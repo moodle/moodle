@@ -15,6 +15,12 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+require_once $CFG->libdir.'/completion/completion_aggregation.php';
+require_once $CFG->libdir.'/completion/completion_criteria.php';
+require_once $CFG->libdir.'/completion/completion_completion.php';
+require_once $CFG->libdir.'/completion/completion_criteria_completion.php';
+
+
 /**
  * Contains a class used for tracking whether activities have been completed
  * by students ('completion')
@@ -81,13 +87,18 @@ define('COMPLETION_NOT_VIEWED', 0);
 define('COMPLETION_CACHE_EXPIRY', 10*60);
 
 // Combining completion condition. This is also the value you should return
-// if you don't have any applicable conditions.
+// if you don't have any applicable conditions. Used for activity completion.
 /** Completion details should be ORed together and you should return false if
  none apply */
 define('COMPLETION_OR', false);
 /** Completion details should be ANDed together and you should return true if
  none apply */
 define('COMPLETION_AND', true);
+
+// Course completion criteria aggregation methods
+define('COMPLETION_AGGREGATION_ALL',        1);
+define('COMPLETION_AGGREGATION_ANY',        2);
+
 
 /**
  * Class represents completion information for a course.
@@ -99,8 +110,39 @@ define('COMPLETION_AND', true);
  * @package moodlecore
  */
 class completion_info {
-    /** @var object Passed during construction */
+    /** 
+     * Course object passed during construction
+     * @access  private
+     * @var     object
+     */
     private $course;
+
+    /**
+     * Course id
+     * @access  public
+     * @var     int
+     */
+    public $course_id;
+
+    /**
+     * Completion criteria
+     * @access  private
+     * @var     array
+     * @see     completion_info->get_criteria()
+     */
+    private $criteria;
+
+    /**
+     * Return array of aggregation methods
+     * @access  public
+     * @return  array
+     */
+    public static function get_aggregation_methods() {
+        return array(
+            COMPLETION_AGGREGATION_ALL       => get_string('all'),
+            COMPLETION_AGGREGATION_ANY       => get_string('any', 'completion'),
+        );
+    }
 
     /**
      * Constructs with course details.
@@ -109,6 +151,7 @@ class completion_info {
      */
     public function __construct($course) {
         $this->course = $course;
+        $this->course_id = $course->id;
     }
 
     /**
@@ -173,7 +216,194 @@ class completion_info {
             echo '</span>';
         }
     }
-    // OU specific end
+
+    /**
+     * Get a course completion for a user
+     * @access  public
+     * @param   $user_id        int     User id
+     * @param   $criteriatype   int     Specific criteria type to return
+     * @return  false|completion_criteria_completion
+     */
+    public function get_completion($user_id, $criteriatype) {
+        $completions = $this->get_completions($user_id, $criteriatype);
+
+        if (empty($completions)) {
+            return false;
+        } elseif (count($completions) > 1) {
+            print_error('multipleselfcompletioncriteria', 'completion');
+        }
+
+        return $completions[0];
+    }
+
+    /**
+     * Get all course criteria's completion objects for a user
+     * @access  public
+     * @param   $user_id        int     User id
+     * @param   $criteriatype   int     optional    Specific criteria type to return
+     * @return  array
+     */
+    public function get_completions($user_id, $criteriatype = null) {
+        $criterion = $this->get_criteria($criteriatype);
+
+        $completions = array();
+
+        foreach ($criterion as $criteria) {
+            $params = array(
+                'course'        => $this->course_id,
+                'userid'        => $user_id,
+                'criteriaid'    => $criteria->id
+            );
+
+            $completion = new completion_criteria_completion($params);
+            $completion->attach_criteria($criteria);
+
+            $completions[] = $completion;
+        }
+
+        return $completions;
+    }
+
+    /**
+     * Get completion object for a user and a criteria
+     * @access  public
+     * @param   $user_id        int     User id
+     * @param   $criteria       completion_criteria     Criteria object
+     * @return  completion_criteria_completion
+     */
+    public function get_user_completion($user_id, $criteria) {
+        $params = array(
+            'criteriaid'    => $criteria->id,
+            'userid'        => $user_id
+        );
+
+        $completion = new completion_criteria_completion($params);
+        return $completion;
+    }
+
+    /**
+     * Check if course has completion criteria set
+     *
+     * @access  public
+     * @return  bool
+     */
+    public function has_criteria() {
+        $criteria = $this->get_criteria();
+
+        return (bool) count($criteria);
+    }
+
+
+    /**
+     * Get course completion criteria
+     * @access  public
+     * @param   $criteriatype   int     optional    Specific criteria type to return
+     * @return  void
+     */
+    public function get_criteria($criteriatype = null) {
+
+        // Fill cache if empty
+        if (!is_array($this->criteria)) {
+            global $DB;
+
+            $params = array(
+                'course'    => $this->course->id
+            );
+
+            // Load criteria from database
+            $records = (array)$DB->get_records('course_completion_criteria', $params);
+
+            // Build array of criteria objects
+            $this->criteria = array();
+            foreach ($records as $record) {
+                $this->criteria[$record->id] = completion_criteria::factory($record);
+            }
+        }
+
+        // If after all criteria
+        if ($criteriatype === null) {
+            return $this->criteria;
+        }
+
+        // If we are only after a specific criteria type
+        $criteria = array();
+        foreach ($this->criteria as $criterion) {
+
+            if ($criterion->criteriatype != $criteriatype) {
+                continue;
+            }
+
+            $criteria[$criterion->id] = $criterion;
+        }
+
+        return $criteria;
+    }
+
+    /**
+     * Get aggregation method
+     * @access  public
+     * @param   $criteriatype   int     optional    If none supplied, get overall aggregation method
+     * @return  int
+     */
+    public function get_aggregation_method($criteriatype = null) {
+        $params = array(
+            'course'        => $this->course_id,
+            'criteriatype'  => $criteriatype
+        );
+
+        $aggregation = new completion_aggregation($params);
+
+        if (!$aggregation->id) {
+            $aggregation->method = COMPLETION_AGGREGATION_ALL;
+        }
+
+        return $aggregation->method;
+    }
+
+    /**
+     * Get incomplete course completion criteria
+     * @access  public
+     * @return  void
+     */
+    public function get_incomplete_criteria() {
+        $incomplete = array();
+
+        foreach ($this->get_criteria() as $criteria) {
+            if (!$criteria->is_complete()) {
+                $incomplete[] = $criteria;
+            }
+        }
+
+        return $incomplete;
+    }
+
+    /**
+     * Clear old course completion criteria
+     */
+    public function clear_criteria() {
+        global $DB;
+        $DB->delete_records('course_completion_criteria', array('course' => $this->course_id));
+        $DB->delete_records('course_completion_aggr_methd', array('course' => $this->course_id));
+
+        $this->delete_course_completion_data();
+    }
+
+    /**
+     * Has the supplied user completed this course
+     * @access  public
+     * @param   $user_id    int     User's id
+     * @return  boolean
+     */
+    public function is_course_complete($user_id) {
+        $params = array(
+            'userid'    => $user_id,
+            'course'  => $this->course_id
+        );
+
+        $ccompletion = new completion_completion($params);
+        return $ccompletion->is_complete();
+    }
+
     /**
      * Updates (if necessary) the completion state of activity $cm for the given
      * user.
@@ -377,13 +607,12 @@ class completion_info {
      * editing form.
      *
      * @global object
-     * @global object
      * @param object $cm Activity
      * @return int The number of users who have completion data stored for this
      *   activity, 0 if none
      */
     public function count_user_data($cm) {
-        global $CFG, $DB;
+        global $DB;
 
         return $DB->get_field_sql("
     SELECT
@@ -392,6 +621,63 @@ class completion_info {
         {course_modules_completion}
     WHERE
         coursemoduleid=? AND completionstate<>0", array($cm->id));
+    }
+
+    /**
+     * Determines how much course completion data exists for a course. This is used when
+     * deciding whether completion information should be 'locked' in the completion
+     * settings form and activity completion settings.
+     *
+     * @global object
+     * @param  int $user_id Optionally only get course completion data for a single user
+     * @return int The number of users who have completion data stored for this
+     *   course, 0 if none
+     */
+    public function count_course_user_data($user_id = null) {
+        global $DB;
+
+        $sql = '
+    SELECT
+        COUNT(1)
+    FROM
+        {course_completion_crit_compl}
+    WHERE
+        course = ?
+        ';
+
+        $params = array($this->course_id);
+
+        // Limit data to a single user if an ID is supplied
+        if ($user_id) {
+            $sql .= ' AND userid = ?';
+            $params[] = $user_id;
+        }
+
+        return $DB->get_field_sql($sql, $params);
+    }
+
+    /**
+     * Check if this course's completion criteria should be locked
+     *
+     * @return  boolean
+     */
+    public function is_course_locked() {
+        return (bool) $this->count_course_user_data();
+    }
+
+    /**
+     * Deletes all course completion completion data.
+     *
+     * Intended to be used when unlocking completion criteria settings.
+     *
+     * @global  object
+     * @return  void
+     */
+    public function delete_course_completion_data() {
+        global $DB;
+
+        $DB->delete_records('course_completions', array('course' => $this->course_id));
+        $DB->delete_records('course_completion_crit_compl', array('course' => $this->course_id));
     }
 
     /**
@@ -415,6 +701,22 @@ class completion_info {
             array_key_exists($cm->id, $SESSION->completioncache[$cm->course])) {
 
             unset($SESSION->completioncache[$cm->course][$cm->id]);
+        }
+
+        // Check if there is an associated course completion criteria
+        $criteria = $this->get_criteria(COMPLETION_CRITERIA_TYPE_ACTIVITY);
+        $acriteria = false;
+        foreach ($criteria as $criterion) {
+            if ($criterion->moduleinstance == $cm->id) {
+                $acriteria = $criterion;
+                break;
+    }
+        }
+
+        if ($acriteria) {
+            // Delete all criteria completions relating to this activity
+            $DB->delete_records('course_completion_crit_compl', array('course' => $this->course_id, 'criteriaid' => $acriteria->id));
+            $DB->delete_records('course_completions', array('course' => $this->course_id));
         }
     }
 
@@ -496,7 +798,7 @@ class completion_info {
         // Is this the current user?
         $currentuser = $userid==$USER->id;
 
-        if ($currentuser) {
+        if ($currentuser && is_object($SESSION)) {
             // Make sure cache is present and is for current user (loginas
             // changes this)
             if (!isset($SESSION->completioncache) || $SESSION->completioncacheuserid!=$USER->id) {
@@ -635,7 +937,7 @@ class completion_info {
         // Obtain those activities which have completion turned on
         $withcompletion = $DB->get_records_select('course_modules', 'course='.$this->course->id.
           ' AND completion<>'.COMPLETION_TRACKING_NONE);
-        if (count($withcompletion) == 0) {
+        if (!$withcompletion) {
             return array();
         }
 
@@ -664,11 +966,11 @@ class completion_info {
      * @global object
      * @global object
      * @uses CONTEXT_COURSE
-     * @param bool $sortfirstname True to sort with firstname
+     * @param bool $sortfirstname Optional True to sort with firstname
      * @param int $groupid Optionally restrict to groupid
      * @return array Array of user objects containing id, firstname, lastname (empty if none)
      */
-    function internal_get_tracked_users($sortfirstname, $groupid=0) {
+    function internal_get_tracked_users($sortfirstname = false, $groupid = 0) {
         global $CFG, $DB;
 
         if (!empty($CFG->progresstrackedroles)) {

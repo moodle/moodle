@@ -1,0 +1,619 @@
+<?php
+
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+
+/**
+ * Course completion progress report
+ *
+ * @package   moodlecore
+ * @copyright 2009 Catalyst IT Ltd
+ * @author    Aaron Barnes <aaronb@catalyst.net.nz>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+require_once('../../../config.php');
+require_once($CFG->libdir.'/completionlib.php');
+
+
+/**
+ * Configuration
+ */
+define('COMPLETION_REPORT_PAGE',        25);
+define('COMPLETION_REPORT_COL_TITLES',  true);
+
+
+/**
+ * Setup page, check permissions
+ */
+
+// Get course
+$course = $DB->get_record('course', array('id' => required_param('course', PARAM_INT)));
+if(!$course) {
+    print_error('invalidcourseid');
+}
+
+// Non-js edit
+$edituser = optional_param('edituser', 0, PARAM_INT);
+
+// Sort (default lastname, optionally firstname)
+$sort = optional_param('sort','',PARAM_ALPHA);
+$firstnamesort = $sort == 'firstname';
+
+// CSV format
+$format = optional_param('format','',PARAM_ALPHA);
+$excel = $format == 'excelcsv';
+$csv = $format == 'csv' || $excel;
+
+// Whether to start at a particular position
+$start = optional_param('start',0,PARAM_INT);
+
+// Whether to show idnumber
+$idnumbers = $CFG->grade_report_showuseridnumber;
+
+// Function for quoting csv cell values
+function csv_quote($value) {
+    global $excel;
+    if($excel) {
+        $tl=textlib_get_instance();
+        return $tl->convert('"'.str_replace('"',"'",$value).'"','UTF-8','UTF-16LE');
+    } else {
+        return '"'.str_replace('"',"'",$value).'"';
+    }
+}
+
+
+// Check permissions
+require_login($course);
+
+$context=get_context_instance(CONTEXT_COURSE, $course->id);
+require_capability('coursereport/completion:view', $context);
+
+// Get group mode
+$group = groups_get_course_group($course, true); // Supposed to verify group
+if($group === 0 && $course->groupmode == SEPARATEGROUPS) {
+    require_capability('moodle/site:accessallgroups',$context);
+}
+
+
+$url = new moodle_url('/course/report/completion/index.php', array('course'=>$course->id));
+$PAGE->set_url($url);
+
+/**
+ * Load data
+ */
+
+// Get criteria for course
+$completion = new completion_info($course);
+
+if (!$completion->has_criteria()) {
+    print_error('err_nocriteria', 'completion', $CFG->wwwroot.'/course/report.php?id='.$course->id);
+}
+
+// Get criteria and put in correct order
+$criteria = array();
+
+foreach ($completion->get_criteria(COMPLETION_CRITERIA_TYPE_COURSE) as $criterion) {
+    $criteria[] = $criterion;
+}
+
+foreach ($completion->get_criteria(COMPLETION_CRITERIA_TYPE_ACTIVITY) as $criterion) {
+    $criteria[] = $criterion;
+}
+
+foreach ($completion->get_criteria() as $criterion) {
+    if (!in_array($criterion->criteriatype, array(
+            COMPLETION_CRITERIA_TYPE_COURSE, COMPLETION_CRITERIA_TYPE_ACTIVITY))) {
+        $criteria[] = $criterion;
+    }
+}
+
+// Can logged in user mark users as complete?
+// (if the logged in user has a role defined in the role criteria)
+$allow_marking = false;
+$allow_marking_criteria = null;
+
+if (!$csv) {
+    // Get role criteria
+    $rcriteria = $completion->get_criteria(COMPLETION_CRITERIA_TYPE_ROLE);
+
+    if (!empty($rcriteria)) {
+
+        foreach ($rcriteria as $rcriterion) {
+            $users = get_role_users($rcriterion->role, $context, true);
+
+            // If logged in user has this role, allow marking complete
+            if ($users && in_array($USER->id, array_keys($users))) {
+                $allow_marking = true;
+                $allow_marking_criteria = $rcriterion->id;
+                break;
+            }
+        }
+    }
+}
+
+// Get user data
+$progress = $completion->get_progress_all(
+    $firstnamesort, $group,
+    $csv ? 0 : COMPLETION_REPORT_PAGE,
+    $csv ? 0 : $start);
+
+
+/**
+ * Setup page header
+ */
+if ($csv) {
+    header('Content-Disposition: attachment; filename=progress.'.
+        preg_replace('/[^a-z0-9-]/','_',strtolower($course->shortname)).'.csv');
+    // Unicode byte-order mark for Excel
+    if($excel) {
+        header('Content-Type: text/csv; charset=UTF-16LE');
+        print chr(0xFF).chr(0xFE);
+        $sep="\t".chr(0);
+        $line="\n".chr(0);
+    } else {
+        header('Content-Type: text/csv; charset=UTF-8');
+        $sep=",";
+        $line="\n";
+    }
+
+} else {
+    // Navigation and header
+    $strcompletion = get_string('completionreport','completion');
+
+    $PAGE->set_title($strcompletion);
+    $PAGE->set_heading($course->fullname);
+    
+    echo $OUTPUT->header();
+
+    $PAGE->requires->yui2_lib(
+        array(
+            'yahoo',
+            'dom',
+            'element',
+            'event',
+        )
+    );
+
+    $PAGE->requires->js('/course/report/completion/textrotate.js');
+
+    // Handle groups (if enabled)
+    groups_print_course_menu($course, $CFG->wwwroot.'/course/report/progress/?course='.$course->id);
+}
+
+// Do we need a paging bar?
+if($progress->total > COMPLETION_REPORT_PAGE) {
+    $pagingbar='<div class="completion_pagingbar">';
+
+    if($start>0) {
+        $newstart=$start-COMPLETION_REPORT_PAGE;
+        if($newstart<0) {
+            $newstart=0;
+        }
+        $pagingbar.=link_arrow_left(get_string('previous'),'./?course='.$course->id.
+            ($newstart ? '&amp;start='.$newstart : ''),false,'completion_prev');
+    }
+
+    $a=new StdClass;
+    $a->from=$start+1;
+    $a->to=$start+COMPLETION_REPORT_PAGE;
+    $a->total=$progress->total;
+    $pagingbar.='<p>'.get_string('reportpage','completion',$a).'</p>';
+
+    if($start+COMPLETION_REPORT_PAGE < $progress->total) {
+        $pagingbar.=link_arrow_right(get_string('next'),'./?course='.$course->id.
+            '&amp;start='.($start+COMPLETION_REPORT_PAGE),false,'completion_next');
+    }
+
+    $pagingbar.='</div>';
+} else {
+    $pagingbar='';
+}
+
+
+/**
+ * Draw table header
+ */
+
+// Start of table
+if(!$csv) {
+    print '<br class="clearer"/>'; // ugh
+
+    if(count($progress->users)==0) {
+        echo $OUTPUT->box_start('errorbox errorboxcontent boxaligncenter boxwidthnormal');
+        print '<p class="nousers">'.get_string('err_nousers','completion').'</p>';
+        print '<p><a href="'.$CFG->wwwroot.'/course/report.php?id='.$course->id.'">'.get_string('continue').'</a></p>';
+        echo $OUTPUT->box_end();
+        echo $OUTPUT->footer($course);
+        exit;
+    }
+
+    print $pagingbar;
+    print '<table id="completion-progress" class="generaltable flexible boxaligncenter completionreport" style="text-align: left" cellpadding="5" border="1">';
+
+    // Print criteria group names
+    print PHP_EOL.'<tr style="vertical-align: top">';
+    print '<th scope="row" class="rowheader">'.get_string('criteriagroup', 'completion').'</th>';
+
+    $current_group = false;
+    $col_count = 0;
+    for ($i = 0; $i <= count($criteria); $i++) {
+
+        if (isset($criteria[$i])) {
+            $criterion = $criteria[$i];
+
+            if ($current_group && $criterion->criteriatype === $current_group->criteriatype) {
+                ++$col_count;
+                continue;
+            }
+        }
+
+        // Print header cell
+        if ($col_count) {
+            print '<th scope="col" colspan="'.$col_count.'" class="colheader criteriagroup">'.$current_group->get_type_title().'</th>';
+        }
+
+        if (isset($criteria[$i])) {
+            // Move to next criteria type
+            $current_group = $criterion;
+            $col_count = 1;
+        }
+    }
+
+    // Overall course completion status
+    print '<th style="text-align: center;">'.get_string('course').'</th>';
+
+    print '</tr>';
+
+    // Print aggregation methods
+    print PHP_EOL.'<tr style="vertical-align: top">';
+    print '<th scope="row" class="rowheader">'.get_string('aggregationmethod', 'completion').'</th>';
+
+    $current_group = false;
+    $col_count = 0;
+    for ($i = 0; $i <= count($criteria); $i++) {
+
+        if (isset($criteria[$i])) {
+            $criterion = $criteria[$i];
+
+            if ($current_group && $criterion->criteriatype === $current_group->criteriatype) {
+                ++$col_count;
+                continue;
+            }
+        }
+
+        // Print header cell
+        if ($col_count) {
+            $has_agg = array(
+                COMPLETION_CRITERIA_TYPE_COURSE,
+                COMPLETION_CRITERIA_TYPE_ACTIVITY,
+                COMPLETION_CRITERIA_TYPE_ROLE,
+            );
+
+            if (in_array($current_group->criteriatype, $has_agg)) {
+                // Try load a aggregation method
+                $method = $completion->get_aggregation_method($current_group->criteriatype);
+
+                $method = $method == 1 ? 'All' : 'Any';
+
+            } else {
+                $method = '-';
+            }
+
+            print '<th scope="col" colspan="'.$col_count.'" class="colheader aggheader">'.$method.'</th>';
+        }
+
+        if (isset($criteria[$i])) {
+            // Move to next criteria type
+            $current_group = $criterion;
+            $col_count = 1;
+        }
+    }
+
+    // Overall course aggregation method
+    print '<th scope="col" class="colheader aggheader aggcriteriacourse">';
+
+    // Get course aggregation
+    $method = $completion->get_aggregation_method();
+
+    print $method == 1 ? 'All' : 'Any';
+    print '</th>';
+
+    print '</tr>';
+
+
+    // Print criteria titles
+    if (COMPLETION_REPORT_COL_TITLES) {
+
+        print PHP_EOL.'<tr>';
+        print '<th scope="row" class="rowheader">'.get_string('criteria', 'completion').'</th>';
+
+        foreach ($criteria as $criterion) {
+            // Get criteria details
+            $details = $criterion->get_title_detailed();
+            print '<th scope="col" class="colheader criterianame">';
+            print '<span class="completion-criterianame">'.$details.'</span>';
+            print '</th>';
+        }
+
+        // Overall course completion status
+        print '<th scope="col" class="colheader criterianame">';
+
+        print '<span class="completion-criterianame">'.get_string('coursecomplete', 'completion').'</span>';
+
+        print '</th></tr>';
+    }
+
+    // Print user heading and icons
+    print '<tr>';
+
+    // User heading / sort option
+    print '<th scope="col" class="completion-sortchoice" style="clear: both;">';
+    if($firstnamesort) {
+        print
+            get_string('firstname').' / <a href="./?course='.$course->id.'">'.
+            get_string('lastname').'</a>';
+    } else {
+        print '<a href="./?course='.$course->id.'&amp;sort=firstname">'.
+            get_string('firstname').'</a> / '.
+            get_string('lastname');
+    }
+    print '</th>';
+
+
+    // Print user id number column
+    if($idnumbers) {
+        print '<th>'.get_string('idnumber').'</th>';
+    }
+
+    ///
+    /// Print criteria icons
+    ///
+    foreach ($criteria as $criterion) {
+
+        // Generate icon details
+        $icon = '';
+        $iconlink = '';
+        $icontitle = ''; // Required if $iconlink set
+        $iconalt = ''; // Required
+        switch ($criterion->criteriatype) {
+
+            case COMPLETION_CRITERIA_TYPE_ACTIVITY:
+                // Load activity
+                $activity = $criterion->get_mod_instance();
+
+                // Display icon
+                $icon = $OUTPUT->pix_url('icon', $criterion->module).'/icon.gif';
+                $iconlink = $CFG->wwwroot.'/mod/'.$criterion->module.'/view.php?id='.$activity->id;
+                $icontitle = $activity->name;
+                $iconalt = get_string('modulename', $criterion->module);
+                break;
+
+            case COMPLETION_CRITERIA_TYPE_COURSE:
+                // Load course
+                $crs = get_record('course', 'id', $criterion->courseinstance);
+
+                // Display icon
+                $iconlink = $CFG->wwwroot.'/course/view.php?id='.$criterion->courseinstance;
+                $icontitle = $crs->fullname;
+                $iconalt = $crs->shortname;
+                break;
+
+            case COMPLETION_CRITERIA_TYPE_ROLE:
+                // Load role
+                $role = $DB->get_record('role', array('id' => $criterion->role));
+
+                // Display icon
+                $iconalt = $role->name;
+                break;
+        }
+
+        // Print icon and cell
+        print '<th class="criteriaicon">';
+
+        // Create icon if not supplied
+        if (!$icon) {
+            $icon = $OUTPUT->pix_url('i/'.$COMPLETION_CRITERIA_TYPES[$criterion->criteriatype].'.gif');
+        }
+
+        print ($iconlink ? '<a href="'.$iconlink.'" title="'.$icontitle.'">' : '');
+        print '<img src="'.$icon.'" class="icon" alt="'.$iconalt.'" '.(!$iconlink ? 'title="'.$iconalt.'"' : '').' />';
+        print ($iconlink ? '</a>' : '');
+
+        print '</th>';
+    }
+
+    // Overall course completion status
+    print '<th class="criteriaicon">';
+    print '<img src="'.$OUTPUT->pix_url('i/course.gif').'" class="icon" alt="Course" title="Course Complete" />';
+    print '</th>';
+
+    print '</tr>';
+
+
+} else {
+    // TODO
+    if($idnumbers) {
+        print $sep;
+    }
+}
+
+
+///
+/// Display a row for each user
+///
+foreach($progress->users as $user) {
+
+    // User name
+    if($csv) {
+        print csv_quote(fullname($user));
+        if($idnumbers) {
+            print $sep.csv_quote($user->idnumber);
+        }
+    } else {
+        print PHP_EOL.'<tr id="user-'.$user->id.'">';
+
+        print '<th scope="row"><a href="'.$CFG->wwwroot.'/user/view.php?id='.
+            $user->id.'&amp;course='.$course->id.'">'.fullname($user).'</a></th>';
+        if($idnumbers) {
+            print '<td>'.htmlspecialchars($user->idnumber).'</td>';
+        }
+    }
+
+    // Progress for each course completion criteria
+    foreach ($criteria as $criterion) {
+
+        // Handle activity completion differently
+        if ($criterion->criteriatype == COMPLETION_CRITERIA_TYPE_ACTIVITY) {
+
+            // Load activity
+            $mod = $criterion->get_mod_instance();
+            $activity = $DB->get_record('course_modules', array('id' => $criterion->moduleinstance));
+            $activity->name = $mod->name;
+
+
+            // Get progress information and state
+            if(array_key_exists($activity->id,$user->progress)) {
+                $thisprogress=$user->progress[$activity->id];
+                $state=$thisprogress->completionstate;
+                $date=userdate($thisprogress->timemodified);
+            } else {
+                $state=COMPLETION_INCOMPLETE;
+                $date='';
+            }
+
+            $criteria_completion = $completion->get_user_completion($user->id, $criterion);
+
+            // Work out how it corresponds to an icon
+            switch($state) {
+                case COMPLETION_INCOMPLETE : $completiontype='n'; break;
+                case COMPLETION_COMPLETE : $completiontype='y'; break;
+                case COMPLETION_COMPLETE_PASS : $completiontype='pass'; break;
+                case COMPLETION_COMPLETE_FAIL : $completiontype='fail'; break;
+            }
+
+            $completionicon='completion-'.
+                ($activity->completion==COMPLETION_TRACKING_AUTOMATIC ? 'auto' : 'manual').
+                '-'.$completiontype;
+
+            $describe=get_string('completion-alt-auto-'.$completiontype,'completion');
+            $a=new StdClass;
+            $a->state=$describe;
+            $a->date=$date;
+            $a->user=fullname($user);
+            $a->activity=strip_tags($activity->name);
+            $fulldescribe=get_string('progress-title','completion',$a);
+
+            if($csv) {
+                print $sep.csv_quote($describe).$sep.csv_quote($date);
+            } else {
+                print '<td class="completion-progresscell">';
+
+                print '<img src="'.$OUTPUT->pix_url('i/'.$completionicon).
+                      '" alt="'.$describe.'" class="icon" title="'.$fulldescribe.'" />';
+
+                print '</td>';
+            }
+
+            continue;
+        }
+
+        // Handle all other criteria
+        $criteria_completion = $completion->get_user_completion($user->id, $criterion);
+        $is_complete = $criteria_completion->is_complete();
+
+        $completiontype = $is_complete ? 'y' : 'n';
+        $completionicon = 'completion-auto-'.$completiontype;
+
+        $describe = get_string('completion-alt-auto-'.$completiontype, 'completion');
+
+        $a = new Object();
+        $a->state    = $describe;
+        $a->date     = $is_complete ? userdate($criteria_completion->timecompleted) : '';
+        $a->user     = fullname($user);
+        $a->activity = strip_tags($criterion->get_title());
+        $fulldescribe = get_string('progress-title', 'completion', $a);
+
+        if ($csv) {
+            print $sep.csv_quote($describe);
+        } else {
+
+            if ($allow_marking_criteria === $criterion->id) {
+                $describe = get_string('completion-alt-auto-'.$completiontype,'completion');
+
+                print '<td class="completion-progresscell">'.
+                    '<a href="'.$CFG->wwwroot.'/course/togglecompletion.php?user='.$user->id.'&course='.$course->id.'&rolec='.$allow_marking_criteria.'">'.
+                    '<img src="'.$OUTPUT->pix_url('i/completion-manual-'.($is_complete ? 'y' : 'n')).
+                    '" alt="'.$describe.'" class="icon" title="Mark as complete" /></a></td>';
+            } else {
+                print '<td class="completion-progresscell">'.
+                    '<img src="'.$OUTPUT->pix_url('i/'.$completionicon).
+                    '" alt="'.$describe.'" class="icon" title="'.$fulldescribe.'" /></td>';
+            }
+        }
+    }
+
+    // Handle overall course completion
+
+    // Load course completion
+    $params = array(
+        'userid'    => $user->id,
+        'course'    => $course->id
+    );
+
+    $ccompletion = new completion_completion($params);
+    $completiontype =  $ccompletion->is_complete() ? 'y' : 'n';
+
+    $describe = get_string('completion-alt-auto-'.$completiontype, 'completion');
+
+    $a = new StdClass;
+    $a->state    = $describe;
+    $a->date     = '';
+    $a->user     = fullname($user);
+    $a->activity = strip_tags(get_string('coursecomplete', 'completion'));
+    $fulldescribe = get_string('progress-title', 'completion', $a);
+
+    if ($csv) {
+        print $sep.csv_quote($describe);
+    } else {
+
+        print '<td class="completion-progresscell">';
+
+        // Display course completion status icon
+        print '<img src="'.$OUTPUT->pix_url('i/completion-auto-'.$completiontype).
+               '" alt="'.$describe.'" class="icon" title="'.$fulldescribe.'" />';
+
+        print '</td>';
+    }
+
+    if($csv) {
+        print $line;
+    } else {
+        print '</tr>';
+    }
+}
+
+if($csv) {
+    exit;
+}
+print '</table>';
+print $pagingbar;
+
+print '<ul class="progress-actions"><li><a href="index.php?course='.$course->id.
+    '&amp;format=csv">'.get_string('csvdownload','completion').'</a></li>
+    <li><a href="index.php?course='.$course->id.'&amp;format=excelcsv">'.
+    get_string('excelcsvdownload','completion').'</a></li></ul>';
+
+echo $OUTPUT->footer($course);

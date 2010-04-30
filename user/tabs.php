@@ -273,6 +273,23 @@
 
     }
 
+    // Course completion tab
+    if (!empty($CFG->enablecompletion) && ($course->id == SITEID || !empty($course->enablecompletion)) && // completion enabled
+        ($myreports || $anyreport || ($course->id == SITEID || has_capability('coursereport/completion:view', $coursecontext)))) { // permissions to view the report
+
+        // Decide if singular or plural
+        $coursecompletion = $course->id == SITEID ? 'coursecompletions' : 'coursecompletion';
+
+        // Add tab
+        $reportsecondrow[] = new tabobject(
+            'completion',
+            $CFG->wwwroot.'/course/user.php?id='.$course->id.'&amp;user='.$user->id.'&amp;mode='.$coursecompletion,
+            get_string($coursecompletion)
+        );
+    }
+
+
+
 /// Add second row to display if there is one
 
     if (!empty($secondrow)) {

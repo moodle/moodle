@@ -109,11 +109,11 @@ if ($hassiteconfig
     $languages += get_string_manager()->get_list_of_translations();
     $temp->add(new admin_setting_configselect('moodlecourse/lang', get_string('forcelanguage'), '',key($languages),$languages));
 
-    if (!empty($CFG->enablecompletion)) {
-        $temp->add(new admin_setting_heading('progress', get_string('progress','completion'), ''));
-        $temp->add(new admin_setting_configselect('moodlecourse/enablecompletion', get_string('completion','completion'), '',
-            1, array(0 => get_string('completiondisabled','completion'), 1 => get_string('completionenabled','completion'))));
-    }
+    $temp->add(new admin_setting_heading('progress', get_string('progress','completion'), ''));
+    $temp->add(new admin_setting_configselect('moodlecourse/enablecompletion', get_string('completion','completion'), '',
+        1, array(0 => get_string('completiondisabled','completion'), 1 => get_string('completionenabled','completion'))));
+
+    $temp->add(new admin_setting_configcheckbox('moodlecourse/completionstartonenrol', get_string('completionstartonenrol','completion'), get_string('completionstartonenrolhelp', 'completion'), 1));
     $ADMIN->add('courses', $temp);
 
 /// "courserequests" settingpage

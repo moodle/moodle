@@ -212,7 +212,7 @@ abstract class moodleform_mod extends moodleform {
                             get_string('completedwarning', 'completion'),
                             get_string('completedwarningtext', 'completion', $completedcount)),
                         'unlockcompletion');
-                    $mform->setHelpButton('completedwarning', array('completionlocked', get_string('help_completionlocked', 'completion'), 'completion'));
+                    $mform->setHelpButton('completedwarning', array('completionlocked', get_string('completionlocked_help', 'completion'), 'completion'));
 
                     $freeze = true;
                 }
@@ -409,9 +409,9 @@ abstract class moodleform_mod extends moodleform {
             // Conditional availability
             $mform->addElement('header', '', get_string('availabilityconditions', 'condition'));
             $mform->addElement('date_selector', 'availablefrom', get_string('availablefrom', 'condition'), array('optional'=>true));
-            $mform->setHelpButton('availablefrom', array('conditiondates', get_string('help_conditiondates', 'condition'), 'condition'));
+            $mform->setHelpButton('availablefrom', array('conditiondates', get_string('conditiondates_help', 'condition'), 'condition'));
             $mform->addElement('date_selector', 'availableuntil', get_string('availableuntil', 'condition'), array('optional'=>true));
-            $mform->setHelpButton('availableuntil', array('conditiondates', get_string('help_conditiondates', 'condition'), 'condition'));
+            $mform->setHelpButton('availableuntil', array('conditiondates', get_string('conditiondates_help', 'condition'), 'condition'));
 
             // Conditions based on grades
             $gradeoptions = array();
@@ -487,7 +487,7 @@ abstract class moodleform_mod extends moodleform {
                 $this->repeat_elements(array($group),$count,array(),
                     'conditioncompletionrepeats','conditioncompletionadds',2,
                     get_string('addcompletions','condition'),true);
-                $mform->setHelpButton('conditioncompletiongroup[0]', array('completioncondition', get_string('help_completioncondition', 'condition'), 'condition'));
+                $mform->setHelpButton('conditioncompletiongroup[0]', array('completioncondition', get_string('completioncondition_help', 'condition'), 'condition'));
             }
 
             // Do we display availability info to students?
@@ -495,7 +495,7 @@ abstract class moodleform_mod extends moodleform {
                     array(CONDITION_STUDENTVIEW_SHOW=>get_string('showavailability_show', 'condition'),
                     CONDITION_STUDENTVIEW_HIDE=>get_string('showavailability_hide', 'condition')));
             $mform->setDefault('showavailability', CONDITION_STUDENTVIEW_SHOW);
-            $mform->setHelpButton('showavailability', array('showavailability', get_string('help_showavailability', 'condition'), 'condition'));
+            $mform->setHelpButton('showavailability', array('showavailability', get_string('showavailability_help', 'condition'), 'condition'));
         }
 
         // Conditional activities: completion tracking section
@@ -515,7 +515,7 @@ abstract class moodleform_mod extends moodleform {
             $mform->addElement('select', 'completion', get_string('completion', 'completion'),
                 array(COMPLETION_TRACKING_NONE=>get_string('completion_none', 'completion'),
                 COMPLETION_TRACKING_MANUAL=>get_string('completion_manual', 'completion')));
-            $mform->setHelpButton('completion', array('completion', get_string('help_completion', 'completion'), 'completion'));
+            $mform->setHelpButton('completion', array('completion', get_string('completion_help', 'completion'), 'completion'));
             $mform->setDefault('completion', $this->_features->defaultcompletion
                 ? COMPLETION_TRACKING_MANUAL
                 : COMPLETION_TRACKING_NONE);
@@ -525,7 +525,7 @@ abstract class moodleform_mod extends moodleform {
             if (plugin_supports('mod', $this->_modname, FEATURE_COMPLETION_TRACKS_VIEWS, false)) {
                 $mform->addElement('checkbox', 'completionview', get_string('completionview', 'completion'),
                     get_string('completionview_text', 'completion'));
-                $mform->setHelpButton('completionview', array('completionview', get_string('help_completionview', 'completion'), 'completion'));
+                $mform->setHelpButton('completionview', array('completionview', get_string('completionview_help', 'completion'), 'completion'));
                 $mform->disabledIf('completionview', 'completion', 'ne', COMPLETION_TRACKING_AUTOMATIC);
                 $gotcompletionoptions = true;
             }
@@ -534,7 +534,7 @@ abstract class moodleform_mod extends moodleform {
             if (plugin_supports('mod', $this->_modname, FEATURE_GRADE_HAS_GRADE, false)) {
                 $mform->addElement('checkbox', 'completionusegrade', get_string('completionusegrade', 'completion'),
                     get_string('completionusegrade_text', 'completion'));
-                $mform->setHelpButton('completionusegrade', array('completionusegrade', get_string('help_completionusegrade', 'completion'), 'completion'));
+                $mform->setHelpButton('completionusegrade', array('completionusegrade', get_string('completionusegrade_help', 'completion'), 'completion'));
                 $mform->disabledIf('completionusegrade', 'completion', 'ne', COMPLETION_TRACKING_AUTOMATIC);
                 $gotcompletionoptions = true;
             }
@@ -557,7 +557,7 @@ abstract class moodleform_mod extends moodleform {
 
             // Completion expected at particular date? (For progress tracking)
             $mform->addElement('date_selector', 'completionexpected', get_string('completionexpected', 'completion'), array('optional'=>true));
-            $mform->setHelpButton('completionexpected', array('completionexpected', get_string('help_completionexpected', 'completion'), 'completion'));
+            $mform->setHelpButton('completionexpected', array('completionexpected', get_string('completionexpected_help', 'completion'), 'completion'));
             $mform->disabledIf('completionexpected', 'completion', 'eq', COMPLETION_TRACKING_NONE);
         }
 

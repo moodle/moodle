@@ -2291,6 +2291,12 @@ class settings_navigation extends navigation_node {
             // Add the course settings link
             $url = new moodle_url('/course/edit.php', array('id'=>$course->id));
             $coursenode->add(get_string('settings'), $url, self::TYPE_SETTING, null, null, new pix_icon('i/settings', ''));
+
+            // Add the course completion settings link
+            if ($CFG->enablecompletion && $course->enablecompletion) {
+                $url = new moodle_url('/course/completion.php', array('id'=>$course->id));
+                $coursenode->add(get_string('completion', 'completion'), $url, self::TYPE_SETTING, null, null, new pix_icon('i/settings', ''));
+            }
         }
 
         if (has_capability('moodle/role:assign', $coursecontext)) {

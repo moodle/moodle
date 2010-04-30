@@ -242,6 +242,16 @@
     events_cron();
     mtrace('done.');
 
+
+    if ($CFG->enablecompletion) {
+        // Completion cron
+        mtrace('Starting the completion cron...');
+        require_once($CFG->libdir . '/completion/cron.php');
+        completion_cron();
+        mtrace('done');
+    }
+
+
     if ($CFG->enableportfolios) {
         // Portfolio cron
         mtrace('Starting the portfolio cron...');

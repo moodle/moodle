@@ -23,5 +23,5 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['pluginname'] = 'Course progress';
-$string['progress:view'] = 'View course progress report';
+$string['pluginname'] = 'Activity completion';
+$string['progress:view'] = 'View activity completion reports';

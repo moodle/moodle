@@ -111,6 +111,19 @@ if (has_capability('moodle/grade:viewall', $coursecontext)) {
     $modes[] = 'grade';
 }
 
+// Course completion tab
+if (!empty($CFG->enablecompletion) && ($course->id == SITEID || !empty($course->enablecompletion)) && // completion enabled
+    ($myreports || $anyreport || ($course->id == SITEID || has_capability('coursereport/completion:view', $coursecontext)))) { // permissions to view the report
+
+    // Decide if singular or plural
+    if ($course->id == SITEID) {
+        $modes[] = 'coursecompletions';
+    } else {
+        $modes[] = 'coursecompletion';
+    }
+}
+
+
 if (empty($modes)) {
     require_capability('moodle/user:viewuseractivitiesreport', $personalcontext);
 }
@@ -350,6 +363,239 @@ switch ($mode) {
                 }
             }
         }
+        break;
+    case "coursecompletion":
+    case "coursecompletions":
+
+        // Display course completion user report
+        require_once $CFG->libdir.'/completionlib.php';
+
+        // Grab all courses the user is enrolled in and their completion status
+        $sql = "
+            SELECT DISTINCT
+                c.id AS id
+            FROM
+                {$CFG->prefix}course c
+            INNER JOIN
+                {$CFG->prefix}context con
+             ON con.instanceid = c.id
+            INNER JOIN
+                {$CFG->prefix}role_assignments ra
+             ON ra.contextid = con.id
+            AND ra.userid = {$user->id}
+        ";
+
+        // Get roles that are tracked by course completion
+        if ($roles = $CFG->progresstrackedroles) {
+            $sql .= '
+                AND ra.roleid IN ('.$roles.')
+            ';
+        }
+
+        $sql .= '
+            WHERE
+                con.contextlevel = '.CONTEXT_COURSE.'
+            AND c.enablecompletion = 1
+        ';
+
+
+        // If we are looking at a specific course
+        if ($course->id != 1) {
+            $sql .= '
+                AND c.id = '.(int)$course->id.'
+            ';
+        }
+
+        // Check if result is empty
+        if (!$rs = get_recordset_sql($sql)) {
+
+            if ($course->id != 1) {
+                $error = get_string('nocompletions', 'coursereport_completion');
+            } else {
+                $error = get_string('nocompletioncoursesenroled', 'coursereport_completion');
+            }
+
+            echo $OUTPUT->notification($error);
+            break;
+        }
+
+        // Categorize courses by their status
+        $courses = array(
+            'inprogress'    => array(),
+            'complete'      => array(),
+            'unstarted'     => array()
+        );
+
+        // Sort courses by the user's status in each
+        foreach ($rs as $course_completion) {
+            $c_info = new completion_info((object)$course_completion);
+
+            // Is course complete?
+            $coursecomplete = $c_info->is_course_complete($user->id);
+
+            // Has this user completed any criteria?
+            $criteriacomplete = $c_info->count_course_user_data($user->id);
+
+            if ($coursecomplete) {
+                $courses['complete'][] = $c_info;
+            } else if ($criteriacomplete) {
+                $courses['inprogress'][] = $c_info;
+            } else {
+                $courses['unstarted'][] = $c_info;
+            }
+        }
+
+        $rs->close();
+
+        // Loop through course status groups
+        foreach ($courses as $type => $infos) {
+
+            // If there are courses with this status
+            if (!empty($infos)) {
+
+                echo '<h1 align="center">'.get_string($type, 'coursereport_completion').'</h1>';
+                echo '<table class="generalbox boxaligncenter">';
+                echo '<tr class="ccheader">';
+                echo '<th class="c0 header" scope="col">'.get_string('course').'</th>';
+                echo '<th class="c1 header" scope="col">'.get_string('requiredcriteria', 'completion').'</th>';
+                echo '<th class="c2 header" scope="col">'.get_string('status').'</th>';
+                echo '<th class="c3 header" scope="col" width="15%">'.get_string('info').'</th>';
+
+                if ($type === 'complete') {
+                    echo '<th class="c4 header" scope="col">'.get_string('completiondate', 'coursereport_completion').'</th>';
+                }
+
+                echo '</tr>';
+
+                // For each course
+                foreach ($infos as $c_info) {
+
+                    // Get course info
+                    $c_course = get_record('course', 'id', $c_info->course_id);
+                    $course_name = $c_course->fullname;
+
+                    // Get completions
+                    $completions = $c_info->get_completions($user->id);
+
+                    // Save row data
+                    $rows = array();
+
+                    // For aggregating activity completion
+                    $activities = array();
+                    $activities_complete = 0;
+                    
+                    // For aggregating prerequisites
+                    $prerequisites = array();
+                    $prerequisites_complete = 0;
+
+                    // Loop through course criteria
+                    foreach ($completions as $completion) {
+                        $criteria = $completion->get_criteria();
+                        $complete = $completion->is_complete();
+
+                        // Activities are a special case, so cache them and leave them till last
+                        if ($criteria->criteriatype == COMPLETION_CRITERIA_TYPE_ACTIVITY) {
+                            $activities[$criteria->moduleinstance] = $complete;
+
+                            if ($complete) {
+                                $activities_complete++;
+                            }
+
+                            continue;
+                        }
+
+                        // Prerequisites are also a special case, so cache them and leave them till last
+                        if ($criteria->criteriatype == COMPLETION_CRITERIA_TYPE_COURSE) {
+                            $prerequisites[$criteria->courseinstance] = $complete;
+
+                            if ($complete) {
+                                $prerequisites_complete++;
+                            }
+
+                            continue;
+                        }
+
+                        $row = array();
+                        $row['title'] = $criteria->get_title();
+                        $row['status'] = $completion->get_status();
+                        $rows[] = $row;
+                    }
+
+                    // Aggregate activities
+                    if (!empty($activities)) {
+
+                        $row = array();
+                        $row['title'] = get_string('activitiescomplete', 'coursereport_completion');
+                        $row['status'] = $activities_complete.' of '.count($activities);
+                        $rows[] = $row;
+                    }
+
+                    // Aggregate prerequisites
+                    if (!empty($prerequisites)) {
+
+                        $row = array();
+                        $row['title'] = get_string('prerequisitescompleted', 'completion');
+                        $row['status'] = $prerequisites_complete.' of '.count($prerequisites);
+                        array_splice($rows, 0, 0, array($row));
+                    }
+
+                    $first_row = true;
+
+                    // Print table
+                    foreach ($rows as $row) {
+
+                        // Display course name on first row
+                        if ($first_row) {
+                            echo '<tr><td class="c0"><a href="'.$CFG->wwwroot.'/course/view.php?id='.$c_course->id.'">'.format_string($course_name).'</a></td>';
+                        } else {
+                            echo '<tr><td class="c0"></td>';
+                        }
+
+                        echo '<td class="c1">';
+                        echo $row['title'];
+                        echo '</td><td class="c2">';
+
+                        switch ($row['status']) {
+                            case 'Yes':
+                                echo get_string('complete');
+                                break;
+
+                            case 'No':
+                                echo get_string('incomplete', 'coursereport_completion');
+                                break;
+
+                            default:
+                                echo $row['status'];
+                        }
+
+                        // Display link on first row
+                        echo '</td><td class="c3">';
+                        if ($first_row) {
+                            echo '<a href="'.$CFG->wwwroot.'/blocks/completionstatus/details.php?course='.$c_course->id.'&user='.$user->id.'">'.get_string('detailedview', 'coursereport_completion').'</a>';
+                        }
+                        echo '</td>';
+
+                        // Display completion date for completed courses on first row
+                        if ($type === 'complete' && $first_row) {
+                            $params = array(
+                                'userid'    => $user->id,
+                                'course'  => $c_course->id
+                            );
+
+                            $ccompletion = new completion_completion($params);
+                            echo '<td class="c4">'.userdate($ccompletion->timecompleted, '%e %B %G').'</td>';
+                        }
+
+                        $first_row = false;
+                        echo '</tr>';
+                    }
+                }
+
+                echo '</table>';
+            }
+
+        }
+
         break;
     default:
         // can not be reached ;-)

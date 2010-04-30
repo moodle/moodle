@@ -31,19 +31,11 @@
  * @param stdClass $course The course to object for the report
  * @param stdClass $context The context of the course
  */
-function progress_report_extend_navigation($navigation, $course, $context) {
+function completion_report_extend_navigation($navigation, $course, $context) {
     global $CFG, $OUTPUT;
 
-    $showonnavigation = has_capability('coursereport/progress:view', $context);
-    $group=groups_get_course_group($course,true); // Supposed to verify group
-    if($group===0 && $course->groupmode==SEPARATEGROUPS) {
-        $showonnavigation = ($showonnavigation && has_capability('moodle/site:accessallgroups', $context));
-    }
-
-    $completion = new completion_info($course);
-    $showonnavigation = ($showonnavigation && $completion->is_enabled() && count($completion->get_activities())>0);
-    if ($showonnavigation) {
-        $url = new moodle_url('/course/report/progress/index.php', array('course'=>$course->id));
-        $navigation->add(get_string('pluginname','coursereport_progress'), $url, navigation_node::TYPE_SETTING, null, null, new pix_icon('i/report', ''));
+    if (has_capability('coursereport/completion:view', $context)) {
+        $url = new moodle_url('/course/report/completion/index.php', array('course'=>$course->id));
+        $navigation->add(get_string('pluginname','coursereport_completion'), $url, navigation_node::TYPE_SETTING, null, null, new pix_icon('i/report', ''));
     }
 }

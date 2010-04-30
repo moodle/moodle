@@ -31,9 +31,11 @@ $string['availableuntil'] = 'Only available until end';
 $string['badavailabledates'] = 'Invalid dates. If you set both dates, the \'available from\' date should be before the \'until\' date.';
 $string['completion_complete'] = 'must be marked complete';
 $string['completioncondition'] = 'Activity completion condition';
+$string['completioncondition_help'] = 'Not available until the user has completed another activity in a particular way';
 $string['completion_fail'] = 'must be complete with fail grade';
 $string['completion_incomplete'] = 'must not be marked complete';
 $string['completion_pass'] = 'must be complete with pass grade';
+$string['conditiondates_help'] = 'available dates';
 $string['configenableavailability'] = 'When enabled, this lets you set conditions (based on date, grade, or completion) that control whether an activity is available.';
 $string['enableavailability'] = 'Enable conditional availability';
 $string['grade_atleast'] = 'must be at least';
@@ -58,8 +60,6 @@ for the activity to appear.
     to 10. This guarantees that everyone with a grade will see one or other.</li>
 </ul>';
 $string['grade_upto'] = 'and less than';
-$string['help_conditiondates'] = 'available dates';
-$string['help_showavailability'] = 'display of unavailable activities';
 $string['none'] = '(none)';
 $string['notavailableyet'] = 'Not available yet';
 $string['requires_completion_0'] = 'Not available unless the activity <strong>{$a}</strong> is incomplete.';
@@ -74,6 +74,7 @@ $string['requires_grade_max'] = 'Not available unless you get an appropriate sco
 $string['requires_grade_min'] = 'Not available until you achieve a required score in <strong>{$a}</strong>.';
 $string['requires_grade_range'] = 'Not available unless you get a particular score in <strong>{$a}</strong>.';
 $string['showavailability'] = 'Before activity is available';
+$string['showavailability_help'] = 'display of unavailable activities';
 $string['showavailability_hide'] = 'Hide activity entirely';
 $string['showavailability_show'] = 'Show activity greyed-out, with restriction information';
 $string['userrestriction_hidden'] = 'Restricted (completely hidden, no message): &lsquo;{$a}&rsquo;';
