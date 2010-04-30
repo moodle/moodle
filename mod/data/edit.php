@@ -341,7 +341,7 @@ if (has_capability('mod/data:manageentries',$context)) {
         echo '<tr>';
         echo '<td align="right">'.get_string('csvfile', 'data').':</td>';
         echo '<td><input type="file" name="recordsfile" size="30" />';
-        echo $OUTPUT->old_help_icon('importcsv', get_string('csvimport', 'data'), 'data');
+        echo $OUTPUT->help_icon('csvimport', 'data');
         echo '</td><tr>';
         echo '<td align="right">'.get_string('fielddelimiter', 'data').':</td>';
         echo '<td><input type="text" name="fielddelimiter" size="6" />';

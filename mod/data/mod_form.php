@@ -34,20 +34,20 @@ class mod_data_mod_form extends moodleform_mod {
                         (array_combine(range(1, DATA_MAX_ENTRIES),//keys
                                         range(1, DATA_MAX_ENTRIES)));//values
         $mform->addElement('select', 'requiredentries', get_string('requiredentries', 'data'), $countoptions);
-        $mform->setHelpButton('requiredentries', array('requiredentries', get_string('requiredentries', 'data'), 'data'));
+        $mform->addHelpButton('requiredentries', 'requiredentries', 'data');
 
         $mform->addElement('select', 'requiredentriestoview', get_string('requiredentriestoview', 'data'), $countoptions);
-        $mform->setHelpButton('requiredentriestoview', array('requiredentriestoview', get_string('requiredentriestoview', 'data'), 'data'));
+        $mform->addHelpButton('requiredentriestoview', 'requiredentriestoview', 'data');
 
         $mform->addElement('select', 'maxentries', get_string('maxentries', 'data'), $countoptions);
-        $mform->setHelpButton('maxentries', array('maxentries', get_string('maxentries', 'data'), 'data'));
+        $mform->addHelpButton('maxentries', 'maxentries', 'data');
 
         $ynoptions = array(0 => get_string('no'), 1 => get_string('yes'));
         $mform->addElement('select', 'comments', get_string('comments', 'data'), $ynoptions);
         $mform->setHelpButton('comments', array('comments', get_string('allowcomments', 'data'), 'data'));
 
         $mform->addElement('select', 'approval', get_string('requireapproval', 'data'), $ynoptions);
-        $mform->setHelpButton('approval', array('requireapproval', get_string('requireapproval', 'data'), 'data'));
+        $mform->addHelpButton('approval', 'requireapproval', 'data');
 
         if($CFG->enablerssfeeds && $CFG->data_enablerssfeeds){
             $mform->addElement('select', 'rssarticles', get_string('numberrssarticles', 'data') , $countoptions);

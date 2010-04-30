@@ -25,7 +25,6 @@
 
 $string['action'] = 'Action';
 $string['add'] = 'Add entry';
-$string['addafield'] = 'Add a field';
 $string['addcomment'] = 'Add comment';
 $string['addentries'] = 'Add entries';
 $string['addtemplate'] = 'Add template';
@@ -140,6 +139,8 @@ $string['fieldheightlistview'] = 'Height in list view';
 $string['fieldheightsingleview'] = 'Height in single view';
 $string['fieldids'] = 'Field ids';
 $string['fieldmappings'] = 'Field Mappings';
+$string['fieldmappings_help'] = 'This menu allows you to keep the data from the existing database. To preserve the data in a field, you must map it to a new field, where the data will appear. Any field can also be left blank, with no infomation copied into it. Any old field not mapped to a new one will be lost and all it\'s data removed.
+You can only map fields of the same type, so each dropdown will have different fields in it. Also, you must be careful not to try and map one old field to more than one new field.';
 $string['fieldname'] = 'Field name';
 $string['fieldnotmatched'] = 'The following fields in your file are not known in this database: {$a}';
 $string['fieldoptions'] = 'Options (one per line)';
