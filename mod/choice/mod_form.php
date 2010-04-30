@@ -33,7 +33,7 @@ class mod_choice_mod_form extends moodleform_mod {
         $menuoptions[1] = get_string('enable');
         $mform->addElement('header', 'timerestricthdr', get_string('limit', 'choice'));
         $mform->addElement('select', 'limitanswers', get_string('limitanswers', 'choice'), $menuoptions);
-        $mform->addHelpButton('limitanswers', 'choice');
+        $mform->addHelpButton('limitanswers', 'limitanswers', 'choice');
 
         if ($this->_instance){
             $repeatno = $DB->count_records('choice_options', array('choiceid'=>$this->_instance));
@@ -47,7 +47,7 @@ class mod_choice_mod_form extends moodleform_mod {
         $repeateloptions['limit']['disabledif'] = array('limitanswers', 'eq', 0);
         $mform->setType('limit', PARAM_INT);
 
-        $repeateloptions['option']['helpbutton'] = array('options', get_string('modulenameplural', 'choice'), 'choice');
+        $repeateloptions['option']['helpbutton'] = array('choiceoptions', get_string('modulenameplural', 'choice'), 'choice');
         $mform->setType('option', PARAM_CLEAN);
 
         $mform->setType('optionid', PARAM_INT);
@@ -61,7 +61,7 @@ class mod_choice_mod_form extends moodleform_mod {
 //-------------------------------------------------------------------------------
         $mform->addElement('header', 'timerestricthdr', get_string('timerestrict', 'choice'));
         $mform->addElement('checkbox', 'timerestrict', get_string('timerestrict', 'choice'));
-        $mform->setHelpButton('timerestrict', array("timerestrict", get_string("timerestrict","choice"), "choice"));
+        $mform->addHelpButton('timerestrict', 'timerestrict', 'choice');
 
 
         $mform->addElement('date_time_selector', 'timeopen', get_string("choiceopen", "choice"));
