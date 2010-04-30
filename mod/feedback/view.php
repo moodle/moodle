@@ -138,7 +138,7 @@ if( (intval($feedback->publish_stats) == 1) AND
         echo '</div>';
     }
 }
-echo '<p>';
+// echo '<p>';
 
 //####### mapcourse-start
 if($feedback_complete_cap) {
@@ -164,7 +164,6 @@ if($feedback_complete_cap) {
     //check, whether the feedback is open (timeopen, timeclose)
     $checktime = time();
     if(($feedback->timeopen > $checktime) OR ($feedback->timeclose < $checktime AND $feedback->timeclose > 0)) {
-        echo $OUTPUT->box_start('generalbox boxaligncenter');
             echo '<h2><font color="red">'.get_string('feedback_is_not_open', 'feedback').'</font></h2>';
             echo $OUTPUT->continue_button($CFG->wwwroot.'/course/view.php?id='.$course->id);
         echo $OUTPUT->box_end();
@@ -209,7 +208,7 @@ if($feedback_complete_cap) {
     echo $OUTPUT->box_end();
 }
 //####### completed-end
-echo "</p>";
+// echo "</p>";
 
 /// Finish the page
 ///////////////////////////////////////////////////////////////////////////
