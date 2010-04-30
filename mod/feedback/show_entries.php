@@ -62,7 +62,7 @@ require_capability('mod/feedback:viewreports', $context);
 if($do_show == 'showoneentry') {
     //get the feedbackitems
     $feedbackitems = $DB->get_records('feedback_item', array('feedback'=>$feedback->id), 'position');
-    $feedbackcompleted = $DB->get_record('feedback_completed', array('feedback'=>$feedback->id, 'userid'=>$formdata->userid, 'anonymous_response'=>FEEDBACK_ANONYMOUS_NO)); //arb
+    $feedbackcompleted = $DB->get_record('feedback_completed', array('feedback'=>$feedback->id, 'userid'=>$userid, 'anonymous_response'=>FEEDBACK_ANONYMOUS_NO)); //arb
 }
 
 /// Print the page header
@@ -164,7 +164,7 @@ if($do_show == 'showentries'){
                 ?>
                             <td align="right">
                             <?php
-                                $aurl = new moodle_url($url, array('sesskey'=>sesskey(), 'completedid'=>$feedbackcompleted->id, 'do_show'=>'showoneentry'));
+                                $aurl = new moodle_url($CFG->wwwroot.'/mod/feedback/delete_completed.php', array('sesskey'=>sesskey(), 'id'=>$cm->id, 'completedid'=>$feedbackcompleted->id, 'do_show'=>'showoneentry'));
                                 echo $OUTPUT->single_button($aurl, get_string('delete_entry', 'feedback'));
                             ?>
                             </td>
@@ -206,7 +206,7 @@ if($do_show == 'showoneentry') {
 
     //print the items
     if(is_array($feedbackitems)){
-        $usr = $DB->get_record('user', array('id'=>$formdata->userid));
+        $usr = $DB->get_record('user', array('id'=>$userid));
         if($feedbackcompleted) {
             echo '<p align="center">'.UserDate($feedbackcompleted->timemodified).'<br />('.fullname($usr).')</p>';
         } else {
