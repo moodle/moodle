@@ -910,8 +910,8 @@ function feedback_items_from_template($feedback, $templateid, $deleteold = false
             $DB->delete_records('feedback_tracking', array('feedback'=>$feedback->id));
             $DB->delete_records('feedback_completed', array('feedback'=>$feedback->id));
             $DB->delete_records('feedback_completedtmp', array('feedback'=>$feedback->id));
-            $positionoffset = 0;
         }
+        $positionoffset = 0;
     } else {
         //if the old items are kept the new items will be appended
         //therefor the new position has an offset

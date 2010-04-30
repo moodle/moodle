@@ -368,6 +368,7 @@ if($feedback_can_submit) {
 
             unset($startitem);
             $itemnr = $DB->count_records_select('feedback_item', 'feedback = ? AND hasvalue = 1 AND position < ?', array($feedback->id, $startposition));
+            $lastbreakposition = 0;
             foreach($feedbackitems as $feedbackitem){
                 if(!isset($startitem)) {
                     //avoid showing double pagebreaks
