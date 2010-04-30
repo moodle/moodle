@@ -19,8 +19,6 @@ class course_import_groups_form extends moodleform {
         // buttons
 
         $mform->addElement('file', 'userfile', '');
-        $mform->setHelpButton('userfile', array('attachment', get_string('attachment', 'forum'), 'forum'));
-
 
         $this->add_action_buttons(false, $strimportgroups);
 

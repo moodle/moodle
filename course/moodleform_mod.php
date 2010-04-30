@@ -352,7 +352,7 @@ abstract class moodleform_mod extends moodleform {
 
             $mform->addElement('select', 'assessed', get_string('aggregatetype', 'rating') , $rm->get_aggregate_types());
             $mform->setDefault('assessed', 0);
-            $mform->setHelpButton('assessed', array('assessaggregate', get_string('aggregatetype', 'rating'), 'forum'));
+            $mform->addHelpButton('assessed', 'aggregatetype', 'forum');
 
             $mform->addElement('modgrade', 'scale', get_string('scale'), false);
             $mform->disabledIf('scale', 'assessed', 'eq', 0);

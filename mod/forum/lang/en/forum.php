@@ -160,8 +160,6 @@ $string['everyoneisnowsubscribed'] = 'Everyone is now subscribed to this forum';
 $string['everyoneissubscribed'] = 'Everyone is subscribed to this forum';
 $string['existingsubscribers'] = 'Existing subscribers';
 $string['forcessubscribe'] = 'This forum forces everyone to be subscribed';
-$string['forcesubscribe'] = 'Force everyone to be subscribed';
-$string['forcesubscribeq'] = 'Force everyone to be subscribed?';
 $string['forum'] = 'Forum';
 $string['forum:addnews'] = 'Add news';
 $string['forumadministration'] = 'Forum Administration';
@@ -198,7 +196,6 @@ $string['forumtype_help'] = 'There are 5 forum types:
 * Q and A forum - Students must first post their perspectives before viewing other students\' posts
 * Standard forum displayed in a blog-like format - An open forum where anyone can start a new discussion at any time, and in which discussion topics are displayed on one page with "Discuss this topic" links
 * Standard forum for general use - An open forum where anyone can start a new discussion at any time';
-$string['forumtypenews_help'] = 'The news forum is a special forum for announcements that is automatically created when a course is created. A course can have only one news forum. Only teachers and administrators can post in the news forum. The "Latest news" block will display recent discussions from the news forum.';
 $string['forum:viewallratings'] = 'View all raw ratings given by individuals';
 $string['forum:viewanyrating'] = 'View total ratings that anyone received';
 $string['forum:viewdiscussion'] = 'View discussions';
@@ -253,6 +250,7 @@ $string['movedmarker'] = '(Moved)';
 $string['movethisdiscussionto'] = 'Move this discussion to ...';
 $string['mustprovidediscussionorpost'] = 'You must provide either a discussion id or post id to export';
 $string['namenews'] = 'News forum';
+$string['namenews_help'] = 'The news forum is a special forum for announcements that is automatically created when a course is created. A course can have only one news forum. Only teachers and administrators can post in the news forum. The "Latest news" block will display recent discussions from the news forum.';
 $string['namesocial'] = 'Social forum';
 $string['nameteacher'] = 'Teacher forum';
 $string['newforumposts'] = 'New forum posts';

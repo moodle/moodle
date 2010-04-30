@@ -56,7 +56,7 @@ class mod_forum_post_form extends moodleform {
             $mform->addElement('static', 'subscribemessage', get_string('subscription', 'forum'), get_string('everyoneissubscribed', 'forum'));
             $mform->addElement('hidden', 'subscribe');
             $mform->setType('subscribe', PARAM_INT);
-            $mform->setHelpButton('subscribemessage', array('subscription', get_string('subscription', 'forum'), 'forum'));
+            $mform->addHelpButton('subscribemessage', 'subscription', 'forum');
 
         } else if (isset($forum->forcesubscribe)&& $forum->forcesubscribe != FORUM_DISALLOWSUBSCRIBE ||
                     has_capability('moodle/course:manageactivities', $coursecontext)) {
@@ -66,12 +66,12 @@ class mod_forum_post_form extends moodleform {
             $options[1] = get_string('subscribestart', 'forum');
 
             $mform->addElement('select', 'subscribe', get_string('subscription', 'forum'), $options);
-            $mform->setHelpButton('subscribe', array('subscription', get_string('subscription', 'forum'), 'forum'));
+            $mform->addHelpButton('subscribe', 'subscription', 'forum');
         } else if ($forum->forcesubscribe == FORUM_DISALLOWSUBSCRIBE) {
             $mform->addElement('static', 'subscribemessage', get_string('subscription', 'forum'), get_string('disallowsubscribe', 'forum'));
             $mform->addElement('hidden', 'subscribe');
             $mform->setType('subscribe', PARAM_INT);
-            $mform->setHelpButton('subscribemessage', array('subscription', get_string('subscription', 'forum'), 'forum'));
+            $mform->addHelpButton('subscribemessage', 'subscription', 'forum');
         }
 
         if (!empty($forum->maxattachments) && $forum->maxbytes != 1 && has_capability('mod/forum:createattachment', $modcontext))  {  //  1 = No attachments at all
@@ -82,7 +82,7 @@ class mod_forum_post_form extends moodleform {
                       'filetypes'=>'*',
                       'returnvalue'=>'ref_id'
                 ));
-            $mform->setHelpButton('attachments', array('attachment2', get_string('attachment', 'forum'), 'forum'));
+            $mform->addHelpButton('attachments', 'attachment', 'forum');
         }
 
         if (empty($post->id) && has_capability('moodle/course:manageactivities', $coursecontext)) { // hack alert
@@ -93,10 +93,10 @@ class mod_forum_post_form extends moodleform {
             $mform->addElement('header', '', get_string('displayperiod', 'forum'));
 
             $mform->addElement('date_selector', 'timestart', get_string('displaystart', 'forum'), array('optional'=>true));
-            $mform->setHelpButton('timestart', array('displayperiod', get_string('displayperiod', 'forum'), 'forum'));
+            $mform->addHelpButton('timestart', 'displaystart', 'forum');
 
             $mform->addElement('date_selector', 'timeend', get_string('displayend', 'forum'), array('optional'=>true));
-            $mform->setHelpButton('timeend', array('displayperiod', get_string('displayperiod', 'forum'), 'forum'));
+            $mform->addHelpButton('timeend', 'displayend', 'forum');
 
         } else {
             $mform->addElement('hidden', 'timestart');
