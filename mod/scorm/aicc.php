@@ -337,7 +337,7 @@
                 case 'exitau':
                     if ($status == 'Running') {
                         if (isset($SESSION->scorm_session_time) && ($SESSION->scorm_session_time != '')) {
-                            if ($track = $DB->get_record_select('scorm_scoes_track',"userid='$USER->id' AND scormid='$scorm->id' AND scoid='$sco->id' AND element='cmi.core.total_time'")) {
+                            if ($track = $DB->get_record('scorm_scoes_track',array("userid"=>$USER->id, "scormid"=>$scorm->id,"scoid"=>$sco->id, "attempt"=>$attempt,"element"=>'cmi.core.total_time'))) {
                                // Add session_time to total_time
                                 $value = scorm_add_time($track->value, $SESSION->scorm_session_time);
                                 $track->value = $value;
@@ -350,6 +350,7 @@
                                 $track->scoid = $sco->id;
                                 $track->element = 'cmi.core.total_time';
                                 $track->value = $SESSION->scorm_session_time;
+                                $track->attempt = $attempt;
                                 $track->timemodified = time();
                                 $id = $DB->insert_record('scorm_scoes_track',$track);
                             }
