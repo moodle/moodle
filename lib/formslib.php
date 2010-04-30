@@ -1327,6 +1327,7 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
     /**
      * Add a single button.
      *
+     * @deprecated use addHelpButton() instead
      * @param string $elementname name of the element to add the item to
      * @param array $button arguments to pass to function $function
      * @param boolean $suppresscheck whether to throw an error if the element
@@ -1362,15 +1363,23 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
     /**
      * Add a help button to element, only one button per element is allowed.
      *
+     * This is new, simplified and preferable method of setting a help icon on form elements.
+     * It uses the new $OUTPUT->help_icon().
+     *
+     * Typically, you will provide the same identifier and the component as you have used for the
+     * label of the element. The string identifier with the _help suffix added is then used
+     * as the help string.
+     *
      * There has to be two strings defined:
      *   1/ get_string($identifier, $component) - the title of the help page
      *   2/ get_string($identifier.'_help', $component) - the actual help page text
      *
+     * @since 2.0
      * @param string $elementname name of the element to add the item to
-     * @param string $identifier
-     * @param string $component
-     * @param string $linktext
-     * @param boolean $suppresscheck whether to throw an error if the element doesn't exist.
+     * @param string $identifier help string identifer without _help suffix
+     * @param string $component component name to look the help string in
+     * @param string $linktext optional text to display next to the icon
+     * @param boolean $suppresscheck set to true if the element may not exist
      * @return void
      */
     function addHelpButton($elementname, $identifier, $component = 'moodle', $linktext = '', $suppresscheck = false) {
