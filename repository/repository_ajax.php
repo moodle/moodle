@@ -44,7 +44,7 @@ $author    = optional_param('author', '', PARAM_TEXT);
 $source    = optional_param('source', '', PARAM_RAW);           // file to download
 $itemid    = optional_param('itemid', 0, PARAM_INT);
 $page      = optional_param('page', '', PARAM_RAW);             // page
-$maxbytes  = optional_param('maxbytes', -1, PARAM_INT);
+$maxbytes  = optional_param('maxbytes', 0, PARAM_INT);
 $req_path  = optional_param('p', '', PARAM_RAW);                // path
 $saveas_filearea = optional_param('filearea', 'user_draft', PARAM_TEXT);
 $saveas_filename = optional_param('title', '', PARAM_FILE);           // new file name
@@ -58,6 +58,10 @@ header('Expires: Sat, 26 Jul 1997 05:00:00 GMT');
 
 $err = new stdclass;
 $err->client_id = $client_id;
+
+if ($maxbytes == 0) {
+    $maxbytes = get_max_upload_file_size();
+}
 
 /// Check permissions
 if (! (isloggedin() && repository::check_context($contextid)) ) {
