@@ -12,7 +12,8 @@ class feedback_item_label extends feedback_item_base {
     
     function init() {
         global $CFG;
-        $this->presentationoptions = array('trusttext'=>true, 'subdirs'=>false, 'maxfiles'=>EDITOR_UNLIMITED_FILES, 'maxbytes'=>$CFG->maxbytes, 'trusttext'=>true);
+        $this->presentationoptions = array('maxfiles' => EDITOR_UNLIMITED_FILES, 'trusttext'=>true);
+
     }
 
     function build_editform($item, $feedback, $cm) {
