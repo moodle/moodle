@@ -24,10 +24,10 @@
  */
 
 $string['configtitle'] = 'Title';
-$string['date-posted-asc'] = 'Date Posted ASC';
-$string['date-posted-desc'] = 'Date Posted DESC';
-$string['date-taken-asc'] = 'Date Taken ASC';
-$string['date-taken-desc'] = 'Date Taken DESC';
+$string['date-posted-asc'] = 'Date posted ASC';
+$string['date-posted-desc'] = 'Date posted DESC';
+$string['date-taken-asc'] = 'Date taken ASC';
+$string['date-taken-desc'] = 'Date taken DESC';
 $string['defaulttile'] = 'Flickr';
 $string['getfromphotoset'] = 'Get photos from photoset with id';
 $string['includerelatedtags'] = 'Include related tags in query';
