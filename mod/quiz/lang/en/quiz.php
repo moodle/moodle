@@ -117,6 +117,10 @@ $string['blackboard_six'] = 'Blackboard V6+';
 $string['bothattempts'] = 'Show students with and without attempts';
 $string['braceerror'] = 'Could not find {...} around answers';
 $string['browsersecurity'] = 'Browser security';
+$string['browsersecurity_help'] = 'If "Full screen pop-up with some JavaScript security" is selected, 
+* The quiz will only start if the student has a JavaScript-enabled web-browser
+* The quiz appears in a full screen popup window that covers all the other windows and has no navigation controls
+* Students are prevented, as far as is possible, from using facilities like copy and paste';
 $string['calculated'] = 'Calculated';
 $string['calculatedquestion'] = 'Calculated Question not supported at line {$a}. The question will be ignored';
 $string['cannotcreatepath'] = 'Path cannot be created ({$a})';
@@ -227,8 +231,10 @@ $string['default'] = 'Default';
 $string['defaultgrade'] = 'Default question grade';
 $string['defaultinfo'] = 'The default category for questions.';
 $string['delaylater'] = 'Enforced delay between later attempts';
+$string['delaylater_help'] = 'If enabled, a student must wait for the specified time to elapse before attempting the quiz a third time and any subsequent times.';
 $string['delay1'] = 'Time delay between first and second attempt';
 $string['delay1st2nd'] = 'Enforced delay between 1st and 2nd attempts';
+$string['delay1st2nd_help'] = 'If enabled, a student must wait for the specified time to elapse before being able to attempt the quiz a second time.';
 $string['delay2'] = 'Time delay between later attempts';
 $string['deleteattemptcheck'] = 'Are you absolutely sure you want to completely delete these attempts?';
 $string['deletequestioncheck'] = 'Are you absolutely sure you want to delete \'{$a}\'?';
@@ -530,6 +536,7 @@ $string['outof'] = '{$a->grade} out of a maximum of {$a->maxgrade}';
 $string['outofpercent'] = '{$a->grade} out of a maximum of {$a->maxgrade} ({$a->percent}%)';
 $string['outofshort'] = '{$a->grade}/{$a->maxgrade}';
 $string['overallfeedback'] = 'Overall feedback';
+$string['overallfeedback_help'] = 'Overall feedback is text that is shown after a quiz has been attempted. By specifying additional grade boundaries (as a percentage or as a number), the text shown can depend on the grade obtained.';
 $string['overdue'] = 'Overdue';
 $string['override'] = 'Override';
 $string['overridedeletegroupsure'] = 'Are you sure you want to delete the override for group {$a}?';
@@ -678,6 +685,7 @@ $string['requirepassword_help'] = 'If a password is specified, a student must en
 $string['requirepasswordmessage'] = 'To attempt this quiz you need to know the quiz password';
 $string['requiresafeexambrowser'] = 'Require the use of Safe Exam Browser';
 $string['requiresubnet'] = 'Require network address';
+$string['requiresubnet_help'] = 'Quiz access may be restricted to particular subnets on the LAN or Internet by specifying a comma-separated list of partial or full IP address numbers. This can be useful for an invigilated (proctored) quiz, to ensure that only people in a certain location can access the quiz.';
 $string['response'] = 'Response';
 $string['responses'] = 'Responses';
 $string['results'] = 'Results';
