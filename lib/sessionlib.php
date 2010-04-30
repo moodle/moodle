@@ -154,8 +154,10 @@ abstract class session_stub implements moodle_session {
     public function terminate_current() {
         global $CFG, $SESSION, $USER, $DB;
 
-        if ($DB->get_manager()->table_exists('external_tokens')) {
+        try {
             $DB->delete_records('external_tokens', array('sid'=>session_id(), 'tokentype'=>EXTERNAL_TOKEN_EMBEDDED));
+        } catch (Exception $ignored) {
+            // probably install/upgrade - ignore this problem
         }
         
         if (NO_MOODLE_COOKIES) {
