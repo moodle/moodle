@@ -81,6 +81,5 @@ $string['spaceleft'] = 'space available';
 $string['spacesleft'] = 'spaces available';
 $string['taken'] = 'Taken';
 $string['timerestrict'] = 'Restrict answering to this time period';
-$string['timerestrict_help'] = 'This setting allows you to define a time window within which participants are allowed to make a choice. To set an open-ended close date just set the time very far in the future. If you don\'t need this at all then uncheck the box.';
 $string['viewallresponses'] = 'View {$a} responses';
 $string['yourselection'] = 'Your selection';

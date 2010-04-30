@@ -61,8 +61,6 @@ class mod_choice_mod_form extends moodleform_mod {
 //-------------------------------------------------------------------------------
         $mform->addElement('header', 'timerestricthdr', get_string('timerestrict', 'choice'));
         $mform->addElement('checkbox', 'timerestrict', get_string('timerestrict', 'choice'));
-        $mform->addHelpButton('timerestrict', 'timerestrict', 'choice');
-
 
         $mform->addElement('date_time_selector', 'timeopen', get_string("choiceopen", "choice"));
         $mform->disabledIf('timeopen', 'timerestrict');
