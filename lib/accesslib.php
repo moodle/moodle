@@ -3030,7 +3030,7 @@ function is_viewing($context, $user = NULL, $withcapability = '') {
 
     if (isguestuser($user)) {
         // can not inspect
-        return true;
+        return false;
     }
 
     if (!has_capability('moodle/course:view', $coursecontext, $user)) {
