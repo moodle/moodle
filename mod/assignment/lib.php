@@ -1422,7 +1422,6 @@ class assignment_base {
         echo '</td>';
         echo '<td>';
         echo '<input type="text" id="perpage" name="perpage" size="1" value="'.$perpage.'" />';
-        echo $OUTPUT->help_icon('pagesize', 'assignment');
         echo '</td></tr>';
         echo '<tr><td>';
         echo '<label for="quickgrade">'.get_string('quickgrade','assignment').'</label>';
