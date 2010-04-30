@@ -28,10 +28,46 @@ $string['addmoreanswerblanks'] = 'Blanks for {no} More Answers';
 $string['addmoreunitblanks'] = 'Blanks for {no} More Units';
 $string['answermustbenumberorstar'] = 'The answer must be a number, or \'*\'.';
 $string['answerno'] = 'Answer {$a}';
+$string['decfractionof'] = 'AS' ;
+$string['decfractionofquestiongrade'] = 'as decimal fraction (0-1) of question grade' ;
+$string['decfractionofresponsegrade'] = 'as decimal fraction (0-1) of response grade' ;
+$string['editableunittext'] = 'Text input element' ;
 $string['editingnumerical'] = 'Editing a Numerical question';
 $string['errornomultiplier'] = 'You must specify a multiplier for this unit.';
 $string['errorrepeatedunit'] = 'You cannot have two units with the same name.';
+$string['instructions'] = 'Instructions ' ;
+$string['leftexample'] = 'LEFT as $1.00' ;
+$string['noneditableunittext'] = 'NON editable text of Unit No1' ;
 $string['notenoughanswers'] = 'You must enter at least one answer.';
+$string['nounitdisplay'] = 'No unit grading' ;
 $string['numerical'] = 'Numerical';
 $string['numericalsummary'] = 'Allows a numerical response, possibly with units, that is graded by comparing against various model answers, possibly with tolerances.';
+$string['onlynumerical'] = 'Only NUMERICAL ANSWER will be graded' ;
+$string['onlynumerical1'] = 'Only NUMERICAL ANSWER will be graded' ;
+$string['rightexample'] = 'RIGHT as 1.00cm' ;
+$string['selectunits'] = 'Select units' ; 
+$string['studentunitanswer'] = 'UNIT ANSWER displayed as a ' ;
+$string['unitchoice'] = 'Multichoice (radio elements)' ;
+$string['unitdisplay'] = 'Display Unit1' ; 
+$string['unitedit'] = 'Edit unit' ;
+$string['unitgraded'] = ' NUMERICAL  ANSWER and UNIT ANSWER will be graded ' ;
+$string['unitgraded1'] = '<STRONG>UNIT GRADED</STRONG>' ;
 $string['unithdr'] = 'Unit {$a}';
+$string['unitnotgraded'] = '<STRONG>UNIT NOT GRADED</STRONG>' ;
+$string['unitpenalty'] = 'Penalty for bad unit' ;
+$string['unitposition'] = 'Unit position' ;
+$string['unitshandling'] = 'Units handling' ;
+$string['validnumberformats'] = 'Valid number formats';
+$string['validnumbers'] = ' 13500.67 : 13 500.67 : 13500,67: 13 500,67 : 1.350067 E4 : 1.350067 E04 ';
+$string['numerical_help'] = 'From the student perspective, a numerical question looks just
+like a short-answer question.
+<p>
+The difference is that numerical answers are allowed
+to have an accepted error. This allows a continuous range of answers
+to be set.
+</p>
+For example, if the answer is 30 with an accepted error of 5,
+then any number between 25 and 35 will be accepted as correct.
+Like with short answer questions, different answers, or the same
+answer with different precisions can be given.'; 
+
