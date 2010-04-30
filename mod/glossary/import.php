@@ -227,7 +227,7 @@ if ($xml = glossary_read_imported_file($file['tmp_name']) ) {
                 if ( $newentry->casesensitive ) {
                     $dupentry = $DB->get_record("glossary_entries", array("concept"=>$newentry->concept, "glossaryid"=>$glossary->id));
                 } else {
-                    $dupentry = $DB->get_record("glossary_entries", array("lower(concept)"=>moodle_strtolower($newentry->concept)), array("glossaryid"=>$glossary->id));
+                    $dupentry = $DB->get_record("glossary_entries", array("lower(concept)"=>moodle_strtolower($newentry->concept), "glossaryid"=>$glossary->id));
                 }
                 if ($dupentry) {
                     $permissiongranted = 0;
@@ -294,7 +294,7 @@ if ($xml = glossary_read_imported_file($file['tmp_name']) ) {
                         }
                         if ( $category ) {
                             // inserting the new relation
-                            $entrycat = new opbject();
+                            $entrycat = new object();
                             $entrycat->entryid    = $newentry->id;
                             $entrycat->categoryid = $category->id;
                             $DB->insert_record("glossary_entries_categories",$entrycat);
