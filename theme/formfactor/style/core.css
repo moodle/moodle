@@ -30,6 +30,23 @@ body,h1,h2,h3,h4,h5,h6,p,ul,ol,dl,input,textarea { font-family: "Trebuchet MS", 
 
 #page-content-wrapper { margin:10px 50px; }
 
+/* Tabs 
+---------------------------*/
+
+.tabtree .tabrow0 li.here a { background:#fff url([[pix:theme|gradient-sb]]) repeat-x 0 0; }
+.tabtree .tabrow0 .tabrow1 li a {background: none !important;}
+
+/* User
+---------------------------*/
+
+.userinfobox .content {border-width: 2px;background: url([[pix:theme|gradient-sb]]) repeat-x 0 0; }
+
+/* Forms
+------------------------*/
+
+.mform fieldset {border-color: #ddd;}
+.mform legend {border: 1px solid #ddd;padding: 2px 7px;background: url([[pix:theme|gradient-sb]]) repeat-x 0 -25%;}
+
 /* Footer
 --------------------------*/
 

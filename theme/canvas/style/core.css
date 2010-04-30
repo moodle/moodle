@@ -1,24 +1,24 @@
-.sitetopic { border:none; }
-
-.headingblock { border-bottom:1px solid #ddd;font-size:1.3em;color:#333; }
-
+.sitetopic { border: none; }
+.headingblock { border-bottom: 1px solid #ddd;font-size: 1.3em;color: #333; }
 .singlebutton,
-.singleselect  { text-align:center;margin:1em 0; }
+.singleselect { text-align: center;margin: 1em 0; }
 
-/* Login 
--------------------------*/
-
-.loginbox {margin:15px 25%;}
+.loginbox { margin: 15px 25%; }
 .loginbox .loginerrors { color: #f00; }
-.loginbox .loginform { margin: 15px auto 0;width:175px; }
-.loginbox .loginform .form-label {float:none;width:100%;margin:0 auto;text-align: left;}
-.loginbox .loginform .form-input {float: none;width:100%;margin: 0 auto;}
+.loginbox .loginform { margin: 15px auto 0;width: 175px; }
+.loginbox .loginform .form-label { float: none;width: 100%;margin: 0 auto;text-align: left; }
+.loginbox .loginform .form-input { float: none;width: 100%;margin: 0 auto; }
 .loginbox .loginform .form-input #username,
-.loginbox .loginform .form-input #password { width:97%;padding: 3px;font-size: 1.1em;font-family: Helvetica, Arial, sans-serif;border: 2px solid #ddd;margin: 0 0 5px;color: #333; }
+.loginbox .loginform .form-input #password { width: 97%;padding: 3px;font-size: 1.1em;font-family: Helvetica, Arial, sans-serif;border: 2px solid #ddd;margin: 0 0 5px;color: #333; }
 .loginbox .loginform .form-input #loginbtn { margin: 0.5em auto; }
-.loginbox .forgetpass { margin:1em 0 0;font-size: 0.95em;}
-.loginbox.twocolumns {width:90%;margin-left:5%;}
-.loginbox .guestsub {border-top:1px solid #DDDDDD;margin:5px 20%}
-.loginbox.twocolumns .loginpanel { border-color:#ddd;padding-right:0.5%; }
-.loginbox.twocolumns .signuppanel { padding-left:1%;width:49%; }
+.loginbox .forgetpass { margin: 1em 0 0;font-size: 0.95em; }
+.loginbox.twocolumns { width: 90%;margin-left: 5%; }
+.loginbox .guestsub { border-top: 1px solid #DDDDDD;margin: 5px 20% }
+.loginbox.twocolumns .loginpanel { border-color: #ddd;padding-right: 0.5%; }
+.loginbox.twocolumns .signuppanel { padding-left: 1%;width: 49%; }
+
+.userinfobox { border: none; }
+.userinfobox .content { border: 1px solid #ddd; }
+#page-user-view .buttons { text-align: center;width: 70%;margin: 0 auto; }
+#page-user-view .buttons div { padding: 0 0 10px; }
 
