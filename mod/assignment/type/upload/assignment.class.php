@@ -50,12 +50,12 @@ class assignment_upload extends assignment_base {
             }
 
             if ($filecount and $submission) {
-                echo $OUTPUT->box($this->print_user_files($USER->id, true), 'generalbox boxaligncenter');
+                echo $OUTPUT->box($this->print_user_files($USER->id, true), 'generalbox boxaligncenter', 'userfiles');
             } else {
                 if (!$this->isopen() or $this->is_finalized($submission)) {
-                    echo $OUTPUT->box(get_string('nofiles', 'assignment'), 'generalbox boxaligncenter');
+                    echo $OUTPUT->box(get_string('nofiles', 'assignment'), 'generalbox boxaligncenter', 'userfiles');
                 } else {
-                    echo $OUTPUT->box(get_string('nofilesyet', 'assignment'), 'generalbox boxaligncenter');
+                    echo $OUTPUT->box(get_string('nofilesyet', 'assignment'), 'generalbox boxaligncenter', 'userfiles');
                 }
             }
 
