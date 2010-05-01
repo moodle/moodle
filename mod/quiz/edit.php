@@ -213,6 +213,7 @@ if (($addquestion = optional_param('addquestion', 0, PARAM_INT)) && confirm_sess
     quiz_add_quiz_question($addquestion, $quiz, $addonpage);
     quiz_update_sumgrades($quiz);
     quiz_delete_previews($quiz);
+    $thispageurl->param('lastchanged', $addquestion);
     redirect($thispageurl);
 }
 
