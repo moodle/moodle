@@ -90,7 +90,7 @@ function quiz_delete_empty_page($layout, $index) {
  */
 function quiz_add_quiz_question($id, &$quiz, $page = 0) {
     global $DB;
-    $questions = explode(',', $quiz->questions);
+    $questions = explode(',', quiz_clean_layout($quiz->questions));
     if (in_array($id, $questions)) {
         return false;
     }
@@ -101,7 +101,7 @@ function quiz_add_quiz_question($id, &$quiz, $page = 0) {
         $end = end($breaks);
         $last = prev($breaks);
         $last = $last ? $last : -1;
-        if (!$quiz->questionsperpage || (($end - $last -1) < $quiz->questionsperpage)) {
+        if (!$quiz->questionsperpage || (($end - $last - 1) < $quiz->questionsperpage)) {
             array_pop($questions);
         }
     }

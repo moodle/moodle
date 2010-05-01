@@ -301,7 +301,7 @@ function quiz_number_of_pages($layout) {
  * @return integer The number of questions in the quiz.
  */
 function quiz_number_of_questions_in_quiz($layout) {
-    $layout = quiz_questions_in_quiz($layout);
+    $layout = quiz_questions_in_quiz(quiz_clean_layout($layout));
     $count = substr_count($layout, ',');
     if ($layout !== '') {
         $count++;

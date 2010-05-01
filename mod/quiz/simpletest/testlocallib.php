@@ -48,6 +48,7 @@ class quiz_locallib_test extends UnitTestCase {
         $this->assertEqual(quiz_number_of_questions_in_quiz('1,2,3,0'), 3);
         $this->assertEqual(quiz_number_of_questions_in_quiz('1,2,3,0'), 3);
         $this->assertEqual(quiz_number_of_questions_in_quiz('0,1,0,0,2,0'), 2);
+        $this->assertEqual(quiz_number_of_questions_in_quiz('10,,0,0'), 1);
     }
 
     function test_quiz_clean_layout() {
