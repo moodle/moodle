@@ -57,6 +57,7 @@ $string['addquestionstoquiz'] = 'Add questions to current quiz';
 $string['addrandom'] = 'Add {$a} random questions';
 $string['addrandomfromcategory'] = 'Add random questions from category:';
 $string['addrandomquestion'] = 'Add random question';
+$string['addarandomquestion_help'] = 'When a random question is added, it results in a randomly-chosen question from the category being inserted into the quiz. This means that different students are likely to get a different selection of questions, and when a quiz allows multiple attempts then each attempt is likely to contain a new selection of questions.';
 $string['addrandomquestiontoquiz'] = 'Add a random question to quiz {$a}';
 $string['addrandom1'] = '<< Add';
 $string['addrandom2'] = 'random questions';
@@ -263,6 +264,10 @@ $string['editingmultichoice'] = 'Editing a Multiple Choice question';
 $string['editingnumerical'] = 'Editing a Numerical question';
 $string['editingquestion'] = 'Editing a question';
 $string['editingquiz'] = 'Editing quiz';
+$string['editingquiz_help'] = 'When creating a quiz, the main concepts are:
+* The quiz, containing questions over one or more pages
+* The question bank, which stores copies of all questions organised into categories
+* Random questions -  A student gets different questions each time they attempt the quiz and different students can get different questions';
 $string['editingrandom'] = 'Editing a Random Question';
 $string['editingrandomsamatch'] = 'Editing a Random Short-Answer Matching question';
 $string['editingrqp'] = '{$a}: editing a question';
