@@ -546,6 +546,9 @@ class rating_manager {
             case RATING_AGGREGATE_SUM:
                 $aggregatestr = 'SUM';
                 break;
+            default:
+                $aggregatestr = 'AVG'; // Default to this to avoid real breakage - MDL-22270
+                debugging('Incorrect call to get_aggregation_method(), was called with incorrect aggregate method ' . $aggregate, DEBUG_DEVELOPER);
         }
         return $aggregatestr;
     }
