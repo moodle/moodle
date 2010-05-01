@@ -45,14 +45,12 @@ define('SITEIMAGEWIDTH',   150);
 /**
  * Hub directory url (should be moodle.org)
  */
-//define('HUBDIRECTORYURL', "http://jerome.moodle.local/Moodle_HEAD_hubdirectory/moodle");
 define('HUBDIRECTORYURL', "http://hubdirectory.moodle.org");
 
 
 /**
  * Moodle.org url (should be moodle.org)
  */
-//define('MOODLEORGHUBURL', "http://jerome.moodle.local/Moodle_HEAD_secure_hub/moodle");
 define('MOODLEORGHUBURL', "http://hub.moodle.org");
 
 
