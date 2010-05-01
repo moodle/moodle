@@ -262,7 +262,7 @@ function file_postupdate_standard_editor($data, $field, array $options, $context
 
     $editor = $data->{$field.'_editor'};
 
-    if ($options['maxfiles'] == 0 or is_null($filearea) or is_null($itemid)) {
+    if ($options['maxfiles'] == 0 or is_null($filearea) or is_null($itemid) or empty($editor['itemid'])) {
         $data->{$field} = $editor['text'];
     } else {
         $data->{$field} = file_save_draft_area_files($editor['itemid'], $context->id, $filearea, $itemid, $options, $editor['text'], $options['forcehttps']);
