@@ -269,13 +269,13 @@ function blog_get_context_url($context=null) {
 }
 
 /**
- * This function checks that blogs are enabled, and that the user is logged in an
- * is not the guest user.
+ * This function checks that blogs are enabled, and that the user can see blogs at all
  * @return bool
  */
 function blog_is_enabled_for_user() {
     global $CFG;
-    return (!empty($CFG->bloglevel) && $CFG->bloglevel <= BLOG_GLOBAL_LEVEL && isloggedin() && !isguestuser());
+    //return (!empty($CFG->bloglevel) && $CFG->bloglevel <= BLOG_GLOBAL_LEVEL && isloggedin() && !isguestuser());
+    return (!empty($CFG->bloglevel) && (isloggedin() || ($CFG->bloglevel == BLOG_GLOBAL_LEVEL)));
 }
 
 /**
