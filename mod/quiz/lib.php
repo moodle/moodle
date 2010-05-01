@@ -556,7 +556,7 @@ function quiz_refresh_events($courseid = 0) {
  */
 function quiz_get_recent_mod_activity(&$activities, &$index, $timestart,
         $courseid, $cmid, $userid = 0, $groupid = 0) {
-    global $CFG, $COURSE, $USER, $DB;
+    global $CFG, $COURSE, $USER;
     require_once('locallib.php');
 
     if ($COURSE->id == $courseid) {
@@ -680,8 +680,8 @@ function quiz_print_recent_mod_activity($activity, $courseid, $detail, $modnames
     if ($detail) {
         $modname = $modnames[$activity->type];
         echo '<div class="title">';
-        echo '<img src="' . $CFG->modpixpath . '/' . $activity->type . '/icon.gif" ' .
-                'class="icon" alt="' . $modname . '" />';
+        echo '<img src="' . $CFG->modpixpath . '/' . $activity->type . '/icon.gif" '.
+             'class="icon" alt="' . $modname . '" />';
         echo '<a href="' . $CFG->wwwroot . '/mod/quiz/view.php?id=' .
                 $activity->cmid . '">' . $activity->name . '</a>';
         echo '</div>';
@@ -697,7 +697,7 @@ function quiz_print_recent_mod_activity($activity, $courseid, $detail, $modnames
     echo '</div>';
 
     echo '<div class="user">';
-    echo '<a href="' . $CFG->wwwroot . '/user/view.php?id=' . $activity->user->userid .
+    echo '<a href="' . $CFG->wwwroot . '/user/view.php?id=' . $activity->user->userid . 
             '&amp;course=' . $courseid . '">' . $activity->user->fullname .
             '</a> - ' . userdate($activity->timestamp);
     echo '</div>';
