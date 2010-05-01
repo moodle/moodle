@@ -364,10 +364,6 @@ if ($insecuredataroot == INSECURE_DATAROOT_WARNING) {
 
 }
 
-if (empty($CFG->passwordsaltmain)) {
-    echo $OUTPUT->box(get_string('upgrade197notice', 'admin')."\n".get_string('upgrade197salt', 'admin', get_docs_url('report/security/report_security_check_passwordsaltmain')), 'generalbox adminwarning');
-}
-
 if (defined('WARN_DISPLAY_ERRORS_ENABLED')) {
     echo $OUTPUT->box(get_string('displayerrorswarning', 'admin'), 'generalbox adminwarning');
 }
@@ -378,11 +374,6 @@ if (time() - $lastcron > 3600 * 24) {
     $strinstallation = get_string('installation', 'install');
     $helpbutton = $OUTPUT->old_help_icon('install', $strinstallation);
     echo $OUTPUT->box(get_string('cronwarning', 'admin').'&nbsp;'.$helpbutton, 'generalbox adminwarning');
-}
-
-// Print multilang upgrade notice if needed
-if (empty($CFG->filter_multilang_converted)) {
-    echo $OUTPUT->box(get_string('multilangupgradenotice', 'admin'), 'generalbox adminwarning');
 }
 
 // Hidden bloglevel upgrade
