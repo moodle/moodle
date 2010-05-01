@@ -46,18 +46,20 @@ abstract class backup_factory {
 
         $enabledloggers = array(); // Array to store all enabled loggers
 
-        // Create error_log_logger, observing $CFG->backup_error_log_logger_level
+        // Create error_log_logger, observing $CFG->backup_error_log_logger_level,
+        // defaulting to $dfltloglevel
         $elllevel = isset($CFG->backup_error_log_logger_level) ? $CFG->backup_error_log_logger_level : $dfltloglevel;
         $enabledloggers[] = new error_log_logger($elllevel);
 
         // Create output_indented_logger, observing $CFG->backup_output_indented_logger_level and $CFG->debugdisplay,
-        // defaulting to LOG_WARNING. Only if interactive and inmediate
+        // defaulting to LOG_ERROR. Only if interactive and inmediate
         if ($CFG->debugdisplay && $interactive == backup::INTERACTIVE_YES && $execution == backup::EXECUTION_INMEDIATE) {
-            $oillevel = isset($CFG->backup_output_indented_logger_level) ? $CFG->backup_output_indented_logger_level : $dfltloglevel;;
+            $oillevel = isset($CFG->backup_output_indented_logger_level) ? $CFG->backup_output_indented_logger_level : backup::LOG_ERROR;
             $enabledloggers[] = new output_indented_logger($oillevel, false, false);
         }
 
         // Create file_logger, observing $CFG->backup_file_logger_level
+        // defaulting to $dfltloglevel
         check_dir_exists($CFG->dataroot . '/temp/backup', true, true); // need to ensure that temp/backup already exists
         $fllevel = isset($CFG->backup_file_logger_level) ? $CFG->backup_file_logger_level : $dfltloglevel;
         $enabledloggers[] = new file_logger($fllevel, true, true, $CFG->dataroot . '/temp/backup/' . $backupid . '.log');
@@ -69,6 +71,7 @@ abstract class backup_factory {
         $enabledloggers[] = new database_logger($dllevel, 'timecreated', 'level', 'message', 'backup_logs', $columns);
 
         // Create extra file_logger, observing $CFG->backup_file_logger_extra and $CFG->backup_file_logger_extra_level
+        // defaulting to $fllevel (normal file logger)
         if (isset($CFG->backup_file_logger_extra)) {
             $flelevel = isset($CFG->backup_file_logger_extra_level) ? $CFG->backup_file_logger_extra_level : $fllevel;
             $enabledloggers[] =  new file_logger($flelevel, true, true, $CFG->backup_file_logger_extra);
