@@ -88,6 +88,62 @@ $capabilities = array(
         'clonepermissionsfrom' =>  'moodle/site:backup'
     ),
 
+    'moodle/backup:backupsection' => array(
+
+        'riskbitmask' => RISK_SPAM | RISK_PERSONAL | RISK_XSS,
+
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_COURSE,
+        'legacy' => array(
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW
+        ),
+
+        'clonepermissionsfrom' =>  'moodle/backup:backupcourse'
+    ),
+
+    'moodle/backup:backupactivity' => array(
+
+        'riskbitmask' => RISK_SPAM | RISK_PERSONAL | RISK_XSS,
+
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_MODULE,
+        'legacy' => array(
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW
+        ),
+
+        'clonepermissionsfrom' =>  'moodle/backup:backupcourse'
+    ),
+
+    'moodle/backup:backuptargethub' => array(
+
+        'riskbitmask' => RISK_SPAM | RISK_PERSONAL | RISK_XSS,
+
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_COURSE,
+        'legacy' => array(
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW
+        ),
+
+        'clonepermissionsfrom' =>  'moodle/backup:backupcourse'
+    ),
+
+    'moodle/backup:backuptargetimport' => array(
+
+        'riskbitmask' => RISK_SPAM | RISK_PERSONAL | RISK_XSS,
+
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_COURSE,
+        'legacy' => array(
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW
+        ),
+
+        'clonepermissionsfrom' =>  'moodle/backup:backupcourse'
+    ),
+
     'moodle/backup:downloadfile' => array(
 
         'riskbitmask' => RISK_SPAM | RISK_PERSONAL | RISK_XSS,
@@ -102,7 +158,30 @@ $capabilities = array(
         'clonepermissionsfrom' =>  'moodle/site:backupdownload'
     ),
 
+    'moodle/backup:configure' => array(
+
+        'riskbitmask' => RISK_SPAM | RISK_PERSONAL | RISK_XSS,
+
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_COURSE,
+        'legacy' => array(
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW
+        )
+    ),
+
     'moodle/backup:userinfo' => array(
+
+        'riskbitmask' => RISK_PERSONAL,
+
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_COURSE,
+        'legacy' => array(
+            'manager' => CAP_ALLOW
+        )
+    ),
+
+    'moodle/backup:anonymise' => array(
 
         'riskbitmask' => RISK_PERSONAL,
 
@@ -125,6 +204,48 @@ $capabilities = array(
         ),
 
         'clonepermissionsfrom' =>  'moodle/site:restore'
+    ),
+
+    'moodle/restore:restoresection' => array(
+
+        'riskbitmask' => RISK_SPAM | RISK_PERSONAL | RISK_XSS,
+
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_COURSE,
+        'legacy' => array(
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW
+        ),
+
+        'clonepermissionsfrom' =>  'moodle/restore:restorecourse'
+    ),
+
+    'moodle/restore:restoreactivity' => array(
+
+        'riskbitmask' => RISK_SPAM | RISK_PERSONAL | RISK_XSS,
+
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_MODULE,
+        'legacy' => array(
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW
+        ),
+
+        'clonepermissionsfrom' =>  'moodle/restore:restorecourse'
+    ),
+
+    'moodle/restore:restoretargethub' => array(
+
+        'riskbitmask' => RISK_SPAM | RISK_PERSONAL | RISK_XSS,
+
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_COURSE,
+        'legacy' => array(
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW
+        ),
+
+        'clonepermissionsfrom' =>  'moodle/restore:restorecourse'
     ),
 
     'moodle/restore:restoretargetimport' => array(
@@ -155,6 +276,28 @@ $capabilities = array(
         'clonepermissionsfrom' =>  'moodle/site:backupupload'
     ),
 
+    'moodle/restore:configure' => array(
+
+        'riskbitmask' => RISK_SPAM | RISK_PERSONAL | RISK_XSS,
+
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_COURSE,
+        'legacy' => array(
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW
+        )
+    ),
+
+    'moodle/restore:rolldates' => array(
+
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_COURSE,
+        'legacy' => array(
+            'coursecreator' => CAP_ALLOW,
+            'manager' => CAP_ALLOW
+        )
+    ),
+
     'moodle/restore:userinfo' => array(
 
         'riskbitmask' => RISK_SPAM | RISK_PERSONAL | RISK_XSS | RISK_CONFIG,
@@ -173,16 +316,6 @@ $capabilities = array(
         'captype' => 'write',
         'contextlevel' => CONTEXT_SYSTEM,
         'legacy' => array(
-            'manager' => CAP_ALLOW
-        )
-    ),
-
-    'moodle/restore:rolldates' => array(
-
-        'captype' => 'write',
-        'contextlevel' => CONTEXT_COURSE,
-        'legacy' => array(
-            'coursecreator' => CAP_ALLOW,
             'manager' => CAP_ALLOW
         )
     ),
