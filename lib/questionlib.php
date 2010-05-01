@@ -2104,8 +2104,8 @@ function question_init_qengine_js() {
     global $CFG, $PAGE, $OUTPUT;
     $config = array(
         'actionurl' => $CFG->wwwroot . '/question/toggleflag.php',
-        'flagicon' => $OUTPUT->pix_url('i/flagged'),
-        'unflagicon' => $OUTPUT->pix_url('i/unflagged'),
+        'flagicon' => '' . $OUTPUT->pix_url('i/flagged'),
+        'unflagicon' => '' . $OUTPUT->pix_url('i/unflagged'),
         'flagtooltip' => get_string('clicktoflag', 'question'),
         'unflagtooltip' => get_string('clicktounflag', 'question'),
         'flaggedalt' => get_string('flagged', 'question'),

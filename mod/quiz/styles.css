@@ -121,19 +121,19 @@ table.quizreviewsummary {width: 100%;}
 table.quizreviewsummary th.cell {padding: 1px 0.5em 1px 1em;font-weight: bold;text-align: right;width: 10em;background: #f0f0f0;}
 table.quizreviewsummary td.cell {padding: 1px 1em 1px 0.5em;text-align: left;background: #fafafa;}
 
-#quiznavigation #user-picture {margin: 0.5em 0;}
-#quiznavigation #user-picture img {width: auto;height: auto;float: left;}
-#quiznavigation .othernav {clear: both;}
-#quiznavigation .othernav a,
-#quiznavigation .othernav input {display: block;margin: 0.5em 0;}
-#quiznavigation .qnbutton {display: block;float: left;width: 1.5em;height: 1.5em;overflow: hidden;margin: 0.3em 0.3em 0.3em 0;padding: 0;border: 1px solid #bbb;background: #eee no-repeat top right;text-align: center;vertical-align: middle;cursor: pointer;white-space: normal;font: inherit;line-height: 1.5em;font-weight: bold;color: #00f;border-color: #bbb;background-color: #ddd;}
-#quiznavigation .qnbutton:hover {text-decoration: underline;color: #f00;}
-#quiznavigation .qnbutton.flagged {background-image: url([[pix:i/ne_red_mark]]);}
-#quiznavigation .qnbutton.thispage {border-color: black;}
-#quiznavigation .qnbutton.open {background-color: white;}
-#quiznavigation .qnbutton.correct {background-color: #cfc;}
-#quiznavigation .qnbutton.partiallycorrect {background-color: #ffa;}
-#quiznavigation .qnbutton.incorrect {background-color: #fcc;}
+.path-mod-quiz #user-picture {margin: 0.5em 0;}
+.path-mod-quiz #user-picture img {width: auto;height: auto;float: left;}
+.path-mod-quiz .othernav {clear: both;}
+.path-mod-quiz .othernav a,
+.path-mod-quiz .othernav input {display: block;margin: 0.5em 0;}
+.path-mod-quiz .qnbutton {display: block;float: left;width: 1.5em;height: 1.5em;overflow: hidden;margin: 0.3em 0.3em 0.3em 0;padding: 0;border: 1px solid #bbb;background: #eee no-repeat top right;text-align: center;vertical-align: middle;cursor: pointer;white-space: normal;font: inherit;line-height: 1.5em;font-weight: bold;color: #00f;border-color: #bbb;background-color: #ddd;}
+.path-mod-quiz .qnbutton:hover {text-decoration: underline;color: #f00;}
+.path-mod-quiz .qnbutton.flagged {background-image: url([[pix:i/ne_red_mark]]);}
+.path-mod-quiz .qnbutton.thispage {border-color: black;}
+.path-mod-quiz .qnbutton.open {background-color: white;}
+.path-mod-quiz .qnbutton.correct {background-color: #cfc;}
+.path-mod-quiz .qnbutton.partiallycorrect {background-color: #ffa;}
+.path-mod-quiz .qnbutton.incorrect {background-color: #fcc;}
 
 #quiznojswarning {color: red;}
 #quiznojswarning {font-size: 0.7em;line-height: 1.1;}

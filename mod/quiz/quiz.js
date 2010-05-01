@@ -171,7 +171,13 @@ function quiz_init_attempt_nav() {
             continue;
         }
         var pageidmatch = button.href.match(/page=(\d+)/);
-        var nav = {pageid: pageidmatch[1]};
+        var page;
+        if (pageidmatch) {
+            page = pageidmatch[1];
+        } else {
+            page = 0;
+        }
+        var nav = {pageid: page};
         var questionidmatch = button.href.match(/#q(\d+)/);
         if (questionidmatch) {
             nav.questionid = questionidmatch[1];
