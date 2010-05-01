@@ -352,3 +352,28 @@ table#tag-management-list {margin: 10px auto;width: 80%;}
 .ie6.course-view li.activity {height:0;}
 .ie6 #help_icon_tooltip .yui-tt-shadow-visible {background-color: transparent;}
 
+/**
+ * Site registration
+ */
+
+ #page-admin-registration-index .centeredbutton {text-align: center}
+ #page-admin-registration-index .cell {border-width: 0 1px;}
+ #page-admin-registration-index .justifytext {text-align: justify}
+
+
+ /**
+ * Course publication
+ */
+
+ #page-course-publish-index .centeredbutton {text-align: center}
+ #page-course-publish-index .cell {border-width: 0 1px;}
+ #page-course-publish-index .justifytext {text-align: justify}
+ #page-course-publish-index .publicationwarning {color: #6666ff;}
+
+ /**
+ * Community block
+ */
+ #page-blocks-community-communitycourse .trustedtr {background-color: #ffe1c3;}
+ #page-blocks-community-communitycourse .prioritisetr {background-color: #ffd4ff;}
+ #page-blocks-community-communitycourse .additionaldesc {font-size: 80%; color: purple;}
+ #page-blocks-community-communitycourse .additionaladmindesc {font-size: 80%; color: #6666ff;}

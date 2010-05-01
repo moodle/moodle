@@ -5437,7 +5437,7 @@ function admin_get_root($reload=false, $requirefulltree=true) {
 
         $ADMIN->loaded = true;
     }
-
+    
     return $ADMIN;
 }
 
@@ -5851,6 +5851,7 @@ function print_plugin_tables() {
         'calendar_month',
         'calendar_upcoming',
         'comments',
+        'community',
         'course_list',
         'course_summary',
         'glossary_random',

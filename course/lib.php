@@ -3413,6 +3413,26 @@ function get_course_by_idnumber ($idnumber) {
 }
 
 /**
+ * TODO: Average number of participants (in non-empty courses)
+ * @return integer
+ */
+function average_number_of_participants() {
+    global $DB;
+    return 0;
+    return $avg;
+}
+
+/**
+ * TODO: Average number of course modules (in non-empty courses)
+ * @return integer
+ */
+function average_number_of_courses_modules() {
+    global $DB;
+    return 0;
+    return $avg;
+}
+
+/**
  * This class pertains to course requests and contains methods associated with
  * create, approving, and removing course requests.
  *

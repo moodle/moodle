@@ -10,11 +10,15 @@ $hassiteconfig = has_capability('moodle/site:config', $systemcontext);
 
 $ADMIN->add('root', new admin_externalpage('adminnotifications', get_string('notifications'), "$CFG->wwwroot/$CFG->admin/index.php"));
 
-// Show the annoying registration button if registration hasn't been done or is 6 months old (15552000 seconds) MDL-17429
-if (empty($CFG->registered) || ($CFG->registered < (time() - 15552000))) {
-    $ADMIN->add('root', new admin_externalpage('adminregistration', get_string('registration','admin'), "$CFG->wwwroot/$CFG->admin/register.php"));
-}
-
+$ADMIN->add('root', new admin_externalpage('registrationindex', get_string('registration','admin'),
+        "$CFG->wwwroot/$CFG->admin/registration/index.php"));
+$ADMIN->add('root', new admin_externalpage('registration', get_string('registeron','hub'),
+        "$CFG->wwwroot/$CFG->admin/registration/register.php", 'moodle/site:config', true));
+$ADMIN->add('root', new admin_externalpage('registrationselector', get_string('registeron','hub'),
+        "$CFG->wwwroot/$CFG->admin/registration/hubselector.php", 'moodle/site:config', true));
+$ADMIN->add('root', new admin_externalpage('siteregistrationconfirmed',
+        get_string('registrationconfirmed', 'hub'),
+        $CFG->wwwroot."/".$CFG->admin."/registration/confirmregistration.php", 'moodle/site:config', true));
  // hidden upgrade script
 $ADMIN->add('root', new admin_externalpage('upgradesettings', get_string('upgradesettings', 'admin'), "$CFG->wwwroot/$CFG->admin/upgradesettings.php", 'moodle/site:config', true));
 

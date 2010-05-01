@@ -1538,6 +1538,16 @@ $capabilities = array(
             'manager' => CAP_ALLOW
         )
     ),
+     'moodle/course:publish' => array(
+
+        'riskbitmask' => RISK_SPAM | RISK_PERSONAL,
+
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'legacy' => array(
+            'manager' => CAP_ALLOW
+        )
+    ),
     'moodle/course:markcomplete' => array(
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSE,

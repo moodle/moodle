@@ -935,7 +935,7 @@ function set_config($name, $value, $plugin=NULL) {
  * @global object
  * @param string $plugin default NULL
  * @param string $name default NULL
- * @return mixed hash-like object or single value
+ * @return mixed hash-like object or single value, return false no config found
  */
 function get_config($plugin=NULL, $name=NULL) {
     global $CFG, $DB;
@@ -3449,13 +3449,13 @@ function delete_user($user) {
     require_once($CFG->libdir.'/grouplib.php');
     require_once($CFG->libdir.'/gradelib.php');
     require_once($CFG->dirroot.'/message/lib.php');
-
-    // delete all grades - backup is kept in grade_grades_history table
-    if ($grades = grade_grade::fetch_all(array('userid'=>$user->id))) {
-        foreach ($grades as $grade) {
-            $grade->delete('userdelete');
+  
+        // delete all grades - backup is kept in grade_grades_history table
+        if ($grades = grade_grade::fetch_all(array('userid'=>$user->id))) {
+            foreach ($grades as $grade) {
+                $grade->delete('userdelete');
+            }
         }
-    }
 
     //move unread messages from this user to read
     message_move_userfrom_unread2read($user->id);
@@ -6913,6 +6913,7 @@ function get_core_subsystems() {
             'debug'       => NULL,
             'dock'        => NULL,
             'editor'      => 'lib/editor',
+            'edufields'   => NULL,
             'error'       => NULL,
             'filepicker'  => NULL,
             'filters'     => NULL,
@@ -6922,6 +6923,7 @@ function get_core_subsystems() {
             'grades'      => 'grade',
             'group'       => 'group',
             'help'        => NULL,
+            'hub'         => NULL,
             'imscc'       => NULL,
             'install'     => NULL,
             'iso6392'     => NULL,
@@ -6936,8 +6938,10 @@ function get_core_subsystems() {
             'pagetype'    => NULL,
             'pix'         => NULL,
             'portfolio'   => 'portfolio',
+            'publish'     => 'course/publish',
             'question'    => 'question',
             'rating'      => 'rating',
+            'register'    => 'admin/registration',
             'repository'  => 'repository',
             'role'        => $CFG->admin.'/role',
             'simpletest'  => NULL,
@@ -9448,7 +9452,7 @@ function is_primary_admin($userid){
     }
 }
 
-/**
+ /**
  * Returns the site identifier
  *
  * @global object

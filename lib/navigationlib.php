@@ -2383,6 +2383,12 @@ class settings_navigation extends navigation_node {
             $coursenode->add(get_string('import'), $url, self::TYPE_SETTING, null, null, new pix_icon('i/restore', ''));
         }
 
+        // Publish course on a hub
+        if (has_capability('moodle/course:publish', $coursecontext)) {
+            $url = new moodle_url('/course/publish/index.php', array('id'=>$course->id));
+            $coursenode->add(get_string('publish'), $url, self::TYPE_SETTING, null, null, new pix_icon('i/publish', ''));
+        }
+
         // Reset this course
         if (has_capability('moodle/course:reset', $coursecontext)) {
             $url = new moodle_url('/course/reset.php', array('id'=>$course->id));

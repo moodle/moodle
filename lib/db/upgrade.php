@@ -2984,7 +2984,7 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         upgrade_main_savepoint($result, 2010031900);
     }
 
-
+   
     if ($result && $oldversion < 2010032400) {
         // Upgrade all of those using the standardold theme to the use the standard
         // theme instead
@@ -3697,7 +3697,7 @@ AND EXISTS (SELECT 'x'
         upgrade_main_savepoint($result, 2010042802);
     }
 
-
+    
     if ($result && $oldversion < 2010043000) {  // Adding new course completion feature
 
     /// Add course completion tables
@@ -3855,6 +3855,30 @@ AND EXISTS (SELECT 'x'
         }
 
         upgrade_main_savepoint($result, 2010043000);
+    }
+
+    if ($result && $oldversion < 2010043001) {
+
+    /// Define table registration_hubs to be created
+        $table = new xmldb_table('registration_hubs');
+
+    /// Adding fields to table registration_hubs
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('token', XMLDB_TYPE_CHAR, '40', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('hubname', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('huburl', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('confirmed', XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+
+    /// Adding keys to table registration_hubs
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+
+    /// Conditionally launch create table for registration_hubs
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+    /// Main savepoint reached
+        upgrade_main_savepoint($result, 2010043001);
     }
 
 
