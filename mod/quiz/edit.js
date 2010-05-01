@@ -100,10 +100,10 @@ function quiz_settings_init() {
 // Depending on which page this is, do the appropriate initialisation.
 function quiz_edit_generic_init() {
     switch (document.body.id) {
-    case 'mod-quiz-edit':
+    case 'page-mod-quiz-edit':
         quiz_edit_init();
         break;
-    case 'mod-quiz-mod':
+    case 'page-mod-quiz-mod':
         quiz_settings_init();
     }
 }
