@@ -10,7 +10,7 @@ require_once($CFG->libdir.'/googleapi.php');
 class portfolio_plugin_googledocs extends portfolio_plugin_push_base {
     private $sessiontoken;
 
-    public static function supported_formats() {
+    public function supported_formats() {
         return array(
             PORTFOLIO_FORMAT_PLAINHTML,
             PORTFOLIO_FORMAT_IMAGE,

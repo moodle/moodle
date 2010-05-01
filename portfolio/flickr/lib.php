@@ -8,7 +8,7 @@ class portfolio_plugin_flickr extends portfolio_plugin_push_base {
     private $token;
     private $raw_sets;
 
-    public static function supported_formats() {
+    public function supported_formats() {
         return array(PORTFOLIO_FORMAT_IMAGE);
     }
 

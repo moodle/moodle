@@ -66,7 +66,7 @@ class portfolio_plugin_mahara extends portfolio_plugin_pull_base {
         return array('mnethostid');
     }
 
-    public static function supported_formats() {
+    public function supported_formats() {
         return array(PORTFOLIO_FORMAT_FILE, PORTFOLIO_FORMAT_LEAP2A);
     }
 

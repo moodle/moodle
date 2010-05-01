@@ -244,7 +244,7 @@ class portfolio_plugin_boxnet extends portfolio_plugin_push_base {
         return false;
     }
 
-    public static function supported_formats() {
+    public function supported_formats() {
         return array(PORTFOLIO_FORMAT_FILE); // don't support rich html, it breaks links
     }
 

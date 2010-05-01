@@ -11,7 +11,7 @@ require_once($CFG->libdir.'/googleapi.php');
 class portfolio_plugin_picasa extends portfolio_plugin_push_base {
     private $sessionkey;
 
-    public static function supported_formats() {
+    public function supported_formats() {
         return array(PORTFOLIO_FORMAT_IMAGE, PORTFOLIO_FORMAT_VIDEO);
     }
 
