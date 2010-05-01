@@ -160,8 +160,7 @@ function mnet_server_strip_signature($plaintextmessage) {
  * Return the proper XML-RPC content to report an error in the local language.
  *
  * @param  int    $code   The ID code of the error message
- * @param  string $text   The array-key of the error message in the lang file
- *                        or the full string (will be detected by the function
+ * @param  string $text   The full string of the error message (get_string will <b>not be called</b>)
  * @param  string $param  The $a param for the error message in the lang file
  * @return string $text   The text of the error message
  */
@@ -170,13 +169,7 @@ function mnet_server_fault($code, $text, $param = null) {
         $code = 0;
     }
     $code = intval($code);
-
-    $string = get_string($text, 'mnet', $param);
-    if (strpos($string, '[[') === 0) {
-        $string = $text;
-    }
-
-    return mnet_server_fault_xml($code, $string);
+    return mnet_server_fault_xml($code, $text);
 }
 
 /**
@@ -667,7 +660,6 @@ function mnet_server_dummy_method($methodname, $argsarray, $functionname) {
 }
 /**
  * mnet server exception.  extends moodle_exception, but takes slightly different arguments.
- * error strings are always in mnet, so $module is not necessary,
  * and unlike the rest of moodle, the actual int error code is used.
  * this exception should only be used during an xmlrpc server request, ie, not for client requests.
  */
@@ -675,13 +667,13 @@ class mnet_server_exception extends moodle_exception {
 
     /**
      * @param int    $intcode      the numerical error associated with this fault.  this is <b>not</b> the string errorcode
-     * @param string $languagekey  the key to the language string for the error message, or the text of the message (mnet_server_fault figures it out for you) if you're not using mnet error string file
+     * @param string $langkey      the error message in full (<b>get_string will not be used</b>)
+     * @param string $module       the language module, defaults to 'mnet'
      * @param mixed  $a            params for get_string
      */
-    public function __construct($intcode, $languagekey, $a=null) {
-        parent::__construct($languagekey, 'mnet', '', $a);
+    public function __construct($intcode, $languagekey, $module='mnet', $a=null) {
+        parent::__construct($languagekey, $module, '', $a);
         $this->code    = $intcode;
-        $this->message = $languagekey; // override this because mnet_server_fault (our handler) uses this directly
 
     }
 }

@@ -43,7 +43,7 @@ mnet_debug("HTTP_RAW_POST_DATA", 2);
 mnet_debug($HTTP_RAW_POST_DATA, 2);
 
 if (!isset($_SERVER)) {
-    exit(mnet_server_fault(712, "phperror"));
+    exit(mnet_server_fault(712, get_string('phperror', 'mnet')));
 }
 
 
@@ -95,19 +95,19 @@ if ((($remoteclient->request_was_encrypted == true) && ($remoteclient->signature
 // so detect a few common cases and send appropriate errors
 if (($remoteclient->request_was_encrypted == false) && ($remoteclient->plaintext_is_ok() == false)) {
     mnet_debug('non encrypted request');
-    exit(mnet_server_fault(7021, 'forbidden-transport'));
+    exit(mnet_server_fault(7021, get_string('forbidden-transport', 'mnet')));
 }
 
 if ($remoteclient->request_was_signed == false) {
     // Request was not signed
     mnet_debug('non signed request');
-    exit(mnet_server_fault(711, 'verifysignature-error'));
+    exit(mnet_server_fault(711, get_string('verifysignature-error', 'mnet')));
 }
 
 if ($remoteclient->signatureok == false) {
     // We were unable to verify the signature
     mnet_debug('non verified signature');
-    exit(mnet_server_fault(710, 'verifysignature-invalid'));
+    exit(mnet_server_fault(710, get_string('verifysignature-invalid', 'mnet')));
 }
 mnet_debug('unknown error');
-exit(mnet_server_fault(7000, 'unknownerror'));
+exit(mnet_server_fault(7000, get_string('unknownerror', 'mnet')));
