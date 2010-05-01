@@ -101,6 +101,13 @@ $string['gradeaverage'] = 'Average grade';
 $string['gradeforattempt'] = 'Grade for attempt';
 $string['gradehighest'] = 'Highest grade';
 $string['grademethod'] = 'Grading method';
+$string['grademethod_help'] = 'The grading method defines how a final grade for the activity is determined.
+
+There are 4 grading methods:
+* Learning objects - The number of completed/passed learning objects
+* Highest grade - The highest score obtained in all passed learning objects
+* Average grade - The mean of all the scores
+* Sum grade - The sum of all the scores';
 $string['grademethod_hlp'] = 'This preference sets the grade method for an activity';
 $string['grademethoddesc'] = 'This preference sets the default grade method for an activity';
 $string['gradereported'] = 'Grade reported';
@@ -136,6 +143,7 @@ $string['lastattemptlockdesc'] = 'This preference sets the default value for the
 $string['location'] = 'Show the location bar';
 $string['max'] = 'Max score';
 $string['maximumattempts'] = 'Number of attempts';
+$string['maximumattempts_help'] = 'This setting enables the number of attempts to be restricted. It is only applicable for SCORM 1.2 and AICC packages.';
 $string['maximumattempts_hlp'] = 'This preference sets the maximum number of attempts for an activity';
 $string['maximumattemptsdesc'] = 'This preference sets the default maximum attempts for an activity';
 $string['maximumgradedesc'] = 'This preference sets the default maximum grade for an activity';
@@ -146,6 +154,7 @@ $string['missingparam'] = 'A required is missing or wrong';
 $string['missing_tag'] = 'Missing tag {$a->tag}';
 $string['mode'] = 'Mode';
 $string['modulename'] = 'SCORM/AICC';
+$string['modulename_help'] = 'SCORM is a collection of specifications that enable interoperability, accessibility and reusability of web-based learning content. The SCORM/AICC module allows for SCORM/AICC packages to be included in the course.';
 $string['modulenameplural'] = 'SCORMs/AICCs';
 $string['newattempt'] = 'Start a new attempt';
 $string['next'] = 'Continue';
@@ -159,7 +168,7 @@ $string['nomanifest'] = 'Manifest not found';
 $string['noprerequisites'] = 'Sorry but you haven\'t reached enough prerequisites to access this learning object';
 $string['noreports'] = 'No report to display';
 $string['normal'] = 'Normal';
-$string['noscriptnoscorm'] = 'Your browser does not support javascript or it has javascript support disabled. This SCORM package may not play or save data correctly.';
+$string['noscriptnoscorm'] = 'Your browser does not support JavaScript or it has JavaScript support disabled. This SCORM package may not play or save data correctly.';
 $string['notattempted'] = 'Not attempted';
 $string['not_corr_type'] = 'Type mismatch for tag {$a->tag}';
 $string['notopenyet'] = 'Sorry, this activity is not available until {$a}';
@@ -175,6 +184,7 @@ $string['othersettings'] = 'Additional settings';
 $string['othertracks'] = 'Other Tracks';
 $string['pagesize'] = 'Page size';
 $string['package'] = 'Package file';
+$string['package_help'] = 'The package file is a zip (or pif) file containing SCORM/AICC course definition files.';
 $string['packagedir'] = 'Filesystem Error: Can\'t create package directory';
 $string['packagefile'] = 'No package file specified';
 $string['passed'] = 'Passed';
