@@ -22,6 +22,7 @@ abbr {cursor: help;}
 a.dimmed,
 a.dimmed_text,
 .dimmed_text a {color:#AAAAAA;}
+
 .unlist,
 .unlist li,
 .inline-list,
@@ -29,8 +30,9 @@ a.dimmed_text,
 .sideblock .list,
 .sideblock .list li,
 .sitetopic .section li,
-.course-content .section li,
+.course-content .section li.activity,
 .tabtree li {list-style: none;margin:0;padding:0;}
+
 .inline-list li {display: inline;}
 .notifytiny {font-size:0.7em;}
 .notifytiny li,
