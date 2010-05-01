@@ -68,6 +68,7 @@ require_once($CFG->dirroot . '/backup/util/loggers/error_log_logger.class.php');
 require_once($CFG->dirroot . '/backup/util/loggers/file_logger.class.php');
 require_once($CFG->dirroot . '/backup/util/loggers/database_logger.class.php');
 require_once($CFG->dirroot . '/backup/util/loggers/output_indented_logger.class.php');
+require_once($CFG->dirroot . '/backup/util/settings/setting_dependency.class.php');
 require_once($CFG->dirroot . '/backup/util/settings/base_setting.class.php');
 require_once($CFG->dirroot . '/backup/util/settings/backup_setting.class.php');
 require_once($CFG->dirroot . '/backup/util/settings/root/root_backup_setting.class.php');
@@ -83,6 +84,10 @@ require_once($CFG->dirroot . '/backup/util/plan/backup_step.class.php');
 require_once($CFG->dirroot . '/backup/util/plan/backup_structure_step.class.php');
 require_once($CFG->dirroot . '/backup/util/plan/backup_execution_step.class.php');
 require_once($CFG->dirroot . '/backup/controller/backup_controller.class.php');
+require_once($CFG->dirroot . '/backup/util/ui/backup_moodleform.class.php');
+require_once($CFG->dirroot . '/backup/util/ui/backup_ui.class.php');
+require_once($CFG->dirroot . '/backup/util/ui/backup_ui_stage.class.php');
+require_once($CFG->dirroot . '/backup/util/ui/backup_ui_setting.class.php');
 
 // And some moodle stuff too
 require_once($CFG->libdir.'/gradelib.php');

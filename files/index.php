@@ -40,20 +40,23 @@ $newdirname = optional_param('newdirname', '', PARAM_FILE);
 $delete     = optional_param('delete', 0, PARAM_BOOL);
 
 if ($courseid) {
-    if (!$course = $DB->get_record('course', array('id'=>$courseid))) {
-        print_error('invalidcourseid');
-    }
-    if (!$context = get_context_instance(CONTEXT_COURSE, $course->id)) {
-        print_error('invalidcontext');
-    }
+    $course = $DB->get_record('course', array('id'=>$courseid), '*', MUST_EXIST);
+    $context = get_context_instance(CONTEXT_COURSE, $course->id, MUST_EXIST);
     redirect(new moodle_url('index.php', array('contextid' => $context->id, 'itemid'=> 0, 'filearea' => 'course_content')));
 }
 
-if (!$context = get_context_instance_by_id($contextid)) {
-    print_error('invalidcontext');
+$context = get_context_instance_by_id($contextid, MUST_EXIST);
+
+$course = null;
+$cm = null;
+if ($context->contextlevel == CONTEXT_MODULE) {
+    $cm = get_coursemodule_from_id(null, $context->instanceid, 0, false, MUST_EXIST);
+    $course = $DB->get_record('course', array('id'=>$cm->course), '*', MUST_EXIST);
+} else if ($context->contextlevel == CONTEXT_COURSE) {
+    $course = $DB->get_record('course', array('id'=>$context->instanceid), '*', MUST_EXIST);
 }
 
-require_login();
+require_login($course, false, $cm);
 require_capability('moodle/course:managefiles', $context);
 
 if ($filearea === '') {
@@ -183,7 +186,14 @@ function html_header($context, $file_info){
     global $CFG, $SITE, $PAGE, $OUTPUT;
 
     $strfiles = get_string("files");
-    build_navbar_for_file($PAGE, $file_info);
+    if ($context->contextlevel == CONTEXT_MODULE) {
+        $PAGE->set_pagelayout('incourse');
+    } else if ($context->contextlevel == CONTEXT_COURSE) {
+        $PAGE->set_pagelayout('course');
+    } else {
+        $PAGE->set_pagelayout('admin');
+    }
+    $PAGE->navbar->add($strfiles);
     $PAGE->set_url("/files/index.php", $file_info->get_params());
     $PAGE->set_title("$SITE->shortname: $strfiles");
     echo $OUTPUT->header();
@@ -325,25 +335,4 @@ function displaydir($file_info) {
     echo "</div>";
     echo "<hr/>";
 
-}
-
-/**
- * Creates a navigation bar that relates to the passed file
- *
- * @param moodle_page $page
- * @param file_info $file_info
- */
-function build_navbar_for_file($page, $file_info) {
-    $page->navbar->ignore_active();
-    $parent_info = $file_info->get_parent();
-    $level = $parent_info;
-    $nodes = array(clone($file_info));
-    while ($level) {
-        $nodes[] = $level;
-        $level = $level->get_parent();
-    }
-    $page->navbar->add(get_string('files'));
-    foreach (array_reverse($nodes) as $level) {
-        $page->navbar->add($level->get_visible_name(), 'index.php?'.implode('&amp;', $level->get_params_rawencoded()));
-    }
 }

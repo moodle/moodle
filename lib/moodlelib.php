@@ -6900,6 +6900,7 @@ function get_core_subsystems() {
             'access'      => NULL,
             'admin'       => $CFG->admin,
             'auth'        => 'auth',
+            'backup'      => 'backup/util/ui',
             'block'       => 'blocks',
             'blog'        => 'blog',
             'bulkusers'   => NULL,

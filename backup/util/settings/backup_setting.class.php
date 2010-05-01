@@ -41,15 +41,12 @@ abstract class backup_setting extends base_setting implements checksumable {
         return $this->level;
     }
 
-    public function add_dependency($obj) {
-        if (! $obj instanceof backup_setting) {
-            throw new backup_setting_exception('dependency_is_not_backkup_setting');
-        }
+    public function add_dependency(backup_setting $dependentsetting, $type=setting_dependency::DISABLED_VALUE, $options=array()) {
         // Check the dependency level is >= current level
-        if ($obj->get_level() < $this->level) {
+        if ($dependentsetting->get_level() < $this->level) {
             throw new backup_setting_exception('cannot_add_upper_level_dependency');
         }
-        parent::add_dependency($obj);
+        parent::add_dependency($dependentsetting, $type, $options);
     }
 
 // checksumable interface methods
@@ -63,6 +60,18 @@ abstract class backup_setting extends base_setting implements checksumable {
 
     public function is_checksum_correct($checksum) {
         return $this->calculate_checksum() === $checksum;
+    }
+
+    public function get_dependencies() {
+        return $this->dependencies;
+    }
+
+    public function get_ui_name() {
+        return $this->uisetting->get_name();
+    }
+
+    public function get_ui_type() {
+        return $this->uisetting->get_type();
     }
 }
 

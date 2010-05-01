@@ -37,6 +37,15 @@ class backup_generic_setting extends root_backup_setting {
  * root setting to handle backup file names (no dependencies nor anything else)
  */
 class backup_filename_setting extends backup_generic_setting {
+
+    public function  __construct($name, $vtype, $value = null, $visibility = self::VISIBLE, $status = self::NOT_LOCKED) {
+        parent::__construct($name, $vtype, $value, $visibility, $status);
+    }
+
+    public function set_ui($label, $value, array $options = null) {
+        parent::make_ui(self::UI_HTML_TEXTFIELD, $label, null, $options);
+        $this->set_value($value);
+    }
 }
 
 /**

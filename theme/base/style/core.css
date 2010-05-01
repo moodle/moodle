@@ -513,11 +513,22 @@ body.tag .managelink {padding: 5px;}
 .fm-file-entry{border: 1px solid red;}
 .fm-operation {font-weight: bold;}
 
-/**
- * Backup and restore
+/*
+ * Backup and Restore CSS
  */
-.backup-form-instances,
-.restore-form-instances {margin:0 20px;}
+.path-backup .mform .grouped_settings.section_level {clear:both;}
+.path-backup .mform .grouped_settings {clear:both;overflow:hidden;}
+.path-backup .mform .grouped_settings .fitem .fitemtitle {width:40%;padding-right:10px;}
+.path-backup .mform .grouped_settings .fitem .felement {width:50%;}
+.path-backup .mform .grouped_settings.section_level .include_setting {width:50%;margin:0;float:left;clear:left;}
+.path-backup .mform .grouped_settings.section_level .normal_setting {width:50%;margin:0;margin-left:50%;}
+.path-backup .notification.dependencies_enforced {text-align:center;color:#A00;font-weight:bold;}
+.path-backup .backup_progress {text-align:center;}
+.path-backup .backup_progress .backup_stage {color:#999;}
+.path-backup .backup_progress .backup_stage.backup_stage_current {font-weight:bold;color:inherit;}
+.path-backup .backup_progress .backup_stage.backup_stage_next {}
+.path-backup .backup_progress .backup_stage.backup_stage_complete {color:inherit;}
+
 
 /**
  * Web Service

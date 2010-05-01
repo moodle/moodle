@@ -234,6 +234,7 @@ abstract class backup_activity_task extends backup_task {
         // Define activity_userinfo (dependent of root users setting)
         $settingname = $settingprefix . 'userinfo';
         $activity_userinfo = new backup_activity_userinfo_setting($settingname, base_setting::IS_BOOLEAN, true);
+        $activity_userinfo->get_ui()->set_label(get_string('includeuserinfo','backup'));
         $this->add_setting($activity_userinfo);
         // Look for "users" root setting
         $users = $this->plan->get_setting('users');
