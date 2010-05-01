@@ -207,6 +207,7 @@ $string['invalidsurveyid'] = 'Survey ID was incorrect';
 $string['invalidtmptid'] = 'Invalid template id';
 $string['ipreferthat'] = 'I prefer that';
 $string['modulename'] = 'Survey';
+$string['modulename_help'] = 'The survey module provides three types of survey instrument for assessing and stimulating learning in online environments. The teacher can use them to gather data that will help them learn about their class and reflect on their own teaching.';
 $string['modulenameplural'] = 'Surveys';
 $string['name'] = 'Name';
 $string['newsurveyresponses'] = 'New survey responses';
