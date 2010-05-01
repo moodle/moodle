@@ -63,11 +63,14 @@ class portfolio_plugin_mahara extends portfolio_plugin_pull_base {
     }
 
     public static function get_allowed_config() {
-        return array('mnethostid');
+        return array('mnethostid', 'enableleap2a');
     }
 
     public function supported_formats() {
-        return array(PORTFOLIO_FORMAT_FILE, PORTFOLIO_FORMAT_LEAP2A);
+        if ($this->get_config('enableleap2a')) {
+            return array(PORTFOLIO_FORMAT_FILE, PORTFOLIO_FORMAT_LEAP2A);
+        }
+        return array(PORTFOLIO_FORMAT_FILE);
     }
 
     public function expected_time($callertime) {
@@ -89,6 +92,7 @@ class portfolio_plugin_mahara extends portfolio_plugin_pull_base {
         }
         $mform->addElement('select', 'mnethostid', get_string('mnethost', 'portfolio_mahara'), $hosts);
         $mform->addRule('mnethostid', $strrequired, 'required', null, 'client');
+        $mform->addElement('selectyesno', 'enableleap2a', get_string('enableleap2a', 'portfolio_mahara'));
     }
 
     public function instance_sanity_check() {
