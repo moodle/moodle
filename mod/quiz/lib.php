@@ -277,7 +277,7 @@ function quiz_update_effective_access($quiz, $userid) {
         list($extra, $params) = $DB->get_in_or_equal(array_values($groupings[$groupingid]));
         $sql = "SELECT * FROM {quiz_overrides}
                 WHERE groupid $extra AND quiz = ?";
-        $params[] = $qiuz->id;
+        $params[] = $quiz->id;
         $records = $DB->get_records_sql($sql, $params);
 
         // Combine the overrides
