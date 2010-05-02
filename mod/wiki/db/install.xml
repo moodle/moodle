@@ -54,9 +54,9 @@
         <FIELD NAME="readonly" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Read only flag" PREVIOUS="pageviews"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="subwikititle"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="subwikititleuser"/>
         <KEY NAME="subwikititleuser" TYPE="unique" FIELDS="subwikiid, title, userid" PREVIOUS="primary" NEXT="subwikifk"/>
-        <KEY NAME="subwikifk" TYPE="foreign" FIELDS="subwikiid" REFTABLE="wiki_subwiki" REFFIELDS="id" COMMENT="Foreign key to subwiki table" PREVIOUS="subwikititle"/>
+        <KEY NAME="subwikifk" TYPE="foreign" FIELDS="subwikiid" REFTABLE="wiki_subwiki" REFFIELDS="id" COMMENT="Foreign key to subwiki table" PREVIOUS="subwikititleuser"/>
       </KEYS>
     </TABLE>
     <TABLE NAME="wiki_versions" COMMENT="Stores wiki page history" PREVIOUS="wiki_pages" NEXT="wiki_synonyms">
