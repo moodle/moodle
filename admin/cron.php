@@ -418,8 +418,8 @@
 
     } // End of occasional clean-up tasks
 
-
-    if (empty($CFG->disablescheduledbackups)) {   // Defined in config.php
+    // Disabled until implemented. MDL-21432, MDL-22184
+    if (1 == 2 && empty($CFG->disablescheduledbackups)) {   // Defined in config.php
         //Execute backup's cron
         //Perhaps a long time and memory could help in large sites
         @set_time_limit(0);
