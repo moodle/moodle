@@ -49,8 +49,18 @@ if (!is_null($cmid)) {
 }
 require_login($course, false, $cm);
 
-if (!has_capability('moodle/backup:backupcourse', get_context_instance(CONTEXT_COURSE, $course->id))) {
-    print_error('cannotuseadminadminorteacher', 'error');
+switch ($type) {
+    case backup::TYPE_1COURSE :
+        require_capability('moodle/backup:backupcourse', get_context_instance(CONTEXT_COURSE, $course->id));
+        break;
+    case backup::TYPE_1SECTION :
+        require_capability('moodle/backup:backupsection', get_context_instance(CONTEXT_COURSE, $course->id));
+        break;
+    case backup::TYPE_1ACTIVITY :
+        require_capability('moodle/backup:backupactivity', get_context_instance(CONTEXT_MODULE, $cm->id));
+        break;
+    default :
+        print_error('unknownbackuptype');
 }
 
 if (!($bc = backup_ui::load_controller())) {
