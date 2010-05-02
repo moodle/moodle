@@ -72,18 +72,14 @@ abstract class base_setting {
     protected $dependencies; // array of dependent (observer) objects (usually setting_base ones)
 
     /**
-     *
+     * The user interface for this setting
      * @var backup_setting_ui|backup_setting_ui_checkbox|backup_setting_ui_radio|backup_setting_ui_select|backup_setting_ui_text
      */
     protected $uisetting;
 
-    // Note: all the UI stuff could go to independent classes in the future...
-    protected $ui_type;   // setting_base::UI_HTML_CHECKBOX/setting_base::UI_HTML_RADIOBUTTON...
-    protected $ui_label;  // UI label of the setting
-    protected $ui_values; // array of value => ui value of the setting
-    protected $ui_options;// array of custom ui options
-
     /**
+     * An array that contains the identifier and component of a help string if one
+     * has been set
      * @var array
      */
     protected $help = array();

@@ -127,12 +127,6 @@ class backup_controller extends backup implements loggable {
         }
     }
 
-    public function show_ui() {
-    }
-
-    public function process_ui() {
-    }
-
     public function finish_ui() {
         if ($this->status != backup::STATUS_SETTING_UI) {
             throw new backup_controller_exception('cannot_finish_ui_if_not_setting_ui');
