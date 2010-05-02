@@ -71,7 +71,9 @@ class assignment_uploadsingle extends assignment_base {
 
     function view_upload_form() {
         $mform = new mod_assignment_upload_file_form('upload.php', $this);
+		echo "<div class=\"uploadbox\">";
         $mform->display();
+        echo "</div>";
     }
 
 

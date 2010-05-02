@@ -101,7 +101,7 @@ class assignment_online extends assignment_base {
 
         if (has_capability('mod/assignment:submit', $context)) {
             if ($editmode) {
-                echo $OUTPUT->box_start('generalbox', 'online');
+                echo $OUTPUT->box_start('generalbox', 'onlineenter');
                 $mform->display();
             } else {
                 echo $OUTPUT->box_start('generalbox boxwidthwide boxaligncenter', 'online');

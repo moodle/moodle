@@ -163,7 +163,9 @@ class assignment_upload extends assignment_base {
 
         if ($this->can_upload_file($submission)) {
             $mform = new mod_assignment_upload_file_form('upload.php', $this);
-            $mform->display();
+			echo "<div class=\"uploadbox\">";
+	        $mform->display();
+    	    echo "</div>";
         }
 
     }
