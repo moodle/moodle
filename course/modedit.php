@@ -342,6 +342,7 @@ if ($mform->is_cancelled()) {
         $eventdata->component = 'mod/'.$fromform->modulename;
         $eventdata->course    = $course->id;
         $eventdata->cm        = $fromform->coursemodule;
+        $eventdata->user      = $USER;
         events_trigger($fromform->modulename.'_mod_updated', $eventdata);
 
         add_to_log($course->id, "course", "update mod",
@@ -451,6 +452,7 @@ if ($mform->is_cancelled()) {
         $eventdata->component = 'mod/'.$fromform->modulename;
         $eventdata->course    = $course->id;
         $eventdata->cm        = $fromform->coursemodule;
+        $eventdata->user      = $USER;
         events_trigger($fromform->modulename.'_mod_created', $eventdata);
 
         add_to_log($course->id, "course", "add mod",
