@@ -107,16 +107,34 @@ abstract class backup_check {
         switch ($type) {
             case backup::TYPE_1COURSE :
                 $DB->get_record('course', array('id' => $id), '*', MUST_EXIST); // course exists
-                require_capability('moodle/backup:backupcourse', $coursectx, $userid);
+                if (!has_capability('moodle/backup:backupcourse', $coursectx, $userid)) {
+                    $a = new stdclass();
+                    $a->userid = $userid;
+                    $a->courseid = $courseid;
+                    $a->capability = 'moodle/backup:backupcourse';
+                    throw new backup_controller_exception('backup_user_missing_capability', $a);
+                }
                 break;
             case backup::TYPE_1SECTION :
                 $DB->get_record('course_sections', array('course' => $courseid, 'id' => $id), '*', MUST_EXIST); // sec exists
-                require_capability('moodle/backup:backupsection', $coursectx, $userid);
+                if (!has_capability('moodle/backup:backupsection', $coursectx, $userid)) {
+                    $a = new stdclass();
+                    $a->userid = $userid;
+                    $a->courseid = $courseid;
+                    $a->capability = 'moodle/backup:backupsection';
+                    throw new backup_controller_exception('backup_user_missing_capability', $a);
+                }
                 break;
             case backup::TYPE_1ACTIVITY :
                 get_coursemodule_from_id(null, $id, $courseid, false, MUST_EXIST); // cm exists
                 $modulectx = get_context_instance(CONTEXT_MODULE, $id);
-                require_capability('moodle/backup:backupactivity', $modulectx, $userid);
+                if (!has_capability('moodle/backup:backupactivity', $modulectx, $userid)) {
+                    $a = new stdclass();
+                    $a->userid = $userid;
+                    $a->cmid = $id;
+                    $a->capability = 'moodle/backup:backupactivity';
+                    throw new backup_controller_exception('backup_user_missing_capability', $a);
+                }
                 break;
             default :
                 print_error('unknownbackuptype');
@@ -125,10 +143,22 @@ abstract class backup_check {
         // Now, if backup mode is hub or import, check userid has permissions for those modes
         switch ($mode) {
             case backup::MODE_HUB:
-                require_capability('moodle/backup:backuptargethub', $coursectx, $userid);
+                if (!has_capability('moodle/backup:backuptargethub', $coursectx, $userid)) {
+                    $a = new stdclass();
+                    $a->userid = $userid;
+                    $a->courseid = $courseid;
+                    $a->capability = 'moodle/backup:backuptargethub';
+                    throw new backup_controller_exception('backup_user_missing_capability', $a);
+                }
                 break;
             case backup::MODE_IMPORT:
-                require_capability('moodle/backup:backuptargetimport', $coursectx, $userid);
+                if (!has_capability('moodle/backup:backuptargetimport', $coursectx, $userid)) {
+                    $a = new stdclass();
+                    $a->userid = $userid;
+                    $a->courseid = $courseid;
+                    $a->capability = 'moodle/backup:backuptargetimport';
+                    throw new backup_controller_exception('backup_user_missing_capability', $a);
+                }
                 break;
         }
 
