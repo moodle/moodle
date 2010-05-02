@@ -226,10 +226,11 @@ abstract class backup_helper {
             $itemid   = 0;
         }
 
-        // Backups without user info are sent to user's "user_backup"
+        // Backups without user info or withe the anoymise functionality
+        // enabled are sent to user's "user_backup"
         // file area. Maintenance of such area is responsibility of
         // the user via corresponding file manager frontend
-        if ($backupmode == backup::MODE_GENERAL && !$hasusers) {
+        if ($backupmode == backup::MODE_GENERAL && (!$hasusers || $isannon)) {
             $ctxid = get_context_instance(CONTEXT_USER, $userid)->id;
             $filearea = 'user_backup';
             $itemid   = 0;
