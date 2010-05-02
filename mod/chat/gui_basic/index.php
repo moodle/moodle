@@ -116,10 +116,10 @@ $PAGE->set_title("$strchat: $course->shortname: ".format_string($chat->name,true
 $PAGE->set_focuscontrol('message');
 echo $OUTPUT->header();
 echo '<div id="mod-chat-gui_basic">';
-echo '<h1>'.get_string('participants').'</h1>';
+echo '<h2>'.get_string('participants').'</h2>';
 echo '<div id="participants"><ul>';
 foreach($chatusers as $chu) {
-    echo '<li>';
+    echo '<li class="clearfix">';
     echo $OUTPUT->user_picture($chu, array('size'=>24, 'courseid'=>$course->id));
     echo '<div class="userinfo">';
     echo fullname($chu).' ';
@@ -136,7 +136,7 @@ echo '<div id="send">';
 echo '<form id="editing" method="post" action="index.php">';
 
 $usehtmleditor = can_use_html_editor();
-echo '<h1><label for="message">'.get_string('sendmessage', 'message').'</label></h1>';
+echo '<h2><label for="message">'.get_string('sendmessage', 'message').'</label></h2>';
 echo '<div>';
 echo '<input type="text" id="message" name="message" value="'.s($refreshedmessage, true).'" size="60" />';
 echo '</div><div>';
@@ -152,7 +152,7 @@ echo '</form>';
 echo '</div>';
 
 echo '<div id="messages">';
-echo '<h1>'.get_string('messages', 'chat').'</h1>';
+echo '<h2>'.get_string('messages', 'chat').'</h2>';
 
 $allmessages = array();
 $options = new object();
