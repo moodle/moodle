@@ -196,12 +196,13 @@ abstract class backup_moodleform extends moodleform {
      * @param backup_setting $setting
      */
     function add_fixed_setting(backup_setting $setting) {
+        global $OUTPUT;
         $this->add_html_formatting($setting);
 
         $mform = $this->_form;
         $settingui = $setting->get_ui();
         if ($setting->get_status() != backup_setting::NOT_LOCKED) {
-            $mform->addElement('static', 'static_'.$settingui->get_name(), $settingui->get_label(), get_string('settingislocked','backup',$settingui->get_static_value()));
+            $mform->addElement('static', 'static_'.$settingui->get_name(), $settingui->get_label(),$settingui->get_static_value().' '.$OUTPUT->pix_icon('i/unlock', get_string('locked', 'backup'), 'moodle', array('class'=>'smallicon lockedicon')));
         } else {
             $mform->addElement('static','static_'. $settingui->get_name(), $settingui->get_label(), $settingui->get_static_value());
         }
