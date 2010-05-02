@@ -79,12 +79,6 @@ if(has_capability('mod/feedback:complete', $context)) {
     $feedback_complete_cap = true;
 }
 
-if(isset($CFG->feedback_allowfullanonymous)
-            AND $CFG->feedback_allowfullanonymous
-            AND $feedback->anonymous == FEEDBACK_ANONYMOUS_YES ) {
-    $feedback_complete_cap = true;
-}
-
 //check whether the feedback is located and! started from the mainsite
 if($course->id == SITEID AND !$courseid) {
     $courseid = SITEID;
@@ -178,9 +172,9 @@ if($feedback_can_submit) {
         if(!$SESSION->feedback->is_started == true)
             print_error('error', '', $CFG->wwwroot.'/course/view.php?id='.$course->id);
         //checken, ob alle required items einen wert haben
-        if(feedback_check_values($_POST, $startitempos, $lastitempos)) {
+        if(feedback_check_values($startitempos, $lastitempos)) {
                 $userid = $USER->id; //arb
-            if($completedid = feedback_save_values($_POST, $USER->id, true)){
+            if($completedid = feedback_save_values($USER->id, true)){
                 if($userid > 0) {
                     add_to_log($course->id, 'feedback', 'startcomplete', 'view.php?id='.$cm->id, $feedback->id, $cm->id, $userid);
                 }

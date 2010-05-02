@@ -141,7 +141,7 @@ if( (intval($feedback->publish_stats) == 1) AND
 // echo '<p>';
 
 //####### mapcourse-start
-if($feedback_complete_cap) {
+if(has_capability('mod/feedback:mapcourse', $context)) {
     if($feedback->course == SITEID) {
         echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthwide');
         echo '<div class="mdl-align">';

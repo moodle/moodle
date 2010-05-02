@@ -103,7 +103,8 @@ if(has_capability('mod/feedback:complete', $context)) {
 //check whether the feedback is anonymous
 if(isset($CFG->feedback_allowfullanonymous)
                 AND $CFG->feedback_allowfullanonymous
-                AND $feedback->anonymous == FEEDBACK_ANONYMOUS_YES ) {
+                AND $feedback->anonymous == FEEDBACK_ANONYMOUS_YES
+                AND $course->id == SITEID ) {
     $feedback_complete_cap = true;
 }
 if($feedback->anonymous != FEEDBACK_ANONYMOUS_YES) {
@@ -176,9 +177,9 @@ if($feedback_can_submit) {
             print_error('error', 'error', $CFG->wwwroot.'/course/view.php?id='.$course->id);
         }
         //check, if all required items have a value
-        if(feedback_check_values($_POST, $startitempos, $lastitempos)) {
+        if(feedback_check_values($startitempos, $lastitempos)) {
             $userid = $USER->id; //arb
-            if($completedid = feedback_save_guest_values($_POST, sesskey())){
+            if($completedid = feedback_save_guest_values(sesskey())){
                 add_to_log($course->id, 'feedback', 'startcomplete', 'view.php?id='.$cm->id, $feedback->id); //arb: log even guest submissions or at least the startcomplete since the other add log event is elsewhere
 
                 if(!$gonextpage AND !$gopreviouspage) $preservevalues = false;//es kann gespeichert werden

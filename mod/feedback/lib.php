@@ -1116,7 +1116,6 @@ function feedback_create_item($data) {
  *
  * @global object
  * @param object $item
- * @param object $data the data from edit_item_form
  * @return boolean
  */
 function feedback_update_item($item){
@@ -1634,26 +1633,27 @@ function feedback_get_page_to_continue($feedbackid, $courseid = false, $guestid)
  * on all other things new value records will be created
  *
  * @global object
- * @param object $data the data from complete form
  * @param int $userid
  * @param boolean $tmp
  * @return mixed false on error or the completeid
  */
-function feedback_save_values($data, $usrid, $tmp = false) {
+function feedback_save_values($usrid, $tmp = false) {
     global $DB;
+    
+    $completedid = optional_param('completedid', false, PARAM_INT);
 
     $tmpstr = $tmp ? 'tmp' : '';
-         $time = time(); //arb
-         $timemodified = mktime(0, 0, 0, date('m', $time),date('d', $time),date('Y', $time)); //arb
-//         $timemodified = time();
+    $time = time();
+    $timemodified = mktime(0, 0, 0, date('m', $time),date('d', $time),date('Y', $time));
+
     if($usrid == 0) {
-        return feedback_create_values($data, $usrid, $timemodified, $tmp);
+        return feedback_create_values($usrid, $timemodified, $tmp);
     }
-    if(!$data['completedid'] or !$completed = $DB->get_record('feedback_completed'.$tmpstr, array('id'=>$data['completedid']))) {
-        return feedback_create_values($data, $usrid, $timemodified, $tmp);
+    if(!$completedid or !$completed = $DB->get_record('feedback_completed'.$tmpstr, array('id'=>$completedid))) {
+        return feedback_create_values($usrid, $timemodified, $tmp);
     }else{
         $completed->timemodified = $timemodified;
-        return feedback_update_values($data, $completed, $tmp);
+        return feedback_update_values($completed, $tmp);
     }
 }
 
@@ -1661,19 +1661,20 @@ function feedback_save_values($data, $usrid, $tmp = false) {
  * this saves the values from anonymous user such as guest on the main-site
  *
  * @global object
- * @param object $data the data form complete_guest form
  * @param string $guestid the unique guestidentifier
  * @return mixed false on error or the completeid
  */
-function feedback_save_guest_values($data, $guestid) {
+function feedback_save_guest_values($guestid) {
     global $DB;
 
+    $completedid = optional_param('completedid', false, PARAM_INT);
+    
     $timemodified = time();
-    if(!$completed = $DB->get_record('feedback_completedtmp', array('id'=>$data['completedid']))) {
-        return feedback_create_values($data, 0, $timemodified, true, $guestid);
+    if(!$completed = $DB->get_record('feedback_completedtmp', array('id'=>$completedid))) {
+        return feedback_create_values(0, $timemodified, true, $guestid);
     }else {
         $completed->timemodified = $timemodified;
-        return feedback_update_values($data, $completed, true);
+        return feedback_update_values($completed, true);
     }
 }
 
@@ -1701,20 +1702,21 @@ function feedback_get_item_value($completedid, $itemid, $tmp = false) {
  * the params first/lastitem are given to determine the visible range between pagebreaks.
  *
  * @global object
- * @param object $data the data of complete form
  * @param int $firstitem the position of firstitem for checking
  * @param int $lastitem the position of lastitem for checking
  * @return boolean
  */
-function feedback_check_values($data, $firstitem, $lastitem) {
+function feedback_check_values($firstitem, $lastitem) {
     global $DB, $CFG;
+
+    $feedbackid = optional_param('feedbackid', 0, PARAM_INT);
 
     //get all items between the first- and lastitem
     $select = "feedback = ?
                     AND position >= ?
                     AND position <= ?
                     AND hasvalue = 1";
-    $params = array(intval($data['feedbackid']), $firstitem, $lastitem);
+    $params = array($feedbackid, $firstitem, $lastitem);
     if(!$feedbackitems = $DB->get_records_select('feedback_item', $select, $params)) {
         //if no values are given so no values can be wrong ;-)
         return true;
@@ -1725,14 +1727,13 @@ function feedback_check_values($data, $firstitem, $lastitem) {
         //<item-typ>_<item-id> eg. numeric_234
         //this is the key to get the value for the correct item
         $formvalname = $item->typ . '_' . $item->id;
-
+    
+        $value = optional_param($formvalname, NULL, PARAM_RAW);
+        
         //check if the value is set
-        if((!isset($data[$formvalname])) AND ($item->required == 1)) {
+        if(is_null($value) AND $item->required == 1) {
             return false;
         }
-
-        //if there is a value so save it temporary
-        $value = isset($data[$formvalname]) ? $data[$formvalname] : '';
 
         //get the class of the item-typ
         $itemclass = 'feedback_item_'.$item->typ;
@@ -1758,58 +1759,64 @@ function feedback_check_values($data, $firstitem, $lastitem) {
  * depending on the $tmp (true/false) the values are saved temporary or permanently
  *
  * @global object
- * @param object $data the data of the complete form
  * @param int $userid
  * @param int $timemodified
  * @param boolean $tmp
  * @param string $guestid a unique identifier to save temporary data
  * @return mixed false on error or the completedid
  */
-function feedback_create_values($data, $usrid, $timemodified, $tmp = false, $guestid = false){
+function feedback_create_values($usrid, $timemodified, $tmp = false, $guestid = false){
     global $DB;
 
+    $feedbackid = optional_param('feedbackid', false, PARAM_INT);
+    $anonymous_response = optional_param('anonymous_response', false, PARAM_INT);
+    $courseid = optional_param('courseid', false, PARAM_INT);
+    
     $tmpstr = $tmp ? 'tmp' : '';
     //first we create a new completed record
     $completed = new object();
-    $completed->feedback           = $data['feedbackid'];
+    $completed->feedback           = $feedbackid;
     $completed->userid             = $usrid;
     $completed->guestid            = $guestid;
     $completed->timemodified       = $timemodified;
-    $completed->anonymous_response = $data['anonymous_response'];
+    $completed->anonymous_response = $anonymous_response;
 
     $completedid = $DB->insert_record('feedback_completed'.$tmpstr, $completed);
 
     $completed = $DB->get_record('feedback_completed'.$tmpstr, array('id'=>$completedid));
 
-    //$data includes an associative array. the keys are in the form like abc_xxx
+    //the keys are in the form like abc_xxx
     //with explode we make an array with(abc, xxx) and (abc=typ und xxx=itemnr)
-    $keys = array_keys($data);
-    $errcount = 0;
-    foreach($keys as $key){
-        //ensure the keys are what we want
-        if(preg_match('/([a-z0-9]{1,})_([0-9]{1,})/i',$key)){
-            $value = new object();
-            $itemnr = explode('_', $key);
-            $value->item = intval($itemnr[1]);
-            $value->completed = $completed->id;
-            $value->course_id = intval($data['courseid']);
-
-            //get the class of item-typ
-            $itemclass = 'feedback_item_'.$itemnr[0];
-            //get the instance of item-class
-            if (!class_exists($itemclass)) {
-                require_once($CFG->dirroot.'/mod/feedback/item/'.$itemnr[0].'/lib.php');
-            }
-            $itemobj = new $itemclass();
-            //the kind of values can be absolutely different so we run create_value directly by the item-class
-            $value->value = $itemobj->create_value($data[$key]);
-
-            $DB->insert_record('feedback_value'.$tmpstr, $value);
-        }
+    
+    //get the items of the feedback
+    if(!$allitems = $DB->get_records('feedback_item', array('feedback'=>$completed->feedback))) {
+        return false;
     }
-
-    //if nothing is wrong so we can return the completedid otherwise false
-    return $errcount == 0 ? $completed->id : false;
+    foreach($allitems as $item) {
+        $keyname = $item->typ.'_'.$item->id;
+        $itemvalue = optional_param($keyname, NULL, PARAM_RAW);
+        if(is_null($itemvalue)) {
+            continue;
+        }
+        $value = new object();
+        $value->item = $item->id;
+        $value->completed = $completed->id;
+        $value->course_id = $courseid;
+        
+        //get the class of item-typ
+        $itemclass = 'feedback_item_'.$item->typ;
+        
+        //get the instance of item-class
+        if (!class_exists($itemclass)) {
+            require_once($CFG->dirroot.'/mod/feedback/item/'.$item->typ.'/lib.php');
+        }
+        $itemobj = new $itemclass();
+        
+        //the kind of values can be absolutely different so we run create_value directly by the item-class
+        $value->value = $itemobj->create_value($itemvalue);
+        $DB->insert_record('feedback_value'.$tmpstr, $value);
+    }
+    return $completed->id;
 }
 
 /**
@@ -1817,13 +1824,13 @@ function feedback_create_values($data, $usrid, $timemodified, $tmp = false, $gue
  * depending on the $tmp (true/false) the values are saved temporary or permanently
  *
  * @global object
- * @param object $data the data of the complete form
  * @param object $completed
  * @param boolean $tmp
  * @return int the completedid
  */
-function feedback_update_values($data, $completed, $tmp = false) {
+function feedback_update_values($completed, $tmp = false) {
     global $DB;
+    $courseid = optional_param('courseid', false, PARAM_INT);
 
     $tmpstr = $tmp ? 'tmp' : '';
 
@@ -1831,44 +1838,47 @@ function feedback_update_values($data, $completed, $tmp = false) {
     //get the values of this completed
     $values = $DB->get_records('feedback_value'.$tmpstr, array('completed'=>$completed->id));
 
-    //$data includes an associative array. the keys are in the form like abc_xxx
-    //with explode we make an array with(abc, xxx) and (abc=typ und xxx=itemnr)
-    $keys = array_keys($data);
-    foreach($keys as $key){
-        //ensure the keys are what we want
-        if(preg_match('/([a-z0-9]{1,})_([0-9]{1,})/i',$key)){
-            //build the new value to update([id], item, completed, value)
-            $itemnr = explode('_', $key);
-            $newvalue = new object();
-            $newvalue->item      = $itemnr[1];
-            $newvalue->completed = $completed->id;
-            $newvalue->course_id = $data['courseid'];
+    //get the items of the feedback
+    if(!$allitems = $DB->get_records('feedback_item', array('feedback'=>$completed->feedback))) {
+        return false;
+    }
+    foreach($allitems as $item) {
+        $keyname = $item->typ.'_'.$item->id;
+        $itemvalue = optional_param($keyname, NULL, PARAM_RAW);
+        //is the itemvalue set (could be a subset of items because pagebreak)?
+        if(is_null($itemvalue)) {
+            continue;
+        }
+        
+        $newvalue = new object();
+        $newvalue->item = $item->id;
+        $newvalue->completed = $completed->id;
+        $newvalue->course_id = $courseid;
 
-            //get the class of item-typ
-            $itemclass = 'feedback_item_'.$itemnr[0];
-            //get the instace of the item-class
-            if (!class_exists($itemclass)) {
-                require_once($CFG->dirroot.'/mod/feedback/item/'.$itemnr[0].'/lib.php');
+        //get the class of item-typ
+        $itemclass = 'feedback_item_'.$item->typ;
+        
+        //get the instance of item-class
+        if (!class_exists($itemclass)) {
+            require_once($CFG->dirroot.'/mod/feedback/item/'.$item->typ.'/lib.php');
+        }
+        $itemobj = new $itemclass();
+        //the kind of values can be absolutely different so we run create_value directly by the item-class
+        $newvalue->value = $itemobj->create_value($itemvalue);
+        
+        //check, if we have to create or update the value
+        $exist = false;
+        foreach($values as $value){
+            if($value->item == $newvalue->item){
+                $newvalue->id = $value->id;
+                $exist = true;
+                break;
             }
-            $itemobj = new $itemclass();
-            //the kind of values can be absolutely different so we run create_value directly by the item-class
-            $newvalue->value = $itemobj->create_value($data[$key]);
-
-            //check, if we have to create or update the value
-            $exist = false;
-            foreach($values as $value){
-                if($value->item == $newvalue->item){
-                    $newvalue->id = $value->id;
-                    $exist = true;
-                    break;
-                }
-            }
-            if($exist){
-                $DB->update_record('feedback_value'.$tmpstr, $newvalue);
-            }else {
-                $DB->insert_record('feedback_value'.$tmpstr, $newvalue);
-            }
-
+        }
+        if($exist){
+            $DB->update_record('feedback_value'.$tmpstr, $newvalue);
+        }else {
+            $DB->insert_record('feedback_value'.$tmpstr, $newvalue);
         }
     }
 
