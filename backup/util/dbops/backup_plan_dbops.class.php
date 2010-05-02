@@ -121,4 +121,55 @@ abstract class backup_plan_dbops extends backup_dbops {
         }
         return $wwwroot;
     }
+
+    /**
+    * Returns the default backup filename, based in passed params.
+    *
+    * Default format is (see MDL-22145)
+    *   backup word - format - type - name - date - info . zip
+    * where name is variable (course shortname, section name/id, activity modulename + cmid)
+    * and info can be (nu = no user info, an = anonymized)
+    */
+    public static function get_default_backup_filename($format, $type, $id, $users, $anonymised) {
+        global $DB;
+
+        // Calculate backup word
+        $backupword = str_replace(' ', '_', moodle_strtolower(get_string('backupfilename')));
+        $backupword = trim(clean_filename($backupword), '_');
+
+        // Calculate proper name element (based on type)
+        switch ($type) {
+            case backup::TYPE_1COURSE:
+                $shortname = $DB->get_field('course', 'shortname', array('id' => $id));
+                break;
+            case backup::TYPE_1SECTION:
+                if (!$shortname = $DB->get_field('course_sections', 'name', array('id' => $id))) {
+                    $shortname = $DB->get_field('course_sections', 'section', array('id' => $id));
+                }
+                break;
+            case backup::TYPE_1ACTIVITY:
+                $cm = get_coursemodule_from_id(null, $id);
+                $shortname = $cm->modname . $id;
+                break;
+        }
+        $shortname = str_replace(' ', '_', $shortname);
+        $shortname = moodle_strtolower(trim(clean_filename($shortname), '_'));
+        $name = empty($shortname) ? $id : $shortname;
+
+        // Calculate date
+        $backupdateformat = str_replace(' ', '_', get_string('backupnameformat', 'langconfig'));
+        $date = userdate(time(), $backupdateformat, 99, false);
+        $date = moodle_strtolower(trim(clean_filename($date), '_'));
+
+        // Calculate info
+        $info = '';
+        if (!$users) {
+            $info = '-nu';
+        } else if ($anonymised) {
+            $info = '-an';
+        }
+
+        return $backupword . '-' . $format . '-' . $type . '-' .
+               $name . '-' . $date . $info . '.zip';
+    }
 }
