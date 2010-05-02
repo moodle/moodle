@@ -68,7 +68,7 @@ abstract class backup_factory {
         // and pointing to the backup_logs table
         $dllevel = isset($CFG->backup_database_logger_level) ? $CFG->backup_database_logger_level : backup::LOG_WARNING;
         $columns = array('backupid' => $backupid);
-        $enabledloggers[] = new database_logger($dllevel, 'timecreated', 'level', 'message', 'backup_logs', $columns);
+        $enabledloggers[] = new database_logger($dllevel, 'timecreated', 'loglevel', 'message', 'backup_logs', $columns);
 
         // Create extra file_logger, observing $CFG->backup_file_logger_extra and $CFG->backup_file_logger_extra_level
         // defaulting to $fllevel (normal file logger)
