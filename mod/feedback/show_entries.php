@@ -112,15 +112,15 @@ if($do_show == 'showentries'){
         $completedFeedbackCount = feedback_get_completeds_group_count($feedback, $mygroupid);
         if($feedback->course == SITEID){
             $analysisurl = new moodle_url('/mod/feedback/analysis_course.php', array('id'=>$id, 'courseid'=>$courseid));
-            echo '<div class="mdl-align"><a href="'.$analysisurl->out().'">';
-            echo get_string('course') .' '. get_string('analysis', 'feedback') . ' ('.get_string('completed_feedbacks', 'feedback').': '.intval($completedFeedbackCount).')</a>';
+            echo $OUTPUT->box_start('mdl-align');
+            echo '<a href="'.$analysisurl->out().'">'.get_string('course').' '.get_string('analysis', 'feedback').' ('.get_string('completed_feedbacks', 'feedback').': '.intval($completedFeedbackCount).')</a>';
             echo $OUTPUT->help_icon('viewcompleted', 'feedback');
-            echo '</div>';
+            echo $OUTPUT->box_end();
         }else {
             $analysisurl = new moodle_url('/mod/feedback/analysis.php', array('id'=>$id, 'courseid'=>$courseid));
-            echo '<div class="mdl-align"><a href="'.$analysisurl->out().'">';
-            echo get_string('analysis', 'feedback') . ' ('.get_string('completed_feedbacks', 'feedback').': '.intval($completedFeedbackCount).')</a>';
-            echo '</div>';
+            echo $OUTPUT->box_start('mdl-align');
+            echo '<a href="'.$analysisurl->out().'">'.get_string('analysis', 'feedback').' ('.get_string('completed_feedbacks', 'feedback').': '.intval($completedFeedbackCount).')</a>';
+            echo $OUTPUT->box_end();
         }
     }
 
@@ -130,7 +130,8 @@ if($do_show == 'showentries'){
         echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthwide');
         echo isset($groupselect) ? $groupselect : '';
         echo '<div class="clearer"></div>';
-        echo '<div class="mdl-align"><table><tr><td width="400">';
+        echo $OUTPUT->box_start('mdl-align');
+        echo '<table><tr><td width="400">';
         if (!$students) {
             if($courseid != SITEID){
                 echo $OUTPUT->notification(get_string('noexistingstudents'));
@@ -193,7 +194,8 @@ if($do_show == 'showentries'){
             </tr>
         </table>
 <?php
-        echo '</td></tr></table></div>';
+        echo '</td></tr></table>';
+        echo $OUTPUT->box_end();
         echo $OUTPUT->box_end();
     }
 
@@ -206,46 +208,42 @@ if($do_show == 'showoneentry') {
 
     //print the items
     if(is_array($feedbackitems)){
+        $align = right_to_left() ? 'right' : 'left';
         $usr = $DB->get_record('user', array('id'=>$userid));
+        echo $OUTPUT->box_start('feedback_info');
         if($feedbackcompleted) {
-            echo '<p align="center">'.UserDate($feedbackcompleted->timemodified).'<br />('.fullname($usr).')</p>';
+            echo UserDate($feedbackcompleted->timemodified).'<br />('.fullname($usr).')';
         } else {
-            echo '<p align="center">'.get_string('not_completed_yet','feedback').'</p>';
+            echo get_string('not_completed_yet','feedback');
         }
-        echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthnormal');
-        echo '<form>';
-        echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
-        echo '<table width="100%">';
+        echo $OUTPUT->box_end();
+        
+        echo $OUTPUT->box_start('feedback_items');
         $itemnr = 0;
         foreach($feedbackitems as $feedbackitem){
             //get the values
             $value = $DB->get_record('feedback_value', array('completed'=>$feedbackcompleted->id, 'item'=>$feedbackitem->id));
-            echo '<tr>';
+            echo $OUTPUT->box_start('feedback_item_box_'.$align);
             if($feedbackitem->hasvalue == 1 AND $feedback->autonumbering) {
                 $itemnr++;
-                echo '<td valign="top">' . $itemnr . '.&nbsp;</td>';
-            } else {
-                echo '<td>&nbsp;</td>';
+                echo $OUTPUT->box_start('feedback_item_number_'.$align);
+                echo $itemnr;
+                echo $OUTPUT->box_end();
             }
 
             if($feedbackitem->typ != 'pagebreak') {
+                echo $OUTPUT->box_start('box generalbox boxalign_'.$align);
                 if(isset($value->value)) {
                     feedback_print_item_show_value($feedbackitem, $value->value);
                 }else {
                     feedback_print_item_show_value($feedbackitem, false);
                 }
-            }else {
-                echo '<td><hr /></td>';
+                echo $OUTPUT->box_end();
             }
-            echo '</tr>';
+            echo $OUTPUT->box_end();
         }
-        echo '<tr><td colspan="2" align="center">';
-        echo '</td></tr>';
-        echo '</table>';
-        echo '</form>';
         echo $OUTPUT->box_end();
     }
-    // echo $OUTPUT->continue_button(htmlspecialchars('show_entries.php?id='.$id.'&do_show=showentries'));
     echo $OUTPUT->continue_button(new moodle_url($url, array('do_show'=>'showentries')));
 }
 /// Finish the page

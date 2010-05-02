@@ -233,16 +233,16 @@ if($do_show == 'edit') {
         }
 
         //use list instead a table
-        echo '<div class="feedback_items_edit">';
+        echo $OUTPUT->box_start('feedback_items');
             if(isset($SESSION->feedback->moving) AND $SESSION->feedback->moving->shouldmoving == 1) {
                 $moveposition = 1;
                 $movehereurl = new moodle_url($url, array('movehere'=>$moveposition));
-                echo '<div class="feedback_item_box_'.$align.' clipboard">'; //only shown if shouldmoving = 1
+                echo $OUTPUT->box_start('feedback_item_box_'.$align.' clipboard'); //only shown if shouldmoving = 1
                     $buttonlink = $movehereurl->out();
                     echo '<a title="'.get_string('move_here','feedback').'" href="'.$buttonlink.'">
                             <img class="movetarget" alt="'.get_string('move_here','feedback').'" src="'.$OUTPUT->pix_url('movehere') . '" />
                           </a>';
-                echo '</div>';
+                echo $OUTPUT->box_end();
             }
             //print the inserted items
             $itempos = 0;
@@ -251,14 +251,14 @@ if($do_show == 'edit') {
                 if(isset($SESSION->feedback->moving) AND $SESSION->feedback->moving->movingitem == $feedbackitem->id){ //hiding the item to move
                     continue;
                 }
-                echo '<div class="feedback_item_box_'.$align.'">';
+                echo $OUTPUT->box_start('feedback_item_box_'.$align);
                     //items without value only are labels
                     if($feedbackitem->hasvalue == 1 AND $feedback->autonumbering) {
                         $itemnr++;
-                        echo '<div class="feedback_item_number_'.$align.'">' . $itemnr . '</div>';
+                        echo $OUTPUT->box_start('feedback_item_number_'.$align) . $itemnr . $OUTPUT->box_end();
                     }
-                    echo '<div class="box generalbox boxalign_'.$align.'">';
-                        echo '<div class="feedback_item_commands_'.$align.'">';
+                    echo $OUTPUT->box_start('box generalbox boxalign_'.$align);
+                        echo $OUTPUT->box_start('feedback_item_commands_'.$align);
                             echo '<span class="feedback_item_commands">('.get_string('position', 'feedback').':'.$itempos .')</span>';
                             //print the moveup-button
                             if($feedbackitem->position > 1){
@@ -340,29 +340,29 @@ if($do_show == 'edit') {
                                     <img alt="'.get_string('delete_item','feedback').'" src="'.$OUTPUT->pix_url('t/delete') . '" />
                                   </a>';
                             echo '</span>';
-                        echo '</div>';
+                        echo $OUTPUT->box_end();
                     if($feedbackitem->typ != 'pagebreak') {
-                        // echo '<div class="feedback_item_'.$align.'">';
                         feedback_print_item_preview($feedbackitem);
                     }else {
-                        echo '<div class="feedback_pagebreak">'.get_string('pagebreak', 'feedback').'<hr class="feedback_pagebreak" /></div>';
+                        echo $OUTPUT->box_start('feedback_pagebreak');
+                        echo get_string('pagebreak', 'feedback').'<hr class="feedback_pagebreak" />';
+                        echo $OUTPUT->box_end();
                     }
-                    echo '</div>';
-                echo '</div>';
+                    echo $OUTPUT->box_end();
+                echo $OUTPUT->box_end();
                 if(isset($SESSION->feedback->moving) AND $SESSION->feedback->moving->shouldmoving == 1) {
                     $moveposition++;
                     $movehereurl->param('movehere', $moveposition);
-                    echo '<div class="clipboard">'; //only shown if shouldmoving = 1
+                    echo $OUTPUT->box_start('clipboard'); //only shown if shouldmoving = 1
                             $buttonlink = $movehereurl->out();
                             echo '<a title="'.get_string('move_here','feedback').'" href="'.$buttonlink.'">
                                     <img class="movetarget" alt="'.get_string('move_here','feedback').'" src="'.$OUTPUT->pix_url('movehere') . '" />
                                   </a>';
-                    echo '</div>';
+                    echo $OUTPUT->box_end();
                 }
                 echo '<div class="clearer">&nbsp;</div>';
             }
-        echo '</div>';
-        // echo $OUTPUT->box_end();
+        echo $OUTPUT->box_end();
     }else{
         echo $OUTPUT->box(get_string('no_items_available_yet','feedback'),'generalbox boxaligncenter');
     }

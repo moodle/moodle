@@ -146,10 +146,10 @@ if ($courseitemfilter > 0) {
     echo '<input type="hidden" name="courseitemfiltertyp" value="'.$courseitemfiltertyp.'" />';
     echo '<input type="hidden" name="courseid" value="'.$courseid.'" />';
     echo html_writer::script('', $CFG->wwwroot.'/mod/feedback/feedback.js');
-    $sql = 'select c.id, c.shortname from {course} c, '.
+    $sql = 'select DISTINCT c.id, c.shortname from {course} c, '.
                                           '{feedback_value} fv, {feedback_item} fi '.
                                           'where c.id = fv.course_id and fv.item = fi.id '.
-                                          'and fi.feedback = ?'.
+                                          'and fi.feedback = ? '.
                                           'and
                                           (c.shortname '.$DB->sql_ilike().' ?
                                           OR c.fullname '.$DB->sql_ilike().' ?)';
@@ -172,6 +172,7 @@ if ($courseitemfilter > 0) {
         //get the class from item-typ
         $itemclass = 'feedback_item_'.$item->typ;
         //get the instance of the item-class
+        require_once($CFG->dirroot.'/mod/feedback/item/'.$item->typ.'/lib.php');
         $itemobj = new $itemclass();
         $itemnr++;
         if($feedback->autonumbering) {

@@ -15,8 +15,6 @@ $id = required_param('id', PARAM_INT);
 
 $PAGE->set_url('/mod/feedback/print.php', array('id'=>$id));
 
-$formdata = data_submitted();
-
 if (! $cm = get_coursemodule_from_id('feedback', $id)) {
     print_error('invalidcoursemodule');
 }
@@ -58,31 +56,38 @@ feedback_print_errors();
 $feedbackitems = $DB->get_records('feedback_item', array('feedback'=>$feedback->id), 'position');
 if(is_array($feedbackitems)){
     $itemnr = 0;
+    $align = right_to_left() ? 'right' : 'left';
 
-    echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthwide');
-    echo '<div class="mdl-align printview"><table>';
+    // echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthwide');
+    echo $OUTPUT->box_start('feedback_items printview');
+    //check, if there exists required-elements
+    $countreq = $DB->count_records('feedback_item', array('feedback'=>$feedback->id, 'required'=>1));
+    if($countreq > 0) {
+        echo '<span class="feedback_required_mark">(*)' . get_string('items_are_required', 'feedback') . '</span>';
+    }
     //print the inserted items
     $itempos = 0;
     foreach($feedbackitems as $feedbackitem){
-        $itempos++;
-        echo '<tr>';
-        //Items without value only are labels
-        if($feedbackitem->hasvalue == 1 AND $feedback->autonumbering) {
-            $itemnr++;
-            echo '<td valign="top">' . $itemnr . '.&nbsp;</td>';
-        } else {
-            echo '<td>&nbsp;</td>';
-        }
-        if($feedbackitem->typ != 'pagebreak') {
-            feedback_print_item_complete($feedbackitem, false, false);
-        }else {
-            echo '<td class="feedback_print_pagebreak" colspan="2">&nbsp;</td>';
-        }
-        echo '</tr>';
+        echo $OUTPUT->box_start('feedback_item_box_'.$align);
+            $itempos++;
+            //Items without value only are labels
+            if($feedbackitem->hasvalue == 1 AND $feedback->autonumbering) {
+                $itemnr++;
+                    echo $OUTPUT->box_start('feedback_item_number_'.$align);
+                    echo $itemnr;
+                    echo $OUTPUT->box_end();
+            }
+            echo $OUTPUT->box_start('box generalbox boxalign_'.$align);
+            if($feedbackitem->typ != 'pagebreak') {
+                feedback_print_item_complete($feedbackitem, false, false);
+            }else {
+                echo $OUTPUT->box_start('feedback_pagebreak');
+                echo '<hr class="feedback_pagebreak" />';
+                echo $OUTPUT->box_end();
+            }
+            echo $OUTPUT->box_end();
+        echo $OUTPUT->box_end();
     }
-    echo '</table>';
-    echo '<font color="red">(*)' . get_string('items_are_required', 'feedback') . '</font>';
-    echo '</div>';
     echo $OUTPUT->box_end();
 }else{
     echo $OUTPUT->box(get_string('no_items_available_yet','feedback'),'generalbox boxaligncenter boxwidthwide');

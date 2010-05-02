@@ -131,39 +131,41 @@ if(isset($formdata->showanonym) && $formdata->showanonym == FEEDBACK_ANONYMOUS_Y
         $align = right_to_left() ? 'right' : 'left';
         
         if($feedbackcompleted) {
-            echo '<div class="feedback_info">';
+            echo $OUTPUT->box_start('feedback_info');
             echo get_string('chosen_feedback_response', 'feedback');
-            echo '</div>';
-            echo '<div class="feedback_info">';
+            echo $OUTPUT->box_end();
+            echo $OUTPUT->box_start('feedback_info');
             echo '('.get_string('anonymous', 'feedback').')';
-            echo '</div>';
+            echo $OUTPUT->box_end();
         } else {
-            echo '<div class="feedback_info">';
+            echo $OUTPUT->box_start('feedback_info');
             echo get_string('not_completed_yet','feedback');
-            echo '</div>';
+            echo $OUTPUT->box_end();
         }
             
-        echo '<div class="feedback_items_show">';
+        echo $OUTPUT->box_start('feedback_items');
         // echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthnormal');
         $itemnr = 0;
         foreach($feedbackitems as $feedbackitem){
             //get the values
             $value = $DB->get_record('feedback_value', array('completed'=>$feedbackcompleted->id, 'item'=>$feedbackitem->id));
-            echo '<div class="feedback_item_box_'.$align.'">';
+            echo $OUTPUT->box_start('feedback_item_box_'.$align);
             if($feedbackitem->hasvalue == 1 AND $feedback->autonumbering) {
                 $itemnr++;
-                echo '<div class="feedback_item_number_'.$align.'">' . $itemnr . '</div>';
+                echo $OUTPUT->box_start('feedback_item_number_'.$align);
+                echo $itemnr;
+                echo $OUTPUT->box_end();
             }
             if($feedbackitem->typ != 'pagebreak') {
-                echo '<div class="box generalbox boxalign_'.$align.'">';
+                echo $OUTPUT->box_start('box generalbox boxalign_'.$align);
                 $itemvalue = isset($value->value) ? $value->value : false;
                 feedback_print_item_show_value($feedbackitem, $itemvalue);
-                echo '</div>';
+                echo $OUTPUT->box_end();
             }
-            echo '</div>';
+            echo $OUTPUT->box_end();
         }
         // echo $OUTPUT->box_end();
-        echo '</div>';
+        echo $OUTPUT->box_end();
     }
 }
 /// Finish the page

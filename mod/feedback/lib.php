@@ -1932,7 +1932,7 @@ function feedback_get_current_completed($feedbackid, $tmp = false, $courseid = f
         $params['userid'] = $USER->id;
     }
     //if courseid is set the feedback is global. there can be more than one completed on one feedback
-    $sql =  "SELECT fc.*
+    $sql =  "SELECT DISTINCT fc.*
                FROM {feedback_value{$tmpstr}} fv, {feedback_completed{$tmpstr}} fc
               WHERE fv.course_id = :courseid
                     AND fv.completed = fc.id

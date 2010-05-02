@@ -80,7 +80,7 @@ echo $OUTPUT->header();
 ///////////////////////////////////////////////////////////////////////////
 echo $OUTPUT->heading(format_text($feedback->name));
 
-echo $OUTPUT->box_start('generalbox errorboxcontent boxaligncenter boxwidthnormal');
+echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthnormal');
 echo $OUTPUT->heading(get_string('confirmusetemplate', 'feedback'));
 
 $mform->display();
@@ -94,26 +94,28 @@ if(is_array($templateitems)){
 
 if(is_array($templateitems)){
     $itemnr = 0;
-    echo '<p align="center">'.get_string('preview', 'feedback').'</p>';
-    echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthwide');
-    echo '<div class="mdl-align"><table>';
+    $align = right_to_left() ? 'right' : 'left';
+    echo $OUTPUT->box_start('feedback_items');
     foreach($templateitems as $templateitem){
-        echo '<tr>';
-        if($templateitem->hasvalue == 1 AND $feedback->autonumbering) {
-            $itemnr++;
-            echo '<td valign="top">' . $itemnr . '.&nbsp;</td>';
-        } else {
-            echo '<td>&nbsp;</td>';
-        }
-        if($templateitem->typ != 'pagebreak') {
-            feedback_print_item_preview($templateitem);
-        }else {
-            echo '<td><hr /></td><td>'.get_string('pagebreak', 'feedback').'</td>';
-        }
-        echo '</tr>';
-        echo '<tr><td>&nbsp;</td></tr>';
+        echo $OUTPUT->box_start('feedback_item_box_'.$align);
+            if($templateitem->hasvalue == 1 AND $feedback->autonumbering) {
+                $itemnr++;
+                echo $OUTPUT->box_start('feedback_item_number_'.$align);
+                echo $itemnr;
+                echo $OUTPUT->box_end();
+            }
+            echo $OUTPUT->box_start('box generalbox boxalign_'.$align);
+            if($templateitem->typ != 'pagebreak') {
+                // echo '<div class="feedback_item_'.$align.'">';
+                feedback_print_item_preview($templateitem);
+            }else {
+                echo $OUTPUT->box_start('feedback_pagebreak');
+                echo get_string('pagebreak', 'feedback').'<hr class="feedback_pagebreak" />';
+                echo $OUTPUT->box_end();
+            }
+            echo $OUTPUT->box_end();
+        echo $OUTPUT->box_end();
     }
-    echo '</table></div>';
     echo $OUTPUT->box_end();
 }else{
     echo $OUTPUT->box(get_string('no_items_available_at_this_template','feedback'),'generalbox boxaligncenter boxwidthwide');

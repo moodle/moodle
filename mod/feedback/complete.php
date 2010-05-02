@@ -296,9 +296,10 @@ if($feedback_can_submit) {
             ( has_capability('mod/feedback:viewanalysepage', $context)) AND
             !( has_capability('mod/feedback:viewreports', $context)) ) {
         if($multiple_count = $DB->count_records('feedback_tracking', array('userid'=>$USER->id, 'feedback'=>$feedback->id))) {
-            echo '<div class="mdl-align"><a href="'.$analysisurl->out().'">';
+            echo $OUTPUT->box_start('mdl-align');
+            echo '<a href="'.$analysisurl->out().'">';
             echo get_string('completed_feedbacks', 'feedback').'</a>';
-            echo '</div>';
+            echo $OUTPUT->box_end();
         }
     }
 
@@ -339,21 +340,25 @@ if($feedback_can_submit) {
         }
     }else {
         if(isset($savereturn) && $savereturn == 'failed') {
-            echo '<div class="mform error">'.get_string('saving_failed','feedback').'</div>';
+            echo $OUTPUT->box_start('mform error');
+            echo get_string('saving_failed','feedback');
+            echo $OUTPUT->box_end();
         }
 
         if(isset($savereturn) && $savereturn == 'missing') {
-            echo '<div class="mform error">'.get_string('saving_failed_because_missing_or_false_values','feedback').'</div>';
+            echo $OUTPUT->box_start('mform error');
+            echo get_string('saving_failed_because_missing_or_false_values','feedback');
+            echo $OUTPUT->box_end();
         }
 
         //print the items
         if(is_array($feedbackitems)){
             // echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthwide');
-            echo '<div class="feedback_form">';
+            echo $OUTPUT->box_start('feedback_form');
             echo '<form action="complete.php" method="post" onsubmit=" ">';
             echo '<fieldset>';
             echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
-            echo '<div class="feedback_anonymousinfo">';
+            echo $OUTPUT->box_start('feedback_anonymousinfo');
             switch ($feedback->anonymous) {
                 case FEEDBACK_ANONYMOUS_YES:
                     echo '<input type="hidden" name="anonymous" value="1" />';
@@ -366,13 +371,13 @@ if($feedback_can_submit) {
                     echo get_string('mode', 'feedback').': '.get_string('non_anonymous', 'feedback');
                     break;
             }
-            echo '</div>';
+            echo $OUTPUT->box_end();
             //check, if there exists required-elements
             $countreq = $DB->count_records('feedback_item', array('feedback'=>$feedback->id, 'required'=>1));
             if($countreq > 0) {
                 echo '<span class="feedback_required_mark">(*)' . get_string('items_are_required', 'feedback') . '</span>';
             }
-            echo '<div class="feedback_items_complete">';
+            echo $OUTPUT->box_start('feedback_items');
 
             unset($startitem);
             $itemnr = $DB->count_records_select('feedback_item', 'feedback = ? AND hasvalue = 1 AND position < ?', array($feedback->id, $startposition));
@@ -387,7 +392,7 @@ if($feedback_can_submit) {
                     }
                     $startitem = $feedbackitem;
                 }
-                echo '<div class="feedback_item_box_'.$align.'">';
+                echo $OUTPUT->box_start('feedback_item_box_'.$align);
                     $value = '';
                     //get the value
                     $frmvaluename = $feedbackitem->typ . '_'. $feedbackitem->id;
@@ -400,14 +405,16 @@ if($feedback_can_submit) {
                     }
                     if($feedbackitem->hasvalue == 1 AND $feedback->autonumbering) {
                         $itemnr++;
-                        echo '<div class="feedback_item_number_'.$align.'">' . $itemnr . '</div>';
+                        echo $OUTPUT->box_start('feedback_item_number_'.$align);
+                        echo $itemnr;
+                        echo $OUTPUT->box_end();
                     }
                     if($feedbackitem->typ != 'pagebreak') {
-                        echo '<div class="box generalbox boxalign_'.$align.'">';
+                        echo $OUTPUT->box_start('box generalbox boxalign_'.$align);
                             feedback_print_item_complete($feedbackitem, $value, $highlightrequired);
-                        echo '</div>';
+                        echo $OUTPUT->box_end();
                     }
-                echo '</div>';
+                echo $OUTPUT->box_end();
 
                 $lastbreakposition = $feedbackitem->position; //last item-pos (item or pagebreak)
                 if($feedbackitem->typ == 'pagebreak'){
@@ -416,7 +423,7 @@ if($feedback_can_submit) {
                     $lastitem = $feedbackitem;
                 }
             }
-            echo '</div>';
+            echo $OUTPUT->box_end();
             echo '<input type="hidden" name="id" value="'.$id.'" />';
             echo '<input type="hidden" name="feedbackid" value="'.$feedback->id.'" />';
             echo '<input type="hidden" name="lastpage" value="'.$gopage.'" />';
@@ -440,9 +447,9 @@ if($feedback_can_submit) {
 
             echo '</fieldset>';
             echo '</form>';
-            echo '</div>';
+            echo $OUTPUT->box_end();
             
-            echo '<div class="feedback_complete_cancel">';
+            echo $OUTPUT->box_start('feedback_complete_cancel');
             if($courseid) {
                 echo '<form action="'.$CFG->wwwroot.'/course/view.php?id='.$courseid.'" method="post" onsubmit=" ">';
             }else{
@@ -458,7 +465,7 @@ if($feedback_can_submit) {
             echo '<button type="submit">'.get_string('cancel').'</button>';
             echo '</fieldset>';
             echo '</form>';
-            echo '</div>';
+            echo $OUTPUT->box_end();
             $SESSION->feedback->is_started = true;
             // echo $OUTPUT->box_end();
         }
