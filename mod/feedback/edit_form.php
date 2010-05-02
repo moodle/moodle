@@ -129,9 +129,11 @@ class feedback_edit_create_template_form extends moodleform {
 
         $elementgroup[] =& $mform->createElement('static', 'templatenamelabel', get_string('name', 'feedback'));
         $elementgroup[] =& $mform->createElement('text', 'templatename', get_string('name', 'feedback'), array('size'=>'40', 'maxlength'=>'200'));
-        if(has_capability('mod/feedback:createpublictemplate', $this->feedbackdata->context)) {
-            $elementgroup[] =& $mform->createElement('checkbox', 'ispublic', get_string('public', 'feedback'), get_string('public', 'feedback'));
-        }
+        
+        //public templates are currently deactivated
+        // if(has_capability('mod/feedback:createpublictemplate', $this->feedbackdata->context)) {
+            // $elementgroup[] =& $mform->createElement('checkbox', 'ispublic', get_string('public', 'feedback'), get_string('public', 'feedback'));
+        // }
 
         // buttons
         $elementgroup[] =& $mform->createElement('submit', 'create_template', get_string('save_as_new_template', 'feedback'));

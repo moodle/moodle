@@ -99,11 +99,12 @@ if(isset($create_template_formdata->savetemplate) && $create_template_formdata->
     {
         $savereturn = 'notsaved_name';
     }else {
-        if(has_capability('mod/feedback:createpublictemplate', $context)) {
-            $create_template_formdata->ispublic = isset($create_template_formdata->ispublic) ? 1 : 0;
-        }else {
+        //public templates are currently deaktivated
+        // if(has_capability('mod/feedback:createpublictemplate', $context)) {
+            // $create_template_formdata->ispublic = isset($create_template_formdata->ispublic) ? 1 : 0;
+        // }else {
             $create_template_formdata->ispublic = 0;
-        }
+        // }
         if(!feedback_save_as_template($feedback, $create_template_formdata->templatename, $create_template_formdata->ispublic))
         {
             $savereturn = 'failed';
