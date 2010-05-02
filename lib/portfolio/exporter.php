@@ -639,7 +639,7 @@ class portfolio_exporter {
         } else {
             if (!$r = $DB->get_record('portfolio_tempdata', array('id' => $this->id))) {
                 if (!$this->deleted) {
-                    debugging("tried to save current object, but failed - see MDL-20872");
+                    //debugging("tried to save current object, but failed - see MDL-20872");
                 }
                 return;
             }

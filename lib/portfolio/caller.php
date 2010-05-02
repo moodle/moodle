@@ -84,7 +84,7 @@ abstract class portfolio_caller_base {
         foreach ($expected as $key => $required) {
             if (!array_key_exists($key, $callbackargs)) {
                 if ($required) {
-                    $a = (object)array('key' => $key, 'class' => get_class($this));
+                    $a = (object)array('arg' => $key, 'class' => get_class($this));
                     throw new portfolio_caller_exception('missingcallbackarg', 'portfolio', null, $a);
                 }
                 continue;

@@ -136,13 +136,13 @@ class portfolio_add_button {
 
             $file = substr($backtrace[0]['file'], strlen($CFG->dirroot));
         } else if (!is_readable($CFG->dirroot . $file)) {
-            throw new portfolio_button_exception('nocallbackfile', 'portfolio', $file);
+            throw new portfolio_button_exception('nocallbackfile', 'portfolio', '', $file);
         }
         $this->callbackfile = $file;
         require_once($CFG->libdir . '/portfolio/caller.php'); // require the base class first
         require_once($CFG->dirroot . $file);
         if (!class_exists($class)) {
-            throw new portfolio_button_exception('nocallbackclass', 'portfolio', $class);
+            throw new portfolio_button_exception('nocallbackclass', 'portfolio', '', $class);
         }
 
         // this will throw exceptions
