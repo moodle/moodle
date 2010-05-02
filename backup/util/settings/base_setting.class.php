@@ -69,7 +69,8 @@ abstract class base_setting {
     protected $visibility; // visibility of the setting (setting_base::VISIBLE/setting_base::HIDDEN)
     protected $status; // setting_base::NOT_LOCKED/setting_base::LOCKED_BY_PERMISSION...
 
-    protected $dependencies; // array of dependent (observer) objects (usually setting_base ones)
+    protected $dependencies = array(); // array of dependent (observer) objects (usually setting_base ones)
+    protected $dependenton = array();
 
     /**
      * The user interface for this setting
@@ -105,7 +106,6 @@ abstract class base_setting {
         $this->value       = $value;
         $this->visibility  = $visibility;
         $this->status      = $status;
-        $this->dependencies= array();
 
         // Generate a default ui
         $this->uisetting = new backup_setting_ui_checkbox($this, $name);
@@ -148,6 +148,18 @@ abstract class base_setting {
 
     public function set_visibility($visibility) {
         $visibility = $this->validate_visibility($visibility);
+
+        // If this setting is dependent on other settings first check that all
+        // of those settings are visible
+        if (count($this->dependenton) > 0 && $visibility == base_setting::VISIBLE) {
+            foreach ($this->dependenton as $dependency) {
+                if ($dependency->get_setting()->get_visibility() != base_setting::VISIBLE) {
+                    $visibility = base_setting::HIDDEN;
+                    break;
+                }
+            }
+        }
+
         $oldvisibility = $this->visibility;
         $this->visibility = $visibility;
         if ($visibility !== $oldvisibility) { // Visibility has changed, let's inform dependencies
@@ -157,6 +169,18 @@ abstract class base_setting {
 
     public function set_status($status) {
         $status = $this->validate_status($status);
+
+        // If this setting is dependent on other settings first check that all
+        // of those settings are not locked
+        if (count($this->dependenton) > 0 && $status == base_setting::NOT_LOCKED) {
+            foreach ($this->dependenton as $dependency) {
+                if ($dependency->get_setting()->get_status() != base_setting::NOT_LOCKED) {
+                    $status = base_setting::LOCKED_BY_HIERARCHY;
+                    break;
+                }
+            }
+        }
+
         $oldstatus = $this->status;
         $this->status = $status;
         if ($status !== $oldstatus) { // Status has changed, let's inform dependencies
@@ -198,6 +222,31 @@ abstract class base_setting {
 
     public function get_ui() {
         return $this->uisetting;
+    }
+
+    /**
+     * Adds a dependency where another setting depends on this setting.
+     * @param setting_dependency $dependency
+     */
+    public function register_dependency(setting_dependency $dependency) {
+        if ($this->is_circular_reference($dependency->get_dependant_setting())) {
+            $a = new stdclass();
+            $a->alreadydependent = $this->name;
+            $a->main = $dependentsetting->get_name();
+            throw new base_setting_exception('setting_circular_reference', $a);
+        }
+        $this->dependencies[$dependency->get_dependant_setting()->get_name()] = $dependency;
+        $dependency->get_dependant_setting()->register_dependent_dependency($dependency);
+    }
+    /**
+     * Adds a dependency where this setting is dependent on another.
+     *
+     * This should only be called internally once we are sure it is not cicrular.
+     *
+     * @param setting_dependency $dependency
+     */
+    protected function register_dependent_dependency(setting_dependency $dependency) {
+        $this->dependenton[$dependency->get_setting()->get_name()] = $dependency;
     }
 
     public function add_dependency(base_setting $dependentsetting, $type=null, $options=array()) {
@@ -253,6 +302,7 @@ abstract class base_setting {
                 break;
         }
         $this->dependencies[$dependentsetting->get_name()] = $dependency;
+        $dependency->get_dependant_setting()->register_dependent_dependency($dependency);
     }
 
 // Protected API starts here
