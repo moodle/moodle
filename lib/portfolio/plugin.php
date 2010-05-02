@@ -748,6 +748,16 @@ abstract class portfolio_plugin_base {
     public static function allows_multiple_exports() {
         return true;
     }
+
+    /**
+    * return a string to put at the header summarising this export
+    * by default, just the plugin instance name
+    *
+    * @return string
+    */
+    public function heading_summary() {
+        return get_string('exportingcontentto', 'portfolio', $this->name);
+    }
 }
 
 /**

@@ -61,6 +61,7 @@ $string['exportexpired'] = 'Portfolio export expired';
 $string['exportexpireddesc'] = 'You tried to repeat the export of some information, or start an empty export.  To do that properly you should go back to the original location and start again.  This sometimes happens if you use the back button after an export has completed, or by bookmarking an invalid url.';
 $string['exporting'] = 'Exporting to portfolio';
 $string['exportingcontentfrom'] = 'Exporting content from {$a}';
+$string['exportingcontentto'] = 'Exporting content to {$a}';
 $string['exportqueued'] = 'Portfolio export has been successfully queued for transfer';
 $string['exportqueuedforced'] = 'Portfolio export has been successfully queued for transfer (the remote system has enforced queued transfers)';
 $string['failedtopackage'] = 'Could not find files to package';

@@ -339,7 +339,7 @@ class portfolio_exporter {
                 $this->set('format', $fromform->format);
                 return true;
             } else {
-                $this->print_header('configexport');
+                $this->print_header(get_string('configexport', 'portfolio'));
                 echo $OUTPUT->box_start();
                 $mform->display();
                 echo $OUTPUT->box_end();
@@ -389,7 +389,7 @@ class portfolio_exporter {
         $baseurl = $CFG->wwwroot . '/portfolio/add.php?sesskey=' . sesskey() . '&id=' . $this->get('id');
         $yesurl = $baseurl . '&stage=' . PORTFOLIO_STAGE_QUEUEORWAIT;
         $nourl  = $baseurl . '&cancel=1';
-        $this->print_header('confirmexport');
+        $this->print_header(get_string('confirmexport', 'portfolio'));
         echo $OUTPUT->box_start();
         echo $OUTPUT->heading(get_string('confirmsummary', 'portfolio'), 4);
         $mainsummary = array();
@@ -568,7 +568,7 @@ class portfolio_exporter {
                 $key = 'exportqueuedforced';
             }
         }
-        $this->print_header($key, false);
+        $this->print_header(get_string($key, 'portfolio'), false);
         self::print_finish_info($returnurl, $continueurl, $extras);
         echo $OUTPUT->footer();
         return false;
@@ -578,8 +578,7 @@ class portfolio_exporter {
     /**
     * local print header function to be reused across the export
     *
-    * @param string $titlestring key for a portfolio language string
-    * @param string $headerstring key for a portfolio language string
+    * @param string $headerstring full language string
     */
     public function print_header($headingstr, $summary=true) {
         global $OUTPUT, $PAGE;
@@ -589,18 +588,21 @@ class portfolio_exporter {
         $PAGE->set_title($titlestr);
         $PAGE->set_heading($headerstr);
         echo $OUTPUT->header();
-        $hstr = get_string($headingstr, 'portfolio');
-        if (strpos($hstr, '[[') === 0) {
-            $hstr = $headingstr;
-        }
-        echo $OUTPUT->heading($hstr);
+        echo $OUTPUT->heading($headingstr);
 
         if (!$summary) {
             return;
         }
 
         echo $OUTPUT->box_start();
+        echo $OUTPUT->box_start();
         echo $this->caller->heading_summary();
+        echo $OUTPUT->box_end();
+        if ($this->instance) {
+            echo $OUTPUT->box_start();
+            echo $this->instance->heading_summary();
+            echo $OUTPUT->box_end();
+        }
         echo $OUTPUT->box_end();
     }
 
