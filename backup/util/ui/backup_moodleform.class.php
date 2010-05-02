@@ -110,7 +110,6 @@ abstract class backup_moodleform extends moodleform {
      * @return bool
      */
     function add_setting(backup_setting $setting, backup_task $task=null) {
-        $mform = $this->_form;
         if ($setting->get_visibility() != backup_setting::VISIBLE) {
             return false;
         }
@@ -118,8 +117,12 @@ abstract class backup_moodleform extends moodleform {
             // First add the formatting for this setting
             $this->add_html_formatting($setting);
             // The call the add method with the get_element_properties array
-            call_user_method_array('addElement', $mform, $setting->get_ui()->get_element_properties($task));
-            $mform->setDefault($setting->get_ui_name(), $setting->get_value());
+            call_user_method_array('addElement', $this->_form, $setting->get_ui()->get_element_properties($task));
+            $this->_form->setDefault($setting->get_ui_name(), $setting->get_value());
+            if ($setting->has_help()) {
+                list($identifier, $component) = $setting->get_help();
+                $this->_form->addHelpButton($setting->get_ui_name(), $identifier, $component);
+            }
             $this->_form->addElement('html', html_writer::end_tag('div'));
         } else {
             // Add as a fixed unchangeable setting

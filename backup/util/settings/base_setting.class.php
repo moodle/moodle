@@ -83,6 +83,11 @@ abstract class base_setting {
     protected $ui_values; // array of value => ui value of the setting
     protected $ui_options;// array of custom ui options
 
+    /**
+     * @var array
+     */
+    protected $help = array();
+
     public function __construct($name, $vtype, $value = null, $visibility = self::VISIBLE, $status = self::NOT_LOCKED) {
         // Check vtype
         if ($vtype !== self::IS_BOOLEAN && $vtype !== self::IS_INTEGER &&
@@ -345,6 +350,35 @@ abstract class base_setting {
             $dependencies = array_merge($dependencies, $dependency->get_dependencies());
         }
         return $dependencies;
+    }
+
+    /**
+     * Sets a help string for this setting
+     *
+     * @param string $identifier
+     * @param string $component
+     */
+    public function set_help($identifier, $component='moodle') {
+        $this->help = array($identifier, $component);
+    }
+
+    /**
+     * Gets the help string params for this setting if it has been set
+     * @return array|false An array (identifier, component) or false if not set
+     */
+    public function get_help() {
+        if ($this->has_help()) {
+            return $this->help;
+        }
+        return false;
+    }
+
+    /**
+     * Returns true if help has been set for this setting
+     * @return cool
+     */
+    public function has_help() {
+        return (!empty($this->help));
     }
 
 // Implementable API starts here
