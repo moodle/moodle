@@ -265,13 +265,12 @@ if($do_show == 'showoneentry') {
     if(is_array($feedbackitems)){
         $align = right_to_left() ? 'right' : 'left';
         $usr = $DB->get_record('user', array('id'=>$userid));
-        echo $OUTPUT->box_start('feedback_info');
+        
         if($feedbackcompleted) {
-            echo UserDate($feedbackcompleted->timemodified).'<br />('.fullname($usr).')';
+            echo $OUTPUT->heading(UserDate($feedbackcompleted->timemodified).' ('.fullname($usr).')', 3);
         } else {
-            echo get_string('not_completed_yet','feedback');
+            echo $OUTPUT->heading(get_string('not_completed_yet','feedback'), 3);
         }
-        echo $OUTPUT->box_end();
         
         echo $OUTPUT->box_start('feedback_items');
         $itemnr = 0;

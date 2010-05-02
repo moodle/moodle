@@ -138,6 +138,7 @@ if(!$showcompleted) {
 
     if(is_array($feedbackcompleteds)) {
         echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthwide');
+        echo $OUTPUT->heading(get_string('anonymous_entries', 'feedback'), 3);
         foreach($feedbackcompleteds as $compl) {
             $data = array();
             
