@@ -76,6 +76,8 @@ class backup_ui {
         $this->controller = $controller;
         $this->progress = self::PROGRESS_INTIAL;
         $this->stage = $this->initialise_stage();
+        // Process UI event before to be safe
+        $this->controller->process_ui_event();
     }
     /**
      * Intialises what ever stage is requested. If none are requested we check
@@ -165,7 +167,11 @@ class backup_ui {
             throw new backup_ui_exception('backupuialreadyprocessed');
         }
         $this->progress = self::PROGRESS_PROCESSED;
-        return $this->stage->process();
+        // Process the stage
+        $processoutcome = $this->stage->process();
+        // Process UI event after to check changes are valid
+        $this->controller->process_ui_event();
+        return $processoutcome;
     }
     /**
      * Saves the backup controller.
@@ -181,6 +187,8 @@ class backup_ui {
         $this->progress = self::PROGRESS_SAVED;
         // First enforce dependencies
         $this->enforce_dependencies();
+        // Process UI event after to check any changes are valid
+        $this->controller->process_ui_event();
         // Save the controller
         $this->controller->save_controller();
         return true;

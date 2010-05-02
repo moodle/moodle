@@ -110,7 +110,7 @@ abstract class backup_moodleform extends moodleform {
      * @return bool
      */
     function add_setting(backup_setting $setting, backup_task $task=null) {
-        if ($setting->get_status() == backup_setting::NOT_LOCKED && $setting->get_visibility() != backup_setting::VISIBLE) {
+        if ($setting->get_status() == backup_setting::NOT_LOCKED && $setting->get_visibility() == backup_setting::VISIBLE) {
             // First add the formatting for this setting
             $this->add_html_formatting($setting);
             // The call the add method with the get_element_properties array
