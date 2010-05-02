@@ -23,6 +23,10 @@ require_once($CFG->dirroot . '/backup/moodle2/backup_plan_builder.class.php');
 $courseid = required_param('id', PARAM_INT);
 $sectionid = optional_param('section', null, PARAM_INT);
 $cmid = optional_param('cm', null, PARAM_INT);
+/**
+ * Part of the forms in stages after initial, is POST never GET
+ */
+$backupid = optional_param('backup', false, PARAM_ALPHANUM);
 
 $url = new moodle_url('/backup/backup.php', array('id'=>$courseid));
 if ($sectionid !== null) {
@@ -72,7 +76,7 @@ switch ($type) {
         print_error('unknownbackuptype');
 }
 
-if (!($bc = backup_ui::load_controller())) {
+if (!($bc = backup_ui::load_controller($backupid))) {
     $bc = new backup_controller($type, $id, backup::FORMAT_MOODLE,
                             backup::INTERACTIVE_YES, backup::MODE_GENERAL, $USER->id);
 }

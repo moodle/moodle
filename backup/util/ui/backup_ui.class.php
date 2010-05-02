@@ -293,9 +293,8 @@ class backup_ui {
      * Loads the backup controller if we are tracking one
      * @return backup_controller|false
      */
-    final public static function load_controller() {
+    final public static function load_controller($backupid=false) {
         // Get the backup id optional param
-        $backupid = optional_param('backup', false, PARAM_ALPHANUM);
         if ($backupid) {
             try {
                 // Try to load the controller with it.
