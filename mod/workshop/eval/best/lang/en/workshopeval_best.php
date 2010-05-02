@@ -24,6 +24,7 @@
  */
 
 $string['comparison'] = 'Comparison of assessments';
+$string['comparison_help'] = 'This is a factor that influences the grades for assessments calculated during the grading evaluation. If it is set to strict, then the assessment must be very similar to the best one to get a high grade. If it is set to lax, then the calculation is more benevolent to the differences in the assessments. Experiment with using various levels to get the figures you like most.';
 $string['comparisonlevel1'] = 'very strict';
 $string['comparisonlevel3'] = 'strict';
 $string['comparisonlevel5'] = 'fair';

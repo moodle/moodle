@@ -59,7 +59,6 @@ class mod_workshop_mod_form extends moodleform_mod {
         }
         $mform->addRule('name', null, 'required', null, 'client');
         $mform->addRule('name', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
-        $mform->setHelpButton('name', array('workshopname', $label, 'workshop'));
 
         // Introduction
         $this->add_intro_editor(false, get_string('introduction', 'workshop'));
@@ -68,19 +67,19 @@ class mod_workshop_mod_form extends moodleform_mod {
         $mform->addElement('header', 'workshopfeatures', get_string('workshopfeatures', 'workshop'));
 
         $label = get_string('useexamples', 'workshop');
-        $text = get_string('useexamplesdesc', 'workshop');
+        $text = get_string('useexamples_desc', 'workshop');
         $mform->addElement('checkbox', 'useexamples', $label, $text);
-        $mform->setHelpButton('useexamples', array('useexamples', $label, 'workshop'));
+        $mform->addHelpButton('useexamples', 'useexamples', 'workshop');
 
         $label = get_string('usepeerassessment', 'workshop');
-        $text = get_string('usepeerassessmentdesc', 'workshop');
+        $text = get_string('usepeerassessment_desc', 'workshop');
         $mform->addElement('checkbox', 'usepeerassessment', $label, $text);
-        $mform->setHelpButton('usepeerassessment', array('usepeerassessment', $label, 'workshop'));
+        $mform->addHelpButton('usepeerassessment', 'usepeerassessment', 'workshop');
 
         $label = get_string('useselfassessment', 'workshop');
-        $text = get_string('useselfassessmentdesc', 'workshop');
+        $text = get_string('useselfassessment_desc', 'workshop');
         $mform->addElement('checkbox', 'useselfassessment', $label, $text);
-        $mform->setHelpButton('useselfassessment', array('useselfassessment', $label, 'workshop'));
+        $mform->addHelpButton('useselfassessment', 'useselfassessment', 'workshop');
 
         // Grading settings -----------------------------------------------------------
         $mform->addElement('header', 'gradingsettings', get_string('gradingsettings', 'workshop'));
@@ -90,17 +89,17 @@ class mod_workshop_mod_form extends moodleform_mod {
         $label = get_string('submissiongrade', 'workshop');
         $mform->addElement('select', 'grade', $label, $grades);
         $mform->setDefault('grade', $workshopconfig->grade);
-        $mform->setHelpButton('grade', array('grade', $label, 'workshop'));
+        $mform->addHelpButton('grade', 'submissiongrade', 'workshop');
 
         $label = get_string('gradinggrade', 'workshop');
         $mform->addElement('select', 'gradinggrade', $label , $grades);
         $mform->setDefault('gradinggrade', $workshopconfig->gradinggrade);
-        $mform->setHelpButton('gradinggrade', array('gradinggrade', $label, 'workshop'));
+        $mform->addHelpButton('gradinggrade', 'gradinggrade', 'workshop');
 
         $label = get_string('strategy', 'workshop');
         $mform->addElement('select', 'strategy', $label, workshop::available_strategies_list());
         $mform->setDefault('strategy', $workshopconfig->strategy);
-        $mform->setHelpButton('strategy', array('strategy', $label, 'workshop'));
+        $mform->addHelpButton('strategy', 'strategy', 'workshop');
 
         $options = array();
         for ($i=5; $i>=0; $i--) {
@@ -108,7 +107,6 @@ class mod_workshop_mod_form extends moodleform_mod {
         }
         $label = get_string('gradedecimals', 'workshop');
         $mform->addElement('select', 'gradedecimals', $label, $options);
-        $mform->setHelpButton('gradedecimals', array('gradedecimals', $label, 'workshop'));
         $mform->setAdvanced('gradedecimals');
         $mform->setDefault('gradedecimals', $workshopconfig->gradedecimals);
 
@@ -126,18 +124,16 @@ class mod_workshop_mod_form extends moodleform_mod {
         $label = get_string('nattachments', 'workshop');
         $mform->addElement('select', 'nattachments', $label, $options);
         $mform->setDefault('nattachments', 1);
-        $mform->setHelpButton('nattachments', array('nattachments', $label, 'workshop'));
 
         $options = get_max_upload_sizes($CFG->maxbytes, $COURSE->maxbytes);
         $options[0] = get_string('courseuploadlimit') . ' ('.display_size($COURSE->maxbytes).')';
-        $mform->addElement('select', 'maxbytes', get_string('maximumsize', 'assignment'), $options);
+        $mform->addElement('select', 'maxbytes', get_string('maxbytes', 'workshop'), $options);
         $mform->setDefault('maxbytes', $workshopconfig->maxbytes);
-        $mform->setHelpButton('maxbytes', array('maxbytes', $label, 'workshop'));
 
         $label = get_string('latesubmissions', 'workshop');
-        $text = get_string('latesubmissionsdesc', 'workshop');
+        $text = get_string('latesubmissions_desc', 'workshop');
         $mform->addElement('checkbox', 'latesubmissions', $label, $text);
-        $mform->setHelpButton('latesubmissions', array('latesubmissions', $label, 'workshop'));
+        $mform->addHelpButton('latesubmissions', 'latesubmissions', 'workshop');
         $mform->setAdvanced('latesubmissions');
 
         // Assessment settings --------------------------------------------------------
@@ -151,7 +147,6 @@ class mod_workshop_mod_form extends moodleform_mod {
         $options = workshop::available_example_modes_list();
         $mform->addElement('select', 'examplesmode', $label, $options);
         $mform->setDefault('examplesmode', $workshopconfig->examplesmode);
-        $mform->setHelpButton('examplesmode', array('examplesmode', $label, 'workshop'));
         $mform->disabledIf('examplesmode', 'useexamples');
         $mform->setAdvanced('examplesmode');
 
@@ -160,22 +155,18 @@ class mod_workshop_mod_form extends moodleform_mod {
 
         $label = get_string('submissionstart', 'workshop');
         $mform->addElement('date_time_selector', 'submissionstart', $label, array('optional' => true));
-        $mform->setHelpButton('submissionstart', array('submissionstart', $label, 'workshop'));
         $mform->setAdvanced('submissionstart');
 
         $label = get_string('submissionend', 'workshop');
         $mform->addElement('date_time_selector', 'submissionend', $label, array('optional' => true));
-        $mform->setHelpButton('submissionend', array('submissionend', $label, 'workshop'));
         $mform->setAdvanced('submissionend');
 
         $label = get_string('assessmentstart', 'workshop');
         $mform->addElement('date_time_selector', 'assessmentstart', $label, array('optional' => true));
-        $mform->setHelpButton('assessmentstart', array('assessmentstart', $label, 'workshop'));
         $mform->setAdvanced('assessmentstart');
 
         $label = get_string('assessmentend', 'workshop');
         $mform->addElement('date_time_selector', 'assessmentend', $label, array('optional' => true));
-        $mform->setHelpButton('assessmentend', array('assessmentend', $label, 'workshop'));
         $mform->setAdvanced('assessmentend');
 
         // Common module settinga, Restrict availability, Activity completion etc. ----
