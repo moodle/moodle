@@ -61,18 +61,6 @@ abstract class backup_setting extends base_setting implements checksumable {
     public function is_checksum_correct($checksum) {
         return $this->calculate_checksum() === $checksum;
     }
-
-    public function get_dependencies() {
-        return $this->dependencies;
-    }
-
-    public function get_ui_name() {
-        return $this->uisetting->get_name();
-    }
-
-    public function get_ui_type() {
-        return $this->uisetting->get_type();
-    }
 }
 
 /*

@@ -188,6 +188,22 @@ abstract class base_setting {
         }
     }
 
+    /**
+     * Returns an array of all dependencies this setting has as well as the dependencies
+     * of its dependencies.... another words recursivily
+     * @return array
+     */
+    public function get_all_dependencies() {
+        $dependencies = array_values($this->dependencies);
+        foreach ($this->dependencies as &$dependency) {
+            $childdependencies = $dependency->get_dependant_setting()->get_all_dependencies();
+            foreach ($childdependencies as $name=>&$childdependency) {
+                $dependencies[] = $childdependency;
+            }
+        }
+        return $dependencies;
+    }
+
     public function set_ui(backup_setting_ui $ui) {
         $this->uisetting = $ui;
     }
@@ -270,10 +286,18 @@ abstract class base_setting {
         if ($type == null) {
             switch ($this->vtype) {
                 case self::IS_BOOLEAN :
-                    if ($this->value) {
-                        $type = setting_dependency::DISABLED_FALSE;
+                    if ($this->get_ui_type() == self::UI_HTML_CHECKBOX) {
+                        if ($this->value) {
+                            $type = setting_dependency::DISABLED_NOT_CHECKED;
+                        } else {
+                            $type = setting_dependency::DISABLED_CHECKED;
+                        }
                     } else {
-                        $type = setting_dependency::DISABLED_TRUE;
+                        if ($this->value) {
+                            $type = setting_dependency::DISABLED_FALSE;
+                        } else {
+                            $type = setting_dependency::DISABLED_TRUE;
+                        }
                     }
                     break;
                 case self::IS_FILENAME :
@@ -293,12 +317,16 @@ abstract class base_setting {
                 $dependency = new setting_dependency_disabledif_equals($this, $dependentsetting, $options['value'], $options['defaultvalue']);
                 break;
             case setting_dependency::DISABLED_TRUE :
-            case setting_dependency::DISABLED_CHECKED :
                 $dependency = new setting_dependency_disabledif_equals($this, $dependentsetting, true, $options['defaultvalue']);
                 break;
             case setting_dependency::DISABLED_FALSE :
-            case setting_dependency::DISABLED_NOT_CHECKED :
                 $dependency = new setting_dependency_disabledif_equals($this, $dependentsetting, false, $options['defaultvalue']);
+                break;
+            case setting_dependency::DISABLED_CHECKED :
+                $dependency = new setting_dependency_disabledif_checked($this, $dependentsetting, $options['defaultvalue']);
+                break;
+            case setting_dependency::DISABLED_NOT_CHECKED :
+                $dependency = new setting_dependency_disabledif_not_checked($this, $dependentsetting, $options['defaultvalue']);
                 break;
         }
         $this->dependencies[$dependentsetting->get_name()] = $dependency;
@@ -389,13 +417,16 @@ abstract class base_setting {
         return false;
     }
 
-    protected function get_dependencies() {
-        $dependencies = array();
-        foreach ($this->dependencies as $dependency) {
-            $dependencies[$dependency->get_dependant_setting()->get_name()] = $dependency->get_dependant_setting();
-            $dependencies = array_merge($dependencies, $dependency->get_dependencies());
-        }
-        return $dependencies;
+    public function get_dependencies() {
+        return $this->dependencies;
+    }
+
+    public function get_ui_name() {
+        return $this->uisetting->get_name();
+    }
+
+    public function get_ui_type() {
+        return $this->uisetting->get_type();
     }
 
     /**

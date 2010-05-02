@@ -38,10 +38,10 @@ abstract class setting_dependency {
      */
     const DISABLED_VALUE = 0;
     const DISABLED_NOT_VALUE = 1;
-    const DISABLED_CHECKED = 2;
     const DISABLED_TRUE = 2;
-    const DISABLED_NOT_CHECKED = 3;
     const DISABLED_FALSE = 3;
+    const DISABLED_CHECKED = 4;
+    const DISABLED_NOT_CHECKED = 5;
 
     /**
      * The parent setting (primary)
@@ -130,6 +130,16 @@ abstract class setting_dependency {
     public function get_dependant_setting() {
         return $this->dependentsetting;
     }
+    /**
+     * This function enforces the dependency
+     */
+    abstract public function enforce();
+    /**
+     * Returns an array of properties suitable to be used to define a moodleforms
+     * disabled command
+     * @return array
+     */
+    abstract public function get_moodleform_properties();
 }
 
 /**
@@ -155,7 +165,7 @@ class setting_dependency_disabledif_equals extends setting_dependency {
      */
     public function __construct(base_setting $setting, base_setting $dependentsetting, $value, $defaultvalue = false) {
         parent::__construct($setting, $dependentsetting, $defaultvalue);
-        $this->value = $value;
+        $this->value = ($value)?(string)$value:0;
     }
     /**
      * Processes a value change in the primary setting
@@ -171,10 +181,8 @@ class setting_dependency_disabledif_equals extends setting_dependency {
             $this->dependentsetting->set_status(base_setting::LOCKED_BY_HIERARCHY);
             $this->dependentsetting->set_value($this->defaultvalue);
         } else if ($this->dependentsetting->get_status() == base_setting::LOCKED_BY_HIERARCHY) {
-            // We can unlock the dependent setting and reset its value to the
-            // last value the user had for it.
+            // We can unlock the dependent setting
             $this->dependentsetting->set_status(base_setting::NOT_LOCKED);
-            $this->dependentsetting->set_value($this->lastvalue);
         }
         // Return true if the value has changed for the dependent setting
         return ($prevalue != $this->dependentsetting->get_value());
@@ -222,6 +230,19 @@ class setting_dependency_disabledif_equals extends setting_dependency {
         }
         return $changes;
     }
+    /**
+     * Returns an array of properties suitable to be used to define a moodleforms
+     * disabled command
+     * @return array
+     */
+    public function get_moodleform_properties() {
+        return array(
+            'setting'=>$this->dependentsetting->get_ui_name(),
+            'dependenton'=>$this->setting->get_ui_name(),
+            'condition'=>'eq',
+            'value'=>$this->value
+        );
+    }
 }
 /**
  * A dependency that disables the secondary element if the primary element is
@@ -231,9 +252,21 @@ class setting_dependency_disabledif_equals extends setting_dependency {
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class setting_dependency_disabledif_checked extends setting_dependency_disabledif_equals {
-    public function __construct(base_setting $setting, base_setting $dependentsetting) {
-        parent::__construct($setting, $dependentsetting, $defaultvalue = false);
+    public function __construct(base_setting $setting, base_setting $dependentsetting, $defaultvalue = false) {
+        parent::__construct($setting, $dependentsetting, true, $defaultvalue);
         $this->value = true;
+    }
+    /**
+     * Returns an array of properties suitable to be used to define a moodleforms
+     * disabled command
+     * @return array
+     */
+    public function get_moodleform_properties() {
+        return array(
+            'setting'=>$this->dependentsetting->get_ui_name(),
+            'dependenton'=>$this->setting->get_ui_name(),
+            'condition'=>'checked'
+        );
     }
 }
 
@@ -244,9 +277,21 @@ class setting_dependency_disabledif_checked extends setting_dependency_disabledi
  * @copyright 2010 Sam Hemelryk
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class setting_dependency_disabledif_notchecked extends setting_dependency_disabledif_equals {
+class setting_dependency_disabledif_not_checked extends setting_dependency_disabledif_equals {
     public function __construct(base_setting $setting, base_setting $dependentsetting, $defaultvalue = false) {
-        parent::__construct($setting, $dependentsetting);
+        parent::__construct($setting, $dependentsetting, false, $defaultvalue);
         $this->value = false;
+    }
+    /**
+     * Returns an array of properties suitable to be used to define a moodleforms
+     * disabled command
+     * @return array
+     */
+    public function get_moodleform_properties() {
+        return array(
+            'setting'=>$this->dependentsetting->get_ui_name(),
+            'dependenton'=>$this->setting->get_ui_name(),
+            'condition'=>'notchecked'
+        );
     }
 }

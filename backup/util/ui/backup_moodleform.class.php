@@ -110,21 +110,16 @@ abstract class backup_moodleform extends moodleform {
      * @return bool
      */
     function add_setting(backup_setting $setting, backup_task $task=null) {
-        if ($setting->get_status() == backup_setting::NOT_LOCKED && $setting->get_visibility() == backup_setting::VISIBLE) {
-            // First add the formatting for this setting
-            $this->add_html_formatting($setting);
-            // The call the add method with the get_element_properties array
-            call_user_method_array('addElement', $this->_form, $setting->get_ui()->get_element_properties($task));
-            $this->_form->setDefault($setting->get_ui_name(), $setting->get_value());
-            if ($setting->has_help()) {
-                list($identifier, $component) = $setting->get_help();
-                $this->_form->addHelpButton($setting->get_ui_name(), $identifier, $component);
-            }
-            $this->_form->addElement('html', html_writer::end_tag('div'));
-        } else {
-            // Add as a fixed unchangeable setting
-            $this->add_fixed_setting($setting);
+        // First add the formatting for this setting
+        $this->add_html_formatting($setting);
+        // The call the add method with the get_element_properties array
+        call_user_method_array('addElement', $this->_form, $setting->get_ui()->get_element_properties($task));
+        $this->_form->setDefault($setting->get_ui_name(), $setting->get_value());
+        if ($setting->has_help()) {
+            list($identifier, $component) = $setting->get_help();
+            $this->_form->addHelpButton($setting->get_ui_name(), $identifier, $component);
         }
+        $this->_form->addElement('html', html_writer::end_tag('div'));
         return true;
     }
     /**
@@ -221,21 +216,9 @@ abstract class backup_moodleform extends moodleform {
         if ($basesetting == null) {
             $basesetting = $setting;
         }
-        foreach ($setting->get_dependencies() as $dependency) {
-            $dependency = $dependency->get_dependant_setting();
-            switch ($basesetting->get_ui_type()) {
-                case backup_setting::UI_HTML_CHECKBOX :
-                    $mform->disabledIf($dependency->get_ui_name(), $basesetting->get_ui_name(), 'notchecked');
-                    $this->add_dependencies($dependency, $basesetting);
-                    break;
-                case backup_setting::UI_HTML_DROPDOWN :
-                    $mform->disabledIf($dependency->get_ui_name(), $basesetting->get_ui_name(), 'eq', 0);
-                    $this->add_dependencies($dependency, $basesetting);
-                    break;
-                default:
-                    debugging('Unknown backup setting type', DEBUG_DEVELOPER);
-                    break;
-            }
+        // Apply all dependencies for backup
+        foreach ($setting->get_all_dependencies() as $dependency) {
+            call_user_method_array('disabledIf', $this->_form, $dependency->get_moodleform_properties());
         }
     }
     /**
