@@ -79,8 +79,8 @@ class mod_forum_post_form extends moodleform {
                 array('subdirs'=>0,
                       'maxbytes'=>$forum->maxbytes,
                       'maxfiles'=>$forum->maxattachments,
-                      'filetypes'=>'*',
-                      'returnvalue'=>'ref_id'
+                      'accepted_types'=>'*',
+                      'return_types'=>FILE_INTERNAL
                 ));
             $mform->addHelpButton('attachments', 'attachment', 'forum');
         }
