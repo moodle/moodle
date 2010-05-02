@@ -1345,7 +1345,6 @@ $capabilities = array(
         'captype' => 'read',
         'contextlevel' => CONTEXT_SYSTEM,
         'legacy' => array(
-            'manager' => CAP_ALLOW
         )
     ),
 
