@@ -692,6 +692,16 @@
         $records = array();
     }
 
+    if ($mode == '' && $CFG->enableportfolios) {
+        require_once($CFG->libdir . '/portfoliolib.php');
+        $button = new portfolio_add_button();
+        $button->set_callback_options('data_portfolio_caller', array('id' => $cm->id), '/mod/data/locallib.php');
+        if (data_portfolio_caller::has_files($data)) {
+            $button->set_formats(array(PORTFOLIO_FORMAT_RICHHTML, PORTFOLIO_FORMAT_LEAP2A)); // no plain html for us
+        }
+        echo $button->to_html(PORTFOLIO_ADD_FULL_FORM);
+    }
+
     //Advanced search form doesn't make sense for single (redirects list view)
     if (($maxcount || $mode == 'asearch') && $mode != 'single') {
         data_print_preference_form($data, $perpage, $search, $sort, $order, $search_array, $advanced, $mode);

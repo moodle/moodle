@@ -127,6 +127,7 @@ $string['exportaszip'] = 'Export as zip';
 $string['exportaszip_help'] = 'The export as zip feature allows you to save the templates and fields as a preset zip for download. The zip may then be imported to another course.';
 $string['exportdatabaserecords'] = 'Export Database records';
 $string['exportedtozip'] = 'Exported to temporary zip...';
+$string['exportownentries'] = 'Export your own entries only? ({$a->mine}/{$a->all})';
 $string['failedpresetdelete'] = 'Error deleting a preset!';
 $string['fieldadded'] = 'Field added';
 $string['fieldallowautolink'] = 'Allow autolink';

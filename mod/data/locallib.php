@@ -21,52 +21,47 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-/**
- * @package   mod-data
- * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+require_once($CFG->dirroot . '/mod/data/lib.php');
 
+/**
+ * The class to handle entry exports of a database module
+ */
 class data_portfolio_caller extends portfolio_module_caller_base {
 
-    /** @var int */
+    /** @var int the single record to export */
     protected $recordid;
-    /** @var string */
-    protected $exporttype;
-    /** @var string */
-    protected $delimiter_name;
 
-    /** @var object */
+    /** @var object the record from the data table */
     private $data;
-    /**#@+ @var array */
-    private $selectedfields;
+
+    /**#@+ @var array the fields used and their fieldtypes */
     private $fields;
     private $fieldtypes;
-    private $exportdata;
-    /**#@-*/
-    /**#@+ @var object */
-    private $singlerecord;
-    private $singlefield;
-    /**#@-*/
+
+    /** @var object the records to export */
+    private $records;
+
+    /** @var int how many records are 'mine' */
+    private $minecount;
+
     /**
+     * the required callback arguments for a single-record export
+     *
      * @return array
      */
     public static function expected_callbackargs() {
         return array(
-            'id'             => true,
-            'recordid'       => false,
-            'delimiter_name' => false,
-            'exporttype'     => false,
+            'id'       => true,
+            'recordid' => false,
         );
     }
+
     /**
-     * @param array $callbackargs
+     * @param array $callbackargs the arguments passed through
      */
     public function __construct($callbackargs) {
         parent::__construct($callbackargs);
-        if (empty($this->exporttype)) {
-            $this->exporttype = 'csv';
-        }
+        // set up the list of fields to export
         $this->selectedfields = array();
         foreach ($callbackargs as $key => $value) {
             if (strpos($key, 'field_') === 0) {
@@ -76,15 +71,19 @@ class data_portfolio_caller extends portfolio_module_caller_base {
     }
 
     /**
-     * @global object
+     * load up the data needed for the export
+     *
+     * @global object $DB
      */
     public function load_data() {
-        global $DB;
+        global $DB, $USER;
         if (!$this->cm = get_coursemodule_from_id('data', $this->id)) {
             throw new portfolio_caller_exception('invalidid', 'data');
         }
-        $this->data = $DB->get_record('data', array('id' => $this->cm->instance));
-        $fieldrecords = $DB->get_records('data_fields', array('dataid'=>$this->cm->instance), 'id');
+        if (!$this->data = $DB->get_record('data', array('id' => $this->cm->instance))) {
+            throw new portfolio_caller_exception('invalidid', 'data');
+        }
+        $fieldrecords = $DB->get_records('data_fields', array('dataid' => $this->cm->instance), 'id');
         // populate objets for this databases fields
         $this->fields = array();
         foreach ($fieldrecords as $fieldrecord) {
@@ -93,105 +92,138 @@ class data_portfolio_caller extends portfolio_module_caller_base {
             $this->fieldtypes[]  = $tmp->type;
         }
 
+        $this->records = array();
         if ($this->recordid) {
-            //user has selected to export one single entry rather than the whole thing
-            // which is completely different
-            $this->singlerecord = $DB->get_record('data_records', array('id' => $this->recordid));
-            $this->singlerecord->content = $DB->get_records('data_content', array('recordid' => $this->singlerecord->id));
-            $this->exporttype = 'single';
-
-            list($formats, $files) = self::formats($this->fields, $this->singlerecord);
-            if (count($files) == 1 && count($this->fields) == 1) {
-                $this->singlefile = $files[0];
-                $this->exporttype = 'singlefile';
-            } else if (count($files) > 0) {
-                $this->multifiles = $files;
-            }
+            $tmp = $DB->get_record('data_records', array('id' => $this->recordid));
+            $tmp->content = $DB->get_records('data_content', array('recordid' => $this->recordid));
+            $this->records[] = $tmp;
         } else {
-            // all records as csv or whatever
-            $this->exportdata = data_get_exportdata($this->cm->instance, $this->fields, $this->selectedfields);
+            $where = array('dataid' => $this->data->id);
+            if (!has_capability('mod/data:exportallentries', get_context_instance(CONTEXT_MODULE, $this->cm->id))) {
+                $where['userid'] = $USER->id; // get them all in case, we'll unset ones that aren't ours later if necessary
+            }
+            $tmp = $DB->get_records('data_records', $where);
+            foreach ($tmp as $t) {
+                $t->content = $DB->get_records('data_content', array('recordid' => $t->id));
+                $this->records[] = $t;
+            }
+            $this->minecount = $DB->count_records('data_records', array('dataid' => $this->data->id, 'userid' => $USER->id));
+        }
+
+        if ($this->recordid) {
+            list($formats, $files) = self::formats($this->fields, $this->records[0]);
+            $this->set_file_and_format_data($files);
         }
     }
 
     /**
-     * @todo penny  later when we suport exporting to more than just csv, we may
-     * need to ask the user here if we have not already passed it
+     * How long we think the export will take
+     * Single entry is probably not too long.
+     * But we check for filesizes
+     * Else base it on the number of records
      *
-     * @return bool
-     */
-    public function has_export_config() {
-        return false;
-    }
-
-    /**
-     * @uses PORTFOLIO_TIME_LOW
-     * @return mixed
+     * @return one of PORTFOLIO_TIME_XX constants
      */
     public function expected_time() {
-        if ($this->exporttype == 'single') {
-            return PORTFOLIO_TIME_LOW;
+        if ($this->recordid) {
+            return $this->expected_time_file();
+        } else {
+            return portfolio_expected_time_db(count($this->records));
         }
-        return portfolio_expected_time_db(count($this->exportdata));
     }
 
     /**
+     * Calculate the shal1 of this export
+     * Dependent on the export format.
      * @return string
      */
     public function get_sha1() {
-        if ($this->exporttype == 'singlefile') {
-            return $this->singlefile->get_contenthash();
+        // in the case that we're exporting a subclass of 'file' and we have a singlefile,
+        // then we're not exporting any metadata, just the file by itself by mimetype.
+        if ($this->exporter->get('format') instanceof portfolio_format_file && $this->singlefile) {
+            return $this->get_sha1_file();
         }
-        $loopdata = $this->exportdata;
-        if ($this->exporttype == 'single') {
-            $loopdata = $this->singlerecord;
-        }
+        // otherwise we're exporting some sort of multipart content so use the data
         $str = '';
-        foreach ($loopdata as $data) {
-            if (is_array($data) || is_object($data)) {
-                $testkey = array_pop(array_keys($data));
-                if (is_array($data[$testkey]) || is_object($data[$testkey])) {
-                    foreach ($data as $d) {
-                        $str .= implode(',', (array)$d);
+        foreach ($this->records as $record) {
+            foreach ($record as $data) {
+                if (is_array($data) || is_object($data)) {
+                    $testkey = array_pop(array_keys($data));
+                    if (is_array($data[$testkey]) || is_object($data[$testkey])) {
+                        foreach ($data as $d) {
+                            $str .= implode(',', (array)$d);
+                        }
+                    } else {
+                        $str .= implode(',', (array)$data);
                     }
                 } else {
-                    $str .= implode(',', (array)$data);
+                    $str .= $data;
                 }
-            } else {
-                $str .= $data;
             }
         }
-        return sha1($str . ',' . $this->exporttype);
+        return sha1($str . ',' . $this->exporter->get('formatclass'));
     }
+
     /**
-     * @global object
+     * Prepare the package for export
+     *
+     * @return stored_file object
      */
     public function prepare_package() {
         global $DB;
-        $count = count($this->exportdata);
+        $leapwriter = null;
         $content = '';
         $filename = '';
-        switch ($this->exporttype) {
-            case 'singlefile':
-                return $this->get('exporter')->copy_existing_file($this->singlefile);
-            case 'single':
-                $content = $this->exportsingle();
+        $uid = $this->exporter->get('user')->id;
+        $users = array(); //cache
+        $onlymine = $this->get_export_config('mineonly');
+        if ($this->exporter->get('formatclass') == PORTFOLIO_FORMAT_LEAP2A) {
+            $leapwriter = $this->exporter->get('format')->leap2a_writer();
+            $ids = array();
+        }
+
+        if ($this->exporter->get('format') instanceof portfolio_format_file && $this->singlefile) {
+            return $this->get('exporter')->copy_existing_file($this->singlefile);
+        }
+        foreach ($this->records  as $key => $record) {
+            if ($onlymine && $record->userid != $uid) {
+                unset($this->records[$key]); // sha1
+                continue;
+            }
+            list($tmpcontent, $files)  = $this->exportentry($record);
+            $content .= $tmpcontent;
+            if ($leapwriter) {
+                $entry = new portfolio_format_leap2a_entry('dataentry' . $record->id, $this->data->name, 'resource', $tmpcontent);
+                $entry->published = $record->timecreated;
+                $entry->updated = $record->timemodified;
+                if ($record->userid != $uid) {
+                    if (!array_key_exists($record->userid, $users)) {
+                        $users[$record->userid] = $DB->get_record('user', array('id' => $record->userid), 'id,firstname,lastname');
+                    }
+                    $entry->author = $users[$record->userid];
+                }
+                $ids[] = $entry->id;
+                foreach ($files as $file) {
+                    $entry->add_attachment($file);
+                }
+                $leapwriter->add_entry($entry);
+            }
+        }
+        if ($leapwriter) {
+            if (count($this->records) > 1) { // make a selection element to tie them all together
+                $selection = new portfolio_format_leap2a_entry('datadb' . $this->data->id,
+                    get_string('entries', 'data') . ': ' . $this->data->name, 'selection');
+                $leapwriter->add_entry($selection);
+                $leapwriter->make_selection($selection, $ids, 'Grouping');
+            }
+            $filename = $this->exporter->get('format')->manifest_name();
+            $content = $leapwriter->to_xml();
+        } else {
+            if (count($this->records) == 1) {
                 $filename = clean_filename($this->cm->name . '-entry.html');
-                break;
-            case 'csv':
-                $content = data_export_csv($this->exportdata, $this->delimiter_name, $this->cm->name, $count, true);
-                $filename = clean_filename($this->cm->name . '.csv');
-                break;
-            case 'xls':
-                throw new portfolio_caller_exception('notimplemented', 'portfolio', '', 'xls');
-                $content = data_export_xls($this->exportdata, $this->cm->name, $count, true);
-                break;
-            case 'ods':
-                throw new portfolio_caller_exception('notimplemented', 'portfolio', '', 'ods');
-                $content = data_export_ods($this->exportdata, $this->cm->name, $count, true);
-                break;
-            default:
-                throw new portfolio_caller_exception('notimplemented', 'portfolio', '', $this->exporttype);
-            break;
+            } else {
+                $filename = clean_filename($this->cm->name . '-full.html');
+            }
         }
         return $this->exporter->write_new_file(
             $content,
@@ -201,10 +233,21 @@ class data_portfolio_caller extends portfolio_module_caller_base {
     }
 
     /**
+     * Verify the user can still export this entry
+     *
      * @return bool
      */
     public function check_permissions() {
-        return has_capability('mod/data:exportallentries', get_context_instance(CONTEXT_MODULE, $this->cm->id));
+        if ($this->recordid) {
+            if (data_isowner($this->recordid)) {
+                return has_capability('mod/data:exportownentry', get_context_instance(CONTEXT_MODULE, $this->cm->id));
+            }
+            return has_capability('mod/data:exportentry', get_context_instance(CONTEXT_MODULE, $this->cm->id));
+        }
+        if ($this->has_export_config() && !$this->get_export_config('mineonly')) {
+            return has_capability('mod/data:exportallentries', get_context_instance(CONTEXT_MODULE, $this->cm->id));
+        }
+        return has_capability('mod/data:exportownentry', get_context_instance(CONTEXT_MODULE, $this->cm->id));
     }
 
     /**
@@ -230,32 +273,33 @@ class data_portfolio_caller extends portfolio_module_caller_base {
     }
 
     /**
-     * @global object
-     * @return string
+     * Prepare a single entry for export, replacing all the content etc
+     *
+     * @param stdclass $record the entry to export
+     *
+     * @return array with key 0 = the html content, key 1 = array of attachments
      */
-    private function exportsingle() {
-        global $DB;
+    private function exportentry($record) {
     // Replacing tags
         $patterns = array();
         $replacement = array();
         $context = get_context_instance(CONTEXT_MODULE, $this->cm->id);
 
+        $files = array();
     // Then we generate strings to replace for normal tags
         $format = $this->get('exporter')->get('format');
         foreach ($this->fields as $field) {
             $patterns[]='[['.$field->field->name.']]';
             if (is_callable(array($field, 'get_file'))) {
-                // TODO this used to be:
-                // if ($field instanceof data_field_file) {
-                // - see  MDL-16493
-                if (!$file = $field->get_file($this->singlerecord->id)) {
+                if (!$file = $field->get_file($record->id)) {
                     $replacement[] = '';
                     continue; // probably left empty
                 }
                 $replacement[] = $format->file_output($file);
                 $this->get('exporter')->copy_existing_file($file);
+                $files[] = $file;
             } else {
-                $replacement[] = $field->display_browse_field($this->singlerecord->id, 'singletemplate');
+                $replacement[] = $field->display_browse_field($record->id, 'singletemplate');
             }
         }
 
@@ -278,19 +322,24 @@ class data_portfolio_caller extends portfolio_module_caller_base {
         $replacement[] = '';
         $replacement[] = '';
         $replacement[] = '';
-        $replacement[] = userdate($this->singlerecord->timecreated);
-        $replacement[] = userdate($this->singlerecord->timemodified);
+        $replacement[] = userdate($record->timecreated);
+        $replacement[] = userdate($record->timemodified);
 
         // actual replacement of the tags
-        return str_ireplace($patterns, $replacement, $this->data->singletemplate);
+        return array(str_ireplace($patterns, $replacement, $this->data->singletemplate), $files);
     }
 
     /**
-     * @param array $fields
-     * @param object $record
+     * Given the fields being exported, and the single record,
+     * work out which export format(s) we can use
+     *
+     * @param array $fields array of field objects
+     * @param object $record The data record object
+     *
      * @uses PORTFOLIO_FORMAT_PLAINHTML
      * @uses PORTFOLIO_FORMAT_RICHHTML
-     * @return array
+     *
+     * @return array of PORTFOLIO_XX constants
      */
     public static function formats($fields, $record) {
         $formats = array(PORTFOLIO_FORMAT_PLAINHTML);
@@ -301,14 +350,52 @@ class data_portfolio_caller extends portfolio_module_caller_base {
             }
         }
         if (count($includedfiles) == 1 && count($fields) == 1) {
-            $formats= array(portfolio_format_from_mimetype($includedfiles[0]->get_mimetype()));
+            $formats = array(portfolio_format_from_mimetype($includedfiles[0]->get_mimetype()));
         } else if (count($includedfiles) > 0) {
             $formats = array(PORTFOLIO_FORMAT_RICHHTML);
         }
         return array($formats, $includedfiles);
     }
 
+    public static function has_files($data) {
+        global $DB;
+        $fieldrecords = $DB->get_records('data_fields', array('dataid' => $data->id), 'id');
+        // populate objets for this databases fields
+        foreach ($fieldrecords as $fieldrecord) {
+            $field = data_get_field($fieldrecord, $data);
+            if (is_callable(array($field, 'get_file'))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * base supported formats before we know anything about the export
+     */
     public static function base_supported_formats() {
-        return array(PORTFOLIO_FORMAT_SPREADSHEET, PORTFOLIO_FORMAT_RICHHTML, PORTFOLIO_FORMAT_PLAINHTML);
+        return array(PORTFOLIO_FORMAT_RICHHTML, PORTFOLIO_FORMAT_PLAINHTML, PORTFOLIO_FORMAT_LEAP2A);
+    }
+
+    public function has_export_config() {
+        // if we're exporting more than just a single entry,
+        // and we have the capability to export all entries,
+        // then ask whether we want just our own, or all of them
+        return (empty($this->recordid) // multi-entry export
+            && $this->minecount > 0    // some of them are mine
+            && $this->minecount != count($this->records) // not all of them are mine
+            && has_capability('mod/data:exportallentries', get_context_instance(CONTEXT_MODULE, $this->cm->id))); // they actually have a choice in the matter
+    }
+
+    public function export_config_form(&$mform, $instance) {
+        if (!$this->has_export_config()) {
+            return;
+        }
+        $mform->addElement('selectyesno', 'mineonly', get_string('exportownentries', 'data', (object)array('mine' => $this->minecount, 'all' => count($this->records))));
+        $mform->setDefault('mineonly', 1);
+    }
+
+    public function get_allowed_export_config() {
+        return array('mineonly');
     }
 }
