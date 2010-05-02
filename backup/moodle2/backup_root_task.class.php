@@ -69,7 +69,7 @@ class backup_root_task extends backup_task {
         $this->add_setting($roleassignments);
         $users->add_dependency($roleassignments);
 
-        // Define user_files (dependent of users)
+        // Define user_files (dependent of users and anonymize)
         $userfiles = new backup_user_files_setting('user_files', base_setting::IS_BOOLEAN, true);
         $userfiles->set_ui(new backup_setting_ui_select($userfiles, $userfiles->get_name(), array(1=>get_string('yes'), 0=>get_string('no'))));
         $this->add_setting($userfiles);
@@ -109,9 +109,10 @@ class backup_root_task extends backup_task {
         $this->add_setting($logs);
         $users->add_dependency($logs);
 
-        // Define grade_histories
+        // Define grade_histories (dependent of users)
         $gradehistories = new backup_generic_setting('grade_histories', base_setting::IS_BOOLEAN, true);
         $gradehistories->set_ui(new backup_setting_ui_select($gradehistories, $gradehistories->get_name(), array(1=>get_string('yes'), 0=>get_string('no'))));
         $this->add_setting($gradehistories);
+        $users->add_dependency($gradehistories);
     }
 }

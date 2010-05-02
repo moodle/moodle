@@ -218,6 +218,9 @@ abstract class backup_activity_task extends backup_task {
         // All these are common settings to be shared by all activities
 
         // Define activity_include (to decide if the whole task must be really executed)
+        // Dependent of:
+        // - activities root setting
+        // - section_included setting (if exists)
         $settingname = $settingprefix . 'included';
         $activity_included = new backup_activity_generic_setting($settingname, base_setting::IS_BOOLEAN, true);
         $this->add_setting($activity_included);
@@ -231,7 +234,10 @@ abstract class backup_activity_task extends backup_task {
             $section_included->add_dependency($activity_included);
         }
 
-        // Define activity_userinfo (dependent of root users setting)
+        // Define activity_userinfo. Dependent of:
+        // - users root setting
+        // - section_userinfo setting (if exists)
+        // - activity_included setting
         $settingname = $settingprefix . 'userinfo';
         $activity_userinfo = new backup_activity_userinfo_setting($settingname, base_setting::IS_BOOLEAN, true);
         $activity_userinfo->get_ui()->set_label(get_string('includeuserinfo','backup'));
@@ -245,6 +251,8 @@ abstract class backup_activity_task extends backup_task {
             $section_userinfo = $this->plan->get_setting($settingname);
             $section_userinfo->add_dependency($activity_userinfo);
         }
+        // Look for "activity_included" setting
+        $activity_included->add_dependency($activity_userinfo);
 
         // End of common activity settings, let's add the particular ones
         $this->define_my_settings();
