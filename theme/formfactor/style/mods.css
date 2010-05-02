@@ -1,4 +1,5 @@
-#intro { background:#f7f7f7; }
+#intro,
+#pageintro { background:#f7f7f7; }
 
 /* Forum
 ---------------------------*/
@@ -6,10 +7,12 @@
 .path-mod-forum .forumheaderlist th {background: url([[pix:theme|gradient-sb]]) repeat-x 0 0}
 .path-mod-forum .forumheaderlist .r1 td { background:#f5f5f5; }
 
-.forumpost { border:none; }
 .forumpost .topic { background:#eee;border-color:#aaa;border-width:0 0 2px 0;padding-left:7px; }
 .forumpost .topic .subject { font-size:1.25em; }
 .forumpost .topic .author { font-style:italic;color:#444;font-size:0.95em; }
 .forumpost .content { border-bottom:5px solid #aaa;padding:5px 7px 10px 7px; }
-.forumpost .content .commands,
-.forumpost .content .link { font-size:0.9em; }
+
+/* Assignments 
+--------------------------*/
+
+.path-mod-assignment #dates table .c0 { background:#f5f5f5; }

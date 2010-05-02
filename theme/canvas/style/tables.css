@@ -1,10 +1,14 @@
 .generaltable th.header,
 .generaltable td.cell,
+#attempts th.header,
+#attempts td.cell,
 .plugincompattable th,
 .plugincompattable td,
 .environmenttable th,
 .environmenttable td { border:1px solid #ddd;border-collapse:collapse; }
 
+.results .header,
+#attempts th.header,
 .generaltable th.header,
 .plugincompattable th,
 .environmenttable th { background:#f3f3f3;border-bottom-width:2px; }

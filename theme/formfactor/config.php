@@ -21,7 +21,7 @@ $THEME->parents = array('canvas','base');
 ////////////////////////////////////////////////////
 
 
-$THEME->sheets = array('core', 'course', 'mods', 'blocks', 'selected');
+$THEME->sheets = array('selected', 'core', 'course', 'mods', 'blocks');
 
 ////////////////////////////////////////////////////
 // Name of the stylesheet(s) you've including in 
@@ -98,7 +98,7 @@ $THEME->layouts = array(
     'popup' => array(
         'file' => 'general.php',
         'regions' => array(),
-        'options' => array('nofooter'=>true),
+        'options' => array('nofooter'=>true, 'noblocks'=>true, 'nonavbar'=>true),
     ),
     'frametop' => array(
         'file' => 'general.php',

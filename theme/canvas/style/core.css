@@ -1,10 +1,22 @@
 .sitetopic { border: none; }
 .headingblock { border-bottom: 1px solid #ddd;font-size: 1.3em;color: #333; }
+
+.notifysuccess,
+.notifyproblem,
+.errorbox,
 .continuebutton,
 .singlebutton,
 .buttons,
 .singleselect { text-align: center;margin: 1em 0; }
 .generalbox { border-color:#ddd; }
+
+.buttons .singlebutton input { margin:0; }
+.initialbar { text-align:center; }
+
+.side-pre-only #page-content #region-main-box #region-post-box #region-main-wrap #region-main { padding-right:0; }
+.side-post-only #page-content #region-main-box #region-post-box #region-main-wrap #region-main { padding-left:0; }
+/* Login
+------------------------*/
 
 .loginbox { margin: 15px 25%; }
 .loginbox .loginerrors { color: #f00; }
@@ -18,7 +30,66 @@
 .loginbox.twocolumns { width: 90%;margin-left: 5%; }
 .loginbox .guestsub { border-top: 1px solid #DDDDDD;margin: 5px 20% }
 .loginbox.twocolumns .loginpanel { border-color: #ddd;padding-right: 0.5%; }
-.loginbox.twocolumns .signuppanel { padding-left: 1%;width: 49%; }
+.loginbox.twocolumns .signuppanel { padding-left: 1%;width: 48%; }
+
+#page-login-forgot_password .generalbox { margin:0 auto 1.5em;width:75%;padding:10px; }
+
+#page-login-signup .mform { width:85%;margin:0 auto; }
+#page-login-signup .mform .fitem .fitemtitle { width:20%; }
+#page-login-signup .mform .fitem .felement { margin-left:21%; }
+
+/* Calendar 
+-----------------------*/
+.calendarlayout { width:100%; }
+.calendarlayout .sidecalendar { padding-left:15px; }
+.calendarlayout .sidecalendar .sideblock { width:210px; }
+.calendarlayout .sideblock .minicalendarblock h3 { text-align:center;font-size:1.2em; }
+
+.maincalendar .header .buttons { margin:0; }
+.maincalendar .calendarmonth td,
+.maincalendar .calendarmonth th { border-color: #ddd; border-style: dotted;border-width: 1px; } 
+.maincalendar .calendarmonth th,
+.calendarlayout .sidecalendar .minicalendar th { background:url([[pix:theme|gradient-sb]]) repeat-x 0 0; }
+
+.maincalendar .calendar-controls { padding:10px 5px 0; }
+.maincalendar .calendar-controls .previous,
+.maincalendar .calendar-controls .current,
+.maincalendar .calendar-controls .next { width:5%;float:left; }
+.maincalendar .calendar-controls .current { margin:0 auto;font-size:1.5em;text-align:center;line-height:1;font-weight:bold; }
+.maincalendar .calendar-controls .next { text-align:right; }
+.maincalendar .filters table td { font-size:0.9em; }
+.maincalendar .bottom { margin-top:25px; }
+
+.minicalendar th abbr { border:none; }
+.sidecalendar .filters td,
+.minicalendar td,
+.minicalendar th { padding:2px;font-size:0.85em; }
+
+#page-calendar-view .eventlist { padding-top:1em; }
+#page-calendar-view .eventlist .event { border:none; }
+#page-calendar-view .eventlist .event .topic { border-width:1px 1px 0;border-color:#ddd;border-style:solid;background:#f5f5f5; }
+#page-calendar-view .eventlist .event .topic .name { font-weight:bold; }
+#page-calendar-view .eventlist .event .description { border-width:0 1px 1px;border-style:solid;border-color:#ddd; }
+
+.calendartable .duration ul { border-width:2px 0;border-style:solid;}
+.calendartable .duration_user ul { border-color:#dce7ec; }
+.calendartable .duration_global ul { border-color:#d6f8cd; }
+.calendartable .duration_group ul { border-color:#fee7ae; }
+.calendartable .duration_course ul { border-color:#ffd3bd; }
+.calendartable .duration .events-underway { color:#666; }
+
+.minicalendar { border-collapse:separate;  }
+.minicalendar td,
+.minicalendar th { font-size:0.85em;padding:0 2px;border-width:2px 0;border-color:#fff;}
+
+.minicalendar .calendar_event_user,
+.minicalendar .duration_user { border-color:#dce7ec; }
+.minicalendar .calendar_event_course,
+.minicalendar .duration_course { border-color:#ffd3bd; }
+.minicalendar .calendar_event_global,
+.minicalendar .duration_global { border-color:#d6f8cd; }
+.minicalendar .calendar_event_group,
+.minicalendar .duration_group { border-color:#fee7ae; }
 
 /* User
 -----------------------*/
@@ -30,6 +101,7 @@
 #page-user-view .buttons div { padding: 0 0 10px; }
 
 #page-user-index .controls { width: 100%}
+#page-user-index .controls .singleselect {margin: 0;}
 #page-user-index .rolesform { text-align: center; margin: 1em 0; }
 #page-user-index #participantsform { text-align: center;}
 #page-user-index #longtimenosee { font-style: italic;font-size: 0.95em;}
@@ -37,10 +109,26 @@
 #page-user-index #participants th,
 #page-user-index #participants td { vertical-align: middle; }
 
+/* Tags 
+------------------------*/
+
+#big-tag-cloud-box { padding:10px; }
+#tag-management-box { text-align:center; }
+.tag-management-form { border:none;padding:0 0 1em; }
+#tag-management-list { margin:1em 0 }
+
+#page-tag-index .managelink { text-align:right; }
+#page-tag-index .headingblock { text-align:center;margin-bottom:0;}
+#page-tag-index #tag-management-box { border-bottom:1px solid #ddd;padding:4px 0; }
+#page-tag-index .relatedpages { text-align:center; }
+
+#page-tag-manage .lastinitial { margin-bottom:0.5em; }
+#page-tag-manage .green { text-align:center;padding:0 0 1em; }
+
 /* Embedded Pages
 ------------------------*/
 
-.pagelayout-embedded { text-align:center; }
+.pagelayout-embedded { text-align:center;background-color:#fff;background-image:none; }
 .pagelayout-embedded #content { padding-top:30px; }
 
 /* Forms 

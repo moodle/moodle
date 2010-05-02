@@ -40,10 +40,10 @@ echo $OUTPUT->doctype() ?>
 	    </div>
     </div>
     
-    <ul id="page-navigation" class="clearfix">
-    	<li id="first"><a href="<?php echo $CFG->wwwroot; ?>" title="Home">Home</a></li>
-    	<li><a href="<?php echo $CFG->wwwroot; ?>/course/index.php" title="Courses">Courses</a></li>
-    </ul>
+	    <ul id="page-navigation" class="clearfix">
+    		<li id="first"><a href="<?php echo $CFG->wwwroot; ?>" title="Home">Home</a></li>
+    		<li><a href="<?php echo $CFG->wwwroot; ?>" title="Courses">Courses</a></li>
+	    </ul>
     
 <!-- END OF HEADER -->
 
