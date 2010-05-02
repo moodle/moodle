@@ -35,6 +35,8 @@
         }
     }
 
+    $PAGE->set_url('/course/view.php', array('id' => $course->id)); // Defined here to avoid notices on errors etc
+
     preload_course_contexts($course->id);
     if (!$context = get_context_instance(CONTEXT_COURSE, $course->id)) {
         print_error('nocontext');
@@ -89,7 +91,6 @@
         $course->format = 'weeks';  // Default format is weeks
     }
 
-    $PAGE->set_url('/course/view.php', array('id' => $course->id));
     $PAGE->set_pagelayout('course');
     $PAGE->set_pagetype('course-view-' . $course->format);
     $PAGE->set_other_editing_capability('moodle/course:manageactivities');
