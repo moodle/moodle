@@ -14,6 +14,7 @@ require_once('delete_completed_form.php');
 
 $id = required_param('id', PARAM_INT);
 $completedid = optional_param('completedid', 0, PARAM_INT);
+$return = optional_param('return', 'entries', PARAM_ALPHA);
 
 if($completedid == 0){
     print_error('no_complete_to_delete', 'feedback', 'show_entries.php?id='.$id.'&do_show=showentries');
@@ -45,19 +46,29 @@ $mform = new mod_feedback_delete_completed_form();
 $newformdata = array('id'=>$id,
                     'completedid'=>$completedid,
                     'confirmdelete'=>'1',
-                    'do_show'=>'edit');
+                    'do_show'=>'edit',
+                    'return'=>$return);
 $mform->set_data($newformdata);
 $formdata = $mform->get_data();
 
 if ($mform->is_cancelled()) {
-    redirect('show_entries.php?id='.$id.'&do_show=showentries');
+    if($return == 'entriesanonym') {
+        redirect('show_entries_anonym.php?id='.$id);
+    }else {
+        redirect('show_entries.php?id='.$id.'&do_show=showentries');
+    }
 }
 
 if(isset($formdata->confirmdelete) AND $formdata->confirmdelete == 1){
     if($completed = $DB->get_record('feedback_completed', array('id'=>$completedid))) {
         feedback_delete_completed($completedid);
         add_to_log($course->id, 'feedback', 'delete', 'view.php?id='.$cm->id, $feedback->id,$cm->id);
-        redirect('show_entries.php?id='.$id.'&do_show=showentries');
+        
+        if($return == 'entriesanonym') {
+            redirect('show_entries_anonym.php?id='.$id);
+        }else {
+            redirect('show_entries.php?id='.$id.'&do_show=showentries');
+        }
     }
 }
 

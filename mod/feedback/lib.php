@@ -38,6 +38,7 @@ define('FEEDBACK_THOUSAND', ',');
 define('FEEDBACK_RESETFORM_RESET', 'feedback_reset_data_');
 define('FEEDBACK_RESETFORM_DROP', 'feedback_drop_feedback_');
 define('FEEDBACK_MAX_PIX_LENGTH', '400'); //max. Breite des grafischen Balkens in der Auswertung
+define('FEEDBACK_DEFAULT_PAGE_COUNT', 20);
 
 /**
  * @uses FEATURE_GROUPS

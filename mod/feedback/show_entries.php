@@ -15,7 +15,6 @@ require_once($CFG->libdir.'/tablelib.php');
 ////////////////////////////////////////////////////////
 //get the params
 ////////////////////////////////////////////////////////
-define('FEEDBACK_DEFAULT_PAGE_COUNT', 20);
 $id = required_param('id', PARAM_INT);
 $userid = optional_param('userid', false, PARAM_INT);
 $do_show = required_param('do_show', PARAM_ALPHA);
@@ -105,8 +104,8 @@ if($do_show == 'showentries'){
         $baseurl = new moodle_url('/mod/feedback/show_entries.php');
         $baseurl->params(array('id'=>$id, 'do_show'=>$do_show, 'showall'=>$showall));
         
-        $tablecolumns = array('userpic', 'fullname', 'showresponse');
-        $tableheaders = array(get_string('userpic'), get_string('fullnameuser'), '');
+        $tablecolumns = array('userpic', 'fullname', 'timemodified');
+        $tableheaders = array(get_string('userpic'), get_string('fullnameuser'), get_string('date'));
         
         if(has_capability('mod/feedback:deletesubmissions', $context)) {
             $tablecolumns[] = 'deleteentry';
