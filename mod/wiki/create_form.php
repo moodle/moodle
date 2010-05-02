@@ -36,7 +36,7 @@ class mod_wiki_create_form extends moodleform {
 
         $textoptions = array();
         if (!empty($this->_customdata['disable_pagetitle'])) {
-            $textoptions = array('disabled'=>'disabled');
+            $textoptions = array('readonly'=>'readonly');
         }
         $mform->addElement('text', 'pagetitle', get_string('newpagetitle', 'wiki'), $textoptions);
 
