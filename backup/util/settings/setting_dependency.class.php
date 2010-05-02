@@ -127,7 +127,7 @@ abstract class setting_dependency {
      * Gets the dependent setting
      * @return backup_setting
      */
-    public function get_dependant_setting() {
+    public function get_dependent_setting() {
         return $this->dependentsetting;
     }
     /**

@@ -196,7 +196,7 @@ abstract class base_setting {
     public function get_all_dependencies() {
         $dependencies = array_values($this->dependencies);
         foreach ($this->dependencies as &$dependency) {
-            $childdependencies = $dependency->get_dependant_setting()->get_all_dependencies();
+            $childdependencies = $dependency->get_dependent_setting()->get_all_dependencies();
             foreach ($childdependencies as $name=>&$childdependency) {
                 $dependencies[] = $childdependency;
             }
@@ -245,14 +245,14 @@ abstract class base_setting {
      * @param setting_dependency $dependency
      */
     public function register_dependency(setting_dependency $dependency) {
-        if ($this->is_circular_reference($dependency->get_dependant_setting())) {
+        if ($this->is_circular_reference($dependency->get_dependent_setting())) {
             $a = new stdclass();
             $a->alreadydependent = $this->name;
             $a->main = $dependentsetting->get_name();
             throw new base_setting_exception('setting_circular_reference', $a);
         }
-        $this->dependencies[$dependency->get_dependant_setting()->get_name()] = $dependency;
-        $dependency->get_dependant_setting()->register_dependent_dependency($dependency);
+        $this->dependencies[$dependency->get_dependent_setting()->get_name()] = $dependency;
+        $dependency->get_dependent_setting()->register_dependent_dependency($dependency);
     }
     /**
      * Adds a dependency where this setting is dependent on another.
@@ -330,7 +330,7 @@ abstract class base_setting {
                 break;
         }
         $this->dependencies[$dependentsetting->get_name()] = $dependency;
-        $dependency->get_dependant_setting()->register_dependent_dependency($dependency);
+        $dependency->get_dependent_setting()->register_dependent_dependency($dependency);
     }
 
 // Protected API starts here

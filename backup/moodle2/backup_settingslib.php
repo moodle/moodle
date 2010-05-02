@@ -46,7 +46,7 @@ class backup_filename_setting extends backup_generic_setting {
 
 /**
  * root setting to control if backup will include user information
- * A lot of other settings are dependant of this (module's user info,
+ * A lot of other settings are dependent of this (module's user info,
  * grades user info, messages, blogs...
  */
 class backup_users_setting extends backup_generic_setting {}
