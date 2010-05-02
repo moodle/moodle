@@ -10,13 +10,17 @@
 
 require_once("../../config.php");
 require_once("lib.php");
+require_once($CFG->libdir.'/tablelib.php');
 
 ////////////////////////////////////////////////////////
 //get the params
 ////////////////////////////////////////////////////////
+define('FEEDBACK_DEFAULT_PAGE_COUNT', 20);
 $id = required_param('id', PARAM_INT);
 $userid = optional_param('userid', false, PARAM_INT);
 $do_show = required_param('do_show', PARAM_ALPHA);
+$perpage = optional_param('perpage', FEEDBACK_DEFAULT_PAGE_COUNT, PARAM_INT);  // how many per page
+$showall = optional_param('showall', false, PARAM_INT);  // should we show all users
 // $SESSION->feedback->current_tab = $do_show;
 $current_tab = $do_show;
 
@@ -97,17 +101,73 @@ if($do_show == 'showentries'){
         $groupselect = groups_print_activity_menu($cm, $url->out(), true);
         $mygroupid = groups_get_activity_group($cm);
 
+        // preparing the table for output
+        $baseurl = new moodle_url('/mod/feedback/show_entries.php');
+        $baseurl->params(array('id'=>$id, 'do_show'=>$do_show, 'showall'=>$showall));
+        
+        $tablecolumns = array('userpic', 'fullname', 'showresponse');
+        $tableheaders = array(get_string('userpic'), get_string('fullnameuser'), '');
+        
+        if(has_capability('mod/feedback:deletesubmissions', $context)) {
+            $tablecolumns[] = 'deleteentry';
+            $tableheaders[] = '';
+        }
+        
+        $table = new flexible_table('feedback-showentry-list-'.$course->id);
+
+        $table->define_columns($tablecolumns);
+        $table->define_headers($tableheaders);
+        $table->define_baseurl($baseurl);
+
+        $table->sortable(true, 'lastname', SORT_DESC);
+        $table->set_attribute('cellspacing', '0');
+        $table->set_attribute('id', 'showentrytable');
+        $table->set_attribute('class', 'generaltable generalbox');
+        $table->set_control_variables(array(
+                    TABLE_VAR_SORT    => 'ssort',
+                    TABLE_VAR_IFIRST  => 'sifirst',
+                    TABLE_VAR_ILAST   => 'silast',
+                    TABLE_VAR_PAGE    => 'spage'
+                    ));
+        $table->setup();
+
+        if($table->get_sql_sort()) {
+            $sort = $table->get_sql_sort();
+        }else {
+            $sort = '';
+        }
+
+        if($table->get_sql_where()) {
+            $where = $table->get_sql_where();
+            $where .= ' AND';
+        }else {
+            $where = '';
+        }
+
         //get students in conjunction with groupmode
         if($groupmode > 0) {
-
             if($mygroupid > 0) {
-                $students = feedback_get_complete_users($cm, $mygroupid);
+                $usedgroupid = $mygroupid;
             } else {
-                $students = feedback_get_complete_users($cm);
+                $usedgroupid = false;
             }
         }else {
-            $students = feedback_get_complete_users($cm);
+            $usedgroupid = false;
         }
+        
+        $matchcount = feedback_count_complete_users($cm, $usedgroupid);
+        $table->initialbars(true);
+        
+        if($showall) {
+            $startpage = false;
+            $pagecount = false;
+        }else {
+            $table->pagesize($perpage, $matchcount);
+            $startpage = $table->get_page_start();
+            $pagecount = $table->get_page_size();
+        }
+        
+        $students = feedback_get_complete_users($cm, $usedgroupid, $where, $sort, $startpage, $pagecount);
 
         $completedFeedbackCount = feedback_get_completeds_group_count($feedback, $mygroupid);
         if($feedback->course == SITEID){
@@ -131,7 +191,7 @@ if($do_show == 'showentries'){
         echo isset($groupselect) ? $groupselect : '';
         echo '<div class="clearer"></div>';
         echo $OUTPUT->box_start('mdl-align');
-        echo '<table><tr><td width="400">';
+        // echo '<table><tr><td width="400">';
         if (!$students) {
             if($courseid != SITEID){
                 echo $OUTPUT->notification(get_string('noexistingstudents'));
@@ -143,39 +203,36 @@ if($do_show == 'showentries'){
             foreach ($students as $student){
                 $completedCount = $DB->count_records('feedback_completed', array('userid'=>$student->id, 'feedback'=>$feedback->id, 'anonymous_response'=>FEEDBACK_ANONYMOUS_NO));
                 if($completedCount > 0) {
-                 // Are we assuming that there is only one response per user? Should westep through a feedbackcompleteds? I added the addition anonymous check to the select so that only non-anonymous submissions are retrieved.
+                
+                    //userpicture and link to the profilepage
+                    $profilelink = '<strong><a href="'.$CFG->wwwroot.'/user/view.php?id='.$student->id.'&amp;course='.$course->id.'">'.fullname($student).'</a></strong>';
+                    $data = array ($OUTPUT->user_picture($student, array('courseid'=>$course->id)), $profilelink);
+                    
+                    //link to the entry of the user
                     $feedbackcompleted = $DB->get_record('feedback_completed', array('feedback'=>$feedback->id, ' userid'=>$student->id, 'anonymous_response'=>FEEDBACK_ANONYMOUS_NO));
-                ?>
-                    <table width="100%">
-                        <tr>
-                            <td align="left">
-                                <?php echo $OUTPUT->user_picture($student, array('courseid'=>$course->id));?>
-                            </td>
-                            <td align="left">
-                                <?php echo fullname($student);?>
-                            </td>
-                            <td align="right">
-                            <?php
-                                $aurl = new moodle_url($url, array('sesskey'=>sesskey(), 'userid'=>$student->id, 'do_show'=>'showoneentry'));
-                                echo $OUTPUT->single_button($aurl, get_string('show_entries', 'feedback'));
-                            ?>
-                            </td>
-                <?php
+                    $showentryurl = new moodle_url($url, array('userid'=>$student->id, 'do_show'=>'showoneentry'));
+                    $showentrylink = '<a href="'.$showentryurl->out().'">'.UserDate($feedbackcompleted->timemodified).'</a>';
+                    $data[] = $showentrylink;
+                    
+                    //link to delete the entry
                     if(has_capability('mod/feedback:deletesubmissions', $context)) {
-                ?>
-                            <td align="right">
-                            <?php
-                                $aurl = new moodle_url($CFG->wwwroot.'/mod/feedback/delete_completed.php', array('sesskey'=>sesskey(), 'id'=>$cm->id, 'completedid'=>$feedbackcompleted->id, 'do_show'=>'showoneentry'));
-                                echo $OUTPUT->single_button($aurl, get_string('delete_entry', 'feedback'));
-                            ?>
-                            </td>
-                <?php
+                        $deleteentryurl = new moodle_url($CFG->wwwroot.'/mod/feedback/delete_completed.php', array('id'=>$cm->id, 'completedid'=>$feedbackcompleted->id, 'do_show'=>'showoneentry'));
+                        $deleteentrylink = '<a href="'.$deleteentryurl->out().'">'.get_string('delete_entry', 'feedback').'</a>';
+                        $data[] = $deleteentrylink;
                     }
-                ?>
-                        </tr>
-                    </table>
-                <?php
+                    $table->add_data($data);
                 }
+            }
+            $table->print_html();
+            
+            $allurl = new moodle_url($baseurl);
+            
+            if ($showall) {
+                $allurl->param('showall', 0);
+                echo $OUTPUT->container(html_writer::link($allurl, get_string('showperpage', '', FEEDBACK_DEFAULT_PAGE_COUNT)), array(), 'showall');
+            } else if ($matchcount > 0 && $perpage < $matchcount) {
+                $allurl->param('showall', 1);
+                echo $OUTPUT->container(html_writer::link($allurl, get_string('showall', '', $matchcount)), array(), 'showall');
             }
         }
 ?>
@@ -194,7 +251,6 @@ if($do_show == 'showentries'){
             </tr>
         </table>
 <?php
-        echo '</td></tr></table>';
         echo $OUTPUT->box_end();
         echo $OUTPUT->box_end();
     }

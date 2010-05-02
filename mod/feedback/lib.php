@@ -702,7 +702,7 @@ function feedback_check_is_switchrole(){
 }
 
 /**
- * get users which have the complete-capability
+ * count users which have the completed a feedback
  *
  * @global object
  * @uses CONTEXT_MODULE
@@ -710,7 +710,39 @@ function feedback_check_is_switchrole(){
  * @param int $group single groupid
  * @return object the userrecords
  */
-function feedback_get_complete_users($cm, $group = false) {
+function feedback_count_complete_users($cm, $group = false) {
+    global $DB;
+
+    $params = array(FEEDBACK_ANONYMOUS_NO, $cm->instance);
+
+    $fromgroup = '';
+    $wheregroup = '';
+    if($group) {
+        $fromgroup = ', {groups_members} g';
+        $wheregroup = ' AND g.groupid = ? AND g.userid = c.userid';
+        $params[] = $group;
+    }
+    
+    $sql = 'SELECT COUNT(u.id) FROM {user} u, {feedback_completed} c'.$fromgroup.'
+              WHERE anonymous_response = ? AND u.id = c.userid AND c.feedback = ?
+              '.$wheregroup;
+              ;
+              
+    return $DB->count_records_sql($sql, $params);
+
+}
+
+/**
+ * get users which have the completed a feedback
+ *
+ * @global object
+ * @uses CONTEXT_MODULE
+ * @param object $cm
+ * @param int $group single groupid
+ * @param string $sort a table field
+ * @return object the userrecords
+ */
+function feedback_get_complete_users($cm, $group = false, $where, $sort = '', $startpage = false, $pagecount = false) {
     global $DB;
 
     if (!$context = get_context_instance(CONTEXT_MODULE, $cm->id)) {
@@ -726,11 +758,23 @@ function feedback_get_complete_users($cm, $group = false) {
         $wheregroup = ' AND g.groupid = ? AND g.userid = c.userid';
         $params[] = $group;
     }
+    
+    if($sort) {
+        $sortsql = ' ORDER BY '.$sort;
+    }else {
+        $sortsql = '';
+    }
+    
     $sql = 'SELECT DISTINCT u.* FROM {user} u, {feedback_completed} c'.$fromgroup.'
-              WHERE anonymous_response = ? AND u.id = c.userid AND c.feedback = ?
-              '.$wheregroup.'
-              ORDER BY u.lastname';
-    return $DB->get_records_sql($sql, $params);
+              WHERE '.$where.' anonymous_response = ? AND u.id = c.userid AND c.feedback = ?
+              '.$wheregroup.$sortsql;
+              ;
+              
+    if($startpage === false OR $pagecount === false) {
+        $startpage = false;
+        $pagecount = false;
+    }
+    return $DB->get_records_sql($sql, $params, $startpage, $pagecount);
 }
 
 /**
