@@ -17,8 +17,7 @@
 define('NO_DEBUG_DISPLAY', true);//comment this out to see any error messages during RSS generation
 
 // session not used here
-if (!defined('NO_MOODLE_COOKIES')) { define('NO_MOODLE_COOKIES', true); }
-if (!defined('USER_KEY_LOGIN')) { define('USER_KEY_LOGIN', true); }
+define('NO_MOODLE_COOKIES', true);
 
 require_once('../config.php');
 require_once($CFG->libdir.'/filelib.php');
