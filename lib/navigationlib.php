@@ -2382,12 +2382,14 @@ class settings_navigation extends navigation_node {
         // Restore to this course
         if (has_capability('moodle/restore:restorecourse', $coursecontext)) {
             $url = new moodle_url('/files/index.php', array('id'=>$course->id, 'wdir'=>'/backupdata'));
+            $url = null; // Disabled until restore is implemented. MDL-21432
             $coursenode->add(get_string('restore'), $url, self::TYPE_SETTING, null, null, new pix_icon('i/restore', ''));
         }
 
         // Import data from other courses
         if (has_capability('moodle/restore:restoretargetimport', $coursecontext)) {
             $url = new moodle_url('/course/import.php', array('id'=>$course->id));
+            $url = null; // Disabled until restore is implemented. MDL-21432
             $coursenode->add(get_string('import'), $url, self::TYPE_SETTING, null, null, new pix_icon('i/restore', ''));
         }
 
