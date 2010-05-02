@@ -110,22 +110,21 @@ function xmldb_wiki_upgrade($oldversion) {
         upgrade_set_timeout();
 
         // Setting up wiki configuration
-        $sql = 'UPDATE {wiki} w ' .
-            'SET w.intro = w.summary, ' .
-            'w.firstpagetitle = w.pagename, ' .
-            'w.defaultformat = "html"';
+        $sql = 'UPDATE {wiki} ' .
+            'SET intro = summary, ' .
+            'firstpagetitle = pagename, ' .
+            'defaultformat = ?';
+        $DB->execute($sql, array('html'));
 
-        $DB->execute($sql);
+        $sql = 'UPDATE {wiki} ' .
+            'SET wikimode = ? ' .
+            'WHERE wtype = ?';
+        $DB->execute($sql, array('collaborative', 'group'));
 
-        $sql = 'UPDATE {wiki} w ' .
-            'SET w.wikimode = "collaborative" ' .
-            'WHERE w.wtype = "group"';
-        $DB->execute($sql);
-
-        $sql = 'UPDATE {wiki} w ' .
-            'SET w.wikimode = "individual" ' .
-            'WHERE w.wtype != "group"';
-        $DB->execute($sql);
+        $sql = 'UPDATE {wiki} ' .
+            'SET wikimode = ? ' .
+            'WHERE wtype != ?';
+        $DB->execute($sql, array('individual', 'group'));
 
         // Removing edit & create capability to students in old teacher wikis
         $studentroles = $DB->get_records('role', array('archetype' => 'student'));
@@ -173,7 +172,7 @@ function xmldb_wiki_upgrade($oldversion) {
          */
 
         $sql = 'INSERT into {wiki_pages} (subwikiid, title, cachedcontent, timecreated, timemodified, userid, pageviews) ' .
-            'SELECT s.id, p.pagename, "**reparse needed**", p.created, p.lastmodified, p.userid, p.hits ' .
+            'SELECT s.id, p.pagename, ?, p.created, p.lastmodified, p.userid, p.hits ' .
             'FROM {wiki_pages_old} p '.
             'LEFT OUTER JOIN {wiki_entries_old} e ON e.id = p.wiki ' .
             'LEFT OUTER JOIN {wiki_subwikis} s ' .
@@ -187,7 +186,7 @@ function xmldb_wiki_upgrade($oldversion) {
             '   LIMIT 1)';
         echo $OUTPUT->notification('Migrating old pages to new pages', 'notifysuccess');
 
-        $DB->execute($sql, array());
+        $DB->execute($sql, array('**reparse needed**'));
 
         upgrade_mod_savepoint($result, 2010040105, 'wiki');
     }
