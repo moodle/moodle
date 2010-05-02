@@ -1,90 +1,103 @@
 <?php
-require_once ($CFG->dirroot.'/course/moodleform_mod.php');
+
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle. If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * This file defines de main wiki configuration form
+ *
+ * @package mod-wiki-2.0
+ * @copyrigth 2009 Marc Alier, Jordi Piguillem marc.alier@upc.edu
+ * @copyrigth 2009 Universitat Politecnica de Catalunya http://www.upc.edu
+ *
+ * @author Jordi Piguillem
+ * @author Marc Alier
+ * @author David Jimenez
+ * @author Josep Arus
+ * @author Kenneth Riba
+ *
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+require_once('moodleform_mod.php');
+require_once($CFG->dirroot . '/mod/wiki/locallib.php');
+require_once($CFG->dirroot . '/lib/datalib.php');
 
 class mod_wiki_mod_form extends moodleform_mod {
 
     function definition() {
 
-        global $CFG, $COURSE, $WIKI_TYPES;
-        $mform    =& $this->_form;
+        global $COURSE;
+        $mform =& $this->_form;
 
-        if (!empty($this->_instance)) {
-            $queryobject = new stdClass();
-            $queryobject->id = $this->_instance;
-            $wikihasentries = wiki_has_entries($queryobject);
-        } else {
-            $wikihasentries=false;
-        }
-//-------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------
+        /// Adding the "general" fieldset, where all the common settings are showed
         $mform->addElement('header', 'general', get_string('general', 'form'));
-        $mform->addElement('text', 'name', get_string('name'), array('size'=>'64'));
-        $mform->setType('name', PARAM_NOTAGS);
+        /// Adding the standard "name" field
+        $mform->addElement('text', 'name', get_string('wikiname', 'wiki'), array('size' => '64'));
+        $mform->setType('name', PARAM_TEXT);
         $mform->addRule('name', null, 'required', null, 'client');
+        /// Adding the optional "intro" and "introformat" pair of fields
+        //    	$mform->addElement('htmleditor', 'intro', get_string('wikiintro', 'wiki'));
+        //		$mform->setType('intro', PARAM_RAW);
+        //		$mform->addRule('intro', get_string('required'), 'required', null, 'client');
+        //        $mform->setHelpButton('intro', array('writing', 'richtext2'), false, 'editorhelpbutton');
+        //
+        //        $mform->addElement('format', 'introformat', get_string('format'));
+        $this->add_intro_editor(true, get_string('wikiintro', 'wiki'));
+        //-------------------------------------------------------------------------------
+        /// Adding the rest of wiki settings, spreeading all them into this fieldset
+        /// or adding more fieldsets ('header' elements) if needed for better logic
 
-        $this->add_intro_editor(true);
+        $mform->addElement('header', 'wikifieldset', get_string('wikisettings', 'wiki'));
 
-        if (!$wikihasentries){
-            asort($WIKI_TYPES);
-            $mform->addElement('select', 'wtype', get_string('wikitype', 'wiki'), $WIKI_TYPES);
-            $mform->setHelpButton('wtype', array('wikitype', get_string('wikitype', 'wiki'), 'wiki'));
-            $mform->setDefault('wtype', 'group');
+        $attr = array('size' => '20');
+        if (!empty($this->_instance)) {
+            $attr['disabled'] = 'disabled';
         } else {
-            $mform->addElement('static', 'wtype', get_string('wikitype', 'wiki'));
+            $attr['value'] = get_string('firstpagetitle', 'wiki');
         }
 
-        $mform->addElement('selectyesno', 'ewikiprinttitle', get_string('ewikiprinttitle', 'wiki'));
-        $mform->setDefault('ewikiprinttitle', 1);
-        $mform->setAdvanced('ewikiprinttitle');
+        $mform->addElement('text', 'firstpagetitle', get_string('firstpagetitle', 'wiki'), $attr);
 
-        $htmlmodes = array(0 => get_string('nohtml', 'wiki'),
-            1 => get_string('safehtml', 'wiki'),
-            2 => get_string('htmlonly', 'wiki'));
-        $mform->addElement('select', 'htmlmode', get_string('htmlmode', 'wiki'), $htmlmodes);
-        $mform->setDefault('htmlmode', 2);
-        $mform->setAdvanced('htmlmode');
-
-        $mform->addElement('selectyesno', 'ewikiacceptbinary', get_string('ewikiacceptbinary', 'wiki'));
-        $mform->setDefault('ewikiacceptbinary', 0);
-        $mform->setHelpButton('ewikiacceptbinary', array('ewikiacceptbinary', get_string('ewikiacceptbinary', 'wiki'), 'wiki'));
-        $mform->setAdvanced('ewikiacceptbinary');
-
-        $mform->addElement('advcheckbox', 'disablecamelcase', get_string('wikilinkoptions', 'wiki'), get_string('disablecamel', 'wiki'));
-        $mform->setDefault('disablecamelcase', 0);
-        $mform->setHelpButton('disablecamelcase', array('wikilinkoptions', get_string('wikilinkoptions', 'wiki'), 'wiki'));
-        $mform->setAdvanced('disablecamelcase');
-
-        $studentadminoptionsgrp = array();
-        $studentadminoptionsgrp[] =& $mform->createElement('advcheckbox', 'setpageflags', '', get_string('allowsetpage', 'wiki'));
-        $mform->setDefault('setpageflags', 0);
-        $studentadminoptionsgrp[] =& $mform->createElement('advcheckbox', 'strippages', '', get_string('allowstrippages', 'wiki'));
-        $mform->setDefault('strippages', 0);
-        $studentadminoptionsgrp[] =& $mform->createElement('advcheckbox', 'removepages', '', get_string('allowremovepages', 'wiki'));
-        $mform->setDefault('removepages', 0);
-        $studentadminoptionsgrp[] =& $mform->createElement('advcheckbox', 'revertchanges', '', get_string('allowrevertchanges', 'wiki'));
-        $mform->setDefault('revertchanges', 0);
-        $mform->addGroup($studentadminoptionsgrp, 'studentadminoptions', get_string('studentadminoptions', 'wiki'), null, false);
-        $mform->setAdvanced('studentadminoptions');
-
-//-------------------------------------------------------------------------------
-        $mform->addElement('header', 'optional', get_string('optional', 'form'));
-        $mform->addElement('text', 'pagename', get_string('wikiname', 'wiki'));
-        if ($wikihasentries) {
-            $mform->hardFreeze('pagename');
+        if (empty($this->_instance)) {
+            $mform->addRule('firstpagetitle', null, 'required', null, 'client');
         }
-        $mform->setHelpButton('pagename', array('wikiname', get_string('wikiname', 'wiki'), 'wiki'));
-        $mform->setType('pagename', PARAM_NOTAGS);
-        $mform->setAdvanced('pagename');
 
-        $mform->addElement('choosecoursefile', 'initialcontent', get_string('initialcontent', 'wiki'));
-        $mform->setHelpButton('initialcontent', array('initialcontent', get_string('initialcontent', 'wiki'), 'wiki'));
-        $mform->setAdvanced('initialcontent');
+        $wikimodeoptions = array ('collaborative' => get_string('wikimodecollaborative', 'wiki'), 'individual' => get_string('wikimodeindividual', 'wiki'));
+        // don't allow to change wiki type once is set
+        $wikitype_attr = array();
+        if (!empty($this->_instance)) {
+            $wikitype_attr['disabled'] = 'disabled';
+        }
+        $mform->addElement('select', 'wikimode', get_string('wikimode', 'wiki'), $wikimodeoptions, $wikitype_attr);
 
-//-------------------------------------------------------------------------------
+        $formats = wiki_get_formats();
+        $editoroptions = array();
+        foreach ($formats as $format) {
+            $editoroptions[$format] = get_string($format, 'wiki');
+        }
+        $mform->addElement('select', 'defaultformat', get_string('defaultformat', 'wiki'), $editoroptions);
+        $mform->addElement('checkbox', 'forceformat', get_string('forceformat', 'wiki'));
+
+        //-------------------------------------------------------------------------------
+        // add standard elements, common to all modules
         $this->standard_coursemodule_elements();
-//-------------------------------------------------------------------------------
-// buttons
+        //-------------------------------------------------------------------------------
+        // add standard buttons, common to all modules
         $this->add_action_buttons();
 
     }
 }
-

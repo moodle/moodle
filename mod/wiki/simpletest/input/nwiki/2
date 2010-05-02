@@ -1,0 +1,23 @@
+= Links =
+
+== Internal links ==
+
+Some [[links]]. [[link|Another Link]].
+
+=== Anchors ===
+
+This is an [[#External links|anchor]] to the external links section.
+
+And this is an [[link#Section|anchor to another page]].
+
+== External links ==
+
+A link to http://www.google.com , and a link to [http://www.apple.com|apple]. 
+
+The same link to [http://www.apple.com Apple Corporation].
+
+== Attachments & images ==
+
+That's an [[attach:attachment.png|attachment]].
+
+And that's an [[image:image.png|image]].

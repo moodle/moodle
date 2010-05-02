@@ -1,0 +1,39 @@
+<h1><a name="toc-1"></a>Lists</h1>
+<h2><a name="toc-2"></a>Unordered lists</h2>
+<ul>
+<li>1
+<ul>
+<li>2</li>
+</ul>
+</li>
+<li>1</li>
+</ul>
+<ul>
+<li>1
+<ul>
+<li>3
+<ul>
+<li><strong>bold</strong></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><em>italic</em></li>
+</ul>
+<h2><a name="toc-3"></a>Ordered lists</h2>
+<ol>
+<li>1
+<ol>
+<li>2</li>
+</ol>
+</li>
+<li>3</li>
+</ol>
+<ol>
+<li>4</li>
+<li>5
+<ol>
+<li>6</li>
+</ol>
+</li>
+</ol>
