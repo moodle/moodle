@@ -376,10 +376,6 @@ abstract class base_setting {
     public function has_help() {
         return (!empty($this->help));
     }
-
-// Implementable API starts here
-
-    abstract public function process_change($setting, $ctype, $oldv);
 }
 
 /*
