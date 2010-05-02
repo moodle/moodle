@@ -38,7 +38,7 @@ $cm = null;
 $course = $DB->get_record('course', array('id'=>$courseid), '*', MUST_EXIST);
 $type = backup::TYPE_1COURSE;
 if (!is_null($sectionid)) {
-    $section = $DB->get_record('course_sections', array('course'=>$course->id, 'section'=>$sectionid));
+    $section = $DB->get_record('course_sections', array('course'=>$course->id, 'id'=>$sectionid), '*', MUST_EXIST);
     $type = backup::TYPE_1SECTION;
     $id = $sectionid;
 }
@@ -52,12 +52,21 @@ require_login($course, false, $cm);
 switch ($type) {
     case backup::TYPE_1COURSE :
         require_capability('moodle/backup:backupcourse', get_context_instance(CONTEXT_COURSE, $course->id));
+        $heading = get_string('backupcourse', 'backup', $course->shortname);
         break;
     case backup::TYPE_1SECTION :
         require_capability('moodle/backup:backupsection', get_context_instance(CONTEXT_COURSE, $course->id));
+        if (!empty($section->name)) {
+            $heading = get_string('backupsection', 'backup', $section->name);
+            $PAGE->navbar->add($section->name);
+        } else {
+            $heading = get_string('backupsection', 'backup', $section->section);
+            $PAGE->navbar->add(get_string('section').' '.$section->section);
+        }
         break;
     case backup::TYPE_1ACTIVITY :
         require_capability('moodle/backup:backupactivity', get_context_instance(CONTEXT_MODULE, $cm->id));
+        $heading = get_string('backupactivity', 'backup', $cm->name);
         break;
     default :
         print_error('unknownbackuptype');
@@ -75,10 +84,10 @@ if ($backup->get_stage() == backup_ui::STAGE_FINAL) {
     $backup->save_controller();
 }
 
-$PAGE->set_title(get_string('backup'));
-$PAGE->set_heading(get_string('backup'));
-$PAGE->navbar->add($backup->get_stage_name());
+$PAGE->set_title($heading.': '.$backup->get_stage_name());
+$PAGE->set_heading($heading);
 $PAGE->set_pagelayout('admin');
+$PAGE->navbar->add($backup->get_stage_name());
 
 $renderer = $PAGE->get_renderer('core','backup');
 echo $OUTPUT->header();

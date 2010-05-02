@@ -23,6 +23,9 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['backupcourse'] = 'Backup course: {$a}';
+$string['backupsection'] = 'Backup course section: {$a}';
+$string['backupactivity'] = 'Backup activity: {$a}';
 $string['coursesettings'] = 'Course settings';
 $string['currentstage1'] = 'Initial settings';
 $string['currentstage2'] = 'Schema settings';
