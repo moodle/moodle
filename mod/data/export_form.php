@@ -33,9 +33,6 @@ class mod_data_export_form extends moodleform {
         $typesarray[] = &MoodleQuickForm::createElement('select', 'delimiter_name', null, $choices);
         $typesarray[] = &MoodleQuickForm::createElement('radio', 'exporttype', null, get_string('excel', 'data'), 'xls');
         $typesarray[] = &MoodleQuickForm::createElement('radio', 'exporttype', null, get_string('ods', 'data'), 'ods');
-        if ($CFG->enableportfolios) {
-            $typesarray[] = &MoodleQuickForm::createElement('radio', 'exporttype', null, get_string('format_leap2a', 'portfolio'), 'leap2a');
-        }
         $mform->addGroup($typesarray, 'exportar', '', array(''), false);
         $mform->addRule('exportar', null, 'required');
         $mform->setDefault('exporttype', 'csv');
@@ -58,23 +55,6 @@ class mod_data_export_form extends moodleform {
             }
         }
         $this->add_checkbox_controller(1, null, null, 1);
-        if ($CFG->enableportfolios && has_capability('mod/data:exportallentries', get_context_instance(CONTEXT_MODULE, $this->_cm->id))) {
-            require_once($CFG->libdir . '/portfoliolib.php');
-            require_once($CFG->dirroot . '/mod/data/locallib.php');
-            if ($portfoliooptions = portfolio_instance_select(
-                portfolio_instances(),
-                call_user_func(array('data_portfolio_caller', 'base_supported_formats')),
-                'data_portfolio_caller',
-                mimeinfo('type', 'export.csv'),
-                'instance',
-                true,
-                true)) {
-                    $mform->addElement('header', 'notice', get_string('portfolionotfile', 'data') . ':');
-                    $portfoliooptions[0] = get_string('none');
-                    ksort($portfoliooptions);
-                    $mform->addElement('select', 'portfolio', get_string('portfolio', 'portfolio'), $portfoliooptions);
-            }
-        }
         $this->add_action_buttons(true, get_string('exportdatabaserecords', 'data'));
     }
 
