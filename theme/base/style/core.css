@@ -21,6 +21,7 @@ abbr {cursor: help;}
 .mdl-align {text-align: center;}
 a.dimmed,
 a.dimmed_text,
+.dimmed_text,
 .dimmed_text a {color:#AAAAAA;}
 
 .unlist,
