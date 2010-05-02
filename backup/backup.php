@@ -43,7 +43,7 @@ if (!is_null($sectionid)) {
     $id = $sectionid;
 }
 if (!is_null($cmid)) {
-    $cm = get_coursemodule_from_id(null, $cmid, $course->id, $sectionid, MUST_EXIST);
+    $cm = get_coursemodule_from_id(null, $cmid, $course->id, false, MUST_EXIST);
     $type = backup::TYPE_1ACTIVITY;
     $id = $cmid;
 }
