@@ -255,7 +255,7 @@ if ($generalforums) {
                     $tooltiptext = get_string('rsssubscriberssposts', 'forum', format_string($forum->name));
                 }
                 //Get html code for RSS link
-                $row[] = rss_get_link($course->id, $USER->id, 'forum', $forum->id, $tooltiptext);
+                $row[] = rss_get_link($context->id, $USER->id, 'forum', $forum->id, $tooltiptext);
             } else {
                 $row[] = '&nbsp;';
             }
@@ -389,7 +389,7 @@ if ($course->id != SITEID) {    // Only real courses have learning forums
                         $tooltiptext = get_string('rsssubscriberssposts', 'forum', format_string($forum->name));
                     }
                     //Get html code for RSS link
-                    $row[] = rss_get_link($course->id, $USER->id, 'forum', $forum->id, $tooltiptext);
+                    $row[] = rss_get_link($context->id, $USER->id, 'forum', $forum->id, $tooltiptext);
                 } else {
                     $row[] = '&nbsp;';
                 }

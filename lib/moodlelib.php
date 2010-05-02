@@ -394,6 +394,7 @@ define('EXTERNAL_TOKEN_PERMANENT', 0);
  */
 define('EXTERNAL_TOKEN_EMBEDDED', 1);
 
+
 /// PARAMETER HANDLING ////////////////////////////////////////////////////
 
 /**

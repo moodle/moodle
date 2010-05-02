@@ -266,7 +266,7 @@
 /// RSS and CSS and JS meta
     $meta = '';
     if (!empty($CFG->enablerssfeeds) && !empty($CFG->data_enablerssfeeds) && $data->rssarticles > 0) {
-        $rsspath = rss_get_url($course->id, $USER->id, 'data', $data->id);
+        $rsspath = rss_get_url($context->id, $USER->id, 'data', $data->id);
         $PAGE->add_alternate_version(format_string($course->shortname) . ': %fullname%',
                 $rsspath, 'application/rss+xml');
     }
@@ -317,7 +317,7 @@
     // Do we need to show a link to the RSS feed for the records?
     if (!empty($CFG->enablerssfeeds) && !empty($CFG->data_enablerssfeeds) && $data->rssarticles > 0) {
         echo '<div style="float:right;">';
-        rss_print_link($course->id, $USER->id, 'data', $data->id, get_string('rsstype'));
+        rss_print_link($context->id, $USER->id, 'data', $data->id, get_string('rsstype'));
         echo '</div>';
         echo '<div style="clear:both;"></div>';
     }

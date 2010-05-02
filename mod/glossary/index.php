@@ -109,7 +109,7 @@ foreach ($glossarys as $glossary) {
                 $userid = $USER->id;
             }
             //Get html code for RSS link
-            $rsslink = rss_get_link($course->id, $userid, "glossary", $glossary->id, $tooltiptext);
+            $rsslink = rss_get_link($context->id, $userid, "glossary", $glossary->id, $tooltiptext);
         }
     }
 

@@ -7510,7 +7510,7 @@ function forum_extend_settings_navigation(settings_navigation $settingsnav, navi
         } else {
             $userid = $USER->id;
         }
-        $url = new moodle_url(rss_get_url($PAGE->course->id, $userid, "forum", $forumobject->id));
+        $url = new moodle_url(rss_get_url($PAGE->cm->context->id, $userid, "forum", $forumobject->id));
         $forumnode->add($string, $url, settings_navigation::TYPE_SETTING, null, null, new pix_icon('i/rss', ''));
     }
 }

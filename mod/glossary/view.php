@@ -304,7 +304,7 @@ if ($showcommonelements) {
         }
 //            print_box_start('rsslink');
         echo '<span class="wrap rsslink">';
-        rss_print_link($course->id, $userid, "glossary", $glossary->id, $tooltiptext);
+        rss_print_link($context->id, $userid, "glossary", $glossary->id, $tooltiptext);
         echo '</span>';
 //            print_box_end();
     }

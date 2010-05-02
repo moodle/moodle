@@ -447,17 +447,6 @@
         }
     }
 
-    if (!empty($CFG->enablerssfeeds)) {  //Defined in admin/variables page
-        include_once("$CFG->libdir/rsslib.php");
-        mtrace("Running rssfeeds if required...");
-
-        if ( ! cron_rss_feeds()) {
-            mtrace("Something went wrong while generating rssfeeds!!!");
-        } else {
-            mtrace("Rssfeeds finished");
-        }
-    }
-
 /// Run the auth cron, if any
 /// before enrolments because it might add users that will be needed in enrol plugins
     $auths = get_enabled_auth_plugins();

@@ -1434,6 +1434,7 @@ $string['roles'] = 'Roles';
 $string['rss'] = 'RSS';
 $string['rssarticles'] = 'Number of RSS recent articles';
 $string['rsserror'] = 'Error reading RSS data';
+$string['rsserrorauth'] = 'Your RSS link does not contain a valid authentication token.';
 $string['rsstype'] = 'RSS feed for this activity';
 $string['saveandnext'] = 'Save and show next';
 $string['savedat'] = 'Saved at:';

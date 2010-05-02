@@ -109,7 +109,7 @@ if ($cancel) {
 
 /// RSS and CSS and JS meta
 if (!empty($CFG->enablerssfeeds) && !empty($CFG->data_enablerssfeeds) && $data->rssarticles > 0) {
-    $rsspath = rss_get_url($course->id, $USER->id, 'data', $data->id);
+    $rsspath = rss_get_url($context->id, $USER->id, 'data', $data->id);
     $PAGE->add_alternate_version(format_string($course->shortname) . ': %fullname%',
             $rsspath, 'application/rss+xml');
 }

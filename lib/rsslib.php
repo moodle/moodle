@@ -29,110 +29,98 @@
  * @global object
  * @global object
  */
-function rss_get_link($courseid, $userid, $modulename, $id, $tooltiptext='') {
-
+function rss_get_link($contextid, $userid, $modulename, $id, $tooltiptext='') {
     global $OUTPUT;
 
     static $rsspath = '';
 
-    //In site course, if no logged (userid), use admin->id. Bug 2048.
-    if ($courseid == SITEID and empty($userid)) {
-        $admin = get_admin();
-        $userid = $admin->id;
-    }
-
-    $rsspath = rss_get_url($courseid, $userid, $modulename, $id);
+    $rsspath = rss_get_url($contextid, $userid, $modulename, $id);
     $rsspix = $OUTPUT->pix_url('i/rss');
 
     return '<a href="'. $rsspath .'"><img src="'. $rsspix .'" title="'. strip_tags($tooltiptext) .'" alt="'.get_string('rss').'" /></a>';
-
 }
 
 /**
  * This function returns the URL for the RSS XML file.
  *
  * @global object
+ * @param int contextid the course id
+ * @param int userid the current user id
+ * @param string modulename the name of the current module. For example "forum"
+ * @param int id For modules, module instance id
  */
-function rss_get_url($courseid, $userid, $modulename, $id) {
+function rss_get_url($contextid, $userid, $modulename, $id) {
     global $CFG;
     require_once($CFG->libdir.'/filelib.php');
-    return get_file_url($courseid.'/'.$userid.'/'.$modulename.'/'.$id.'/rss.xml', null, 'rssfile');
+    $usertoken = rss_get_token($userid);
+    return get_file_url($contextid.'/'.$usertoken.'/'.$modulename.'/'.$id.'/rss.xml', null, 'rssfile');
 }
 
 /**
  * This function prints the icon (from theme) with the link to rss/file.php
  */
-function rss_print_link($courseid, $userid, $modulename, $id, $tooltiptext='') {
-    print rss_get_link($courseid, $userid, $modulename, $id, $tooltiptext);
+function rss_print_link($contextid, $userid, $modulename, $id, $tooltiptext='') {
+    print rss_get_link($contextid, $userid, $modulename, $id, $tooltiptext);
 
 }
 
 /**
- * This function iterates over each module in the server to see if
- * it supports generating rss feeds, searching for a MODULENAME_rss_feeds()
- * function and invoking it foreach activity as necessary
+ * Given an object, deletes all RSS files associated with it.
+ * Relies on a naming convention. See rss_get_filename()
  *
- * @global object
- * @global object
+ * @param string $modname the name of the module ie 'forum'. Used to construct the cache path.
+ * @param object $instance An object with an id member variable ie $forum, $glossary.
+ * @return void
  */
-function cron_rss_feeds () {
-    global $CFG, $DB;
+function rss_delete_file($modname, $instance) {
+    global $CFG;
 
-    $status = true;
-
-    mtrace('    Generating rssfeeds...');
-
-    //Check for required functions...
-    if(!function_exists('utf8_encode')) {
-        mtrace('        ERROR: You need to add XML support to your PHP installation!');
-        return true;
-    }
-
-    if ($allmods = $DB->get_records('modules') ) {
-        foreach ($allmods as $mod) {
-            mtrace('        '.$mod->name.': ', '');
-            $modname = $mod->name;
-            $modfile = "$CFG->dirroot/mod/$modname/rsslib.php";
-            //If file exists and we have selected to restore that type of module
-            if (file_exists($modfile)) {
-                include_once($modfile);
-                $generaterssfeeds = $modname.'_rss_feeds';
-                if (function_exists($generaterssfeeds)) {
-                    if ($status) {
-                        mtrace('generating ', '');;
-                        $status = $generaterssfeeds();
-                        if (!empty($status)) {
-                            mtrace('...OK');
-                        } else {
-                            mtrace('...FAILED');
-                        }
-                    } else {
-                        mtrace('...SKIPPED (failed above)');
-                    }
-                } else {
-                    mtrace('...NOT SUPPORTED (function)');
-                }
-            } else {
-                mtrace('...NOT SUPPORTED (file)');
+    $dh  = opendir("$CFG->dataroot/rss/$modname");
+    while (false !== ($filename = readdir($dh))) {
+        if ($filename!='.' && $filename!='..') {
+            if (preg_match("/{$instance->id}_/", $filename)) {
+                unlink("$CFG->dataroot/rss/$modname/$filename");
             }
         }
     }
-    mtrace('    Ending  rssfeeds...', '');
-    if (!empty($status)) {
-        mtrace('...OK');
-    } else {
-        mtrace('...FAILED');
+}
+
+/**
+ * Are RSS feeds enabled for the supplied module instance?
+ * @param object $instance An instance of an activity module ie $forum, $glossary.
+ * @param boolean $hasrsstype Should there be a rsstype member variable?
+ * @param boolean $hasrssarticles Should there be a rssarticles member variable?
+ */
+function rss_enabled($modname, $instance, $hasrsstype=true, $hasrssarticles=true) {
+    if ($hasrsstype) {
+        if (empty($instance->rsstype) || $instance->rsstype==0) {
+            return false;
+        }
     }
 
-    return $status;
+    //have they set the RSS feed to return 0 results?
+    if ($hasrssarticles) {
+        if (empty($instance->rssarticles) || $instance->rssarticles==0) {
+            return false;
+        }
+    }
+
+    if (!instance_is_visible($modname,$instance)) {
+        return false;
+    }
+
+    return true;
 }
 
 /**
  * This function saves to file the rss feed specified in the parameters
  *
  * @global object
+ * @param string $modname the module name ie forum. Used to create a cache directory.
+ * @param string $filename the name of the file to be created ie "1234"
+ * @param string $result the data to be written to the file
  */
-function rss_save_file($modname, $mod, $result) {
+function rss_save_file($modname, $filename, $result) {
     global $CFG;
 
     $status = true;
@@ -143,8 +131,8 @@ function rss_save_file($modname, $mod, $result) {
     }
 
     if ($status) {
-        $file = rss_file_name($modname, $mod);
-        $rss_file = fopen($file, "w");
+        $fullfilename = rss_get_file_full_name($modname, $filename);
+        $rss_file = fopen($fullfilename, "w");
         if ($rss_file) {
             $status = fwrite ($rss_file, $result);
             fclose($rss_file);
@@ -156,10 +144,13 @@ function rss_save_file($modname, $mod, $result) {
 }
 
 
-function rss_file_name($modname, $mod) {
+function rss_get_file_full_name($modname, $filename) {
     global $CFG;
+    return "$CFG->dataroot/rss/$modname/$filename.xml";
+}
 
-    return "$CFG->dataroot/rss/$modname/$mod->id.xml";
+function rss_get_file_name($instance, $sql) {
+    return $instance->id.'_'.md5($sql);
 }
 
 /**
@@ -303,7 +294,7 @@ function rss_standard_footer($title = NULL, $link = NULL, $description = NULL) {
  * to be sent when a rss is required (file.php)
  * and something goes wrong
  */
-function rss_geterrorxmlfile() {
+function rss_geterrorxmlfile($errortype = 'rsserror') {
     global $CFG;
 
     $return = '';
@@ -317,7 +308,7 @@ function rss_geterrorxmlfile() {
         $item->title       = "RSS Error";
         $item->link        = $CFG->wwwroot;
         $item->pubdate     = time();
-        $item->description = get_string("rsserror");
+        $item->description = get_string($errortype);
         $return .= rss_add_items(array($item));
     }
 
@@ -328,6 +319,24 @@ function rss_geterrorxmlfile() {
 
     return $return;
 }
+
+function rss_get_userid_from_token($token) {
+    global $DB;
+    $record = $DB->get_record('user_private_key', array('script'=>'rss','value' => $token), 'userid', IGNORE_MISSING);
+    if ($record) {
+        return $record->userid;
+    }
+    return null;
+}
+
+function rss_get_token($userid) {
+    return get_user_key('rss', $userid);
+}
+
+/*function rss_update_token_last_access($userid) {
+    global $DB;
+    $DB->set_field('rss_tokens', 'lastaccess', time(), array('userid'=>$userid));
+}*/
 
 // ===== This function are used to write XML tags =========
 // [stronk7]: They are similar to the glossary export and backup generation
