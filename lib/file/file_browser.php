@@ -229,6 +229,35 @@ class file_browser {
         return new file_info_stored($this, $context, $storedfile, $urlbase, get_string('areauserdraft', 'repository'), true, true, true, true);
     }
 
+    private function get_file_info_user_backup($user, $context, $filearea=null, $itemid=null, $filepath=null, $filename=null) {
+        global $USER, $CFG;
+
+        $fs = get_file_storage();
+
+        // only current user can access this area
+        if ($context->instanceid != $USER->id) {
+            return null;
+        }
+        if ($USER->id != $user->id) {
+            return null;
+        }
+
+        $urlbase = $CFG->wwwroot.'/userfile.php';
+
+        $filepath = is_null($filepath) ? '/' : $filepath;
+        $filename = is_null($filename) ? '.' : $filename;
+
+        if (!$storedfile = $fs->get_file($context->id, $filearea, $itemid, $filepath, $filename)) {
+            if ($filepath === '/' and $filename === '.') {
+                $storedfile = new virtual_root_file($context->id, $filearea, 0);
+            } else {
+                // not found
+                return null;
+            }
+        }
+        return new file_info_stored($this, $context, $storedfile, $urlbase, get_string('areauserbackup', 'repository'), false, true, true, false);
+    }
+
     private function get_file_info_coursecat($context, $filearea=null, $itemid=null, $filepath=null, $filename=null) {
         global $DB, $CFG;
 
