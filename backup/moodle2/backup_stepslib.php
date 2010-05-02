@@ -1096,8 +1096,8 @@ class backup_zip_contents extends backup_execution_step {
              $files['moodle_backup.log'] = $logfilepath;
         }
 
-        // Calculate the zip fullpath
-        $zipfile = $basepath . '/' . $this->get_setting_value('filename');
+        // Calculate the zip fullpath (in OS temp area it's always backup.zip)
+        $zipfile = $basepath . '/backup.zip';
 
         // Get the zip packer
         $zippacker = get_file_packer('application/zip');
@@ -1117,8 +1117,8 @@ class backup_store_backup_file extends backup_execution_step {
         // Get basepath
         $basepath = $this->get_basepath();
 
-        // Calculate the zip fullpath
-        $zipfile = $basepath . '/' . $this->get_setting_value('filename');
+        // Calculate the zip fullpath (in OS temp area it's always backup.zip)
+        $zipfile = $basepath . '/backup.zip';
 
         // Perform storage and return it (TODO: shouldn't be array but proper result object)
         return array('backup_destination' => backup_helper::store_backup_file($this->get_backupid(), $zipfile));

@@ -183,6 +183,7 @@ abstract class backup_helper {
         // Extract useful information to decide
         $hasusers  = (bool)$sinfo['users']->value;     // Backup has users
         $isannon   = (bool)$sinfo['anonymize']->value; // Backup is annonymzed
+        $filename  = $sinfo['filename']->value;        // Backup filename
         $backupmode= $dinfo[0]->mode;                  // Backup mode backup::MODE_GENERAL/IMPORT/HUB
         $backuptype= $dinfo[0]->type;                  // Backup type backup::TYPE_1ACTIVITY/SECTION/COURSE
         $userid    = $dinfo[0]->userid;                // User->id executing the backup
@@ -241,7 +242,7 @@ abstract class backup_helper {
             'filearea'    => $filearea,
             'itemid'      => $itemid,
             'filepath'    => '/',
-            'filename'    => basename($filepath),
+            'filename'    => $filename,
             'userid'      => $userid,
             'timecreated' => time(),
             'timemodified'=> time());
