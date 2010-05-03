@@ -947,7 +947,7 @@ class moodle_page {
         }
         $alt = new stdClass;
         $alt->title = $title;
-        $alt->url = url;
+        $alt->url = $url;
         $this->_alternateversions[$mimetype] = $alt;
     }
 
