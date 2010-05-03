@@ -45,7 +45,12 @@ class block_html_edit_form extends block_edit_form {
     function set_data($defaults) {
         $block = $this->block;
         $draftid_editor = file_get_submitted_draft_itemid('config_text');
-        $block->config->text['text'] = file_prepare_draft_area($draftid_editor, $block->context->id, 'block_html', $block->instance->id, array('subdirs'=>true), $block->config->text['text']);
+        if (empty($block->config->text['text'])) {
+            $currenttext = '';
+        } else {
+            $currenttext = $block->config->text['text'];
+        }
+        $block->config->text['text'] = file_prepare_draft_area($draftid_editor, $block->context->id, 'block_html', $block->instance->id, array('subdirs'=>true), $currenttext);
         $block->config->text['itemid'] = $draftid_editor;
         parent::set_data($defaults);
     }
