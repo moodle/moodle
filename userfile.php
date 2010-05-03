@@ -98,7 +98,7 @@ switch ($filearea) {
         if ($USER->id != $userid) {
             send_file_not_found();
         }
-        $itemid = (int)array_shift($args);
+        $itemid = 0;
         $forcedownload = true;
         break;
 
