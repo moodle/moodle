@@ -21,7 +21,7 @@
  *
  * @package    moodlecore
  * @subpackage file-storage
- * @copyright  2008 Petr Skoda (http://skodak.org)
+ * @copyright  2008 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -29,23 +29,34 @@ require_once("$CFG->libdir/file/stored_file.php");
 
 /**
  * File storage class used for low level access to stored files.
+ *
  * Only owner of file area may use this class to access own files,
  * for example only code in mod/assignment/* may access assignment
- * attachments. When core needs to access files of modules it has
- * to use file_browser class instead.
+ * attachments. When some other part of moodle needs to access
+ * files of modules it has to use file_browser class instead or there
+ * has to be some callback API.
+ *
+ * @copyright 2008 Petr Skoda {@link http://skodak.org}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since     Moodle 2.0
  */
 class file_storage {
-    /** Directory with file contents */
+    /** @var string Directory with file contents */
     private $filedir;
-    /** Contents of deleted files not needed any more */
+    /** @var string Contents of deleted files not needed any more */
     private $trashdir;
-    /** Permissions for new directories */
+    /** @var int Permissions for new directories */
     private $dirpermissions;
-    /** Permissions for new files */
+    /** @var int Permissions for new files */
     private $filepermissions;
+
     /**
-     * Contructor
+     * Constructor - do not use directly use @see get_file_storage() call instead.
+     *
      * @param string $filedir full path to pool directory
+     * @param string $trashdir temporary storage of deleted area
+     * @param int $dirpermissions new directory permissions
+     * @param int $filepermissions new file permissions
      */
     public function __construct($filedir, $trashdir, $dirpermissions, $filepermissions) {
         $this->filedir         = $filedir;
@@ -73,8 +84,10 @@ class file_storage {
     }
 
     /**
-     * Returns location of filedir (file pool)
-     * Do not use, this method is intended for stored_file instances only.
+     * Returns location of filedir (file pool).
+     *
+     * Do not use, this method is intended for stored_file instances only!!!
+     *
      * @return string pathname
      */
     public function get_filedir() {
@@ -82,15 +95,17 @@ class file_storage {
     }
 
     /**
-     * Calculates sha1 hash of unique full path name information,
-     * this hash is a unique file identifier. This improves performance
-     * and overcomes db index size limits.
+     * Calculates sha1 hash of unique full path name information.
+     *
+     * This hash is a unique file identifier - it is used to improve
+     * performance and overcome db index size limits.
+     *
      * @param int $contextid
      * @param string $filearea
      * @param int $itemid
      * @param string $filepath
      * @param string $filename
-     * @return string
+     * @return string sha1 hash
      */
     public static function get_pathname_hash($contextid, $filearea, $itemid, $filepath, $filename) {
         return sha1($contextid.$filearea.$itemid.$filepath.$filename);
@@ -98,6 +113,7 @@ class file_storage {
 
     /**
      * Does this file exist?
+     *
      * @param int $contextid
      * @param string $filearea
      * @param int $itemid
@@ -119,6 +135,7 @@ class file_storage {
 
     /**
      * Does this file exist?
+     *
      * @param string $pathnamehash
      * @return bool
      */
@@ -130,10 +147,12 @@ class file_storage {
 
     /**
      * Fetch file using local file id.
+     *
      * Please do not rely on file ids, it is usually easier to use
      * pathname hashes instead.
+     *
      * @param int $fileid
-     * @return mixed stored_file instance if exists, false if not
+     * @return stored_file instance if exists, false if not
      */
     public function get_file_by_id($fileid) {
         global $DB;
@@ -147,8 +166,9 @@ class file_storage {
 
     /**
      * Fetch file using local file full pathname hash
+     *
      * @param string $pathnamehash
-     * @return mixed stored_file instance if exists, false if not
+     * @return stored_file instance if exists, false if not
      */
     public function get_file_by_hash($pathnamehash) {
         global $DB;
@@ -161,13 +181,14 @@ class file_storage {
     }
 
     /**
-     * Fetch localy stored file.
+     * Fetch locally stored file.
+     *
      * @param int $contextid
      * @param string $filearea
      * @param int $itemid
      * @param string $filepath
      * @param string $filename
-     * @return mixed stored_file instance if exists, false if not
+     * @return stored_file instance if exists, false if not
      */
     public function get_file($contextid, $filearea, $itemid, $filepath, $filename) {
         global $DB;
@@ -185,6 +206,7 @@ class file_storage {
 
     /**
      * Returns all area files (optionally limited by itemid)
+     *
      * @param int $contextid
      * @param string $filearea
      * @param int $itemid (all files if not specified)
@@ -192,7 +214,7 @@ class file_storage {
      * @param bool $includedirs
      * @return array of stored_files indexed by pathanmehash
      */
-    public function get_area_files($contextid, $filearea, $itemid=false, $sort="itemid, filepath, filename", $includedirs=true) {
+    public function get_area_files($contextid, $filearea, $itemid=false, $sort="itemid, filepath, filename", $includedirs = true) {
         global $DB;
 
         $conditions = array('contextid'=>$contextid, 'filearea'=>$filearea);
@@ -213,6 +235,7 @@ class file_storage {
 
     /**
      * Returns array based tree structure of area files
+     *
      * @param int $contextid
      * @param string $filearea
      * @param int $itemid
@@ -261,7 +284,8 @@ class file_storage {
     }
 
     /**
-     * Returns all files and otionally directories
+     * Returns all files and optionally directories
+     *
      * @param int $contextid
      * @param string $filearea
      * @param int $itemid
@@ -271,7 +295,7 @@ class file_storage {
      * @param string $sort
      * @return array of stored_files indexed by pathanmehash
      */
-    public function get_directory_files($contextid, $filearea, $itemid, $filepath, $recursive=false, $includedirs=true, $sort="filepath, filename") {
+    public function get_directory_files($contextid, $filearea, $itemid, $filepath, $recursive = false, $includedirs = true, $sort = "filepath, filename") {
         global $DB;
 
         if (!$directory = $this->get_file($contextid, $filearea, $itemid, $filepath, '.')) {
@@ -344,13 +368,14 @@ class file_storage {
     }
 
     /**
-     * Delete all area files (optionally limited by itemid)
+     * Delete all area files (optionally limited by itemid).
+     *
      * @param int $contextid
      * @param string $filearea (all areas in context if not specified)
      * @param int $itemid (all files if not specified)
-     * @return success
+     * @return bool success
      */
-    public function delete_area_files($contextid, $filearea=false, $itemid=false) {
+    public function delete_area_files($contextid, $filearea = false, $itemid = false) {
         global $DB;
 
         $conditions = array('contextid'=>$contextid);
@@ -361,19 +386,18 @@ class file_storage {
             $conditions['itemid'] = $itemid;
         }
 
-        $success = true;
-
         $file_records = $DB->get_records('files', $conditions);
         foreach ($file_records as $file_record) {
             $stored_file = new stored_file($this, $file_record);
-            $success = $stored_file->delete() && $success;
+            $stored_file->delete();
         }
 
-        return $success;
+        return true; // BC only
     }
 
     /**
-     * Recursively creates directory
+     * Recursively creates directory.
+     *
      * @param int $contextid
      * @param string $filearea
      * @param int $itemid
@@ -381,7 +405,7 @@ class file_storage {
      * @param string $filename
      * @return bool success
      */
-    public function create_directory($contextid, $filearea, $itemid, $filepath, $userid=null) {
+    public function create_directory($contextid, $filearea, $itemid, $filepath, $userid = null) {
         global $DB;
 
         // validate all parameters, we do not want any rubbish stored in database, right?
@@ -451,10 +475,11 @@ class file_storage {
     }
 
     /**
-     * Add new local file based on existing local file
+     * Add new local file based on existing local file.
+     *
      * @param mixed $file_record object or array describing changes
      * @param mixed $fileorid id or stored_file instance of the existing local file
-     * @return object stored_file instance of newly created file
+     * @return stored_file instance of newly created file
      */
     public function create_file_from_storedfile($file_record, $fileorid) {
         global $DB;
@@ -545,13 +570,14 @@ class file_storage {
     }
 
     /**
-     * Add new local file
+     * Add new local file.
+     *
      * @param mixed $file_record object or array describing file
      * @param string $path path to file or content of file
      * @param array $options @see download_file_content() options
-     * @return object stored_file instance
+     * @return stored_file instance
      */
-    public function create_file_from_url($file_record, $url, $options=null) {
+    public function create_file_from_url($file_record, $url, array $options = NULL) {
 
         $file_record = (array)$file_record;  //do not modify the submitted record, this cast unlinks objects
         $file_record = (object)$file_record; // we support arrays too
@@ -563,7 +589,7 @@ class file_storage {
         $connecttimeout = isset($options['connecttimeout']) ? $options['connecttimeout'] : 20;
         $skipcertverify = isset($options['skipcertverify']) ? $options['skipcertverify'] : false;
 
-        // TODO: it might be better to add a new option to file file content to temp file,
+        // TODO: it might be better to add a new option to download file content to temp file,
         //       the problem here is that the size of file is limited by available memory
 
         $content = download_file_content($url, $headers, $postdata, $fullresponse, $timeout, $connecttimeout, $skipcertverify);
@@ -580,10 +606,11 @@ class file_storage {
     }
 
     /**
-     * Add new local file
+     * Add new local file.
+     *
      * @param mixed $file_record object or array describing file
      * @param string $path path to file or content of file
-     * @return object stored_file instance
+     * @return stored_file instance
      */
     public function create_file_from_pathname($file_record, $pathname) {
         global $DB;
@@ -659,10 +686,11 @@ class file_storage {
     }
 
     /**
-     * Add new local file
+     * Add new local file.
+     *
      * @param mixed $file_record object or array describing file
      * @param string $content content of file
-     * @return object stored_file instance
+     * @return stored_file instance
      */
     public function create_file_from_string($file_record, $content) {
         global $DB;
@@ -739,15 +767,16 @@ class file_storage {
 
     /**
      * Creates new image file from existing.
+     *
      * @param mixed $file_record object or array describing new file
      * @param mixed file id or stored file object
      * @param int $newwidth in pixels
      * @param int $newheight in pixels
      * @param bool $keepaspectratio
-     * @param int $quality depending on image type 0-100 for jpeg, 0-9 (0 means no comppression) for png
-     * @return object stored_file instance
+     * @param int $quality depending on image type 0-100 for jpeg, 0-9 (0 means no compression) for png
+     * @return stored_file instance
      */
-    public function convert_image($file_record, $fid, $newwidth=null, $newheight=null, $keepaspectratio=true, $quality=null) {
+    public function convert_image($file_record, $fid, $newwidth = NULL, $newheight = NULL, $keepaspectratio = true, $quality = NULL) {
         global $DB;
 
         if ($fid instanceof stored_file) {
@@ -852,12 +881,13 @@ class file_storage {
     }
 
     /**
-     * Add file content to sha1 pool
+     * Add file content to sha1 pool.
+     *
      * @param string $pathname path to file
-     * @param string sha1 hash of content if known (performance only)
-     * @return array(contenthash, filesize, newfile)
+     * @param string $contenthash sha1 hash of content if known (performance only)
+     * @return array (contenthash, filesize, newfile)
      */
-    public function add_file_to_pool($pathname, $contenthash=null) {
+    public function add_file_to_pool($pathname, $contenthash = NULL) {
         if (!is_readable($pathname)) {
             throw new file_exception('storedfilecannotread');
         }
@@ -901,9 +931,10 @@ class file_storage {
     }
 
     /**
-     * Add string content to sha1 pool
+     * Add string content to sha1 pool.
+     *
      * @param string $content file content - binary string
-     * @return array(contenthash, filesize, newfile)
+     * @return array (contenthash, filesize, newfile)
      */
     public function add_string_to_pool($content) {
         $contenthash = sha1($content);
@@ -940,7 +971,7 @@ class file_storage {
     }
 
     /**
-     * Return path to file with given hash
+     * Return path to file with given hash.
      *
      * NOTE: must not be public, files in pool must not be modified
      *
@@ -955,7 +986,7 @@ class file_storage {
     }
 
     /**
-     * Return path to file with given hash
+     * Return path to file with given hash.
      *
      * NOTE: must not be public, files in pool must not be modified
      *
@@ -970,7 +1001,8 @@ class file_storage {
     }
 
     /**
-     * Tries to recover missing content of file from trash
+     * Tries to recover missing content of file from trash.
+     *
      * @param object $file_record
      * @return bool success
      */
@@ -1003,8 +1035,10 @@ class file_storage {
     }
 
     /**
-     * Marks pool file as candidate for deleting
-     * DO NOT call directly - reserved for core!
+     * Marks pool file as candidate for deleting.
+     *
+     * DO NOT call directly - reserved for core!!
+     *
      * @param string $contenthash
      * @return void
      */
@@ -1039,6 +1073,8 @@ class file_storage {
 
     /**
      * Cron cleanup job.
+     *
+     * @return void
      */
     public function cron() {
         global $CFG, $DB;
@@ -1067,3 +1103,4 @@ class file_storage {
         }
     }
 }
+
