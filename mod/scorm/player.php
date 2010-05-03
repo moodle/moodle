@@ -75,7 +75,7 @@
     $pagetitle = strip_tags("$course->shortname: ".format_string($scorm->name));
     $PAGE->set_title($pagetitle);
     $PAGE->set_heading($course->fullname);
-    $PAGE->navbar->add(format_string($scorm->name,true), new moodle_url('/mode/scorm/view.php', array('id'=>$cm->id)));
+    $PAGE->navbar->add(format_string($scorm->name,true), new moodle_url('/mod/scorm/view.php', array('id'=>$cm->id)));
 
     if (!$cm->visible and !has_capability('moodle/course:viewhiddenactivities', get_context_instance(CONTEXT_COURSE,$course->id))) {
         echo $OUTPUT->header();
