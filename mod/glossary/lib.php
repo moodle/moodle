@@ -1095,7 +1095,7 @@ function  glossary_print_entry_lower_section($course, $cm, $glossary, $entry, $m
         if ($icons) {
             echo '<tr valign="top"><td class="icons">'.$icons.'</td></tr>';
         }
-        if ($entry->rating) {
+        if (!empty($entry->rating)) {
             echo '<tr valign="top"><td class="ratings">';
             glossary_print_entry_ratings($course, $entry);
             echo '</td></tr>';

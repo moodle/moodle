@@ -401,41 +401,22 @@ if ($allentries) {
 
     //load ratings
     require_once($CFG->dirroot.'/rating/lib.php');
-    $ratingoptions = new stdclass();
-    $ratingoptions->context = $cm->context;
-    $ratingoptions->items = $allentries;
-    $ratingoptions->aggregate = $glossary->assessed;//the aggregation method
-    $ratingoptions->scaleid = $glossary->scale;
-    $ratingoptions->userid = $USER->id;
-    $ratingoptions->returnurl = $CFG->wwwroot.'/mod/glossary/view.php?id='.$cm->id;
-    $ratingoptions->assesstimestart = $glossary->assesstimestart;
-    $ratingoptions->assesstimefinish = $glossary->assesstimefinish;
-    $ratingoptions->plugintype = 'mod';
-    $ratingoptions->pluginname = 'glossary';
+    if ($glossary->assessed!=RATING_AGGREGATE_NONE) {
+        $ratingoptions = new stdclass();
+        $ratingoptions->context = $cm->context;
+        $ratingoptions->items = $allentries;
+        $ratingoptions->aggregate = $glossary->assessed;//the aggregation method
+        $ratingoptions->scaleid = $glossary->scale;
+        $ratingoptions->userid = $USER->id;
+        $ratingoptions->returnurl = $CFG->wwwroot.'/mod/glossary/view.php?id='.$cm->id;
+        $ratingoptions->assesstimestart = $glossary->assesstimestart;
+        $ratingoptions->assesstimefinish = $glossary->assesstimefinish;
+        $ratingoptions->plugintype = 'mod';
+        $ratingoptions->pluginname = 'glossary';
 
-    $rm = new rating_manager();
-    $allentries = $rm->get_ratings($ratingoptions);
-
-    /*$ratings = NULL;
-    $ratingsmenuused = false;
-    if ($glossary->assessed and isloggedin() and !isguestuser()) {
-        $ratings = new object();
-        if ($ratings->scale = make_grades_menu($glossary->scale)) {
-            $ratings->assesstimestart = $glossary->assesstimestart;
-            $ratings->assesstimefinish = $glossary->assesstimefinish;
-        }
-        if ($glossary->assessed == 2 and !has_capability('mod/glossary:rate', $context)) {
-            $ratings->allow = false;
-        } else {
-            $ratings->allow = true;
-        }
-        $formsent = 1;
-
-        echo "<form method=\"post\" action=\"rate.php\">";
-        echo "<div>";
-        echo "<input type=\"hidden\" name=\"glossaryid\" value=\"$glossary->id\" />";
-        echo "<input type=\"hidden\" name=\"sesskey\" value=\"".sesskey()."\" />";
-    }*/
+        $rm = new rating_manager();
+        $allentries = $rm->get_ratings($ratingoptions);
+    }
 
     foreach ($allentries as $entry) {
 

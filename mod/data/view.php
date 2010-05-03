@@ -642,20 +642,22 @@
                 //data_print_template() only adds ratings for singletemplate which is why we're attaching them here
                 //attach ratings to data records
                 require_once($CFG->dirroot.'/rating/lib.php');
-                $ratingoptions = new stdclass();
-                $ratingoptions->context = $cm->context;
-                $ratingoptions->items = $records;
-                $ratingoptions->aggregate = $data->assessed;//the aggregation method
-                $ratingoptions->scaleid = $data->scale;
-                $ratingoptions->userid = $USER->id;
-                $ratingoptions->returnurl = $CFG->wwwroot.'/mod/data/'.$baseurl;
-                $ratingoptions->assesstimestart = $data->assesstimestart;
-                $ratingoptions->assesstimefinish = $data->assesstimefinish;
-                $ratingoptions->plugintype = 'mod';
-                $ratingoptions->pluginname = 'data';
+                if ($data->assessed!=RATING_AGGREGATE_NONE) {
+                    $ratingoptions = new stdclass();
+                    $ratingoptions->context = $cm->context;
+                    $ratingoptions->items = $records;
+                    $ratingoptions->aggregate = $data->assessed;//the aggregation method
+                    $ratingoptions->scaleid = $data->scale;
+                    $ratingoptions->userid = $USER->id;
+                    $ratingoptions->returnurl = $CFG->wwwroot.'/mod/data/'.$baseurl;
+                    $ratingoptions->assesstimestart = $data->assesstimestart;
+                    $ratingoptions->assesstimefinish = $data->assesstimefinish;
+                    $ratingoptions->plugintype = 'mod';
+                    $ratingoptions->pluginname = 'data';
 
-                $rm = new rating_manager();
-                $records = $rm->get_ratings($ratingoptions);
+                    $rm = new rating_manager();
+                    $records = $rm->get_ratings($ratingoptions);
+                }
 
                 data_print_template('singletemplate', $records, $data, $search, $page);
 

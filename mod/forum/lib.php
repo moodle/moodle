@@ -5240,24 +5240,26 @@ function forum_print_discussion($course, $cm, $forum, $discussion, $post, $mode,
     }
 
     //load ratings
-    $ratingoptions = new stdclass();
-    $ratingoptions->context = $cm->context;
-    $ratingoptions->items = $posts;
-    $ratingoptions->aggregate = $forum->assessed;//the aggregation method
-    $ratingoptions->scaleid = $forum->scale;
-    $ratingoptions->userid = $USER->id;
-    if ($forum->type == 'single' or !$discussion->id) {
-        $ratingoptions->returnurl = "$CFG->wwwroot/mod/forum/view.php?id=$cm->id";
-    } else {
-        $ratingoptions->returnurl = "$CFG->wwwroot/mod/forum/discuss.php?d=$discussion->id";
-    }
-    $ratingoptions->assesstimestart = $forum->assesstimestart;
-    $ratingoptions->assesstimefinish = $forum->assesstimefinish;
-    $ratingoptions->plugintype = 'mod';
-    $ratingoptions->pluginname = 'forum';
+    if ($forum->assessed!=RATING_AGGREGATE_NONE) {
+        $ratingoptions = new stdclass();
+        $ratingoptions->context = $cm->context;
+        $ratingoptions->items = $posts;
+        $ratingoptions->aggregate = $forum->assessed;//the aggregation method
+        $ratingoptions->scaleid = $forum->scale;
+        $ratingoptions->userid = $USER->id;
+        if ($forum->type == 'single' or !$discussion->id) {
+            $ratingoptions->returnurl = "$CFG->wwwroot/mod/forum/view.php?id=$cm->id";
+        } else {
+            $ratingoptions->returnurl = "$CFG->wwwroot/mod/forum/discuss.php?d=$discussion->id";
+        }
+        $ratingoptions->assesstimestart = $forum->assesstimestart;
+        $ratingoptions->assesstimefinish = $forum->assesstimefinish;
+        $ratingoptions->plugintype = 'mod';
+        $ratingoptions->pluginname = 'forum';
 
-    $rm = new rating_manager();
-    $posts = $rm->get_ratings($ratingoptions);
+        $rm = new rating_manager();
+        $posts = $rm->get_ratings($ratingoptions);
+    }
 
 
     $post->forum = $forum->id;   // Add the forum id to the post object, later used by forum_print_post
