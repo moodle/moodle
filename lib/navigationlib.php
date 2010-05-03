@@ -1415,7 +1415,7 @@ class global_navigation extends navigation_node {
             $parent = $this->rootnodes['courses'];
             $url = new moodle_url('/course/view.php', array('id'=>$course->id));
         }
-        $coursenode = $parent->add($course->fullname, $url, self::TYPE_COURSE, $course->shortname, $course->id);
+        $coursenode = $parent->add($course->shortname, $url, self::TYPE_COURSE, $course->shortname, $course->id);
         $coursenode->nodetype = self::NODETYPE_BRANCH;
         $coursenode->hidden = (!$course->visible);
         $this->addedcourses[$course->id] = &$coursenode;
