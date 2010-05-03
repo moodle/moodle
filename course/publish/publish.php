@@ -128,7 +128,12 @@ if (has_capability('moodle/course:publish', get_context_instance(CONTEXT_COURSE,
     $serverurl = $huburl."/local/hub/webservice/webservices.php";
     require_once($CFG->dirroot."/webservice/xmlrpc/lib.php");
     $xmlrpcclient = new webservice_xmlrpc_client();
-    $result = $xmlrpcclient->call($serverurl, $registeredhub->token, $function, $params);
+    $courseids = $xmlrpcclient->call($serverurl, $registeredhub->token, $function, $params);
+    varlog('The course id after retrieveing from ws:');
+    varlog($courseids);
+    if (count($courseids) != 1) {
+        throw new moodle_exception('coursewronglypublished');
+    }
 
     $courseregisteredmsg = $OUTPUT->notification(get_string('coursepublished', 'hub'), 'notifysuccess');
 
@@ -151,11 +156,14 @@ if (has_capability('moodle/course:publish', get_context_instance(CONTEXT_COURSE,
 
 // send backup
     if ($share) {
-        $params['filetype'] = BACKUP_FILE_TYPE;
-        $params['file'] = $backupfile;
-        $params['filename'] = $backupfile->get_filename();
-        $curl->post($huburl."/local/hub/webservice/upload.php", $params);
+        foreach ($courseids as $courseid) {
+            $params['filetype'] = BACKUP_FILE_TYPE;
+            $params['courseid'] = $courseid;
+            $params['file'] = $backupfile;
+            $curl->post($huburl."/local/hub/webservice/upload.php", $params);
+        }
     }
+    
 
 //TODO: Delete the backup from user_tohub
 

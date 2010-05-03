@@ -65,6 +65,7 @@ $string['demourl'] = 'Demo URL';
 $string['demourl_help'] = 'Enter the demo URL of your course. By default it is the URL of your course. The demo url is displayed as a link in a search result.';
 $string['description'] = 'Description';
 $string['downloadable'] = 'Downloadable';
+$string['downloadconfirmed'] = 'The backup has been saved into your personal area';
 $string['educationallevel'] = 'Educational level';
 $string['educationallevel_help'] = '';
 $string['edulevelassociation'] = 'Association';

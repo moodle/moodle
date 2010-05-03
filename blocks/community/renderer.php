@@ -102,13 +102,13 @@ class block_community_renderer extends plugin_renderer_base {
                                 'coursedescription' => $course->description));
                     $addlinkhtml = html_writer::tag('a', get_string('add'), array('href' => $addurl));
                 } else {
-                    //Add link TODO make it a button and send by post
-//                    $addurl = new moodle_url("/blocks/community/communitycourse.php",
-//                            array('sesskey' => sesskey(), 'download' => 1, 'confirmed' => 1,
-//                                'courseid' => $course->id, 'huburl' => $huburl));
-//                    $addlinkhtml = html_writer::tag('a', get_string('download', 'block_community'), array('href' => $addurl));
+//                    Add link TODO make it a button and send by post
+                    $addurl = new moodle_url("/blocks/community/communitycourse.php",
+                            array('sesskey' => sesskey(), 'download' => 1, 'confirmed' => 1,
+                                'courseid' => $course->id, 'huburl' => $huburl));
+                    $addlinkhtml = html_writer::tag('a', get_string('download', 'block_community'), array('href' => $addurl));
                 
-                    $addlinkhtml = "Download not implemented yet";
+//                    $addlinkhtml = "Download not implemented yet";
                 }
 
                 // add a row to the table

@@ -60,7 +60,9 @@ $huburl  = optional_param('huburl', false, PARAM_URL);
 $download  = optional_param('download', -1, PARAM_INTEGER);
 $courseid  = optional_param('courseid', '', PARAM_INTEGER);
 if ($download != -1 and !empty($courseid) and confirm_sesskey()) {
-    $community->get_community_course_backup($courseid, $huburl);
+    $community->download_community_course_backup($courseid, $huburl);
+    $downloadmessage = $OUTPUT->notification(get_string('downloadconfirmed', 'hub', 'backup_'.$courseid.".zip"),
+            'notifysuccess');
 }
 
 $renderer = $PAGE->get_renderer('block_community');
@@ -84,6 +86,7 @@ if (!empty($fromform)) {
 // OUTPUT
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('addcommunitycourse', 'block_community'), 3, 'main');
+echo $downloadmessage;
 $hubselectorform->display();
 echo $renderer->course_list($courses, $huburl);
 echo $OUTPUT->footer();

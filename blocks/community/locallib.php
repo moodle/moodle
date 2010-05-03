@@ -56,18 +56,58 @@ class community {
     }
 
     /**
-     *
+     * Download the community course backup and save it in file API
      * @param <type> $courseid
      * @param <type> $huburl
      */
-    public function get_community_course_backup($courseid, $huburl) {
-        global $CFG;
+    public function download_community_course_backup($courseid, $huburl) {
+        global $CFG, $USER;
         require_once($CFG->dirroot. "/lib/filelib.php");
         require_once($CFG->dirroot. "/lib/hublib.php");
-        $curl = new curl();
+        //$curl = new curl();
         $params['courseid'] = $courseid;
         $params['filetype'] = BACKUP_FILE_TYPE;
-        $filecontent = $curl->get($huburl.'/local/hub/webservice/download.php', $params);
+
+        $url  = new moodle_url($huburl.'/local/hub/webservice/download.php', $params);
+        varlog($url);
+        $path = $CFG->dataroot.'/temp/download/'.'backup_'.$courseid.".zip";
+        $fp = fopen($path, 'w');
+        $ch = curl_init($huburl.'/local/hub/webservice/download.php?filetype='.BACKUP_FILE_TYPE.'&courseid='.$courseid);
+        curl_setopt($ch, CURLOPT_FILE, $fp);
+        $data = curl_exec($ch);
+        curl_close($ch);
+        fclose($fp);
+
+        $record->contextid = get_context_instance(CONTEXT_USER, $USER->id)->id;
+        $record->filearea = 'community_backups';
+        $record->itemid = $courseid;
+        $record->filename = 'backup_'.$courseid.".zip";
+        $record->filepath = '/';
+        $fs = get_file_storage();
+        $fs->create_file_from_pathname($record, $CFG->dataroot.'/temp/download/'.'backup_'.$courseid.".zip");
+    }
+
+
+    /**
+     * Decide where to save the file, can be
+     * reused by sub class
+     * @param string filename
+     */
+    public function prepare_file($filename) {
+        global $CFG;
+        if (!file_exists($CFG->dataroot.'/temp/download')) {
+            mkdir($CFG->dataroot.'/temp/download/', 0777, true);
+        }
+        if (is_dir($CFG->dataroot.'/temp/download')) {
+            $dir = $CFG->dataroot.'/temp/download/';
+        }
+        if (empty($filename)) {
+            $filename = uniqid('repo').'_'.time().'.tmp';
+        }
+        if (file_exists($dir.$filename)) {
+            $filename = uniqid('m').$filename;
+        }
+        return $dir.$filename;
     }
 
 }
