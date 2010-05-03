@@ -539,7 +539,7 @@ class rating_manager {
                 $aggregatestr = 'AVG';
                 break;
             case RATING_AGGREGATE_COUNT:
-                $aggregatestr = 'CNT';
+                $aggregatestr = 'COUNT';
                 break;
             case RATING_AGGREGATE_MAXIMUM:
                 $aggregatestr = 'MAX';
