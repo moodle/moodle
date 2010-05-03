@@ -219,7 +219,6 @@ M.core_filepicker.init = function(Y, options) {
                     var list = obj.list;
                     scope.viewbar.set('disabled', false);
                     scope.parse_repository_options(obj);
-                    console.info(node);
                     for(k in list) {
                         scope.build_tree(list[k], node);
                     }
@@ -533,6 +532,7 @@ M.core_filepicker.init = function(Y, options) {
                     layout.render();
                 });
             });
+
             this.mainui.setHeader('File Picker');
             this.mainui.setBody('<div id="layout-'+client_id+'"></div>');
             this.mainui.render();
