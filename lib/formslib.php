@@ -1354,8 +1354,6 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
             $linktext = isset($buttonargs[3]) ? $buttonargs[3] : false;
 
             $element->_helpbutton = $OUTPUT->old_help_icon($page, $text, $module, $linktext);
-            //$OUTPUT->help_icon($identifier, $component, $linktext);
-            // $OUTPUT->help_icon($elementname, $module); // this is works
 
         } else if (!$suppresscheck) {
             print_error('nonexistentformelements', 'form', '', $elementname);
