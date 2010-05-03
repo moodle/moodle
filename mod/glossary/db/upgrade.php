@@ -215,6 +215,7 @@ function xmldb_glossary_upgrade($oldversion) {
         if ($dbman->table_exists($table)) {
             $sql = 'SELECT e.glossaryid AS glossaryid,
                 g.course AS courseid,
+                c.userid,
                 e.id AS itemid,
                 c.id AS old_id,
                 c.entrycomment AS commentcontent,
@@ -238,17 +239,16 @@ function xmldb_glossary_upgrade($oldversion) {
                         $lastglossaryid = $res->glossaryid;
                         $lastcourseid   = $res->courseid;
                     }
-                    list($context, $course, $cm) = get_context_info_array($contextid);
                     $cmt = new stdclass;
-                    $cmt->pluginname = 'glossary';
-                    $cmt->context  = $modcontext;
-                    $cmt->courseid = $res->courseid;
-                    $cmt->cm       = $cm;
-                    $cmt->area     = 'glossary_entry';
-                    $cmt->itemid   = $res->itemid;
-                    $comment = new comment($cmt);
-                    $cmt = $comment->add($res->commentcontent, $res->format);
-                    if (!empty($cmt)) {
+                    $cmt->contextid     = $modcontext->id;
+                    $cmt->commentarea   = 'glossary_entry';
+                    $cmt->itemid        = $res->itemid;
+                    $cmt->content       = $res->commentcontent;
+                    $cmt->format        = $res->format;
+                    $cmt->userid        = $res->userid;
+                    $cmt->timecreated    = $res->timemodified;
+                    $cmt_id = $DB->insert_record('comments', $cmt);
+                    if (!empty($cmt_id)) {
                         $DB->delete_records('glossary_comments', array('id'=>$res->old_id));
                     }
                 }
