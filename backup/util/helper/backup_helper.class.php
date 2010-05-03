@@ -190,6 +190,13 @@ abstract class backup_helper {
         $id        = $dinfo[0]->id;                    // Id of activity/section/course (depends of type)
         $courseid  = $dinfo[0]->courseid;              // Id of the course
 
+        // Quick hack. If for any reason, filename is blank, fix it here.
+        // This hack will be out once MDL-22142 - P26 gets fixed
+        if (empty($filename)) {
+            $filename = backup_plan_dbops::get_default_backup_filename('moodle2', $backuptype, $id, $hasusers, $isannon);
+        }
+
+
         // Backups of type IMPORT aren't stored ever
         if ($backupmode == backup::MODE_IMPORT) {
             return true;
