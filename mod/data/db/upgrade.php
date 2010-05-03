@@ -181,7 +181,6 @@ function xmldb_data_upgrade($oldversion) {
     }
 
     if ($result && $oldversion < 2009111701) {
-        require_once($CFG->dirroot . '/comment/lib.php');
         upgrade_set_timeout(60*20);
 
     /// Define table data_comments to be dropped
@@ -191,14 +190,14 @@ function xmldb_data_upgrade($oldversion) {
         if ($dbman->table_exists($table)) {
             $sql = 'SELECT d.id AS dataid,
                 d.course AS courseid,
+                c.userid,
                 r.id AS itemid,
                 c.id AS commentid,
                 c.content AS commentcontent,
                 c.format AS format,
-                c.created AS timemodified
+                c.created AS timecreated
                 FROM {data_comments} c, {data_records} r, {data} d
                 WHERE c.recordid=r.id AND r.dataid=d.id ORDER BY dataid, courseid';
-
             /// move data comments to comments table
             $lastdataid = null;
             $lastcourseid = null;
@@ -214,15 +213,16 @@ function xmldb_data_upgrade($oldversion) {
                         $lastcourseid = $res->courseid;
                     }
                     $cmt = new stdclass;
-                    $cmt->pluginname = 'data';
-                    $cmt->context   = $modcontext;
-                    $cmt->courseid  = $res->courseid;
-                    $cmt->area      = 'database_entry';
-                    $cmt->itemid    = $res->itemid;
-                    $comment = new comment($cmt);
+                    $cmt->contextid   = $modcontext->id;
+                    $cmt->commentarea = 'database_entry';
+                    $cmt->itemid      = $res->itemid;
+                    $cmt->content     = $res->commentcontent;
+                    $cmt->format      = $res->format;
+                    $cmt->userid      = $res->userid;
+                    $cmt->timecreated = $res->timecreated;
                     // comments class will throw an exception if error occurs
-                    $cmt = $comment->add($res->commentcontent, $res->format);
-                    if (!empty($cmt)) {
+                    $cmt_id = $DB->insert_record('comments', $cmt);
+                    if (!empty($cmt_id)) {
                         $DB->delete_records('data_comments', array('id'=>$res->commentid));
                     }
                 }
