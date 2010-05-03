@@ -133,9 +133,15 @@ if ($id) {
     if (!empty($swid)){
         // User wants to view another subwiki
         if ($subwiki = wiki_get_subwiki($swid)){
+            // Trying to get the same page but from another subwiki
             if (!$page = wiki_get_page_by_title($swid, $page->title)) {
-                $url = new moodle_url('/mod/wiki/view.php', array('id'=>$subwiki->id));
-                print_error('individualpagedoesnotexist', 'wiki', $url->out());
+                // That page does not exists
+                // Getting the first page of that wiki
+                $wiki = wiki_get_wiki($subwiki->wikiid);
+                if (!$page = wiki_get_page_by_title($swid, $wiki->firstpagetitle)){
+                    $url = new moodle_url('/mod/wiki/view.php', array('id'=>$subwiki->id));
+                    print_error('individualpagedoesnotexist', 'wiki', $url->out());
+                }
             }
         } else {
             print_error('incorrectsubwikiid', 'wiki');
