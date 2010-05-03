@@ -103,7 +103,6 @@ class mod_lesson_mod_form extends moodleform_mod {
         $mform->setDefault('timed', 0);
         $mform->setDefault('maxtime', 20);
         $mform->setType('maxtime', PARAM_INT);
-        $mform->setHelpButton('timedgrp', array('timed', get_string('timed', 'lesson'), 'lesson'));
 
         $numbers = array();
         for ($i=20; $i>1; $i--) {
@@ -119,15 +118,14 @@ class mod_lesson_mod_form extends moodleform_mod {
         $mform->addElement('select', 'maxanswers', get_string('maximumnumberofanswersbranches', 'lesson'), $numbers);
         $mform->setDefault('maxanswers', $CFG->lesson_maxanswers);
         $mform->setType('maxanswers', PARAM_INT);
-        $mform->setHelpButton('maxanswers', array('maxanswers', get_string('maximumnumberofanswersbranches', 'lesson'), 'lesson'));
+        $mform->addHelpButton('maxanswers', 'maximumnumberofanswersbranches', 'lesson');
 
         $mform->addElement('selectyesno', 'usepassword', get_string('usepassword', 'lesson'));
-        $mform->setHelpButton('usepassword', array('usepassword', get_string('usepassword', 'lesson'), 'lesson'));
+        $mform->addHelpButton('usepassword', 'usepassword', 'lesson');
         $mform->setDefault('usepassword', 0);
         $mform->setAdvanced('usepassword');
 
         $mform->addElement('passwordunmask', 'password', get_string('password', 'lesson'));
-        $mform->setHelpButton('password', array('password', get_string('password', 'lesson'), 'lesson'));
         $mform->setDefault('password', '');
         $mform->setType('password', PARAM_RAW);
         $mform->setAdvanced('password');
@@ -137,47 +135,47 @@ class mod_lesson_mod_form extends moodleform_mod {
         $mform->addElement('header', 'gradeoptions', get_string('gradeoptions', 'lesson'));
 
         $mform->addElement('selectyesno', 'practice', get_string('practice', 'lesson'));
-        $mform->setHelpButton('practice', array('practice', get_string('practice', 'lesson'), 'lesson'));
+        $mform->addHelpButton('practice', 'practice', 'lesson');
         $mform->setDefault('practice', 0);
 
         $mform->addElement('selectyesno', 'custom', get_string('customscoring', 'lesson'));
-        $mform->setHelpButton('custom', array('custom', get_string('customscoring', 'lesson'), 'lesson'));
+        $mform->addHelpButton('custom', 'customscoring', 'lesson');
         $mform->setDefault('custom', 1);
 
         $grades = array();
         for ($i=100; $i>=0; $i--) {
             $grades[$i] = $i;
         }
-        $mform->addElement('select', 'grade', get_string('maximumgrade'), $grades);
+        $mform->addElement('select', 'grade', get_string('maxgrade', 'lesson'), $grades);
         $mform->setDefault('grade', 0);
-        $mform->setHelpButton('grade', array('grade', get_string('maximumgrade'), 'lesson'));
+        $mform->addHelpButton('grade', 'maxgrade', 'lesson');
         $mform->disabledIf('grade', 'practice', 'eq', '1');
 
         $mform->addElement('selectyesno', 'retake', get_string('retakesallowed', 'lesson'));
-        $mform->setHelpButton('retake', array('retake', get_string('retakesallowed', 'lesson'), 'lesson'));
+        $mform->addHelpButton('retake', 'retakesallowed', 'lesson');
         $mform->setDefault('retake', 0);
 
         $options = array();
         $options[0] = get_string('usemean', 'lesson');
         $options[1] = get_string('usemaximum', 'lesson');
         $mform->addElement('select', 'usemaxgrade', get_string('handlingofretakes', 'lesson'), $options);
-        $mform->setHelpButton('usemaxgrade', array('handlingofretakes', get_string('handlingofretakes', 'lesson'), 'lesson'));
+        $mform->addHelpButton('usemaxgrade', 'handlingofretakes', 'lesson');
         $mform->setDefault('usemaxgrade', 0);
         $mform->disabledIf('usemaxgrade', 'retake', 'eq', '0');
 
         $mform->addElement('selectyesno', 'ongoing', get_string('ongoing', 'lesson'));
-        $mform->setHelpButton('ongoing', array('ongoing', get_string('ongoing', 'lesson'), 'lesson'));
+        $mform->addHelpButton('ongoing', 'ongoing', 'lesson');
         $mform->setDefault('ongoing', 0);
 
 //-------------------------------------------------------------------------------
         $mform->addElement('header', 'flowcontrol', get_string('flowcontrol', 'lesson'));
 
         $mform->addElement('selectyesno', 'modattempts', get_string('modattempts', 'lesson'));
-        $mform->setHelpButton('modattempts', array('modattempts', get_string('modattempts', 'lesson'), 'lesson'));
+        $mform->addHelpButton('modattempts', 'modattempts', 'lesson');
         $mform->setDefault('modattempts', 0);
 
         $mform->addElement('selectyesno', 'review', get_string('displayreview', 'lesson'));
-        $mform->setHelpButton('review', array('review', get_string('displayreview', 'lesson'), 'lesson'));
+        $mform->addHelpButton('review', 'displayreview', 'lesson');
         $mform->setDefault('review', 0);
 
         $numbers = array();
@@ -185,28 +183,28 @@ class mod_lesson_mod_form extends moodleform_mod {
             $numbers[$i] = $i;
         }
         $mform->addElement('select', 'maxattempts', get_string('maximumnumberofattempts', 'lesson'), $numbers);
-        $mform->setHelpButton('maxattempts', array('maxattempts', get_string('maximumnumberofattempts', 'lesson'), 'lesson'));
+        $mform->addHelpButton('maxattempts', 'maximumnumberofattempts', 'lesson');
         $mform->setDefault('maxattempts', 1);
 
         $defaultnextpages = array();
-        $defaultnextpages[0] = get_string("normal", "lesson");
-        $defaultnextpages[LESSON_UNSEENPAGE] = get_string("showanunseenpage", "lesson");
-        $defaultnextpages[LESSON_UNANSWEREDPAGE] = get_string("showanunansweredpage", "lesson");
+        $defaultnextpages[0] = get_string('normal', 'lesson');
+        $defaultnextpages[LESSON_UNSEENPAGE] = get_string('showanunseenpage', 'lesson');
+        $defaultnextpages[LESSON_UNANSWEREDPAGE] = get_string('showanunansweredpage', 'lesson');
         $mform->addElement('select', 'nextpagedefault', get_string('actionaftercorrectanswer', 'lesson'), $defaultnextpages);
-        $mform->setHelpButton('nextpagedefault', array('nextpageaction', get_string('actionaftercorrectanswer', 'lesson'), 'lesson'));
+        $mform->addHelpButton('nextpagedefault', 'actionaftercorrectanswer', 'lesson');
         $mform->setDefault('nextpagedefault', $CFG->lesson_defaultnextpage);
         $mform->setAdvanced('nextpagedefault');
 
         $mform->addElement('selectyesno', 'feedback', get_string('displaydefaultfeedback', 'lesson'));
-        $mform->setHelpButton('feedback', array('feedback', get_string('displaydefaultfeedback', 'lesson'), 'lesson'));
+        $mform->addHelpButton('feedback', 'displaydefaultfeedback', 'lesson');
         $mform->setDefault('feedback', 0);
 
         $mform->addElement('selectyesno', 'progressbar', get_string('progressbar', 'lesson'));
-        $mform->setHelpButton('progressbar', array('progressbar', get_string('progressbar', 'lesson'), 'lesson'));
+        $mform->addHelpButton('progressbar', 'progressbar', 'lesson');
         $mform->setDefault('progressbar', 0);
 
         $mform->addElement('selectyesno', 'displayleft', get_string('displayleftmenu', 'lesson'));
-        $mform->setHelpButton('displayleft', array('displayleft', get_string('displayleftmenu', 'lesson'), 'lesson'));
+        $mform->addHelpButton('displayleft', 'displayleftmenu', 'lesson');
         $mform->setDefault('displayleft', 0);
 
         $options = array();
@@ -214,7 +212,7 @@ class mod_lesson_mod_form extends moodleform_mod {
             $options[$i] = $i.'%';
         }
         $mform->addElement('select', 'displayleftif', get_string('displayleftif', 'lesson'), $options);
-        $mform->setHelpButton('displayleftif', array('displayleftif', get_string('displayleftmenuif', 'lesson'), 'lesson'));
+        $mform->addHelpButton('displayleftif', 'displayleftif', 'lesson');
         $mform->setDefault('displayleftif', 0);
         $mform->setAdvanced('displayleftif');
 
@@ -223,7 +221,7 @@ class mod_lesson_mod_form extends moodleform_mod {
             $numbers[$i] = $i;
         }
         $mform->addElement('select', 'minquestions', get_string('minimumnumberofquestions', 'lesson'), $numbers);
-        $mform->setHelpButton('minquestions', array('minquestions', get_string('minimumnumberofquestions', 'lesson'), 'lesson'));
+        $mform->addHelpButton('minquestions', 'minimumnumberofquestions', 'lesson');
         $mform->setDefault('minquestions', 0);
         $mform->setAdvanced('minquestions');
 
@@ -232,12 +230,12 @@ class mod_lesson_mod_form extends moodleform_mod {
             $numbers[$i] = $i;
         }
         $mform->addElement('select', 'maxpages', get_string('numberofpagestoshow', 'lesson'), $numbers);
-        $mform->setHelpButton('maxpages', array('maxpages', get_string('numberofpagestoshow', 'lesson'), 'lesson'));
+        $mform->addHelpButton('maxpages', 'numberofpagestoshow', 'lesson');
         $mform->setAdvanced('maxpages');
         $mform->setDefault('maxpages', 0);
 
         $mform->addElement('selectyesno', 'slideshow', get_string('slideshow', 'lesson'));
-        $mform->setHelpButton('slideshow', array('slideshow', get_string('slideshow', 'lesson'), 'lesson'));
+        $mform->addHelpButton('slideshow', 'slideshow', 'lesson');
         $mform->setDefault('slideshow', 0);
         $mform->setAdvanced('slideshow');
 
@@ -257,7 +255,7 @@ class mod_lesson_mod_form extends moodleform_mod {
             $modinstances=array(0=>get_string('none'))+$modinstances;
 
             $mform->addElement('select', 'activitylink', get_string('activitylink', 'lesson'), $modinstances);
-            $mform->setHelpButton('activitylink', array('activitylink', get_string('activitylink', 'lesson'), 'lesson'));
+            $mform->addHelpButton('activitylink', 'activitylink', 'lesson');
             $mform->setDefault('activitylink', 0);
             $mform->setAdvanced('activitylink');
         }
@@ -269,7 +267,7 @@ class mod_lesson_mod_form extends moodleform_mod {
         $filepickeroptions['filetypes'] = '*';
         $filepickeroptions['maxbytes'] = $this->course->maxbytes;
         $mform->addElement('filepicker', 'mediafile', get_string('mediafile', 'lesson'), null, $filepickeroptions);
-        $mform->setHelpButton('mediafile', array('mediafile', get_string('mediafile', 'lesson'), 'lesson'));
+        $mform->addHelpButton('mediafile', 'mediafile', 'lesson');
         $mform->setDefault('mediafile', '');
 
 //-------------------------------------------------------------------------------
@@ -285,7 +283,7 @@ class mod_lesson_mod_form extends moodleform_mod {
             }
         }
         $mform->addElement('select', 'dependency', get_string('dependencyon', 'lesson'), $options);
-        $mform->setHelpButton('dependency', array('dependency', get_string('dependencyon', 'lesson'), 'lesson'));
+        $mform->addHelpButton('dependency', 'dependencyon', 'lesson');
         $mform->setDefault('dependency', 0);
 
         $mform->addElement('text', 'timespent', get_string('timespentminutes', 'lesson'));
