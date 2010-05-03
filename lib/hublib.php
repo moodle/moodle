@@ -74,39 +74,6 @@ define('SITELINKPUBLISHED', 'linked');
 
 
 
-//// Communication /////
-
-/**
- * Hub server
- */
-define('HUB', 'hub');
-
-/**
- * Registered site
- */
-define('REGISTEREDSITE', 'site');
-
-/**
- * Public site
- */
-define('PUBLICSITE', 'publicsite');
-
-/**
- * Hub directory
- */
-define('HUBDIRECTORY', 'hubdirectory');
-
-/**
- * WS server
- */
-define('WSSERVER', 'server');
-
-/**
- * WS client
- */
-define('WSCLIENT', 'client');
-
-
 
 //// AUDIENCE ////
 
