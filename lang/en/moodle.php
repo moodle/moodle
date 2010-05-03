@@ -1312,6 +1312,7 @@ $string['phone'] = 'Phone';
 $string['phone2'] = 'Mobile Phone';
 $string['phpinfo'] = 'PHP info';
 $string['pictureof'] = 'Picture of {$a}';
+$string['pictureofuser'] = 'User picture';
 $string['pleaseclose'] = 'Please close this window now.';
 $string['pleasesearchmore'] = 'Please search some more';
 $string['pleaseusesearch'] = 'Please use the search';

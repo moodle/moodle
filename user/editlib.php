@@ -233,7 +233,7 @@ function useredit_shared_definition(&$mform, $editoroptions = null) {
     $mform->setHelpButton('description_editor', array('text2', get_string('helptext')));
 
     if (!empty($CFG->gdversion)) {
-        $mform->addElement('header', 'moodle_picture', get_string('pictureof'));//TODO: Accessibility fix fieldset legend
+        $mform->addElement('header', 'moodle_picture', get_string('pictureofuser'));
 
         $mform->addElement('static', 'currentpicture', get_string('currentpicture'));
 
