@@ -2192,9 +2192,9 @@ abstract class lesson_page extends lesson_base {
                     $nretakes = $DB->count_records("lesson_grades", array("lessonid"=>$this->lesson->id, "userid"=>$USER->id));
                     $qattempts = $DB->count_records("lesson_attempts", array("userid"=>$USER->id, "retry"=>$nretakes, "pageid"=>$this->properties->id));
                     if ($qattempts == 1) {
-                        $result->feedback = get_string("firstwrong", "lesson");
+                        $result->feedback = $OUTPUT->box(get_string("firstwrong", "lesson"), 'feedback');
                     } else {
-                        $result->feedback = get_string("secondpluswrong", "lesson");
+                        $result->feedback = $OUTPUT->BOX(get_string("secondpluswrong", "lesson"), 'feedback');
                     }
                 } else {
                     $class = 'response';
@@ -2207,8 +2207,9 @@ abstract class lesson_page extends lesson_base {
                     $options->noclean = true;
                     $options->para = true;
                     $result->feedback = $OUTPUT->box(format_text($this->properties->contents, FORMAT_MOODLE, $options), 'generalbox boxaligncenter');
-                    $result->feedback .= '<em>'.get_string("youranswer", "lesson").'</em> : '.format_text($result->studentanswer, FORMAT_MOODLE, $options);
+                    $result->feedback .= '<div class="correctanswer generalbox"><em>'.get_string("youranswer", "lesson").'</em> : '.format_text($result->studentanswer, FORMAT_MOODLE, $options);
                     $result->feedback .= $OUTPUT->box(format_text($result->response, FORMAT_MOODLE, $options), $class);
+                    echo "</div>";
                 }
             }
         }

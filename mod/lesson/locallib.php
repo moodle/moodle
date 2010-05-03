@@ -489,7 +489,7 @@ function lesson_clock_block_contents($cmid, $lesson, $timer, $page) {
 
     $bc = new block_contents();
     $bc->title = get_string('timeremaining', 'lesson');
-    $bc->attributes['class'] = 'clock';
+    $bc->attributes['class'] = 'clock sideblock';
     $bc->content = $content;
 
     return $bc;
@@ -543,7 +543,7 @@ function lesson_menu_block_contents($cmid, $lesson) {
 
     $bc = new block_contents();
     $bc->title = get_string('lessonmenu', 'lesson');
-    $bc->attributes['class'] = 'menu';
+    $bc->attributes['class'] = 'menu sideblock';
     $bc->content = $content;
 
     return $bc;

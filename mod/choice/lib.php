@@ -487,7 +487,7 @@ function choice_show_results($choice, $course, $cm, $allresponses, $forcepublish
                 }
                 echo "</table></td>";
             }
-            $count = 0;
+            $count = 1;
             foreach ($choice->option as $optionid => $optiontext) {
                     echo '<td class="col'.$count.' data" >';
 
@@ -515,14 +515,14 @@ function choice_show_results($choice, $course, $cm, $allresponses, $forcepublish
                     echo '</table></td>';
             }
             echo "</tr><tr>";
-            $count = 0;
+            $count = 1;
 
             if ($choice->showunanswered) {
                 echo "<td></td>";
             }
-
+            
             foreach ($choice->option as $optionid => $optiontext) {
-                echo "<td align=\"center\" class=\"count\">";
+                echo "<td align=\"center\" class=\"col$count count\">";
                 if ($choice->limitanswers) {
                     echo get_string("taken", "choice").":";
                     echo $columncount[$optionid];

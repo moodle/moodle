@@ -450,7 +450,7 @@ class mod_lesson_renderer extends plugin_renderer_base {
 
         $context = get_context_instance(CONTEXT_MODULE, $this->page->cm->id);
         if (has_capability('mod/lesson:manage', $context)) {
-            return '<p align="center">'.get_string('teacherongoingwarning', 'lesson').'</p>';
+            return $this->output->box(get_string('teacherongoingwarning', 'lesson'), "ongoing center");
         } else {
             $ntries = $DB->count_records("lesson_grades", array("lessonid"=>$lesson->id, "userid"=>$USER->id));
             if (isset($USER->modattempts[$lesson->id])) {
@@ -461,11 +461,11 @@ class mod_lesson_renderer extends plugin_renderer_base {
             if ($lesson->custom) {
                 $a->score = $gradeinfo->earned;
                 $a->currenthigh = $gradeinfo->total;
-                return $this->output->box(get_string("ongoingcustom", "lesson", $a), "generalbox boxaligncenter");
+                return $this->output->box(get_string("ongoingcustom", "lesson", $a), "ongoing center");
             } else {
                 $a->correct = $gradeinfo->earned;
                 $a->viewed = $gradeinfo->attempts;
-                return $this->output->box(get_string("ongoingnormal", "lesson", $a), "generalbox boxaligncenter");
+                return $this->output->box(get_string("ongoingnormal", "lesson", $a), "ongoing center");
             }
         }
     }

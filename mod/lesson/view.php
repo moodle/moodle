@@ -219,10 +219,10 @@ if (empty($pageid)) {
         if ($lesson->timed) {
             if ($lesson->retake) {
                 $continuelink = new single_button(new moodle_url('/mod/lesson/view.php', array('id'=>$cm->id, 'pageid'=>$lesson->firstpageid, 'startlastseen'=>'no')), get_string('continue', 'lesson'), 'get');
-                echo $lessonoutput->message(get_string('leftduringtimed', 'lesson'), $continuelink);
+                echo '<div class="center leftduring">'.$lessonoutput->message(get_string('leftduringtimed', 'lesson'), $continuelink).'</div>';
             } else {
                 $courselink = new single_button(new moodle_url('/course/view.php', array('id'=>$PAGE->course->id)), get_string('returntocourse', 'lesson'), 'get');
-                echo $lessonoutput->message(get_string('leftduringtimednoretake', 'lesson'), $courselink);
+                echo '<div class="center leftduring">'.$lessonoutput->message(get_string('leftduringtimednoretake', 'lesson'), $courselink).'</div>';
             }
         } else {
             echo $lessonoutput->continue_links($lesson, $lastpageseen);
