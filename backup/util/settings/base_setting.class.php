@@ -204,6 +204,34 @@ abstract class base_setting {
         return $dependencies;
     }
 
+    /**
+     * Gets an array of properties for all of the dependencies that will affect
+     * this setting.
+     *
+     * This method returns and array rather than the dependencies in order to
+     * minimise the memory footprint of for the potentially huge recursive
+     * dependency structure that we may be dealing with.
+     *
+     * This method also ensures that all dependencies are transmuted to affect
+     * the setting in question and that we don't provide any duplicates.
+     *
+     * @param string|null $settingname
+     * @return array
+     */
+    public function get_my_dependency_properties($settingname=null) {
+        if ($settingname ==  null) {
+            $settingname = $this->get_ui_name();
+        }
+        $dependencies = array();
+        foreach ($this->dependenton as $dependenton) {
+            $properties = $dependenton->get_moodleform_properties();
+            $properties['setting'] = $settingname;
+            $dependencies[$properties['setting'].'-'.$properties['dependenton']] = $properties;
+            $dependencies = array_merge($dependencies, $dependenton->get_setting()->get_my_dependency_properties($settingname));
+        }
+        return $dependencies;
+    }
+
     public function set_ui(backup_setting_ui $ui) {
         $this->uisetting = $ui;
     }

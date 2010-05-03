@@ -192,7 +192,6 @@ abstract class backup_moodleform extends moodleform {
      */
     function add_fixed_setting(backup_setting $setting) {
         global $OUTPUT;
-
         $settingui = $setting->get_ui();
         if ($setting->get_visibility() == backup_setting::VISIBLE) {
             $this->add_html_formatting($setting);
@@ -209,16 +208,12 @@ abstract class backup_moodleform extends moodleform {
      * Adds dependencies to the form recursively
      * 
      * @param backup_setting $setting
-     * @param backup_setting $basesetting
      */
-    function add_dependencies(backup_setting $setting, $basesetting=null) {
+    function add_dependencies(backup_setting $setting) {
         $mform = $this->_form;
-        if ($basesetting == null) {
-            $basesetting = $setting;
-        }
         // Apply all dependencies for backup
-        foreach ($setting->get_all_dependencies() as $dependency) {
-            call_user_method_array('disabledIf', $this->_form, $dependency->get_moodleform_properties());
+        foreach ($setting->get_my_dependency_properties() as $key=>$dependency) {
+            call_user_method_array('disabledIf', $this->_form, $dependency);
         }
     }
     /**
