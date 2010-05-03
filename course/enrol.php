@@ -38,7 +38,7 @@ if ($loginasguest !== 0) {
 }
 $PAGE->set_url($url);
 
-if (!isloggedin() or isguestuser()) {
+if (!isloggedin()) {
     // do not use require_login here because we are usually comming from it
     redirect(get_login_url());
 }
