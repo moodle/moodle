@@ -28,7 +28,7 @@ class mod_glossary_mod_form extends moodleform_mod {
 
         if (has_capability('mod/glossary:manageentries', get_context_instance(CONTEXT_SYSTEM))) {
             $mform->addElement('checkbox', 'globalglossary', get_string('isglobal', 'glossary'));
-            $mform->setHelpButton('globalglossary', array('globalglossary', get_string('globalglossary', 'glossary'), 'glossary'));
+            $mform->addHelpButton('globalglossary', 'isglobal', 'glossary');
 
         }else{
             $mform->addElement('hidden', 'globalglossary');
@@ -37,28 +37,28 @@ class mod_glossary_mod_form extends moodleform_mod {
 
         $options = array(1=>get_string('mainglossary', 'glossary'), 0=>get_string('secondaryglossary', 'glossary'));
         $mform->addElement('select', 'mainglossary', get_string('glossarytype', 'glossary'), $options);
-        $mform->setHelpButton('mainglossary', array('mainglossary', get_string('mainglossary', 'glossary'), 'glossary'));
+        $mform->addHelpButton('mainglossary', 'glossarytype', 'glossary');
         $mform->setDefault('mainglossary', 0);
 
         $mform->addElement('selectyesno', 'allowduplicatedentries', get_string('allowduplicatedentries', 'glossary'));
         $mform->setDefault('allowduplicatedentries', $CFG->glossary_dupentries);
-        $mform->setHelpButton('allowduplicatedentries', array('allowduplicatedentries', get_string('allowduplicatedentries', 'glossary'), 'glossary'));
+        $mform->addHelpButton('allowduplicatedentries', 'allowduplicatedentries', 'glossary');
 
         $mform->addElement('selectyesno', 'allowcomments', get_string('allowcomments', 'glossary'));
         $mform->setDefault('allowcomments', $CFG->glossary_allowcomments);
-        $mform->setHelpButton('allowcomments', array('allowcomments', get_string('allowcomments', 'glossary'), 'glossary'));
+        $mform->addHelpButton('allowcomments', 'allowcomments', 'glossary');
 
         $mform->addElement('selectyesno', 'allowprintview', get_string('allowprintview', 'glossary'));
         $mform->setDefault('allowprintview', 1);
-        $mform->setHelpButton('allowprintview', array('allowprintview', get_string('allowprintview', 'glossary'), 'glossary'));
+        $mform->addHelpButton('allowprintview', 'allowprintview', 'glossary');
 
         $mform->addElement('selectyesno', 'usedynalink', get_string('usedynalink', 'glossary'));
         $mform->setDefault('usedynalink', $CFG->glossary_linkbydefault);
-        $mform->setHelpButton('usedynalink', array('usedynalink', get_string('usedynalink', 'glossary'), 'glossary'));
+        $mform->addHelpButton('usedynalink', 'usedynalink', 'glossary');
 
         $mform->addElement('selectyesno', 'defaultapproval', get_string('defaultapproval', 'glossary'));
         $mform->setDefault('defaultapproval', $CFG->glossary_defaultapproval);
-        $mform->setHelpButton('defaultapproval', array('defaultapproval', get_string('defaultapproval', 'glossary'), 'glossary'));
+        $mform->addHelpButton('defaultapproval', 'defaultapproval', 'glossary');
 
         //get and update available formats
         $recformats = glossary_get_available_formats();
@@ -73,23 +73,23 @@ class mod_glossary_mod_form extends moodleform_mod {
         asort($formats);
         $mform->addElement('select', 'displayformat', get_string('displayformat', 'glossary'), $formats);
         $mform->setDefault('displayformat', 'dictionary');
-        $mform->setHelpButton('displayformat', array('displayformat', get_string('displayformat', 'glossary'), 'glossary'));
+        $mform->addHelpButton('displayformat', 'displayformat', 'glossary');
 
         $mform->addElement('selectyesno', 'showspecial', get_string('showspecial', 'glossary'));
         $mform->setDefault('showspecial', 1);
-        $mform->setHelpButton('showspecial', array('shows', get_string('showspecial', 'glossary'), 'glossary'));
+        $mform->addHelpButton('showspecial', 'showspecial', 'glossary');
 
         $mform->addElement('selectyesno', 'showalphabet', get_string('showalphabet', 'glossary'));
         $mform->setDefault('showalphabet', 1);
-        $mform->setHelpButton('showalphabet', array('shows', get_string('showalphabet', 'glossary'), 'glossary'));
+        $mform->addHelpButton('showalphabet', 'showalphabet', 'glossary');
 
         $mform->addElement('selectyesno', 'showall', get_string('showall', 'glossary'));
         $mform->setDefault('showall', 1);
-        $mform->setHelpButton('showall', array('shows', get_string('showall', 'glossary'), 'glossary'));
+        $mform->addHelpButton('showall', 'showall', 'glossary');
 
         $mform->addElement('selectyesno', 'editalways', get_string('editalways', 'glossary'));
         $mform->setDefault('editalways', 0);
-        $mform->setHelpButton('editalways', array('editalways', get_string('editalways', 'glossary'), 'glossary'));
+        $mform->addHelpButton('editalways', 'editalways', 'glossary');
 
         if ($CFG->enablerssfeeds && isset($CFG->glossary_enablerssfeeds) && $CFG->glossary_enablerssfeeds) {
 //-------------------------------------------------------------------------------
@@ -99,7 +99,7 @@ class mod_glossary_mod_form extends moodleform_mod {
             $choices[1] = get_string('withauthor', 'glossary');
             $choices[2] = get_string('withoutauthor', 'glossary');
             $mform->addElement('select', 'rsstype', get_string('rsstype'), $choices);
-            $mform->setHelpButton('rsstype', array('rsstype', get_string('rsstype'), 'glossary'));
+            $mform->addHelpButton('rsstype', 'rsstype', 'glossary');
 
             $choices = array();
             $choices[0] = '0';
@@ -116,7 +116,7 @@ class mod_glossary_mod_form extends moodleform_mod {
             $choices[40] = '40';
             $choices[50] = '50';
             $mform->addElement('select', 'rssarticles', get_string('rssarticles'), $choices);
-            $mform->setHelpButton('rssarticles', array('rssarticles', get_string('rssarticles'), 'glossary'));
+            $mform->addHelpButton('rssarticles', 'rssarticles', 'glossary');
             $mform->disabledIf('rssarticles', 'rsstype', 'eq', 0);
         }
 

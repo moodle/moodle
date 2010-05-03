@@ -34,10 +34,10 @@ class mod_glossary_entry_form extends moodleform {
 
         $mform->addElement('textarea', 'aliases', get_string('aliases', 'glossary'), 'rows="2" cols="40"');
         $mform->setType('aliases', PARAM_TEXT);
-        $mform->setHelpButton('aliases', array('aliases2', strip_tags(get_string('aliases', 'glossary')), 'glossary'));
+        $mform->addHelpButton('aliases', 'aliases', 'glossary');
 
         $mform->addElement('filemanager', 'attachment_filemanager', get_string('attachment', 'glossary'), null, $attachmentoptions);
-        $mform->setHelpButton('attachment_filemanager', array('attachment2', get_string('attachment', 'glossary'), 'glossary'));
+        $mform->addHelpButton('attachment_filemanager', 'attachment', 'glossary');
 
         if (!$glossary->usedynalink) {
             $mform->addElement('hidden', 'usedynalink',   $CFG->glossary_linkentries);
@@ -52,16 +52,16 @@ class mod_glossary_entry_form extends moodleform {
             $mform->addElement('header', 'linkinghdr', get_string('linking', 'glossary'));
 
             $mform->addElement('checkbox', 'usedynalink', get_string('entryusedynalink', 'glossary'));
-            $mform->setHelpButton('usedynalink', array('usedynalinkentry', strip_tags(get_string('usedynalink', 'glossary')), 'glossary'));
+            $mform->addHelpButton('usedynalink', 'entryusedynalink', 'glossary');
             $mform->setDefault('usedynalink', $CFG->glossary_linkentries);
 
             $mform->addElement('checkbox', 'casesensitive', get_string('casesensitive', 'glossary'));
-            $mform->setHelpButton('casesensitive', array('casesensitive', strip_tags(get_string('casesensitive', 'glossary')), 'glossary'));
+            $mform->addHelpButton('casesensitive', 'casesensitive', 'glossary');
             $mform->disabledIf('casesensitive', 'usedynalink');
             $mform->setDefault('casesensitive', $CFG->glossary_casesensitive);
 
             $mform->addElement('checkbox', 'fullmatch', get_string('fullmatch', 'glossary'));
-            $mform->setHelpButton('fullmatch', array('fullmatch', strip_tags(get_string('fullmatch', 'glossary')), 'glossary'));
+            $mform->addHelpButton('fullmatch', 'fullmatch', 'glossary');
             $mform->disabledIf('fullmatch', 'usedynalink');
             $mform->setDefault('fullmatch', $CFG->glossary_fullmatch);
         }
