@@ -738,7 +738,7 @@ class portfolio_exporter {
     * associated with this export
     *
     * @param $oldfile stored_file object
-    * @return new stored_file object
+    * @return stored_file new file object
     */
     public function copy_existing_file($oldfile) {
         if (array_key_exists($oldfile->get_contenthash(), $this->newfilehashes)) {
@@ -766,7 +766,7 @@ class portfolio_exporter {
     * @param string $content content to write
     * @param string $name filename to use
     * @param bool $maifest whether this is the main file or an secondary file (eg attachment)
-    * @return new stored_file object
+    * @return stored_file new file object
     */
     public function write_new_file($content, $name, $manifest=true) {
         $fs = get_file_storage();
