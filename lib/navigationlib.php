@@ -2014,7 +2014,8 @@ class settings_navigation extends navigation_node {
      */
     public function prepend($text, $url=null, $type=null, $shorttext=null, $key=null, pix_icon $icon=null) {
         $children = $this->children;
-        $this->children = new get_class($children);
+        $childrenclass = get_class($children);
+        $this->children = new $childrenclass;
         $node = $this->add($text, $url, $type, $shorttext, $key, $icon);
         foreach ($children as $child) {
             $this->children->add($child);
@@ -2347,7 +2348,7 @@ class settings_navigation extends navigation_node {
         }
         if ($reportavailable) {
             $url = new moodle_url('/grade/report/index.php', array('id'=>$course->id));
-            $coursenode->add(get_string('grades'), $url, self::TYPE_SETTING, null, null, new pix_icon('i/grades', ''));
+            $gradenode = $coursenode->add(get_string('grades'), $url, self::TYPE_SETTING, null, 'grades', new pix_icon('i/grades', ''));
         }
 
         //  Add outcome if permitted
