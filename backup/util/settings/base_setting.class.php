@@ -189,22 +189,6 @@ abstract class base_setting {
     }
 
     /**
-     * Returns an array of all dependencies this setting has as well as the dependencies
-     * of its dependencies.... another words recursivily
-     * @return array
-     */
-    public function get_all_dependencies() {
-        $dependencies = array_values($this->dependencies);
-        foreach ($this->dependencies as &$dependency) {
-            $childdependencies = $dependency->get_dependent_setting()->get_all_dependencies();
-            foreach ($childdependencies as $name=>&$childdependency) {
-                $dependencies[] = $childdependency;
-            }
-        }
-        return $dependencies;
-    }
-
-    /**
      * Gets an array of properties for all of the dependencies that will affect
      * this setting.
      *
@@ -232,10 +216,41 @@ abstract class base_setting {
         return $dependencies;
     }
 
+    /**
+     * Checks if there are other settings that are dependent on this setting
+     *
+     * @return bool True if there are other settings that are dependent on this setting
+     */
+    public function has_dependent_settings() {
+        return (count($this->dependencies)>0);
+    }
+
+    /**
+     * Checks if this setting is dependent on any other settings
+     *
+     * @return bool True if this setting is dependent on any other settings
+     */
+    public function has_dependencies_on_settings() {
+        return (count($this->dependenton)>0);
+    }
+
+    /**
+     * Sets the user interface for this setting
+     *
+     * @param backup_setting_ui $ui
+     */
     public function set_ui(backup_setting_ui $ui) {
         $this->uisetting = $ui;
     }
 
+    /**
+     * Creates and sets a user interface for this setting given appropriate arguments
+     *
+     * @param int $type
+     * @param string $label
+     * @param array $attributes
+     * @param array $options 
+     */
     public function make_ui($type, $label, array $attributes = null, array $options = null) {
         $type = $this->validate_ui_type($type);
         $label = $this->validate_ui_label($label);
@@ -264,6 +279,11 @@ abstract class base_setting {
         }
     }
 
+    /**
+     * Gets the user interface for this setting
+     *
+     * @return backup_setting_ui
+     */
     public function get_ui() {
         return $this->uisetting;
     }
@@ -293,6 +313,16 @@ abstract class base_setting {
         $this->dependenton[$dependency->get_setting()->get_name()] = $dependency;
     }
 
+    /**
+     * Quick method to add a dependency to this setting.
+     *
+     * The dependency created is done so by inspecting this setting and the
+     * setting that is passed in as the dependent setting.
+     *
+     * @param base_setting $dependentsetting
+     * @param int $type One of setting_dependency::*
+     * @param array $options
+     */
     public function add_dependency(base_setting $dependentsetting, $type=null, $options=array()) {
         if ($this->is_circular_reference($dependentsetting)) {
             $a = new stdclass();

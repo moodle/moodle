@@ -110,6 +110,19 @@ abstract class backup_moodleform extends moodleform {
      * @return bool
      */
     function add_setting(backup_setting $setting, backup_task $task=null) {
+
+        // Check if the setting is locked first up
+        if ($setting->get_status() !== base_setting::NOT_LOCKED) {
+            // If it has no dependencies on other settings we can add it as a
+            // fixed setting instead
+            if (!$setting->has_dependencies_on_settings()) {
+                // Fixed setting it is!
+                return $this->add_fixed_setting($setting);
+            }
+            // Hmm possible to unlock it in the UI so disable instead.
+            $setting->get_ui()->disable();
+        }
+
         // First add the formatting for this setting
         $this->add_html_formatting($setting);
         // The call the add method with the get_element_properties array
