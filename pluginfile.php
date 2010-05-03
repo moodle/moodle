@@ -409,6 +409,22 @@ if (!empty($sendflashupgrader) && (($userplayerversion[0] <  $requiredplayervers
         session_get_instance()->write_close(); // unlock session during fileserving
         send_stored_file($file, 60*60, 0, false); // TODO: change timeout?
 
+    } else if ($filearea === 'section_backup') {
+        require_login($course);
+        require_capability('moodle/backup:downloadfile', $context);
+
+        $sectionid = (int)array_shift($args);
+
+        $relativepath = '/'.implode('/', $args);
+        $fullpath = $context->id.'section_backup'.$sectionid.$relativepath;
+
+        if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
+            send_file_not_found();
+        }
+
+        session_get_instance()->write_close();
+        send_stored_file($file, 60*60, 0, false);
+   
     } else if ($filearea === 'user_profile') {
         $userid = (int)array_shift($args);
         $usercontext = get_context_instance(CONTEXT_USER, $userid);
@@ -499,6 +515,19 @@ if (!empty($sendflashupgrader) && (($userplayerversion[0] <  $requiredplayervers
 
         // finally send the file
         send_stored_file($file, $lifetime, 0);
+    } else if ($filearea === 'activity_backup') {
+        require_login($course);
+        require_capability('moodle/backup:downloadfile', $context);
+
+        $relativepath = '/'.implode('/', $args);
+        $fullpath = $context->id.'activity_backup0'.$relativepath;
+
+        if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
+            send_file_not_found();
+        }
+
+        session_get_instance()->write_close();
+        send_stored_file($file, 60*60, 0, false);
     }
 
     $filefunction = $modname.'_pluginfile';

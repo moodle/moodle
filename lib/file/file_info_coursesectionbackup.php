@@ -17,24 +17,22 @@
 
 
 /**
- * Utility class for browsing of course files.
+ * Utility class for browsing of course section files.
  *
  * @package    moodlecore
  * @subpackage file-browser
- * @copyright  2008 Petr Skoda (http://skodak.org)
+ * @copyright  2010 Dongsheng Cai <dongsheng@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 /**
- * Represents a course context in the tree navigated by @see{file_browser}.
  */
-class file_info_course extends file_info {
+class file_info_coursesectionbackup extends file_info {
     protected $course;
 
     public function __construct($browser, $context, $course) {
-        global $DB;
         parent::__construct($browser, $context);
-        $this->course   = $course;
+        $this->course = $course;
     }
 
     /**
@@ -45,14 +43,21 @@ class file_info_course extends file_info {
      */
     public function get_params() {
         return array('contextid'=>$this->context->id,
-                     'filearea' =>null,
+                     'filearea' =>'section_backup',
                      'itemid'   =>null,
                      'filepath' =>null,
                      'filename' =>null);
     }
 
+    /**
+     * Returns localised visible name.
+     * @return string
+     */
     public function get_visible_name() {
-        return ($this->course->id == SITEID) ? get_string('frontpage', 'admin') : format_string($this->course->fullname);
+        $format = $this->course->format;
+        $sectionsname = get_string('sectionbackup', 'repository');
+
+        return $sectionsname;
     }
 
     /**
@@ -76,33 +81,13 @@ class file_info_course extends file_info {
      * @return array of file_info instances
      */
     public function get_children() {
+        global $DB;
+
         $children = array();
 
-        if ($child = $this->browser->get_file_info($this->context, 'course_intro', 0)) {
-            $children[] = $child;
-        }
-        if ($child = $this->browser->get_file_info($this->context, 'course_section')) {
-            $children[] = $child;
-        }
-        if ($child = $this->browser->get_file_info($this->context, 'section_backup')) {
-            $children[] = $child;
-        }
-
-        if ($child = $this->browser->get_file_info($this->context, 'course_backup', 0)) {
-            $children[] = $child;
-        }
-
-        if ($child = $this->browser->get_file_info($this->context, 'course_content', 0)) {
-            $children[] = $child;
-        }
-
-        $modinfo = get_fast_modinfo($this->course);
-        foreach ($modinfo->cms as $cminfo) {
-            if (empty($cminfo->uservisible)) {
-                continue;
-            }
-            $modcontext = get_context_instance(CONTEXT_MODULE, $cminfo->id);
-            if ($child = $this->browser->get_file_info($modcontext)) {
+        $course_sections = $DB->get_records('course_sections', array('course'=>$this->course->id), 'section');
+        foreach ($course_sections as $section) {
+            if ($child = $this->browser->get_file_info($this->context, 'section_backup', $section->id)) {
                 $children[] = $child;
             }
         }
@@ -115,9 +100,7 @@ class file_info_course extends file_info {
      * @return file_info or null for root
      */
     public function get_parent() {
-        //TODO: error checking if get_parent_contextid() returns false
-        $pcid = get_parent_contextid($this->context);
-        $parent = get_context_instance_by_id($pcid);
-        return $this->browser->get_file_info($parent);
+        return $this->browser->get_file_info($this->context);
     }
 }
+

@@ -33,6 +33,7 @@ require_once("$CFG->libdir/file/file_info_user.php");
 require_once("$CFG->libdir/file/file_info_coursecat.php");
 require_once("$CFG->libdir/file/file_info_course.php");
 require_once("$CFG->libdir/file/file_info_coursesection.php");
+require_once("$CFG->libdir/file/file_info_coursesectionbackup.php");
 require_once("$CFG->libdir/file/file_info_coursefile.php");
 require_once("$CFG->libdir/file/virtual_root_file.php");
 
@@ -317,7 +318,7 @@ class file_browser {
             return null;
         }
 
-        if (!is_null($filearea) and !in_array($filearea, array('course_intro', 'course_content', 'course_section', 'course_backup'))) {
+        if (!is_null($filearea) and !in_array($filearea, array('course_intro', 'course_content', 'course_section', 'course_backup', 'section_backup'))) {
             // file area does not exist, sorry
             $filearea = null;
         }
@@ -422,6 +423,39 @@ class file_browser {
 
     }
 
+    private function get_file_info_section_backup($course, $context, $filearea=null, $itemid=null, $filepath=null, $filename=null) {
+        global $CFG, $DB;
+
+        $fs = get_file_storage();
+        if (empty($itemid)) {
+            // list all sections
+            return new file_info_coursesectionbackup($this, $context, $course);
+        }
+
+        if (!has_capability('moodle/backup:backupcourse', $context) and !has_capability('moodle/restore:restorecourse', $context)) {
+            return null;
+        }
+
+        if (!$section = $DB->get_record('course_sections', array('course'=>$course->id, 'id'=>$itemid))) {
+            return null; // does not exist
+        }
+
+
+        $urlbase = $CFG->wwwroot.'/pluginfile.php';
+        if (!$storedfile = $fs->get_file($context->id, $filearea, $itemid, $filepath, $filename)) {
+            if ($filepath === '/' and $filename === '.') {
+                $storedfile = new virtual_root_file($context->id, $filearea, $itemid);
+            } else {
+                // not found
+                return null;
+            }
+        }
+
+        $downloadable = has_capability('moodle/backup:downloadfile', $context);
+        $uploadable   = has_capability('moodle/restore:uploadfile', $context);
+        return new file_info_stored($this, $context, $storedfile, $urlbase, $section->id, true, $downloadable, $uploadable, false);
+    }
+
     private function get_file_info_course_content($course, $context, $filearea=null, $itemid=null, $filepath=null, $filename=null) {
         $fs = get_file_storage();
 
@@ -484,13 +518,22 @@ class file_browser {
           and has_capability('moodle/course:managefiles', $context)) {
             $areas = array_merge(array($modname.'_intro'=>get_string('moduleintro')), $areas);
         }
+
+        if (has_capability('moodle/backup:downloadfile', $context)) {
+            $areas = array_merge(array('activity_backup'=>get_string('activitybackup', 'repository')), $areas);
+        }
+
         if (empty($areas)) {
             return null;
         }
 
-        if ($filearea === $modname.'_intro') {
+        if ($filearea === $modname.'_intro' || $filearea === 'activity_backup') {
             // always only itemid 0
             if (!has_capability('moodle/course:managefiles', $context)) {
+                return null;
+            }
+            // need downloadfile cap when accessing activity_backup area
+            if ($filearea === 'activity_backup' && !has_capability('moodle/backup:downloadfile', $context)) {
                 return null;
             }
 
