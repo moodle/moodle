@@ -246,6 +246,7 @@ class site_registration_form extends moodleform {
 //        $mform->setType('imageurl', PARAM_URL);
 //        $mform->setDefault('imageurl', $imageurl);
 //        $mform->addHelpButton('imageurl', 'imageurl', 'hub');
+        $mform->addElement('hidden', 'imageurl', ''); //TODO: temporary
 
         /// Display statistic that are going to be retrieve by the hub
         $coursecount = $DB->count_records('course')-1;
