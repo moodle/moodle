@@ -77,6 +77,7 @@ if ($id) {
 
     // Getting current group id
     $currentgroup = groups_get_activity_group($cm);
+    $currentgroup = !empty($currentgroup)?$currentgroup:0;
     // Getting current user id
     if ($wiki->wikimode == 'individual'){
         if (empty($userid)){
@@ -93,23 +94,21 @@ if ($id) {
     if (!empty($page)){
         $pageid = $page->id;
     } else {
-        // the first page doesn't exist, so redirect to create page
+        // the first page doesn't exist, create first page automatically
+        // Then redirct to editing page
         $page = null;
         $title = $wiki->firstpagetitle;
         $default = $wiki->defaultformat;
-        $params = array();
-        $params['action'] = 'new';
-        $params['title'] = $title;
         if (empty($subwiki)) {
-            $params['gid'] = $currentgroup;
-            $params['wid'] = $wiki->id;
-            $params['uid'] = $userid;
+            if (!$swid = wiki_add_subwiki($wiki->id, $currentgroup, $userid)) {
+                print_error('invalidwikiid');
+            }
         } else {
-            $params['swid'] = $subwiki->id;
+            $swid = $subwiki->id;
         }
 
-        $url = new moodle_url('/mod/wiki/create.php', $params);
-        redirect($url->out(false));
+        $id = wiki_create_page($swid, $title, $default, $USER->id);
+        redirect($CFG->wwwroot . '/mod/wiki/edit.php?pageid=' . $id);
     }
 
     /*

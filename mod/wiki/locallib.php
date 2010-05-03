@@ -323,7 +323,8 @@ function wiki_refresh_page_links($page, $links) {
  * @param int $userid
  */
 function wiki_create_page($swid, $title, $format, $userid) {
-    global $DB;
+    global $DB, $PAGE;
+    require_capability('mod/wiki:editpage', $PAGE->context);
     // if page exists
     if ($page = wiki_get_page_by_title($swid, $title)) {
         return $page->id;
