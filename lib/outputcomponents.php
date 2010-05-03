@@ -235,7 +235,7 @@ class help_icon implements renderable {
             debugging("Help title string does not exist: [$this->identifier, $this->component]");
         }
         if (!$sm->string_exists($this->identifier.'_help', $this->component)) {
-            debugging("Help title string does not exist: [{$this->identifier}_help, $this->component]");
+            debugging("Help contents string does not exist: [{$this->identifier}_help, $this->component]");
         }
     }
 }
