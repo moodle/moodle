@@ -154,6 +154,11 @@ case 'zip':
 case 'downloaddir':
     $zipper = new zip_packer();
     $fs = get_file_storage();
+    $draftarea = file_get_draft_area_info($itemid);
+    if ($draftarea['filecount'] == 0) {
+        echo json_encode(false);
+        die;
+    }
 
     $stored_file = $fs->get_file($user_context->id, $filearea, $itemid, $filepath, '.');
     if ($filepath === '/') {

@@ -73,6 +73,7 @@ $string['disabled'] = 'Disabled';
 $string['download'] = 'Download';
 $string['downloadfolder'] = 'Download this folder';
 $string['downloadsucc'] = 'The file has been downloaded successfully';
+$string['draftareanofiles'] = 'Cannot be downloaed because there is no files attached';
 $string['editrepositoryinstance'] = 'Edit repository instance';
 $string['emptylist'] = 'Empty result';
 $string['emptytype'] = 'Cannot create repository type: type name is empty';

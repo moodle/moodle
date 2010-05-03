@@ -2754,6 +2754,7 @@ function print_filemanager($options, $return = false) {
     $PAGE->requires->string_for_js('confirmdeletefile', 'repository');
     $PAGE->requires->string_for_js('nopathselected', 'repository');
     $PAGE->requires->string_for_js('popupblockeddownload', 'repository');
+    $PAGE->requires->string_for_js('draftareanofiles', 'repository');
     $PAGE->requires->string_for_js('path', 'moodle');
     // language strings
     $straddfile  = get_string('add', 'repository') . '...';
