@@ -37,6 +37,17 @@ $string['calclength'] = 'Decimal Places';
 $string['calcmax'] = 'Maximum';
 $string['calcmin'] = 'Minimum';
 $string['calculated'] = 'Calculated';
+$string['calculated_help'] = '<p>Calculated questions offers a way to create individual numerical question by the use of wildcards {a},{b}that are substituted with individual values when the quiz is taken.</p>
+<p>The answers are the result of formulas that can use accepted operators as +-*/ and % where % is the modulo operator. 
+It is also possible to use some PHP-style mathematical function.</p>
+<p>Among these there are 24 single-argument function:<b>
+abs, acos, acosh, asin, asinh, atan, atanh, ceil, cos, cosh, deg2rad, exp, expm1, floor, log, log10, log1p, rad2deg, round, sin, sinh, sqrt, tan, tanh
+</b>and two two-argument functions<b>
+atan2, pow
+</b>and the functions <b>min</b> and <b>max</b> that can take two or more arguments.</p> 
+<p>It is also possible to use the function <b>pi()</b></p> 
+<p>Possible usage is for example <b>sin({a}) + cos({b}) * 2</b>.</p> 
+';
 $string['calculatedsummary'] = 'Calculated questions are like numerical questions but with the numbers used selected randomly from a set when the quiz is taken.';
 $string['correctanswershows'] = 'Correct answer shows';
 $string['correctanswershowsformat'] = 'Format';
@@ -45,7 +56,6 @@ $string['datasetrole']= ' The wild cards <strong>{x..}</strong> will be substitu
 $string['deleteitem'] = 'Delete Item';
 $string['deletelastitem'] = 'Delete Last Item';
 $string['editingcalculated'] = 'Editing a Calculated question';
-$string['existingcategory1'] = 'a literal from an already existing set of literals that are also used by other questions in this category';
 $string['existingcategory1'] = 'will use an already existing shared dataset';
 $string['existingcategory2'] = 'a file from an already existing set of files that are also used by other questions in this category';
 $string['existingcategory3'] = 'a link from an already existing set of links that are also used by other questions in this category';
@@ -58,11 +68,9 @@ $string['item(s)'] = 'item(s)';
 $string['itemno'] = 'Item $a';
 $string['itemscount']='Items<br />Count';
 $string['itemtoadd'] = 'Item To Add';
-$string['keptcategory1'] = 'a literal from the same category reusable set of literals as before';
 $string['keptcategory1'] = 'will use the same existing shared dataset as before';
 $string['keptcategory2'] = 'a file from the same category reusable set of files as before';
 $string['keptcategory3'] = 'a link from the same category reusable set of links as before';
-$string['keptlocal1'] = 'a literal from the same question private set of literals as before';
 $string['keptlocal1'] = 'will use the same existing private dataset as before';
 $string['keptlocal2'] = 'a file from the same question private set of files as before';
 $string['keptlocal3'] = 'a link from the same question private set of links as before';
@@ -73,18 +81,15 @@ $string['mandatoryhdr'] = 'Mandatory wild cards present in answers';
 $string['minmax'] = 'Range of Values';
 $string['mustbenumeric'] = 'You must enter a number here.';
 $string['mustnotbenumeric'] = 'This can\'t be a number.';
-$string['newcategory1'] = 'a literal from a new set of literals that may also be used by other questions in this category';
 $string['newcategory1'] = 'will use a new shared dataset';
 $string['newcategory2'] = 'a file from a new set of files that may also be used by other questions in this category';
 $string['newcategory3'] = 'a link from a new set of links that may also be used by other questions in this category';
-$string['newlocal1'] = 'a literal from a new set of literals that will only be used by this question';
 $string['newlocal1'] = 'will use a new private dataset';
 $string['newlocal2'] = 'a file  from a new set of files that will only be used by this question';
 $string['newlocal3'] = 'a link from a new set of links that will only be used by this question';
 $string['nextitemtoadd'] = 'Next \'Item to Add\'';
 $string['nextpage'] = 'Next Page';
 $string['nocommaallowed'] = 'The , cannot be used, use . as in 0.013 or 1.3e-2' ;
-$string['nodataset'] = 'nothing - it is not a wild card';
 $string['nodataset'] = 'nothing - it is not a wild card';
 $string['nosharedwildcard'] = 'No shared wild card in this category';
 $string['notvalidnumber'] = 'Wild card value is not a valid number ' ;
