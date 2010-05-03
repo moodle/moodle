@@ -126,7 +126,7 @@ class comment {
         } else if (!empty($options->courseid)) {
             $this->courseid = $options->courseid;
         } else {
-            print_error('commentsrequirecourseid');
+            $this->courseid = SITEID;
         }
 
         if (!empty($options->pluginname)) {
