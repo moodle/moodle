@@ -1,6 +1,6 @@
 M.core_message = {};
 
-M.core_message.init_focus = function(Y.eid) {
+M.core_message.init_focus = function(Y, eid) {
     document.getElementById(eid).focus();
 }
 
