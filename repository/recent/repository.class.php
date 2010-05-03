@@ -183,6 +183,9 @@ class repository_recent extends repository {
         if ($stored_file = $fs->get_file($contextid, $filearea, $fileitemid, $filepath, $filename)) {
             $file_record = array('contextid'=>$user_context->id, 'filearea'=>'user_draft',
                 'itemid'=>$new_itemid, 'filepath'=>$new_filepath, 'filename'=>$new_filename);
+            if ($file = $fs->get_file($user_context->id, 'user_draft', $new_itemid, $new_filepath, $new_filename)) {
+                $file->delete();
+            }
             $fs->create_file_from_storedfile($file_record, $stored_file);
         }
 
