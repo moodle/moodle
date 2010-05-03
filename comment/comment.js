@@ -262,7 +262,7 @@ bodyContent: '<div class="comment-delete-confirm"><a href="#" id="confirmdelete-
                             Y.Event.purgeElement('#'+theid, false, 'click');
                         }
                         node.on('click', function(e, node) {
-							e.preventDefault();
+                            e.preventDefault();
                             var width = CommentHelper.confirmoverlay.bodyNode.getStyle('width');
                             var re = new RegExp("(\\d+).*", "i");
                             var result = width.match(re);
@@ -271,7 +271,8 @@ bodyContent: '<div class="comment-delete-confirm"><a href="#" id="confirmdelete-
                             } else {
                                 width = 0;
                             }
-                            CommentHelper.confirmoverlay.set('xy', [e.pageX-(width/2), e.pageY+10]);
+                            //CommentHelper.confirmoverlay.set('xy', [e.pageX-(width/2), e.pageY]);
+                            CommentHelper.confirmoverlay.set('xy', [e.pageX-width-5, e.pageY]);
                             CommentHelper.confirmoverlay.set('visible', true);
                             Y.one('#canceldelete-'+scope.client_id).on('click', function(e) {
 								e.preventDefault();
