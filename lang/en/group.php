@@ -73,6 +73,7 @@ $string['groupinfo'] = 'Info about selected group';
 $string['groupinfomembers'] = 'Info about selected members';
 $string['groupinfopeople'] = 'Info about selected people';
 $string['grouping'] = 'Grouping';
+$string['grouping_help'] = 'A grouping is a collection of groups within a course. If a grouping is selected, then users assigned to groups within the grouping will be able to work together. Group mode must be set to separate or visible groups.';
 $string['groupingdescription'] = 'Grouping description';
 $string['groupingname'] = 'Grouping name';
 $string['groupingnameexists'] = 'The grouping name \'{$a}\' already exists in this course, please choose another one.';
@@ -82,10 +83,23 @@ $string['groupmember'] = 'Group Member';
 $string['groupmemberdesc'] = 'Standard role for a member of a group.';
 $string['groupmembers'] = 'Group members';
 $string['groupmembersonly'] = 'Available for group members only';
+$string['groupmembersonly_help'] = 'If the checkbox is checked, then the activity or resource will only be available to users assigned to groups within the selected grouping, or to any group if no grouping is selected.';
 $string['groupmembersonlyerror'] = 'Sorry, you must be member of at least one group that is used in this activity.';
 $string['groupmemberssee'] = 'See group members';
 $string['groupmembersselected'] = 'Members of selected group';
 $string['groupmode'] = 'Group mode';
+$string['groupmode_help'] = 'The group mode can be one of three levels:
+
+* No groups - there are no sub groups, everyone is part of one big community
+* Separate groups - each group can only see their own group, others are invisible
+* Visible groups - each group works in their own group, but can also see other groups
+
+The group mode can be defined at two levels:
+
+1. Course level - the group mode defined at the course level is the default mode for all activities defined within that course
+2. Activity level - each activity that supports groups can also define its own grouping mode
+
+If the course is set to "force group mode",  the setting at the activity level is ignored.';
 $string['groupmodeforce'] = 'Force group mode';
 $string['groupmy'] = 'My group';
 $string['groupname'] = 'Group name';
