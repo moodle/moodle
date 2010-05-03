@@ -35,6 +35,8 @@ class block_html extends block_base {
         $this->content = new stdClass;
         $this->content->footer = '';
         if (isset($this->config->text)) {
+            // rewrite url
+            $this->config->text['text'] = file_rewrite_pluginfile_urls($this->config->text['text'], 'pluginfile.php', $this->context->id, 'block_html', $this->instance->id);
             $this->content->text = format_text($this->config->text['text'], $this->config->text['format'], $filteropt);
         } else {
             $this->content->text = '';
@@ -44,6 +46,20 @@ class block_html extends block_base {
 
         return $this->content;
     }
+
+
+    /**
+     * Serialize and store config data
+     */
+    function instance_config_save($data, $nolongerused = false) {
+        global $DB;
+
+        // Move embedded files into a proper filearea and adjust HTML links to match
+        $data->text['text'] = file_save_draft_area_files($data->text['itemid'], $this->context->id, 'block_html', $this->instance->id, array('subdirs'=>true), $data->text['text']);
+
+        parent::instance_config_save($data, $nolongerused);
+    }
+
 
     function content_is_trusted() {
         return in_array($this->page->context->contextlevel, array(CONTEXT_COURSE, CONTEXT_COURSECAT, CONTEXT_SYSTEM));
@@ -98,6 +114,17 @@ class block_html extends block_base {
         }
 
         return true;
+    }
+    function send_file($context, $filearea, $itemid, $filepath, $filename) {
+        $fs = get_file_storage();
+        $fullpath = $context->id.'block_html'.$itemid.$filepath.$filename;
+
+        if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
+            send_file_not_found();
+        }
+
+        session_get_instance()->write_close();
+        send_stored_file($file, 60*60, 0, false);
     }
 }
 

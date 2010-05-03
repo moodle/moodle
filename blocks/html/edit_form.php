@@ -37,10 +37,16 @@ class block_html_edit_form extends block_edit_form {
         $mform->addElement('text', 'config_title', get_string('configtitle', 'block_html'));
         $mform->setType('config_title', PARAM_MULTILANG);
 
-        // TODO MDL-19844 still needs to be fixed to support files properly
-
         $editoroptions = array('maxfiles' => EDITOR_UNLIMITED_FILES, 'trusttext'=>true, 'context'=>$this->block->context);
         $mform->addElement('editor', 'config_text', get_string('configcontent', 'block_html'), null, $editoroptions);
         $mform->setType('config_text', PARAM_RAW); // no XSS prevention here, users must be trusted
+    }
+
+    function set_data($defaults) {
+        $block = $this->block;
+        $draftid_editor = file_get_submitted_draft_itemid('config_text');
+        $block->config->text['text'] = file_prepare_draft_area($draftid_editor, $block->context->id, 'block_html', $block->instance->id, array('subdirs'=>true), $block->config->text['text']);
+        $block->config->text['itemid'] = $draftid_editor;
+        parent::set_data($defaults);
     }
 }
