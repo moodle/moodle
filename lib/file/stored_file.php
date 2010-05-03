@@ -17,57 +17,78 @@
 
 
 /**
- * Class representing filesin Moodle file storage.
+ * Definition of a class stored_file.
  *
  * @package    moodlecore
  * @subpackage file-storage
- * @copyright  2008 Petr Skoda (http://skodak.org)
+ * @copyright  2008 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 require_once("$CFG->libdir/file/stored_file.php");
 
 /**
- * Class representing local files stored in sha1 file pool
+ * Class representing local files stored in a sha1 file pool.
+ *
+ * Since Moodle 2.0 file contents are stored in sha1 pool and
+ * all other file information is stored in new "files" database table.
+ *
+ * @copyright 2008 Petr Skoda {@link http://skodak.org}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since     Moodle 2.0
  */
 class stored_file {
+    /** @var file_storage file storage pool instance */
     private $fs;
+    /** @var object record from the files table */
     private $file_record;
 
     /**
-     * Constructor
-     * @param object $fs file  storage instance
+     * Constructor, this constructor should be called ONLY from the file_storage class!
+     *
+     * @param file_storage $fs file  storage instance
      * @param object $file_record description of file
      */
-    public function __construct($fs, $file_record) {
-        $this->fs = $fs;
-        $this->file_record = clone($file_record);
+    public function __construct(file_storage $fs, stdClass $file_record) {
+        $this->fs          = $fs;
+        $this->file_record = clone($file_record); // prevent modifications
     }
 
     /**
      * Is this a directory?
-     * @return bool
+     *
+     * Directories are only emulated, internally they are stored as empty
+     * files with a "." instead of name - this means empty directory contains
+     * exactly one empty file with name dot.
+     *
+     * @return bool true means directory, false means file
      */
     public function is_directory() {
-        return $this->file_record->filename === '.';
+        return ($this->file_record->filename === '.');
     }
 
     /**
-     * Delete file
-     * @return bool success
+     * Delete file from files table.
+     *
+     * The content of files stored in sha1 pool is reclaimed
+     * later - the occupied disk space is reclaimed much later.
+     *
+     * @return bool always true or exception if error occurred
      */
     public function delete() {
         global $DB;
         $DB->delete_records('files', array('id'=>$this->file_record->id));
         // moves pool file to trash if content not needed any more
         $this->fs->deleted_file_cleanup($this->file_record->contenthash);
-        return true;
+        return true; // BC only
     }
 
     /**
-     * Protected - developers must not gain direct access to this function
+     * Protected - developers must not gain direct access to this function.
+     *
      * NOTE: do not make this public, we must not modify or delete the pool files directly! ;-)
-     * @return ful path to pool file with file content
+     *
+     * @return string full path to pool file with file content
      **/
     protected function get_content_file_location() {
         $filedir = $this->fs->get_filedir();
@@ -83,6 +104,7 @@ class stored_file {
     *
     * @param curl $curlrequest the curl request object
     * @param string $key what key to use in the POST request
+    * @return void
     */
     public function add_to_curl_request(&$curlrequest, $key) {
         $curlrequest->_tmp_file_post_params[$key] = '@' . $this->get_content_file_location();
@@ -90,7 +112,10 @@ class stored_file {
 
     /**
      * Returns file handle - read only mode, no writing allowed into pool files!
-     * @return file handle
+     *
+     * When you want to modify a file, create a new file and delete the old one.
+     *
+     * @return resource file handle
      */
     public function get_content_file_handle() {
         $path = $this->get_content_file_location();
@@ -103,8 +128,9 @@ class stored_file {
     }
 
     /**
-     * Dumps file content to page
-     * @return file handle
+     * Dumps file content to page.
+     *
+     * @return void
      */
     public function readfile() {
         $path = $this->get_content_file_location();
@@ -117,7 +143,8 @@ class stored_file {
     }
 
     /**
-     * Returns file content as string
+     * Returns file content as string.
+     *
      * @return string content
      */
     public function get_content() {
@@ -131,8 +158,9 @@ class stored_file {
     }
 
     /**
-     * Copy content of file to give npathname
-     * @param string $pathnema rela path to new file
+     * Copy content of file to given pathname.
+     *
+     * @param string $pathname real path to the new file
      * @return bool success
      */
     public function copy_content_to($pathname) {
@@ -146,8 +174,9 @@ class stored_file {
     }
 
     /**
-     * List contents of archive
-     * @param object $file_packer
+     * List contents of archive.
+     *
+     * @param file_packer $file_packer
      * @return array of file infos
      */
     public function list_files(file_packer $packer) {
@@ -156,10 +185,11 @@ class stored_file {
     }
 
     /**
-     * Extract file to given file path (real OS filesystem), existing files are overwrited
-     * @param object $file_packer
+     * Extract file to given file path (real OS filesystem), existing files are overwritten.
+     *
+     * @param file_packer $file_packer
      * @param string $pathname target directory
-     * @return mixed list of processed files; false if error
+     * @return array|bool list of processed files; false if error
      */
     public function extract_to_pathname(file_packer $packer, $pathname) {
         $archivefile = $this->get_content_file_location();
@@ -167,23 +197,25 @@ class stored_file {
     }
 
     /**
-     * Extract file to given file path (real OS filesystem), existing files are overwrited
-     * @param object $file_packer
+     * Extract file to given file path (real OS filesystem), existing files are overwritten.
+     *
+     * @param file_packer $file_packer
      * @param int $contextid
      * @param string $filearea
      * @param int $itemid
      * @param string $pathbase
      * @param int $userid
-     * @return mixed list of processed files; false if error
+     * @return array|bool list of processed files; false if error
      */
-    public function extract_to_storage(file_packer $packer, $contextid, $filearea, $itemid, $pathbase, $userid=null) {
+    public function extract_to_storage(file_packer $packer, $contextid, $filearea, $itemid, $pathbase, $userid = NULL) {
         $archivefile = $this->get_content_file_location();
         return $packer->extract_to_storage($archivefile, $contextid, $filearea, $itemid, $pathbase);
     }
 
     /**
-     * Add file/directory into archive
-     * @param object $filearch
+     * Add file/directory into archive.
+     *
+     * @param file_archive $filearch
      * @param string $archivepath pathname in archive
      * @return bool success
      */
@@ -218,7 +250,9 @@ class stored_file {
 
     /**
      * Verifies the file is a valid web image - gif, png and jpeg only.
+     *
      * It should be ok to serve this image from server without any other security workarounds.
+     *
      * @return bool true if file ok
      */
     public function is_valid_image() {
@@ -237,8 +271,9 @@ class stored_file {
     }
 
     /**
-     * Returns parent directory, creates missing parents if needed
-     * @return object stored_file
+     * Returns parent directory, creates missing parents if needed.
+     *
+     * @return stored_file
      */
     public function get_parent_directory() {
         if ($this->file_record->filepath === '/' and $this->file_record->filename === '.') {
@@ -261,7 +296,8 @@ class stored_file {
     }
 
     /**
-     * Returns context id of the file
+     * Returns context id of the file-
+     *
      * @return int context id
      */
     public function get_contextid() {
@@ -270,7 +306,8 @@ class stored_file {
 
     /**
      * Returns file area name, the areas do not have to be unique,
-     * but usually have form pluginname_typeofarea such as forum_attachments
+     * but usually have form component_typeofarea such as forum_attachments.
+     *
      * @return string
      */
     public function get_filearea() {
@@ -278,7 +315,8 @@ class stored_file {
     }
 
     /**
-     * Returns returns item id of file
+     * Returns returns item id of file.
+     *
      * @return int
      */
     public function get_itemid() {
@@ -287,6 +325,7 @@ class stored_file {
 
     /**
      * Returns file path - starts and ends with /, \ are not allowed.
+     *
      * @return string
      */
     public function get_filepath() {
@@ -295,6 +334,7 @@ class stored_file {
 
     /**
      * Returns file name or '.' in case of directories.
+     *
      * @return string
      */
     public function get_filename() {
@@ -303,6 +343,7 @@ class stored_file {
 
     /**
      * Returns id of user who created the file.
+     *
      * @return int
      */
     public function get_userid() {
@@ -311,6 +352,7 @@ class stored_file {
 
     /**
      * Returns the size of file in bytes.
+     *
      * @return int bytes
      */
     public function get_filesize() {
@@ -318,7 +360,8 @@ class stored_file {
     }
 
     /**
-     * Returns mime type of file
+     * Returns mime type of file.
+     *
      * @return string
      */
     public function get_mimetype() {
@@ -326,7 +369,8 @@ class stored_file {
     }
 
     /**
-     * Returns unix timestamp of file creation date
+     * Returns unix timestamp of file creation date.
+     *
      * @return int
      */
     public function get_timecreated() {
@@ -334,7 +378,8 @@ class stored_file {
     }
 
     /**
-     * Returns unix timestamp of last file modification
+     * Returns unix timestamp of last file modification.
+     *
      * @return int
      */
     public function get_timemodified() {
@@ -342,7 +387,8 @@ class stored_file {
     }
 
     /**
-     * Returns file status flag
+     * Returns file status flag.
+     *
      * @return int 0 means file OK, anything else is a problem and file can not be used
      */
     public function get_status() {
@@ -350,7 +396,8 @@ class stored_file {
     }
 
     /**
-     * Returns file id
+     * Returns file id.
+     *
      * @return int
      */
     public function get_id() {
@@ -358,7 +405,8 @@ class stored_file {
     }
 
     /**
-     * Returns sha1 hash of file content
+     * Returns sha1 hash of file content.
+     *
      * @return string
      */
     public function get_contenthash() {
@@ -366,7 +414,8 @@ class stored_file {
     }
 
     /**
-     * Returns sha1 hash of all file path components sha1(contextid/filearea/itemid/dir/dir/filename.ext)
+     * Returns sha1 hash of all file path components sha1("contextid/filearea/itemid/dir/dir/filename.ext").
+     *
      * @return string
      */
     public function get_pathnamehash() {
@@ -374,7 +423,8 @@ class stored_file {
     }
 
     /**
-     * Returns the license type of the file, it is a short name referred from license table
+     * Returns the license type of the file, it is a short name referred from license table.
+     *
      * @return string
      */
     public function get_license() {
@@ -382,7 +432,8 @@ class stored_file {
     }
 
     /**
-     * returns the author name of the file
+     * Returns the author name of the file.
+     *
      * @return string
      */
     public function get_author() {
@@ -390,10 +441,12 @@ class stored_file {
     }
 
     /**
-     * Returns the source of the file, usually it is a url
+     * Returns the source of the file, usually it is a url.
+     *
      * @return string
      */
     public function get_source() {
         return $this->file_record->source;
     }
 }
+
