@@ -241,6 +241,12 @@ class rating_manager {
     public function get_ratings($options) {
         global $DB, $USER, $PAGE, $CFG;
 
+        //are ratings enabled?
+        if ($options->aggregate==RATING_AGGREGATE_NONE) {
+            return $options->items;
+        }
+        $aggregatestr = $this->get_aggregation_method($options->aggregate);
+
         if(empty($options->items)) {
             return $options->items;
         }
@@ -250,8 +256,6 @@ class rating_manager {
         } else {
             $userid = $options->userid;
         }
-
-        $aggregatestr = $this->get_aggregation_method($options->aggregate);
 
         //create an array of item ids
         $itemids = array();
