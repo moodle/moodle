@@ -1209,7 +1209,7 @@ class assignment_base {
             return true;
         }
         if ($this->assignment->assignmenttype=='upload' || $this->assignment->assignmenttype=='online' || $this->assignment->assignmenttype=='uploadsingle') {
-            echo '<div style="text-align:right"><a href="submissions.php?id='.$this->cm->id.'&amp;download=zip">'.get_string('downloadall', 'assignment').'</div>';
+            echo '<div style="text-align:right"><a href="submissions.php?id='.$this->cm->id.'&amp;download=zip">'.get_string('downloadall', 'assignment').'</a></div>';
         }
     /// Construct the SQL
 
