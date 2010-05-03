@@ -69,6 +69,7 @@ if ($id) {
     if (!$wiki = wiki_get_wiki($cm->instance)) {
         print_error('incorrectwikiid', 'wiki');
     }
+    $PAGE->set_cm($cm);
 
     // Getting the subwiki corresponding to that wiki, group and user.
     //
