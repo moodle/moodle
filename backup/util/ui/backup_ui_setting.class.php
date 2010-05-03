@@ -152,6 +152,9 @@ abstract class backup_setting_ui extends base_setting_ui {
      * @return array
      */
     public function apply_options(array $properties) {
+        if (!empty($this->options['size'])) {
+            $properties['attributes']['size'] = $this->options['size'];
+        }
         return $properties;
     }
     /**

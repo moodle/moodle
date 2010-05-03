@@ -427,6 +427,15 @@ class backup_ui_stage_confirmation extends backup_ui_stage {
                 if ($setting->get_name() != 'filename') {
                     $form->add_fixed_setting($setting);
                 } else {
+                    $value = $setting->get_value();
+                    if (empty($value)) {
+                        $format = $this->ui->get_backup_format();
+                        $type = $this->ui->get_backup_type();
+                        $id = $this->ui->get_controller_id();
+                        $users = $this->ui->get_setting_value('users');
+                        $anonymised = $this->ui->get_setting_value('anonymize');
+                        $setting->set_value(backup_plan_dbops::get_default_backup_filename($format, $type, $id, $users, $anonymised));
+                    }
                     $form->add_setting($setting, $task);
                 }
             }

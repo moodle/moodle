@@ -49,7 +49,7 @@ class backup_root_task extends backup_task {
 
         // Define filename setting
         $filename = new backup_filename_setting('filename', base_setting::IS_FILENAME, 'backup.zip');
-        $filename->set_ui(get_string('filename', 'backup'), 'backup.zip');
+        $filename->set_ui(get_string('filename', 'backup'), '', array('size'=>50));
         $this->add_setting($filename);
 
         // Define users setting (keeping it on hand to define dependencies)

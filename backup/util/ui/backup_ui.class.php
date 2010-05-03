@@ -345,6 +345,41 @@ class backup_ui {
         }
         return $items;
     }
+    /**
+     * Gets the format for the backup
+     * @return int
+     */
+    public function get_backup_format() {
+        return $this->controller->get_format();
+    }
+    /**
+     * Gets the type of the backup
+     * @return int
+     */
+    public function get_backup_type() {
+        return $this->controller->get_type();
+    }
+    /**
+     * Gets the ID used in creating the controller. Relates to course/section/cm
+     * @return int
+     */
+    public function get_controller_id() {
+        return $this->controller->get_id();
+    }
+    /**
+     * Gets the value for the requested setting
+     *
+     * @param string $name
+     * @return mixed
+     */
+    public function get_setting_value($name, $default = false) {
+        try {
+            return $this->controller->get_plan()->get_setting($name)->get_value();
+        } catch (Exception $e) {
+            debugging('Failed to find the setting: '.$name, DEBUG_DEVELOPER);
+            return $default;
+        }
+    }
 }
 
 /**
