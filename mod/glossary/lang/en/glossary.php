@@ -104,6 +104,7 @@ $string['destination'] = 'Destination of imported entries';
 $string['destination_help'] = 'Entries can either be imported and added to the current glossary or to a new glossary, in which case a new glossary will be created based on information in the XML file.';
 $string['displayformat'] = 'Display format';
 $string['displayformat_help'] = 'There are 7 display formats:
+
 * Simple, dictionary style - No authors are displayed and attachments are shown as links
 * Continuous without author - Entries are displayed one after another without any separation apart from the editing icons
 * Full with author - A forum-like display format showing the author\'s data and with attachments shown as links

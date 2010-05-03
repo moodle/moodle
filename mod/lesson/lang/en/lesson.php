@@ -26,6 +26,7 @@
 $string['accesscontrol'] = 'Access control';
 $string['actionaftercorrectanswer'] = 'Action after correct answer';
 $string['actionaftercorrectanswer_help'] = 'After answering a question correctly, there are 3 options for the following page:
+
 * Normal - Follow lesson path
 * Show an unseen page - Pages are shown in a random order with no page shown twice
 * Show an unanswered page - Pages are shown in a random order, with pages containing unanswered questions shown again';

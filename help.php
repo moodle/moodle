@@ -63,7 +63,7 @@ if ($sm->string_exists($identifier.'_help', $component)) {
 
     echo $OUTPUT->heading(format_string(get_string($identifier, $component)), 1, 'helpheading');
     // Should be simple wiki only MDL-21695
-    echo format_text(get_string($identifier.'_help', $component), FORMAT_MOODLE, $options);
+    echo format_text(get_string($identifier.'_help', $component), FORMAT_MARKDOWN, $options);
 
     if ($sm->string_exists($identifier.'_link', $component)) {  // Link to further info in Moodle docs
         $link = get_string($identifier.'_link', $component);

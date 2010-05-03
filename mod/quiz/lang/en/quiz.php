@@ -118,7 +118,8 @@ $string['blackboard_six'] = 'Blackboard V6+';
 $string['bothattempts'] = 'Show students with and without attempts';
 $string['braceerror'] = 'Could not find {...} around answers';
 $string['browsersecurity'] = 'Browser security';
-$string['browsersecurity_help'] = 'If "Full screen pop-up with some JavaScript security" is selected, 
+$string['browsersecurity_help'] = 'If "Full screen pop-up with some JavaScript security" is selected,
+
 * The quiz will only start if the student has a JavaScript-enabled web-browser
 * The quiz appears in a full screen popup window that covers all the other windows and has no navigation controls
 * Students are prevented, as far as is possible, from using facilities like copy and paste';
@@ -265,6 +266,7 @@ $string['editingnumerical'] = 'Editing a Numerical question';
 $string['editingquestion'] = 'Editing a question';
 $string['editingquiz'] = 'Editing quiz';
 $string['editingquiz_help'] = 'When creating a quiz, the main concepts are:
+
 * The quiz, containing questions over one or more pages
 * The question bank, which stores copies of all questions organised into categories
 * Random questions -  A student gets different questions each time they attempt the quiz and different students can get different questions';
@@ -375,6 +377,7 @@ $string['gradeessays'] = 'Grade Essays';
 $string['gradehighest'] = 'Highest grade';
 $string['grademethod'] = 'Grading method';
 $string['grademethod_help'] = 'When multiple attempts are allowed, the following methods are available for calculating the final quiz grade:
+
 * Highest grade of all attempts
 * Average (mean) grade of all attempts
 * First attempt (all other attempts are ignored)

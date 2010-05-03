@@ -722,6 +722,7 @@ $string['forgottenduplicate'] = 'The email address is shared by several accounts
 $string['forgotteninvalidurl'] = 'Invalid password reset URL';
 $string['format'] = 'Format';
 $string['format_help'] = 'The course format determines the layout of the course page.
+
 * SCORM format - For displaying a SCORM package in the first section of the course page (as an alternative to using the SCORM/AICC module)
 * Social format - A forum is displayed on the course page
 * Topics format - The course page is organised into topic sections

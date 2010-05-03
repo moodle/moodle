@@ -104,6 +104,7 @@ $string['grademethod'] = 'Grading method';
 $string['grademethod_help'] = 'The grading method defines how a final grade for the activity is determined.
 
 There are 4 grading methods:
+
 * Learning objects - The number of completed/passed learning objects
 * Highest grade - The highest score obtained in all passed learning objects
 * Average grade - The mean of all the scores
