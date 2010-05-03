@@ -382,11 +382,10 @@ function wiki_pluginfile($course, $cminfo, $context, $filearea, $args, $forcedow
 
     require_once($CFG->dirroot . "/mod/wiki/locallib.php");
 
-    if ($filearea == "wiki_attachments") {
-        $pageid = (int) array_shift($args);
+    if ($filearea == 'wiki_attachments') {
+        $swid = (int) array_shift($args);
 
-        // Checking page instance
-        if (!$page = wiki_get_page($pageid)) {
+        if (!$subwiki = wiki_get_subwiki($swid)) {
             return false;
         }
 
@@ -396,7 +395,7 @@ function wiki_pluginfile($course, $cminfo, $context, $filearea, $args, $forcedow
 
         $relativepath = '/' . implode('/', $args);
 
-        $fullpath = $context->id . 'wiki_attachments' . $pageid . $relativepath;
+        $fullpath = $context->id . 'wiki_attachments' . $swid . $relativepath;
 
         $fs = get_file_storage();
         if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
