@@ -193,7 +193,7 @@ function grade_update($source, $courseid, $itemtype, $itemmodule, $iteminstance,
             $grades[$k] = $g;
         }
 
-        if (empty($g['userid']) or $k != $g['userid']) {
+        if ($g['userid']!=='0' && (empty($g['userid']) or $k != $g['userid'])) {
             debugging('Incorrect grade array index, must be user id! Grade ignored.');
             unset($grades[$k]);
         }
