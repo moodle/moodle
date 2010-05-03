@@ -533,3 +533,15 @@ body.tag .managelink {padding: 5px;}
  * Web Service
  */
 #webservice-doc-generator td {text-align: left;border: 0px solid black;}
+
+
+/**
+ * Help Content (pop-up)
+ */
+#helpcontent { background-color: #FFE691; border: 1px solid #848484; z-index: 10; }
+#show { margin-left:5px; padding:0; }
+#hide { float: right; }
+.closehelpbutton { border: none; background: none; }
+.yui3-js-enabled .yui3-overlay-loading { top:-1000em; left:-1000em; position:absolute; display: none; }
+.yui3-widget-bd { float: none; clear: both; margin: 1em;}
+#helpcontent .helpheading {font-size: 1em;}

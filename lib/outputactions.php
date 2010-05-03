@@ -122,7 +122,7 @@ class popup_action extends component_action {
      * @param array  $params An array of popup parameters
      * @return void
      */
-    public function __construct($event, $url, $name='popup', $params=array()) {
+    public function __construct($event, $url, $name='popup', $params=array()) {        
         global $CFG;
         $this->name = $name;
 
@@ -143,7 +143,12 @@ class popup_action extends component_action {
                 $this->params[$var] = $params[$var];
             }
         }
-        parent::__construct($event, 'openpopup', array('url' => $url->out(false), 'name' => $name, 'options' => $this->get_js_options($params)));
+        
+        $attributes = array('url' => $url->out(false), 'name' => $name, 'options' => $this->get_js_options($params));
+        if (array_key_exists('id', $params)) {
+            $attributes['id'] = $params['id'];
+        }
+        parent::__construct($event, 'openpopup', $attributes);
     }
 
     /**
