@@ -69,7 +69,6 @@ class community {
         $params['filetype'] = BACKUP_FILE_TYPE;
 
         $url  = new moodle_url($huburl.'/local/hub/webservice/download.php', $params);
-        varlog($url);
         $path = $CFG->dataroot.'/temp/download/'.'backup_'.$courseid.".zip";
         $fp = fopen($path, 'w');
         $ch = curl_init($huburl.'/local/hub/webservice/download.php?filetype='.BACKUP_FILE_TYPE.'&courseid='.$courseid);

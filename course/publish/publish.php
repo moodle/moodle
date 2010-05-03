@@ -129,8 +129,7 @@ if (has_capability('moodle/course:publish', get_context_instance(CONTEXT_COURSE,
     require_once($CFG->dirroot."/webservice/xmlrpc/lib.php");
     $xmlrpcclient = new webservice_xmlrpc_client();
     $courseids = $xmlrpcclient->call($serverurl, $registeredhub->token, $function, $params);
-    varlog('The course id after retrieveing from ws:');
-    varlog($courseids);
+    
     if (count($courseids) != 1) {
         throw new moodle_exception('coursewronglypublished');
     }
