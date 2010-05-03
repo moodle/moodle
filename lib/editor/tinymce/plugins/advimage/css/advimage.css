@@ -1,8 +1,14 @@
 #src_list, #over_list, #out_list {width:280px;}
 .mceActionPanel {margin-top:7px;}
-.moodlebutton {font-size: 1.5em;font-weight:bold;padding: 3px;border:1px solid #ccc;text-decoration:none}
-.moodlebutton:hover {background: #ccc}
 .alignPreview {border:1px solid #000; width:140px; height:140px; overflow:hidden; padding:5px;}
+.moodlebutton {
+    background: url(../../../../../../pix/a/search.png) .2em .2em no-repeat;
+    font-weight:bold;
+    font-size: 1.5em;
+    padding: .2em 1.5em;
+    border:1px solid #ccc;
+    text-decoration:none;
+}
 .checkbox {border:0;}
 .panel_wrapper div.current {height:305px;}
 #prev {margin:0; border:1px solid #000; width:428px; height:180px; overflow:auto;}
