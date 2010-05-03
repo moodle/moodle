@@ -65,9 +65,12 @@ class repository_recent extends repository {
 
     private function get_recent_files($limitfrom = 0, $limit = DEFAULT_RECENT_FILES_NUM) {
         global $USER, $DB;
-        $sql = 'SELECT DISTINCT pathnamehash, contextid, itemid, filearea, filepath, filename FROM {files} WHERE userid = ? AND filename <> "." ORDER BY timecreated DESC';
-        $params = array('userid'=>$USER->id);
-        $rs = $DB->get_recordset_sql($sql, array('userid'=>$USER->id), $limitfrom, $limit);
+        $sql = 'SELECT DISTINCT pathnamehash, contextid, itemid, filearea, filepath, filename 
+                FROM {files} 
+                WHERE userid = ? AND filename <> ? 
+                ORDER BY timecreated DESC';
+        $params = array('userid'=>$USER->id, 'filename'=>'.');
+        $rs = $DB->get_recordset_sql($sql, $params, $limitfrom, $limit);
         $result = array();
         foreach ($rs as $file_record) {
             $info = array();
