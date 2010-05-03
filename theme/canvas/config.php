@@ -108,14 +108,24 @@ $THEME->layouts = array(
     
 );
 
-///////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////
 // These are all of the possible layouts in Moodle. The
 // simplest way to do this is to keep the theme and file
 // variables the same for every layout. Including them
 // all in this way allows some flexibility down the road
 // if you want to add a different layout template to a
 // specific page.
-///////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////
+
+$THEME->hidefromselector = true;
+
+/////////////////////////////////////////////////////
+// We don't want the base theme to be shown on the 
+// theme selection screen, by setting this to true 
+// it will only be shown if theme designer mode is 
+// switched on.
+/////////////////////////////////////////////////////
+
 
 
 // $THEME->enable_dock = false;
@@ -125,7 +135,7 @@ $THEME->layouts = array(
 ////////////////////////////////////////////////////
 
 
-// $THEME->editor_sheets;
+// $THEME->editor_sheets
 
 ////////////////////////////////////////////////////
 // An array of stylesheets to include within the 

@@ -97,3 +97,25 @@
 .path-mod-choice .data { border-right:1px solid #ddd; }
 .path-mod-choice .col1 { border-left:1px solid #ddd; }
 .path-mod-choice .count { border-top:2px solid #ddd; background:#f5f5f5;border-bottom:1px solid #ddd;}
+
+/* Lesson 
+--------------------------*/
+
+.path-mod-lesson .firstpageoptions { padding:10px; }
+.path-mod-lesson .centerpadded { text-align:center;display:block;padding:10px; }
+.path-mod-lesson .edit_pages_box .addlinks { text-align:center; }
+.path-mod-lesson .feedback { text-align:center;font-weight:bold; }
+.path-mod-lesson .password-form .generalbox { padding:10px;width:50%;text-align:center; }
+.path-mod-lesson .center { text-align:center; }
+.path-mod-lesson .ongoing { color:#00f;margin:0 0 1em; }
+.path-mod-lesson .clock .content { font-size:1.2em;padding-left:15px; }
+.path-mod-lesson .leftduring .generalbox { padding:10px;width:50%;margin:0 auto; }
+.path-mod-lesson .correctanswer { margin:1em auto;width:50%;padding:10px; }
+.path-mod-lesson .correctanswer .correct { color:#0fb337; }
+
+#page-mod-lesson-view #pageheader,
+#page-mod-lesson-view #pageheader legend { border:none; }
+#page-mod-lesson-continue .generalbox { padding:10px; }
+
+.branchbuttoncontainer { text-align:center; }
+.branchbuttoncontainer input { margin:10px; }

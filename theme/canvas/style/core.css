@@ -1,6 +1,8 @@
 .sitetopic { border: none; }
 .headingblock { border-bottom: 1px solid #ddd;font-size: 1.3em;color: #333; }
 
+.expired,
+.notopenyet,
 .notifysuccess,
 .notifyproblem,
 .errorbox,
@@ -10,11 +12,15 @@
 .singleselect { text-align: center;margin: 1em 0; }
 .generalbox { border-color:#ddd; }
 
+.expired,
+.notopenyet {border: none;color:#f00;}
+
 .buttons .singlebutton input { margin:0; }
 .initialbar { text-align:center; }
 
 .side-pre-only #page-content #region-main-box #region-post-box #region-main-wrap #region-main { padding-right:0; }
 .side-post-only #page-content #region-main-box #region-post-box #region-main-wrap #region-main { padding-left:0; }
+
 /* Login
 ------------------------*/
 
@@ -31,6 +37,8 @@
 .loginbox .guestsub { border-top: 1px solid #DDDDDD;margin: 5px 20% }
 .loginbox.twocolumns .loginpanel { border-color: #ddd;padding-right: 0.5%; }
 .loginbox.twocolumns .signuppanel { padding-left: 1%;width: 48%; }
+
+.page-course-loginas #notice { border:none; }
 
 #page-login-forgot_password .generalbox { margin:0 auto 1.5em;width:75%;padding:10px; }
 
@@ -133,6 +141,7 @@
 
 /* Forms 
 -----------------------*/
+.mform .fsubmit { text-align:center;padding:2px; }
 
 .form-label .form-shortname { font-size: 0.9em;color: #777;}
 .form-description { font-size: 0.95em; color: #444; }
