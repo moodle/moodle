@@ -239,7 +239,8 @@ class mod_wiki_renderer extends plugin_renderer_base {
         return $output;
     }
     public function wiki_info() {
-        return $this->output->box($this->page->activityrecord->intro, 'generalbox', 'intro');
+        global $PAGE;
+        return $this->output->box(format_module_intro('wiki', $this->page->activityrecord, $PAGE->cm->id), 'generalbox', 'intro');
     }
     public function tabs($page, $tabitems, $options) {
         global $CFG;
