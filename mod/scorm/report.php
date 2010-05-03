@@ -453,9 +453,12 @@
                                     $row[] = '';
                                 }
                             }
-                            //TODO: fetch the user details elsewhere - this is a performance problem!!
                             if (in_array('picture', $columns)){
-                                $user = (object)array('id'=>$scouser->userid);
+                                $user = (object)array('id'=>$scouser->userid,
+                                                      'picture'=>$scouser->picture, 
+                                                      'imagealt'=>$scouser->imagealt, 
+                                                      'firstname'=>$scouser->firstname,
+                                                      'lastname'=>$scouser->lastname);
                                 $row[] = $OUTPUT->user_picture($user, array('courseid'=>$course->id));
                             }
                             if (!$download){
