@@ -82,8 +82,8 @@ if (!empty($fromform) and confirm_sesskey()) {
     set_config('site_imageurl_'.$cleanhuburl, $fromform->imageurl, 'hub');
     set_config('site_privacy_'.$cleanhuburl, $fromform->privacy, 'hub');
     set_config('site_address_'.$cleanhuburl, $fromform->address, 'hub');
-    set_config('site_region_'.$cleanhuburl, $fromform->region, 'hub');
-    set_config('site_country_'.$cleanhuburl, $fromform->country, 'hub');
+    set_config('site_region_'.$cleanhuburl, $fromform->regioncode, 'hub');
+    set_config('site_country_'.$cleanhuburl, $fromform->countrycode, 'hub');
     set_config('site_geolocation_'.$cleanhuburl, $fromform->geolocation, 'hub');
     set_config('site_contactable_'.$cleanhuburl, $fromform->contactable, 'hub');
     set_config('site_emailalert_'.$cleanhuburl, $fromform->emailalert, 'hub');
