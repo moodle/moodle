@@ -2945,6 +2945,7 @@ class settings_navigation extends navigation_node {
         // Restore to this course
         if (has_capability('moodle/restore:restorecourse', $coursecontext)) {
             $url = new moodle_url('/files/index.php', array('id'=>$course->id, 'wdir'=>'/backupdata'));
+            $url = null; // Disabled until restore is implemented. MDL-21432
             $frontpage->add(get_string('restore'), $url, self::TYPE_SETTING, null, null, new pix_icon('i/restore', ''));
         }
 
