@@ -462,8 +462,6 @@ body.tag .managelink {padding: 5px;}
 .file-picker .ygtvlabel:hover {margin-left:2px;text-decoration: none;}
 .file-picker {font-size:12px;}
 .file-picker strong {background:#FFFFCC;}
-.file-picker a {color: #336699;}
-.file-picker a:hover {background:#003366;color:white;}
 .file-picker .fp-panel {padding:0;margin:0;text-align:left;}
 .file-picker .fp-login-form {text-align:center;}
 .file-picker .fp-searchbar {float:right;}

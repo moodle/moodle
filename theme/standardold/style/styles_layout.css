@@ -4027,8 +4027,6 @@ table.mod_index {
 
 .file-picker{font-size:12px;}
 .file-picker strong{background:#FFFFCC}
-.file-picker a{color: #336699}
-.file-picker a:hover{background:#003366;color:white}
 .file-picker .fp-panel{padding:0;margin:0; text-align:left;}
 .file-picker .fp-login-form{text-align:center}
 .file-picker .fp-searchbar{float:right}
