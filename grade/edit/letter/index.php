@@ -36,8 +36,9 @@ if (!$course = $DB->get_record('course', array('id' => $courseid))) {
     print_error('nocourseid');
 }
 
-$context = get_context_instance(CONTEXT_COURSE, $course->id);
+require_login($course);
 
+$context = get_context_instance(CONTEXT_COURSE, $course->id);
 if (!has_capability('moodle/grade:manage', $context) and !has_capability('moodle/grade:manageletters', $context)) {
     print_error('nopermissiontoviewletergrade');
 }
