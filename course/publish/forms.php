@@ -111,6 +111,7 @@ class course_publication_form extends moodleform {
             $mform->addElement('text', 'demourl', get_string('demourl', 'hub'));
             $mform->setType('demourl', PARAM_URL);
             $mform->setDefault('demourl', new moodle_url("/course/view.php?id=".$course->id));
+            $mform->addHelpButton('demourl', 'demourl', 'hub');
         }
 
         if ($advertise) {
@@ -120,10 +121,12 @@ class course_publication_form extends moodleform {
             $mform->addElement('text', 'courseurl', get_string('courseurl', 'hub'));
             $mform->setType('courseurl', PARAM_URL);
             $mform->setDefault('courseurl', new moodle_url("/course/view.php?id=".$course->id));
+            $mform->addHelpButton('courseurl', 'courseurl', 'hub');
         }
 
         $mform->addElement('text', 'courseshortname',get_string('courseshortname', 'hub'));
         $mform->setDefault('courseshortname', $course->shortname);
+        $mform->addHelpButton('courseshortname', 'courseshortname', 'hub');
 
         $mform->addElement('textarea', 'description', get_string('description'), array('rows'=>10));
         $mform->addRule('description', $strrequired, 'required', null, 'client');
@@ -149,17 +152,21 @@ class course_publication_form extends moodleform {
         $mform->addElement('text', 'publishername',get_string('publishername', 'hub'));
         $mform->setDefault('publishername', $USER->firstname.' '.$USER->lastname);
         $mform->addRule('publishername', $strrequired, 'required', null, 'client');
+        $mform->addHelpButton('publishername', 'publishername', 'hub');
 
         $mform->addElement('text', 'contributornames', get_string('contributornames', 'hub'));
         $mform->setDefault('contributornames', '');
+        $mform->addHelpButton('contributornames', 'contributornames', 'hub');
 
         $mform->addElement('text','coverage' , get_string('tags', 'hub'));
         $mform->setType('coverage', PARAM_TEXT);
+        $mform->addHelpButton('coverage', 'tags', 'hub');
 
         $mform->addElement('text', 'creatorname', get_string('creatorname', 'hub'));
         $mform->addRule('creatorname', $strrequired, 'required', null, 'client');
         $mform->setType('creatorname', PARAM_TEXT);
         $mform->setDefault('creatorname', $USER->firstname.' '.$USER->lastname);
+        $mform->addHelpButton('creatorname', 'creatorname', 'hub');
 
         require_once($CFG->dirroot."/lib/licenselib.php");
         $licensemanager = new license_manager();
@@ -171,10 +178,12 @@ class course_publication_form extends moodleform {
         $mform->addElement('select', 'licence', get_string('license'), $options);
         $mform->setDefault('licence', 'cc');
         unset($options);
+        $mform->addHelpButton('licence', 'licence', 'hub');
 
         $options = get_string_manager()->load_component_strings('edufields', current_language());
         $mform->addElement('select', 'subject', get_string('subject', 'hub'), $options);
         unset($options);
+        $mform->addHelpButton('subject', 'subject', 'hub');
 
         $options = array();
         $options[AUDIENCE_EDUCATORS] = get_string('audienceeducators', 'hub');
@@ -183,6 +192,7 @@ class course_publication_form extends moodleform {
         $mform->addElement('select', 'audience', get_string('audience', 'hub'), $options);
         $mform->setDefault('audience', AUDIENCE_EDUCATORS);
         unset($options);
+        $mform->addHelpButton('audience', 'audience', 'hub');
 
         $options = array();
         $options[EDULEVEL_PRIMARY] = get_string('edulevelprimary', 'hub');
@@ -195,22 +205,24 @@ class course_publication_form extends moodleform {
         $mform->addElement('select', 'educationallevel', get_string('educationallevel', 'hub'), $options);
         $mform->setDefault('educationallevel', EDULEVEL_TERTIARY);
         unset($options);
+        $mform->addHelpButton('educationallevel', 'educationallevel', 'hub');
 
         $editoroptions = array('maxfiles'=>0, 'maxbytes'=>0, 'trusttext'=>false, 'forcehttps'=>false);
         $mform->addElement('editor', 'creatornotes', get_string('creatornotes', 'hub'), '', $editoroptions);
         $mform->addRule('creatornotes', $strrequired, 'required', null, 'client');
         $mform->setDefault('creatornotes', '');
         $mform->setType('creatornotes', PARAM_CLEANHTML);
+        $mform->addHelpButton('creatornotes', 'creatornotes', 'hub');
 
 
 
         $mform->addElement('filemanager', 'screenshots', get_string('screenshots','hub'), null,
                 array('subdirs'=>0,
                 'maxbytes'=>1000000,
-                'maxfiles'=>3,
-                'filetypes'=>array('image')
+                'maxfiles'=>3
         ));
         $mform->setHelpButton('screenshots', array('screenshots', get_string('screenshots', 'hub'), 'hub'));
+        $mform->addHelpButton('screenshots', 'screenshots', 'hub');
 
         $this->add_action_buttons(false, $buttonlabel);
     }
