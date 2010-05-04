@@ -84,9 +84,9 @@ class backup_scorm_activity_structure_step extends backup_activity_structure_ste
         $seqobjective = new backup_nested_element('seq_objective', array('id'), array(
             'primaryobj', 'objectiveid', 'satisfiedbymeasure', 'minnormalizedmeasure'));
 
-        $seqmapinfo = new backup_nested_element('seq_mapinfos');
+        $seqmapinfos = new backup_nested_element('seq_mapinfos');
 
-        $seqmapinf = new backup_nested_element('seq_mapinfo', array('id'), array(
+        $seqmapinfo = new backup_nested_element('seq_mapinfo', array('id'), array(
             'targetobjectiveid', 'readsatisfiedstatus', 'readnormalizedmeasure', 'writesatisfiedstatus',
             'writenormalizedmeasure'));
 
@@ -118,8 +118,8 @@ class backup_scorm_activity_structure_step extends backup_activity_structure_ste
         $sco->add_child($seqobjectives);
         $seqobjectives->add_child($seqobjective);
 
-        $seqobjective->add_child($seqmapinfo);
-        $seqmapinfo->add_child($seqmapinf);
+        $seqobjective->add_child($seqmapinfos);
+        $seqmapinfos->add_child($seqmapinfo);
 
         $sco->add_child($scotracks);
         $scotracks->add_child($scotrack);
@@ -141,7 +141,7 @@ class backup_scorm_activity_structure_step extends backup_activity_structure_ste
 
         $seqobjective->set_source_table('scorm_seq_objective', array('scoid' => backup::VAR_PARENTID));
 
-        $seqmapinf->set_source_table('scorm_seq_mapinfo', array('objectiveid' => backup::VAR_PARENTID));
+        $seqmapinfo->set_source_table('scorm_seq_mapinfo', array('objectiveid' => backup::VAR_PARENTID));
 
         // All the rest of elements only happen if we are including user info
         if ($userinfo) {
