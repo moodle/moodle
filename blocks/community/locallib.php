@@ -34,19 +34,27 @@ class community {
      * Add a community course
      * @param object $course
      * @param integer $userid
+     * @return id of course or false if already added
      */
     public function add_community_course($course, $userid) {
         global $DB;
-        $community->userid = $userid;
-        $community->coursename = $course->name;
-        $community->coursedescription = $course->description;
-        $community->courseurl = $course->url;
-        $community->imageurl = $course->imageurl;
-        return $DB->insert_record('block_community', $community);
+
+        $community = $this->get_community_course($course->id, $userid);
+
+        if (empty($community)) {
+            $community->userid = $userid;
+            $community->coursename = $course->name;
+            $community->coursedescription = $course->description;
+            $community->courseurl = $course->url;
+            $community->imageurl = $course->imageurl;
+            return $DB->insert_record('block_community', $community);
+        } else {
+            return false;
+        }
     }
 
     /**
-     Return all community courses of a user
+     * Return all community courses of a user
      * @param integer $userid
      * @return array of course
      */
@@ -56,9 +64,20 @@ class community {
     }
 
     /**
+     * Return a community courses of a user
+     * @param integer $userid
+     * @param integer $userid
+     * @return array of course
+     */
+    public function get_community_course($courseid, $userid) {
+        global $DB;
+        return $DB->get_record('block_community', array('id' => $courseid, 'userid' => $userid));
+    }
+
+    /**
      * Download the community course backup and save it in file API
-     * @param <type> $courseid
-     * @param <type> $huburl
+     * @param integer $courseid
+     * @param string $huburl
      */
     public function download_community_course_backup($courseid, $huburl) {
         global $CFG, $USER;
@@ -86,6 +105,16 @@ class community {
         $fs->create_file_from_pathname($record, $CFG->dataroot.'/temp/download/'.'backup_'.$courseid.".zip");
     }
 
+    /**
+     * Delete a community course
+     * @param integer $communityid
+     * @param integer $userid
+     * @return bool true
+     */
+    public function remove_community_course($communityid, $userid) {
+        global $DB, $USER;
+        return $DB->delete_records('block_community', array('userid' => $userid, 'id' => $communityid));
+    }
 
     /**
      * Decide where to save the file, can be

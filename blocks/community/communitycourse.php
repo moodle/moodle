@@ -53,6 +53,8 @@ if ($add != -1 and $confirm and confirm_sesskey()) {
     $course->url  = optional_param('courseurl', '', PARAM_URL);
     $course->imageurl  = optional_param('courseimageurl', '', PARAM_URL);
     $community->add_community_course($course, $USER->id);
+    $notificationmessage = $OUTPUT->notification(get_string('addedtoblock', 'hub', 'backup_'.$courseid.".zip"),
+            'notifysuccess');
 }
 
 /// Download
@@ -61,9 +63,19 @@ $download  = optional_param('download', -1, PARAM_INTEGER);
 $courseid  = optional_param('courseid', '', PARAM_INTEGER);
 if ($download != -1 and !empty($courseid) and confirm_sesskey()) {
     $community->download_community_course_backup($courseid, $huburl);
-    $downloadmessage = $OUTPUT->notification(get_string('downloadconfirmed', 'hub', 'backup_'.$courseid.".zip"),
+    $notificationmessage = $OUTPUT->notification(get_string('downloadconfirmed', 'hub', 'backup_'.$courseid.".zip"),
             'notifysuccess');
 }
+
+/// Remove community
+$remove  = optional_param('remove', '', PARAM_INTEGER);
+$communityid  = optional_param('communityid', '', PARAM_INTEGER);
+if ($remove != -1 and !empty($communityid) and confirm_sesskey()) {
+    $community->remove_community_course($communityid, $USER->id);
+    $notificationmessage = $OUTPUT->notification(get_string('communityremoved', 'hub'),
+            'notifysuccess');
+}
+
 
 $renderer = $PAGE->get_renderer('block_community');
 
@@ -86,8 +98,8 @@ if (!empty($fromform)) {
 // OUTPUT
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('addcommunitycourse', 'block_community'), 3, 'main');
-if (!empty($downloadmessage)) {
-    echo $downloadmessage;
+if (!empty($notificationmessage)) {
+    echo $notificationmessage;
 }
 $hubselectorform->display();
 echo $renderer->course_list($courses, $huburl);

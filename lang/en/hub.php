@@ -24,11 +24,13 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['addedtoblock'] = 'Course added to block';
 $string['advertise'] = 'Advertise';
 $string['advertiseon'] = 'Advertise on {$a}';
 $string['advertiseonhub'] = 'Advertise on hub';
 $string['advertiseonmoodleorg'] = 'Advertise on Moodle.org';
 $string['advertiseonspecifichub'] = 'Advertise on a specific hub';
+$string['all'] = 'All';
 $string['allowglobalsearch'] = 'Publish this hub and allow global search of all courses';
 $string['allowpublicsearch'] = 'Publish this hub so people can join it';
 $string['audience'] = 'Audience';
@@ -38,6 +40,7 @@ $string['audiencestudents'] = 'Students';
 $string['audienceadmins'] = 'Administators';
 $string['badurlformat'] = 'Bad URL format';
 $string['community'] = 'Community';
+$string['communityremoved'] = 'The community course has been removed from your Community block';
 $string['confirmregistration'] = 'Confirm registration';
 $string['contactable'] = 'Contact from the public';
 $string['contactable_help'] = 'Set to yes, the hub will display your email address.';
@@ -100,6 +103,7 @@ If you choose, you can allow your site name, country and URL to be added to the 
 All new registrations are verified manually before they are added to the list, but once you are added you can update your registration (and your entry on the public list) at any time.';
 $string['name'] = 'Name';
 $string['no'] = 'No';
+$string['nohubselected'] = 'No hub selected';
 $string['nosearch'] = 'Don\'t publish hub or courses';
 $string['notregisteredonhub'] = 'You cannot publish this course on a hub  different from Moodle.org, because this site isn\'t registered on any different hub. Contact your administrator if you want to do so.';
 $string['notregisteredonmoodleorg'] = 'You cannot publish this course on Moodle.org hub, because this site isn\'t registered on Moodle.org hub. Contact your administrator if you want to do so.';

@@ -79,6 +79,7 @@ class block_community_renderer extends plugin_renderer_base {
 
 
                 //create description to display
+                $course->subject = get_string($course->subject, 'edufields');
                 $deschtml = $course->description; //the description
                 /// courses and sites number display under the description, in smaller
                 $deschtml .= html_writer::empty_tag('br');
@@ -107,8 +108,6 @@ class block_community_renderer extends plugin_renderer_base {
                             array('sesskey' => sesskey(), 'download' => 1, 'confirmed' => 1,
                                 'courseid' => $course->id, 'huburl' => $huburl));
                     $addlinkhtml = html_writer::tag('a', get_string('download', 'block_community'), array('href' => $addurl));
-                
-//                    $addlinkhtml = "Download not implemented yet";
                 }
 
                 // add a row to the table

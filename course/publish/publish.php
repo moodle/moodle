@@ -74,7 +74,7 @@ if (has_capability('moodle/course:publish', get_context_instance(CONTEXT_COURSE,
     $courseinfo->coverage = optional_param('coverage', false, PARAM_TEXT);
     $courseinfo->creatorname = optional_param('creatorname', false, PARAM_TEXT);
     $courseinfo->licenceshortname = optional_param('licence', false, PARAM_ALPHANUMEXT);
-    $courseinfo->subject = optional_param('subject', false, PARAM_INTEGER);
+    $courseinfo->subject = optional_param('subject', false, PARAM_ALPHANUM);
     $courseinfo->audience = optional_param('audience', false, PARAM_ALPHA);
     $courseinfo->educationallevel = optional_param('educationallevel', false, PARAM_ALPHA);
     $creatornotes = optional_param('creatornotes', false, PARAM_RAW);
