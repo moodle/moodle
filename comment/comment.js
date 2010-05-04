@@ -49,11 +49,14 @@ M.core_comment = {
                     Y.one('#comment-link-'+this.client_id).setStyle('display', 'none');
                 }
                 // load comments
-                Y.one('#comment-link-'+this.client_id).on('click', function(e) {
-                    e.preventDefault();
-                    this.view(0);
-                    return false;
-                }, this);
+                var handle = Y.one('#comment-link-'+this.client_id);
+                if (handle) {
+                    handle.on('click', function(e) {
+                        e.preventDefault();
+                        this.view(0);
+                        return false;
+                    }, this);
+                }
                 CommentHelper.confirmoverlay = new Y.Overlay({
 bodyContent: '<div class="comment-delete-confirm"><a href="#" id="confirmdelete-'+this.client_id+'">'+M.str.moodle.yes+'</a> <a href="#" id="canceldelete-'+this.client_id+'">'+M.str.moodle.no+'</a></div>',
                                         visible: false
