@@ -621,6 +621,9 @@ $string['enroldetails'] = 'Enrolment details';
 $string['enrolenddate'] = 'End date';
 $string['enrolenddaterror'] = 'Enrolment end date cannot be earlier than start date';
 $string['enrollable'] = 'Course enrollable';
+$string['enrollable_help'] = 'This setting determines whether students are able to enrol themselves using the default interactive enrolment plugin (e.g. internal enrolment) or whether they obtain the message "This course is not enrollable at the moment."
+
+This setting has no effect on non-interactive enrolment plugins. Also, users can always be assigned the role of student via the assign roles link in the course administration block.';
 $string['enrolledincourse'] = 'Enrolled in course "{$a}"';
 $string['enrolledincoursenot'] = 'Not enrolled in course "{$a}"';
 $string['enrolledincoursenotrole'] = 'Error enrolling into "{$a->course}" as "{$a->role}"';
@@ -640,7 +643,8 @@ $string['enrolmentnew'] = 'New enrolment in {$a}';
 $string['enrolmentnewuser'] = '{$a->user} has enrolled in course "{$a->course}"';
 $string['enrolmentnointernal'] = 'Manual enrolments are currently not enabled';
 $string['enrolmentnotyet'] = 'Sorry, you can not access this course until <br /> {$a}';
-$string['enrolmentplugins'] = 'Enrolment Plugins';
+$string['enrolmentplugins'] = 'Enrolment plugins';
+$string['enrolmentplugins_help'] = 'This setting determines whether an interactive enrolment plugin is used. Interactive enrolment is when a user has to do something interactively in order to be enrolled, such as clicking "Yes, I do" (internal enrolment) or paying some money. If a non-interactive enrolment plugin is used, the setting may be left as site default.';
 $string['enrolments'] = 'Enrolments';
 $string['enrolmentstart'] = 'Enrolment Started';
 $string['enrolperiod'] = 'Enrolment duration';
@@ -676,12 +680,14 @@ The following students in this course are expiring in less than {$a->threshold} 
 You may go to the following page to extend their enrolment period:
 {$a->extendurl}';
 $string['expirynotifystudents'] = 'Notify students';
+$string['expirynotifystudents_help'] = 'If an enrolment duration has been specified, then this setting determines whether students receive email notification when they are about to be unenrolled from the course.';
 $string['expirynotifystudentsemail'] = 'Dear {$a->studentstr}:
 
 This is a notification that your enrolment in the course {$a->course} will expire in {$a->threshold} days.
 
 Please contact {$a->teacherstr} for any further enquiries.';
 $string['expirythreshold'] = 'Threshold';
+$string['expirythreshold_help'] = 'If an enrolment duration has been specified, then this setting determines the number of days notice given before students are unenrolled from the course.';
 $string['explanation'] = 'Explanation';
 $string['extendenrol'] = 'Extend enrolment (individual)';
 $string['extendperiod'] = 'Extended period';
@@ -1239,7 +1245,8 @@ $string['nothingtodisplay'] = 'Nothing to display';
 $string['notice'] = 'Notice';
 $string['noticenewerbackup'] = 'This backup file has been created with Moodle {$a->backuprelease} ({$a->backupversion}) and it\'s newer than your currently installed Moodle {$a->serverrelease} ({$a->serverversion}). This could cause some inconsistencies because backwards compatibility of backup files cannot be guaranteed.';
 $string['notifications'] = 'Notifications';
-$string['notify'] = 'Notify';
+$string['notify'] = 'Notify teachers';
+$string['notify_help'] = 'If an enrolment duration has been specified, then this setting determines whether teachers receive email notification when a student is about to be unenrolled from the course.';
 $string['notifyloginfailuresmessage'] = '{$a->time}, IP: {$a->ip}, User: {$a->info}';
 $string['notifyloginfailuresmessageend'] = 'You can view these logs at {$a}/course/report/log/index.php?id=1&amp;chooselog=1&amp;modid=site_errors.';
 $string['notifyloginfailuresmessagestart'] = 'Here is a list of failed login attempts at {$a} since you were last notified';
