@@ -48,7 +48,7 @@ $maxbytes  = optional_param('maxbytes', 0, PARAM_INT);
 $req_path  = optional_param('p', '', PARAM_RAW);                // path
 $saveas_filearea = optional_param('filearea', 'user_draft', PARAM_TEXT);
 $saveas_filename = optional_param('title', '', PARAM_FILE);           // new file name
-$saveas_path   = optional_param('saveaspath', '/', PARAM_PATH);
+$saveas_path   = optional_param('savepath', '/', PARAM_PATH);
 $search_text   = optional_param('s', '', PARAM_CLEANHTML);
 $linkexternal  = optional_param('linkexternal', '', PARAM_ALPHA);
 
