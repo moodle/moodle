@@ -538,10 +538,8 @@ body.tag .managelink {padding: 5px;}
 /**
  * Help Content (pop-up)
  */
-#helpcontent { background-color: #FFE691; border: 1px solid #848484; z-index: 10; }
-#show { margin-left:5px; padding:0; }
-#hide { float: right; }
-.closehelpbutton { border: none; background: none; }
-.yui3-js-enabled .yui3-overlay-loading { top:-1000em; left:-1000em; position:absolute; display: none; }
-.yui3-widget-bd { float: none; clear: both; margin: 1em;}
-#helpcontent .helpheading {font-size: 1em;}
+ .helppopup {background-color: #FFE691; border: 1px solid #848484;}
+ .helppopup .yui3-widget-hd {float:right;margin:3px 3px 0 0;}
+ .helppopup .yui3-widget-bd {margin:0 1em 1em 1em;border-top:1px solid #FFE691;}
+ .helppopup .helpheading {font-size: 1em;}
+ .helppopup .spinner {margin:1em;}

@@ -241,7 +241,7 @@ class page_requirements_manager {
         }
 
         // accessibility stuff
-        $this->skip_link_to('maincontent', get_string('tocontent', 'access'));        
+        $this->skip_link_to('maincontent', get_string('tocontent', 'access'));
 
         // to be removed soon
         $this->yui2_lib('dom');        // at least javascript-static.js needs to be migrated to YUI3
@@ -936,13 +936,13 @@ class page_requirements_manager {
      * @return string the HTML code to to at the end of the page.
      */
     public function get_end_code() {
-        global $CFG;        
+        global $CFG;
         // add other requested modules
         $output = $this->get_extra_modules_code();
 
         // add missing YUI2 YUI - to be removed once we convert everything to YUI3!
         $output .= $this->get_yui2lib_code();
-        
+
         // all the other linked scripts - there should be as few as possible
         if ($this->jsincludes['footer']) {
             foreach ($this->jsincludes['footer'] as $url) {

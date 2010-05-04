@@ -62,7 +62,7 @@ class renderer_base {
      * @return string
      */
     public function render(renderable $widget) {
-        $rendermethod = 'render_'.get_class($widget);  
+        $rendermethod = 'render_'.get_class($widget);
         if (method_exists($this, $rendermethod)) {
             return $this->$rendermethod($widget);
         }
@@ -622,10 +622,6 @@ class core_renderer extends renderer_base {
         global $CFG, $DB;
 
         $output = $this->container_end_all(true);
-
-        $helpcontent_body = html_writer::tag('div',  '<button class="closehelpbutton" type="button" id="hide"><img src="'.$this->pix_url('t/delete').'" alt="close" /></button>', array('class'=>'helpcontent_body'));
-        $output .= html_writer::tag('div', $helpcontent_body, array('id'=>'helpcontent', 'class'=>'yui3-overlay-loading'));       
-        $this->page->requires->js_init_call('M.help_content.init');
         
         $footer = $this->opencontainers->pop('header/footer');
 
@@ -649,7 +645,6 @@ class core_renderer extends renderer_base {
         $footer = str_replace(self::END_HTML_TOKEN, $this->page->requires->get_end_code(), $footer);
 
         $this->page->set_state(moodle_page::STATE_DONE);
-      
 
         return $output . $footer;
     }
@@ -1480,7 +1475,7 @@ END;
      * @return string HTML fragment
      */
     public function help_icon($identifier, $component = 'moodle', $linktext = '') {
-        $icon = new help_icon($identifier, $component);        
+        $icon = new help_icon($identifier, $component);
         $icon->diag_strings();
         if ($linktext === true) {
             $icon->linktext = get_string($icon->identifier, $icon->component);
@@ -1527,8 +1522,9 @@ END;
         $attributes = array('href'=>$url, 'title'=>$title);
         $id = html_writer::random_id('helpicon');
         $attributes['id'] = $id;
-        $this->add_action_handler(new popup_action('click', $url, 'popup', array('id'=>$id)), $id);
         $output = html_writer::tag('a', $output, $attributes);
+
+        $this->page->requires->js_init_call('M.util.help_icon.add', array(array('id'=>$id, 'url'=>$url->out(false))));
 
         // and finally span
         return html_writer::tag('span', $output, array('class' => 'helplink'));
