@@ -91,8 +91,8 @@ abstract class backup implements checksumable {
     const VAR_BASEPATH   = -1011; // To reference the dir where the file is generated
 
     // Version (to keep CFG->backup_version (and release) updated automatically)
-    const VERSION = 2010022500;
-    const RELEASE = '2.0 dev';
+    const VERSION = 2010050500;
+    const RELEASE = '2.0 Preview 1';
 }
 
 /*
