@@ -2551,6 +2551,13 @@ class settings_navigation extends navigation_node {
             $modulenode->add(get_string('filters', 'admin'), $url, self::TYPE_SETTING);
         }
 
+        // Add a backup link
+        $featuresfunc = $this->page->activityname.'_supports';
+        if ($featuresfunc(FEATURE_BACKUP_MOODLE2) && has_capability('moodle/backup:backupactivity', $this->page->cm->context)) {
+            $url = new moodle_url('/backup/backup.php', array('id'=>$this->page->cm->course, 'cm'=>$this->page->cm->id));
+            $modulenode->add(get_string('backup'), $url, self::TYPE_SETTING);
+        }
+
         $file = $CFG->dirroot.'/mod/'.$this->page->activityname.'/lib.php';
         $function = $this->page->activityname.'_extend_settings_navigation';
 
