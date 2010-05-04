@@ -2756,6 +2756,7 @@ function print_filemanager($options, $return = false) {
     $PAGE->requires->string_for_js('popupblockeddownload', 'repository');
     $PAGE->requires->string_for_js('draftareanofiles', 'repository');
     $PAGE->requires->string_for_js('path', 'moodle');
+    $PAGE->requires->string_for_js('setmainfile', 'repository');
     // language strings
     $straddfile  = get_string('add', 'repository') . '...';
     $strmakedir  = get_string('makeafolder', 'moodle');

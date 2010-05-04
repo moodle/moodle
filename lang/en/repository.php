@@ -144,6 +144,7 @@ $string['searching'] = 'Search in';
 $string['select'] = 'Select';
 $string['settings'] = 'Settings';
 $string['setupdefaultplugins'] = 'Setting up default repository plugins';
+$string['setmainfile'] = 'Set main file';
 $string['siteinstances'] = 'Repositories instances of the site';
 $string['size'] = 'Size';
 $string['submit'] = 'Submit';

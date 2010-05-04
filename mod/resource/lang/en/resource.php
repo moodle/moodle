@@ -158,6 +158,7 @@ $string['printintro'] = 'Display resource description';
 $string['printintroexplain'] = 'Display resource description bellow content? Some display types may not display description even if enabled.';
 $string['redeploy'] = 'Deploy again';
 $string['repository'] = 'IMS repository';
+$string['resourceadministration'] = 'Resource administration';
 $string['resourcecontent'] = 'Files and subfolders';
 $string['resourcedefaulturl'] = 'Default URL';
 $string['resource:exportresource'] = 'Export resource';
