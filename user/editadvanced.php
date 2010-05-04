@@ -232,6 +232,7 @@ if ($user->id == -1 or ($user->id != $USER->id)) {
     if ($user->id == -1) {
         echo $OUTPUT->header();
     } else {
+        $PAGE->set_heading($SITE->fullname);
         echo $OUTPUT->header();
         $userfullname = fullname($user, true);
         echo $OUTPUT->heading($userfullname);
