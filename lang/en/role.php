@@ -52,17 +52,7 @@ $string['assignmentcontext'] = 'Assignment context';
 $string['assignmentoptions'] = 'Assignment options';
 $string['assignrolenameincontext'] = 'Assign role \'{$a->role}\' in {$a->context}';
 $string['assignroles'] = 'Assign roles';
-$string['assignroles_help'] = 'By assigning a role to a user in a context, you are granting them the permissions contained in that role, for the current context and all "lower" contexts.
-
-Contexts include:
-<ol>
-<li>System (the entire installation)</li>
-<li>Course categories</li>
-<li>Course (the front page of the site is also a "course")</li>
-<li>Activities and Blocks</li>
-</ol>
-
-For example: if you grant a Student role to a user in a Course, they will have that role for the course as well as all Blocks and Activities inside that course.  Their actual final permissions will depend on other assigned roles and overrides that have been defined.';
+$string['assignroles_help'] = 'By assigning a role to a user in a context, you are granting them the permissions contained in that role, for the current context and all lower contexts. For example, if a user is assigned the role of student in a course, they will also have the role of student for all activities and blocks within the course.';
 $string['assignroles_link'] = 'admin/roles/assign';
 $string['assignrolesin'] = 'Assign roles in {$a}';
 $string['assignrolesrelativetothisuser'] = 'Assign roles relative to this user';
