@@ -154,8 +154,8 @@ case 'zip':
 case 'downloaddir':
     $zipper = new zip_packer();
     $fs = get_file_storage();
-    $draftarea = file_get_draft_area_info($itemid);
-    if ($draftarea['filecount'] == 0) {
+    $area = file_get_user_area_info($itemid, $filearea);
+    if ($area['filecount'] == 0) {
         echo json_encode(false);
         die;
     }
@@ -171,9 +171,9 @@ case 'downloaddir':
 
     // archive compressed file to an unused draft area
     $newdraftitemid = file_get_unused_draft_itemid();
-    if ($newfile = $zipper->archive_to_storage(array($stored_file), $user_context->id, $filearea, $newdraftitemid, '/', $filename, $USER->id)) {
+    if ($newfile = $zipper->archive_to_storage(array($stored_file), $user_context->id, 'user_draft', $newdraftitemid, '/', $filename, $USER->id)) {
         $return = new stdclass;
-        $return->fileurl  = $CFG->wwwroot . '/draftfile.php/' . $user_context->id .'/'.$filearea.'/'.$newdraftitemid.'/'.$filename;
+        $return->fileurl  = $CFG->wwwroot . '/draftfile.php/' . $user_context->id .'/user_draft/'.$newdraftitemid.'/'.$filename;
         $return->filepath = $parent_path;
         echo json_encode($return);
     } else {

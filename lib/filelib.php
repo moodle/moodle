@@ -484,6 +484,21 @@ function file_get_draft_area_info($draftitemid) {
     return $results;
 }
 
+function file_get_user_area_info($draftitemid, $filearea = 'user_draft') {
+    global $CFG, $USER;
+
+    $usercontext = get_context_instance(CONTEXT_USER, $USER->id);
+    $fs = get_file_storage();
+
+    $results = array();
+
+    // The number of files
+    $draftfiles = $fs->get_area_files($usercontext->id, $filearea, $draftitemid, 'id', false);
+    $results['filecount'] = count($draftfiles);
+
+    return $results;
+}
+
 
 /**
  * Convert any string to a valid filepath
