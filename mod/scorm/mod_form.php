@@ -53,7 +53,7 @@ class mod_scorm_mod_form extends moodleform_mod {
         if (count($options) > 1) {
             $mform->addElement('text', 'packageurl', get_string('url', 'scorm'), array('size'=>60));
             $mform->setType('packageurl', PARAM_RAW);
-            $mform->setHelpButton('packageurl', array('packagefile', get_string('package', 'scorm'), 'scorm'));
+            $mform->addHelpButton('packageurl', 'package', 'scorm');
             $mform->disabledIf('packageurl', 'scormtype', 'eq', SCORM_TYPE_LOCAL);
         }
 
@@ -81,7 +81,7 @@ class mod_scorm_mod_form extends moodleform_mod {
 
 // Grade Method
         $mform->addElement('select', 'grademethod', get_string('grademethod', 'scorm'), scorm_get_grade_method_array());
-        $mform->setHelpButton('grademethod', array('grademethod', get_string('grademethod', 'scorm'),'scorm'));
+        $mform->addHelpButton('grademethod', 'grademethod', 'scorm');
         $mform->setDefault('grademethod', $cfg_scorm->grademethod);
 
 // Maximum Grade
@@ -97,36 +97,36 @@ class mod_scorm_mod_form extends moodleform_mod {
 
 // Max Attempts
         $mform->addElement('select', 'maxattempt', get_string('maximumattempts', 'scorm'), scorm_get_attempts_array());
-        $mform->setHelpButton('maxattempt', array('maximumattempts',get_string('maximumattempts', 'scorm'), 'scorm'));
+        $mform->addHelpButton('maxattempt', 'maximumattempts', 'scorm');
         $mform->setDefault('maxattempt', $cfg_scorm->maxattempts);
 
 // What Grade
         $mform->addElement('select', 'whatgrade', get_string('whatgrade', 'scorm'),  scorm_get_what_grade_array());
         $mform->disabledIf('whatgrade', 'maxattempt','eq',1);
-        $mform->setHelpButton('whatgrade', array('whatgrade',get_string('whatgrade', 'scorm'), 'scorm'));
+        $mform->addHelpButton('whatgrade', 'whatgrade', 'scorm');
         $mform->setDefault('whatgrade', $cfg_scorm->whatgrade);
         $mform->setAdvanced('whatgrade');
 
 // Display attempt status
         $mform->addElement('selectyesno', 'displayattemptstatus', get_string('displayattemptstatus', 'scorm'));
-        $mform->setHelpButton('displayattemptstatus', array('displayattemptstatus',get_string('displayattemptstatus', 'scorm'), 'scorm'));
+        $mform->addHelpButton('displayattemptstatus', 'displayattemptstatus', 'scorm');
         $mform->setDefault('displayattemptstatus', $cfg_scorm->displayattemptstatus);
 
 // Force completed
         $mform->addElement('selectyesno', 'forcecompleted', get_string('forcecompleted', 'scorm'));
-        $mform->setHelpButton('forcecompleted', array('forcecompleted',get_string('forcecompleted', 'scorm'), 'scorm'));
+        $mform->addHelpButton('forcecompleted', 'forcecompleted', 'scorm');
         $mform->setDefault('forcecompleted', $cfg_scorm->forcecompleted);
         $mform->setAdvanced('forcecompleted');
 
 // Force new attempt
         $mform->addElement('selectyesno', 'forcenewattempt', get_string('forcenewattempt', 'scorm'));
-        $mform->setHelpButton('forcenewattempt', array('forcenewattempt',get_string('forcenewattempt', 'scorm'), 'scorm'));
+        $mform->addHelpButton('forcenewattempt', 'forcenewattempt', 'scorm');
         $mform->setDefault('forcenewattempt', $cfg_scorm->forcenewattempt);
         $mform->setAdvanced('forcenewattempt');
 
 // Last attempt lock - lock the enter button after the last available attempt has been made
         $mform->addElement('selectyesno', 'lastattemptlock', get_string('lastattemptlock', 'scorm'));
-        $mform->setHelpButton('lastattemptlock', array('lastattemptlock',get_string('lastattemptlock', 'scorm'), 'scorm'));
+        $mform->addHelpButton('lastattemptlock', 'lastattemptlock', 'scorm');
         $mform->setDefault('lastattemptlock', $cfg_scorm->lastattemptlock);
         $mform->setAdvanced('lastattemptlock');
 
@@ -153,7 +153,7 @@ class mod_scorm_mod_form extends moodleform_mod {
 // Stage Size
         $mform->addElement('static', '', '' ,'<hr />');
         $mform->addElement('static', 'stagesize', get_string('stagesize','scorm'));
-        $mform->setHelpButton('stagesize', array('stagesize',get_string('stagesize', 'scorm'), 'scorm'));
+        $mform->addHelpButton('stagesize', 'stagesize', 'scorm');
 // Width
         $mform->addElement('text', 'width', get_string('width','scorm'), 'maxlength="5" size="5"');
         $mform->setDefault('width', $cfg_scorm->framewidth);
@@ -181,25 +181,25 @@ class mod_scorm_mod_form extends moodleform_mod {
 
 // Skip view page
         $mform->addElement('select', 'skipview', get_string('skipview', 'scorm'),scorm_get_skip_view_array());
-        $mform->setHelpButton('skipview', array('skipview',get_string('skipview', 'scorm'), 'scorm'));
+        $mform->addHelpButton('skipview', 'skipview', 'scorm');
         $mform->setDefault('skipview', $cfg_scorm->skipview);
         $mform->setAdvanced('skipview');
 
 // Hide Browse
         $mform->addElement('selectyesno', 'hidebrowse', get_string('hidebrowse', 'scorm'));
-        $mform->setHelpButton('hidebrowse', array('hidebrowse',get_string('hidebrowse', 'scorm'), 'scorm'));
+        $mform->addHelpButton('hidebrowse', 'hidebrowse', 'scorm');
         $mform->setDefault('hidebrowse', $cfg_scorm->hidebrowse);
         $mform->setAdvanced('hidebrowse');
 
 // Display course structure
         $mform->addElement('selectyesno', 'displaycoursestructure', get_string('displaycoursestructure', 'scorm'));
-        $mform->setHelpButton('displaycoursestructure', array('displaycoursestructure',get_string('displaycoursestructure', 'scorm'), 'scorm'));
+        $mform->addHelpButton('displaycoursestructure', 'displaycoursestructure', 'scorm');
         $mform->setDefault('displaycoursestructure', $cfg_scorm->displaycoursestructure);
         $mform->setAdvanced('displaycoursestructure');
-        
+
 // Toc display
         $mform->addElement('select', 'hidetoc', get_string('hidetoc', 'scorm'), scorm_get_hidetoc_array());
-        $mform->setHelpButton('hidetoc', array('hidetoc',get_string('hidetoc', 'scorm'), 'scorm'));
+        $mform->addHelpButton('hidetoc', 'hidetoc', 'scorm');
         $mform->setDefault('hidetoc', $cfg_scorm->hidetoc);
         $mform->setAdvanced('hidetoc');
 
@@ -210,7 +210,7 @@ class mod_scorm_mod_form extends moodleform_mod {
 
 // Autocontinue
         $mform->addElement('selectyesno', 'auto', get_string('autocontinue', 'scorm'));
-        $mform->setHelpButton('auto', array('autocontinue',get_string('autocontinue', 'scorm'), 'scorm'));
+        $mform->addHelpButton('auto', 'autocontinue', 'scorm');
         $mform->setDefault('auto', $cfg_scorm->auto);
         $mform->setAdvanced('auto');
 

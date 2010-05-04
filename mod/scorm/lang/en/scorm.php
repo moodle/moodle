@@ -25,7 +25,7 @@
 
 $string['activation'] = 'Activation';
 $string['activityloading'] = 'You will be automatically redirected to the activity in';
-$string['activitypleasewait'] = 'Activity loading, please wait ....';
+$string['activitypleasewait'] = 'Activity loading, please wait ...';
 $string['advanced'] = 'Parameters';
 $string['allowapidebug'] = 'Activate API debug and tracing (set the capture mask with apidebugmask)';
 $string['allowtypeexternal'] = 'Enable external package type';
