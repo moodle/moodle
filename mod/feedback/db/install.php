@@ -8,6 +8,9 @@
 function xmldb_feedback_install() {
     global $DB;
 
+/// Disable it by default
+    $DB->set_field('modules', 'visible', 0, array('name'=>'feedback'));
+
 /// Install logging support
     update_log_display_entry('feedback', 'startcomplete', 'feedback', 'name');
     update_log_display_entry('feedback', 'submit', 'feedback', 'name');
