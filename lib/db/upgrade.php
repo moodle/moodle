@@ -3928,7 +3928,7 @@ AND EXISTS (SELECT 'x'
     }
 
 
-    if ($result && $oldversion < 2010050401) {  // my_pages for My Moodle and Public Profile pages
+    if ($result && $oldversion < 2010050402) {  // my_pages for My Moodle and Public Profile pages
 
     /// Define table my_pages to be created
         $table = new xmldb_table('my_pages');
@@ -3966,18 +3966,8 @@ AND EXISTS (SELECT 'x'
             $result = $result && $DB->insert_record('my_pages', $mypage);
         }
 
-        if ($defaultmypage = $DB->get_record('my_pages', array('userid'=>null, 'name'=>'__default', 'private'=>1))) {
-            $subpagepattern = $defaultmypage->id;
-        } else {
-            $subpagepattern = null;
-        }
-    
-        $page = new moodle_page();
-        $page->set_context(get_context_instance(CONTEXT_SYSTEM));
-        $page->blocks->add_blocks(array(BLOCK_POS_RIGHT => array('myprofile', 'private_files', 'online_users'), 'content' => array('course_overview')), 'my-index', $subpagepattern, false);
-
     /// Main savepoint reached
-        upgrade_main_savepoint($result, 2010050401);
+        upgrade_main_savepoint($result, 2010050402);
     }
 
 
