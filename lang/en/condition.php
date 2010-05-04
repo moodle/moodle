@@ -27,9 +27,7 @@ $string['addcompletions'] = 'Add {no} activity conditions to form';
 $string['addgrades'] = 'Add {no} grade conditions to form';
 $string['availabilityconditions'] = 'Restrict availability';
 $string['availablefrom'] = 'Only available from';
-$string['availablefrom_help'] = 'The activity is only shown to students from this date. If you choose to show information about an activity that is unavailable, then before this date, students will see the activity greyed-out, with informational text about the date that it appears.';
 $string['availableuntil'] = 'Only available until end';
-$string['availableuntil_help'] = 'The activity disappears after this date. The activity completely vanishes at midnight on the given date, even if you\'ve chosen to show the restriction information.';
 $string['badavailabledates'] = 'Invalid dates. If you set both dates, the \'available from\' date should be before the \'until\' date.';
 $string['completion_complete'] = 'must be marked complete';
 $string['completioncondition'] = 'Activity completion condition';
@@ -57,12 +55,6 @@ $string['requires_grade_max'] = 'Not available unless you get an appropriate sco
 $string['requires_grade_min'] = 'Not available until you achieve a required score in <strong>{$a}</strong>.';
 $string['requires_grade_range'] = 'Not available unless you get a particular score in <strong>{$a}</strong>.';
 $string['showavailability'] = 'Before activity is available';
-$string['showavailability_help'] = 'When an activity is unavailable due to the restrictions in this box, there are two possibilities:
-
-* The activity displays to users, but as greyed-out text instead of a link. Informational text below the activity indicates when, or under what conditions, it will become available.
-* The activity does not display to users at all.
-
-In both cases, once the activity becomes available, it displays as normal. Users with the capability to view hidden activities can still see unavailable activities, regardless of this setting. The informational text always appears to them. This option does not affect the standard visibility option. You can still use the eye icon to quickly and completely hide any activity from course participants.';
 $string['showavailability_hide'] = 'Hide activity entirely';
 $string['showavailability_show'] = 'Show activity greyed-out, with restriction information';
 $string['userrestriction_hidden'] = 'Restricted (completely hidden, no message): &lsquo;{$a}&rsquo;';
