@@ -209,7 +209,7 @@ class block_manager {
         $pageformat = $this->page->pagetype;
         foreach($allblocks as $block) {
             if ($block->visible &&
-                    (block_method_result($block->name, 'instance_allow_multiple') || !$this->is_block_present($block->id)) &&
+                    (block_method_result($block->name, 'instance_allow_multiple') || !$this->is_block_present($block->name)) &&
                     blocks_name_allowed_in_format($block->name, $pageformat) &&
                     block_method_result($block->name, 'user_can_addto', $this->page)) {
                 $this->addableblocks[$block->name] = $block;
@@ -220,11 +220,27 @@ class block_manager {
     }
 
     /**
-     * Find out if a block is present ? just a guess
-     * @todo Write this function and document
+     * Given a block name, find out of any of them are currently present in the page
+
+     * @param string $blockname - the basic name of a block (eg "navigation")
+     * @return boolean - is there one of these blocks in the current page?
      */
-    public function is_block_present($blocktypeid) {
-        // TODO
+    public function is_block_present($blockname) {
+        if (empty($this->blockinstances)) {
+            return false;
+        }
+
+        foreach ($this->blockinstances as $region) {
+            foreach ($region as $instance) {
+                if (empty($instance->instance->blockname)) {
+                    continue;
+                }
+                if ($instance->instance->blockname == $blockname) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     /**
