@@ -367,11 +367,11 @@ function backup_scorm_seq_objective ($bf,$preferences,$sco) {
         //If there is rulecondition
         if ($scorm_seq_objectives) {
             //Write start tag
-            $status =fwrite ($bf,start_tag('SEQ_MAPINFO',4,true));
+            $status =fwrite ($bf,start_tag('SEQ_MAPINFOS',4,true));
             //Iterate over each sco
             foreach ($scorm_seq_objectives as $seq_objective) {
                 //Start sco 
-                $status =fwrite ($bf,start_tag('SEQ_MAPINF',5,true));
+                $status =fwrite ($bf,start_tag('SEQ_MAPINFO',5,true));
                 //Print track contents
                 fwrite ($bf,full_tag('ID',6,false,$seq_objective->id));
                 fwrite ($bf,full_tag('SCOID',6,false,$seq_objective->scoid));
@@ -382,10 +382,10 @@ function backup_scorm_seq_objective ($bf,$preferences,$sco) {
                 fwrite ($bf,full_tag('WRITESATISFIEDSTATUS',6,false,$seq_objective->writesatisfiedstatus));
                 fwrite ($bf,full_tag('WRITENORMALIZEDMEASURE',6,false,$seq_objective->writenormalizedmeasure));
                 //End sco track
-                $status =fwrite ($bf,end_tag('SEQ_MAPINF',5,true));
+                $status =fwrite ($bf,end_tag('SEQ_MAPINFO',5,true));
             }
             //Write end tag
-            $status =fwrite ($bf,end_tag('SEQ_MAPINFO',4,true));
+            $status =fwrite ($bf,end_tag('SEQ_MAPINFOS',4,true));
         }
         return $status;
     }

@@ -504,11 +504,14 @@
 
         //Get the discussions array
         $mapinfos = array();
-        
+        //backward compatibility with old backups.
         if (!empty($info['MOD']['#']['SEQ_MAPINFO']['0']['#']['SEQ_MAPINF'])) {
             $mapinfos = $info['MOD']['#']['SEQ_MAPINFO']['0']['#']['SEQ_MAPINF'];
         }
-
+        //correct way of getting data.
+        if (!empty($info['MOD']['#']['SEQ_MAPINFOS']['0']['#']['SEQ_MAPINFO'])) {
+            $mapinfos = $info['MOD']['#']['SEQ_MAPINFOS']['0']['#']['SEQ_MAPINFO'];
+        }
         
         for($i = 0; $i < sizeof($mapinfos); $i++) {
             $map_info = $mapinfos[$i];
