@@ -114,8 +114,44 @@ if ((empty($cm->visible) and !has_capability('moodle/course:viewhiddenactivities
 /// print the tabs
 include('tabs.php');
 
-echo $OUTPUT->heading(format_text($feedback->name));
+$previewimg = $OUTPUT->pix_icon('t/preview', get_string('preview'));
+$previewlnk = '<a href="'.$CFG->wwwroot.'/mod/feedback/print.php?id='.$id.'">'.$previewimg.'</a>';
 
+echo $OUTPUT->heading(format_text($feedback->name.' '.$previewlnk));
+
+//show some infos to the feedback
+if(has_capability('mod/feedback:edititems', $context)) {
+    //get the groupid
+    $groupselect = groups_print_activity_menu($cm, $CFG->wwwroot . '/mod/feedback/view.php?id=' . $cm->id, true);
+    $mygroupid = groups_get_activity_group($cm);
+
+    echo $OUTPUT->box_start('boxaligncenter boxwidthwide');
+    echo $groupselect.'<div class="clearer">&nbsp;</div>';
+    $completedscount = feedback_get_completeds_group_count($feedback, $mygroupid);
+    echo $OUTPUT->box_start('feedback_info');
+    echo '<span class="feedback_info">'.get_string('completed_feedbacks', 'feedback').': </span><span class="feedback_info_value">'.$completedscount. '</span>';
+    echo $OUTPUT->box_end();
+    $itemscount = $DB->count_records('feedback_item', array('feedback'=>$feedback->id, 'hasvalue'=>1));
+    echo $OUTPUT->box_start('feedback_info');
+    echo '<span class="feedback_info">'.get_string('questions', 'feedback').': </span><span class="feedback_info_value">' .$itemscount. '</span>';
+    echo $OUTPUT->box_end();
+    
+    if($feedback->timeopen) {
+        echo $OUTPUT->box_start('feedback_info');
+        echo '<span class="feedback_info">'.get_string('feedbackopen', 'feedback').': </span><span class="feedback_info_value">' .UserDate($feedback->timeopen). '</span>';
+        echo $OUTPUT->box_end();
+    }
+    if($feedback->timeclose) {
+        echo $OUTPUT->box_start('feedback_info');
+        echo '<span class="feedback_info">'.get_string('timeclose', 'feedback').': </span><span class="feedback_info_value">' .UserDate($feedback->timeclose). '</span>';
+        echo $OUTPUT->box_end();
+    }
+    echo $OUTPUT->box_end();
+}
+
+if(has_capability('mod/feedback:edititems', $context)) {
+    echo $OUTPUT->heading(get_string('description', 'feedback'), 4);
+}
 echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthwide');
 $options = (object)array('noclean'=>true);
 echo format_module_intro('feedback', $feedback, $cm->id);

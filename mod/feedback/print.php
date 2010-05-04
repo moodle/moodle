@@ -33,7 +33,8 @@ if (!$context = get_context_instance(CONTEXT_MODULE, $cm->id)) {
 
 require_login($course->id, true, $cm);
 
-require_capability('mod/feedback:edititems', $context);
+require_capability('mod/feedback:view', $context);
+$PAGE->set_pagelayout('embedded');
 
 /// Print the page header
 $strfeedbacks = get_string("modulenameplural", "feedback");
@@ -51,14 +52,13 @@ echo $OUTPUT->header();
 ///////////////////////////////////////////////////////////////////////////
 echo $OUTPUT->heading(format_text($feedback->name));
 
-feedback_print_errors();
-
 $feedbackitems = $DB->get_records('feedback_item', array('feedback'=>$feedback->id), 'position');
+echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthwide');
+echo $OUTPUT->continue_button('view.php?id='.$id);
 if(is_array($feedbackitems)){
     $itemnr = 0;
     $align = right_to_left() ? 'right' : 'left';
 
-    // echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthwide');
     echo $OUTPUT->box_start('feedback_items printview');
     //check, if there exists required-elements
     $countreq = $DB->count_records('feedback_item', array('feedback'=>$feedback->id, 'required'=>1));
@@ -93,6 +93,7 @@ if(is_array($feedbackitems)){
     echo $OUTPUT->box(get_string('no_items_available_yet','feedback'),'generalbox boxaligncenter boxwidthwide');
 }
 echo $OUTPUT->continue_button('view.php?id='.$id);
+echo $OUTPUT->box_end();
 /// Finish the page
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
