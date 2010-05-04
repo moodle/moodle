@@ -86,7 +86,9 @@ if (!empty($fromform)) {
 // OUTPUT
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('addcommunitycourse', 'block_community'), 3, 'main');
-echo $downloadmessage;
+if (!empty($downloadmessage)) {
+    echo $downloadmessage;
+}
 $hubselectorform->display();
 echo $renderer->course_list($courses, $huburl);
 echo $OUTPUT->footer();
