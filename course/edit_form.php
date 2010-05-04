@@ -262,7 +262,7 @@ class course_edit_form extends moodleform {
         $choices['0'] = get_string('no');
         $choices['1'] = get_string('yes');
         $mform->addElement('select', 'expirynotify', get_string('notify'), $choices);
-        $mform->addHelpButton('expirynotify', 'expirynotify');
+        $mform->addHelpButton('expirynotify', 'notify');
         $mform->setDefault('expirynotify', $courseconfig->expirynotify);
 
         $mform->addElement('select', 'notifystudents', get_string('expirynotifystudents'), $choices);
@@ -285,15 +285,15 @@ class course_edit_form extends moodleform {
         $choices[NOGROUPS] = get_string('groupsnone', 'group');
         $choices[SEPARATEGROUPS] = get_string('groupsseparate', 'group');
         $choices[VISIBLEGROUPS] = get_string('groupsvisible', 'group');
-        $mform->addElement('select', 'groupmode', get_string('groupmode'), $choices);
-        $mform->addHelpButton('groupmode', 'groupmode');
+        $mform->addElement('select', 'groupmode', get_string('groupmode', 'group'), $choices);
+        $mform->addHelpButton('groupmode', 'groupmode', 'group');
         $mform->setDefault('groupmode', $courseconfig->groupmode);
 
         $choices = array();
         $choices['0'] = get_string('no');
         $choices['1'] = get_string('yes');
-        $mform->addElement('select', 'groupmodeforce', get_string('force'), $choices);
-        $mform->addHelpButton('groupmodeforce', 'groupmodeforce');
+        $mform->addElement('select', 'groupmodeforce', get_string('groupmodeforce', 'group'), $choices);
+        $mform->addHelpButton('groupmodeforce', 'groupmodeforce', 'group');
         $mform->setDefault('groupmodeforce', $courseconfig->groupmodeforce);
 
         //default groupings selector
