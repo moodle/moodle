@@ -112,18 +112,6 @@
     if (has_capability('mod/chat:chat',$context)) {
         /// Print the main part of the page
         echo $OUTPUT->box_start('generalbox', 'enterlink');
-        // users with screenreader set, will only see 1 link, to the manual refresh page
-        // for better accessibility
-        if (!empty($USER->screenreader)) {
-            $chattarget = "/mod/chat/gui_basic/index.php?id=$chat->id$groupparam";
-        } else {
-            $chattarget = "/mod/chat/gui_$CFG->chat_method/index.php?id=$chat->id$groupparam";
-        }
-
-        echo '<p>';
-        echo $OUTPUT->action_link($chattarget, $strenterchat, new popup_action('click', $chattarget, "chat$course->id$chat->id$groupparam", array('height' => 500, 'width' => 700)));
-
-        echo '</p>';
 
         if ($CFG->enableajax) {
             echo '<p>';
@@ -132,9 +120,22 @@
             $action = new popup_action('click', $link, "chat$course->id$chat->id$groupparam", array('height' => 500, 'width' => 700, 'toolbar' => false, 'resizeable' => false, 'status' => false));
             echo $OUTPUT->action_link($link, get_string('ajax_gui', 'message'), $action, array('title'=>get_string('modulename', 'chat')));
             echo '</p>';
+        } else {
+            if (!empty($USER->screenreader)) {
+                $chattarget = "/mod/chat/gui_basic/index.php?id=$chat->id$groupparam";
+            } else {
+                $chattarget = "/mod/chat/gui_$CFG->chat_method/index.php?id=$chat->id$groupparam";
+            }
+
+            echo '<p>';
+            echo $OUTPUT->action_link($chattarget, $strenterchat, new popup_action('click', $chattarget, "chat$course->id$chat->id$groupparam", array('height' => 500, 'width' => 700)));
+
+            echo '</p>';
         }
 
         // if user is using screen reader, then there is no need to display this link again
+        // users with screenreader set, will only see 1 link, to the manual refresh page
+        // for better accessibility
         if ($CFG->chat_method == 'header_js' && empty($USER->screenreader)) {
             // show frame/js-less alternative
             echo '<p>(';

@@ -26,9 +26,36 @@ function xmldb_chat_upgrade($oldversion) {
     $dbman = $DB->get_manager();
     $result = true;
 
-//===== 1.9.0 upgrade line ======//
+    //===== 1.9.0 upgrade line ======//
 
-    if ($result && $oldversion < 2008072400) {
+    if ($result && $oldversion < 2010050100) {
+
+    /// Changing precision of field ip on table chat_users to (45)
+        $table = new xmldb_table('chat_users');
+        $field = new xmldb_field('ip', XMLDB_TYPE_CHAR, '45', null, XMLDB_NOTNULL, null, null, 'version');
+
+    /// Launch change of precision for field ip
+        $dbman->change_field_precision($table, $field);
+
+    /// chat savepoint reached
+        upgrade_mod_savepoint($result, 2010050100, 'chat');
+    }
+
+    if ($result && $oldversion < 2010050101) {
+
+    /// Define field introformat to be added to chat
+        $table = new xmldb_table('chat');
+        $field = new xmldb_field('introformat', XMLDB_TYPE_INTEGER, '4', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'intro');
+
+    /// Launch add field introformat
+        $dbman->add_field($table, $field);
+
+    /// chat savepoint reached
+        upgrade_mod_savepoint($result, 2010050101, 'chat');
+    }
+
+    /// Creating chat_messages_current to hold latest chat messages
+    if ($result && $oldversion < 2010050102) {
 
     /// Define table chat_messages_current to be created
         $table = new xmldb_table('chat_messages_current');
@@ -52,38 +79,13 @@ function xmldb_chat_upgrade($oldversion) {
         $table->add_index('timestamp-chatid', XMLDB_INDEX_NOTUNIQUE, array('timestamp', 'chatid'));
 
     /// create table for chat_messages_current
-        $dbman->create_table($table);
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
 
     /// chat savepoint reached
-        upgrade_mod_savepoint($result, 2008072400, 'chat');
+        upgrade_mod_savepoint($result, 2010050102, 'chat');
     }
-
-    if ($result && $oldversion < 2009010600) {
-
-    /// Changing precision of field ip on table chat_users to (45)
-        $table = new xmldb_table('chat_users');
-        $field = new xmldb_field('ip', XMLDB_TYPE_CHAR, '45', null, XMLDB_NOTNULL, null, null, 'version');
-
-    /// Launch change of precision for field ip
-        $dbman->change_field_precision($table, $field);
-
-    /// chat savepoint reached
-        upgrade_mod_savepoint($result, 2009010600, 'chat');
-    }
-
-    if ($result && $oldversion < 2009042000) {
-
-    /// Define field introformat to be added to chat
-        $table = new xmldb_table('chat');
-        $field = new xmldb_field('introformat', XMLDB_TYPE_INTEGER, '4', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'intro');
-
-    /// Launch add field introformat
-        $dbman->add_field($table, $field);
-
-    /// chat savepoint reached
-        upgrade_mod_savepoint($result, 2009042000, 'chat');
-    }
-
     return $result;
 }
 
