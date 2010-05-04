@@ -3928,7 +3928,7 @@ AND EXISTS (SELECT 'x'
     }
 
 
-    if ($result && $oldversion < 2010050402) {  // my_pages for My Moodle and Public Profile pages
+    if ($result && $oldversion < 2010050403) {  // my_pages for My Moodle and Public Profile pages
 
     /// Define table my_pages to be created
         $table = new xmldb_table('my_pages');
@@ -3952,7 +3952,7 @@ AND EXISTS (SELECT 'x'
             $dbman->create_table($table);
         }
 
-    /// Add two lines of data into this new table
+    /// Add two lines of data into this new table.  These are the default pages.
         $mypage = new object();
         $mypage->userid = NULL;
         $mypage->name = '__default';
@@ -3965,9 +3965,45 @@ AND EXISTS (SELECT 'x'
         if (!$DB->record_exists('my_pages', array('userid'=>NULL, 'private'=>1))) {
             $result = $result && $DB->insert_record('my_pages', $mypage);
         }
+    
+    /// This bit is a "illegal" hack, unfortunately, but there is not a better way to install default
+    /// blocks right now, since the upgrade function need to be called after core AND plugins upgrade, 
+    /// and there is no such hook yet.  Sigh.
+
+        if ($mypage = $DB->get_record('my_pages', array('userid'=>NULL, 'private'=>1))) {
+            if (!$DB->record_exists('block_instances', array('pagetypepattern'=>'my-index', 'parentcontextid'=>SITEID, 'subpagepattern'=>$mypage->id))) {   
+            
+                // No default exist there yet, let's put a few into My Moodle so it's useful.
+
+                $blockinstance = new stdClass;
+                $blockinstance->parentcontextid = SITEID;
+                $blockinstance->showinsubcontexts = 0;
+                $blockinstance->pagetypepattern = 'my-index';
+                $blockinstance->subpagepattern = $mypage->id;
+                $blockinstance->configdata = '';
+
+                $blockinstance->blockname = 'private_files';
+                $blockinstance->defaultregion = 'side-post';
+                $blockinstance->defaultweight = 0;
+                $blockinstanceid = $DB->insert_record('block_instances', $blockinstance);
+                get_context_instance(CONTEXT_BLOCK, $blockinstanceid);
+
+                $blockinstance->blockname = 'online_users';
+                $blockinstance->defaultregion = 'side-post';
+                $blockinstance->defaultweight = 1;
+                $blockinstanceid = $DB->insert_record('block_instances', $blockinstance);
+                get_context_instance(CONTEXT_BLOCK, $blockinstanceid);
+
+                $blockinstance->blockname = 'course_overview';
+                $blockinstance->defaultregion = 'content';
+                $blockinstance->defaultweight = 0;
+                $blockinstanceid = $DB->insert_record('block_instances', $blockinstance);
+                get_context_instance(CONTEXT_BLOCK, $blockinstanceid);
+            }
+        }
 
     /// Main savepoint reached
-        upgrade_main_savepoint($result, 2010050402);
+        upgrade_main_savepoint($result, 2010050403);
     }
 
 

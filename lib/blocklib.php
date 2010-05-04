@@ -1785,5 +1785,5 @@ function blocks_add_default_system_blocks() {
         $subpagepattern = null;
     }
 
-    $page->blocks->add_blocks(array(BLOCK_POS_RIGHT => array('myprofile', 'private_files', 'online_users'), 'content' => array('course_overview')), 'my-index', $subpagepattern, false);
+    $page->blocks->add_blocks(array(BLOCK_POS_RIGHT => array('private_files', 'online_users'), 'content' => array('course_overview')), 'my-index', $subpagepattern, false);
 }
