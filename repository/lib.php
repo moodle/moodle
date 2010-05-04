@@ -1843,6 +1843,6 @@ function repository_setup_default_plugins() {
     $upload_plugin_id = $upload_plugin->create(true);
     $recent_plugin = new repository_type('recent', array(), true);
     $recent_plugin_id = $upload_plugin->create(true);
-    echo $OUTPUT->box(get_string('setupdefaultplugins', 'repository'));
+    echo $OUTPUT->notification(get_string('setupdefaultplugins', 'repository'), 'notifysuccess');
     return true;
 }
