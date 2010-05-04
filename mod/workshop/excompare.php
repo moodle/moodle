@@ -73,9 +73,6 @@ $wsoutput = $PAGE->get_renderer('mod_workshop');
 
 // Output starts here
 echo $OUTPUT->header();
-//$currenttab = 'example';
-//include(dirname(__FILE__) . '/tabs.php');
-//$currenttab = 'example';
 echo $OUTPUT->heading(get_string('assessedexample', 'workshop'), 2);
 
 echo $wsoutput->example_full($example, true);

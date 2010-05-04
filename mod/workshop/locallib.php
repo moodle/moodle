@@ -879,11 +879,16 @@ class workshop {
     }
 
     /**
+     * @param string $method allocation method
      * @return moodle_url to the allocation page
      */
-    public function allocation_url() {
+    public function allocation_url($method=null) {
         global $CFG;
-        return new moodle_url('/mod/workshop/allocation.php', array('cmid' => $this->cm->id));
+        $params = array('cmid' => $this->cm->id);
+        if (!empty($method)) {
+            $params['method'] = $method;
+        }
+        return new moodle_url('/mod/workshop/allocation.php', $params);
     }
 
     /**

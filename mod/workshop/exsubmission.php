@@ -155,8 +155,6 @@ if ($edit) {
 
 // Output starts here
 echo $OUTPUT->header();
-$currenttab = 'example';
-include(dirname(__FILE__) . '/tabs.php');
 echo $OUTPUT->heading(format_string($workshop->name), 2);
 
 // if in edit mode, display the form to edit the example
