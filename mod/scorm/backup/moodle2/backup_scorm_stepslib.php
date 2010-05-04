@@ -84,9 +84,9 @@ class backup_scorm_activity_structure_step extends backup_activity_structure_ste
         $seqobjective = new backup_nested_element('seq_objective', array('id'), array(
             'primaryobj', 'objectiveid', 'satisfiedbymeasure', 'minnormalizedmeasure'));
 
-        $seqmapinfo = new backup_nested_element('seq_mapinfo');
+        $seqmapinfo = new backup_nested_element('seq_mapinfos');
 
-        $seqmapinf = new backup_nested_element('seq_mapinf', array('id'), array(
+        $seqmapinf = new backup_nested_element('seq_mapinfo', array('id'), array(
             'targetobjectiveid', 'readsatisfiedstatus', 'readnormalizedmeasure', 'writesatisfiedstatus',
             'writenormalizedmeasure'));
 
