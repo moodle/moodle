@@ -1460,9 +1460,10 @@ END;
         $attributes = array('href'=>$url, 'title'=>$title);
         $id = html_writer::random_id('helpicon');
         $attributes['id'] = $id;
-        $this->add_action_handler(new popup_action('click', $url, 'popup', array('id'=>$id)), $id);
         $output = html_writer::tag('a', $output, $attributes);
-        
+
+        $this->page->requires->js_init_call('M.util.help_icon.add', array(array('id'=>$id, 'url'=>$url->out(false))));
+
         // and finally span
         return html_writer::tag('span', $output, array('class' => 'helplink'));
     }
