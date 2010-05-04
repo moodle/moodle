@@ -66,14 +66,14 @@ $string['evenallocation'] = 'Note: To keep group allocation even, the actual num
 $string['existingmembers'] = 'Existing members: {$a}';
 $string['filtergroups'] = 'Filter groups by:';
 $string['group'] = 'Group';
-$string['groupaddedsuccesfully'] = 'Group {$a} added succesfully';
+$string['groupaddedsuccesfully'] = 'Group {$a} added successfully';
 $string['groupby'] = 'Specify';
 $string['groupdescription'] = 'Group description';
 $string['groupinfo'] = 'Info about selected group';
 $string['groupinfomembers'] = 'Info about selected members';
 $string['groupinfopeople'] = 'Info about selected people';
 $string['grouping'] = 'Grouping';
-$string['grouping_help'] = 'A grouping is a collection of groups within a course. If a grouping is selected, then users assigned to groups within the grouping will be able to work together. Group mode must be set to separate or visible groups.';
+$string['grouping_help'] = 'A grouping is a collection of groups within a course. If a grouping is selected, students assigned to groups within the grouping will be able to work together.';
 $string['groupingdescription'] = 'Grouping description';
 $string['groupingname'] = 'Grouping name';
 $string['groupingnameexists'] = 'The grouping name \'{$a}\' already exists in this course, please choose another one.';
@@ -83,24 +83,20 @@ $string['groupmember'] = 'Group Member';
 $string['groupmemberdesc'] = 'Standard role for a member of a group.';
 $string['groupmembers'] = 'Group members';
 $string['groupmembersonly'] = 'Available for group members only';
-$string['groupmembersonly_help'] = 'If the checkbox is checked, then the activity or resource will only be available to users assigned to groups within the selected grouping, or to any group if no grouping is selected.';
+$string['groupmembersonly_help'] = 'If this checkbox is ticked, the activity (or resource) will only be available to students assigned to groups within the selected grouping.';
 $string['groupmembersonlyerror'] = 'Sorry, you must be member of at least one group that is used in this activity.';
 $string['groupmemberssee'] = 'See group members';
 $string['groupmembersselected'] = 'Members of selected group';
 $string['groupmode'] = 'Group mode';
-$string['groupmode_help'] = 'The group mode can be one of three levels:
+$string['groupmode_help'] = 'This setting has 3 options:
 
-* No groups - there are no sub groups, everyone is part of one big community
-* Separate groups - each group can only see their own group, others are invisible
-* Visible groups - each group works in their own group, but can also see other groups
+* No groups - There are no sub groups, everyone is part of one big community
+* Separate groups - Each group member can only see their own group, others are invisible
+* Visible groups - Each group member works in their own group, but can also see other groups
 
-The group mode can be defined at two levels:
-
-1. Course level - the group mode defined at the course level is the default mode for all activities defined within that course
-2. Activity level - each activity that supports groups can also define its own grouping mode
-
-If the course is set to "force group mode",  the setting at the activity level is ignored.';
+The group mode defined at course level is the default mode for all activities within the course. Each activity that supports groups can also define its own group mode, though if the group mode is forced at course level, the group mode setting for each activity is ignored.';
 $string['groupmodeforce'] = 'Force group mode';
+$string['groupmodeforce_help'] = 'If group mode is forced, then the course group mode is applied to every activity in the course. Group mode settings in each activity are then ignored.';
 $string['groupmy'] = 'My group';
 $string['groupname'] = 'Group name';
 $string['groupnameexists'] = 'The group name \'{$a}\' already exists in this course, please choose another one.';
@@ -116,7 +112,7 @@ $string['groupsseparate'] = 'Separate groups';
 $string['groupsvisible'] = 'Visible groups';
 $string['grouptemplate'] = 'Group @';
 $string['hidepicture'] = 'Hide picture';
-$string['javascriptrequired'] = 'This page requires Javascript to be enabled.';
+$string['javascriptrequired'] = 'This page requires JavaScript to be enabled.';
 $string['members'] = 'Members per group';
 $string['membersofselectedgroup'] = 'Members of:';
 $string['namingscheme'] = 'Naming scheme';
@@ -126,7 +122,7 @@ $string['newpicture'] = 'New picture';
 $string['noallocation'] = 'No allocation';
 $string['nogroups'] = 'There are no groups setup in this course yet';
 $string['nogroupsassigned'] = 'No groups assigned';
-$string['nopermissionforcreation'] = 'Can\'t create group "{$a}" as you dont have the required permissions';
+$string['nopermissionforcreation'] = 'Can\'t create group "{$a}" as you don\'t have the required permissions';
 $string['nosmallgroups'] = 'Prevent last small group';
 $string['notingrouping'] = '[Not in a grouping]';
 $string['nousersinrole'] = 'There are no suitable users in the selected role';
