@@ -208,8 +208,16 @@ class MoodleQuickForm_editor extends HTML_QuickForm_element {
             if ($maxfiles != 0 ) {
                 $str .= '<div><input type="hidden" name="'.$elname.'[itemid]" value="'.$draftitemid.'" /></div>';
                 $str .= '<div id="'.$id.'_filemanager">';
-                $editorurl = "$CFG->wwwroot/repository/filepicker.php?action=browse&amp;env=editor&amp;itemid=$draftitemid&amp;subdirs=$subdirs&amp;maxbytes=$maxbytes&amp;ctx_id=".$ctx->id.'&amp;course='.$PAGE->course->id;
-                $str .= html_writer::link($editorurl, get_string('manageeditorfiles'), array('target'=>'_blank'));
+                $editorurl = new moodle_url("$CFG->wwwroot/repository/filepicker.php", array(
+                    'action'=>'browse',
+                    'env'=>'editor',
+                    'itemid'=>$draftitemid,
+                    'subdirs'=>$subdirs,
+                    'maxbytes'=>$maxbytes,
+                    'ctx_id'=>$ctx->id,
+                    'course'=>$PAGE->course->id
+                    ));
+                $str .= html_writer::link($editorurl->out(false), get_string('manageeditorfiles'), array('target'=>'_blank'));
                 //$str .= '<object type="text/html" data="'.$editorurl.'" height="160" width="600" style="border:1px solid #000">Error</object>';
                 $str .= '</div>';
             }
