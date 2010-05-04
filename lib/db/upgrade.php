@@ -3928,6 +3928,49 @@ AND EXISTS (SELECT 'x'
     }
 
 
+    if ($result && $oldversion < 2010050400) {  // my_pages for My Moodle and Public Profile pages
+
+    /// Define table my_pages to be created
+        $table = new xmldb_table('my_pages');
+
+    /// Adding fields to table my_pages
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, 0);
+        $table->add_field('name', XMLDB_TYPE_CHAR, '200', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('private', XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 0);
+        $table->add_field('sortorder', XMLDB_TYPE_INTEGER, '6', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+
+
+    /// Adding keys to table my_pages
+        $table->add_key('id', XMLDB_KEY_PRIMARY, array('id'));
+
+    /// Adding indexes to table my_pages
+        $table->add_index('useridprivate', XMLDB_INDEX_NOTUNIQUE, array('userid', 'private'));
+
+    /// Conditionally launch create table for my_pages
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+    /// Add two lines of data into this new table
+        $mypage = new object();
+        $mypage->userid = NULL;
+        $mypage->name = '__default';
+        $mypage->private = 0;
+        $mypage->sortorder  = 0;
+        if (!$DB->record_exists('my_pages', array('userid'=>NULL, 'private'=>0))) {
+            $result = $result && $DB->insert_record('my_pages', $mypage);
+        }
+        $mypage->private = 1;
+        if (!$DB->record_exists('my_pages', array('userid'=>NULL, 'private'=>1))) {
+            $result = $result && $DB->insert_record('my_pages', $mypage);
+        }
+
+    /// Main savepoint reached
+        upgrade_main_savepoint($result, 2010050400);
+    }
+
+
     return $result;
 }
 

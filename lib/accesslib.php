@@ -3710,9 +3710,10 @@ function get_context_url($context) {
 
     switch ($context->contextlevel) {
         case CONTEXT_USER:
-            $url = new moodle_url('/user/view.php', array('id'=>$context->instanceid));
-            if ($COURSE->id != SITEID) {
-                $url->param('courseid', $COURSE->id);
+            if ($COURSE->id == SITEID) {
+                $url = new moodle_url('/user/profile.php', array('id'=>$context->instanceid));
+            } else {
+                $url = new moodle_url('/user/view.php', array('id'=>$context->instanceid, 'courseid'=>$COURSE->id));
             }
             return $url;;
 

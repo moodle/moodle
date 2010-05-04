@@ -1772,8 +1772,18 @@ function blocks_add_default_course_blocks($course) {
  * Add the default system-context blocks. E.g. the admin tree.
  */
 function blocks_add_default_system_blocks() {
+    global $DB;
+
     $page = new moodle_page();
     $page->set_context(get_context_instance(CONTEXT_SYSTEM));
     $page->blocks->add_blocks(array(BLOCK_POS_LEFT => array('navigation', 'settings')), '*', null, true);
     $page->blocks->add_blocks(array(BLOCK_POS_LEFT => array('admin_bookmarks')), 'admin-*', null, null, 2);
+
+    if ($defaultmypage = $DB->get_record('my_pages', array('userid'=>null, 'name'=>'__default', 'private'=>1))) {
+        $subpagepattern = $defaultmypage->id;
+    } else {
+        $subpagepattern = null;
+    }
+
+    $page->blocks->add_blocks(array(BLOCK_POS_RIGHT => array('myprofile', 'private_files', 'online_users'), 'content' => array('course_overview')), 'my-index', $subpagepattern, false);
 }

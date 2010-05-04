@@ -37,91 +37,60 @@
 
 require_once(dirname(__FILE__) . '/../config.php');
 require_once($CFG->dirroot . '/my/lib.php');
+require_once($CFG->libdir.'/adminlib.php');
 
-redirect_if_major_upgrade_required();
-
-// TODO Add sesskey check to edit
 $edit   = optional_param('edit', null, PARAM_BOOL);    // Turn editing on and off
 
 require_login();
 
 $strmymoodle = get_string('myhome');
 
-if (isguestuser()) {  // Force them to see system default, no editing allowed
-    $userid = NULL; 
-    $USER->editing = $edit = 0;  // Just in case
-    $context = get_context_instance(CONTEXT_SYSTEM);
-    $PAGE->set_blocks_editing_capability('moodle/my:configsyspages');  // unlikely :)
-    $header = "$SITE->shortname: $strmymoodle (GUEST)";
-
-} else {        // We are trying to view or edit our own My Moodle page
-    $userid = $USER->id;  // Owner of the page
-    $context = get_context_instance(CONTEXT_USER, $USER->id);
-    $PAGE->set_blocks_editing_capability('moodle/my:manageblocks');
-    $header = "$SITE->shortname: $strmymoodle";
-}
-
-// Get the My Moodle page info.  Should always return something unless the database is broken.
-if (!$currentpage = my_get_page($userid, MY_PAGE_PRIVATE)) {
-    print_error('mymoodlesetup');
-}
-
-if (!$currentpage->userid) {
-    $context = get_context_instance(CONTEXT_SYSTEM);  // So we even see non-sticky blocks
-}
+$context = get_context_instance(CONTEXT_SYSTEM);
+require_capability('moodle/my:configsyspages', $context);
+$PAGE->set_blocks_editing_capability('moodle/my:configsyspages');
+$header = "$SITE->shortname: $strmymoodle (DEFAULT)";
 
 // Start setting up the page
 $params = array();
-$PAGE->set_context($context);
-$PAGE->set_url('/my/index.php', $params);
+$PAGE->set_url('/my/indexsys.php', $params);
 $PAGE->set_pagelayout('mydashboard');
 $PAGE->set_pagetype('my-index');
-$PAGE->blocks->add_region('content');
-$PAGE->set_subpage($currentpage->id);
+$PAGE->set_context($context);
 $PAGE->set_title($header);
 $PAGE->set_heading($header);
+$PAGE->blocks->add_region('content');
+
+// TODO: Make the page be selected properly in the Settings block
+
+// Get the My Moodle page info.  Should always return something unless the database is broken.
+if (!$currentpage = my_get_page(0, MY_PAGE_PRIVATE)) {
+    print_error('mymoodlesetup');
+}
+$PAGE->set_subpage($currentpage->id);
+
 
 // Toggle the editing state and switches
 if ($PAGE->user_allowed_editing()) {
     if ($edit !== null) {             // Editing state was specified
         $USER->editing = $edit;       // Change editing state
-        if (!$currentpage->userid && $edit) {
-            // If we are viewing a system page as ordinary user, and the user turns
-            // editing on, copy the system pages as new user pages, and get the
-            // new page record
-            if (!$currentpage = my_copy_page($USER->id, MY_PAGE_PRIVATE)) {
-                print_error('mymoodlesetup');
-            }
-            $context = get_context_instance(CONTEXT_USER, $USER->id);
-            $PAGE->set_context($context);
-            $PAGE->set_subpage($currentpage->id);
-        }
     } else {                          // Editing state is in session
-        if ($currentpage->userid) {   // It's a page we can edit, so load from session
-            if (!empty($USER->editing)) {
-                $edit = 1;
-            } else {
-                $edit = 0;
-            }
-        } else {                      // It's a system page and they are not allowed to edit system pages
-            $USER->editing = $edit = 0;          // Disable editing completely, just to be safe
+        if (!empty($USER->editing)) {
+            $edit = 1;
+        } else {
+            $edit = 0;
         }
     }
 
     // Add button for editing page
-    $params = array('edit' => !$edit);
+    $params['edit'] = !$edit;
 
-    if (!$currentpage->userid) {
-        // viewing a system page -- let the user customise it
-        $editstring = get_string('updatemymoodleon');
-        $params['edit'] = 1;
-    } else if (empty($edit)) {
+    if (empty($edit)) {
         $editstring = get_string('updatemymoodleon');
     } else {
         $editstring = get_string('updatemymoodleoff');
     }
 
-    $url = new moodle_url("$CFG->wwwroot/my/index.php", $params);
+    $url = new moodle_url("$CFG->wwwroot/my/indexsys.php", $params);
     $button = $OUTPUT->single_button($url, $editstring);
     $PAGE->set_button($button);
 

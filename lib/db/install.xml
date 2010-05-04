@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/db" VERSION="20100502" COMMENT="XMLDB file for core Moodle tables"
+<XMLDB PATH="lib/db" VERSION="20100504" COMMENT="XMLDB file for core Moodle tables"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
 >
@@ -587,7 +587,7 @@
         <INDEX NAME="userid-contactid" UNIQUE="true" FIELDS="userid, contactid"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="modules" COMMENT="modules available in the site" PREVIOUS="message_contacts" NEXT="sessions">
+    <TABLE NAME="modules" COMMENT="modules available in the site" PREVIOUS="message_contacts" NEXT="my_pages">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="name"/>
         <FIELD NAME="name" TYPE="char" LENGTH="20" NOTNULL="true" SEQUENCE="false" PREVIOUS="id" NEXT="version"/>
@@ -604,7 +604,22 @@
         <INDEX NAME="name" UNIQUE="false" FIELDS="name"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="sessions" COMMENT="Database based session storage - now recommended" PREVIOUS="modules" NEXT="timezone">
+    <TABLE NAME="my_pages" COMMENT="Extra user pages for the My Moodle system" PREVIOUS="modules" NEXT="sessions">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="userid"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="The user who owns this page or 0 for system defaults" PREVIOUS="id" NEXT="name"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="200" NOTNULL="true" SEQUENCE="false" COMMENT="The page name (freeform text)" PREVIOUS="userid" NEXT="private"/>
+        <FIELD NAME="private" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" COMMENT="Whether or not the page is private (dashboard) or public (profile)" PREVIOUS="name" NEXT="sortorder"/>
+        <FIELD NAME="sortorder" TYPE="int" LENGTH="6" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" COMMENT="The order of the pages for a user" PREVIOUS="private"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="id" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="user_idx" UNIQUE="false" FIELDS="userid, private"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="sessions" COMMENT="Database based session storage - now recommended" PREVIOUS="my_pages" NEXT="timezone">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="state"/>
         <FIELD NAME="state" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="0 means normal session" PREVIOUS="id" NEXT="sid"/>

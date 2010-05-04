@@ -1251,7 +1251,11 @@ class global_navigation extends navigation_node {
         // If the user is the current user or has permission to view the details of the requested
         // user than add a view profile link.
         if ($iscurrentuser || has_capability('moodle/user:viewdetails', $coursecontext) || has_capability('moodle/user:viewdetails', $usercontext)) {
-            $usernode->add(get_string('viewprofile'), new moodle_url('/user/view.php',$baseargs));
+            if ($issitecourse) {
+                $usernode->add(get_string('viewprofile'), new moodle_url('/user/profile.php',$baseargs));
+            } else {
+                $usernode->add(get_string('viewprofile'), new moodle_url('/user/view.php',$baseargs));
+            }
         }
 
         // Add nodes for forum posts and discussions if the user can view either or both
@@ -1263,7 +1267,7 @@ class global_navigation extends navigation_node {
                 $forumtab->add(get_string('posts', 'forum'), new moodle_url('/mod/forum/user.php', $baseargs));
             }
             if ($canviewdiscussions) {
-                $forumtab->add(get_string('discussions', 'forum'), new moodle_url('/mod/forum/user.php', array_merge($baseargs, array('mode'=>'discussions'))));
+                $forumtab->add(get_string('discussions', 'forum'), new moodle_url('/mod/forum/user.php', array_merge($baseargs, array('mode'=>'discussions', 'course'=>$course->id))));
             }
         }
 
@@ -1290,59 +1294,62 @@ class global_navigation extends navigation_node {
         }
 
         // Add a reports tab and then add reports the the user has permission to see.
-        $reporttab = $usernode->add(get_string('activityreports'));
         $anyreport  = has_capability('moodle/user:viewuseractivitiesreport', $usercontext);
         $viewreports = ($anyreport || ($course->showreports && $iscurrentuser));
-        $reportargs = array('user'=>$user->id);
-        if (!empty($course->id)) {
-            $reportargs['id'] = $course->id;
-        } else {
-            $reportargs['id'] = SITEID;
-        }
-        if ($viewreports || has_capability('coursereport/outline:view', $coursecontext)) {
-            $reporttab->add(get_string('outlinereport'), new moodle_url('/course/user.php', array_merge($reportargs, array('mode'=>'outline'))));
-            $reporttab->add(get_string('completereport'), new moodle_url('/course/user.php', array_merge($reportargs, array('mode'=>'complete'))));
-        }
+        if ($viewreports) {
+            $reporttab = $usernode->add(get_string('activityreports'));
+            $reportargs = array('user'=>$user->id);
+            if (!empty($course->id)) {
+                $reportargs['id'] = $course->id;
+            } else {
+                $reportargs['id'] = SITEID;
+            }
+            if ($viewreports || has_capability('coursereport/outline:view', $coursecontext)) {
+                $reporttab->add(get_string('outlinereport'), new moodle_url('/course/user.php', array_merge($reportargs, array('mode'=>'outline'))));
+                $reporttab->add(get_string('completereport'), new moodle_url('/course/user.php', array_merge($reportargs, array('mode'=>'complete'))));
+            }
 
-        if ($viewreports || has_capability('coursereport/log:viewtoday', $coursecontext)) {
-            $reporttab->add(get_string('todaylogs'), new moodle_url('/course/user.php', array_merge($reportargs, array('mode'=>'todaylogs'))));
-        }
+            if ($viewreports || has_capability('coursereport/log:viewtoday', $coursecontext)) {
+                $reporttab->add(get_string('todaylogs'), new moodle_url('/course/user.php', array_merge($reportargs, array('mode'=>'todaylogs'))));
+            }
 
-        if ($viewreports || has_capability('coursereport/log:view', $coursecontext)) {
-            $reporttab->add(get_string('alllogs'), new moodle_url('/course/user.php', array_merge($reportargs, array('mode'=>'alllogs'))));
-        }
+            if ($viewreports || has_capability('coursereport/log:view', $coursecontext)) {
+                $reporttab->add(get_string('alllogs'), new moodle_url('/course/user.php', array_merge($reportargs, array('mode'=>'alllogs'))));
+            }
 
-        if (!empty($CFG->enablestats)) {
-            if ($viewreports || has_capability('coursereport/stats:view', $coursecontext)) {
-                $reporttab->add(get_string('stats'), new moodle_url('/course/user.php', array_merge($reportargs, array('mode'=>'stats'))));
+            if (!empty($CFG->enablestats)) {
+                if ($viewreports || has_capability('coursereport/stats:view', $coursecontext)) {
+                    $reporttab->add(get_string('stats'), new moodle_url('/course/user.php', array_merge($reportargs, array('mode'=>'stats'))));
+                }
+            }
+
+            $gradeaccess = false;
+            if (has_capability('moodle/grade:viewall', $coursecontext)) {
+                //ok - can view all course grades
+                $gradeaccess = true;
+            } else if ($course->showgrades) {
+                if ($iscurrentuser && has_capability('moodle/grade:view', $coursecontext)) {
+                    //ok - can view own grades
+                    $gradeaccess = true;
+                } else if (has_capability('moodle/grade:viewall', $usercontext)) {
+                    // ok - can view grades of this user - parent most probably
+                    $gradeaccess = true;
+                } else if ($anyreport) {
+                    // ok - can view grades of this user - parent most probably
+                    $gradeaccess = true;
+                }
+            }
+            if ($gradeaccess) {
+                $reporttab->add(get_string('grade'), new moodle_url('/course/user.php', array_merge($reportargs, array('mode'=>'grade'))));
+            }
+
+            // Check the number of nodes in the report node... if there are none remove
+            // the node
+            if (count($reporttab->children)===0) {
+                $usernode->remove_child($reporttab);
             }
         }
 
-        $gradeaccess = false;
-        if (has_capability('moodle/grade:viewall', $coursecontext)) {
-            //ok - can view all course grades
-            $gradeaccess = true;
-        } else if ($course->showgrades) {
-            if ($iscurrentuser && has_capability('moodle/grade:view', $coursecontext)) {
-                //ok - can view own grades
-                $gradeaccess = true;
-            } else if (has_capability('moodle/grade:viewall', $usercontext)) {
-                // ok - can view grades of this user - parent most probably
-                $gradeaccess = true;
-            } else if ($anyreport) {
-                // ok - can view grades of this user - parent most probably
-                $gradeaccess = true;
-            }
-        }
-        if ($gradeaccess) {
-            $reporttab->add(get_string('grade'), new moodle_url('/course/user.php', array_merge($reportargs, array('mode'=>'grade'))));
-        }
-
-        // Check the number of nodes in the report node... if there are none remove
-        // the node
-        if (count($reporttab->children)===0) {
-            $usernode->remove_child($reporttab);
-        }
 
         // If the user is the current user add the repositories for the current user
         if ($iscurrentuser) {
@@ -1353,6 +1360,23 @@ class global_navigation extends navigation_node {
             }
         }
         return true;
+    }
+
+    private function add_my_pages($node, $subpages, $baseurl, $defaultname, $baseargs = array()) {
+        global $CFG;
+
+        foreach($subpages as $page) {
+            $name = $page->name;
+            $params = $baseargs;
+            if ($page->name == '__default') {
+                $name = $defaultname;
+            } else {
+                $params['pageid'] = $page->id;
+            }
+            $url = new moodle_url($baseurl, $params);
+
+            $node->add($name, $url, null, null, null, null, false);
+        }
     }
 
     /**
@@ -2686,7 +2710,11 @@ class settings_navigation extends navigation_node {
                 $usersetting->add(get_string('userdeleted'), null, self::TYPE_SETTING);
             } else {
                 // We can edit the user so show the user deleted message and link it to the profile
-                $profileurl = new moodle_url('/user/view.php', array('id'=>$user->id, 'course'=>$course->id));
+                if ($course->id == SITEID) {
+                    $profileurl = new moodle_url('/user/profile.php', array('id'=>$user->id));
+                } else {
+                    $profileurl = new moodle_url('/user/view.php', array('id'=>$user->id, 'course'=>$course->id));
+                }
                 $usersetting->add(get_string('userdeleted'), $profileurl, self::TYPE_SETTING);
             }
             return true;
@@ -2779,9 +2807,16 @@ class settings_navigation extends navigation_node {
         }
 
         // Messaging
+        // TODO this is adding itself to the messaging settings for other people based on one's own setting
         if (has_capability('moodle/user:editownmessageprofile', $systemcontext)) {
             $url = new moodle_url('/message/edit.php', array('id'=>$user->id, 'course'=>$course->id));
             $usersetting->add(get_string('editmymessage', 'message'), $url, self::TYPE_SETTING);
+        }
+
+        // Login as ...
+        if (!$user->deleted and !$currentuser && !session_is_loggedinas() && has_capability('moodle/user:loginas', $coursecontext) && !is_siteadmin($user->id)) {
+            $url = new moodle_url('/course/loginas.php', array('id'=>$course->id, 'user'=>$user->id, 'sesskey'=>sesskey()));
+            $usersetting->add(get_string('loginas'), $url, self::TYPE_SETTING);
         }
 
         return $usersetting;

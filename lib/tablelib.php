@@ -757,10 +757,15 @@ class flexible_table {
      */
     function col_fullname($row){
         global $COURSE, $CFG;
-        if (!$this->download){
 
-            return '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$row->{$this->useridfield}.
-                    '&amp;course='.$COURSE->id.'">'.fullname($row).'</a>';
+        if (!$this->download){
+            if ($COURSE->id == SITEID) {
+                return '<a href="'.$CFG->wwwroot.'/user/profile.php?id='.$row->{$this->useridfield}.  '">'.
+                        fullname($row).'</a>';
+            } else {
+                return '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$row->{$this->useridfield}.
+                        '&amp;course='.$COURSE->id.'">'.fullname($row).'</a>';
+            }
         } else {
             return fullname($row);
         }

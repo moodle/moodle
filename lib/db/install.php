@@ -262,4 +262,18 @@ function xmldb_main_install() {
     // Install licenses
     require_once($CFG->libdir . '/licenselib.php');
     license_manager::install_licenses();
+
+    /// Add two lines of data into this new table
+    $mypage = new object();
+    $mypage->userid = NULL;
+    $mypage->name = '__default';
+    $mypage->private = 0;
+    $mypage->sortorder  = 0;
+    if (!$DB->record_exists('my_pages', array('userid'=>NULL, 'private'=>0))) {
+        $DB->insert_record('my_pages', $mypage);
+    }
+    $mypage->private = 1;
+    if (!$DB->record_exists('my_pages', array('userid'=>NULL, 'private'=>1))) {
+        $DB->insert_record('my_pages', $mypage);
+    }
 }

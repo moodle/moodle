@@ -665,7 +665,21 @@ class block_base {
      * @return boolean
      */
     function user_can_edit() {
-        return has_capability('moodle/block:edit', $this->context);
+        global $USER;
+
+        if (has_capability('moodle/block:edit', $this->context)) {
+            return true;
+        }
+
+        // The blocks in My Moodle are a special case.  We want them to inherit from the user context.
+        if (!empty($USER->id)
+            && $this->instance->parentcontextid == $this->page->context->id   // Block belongs to this page
+            && $this->page->context->contextlevel == CONTEXT_USER             // Page belongs to a user
+            && $this->page->context->instanceid == $USER->id) {               // Page belongs to this user
+            return has_capability('moodle/my:manageblocks', $this->page->context);
+        }
+
+        return false;
     }
 
     /**
@@ -676,7 +690,20 @@ class block_base {
      * @return boolean
      */
     function user_can_addto($page) {
-        return has_capability('moodle/block:edit', $page->context);
+        global $USER;
+
+        if (has_capability('moodle/block:edit', $page->context)) {
+            return true;
+        }
+
+        // The blocks in My Moodle are a special case and use a different capability.
+        if (!empty($USER->id)
+            && $page->context->contextlevel == CONTEXT_USER             // Page belongs to a user
+            && $page->context->instanceid == $USER->id) {               // Page belongs to this user
+            return has_capability('moodle/my:manageblocks', $page->context);
+        }
+
+        return false;
     }
 
     function get_extra_capabilities() {

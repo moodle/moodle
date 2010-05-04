@@ -407,7 +407,8 @@ class core_renderer extends renderer_base {
             $context = get_context_instance(CONTEXT_COURSE, $course->id);
 
             $fullname = fullname($USER, true);
-            $username = "<a href=\"$CFG->wwwroot/user/view.php?id=$USER->id&amp;course=$course->id\">$fullname</a>";
+            // Since Moodle 2.0 this link always goes to the public profile page (not the course profile page)
+            $username = "<a href=\"$CFG->wwwroot/user/profile.php?id=$USER->id\">$fullname</a>";
             if (is_mnet_remote_user($USER) and $idprovider = $DB->get_record('mnet_host', array('id'=>$USER->mnethostid))) {
                 $username .= " from <a href=\"{$idprovider->wwwroot}\">{$idprovider->name}</a>";
             }
@@ -1675,7 +1676,11 @@ END;
             $courseid = $userpicture->courseid;
         }
 
-        $url = new moodle_url('/user/view.php', array('id' => $user->id, 'course' => $courseid));
+        if ($courseid == SITEID) {
+            $url = new moodle_url('/user/profile.php', array('id' => $user->id));
+        } else {
+            $url = new moodle_url('/user/view.php', array('id' => $user->id, 'course' => $courseid));
+        }
 
         $attributes = array('href'=>$url);
 

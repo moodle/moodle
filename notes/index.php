@@ -89,11 +89,11 @@ $PAGE->set_title($course->shortname . ': ' . $strnotes);
 $PAGE->set_heading($course->fullname);
 
 echo $OUTPUT->header();
-echo $OUTPUT->heading(fullname($user));
-
-$showroles = 1;
-$currenttab = 'notes';
-require($CFG->dirroot .'/user/tabs.php');
+if ($userid) {
+    echo $OUTPUT->heading(fullname($user).': '.$strnotes);
+} else {
+    echo $OUTPUT->heading($course->shortname.': '.$strnotes);
+}
 
 $strsitenotes = get_string('sitenotes', 'notes');
 $strcoursenotes = get_string('coursenotes', 'notes');

@@ -29,8 +29,8 @@ if ($noteid) {
 
     $url->param('courseid', $courseid);
     $url->param('userid', $userid);
-    if ($publishstate !== NOTES_STATE_PUBLIC) {
-        $url->param('publishstate', $publishstate);
+    if ($state !== NOTES_STATE_PUBLIC) {
+        $url->param('publishstate', $state);
     }
 }
 

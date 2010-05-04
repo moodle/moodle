@@ -140,6 +140,8 @@
     $PAGE->navbar->add(get_string('participants'));
     $PAGE->set_title("$course->shortname: ".get_string('participants'));
     $PAGE->set_heading($course->fullname);
+    $PAGE->set_pagetype('course-view-' . $course->format);
+    $PAGE->set_other_editing_capability('moodle/course:manageactivities');
 
     echo $OUTPUT->header();
 
@@ -149,6 +151,7 @@
         echo $OUTPUT->footer();
         exit;
     }
+
 
     // Should use this variable so that we don't break stuff every time a variable is added or changed.
     $baseurl = new moodle_url('/user/index.php', array(
@@ -169,11 +172,8 @@
         $filtertype = 'group';
         $filterselect = $currentgroup;
     }
-    $currenttab = 'participants';
-    $user = $USER;
-    $userindexpage = true;
 
-    require_once($CFG->dirroot .'/user/tabs.php');
+
 
 /// Get the hidden field list
     if (has_capability('moodle/course:viewhiddenuserfields', $context)) {

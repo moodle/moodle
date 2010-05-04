@@ -35,6 +35,7 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
         }
     }
 
+
     // calendar
     $temp = new admin_settingpage('calendar', get_string('calendarsettings','admin'));
     $temp->add(new admin_setting_special_adminseesall());
@@ -123,9 +124,10 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
     $temp->add(new admin_setting_configcheckbox('doctonewwindow', get_string('doctonewwindow', 'admin'), get_string('configdoctonewwindow', 'admin'), 0));
     $ADMIN->add('appearance', $temp);
 
-    $temp = new admin_settingpage('mymoodle', get_string('mymoodle', 'admin'));
-    $temp->add(new admin_setting_configcheckbox('mymoodleredirect', get_string('mymoodleredirect', 'admin'), get_string('configmymoodleredirect', 'admin'), 0));
-    $temp->add(new admin_setting_configtext('mycoursesperpage', get_string('mycoursesperpage', 'admin'), get_string('configmycoursesperpage', 'admin'), 21, PARAM_INT));
+    $temp = new admin_externalpage('mypage', get_string('mypage', 'admin'), $CFG->wwwroot . '/my/indexsys.php');
+    $ADMIN->add('appearance', $temp);
+
+    $temp = new admin_externalpage('profilepage', get_string('myprofile', 'admin'), $CFG->wwwroot . '/user/profilesys.php');
     $ADMIN->add('appearance', $temp);
 
     // coursemanager is the person responsible for course - usually manages enrolments, receives notification, etc.

@@ -5854,6 +5854,7 @@ function print_plugin_tables() {
         'community',
         'completionstatus',
         'course_list',
+        'course_overview',
         'course_summary',
         'glossary_random',
         'html',
@@ -5862,6 +5863,7 @@ function print_plugin_tables() {
         'mentees',
         'messages',
         'mnet_hosts',
+        'myprofile',
         'navigation',
         'news_items',
         'online_users',
@@ -6895,7 +6897,7 @@ class admin_setting_managewebservicetokens extends admin_setting {
                     $iprestriction = $token->iprestriction;
                 }
 
-                $userprofilurl = new moodle_url('/user/view.php?id='.$token->userid);
+                $userprofilurl = new moodle_url('/user/profile.php?id='.$token->userid);
                 $useratag = html_writer::start_tag('a', array('href' => $userprofilurl));
                 $useratag .= $token->firstname." ".$token->lastname;
                 $useratag .= html_writer::end_tag('a');

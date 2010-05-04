@@ -252,11 +252,6 @@ $PAGE->set_heading($course->fullname);
 
 echo $OUTPUT->header();
 
-/// Print tabs at the top
-$showroles = 1;
-$currenttab = 'editprofile';
-require('tabs.php');
-
 if ($email_changed) {
     echo $email_changed_html;
 } else {

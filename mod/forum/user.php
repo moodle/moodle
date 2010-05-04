@@ -94,11 +94,7 @@ $PAGE->navigation->extend_for_user($user);
 $PAGE->set_title("$course->shortname: $fullname: $strmode");
 $PAGE->set_heading($course->fullname);
 echo $OUTPUT->header();
-
-$currenttab = $mode;
-$showroles = 1;
-require($CFG->dirroot.'/user/tabs.php');   /// Prints out tabs as part of user page
-
+echo $OUTPUT->heading($fullname);
 
 switch ($mode) {
     case 'posts' :

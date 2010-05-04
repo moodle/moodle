@@ -493,6 +493,51 @@ $capabilities = array(
         )
     ),
 
+    // can the user manage the system default profile page?
+    'moodle/user:managesyspages' => array(
+
+        'riskbitmap' => RISK_SPAM | RISK_PERSONAL | RISK_CONFIG,
+
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'legacy' => array(
+            'manager' => CAP_ALLOW
+        )
+    ),
+
+    // can the user manage another user's profile page?
+    'moodle/user:manageblocks' => array(
+
+        'riskbitmap' => RISK_SPAM | RISK_PERSONAL,
+
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_USER
+    ),
+
+    // can the user manage their own profile page?
+    'moodle/user:manageownblocks' => array(
+
+        'riskbitmap' => RISK_SPAM | RISK_PERSONAL,
+
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'legacy' => array(
+            'user' => CAP_ALLOW,
+        )
+    ),
+
+    // can the user manage the system default dashboard page?
+    'moodle/my:configsyspages' => array(
+
+        'riskbitmap' => RISK_SPAM | RISK_PERSONAL | RISK_CONFIG,
+
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'legacy' => array(
+            'manager' => CAP_ALLOW
+        )
+    ),
+
     'moodle/role:assign' => array(
 
         'riskbitmask' => RISK_SPAM | RISK_PERSONAL | RISK_XSS,
