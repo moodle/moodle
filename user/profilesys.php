@@ -102,7 +102,4 @@ echo $OUTPUT->header();
 
 echo $OUTPUT->blocks_for_region('content');
 
-print_object($currentpage);
-print_object($context);
-
 echo $OUTPUT->footer();
