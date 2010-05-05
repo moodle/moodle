@@ -360,10 +360,15 @@ echo '<fieldset class="invisiblefieldset">';
 echo '<input type="hidden" name="d" value="'.$data->id.'" />';
 echo '<input type="hidden" name="action" value="importzip" />';
 echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
-echo '<input name="file" size="20" value="" id="fromfile" type="text" /><input name="coursefiles" value="'.$strchooseorupload.'" onclick="return openpopup('."'/files/index.php?id={$course->id}&amp;choose=uploadpreset.file', 'coursefiles', 'menubar=0,location=0,scrollbars,resizable,width=750,height=500', 0".');" type="button" />';
+echo '<input name="file" size="20" value="" id="fromfile" type="text" /><input name="coursefiles" value="'.$strchooseorupload.'" type="button" />';
 echo '<input type="submit" value="'.$strimport.'" />';
 echo '</fieldset></form>';
 echo '</td></tr>';
+
+//attach the onclick event to fromfile button
+$link = '/files/index.php?id={$course->id}&amp;choose=uploadpreset.file';
+$action = new popup_action('click', $link, 'coursefiles', array('height'=>750,'width'=>500));
+$OUTPUT->add_action_handler($action, 'fromfile');
 
 echo '<tr valign="top"><td><label>'.$strusestandard.'</label>';
 echo $OUTPUT->help_icon('usestandard', 'data');

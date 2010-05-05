@@ -128,12 +128,15 @@ function glossary_filter($courseid, $text) {
                     $encodedconcept = urlencode($concept->concept);
                     $title = str_replace('"', "'", strip_tags($glossaryname.': '.$concept->concept));
                 }
-                $href_tag_begin = '<a class="glossary autolink glossaryid'.$concept->glossaryid.'" title="'.$title.'" '.
+                $randid = html_writer::random_id($title);
+                $href_tag_begin = '<a id="'.$randid.'" class="glossary autolink glossaryid'.$concept->glossaryid.'" title="'.$title.'" '.
                                   'href="'.$CFG->wwwroot.'/mod/glossary/showentry.php?courseid='.$courseid.
-                                  '&amp;concept='.$encodedconcept.'" '.
-                                  'onclick="return openpopup(\'/mod/glossary/showentry.php?courseid='.$courseid.
-                                  '\&amp;concept='.$encodedconcept.'\', \'entry\', '.
-                                  '\'menubar=0,location=0,scrollbars,resizable,width=600,height=450\', 0);">';
+                                  '&amp;concept='.$encodedconcept.'" >';
+
+                //attach the onclick event
+                $link = '/mod/glossary/showentry.php?courseid='.$courseid.'\&amp;concept='.$encodedconcept;
+                $action = new popup_action('click', $link, 'entry', array('height'=>600,'width'=>450));
+                $OUTPUT->add_action_handler($action, $randid);
             }
 
 

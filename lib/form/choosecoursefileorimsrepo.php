@@ -88,19 +88,25 @@ class MoodleQuickForm_choosecoursefileorimsrepo extends MoodleQuickForm_group
         }
         $fullscreen = 0;
 
-        $buttonattributes = array('title'=>get_string("chooseafile", "resource"),
-                  'onclick'=>"return openpopup('$url', '".$button->getName()."', '$options', $fullscreen);");
+        $buttonattributes = array('title'=>get_string("chooseafile", "resource"));
 
         $button->updateAttributes($buttonattributes);
+
+        //attach the onclick event
+        $action = new popup_action('click', $url, $button->getName(), $options);
+        $OUTPUT->add_action_handler($action, $button->id);
 
         /// With repository active, show the button to browse it
         if (isset($CFG->repositoryactivate) && $CFG->repositoryactivate) {
             $this->_elements[2] =& MoodleQuickForm::createElement('button', 'imsrepo', get_string('browserepository', 'resource'));
             $imsbutton =& $this->_elements[2];
             $url = "/mod/resource/type/ims/finder.php?directory=&choose=".$choose;
-            $buttonattributes = array('title'=>get_string("browserepository", "resource"),
-                  'onclick'=>"return openpopup('$url', '".$button->getName()."', '$options', $fullscreen);");
+            $buttonattributes = array('title'=>get_string("browserepository", "resource"));
             $imsbutton->updateAttributes($buttonattributes);
+
+            //attach the onclick event
+            //$action = new popup_action('click', $url, $button->getName(), $options);
+            $OUTPUT->add_action_handler($action, $imsbutton->id);
         }
     }
     /**

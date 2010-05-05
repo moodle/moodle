@@ -61,23 +61,23 @@ function string_file_picture_algebra($imagefile, $tex= "", $height="", $width=""
   }
   $style .= '"';
   if ($imagefile) {
-    if (!file_exists("$CFG->dataroot/filter/algebra/$imagefile") && has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM))) {
-      $output .= "<a href=\"$CFG->wwwroot/filter/algebra/algebradebug.php\">";
-    } else {
-      $output .= "<a target=\"popup\" title=\"TeX\" href=";
-      $output .= "\"$CFG->wwwroot/filter/algebra/displaytex.php?";
-      $output .= urlencode($tex) . "\" onclick=\"return openpopup('/filter/algebra/displaytex.php?";
-      $output .= urlencode($tex) . "', 'popup', 'menubar=0,location=0,scrollbars,";
-      $output .= "resizable,width=300,height=240', 0);\">";
-    }
-    $output .= "<img $title alt=\"".s($origtex)."\" src=\"";
+    $anchorcontents .= "<img $title alt=\"".s($origtex)."\" src=\"";
     if ($CFG->slasharguments) {        // Use this method if possible for better caching
-      $output .= "$CFG->wwwroot/filter/algebra/pix.php/$imagefile";
+      $anchorcontents .= "$CFG->wwwroot/filter/algebra/pix.php/$imagefile";
     } else {
-      $output .= "$CFG->wwwroot/filter/algebra/pix.php?file=$imagefile";
+      $anchorcontents .= "$CFG->wwwroot/filter/algebra/pix.php?file=$imagefile";
     }
-    $output .= "\" $style />";
-    $output .= "</a>";
+    $anchorcontents .= "\" $style />";
+
+    $link = $action = null;
+    if (!file_exists("$CFG->dataroot/filter/algebra/$imagefile") && has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM))) {
+        $link = '/filter/algebra/algebradebug.php';
+    } else {
+        $link = '/filter/algebra/displaytex.php?'.urlencode($tex);
+        $action = new popup_action('click', $link, 'popup', array('height'=>300,'width'=>240));
+    }
+    $output .= $OUTPUT->action_link($link, $anchortagcontents, $action, array('title'=>'TeX'));
+    
   } else {
     $output .= "Error: must pass URL or course";
   }

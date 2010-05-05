@@ -112,7 +112,9 @@ function glossary_make_link($entry_id) {
     // Suggestion : bounce on popup within the glossarie's showentry page
     // preserve glossary pop-up, be careful where you place your ' and "s
     //this function is meant to return a url that is placed between href='[url here]'
-    return "$CFG->wwwroot/mod/glossary/showentry.php?eid=$entry_id' onclick='return openpopup(\"/mod/glossary/showentry.php?eid={$entry_id}\", \"entry\", DEFAULT_POPUP_SETTINGS, 0);";
+    $jsondata = array('url'=>'/mod/glossary/showentry.php?eid='.$entry_id,'name'=>'entry','options'=>DEFAULT_POPUP_SETTINGS);
+    $jsondata = json_encode($jsondata);
+    return "$CFG->wwwroot/mod/glossary/showentry.php?eid=$entry_id' onclick='return openpopup(null, $jsondata);";
 } 
 
 /**

@@ -102,12 +102,14 @@ class mod_hotpot_mod_form extends moodleform_mod {
         if ($choosefile_button) {
             $wdir = "'+getDir(this.form.reference.value)+'";
             $url="/files/index.php?id=$id&wdir=$wdir&choose=id_reference";
-            $options = 'menubar=0,location=0,scrollbars,resizable,width=750,height=500';
             $attributes = array(
-                'title'=>get_string('chooseafile', 'resource'),
-                'onclick'=>"return openpopup('$url', '".$choosefile_button->getName()."', '$options', 0);"
+                'title'=>get_string('chooseafile', 'resource')
             );
             $choosefile_button->updateAttributes($attributes);
+
+            //attach the onclick event
+            $action = new popup_action('click', $url, $choosefile_button->getName(), array('title'=>$choosefile_button->getName(),'width'=>750,'height'=>500));
+            $OUTPUT->add_action_handler($action, $choosefile_button->id);
         }
         $mform->setType('reference', PARAM_TEXT);
 

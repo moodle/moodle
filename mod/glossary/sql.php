@@ -149,10 +149,10 @@
 
             $searchcond = array();
             $alcond     = array();
-            $params     = array();
+            //$params     = array();
             $i = 0;
 
-            $concat = $DB->sql_concat('ge.concept', "' '", 'ge.definition',"' '", "COALESCE(al.alial, '')");
+            $concat = $DB->sql_concat('ge.concept', "' '", 'ge.definition',"' '", "COALESCE(al.alias, '')");
 
             $searchterms = explode(" ",$hook);
 

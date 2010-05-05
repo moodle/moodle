@@ -154,8 +154,14 @@ class block_online_users extends block_base {
                     $this->content->text .= '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$user->id.'&amp;course='.$this->page->course->id.'" title="'.$timeago.'">'.$user->fullname.'</a></div>';
                 }
                 if ($canshowicon and ($USER->id != $user->id) and  $user->username != 'guest') {  // Only when logged in and messaging active etc
-                    $this->content->text .= '<div class="message"><a title="'.get_string('messageselectadd').'" href="'.$CFG->wwwroot.'/message/discussion.php?id='.$user->id.'" onclick="this.target=\'message_'.$user->id.'\';return openpopup(\'/message/discussion.php?id='.$user->id.'\', \'message_'.$user->id.'\', \'menubar=0,location=0,scrollbars,status,resizable,width=400,height=500\', 0);">'
-                        .'<img class="iconsmall" src="'.$OUTPUT->pix_url('t/message') . '" alt="'. get_string('messageselectadd') .'" /></a></div>';
+                    //<a title="'.get_string('messageselectadd').'" href="'.$CFG->wwwroot.'/message/discussion.php?id='.$user->id.'" onclick="this.target=\'message_'.$user->id.'\';return openpopup(\'/message/discussion.php?id='.$user->id.'\', \'message_'.$user->id.'\', \'menubar=0,location=0,scrollbars,status,resizable,width=400,height=500\', 0);">
+                    $link = '/message/discussion.php?id='.$user->id;
+                    $anchortagcontents = '<img class="iconsmall" src="'.$OUTPUT->pix_url('t/message') . '" alt="'. get_string('messageselectadd') .'" />';
+
+                    $action = new popup_action('click', $link, 'message_'.$user->id);
+                    $anchortag = $OUTPUT->action_link($link, $anchortagcontents, $action, array('title'=>get_string('messageselectadd')));
+
+                    $this->content->text .= '<div class="message">'.$anchortag.'</div>';
                 }
                 $this->content->text .= "</li>\n";
             }

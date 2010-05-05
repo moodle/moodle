@@ -1655,7 +1655,7 @@ global $CFG;
  * @param string $sortorder
  */
 function glossary_print_sorting_links($cm, $mode, $sortkey = '',$sortorder = '') {
-    global $CFG;
+    global $CFG, $OUTPUT;
 
     $asc    = get_string("ascending","glossary");
     $desc   = get_string("descending","glossary");

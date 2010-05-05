@@ -29,7 +29,10 @@ class block_messages extends block_base {
             return $this->content;
         }
 
-        $this->content->footer = '<a href="'.$CFG->wwwroot.'/message/index.php" onclick="this.target=\'message\'; return openpopup(\'/message/index.php\', \'message\', \'menubar=0,location=0,scrollbars,status,resizable,width=400,height=500\', 0);">'.get_string('messages', 'message').'</a>...';
+        $link = '/message/index.php';
+        $action = new popup_action('click', $link, 'message');
+        $this->content->footer = $OUTPUT->action_link($link, get_string('messages', 'message'), $action);
+        //$this->content->footer = '<a href="'.$CFG->wwwroot.'/message/index.php" onclick="this.target=\'message\'; return openpopup_old(\'/message/index.php\', \'message\', \'menubar=0,location=0,scrollbars,status,resizable,width=400,height=500\', 0);">'.get_string('messages', 'message').'</a>...';
 
         $users = $DB->get_records_sql("SELECT m.useridfrom AS id, COUNT(m.useridfrom) AS count,
                                               u.firstname, u.lastname, u.picture, u.imagealt, u.lastaccess
@@ -47,8 +50,15 @@ class block_messages extends block_base {
                 $this->content->text .= '<li class="listentry"><div class="user"><a href="'.$CFG->wwwroot.'/user/view.php?id='.$user->id.'&amp;course='.SITEID.'" title="'.$timeago.'">';
                 $this->content->text .= $OUTPUT->user_picture($user, array('courseid'=>SITEID)); //TODO: user might not have capability to view frontpage profile :-(
                 $this->content->text .= fullname($user).'</a></div>';
-                $this->content->text .= '<div class="message"><a href="'.$CFG->wwwroot.'/message/discussion.php?id='.$user->id.'" onclick="this.target=\'message_'.$user->id.'\'; return openpopup(\'/message/discussion.php?id='.$user->id.'\', \'message_'.$user->id.'\', \'menubar=0,location=0,scrollbars,status,resizable,width=400,height=500\', 0);"><img class="iconsmall" src="'.$OUTPUT->pix_url('t/message') . '" alt="" />&nbsp;'.$user->count.'</a>';
-                $this->content->text .= '</div></li>';
+
+                //<a href="'.$CFG->wwwroot.'/message/discussion.php?id='.$user->id.'" onclick="this.target=\'message_'.$user->id.'\'; return openpopup(\'/message/discussion.php?id='.$user->id.'\', \'message_'.$user->id.'\', \'menubar=0,location=0,scrollbars,status,resizable,width=400,height=500\', 0);"><img class="iconsmall" src="'.$OUTPUT->pix_url('t/message') . '" alt="" />&nbsp;'.$user->count.'</a>'
+                $link = '/message/discussion.php?id='.$user->id;
+                $anchortagcontents = '<img class="iconsmall" src="'.$OUTPUT->pix_url('t/message') . '" alt="" />&nbsp;'.$user->count;
+                
+                $action = new popup_action('click', $link, 'message_'.$user->id);
+                $anchortag = $OUTPUT->action_link($link, $anchortagcontents, $action);
+
+                $this->content->text .= '<div class="message">'.$anchortag.'</div></li>';
             }
             $this->content->text .= '</ul>';
         } else {

@@ -278,11 +278,18 @@ EOD;
             $userinfo = $this->sets_info[$usersessionid];
 
             $lastping = $timenow - $userinfo['chatuser']->lastmessageping;
-            $popuppar = '\'/user/view.php?id='.$userinfo['user']->id.'&amp;course='.$userinfo['courseid'].'\',\'user'.$userinfo['chatuser']->id.'\',\'\'';
+            //$popuppar = '\'/user/view.php?id='.$userinfo['user']->id.'&amp;course='.$userinfo['courseid'].'\',\'user'.$userinfo['chatuser']->id.'\',\'\'';
             echo '<tr><td width="35">';
-            echo '<a target="_new" onclick="return openpopup('.$popuppar.');" href="'.$CFG->wwwroot.'/user/view.php?id='.$userinfo['chatuser']->id.'&amp;course='.$userinfo['courseid'].'">';
-            echo $OUTPUT->user_picture($userinfo['user'], array('courseid'=>$userinfo['courseid']));
-            echo "</a></td><td valign=\"center\">";
+
+            //echo '<a target="_new" onclick="return openpopup('.$popuppar.');" href="'.$CFG->wwwroot.'/user/view.php?id='.$userinfo['chatuser']->id.'&amp;course='.$userinfo['courseid'].'">';
+            $link = '/user/view.php?id='.$userinfo['user']->id.'&course='.$userinfo['courseid'];
+            $anchortagcontents = $OUTPUT->user_picture($userinfo['user'], array('courseid'=>$userinfo['courseid']));
+            
+            $action = new popup_action('click', $link, 'user'.$userinfo['chatuser']->id);
+            $anchortag = $OUTPUT->action_link($link, $anchortagcontents, $action);
+
+            echo $anchortag;
+            echo "</td><td valign=\"center\">";
             echo "<p><font size=\"1\">";
             echo fullname($userinfo['user'])."<br />";
             echo "<font color=\"#888888\">$str->idle: ".format_time($lastping, $str)."</font> ";

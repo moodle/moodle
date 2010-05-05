@@ -83,17 +83,20 @@ class MoodleQuickForm_choosecoursefile extends MoodleQuickForm_group
         $choose = 'id_'.str_replace(array('[', ']'), array('_', ''), $this->getElementName(0));
         $url="/files/index.php?id=$courseid&choose=".$choose;
 
+        $fullscreen = 0;
+
+        $buttonattributes = array('title'=>get_string("chooseafile", "resource"));
+
+        $button->updateAttributes($buttonattributes);
+
+        //attach the onclick event
         if ($this->_options['options'] == 'none') {
-            $options = 'menubar=0,location=0,scrollbars,resizable,width='. $this->_options['width'] .',height='. $this->_options['height'];
+            $options = array('height'=>$this->_options['height'],'width'=>$this->_options['width']);
         }else{
             $options = $this->_options['options'];
         }
-        $fullscreen = 0;
-
-        $buttonattributes = array('title'=>get_string("chooseafile", "resource"),
-                  'onclick'=>"return openpopup('$url', '".$button->getName()."', '$options', $fullscreen);");
-
-        $button->updateAttributes($buttonattributes);
+        $action = new popup_action('click', $url, $button->getName(), $options);
+        $OUTPUT->add_action_handler($action, $button->id);
     }
 
     /**
