@@ -43,12 +43,10 @@ $edit   = optional_param('edit', null, PARAM_BOOL);    // Turn editing on and of
 
 require_login();
 
-$strmymoodle = get_string('myhome');
-
 $context = get_context_instance(CONTEXT_SYSTEM);
 require_capability('moodle/my:configsyspages', $context);
 $PAGE->set_blocks_editing_capability('moodle/my:configsyspages');
-$header = "$SITE->shortname: $strmymoodle (DEFAULT)";
+$header = "$SITE->shortname: ".get_string('myhome')." (".get_string('mypage', 'admin').")";
 
 // Start setting up the page
 $params = array();
