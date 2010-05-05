@@ -1051,6 +1051,7 @@ $string['messagedselectedusers'] = 'Selected users have been messaged and the re
 $string['messagedselectedusersfailed'] = 'Something went wrong while messaging selected users.  Some may have received the email.';
 $string['messageprovider:errors'] = 'Important errors with the site';
 $string['messageprovider:notices'] = 'Notices about minor problems';
+$string['messageprovider:instantmessage'] = 'Personal messages between users';
 $string['messageselect'] = 'Select this user as an email recipient';
 $string['messageselectadd'] = 'Add / send message';
 $string['metaaddcourse'] = 'Add this course';

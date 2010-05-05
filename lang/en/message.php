@@ -61,7 +61,6 @@ $string['mailsent'] = 'Your message was sent via email.';
 $string['maxmessages'] = 'Maximum number of messages to show in the discussion history';
 $string['message'] = 'Message';
 $string['messagehistory'] = 'Message history';
-$string['messageprovider:instantmessage'] = 'Personal messages between users';
 $string['messages'] = 'Messages';
 $string['messaging'] = 'Messaging';
 $string['messagingdisabled'] = 'Messaging is disabled on this site, emails will be sent instead';
