@@ -26,9 +26,12 @@ class block_navigation_renderer extends plugin_renderer_base {
             }
             $content = $item->get_content();
             $title = $item->get_title();
-            if ($item->icon instanceof renderable) {
+            $isbranch = (empty($expansionlimit) || $item->type != $expansionlimit) && ($item->children->count() > 0 || ($item->nodetype == navigation_node::NODETYPE_BRANCH && $item->children->count()==0 && isloggedin()));
+            $hasicon = (!$isbranch && $item->icon instanceof renderable);
+
+            if ($hasicon) {
                 $icon = $this->output->render($item->icon);
-                $content = $icon.'&nbsp;'.$content; // use CSS for spacing of icons
+                $content = $icon.$content; // use CSS for spacing of icons
             }
             if ($item->helpbutton !== null) {
                 $content = trim($item->helpbutton).html_writer::tag('span', $content, array('class'=>'clearhelpbutton'));
@@ -71,16 +74,24 @@ class block_navigation_renderer extends plugin_renderer_base {
             if ($item->has_children() && (!$item->forceopen || $item->collapse)) {
                 $liclasses[] = 'collapsed';
             }
+            if ($isbranch) {
+                $liclasses[] = 'contains_branch';
+            } else if ($hasicon) {
+                $liclasses[] = 'item_with_icon';
+            }
             if ($item->isactive === true) {
                 $liclasses[] = 'current_branch';
             }
             $liattr = array('class'=>join(' ',$liclasses));
             // class attribute on the div item which only contains the item content
             $divclasses = array('tree_item');
-            if ((empty($expansionlimit) || $item->type != $expansionlimit) && ($item->children->count() > 0 || ($item->nodetype == navigation_node::NODETYPE_BRANCH && $item->children->count()==0 && isloggedin()))) {
+            if ($isbranch) {
                 $divclasses[] = 'branch';
             } else {
                 $divclasses[] = 'leaf';
+            }
+            if ($hasicon) {
+                $divclasses[] = 'hasicon';
             }
             if (!empty($item->classes) && count($item->classes)>0) {
                 $divclasses[] = join(' ', $item->classes);

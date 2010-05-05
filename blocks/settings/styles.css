@@ -7,7 +7,12 @@
 .block_settings .block_tree {margin:5px;padding-left:0px;overflow:visible;}
 .block_settings .block_tree li {margin:0;list-style: none;}
 .block_settings .block_tree li ul {padding-left:16px;margin:0;}
-.block_settings .block_tree .tree_item {padding-left: 16px;margin:3px 0px;text-align:left;}
+
+.block_settings .block_tree li.item_with_icon > p {position:relative;}
+.block_settings .block_tree li.item_with_icon > p img {vertical-align:middle;position:absolute;left:0;top:3px}
+
+.block_settings .block_tree .tree_item {padding-left: 18px;margin:3px 0px;text-align:left;}
+
 .block_settings .block_tree .tree_item.branch {background-image: url([[pix:t/expanded]]);background-position: center left;background-repeat: no-repeat;}
 .block_settings .block_tree .root_node.leaf {padding-left:0px;}
 .block_settings .block_tree .current_branch {font-weight:bold;}

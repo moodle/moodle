@@ -291,11 +291,13 @@ M.block_navigation.classes.branch.prototype.construct_from_json = function(obj) 
  */
 M.block_navigation.classes.branch.prototype.inject_into_dom = function(element) {
 
+    var isbranch = ((this.expandable !== null || this.haschildren) && this.expansionceiling===null);
     var branchli = this.tree.Y.Node.create('<li></li>');
     var branchp = this.tree.Y.Node.create('<p class="tree_item"></p>');
 
-    if ((this.expandable !== null || this.haschildren) && this.expansionceiling===null) {
+    if (isbranch) {
         branchli.addClass('collapsed');
+        branchli.addClass('contains_branch');
         branchp.addClass('branch');
         branchp.on('click', this.tree.toggleexpansion, this.tree);
         if (this.expandable) {
@@ -312,8 +314,9 @@ M.block_navigation.classes.branch.prototype.inject_into_dom = function(element) 
 
     // Prepare the icon, should be an object representing a pix_icon
     var branchicon = false;
-    if (this.icon != null) {
+    if (this.icon != null && !isbranch) {
         branchicon = this.tree.Y.Node.create('<img src="'+M.util.image_url(this.icon.pix, this.icon.component)+'" alt="" />');
+        branchli.addClass('item_with_icon');
         if (this.icon.alt) {
             branchicon.setAttribute('alt', this.icon.alt);
         }
@@ -325,7 +328,6 @@ M.block_navigation.classes.branch.prototype.inject_into_dom = function(element) 
                 branchicon.addClass(this.icon.classes[i]);
             }
         }
-        this.name = '&nbsp;'+this.name;
     }
     
     if (this.link === null) {

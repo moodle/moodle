@@ -153,14 +153,15 @@ class navigation_node implements renderable {
             if (array_key_exists('shorttext', $properties)) {
                 $this->shorttext = $properties['shorttext'];
             }
-            if (array_key_exists('icon', $properties)) {
-                $this->icon = $properties['icon'];
-                if ($this->icon instanceof pix_icon) {
-                    if (empty($this->icon->attributes['class'])) {
-                        $this->icon->attributes['class'] = 'navicon';
-                    } else {
-                        $this->icon->attributes['class'] .= ' navicon';
-                    }
+            if (!array_key_exists('icon', $properties)) {
+                $properties['icon'] = new pix_icon('i/navigationitem', 'moodle');
+            }
+            $this->icon = $properties['icon'];
+            if ($this->icon instanceof pix_icon) {
+                if (empty($this->icon->attributes['class'])) {
+                    $this->icon->attributes['class'] = 'navicon';
+                } else {
+                    $this->icon->attributes['class'] .= ' navicon';
                 }
             }
             if (array_key_exists('type', $properties)) {

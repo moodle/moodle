@@ -30,6 +30,12 @@ class block_settings_renderer extends plugin_renderer_base {
                 continue;
             }
 
+            $isbranch = ($item->children->count()>0  || $item->nodetype==navigation_node::NODETYPE_BRANCH);
+            $hasicon = (!$isbranch && $item->icon instanceof renderable);
+
+            if ($isbranch) {
+                $item->hideicon = true;
+            }
             $content = $this->output->render($item);
 
             // this applies to the li item which contains all child lists too
@@ -37,13 +43,18 @@ class block_settings_renderer extends plugin_renderer_base {
             if (!$item->forceopen || (!$item->forceopen && $item->collapse) || ($item->children->count()==0  && $item->nodetype==navigation_node::NODETYPE_BRANCH)) {
                 $liclasses[] = 'collapsed';
             }
+            if ($isbranch) {
+                $liclasses[] = 'contains_branch';
+            } else if ($hasicon) {
+                $liclasses[] = 'item_with_icon';
+            }
             if ($item->isactive === true) {
                 $liclasses[] = 'current_branch';
             }
             $liattr = array('class'=>join(' ',$liclasses));
             // class attribute on the div item which only contains the item content
             $divclasses = array('tree_item');
-            if ($item->children->count()>0  || $item->nodetype==navigation_node::NODETYPE_BRANCH) {
+            if ($isbranch) {
                 $divclasses[] = 'branch';
             } else {
                 $divclasses[] = 'leaf';
