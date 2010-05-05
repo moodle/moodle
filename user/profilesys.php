@@ -84,7 +84,7 @@ if ($PAGE->user_allowed_editing()) {
         $editstring = get_string('updatemymoodleoff');
     }
 
-    $url = new moodle_url("$CFG->wwwroot/my/profilesys.php", $params);
+    $url = new moodle_url("$CFG->wwwroot/user/profilesys.php", $params);
     $button = $OUTPUT->single_button($url, $editstring);
     $PAGE->set_button($button);
 
