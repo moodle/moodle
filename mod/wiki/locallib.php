@@ -195,14 +195,14 @@ function wiki_get_version($versionid) {
  * @param int $subwikiid
  * @param int $module, wiki instance object
  */
-function wiki_get_first_page($subwikid, $module=null) {
+function wiki_get_first_page($subwikid, $module = null) {
     global $DB, $USER;
     // TODO:
     // not sure if we should use current userid
 
     $extra = '';
     if ($module && $module->wikimode == 'individual') {
-        $extra = ' AND p.userid='.$USER->id;
+        $extra = ' AND p.userid=' . $USER->id;
     }
 
     $sql = 'SELECT p.* ' .
@@ -757,7 +757,7 @@ function wiki_user_can_view($subwiki) {
                 $manage = has_capability('mod/wiki:managewiki', $context, $USER);
                 $access = has_capability('moodle/site:accessallgroups', $context, $USER);
                 return ($manage || $access) && $view;
-                }
+            }
         } else {
             //Error
             return false;
@@ -1371,9 +1371,24 @@ function wiki_build_tree($page, $node, &$keys) {
 function wiki_get_linked_pages($pageid) {
     global $DB;
 
-    return $DB->get_records_sql("SELECT p.id, p.title
-								  FROM mdl_wiki_pages p
-								  JOIN mdl_wiki_links l ON l.topageid = p.id
-								  WHERE l.frompageid = ?
-								ORDER BY p.title ASC", array($pageid));
+    $sql = 'SELECT p.id, p.title ' .
+        'FROM mdl_wiki_pages p ' .
+        'JOIN mdl_wiki_links l ON l.topageid = p.id ' .
+        'WHERE l.frompageid = ? ' .
+        'ORDER BY p.title ASC';
+    return $DB->get_records_sql($sql, array($pageid));
+}
+
+/**
+ * Get updated pages from wiki
+ * @param int $pageid
+ */
+function wiki_get_updated_pages_by_subwiki($swid) {
+    global $DB, $USER;
+
+    $sql = 'SELECT * ' .
+        'FROM {wiki_pages} ' .
+        'WHERE subwikiid = ? AND timemodified > ? ' .
+        'ORDER BY timemodified DESC';
+    return $DB->get_records_sql($sql, array($swid, $USER->lastlogin));
 }
