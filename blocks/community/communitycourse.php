@@ -87,8 +87,30 @@ $fromform = $hubselectorform->get_data();
 $courses = array();
 if (!empty($fromform)) {
     $downloadable  = optional_param('downloadable', false, PARAM_INTEGER);
+
+    $options = new stdClass();
+    if (!empty($fromform->coverage)) {
+        $options->coverage = $fromform->coverage;
+    }
+    if ($fromform->licence != 'all') {
+        $options->licenceshortname = $fromform->licence;
+    }
+    if ($fromform->subject != 'all') {
+        $options->subject = $fromform->subject;
+    }
+    if ($fromform->audience != 'all') {
+        $options->audience = $fromform->audience;
+    }
+    if ($fromform->educationallevel != 'all') {
+        $options->educationallevel = $fromform->educationallevel;
+    }
+    if ($fromform->language != 'all') {
+        $options->language = $fromform->language;
+    }
+
+
     $function = 'hub_get_courses';
-    $params = array($search, $downloadable);
+    $params = array($search, $downloadable, $options);
     $serverurl = $huburl."/local/hub/webservice/webservices.php";
     require_once($CFG->dirroot."/webservice/xmlrpc/lib.php");
     $xmlrpcclient = new webservice_xmlrpc_client();
