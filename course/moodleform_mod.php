@@ -515,6 +515,7 @@ abstract class moodleform_mod extends moodleform {
             $mform->setDefault('completion', $this->_features->defaultcompletion
                 ? COMPLETION_TRACKING_MANUAL
                 : COMPLETION_TRACKING_NONE);
+            $mform->addHelpButton('completion', 'completion', 'completion');
 
             // Automatic completion once you view it
             $gotcompletionoptions = false;

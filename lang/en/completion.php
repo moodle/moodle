@@ -60,7 +60,7 @@ $string['completionusegrade'] = 'Require grade';
 $string['completionusegrade_help'] = 'If enabled, the activity is considered complete when a student receives a grade. Pass and fail icons may be displayed if a pass grade for the activity has been set.';
 $string['completionusegrade_desc'] = 'A student must receive a grade to complete this activity';
 $string['completionview'] = 'Require view';
-$string['completionview_desc'] = 'A studet must view this activity to complete it';
+$string['completionview_desc'] = 'A student must view this activity to complete it';
 $string['configenablecompletion'] = 'When enabled, this lets you turn on completion tracking (progress) features at course level.';
 $string['configprogresstrackedroles'] = 'Roles that are displayed in the progress-tracking screen. (Usually includes just students and equivalent roles.)';
 $string['csvdownload'] = 'Download in spreadsheet format (UTF-8 .csv)';
@@ -78,7 +78,6 @@ $string['saved'] = 'Saved';
 $string['unlockcompletion'] = 'Unlock completion options';
 $string['writingcompletiondata'] = 'Writing completion data';
 $string['yourprogress'] = 'Your progress';
-
 $string['achievinggrade']='Achieving grade';
 $string['activities']='Activities';
 $string['activitiescompleted']='Activities completed';
