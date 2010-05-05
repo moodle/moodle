@@ -174,7 +174,7 @@ if (!empty($forum)) {      // User is starting a new discussion in a forum
     $modcontext    = get_context_instance(CONTEXT_MODULE, $cm->id);
 
     if (! forum_user_can_post($forum, $discussion, $USER, $cm, $course, $modcontext)) {
-        if (!isguestuser) {
+        if (!isguestuser()) {
             if (!is_enrolled($coursecontext)) {  // User is a guest here!
                 $SESSION->wantsurl = $FULLME;
                 $SESSION->enrolcancel = $_SERVER['HTTP_REFERER'];
