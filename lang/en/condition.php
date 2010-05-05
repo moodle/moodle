@@ -31,7 +31,9 @@ $string['availableuntil'] = 'Only available until end';
 $string['badavailabledates'] = 'Invalid dates. If you set both dates, the \'available from\' date should be before the \'until\' date.';
 $string['completion_complete'] = 'must be marked complete';
 $string['completioncondition'] = 'Activity completion condition';
-$string['completioncondition_help'] = 'This setting determines any activity completion conditions which must be met in order for the activity to be available. Note that completion tracking must first be set before an activity completion condition can be set.  Multiple activity completion conditions may be set if desired.  The activity will only become available when ALL activity completion conditions are met.';
+$string['completioncondition_help'] = 'This setting determines any activity completion conditions which must be met in order for the activity to be available. Note that completion tracking must first be set before an activity completion condition can be set.
+
+Multiple activity completion conditions may be set if desired.  If so, the activity will only become available when ALL activity completion conditions are met.';
 $string['completion_fail'] = 'must be complete with fail grade';
 $string['completion_incomplete'] = 'must not be marked complete';
 $string['completion_pass'] = 'must be complete with pass grade';
@@ -39,7 +41,9 @@ $string['configenableavailability'] = 'When enabled, this lets you set condition
 $string['enableavailability'] = 'Enable conditional availability';
 $string['grade_atleast'] = 'must be at least';
 $string['gradecondition'] = 'Grade condition';
-$string['gradecondition_help'] = 'This setting determines any grade conditions which must be met in order for the activity to be available. Multiple grade conditions may be set if desired. The activity will only become available when ALL grade conditions are met.';
+$string['gradecondition_help'] = 'This setting determines any grade conditions which must be met in order for the activity to be available.
+
+Multiple grade conditions may be set if desired. If so, the activity will only become available when ALL grade conditions are met.';
 $string['grade_upto'] = 'and less than';
 $string['none'] = '(none)';
 $string['notavailableyet'] = 'Not available yet';
