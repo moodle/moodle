@@ -46,9 +46,12 @@ M.mod_chat_ajax.init = function(Y, cfg) {
             });
 
             this.layout.on('render', function() {
-                this.getUnitByPosition('left').on('close', function() {
-                    closeLeft();
-                });
+                var unit = this.getUnitByPosition('right');
+                if (unit) {
+                    unit.on('close', function() {
+                        closeLeft();
+                    });
+                }
             }, this.layout);
             this.layout.render();
 
