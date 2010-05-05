@@ -33,6 +33,7 @@ $string['completion'] = 'Completion tracking';
 $string['completion_help'] = 'If enabled, activity completion is tracked, either manually or automatically, based on certain conditions. Multiple conditions may be set if desired. If so, the activity will only be considered complete when ALL conditions are met.
 
 A tick next to the activity name on the course page indicates when the activity is complete.';
+$string['completion_link'] = 'activity/completion';
 $string['completion-alt-auto-enabled'] = 'The system marks this item complete according to conditions';
 $string['completion-alt-auto-fail'] = 'Completed (did not achieve pass grade)';
 $string['completion-alt-auto-n'] = 'Not completed';
@@ -58,9 +59,9 @@ $string['completion-title-manual-n'] = 'Mark as complete';
 $string['completion-title-manual-y'] = 'Mark as not complete';
 $string['completionusegrade'] = 'Require grade';
 $string['completionusegrade_help'] = 'If enabled, the activity is considered complete when a student receives a grade. Pass and fail icons may be displayed if a pass grade for the activity has been set.';
-$string['completionusegrade_desc'] = 'A student must receive a grade to complete this activity';
+$string['completionusegrade_desc'] = 'Student must receive a grade to complete this activity';
 $string['completionview'] = 'Require view';
-$string['completionview_desc'] = 'A student must view this activity to complete it';
+$string['completionview_desc'] = 'Student must view this activity to complete it';
 $string['configenablecompletion'] = 'When enabled, this lets you turn on completion tracking (progress) features at course level.';
 $string['configprogresstrackedroles'] = 'Roles that are displayed in the progress-tracking screen. (Usually includes just students and equivalent roles.)';
 $string['csvdownload'] = 'Download in spreadsheet format (UTF-8 .csv)';
