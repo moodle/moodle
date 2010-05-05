@@ -2093,6 +2093,8 @@ class settings_navigation extends navigation_node {
                 if ($currentnode) {
                     $currentnode->make_active();
                 }
+            } else {
+                $this->scan_for_active_node($referencebranch);
             }
             return $referencebranch;
         } else if ($adminbranch->check_access()) {
@@ -2129,6 +2131,19 @@ class settings_navigation extends navigation_node {
                 }
             } else {
                 $reference->icon = new pix_icon('i/settings', '');
+            }
+        }
+    }
+
+    /**
+     * This function recursivily scans nodes until it finds the active node or there
+     * are no more nodes.
+     * @param navigation_node $node
+     */
+    protected function scan_for_active_node(navigation_node $node) {
+        if (!$node->check_if_active() && $node->children->count()>0) {
+            foreach ($node->children as &$child) {
+                $this->scan_for_active_node($child);
             }
         }
     }
@@ -2705,7 +2720,7 @@ class settings_navigation extends navigation_node {
         $fullname = fullname($user, has_capability('moodle/site:viewfullnames', $this->page->context));
 
         // Add a user setting branch
-        $usersetting = $this->add(get_string($gstitle, 'moodle', $fullname));
+        $usersetting = $this->add(get_string($gstitle, 'moodle', $fullname), null, self::TYPE_CONTAINER, null, $gstitle);
         $usersetting->id = 'usersettings';
 
         // Check if the user has been deleted
