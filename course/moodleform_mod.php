@@ -531,6 +531,7 @@ abstract class moodleform_mod extends moodleform {
                 $mform->addElement('checkbox', 'completionusegrade', get_string('completionusegrade', 'completion'),
                     get_string('completionusegrade_desc', 'completion'));
                 $mform->disabledIf('completionusegrade', 'completion', 'ne', COMPLETION_TRACKING_AUTOMATIC);
+                $mform->addHelpButton('completionusegrade', 'completionusegrade', 'completion');
                 $gotcompletionoptions = true;
             }
 
