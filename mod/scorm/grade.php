@@ -8,11 +8,11 @@
         print_error('invalidcoursemodule');
     }
 
-    if (! $scorm = get_record('scorm', 'id', $cm->instance)) {
+    if (! $scorm = $DB->get_record('scorm', array('id'=>$cm->instance))) {
         print_error('invalidcoursemodule');
     }
 
-    if (! $course = get_record('course', 'id', $scorm->course)) {
+    if (! $course = $DB->get_record('course', array('id'=> $scorm->course))) {
         print_error('coursemisconf');
     }
 
