@@ -41,8 +41,7 @@ echo $OUTPUT->doctype() ?>
     </div>
     
 	    <ul id="page-navigation" class="clearfix">
-    		<li id="first"><a href="<?php echo $CFG->wwwroot; ?>" title="Home">Home</a></li>
-    		<li><a href="<?php echo $CFG->wwwroot; ?>" title="Courses">Courses</a></li>
+        &nbsp;
 	    </ul>
     
 <!-- END OF HEADER -->
