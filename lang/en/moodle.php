@@ -943,6 +943,7 @@ $string['institution'] = 'Institution';
 $string['instudentview'] = 'in student view';
 $string['interests'] = 'Interests';
 $string['interestslist'] = 'List of interests';
+$string['interestslist_help'] = 'Enter your interests separated by commas. Your interests will be displayed on your profile page as tags.';
 $string['invalidemail'] = 'Invalid email address';
 $string['invalidlogin'] = 'Invalid login, please try again';
 $string['invalidusername'] = 'The username can only contain alphanumeric lowercase characters, underscore (_), hyphen (-), period (.) or at symbol (@)';
@@ -1161,6 +1162,7 @@ line at the top of your web browser window.
 Cheers from the \'{$a->sitename}\' administrator,
 {$a->signoff}';
 $string['newpicture'] = 'New picture';
+$string['newpicture_help'] = 'To add a new picture, browse and select an image (in JPG or PNG format) then click "Update profile". The image will be cropped to a square and resized to 100x100 pixels.';
 $string['newsitem'] = 'news item';
 $string['newsitems'] = 'news items';
 $string['newsitemsnumber'] = 'News items to show';
