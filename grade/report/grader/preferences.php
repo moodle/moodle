@@ -22,7 +22,8 @@ require_once '../../lib.php';
 
 $courseid      = required_param('id', PARAM_INT);
 
-$PAGE->set_url('/grade/report/grader/preferences.php', array('id'=>$courseid));
+$PAGE->set_url(new moodle_url('/grade/report/grader/preferences.php', array('id'=>$courseid)));
+$PAGE->set_pagelayout('admin');
 
 /// Make sure they can even access this course
 

@@ -34,7 +34,7 @@ $target        = optional_param('target', 0, PARAM_ALPHANUM);
 $toggle        = optional_param('toggle', NULL, PARAM_INT);
 $toggle_type   = optional_param('toggle_type', 0, PARAM_ALPHANUM);
 
-$PAGE->set_url('/grade/report/grader/index.php', compact('courseid', 'page', 'perpageurl', 'edit', 'sortitemid'));
+$PAGE->set_url(new moodle_url('/grade/report/grader/index.php', array('id'=>$courseid)));
 
 /// basic access checks
 if (!$course = $DB->get_record('course', array('id' => $courseid))) {
@@ -84,8 +84,7 @@ if (has_capability('moodle/grade:edit', $context)) {
         $string = get_string('turneditingon');
     }
 
-    $buttons = $OUTPUT->single_button(new moodle_url('index.php', $options), $string, 'get');
-
+    $buttons = new single_button(new moodle_url('index.php', $options), $string, 'get');
 } else {
     $USER->gradeediting[$course->id] = 0;
     $buttons = '';

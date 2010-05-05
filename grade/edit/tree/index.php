@@ -49,6 +49,7 @@ if($showadvanced!=-1) {
     $url->param("showadvanced",$showadvanced);
 }
 $PAGE->set_url($url);
+$PAGE->set_pagelayout('admin');
 
 /// Make sure they can even access this course
 if (!$course = $DB->get_record('course', array('id' => $courseid))) {

@@ -32,6 +32,7 @@ if ($courseid) {
     require_login($course);
     $context = get_context_instance(CONTEXT_COURSE, $course->id);
     require_capability('moodle/course:managescales', $context);
+    $PAGE->set_pagelayout('admin');
 } else {
     require_once $CFG->libdir.'/adminlib.php';
     admin_externalpage_setup('scales');
@@ -120,7 +121,7 @@ if ($courseid and $scales = grade_scale::fetch_all_local($courseid)) {
     $table->head  = array($strscale, $strused, $stredit);
     $table->size  = array('70%', '20%', '10%');
     $table->align = array('left', 'center', 'center');
-    $table->width = '90%';
+    $table->attributes['class'] = 'scaletable localscales generaltable';
     $table->data  = $data;
 }
 
@@ -146,9 +147,9 @@ if ($scales = grade_scale::fetch_all_global()) {
         $data[] = $line;
     }
     $table2->head  = array($strscale, $strused, $stredit);
+    $table->attributes['class'] = 'scaletable globalscales generaltable';
     $table2->size  = array('70%', '20%', '10%');
     $table2->align = array('left', 'center', 'center');
-    $table2->width = '90%';
     $table2->data  = $data;
 }
 

@@ -1712,6 +1712,8 @@ class navbar extends navigation_node {
     protected $items;
     /** @var array */
     public $children = array();
+    /** @var bool */
+    public $includesettingsbase = false;
     /**
      * The almighty constructor
      *
@@ -1802,8 +1804,10 @@ class navbar extends navigation_node {
                     }
                     $settingsactivenode = $settingsactivenode->parent;
                 }
-                // Removes the first node from the settings (root node) from the list
-                array_pop($items);
+                if (!$this->includesettingsbase) {
+                    // Removes the first node from the settings (root node) from the list
+                    array_pop($items);
+                }
                 while ($navigationactivenode && $navigationactivenode->parent !== null) {
                     if (!$navigationactivenode->mainnavonly) {
                         $items[] = $navigationactivenode;

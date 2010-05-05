@@ -23,11 +23,7 @@ require_once $CFG->dirroot.'/grade/report/user/lib.php';
 $courseid = required_param('id', PARAM_INT);
 $userid   = optional_param('userid', $USER->id, PARAM_INT);
 
-$url = new moodle_url('/grade/report/user/index.php', array('id'=>$courseid));
-if ($userid !== $USER->id) {
-    $url->param('userid', $userid);
-}
-$PAGE->set_url($url);
+$PAGE->set_url(new moodle_url('/grade/report/user/index.php', array('id'=>$courseid)));
 
 /// basic access checks
 if (!$course = $DB->get_record('course', array('id' => $courseid))) {
@@ -92,13 +88,9 @@ if (has_capability('moodle/grade:viewall', $context)) { //Teachers will see all 
     if ($isseparategroups and (!$currentgroup)) {
         // no separate group access, can view only self
         $userid = $USER->id;
-        $user_selector = '';
+        $user_selector = false;
     } else {
-        /// Print graded user selector at the top
-        $user_selector = '<div id="graded_users_selector">';
-        $user_selector .= print_graded_users_selector($course, 'report/user/index.php?id=' . $course->id, $userid, $currentgroup, true, true);
-        $user_selector .= '</div>';
-        $user_selector .= "<p style = 'page-break-after: always;'></p>";
+        $user_selector = true;
     }
 
     if (empty($userid)) {
@@ -108,7 +100,11 @@ if (has_capability('moodle/grade:viewall', $context)) { //Teachers will see all 
         print_grade_page_head($courseid, 'report', 'user');
         groups_print_course_menu($course, $gpr->get_return_url('index.php?id='.$courseid, array('userid'=>0)));
 
-        echo $user_selector.'<br />';
+        if ($user_selector) {
+            $renderer = $PAGE->get_renderer('gradereport_user');
+            echo $renderer->graded_users_selector('user', $course, $userid, $currentgroup, false);
+        }
+
         while ($userdata = $gui->next_user()) {
             $user = $userdata->user;
             $report = new grade_report_user($courseid, $gpr, $context, $user->id);
@@ -125,7 +121,10 @@ if (has_capability('moodle/grade:viewall', $context)) { //Teachers will see all 
         print_grade_page_head($courseid, 'report', 'user', get_string('modulename', 'gradereport_user'). ' - '.fullname($report->user));
         groups_print_course_menu($course, $gpr->get_return_url('index.php?id='.$courseid, array('userid'=>0)));
 
-        echo $user_selector;
+        if ($user_selector) {
+            $renderer = $PAGE->get_renderer('gradereport_user');
+            echo $renderer->graded_users_selector('user', $course, $userid, $currentgroup, false);
+        }
 
         if ($currentgroup and !groups_is_member($currentgroup, $userid)) {
             echo $OUTPUT->notification(get_string('groupusernotmember', 'error'));

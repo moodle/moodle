@@ -279,6 +279,8 @@ class graded_users_iterator {
 /**
  * Print a selection popup form of the graded users in a course.
  *
+ * @deprecated since 2.0
+ *
  * @param int    $course id of the course
  * @param string $actionpage The page receiving the data from the popoup form
  * @param int    $userid   id of the currently selected user (or 'all' if they are all selected)
@@ -289,39 +291,35 @@ class graded_users_iterator {
  */
 function print_graded_users_selector($course, $actionpage, $userid=0, $groupid=0, $includeall=true, $return=false) {
     global $CFG, $USER, $OUTPUT;
+    return $OUTPUT->render(grade_get_graded_users_select(substr($actionpage, 0, strpos($actionpage, '/')), $course, $userid, $groupid, $includeall));
+}
 
+function grade_get_graded_users_select($report, $course, $userid, $groupid, $includeall) {
     if (is_null($userid)) {
         $userid = $USER->id;
     }
 
-    $context = get_context_instance(CONTEXT_COURSE, $course->id);
-
     $menu = array(); // Will be a list of userid => user name
-
     $gui = new graded_users_iterator($course, null, $groupid);
     $gui->init();
-
-
     $label = get_string('selectauser', 'grades');
     if ($includeall) {
         $menu[0] = get_string('allusers', 'grades');
         $label = get_string('selectalloroneuser', 'grades');
     }
-
     while ($userdata = $gui->next_user()) {
         $user = $userdata->user;
         $menu[$user->id] = fullname($user);
     }
-
     $gui->close();
 
     if ($includeall) {
         $menu[0] .= " (" . (count($menu) - 1) . ")";
     }
-    $select = new single_select(new moodle_url('/grade/'.$actionpage), 'userid', $menu, $userid);
+    $select = new single_select(new moodle_url('/grade/report/'.$report.'/index.php', array('id'=>$course->id)), 'userid', $menu, $userid);
     $select->label = $label;
     $select->formid = 'choosegradeuser';
-    return $OUTPUT->render($select);
+    return $select;
 }
 
 /**
@@ -471,241 +469,62 @@ function grade_get_plugin_info($courseid, $active_type, $active_plugin) {
     $url_prefix = $CFG->wwwroot . '/grade/';
 
     // Language strings
-    $plugin_info['strings'] = array(
-        'report' => get_string('view'),
-        'edittree' => get_string('edittree', 'grades'),
-        'scale' => get_string('scales'),
-        'outcome' => get_string('outcomes', 'grades'),
-        'letter' => get_string('letters', 'grades'),
-        'export' => get_string('export', 'grades'),
-        'import' => get_string('import'),
-        'preferences' => get_string('mypreferences', 'grades'),
-        'settings' => get_string('settings'));
+    $plugin_info['strings'] = grade_helper::get_plugin_strings();
 
-    // Settings tab first
-    if (has_capability('moodle/course:update', $context)) {
-        $url = $url_prefix.'edit/settings/index.php?id='.$courseid;
-
-        if ($active_type == 'settings' and $active_plugin == 'course') {
-            $active = $url;
-        }
-
-        $plugin_info['settings'] = array();
-        $plugin_info['settings']['course'] =
-                new grade_plugin_info('coursesettings', $url, get_string('course'));
-        $count++;
+    if ($reports = grade_helper::get_plugins_reports($courseid)) {
+        $plugin_info['report'] = $reports;
+    }
+    
+    if ($edittree = grade_helper::get_info_edit_structure($courseid)) {
+        $plugin_info['edittree'] = $edittree;
     }
 
+    if ($scale = grade_helper::get_info_scales($courseid)) {
+        $plugin_info['scale'] = array('view'=>$scale);
+    }
 
-    // report plugins with its special structure
-
-    // Get all installed reports
-    if ($reports = get_plugin_list('gradereport')) {
-
-        // Remove ones we can't see
-        foreach ($reports as $plugin => $unused) {
-            if (!has_capability('gradereport/'.$plugin.':view', $context)) {
-                unset($reports[$plugin]);
-            }
+    if ($outcomes = grade_helper::get_info_outcomes($courseid)) {
+        $plugin_info['outcome'] = $outcomes;
+        if ($active_type == 'outcome' && $active_plugin == 'import') {
+            $plugin_info['outcome']['import'] = new grade_plugin_info('import', null, get_string('importoutcomes', 'grades'));
         }
     }
 
-    $reportnames = array();
-
-    if (!empty($reports)) {
-        foreach ($reports as $plugin => $plugindir) {
-            $pluginstr = get_string('modulename', 'gradereport_'.$plugin);
-            $url = $url_prefix.'report/'.$plugin.'/index.php?id='.$courseid;
-            if ($active_type == 'report' and $active_plugin == $plugin ) {
-                $active = $url;
-            }
-            $reportnames[$plugin] = new grade_plugin_info($plugin, $url, $pluginstr);
-
-            // Add link to preferences tab if such a page exists
-            if (file_exists($plugindir.'/preferences.php')) {
-                $pref_url = $url_prefix.'report/'.$plugin.'/preferences.php?id='.$courseid;
-                $plugin_info['preferences'][$plugin] = new grade_plugin_info($plugin, $pref_url, $pluginstr);
-            }
-
-            $count++;
-        }
-        asort($reportnames);
-    }
-    if (!empty($reportnames)) {
-        $plugin_info['report']=$reportnames;
+    if ($letters = grade_helper::get_info_letters($courseid)) {
+        $plugin_info['letter'] = $letters;
     }
 
-    // editing scripts - not real plugins
-    if (has_capability('moodle/grade:manage', $context)
-      or has_capability('moodle/grade:manageletters', $context)
-      or has_capability('moodle/course:managescales', $context)
-      or has_capability('moodle/course:update', $context)) {
-
-        if (has_capability('moodle/grade:manage', $context)) {
-            $url = $url_prefix.'edit/tree/index.php?sesskey='.sesskey().
-                    '&amp;showadvanced=0&amp;id='.$courseid;
-            $url_adv = $url_prefix.'edit/tree/index.php?sesskey='.sesskey().
-                    '&amp;showadvanced=1&amp;id='.$courseid;
-
-            if ($active_type == 'edittree' and $active_plugin == 'simpleview') {
-                $active = $url;
-            } else if ($active_type == 'edittree' and $active_plugin == 'fullview') {
-                $active = $url_adv;
-            }
-
-            $plugin_info['edittree'] = array();
-            $plugin_info['edittree']['simpleview'] =
-                    new grade_plugin_info('simpleview', $url, get_string('simpleview', 'grades'));
-            $plugin_info['edittree']['fullview'] =
-                    new grade_plugin_info('fullview', $url_adv, get_string('fullview', 'grades'));
-            $count++;
-        }
-
-        if (has_capability('moodle/course:managescales', $context)) {
-            $url = $url_prefix.'edit/scale/index.php?id='.$courseid;
-
-            if ($active_type == 'scale' and is_null($active_plugin)) {
-                $active = $url;
-            }
-
-            $plugin_info['scale'] = array();
-
-            if ($active_type == 'scale' and $active_plugin == 'edit') {
-                $edit_url = $url_prefix.'edit/scale/edit.php?courseid='.$courseid.
-                        '&amp;id='.optional_param('id', 0, PARAM_INT);
-                $active = $edit_url;
-                $parent = new grade_plugin_info('scale', $url, get_string('scales'));
-                $plugin_info['scale']['view'] =
-                        new grade_plugin_info('edit', $edit_url, get_string('edit'), $parent);
-            } else {
-                $plugin_info['scale']['view'] =
-                        new grade_plugin_info('scale', $url, get_string('view'));
-            }
-
-            $count++;
-        }
-
-        if (!empty($CFG->enableoutcomes) && (has_capability('moodle/grade:manage', $context) or
-                                             has_capability('moodle/course:update', $context))) {
-
-            $url_course = $url_prefix.'edit/outcome/course.php?id='.$courseid;
-            $url_edit = $url_prefix.'edit/outcome/index.php?id='.$courseid;
-
-            $plugin_info['outcome'] = array();
-
-            if (has_capability('moodle/course:update', $context)) {  // Default to course assignment
-                $plugin_info['outcome']['course'] =
-                        new grade_plugin_info('course', $url_course, get_string('outcomescourse', 'grades'));
-                $plugin_info['outcome']['edit'] =
-                        new grade_plugin_info('edit', $url_edit, get_string('editoutcomes', 'grades'));
-            } else {
-                $plugin_info['outcome'] =
-                        new grade_plugin_info('edit', $url_course, get_string('outcomescourse', 'grades'));
-            }
-
-            if ($active_type == 'outcome' and is_null($active_plugin)) {
-                $active = $url_edit;
-            } else if ($active_type == 'outcome' and $active_plugin == 'course' ) {
-                $active = $url_course;
-            } else if ($active_type == 'outcome' and $active_plugin == 'edit' ) {
-                $active = $url_edit;
-            } else if ($active_type == 'outcome' and $active_plugin == 'import') {
-                $plugin_info['outcome']['import'] =
-                        new grade_plugin_info('import', null, get_string('importoutcomes', 'grades'));
-            }
-
-            $count++;
-        }
-
-        if (has_capability('moodle/grade:manage', $context) or
-                    has_capability('moodle/grade:manageletters', $context)) {
-            $course_context = get_context_instance(CONTEXT_COURSE, $courseid);
-            $url = $url_prefix.'edit/letter/index.php?id='.$courseid;
-            $url_edit = $url_prefix.'edit/letter/edit.php?id='.$course_context->id;
-
-            if ($active_type == 'letter' and $active_plugin == 'view' ) {
-                $active = $url;
-            } else if ($active_type == 'letter' and $active_plugin == 'edit' ) {
-                $active = $url_edit;
-            }
-
-            $plugin_info['letter'] = array();
-            $plugin_info['letter']['view'] = new grade_plugin_info('view', $url, get_string('view'));
-            $plugin_info['letter']['edit'] = new grade_plugin_info('edit', $url_edit, get_string('edit'));
-            $count++;
-        }
+    if ($imports = grade_helper::get_plugins_import($courseid)) {
+        $plugin_info['import'] = $imports;
+    }
+    
+    if ($exports = grade_helper::get_plugins_export($courseid)) {
+        $plugin_info['export'] = $exports;
     }
 
-    // standard import plugins
-    if ($imports = get_plugin_list('gradeimport')) { // Get all installed import plugins
-        foreach ($imports as $plugin => $plugindir) { // Remove ones we can't see
-            if (!has_capability('gradeimport/'.$plugin.':view', $context)) {
-                unset($imports[$plugin]);
+    foreach ($plugin_info as $plugin_type => $plugins) {
+        if (!empty($plugins->id) && $active_plugin == $plugins->id) {
+            $plugin_info['strings']['active_plugin_str'] = $plugins->string;
+            break;
+        }
+        foreach ($plugins as $plugin) {
+            if (is_a($plugin, 'grade_plugin_info')) {
+                if ($active_plugin == $plugin->id) {
+                    $plugin_info['strings']['active_plugin_str'] = $plugin->string;
+                }
             }
         }
     }
-    $importnames = array();
-    if (!empty($imports)) {
-        foreach ($imports as $plugin => $plugindir) {
-            $pluginstr = get_string('modulename', 'gradeimport_'.$plugin);
-            $url = $url_prefix.'import/'.$plugin.'/index.php?id='.$courseid;
-            if ($active_type == 'import' and $active_plugin == $plugin ) {
-                $active = $url;
-            }
-            $importnames[$plugin] = new grade_plugin_info($plugin, $url, $pluginstr);
-            $count++;
-        }
-        asort($importnames);
-    }
-    if (!empty($importnames)) {
-        $plugin_info['import']=$importnames;
+    
+    // Put settings last
+    if ($setting = grade_helper::get_info_manage_settings($courseid)) {
+        $plugin_info['settings'] = array('course'=>$setting);
     }
 
-    // standard export plugins
-    if ($exports = get_plugin_list('gradeexport')) { // Get all installed export plugins
-        foreach ($exports as $plugin => $plugindir) { // Remove ones we can't see
-            if (!has_capability('gradeexport/'.$plugin.':view', $context)) {
-                unset($exports[$plugin]);
-            }
-        }
+    // Put preferences last
+    if ($preferences = grade_helper::get_plugins_report_preferences($courseid)) {
+        $plugin_info['preferences'] = $preferences;
     }
-    $exportnames = array();
-    if (!empty($exports)) {
-        foreach ($exports as $plugin => $plugindir) {
-            $pluginstr = get_string('modulename', 'gradeexport_'.$plugin);
-            $url = $url_prefix.'export/'.$plugin.'/index.php?id='.$courseid;
-            if ($active_type == 'export' and $active_plugin == $plugin ) {
-                $active = $url;
-            }
-            $exportnames[$plugin] = new grade_plugin_info($plugin, $url, $pluginstr);
-            $count++;
-        }
-        asort($exportnames);
-    }
-
-    if (!empty($exportnames)) {
-        $plugin_info['export']=$exportnames;
-    }
-
-    // Key managers
-    if ($CFG->gradepublishing) {
-        $keymanager_url = $url_prefix.'export/keymanager.php?id='.$courseid;
-        $plugin_info['export']['keymanager'] =
-                new grade_plugin_info('keymanager', $keymanager_url, get_string('keymanager', 'grades'));
-        if ($active_type == 'export' and $active_plugin == 'keymanager' ) {
-            $active = $keymanager_url;
-        }
-        $count++;
-
-        $keymanager_url = $url_prefix.'import/keymanager.php?id='.$courseid;
-        $plugin_info['import']['keymanager'] =
-                new grade_plugin_info('keymanager', $keymanager_url, get_string('keymanager', 'grades'));
-        if ($active_type == 'import' and $active_plugin == 'keymanager' ) {
-            $active = $keymanager_url;
-        }
-        $count++;
-    }
-
 
     foreach ($plugin_info as $plugin_type => $plugins) {
         if (!empty($plugins->id) && $active_plugin == $plugins->id) {
@@ -721,27 +540,6 @@ function grade_get_plugin_info($courseid, $active_type, $active_plugin) {
         }
     }
 
-    // Put settings last
-    if (!empty($plugin_info['settings'])) {
-        $settings = $plugin_info['settings'];
-        unset($plugin_info['settings']);
-        $plugin_info['settings'] = $settings;
-    }
-
-    // Put preferences last
-    if (!empty($plugin_info['preferences'])) {
-        $prefs = $plugin_info['preferences'];
-        unset($plugin_info['preferences']);
-        $plugin_info['preferences'] = $prefs;
-    }
-
-    // Check import and export caps
-    if (!has_capability('moodle/grade:export', $context)) {
-        unset($plugin_info['export']);
-    }
-    if (!has_capability('moodle/grade:import', $context)) {
-        unset($plugin_info['import']);
-    }
     return $plugin_info;
 }
 
@@ -818,50 +616,29 @@ class grade_plugin_info {
 function print_grade_page_head($courseid, $active_type, $active_plugin=null,
                                $heading = false, $return=false,
                                $buttons=false) {
-    global $CFG, $COURSE, $OUTPUT, $PAGE;
-    $strgrades = get_string('grades');
+    global $CFG, $OUTPUT, $PAGE;
+    
     $plugin_info = grade_get_plugin_info($courseid, $active_type, $active_plugin);
-
+    
     // Determine the string of the active plugin
     $stractive_plugin = ($active_plugin) ? $plugin_info['strings']['active_plugin_str'] : $heading;
     $stractive_type = $plugin_info['strings'][$active_type];
 
-    $first_link = '';
-
-    if ($active_type == 'settings' && $active_plugin != 'coursesettings') {
-        $first_link = $plugin_info['report'][$active_plugin]->link;
-    } else if ($active_type != 'report') {
-        $first_link = $CFG->wwwroot.'/grade/index.php?id='.$COURSE->id;
-    }
-
-
-    $PAGE->navbar->add($strgrades, $first_link);
-
-    $active_type_link = '';
-
-    if (!empty($plugin_info[$active_type]->link) && $plugin_info[$active_type]->link != qualified_me()) {
-        $active_type_link = $plugin_info[$active_type]->link;
-    }
-
-    if (!empty($plugin_info[$active_type]->parent->link)) {
-        $active_type_link = $plugin_info[$active_type]->parent->link;
-        $PAGE->navbar->add($stractive_type, $active_type_link);
-    }
-
-    if (empty($plugin_info[$active_type]->id)) {
-        $PAGE->navbar->add($stractive_type, $active_type_link);
-    }
-
-    $PAGE->navbar->add($stractive_plugin);
-
-    $title = ': ' . $stractive_plugin;
     if (empty($plugin_info[$active_type]->id) || !empty($plugin_info[$active_type]->parent)) {
-        $title = ': ' . $stractive_type . ': ' . $stractive_plugin;
+        $title = $PAGE->course->fullname.': ' . $stractive_type . ': ' . $stractive_plugin;
+    } else {
+        $title = $PAGE->course->fullname.': ' . $stractive_plugin;
     }
 
-    $PAGE->set_title($strgrades . ': ' . $stractive_type);
+    $PAGE->set_pagelayout('admin');
+    $PAGE->set_title(get_string('grades') . ': ' . $stractive_type);
     $PAGE->set_heading($title);
+    if ($buttons instanceof single_button) {
+        $buttons = $OUTPUT->render($buttons);
+    }
     $PAGE->set_button($buttons);
+    grade_extend_settings($plugin_info, $courseid);
+
     $returnval = $OUTPUT->header();
     if (!$return) {
         echo $returnval;
@@ -876,7 +653,6 @@ function print_grade_page_head($courseid, $active_type, $active_plugin=null,
         $returnval .= print_grade_plugin_selector($plugin_info, $active_type, $active_plugin, $return);
     }
     $returnval .= $OUTPUT->heading($heading);
-
     if ($CFG->grade_navmethod == GRADE_NAVMETHOD_COMBO || $CFG->grade_navmethod == GRADE_NAVMETHOD_TABS) {
         $returnval .= grade_print_tabs($active_type, $active_plugin, $plugin_info, $return);
     }
@@ -2238,4 +2014,416 @@ function grade_button($type, $courseid, $object) {
 
     return $OUTPUT->action_icon($url, new pix_icon('t/'.$type, ${'str'.$type}));
 
+}
+
+/**
+ * This method adds settings to the settings block for the grade system and its
+ * plugins
+ *
+ * @global moodle_page $PAGE
+ */
+function grade_extend_settings($plugininfo, $courseid) {
+    global $PAGE;
+
+    $gradenode = $PAGE->settingsnav->prepend(get_string('gradeadministration', 'grades'), null, navigation_node::TYPE_CONTAINER);
+
+    $strings = array_shift($plugininfo);
+
+    if ($reports = grade_helper::get_plugins_reports($courseid)) {
+        foreach ($reports as $report) {
+            $gradenode->add($report->string, $report->link, navigation_node::TYPE_SETTING, null, $report->id, new pix_icon('i/report', ''));
+        }
+    }
+
+    if ($imports = grade_helper::get_plugins_import($courseid)) {
+        $importnode = $gradenode->add($strings['import'], null, navigation_node::TYPE_CONTAINER);
+        foreach ($imports as $import) {
+            $importnode->add($import->string, $import->link, navigation_node::TYPE_SETTING, null, $import->id, new pix_icon('i/restore', ''));
+        }
+    }
+
+    if ($exports = grade_helper::get_plugins_export($courseid)) {
+        $exportnode = $gradenode->add($strings['export'], null, navigation_node::TYPE_CONTAINER);
+        foreach ($exports as $export) {
+            $exportnode->add($export->string, $export->link, navigation_node::TYPE_SETTING, null, $export->id, new pix_icon('i/backup', ''));
+        }
+    }
+
+    if ($setting = grade_helper::get_info_manage_settings($courseid)) {
+        $gradenode->add(get_string('coursegradesettings', 'grades'), $setting->link, navigation_node::TYPE_SETTING, null, $setting->id, new pix_icon('i/settings', ''));
+    }
+
+    if ($preferences = grade_helper::get_plugins_report_preferences($courseid)) {
+        $preferencesnode = $gradenode->add(get_string('myreportpreferences', 'grades'), null, navigation_node::TYPE_CONTAINER);
+        foreach ($preferences as $preference) {
+            $preferencesnode->add($preference->string, $preference->link, navigation_node::TYPE_SETTING, null, $preference->id, new pix_icon('i/settings', ''));
+        }
+    }
+
+    if ($letters = grade_helper::get_info_letters($courseid)) {
+        $letters = array_shift($letters);
+        $gradenode->add($strings['letter'], $letters->link, navigation_node::TYPE_SETTING, null, $letters->id, new pix_icon('i/settings', ''));
+    }
+
+    if ($outcomes = grade_helper::get_info_outcomes($courseid)) {
+        $outcomes = array_shift($outcomes);
+        $gradenode->add($strings['outcome'], $outcomes->link, navigation_node::TYPE_SETTING, null, $outcomes->id, new pix_icon('i/outcomes', ''));
+    }
+
+    if ($scales = grade_helper::get_info_scales($courseid)) {
+        $gradenode->add($strings['scale'], $scales->link, navigation_node::TYPE_SETTING, null, $scales->id, new pix_icon('i/scales', ''));
+    }
+
+    if ($categories = grade_helper::get_info_edit_structure($courseid)) {
+        $categoriesnode = $gradenode->add(get_string('categoriesanditems','grades'), null, navigation_node::TYPE_CONTAINER);
+        foreach ($categories as $category) {
+            $categoriesnode->add($category->string, $category->link, navigation_node::TYPE_SETTING, null, $category->id, new pix_icon('i/report', ''));
+        }
+    }
+
+    if ($gradenode->contains_active_node()) {
+        // If the gradenode is active include the settings base node (gradeadministration) in
+        // the navbar, typcially this is ignored.
+        $PAGE->navbar->includesettingsbase = true;
+
+        // If we can get the course admin node make sure it is closed by default
+        // as in this case the gradenode will be opened
+        if ($coursenode = $PAGE->settingsnav->get('courseadmin', navigation_node::TYPE_COURSE)){
+            $coursenode->make_inactive();
+            $coursenode->forceopen = false;
+        }
+    }
+}
+
+/**
+ * Grade helper class
+ *
+ * This class provides several helpful functions that work irrespective of any
+ * current state.
+ *
+ * @copyright 2010 Sam Hemelryk
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+abstract class grade_helper {
+    /**
+     * Cached manage settings info {@see get_info_settings}
+     * @var grade_plugin_info|false
+     */
+    protected static $managesetting = null;
+    /**
+     * Cached grade report plugins {@see get_plugins_reports}
+     * @var array|false
+     */
+    protected static $gradereports = null;
+    /**
+     * Cached grade report plugins preferences {@see get_info_scales}
+     * @var array|false
+     */
+    protected static $gradereportpreferences = null;
+    /**
+     * Cached scale info {@see get_info_scales}
+     * @var grade_plugin_info|false
+     */
+    protected static $scaleinfo = null;
+    /**
+     * Cached outcome info {@see get_info_outcomes}
+     * @var grade_plugin_info|false
+     */
+    protected static $outcomeinfo = null;
+    /**
+     * Cached info on edit structure {@see get_info_edit_structure}
+     * @var array|false
+     */
+    protected static $edittree = null;
+    /**
+     * Cached leftter info {@see get_info_letters}
+     * @var grade_plugin_info|false
+     */
+    protected static $letterinfo = null;
+    /**
+     * Cached grade import plugins {@see get_plugins_import}
+     * @var array|false
+     */
+    protected static $importplugins = null;
+    /**
+     * Cached grade export plugins {@see get_plugins_export}
+     * @var array|false
+     */
+    protected static $exportplugins = null;
+    /**
+     * Cached grade plugin strings
+     * @var array
+     */
+    protected static $pluginstrings = null;
+
+    /**
+     * Gets strings commonly used by the describe plugins
+     *
+     * report => get_string('view'),
+     * edittree => get_string('edittree', 'grades'),
+     * scale => get_string('scales'),
+     * outcome => get_string('outcomes', 'grades'),
+     * letter => get_string('letters', 'grades'),
+     * export => get_string('export', 'grades'),
+     * import => get_string('import'),
+     * preferences => get_string('mypreferences', 'grades'),
+     * settings => get_string('settings')
+     *
+     * @return array
+     */
+    public static function get_plugin_strings() {
+        if (self::$pluginstrings === null) {
+            self::$pluginstrings = array(
+                'report' => get_string('view'),
+                'edittree' => get_string('edittree', 'grades'),
+                'scale' => get_string('scales'),
+                'outcome' => get_string('outcomes', 'grades'),
+                'letter' => get_string('letters', 'grades'),
+                'export' => get_string('export', 'grades'),
+                'import' => get_string('import'),
+                'preferences' => get_string('mypreferences', 'grades'),
+                'settings' => get_string('settings')
+            );
+        }
+        return self::$pluginstrings;
+    }
+    /**
+     * Get grade_plugin_info object for managing settings if the user can
+     *
+     * @param int $courseid
+     * @return grade_plugin_info
+     */
+    public static function get_info_manage_settings($courseid) {
+        if (self::$managesetting !== null) {
+            return self::$managesetting;
+        }
+        $context = get_context_instance(CONTEXT_COURSE, $courseid);
+        if (has_capability('moodle/course:update', $context)) {
+            self::$managesetting = new grade_plugin_info('coursesettings', new moodle_url('/grade/edit/settings/index.php', array('id'=>$courseid)), get_string('course'));
+        } else {
+            self::$managesetting = false;
+        }
+        return self::$managesetting;
+    }
+    /**
+     * Returns an array of plugin reports as grade_plugin_info objects
+     *
+     * @param int $courseid
+     * @return array
+     */
+    public static function get_plugins_reports($courseid) {
+        if (self::$gradereports !== null) {
+            return self::$gradereports;
+        }
+        $context = get_context_instance(CONTEXT_COURSE, $courseid);
+        $gradereports = array();
+        $gradepreferences = array();
+        foreach (get_plugin_list('gradereport') as $plugin => $plugindir) {
+            // Remove ones we can't see
+            if (!has_capability('gradereport/'.$plugin.':view', $context)) {
+                continue;
+            }
+
+            $pluginstr = get_string('modulename', 'gradereport_'.$plugin);
+            $url = new moodle_url('/grade/report/'.$plugin.'/index.php', array('id'=>$courseid));
+            $gradereports[$plugin] = new grade_plugin_info($plugin, $url, $pluginstr);
+
+            // Add link to preferences tab if such a page exists
+            if (file_exists($plugindir.'/preferences.php')) {
+                $url = new moodle_url('/grade/report/'.$plugin.'/preferences.php', array('id'=>$courseid));
+                $gradepreferences[$plugin] = new grade_plugin_info($plugin, $url, $pluginstr);
+            }
+        }
+        if (count($gradereports) == 0) {
+            $gradereports = false;
+            $gradepreferences = false;
+        } else if (count($gradepreferences) == 0) {
+            $gradepreferences = false;
+            asort($gradereports);
+        } else {
+            asort($gradereports);
+            asort($gradepreferences);
+        }
+        self::$gradereports = $gradereports;
+        self::$gradereportpreferences = $gradepreferences;
+        return self::$gradereports;
+    }
+    /**
+     * Returns an array of grade plugin report preferences for plugin reports that
+     * support preferences
+     * @param int $courseid
+     * @return array
+     */
+    public static function get_plugins_report_preferences($courseid) {
+        if (self::$gradereportpreferences !== null) {
+            return self::$gradereportpreferences;
+        }
+        self::get_plugins_reports($courseid);
+        return self::$gradereportpreferences;
+    }
+    /**
+     * Get information on scales
+     * @param int $courseid
+     * @return grade_plugin_info
+     */
+    public static function get_info_scales($courseid) {
+        if (self::$scaleinfo !== null) {
+            return self::$scaleinfo;
+        }
+        if (has_capability('moodle/course:managescales', get_context_instance(CONTEXT_COURSE, $courseid))) {
+            $url = new moodle_url('/grade/edit/scale/index.php', array('id'=>$courseid));
+            self::$scaleinfo = new grade_plugin_info('scale', $url, get_string('view'));
+        } else {
+            self::$scaleinfo = false;
+        }
+        return self::$scaleinfo;
+    }
+    /**
+     * Get information on outcomes
+     * @param int $courseid
+     * @return grade_plugin_info
+     */
+    public static function get_info_outcomes($courseid) {
+        global $CFG;
+
+        if (self::$outcomeinfo !== null) {
+            return self::$outcomeinfo;
+        }
+        $context = get_context_instance(CONTEXT_COURSE, $courseid);
+        $canmanage = has_capability('moodle/grade:manage', $context);
+        $canupdate = has_capability('moodle/course:update', $context);
+        if (!empty($CFG->enableoutcomes) && ($canmanage || $canupdate)) {
+            $outcomes = array();
+            if ($canupdate) {
+                $url = new moodle_url('/grade/edit/outcome/course.php', array('id'=>$courseid));
+                $outcomes['course'] = new grade_plugin_info('course', $url, get_string('outcomescourse', 'grades'));
+                $url = new moodle_url('/grade/edit/outcome/index.php', array('id'=>$courseid));
+                $outcomes['edit'] = new grade_plugin_info('edit', $url, get_string('editoutcomes', 'grades'));
+            } else {
+                $url = new moodle_url('/grade/edit/outcome/course.php', array('id'=>$courseid));
+                $outcomes['edit'] = new grade_plugin_info('edit', $url, get_string('outcomescourse', 'grades'));
+            }
+            self::$outcomeinfo = $outcomes;
+        } else {
+            self::$outcomeinfo = false;
+        }
+        return self::$outcomeinfo;
+    }
+    /**
+     * Get information on editing structures
+     * @param int $courseid
+     * @return array
+     */
+    public static function get_info_edit_structure($courseid) {
+        if (self::$edittree !== null) {
+            return self::$edittree;
+        }
+        if (has_capability('moodle/grade:manage', get_context_instance(CONTEXT_COURSE, $courseid))) {
+            $url = new moodle_url('/grade/edit/tree/index.php', array('sesskey'=>sesskey(), 'showadvanced'=>'0', 'id'=>$courseid));
+            self::$edittree = array(
+                'simpleview' => new grade_plugin_info('simpleview', $url, get_string('simpleview', 'grades')),
+                'fullview' => new grade_plugin_info('fullview', new moodle_url($url, array('showadvanced'=>'1')), get_string('fullview', 'grades'))
+            );
+        } else {
+            self::$edittree = false;
+        }
+        return self::$edittree;
+    }
+    /**
+     * Get information on letters
+     * @param int $courseid
+     * @return grade_plugin_info
+     */
+    public static function get_info_letters($courseid) {
+        if (self::$letterinfo !== null) {
+            return self::$letterinfo;
+        }
+        $context = get_context_instance(CONTEXT_COURSE, $courseid);
+        $canmanage = has_capability('moodle/grade:manage', $context);
+        $canmanageletters = has_capability('moodle/grade:manageletters', $context);
+        if ($canmanage || $canmanageletters) {
+            self::$letterinfo = array(
+                'view' => new grade_plugin_info('view', new moodle_url('/grade/edit/letter/index.php', array('id'=>$courseid)), get_string('view')),
+                'edit' => new grade_plugin_info('edit', new moodle_url('/grade/edit/letter/edit.php', array('id'=>$courseid)), get_string('edit'))
+            );
+        } else {
+            self::$letterinfo = false;
+        }
+        return self::$letterinfo;
+    }
+    /**
+     * Get information import plugins
+     * @param int $courseid
+     * @return array
+     */
+    public static function get_plugins_import($courseid) {
+        global $CFG;
+
+        if (self::$importplugins !== null) {
+            return self::$importplugins;
+        }
+        $importplugins = array();
+        $context = get_context_instance(CONTEXT_COURSE, $courseid);
+
+        if (has_capability('moodle/grade:import', $context)) {
+            foreach (get_plugin_list('gradeimport') as $plugin => $plugindir) {
+                if (!has_capability('gradeimport/'.$plugin.':view', $context)) {
+                    continue;
+                }
+                $pluginstr = get_string('modulename', 'gradeimport_'.$plugin);
+                $url = new moodle_url('/grade/import/'.$plugin.'/index.php', array('id'=>$courseid));
+                $importplugins[$plugin] = new grade_plugin_info($plugin, $url, $pluginstr);
+            }
+
+
+            if ($CFG->gradepublishing) {
+                $url = new moodle_url('/grade/import/keymanager.php', array('id'=>$courseid));
+                $importplugins['keymanager'] = new grade_plugin_info('keymanager', $url, get_string('keymanager', 'grades'));
+            }
+        }
+
+        if (count($importplugins) > 0) {
+            asort($importplugins);
+            self::$importplugins = $importplugins;
+        } else {
+            self::$importplugins = false;
+        }
+        return self::$importplugins;
+    }
+    /**
+     * Get information export plugins
+     * @param int $courseid
+     * @return array
+     */
+    public static function get_plugins_export($courseid) {
+        global $CFG;
+
+        if (self::$exportplugins !== null) {
+            return self::$exportplugins;
+        }
+        $context = get_context_instance(CONTEXT_COURSE, $courseid);
+        $exportplugins = array();
+        if (has_capability('moodle/grade:export', $context)) {
+            foreach (get_plugin_list('gradeexport') as $plugin => $plugindir) {
+                if (!has_capability('gradeexport/'.$plugin.':view', $context)) {
+                    continue;
+                }
+                $pluginstr = get_string('modulename', 'gradeexport_'.$plugin);
+                $url = new moodle_url('/grade/export/'.$plugin.'/index.php', array('id'=>$courseid));
+                $exportplugins[$plugin] = new grade_plugin_info($plugin, $url, $pluginstr);
+            }
+
+            if ($CFG->gradepublishing) {
+                $url = new moodle_url('/grade/export/keymanager.php', array('id'=>$courseid));
+                $exportplugins['keymanager'] = new grade_plugin_info('keymanager', $url, get_string('keymanager', 'grades'));
+            }
+        }
+        if (count($exportplugins) > 0) {
+            asort($exportplugins);
+            self::$exportplugins = $exportplugins;
+        } else {
+            self::$exportplugins = false;
+        }
+        return self::$exportplugins;
+    }
 }
