@@ -39,7 +39,7 @@ require_once("$CFG->libdir/blocklib.php");
 function my_get_page($userid, $private=MY_PAGE_PRIVATE) {
     global $DB, $CFG;
 
-    if (empty($CFG->forcedefaultmymoodle)) {   // We ignore custom My Moodle pages if admin has forced them
+    if (empty($CFG->forcedefaultmymoodle) && $userid) {  // Ignore custom My Moodle pages if admin has forced them
         // Does the user have their own page defined?  If so, return it.
         if ($customised = $DB->get_record('my_pages', array('userid' => $userid, 'private' => $private))) {
             return $customised;

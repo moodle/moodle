@@ -60,10 +60,10 @@ $PAGE->set_title($header);
 $PAGE->set_heading($header);
 $PAGE->blocks->add_region('content');
 
-// TODO: Make the page be selected properly in the Settings block
+admin_externalpage_setup('mypage');
 
 // Get the My Moodle page info.  Should always return something unless the database is broken.
-if (!$currentpage = my_get_page(0, MY_PAGE_PRIVATE)) {
+if (!$currentpage = my_get_page(null, MY_PAGE_PRIVATE)) {
     print_error('mymoodlesetup');
 }
 $PAGE->set_subpage($currentpage->id);
@@ -97,12 +97,6 @@ if ($PAGE->user_allowed_editing()) {
 } else {
     $USER->editing = $edit = 0;
 }
-
-// HACK WARNING!  This loads up all this page's blocks in the system context
-if ($currentpage->userid == 0) {
-    $CFG->blockmanagerclass = 'my_syspage_block_manager';
-}
-
 
 echo $OUTPUT->header();
 
