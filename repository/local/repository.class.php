@@ -155,9 +155,9 @@ class repository_local extends repository {
     public function supported_returntypes() {
         return FILE_INTERNAL;
     }
-    
+
     /**
-     * Copy a file to draft area
+     * Copy a file to file area
      *
      * @global object $USER
      * @global object $DB
@@ -167,7 +167,7 @@ class repository_local extends repository {
      * @param string $new_filepath the new path in draft area
      * @return array The information of file
      */
-    public function copy_to_draft($encoded, $new_filename = '', $new_itemid = '', $new_filepath = '/') {
+    public function copy_to_area($encoded, $new_filearea='user_draft', $new_itemid = '', $new_filepath = '/', $new_filename = '') {
         global $USER, $DB;
         $info = array();
 
@@ -183,7 +183,7 @@ class repository_local extends repository {
         $context    = get_context_instance_by_id($contextid);
         try {
             $file_info = $browser->get_file_info($context, $filearea, $fileitemid, $filepath, $filename);
-            $file_info->copy_to_storage($user_context->id, 'user_draft', $new_itemid, $new_filepath, $new_filename);
+            $file_info->copy_to_storage($user_context->id, $new_filearea, $new_itemid, $new_filepath, $new_filename);
         } catch (Exception $e) {
             throw $e;
         }

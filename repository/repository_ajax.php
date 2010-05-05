@@ -223,8 +223,9 @@ switch ($action) {
         try {
             // we have two special repoisitory type need to deal with
             if ($repo->options['type'] == 'local' || $repo->options['type'] == 'recent' ) {
+                // saveas_filearea
                 try {
-                    $fileinfo = $repo->copy_to_draft($source, $saveas_filename, $itemid, $saveas_path);
+                    $fileinfo = $repo->copy_to_area($source, $saveas_filearea, $itemid, $saveas_path, $saveas_filename);
                 } catch (Exception $e) {
                     throw $e;
                 }

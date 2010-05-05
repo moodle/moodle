@@ -68,11 +68,11 @@ class repository_recent extends repository {
         // TODO: should exclude user_draft area files?
         $sql = 'SELECT * FROM {files} files1
                 JOIN (SELECT contenthash, filename, MAX(id) AS id
-                FROM {files} 
-                WHERE userid = ? AND filename != ?
+                FROM {files}
+                WHERE userid = ? AND filename != ? AND filearea != ?
                 GROUP BY contenthash, filename) files2 ON files1.id = files2.id
                 ORDER BY files1.timemodified DESC';
-        $params = array('userid'=>$USER->id, 'filename'=>'.');
+        $params = array('userid'=>$USER->id, 'filename'=>'.', 'filearea'=>'user_draft');
         $rs = $DB->get_recordset_sql($sql, $params, $limitfrom, $limit);
         $result = array();
         foreach ($rs as $file_record) {
@@ -155,7 +155,7 @@ class repository_recent extends repository {
         return FILE_INTERNAL;
     }
     /**
-     * Copy a file to draft area
+     * Copy a file to file area
      *
      * @global object $USER
      * @global object $DB
@@ -165,7 +165,7 @@ class repository_recent extends repository {
      * @param string $new_filepath the new path in draft area
      * @return array The information of file
      */
-    public function copy_to_draft($encoded, $new_filename = '', $new_itemid = '', $new_filepath = '/') {
+    public function copy_to_area($encoded, $new_filearea='user_draft', $new_itemid = '', $new_filepath = '/', $new_filename = '') {
         global $USER, $DB;
         $info = array();
         $fs = get_file_storage();
@@ -187,9 +187,9 @@ class repository_recent extends repository {
         // To get 'recent' plugin working, we need to use lower level file_stoarge class to bypass the
         // capability check, we will use a better workaround to improve it.
         if ($stored_file = $fs->get_file($contextid, $filearea, $fileitemid, $filepath, $filename)) {
-            $file_record = array('contextid'=>$user_context->id, 'filearea'=>'user_draft',
+            $file_record = array('contextid'=>$user_context->id, 'filearea'=>$new_filearea,
                 'itemid'=>$new_itemid, 'filepath'=>$new_filepath, 'filename'=>$new_filename);
-            if ($file = $fs->get_file($user_context->id, 'user_draft', $new_itemid, $new_filepath, $new_filename)) {
+            if ($file = $fs->get_file($user_context->id, $new_filearea, $new_itemid, $new_filepath, $new_filename)) {
                 $file->delete();
             }
             $fs->create_file_from_storedfile($file_record, $stored_file);
