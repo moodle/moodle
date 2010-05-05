@@ -53,6 +53,13 @@ class hub_selector_form extends moodleform {
         $xmlrpcclient = new webservice_xmlrpc_client();
         $hubs = $xmlrpcclient->call($serverurl, 'publichubdirectory', $function, $params);
 
+        //remove moodle.org from the hub list
+        foreach ($hubs as $key => $hub) {
+            if ($hub['url'] == MOODLEORGHUBURL) {
+                unset($hubs[$key]);
+            }
+        }
+
         //Public hub list
         $options = array();
         foreach ($hubs as $hub) {

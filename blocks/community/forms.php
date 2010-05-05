@@ -51,11 +51,9 @@ class community_hub_search_form extends moodleform {
 
         //sort hubs by trusted/prioritize
 
-        //add moodle.org hub
-        $mform->addElement('radio','huburl',get_string('selecthub', 'hub'),' Moodle.org', MOODLEORGHUBURL);
-
         //Public hub list
         $options = array();
+        $mform->addElement('static','huburlstring',get_string('selecthub', 'hub').':');
         foreach ($hubs as $hub) {
             $mform->addElement('radio','huburl',null,' '.$hub['name'], $hub['url']);
         }
