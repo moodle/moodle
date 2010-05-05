@@ -65,10 +65,13 @@ class repository_recent extends repository {
 
     private function get_recent_files($limitfrom = 0, $limit = DEFAULT_RECENT_FILES_NUM) {
         global $USER, $DB;
-        $sql = 'SELECT DISTINCT pathnamehash, contextid, itemid, filearea, filepath, filename 
+        // TODO: should exclude user_draft area files?
+        $sql = 'SELECT * FROM {files} files1
+                JOIN (SELECT contenthash, filename, MAX(id) AS id
                 FROM {files} 
-                WHERE userid = ? AND filename <> ? 
-                ORDER BY timecreated DESC';
+                WHERE userid = ? AND filename != ?
+                GROUP BY contenthash, filename) files2 ON files1.id = files2.id
+                ORDER BY files1.timemodified DESC';
         $params = array('userid'=>$USER->id, 'filename'=>'.');
         $rs = $DB->get_recordset_sql($sql, $params, $limitfrom, $limit);
         $result = array();
@@ -182,7 +185,7 @@ class repository_recent extends repository {
         // browse the files (for example, forum_attachment area).
         //
         // To get 'recent' plugin working, we need to use lower level file_stoarge class to bypass the
-        // capability check, we will use a better workaround to improve it. 
+        // capability check, we will use a better workaround to improve it.
         if ($stored_file = $fs->get_file($contextid, $filearea, $fileitemid, $filepath, $filename)) {
             $file_record = array('contextid'=>$user_context->id, 'filearea'=>'user_draft',
                 'itemid'=>$new_itemid, 'filepath'=>$new_filepath, 'filename'=>$new_filename);
