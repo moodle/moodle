@@ -1276,6 +1276,7 @@ class moodle_page {
         $this->add_body_class('dir-' . get_string('thisdirection', 'langconfig'));
         $this->add_body_class('lang-' . current_language());
         $this->add_body_class('yui-skin-sam'); // Make YUI happy, if it is used.
+        $this->add_body_class('yui3-skin-sam'); // Make YUI3 happy, if it is used.
         $this->add_body_class($this->url_to_class_name($CFG->wwwroot));
 
         $this->add_body_class('pagelayout-' . $this->_pagelayout); // extra class describing current page layout
