@@ -10,7 +10,7 @@ class course_reset_form extends moodleform {
         $mform->addElement('header', 'generalheader', get_string('general'));
 
         $mform->addElement('date_selector', 'reset_start_date', get_string('startdate'), array('optional'=>true));
-        $mform->setHelpButton('reset_start_date', array('coursestartdate', get_string('startdate')));
+        $mform->addHelpButton('reset_start_date', 'startdate');
         $mform->addElement('checkbox', 'reset_events', get_string('deleteevents', 'calendar'));
         $mform->addElement('checkbox', 'reset_logs', get_string('deletelogs'));
         $mform->addElement('checkbox', 'reset_notes', get_string('deletenotes', 'notes'));

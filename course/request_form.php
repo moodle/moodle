@@ -60,12 +60,12 @@ class course_request_form extends moodleform {
         $mform->setType('fullname', PARAM_MULTILANG);
 
         $mform->addElement('text', 'shortname', get_string('shortname'), 'maxlength="100" size="20"');
-        $mform->setHelpButton('shortname', array('courseshortname', get_string('shortname')), true);
+        $mform->addHelpButton('shortname', 'shortnamecourse');
         $mform->addRule('shortname', get_string('missingshortname'), 'required', null, 'client');
         $mform->setType('shortname', PARAM_MULTILANG);
 
         $mform->addElement('editor', 'summary_editor', get_string('summary'), null, course_request::summary_editor_options());
-        $mform->setHelpButton('summary_editor', array('text2', get_string('helptext')), true);
+        $mform->addHelpButton('summary_editor', 'coursesummary');
         $mform->setType('summary_editor', PARAM_RAW);
 
         $mform->addElement('passwordunmask', 'password', get_string('enrolmentkey'), 'size="25"');
