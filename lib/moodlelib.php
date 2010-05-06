@@ -1514,7 +1514,7 @@ function userdate($date, $format = '', $timezone = 99, $fixday = true) {
     if (abs($timezone) > 13) {   /// Server time
         if ($fixday) {
             $datestring = strftime($formatnoday, $date);
-            $daystring  = str_replace(array(' 0', ' '), '', strftime(' %d', $date));
+            $daystring  = ltrim(str_replace(array(' 0', ' '), '', strftime(' %d', $date)));
             $datestring = str_replace('DD', $daystring, $datestring);
         } else {
             $datestring = strftime($format, $date);
@@ -1523,7 +1523,7 @@ function userdate($date, $format = '', $timezone = 99, $fixday = true) {
         $date += (int)($timezone * 3600);
         if ($fixday) {
             $datestring = gmstrftime($formatnoday, $date);
-            $daystring  = str_replace(array(' 0', ' '), '', gmstrftime(' %d', $date));
+            $daystring  = ltrim(str_replace(array(' 0', ' '), '', gmstrftime(' %d', $date)));
             $datestring = str_replace('DD', $daystring, $datestring);
         } else {
             $datestring = gmstrftime($format, $date);
