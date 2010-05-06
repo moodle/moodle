@@ -1,7 +1,7 @@
-.sideblock { border-width:1px 0 0;border-color:#ccc;border-style:solid;background:url([[pix:theme|gradient-sb]]) repeat-x 0 0;}
-.sideblock .header { border-width:0 1px;border-style:solid;border-color:#eee;;padding:3px 10px; }
-.sideblock .header h2 { color:#333;font-size:1.2em; }
-.sideblock .content { padding:5px 10px;border-color:#eee;border-width:0 1px 1px;border-style:solid; }
+.block { border-width:1px 0 0;border-color:#ccc;border-style:solid;background:url([[pix:theme|gradient-sb]]) repeat-x 0 0;}
+.block .header { border-width:0 1px;border-style:solid;border-color:#eee;;padding:3px 10px; }
+.block .header h2 { color:#333;font-size:1.2em; }
+.block .content { padding:5px 10px;border-color:#eee;border-width:0 1px 1px;border-style:solid; }
 
 .block_login { border:1px solid #ccc;background:#fcffc8; }
 .block_login label { font-size:0.85em;display:block; }

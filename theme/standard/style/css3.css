@@ -27,7 +27,7 @@
  *   -webkit-border-bottom-right-radius
  */
 
-.sideblock.hidden {
+.block.hidden {
   -moz-border-radius: 0;
   -webkit-border-radius: 0;
   border-radius: 0;
@@ -37,7 +37,7 @@
 table.minicalendar td,
 .path-calendar .maincalendar .filters table,
 .path-calendar .sidecalendar .filters table,
-.sideblock.block_calendar_month .filters table,
+.block.block_calendar_month .filters table,
 .path-calendar .maincalendar li.calendar_event_course,
 .path-calendar .maincalendar li.calendar_event_global,
 .path-calendar .maincalendar li.calendar_event_user,
@@ -168,12 +168,12 @@ table.minicalendar {
 
 .path-calendar .maincalendar,
 .path-calendar .sidecalendar,
-.path-calendar td.sidecalendar .sideblock,
+.path-calendar td.sidecalendar .block,
 .loginbox,
 .userinfobox,
 .groupinfobox,
 .forumpost,
-.sideblock .content,
+.block .content,
 .glossarycomment {
   -moz-border-radius-bottomright:20px;
   -moz-border-radius-bottomleft:20px;

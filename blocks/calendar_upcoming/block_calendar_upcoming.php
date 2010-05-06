@@ -64,7 +64,7 @@ class block_calendar_upcoming extends block_base {
                                         get_user_preferences('calendar_maxevents', CALENDAR_UPCOMING_MAXEVENTS));
 
         if (!empty($this->instance)) {
-            $this->content->text = calendar_get_sideblock_upcoming($events,
+            $this->content->text = calendar_get_block_upcoming($events,
                                    'view.php?view=day&amp;course='.$courseshown.'&amp;');
         }
 

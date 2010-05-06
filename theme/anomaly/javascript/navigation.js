@@ -93,9 +93,9 @@ var anomaly = (function(){
                     noblocksc:'noblocks'
                 }
                 M.core_dock.Y.all('div.block-region').each(function(blockregion){
-                    if (blockregion.hasClass('side-pre') && blockregion.all('.sideblock').size() == 0) {
+                    if (blockregion.hasClass('side-pre') && blockregion.all('.block').size() == 0) {
                         blockregions.pre.hasblocks = false;
-                    } else if (blockregion.hasClass('side-post') && blockregion.all('.sideblock').size() == 0) {
+                    } else if (blockregion.hasClass('side-post') && blockregion.all('.block').size() == 0) {
                         blockregions.post.hasblocks = false;
                     }
                 });

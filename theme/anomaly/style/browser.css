@@ -18,13 +18,13 @@
 #page-footer .rounded-corner.bottom-left {background-position:0px 11px;bottom:0px;left:0px;float:left;}
 #page-footer .rounded-corner.bottom-right {background-position:11px 11px;bottom:0px;right:-1px;float:right;}
 
-.sideblock {border-width:0px;background-color:white;}
-.sideblock .corner-box {border:1px solid #C8C9C7;margin-bottom:10px;padding-bottom:10px;background-color:#E3E3E3;}
-.sideblock .corner-box .rounded-corner {background-image:url([[pix:theme|corners_sideblock]]);position:relative;}
-.sideblock .corner-box .rounded-corner.top-left {background-position:0px 0px;float:left;top:-1px;left:-1px;}
-.sideblock .corner-box .rounded-corner.top-right {background-position:11px 0px;float:right;top:-1px;right:-1px;}
-.sideblock .corner-box .rounded-corner.bottom-left {background-position:0px 11px;float:left;bottom:0px;left:-1px;}
-.sideblock .corner-box .rounded-corner.bottom-right {background-position:11px 11px;float:right;bottom:0px;right:-1px;}
+.block {border-width:0px;background-color:white;}
+.block .corner-box {border:1px solid #C8C9C7;margin-bottom:10px;padding-bottom:10px;background-color:#E3E3E3;}
+.block .corner-box .rounded-corner {background-image:url([[pix:theme|corners_block]]);position:relative;}
+.block .corner-box .rounded-corner.top-left {background-position:0px 0px;float:left;top:-1px;left:-1px;}
+.block .corner-box .rounded-corner.top-right {background-position:11px 0px;float:right;top:-1px;right:-1px;}
+.block .corner-box .rounded-corner.bottom-left {background-position:0px 11px;float:left;bottom:0px;left:-1px;}
+.block .corner-box .rounded-corner.bottom-right {background-position:11px 11px;float:right;bottom:0px;right:-1px;}
 
 /** 
  * Pure CSS rounded corners
@@ -46,12 +46,12 @@
 .gecko .rounded-corner.bottom-left,
 .gecko .rounded-corner.bottom-right {background-image:none;display:none;}
 
-.safari .sideblock .corner-box,
-.gecko .sideblock .corner-box {-webkit-border-radius: 10px;-moz-border-radius: 10px;}
+.safari .block .corner-box,
+.gecko .block .corner-box {-webkit-border-radius: 10px;-moz-border-radius: 10px;}
 
-.safari .sideblock .corner-box .header,
+.safari .block .corner-box .header,
 .safari #page-header,
-.gecko .sideblock .corner-box .header,
+.gecko .block .corner-box .header,
 .gecko #page-header {-moz-border-radius: 10px 10px 0px 0px;-webkit-border-top-left-radius:10px;-webkit-border-top-right-radius:10px;}
 
 .safari #page-footer,

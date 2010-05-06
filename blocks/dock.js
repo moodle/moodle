@@ -450,7 +450,7 @@ M.core_dock = {
             node = node.ancestor('.block-region');
             if (node) {
                 var width =  node.getStyle('width');
-                if (node.all('.sideblock').size() === 0 && this.blockspacewidth === null) {
+                if (node.all('.block').size() === 0 && this.blockspacewidth === null) {
                     // If the node has no children then we can shrink it
                     this.blockspacewidth = width;
                     node.setStyle('width', '0px');

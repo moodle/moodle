@@ -315,7 +315,7 @@ table.quizreviewsummary td.cell {
 .mod-quiz div.tabtree a span img.iconsmall {
   vertical-align: baseline;
 }
-#mod-quiz-edit div.sideblock{
+#mod-quiz-edit div.block{
   float:right;
   width:30%;
   right:0.3em;
@@ -883,7 +883,7 @@ table#categoryquestions td,#mod-quiz-edit table#categoryquestions th{
   clear:both;
 }
 
-#mod-quiz-edit .sideblock .content{
+#mod-quiz-edit .block .content{
   padding:0;
 }
 

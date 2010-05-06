@@ -384,15 +384,15 @@ table.flexible .r1 {
     color: red;
 }
 
-.block_admin_tree.sideblock .link.current {
+.block_admin_tree.block .link.current {
   background-color:#EEEEEE;
 }
 
-.block_admin_tree.sideblock .link.criticalnotification {
+.block_admin_tree.block .link.criticalnotification {
   background-color:#ff6666;
 }
 
-.block_admin_tree.sideblock .link.hidden {
+.block_admin_tree.block .link.hidden {
   color:#999999;
 }
 
@@ -473,16 +473,16 @@ table.flexible .r1 {
  *** Blocks
  ***/
 
-.sideblock .header {
+.block .header {
   border-color: #dddddd;
 }
 
-.sideblock .content {
+.block .content {
   border-color: #dddddd;
   background-color:#FCFCFC;
 }
 
-.sideblock .content hr {
+.block .content hr {
   border-top-color:#999999;
 }
 
@@ -501,7 +501,7 @@ table.flexible .r1 {
   background-color: #f88;
   border-color: #c00;
 }
-.sideblock.beingmoved {
+.block.beingmoved {
   border-color: #f88;
 }
 

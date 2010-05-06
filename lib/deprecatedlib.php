@@ -2233,8 +2233,8 @@ function user_login_string($course='ignored', $user='ignored') {
  * @param array $icons optional icons for the things in $list.
  * @param string $footer Extra HTML content that gets output at the end, inside a &lt;div class="footer">
  * @param array $attributes an array of attribute => value pairs that are put on the
- * outer div of this block. If there is a class attribute ' sideblock' gets appended to it. If there isn't
- * already a class, class='sideblock' is used.
+ * outer div of this block. If there is a class attribute ' block' gets appended to it. If there isn't
+ * already a class, class='block' is used.
  * @param string $title Plain text title, as embedded in the $heading.
  * @deprecated
  */

@@ -55,11 +55,11 @@ function customise_dock_for_theme() {
     M.core_dock.genericblock.prototype.resize_block_space = function() {
         var blockregions = {
             pre: {
-                hasblocks : (M.core_dock.Y.one('#region-pre') && M.core_dock.Y.one('#region-pre').all('.sideblock').size() > 0),
+                hasblocks : (M.core_dock.Y.one('#region-pre') && M.core_dock.Y.one('#region-pre').all('.block').size() > 0),
                 c : 'side-pre-only'
             },
             post: {
-                hasblocks : (M.core_dock.Y.one('#region-post') && M.core_dock.Y.one('#region-post').all('.sideblock').size() > 0),
+                hasblocks : (M.core_dock.Y.one('#region-post') && M.core_dock.Y.one('#region-post').all('.block').size() > 0),
                 c : 'side-post-only'
             },
             noblocksc:'content-only'

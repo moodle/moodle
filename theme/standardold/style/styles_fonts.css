@@ -329,54 +329,54 @@ a.skip-block {
   text-decoration:none;
 }
 
-.sideblock img.resize,
+.block img.resize,
 .breadcrumb img.resize {
   width: 0.8em;
   height: 0.9em;
 }
-.sideblock .searchform img.resize {
+.block .searchform img.resize {
   width: 1em;
   height: 1.1em;
 }
 
-.sideblock .header, .sideblock h2 {
+.block .header, .block h2 {
   font-size:0.9em;
   font-weight: bold;
 }
 
-.sideblock .content {
+.block .content {
   font-size:0.9em;
   line-height:1.2em;
 }
 
-.sideblock a {
+.block a {
   line-height:1.2em
 }
 
-.sideblock .content h3,
-.sideblock .content h2 {
+.block .content h3,
+.block .content h2 {
   font-size:1.0em;
 }
 
-.sideblock .content .message {
+.block .content .message {
   font-size:0.9em
 }
 
-.sideblock .header .commands {
+.block .header .commands {
   font-size:0.9em;
 }
 
-.sideblock .footer {
+.block .footer {
   font-size:0.9em;
 }
 
-.sideblock .head,
-.sideblock .info,
-.sideblock .event {
+.block .head,
+.block .info,
+.block .event {
   font-size: 0.9em;
 }
 
-.sideblock .date {
+.block .date {
   font-style: italic;
 }
 
@@ -441,7 +441,7 @@ a.skip-block {
   font-size:0.8em;
 }
 
-.sideblock .filters td {
+.block .filters td {
   font-size:1.1em;
 }
 
@@ -895,6 +895,6 @@ body#user-index #longtimenosee {
   color: #000000;
 }
 
-.sideblock .content h3.eventskey {
+.block .content h3.eventskey {
     font-size:0.8em;
 }

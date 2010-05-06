@@ -1370,12 +1370,12 @@ a.skip:focus, a.skip:active {
   overflow: hidden;
 }
 
-.sideblock {
+.block {
   margin-bottom:1em;
   width: 100%;
 }
 
-.sideblock .header, .sideblock h2.header {
+.block .header, .block h2.header {
   text-align: left;
   margin:0;
   padding:4px;
@@ -1384,31 +1384,31 @@ a.skip:focus, a.skip:active {
   border-style: solid;
   border-bottom: none;
 }
-.sideblock h2 {
+.block h2 {
   margin:0;
   padding:0;
 }
 
-.sideblock .header .block_action,
-.sideblock .content .block_action.notitle {
+.block .header .block_action,
+.block .content .block_action.notitle {
   float:right;
   height:11px;
   margin-top:0.25em;
 }
 
-.sideblock .header .block_action input,
-.sideblock .content .block_action.notitle input {
+.block .header .block_action input,
+.block .content .block_action.notitle input {
     margin-right:2px;
     height:11px;
     width:11px;
 }
 
-.sideblock .header .commands {
+.block .header .commands {
   margin-top: 0.3em;
   clear: both;
 }
 
-.sideblock .header .commands a {
+.block .header .commands a {
   margin: 0px 2px;
 }
 
@@ -1433,8 +1433,8 @@ a.skip:focus, a.skip:active {
   filter: alpha(opacity=0.5);
 }
 
-.sideblock .header .icon.hide,
-.sideblock .header .icon.edit {
+.block .header .icon.hide,
+.block .header .icon.edit {
   margin-right: 6px;
 }
 .blockannotation {
@@ -1449,32 +1449,32 @@ a.skip:focus, a.skip:active {
   border-width: 2px;
   border-style: dashed;
 }
-.sideblock.beingmoved {
+.block.beingmoved {
   border-width: 2px;
   border-style: dashed;
 }
 
-.sideblock .content {
+.block .content {
   padding: 4px;
   border-width: 1px;
   border-style: solid;
 }
 
-.sideblock .content h3,
-.sideblock .content h2 {
+.block .content h3,
+.block .content h2 {
   text-align: left;
 }
 
-.sideblock .content h2 {
+.block .content h2 {
   margin:1.5em 0 0;
   padding:0;
 }
 
-.sideblock .content .head {
+.block .content .head {
   margin-top: 10px;
 }
 
-.sideblock .content hr {
+.block .content hr {
   height:1px;
   margin-top:4px;
   margin-bottom:4px;
@@ -1482,57 +1482,57 @@ a.skip:focus, a.skip:active {
   border-top:1px solid;
 }
 
-.sideblock div.column {
+.block div.column {
   margin:0px;
   margin-right:4px;
   padding:0px;
 }
 
-.sideblock div.column.c0 {
+.block div.column.c0 {
   float: left;
 }
 
-.sideblock div.column.c1 {
+.block div.column.c1 {
   display: inline;
 }
 
-.sideblock .content .c0 img.icon {
+.block .content .c0 img.icon {
   margin:0px;
 }
 
-.sideblock .content .list, .unlist, .inline-list {
+.block .content .list, .unlist, .inline-list {
   list-style:none;
   padding:0;
   margin:0;
 }
 
-.sideblock .content .list {
+.block .content .list {
   width: 100%;
 }
 
-.sideblock .content .list li {
+.block .content .list li {
   clear: left;
 }
 
-.sideblock .content .inline-list li, .inline-list li {
+.block .content .inline-list li, .inline-list li {
   display: inline;
 }
 
-.sideblock .content ul.list li.listentry {
+.block .content ul.list li.listentry {
   clear:both;
 }
 
-.sideblock .content div.info {
+.block .content div.info {
   text-align:center;
 }
 
-.sideblock .footer {
+.block .footer {
   margin-bottom: 4px;
   text-align:center;
   clear:both;
 }
 
-.sideblock img.userpicture {
+.block img.userpicture {
   width:16px;
   height:16px;
   margin-right:4px;
@@ -1622,16 +1622,16 @@ a.skip:focus, a.skip:active {
 /**
  * Navigation and settings block
  **/
-.sideblock .block_tree_box {
+.block .block_tree_box {
     margin:2px;
 }
-.sideblock .block_tree {
+.block .block_tree {
   width:180px;
   overflow-x:auto;
   overflow-y:visible;
 }
-.ie6 .sideblock .block_tree,
-.ie7 .sideblock .block_tree {
+.ie6 .block .block_tree,
+.ie7 .block .block_tree {
   overflow-x:scroll;
 }
 .block_tree {
@@ -1780,7 +1780,7 @@ body.has_dock {
 }
 
 /* Navigation and settings block */
-/* Sideblock expansion code */
+/* block expansion code */
 .block_js_expansion .block_tree {
   overflow-x:scroll;
 }
@@ -1847,7 +1847,7 @@ body.has_dock {
 {
   text-align: center;
 }
-#calendar .sideblock h2 {
+#calendar .block h2 {
   text-align: left;
 }
 
@@ -1920,7 +1920,7 @@ table.minicalendar td {
 
 #calendar .maincalendar .filters table,
 #calendar .sidecalendar .filters table,
-.sideblock.block_calendar_month .filters table
+.block.block_calendar_month .filters table
 {
   border-collapse:separate;
   border-spacing: 2px;
@@ -2115,7 +2115,7 @@ border-width:0px;
   padding-top:10px;
 }
 
-.sideblock .content h3.eventskey {
+.block .content h3.eventskey {
   margin-top:0.5em;
   margin-bottom:0;
   margin-left:0.5em;
@@ -2305,7 +2305,7 @@ body.course-view .unread {
   margin-left: 3em;
 }
 
-body.course-view .sideblock.drag .header {
+body.course-view .block.drag .header {
   cursor: move;
 }
 
@@ -4220,11 +4220,11 @@ table.mod_index {
   margin-right: 0;
 }
 
-.ie7 .sideblock {
+.ie7 .block {
   overflow: hidden;
 }
 
-.ie7 .sideblock .content {
+.ie7 .block .content {
   word-wrap: break-word;
 }
 

@@ -43,10 +43,10 @@ h4.main  { text-align:center; }
 
 /* Sideblock */
 
-.sideblock  { border:none; }
-.sideblock .header  { background:#69804e; padding:2px 5px; }
-.sideblock .header h2  { color:#fff; font-size:1.2em; line-height:1; }
-.sideblock .content  { background:#f3f8ed; border-width:1px; border-color:#69804e; border-style:solid; padding:4px; }
+.block  { border:none; }
+.block .header  { background:#69804e; padding:2px 5px; }
+.block .header h2  { color:#fff; font-size:1.2em; line-height:1; }
+.block .content  { background:#f3f8ed; border-width:1px; border-color:#69804e; border-style:solid; padding:4px; }
 
 .block_js_expansion .block_tree  { overflow:auto; }
 

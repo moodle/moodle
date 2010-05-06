@@ -475,7 +475,7 @@ if ($quiz_qbanktool) {
     $quizcontentsclass = 'quizwhenbankcollapsed';
 }
 
-echo '<div class="questionbankwindow ' . $bankclass . 'sideblock">';
+echo '<div class="questionbankwindow ' . $bankclass . 'block">';
 echo '<div class="header"><div class="title"><h2>';
 echo get_string('questionbankcontents', 'quiz') .
         ' <a href="' . $thispageurl->out(true, array('qbanktool' => '1')) .

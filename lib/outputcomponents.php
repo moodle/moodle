@@ -1888,7 +1888,7 @@ class block_contents {
             $this->attributes = $attributes;
         } else {
             // simple "fake" blocks used in some modules and "Add new block" block
-            $this->attributes = array('class'=>'sideblock');
+            $this->attributes = array('class'=>'block');
         }
     }
 

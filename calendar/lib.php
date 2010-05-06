@@ -1007,7 +1007,7 @@ function calendar_days_in_month($month, $year) {
    return intval(date('t', mktime(0, 0, 0, $month, 1, $year)));
 }
 
-function calendar_get_sideblock_upcoming($events, $linkhref = NULL) {
+function calendar_get_block_upcoming($events, $linkhref = NULL) {
     $content = '';
     $lines = count($events);
     if (!$lines) {

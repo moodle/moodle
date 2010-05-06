@@ -16,7 +16,7 @@ body.has_dock {margin-left:30px;margin-right:30px;}
 .dock .yui-panel .hd {text-align:right;border-width:0 0 1px 0;padding:3px 5px;}
 .dock .yui-panel .hd .commands img {margin-right:2px;}
 
-/**.dock .bd .content .sideblockcommands {text-align:right;border:1px solid #AAA;border-width:0 0 1px 1px;background-image:url([[pix:theme|hgradient]]);background-repeat: repeat-x;}**/
+/**.dock .bd .content .blockcommands {text-align:right;border:1px solid #AAA;border-width:0 0 1px 1px;background-image:url([[pix:theme|hgradient]]);background-repeat: repeat-x;}**/
 /** YUI overrides **/
 .yui-skin-sam .dock .yui-panel {border-width:1px 2px 1px 1px;border-color:#AAA;min-width:150px;}
 .yui-skin-sam .dock .yui-panel .bd {border-width:0;background-color:#FAFAFA;}
@@ -25,7 +25,7 @@ body.has_dock {margin-left:30px;margin-right:30px;}
 .dock.dock_right_vertical .commands {text-align:right;}
 .yui-skin-sam .dock.dock_right_vertical .yui-panel {border-width:1px 0 1px 5px;}
 
-/* Sideblock expansion code */
+/* block expansion code */
 .block_js_expansion .block_tree {overflow-x:scroll;}
 .block_js_expansion.mouseover .content {width:200%;z-index:1000;position:relative;}
 .block_js_expansion.mouseover .content .block_tree {width:100%; background-color:#FAFAFA; padding-bottom:0px;}
@@ -42,8 +42,8 @@ body.has_dock {margin-left:30px;margin-right:30px;}
 .divshadow .shadow_bottom_left {bottom:-3px;left:-3px;}
 
 /** IE stylings */
-.ie6 .sideblock .block_tree {width:160px;overflow-x:scroll;}
-.ie7 .sideblock .block_tree {overflow-x:scroll;}
+.ie6 .block .block_tree {width:160px;overflow-x:scroll;}
+.ie7 .block .block_tree {overflow-x:scroll;}
 .ie6 .block_tree .tree_item {width:100%;}
 .ie6 .dock {position:absolute;}
 .ie6 .dock hr {display:none;margin:0px;height:0px;padding:0px;}

@@ -50,8 +50,8 @@
 -----------------------*/
 .calendarlayout { width:100%; }
 .calendarlayout .sidecalendar { padding-left:15px; }
-.calendarlayout .sidecalendar .sideblock { width:210px; }
-.calendarlayout .sideblock .minicalendarblock h3 { text-align:center;font-size:1.2em; }
+.calendarlayout .sidecalendar .block { width:210px; }
+.calendarlayout .block .minicalendarblock h3 { text-align:center;font-size:1.2em; }
 
 .maincalendar .header .buttons { margin:0; }
 .maincalendar .calendarmonth td,

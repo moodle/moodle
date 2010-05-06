@@ -266,7 +266,7 @@ body#mod-forum-index .generalbox .cell {
 /** The location of these classes is unknown
  * Commented out with patch MDL-18971 version 3
  **/
-/*.sideblock .post .head {
+/*.block .post .head {
   color:#555555;
 }*/
 

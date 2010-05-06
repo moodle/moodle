@@ -28,8 +28,8 @@ a.dimmed_text,
 .unlist li,
 .inline-list,
 .inline-list li,
-.sideblock .list,
-.sideblock .list li,
+.block .list,
+.block .list li,
 .sitetopic .section li,
 .course-content .section li.activity,
 .tabtree li {list-style: none;margin:0;padding:0;}
@@ -60,7 +60,7 @@ a.autolink.glossary:hover {cursor: help;}
 .pagingbar .thispage,
 .headingblock {font-weight: bold;}
 img.resize {height: 1em;width: 1em;}
-.sideblock img.resize,
+.block img.resize,
 .breadcrumb img.resize {height: 0.9em;width: 0.8em;}
 img.icon {height:16px;vertical-align:middle;width:16px;}
 img.iconsmall {height:11px;margin-right:1px;vertical-align:middle;width:11px;}

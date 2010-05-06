@@ -172,8 +172,8 @@ body#question-preview .controls{text-align: center;}
 /** Mod quiz edit **/
 #page-mod-quiz-edit h2.main{display:inline;padding-right:1em;clear:left;}
 
-#page-mod-quiz-edit div.sideblock {float:right;width:30%;right:0.3em;padding-bottom:0.5em;display:block;border-width:0;}
-#page-mod-quiz-edit div.sideblock .content {padding:0;}
+#page-mod-quiz-edit div.block {float:right;width:30%;right:0.3em;padding-bottom:0.5em;display:block;border-width:0;}
+#page-mod-quiz-edit div.block .content {padding:0;}
 #page-mod-quiz-edit div.quizcontents {float:left;width:70%;display:block;clear:left;}
 #page-mod-quiz-edit div.quizwhenbankcollapsed {width:100%;}
 #page-mod-quiz-edit div.quizpage {display:block;clear:both;width:100%;}

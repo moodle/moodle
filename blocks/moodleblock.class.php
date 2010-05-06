@@ -534,7 +534,7 @@ class block_base {
     function html_attributes() {
         $attributes = array(
             'id' => 'inst' . $this->instance->id,
-            'class' => 'block_' . $this->name(). '  sideblock'
+            'class' => 'block_' . $this->name(). '  block'
         );
         if ($this->instance_can_be_docked() && get_user_preferences('docked_block_instance_'.$this->instance->id, 0)) {
             $attributes['class'] .= ' dock_on_load';
