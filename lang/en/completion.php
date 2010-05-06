@@ -28,7 +28,7 @@ $string['badautocompletion'] = 'When you select automatic completion, you must a
 $string['completedunlocked'] = 'Completion options unlocked';
 $string['completedunlockedtext'] = 'When you save changes, completion state for all students will be erased. If you change your mind about this, do not save the form.';
 $string['completedwarning'] = 'Completion options locked';
-$string['completedwarningtext'] = 'One or more students ({$a}) has already marked this activity completed. Changing completion options will erase their completion state and may cause confusion. The options have been locked and we recommend that you do not unlock them unless absolutely necessary.';
+$string['completedwarningtext'] = 'One or more students ({$a}) has already marked this activity as completed. Changing completion options will erase their completion state and may cause confusion. Thus the options have been locked and should not be unlocked unless absolutely necessary.';
 $string['completion'] = 'Completion tracking';
 $string['completion_help'] = 'If enabled, activity completion is tracked, either manually or automatically, based on certain conditions. Multiple conditions may be set if desired. If so, the activity will only be considered complete when ALL conditions are met.
 
@@ -70,7 +70,6 @@ $string['err_noactivities'] = 'Completion information is not enabled for any act
 $string['err_nousers'] = 'There are no students on this course or group for whom completion information is displayed. (By default, completion information is displayed only for students, so if there are no students, you will see this error. Administrators can alter this option via the admin screens.)';
 $string['err_system'] = 'An internal error occurred in the completion system. (System administrators can enable debugging information to see more detail.)';
 $string['excelcsvdownload'] = 'Download in Excel-compatible format (.csv)';
-$string['completionlocked_help'] = 'Completion options are locked because at least one student has already completed this activity.';
 $string['progress'] = 'Student progress';
 $string['progress-title'] = '{$a->user}, {$a->activity}: {$a->state} {$a->date}';
 $string['reportpage'] = 'Showing users {$a->from} to {$a->to} of {$a->total}.';
