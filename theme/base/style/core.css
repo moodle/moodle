@@ -477,8 +477,6 @@ body.tag .managelink {padding: 5px;}
 .file-picker .fp-rename-form p {margin: 1em;}
 .file-picker .fp-upload-form {margin: 2em 0;text-align:center;}
 .file-picker .fp-upload-btn {clear:both;margin-top: 2em;}
-.file-picker .fp-upload-btn a {cursor: default;background: white;border:1px solid gray;color:black;padding: .5em;}
-.file-picker .fp-upload-btn a:hover {background: gray;color:white;}
 .file-picker .fp-paging {margin:1em .5em;clear:both;text-align:center;line-height: 2.5em;}
 .file-picker .fp-paging a {padding: .5em;border: 1px solid #CCC;}
 .file-picker .fp-paging a.cur_page {border: 1px solid blue;}

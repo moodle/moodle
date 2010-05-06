@@ -908,13 +908,14 @@ M.core_filepicker.init = function(Y, options) {
             str += '</select>';
             str += '</td>';
             str += '</tr></table>';
-            str += '<div class="fp-upload-btn"><a id="'+id+'_action" href="###" >'+M.str.repository.upload+'...</a></div>';
             str += '</form>';
+            str += '<div class="fp-upload-btn"><button id="'+id+'_action">'+M.str.repository.upload+'...</button></div>';
             str += '</div>';
             var upload_form = Y.Node.create(str);
             Y.one('#panel-'+client_id).appendChild(upload_form);
             var scope = this;
-            Y.one('#'+id+'_action').on('click', function() {
+            Y.one('#'+id+'_action').on('click', function(e) {
+                e.preventDefault(); 
                 Y.use('io-upload-iframe', function() {
                     scope.request({
                             scope: scope,
