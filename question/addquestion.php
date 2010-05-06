@@ -40,6 +40,7 @@ $cmid = optional_param('cmid', 0, PARAM_INT);
 $courseid = optional_param('courseid', 0, PARAM_INT);
 $returnurl = optional_param('returnurl', 0, PARAM_LOCALURL);
 $appendqnumstring = optional_param('appendqnumstring', '', PARAM_ALPHA);
+$validationerror = optional_param('validationerror', false, PARAM_BOOL);
 
 // Place to accumulate hidden params for the form we will print.
 $hiddenparams = array('category' => $categoryid);
@@ -95,6 +96,7 @@ if ($cm !== null) {
 }
 
 // Display a form to choose the question type.
+echo $OUTPUT->notification(get_string('youmustselectaqtype', 'question'));
 echo $OUTPUT->box_start('generalbox boxwidthnormal boxaligncenter', 'chooseqtypebox');
 print_choose_qtype_to_add_form($hiddenparams);
 echo $OUTPUT->box_end();

@@ -187,4 +187,5 @@ $string['upgradeproblemcategoryloop'] = 'Problem detected when upgrading questio
 $string['upgradeproblemcouldnotupdatecategory'] = 'Could not update question category {$a->name} ({$a->id}).';
 $string['upgradeproblemunknowncategory'] = 'Problem detected when upgrading question categories. Category {$a->id} refers to parent {$a->parent}, which does not exist. Parent changed to fix problem.';
 $string['wrongprefix'] = 'Wrongly formatted nameprefix {$a}';
+$string['youmustselectaqtype'] = 'You must select a question type.';
 $string['yourfileshoulddownload'] = 'Your export file should start to download shortly. If not, please <a href="{$a}">click here</a>.';
