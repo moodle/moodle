@@ -56,21 +56,22 @@ class mod_resource_mod_form extends moodleform_mod {
 
         //-------------------------------------------------------
         $mform->addElement('header', 'contentsection', get_string('contentheader', 'resource'));
+        $mainfile = 'mainfile';
+
+        $mform->addElement('text', $mainfile, get_string('selectedfile'));
+        $mform->setType($mainfile, PARAM_PATH);
+        $mform->addRule($mainfile, null, 'required', null, 'client');
 
         $filemanager_options = array();
-        $filemanager_options['accepted_types'] = '*';
-
         // 3 == FILE_EXTERNAL & FILE_INTERNAL
         // These two constant names are defined in repository/lib.php
         $filemanager_options['return_types'] = 3;
+        $filemanager_options['accepted_types'] = '*';
         $filemanager_options['maxbytes'] = 0;
         $filemanager_options['maxfiles'] = -1;
-        $mainfile = 'mainfile';
         $filemanager_options['mainfile'] = $mainfile;
 
         $mform->addElement('filemanager', 'files', get_string('selectfiles'), null, $filemanager_options);
-        $mform->addElement('text', $mainfile, get_string('selectedfile'));
-        $mform->setType($mainfile, PARAM_PATH);
 
         //-------------------------------------------------------
         $mform->addElement('header', 'optionssection', get_string('optionsheader', 'resource'));
