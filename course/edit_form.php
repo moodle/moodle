@@ -76,14 +76,6 @@ class course_edit_form extends moodleform {
             $mform->setConstant('category', $category->id);
         }
 
-        $fullname  = get_string('defaultcoursefullname');
-        $shortname = get_string('defaultcourseshortname');
-        while ($DB->record_exists('course', array('fullname'=>$fullname))
-            or $DB->record_exists('course', array('fullname'=>$fullname))) {
-            $fullname++;
-            $shortname++;
-        }
-
         $mform->addElement('text','fullname', get_string('fullnamecourse'),'maxlength="254" size="50"');
         $mform->addHelpButton('fullname', 'fullnamecourse');
         $mform->addRule('fullname', get_string('missingfullname'), 'required', null, 'client');
@@ -93,8 +85,6 @@ class course_edit_form extends moodleform {
             $mform->setConstant('fullname', $course->fullname);
         }
 
-        $mform->setDefault('fullname', $fullname);
-
         $mform->addElement('text','shortname', get_string('shortnamecourse'),'maxlength="100" size="20"');
         $mform->addHelpButton('shortname', 'shortnamecourse');
         $mform->addRule('shortname', get_string('missingshortname'), 'required', null, 'client');
@@ -103,8 +93,6 @@ class course_edit_form extends moodleform {
             $mform->hardFreeze('shortname');
             $mform->setConstant('shortname', $course->shortname);
         }
-
-        $mform->setDefault('shortname', $shortname);
 
         $mform->addElement('text','idnumber', get_string('idnumbercourse'),'maxlength="100"  size="10"');
         $mform->addHelpButton('idnumber', 'idnumbercourse');
