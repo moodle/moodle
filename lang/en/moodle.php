@@ -1141,6 +1141,7 @@ $string['new'] = 'New';
 $string['newaccount'] = 'New account';
 $string['newcourse'] = 'New course';
 $string['newpassword'] = 'New password';
+$string['newpassword_help'] = 'Enter a new password or leave blank to keep current password.';
 $string['newpasswordfromlost'] = '<strong>NOTICE:</strong> Your <strong>Current Password</strong> will have been sent to you in the <strong>second</strong> of the two emails sent as part of the lost password recovery process. Make sure you have received your replacement password before continuing with this screen.';
 $string['newpasswordtext'] = 'Hi {$a->firstname},
 
