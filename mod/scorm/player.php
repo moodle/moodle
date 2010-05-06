@@ -3,7 +3,7 @@
 /// This page prints a particular instance of aicc/scorm package
 
     require_once('../../config.php');
-    require_once('locallib.php');
+    require_once($CFG->dirroot.'/mod/scorm/locallib.php');
     //
     // Checkin' script parameters
     //

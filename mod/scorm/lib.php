@@ -51,7 +51,7 @@ define('SCORM_TYPE_IMSREPOSITORY', 'imsrepository');
 function scorm_add_instance($scorm, $mform=null) {
     global $CFG, $DB;
 
-    require_once('locallib.php');
+    require_once($CFG->dirroot.'/mod/scorm/locallib.php');
 
     if (empty($scorm->timerestrict)) {
         $scorm->timeopen = 0;
@@ -141,7 +141,7 @@ function scorm_add_instance($scorm, $mform=null) {
 function scorm_update_instance($scorm, $mform=null) {
     global $CFG, $DB;
 
-    require_once('locallib.php');
+    require_once($CFG->dirroot.'/mod/scorm/locallib.php');
 
     if (empty($scorm->timerestrict)) {
         $scorm->timeopen = 0;
@@ -284,7 +284,7 @@ function scorm_delete_instance($id) {
  */
 function scorm_user_outline($course, $user, $mod, $scorm) {
     global $CFG;
-    require_once('locallib.php');
+    require_once($CFG->dirroot.'/mod/scorm/locallib.php');
 
     require_once("$CFG->libdir/gradelib.php");
     $grades = grade_get_grades($course->id, 'mod', 'scorm', $scorm->id, $user->id);
@@ -322,7 +322,7 @@ function scorm_user_complete($course, $user, $mod, $scorm) {
     $report = '';
     
     // First Access and Last Access dates for SCOs
-    require_once("locallib.php");
+    require_once($CFG->dirroot.'/mod/scorm/locallib.php');
     $timetracks = scorm_get_sco_runtime($scorm->id, false, $user->id);
     $firstmodify = $timetracks->start;
     $lastmodify = $timetracks->finish;
@@ -461,7 +461,7 @@ function scorm_user_complete($course, $user, $mod, $scorm) {
 function scorm_cron () {
     global $CFG, $DB;
 
-    require_once('locallib.php');
+    require_once($CFG->dirroot.'/mod/scorm/locallib.php');
 
     $sitetimezone = $CFG->timezone;
     /// Now see if there are any scorm updates to be done
@@ -499,7 +499,7 @@ function scorm_cron () {
  */
 function scorm_get_user_grades($scorm, $userid=0) {
     global $CFG, $DB;
-    require_once('locallib.php');
+    require_once($CFG->dirroot.'/mod/scorm/locallib.php');
 
     $grades = array();
     if (empty($userid)) {
