@@ -119,6 +119,7 @@ class site_registration_form extends moodleform {
         $mform =& $this->_form;
         $huburl = $this->_customdata['huburl'];
         $hubname = $this->_customdata['hubname'];
+        $password = $this->_customdata['password'];
         $admin = get_admin();
         $site = get_site();
 
@@ -166,6 +167,7 @@ class site_registration_form extends moodleform {
         //hidden parameters
         $mform->addElement('hidden', 'huburl', $huburl);
         $mform->addElement('hidden', 'hubname', $hubname);
+        $mform->addElement('hidden', 'password', $password);
 
         //the input parameters
         $mform->addElement('header', 'moodle', get_string('registrationinfo', 'hub'));

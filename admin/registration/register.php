@@ -42,6 +42,7 @@ admin_externalpage_setup('registration');
 
 
 $huburl = optional_param('huburl', '', PARAM_URL);
+$password = optional_param('password', '', PARAM_TEXT);
 $hubname = optional_param('hubname', '', PARAM_TEXT);
 if (empty($huburl) or !confirm_sesskey()) {
     throw new moodle_exception('cannotaccessthispage');
@@ -68,7 +69,8 @@ $registeredhub = $hub->get_registeredhub($huburl);
 
 $siteregistrationform = new site_registration_form('',
         array('alreadyregistered' => !empty($registeredhub->token),
-                'huburl' => $huburl, 'hubname' => $hubname));
+                'huburl' => $huburl, 'hubname' => $hubname,
+                'password' => $password));
 $fromform = $siteregistrationform->get_data();
 
 if (!empty($fromform) and confirm_sesskey()) {
@@ -125,17 +127,18 @@ if (!empty($fromform) and empty($update) and confirm_sesskey()) {
     if (!empty($fromform) and confirm_sesskey()) { // if the register button has been clicked
         $params = (array) $fromform; //we are using the form input as the redirection parameters (token, url and name)
 
-        if (empty($registeredhub)) {
+        $unconfirmedhub = $hub->get_unconfirmedhub($huburl);
+        if (empty($unconfirmedhub)) {
             //we save the token into the communication table in order to have a reference
-            $registeredhub = new stdClass();
-            $registeredhub->token = md5(uniqid(rand(),1));
-            $registeredhub->huburl = $huburl;
-            $registeredhub->hubname = $hubname;
-            $registeredhub->confirmed = 0;
-            $registeredhub->id = $hub->add_registeredhub($registeredhub);
+            $unconfirmedhub = new stdClass();
+            $unconfirmedhub->token = md5(uniqid(rand(),1));
+            $unconfirmedhub->huburl = $huburl;
+            $unconfirmedhub->hubname = $hubname;
+            $unconfirmedhub->confirmed = 0;
+            $unconfirmedhub->id = $hub->add_registeredhub($unconfirmedhub);
         }
 
-        $params['token'] = $registeredhub->token;
+        $params['token'] = $unconfirmedhub->token;
         $params['url'] = $CFG->wwwroot;
         redirect(new moodle_url(MOODLEORGHUBURL.'/local/hub/siteregistration.php', $params));
 

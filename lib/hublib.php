@@ -169,6 +169,17 @@ class hub {
         if (!empty($token)) {
             $params['token'] = $token;
         }
+        $params['confirmed'] = 1;
+        $token = $DB->get_record('registration_hubs',$params);
+        return $token;
+    }
+
+    public function get_unconfirmedhub($huburl) {
+        global $DB;
+
+        $params = array();
+        $params['huburl'] = $huburl;
+        $params['confirmed'] = 0;
         $token = $DB->get_record('registration_hubs',$params);
         return $token;
     }

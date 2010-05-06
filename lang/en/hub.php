@@ -175,5 +175,6 @@ $string['untrustme'] = 'Untrust';
 $string['updatesite'] = 'Update registration on {$a}';
 $string['url'] = 'hub URL';
 $string['usersnumber'] = 'Number of users ({$a})';
+$string['wrongtoken'] = 'The registration failed. Press continue and try again.';
 $string['wrongurlformat'] = 'Bad URL format';
 

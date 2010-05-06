@@ -46,9 +46,8 @@ $token           = optional_param('token', '', PARAM_ALPHANUM);
 $hub = new hub();
 
 //check that the token/url couple exist and is not confirmed
-$registeredhub = $hub->get_registeredhub($url);
-if (!empty($registeredhub) and  $registeredhub->confirmed == 0
-        and $registeredhub->token == $token) {
+$registeredhub = $hub->get_unconfirmedhub($url);
+if (!empty($registeredhub) and $registeredhub->token == $token) {
 
     $registeredhub->token = $newtoken;
     $registeredhub->confirmed = 1;
@@ -58,7 +57,7 @@ if (!empty($registeredhub) and  $registeredhub->confirmed == 0
     echo $OUTPUT->notification(get_string('registrationconfirmed', 'hub'), 'notifysuccess');
     echo $OUTPUT->footer();
 } else {
-    throw new moodle_exception('wrongtoken');
+    throw new moodle_exception('wrongtoken', 'hub', $CFG->wwwroot.'/admin/registration/index.php');
 }
 
 
