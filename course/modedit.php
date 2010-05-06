@@ -196,6 +196,7 @@ if (!empty($type)) { //TODO: hopefully will be removed in 2.0
     $pagepath .= 'mod';
 }
 $PAGE->set_pagetype($pagepath);
+$PAGE->set_pagelayout('admin');
 
 $modmoodleform = "$CFG->dirroot/mod/$module->name/mod_form.php";
 if (file_exists($modmoodleform)) {
@@ -578,7 +579,6 @@ if ($mform->is_cancelled()) {
     $PAGE->set_title($streditinga);
     $PAGE->set_focuscontrol($mform->focus());
     $PAGE->set_cacheable(false);
-    $PAGE->set_pagelayout('admin');
     echo $OUTPUT->header();
 
     if (!empty($cm->id)) {
