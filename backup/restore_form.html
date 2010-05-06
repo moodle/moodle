@@ -274,7 +274,7 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
         echo '<label for="fullnamefield">'.get_string ('fullname').'</label>';
         echo "</td>";
         echo "<td><input type=\"text\" id=\"fullnamefield\" name=\"fullname\" maxlength=\"254\" size=\"50\" value=\"".s($form1->fullname)."\" alt=\" ".get_string("fullname")."\"  />" ;
-        echo $OUTPUT->old_help_icon("coursefullname", get_string("fullname"));
+        echo $OUTPUT->help_icon('fullnamecourse');
         if (isset($err["fullname"])) echo $OUTPUT->error_text($err["fullname"]);
         echo"</td></tr>";
     } else {
