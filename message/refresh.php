@@ -27,7 +27,6 @@ require('lib.php');
 define('MESSAGE_DEFAULT_REFRESH', 5);
 
 require_login();
-echo('refresh.php');
 
 if (isguestuser()) {
     redirect($CFG->wwwroot);
