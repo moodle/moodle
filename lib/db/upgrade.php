@@ -101,7 +101,9 @@ function xmldb_main_upgrade($oldversion) {
         $index = new xmldb_index('contextid-lowerboundary', XMLDB_INDEX_NOTUNIQUE, array('contextid', 'lowerboundary'));
 
     /// Launch drop index contextid-lowerboundary
-        $dbman->drop_index($table, $index);
+        if ($dbman->index_exists($table, $index)) {
+            $dbman->drop_index($table, $index);
+        }
 
     /// Define index contextid-lowerboundary-letter (unique) to be added to grade_letters
         $table = new xmldb_table('grade_letters');

@@ -907,7 +907,7 @@ class database_manager {
         if (!$this->index_exists($xmldb_table, $xmldb_intex)) {
             throw new ddl_exception('ddlunknownerror', null,
                       'Index ' . $xmldb_table->getName() . '->' . $xmldb_intex->getName() .
-                      ' does not exist. Delete skipped');
+                      ' does not exist. Drop skipped');
         }
 
         if (!$sqlarr = $this->generator->getDropIndexSQL($xmldb_table, $xmldb_intex)) {
