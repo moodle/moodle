@@ -1,18 +1,17 @@
 <?php
-	header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
-	header("Cache-Control: no-cache");
-	header("Pragma: no-cache");
+    header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
+    header("Cache-Control: no-cache");
+    header("Pragma: no-cache");
 
     require_once('../../config.php');
-    include_once('lib.php');
-    require_once('locallib.php');
-    require_once('datamodels/aicclib.php');
+    include_once($CFG->dirroot.'/mod/scorm/lib.php');
+    require_once($CFG->dirroot.'/mod/scorm/locallib.php');
+    require_once($CFG->dirroot.'/mod/scorm/datamodels/aicclib.php');
 
-	foreach ($_POST as $key => $value)
-		{
-			$tempkey = strtolower($key);
-			$_POST[$tempkey] = $value;
-	}
+    foreach ($_POST as $key => $value) {
+        $tempkey = strtolower($key);
+        $_POST[$tempkey] = $value;
+    }
 
     $command = required_param('command', PARAM_ALPHA);
     $sessionid = required_param('session_id', PARAM_ALPHANUM);
