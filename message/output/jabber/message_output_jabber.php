@@ -82,7 +82,7 @@ class message_output_jabber extends message_output {
      * @param object $mform preferences form class
      */
     function config_form($preferences){
-        return get_string('jabberid', 'messageprocessor_jabber').': <input size="30" name="jabber_jabberid" value="'.$preferences->jabber_jabberid.'" />';
+        return get_string('jabberid', 'message_jabber').': <input size="30" name="jabber_jabberid" value="'.$preferences->jabber_jabberid.'" />';
     }
 
     /**
