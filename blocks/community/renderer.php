@@ -80,6 +80,14 @@ class block_community_renderer extends plugin_renderer_base {
 
                 //create description to display
                 $course->subject = get_string($course->subject, 'edufields');
+                $course->audience = get_string('audience'.$course->audience, 'hub');
+                $course->educationallevel = get_string('edulevel'.$course->educationallevel, 'hub');
+                if (!empty($course->contributornames)) {
+                    $course->contributorname = get_string('contributors', 'block_community', $course->contributorname);
+                }
+                if (!empty($course->coverage)) {
+                    $course->coverage = get_string('coverage', 'block_community', $course->coverage);
+                }
                 $deschtml = $course->description; //the description
                 /// courses and sites number display under the description, in smaller
                 $deschtml .= html_writer::empty_tag('br');
