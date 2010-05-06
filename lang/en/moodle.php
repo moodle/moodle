@@ -902,7 +902,6 @@ $string['checknone'] = 'Check none';
 $string['childcoursenotfound'] = 'Child course not found!';
 $string['childcourses'] = 'Child courses';
 $string['choose'] = 'Choose';
-$string['chooseauthmethod'] = 'Choose authentication plugin';
 $string['choosecourse'] = 'Choose a course';
 $string['choosedots'] = 'Choose...';
 $string['chooseenrolmethod'] = 'Choose enrolment plugin';

@@ -212,8 +212,6 @@ abstract class moodleform_mod extends moodleform {
                             get_string('completedwarning', 'completion'),
                             get_string('completedwarningtext', 'completion', $completedcount)),
                         'unlockcompletion');
-                    $mform->addHelpButton('completedwarning', 'completionlocked', 'completion');
-
                     $freeze = true;
                 }
             }
