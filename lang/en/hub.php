@@ -25,11 +25,11 @@
  */
 
 $string['addedtoblock'] = 'Course added to block';
-$string['advertise'] = 'Advertise';
-$string['advertiseon'] = 'Advertise on {$a}';
-$string['advertiseonhub'] = 'Advertise on hub';
-$string['advertiseonmoodleorg'] = 'Advertise on Moodle.org';
-$string['advertiseonspecifichub'] = 'Advertise on a specific hub';
+$string['advertise'] = 'Publish as enrollable';
+$string['advertiseon'] = 'Publish as enrollable on {$a}';
+$string['advertiseonhub'] = 'Publish as enrollable on hub';
+$string['advertiseonmoodleorg'] = 'Publish as enrollable on Moodle.org';
+$string['advertiseonspecifichub'] = 'Publish as enrollable on a specific hub';
 $string['all'] = 'All';
 $string['allowglobalsearch'] = 'Publish this hub and allow global search of all courses';
 $string['allowpublicsearch'] = 'Publish this hub so people can join it';
@@ -145,11 +145,11 @@ $string['selecthub'] = 'Select hub';
 $string['sendfollowinginfo'] = 'Send the following information:';
 $string['settings'] = 'Settings';
 $string['settingsupdated'] = 'Settings have been updated.';
-$string['share'] = 'Share';
-$string['shareon'] = 'Share on {$a}';
-$string['shareonhub'] = 'Share on hub';
-$string['shareonmoodleorg'] = 'Share on Moodle.org';
-$string['shareonspecifichub'] = 'Share on a specific hub';
+$string['share'] = 'Publish as downloadable';
+$string['shareon'] = 'Publish as downloadable on {$a}';
+$string['shareonhub'] = 'Publish as downloadable on hub';
+$string['shareonmoodleorg'] = 'Publish as downloadable on Moodle.org';
+$string['shareonspecifichub'] = 'Publish as downloadable on a specific hub';
 $string['siteadmin'] = 'Administrator';
 $string['sitecreated'] = 'Site created';
 $string['sitedesc'] = 'Description';
