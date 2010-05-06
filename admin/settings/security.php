@@ -6,9 +6,9 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
     $temp = new admin_settingpage('ipblocker', get_string('ipblocker', 'admin'));
     $temp->add(new admin_setting_configcheckbox('allowbeforeblock', get_string('allowbeforeblock', 'admin'), get_string('allowbeforeblockdesc', 'admin'), 0));
     $temp->add(new admin_setting_configiplist('allowedip', get_string('allowediplist', 'admin'),
-                                                '', ''));
+                                                get_string('ipblockersyntax', 'admin'), ''));
     $temp->add(new admin_setting_configiplist('blockedip', get_string('blockediplist', 'admin'),
-                                                '', ''));
+                                                get_string('ipblockersyntax', 'admin'), ''));
     $ADMIN->add('security', $temp);
 
     // "sitepolicies" settingpage
