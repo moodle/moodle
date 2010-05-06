@@ -333,9 +333,6 @@ class workshop_manual_allocator implements workshop_allocator {
         if (empty($users)) {
             return null;
         }
-        if (count($users) > 9999) {
-            throw coding_exception('two many users');
-        }
 
         list($authorids, $authorparams)     = $DB->get_in_or_equal(array_keys($users), SQL_PARAMS_NAMED, 'a0000');
         list($reviewerids, $reviewerparams) = $DB->get_in_or_equal(array_keys($users), SQL_PARAMS_NAMED, 'r0000');
