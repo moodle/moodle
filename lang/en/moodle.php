@@ -29,7 +29,7 @@ $string['actions'] = 'Actions';
 $string['active'] = 'Active';
 $string['activeusers'] = 'Active users';
 $string['activities'] = 'Activities';
-$string['activities_help'] = 'Moodle contains a wide range of activity modules that can be used to build up any type of course.';
+$string['activities_help'] = 'Activities, such as forums, quizzes and wikis, enable interactive content to be added to the course.';
 $string['activity'] = 'Activity';
 $string['activityclipboard'] = 'Moving this activity: <b>{$a}</b>';
 $string['activityiscurrentlyhidden'] = 'Sorry, this activity is currently hidden';
@@ -264,6 +264,11 @@ $string['continue'] = 'Continue';
 $string['continuetocourse'] = 'Click here to enter your course';
 $string['convertingwikitomarkdown'] = 'Converting Wiki to Markdown';
 $string['cookiesenabled'] = 'Cookies must be enabled in your browser';
+$string['cookiesenabled_help'] = 'Two cookies are used by this site:
+
+The essential one is the session cookie, usually called MoodleSession. You must allow this cookie into your browser to provide continuity and maintain your login from page to page. When you log out or close the browser this cookie is destroyed (in your browser and on the server).
+
+The other cookie is purely for convenience, usually called something like MOODLEID. It just remembers your username within the browser. This means when you return to this site the username field on the login page will be already filled out for you. It is safe to refuse this cookie - you will just have to retype your username every time you log in.';
 $string['cookiesnotenabled'] = 'Unfortunately, cookies are currently not enabled in your browser';
 $string['copy'] = 'copy';
 $string['copyasnoun'] = 'copy';
@@ -1436,7 +1441,7 @@ $string['resettodefaults'] = 'Reset to defaults';
 $string['resortcoursesbyname'] = 'Re-sort courses by name';
 $string['resource'] = 'Resource';
 $string['resources'] = 'Resources';
-$string['resources_help'] = 'Resources are reading materials.';
+$string['resources_help'] = 'Resource types enable almost any kind of web content to be inserted into the course.';
 $string['restore'] = 'Restore';
 $string['restorecancelled'] = 'Restore cancelled';
 $string['restorecannotassignroles'] = 'Restore needs to assign roles and you do not have permission to do so';
