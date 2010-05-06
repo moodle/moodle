@@ -39,7 +39,7 @@ class user_editadvanced_form extends moodleform {
             $auth_options[$auth] = get_string('pluginname', "auth_{$auth}");
         }
         $mform->addElement('select', 'auth', get_string('chooseauthmethod','auth'), $auth_options);
-        $mform->setHelpButton('auth', array('authchange', get_string('chooseauthmethod','auth')));
+        $mform->addHelpButton('auth', 'chooseauthmethod', 'auth');
         $mform->setAdvanced('auth');
 
         if (!empty($CFG->passwordpolicy)){
