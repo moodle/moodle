@@ -90,7 +90,7 @@ echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
 echo '</fieldset>';
 $table = new html_table();
 $table->head  = array (get_string('fullname'),
-    get_string('content', 'notes') . $OUTPUT->old_help_icon('writing', get_string('helpwriting')),
+    get_string('content', 'notes'),
     get_string('publishstate', 'notes') . $OUTPUT->old_help_icon('status', get_string('publishstate', 'notes'), 'notes'),
     );
 $table->align = array ('left', 'center', 'center');

@@ -477,7 +477,6 @@ class mod_assignment_online_edit_form extends moodleform {
         // visible elements
         $mform->addElement('editor', 'text_editor', get_string('submission', 'assignment'), null, $this->get_editor_options());
         $mform->setType('text_editor', PARAM_RAW); // to be cleaned before display
-        $mform->setHelpButton('text_editor', array('reading', 'writing', 'richtext2'), false, 'editorhelpbutton');
         $mform->addRule('text_editor', get_string('required'), 'required', null, 'client');
 
         // hidden params

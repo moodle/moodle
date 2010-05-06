@@ -116,7 +116,6 @@ echo get_string('users'). ': ' . implode(', ', $userlist) . '.';
 echo '</p>';
 
 echo '<p>' . get_string('content', 'notes');
-echo $OUTPUT->old_help_icon('writing', get_string('helpwriting'));
 echo '<br /><textarea name="content" rows="5" cols="50">' . strip_tags(@$content) . '</textarea></p>';
 
 echo '<p>' . $strpublishstate;

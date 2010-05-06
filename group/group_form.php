@@ -40,7 +40,7 @@ class group_form extends moodleform {
             $mform->addElement('select', 'hidepicture', get_string('hidepicture'), $options);
 
             $mform->addElement('file', 'imagefile', get_string('newpicture', 'group'));
-            $mform->setHelpButton('imagefile', array ('picture', get_string('helppicture')), true);
+            $mform->addHelpButton('imagefile', 'newpicture', 'group');
         }
 
         $mform->addElement('hidden','id');

@@ -12,25 +12,6 @@
     <?php print_textarea($usehtmleditor, 25, 65, 630, 400, "messagebody", $messagebody); ?>
     </td>
 </tr>
-<tr valign="top">
-    <td align="right" valign="middle" nowrap="nowrap">
-     <?php
-     //TODO: replace by new editor stuff!
-        echo $OUTPUT->old_help_icon("reading", get_string("helpreading"), "moodle", true);
-        echo "<br />";
-        echo $OUTPUT->old_help_icon("writing", get_string("helpwriting"), "moodle", true);
-        echo "<br />";
-        echo $OUTPUT->old_help_icon("questions", get_string("helpquestions"), "moodle", true);
-        echo "<br />";
-        if ($usehtmleditor) {
-           echo $OUTPUT->old_help_icon("richtext2", get_string("helprichtext"), "moodle", true);
-        } else {
-           //emoticonhelpbutton("theform", "message"); to be replaced by new editor stuff
-        }
-      ?>
-     <br />
-    </td>
-</tr>
 
 <tr valign="top">
     <td align="right"><b><?php print_string("formattexttype"); ?>:</b></td>

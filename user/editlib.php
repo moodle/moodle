@@ -230,7 +230,7 @@ function useredit_shared_definition(&$mform, $editoroptions = null) {
 
     $mform->addElement('editor', 'description_editor', get_string('userdescription'), null, $editoroptions);
     $mform->setType('description_editor', PARAM_CLEANHTML);
-    $mform->setHelpButton('description_editor', array('text2', get_string('helptext')));
+    $mform->addHelpButton('description_editor', 'userdescription');
 
     if (!empty($CFG->gdversion)) {
         $mform->addElement('header', 'moodle_picture', get_string('pictureofuser'));
@@ -241,7 +241,7 @@ function useredit_shared_definition(&$mform, $editoroptions = null) {
         $mform->setDefault('deletepicture',false);
 
         $mform->addElement('file', 'imagefile', get_string('newpicture'));
-        $mform->setHelpButton('imagefile', array('picture', get_string('helppicture')));
+        $mform->addHelpButton('imagefile', 'newpicture');
 
         $mform->addElement('text', 'imagealt', get_string('imagealt'), 'maxlength="100" size="30"');
         $mform->setType('imagealt', PARAM_MULTILANG);
@@ -251,7 +251,7 @@ function useredit_shared_definition(&$mform, $editoroptions = null) {
     if (!empty($CFG->usetags)) {
         $mform->addElement('header', 'moodle_interests', get_string('interests'));
         $mform->addElement('tags', 'interests', get_string('interestslist'), array('display' => 'noofficial'));
-        $mform->setHelpButton('interests', array('interestslist', get_string('helpinterestslist'), false, true, false));
+        $mform->addHelpButton('interests', 'interestslist');
     }
 
     /// Moodle optional fields

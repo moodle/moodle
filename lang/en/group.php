@@ -119,6 +119,7 @@ $string['namingscheme'] = 'Naming scheme';
 $string['namingschemehelp'] = 'Use @ character to represent the group letter (A-Z) or # to represent the group number.';
 $string['newgrouping'] = 'New grouping';
 $string['newpicture'] = 'New picture';
+$string['newpicture_help'] = 'Select an image in JPG or PNG format. The image will be cropped to a square and resized to 100x100 pixels.';
 $string['noallocation'] = 'No allocation';
 $string['nogroups'] = 'There are no groups setup in this course yet';
 $string['nogroupsassigned'] = 'No groups assigned';
