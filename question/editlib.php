@@ -1038,7 +1038,7 @@ class question_bank_view {
     /// Build the where clause.
         $tests = array('parent = 0');
 
-        if ($showhidden) {
+        if (!$showhidden) {
             $tests[] = 'hidden = 0';
         }
 
