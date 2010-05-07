@@ -468,8 +468,13 @@ class question_dataset_dependent_questiontype extends default_questiontype {
                         }
                         $itemcount++;
                         }
-                        //update item count
-                        $datasetdef->itemcount =$itemcount;
+                        //update item count to olditemcount if 
+                        // at least this number of items has been recover from the database
+                        if( $olditemcount <= $itemcount ) {
+                            $datasetdef->itemcount = $olditemcount;
+                        } else {
+                            $datasetdef->itemcount = $itemcount ;
+                        }
                         update_record('question_dataset_definitions', $datasetdef);
                     } // end of  copy the dataitems
                 }// end of  copy the datasetdef
