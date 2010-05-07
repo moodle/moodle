@@ -1592,8 +1592,13 @@ class question_calculated_qtype extends default_questiontype {
                             $DB->insert_record('question_dataset_items', $item);
                             $itemcount++;
                         }
-                        //update item count
-                        $datasetdef->itemcount =$itemcount;
+                        //update item count to olditemcount if 
+                        // at least this number of items has been recover from the database
+                        if( $olditemcount <= $itemcount ) {
+                            $datasetdef->itemcount = $olditemcount;
+                        } else {
+                            $datasetdef->itemcount = $itemcount ;
+                        }
                         $DB->update_record('question_dataset_definitions', $datasetdef);
                     } // end of  copy the dataitems
                 }// end of  copy the datasetdef
