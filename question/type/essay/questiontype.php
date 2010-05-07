@@ -42,13 +42,11 @@ class question_essay_qtype extends default_questiontype {
 
     function print_question_formulation_and_controls(&$question, &$state, $cmoptions, $options) {
         global $CFG;
-        static $htmleditorused = false;
 
         $answers       = &$question->options->answers;
         $readonly      = empty($options->readonly) ? '' : 'disabled="disabled"';
 
         // Only use the rich text editor for the first essay question on a page.
-        $usehtmleditor = can_use_html_editor() && !$htmleditorused;
 
         $formatoptions          = new stdClass;
         $formatoptions->noclean = true;
@@ -82,7 +80,8 @@ class question_essay_qtype extends default_questiontype {
         // answer
         if (empty($options->readonly)) {
             // the student needs to type in their answer so print out a text editor
-            $answer = print_textarea($usehtmleditor, 18, 80, 630, 400, $inputname, $value, $cmoptions->course, true);
+            $answer = print_textarea(can_use_html_editor(), 18, 80, 630, 400,
+                    $inputname, $value, $cmoptions->course, true);
         } else {
             // it is read only, so just format the students answer and output it
             $safeformatoptions = new stdClass;
@@ -93,10 +92,6 @@ class question_essay_qtype extends default_questiontype {
         }
 
         include("$CFG->dirroot/question/type/essay/display.html");
-
-        if ($usehtmleditor && empty($options->readonly)) {
-            $htmleditorused = true;
-        }
     }
 
     function grade_responses(&$question, &$state, $cmoptions) {
