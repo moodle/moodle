@@ -175,7 +175,7 @@
     }
 
 /// Show scores (if the user is allowed to see scores at the moment).
-    $grade = quiz_rescale_grade($attempt->sumgrades, $quiz);
+    $grade = quiz_rescale_grade($attempt->sumgrades, $quiz, false);
     if ($options->scores) {
         if (quiz_has_grades($quiz)) {
             if($overtime) {
@@ -194,7 +194,7 @@
 
         /// Now the scaled grade.
             $a = new stdClass;
-            $a->grade = '<b>' . $grade . '</b>';
+            $a->grade = '<b>' . quiz_format_grade($quiz, $grade) . '</b>';
             $a->maxgrade = quiz_format_grade($quiz, $quiz->grade);
             $a->percent = '<b>' . round(($attempt->sumgrades/$quiz->sumgrades)*100, 0) . '</b>';
             $rows[] = '<tr><th scope="row" class="cell">' . get_string('grade') . '</th><td class="cell">' .

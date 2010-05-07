@@ -401,8 +401,7 @@ function quiz_has_grades($quiz) {
 /**
  * Get the best current grade for a particular user in a quiz.
  *
- * @global object
- * @param object $quiz the quiz object.
+ * @param object $quiz the quiz settings.
  * @param integer $userid the id of the user.
  * @return float the user's current grade for this quiz, or NULL if this user does
  * not have a grade on this quiz.
@@ -412,11 +411,11 @@ function quiz_get_best_grade($quiz, $userid) {
     $grade = $DB->get_field('quiz_grades', 'grade', array('quiz' => $quiz->id, 'userid' => $userid));
 
     // Need to detect errors/no result, without catching 0 scores.
-    if (is_numeric($grade)) {
-        return quiz_format_grade($quiz, $grade);
-    } else {
-        return NULL;
+    if ($grade === false) {
+        return null;
     }
+
+    return $grade + 0; // Convert to number.
 }
 
 /**

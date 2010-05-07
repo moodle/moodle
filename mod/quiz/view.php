@@ -318,7 +318,10 @@
                 $a->quizgrade = quiz_format_grade($quiz, $quiz->grade);
                 $resultinfo .= $OUTPUT->heading(get_string('gradesofar', 'quiz', $a), 2, 'main');
             } else {
-                $a = quiz_format_grade($quiz, $mygrade) . '/' . quiz_format_grade($quiz, $quiz->grade);
+                $a = new stdClass;
+                $a->grade = quiz_format_grade($quiz, $mygrade);
+                $a->maxgrade = quiz_format_grade($quiz, $quiz->grade);
+                $a = get_string('outofshort', 'quiz', $a);
                 $resultinfo .= $OUTPUT->heading(get_string('yourfinalgradeis', 'quiz', $a), 2, 'main');
             }
         }

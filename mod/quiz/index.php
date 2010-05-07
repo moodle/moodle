@@ -89,6 +89,13 @@
             array_push($align, 'left');
         }
         $showing = 'scores';  // default
+
+        $scores = $DB->get_records_sql_menu('
+                SELECT qg.quiz, qg.grade
+                FROM {quiz_grades} qg
+                JOIN {quiz} q ON q.id = qg.quiz
+                WHERE q.course = ?',
+                $course->id);
     }
 
     $table = new html_table();
@@ -141,18 +148,20 @@
         } else if ($showing == 'scores') {
 
             // Grade and feedback.
-            $bestgrade = quiz_get_best_grade($quiz, $USER->id);
             $attempts = quiz_get_user_attempts($quiz->id, $USER->id, 'all');
             list($someoptions, $alloptions) = quiz_get_combined_reviewoptions($quiz, $attempts, $context);
 
             $grade = '';
             $feedback = '';
-            if ($quiz->grade && !is_null($bestgrade)) {
+            if ($quiz->grade && array_key_exists($quiz->id, $scores)) {
                 if ($alloptions->scores) {
-                    $grade = "$bestgrade / $quiz->grade";
+                    $a = new stdClass;
+                    $a->grade = quiz_format_grade($quiz, $scores[$quiz->id]);
+                    $a->maxgrade = quiz_format_grade($quiz, $quiz->grade);
+                    $grade = get_string('outofshort', 'quiz', $a);
                 }
                 if ($alloptions->overallfeedback) {
-                    $feedback = quiz_feedback_for_grade($bestgrade, $quiz->id);
+                    $feedback = quiz_feedback_for_grade($scores[$quiz->id], $quiz->id);
                 }
             }
             $data[] = $grade;
