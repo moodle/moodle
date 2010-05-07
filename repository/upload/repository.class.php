@@ -81,7 +81,10 @@ class repository_upload extends repository {
         $ret['nosearch'] = true;
         // define upload form in file picker
         $ret['upload'] = array('label'=>get_string('attachment', 'repository'), 'id'=>'repo-form');
-        $ret['manage'] = $CFG->wwwroot .'/files/index.php'; // temporary
+
+        if (has_capability('moodle/course:managefiles', $this->context)) {
+            $ret['manage'] = $CFG->wwwroot .'/files/index.php';
+        }
         $ret['list'] = array();
         $ret['dynload'] = false;
         return $ret;
