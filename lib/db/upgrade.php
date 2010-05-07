@@ -2986,7 +2986,7 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         upgrade_main_savepoint($result, 2010031900);
     }
 
-   
+
     if ($result && $oldversion < 2010032400) {
         // Upgrade all of those using the standardold theme to the use the standard
         // theme instead
@@ -3699,7 +3699,7 @@ AND EXISTS (SELECT 'x'
         upgrade_main_savepoint($result, 2010042802);
     }
 
-    
+
     if ($result && $oldversion < 2010043000) {  // Adding new course completion feature
 
     /// Add course completion tables
@@ -3967,14 +3967,14 @@ AND EXISTS (SELECT 'x'
         if (!$DB->record_exists('my_pages', array('userid'=>NULL, 'private'=>1))) {
             $result = $result && $DB->insert_record('my_pages', $mypage);
         }
-    
+
     /// This bit is a "illegal" hack, unfortunately, but there is not a better way to install default
-    /// blocks right now, since the upgrade function need to be called after core AND plugins upgrade, 
+    /// blocks right now, since the upgrade function need to be called after core AND plugins upgrade,
     /// and there is no such hook yet.  Sigh.
 
         if ($mypage = $DB->get_record('my_pages', array('userid'=>NULL, 'private'=>1))) {
-            if (!$DB->record_exists('block_instances', array('pagetypepattern'=>'my-index', 'parentcontextid'=>SITEID, 'subpagepattern'=>$mypage->id))) {   
-            
+            if (!$DB->record_exists('block_instances', array('pagetypepattern'=>'my-index', 'parentcontextid'=>SITEID, 'subpagepattern'=>$mypage->id))) {
+
                 // No default exist there yet, let's put a few into My Moodle so it's useful.
 
                 $blockinstance = new stdClass;
@@ -4007,7 +4007,15 @@ AND EXISTS (SELECT 'x'
     /// Main savepoint reached
         upgrade_main_savepoint($result, 2010050403);
     }
-
+    // fix repository_alfresco version number
+    if ($result && $oldversion < 2010050411) {
+        // force to change repository_alfresco version number to upgrade smoothly (from preview 1 -> preview 2)
+        if ($repository_plugin = $DB->get_record('config_plugins', array('plugin'=>'repository_alfresco', 'name'=>'version'))) {
+            $repository_plugin->value = '2008000000';
+            $DB->update_record('config_plugins', $repository_plugin);
+        }
+        upgrade_main_savepoint($result, 2010050411);
+    }
 
     return $result;
 }
