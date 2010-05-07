@@ -536,8 +536,8 @@ body.tag .managelink {padding: 5px;}
 /**
  * Help Content (pop-up)
  */
- .helppopup {background-color: #FFE691; border: 1px solid #848484;}
- .helppopup .yui3-widget-hd {float:right;margin:3px 3px 0 0;}
- .helppopup .yui3-widget-bd {margin:0 1em 1em 1em;border-top:1px solid #FFE691;}
- .helppopup .helpheading {font-size: 1em;}
- .helppopup .spinner {margin:1em;}
+#helppopupbox {background-color: #FFE691; border: 1px solid #848484;}
+#helppopupbox .yui3-widget-hd {float:right;margin:3px 3px 0 0;}
+#helppopupbox .yui3-widget-bd {margin:0 1em 1em 1em;border-top:1px solid #FFE691;}
+#helppopupbox .helpheading {font-size: 1em;}
+#helppopupbox .spinner {margin:1em;} 
