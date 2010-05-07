@@ -41,16 +41,29 @@ $string['aggregatemedian'] = 'Median of grades';
 $string['aggregatemin'] = 'Lowest grade';
 $string['aggregatemode'] = 'Mode of grades';
 $string['aggregateonlygraded'] = 'Aggregate only non-empty grades';
+$string['aggregateonlygraded_help'] = 'An empty grade is a grade which is missing from the gradebook. It may be from an assignment submission which has not yet been graded or from a quiz which has not yet been attempted etc.
+
+This setting determines whether non-empty grades are not included in the aggregation (checkbox ticked) or are counted as minimal grades, for example 0 for an assignment graded between 0 and 100.';
 $string['aggregateonlygradedhelp'] = 'Nonexistent grades are either treated as minimal grades or not included in aggregation.';
 $string['aggregateoutcomes'] = 'Include outcomes in aggregation';
 $string['aggregateoutcomeshelp'] = 'Including outcomes in aggregation may not lead to the desired overall grade, so you have the option to include or leave them out.';
 $string['aggregatesonly'] = 'Aggregates only';
 $string['aggregatesubcats'] = 'Aggregate including subcategories';
+$string['aggregatesubcats_help'] = 'This setting determines whether grades in subcategories are included in the aggregation (checkbox ticked).';
 $string['aggregatesubcatshelp'] = 'The aggregation is usually done only with immediate children, it is also possible to aggregate including individual grades in all subcategories excluding other aggregated grades.';
 $string['aggregatesum'] = 'Sum of grades';
 $string['aggregateweightedmean'] = 'Weighted mean of grades';
 $string['aggregateweightedmean2'] = 'Simple weighted mean of grades';
 $string['aggregation'] = 'Aggregation';
+$string['aggregation_help'] = 'The aggregation determines how grades in a category are combined, such as
+
+* Mean of grades - The sum of all grades divided by the total number of grades
+* Median of grades - The middle grade when grades are arranged in order of size
+* Lowest grade
+* Highest grade
+* Mode of grades - The grade that occurs the most frequently
+* Sum of grades - The sum of all grade values, with scale grades being ignored';
+$string['aggregation_link'] = 'grade/aggregation';
 $string['aggregationcoef'] = 'Aggregation coefficient';
 $string['aggregationcoefextra'] = 'Extra credit';
 $string['aggregationcoefextrahelp'] = 'Extra credit for this grade item during aggregation.';
@@ -168,6 +181,7 @@ $string['displaypoints'] = 'Display points';
 $string['displayweighted'] = 'Display weighted grades';
 $string['dropdown'] = 'Dropdown menu';
 $string['droplow'] = 'Drop the lowest';
+$string['droplow_help'] = 'This setting enables a specified number of the lowest grades to be excluded from the aggregation.';
 $string['droplowhelp'] = 'If set, this option will drop the X lowest grades, X being the selected value for this option.';
 $string['dropped'] = 'Dropped';
 $string['dropxlowest'] = 'Drop X lowest';
@@ -392,6 +406,7 @@ $string['morethanmax'] = 'The grade entered for {$a->itemname} for {$a->username
 $string['moveselectedto'] = 'Move selected items to';
 $string['movingelement'] = 'Moving {$a}';
 $string['multfactor'] = 'Multiplicator';
+$string['multfactor_help'] = 'The multiplicator is the factor by which all grades for this grade item will be multiplied, with a maximum value of the maximum grade. For example, if the multiplicator is 2 and the maximum grade is 100, then all grades less than 50 are multiplied by 2, and all grades 50 and above are changed to 100.';
 $string['multfactorhelp'] = 'Factor by which all grades for this grade item will be multiplied.';
 $string['mypreferences'] = 'My preferences';
 $string['myreportpreferences'] = 'My report preferences';
@@ -466,6 +481,7 @@ $string['percentascending'] = 'Sort by percent ascending';
 $string['percentdescending'] = 'Sort by percent descending';
 $string['percentshort'] = '%';
 $string['plusfactor'] = 'Offset';
+$string['plusfactor_help'] = 'The offset is a number that is added to every grade for this grade item, after the multiplicator is applied.';
 $string['plusfactorhelp'] = 'Number that will be added to every grade for this grade item, after the Multiplicator is applied.';
 $string['points'] = 'points';
 $string['pointsascending'] = 'Sort by points ascending';
