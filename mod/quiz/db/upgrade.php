@@ -61,11 +61,6 @@ function xmldb_quiz_upgrade($oldversion) {
         $result = $result && $DB->insert_record('quiz_report', $reporttoinsert);
 
         $reporttoinsert = new object();
-        $reporttoinsert->name = 'statistics';
-        $reporttoinsert->displayorder = 8000;
-        $result = $result && $DB->insert_record('quiz_report', $reporttoinsert);
-
-        $reporttoinsert = new object();
         $reporttoinsert->name = 'regrade';
         $reporttoinsert->displayorder = 7000;
         $result = $result && $DB->insert_record('quiz_report', $reporttoinsert);
