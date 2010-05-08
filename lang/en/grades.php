@@ -29,7 +29,7 @@ $string['addcategoryerror'] = 'Could not add category.';
 $string['addexceptionerror'] = 'Error occurred while adding exception for userid:gradeitem';
 $string['addfeedback'] = 'Add feedback';
 $string['addgradeletter'] = 'Add a grade letter';
-$string['addidnumbers'] = 'Add id numbers';
+$string['addidnumbers'] = 'Add ID numbers';
 $string['additem'] = 'Add grade item';
 $string['addoutcome'] = 'Add an outcome';
 $string['addoutcomeitem'] = 'Add outcome item';
@@ -80,7 +80,7 @@ $string['allgrades'] = 'All grades by category';
 $string['allstudents'] = 'All students';
 $string['allusers'] = 'All users';
 $string['autosort'] = 'Auto-sort';
-$string['availableidnumbers'] = 'Available id numbers';
+$string['availableidnumbers'] = 'Available ID numbers';
 $string['average'] = 'Average';
 $string['averagesdecimalpoints'] = 'Decimals in column averages';
 $string['averagesdisplaytype'] = 'Column averages display type';
@@ -147,7 +147,7 @@ $string['configshowpercentage'] = 'Whether to show the percentage value of each 
 $string['configshowquickfeedback'] = 'Quick Feedback adds a text input element in each grade cell on the grader report, allowing you to edit the feedback for many grades at once. You can then click the Update button to perform all these changes at once, instead of one at a time.';
 $string['configshowranges'] = 'Whether to show the range of grades for each column in an additional row.';
 $string['configshowrank'] = 'Whether to show the position of the user in relation to the rest of the class, for each grade item.';
-$string['configshowuseridnumber'] = 'Whether to show user id numbers in an additional column.';
+$string['configshowuseridnumber'] = 'Whether to show user ID numbers in an additional column.';
 $string['configshowuserimage'] = 'Whether to show the user\'s profile image next to the name in the grader report.';
 $string['configstudentsperpage'] = 'The number of students to display per page in the grader report.';
 $string['configstudentsperpagedefault'] = 'The number of students to display per page in the grader report. Leave this field empty to use the site default (currently {$a}).';
@@ -171,6 +171,7 @@ $string['csv'] = 'CSV';
 $string['currentparentaggregation'] = 'Current parent aggregation';
 $string['curveto'] = 'Curve to';
 $string['decimalpoints'] = 'Overall decimal points';
+$string['decimalpoints_help'] = 'This setting determines the number of decimal points to display for each grade. It has no effect on grade calculations, which are made with an accuracy of 5 decimal places.';
 $string['default'] = 'Default';
 $string['defaultprev'] = 'Default ({$a})';
 $string['deletecategory'] = 'Delete category';
@@ -255,6 +256,11 @@ $string['gradecategoryhelp'] = 'Grade category help';
 $string['gradecategorysettings'] = 'Grade category settings';
 $string['gradedisplay'] = 'Grade display';
 $string['gradedisplaytype'] = 'Grade display type';
+$string['gradedisplaytype_help'] = 'This setting determines how grades are displayed in the grader and user reports.
+
+* Real - Actual grades
+* Percentage
+* Letter - Symbols are used to represent a range of grades';
 $string['gradedon'] = 'Graded: {$a}';
 $string['gradeexceptions'] = 'Grade exceptions';
 $string['gradeexceptionshelp'] = 'Grade exceptions Help';
@@ -283,13 +289,16 @@ $string['gradeletters'] = 'Grade letters';
 $string['gradelocked'] = 'Grade is locked';
 $string['gradelong'] = '{$a->grade} / {$a->max}';
 $string['grademax'] = 'Maximum grade';
+$string['grademax_help'] = 'This setting determines the maximum grade when using the value grade type. The maximum grade for an activity-based grade item is set on the activity settings page.';
 $string['grademaxhelp'] = 'When using the value grade type, a maximum grade can be set. The maximum grade for an activity-based grade item is set on the update activity page.';
 $string['grademin'] = 'Minimum grade';
+$string['grademin_help'] = 'This setting determines the minimum grade when using the value grade type.';
 $string['grademinhelp'] = 'When using the value grade type, a minimum grade can be set.';
 $string['gradeoutcomeitem'] = 'Grade outcome item';
 $string['gradeoutcomes'] = 'Outcomes';
 $string['gradeoutcomescourses'] = 'Course outcomes';
 $string['gradepass'] = 'Grade to pass';
+$string['gradepass_help'] = 'This setting determines the minimum grade required to pass. The value is used in activity and course completion, and in the gradebook, where pass grades are highlighted in green and fail grades in red.';
 $string['gradepasshelp'] = 'If an item has a grade that users must equal or exceed to pass that item, you can set that here.';
 $string['gradepreferences'] = 'Grade preferences';
 $string['gradepreferenceshelp'] = 'Grade preferences Help';
@@ -301,6 +310,14 @@ $string['gradesforuser'] = 'Grades for {$a->user}';
 $string['gradesonly'] = 'Grades only';
 $string['gradessettings'] = 'Grade settings';
 $string['gradetype'] = 'Grade type';
+$string['gradetype_help'] = 'There are 4 grade types:
+
+* None - No grading possible
+* Value - A numerical value with a maximum and minimum
+* Scale - An item in a list
+* Text - Feedback only
+
+Only value and scale grade types may be aggregated. The grade type for an activity-based grade item is set on the activity settings page.';
 $string['gradetypehelp'] = 'Specifies the type of grade used: none (no grading possible), value (enables the maximum and minimum grade settings), scale (enables the scale setting) or text (feedback only). Only value and scale grade types may be aggregated. The grade type for an activity-based grade item is set on the update activity page.';
 $string['gradeview'] = 'View Grade';
 $string['gradeweighthelp'] = 'Grade weight Help';
@@ -335,7 +352,7 @@ $string['chooseaction'] = 'Choose an action ...';
 $string['choosecategory'] = 'Select category';
 $string['identifier'] = 'Identify user by';
 $string['idnumberhelp'] = 'Setting an ID number provides a way of identifying the activity for grade calculation purposes. If the activity is not included in any grade calculation then the ID number field can be left blank. The ID number for an activity-based grade item may be set on the update activity page.';
-$string['idnumbers'] = 'Id numbers';
+$string['idnumbers'] = 'ID numbers';
 $string['import'] = 'Import';
 $string['importcsv'] = 'Import CSV';
 $string['importcustom'] = 'Import as custom outcomes (only this course)';
@@ -364,6 +381,7 @@ $string['inherit'] = 'Inherit';
 $string['intersectioninfo'] = 'Student/Grade info';
 $string['item'] = 'Item';
 $string['iteminfo'] = 'Item info';
+$string['iteminfo_help'] = 'This setting provides space for entering information about the item. The information is not displayed anywhere.';
 $string['iteminfohelp'] = 'A space for entering information about the item. Text entered does not appear anywhere else.';
 $string['itemname'] = 'Item name';
 $string['itemnamehelp'] = 'The name of this item, pushed in by the module.';
@@ -424,7 +442,7 @@ $string['nocourses'] = 'There are no courses yet';
 $string['noforce'] = 'Do not force';
 $string['nogradeletters'] = 'No grade letters set';
 $string['nogradesreturned'] = 'No grades returned';
-$string['noidnumber'] = 'No id number';
+$string['noidnumber'] = 'No ID number';
 $string['nolettergrade'] = 'No letter grade for';
 $string['nomode'] = 'NA';
 $string['nonnumericweight'] = 'Received non-numeric value for';
@@ -584,6 +602,7 @@ $string['turnfeedbackoff'] = 'Turn feedback off';
 $string['turnfeedbackon'] = 'Turn feedback on';
 $string['typenone'] = 'None';
 $string['typescale'] = 'Scale';
+$string['typescale_help'] = 'This setting determines the scale used when using the scale grade type. The scale for an activity-based grade item is set on the activity settings page.';
 $string['typetext'] = 'Text';
 $string['typevalue'] = 'Value';
 $string['uncategorised'] = 'Uncategorised';
