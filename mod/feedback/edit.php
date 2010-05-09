@@ -152,6 +152,7 @@ if ($do_show == 'edit') {
     $PAGE->navbar->add(get_string($do_show, 'feedback'));
 }
 $PAGE->set_url('/mod/feedback/edit.php', array('id'=>$cm->id, 'do_show'=>$do_show));
+$PAGE->set_heading(format_string($course->fullname));
 $PAGE->set_title(format_string($feedback->name));
 echo $OUTPUT->header();
 

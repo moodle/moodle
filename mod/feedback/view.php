@@ -92,6 +92,7 @@ $strfeedback  = get_string("modulename", "feedback");
 
 $PAGE->set_url('/mod/feedback/view.php', array('id'=>$cm->id, 'do_show'=>'view'));
 $PAGE->set_title(format_string($feedback->name));
+$PAGE->set_heading(format_string($course->fullname));
 echo $OUTPUT->header();
 
 //ishidden check.
@@ -182,10 +183,12 @@ if(has_capability('mod/feedback:mapcourse', $context)) {
         echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthwide');
         echo '<div class="mdl-align">';
         echo '<form action="mapcourse.php" method="get">';
+        echo '<fieldset>';
         echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
         echo '<input type="hidden" name="id" value="'.$id.'" />';
         echo '<button type="submit">'.get_string('mapcourses', 'feedback').'</button>';
         echo $OUTPUT->help_icon('mapcourse', 'feedback');
+        echo '</fieldset>';
         echo '</form>';
         echo '<br />';
         echo '</div>';

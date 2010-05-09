@@ -127,6 +127,7 @@ $strfeedback  = get_string("modulename", "feedback");
 
 $PAGE->navbar->add(get_string('feedback:complete', 'feedback'));
 $PAGE->set_url('/mod/feedback/complete.php', array('id'=>$cm->id, 'gopage'=>$gopage, 'courseid'=>$course->id));
+$PAGE->set_heading(format_string($course->fullname));
 $PAGE->set_title(format_string($feedback->name));
 echo $OUTPUT->header();
 

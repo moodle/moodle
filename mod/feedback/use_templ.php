@@ -70,7 +70,7 @@ $strfeedback  = get_string("modulename", "feedback");
 
 $PAGE->navbar->add($strfeedbacks, new moodle_url('/mod/feedback/index.php', array('id'=>$course->id)));
 $PAGE->navbar->add(format_string($feedback->name));
-
+$PAGE->set_heading(format_string($course->fullname));
 $PAGE->set_title(format_string($feedback->name));
 echo $OUTPUT->header();
 
