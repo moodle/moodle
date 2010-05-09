@@ -230,16 +230,16 @@ class question_calculatedsimple_qtype extends question_calculated_qtype {
     function custom_generator_tools_part(&$mform, $idx, $j){
 
         $minmaxgrp = array();
-        $minmaxgrp[] =& $mform->createElement('text', "calcmin[$idx]", get_string('calcmin', 'qtype_datasetdependent'));
-        $minmaxgrp[] =& $mform->createElement('text', "calcmax[$idx]", get_string('calcmax', 'qtype_datasetdependent'));
-        $mform->addGroup($minmaxgrp, 'minmaxgrp', get_string('minmax', 'qtype_datasetdependent'), ' - ', false);
+        $minmaxgrp[] =& $mform->createElement('text', "calcmin[$idx]", get_string('calcmin', 'qtype_calculated'));
+        $minmaxgrp[] =& $mform->createElement('text', "calcmax[$idx]", get_string('calcmax', 'qtype_calculated'));
+        $mform->addGroup($minmaxgrp, 'minmaxgrp', get_string('minmax', 'qtype_calculated'), ' - ', false);
         $mform->setType("calcmin[$idx]", PARAM_NUMBER);
         $mform->setType("calcmax[$idx]", PARAM_NUMBER);
 
         $precisionoptions = range(0, 10);
-        $mform->addElement('select', "calclength[$idx]", get_string('calclength', 'qtype_datasetdependent'), $precisionoptions);
+        $mform->addElement('select', "calclength[$idx]", get_string('calclength', 'qtype_calculated'), $precisionoptions);
 
-        $distriboptions = array('uniform' => get_string('uniform', 'qtype_datasetdependent'), 'loguniform' => get_string('loguniform', 'qtype_datasetdependent'));
+        $distriboptions = array('uniform' => get_string('uniform', 'qtype_calculated'), 'loguniform' => get_string('loguniform', 'qtype_calculated'));
         $mform->addElement('hidden', "calcdistribution[$idx]", 'uniform');
         $mform->setType("calcdistribution[$idx]", PARAM_INT);
 
@@ -262,63 +262,6 @@ class question_calculatedsimple_qtype extends question_calculated_qtype {
             $delimiter = '<br/><br/><br/>';
         }
         return $strheader;
-    }
-
-    function comment_on_datasetitems($questionid, $answers,$data, $number) {
-        global $DB,$QTYPES;
-        $comment = new stdClass;
-        $comment->stranswers = array();
-        $comment->outsidelimit = false ;
-        $comment->answers = array();
-        /// Find a default unit:
-        if (!empty($questionid) && $unit = $DB->get_record('question_numerical_units', array('question'=> $questionid, 'multiplier' => 1.0))) {
-            $unit = $unit->unit;
-        } else {
-            $unit = '';
-        }
-
-        $answers = fullclone($answers);
-        $strmin = get_string('min', 'quiz');
-        $strmax = get_string('max', 'quiz');
-        $errors = '';
-        $delimiter = ': ';
-        $virtualqtype = & $QTYPES['numerical'] ; //$this->get_virtual_qtype($question);
-        foreach ($answers as $key => $answer) {
-            $formula = $this->substitute_variables($answer->answer,$data);
-            $formattedanswer = qtype_calculated_calculate_answer(
-                    $answer->answer, $data, $answer->tolerance,
-                    $answer->tolerancetype, $answer->correctanswerlength,
-                    $answer->correctanswerformat, $unit);
-                    if ( $formula === '*'){
-                        $answer->min = ' ';
-                        $formattedanswer->answer = $answer->answer ;
-                    }else {
-                        eval('$answer->answer = '.$formula.';') ;
-                        $virtualqtype->get_tolerance_interval($answer);
-                    }
-            if ($answer->min === '') {
-                // This should mean that something is wrong
-                $comment->stranswers[$key] = " $formattedanswer->answer".'<br/><br/>';
-            } else if ($formula === '*'){
-                $comment->stranswers[$key] = $formula.' = '.get_string('anyvalue','qtype_calculated').'<br/><br/>';
-            }else{
-                $comment->stranswers[$key]= $formula.' = '.$formattedanswer->answer.'' ;
-                $comment->stranswers[$key] .= "<br/>".$strmin. $delimiter.$answer->min.'---';
-                $comment->stranswers[$key] .= $strmax.$delimiter.$answer->max;
-                $comment->stranswers[$key] .='<br/>';
-                $correcttrue->correct = $formattedanswer->answer ;
-                $correcttrue->true = $answer->answer ;
-                if ($formattedanswer->answer < $answer->min || $formattedanswer->answer > $answer->max){
-                    $comment->outsidelimit = true ;
-                    $comment->answers[$key] = $key;
-                    $comment->stranswers[$key] .=get_string('trueansweroutsidelimits','qtype_calculated',$correcttrue);//<span class="error">ERROR True answer '..' outside limits</span>';
-                }else {
-                    $comment->stranswers[$key] .=get_string('trueanswerinsidelimits','qtype_calculated',$correcttrue);//' True answer :'.$calculated->trueanswer.' inside limits';
-                }
-                $comment->stranswers[$key] .='';
-            }
-        }
-        return fullclone($comment);
     }
 
     function tolerance_types() {
