@@ -41,9 +41,19 @@ $string['noneditableunittext'] = 'NON editable text of Unit No1' ;
 $string['notenoughanswers'] = 'You must enter at least one answer.';
 $string['nounitdisplay'] = 'No unit grading' ;
 $string['numerical'] = 'Numerical';
+$string['numerical_help'] = 'From the student perspective, a numerical question looks just
+like a short-answer question.
+<p>
+The difference is that numerical answers are allowed
+to have an accepted error. This allows a continuous range of answers
+to be set.
+</p>
+For example, if the answer is 30 with an accepted error of 5,
+then any number between 25 and 35 will be accepted as correct.
+Like with short answer questions, different answers, or the same
+answer with different precisions can be given.'; 
 $string['numericalsummary'] = 'Allows a numerical response, possibly with units, that is graded by comparing against various model answers, possibly with tolerances.';
 $string['onlynumerical'] = 'Only NUMERICAL ANSWER will be graded' ;
-$string['onlynumerical1'] = 'Only NUMERICAL ANSWER will be graded' ;
 $string['rightexample'] = 'RIGHT as 1.00cm' ;
 $string['selectunits'] = 'Select units' ; 
 $string['studentunitanswer'] = 'UNIT ANSWER displayed as a ' ;
@@ -59,15 +69,4 @@ $string['unitposition'] = 'Unit position' ;
 $string['unitshandling'] = 'Units handling' ;
 $string['validnumberformats'] = 'Valid number formats';
 $string['validnumbers'] = ' 13500.67 : 13 500.67 : 13500,67: 13 500,67 : 1.350067 E4 : 1.350067 E04 ';
-$string['numerical_help'] = 'From the student perspective, a numerical question looks just
-like a short-answer question.
-<p>
-The difference is that numerical answers are allowed
-to have an accepted error. This allows a continuous range of answers
-to be set.
-</p>
-For example, if the answer is 30 with an accepted error of 5,
-then any number between 25 and 35 will be accepted as correct.
-Like with short answer questions, different answers, or the same
-answer with different precisions can be given.'; 
 
