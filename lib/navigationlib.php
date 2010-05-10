@@ -2595,6 +2595,11 @@ class settings_navigation extends navigation_node {
             $modulenode->add(get_string('filters', 'admin'), $url, self::TYPE_SETTING);
         }
 
+        if (has_capability('coursereport/log:view', get_context_instance(CONTEXT_COURSE, $this->page->cm->course))) {
+            $url = new moodle_url('/course/report/log/index.php', array('chooselog'=>'1','id'=>$this->page->cm->course,'modid'=>$this->page->cm->id));
+            $modulenode->add(get_string('logs'), $url, self::TYPE_SETTING);
+        }
+
         // Add a backup link
         $featuresfunc = $this->page->activityname.'_supports';
         if ($featuresfunc(FEATURE_BACKUP_MOODLE2) && has_capability('moodle/backup:backupactivity', $this->page->cm->context)) {
