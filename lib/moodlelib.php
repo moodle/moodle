@@ -5706,13 +5706,21 @@ function get_parent_language($lang=null) {
 
 /**
  * Returns current string_manager instance.
+ *
+ * The param $forcereload is needed for CLI installer only where the string_manager instance
+ * must be replaced during the install.php script life time.
+ *
+ * @param bool $forcereload shall the singleton be released and new instance created instead?
  * @return string_manager
  */
-function get_string_manager() {
+function get_string_manager($forcereload=false) {
     global $CFG;
 
     static $singleton = null;
 
+    if ($forcereload) {
+        $singleton = null;
+    }
     if ($singleton === null) {
         if (empty($CFG->early_install_lang)) {
             $singleton = new core_string_manager($CFG->langotherroot, $CFG->langlocalroot);

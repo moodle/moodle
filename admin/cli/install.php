@@ -333,7 +333,9 @@ if ($CFG->lang != 'en') {
     }
 }
 
+// switch the string_manager instance to stop using install/lang/
 $CFG->early_install_lang = false;
+get_string_manager(true);
 
 // ask for db type - show only drivers available
 if ($interactive) {
