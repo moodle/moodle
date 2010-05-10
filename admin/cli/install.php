@@ -264,6 +264,9 @@ $CFG->httpswwwroot  = $CFG->wwwroot;
 
 
 //We need dataroot before lang download
+if (!empty($options['dataroot'])) {
+    $CFG->dataroot = clean_param($options['dataroot'], PARAM_SAFEPATH);
+}
 if ($interactive) {
     cli_separator();
     $i=0;
@@ -303,7 +306,6 @@ if ($interactive) {
     } while ($error !== '');
 
 } else {
-    $CFG->dataroot = $options['dataroot'];
     if (is_dataroot_insecure()) {
         cli_error(get_string('pathsunsecuredataroot', 'install'));
     }
