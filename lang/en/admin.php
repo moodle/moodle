@@ -53,7 +53,6 @@ $string['authentication'] = 'Authentication';
 $string['authsettings'] = 'Manage authentication';
 $string['autolang'] = 'Language autodetect';
 $string['autologinguests'] = 'Auto-login guests';
-$string['availablelangs'] = 'Available language packs';
 $string['availableto'] = 'Available to';
 $string['backgroundcolour'] = 'Transparent colour';
 $string['backups'] = 'Backups';

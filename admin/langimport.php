@@ -345,7 +345,7 @@ die('Work in progress, to be replaced by the new language update interface...');
     echo '<form id="installform" method="post" action="langimport.php?mode='.INSTALLATION_OF_SELECTED_LANG.'">';
     echo '<fieldset class="invisiblefieldset">';
     echo '<input name="sesskey" type="hidden" value="'.sesskey().'" />';
-    echo '<label for="pack">'.get_string('availablelangs','admin')."</label><br />\n";
+    echo '<label for="pack">'.get_string('availablelangs','install')."</label><br />\n";
     if ($remote) {
         echo '<select name="pack[]" id="pack" size="15" multiple="multiple">';
     }
