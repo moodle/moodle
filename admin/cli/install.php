@@ -112,8 +112,6 @@ $CFG->wwwroot              = "http://localhost";
 $CFG->httpswwwroot         = $CFG->wwwroot;
 $CFG->dataroot             = str_replace('\\', '/', dirname(dirname(dirname(dirname(__FILE__)))).'/moodledata');
 $CFG->docroot              = 'http://docs.moodle.org';
-$CFG->langotherroot        = $CFG->dataroot.'/lang';
-$CFG->langlocalroot        = $CFG->dataroot.'/lang';
 $CFG->directorypermissions = 00777;
 $CFG->running_installer    = true;
 $CFG->early_install_lang   = true;
@@ -340,6 +338,8 @@ if ($CFG->lang != 'en') {
 
 // switch the string_manager instance to stop using install/lang/
 $CFG->early_install_lang = false;
+$CFG->langotherroot      = $CFG->dataroot.'/lang';
+$CFG->langlocalroot      = $CFG->dataroot.'/lang';
 get_string_manager(true);
 
 // ask for db type - show only drivers available
