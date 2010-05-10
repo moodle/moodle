@@ -606,12 +606,14 @@ class theme_config {
         $urls = array();
 
         if ($rev > -1) {
-            $params = array('theme'=>$this->name,'rev'=>$rev);
             if (check_browser_version('MSIE', 5) and !check_browser_version('MSIE', 8)) {
-                $params['type'] = 'ie';
+                // We need to split the CSS files for IE
+                $urls[] = new moodle_url($CFG->httpswwwroot.'/theme/styles.php', array('theme'=>$this->name,'rev'=>$rev, 'type'=>'plugins'));
+                $urls[] = new moodle_url($CFG->httpswwwroot.'/theme/styles.php', array('theme'=>$this->name,'rev'=>$rev, 'type'=>'parents'));
+                $urls[] = new moodle_url($CFG->httpswwwroot.'/theme/styles.php', array('theme'=>$this->name,'rev'=>$rev, 'type'=>'theme'));
+            } else {
+                $urls[] = new moodle_url($CFG->httpswwwroot.'/theme/styles.php', array('theme'=>$this->name,'rev'=>$rev));
             }
-            $urls[] = new moodle_url($CFG->httpswwwroot.'/theme/styles.php', $params);
-
         } else {
             // find out the current CSS and cache it now for 5 seconds
             // the point is to construct the CSS only once and pass it through the
