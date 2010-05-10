@@ -134,7 +134,7 @@ function install_db_validate($database, $dbhost, $dbuser, $dbpass, $dbname, $pre
  * @return string
  */
 function install_generate_configphp($database, $cfg, $userealpath=false) {
-    $configphp = '<?php  // Moodle Configuration File ' . PHP_EOL . PHP_EOL;
+    $configphp = '<?php  // Moodle configuration file' . PHP_EOL . PHP_EOL;
 
     $configphp .= 'unset($CFG);' . PHP_EOL;
     $configphp .= '$CFG = new stdClass();' . PHP_EOL . PHP_EOL; // prevent PHP5 strict warnings

@@ -47,8 +47,8 @@ Options:
 --wwwroot=URL         Web address for the Moodle site,
                       required in non-interactive mode.
 --dataroot=DIR        Location of the moodle data folder,
-                      must not be web accessible. Default is moodleroot
-                      in parent directory.
+                      must not be web accessible. Default is moodledata
+                      in the parent directory.
 --dbtype=TYPE         Database type. Default is mysqli
 --dbhost=HOST         Database host. Default is localhost
 --dbname=NAME         Database name. Default is moodle
@@ -110,8 +110,10 @@ $CFG->dirroot              = str_replace('\\', '/', dirname(dirname(dirname(__FI
 $CFG->libdir               = "$CFG->dirroot/lib";
 $CFG->wwwroot              = "http://localhost";
 $CFG->httpswwwroot         = $CFG->wwwroot;
-$CFG->dataroot             = str_replace('\\', '/', dirname(dirname(dirname(__FILE__))).'/moodledata');
+$CFG->dataroot             = str_replace('\\', '/', dirname(dirname(dirname(dirname(__FILE__)))).'/moodledata');
 $CFG->docroot              = 'http://docs.moodle.org';
+$CFG->langotherroot        = $CFG->dataroot.'/lang';
+$CFG->langlocalroot        = $CFG->dataroot.'/lang';
 $CFG->directorypermissions = 00777;
 $CFG->running_installer    = true;
 $CFG->early_install_lang   = true;
@@ -293,20 +295,21 @@ if ($interactive) {
             if (make_upload_directory('lang', false)) {
                 $error = '';
             } else {
-                $error = get_string('pathserrcreatedataroot', 'install', $CFG->dataroot)."\n";
+                $a = (object)array('dataroot' => $CFG->dataroot);
+                $error = get_string('pathserrcreatedataroot', 'install', $a)."\n";
             }
         }
 
     } while ($error !== '');
 
 } else {
+    $CFG->dataroot = $options['dataroot'];
     if (is_dataroot_insecure()) {
-        $a = (object)array('option'=>'dataroot', 'value'=>$CFG->dataroot);
-        //TODO: use unsecure warning instead
-        cli_error(get_string('cliincorrectvalueerror', 'admin', $a));
+        cli_error(get_string('pathsunsecuredataroot', 'install'));
     }
     if (!make_upload_directory('lang', false)) {
-        cli_error(get_string('pathserrcreatedataroot', 'install', $CFG->dataroot));
+        $a = (object)array('dataroot' => $CFG->dataroot);
+        cli_error(get_string('pathserrcreatedataroot', 'install', $a));
     }
 }
 
