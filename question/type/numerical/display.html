@@ -61,8 +61,18 @@
         $class = '';
         $feedbackimgunit = '';
         if ($options->feedback){
-            $classunit = question_get_feedback_class(1-$this->raw_unitpenalty);
-            $feedbackimgunit = question_get_feedback_image(1-$this->raw_unitpenalty, $options->feedback);
+            $classunitvalue = 0 ;
+            if ( isset($state->responses['unit']) && $state->responses['unit']!='' && count( $question->options->units) > 0){//&& isset($question->options->units['0'])
+                foreach($question->options->units as $key => $unitv){
+                    if ($unitv->unit == trim($state->responses['unit'])){
+                      $classunitvalue = 1 ;
+                    //  break ;
+                    }  
+                }
+            }
+           // $classunitvalue = 0 ;
+            $classunit = question_get_feedback_class($classunitvalue); //1-$this->raw_unitpenalty
+            $feedbackimgunit = question_get_feedback_image($classunitvalue, $options->feedback);
         }
         if ($question->options->showunits == 3 || (isset($question->options->units) && count($question->options->units) == 0 )) {// no unit display or tested
 
