@@ -73,6 +73,7 @@ $string['aggregationcoefweight'] = 'Item weight';
 $string['aggregationcoefweighthelp'] = 'Weight applied to all grades in this grade item during aggregation with other grade items.';
 $string['aggregationhelp'] = 'Strategy used to aggregate grades across all students in a course.';
 $string['aggregationposition'] = 'Aggregation position';
+$string['aggregationposition_help'] = 'This setting determines whether the category and course total columns are displayed first or last in the gradebook reports.';
 $string['aggregationsvisible'] = 'Available aggregation types';
 $string['aggregationsvisiblehelp'] = 'Select all aggregation types that should be available. Hold down the Ctrl key to select multiple items.';
 $string['aggregationview'] = 'Aggregation view';
@@ -252,6 +253,7 @@ $string['gradebook'] = 'Gradebook';
 $string['gradebookhiddenerror'] = 'The gradebook is currently set to hide everything from students.';
 $string['gradebookhistories'] = 'Grade histories';
 $string['gradeboundary'] = 'Letter grade boundary';
+$string['gradeboundary_help'] = 'This setting determines the minimum percentage over which grades will be assigned the grade letter.';
 $string['gradecategories'] = 'Grade categories';
 $string['gradecategory'] = 'Grade category';
 $string['gradecategoryhelp'] = 'Grade category help';
@@ -343,6 +345,9 @@ $string['hidenooutcomes'] = 'Show outcomes';
 $string['hidequickfeedback'] = 'Hide Quick Feedback';
 $string['hideranges'] = 'Hide ranges';
 $string['hidetotalifhiddenitems'] = 'Hide totals if they contain hidden items';
+$string['hidetotalifhiddenitems_help'] = 'This setting specifies whether totals which contain hidden grade items are shown to students or replaced with a hyphen (-). If shown, the total may be calculated either excluding or including hidden items.
+
+If hidden items are excluded, the total will be different to the total seen by the teacher in the grader report, since the teacher always sees totals calculated from all items, hidden or unhidden. If hidden items are included, students may be able to calculate the hidden items.';
 $string['hidetotalifhiddenitemsdescription'] = 'Whether totals which contain hidden grade items are shown to students (calculated either excluding or including hidden items) or replaced with a hyphen.';
 $string['hidetotalshowexhiddenitems'] = 'Show totals excluding hidden items';
 $string['hidetotalshowinchiddenitems'] = 'Show totals including hidden items';
@@ -569,15 +574,22 @@ $string['showeyecons'] = 'Show show/hide icons';
 $string['showfeedback'] = 'Show feedback';
 $string['showgroups'] = 'Show groups';
 $string['showhiddenitems'] = 'Show hidden items';
+$string['showhiddenitems_help'] = 'This setting determines whether hidden items are indicated.
+
+* No hidden - Hidden grade item row is shown in grey with the grade hidden completely
+* Only hidden until - Grade items with a "hide until" date set are shown in grey with the grades hidden completely until the set date, after which the whole item is shown
+* All hidden - Grade items are completely hidden';
 $string['showhiddenuntilonly'] = 'Only hidden until';
 $string['showlocks'] = 'Show locks';
 $string['shownohidden'] = 'No hidden';
 $string['shownooutcomes'] = 'Hide outcomes';
 $string['shownumberofgrades'] = 'Show number of grades in averages';
 $string['showpercentage'] = 'Show percentage';
+$string['showpercentage_help'] = 'This setting determines whether the percentage value of each grade item is shown.';
 $string['showquickfeedback'] = 'Show Quick Feedback';
 $string['showranges'] = 'Show ranges';
 $string['showrank'] = 'Show rank';
+$string['showrank_help'] = 'This setting determines whether the position of the student in relation to the rest of the class is shown for each grade item.';
 $string['showuseridnumber'] = 'Show user idnumber';
 $string['showuserimage'] = 'Show user profile images';
 $string['showverbose'] = 'Show {$a->category}$a->itemmodule {$a->itemname}';
