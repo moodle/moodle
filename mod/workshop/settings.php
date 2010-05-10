@@ -44,10 +44,12 @@ for ($i = 5; $i >= 0; $i--) {
 $settings->add(new admin_setting_configselect('workshop/gradedecimals', get_string('gradedecimals', 'workshop'),
                     get_string('configgradedecimals', 'workshop'), 0, $options));
 
-$options = get_max_upload_sizes($CFG->maxbytes);
-$options[0] = get_string('courseuploadlimit');
-$settings->add(new admin_setting_configselect('workshop/maxbytes', get_string('maxbytes', 'workshop'),
-                    get_string('configmaxbytes', 'workshop'), 0, $options));
+if (isset($CFG->maxbytes)) {
+    $options = get_max_upload_sizes($CFG->maxbytes);
+    $options[0] = get_string('courseuploadlimit');
+    $settings->add(new admin_setting_configselect('workshop/maxbytes', get_string('maxbytes', 'workshop'),
+                        get_string('configmaxbytes', 'workshop'), 0, $options));
+}
 
 $settings->add(new admin_setting_configselect('workshop/strategy', get_string('strategy', 'workshop'),
                     get_string('configstrategy', 'workshop'), 'accumulative', workshop::available_strategies_list()));
