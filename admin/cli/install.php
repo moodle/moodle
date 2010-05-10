@@ -56,7 +56,8 @@ Options:
 --dbpass=PASSWORD     Database password. Default is blank
 --dbsocket            Use database sockets. Available for some databases only.
 --prefix=STRING       Table prefix for above database tables. Default is mdl_
---admin-password=PASS Password for the moodle admin account,
+--adminuser=USERNAME  Username for the moodle admin account. Default is admin
+--adminpass=PASSWORD  Password for the moodle admin account,
                       required in non-interactive mode.
 --non-interactive     No interactive questions, installation fails if any
                       problem encountered.
@@ -161,10 +162,28 @@ if (empty($databases)) {
 }
 
 // now get cli options
-list($options, $unrecognized) = cli_get_params(array('lang'=>$CFG->lang, 'wwwroot'=>'', 'dataroot'=>$CFG->dataroot, 'dbtype'=>$defaultdb, 'dbhost'=>'localhost',
-                                                     'dbname'=>'moodle', 'dbuser'=>'root', 'dbpass'=>'', 'dbsocket'=>false, 'prefix'=>'mdl_', 'admin-password'=>'',
-                                                     'non-interactive'=>false, 'agree-license'=>false, 'help'=>false),
-                                               array('h'=>'help'));
+list($options, $unrecognized) = cli_get_params(
+    array(
+        'lang'              => $CFG->lang,
+        'wwwroot'           => '',
+        'dataroot'          => $CFG->dataroot,
+        'dbtype'            => $defaultdb,
+        'dbhost'            => 'localhost',
+        'dbname'            => 'moodle',
+        'dbuser'            => 'root',
+        'dbpass'            => '',
+        'dbsocket'          => false,
+        'prefix'            => 'mdl_',
+        'adminuser'         => 'admin',
+        'adminpass'         => '',
+        'non-interactive'   => false,
+        'agree-license'     => false,
+        'help'              => false
+    ),
+    array(
+        'h' => 'help'
+    )
+);
 
 $interactive = empty($options['non-interactive']);
 
@@ -451,17 +470,36 @@ if ($interactive) {
     }
 }
 
+// ask for admin user name
+if ($interactive) {
+    cli_separator();
+    cli_heading(get_string('cliadminusername', 'install'));
+    if (!empty($options['adminuser'])) {
+        $prompt = get_string('clitypevaluedefault', 'admin', $options['adminuser']);
+    } else {
+        $prompt = get_string('clitypevalue', 'admin');
+    }
+    do {
+        $options['adminuser'] = cli_input($prompt, $options['adminuser']);
+    } while (empty($options['adminuser']) or $options['adminuser'] === 'guest');
+} else {
+    if (empty($options['adminuser']) or $options['adminuser'] === 'guest') {
+        $a = (object)array('option'=>'adminuser', 'value'=>$options['adminuser']);
+        cli_error(get_string('cliincorrectvalueerror', 'admin', $a));
+    }
+}
+
 // ask for admin user password
 if ($interactive) {
     cli_separator();
     cli_heading(get_string('cliadminpassword', 'install'));
     $prompt = get_string('clitypevalue', 'admin');
     do {
-        $options['admin-password'] = cli_input($prompt);
-    } while (empty($options['admin-password']) or $options['admin-password'] === 'admin');
+        $options['adminpass'] = cli_input($prompt);
+    } while (empty($options['adminpass']) or $options['adminpass'] === 'admin');
 } else {
-    if (empty($options['admin-password']) or $options['admin-password'] === 'admin') {
-        $a = (object)array('option'=>'admin-password', 'value'=>$options['admin-password']);
+    if (empty($options['adminpass']) or $options['adminpass'] === 'admin') {
+        $a = (object)array('option'=>'adminpass', 'value'=>$options['adminpass']);
         cli_error(get_string('cliincorrectvalueerror', 'admin', $a));
     }
 }
@@ -551,7 +589,12 @@ set_config('release', $release);
 upgrade_noncore(true);
 
 // set up admin user password
-$DB->set_field('user', 'password', hash_internal_user_password($options['admin-password'], array('username'=>'admin')));
+$DB->set_field('user', 'password', hash_internal_user_password($options['adminpass']), array('username' => 'admin'));
+
+// rename admin username if needed
+if ($options['adminuser'] !== 'admin') {
+    $DB->set_field('user', 'username', $options['adminuser'], array('username' => 'admin'));
+}
 
 // indicate that this site is fully configured
 set_config('rolesactive', 1);

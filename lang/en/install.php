@@ -41,6 +41,7 @@ $string['admindirsettingsub'] = 'A very few webhosts use /admin as a special URL
 $string['availablelangs'] = 'List of available languages';
 $string['caution'] = 'Caution';
 $string['cliadminpassword'] = 'New admin user password';
+$string['cliadminusername'] = 'Admin account username';
 $string['clialreadyinstalled'] = 'File config.php already exists, please use admin/cli/upgrade.php if you want to upgrade your site.';
 $string['cliinstallfinished'] = 'Installation completed successfully.';
 $string['cliinstallheader'] = 'Moodle {$a} command line installation program';
