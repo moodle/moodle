@@ -269,12 +269,10 @@ function quiz_update_effective_access($quiz, $userid) {
 
     // check for group overrides
     $groupings = groups_get_user_groups($quiz->course, $userid);
-    $groupingid = empty($cm->groupingid)? 0 : $cm->groupingid;
 
-    if (!empty($groupings[$groupingid])) {
-
+    if (!empty($groupings[0])) {
         // Select all overrides that apply to the User's groups
-        list($extra, $params) = $DB->get_in_or_equal(array_values($groupings[$groupingid]));
+        list($extra, $params) = $DB->get_in_or_equal(array_values($groupings[0]));
         $sql = "SELECT * FROM {quiz_overrides}
                 WHERE groupid $extra AND quiz = ?";
         $params[] = $quiz->id;

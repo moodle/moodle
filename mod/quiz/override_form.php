@@ -66,9 +66,11 @@ class quiz_override_form extends moodleform {
                 $mform->freeze('groupid');
             } else {
                 // Prepare the list of groups
-                $groups = groups_get_all_groups($cm->course, null, $cm->groupingid);
+                $groups = groups_get_all_groups($cm->course);
                 if (empty($groups)) {
-                    $groups = array();
+                    // generate an error
+                    $link = new moodle_url('/mod/quiz/overrides.php', array('cmid'=>$cm->id));
+                    print_error('groupsnone', 'quiz', $link);
                 }
 
                 $groupchoices = array();
@@ -95,16 +97,24 @@ class quiz_override_form extends moodleform {
                 $mform->freeze('userid');
             } else {
                 // Prepare the list of users
-                if (!empty($cm->groupingid)) {
+                $users = array();
+                if (!empty($CFG->enablegroupmembersonly) && $cm->groupmembersonly) {
+                    // only users from the grouping
                     $groups = groups_get_all_groups($cm->course, 0, $cm->groupingid);
-                    $groups = array_keys($groups);
+                    if (empty($groups)) {
+                        // empty grouping
+                    } else {
+                        $users = get_users_by_capability($this->context, 'mod/quiz:attempt', 'u.id,u.firstname,u.lastname,u.email' ,
+                                    'firstname ASC, lastname ASC', '', '', array_keys($groups), '', false, true);
+                    }
                 } else {
-                    $groups = null;
+                    $users = get_users_by_capability($this->context, 'mod/quiz:attempt', 'u.id,u.firstname,u.lastname,u.email' ,
+                                    'firstname ASC, lastname ASC', '', '', '', '', false, true);
                 }
-                $users = get_users_by_capability($this->context, 'mod/quiz:attempt', 'u.id,u.firstname,u.lastname,u.email' ,
-                                    'firstname ASC, lastname ASC', '', '', $groups, '', false, true);
                 if (empty($users)) {
-                    $users = array();
+                    // generate an error
+                    $link = new moodle_url('/mod/quiz/overrides.php', array('cmid'=>$cm->id));
+                    print_error('usersnone', 'quiz', $link);
                 }
 
                 $userchoices = array();

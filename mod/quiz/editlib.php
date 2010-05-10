@@ -394,7 +394,8 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete = true,
 
     $pageopen = false;
 
-    $returnurl = $pageurl->out();
+    $returnurl = $pageurl->out($returnurl);
+    echo '<pre>'; var_dump($returnurl); echo '</pre>'; // DONOTCOMMIT
     $questiontotalcount = count($order);
 
     foreach ($order as $i => $qnum) {

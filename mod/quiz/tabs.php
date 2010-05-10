@@ -101,11 +101,15 @@ if ($currenttab == 'overrides' and isset($mode)) {
     $currenttab = $mode;
 
     $strgroup = get_string('groupoverrides', 'quiz');
+    if (empty($groups)) {
+        $inactive[] = 'group';
+    }
     $struser = get_string('useroverrides', 'quiz');
 
-    $row[] = new tabobject('group', "$CFG->wwwroot/mod/quiz/overrides.php?cmid=$cm->id", $strgroup);
+    $row[] = new tabobject('group', "$CFG->wwwroot/mod/quiz/overrides.php?cmid=$cm->id&amp;mode=group", $strgroup);
     $row[] = new tabobject('user', "$CFG->wwwroot/mod/quiz/overrides.php?cmid=$cm->id&amp;mode=user", $struser);
     $tabs[] = $row;
+
 }
 
 if (!$quiz->questions) {
