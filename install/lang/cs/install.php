@@ -32,6 +32,7 @@ $string['admindirname'] = 'Adresář pro správu (admin)';
 $string['chooselanguagehead'] = 'Vyberte jazyk';
 $string['chooselanguagesub'] = 'Zvolte si jazyk PRO INSTALOVÁNÍ. Jazyk pro stránky Moodlu a pro uživatele budete moci vybrat později.';
 $string['dataroot'] = 'Datový adresář';
+$string['dbprefix'] = 'Předpona tabulek';
 $string['dirroot'] = 'Adresář Moodlu';
 $string['installation'] = 'Instalace';
 $string['langdownloaderror'] = 'Bohužel, jazyk "{$a}" se nepodařilo nainstalovat. Instalace bude pokračovat v angličtine.';

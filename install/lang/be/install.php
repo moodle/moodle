@@ -30,6 +30,7 @@
 
 $string['admindirname'] = 'Каталог адміністратара';
 $string['dataroot'] = 'Каталог дадзеных';
+$string['dbprefix'] = 'Прэфікс табліцаў';
 $string['dirroot'] = 'Каталог Moodle';
 $string['installation'] = 'Ладаванне';
 $string['memorylimithelp'] = '<p>Ліміт памяці PHP для вашага сэрвера выстаўлены на {$a}.</p>

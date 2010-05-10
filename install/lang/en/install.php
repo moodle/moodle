@@ -32,7 +32,12 @@ $string['admindirname'] = 'Admin Directory';
 $string['availablelangs'] = 'List of available languages';
 $string['chooselanguagehead'] = 'Choose a language';
 $string['chooselanguagesub'] = 'Please choose a language for the installation. This language will also be used as the default language for the site, though it may be changed later.';
+$string['cliinstallheader'] = 'Moodle {$a} command line installation program';
+$string['databasehost'] = 'Database host';
+$string['databasename'] = 'Database name';
+$string['databasetypehead'] = 'Choose database driver';
 $string['dataroot'] = 'Data Directory';
+$string['dbprefix'] = 'Tables prefix';
 $string['dirroot'] = 'Moodle Directory';
 $string['environmentsub2'] = 'Each Moodle release has some minimum PHP version requirement and a number of mandatory PHP extensions.
 Full environment check is done before each install and upgrade. Please contact server administrator if you do not know how to install new version or enable PHP extensions.';

@@ -32,6 +32,7 @@ $string['admindirname'] = 'Administratora direktorijs';
 $string['chooselanguagehead'] = 'Valodas izvēle';
 $string['chooselanguagesub'] = 'Lūdzu, izvēlieties valodu, kas tiks lietota TIKAI instalēšanas laikā. Vietni un lietotājiem pieejamās valodas vēlāk varēsit izvēlēties citā ekrānā.';
 $string['dataroot'] = 'Datu direktorijs';
+$string['dbprefix'] = 'Tabulu prefikss';
 $string['dirroot'] = 'Moodle direktorijs';
 $string['installation'] = 'Instalēšana';
 $string['langdownloaderror'] = '“{$a}” valodas pakotne diemžēl netika instalēta. Instalēšana tiks turpināta angļu valodā.';

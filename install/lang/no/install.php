@@ -32,6 +32,7 @@ $string['admindirname'] = 'Adminmappe';
 $string['chooselanguagehead'] = 'Velg et språk';
 $string['chooselanguagesub'] = 'Velg språk (bare for INSTALLASJONEN). Du vil kunne velge språk for nettsted og bruker på et skjermbilde senere.';
 $string['dataroot'] = 'Datamappe';
+$string['dbprefix'] = 'Tabellprefix';
 $string['dirroot'] = 'Moodlemappe';
 $string['installation'] = 'Installasjon';
 $string['langdownloaderror'] = 'Beklageligvis ble ikke språkpakken "{$a}" installert. Installasjonsprosessen vil fortsette på Engelsk.';

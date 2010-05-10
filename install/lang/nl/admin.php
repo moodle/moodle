@@ -28,8 +28,11 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['clianswerno'] = 'n';
+$string['cliansweryes'] = 'j';
 $string['cliincorrectvalueerror'] = 'Fout, waarde "{$a->value}" voor de optie "{$a->option}" is niet juist';
 $string['cliincorrectvalueretry'] = 'Foute waarde. Probeer opnieuw';
 $string['clitypevalue'] = 'type waarde';
 $string['clitypevaluedefault'] = 'type waarde, druk op Enter om de standaardwaarde te gebruiken ({$a})';
 $string['cliunknowoption'] = 'Optie {$a} niet herkend: gebruik de --help optie.';
+$string['cliyesnoprompt'] = 'typ j (ja) of n (nee)';

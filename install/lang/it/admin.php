@@ -28,6 +28,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['clianswerno'] = 'n';
+$string['cliansweryes'] = 's';
 $string['cliincorrectvalueerror'] = 'Errore, il valore "{$a->value}" non è corretto per "{$a->option}"';
 $string['cliincorrectvalueretry'] = 'Valore non corretto, per favore riprova';
 $string['clitypevalue'] = 'inserisci valore';
@@ -35,3 +37,4 @@ $string['clitypevaluedefault'] = 'inserisci valore oppure premi Invio per usare 
 $string['cliunknowoption'] = 'Opzione non riconosciuta:
 {$a}
 . Per favore utilizzate l\'opzione --help.';
+$string['cliyesnoprompt'] = 'inserisci s (per Si) o n (per No)';

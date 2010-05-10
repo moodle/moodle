@@ -32,6 +32,7 @@ $string['admindirname'] = 'Direutoriu d\'alministración';
 $string['chooselanguagehead'] = 'Escueya idioma';
 $string['chooselanguagesub'] = 'Escueya un idioma NAMÁS pa la instalación. va poder escoyer l\'idioma del sitiu y l\'idioma d\'usuariu nes pantayes vinientes.';
 $string['dataroot'] = 'Direutoriu de datos';
+$string['dbprefix'] = 'Prefixu de les tables';
 $string['dirroot'] = 'Direutoriu Moodle';
 $string['installation'] = 'Instalación';
 $string['langdownloaderror'] = 'Desgraciadamente l\'idioma "{$a}" nun ta instaláu. El procesu d\'instalación va siguir n\'inglés.';

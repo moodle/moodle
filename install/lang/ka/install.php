@@ -30,6 +30,7 @@
 
 $string['admindirname'] = 'ადმინისტრატორის დირექტორია';
 $string['dataroot'] = 'მონაცემტა დირექტორია';
+$string['dbprefix'] = 'ცხრილების პრეფიქსი';
 $string['dirroot'] = 'Moodle-ის დირექტორია';
 $string['installation'] = 'ინსტალირება';
 $string['memorylimithelp'] = '<p>The PHP memory limit for your server is currently set to {$a}.</p>

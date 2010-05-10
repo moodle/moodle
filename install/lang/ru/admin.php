@@ -35,3 +35,4 @@ $string['clitypevaluedefault'] = 'тип значения, нажмите Enter 
 $string['cliunknowoption'] = 'Неопределённые опции
 {$a}
 .Пожалуйста, используйте опцию --help';
+$string['cliyesnoprompt'] = 'Введите y (обозначает да) или n (обозначает нет)';

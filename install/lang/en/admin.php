@@ -28,10 +28,13 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['clianswerno'] = 'n';
+$string['cliansweryes'] = 'y';
 $string['cliincorrectvalueerror'] = 'Error, incorrect value "{$a->value}" for "{$a->option}"';
 $string['cliincorrectvalueretry'] = 'Incorrect value, please retry';
 $string['clitypevalue'] = 'type value';
 $string['clitypevaluedefault'] = 'type value, press Enter to use default value ({$a})';
 $string['cliunknowoption'] = 'Unrecognized options:
   {$a}
-. Please use --help option.';
+Please use --help option.';
+$string['cliyesnoprompt'] = 'type y (means yes) or n (means no)';

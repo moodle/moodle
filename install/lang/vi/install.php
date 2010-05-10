@@ -30,6 +30,7 @@
 
 $string['admindirname'] = 'Thư mục quản trị';
 $string['dataroot'] = 'Thư mục dữ liệu';
+$string['dbprefix'] = 'Các bảng cố định trước';
 $string['dirroot'] = 'Thư mục Moodle';
 $string['installation'] = 'Cài đặt';
 $string['memorylimithelp'] = '<p> PHP thiết lập giới hạn bộ nhớ cho máy chủ của bạn hiện tại là {$a}.</p>

@@ -32,6 +32,7 @@ $string['admindirname'] = 'ថត​អ្នក​គ្រប់គ្រង';
 $string['chooselanguagehead'] = 'ជ្រើស​ភាសា';
 $string['chooselanguagesub'] = 'សូម​ជ្រើស​ភាសា សម្រាប់​តែ​ការ​ដំឡើង​ប៉ុណ្ណោះ ។ អ្នក​នឹង​អាច​ជ្រើស​ភាសា​សម្រាប់​តំបន់​បណ្ដាញ និង​អ្នក​ប្រើ នៅ​ផ្នែក​ក្រោយ​ៗ​ទៀត ។';
 $string['dataroot'] = 'ថត​ទិន្នន័យ';
+$string['dbprefix'] = 'បុព្វបទ​តារាង';
 $string['dirroot'] = 'ថត Moodle';
 $string['installation'] = 'ការ​ដំឡើង';
 $string['langdownloaderror'] = 'ភាសា "{$a}" មិនត្រូវ​បាន​ដំឡើង​ឡើយ ។ វា​នឹង​បន្ត​ដំឡើង​ជា​ភាសា​អង់គ្លេស ។';

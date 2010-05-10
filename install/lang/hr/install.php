@@ -29,6 +29,7 @@
  */
 
 $string['dataroot'] = 'Mapa s podacima';
+$string['dbprefix'] = 'Prefiks tablice';
 $string['dirroot'] = 'Moodle mapa';
 $string['installation'] = 'Instalacija';
 $string['phpversion'] = 'PHP inačica';

@@ -32,6 +32,7 @@ $string['admindirname'] = 'Cyfeiriadur y Gweinyddwr';
 $string['chooselanguagehead'] = 'Dewis iaith';
 $string['chooselanguagesub'] = 'Dewiswch iaith ar gyfer y broses osod YN UNIG. Gallwch ddewis yr iaith ar gyfer y safle ac ar gyfer defnyddwyr yn nes ymlaen ar sgrin arall.';
 $string['dataroot'] = 'Cyfeiriadur Data';
+$string['dbprefix'] = 'Llythrennau Blaen Tablau';
 $string['dirroot'] = 'Cyfeiriadur Moodle';
 $string['installation'] = 'Gosod';
 $string['langdownloaderror'] = 'Yn anffodus, ni osodwyd yr iaith ganlynol: "{$a}". Bydd y broses osod yn cario ymlaen yn Saesneg.';

@@ -31,6 +31,7 @@
 $string['admindirname'] = 'مجلد الإدارة';
 $string['chooselanguagehead'] = 'اختر اللغة';
 $string['dataroot'] = 'دليل البيانات';
+$string['dbprefix'] = 'مقدمة الجداول';
 $string['dirroot'] = 'دليل مودل';
 $string['installation'] = 'تثبيت';
 $string['phpversion'] = 'أصدار PHP';

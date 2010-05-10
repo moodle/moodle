@@ -32,7 +32,11 @@ $string['admindirname'] = 'Admin-map';
 $string['availablelangs'] = 'Lijst met beschikbare talen';
 $string['chooselanguagehead'] = 'Kies een taal';
 $string['chooselanguagesub'] = 'De taalinstelling die je hier kiest is enkel voor het installatieproces. In één van de volgende schermen zul je de standaardtaal voor de site kunnen kiezen. Bebruikers kunnen als je dat wil, zelf bepalen met welke taal ze werken.';
+$string['databasehost'] = 'Databank host:';
+$string['databasename'] = 'Datanbanknaam:';
+$string['databasetypehead'] = 'Kies databankdriver';
 $string['dataroot'] = 'Gegevens';
+$string['dbprefix'] = 'Tabelvoorvoegsel';
 $string['dirroot'] = 'Moodle-map';
 $string['environmentsub2'] = 'Elke Moodleversie vraagt een minimum PHP-versie en een aantal vereiste PHP-extenties.
 De volledige installatie-omgeving wordt gecontroleerd voor elke installatie en upgrade. Contacteer je server beheerder als je niet weet hoe je de juiste PHP-versie moet installeren of PHP-extenties moet inschakelen.';

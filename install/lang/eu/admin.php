@@ -28,9 +28,12 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['clianswerno'] = 'e';
+$string['cliansweryes'] = 'b';
 $string['cliincorrectvalueerror'] = 'Errorea, "{$a->value}" balorea ez da egokia "{$a->option}"-rako';
 $string['cliincorrectvalueretry'] = 'Balore ezegokia, mesedez saiatu berriz';
 $string['clitypevalue'] = 'Sartu balorea';
 $string['clitypevaluedefault'] = 'sartu balorea, sakatu Enter-i berezko balorea erabiltzeko ({$a})';
 $string['cliunknowoption'] = 'Aukera ezezagunak:{$a}
 .Mesedez, erabili --laguntza aukera.';
+$string['cliyesnoprompt'] = 'idatzi b(bai esateko) edo e (ez esateko)';

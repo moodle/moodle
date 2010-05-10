@@ -32,6 +32,7 @@ $string['admindirname'] = 'Directorio de administración';
 $string['chooselanguagehead'] = 'Escolla idioma';
 $string['chooselanguagesub'] = 'Escolla un idioma SÓ para a instalación. Poderá escoller o idioma do sitio e o idioma de usuario en próximas pantallas.';
 $string['dataroot'] = 'Directorio de datos';
+$string['dbprefix'] = 'Prefixo das táboas';
 $string['dirroot'] = 'Directorio Moodle';
 $string['installation'] = 'Instalación';
 $string['langdownloaderror'] = 'Desafortunadamente o idioma "{$a}" non foi instalado. O proceso de instalación continuará en inglés.';

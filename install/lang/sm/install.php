@@ -30,6 +30,7 @@
 
 $string['admindirname'] = 'Fa\'afoega';
 $string['dataroot'] = 'Ala atu i fa\'amaumauga';
+$string['dbprefix'] = 'Tables prefix';
 $string['dirroot'] = 'Auala atu i le Moodle';
 $string['installation'] = 'Fa\'atu/Install';
 $string['memorylimithelp'] = '<p>The PHP memory limit for your server is currently set to {$a}.</p>

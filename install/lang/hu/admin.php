@@ -28,8 +28,11 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['clianswerno'] = 'n';
+$string['cliansweryes'] = 'i';
 $string['cliincorrectvalueerror'] = 'Hiba, "{$a->value}" értéke "{$a->option}" esetén hibás';
 $string['cliincorrectvalueretry'] = 'Hibás érték, próbálja újra.';
 $string['clitypevalue'] = 'érték beírása';
 $string['clitypevaluedefault'] = 'érték beírása, Enter esetén alapérték ({$a}) használata';
 $string['cliunknowoption'] = 'Ismeretlen paraméter: {$a}. Használja a --help paramétert.';
+$string['cliyesnoprompt'] = 'írjon be i-t (igen) vagy n-t (nem)';

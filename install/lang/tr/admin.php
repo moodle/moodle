@@ -28,6 +28,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['clianswerno'] = 'h';
+$string['cliansweryes'] = 'e';
 $string['cliincorrectvalueerror'] = 'Hata, "{$a->option}" için geçeriz değer ("{$a->value}")';
 $string['cliincorrectvalueretry'] = 'Geçersiz değer, lütfen tekrar deneyin';
 $string['clitypevalue'] = 'değeri yazın';
@@ -35,3 +37,4 @@ $string['clitypevaluedefault'] = 'değeri yazın, varsayılan değeri ({$a}) kul
 $string['cliunknowoption'] = 'Tanınmayan seçenekler:
 {$a}
 . Lütfen --help seçeneğini kullanın.';
+$string['cliyesnoprompt'] = 'e (evet) veya h (hayır) yazın';

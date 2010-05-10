@@ -28,6 +28,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['clianswerno'] = 'n';
+$string['cliansweryes'] = 'j';
 $string['cliincorrectvalueerror'] = 'Fehler: Falscher Wert "{$a->value}" für "{$a->option}"';
 $string['cliincorrectvalueretry'] = 'Falscher Wert - versuchen Sie es nochmal';
 $string['clitypevalue'] = 'Wert eingeben';

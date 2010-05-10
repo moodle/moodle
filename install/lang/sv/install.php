@@ -32,6 +32,7 @@ $string['admindirname'] = 'Katalog för administration';
 $string['chooselanguagehead'] = 'Välj ett språk';
 $string['chooselanguagesub'] = 'Var snäll och välj ett språk ENDAST för installationen. Du kommer att ha möjlighet att välja språk för webbplatsen och användarna på en senare skärm.';
 $string['dataroot'] = 'katalog för data';
+$string['dbprefix'] = 'Prefix för tabeller';
 $string['dirroot'] = 'Katalogen för Moodle';
 $string['installation'] = 'Installation';
 $string['langdownloaderror'] = 'Språket "{$a}" installerades tyvärr inte. Installationen kommer att fullföljas på engelska.';

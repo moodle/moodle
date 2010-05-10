@@ -32,6 +32,7 @@ $string['admindirname'] = 'Admin դիրեկտորիա';
 $string['chooselanguagehead'] = 'Ընտրեք լեզուն';
 $string['chooselanguagesub'] = 'Ընտրեք լեզուն ՄԻԱՅՆ տեղակայման համար: Հետագա էկրաններից դուք հնարավորություն կունենաք ընտրել կայքի և օգտագործողի լեզուն:';
 $string['dataroot'] = 'Տվյալների դիրեկտորիա';
+$string['dbprefix'] = 'Աղյուսակների նախածանց';
 $string['dirroot'] = 'Moodle դիրեկտորիա';
 $string['installation'] = 'Տեղակայում';
 $string['langdownloaderror'] = 'Ցավոք "{$a}" լեզուն տեղակայված չէ և տեղակայման գործընթացը կշարունակվի անգլերենով։';

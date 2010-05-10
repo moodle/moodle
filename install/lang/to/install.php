@@ -30,6 +30,7 @@
 
 $string['admindirname'] = '\'Etimini fakahinohino';
 $string['dataroot'] = 'Fakahinohino tata';
+$string['dbprefix'] = 'Tepile pulifiki';
 $string['dirroot'] = 'Mutolo fakahinohino';
 $string['installation'] = 'Fokotu\'u';
 $string['memorylimithelp'] = '<p> Koe memolii PHP limiti ki ho\'o seeva \'oku lolotonga seti ki he {$a}.</p>

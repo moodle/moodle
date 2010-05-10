@@ -28,8 +28,11 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['clianswerno'] = 'n';
+$string['cliansweryes'] = 'y';
 $string['cliincorrectvalueerror'] = 'Erreur, valeur incorrecte « {$a->value} » pour le paramètre « {$a->option} »';
 $string['cliincorrectvalueretry'] = 'Valeur incorrecte, veuillez essayer de nouveau';
 $string['clitypevalue'] = 'type valeur';
 $string['clitypevaluedefault'] = 'type valeur, tapez Entrée pour utiliser la valeur par défaut ({$a})';
 $string['cliunknowoption'] = 'Options non reconnues :n  $an. Utilisez l\'option --help.';
+$string['cliyesnoprompt'] = 'Tapez y (pour oui) ou n (pour non)';

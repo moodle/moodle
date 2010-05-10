@@ -30,5 +30,6 @@
 
 $string['admindirname'] = 'Administrator katalogi nomi';
 $string['dataroot'] = 'Ma\'lumotlar katalogi';
+$string['dbprefix'] = 'Jadvallar prefiksi';
 $string['dirroot'] = 'Moodle kataloglari';
 $string['installation'] = 'O\'rnatish';

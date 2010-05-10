@@ -30,6 +30,7 @@
 
 $string['admindirname'] = 'Dossier d\'administration';
 $string['dataroot'] = 'Dossier de données';
+$string['dbprefix'] = 'Préfixe des tables';
 $string['dirroot'] = 'Dossier Moodle';
 $string['installation'] = 'Installation';
 $string['memorylimithelp'] = '<p>La limite de mémoire de PHP sur votre serveur est actuellement de {$a}.</p> <p>Cette valeur très faible risque de générer des problèmes de manque de mémoire pour Moodle, notamment si vous utilisez beaucoup de modules et/ou si vous avez un grand nombre d\'utilisateurs.</p> <p>Il est recommandé de configurer PHP avec une limite de mémoire aussi élevée que possible, par exemple 16 Mo. Vous pouvez obtenir cela de différentes façons :

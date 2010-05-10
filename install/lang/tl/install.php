@@ -32,6 +32,7 @@ $string['admindirname'] = 'Pang-Admin na Bugsok';
 $string['chooselanguagehead'] = 'Pumilì ng wika';
 $string['chooselanguagesub'] = 'Pumili po ng wika para sa pagluluklok LAMANG.  Sa mga susunod na iskrin ay makakapili ka ng wika para sa site o tagagamit.';
 $string['dataroot'] = 'Bugsok ng Datos';
+$string['dbprefix'] = 'Unlapi ng mga teybol';
 $string['dirroot'] = 'Bugsok ng Moodle';
 $string['installation'] = 'Pagluklok';
 $string['langdownloaderror'] = 'Ikinalulungkot namin na ang wikang "{$a}" ay hindi nailuklok. Ang kabuuan ng pagluluklok ay itutuloy sa Ingles.';

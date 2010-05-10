@@ -28,9 +28,12 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['clianswerno'] = 'n';
+$string['cliansweryes'] = 'y';
 $string['cliincorrectvalueerror'] = 'Greška, neispravna vrednost "{$a->value}" za "{$a->option}"';
 $string['cliincorrectvalueretry'] = 'Neispravna vrednos, molim pokušajte ponovo';
 $string['clitypevalue'] = 'otkucaj vrednost';
 $string['clitypevaluedefault'] = 'otkucaj vrednost, pritisni Enter da biste upotrebili podrazumevanu vrednost ({$a})';
 $string['cliunknowoption'] = 'Neprepoznata opcija:
 {$a}';
+$string['cliyesnoprompt'] = 'otkucaj y (znači da) ili n (znači ne)';

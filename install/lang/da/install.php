@@ -32,6 +32,7 @@ $string['admindirname'] = 'Admin-mappe';
 $string['chooselanguagehead'] = 'Vælg et sprog';
 $string['chooselanguagesub'] = 'Vælg et sprog til brug under installationen. Senere vil du kunne vælge hvilke sprog Moodle skal kunne bruge.';
 $string['dataroot'] = 'Datamappe';
+$string['dbprefix'] = 'Præfix for tabeller';
 $string['dirroot'] = 'Moodle-mappe';
 $string['installation'] = 'Installation';
 $string['langdownloaderror'] = 'Sproget "{$a}" blev desværre ikke installeret. Installationen vil fortsætte på engelsk.';

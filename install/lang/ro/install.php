@@ -32,6 +32,7 @@ $string['admindirname'] = 'Admin Directory';
 $string['chooselanguagehead'] = 'Selectare limbă';
 $string['chooselanguagesub'] = 'Vă rugăm selectaţi limba pentru interfaţa de instalare, limba selectată va fi folosită EXCLUSIV în cadrul procedurii de instalare. Ulterior veţi putea selecta limba în care doriţi să fie afişată interfaţa.';
 $string['dataroot'] = 'Data Directory';
+$string['dbprefix'] = 'Prefix tabele';
 $string['dirroot'] = 'Director Moodle';
 $string['installation'] = 'Instalare';
 $string['phpversion'] = 'Versiune PHP';

@@ -32,6 +32,7 @@ $string['admindirname'] = 'Admin Directory';
 $string['chooselanguagehead'] = 'மொழியைத் தேர்ந்தெடு';
 $string['chooselanguagesub'] = 'Please choose a language for the installation ONLY. You will be able to choose site and user languages on a later screen.';
 $string['dataroot'] = 'Data Directory';
+$string['dbprefix'] = 'Tables prefix';
 $string['dirroot'] = 'Moodle Directory';
 $string['installation'] = 'Installation';
 $string['langdownloaderror'] = 'Unfortunately the language "{$a}" was not installed. The installation process will continue in English.';

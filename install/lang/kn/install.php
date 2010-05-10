@@ -30,6 +30,7 @@
 
 $string['admindirname'] = 'ನಿರ್ವಾಹಕ ಕಡತ ಕೋಶ';
 $string['dataroot'] = 'ದತ್ತ ಡೈರೆಕ್ಟರಿ';
+$string['dbprefix'] = 'ಪಟ್ಟಿಯ ಶೀರ್ಷಿಕೆ';
 $string['dirroot'] = 'ಮೂಡಲ್ ಡೈರೆಕ್ಟರಿ';
 $string['installation'] = 'ಅನುಸ್ಥಾಪನೆ';
 $string['phpversion'] = 'ಪಿಎಚ್‌ಪಿ ಆವೃತ್ತಿ';

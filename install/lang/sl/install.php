@@ -32,6 +32,7 @@ $string['admindirname'] = 'Skrbniški imenik';
 $string['chooselanguagehead'] = 'Izberite jezik';
 $string['chooselanguagesub'] = 'Izberite jezika SAMO za namestitev. Pozneje boste lahko izbrali tudi jezike strani in uporabniške jezike.';
 $string['dataroot'] = 'Imenik za podatke';
+$string['dbprefix'] = 'Predpona tabel';
 $string['dirroot'] = 'Imenik Moodle';
 $string['installation'] = 'Namestitev';
 $string['langdownloaderror'] = 'Žal jezik "{$a}" ni bil nameščen. Postopek namestitve se bo nadaljeval v angleščini.';

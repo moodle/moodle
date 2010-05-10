@@ -30,6 +30,7 @@
 
 $string['admindirname'] = 'Administratorski direktorij';
 $string['dataroot'] = 'Direktorij podataka';
+$string['dbprefix'] = 'Lista prefiksa';
 $string['dirroot'] = 'Direktorij Moodla';
 $string['installation'] = 'Instalacija';
 $string['memorylimithelp'] = '<p>PHP ograničenje memorije za Vaš server je trenutno podešeno na {$a}.</p>

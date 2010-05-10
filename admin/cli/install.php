@@ -288,8 +288,7 @@ if ($interactive) {
             $error = get_string('cliincorrectvalueretry', 'admin')."\n";
         } else if (is_dataroot_insecure()) {
             $CFG->dataroot = '';
-            //TODO: use unsecure warning instead
-            $error = get_string('cliincorrectvalueretry', 'admin')."\n";
+            $error = get_string('pathsunsecuredataroot', 'install')."\n";
         } else {
             if (make_upload_directory('lang', false)) {
                 $error = '';

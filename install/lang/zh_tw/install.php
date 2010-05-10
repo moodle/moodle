@@ -32,6 +32,7 @@ $string['admindirname'] = '管理目錄';
 $string['chooselanguagehead'] = '選擇一種語言';
 $string['chooselanguagesub'] = '請選擇在安裝過程中使用的語言。稍後您可以根據需要重新選擇用於網站和使用者的語言。';
 $string['dataroot'] = '資料目錄';
+$string['dbprefix'] = '資料表名稱的前置字元';
 $string['dirroot'] = 'Moodle目錄';
 $string['installation'] = '安裝';
 $string['langdownloaderror'] = '很不幸地，語言“{$a}”並未安裝。安裝過程將以英文繼續。';
