@@ -84,7 +84,7 @@ class repository_filesystem extends repository {
                             'source' => $path.'/'.$file,
                             'size' => filesize($this->root_path.$file),
                             'date' => time(),
-                            'thumbnail' => $OUTPUT->pix_url(file_extension_icon($this->root_path.$file, 32))
+                            'thumbnail' => $OUTPUT->pix_url(file_extension_icon($this->root_path.$file, 32)).''
                         );
                     } else {
                         if (!empty($path)) {
@@ -95,13 +95,14 @@ class repository_filesystem extends repository {
                         $list['list'][] = array(
                             'title' => $file,
                             'children' => array(),
-                            'thumbnail' => $OUTPUT->pix_url('f/folder-32'),
+                            'thumbnail' => $OUTPUT->pix_url('f/folder-32').'',
                             'path' => $current_path
                             );
                     }
                 }
             }
         }
+        $list['list'] = array_filter($list['list'], array($this, 'filter'));
         return $list;
     }
     public function check_login() {
@@ -146,6 +147,9 @@ class repository_filesystem extends repository {
     public function instance_config_form($mform) {
         global $CFG;
         $path = $CFG->dataroot . '/repository/';
+        if (!is_dir($path)) {
+            mkdir($path);
+        }
         if ($handle = opendir($path)) {
             $fieldname = get_string('path', 'repository_filesystem');
             $choices = array();
