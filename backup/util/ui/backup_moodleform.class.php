@@ -76,7 +76,7 @@ abstract class backup_moodleform extends moodleform {
      */
     function definition() {
         $mform = $this->_form;
-        $stage = $mform->addElement('hidden', 'stage', $this->uistage->get_next_stage());
+        $stage = $mform->addElement('hidden', 'stage', $this->uistage->get_stage());
         $stage = $mform->addElement('hidden', 'backup', $this->uistage->get_backupid());
     }
     /**
@@ -84,8 +84,15 @@ abstract class backup_moodleform extends moodleform {
      * to add elements on the fly.
      */
     function definition_after_data() {
-        $mform = $this->_form;
-        $this->add_action_buttons(get_string('cancel'), get_string('onstage'.$this->uistage->get_stage().'action', 'backup'));
+
+        $buttonarray=array();
+        if ($this->uistage->get_stage() > backup_ui::STAGE_INITIAL) {
+            $buttonarray[] = $this->_form->createElement('submit', 'previous', get_string('previousstage','backup'));
+        }
+        $buttonarray[] = $this->_form->createElement('submit', 'submitbutton', get_string('onstage'.$this->uistage->get_stage().'action', 'backup'));
+        $buttonarray[] = $this->_form->createElement('cancel');
+        $this->_form->addGroup($buttonarray, 'buttonar', '', array(' '), false);
+        $this->_form->closeHeaderBefore('buttonar');
     }
     /**
      * Closes any open divs
@@ -257,4 +264,26 @@ class backup_schema_form extends backup_moodleform {}
  * Nothing to override we only need it defined so that moodleform doesn't get confused
  * between stages.
  */
-class backup_confirmation_form extends backup_moodleform {}
+class backup_confirmation_form extends backup_moodleform {
+
+    public function definition_after_data() {
+        parent::definition_after_data();
+        $this->_form->addRule('setting_root_filename', get_string('errorfilenamerequired', 'backup'), 'required');
+        $this->_form->setType('setting_root_filename', PARAM_FILE);
+    }
+
+    public function validation($data, $files) {
+        $errors = parent::validation($data, $files);
+
+        if (!array_key_exists('setting_root_filename', $errors)) {
+            if (trim($data['setting_root_filename']) == '') {
+                $errors['setting_root_filename'] = get_string('errorfilenamerequired', 'backup');
+            } else if (!preg_match('#\.zip$#i', $data['setting_root_filename'])) {
+                $errors['setting_root_filename'] = get_string('errorfilenamemustbezip', 'backup');
+            }
+        }
+
+        return $errors;
+    }
+
+}

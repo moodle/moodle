@@ -40,6 +40,7 @@ class backup_ui {
     const STAGE_SCHEMA = 2;
     const STAGE_CONFIRMATION = 4;
     const STAGE_FINAL = 8;
+    const STAGE_COMPLETE = 16;
     /**
      * The progress of this instance of the backup ui class
      */
@@ -110,55 +111,6 @@ class backup_ui {
         return $stage;
     }
     /**
-     * This passes off processing for the current stage to the previous stage.
-     *
-     * This occurs when the current stage hasn't been completed yet
-     *
-     * @param backup_ui_stage $stage
-     * @return bool
-     */
-    public function process_previous_stage(backup_ui_stage $stage) {
-        $prevstage = $stage->get_prev_stage();
-        if ($prevstage) {
-            $prevstage = $this->initialise_stage($prevstage);
-            if ($prevstage) {
-                return $prevstage->process();
-            }
-        }
-        return false;
-    }
-    /**
-     * This magical function processes all previous stages to the provided stage
-     * given its backup_moodleform
-     *
-     * @param backup_ui_stage $stage
-     * @param backup_moodleform $form
-     * @return int The number of changes made by the user
-     */
-    public function process_all_previous_stages(backup_ui_stage $stage, backup_moodleform $form) {
-        $stages = array();
-        // First get an instance of each previous stage
-        while ($stage instanceof backup_ui_stage) {
-            $stage = $stage->get_prev_stage();
-            if ($stage) {
-                $stage = $this->initialise_stage($stage);
-                $stages[] = $stage;
-            }
-        }
-        $stages = array_reverse($stages);
-        $changes = 0;
-        // The process each stage in the correct order.
-        foreach ($stages as $stage) {
-            $outcome = $stage->process($form);
-            // Check it didn't fail
-            if ($outcome === false) {
-                throw new backup_ui_exception('backup_ui_process_all_previous_stages_failed', $stage->get_stage());
-            }
-            $changes += $outcome;
-        }
-        return $changes;
-    }
-    /**
      * This processes the current stage of the backup
      * @return bool
      */
@@ -167,8 +119,19 @@ class backup_ui {
             throw new backup_ui_exception('backupuialreadyprocessed');
         }
         $this->progress = self::PROGRESS_PROCESSED;
+
+        if (optional_param('previous', false, PARAM_BOOL) && $this->stage->get_stage() > self::STAGE_INITIAL) {
+            $this->stage = $this->initialise_stage($this->stage->get_prev_stage());
+            return false;
+        }
+
         // Process the stage
         $processoutcome = $this->stage->process();
+
+        if ($processoutcome !== false) {
+            $this->stage = $this->initialise_stage($this->stage->get_next_stage());
+        }
+
         // Process UI event after to check changes are valid
         $this->controller->process_ui_event();
         return $processoutcome;
@@ -325,7 +288,9 @@ class backup_ui {
      * @return array Array of items for the progress bar
      */
     public function get_progress_bar() {
-        $stage = self::STAGE_FINAL;
+        global $PAGE;
+        
+        $stage = self::STAGE_COMPLETE;
         $currentstage = $this->stage->get_stage();
         $items = array();
         while ($stage > 0) {
@@ -337,10 +302,11 @@ class backup_ui {
             } else if ($stage < $currentstage) {
                 $classes[] = 'backup_stage_complete';
             }
-            array_unshift($items, array(
-                'text' => get_string('currentstage'.$stage, 'backup'),
-                'class' => join(' ', $classes)
-            ));
+            $item = array('text' => strlen(decbin($stage)).'. '.get_string('currentstage'.$stage, 'backup'),'class' => join(' ', $classes));
+            if ($stage < $currentstage && $currentstage < self::STAGE_COMPLETE) {
+                $item['link'] = new moodle_url($PAGE->url, array('backup'=>$this->get_backupid(), 'stage'=>$stage));
+            }
+            array_unshift($items, $item);
             $stage = floor($stage/2);
         }
         return $items;
@@ -365,6 +331,19 @@ class backup_ui {
      */
     public function get_controller_id() {
         return $this->controller->get_id();
+    }
+    /**
+     * Gets the requested setting
+     * @param string $name
+     * @return mixed
+     */
+    public function get_setting($name, $default = false) {
+        try {
+            return $this->controller->get_plan()->get_setting($name);
+        } catch (Exception $e) {
+            debugging('Failed to find the setting: '.$name, DEBUG_DEVELOPER);
+            return $default;
+        }
     }
     /**
      * Gets the value for the requested setting

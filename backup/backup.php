@@ -36,6 +36,7 @@ if ($cmid !== null) {
     $url->param('cm', $cmid);
 }
 $PAGE->set_url($url);
+$PAGE->set_pagelayout('admin');
 
 $id = $courseid;
 $cm = null;
@@ -90,7 +91,6 @@ if ($backup->get_stage() == backup_ui::STAGE_FINAL) {
 
 $PAGE->set_title($heading.': '.$backup->get_stage_name());
 $PAGE->set_heading($heading);
-$PAGE->set_pagelayout('admin');
 $PAGE->navbar->add($backup->get_stage_name());
 
 $renderer = $PAGE->get_renderer('core','backup');

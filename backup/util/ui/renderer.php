@@ -45,7 +45,13 @@ class core_backup_renderer extends plugin_renderer_base {
         foreach ($items as &$item) {
             $text = $item['text'];
             unset($item['text']);
-            $item = html_writer::tag('span', $text, $item);
+            if (array_key_exists('link', $item)) {
+                $link = $item['link'];
+                unset($item['link']);
+                $item = html_writer::link($link, $text, $item);
+            } else {
+                $item = html_writer::tag('span', $text, $item);
+            }
         }
         return html_writer::tag('div', join(get_separator(), $items), array('class'=>'backup_progress clearfix'));
     }
