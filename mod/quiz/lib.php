@@ -600,10 +600,9 @@ function quiz_get_recent_mod_activity(&$activities, &$index, $timestart,
     }
 
     $context         = get_context_instance(CONTEXT_MODULE, $cm->id);
-    $grader          = has_capability('moodle/grade:viewall', $context);
     $accessallgroups = has_capability('moodle/site:accessallgroups', $context);
     $viewfullnames   = has_capability('moodle/site:viewfullnames', $context);
-    $grader          = has_capability('mod/quiz:grade', $context);
+    $grader          = has_capability('mod/quiz:viewreports', $context);
     $groupmode       = groups_get_activity_groupmode($cm, $course);
 
     if (is_null($modinfo->groups)) {
