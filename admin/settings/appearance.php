@@ -24,6 +24,7 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
             1 => get_string('hidefromstudents', 'admin'),
             2 => get_string('hidefromall', 'admin')
         )));
+    $temp->add(new admin_setting_configtextarea('custommenuitems', get_string('custommenuitems', 'admin'), get_string('configcustommenuitems', 'admin'), '', PARAM_TEXT, '50', '10'));
     $ADMIN->add('themes', $temp);
     $ADMIN->add('themes', new admin_externalpage('themeselector', get_string('themeselector','admin'), $CFG->wwwroot . '/theme/index.php'));
 

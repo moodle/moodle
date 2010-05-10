@@ -521,17 +521,15 @@ body.tag .managelink {padding: 5px;}
 .path-backup .mform .grouped_settings.section_level .normal_setting {width:50%;margin:0;margin-left:50%;}
 .path-backup .notification.dependencies_enforced {text-align:center;color:#A00;font-weight:bold;}
 .path-backup .backup_progress {text-align:center;}
-.path-backup .backup_progress .backup_stage {color:#999;}
+.path-backup .backup_progress span.backup_stage {color:#999;}
 .path-backup .backup_progress .backup_stage.backup_stage_current {font-weight:bold;color:inherit;}
 .path-backup .backup_progress .backup_stage.backup_stage_next {}
-.path-backup .backup_progress .backup_stage.backup_stage_complete {color:inherit;}
-
+.path-backup .backup_progress span.backup_stage.backup_stage_complete {color:inherit;}
 
 /**
  * Web Service
  */
 #webservice-doc-generator td {text-align: left;border: 0px solid black;}
-
 
 /**
  * Help Content (pop-up)
@@ -541,3 +539,20 @@ body.tag .managelink {padding: 5px;}
 #helppopupbox .yui3-widget-bd {margin:0 1em 1em 1em;border-top:1px solid #FFE691;}
 #helppopupbox .helpheading {font-size: 1em;}
 #helppopupbox .spinner {margin:1em;} 
+
+/**
+ * Custom menu
+ */
+#custommenu {clear:both;}
+#custommenu .yui3-menu-horizontal.javascript-disabled .yui3-menu-content,
+#custommenu .yui3-menu-horizontal.javascript-disabled .yui3-menu-content .ul {border:1px solid #000;}
+#custommenu .yui3-menu-horizontal.javascript-disabled ul {margin:0;padding:0;}
+#custommenu .yui3-menu-horizontal.javascript-disabled li {margin:0;padding:0;list-style:none;width:auto;position:relative;}
+#custommenu .yui3-menu-horizontal.javascript-disabled>.yui3-menu-content>ul>li {float:left;}
+#custommenu .yui3-menu-horizontal.javascript-disabled li a {padding:0 10px;}
+#custommenu .yui3-menu-horizontal.javascript-disabled .yui3-menu {position:absolute;top:-10000px;left:-10000px;visibility:hidden;white-space: nowrap;max-width: 250px;background-color:#FFF;}
+#custommenu .yui3-menu-horizontal.javascript-disabled li:hover>.yui3-menu {top:100%;left:0;visibility: visible;z-index:10;}
+#custommenu .yui3-menu-horizontal.javascript-disabled li:hover .yui3-menu .yui3-menu {top:0;left:100%;min-width:200px;}
+#custommenu .yui3-menu-horizontal.javascript-disabled>.yui3-menu-content>ul:after {content:"";display:block;clear:both;line-height:0;font-size:0;visibility:hidden;}
+#custommenu .yui3-menu-horizontal.javascript-disabled .yui3-menu-content {font-size:93%;line-height:2;padding:0;}
+#custommenu .yui3-menu-horizontal.javascript-disabled .yui3-menu-content .yui3-menu-content {font-size:100%;}

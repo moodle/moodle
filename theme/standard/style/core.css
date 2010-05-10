@@ -289,6 +289,7 @@ table#tag-management-list {margin: 10px auto;width: 80%;}
  */
 #page-header .headermain {font-size:1.5em;}
 .pagelayout-frontpage #page-header {border-bottom:2px groove #999;margin:0 0.5%;width:99%;}
+.has_custom_menu.pagelayout-frontpage #page-header {border-bottom-width:0;}
 
 .navbar {margin:5px 10px;border:1px solid #DDD;}
 .navbar .breadcrumb {margin:5px;}
@@ -389,3 +390,23 @@ table#tag-management-list {margin: 10px auto;width: 80%;}
  #page-blocks-community-communitycourse .prioritisetr {background-color: #ffd4ff;}
  #page-blocks-community-communitycourse .additionaldesc {font-size: 80%; color: purple;}
  #page-blocks-community-communitycourse .additionaladmindesc {font-size: 80%; color: #6666ff;}
+
+/**
+ * Custom menu
+ */
+.pagelayout-frontpage #custommenu {padding:0 2px;}
+#custommenu {padding:0 10px;}
+#custommenu .yui3-menu {background-image:url([[pix:theme|hgradient]]);background-repeat: repeat-x;background-color:#e1e1df;}
+#custommenu .yui3-menu .yui3-menu {background-image:none;background-color:#FFF;}
+#custommenu .yui3-menu .yui3-menu-label,
+#custommenu .yui3-menu .yui3-menuitem-content,
+#custommenu .yui3-menu .yui3-menu-content,
+#custommenu .yui3-menu .yui3-menu .yui3-menu-content,
+#custommenu .yui3-menu-horizontal.javascript-disabled .yui3-menu-content,
+#custommenu .yui3-menu-horizontal.javascript-disabled .yui3-menu-content ul {border-color:#CCC;}
+#custommenu .yui3-menu .yui3-menuitem-content,
+#custommenu .yui3-menu .yui3-menu .yui3-menuitem-content {cursor:pointer;}
+#custommenu .yui3-menu .yui3-menu-label-menuvisible,
+#custommenu .yui3-menu .yui3-menuitem-active {background-color:#e1e1df;}
+#custommenu .yui3-menu-horizontal.javascript-disabled a {color:inherit;}
+#custommenu .yui3-menu-horizontal.javascript-disabled a:hover {color:blue;text-decoration:none;}
