@@ -51,6 +51,8 @@ define('AJAX_SCRIPT', false); // prevents some warnings later
 @ini_set('display_errors', '1');
 
 // Check that PHP is of a sufficient version
+// PHP 5.2.0 is intentionally checked here even though a higher version is required by the environment
+// check. This is not a typo - see MDL-18112
 if (version_compare(phpversion(), "5.2.0") < 0) {
     $phpversion = phpversion();
     // do NOT localise - lang strings would not work here and we CAN not move it after installib
