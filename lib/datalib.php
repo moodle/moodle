@@ -2279,7 +2279,9 @@ function count_login_failures($mode, $username, $lastlogin) {
  * @return void OUtput is echo'd
  */
 function print_object($object) {
-    echo '<pre class="notifytiny">' . htmlspecialchars(print_r($object,true)) . '</pre>';
+    echo '<pre class="notifytiny">';
+    print_r($object);  // Direct to output because some objects get too big for memory otherwise!
+    echo '</pre>';
 }
 
 /**
