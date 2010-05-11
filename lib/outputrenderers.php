@@ -2191,6 +2191,10 @@ END;
      * @return string
      */
     public function custom_menu() {
+        global $CFG;
+        if (empty($CFG->custommenuitems)) {
+            return '';
+        }
         $custommenu = new custom_menu();
         return $this->render_custom_menu($custommenu);
     }

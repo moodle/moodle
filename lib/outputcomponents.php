@@ -2099,7 +2099,9 @@ class custom_menu extends custom_menu_item {
     public function __construct($text='base') {
         global $CFG;
         parent::__construct($text);
-        $this->override_children(self::convert_text_to_menu_nodes($CFG->custommenuitems));
+        if (!empty($CFG->custommenuitems)) {
+            $this->override_children(self::convert_text_to_menu_nodes($CFG->custommenuitems));
+        }
     }
 
     /**
