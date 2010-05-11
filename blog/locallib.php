@@ -1002,7 +1002,7 @@ class blog_filter_context extends blog_filter {
             $this->type = $type;
         }
 
-        $this->availabletypes = array('site' => get_string('site'), 'course' => get_string('course'), 'module' => get_string('module'));
+        $this->availabletypes = array('site' => get_string('site'), 'course' => get_string('course'), 'module' => get_string('activity'));
 
         switch ($this->type) {
             case 'course': // Careful of site course!

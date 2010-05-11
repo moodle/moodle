@@ -74,20 +74,27 @@ class block_blog_recent extends block_base {
         $this->content = new stdClass();
         $this->content->footer = '';
 
-        $context = $PAGE->context;
+        $context = $this->page->context;
 
-        $blogheaders = blog_get_headers();
-
-        // Remove entryid filter
-        if (!empty($blogheaders['filters']['entry'])) {
-            unset($blogheaders['filters']['entry']);
-            $blogheaders['url']->remove_params(array('entryid'));
+        $filter = array();
+        if ($context->contextlevel == CONTEXT_MODULE) {
+            $filter['module'] = $context->instanceid;
+            $a = new stdClass;
+            $a->type = get_string('modulename', $page->cm->modname);
+            $strview = get_string('viewallmodentries', 'blog', $a);
+        } else if ($context->contextlevel == CONTEXT_COURSE) {
+            $filter['course'] = $context->instanceid;
+            $a = new stdClass;
+            $a->type = get_string('course');
+            $strview = get_string('viewblogentries', 'blog', $a);
+        } else {
+            $strview = get_string('viewsiteentries', 'blog');
         }
+        $filter['since'] = $this->config->recentbloginterval;
 
-        $blogheaders['filters']['since'] = $this->config->recentbloginterval;
-
-        $bloglisting = new blog_listing($blogheaders['filters']);
+        $bloglisting = new blog_listing($filter);
         $entries = $bloglisting->get_entries(0, $this->config->numberofrecentblogentries, 4);
+        $url = new moodle_url('/blog/index.php', $filter);
 
         if (!empty($entries)) {
             $entrieslist = array();
@@ -100,11 +107,7 @@ class block_blog_recent extends block_base {
             }
 
             $this->content->text .= html_writer::alist($entrieslist, array('class'=>'list'));
-            $strview = get_string('viewsiteentries', 'blog');
-            if (!empty($blogheaders['strview'])) {
-                $strview = $blogheaders['strview'];
-            }
-            $viewallentrieslink = html_writer::link($blogheaders['url'], $strview);
+            $viewallentrieslink = html_writer::link($url, $strview);
             $this->content->text .= $viewallentrieslink;
         } else {
             $this->content->text .= get_string('norecentblogentries', 'block_blog_recent');

@@ -70,7 +70,7 @@ class block_blog_tags extends block_base {
         /// Get a list of tags
         $timewithin = time() - $this->config->timewithin * 24 * 60 * 60; /// convert to seconds
 
-        $blogheaders = blog_get_headers();
+        $context = $this->page->context;
 
         // admins should be able to read all tags
         $type = '';
@@ -85,12 +85,10 @@ class block_blog_tags extends block_base {
                         AND ti.itemtype = 'post'
                         AND ti.timemodified > $timewithin";
 
-        if (!empty($blogheaders['filters']['module'])) {
-            $modulecontext = get_context_instance(CONTEXT_MODULE, $blogheaders['filters']['module']);
-            $sql .= " AND ba.contextid = $modulecontext->id AND p.id = ba.blogid ";
-        } else if (!empty($blogheaders['filters']['course'])) {
-            $coursecontext = get_context_instance(CONTEXT_COURSE, $blogheaders['filters']['course']);
-            $sql .= " AND ba.contextid = $coursecontext->id AND p.id = ba.blogid ";
+        if ($context->contextlevel == CONTEXT_MODULE) {
+            $sql .= " AND ba.contextid = $context->id AND p.id = ba.blogid ";
+        } else if ($context->contextlevel == CONTEXT_COURSE) {
+            $sql .= " AND ba.contextid = $context->id AND p.id = ba.blogid ";
         }
 
         $sql .= "
@@ -144,10 +142,10 @@ class block_blog_tags extends block_base {
                     break;
 
                     default:
-                        if (!empty($blogheaders['filters']['module'])) {
-                            $blogurl->param('modid', $blogheaders['filters']['module']);
-                        } else if (!empty($blogheaders['filters']['course'])) {
-                            $blogurl->param('courseid', $blogheaders['filters']['course']);
+                        if ($context->contextlevel == CONTEXT_MODULE) {
+                            $blogurl->param('modid', $context->instanceid);
+                        } else if ($context->contextlevel == CONTEXT_COURSE) {
+                            $blogurl->param('courseid', $context->instanceid);
                         }
 
                     break;
