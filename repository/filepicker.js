@@ -597,6 +597,7 @@ M.core_filepicker.init = function(Y, options) {
             this.active_repo.manage = data.manage?data.manage:null;
         },
         print_login: function(data) {
+            this.parse_repository_options(data);
             var client_id = this.options.client_id;
             var repository_id = data.repo_id;
             var l = this.logindata = data.login;
