@@ -291,6 +291,16 @@ function xmldb_feedback_upgrade($oldversion) {
         upgrade_mod_savepoint($result, 2009112000, 'feedback');
     }
 
+    if ($result && $oldversion < 2010051101) {
+        /// Define field options to be added to feedback_item
+        $table = new xmldb_table('feedback_item');
+        $field = new xmldb_field('options', XMLDB_TYPE_CHAR, '255', null, null, false, '', 'required');
+        /// Launch add field
+        $dbman->add_field($table, $field);
+
+        upgrade_mod_savepoint($result, 2010051101, 'feedback');
+    }
+
     return $result;
 }
 

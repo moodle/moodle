@@ -5,6 +5,8 @@ require_once($CFG->dirroot.'/mod/feedback/item/feedback_item_class.php');
 define('FEEDBACK_MULTICHOICE_TYPE_SEP', '>>>>>');
 define('FEEDBACK_MULTICHOICE_LINE_SEP', '|');
 define('FEEDBACK_MULTICHOICE_ADJUST_SEP', '<<<<<');
+define('FEEDBACK_MULTICHOICE_IGNOREEMPTY', 'i');
+define('FEEDBACK_MULTICHOICE_HIDENOSELECT', 'h');
 
 class feedback_item_multichoice extends feedback_item_base {
     var $type = "multichoice";
@@ -37,6 +39,9 @@ class feedback_item_multichoice extends feedback_item_base {
         $item->presentation = empty($item->presentation) ? '' : $item->presentation;
         $info = $this->get_info($item);
 
+        $item->ignoreempty = $this->ignoreempty($item);
+        $item->hidenoselect = $this->hidenoselect($item);
+        
         $commonparams = array('cmid'=>$cm->id,
                              'id'=>isset($item->id) ? $item->id : NULL,
                              'typ'=>$item->typ,
@@ -69,6 +74,9 @@ class feedback_item_multichoice extends feedback_item_base {
             return false;
         }
         
+        $this->set_ignoreempty($item, $item->ignoreempty);        
+        $this->set_hidenoselect($item, $item->hidenoselect);
+
         $item->hasvalue = $this->get_hasvalue();
         if(!$item->id) {
             $item->id = $DB->insert_record('feedback_item', $item);
@@ -97,7 +105,7 @@ class feedback_item_multichoice extends feedback_item_base {
         if(!is_array($answers)) return null;
 
         //die Werte holen
-        $values = feedback_get_group_values($item, $groupid, $courseid);
+        $values = feedback_get_group_values($item, $groupid, $courseid, $this->ignoreempty($item));
         if(!$values) return null;
         //schleife ueber den Werten und ueber die Antwortmoeglichkeiten
 
@@ -268,7 +276,7 @@ class feedback_item_multichoice extends feedback_item_base {
             $hv = 'v';
         }
         
-        if($info->subtype == 'r') {
+        if($info->subtype == 'r' AND !$this->hidenoselect($item)) {
         //print the "not_selected" item on radiobuttons
         ?>
             <li class="feedback_item_radio_<?php echo $hv.'_'.$align;?>">
@@ -352,7 +360,7 @@ class feedback_item_multichoice extends feedback_item_base {
             $hv = 'v';
         }
         //print the "not_selected" item on radiobuttons
-        if($info->subtype == 'r') {
+        if($info->subtype == 'r' AND !$this->hidenoselect($item)) {
         ?>
             <li class="feedback_item_radio_<?php echo $hv.'_'.$align;?>">
                 <span class="feedback_item_radio_<?php echo $hv.'_'.$align;?>">
@@ -630,7 +638,35 @@ class feedback_item_multichoice extends feedback_item_base {
         </li>
         <?php
     }
-
+    
+    function set_ignoreempty($item, $ignoreempty=true) {
+        $item->options = str_replace(FEEDBACK_MULTICHOICE_IGNOREEMPTY, '', $item->options);
+        if($ignoreempty) {
+            $item->options .= FEEDBACK_MULTICHOICE_IGNOREEMPTY;
+        }
+    }
+    
+    function ignoreempty($item) {
+        if(strstr($item->options, FEEDBACK_MULTICHOICE_IGNOREEMPTY)) {
+            return true;
+        }
+        return false;
+    }
+    
+    function set_hidenoselect($item, $hidenoselect=true) {
+        $item->options = str_replace(FEEDBACK_MULTICHOICE_HIDENOSELECT, '', $item->options);
+        if($hidenoselect) {
+            $item->options .= FEEDBACK_MULTICHOICE_HIDENOSELECT;
+        }
+    }
+    
+    function hidenoselect($item) {
+        if(strstr($item->options, FEEDBACK_MULTICHOICE_HIDENOSELECT)) {
+            return true;
+        }
+        return false;
+    }
+    
 }
 
 ?>

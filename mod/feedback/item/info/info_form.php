@@ -61,6 +61,8 @@ class feedback_info_form extends feedback_item_form {
         $mform->addElement('hidden', 'hasvalue', 0);
         $mform->setType('hasvalue', PARAM_INT);
 
+        $mform->addElement('hidden', 'options', '');
+        $mform->setType('options', PARAM_ALPHA);
 
         $buttonarray = array();
         if(!empty($item->id)){

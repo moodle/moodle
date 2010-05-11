@@ -31,6 +31,9 @@ class feedback_multichoicerated_form extends feedback_item_form {
                             array('r'=>get_string('radio', 'feedback'),
                                   'd'=>get_string('dropdown', 'feedback')));
 
+        $mform->addElement('selectyesno', 'ignoreempty', get_string('do_not_analyse_empty_submits', 'feedback'));
+        $mform->addElement('selectyesno', 'hidenoselect', get_string('hide_no_select_option', 'feedback'));
+        
         $mform->addElement('static', 'hint', get_string('multichoice_values', 'feedback'), get_string('use_one_line_for_each_value', 'feedback'));
 
         $this->values = $mform->addElement('textarea', 'values', '', 'wrap="virtual" rows="10" cols="65"');
@@ -70,6 +73,8 @@ class feedback_multichoicerated_form extends feedback_item_form {
         $mform->addElement('hidden', 'hasvalue', 0);
         $mform->setType('hasvalue', PARAM_INT);
 
+        $mform->addElement('hidden', 'options', '');
+        $mform->setType('options', PARAM_ALPHA);
 
         $buttonarray = array();
         if(!empty($item->id)){

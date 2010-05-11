@@ -1896,25 +1896,40 @@ function feedback_update_values($completed, $tmp = false) {
  * @param int $courseid
  * @return array the value-records
  */
-function feedback_get_group_values($item, $groupid = false, $courseid = false){
+function feedback_get_group_values($item, $groupid = false, $courseid = false, $ignore_empty = false){
     global $CFG, $DB;
 
     //if the groupid is given?
     if (intval($groupid) > 0) {
+        if($ignore_empty) {
+            $ignore_empty_select = "AND fbc.value != ''";
+        }
+        else {
+            $ignore_empty_select = "";
+        }
+        
         $query = 'SELECT fbv .  *
                     FROM {feedback_value} fbv, {feedback_completed} fbc, {groups_members} gm
                    WHERE fbv.item = ?
                          AND fbv.completed = fbc.id
                          AND fbc.userid = gm.userid
+                         '.$ignore_empty_select.'
                          AND gm.groupid = ?
                 ORDER BY fbc.timemodified';
         $values = $DB->get_records_sql($query, array($item->id, $groupid));
 
     } else {
+        if($ignore_empty) {
+            $ignore_empty_select = "AND value != ''";
+        }
+        else {
+            $ignore_empty_select = "";
+        }
+        
         if ($courseid) {
-             $values = $DB->get_records('feedback_value', array('item'=>$item->id, 'course_id'=>$courseid));
+            $values = $DB->get_records_select('feedback_value', "item = ? AND course_id = ? ".$ignore_empty_select, array($item->id, $courseid));
         } else {
-             $values = $DB->get_records('feedback_value', array('item'=>$item->id));
+            $values = $DB->get_records_select('feedback_value', "item = ? ".$ignore_empty_select, array($item->id));
         }
     }
     if ($DB->get_field('feedback', 'anonymous', array('id'=>$item->feedback)) == FEEDBACK_ANONYMOUS_YES) {

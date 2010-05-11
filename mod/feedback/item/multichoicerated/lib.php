@@ -10,6 +10,8 @@ define('FEEDBACK_MULTICHOICERATED_VALUE_SEP2', '/');
 define('FEEDBACK_MULTICHOICERATED_TYPE_SEP', '>>>>>');
 define('FEEDBACK_MULTICHOICERATED_LINE_SEP', '|');
 define('FEEDBACK_MULTICHOICERATED_ADJUST_SEP', '<<<<<');
+define('FEEDBACK_MULTICHOICERATED_IGNOREEMPTY', 'i');
+define('FEEDBACK_MULTICHOICERATED_HIDENOSELECT', 'h');
 
 class feedback_item_multichoicerated extends feedback_item_base {
     var $type = "multichoicerated";
@@ -41,6 +43,9 @@ class feedback_item_multichoicerated extends feedback_item_base {
         
         $item->presentation = empty($item->presentation) ? '' : $item->presentation;
         $info = $this->get_info($item);
+        
+        $item->ignoreempty = $this->ignoreempty($item);
+        $item->hidenoselect = $this->hidenoselect($item);
 
         $commonparams = array('cmid'=>$cm->id,
                              'id'=>isset($item->id) ? $item->id : NULL,
@@ -74,6 +79,9 @@ class feedback_item_multichoicerated extends feedback_item_base {
             return false;
         }
         
+        $this->set_ignoreempty($item, $item->ignoreempty);        
+        $this->set_hidenoselect($item, $item->hidenoselect);
+        
         $item->hasvalue = $this->get_hasvalue();
         if(!$item->id) {
             $item->id = $DB->insert_record('feedback_item', $item);
@@ -99,7 +107,7 @@ class feedback_item_multichoicerated extends feedback_item_base {
         if(!is_array($lines)) return null;
 
         //die Werte holen
-        $values = feedback_get_group_values($item, $groupid, $courseid);
+        $values = feedback_get_group_values($item, $groupid, $courseid, $this->ignoreempty($item));
         if(!$values) return null;
         //schleife ueber den Werten und ueber die Antwortmoeglichkeiten
 
@@ -340,7 +348,7 @@ class feedback_item_multichoicerated extends feedback_item_base {
     }
 
     function create_value($data) {
-        $data = clean_param($data, PARAM_INT);
+        $data = trim($data);
         return $data;
     }
 
@@ -404,16 +412,18 @@ class feedback_item_multichoicerated extends feedback_item_base {
             $hv = 'v';
         }
         echo '<ul>';
-        ?>
-            <li class="feedback_item_radio_<?php echo $hv.'_'.$align;?>">
-                <span class="feedback_item_radio_<?php echo $hv.'_'.$align;?>">
-                    <input type="radio" name="<?php echo $item->typ . '_' . $item->id ;?>" id="<?php echo $item->typ . '_' . $item->id.'_xxx';?>" value="" checked="checked" />
-                </span>
-                <span class="feedback_item_radiolabel_<?php echo $hv.'_'.$align;?>">
-                    <label for="<?php echo $item->typ . '_' . $item->id.'_xxx';?>"><?php print_string('not_selected', 'feedback');?>&nbsp;</label>
-                </span>
-            </li>
-        <?php
+        if(!$this->hidenoselect($item)) {
+            ?>
+                <li class="feedback_item_radio_<?php echo $hv.'_'.$align;?>">
+                    <span class="feedback_item_radio_<?php echo $hv.'_'.$align;?>">
+                        <input type="radio" name="<?php echo $item->typ . '_' . $item->id ;?>" id="<?php echo $item->typ . '_' . $item->id.'_xxx';?>" value="" checked="checked" />
+                    </span>
+                    <span class="feedback_item_radiolabel_<?php echo $hv.'_'.$align;?>">
+                        <label for="<?php echo $item->typ . '_' . $item->id.'_xxx';?>"><?php print_string('not_selected', 'feedback');?>&nbsp;</label>
+                    </span>
+                </li>
+            <?php
+        }
         foreach($lines as $line){
             if($value == $index){
                 $checked = 'checked="checked"';
@@ -508,5 +518,35 @@ class feedback_item_multichoicerated extends feedback_item_base {
     function prepare_presentation_values_save($valuestring, $valuesep1, $valuesep2) {
         return $this->prepare_presentation_values("\n", FEEDBACK_MULTICHOICERATED_LINE_SEP, $valuestring, $valuesep1, $valuesep2);
     }
+
+    function set_ignoreempty($item, $ignoreempty=true) {
+        $item->options = str_replace(FEEDBACK_MULTICHOICERATED_IGNOREEMPTY, '', $item->options);
+        if($ignoreempty) {
+            $item->options .= FEEDBACK_MULTICHOICERATED_IGNOREEMPTY;
+        }
+    }
+    
+    function ignoreempty($item) {
+        if(strstr($item->options, FEEDBACK_MULTICHOICERATED_IGNOREEMPTY)) {
+            return true;
+        }
+        return false;
+    }
+    
+    function set_hidenoselect($item, $hidenoselect=true) {
+        $item->options = str_replace(FEEDBACK_MULTICHOICERATED_HIDENOSELECT, '', $item->options);
+        if($hidenoselect) {
+            $item->options .= FEEDBACK_MULTICHOICERATED_HIDENOSELECT;
+        }
+    }
+    
+    function hidenoselect($item) {
+        if(strstr($item->options, FEEDBACK_MULTICHOICERATED_HIDENOSELECT)) {
+            return true;
+        }
+        return false;
+    }
+    
+
 }
 ?>
