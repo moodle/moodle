@@ -1483,6 +1483,7 @@ $string['scalescustomcreate'] = 'Add a new scale';
 $string['scalescustomno'] = 'No custom scales have been created yet';
 $string['scalesstandard'] = 'Standard scales';
 $string['scalestandard'] = 'Standard scale';
+$string['scalestandard_help'] = 'A standard scale is available site-wide, for all courses.';
 $string['scalestip'] = 'To create custom scales, use the \'Scales...\' link in your course administration menu.';
 $string['scalestip2'] = 'To create custom scales, click the Grades link in the course administration menu, then choose Edit, Scales.';
 $string['screenreaderno'] = 'No';
