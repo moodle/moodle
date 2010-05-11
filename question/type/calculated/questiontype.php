@@ -250,7 +250,7 @@ class question_calculated_qtype extends default_questiontype {
                         "type = '1'
                         AND name = ?
                         AND category = ?
-                        ORDER BY id DESC;", array($dataset->name, $question->category)
+                        ORDER BY id DESC ", array($dataset->name, $question->category)
                        )) { // so there is at least one
                     $sharedatasetdef = array_shift($sharedatasetdefs);
                     if ( $sharedatasetdef->options ==  $datasetdef->options ){// identical so use it
@@ -672,7 +672,7 @@ class question_calculated_qtype extends default_questiontype {
                 if (!$DB->get_records_select(
                         'question_datasets',
                         "question != ?
-                        AND datasetdefinition = ?;", array($questionid, $dataset->datasetdefinition))){
+                        AND datasetdefinition = ? ", array($questionid, $dataset->datasetdefinition))){
                     $DB->delete_records('question_dataset_definitions', array('id' => $dataset->datasetdefinition));
                     $DB->delete_records('question_dataset_items', array('definition' => $dataset->datasetdefinition));
                 }
