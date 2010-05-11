@@ -2107,7 +2107,7 @@ END;
             $content = trim($item->helpbutton).html_writer::tag('span', $content, array('class'=>'clearhelpbutton'));
         }
         if ($content === '') {
-            continue;
+            return '';
         }
         if ($item->action instanceof action_link) {
             //TODO: to be replaced with something else
