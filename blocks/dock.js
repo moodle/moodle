@@ -415,7 +415,7 @@ M.core_dock = {
                     M.core_dock.remove(this.id)
                 }, this);
                 // Add a close icon
-                var closeicon = this.Y.Node.create('<span class="hidepanelicon"><img src="'+M.util.image_url('t/delete', 'moodle')+'" alt="" style="width:11px;height:11px;cursor:pointer;" /></span>');
+                var closeicon = this.Y.Node.create('<span class="hidepanelicon"><img src="'+M.util.image_url('t/dockclose', 'moodle')+'" alt="" style="width:11px;height:11px;cursor:pointer;" /></span>');
                 closeicon.on('forceclose|click', M.core_dock.hide_all, M.core_dock);
                 closeicon.on('forceclose|click', M.core_dock.hide_all, M.core_dock);
                 this.commands.append(closeicon);
