@@ -21,11 +21,17 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
         get_string('profileroles','admin'),
         get_string('configprofileroles', 'admin'),
         array('student', 'teacher', 'editingteacher')));
-    
+
     $max_upload_choices = get_max_upload_sizes();
     // maxbytes set to 0 will allow the maxium server lmit for uploads
     $max_upload_choices[0] = get_string('serverlimit', 'admin');
     $temp->add(new admin_setting_configselect('maxbytes', get_string('maxbytes', 'admin'), get_string('configmaxbytes', 'admin'), 0, $max_upload_choices));
+    // 100MB
+    $defaultuserquota = 104857600;
+    $params = new stdclass;
+    $params->bytes = $defaultuserquota;
+    $params->displaysize = display_size($defaultuserquota);
+    $temp->add(new admin_setting_configtext('userquota', get_string('userquota', 'admin'), get_string('configuserquota', 'admin', $params), $defaultuserquota));
 
     $temp->add(new admin_setting_configcheckbox('allowobjectembed', get_string('allowobjectembed', 'admin'), get_string('configallowobjectembed', 'admin'), 0));
     $temp->add(new admin_setting_configcheckbox('enabletrusttext', get_string('enabletrusttext', 'admin'), get_string('configenabletrusttext', 'admin'), 0));
@@ -77,7 +83,7 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
     // "modulesecurity" settingpage
     $temp = new admin_settingpage('modulesecurity', get_string('modulesecurity', 'admin'));
     $temp->add(new admin_setting_configselect('restrictmodulesfor', get_string('restrictmodulesfor', 'admin'), get_string('configrestrictmodulesfor', 'admin'), 'none', array('none' => get_string('nocourses'),
-                                                                                                                                                                              'all' => get_string('fulllistofcourses'), 
+                                                                                                                                                                              'all' => get_string('fulllistofcourses'),
                                                                                                                                                                               'requested' => get_string('requestedcourses'))));
     $temp->add(new admin_setting_configcheckbox('restrictbydefault', get_string('restrictbydefault', 'admin'), get_string('configrestrictbydefault', 'admin'), 0));
     if (!$options = $DB->get_records('modules')) {

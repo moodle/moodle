@@ -303,6 +303,7 @@ $string['configrestrictbydefault'] = 'Should new courses that are created that f
 $string['configrestrictmodulesfor'] = 'Which courses should have <b>the setting</b> for disabling some activity modules?  Note that this setting only applies to teachers, administrators will still be able to add any activity to a course.';
 $string['configrunclamavonupload'] = 'When enabled, clam AV will be used to scan all uploaded files.';
 $string['configrunclamonupload'] = 'Run clam AV on file upload? You will need a correct path in pathtoclam for this to work.  (Clam AV is a free virus scanner that you can get from http://www.clamav.net/)';
+$string['configuserquota'] = 'The maxbytes if files that user can use in user area, the value is in bytes. <b>{$a->bytes} bytes == {$a->displaysize}</b>';
 $string['configsectioninterface'] = 'Interface';
 $string['configsectionmail'] = 'Mail';
 $string['configsectionmaintenance'] = 'Maintenance';
@@ -983,6 +984,7 @@ $string['usersrenamed'] = 'Users renamed';
 $string['usersskipped'] = 'Users skipped';
 $string['usersupdated'] = 'Users updated';
 $string['usersweakpassword'] = 'Users having a weak password';
+$string['userquota'] = 'User quota';
 $string['usetags'] = 'Enable tags functionality';
 $string['uubulk'] = 'Select for bulk operations';
 $string['uubulkall'] = 'All users';

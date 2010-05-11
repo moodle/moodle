@@ -59,8 +59,10 @@ header('Expires: Sat, 26 Jul 1997 05:00:00 GMT');
 $err = new stdclass;
 $err->client_id = $client_id;
 
-if ($maxbytes == 0) {
-    $maxbytes = get_max_upload_file_size();
+$moodle_maxbytes = get_max_upload_file_size();
+// to prevent maxbytes greater than moodle maxbytes setting
+if ($maxbytes == 0 || $maxbytes>=$moodle_maxbytes) {
+    $maxbytes = $moodle_maxbytes;
 }
 
 /// Check permissions
@@ -221,9 +223,10 @@ switch ($action) {
         break;
     case 'download':
         try {
-            // we have two special repoisitory type need to deal with
+            // We have two special repoisitory type need to deal with
+            // local and recent plugins don't added new files to moodle, just add new records to database
+            // so we don't check user quota and maxbytes here
             if ($repo->options['type'] == 'local' || $repo->options['type'] == 'recent' ) {
-                // saveas_filearea
                 try {
                     $fileinfo = $repo->copy_to_area($source, $saveas_filearea, $itemid, $saveas_path, $saveas_filename);
                 } catch (Exception $e) {
@@ -250,11 +253,13 @@ switch ($action) {
                 // allow external links in url element all the time
                 $allowexternallink = ($allowexternallink || ($env == 'url'));
 
+                // Use link of the files
                 if ($allowexternallink and $linkexternal === 'yes' and ($repo->supported_returntypes() || FILE_EXTERNAL)) {
                     // use external link
                     try {
                         $link = $repo->get_link($source);
                     } catch (repository_exception $e){
+                        throw $e;
                     }
                     $info = array();
                     $info['filename'] = $saveas_filename;
@@ -263,14 +268,22 @@ switch ($action) {
                     echo json_encode($info);
                     die;
                 } else {
-                    // get the file location
+                    // Download file to moodle
                     $file = $repo->get_file($source, $saveas_filename);
                     if ($file['path'] === false) {
                         $err->e = get_string('cannotdownload', 'repository');
                         die(json_encode($err));
                     }
+
+                    // check if exceed maxbytes
                     if (($maxbytes!==-1) && (filesize($file['path']) > $maxbytes)) {
                         throw new file_exception('maxbytes');
+                    }
+
+                    // check if exceed user quota
+                    $userquota = file_get_user_used_space();
+                    if (filesize($file['path'])+$userquota>=(int)$CFG->userquota) {
+                        throw new file_exception('userquotalimit');
                     }
 
                     $record = new stdclass;
@@ -299,9 +312,6 @@ switch ($action) {
                     die;
                 }
             }
-        } catch (repository_exception $e){
-            $err->e = $e->getMessage();
-            die(json_encode($err));
         } catch (Exception $e) {
             $err->e = $e->getMessage();
             die(json_encode($err));

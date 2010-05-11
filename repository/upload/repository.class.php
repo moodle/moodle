@@ -116,7 +116,7 @@ class repository_upload extends repository {
      * @return mixed stored_file object or false if error; may throw exception if duplicate found
      */
     public function upload_to_filepool($elname, $record, $override = true) {
-        global $USER;
+        global $USER, $CFG;
         $context = get_context_instance(CONTEXT_USER, $USER->id);
         $fs = get_file_storage();
         $browser = get_file_browser();
@@ -136,6 +136,11 @@ class repository_upload extends repository {
 
         if (empty($record->filename)) {
             $record->filename = $_FILES[$elname]['name'];
+        }
+
+        $userquota = file_get_user_used_space();
+        if (filesize($_FILES[$elname]['tmp_name'])+$userquota>=(int)$CFG->userquota) {
+            throw new file_exception('userquotalimit');
         }
 
         if (empty($record->itemid)) {

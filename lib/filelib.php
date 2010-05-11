@@ -499,6 +499,35 @@ function file_get_user_area_info($draftitemid, $filearea = 'user_draft') {
     return $results;
 }
 
+/**
+ * Get used space of files
+ * @return int totalbytes
+ */
+function file_get_user_used_space() {
+    global $DB, $CFG, $USER;
+
+    $usercontext = get_context_instance(CONTEXT_USER, $USER->id);
+    $fs = get_file_storage();
+
+    // only count files in user context
+    $conditions = array('contextid'=>$usercontext->id);
+
+    $totalbytes = 0;
+    $files = array();
+    $file_records = $DB->get_records('files', $conditions);
+    foreach ($file_records as $file_record) {
+        if ($file_record->filename === '.') {
+            continue;
+        }
+        // doesn't count same files
+        if (!isset($files[$file_record->contenthash])) {
+            $totalbytes += $file_record->filesize;
+        } else {
+            $files[$file_record->contenthash] = true;
+        }
+    }
+    return (int)$totalbytes;
+}
 
 /**
  * Convert any string to a valid filepath
@@ -845,7 +874,7 @@ function format_postdata_for_curlcall($postdata) {
                 $currentdata = urlencode($k);
                 format_array_postdata_for_curlcall($v, $currentdata, $data);
             }  else {
-                $data[] = urlencode($k).'='.urlencode($v);            
+                $data[] = urlencode($k).'='.urlencode($v);
             }
         }
         $convertedpostdata = implode('&', $data);
@@ -927,7 +956,7 @@ function download_file_content($url, $headers=null, $postdata=null, $fullrespons
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $postdata);
     }
-    
+
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_HEADER, true);
     curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $connecttimeout);

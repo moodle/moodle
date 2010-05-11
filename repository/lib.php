@@ -528,7 +528,7 @@ abstract class repository {
         }
         if ($records = $DB->get_records('repository',$params,'sortorder')) {
             foreach($records as $type) {
-                if (file_exists($CFG->dirroot . '/repository/'. $type->type .'/repository.class.php')) { 
+                if (file_exists($CFG->dirroot . '/repository/'. $type->type .'/repository.class.php')) {
                     $types[] = new repository_type($type->type, (array)get_config($type->type), $type->visible, $type->sortorder);
                 }
             }
@@ -1805,7 +1805,7 @@ function initialise_filepicker($args) {
     $repositories = repository::get_instances(array(
         'context'=>array($user_context, get_system_context()),
         'currentcontext'=> $context,
-        'accepted_types'=>$args->accepted_types, 
+        'accepted_types'=>$args->accepted_types,
         'return_types'=>$args->return_types
     ));
 
