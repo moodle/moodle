@@ -922,7 +922,7 @@ class assignment_base {
                 $nextid = $nextuser->id;
             }
         }
-
+        $PAGE->set_pagelayout('popup');
         $PAGE->set_title(get_string('feedback', 'assignment').':'.fullname($user, true).':'.format_string($this->assignment->name));
         echo $OUTPUT->header();
 
