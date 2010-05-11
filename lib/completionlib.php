@@ -1052,12 +1052,14 @@ WHERE
     }
 
     /**
-     * @todo Document this function
+     * Called by grade code to inform the completion system when a grade has
+     * been changed. If the changed grade is used to determine completion for
+     * the course-module, then the completion status will be updated.
      *
      * @uses COMPLETION_TRACKING_MANUAL
      * @uses COMPLETION_INCOMPLETE
-     * @param object $cm
-     * @param object $item
+     * @param object $cm Course-module for item that owns grade
+     * @param grade_item $item Grade item
      * @param object $grade
      * @param bool $deleted
      * @return void
@@ -1070,7 +1072,6 @@ WHERE
             $cm->completion == COMPLETION_TRACKING_MANUAL ||
             is_null($cm->completiongradeitemnumber) ||
             $item->itemnumber != $cm->completiongradeitemnumber) {
-
             return;
         }
 
