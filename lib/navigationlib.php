@@ -2458,9 +2458,9 @@ class settings_navigation extends navigation_node {
                               'moodle/question:viewall',
                               'moodle/question:movemine',
                               'moodle/question:moveall');
-        if (has_any_capability($questioncaps, $this->context)) {
+        if (has_any_capability($questioncaps, $coursecontext)) {
             $questionlink = $CFG->wwwroot.'/question/edit.php';
-        } else if (has_capability('moodle/question:managecategory', $this->context)) {
+        } else if (has_capability('moodle/question:managecategory', $coursecontext)) {
             $questionlink = $CFG->wwwroot.'/question/category.php';
         }
         if (isset($questionlink)) {
@@ -2470,16 +2470,16 @@ class settings_navigation extends navigation_node {
 
         // Repository Instances
         require_once($CFG->dirroot.'/repository/lib.php');
-        $editabletypes = repository::get_editable_types($this->context);
-        if (has_capability('moodle/course:update', $this->context) && !empty($editabletypes)) {
-            $url = new moodle_url('/repository/manage_instances.php', array('contextid'=>$this->context->id));
+        $editabletypes = repository::get_editable_types($coursecontext);
+        if (has_capability('moodle/course:update', $coursecontext) && !empty($editabletypes)) {
+            $url = new moodle_url('/repository/manage_instances.php', array('contextid'=>$coursecontext->id));
             $coursenode->add(get_string('repositories'), $url, self::TYPE_SETTING, null, null, new pix_icon('i/repository', ''));
         }
 
         // Manage files
-        if (has_capability('moodle/course:managefiles', $this->context)) {
-            $url = new moodle_url('/files/index.php', array('id'=>$course->id));
-            $coursenode->add(get_string('files'), $url, self::TYPE_SETTING, null, null, new pix_icon('i/files', ''));
+        if (has_capability('moodle/course:managefiles', $coursecontext)) {
+            $url = new moodle_url('/files/index.php', array('contextid'=>$coursecontext->id, 'itemid'=>0, 'filearea'=>'course_content'));
+            $coursenode->add(get_string('files'), $url, self::TYPE_SETTING, null, 'coursefiles', new pix_icon('i/files', ''));
         }
 
         // Authorize hooks
@@ -2519,8 +2519,8 @@ class settings_navigation extends navigation_node {
         if ($assumedrole!==false) {
             $roles[0] = get_string('switchrolereturn');
         }
-        if (has_capability('moodle/role:switchroles', $this->context)) {
-            $availableroles = get_switchable_roles($this->context);
+        if (has_capability('moodle/role:switchroles', $coursecontext)) {
+            $availableroles = get_switchable_roles($coursecontext);
             if (is_array($availableroles)) {
                 foreach ($availableroles as $key=>$role) {
                     if ($key == $CFG->guestroleid || $assumedrole===(int)$key) {
