@@ -958,6 +958,7 @@ $string['uploadpicture_cannotunzip'] = 'Cannot unzip pictures file.';
 $string['uploadpicture_invalidfilename'] = 'Picture file {$a} has invalid characters in its name. Skipping.';
 $string['uploadpicture_overwrite'] = 'Overwrite existing user pictures?';
 $string['uploadpictures'] = 'Upload user pictures';
+$string['uploadpictures_help'] = 'User pictures can be uploaded as a zip file of image files. The image files should be named chosen-user-attribute.extension, for example user1234.jpg for a user with username user1234.';
 $string['uploadpicture_userfield'] = 'User attribute to use to match pictures:';
 $string['uploadpicture_usernotfound'] = 'User with a \'{$a->userfield}\' value of \'{$a->uservalue}\' does not exist. Skipping.';
 $string['uploadpicture_userskipped'] = 'Skipping user {$a} (already has a picture).';
