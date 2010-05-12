@@ -46,6 +46,7 @@ $string['aggregateonlygraded_help'] = 'An empty grade is a grade which is missin
 This setting determines whether non-empty grades are not included in the aggregation (checkbox ticked) or are counted as minimal grades, for example 0 for an assignment graded between 0 and 100.';
 $string['aggregateonlygradedhelp'] = 'Nonexistent grades are either treated as minimal grades or not included in aggregation.';
 $string['aggregateoutcomes'] = 'Include outcomes in aggregation';
+$string['aggregateoutcomes_help'] = 'If ticked, outcomes are included in the aggregation. This may result in an unexpected category total.';
 $string['aggregateoutcomeshelp'] = 'Including outcomes in aggregation may not lead to the desired overall grade, so you have the option to include or leave them out.';
 $string['aggregatesonly'] = 'Aggregates only';
 $string['aggregatesubcats'] = 'Aggregate including subcategories';
@@ -66,10 +67,16 @@ $string['aggregation_help'] = 'The aggregation determines how grades in a catego
 $string['aggregation_link'] = 'grade/aggregation';
 $string['aggregationcoef'] = 'Aggregation coefficient';
 $string['aggregationcoefextra'] = 'Extra credit';
+$string['aggregationcoefextra_help'] = 'If the aggregation is Sum of grades and the extra credit checkbox is ticked, the grade item\'s maximum grade is not added to the category\'s maximum grade, resulting in the possibility of achieving the maximum grade (or grades over the maximum if enabled by the site administrator) in the category without having the maximum grade in all the grade items. 
+
+If the aggregation is Mean of grades (with extra credits) and the extra credit is set to a value greater than zero, the extra credit is the factor by which the grade is multiplied before adding it to the total after the computation of the mean.';
+$string['aggregationcoefextra_link'] = 'grade/aggregation';
 $string['aggregationcoefextrahelp'] = 'Extra credit for this grade item during aggregation.';
 $string['aggregationcoefextrasum'] = 'Extra credit';
 $string['aggregationcoefextrasumhelp'] = 'Extra credit for this grade item during aggregation.';
 $string['aggregationcoefweight'] = 'Item weight';
+$string['aggregationcoefweight_help'] = 'The item weight is used in the category aggregation to influence the importance of the item compared with other grade items in the same category.';
+$string['aggregationcoefweight_link'] = 'grade/aggregation';
 $string['aggregationcoefweighthelp'] = 'Weight applied to all grades in this grade item during aggregation with other grade items.';
 $string['aggregationhelp'] = 'Strategy used to aggregate grades across all students in a course.';
 $string['aggregationposition'] = 'Aggregation position';
