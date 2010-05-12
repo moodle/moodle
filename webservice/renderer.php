@@ -28,6 +28,97 @@
  */
 
 class core_webservice_renderer extends plugin_renderer_base {
+
+    /**
+     *  Display Reset token confirmation box
+     * @param object $token to reset
+     * @return string html
+     */
+    public function user_reset_token_confirmation($token) {
+        global $OUTPUT, $CFG;
+        $managetokenurl = $CFG->wwwroot."/user/managetoken.php?sesskey=" . sesskey();
+        $optionsyes = array('tokenid'=>$token->id, 'action'=>'resetwstoken', 'confirm'=>1, 'sesskey'=>sesskey());
+        $optionsno  = array('section'=>'webservicetokens', 'sesskey'=>sesskey());
+        $formcontinue = new single_button(new moodle_url($managetokenurl, $optionsyes), get_string('reset'));
+        $formcancel = new single_button(new moodle_url($managetokenurl, $optionsno), get_string('cancel'), 'get');
+        $html = $OUTPUT->confirm(get_string('resettokenconfirm', 'webservice', 
+                (object)array('user'=>$token->firstname." ".$token->lastname, 'service'=>$token->name)),
+                $formcontinue, $formcancel);
+        return $html;
+    }
+
+
+
+    /**
+     * Display user tokens with buttons to reset them
+     * @param object $tokens
+     * @param int $userid
+     * @return string html code
+     */
+    public function user_webservice_tokens_box($tokens, $userid) {
+        global $OUTPUT, $CFG;
+
+        // display strings
+        $stroperation = get_string('operation', 'webservice');
+        $strtoken = get_string('key', 'webservice');
+        $strservice = get_string('service', 'webservice');
+        $strcreator = get_string('tokencreator', 'webservice');
+        $strcontext = get_string('context', 'webservice');
+        $strvaliduntil = get_string('validuntil', 'webservice');
+
+        $return = $OUTPUT->heading(get_string('securitykeys', 'webservice'), 3, 'main', true);
+        $return .= $OUTPUT->box_start('generalbox webservicestokenui');
+
+        $return .= get_string('keyshelp', 'webservice');
+
+        $table = new html_table();
+        $table->head  = array($strtoken, $strservice, $strvaliduntil, $strcreator, $stroperation);
+        $table->align = array('left', 'left', 'left', 'center', 'left', 'center');
+        $table->width = '100%';
+        $table->data  = array();
+
+        if (!empty($tokens)) {
+            foreach ($tokens as $token) {
+                //TODO: retrieve context
+
+                if ($token->creatorid == $userid) {
+                    $reset = "<a href=\"".$CFG->wwwroot."/user/managetoken.php?sesskey=".sesskey().
+                            "&amp;action=resetwstoken&amp;tokenid=".$token->id."\">";
+                    $reset .= get_string('reset')."</a>";
+                    $creator = $token->firstname." ".$token->lastname;
+                } else {
+                    //retrive administrator name
+                    require_once($CFG->dirroot.'/user/lib.php');
+                    $creators = user_get_users_by_id(array($token->creatorid));
+                    $admincreator = $creators[$token->creatorid];
+                    $creator = $admincreator->firstname." ".$admincreator->lastname;
+                    $reset = '';
+                }
+
+                $userprofilurl = new moodle_url('/user/view.php?id='.$token->creatorid);
+                $creatoratag = html_writer::start_tag('a', array('href' => $userprofilurl));
+                $creatoratag .= $creator;
+                $creatoratag .= html_writer::end_tag('a');
+
+                $validuntil = '';
+                if (!empty($token->validuntil)) {
+                    $validuntil = date("F j, Y"); //TODO: language support (look for moodle function)
+                }
+
+                $table->data[] = array($token->token, $token->name, $validuntil, $creatoratag, $reset);
+            }
+            $return .= html_writer::table($table);
+
+        } else {
+            $return .= get_string('notoken', 'webservice');
+        }
+
+        $return .= $OUTPUT->box_end();
+        return $return;
+    }
+
+
+
      /**
      * Return documentation for a ws description object
      * ws description object can be 'external_multiple_structure', 'external_single_structure' or 'external_value'

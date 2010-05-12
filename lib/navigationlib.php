@@ -2816,7 +2816,7 @@ class settings_navigation extends navigation_node {
         }
 
         // Security keys
-        if ($currentuser && !is_siteadmin($USER->id) && !empty($CFG->enablewebservices) && has_capability('moodle/webservice:createtoken', $systemcontext)) {
+        if ($currentuser) {
             $url = new moodle_url('/user/managetoken.php', array('sesskey'=>sesskey()));
             $usersetting->add(get_string('securitykeys', 'webservice'), $url, self::TYPE_SETTING);
         }

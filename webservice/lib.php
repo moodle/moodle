@@ -30,6 +30,116 @@ define('WEBSERVICE_AUTHMETHOD_PERMANENT_TOKEN', 1);
 define('WEBSERVICE_AUTHMETHOD_SESSION_TOKEN', 2);
 
 /**
+ * General web service library
+ */
+class webservice {
+
+    /**
+     * Generate all ws token needed by a user
+     * @param int $userid
+     */
+    public function generate_user_ws_tokens($userid) {
+        global $CFG, $DB;
+        
+        /// generate a token for non admin if web service are enable and the user has the capability to create a token
+        if (!is_siteadmin() && has_capability('moodle/webservice:createtoken', get_context_instance(CONTEXT_SYSTEM), $userid) && !empty($CFG->enablewebservices)) {
+        /// for every service than the user is authorised on, create a token (if it doesn't already exist)
+
+            ///get all services which are set to all user (no restricted to specific users)
+            $norestrictedservices = $DB->get_records('external_services', array('restrictedusers' => 0));
+            $serviceidlist = array();
+            foreach ($norestrictedservices as $service) {
+                $serviceidlist[] = $service->id;
+            }
+
+            //get all services which are set to the current user (the current user is specified in the restricted user list)
+            $servicesusers = $DB->get_records('external_services_users', array('userid' => $userid));
+            foreach ($servicesusers as $serviceuser) {
+                if (!in_array($serviceuser->externalserviceid,$serviceidlist)) {
+                     $serviceidlist[] = $serviceuser->externalserviceid;
+                }
+            }
+
+            //get all services which already have a token set for the current user
+            $usertokens = $DB->get_records('external_tokens', array('userid' => $userid, 'tokentype' => EXTERNAL_TOKEN_PERMANENT));
+            $tokenizedservice = array();
+            foreach ($usertokens as $token) {
+                    $tokenizedservice[]  = $token->externalserviceid;
+            }
+
+            //create a token for the service which have no token already
+            foreach ($serviceidlist as $serviceid) {
+                if (!in_array($serviceid, $tokenizedservice)) {
+                    //create the token for this service
+                    $newtoken = new object();
+                    $newtoken->token = md5(uniqid(rand(),1));
+                    //check that the user has capability on this service
+                    $newtoken->tokentype = EXTERNAL_TOKEN_PERMANENT;
+                    $newtoken->userid = $userid;
+                    $newtoken->externalserviceid = $serviceid;
+                    //TODO: find a way to get the context - UPDATE FOLLOWING LINE
+                    $newtoken->contextid = get_context_instance(CONTEXT_SYSTEM)->id;
+                    $newtoken->creatorid = $userid;
+                    $newtoken->timecreated = time();
+
+                    $DB->insert_record('external_tokens', $newtoken);
+                }
+            }
+
+
+        }
+    }
+
+    /**
+     * Return all ws user token
+     * @param integer $userid
+     * @return array of token
+     */
+    public function get_user_ws_tokens($userid) {
+        global $DB;
+        //here retrieve token list (including linked users firstname/lastname and linked services name)
+        $sql = "SELECT
+                    t.id, t.creatorid, t.token, u.firstname, u.lastname, s.name, t.validuntil
+                FROM
+                    {external_tokens} t, {user} u, {external_services} s
+                WHERE
+                    t.userid=? AND t.tokentype = ".EXTERNAL_TOKEN_PERMANENT." AND s.id = t.externalserviceid AND t.userid = u.id";
+        $tokens = $DB->get_records_sql($sql, array( $userid));
+        return $tokens;
+    }
+
+    /**
+     * Return a user token that has been created by the user
+     * If doesn't exist a exception is thrown
+     * @param integer $userid
+     * @param integer $tokenid
+     * @return object
+     */
+    public function get_created_by_user_ws_token($userid, $tokenid) {
+        global $DB;
+        $sql = "SELECT
+                        t.id, t.token, u.firstname, u.lastname, s.name
+                    FROM
+                        {external_tokens} t, {user} u, {external_services} s
+                    WHERE
+                        t.creatorid=? AND t.id=? AND t.tokentype = ".EXTERNAL_TOKEN_PERMANENT." AND s.id = t.externalserviceid AND t.userid = u.id";
+        $token = $DB->get_record_sql($sql, array($userid, $tokenid), MUST_EXIST); //must be the token creator
+        return $token;
+
+    }
+
+    /**
+     * Delete a user token
+     * @param int $tokenid
+     */
+    public function delete_user_ws_token($tokenid) {
+        global $DB;
+        $DB->delete_records('external_tokens', array('id'=>$tokenid));
+    }
+}
+
+
+/**
  * Exception indicating access control problem in web service call
  * @author Petr Skoda (skodak)
  */
