@@ -25,7 +25,7 @@ class question_numerical_qtype extends question_shortanswer_qtype {
     public $unitpenalty = 0;
     public $raw_unitgrade = 0 ;
     public $raw_unitpenalty = 0 ;
-    public $valid_numerical_unit = true ;
+    public $valid_numerical_unit = false ;
     function name() {
         return 'numerical';
     }
@@ -82,10 +82,10 @@ class question_numerical_qtype extends question_shortanswer_qtype {
             // the default 
             if ($defaultunit = $this->get_default_numerical_unit($question)) {
                 // so units can be graded
-                $question->options->showunits = 0 ;
+                $question->options->showunits = NUMERICALQUESTIONUNITTEXTINPUTDISPLAY ;
             }else {
                 // only numerical will be graded
-                $question->options->showunits = 3 ;
+                $question->options->showunits = NUMERICALQUESTIONUNITNODISPLAY ;
             }
             $question->options->unitsleft = 0 ;
             $question->options->instructions = '' ;
@@ -255,10 +255,10 @@ class question_numerical_qtype extends question_shortanswer_qtype {
             }else {
                 if ($defaultunit = $this->get_default_numerical_unit($question)) {
                     // so units can be graded
-                    $options->showunits = 0 ;
+                    $options->showunits = NUMERICALQUESTIONUNITTEXTINPUTDISPLAY ;
                 }else {
                     // only numerical will be graded
-                    $options->showunits = 3 ;
+                    $options->showunits = NUMERICALQUESTIONUNITNODISPLAY ;
                 }
             }
         }
@@ -323,9 +323,6 @@ class question_numerical_qtype extends question_shortanswer_qtype {
         $state->responses = array();
         $state->responses['answer'] =  '';
         $state->responses['unit'] = '';
-     /*   if ($question->options->showunits == 1){
-            $state->responses['unit'] = '0';
-        }*/
 
         return true;
     }
@@ -340,12 +337,7 @@ class question_numerical_qtype extends question_shortanswer_qtype {
             $state->responses['answer']= $responses[0];
             $state->responses['unit'] = $responses[1];
        }
-      //                             echo "<p> restore response $responses ||   <pre>";print_r($state);echo "</pre></p>";
 
-      /*
-       if ($question->options->showunits == 1 && isset($question->options->units)){
-            $state->responses['unit']=$this->find_unit_index($question,$state->responses['unit']);
-       }*/
        return true;
     }
 
@@ -377,7 +369,6 @@ class question_numerical_qtype extends question_shortanswer_qtype {
 
     function save_session_and_responses(&$question, &$state) {
         global $DB;
-        //                            echo "<p> save session   <pre>";print_r($state);echo "</pre></p>";
 
         $responses = '';
         if(isset($state->responses['unit']) && isset($question->options->units[$state->responses['unit']])){
@@ -394,7 +385,7 @@ class question_numerical_qtype extends question_shortanswer_qtype {
         return true;
     }
 
-/**
+    /**
      * Deletes question from the question-type specific tables
      *
      * @return boolean Success/Failure
@@ -410,7 +401,7 @@ class question_numerical_qtype extends question_shortanswer_qtype {
 
 
     function compare_responses(&$question, $state, $teststate) {
-               if ($question->options->showunits == 1 && isset($question->options->units) && isset($question->options->units[$state->responses['unit']] )){
+               if ($question->options->showunits == NUMERICALQUESTIONUNITMULTICHOICEDISPLAY && isset($question->options->units) && isset($question->options->units[$state->responses['unit']] )){
             $state->responses['unit']=$question->options->units[$state->responses['unit']]->unit;
         };
 
@@ -429,7 +420,6 @@ class question_numerical_qtype extends question_shortanswer_qtype {
         if (isset($teststate->responses['unit'])){
             $testresponses .= $teststate->responses['unit'];
         }
-         // echo "<p> compare response $responses || $testresponses  <pre>";print_r($state);echo "</pre></p>";
 
         if ( isset($responses)  && isset($testresponses )) {
 
@@ -448,23 +438,33 @@ class question_numerical_qtype extends question_shortanswer_qtype {
         if ($answer->answer === '*') {
             return true;
         }
-        //       echo "<p> test response numerical state  <pre>";print_r($state);echo "</pre></p>";
-        //        echo "<p> test response numerical question  <pre>";print_r($question);echo "</pre></p>";
-
-       if( isset($state->responses['unit']) && isset($question->options->units[$state->responses['unit']])){
-            $state->responses['']=$state->responses['answer'].$question->options->units[$state->responses['unit']]->unit;
-           //  echo "<p>test responses valid unit </p>";
-        }else if(isset($state->responses['unit'])){
-            $state->responses['']= $state->responses['answer'].$state->responses['unit'] ;// why?
+        /* To be able to test (old) questions that do not have an unit
+        * input element the test is done using the $state->responses['']
+        * which contains the response which is analyzed by apply_unit() 
+        * If the data comes from the numerical or calculated display
+        * the $state->responses['unit'] comes from either 
+        * a multichoice radio element NUMERICALQUESTIONUNITMULTICHOICEDISPLAY
+        * where the $state->responses['unit'] value is the key => unit object
+        * in the  the $question->options->units array
+        * or an input text element NUMERICALUNITTEXTINPUTDISPLAY
+        * which contains the student response
+        * for NUMERICALQUESTIONUNITTEXTDISPLAY and NUMERICALQUESTIONUNITNODISPLAY
+        * 
+        */ 
+             //  echo "<p> test1 response response answer $answer->answer  numerical state  <pre>";print_r($state);echo "</pre></p>";
+        if ( ($question->options->showunits == NUMERICALQUESTIONUNITMULTICHOICEDISPLAY || 
+                $question->options->showunits == NUMERICALQUESTIONUNITTEXTINPUTDISPLAY ) && 
+                isset($state->responses['unit']) ){
+            $state->responses['']= $state->responses['answer'].$state->responses['unit'] ;
+            
+        }else if (!isset($state->responses['']) && isset($state->responses['answer'])){
+            
+            $state->responses['']= $state->responses['answer'] ;
         }
-         //     echo "<p> test response numerical state  before apply unit <pre>";print_r($state);echo "</pre></p>";
-
-        $response = $this->apply_unit($state->responses[''], $question->options->units);
-                     //  $this->valid_numerical_unit = $this->valid_unit($state->responses[''], $question->options->units);
-     //  if ($this->valid_numerical_unit) echo "<p>test responses valid unit </p>";
-     //  if (!$this->valid_numerical_unit) echo "<p>test responses not valid unit </p>";
-     //   echo "<p>state response test $response after apply unit <pre>";print_r($state);echo "</pre></p>";
-       // $this->raw_unitpenalty = 0.1 ;
+            
+            $response = $this->apply_unit($state->responses[''], $question->options->units);
+            //   echo "<p> test response $response answer $answer->answer  numerical state  <pre>";print_r($state);echo "</pre></p>";
+            //   echo "<p> test response $response answer $answer->answer  numerical state  <pre>";print_r($question->options->units);echo "</pre></p>";
 
         if ($response === false) {
             return false; // The student did not type a number.
@@ -475,20 +475,30 @@ class question_numerical_qtype extends question_shortanswer_qtype {
         return ($answer->min <= $response && $response <= $answer->max);
     }
 
-    function grade_responses(&$question, &$state, $cmoptions) {
-        // The default implementation uses the test_response method to
-        // compare what the student entered against each of the possible
-        // answers stored in the question, and uses the grade from the
-        // first one that matches. It also sets the marks and penalty.
-        // This should be good enought for most simple question types.
-          //     echo "<p>grade responses  <pre>";print_r($state->responses);echo "</pre></p>";
-
-        //first the split response from unit choice display is converted as
-        // standard numerical response value.unit
-  /*      if (!empty($question->options->showunits) && isset($state->responses['unit'])){
-            $state->responses[''] .= $question->options->units[$state->responses['unit']]->unit ;
-        }
-  */
+    /**
+    * Performs response processing and grading 
+    * The function was redefined for handling correctly the two parts
+    * number and unit of numerical or calculated questions 
+    * The code handles also the case when there no unit defined by the user or 
+    * when used in a multianswer (Cloze) question. 
+    * This function performs response processing and grading and updates
+    * the state accordingly.
+    * @return boolean         Indicates success or failure.
+    * @param object $question The question to be graded. Question type
+    *                         specific information is included.
+    * @param object $state    The state of the question to grade. The current
+    *                         responses are in ->responses. The last graded state
+    *                         is in ->last_graded (hence the most recently graded
+    *                         responses are in ->last_graded->responses). The
+    *                         question type specific information is also
+    *                         included. The ->raw_grade and ->penalty fields
+    *                         must be updated. The method is able to
+    *                         close the question session (preventing any further
+    *                         attempts at this question) by setting
+    *                         $state->event to QUESTION_EVENTCLOSEANDGRADE
+    * @param object $cmoptions
+    */
+    function grade_responses(&$question, &$state, $cmoptions) {    
         //to apply the unit penalty we need to analyse the response in a more complex way
         //the apply_unit() function analysis could be used to obtain the infos
         // however it is used to detect good or bad numbers but also
@@ -502,28 +512,22 @@ class question_numerical_qtype extends question_shortanswer_qtype {
             }
         }
         // in all cases the unit should be tested
-        if( $question->options->showunits == 3) {
+        if( $question->options->showunits == NUMERICALQUESTIONUNITNODISPLAY ) {
             $this->valid_numerical_unit == true ;
         }else {
             $this->valid_numerical_unit = $this->valid_unit($state->responses[''], $question->options->units);
         }
-      // if ($this->valid_numerical_unit) echo "<p>grade responses valid unit </p>";
-      // if (!$this->valid_numerical_unit) echo "<p>grade responses not valid unit </p>";
         // apply unit penalty
         $this->raw_unitpenalty = 0 ;
         if(!empty($question->options->unitpenalty)&& !$this->valid_numerical_unit ){
             if($question->options->unitgradingtype == 1){
-                $this->raw_unitpenalty = $question->options->unitpenalty* $state->raw_grade ;
+                $this->raw_unitpenalty = $question->options->unitpenalty * $state->raw_grade ;
             }else {
-                $this->raw_unitpenalty = $question->options->unitpenalty* $question->maxgrade;
+                $this->raw_unitpenalty = $question->options->unitpenalty * $question->maxgrade;
             }
-            $state->raw_grade -= $question->options->unitpenalty ;
+            $state->raw_grade -= $this->raw_unitpenalty ;
         }
-      //  echo "<p>grade responses  <pre>";print_r($state->responses);echo "</pre></p>";
-
-       // $this->raw_unitpenalty = $question->options->unitpenalty ;
         // Make sure we don't assign negative or too high marks.
-     //   $state->raw_grade -= $question->options->unitpenalty ;
         $state->raw_grade = min(max((float) $state->raw_grade,
                             0.0), 1.0) * $question->maxgrade;
 
@@ -575,7 +579,6 @@ class question_numerical_qtype extends question_shortanswer_qtype {
         return $result;
     }
     function get_actual_response($question, $state) {
-      //   echo "<p>state response numerical GET ACTUAL RESPONSE $question->id $question->qtype <pre>";print_r($state);echo "</pre></p>";
        if (!empty($state->responses) && !empty($state->responses[''])) {
            if(false === strpos($state->responses[''], '|||||')){
                 $responses[] = $state->responses[''];
@@ -667,10 +670,12 @@ class question_numerical_qtype extends question_shortanswer_qtype {
             $replace = array('', '.');
         }
         $rawresponse = str_replace($search, $replace, $rawresponse);
+           //    echo "<p> apply_unit rawresponse $rawresponse answer answer->answer  numerical state  <pre>";print_r($units);echo "</pre></p>";
 
         // Apply any unit that is present.
         if (preg_match('~^([+-]?([0-9]+(\\.[0-9]*)?|\\.[0-9]+)([eE][-+]?[0-9]+)?)([^0-9].*)?$~',
                 $rawresponse, $responseparts)) {
+             //  echo "<p> test response $rawresponse answer answer->answer  numerical responseparts  <pre>";print_r($responseparts);echo "</pre></p>";
 
             if (!empty($responseparts[5])) {
 
@@ -690,11 +695,11 @@ class question_numerical_qtype extends question_shortanswer_qtype {
         // Invalid number. Must be wrong.
         return false;
     }
-/**
-  * function used in in function definition_inner()
-  * of edit_..._form.php for
-  * numerical, calculated, calculatedsimple
-  */    
+    /**
+    * function used in function definition_inner()
+    * of edit_..._form.php for
+    * numerical, calculated, calculatedsimple
+    */    
     function add_units_options(&$mform, &$that){
         $mform->addElement('header', 'unithandling', get_string('unitshandling', 'qtype_numerical'));
         // Units are graded
@@ -756,7 +761,7 @@ class question_numerical_qtype extends question_shortanswer_qtype {
         $repeated[] =& $mform->createElement('text', 'multiplier', get_string('multiplier', 'quiz'));
         $mform->setType('multiplier', PARAM_NUMBER);
 
-        if (isset($this->question->options)){
+        if (isset($that->question->options)){
             $countunits = count($that->question->options->units);
         } else {
             $countunits = 0;
@@ -789,12 +794,14 @@ class question_numerical_qtype extends question_shortanswer_qtype {
             $showunits = $data['showunits1'];
         }
         
-        if (($showunits == 0) || ($showunits == 1) || ($showunits == 2)){
+        if (($showunits == NUMERICALQUESTIONUNITTEXTINPUTDISPLAY) || 
+                ($showunits == NUMERICALQUESTIONUNITMULTICHOICEDISPLAY ) || 
+                ($showunits == NUMERICALQUESTIONUNITTEXTDISPLAY )){
            if (trim($units[0]) == ''){
              $errors['unit[0]'] = 'You must set a valid unit name' ;
             }
         }
-        if ($showunits == 3 ){
+        if ($showunits == NUMERICALQUESTIONUNITNODISPLAY ){
             if (count($units)) {
                 foreach ($units as $key => $unit){
                     if ($units[$key] != ''){
@@ -842,14 +849,8 @@ class question_numerical_qtype extends question_shortanswer_qtype {
 
     }
 
-    function print_question_grading_details(&$question, &$state, $cmoptions, $options) {
-      //           echo "<p>state uestion_grading_details $question->id $question->qtype <pre>";print_r($state);echo "</pre></p>";
 
-        parent::print_question_grading_details($question, $state, $cmoptions, $options);
-
-    }
-
-        function valid_unit($rawresponse, $units) {
+    function valid_unit($rawresponse, $units) {
         // Make units more useful
         $tmpunits = array();
         foreach ($units as $unit) {
@@ -1025,4 +1026,15 @@ class question_numerical_qtype extends question_shortanswer_qtype {
 
 // INITIATION - Without this line the question type is not in use.
 question_register_questiontype(new question_numerical_qtype());
-
+if ( ! defined ("NUMERICALQUESTIONUNITTEXTINPUTDISPLAY")) {
+    define("NUMERICALQUESTIONUNITTEXTINPUTDISPLAY",   0);
+}
+if ( ! defined ("NUMERICALQUESTIONUNITMULTICHOICEDISPLAY")) {
+    define("NUMERICALQUESTIONUNITMULTICHOICEDISPLAY",   1);
+}
+if ( ! defined ("NUMERICALQUESTIONUNITTEXTDISPLAY")) {
+    define("NUMERICALQUESTIONUNITTEXTDISPLAY",   2);
+}
+if ( ! defined ("NUMERICALQUESTIONUNITNODISPLAY")) {
+    define("NUMERICALQUESTIONUNITNODISPLAY",    3);
+}
