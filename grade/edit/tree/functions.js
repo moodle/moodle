@@ -224,5 +224,5 @@ function submit_bulk_move(e, args) {
 
 function update_category_aggregation(e, args) {
     var selectmenu = e.target;
-    window.location = 'index.php?id='+args.courseid+'&category='+args.category+'&aggregationtype='+selectmenu.value+'&sesskey='+args.sesskey;
+    window.location = 'index.php?id='+args.courseid+'&category='+args.category+'&aggregationtype='+selectmenu.get('value')+'&sesskey='+args.sesskey;
 }
