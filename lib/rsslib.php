@@ -333,10 +333,9 @@ function rss_get_token($userid) {
     return get_user_key('rss', $userid);
 }
 
-/*function rss_update_token_last_access($userid) {
-    global $DB;
-    $DB->set_field('rss_tokens', 'lastaccess', time(), array('userid'=>$userid));
-}*/
+function rss_delete_token($userid) {
+    delete_user_key('rss', $userid);
+}
 
 // ===== This function are used to write XML tags =========
 // [stronk7]: They are similar to the glossary export and backup generation

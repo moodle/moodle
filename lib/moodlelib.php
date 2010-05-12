@@ -2529,6 +2529,19 @@ function create_user_key($script, $userid, $instance=null, $iprestriction=null, 
 }
 
 /**
+ * Delete the user's new private user access keys for a particular script.
+ *
+ * @global object
+ * @param string $script unique target identifier
+ * @param int $userid
+ * @return void
+ */
+function delete_user_key($script,$userid) {
+    global $DB;
+    $DB->delete_records('user_private_key', array('script'=>$script, 'userid'=>$userid));
+}
+
+/**
  * Gets a private user access key (and creates one if one doesn't exist).
  *
  * @global object
