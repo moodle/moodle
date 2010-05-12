@@ -239,9 +239,9 @@ class blog_entry {
             foreach ($blogassociations as $assocrec) {
                 $contextrec = $DB->get_record('context', array('id' => $assocrec->contextid));
                 if ($contextrec->contextlevel ==  CONTEXT_COURSE) {
-                    $url = new moodle_url('/course/view.php', array('id' => $contextrec->instanceid));
+                    $assocurl = new moodle_url('/course/view.php', array('id' => $contextrec->instanceid));
                     $text = $DB->get_field('course', 'shortname', array('id' => $contextrec->instanceid)); //TODO: performance!!!!
-                    $assocstr .= $OUTPUT->action_icon($associconurl, new pix_icon('i/course', $text));
+                    $assocstr .= $OUTPUT->action_icon($assocurl, new pix_icon('i/course', $text), null, array(), true);
                     $hascourseassocs = true;
                     $assoctype = get_string('course');
                 }
@@ -260,9 +260,9 @@ class blog_entry {
                     $modinfo = $DB->get_record('course_modules', array('id' => $contextrec->instanceid));
                     $modname = $DB->get_field('modules', 'name', array('id' => $modinfo->module));
 
-                    $url = new moodle_url('/mod/'.$modname.'/view.php', array('id' => $modinfo->id));
+                    $assocurl = new moodle_url('/mod/'.$modname.'/view.php', array('id' => $modinfo->id));
                     $text = $DB->get_field($modname, 'name', array('id' => $modinfo->instance)); //TODO: performance!!!!
-                    $assocstr .= $OUTPUT->action_icon($associconurl, new pix_icon('icon', $text, $modname));
+                    $assocstr .= $OUTPUT->action_icon($assocurl, new pix_icon('icon', $text, $modname), null, array(), true);
                     $assocstr .= ', ';
                     $assoctype = get_string('modulename', $modname);
 
