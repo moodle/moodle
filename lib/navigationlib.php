@@ -486,7 +486,7 @@ class navigation_node implements renderable {
      * @return string
      */
     public function get_title() {
-        if ($this->forcetitle || ($this->shorttext!==null && $this->title !== $this->shorttext) || $this->title !== $this->text) {
+        if ($this->forcetitle || $this->action != null){
             return $this->title;
         } else {
             return '';
