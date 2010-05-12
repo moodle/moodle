@@ -45,7 +45,7 @@ $huburl = optional_param('huburl', '', PARAM_URL);
 $password = optional_param('password', '', PARAM_TEXT);
 $hubname = optional_param('hubname', '', PARAM_TEXT);
 if (empty($huburl) or !confirm_sesskey()) {
-    throw new moodle_exception('cannotaccessthispage');
+    throw new moodle_exception('missingparameter');
 }
 
 /* TO DO

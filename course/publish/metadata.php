@@ -50,7 +50,7 @@ if (has_capability('moodle/course:publish', get_context_instance(CONTEXT_COURSE,
     $huburl = optional_param('huburl', '', PARAM_URL);
     $hubname = optional_param('hubname', '', PARAM_TEXT);
     if (empty($huburl) or !confirm_sesskey()) {
-        throw new moodle_exception('cannotaccessthispage');
+        throw new moodle_exception('missingparameter');
     }
 
     //set the publication form
