@@ -24,7 +24,7 @@
  */
 
 $string['addingmultianswer'] = 'Adding an Embedded answers (Cloze) question';
-$string['confirmsave']="Confirm then save {$a}" ;
+$string['confirmsave']='Confirm then save {$a}' ;
 $string['correctanswer'] = 'Correct Answer';
 $string['correctanswerandfeedback'] = 'Correct Answer and Feedback';
 $string['decodeverifyquestiontext'] = 'Decode and Verify the Question Text';
