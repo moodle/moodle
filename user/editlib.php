@@ -223,7 +223,12 @@ function useredit_shared_definition(&$mform, $editoroptions = null) {
     if (!empty($CFG->allowuserthemes)) {
         $choices = array();
         $choices[''] = get_string('default');
-        $choices += get_list_of_themes();
+        $themes = get_list_of_themes();
+        foreach ($themes as $key=>$theme) {
+            if (empty($theme->hidefromselector)) {
+                $choices[$key] = $theme->name;
+            }
+        }
         $mform->addElement('select', 'theme', get_string('preferredtheme'), $choices);
         $mform->setAdvanced('theme');
     }
