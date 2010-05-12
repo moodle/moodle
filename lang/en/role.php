@@ -227,6 +227,8 @@ $string['notset'] = 'Not set';
 $string['overrideanotherrole'] = 'Override another role';
 $string['overridecontext'] = 'Override context';
 $string['overridepermissions'] = 'Override permissions';
+$string['overridepermissions_help'] = 'Permissions overrides enable selected capabilities to be allowed or prevented in a specific context.';
+$string['overridepermissions_link'] = 'admin/roles/override';
 $string['overridepermissionsforrole'] = 'Override permissions for role \'{$a->role}\' in {$a->context}';
 $string['overridepermissionsin'] = 'Override permissions in {$a}';
 $string['overrideroles'] = 'Override roles';
@@ -234,6 +236,12 @@ $string['overriderolesin'] = 'Override roles in {$a}';
 $string['overrides'] = 'Overrides';
 $string['overridesbycontext'] = 'Overrides (by context)';
 $string['permission'] = 'Permission';
+$string['permission_help'] = 'Permissions are capability settings. There are 4 options:
+
+* Inherit - The permission without any override active i.e. the same permission as in a higher (less specific) context
+* Allow - Permission is granted for the capability
+* Prevent - Permission is removed for the capability, even if allowed in a higher context
+* Prohibit - Permission is completely denied  and cannot be overridden at any lower (more specific) context';
 $string['permissions'] = 'Permissions';
 $string['permissionsforuser'] = 'Permissions for user {$a}';
 $string['permissionsincontext'] = 'Permissions in {$a}';
