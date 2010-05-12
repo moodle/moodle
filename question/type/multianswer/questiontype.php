@@ -329,6 +329,7 @@ class embedded_cloze_qtype extends default_questiontype {
             } else {
                 $response = null;
             }
+            //   echo "<p> multianswer positionkey $positionkey response $response state  <pre>";print_r($state);echo "</pre></p>";
 
             // Determine feedback popup if any
             $popup = '';
@@ -338,7 +339,7 @@ class embedded_cloze_qtype extends default_questiontype {
             $correctanswer = '';
             $strfeedbackwrapped  = $strfeedback;
                 $testedstate = clone($state);
-                if ($correctanswers =  $QTYPES[$wrapped->qtype]->get_correct_responses($wrapped, $testedstate)) {
+                if ($correctanswers =  $QTYPES[$wrapped->qtype]->get_correct_responses($wrapped, $state)) {
                     if ($options->readonly && $options->correct_responses) {
                         $delimiter = '';
                         if ($correctanswers) {

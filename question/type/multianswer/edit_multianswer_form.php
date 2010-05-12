@@ -137,7 +137,7 @@ class question_edit_multianswer_form extends question_edit_form {
                 $storemess = '';
                  if(isset($this->savedquestiondisplay->options->questions[$sub]->qtype) &&
                  $this->savedquestiondisplay->options->questions[$sub]->qtype != $this->questiondisplay->options->questions[$sub]->qtype ){
-                    $this->type_change = true ;
+                    $this->qtype_change = true ;
                    $storemess = "<font class=\"error\"> STORED QTYPE ".$question_type_names[$this->savedquestiondisplay->options->questions[$sub]->qtype]."</font >";
                 }
 
@@ -176,17 +176,17 @@ class question_edit_multianswer_form extends question_edit_form {
             }
             echo '</div>';
             $this->negative_diff =$countsavedsubquestions - $countsubquestions ;
-            if ( ($this->negative_diff > 0 ) ||$this->type_change || ($this->used_in_quiz && $this->negative_diff != 0)){
+            if ( ($this->negative_diff > 0 ) ||$this->qtype_change || ($this->used_in_quiz && $this->negative_diff != 0)){
                     $mform->addElement('header', 'additemhdr', "WARNING");
                 }
             if($this->negative_diff > 0) {
                 //$this->used_in_quiz
 
-                            $mform->addElement('static', 'alert1', "<strong>"."Question deleted"."</strong>","<strong>".$this->negative_diff.get_string(' questions less than in the multtianswer question stored in the database','qtype_multianswer')."</strong>");//$countsubquestions."-".$countsavedsubquestions
+                            $mform->addElement('static', 'alert1', "<strong>"."Question deleted"."</strong>","<strong>".$this->negative_diff.get_string('questionsless','qtype_multianswer')."</strong>");//$countsubquestions."-".$countsavedsubquestions
             }
-            if($this->type_change )
+            if($this->qtype_change )
                {
-                            $mform->addElement('static', 'alert1', "<strong>"."Question type change "."</strong>","<strong>".get_string(' at least one question type has been changed. Did you add,delete or move a question ? Look ahead ','qtype_multianswer')."</strong>");//$countsubquestions."-".$countsavedsubquestions
+                            $mform->addElement('static', 'alert1', "<strong>"."Question type change "."</strong>","<strong>".get_string('questiontypechanged','qtype_multianswer')."</strong>");//$countsubquestions."-".$countsavedsubquestions
             }
             echo '</div>';
         }
@@ -198,9 +198,9 @@ class question_edit_multianswer_form extends question_edit_form {
                 $mform->addElement('header', 'additemhdr2', "This question is used in $this->nb_of_quiz  quiz(s), total attempt(s) : $this->nb_of_attempts ");
                              $mform->addElement('static', 'alertas', "<strong>"."YOU SHOULD NOT "."</strong>");//$countsubquestions."-".$countsavedsubquestions
          }
-        if ( ($this->negative_diff > 0 || $this->used_in_quiz && ($this->negative_diff > 0 ||$this->negative_diff < 0 || $this->type_change ) ) &&  $this->reload ){
-            $mform->addElement('header', 'additemhdr', get_string('The question will be saved as edited', 'qtype_calculatedsimple'));
-            $mform->addElement('checkbox', 'confirm','' ,get_string('I confirm that I want the question be saved as edited', 'qtype_calculatedsimple'));
+        if ( ($this->negative_diff > 0 || $this->used_in_quiz && ($this->negative_diff > 0 ||$this->negative_diff < 0 || $this->qtype_change ) ) &&  $this->reload ){
+            $mform->addElement('header', 'additemhdr', get_string('questionsaveasedited', 'qtype_multianswer'));
+            $mform->addElement('checkbox', 'confirm','' ,get_string('confirmquestionsaveasedited', 'qtype_multianswer'));
             $mform->setDefault('confirm', 0);
         }else {
             $mform->addElement('hidden', 'confirm',0);
@@ -343,13 +343,7 @@ class question_edit_multianswer_form extends question_edit_form {
                 }
             }
         }
-       $default_values['alertas']= "<strong>".get_string("
-
-<ul>
-  <li>add or delete questions, </li>
-  <li>change the questions order in the text,</li>
-  <li>change their question type (numerical, shortanswer, multiple choice). </li></ul>
-",'qtype_multianswer')."</strong>";
+       $default_values['alertas']= "<strong>".get_string('questioninquiz','qtype_multianswer')."</strong>";
 
         if( $default_values != "")   {
             $question = (object)((array)$question + $default_values);
@@ -411,8 +405,8 @@ class question_edit_multianswer_form extends question_edit_form {
         }
            // $question = qtype_multianswer_extract_question($data['questiontext']);
           //  if (isset $question->options->questions
-        if (( $this->negative_diff > 0 || $this->used_in_quiz && ($this->negative_diff > 0 ||$this->negative_diff < 0 || $this->type_change ))&& $this->confirm == 0 ){
-       $errors['confirm']="confirm then save".$this->negative_diff ;
+        if (( $this->negative_diff > 0 || $this->used_in_quiz && ($this->negative_diff > 0 ||$this->negative_diff < 0 || $this->qtype_change ))&& $this->confirm == 0 ){
+       $errors['confirm']=get_string('confirmsave', 'qtype_multianswer',$this->negative_diff);
         }
 
         
