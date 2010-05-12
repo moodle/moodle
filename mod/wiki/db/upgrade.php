@@ -254,9 +254,9 @@ function xmldb_wiki_upgrade($oldversion) {
                     $orgifilename = urldecode($filemeta['Content-Location']);
                     $orgifilename = str_replace(' ', '_', $orgifilename);
                 }
-                $thefile = $CFG->dataroot . '/' . $r->courseid . '/moddata/wiki/' . $r->wikiid .'/' . $r->entryid . '/'. $filesection .'/'. $filename; 
+                $thefile = $CFG->dataroot . '/' . $r->courseid . '/moddata/wiki/' . $r->wikiid .'/' . $r->entryid . '/'. $filesection .'/'. $filename;
 
-                if (is_readable($thefile)) {
+                if (is_file($thefile) && is_readable($thefile)) {
                     $filerecord = array('contextid' => $context->id,
                                         'filearea'  => 'wiki_attachments',
                                         'itemid'    => $r->subwiki,
@@ -264,15 +264,19 @@ function xmldb_wiki_upgrade($oldversion) {
                                         'filename'  => $orgifilename,
                                         'userid'    => $r->userid);
                     if (!$fs->file_exists($context->id, 'wiki_attachments', $r->subwiki, '/', $orgifilename)) {
-                        echo $OUTPUT->notification('Migrating file '.$orgifilename, 'notifysuccess');
+                        //echo $OUTPUT->notification('Migrating file '.$orgifilename, 'notifysuccess');
                         $storedfile = $fs->create_file_from_pathname($filerecord, $thefile);
                     }
                     // we have to create another file here to make sure interlinks work
                     if (!$fs->file_exists($context->id, 'wiki_attachments', $r->subwiki, '/', $filename)) {
                         $filerecord['filename'] = $filename;
-                        echo $OUTPUT->notification('Migrating file '.$filename, 'notifysuccess');
+                        //echo $OUTPUT->notification('Migrating file '.$filename, 'notifysuccess');
                         $storedfile = $fs->create_file_from_pathname($filerecord, $thefile);
                     }
+                } else {
+                    echo $OUTPUT->notification("Bad data found: $r->pagename <br/> Expected file path: $thefile Please fix the bad file path manually.");
+                    // print file meta info, which can help admin find missing file
+                    print_object($filemeta);
                 }
             }
         }
