@@ -597,7 +597,7 @@ function clean_param($param, $type) {
             return preg_replace('/[^a-zA-Z0-9\/_-]/i', '', $param);
 
         case PARAM_FILE:         // Strip all suspicious characters from filename
-            $param = preg_replace('~[[:cntrl:]]|[&<>"`\|\':\\/]~u', '', $param);
+            $param = preg_replace('~[[:cntrl:]]|[&<>"`\|\':\\\\/]~u', '', $param);
             $param = preg_replace('~\.\.+~', '', $param);
             if ($param === '.') {
                 $param = '';
