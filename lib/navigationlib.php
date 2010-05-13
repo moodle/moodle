@@ -2815,8 +2815,16 @@ class settings_navigation extends navigation_node {
             }
         }
 
+        $enablemanagetokens = false;
+        if (!empty($CFG->enablerssfeeds)) {
+            $enablemanagetokens = true;
+        } else if (!is_siteadmin($USER->id)
+             && !empty($CFG->enablewebservices)
+             && has_capability('moodle/webservice:createtoken', get_system_context()) ) {
+            $enablemanagetokens = true;
+        }
         // Security keys
-        if ($currentuser) {
+        if ($currentuser && $enablemanagetokens) {
             $url = new moodle_url('/user/managetoken.php', array('sesskey'=>sesskey()));
             $usersetting->add(get_string('securitykeys', 'webservice'), $url, self::TYPE_SETTING);
         }
