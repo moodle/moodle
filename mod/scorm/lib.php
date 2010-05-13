@@ -389,7 +389,7 @@ function scorm_user_complete($course, $user, $mod, $scorm) {
                     if (($nextsco !== false) && ($sco->parent != $nextsco->parent) && (($level==0) || (($level>0) && ($nextsco->parent == $sco->identifier)))) {
                         $sublist++;
                     } else {
-                        $report .= '<img src="'.$OUTPUT->pix_url('pix/spacer', 'scorm').'" alt="" />';
+                        $report .= '<img src="'.$OUTPUT->pix_url('spacer', 'scorm').'" alt="" />';
                     }
 
                     if ($sco->launch) {
@@ -400,12 +400,12 @@ function scorm_user_complete($course, $user, $mod, $scorm) {
                                 $usertrack->status = 'notattempted';
                             }
                             $strstatus = get_string($usertrack->status,'scorm');
-                            $report .= "<img src='".$OUTPUT->pix_url('pix/'.$usertrack->status, 'scorm')."' alt='$strstatus' title='$strstatus' />";
+                            $report .= "<img src='".$OUTPUT->pix_url($usertrack->status, 'scorm')."' alt='$strstatus' title='$strstatus' />";
                         } else {
                             if ($sco->scormtype == 'sco') {
-                                $report .= '<img src="'.$OUTPUT->pix_url('pix/notattempted', 'scorm').'" alt="'.get_string('notattempted','scorm').'" title="'.get_string('notattempted','scorm').'" />';
+                                $report .= '<img src="'.$OUTPUT->pix_url('notattempted', 'scorm').'" alt="'.get_string('notattempted','scorm').'" title="'.get_string('notattempted','scorm').'" />';
                             } else {
-                                $report .= '<img src="'.$OUTPUT->pix_url('pix/asset', 'scorm').'" alt="'.get_string('asset','scorm').'" title="'.get_string('asset','scorm').'" />';
+                                $report .= '<img src="'.$OUTPUT->pix_url('asset', 'scorm').'" alt="'.get_string('asset','scorm').'" title="'.get_string('asset','scorm').'" />';
                             }
                         }
                         $report .= "&nbsp;$sco->title $score$totaltime</li>\n";

@@ -510,7 +510,7 @@
                                                 $score = $strstatus;
                                             }
                                             if (!$download) {
-                                                $row[] = '<img src="'.$OUTPUT->pix_url('pix/'.$trackdata->status, 'scorm').'" alt="'.$strstatus.'" title="'.$strstatus.'" /><br/>
+                                                $row[] = '<img src="'.$OUTPUT->pix_url($trackdata->status, 'scorm').'" alt="'.$strstatus.'" title="'.$strstatus.'" /><br/>
                                                           <a href="report.php?b='.$sco->id.'&amp;user='.$scouser->userid.'&amp;attempt='.$scouser->attempt.
                                                          '" title="'.get_string('details','scorm').'">'.$score.'</a>';
                                             } else {
@@ -520,7 +520,7 @@
                                             // if we don't have track data, we haven't attempted yet
                                             $strstatus = get_string('notattempted', 'scorm');
                                             if (!$download) {
-                                                $row[] = '<img src="'.$OUTPUT->pix_url('pix/notattempted', 'scorm').'" alt="'.$strstatus.'" title="'.$strstatus.'" /><br/>'.$strstatus;
+                                                $row[] = '<img src="'.$OUTPUT->pix_url('notattempted', 'scorm').'" alt="'.$strstatus.'" title="'.$strstatus.'" /><br/>'.$strstatus;
                                             } else {
                                                 $row[] = $strstatus;
                                             }
@@ -636,7 +636,7 @@
                                     $detailslink = '&nbsp;';
                                 }
                                 $strstatus = get_string($trackdata->status,'scorm');
-                                $row[] = '<img src="'.$OUTPUT->pix_url('pix/' . $trackdata->status, 'scorm').'" alt="'.$strstatus.'" title="'.
+                                $row[] = '<img src="'.$OUTPUT->pix_url($trackdata->status, 'scorm').'" alt="'.$strstatus.'" title="'.
                                          $strstatus.'" />&nbsp;'.format_string($sco->title);
                                 $row[] = get_string($trackdata->status,'scorm');
                                 $row[] = scorm_format_date_time($trackdata->total_time);
@@ -678,7 +678,7 @@
                 $trackdata->total_time = '';
             }
             $strstatus = get_string($trackdata->status,'scorm');
-            echo '<img src="'.$OUTPUT->pix_url('pix/'.$trackdata->status, 'scorm').'" alt="'.$strstatus.'" title="'.
+            echo '<img src="'.$OUTPUT->pix_url($trackdata->status, 'scorm').'" alt="'.$strstatus.'" title="'.
             $strstatus.'" />&nbsp;'.scorm_format_date_time($trackdata->total_time).'<br />'.$scoreview.'<br />';
             echo '</div>'."\n";
             echo '<hr /><h2>'.get_string('details','scorm').'</h2>';

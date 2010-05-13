@@ -45,7 +45,7 @@ function scorm_resize () {
     }
 
     var header = document.getElementById('header');
-    var content = document.getElementById('content');
+    var content = document.getElementById('region-content');
     var headerheight = 0;
     if (content) {
         headerheight = content.offsetTop;
@@ -105,14 +105,14 @@ function scorm_resize () {
     if (contenti3) {
         contenti3.style.height = (winheight - totalheight + 30) + 'px';
     } else {
-       document.getElementById('content').style.height = (finalheight + 30) + 'px';
+       document.getElementById('region-main-box').style.height = (finalheight + 30) + 'px';
     }
      // resize the content container too to move the footer below the SCORM content
     var contenti3 = document.getElementById('content-i3');
     if (contenti3) {
         contenti3.style.height = (finalheight + 30) + 'px';
     } else {
-        document.getElementById('content').style.height = (finalheight + 30) + 'px';
+        document.getElementById('region-main-box').style.height = (finalheight + 30) + 'px';
     }
 }
 -->

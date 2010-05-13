@@ -133,21 +133,22 @@
         <title>LoadSCO</title>
         <script type="text/javascript">
         //<![CDATA[
-        var apiHandle = null;
-        var findAPITries = 0;
+        var myApiHandle = null;
+        var myFindAPITries = 0;
 
-        function getAPIHandle() {
-           if (apiHandle == null) {
-              apiHandle = getAPI();
+        function myGetAPIHandle() {
+           myFindAPITries = 0;
+           if (myApiHandle == null) {
+              myApiHandle = myGetAPI();
            }
-           return apiHandle;
+           return myApiHandle;
         }
 
-        function findAPI(win) {
+        function myFindAPI(win) {
            while ((win.<?php echo $LMS_api; ?> == null) && (win.parent != null) && (win.parent != win)) {
-              findAPITries++;
+              myFindAPITries++;
               // Note: 7 is an arbitrary number, but should be more than sufficient
-              if (findAPITries > 7) {
+              if (myFindAPITries > 7) {
                  return null;
               }
               win = win.parent;
@@ -156,10 +157,10 @@
         }
 
         // hun for the API - needs to be loaded before we can launch the package
-        function getAPI() {
-           var theAPI = findAPI(window);
+        function myGetAPI() {
+           var theAPI = myFindAPI(window);
            if ((theAPI == null) && (window.opener != null) && (typeof(window.opener) != "undefined")) {
-              theAPI = findAPI(window.opener);
+              theAPI = myFindAPI(window.opener);
            }
            if (theAPI == null) {
               return null;
@@ -168,15 +169,15 @@
         }
 
        function doredirect() {
-            if (getAPI() != null) {
+            if (myGetAPIHandle() != null) {
                 location = "<?php echo $result ?>";
             }
             else {
-                document.body.innerHTML = "<p><?php echo get_string('activityloading', 'scorm');?> <span id='countdown'><?php echo $delayseconds ?></span> <?php echo get_string('numseconds');?>. &nbsp; <img src='<?php echo $OUTPUT->pix_url('pix/wait', 'scorm') ?>'><p>";
+                document.body.innerHTML = "<p><?php echo get_string('activityloading', 'scorm');?> <span id='countdown'><?php echo $delayseconds ?></span> <?php echo get_string('numseconds', 'moodle', '');?>. &nbsp; <img src='<?php echo $OUTPUT->pix_url('wait', 'scorm') ?>'><p>";
                 var e = document.getElementById("countdown");
                 var cSeconds = parseInt(e.innerHTML);
                 var timer = setInterval(function() {
-                                                if( cSeconds && getAPI() == null ) {
+                                                if( cSeconds && myGetAPIHandle() == null ) {
                                                     e.innerHTML = --cSeconds;
                                                 } else {
                                                     clearInterval(timer);

@@ -2,6 +2,26 @@
 function safeGetElement(doc, el) {
     return doc.ids ? doc.ids[el] : doc.getElementById ? doc.getElementById(el) : doc.all[el];
 }
+// Find elements by class name
+var aryClassElements = new Array();
+function getNextElementByClassName( strClassName, obj ) {
+    if ( obj.className == strClassName ) {
+        aryClassElements[aryClassElements.length] = obj;
+    }
+    for ( var i = 0; i < obj.childNodes.length; i++ )
+        getNextElementByClassName( strClassName, obj.childNodes[i] );
+}
+
+function getElementsByClassName( strClassName, obj ) {
+    aryClassElements = new Array();
+    getNextElementByClassName( strClassName, obj );
+    if (aryClassElements.length > 0) {
+        return aryClassElements[0];
+    }
+    else {
+        return null;
+    }
+}
 
 // Add in a JS controlled link for toggling the Debug logging
 var logButton = document.createElement('a');
@@ -13,7 +33,9 @@ if (getLoggingActive() == "A") {
 } else {
     logButton.innerHTML = '<?php print_string('scormloggingoff','scorm') ?>';
 }
-var content = safeGetElement(document, 'content');
+var content = safeGetElement(document, 'region-main');
+content = getElementsByClassName( 'region-content', content );
+
 content.appendChild(logButton);
 
 // retrieve cookie data
