@@ -23,7 +23,6 @@
 
     require_once('../../config.php');
     require_once('lib.php');
-    require_once("$CFG->libdir/rsslib.php");
 
 
     $id          = optional_param('id', 0, PARAM_INT);       // Course Module ID
@@ -90,6 +89,13 @@
 
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
     $PAGE->set_context($context);
+
+    if (!empty($CFG->enablerssfeeds) && !empty($CFG->forum_enablerssfeeds) && $forum->rsstype && $forum->rssarticles) {
+        require_once("$CFG->libdir/rsslib.php");
+
+        $rsstitle = format_string($course->shortname) . ': %fullname%';
+        rss_add_http_header($context, 'forum', $forum, $rsstitle);
+    }
 
 
 /// Print header.

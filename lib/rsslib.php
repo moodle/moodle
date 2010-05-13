@@ -23,6 +23,12 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+ function rss_add_http_header($context, $modname, $modinstance, $title) {
+    global $PAGE, $USER;
+    $rsspath = rss_get_url($context->id, $USER->id, $modname, $modinstance->id);
+    $PAGE->add_alternate_version($title, $rsspath, 'application/rss+xml');
+ }
+
 /**
  * This function returns the icon (from theme) with the link to rss/file.php
  *

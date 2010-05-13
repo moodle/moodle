@@ -2581,7 +2581,7 @@ function glossary_extend_navigation($navigation, $course, $module, $cm) {
  * @param navigation_node $glossarynode The node to add module settings to
  */
 function glossary_extend_settings_navigation(settings_navigation $settings, navigation_node $glossarynode) {
-    global $PAGE, $DB, $CFG;
+    global $PAGE, $DB, $CFG, $USER;
 
     $mode = optional_param('mode', '', PARAM_ALPHA);
     $hook = optional_param('hook', 'ALL', PARAM_CLEAN);
@@ -2600,5 +2600,17 @@ function glossary_extend_settings_navigation(settings_navigation $settings, navi
 
     if (has_capability('mod/glossary:write', $PAGE->cm->context)) {
         $glossarynode->add(get_string('addentry', 'glossary'), new moodle_url('/mod/glossary/edit.php', array('cmid'=>$PAGE->cm->id)));
+    }
+
+    $glossary = $DB->get_record('glossary', array("id" => $PAGE->cm->instance));
+
+    if (!empty($CFG->enablerssfeeds) && !empty($CFG->glossary_enablerssfeeds)
+    && $glossary->rsstype && $glossary->rssarticles) {
+        require_once("$CFG->libdir/rsslib.php");
+
+        $string = get_string('rsstype','forum');
+
+        $url = new moodle_url(rss_get_url($PAGE->cm->context->id, $USER->id, 'glossary', $glossary->id));
+        $glossarynode->add($string, $url, settings_navigation::TYPE_SETTING, null, null, new pix_icon('i/rss', ''));
     }
 }

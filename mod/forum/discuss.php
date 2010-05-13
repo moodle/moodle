@@ -79,6 +79,13 @@
     $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
     require_capability('mod/forum:viewdiscussion', $modcontext, NULL, true, 'noviewdiscussionspermission', 'forum');
 
+    if (!empty($CFG->enablerssfeeds) && !empty($CFG->forum_enablerssfeeds) && $forum->rsstype && $forum->rssarticles) {
+        require_once("$CFG->libdir/rsslib.php");
+
+        $rsstitle = format_string($course->shortname) . ': %fullname%';
+        rss_add_http_header($modcontext, 'forum', $forum, $rsstitle);
+    }
+
     if ($forum->type == 'news') {
         if (!($USER->id == $discussion->userid || (($discussion->timestart == 0
             || $discussion->timestart <= time())

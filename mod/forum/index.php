@@ -248,11 +248,11 @@ if ($generalforums) {
         //If this forum has RSS activated, calculate it
         if ($show_rss) {
             if ($forum->rsstype and $forum->rssarticles) {
-                //Calculate the tolltip text
+                //Calculate the tooltip text
                 if ($forum->rsstype == 1) {
-                    $tooltiptext = get_string('rsssubscriberssdiscussions', 'forum', format_string($forum->name));
+                    $tooltiptext = get_string('rsssubscriberssdiscussions', 'forum');
                 } else {
-                    $tooltiptext = get_string('rsssubscriberssposts', 'forum', format_string($forum->name));
+                    $tooltiptext = get_string('rsssubscriberssposts', 'forum');
                 }
                 //Get html code for RSS link
                 $row[] = rss_get_link($context->id, $USER->id, 'forum', $forum->id, $tooltiptext);
@@ -384,9 +384,9 @@ if ($course->id != SITEID) {    // Only real courses have learning forums
                 if ($forum->rsstype and $forum->rssarticles) {
                     //Calculate the tolltip text
                     if ($forum->rsstype == 1) {
-                        $tooltiptext = get_string('rsssubscriberssdiscussions', 'forum', format_string($forum->name));
+                        $tooltiptext = get_string('rsssubscriberssdiscussions', 'forum');
                     } else {
-                        $tooltiptext = get_string('rsssubscriberssposts', 'forum', format_string($forum->name));
+                        $tooltiptext = get_string('rsssubscriberssposts', 'forum');
                     }
                     //Get html code for RSS link
                     $row[] = rss_get_link($context->id, $USER->id, 'forum', $forum->id, $tooltiptext);

@@ -266,9 +266,8 @@
 /// RSS and CSS and JS meta
     $meta = '';
     if (!empty($CFG->enablerssfeeds) && !empty($CFG->data_enablerssfeeds) && $data->rssarticles > 0) {
-        $rsspath = rss_get_url($context->id, $USER->id, 'data', $data->id);
-        $PAGE->add_alternate_version(format_string($course->shortname) . ': %fullname%',
-                $rsspath, 'application/rss+xml');
+        $rsstitle = format_string($course->shortname) . ': %fullname%';
+        rss_add_http_header($context, 'data', $data, $rsstitle);
     }
     if ($data->csstemplate) {
         $PAGE->requires->css('/mod/data/css.php?d='.$data->id);
@@ -315,12 +314,13 @@
     echo $OUTPUT->heading(format_string($data->name));
 
     // Do we need to show a link to the RSS feed for the records?
-    if (!empty($CFG->enablerssfeeds) && !empty($CFG->data_enablerssfeeds) && $data->rssarticles > 0) {
+    //this links has been Settings (database activity administration) block
+    /*if (!empty($CFG->enablerssfeeds) && !empty($CFG->data_enablerssfeeds) && $data->rssarticles > 0) {
         echo '<div style="float:right;">';
         rss_print_link($context->id, $USER->id, 'data', $data->id, get_string('rsstype'));
         echo '</div>';
         echo '<div style="clear:both;"></div>';
-    }
+    }*/
 
     if ($data->intro and empty($page) and empty($record) and $mode != 'single') {
         $options = new object();

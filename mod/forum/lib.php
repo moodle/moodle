@@ -7503,9 +7503,9 @@ function forum_extend_settings_navigation(settings_navigation $settingsnav, navi
         }
 
         if ($forumobject->rsstype == 1) {
-            $string = get_string("rsssubscriberssdiscussions","forum",format_string($forumobject->name));
+            $string = get_string('rsssubscriberssdiscussions','forum');
         } else {
-            $string = get_string("rsssubscriberssposts","forum",format_string($forumobject->name));
+            $string = get_string('rsssubscriberssposts','forum');
         }
         if (!isloggedin()) {
             $userid = 0;

@@ -236,6 +236,14 @@ if (isset($mode)) {
     $url->param('mode', $mode);
 }
 $PAGE->set_url($url);
+
+if (!empty($CFG->enablerssfeeds) && !empty($CFG->glossary_enablerssfeeds)
+    && $glossary->rsstype && $glossary->rssarticles) {
+
+    $rsstitle = format_string($course->shortname) . ': %fullname%';
+    rss_add_http_header($context, 'glossary', $glossary, $rsstitle);
+}
+
 if ($tab == GLOSSARY_APPROVAL_VIEW) {
     require_capability('mod/glossary:approve', $context);
     $PAGE->navbar->add($strwaitingapproval);
@@ -251,7 +259,7 @@ if ($showcommonelements) {
     $availableoptions = '';
 
 /// Decide about to print the import link
-    if (has_capability('mod/glossary:import', $context)) {
+    /*if (has_capability('mod/glossary:import', $context)) {
         $availableoptions = '<span class="helplink">' .
                             '<a href="' . $CFG->wwwroot . '/mod/glossary/import.php?id=' . $cm->id . '"' .
                             '  title="' . s(get_string('importentries', 'glossary')) . '">' .
@@ -269,7 +277,7 @@ if ($showcommonelements) {
                             '  title="' . s(get_string('exportentries', 'glossary')) . '">' .
                             get_string('exportentries', 'glossary') . '</a>' .
                             '</span>';
-    }
+    }*/
 
 /// Decide about to print the approval link
     if (has_capability('mod/glossary:approve', $context)) {
@@ -293,10 +301,10 @@ if ($showcommonelements) {
     echo $availableoptions;
 
 /// If rss are activated at site and glossary level and this glossary has rss defined, show link
-    if (isset($CFG->enablerssfeeds) && isset($CFG->glossary_enablerssfeeds) &&
-        $CFG->enablerssfeeds && $CFG->glossary_enablerssfeeds && $glossary->rsstype && $glossary->rssarticles) {
+    /*if (!empty($CFG->enablerssfeeds) && !empty($CFG->glossary_enablerssfeeds)
+        && $glossary->rsstype && $glossary->rssarticles) {
 
-        $tooltiptext = get_string("rsssubscriberss","glossary",format_string($glossary->name,true));
+        $tooltiptext = get_string("rsssubscriberss",'glossary',format_string($glossary->name,true));
         if (!isloggedin()) {
             $userid = 0;
         } else {
@@ -307,7 +315,7 @@ if ($showcommonelements) {
         rss_print_link($context->id, $userid, "glossary", $glossary->id, $tooltiptext);
         echo '</span>';
 //            print_box_end();
-    }
+    }*/
 
 /// The print icon
     if ( $showcommonelements and $mode != 'search') {

@@ -2809,11 +2809,9 @@ function data_extend_navigation($navigation, $course, $module, $cm) {
  * @param navigation_node $datanode The node to add module settings to
  */
 function data_extend_settings_navigation(settings_navigation $settings, navigation_node $datanode) {
-    global $PAGE;
+    global $PAGE, $DB, $CFG, $USER;
 
-    // We only actually need the id here for functions
-    $data = new stdClass;
-    $data->id = $PAGE->cm->instance;
+    $data = $DB->get_record('data', array("id" => $PAGE->cm->instance));
 
     $currentgroup = groups_get_activity_group($PAGE->cm);
     $groupmode = groups_get_activity_groupmode($PAGE->cm);
@@ -2854,5 +2852,14 @@ function data_extend_settings_navigation(settings_navigation $settings, navigati
 
         $datanode->add(get_string('fields', 'data'), new moodle_url('/mod/data/field.php', array('d'=>$data->id)));
         $datanode->add(get_string('presets', 'data'), new moodle_url('/mod/data/preset.php', array('d'=>$data->id)));
+    }
+
+    if (!empty($CFG->enablerssfeeds) && !empty($CFG->data_enablerssfeeds) && $data->rssarticles > 0) {
+        require_once("$CFG->libdir/rsslib.php");
+
+        $string = get_string('rsstype','forum');
+
+        $url = new moodle_url(rss_get_url($PAGE->cm->context->id, $USER->id, 'data', $data->id));
+        $datanode->add($string, $url, settings_navigation::TYPE_SETTING, null, null, new pix_icon('i/rss', ''));
     }
 }
