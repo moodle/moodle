@@ -401,6 +401,7 @@ class question_numerical_qtype extends question_shortanswer_qtype {
 
 
     function compare_responses(&$question, $state, $teststate) {
+
                if ($question->options->showunits == NUMERICALQUESTIONUNITMULTICHOICEDISPLAY && isset($question->options->units) && isset($question->options->units[$state->responses['unit']] )){
             $state->responses['unit']=$question->options->units[$state->responses['unit']]->unit;
         };
@@ -451,9 +452,9 @@ class question_numerical_qtype extends question_shortanswer_qtype {
         * for NUMERICALQUESTIONUNITTEXTDISPLAY and NUMERICALQUESTIONUNITNODISPLAY
         * 
         */ 
-             //  echo "<p> test1 response response answer $answer->answer  numerical state  <pre>";print_r($state);echo "</pre></p>";
         if ( ($question->options->showunits == NUMERICALQUESTIONUNITMULTICHOICEDISPLAY || 
-                $question->options->showunits == NUMERICALQUESTIONUNITTEXTINPUTDISPLAY ) && 
+                $question->options->showunits == NUMERICALQUESTIONUNITTEXTINPUTDISPLAY ||
+                $question->options->showunits == NUMERICALQUESTIONUNITTEXTDISPLAY ) && 
                 isset($state->responses['unit']) ){
             $state->responses['']= $state->responses['answer'].$state->responses['unit'] ;
             
@@ -463,8 +464,6 @@ class question_numerical_qtype extends question_shortanswer_qtype {
         }
             
             $response = $this->apply_unit($state->responses[''], $question->options->units);
-            //   echo "<p> test response $response answer $answer->answer  numerical state  <pre>";print_r($state);echo "</pre></p>";
-            //   echo "<p> test response $response answer $answer->answer  numerical state  <pre>";print_r($question->options->units);echo "</pre></p>";
 
         if ($response === false) {
             return false; // The student did not type a number.
@@ -512,14 +511,16 @@ class question_numerical_qtype extends question_shortanswer_qtype {
             }
         }
         // in all cases the unit should be tested
-        if( $question->options->showunits == NUMERICALQUESTIONUNITNODISPLAY ) {
-            $this->valid_numerical_unit == true ;
+        if( $question->options->showunits == NUMERICALQUESTIONUNITNODISPLAY || 
+                $question->options->showunits == NUMERICALQUESTIONUNITTEXTDISPLAY ) {
+            $this->valid_numerical_unit = true ;
         }else {
             $this->valid_numerical_unit = $this->valid_unit($state->responses[''], $question->options->units);
         }
         // apply unit penalty
         $this->raw_unitpenalty = 0 ;
-        if(!empty($question->options->unitpenalty)&& !$this->valid_numerical_unit ){
+        if(!empty($question->options->unitpenalty)&& $this->valid_numerical_unit != true ){
+
             if($question->options->unitgradingtype == 1){
                 $this->raw_unitpenalty = $question->options->unitpenalty * $state->raw_grade ;
             }else {
@@ -670,12 +671,10 @@ class question_numerical_qtype extends question_shortanswer_qtype {
             $replace = array('', '.');
         }
         $rawresponse = str_replace($search, $replace, $rawresponse);
-           //    echo "<p> apply_unit rawresponse $rawresponse answer answer->answer  numerical state  <pre>";print_r($units);echo "</pre></p>";
 
         // Apply any unit that is present.
         if (preg_match('~^([+-]?([0-9]+(\\.[0-9]*)?|\\.[0-9]+)([eE][-+]?[0-9]+)?)([^0-9].*)?$~',
                 $rawresponse, $responseparts)) {
-             //  echo "<p> test response $rawresponse answer answer->answer  numerical responseparts  <pre>";print_r($responseparts);echo "</pre></p>";
 
             if (!empty($responseparts[5])) {
 
