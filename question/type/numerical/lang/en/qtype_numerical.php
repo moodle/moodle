@@ -57,7 +57,7 @@ $string['numericalmultiplier'] = 'Multiplier';
 $string['numericalmultiplier_help'] = 'The Correct numerical response will be multiplied by the multiplier related to a specific unit to obtain the Correct response in this unit.<br/>
  <p> The first unit (Unit1) has a default multiplier of 1. </p>
  <p> So, if your Correct numerical response is 5500 and you set W as unit at Unit1 which has 1 as default multiplier, the Correct response is 5500 W.</p> 
- <p> If you add the unit kW with a multiplier of 0.001, this will add a Correct response of 5 kW. </p><p>This means that the answers 5500, 5500W or 5.5kW would all be marked correct.</p><p> Note that the accepted error is also multiplied, so an allowed error of 100W would become an error of 0.1kW.</p>'; 
+ <p> If you add the unit kW with a multiplier of 0.001, this will add a Correct response of 5 kW. </p><p>This means that the answers 5500W or 5.5kW would be marked correct.</p><p> Note that the accepted error is also multiplied, so an allowed error of 100W would become an error of 0.1kW.</p>'; 
 $string['onlynumerical'] = 'Only NUMERICAL ANSWER will be graded' ;
 $string['rightexample'] = 'RIGHT as 1.00cm' ;
 $string['selectunits'] = 'Select units' ; 
