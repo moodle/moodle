@@ -1,4 +1,9 @@
 <?php
+
+if (!defined('MOODLE_INTERNAL')) {
+    die('Direct access to this script is forbidden.');    ///  It must be included from a Moodle page
+}
+
 require_once ($CFG->libdir.'/formslib.php');
 /**
  * This class adds extra methods to form wrapper specific to be used for module
