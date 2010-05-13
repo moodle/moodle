@@ -777,6 +777,7 @@ class question_numerical_qtype extends question_shortanswer_qtype {
             $firstunit->freeze();
             $firstunit->setValue('1.0');
             $firstunit->setPersistantFreeze(true);
+            $mform->setHelpButton('multiplier[0]', array('numericalmultiplier', get_string('numericalmultiplier', 'qtype_numerical'), 'qtype_numerical'));            
         }
     }
 /**
