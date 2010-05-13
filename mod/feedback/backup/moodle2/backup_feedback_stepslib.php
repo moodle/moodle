@@ -72,7 +72,8 @@ class backup_feedback_activity_structure_step extends backup_activity_structure_
                                                 'typ',
                                                 'hasvalue',
                                                 'position',
-                                                'required'));
+                                                'required',
+                                                'options'));
 
         $trackings = new backup_nested_element('trackings');
 

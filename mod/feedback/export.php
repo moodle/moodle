@@ -101,6 +101,16 @@ function feedback_get_xml_data($feedbackid) {
         //end of presentation
         $data .= $space.$space.$space.'</PRESENTATION>'."\n";
 
+        //start of options
+        $data .= $space.$space.$space.'<OPTIONS>'."\n";
+        //start of CDATA
+        $data .= $space.$space.$space.$space.'<![CDATA[';
+        $data .= $item->options;
+        //end of CDATA
+        $data .= ']]>'."\n";
+        //end of options
+        $data .= $space.$space.$space.'</OPTIONS>'."\n";
+
         //end of item
         $data .= $space.$space.'</ITEM>'."\n";
     }

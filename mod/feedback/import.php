@@ -208,6 +208,7 @@
             $newitem->typ = $typ;
             $newitem->name = trim($item['#']['ITEMTEXT'][0]['#']);
             $newitem->label = trim($item['#']['ITEMLABEL'][0]['#']);
+            $newitem->options = trim($item['#']['OPTIONS'][0]['#']);
             $newitem->presentation = trim($item['#']['PRESENTATION'][0]['#']);
             //check old types of radio, check, and so on
             switch($oldtyp) {
