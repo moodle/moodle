@@ -80,6 +80,7 @@ if (has_capability('moodle/course:publish', get_context_instance(CONTEXT_COURSE,
     $creatornotes = optional_param('creatornotes', false, PARAM_RAW);
     $courseinfo->creatornotes = $creatornotes['text'];
     $courseinfo->creatornotesformat = $creatornotes['format'];
+    $courseinfo->sitecourseid = $id;
     if ($share) {
         $courseinfo->demourl = optional_param('demourl', false, PARAM_URL);
         $courseinfo->enrollable = false;
@@ -136,6 +137,17 @@ if (has_capability('moodle/course:publish', get_context_instance(CONTEXT_COURSE,
 
     $courseregisteredmsg = $OUTPUT->notification(get_string('coursepublished', 'hub'), 'notifysuccess');
 
+
+//save the record into the published course table
+   $publication =  $hub->get_publication($courseids[0]);
+   if (empty($publication)) {
+       //if never been published or if we share, we need to save this new publication record
+       $hub->add_course_publication($registeredhub->id, $course->id, !$share, $courseids[0]);
+   } else {
+       //if we update the enrollable course publication we update the publication record
+       $hub->update_enrollable_course_publication($publication->id);
+   }
+  
 
 // SEND FILES
 

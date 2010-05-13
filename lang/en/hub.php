@@ -27,6 +27,7 @@
 $string['addedtoblock'] = 'Course added to block';
 $string['advertise'] = 'Publish as enrollable';
 $string['advertiseon'] = 'Publish as enrollable on {$a}';
+$string['readvertiseon'] = 'Update publication information on {$a}';
 $string['advertiseonhub'] = 'Publish as enrollable on hub';
 $string['advertiseonmoodleorg'] = 'Publish as enrollable on Moodle.org';
 $string['advertiseonspecifichub'] = 'Publish as enrollable on a specific hub';

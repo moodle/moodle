@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/db" VERSION="20100504" COMMENT="XMLDB file for core Moodle tables"
+<XMLDB PATH="lib/db" VERSION="20100513" COMMENT="XMLDB file for core Moodle tables"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
 >
@@ -2594,7 +2594,7 @@
         <INDEX NAME="backupid_parentitemid_ix" UNIQUE="false" FIELDS="backupid, itemname, parentitemid"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="backup_logs" COMMENT="To store all the logs from backup and restore operations (by db logger)" PREVIOUS="backup_ids_template">
+    <TABLE NAME="backup_logs" COMMENT="To store all the logs from backup and restore operations (by db logger)" PREVIOUS="backup_ids_template" NEXT="published_courses">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="backupid"/>
         <FIELD NAME="backupid" TYPE="char" LENGTH="32" NOTNULL="true" SEQUENCE="false" COMMENT="backupid the log record belongs to" PREVIOUS="id" NEXT="loglevel"/>
@@ -2609,6 +2609,19 @@
       <INDEXES>
         <INDEX NAME="backupid-id" UNIQUE="true" FIELDS="backupid, id" COMMENT="for quick ordered retrieval by backupid"/>
       </INDEXES>
+    </TABLE>
+    <TABLE NAME="published_courses" COMMENT="All course that has been published on a hub and the type of publishing (enrol/download)" PREVIOUS="backup_logs">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="hubid"/>
+        <FIELD NAME="hubid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="the id of the &quot;registered on&quot; hub" PREVIOUS="id" NEXT="courseid"/>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="the id of the published course" PREVIOUS="hubid" NEXT="time"/>
+        <FIELD NAME="time" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="the time when the publication occured" PREVIOUS="courseid" NEXT="enrollable"/>
+        <FIELD NAME="enrollable" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" COMMENT="1 = enrollable, 0 = downloadable" PREVIOUS="time" NEXT="hubcourseid"/>
+        <FIELD NAME="hubcourseid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="the course id on the hub server" PREVIOUS="enrollable"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
     </TABLE>
   </TABLES>
 </XMLDB>

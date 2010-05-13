@@ -190,6 +190,40 @@ class hub {
     }
 
 
+    public function add_course_publication($hubid, $courseid, $enrollable, $hubcourseid) {
+        global $DB;
+        $publication = new stdClass();
+        $publication->hubid = $hubid;
+        $publication->courseid = $courseid;
+        $publication->hubcourseid = $hubcourseid;
+        $publication->enrollable = $enrollable;
+        $publication->time = time();
+        $DB->insert_record('published_courses', $publication);
+    }
+
+    public function update_enrollable_course_publication($publicationid) {
+        global $DB;
+        $publication = new stdClass();
+        $publication->id = $publicationid;
+        $publication->time = time();
+        $DB->update_record('published_courses', $publication);
+    }
+
+
+    public function get_publications($hubid, $courseid, $enrollable) {
+        global $DB;
+        return $DB->get_records('published_courses',
+                array('hubid' => $hubid, 'courseid' => $courseid, 'enrollable' => $enrollable));
+    }
+
+    public function get_publication($hubcourseid) {
+        global $DB;
+        return $DB->get_record('published_courses',
+                array('hubcourseid' => $hubcourseid));
+    }
+
+
+
 ///////////////////////////
 /// Library functions   ///
 ///////////////////////////
