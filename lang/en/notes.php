@@ -48,7 +48,12 @@ $string['notesnotvisible'] = 'You are not allowed to view the notes.';
 $string['nouser'] = 'You must select a user';
 $string['personal'] = 'personal';
 $string['personalnotes'] = 'Personal notes';
-$string['publishstate'] = 'Status';
+$string['publishstate'] = 'Context';
+$string['publishstate_help'] = 'A note\'s context determines who can see the note. 
+
+* Personal - The note will be visible only to you
+* Course - The note will be visible to teachers in this course
+* Site - The note will be visible to teachers in all courses';
 $string['site'] = 'site';
 $string['sitenotes'] = 'Site notes';
 $string['unknown'] = 'unknown';
