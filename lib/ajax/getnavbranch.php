@@ -40,6 +40,8 @@ try {
     // This identifies the block instance requesting AJAX extension
     $instanceid = optional_param('instance', null, PARAM_INT);
 
+    $PAGE->set_context(get_context_instance(CONTEXT_SYSTEM));
+
     // Create a global nav object
     $navigation = new global_navigation_for_ajax($PAGE);
 
@@ -68,8 +70,12 @@ try {
     // Create a navigation object to use, we can't guarantee PAGE will be complete
 
     $expandable = $navigation->initialise($branchtype, $branchid);
-    if (isset($block) && !empty($block->config->expansionlimit)) {
-        $navigation->set_expansion_limit($block->config->expansionlimit);
+    if (!isloggedin() || isguestuser()) {
+        $navigation->set_expansion_limit(navigation_node::TYPE_COURSE);
+    } else {
+        if (isset($block) && !empty($block->config->expansionlimit)) {
+            $navigation->set_expansion_limit($block->config->expansionlimit);
+        }
     }
     if (isset($block)) {
         $block->trim($navigation, $trimmode, $trimlength, ceil($trimlength/2));
@@ -78,7 +84,7 @@ try {
     
     // Find the actuall branch we are looking for
     $branch = $navigation->find($branchid, $branchtype);
-
+    
     // Stop buffering errors at this point
     $html = ob_get_contents();
     ob_end_clean();

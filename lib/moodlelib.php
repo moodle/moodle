@@ -394,6 +394,18 @@ define('EXTERNAL_TOKEN_PERMANENT', 0);
  */
 define('EXTERNAL_TOKEN_EMBEDDED', 1);
 
+/**
+ * The home page should be the site home
+ */
+define('HOMEPAGE_SITE', 0);
+/**
+ * The home page should be the users my page
+ */
+define('HOMEPAGE_MY', 1);
+/**
+ * The home page can be chosen by the user
+ */
+define('HOMEPAGE_USER', 2);
 
 /// PARAMETER HANDLING ////////////////////////////////////////////////////
 
@@ -9637,4 +9649,22 @@ function mnet_get_idp_jump_url($user) {
         $mnetjumps[$user->mnethostid] = $idp->wwwroot . $idpjumppath . '?hostwwwroot=' . $CFG->wwwroot . '&wantsurl=';
     }
     return $mnetjumps[$user->mnethostid];
+}
+
+/**
+ * Gets the homepage to use for the current user
+ *
+ * @return int One of HOMEPAGE_*
+ */
+function get_home_page() {
+    global $CFG;
+
+    if (isloggedin() && !isguestuser() && !empty($CFG->defaulthomepage)) {
+        if ($CFG->defaulthomepage == HOMEPAGE_MY) {
+            return HOMEPAGE_MY;
+        } else {
+            return (int)get_user_preferences('user_home_page_preference', HOMEPAGE_MY);
+        }
+    }
+    return HOMEPAGE_SITE;
 }

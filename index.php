@@ -42,6 +42,9 @@
         user_accesstime_log();
     }
 
+    $PAGE->set_url('/');
+    $PAGE->set_course($SITE);
+
 /// If the site is currently under maintenance, then print a message
     if (!empty($CFG->maintenance_enabled) and !has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM))) {
         print_maintenance_message();
@@ -51,12 +54,16 @@
         if (moodle_needs_upgrading()) {
             redirect($CFG->wwwroot .'/'. $CFG->admin .'/index.php');
         }
-    } else if (!empty($CFG->mymoodleredirect)) {    // Redirect logged-in users to My Moodle overview if required
-        if (isloggedin() && !isguestuser()) {
-            redirect($CFG->wwwroot .'/my/index.php');
+    } else if (get_home_page() != HOMEPAGE_SITE) {
+        // Redirect logged-in users to My Moodle overview if required
+        if (optional_param('setdefaulthome', false, PARAM_BOOL)) {
+            set_user_preference('user_home_page_preference', HOMEPAGE_SITE);
+        } else if ($CFG->defaulthomepage == HOMEPAGE_MY && optional_param('redirect', true, PARAM_BOOL)) {
+            redirect($CFG->wwwroot .'/my/');
+        } else if (!empty($CFG->defaulthomepage) && $CFG->defaulthomepage == HOMEPAGE_USER) {
+            $PAGE->settingsnav->get('usercurrentsettings')->add(get_string('makethismyhome'), new moodle_url('/', array('setdefaulthome'=>true)), navigation_node::TYPE_SETTING);
         }
     }
-
 
     if (get_moodle_cookie() == '') {
         set_moodle_cookie('nobody');   // To help search for cookies on login page
@@ -67,10 +74,7 @@
     }
 
     $PAGE->set_pagetype('site-index');
-    $PAGE->set_course($SITE);
-
     $PAGE->set_other_editing_capability('moodle/course:manageactivities');
-    $PAGE->set_url('/');
     $PAGE->set_docs_path('');
     $PAGE->set_pagelayout('frontpage');
     $editing = $PAGE->user_is_editing();
