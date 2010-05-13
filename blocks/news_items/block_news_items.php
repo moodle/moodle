@@ -100,7 +100,7 @@ class block_news_items extends block_base {
                 if ($forum->rsstype == 1) {
                     $tooltiptext = get_string('rsssubscriberssdiscussions','forum',format_string($forum->name));
                 } else {
-                    $tooltiptext = get_string('rsssubscriberssposts','forum',format_string($forum->name));
+                    $tooltiptext = get_string('rsssubscriberssposts','forum');
                 }
                 if (!isloggedin()) {
                     $userid = 0;
