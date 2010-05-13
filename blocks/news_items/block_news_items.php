@@ -98,7 +98,7 @@ class block_news_items extends block_base {
                 $CFG->enablerssfeeds && $CFG->forum_enablerssfeeds && $forum->rsstype && $forum->rssarticles) {
                 require_once($CFG->dirroot.'/lib/rsslib.php');   // We'll need this
                 if ($forum->rsstype == 1) {
-                    $tooltiptext = get_string('rsssubscriberssdiscussions','forum',format_string($forum->name));
+                    $tooltiptext = get_string('rsssubscriberssdiscussions','forum');
                 } else {
                     $tooltiptext = get_string('rsssubscriberssposts','forum');
                 }
