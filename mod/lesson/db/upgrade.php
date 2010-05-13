@@ -42,7 +42,7 @@
  */
 
 function xmldb_lesson_upgrade($oldversion) {
-    global $CFG, $DB;
+    global $CFG, $DB, $OUTPUT;
 
     $dbman = $DB->get_manager();
     $result = true;
