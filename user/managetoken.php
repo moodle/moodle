@@ -25,7 +25,6 @@
  */
 
 require('../config.php');
-require($CFG->dirroot.'/webservice/lib.php');
 
 $PAGE->set_url('/user/managetoken.php');
 $PAGE->set_title(get_string('securitykeys', 'webservice'));
@@ -34,10 +33,12 @@ $PAGE->set_heading(get_string('securitykeys', 'webservice'));
 require_login();
 require_sesskey();
 
-$webservicetokenboxhtml = '';
+$rsstokenboxhtml = $webservicetokenboxhtml = '';
 /// Manage user web service tokens
-if ( !is_siteadmin($USER->id) && !empty($CFG->enablewebservices) &&
-        has_capability('moodle/webservice:createtoken', get_system_context())) {
+if ( !is_siteadmin($USER->id) 
+    && !empty($CFG->enablewebservices)
+    && has_capability('moodle/webservice:createtoken', get_system_context() )) {
+    require($CFG->dirroot.'/webservice/lib.php');
 
     $action  = optional_param('action', '', PARAM_ACTION);
     $tokenid = optional_param('tokenid', '', PARAM_SAFEDIR);
@@ -52,33 +53,50 @@ if ( !is_siteadmin($USER->id) && !empty($CFG->enablewebservices) &&
             if (!$confirm) {
                 $resetconfirmation = $wsrenderer->user_reset_token_confirmation($token);
             } else {
-            /// Delete the token that need to be regenerated
+                /// Delete the token that need to be regenerated
                 $webservice->delete_user_ws_token($tokenid);
             }      
     }
 
-    $webservice->generate_user_ws_tokens($USER->id); //generate all token that need to be generated
-    $tokens = $webservice->get_user_ws_tokens($USER->id);
-    $webservicetokenboxhtml =  $wsrenderer->user_webservice_tokens_box($tokens, $USER->id); //display the box for web service token
+    //no point creating the table is we're just displaying a confirmation screen
+    if (empty($resetconfirmation)) {
+        $webservice->generate_user_ws_tokens($USER->id); //generate all token that need to be generated
+        $tokens = $webservice->get_user_ws_tokens($USER->id);
+        $webservicetokenboxhtml =  $wsrenderer->user_webservice_tokens_box($tokens, $USER->id); //display the box for web service token
+    }
 }
 
-//TODO Manage RSS keys
-//1- the reset confirmation page content should go into $resetconfirmation
-//2- create a table/box for the RSS key
-//PS: in 2 if you prefer to add a special row to the ws table in this case move
-//the renderer somewhere else, add a new column to make difference between web service and RSS, change the name of the
-//renderer function.
+//RSS keys
+if (!empty($CFG->enablerssfeeds)) {
+    require_once($CFG->dirroot.'/lib/rsslib.php');
 
+    $action  = optional_param('action', '', PARAM_ACTION);
+    $confirm = optional_param('confirm', 0, PARAM_BOOL);
+
+    $rssrenderer = $PAGE->get_renderer('core', 'rss');
+
+    if ($action=='resetrsstoken') {
+        /// Display confirmation page to Reset the token
+        if (!$confirm) {
+            $resetconfirmation = $rssrenderer->user_reset_rss_token_confirmation();
+        } else {
+            rss_delete_token($USER->id);
+        }
+    }
+    if (empty($resetconfirmation)) {
+        $token = rss_get_token($USER->id);
+        $rsstokenboxhtml = $rssrenderer->user_rss_token_box($token); //display the box for the user's RSS token
+    }
+}
 
 
 // PAGE OUTPUT
 echo $OUTPUT->header();
 if (!empty($resetconfirmation)) {
-    echo $resetconfirmation;  //TODO the RSS regenerate confirmation content code should
-                              //be containt into $resetconfirmation too
+    echo $resetconfirmation;
 } else {
     echo $webservicetokenboxhtml;
-    //TODO: echo RSS table html here
+    echo $rsstokenboxhtml;
 }
 echo $OUTPUT->footer();
 

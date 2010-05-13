@@ -6970,6 +6970,7 @@ function get_core_subsystems() {
             'rating'      => 'rating',
             'register'    => 'admin/registration',
             'repository'  => 'repository',
+            'rss'         => 'rss',
             'role'        => $CFG->admin.'/role',
             'simpletest'  => NULL,
             'search'      => 'search',
