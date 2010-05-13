@@ -1,4 +1,8 @@
 <?php
+if (!defined('MOODLE_INTERNAL')) {
+    die('Direct access to this script is forbidden.');    ///  It must be included from a Moodle page
+}
+
 require_once($CFG->dirroot.'/question/type/edit_question_form.php');
 /**
  * Defines the editing form for the thruefalse question type.

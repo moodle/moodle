@@ -1,5 +1,10 @@
 <?php
 
+if (!defined('MOODLE_INTERNAL')) {
+    die('Direct access to this script is forbidden.');    ///  It must be included from a Moodle page
+}
+
+
 if (!isset($frm->enrol_cost)) $frm->enrol_cost = '5';
 if (!isset($frm->enrol_currency)) $frm->enrol_currency = 'USD';
 if (!isset($frm->enrol_mailstudents)) $frm->enrol_mailstudents = '';

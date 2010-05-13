@@ -11,6 +11,10 @@
 // part of each plugin, but now now. See MDL-20846
 // for the rationale for this implementation.
 
+if (!defined('MOODLE_INTERNAL')) {
+    die('Direct access to this script is forbidden.');    ///  It must be included from a Moodle page
+}
+
 require_once $CFG->libdir.'/formslib.php';
 
 class login_forgot_password_form extends moodleform {

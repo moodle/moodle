@@ -27,6 +27,10 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+if (!defined('MOODLE_INTERNAL')) {
+    die('Direct access to this script is forbidden.');    ///  It must be included from a Moodle page
+}
+
 require_once($CFG->dirroot . "/mod/wiki/editors/wikieditor.php");
 require_once($CFG->dirroot . "/mod/wiki/editors/wikifiletable.php");
 
