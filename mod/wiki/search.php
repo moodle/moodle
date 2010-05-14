@@ -41,7 +41,9 @@ if (! $cm = get_coursemodule_from_id('wiki', $cmid)) {
 require_course_login($course, true, $cm);
 
 // @TODO: Fix call to wiki_get_subwiki_by_group
-$gid = groups_get_activity_group($cm);
+if (!$gid = groups_get_activity_group($cm)){
+    $gid = 0;
+}
 if (!$subwiki = wiki_get_subwiki_by_group($cm->instance, $gid)){
     return false;
 }

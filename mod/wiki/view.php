@@ -241,7 +241,9 @@ if ($id) {
 
     // Checking subwiki instance
     // @TODO: Fix call to wiki_get_subwiki_by_group
-    $currentgroup = groups_get_activity_group($cm);
+    if (!$currentgroup = groups_get_activity_group($cm)){
+        $currentgroup = 0;
+    }
     if (!$subwiki = wiki_get_subwiki_by_group($wid, $currentgroup)) {
         print_error('incorrectsubwikiid', 'wiki');
     }
