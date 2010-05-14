@@ -670,7 +670,7 @@ function blog_get_headers() {
         $PAGE->navbar->add($strblogentries, $blogurl);
         $PAGE->set_title("$site->shortname: " . get_string('blog', 'blog'));
         $PAGE->set_heading("$site->shortname: " . get_string('blog', 'blog'));
-        $headers['heading'] = get_string('siteblog', 'blog');
+        $headers['heading'] = get_string('siteblog', 'blog', $site->shortname);
         // $headers['strview'] = get_string('viewsiteentries', 'blog');
     }
 
@@ -726,7 +726,7 @@ function blog_get_headers() {
         $PAGE->navbar->add($strblogentries, $blogurl);
         $PAGE->set_title("$site->shortname: " . get_string('blog', 'blog'));
         $PAGE->set_heading("$site->shortname: " . get_string('blog', 'blog'));
-        $headers['heading'] = get_string('siteblog', 'blog');
+        $headers['heading'] = get_string('siteblog', 'blog', $site->shortname);
     } else
 
     // Case 5: Blog entries associated with an activity by a specific user (courseid ignored)
