@@ -164,8 +164,43 @@
                         $hp->insert_giveup_form($attemptid, '<!-- BeginTopNavButtons -->', '<!-- EndTopNavButtons -->');
                         break;
                     case HOTPOT_NAVIGATION_FRAME:
-                        $targetframe = $CFG->framename;
-                        // drop through to remove nav buttons too
+                    case HOTPOT_NAVIGATION_IFRAME:
+                        if (empty($CFG->framename)) {
+                            $targetframe = '_top';
+                        } else {
+                            $targetframe = $CFG->framename;
+                        }
+                        if ($pos = strpos($hp->html, '</body>')) {
+                            $insert = ''
+                                .'<script type="text/javascript">'."\n"
+                                .'//<![CDATA['."\n"
+                                ."var obj = document.getElementsByTagName('a');\n"
+                                ."if (obj) {\n"
+                                ."	var i_max = obj.length;\n"
+                                ."	for (var i=0; i<i_max; i++) {\n"
+                                ."		if (obj[i].href && ! obj[i].target) {\n"
+                                ."			obj[i].target = '$targetframe';\n"
+                                ."		}\n"
+                                ."	}\n"
+                                ."	var obj = null;\n"
+                                ."}\n"
+                                ."var obj = document.getElementsByTagName('form');\n"
+                                ."if (obj) {\n"
+                                ."	var i_max = obj.length;\n"
+                                ."	for (var i=0; i<i_max; i++) {\n"
+                                ."		if (obj[i].action && ! obj[i].target) {\n"
+                                ."			obj[i].target = '$targetframe';\n"
+                                ."		}\n"
+                                ."	}\n"
+                                ."	var obj = null;\n"
+                                ."}\n"
+                                .'//]]>'."\n"
+                                .'</script>'."\n"
+                            ;
+                            $hp->html = substr_replace($hp->html, $insert, $pos, 0);
+                        }
+                        $hp->remove_nav_buttons();
+                        break;
                     default:
                         $hp->remove_nav_buttons();
                 }
@@ -451,7 +486,6 @@
                     print '<!--> <![endif]-->'."\n";
 
                     print $footer;
-                break;
             } // end switch $framename
         break;
         case HOTPOT_NAVIGATION_GIVEUP:

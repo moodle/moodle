@@ -1092,7 +1092,7 @@ function GetJCrossQuestionDetails(hp, v) {
 							if (JCross[0]) {
 								qDetails += makeSeparator(Q);
 							}
-							if (JCross[5]) {
+							if (JCross[3]) {
 								var x = (HP[_correct][AD] && HP[_correct][AD][q]) ? HP[_correct][AD][q] : '';
 								qDetails += hpHiddenField(Q+'correct', x);
 							}
@@ -1548,7 +1548,7 @@ function hpClickClue(hp, t, v, args) {
 }
 function hpClickCheck(hp, t, v, args) {
 	if (t==2) { // JCloze
-    if (v==5 || v==6) {
+        if (v==5 || v==6) {
 			var r = hpRottmeier();
 			var already_correct = 'true';
 			if (r==0) {
@@ -1844,7 +1844,12 @@ function hpClickCheckJCrossV5V6(hp, v, AD, q, row, col) {
 		var check = false;
 		var guess = GetJCrossWord(G, row, col, (AD=='D'));
 		var correct = GetJCrossWord(L, row, col, (AD=='D'));
-		if (guess==correct) {
+        if (window.CaseSensitive) {
+            var is_correct = (guess==correct);
+        } else {
+            var is_correct = (guess.toUpperCase()==correct.toUpperCase());
+        }
+		if (is_correct) {
 			HP[_correct][AD][q] = correct;
 			check = true;
 		} else if (guess) {
@@ -2922,14 +2927,23 @@ hpInterceptClues();
 hpInterceptChecks();
 function hpFindForm(formname, w) {
 	if (w==null) w = self;
-	var f = w.document.forms[formname];
-	if (f==null && w.frames) {
+    var f = w.document.getElementById(formname);
+    if (f) {
+        return f;
+    }
+    var f = w.document.forms[formname];
+    if (f) {
+        return f;
+    }
+	if (w.frames) {
 		for (var i=0; i<w.frames.length; i++) {
-				f = hpFindForm(formname, w.frames[i]);
-				if (f) break;
+				var f = hpFindForm(formname, w.frames[i]);
+				if (f) {
+                    return f;
+                }
 		}
 	}
-	return f;
+	return null;
 }
 function Finish(quizstatus) {
 	var mark = hpScore();
