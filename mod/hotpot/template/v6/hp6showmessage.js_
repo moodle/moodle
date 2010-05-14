@@ -54,7 +54,7 @@ function ShowElements(Show, TagName, ContainerToReverse){
 				Els[i].style.visibility = 'hidden';
 				if (C.mac && C.gecko) {Els[i].style.display = 'none';}
 			}
-		}
+		} 
 		else {
 			// tagName is either input or select (that is, Form Elements)
 			// ie6 has a problem with Form elements, so manipulate those

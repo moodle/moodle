@@ -1,13 +1,13 @@
 <?php
 //////////////////////////////////////////////////////////////
 //  Media plugin filtering
-//
-//  This filter will replace any links to a media file with
+// 
+//  This filter will replace any links to a media file with 
 //  a media plugin that plays that media inline
 //
 //////////////////////////////////////////////////////////////
 
-/// This is the filtering function itself.  It accepts the
+/// This is the filtering function itself.  It accepts the 
 /// courseid and the text to be filtered (in HTML form).
 
 function hotpot_mediaplayer_moodle(&$hotpot, $text) {
@@ -36,7 +36,7 @@ function hotpot_mediaplayer_moodle(&$hotpot, $text) {
         $replace .= ' pluginspage="http://www.macromedia.com/go/getflashplayer">';
         $replace .= '</embed>';
         $replace .= '</object>&nbsp;';
-
+    
         $text = preg_replace($search, $replace, $text);
     }
 
@@ -80,7 +80,7 @@ function hotpot_mediaplayer_moodle(&$hotpot, $text) {
 
     if ($CFG->filter_mediaplugin_enable_flv) {
         $search = '/<a(.*?)href=\"([^<]+)\.flv\"([^>]*)>(.*?)<\/a>/is';
-
+            
         $replace  = '\\0&nbsp;<object class="mediaplugin flv" classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000"';
         $replace .= ' codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=6,0,0,0" ';
         $replace .= ' width="480" height="360" id="flvplayer">';
@@ -93,7 +93,7 @@ function hotpot_mediaplayer_moodle(&$hotpot, $text) {
         $replace .= ' pluginspage="http://www.macromedia.com/go/getflashplayer">';
         $replace .= '</embed>';
         $replace .= '</object>&nbsp;';
-
+    
         $text = preg_replace($search, $replace, $text);
     }
 
@@ -155,7 +155,7 @@ function hotpot_mediaplayer_moodle(&$hotpot, $text) {
         $replace .= '<param name="autoplay" value="false" />';
         $replace .= '<embed src="\\2.\\3" width="240" height="180" controller="true" autoplay="false"> </embed>';
         $replace .= '</object></p>';
-
+        
         $text = preg_replace($search, $replace, $text);
     }
 
@@ -168,10 +168,10 @@ function hotpot_mediaplayer_moodle(&$hotpot, $text) {
         $replace .= '<param name="autoplay" value="false" />';
         $replace .= '<embed src="\\2.avi" width="240" height="180" controller="true" autoplay="false"> </embed>';
         $replace .= '</object></p>';
-
+    
         $text = preg_replace($search, $replace, $text);
     }
-
+    
     if ($CFG->filter_mediaplugin_enable_ram) {
         $search = '/<a(.*?)href=\"([^<]+)\.ram\"([^>]*)>(.*?)<\/a>/is';
 
@@ -181,7 +181,7 @@ function hotpot_mediaplayer_moodle(&$hotpot, $text) {
         $replace .= '<param name="controls" value="imagewindow" />';
         $replace .= '<param name="console" value="video" />';
         $replace .= '<param name="loop" value="true" />';
-        $replace .= '<embed src="\\2.ram" width="240" height="180" loop="true" type="audio/x-pn-realaudio-plugin" controls="imagewindow" console="video" autostart="true">';
+        $replace .= '<embed src="\\2.ram" width=240" height="180" loop="true" type="audio/x-pn-realaudio-plugin" controls="imagewindow" console="video" autostart="true">';
         $replace .= '</embed>';
         $replace .= '</object><br />';
 
@@ -196,7 +196,7 @@ function hotpot_mediaplayer_moodle(&$hotpot, $text) {
 
         $text = preg_replace($search, $replace, $text);
     }
-
+     
     if ($CFG->filter_mediaplugin_enable_rpm) {
         $search = '/<a(.*?)href=\"([^<]+)\.rpm\"([^>]*)>(.*?)<\/a>/is';
 
@@ -206,7 +206,7 @@ function hotpot_mediaplayer_moodle(&$hotpot, $text) {
         $replace .= '<param name="controls" value="imagewindow" />';
         $replace .= '<param name="console" value="video" />';
         $replace .= '<param name="loop" value="true" />';
-        $replace .= '<embed src="\\2.rpm" width="240" height="180" loop="true" type="audio/x-pn-realaudio-plugin" controls="imagewindow" console="video" autostart="true">';
+        $replace .= '<embed src="\\2.rpm" width=240" height="180" loop="true" type="audio/x-pn-realaudio-plugin" controls="imagewindow" console="video" autostart="true">';
         $replace .= '</embed>';
         $replace .= '</object><br />';
 
@@ -221,7 +221,7 @@ function hotpot_mediaplayer_moodle(&$hotpot, $text) {
 
         $text = preg_replace($search, $replace, $text);
     }
-
+    
     if ($CFG->filter_mediaplugin_enable_rm) {
         $search = '/<a(.*?)href=\"([^<]+)\.rm\"([^>]*)>(.*?)<\/a>/is';
 
@@ -231,7 +231,7 @@ function hotpot_mediaplayer_moodle(&$hotpot, $text) {
         $replace .= '<param name="controls" value="imagewindow" />';
         $replace .= '<param name="console" value="video" />';
         $replace .= '<param name="loop" value="true" />';
-        $replace .= '<embed src="\\2.rm" width="240" height="180" loop="true" type="audio/x-pn-realaudio-plugin" controls="imagewindow" console="video" autostart="true">';
+        $replace .= '<embed src="\\2.rm" width=240" height="180" loop="true" type="audio/x-pn-realaudio-plugin" controls="imagewindow" console="video" autostart="true">';
         $replace .= '</embed>';
         $replace .= '</object><br />';
 

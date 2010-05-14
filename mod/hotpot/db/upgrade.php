@@ -29,5 +29,3 @@ function xmldb_hotpot_upgrade($oldversion) {
 
     return $result;
 }
-
-

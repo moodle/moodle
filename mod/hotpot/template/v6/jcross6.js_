@@ -35,7 +35,7 @@ var Feedback = '';
 var AcrossCaption = '';
 var DownCaption = '';
 var Correct = '[strCorrect]';
-var Incorrect = '[strIncorrect]';
+var Incorrect = '[strIncorrect]'; 
 var GiveHint = '[strGiveHint]';
 var YourScoreIs = '[strYourScoreIs]';
 var BuiltGrid = '';
@@ -45,7 +45,7 @@ var Score = 0;
 var InTextBox = false;
 var Locked = false;
 var TimeOver = false;
-var CaseSensitive = [boolCaseSensitive];
+var CaseSensitive = [boolCaseSensitive]; 
 
 var InputStuff = '<form method="post" action="" onsubmit="return false;"><span class="ClueNum">[strClueNum]: </span>';
 InputStuff += '[strClue] <input onfocus="CurrentBox=this;InTextBox=true;" onblur="InTextBox=false;" id="[strBoxId]" type="edit" size="[strEditSize]" maxlength="[strMaxLength]"></input>';
@@ -88,7 +88,7 @@ function GetAnswerLength(Across,x,y){
 		while ((x<L.length)&&(L[x][y].length > 0)){
 			Result += L[x][y].length;
 			x++;
-		}
+		} 
 		return Result;
 	}
 	else{
@@ -269,7 +269,7 @@ function CheckAnswers(){
 	var AllCorrect = true;
 	var TotLetters = 0;
 	var CorrectLetters = 0;
-	var LetterFromKey = '';
+	var LetterFromKey = ''; 
 	var LetterFromGuess = '';
 	
 //Check each letter
@@ -285,7 +285,7 @@ function CheckAnswers(){
 					LetterFromKey = L[i][j].toUpperCase();
 					LetterFromGuess = G[i][j].toUpperCase();
 				}
-				if (LetterFromGuess != LetterFromKey){
+				if (LetterFromGuess != LetterFromKey){ 
 					G[i][j] = '';
 //Blank that square in the grid
 					SetGridSquareValue(i,j,'');

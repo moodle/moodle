@@ -108,6 +108,7 @@
                     print '</ul>';
                 }
                 print ''
+<<<<<<< index.php
                 .   '<div class="mdl-align"><table border="0"><tr><td>'
                 .   '<form target="_parent" method="post" action="index.php">'
                 .   '<input type="hidden" name="id" value="'.$course->id.'" />'

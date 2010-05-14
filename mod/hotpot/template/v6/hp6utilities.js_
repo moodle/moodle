@@ -57,13 +57,13 @@ function GetViewportHeight(){
 
 function TopSettingWithScrollOffset(TopPercent){
 	var T = Math.floor(GetViewportHeight() * (TopPercent/100));
-	return GetScrollTop() + T;
+	return GetScrollTop() + T; 
 }
 
 //CODE FOR AVOIDING LOSS OF DATA WHEN BACKSPACE KEY INVOKES history.back()
 var InTextBox = false;
 
-function SuppressBackspace(e){
+function SuppressBackspace(e){ 
 	if (InTextBox == true){return;}
 	if (C.ie) {
 		thisKey = window.event.keyCode;

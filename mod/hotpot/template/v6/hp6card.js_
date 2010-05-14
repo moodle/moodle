@@ -105,18 +105,18 @@ Card.prototype.GoHome=CardGoHome;
 function doDrag(e) {
 	if (CurrDrag == -1) {return};
 	if (C.ie){var Ev = window.event}else{var Ev = e}
-	var difX = Ev.clientX-window.lastX;
-	var difY = Ev.clientY-window.lastY;
-	var newX = DC[CurrDrag].GetL()+difX;
-	var newY = DC[CurrDrag].GetT()+difY;
-	DC[CurrDrag].SetL(newX);
+	var difX = Ev.clientX-window.lastX; 
+	var difY = Ev.clientY-window.lastY; 
+	var newX = DC[CurrDrag].GetL()+difX; 
+	var newY = DC[CurrDrag].GetT()+difY; 
+	DC[CurrDrag].SetL(newX); 
 	DC[CurrDrag].SetT(newY);
-	window.lastX = Ev.clientX;
-	window.lastY = Ev.clientY;
+	window.lastX = Ev.clientX; 
+	window.lastY = Ev.clientY; 
 	return false;
-}
+} 
 
-function beginDrag(e, DragNum) {
+function beginDrag(e, DragNum) { 
 	CurrDrag = DragNum;
 	if (C.ie){
 		var Ev = window.event;
@@ -125,18 +125,18 @@ function beginDrag(e, DragNum) {
 	}
 	else{
 		var Ev = e;
-		window.onmousemove=doDrag;
+		window.onmousemove=doDrag; 
 		window.onmouseup=endDrag;
-	}
+	} 
 	DC[CurrDrag].Highlight();
 	topZ++;
 	DC[CurrDrag].css.zIndex = topZ;
-	window.lastX=Ev.clientX;
+	window.lastX=Ev.clientX; 
 	window.lastY=Ev.clientY;
-	return false;
-}
+	return false;  
+} 
 
-function endDrag(e) {
+function endDrag(e) { 
 	if (CurrDrag == -1) {return};
 	DC[CurrDrag].Unhighlight();
 	if (C.ie){document.onmousemove=null}else{window.onmousemove=null;}
@@ -145,7 +145,7 @@ function endDrag(e) {
 //Need a bugfix for Opera focus problem here
 	if (C.opera){FocusAButton();}
 	return true;
-}
+} 
 
 var CurrDrag = -1;
 var topZ = 100;

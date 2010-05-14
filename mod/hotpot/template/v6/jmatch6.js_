@@ -233,7 +233,7 @@ function CheckAnswers(){
 					Parent.removeChild(Select);
 					Parent.innerHTML = AnsText;
 					Parent.nextSibling.innerHTML = CorrectIndicator;
-			}
+			} 
 			else{
 				AllDone = false;
 				Parent = Select.parentNode;

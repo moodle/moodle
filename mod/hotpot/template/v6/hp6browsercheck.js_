@@ -5,7 +5,7 @@ function Client(){
 
 	this.ua = navigator.userAgent;
 	this.name = navigator.appName;
-	this.ver = navigator.appVersion;
+	this.ver = navigator.appVersion;  
 
 //Get data about the browser
 	this.mac = (this.ver.indexOf('Mac') != -1);

@@ -89,7 +89,7 @@ function CompleteEmptyFeedback(){
 }
 
 function SetUpQuestions(){
-	var AList = new Array();
+	var AList = new Array(); 
 	var QList = new Array();
 	var i, j;
 	Qs = document.getElementById('Questions');
@@ -172,7 +172,7 @@ function SetFocusToTextbox(){
 
 function ChangeQ(ChangeBy){
 //The following line prevents moving to another question until the current
-//question is answered correctly. Uncomment it to enable this behaviour.
+//question is answered correctly. Uncomment it to enable this behaviour. 
 //	if (State[CurrQNum][0] == -1){return;}
 	if (((CurrQNum + ChangeBy) < 0)||((CurrQNum + ChangeBy) >= QArray.length)){return;}
 	QArray[CurrQNum].style.display = 'none';
@@ -571,9 +571,9 @@ function CalculateOverallScore(){
 		Score = Math.floor((TotalScore/TotalWeighting)*100);
 	}
 	else{
-//if TotalWeighting is 0, no questions so far have any value, so
+//if TotalWeighting is 0, no questions so far have any value, so 
 //no penalty should be shown.
-		Score = 100;
+		Score = 100; 
 	}
 }
 

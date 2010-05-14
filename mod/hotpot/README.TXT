@@ -16,7 +16,7 @@ This is v2.4.2 of the HotPot module for Moodle 1.9
    This software is provided "AS IS" without a warranty of any kind.
 
    Sponsors who have generously contributed to the development of this software:
-      - Agencia de Gestio d'Ajuts Universitaris i de Recerca (AGAUR),
+      - Agencia de Gestio d'Ajuts Universitaris i de Recerca (AGAUR), 
         Autonomous Government of Catalonia, Spain
         (via Josep M. Fontana, Universitat Pompeu Fabra)
       - Rikkyo Univeristy, Japan (via Paul Allum)
@@ -33,9 +33,9 @@ IMPORTANT NOTICE
 TO INSTALL OR UPDATE THE HOTPOT MODULE
 ======================================
 
-   You should install only this module by installing a complete Moodle 1.9 package.
+   You should install only this module by installing a complete Moodle 1.9 package. 
 
-   Similarly, the recommended way to upgrade this module is to upgrade to a complete Moodle 1.8 package.
+   Similarly, the recommended way to upgrade this module is to upgrade to a complete Moodle 1.8 package. 
 
    However, it is possible to download and unzip a complete Moodle 1.9 package and extract the "mod/hotpot" folder for use on your live Moodle 1.8 site.
 
@@ -53,7 +53,7 @@ TO USE THE HOTPOT MODULE
 
 5. On the main page for the Moodle course, confirm editing is turned on (click the "Turn editing on" button), then, in the section where you want to add the HotPot activity, select "Hot Potatoes Quiz" on the "Add an activity" drop-down menu .
 
-   If "Hot Potatoes Quiz" does not appear on the "Add an activity" menu, you may need to enable the HotPot module as follows:
+   If "Hot Potatoes Quiz" does not appear on the "Add an activity" menu, you may need to enable the HotPot module as follows: 
 
    a) from the site's front page select "Admin" then "Modules"
    b) click the "closed eye" icon for the "Hot Potatoes Quiz" module
@@ -75,9 +75,9 @@ HOT POTATOES CONDITIONS OF USE
 ** Reproduced from the Hot Potatoes site **
 
 Hot Potatoes is offered free to the educational community by the University of Victoria Humanities Computing and Media Centre (formerly the Language Centre), under certain conditions. Hot Potatoes is free for use by state educational institutions which are non-profit making, on the condition that the material produced using the program is freely available to anyone via the WWW. However, you need to purchase a licence under any of the following conditions:
-*  You do not work for a public sector educational establishment.
-*  You charge money for access to the material you make with Hot Potatoes.
-*  You restrict access to the material in some way. (The only exception here is if you have an account on www.hotpot.net, where you ARE allowed to use password restrictions.)
+*  You do not work for a public sector educational establishment. 
+*  You charge money for access to the material you make with Hot Potatoes. 
+*  You restrict access to the material in some way. (The only exception here is if you have an account on www.hotpot.net, where you ARE allowed to use password restrictions.) 
 *  You want to use the Masher program included with the Hot Potatoes suite.
 
 For more information on licences, and details on how to purchase one, check out our Website at:

@@ -5,7 +5,7 @@
 
 [strDublinCoreMetadata]
 
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" /> 
 
 <title>
 [strPlainTitle]
@@ -120,7 +120,7 @@
 [/inclHint]
 
  -->
-
+ 
 <div id="ClozeDiv">
 <form id="Cloze" method="post" action="" onsubmit="return false;">
 <div class="ClozeBody">

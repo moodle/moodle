@@ -51,7 +51,7 @@ function StartUp(){
 [inclScorm1.2]
 	initAPI(window);
 	if (API != null){
-		API.LMSInitialize('');
+		API.LMSInitialize(''); 
 		API.LMSSetValue('cmi.core.lesson_status', 'browsed');
 		API.LMSSetValue('cmi.comments', 'This exercise has no checking or scoring features.');
 		API.LMSCommit('');

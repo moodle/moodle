@@ -1,21 +1,18 @@
-<?PHP
+<?PHP 
 
 class hotpot_xml_quiz_template extends hotpot_xml_template_default {
-    // left and right items for JMatch
-    var $l_items = array();
-    var $r_items = array();
 
     // constructor function for this class
     function hotpot_xml_quiz_template(&$parent) {
 
         $this->parent = &$parent;
-
+        
         $get_js = optional_param('js', false);
         $get_css = optional_param('css', false);
 
         if (!empty($get_css)) {
             // set $this->css
-            $this->v6_expand_StyleSheet();
+            $this->v6_expand_StyleSheet(); 
 
         } else if (!empty($get_js)) {
             // set $this->js
@@ -48,12 +45,6 @@ class hotpot_xml_quiz_template extends hotpot_xml_template_default {
         if (!empty($pattern)) {
             $this->expand_strings('html', $pattern);
         }
-        // fix doctype (convert short dtd to long dtd)
-        $this->html = preg_replace(
-            '/<!DOCTYPE[^>]*>/',
-            '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">',
-            $this->html, 1
-        );
     }
 
     // captions and messages
@@ -74,7 +65,7 @@ class hotpot_xml_quiz_template extends hotpot_xml_template_default {
         return $this->int_value('hotpot-config-file,global,include-back');
     }
     function v6_expand_BackCaption() {
-        return str_replace('<=', '&lt;=', $this->parent->xml_value('hotpot-config-file,global,back-caption'));
+        return $this->parent->xml_value('hotpot-config-file,global,back-caption');
     }
     function v6_expand_ClickToAdd() {
         return $this->parent->xml_value('hotpot-config-file,'.$this->parent->quiztype.',click-to-add');
@@ -121,7 +112,8 @@ class hotpot_xml_quiz_template extends hotpot_xml_template_default {
         return $this->int_value('hotpot-config-file,global,include-next-ex');
     }
     function v6_expand_NextExCaption() {
-        return str_replace('=>', '=&gt;', $this->parent->xml_value('hotpot-config-file,global,next-ex-caption'));
+        $caption = $this->parent->xml_value('hotpot-config-file,global,next-ex-caption');
+        return ($caption=='=>' ? '=&gt;' : $caption);
     }
     function v6_expand_NextQCaption() {
         return $this->parent->xml_value('hotpot-config-file,global,next-q-caption');
@@ -173,7 +165,7 @@ class hotpot_xml_quiz_template extends hotpot_xml_template_default {
         return empty($value) ? '' : ('<h3 class="ExerciseSubtitle">'.$value.'</h3>');
     }
 
-    // timer
+    // timer 
 
     function v6_expand_Timer() {
         return $this->int_value('data,timer,include-timer');
@@ -185,7 +177,7 @@ class hotpot_xml_quiz_template extends hotpot_xml_template_default {
         return $this->parent->xml_value('data,timer,seconds');
     }
 
-    // send results
+    // send results 
 
     function v6_expand_SendResults() {
         return $this->parent->xml_value('hotpot-config-file,'.$this->parent->quiztype.',send-email');
@@ -227,7 +219,7 @@ class hotpot_xml_quiz_template extends hotpot_xml_template_default {
             }
 
             // convert to comma delimited string
-            $this->PreloadImageList = empty($list) ? '' : "'".implode("','", $list)."'";
+            $this->PreloadImageList = empty($list) ? '' : "'".implode(',', $list)."'";
         }
         return $this->PreloadImageList;
     }
@@ -307,7 +299,7 @@ class hotpot_xml_quiz_template extends hotpot_xml_template_default {
     }
     function v6_expand_NavLightColor() {
         $color = $this->parent->xml_value('hotpot-config-file,global,nav-bar-color');
-        return $this->get_halfway_color($color, '#ffffff');
+        return $this->get_halfway_color($color, '#ffffff'); 
     }
     function v6_expand_NavShadeColor() {
         $color = $this->parent->xml_value('hotpot-config-file,global,nav-bar-color');
@@ -428,26 +420,28 @@ class hotpot_xml_quiz_template extends hotpot_xml_template_default {
         return $i;
     }
     function v6_expand_MatchDivItems() {
-        $this->set_jmatch_items();
+        $l_items = array();
+        $r_items = array();
+        $this->get_jmatch_items($l_items, $r_items);
 
-        $l_keys = $this->shuffle_jmatch_items($this->l_items);
-        $r_keys = $this->shuffle_jmatch_items($this->r_items);
+        $l_keys = $this->shuffle_jmatch_items($l_items);
+        $r_keys = $this->shuffle_jmatch_items($r_items);
 
         $options = '<option value="x">'.$this->parent->xml_value('data,matching-exercise,default-right-item').'</option>';
         foreach ($r_keys as $key) {
-            if (! $this->r_items[$key]['fixed']) {
-                $options .= '<option value="'.$key.'">'.$this->r_items[$key]['text'].'</option>'."\n";
+            if (empty($r_items[$key]['fixed'][0]['#'])) {
+                $options .= '<option value="'.$key.'">'.$r_items[$key]['text'][0]['#'].'</option>'."\n";
             }
         }
 
         $str = '';
         foreach ($l_keys as $key) {
-            $str .= '<tr><td class="LeftItem">'.$this->l_items[$key]['text'].'</td>';
+            $str .= '<tr><td class="LeftItem">'.$l_items[$key]['text'][0]['#'].'</td>';
             $str .= '<td class="RightItem">';
-            if ($this->r_items[$key]['fixed']) {
-                $str .= $this->r_items[$key]['text'];
-            }  else {
+            if (empty($r_items[$key]['fixed'][0]['#'])) {
                 $str .= '<select id="s'.$key.'_'.$key.'">'.$options.'</select>';
+            }  else {
+                $str .= $r_items[$key]['text'][0]['#'];
             }
             $str .= '</td><td></td></tr>';
         }
@@ -540,7 +534,7 @@ class hotpot_xml_quiz_template extends hotpot_xml_template_default {
             $value = strtr($value, $ENTITIES);
             if (preg_match_all($pattern, $value, $matches)) {
                 $chars = array_merge($chars, $matches[0]);
-            }
+            } 
             $i++;
         }
 
@@ -717,67 +711,46 @@ class hotpot_xml_quiz_template extends hotpot_xml_template_default {
     // specials (JMatch)
 
     function v6_expand_FixedArray() {
-        $this->set_jmatch_items();
+        $l_items = array();
+        $r_items = array();
+        $this->get_jmatch_items($l_items, $r_items);
+
         $str = '';
-        foreach ($this->l_items as $i=>$item) {
-            for ($ii=0; $ii<$i; $ii++) {
-                if ($this->r_items[$ii]['text']==$this->r_items[$i]['text']) {
-                    break;
-                }
-            }
+        foreach ($l_items as $i=>$item) {
             $str .= "F[$i] = new Array();\n";
-            $str .= "F[$i][0] = '".$this->js_safe($item['text'], true)."';\n";
-            $str .= "F[$i][1] = ".($ii+1).";\n";
+            $str .= "F[$i][0] = '".$this->js_safe($item['text'][0]['#'], true)."';\n";
+            $str .= "F[$i][1] = ".($i+1).";\n";
         }
         return $str;
     }
     function v6_expand_DragArray() {
-        $this->set_jmatch_items();
+        $l_items = array();
+        $r_items = array();
+        $this->get_jmatch_items($l_items, $r_items);
+
         $str = '';
-        foreach ($this->r_items as $i=>$item) {
-            for ($ii=0; $ii<$i; $ii++) {
-                if ($this->r_items[$ii]['text']==$this->r_items[$i]['text']) {
-                    break;
-                }
-            }
+        foreach ($r_items as $i=>$item) {
             $str .= "D[$i] = new Array();\n";
-            $str .= "D[$i][0] = '".$this->js_safe($item['text'], true)."';\n";
-            $str .= "D[$i][1] = ".($ii+1).";\n";
-            $str .= "D[$i][2] = ".$item['fixed'].";\n";
+            $str .= "D[$i][0] = '".$this->js_safe($item['text'][0]['#'], true)."';\n";
+            $str .= "D[$i][1] = ".($i+1).";\n";
+            $str .= "D[$i][2] = '".(empty($item['fixed'][0]['#']) ? 0 : 1)."';\n";
         }
         return $str;
     }
 
-    function set_jmatch_items() {
-        if (count($this->l_items)) {
-            return;
-        }
+    function get_jmatch_items(&$l_items, &$r_items) {
         $tags = 'data,matching-exercise,pair';
         $i = 0;
-        while (($item = "[$i]['#']") && $this->parent->xml_value($tags, $item)) {
-            $leftitem = $item."['left-item'][0]['#']";
-            $lefttext = $this->parent->xml_value($tags, $leftitem."['text'][0]['#']");
-
-            $rightitem = $item."['right-item'][0]['#']";
-            $righttext = $this->parent->xml_value($tags, $rightitem."['text'][0]['#']");
-
-            if (strlen($righttext)) {
-                $addright = true;
-            } else {
-                $addright = false;
+        while($item = $this->parent->xml_value($tags,"[$i]['#']['left-item'][0]['#']")) {
+            if (!empty($item['text'][0]['#'])) {
+                $l_items[] = $item;
             }
-            if (strlen($lefttext)) {
-                $this->l_items[] = array(
-                    'text' => $lefttext,
-                    'fixed' => $this->int_value($tags, $leftitem."['fixed'][0]['#']")
-                );
-                $addright = true; // force right item to be added
-            }
-            if ($addright) {
-                $this->r_items[] = array(
-                    'text' => $righttext,
-                    'fixed' => $this->int_value($tags, $rightitem."['fixed'][0]['#']")
-                );
+            $i++;
+        }
+        $i = 0;
+        while($item = $this->parent->xml_value($tags,"[$i]['#']['right-item'][0]['#']")) {
+            if (!empty($item['text'][0]['#'])) {
+                $r_items[] = $item;
             }
             $i++;
         }
@@ -786,7 +759,7 @@ class hotpot_xml_quiz_template extends hotpot_xml_template_default {
         // get moveable items
         $moveable_keys = array();
         for($i=0; $i<count($items); $i++) {
-            if(empty($items[$i]['fixed'])) {
+            if(empty($items[$i]['fixed'][0]['#'])) {
                 $moveable_keys[] = $i;
             }
         }
@@ -796,7 +769,7 @@ class hotpot_xml_quiz_template extends hotpot_xml_template_default {
 
         $keys = array();
         for($i=0, $ii=0; $i<count($items); $i++) {
-            if(empty($items[$i]['fixed'])) {
+            if(empty($items[$i]['fixed'][0]['#'])) {
                 //  moveable items are inserted in a shuffled order
                 $keys[] = $moveable_keys[$ii++];
             } else {
@@ -929,9 +902,7 @@ class hotpot_xml_quiz_template extends hotpot_xml_template_default {
                     $gap .= '<select id="Gap'.$q.'"><option value=""></option>'.$dropdownlist.'</select>';
                 } else {
                     // minimum gap size
-                    if (! $gapsize = $this->int_value('hotpot-config-file,'.$this->parent->quiztype.',minimum-gap-size')) {
-                        $gapsize = 6;
-                    }
+                    $gapsize = 6;
 
                     // increase gap size to length of longest answer for this gap
                     $a = 0;
@@ -1064,20 +1035,10 @@ class hotpot_xml_quiz_template extends hotpot_xml_template_default {
         }
     }
     function v6_expand_Correct() {
-        if ($this->parent->quiztype=='jcloze') {
-            $tag = 'guesses-correct';
-        } else {
-            $tag = 'guess-correct';
-        }
-        return $this->js_value('hotpot-config-file,'.$this->parent->quiztype.','.$tag);
+        return $this->js_value('hotpot-config-file,'.$this->parent->quiztype.',guesses-correct');
     }
     function v6_expand_Incorrect() {
-        if ($this->parent->quiztype=='jcloze') {
-            $tag = 'guesses-incorrect';
-        } else {
-            $tag = 'guess-incorrect';
-        }
-        return $this->js_value('hotpot-config-file,'.$this->parent->quiztype.','.$tag);
+        return $this->js_value('hotpot-config-file,'.$this->parent->quiztype.',guesses-incorrect');
     }
     function v6_expand_GiveHint() {
         return $this->js_value('hotpot-config-file,'.$this->parent->quiztype.',next-correct-letter');
@@ -1299,26 +1260,11 @@ class hotpot_xml_quiz_template extends hotpot_xml_template_default {
                 $str .= '<p class="QuestionText">'.$question_text.'</p>';
 
                 if (
-                    $question_type==HOTPOT_JQUIZ_SHORTANSWER ||
+                    $question_type==HOTPOT_JQUIZ_SHORTANSWER || 
                     $question_type==HOTPOT_JQUIZ_HYBRID
                 ) {
-                    $size = 9; // default size
-                    $a = 0;
-                    $answers = $question."['answers'][0]['#']";
-                    while (($answer = $answers."['answer'][$a]['#']") && $this->parent->xml_value($tags, $answer)) {
-                        $text = $this->parent->xml_value($tags, $answer."['text'][0]['#']");
-                        $text = preg_replace('/&[#a-zA-Z0-9]+;/', 'x', $text);
-                        $size = max($size, strlen($text));
-                        $a++;
-                    }
-
                     $str .= '<div class="ShortAnswer" id="Q_'.$q.'_SA"><form method="post" action="" onsubmit="return false;"><div>';
-                    if ($size<=25) { // text box
-                        $str .= '<input type="text" id="Q_'.$q.'_Guess" onfocus="TrackFocus('."'".'Q_'.$q.'_Guess'."'".')" onblur="LeaveGap()" class="ShortAnswerBox" size="'.$size.'"></input>';
-                    } else { // textarea (29 cols wide)
-                        $str .= '<textarea id="Q_'.$q.'_Guess" onfocus="TrackFocus('."'".'Q_'.$q.'_Guess'."'".')" onblur="LeaveGap()" class="ShortAnswerBox" cols="29" rows="'.ceil($size/25).'"></textarea>';
-                    }
-                    $str .= '<br /><br />';
+                    $str .= '<input type="text" id="Q_'.$q.'_Guess" onfocus="TrackFocus('."'".'Q_'.$q.'_Guess'."'".')" onblur="LeaveGap()" class="ShortAnswerBox" size="9"></input><br /><br />';
 
                     $caption = $this->v6_expand_CheckCaption();
                     $str .= $this->v6_expand_jquiz_button($caption, "CheckShortAnswer($q)");
@@ -1337,13 +1283,13 @@ class hotpot_xml_quiz_template extends hotpot_xml_template_default {
                 }
 
                 if (
-                    $question_type==HOTPOT_JQUIZ_MULTICHOICE ||
+                    $question_type==HOTPOT_JQUIZ_MULTICHOICE || 
                     $question_type==HOTPOT_JQUIZ_HYBRID ||
                     $question_type==HOTPOT_JQUIZ_MULTISELECT
                 ) {
 
                     switch ($question_type) {
-                        case HOTPOT_JQUIZ_MULTICHOICE:
+                        case HOTPOT_JQUIZ_MULTICHOICE: 
                             $str .= '<ol class="MCAnswers">'."\n";
                         break;
                         case HOTPOT_JQUIZ_HYBRID:
@@ -1510,6 +1456,6 @@ function hotpot_keypad_sort_value($char) {
     }
 
     return $sort_value;
-}
+} 
 
 

@@ -16,7 +16,7 @@ body{
 	font-family: [strFontFace];
 [inclPageBGColor]	background-color: [strPageBGColor];[/inclPageBGColor]
 	color: [strTextColor];
-[inclGraphicURL]	background-image: url([strGraphicURL]);[/inclGraphicURL]
+[inclGraphicURL]	background-image: url([strGraphicURL]);[/inclGraphicURL] 
 	margin-right: 5%;
 	margin-left: 5%;
 	font-size: [strFontSize];
@@ -73,14 +73,14 @@ div.StdDiv{
 	text-align: right;
 	font-size: 150%;
 	direction: rtl;
-	font-family: "Simplified Arabic", "Traditional Arabic", "Times New Roman", [strFontFace];
+	font-family: "Simplified Arabic", "Traditional Arabic", "Times New Roman", [strFontFace]; 
 }
 
 .CentredRTLText{
 	text-align: center;
 	font-size: 150%;
 	direction: rtl;
-	font-family: "Simplified Arabic", "Traditional Arabic", "Times New Roman", [strFontFace];
+	font-family: "Simplified Arabic", "Traditional Arabic", "Times New Roman", [strFontFace]; 
 }
 
 button p.RTLText{

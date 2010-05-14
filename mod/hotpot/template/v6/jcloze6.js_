@@ -48,7 +48,7 @@ function ItemState(){
 
 var Feedback = '';
 var Correct = '[strCorrect]';
-var Incorrect = '[strIncorrect]';
+var Incorrect = '[strIncorrect]'; 
 var GiveHint = '[strGiveHint]';
 var CaseSensitive = [boolCaseSensitive];
 var YourScoreIs = '[strYourScoreIs]';
