@@ -2137,7 +2137,11 @@ function print_courses($category) {
         $context = get_context_instance(CONTEXT_SYSTEM);
         if (has_capability('moodle/course:create', $context)) {
             $options = array();
-            $options['category'] = $category->id;
+            if (!empty($category->id)) {
+                $options['category'] = $category->id;
+            } else {
+                $options['category'] = $CFG->defaultrequestcategory;
+            }
             echo '<div class="addcoursebutton">';
             echo $OUTPUT->single_button(new moodle_url('/course/edit.php', $options), get_string("addnewcourse"));
             echo '</div>';
