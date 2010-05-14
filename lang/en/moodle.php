@@ -138,6 +138,7 @@ $string['alreadyconfirmed'] = 'Registration has already been confirmed';
 $string['always'] = 'Always';
 $string['and'] = '{$a->one} and {$a->two}';
 $string['answer'] = 'Answer';
+$string['any'] = 'Any';
 $string['approve'] = 'Approve';
 $string['areyousuretorestorethis'] = 'Do you want to continue?';
 $string['areyousuretorestorethisinfo'] = 'Later in this process you will have a choice of adding this backup to an existing course or creating a completely new course.';
