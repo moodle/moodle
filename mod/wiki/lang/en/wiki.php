@@ -90,6 +90,7 @@ $string['norated']='This page has not been rated yet, be the first!';
 $string['norating'] = 'No rating';
 $string['nosearchresults'] = 'No results';
 $string['noteditblocks'] = 'Turn edit blocks off';
+$string['notingroup'] = 'Not in group';
 $string['notopages'] = 'This page does not link to other pages';
 $string['notmigrated'] = 'This wiki has not been migrated yet. Please contact your administrator.';
 $string['noupdatedpages'] = 'There are no updated pages';
