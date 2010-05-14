@@ -55,8 +55,10 @@
     $frontpagectx = get_context_instance(CONTEXT_COURSE, SITEID);
 
     if ($isfrontpage) {
+        $PAGE->set_pagelayout('admin');
         require_capability('moodle/site:viewparticipants', $systemcontext);
     } else {
+        $PAGE->set_pagelayout('incourse');
         require_capability('moodle/course:viewparticipants', $context);
     }
 
