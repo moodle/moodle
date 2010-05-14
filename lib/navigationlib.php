@@ -842,8 +842,10 @@ class global_navigation extends navigation_node {
         // users:       Other users information loaded here.
         $this->rootnodes = array();
         if (get_home_page() == HOMEPAGE_SITE) {
-            // The home element should be the my moolde because the root element is the site
-            $this->rootnodes['home']      = $this->add(get_string('myhome'), new moodle_url('/my/'), self::TYPE_SETTING, null, 'home');
+            // The home element should be my moodle because the root element is the site
+            if (isloggedin()) {  // Makes no sense if you aren't logged in
+                $this->rootnodes['home']      = $this->add(get_string('myhome'), new moodle_url('/my/'), self::TYPE_SETTING, null, 'home');
+            }
         } else {
             // The home element should be the site because the root node is my moodle
             $this->rootnodes['home']      = $this->add(get_string('sitehome'), new moodle_url('/'), self::TYPE_SETTING, null, 'home');
