@@ -25,7 +25,7 @@
 /**
  * Define all the backup steps that will be used by the backup_wiki_activity_task
  */
- 
+
 /**
  * Define the complete wiki structure for backup, with file and id annotations
  */
@@ -37,46 +37,34 @@ class backup_wiki_activity_structure_step extends backup_activity_structure_step
         $userinfo = $this->get_setting_value('userinfo');
 
         // Define each element separated
-        $wiki = new backup_nested_element('wiki', array('id'), array(
-            'name', 'intro', 'introformat', 'timecreated', 'timemodified', 
-            'firstpagetitle', 'wikimode', 'defaultformat', 'forceformat', 
-            'editbegin', 'editend'));
+        $wiki = new backup_nested_element('wiki', array('id'), array('name', 'intro', 'introformat', 'timecreated', 'timemodified', 'firstpagetitle', 'wikimode', 'defaultformat', 'forceformat', 'editbegin', 'editend'));
 
         $subwikis = new backup_nested_element('subwikis');
 
-        $subwiki = new backup_nested_element('subwiki', array('id'), array(
-            'groupid', 'userid'));
+        $subwiki = new backup_nested_element('subwiki', array('id'), array('groupid', 'userid'));
 
         $pages = new backup_nested_element('pages');
 
-        $page = new backup_nested_element('page', array('id'), array(
-            'title', 'cachedcontent', 'timecreated', 'timemodified',
-            'timerendered', 'userid', 'pageviews', 'redonly'));
+        $page = new backup_nested_element('page', array('id'), array('title', 'cachedcontent', 'timecreated', 'timemodified', 'timerendered', 'userid', 'pageviews', 'redonly'));
 
         $synonyms = new backup_nested_element('synonyms');
 
-        $synonym = new backup_nested_element('synonym', array('id'), array(
-            'pageid', 'pagesynonym'));
+        $synonym = new backup_nested_element('synonym', array('id'), array('pageid', 'pagesynonym'));
 
         $links = new backup_nested_element('links');
 
-        $link = new backup_nested_element('link', array('id'), array(
-            'frompageid', 'topageid', 'tomissingpage'));
+        $link = new backup_nested_element('link', array('id'), array('frompageid', 'topageid', 'tomissingpage'));
 
         $versions = new backup_nested_element('versions');
 
-        $version = new backup_nested_element('version', array('id'), array(
-            'content', 'contentformat', 'version', 'timecreated',
-            'userid'));
-        
+        $version = new backup_nested_element('version', array('id'), array('content', 'contentformat', 'version', 'timecreated', 'userid'));
+
         $comments = new backup_nested_element('comments');
-        
-        $comment = new backup_nested_element('comment', array('id'), array(
-            'contextid', 'commentarea', 'content', 'format',
-            'userid', 'timecreated'));
-        
+
+        $comment = new backup_nested_element('comment', array('id'), array('contextid', 'commentarea', 'content', 'format', 'userid', 'timecreated'));
+
         // Build the tree
-		$wiki->add_child($subwikis);
+        $wiki->add_child($subwikis);
         $subwikis->add_child($subwiki);
 
         $subwiki->add_child($pages);
@@ -90,45 +78,44 @@ class backup_wiki_activity_structure_step extends backup_activity_structure_step
 
         $page->add_child($versions);
         $versions->add_child($version);
-        
+
         $page->add_child($comments);
         $comments->add_child($comment);
 
         // Define sources
-    	$wiki->set_source_table('wiki', array('id' => backup::VAR_ACTIVITYID));
+        $wiki->set_source_table('wiki', array('id' => backup::VAR_ACTIVITYID));
 
         // All these source definitions only happen if we are including user info
-		if ($userinfo) {
-			$subwiki->set_source_sql('
+        if ($userinfo) {
+            $subwiki->set_source_sql('
                 SELECT *
                   FROM {wiki_subwikis}
-                 WHERE wikiid = ?',
-                array(backup::VAR_PARENTID));
+                 WHERE wikiid = ?', array(backup::VAR_PARENTID));
 
-			$page->set_source_table('wiki_pages', array('subwikiid' => backup::VAR_PARENTID));
+            $page->set_source_table('wiki_pages', array('subwikiid' => backup::VAR_PARENTID));
 
-			$synonym->set_source_table('wiki_synonyms', array('subwikiid' => backup::VAR_PARENTID));
+            $synonym->set_source_table('wiki_synonyms', array('subwikiid' => backup::VAR_PARENTID));
 
-			$link->set_source_table('wiki_links', array('subwikiid' => backup::VAR_PARENTID));
+            $link->set_source_table('wiki_links', array('subwikiid' => backup::VAR_PARENTID));
 
-			$version->set_source_table('wiki_versions', array('pageid' => backup::VAR_PARENTID));
-            
-			$comment->set_source_table('comments', array('itemid' => backup::VAR_PARENTID));
+            $version->set_source_table('wiki_versions', array('pageid' => backup::VAR_PARENTID));
+
+            $comment->set_source_table('comments', array('itemid' => backup::VAR_PARENTID));
         }
 
         // Define id annotations
-		$subwiki->annotate_ids('group', 'groupid');
+        $subwiki->annotate_ids('group', 'groupid');
 
-		$subwiki->annotate_ids('user', 'userid');
+        $subwiki->annotate_ids('user', 'userid');
 
-		$page->annotate_ids('user', 'userid');
+        $page->annotate_ids('user', 'userid');
 
-		$version->annotate_ids('user', 'userid');
+        $version->annotate_ids('user', 'userid');
 
-		$comment->annotate_ids('user', 'userid');
+        $comment->annotate_ids('user', 'userid');
 
         // Define file annotations
-		$wiki->annotate_files(array('wiki_intro'), null); // This file area hasn't itemid
+        $wiki->annotate_files(array('wiki_intro'), null); // This file area hasn't itemid
 
         // Return the root element (wiki), wrapped into standard activity structure
         return $this->prepare_activity_structure($wiki);
