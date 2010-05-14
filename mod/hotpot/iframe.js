@@ -32,26 +32,45 @@ function getElement(id, lyr) {
     var obj = (document.layers) ? eval("d."+id) : (d.all) ? d.all[id] : (d.getElementById) ? d.getElementById(id) : null;
     return obj;
 }
-function set_object_height(myObject) {
-    if (myObject) {
-        if (document.frames) {
-            var obj = myObject; // IE - obj is alaredy a document element
-        } else {
-            var obj = myObject.document || myObject.contentDocument || null; // IE || FireFox
-        }
-        if (obj) {
-            if (obj.body) {
-                obj = obj.body;
-            }
-            var h = getContentH(obj);
-            if (h) {
-                setSize(myObject, 0, h + 65);
-            }
-            if (document.all) {
-                myObject.allowTransparency = true;
-                obj.style.backgroundColor = 'transparent';
+function set_embed_object_height(evt, embed_object) {
+    if (typeof(embed_object)=='undefined') {
+        if (evt) {
+            // we are being called by the onload event handler
+            if (evt.target) { // most browsers
+                embed_object = evt.target;
+            } else if (evt.srcElement) { // IE
+                embed_object = evt.srcElement;
             }
         }
+    }
+    var obj = null;
+    if (embed_object) {
+        if (document.frames) { // IE
+            switch (embed_object.tagName) {
+                case 'IFRAME':
+                    obj = document.frames[embed_object.name].document;
+                    break;
+                case 'OBJECT':
+                    obj = embed_object; // already an HTML document element
+                    break;
+            }
+        } else { // Firefox, Safari, Opera, Chrome
+            obj = embed_object.document || embed_object.contentDocument || null;
+        }
+    }
+    if (obj) {
+        if (obj.body) {
+            obj = obj.body;
+        }
+        var h = getContentH(obj);
+        if (h) {
+            setSize(embed_object, 0, h + 65);
+        }
+        // at some point the next two lines were important, but now it doesn't seeme to matter ?!
+        // if (document.all) {
+        //     embed_object.allowTransparency = true;
+        //     obj.style.backgroundColor = 'transparent';
+        // }
     }
 }
 is = new domSniffer();

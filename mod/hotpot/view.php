@@ -460,13 +460,17 @@
             switch ($framename) {
                 case 'main':
                     print $hp->html;
-               break;
+                break;
                 default:
                     // set iframe attributes
-                    $iframe_id = 'hotpot_iframe';
+                    $iframe_id = 'hotpot_embed_object';
+                    $iframe_name = 'hotpot_embed_iframe';
+                    $iframe_width = '100%';
+                    $iframe_height = '100%';
                     $iframe_src = $CFG->wwwroot.'/mod/hotpot/view.php?id='.$cm->id.'&amp;framename=main';
-                    $iframe_onload_function = 'set_object_height';
+                    $iframe_onload_function = 'set_embed_object_height';
                     $iframe_js = '<script src="'.$CFG->wwwroot.'/mod/hotpot/iframe.js" type="text/javascript"></script>'."\n";
+
                     print_header(
                         $title, $heading, $navigation,
                         "", $head.$styles.$scripts.$iframe_js, true, $button,
@@ -476,21 +480,35 @@
                         notify($available_msg);
                     }
 
-                    // the object to hold the embedded html page
-                    print '<object id="'.$iframe_id.'" type="text/html" data="'.$iframe_src.'" width="100%" height="100%" onload="'.$iframe_onload_function.'(this)"></object>'."\n";
+                    // for XHTML 1.0 Strict compatability, the embedded page should be implemented
+                    // using an <object> not an <iframe>. However, IE <object>'s are problematic
+                    // (links and forms cannot escape), so we use conditional comments to display
+                    // an <iframe> in IE and an <object> in other browsers
 
-                    // javascript to simulate object onload event in IE (thanks to David Horat !)
+                    // print the html element to hold the embedded html page
+                    // Note: the iframe in IE needs a "name" attribute for the resizing to work
+                    print '<!--[if IE]>'."\n";
+                    print '<iframe name="'.$iframe_name.'" id="'.$iframe_id.'" src="'.$iframe_src.'" width="'.$iframe_width.'" height="'.$iframe_height.'"></iframe>'."\n";
+                    print '<![endif]-->'."\n";
+                    print '<!--[if !IE]> <-->'."\n";
+                    print '<object id="'.$iframe_id.'" type="text/html" data="'.$iframe_src.'" width="'.$iframe_width.'" height="'.$iframe_height.'"></object>'."\n";
+                    print '<!--> <![endif]-->'."\n";
+
+                    // print javascript to add onload event handler - we do this here because
+                    // an object tag should have no onload attribute in XHTML 1.0 Strict
                     print '<script type="text/javascript">'."\n";
                     print '//<![CDATA['."\n";
-                    print 'function ieOnload(id, fn) {'."\n";
-                    print '	if (document.all[id].readyState==4) {'."\n";
-                    print '		clearInterval(ieOnloadInterval);'."\n";
-                    print '		fn(document.all[id]);'."\n";
-                    print '	}'."\n";
-                    print '}'."\n";
-                    print 'if (document.all) {'."\n";
-                    print '	var ieOnloadInterval = setInterval("ieOnload('."'$iframe_id',$iframe_onload_function".')", 100);'."\n";
-                    print '}'."\n";
+                    print "var obj = document.getElementById('$iframe_id');\n";
+                    print "if (obj) {\n";
+                    print "	if (obj.addEventListener) {\n";
+                    print "		obj.addEventListener('load', $iframe_onload_function, false);\n";
+                    print "	} else if (obj.attachEvent) {\n";
+                    print "		obj.attachEvent('onload', $iframe_onload_function);\n";
+                    print "	} else {\n";
+                    print "		obj['onload'] = $iframe_onload_function;\n";
+                    print "	}\n";
+                    print "}\n";
+                    print "obj = null;\n";
                     print '//]]>'."\n";
                     print '</script>'."\n";
 
