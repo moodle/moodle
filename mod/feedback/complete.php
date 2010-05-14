@@ -125,6 +125,11 @@ if(!$feedback_complete_cap) {
 $strfeedbacks = get_string("modulenameplural", "feedback");
 $strfeedback  = get_string("modulename", "feedback");
 
+if($course->id == SITEID) {
+    $PAGE->set_cm($cm, $course); // set's up global $COURSE
+    $PAGE->set_pagelayout('incourse');
+}
+
 $PAGE->navbar->add(get_string('feedback:complete', 'feedback'));
 $PAGE->set_url('/mod/feedback/complete.php', array('id'=>$cm->id, 'gopage'=>$gopage, 'courseid'=>$course->id));
 $PAGE->set_heading(format_string($course->fullname));

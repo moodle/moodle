@@ -90,6 +90,11 @@ if($feedback->anonymous == FEEDBACK_ANONYMOUS_NO) {
 $strfeedbacks = get_string("modulenameplural", "feedback");
 $strfeedback  = get_string("modulename", "feedback");
 
+if($course->id == SITEID) {
+    $PAGE->set_cm($cm, $course); // set's up global $COURSE
+    $PAGE->set_pagelayout('incourse');
+}
+
 $PAGE->set_url('/mod/feedback/view.php', array('id'=>$cm->id, 'do_show'=>'view'));
 $PAGE->set_title(format_string($feedback->name));
 $PAGE->set_heading(format_string($course->fullname));

@@ -96,7 +96,9 @@ if (!$context = get_context_instance(CONTEXT_MODULE, $cm->id)) {
 
 $feedback_complete_cap = false;
 
-if(has_capability('mod/feedback:complete', $context)) {
+if(isset($CFG->feedback_allowfullanonymous)
+            AND $CFG->feedback_allowfullanonymous
+            AND $feedback->anonymous == FEEDBACK_ANONYMOUS_YES ) {
     $feedback_complete_cap = true;
 }
 
@@ -135,6 +137,9 @@ if(!$feedback_complete_cap) {
 /// Print the page header
 $strfeedbacks = get_string("modulenameplural", "feedback");
 $strfeedback  = get_string("modulename", "feedback");
+
+$PAGE->set_cm($cm, $course); // set's up global $COURSE
+$PAGE->set_pagelayout('incourse');
 
 $PAGE->navbar->add($strfeedbacks, new moodle_url('/mod/feedback/index.php', array('id'=>$course->id)));
 $PAGE->navbar->add(format_string($feedback->name));
