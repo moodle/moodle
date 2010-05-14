@@ -330,9 +330,10 @@ M.core_filepicker.init = function(Y, options) {
                             this.view_files();
                         }
                     }, this, node);
-                    y_title.on('click', function(e, p){
-                        y_file.simulate('click');
-                    }, this, node);
+                    y_title.on('click', function(e, p, id){
+                        var icon = Y.one(id);
+                        icon.simulate('click');
+                    }, this, node, '#'+link.id);
                 } else {
                     var fileinfo = {};
                     fileinfo['title'] = list[k].title;
