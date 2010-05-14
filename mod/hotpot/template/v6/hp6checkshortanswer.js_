@@ -39,7 +39,7 @@ function CheckGuess(Guess, Answer, CaseSensitive, PercentCorrect, Feedback){
 	}
 	else{
 		this.WorkingGuess = Guess;
-		this.WorkingAnswer = Answer;				
+		this.WorkingAnswer = Answer;
 	}
 	this.Hint = '';
 	this.HintPenalty = 1/Answer.length;
@@ -66,12 +66,12 @@ function CheckGuess_DoCheck(){
 	}
 //Stash the hint
 	this.Hint = this.Answer.charAt(i);
-	
+
 	this.CorrectStart = this.Guess.substring(0, i);
-	
+
 //If there's more to the answer, look at the rest of it
 	if (i<this.Guess.length){
-	
+
 //Figure out how much of the end is correct
 		var j = this.WorkingGuess.length-1;
 		var k = this.WorkingAnswer.length-1;
@@ -90,7 +90,7 @@ function CheckGuess_DoCheck(){
 	}
 	else{
 		this.PercentMatch = Math.floor((100 * CorrectChars)/this.Guess.length);
-	}	
+	}
 }
 
 CheckGuess.prototype.DoCheck = CheckGuess_DoCheck;
@@ -160,13 +160,13 @@ CheckAnswerArray.prototype.GetBestMatch = CheckAnswerArray_GetBestMatch;
 function CheckShortAnswer(QNum){
 //bail if question doesn't exist or exercise finished
 	if ((State[QNum].length < 1)||(Finished == true)){return;}
-	
+
 //bail if question already complete
 	if (State[QNum][0] > -1){return;}
 
 //Get the guess (TrimString added to fix bug for 6.0.4.3)
 	var G = TrimString(document.getElementById('Q_' + QNum + '_Guess').value);
-	
+
 //If no guess, bail with message; no penalty
 	if (G.length < 1){
 		ShowMessage(PleaseEnter);
@@ -175,7 +175,7 @@ function CheckShortAnswer(QNum){
 
 //Increment tries
 	State[QNum][2]++;
-	
+
 //Create a check object
 	var CA = new CheckAnswerArray(CaseSensitive);
 
@@ -184,7 +184,7 @@ function CheckShortAnswer(QNum){
 		CA.AddAnswer(G, I[QNum][3][ANum][0], I[QNum][3][ANum][3], I[QNum][3][ANum][1]);
 	}
 	CA.GetBestMatch();
-	
+
 //Store any match in the state tracking field
 	if (State[QNum][5].length > 0){State[QNum][5] += ' | ';}
 	if (CA.MatchNum > -1){
@@ -198,11 +198,11 @@ function CheckShortAnswer(QNum){
 //Add the percent correct value for this answer to the Q State (works for all
 //situations, wrong or right)
 	State[QNum][3] += CA.Score;
-	
+
 //Now branch, based on the nature of the match
 //Is it a complete match?
 	if (CA.CompleteMatch == true){
-		
+
 //Is it with a wrong answer, or a right answer?
 		if (CA.Score == 100){
 //It's right
@@ -213,8 +213,8 @@ function CheckShortAnswer(QNum){
 				if (AlsoCorrectList.length > 0){
 					CA.Feedback += '<br />' + CorrectList + '<br />' + AlsoCorrectList;
 				}
-			}	
-		
+			}
+
 //Get the overall score and add it to the feedback
 			if (ContinuousScoring == true){
 				CalculateOverallScore();
@@ -228,14 +228,14 @@ function CheckShortAnswer(QNum){
 			return;
 		}
 	}
-	
+
 //Otherwise, it's a match to a predicted wrong/partially correct, or a partial
 //match to a right answer
 	if (CA.Feedback.length < 1){CA.Feedback = DefaultWrong;}
 //Remove any previous score unless exercise is finished (6.0.3.8+)
 	if (Finished == false){
 		WriteToInstructions(strInstructions);
-	}	
+	}
 	ShowMessage(CA.Feedback);
 
 //If necessary, switch a hybrid question to m/c
@@ -278,7 +278,7 @@ function GetCorrectArray(QNum){
 		if (I[QNum][3][ANum][2] == 1){ //This is an acceptable correct answer
 			Result.push(I[QNum][3][ANum][0]);
 		}
-	}	
+	}
 	return Result;
 }
 
@@ -322,14 +322,14 @@ function ReplaceGuessBox(QNum, Ans){
 function ShowAnswers(QNum){
 //bail if question doesn't exist or exercise finished
 	if ((State[QNum].length < 1)||(Finished == true)){return;}
-	
+
 //Get the answer list to display
 	var Ans = GetCorrectList(QNum, '', false);
 	Ans = CorrectList + '<br />' + Ans;
-	
+
 //Display feedback
 	ShowMessage(Ans);
-	
+
 //Set the score for this question to 0 if no
 	if (State[QNum][0] < 1){
 		State[QNum][0] = 0;
@@ -337,13 +337,13 @@ function ShowAnswers(QNum){
 
 //Get the first correct answer
 	var FirstAns = GetFirstCorrectAnswer(QNum);
-	
+
 //Replace the textbox
 	ReplaceGuessBox(QNum, FirstAns);
-	
+
 //Remove any current score
 	WriteToInstructions(strInstructions);
-	
+
 //This may be the last, so check finished status
 	CheckFinished();
 }
@@ -355,13 +355,13 @@ function ShowAnswers(QNum){
 function ShowHint(QNum){
 //bail if question doesn't exist or exercise finished
 	if ((State[QNum].length < 1)||(Finished == true)){return;}
-	
+
 //bail if question already complete
 	if (State[QNum][0] > -1){return;}
 
 //Get the guess
 	var G = document.getElementById('Q_' + QNum + '_Guess').value;
-	
+
 //If no guess, give the first correct bit
 	if (G.length < 1){
 		var Ans = GetFirstCorrectAnswer(QNum);
@@ -374,7 +374,7 @@ function ShowHint(QNum){
 
 //Increment tries
 	State[QNum][2]++;
-	
+
 //Create a check object
 	var CA = new CheckAnswerArray(CaseSensitive);
 

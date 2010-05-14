@@ -1,4 +1,4 @@
-<?PHP 
+<?PHP
 
 class hotpot_xml_quiz_template extends hotpot_xml_template_default {
 
@@ -6,13 +6,13 @@ class hotpot_xml_quiz_template extends hotpot_xml_template_default {
     function hotpot_xml_quiz_template(&$parent) {
 
         $this->parent = &$parent;
-        
+
         $get_js = optional_param('js', false);
         $get_css = optional_param('css', false);
 
         if (!empty($get_css)) {
             // set $this->css
-            $this->v6_expand_StyleSheet(); 
+            $this->v6_expand_StyleSheet();
 
         } else if (!empty($get_js)) {
             // set $this->js
@@ -165,7 +165,7 @@ class hotpot_xml_quiz_template extends hotpot_xml_template_default {
         return empty($value) ? '' : ('<h3 class="ExerciseSubtitle">'.$value.'</h3>');
     }
 
-    // timer 
+    // timer
 
     function v6_expand_Timer() {
         return $this->int_value('data,timer,include-timer');
@@ -177,7 +177,7 @@ class hotpot_xml_quiz_template extends hotpot_xml_template_default {
         return $this->parent->xml_value('data,timer,seconds');
     }
 
-    // send results 
+    // send results
 
     function v6_expand_SendResults() {
         return $this->parent->xml_value('hotpot-config-file,'.$this->parent->quiztype.',send-email');
@@ -299,7 +299,7 @@ class hotpot_xml_quiz_template extends hotpot_xml_template_default {
     }
     function v6_expand_NavLightColor() {
         $color = $this->parent->xml_value('hotpot-config-file,global,nav-bar-color');
-        return $this->get_halfway_color($color, '#ffffff'); 
+        return $this->get_halfway_color($color, '#ffffff');
     }
     function v6_expand_NavShadeColor() {
         $color = $this->parent->xml_value('hotpot-config-file,global,nav-bar-color');
@@ -534,7 +534,7 @@ class hotpot_xml_quiz_template extends hotpot_xml_template_default {
             $value = strtr($value, $ENTITIES);
             if (preg_match_all($pattern, $value, $matches)) {
                 $chars = array_merge($chars, $matches[0]);
-            } 
+            }
             $i++;
         }
 
@@ -1260,7 +1260,7 @@ class hotpot_xml_quiz_template extends hotpot_xml_template_default {
                 $str .= '<p class="QuestionText">'.$question_text.'</p>';
 
                 if (
-                    $question_type==HOTPOT_JQUIZ_SHORTANSWER || 
+                    $question_type==HOTPOT_JQUIZ_SHORTANSWER ||
                     $question_type==HOTPOT_JQUIZ_HYBRID
                 ) {
                     $str .= '<div class="ShortAnswer" id="Q_'.$q.'_SA"><form method="post" action="" onsubmit="return false;"><div>';
@@ -1283,13 +1283,13 @@ class hotpot_xml_quiz_template extends hotpot_xml_template_default {
                 }
 
                 if (
-                    $question_type==HOTPOT_JQUIZ_MULTICHOICE || 
+                    $question_type==HOTPOT_JQUIZ_MULTICHOICE ||
                     $question_type==HOTPOT_JQUIZ_HYBRID ||
                     $question_type==HOTPOT_JQUIZ_MULTISELECT
                 ) {
 
                     switch ($question_type) {
-                        case HOTPOT_JQUIZ_MULTICHOICE: 
+                        case HOTPOT_JQUIZ_MULTICHOICE:
                             $str .= '<ol class="MCAnswers">'."\n";
                         break;
                         case HOTPOT_JQUIZ_HYBRID:
@@ -1456,6 +1456,6 @@ function hotpot_keypad_sort_value($char) {
     }
 
     return $sort_value;
-} 
+}
 
 

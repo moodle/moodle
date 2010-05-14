@@ -5,7 +5,7 @@ function SetScormScore(){
 //Reports the current score and any other information back to the LMS
 	if (API != null){
 		API.LMSSetValue('cmi.core.score.raw', Score);
-		
+
 //Now send a detailed reports on the item
 		var ItemLabel = 'Item_1';
 		API.LMSSetValue('cmi.objectives.0.id', 'obj'+ItemLabel);
@@ -16,14 +16,14 @@ function SetScormScore(){
 		else{
 			API.LMSSetValue('cmi.objectives.0.status', 'incomplete');
 		}
-				
+
 		API.LMSSetValue('cmi.objectives.0.score.min', '0');
 		API.LMSSetValue('cmi.objectives.0.score.max', '100');
 		API.LMSSetValue('cmi.objectives.0.score.raw', Score);
 //We can only use the performance type, because we're storing multiple responses of various types.
 		API.LMSSetValue('cmi.interactions.0.type', 'performance');
 		API.LMSSetValue('cmi.interactions.0.student_response', AnswersTried);
-		
+
 		API.LMSCommit('');
 	}
 }
@@ -135,7 +135,7 @@ function BuildCurrGuess(){
 			RemainingList += Segments[i][0] + '&nbsp; &nbsp;&nbsp;';
 		}
 	}
-	
+
 //now concatenate the segments, adding spaces where appropriate;
 	Output = CompileString(GuessSequence);
 }
@@ -162,7 +162,7 @@ function CompileString(InArray){
 		if ((Openers.indexOf(OutString.charAt(OutString.length-1)) > -1)||(Punctuation.indexOf(OutArray[i].charAt(0)) > -1)){
 			Spacer = '';
 		}
-		OutString = OutString + Spacer + OutArray[i];		
+		OutString = OutString + Spacer + OutArray[i];
 	}
 
 //Capitalize the first letter if necessary
@@ -228,7 +228,7 @@ function CheckAnswer(CheckType){
 				}
 				HintToReturn = TempHint;
 			}
-		}	
+		}
 	}
 	if (WhichCorrect > -1){
 		AllDone = true;
@@ -242,7 +242,7 @@ function CheckAnswer(CheckType){
 
 		if (AnswersTried.length > 0){AnswersTried += ' | ';}
 		AnswersTried += Output;
-		
+
 //Do score calculation here
 		Score = Math.floor(((Segments.length-Penalties) * 100)/Segments.length);
 		WellDone += YourScoreIs + ' ' + Score + '%.<br />';
@@ -289,7 +289,7 @@ function CheckAnswer(CheckType){
 		DisplayExercise(Exercise);
 		ShowMessage(TryAgain);
 		Penalties++; //Penalty for inaccurate check
-		
+
 [inclTimer]
 		if (TimeOver == true){
 			Score = Math.floor(((LongestCorrect.length-Penalties) * 100)/Segments.length);
@@ -339,7 +339,7 @@ function StartUp(){
 
 //Stash the instructions so they can be redisplayed
 	strInstructions = document.getElementById('InstructionsDiv').innerHTML;
-	
+
 [inclSendResults]
 	GetUserName();
 [/inclSendResults]
@@ -356,8 +356,8 @@ function StartUp(){
 
 //Build and show the exercise
 	BuildExercise();
-	DisplayExercise(Exercise);	
-	
+	DisplayExercise(Exercise);
+
 [inclTimer]
 	StartTimer();
 [/inclTimer]

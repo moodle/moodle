@@ -5,7 +5,7 @@
 
 [strDublinCoreMetadata]
 
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" /> 
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 
 <title>
 [strPlainTitle]
@@ -109,7 +109,7 @@
 
 
 <div id="MainDiv" class="StdDiv">
- 
+
 <div id="QNav" class="QuestionNavigation">
 
 <p style="text-align: right;">
@@ -126,7 +126,7 @@
 </div>
 
 </div>
- 
+
 [strQuestionOutput]
 
 [inclKeypad]
