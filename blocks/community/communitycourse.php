@@ -32,6 +32,7 @@ require_once($CFG->dirroot.'/blocks/community/forms.php');
 
 require_login();
 
+$PAGE->set_context(get_context_instance(CONTEXT_SYSTEM));
 $PAGE->set_url('/blocks/community/communitycourse.php');
 $PAGE->set_heading($SITE->fullname);
 $PAGE->set_pagelayout('course');
