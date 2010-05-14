@@ -201,7 +201,7 @@ class course_publication_form extends moodleform {
         $mform->setType('description', PARAM_TEXT);
 
         $languages = get_string_manager()->get_list_of_languages();
-
+        asort($languages, SORT_LOCALE_STRING);
         $mform->addElement('select', 'language',get_string('language'), $languages);    
         $mform->setDefault('language', $defaultlanguage);
 
@@ -239,6 +239,14 @@ class course_publication_form extends moodleform {
         $mform->addHelpButton('licence', 'licence', 'hub');
 
         $options = get_string_manager()->load_component_strings('edufields', current_language());
+        foreach ($options as $key => &$option) {
+            $keylength = strlen ( $key );
+            if ( $keylength == 10) {
+                $option = "&nbsp;&nbsp;" . $option;
+            } else  if ( $keylength == 12) {
+                $option = "&nbsp;&nbsp;&nbsp;&nbsp;" . $option;
+            }
+        }
         $mform->addElement('select', 'subject', get_string('subject', 'hub'), $options);
         unset($options);
         $mform->addHelpButton('subject', 'subject', 'hub');
@@ -285,6 +293,20 @@ class course_publication_form extends moodleform {
 
         $this->add_action_buttons(false, $buttonlabel);
     }
+
+    function validation($data, $files) {
+        global $CFG;
+
+        $errors = array();
+
+        if (!(strlen($this->_form->_submitValues['subject']) == 12 or $this->_form->_submitValues['subject'] == 'all')) {
+            $errors['subject'] = get_string('cannotselecttopsubject', 'block_community');
+        }
+
+        return $errors;
+    }
+
+
 
 }
 
