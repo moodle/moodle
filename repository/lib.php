@@ -1532,6 +1532,13 @@ abstract class repository {
     }
 
     /**
+     * For oauth like external authentication, when external repository direct user back to moodle,
+     * this funciton will be called to set up token and token_secret
+     */
+    public function callback() {
+    }
+
+    /**
      * is it possible to do glboal search?
      * @return boolean
      */

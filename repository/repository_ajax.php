@@ -34,21 +34,21 @@ require_login();
 
 /// Parameters
 $action    = optional_param('action', '', PARAM_ALPHA);
-$repo_id   = optional_param('repo_id', 0, PARAM_INT);           // repository ID
-$callback  = optional_param('callback', '', PARAM_CLEANHTML);
-$client_id = optional_param('client_id', '', PARAM_RAW);        // client ID
-$contextid = optional_param('ctx_id', SYSCONTEXTID, PARAM_INT);       // context ID
-$env       = optional_param('env', 'filepicker', PARAM_ALPHA);  // opened in editor or moodleform
+$repo_id   = optional_param('repo_id', 0, PARAM_INT);           // Pepository ID
+$callback  = optional_param('callback', '', PARAM_CLEANHTML);   // Is this a callback from external site?
+$client_id = optional_param('client_id', '', PARAM_RAW);        // Client ID
+$contextid = optional_param('ctx_id', SYSCONTEXTID, PARAM_INT); // Context ID
+$env       = optional_param('env', 'filepicker', PARAM_ALPHA);  // Opened in editor or moodleform
 $license   = optional_param('license', $CFG->sitedefaultlicense, PARAM_TEXT);
-$author    = optional_param('author', '', PARAM_TEXT);
-$source    = optional_param('source', '', PARAM_RAW);           // file to download
-$itemid    = optional_param('itemid', 0, PARAM_INT);
-$page      = optional_param('page', '', PARAM_RAW);             // page
-$maxbytes  = optional_param('maxbytes', 0, PARAM_INT);
-$req_path  = optional_param('p', '', PARAM_RAW);                // path
+$author    = optional_param('author', '', PARAM_TEXT);          // File author
+$source    = optional_param('source', '', PARAM_RAW);           // File to download
+$itemid    = optional_param('itemid', 0, PARAM_INT);            // Itemid
+$page      = optional_param('page', '', PARAM_RAW);             // Page
+$maxbytes  = optional_param('maxbytes', 0, PARAM_INT);          // Maxbytes
+$req_path  = optional_param('p', '', PARAM_RAW);                // Path
 $saveas_filearea = optional_param('filearea', 'user_draft', PARAM_TEXT);
-$saveas_filename = optional_param('title', '', PARAM_FILE);           // new file name
-$saveas_path   = optional_param('savepath', '/', PARAM_PATH);
+$saveas_filename = optional_param('title', '', PARAM_FILE);     // save as file name
+$saveas_path   = optional_param('savepath', '/', PARAM_PATH);   // save as file path
 $search_text   = optional_param('s', '', PARAM_CLEANHTML);
 $linkexternal  = optional_param('linkexternal', '', PARAM_ALPHA);
 
@@ -59,16 +59,16 @@ header('Expires: Sat, 26 Jul 1997 05:00:00 GMT');
 $err = new stdclass;
 $err->client_id = $client_id;
 
-$moodle_maxbytes = get_max_upload_file_size();
-// to prevent maxbytes greater than moodle maxbytes setting
-if ($maxbytes == 0 || $maxbytes>=$moodle_maxbytes) {
-    $maxbytes = $moodle_maxbytes;
-}
-
 /// Check permissions
 if (! (isloggedin() && repository::check_context($contextid)) ) {
     $err->e = get_string('nopermissiontoaccess', 'repository');
     die(json_encode($err));
+}
+
+$moodle_maxbytes = get_max_upload_file_size();
+// to prevent maxbytes greater than moodle maxbytes setting
+if ($maxbytes == 0 || $maxbytes>=$moodle_maxbytes) {
+    $maxbytes = $moodle_maxbytes;
 }
 
 /// Wait as long as it takes for this script to finish
@@ -137,6 +137,8 @@ if (file_exists($CFG->dirroot.'/repository/'.$type.'/repository.class.php')) {
 
 
 if (!empty($callback)) {
+    // post callback
+    $repo->callback();
     // call opener window to refresh repository
     // the callback url should be something like this:
     // http://xx.moodle.com/repository/repository_ajax.php?callback=yes&repo_id=1&sid=xxx
