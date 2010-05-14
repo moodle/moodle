@@ -25,9 +25,10 @@
  */
 
 $string['addcommunitycourse'] = 'Add community course';
-$string['additionalcoursedesc'] = '{$a->contributornames} {$a->coverage} - Creator: {$a->creatorname} - Publisher: {$a->publishername} - Subject: {$a->subject}
+$string['additionalcoursedesc'] = '{$a->contributornames} - {$a->coverage} - Creator: {$a->creatorname} - Publisher: {$a->publishername} - Subject: {$a->subject}
     - Audience: {$a->audience} - Educational level: {$a->educationallevel}';
 $string['addcourse'] = 'Search';
+$string['cannotselecttopsubject'] = 'Cannot select a top subject level';
 $string['contributors'] = ' - Contributors: {$a}';
 $string['coursedesc'] = 'Description';
 $string['courselang'] = 'Language';

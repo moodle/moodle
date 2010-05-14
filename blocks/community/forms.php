@@ -88,6 +88,14 @@ class community_hub_search_form extends moodleform {
         $mform->addHelpButton('educationallevel', 'educationallevel', 'hub');
 
         $options = get_string_manager()->load_component_strings('edufields', current_language());
+        foreach ($options as $key => &$option) {
+            $keylength = strlen ( $key );
+            if ( $keylength == 10) {
+                $option = "&nbsp;&nbsp;" . $option;
+            } else  if ( $keylength == 12) {
+                $option = "&nbsp;&nbsp;&nbsp;&nbsp;" . $option;
+            }
+        }
         $options['all'] = get_string('all', 'hub');
         $mform->addElement('select', 'subject', get_string('subject', 'hub'), $options);
         $mform->setDefault('subject', 'all');
@@ -109,6 +117,7 @@ class community_hub_search_form extends moodleform {
         $mform->setDefault('licence', 'all');
 
         $languages = get_string_manager()->get_list_of_languages();
+        asort($languages, SORT_LOCALE_STRING);
         $languages['all'] = get_string('all', 'hub');
         $mform->addElement('select', 'language',get_string('language'), $languages);
         $mform->setDefault('language', 'all');
@@ -126,6 +135,11 @@ class community_hub_search_form extends moodleform {
 
         if (empty($this->_form->_submitValues['huburl'])) {
             $errors['huburl'] = get_string('nohubselected', 'hub');
+        }
+
+        if (!(strlen($this->_form->_submitValues['subject']) == 12 or $this->_form->_submitValues['subject'] == 'all')) {
+
+            $errors['subject'] = get_string('cannotselecttopsubject', 'block_community');
         }
 
         return $errors;
