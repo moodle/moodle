@@ -163,8 +163,13 @@ class block_navigation extends block_base {
 
         // Initialise the JS tree object
         $module = array('name'=>'block_navigation', 'fullpath'=>'/blocks/navigation/navigation.js', 'requires'=>array('core_dock', 'io', 'node', 'dom', 'event-custom', 'json-parse'));
-        $arguments = array($this->instance->id, array('expansions'=>$expandable, 'instance'=>$this->instance->id, 'candock'=>$this->instance_can_be_docked()));
+        $limit = 20;
+        if (!empty($CFG->navcourselimit)) {
+            $limit = $CFG->navcourselimit;
+        }
+        $arguments = array($this->instance->id, array('expansions'=>$expandable, 'instance'=>$this->instance->id, 'candock'=>$this->instance_can_be_docked(), 'courselimit'=>$limit));
         $this->page->requires->js_init_call('M.block_navigation.init_add_tree', $arguments, false, $module);
+        $this->page->requires->string_for_js('viewallcourses','moodle');
 
         // Grab the items to display
         $renderer = $this->page->get_renderer('block_navigation');

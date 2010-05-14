@@ -867,6 +867,9 @@ class global_navigation extends navigation_node {
         }
 
         $this->mycourses = get_my_courses($USER->id, 'visible DESC,sortorder ASC', null, false, $limit);
+        $showallcourses = (count($this->mycourses) == 0 || !empty($CFG->navshowallcourses));
+        $showcategories = ($showallcourses && !empty($CFG->navshowcategories));
+
         // Check if any courses were returned.
         if (count($this->mycourses) > 0) {
             // Add all of the users courses to the navigation
@@ -875,12 +878,12 @@ class global_navigation extends navigation_node {
             }
         }
 
-        $showallcourses = (count($this->mycourses) == 0 || !empty($CFG->navshowallcourses));
-        $showcategories = ($showallcourses && !empty($CFG->navshowcategories));
-
         if ($showcategories) {
             // Load all categories (ensures we get the base categories)
             $this->load_all_categories();
+        } else if ($showallcourses) {
+            // Load all courses
+            $this->load_all_courses();
         }
 
         // Next load context specific content into the navigation
@@ -889,10 +892,6 @@ class global_navigation extends navigation_node {
             case CONTEXT_COURSECAT :
                 // Load the front page course navigation
                 $this->load_course($SITE);
-                if ($showallcourses) {
-                    // Load all courses
-                    $this->load_all_courses();
-                }
                 break;
             case CONTEXT_BLOCK :
             case CONTEXT_COURSE :
@@ -946,6 +945,22 @@ class global_navigation extends navigation_node {
                     $sections = $this->load_course_sections($course, $coursenode);
                 }
                 break;
+        }
+
+        $limit = 20;
+        if (!empty($CFG->navcourselimit)) {
+            $limit = $CFG->navcourselimit;
+        }
+        if ($showcategories) {
+            $categories = $this->find_all_of_type(self::TYPE_CATEGORY);
+            foreach ($categories as &$category) {
+                if ($category->children->count() >= $limit) {
+                    $url = new moodle_url('/course/category.php', array('id'=>$category->key));
+                    $category->add(get_string('viewallcourses'), $url, self::TYPE_SETTING);
+                }
+            }
+        } else if ($this->rootnodes['courses']->children->count() >= $limit) {
+            $this->rootnodes['courses']->add(get_string('viewallcoursescategories'), new moodle_url('/course/index.php'), self::TYPE_SETTING);
         }
 
         // Load for the current user

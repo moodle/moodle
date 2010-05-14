@@ -38,6 +38,7 @@ M.block_navigation = M.block_navigation || {
      * @namespace
      */
     classes:{},
+    courselimit : 20,
     /**
      * This function gets called when the module is first loaded as required by
      * the YUI.add statement at the bottom of the page.
@@ -55,6 +56,9 @@ M.block_navigation = M.block_navigation || {
      * Add new instance of navigation tree to tree collection
      */
     init_add_tree:function(Y, id, properties) {
+        if (properties.courselimit) {
+            this.courselimit = properties.courselimit;
+        }
     	M.block_navigation.treecollection[id] = new M.block_navigation.classes.tree(Y, id, properties);
     }
 };
@@ -174,6 +178,7 @@ M.block_navigation.classes.tree.prototype.load_ajax = function(tid, outcome, arg
         }
     } catch (e) {
         // If we got here then there was an error parsing the result
+        alert(e.message);
     }
     // The branch is empty so class it accordingly
     args.target.replaceClass('branch', 'emptybranch');
@@ -191,7 +196,6 @@ M.block_navigation.classes.tree.prototype.add_branch = function(branchobj, targe
 
     // Make the new branch into an object
     var branch = new M.block_navigation.classes.branch(this, branchobj);
-
     var childrenul = false;
     if (depth === 1) {
         if (!branch.children) {
@@ -203,9 +207,22 @@ M.block_navigation.classes.tree.prototype.add_branch = function(branchobj, targe
         childrenul = branch.inject_into_dom(target);
     }
     if (childrenul) {
-        for (i in branch.children) {
+        var count = 0;
+        for (var i in branch.children) {
             // Add each branch to the tree
+            if (branch.children[i].type == 20) {
+                count++;
+            }
             this.add_branch(branch.children[i], childrenul, depth+1);
+        }
+        if (branch.type == 10 && count >= M.block_navigation.courselimit) {
+            var properties = Array();
+            properties['name'] = M.str.moodle.viewallcourses;
+            properties['title'] = M.str.moodle.viewallcourses;
+            properties['link'] = M.cfg.wwwroot+'/course/category.php?id='+branch.key;
+            properties['haschildren'] = false;
+            properties['icon'] = {'pix':"i/navigationitem",'component':'moodle'};
+            this.add_branch(properties, childrenul, depth+1);
         }
     }
     return true;

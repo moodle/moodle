@@ -187,8 +187,8 @@ if (empty($CFG->usesid) and $testcookies and (get_moodle_cookie() == '')) {    /
             unset($SESSION->wantsurl);
         }
 
-    /// Go to my-moodle page instead of homepage if mymoodleredirect enabled
-        if (!empty($CFG->mymoodleredirect) and !is_siteadmin() and !isguestuser()) {
+    /// Go to my-moodle page instead of site homepage if defaulthomepage set to homepage_my
+        if (!empty($CFG->defaulthomepage) && $CFG->defaulthomepage == HOMEPAGE_MY && !is_siteadmin() && !isguestuser()) {
             if ($urltogo == $CFG->wwwroot or $urltogo == $CFG->wwwroot.'/' or $urltogo == $CFG->wwwroot.'/index.php') {
                 $urltogo = $CFG->wwwroot.'/my/';
             }
