@@ -2,6 +2,10 @@
 white-space:normal;
 }
 
+.gradestable {
+    margin-bottom:0;
+}
+
 .gradestable th.user img {
 width:20px;
 height:20px;
@@ -530,6 +534,10 @@ border-width:0;
 .grade-report-grader div.gradeparent,
 .ie6 form,.grade-report-grader table#user-grades td.ajax {
 text-align:left;
+}
+
+.gradeparent {
+    overflow:auto;
 }
 
 .grade-report-grader table tr.avg td.cell,
