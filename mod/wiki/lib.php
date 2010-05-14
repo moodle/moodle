@@ -438,7 +438,9 @@ function wiki_extend_navigation(navigation_node $navref, $course, $module, $cm) 
         return false;
     }
 
-    $gid = groups_get_activity_group($cm);
+    if (!$gid = groups_get_activity_group($cm)){
+        $gid = 0;
+    }
     if (!$subwiki = wiki_get_subwiki_by_group($cm->instance, $gid, $userid)){
         return null;
     } else {
