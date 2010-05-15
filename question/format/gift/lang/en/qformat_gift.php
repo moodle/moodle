@@ -24,3 +24,6 @@
  */
 
 $string['nohandler'] = 'No handler for question type {$a}';
+$string['gift'] = 'GIFT format';
+$string['gift_help'] = 'GIFT format enables multiple-choice, true-false, short answer, matching, missing word, numerical and essay questions to be imported or exported via text file.';
+$string['gift_link'] = 'qformat/gift';
