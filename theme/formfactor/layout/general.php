@@ -49,9 +49,13 @@ echo $OUTPUT->doctype() ?>
     </div>
 
     <?php if ($hasheading) { ?>	
-	    <ul id="page-navigation" class="clearfix">
-        &nbsp;
-	    </ul>
+      <?php if ($hascustommenu) { ?>
+        <div id="custommenu"><?php echo $custommenu; ?></div>
+      <?php } else { ?>
+        <ul id="page-navigation" class="clearfix">
+          <li>&nbsp;</li>
+        </ul>
+      <?php } ?>
 	<?php } ?>
     
     <?php if ($hasnavbar) { ?>

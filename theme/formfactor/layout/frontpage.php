@@ -40,10 +40,14 @@ echo $OUTPUT->doctype() ?>
 	    </div>
     </div>
     
-	    <ul id="page-navigation" class="clearfix">
-        &nbsp;
-	    </ul>
-    
+    <?php if ($hascustommenu) { ?>
+      <div id="custommenu"><?php echo $custommenu; ?></div>
+    <?php } else { ?>
+      <ul id="page-navigation" class="clearfix">
+        <li>&nbsp;</li>
+      </ul>
+  	<?php } ?>
+  	  
 <!-- END OF HEADER -->
 
 <!-- START OF CONTENT -->
