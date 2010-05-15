@@ -825,10 +825,6 @@ class question_calculated_qtype extends default_questiontype {
         return $virtualqtype->grade_responses($numericalquestion, $state, $cmoptions) ;
     }
 
-    function response_summary($question, $state, $length=80, $formatting=true) {
-        // The actual response is the bit after the hyphen
-        return substr($state->answer, strpos($state->answer, '-')+1, $length);
-    }
 
     // ULPGC ecastro
     function check_response(&$question, &$state) {

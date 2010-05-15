@@ -222,10 +222,6 @@ class question_calculatedsimple_qtype extends question_calculated_qtype {
     }
 
 
-    function response_summary($question, $state, $length=80, $formatting=true) {
-        // The actual response is the bit after the hyphen
-        return substr($state->answer, strpos($state->answer, '-')+1, $length);
-    }
 
     function custom_generator_tools_part(&$mform, $idx, $j){
 
