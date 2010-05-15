@@ -45,14 +45,6 @@ echo $OUTPUT->doctype() ?>
       <?php } ?>
     </div>
 
-      
-      <?php if ($hasnavbar) { ?>
-        <div class="navbar clearfix">
-          <div class="breadcrumb"><?php echo $OUTPUT->navbar(); ?></div>
-          <div class="navbutton"> <?php echo $PAGE->button; ?></div>
-        </div>
-      <?php } ?>
-  
 <?php } ?>
       
     <div id="page-content">

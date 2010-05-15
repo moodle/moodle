@@ -8,7 +8,7 @@ $THEME->name = 'boxxie';
 ////////////////////////////////////////////////////
 
 
-$THEME->parents = array('base');
+$THEME->parents = array('canvas','base');
 
 /////////////////////////////////////////////////////
 // Which existing theme(s) in the /theme/ directory
@@ -21,7 +21,7 @@ $THEME->parents = array('base');
 ////////////////////////////////////////////////////
 
 
-$THEME->sheets = array('pagelayout', 'boilerplate', 'screen');
+$THEME->sheets = array('core');
 
 ////////////////////////////////////////////////////
 // Name of the stylesheet(s) you've including in 
@@ -38,74 +38,62 @@ $THEME->enable_dock = false;
 
 $THEME->layouts = array(
     'base' => array(
-        'theme' => 'boxxie',
         'file' => 'general.php',
         'regions' => array('side-pre', 'side-post'),
         'defaultregion' => 'side-post',
     ),
     'general' => array(
-        'theme' => 'boxxie',
         'file' => 'general.php',
         'regions' => array('side-pre', 'side-post'),
         'defaultregion' => 'side-post',
     ),
     'course' => array(
-        'theme' => 'boxxie',
         'file' => 'general.php',
         'regions' => array('side-pre', 'side-post'),
         'defaultregion' => 'side-post'
     ),
     'coursecategory' => array(
-        'theme' => 'boxxie',
         'file' => 'general.php',
         'regions' => array('side-pre', 'side-post'),
         'defaultregion' => 'side-post',
     ),
     'incourse' => array(
-        'theme' => 'boxxie',
         'file' => 'general.php',
         'regions' => array('side-pre', 'side-post'),
         'defaultregion' => 'side-post',
     ),
     'frontpage' => array(
-        'theme' => 'boxxie',
         'file' => 'frontpage.php',
         'regions' => array('side-pre', 'side-post'),
         'defaultregion' => 'side-post',
     ),
     'admin' => array(
-        'theme' => 'boxxie',
         'file' => 'general.php',
         'regions' => array('side-pre'),
         'defaultregion' => 'side-pre',
     ),
     'mydashboard' => array(
-        'theme' => 'boxxie',
         'file' => 'general.php',
         'regions' => array('side-pre', 'side-post'),
         'defaultregion' => 'side-post',
         'options' => array('langmenu'=>true),
     ),
     'mypublic' => array(
-        'theme' => 'boxxie',
         'file' => 'general.php',
         'regions' => array('side-pre', 'side-post'),
         'defaultregion' => 'side-post',
     ),
     'login' => array(
-        'theme' => 'boxxie',
         'file' => 'general.php',
         'regions' => array(),
         'options' => array('langmenu'=>true),
     ),
     'popup' => array(
-        'theme' => 'boxxie',
         'file' => 'general.php',
         'regions' => array(),
         'options' => array('nofooter'=>true),
     ),
     'frametop' => array(
-        'theme' => 'boxxie',
         'file' => 'general.php',
         'regions' => array(),
         'options' => array('nofooter'=>true),
@@ -117,7 +105,6 @@ $THEME->layouts = array(
         'options' => array('nofooter'=>true, 'nonavbar'=>true),
     ),
     'embedded' => array(
-    	'theme' => 'boxxie',
         'file' => 'embedded.php',
         'regions' => array(),
         'options' => array('nofooter'=>true, 'nonavbar'=>true),
@@ -133,3 +120,85 @@ $THEME->layouts = array(
 // if you want to add a different layout template to a
 // specific page.
 ///////////////////////////////////////////////////////////////
+
+// $THEME->csspostprocess
+	
+////////////////////////////////////////////////////
+// Allows the user to provide the name of a function 
+// that all CSS should be passed to before being 
+// delivered.
+////////////////////////////////////////////////////
+
+// $THEME->filter_mediaplugin_colors
+
+////////////////////////////////////////////////////
+// Used to control the colours used in the small 
+// media player for the filters
+////////////////////////////////////////////////////
+
+// $THEME->javascripts	
+
+////////////////////////////////////////////////////
+// An array containing the names of JavaScript files
+// located in /javascript/ to include in the theme. 
+// (gets included in the head)
+////////////////////////////////////////////////////
+
+// $THEME->javascripts_footer	
+
+////////////////////////////////////////////////////
+// As above but will be included in the page footer.
+////////////////////////////////////////////////////
+
+// $THEME->larrow	
+
+////////////////////////////////////////////////////
+// Overrides the left arrow image used throughout 
+// Moodle
+////////////////////////////////////////////////////
+
+// $THEME->rarrow	
+
+////////////////////////////////////////////////////
+// Overrides the right arrow image used throughout Moodle
+////////////////////////////////////////////////////
+
+// $THEME->layouts	
+
+////////////////////////////////////////////////////
+// An array setting the layouts for the theme
+////////////////////////////////////////////////////
+
+// $THEME->parents_exclude_javascripts
+
+////////////////////////////////////////////////////
+// An array of JavaScript files NOT to inherit from
+// the themes parents
+////////////////////////////////////////////////////
+
+// $THEME->parents_exclude_sheets	
+
+////////////////////////////////////////////////////
+// An array of stylesheets not to inherit from the
+// themes parents
+////////////////////////////////////////////////////
+
+// $THEME->plugins_exclude_sheets
+
+////////////////////////////////////////////////////
+// An array of plugin sheets to ignore and not 
+// include.
+////////////////////////////////////////////////////
+
+// $THEME->renderfactory
+
+////////////////////////////////////////////////////
+// Sets a custom render factory to use with the 
+// theme, used when working with custom renderers.
+////////////////////////////////////////////////////
+
+// $THEME->resource_mp3player_colors
+
+////////////////////////////////////////////////////
+// Controls the colours for the MP3 player 	
+////////////////////////////////////////////////////
