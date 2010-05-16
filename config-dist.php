@@ -371,6 +371,9 @@ $CFG->admin = 'admin';
 // Prevent theme caching
 // $CFG->themerev = -1; // NOT FOR PRODUCTION SERVERS!
 //
+// Prevent core_string_manager on-disk cache
+// $CFG->disablelangdiskcache = true; // NOT FOR PRODUCTION SERVERS!
+//
 // When working with production data on test servers, no emails should ever be send to real users
 // $CFG->noemailever = true;    // NOT FOR PRODUCTION SERVERS!
 //
