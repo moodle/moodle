@@ -79,6 +79,7 @@ if($id and $item = $DB->get_record('feedback_item', array('id'=>$id))) {
         print_error('typemissing', 'feedback', $editurl->out(false));
     }
     $item->typ = $typ;
+    $item->options = '';
 }
 
 require_once($CFG->dirroot.'/mod/feedback/item/'.$typ.'/lib.php');
