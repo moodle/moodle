@@ -43,6 +43,10 @@
 .calendar_event_user {border-color: #DCE7EC; background-color:#DCE7EC;}
 .calendar_event_group {border-color: #FEE7AE; background-color:#FEE7AE;}
 
+/** Calendar Upcoming **/
+
+.block_calendar_upcoming .event .date {text-align:right;}
+
 /** Login Block **/
 .block_login .loginform .c1 {margin:0.3em 0.8em;text-align:right;}
 .block_login .loginform .c1.fld input {width:5em;}

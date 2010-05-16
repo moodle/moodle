@@ -182,13 +182,12 @@
 .maincalendar .calendar-controls .previous,
 .maincalendar .calendar-controls .current,
 .maincalendar .calendar-controls .next {
-	width: 5%;
 	float: left;
 }
 
 .maincalendar .calendar-controls .current {
 	margin: 0 auto;
-	font-size: 1.5em;
+	font-size: 1.35em;
 	text-align: center;
 	line-height: 1;
 	font-weight: bold;
@@ -306,8 +305,34 @@
 	border: none;
 }
 
-.userinfobox .content {
+.path-user .profilepicture {
+	float: left;
+	margin-right: 10px;
+}
+
+.path-user .descriptionbox {
+    margin-left: 110px;
 	border: 1px solid #ddd;
+	padding: 10px;
+}
+
+.path-user .description {
+    padding-bottom: 15px;
+    border-bottom: 1px solid #eee;
+}
+
+.userprofile .list {
+    margin-top: 10px;
+}
+
+.userprofile .list td {
+    padding-top: 3px;
+    padding-bottom: 3px;
+}
+
+.userprofile .list .c0 {
+    padding-left: 0;
+    font-weight: bold;
 }
 
 #page-user-view .buttons {

@@ -78,7 +78,7 @@ class block_news_items extends block_base {
                 $discussion->subject = format_string($discussion->subject, true, $forum->course);
 
                 $text .= '<li class="post">'.
-                         '<div class="head">'.
+                         '<div class="head clearfix">'.
                          '<div class="date">'.userdate($discussion->modified, $strftimerecent).'</div>'.
                          '<div class="name">'.fullname($discussion).'</div></div>'.
                          '<div class="info">'.$discussion->subject.' '.

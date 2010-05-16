@@ -200,11 +200,11 @@ if (is_mnet_remote_user($user)) {
     }
 }
 
-echo '<div class="profilepicture">';
+echo '<div class="userprofilebox clearfix"><div class="profilepicture">';
 echo $OUTPUT->user_picture($user, array('size'=>100));
 echo '</div>';
 
-echo '<div class="description">';
+echo '<div class="descriptionbox"><div class="description">';
 // Print the description
 
 if ($user->description && !isset($hiddenfields['description'])) {
@@ -367,7 +367,7 @@ if (!empty($CFG->usetags)) {
     }
 }
 
-echo "</table>";
+echo "</table></div></div>";
 
 
 echo $OUTPUT->blocks_for_region('content');

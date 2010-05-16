@@ -1,4 +1,15 @@
-.block_action .reloadnavigation { margin-right: 3px }
+.block {padding: 0}
+.block .footer {margin-top: 10px;margin-bottom: 0;text-align: center;}
 
-.block_calendar_month .minicalendar th,
-.block_calendar_month .minicalendar td { border-color: #ddd; border-style: dotted;border-width: 1px; }
+.block_action .reloadnavigation { margin-right: 3px; }
+
+.block_news_items .newlink {text-align: center;margin-bottom: 5px;}
+.block_news_items .post .head { font-style: italic;font-size: 0.9em;margin-top: 10px;}
+.block_news_items .post .date {float: right;text-align: right;}
+.block_news_items .post .name {float: left;color: #555;}
+
+.block_calendar_upcoming .event { font-weight: bold;}
+.block_calendar_upcoming .date {font-weight: normal;font-size: 0.85em;font-style: italic;margin-left: 20px;}
+
+.block_recent_activity .activitydate {font-size: 0.9em;color: #444;margin-bottom: 5px;}
+.block_recent_activity .activityhead {font-size: 0.95em;margin: 0.5em 0;}

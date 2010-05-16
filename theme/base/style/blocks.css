@@ -20,7 +20,6 @@
 .block .blockannotation {font-size:0.75em;margin: -1em 0 1em;}
 .block.beingmoved {border-width: 2px;border-style: dashed;}
 .block .content ul.list li.listentry {clear:both;}
-.block .content div.info {text-align:center;}
 
 /** List block contents **/
 .block .list .c0 {display:inline;}
