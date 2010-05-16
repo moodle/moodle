@@ -293,12 +293,12 @@
         if ($scorm->popup == 0) {
             $fullurl="loadSCO.php?id=".$cm->id.$scoidstr.$modestr;
             ?>
-            <!--[if IE]-->
+            <!--[if IE]>
                 <iframe id="scoframe1" class="scoframe" name="scoframe1" src="<?php echo $fullurl; ?>"></iframe>
-            <!--[endif]-->
-            <!--[if !IE]-->
+            <![endif]-->
+            <!--[if !IE]>
                 <object id="scoframe1" class="scoframe" type="text/html" data="<?php echo $fullurl; ?>"></object>
-            <!--[endif]-->
+            <![endif]-->
 <?php
             $PAGE->requires->js_function_call('scorm_resize');
         } else {
@@ -314,12 +314,12 @@
             echo html_writer::script(js_writer::function_call('scorm_openpopup', Array("loadSCO.php?id=".$cm->id.$scoidpop, $name, $scorm->options, $scorm->width, $scorm->height)));
             ?>
             <noscript>
-            <!--[if IE]-->
+            <!--[if IE]>
                 <iframe id="main" class="scoframe" name="main" src="loadSCO.php?id=<?php echo $cm->id.$scoidstr.$modestr; ?>"></iframe>
-            <!--[endif]-->
-            <!--[if !IE]-->
+            <![endif]-->
+            <!--[if !IE]>
                 <object id="main" class="scoframe" type="text/html" data="loadSCO.php?id=<?php echo $cm->id.$scoidstr.$modestr; ?>"></object>
-            <!--[endif]-->
+            <![endif]-->
             </noscript>
 <?php
             //Added incase javascript popups are blocked
