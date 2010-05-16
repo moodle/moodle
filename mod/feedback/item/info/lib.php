@@ -33,9 +33,12 @@ class feedback_item_info extends feedback_item_base {
         $item->presentation = empty($item->presentation) ? 1 : $item->presentation;
         $item->required = 0;
 
+        //all items for dependitem
+        $feedbackitems = feedback_get_depend_candidates_for_item($feedback, $item);
         $commonparams = array('cmid'=>$cm->id,
                              'id'=>isset($item->id) ? $item->id : NULL,
                              'typ'=>$item->typ,
+                             'items'=>$feedbackitems,
                              'feedback'=>$feedback->id);
 
         //build the form
@@ -186,6 +189,11 @@ class feedback_item_info extends feedback_item_base {
         echo '<div class="feedback_item_label_'.$align.'">';
         echo '('.$item->label.') ';
         echo format_text($item->name.$requiredmark, true, false, false);
+        if($item->dependitem) {
+            if($dependitem = $DB->get_record('feedback_item', array('id'=>$item->dependitem))) {
+                echo ' <span class="feedback_depend">('.$dependitem->label.'-&gt;'.$item->dependvalue.')</span>';
+            }
+        }
         echo '</div>';
         //print the presentation
         echo '<div class="feedback_item_presentation_'.$align.'">';
@@ -281,6 +289,16 @@ class feedback_item_info extends feedback_item_base {
         return $data;
     }
 
+    //compares the dbvalue with the dependvalue
+    //the values can be the shortname of a course or the category name
+    //the date is not compareable :(.
+    function compare_value($item, $dbvalue, $dependvalue) {
+        if($dbvalue == $dependvalue) {
+            return true;
+        }
+        return false;
+    }
+    
     function get_presentation($data) {
         return $data->infotype;
     }

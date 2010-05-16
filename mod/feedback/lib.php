@@ -870,7 +870,12 @@ function feedback_save_as_template($feedback, $name, $ispublic = 0) {
     $f_context = get_context_instance(CONTEXT_MODULE, $cm->id);
     
     //create items of this new template
+    //depend items we are storing temporary in an mapping list array(new id => dependitem)
+    //we also store a mapping of all items array(oldid => newid)
+    $dependitemsmap = array();
+    $itembackup = array();
     foreach($feedbackitems as $item) {
+        
         $t_item = clone($item);
         
         unset($t_item->id);
@@ -887,7 +892,21 @@ function feedback_save_as_template($feedback, $name, $ispublic = 0) {
                 $fs->create_file_from_storedfile($file_record, $ifile);
             }
         }
+        
+        $itembackup[$item->id] = $t_item->id;
+        if($t_item->dependitem) {
+            $dependitemsmap[$t_item->id] = $t_item->dependitem;
+        }
+        
     }
+    
+    //remapping the dependency
+    foreach($dependitemsmap as $key => $dependitem) {
+        $newitem = $DB->get_record('feedback_item', array('id'=>$key));
+        $newitem->dependitem = $itembackup[$newitem->dependitem];
+        $DB->update_record('feedback_item', $newitem);
+    }
+    
     return true;
 }
 
@@ -963,6 +982,11 @@ function feedback_items_from_template($feedback, $templateid, $deleteold = false
         $positionoffset = $DB->count_records('feedback_item', array('feedback'=>$feedback->id));
     }
 
+    //create items of this new template
+    //depend items we are storing temporary in an mapping list array(new id => dependitem)
+    //we also store a mapping of all items array(oldid => newid)
+    $dependitemsmap = array();
+    $itembackup = array();
     foreach($templitems as $t_item) {
         $item = clone($t_item);
         unset($item->id);
@@ -982,7 +1006,19 @@ function feedback_items_from_template($feedback, $templateid, $deleteold = false
                 $fs->create_file_from_storedfile($file_record, $tfile);
             }
         }
+        
+        $itembackup[$t_item->id] = $item->id;
+        if($item->dependitem) {
+            $dependitemsmap[$item->id] = $item->dependitem;
+        }
     }
+    
+    //remapping the dependency
+    foreach($dependitemsmap as $key => $dependitem) {
+        $newitem = $DB->get_record('feedback_item', array('id'=>$key));
+        $newitem->dependitem = $itembackup[$newitem->dependitem];
+        $DB->update_record('feedback_item', $newitem);
+    }    
 }
 
 /**
@@ -1054,6 +1090,26 @@ function feedback_load_feedback_items_options() {
     asort($feedback_options);
     $feedback_options = array_merge( array(' ' => get_string('select')), $feedback_options );
     return $feedback_options;
+}
+
+function feedback_get_depend_candidates_for_item($feedback, $item) {
+    global $DB;
+    //all items for dependitem
+    $where = "feedback = ? AND typ != 'pagebreak' AND hasvalue = 1";
+    $params = array($feedback->id);
+    if(isset($item->id) AND $item->id) {
+        $where .= ' AND id != ?';
+        $params[] = $item->id;
+    }
+    $dependitems = array(0 => get_string('choose'));
+    if(!$feedbackitems = $DB->get_records_select_menu('feedback_item', $where, $params, 'position', 'id, label')) {
+        return $dependitems;
+    }
+    //adding the choose-option
+    foreach($feedbackitems as $key=>$val) {
+        $dependitems[$key] = $val;
+    }
+    return $dependitems;
 }
 
 /**
@@ -1150,6 +1206,11 @@ function feedback_delete_item($itemid, $renumber = true){
     
     $DB->delete_records("feedback_value", array("item"=>$itemid));
     $DB->delete_records("feedback_valuetmp", array("item"=>$itemid));
+    
+    //remove all depends
+    $DB->set_field('feedback_item', 'dependvalue', '', array('dependitem'=>$itemid));
+    $DB->set_field('feedback_item', 'dependitem', 0, array('dependitem'=>$itemid));
+    
     $DB->delete_records("feedback_item", array("id"=>$itemid));
     if($renumber) {
         feedback_renumber_items($item->feedback);
@@ -1435,54 +1496,44 @@ function feedback_save_tmp_values($feedbackcompletedtmp, $feedbackcompleted, $us
     global $DB;
 
     $tmpcplid = $feedbackcompletedtmp->id;
-    if(!$feedbackcompleted) {
-
-        //first we create a completedtmp
-        $newcpl = new object();
-        foreach($feedbackcompletedtmp as $key => $value) {
-            $newcpl->{$key} = $value;
-        }
-
-        unset($newcpl->id);
-        $newcpl->userid = $userid;
-        $newcpl->timemodified = time();
-        $newcpl->id = $DB->insert_record('feedback_completed', $newcpl);
-        //get all values of tmp-completed
-        if(!$values = $DB->get_records('feedback_valuetmp', array('completed'=>$feedbackcompletedtmp->id))) {
-            return false;
-        }
-
-        foreach($values as $value) {
-            unset($value->id);
-            $value->completed = $newcpl->id;
-            $DB->insert_record('feedback_value', $value);
-        }
-        //drop all the tmpvalues
-        $DB->delete_records('feedback_valuetmp', array('completed'=>$tmpcplid));
-        $DB->delete_records('feedback_completedtmp', array('id'=>$tmpcplid));
-        return $newcpl->id;
-
-    } else {
+    if($feedbackcompleted) {
         //first drop all existing values
         $DB->delete_records('feedback_value', array('completed'=>$feedbackcompleted->id));
         //update the current completed
         $feedbackcompleted->timemodified = time();
         $DB->update_record('feedback_completed', $feedbackcompleted);
-        //save all the new values from feedback_valuetmp
-        //get all values of tmp-completed
-        if(!$values = $DB->get_records('feedback_valuetmp', array('completed'=>$feedbackcompletedtmp->id))) {
-            return false;
+    }else {
+        $feedbackcompleted = clone($feedbackcompletedtmp);
+        $feedbackcompleted->id = '';
+        $feedbackcompleted->userid = $userid;
+        $feedbackcompleted->timemodified = time();
+        $feedbackcompleted->id = $DB->insert_record('feedback_completed', $feedbackcompleted);
+    }
+
+    //save all the new values from feedback_valuetmp
+    //get all values of tmp-completed
+    if(!$values = $DB->get_records('feedback_valuetmp', array('completed'=>$feedbackcompletedtmp->id))) {
+        return false;
+    }
+    foreach($values as $value) {
+        //check if there are depend items
+        $item = $DB->get_record('feedback_item', array('id'=>$value->item));
+        if($item->dependitem > 0) {
+            $check = feedback_compare_item_value($tmpcplid, $item->dependitem, $item->dependvalue, true);
+        }else {
+            $check = true;
         }
-        foreach($values as $value) {
+        if($check) {
             unset($value->id);
             $value->completed = $feedbackcompleted->id;
             $DB->insert_record('feedback_value', $value);
         }
-        //drop all the tmpvalues
-        $DB->delete_records('feedback_valuetmp', array('completed'=>$tmpcplid));
-        $DB->delete_records('feedback_completedtmp', array('id'=>$tmpcplid));
-        return $feedbackcompleted->id;
     }
+    //drop all the tmpvalues
+    $DB->delete_records('feedback_valuetmp', array('completed'=>$tmpcplid));
+    $DB->delete_records('feedback_completedtmp', array('id'=>$tmpcplid));
+    return $feedbackcompleted->id;
+
 }
 
 /**
@@ -1561,7 +1612,9 @@ function feedback_get_all_break_positions($feedbackid) {
  * @return int the position of the last pagebreak
  */
 function feedback_get_last_break_position($feedbackid) {
-    if(!$allbreaks = feedback_get_all_break_positions($feedbackid)) return false;
+    if(!$allbreaks = feedback_get_all_break_positions($feedbackid)) {
+        return false;
+    }
     return $allbreaks[count($allbreaks) - 1];
 }
 
@@ -1693,6 +1746,22 @@ function feedback_get_item_value($completedid, $itemid, $tmp = false) {
 
     $tmpstr = $tmp ? 'tmp' : '';
     return $DB->get_field('feedback_value'.$tmpstr, 'value', array('completed'=>$completedid, 'item'=>$itemid));
+}
+
+function feedback_compare_item_value($completedid, $itemid, $dependvalue, $tmp = false) {
+    global $DB, $CFG;
+    
+    $dbvalue = feedback_get_item_value($completedid, $itemid, $tmp);
+    
+    //get the class of the given item-typ
+    $item = $DB->get_record('feedback_item', array('id'=>$itemid));
+    $itemclass = 'feedback_item_'.$item->typ;
+    if (!class_exists($itemclass)) {
+        require_once($CFG->dirroot.'/mod/feedback/item/'.$item->typ.'/lib.php');
+    }
+    //get the instance of the item-class
+    $itemobj = new $itemclass();
+    return $itemobj->compare_value($item, $dbvalue, $dependvalue); //true or false
 }
 
 /**

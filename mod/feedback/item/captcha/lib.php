@@ -33,9 +33,12 @@ class feedback_item_captcha extends feedback_item_base {
         $item->presentation = empty($item->presentation) ? 3 : $item->presentation;
         $item->required = 1;
 
+        //all items for dependitem
+        $feedbackitems = feedback_get_depend_candidates_for_item($feedback, $item);
         $commonparams = array('cmid'=>$cm->id,
                              'id'=>isset($item->id) ? $item->id : NULL,
                              'typ'=>$item->typ,
+                             'items'=>$feedbackitems,
                              'feedback'=>$feedback->id);
 
         //build the form
@@ -129,6 +132,11 @@ class feedback_item_captcha extends feedback_item_base {
         echo '<div class="feedback_item_label_'.$align.'">';
         echo '('.$item->label.') ';
         echo format_text($item->name.$requiredmark, true, false, false);
+        if($item->dependitem) {
+            if($dependitem = $DB->get_record('feedback_item', array('id'=>$item->dependitem))) {
+                echo ' <span class="feedback_depend">('.$dependitem->label.'-&gt;'.$item->dependvalue.')</span>';
+            }
+        }
         echo '</div>';
         
         //print the presentation
@@ -269,6 +277,16 @@ class feedback_item_captcha extends feedback_item_base {
         return $data;
     }
 
+    //compares the dbvalue with the dependvalue
+    //dbvalue is value stored in the db
+    //dependvalue is the value to check
+    function compare_value($item, $dbvalue, $dependvalue) {
+        if($dbvalue == $dependvalue) {
+            return true;
+        }
+        return false;
+    }
+    
     function get_presentation($data) {
         return $data->count_of_nums;
     }

@@ -47,9 +47,12 @@ class feedback_item_numeric extends feedback_item_base {
         $item->rangefrom = $range_from;
         $item->rangeto = $range_to;
 
+        //all items for dependitem
+        $feedbackitems = feedback_get_depend_candidates_for_item($feedback, $item);
         $commonparams = array('cmid'=>$cm->id,
                              'id'=>isset($item->id) ? $item->id : NULL,
                              'typ'=>$item->typ,
+                             'items'=>$feedbackitems,
                              'feedback'=>$feedback->id);
 
         //build the form
@@ -184,7 +187,8 @@ class feedback_item_numeric extends feedback_item_base {
      * @return void
      */
     function print_item_preview($item) {
-        global $OUTPUT;
+        global $OUTPUT, $DB;
+        
         $align = right_to_left() ? 'right' : 'left';
 
         //get the range
@@ -198,6 +202,11 @@ class feedback_item_numeric extends feedback_item_base {
         echo '<div class="feedback_item_label_'.$align.'">';
             echo '('.$item->label.') ';
             echo format_text($item->name . $requiredmark, true, false, false);
+            if($item->dependitem) {
+                if($dependitem = $DB->get_record('feedback_item', array('id'=>$item->dependitem))) {
+                    echo ' <span class="feedback_depend">('.$dependitem->label.'-&gt;'.$item->dependvalue.')</span>';
+                }
+            }
             echo '<span class="feedback_item_numinfo">';
             switch(true) {
                 case ($range_from === '-' AND is_numeric($range_to)):
@@ -363,6 +372,16 @@ class feedback_item_numeric extends feedback_item_base {
         return $data;
     }
 
+    //compares the dbvalue with the dependvalue
+    //dbvalue is the number put in by the user
+    //dependvalue is the value that is compared
+    function compare_value($item, $dbvalue, $dependvalue) {
+        if($dbvalue == $dependvalue) {
+            return true;
+        }
+        return false;
+    }
+    
     function get_presentation($data) {
         $num1 = str_replace($this->sep_dec, FEEDBACK_DECIMAL, $data->numericrangefrom);
         if(is_numeric($num1)) {

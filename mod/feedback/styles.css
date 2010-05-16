@@ -16,6 +16,18 @@ span.feedback_info {
 div.feedback_item_box_left, div.feedback_item_box_right {
 }
 
+div.feedback_depend {
+	background:#DDDDDD;
+}
+
+div.feedback_complete_depend {
+	background:#EEEEEE;
+}
+
+span.feedback_depend {
+	color:#ff0000;
+}
+
 div.feedback_item_number_left, div.feedback_item_left {
 	float:left;
 }

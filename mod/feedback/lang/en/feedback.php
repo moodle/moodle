@@ -62,6 +62,28 @@ $string['delete_item'] = 'Delete question';
 $string['delete_old_items'] = 'Delete old items';
 $string['delete_template'] = 'Delete template';
 $string['delete_templates'] = 'Delete template...';
+$string['depending'] = 'depending items';
+$string['depending_help'] = 'Depending items allow you to show items depend on values from other items.<br />
+<strong>Here an build expample to use it:</strong><br />
+<ul>
+<li>First create an item on which value other items depends.</li>
+<li>Next add a pagebreak.</li>
+<li>Next add the items depend on the item-value before<br />
+Choose in the item creation-form the item in the list "depend item" and put the needed value into the textbox "depend value".</li>
+</ul>
+<strong>The structure should looks like this:</strong>
+<ol>
+<li>Item Q: do you have a car? A: yes/no</li>
+<li>Pagebreak</li>
+<li>Item Q: what color has your car?<br />
+(this item depends on item 1 with value = yes)</li>
+<li>Item Q: why you have not a car?<br />
+(this item depends on item 1 with value = no)</li>
+<li> ... other items</li>
+</ol>
+That is all. Have fun!';
+$string['dependitem'] = 'depend item';
+$string['dependvalue'] = 'depend value';
 $string['description'] = 'Description';
 $string['do_not_analyse_empty_submits'] = 'Do not analyse empty submits';
 $string['dropdown'] = 'Multiple choice - single answer allowed (dropdownlist)';

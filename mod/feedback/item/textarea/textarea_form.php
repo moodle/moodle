@@ -33,6 +33,22 @@ class feedback_textarea_form extends feedback_item_form {
         ////////////////////////////////////////////////////////////////////////
         //the following is used in all itemforms
         ////////////////////////////////////////////////////////////////////////
+        //itemdepending
+        if($common['items']) {
+            $mform->addElement('select',
+                                'dependitem',
+                                get_string('dependitem', 'feedback').'&nbsp;',
+                                $common['items']
+                                );
+            $mform->addHelpButton('dependitem', 'depending', 'feedback');
+            $mform->addElement('text', 'dependvalue', get_string('dependvalue', 'feedback'), array('size="'.FEEDBACK_ITEM_LABEL_TEXTBOX_SIZE.'"','maxlength="255"'));
+        }else {
+            $mform->addElement('hidden', 'dependitem', 0);
+            $mform->setType('dependitem', PARAM_INT);
+            $mform->addElement('hidden', 'dependvalue', '');
+            $mform->setType('dependitem', PARAM_ALPHA);
+        }
+
         $position_select = $mform->addElement('select',
                                             'position',
                                             get_string('position', 'feedback').'&nbsp;',
@@ -52,11 +68,8 @@ class feedback_textarea_form extends feedback_item_form {
         $mform->addElement('hidden', 'template', 0);
         $mform->setType('template', PARAM_INT);
         
-        $mform->addElement('hidden', 'name', 'label');
-        $mform->setType('template', PARAM_ALPHA);
-        
-        $mform->addElement('hidden', 'label', '-');
-        $mform->setType('label', PARAM_ALPHA);
+        $mform->setType('name', PARAM_RAW);
+        $mform->setType('label', PARAM_ALPHANUM);
         
         $mform->addElement('hidden', 'typ', $this->type);
         $mform->setType('typ', PARAM_ALPHA);

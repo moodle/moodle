@@ -253,7 +253,12 @@ if($do_show == 'edit') {
                 if(isset($SESSION->feedback->moving) AND $SESSION->feedback->moving->movingitem == $feedbackitem->id){ //hiding the item to move
                     continue;
                 }
-                echo $OUTPUT->box_start('feedback_item_box_'.$align);
+                if($feedbackitem->dependitem > 0) {
+                    $dependstyle = ' feedback_depend';
+                }else {
+                    $dependstyle = '';
+                }
+                echo $OUTPUT->box_start('feedback_item_box_'.$align.$dependstyle);
                     //items without value only are labels
                     if($feedbackitem->hasvalue == 1 AND $feedback->autonumbering) {
                         $itemnr++;

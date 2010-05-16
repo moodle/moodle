@@ -47,9 +47,12 @@ class feedback_item_multichoicerated extends feedback_item_base {
         $item->ignoreempty = $this->ignoreempty($item);
         $item->hidenoselect = $this->hidenoselect($item);
 
+        //all items for dependitem
+        $feedbackitems = feedback_get_depend_candidates_for_item($feedback, $item);
         $commonparams = array('cmid'=>$cm->id,
                              'id'=>isset($item->id) ? $item->id : NULL,
                              'typ'=>$item->typ,
+                             'items'=>$feedbackitems,
                              'feedback'=>$feedback->id);
 
         //build the form
@@ -238,7 +241,8 @@ class feedback_item_multichoicerated extends feedback_item_base {
      * @return void
      */
     function print_item_preview($item) {
-        global $OUTPUT;
+        global $OUTPUT, $DB;
+        
         $align = right_to_left() ? 'right' : 'left';
         $info = $this->get_info($item);
 
@@ -248,6 +252,11 @@ class feedback_item_multichoicerated extends feedback_item_base {
         echo '<div class="feedback_item_label_'.$align.'">';
         echo '('.$item->label.') ';
         echo format_text($item->name.$requiredmark, true, false, false);
+        if($item->dependitem) {
+            if($dependitem = $DB->get_record('feedback_item', array('id'=>$item->dependitem))) {
+                echo ' <span class="feedback_depend">('.$dependitem->label.'-&gt;'.$item->dependvalue.')</span>';
+            }
+        }
         echo '</div>';
         
         //print the presentation
@@ -352,6 +361,32 @@ class feedback_item_multichoicerated extends feedback_item_base {
         return $data;
     }
 
+    //compares the dbvalue with the dependvalue
+    //dbvalue is the number of one selection
+    //dependvalue is the presentation of one selection
+    function compare_value($item, $dbvalue, $dependvalue) {
+
+        if (is_array($dbvalue)) {
+            $dbvalues = $dbvalue;
+        }else {
+            $dbvalues = explode(FEEDBACK_MULTICHOICERATED_LINE_SEP, $dbvalue);
+        }
+        
+        $info = $this->get_info($item);
+        $presentation = explode (FEEDBACK_MULTICHOICERATED_LINE_SEP, $info->presentation);
+        $index = 1;
+        foreach($presentation as $pres) {
+            $presvalues = explode(FEEDBACK_MULTICHOICERATED_VALUE_SEP, $pres);
+
+            foreach($dbvalues as $dbval) {
+                if($dbval == $index AND trim($presvalues[1]) == $dependvalue) {
+                    return true;
+                }
+            }
+            $index++;
+        }
+        return false;
+    }
     function get_presentation($data) {
         // $present = str_replace("\n", FEEDBACK_MULTICHOICERATED_LINE_SEP, trim($data->itemvalues));
         $present = $this->prepare_presentation_values_save(trim($data->itemvalues), FEEDBACK_MULTICHOICERATED_VALUE_SEP2, FEEDBACK_MULTICHOICERATED_VALUE_SEP);

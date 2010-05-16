@@ -301,6 +301,26 @@ function xmldb_feedback_upgrade($oldversion) {
         upgrade_mod_savepoint($result, 2010051101, 'feedback');
     }
 
+    if ($result && $oldversion < 2010051600) {
+        /// Define field options to be added to feedback_item
+        $table = new xmldb_table('feedback_item');
+        $field = new xmldb_field('dependitem', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'required');
+        /// Launch add field
+        $dbman->add_field($table, $field);
+
+        upgrade_mod_savepoint($result, 2010051600, 'feedback');
+    }
+
+    if ($result && $oldversion < 2010051601) {
+        /// Define field options to be added to feedback_item
+        $table = new xmldb_table('feedback_item');
+        $field = new xmldb_field('dependvalue', XMLDB_TYPE_CHAR, '255', null, null, false, '', 'dependitem');
+        /// Launch add field
+        $dbman->add_field($table, $field);
+
+        upgrade_mod_savepoint($result, 2010051601, 'feedback');
+    }
+
     return $result;
 }
 

@@ -163,6 +163,10 @@
             $position = $DB->count_records('feedback_item', array('feedback'=>$feedbackid));
         }
 
+        //depend items we are storing temporary in an mapping list array(new id => dependitem)
+        //we also store a mapping of all items array(oldid => newid)
+        $dependitemsmap = array();
+        $itembackup = array();
         foreach($data as $item) {
             $position++;
             //check the typ
@@ -228,7 +232,19 @@
                     $newitem->presentation = 'd>>>>>'.$newitem->presentation;
                     break;
             }
-
+            
+            if(isset($item['#']['DEPENDITEM'][0]['#'])) {
+                $newitem->dependitem = intval($item['#']['DEPENDITEM'][0]['#']);
+            }else {
+                $newitem->dependitem = 0;
+            }
+            if(isset($item['#']['DEPENDVALUE'][0]['#'])) {
+                $newitem->dependvalue = trim($item['#']['DEPENDVALUE'][0]['#']);
+            }else {
+                $newitem->dependvalue = '';
+            }
+            $olditemid = intval($item['#']['ITEMID'][0]['#']);
+            
             if($typ != 'pagebreak') {
                 $newitem->hasvalue = $itemobj->get_hasvalue();
             }else {
@@ -236,8 +252,21 @@
             }
             $newitem->required = intval($item['@']['REQUIRED']);
             $newitem->position = $position;
-            $DB->insert_record('feedback_item', $newitem);
+            $newid = $DB->insert_record('feedback_item', $newitem);
+            
+            $itembackup[$olditemid] = $newid;
+            if($newitem->dependitem) {
+                $dependitemsmap[$newid] = $newitem->dependitem;
+            }
+
         }
+        //remapping the dependency
+        foreach($dependitemsmap as $key => $dependitem) {
+            $newitem = $DB->get_record('feedback_item', array('id'=>$key));
+            $newitem->dependitem = $itembackup[$newitem->dependitem];
+            $DB->update_record('feedback_item', $newitem);
+        }    
+        
         return $error;
     }
 

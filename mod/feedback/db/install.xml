@@ -55,8 +55,10 @@
         <FIELD NAME="typ" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="presentation" NEXT="hasvalue"/>
         <FIELD NAME="hasvalue" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="typ" NEXT="position"/>
         <FIELD NAME="position" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="hasvalue" NEXT="required"/>
-        <FIELD NAME="required" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="position" NEXT="options"/>
-        <FIELD NAME="options" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="required"/>
+        <FIELD NAME="required" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="position" NEXT="dependitem"/>
+        <FIELD NAME="dependitem" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="required" NEXT="dependvalue"/>
+        <FIELD NAME="dependvalue" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="dependitem" NEXT="options"/>
+        <FIELD NAME="options" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="dependvalue"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for feedback_item" NEXT="feedback"/>

@@ -34,9 +34,12 @@ class feedback_item_label extends feedback_item_base {
         //the elements for position dropdownlist
         $positionlist = array_slice(range(0,$i_formselect_last),1,$i_formselect_last,true);
 
+        //all items for dependitem
+        $feedbackitems = feedback_get_depend_candidates_for_item($feedback, $item);
         $commonparams = array('cmid'=>$cm->id,
                              'id'=>isset($item->id) ? $item->id : NULL,
                              'typ'=>$item->typ,
+                             'items'=>$feedbackitems,
                              'feedback'=>$feedback->id);
 
         $this->context = get_context_instance(CONTEXT_MODULE, $cm->id);
@@ -128,6 +131,13 @@ class feedback_item_label extends feedback_item_base {
      * @return void
      */
     function print_item_preview($item) {
+        global $OUTPUT, $DB;
+        
+        if($item->dependitem) {
+            if($dependitem = $DB->get_record('feedback_item', array('id'=>$item->dependitem))) {
+                echo ' <span class="feedback_depend">('.$dependitem->label.'-&gt;'.$item->dependvalue.')</span>';
+            }
+        }
         $this->print_item($item);
     }
     
@@ -160,6 +170,10 @@ class feedback_item_label extends feedback_item_base {
         return false;
     }
 
+    function compare_value($item, $dbvalue, $dependvalue) {
+        return false;
+    }
+    
     //used by create_item and update_item functions,
     //when provided $data submitted from feedback_show_edit
     function get_presentation($data) {
