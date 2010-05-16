@@ -241,11 +241,11 @@ class auth_plugin_db extends auth_plugin_base {
             if (count($userlist)) {
                 $sql = "SELECT u.id, u.username, u.email, u.auth
                         FROM {user} u
-                        WHERE u.auth='db' AND u.deleted=0 AND u.username NOT IN ($quoteduserlist)";
+                        WHERE u.auth='{$this->authtype}' AND u.deleted=0 AND u.username NOT IN ($quoteduserlist)";
             } else {
                 $sql = "SELECT u.id, u.username, u.email, u.auth
                         FROM {user} u
-                        WHERE u.auth='db' AND u.deleted=0";
+                        WHERE u.auth='{$this->authtype}' AND u.deleted=0";
             }
             $remove_users = $DB->get_records_sql($sql);
 
@@ -302,7 +302,7 @@ class auth_plugin_db extends auth_plugin_base {
             if (!empty($updatekeys)) {
                 $sql = 'SELECT u.id, u.username
                         FROM {user} u
-                        WHERE u.auth=\'db\' AND u.deleted=\'0\' AND u.username IN (' . $quoteduserlist . ')';
+                        WHERE u.auth=\'' . $this->authtype . '\' AND u.deleted=\'0\' AND u.username IN (' . $quoteduserlist . ')';
                 if ($update_users = $DB->get_records_sql($sql)) {
                     print "User entries to update: ". count($update_users). "\n";
 
@@ -326,7 +326,7 @@ class auth_plugin_db extends auth_plugin_base {
         // and generally inefficient
         $sql = 'SELECT u.id, u.username
                 FROM {user} u
-                WHERE u.auth=\'db\' AND u.deleted=\'0\'';
+                WHERE u.auth=\'' . $this->authtype . '\' AND u.deleted=\'0\'';
 
         $users = $DB->get_records_sql($sql);
 
@@ -353,7 +353,7 @@ class auth_plugin_db extends auth_plugin_base {
                 $user->username   = $username;
                 $user->modified   = time();
                 $user->confirmed  = 1;
-                $user->auth       = 'db';
+                $user->auth       = $this->authtype;
                 $user->mnethostid = $CFG->mnet_localhost_id;
                 if (empty($user->lang)) {
                     $user->lang = $CFG->lang;
@@ -514,7 +514,7 @@ class auth_plugin_db extends auth_plugin_base {
             return false;
         }
 
-        if (isset($olduser->auth) and $olduser->auth != 'db') {
+        if (isset($olduser->auth) and $olduser->auth != $this->authtype) {
             return true; // just change auth and skip update
         }
 
