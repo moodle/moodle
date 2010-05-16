@@ -5848,8 +5848,6 @@ interface string_manager {
 /**
  * Standard string_manager implementation
  *
- * TODO: implement lang precompilation
- *
  * @package    moodlecore
  * @copyright  2010 Petr Skoda (http://skodak.org)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -5859,19 +5857,28 @@ class core_string_manager implements string_manager {
     protected $otherroot;
     /** @var string location of all lang pack local modifications */
     protected $localroot;
-
+    /** @var string location of on-disk cache of merged strings */
+    protected $cacheroot;
     /** @var array lang string cache - it will be optimised more later */
     protected $cache = array();
-
+    /** @var int get_string() counter */
+    protected $countgetstring = 0;
+    /** @var int in-memory cache hits counter */
+    protected $countmemcache = 0;
+    /** @var int on-disk cache hits counter */
+    protected $countdiskcache = 0;
     /**
-     * Crate new instance of amos string manager
+     * Crate new instance of string manager
      *
      * @param string $otherroot location of downlaoded lang packs - usually $CFG->dataroot/lang
      * @param string $localroot usually the same as $otherroot
      */
     public function __construct($otherroot, $localroot) {
+        global $CFG;
+
         $this->otherroot  = $otherroot;
         $this->localroot  = $localroot;
+        $this->cacheroot  = "$CFG->dataroot/cache/lang";
     }
 
     /**
@@ -5908,15 +5915,26 @@ class core_string_manager implements string_manager {
         global $CFG;
 
         list($plugintype, $pluginname) = normalize_component($component);
-
-        if (!isset($this->cache[$lang])) {
-            $this->cache[$lang] = array();
+        if ($plugintype == 'core' and is_null($pluginname)) {
+            $component = 'core';
+        } else {
+            $component = $plugintype . '_' . $pluginname;
         }
 
-        if (isset($this->cache[$lang][$plugintype.$pluginname])) {
-            return $this->cache[$lang][$plugintype.$pluginname];
+        // try in-memory cache first
+        if (isset($this->cache[$lang][$component])) {
+            $this->countmemcache++;
+            return $this->cache[$lang][$component];
         }
 
+        // try on-disk cache then
+        if (file_exists($this->cacheroot . "/$lang/$component")) {
+            $this->countdiskcache++;
+            eval('$this->cache[$lang][$component] = ' . file_get_contents($this->cacheroot . "/$lang/$component") . ';');
+            return $this->cache[$lang][$component];
+        }
+
+        // no cache found - let us merge all possible sources of the strings
         if ($plugintype === 'core') {
             $file = $pluginname;
             if ($file === null) {
@@ -5988,8 +6006,11 @@ class core_string_manager implements string_manager {
         // we do not want any extra strings from other languages - everything must be in en lang pack
         $string = array_intersect_key($string, $originalkeys);
 
-        $this->cache[$lang][$plugintype.$pluginname] = $string;
-
+        // now we have a list of strings from all possible sources. put it into both in-memory and on-disk
+        // caches so we do not need to do all this merging and dependecies resolving again
+        $this->cache[$lang][$component] = $string;
+        check_dir_exists($this->cacheroot . '/' . $lang, true, true);
+        file_put_contents($this->cacheroot . "/$lang/$component", var_export($string, true));
         return $string;
     }
 
@@ -6026,6 +6047,7 @@ class core_string_manager implements string_manager {
      * @return string The String !
      */
     public function get_string($identifier, $component = '', $a = NULL, $lang = NULL) {
+        $this->countgetstring++;
         // there are very many uses of these time formating strings without the 'langconfig' component,
         // it would not be reasonable to expect that all of them would be converted during 2.0 migration
         static $langconfigstrs = array(
@@ -6099,6 +6121,22 @@ class core_string_manager implements string_manager {
         }
 
         return $string;
+    }
+
+    /**
+     * Returns information about the string_manager performance
+     * @return array
+     */
+    public function get_performance_summary() {
+        return array(array(
+            'langcountgetstring' => $this->countgetstring,
+            'langcountmemcache' => $this->countmemcache,
+            'langcountdiskcache' => $this->countdiskcache,
+        ), array(
+            'langcountgetstring' => 'get_string calls',
+            'langcountmemcache' => 'strings mem cache hits',
+            'langcountdiskcache' => 'strings disk cache hits',
+        ));
     }
 
     /**
@@ -9048,6 +9086,16 @@ function get_performance_info() {
     $filtermanager = filter_manager::instance();
     if (method_exists($filtermanager, 'get_performance_summary')) {
         list($filterinfo, $nicenames) = $filtermanager->get_performance_summary();
+        $info = array_merge($filterinfo, $info);
+        foreach ($filterinfo as $key => $value) {
+            $info['html'] .= "<span class='$key'>$nicenames[$key]: $value </span> ";
+            $info['txt'] .= "$key: $value ";
+        }
+    }
+
+    $stringmanager = get_string_manager();
+    if (method_exists($stringmanager, 'get_performance_summary')) {
+        list($filterinfo, $nicenames) = $stringmanager->get_performance_summary();
         $info = array_merge($filterinfo, $info);
         foreach ($filterinfo as $key => $value) {
             $info['html'] .= "<span class='$key'>$nicenames[$key]: $value </span> ";
