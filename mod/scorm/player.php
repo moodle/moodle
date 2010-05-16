@@ -62,20 +62,9 @@
     $strpopup = get_string('popup','scorm');
     $strexit = get_string('exitactivity','scorm');
 
-    if ($course->id != SITEID) {
-        if ($scorms = get_all_instances_in_course('scorm', $course)) {
-            // The module SCORM/AICC activity with the first id is the course
-            $firstscorm = current($scorms);
-            if (!(($course->format == 'scorm') && ($firstscorm->id == $scorm->id))) {
-                $PAGE->navbar->add($strscorms, new moodle_url('/mod/scorm/index.php', array('id'=>$course->id)));
-            }
-        }
-    }
-
     $pagetitle = strip_tags("$course->shortname: ".format_string($scorm->name));
     $PAGE->set_title($pagetitle);
     $PAGE->set_heading($course->fullname);
-    $PAGE->navbar->add(format_string($scorm->name,true), new moodle_url('/mod/scorm/view.php', array('id'=>$cm->id)));
 
     if (!$cm->visible and !has_capability('moodle/course:viewhiddenactivities', get_context_instance(CONTEXT_COURSE,$course->id))) {
         echo $OUTPUT->header();
@@ -304,12 +293,12 @@
         if ($scorm->popup == 0) {
             $fullurl="loadSCO.php?id=".$cm->id.$scoidstr.$modestr;
             ?>
-            <!--[if IE]>
+            <!--[if IE]-->
                 <iframe id="scoframe1" class="scoframe" name="scoframe1" src="<?php echo $fullurl; ?>"></iframe>
-            <![endif]-->
-            <!--[if !IE]>-->
+            <!--[endif]-->
+            <!--[if !IE]-->
                 <object id="scoframe1" class="scoframe" type="text/html" data="<?php echo $fullurl; ?>"></object>
-            <!--<![endif]-->
+            <!--[endif]-->
 <?php
             $PAGE->requires->js_function_call('scorm_resize');
         } else {
@@ -325,12 +314,12 @@
             echo html_writer::script(js_writer::function_call('scorm_openpopup', Array("loadSCO.php?id=".$cm->id.$scoidpop, $name, $scorm->options, $scorm->width, $scorm->height)));
             ?>
             <noscript>
-            <!--[if IE]>
-            <iframe id="main" class="scoframe" name="main" src="loadSCO.php?id=<?php echo $cm->id.$scoidstr.$modestr; ?>"></iframe>
-            <![endif]-->
-            <!--[if !IE]>-->
-            <!object id="main" class="scoframe" type="text/html" data="loadSCO.php?id=<?php echo $cm->id.$scoidstr.$modestr; ?>"></object>
-            <!--<![endif]-->
+            <!--[if IE]-->
+                <iframe id="main" class="scoframe" name="main" src="loadSCO.php?id=<?php echo $cm->id.$scoidstr.$modestr; ?>"></iframe>
+            <!--[endif]-->
+            <!--[if !IE]-->
+                <object id="main" class="scoframe" type="text/html" data="loadSCO.php?id=<?php echo $cm->id.$scoidstr.$modestr; ?>"></object>
+            <!--[endif]-->
             </noscript>
 <?php
             //Added incase javascript popups are blocked
