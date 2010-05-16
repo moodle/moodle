@@ -137,8 +137,6 @@ if ($context->contextlevel == CONTEXT_USER) {
     if ( !$course = $DB->get_record('course', array('id'=>$usercourseid))) {
         print_error('invalidcourseid');
     }
-    $currenttab = 'repositories';
-    include($CFG->dirroot.'/user/tabs.php');
 }
 
 echo $OUTPUT->heading($pagename);

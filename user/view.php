@@ -59,7 +59,8 @@ if (isguestuser($user)) {
 }
 
 $PAGE->set_context($coursecontext);
-$PAGE->set_pagetype('course-view-' . $course->format);
+$PAGE->set_pagetype('course-view-' . $course->format);  // To get the blocks exactly like the course
+$PAGE->add_body_class('path-user');                     // So we can style it independently
 $PAGE->set_other_editing_capability('moodle/course:manageactivities');
 
 $isparent = false;
@@ -153,7 +154,10 @@ $PAGE->set_title("$course->fullname: $strpersonalprofile: $fullname");
 $PAGE->set_heading($course->fullname);
 $PAGE->set_pagelayout('standard');
 echo $OUTPUT->header();
-echo $OUTPUT->heading(fullname($user));
+
+echo '<div class="userprofile">';
+
+echo $OUTPUT->heading(fullname($user).' ('.$course->shortname.')');
 
 if ($user->deleted) {
     echo $OUTPUT->heading(get_string('userdeleted'));
@@ -166,12 +170,6 @@ if ($user->deleted) {
 /// OK, security out the way, now we are showing the user
 
 add_to_log($course->id, "user", "view", "view.php?id=$user->id&course=$course->id", "$user->id");
-
-$user->lastaccess = false;
-if ($lastaccess = $DB->get_record('user_lastaccess', array('userid'=>$user->id, 'courseid'=>$course->id))) {
-    $user->lastaccess = $lastaccess->timeaccess;
-}
-
 
 /// Get the hidden field list
 if (has_capability('moodle/user:viewhiddendetails', $coursecontext)) {
@@ -202,10 +200,6 @@ if (is_mnet_remote_user($user)) {
     }
 }
 
-echo '<div class="fullprofilelink">';
-echo html_writer::link($CFG->wwwroot.'/user/profile.php?id='.$id, get_string('fullprofile'));
-echo '</div>';
-
 echo '<div class="profilepicture">';
 echo $OUTPUT->user_picture($user, array('size'=>100));
 echo '</div>';
@@ -214,10 +208,10 @@ echo '</div>';
 echo '<div class="description">';
 if ($user->description && !isset($hiddenfields['description'])) {
     if (!empty($CFG->profilesforenrolledusersonly) && !$DB->record_exists('role_assignments', array('userid'=>$id))) {
-        echo get_string('profilenotshown', 'moodle').'<hr />';
+        echo get_string('profilenotshown', 'moodle');
     } else {
         $user->description = file_rewrite_pluginfile_urls($user->description, 'pluginfile.php', $usercontext->id, 'user_profile', $id);
-        echo format_text($user->description, $user->descriptionformat)."<hr />";
+        echo format_text($user->description, $user->descriptionformat);
     }
 }
 echo '</div>';
@@ -227,107 +221,38 @@ echo '</div>';
 
 echo '<table class="list" summary="">';
 
-if (! isset($hiddenfields['country']) && $user->country) {
-    print_row(get_string('country') . ':', get_string($user->country, 'countries'));
+// Show last time this user accessed this course
+if (!isset($hiddenfields['lastaccess'])) {
+    if ($lastaccess = $DB->get_record('user_lastaccess', array('userid'=>$user->id, 'courseid'=>$course->id))) {
+        $datestring = userdate($lastaccess->timeaccess)."&nbsp; (".format_time(time() - $lastaccess->timeaccess).")";
+    } else {
+        $datestring = get_string("never");
+    }
+    print_row(get_string("lastaccess").":", $datestring);
 }
 
-if (! isset($hiddenfields['city']) && $user->city) {
-    print_row(get_string('city') . ':', $user->city);
+// Show roles in this course
+if ($rolestring = get_user_roles_in_course($id, $course->id)) {
+    print_row(get_string('roles').':', $rolestring);
 }
 
-if (has_capability('moodle/user:viewhiddendetails', $coursecontext)) {
-    if ($user->address) {
-        print_row(get_string("address").":", "$user->address");
-    }
-    if ($user->phone1) {
-        print_row(get_string("phone").":", "$user->phone1");
-    }
-    if ($user->phone2) {
-        print_row(get_string("phone2").":", "$user->phone2");
-    }
-}
-
-if ($user->maildisplay == 1
-   or ($user->maildisplay == 2 && !isguestuser())
-   or has_capability('moodle/course:useremail', $coursecontext)) {
-
-    $emailswitch = '';
-
-    if ($currentuser or has_capability('moodle/course:useremail', $coursecontext)) {   /// Can use the enable/disable email stuff
-        if (!empty($enable) and confirm_sesskey()) {     /// Recieved a parameter to enable the email address
-            $DB->set_field('user', 'emailstop', 0, array('id'=>$user->id));
-            $user->emailstop = 0;
-        }
-        if (!empty($disable) and confirm_sesskey()) {     /// Recieved a parameter to disable the email address
-            $DB->set_field('user', 'emailstop', 1, array('id'=>$user->id));
-            $user->emailstop = 1;
+// Show groups this user is in
+if (!isset($hiddenfields['groups'])) {
+    if ($course->groupmode != SEPARATEGROUPS or has_capability('moodle/site:accessallgroups', $coursecontext)) {
+        if ($usergroups = groups_get_all_groups($course->id, $user->id)) {
+            $groupstr = '';
+            foreach ($usergroups as $group){
+                $groupstr .= ' <a href="'.$CFG->wwwroot.'/user/index.php?id='.$course->id.'&amp;group='.$group->id.'">'.format_string($group->name).'</a>,';
+            }
+            print_row(get_string("group").":", rtrim($groupstr, ', '));
         }
     }
-
-    if (has_capability('moodle/course:useremail', $coursecontext)) {   /// Can use the enable/disable email stuff
-        if ($user->emailstop) {
-            $switchparam = 'enable';
-            $switchtitle = get_string('emaildisable');
-            $switchclick = get_string('emailenableclick');
-            $switchpix   = 't/emailno';
-        } else {
-            $switchparam = 'disable';
-            $switchtitle = get_string('emailenable');
-            $switchclick = get_string('emaildisableclick');
-            $switchpix   = 't/email';
-        }
-        $emailswitch = "&nbsp;<a title=\"$switchclick\" ".
-                       "href=\"view.php?id=$user->id&amp;course=$course->id&amp;$switchparam=1&amp;sesskey=".sesskey()."\">".
-                       "<img src=\"" . $OUTPUT->pix_url("$switchpix") . "\" alt=\"$switchclick\" /></a>";
-
-    } else if ($currentuser) {         /// Can only re-enable an email this way
-        if ($user->emailstop) {   // Include link that tells how to re-enable their email
-            $switchparam = 'enable';
-            $switchtitle = get_string('emaildisable');
-            $switchclick = get_string('emailenableclick');
-
-            $emailswitch = "&nbsp;(<a title=\"$switchclick\" ".
-                           "href=\"view.php?id=$user->id&amp;course=$course->id&amp;enable=1&amp;sesskey=".sesskey()."\">$switchtitle</a>)";
-        }
-    }
-
-    print_row(get_string("email").":", obfuscate_mailto($user->email, '', $user->emailstop)."$emailswitch");
 }
 
-if ($user->url && !isset($hiddenfields['webpage'])) {
-    $url = $user->url;
-    if (strpos($user->url, '://') === false) {
-        $url = 'http://'. $url;
-    }
-    print_row(get_string('webpage') .':', '<a href="'.s($url).'">'.s($user->url).'</a>');
-}
-
-if ($user->icq && !isset($hiddenfields['icqnumber'])) {
-    print_row(get_string('icqnumber').':',"<a href=\"http://web.icq.com/wwp?uin=".urlencode($user->icq)."\">".s($user->icq)." <img src=\"http://web.icq.com/whitepages/online?icq=".urlencode($user->icq)."&amp;img=5\" alt=\"\" /></a>");
-}
-
-if ($user->skype && !isset($hiddenfields['skypeid'])) {
-    print_row(get_string('skypeid').':','<a href="callto:'.urlencode($user->skype).'">'.s($user->skype).
-        ' <img src="http://mystatus.skype.com/smallicon/'.urlencode($user->skype).'" alt="'.get_string('status').'" '.
-        ' /></a>');
-}
-if ($user->yahoo && !isset($hiddenfields['yahooid'])) {
-    print_row(get_string('yahooid').':', '<a href="http://edit.yahoo.com/config/send_webmesg?.target='.urlencode($user->yahoo).'&amp;.src=pg">'.s($user->yahoo)." <img src=\"http://opi.yahoo.com/online?u=".urlencode($user->yahoo)."&m=g&t=0\" alt=\"\"></a>");
-}
-if ($user->aim && !isset($hiddenfields['aimid'])) {
-    print_row(get_string('aimid').':', '<a href="aim:goim?screenname='.urlencode($user->aim).'">'.s($user->aim).'</a>');
-}
-if ($user->msn && !isset($hiddenfields['msnid'])) {
-    print_row(get_string('msnid').':', s($user->msn));
-}
-
-/// Print the Custom User Fields
-profile_display_fields($user->id);
-
-
+// Show other courses they may be in
 if (!isset($hiddenfields['mycourses'])) {
     if ($mycourses = get_my_courses($user->id, 'visible DESC,sortorder ASC', null, false, 21)) {
-        $shown=0;
+        $shown = 0;
         $courselisting = '';
         foreach ($mycourses as $mycourse) {
             if ($mycourse->category) {
@@ -341,86 +266,38 @@ if (!isset($hiddenfields['mycourses'])) {
                     }
                     $courselisting .= "<a href=\"{$CFG->wwwroot}/user/view.php?id={$user->id}&amp;course={$mycourse->id}\" $class >"
                         . format_string($mycourse->fullname) . "</a>, ";
-                }
-                else {
+                } else {
                     $courselisting .= format_string($mycourse->fullname) . ", ";
+                    $PAGE->navbar->add($mycourse->fullname);
                 }
             }
             $shown++;
-            if($shown==20) {
-                $courselisting.= "...";
+            if ($shown >= 20) {
+                $courselisting .= "...";
                 break;
             }
         }
         print_row(get_string('courseprofiles').':', rtrim($courselisting,', '));
     }
 }
-if (!isset($hiddenfields['firstaccess'])) {
-    if ($user->firstaccess) {
-        $datestring = userdate($user->firstaccess)."&nbsp; (".format_time(time() - $user->firstaccess).")";
-    } else {
-        $datestring = get_string("never");
-    }
-    print_row(get_string("firstaccess").":", $datestring);
-}
-if (!isset($hiddenfields['lastaccess'])) {
-    if ($user->lastaccess) {
-        $datestring = userdate($user->lastaccess)."&nbsp; (".format_time(time() - $user->lastaccess).")";
-    } else {
-        $datestring = get_string("never");
-    }
-    print_row(get_string("lastaccess").":", $datestring);
-}
-/// printing roles
-
-if ($rolestring = get_user_roles_in_course($id, $course->id)) {
-    print_row(get_string('roles').':', $rolestring);
-}
-
-/// Printing groups
-if (!isset($hiddenfields['groups'])) {
-    if ($course->groupmode != SEPARATEGROUPS or has_capability('moodle/site:accessallgroups', $coursecontext)) {
-        if ($usergroups = groups_get_all_groups($course->id, $user->id)) {
-            $groupstr = '';
-            foreach ($usergroups as $group){
-                $groupstr .= ' <a href="'.$CFG->wwwroot.'/user/index.php?id='.$course->id.'&amp;group='.$group->id.'">'.format_string($group->name).'</a>,';
-            }
-            print_row(get_string("group").":", rtrim($groupstr, ', '));
-        }
-    }
-}
-/// End of printing groups
-
-/// Printing Interests
-    if( !empty($CFG->usetags)) {
-        if ( $interests = tag_get_tags_csv('user', $user->id) ) {
-        print_row(get_string('interests') .": ", $interests);
-    }
-}
-/// End of Printing Interests
 
 echo "</table>";
 
-$userauth = get_auth_plugin($user->auth);
+echo '<div class="fullprofilelink">';
+echo html_writer::link($CFG->wwwroot.'/user/profile.php?id='.$id, get_string('fullprofile'));
+echo '</div>';
 
-$passwordchangeurl = false;
-if ($currentuser and $userauth->can_change_password() and !isguestuser() and has_capability('moodle/user:changeownpassword', $systemcontext)) {
-    if (!$passwordchangeurl = $userauth->change_password_url()) {
-        if (empty($CFG->loginhttps)) {
-            $passwordchangeurl = "$CFG->wwwroot/login/change_password.php";
-        } else {
-            $passwordchangeurl = str_replace('http:', 'https:', $CFG->wwwroot.'/login/change_password.php');
-        }
-    }
-}
+/// TODO Add more useful overview info for teachers here, see below
 
-// Buttons gone!  TODO: Make sure there's a good way to message someone from the profile pages
+/// Show links to notes made about this student (must click to display, for privacy)
 
-if ($CFG->debugdisplay && debugging('', DEBUG_DEVELOPER) && $currentuser) {  // Show user object
-    echo '<br /><br /><hr />';
-    echo $OUTPUT->heading('DEBUG MODE:  User session variables');
-    print_object($USER);
-}
+/// Recent comments made in this course
+
+/// Recent blogs associated with this course and items in it
+
+
+
+echo '</div>';  // userprofile class
 
 echo $OUTPUT->footer();
 

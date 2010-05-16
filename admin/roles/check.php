@@ -80,7 +80,7 @@ switch ($context->contextlevel) {
         admin_externalpage_setup('assignroles', '', array('contextid' => $contextid, 'roleid' => $roleid));
         break;
     case CONTEXT_USER:
-        $tabfile = $CFG->dirroot.'/user/tabs.php';
+        $tabfile = null;
         if ($isfrontpage) {
             $fullname = fullname($user, has_capability('moodle/site:viewfullnames', $context));
             $PAGE->set_heading($fullname);
@@ -108,12 +108,14 @@ switch ($context->contextlevel) {
         break;
 }
 
-$currenttab = 'check';
 echo $OUTPUT->header();
 // These are needed early because of tabs.php
 $assignableroles = get_assignable_roles($context, ROLENAME_BOTH);
 $overridableroles = get_overridable_roles($context, ROLENAME_BOTH);
-include($tabfile);
+if ($tabfile) {
+    $currenttab = 'check';
+    include($tabfile);
+}
 
 // Print heading.
 echo $OUTPUT->heading_with_help($title, 'checkpermissions', 'role');

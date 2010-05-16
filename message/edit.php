@@ -185,11 +185,6 @@ if ($course->id != SITEID) {
 }
 echo $OUTPUT->header();
 
-/// Print tabs at the top
-$showroles = 1;
-$currenttab = 'editmessage';
-require('../user/tabs.php');
-
 /// Start the form.  We're not using mform here because of our special formatting needs ...
 echo '<form class="mform" method="post" action="'.$CFG->wwwroot.'/message/edit.php">';
 

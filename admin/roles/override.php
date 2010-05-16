@@ -65,7 +65,7 @@ if (optional_param('cancel', false, PARAM_BOOL)) {
 
 $role = $DB->get_record('role', array('id'=>$roleid), '*', MUST_EXIST);
 
-// These are needed early because of tabs.php
+// These are needed early 
 $assignableroles  = get_assignable_roles($context, ROLENAME_BOTH);
 list($overridableroles, $overridecounts, $nameswithcounts) = get_overridable_roles($context, ROLENAME_BOTH, true);
 
@@ -86,7 +86,7 @@ switch ($context->contextlevel) {
         print_error('cannotoverridebaserole', 'error');
         break;
     case CONTEXT_USER:
-        $tabfile = $CFG->dirroot.'/user/tabs.php';
+        $tabfile = null;
         if ($isfrontpage) {
             $fullname = fullname($user, has_capability('moodle/site:viewfullnames', $context));
             $PAGE->set_heading($fullname);
@@ -135,7 +135,9 @@ if (optional_param('savechanges', false, PARAM_BOOL) && confirm_sesskey()) {
 
 // Finally start page output
 echo $OUTPUT->header();
-include($tabfile);
+if ($tabfile) {
+    include($tabfile);
+}
 echo $OUTPUT->heading_with_help($title, 'overrides', 'role');
 
 // Show UI for overriding roles.

@@ -154,15 +154,6 @@ $PAGE->set_title("$course->shortname: $stractivityreport ($mode)");
 $PAGE->set_heading($course->fullname);
 echo $OUTPUT->header();
 
-/// Print tabs at top
-/// This same call is made in:
-///     /user/view.php
-///     /user/edit.php
-///     /course/user.php
-$currenttab = $mode;
-$showroles = 1;
-include($CFG->dirroot.'/user/tabs.php');
-
 switch ($mode) {
     case "grade":
         if (empty($CFG->grade_profilereport) or !file_exists($CFG->dirroot.'/grade/report/'.$CFG->grade_profilereport.'/lib.php')) {

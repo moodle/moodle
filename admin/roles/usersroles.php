@@ -106,11 +106,10 @@ foreach ($roleassignments as $ra) {
     $contexts[$ra->contextid]->roleassignments[$ra->roleid] = $ra;
 }
 
-/// These are needed to determine which tabs tabs.php should show.
 $assignableroles = get_assignable_roles($usercontext, ROLENAME_BOTH);
 $overridableroles = get_overridable_roles($usercontext, ROLENAME_BOTH);
 
-/// Print the header and tabs
+/// Print the header
 $fullname = fullname($user, has_capability('moodle/site:viewfullnames', $coursecontext));
 $straction = get_string('thisusersroles', 'role');
 $title = get_string('xroleassignments', 'role', $fullname);
@@ -128,11 +127,6 @@ if ($courseid != SITEID) {
 $PAGE->navbar->add($fullname, new moodle_url("$CFG->wwwroot/user/view.php", array('id'=>$userid,'course'=>$courseid)));
 $PAGE->navbar->add($straction);
 echo $OUTPUT->header();
-
-$showroles = 1;
-$currenttab = 'usersroles';
-include($CFG->dirroot.'/user/tabs.php');
-
 echo $OUTPUT->heading($title, 3);
 echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthnormal');
 

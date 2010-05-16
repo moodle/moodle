@@ -169,7 +169,9 @@ if ($currentpage->userid == 0) {
 }
 
 // TODO WORK OUT WHERE THE NAV BAR IS!
+
 echo $OUTPUT->header();
+echo '<div class="userprofile">';
 
 
 // Print the standard content of this page, the basic profile info
@@ -370,6 +372,13 @@ echo "</table>";
 
 echo $OUTPUT->blocks_for_region('content');
 
+if ($CFG->debugdisplay && debugging('', DEBUG_DEVELOPER) && $currentuser) {  // Show user object
+    echo '<br /><br /><hr />';
+    echo $OUTPUT->heading('DEBUG MODE:  User session variables');
+    print_object($USER);
+}
+
+echo '</div>';  // userprofile class
 echo $OUTPUT->footer();
 
 

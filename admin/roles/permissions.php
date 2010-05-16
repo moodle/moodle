@@ -85,7 +85,7 @@ switch ($context->contextlevel) {
         print_error('cannotoverridebaserole', 'error');
         break;
     case CONTEXT_USER:
-        $tabfile = $CFG->dirroot.'/user/tabs.php';
+        $tabfile = null;
         if ($isfrontpage) {
             $fullname = fullname($user, has_capability('moodle/site:viewfullnames', $context));
             $PAGE->set_heading($fullname);
@@ -143,7 +143,9 @@ if ($capability && ($allowoverrides || ($allowsafeoverrides && is_safe_capabilit
         }
         // Display and print
         echo $OUTPUT->header();
-        include($tabfile);
+        if ($tabfile) {
+            include($tabfile);
+        }
         echo $OUTPUT->heading($title);
         echo $OUTPUT->confirm($message, $continueurl, $PAGE->url);
         echo $OUTPUT->footer();
@@ -182,7 +184,9 @@ if ($capability && ($allowoverrides || ($allowsafeoverrides && is_safe_capabilit
             }
         }
         echo $OUTPUT->header();
-        include($tabfile);
+        if ($tabfile) {
+            include($tabfile);
+        }
         echo $OUTPUT->heading($title);
         echo $OUTPUT->box($message);
         $mform->display();
@@ -192,7 +196,9 @@ if ($capability && ($allowoverrides || ($allowsafeoverrides && is_safe_capabilit
 }
 
 echo $OUTPUT->header();
-include($tabfile);
+if ($tabfile) {
+    include($tabfile);
+}
 echo $OUTPUT->heading($title);
 
 $table = new permissions_table($context, $contextname, $allowoverrides, $allowsafeoverrides, $overridableroles);

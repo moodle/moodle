@@ -58,7 +58,6 @@ if (empty($CFG->bloglevel)) {
 }
 
 $sitecontext = get_context_instance(CONTEXT_SYSTEM);
-$tabsfile = null;
 
 if (!$userid && has_capability('moodle/blog:view', $sitecontext) && $CFG->bloglevel > BLOG_USER_LEVEL) {
     if ($entryid) {
@@ -173,7 +172,6 @@ if (!empty($user)) {
             print_error('cannotviewcourseblog', 'blog');
         }
     }
-    $tabsfile = $CFG->dirroot . '/user/tabs.php';
 }
 
 $courseid = (empty($courseid)) ? SITEID : $courseid;
@@ -194,10 +192,6 @@ if (empty($entryid) && empty($modid) && empty($groupid)) {
 }
 
 echo $OUTPUT->header();
-
-if (!empty($tabsfile)) {
-    require_once($tabsfile);
-}
 
 echo $OUTPUT->heading($blogheaders['heading'], 2);
 

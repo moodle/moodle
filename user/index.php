@@ -143,9 +143,12 @@
     $PAGE->set_title("$course->shortname: ".get_string('participants'));
     $PAGE->set_heading($course->fullname);
     $PAGE->set_pagetype('course-view-' . $course->format);
+    $PAGE->add_body_class('path-user');                     // So we can style it independently
     $PAGE->set_other_editing_capability('moodle/course:manageactivities');
 
     echo $OUTPUT->header();
+
+    echo '<div class="userlist">';
 
     if ($isseparategroups and (!$currentgroup) ) {
         // The user is not in the group so show message and exit
@@ -883,6 +886,8 @@
         $perpageurl->param('perpage', SHOW_ALL_PAGE_SIZE);
         echo $OUTPUT->container(html_writer::link($perpageurl, get_string('showall', '', $matchcount)), array(), 'showall');
     }
+
+    echo '</div>';  // userlist
 
     echo $OUTPUT->footer();
 

@@ -8,6 +8,7 @@ $THEME->sheets = array(
     'blocks',
     'calendar',
     'course',
+    'user',
     'dock',
     'grade',
     'message',
