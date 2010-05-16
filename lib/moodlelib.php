@@ -5842,6 +5842,11 @@ interface string_manager {
      * @return array of all string for given component and lang
      */
     public function load_component_strings($component, $lang);
+
+    /**
+     * Invalidates all caches, should the implementation use any
+     */
+    public function reset_caches();
 }
 
 
@@ -5867,6 +5872,7 @@ class core_string_manager implements string_manager {
     protected $countmemcache = 0;
     /** @var int on-disk cache hits counter */
     protected $countdiskcache = 0;
+
     /**
      * Crate new instance of string manager
      *
@@ -6325,6 +6331,17 @@ class core_string_manager implements string_manager {
 
         return $currencies;
     }
+
+    /**
+     * Clears both in-memory and on-disk caches
+     */
+    public function reset_caches() {
+        global $CFG;
+        require_once("$CFG->libdir/filelib.php");
+
+        fulldelete($this->cacheroot);
+        $this->cache = array();
+    }
 }
 
 
@@ -6532,6 +6549,11 @@ class install_string_manager implements string_manager {
         // not used in installer
         return array();
     }
+
+    /**
+     * This implementation does not use any caches
+     */
+    public function reset_caches() {}
 }
 
 

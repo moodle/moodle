@@ -1298,6 +1298,7 @@ function core_tables_exist() {
 function upgrade_reset_caches() {
     js_reset_all_caches();
     theme_reset_all_caches();
+    get_string_manager()->reset_caches();
 }
 
 /**
