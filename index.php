@@ -73,7 +73,7 @@
         add_to_log(SITEID, 'course', 'view', 'view.php?id='.SITEID, SITEID);
     }
 
-    //Hack to display the hub server home page if ever the hub plugin is installed
+/// If the hub plugin is installed then we let it take over the homepage here
     if (get_config('local_hub', 'hubenabled') && file_exists($CFG->dirroot.'/local/hub/lib.php')) {
         require_once($CFG->dirroot.'/local/hub/lib.php');
         $hub = new local_hub();
