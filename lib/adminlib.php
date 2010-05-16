@@ -5842,9 +5842,7 @@ function print_plugin_tables() {
         'workshop');
 
     $plugins_standard['blocks'] = array('activity_modules',
-        'admin',
         'admin_bookmarks',
-        'admin_tree',
         'blog_menu',
         'blog_recent',
         'blog_tags',

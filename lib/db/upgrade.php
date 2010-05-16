@@ -4052,6 +4052,16 @@ AND EXISTS (SELECT 'x'
     }
 
 
+    if ($result && $oldversion < 2010051600) {
+
+    /// Delete the blocks completely.  All the contexts, instances etc were cleaned up above in 2009082800
+        $DB->delete_records('block', array('name'=>'admin'));
+        $DB->delete_records('block', array('name'=>'admin_tree'));
+
+    /// Main savepoint reached
+        upgrade_main_savepoint($result, 2010051600);
+    }
+
     return $result;
 }
 
