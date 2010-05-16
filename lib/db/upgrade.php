@@ -4007,6 +4007,8 @@ AND EXISTS (SELECT 'x'
     /// Main savepoint reached
         upgrade_main_savepoint($result, 2010050403);
     }
+
+
     // fix repository_alfresco version number
     if ($result && $oldversion < 2010050411) {
         // force to change repository_alfresco version number to upgrade smoothly (from preview 1 -> preview 2)
@@ -4017,43 +4019,36 @@ AND EXISTS (SELECT 'x'
         upgrade_main_savepoint($result, 2010050411);
     }
 
-     if ($result && $oldversion < 2010050413) {
 
-    /// Define table published_courses to be created
+    if ($result && $oldversion < 2010051500) {
+
+    /// Fix a bad table name that existed for a few days in HEAD
         $table = new xmldb_table('published_courses');
+        if ($dbman->table_exists($table)) {
+            $dbman->drop_table($table);
+        }
 
-    /// Adding fields to table published_courses
+    /// Define table course_published to be created
+        $table = new xmldb_table('course_published');
+
+    /// Adding fields to table course_published
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
         $table->add_field('hubid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
         $table->add_field('courseid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
-        $table->add_field('time', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+        $table->add_field('timepublished', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
         $table->add_field('enrollable', XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '1');
+        $table->add_field('hubcourseid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
 
-    /// Adding keys to table published_courses
+    /// Adding keys to table course_published
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
 
-    /// Conditionally launch create table for published_courses
+    /// Conditionally launch create table for course_published
         if (!$dbman->table_exists($table)) {
             $dbman->create_table($table);
         }
 
     /// Main savepoint reached
-        upgrade_main_savepoint($result, 2010050413);
-    }
-
-     if ($result && $oldversion < 2010050414) {
-
-    /// Define field hubcourseid to be added to published_courses
-        $table = new xmldb_table('published_courses');
-        $field = new xmldb_field('hubcourseid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 0, 'enrollable');
-
-    /// Conditionally launch add field hubcourseid
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-
-    /// Main savepoint reached
-        upgrade_main_savepoint($result, 2010050414);
+        upgrade_main_savepoint($result, 2010051500);
     }
 
 
