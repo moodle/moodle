@@ -23,5 +23,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['invalidxml'] = 'Invalid xml file - string expected (use CDATA?)';
-$string['unsupportedexport'] = 'Question type {$a} is not supported by xml export';
+$string['invalidxml'] = 'Invalid XML file - string expected (use CDATA?)';
+$string['unsupportedexport'] = 'Question type {$a} is not supported by XML export';
+$string['xml'] = 'Moodle XML format';
+$string['xml_help'] = 'This is a Moodle-specific format for importing and exporting questions for use in quiz activities.';
+$string['xml_link'] = 'qformat/xml';
