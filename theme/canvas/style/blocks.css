@@ -13,3 +13,10 @@
 
 .block_recent_activity .activitydate {font-size: 0.9em;color: #444;margin-bottom: 5px;}
 .block_recent_activity .activityhead {font-size: 0.95em;margin: 0.5em 0;}
+
+.block_loancalc table td {padding: 0;}
+
+.block_messages .info,
+.block_online_users .info {text-align: center;font-size: 0.85em;color: #444;margin-bottom: 7px;}
+
+.block_blog_menu .list li {font-size: 0.9em;margin: 0.25em 0;}

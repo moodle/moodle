@@ -11,9 +11,10 @@
 #page-course-category .generalbox { margin:25px auto 30px;width:75%;padding:10px; }
 
 .path-course-view .section .side { padding:5px 0; }
-.path-course-view .section .content { padding:5px 10px; }
+.path-course-view .section .content { padding:10px; }
 .path-course-view .section .content .section { margin:0; }
 .path-course-view .section .content .weekdates { font-size:1em;color:#777;font-weight:normal; }
+.path-course-view .section_add_menus {margin-top: 1em;}
 
 #page-course-report .plugin p,
 #page-course-report .logselectform { text-align:center; }
@@ -35,3 +36,5 @@
 #page-course-report-log-index .generaltable { margin:5px auto; }
 
 #page-course-loginas #notice {width: 50%;text-align: center;margin: 10px auto;}
+
+#page-course-reset .generalbox {margin-bottom: 1em;}

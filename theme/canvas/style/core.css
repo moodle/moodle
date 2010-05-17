@@ -353,28 +353,61 @@
 	margin: 0;
 }
 
-#page-user-index .rolesform {
+.rolesform {
 	text-align: center;
 	margin: 1em 0;
 }
 
-#page-user-index #participantsform {
+#participantsform {
 	text-align: center;
 }
 
-#page-user-index #longtimenosee {
+#longtimenosee {
 	font-style: italic;
 	font-size: 0.95em;
 }
 
-#page-user-index #participants {
+#participants {
 	width: 100%;
-	margin: 1em auto;
+	margin: 1em auto 0;
 }
 
-#page-user-index #participants th,
-#page-user-index #participants td {
+#participants th,
+#participants td {
 	vertical-align: middle;
+}
+
+/* Roles
+------------------------*/
+
+.path-admin-roles .generaltable {
+	width: 65%;
+}
+
+.path-admin-roles .generaltable th {
+  vertical-align: middle;
+}
+
+.path-admin-roles .generaltable .lastcol {
+  width:15%;
+}
+
+
+.path-admin-roles .backlink {
+	text-align: center;
+}
+
+/* Blogs 
+------------------------*/
+
+.blog_entry .audience {
+	color: #444;
+	margin: 0 0 0.5em;
+    font-size: 0.9em;
+}
+
+.blog_entry .tags {
+	margin-bottom: 0.5em;
 }
 
 /* Tags 
@@ -397,6 +430,20 @@
 	margin: 1em 0
 }
 
+#page-tag-index #tag-blogs {
+	border: none;
+}
+
+#tagblogentries {
+	width: 75%;
+	margin: 0 auto 1em;
+}
+
+#tag-user-table {
+	width:95%;
+	margin: 0 auto;
+}
+
 #page-tag-index .managelink {
 	text-align: right;
 }
@@ -411,6 +458,7 @@
 	padding: 4px 0;
 }
 
+#page-tag-index .moreblogs,
 #page-tag-index .relatedpages {
 	text-align: center;
 }
@@ -453,4 +501,23 @@
 .form-description {
 	font-size: 0.95em;
 	color: #444;
+}
+
+/* Footer
+-----------------------*/
+
+.homelink a {
+	text-decoration: none;
+	border-top: 1px solid #cecece;
+	border-bottom: 2px solid #8a8a8a;
+	border-left: 1px solid #cecece;
+	border-right: 2px solid #8a8a8a;
+}
+
+.homelink a:hover {
+	text-decoration: none;
+	border-bottom: 1px solid #cecece;
+	border-top: 2px solid #8a8a8a;
+	border-right: 1px solid #cecece;
+	border-left: 2px solid #8a8a8a;
 }

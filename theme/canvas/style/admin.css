@@ -2,8 +2,22 @@
 #page-admin-index #notice strong { background:#ffc; }
 #page-admin-index .notifysuccess { text-align:center;font-weight:bold;padding:10px; }
 #page-admin-index h2.main { padding:1em 0; }
+
 #page-admin-index .adminwarning { border:1px solid #a35f1d;background:#ffeeba;padding:10px;margin:10px auto;width:75%; }
 #page-admin-index .copyright { text-align:center;margin:20px auto; }
 
 #adminsettings .form-buttons { width:100%;text-align:center;margin:10px 0; }
 
+#authmenu .generalbox {
+	border: none;
+}
+
+#page-admin-cohort-index .generaltable,
+#page-admin-user .generaltable {width:100%; }
+
+#page-admin-roles-manage .generaltable {width: 95%;margin: 1em auto;}
+#page-admin-roles-allow .generalbox {margin:0 auto 1em;width:65%;padding: 10px;}
+
+.editcourse .singleselect {margin: 0;}
+
+#page-admin-course-category .generalbox {margin-bottom:0;}
