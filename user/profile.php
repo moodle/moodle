@@ -107,12 +107,17 @@ $PAGE->blocks->add_region('content');
 $PAGE->set_subpage($currentpage->id);
 $PAGE->set_title("$SITE->shortname: $strpublicprofile");
 $PAGE->set_heading("$SITE->shortname: $strpublicprofile");
-$PAGE->navigation->extend_for_user($user);
-if ($node = $PAGE->settingsnav->get('userviewingsettings')) {
-    $node->forceopen = true;
-    if ($node = $PAGE->settingsnav->get('root')) {
-        $node->forceopen = false;
+
+if (!$currentuser) {
+    $PAGE->navigation->extend_for_user($user);
+    if ($node = $PAGE->settingsnav->get('userviewingsettings')) {
+        $node->forceopen = true;
     }
+} else if ($node = $PAGE->settingsnav->get('usercurrentsettings', navigation_node::TYPE_CONTAINER)) {
+    $node->forceopen = true;
+}
+if ($node = $PAGE->settingsnav->get('root')) {
+    $node->forceopen = false;
 }
 
 

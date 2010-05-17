@@ -149,7 +149,18 @@ if ($currentuser) {
 
 /// We've established they can see the user's name at least, so what about the rest?
 
-$PAGE->navigation->extend_for_user($user);
+if (!$currentuser) {
+    $PAGE->navigation->extend_for_user($user);
+    if ($node = $PAGE->settingsnav->get('userviewingsettings')) {
+        $node->forceopen = true;
+    }
+} else if ($node = $PAGE->settingsnav->get('usercurrentsettings', navigation_node::TYPE_CONTAINER)) {
+    $node->forceopen = true;
+}
+if ($node = $PAGE->settingsnav->get('courseadmin')) {
+    $node->forceopen = false;
+}
+
 $PAGE->set_title("$course->fullname: $strpersonalprofile: $fullname");
 $PAGE->set_heading($course->fullname);
 $PAGE->set_pagelayout('standard');

@@ -965,6 +965,9 @@ class global_navigation extends navigation_node {
 
         // Load for the current user
         $this->load_for_user();
+        if ($this->page->context->contextlevel >= CONTEXT_COURSE) {
+            $this->load_for_user(null, true);
+        }
         // Load each extending user into the navigation.
         foreach ($this->extendforuser as $user) {
             if ($user->id !== $USER->id) {
@@ -1349,7 +1352,7 @@ class global_navigation extends navigation_node {
      * @param stdClass $user
      * @return bool
      */
-    protected function load_for_user($user=null) {
+    protected function load_for_user($user=null, $forceforcontext=false) {
         global $DB, $CFG, $USER;
 
         $iscurrentuser = false;
@@ -1370,7 +1373,7 @@ class global_navigation extends navigation_node {
         // Get the course set against the page, by default this will be the site
         $course = $this->page->course;
         $baseargs = array('id'=>$user->id);
-        if ($course->id !== SITEID) {
+        if ($course->id !== SITEID && (!$iscurrentuser || $forceforcontext)) {
             if (array_key_exists($course->id, $this->mycourses)) {
                 $coursenode = $this->mycourses[$course->id]->coursenode;
             } else {
@@ -1389,7 +1392,7 @@ class global_navigation extends navigation_node {
         }
 
         // Create a node to add user information under.
-        if ($iscurrentuser) {
+        if ($iscurrentuser && !$forceforcontext) {
             // If it's the current user the information will go under the profile root node
             $usernode = $this->rootnodes['myprofile'];
         } else {
@@ -1412,7 +1415,7 @@ class global_navigation extends navigation_node {
         // If the user is the current user or has permission to view the details of the requested
         // user than add a view profile link.
         if ($iscurrentuser || has_capability('moodle/user:viewdetails', $coursecontext) || has_capability('moodle/user:viewdetails', $usercontext)) {
-            if ($issitecourse) {
+            if ($issitecourse || ($iscurrentuser && !$forceforcontext)) {
                 $usernode->add(get_string('viewprofile'), new moodle_url('/user/profile.php',$baseargs));
             } else {
                 $usernode->add(get_string('viewprofile'), new moodle_url('/user/view.php',$baseargs));
@@ -1556,6 +1559,7 @@ class global_navigation extends navigation_node {
      */
     public function extend_for_user($user) {
         $this->extendforuser[] = $user;
+        $this->page->settingsnav->extend_for_user($user->id);
     }
     /**
      * Adds the given course to the navigation structure.
@@ -1854,6 +1858,7 @@ class global_navigation_for_ajax extends global_navigation {
                 $course = $DB->get_record('course', array('id' => $id), '*', MUST_EXIST);
                 require_course_login($course);
                 $this->page = $PAGE;
+                $this->page->set_context(get_context_instance(CONTEXT_COURSE, $course->id));
                 $coursenode = $this->add_course($course);
                 $this->add_course_essentials($coursenode, $course);
                 if ($this->format_display_course_content($course->format)) {
@@ -1868,6 +1873,7 @@ class global_navigation_for_ajax extends global_navigation {
                 $course = $DB->get_record_sql($sql, array($id), MUST_EXIST);
                 require_course_login($course);
                 $this->page = $PAGE;
+                $this->page->set_context(get_context_instance(CONTEXT_COURSE, $course->id));
                 $coursenode = $this->add_course($course);
                 $this->add_course_essentials($coursenode, $course);
                 $sections = $this->load_course_sections($course, $coursenode);
@@ -1878,6 +1884,7 @@ class global_navigation_for_ajax extends global_navigation {
                 $course = $DB->get_record('course', array('id'=>$cm->course), '*', MUST_EXIST);
                 require_course_login($course, true, $cm);
                 $this->page = $PAGE;
+                $this->page->set_context(get_context_instance(CONTEXT_MODULE, $cm->id));
                 $coursenode = $this->load_course($course);
                 $sections = $this->load_course_sections($course, $coursenode);
                 foreach ($sections as $section) {
@@ -2133,6 +2140,8 @@ class settings_navigation extends navigation_node {
     protected $adminsection;
     /** @var bool */
     protected $initialised = false;
+    /** @var array */
+    protected $userstoextendfor = array();
 
     /**
      * Sets up the object with basic settings and preparse it for use
@@ -2867,29 +2876,40 @@ class settings_navigation extends navigation_node {
         if (isguestuser() || !isloggedin()) {
             return false;
         }
-
-        // This is terribly ugly code, but I couldn't see a better way around it
-        // we need to pick up the user id, it can be the current user or someone else
-        // and the key depends on the current location
-        // Default to look at id
-        $userkey='id';
-        if (strpos($FULLME,'/blog/') || strpos($FULLME, $CFG->admin.'/roles/')) {
-            // And blog and roles just do thier own thing using `userid`
-            $userkey = 'userid';
-        } else if ($this->context->contextlevel >= CONTEXT_COURSECAT && strpos($FULLME, '/message/')===false && strpos($FULLME, '/mod/forum/user')===false && strpos($FULLME, '/user/editadvanced')===false) {
-            // If we have a course context and we are not in message or forum
-            // Message and forum both pick the user up from `id`
-            $userkey = 'user';
-        }
-
-        $userid = optional_param($userkey, $USER->id, PARAM_INT);
-        if ($userid!=$USER->id) {
-            $usernode = $this->generate_user_settings($courseid, $userid, 'userviewingsettings');
+        
+        if (count($this->userstoextendfor) > 0) {
+            $usernode = null;
+            foreach ($this->userstoextendfor as $userid) {
+                $node = $this->generate_user_settings($courseid, $userid, 'userviewingsettings');
+                if (is_null($usernode)) {
+                    $usernode = $node;
+                }
+            }
             $this->generate_user_settings($courseid, $USER->id);
         } else {
             $usernode = $this->generate_user_settings($courseid, $USER->id);
         }
         return $usernode;
+    }
+
+    public function extend_for_user($userid) {
+        global $CFG;
+
+        if (!in_array($userid, $this->userstoextendfor)) {
+            $this->userstoextendfor[] = $userid;
+            if ($this->initialised) {
+                $this->generate_user_settings($this->page->course->id, $userid, 'userviewingsettings');
+                $children = array();
+                foreach ($this->children as $child) {
+                    $children[] = $child;
+                }
+                array_unshift($children, array_pop($children));
+                $this->children = new navigation_node_collection();
+                foreach ($children as $child) {
+                    $this->children->add($child);
+                }
+            }
+        }
     }
 
     /**
