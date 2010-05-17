@@ -113,7 +113,7 @@ if (empty($iid)) {
     } else {
         echo $OUTPUT->header();
 
-        echo $OUTPUT->heading_with_help(get_string('uploadusers'), 'uploadusers3');
+        echo $OUTPUT->heading_with_help(get_string('uploadusers', 'admin'), 'uploadusers', 'admin');
 
         $mform->display();
         echo $OUTPUT->footer();
@@ -759,7 +759,7 @@ echo $OUTPUT->header();
 
 /// Print the form
 
-echo $OUTPUT->heading_with_help(get_string('uploaduserspreview', 'admin'), 'uploadusers2');
+echo $OUTPUT->heading(get_string('uploaduserspreview', 'admin'));
 
 $cir->init();
 

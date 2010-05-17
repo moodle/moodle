@@ -44,7 +44,7 @@ if (!$adminuser = get_admin()) {
 
 $strfile = get_string('file');
 $struser = get_string('user');
-$strusersupdated = get_string('usersupdated');
+$strusersupdated = get_string('usersupdated', 'admin');
 $struploadpictures = get_string('uploadpictures','admin');
 
 $userfields = array (
@@ -58,7 +58,7 @@ $overwritepicture = optional_param('overwritepicture', 0, PARAM_BOOL);
 /// Print the header
 echo $OUTPUT->header();
 
-echo $OUTPUT->heading_with_help($struploadpictures, 'uploadpictures');
+echo $OUTPUT->heading_with_help($struploadpictures, 'uploadpictures', 'admin');
 
 $mform = new admin_uploadpicture_form(null, $userfields);
 if ($formdata = $mform->get_data()) {

@@ -969,6 +969,14 @@ $string['uploadpicture_userfield'] = 'User attribute to use to match pictures:';
 $string['uploadpicture_usernotfound'] = 'User with a \'{$a->userfield}\' value of \'{$a->uservalue}\' does not exist. Skipping.';
 $string['uploadpicture_userskipped'] = 'Skipping user {$a} (already has a picture).';
 $string['uploadpicture_userupdated'] = 'Picture updated for user {$a}.';
+$string['uploadusers'] = 'Upload users';
+$string['uploadusers_help'] = 'Users may be uploaded (and optionally enrolled in courses) via text file. The format of the file should be as follows:
+
+* Each line of the file contains one record
+* Each record is a series of data separated by commas (or other delimiters)
+* The first record contains a list of fieldnames defining the format of the rest of the file
+* Required fieldnames are username, password, firstname, lastname, email';
+$string['uploadusers_link'] = 'admin/uploaduser';
 $string['uploaduserspreview'] = 'Upload users preview';
 $string['uploadusersresult'] = 'Upload users results';
 $string['upwards'] = 'upwards';

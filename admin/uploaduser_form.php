@@ -43,8 +43,8 @@ class admin_uploaduser_form1 extends moodleform {
                          UU_ADD_UPDATE => get_string('uuoptype_addupdate', 'admin'),
                          UU_UPDATE     => get_string('uuoptype_update', 'admin'));
         $mform->addElement('select', 'uutype', get_string('uuoptype', 'admin'), $choices);
-        
-        $this->add_action_buttons(false, get_string('uploadusers'));
+
+        $this->add_action_buttons(false, get_string('uploadusers', 'admin'));
     }
 }
 
@@ -266,7 +266,7 @@ class admin_uploaduser_form2 extends moodleform {
         $mform->addElement('hidden', 'uutype');
         $mform->setType('uutype', PARAM_INT);
 
-        $this->add_action_buttons(true, get_string('uploadusers'));
+        $this->add_action_buttons(true, get_string('uploadusers', 'admin'));
     }
 
     /**
