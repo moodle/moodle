@@ -54,7 +54,7 @@ if ($add != -1 and $confirm and confirm_sesskey()) {
     $course->url  = optional_param('courseurl', '', PARAM_URL);
     $course->imageurl  = optional_param('courseimageurl', '', PARAM_URL);
     $community->add_community_course($course, $USER->id);
-    $notificationmessage = $OUTPUT->notification(get_string('addedtoblock', 'hub', 'backup_'.$courseid.".zip"),
+    $notificationmessage = $OUTPUT->notification(get_string('addedtoblock', 'hub'),
             'notifysuccess');
 }
 
