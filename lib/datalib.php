@@ -74,6 +74,22 @@ function get_admin() {
 function get_admins() {
     global $DB, $CFG;
 
+    if (empty($CFG->siteadmins)) {  // Should not happen on an ordinary site
+        // Using shortname instead of archetype field to make it work on 1.9 data too (eg during upgrade) MDL-22479
+        $sql = "SELECT ra.id, ra.userid
+                  FROM {role_assignments} ra
+                  JOIN {role} r ON r.id = ra.roleid
+                  JOIN {user} u ON u.id = ra.userid
+                 WHERE ra.contextid = :syscontext AND ( r.shortname = :admin OR r.shortname = :manager ) AND u.deleted = 0
+              ORDER BY ra.id";
+        $ras = $DB->get_records_sql($sql, array('syscontext'=>SYSCONTEXTID, 'admin'=>'admin', 'manager'=>'manager'));
+        $admins = array();
+        foreach ($ras as $ra) {
+            $admins[$ra->userid] = $ra->userid;
+        }
+        $CFG->siteadmins = implode(',', $admins);
+    }
+
     $sql = "SELECT u.*
               FROM {user} u
              WHERE u.deleted = 0 AND u.id IN ($CFG->siteadmins)";
