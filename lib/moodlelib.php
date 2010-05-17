@@ -5934,7 +5934,7 @@ class core_string_manager implements string_manager {
         }
 
         // try on-disk cache then
-        if (empty($CFG->disablelangdiskcache) and file_exists($this->cacheroot . "/$lang/$component")) {
+        if (!empty($CFG->langstringcache) and file_exists($this->cacheroot . "/$lang/$component")) {
             $this->countdiskcache++;
             eval('$this->cache[$lang][$component] = ' . file_get_contents($this->cacheroot . "/$lang/$component") . ';');
             return $this->cache[$lang][$component];
@@ -6015,7 +6015,7 @@ class core_string_manager implements string_manager {
         // now we have a list of strings from all possible sources. put it into both in-memory and on-disk
         // caches so we do not need to do all this merging and dependecies resolving again
         $this->cache[$lang][$component] = $string;
-        if (empty($CFG->disablelangdiskcache)) {
+        if (!empty($CFG->langstringcache)) {
             check_dir_exists($this->cacheroot . '/' . $lang, true, true);
             file_put_contents($this->cacheroot . "/$lang/$component", var_export($string, true));
         }

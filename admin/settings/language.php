@@ -13,6 +13,7 @@ if ($hassiteconfig
     $temp->add(new admin_setting_configcheckbox('langmenu', get_string('langmenu', 'admin'), get_string('configlangmenu', 'admin'), 1));
     $temp->add(new admin_setting_langlist());
     $temp->add(new admin_setting_configcheckbox('langcache', get_string('langcache', 'admin'), get_string('configlangcache', 'admin'), 1));
+    $temp->add(new admin_setting_configcheckbox('langstringcache', get_string('langstringcache', 'admin'), get_string('configlangstringcache', 'admin'), 1));
     $temp->add(new admin_setting_configtext('locale', get_string('localetext', 'admin'), get_string('configlocale', 'admin'), '', PARAM_FILE));
     $temp->add(new admin_setting_configselect('latinexcelexport', get_string('latinexcelexport', 'admin'), get_string('configlatinexcelexport', 'admin'), '0', array('0'=>'Unicode','1'=>'Latin')));
 
