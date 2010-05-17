@@ -254,7 +254,7 @@ function xmldb_data_upgrade($oldversion) {
         upgrade_mod_savepoint($result, 2010031602, 'data');
     }
 
-    if($result && $oldversion < 2010042800) {
+    if ($result && $oldversion < 2010042800) {
         //migrate data ratings to the central rating table
         require_once($CFG->dirroot . '/lib/db/upgradelib.php');
         $table = new xmldb_table('data_ratings');

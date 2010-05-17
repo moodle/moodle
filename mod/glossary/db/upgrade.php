@@ -260,7 +260,7 @@ function xmldb_glossary_upgrade($oldversion) {
         upgrade_mod_savepoint($result, 2009110800, 'glossary');
     }
 
-    if($result && $oldversion < 2010042800) {
+    if ($result && $oldversion < 2010042800) {
         //migrate glossary_ratings to the central rating table
         require_once($CFG->dirroot . '/lib/db/upgradelib.php');
 

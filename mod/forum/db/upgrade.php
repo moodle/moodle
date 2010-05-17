@@ -285,7 +285,7 @@ function xmldb_forum_upgrade($oldversion) {
         upgrade_mod_savepoint($result, 2009050400, 'forum');
     }
 
-    if($result && $oldversion < 2010042800) {
+    if ($result && $oldversion < 2010042800) {
         //migrate forumratings to the central rating table
         require_once($CFG->dirroot . '/lib/db/upgradelib.php');
         $table = new xmldb_table('forum_ratings');
