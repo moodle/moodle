@@ -39,7 +39,7 @@ class block_comments extends block_base {
         $this->content->footer = '';
         $this->content->text = '';
         if (isloggedin() && !isguestuser()) {
-            list($context, $course, $cm) = get_context_info_array($this->context->id);
+            list($context, $course, $cm) = get_context_info_array($PAGE->context->id);
             $args = new stdclass;
             $args->context   = $PAGE->context;
             $args->course    = $course;
