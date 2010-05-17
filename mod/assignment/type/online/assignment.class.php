@@ -14,7 +14,7 @@ class assignment_online extends assignment_base {
 
     function view() {
 
-        global $OUTPUT;
+        global $OUTPUT, $CFG;
 
         $edit  = optional_param('edit', 0, PARAM_BOOL);
         $saved = optional_param('saved', 0, PARAM_BOOL);
@@ -108,15 +108,18 @@ class assignment_online extends assignment_base {
                 if ($submission && has_capability('mod/assignment:exportownsubmission', $this->context)) {
                     $text = file_rewrite_pluginfile_urls($submission->data1, 'pluginfile.php', $this->context->id, 'assignment_online_submission', $submission->id);
                     echo format_text($text, $submission->data2);
-                    $button = new portfolio_add_button();
-                    $button->set_callback_options('assignment_portfolio_caller', array('id' => $this->cm->id), '/mod/assignment/locallib.php');
-                    $fs = get_file_storage();
-                    if ($files = $fs->get_area_files($this->context->id, 'assignment_online_submission', $submission->id, "timemodified", false)) {
-                        $button->set_formats(PORTFOLIO_FORMAT_RICHHTML);
-                    } else {
-                        $button->set_formats(PORTFOLIO_FORMAT_PLAINHTML);
+                    if ($CFG->enableportfolios) {
+                        require_once($CFG->libdir . '/portfoliolib.php');
+                        $button = new portfolio_add_button();
+                        $button->set_callback_options('assignment_portfolio_caller', array('id' => $this->cm->id), '/mod/assignment/locallib.php');
+                        $fs = get_file_storage();
+                        if ($files = $fs->get_area_files($this->context->id, 'assignment_online_submission', $submission->id, "timemodified", false)) {
+                            $button->set_formats(PORTFOLIO_FORMAT_RICHHTML);
+                        } else {
+                            $button->set_formats(PORTFOLIO_FORMAT_PLAINHTML);
+                        }
+                        $button->render();
                     }
-                    $button->render();
                 } else if (!has_capability('mod/assignment:submit', $context)) { //fix for #4604
                     echo '<div style="text-align:center">'. get_string('guestnosubmit', 'assignment').'</div>';
                 } else if ($this->isopen()){    //fix for #4206
