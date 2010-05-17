@@ -43,14 +43,14 @@ $string['aggregatemode'] = 'Mode of grades';
 $string['aggregateonlygraded'] = 'Aggregate only non-empty grades';
 $string['aggregateonlygraded_help'] = 'An empty grade is a grade which is missing from the gradebook. It may be from an assignment submission which has not yet been graded or from a quiz which has not yet been attempted etc.
 
-This setting determines whether non-empty grades are not included in the aggregation (checkbox ticked) or are counted as minimal grades, for example 0 for an assignment graded between 0 and 100.';
+This setting determines whether empty grades are not included in the aggregation or are counted as minimal grades, for example 0 for an assignment graded between 0 and 100.';
 $string['aggregateonlygradedhelp'] = 'Nonexistent grades are either treated as minimal grades or not included in aggregation.';
 $string['aggregateoutcomes'] = 'Include outcomes in aggregation';
-$string['aggregateoutcomes_help'] = 'If ticked, outcomes are included in the aggregation. This may result in an unexpected category total.';
+$string['aggregateoutcomes_help'] = 'If enabled, outcomes are included in the aggregation. This may result in an unexpected category total.';
 $string['aggregateoutcomeshelp'] = 'Including outcomes in aggregation may not lead to the desired overall grade, so you have the option to include or leave them out.';
 $string['aggregatesonly'] = 'Aggregates only';
 $string['aggregatesubcats'] = 'Aggregate including subcategories';
-$string['aggregatesubcats_help'] = 'This setting determines whether grades in subcategories are included in the aggregation (checkbox ticked).';
+$string['aggregatesubcats_help'] = 'This setting determines whether grades in subcategories are included in the aggregation.';
 $string['aggregatesubcatshelp'] = 'The aggregation is usually done only with immediate children, it is also possible to aggregate including individual grades in all subcategories excluding other aggregated grades.';
 $string['aggregatesum'] = 'Sum of grades';
 $string['aggregateweightedmean'] = 'Weighted mean of grades';
