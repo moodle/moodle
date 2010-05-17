@@ -256,7 +256,7 @@ echo '</div>'."\n";
 echo '</form>'."\n";
 
 if (ajaxenabled()) {
-    $PAGE->requires->js_init_call('M.core_group.init_index');
+    $PAGE->requires->js_init_call('M.core_group.init_index', array($CFG->wwwroot, $courseid));
 }
 
 echo $OUTPUT->footer();
