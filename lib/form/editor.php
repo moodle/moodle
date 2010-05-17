@@ -13,6 +13,8 @@ require_once($CFG->dirroot.'/repository/lib.php');
 
 class MoodleQuickForm_editor extends HTML_QuickForm_element {
     public $_helpbutton = '';
+
+    public $_type       = 'editor';
     protected $_options    = array('subdirs'=>0, 'maxbytes'=>0, 'maxfiles'=>0, 'changeformat'=>0,
                                    'context'=>null, 'noclean'=>0, 'trusttext'=>0);
     protected $_values     = array('text'=>null, 'format'=>null, 'itemid'=>null);
@@ -169,7 +171,7 @@ class MoodleQuickForm_editor extends HTML_QuickForm_element {
             $image_options = initialise_filepicker($args);
 
             $args->accepted_types = array('video', 'media');
-            $media_options = initialise_filepicker($args); 
+            $media_options = initialise_filepicker($args);
 
             $image_options->client_id = uniqid();
             $media_options->client_id = uniqid();
