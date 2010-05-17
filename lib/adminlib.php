@@ -1210,7 +1210,7 @@ abstract class admin_setting {
     public $name;
     /** @var string localised name */
     public $visiblename;
-    /** @var string localised long description */
+    /** @var string localised long description in Markdown format */
     public $description;
     /** @var mixed Can be string or array of string */
     public $defaultsetting;
@@ -1232,7 +1232,7 @@ abstract class admin_setting {
     public function __construct($name, $visiblename, $description, $defaultsetting) {
         $this->parse_setting_name($name);
         $this->visiblename    = $visiblename;
-        $this->description    = $description;
+        $this->description    = markdown_to_html($description);
         $this->defaultsetting = $defaultsetting;
     }
 
