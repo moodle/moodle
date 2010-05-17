@@ -1309,12 +1309,11 @@ class core_renderer extends renderer_base {
                 $aggregatestr = ' - ';
             }
 
-            $countstr = null;
+            $countstr = html_writer::start_tag('span', array('id'=>"ratingcount{$rating->itemid}"));
             if ($rating->count>0) {
-                $countstr = "<span id='ratingcount{$rating->itemid}'>({$rating->count})</span>";
-            } else {
-                $countstr = "<span id='ratingcount{$rating->itemid}'></span>";
+                $countstr .= "({$rating->count})";
             }
+            $countstr .= html_writer::end_tag('span');
 
             //$aggregatehtml = "{$ratingstr} / $scalemax ({$rating->count}) ";
             $aggregatehtml = "<span id='ratingaggregate{$rating->itemid}'>{$aggregatestr}</span> $countstr ";
@@ -1339,16 +1338,37 @@ class core_renderer extends renderer_base {
             && $rating->settings->pluginpermissions->rate
             && $inassessablewindow) {
             
-            $formstart = <<<END
-<form id="postrating{$rating->itemid}" class="postratingform" method="post" action="{$CFG->wwwroot}/rating/rate.php">
-<div class="ratingform">
-<input type="hidden" class="ratinginput" name="contextid" value="{$rating->context->id}" />
-<input type="hidden" class="ratinginput" name="itemid" value="{$rating->itemid}" />
-<input type="hidden" class="ratinginput" name="scaleid" value="{$rating->settings->scale->id}" />
-<input type="hidden" class="ratinginput" name="returnurl" value="{$rating->settings->returnurl}" />
-<input type="hidden" class="ratinginput" name="rateduserid" value="{$rating->itemuserid}" />
-<input type="hidden" class="ratinginput" name="aggregation" value="{$rating->settings->aggregationmethod}" />
-END;
+            //start the rating form
+            $formstart = html_writer::start_tag('form',
+                array('id'=>"postrating{$rating->itemid}", 'class'=>'postratingform', 'method'=>'post', 'action'=>"{$CFG->wwwroot}/rating/rate.php"));
+
+            $formstart .= html_writer::start_tag('div', array('class'=>'ratingform'));
+
+            //add the hidden inputs
+
+            $attributes = array('type'=>'hidden', 'class'=>'ratinginput', 'name'=>'contextid', 'value'=>$rating->context->id);
+            $formstart .= html_writer::empty_tag('input', $attributes);
+
+            $attributes['name'] = 'itemid';
+            $attributes['value'] = $rating->itemid;
+            $formstart .= html_writer::empty_tag('input', $attributes);
+
+            $attributes['name'] = 'scaleid';
+            $attributes['value'] = $rating->settings->scale->id;
+            $formstart .= html_writer::empty_tag('input', $attributes);
+
+            $attributes['name'] = 'returnurl';
+            $attributes['value'] = $rating->settings->returnurl;
+            $formstart .= html_writer::empty_tag('input', $attributes);
+
+            $attributes['name'] = 'rateduserid';
+            $attributes['value'] = $rating->itemuserid;
+            $formstart .= html_writer::empty_tag('input', $attributes);
+
+            $attributes['name'] = 'aggregation';
+            $attributes['value'] = $rating->settings->aggregationmethod;
+            $formstart .= html_writer::empty_tag('input', $attributes);
+
             if (empty($ratinghtml)) {
                 $ratinghtml .= $strrate.': ';
             }
@@ -1371,12 +1391,18 @@ END;
             $ratinghtml .= html_writer::select($scalearray, 'rating', $rating->rating, false, array('class'=>'postratingmenu ratinginput','id'=>'menurating'.$rating->itemid));
 
             //output submit button
-            $ratinghtml .= '<span class="ratingsubmit"><input type="submit" class="postratingmenusubmit" id="postratingsubmit'.$rating->itemid.'" value="'.s(get_string('rate', 'rating')).'" />';
+            
+            $ratinghtml .= html_writer::start_tag('span', array('class'=>"ratingsubmit"));
+
+            $attributes = array('type'=>'submit', 'class'=>'postratingmenusubmit', 'id'=>'postratingsubmit'.$rating->itemid, 'value'=>s(get_string('rate', 'rating')));
+            $ratinghtml .= html_writer::empty_tag('input', $attributes);
 
             if (is_array($rating->settings->scale->scaleitems)) {
                 $ratinghtml .= $this->help_icon_scale($rating->settings->scale->courseid, $rating->settings->scale);
             }
-            $ratinghtml .= '</span></div></form>';
+            $ratinghtml .= html_writer::end_tag('span');
+            $ratinghtml .= html_writer::end_tag('div');
+            $ratinghtml .= html_writer::end_tag('form');
         }
 
         return $ratinghtml;
