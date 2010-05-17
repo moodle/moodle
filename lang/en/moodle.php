@@ -1496,6 +1496,9 @@ $string['screenreaderuse'] = 'Screen reader';
 $string['screenreaderyes'] = 'Yes';
 $string['screenshot'] = 'Screenshot';
 $string['search'] = 'Search';
+$string['search_help'] = 'For basic searching of one or more words anywhere in the text, just type them separated by spaces. All words longer than two characters are used.
+
+For advanced searching, press the search button without typing anything in the search box to access the advanced search form.';
 $string['searchagain'] = 'Search again';
 $string['searchbyemail'] = 'Search by email address';
 $string['searchbyusername'] = 'Search by username';
@@ -1847,6 +1850,11 @@ $string['windowclosing'] = 'This window should close automatically. If not, plea
 $string['withchosenfiles'] = 'With chosen files';
 $string['withoutuserdata'] = 'without user data';
 $string['withselectedusers'] = 'With selected users...';
+$string['withselectedusers_help'] = '* Add / send message - For sending a message to one or more participants
+* Add a new note - For adding a note to a selected participant
+* Add a common note - For adding the same note to more than one participant
+* Extend enrolment (individual) - For extending a selected student\'s access to the course, even when an enrolment period is set
+* Extend enrolment (common) - For extending more than one student\'s access to the course by the same amount';
 $string['withuserdata'] = 'with user data';
 $string['wordforstudent'] = 'Your word for Student';
 $string['wordforstudenteg'] = 'eg Student, Participant etc';
