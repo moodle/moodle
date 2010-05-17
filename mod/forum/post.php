@@ -697,11 +697,11 @@ if ($fromform = $mform_post->get_data()) {
         }
 
         $fromform->mailnow = empty($fromform->mailnow) ? 0 : 1;
-        $discussion = $fromform;
-        $discussion->name  = $fromform->subject;
-        $discussion->intro = $fromform->message;
-        $newstopic = false;
 
+        $discussion = $fromform;
+        $discussion->name    = $fromform->subject;
+
+        $newstopic = false;
         if ($forum->type == 'news' && !$fromform->parent) {
             $newstopic = true;
         }

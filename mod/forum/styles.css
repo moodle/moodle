@@ -35,6 +35,7 @@
 #page-mod-forum-view .groupmenu {float: left;text-align:left;white-space: nowrap;}
 #page-mod-forum-index .subscription,
 #page-mod-forum-view .subscription {float: right;text-align:right;white-space: nowrap;margin: 5px 0;}
+#page-mod-forum-view.forumtype-blog  table.forumpost {width:100%;}
 
 /** Styles for search.php */
 #page-mod-forum-search .introcontent {padding: 15px;font-weight:bold;}

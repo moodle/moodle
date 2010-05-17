@@ -97,7 +97,6 @@
         rss_add_http_header($context, 'forum', $forum, $rsstitle);
     }
 
-
 /// Print header.
     /// Add ajax-related libs for ratings if required  MDL-20119
     $PAGE->requires->yui2_lib('event');
@@ -105,7 +104,9 @@
     $PAGE->requires->yui2_lib('json');
 
     $PAGE->set_title(format_string($forum->name));
+    $PAGE->add_body_class('forumtype-'.$forum->type);
     $PAGE->set_heading(format_string($course->fullname));
+
     echo $OUTPUT->header();
 
 /// Some capability checks.
@@ -129,6 +130,7 @@
         add_to_log($course->id, "forum", "view forum", "view.php?f=$forum->id", "$forum->id");
     }
 
+    $SESSION->fromdiscussion = $FULLME;   // Return here if we post or set subscription etc
 
 
 /// Print settings and things across the top

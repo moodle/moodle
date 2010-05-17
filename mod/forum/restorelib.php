@@ -160,8 +160,8 @@
                     $sd->course   = $forum->course;
                     $sd->forum    = $newid;
                     $sd->name     = $forum->name;
-                    $sd->intro    = $forum->intro;
                     $sd->assessed = $forum->assessed;
+                    $sd->message       = $forum->intro;
                     $sd->messageformat = $defaultformat;
                     $sd->mailnow  = false;
                     //Insert dicussion/post data

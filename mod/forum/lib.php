@@ -77,9 +77,10 @@ function forum_add_instance($forum) {
         $discussion->course        = $forum->course;
         $discussion->forum         = $forum->id;
         $discussion->name          = $forum->name;
-        $discussion->intro         = $forum->intro;
         $discussion->assessed      = $forum->assessed;
-        $discussion->messageformat = $forum->messageformat;
+        $discussion->message       = $forum->intro;
+        $discussion->messageformat = $forum->introformat;
+        $discussion->messagetrust  = trusttext_trusted(get_context_instance(CONTEXT_COURSE, $forum->course));
         $discussion->mailnow       = false;
         $discussion->groupid       = -1;
 
@@ -153,9 +154,10 @@ function forum_update_instance($forum) {
                 $discussion->course          = $forum->course;
                 $discussion->forum           = $forum->id;
                 $discussion->name            = $forum->name;
-                $discussion->intro           = $forum->intro;
                 $discussion->assessed        = $forum->assessed;
-                $discussion->messageformat   = $forum->messageformat;
+                $discussion->message         = $forum->intro;
+                $discussion->messageformat   = $forum->introformat;
+                $discussion->messagetrust    = true;
                 $discussion->mailnow         = false;
                 $discussion->groupid         = -1;
 
@@ -170,10 +172,15 @@ function forum_update_instance($forum) {
             print_error('cannotfindfirstpost', 'forum');
         }
 
-        $post->subject  = $forum->name;
-        $post->message  = $forum->intro;
-        $post->modified = $forum->timemodified;
-        $post->userid   = $USER->id;    // MDL-18599, so that current teacher can take ownership of activities
+        $cm         = get_coursemodule_from_instance('forum', $forum->id);
+        $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
+
+        $post->subject       = $forum->name;
+        $post->message       = $forum->intro;
+        $post->messageformat = $forum->introformat;
+        $post->messagetrust  = trusttext_trusted($modcontext);
+        $post->modified      = $forum->timemodified;
+        $post->userid        = $USER->id;    // MDL-18599, so that current teacher can take ownership of activities
 
         $DB->update_record('forum_posts', $post);
         $discussion->name = $forum->name;
@@ -1871,9 +1878,6 @@ function forum_get_readable_forums($userid, $courseid=0) {
 
     } // End foreach $courses
 
-    //print_object($courses);
-    //print_object($readableforums);
-
     return $readableforums;
 }
 
@@ -2485,8 +2489,6 @@ function forum_get_discussions($cm, $forumsort="d.timemodified DESC", $fullpost=
     global $CFG, $DB, $USER;
 
     $timelimit = '';
-
-    $modcontext = null;
 
     $now = round(time(), -2);
     $params = array($cm->instance);
@@ -3919,6 +3921,10 @@ function forum_add_attachment($post, $forum, $cm, $mform=null, &$message=null) {
         return false;
     }
 
+    if (empty($post->attachments)) {
+        return true;   // Nothing to do
+    }
+
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
     $info = file_get_draft_area_info($post->attachments);
@@ -4043,7 +4049,6 @@ function forum_add_discussion($discussion, $mform=null, &$message=null, $userid=
 
     $forum = $DB->get_record('forum', array('id'=>$discussion->forum));
     $cm    = get_coursemodule_from_instance('forum', $forum->id);
-    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
     $post = new object();
     $post->discussion    = 0;
@@ -4053,18 +4058,22 @@ function forum_add_discussion($discussion, $mform=null, &$message=null, $userid=
     $post->modified      = $timenow;
     $post->mailed        = 0;
     $post->subject       = $discussion->name;
-    $post->message       = $discussion->intro;
+    $post->message       = $discussion->message;
     $post->messageformat = $discussion->messageformat;
     $post->messagetrust  = $discussion->messagetrust;
-    $post->attachments   = $discussion->attachments;
+    $post->attachments   = isset($discussion->attachments) ? $discussion->attachments : null;
     $post->forum         = $forum->id;     // speedup
     $post->course        = $forum->course; // speedup
     $post->mailnow       = $discussion->mailnow;
 
     $post->id = $DB->insert_record("forum_posts", $post);
 
-    $text = file_save_draft_area_files($discussion->itemid, $context->id, 'forum_post', $post->id, array('subdirs'=>true), $post->message);
-    $DB->set_field('forum_posts', 'message', $text, array('id'=>$post->id));
+    // TODO: Fix the calling code so that there always is a $cm when this function is called
+    if (!empty($cm->id) && !empty($discussion->itemid)) {   // In "single simple discussions" this may not exist yet
+        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+        $text = file_save_draft_area_files($discussion->itemid, $context->id, 'forum_post', $post->id, array('subdirs'=>true), $post->message);
+        $DB->set_field('forum_posts', 'message', $text, array('id'=>$post->id));
+    }
 
     // Now do the main entry for the discussion, linking to this first post
 
