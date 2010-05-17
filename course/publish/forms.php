@@ -185,10 +185,9 @@ class course_publication_form extends moodleform {
                $buttonlabel = get_string('readvertiseon', 'hub', !empty($hubname)?$hubname:$huburl);
             }
             $mform->addElement('hidden', 'advertise', $advertise);
-
-            $mform->addElement('static', 'courseurl', get_string('courseurl', 'hub'));
-            $mform->setType('courseurl', PARAM_URL);
-            $mform->setDefault('courseurl', new moodle_url("/course/view.php?id=".$course->id));
+            $mform->addElement('hidden', 'courseurl', $CFG->wwwroot."/course/view.php?id=".$course->id);
+            $mform->addElement('static', 'courseurlstring', get_string('courseurl', 'hub'));
+            $mform->setDefault('courseurlstring', new moodle_url("/course/view.php?id=".$course->id));
         }
 
         $mform->addElement('text', 'courseshortname',get_string('courseshortname', 'hub'));

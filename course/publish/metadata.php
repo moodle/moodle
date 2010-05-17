@@ -56,17 +56,138 @@ if (has_capability('moodle/course:publish', get_context_instance(CONTEXT_COURSE,
     //set the publication form
     $advertise = optional_param('advertise', false, PARAM_BOOL);
     $share = optional_param('share', false, PARAM_BOOL);
-    $coursepublicationform = new course_publication_form( new moodle_url('/course/publish/publish.php'),
+    $coursepublicationform = new course_publication_form( '',
             array('huburl' => $huburl, 'hubname' => $hubname, 'sesskey' => sesskey(),
                     'course' => $course, 'advertise' => $advertise, 'share' => $share,
                     'id' => $id));
     $fromform = $coursepublicationform->get_data();
 
+    if (!empty($fromform)) {
+
+        //retrieve the course information
+        $courseinfo = new stdClass();
+        $courseinfo->fullname = $fromform->name;
+        $courseinfo->shortname = $fromform->courseshortname;
+        $courseinfo->description = $fromform->description;
+        $courseinfo->language = $fromform->language;
+        $courseinfo->publishername = $fromform->publishername;
+        $courseinfo->contributornames = $fromform->contributornames;
+        $courseinfo->coverage = $fromform->coverage;
+        $courseinfo->creatorname = $fromform->creatorname;
+        $courseinfo->licenceshortname = $fromform->licence;
+        $courseinfo->subject = $fromform->subject;
+        $courseinfo->audience = $fromform->audience;
+        $courseinfo->educationallevel = $fromform->educationallevel;
+        $creatornotes = $fromform->creatornotes;
+        $courseinfo->creatornotes = $creatornotes['text'];
+        $courseinfo->creatornotesformat = $creatornotes['format'];
+        $courseinfo->sitecourseid = $id;
+        if ($share) {
+            $courseinfo->demourl = $fromform->demourl;
+            $courseinfo->enrollable = false;
+        } else {
+            $courseinfo->courseurl = $fromform->courseurl;
+            $courseinfo->enrollable = true;
+        }
+
+        //save into screenshots field the references to the screenshot content hash
+        //(it will be like a unique id from the hub perspective)
+        if (!empty($fromform->screenshots)) {
+            $screenshots = $fromform->screenshots;
+            $fs = get_file_storage();
+            $files = $fs->get_area_files(get_context_instance(CONTEXT_USER, $USER->id)->id, 'user_draft', $screenshots);
+            if (!empty($files)) {
+                $courseinfo->screenshotsids = '';
+                foreach ($files as $file) {
+                    if ($file->is_valid_image()) {
+                        $courseinfo->screenshotsids = $courseinfo->screenshotsids . "notsend:" . $file->get_contenthash() . ";";
+                    }
+                }
+            }
+        }
+
+        // BACKUP ACTION
+        if ($share) {
+            $bc = new backup_controller(backup::TYPE_1COURSE, $course->id, backup::FORMAT_MOODLE,
+                    backup::INTERACTIVE_YES, backup::MODE_HUB, $USER->id);
+            $bc->finish_ui();
+            $bc->execute_plan();
+            $backup = $bc->get_results();
+            $backupfile = $backup['backup_destination'];
+        }
+
+        // PUBLISH ACTION
+
+        //retrieve the token to call the hub
+        $hub = new hub();
+        $registeredhub = $hub->get_registeredhub($huburl);
+
+        //publish the course information
+        $function = 'hub_register_courses';
+        $params = array(array($courseinfo));
+        $serverurl = $huburl."/local/hub/webservice/webservices.php";
+        require_once($CFG->dirroot."/webservice/xmlrpc/lib.php");
+        $xmlrpcclient = new webservice_xmlrpc_client();
+        $courseids = $xmlrpcclient->call($serverurl, $registeredhub->token, $function, $params);
+
+        if (count($courseids) != 1) {
+            throw new moodle_exception('coursewronglypublished');
+        }
+
+        $courseregisteredmsg = $OUTPUT->notification(get_string('coursepublished', 'hub'), 'notifysuccess');
+
+
+        //save the record into the published course table
+        $publication =  $hub->get_publication($courseids[0]);
+        if (empty($publication)) {
+            //if never been published or if we share, we need to save this new publication record
+            $hub->add_course_publication($registeredhub->id, $course->id, !$share, $courseids[0]);
+        } else {
+            //if we update the enrollable course publication we update the publication record
+            $hub->update_enrollable_course_publication($publication->id);
+        }
+
+
+        // SEND FILES
+
+        // send screenshots
+        if (!empty($fromform->screenshots)) {
+            require_once($CFG->dirroot. "/lib/filelib.php");
+            $params = array('token' => $registeredhub->token, 'filetype' => SCREENSHOT_FILE_TYPE,
+                    'courseshortname' => $courseinfo->shortname);
+            $curl = new curl();
+            foreach ($files as $file) {
+                if ($file->is_valid_image()) {
+                    $params['file'] = $file;
+                    $params['filename'] = $file->get_filename();
+                    $curl->post($huburl."/local/hub/webservice/upload.php", $params);
+                }
+            }
+        }
+
+
+        // send backup
+        if ($share) {
+            foreach ($courseids as $courseid) {
+                $params['filetype'] = BACKUP_FILE_TYPE;
+                $params['courseid'] = $courseid;
+                $params['file'] = $backupfile;
+                $curl->post($huburl."/local/hub/webservice/upload.php", $params);
+            }
+        }
+
+
+        //TODO: Delete the backup from user_tohub
+       
+    }
+
 
     /////// OUTPUT SECTION /////////////
 
     echo $OUTPUT->header();
-
+    if (!empty($courseregisteredmsg)) {
+            echo $courseregisteredmsg;
+    }
     $coursepublicationform->display();
 
     echo $OUTPUT->footer();
