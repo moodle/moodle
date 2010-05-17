@@ -138,7 +138,7 @@ echo $OUTPUT->header();
 if ($tabfile) {
     include($tabfile);
 }
-echo $OUTPUT->heading_with_help($title, 'overrides', 'role');
+echo $OUTPUT->heading_with_help($title, 'overridepermissions', 'role');
 
 // Show UI for overriding roles.
 if (!empty($capabilities)) {

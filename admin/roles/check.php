@@ -118,7 +118,7 @@ if ($tabfile) {
 }
 
 // Print heading.
-echo $OUTPUT->heading_with_help($title, 'checkpermissions', 'role');
+echo $OUTPUT->heading($title);
 
 // If a user has been chosen, show all the permissions for this user.
 $reportuser = $userselector->get_selected_user();
