@@ -312,7 +312,7 @@ function xmldb_wiki_upgrade($oldversion) {
             //}
         //}
         //echo $OUTPUT->notification('Droping old tables', 'notifysuccess');
-        //upgrade_mod_savepoint($result, 2010040110, 'wiki');
+        //upgrade_mod_savepoint($result, 2010040120, 'wiki');
     }
 
     return $result;
