@@ -89,6 +89,7 @@ case workshop::PHASE_SETUP:
             echo $OUTPUT->container(get_string('noexamplesformready', 'workshop'));
         }
         echo $OUTPUT->box_end();
+        print_collapsible_region_end();
     }
     break;
 case workshop::PHASE_SUBMISSION:
