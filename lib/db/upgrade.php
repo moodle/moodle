@@ -1202,20 +1202,6 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint($result, 2009010604);
     }
 
-    if ($result && $oldversion < 2009010800) {
-    /// Update the notifyloginfailures setting.
-        if ($CFG->notifyloginfailures == 'mainadmin') {
-            set_config('notifyloginfailures', get_admin()->username);
-        } else if ($CFG->notifyloginfailures == 'alladmins') {
-            set_config('notifyloginfailures', '$@ALL@$');
-        } else {
-            set_config('notifyloginfailures', '');
-        }
-
-    /// Main savepoint reached
-        upgrade_main_savepoint($result, 2009010800);
-    }
-
     if ($result && $oldversion < 2009011000) {
 
     /// Changing nullability of field configdata on table block_instance to null
@@ -2604,12 +2590,10 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         }
         $dbman->create_table($table);
 
-        // Print notice about need to upgrade bloglevel
+        // now inform admins that some settings require attention after upgrade
         if (($CFG->bloglevel == BLOG_COURSE_LEVEL || $CFG->bloglevel == BLOG_GROUP_LEVEL) && empty($CFG->bloglevel_upgrade_complete)) {
             echo $OUTPUT->notification(get_string('bloglevelupgradenotice', 'admin'));
 
-            // email admins about the need to upgrade their system using the admin/bloglevelupgrade.php script
-            $admins = get_admins();
             $site = get_site();
 
             $a = new StdClass;
@@ -4061,6 +4045,43 @@ AND EXISTS (SELECT 'x'
     /// Main savepoint reached
         upgrade_main_savepoint($result, 2010051600);
     }
+
+    if ($result && $oldversion < 2010051800) {
+        // switching to userid in config settings because user names are not unique and reliable enough
+        if (!empty($CFG->courserequestnotify) and $CFG->courserequestnotify !== '$@NONE@$' and $CFG->courserequestnotify !== '$@ALL@$') {
+            list($where, $params) = $DB->get_in_or_equal(explode(',', $CFG->courserequestnotify));
+            $params[] = $CFG->mnet_localhost_id;
+            $users = $DB->get_fieldset_select('user', 'id', "username $where AND mnethostid = ?", $params);
+            if ($users) {
+                set_config('courserequestnotify', implode(',', $users));
+            } else {
+                set_config('courserequestnotify', '$@NONE@$');
+            }
+        }
+        upgrade_main_savepoint($result, 2010051800);
+    }
+
+    if ($result && $oldversion < 2010051801) {
+        // Update the notifyloginfailures setting.
+        if ($CFG->notifyloginfailures == 'mainadmin') {
+            if ($admins = explode(',', $CFG->siteadmins)) {
+                $adminid = reset($admins);
+                set_config('notifyloginfailures', $adminid);
+            } else {
+                unset_config('notifyloginfailures'); // let them choose
+            }
+            unset($admins);
+
+        } else if ($CFG->notifyloginfailures == 'alladmins') {
+            set_config('notifyloginfailures', '$@ALL@$');
+
+        } else {
+            set_config('notifyloginfailures', '$@NONE@$');
+        }
+
+        upgrade_main_savepoint($result, 2010051801);
+    }
+
 
     return $result;
 }

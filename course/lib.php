@@ -3536,8 +3536,7 @@ class course_request {
         $request = new course_request($data);
 
         // Notify the admin if required.
-        if ($CFG->courserequestnotify) {
-            $users = get_users_from_config($CFG->courserequestnotify, 'moodle/site:approvecourse');
+        if ($users = get_users_from_config($CFG->courserequestnotify, 'moodle/site:approvecourse')) {
 
             $a = new stdClass;
             $a->link = "$CFG->wwwroot/course/pending.php";
