@@ -34,6 +34,7 @@ $string['allocationerror'] = 'Allocation error';
 $string['allsubmissions'] = 'All submissions';
 $string['alreadygraded'] = 'Already graded';
 $string['areainstructauthors'] = 'Instructions for submitting';
+$string['areainstructreviewers'] = 'Instructions for assessing';
 $string['areasubmissionattachment'] = 'Submission attachments';
 $string['areasubmissioncontent'] = 'Submission texts';
 $string['assess'] = 'Assess';
