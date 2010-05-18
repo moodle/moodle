@@ -104,10 +104,6 @@ class file_info_user extends file_info {
         if ($child = $this->browser->get_file_info(get_context_instance(CONTEXT_USER, $USER->id), 'user_backup', 0)) {
             $children[] = $child;
         }
-
-        if ($child = $this->browser->get_file_info(get_context_instance(CONTEXT_USER, $USER->id), 'user_private', 0)) {
-            $children[] = $child;
-        }
         // do not list user_draft here - it is browsable only if you know the draft itemid ;-)
 
         return $children;
