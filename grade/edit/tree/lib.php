@@ -215,7 +215,9 @@ class grade_edit_tree {
 
                     $cell = new html_table_cell();
                     $cell->colspan = 12;
-                    $cell->text = $OUTPUT->action_icon($aurl, $strmovehere, new pix_icon(array('class'=>'movetarget'), 'movehere'));
+                    
+                    $icon = new pix_icon('movehere', $strmovehere, null, array('class'=>'movetarget'));
+                    $cell->text = $OUTPUT->action_icon($aurl, $icon);
 
                     $moveto = new html_table_row(array($cell));
                 }
