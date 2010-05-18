@@ -1671,6 +1671,7 @@ $string['submit'] = 'Submit';
 $string['success'] = 'Success';
 $string['summary'] = 'Summary';
 $string['summaryof'] = 'Summary of {$a}';
+$string['summaryof_help'] = 'The idea of a summary is a short text to prepare students for the activities within the topic or week. The text is shown on the course page under the section name.';
 $string['supplyinfo'] = 'More details';
 $string['switchrolereturn'] = 'Return to my normal role';
 $string['switchroleto'] = 'Switch role to...';
