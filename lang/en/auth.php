@@ -105,6 +105,9 @@ $string['pluginnotenabled'] = 'Authentication plugin \'{$a}\' is not enabled.';
 $string['pluginnotinstalled'] = 'Authentication plugin \'{$a}\' is not installed.';
 $string['potentialidps'] = 'Do you usually log in somewhere else before arriving here?<br />Choose from the following list to log in at your usual place:';
 $string['recaptcha'] = 'reCAPTCHA';
+$string['recaptcha_help'] = 'The CAPTCHA is for preventing abuse from automated programs. Simply enter the words in the box, in order and separated by a space.
+
+If you are not sure what the words are, you can try getting another CAPTCHA or an audio CAPTCHA.';
 $string['selfregistration'] = 'Self registration';
 $string['selfregistration_help'] = 'If an authentication plugin, such as email-based self-registration, is selected, then it enables potential users to register themselves and create accounts. This results in the possibility of spammers creating accounts in order to use forum posts, blog entries etc. for spam. To avoid this risk, self-registration should be disabled or limited by <em>Allowed email domains</em> setting.';
 $string['sha1'] = 'SHA-1 hash';
