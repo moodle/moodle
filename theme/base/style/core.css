@@ -317,9 +317,9 @@ table.mod_index {width:100%;}
 /**
  * Comments
  */
-.comment-ctrl {max-width: 200px;font-size: 12px;display: none;margin:0;padding:0;}
+.comment-ctrl {font-size: 12px;display: none;margin:0;padding:0;}
 .comment-ctrl h5 {margin:0;padding: 5px;}
-.comment-area {padding: 5px;}
+.comment-area {max-width: 400px;padding: 5px;}
 .comment-area textarea {width:100%;overflow:auto;}
 .comment-area .fd {text-align:right;}
 .comment-meta span {color:gray;}
@@ -334,7 +334,7 @@ table.mod_index {width:100%;}
 .comment-content p {padding:0;margin:0 18px 0 0;}
 .comment-delete {float:right;text-align:right;}
 .comment-delete-confirm {background: #FFE390; padding: 2px; width: 5em;text-align:center;}
-.comment-container {float:left;width: 305px;margin: 4px;}
+.comment-container {float:left;margin: 4px;}
 .comment-report-selectall{display:none}
 .jsenabled .comment-report-selectall{display:inline}
 
