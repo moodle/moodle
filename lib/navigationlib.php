@@ -866,6 +866,11 @@ class global_navigation extends navigation_node {
             $limit = $CFG->navcourselimit;
         }
 
+        if (!empty($CFG->navshowcategories) && $DB->count_records('course_categories') == 1) {
+            // There is only one category so we don't want to show categories
+            $CFG->navshowcategories = false;
+        }
+
         $this->mycourses = get_my_courses($USER->id, 'visible DESC,sortorder ASC', null, false, $limit);
         $showallcourses = (count($this->mycourses) == 0 || !empty($CFG->navshowallcourses));
         $showcategories = ($showallcourses && !empty($CFG->navshowcategories));
