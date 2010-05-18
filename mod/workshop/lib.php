@@ -492,6 +492,7 @@ function workshop_pluginfile($course, $cminfo, $context, $filearea, array $args,
     }
 
     // the following file areas are for the files embedded into the assessment forms
+    // TODO this should be rewritten to using callbacks into subplugins
     if (in_array($filearea, array(
             'workshopform_comments_description',
             'workshopform_accumulative_description',
