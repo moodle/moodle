@@ -241,6 +241,12 @@ $string['survey:participate'] = 'Respond to survey';
 $string['survey:readresponses'] = 'View responses';
 $string['surveysaved'] = 'Survey saved';
 $string['surveytype'] = 'Survey type';
+$string['surveytype_help'] = 'There are 3 available survey types:
+
+* Attitudes to Thinking and Learning Survey (ATTLS) - For measuring the extent to which a person is a \'connected knower\' (tends to find learning more enjoyable, and is often more cooperative, congenial and more willing to build on the ideas of others) or a \'separate knower\' (tends to take a more critical and argumentative stance to learning)
+* Critical Incidents survey
+* Constructivist On-line Learning Environment Survey (COLLES) - For monitoring the extent to which the interactive capacity of the World Wide Web may be exploited for engaging students in dynamic learning practices';
+$string['surveytype_link'] = 'mod/survey/mod';
 $string['thanksforanswers'] = 'Thanks for answering this survey, {$a}';
 $string['time'] = 'Time';
 $string['viewsurveyresponses'] = 'View {$a} survey responses';
