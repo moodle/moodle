@@ -556,3 +556,34 @@ body.tag .managelink {padding: 5px;}
 #custommenu .yui3-menu-horizontal.javascript-disabled>.yui3-menu-content>ul:after {content:"";display:block;clear:both;line-height:0;font-size:0;visibility:hidden;}
 #custommenu .yui3-menu-horizontal.javascript-disabled .yui3-menu-content {font-size:93%;line-height:2;padding:0;}
 #custommenu .yui3-menu-horizontal.javascript-disabled .yui3-menu-content .yui3-menu-content {font-size:100%;}
+
+/**
+ * Smart Select Element
+ */
+.smartselect {position:absolute;}
+.smartselect .smartselect_mask {background-color:#fff;}
+.smartselect ul  {padding: 0;margin: 0;}
+.smartselect ul li {list-style: none;}
+.smartselect .smartselect_menu {margin-right:5px;}
+.safari .smartselect .smartselect_menu {margin-left:2px;}
+.smartselect .smartselect_menu,
+.smartselect .smartselect_submenu {border:1px solid #000;background-color:#FFF;display: none;}
+.smartselect .smartselect_menu.visible,
+.smartselect .smartselect_submenu.visible {display:block;}
+.smartselect .smartselect_menu_content ul li {position:relative;padding:2px 5px;}
+.smartselect .smartselect_menu_content ul li a {color:#333;text-decoration:none;}
+.smartselect .smartselect_menu_content ul li a.selectable {color:inherit;}
+.smartselect .smartselect_submenuitem {background-image:url([[pix:moodle|t/collapsed]]);background-repeat: no-repeat;}
+/** Spanning mode */
+.smartselect.spanningmenu .smartselect_submenu {position:absolute;top:-1px;left:100%;}
+.smartselect.spanningmenu .smartselect_submenu a {white-space: nowrap;padding-right:16px;}
+.smartselect.spanningmenu .smartselect_submenuitem {background-position:100%;}
+.smartselect.spanningmenu .smartselect_menu_content ul li a.selectable:hover {text-decoration:underline;}
+/** Compact mode */
+.smartselect.compactmenu .smartselect_submenu {position:relative;width:100%;margin:0 10px;display:none;border-width:0;z-index: 1010;}
+.smartselect.compactmenu .smartselect_submenu.visible {display:block;}
+.smartselect.compactmenu .smartselect_menu {z-index: 1000;overflow:hidden;}
+.smartselect.compactmenu .smartselect_submenu .smartselect_submenu {z-index: 1020;}
+.smartselect.compactmenu .smartselect_submenuitem:hover > .smartselect_menuitem_label {font-weight:bold;}
+.smartselect.compactmenu .smartselect_submenuitem {background-position:0.5em 3px;}
+.smartselect.compactmenu .smartselect_submenuitem > a {padding-left:16px;}

@@ -97,10 +97,11 @@ class community_hub_search_form extends moodleform {
             }
         }
         $options = array_merge (array('all' => get_string('any')),$options);
-        $mform->addElement('select', 'subject', get_string('subject', 'hub'), $options);
+        $mform->addElement('select', 'subject', get_string('subject', 'hub'), $options, array('id'=>'communitysubject'));
         $mform->setDefault('subject', 'all');
         unset($options);
         $mform->addHelpButton('subject', 'subject', 'hub');
+        $this->init_javascript_enhancement('subject', 'smartselect', array('selectablecategories' => false, 'mode'=>'compact'));
 
         require_once($CFG->dirroot."/lib/licenselib.php");
         $licensemanager = new license_manager();

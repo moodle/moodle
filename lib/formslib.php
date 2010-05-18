@@ -94,7 +94,7 @@ abstract class moodleform {
     /**
      * quickform object definition
      *
-     * @var object MoodleQuickForm
+     * @var MoodleQuickForm MoodleQuickForm
      */
     protected $_form;
     /**
@@ -990,6 +990,46 @@ EOS;
             //no group needed
             $mform->addElement('submit', 'submitbutton', $submitlabel);
             $mform->closeHeaderBefore('submitbutton');
+        }
+    }
+
+    /**
+     * Adds an initialisation call for a standard JavaScript enchancement.
+     *
+     * This function is designed to add an initialisation call for a JavaScript
+     * enhancment that should exist within javascript-static M.form.init_{enhancementname}.
+     *
+     * Current options:
+     *  - Selectboxes
+     *      - smartselect:  Turns a nbsp indented select box into a custom drop down
+     *                      control that supports multilevel and category selection.
+     *                      $enhancement = 'smartselect';
+     *                      $options = array('selectablecategories' => true|false)
+     *
+     * @since 2.0
+     * @param string|element $element
+     * @param string $enhancement
+     * @param array $options
+     * @param array $strings
+     */
+    function init_javascript_enhancement($element, $enhancement, array $options=array(), array $strings=null) {
+        global $PAGE;
+        if (is_string($element)) {
+            $element = $this->_form->getElement($element);
+}
+        if (is_object($element)) {
+            $element->_generateId();
+            $elementid = $element->getAttribute('id');
+            $PAGE->requires->js_init_call('M.form.init_'.$enhancement, array($elementid, $options));
+            if (is_array($strings)) {
+                foreach ($strings as $string) {
+                    if (is_array($string)) {
+                        call_user_method_array('string_for_js', $PAGE->requires, $string);
+                    } else {
+                        $PAGE->requires->string_for_js($string, 'moodle');
+                    }
+                }
+            }
         }
     }
 }
