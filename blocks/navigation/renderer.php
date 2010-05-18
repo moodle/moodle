@@ -26,7 +26,7 @@ class block_navigation_renderer extends plugin_renderer_base {
             }
             $content = $item->get_content();
             $title = $item->get_title();
-            $isbranch = ($item->type != $expansionlimit && ($item->children->count() > 0 || ($item->nodetype == navigation_node::NODETYPE_BRANCH && $item->children->count()==0 && (isloggedin() || $item->type <= navigation_node::TYPE_CATEGORY))));
+            $isbranch = ($item->type !== $expansionlimit && ($item->children->count() > 0 || ($item->nodetype == navigation_node::NODETYPE_BRANCH && $item->children->count()==0 && (isloggedin() || $item->type <= navigation_node::TYPE_CATEGORY))));
             $hasicon = (!$isbranch && $item->icon instanceof renderable);
 
             if ($hasicon) {
