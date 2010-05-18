@@ -965,7 +965,7 @@ class global_navigation extends navigation_node {
 
         // Load for the current user
         $this->load_for_user();
-        if ($this->page->context->contextlevel >= CONTEXT_COURSE) {
+        if ($this->page->context->contextlevel >= CONTEXT_COURSE && $this->page->context->instanceid != SITEID) {
             $this->load_for_user(null, true);
         }
         // Load each extending user into the navigation.
