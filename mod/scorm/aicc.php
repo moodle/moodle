@@ -5,13 +5,13 @@
     header("Pragma: no-cache");
 
     require_once('../../config.php');
-    include_once('lib.php');
-    require_once('locallib.php');
-    require_once('datamodels/aicclib.php');
+    include_once($CFG->dirroot.'/mod/scorm/lib.php');
+    require_once($CFG->dirroot.'/mod/scorm/locallib.php');
+    require_once($CFG->dirroot.'/mod/scorm/datamodels/aicclib.php');
 
     foreach ($_POST as $key => $value) {
-            $tempkey = strtolower($key);
-            $_POST[$tempkey] = $value;
+        $tempkey = strtolower($key);
+        $_POST[$tempkey] = $value;
     }
 
     $command = required_param('command', PARAM_ALPHA);
