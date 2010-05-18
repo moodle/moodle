@@ -353,20 +353,17 @@ class mod_workshop_renderer extends plugin_renderer_base {
     /**
      * Renders the user plannner tool
      *
-     * @param array $plan as returned by {@link workshop::prepare_user_plan()}
+     * @param workshop_user_plan $plan prepared for the user
      * @return string html code to be displayed
      */
-    public function user_plan(array $plan) {
-        if (empty($plan)) {
-            throw new coding_exception('you must provide the prepared user plan to be rendered');
-        }
+    protected function render_workshop_user_plan(workshop_user_plan $plan) {
         $table = new html_table();
         $table->attributes['class'] = 'userplan';
         $table->head = array();
         $table->colclasses = array();
         $row = new html_table_row();
         $row->attributes['class'] = 'phasetasks';
-        foreach ($plan as $phasecode => $phase) {
+        foreach ($plan->phases as $phasecode => $phase) {
             $title = html_writer::tag('span', $phase->title);
             $actions = '';
             foreach ($phase->actions as $action) {
