@@ -108,7 +108,7 @@ class edit_category_form extends moodleform {
         $mform->setHelpButton('grade_item_iteminfo', array('iteminfo', get_string('iteminfo', 'grades'), 'grade'), true);
 
         $mform->addElement('text', 'grade_item_idnumber', get_string('idnumbermod'));
-        $mform->setHelpButton('grade_item_idnumber', array('idnumber', get_string('idnumber', 'grades'), 'grade'), true);
+        $mform->addHelpButton('grade_item_idnumber', 'idnumbermod');
 
         $options = array(GRADE_TYPE_NONE=>get_string('typenone', 'grades'),
                          GRADE_TYPE_VALUE=>get_string('typevalue', 'grades'),

@@ -39,7 +39,7 @@ class edit_item_form extends moodleform {
         $mform->setHelpButton('iteminfo', array('iteminfo', get_string('iteminfo', 'grades'), 'grade'), true);
 
         $mform->addElement('text', 'idnumber', get_string('idnumbermod'));
-        $mform->setHelpButton('idnumber', array('idnumber', get_string('idnumber', 'grades'), 'grade'), true);
+        $mform->addHelpButton('idnumber', 'idnumbermod');
 
         $options = array(GRADE_TYPE_NONE=>get_string('typenone', 'grades'),
                          GRADE_TYPE_VALUE=>get_string('typevalue', 'grades'),

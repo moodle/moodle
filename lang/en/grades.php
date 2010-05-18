@@ -371,7 +371,6 @@ $string['changereportdefaults'] = 'Change report defaults';
 $string['chooseaction'] = 'Choose an action ...';
 $string['choosecategory'] = 'Select category';
 $string['identifier'] = 'Identify user by';
-$string['idnumberhelp'] = 'Setting an ID number provides a way of identifying the activity for grade calculation purposes. If the activity is not included in any grade calculation then the ID number field can be left blank. The ID number for an activity-based grade item may be set on the update activity page.';
 $string['idnumbers'] = 'ID numbers';
 $string['import'] = 'Import';
 $string['importcsv'] = 'Import CSV';
