@@ -62,7 +62,7 @@ class MoodleQuickForm_choosecoursefile extends MoodleQuickForm_group
     // {{{ _createElements()
 
     function _createElements() {
-        global $COURSE;
+        global $COURSE, $OUTPUT;
         $this->_elements = array();
 
         if (!is_array($this->getAttributes()) || !array_key_exists('size', $this->getAttributes())) {
