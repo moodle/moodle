@@ -124,6 +124,7 @@ class course_publication_form extends moodleform {
             $defaultsummary = $publishedcourse['description'];
             $defaultlanguage = $publishedcourse['language'];
             $defaultpublishername = $publishedcourse['publishername'];
+            $defaultpublisheremail = $publishedcourse['defaultpublisheremail'];
             $defaultcontributornames = $publishedcourse['contributornames'];
             $defaultcoverage = $publishedcourse['coverage'];
             $defaultcreatorname = $publishedcourse['creatorname'];
@@ -148,12 +149,13 @@ class course_publication_form extends moodleform {
                 $defaultlanguage =  $course->lang;
             }
             $defaultpublishername = $USER->firstname.' '.$USER->lastname;
+            $defaultpublisheremail = $USER->email;
             $defaultcontributornames = '';
             $defaultcoverage = '';
             $defaultcreatorname = $USER->firstname.' '.$USER->lastname;
             $defaultlicenceshortname = 'cc';
             $defaultsubject = '';
-            $defaultaudience = AUDIENCE_EDUCATORS;
+            $defaultaudience = AUDIENCE_STUDENTS;
             $defaulteducationallevel = EDULEVEL_TERTIARY;
             $defaultcreatornotes = '';
         }
@@ -166,6 +168,7 @@ class course_publication_form extends moodleform {
         $mform->addRule('name', $strrequired, 'required', null, 'client');
         $mform->setType('name', PARAM_TEXT);
         $mform->setDefault('name', $defaultfullname);
+        $mform->addHelpButton('name', 'name', 'hub');
 
         $mform->addElement('hidden', 'id', $this->_customdata['id']);
 
@@ -190,6 +193,7 @@ class course_publication_form extends moodleform {
             $mform->addElement('hidden', 'courseurl', $CFG->wwwroot."/course/view.php?id=".$course->id);
             $mform->addElement('static', 'courseurlstring', get_string('courseurl', 'hub'));
             $mform->setDefault('courseurlstring', new moodle_url("/course/view.php?id=".$course->id));
+            $mform->addHelpButton('courseurlstring', 'courseurl', 'hub');
         }
 
         $mform->addElement('text', 'courseshortname',get_string('courseshortname', 'hub'));
@@ -200,17 +204,30 @@ class course_publication_form extends moodleform {
         $mform->addRule('description', $strrequired, 'required', null, 'client');
         $mform->setDefault('description', $defaultsummary);
         $mform->setType('description', PARAM_TEXT);
+        $mform->addHelpButton('description', 'description', 'hub');
 
         $languages = get_string_manager()->get_list_of_languages();
         asort($languages, SORT_LOCALE_STRING);
         $mform->addElement('select', 'language',get_string('language'), $languages);    
         $mform->setDefault('language', $defaultlanguage);
+        $mform->addHelpButton('language', 'language', 'hub');
 
 
         $mform->addElement('text', 'publishername',get_string('publishername', 'hub'));
         $mform->setDefault('publishername', $defaultpublishername);
         $mform->addRule('publishername', $strrequired, 'required', null, 'client');
         $mform->addHelpButton('publishername', 'publishername', 'hub');
+
+        $mform->addElement('text', 'publisheremail',get_string('publisheremail', 'hub'));
+        $mform->setDefault('publisheremail', $defaultpublisheremail);
+        $mform->addRule('publisheremail', $strrequired, 'required', null, 'client');
+        $mform->addHelpButton('publisheremail', 'publisheremail', 'hub');
+
+        $mform->addElement('text', 'creatorname', get_string('creatorname', 'hub'));
+        $mform->addRule('creatorname', $strrequired, 'required', null, 'client');
+        $mform->setType('creatorname', PARAM_TEXT);
+        $mform->setDefault('creatorname', $defaultcreatorname);
+        $mform->addHelpButton('creatorname', 'creatorname', 'hub');
 
         $mform->addElement('text', 'contributornames', get_string('contributornames', 'hub'));
         $mform->setDefault('contributornames', $defaultcontributornames);
@@ -221,11 +238,7 @@ class course_publication_form extends moodleform {
         $mform->setDefault('coverage', $defaultcoverage);
         $mform->addHelpButton('coverage', 'tags', 'hub');
 
-        $mform->addElement('text', 'creatorname', get_string('creatorname', 'hub'));
-        $mform->addRule('creatorname', $strrequired, 'required', null, 'client');
-        $mform->setType('creatorname', PARAM_TEXT);
-        $mform->setDefault('creatorname', $defaultcreatorname);
-        $mform->addHelpButton('creatorname', 'creatorname', 'hub');
+       
 
         require_once($CFG->dirroot."/lib/licenselib.php");
         $licensemanager = new license_manager();

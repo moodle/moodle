@@ -73,6 +73,7 @@ if (has_capability('moodle/course:publish', get_context_instance(CONTEXT_COURSE,
         $courseinfo->description = $fromform->description;
         $courseinfo->language = $fromform->language;
         $courseinfo->publishername = $fromform->publishername;
+        $courseinfo->publisheremail = $fromform->publisheremail;
         $courseinfo->contributornames = $fromform->contributornames;
         $courseinfo->coverage = $fromform->coverage;
         $courseinfo->creatorname = $fromform->creatorname;
@@ -189,6 +190,7 @@ if (has_capability('moodle/course:publish', get_context_instance(CONTEXT_COURSE,
     /////// OUTPUT SECTION /////////////
 
     echo $OUTPUT->header();
+    echo $OUTPUT->heading(get_string('publishcourseon', 'hub', !empty($hubname)?$hubname:$huburl), 3, 'main');
     if (!empty($courseregisteredmsg)) {
             echo $courseregisteredmsg;
     }
