@@ -388,6 +388,10 @@ M.core_dock = {
             blocktitle = this.fix_title_orientation(blocktitle);
 
             var blockcommands = this.cachedcontentnode.one('.title .commands');
+            if (!blockcommands) {
+                blockcommands = this.Y.Node.create('<div class="commands"></div>');
+                this.cachedcontentnode.one('.title').append(blockcommands);
+            }
             var moveto = this.Y.Node.create('<a class="moveto customcommand requiresjs"></a>');
             moveto.append(this.Y.Node.create('<img src="'+M.util.image_url('t/dock_to_block', 'moodle')+'" alt="'+M.str.block.undockitem+'" title="'+M.str.block.undockitem+'" />'));
             if (location.href.match(/\?/)) {
