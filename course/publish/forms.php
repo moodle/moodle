@@ -45,6 +45,8 @@ class hub_publish_selector_form extends moodleform {
 
         $mform->addElement('header', 'site', get_string('selecthub', 'hub'));
 
+        $mform->addElement('static', 'info', '', get_string('selecthubinfo', 'hub').html_writer::empty_tag('br'));
+
         $hubmanager = new hub();
         $registeredhubs = $hubmanager->get_registered_on_hubs();
 
@@ -58,6 +60,9 @@ class hub_publish_selector_form extends moodleform {
                  $hubname = $hub->huburl;
             }
             $mform->addElement('radio','huburl',null,' '.$hubname, $hub->huburl);
+            if ($hub->huburl == MOODLEORGHUBURL) {
+                $mform->setDefault('huburl', $hub->huburl);
+            }
         }
 
         $mform->addElement('hidden', 'id', $this->_customdata['id']);

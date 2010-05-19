@@ -154,6 +154,7 @@ $string['screenshots'] = 'Screenshots';
 $string['screenshots_help'] = 'Screenshots will displayed during search results.';
 $string['search'] = 'Search';
 $string['selecthub'] = 'Select hub';
+$string['selecthubinfo'] = 'Please select the hub to publish on. A hub is a directory of Moodle sites and a directory of Moodle courses.';
 $string['selecthubforadvertise'] = 'Select hub for advertising';
 $string['selecthubforsharing'] = 'Select hub for uploading';
 $string['sendfollowinginfo'] = 'Send the following information:';
