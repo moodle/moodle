@@ -124,7 +124,7 @@ class course_publication_form extends moodleform {
             $defaultsummary = $publishedcourse['description'];
             $defaultlanguage = $publishedcourse['language'];
             $defaultpublishername = $publishedcourse['publishername'];
-            $defaultpublisheremail = $publishedcourse['defaultpublisheremail'];
+            $defaultpublisheremail = $publishedcourse['publisheremail'];
             $defaultcontributornames = $publishedcourse['contributornames'];
             $defaultcoverage = $publishedcourse['coverage'];
             $defaultcreatorname = $publishedcourse['creatorname'];
@@ -265,6 +265,7 @@ class course_publication_form extends moodleform {
         unset($options);
         $mform->addHelpButton('subject', 'subject', 'hub');
         $mform->setDefault('subject', $defaultsubject);
+        $this->init_javascript_enhancement('subject', 'smartselect', array('selectablecategories' => false, 'mode'=>'compact'));
 
         $options = array();
         $options[AUDIENCE_EDUCATORS] = get_string('audienceeducators', 'hub');
