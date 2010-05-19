@@ -816,7 +816,7 @@ class grade_edit_tree_column_aggregateonlygraded extends grade_edit_tree_column_
         $headercell = clone($this->headercell);
         $headercell->style .= 'width: 40px;';
         $headercell->text = get_string('aggregateonlygraded', 'grades')
-                . $OUTPUT->help_icon('aggregateonlygraded', 'grade');
+                . $OUTPUT->help_icon('aggregateonlygraded', 'grades');
         return $headercell;
     }
 
