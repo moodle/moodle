@@ -156,6 +156,7 @@ $string['upload'] = 'Upload this file';
 $string['uploading'] = 'Uploading...';
 $string['uploadsucc'] = 'The file has been uploaded successfully';
 $string['usercontextrepositorydisabled'] = 'You cannot edit this repository in user context';
+$string['usenonjsfilemanager'] = 'Use non javascript file manager';
 $string['wrongcontext'] = 'You cannot access to this context';
 $string['xhtmlerror'] = 'You are probably using XHTML strict header, some YUI Component doesn\'t work in this mode, please turn it off in moodle';
 $string['ziped'] = 'Compress folder successfully';

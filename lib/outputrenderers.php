@@ -623,7 +623,7 @@ class core_renderer extends renderer_base {
         global $CFG, $DB;
 
         $output = $this->container_end_all(true);
-        
+
         $footer = $this->opencontainers->pop('header/footer');
 
         if (debugging() and $DB and $DB->is_transaction_started()) {
@@ -739,7 +739,7 @@ class core_renderer extends renderer_base {
             $output = html_writer::tag('a', get_string('skipa', 'access', $skiptitle), array('href' => '#sb-' . $bc->skipid, 'class' => 'skip-block'));
             $skipdest = html_writer::tag('span', '', array('id' => 'sb-' . $bc->skipid, 'class' => 'skip-block-to'));
         }
-        
+
         $output .= html_writer::start_tag('div', $bc->attributes);
 
         $controlshtml = $this->block_controls($bc->controls);
@@ -1269,9 +1269,9 @@ class core_renderer extends renderer_base {
         $ratinghtml = ''; //the string we'll return
 
         //permissions check - can they view the aggregate?
-        if ( ($rating->itemuserid==$USER->id 
+        if ( ($rating->itemuserid==$USER->id
                 && $rating->settings->permissions->view && $rating->settings->pluginpermissions->view)
-            || ($rating->itemuserid!=$USER->id 
+            || ($rating->itemuserid!=$USER->id
                 && $rating->settings->permissions->viewany && $rating->settings->pluginpermissions->viewany) ) {
 
             $aggregatelabel = '';
@@ -1337,7 +1337,7 @@ class core_renderer extends renderer_base {
             && $rating->settings->permissions->rate
             && $rating->settings->pluginpermissions->rate
             && $inassessablewindow) {
-            
+
             //start the rating form
             $formstart = html_writer::start_tag('form',
                 array('id'=>"postrating{$rating->itemid}", 'class'=>'postratingform', 'method'=>'post', 'action'=>"{$CFG->wwwroot}/rating/rate.php"));
@@ -1391,7 +1391,7 @@ class core_renderer extends renderer_base {
             $ratinghtml .= html_writer::select($scalearray, 'rating', $rating->rating, false, array('class'=>'postratingmenu ratinginput','id'=>'menurating'.$rating->itemid));
 
             //output submit button
-            
+
             $ratinghtml .= html_writer::start_tag('span', array('class'=>"ratingsubmit"));
 
             $attributes = array('type'=>'submit', 'class'=>'postratingmenusubmit', 'id'=>'postratingsubmit'.$rating->itemid, 'value'=>s(get_string('rate', 'rating')));
@@ -1718,6 +1718,127 @@ class core_renderer extends renderer_base {
         }
 
         return html_writer::tag('a', $output, $attributes);
+    }
+
+    /**
+     * Print the file manager
+     *
+     * <pre>
+     * $OUTPUT->file_manager($options);
+     * </pre>
+     *
+     * @param array $options associative array with file manager options
+     *   options are:
+     *       maxbytes=>-1,
+     *       maxfiles=>-1,
+     *       filearea=>'user_draft',
+     *       itemid=>0,
+     *       subdirs=>false,
+     *       client_id=>uniqid(),
+     *       ccepted_types=>'*',
+     *       return_types=>FILE_INTERNAL,
+     *       context=>$PAGE->context
+     * @return string HTML fragment
+     */
+    public function file_manager($options) {
+        $fm = new file_manager($options);
+        return $this->render($fm);
+    }
+
+    /**
+     * Internal implementation of file manager rendering.
+     * @param file_manager $fm
+     * @return string
+     */
+    public function render_file_manager(file_manager $fm) {
+        global $CFG, $OUTPUT;
+        static $filemanagertemplateloaded;
+        $html = '';
+        $nonjsfilemanager = optional_param('usenonjsfilemanager', 0, PARAM_INT);
+        $options = $fm->options;
+        $straddfile  = get_string('add', 'repository') . '...';
+        $strmakedir  = get_string('makeafolder', 'moodle');
+        $strdownload  = get_string('downloadfolder', 'repository');
+
+        $icon_add_file = $OUTPUT->pix_icon('t/addfile', $straddfile).'';
+        $icon_add_folder = $OUTPUT->pix_icon('t/adddir', $strmakedir).'';
+        $icon_download = $OUTPUT->pix_icon('t/download', $strdownload).'';
+
+        $client_id = $options->client_id;
+        $itemid    = $options->itemid;
+        $filearea  = $options->filearea;
+
+        if (empty($options->filecount)) {
+            $extra = ' style="display:none"';
+        } else {
+            $extra = '';
+        }
+
+        $html .= <<<FMHTML
+<div id="filemanager-wrapper-{$client_id}" style="display:none">
+    <div class="fm-breadcrumb" id="fm-path-{$client_id}"></div>
+    <div class="filemanager-toolbar">
+        <button id="btnadd-{$client_id}" onclick="return false">{$icon_add_file} $straddfile</button>
+        <button id="btncrt-{$client_id}" onclick="return false">{$icon_add_folder} $strmakedir</button>
+        <button id="btndwn-{$client_id}" onclick="return false" {$extra}>{$icon_download} $strdownload</button>
+    </div>
+    <div class="filemanager-container" id="filemanager-{$client_id}">
+        <ul id="draftfiles-{$client_id}" class="fm-filelist">
+            <li>Loading...</li>
+        </ul>
+    </div>
+</div>
+<div class='clearer'></div>
+FMHTML;
+        if (empty($filemanagertemplateloaded)) {
+            $filemanagertemplateloaded = true;
+            $html .= <<<FMHTML
+<div id="fm-template" style="display:none"><div class="fm-file-menu">___action___</div> <div class="fm-file-name">___fullname___</div></div>
+FMHTML;
+        }
+
+        $filemanagerurl = new moodle_url('/repository/filepicker.php', array(
+            'filearea'=>$filearea,
+            'env'=>'filemanager',
+            'action'=>'embedded',
+            'itemid'=>$itemid,
+            'subdirs'=>'/',
+            'maxbytes'=>$options->maxbytes,
+            'ctx_id'=>$this->page->context->id,
+            'course'=>$this->page->course->id,
+            ));
+
+        $module = array(
+            'name'=>'form_filemanager',
+            'fullpath'=>'/lib/form/filemanager.js',
+            'requires' => array('core_filepicker', 'base', 'io', 'node', 'json', 'yui2-button', 'yui2-container', 'yui2-layout', 'yui2-menu', 'yui2-treeview'),
+            'strings' => array(array('loading', 'repository'), array('nomorefiles', 'repository'), array('confirmdeletefile', 'repository'),
+                 array('add', 'repository'), array('accessiblefilepicker', 'repository'), array('move', 'moodle'),
+                 array('cancel', 'moodle'), array('download', 'moodle'), array('ok', 'moodle'),
+                 array('emptylist', 'repository'), array('entername', 'repository'), array('enternewname', 'repository'),
+                 array('zip', 'editor'), array('unzip', 'moodle'), array('rename', 'moodle'), array('delete', 'moodle'),
+                 array('setmainfile', 'resource'), array('cannotdeletefile', 'error'), array('confirmdeletefile', 'repository'),
+                 array('nopathselected', 'repository'), array('popupblockeddownload', 'repository'),
+                 array('draftareanofiles', 'repository'), array('path', 'moodle'), array('setmainfile', 'repository')
+            )
+        );
+        $this->page->requires->js_module($module);
+        $this->page->requires->js_init_call('M.form_filemanager.init', array($options), true, $module);
+
+        $url = new moodle_url($this->page->url, array('usenonjsfilemanager'=>1));
+
+        // non javascript file manager
+        $html .= '<div id="nonjs-filemanager-'.$client_id.'">';
+        if (!empty($nonjsfilemanager)) {
+            $html .= <<<NONJS
+<object type="text/html" data="$url" height="160" width="600" style="border:1px solid #000">Error</object>
+NONJS;
+        } else {
+            $html .= html_writer::link($url, get_string('usenonjsfilemanager', 'repository'));
+        }
+        $html .= '</div>';
+
+        return $html;
     }
 
     /**
@@ -2213,7 +2334,7 @@ class core_renderer extends renderer_base {
      * A custom menu can be configured by browing to
      *    Settings: Administration > Appearance > Themes > Theme settings
      * and then configuring the custommenu config setting as described.
-     * 
+     *
      * @return string
      */
     public function custom_menu() {

@@ -69,33 +69,6 @@ class data_field_file extends data_field_base {
             $itemid = file_get_unused_draft_itemid();
         }
 
-        $draftareainfo = file_get_draft_area_info($itemid);
-        $filecount = $draftareainfo['filecount'];
-
-
-        // create a unique id for filemanager
-        $client_id = uniqid();
-
-        // parameters to filter repositories
-        $params = new stdclass;
-        $params->accepted_types = '*';
-        $params->return_types = FILE_INTERNAL;
-        $params->context = $PAGE->context;
-
-        // including repoisitory instances list
-        $filepicker_options = initialise_filepicker($params);
-
-        // get existing files
-        $filemanager_options = file_get_user_area_files($itemid);
-        $filemanager_options->client_id = $client_id;
-        $filemanager_options->filecount = $filecount;
-        $filemanager_options->itemid    = $itemid;
-        $filemanager_options->subdirs   = 0;
-        $filemanager_options->maxbytes = $this->field->param3;
-        $filemanager_options->maxfiles = 1;
-        // store filepicker options
-        $filemanager_options->filepicker = $filepicker_options;
-
         $html = '';
         // database entry label
         $html .= '<div title="'.s($this->field->description).'">';
@@ -104,7 +77,16 @@ class data_field_file extends data_field_base {
         // itemid element
         $html .= '<input type="hidden" name="field_'.$this->field->id.'_file" value="'.$itemid.'" />';
 
-        $html .= print_filemanager($filemanager_options, true);
+        $filemanager_options = new stdclass;
+        $filemanager_options->maxbytes = $this->field->param3;
+        $filemanager_options->maxfiles = 1;
+        $filemanager_options->filearea = 'user_draft';
+        $filemanager_options->itemid   = $itemid;
+        $filemanager_options->subdirs  = 0;
+        $filemanager_options->accepted_types = '*';
+        $filemanager_options->return_types = FILE_INTERNAL;
+        $filemanager_options->context  = $PAGE->context;
+        $html .= $OUTPUT->file_manager($filemanager_options);
 
         $html .= '</fieldset>';
         $html .= '</div>';

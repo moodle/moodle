@@ -35,6 +35,61 @@ interface renderable {
     // intentionally empty
 }
 
+/**
+ * Data structure representing a file manager.
+ *
+ * @copyright 2010 Dongsheng Cai
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since     Moodle 2.0
+ */
+class file_manager implements renderable {
+    public $options;
+    public function __construct(stdClass $options) {
+        global $CFG, $USER, $PAGE;
+        require_once($CFG->dirroot. '/repository/lib.php');
+        $defaults = array(
+            'maxbytes'=>-1,
+            'maxfiles'=>-1,
+            'filearea'=>'user_draft',
+            'itemid'=>0,
+            'subdirs'=>0,
+            'client_id'=>uniqid(),
+            'accepted_types'=>'*',
+            'return_types'=>FILE_INTERNAL,
+            'context'=>$PAGE->context
+            );
+        foreach ($defaults as $key=>$value) {
+            if (empty($options->$key)) {
+                $options->$key = $value;
+            }
+        }
+
+        $fs = get_file_storage();
+
+        // initilise options, getting files in root path
+        $this->options = file_get_user_area_files($options->itemid, '/', $options->filearea);
+
+        // calculate file count
+        $usercontext = get_context_instance(CONTEXT_USER, $USER->id);
+        $files = $fs->get_area_files($usercontext->id, $options->filearea, $options->itemid, 'id', false);
+        $filecount = count($files);
+        $this->options->filecount = $filecount;
+
+        // copying other options
+        foreach ($options as $name=>$value) {
+            $this->options->$name = $value;
+        }
+
+        // building file picker options
+        $params = new stdclass;
+        $params->accepted_types = $options->accepted_types;
+        $params->return_types = $options->return_types;
+        $params->context = $options->context;
+        $params->env = 'filemanager';
+        $filepicker_options = initialise_filepicker($params);
+        $this->options->filepicker = $filepicker_options;
+    }
+}
 
 /**
  * Data structure representing a user picture.
@@ -2133,7 +2188,7 @@ class custom_menu extends custom_menu_item {
      *     -Second level third item|http://www.moodle.com/development/
      *     First level second item|http://www.moodle.com/feedback/
      *     First level third item
-     * 
+     *
      * @static
      * @param string $text
      * @return array

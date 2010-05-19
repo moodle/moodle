@@ -132,36 +132,26 @@ class MoodleQuickForm_filemanager extends HTML_QuickForm_element {
             $draftitemid = $this->getValue();
         }
 
-        $draftareainfo = file_get_draft_area_info($draftitemid);
-        $filecount = $draftareainfo['filecount'];
         $client_id = uniqid();
 
-        $params = new stdclass;
-        $params->accepted_types = $accepted_types;
-        $params->return_types = FILE_INTERNAL;
-        $params->context = $PAGE->context;
-        $params->env = 'filemanager';
-
-        // including the repository instances list
-        $filepicker_options = initialise_filepicker($params);
-
-        // including draft files
-        $options = file_get_user_area_files($draftitemid, '/', 'user_draft');
         // filemanager options
-        $options->filepicker = $filepicker_options;
+        $options = new stdclass;
         $options->mainfile  = $this->_options['mainfile'];
+        $options->filearea  = 'user_draft';
         $options->maxbytes  = $this->_options['maxbytes'];
         $options->maxfiles  = $this->getMaxfiles();
         $options->client_id = $client_id;
-        $options->filecount = $filecount;
         $options->itemid    = $draftitemid;
         $options->subdirs   = $this->_options['subdirs'];
-        // store filepicker options
         $options->target    = $id;
+        $options->accepted_types = $accepted_types;
+        $options->return_types = FILE_INTERNAL;
+        $options->context = $PAGE->context;
 
         $html = $this->_getTabs();
+        $html .= $OUTPUT->file_manager($options);
+
         $html .= '<input value="'.$draftitemid.'" name="'.$elname.'" type="hidden" />';
-        $html .= print_filemanager($options, true);
 
         return $html;
     }

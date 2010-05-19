@@ -21,7 +21,7 @@
  *
  * @package    moodlecore
  * @subpackage repository
- * @copyright  2010 Dongsheng Cai <dongsheng@moodle.com> 
+ * @copyright  2010 Dongsheng Cai <dongsheng@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -46,7 +46,7 @@ class block_private_files extends block_base {
     }
 
     function get_content() {
-        global $CFG, $USER, $PAGE;
+        global $CFG, $USER, $PAGE, $OUTPUT;
         if ($this->content !== NULL) {
             return $this->content;
         }
@@ -56,36 +56,19 @@ class block_private_files extends block_base {
         $this->content->text = '';
         $this->content->footer = '';
         if (isloggedin() && !isguestuser()) {   // Show the block
-            $usercontext = get_context_instance(CONTEXT_USER, $USER->id);
-            $client_id = uniqid();
 
-            $params = new stdclass;
-            $params->accepted_types = '*';
-            $params->return_types = FILE_INTERNAL;
-            $params->context = $PAGE->context;
-            $params->env = 'filemanager';
-
-            $filepicker_options = initialise_filepicker($params);
-
-            $fs = get_file_storage();
-            $draftfiles = $fs->get_area_files($usercontext->id, 'user_private', 0, 'id', false);
-            // the number of existing files in user private area
-            $filecount = count($draftfiles);
-
-            // read existing user private files
-            $options = file_get_user_area_files(0, '/', 'user_private');
+            $options = new stdclass;
             $options->maxbytes  = -1;
             $options->maxfiles  = -1;
             $options->filearea  = 'user_private';
-            $options->client_id = $client_id;
-            $options->filecount = $filecount;
             $options->itemid    = 0;
             $options->subdirs   = true;
-            // store filepicker options
-            $options->filepicker = $filepicker_options;
+            $options->accepted_types = '*';
+            $options->return_types = FILE_INTERNAL;
+            $options->context   = $PAGE->context;
 
             $this->content = new stdClass;
-            $this->content->text = print_filemanager($options, true);
+            $this->content->text = $OUTPUT->file_manager($options);
 ;
             $this->content->footer = '';
 
