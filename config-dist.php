@@ -399,6 +399,21 @@ $CFG->admin = 'admin';
 // Since 2.0 sql queries are not shown during upgrade by default.
 // Please note that this setting may produce very long upgrade page on large sites.
 // $CFG->upgradeshowsql = true; // NOT FOR PRODUCTION SERVERS!
+//
+//=========================================================================
+// 9. FORCED SETTINGS
+//=========================================================================
+// It is possible to specify normal admin settings here, the point is that
+// they can not be changed through the standard admin settings pages any more.
+//
+// Core settings are specified directly via assignment to $CFG variable.
+// Example:
+//   $CFG->somecoresetting = 'value';
+//
+// Plugin settings have to be put into a special array.
+// Example:
+//   $CFG->forced_plugin_settings = array('pluginname'  => array('settingname' => 'value', 'secondsetting' => 'othervalue'),
+//                                        'otherplugin' => array('mysetting' => 'myvalue', 'thesetting' => 'thevalue'));
 
 
 //=========================================================================

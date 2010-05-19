@@ -224,7 +224,11 @@ if (!isset($_SERVER['REMOTE_ADDR']) && isset($_SERVER['argv'][0])) {
 
 // Store settings from config.php in array in $CFG - we can use it later to detect problems and overrides
 $CFG->config_php_settings = (array)$CFG;
-
+// Forced plugin settings override values from config_plugins table
+unset($CFG->config_php_settings['forced_plugin_settings']);
+if (!isset($CFG->forced_plugin_settings)) {
+    $CFG->forced_plugin_settings = array();
+}
 // Set httpswwwroot default value (this variable will replace $CFG->wwwroot
 // inside some URLs used in HTTPSPAGEREQUIRED pages.
 $CFG->httpswwwroot = $CFG->wwwroot;
@@ -315,11 +319,7 @@ if (isset($CFG->debug)) {
 }
 
 // Load up any configuration from the config table
-try {
-    $CFG = get_config();
-} catch (dml_read_exception $e) {
-    // most probably empty db, going to install soon
-}
+initialise_cfg();
 
 // Verify upgrade is not running unless we are in a script that needs to execute in any case
 if (!defined('NO_UPGRADE_CHECK') and isset($CFG->upgraderunning)) {
@@ -392,7 +392,7 @@ unset($originalconfigdebug);
 unset($originaldatabasedebug);
 error_reporting($CFG->debug);
 
-// find out if PHP cofigured to display warnings,
+// find out if PHP configured to display warnings,
 // this is a security problem because some moodle scripts may
 // disclose sensitive information
 if (ini_get_bool('display_errors')) {

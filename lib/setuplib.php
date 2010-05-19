@@ -455,6 +455,29 @@ function setup_validate_php_configuration() {
 }
 
 /**
+ * Initialise global $CFG variable
+ * @return void
+ */
+function initialise_cfg() {
+    global $CFG, $DB;
+    
+    try {
+        if ($DB) {
+            $localcfg = $DB->get_records_menu('config', array(), '', 'name,value');
+            foreach ($localcfg as $name=>$value) {
+                if (property_exists($CFG, $name)) {
+                    // config.php settings always take precedence
+                    continue;
+                }
+                $CFG->{$name} = $value;
+            }
+        }
+    } catch (dml_read_exception $e) {
+        // most probably empty db, going to install soon
+    }
+}
+
+/**
  * Initialises $FULLME and friends. Private function. Should only be called from
  * setup.php.
  */
