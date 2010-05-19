@@ -35,44 +35,23 @@ class core_publish_renderer extends plugin_renderer_base {
     public function publicationselector($courseid) {
         global $OUTPUT;
 
-        $table = new html_table();
-        $table->head  = array(get_string('advertise', 'hub'), get_string('share', 'hub'));
-        $table->size = array('50%', '50%');
-
-        //Advertise information cell
-        $advertisecell = get_string('advertisepublicationdetail', 'hub');
-        $advertisecell .= html_writer::empty_tag('br').html_writer::empty_tag('br');
-        $advertisecell = html_writer::tag('div', $advertisecell, array('class' => 'justifytext'));
-
-        //Share information cell
-        $sharecell = get_string('sharepublicationdetail', 'hub');
-        $sharecell .= html_writer::empty_tag('br').html_writer::empty_tag('br');
-        $sharecell = html_writer::tag('div', $sharecell, array('class' => 'justifytext'));
-
-        //add information cells
-        $cells = array($advertisecell, $sharecell);
-        $row = new html_table_row($cells);
-        $table->data[] = $row;
+        $text = '';
 
         $advertiseurl = new moodle_url("/course/publish/hubselector.php",
                             array('sesskey' => sesskey(), 'id' => $courseid, 'advertise' => true));
-        $advertisebutton = new single_button($advertiseurl, get_string('selecthubforadvertise', 'hub'));
-        $advertisebutton->class = 'centeredbutton';
-        $advertisecell = $OUTPUT->render($advertisebutton);
+        $advertisebutton = new single_button($advertiseurl, get_string('advertise', 'hub'));
+        $text .= $OUTPUT->render($advertisebutton);
+        $text .= html_writer::tag('div', get_string('advertisepublication_help', 'hub'), array('class' => 'publishhelp'));
 
-        $shareurl = new moodle_url("/course/publish/hubselector.php",
+        $text .= html_writer::empty_tag('br');  /// TODO Delete
+
+        $uploadurl = new moodle_url("/course/publish/hubselector.php",
                             array('sesskey' => sesskey(), 'id' => $courseid, 'share' => true));
-        $sharebutton = new single_button($shareurl, get_string('selecthubforsharing', 'hub'));
-        $sharebutton->class = 'centeredbutton';
-        $sharecell = $OUTPUT->render($sharebutton);
+        $uploadbutton = new single_button($uploadurl, get_string('share', 'hub'));
+        $text .= $OUTPUT->render($uploadbutton);
+        $text .= html_writer::tag('div', get_string('sharepublication_help', 'hub'), array('class' => 'publishhelp'));
 
-        //add button cells
-        $cells = array($advertisecell, $sharecell);
-        $row = new html_table_row($cells);
-        $table->data[] = $row;
-
-        return html_writer::table($table);
-
+        return $text;
     }
 
      /**
