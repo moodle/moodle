@@ -500,12 +500,13 @@ body.tag .managelink {padding: 5px;}
 .filemanager-toolbar a:hover {background: white;text-decoration: none;}
 .fm-breadcrumb {margin:0;}
 .filemanager-container {padding: 5px;margin: 6px 0;}
-.filemanager-container ul{margin:0;padding:0;list-style-type:none;}
-.filemanager-container li{clear:both;list-style-type:none;white-space:nowrap}
+.filemanager-container ul{margin:0;padding:0;}
+.filemanager-container ul li{white-space:nowrap;list-style-type:none;clear:both}
+.filemanager-container ul li a{margin:1px;}
+.filemanager-container ul li div.fm-file-name a:hover {margin:0;border: 1px solid #CCC; background: grey; color: white;}
 #fm-move-div {margin: 6px;}
 #fm-move-div strong{color:red;}
 .fm-file-menu {width:18px;height:18px;float:left;}
-.fm-file-menu img {width: 16px;}
 .fm-file-name {float:left;}
 .fm-file-entry{border: 1px solid red;}
 .fm-operation {font-weight: bold;}

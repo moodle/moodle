@@ -1630,7 +1630,7 @@ function replace_smilies(&$text) {
             $alttext = get_string($image, 'pix');
             if ($alttext === '') {
                 $alttext = $image;
-            } 
+            }
             $e[$lang][] = $emoticon;
             $img[$lang][] = '<img alt="'. $alttext .'" width="15" height="15" src="'. $OUTPUT->pix_url('s/' . $image) . '" />';
         }
@@ -2730,7 +2730,7 @@ function print_maintenance_message() {
  * @return string
  */
 function print_filemanager($options, $return = false) {
-    global $PAGE, $CFG;
+    global $PAGE, $CFG, $OUTPUT;
     // start to setup filemanager
     // loading filemanager language string
     $PAGE->requires->string_for_js('loading', 'repository');
@@ -2772,14 +2772,17 @@ function print_filemanager($options, $return = false) {
     } else {
         $extra = '';
     }
+    $icon_add_file = $OUTPUT->pix_icon('t/addfile', $straddfile).'';
+    $icon_add_folder = $OUTPUT->pix_icon('t/adddir', $strmakedir).'';
+    $icon_download = $OUTPUT->pix_icon('t/download', $strdownload).'';
 
     $html .= <<<FMHTML
 <div id="filemanager-wrapper-{$client_id}" style="display:none">
     <div class="fm-breadcrumb" id="fm-path-{$client_id}"></div>
     <div class="filemanager-toolbar">
-        <button id="btnadd-{$client_id}" onclick="return false">{$straddfile}</button>
-        <button id="btncrt-{$client_id}" onclick="return false">{$strmakedir}</button>
-        <button id="btndwn-{$client_id}" onclick="return false" {$extra}>{$strdownload}</button>
+        <button id="btnadd-{$client_id}" onclick="return false">{$icon_add_file} $straddfile</button>
+        <button id="btncrt-{$client_id}" onclick="return false">{$icon_add_folder} $strmakedir</button>
+        <button id="btndwn-{$client_id}" onclick="return false" {$extra}>{$icon_download} $strdownload</button>
     </div>
     <div class="filemanager-container" id="filemanager-{$client_id}">
         <ul id="draftfiles-{$client_id}">
@@ -2787,6 +2790,7 @@ function print_filemanager($options, $return = false) {
         </ul>
     </div>
 </div>
+<div class='clearer'></div>
 FMHTML;
     // print out file entry template only one time
     if (empty($CFG->filemanagertemplateloaded)) {
