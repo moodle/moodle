@@ -1794,6 +1794,9 @@ function initialise_filepicker($args) {
             $licenses[] = $l;
         }
     }
+    if (!empty($CFG->sitedefaultlicense)) {
+        $return->defaultlicense = $CFG->sitedefaultlicense;
+    }
 
     $return->licenses = $licenses;
 

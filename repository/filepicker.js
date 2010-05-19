@@ -373,8 +373,9 @@ M.core_filepicker.init = function(Y, options) {
             var form_id = 'fp-rename-form-'+client_id;
             var html = '<div class="fp-rename-form" id="'+form_id+'">';
             html += '<p><img src="'+args.thumbnail+'" /></p>';
-            html += '<p><label for="newname-'+client_id+'">'+M.str.repository.saveas+':</label>';
-            html += '<input type="text" id="newname-'+client_id+'" value="'+args.title+'" /></p>';
+            html += '<table width="100%">';
+            html += '<tr><td class="mdl-right"><label for="newname-'+client_id+'">'+M.str.repository.saveas+':</label></td>';
+            html += '<td class="mdl-left"><input type="text" id="newname-'+client_id+'" value="'+args.title+'" /></td></tr>';
 
             var le_checked = '';
             var le_style = '';
@@ -387,26 +388,32 @@ M.core_filepicker.init = function(Y, options) {
                 le_style = ' style="display:none;"';
             }
             if (this.options.externallink && this.options.env == 'editor') {
-                html += '<p'+le_style+'><input type="checkbox" id="linkexternal-'+client_id+'" value="" '+le_checked+' />'+M.str.repository.linkexternal+'</p>';
+                html += '<tr'+le_style+'><td></td><td class="mdl-left"><input type="checkbox" id="linkexternal-'+client_id+'" value="" '+le_checked+' />'+M.str.repository.linkexternal+'</td></tr>';
             }
 
             if (!args.hasauthor) {
                 // the author of the file
-                html += '<p><label for="text-author">'+M.str.repository.author+' :</label>';
-                html += '<input id="text-author-'+client_id+'" type="text" name="author" value="'+this.options.author+'" />';
-                html += '</p>';
+                html += '<tr><td class="mdl-right"><label for="text-author">'+M.str.repository.author+' :</label></td>';
+                html += '<td class="mdl-left"><input id="text-author-'+client_id+'" type="text" name="author" value="'+this.options.author+'" /></td>';
+                html += '</tr>';
             }
 
             if (!args.haslicense) {
                 // the license of the file
                 var licenses = this.options.licenses;
-                html += '<p><label for="select-license-'+client_id+'">'+M.str.repository.chooselicense+' :</label>';
-                html += '<select name="license" id="select-license-'+client_id+'">';
+                html += '<tr><td class="mdl-right"><label for="select-license-'+client_id+'">'+M.str.repository.chooselicense+' :</label></td>';
+                html += '<td class="mdl-left"><select name="license" id="select-license-'+client_id+'">';
                 for (var i in licenses) {
-                    html += '<option value="'+licenses[i].shortname+'">'+licenses[i].fullname+'</option>';
+                    if (this.options.defaultlicense==licenses[i].shortname) {
+                        var selected = ' selected';
+                    } else {
+                        var selected = '';
+                    }
+                    html += '<option value="'+licenses[i].shortname+'"'+selected+'>'+licenses[i].fullname+'</option>';
                 }
-                html += '</select></p>';
+                html += '</select></td></tr>';
             }
+            html += '</table>';
 
             html += '<p><input type="hidden" id="filesource-'+client_id+'" value="'+args.source+'" />';
             html += '<input type="button" id="fp-confirm-'+client_id+'" value="'+M.str.repository.getfile+'" />';
@@ -888,24 +895,29 @@ M.core_filepicker.init = function(Y, options) {
 
             this.print_header();
             var id = data.upload.id+'_'+client_id;
-            var str = '<div id="'+id+'_div" class="fp-upload-form">';
+            var str = '<div id="'+id+'_div" class="fp-upload-form mdl-align">';
             str += '<form id="'+id+'" method="POST">';
-            str += '<table border=1>';
-            str += '<tr><td>';
+            str += '<table width="100%">';
+            str += '<tr><td class="mdl-right">';
             str += '<label for="'+id+'_file">'+data.upload.label+': </label></td>';
-            str += '<td><input type="file" id="'+id+'_file" name="repo_upload_file" />';
+            str += '<td class="mdl-left"><input type="file" id="'+id+'_file" name="repo_upload_file" />';
             str += '<input type="hidden" name="itemid" value="'+this.options.itemid+'" /></tr>';
             str += '<tr>';
-            str += '<td><label>'+M.str.repository.author+': </label></td>';
-            str += '<td><input type="text" name="author" value="'+this.options.author+'" /></td>';
+            str += '<td class="mdl-right"><label>'+M.str.repository.author+': </label></td>';
+            str += '<td class="mdl-left"><input type="text" name="author" value="'+this.options.author+'" /></td>';
             str += '</tr>';
             str += '<tr>';
-            str += '<td>'+M.str.repository.chooselicense+': </td>';
-            str += '<td>';
+            str += '<td class="mdl-right">'+M.str.repository.chooselicense+': </td>';
+            str += '<td class="mdl-left">';
             var licenses = this.options.licenses;
             str += '<select name="license" id="select-license-'+client_id+'">';
             for (var i in licenses) {
-                str += '<option value="'+licenses[i].shortname+'">'+licenses[i].fullname+'</option>';
+                if (this.options.defaultlicense==licenses[i].shortname) {
+                    var selected = ' selected';
+                } else {
+                    var selected = '';
+                }
+                str += '<option value="'+licenses[i].shortname+'"'+selected+'>'+licenses[i].fullname+'</option>';
             }
             str += '</select>';
             str += '</td>';
