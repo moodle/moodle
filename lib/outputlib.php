@@ -786,7 +786,7 @@ class theme_config {
         if ($type === 'footer') {
             $type = 'javascripts_footer';
         } else {
-            $type = 'javascript';
+            $type = 'javascripts';
         }
 
         $js = array();
