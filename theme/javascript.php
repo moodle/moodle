@@ -66,19 +66,20 @@ define('NO_MOODLE_COOKIES', true); // Session not used here
 define('NO_UPGRADE_CHECK', true);  // Ignore upgrade check
 
 require("$CFG->dirroot/lib/setup.php");
+// setup include path
+set_include_path($CFG->libdir . '/minify/lib' . PATH_SEPARATOR . get_include_path());
+require_once('Minify.php');
 
 $theme = theme_config::load($themename);
 
-$js = $theme->javascript_content($type);
 if ($rev > -1) {
     check_dir_exists(dirname($candidate), true, true);
     $fp = fopen($candidate, 'w');
-    fwrite($fp, $js);
+    fwrite($fp, minify($theme->javascript_files($type)));
     fclose($fp);
     send_cached_js($candidate);
-
 } else {
-    send_uncached_js($js);
+    send_uncached_js($theme->javascript_content($type));
 }
 
 //=================================================================================
@@ -114,4 +115,30 @@ function send_uncached_js($js) {
 
     echo $js;
     die;
+}
+
+function minify($files) {
+    global $CFG;
+
+    if (0 === stripos(PHP_OS, 'win')) {
+        Minify::setDocRoot(); // IIS may need help
+    }
+    Minify::setCache('', true);
+
+    $options = array(
+        'bubbleCssImports' => false,
+        // Don't gzip content we just want text for storage
+        'encodeOutput' => false,
+        // Maximum age to cache, not used but required
+        'maxAge' => 1800,
+        // The files to minify
+        'files' => $files,
+        // Turn orr URI rewriting
+        'rewriteCssUris' => false,
+        // This returns the CSS rather than echoing it for display
+        'quiet' => true
+    );
+
+    $result = Minify::serve('Files', $options);
+    return $result['content'];
 }

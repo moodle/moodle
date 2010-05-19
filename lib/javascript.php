@@ -27,37 +27,39 @@
 define('ABORT_AFTER_CONFIG', true);
 require('../config.php'); // this stops immediately at the beginning of lib/setup.php
 
-$file = min_optional_param('file', '', 'SAFEPATH');
+// setup include path
+set_include_path($CFG->libdir . '/minify/lib' . PATH_SEPARATOR . get_include_path());
+require_once('Minify.php');
+
+$file = min_optional_param('file', '', 'RAW');
 $rev  = min_optional_param('rev', 0, 'INT');
 
-$jspath = $CFG->dirroot.$file;
-
-if (empty($file) or strpos($file, '/') !== 0 or !preg_match('/\.js$/', $file) or !file_exists($jspath)) {
-    header('HTTP/1.0 404 not found');
-    die('JS file was not found, sorry.');
+if (strpos($file, ',')) {
+    $jsfiles = explode(',', $file);
+    foreach ($jsfiles as $key=>$file) {
+        $jsfiles[$key] = $CFG->dirroot.$file;
+}
+} else {
+    $jsfiles = array($CFG->dirroot.$file);
 }
 
-send_cached_js($jspath);
+minify($jsfiles);
 
+function minify($files) {
+    global $CFG;
 
-//=================================================================================
-//=== utility functions ==
-// we are not using filelib because we need to fine tune all header
-// parameters to get the best performance.
-
-function send_cached_js($jspath) {
-    $lifetime = 60*60*24*20;
-
-    header('Content-Disposition: inline; filename="javascript.php"');
-    header('Last-Modified: '. gmdate('D, d M Y H:i:s', filemtime($jspath)) .' GMT');
-    header('Expires: '. gmdate('D, d M Y H:i:s', time() + $lifetime) .' GMT');
-    header('Pragma: ');
-    header('Accept-Ranges: none');
-    header('Content-Type: application/x-javascript');
-    if (!min_enable_zlib_compression()) {
-        header('Content-Length: '.filesize($jspath));
+    if (0 === stripos(PHP_OS, 'win')) {
+        Minify::setDocRoot(); // IIS may need help
     }
+    Minify::setCache($CFG->dataroot.'/temp', true);
 
-    readfile($jspath);
-    die;
-}
+    $options = array(
+        // Maximum age to cache
+        'maxAge' => (60*60*24*20),
+        // The files to minify
+        'files' => $files
+    );
+
+    Minify::serve('Files', $options);
+    die();
+    }

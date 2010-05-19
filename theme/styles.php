@@ -70,6 +70,9 @@ define('NO_MOODLE_COOKIES', true); // Session not used here
 define('NO_UPGRADE_CHECK', true);  // Ignore upgrade check
 
 require("$CFG->dirroot/lib/setup.php");
+// setup include path
+set_include_path($CFG->libdir . '/minify/lib' . PATH_SEPARATOR . get_include_path());
+require_once('Minify.php');
 
 $theme = theme_config::load($themename);
 
@@ -77,36 +80,35 @@ if ($type === 'editor') {
     $css = $theme->editor_css_content();
     store_css($candidatesheet, $css);
 } else {
-    $css = $theme->css_content();
+    $css = $theme->css_files();
+    $allfiles = array();
     foreach ($css as $key=>$value) {
-        $sheet = '';
+        $cssfiles = array();
         foreach($value as $val) {
             if (is_array($val)) {
                 foreach ($val as $k=>$v) {
-                    $sheet .= compress_css($v)."\n";
+                    $cssfiles[] = $v;
                 }
             } else {
-                $sheet .= compress_css($val)."\n";
+                $cssfiles[] = $val;
             }
         }
-        $css[$key] = $sheet;
         $cssfile = "$CFG->dataroot/cache/theme/$themename/css/$key.css";
-        store_css($cssfile, $sheet);
+        store_css($theme, $cssfile, $cssfiles);
+        $allfiles = array_merge($allfiles, $cssfiles);
     }
-    $css = implode('', $css);
     $cssfile = "$CFG->dataroot/cache/theme/$themename/css/all.css";
-    store_css($cssfile, $css);
+    store_css($theme, $cssfile, $allfiles);
 }
-
 send_cached_css($candidatesheet, $rev);
-
 
 //=================================================================================
 //=== utility functions ==
 // we are not using filelib because we need to fine tune all header
 // parameters to get the best performance.
 
-function store_css($csspath, $css) {
+function store_css(theme_config $theme, $csspath, $cssfiles) {
+    $css = $theme->post_process(minify($cssfiles));
     check_dir_exists(dirname($csspath), true, true);
     $fp = fopen($csspath, 'w');
     fwrite($fp, $css);
@@ -154,21 +156,25 @@ function send_cached_css($csspath, $rev) {
     die;
 }
 
-function compress_css($css) {
-    // remove comments - credit for this regex goes to "reinhold weber"
-    $css = preg_replace('!/\*[^*]*\*+([^/][^*]*\*+)*/!', '', $css);
+function minify($files) {
+    if (0 === stripos(PHP_OS, 'win')) {
+        Minify::setDocRoot(); // IIS may need help
+    }
+    Minify::setCache('', true);
 
-    // replace newlines, tabs, etc.
-    $css = str_replace(array("\r\n", "\r", "\n", "\t"), ' ', $css);
-
-    // replace repeated spaces
-    $css = preg_replace('/ +/', ' ', $css);
-
-    // fix whitespace around separators
-    $css = preg_replace('/ ([;,:\{\}])/', '$1', $css);
-    $css = preg_replace('/([;,:\{\}]) /', '$1', $css);
-
-    $css = str_replace('url (', 'url(', $css);
-
-    return $css;
+    $options = array(
+        'bubbleCssImports' => false,
+        // Don't gzip content we just want text for storage
+        'encodeOutput' => false,
+        // Maximum age to cache, not used but required
+        'maxAge' => (60*60*24*20),
+        // The files to minify
+        'files' => $files,
+        // Turn orr URI rewriting
+        'rewriteCssUris' => false,
+        // This returns the CSS rather than echoing it for display
+        'quiet' => true
+    );
+    $result = Minify::serve('Files', $options);
+    return $result['content'];
 }

@@ -668,35 +668,17 @@ class theme_config {
     }
 
     /**
-     * Returns the content of the one huge CSS merged from all style sheets.
-     * @return string
+     * Returns an array of organised CSS files required for this output
+     * @return array
      */
-    public function css_content() {
-        global $CFG;
-
-        $css = array('plugins'=>array(), 'parents'=>array(), 'theme'=>array());
+    public function css_files() {
+        $cssfiles = array('plugins'=>array(), 'parents'=>array(), 'theme'=>array());
 
         // get all plugin sheets
-        $excludes = null;
-        if (is_array($this->plugins_exclude_sheets) or $this->plugins_exclude_sheets === true) {
-            $excludes = $this->plugins_exclude_sheets;
-        } else {
-            foreach ($this->parent_configs as $parent_config) { // the immediate parent first, base last
-                if (!isset($parent_config->plugins_exclude_sheets)) {
-                    continue;
-                }
-                if (is_array($parent_config->plugins_exclude_sheets) or $parent_config->plugins_exclude_sheets === true) {
-                    $excludes = $parent_config->plugins_exclude_sheets;
-                    break;
-                }
-            }
-        }
+        $excludes = $this->resolve_excludes('plugins_exclude_sheets');
         if ($excludes !== true) {
             foreach (get_plugin_types() as $type=>$unused) {
-                if ($type === 'theme') {
-                    continue;
-                }
-                if (!empty($excludes[$type]) and $excludes[$type] === true) {
+                if ($type === 'theme' || (!empty($excludes[$type]) and $excludes[$type] === true)) {
                     continue;
                 }
                 $plugins = get_plugin_list($type);
@@ -709,43 +691,22 @@ class theme_config {
                     $plugincontent = '';
                     $sheetfile = "$fulldir/styles.css";
                     if (is_readable($sheetfile)) {
-                        $plugincontent .= "/*** Standard plugin $type/$plugin ***/\n\n";
-                        $plugincontent .= file_get_contents($sheetfile);
+                        $cssfiles['plugins'][$type.'_'.$plugin] = $sheetfile;
                     }
                     $sheetthemefile = "$fulldir/styles_{$this->name}.css";
                     if (is_readable($sheetthemefile)) {
-                        $plugincontent .= "\n/*** Standard plugin $type/$plugin for the {$this->name} theme ***/\n\n";
-                        $plugincontent .= file_get_contents($sheetthemefile);
+                        $cssfiles['plugins'][$type.'_'.$plugin.'_'.$this->name] = $sheetthemefile;
                     }
-                    if (!empty($plugincontent)) {
-                        $css['plugins'][$type.'_'.$plugin] = $this->post_process($plugincontent);
                     }
                 }
             }
-        }
 
         // find out wanted parent sheets
-        $excludes = null;
-        if (is_array($this->parents_exclude_sheets) or $this->parents_exclude_sheets === true) {
-            $excludes = $this->parents_exclude_sheets;
-        } else {
-            foreach ($this->parent_configs as $parent_config) { // the immediate parent first, base last
-                if (!isset($parent_config->parents_exclude_sheets)) {
-                    continue;
-                }
-                if (is_array($parent_config->parents_exclude_sheets) or $parent_config->parents_exclude_sheets === true) {
-                    $excludes = $parent_config->parents_exclude_sheets;
-                    break;
-                }
-            }
-        }
+        $excludes = $this->resolve_excludes('parents_exclude_sheets');
         if ($excludes !== true) {
             foreach (array_reverse($this->parent_configs) as $parent_config) { // base first, the immediate parent last
                 $parent = $parent_config->name;
-                if (empty($parent_config->sheets)) {
-                    continue;
-                }
-                if (!empty($excludes[$parent]) and $excludes[$parent] === true) {
+                if (empty($parent_config->sheets) || (!empty($excludes[$parent]) and $excludes[$parent] === true)) {
                     continue;
                 }
                 foreach ($parent_config->sheets as $sheet) {
@@ -755,7 +716,7 @@ class theme_config {
                     }
                     $sheetfile = "$parent_config->dir/style/$sheet.css";
                     if (is_readable($sheetfile)) {
-                        $css['parents'][$parent][$sheet] = $this->post_process("/*** Parent theme $parent/style/$sheet.css ***/\n\n" . file_get_contents($sheetfile));
+                        $cssfiles['parents'][$parent][$sheet] = $sheetfile;
                     }
                 }
             }
@@ -766,12 +727,43 @@ class theme_config {
             foreach ($this->sheets as $sheet) {
                 $sheetfile = "$this->dir/style/$sheet.css";
                 if (is_readable($sheetfile)) {
-                    $css['theme'][$sheet] = $this->post_process("/*** This theme $this->name/style/$sheet ***/\n\n" . file_get_contents($sheetfile));
+                    $cssfiles['theme'][$sheet] = $sheetfile;
                 }
             }
         }
 
+        return $cssfiles;
+    }
+
+    /**
+     * Returns the content of the one huge CSS merged from all style sheets.
+     * @return string
+     */
+    public function css_content() {
+        $css = $this->css_files_get_contents($this->css_files(), array());
         return $css;
+    }
+
+    /**
+     * Given an array of file paths or a single file path loads the contents of
+     * the CSS file, processes it then returns it in the same structure it was given.
+     *
+     * Can be used recursively on the results of {@see css_files}
+     *
+     * @param array|string $file An array of file paths or a single file path
+     * @param array $keys An array of previous array keys [recusive addition]
+     * @return The converted array or the contents of the single file ($file type)
+     */
+    protected function css_files_get_contents($file, array $keys) {
+        if (is_array($file)) {
+            foreach ($file as $key=>$f) {
+                $file[$key] = $this->css_files_get_contents($f, array_merge($keys, array($key)));
+            }
+            return $file;
+        } else {
+            $comment = '/** Path: '.implode(' ', $keys).' **/'."\n";
+            return $comment.$this->post_process(file_get_contents($file));
+        }
     }
 
 
@@ -790,30 +782,16 @@ class theme_config {
         return new moodle_url($CFG->httpswwwroot.'/theme/javascript.php', $params);
     }
 
-    /**
-     * Returns the content of the one huge javascript file merged from all theme javascript files.
-     * @param bool $inhead
-     * @return string
-     */
-    public function javascript_content($type) {
-        $type = ($type === 'footer') ? 'javascripts_footer' : 'javascripts';
+    public function javascript_files($type) {
+        if ($type === 'footer') {
+            $type = 'javascripts_footer';
+        } else {
+            $type = 'javascript';
+        }
 
         $js = array();
         // find out wanted parent javascripts
-        $excludes = null;
-        if (is_array($this->parents_exclude_javascripts) or $this->parents_exclude_javascripts === true) {
-            $excludes = $this->parents_exclude_javascripts;
-        } else {
-            foreach ($this->parent_configs as $parent_config) { // the immediate parent first, base last
-                if (!isset($parent_config->parents_exclude_javascripts)) {
-                    continue;
-                }
-                if (is_array($parent_config->parents_exclude_javascripts) or $parent_config->parents_exclude_javascripts === true) {
-                    $excludes = $parent_config->parents_exclude_javascripts;
-                    break;
-                }
-            }
-        }
+        $excludes = $this->resolve_excludes('parents_exclude_javascripts');
         if ($excludes !== true) {
             foreach (array_reverse($this->parent_configs) as $parent_config) { // base first, the immediate parent last
                 $parent = $parent_config->name;
@@ -830,7 +808,7 @@ class theme_config {
                     }
                     $javascriptfile = "$parent_config->dir/javascript/$javascript.js";
                     if (is_readable($javascriptfile)) {
-                        $js[] = "/*** Parent theme $parent/javascript/$javascript.js ***/\n\n" . file_get_contents($javascriptfile);
+                        $js[] = $javascriptfile;
                     }
                 }
             }
@@ -841,15 +819,54 @@ class theme_config {
             foreach ($this->$type as $javascript) {
                 $javascriptfile = "$this->dir/javascript/$javascript.js";
                 if (is_readable($javascriptfile)) {
-                    $js[] = "/*** This theme $this->name/javascript/$javascript.js ***/\n\n" . file_get_contents($javascriptfile);
+                    $js[] = $javascriptfile;
                 }
             }
         }
 
-        return implode("\n\n", $js);
+        return $js;
     }
 
-    protected function post_process($css) {
+    /**
+     * Resolves an exclude setting to the theme's setting is applicable or the
+     * setting of its closest parent.
+     *
+     * @param string $variable The name of the setting the exclude setting to resolve
+     * @return mixed
+     */
+    protected function resolve_excludes($variable, $default=null) {
+        $setting = $default;
+        if (is_array($this->{$variable}) or $this->{$variable} === true) {
+            $setting = $this->{$variable};
+        } else {
+            foreach ($this->parent_configs as $parent_config) { // the immediate parent first, base last
+                if (!isset($parent_config->{$variable})) {
+                    continue;
+                }
+                if (is_array($parent_config->{$variable}) or $parent_config->{$variable} === true) {
+                    $setting = $parent_config->{$variable};
+                    break;
+                }
+            }
+        }
+        return $setting;
+    }
+
+    /**
+     * Returns the content of the one huge javascript file merged from all theme javascript files.
+     * @param bool $inhead
+     * @return string
+     */
+    public function javascript_content($type) {
+        $jsfiles = $this->javascript_files($type);
+        $js = '';
+        foreach ($jsfiles as $jsfile) {
+            $js .= file_get_contents($jsfile)."\n";
+        }
+        return $js;
+    }
+
+    public function post_process($css) {
         global $CFG;
 
         // now resolve all image locations
