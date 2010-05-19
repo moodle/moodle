@@ -42,28 +42,76 @@ if (has_capability('moodle/course:publish', get_context_instance(CONTEXT_COURSE,
     $PAGE->set_title(get_string('course') . ': ' . $course->fullname);
     $PAGE->set_heading($course->fullname);
 
-
     $renderer = $PAGE->get_renderer('core', 'publish');
 
-    echo $OUTPUT->header();
-    echo $OUTPUT->heading(get_string('publishon', 'hub'), 3, 'main');
-
-    //check if the site is registered on Moodle.org hub
-    //check if the site is registered on any other specific hub
     $hub = new hub();
-    $registeredonmoodleorg = false;
-    $registeredonhub = false;
 
-    $hubs = $hub->get_registered_on_hubs();
-    foreach ($hubs as $hub) {
-        if ($hub->huburl == MOODLEORGHUBURL) {
-            $registeredonmoodleorg = true;
+    /// UNPUBLISH
+    $confirmmessage = '';
+    $cancel = optional_param('cancel', 0, PARAM_BOOL);
+    if (!empty($cancel) and confirm_sesskey()) {
+        $confirm = optional_param('confirm', 0, PARAM_BOOL);
+        $hubname = optional_param('hubname', 0, PARAM_TEXT);
+        $huburl = optional_param('huburl', 0, PARAM_URL);
+        $hubcourseid = optional_param('hubcourseid', 0, PARAM_INT);
+        $publicationid = optional_param('publicationid', 0, PARAM_INT);
+        $timepublished = optional_param('timepublished', 0, PARAM_INT);
+        $publication->courseshortname = $course->shortname;
+        $publication->courseid = $course->id;
+        $publication->hubname = $hubname;
+        $publication->huburl = $huburl;
+        $publication->hubcourseid = $hubcourseid;
+        $publication->timepublished = $timepublished;
+        if (empty($publication->hubname)) {
+             $publication->hubname = $huburl;
+        }
+        $publication->id = $publicationid;
+        if($confirm) {
+            //unpublish the publication by web service
+            $registeredhub = $hub->get_registeredhub($huburl);
+            $function = 'hub_unregister_courses';
+            $params = array(array( $publication->hubcourseid));
+            $serverurl = $huburl."/local/hub/webservice/webservices.php";
+            require_once($CFG->dirroot."/webservice/xmlrpc/lib.php");
+            $xmlrpcclient = new webservice_xmlrpc_client();
+            $result = $xmlrpcclient->call($serverurl, $registeredhub->token, $function, $params);
+
+            //delete the publication from the database
+            $hub->delete_publication($publicationid);
+
+            //display confirmation message
+            $confirmmessage = $OUTPUT->notification(get_string('courseunpublished', 'hub', $publication), 'notifysuccess');
+
         } else {
-            $registeredonhub = true;
+            //display confirmation page for unpublishing
+           
+            echo $OUTPUT->header();
+            echo $OUTPUT->heading(get_string('unpublishcourse', 'hub', $course->shortname), 3, 'main');
+            echo $renderer->confirmunpublishing($publication);
+            echo $OUTPUT->footer();
+            die();
         }
     }
 
-    echo $renderer->publicationselector($course->id, $registeredonmoodleorg, $registeredonhub);
+    //check if a course was published
+    if (optional_param('published', 0, PARAM_TEXT)) {
+        $confirmmessage = $OUTPUT->notification(get_string('coursepublished', 'hub'), 'notifysuccess');
+    }
+
+ 
+    /// OUTPUT
+    echo $OUTPUT->header();
+    echo $confirmmessage;
+
+    echo $OUTPUT->heading(get_string('publishcourse', 'hub', $course->shortname), 3, 'main');
+    echo $renderer->publicationselector($course->id);
+
+    $publications = $hub->get_course_publications($course->id);
+    if (!empty($publications)) {
+        echo $OUTPUT->heading(get_string('publishedon', 'hub'), 3, 'main');
+        echo $renderer->registeredonhublisting($course->id, $publications);
+    }
+
     echo $OUTPUT->footer();
 
 }

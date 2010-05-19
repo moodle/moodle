@@ -51,12 +51,14 @@ class hub_publish_selector_form extends moodleform {
         //Public hub list
         $options = array();
         foreach ($registeredhubs as $hub) {
-            $options[$hub->huburl] = $hub->huburl;
+            
             $hubname = $hub->hubname;
             $mform->addElement('hidden', clean_param($hub->huburl, PARAM_ALPHANUMEXT), $hubname);
+            if (empty($hubname)) {
+                 $hubname = $hub->huburl;
+            }
+            $mform->addElement('radio','huburl',null,' '.$hubname, $hub->huburl);
         }
-        $mform->addElement('select', 'huburl', get_string('publichub','hub'),
-                $options, array("size" => 15));
 
         $mform->addElement('hidden', 'id', $this->_customdata['id']);
 
@@ -179,7 +181,7 @@ class course_publication_form extends moodleform {
         }
 
         if ($advertise) {
-            if (empty($publications)) {
+            if (empty($publishedcourses)) {
                $buttonlabel = get_string('advertiseon', 'hub', !empty($hubname)?$hubname:$huburl);
             } else {
                $buttonlabel = get_string('readvertiseon', 'hub', !empty($hubname)?$hubname:$huburl);

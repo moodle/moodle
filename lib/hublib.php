@@ -222,12 +222,24 @@ class hub {
                 array('hubcourseid' => $hubcourseid));
     }
 
+    public function get_course_publications($courseid) {
+        global $DB;
+        $sql = 'SELECT cp.id, cp.timepublished, rh.hubname, rh.huburl, cp.courseid, cp.enrollable, cp.hubcourseid
+                FROM {course_published} cp, {registration_hubs} rh
+                WHERE cp.hubid = rh.id
+                ORDER BY cp.enrollable DESC, rh.hubname, cp.timepublished';
+        return $DB->get_records_sql($sql);
+    }
+
+    public function delete_publication($publicationid) {
+        global $DB;
+        $DB->delete_records('course_published', array('id' => $publicationid));
+    }
 
 
 ///////////////////////////
 /// Library functions   ///
 ///////////////////////////
-
 
 
     /**
