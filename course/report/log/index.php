@@ -34,10 +34,12 @@
     $logformat   = optional_param('logformat', 'showashtml', PARAM_ALPHA);
 
     $params = array();
+    if ($id !== 0) $params['id'] = $id;
+    if ($host_course !== '') $params['host_course'] = $host_course;
     if ($group !== 0) $params['group'] = $group;
     if ($user !== 0) $params['user'] = $user;
     if ($date !== 0) $params['date'] = $date;
-    if ($modname !== 0) $params['modname'] = $modname;
+    if ($modname !== '') $params['modname'] = $modname;
     if ($modid !== 0) $params['modid'] = $modid;
     if ($modaction !== '') $params['modaction'] = $modaction;
     if ($page !== '0') $params['page'] = $page;
@@ -47,6 +49,7 @@
     if ($chooselog !== 0) $params['chooselog'] = $chooselog;
     if ($logformat !== 'showashtml') $params['logformat'] = $logformat;
     $PAGE->set_url('/course/report/log/index.php', $params);
+    $PAGE->set_pagelayout('admin');
 
     if ($hostid == $CFG->mnet_localhost_id) {
         if (!$course = $DB->get_record('course', array('id'=>$id))) {
@@ -141,13 +144,11 @@
 
     } else {
         if ($hostid != $CFG->mnet_localhost_id || $course->id == SITEID) {
-                    admin_externalpage_setup('reportlog');
-                    echo $OUTPUT->header();
+            admin_externalpage_setup('reportlog');
+            echo $OUTPUT->header();
         } else {
             $PAGE->set_title($course->shortname .': '. $strlogs);
             $PAGE->set_heading($course->fullname);
-            $PAGE->navbar->add($strreports, new moodle_url('/course/report.php', array('id'=>$course->id)));
-            $PAGE->navbar->add($strlogs);
             echo $OUTPUT->header();
         }
 

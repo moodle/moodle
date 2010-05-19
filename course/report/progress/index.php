@@ -46,10 +46,11 @@ if ($sort !== '') {
 if ($format !== '') {
     $url->param('format', $format);
 }
-if ($start !== '') {
+if ($start !== 0) {
     $url->param('start', $start);
 }
 $PAGE->set_url($url);
+$PAGE->set_pagelayout('admin');
 
 require_login($course);
 
@@ -99,10 +100,6 @@ if($csv) {
 
     $PAGE->set_title($strcompletion);
     $PAGE->set_heading($course->fullname);
-    if (has_capability('moodle/site:viewreports', $context)) {
-        $PAGE->navbar->add($strreports, new moodle_url('/course/report.php', array('id'=>$course->id)));
-    }
-    $PAGE->navbar->add($strcompletion);
     echo $OUTPUT->header();
 
     if($svgcleverness) {

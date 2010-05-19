@@ -15,23 +15,24 @@ $page    = optional_param('page', 0, PARAM_INT); // which page to show
 $perpage = optional_param('perpage', 18, PARAM_INT);
 
 $params = array();
-if ($query) {
+if ($query !== '') {
     $params['query'] = $query;
 }
-if ($page) {
+if ($page !== 0) {
     $params['page'] = $page;
 }
-if ($perpage) {
+if ($perpage !== 18) {
     $params['perpage'] = $perpage;
 }
-$PAGE->set_url('/tag/search.php', $params);
+$PAGE->set_url(new moodle_url('/tag/search.php', $params));
 $PAGE->set_context(get_context_instance(CONTEXT_SYSTEM));
+$PAGE->set_pagelayout('standard');
 
 $systemcontext = get_context_instance(CONTEXT_SYSTEM);
 $manage_link = '&nbsp;';
 
-$PAGE->navbar->add(get_string('tags', 'tag'), new moodle_url('/tag/search.php'));
 $PAGE->set_title(get_string('tags', 'tag'));
+$PAGE->set_heading($SITE->fullname.': '.$PAGE->title);
 echo $OUTPUT->header();
 
 if ( has_capability('moodle/tag:manage',$systemcontext) ) {

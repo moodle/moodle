@@ -12,6 +12,7 @@
     }
 
     $PAGE->set_url('/course/report/outline/index.php', array('id'=>$id));
+    $PAGE->set_pagelayout('admin');
 
     require_login($course);
     $context = get_context_instance(CONTEXT_COURSE, $course->id);
@@ -35,8 +36,6 @@
 
     $PAGE->set_title($course->shortname .': '. $stractivityreport);
     $PAGE->set_heading($course->fullname);
-    $PAGE->navbar->add($strreports, new moodle_url('/course/report.php', array('id'=>$course->id)));
-    $PAGE->navbar->add($stractivityreport);
     echo $OUTPUT->header();
     echo $OUTPUT->heading(format_string($course->fullname));
 

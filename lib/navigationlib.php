@@ -467,6 +467,24 @@ class navigation_node implements renderable {
     }
 
     /**
+     * Searches all children for the best matching active node
+     * @return navigation_node|false
+     */
+    public function search_for_active_node() {
+        if ($this->check_if_active(URL_MATCH_BASE)) {
+            return $this;
+        } else {
+            foreach ($this->children as &$child) {
+                $outcome = $child->search_for_active_node();
+                if ($outcome !== false) {
+                    return $outcome;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
      * Gets the content for this node.
      *
      * @param bool $shorttext If true shorttext is used rather than the normal text
@@ -896,20 +914,22 @@ class global_navigation extends navigation_node {
             case CONTEXT_SYSTEM :
             case CONTEXT_COURSECAT :
                 // Load the front page course navigation
-                $this->load_course($SITE);
+                $coursenode = $this->load_course($SITE);
+                $this->add_front_page_course_essentials($coursenode, $SITE);
                 break;
             case CONTEXT_BLOCK :
             case CONTEXT_COURSE :
                 // Load the course associated with the page into the navigation
                 $course = $this->page->course;
                 $coursenode = $this->load_course($course);
-                // Make it active
-                $coursenode->make_active();
                 // Add the essentials such as reports etc...
                 $this->add_course_essentials($coursenode, $course);
                 if ($this->format_display_course_content($course->format)) {
                     // Load the course sections
                     $sections = $this->load_course_sections($course, $coursenode);
+                }
+                if (!$coursenode->contains_active_node() && !$coursenode->search_for_active_node()) {
+                    $coursenode->make_active();
                 }
                 break;
             case CONTEXT_MODULE :
@@ -938,8 +958,11 @@ class global_navigation extends navigation_node {
                 }
                 // Finally load the cm specific navigaton information
                 $this->load_activity($cm, $course, $activities[$cm->id]);
-                // And make the activity node active.
-                $activities[$cm->id]->make_active();
+                // Check if we have an active ndoe
+                if (!$activities[$cm->id]->contains_active_node() && !$activities[$cm->id]->search_for_active_node()) {
+                    // And make the activity node active.
+                    $activities[$cm->id]->make_active();
+                }
                 break;
             case CONTEXT_USER :
                 $course = $this->page->course;
@@ -998,6 +1021,10 @@ class global_navigation extends navigation_node {
             if ($node->key !== 'home' && !$node->has_children()) {
                 $node->remove();
             }
+        }
+
+        if (!$this->contains_active_node()) {
+            $this->search_for_active_node();
         }
 
         // If the user is not logged in modify the navigation structure as detailed
