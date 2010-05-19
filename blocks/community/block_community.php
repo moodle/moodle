@@ -48,20 +48,22 @@ class block_community extends block_list {
 
         $community = new community();
         $courses = $community->get_community_courses($USER->id);
-        $this->content->items[] = '';
-        $this->content->icons[] = '';
-        $this->content->items[] = get_string('mycommunities', 'block_community');
-        $this->content->icons[] = '';
-        foreach ($courses as $course) {
-            //delete link
-            $deleteicon = html_writer::empty_tag('img', array('src' => $OUTPUT->pix_url('i/cross_red_small')));
-            $deleteurl = new moodle_url($CFG->wwwroot.'/blocks/community/communitycourse.php',
-                    array('remove'=>true, 'communityid'=> $course->id, 'sesskey' => sesskey()));
-            $deleteatag = html_writer::tag('a', $deleteicon, array('href' => $deleteurl));
-
-            $this->content->items[] = '<a href='.$course->courseurl.'>'.$course->coursename.'</a> ' .
-                    $deleteatag;
+        if ($courses) {
+            $this->content->items[] = '<hr />';
             $this->content->icons[] = '';
+            $this->content->items[] = get_string('mycommunities', 'block_community');
+            $this->content->icons[] = '';
+            foreach ($courses as $course) {
+                //delete link
+                $deleteicon = html_writer::empty_tag('img', array('src' => $OUTPUT->pix_url('i/cross_red_small')));
+                $deleteurl = new moodle_url($CFG->wwwroot.'/blocks/community/communitycourse.php',
+                        array('remove'=>true, 'communityid'=> $course->id, 'sesskey' => sesskey()));
+                $deleteatag = html_writer::tag('a', $deleteicon, array('href' => $deleteurl));
+
+                $this->content->items[] = '<a href='.$course->courseurl.'>'.$course->coursename.'</a> ' .
+                    $deleteatag;
+                $this->content->icons[] = '';
+            }
         }
 
         return $this->content;
