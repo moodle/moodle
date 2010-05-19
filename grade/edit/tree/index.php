@@ -227,6 +227,11 @@ if ($current_view != '') {
 
 print_grade_page_head($courseid, 'edittree', $current_view, get_string('categoriesedit', 'grades') . ': ' . $current_view_str);
 
+//if we go straight to the db to update an element we need to recreate the tree as
+// $grade_edit_tree has already been constructed.
+//Ideally we could do the updates through $grade_edit_tree to avoid recreating it
+$recreatetree = false;
+
 if ($data = data_submitted() and confirm_sesskey()) {
     // Perform bulk actions first
     if (!empty($data->bulkmove)) {
@@ -258,6 +263,8 @@ if ($data = data_submitted() and confirm_sesskey()) {
             $grade_category->update();
             grade_regrade_final_grades($courseid);
 
+            $recreatetree = true;
+
         // Grade item text inputs
         } elseif (preg_match('/^(grademax|aggregationcoef|multfactor|plusfactor)_([0-9]+)$/', $key, $matches)) {
             $param = $matches[1];
@@ -277,6 +284,8 @@ if ($data = data_submitted() and confirm_sesskey()) {
             $grade_item->update();
             grade_regrade_final_grades($courseid);
 
+            $recreatetree = true;
+
         // Grade item checkbox inputs
         } elseif (preg_match('/^extracredit_([0-9]+)$/', $key, $matches)) { // Sum extra credit checkbox
             $aid   = $matches[1];
@@ -287,6 +296,8 @@ if ($data = data_submitted() and confirm_sesskey()) {
 
             $grade_item->update();
             grade_regrade_final_grades($courseid);
+
+            $recreatetree = true;
 
         // Grade category checkbox inputs
         } elseif (preg_match('/^aggregate(onlygraded|subcats|outcomes)_([0-9]+)$/', $key, $matches)) {
@@ -299,6 +310,8 @@ if ($data = data_submitted() and confirm_sesskey()) {
 
             $grade_category->update();
             grade_regrade_final_grades($courseid);
+
+            $recreatetree = true;
         }
     }
 }
@@ -309,6 +322,11 @@ echo $OUTPUT->box_start('gradetreebox generalbox');
 echo '<form id="gradetreeform" method="post" action="'.$returnurl.'">';
 echo '<div>';
 echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
+
+//did we update something in the db and thus invalidate $grade_edit_tree?
+if ($recreatetree) {
+    $grade_edit_tree = new grade_edit_tree($gtree, $movingeid, $gpr);
+}
 
 echo html_writer::table($grade_edit_tree->table);
 
