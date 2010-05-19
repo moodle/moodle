@@ -66,6 +66,7 @@ class repository_local extends repository {
         $ret = array();
         $ret['dynload'] = true;
         $ret['nosearch'] = true;
+        $ret['nologin'] = true;
         $list = array();
 
         if (!empty($encodedpath)) {

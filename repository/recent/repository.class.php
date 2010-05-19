@@ -100,6 +100,7 @@ class repository_recent extends repository {
         $ret = array();
         $ret['dynload'] = true;
         $ret['nosearch'] = true;
+        $ret['nologin'] = true;
         $list = array();
         $files = $this->get_recent_files(0, $this->number);
 

@@ -79,6 +79,7 @@ class repository_upload extends repository {
         $ret = array();
         $ret['nologin']  = true;
         $ret['nosearch'] = true;
+        $ret['norefresh'] = true;
         // define upload form in file picker
         $ret['upload'] = array('label'=>get_string('attachment', 'repository'), 'id'=>'repo-form');
 
