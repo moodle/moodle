@@ -184,14 +184,6 @@ Please note that not all settings are converted to admin_tree,
 they are mostly intended to be set directly in config.php.
 
 
-1.9.x upgrade notes
--------------------
-1.9.x contains basic support for local hacks placed directly into
-/local/ directory. This old local API was completely removed and can
-not be used any more in 2.0. All old customisations need to be
-migrated to new local plugins before running of the 2.0 upgrade script.
-
-
 2.0 pre-upgrade script
 -------------------
 You an use /local/upgrade_pre20.php script for any code that needs to
@@ -204,6 +196,15 @@ function inside. If the execution stops the script is executed again
 during the next upgrade. The first execution of lib/db/upgrade.php
 increments the version number and the pre upgrade script is not
 executed any more.
+
+
+
+1.9.x upgrade notes
+===============================
+1.9.x contains basic support for local hacks placed directly into
+/local/ directory. This old local API was completely removed and can
+not be used any more in 2.0. All old customisations need to be
+migrated to new local plugins before running of the 2.0 upgrade script.
 
 
 
