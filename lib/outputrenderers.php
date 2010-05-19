@@ -1834,7 +1834,8 @@ FMHTML;
 <object type="text/html" data="$url" height="160" width="600" style="border:1px solid #000">Error</object>
 NONJS;
         } else {
-            $html .= html_writer::link($url, get_string('usenonjsfilemanager', 'repository'));
+            //TODO: Fix this link
+            //$html .= html_writer::link($url, get_string('usenonjsfilemanager', 'repository'));
         }
         $html .= '</div>';
 
