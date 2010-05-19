@@ -41,6 +41,7 @@ admin_externalpage_setup('siteregistrationconfirmed');
 
 $newtoken        = optional_param('newtoken', '', PARAM_ALPHANUM);
 $url             = optional_param('url', '', PARAM_URL);
+$hubname         = optional_param('hubname', '', PARAM_TEXT);
 $token           = optional_param('token', '', PARAM_ALPHANUM);
 
 $hub = new hub();
@@ -51,10 +52,13 @@ if (!empty($registeredhub) and $registeredhub->token == $token) {
 
     $registeredhub->token = $newtoken;
     $registeredhub->confirmed = 1;
+    $registeredhub->huname = $hubname;
     $hub->update_registeredhub($registeredhub);
 
     echo $OUTPUT->header();
-    echo $OUTPUT->notification(get_string('registrationconfirmed', 'hub'), 'notifysuccess');
+    echo $OUTPUT->heading(get_string('registrationconfirmed', 'hub'), 3, 'main');
+    $hublink = html_writer::tag('a', $hubname, array('href' => $url));
+    echo $OUTPUT->notification(get_string('registrationconfirmedon', 'hub', $hublink), 'notifysuccess');
     echo $OUTPUT->footer();
 } else {
     throw new moodle_exception('wrongtoken', 'hub', $CFG->wwwroot.'/admin/registration/index.php');

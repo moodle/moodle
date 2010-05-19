@@ -145,6 +145,7 @@ $string['registeron'] = 'Register your site';
 $string['registeronmoodleorg'] = 'Register on Moodle.org now';
 $string['registeronspecifichub'] = 'Register on a specific hub';
 $string['registrationconfirmed'] = 'Site registration confirmed';
+$string['registrationconfirmedon'] = 'You are now registered on the hub  {$a->hublink}. You are now able to publish courses to this hub, using the "Publish" link in course administration menus';
 $string['registrationupdated'] = 'Registration has been updated.';
 $string['registrationupdatedfailed'] = 'Registration update failed.';
 $string['resourcesnumber'] = 'Number of resources ({$a})';
