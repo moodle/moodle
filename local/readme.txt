@@ -199,6 +199,12 @@ be executed before the main upgrade to 2.0. Most probably this will
 be used for undoing of old hacks that would otherwise break normal
 2.0 upgrade.
 
+This file is just included directly, there does not need to be any
+function inside. If the execution stops the script is executed again
+during the next upgrade. The first execution of lib/db/upgrade.php
+increments the version number and the pre upgrade script is not
+executed any more.
+
 
 
 Other site customisation outside of "/local/" directory
