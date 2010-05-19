@@ -46,7 +46,7 @@ Sample /local/ directory listing:
 
 
 Local plugins
-===============================
+=============
 Local plugins are used in cases when no standard plugin fits, examples are:
 * event consumers communicating with external systems
 * custom definitions of web services and external functions
@@ -57,7 +57,7 @@ Local plugins are used in cases when no standard plugin fits, examples are:
 
 
 Local plugin version specification
--------------------
+----------------------------------
 version.php is mandatory for most of the standard plugin infrastructure.
 The version number must be incremented most plugin changes, the changed
 version tells Moodle to invalidate all caches, do db upgrades if necessary,
@@ -71,7 +71,7 @@ $plugin->requires = 2010021900;   // Requires this Moodle version
 
 
 Local plugin capabilities
--------------------
+-------------------------
 Each local plugin may define own capabilities. It is not recommended to define
 capabilities belonging to other plugins here, but it should work too.
 
@@ -86,7 +86,7 @@ $local_nicehack_capabilities = array(
 
 
 Local plugin language strings
------------------------
+-----------------------------
 If customisation needs new strings it is recommended to use normal plugin
 strings.
 
@@ -101,7 +101,7 @@ echo get_string('hello', 'local_nicehack', 'petr');
 
 
 Local plugin admin menu items
-----------------------
+-----------------------------
 It is possible to add new items and categories to the admin_tree block.
 I you need to define new admin setting classes put them into separate
 file and require_once() from settings.php
@@ -115,7 +115,7 @@ $ADMIN->add('tweaks', new admin_externalpage('nicehackery', 'Tweak something',
 
 
 Local plugin event handlers
----------------------
+---------------------------
 Events are intended primarily for communication "core --> plugins".
 (It should not be use in opposite direction!)
 In theory it could be also used for "plugin --> plugin" communication too.
@@ -135,7 +135,7 @@ NOTE: events are not yet fully implemented in current Moodle 2.0dev.
 
 
 Local plugin database tables
-----------------
+----------------------------
 XMLDB editors is the recommended tool. Please note that modification
 of core table structure is highly discouraged.
 
@@ -178,14 +178,14 @@ Second bracket is the name of setting. In the admin settings UI the plugin and
 name of setting is separated by "|".
 
 The values usually correspond to the raw string in config table, with the exception
-of comma separated lists that are usually entered as real arrays. 
+of comma separated lists that are usually entered as real arrays.
 
 Please note that not all settings are converted to admin_tree,
 they are mostly intended to be set directly in config.php.
 
 
 2.0 pre-upgrade script
--------------------
+----------------------
 You an use /local/upgrade_pre20.php script for any code that needs to
 be executed before the main upgrade to 2.0. Most probably this will
 be used for undoing of old hacks that would otherwise break normal
@@ -200,7 +200,7 @@ executed any more.
 
 
 1.9.x upgrade notes
-===============================
+===================
 1.9.x contains basic support for local hacks placed directly into
 /local/ directory. This old local API was completely removed and can
 not be used any more in 2.0. All old customisations need to be
@@ -209,7 +209,7 @@ migrated to new local plugins before running of the 2.0 upgrade script.
 
 
 Other site customisation outside of "/local/" directory
-===============================
+=======================================================
 
 Local language pack modifications
 ---------------------------------
@@ -225,7 +225,7 @@ See also http://docs.moodle.org/en/Language_editing
 
 
 Custom script injection
----------------------------------
+-----------------------
 Very old customisation option that allows you to modify scripts by injecting
 code right after the require 'config.php' call.
 
@@ -236,4 +236,4 @@ files that actually include the config.php!
 
 Examples:
 * disable one specific moodle page without code modification
-* alter page parameters on the fly 
+* alter page parameters on the fly
