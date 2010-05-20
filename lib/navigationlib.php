@@ -1856,7 +1856,7 @@ class global_navigation_for_ajax extends global_navigation {
         $this->cache = new navigation_cache(NAVIGATION_CACHE_NAME);
         $this->children = new navigation_node_collection();
         $this->rootnodes = array();
-        //$this->rootnodes['site']      = $this->add_course($SITE);
+        $this->rootnodes['site']      = $this->add_course($SITE);
         $this->rootnodes['courses'] = $this->add(get_string('courses'), null, self::TYPE_ROOTNODE, null, 'courses');
     }
     /**
@@ -1925,8 +1925,12 @@ class global_navigation_for_ajax extends global_navigation {
                         break;
                     }
                 }
-                $activities = $this->load_section_activities($sections[$cm->sectionnumber]->sectionnode, $cm->sectionnumber, get_fast_modinfo($course));
-                $modulenode = $this->load_activity($cm, $course, $activities[$cm->id]);
+                if ($course->id == SITEID) {
+                    $modulenode = $this->load_activity($cm, $course, $coursenode->find($cm->id, self::TYPE_ACTIVITY));
+                } else {
+                    $activities = $this->load_section_activities($sections[$cm->sectionnumber]->sectionnode, $cm->sectionnumber, get_fast_modinfo($course));
+                    $modulenode = $this->load_activity($cm, $course, $activities[$cm->id]);
+                }
                 break;
             default:
                 throw new Exception('Unknown type');

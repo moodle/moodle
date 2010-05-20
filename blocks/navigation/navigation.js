@@ -178,7 +178,6 @@ M.block_navigation.classes.tree.prototype.load_ajax = function(tid, outcome, arg
         }
     } catch (e) {
         // If we got here then there was an error parsing the result
-        alert(e.message);
     }
     // The branch is empty so class it accordingly
     args.target.replaceClass('branch', 'emptybranch');
