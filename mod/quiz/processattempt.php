@@ -195,5 +195,15 @@ if (!$attempt->preview) {
 $accessmanager = $attemptobj->get_access_manager($timenow);
 $accessmanager->clear_password_access();
 
+/// Trigger event
+$eventdata = new object();
+$eventdata->component  = 'mod/quiz';
+$eventdata->course     = $attemptobj->get_courseid();
+$eventdata->quiz       = $attemptobj->get_quizid();
+$eventdata->cm         = $attemptobj->get_cmid();
+$eventdata->user       = $USER;
+$eventdata->attempt    = $attemptobj->get_attemptid();
+events_trigger('quiz_attempt_processed', $eventdata);
+
 /// Send the user to the review page.
 redirect($attemptobj->review_url());

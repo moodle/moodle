@@ -119,6 +119,15 @@ if (!$states = get_question_states($quizobj->get_questions(), $quizobj->get_quiz
 foreach ($quizobj->get_questions() as $i => $question) {
     save_question_session($question, $states[$i]);
 }
+/// Trigger event
+$eventdata = new object();
+$eventdata->component  = 'mod/quiz';
+$eventdata->course     = $quizobj->get_courseid();
+$eventdata->quiz       = $quizobj->get_quizid();
+$eventdata->cm         = $quizobj->get_cmid();
+$eventdata->user       = $USER;
+$eventdata->attempt    = $attempt->id;
+events_trigger('quiz_attempt_started', $eventdata);
 
 /// Redirect to the attempt page.
 redirect($quizobj->attempt_url($attempt->id));
