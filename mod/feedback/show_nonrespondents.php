@@ -16,6 +16,11 @@
     //get the params
     ////////////////////////////////////////////////////////
     $id = required_param('id', PARAM_INT);
+    $subject = optional_param('subject','',PARAM_CLEANHTML);
+    $message = optional_param('message','',PARAM_CLEANHTML);
+    $format = optional_param('format',FORMAT_MOODLE,PARAM_INT);
+    $messageuser = optional_param('messageuser',PARAM_INT);
+    $action = optional_param('action',PARAM_ALPHA);
     $perpage = optional_param('perpage', FEEDBACK_DEFAULT_PAGE_COUNT, PARAM_INT);  // how many per page
     $showall = optional_param('showall', false, PARAM_INT);  // should we show all users
     // $SESSION->feedback->current_tab = $do_show;
@@ -24,7 +29,6 @@
     ////////////////////////////////////////////////////////
     //get the objects
     ////////////////////////////////////////////////////////
-
     if (! $cm = get_coursemodule_from_id('feedback', $id)) {
         print_error('invalidcoursemodule');
     }
@@ -63,6 +67,34 @@
     }
 
     require_capability('mod/feedback:viewreports', $context);
+
+    if(has_capability('moodle/course:bulkmessaging', $coursecontext)) {
+        // require_once($CFG->dirroot.'/message/lib.php');
+        $good = 1;
+        if(is_array($messageuser)) {
+            foreach ($messageuser as $userid) {
+                $senduser = $DB->get_record('user', array('id'=>$userid));
+                $eventdata = new object();
+                $eventdata->name             = 'feedback';
+                $eventdata->component        = 'mod';
+                $eventdata->userfrom         = $USER;
+                $eventdata->userto           = $senduser;
+                $eventdata->subject          = $subject;
+                $eventdata->fullmessage      = $message;
+                $eventdata->fullmessageformat = FORMAT_PLAIN;
+                $eventdata->fullmessagehtml  = '';
+                $eventdata->smallmessage     = '';
+                $good = $good && message_send($eventdata);
+            }
+            if (!empty($good)) {
+                $msg = $OUTPUT->heading(get_string('messagedselectedusers'));
+            } else {
+                $msg = $OUTPUT->heading(get_string('messagedselectedusersfailed'));
+            }
+            redirect($url, $msg, 4);
+            exit;
+        }
+    }
 
     ////////////////////////////////////////////////////////
     //get the responses of given user
@@ -182,7 +214,7 @@
         echo ' ('.$matchcount.')<hr />';
 
         if(has_capability('moodle/course:bulkmessaging', $coursecontext)) {
-            echo '<form class="mform" action="show_nonrespondents.php" method="post" id="feedback_sendmailform">';
+            echo '<form class="mform" action="show_nonrespondents.php" method="post" id="feedback_sendmessageform">';
         }
         foreach ($students as $student){
             $user = $DB->get_record('user', array('id'=>$student));
@@ -214,23 +246,32 @@
             echo $OUTPUT->container(html_writer::link($allurl, get_string('showall', '', $matchcount)), array(), 'showall');
         }
         if(has_capability('moodle/course:bulkmessaging', $coursecontext)) {
+            $usehtmleditor = can_use_html_editor(); 
             echo '<br /><div class="buttons">';
             echo '<input type="button" id="checkall" value="'.get_string('selectall').'" /> ';
             echo '<input type="button" id="checknone" value="'.get_string('deselectall').'" /> ';
             echo '</div';
             echo '<fieldset class="clearfix">';
             echo '<legend class="ftoggler">'.get_string('send_message', 'feedback').'</legend>';
-            echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
-            echo '<input type="hidden" name="id" value="'.$id.'" />';
-            echo '<textarea name="message" cols="60" rows="5"></textarea>';
+            echo '<div><label for="feedback_subject">'.get_string('subject', 'feedback').'&nbsp;</label><input type="text" id="feedback_subject" size="50" maxlength="255" name="subject" value="'.$subject.'" /></div>';
+            print_textarea($usehtmleditor, 15, 25, 30, 10, "message", $message);
+            if ($usehtmleditor) {
+                print_string('formathtml');
+                echo '<input type="hidden" name="format" value="'.FORMAT_HTML.'" />';
+            } else {
+                choose_from_menu(format_text_menu(), "format", $format, "");
+            }
             echo '<br /><div class="buttons">';
             echo '<input type="submit" name="send_message" value="'.get_string('send', 'feedback').'" />';
             echo '</div>';
             echo '</fieldset>';
+            echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
+            echo '<input type="hidden" name="action" value="sendmessage" />';
+            echo '<input type="hidden" name="id" value="'.$id.'" />';
             echo '</form>';
             //include the needed js
             $module = array('name'=>'mod_feedback', 'fullpath'=>'/mod/feedback/feedback.js');
-            $PAGE->requires->js_init_call('M.mod_feedback.init_sendmail', null, false, $module);
+            $PAGE->requires->js_init_call('M.mod_feedback.init_sendmessage', null, false, $module);
         }
     }
     echo $OUTPUT->box_end();

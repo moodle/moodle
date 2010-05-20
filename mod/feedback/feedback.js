@@ -19,7 +19,7 @@ function setcourseitemfilter(item, item_typ) {
 
 M.mod_feedback = {};
 
-M.mod_feedback.init_sendmail = function(Y) {
+M.mod_feedback.init_sendmessage = function(Y) {
     Y.on('click', function(e) {
         Y.all('input.usercheckbox').each(function() {
             this.set('checked', 'checked');

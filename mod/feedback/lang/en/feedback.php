@@ -252,6 +252,7 @@ $string['sort_by_course'] = 'Sort by course';
 $string['start'] = 'Start';
 $string['started'] = 'started';
 $string['stop'] = 'End';
+$string['subject'] = 'Subject';
 $string['switch_group'] = 'Switch group';
 $string['switch_item_to_not_required'] = 'switch to: answer not required';
 $string['switch_item_to_required'] = 'switch to: answer required';
