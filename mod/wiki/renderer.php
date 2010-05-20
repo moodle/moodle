@@ -35,9 +35,8 @@ class mod_wiki_renderer extends plugin_renderer_base {
         }
 
         // @TODO: Fix call to wiki_get_subwiki_by_group
-        if ($gid = groups_get_activity_group($this->page->cm)){
-            $gid = 0;
-        }
+        $gid = groups_get_activity_group($this->page->cm);
+        $gid = !empty($gid)?$gid:0;
         if (!$subwiki = wiki_get_subwiki_by_group($this->page->cm->instance, $gid)) {
             return false;
         }
