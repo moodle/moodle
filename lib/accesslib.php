@@ -4497,13 +4497,13 @@ function get_users_by_capability($context, $capability, $fields='', $sort='',
         } else {
             $grouptest = 'gm.groupid = ' . $groups;
         }
-        $grouptest = 'ra.userid IN (SELECT userid FROM ' .
+        $grouptest = 'u.id IN (SELECT userid FROM ' .
             $CFG->prefix . 'groups_members gm WHERE ' . $grouptest . ')';
 
         if ($useviewallgroups) {
             $viewallgroupsusers = get_users_by_capability($context,
                     'moodle/site:accessallgroups', 'u.id, u.id', '', '', '', '', $exceptions);
-            $wherecond['groups'] =  '('. $grouptest . ' OR ra.userid IN (' .
+            $wherecond['groups'] =  '('. $grouptest . ' OR u.id IN (' .
                                     implode(',', array_keys($viewallgroupsusers)) . '))';
         } else {
             $wherecond['groups'] =  '(' . $grouptest .')';
