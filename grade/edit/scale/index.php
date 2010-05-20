@@ -155,7 +155,7 @@ if ($scales = grade_scale::fetch_all_global()) {
 
 
 if ($courseid) {
-    print_grade_page_head($courseid, 'scale', null, get_string('coursescales', 'grades'));
+    print_grade_page_head($courseid, 'scale', 'scale', get_string('coursescales', 'grades'));
 }
 
 echo $OUTPUT->heading($strcustomscales, 3, 'main');
