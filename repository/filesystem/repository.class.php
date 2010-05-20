@@ -114,11 +114,16 @@ class repository_filesystem extends repository {
     public function global_search() {
         return false;
     }
-    // move file to local moodle
+    /**
+     * Return file path
+     * @return array
+     */
     public function get_file($file, $title = '') {
         global $CFG;
         if ($file{0} == '/') {
             $file = $this->root_path.substr($file, 1, strlen($file)-1);
+        } else {
+            $file = $this->root_path.$file;
         }
         // this is a hack to prevent move_to_file deleteing files
         // in local repository
