@@ -1756,13 +1756,16 @@ class core_renderer extends renderer_base {
         $html = '';
         $nonjsfilemanager = optional_param('usenonjsfilemanager', 0, PARAM_INT);
         $options = $fm->options;
+        $options->usenonjs = $nonjsfilemanager;
         $straddfile  = get_string('add', 'repository') . '...';
         $strmakedir  = get_string('makeafolder', 'moodle');
-        $strdownload  = get_string('downloadfolder', 'repository');
+        $strdownload = get_string('downloadfolder', 'repository');
+        $strloading  = get_string('loading', 'repository');
 
         $icon_add_file = $OUTPUT->pix_icon('t/addfile', $straddfile).'';
         $icon_add_folder = $OUTPUT->pix_icon('t/adddir', $strmakedir).'';
         $icon_download = $OUTPUT->pix_icon('t/download', $strdownload).'';
+        $icon_progress = $OUTPUT->pix_icon('i/loading_small', $strloading).'';
 
         $client_id = $options->client_id;
         $itemid    = $options->itemid;
@@ -1775,6 +1778,9 @@ class core_renderer extends renderer_base {
         }
 
         $html .= <<<FMHTML
+<div class="filemanager-loading mdl-align" id='filemanager-loading-{$client_id}'>
+$icon_progress
+</div>
 <div id="filemanager-wrapper-{$client_id}" style="display:none">
     <div class="fm-breadcrumb" id="fm-path-{$client_id}"></div>
     <div class="filemanager-toolbar">
@@ -1793,7 +1799,7 @@ FMHTML;
         if (empty($filemanagertemplateloaded)) {
             $filemanagertemplateloaded = true;
             $html .= <<<FMHTML
-<div id="fm-template" style="display:none"><div class="fm-file-menu">___action___</div> <div class="fm-file-name">___fullname___</div></div>
+<div id="fm-template" style="display:none"><span class="fm-file-menu">___action___</span> <span class="fm-file-name">___fullname___</span></div>
 FMHTML;
         }
 
@@ -1825,19 +1831,20 @@ FMHTML;
         $this->page->requires->js_module($module);
         $this->page->requires->js_init_call('M.form_filemanager.init', array($options), true, $module);
 
-        $url = new moodle_url($this->page->url, array('usenonjsfilemanager'=>1));
-
         // non javascript file manager
-        $html .= '<div id="nonjs-filemanager-'.$client_id.'">';
         if (!empty($nonjsfilemanager)) {
+            $html = '<div id="nonjs-filemanager-'.$client_id.'">';
             $html .= <<<NONJS
-<object type="text/html" data="$url" height="160" width="600" style="border:1px solid #000">Error</object>
+<object type="text/html" data="$filemanagerurl" height="160" width="600" style="border:1px solid #000">Error</object>
 NONJS;
+            $html .= '</div>';
         } else {
-            //TODO: Fix this link
-            //$html .= html_writer::link($url, get_string('usenonjsfilemanager', 'repository'));
+            $url = new moodle_url($this->page->url, array('usenonjsfilemanager'=>1));
+            $html .= '<div id="nonjs-filemanager-'.$client_id.'" class="mdl-align">';
+            $html .= html_writer::link($url, get_string('usenonjsfilemanager', 'repository'));
+            $html .= '</div>';
         }
-        $html .= '</div>';
+
 
         return $html;
     }
