@@ -15,3 +15,20 @@ function setcourseitemfilter(item, item_typ) {
     document.report.courseitemfiltertyp.value = item_typ;
     document.report.submit();
 }
+
+
+M.mod_feedback = {};
+
+M.mod_feedback.init_sendmail = function(Y) {
+    Y.on('click', function(e) {
+        Y.all('input.usercheckbox').each(function() {
+            this.set('checked', 'checked');
+        });
+    }, '#checkall');
+
+    Y.on('click', function(e) {
+        Y.all('input.usercheckbox').each(function() {
+            this.set('checked', '');
+        });
+    }, '#checknone');
+};

@@ -53,6 +53,11 @@
         
         $reporturl = new moodle_url('/mod/feedback/show_entries.php', array('id'=>$usedid, 'do_show'=>'showentries'));
         $row[] = new tabobject('showentries', $reporturl->out(), get_string('show_entries', 'feedback'));
+        
+        if($feedback->anonymous == FEEDBACK_ANONYMOUS_NO AND $feedback->course != SITEID) {
+            $nonrespondenturl = new moodle_url('/mod/feedback/show_nonrespondents.php', array('id'=>$usedid));
+            $row[] = new tabobject('nonrespondents', $nonrespondenturl->out(), get_string('show_nonrespondents', 'feedback'));
+        }
     }
 
     if(count($row) > 1) {

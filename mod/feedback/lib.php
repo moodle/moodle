@@ -703,6 +703,61 @@ function feedback_check_is_switchrole(){
 }
 
 /**
+ * count users which have not completed the feedback
+ *
+ * @global object
+ * @uses CONTEXT_MODULE
+ * @param object $cm
+ * @param int $group single groupid
+ * @return object the userrecords
+ */
+function feedback_get_incomplete_users($cm, $group = false, $sort = '', $startpage = false, $pagecount = false) {
+    global $DB;
+    
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    
+    //first get all user who can complete this feedback
+    $cap = 'mod/feedback:complete';
+    $fields = 'u.id, u.username';
+    if(!$allusers = get_users_by_capability($context, $cap, $fields, $sort, '', '', $group, '', true)) {
+        return false;
+    }
+    $allusers = array_keys($allusers);
+
+    //now get all completeds
+    if(!$completedusers = $DB->get_records_menu('feedback_completed', array('feedback'=>$cm->instance), '', 'userid,id')){
+        return false;
+    }
+    $completedusers = array_keys($completedusers);
+    
+    //now strike all completedusers from allusers
+    $allusers = array_diff($allusers, $completedusers);
+
+    //for paging I use array_slice()
+    if($startpage !== false AND $pagecount !== false) {
+        $allusers = array_slice($allusers, $startpage, $pagecount);
+    }
+
+    return $allusers;
+}
+
+/**
+ * count users which have not completed the feedback
+ *
+ * @global object
+ * @uses CONTEXT_MODULE
+ * @param object $cm
+ * @param int $group single groupid
+ * @return object the userrecords
+ */
+function feedback_count_incomplete_users($cm, $group = false) {
+    if($allusers = feedback_get_incomplete_users($cm, $group)) {
+        return count($allusers);
+    }
+    return 0;
+}
+
+/**
  * count users which have the completed a feedback
  *
  * @global object
