@@ -1992,6 +1992,9 @@ function user_accesstime_log($courseid=0) {
         if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbqueries++;};
 
         $remoteaddr = getremoteaddr();
+        if (empty($remoteaddr)) {
+            $remoteaddr = '0.0.0.0';
+        }
         if ($db->Execute("UPDATE {$CFG->prefix}user
                              SET lastip = '$remoteaddr', lastaccess = $timenow
                            WHERE id = $USER->id")) {

@@ -2968,6 +2968,9 @@ function create_user_record($username, $password, $auth='manual') {
     }
     $newuser->confirmed = 1;
     $newuser->lastip = getremoteaddr();
+    if (empty($newuser->lastip)) {
+        $newuser->lastip = '0.0.0.0';
+    }
     $newuser->timemodified = time();
     $newuser->mnethostid = $CFG->mnet_localhost_id;
 
@@ -3137,6 +3140,9 @@ function guest_user() {
         $newuser->confirmed = 1;
         $newuser->lang = $CFG->lang;
         $newuser->lastip = getremoteaddr();
+        if (empty($newuser->lastip)) {
+            $newuser->lastip = '0.0.0.0';
+        }
     }
 
     return $newuser;
