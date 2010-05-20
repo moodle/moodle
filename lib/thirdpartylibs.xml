@@ -218,13 +218,6 @@
     <licenseversion>2.1</licenseversion>
   </library>
   <library>
-    <location>snoopy</location>
-    <name>Snoopy</name>
-    <license>LGPL</license>
-    <version>1.2.4</version>
-    <licenseversion>2.1</licenseversion>
-  </library>
-  <library>
     <location>soap</location>
     <name>SOAP wrappers</name>
     <license>GPL/LGPL</license>
