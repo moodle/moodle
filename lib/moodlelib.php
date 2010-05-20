@@ -4018,7 +4018,6 @@ function set_login_session_preferences() {
  */
 function delete_course($courseorid, $showfeedback = true) {
     global $CFG, $DB, $OUTPUT;
-    $result = true;
 
     if (is_object($courseorid)) {
         $courseid = $courseorid->id;
@@ -4035,36 +4034,17 @@ function delete_course($courseorid, $showfeedback = true) {
         return false;
     }
 
-    if (!remove_course_contents($courseid, $showfeedback)) {
-        if ($showfeedback) {
-            echo $OUTPUT->notification("An error occurred while deleting some of the course contents.");
-        }
-        $result = false;
-    }
+    remove_course_contents($courseid, $showfeedback);
 
     $DB->delete_records("course", array("id"=>$courseid));
 
-/// Delete all roles and overiddes in the course context
-    if (!delete_context(CONTEXT_COURSE, $courseid)) {
-        if ($showfeedback) {
-            echo $OUTPUT->notification("An error occurred while deleting the main course context.");
-        }
-        $result = false;
-    }
+    // Delete all roles and overiddes in the course context
+    delete_context(CONTEXT_COURSE, $courseid);
 
-    if (!fulldelete($CFG->dataroot.'/'.$courseid)) {
-        if ($showfeedback) {
-            echo $OUTPUT->notification("An error occurred while deleting the course files.");
-        }
-        $result = false;
-    }
+    //trigger events
+    events_trigger('course_deleted', $course);
 
-    if ($result) {
-        //trigger events
-        events_trigger('course_deleted', $course);
-    }
-
-    return $result;
+    return true;
 }
 
 /**
@@ -4084,12 +4064,8 @@ function remove_course_contents($courseid, $showfeedback=true) {
     require_once($CFG->libdir.'/questionlib.php');
     require_once($CFG->libdir.'/gradelib.php');
 
-    $result = true;
-
-    if (! $course = $DB->get_record('course', array('id'=>$courseid))) {
-        print_error('invalidcourseid');
-    }
-    $context = get_context_instance(CONTEXT_COURSE, $courseid);
+    $course = $DB->get_record('course', array('id'=>$courseid), '*', MUST_EXIST);
+    $context = get_context_instance(CONTEXT_COURSE, $courseid, MUST_EXIST);
 
     $strdeleted = get_string('deleted');
 
@@ -4132,7 +4108,6 @@ function remove_course_contents($courseid, $showfeedback=true) {
 
                             } else {
                                 echo $OUTPUT->notification('Could not delete '. $modname .' instance '. $instance->id .' ('. format_string($instance->name) .')');
-                                $result = false;
                             }
                             if ($cm) {
                                 // delete cm and its context in correct order
@@ -4143,7 +4118,6 @@ function remove_course_contents($courseid, $showfeedback=true) {
                     }
                 } else {
                     echo $OUTPUT->notification('Function '.$moddelete.'() doesn\'t exist!');
-                    $result = false;
                 }
 
                 if (function_exists($moddeletecourse)) {
@@ -4154,8 +4128,6 @@ function remove_course_contents($courseid, $showfeedback=true) {
                 echo $OUTPUT->notification($strdeleted .' '. $count .' x '. $modname);
             }
         }
-    } else {
-        print_error('nomodules', 'debug');
     }
 
 /// Delete course blocks
@@ -4180,13 +4152,7 @@ function remove_course_contents($courseid, $showfeedback=true) {
         'backup_log' => 'courseid'
     );
     foreach ($tablestoclear as $table => $col) {
-        if ($DB->delete_records($table, array($col=>$course->id))) {
-            if ($showfeedback) {
-                echo $OUTPUT->notification($strdeleted . ' ' . $table);
-            }
-        } else {
-            $result = false;
-        }
+        $DB->delete_records($table, array($col=>$course->id));
     }
 
 
@@ -4220,7 +4186,13 @@ function remove_course_contents($courseid, $showfeedback=true) {
     require_once($CFG->dirroot.'/tag/coursetagslib.php');
     coursetag_delete_course_tags($course->id, $showfeedback);
 
-    return $result;
+    // Delete legacy files
+    fulldelete($CFG->dataroot.'/'.$courseid);
+
+    //trigger events
+    events_trigger('course_content_removed', $course);
+    
+    return true;
 }
 
 /**

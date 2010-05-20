@@ -33,6 +33,8 @@ $handlers = array (
 
 /*
  * portfolio queued event - for non interactive file transfers
+ * NOTE: this is a hack, please do not add any more things like this here
+ *       (it is just abusing cron to do very time consuming things which is wrong)
 */
     'portfolio_send' => array (
         'handlerfile'      => '/lib/portfolio.php',
@@ -63,6 +65,7 @@ course_category_deleted - object course_categories table record
 
 course_created - object course table record
 course_updated - object course table record
+course_content_removed - object course table record
 course_deleted - object course table record
 
 ==== group related events ====
@@ -83,7 +86,7 @@ groups_groupings_groups_removed - int course id - removed all groups from all gr
 groups_groups_deleted           - int course id - deleted all course groups
 groups_groupings_deleted        - int course id - deleted all course groupings
 
-==== role related evetns ====
+==== role related events ====
 
 role_assigned         - object role_assignments table record
 role_unassigned       - object role_assignments table record
