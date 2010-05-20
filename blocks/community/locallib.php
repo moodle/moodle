@@ -97,8 +97,8 @@ class community {
         fclose($fp);
 
         $record->contextid = get_context_instance(CONTEXT_USER, $USER->id)->id;
-        $record->filearea = 'community_backups';
-        $record->itemid = $courseid;
+        $record->filearea = 'user_backup';
+        $record->itemid = 0;
         $record->filename = 'backup_'.$courseid.".zip";
         $record->filepath = '/';
         $fs = get_file_storage();
