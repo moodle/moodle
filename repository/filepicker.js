@@ -797,7 +797,7 @@ M.core_filepicker.init = function(Y, options) {
             if (popup_button) {
                 popup_button.on('click', function(e){
                     M.core_filepicker.active_filepicker = this;
-                    window.open(loginurl, 'repo_auth', 'location=0,status=0,width=500,height=300');
+                    window.open(loginurl, 'repo_auth', 'location=0,status=0,width=500,height=300,scrollbars=yes');
                     e.preventDefault(); 
                 }, this);
             }
