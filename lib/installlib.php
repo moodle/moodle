@@ -165,7 +165,12 @@ function install_generate_configphp($database, $cfg, $userealpath=false) {
 
     $configphp .= '$CFG->admin     = '.var_export($cfg->admin, true) . ';' . PHP_EOL . PHP_EOL;
 
-    $configphp .= '$CFG->directorypermissions = 00777;  // try 02777 on a server in Safe Mode' . PHP_EOL . PHP_EOL;
+    if (empty($cfg->directorypermissions)) {
+        $chmod = '02777';
+    } else {
+        $chmod = '0' . decoct($cfg->directorypermissions);
+    }
+    $configphp .= '$CFG->directorypermissions = ' . $chmod . ';' . PHP_EOL . PHP_EOL;
 
     $configphp .= '$CFG->passwordsaltmain = '.var_export(complex_random_string(), true) . ';' . PHP_EOL . PHP_EOL;
 
