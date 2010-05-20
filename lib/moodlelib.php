@@ -2526,8 +2526,8 @@ function require_user_key_login($script, $instance=null) {
     }
 
     if ($key->iprestriction) {
-        $remoteaddr = getremoteaddr();
-        if ($remoteaddr == '' or !address_in_subnet($remoteaddr, $key->iprestriction)) {
+        $remoteaddr = getremoteaddr(null);
+        if (empty($remoteaddr) or !address_in_subnet($remoteaddr, $key->iprestriction)) {
             print_error('ipmismatch');
         }
     }
@@ -8552,6 +8552,9 @@ function make_unique_id_code($extra='') {
  */
 function address_in_subnet($addr, $subnetstr) {
 
+    if ($addr == '0.0.0.0') {
+        return false;
+    }
     $subnets = explode(',', $subnetstr);
     $found = false;
     $addr = trim($addr);
@@ -8813,7 +8816,7 @@ function cleardoubleslashes ($path) {
  */
 function remoteip_in_list($list){
     $inlist = false;
-    $client_ip = getremoteaddr();
+    $client_ip = getremoteaddr(null);
 
     if(!$client_ip){
         // ensure access on cli
@@ -8835,9 +8838,10 @@ function remoteip_in_list($list){
  * Returns most reliable client address
  *
  * @global object
+ * @param string $default If an address can't be determined, then return this
  * @return string The remote IP address
  */
-function getremoteaddr() {
+function getremoteaddr($default='0.0.0.0') {
     global $CFG;
 
     if (empty($CFG->getremoteaddrconf)) {
@@ -8849,18 +8853,21 @@ function getremoteaddr() {
     }
     if (!($variablestoskip & GETREMOTEADDR_SKIP_HTTP_CLIENT_IP)) {
         if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
-            return cleanremoteaddr($_SERVER['HTTP_CLIENT_IP']);
+            $address = cleanremoteaddr($_SERVER['HTTP_CLIENT_IP']);
+            return $address ? $address : $default;
         }
     }
     if (!($variablestoskip & GETREMOTEADDR_SKIP_HTTP_X_FORWARDED_FOR)) {
         if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-            return cleanremoteaddr($_SERVER['HTTP_X_FORWARDED_FOR']);
+            $address = cleanremoteaddr($_SERVER['HTTP_X_FORWARDED_FOR']);
+            return $address ? $address : $default;
         }
     }
     if (!empty($_SERVER['REMOTE_ADDR'])) {
-        return cleanremoteaddr($_SERVER['REMOTE_ADDR']);
+        $address = cleanremoteaddr($_SERVER['REMOTE_ADDR']);
+        return $address ? $address : $default;
     } else {
-        return null;
+        return $default;
     }
 }
 

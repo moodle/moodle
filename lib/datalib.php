@@ -2007,9 +2007,6 @@ function add_to_log($courseid, $module, $action, $url='', $info='', $cm=0, $user
     }
 
     $REMOTE_ADDR = getremoteaddr();
-    if (empty($REMOTE_ADDR)) {
-        $REMOTE_ADDR = '0.0.0.0';
-    }
 
     $timenow = time();
     $info = $info;

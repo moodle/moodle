@@ -50,7 +50,7 @@ class simple_rules_test extends UnitTestCase {
 
         // Test the allowed case by getting the user's IP address. However, this
         // does not always work, for example using the mac install package on my laptop.
-        $quiz->subnet = getremoteaddr();
+        $quiz->subnet = getremoteaddr(null);
         if (!empty($quiz->subnet)) {
             $quiz->questions = '';
             $quizobj = new quiz($quiz, $cm, null);

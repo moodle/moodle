@@ -601,9 +601,6 @@ function chat_login_user($chatid, $version, $groupid, $course) {
         // or provide a dummy value for the db
         if (empty($chatuser->ip)) {
             $chatuser->ip = getremoteaddr();
-            if (empty($chatuser->ip)) {
-                $chatuser->ip = '';
-            }
         }
 
         if (($chatuser->course != $course->id) or ($chatuser->userid != $USER->id)) {
@@ -628,9 +625,6 @@ function chat_login_user($chatid, $version, $groupid, $course) {
         // or provide a dummy value for the db
         if (empty($chatuser->ip)) {
             $chatuser->ip = getremoteaddr();
-            if (empty($chatuser->ip)) {
-                $chatuser->ip = '';
-            }
         }
 
 
