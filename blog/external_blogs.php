@@ -29,9 +29,10 @@ require_once('../config.php');
 require_once('lib.php');
 
 require_login();
-
-$PAGE->set_url('/blog/external_blogs.php');
-require_capability('moodle/blog:manageexternal', get_context_instance(CONTEXT_SYSTEM));
+$context = get_context_instance(CONTEXT_SYSTEM);
+$PAGE->set_context($context);
+$PAGE->set_url(new moodle_url('/blog/external_blogs.php'));
+require_capability('moodle/blog:manageexternal', $context);
 
 $delete = optional_param('delete', null, PARAM_INT);
 
@@ -50,11 +51,9 @@ if ($delete && confirm_sesskey()) {
 
 $blogs = $DB->get_records('blog_external', array('userid' => $USER->id));
 
-$PAGE->navbar->add(fullname($USER), new moodle_url('/user/view.php', array('id'=>$USER->id)));
-$PAGE->navbar->add($strblogs, new moodle_url('/blog/index.php', array('userid'=>$USER->id)));
-$PAGE->navbar->add($strexternalblogs);
 $PAGE->set_heading("$SITE->shortname: $strblogs: $strexternalblogs", $SITE->fullname);
 $PAGE->set_title("$SITE->shortname: $strblogs: $strexternalblogs");
+$PAGE->set_pagelayout('standard');
 
 echo $OUTPUT->header();
 echo $OUTPUT->heading($strexternalblogs, 2);

@@ -185,7 +185,6 @@ if (!empty($modid)) {
 }
 
 $blogheaders = blog_get_headers();
-blog_extend_settings_navigation($PAGE->settingsnav);
 
 if (empty($entryid) && empty($modid) && empty($groupid)) {
     $PAGE->set_context(get_context_instance(CONTEXT_USER, $USER->id));

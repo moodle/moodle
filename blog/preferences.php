@@ -35,11 +35,30 @@ $userid   = optional_param('userid', null, PARAM_INT);
 $tagid    = optional_param('tagid', null, PARAM_INT);
 $groupid      = optional_param('groupid', null, PARAM_INT);
 
-$PAGE->set_url('/blog/preferences.php', array('courseid' => $courseid, 'modid' => $modid, 'userid' => $userid, 'tagid' => $tagid, 'groupid' => $groupid));
+$url = new moodle_url('/blog/preferences.php');
+if ($courseid !== SITEID) {
+    $url->param('courseid', $courseid);
+}
+if ($modid !== null) {
+    $url->param('modid', $modid);
+}
+if ($userid !== null) {
+    $url->param('userid', $userid);
+}
+if ($tagid !== null) {
+    $url->param('tagid', $tagid);
+}
+if ($groupid !== null) {
+    $url->param('groupid', $groupid);
+}
+
+$PAGE->set_url($url);
+$PAGE->set_pagelayout('standard');
 
 if ($courseid == SITEID) {
     require_login();
     $context = get_context_instance(CONTEXT_SYSTEM);
+    $PAGE->set_context($context);
 } else {
     require_login($courseid);
     $context = get_context_instance(CONTEXT_COURSE, $courseid);
@@ -76,8 +95,6 @@ $strblogs       = get_string('blogs', 'blog');
 $title = "$site->shortname: $strblogs : $strpreferences";
 $PAGE->set_title($title);
 $PAGE->set_heading($title);
-$PAGE->navbar->add($strblogs, new moodle_url('/blog/'));
-$PAGE->navbar->add($strpreferences);
 
 echo $OUTPUT->header();
 

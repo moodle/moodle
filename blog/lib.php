@@ -883,25 +883,6 @@ function blog_get_headers() {
 }
 
 /**
- * Function used by the navigation system to provide links to blog preferences and external blogs.
- * @param object $settingsnav The settings_navigation object
- * @return navigation key
- */
-function blog_extend_settings_navigation($settingsnav) {
-    global $USER, $PAGE, $FULLME, $CFG, $DB, $OUTPUT;
-    $blog = $settingsnav->add(get_string('blogadministration', 'blog'));
-    $blog->forceopen = true;
-
-    $blog->add(get_string('preferences', 'blog'), new moodle_url('preferences.php'), navigation_node::TYPE_SETTING);
-
-    if ($CFG->useexternalblogs && $CFG->maxexternalblogsperuser > 0 && has_capability('moodle/blog:manageexternal', get_context_instance(CONTEXT_SYSTEM))) {
-        $blog->add(get_string('externalblogs', 'blog'), new moodle_url('external_blogs.php'), navigation_node::TYPE_SETTING);
-    }
-
-    return $blog;
-}
-
-/**
  * Shortcut function for getting a count of blog entries associated with a course or a module
  * @param int $courseid The ID of the course
  * @param int $cmid The ID of the course_modules

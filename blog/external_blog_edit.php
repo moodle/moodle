@@ -32,12 +32,19 @@ require_once($CFG->libdir . '/simplepie/moodle_simplepie.php');
 require_once($CFG->dirroot.'/tag/lib.php');
 
 require_login();
-require_capability('moodle/blog:manageexternal', get_context_instance(CONTEXT_SYSTEM));
+$context = get_context_instance(CONTEXT_SYSTEM);
+require_capability('moodle/blog:manageexternal', $context);
 
 // TODO redirect if $CFG->useexternalblogs is off, $CFG->maxexternalblogsperuser == 0, or if user doesn't have caps to manage external blogs
 
 $id = optional_param('id', null, PARAM_INT);
-$PAGE->set_url('/blog/external_blog_edit.php', array('id' => $id));
+$url = new moodle_url('/blog/external_blog_edit.php');
+if ($id !== null) {
+    $url->param('id', $id);
+}
+$PAGE->set_url($url);
+$PAGE->set_context($context);
+$PAGE->set_pagelayout('standard');
 
 $returnurl = new moodle_url('/blog/external_blogs.php');
 
@@ -112,9 +119,6 @@ if ($externalblogform->is_cancelled()){
     redirect($returnurl);
 }
 
-$PAGE->navbar->add(fullname($USER), new moodle_url('/user/view.php', array('id'=>$USER->id)));
-$PAGE->navbar->add($strblogs, new moodle_url('/blog/index.php', array('userid'=>$USER->id)));
-$PAGE->navbar->add($strformheading);
 $PAGE->set_heading("$SITE->shortname: $strblogs: $strexternalblogs", $SITE->fullname);
 $PAGE->set_title("$SITE->shortname: $strblogs: $strexternalblogs");
 
