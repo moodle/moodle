@@ -2089,11 +2089,9 @@ function get_system_context($cache=true) {
  * Remove a context record and any dependent entries,
  * removes context from static context cache too
  *
- * @global object
- * @global object
  * @param int $level
  * @param int $instanceid
- * @return bool properly deleted
+ * @return bool returns true or throws an exception
  */
 function delete_context($contextlevel, $instanceid) {
     global $DB, $ACCESSLIB_PRIVATE, $CFG;
@@ -2101,10 +2099,10 @@ function delete_context($contextlevel, $instanceid) {
     // do not use get_context_instance(), because the related object might not exist,
     // or the context does not exist yet and it would be created now
     if ($context = $DB->get_record('context', array('contextlevel'=>$contextlevel, 'instanceid'=>$instanceid))) {
-        $result = $DB->delete_records('role_assignments', array('contextid'=>$context->id)) &&
-                  $DB->delete_records('role_capabilities', array('contextid'=>$context->id)) &&
-                  $DB->delete_records('context', array('id'=>$context->id)) &&
-                  $DB->delete_records('role_names', array('contextid'=>$context->id));
+        $DB->delete_records('role_assignments', array('contextid'=>$context->id));
+        $DB->delete_records('role_capabilities', array('contextid'=>$context->id));
+        $DB->delete_records('context', array('id'=>$context->id));
+        $DB->delete_records('role_names', array('contextid'=>$context->id));
 
         // do not mark dirty contexts if parents unknown
         if (!is_null($context->path) and $context->depth > 0) {
@@ -2117,12 +2115,9 @@ function delete_context($contextlevel, $instanceid) {
 
         blocks_delete_all_for_context($context->id);
         filter_delete_all_for_context($context->id);
-
-        return $result;
-    } else {
-
-        return true;
     }
+
+    return true;
 }
 
 /**
