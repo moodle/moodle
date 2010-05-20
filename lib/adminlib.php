@@ -140,9 +140,18 @@ function uninstall_plugin($type, $name) {
     if ($type === 'mod') {
         $pluginname = $name;  // eg. 'forum'
         $strpluginname = get_string('modulename', $pluginname);
+        if (get_string_manager()->string_exists('modulename', $component)) {
+            $strpluginname = get_string('modulename', $component);
+        } else {
+            $strpluginname = $component;
+        }
     } else {
         $pluginname = $component;
-        $strpluginname = get_string('pluginname', $pluginname); // replaces string 'modulename'
+        if (get_string_manager()->string_exists('pluginname', $component)) {
+            $strpluginname = get_string('pluginname', $component);
+        } else {
+            $strpluginname = $component;
+        }
     }
     echo $OUTPUT->heading($pluginname);
 
@@ -214,7 +223,7 @@ function uninstall_plugin($type, $name) {
         }
     }
 
-    // perform clean-up taks common for all the plugin/subplugin types
+    // perform clean-up task common for all the plugin/subplugin types
 
     // delete calendar events
     $DB->delete_records('event', array('modulename' => $pluginname));
