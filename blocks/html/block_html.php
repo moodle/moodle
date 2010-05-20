@@ -60,6 +60,12 @@ class block_html extends block_base {
         parent::instance_config_save($data, $nolongerused);
     }
 
+    function instance_delete() {
+        global $DB;
+        $fs = get_file_storage();
+        $fs->delete_area_files($this->context->id, 'block_html', $this->instance->id);
+        return true;
+    }
 
     function content_is_trusted() {
         return in_array($this->page->context->contextlevel, array(CONTEXT_COURSE, CONTEXT_COURSECAT, CONTEXT_SYSTEM));
@@ -115,6 +121,7 @@ class block_html extends block_base {
 
         return true;
     }
+
     function send_file($context, $filearea, $itemid, $filepath, $filename) {
         $fs = get_file_storage();
         $fullpath = $context->id.'block_html'.$itemid.$filepath.$filename;
@@ -127,4 +134,3 @@ class block_html extends block_base {
         send_stored_file($file, 60*60, 0, false);
     }
 }
-

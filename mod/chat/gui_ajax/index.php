@@ -18,7 +18,7 @@ $cm = get_coursemodule_from_instance('chat', $chat->id, $course->id, false, MUST
 
 $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 require_login($course->id, false, $cm);
-require_capability('mod/chat:chat',$context);
+require_capability('mod/chat:chat', $context);
 
 /// Check to see if groups are being used here
  if ($groupmode = groups_get_activity_groupmode($cm)) {   // Groups are being used
@@ -37,7 +37,7 @@ require_capability('mod/chat:chat',$context);
 
 // if requested theme doesn't exist, use default 'bubble' theme
 if (!file_exists(dirname(__FILE__) . '/theme/'.$theme.'/chat.css')) {
-    $theme = 'bubble';
+    $theme = 'compact';
 }
 
 // login chat room

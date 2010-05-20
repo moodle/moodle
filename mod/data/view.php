@@ -295,7 +295,7 @@
 
     $PAGE->set_title($title);
     $PAGE->set_heading($course->fullname);
-    
+
     echo $OUTPUT->header();
 
 /// Check to see if groups are being used here

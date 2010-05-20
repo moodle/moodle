@@ -1425,8 +1425,8 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
     function addHelpButton($elementname, $identifier, $component = 'moodle', $linktext = '', $suppresscheck = false) {
         global $OUTPUT;
         if (array_key_exists($elementname, $this->_elementIndex)) {
-            $element = $this->_elements[$this->_elementIndex[$elementname]];            
-            $element->_helpbutton = $OUTPUT->help_icon($identifier, $component, $linktext);            
+            $element = $this->_elements[$this->_elementIndex[$elementname]];
+            $element->_helpbutton = $OUTPUT->help_icon($identifier, $component, $linktext);
         } else if (!$suppresscheck) {
             debugging(get_string('nonexistentformelements', 'form', $elementname));
         }
@@ -1693,7 +1693,11 @@ function validate_' . $this->_formName . '_' . $elementName . '(element) {
 }
 ';
             $validateJS .= '
-  ret = validate_' . $this->_formName . '_' . $elementName.'(frm.elements[\''.$elementName.'\']) && ret;
+  element = frm.elements[\''.$elementName.'\'];
+  if (!element) {
+      element = frm.elements[\''.$elementName.'[text]\'];
+  }
+  ret = validate_' . $this->_formName . '_' . $elementName.'(element) && ret;
   if (!ret && !first_focus) {
     first_focus = true;
     frm.elements[\''.$elementName.'\'].focus();
@@ -1713,6 +1717,7 @@ function validate_' . $this->_formName . '_' . $elementName . '(element) {
 //  do not rely on frm function parameter, because htmlarea breaks it when overloading the onsubmit method
         $js .= '
 function validate_' . $this->_formName . '(frm) {
+  var element;
   if (skipClientValidation) {
      return true;
   }

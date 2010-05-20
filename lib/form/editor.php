@@ -230,5 +230,39 @@ class MoodleQuickForm_editor extends HTML_QuickForm_element {
 
         return $str;
     }
+    /**
+     * Called by HTML_QuickForm whenever form event is made on this element
+     *
+     * @param     string    $event  Name of event
+     * @param     mixed     $arg    event arguments
+     * @param     object    $caller calling object
+     * @since     1.0
+     * @access    public
+     * @return    void
+     */
+    function onQuickFormEvent($event, $arg, &$caller)
+    {
+        switch ($event) {
+            case 'updateValue':
+                // constant values override both default and submitted ones
+                // default values are overriden by submitted
+                $value = $this->_findValue($caller->_constantValues);
+                if (null === $value) {
+                    $value = $this->_findValue($caller->_submitValues);
+                    if (null === $value) {
+                        $value = $this->_findValue($caller->_defaultValues);
+                    }
+                }
+                if (!is_array($value)) {
+                   $value = array('value' => $value);
+                }
+                if (null !== $value) {
+                    $this->setValue($value);
+                }
+                return true;
+                break;
+        }
+        return parent::onQuickFormEvent($event, $arg, $caller);
 
+    } // end func onQuickFormEvent
 }

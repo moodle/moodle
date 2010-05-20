@@ -115,7 +115,7 @@ if (!empty($refresh) and data_submitted()) {
 $PAGE->set_title("$strchat: $course->shortname: ".format_string($chat->name,true)."$groupname");
 $PAGE->set_focuscontrol('message');
 echo $OUTPUT->header();
-echo '<div id="mod-chat-gui_basic">';
+echo '<div id="page-mod-chat-gui_basic">';
 echo '<h2>'.get_string('participants').'</h2>';
 echo '<div id="participants"><ul>';
 foreach($chatusers as $chu) {

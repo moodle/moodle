@@ -120,8 +120,8 @@ class page_requirements_manager {
 
         // set up some loader options
         if (debugging('', DEBUG_DEVELOPER)) {
-            $this->yui3loader->filter = YUI_DEBUG; // alternatively we could use just YUI_RAW here
-            $this->yui2loader->filter = YUI_DEBUG; // alternatively we could use just YUI_RAW here
+            $this->yui3loader->filter = YUI_RAW; // alternatively we could use just YUI_RAW here
+            $this->yui2loader->filter = YUI_RAW; // alternatively we could use just YUI_RAW here
         } else {
             $this->yui3loader->filter = null;
             $this->yui2loader->filter = null;
@@ -249,7 +249,7 @@ class page_requirements_manager {
         $this->string_for_js('confirmation', 'admin');
         $this->string_for_js('cancel', 'moodle');
         $this->string_for_js('yes', 'moodle');
-        
+
         if ($page->pagelayout === 'frametop') {
             $this->js_init_call('M.util.init_frametop');
         }
@@ -338,7 +338,7 @@ class page_requirements_manager {
 
         $module = null;
 
-        
+
         if (strpos($component, 'core_') === 0) {
             // must be some core stuff - list here is not complete, this is just the stuff used from multiple places
             // so that we do nto have to repeat the definition of these modules over and over again
@@ -346,7 +346,7 @@ class page_requirements_manager {
                 case 'core_filepicker':
                     $module = array('name'     => 'core_filepicker',
                                     'fullpath' => '/repository/filepicker.js',
-                                    'requires' => array('base', 'node', 'node-event-simulate', 'json', 'async-queue', 'io', 'yui2-button', 'yui2-container', 'yui2-layout', 'yui2-menu', 'yui2-treeview', 'yui2-dragdrop'),
+                                    'requires' => array('base', 'node', 'node-event-simulate', 'json', 'async-queue', 'io', 'yui2-button', 'yui2-container', 'yui2-layout', 'yui2-menu', 'yui2-treeview', 'yui2-dragdrop', 'yui2-resize'),
                                     'strings'  => array(array('add', 'repository'), array('back', 'repository'), array('cancel', 'moodle'), array('close', 'repository'),
                                                         array('cleancache', 'repository'), array('copying', 'repository'), array('date', 'repository'), array('downloadsucc', 'repository'),
                                                         array('emptylist', 'repository'), array('error', 'repository'), array('federatedsearch', 'repository'),
@@ -714,8 +714,8 @@ class page_requirements_manager {
      * @param string $function The name of the function to call
      * @param array  $arguments An optional array of argument parameters to pass to the function
      * @return void
-     */    
-    public function event_handler($selector, $event, $function, array $arguments = null) {        
+     */
+    public function event_handler($selector, $event, $function, array $arguments = null) {
         $this->eventhandlers[] = array('selector'=>$selector, 'event'=>$event, 'function'=>$function, 'arguments'=>$arguments);
     }
 

@@ -56,4 +56,10 @@ class block_comments extends block_base {
         }
         return $this->content;
     }
+    function instance_delete() {
+        global $DB, $PAGE;
+        //delete orphan records
+        $DB->delete_records('comments', array('contextid'=>$PAGE->context->id, 'commentarea'=>'page_comments', 'itemid'=>0));
+        return true;
+    }
 }

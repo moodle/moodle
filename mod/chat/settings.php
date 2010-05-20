@@ -4,10 +4,11 @@ $settings->add(new admin_setting_heading('chat_method_heading', get_string('gene
                    get_string('explaingeneralconfig', 'chat')));
 
 $options = array();
+$options['ajax']      = get_string('methodajax', 'chat');
 $options['header_js'] = get_string('methodnormal', 'chat');
 $options['sockets']   = get_string('methoddaemon', 'chat');
 $settings->add(new admin_setting_configselect('chat_method', get_string('method', 'chat'),
-                   get_string('configmethod', 'chat'), 'header_js', $options));
+                   get_string('configmethod', 'chat'), 'ajax', $options));
 
 $settings->add(new admin_setting_configtext('chat_refresh_userlist', get_string('refreshuserlist', 'chat'),
                    get_string('configrefreshuserlist', 'chat'), 10, PARAM_INT));

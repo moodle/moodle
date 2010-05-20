@@ -8,15 +8,16 @@
 .path-mod-chat #chat-header {overflow: hidden;}
 
 /** styles for view.php **/
-#page-mod-chat-view #chatcurrentusers .chatuserdetails {vertical-align: middle;}
+#page-mod-chat-view .chatcurrentusers .chatuserdetails {vertical-align: middle;}
 
 /** Styles for basic chat **/
 #page-mod-chat-gui_basic #participants ul {margin:0;padding:0;list-style-type:none;}
-#page-mod-chat-gui_basic #participants ul li {display:inline;margin-right:10px;}
+#page-mod-chat-gui_basic #participants ul li {list-style-type:none;display:inline;margin-right:10px;}
 #page-mod-chat-gui_basic #participants ul li .userinfo {display:inline;}
-#page-mod-chat-gui_basic #messages dl {padding:0;margin:1px;}
-#page-mod-chat-gui_basic #messages dd,
+#page-mod-chat-gui_basic #messages {padding:0;margin:0}
+#page-mod-chat-gui_basic #messages dl {padding:0;margin:6px 0}
 #page-mod-chat-gui_basic #messages dt {margin-left:0;margin-right:5px;padding:0;display:inline;}
+#page-mod-chat-gui_basic #messages dd {padding:0;margin:0}
 
 /** Styles for header **/
 #page-mod-chat-gui_header_js-jsupdate .chat-event,

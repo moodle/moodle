@@ -62,10 +62,7 @@ class mod_resource_mod_form extends moodleform_mod {
         $mform->addElement('header', 'contentsection', get_string('contentheader', 'resource'));
         $mainfile = 'mainfile';
 
-        $mform->addElement('text', $mainfile, get_string('selectedfile'));
-        $mform->setType($mainfile, PARAM_PATH);
-        $mform->addRule($mainfile, null, 'required', null, 'client');
-
+        $mform->addElement('static', 'warning', '', get_string('notmigrated', 'resource'));
         $filemanager_options = array();
         // 3 == FILE_EXTERNAL & FILE_INTERNAL
         // These two constant names are defined in repository/lib.php
@@ -76,6 +73,11 @@ class mod_resource_mod_form extends moodleform_mod {
         $filemanager_options['mainfile'] = $mainfile;
 
         $mform->addElement('filemanager', 'files', get_string('selectfiles'), null, $filemanager_options);
+
+        $mform->addElement('text', $mainfile, get_string('selectedfile'));
+        $mform->setType($mainfile, PARAM_PATH);
+        $mform->addRule($mainfile, null, 'required', null, 'client');
+
 
         //-------------------------------------------------------
         $mform->addElement('header', 'optionssection', get_string('optionsheader', 'resource'));

@@ -27,7 +27,7 @@ $string['ajax'] = 'Version using Ajax';
 $string['autoscroll'] = 'Auto Scroll';
 $string['beep'] = 'beep';
 $string['cantlogin'] = 'Could not log in to chat room!!';
-$string['configmethod'] = 'The normal chat method involves the clients regularly contacting the server for updates. It requires no configuration and works everywhere, but it can create a large load on the server with many chatters.  Using a server daemon requires shell access to Unix, but it results in a fast scalable chat environment.';
+$string['configmethod'] = 'The ajax chat method provide an ajax based chat interface, it contacts server regularly for update. The normal chat method involves the clients regularly contacting the server for updates. It requires no configuration and works everywhere, but it can create a large load on the server with many chatters.  Using a server daemon requires shell access to Unix, but it results in a fast scalable chat environment.';
 $string['confignormalupdatemode'] = 'Chatroom updates are normally served efficiently using the <em>Keep-Alive</em> feature of HTTP 1.1, but this is still quite heavy on the server. A more advanced method is to use the <em>Stream</em> strategy to feed updates to the users. Using <em>Stream</em> scales much better (similar to the chatd method) but may not be supported by your server.';
 $string['configoldping'] = 'What is the maximum time that may pass before we detect that a user has disconnected (in seconds)? This is just an upper limit, as usually disconnects are detected very quickly. Lower values will be more demanding on your server. If you are using the normal method, <strong>never</strong> set this lower than 2 * chat_refresh_room.';
 $string['configrefreshroom'] = 'How often should the chat room itself be refreshed? (in seconds).  Setting this low will make the chat room seem quicker, but it may place a higher load on your web server when many people are chatting. If you are using <em>Stream</em> updates, you can select higher refresh frequencies -- try with 2.';
@@ -73,6 +73,7 @@ $string['messageyoubeep'] = 'You beeped {$a}';
 $string['method'] = 'Chat method';
 $string['methoddaemon'] = 'Chat server daemon';
 $string['methodnormal'] = 'Normal method';
+$string['methodajax'] = 'Ajax method';
 $string['modulename'] = 'Chat';
 $string['modulename_help'] = 'The chat module allows participants to have a real-time synchronous discussion via the web.  This is a useful way to get a different understanding of each other and the topic being discussed - the mode
 of using a chat room is quite different from the asynchronous forums.';
