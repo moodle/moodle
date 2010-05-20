@@ -2104,6 +2104,10 @@ function delete_context($contextlevel, $instanceid) {
         $DB->delete_records('context', array('id'=>$context->id));
         $DB->delete_records('role_names', array('contextid'=>$context->id));
 
+        // delete all files attached to this context
+        $fs = get_file_storage();
+        $fs->delete_area_files($context->id);
+
         // do not mark dirty contexts if parents unknown
         if (!is_null($context->path) and $context->depth > 0) {
             mark_context_dirty($context->path);
