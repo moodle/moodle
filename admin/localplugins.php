@@ -43,7 +43,12 @@ if (!empty($delete) and confirm_sesskey()) {
     echo $OUTPUT->heading(get_string('localplugins'));
 
     if (!$confirm) {
-        echo $OUTPUT->confirm(get_string('localplugindeleteconfirm', '', get_string('pluginname', 'local_' . $delete)),
+        if (get_string_manager()->string_exists('pluginname', 'local_' . $delete)) {
+            $strpluginname = get_string('pluginname', 'local_' . $delete);
+        } else {
+            $strpluginname = $delete;
+        }
+        echo $OUTPUT->confirm(get_string('localplugindeleteconfirm', '', $strpluginname),
                                 new moodle_url($PAGE->url, array('delete' => $delete, 'confirm' => 1)),
                                 $PAGE->url);
         echo $OUTPUT->footer();
@@ -77,8 +82,9 @@ $table->setup();
 
 $plugins = array();
 foreach (get_plugin_list('local') as $plugin => $plugindir) {
-    $strpluginname = get_string('pluginname', 'local_' . $plugin);
-    if ($strpluginname == '[[pluginname]]') {
+    if (get_string_manager()->string_exists('pluginname', 'local_' . $plugin)) {
+        $strpluginname = get_string('pluginname', 'local_' . $plugin);
+    } else {
         $strpluginname = $plugin;
     }
     $plugins[$plugin] = $strpluginname;
