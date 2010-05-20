@@ -130,13 +130,7 @@ if ($mform->is_cancelled()) {
 }
 
 
-//page header
-if ($admin) {
-    echo $OUTPUT->header();
-
-} else {
-    print_grade_page_head($COURSE->id, 'letter', 'edit', get_string('editgradeletters', 'grades'));
-}
+print_grade_page_head($COURSE->id, 'letter', 'edit', get_string('editgradeletters', 'grades'));
 
 $mform->display();
 
