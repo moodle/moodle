@@ -364,14 +364,14 @@ function upgrade_fix_incorrect_mnethostids() {
  *
  * @since navigation upgrade 20090828
  * @param array $contextidarray An array of block instance context ids
- * @return bool
+ * @return void
  */
 function upgrade_cleanup_unwanted_block_contexts($contextidarray) {
     global $DB;
 
     if (!is_array($contextidarray) || count($contextidarray)===0) {
         // Ummmm no instances?
-        return true;
+        return;
     }
 
     $contextidstring = join(',', $contextidarray);
@@ -384,17 +384,15 @@ function upgrade_cleanup_unwanted_block_contexts($contextidarray) {
 
     if (count($blockcontextids)===0) {
         // None of the instances have unique contexts
-        return true;
+        return;
     }
 
     $blockcontextidsstring = join(',', $blockcontextids);
 
-    $outcome1 = $DB->delete_records_select('role_assignments', 'contextid IN ('.$blockcontextidsstring.')');
-    $outcome2 = $DB->delete_records_select('role_capabilities', 'contextid IN ('.$blockcontextidsstring.')');
-    $outcome3 = $DB->delete_records_select('role_names', 'contextid IN ('.$blockcontextidsstring.')');
-    $outcome4 = $DB->delete_records_select('context', 'id IN ('.$blockcontextidsstring.')');
-
-    return ($outcome1 && $outcome2 && $outcome4 && $outcome4);
+    $DB->delete_records_select('role_assignments', 'contextid IN ('.$blockcontextidsstring.')');
+    $DB->delete_records_select('role_capabilities', 'contextid IN ('.$blockcontextidsstring.')');
+    $DB->delete_records_select('role_names', 'contextid IN ('.$blockcontextidsstring.')');
+    $DB->delete_records_select('context', 'id IN ('.$blockcontextidsstring.')');
 }
 
 /**

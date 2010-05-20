@@ -118,7 +118,7 @@ function xmldb_main_upgrade($oldversion) {
 
     if ($result && $oldversion < 2008050100) {
         // Update courses that used weekscss to weeks
-        $result = $DB->set_field('course', 'format', 'weeks', array('format' => 'weekscss'));
+        $DB->set_field('course', 'format', 'weeks', array('format' => 'weekscss'));
         upgrade_main_savepoint($result, 2008050100);
     }
 
@@ -133,7 +133,7 @@ function xmldb_main_upgrade($oldversion) {
 
     /// Fix minor problem caused by MDL-5482.
         require_once($CFG->dirroot . '/question/upgrade.php');
-        $result = $result && question_fix_random_question_parents();
+        question_fix_random_question_parents();
         upgrade_main_savepoint($result, 2008050700);
     }
 
@@ -178,7 +178,7 @@ function xmldb_main_upgrade($oldversion) {
         $log_action->mtable = 'course';
         $log_action->field  = 'fullname';
         if (!$DB->record_exists('log_display', array('action'=>'unenrol', 'module'=>'course'))) {
-            $result = $result && $DB->insert_record('log_display', $log_action);
+            $DB->insert_record('log_display', $log_action);
         }
         upgrade_main_savepoint($result, 2008051202);
     }
@@ -218,7 +218,7 @@ function xmldb_main_upgrade($oldversion) {
     }
 
     if ($result && $oldversion < 2008070300) {
-        $result = $DB->delete_records_select('role_names', $DB->sql_isempty('role_names', 'name', false, false));
+        $DB->delete_records_select('role_names', $DB->sql_isempty('role_names', 'name', false, false));
         upgrade_main_savepoint($result, 2008070300);
     }
 
@@ -549,8 +549,8 @@ function xmldb_main_upgrade($oldversion) {
         if (!$dbman->field_exists($table, $field)) {
             $field->set_attributes(XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
             $dbman->add_field($table, $field);
-            $result = $DB->set_field('mnet_application', 'sso_jump_url', '/auth/mnet/jump.php', array('name' => 'moodle'));
-            $result = $result && $DB->set_field('mnet_application', 'sso_jump_url', '/auth/xmlrpc/jump.php', array('name' => 'mahara'));
+            $DB->set_field('mnet_application', 'sso_jump_url', '/auth/mnet/jump.php', array('name' => 'moodle'));
+            $DB->set_field('mnet_application', 'sso_jump_url', '/auth/xmlrpc/jump.php', array('name' => 'mahara'));
         }
 
         /// Main savepoint reached
@@ -798,7 +798,7 @@ function xmldb_main_upgrade($oldversion) {
             $instance->contextid = SITEID;
             $instance->timecreated  = time();
             $instance->timemodified = time();
-            $result = $result && $DB->insert_record('repository_instances', $instance);
+            $DB->insert_record('repository_instances', $instance);
         }
         $repo->type      = 'local';
         $repo->visible   = 1;
@@ -817,7 +817,7 @@ function xmldb_main_upgrade($oldversion) {
             $instance->contextid = SITEID;
             $instance->timecreated  = time();
             $instance->timemodified = time();
-            $result = $result && $DB->insert_record('repository_instances', $instance);
+            $DB->insert_record('repository_instances', $instance);
         }
 
         upgrade_main_savepoint($result, 2008090108);
@@ -843,8 +843,8 @@ function xmldb_main_upgrade($oldversion) {
                 // version number (10 digits).
                 continue;
             }
-            $result = $result && set_config('version', $value, $pluginname);
-            $result = $result && unset_config($name);
+            set_config('version', $value, $pluginname);
+            unset_config($name);
         }
         upgrade_main_savepoint($result, 2008091000);
     }
@@ -2140,9 +2140,9 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         // standardizing plugin names
         if ($configs = $DB->get_records_select('config_plugins', "plugin LIKE 'quizreport_%'")) {
             foreach ($configs as $config) {
-                $result = $result && unset_config($config->name, $config->plugin); /// unset old config
+                unset_config($config->name, $config->plugin); /// unset old config
                 $config->plugin = str_replace('quizreport_', 'quiz_', $config->plugin);
-                $result = $result && set_config($config->name, $config->value, $config->plugin); /// set new config
+                set_config($config->name, $config->value, $config->plugin); /// set new config
             }
         }
         unset($configs);
@@ -2153,9 +2153,9 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         // standardizing plugin names
         if ($configs = $DB->get_records_select('config_plugins', "plugin LIKE 'assignment_type_%'")) {
             foreach ($configs as $config) {
-                $result = $result && unset_config($config->name, $config->plugin); /// unset old config
+                unset_config($config->name, $config->plugin); /// unset old config
                 $config->plugin = str_replace('assignment_type_', 'assignment_', $config->plugin);
-                $result = $result && set_config($config->name, $config->value, $config->plugin); /// set new config
+                set_config($config->name, $config->value, $config->plugin); /// set new config
             }
         }
         unset($configs);
@@ -2350,7 +2350,7 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
                 // If we have over 1000 contexts clean them up and reset the array
                 // this ensures we don't hit any nasty memory limits or such
                 if (count($contextids) > 1000) {
-                    $result = $result && upgrade_cleanup_unwanted_block_contexts($contextids);
+                    upgrade_cleanup_unwanted_block_contexts($contextids);
                     $contextids = array();
                 }
             }
@@ -2360,13 +2360,13 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
                 // and empty the array
                 if (count($contextids) > 1000) {
                     $instanceidstring = join(',',$instanceids);
-                    $result = $result && $DB->delete_records_select('block_positions', 'blockinstanceid IN ('.$instanceidstring.')');
+                    $DB->delete_records_select('block_positions', 'blockinstanceid IN ('.$instanceidstring.')');
                     $instanceids = array();
                 }
             }
         }
 
-        $result = $result && upgrade_cleanup_unwanted_block_contexts($contextids);
+        upgrade_cleanup_unwanted_block_contexts($contextids);
 
         $instanceidstring = join(',',$instanceids);
         $outcome1 = $result && $DB->delete_records_select('block_positions', 'blockinstanceid IN ('.$instanceidstring.')');
@@ -2377,7 +2377,7 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         unset($instanceidstring);
 
         // Now remove the actual block instance
-        $result = $result && $DB->delete_records_select('block_instances', 'blockname IN ('.$outmodedblocksstring.')');
+        $$DB->delete_records_select('block_instances', 'blockname IN ('.$outmodedblocksstring.')');
         unset($outmodedblocksstring);
 
         // Insert the new block instances. Remember they have not been installed yet
@@ -3630,22 +3630,20 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         upgrade_main_savepoint($result, 2010042800);
     }
 
-
     if ($result && $oldversion < 2010042801) {
         // migrating old comments block content
-        $DB->execute("
-UPDATE {comments} SET contextid = (
-    SELECT parentcontextid FROM {block_instances}
-    WHERE id = {comments}.itemid AND blockname = 'comments'
-    ),
-    commentarea = 'page_comments',
-    itemid = 0
-WHERE commentarea = 'block_comments'
-AND itemid != 0
-AND EXISTS (SELECT 'x'
-      FROM {block_instances}
-      WHERE id = {comments}.itemid
-      AND blockname = 'comments')");
+        $DB->execute("UPDATE {comments}
+                         SET contextid = (SELECT parentcontextid
+                                            FROM {block_instances}
+                                           WHERE id = {comments}.itemid AND blockname = 'comments'),
+                             commentarea = 'page_comments',
+                             itemid = 0
+                       WHERE commentarea = 'block_comments'
+                             AND itemid != 0
+                             AND EXISTS (SELECT 'x'
+                                           FROM {block_instances}
+                                          WHERE id = {comments}.itemid
+                                                AND blockname = 'comments')");
 
         // remove all orphaned record
         $DB->delete_records('comments', array('commentarea'=>'block_comments'));
@@ -3682,7 +3680,6 @@ AND EXISTS (SELECT 'x'
     /// Main savepoint reached
         upgrade_main_savepoint($result, 2010042802);
     }
-
 
     if ($result && $oldversion < 2010043000) {  // Adding new course completion feature
 
@@ -3913,7 +3910,6 @@ AND EXISTS (SELECT 'x'
         upgrade_main_savepoint($result, 2010050200);
     }
 
-
     if ($result && $oldversion < 2010050403) {  // my_pages for My Moodle and Public Profile pages
 
     /// Define table my_pages to be created
@@ -3945,11 +3941,11 @@ AND EXISTS (SELECT 'x'
         $mypage->private = 0;
         $mypage->sortorder  = 0;
         if (!$DB->record_exists('my_pages', array('userid'=>NULL, 'private'=>0))) {
-            $result = $result && $DB->insert_record('my_pages', $mypage);
+            $DB->insert_record('my_pages', $mypage);
         }
         $mypage->private = 1;
         if (!$DB->record_exists('my_pages', array('userid'=>NULL, 'private'=>1))) {
-            $result = $result && $DB->insert_record('my_pages', $mypage);
+            $DB->insert_record('my_pages', $mypage);
         }
 
     /// This bit is a "illegal" hack, unfortunately, but there is not a better way to install default
@@ -3992,7 +3988,6 @@ AND EXISTS (SELECT 'x'
         upgrade_main_savepoint($result, 2010050403);
     }
 
-
     // fix repository_alfresco version number
     if ($result && $oldversion < 2010050411) {
         // force to change repository_alfresco version number to upgrade smoothly (from preview 1 -> preview 2)
@@ -4002,7 +3997,6 @@ AND EXISTS (SELECT 'x'
         }
         upgrade_main_savepoint($result, 2010050411);
     }
-
 
     if ($result && $oldversion < 2010051500) {
 
@@ -4034,7 +4028,6 @@ AND EXISTS (SELECT 'x'
     /// Main savepoint reached
         upgrade_main_savepoint($result, 2010051500);
     }
-
 
     if ($result && $oldversion < 2010051600) {
 

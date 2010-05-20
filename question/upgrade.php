@@ -1,6 +1,6 @@
 <?php
 /**
- * This file contains dtabase upgrade code that is called from lib/db/upgrade.php,
+ * This file contains datbase upgrade code that is called from lib/db/upgrade.php,
  * and also check methods that can be used for pre-install checks via
  * admin/environment.php and lib/environmentlib.php.
  *
@@ -20,7 +20,8 @@
  */
 function question_fix_random_question_parents() {
     global $CFG, $DB;
-    return $DB->execute("UPDATE {question} SET parent = id WHERE qtype = 'random' AND parent <> id");
+    $DB->execute("UPDATE {question} SET parent = id WHERE qtype = 'random' AND parent <> id");
+    return true;
 }
 
 
