@@ -3667,17 +3667,6 @@ function authenticate_user_login($username, $password) {
             $hauth->user_authenticated_hook($user, $username, $password);
         }
 
-    /// Log in to a second system if necessary
-    /// NOTICE: /sso/ will be moved to auth and deprecated soon; use user_authenticated_hook() instead
-        if (!empty($CFG->sso)) {
-            include_once($CFG->dirroot .'/sso/'. $CFG->sso .'/lib.php');
-            if (function_exists('sso_user_login')) {
-                if (!sso_user_login($username, $password)) {   // Perform the signon process
-                    echo $OUTPUT->notification('Second sign-on failed');
-                }
-            }
-        }
-
         if ($user->id===0) {
             return false;
         }
