@@ -67,6 +67,7 @@ $PAGE->set_url('/course/completion.php', array('id' => $course->id));
 //$PAGE->navbar->add($streditcompletionsettings);
 $PAGE->set_title($course->shortname);
 $PAGE->set_heading($course->fullname);
+$PAGE->set_pagelayout('standard');
 
 /// first create the form
 $form = new course_completion_form('completion.php?id='.$id, compact('course'));

@@ -100,12 +100,13 @@ if ($rs = $DB->get_recordset_sql($sql, $params)) {
     $rs->close();
 }
 
-$PAGE->navbar->add($strparticipants, new moodle_url('/user/index.php', array('id'=>$courseid)));
-$PAGE->navbar->add($strgroups);
+$PAGE->settingsnav->get('courseadmin')->get('groups')->make_active();
+$PAGE->navbar->add(get_string('overview', 'group'));
 
 /// Print header
 $PAGE->set_title($strgroups);
-$PAGE->set_heading(': '.$strgroups);
+$PAGE->set_heading($course->fullname);
+$PAGE->set_pagelayout('standard');
 echo $OUTPUT->header();
 
 // Add tabs

@@ -50,12 +50,13 @@ $struses         = get_string('activities');
 $strparticipants = get_string('participants');
 $strmanagegrping = get_String('showgroupsingrouping', 'group');
 
-$PAGE->navbar->add($strparticipants, new moodle_url('/user/index.php', array('id'=>$courseid)));
+$PAGE->settingsnav->get('courseadmin')->get('groups')->make_active();
 $PAGE->navbar->add($strgroupings);
 
 /// Print header
 $PAGE->set_title($strgroupings);
-$PAGE->set_heading(': '.$strgroupings);
+$PAGE->set_heading($course->fullname);
+$PAGE->set_pagelayout('standard');
 echo $OUTPUT->header();
 
 // Add tabs

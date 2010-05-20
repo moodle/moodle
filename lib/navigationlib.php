@@ -2664,7 +2664,7 @@ class settings_navigation extends navigation_node {
         //  Add outcome if permitted
         if (!empty($CFG->enableoutcomes) && has_capability('moodle/course:update', $coursecontext)) {
             $url = new moodle_url('/grade/edit/outcome/course.php', array('id'=>$course->id));
-            $coursenode->add(get_string('outcomes', 'grades'), $url, self::TYPE_SETTING, null, null, new pix_icon('i/outcomes', ''));
+            $coursenode->add(get_string('outcomes', 'grades'), $url, self::TYPE_SETTING, null, 'outcomes', new pix_icon('i/outcomes', ''));
         }
 
         // Add meta course links
@@ -2681,33 +2681,33 @@ class settings_navigation extends navigation_node {
         // Manage groups in this course
         if (($course->groupmode || !$course->groupmodeforce) && has_capability('moodle/course:managegroups', $coursecontext)) {
             $url = new moodle_url('/group/index.php', array('id'=>$course->id));
-            $coursenode->add(get_string('groups'), $url, self::TYPE_SETTING, null, null, new pix_icon('i/group', ''));
+            $coursenode->add(get_string('groups'), $url, self::TYPE_SETTING, null, 'groups', new pix_icon('i/group', ''));
         }
 
         // Backup this course
         if (has_capability('moodle/backup:backupcourse', $coursecontext)) {
             $url = new moodle_url('/backup/backup.php', array('id'=>$course->id));
-            $coursenode->add(get_string('backup'), $url, self::TYPE_SETTING, null, null, new pix_icon('i/backup', ''));
+            $coursenode->add(get_string('backup'), $url, self::TYPE_SETTING, null, 'backup', new pix_icon('i/backup', ''));
         }
 
         // Restore to this course
         if (has_capability('moodle/restore:restorecourse', $coursecontext)) {
             $url = new moodle_url('/files/index.php', array('id'=>$course->id, 'wdir'=>'/backupdata'));
             $url = null; // Disabled until restore is implemented. MDL-21432
-            $coursenode->add(get_string('restore'), $url, self::TYPE_SETTING, null, null, new pix_icon('i/restore', ''));
+            $coursenode->add(get_string('restore'), $url, self::TYPE_SETTING, null, 'restore', new pix_icon('i/restore', ''));
         }
 
         // Import data from other courses
         if (has_capability('moodle/restore:restoretargetimport', $coursecontext)) {
             $url = new moodle_url('/course/import.php', array('id'=>$course->id));
             $url = null; // Disabled until restore is implemented. MDL-21432
-            $coursenode->add(get_string('import'), $url, self::TYPE_SETTING, null, null, new pix_icon('i/restore', ''));
+            $coursenode->add(get_string('import'), $url, self::TYPE_SETTING, null, 'import', new pix_icon('i/restore', ''));
         }
 
         // Publish course on a hub
         if (has_capability('moodle/course:publish', $coursecontext)) {
             $url = new moodle_url('/course/publish/index.php', array('id'=>$course->id));
-            $coursenode->add(get_string('publish'), $url, self::TYPE_SETTING, null, null, new pix_icon('i/publish', ''));
+            $coursenode->add(get_string('publish'), $url, self::TYPE_SETTING, null, 'publish', new pix_icon('i/publish', ''));
         }
 
         // Reset this course
