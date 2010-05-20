@@ -55,6 +55,18 @@ Local plugins are used in cases when no standard plugin fits, examples are:
 * new capability definitions used in core hacks
 * custom admin settings
 
+Standard plugin features:
+* /local/xxx/db/version.php - version of script (must be incremented after changes)
+* /local/xxx/db/install.xml - executed during install (new version.php found)
+* /local/xxx/db/install.php - executed right after install.xml
+* /local/xxx/db/uninstall.php - executed during uninstallation
+* /local/xxx/db/upgrade.php - executed after version.php change
+* /local/xxx/db/access.php - definition of capabilities
+* /local/xxx/db/events.php - event handlers and subscripts
+* /local/xxx/db/messages.php - messaging registration
+* /local/xxx/db/external.php - web services and external functions descriptions
+* /local/xxx/lang/en/local_pluginname.php - language file
+
 
 Local plugin version specification
 ----------------------------------
