@@ -53,7 +53,9 @@ class block_community_renderer extends plugin_renderer_base {
 
 
         if (empty($courses)) {
-            $renderedhtml .= get_string('nocourse', 'block_community');
+            if (isset($courses)) {
+                $renderedhtml .= get_string('nocourse', 'block_community');
+            }
         } else {
 
             $table->width = '100%';
@@ -109,7 +111,7 @@ class block_community_renderer extends plugin_renderer_base {
                             array('sesskey' => sesskey(), 'add' => 1, 'confirmed' => 1,
                                 'coursefullname' => $course->fullname, 'courseurl' => $courseurl,
                                 'coursedescription' => $course->description));
-                    $addlinkhtml = html_writer::tag('a', get_string('add'), array('href' => $addurl));
+                    $addlinkhtml = html_writer::tag('a', get_string('addtocommunityblock', 'block_community'), array('href' => $addurl));
                 } else {
 //                    Add link TODO make it a button and send by post
                     $addurl = new moodle_url("/blocks/community/communitycourse.php",

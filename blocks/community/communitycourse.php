@@ -40,7 +40,7 @@ $PAGE->set_title(get_string('searchcourse', 'block_community'));
 $PAGE->navbar->ignore_active(true);
 $PAGE->navbar->add(get_string('searchcourse', 'block_community'));
 
-$search  = optional_param('search', '', PARAM_TEXT);
+$search  = optional_param('search', null, PARAM_TEXT);
 
 $community = new community();
 
@@ -83,9 +83,8 @@ $renderer = $PAGE->get_renderer('block_community');
 //forms
 $hubselectorform = new community_hub_search_form('', array('search' => $search));
 $fromform = $hubselectorform->get_data();
-
+$courses= null;
 //Retrieve courses by web service
-$courses = array();
 if (!empty($fromform)) {
     $downloadable  = optional_param('downloadable', false, PARAM_INTEGER);
 
@@ -120,7 +119,7 @@ if (!empty($fromform)) {
 
 // OUTPUT
 echo $OUTPUT->header();
-echo $OUTPUT->heading(get_string('addcommunitycourse', 'block_community'), 3, 'main');
+echo $OUTPUT->heading(get_string('searchcommunitycourse', 'block_community'), 3, 'main');
 if (!empty($notificationmessage)) {
     echo $notificationmessage;
 }

@@ -24,23 +24,43 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['addtocommunityblock'] = 'Add to community block';
 $string['addcommunitycourse'] = 'Add community course';
 $string['additionalcoursedesc'] = '{$a->contributornames} - {$a->coverage} - Creator: {$a->creatorname} - Publisher: {$a->publishername} - Subject: {$a->subject}
     - Audience: {$a->audience} - Educational level: {$a->educationallevel}';
 $string['addcourse'] = 'Search';
+$string['audience'] = 'Designed for';
+$string['audience_help'] = 'What kind of course are you looking for?  As well as traditional courses intended for students, you might search for communities of Educators or Moodle Administrators';
 $string['cannotselecttopsubject'] = 'Cannot select a top subject level';
 $string['contributors'] = ' - Contributors: {$a}';
 $string['coursedesc'] = 'Description';
 $string['courselang'] = 'Language';
 $string['coursename'] = 'Name';
 $string['download'] = 'Download';
-$string['downloadable'] = 'Downloadable';
+$string['downloadable'] = 'courses I can download';
 $string['downloadtemplate'] = 'Create course from template';
-$string['enrollable'] = 'Enrollable';
+$string['educationallevel'] = 'Educational level';
+$string['educationallevel_help'] = 'What educational level are you searching for?  In the case of communities of educators, this level describes the level they are teaching.';
+$string['enroldownload'] = 'Find';
+$string['enroldownload_help'] = 'Some courses listed in the selected hub are being advertised so that people can come and participate in them on the original site.
+
+Others are course templates provided for you to download and use on your own Moodle site.';
+$string['enrollable'] = 'courses I can enrol in';
 $string['hub'] = 'hub';
+$string['keywords'] = 'Keywords';
+$string['keywords_help'] = 'You can search for courses containing specific text in the name, description and other fields of the database.';
+$string['language'] = 'Language';
+$string['language_help'] = 'You can search for courses written in a specific language.';
+$string['licence'] = 'License';
+$string['licence_help'] = 'You can search for courses that are licensed in a particular way.';
 $string['mycommunities'] = 'My communities:';
 $string['nocourse'] = 'No courses found';
 $string['operation'] = 'Operation';
 $string['pluginname'] = 'Community';
 $string['search'] = 'Search';
+$string['searchcommunitycourse'] = 'Search community course';
 $string['searchcourse'] = 'Search community course';
+$string['selecthub'] = 'Select hub';
+$string['selecthub_help'] = 'Select hub where to search the courses.';
+$string['subject'] = 'Subject';
+$string['subject_help'] = 'To narrow your search to courses about a particular subject, choose one from this list.';
