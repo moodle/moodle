@@ -248,7 +248,7 @@ a.skip:active {position: static;display: block;}
 .groupmanagementtable #removeselect_wrapper label,
 .groupmanagementtable #addselect_wrapper label {font-weight: normal;}
 #group-usersummary {width: 14em;}
-div.groupselector {float: left;margin-top: 3px;margin-bottom: 3px;}
+.groupselector {margin-top: 3px;margin-bottom: 3px;}
 
 /**
  * Login
