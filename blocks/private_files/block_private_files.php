@@ -31,7 +31,7 @@ require_once($CFG->dirroot. '/repository/lib.php');
 class block_private_files extends block_base {
 
     function init() {
-        $this->title = get_string('privatefiles', 'block_private_files');
+        $this->title = get_string('areauserpersonal', 'repository');
         $this->version = 2010030100;
     }
 
