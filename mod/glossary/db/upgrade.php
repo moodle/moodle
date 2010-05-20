@@ -213,17 +213,18 @@ function xmldb_glossary_upgrade($oldversion) {
 
     /// Conditionally launch drop table for glossary_comments
         if ($dbman->table_exists($table)) {
-            $sql = 'SELECT e.glossaryid AS glossaryid,
-                g.course AS courseid,
-                c.userid,
-                e.id AS itemid,
-                c.id AS old_id,
-                c.entrycomment AS commentcontent,
-                c.entrycommentformat AS format,
-                c.entrycommenttrust AS trust,
-                c.timemodified AS timemodified
-                FROM {glossary_comments} c, {glossary_entries} e, {glossary} g
-                WHERE c.entryid=e.id AND e.glossaryid=g.id ORDER BY glossaryid, courseid';
+            $sql = "SELECT e.glossaryid AS glossaryid,
+                           g.course AS courseid,
+                           c.userid,
+                           e.id AS itemid,
+                           c.id AS old_id,
+                           c.entrycomment AS commentcontent,
+                           c.entrycommentformat AS format,
+                           c.entrycommenttrust AS trust,
+                           c.timemodified AS timemodified
+                      FROM {glossary_comments} c, {glossary_entries} e, {glossary} g
+                     WHERE c.entryid=e.id AND e.glossaryid=g.id
+                  ORDER BY glossaryid, courseid";
             $lastglossaryid = null;
             $lastcourseid   = null;
             $modcontext     = null;
@@ -268,14 +269,15 @@ function xmldb_glossary_upgrade($oldversion) {
         if ($dbman->table_exists($table)) {
             //glossary ratings only have a single time column so use it for both time created and modified
             $sql = "INSERT INTO {rating} (contextid, scaleid, itemid, rating, userid, timecreated, timemodified)
-    SELECT cxt.id, g.scale, r.entryid AS itemid, r.rating, r.userid, r.time AS timecreated, r.time AS timemodified
-    FROM {glossary_ratings} r
-    JOIN {glossary_entries} ge ON ge.id=r.entryid
-    JOIN {glossary} g ON g.id=ge.glossaryid
-    JOIN {course_modules} cm ON cm.instance=g.id
-    JOIN {context} cxt ON cxt.instanceid=cm.id
-    JOIN {modules} m ON m.id=cm.module
-    WHERE m.name = :modname AND cxt.contextlevel = :contextlevel";
+
+                    SELECT cxt.id, g.scale, r.entryid AS itemid, r.rating, r.userid, r.time AS timecreated, r.time AS timemodified
+                      FROM {glossary_ratings} r
+                      JOIN {glossary_entries} ge ON ge.id=r.entryid
+                      JOIN {glossary} g ON g.id=ge.glossaryid
+                      JOIN {course_modules} cm ON cm.instance=g.id
+                      JOIN {context} cxt ON cxt.instanceid=cm.id
+                      JOIN {modules} m ON m.id=cm.module
+                     WHERE m.name = :modname AND cxt.contextlevel = :contextlevel";
 
             $params['modname'] = 'glossary';
             $params['contextlevel'] = CONTEXT_MODULE;
