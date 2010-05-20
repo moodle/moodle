@@ -5156,7 +5156,7 @@ function get_file_storage() {
         $trashdirdir = $CFG->dataroot.'/trashdir';
     }
 
-    $fs = new file_storage($filedir, $trashdirdir, $CFG->directorypermissions, $CFG->filepermissions);
+    $fs = new file_storage($filedir, $trashdirdir, "$CFG->dataroot/temp/filestorage", $CFG->directorypermissions, $CFG->filepermissions);
 
     return $fs;
 }

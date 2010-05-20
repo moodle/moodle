@@ -45,6 +45,8 @@ class file_storage {
     private $filedir;
     /** @var string Contents of deleted files not needed any more */
     private $trashdir;
+    /** @var string tempdir */
+    private $tempdir;
     /** @var int Permissions for new directories */
     private $dirpermissions;
     /** @var int Permissions for new files */
@@ -55,12 +57,14 @@ class file_storage {
      *
      * @param string $filedir full path to pool directory
      * @param string $trashdir temporary storage of deleted area
+     * @param string $tempdir temporary storage of various files
      * @param int $dirpermissions new directory permissions
      * @param int $filepermissions new file permissions
      */
-    public function __construct($filedir, $trashdir, $dirpermissions, $filepermissions) {
+    public function __construct($filedir, $trashdir, $tempdir, $dirpermissions, $filepermissions) {
         $this->filedir         = $filedir;
         $this->trashdir        = $trashdir;
+        $this->tempdir         = $tempdir;
         $this->dirpermissions  = $dirpermissions;
         $this->filepermissions = $filepermissions;
 
@@ -575,9 +579,10 @@ class file_storage {
      * @param mixed $file_record object or array describing file
      * @param string $path path to file or content of file
      * @param array $options @see download_file_content() options
+     * @param bool $usetempfile use temporary file for download, may prevent out of memory problems
      * @return stored_file instance
      */
-    public function create_file_from_url($file_record, $url, array $options = NULL) {
+    public function create_file_from_url($file_record, $url, array $options = NULL, $usetempfile = false) {
 
         $file_record = (array)$file_record;  //do not modify the submitted record, this cast unlinks objects
         $file_record = (object)$file_record; // we support arrays too
@@ -589,11 +594,6 @@ class file_storage {
         $connecttimeout = isset($options['connecttimeout']) ? $options['connecttimeout'] : 20;
         $skipcertverify = isset($options['skipcertverify']) ? $options['skipcertverify'] : false;
 
-        // TODO: it might be better to add a new option to download file content to temp file,
-        //       the problem here is that the size of file is limited by available memory
-
-        $content = download_file_content($url, $headers, $postdata, $fullresponse, $timeout, $connecttimeout, $skipcertverify);
-
         if (!isset($file_record->filename)) {
             $parts = explode('/', $url);
             $filename = array_pop($parts);
@@ -602,7 +602,29 @@ class file_storage {
         $source = !empty($file_record->source) ? $file_record->source : $url;
         $file_record->source = clean_param($source, PARAM_URL);
 
-        return $this->create_file_from_string($file_record, $content);
+        if ($usetempfile) {
+            check_dir_exists($this->tempdir, true, true);
+            $tmpfile = tempnam($this->tempdir, 'newfromurl');
+            $content = download_file_content($url, $headers, $postdata, $fullresponse, $timeout, $connecttimeout, $skipcertverify, $tmpfile);
+            if ($content === false) {
+                throw new file_exception('storedfileproblem', 'Can not fetch file form URL');
+            }
+            try {
+                $newfile = $this->create_file_from_pathname($file_record, $tmpfile);
+                @unlink($tmpfile);
+                return $newfile;
+            } catch (Exception $e) {
+                @unlink($tmpfile);
+                throw $e;
+            }
+
+        } else {
+            $content = download_file_content($url, $headers, $postdata, $fullresponse, $timeout, $connecttimeout, $skipcertverify);
+            if ($content === false) {
+                throw new file_exception('storedfileproblem', 'Can not fetch file form URL');
+            }
+            return $this->create_file_from_string($file_record, $content);
+        }
     }
 
     /**

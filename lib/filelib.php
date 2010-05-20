@@ -901,9 +901,10 @@ function format_postdata_for_curlcall($postdata) {
  *   usually happens if the remote server is completely down (default 20 seconds);
  *   may not work when using proxy
  * @param bool $skipcertverify If true, the peer's SSL certificate will not be checked. Only use this when already in a trusted location.
- * @return mixed false if request failed or content of the file as string if ok.
+ * @param string $tofile store the downloaded content to file instead of returning it
+ * @return mixed false if request failed or content of the file as string if ok. true if file downloaded into $tofile successfully.
  */
-function download_file_content($url, $headers=null, $postdata=null, $fullresponse=false, $timeout=300, $connecttimeout=20, $skipcertverify=false) {
+function download_file_content($url, $headers=null, $postdata=null, $fullresponse=false, $timeout=300, $connecttimeout=20, $skipcertverify=false, $tofile=NULL) {
     global $CFG;
 
     // some extra security
@@ -958,7 +959,7 @@ function download_file_content($url, $headers=null, $postdata=null, $fullrespons
     }
 
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_HEADER, true);
+    curl_setopt($ch, CURLOPT_HEADER, false);
     curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $connecttimeout);
     curl_setopt($ch, CURLOPT_TIMEOUT, $timeout);
     if (!ini_get('open_basedir') and !ini_get('safe_mode')) {
@@ -1006,12 +1007,26 @@ function download_file_content($url, $headers=null, $postdata=null, $fullrespons
         }
     }
 
-    $data = curl_exec($ch);
+    // set up header and ocntent handlers
+    $received = new object();
+    $received->headers = array(); // received headers array
+    $received->tofile  = $tofile;
+    $received->fh      = null;
+    curl_setopt($ch, CURLOPT_HEADERFUNCTION, partial('download_file_content_header_handler', $received));
+    if ($tofile) {
+        curl_setopt($ch, CURLOPT_WRITEFUNCTION, partial('download_file_content_write_handler', $received));
+    }
+
+    $result = curl_exec($ch);
 
     // try to detect encoding problems
     if ((curl_errno($ch) == 23 or curl_errno($ch) == 61) and defined('CURLOPT_ENCODING')) {
         curl_setopt($ch, CURLOPT_ENCODING, 'none');
-        $data = curl_exec($ch);
+        $result = curl_exec($ch);
+    }
+
+    if ($received->fh) {
+        fclose($received->fh);
     }
 
     if (curl_errno($ch)) {
@@ -1028,7 +1043,7 @@ function download_file_content($url, $headers=null, $postdata=null, $fullrespons
             }
             $response->headers       = array();
             $response->response_code = $error;
-            $response->results       = '';
+            $response->results       = false;
             $response->error         = $error;
             return $response;
         } else {
@@ -1046,21 +1061,15 @@ function download_file_content($url, $headers=null, $postdata=null, $fullrespons
             $response->status        = '0';
             $response->headers       = array();
             $response->response_code = 'Unknown cURL error';
-            $response->results       = ''; // do NOT change this!
+            $response->results       = false; // do NOT change this, we really want to ignore the result!
             $response->error         = 'Unknown cURL error';
 
         } else {
-            // strip redirect headers and get headers array and content
-            $data = explode("\r\n\r\n", $data, $info['redirect_count'] + 2);
-            $results = array_pop($data);
-            $headers = array_pop($data);
-            $headers = explode("\r\n", trim($headers));
-
             $response = new object();;
             $response->status        = (string)$info['http_code'];
-            $response->headers       = $headers;
-            $response->response_code = $headers[0];
-            $response->results       = $results;
+            $response->headers       = $received->headers;
+            $response->response_code = $received->headers[0];
+            $response->results       = $result;
             $response->error         = '';
         }
 
@@ -1073,6 +1082,32 @@ function download_file_content($url, $headers=null, $postdata=null, $fullrespons
             return $response->results;
         }
     }
+}
+
+/**
+ * internal implementation 
+ */
+function download_file_content_header_handler($received, $ch, $header) {
+    $received->headers[] = $header;
+    return strlen($header);
+}
+
+/**
+ * internal implementation 
+ */
+function download_file_content_write_handler($received, $ch, $data) {
+    if (!$received->fh) {
+        $received->fh = fopen($received->tofile, 'w');
+        if ($received->fh === false) {
+            // bad luck, file creation or overriding failed
+            return 0;
+        }
+    }
+    if (fwrite($received->fh, $data) === false) {
+        // bad luck, write failed, let's abort completely
+        return 0;
+    }
+    return strlen($data);
 }
 
 /**
