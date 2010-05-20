@@ -3347,7 +3347,7 @@ function assignment_supports($feature) {
 
 /**
  * Adds module specific settings to the settings block
- *
+ * 
  * @param settings_navigation $settings The settings navigation object
  * @param navigation_node $assignmentnode The node to add module settings to
  */
@@ -3356,7 +3356,7 @@ function assignment_extend_settings_navigation(settings_navigation $settings, na
 
     $assignmentrow = $DB->get_record("assignment", array("id" => $PAGE->cm->instance));
     require_once "$CFG->dirroot/mod/assignment/type/$assignmentrow->assignmenttype/assignment.class.php";
-
+    
     $assignmentclass = 'assignment_'.$assignmentrow->assignmenttype;
     $assignmentinstance = new $assignmentclass($PAGE->cm->id, $assignmentrow, $PAGE->cm, $PAGE->course);
 

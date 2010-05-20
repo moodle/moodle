@@ -1693,11 +1693,7 @@ function validate_' . $this->_formName . '_' . $elementName . '(element) {
 }
 ';
             $validateJS .= '
-  element = frm.elements[\''.$elementName.'\'];
-  if (!element) {
-      element = frm.elements[\''.$elementName.'[text]\'];
-  }
-  ret = validate_' . $this->_formName . '_' . $elementName.'(element) && ret;
+  ret = validate_' . $this->_formName . '_' . $elementName.'(frm.elements[\''.$elementName.'\']) && ret;
   if (!ret && !first_focus) {
     first_focus = true;
     frm.elements[\''.$elementName.'\'].focus();
@@ -1717,7 +1713,6 @@ function validate_' . $this->_formName . '_' . $elementName . '(element) {
 //  do not rely on frm function parameter, because htmlarea breaks it when overloading the onsubmit method
         $js .= '
 function validate_' . $this->_formName . '(frm) {
-  var element;
   if (skipClientValidation) {
      return true;
   }

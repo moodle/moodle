@@ -1428,10 +1428,10 @@ function forum_print_recent_activity($course, $viewfullnames, $timestart) {
  */
 function forum_get_user_grades($forum, $userid=0) {
     global $CFG;
-
+    
     require_once($CFG->dirroot.'/rating/lib.php');
     $rm = new rating_manager();
-
+    
     $ratingoptions = new stdclass();
 
     //need these to work backwards to get a context id. Is there a better way to get contextid from a module instance?
@@ -3384,18 +3384,6 @@ function forum_print_post($post, $discussion, $forum, &$cm, $course, $ownpost=fa
         echo '</div>';
     }
 
-    if (!empty($CFG->usecomments)) {
-        require_once($CFG->dirroot . '/comment/lib.php');
-        $cmt = new stdclass;
-        $cmt->context   = $modcontext;
-        $cmt->area      = 'forum_post';
-        $cmt->itemid    = $post->id;
-        $cmt->pluginname = 'forum';
-        $cmt->course    = $course;
-        $comment = new comment($cmt);
-        $html = $comment->output(true);
-        echo $html;
-    }
     if ($footer) {
         echo '<div class="footer">'.$footer.'</div>';
     }
@@ -7007,7 +6995,7 @@ function forum_reset_userdata($data) {
     // remove all ratings in this course's forums
     if (!empty($data->reset_forum_ratings)) {
         $ratingdeloptions = new stdclass();
-
+        
         if ($forums) {
             foreach ($forums as $forumid=>$unused) {
                 if (!$cm = get_coursemodule_from_instance('forum', $forumid)) {
@@ -7366,64 +7354,6 @@ function forum_get_extra_capabilities() {
 }
 
 
-// a callback function to control permissions
-function forum_comment_permissions($params) {
-    return array('post'=>true, 'view'=>true);
-}
-
-// a callback function to modify user's comment before incerting into db
-function forum_comment_add(&$comment, $params) {
-    global $USER;
-    $comment->content .= (' ~ by ' . fullname($USER));
-    return true;
-}
-
-// a cb function to format comments listing
-function forum_comment_display($comments, $params) {
-    foreach($comments as &$c) {
-        $c->content .= ' did call back';
-    }
-    return $comments;
-}
-// a cb function to return comment template
-function forum_comment_template($options) {
-    $ret = <<<EOD
-<div class="comment-userpicture">___picture___</div>
-<div class="comment-content">
-    ___name___ - <span>___time___</span>
-    <div>___content___</div>
-</div>
-EOD;
-    return $ret;
-}
-
-// a cb function to return original url of comments
-function forum_comment_url($options) {
-    global $CFG, $DB;
-    if (!$context = get_context_instance_by_id($options->contextid)) {
-        return null;
-    }
-    if ($context->contextlevel == CONTEXT_MODULE) {
-        switch ($options->commentarea) {
-        case 'forum_post':
-            if ($record = $DB->get_record('forum_posts', array('id'=>$options->itemid))){
-                $parentid = $record->discussion;
-            } else {
-                $parentid = $options->itemid;
-            }
-            $url = $CFG->httpswwwroot.'/mod/forum/discuss.php?d='.$parentid.'#p' . $options->itemid;
-            return $url;
-            break;
-        default:
-            return null;
-            break;
-        }
-    } else {
-        return null;
-    }
-
-}
-
 /**
  * This function is used to extend the global navigation by add forum nodes if there
  * is relevant content.
@@ -7435,7 +7365,7 @@ function forum_comment_url($options) {
  */
 function forum_extend_navigation($navref, $course, $module, $cm) {
     global $CFG, $OUTPUT, $USER;
-
+    
     $limit = 5;
 
     $discussions = forum_get_discussions($cm,"d.timemodified DESC", false, -1, $limit);
