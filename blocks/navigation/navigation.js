@@ -186,7 +186,7 @@ M.block_navigation.classes.tree.prototype.load_ajax = function(tid, outcome, arg
 
 /**
  * Adds a branch into the tree provided with some XML
- * @param {xmldoc} branchxml
+ * @param {object} branchobj
  * @param {Y.Node} target
  * @param {int} depth
  * @return bool
