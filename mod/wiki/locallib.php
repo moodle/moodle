@@ -324,7 +324,10 @@ function wiki_refresh_page_links($page, $links) {
  */
 function wiki_create_page($swid, $title, $format, $userid) {
     global $DB, $PAGE;
-    require_capability('mod/wiki:editpage', $PAGE->context);
+    $subwiki = wiki_get_subwiki($swid);
+    $cm = get_coursemodule_from_instance('wiki', $subwiki->wikiid);
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    require_capability('mod/wiki:editpage', $context);
     // if page exists
     if ($page = wiki_get_page_by_title($swid, $title)) {
         return $page->id;
