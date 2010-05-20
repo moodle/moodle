@@ -51,7 +51,6 @@ $string['configpopupscrollbars'] = 'Should popup windows be scrollable by defaul
 $string['configpopupstatus'] = 'Should popup windows show the status bar by default?';
 $string['configpopuptoolbar'] = 'Should popup windows show the tool bar by default?';
 $string['configpopupwidth'] = 'What width should be the default width for new popup windows?';
-$string['configsecretphrase'] = 'This secret phrase is used to produce the encrypted code value that can be sent to some resources as a parameter.  The encrypted code is produced by an md5 value of the current_users IP address concatenated with your secret phrase. ie code = md5(IP.secretphrase).  This allows the destination resource to verify the connection for extra security.';
 $string['configwebsearch'] = 'When adding a URL as a webpage or weblink, this location is offered as a site to help the user search for the URL they want.';
 $string['configwindowsettings'] = 'This sets the default value for the Window settings pane in the form when adding some new resources. After the first time, this becomes an individual user preference.';
 $string['contentheader'] = 'Content';

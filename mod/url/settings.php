@@ -44,7 +44,7 @@ if ($ADMIN->fulltree) {
         get_string('framesize', 'url'), get_string('configframesize', 'url'), 130, PARAM_INT));
     $settings->add(new admin_setting_configcheckbox('url/requiremodintro',
         get_string('requiremodintro', 'admin'), get_string('configrequiremodintro', 'admin'), 1));
-    $settings->add(new admin_setting_configpasswordunmask('secretphrase', get_string('password'),
+    $settings->add(new admin_setting_configpasswordunmask('url/secretphrase', get_string('password'),
         get_string('configsecretphrase', 'url'), ''));
     $settings->add(new admin_setting_configcheckbox('url/rolesinparams',
         get_string('rolesinparams', 'url'), get_string('configrolesinparams', 'url'), false));
