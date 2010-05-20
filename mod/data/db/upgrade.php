@@ -188,16 +188,17 @@ function xmldb_data_upgrade($oldversion) {
 
     /// Conditionally launch drop table for data_comments
         if ($dbman->table_exists($table)) {
-            $sql = 'SELECT d.id AS dataid,
-                d.course AS courseid,
-                c.userid,
-                r.id AS itemid,
-                c.id AS commentid,
-                c.content AS commentcontent,
-                c.format AS format,
-                c.created AS timecreated
-                FROM {data_comments} c, {data_records} r, {data} d
-                WHERE c.recordid=r.id AND r.dataid=d.id ORDER BY dataid, courseid';
+            $sql = "SELECT d.id AS dataid,
+                           d.course AS courseid,
+                           c.userid,
+                           r.id AS itemid,
+                           c.id AS commentid,
+                           c.content AS commentcontent,
+                           c.format AS format,
+                           c.created AS timecreated
+                      FROM {data_comments} c, {data_records} r, {data} d
+                     WHERE c.recordid=r.id AND r.dataid=d.id
+                  ORDER BY dataid, courseid";
             /// move data comments to comments table
             $lastdataid = null;
             $lastcourseid = null;
@@ -261,14 +262,15 @@ function xmldb_data_upgrade($oldversion) {
         if ($dbman->table_exists($table)) {
             //data ratings didnt store time created and modified so Im using the times from the record the rating was attached to
             $sql = "INSERT INTO {rating} (contextid, scaleid, itemid, rating, userid, timecreated, timemodified)
-    SELECT cxt.id, d.scale, r.recordid AS itemid, r.rating, r.userid, re.timecreated AS timecreated, re.timemodified AS timemodified
-    FROM {data_ratings} r
-    JOIN {data_records} re ON r.recordid=re.id
-    JOIN {data} d ON d.id=re.dataid
-    JOIN {course_modules} cm ON cm.instance=d.id
-    JOIN {context} cxt ON cxt.instanceid=cm.id
-    JOIN {modules} m ON m.id=cm.module
-    WHERE m.name = :modname AND cxt.contextlevel = :contextlevel";
+
+                    SELECT cxt.id, d.scale, r.recordid AS itemid, r.rating, r.userid, re.timecreated AS timecreated, re.timemodified AS timemodified
+                      FROM {data_ratings} r
+                      JOIN {data_records} re ON r.recordid=re.id
+                      JOIN {data} d ON d.id=re.dataid
+                      JOIN {course_modules} cm ON cm.instance=d.id
+                      JOIN {context} cxt ON cxt.instanceid=cm.id
+                      JOIN {modules} m ON m.id=cm.module
+                     WHERE m.name = :modname AND cxt.contextlevel = :contextlevel";
             $params['modname'] = 'data';
             $params['contextlevel'] = CONTEXT_MODULE;
 
