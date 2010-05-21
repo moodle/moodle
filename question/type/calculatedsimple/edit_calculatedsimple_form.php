@@ -131,6 +131,7 @@ class question_edit_calculatedsimple_form extends question_edit_form {
 
                 if  (  $dummyform->answer = optional_param('answer', '', PARAM_NOTAGS)) { // there is always at least one answer...
                     $tolerance = optional_param('tolerance', '', PARAM_NUMBER);
+                    $tolerance = optional_param('tolerance', '', PARAM_NUMBER);
                     $tolerancetype = optional_param('tolerancetype', '', PARAM_NUMBER);
                     $correctanswerlength = optional_param('correctanswerlength', '', PARAM_INT);
                     $correctanswerformat = optional_param('correctanswerformat', '', PARAM_INT);
@@ -139,7 +140,7 @@ class question_edit_calculatedsimple_form extends question_edit_form {
                         if(trim($answer) != ''){  // just look for non-empty
                             $this->answer[$key]=new stdClass();
                             $this->answer[$key]->answer = $answer;
-                            $this->answer[$key]->fraction = $fraction[$key];
+                        //    $this->answer[$key]->fraction = $fraction[$key];
                             $this->answer[$key]->tolerance = $tolerance[$key];
                             $this->answer[$key]->tolerancetype = $tolerancetype[$key];
                             $this->answer[$key]->correctanswerlength = $correctanswerlength[$key];
@@ -551,18 +552,17 @@ class question_edit_calculatedsimple_form extends question_edit_form {
             if (count($answer)) {
                 $key = 0;
                 foreach ($answer as $answer){
-                    $default_values['answer['.$key.']'] = $answer->answer;
-                    $default_values['fraction['.$key.']'] = $answer->fraction;
+                    $default_values['answer['.$key.']'] = $answer->answer; //  is necessary ? to-do test it
                     $default_values['tolerance['.$key.']'] = $answer->tolerance;
                     $default_values['tolerancetype['.$key.']'] = $answer->tolerancetype;
                     $default_values['correctanswerlength['.$key.']'] = $answer->correctanswerlength;
                     $default_values['correctanswerformat['.$key.']'] = $answer->correctanswerformat;
-                    $default_values['feedback['.$key.']'] = $answer->feedback;
                     $key++;
                 }
             }
             $default_values['synchronize'] = 0 ;
-            if (isset($question->options)){
+            $QTYPES['numerical']->set_numerical_unit_data($question,$default_values);
+          /*  if (isset($question->options)){
                 $default_values['unitgradingtype'] = $question->options->unitgradingtype ;
                 $default_values['unitpenalty'] = $question->options->unitpenalty ;
                 switch ($question->options->showunits){
@@ -590,6 +590,7 @@ class question_edit_calculatedsimple_form extends question_edit_form {
                     }
                 }
             }
+            */
                       $key = 0 ;
 
         $formdata = array();

@@ -143,33 +143,7 @@ class question_edit_calculated_form extends question_edit_form {
                 }
             }
           $default_values['synchronize'] = $question->options->synchronize ;
-          $default_values['unitgradingtype'] = $question->options->unitgradingtype ;
-          $default_values['unitpenalty'] = $question->options->unitpenalty ;
-          switch ($question->options->showunits){
-            case 'O' :
-            case '1' : 
-                $default_values['showunits0'] = $question->options->showunits ;
-                $default_values['unitrole'] = 0 ;
-                break;
-            case '2' :
-            case '3' : 
-                $default_values['showunits1'] = $question->options->showunits ;
-                $default_values['unitrole'] = 1 ;
-                break;
-           } 
-            $default_values['unitsleft'] = $question->options->unitsleft ;
-            $default_values['instructions'] = $question->options->instructions  ;
-
-            if (isset($question->options->units)){
-                $units  = array_values($question->options->units);
-                if (!empty($units)) {
-                    foreach ($units as $key => $unit){
-                        $default_values['unit['.$key.']'] = $unit->unit;
-                        $default_values['multiplier['.$key.']'] = $unit->multiplier;
-                    }
-                }
-            }
-        }
+         $QTYPES['numerical']->set_numerical_unit_data($question,$default_values);
         if (isset($question->options->single)){
             $default_values['single'] =  $question->options->single;
             $default_values['answernumbering'] =  $question->options->answernumbering;
@@ -324,26 +298,6 @@ class question_edit_calculated_form extends question_edit_form {
                 }                
             }*/
             $QTYPES['numerical']->validate_numerical_options($data, $errors) ;
-       /*     if ($data['unitrole'] == 0 ){
-                $showunits = $data['showunits0'];
-            }else {
-                $showunits = $data['showunits1'];
-            }
-            
-            if (($showunits == 0) || ($showunits == 1) || ($showunits == 2)){
-               if (trim($units[0]) == ''){
-                 $errors['unit[0]'] = 'You must set a valid unit name' ;
-                }
-            }
-            if ($showunits == 3 ){
-                if (count($units)) {
-                    foreach ($units as $key => $unit){
-                        if ($units[$key] != ''){
-                        $errors["unit[$key]"] = 'You must erase this unit name' ;
-                        }
-                    }
-                }
-            }*/
             if ($answercount==0){
                 $errors['answer[0]'] = get_string('atleastoneanswer', 'qtype_calculated');
             }
