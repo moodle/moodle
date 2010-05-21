@@ -47,7 +47,7 @@ define('GRADE_UPDATE_MULTIPLE', 2);
 define('GRADE_UPDATE_ITEM_DELETED', 3);
 define('GRADE_UPDATE_ITEM_LOCKED', 4);
 
-// Grate teables history tracking actions
+// Grade tables history tracking actions
 define('GRADE_HISTORY_INSERT', 1);
 define('GRADE_HISTORY_UPDATE', 2);
 define('GRADE_HISTORY_DELETE', 3);

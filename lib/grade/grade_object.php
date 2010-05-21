@@ -125,7 +125,7 @@ abstract class grade_object {
      * @static abstract
      *
      * @param array $params associative arrays varname=>value
-     * @return array array of grade_object insatnces or false if none found.
+     * @return array array of grade_object instances or false if none found.
      */
     public static abstract function fetch_all($params);
 

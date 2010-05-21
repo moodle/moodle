@@ -342,7 +342,7 @@ class grade_grade extends grade_object {
      * @param int $locked 0, 1 or a timestamp int(10) after which date the item will be locked.
      * @param boolean $cascade ignored param
      * @param boolean $refresh refresh grades when unlocking
-     * @return boolean true if sucessful, false if can not set new lock state for grade
+     * @return boolean true if successful, false if can not set new lock state for grade
      */
     public function set_locked($lockedstate, $cascade=false, $refresh=true) {
         $this->load_grade_item();
@@ -512,7 +512,7 @@ class grade_grade extends grade_object {
      * @static
      *
      * @param array $params associative arrays varname=>value
-     * @return array array of grade_grade insatnces or false if none found.
+     * @return array array of grade_grade instances or false if none found.
      */
     public static function fetch_all($params) {
         return grade_object::fetch_all_helper('grade_grades', 'grade_grade', $params);

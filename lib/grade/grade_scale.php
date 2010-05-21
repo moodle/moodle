@@ -63,7 +63,7 @@ class grade_scale extends grade_object {
     public $scale_items = array();
 
     /**
-     * A string representatin of the scale items (a comma-separated list).
+     * A string representation of the scale items (a comma-separated list).
      * @var string $scale
      */
     public $scale;
@@ -90,7 +90,7 @@ class grade_scale extends grade_object {
      * @static
      *
      * @param array $params associative arrays varname=>value
-     * @return array array of grade_scale insatnces or false if none found.
+     * @return array array of grade_scale instances or false if none found.
      */
     public static function fetch_all($params) {
         return grade_object::fetch_all_helper('scale', 'grade_scale', $params);

@@ -886,7 +886,7 @@ class grade_item extends grade_object {
     }
 
     /**
-     * Is this a manualy graded item?
+     * Is this a manually graded item?
      * @return boolean
      */
     public function is_manual_item() {
@@ -1256,7 +1256,7 @@ class grade_item extends grade_object {
     }
 
     /**
-     * Finds out on which other items does this depend directly when doing calculation or category agregation
+     * Finds out on which other items does this depend directly when doing calculation or category aggregation
      * @param bool $reset_cache
      * @return array of grade_item ids this one depends on
      */
@@ -1513,7 +1513,7 @@ class grade_item extends grade_object {
      * @param int $usermodified - user which did the grading
      * @param int $dategraded
      * @param int $datesubmitted
-     * @param object $grade object - usefull for bulk upgrades
+     * @param object $grade object - useful for bulk upgrades
      * @return boolean success
      */
     public function update_raw_grade($userid, $rawgrade=false, $source=NULL, $feedback=false, $feedbackformat=FORMAT_MOODLE, $usermodified=null, $dategraded=null, $datesubmitted=null, $grade=null) {

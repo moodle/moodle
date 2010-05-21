@@ -675,7 +675,7 @@ class grade_category extends grade_object {
                 arsort($freq);                      // sort by frequency keeping keys
                 $top = reset($freq);               // highest frequency count
                 $modes = array_keys($freq, $top);  // search for all modes (have the same highest count)
-                rsort($modes, SORT_NUMERIC);       // get highes mode
+                rsort($modes, SORT_NUMERIC);       // get highest mode
                 $agg_grade = reset($modes);
                 break;
 
@@ -702,7 +702,7 @@ class grade_category extends grade_object {
 
             case GRADE_AGGREGATE_WEIGHTED_MEAN2:
                 // Weighted average of all existing final grades with optional extra credit flag,
-                // weight is the range of grade (ususally grademax)
+                // weight is the range of grade (usually grademax)
                 $weightsum = 0;
                 $sum       = null;
 
@@ -929,9 +929,9 @@ class grade_category extends grade_object {
     }
 
     /**
-     * Returns true if category uses special aggregation coeficient
+     * Returns true if category uses special aggregation coefficient
      *
-     * @return boolean true if coeficient used
+     * @return boolean true if coefficient used
      */
     public function is_aggregationcoef_used() {
         return ($this->aggregation == GRADE_AGGREGATE_WEIGHTED_MEAN
