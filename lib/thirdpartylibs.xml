@@ -249,7 +249,14 @@
     <location>yui</location>
     <name>YUI</name>
     <license>BSD</license>
-    <version>2.7.0</version>
+    <version>3.3.1</version>
+    <licenseversion></licenseversion>
+  </library>
+  <library>
+    <location>yui</location>
+    <name>YUI PHPloader</name>
+    <license>BSD</license>
+    <version>1.0.0b2</version>
     <licenseversion></licenseversion>
   </library>
   <library>
