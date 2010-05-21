@@ -81,7 +81,7 @@ abstract class xml_database_exporter extends database_exporter {
     /**
      * Callback function. Outputs record tag with field subtags and data.
      *
-     * @param xmldb_table $table - XMLDB object of the table from which data was retrived
+     * @param xmldb_table $table - XMLDB object of the table from which data was retrieved
      * @param object $data - data object (fields and values from record)
      * @return void
      */

@@ -111,7 +111,7 @@ abstract class database_exporter {
      * It will insert table data. Subclasses should export basic record
      * information (data values).
      *
-     * @param xmldb_table $table - XMLDB object of the table from which data was retrived
+     * @param xmldb_table $table - XMLDB object of the table from which data was retrieved
      * @param object $data - data object (fields and values from record)
      * @return void
      */
@@ -120,7 +120,7 @@ abstract class database_exporter {
     /**
      * Generic method to export the database. It checks the schema (if
      * @see $check_schema is true), queries the database and calls
-     * appropiate callbacks.
+     * appropriate callbacks.
      *
      * @exception dbtransfer_exception if any checking (e.g. database schema) fails
      *

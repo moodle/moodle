@@ -92,7 +92,7 @@ class database_mover extends database_exporter {
      * Callback function. Calls importer's import_table_data callback method.
      *
      * @param xmldb_table $table - XMLDB object of the table from which data
-     * was retrived
+     * was retrieved
      * @param object $data - data object (fields and values from record)
      * @return void
      */
