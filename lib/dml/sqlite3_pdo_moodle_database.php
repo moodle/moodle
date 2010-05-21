@@ -63,7 +63,7 @@ class sqlite3_pdo_moodle_database extends pdo_moodle_database {
     }
 
     protected function configure_dbconnection() {
-        // try to protect database file agains web access;
+        // try to protect database file against web access;
         // this is required in case that the moodledata folder is web accessible and
         // .htaccess is not in place; requires that the database file extension is php
         $this->pdb->exec('CREATE TABLE IF NOT EXISTS "<?php die?>" (id int)');
@@ -183,7 +183,7 @@ class sqlite3_pdo_moodle_database extends pdo_moodle_database {
     }
 
     /**
-     * Returns datailed information about columns in table. This information is cached internally.
+     * Returns detailed information about columns in table. This information is cached internally.
      * @param string $table name
      * @param bool $usecache
      * @return array array of database_column_info objects indexed with column names

@@ -194,7 +194,7 @@ class pgsql_native_moodle_database extends moodle_database {
      * Do NOT use connect() again, create a new instance if needed.
      */
     public function dispose() {
-        parent::dispose(); // Call parent dispose to write/close session and other common stuff before clossing conn
+        parent::dispose(); // Call parent dispose to write/close session and other common stuff before closing connection
         if ($this->pgsql) {
             pg_close($this->pgsql);
             $this->pgsql = null;
@@ -331,7 +331,7 @@ class pgsql_native_moodle_database extends moodle_database {
     }
 
     /**
-     * Returns datailed information about columns in table. This information is cached internally.
+     * Returns detailed information about columns in table. This information is cached internally.
      * @param string $table name
      * @param bool $usecache
      * @return array array of database_column_info objects indexed with column names

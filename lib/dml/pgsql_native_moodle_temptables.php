@@ -17,7 +17,7 @@
 
 /**
  * PGSQL specific temptables store. Needed because temporary tables
- * are named diferently than normal tables. Also used to be able to retrieve
+ * are named differently than normal tables. Also used to be able to retrieve
  * temp table names included in the get_tables() method of the DB.
  *
  * @package    moodlecore

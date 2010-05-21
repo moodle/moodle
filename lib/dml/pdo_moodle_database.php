@@ -37,8 +37,8 @@ abstract class pdo_moodle_database extends moodle_database {
     protected $lastError = null;
 
     /**
-     * Contructor - instantiates the database, specifying if it's external (connect to other systems) or no (Moodle DB)
-     *              note this has effect to decide if prefix checks must be performed or no
+     * Constructor - instantiates the database, specifying if it's external (connect to other systems) or no (Moodle DB)
+     *               note this has effect to decide if prefix checks must be performed or no
      * @param bool true means external database used
      */
     public function __construct($external=false) {
@@ -165,7 +165,7 @@ abstract class pdo_moodle_database extends moodle_database {
     }
 
     /**
-     * Function to print/save/ignore debuging messages related to SQL queries.
+     * Function to print/save/ignore debugging messages related to SQL queries.
      */
     protected function debug_query($sql, $params = null) {
         echo '<hr /> (', $this->get_dbtype(), '): ',  htmlentities($sql);
@@ -207,7 +207,7 @@ abstract class pdo_moodle_database extends moodle_database {
 
     /**
      * Factory method that creates a recordset for return by a query. The generic pdo_moodle_recordset
-     * class should fit most cases, but pdo_moodle_database subclasses can overide this method to return
+     * class should fit most cases, but pdo_moodle_database subclasses can override this method to return
      * a subclass of pdo_moodle_recordset.
      * @param object $sth instance of PDOStatement
      * @return object instance of pdo_moodle_recordset
@@ -281,7 +281,7 @@ abstract class pdo_moodle_database extends moodle_database {
      *
      * @param string $sql The SQL query
      * @param array $params array of sql parameters
-     * @return mixed array of values or false if an error occured
+     * @return mixed array of values or false if an error occurred
      */
     public function get_fieldset_sql($sql, array $params=null) {
         if(!$rs = $this->get_recordset_sql($sql, $params)) {
@@ -306,7 +306,7 @@ abstract class pdo_moodle_database extends moodle_database {
      * @param array $params array of sql parameters
      * @param int $limitfrom return a subset of records, starting at this point (optional, required if $limitnum is set).
      * @param int $limitnum return a subset comprising this many records (optional, required if $limitfrom is set).
-     * @return mixed an array of objects, or empty array if no records were found, or false if an error occured.
+     * @return mixed an array of objects, or empty array if no records were found, or false if an error occurred.
      */
     public function get_records_sql($sql, array $params=null, $limitfrom=0, $limitnum=0) {
         if(!$rs = $this->get_recordset_sql($sql, $params, $limitfrom, $limitnum)) {
@@ -599,7 +599,7 @@ abstract class pdo_moodle_database extends moodle_database {
     /**
      * Called before each db query.
      *
-     * Overriden to ensure $this->lastErorr is reset each query
+     * Overridden to ensure $this->lastErorr is reset each query
      *
      * @param string $sql
      * @param array array of parameters
