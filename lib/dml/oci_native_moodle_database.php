@@ -197,7 +197,7 @@ class oci_native_moodle_database extends moodle_database {
         //note: do not send "ALTER SESSION SET NLS_NUMERIC_CHARACTERS='.,'" !
         //      instead fix our PHP code to convert "," to "." properly!
 
-        // Connection stabilished and configured, going to instantiate the temptables controller
+        // Connection stabilised and configured, going to instantiate the temptables controller
         $this->temptables = new oci_native_moodle_temptables($this, $this->unique_session_id);
 
         return true;
@@ -209,7 +209,7 @@ class oci_native_moodle_database extends moodle_database {
      * Do NOT use connect() again, create a new instance if needed.
      */
     public function dispose() {
-        parent::dispose(); // Call parent dispose to write/close session and other common stuff before clossing conn
+        parent::dispose(); // Call parent dispose to write/close session and other common stuff before closing connection
         if ($this->oci) {
             oci_close($this->oci);
             $this->oci = null;
@@ -408,7 +408,7 @@ class oci_native_moodle_database extends moodle_database {
     }
 
     /**
-     * Returns datailed information about columns in table. This information is cached internally.
+     * Returns detailed information about columns in table. This information is cached internally.
      * @param string $table name
      * @param bool $usecache
      * @return array array of database_column_info objects indexed with column names
@@ -709,30 +709,30 @@ class oci_native_moodle_database extends moodle_database {
         // !! This paragraph explains behaviour before Moodle 2.0:
         //
         // For Oracle DB, empty strings are converted to NULLs in DB
-        // and this breaks a lot of NOT NULL columns currenty Moodle. In the future it's
+        // and this breaks a lot of NOT NULL columns currently Moodle. In the future it's
         // planned to move some of them to NULL, if they must accept empty values and this
         // piece of code will become less and less used. But, for now, we need it.
         // What we are going to do is to examine all the data being inserted and if it's
         // an empty string (NULL for Oracle) and the field is defined as NOT NULL, we'll modify
         // such data in the best form possible ("0" for booleans and numbers and " " for the
         // rest of strings. It isn't optimal, but the only way to do so.
-        // In the oppsite, when retrieving records from Oracle, we'll decode " " back to
+        // In the opposite, when retrieving records from Oracle, we'll decode " " back to
         // empty strings to allow everything to work properly. DIRTY HACK.
 
         // !! These paragraphs explain the rationale about the change for Moodle 2.0:
         //
         // Before Moodle 2.0, we only used to apply this DIRTY HACK to NOT NULL columns, as
         // stated above, but it causes one problem in NULL columns where both empty strings
-        // and real NULLs are stored as NULLs, being impossible to diferentiate them when
+        // and real NULLs are stored as NULLs, being impossible to differentiate them when
         // being retrieved from DB.
         //
         // So, starting with Moodle 2.0, we are going to apply the DIRTY HACK to all the
         // CHAR/CLOB columns no matter of their nullability. That way, when retrieving
-        // NULLABLE fields we'll get proper empties and NULLs diferentiated, so we'll be able
+        // NULLABLE fields we'll get proper empties and NULLs differentiated, so we'll be able
         // to rely in NULL/empty/content contents without problems, until now that wasn't
         // possible at all.
         //
-        // No breackage with old data is expected as long as at the time of writing this
+        // No breakage with old data is expected as long as at the time of writing this
         // (20090922) all the current uses of both sql_empty() and sql_isempty() has been
         // revised in 2.0 and all them were being performed against NOT NULL columns,
         // where nothing has changed (the DIRTY HACK was already being applied).
@@ -826,7 +826,7 @@ class oci_native_moodle_database extends moodle_database {
             }
             foreach($params as $key => $value) {
                 // Decouple column name and param name as far as sometimes they aren't the same
-                $columnname = $key; // Defaul columname (for DB introspecting is key), but...
+                $columnname = $key; // Default columnname (for DB introspecting is key), but...
                 if ($key == 'newfieldtoset') { // found case where column and key diverge, handle that
                     $columnname   = key($value);    // columnname is the key of the array
                     $params[$key] = $value[$columnname]; // set the proper value in the $params array and
@@ -849,7 +849,7 @@ class oci_native_moodle_database extends moodle_database {
                         continue; // Column binding finished, go to next one
                     }
                 }
-                // TODO: Put propper types and length is possible (enormous speedup)
+                // TODO: Put proper types and length is possible (enormous speedup)
                 // Arrived here, continue with standard processing, using metadata if possible
                 if (isset($columns[$columnname])) {
                     $type = $columns[$columnname]->meta_type;
@@ -1387,7 +1387,7 @@ class oci_native_moodle_database extends moodle_database {
 
     /**
      * Returns the SQL text to be used in order to perform module '%'
-     * opration - remainder after division
+     * operation - remainder after division
      *
      * @param integer int1 first integer in the operation
      * @param integer int2 second integer in the operation
@@ -1414,7 +1414,7 @@ class oci_native_moodle_database extends moodle_database {
     }
 
     // NOTE: Oracle concat implementation isn't ANSI compliant when using NULLs (the result of
-    // any concatenation with NULL must return NULL) because of his inability to diferentiate
+    // any concatenation with NULL must return NULL) because of his inability to differentiate
     // NULLs and empty strings. So this function will cause some tests to fail. Hopefully
     // it's only a side case and it won't affect normal concatenation operations in Moodle.
     public function sql_concat() {

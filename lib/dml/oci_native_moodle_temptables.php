@@ -20,7 +20,7 @@
  * in Oracle are global (to all sessions), so we need to rename them
  * on the fly in order to get local (different for each session) table names.
  * Also used to be able to retrieve temp table names included in the get_tables()
- * method od the DB.
+ * method of the DB.
  *
  * @package    moodlecore
  * @subpackage DML

@@ -17,7 +17,7 @@
 
 
 /**
- * Oracle specific recorset.
+ * Oracle specific recordset.
  *
  * @package    moodlecore
  * @subpackage DML
