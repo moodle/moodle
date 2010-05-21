@@ -26,7 +26,7 @@
 $string['addnewnote'] = 'Add a new note';
 $string['addnewnoteselect'] = 'Select users to write notes about';
 $string['bynameondate'] = 'by {$a->name} - {$a->date}';
-$string['cannotdeletepost'] = 'Error occured while deleting post';
+$string['cannotdeletepost'] = 'Error occurred while deleting post';
 $string['configenablenotes'] = 'Enable storing of notes about individual users.';
 $string['content'] = 'Content';
 $string['course'] = 'course';
