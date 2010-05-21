@@ -26,7 +26,7 @@
 
 /**
  * Get input from user
- * @param string $prompt text prompt, should include possible obptions
+ * @param string $prompt text prompt, should include possible options
  * @param string $default default value when enter pressed
  * @param array $options list of allowed options, empty means any text
  * @param bool $casesensitive true if options are case sensitive
