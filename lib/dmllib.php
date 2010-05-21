@@ -197,7 +197,7 @@ class dml_write_exception extends dml_exception {
 }
 
 /**
- * DML transaction exception - triggered by probles related to DB transactions
+ * DML transaction exception - triggered by problems related to DB transactions
  */
 class dml_transaction_exception extends dml_exception {
     /** @var moodle_transaction */
