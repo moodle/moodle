@@ -31,7 +31,6 @@
  *
  * INTERNAL - to be used from eventslib only
  *
- * @global object
  * @param string $component examples: 'moodle', 'mod/forum', 'block/quiz_results'
  * @return array of capabilities or empty array if not exists
  */
@@ -53,7 +52,6 @@ function events_load_def($component) {
  *
  * INTERNAL - to be used from eventslib only
  *
- * @global object
  * @param string $component examples: 'moodle', 'mod/forum', 'block/quiz_results'
  * @return array of events
  */
@@ -83,7 +81,6 @@ function events_get_cached($component) {
  * will cause any queued events for the component to be removed from
  * the database.
  *
- * @global object
  * @param string $component examples: 'moodle', 'mod_forum', 'block_quiz_results'
  * @return boolean
  */
@@ -136,7 +133,7 @@ function events_update_definition($component='moodle') {
         }
     }
 
-    // clean up the left overs, the entries in cachedevents array at this points are deprecated event handlers
+    // clean up the left overs, the entries in cached events array at this points are deprecated event handlers
     // and should be removed, delete from db
     events_cleanup($component, $cachedhandlers);
 
@@ -158,9 +155,8 @@ function events_uninstall($component) {
  *
  * INTERNAL - to be used from eventslib only
  *
- * @global object
  * @param string $component examples: 'moodle', 'mod/forum', 'block/quiz_results'
- * @param array $chachedevents array of the cached events definitions that will be
+ * @param array $cachedhandlers array of the cached events definitions that will be
  * @return int number of deprecated capabilities that have been removed
  */
 function events_cleanup($component, $cachedhandlers) {
@@ -188,7 +184,6 @@ function events_cleanup($component, $cachedhandlers) {
  *
  * INTERNAL - to be used from eventslib only
  *
- * @global object
  * @param object $handler event handler object from db
  * @param object $event event data object
  * @param string $errormessage The error message indicating the problem
@@ -258,8 +253,6 @@ function events_dispatch($handler, $eventdata, &$errormessage) {
  *
  * INTERNAL - to be used from eventslib only
  *
- * @global object
- * @global object
  * @param object $qhandler events_queued_handler object from db
  * @return boolean meaning success, or NULL on fatal failure
  */
@@ -303,13 +296,12 @@ function events_process_queued_handler($qhandler) {
 }
 
 /**
- * removes this queued handler from the events_queued_handler table
+ * Removes this queued handler from the events_queued_handler table
  *
- * removes events_queue record from events_queue if no more references to this event object exists
+ * Removes events_queue record from events_queue if no more references to this event object exists
  *
  * INTERNAL - to be used from eventslib only
  *
- * @global object
  * @param object $qhandler events_queued_handler object from db
  */
 function events_dequeue($qhandler) {
@@ -325,11 +317,10 @@ function events_dequeue($qhandler) {
 }
 
 /**
- * Returns hanflers for given event. Uses caching for better perf.
+ * Returns handlers for given event. Uses caching for better perf.
  *
  * INTERNAL - to be used from eventslib only
  *
- * @global object
  * @staticvar array $handlers
  * @param string $eventanme name of even or 'reset'
  * @return mixed array of handlers or false otherwise
@@ -358,7 +349,6 @@ function events_get_handlers($eventname) {
  *
  * PUBLIC
  *
- * @global object
  * @param string $eventname empty means all
  * @return number of dispatched+removed broken events
  */
@@ -401,13 +391,10 @@ function events_cron($eventname='') {
 
 
 /**
- * Function to call all eventhandlers when triggering an event
+ * Function to call all event handlers when triggering an event
  *
  * PUBLIC
  *
- * @global object
- * @global object
- * @global object
  * @param string $eventname name of the event
  * @param object $eventdata event data object
  * @return int number of failed events
@@ -468,7 +455,7 @@ function events_trigger($eventname, $eventdata) {
                 $failedcount ++;
 
             } else if ($handler->schedule == 'cron') {
-                //ok - use queuing of events only
+                //ok - use queueing of events only
 
             } else {
                 // unknown schedule - fallback to cron type
@@ -513,7 +500,6 @@ function events_trigger($eventname, $eventdata) {
 /**
  * checks if an event is registered for this component
  *
- * @global object
  * @param string $eventname name of the event
  * @param string $component component name, can be mod/data or moodle
  * @return bool
@@ -528,8 +514,6 @@ function events_is_registered($eventname, $component) {
  *
  * PUBLIC
  *
- * @global object
- * @global object
  * @param string $eventname name of the event
  * @return int number of queued events
  */
