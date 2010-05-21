@@ -30,7 +30,7 @@ require_once($CFG->libdir.'/ddl/sql_generator.php');
 
 /// This class generate SQL code to be used against Oracle
 /// It extends XMLDBgenerator so everything can be
-/// overriden as needed to generate correct SQL.
+/// overridden as needed to generate correct SQL.
 
 class oracle_sql_generator extends sql_generator {
 
@@ -89,7 +89,7 @@ class oracle_sql_generator extends sql_generator {
 
     /**
      * Given one xmldb_table, returns it's correct name, depending of all the parametrization
-     * Overriden to allow change of names in temp tables
+     * Overridden to allow change of names in temp tables
      *
      * @param xmldb_table table whose name we want
      * @param boolean to specify if the name must be quoted (if reserved word, only!)
@@ -134,7 +134,7 @@ class oracle_sql_generator extends sql_generator {
     }
 
     /**
-     * Given one XMLDB Type, lenght and decimals, returns the DB proper SQL type
+     * Given one XMLDB Type, length and decimals, returns the DB proper SQL type
      */
     public function getTypeSQL($xmldb_type, $xmldb_length=null, $xmldb_decimals=null) {
 
@@ -302,7 +302,7 @@ class oracle_sql_generator extends sql_generator {
     }
 
     /**
-     * Given one xmldb_table and one xmldb_field, return the SQL statements needded to alter the field in the table
+     * Given one xmldb_table and one xmldb_field, return the SQL statements needed to alter the field in the table
      * Oracle has some severe limits:
      *     - clob and blob fields doesn't allow type to be specified
      *     - error is dropped if the null/not null clause is specified and hasn't changed
@@ -467,7 +467,7 @@ class oracle_sql_generator extends sql_generator {
             }
         }
 
-    /// If arriving here, something is not being skiped (type, notnull, default), calculate the standar AlterFieldSQL
+    /// If arriving here, something is not being skipped (type, notnull, default), calculate the standard AlterFieldSQL
         if (!$skip_type_clause || !$skip_notnull_clause || !$skip_default_clause) {
             $results = array_merge($results, parent::getAlterFieldSQL($xmldb_table, $xmldb_field, $skip_type_clause, $skip_default_clause, $skip_notnull_clause));
             return $results;
@@ -478,7 +478,7 @@ class oracle_sql_generator extends sql_generator {
     }
 
     /**
-     * Given one xmldb_table and one xmldb_field, return the SQL statements needded to drop its enum
+     * Given one xmldb_table and one xmldb_field, return the SQL statements needed to drop its enum
      * (usually invoked from getModifyEnumSQL()
      *
      * TODO: Moodle 2.1 - drop in Moodle 2.1
@@ -497,7 +497,7 @@ class oracle_sql_generator extends sql_generator {
     }
 
     /**
-     * Given one xmldb_table and one xmldb_field, return the SQL statements needded to create its default
+     * Given one xmldb_table and one xmldb_field, return the SQL statements needed to create its default
      * (usually invoked from getModifyDefaultSQL()
      */
     public function getCreateDefaultSQL($xmldb_table, $xmldb_field) {
@@ -517,7 +517,7 @@ class oracle_sql_generator extends sql_generator {
     }
 
     /**
-     * Given one xmldb_table returns one array with all the check constrainsts
+     * Given one xmldb_table returns one array with all the check constraints
      * in the table (fetched from DB)
      * Optionally the function allows one xmldb_field to be specified in
      * order to return only the check constraints belonging to one field.
@@ -549,7 +549,7 @@ class oracle_sql_generator extends sql_generator {
             $filter = $xmldb_field->getName();
         /// Lets clean a bit each constraint description, looking for the filtered field
             foreach ($results as $key => $result) {
-            /// description starts by "$filter IN" assume it's a constraint beloging to the field
+            /// description starts by "$filter IN" assume it's a constraint belonging to the field
                 if (preg_match("/^{$filter} IN/i", $result->description)) {
                     $filtered_results[$key] = $result;
                 }

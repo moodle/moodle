@@ -30,7 +30,7 @@ require_once($CFG->libdir.'/ddl/sql_generator.php');
 
 /// This class generate SQL code to be used against PostgreSQL
 /// It extends XMLDBgenerator so everything can be
-/// overriden as needed to generate correct SQL.
+/// overridden as needed to generate correct SQL.
 
 class postgres_sql_generator extends sql_generator {
 
@@ -49,10 +49,10 @@ class postgres_sql_generator extends sql_generator {
     public $enum_inline_code = false; //Does the generator need to add inline code in the column definition
 
     public $rename_index_sql = 'ALTER TABLE OLDINDEXNAME RENAME TO NEWINDEXNAME'; //SQL sentence to rename one index
-                                      //TABLENAME, OLDINDEXNAME, NEWINDEXNAME are dinamically replaced
+                                      //TABLENAME, OLDINDEXNAME, NEWINDEXNAME are dynamically replaced
 
     public $rename_key_sql = null; //SQL sentence to rename one key (PostgreSQL doesn't support this!)
-                                          //TABLENAME, OLDKEYNAME, NEWKEYNAME are dinamically replaced
+                                          //TABLENAME, OLDKEYNAME, NEWKEYNAME are dynamically replaced
 
     /**
      * Reset a sequence to the id field of a table.
@@ -95,7 +95,7 @@ class postgres_sql_generator extends sql_generator {
     }
 
     /**
-     * Given one XMLDB Type, lenght and decimals, returns the DB proper SQL type
+     * Given one XMLDB Type, length and decimals, returns the DB proper SQL type
      */
     public function getTypeSQL($xmldb_type, $xmldb_length=null, $xmldb_decimals=null) {
 
@@ -196,7 +196,7 @@ class postgres_sql_generator extends sql_generator {
     }
 
     /**
-     * Given one xmldb_table and one xmldb_field, return the SQL statements needded to alter the field in the table
+     * Given one xmldb_table and one xmldb_field, return the SQL statements needed to alter the field in the table
      * PostgreSQL has some severe limits:
      *     - Any change of type or precision requires a new temporary column to be created, values to
      *       be transfered potentially casting them, to apply defaults if the column is not null and
@@ -315,7 +315,7 @@ class postgres_sql_generator extends sql_generator {
     }
 
     /**
-     * Given one xmldb_table and one xmldb_field, return the SQL statements needded to drop its enum
+     * Given one xmldb_table and one xmldb_field, return the SQL statements needed to drop its enum
      * (usually invoked from getModifyEnumSQL()
      *
      * TODO: Moodle 2.1 - drop in Moodle 2.1
@@ -334,7 +334,7 @@ class postgres_sql_generator extends sql_generator {
     }
 
     /**
-     * Given one xmldb_table and one xmldb_field, return the SQL statements needded to create its default
+     * Given one xmldb_table and one xmldb_field, return the SQL statements needed to create its default
      * (usually invoked from getModifyDefaultSQL()
      */
     public function getCreateDefaultSQL($xmldb_table, $xmldb_field) {
@@ -344,7 +344,7 @@ class postgres_sql_generator extends sql_generator {
     }
 
     /**
-     * Given one xmldb_table and one xmldb_field, return the SQL statements needded to drop its default
+     * Given one xmldb_table and one xmldb_field, return the SQL statements needed to drop its default
      * (usually invoked from getModifyDefaultSQL()
      */
     public function getDropDefaultSQL($xmldb_table, $xmldb_field) {
@@ -354,7 +354,7 @@ class postgres_sql_generator extends sql_generator {
     }
 
     /**
-     * Given one xmldb_table returns one array with all the check constrainsts
+     * Given one xmldb_table returns one array with all the check constraints
      * in the table (fetched from DB)
      * Optionally the function allows one xmldb_field to be specified in
      * order to return only the check constraints belonging to one field.
@@ -390,7 +390,7 @@ class postgres_sql_generator extends sql_generator {
                 $description = preg_replace('/::[a-z]+/i', '', $description);              // Casts out
                 $description = preg_replace("/({$filter})/i", '@$1@', $description);
                 $description = trim(preg_replace('/ or /i', ' OR ', $description));        // Uppercase or & trim
-            /// description starts by @$filter@ assume it's a constraint beloging to the field
+            /// description starts by @$filter@ assume it's a constraint belonging to the field
                 if (preg_match("/^@{$filter}@/i", $description)) {
                     $filtered_results[$key] = $result;
                 }

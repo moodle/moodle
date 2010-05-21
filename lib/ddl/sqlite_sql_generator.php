@@ -29,7 +29,7 @@ require_once($CFG->libdir.'/ddl/sql_generator.php');
 
 /// This class generate SQL code to be used against SQLite
 /// It extends XMLDBgenerator so everything can be
-/// overriden as needed to generate correct SQL.
+/// overridden as needed to generate correct SQL.
 
 class sqlite_sql_generator extends sql_generator {
 
@@ -57,13 +57,13 @@ class sqlite_sql_generator extends sql_generator {
     public $enum_extra_code = false; //Does the generator need to add extra code to generate code for the enums in the table
 
     public $drop_index_sql = 'ALTER TABLE TABLENAME DROP INDEX INDEXNAME'; //SQL sentence to drop one index
-                                                               //TABLENAME, INDEXNAME are dinamically replaced
+                                                               //TABLENAME, INDEXNAME are dynamically replaced
 
     public $rename_index_sql = null; //SQL sentence to rename one index (MySQL doesn't support this!)
-                                      //TABLENAME, OLDINDEXNAME, NEWINDEXNAME are dinamically replaced
+                                      //TABLENAME, OLDINDEXNAME, NEWINDEXNAME are dynamically replaced
 
     public $rename_key_sql = null; //SQL sentence to rename one key (MySQL doesn't support this!)
-                                      //TABLENAME, OLDKEYNAME, NEWKEYNAME are dinamically replaced
+                                      //TABLENAME, OLDKEYNAME, NEWKEYNAME are dynamically replaced
 
     /**
      * Creates one new XMLDBmysql
@@ -127,7 +127,7 @@ class sqlite_sql_generator extends sql_generator {
     }
 
     /**
-     * Given one XMLDB Type, lenght and decimals, returns the DB proper SQL type
+     * Given one XMLDB Type, length and decimals, returns the DB proper SQL type
      */
     public function getTypeSQL($xmldb_type, $xmldb_length=null, $xmldb_decimals=null) {
 
@@ -265,15 +265,15 @@ class sqlite_sql_generator extends sql_generator {
     }
 
     /**
-     * Given one xmldb_table and one xmldb_field, return the SQL statements needded to alter the field in the table
+     * Given one xmldb_table and one xmldb_field, return the SQL statements needed to alter the field in the table
      */
     public function getAlterFieldSQL($xmldb_table, $xmldb_field, $skip_type_clause = NULL, $skip_default_clause = NULL, $skip_notnull_clause = NULL) {
         return $this->getAlterTableSchema($xmldb_table, $xmldb_field, $xmldb_field);
     }
 
     /**
-     * Given one xmldb_table and one xmldb_key, return the SQL statements needded to add the key to the table
-     * note that undelying indexes will be added as parametrised by $xxxx_keys and $xxxx_index parameters
+     * Given one xmldb_table and one xmldb_key, return the SQL statements needed to add the key to the table
+     * note that underlying indexes will be added as parametrised by $xxxx_keys and $xxxx_index parameters
      */
     public function getAddKeySQL($xmldb_table, $xmldb_key) {
         $xmldb_table->addKey($xmldb_key);
@@ -281,7 +281,7 @@ class sqlite_sql_generator extends sql_generator {
     }
 
     /**
-     * Given one xmldb_table and one xmldb_field, return the SQL statements needded to create its enum
+     * Given one xmldb_table and one xmldb_field, return the SQL statements needed to create its enum
      * (usually invoked from getModifyEnumSQL()
      */
     public function getCreateEnumSQL($xmldb_table, $xmldb_field) {
@@ -289,7 +289,7 @@ class sqlite_sql_generator extends sql_generator {
     }
 
     /**
-     * Given one xmldb_table and one xmldb_field, return the SQL statements needded to drop its enum
+     * Given one xmldb_table and one xmldb_field, return the SQL statements needed to drop its enum
      * (usually invoked from getModifyEnumSQL()
      */
     public function getDropEnumSQL($xmldb_table, $xmldb_field) {
@@ -297,7 +297,7 @@ class sqlite_sql_generator extends sql_generator {
     }
 
     /**
-     * Given one xmldb_table and one xmldb_field, return the SQL statements needded to create its default
+     * Given one xmldb_table and one xmldb_field, return the SQL statements needed to create its default
      * (usually invoked from getModifyDefaultSQL()
      */
     public function getCreateDefaultSQL($xmldb_table, $xmldb_field) {
@@ -307,7 +307,7 @@ class sqlite_sql_generator extends sql_generator {
     /**
      * Given one correct xmldb_field and the new name, returns the SQL statements
      * to rename it (inside one array)
-     * SQLite is pretty diferent from the standard to justify this oveloading
+     * SQLite is pretty different from the standard to justify this overloading
      */
     public function getRenameFieldSQL($xmldb_table, $xmldb_field, $newname) {
         $oldfield = clone($xmldb_field);
@@ -316,7 +316,7 @@ class sqlite_sql_generator extends sql_generator {
     }
 
     /**
-     * Given one xmldb_table and one xmldb_index, return the SQL statements needded to rename the index in the table
+     * Given one xmldb_table and one xmldb_index, return the SQL statements needed to rename the index in the table
      */
     function getRenameIndexSQL($xmldb_table, $xmldb_index, $newname) {
     /// Get the real index name
@@ -328,7 +328,7 @@ class sqlite_sql_generator extends sql_generator {
     }
 
     /**
-     * Given one xmldb_table and one xmldb_key, return the SQL statements needded to rename the key in the table
+     * Given one xmldb_table and one xmldb_key, return the SQL statements needed to rename the key in the table
      * Experimental! Shouldn't be used at all!
      */
     public function getRenameKeySQL($xmldb_table, $xmldb_key, $newname) {
@@ -339,14 +339,14 @@ class sqlite_sql_generator extends sql_generator {
     }
 
     /**
-     * Given one xmldb_table and one xmldb_field, return the SQL statements needded to drop the field from the table
+     * Given one xmldb_table and one xmldb_field, return the SQL statements needed to drop the field from the table
      */
     public function getDropFieldSQL($xmldb_table, $xmldb_field) {
         return $this->getAlterTableSchema($xmldb_table, NULL, $xmldb_field);
     }
 
     /**
-     * Given one xmldb_table and one xmldb_index, return the SQL statements needded to drop the index from the table
+     * Given one xmldb_table and one xmldb_index, return the SQL statements needed to drop the index from the table
      */
     public function getDropIndexSQL($xmldb_table, $xmldb_index) {
         $xmldb_table->deleteIndex($xmldb_index->getName());
@@ -354,7 +354,7 @@ class sqlite_sql_generator extends sql_generator {
     }
 
     /**
-     * Given one xmldb_table and one xmldb_index, return the SQL statements needded to drop the index from the table
+     * Given one xmldb_table and one xmldb_index, return the SQL statements needed to drop the index from the table
      */
     public function getDropKeySQL($xmldb_table, $xmldb_key) {
         $xmldb_table->deleteKey($xmldb_key->getName());
@@ -362,7 +362,7 @@ class sqlite_sql_generator extends sql_generator {
     }
 
     /**
-     * Given one xmldb_table and one xmldb_field, return the SQL statements needded to drop its default
+     * Given one xmldb_table and one xmldb_field, return the SQL statements needed to drop its default
      * (usually invoked from getModifyDefaultSQL()
      */
     public function getDropDefaultSQL($xmldb_table, $xmldb_field) {
@@ -377,7 +377,7 @@ class sqlite_sql_generator extends sql_generator {
     }
 
     /**
-     * Given one xmldb_table returns one array with all the check constrainsts
+     * Given one xmldb_table returns one array with all the check constraints
      * in the table (fetched from DB)
      * Optionally the function allows one xmldb_field to be specified in
      * order to return only the check constraints belonging to one field.

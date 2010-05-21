@@ -21,7 +21,7 @@
  * needed functions to generate proper SQL are defined.
  *
  * The rest of classes will inherit, by default, the same logic.
- * Functions will be overriden as needed to generate correct SQL.
+ * Functions will be overridden as needed to generate correct SQL.
  *
  * @package    moodlecore
  * @subpackage DDL
@@ -31,7 +31,7 @@
  */
 
 /**
- * Abstract sql generator class, base for all bd specific implementations.
+ * Abstract sql generator class, base for all db specific implementations.
  */
 abstract class sql_generator {
 
@@ -94,10 +94,10 @@ abstract class sql_generator {
                                   //MySQL CONCAT function will be used
 
     public $rename_table_sql = 'ALTER TABLE OLDNAME RENAME TO NEWNAME'; //SQL sentence to rename one table, both
-                                  //OLDNAME and NEWNAME are dinamically replaced
+                                  //OLDNAME and NEWNAME are dynamically replaced
 
     public $drop_table_sql = 'DROP TABLE TABLENAME'; //SQL sentence to drop one table
-                                  //TABLENAME is dinamically replaced
+                                  //TABLENAME is dynamically replaced
 
     public $alter_column_sql = 'ALTER TABLE TABLENAME ALTER COLUMN COLUMNSPECS'; //The SQL template to alter columns
 
@@ -108,16 +108,16 @@ abstract class sql_generator {
     public $alter_column_skip_notnull = false; //The generator will skip the null/notnull clause on alter columns
 
     public $rename_column_sql = 'ALTER TABLE TABLENAME RENAME COLUMN OLDFIELDNAME TO NEWFIELDNAME';
-                                  ///TABLENAME, OLDFIELDNAME and NEWFIELDNAME are dianmically replaced
+                                  ///TABLENAME, OLDFIELDNAME and NEWFIELDNAME are dyanmically replaced
 
     public $drop_index_sql = 'DROP INDEX INDEXNAME'; //SQL sentence to drop one index
-                                  //TABLENAME, INDEXNAME are dinamically replaced
+                                  //TABLENAME, INDEXNAME are dynamically replaced
 
     public $rename_index_sql = 'ALTER INDEX OLDINDEXNAME RENAME TO NEWINDEXNAME'; //SQL sentence to rename one index
-                                  //TABLENAME, OLDINDEXNAME, NEWINDEXNAME are dinamically replaced
+                                  //TABLENAME, OLDINDEXNAME, NEWINDEXNAME are dynamically replaced
 
     public $rename_key_sql = 'ALTER TABLE TABLENAME CONSTRAINT OLDKEYNAME RENAME TO NEWKEYNAME'; //SQL sentence to rename one key
-                                  //TABLENAME, OLDKEYNAME, NEWKEYNAME are dinamically replaced
+                                  //TABLENAME, OLDKEYNAME, NEWKEYNAME are dynamically replaced
 
     public $prefix;         // Prefix to be used for all the DB objects
 
@@ -590,7 +590,7 @@ abstract class sql_generator {
     }
 
     /**
-     * Given one xmldb_table and one xmldb_field, return the SQL statements needded to add the field to the table
+     * Given one xmldb_table and one xmldb_field, return the SQL statements needed to add the field to the table
      */
     public function getAddFieldSQL($xmldb_table, $xmldb_field, $skip_type_clause = NULL, $skip_default_clause = NULL, $skip_notnull_clause = NULL) {
 
@@ -618,7 +618,7 @@ abstract class sql_generator {
     }
 
     /**
-     * Given one xmldb_table and one xmldb_field, return the SQL statements needded to drop the field from the table
+     * Given one xmldb_table and one xmldb_field, return the SQL statements needed to drop the field from the table
      */
     public function getDropFieldSQL($xmldb_table, $xmldb_field) {
 
@@ -635,7 +635,7 @@ abstract class sql_generator {
     }
 
     /**
-     * Given one xmldb_table and one xmldb_field, return the SQL statements needded to alter the field in the table
+     * Given one xmldb_table and one xmldb_field, return the SQL statements needed to alter the field in the table
      */
     public function getAlterFieldSQL($xmldb_table, $xmldb_field, $skip_type_clause = NULL, $skip_default_clause = NULL, $skip_notnull_clause = NULL) {
 
@@ -669,7 +669,7 @@ abstract class sql_generator {
     }
 
     /**
-     * Given one xmldb_table and one xmldb_field, return the SQL statements needded to modify the default of the field in the table
+     * Given one xmldb_table and one xmldb_field, return the SQL statements needed to modify the default of the field in the table
      */
     public function getModifyDefaultSQL($xmldb_table, $xmldb_field) {
 
@@ -701,9 +701,9 @@ abstract class sql_generator {
     /// that we aren't trying to rename one "id" field. Although it could be
     /// implemented (if adding the necessary code to rename sequences, defaults,
     /// triggers... and so on under each getRenameFieldExtraSQL() function, it's
-    /// better to forbide it, mainly because this field is the default PK and
+    /// better to forbid it, mainly because this field is the default PK and
     /// in the future, a lot of FKs can be pointing here. So, this field, more
-    /// or less, must be considered inmutable!
+    /// or less, must be considered immutable!
         if ($xmldb_field->getName() == 'id') {
             return array();
         }
@@ -722,7 +722,7 @@ abstract class sql_generator {
     }
 
     /**
-     * Given one xmldb_table and one xmldb_key, return the SQL statements needded to add the key to the table
+     * Given one xmldb_table and one xmldb_key, return the SQL statements needed to add the key to the table
      * note that undelying indexes will be added as parametrised by $xxxx_keys and $xxxx_index parameters
      */
     public function getAddKeySQL($xmldb_table, $xmldb_key) {
@@ -763,7 +763,7 @@ abstract class sql_generator {
     }
 
     /**
-     * Given one xmldb_table and one xmldb_index, return the SQL statements needded to drop the index from the table
+     * Given one xmldb_table and one xmldb_index, return the SQL statements needed to drop the index from the table
      */
     public function getDropKeySQL($xmldb_table, $xmldb_key) {
 
@@ -830,7 +830,7 @@ abstract class sql_generator {
     }
 
     /**
-     * Given one xmldb_table and one xmldb_key, return the SQL statements needded to rename the key in the table
+     * Given one xmldb_table and one xmldb_key, return the SQL statements needed to rename the key in the table
      * Experimental! Shouldn't be used at all!
      */
 
@@ -867,7 +867,7 @@ abstract class sql_generator {
     }
 
     /**
-     * Given one xmldb_table and one xmldb_index, return the SQL statements needded to add the index to the table
+     * Given one xmldb_table and one xmldb_index, return the SQL statements needed to add the index to the table
      */
     public function getAddIndexSQL($xmldb_table, $xmldb_index) {
 
@@ -876,7 +876,7 @@ abstract class sql_generator {
     }
 
     /**
-     * Given one xmldb_table and one xmldb_index, return the SQL statements needded to drop the index from the table
+     * Given one xmldb_table and one xmldb_index, return the SQL statements needed to drop the index from the table
      */
     public function getDropIndexSQL($xmldb_table, $xmldb_index) {
 
@@ -895,7 +895,7 @@ abstract class sql_generator {
     }
 
     /**
-     * Given one xmldb_table and one xmldb_index, return the SQL statements needded to rename the index in the table
+     * Given one xmldb_table and one xmldb_index, return the SQL statements needed to rename the index in the table
      * Experimental! Shouldn't be used at all!
      */
     function getRenameIndexSQL($xmldb_table, $xmldb_index, $newname) {
@@ -1025,12 +1025,12 @@ abstract class sql_generator {
                  $fields = $statement->getFieldsFromInsertSentence($sentence);
              /// Get the values of fields
                  $values = $statement->getValuesFromInsertSentence($sentence);
-             /// Look if we have some CONCAT value and transform it dinamically
+             /// Look if we have some CONCAT value and transform it dynamically
                  foreach($values as $key => $value) {
                  /// Trim single quotes
                      $value = trim($value,"'");
                      if (stristr($value, 'CONCAT') !== false){
-                     /// Look for data between parentesis
+                     /// Look for data between parenthesis
                          preg_match("/CONCAT\s*\((.*)\)$/is", trim($value), $matches);
                          if (isset($matches[1])) {
                              $part = $matches[1];
@@ -1065,7 +1065,7 @@ abstract class sql_generator {
     }
 
     /**
-     * Given one array of elements, build de proper CONCAT expresion, based
+     * Given one array of elements, build de proper CONCAT expression, based
      * in the $concat_character setting. If such setting is empty, then
      * MySQL's CONCAT function will be used instead
      */
@@ -1100,7 +1100,7 @@ abstract class sql_generator {
      * Only some DB have this implemented
      */
     public function isNameInUse($object_name, $type, $table_name) {
-        return false; //For generators not implementing introspecion,
+        return false; //For generators not implementing introspection,
                       //we always return with the name being free to be used
     }
 
@@ -1127,7 +1127,7 @@ abstract class sql_generator {
     abstract public function getDropTempTableSQL($xmldb_table);
 
     /**
-     * Given one XMLDB Type, lenght and decimals, returns the DB proper SQL type
+     * Given one XMLDB Type, length and decimals, returns the DB proper SQL type
      */
     public abstract function getTypeSQL($xmldb_type, $xmldb_length=null, $xmldb_decimals=null);
 
@@ -1166,7 +1166,7 @@ abstract class sql_generator {
     }
 
     /**
-     * Given one xmldb_table and one xmldb_field, return the SQL statements needded to drop its enum
+     * Given one xmldb_table and one xmldb_field, return the SQL statements needed to drop its enum
      * (usually invoked from getModifyEnumSQL()
      *
      * TODO: Moodle 2.1 - Drop getDropEnumSQL()
@@ -1174,7 +1174,7 @@ abstract class sql_generator {
     public abstract function getDropEnumSQL($xmldb_table, $xmldb_field);
 
     /**
-     * Given one xmldb_table and one xmldb_field, return the SQL statements needded to drop its default
+     * Given one xmldb_table and one xmldb_field, return the SQL statements needed to drop its default
      * (usually invoked from getModifyDefaultSQL()
      *
      * TODO: Moodle 2.1 - Drop getDropDefaultSQL()
@@ -1191,7 +1191,7 @@ abstract class sql_generator {
     public abstract function getCheckConstraintsFromDB($xmldb_table, $xmldb_field=null);
 
     /**
-     * Given one xmldb_table and one xmldb_field, return the SQL statements needded to add its default
+     * Given one xmldb_table and one xmldb_field, return the SQL statements needed to add its default
      * (usually invoked from getModifyDefaultSQL()
      */
     public abstract function getCreateDefaultSQL($xmldb_table, $xmldb_field);
