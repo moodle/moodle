@@ -378,7 +378,7 @@ $CFG->admin = 'admin';
 // $CFG->xmldbdisablenextprevchecking = true;   // NOT FOR PRODUCTION SERVERS!
 //
 // Special magic - evil developer only wanting to edit xmldb files manually
-// AND allowing the XMLDBEditor to recostruct the prev/next elements every
+// AND allowing the XMLDBEditor to reconstruct the prev/next elements every
 // time one file is loaded and saved (Moodle).
 // Uncomment this if you're lazy like Petr
 // $CFG->xmldbreconstructprevnext = true;   // NOT FOR PRODUCTION SERVERS!
