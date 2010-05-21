@@ -49,7 +49,7 @@ define('RESOURCELIB_LEGACYFILES_ACTIVE', 2);
 /**
  * Returns list of available display options
  * @param array $enabled list of options enabled in module configuration
- * @param int $current current dispaly options for existing instances
+ * @param int $current current display options for existing instances
  * @return array of key=>name pairs
  */
 function resourcelib_get_displayoptions(array $enabled, $current=null) {

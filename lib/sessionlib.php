@@ -70,7 +70,7 @@ interface moodle_session {
 
     /**
      * No more changes in session expected.
-     * Unblocks the sesions, other scripts may start executing in parallel.
+     * Unblocks the sessions, other scripts may start executing in parallel.
      * @return void
      */
     public function write_close();
@@ -98,7 +98,7 @@ abstract class session_stub implements moodle_session {
 
         if (!defined('NO_MOODLE_COOKIES')) {
             if (empty($CFG->version) or $CFG->version < 2009011900) {
-                // no session before sessions table gets greated
+                // no session before sessions table gets created
                 define('NO_MOODLE_COOKIES', true);
             } else if (CLI_SCRIPT) {
                 // CLI scripts can not have session
@@ -192,7 +192,7 @@ abstract class session_stub implements moodle_session {
 
     /**
      * No more changes in session expected.
-     * Unblocks the sesions, other scripts may start executing in parallel.
+     * Unblocks the sessions, other scripts may start executing in parallel.
      * @return void
      */
     public function write_close() {
@@ -282,7 +282,7 @@ abstract class session_stub implements moodle_session {
     }
 
     /**
-     * Prepare cookies and varions system settings
+     * Prepare cookies and various system settings
      */
     protected function prepare_cookies() {
         global $CFG;
@@ -528,7 +528,7 @@ class database_session extends session_stub {
     public function handler_write($sid, $session_data) {
         global $USER;
 
-        // TODO: MDL-20625 we need to rollabck all active transactions and log error if any open needed
+        // TODO: MDL-20625 we need to rollback all active transactions and log error if any open needed
 
         $userid = 0;
         if (!empty($USER->realuser)) {
@@ -546,7 +546,7 @@ class database_session extends session_stub {
             $this->record->lastip       = getremoteaddr();
 
             // TODO: verify session changed before doing update,
-            //       also make sure the timemodified field is changed only overy 10s if nothing else changes  MDL-20462
+            //       also make sure the timemodified field is changed only every 10s if nothing else changes  MDL-20462
 
             try {
                 $this->database->update_record_raw('sessions', $this->record);
@@ -613,7 +613,7 @@ function session_is_legacy() {
 
 /**
  * Terminates all sessions, auth hooks are not executed.
- * Useful in ugrade scripts.
+ * Useful in upgrade scripts.
  */
 function session_kill_all() {
     global $CFG, $DB;
@@ -919,7 +919,7 @@ function session_loginas($userid, $context) {
     $_SESSION['REALSESSION'] = $_SESSION['SESSION'];
     $_SESSION['SESSION']     = new object();
 
-    /// Create the new $USER object with all details and reload needed capabilitites
+    /// Create the new $USER object with all details and reload needed capabilities
     $_SESSION['REALUSER'] = $_SESSION['USER'];
     $user = get_complete_user_data('id', $userid);
     $user->realuser       = $_SESSION['REALUSER']->id;
@@ -944,7 +944,7 @@ function session_unloginas() {
 }
 
 /**
- * Sets up current user and course enviroment (lang, etc.) in cron.
+ * Sets up current user and course environment (lang, etc.) in cron.
  * Do not use outside of cron script!
  *
  * @param object $user full user object, null means default cron user (admin)
@@ -958,7 +958,7 @@ function cron_setup_user($user=null, $course=null) {
     static $cronsession = null;
 
     if (empty($cronuser)) {
-        /// ignore admins timezone, language and locale - use site deafult instead!
+        /// ignore admins timezone, language and locale - use site default instead!
         $cronuser = get_admin();
         $cronuser->timezone = $CFG->timezone;
         $cronuser->lang     = '';

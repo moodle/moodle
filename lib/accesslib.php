@@ -1852,8 +1852,8 @@ function assign_legacy_capabilities($capability, $legacyperms) {
 }
 
 /**
- * @param object $capability a capbility - a row from the capabilitites table.
- * @return boolean whether this capability is safe - that is, wether people with the
+ * @param object $capability a capability - a row from the capabilities table.
+ * @return boolean whether this capability is safe - that is, whether people with the
  *      safeoverrides capability should be allowed to change it.
  */
 function is_safe_capability($capability) {
@@ -3428,7 +3428,7 @@ function get_default_capabilities($archetype) {
 }
 
 /**
- * Reset role capabilitites to default according to selected role archetype.
+ * Reset role capabilities to default according to selected role archetype.
  * If no archetype selected, removes all capabilities.
  * @param int @roleid
  */
