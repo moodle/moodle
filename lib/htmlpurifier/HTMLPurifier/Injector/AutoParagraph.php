@@ -34,16 +34,21 @@ class HTMLPurifier_Injector_AutoParagraph extends HTMLPurifier_Injector
                     //               ----
                     // This is a degenerate case
                 } else {
-                    // State 1.2: PAR1
-                    //            ----
+                    if (!$token->is_whitespace || $this->_isInline($current)) {
+                        // State 1.2: PAR1
+                        //            ----
 
-                    // State 1.3: PAR1\n\nPAR2
-                    //            ------------
+                        // State 1.3: PAR1\n\nPAR2
+                        //            ------------
 
-                    // State 1.4: <div>PAR1\n\nPAR2 (see State 2)
-                    //                 ------------
-                    $token = array($this->_pStart());
-                    $this->_splitText($text, $token);
+                        // State 1.4: <div>PAR1\n\nPAR2 (see State 2)
+                        //                 ------------
+                        $token = array($this->_pStart());
+                        $this->_splitText($text, $token);
+                    } else {
+                        // State 1.5: \n<hr />
+                        //            --
+                    }
                 }
             } else {
                 // State 2:   <div>PAR1... (similar to 1.4)

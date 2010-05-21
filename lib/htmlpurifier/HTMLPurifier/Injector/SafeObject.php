@@ -20,6 +20,8 @@ class HTMLPurifier_Injector_SafeObject extends HTMLPurifier_Injector
     protected $allowedParam = array(
         'wmode' => true,
         'movie' => true,
+        'flashvars' => true,
+        'src' => true,
     );
 
     public function prepare($config, $context) {
@@ -47,7 +49,8 @@ class HTMLPurifier_Injector_SafeObject extends HTMLPurifier_Injector
                 // We need this fix because YouTube doesn't supply a data
                 // attribute, which we need if a type is specified. This is
                 // *very* Flash specific.
-                if (!isset($this->objectStack[$i]->attr['data']) && $token->attr['name'] == 'movie') {
+                if (!isset($this->objectStack[$i]->attr['data']) &&
+                    ($token->attr['name'] == 'movie' || $token->attr['name'] == 'src')) {
                     $this->objectStack[$i]->attr['data'] = $token->attr['value'];
                 }
                 // Check if the parameter is the correct value but has not

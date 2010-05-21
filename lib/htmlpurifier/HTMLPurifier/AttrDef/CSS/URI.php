@@ -47,7 +47,7 @@ class HTMLPurifier_AttrDef_CSS_URI extends HTMLPurifier_AttrDef_URI
         // URI at all
         $result = str_replace($keys, $values, $result);
 
-        return "url($result)";
+        return "url('$result')";
 
     }
 

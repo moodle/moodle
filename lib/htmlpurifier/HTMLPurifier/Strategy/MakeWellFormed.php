@@ -83,6 +83,7 @@ class HTMLPurifier_Strategy_MakeWellFormed extends HTMLPurifier_Strategy
             $this->injectors[] = $injector;
         }
         foreach ($custom_injectors as $injector) {
+            if (!$injector) continue;
             if (is_string($injector)) {
                 $injector = "HTMLPurifier_Injector_$injector";
                 $injector = new $injector;
@@ -217,6 +218,19 @@ class HTMLPurifier_Strategy_MakeWellFormed extends HTMLPurifier_Strategy
                         $autoclose = !isset($elements[$token->name]);
                     } else {
                         $autoclose = false;
+                    }
+
+                    if ($autoclose && $definition->info[$token->name]->wrap) {
+                        // check if this is actually a wrap (mmm wraps!)
+                        $wrapname = $definition->info[$token->name]->wrap;
+                        $wrapdef = $definition->info[$wrapname];
+                        $elements = $wrapdef->child->getAllowedElements($config);
+                        if (isset($elements[$token->name])) {
+                            $newtoken = new HTMLPurifier_Token_Start($wrapname);
+                            $this->insertBefore($newtoken);
+                            $reprocess = true;
+                            continue;
+                        }
                     }
 
                     $carryover = false;

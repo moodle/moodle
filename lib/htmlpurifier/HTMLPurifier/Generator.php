@@ -32,6 +32,17 @@ class HTMLPurifier_Generator
     private $_sortAttr;
 
     /**
+     * Cache of %Output.FlashCompat
+     */
+    private $_flashCompat;
+
+    /**
+     * Stack for keeping track of object information when outputting IE
+     * compatibility code.
+     */
+    private $_flashStack = array();
+
+    /**
      * Configuration for the generator
      */
     protected $config;
@@ -44,6 +55,7 @@ class HTMLPurifier_Generator
         $this->config = $config;
         $this->_scriptFix = $config->get('Output.CommentScriptContents');
         $this->_sortAttr = $config->get('Output.SortAttr');
+        $this->_flashCompat = $config->get('Output.FlashCompat');
         $this->_def = $config->getHTMLDefinition();
         $this->_xhtml = $this->_def->doctype->xml;
     }
@@ -104,12 +116,41 @@ class HTMLPurifier_Generator
 
         } elseif ($token instanceof HTMLPurifier_Token_Start) {
             $attr = $this->generateAttributes($token->attr, $token->name);
+            if ($this->_flashCompat) {
+                if ($token->name == "object") {
+                    $flash = new stdclass();
+                    $flash->attr = $token->attr;
+                    $flash->param = array();
+                    $this->_flashStack[] = $flash;
+                }
+            }
             return '<' . $token->name . ($attr ? ' ' : '') . $attr . '>';
 
         } elseif ($token instanceof HTMLPurifier_Token_End) {
-            return '</' . $token->name . '>';
+            $_extra = '';
+            if ($this->_flashCompat) {
+                if ($token->name == "object" && !empty($this->_flashStack)) {
+                    $flash = array_pop($this->_flashStack);
+                    $compat_token = new HTMLPurifier_Token_Empty("embed");
+                    foreach ($flash->attr as $name => $val) {
+                        if ($name == "classid") continue;
+                        if ($name == "type") continue;
+                        if ($name == "data") $name = "src";
+                        $compat_token->attr[$name] = $val;
+                    }
+                    foreach ($flash->param as $name => $val) {
+                        if ($name == "movie") $name = "src";
+                        $compat_token->attr[$name] = $val;
+                    }
+                    $_extra = "<!--[if IE]>".$this->generateFromToken($compat_token)."<![endif]-->";
+                }
+            }
+            return $_extra . '</' . $token->name . '>';
 
         } elseif ($token instanceof HTMLPurifier_Token_Empty) {
+            if ($this->_flashCompat && $token->name == "param" && !empty($this->_flashStack)) {
+                $this->_flashStack[count($this->_flashStack)-1]->param[$token->attr['name']] = $token->attr['value'];
+            }
             $attr = $this->generateAttributes($token->attr, $token->name);
              return '<' . $token->name . ($attr ? ' ' : '') . $attr .
                 ( $this->_xhtml ? ' /': '' ) // <br /> v. <br>

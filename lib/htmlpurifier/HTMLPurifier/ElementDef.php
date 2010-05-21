@@ -98,6 +98,13 @@ class HTMLPurifier_ElementDef
     public $autoclose = array();
 
     /**
+     * If a foreign element is found in this element, test if it is
+     * allowed by this sub-element; if it is, instead of closing the
+     * current element, place it inside this element.
+     */
+    public $wrap;
+
+    /**
      * Whether or not this is a formatting element affected by the
      * "Active Formatting Elements" algorithm.
      */
