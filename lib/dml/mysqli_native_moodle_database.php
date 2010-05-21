@@ -179,7 +179,7 @@ class mysqli_native_moodle_database extends moodle_database {
         // If available, enforce strict mode for the session. That guaranties
         // standard behaviour under some situations, avoiding some MySQL nasty
         // habits like truncating data or performing some transparent cast losses.
-        // With strict mode enforced, Moodle DB layer will be consistenly throwing
+        // With strict mode enforced, Moodle DB layer will be consistently throwing
         // the corresponding exceptions as expected.
         $si = $this->get_server_info();
         if (version_compare($si['version'], '5.0.2', '>=')) {
@@ -201,7 +201,7 @@ class mysqli_native_moodle_database extends moodle_database {
      * Do NOT use connect() again, create a new instance if needed.
      */
     public function dispose() {
-        parent::dispose(); // Call parent dispose to write/close session and other common stuff before clossing conn
+        parent::dispose(); // Call parent dispose to write/close session and other common stuff before closing connection
         if ($this->mysqli) {
             $this->mysqli->close();
             $this->mysqli = null;
@@ -289,7 +289,7 @@ class mysqli_native_moodle_database extends moodle_database {
     }
 
     /**
-     * Returns datailed information about columns in table. This information is cached internally.
+     * Returns detailed information about columns in table. This information is cached internally.
      * @param string $table name
      * @param bool $usecache
      * @return array array of database_column_info objects indexed with column names
@@ -957,7 +957,7 @@ class mysqli_native_moodle_database extends moodle_database {
     }
 
     /**
-     * Does this driver suppoer regex syntax when searching
+     * Does this driver support regex syntax when searching
      */
     public function sql_regex_supported() {
         return true;

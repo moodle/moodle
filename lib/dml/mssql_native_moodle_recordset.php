@@ -16,7 +16,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * MSSQL specific recorset.
+ * MSSQL specific recordset.
  *
  * @package    moodlecore
  * @subpackage DML
