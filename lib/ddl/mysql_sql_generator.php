@@ -30,7 +30,7 @@ require_once($CFG->libdir.'/ddl/sql_generator.php');
 
 /// This class generate SQL code to be used against MySQL
 /// It extends XMLDBgenerator so everything can be
-/// overriden as needed to generate correct SQL.
+/// overridden as needed to generate correct SQL.
 
 class mysql_sql_generator extends sql_generator {
 
@@ -67,13 +67,13 @@ class mysql_sql_generator extends sql_generator {
     public $alter_column_sql = 'ALTER TABLE TABLENAME MODIFY COLUMN COLUMNSPECS'; //The SQL template to alter columns
 
     public $drop_index_sql = 'ALTER TABLE TABLENAME DROP INDEX INDEXNAME'; //SQL sentence to drop one index
-                                                               //TABLENAME, INDEXNAME are dinamically replaced
+                                                               //TABLENAME, INDEXNAME are dynamically replaced
 
     public $rename_index_sql = null; //SQL sentence to rename one index (MySQL doesn't support this!)
-                                      //TABLENAME, OLDINDEXNAME, NEWINDEXNAME are dinamically replaced
+                                      //TABLENAME, OLDINDEXNAME, NEWINDEXNAME are dynamically replaced
 
     public $rename_key_sql = null; //SQL sentence to rename one key (MySQL doesn't support this!)
-                                      //TABLENAME, OLDKEYNAME, NEWKEYNAME are dinamically replaced
+                                      //TABLENAME, OLDKEYNAME, NEWKEYNAME are dynamically replaced
 
     /**
      * Reset a sequence to the id field of a table.
@@ -117,7 +117,7 @@ class mysql_sql_generator extends sql_generator {
     }
 
     /**
-     * Given one XMLDB Type, lenght and decimals, returns the DB proper SQL type
+     * Given one XMLDB Type, length and decimals, returns the DB proper SQL type
      */
     public function getTypeSQL($xmldb_type, $xmldb_length=null, $xmldb_decimals=null) {
 
@@ -204,7 +204,7 @@ class mysql_sql_generator extends sql_generator {
     }
 
     /**
-     * Given one xmldb_table and one xmldb_field, return the SQL statements needded to create its enum
+     * Given one xmldb_table and one xmldb_field, return the SQL statements needed to create its enum
      * (usually invoked from getModifyEnumSQL()
      */
     public function getCreateEnumSQL($xmldb_table, $xmldb_field) {
@@ -213,7 +213,7 @@ class mysql_sql_generator extends sql_generator {
     }
 
     /**
-     * Given one xmldb_table and one xmldb_field, return the SQL statements needded to drop its enum
+     * Given one xmldb_table and one xmldb_field, return the SQL statements needed to drop its enum
      * (usually invoked from getModifyEnumSQL()
      *
      * TODO: Moodle 2.1 - drop in Moodle 2.1
@@ -229,7 +229,7 @@ class mysql_sql_generator extends sql_generator {
     }
 
     /**
-     * Given one xmldb_table and one xmldb_field, return the SQL statements needded to create its default
+     * Given one xmldb_table and one xmldb_field, return the SQL statements needed to create its default
      * (usually invoked from getModifyDefaultSQL()
      */
     public function getCreateDefaultSQL($xmldb_table, $xmldb_field) {
@@ -241,7 +241,7 @@ class mysql_sql_generator extends sql_generator {
     /**
      * Given one correct xmldb_field and the new name, returns the SQL statements
      * to rename it (inside one array)
-     * MySQL is pretty diferent from the standard to justify this oveloading
+     * MySQL is pretty different from the standard to justify this overloading
      */
     public function getRenameFieldSQL($xmldb_table, $xmldb_field, $newname) {
 
@@ -259,7 +259,7 @@ class mysql_sql_generator extends sql_generator {
     }
 
     /**
-     * Given one xmldb_table and one xmldb_field, return the SQL statements needded to drop its default
+     * Given one xmldb_table and one xmldb_field, return the SQL statements needed to drop its default
      * (usually invoked from getModifyDefaultSQL()
      */
     public function getDropDefaultSQL($xmldb_table, $xmldb_field) {
@@ -282,7 +282,7 @@ class mysql_sql_generator extends sql_generator {
     }
 
     /**
-     * Given one xmldb_table returns one array with all the check constrainsts
+     * Given one xmldb_table returns one array with all the check constraints
      * in the table (fetched from DB)
      * Optionally the function allows one xmldb_field to be specified in
      * order to return only the check constraints belonging to one field.

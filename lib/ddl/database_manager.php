@@ -17,7 +17,7 @@
 
 
 /**
- * Dtabase manager instance is responsible for all database structure
+ * Database manager instance is responsible for all database structure
  * modifications.
  *
  * @package    moodlecore
@@ -29,7 +29,7 @@
  */
 
 /**
- * Dtabase manager instance is responsible for all database structure
+ * Database manager instance is responsible for all database structure
  * modifications. It is using db specific generators to find out
  * the correct SQL syntax to do that.
  */
@@ -213,9 +213,9 @@ class database_manager {
 
     /**
      * Given one xmldb_field, the function returns the name of the check constraint in DB (if exists)
-     * of false if it doesn't exist. Note that XMLDB limits the number of check constrainst per field
+     * of false if it doesn't exist. Note that XMLDB limits the number of check constraints per field
      * to 1 "enum-like" constraint. So, if more than one is returned, only the first one will be
-     * retrieved by this funcion.
+     * retrieved by this function.
      *
      * TODO: Moodle 2.1 - Drop find_check_constraint_name()
      *
@@ -289,7 +289,7 @@ class database_manager {
     ///       columns, reftable and refcolumns
 
     /// So all we do is to return the official name of the requested key without any confirmation!)
-    /// One exception, harcoded primary constraint names
+    /// One exception, hardcoded primary constraint names
         if ($this->generator->primary_key_name && $xmldb_key->getType() == XMLDB_KEY_PRIMARY) {
             return $this->generator->primary_key_name;
         } else {
@@ -306,7 +306,7 @@ class database_manager {
                     $suffix = 'fk';
                     break;
             }
-        /// And simply, return the oficial name
+        /// And simply, return the official name
             return $this->generator->getNameForObject($xmldb_table->getName(), implode(', ', $xmldb_key->getFields()), $suffix);
         }
     }
@@ -349,7 +349,7 @@ class database_manager {
 
     /**
      * This function will drop the table passed as argument
-     * and all the associated objects (keys, indexes, constaints, sequences, triggers)
+     * and all the associated objects (keys, indexes, constraints, sequences, triggers)
      * will be dropped too.
      *
      * @param xmldb_table table object (just the name is mandatory)

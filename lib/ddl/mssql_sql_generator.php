@@ -30,7 +30,7 @@ require_once($CFG->libdir.'/ddl/sql_generator.php');
 
 /// This class generate SQL code to be used against MSSQL
 /// It extends XMLDBgenerator so everything can be
-/// overriden as needed to generate correct SQL.
+/// overridden as needed to generate correct SQL.
 
 class mssql_sql_generator extends sql_generator {
 
@@ -58,19 +58,19 @@ class mssql_sql_generator extends sql_generator {
                                   //MySQL CONCAT function will be use
 
     public $rename_table_sql = "sp_rename 'OLDNAME', 'NEWNAME'"; //SQL sentence to rename one table, both
-                                  //OLDNAME and NEWNAME are dinamically replaced
+                                  //OLDNAME and NEWNAME are dynamically replaced
 
     public $rename_column_sql = "sp_rename 'TABLENAME.OLDFIELDNAME', 'NEWFIELDNAME', 'COLUMN'";
-                                      ///TABLENAME, OLDFIELDNAME and NEWFIELDNAME are dianmically replaced
+                                      ///TABLENAME, OLDFIELDNAME and NEWFIELDNAME are dyanmically replaced
 
     public $drop_index_sql = 'DROP INDEX TABLENAME.INDEXNAME'; //SQL sentence to drop one index
-                                                               //TABLENAME, INDEXNAME are dinamically replaced
+                                                               //TABLENAME, INDEXNAME are dynamically replaced
 
     public $rename_index_sql = "sp_rename 'TABLENAME.OLDINDEXNAME', 'NEWINDEXNAME', 'INDEX'"; //SQL sentence to rename one index
-                                      //TABLENAME, OLDINDEXNAME, NEWINDEXNAME are dinamically replaced
+                                      //TABLENAME, OLDINDEXNAME, NEWINDEXNAME are dynamically replaced
 
     public $rename_key_sql = null; //SQL sentence to rename one key
-                                          //TABLENAME, OLDKEYNAME, NEWKEYNAME are dinamically replaced
+                                          //TABLENAME, OLDKEYNAME, NEWKEYNAME are dynamically replaced
 
     /**
      * Reset a sequence to the id field of a table.
@@ -93,7 +93,7 @@ class mssql_sql_generator extends sql_generator {
 
     /**
      * Given one xmldb_table, returns it's correct name, depending of all the parametrization
-     * Overriden to allow change of names in temp tables
+     * Overridden to allow change of names in temp tables
      *
      * @param xmldb_table table whose name we want
      * @param boolean to specify if the name must be quoted (if reserved word, only!)
@@ -197,7 +197,7 @@ class mssql_sql_generator extends sql_generator {
     }
 
     /**
-     * Given one xmldb_table and one xmldb_field, return the SQL statements needded to drop the field from the table
+     * Given one xmldb_table and one xmldb_field, return the SQL statements needed to drop the field from the table
      * MSSQL overwrites the standard sentence because it needs to do some extra work dropping the default and
      * check constraints
      */
@@ -238,9 +238,9 @@ class mssql_sql_generator extends sql_generator {
     /// that we aren't trying to rename one "id" field. Although it could be
     /// implemented (if adding the necessary code to rename sequences, defaults,
     /// triggers... and so on under each getRenameFieldExtraSQL() function, it's
-    /// better to forbide it, mainly because this field is the default PK and
+    /// better to forbid it, mainly because this field is the default PK and
     /// in the future, a lot of FKs can be pointing here. So, this field, more
-    /// or less, must be considered inmutable!
+    /// or less, must be considered immutable!
         if ($xmldb_field->getName() == 'id') {
             return array();
         }
@@ -278,7 +278,7 @@ class mssql_sql_generator extends sql_generator {
     }
 
     /**
-     * Given one xmldb_table and one xmldb_field, return the SQL statements needded to alter the field in the table
+     * Given one xmldb_table and one xmldb_field, return the SQL statements needed to alter the field in the table
      */
     public function getAlterFieldSQL($xmldb_table, $xmldb_field) {
 
@@ -311,7 +311,7 @@ class mssql_sql_generator extends sql_generator {
             $typechanged = false;
         }
 
-    /// If the new field (and old) specs are for integer, let's be a bit more specific diferentiating
+    /// If the new field (and old) specs are for integer, let's be a bit more specific differentiating
     /// types of integers. Else, some combinations can cause things like MDL-21868
         if ($xmldb_field->getType() == XMLDB_TYPE_INTEGER && $oldmetatype == 'I') {
             if ($xmldb_field->getLength() > 9) { // Convert our new lenghts to detailed meta types
@@ -411,7 +411,7 @@ class mssql_sql_generator extends sql_generator {
     }
 
     /**
-     * Given one xmldb_table and one xmldb_field, return the SQL statements needded to modify the default of the field in the table
+     * Given one xmldb_table and one xmldb_field, return the SQL statements needed to modify the default of the field in the table
      */
     public function getModifyDefaultSQL($xmldb_table, $xmldb_field) {
     /// MSSQL is a bit special with default constraints because it implements them as external constraints so
@@ -421,7 +421,7 @@ class mssql_sql_generator extends sql_generator {
 
     /// Decide if we are going to create/modify or to drop the default
         if ($xmldb_field->getDefault() === null) {
-            $results = $this->getDropDefaultSQL($xmldb_table, $xmldb_field); //Drop but, under some circumptances, re-enable
+            $results = $this->getDropDefaultSQL($xmldb_table, $xmldb_field); //Drop but, under some circumstances, re-enable
             $default_clause = $this->getDefaultClause($xmldb_field);
             if ($default_clause) { //If getDefaultClause() it must have one default, create it
                 $results = array_merge($results, $this->getCreateDefaultSQL($xmldb_table, $xmldb_field)); //Create/modify
@@ -435,7 +435,7 @@ class mssql_sql_generator extends sql_generator {
     }
 
     /**
-     * Given one xmldb_table and one xmldb_field, return the SQL statements needded to drop its enum
+     * Given one xmldb_table and one xmldb_field, return the SQL statements needed to drop its enum
      * (usually invoked from getModifyEnumSQL()
      *
      * TODO: Moodle 2.1 - drop in Moodle 2.1
@@ -454,7 +454,7 @@ class mssql_sql_generator extends sql_generator {
     }
 
     /**
-     * Given one xmldb_table and one xmldb_field, return the SQL statements needded to create its default
+     * Given one xmldb_table and one xmldb_field, return the SQL statements needed to create its default
      * (usually invoked from getModifyDefaultSQL()
      */
     public function getCreateDefaultSQL($xmldb_table, $xmldb_field) {
@@ -478,7 +478,7 @@ class mssql_sql_generator extends sql_generator {
     }
 
     /**
-     * Given one xmldb_table and one xmldb_field, return the SQL statements needded to drop its default
+     * Given one xmldb_table and one xmldb_field, return the SQL statements needed to drop its default
      * (usually invoked from getModifyDefaultSQL()
      */
     public function getDropDefaultSQL($xmldb_table, $xmldb_field) {
@@ -521,7 +521,7 @@ class mssql_sql_generator extends sql_generator {
     }
 
     /**
-     * Given one xmldb_table returns one array with all the check constrainsts
+     * Given one xmldb_table returns one array with all the check constraints
      * in the table (fetched from DB)
      * Optionally the function allows one xmldb_field to be specified in
      * order to return only the check constraints belonging to one field.
@@ -557,7 +557,7 @@ class mssql_sql_generator extends sql_generator {
         /// Lets clean a bit each constraint description, looking for the filtered field
             foreach ($results as $key => $result) {
                 $description = trim(preg_replace('/[\(\)]/', '',  $result->description));   // Parenthesis out & trim
-                /// description starts by [$filter] assume it's a constraint beloging to the field
+                /// description starts by [$filter] assume it's a constraint belonging to the field
                 if (preg_match("/^\[{$filter}\]/i", $description)) {
                     $filtered_results[$key] = $result;
                 }
