@@ -20,7 +20,7 @@ $capabilities = array(
     'gradeimport/xml:view' => array(
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSE,
-        'legacy' => array(
+        'archetypes' => array(
             'editingteacher' => CAP_ALLOW,
             'manager' => CAP_ALLOW
         )
@@ -29,7 +29,7 @@ $capabilities = array(
     'gradeimport/xml:publish' => array(
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSE,
-        'legacy' => array(
+        'archetypes' => array(
             'manager' => CAP_ALLOW
         )
     )

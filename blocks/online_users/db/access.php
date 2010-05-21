@@ -29,7 +29,7 @@ $capabilities = array(
 
         'captype' => 'read',
         'contextlevel' => CONTEXT_BLOCK,
-        'legacy' => array(
+        'archetypes' => array(
             'user' => CAP_ALLOW,
             'guest' => CAP_ALLOW,
             'student' => CAP_ALLOW,

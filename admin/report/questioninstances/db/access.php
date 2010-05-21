@@ -28,7 +28,7 @@ $capabilities = array(
     'report/questioninstances:view' => array(
         'captype' => 'read',
         'contextlevel' => CONTEXT_SYSTEM,
-        'legacy' => array(
+        'archetypes' => array(
             'manager' => CAP_ALLOW
         ),
 
