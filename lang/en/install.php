@@ -321,7 +321,6 @@ If your site is accessible both from intranet and Internet use the public addres
 If the address is not correct please change the URL in your browser to restart installation with a different value.';
 $string['pathsunsecuredataroot'] = 'Dataroot location is not secure';
 $string['pathswrongadmindir'] = 'Admin directory does not exist';
-$string['pathswrongdirroot'] = 'Incorrect dirroot localtion';
 $string['pgsqlextensionisnotpresentinphp'] = 'PHP has not been properly configured with the PGSQL extension so that it can communicate with PostgreSQL.  Please check your php.ini file or recompile PHP.';
 $string['phpextension'] = '{$a} PHP extension';
 $string['phpversion'] = 'PHP version';
