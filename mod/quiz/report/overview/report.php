@@ -171,7 +171,7 @@ class quiz_overview_report extends quiz_default_report {
 
         if ($groupmode = groups_get_activity_groupmode($cm)) {   // Groups are being used
             if (!$table->is_downloading()) {
-                groups_print_activity_menu($cm, $reporturl->out(treu, $displayoptions));
+                groups_print_activity_menu($cm, $reporturl->out(true, $displayoptions));
             }
         }
 
