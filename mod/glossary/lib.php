@@ -475,6 +475,14 @@ function glossary_rating_permissions($options) {
 }
 
 /**
+ * Returns the names of the table and columns necessary to check items for ratings
+ * @return array an array containing the item table, item id and user id columns
+ */
+function glossary_rating_item_check_info() {
+    return array('glossary_entries','id','userid');
+}
+
+/**
  * Update activity grades
  *
  * @global object

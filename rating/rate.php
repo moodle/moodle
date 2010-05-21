@@ -58,6 +58,11 @@ if ($context->contextlevel==CONTEXT_MODULE) {
     $rm = new rating_manager();
     $pluginpermissionsarray = $rm->get_plugin_permissions_array($context->id, $plugintype, $pluginname);
     $pluginrateallowed = $pluginpermissionsarray['rate'];
+
+    if ($pluginrateallowed) {
+        //check the item exists and isn't owned by the current user
+        $pluginrateallowed = $rm->check_item_and_owner($plugintype, $pluginname, $itemid);
+    }
 }
 
 if (!$pluginrateallowed || !has_capability('moodle/rating:rate',$context)) {
@@ -67,8 +72,6 @@ if (!$pluginrateallowed || !has_capability('moodle/rating:rate',$context)) {
     die();
 }
 
-$userid = $USER->id;
-
 $PAGE->set_url('/lib/rate.php', array(
         'contextid'=>$context->id
     ));
@@ -77,7 +80,7 @@ $ratingoptions = new stdclass;
 $ratingoptions->context = $context;
 $ratingoptions->itemid  = $itemid;
 $ratingoptions->scaleid = $scaleid;
-$ratingoptions->userid  = $userid;
+$ratingoptions->userid  = $USER->id;
 $rating = new rating($ratingoptions);
 
 $rating->update_rating($userrating);

@@ -557,6 +557,13 @@ class rating_manager {
         return $aggregatestr;
     }
 
+    /**
+    * Looks for a callback and retrieves permissions from the plugin whose items are being rated
+    * @param int $contextid The current context id
+    * @param string plugintype the type of plugin ie 'mod'
+    * @param string pluginname the name of the plugin ie 'forum'
+    * @return array rating related permissions
+    */
     public function get_plugin_permissions_array($contextid, $plugintype=null, $pluginname=null) {
         $pluginpermissionsarray = null;
         $defaultpluginpermissions = array('rate'=>true,'view'=>true,'viewany'=>true,'viewall'=>true);//all true == rely on system level permissions if no plugin callback is defined
@@ -566,5 +573,30 @@ class rating_manager {
             $pluginpermissionsarray = $defaultpluginpermissions;
         }
         return $pluginpermissionsarray;
+    }
+
+    /**
+    * Checks if the item exists and is NOT owned by the current owner. Uses a callback to find out what table to look in.
+    * @param string plugintype the type of plugin ie 'mod'
+    * @param string pluginname the name of the plugin ie 'forum'
+    * @return boolean True if the callback doesn't exist. True if the item exists and doesn't belong to the current user. False otherwise.
+    */
+    public function check_item_and_owner($plugintype, $pluginname, $itemid) {
+        global $DB, $USER;
+
+        list($tablename,$itemidcol,$useridcol) = plugin_callback($plugintype, $pluginname, 'rating', 'item_check_info');
+
+        if (!empty($tablename)) {
+            $item = $DB->get_record($tablename, array($itemidcol=>$itemid), $useridcol);
+            if ($item) {
+                if ($item->userid!=$USER->id) {
+                    return true;
+                }
+            }
+            
+            return false;//item doesn't exist or belongs to the current user
+        } else {
+            return true;//callback doesn't exist
+        }
     }
 }//end rating_manager class definition

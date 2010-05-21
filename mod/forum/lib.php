@@ -3410,6 +3410,14 @@ function forum_rating_permissions($contextid) {
     }
 }
 
+/**
+ * Returns the names of the table and columns necessary to check items for ratings
+ * @return array an array containing the item table, item id and user id columns
+ */
+function forum_rating_item_check_info() {
+    return array('forum_posts','id','userid');
+}
+
 
 /**
  * This function prints the overview of a discussion in the forum listing.

@@ -1359,6 +1359,14 @@ function data_rating_permissions($options) {
     }
 }
 
+/**
+ * Returns the names of the table and columns necessary to check items for ratings
+ * @return array an array containing the item table, item id and user id columns
+ */
+function data_rating_item_check_info() {
+    return array('data_records','id','userid');
+}
+
 
 /**
  * function that takes in the current data, number of items per page,
