@@ -3411,8 +3411,16 @@ function get_default_capabilities($archetype) {
         }
     }
     foreach($alldefs as $name=>$def) {
-        if (isset($def['legacy'][$archetype])) {
-            $defaults[$name] = $def['legacy'][$archetype];
+        // Use array 'archetypes if available. Only if not specified, use 'legacy'.
+        if (isset($def['archetypes'])) {
+            if (isset($def['archetypes'][$archetype])) {
+                $defaults[$name] = $def['archetypes'][$archetype];
+            }
+        // 'legacy' is for backward compatibility with 1.9 access.php
+        } else {
+            if (isset($def['legacy'][$archetype])) {
+                $defaults[$name] = $def['legacy'][$archetype];
+            }
         }
     }
 
@@ -3526,7 +3534,10 @@ function update_capabilities($component='moodle') {
                     }
                 }
             }
-        // we ignore legacy key if we have cloned permissions
+        // we ignore archetype key if we have cloned permissions
+        } else if (isset($capdef['archetypes']) && is_array($capdef['archetypes'])) {
+            assign_legacy_capabilities($capname, $capdef['archetypes']);
+        // 'legacy' is for backward compatibility with 1.9 access.php
         } else if (isset($capdef['legacy']) && is_array($capdef['legacy'])) {
             assign_legacy_capabilities($capname, $capdef['legacy']);
         }
