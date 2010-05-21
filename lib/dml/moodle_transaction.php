@@ -73,7 +73,7 @@ class moodle_transaction {
     /**
      * Commit delegated transaction.
      * The real database commit SQL is executed
-     * only after commiting all delegated transactions.
+     * only after committing all delegated transactions.
      *
      * Incorrect order of nested commits or rollback
      * at any level is resulting in rollback of SQL transaction.

@@ -18,7 +18,7 @@
 /**
  * Generic temptables object store
  *
- * Provides support to databases lacking some "expeted behaviour" related
+ * Provides support to databases lacking some "expected behaviour" related
  * with some operations with temporary tables like:
  *
  *   - databases not retrieving temp tables from information schema tables (mysql)
@@ -33,7 +33,7 @@
  * of doing temporary tables support 100% cross-db and transparent within the DB API.
  *
  * Only drivers needing it will use this store. Neither moodle_database (abstract) or
- * databses like postgres need this, because they don't lack any temp functionality.º:w
+ * databases like postgres need this, because they don't lack any temp functionality.º:w
 
  *
  * @package    moodlecore
@@ -124,7 +124,7 @@ class moodle_temptables {
         // We shouldn't have any temp table registered at the end of the script.
         // So we error_log that and, at the same time, drop all the pending temptables
         if ($temptables = $this->get_temptables()) {
-            error_log('Potential coding error - existing temptables found when dispossing database. Must be dropped!');
+            error_log('Potential coding error - existing temptables found when disposing database. Must be dropped!');
             foreach ($temptables as $temptable) {
                  $this->mdb->get_manager()->drop_temp_table(new xmldb_table($temptable));
             }

@@ -167,7 +167,7 @@ class mssql_native_moodle_database extends moodle_database {
         $this->free_result($result);
 
         // Force ANSI nulls so the NULL check was done by IS NULL and NOT IS NULL
-        // instead of equal(=) and distinct(<>) simbols
+        // instead of equal(=) and distinct(<>) symbols
         $sql = "SET ANSI_NULLS ON";
         $this->query_start($sql, null, SQL_QUERY_AUX);
         $result = mssql_query($sql, $this->mssql);
@@ -200,7 +200,7 @@ class mssql_native_moodle_database extends moodle_database {
 
         $this->free_result($result);
 
-        // Connection stabilished and configured, going to instantiate the temptables controller
+        // Connection stabilised and configured, going to instantiate the temptables controller
         $this->temptables = new mssql_native_moodle_temptables($this);
 
         return true;
@@ -212,7 +212,7 @@ class mssql_native_moodle_database extends moodle_database {
      * Do NOT use connect() again, create a new instance if needed.
      */
     public function dispose() {
-        parent::dispose(); // Call parent dispose to write/close session and other common stuff before clossing conn
+        parent::dispose(); // Call parent dispose to write/close session and other common stuff before closing connection
         if ($this->mssql) {
             mssql_close($this->mssql);
             $this->mssql = null;
@@ -676,7 +676,7 @@ class mssql_native_moodle_database extends moodle_database {
         $limitfrom = ($limitfrom < 0) ? 0 : $limitfrom;
         $limitnum  = ($limitnum < 0)  ? 0 : $limitnum;
         if ($limitfrom or $limitnum) {
-            if ($limitnum >= 1) { // Only apply TOP clause if we have any limitnum (limitfrom offset is hadled later)
+            if ($limitnum >= 1) { // Only apply TOP clause if we have any limitnum (limitfrom offset is handled later)
                 $fetch = $limitfrom + $limitnum;
                 $sql = preg_replace('/^([\s(])*SELECT( DISTINCT)?(?!\s*TOP\s*\()/i',
                                     "\\1SELECT\\2 TOP $fetch", $sql);
@@ -1120,8 +1120,8 @@ class mssql_native_moodle_database extends moodle_database {
      * NOTE: this was originally returning only function name
      *
      * @param string $expr some string field, no aggregates
-     * @param mixed $start integer or expresion evaluating to int
-     * @param mixed $length optional integer or expresion evaluating to int
+     * @param mixed $start integer or expression evaluating to int
+     * @param mixed $length optional integer or expression evaluating to int
      * @return string sql fragment
      */
     public function sql_substr($expr, $start, $length=false) {
