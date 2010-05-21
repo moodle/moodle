@@ -77,7 +77,6 @@ $string['aggregationcoefextraweight_link'] = 'grade/aggregation';
 $string['aggregationcoefweight'] = 'Item weight';
 $string['aggregationcoefweight_help'] = 'The item weight is used in the category aggregation to influence the importance of the item compared with other grade items in the same category.';
 $string['aggregationcoefweight_link'] = 'grade/aggregation';
-$string['aggregationcoefweighthelp'] = 'Weight applied to all grades in this grade item during aggregation with other grade items.';
 $string['aggregationhelp'] = 'Strategy used to aggregate grades across all students in a course.';
 $string['aggregationposition'] = 'Aggregation position';
 $string['aggregationposition_help'] = 'This setting determines whether the category and course total columns are displayed first or last in the gradebook reports.';
