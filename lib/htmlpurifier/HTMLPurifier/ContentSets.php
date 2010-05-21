@@ -1,94 +1,98 @@
 <?php
 
-// common defs that we'll support by default
-require_once 'HTMLPurifier/ChildDef.php';
-require_once 'HTMLPurifier/ChildDef/Empty.php';
-require_once 'HTMLPurifier/ChildDef/Required.php';
-require_once 'HTMLPurifier/ChildDef/Optional.php';
-require_once 'HTMLPurifier/ChildDef/Custom.php';
-
-// NOT UNIT TESTED!!!
-
+/**
+ * @todo Unit test
+ */
 class HTMLPurifier_ContentSets
 {
-    
+
     /**
      * List of content set strings (pipe seperators) indexed by name.
-     * @public
      */
-    var $info = array();
-    
+    public $info = array();
+
     /**
      * List of content set lookups (element => true) indexed by name.
      * @note This is in HTMLPurifier_HTMLDefinition->info_content_sets
-     * @public
      */
-    var $lookup = array();
-    
+    public $lookup = array();
+
     /**
      * Synchronized list of defined content sets (keys of info)
      */
-    var $keys = array();
+    protected $keys = array();
     /**
      * Synchronized list of defined content values (values of info)
      */
-    var $values = array();
-    
+    protected $values = array();
+
     /**
      * Merges in module's content sets, expands identifiers in the content
      * sets and populates the keys, values and lookup member variables.
      * @param $modules List of HTMLPurifier_HTMLModule
      */
-    function HTMLPurifier_ContentSets($modules) {
+    public function __construct($modules) {
         if (!is_array($modules)) $modules = array($modules);
         // populate content_sets based on module hints
         // sorry, no way of overloading
         foreach ($modules as $module_i => $module) {
             foreach ($module->content_sets as $key => $value) {
-                if (isset($this->info[$key])) {
+                $temp = $this->convertToLookup($value);
+                if (isset($this->lookup[$key])) {
                     // add it into the existing content set
-                    $this->info[$key] = $this->info[$key] . ' | ' . $value;
+                    $this->lookup[$key] = array_merge($this->lookup[$key], $temp);
                 } else {
-                    $this->info[$key] = $value;
+                    $this->lookup[$key] = $temp;
                 }
             }
         }
-        // perform content_set expansions
-        $this->keys = array_keys($this->info);
-        foreach ($this->info as $i => $set) {
-            // only performed once, so infinite recursion is not
-            // a problem
-            $this->info[$i] =
-                str_replace(
-                    $this->keys,
-                    // must be recalculated each time due to
-                    // changing substitutions
-                    array_values($this->info),
-                $set);
+        $old_lookup = false;
+        while ($old_lookup !== $this->lookup) {
+            $old_lookup = $this->lookup;
+            foreach ($this->lookup as $i => $set) {
+                $add = array();
+                foreach ($set as $element => $x) {
+                    if (isset($this->lookup[$element])) {
+                        $add += $this->lookup[$element];
+                        unset($this->lookup[$i][$element]);
+                    }
+                }
+                $this->lookup[$i] += $add;
+            }
         }
+
+        foreach ($this->lookup as $key => $lookup) {
+            $this->info[$key] = implode(' | ', array_keys($lookup));
+        }
+        $this->keys   = array_keys($this->info);
         $this->values = array_values($this->info);
-        
-        // generate lookup tables
-        foreach ($this->info as $name => $set) {
-            $this->lookup[$name] = $this->convertToLookup($set);
-        }
     }
-    
+
     /**
      * Accepts a definition; generates and assigns a ChildDef for it
      * @param $def HTMLPurifier_ElementDef reference
      * @param $module Module that defined the ElementDef
      */
-    function generateChildDef(&$def, $module) {
+    public function generateChildDef(&$def, $module) {
         if (!empty($def->child)) return; // already done!
         $content_model = $def->content_model;
         if (is_string($content_model)) {
-            $def->content_model = str_replace(
-                $this->keys, $this->values, $content_model);
+            // Assume that $this->keys is alphanumeric
+            $def->content_model = preg_replace_callback(
+                '/\b(' . implode('|', $this->keys) . ')\b/',
+                array($this, 'generateChildDefCallback'),
+                $content_model
+            );
+            //$def->content_model = str_replace(
+            //    $this->keys, $this->values, $content_model);
         }
         $def->child = $this->getChildDef($def, $module);
     }
-    
+
+    public function generateChildDefCallback($matches) {
+        return $this->info[$matches[0]];
+    }
+
     /**
      * Instantiates a ChildDef based on content_model and content_model_type
      * member variables in HTMLPurifier_ElementDef
@@ -97,7 +101,7 @@ class HTMLPurifier_ContentSets
      * @param $def HTMLPurifier_ElementDef to have ChildDef extracted
      * @return HTMLPurifier_ChildDef corresponding to ElementDef
      */
-    function getChildDef($def, $module) {
+    public function getChildDef($def, $module) {
         $value = $def->content_model;
         if (is_object($value)) {
             trigger_error(
@@ -130,14 +134,14 @@ class HTMLPurifier_ContentSets
         );
         return false;
     }
-    
+
     /**
      * Converts a string list of elements separated by pipes into
      * a lookup array.
      * @param $string List of elements
      * @return Lookup array of elements
      */
-    function convertToLookup($string) {
+    protected function convertToLookup($string) {
         $array = explode('|', str_replace(' ', '', $string));
         $ret = array();
         foreach ($array as $i => $k) {
@@ -145,6 +149,7 @@ class HTMLPurifier_ContentSets
         }
         return $ret;
     }
-    
+
 }
 
+// vim: et sw=4 sts=4

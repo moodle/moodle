@@ -1,8 +1,5 @@
 <?php
 
-require_once 'HTMLPurifier/AttrDef.php';
-require_once 'HTMLPurifier/CSSDefinition.php';
-
 /**
  * Validates the HTML attribute style, otherwise known as CSS.
  * @note We don't implement the whole CSS specification, so it might be
@@ -16,22 +13,28 @@ require_once 'HTMLPurifier/CSSDefinition.php';
  */
 class HTMLPurifier_AttrDef_CSS extends HTMLPurifier_AttrDef
 {
-    
-    function validate($css, $config, &$context) {
-        
+
+    public function validate($css, $config, $context) {
+
         $css = $this->parseCDATA($css);
-        
+
         $definition = $config->getCSSDefinition();
-        
+
         // we're going to break the spec and explode by semicolons.
         // This is because semicolon rarely appears in escaped form
         // Doing this is generally flaky but fast
         // IT MIGHT APPEAR IN URIs, see HTMLPurifier_AttrDef_CSSURI
         // for details
-        
+
         $declarations = explode(';', $css);
         $propvalues = array();
-        
+
+        /**
+         * Name of the current CSS property being validated.
+         */
+        $property = false;
+        $context->register('CurrentCSSProperty', $property);
+
         foreach ($declarations as $declaration) {
             if (!$declaration) continue;
             if (!strpos($declaration, ':')) continue;
@@ -63,19 +66,22 @@ class HTMLPurifier_AttrDef_CSS extends HTMLPurifier_AttrDef
             if ($result === false) continue;
             $propvalues[$property] = $result;
         }
-        
+
+        $context->destroy('CurrentCSSProperty');
+
         // procedure does not write the new CSS simultaneously, so it's
         // slightly inefficient, but it's the only way of getting rid of
         // duplicates. Perhaps config to optimize it, but not now.
-        
+
         $new_declarations = '';
         foreach ($propvalues as $prop => $value) {
             $new_declarations .= "$prop:$value;";
         }
-        
+
         return $new_declarations ? $new_declarations : false;
-        
+
     }
-    
+
 }
 
+// vim: et sw=4 sts=4

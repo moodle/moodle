@@ -1,7 +1,5 @@
 <?php
 
-require_once 'HTMLPurifier/HTMLModule.php';
-
 /**
  * XHTML 1.1 Object Module, defines elements for generic object inclusion
  * @warning Users will commonly use <embed> to cater to legacy browsers: this
@@ -9,12 +7,13 @@ require_once 'HTMLPurifier/HTMLModule.php';
  */
 class HTMLPurifier_HTMLModule_Object extends HTMLPurifier_HTMLModule
 {
-    
-    var $name = 'Object';
-    
-    function setup($config) {
-        
-        $this->addElement('object', false, 'Inline', 'Optional: #PCDATA | Flow | param', 'Common', 
+
+    public $name = 'Object';
+    public $safe = false;
+
+    public function setup($config) {
+
+        $this->addElement('object', 'Inline', 'Optional: #PCDATA | Flow | param', 'Common',
             array(
                 'archive' => 'URI',
                 'classid' => 'URI',
@@ -31,7 +30,7 @@ class HTMLPurifier_HTMLModule_Object extends HTMLPurifier_HTMLModule
             )
         );
 
-        $this->addElement('param', false, false, 'Empty', false,
+        $this->addElement('param', false, 'Empty', false,
             array(
                 'id' => 'ID',
                 'name*' => 'Text',
@@ -40,8 +39,9 @@ class HTMLPurifier_HTMLModule_Object extends HTMLPurifier_HTMLModule
                 'valuetype' => 'Enum#data,ref,object'
            )
         );
-    
+
     }
-    
+
 }
 
+// vim: et sw=4 sts=4

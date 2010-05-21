@@ -1,30 +1,14 @@
 <?php
 
-require_once 'HTMLPurifier/HTMLModule/Tidy.php';
-
-require_once 'HTMLPurifier/TagTransform/Simple.php';
-require_once 'HTMLPurifier/TagTransform/Font.php';
-
-require_once 'HTMLPurifier/AttrTransform/BgColor.php';
-require_once 'HTMLPurifier/AttrTransform/BoolToCSS.php';
-require_once 'HTMLPurifier/AttrTransform/Border.php';
-require_once 'HTMLPurifier/AttrTransform/Name.php';
-require_once 'HTMLPurifier/AttrTransform/Length.php';
-require_once 'HTMLPurifier/AttrTransform/ImgSpace.php';
-require_once 'HTMLPurifier/AttrTransform/EnumToCSS.php';
-
-require_once 'HTMLPurifier/ChildDef/StrictBlockquote.php';
-
-class HTMLPurifier_HTMLModule_Tidy_XHTMLAndHTML4 extends
-      HTMLPurifier_HTMLModule_Tidy
+class HTMLPurifier_HTMLModule_Tidy_XHTMLAndHTML4 extends HTMLPurifier_HTMLModule_Tidy
 {
-    
-    function makeFixes() {
-        
+
+    public function makeFixes() {
+
         $r = array();
-        
+
         // == deprecated tag transforms ===================================
-        
+
         $r['font']   = new HTMLPurifier_TagTransform_Font();
         $r['menu']   = new HTMLPurifier_TagTransform_Simple('ul');
         $r['dir']    = new HTMLPurifier_TagTransform_Simple('ul');
@@ -32,10 +16,10 @@ class HTMLPurifier_HTMLModule_Tidy_XHTMLAndHTML4 extends
         $r['u']      = new HTMLPurifier_TagTransform_Simple('span', 'text-decoration:underline;');
         $r['s']      = new HTMLPurifier_TagTransform_Simple('span', 'text-decoration:line-through;');
         $r['strike'] = new HTMLPurifier_TagTransform_Simple('span', 'text-decoration:line-through;');
-        
+
         // == deprecated attribute transforms =============================
-        
-        $r['caption@align'] = 
+
+        $r['caption@align'] =
             new HTMLPurifier_AttrTransform_EnumToCSS('align', array(
                 // we're following IE's behavior, not Firefox's, due
                 // to the fact that no one supports caption-side:right,
@@ -46,7 +30,7 @@ class HTMLPurifier_HTMLModule_Tidy_XHTMLAndHTML4 extends
                 'top'    => 'caption-side:top;',
                 'bottom' => 'caption-side:bottom;' // not supported by IE
             ));
-        
+
         // @align for img -------------------------------------------------
         $r['img@align'] =
             new HTMLPurifier_AttrTransform_EnumToCSS('align', array(
@@ -56,7 +40,7 @@ class HTMLPurifier_HTMLModule_Tidy_XHTMLAndHTML4 extends
                 'middle' => 'vertical-align:middle;',
                 'bottom' => 'vertical-align:baseline;',
             ));
-        
+
         // @align for table -----------------------------------------------
         $r['table@align'] =
             new HTMLPurifier_AttrTransform_EnumToCSS('align', array(
@@ -64,7 +48,7 @@ class HTMLPurifier_HTMLModule_Tidy_XHTMLAndHTML4 extends
                 'center' => 'margin-left:auto;margin-right:auto;',
                 'right'  => 'float:right;'
             ));
-        
+
         // @align for hr -----------------------------------------------
         $r['hr@align'] =
             new HTMLPurifier_AttrTransform_EnumToCSS('align', array(
@@ -76,7 +60,7 @@ class HTMLPurifier_HTMLModule_Tidy_XHTMLAndHTML4 extends
                 'center' => 'margin-left:auto;margin-right:auto;text-align:center;',
                 'right'  => 'margin-left:auto;margin-right:0;text-align:right;'
             ));
-        
+
         // @align for h1, h2, h3, h4, h5, h6, p, div ----------------------
         // {{{
             $align_lookup = array();
@@ -90,18 +74,18 @@ class HTMLPurifier_HTMLModule_Tidy_XHTMLAndHTML4 extends
         $r['h5@align'] =
         $r['h6@align'] =
         $r['p@align']  =
-        $r['div@align'] = 
+        $r['div@align'] =
             new HTMLPurifier_AttrTransform_EnumToCSS('align', $align_lookup);
-        
+
         // @bgcolor for table, tr, td, th ---------------------------------
         $r['table@bgcolor'] =
         $r['td@bgcolor'] =
         $r['th@bgcolor'] =
             new HTMLPurifier_AttrTransform_BgColor();
-        
+
         // @border for img ------------------------------------------------
         $r['img@border'] = new HTMLPurifier_AttrTransform_Border();
-        
+
         // @clear for br --------------------------------------------------
         $r['br@clear'] =
             new HTMLPurifier_AttrTransform_EnumToCSS('clear', array(
@@ -110,19 +94,15 @@ class HTMLPurifier_HTMLModule_Tidy_XHTMLAndHTML4 extends
                 'all'   => 'clear:both;',
                 'none'  => 'clear:none;',
             ));
-        
+
         // @height for td, th ---------------------------------------------
-        $r['td@height'] = 
+        $r['td@height'] =
         $r['th@height'] =
             new HTMLPurifier_AttrTransform_Length('height');
-        
+
         // @hspace for img ------------------------------------------------
         $r['img@hspace'] = new HTMLPurifier_AttrTransform_ImgSpace('hspace');
-        
-        // @name for img, a -----------------------------------------------
-        $r['img@name'] = 
-        $r['a@name'] = new HTMLPurifier_AttrTransform_Name();
-        
+
         // @noshade for hr ------------------------------------------------
         // this transformation is not precise but often good enough.
         // different browsers use different styles to designate noshade
@@ -131,18 +111,18 @@ class HTMLPurifier_HTMLModule_Tidy_XHTMLAndHTML4 extends
                 'noshade',
                 'color:#808080;background-color:#808080;border:0;'
             );
-        
+
         // @nowrap for td, th ---------------------------------------------
-        $r['td@nowrap'] = 
+        $r['td@nowrap'] =
         $r['th@nowrap'] =
             new HTMLPurifier_AttrTransform_BoolToCSS(
                 'nowrap',
                 'white-space:nowrap;'
             );
-        
+
         // @size for hr  --------------------------------------------------
         $r['hr@size'] = new HTMLPurifier_AttrTransform_Length('size', 'height');
-        
+
         // @type for li, ol, ul -------------------------------------------
         // {{{
             $ul_types = array(
@@ -159,48 +139,23 @@ class HTMLPurifier_HTMLModule_Tidy_XHTMLAndHTML4 extends
             );
             $li_types = $ul_types + $ol_types;
         // }}}
-        
+
         $r['ul@type'] = new HTMLPurifier_AttrTransform_EnumToCSS('type', $ul_types);
         $r['ol@type'] = new HTMLPurifier_AttrTransform_EnumToCSS('type', $ol_types, true);
         $r['li@type'] = new HTMLPurifier_AttrTransform_EnumToCSS('type', $li_types, true);
-        
+
         // @vspace for img ------------------------------------------------
         $r['img@vspace'] = new HTMLPurifier_AttrTransform_ImgSpace('vspace');
-        
+
         // @width for hr, td, th ------------------------------------------
         $r['td@width'] =
-        $r['th@width'] = 
+        $r['th@width'] =
         $r['hr@width'] = new HTMLPurifier_AttrTransform_Length('width');
-        
+
         return $r;
-        
+
     }
-    
+
 }
 
-class HTMLPurifier_HTMLModule_Tidy_Transitional extends
-      HTMLPurifier_HTMLModule_Tidy_XHTMLAndHTML4
-{
-    var $name = 'Tidy_Transitional';
-    var $defaultLevel = 'heavy';
-}
-
-class HTMLPurifier_HTMLModule_Tidy_Strict extends
-      HTMLPurifier_HTMLModule_Tidy_XHTMLAndHTML4
-{
-    var $name = 'Tidy_Strict';
-    var $defaultLevel = 'light';
-    
-    function makeFixes() {
-        $r = parent::makeFixes();
-        $r['blockquote#content_model_type'] = 'strictblockquote';
-        return $r;
-    }
-    
-    var $defines_child_def = true;
-    function getChildDef($def) {
-        if ($def->content_model_type != 'strictblockquote') return parent::getChildDef($def);
-        return new HTMLPurifier_ChildDef_StrictBlockquote($def->content_model);
-    }
-}
-
+// vim: et sw=4 sts=4

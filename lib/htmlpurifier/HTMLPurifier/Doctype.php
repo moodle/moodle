@@ -11,40 +11,40 @@ class HTMLPurifier_Doctype
     /**
      * Full name of doctype
      */
-    var $name;
-    
+    public $name;
+
     /**
      * List of standard modules (string identifiers or literal objects)
      * that this doctype uses
      */
-    var $modules = array();
-    
+    public $modules = array();
+
     /**
      * List of modules to use for tidying up code
      */
-    var $tidyModules = array();
-    
+    public $tidyModules = array();
+
     /**
      * Is the language derived from XML (i.e. XHTML)?
      */
-    var $xml = true;
-    
+    public $xml = true;
+
     /**
      * List of aliases for this doctype
      */
-    var $aliases = array();
-    
+    public $aliases = array();
+
     /**
      * Public DTD identifier
      */
-    var $dtdPublic;
-    
+    public $dtdPublic;
+
     /**
      * System DTD identifier
      */
-    var $dtdSystem;
-    
-    function HTMLPurifier_Doctype($name = null, $xml = true, $modules = array(),
+    public $dtdSystem;
+
+    public function __construct($name = null, $xml = true, $modules = array(),
         $tidyModules = array(), $aliases = array(), $dtd_public = null, $dtd_system = null
     ) {
         $this->name         = $name;
@@ -55,12 +55,6 @@ class HTMLPurifier_Doctype
         $this->dtdPublic    = $dtd_public;
         $this->dtdSystem    = $dtd_system;
     }
-    
-    /**
-     * Clones the doctype, use before resolving modes and the like
-     */
-    function copy() {
-        return unserialize(serialize($this));
-    }
 }
 
+// vim: et sw=4 sts=4

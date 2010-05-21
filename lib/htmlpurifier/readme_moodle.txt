@@ -1,4 +1,4 @@
-Description of HTML Purifier v2.1.5 Lite library import into Moodle
+Description of HTML Purifier v4.1.0 library import into Moodle
 
 Changes:
  * HMLTModule/Text.php - added  <nolink>, <tex>, <lang> and <algebra> tags
@@ -6,5 +6,3 @@ Changes:
  * AttrDef/Lang.php - relax lang check - needed for multilang
 
 skodak
-
-$Id$

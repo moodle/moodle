@@ -1,41 +1,41 @@
 <?php
 
-require_once 'HTMLPurifier/AttrDef.php';
-
 /**
  * Framework class for strings that involve multiple values.
- * 
+ *
  * Certain CSS properties such as border-width and margin allow multiple
  * lengths to be specified.  This class can take a vanilla border-width
  * definition and multiply it, usually into a max of four.
- * 
+ *
  * @note Even though the CSS specification isn't clear about it, inherit
  *       can only be used alone: it will never manifest as part of a multi
  *       shorthand declaration.  Thus, this class does not allow inherit.
  */
 class HTMLPurifier_AttrDef_CSS_Multiple extends HTMLPurifier_AttrDef
 {
-    
+
     /**
      * Instance of component definition to defer validation to.
+     * @todo Make protected
      */
-    var $single;
-    
+    public $single;
+
     /**
      * Max number of values allowed.
+     * @todo Make protected
      */
-    var $max;
-    
+    public $max;
+
     /**
      * @param $single HTMLPurifier_AttrDef to multiply
      * @param $max Max number of values allowed (usually four)
      */
-    function HTMLPurifier_AttrDef_CSS_Multiple($single, $max = 4) {
+    public function __construct($single, $max = 4) {
         $this->single = $single;
         $this->max = $max;
     }
-    
-    function validate($string, $config, &$context) {
+
+    public function validate($string, $config, $context) {
         $string = $this->parseCDATA($string);
         if ($string === '') return false;
         $parts = explode(' ', $string); // parseCDATA replaced \r, \t and \n
@@ -52,6 +52,7 @@ class HTMLPurifier_AttrDef_CSS_Multiple extends HTMLPurifier_AttrDef
         if ($final === '') return false;
         return rtrim($final);
     }
-    
+
 }
 
+// vim: et sw=4 sts=4

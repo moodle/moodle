@@ -1,28 +1,26 @@
 <?php
 
-require_once 'HTMLPurifier/Token.php';
-
 /**
- * Factory for token generation (PHP 5 only).
- * 
+ * Factory for token generation.
+ *
  * @note Doing some benchmarking indicates that the new operator is much
  *       slower than the clone operator (even discounting the cost of the
- *       constructor).  This class is for that optimization.  We may want to
- *       consider porting this to PHP 4 by virtue of the fact it makes the code
- *       easier to read.  Other then that, there's not much point as we don't
+ *       constructor).  This class is for that optimization.
+ *       Other then that, there's not much point as we don't
  *       maintain parallel HTMLPurifier_Token hierarchies (the main reason why
  *       you'd want to use an abstract factory).
+ * @todo Port DirectLex to use this
  */
 class HTMLPurifier_TokenFactory
 {
-    
+
     /**
      * Prototypes that will be cloned.
      * @private
      */
     // p stands for prototype
     private $p_start, $p_end, $p_empty, $p_text, $p_comment;
-    
+
     /**
      * Generates blank prototypes for cloning.
      */
@@ -33,7 +31,7 @@ class HTMLPurifier_TokenFactory
         $this->p_text   = new HTMLPurifier_Token_Text('');
         $this->p_comment= new HTMLPurifier_Token_Comment('');
     }
-    
+
     /**
      * Creates a HTMLPurifier_Token_Start.
      * @param $name Tag name
@@ -42,10 +40,10 @@ class HTMLPurifier_TokenFactory
      */
     public function createStart($name, $attr = array()) {
         $p = clone $this->p_start;
-        $p->HTMLPurifier_Token_Tag($name, $attr);
+        $p->__construct($name, $attr);
         return $p;
     }
-    
+
     /**
      * Creates a HTMLPurifier_Token_End.
      * @param $name Tag name
@@ -53,10 +51,10 @@ class HTMLPurifier_TokenFactory
      */
     public function createEnd($name) {
         $p = clone $this->p_end;
-        $p->HTMLPurifier_Token_Tag($name);
+        $p->__construct($name);
         return $p;
     }
-    
+
     /**
      * Creates a HTMLPurifier_Token_Empty.
      * @param $name Tag name
@@ -65,10 +63,10 @@ class HTMLPurifier_TokenFactory
      */
     public function createEmpty($name, $attr = array()) {
         $p = clone $this->p_empty;
-        $p->HTMLPurifier_Token_Tag($name, $attr);
+        $p->__construct($name, $attr);
         return $p;
     }
-    
+
     /**
      * Creates a HTMLPurifier_Token_Text.
      * @param $data Data of text token
@@ -76,10 +74,10 @@ class HTMLPurifier_TokenFactory
      */
     public function createText($data) {
         $p = clone $this->p_text;
-        $p->HTMLPurifier_Token_Text($data);
+        $p->__construct($data);
         return $p;
     }
-    
+
     /**
      * Creates a HTMLPurifier_Token_Comment.
      * @param $data Data of comment token
@@ -87,9 +85,10 @@ class HTMLPurifier_TokenFactory
      */
     public function createComment($data) {
         $p = clone $this->p_comment;
-        $p->HTMLPurifier_Token_Comment($data);
+        $p->__construct($data);
         return $p;
     }
-    
+
 }
 
+// vim: et sw=4 sts=4

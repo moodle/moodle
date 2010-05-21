@@ -1,26 +1,24 @@
 <?php
 
-require_once 'HTMLPurifier/AttrDef.php';
-
 /**
  * Validates the border property as defined by CSS.
  */
 class HTMLPurifier_AttrDef_CSS_Border extends HTMLPurifier_AttrDef
 {
-    
+
     /**
      * Local copy of properties this property is shorthand for.
      */
-    var $info = array();
-    
-    function HTMLPurifier_AttrDef_CSS_Border($config) {
+    protected $info = array();
+
+    public function __construct($config) {
         $def = $config->getCSSDefinition();
         $this->info['border-width'] = $def->info['border-width'];
         $this->info['border-style'] = $def->info['border-style'];
         $this->info['border-top-color'] = $def->info['border-top-color'];
     }
-    
-    function validate($string, $config, &$context) {
+
+    public function validate($string, $config, $context) {
         $string = $this->parseCDATA($string);
         $string = $this->mungeRgb($string);
         $bits = explode(' ', $string);
@@ -39,6 +37,7 @@ class HTMLPurifier_AttrDef_CSS_Border extends HTMLPurifier_AttrDef
         }
         return rtrim($ret);
     }
-    
+
 }
 
+// vim: et sw=4 sts=4

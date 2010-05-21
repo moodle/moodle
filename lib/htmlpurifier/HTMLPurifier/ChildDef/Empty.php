@@ -1,7 +1,5 @@
 <?php
 
-require_once 'HTMLPurifier/ChildDef.php';
-
 /**
  * Definition that disallows all elements.
  * @warning validateChildren() in this class is actually never called, because
@@ -11,11 +9,12 @@ require_once 'HTMLPurifier/ChildDef.php';
  */
 class HTMLPurifier_ChildDef_Empty extends HTMLPurifier_ChildDef
 {
-    var $allow_empty = true;
-    var $type = 'empty';
-    function HTMLPurifier_ChildDef_Empty() {}
-    function validateChildren($tokens_of_children, $config, &$context) {
+    public $allow_empty = true;
+    public $type = 'empty';
+    public function __construct() {}
+    public function validateChildren($tokens_of_children, $config, $context) {
         return array();
     }
 }
 
+// vim: et sw=4 sts=4

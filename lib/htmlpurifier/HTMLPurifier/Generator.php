@@ -1,191 +1,201 @@
 <?php
 
-HTMLPurifier_ConfigSchema::define(
-    'Output', 'CommentScriptContents', true, 'bool',
-    'Determines whether or not HTML Purifier should attempt to fix up '.
-    'the contents of script tags for legacy browsers with comments. This '.
-    'directive was available since 2.0.0.'
-);
-HTMLPurifier_ConfigSchema::defineAlias('Core', 'CommentScriptContents', 'Output', 'CommentScriptContents');
-
-// extension constraints could be factored into ConfigSchema
-HTMLPurifier_ConfigSchema::define(
-    'Output', 'TidyFormat', false, 'bool', <<<HTML
-<p>
-    Determines whether or not to run Tidy on the final output for pretty 
-    formatting reasons, such as indentation and wrap.
-</p>
-<p>
-    This can greatly improve readability for editors who are hand-editing
-    the HTML, but is by no means necessary as HTML Purifier has already
-    fixed all major errors the HTML may have had. Tidy is a non-default
-    extension, and this directive will silently fail if Tidy is not
-    available.
-</p>
-<p>
-    If you are looking to make the overall look of your page's source
-    better, I recommend running Tidy on the entire page rather than just
-    user-content (after all, the indentation relative to the containing
-    blocks will be incorrect).
-</p>
-<p>
-    This directive was available since 1.1.1.
-</p>
-HTML
-);
-HTMLPurifier_ConfigSchema::defineAlias('Core', 'TidyFormat', 'Output', 'TidyFormat');
-
-HTMLPurifier_ConfigSchema::define('Output', 'Newline', null, 'string/null', '
-<p>
-    Newline string to format final output with. If left null, HTML Purifier
-    will auto-detect the default newline type of the system and use that;
-    you can manually override it here. Remember, \r\n is Windows, \r
-    is Mac, and \n is Unix. This directive was available since 2.0.1.
-</p>
-');
-
 /**
  * Generates HTML from tokens.
  * @todo Refactor interface so that configuration/context is determined
- *     upon instantiation, no need for messy generateFromTokens() calls
+ *       upon instantiation, no need for messy generateFromTokens() calls
+ * @todo Make some of the more internal functions protected, and have
+ *       unit tests work around that
  */
 class HTMLPurifier_Generator
 {
-    
+
     /**
-     * Bool cache of %HTML.XHTML
-     * @private
+     * Whether or not generator should produce XML output
      */
-    var $_xhtml = true;
-    
+    private $_xhtml = true;
+
     /**
-     * Bool cache of %Output.CommentScriptContents
-     * @private
+     * :HACK: Whether or not generator should comment the insides of <script> tags
      */
-    var $_scriptFix = false;
-    
+    private $_scriptFix = false;
+
     /**
-     * Cache of HTMLDefinition
-     * @private
+     * Cache of HTMLDefinition during HTML output to determine whether or
+     * not attributes should be minimized.
      */
-    var $_def;
-    
+    private $_def;
+
+    /**
+     * Cache of %Output.SortAttr
+     */
+    private $_sortAttr;
+
+    /**
+     * Cache of %Output.FlashCompat
+     */
+    private $_flashCompat;
+
+    /**
+     * Stack for keeping track of object information when outputting IE
+     * compatibility code.
+     */
+    private $_flashStack = array();
+
+    /**
+     * Configuration for the generator
+     */
+    protected $config;
+
+    /**
+     * @param $config Instance of HTMLPurifier_Config
+     * @param $context Instance of HTMLPurifier_Context
+     */
+    public function __construct($config, $context) {
+        $this->config = $config;
+        $this->_scriptFix = $config->get('Output.CommentScriptContents');
+        $this->_sortAttr = $config->get('Output.SortAttr');
+        $this->_flashCompat = $config->get('Output.FlashCompat');
+        $this->_def = $config->getHTMLDefinition();
+        $this->_xhtml = $this->_def->doctype->xml;
+    }
+
     /**
      * Generates HTML from an array of tokens.
      * @param $tokens Array of HTMLPurifier_Token
      * @param $config HTMLPurifier_Config object
      * @return Generated HTML
      */
-    function generateFromTokens($tokens, $config, &$context) {
-        $html = '';
-        if (!$config) $config = HTMLPurifier_Config::createDefault();
-        $this->_scriptFix   = $config->get('Output', 'CommentScriptContents');
-        
-        $this->_def = $config->getHTMLDefinition();
-        $this->_xhtml = $this->_def->doctype->xml;
-        
+    public function generateFromTokens($tokens) {
         if (!$tokens) return '';
+
+        // Basic algorithm
+        $html = '';
         for ($i = 0, $size = count($tokens); $i < $size; $i++) {
             if ($this->_scriptFix && $tokens[$i]->name === 'script'
-                && $i + 2 < $size && $tokens[$i+2]->type == 'end') {
+                && $i + 2 < $size && $tokens[$i+2] instanceof HTMLPurifier_Token_End) {
                 // script special case
                 // the contents of the script block must be ONE token
-                // for this to work
+                // for this to work.
                 $html .= $this->generateFromToken($tokens[$i++]);
                 $html .= $this->generateScriptFromToken($tokens[$i++]);
-                // We're not going to do this: it wouldn't be valid anyway
-                //while ($tokens[$i]->name != 'script') {
-                //    $html .= $this->generateScriptFromToken($tokens[$i++]);
-                //}
             }
             $html .= $this->generateFromToken($tokens[$i]);
         }
-        if ($config->get('Output', 'TidyFormat') && extension_loaded('tidy')) {
-            
-            $tidy_options = array(
+
+        // Tidy cleanup
+        if (extension_loaded('tidy') && $this->config->get('Output.TidyFormat')) {
+            $tidy = new Tidy;
+            $tidy->parseString($html, array(
                'indent'=> true,
                'output-xhtml' => $this->_xhtml,
                'show-body-only' => true,
                'indent-spaces' => 2,
                'wrap' => 68,
-            );
-            if (version_compare(PHP_VERSION, '5', '<')) {
-                tidy_set_encoding('utf8');
-                foreach ($tidy_options as $key => $value) {
-                    tidy_setopt($key, $value);
-                }
-                tidy_parse_string($html);
-                tidy_clean_repair();
-                $html = tidy_get_output();
-            } else {
-                $tidy = new Tidy;
-                $tidy->parseString($html, $tidy_options, 'utf8');
-                $tidy->cleanRepair();
-                $html = (string) $tidy;
-            }
+            ), 'utf8');
+            $tidy->cleanRepair();
+            $html = (string) $tidy; // explicit cast necessary
         }
-        // normalize newlines to system
-        $nl = $config->get('Output', 'Newline');
+
+        // Normalize newlines to system defined value
+        $nl = $this->config->get('Output.Newline');
         if ($nl === null) $nl = PHP_EOL;
-        $html = str_replace("\n", $nl, $html);
+        if ($nl !== "\n") $html = str_replace("\n", $nl, $html);
         return $html;
     }
-    
+
     /**
      * Generates HTML from a single token.
      * @param $token HTMLPurifier_Token object.
      * @return Generated HTML
      */
-    function generateFromToken($token) {
-        if (!isset($token->type)) return '';
-        if ($token->type == 'start') {
+    public function generateFromToken($token) {
+        if (!$token instanceof HTMLPurifier_Token) {
+            trigger_error('Cannot generate HTML from non-HTMLPurifier_Token object', E_USER_WARNING);
+            return '';
+
+        } elseif ($token instanceof HTMLPurifier_Token_Start) {
             $attr = $this->generateAttributes($token->attr, $token->name);
+            if ($this->_flashCompat) {
+                if ($token->name == "object") {
+                    $flash = new stdclass();
+                    $flash->attr = $token->attr;
+                    $flash->param = array();
+                    $this->_flashStack[] = $flash;
+                }
+            }
             return '<' . $token->name . ($attr ? ' ' : '') . $attr . '>';
-            
-        } elseif ($token->type == 'end') {
-            return '</' . $token->name . '>';
-            
-        } elseif ($token->type == 'empty') {
+
+        } elseif ($token instanceof HTMLPurifier_Token_End) {
+            $_extra = '';
+            if ($this->_flashCompat) {
+                if ($token->name == "object" && !empty($this->_flashStack)) {
+                    $flash = array_pop($this->_flashStack);
+                    $compat_token = new HTMLPurifier_Token_Empty("embed");
+                    foreach ($flash->attr as $name => $val) {
+                        if ($name == "classid") continue;
+                        if ($name == "type") continue;
+                        if ($name == "data") $name = "src";
+                        $compat_token->attr[$name] = $val;
+                    }
+                    foreach ($flash->param as $name => $val) {
+                        if ($name == "movie") $name = "src";
+                        $compat_token->attr[$name] = $val;
+                    }
+                    $_extra = "<!--[if IE]>".$this->generateFromToken($compat_token)."<![endif]-->";
+                }
+            }
+            return $_extra . '</' . $token->name . '>';
+
+        } elseif ($token instanceof HTMLPurifier_Token_Empty) {
+            if ($this->_flashCompat && $token->name == "param" && !empty($this->_flashStack)) {
+                $this->_flashStack[count($this->_flashStack)-1]->param[$token->attr['name']] = $token->attr['value'];
+            }
             $attr = $this->generateAttributes($token->attr, $token->name);
              return '<' . $token->name . ($attr ? ' ' : '') . $attr .
-                ( $this->_xhtml ? ' /': '' )
+                ( $this->_xhtml ? ' /': '' ) // <br /> v. <br>
                 . '>';
-            
-        } elseif ($token->type == 'text') {
-            return $this->escape($token->data);
-            
+
+        } elseif ($token instanceof HTMLPurifier_Token_Text) {
+            return $this->escape($token->data, ENT_NOQUOTES);
+
+        } elseif ($token instanceof HTMLPurifier_Token_Comment) {
+            return '<!--' . $token->data . '-->';
         } else {
             return '';
-            
+
         }
     }
-    
+
     /**
      * Special case processor for the contents of script tags
      * @warning This runs into problems if there's already a literal
      *          --> somewhere inside the script contents.
      */
-    function generateScriptFromToken($token) {
-        if ($token->type != 'text') return $this->generateFromToken($token);
-        // return '<!--' . "\n" . trim($token->data) . "\n" . '// -->';
-        // more advanced version:
-        // thanks <http://lachy.id.au/log/2005/05/script-comments>
+    public function generateScriptFromToken($token) {
+        if (!$token instanceof HTMLPurifier_Token_Text) return $this->generateFromToken($token);
+        // Thanks <http://lachy.id.au/log/2005/05/script-comments>
         $data = preg_replace('#//\s*$#', '', $token->data);
         return '<!--//--><![CDATA[//><!--' . "\n" . trim($data) . "\n" . '//--><!]]>';
     }
-    
+
     /**
      * Generates attribute declarations from attribute array.
+     * @note This does not include the leading or trailing space.
      * @param $assoc_array_of_attributes Attribute array
+     * @param $element Name of element attributes are for, used to check
+     *        attribute minimization.
      * @return Generate HTML fragment for insertion.
      */
-    function generateAttributes($assoc_array_of_attributes, $element) {
+    public function generateAttributes($assoc_array_of_attributes, $element = false) {
         $html = '';
+        if ($this->_sortAttr) ksort($assoc_array_of_attributes);
         foreach ($assoc_array_of_attributes as $key => $value) {
             if (!$this->_xhtml) {
-                // remove namespaced attributes
+                // Remove namespaced attributes
                 if (strpos($key, ':') !== false) continue;
-                if (!empty($this->_def->info[$element]->attr[$key]->minimized)) {
+                // Check if we should minimize the attribute: val="val" -> val
+                if ($element && !empty($this->_def->info[$element]->attr[$key]->minimized)) {
                     $html .= $key . ' ';
                     continue;
                 }
@@ -194,15 +204,21 @@ class HTMLPurifier_Generator
         }
         return rtrim($html);
     }
-    
+
     /**
      * Escapes raw text data.
+     * @todo This really ought to be protected, but until we have a facility
+     *       for properly generating HTML here w/o using tokens, it stays
+     *       public.
      * @param $string String data to escape for HTML.
+     * @param $quote Quoting style, like htmlspecialchars. ENT_NOQUOTES is
+     *               permissible for non-attribute output.
      * @return String escaped data.
      */
-    function escape($string) {
-        return htmlspecialchars($string, ENT_COMPAT, 'UTF-8');
+    public function escape($string, $quote = ENT_COMPAT) {
+        return htmlspecialchars($string, $quote, 'UTF-8');
     }
-    
+
 }
 
+// vim: et sw=4 sts=4

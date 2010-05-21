@@ -92,6 +92,10 @@ global $HTTPSPAGEREQUIRED;
 /// sometimes default PHP settings are borked on shared hosting servers, I wonder why they have to do that??
     @ini_set('precision', 14); // needed for upgrades and gradebook
 
+/// New versions of HTML Purifier are not compatible with PHP 4
+    if (version_compare(phpversion(), "5.0.5") < 0) {
+        $CFG->enablehtmlpurifier = 0;
+    }
 
 /// store settings from config.php in array in $CFG - we can use it later to detect problems and overrides
     $CFG->config_php_settings = (array)$CFG;
@@ -255,7 +259,6 @@ global $HTTPSPAGEREQUIRED;
     } else {
         $originaldatabasedebug = -1;
     }
-
 
 /// For now, only needed under apache (and probably unstable in other contexts)
     if (function_exists('register_shutdown_function')) {

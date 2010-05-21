@@ -1,19 +1,16 @@
 <?php
 
-require_once 'HTMLPurifier/HTMLModule.php';
-require_once 'HTMLPurifier/AttrDef/HTML/LinkTypes.php';
-
 /**
  * XHTML 1.1 Hypertext Module, defines hypertext links. Core Module.
  */
 class HTMLPurifier_HTMLModule_Hypertext extends HTMLPurifier_HTMLModule
 {
-    
-    var $name = 'Hypertext';
-    
-    function setup($config) {
-        $a =& $this->addElement(
-            'a', true, 'Inline', 'Inline', 'Common',
+
+    public $name = 'Hypertext';
+
+    public function setup($config) {
+        $a = $this->addElement(
+            'a', 'Inline', 'Inline', 'Common',
             array(
                 // 'accesskey' => 'Character',
                 // 'charset' => 'Charset',
@@ -25,8 +22,10 @@ class HTMLPurifier_HTMLModule_Hypertext extends HTMLPurifier_HTMLModule
                 // 'type' => 'ContentType',
             )
         );
+        $a->formatting = true;
         $a->excludes = array('a' => true);
     }
-    
+
 }
 
+// vim: et sw=4 sts=4

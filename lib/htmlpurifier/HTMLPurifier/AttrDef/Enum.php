@@ -1,7 +1,5 @@
 <?php
 
-require_once 'HTMLPurifier/AttrDef.php';
-
 // Enum = Enumerated
 /**
  * Validates a keyword against a list of valid values.
@@ -11,46 +9,47 @@ require_once 'HTMLPurifier/AttrDef.php';
  */
 class HTMLPurifier_AttrDef_Enum extends HTMLPurifier_AttrDef
 {
-    
+
     /**
      * Lookup table of valid values.
+     * @todo Make protected
      */
-    var $valid_values   = array();
-    
+    public $valid_values   = array();
+
     /**
      * Bool indicating whether or not enumeration is case sensitive.
      * @note In general this is always case insensitive.
      */
-    var $case_sensitive = false; // values according to W3C spec
-    
+    protected $case_sensitive = false; // values according to W3C spec
+
     /**
      * @param $valid_values List of valid values
      * @param $case_sensitive Bool indicating whether or not case sensitive
      */
-    function HTMLPurifier_AttrDef_Enum(
+    public function __construct(
         $valid_values = array(), $case_sensitive = false
     ) {
         $this->valid_values = array_flip($valid_values);
         $this->case_sensitive = $case_sensitive;
     }
-    
-    function validate($string, $config, &$context) {
+
+    public function validate($string, $config, $context) {
         $string = trim($string);
         if (!$this->case_sensitive) {
             // we may want to do full case-insensitive libraries
             $string = ctype_lower($string) ? $string : strtolower($string);
         }
         $result = isset($this->valid_values[$string]);
-        
+
         return $result ? $string : false;
     }
-    
+
     /**
      * @param $string In form of comma-delimited list of case-insensitive
      *      valid values. Example: "foo,bar,baz". Prepend "s:" to make
      *      case sensitive
      */
-    function make($string) {
+    public function make($string) {
         if (strlen($string) > 2 && $string[0] == 's' && $string[1] == ':') {
             $string = substr($string, 2);
             $sensitive = true;
@@ -60,6 +59,7 @@ class HTMLPurifier_AttrDef_Enum extends HTMLPurifier_AttrDef
         $values = explode(',', $string);
         return new HTMLPurifier_AttrDef_Enum($values, $sensitive);
     }
-    
+
 }
 
+// vim: et sw=4 sts=4
