@@ -94,8 +94,8 @@ class virtual_root_file {
     }
 
     /**
-     * Copy content of file to give npathname
-     * @param string $pathnema rela path to new file
+     * Copy content of file to given pathname
+     * @param string $pathname real path to new file
      * @return bool success
      */
     public function copy_content_to($pathname) {

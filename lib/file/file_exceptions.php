@@ -49,7 +49,7 @@ class stored_file_creation_exception extends file_exception {
 }
 
 /**
- * No file access excetion.
+ * No file access exception.
  */
 class file_access_exception extends file_exception {
     function __construct($debuginfo=null) {
