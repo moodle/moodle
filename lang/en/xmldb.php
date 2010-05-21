@@ -45,14 +45,14 @@ $string['confirmcheckdefaults'] = 'This functionality will search for inconsiste
 Once generated you can copy such statements and execute them safely with your favourite SQL interface (don\'t forget to backup your data before doing that).<br /><br />
 It\'s highly recommended to be running the latest (+ version) available of your Moodle release (1.8, 1.9, 2.x ...) before executing the search of inconsistent default values.<br /><br />
 This functionality doesn\'t perform any action against the DB (just reads from it), so can be safely executed at any moment.';
-$string['confirmcheckforeignkeys'] = 'This functionality will search for potential violations of the foreign keys defined in the install.xml definitions. (Moodle does not currently generate acutal foreign key constraints in the database, which is why invalid data may be present.)<br /><br />
+$string['confirmcheckforeignkeys'] = 'This functionality will search for potential violations of the foreign keys defined in the install.xml definitions. (Moodle does not currently generate actutal foreign key constraints in the database, which is why invalid data may be present.)<br /><br />
 It\'s highly recommended to be running the latest (+ version) available of your Moodle release (1.8, 1.9, 2.x ...) before executing the search of missing indexes.<br /><br />
 This functionality doesn\'t perform any action against the DB (just reads from it), so can be safely executed at any moment.';
 $string['confirmcheckindexes'] = 'This functionality will search for potential missing indexes in your Moodle server, generating (but not executing!) automatically the needed SQL statements to keep everything updated.<br /><br />
 Once generated you can copy such statements and execute them safely with your favourite SQL interface (don\'t forget to backup your data before doing that).<br /><br />
 It\'s highly recommended to be running the latest (+ version) available of your Moodle release (1.8, 1.9, 2.x ...) before executing the search of missing indexes.<br /><br />
 This functionality doesn\'t perform any action against the DB (just reads from it), so can be safely executed at any moment.';
-$string['confirmrevertchanges'] = 'Are you absolutely sure that you want to revert changes perfomed over:';
+$string['confirmrevertchanges'] = 'Are you absolutely sure that you want to revert changes performed over:';
 $string['create'] = 'Create';
 $string['createtable'] = 'Create Table:';
 $string['defaultincorrect'] = 'Incorrect default';
@@ -119,7 +119,7 @@ $string['keys'] = 'Keys';
 $string['listreservedwords'] = 'List of Reserved Words<br />(used to keep <a href="http://docs.moodle.org/en/XMLDB_reserved_words" target="_blank">XMLDB_reserved_words</a> updated)';
 $string['load'] = 'Load';
 $string['main_view'] = 'Main View';
-$string['masterprimaryuniqueordernomatch'] = 'The fields in your foreign key must be listed in the same order as they are lised in the UNIQUE KEY on the referenced table.';
+$string['masterprimaryuniqueordernomatch'] = 'The fields in your foreign key must be listed in the same order as they are listed in the UNIQUE KEY on the referenced table.';
 $string['missing'] = 'Missing';
 $string['missingfieldsinsentence'] = 'Missing fields in sentence';
 $string['missingindexes'] = 'Missing Indexes Found';
