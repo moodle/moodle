@@ -313,7 +313,7 @@ $string['coursehelpenrollable'] = 'Are students able to enrol themselves using t
 $string['coursehelpenrolmentkey'] = 'If set, users will need this key to be enrolled into the course.';
 $string['coursehelpenrolmentplugins'] = 'Default interactive enrolment plugin.';
 $string['coursehelpexpirynotifystudents'] = 'If an enrolment duration has been specified, then this setting determines whether students receive email notification when they are about to be unenrolled from the course.';
-$string['coursehelpexpirythreshold'] = 'If an enrolment duration has been specified, then this setting detemines the number of days notice given before students are unenrolled from the course.';
+$string['coursehelpexpirythreshold'] = 'If an enrolment duration has been specified, then this setting determines the number of days notice given before students are unenrolled from the course.';
 $string['coursehelpforce'] = 'Force the course group mode to every activity in the course.';
 $string['coursehelpformat'] = 'The course main page will be displayed in this format.';
 $string['coursehelphiddensections'] = 'How the hidden sections in the course are displayed to students.';
@@ -1831,7 +1831,7 @@ Here is a summary of what has happened to the file:
 {$a->action}';
 $string['virusfoundsubject'] = '{$a}: Virus found!';
 $string['virusfounduser'] = 'The file you have uploaded, {$a->filename}, has been scanned by a virus checker and found to be infected! Your file upload was NOT successful.';
-$string['virusplaceholder'] = 'This file that has been uploaded was found to contain a virus and has been moved or delted and the user notified.';
+$string['virusplaceholder'] = 'This file that has been uploaded was found to contain a virus and has been moved or deleted and the user notified.';
 $string['visible'] = 'Visible';
 $string['visibletostudents'] = 'Visible to {$a}';
 $string['warningdeleteresource'] = 'Warning: {$a} is referred in a resource. Would you like to update the resource?';
