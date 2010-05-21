@@ -43,13 +43,14 @@ class question_edit_numerical_form extends question_edit_form {
     }
 
     function set_data($question) {
+                global $QTYPES ;
         if (isset($question->options)){
-            $default_values['unitgradingtype'] = $question->options->unitgradingtype ;
+     /*       $default_values['unitgradingtype'] = $question->options->unitgradingtype ;
             $default_values['unitpenalty'] = $question->options->unitpenalty ;
             $default_values['showunits'] = $question->options->showunits ;
             $default_values['unitsleft'] = $question->options->unitsleft ;
             $default_values['instructions'] = $question->options->instructions  ;
-
+*/
             $answers = $question->options->answers;
             if (count($answers)) {
                 $key = 0;
@@ -61,7 +62,9 @@ class question_edit_numerical_form extends question_edit_form {
                     $key++;
                 }
             }
-            if (isset($question->options->units)){
+            $QTYPES['numerical']->set_numerical_unit_data($question,$default_values);
+
+          /*  if (isset($question->options->units)){
                 $units  = array_values($question->options->units);
                 if (!empty($units)) {
                     foreach ($units as $key => $unit){
@@ -69,7 +72,7 @@ class question_edit_numerical_form extends question_edit_form {
                         $default_values['multiplier['.$key.']'] = $unit->multiplier;
                     }
                 }
-            }
+            }*/
             $question = (object)((array)$question + $default_values);
         }
         parent::set_data($question);
