@@ -83,7 +83,7 @@ abstract class file_archive implements Iterator {
     /**
      * Add file into archive
      * @param string $localname name of file in archive
-     * @param string $pathname localtion of file
+     * @param string $pathname location of file
      * @return bool success
      */
     public abstract function add_file_from_pathname($localname, $pathname);
@@ -151,7 +151,7 @@ abstract class file_archive implements Iterator {
      * please note that it may fail really badly.
      * The resulting file name is cleaned.
      *
-     * @param strin $localname in anothe encoding
+     * @param strin $localname in another encoding
      * @return string in utf-8
      */
     protected function unmangle_pathname($localname) {
@@ -186,7 +186,7 @@ abstract class file_archive implements Iterator {
     //public abstract function next();
 
     /**
-     * Revinds back to the first file
+     * Rewinds back to the first file
      * @return void
      */
     //public abstract function rewind();

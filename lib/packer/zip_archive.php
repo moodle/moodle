@@ -190,7 +190,7 @@ class zip_archive extends file_archive {
     /**
      * Add file into archive
      * @param string $localname name of file in archive
-     * @param string $pathname localtion of file
+     * @param string $pathname location of file
      * @return bool success
      */
     public function add_file_from_pathname($localname, $pathname) {
@@ -310,7 +310,7 @@ class zip_archive extends file_archive {
     }
 
     /**
-     * Revinds back to the first file
+     * Rewinds back to the first file
      * @return void
      */
     public function rewind() {
