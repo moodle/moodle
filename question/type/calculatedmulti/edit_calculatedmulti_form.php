@@ -90,7 +90,7 @@ class question_edit_calculatedmulti_form extends question_edit_form {
         $this->qtypeobj =& $QTYPES[$this->qtype()];
       // echo code left for testing period 
        // echo "<p>question ".optional_param('multichoice', '', PARAM_RAW)." optional<pre>";print_r($this->question);echo "</pre></p>";
-        $label = get_string("sharedwildcards", "qtype_datasetdependent");
+        $label = get_string("sharedwildcards", "qtype_calculated");
         $mform->addElement('hidden', 'initialcategory', 1);
         $mform->setType('initialcategory', PARAM_INT);
 
@@ -109,7 +109,7 @@ class question_edit_calculatedmulti_form extends question_edit_form {
             $mform->setType('multichoice', PARAM_INT);
                                             
 
-            $mform->addElement('header', 'choicehdr',get_string('multichoicecalculatedquestion', 'qtype_calculated'));
+//            $mform->addElement('header', 'choicehdr',get_string('multichoicecalculatedquestion', 'qtype_calculated'));
             $menu = array(get_string('answersingleno', 'qtype_multichoice'), get_string('answersingleyes', 'qtype_multichoice'));
             $mform->addElement('select', 'single', get_string('answerhowmany', 'qtype_multichoice'), $menu);
             $mform->setDefault('single', 1);
