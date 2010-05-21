@@ -1289,8 +1289,8 @@ function glossary_print_attachments($entry, $cm, $type=NULL, $align="left") {
         return '';
     }
 
-    if ($entry->sourceglossaryid != $cm->instance) {
-        if (!$maincm = get_coursemodule_from_instance('glossary', $entry->sourceglossaryid)) {
+    if ($entry->sourceglossaryid == $cm->instance) {
+        if (!$maincm = get_coursemodule_from_instance('glossary', $entry->glossaryid)) {
             return '';
         }
         $filecontext = get_context_instance(CONTEXT_MODULE, $maincm->id);
