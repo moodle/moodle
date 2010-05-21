@@ -36,7 +36,7 @@ class mod_wiki_renderer extends plugin_renderer_base {
 
         // @TODO: Fix call to wiki_get_subwiki_by_group
         $gid = groups_get_activity_group($this->page->cm);
-        $gid = !empty($gid)?$gid:0;
+        $gid = !empty($gid) ? $gid : 0;
         if (!$subwiki = wiki_get_subwiki_by_group($this->page->cm->instance, $gid)) {
             return false;
         }
@@ -314,20 +314,17 @@ class mod_wiki_renderer extends plugin_renderer_base {
                 // Only people with these capabilities can view all wikis
                 if ($view && $manage) {
                     // @TODO: Print here a combo that contains all users.
-                    $subwikis = wiki_get_subwikis($wiki->id);
+                    $users = get_enrolled_users($context);
                     $options = array();
-                    foreach ($subwikis as $subwiki) {
-                        if ($subwiki->userid == 0) {
-                            continue;
-                        }
-                        $user = user_get_users_by_id(array($subwiki->userid));
-                        $options[$subwiki->id] = fullname($user[$subwiki->userid]);
+                    foreach ($users as $user) {
+                        $options[$user->id] = fullname($user);
                     }
 
                     echo $this->output->container_start('wiki_right');
-                    $url = $CFG->wwwroot . '/mod/wiki/view.php?pageid=' . $page->id;
-                    $name = 'swid';
-                    $selected = $page->subwikiid;
+                    $params = array('wid' => $wiki->id, 'title' => $page->title);
+                    $url = new moodle_url('/mod/wiki/view.php', $params);
+                    $name = 'uid';
+                    $selected = $subwiki->userid;
                     echo $this->output->single_select($url, $name, $options, $selected);
                     echo $this->output->container_end();
                 }
@@ -340,7 +337,7 @@ class mod_wiki_renderer extends plugin_renderer_base {
             if ($wiki->wikimode == 'collaborative') {
                 // We need to print a select to choose a course group
 
-                $params = 'pageid=' . $page->id;
+                $params = 'wid=' . $wiki->id . '&amp;title=' . urlencode($page->title);
 
                 echo $this->output->container_start('wiki_right');
                 groups_print_activity_menu($cm, $CFG->wwwroot . '/mod/wiki/view.php?' . $params);
@@ -348,10 +345,41 @@ class mod_wiki_renderer extends plugin_renderer_base {
                 return;
             } else if ($wiki->wikimode == 'individual') {
                 //  @TODO: Print here a combo that contains all users of that subwiki.
+                $view = has_capability('mod/wiki:viewpage', $context, $USER);
+                $manage = has_capability('mod/wiki:managewiki', $context, $USER);
+
+                // Only people with these capabilities can view all wikis
+                if ($view && $manage) {
+                    $users = get_enrolled_users($context);
+                    $options = array();
+                    foreach ($users as $user) {
+                        $groups = groups_get_all_groups($cm->course, $user->id);
+                        if (!empty($groups)) {
+                            foreach ($groups as $group) {
+                                $options[$group->id][$group->name][$group->id . '-' . $user->id] = fullname($user);
+                            }
+                        } else {
+                            $name = get_string('notingroup', 'wiki');
+                            $options[0][$name]['0' . '-' . $user->id] = fullname($user);
+                        }
+                    }
+                } else {
+                    $group = groups_get_group($subwiki->groupid);
+                    $users = groups_get_members($subwiki->groupid);
+                    foreach ($users as $user) {
+                        $options[$group->id][$group->name][$group->id . '-' . $user->id] = fullname($user);
+                    }
+                }
                 echo $this->output->container_start('wiki_right');
-                echo "TODO: Print here a combo to choose user wiki from that subwiki";
+                $params = array('wid' => $wiki->id, 'title' => $page->title);
+                $url = new moodle_url('/mod/wiki/view.php', $params);
+                $name = 'groupanduser';
+                $selected = $subwiki->groupid . '-' . $subwiki->userid;
+                echo $this->output->single_select($url, $name, $options, $selected);
                 echo $this->output->container_end();
+
                 return;
+
             } else {
                 // error
                 return;
@@ -359,8 +387,7 @@ class mod_wiki_renderer extends plugin_renderer_base {
         CASE VISIBLEGROUPS:
             if ($wiki->wikimode == 'collaborative') {
                 // We need to print a select to choose a course group
-
-                $params = 'pageid=' . $page->id;
+                $params = 'wid=' . $wiki->id . '&amp;title=' . urlencode($page->title);
 
                 echo $this->output->container_start('wiki_right');
                 groups_print_activity_menu($cm, $CFG->wwwroot . '/mod/wiki/view.php?' . $params);
@@ -368,10 +395,28 @@ class mod_wiki_renderer extends plugin_renderer_base {
                 return;
 
             } else if ($wiki->wikimode == 'individual') {
-                //  @TODO: Print here a combo that contains all users of that wiki grouped by group.
+                $users = get_enrolled_users($context);
+                $options = array();
+                foreach ($users as $user) {
+                    $groups = groups_get_all_groups($cm->course, $user->id);
+                    if (!empty($groups)) {
+                        foreach ($groups as $group) {
+                            $options[$group->id][$group->name][$group->id . '-' . $user->id] = fullname($user);
+                        }
+                    } else {
+                        $name = get_string('notingroup', 'wiki');
+                        $options[0][$name]['0' . '-' . $user->id] = fullname($user);
+                    }
+                }
+
                 echo $this->output->container_start('wiki_right');
-                echo "TODO: Print here a combo to choose user wiki from that wiki";
+                $params = array('wid' => $wiki->id, 'title' => $page->title);
+                $url = new moodle_url('/mod/wiki/view.php', $params);
+                $name = 'groupanduser';
+                $selected = $subwiki->groupid . '-' . $subwiki->userid;
+                echo $this->output->single_select($url, $name, $options, $selected);
                 echo $this->output->container_end();
+
                 return;
 
             } else {
@@ -393,10 +438,10 @@ class mod_wiki_renderer extends plugin_renderer_base {
             $items[] = get_string($opt, 'wiki');
         }
         $selectoptions = array();
-        foreach ($items as $key=>$item) {
-            $selectoptions[$key+1] = $item;
+        foreach ($items as $key => $item) {
+            $selectoptions[$key + 1] = $item;
         }
-        $select = new single_select(new moodle_url('/mod/wiki/map.php', array('pageid'=>$pageid)), 'option', $selectoptions, $currentselect);
+        $select = new single_select(new moodle_url('/mod/wiki/map.php', array('pageid' => $pageid)), 'option', $selectoptions, $currentselect);
         $select->label = get_string('mapmenu', 'wiki') . ': ';
         return $this->output->container($this->output->render($select), 'midpad');
     }

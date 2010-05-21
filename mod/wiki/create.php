@@ -15,9 +15,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle. If not, see <http://www.gnu.org/licenses/>.
 
-
 require_once('../../config.php');
-require_once(dirname(__FILE__).'/create_form.php');
+require_once(dirname(__FILE__) . '/create_form.php');
 require_once($CFG->dirroot . '/mod/wiki/lib.php');
 require_once($CFG->dirroot . '/mod/wiki/locallib.php');
 require_once($CFG->dirroot . '/mod/wiki/pagelib.php');
@@ -29,11 +28,11 @@ require_once($CFG->dirroot . '/mod/wiki/pagelib.php');
 // page editing page.
 $action = optional_param('action', 'new', PARAM_TEXT);
 // The title of the new page, can be empty
-$title  = optional_param('title', '', PARAM_TEXT);
-$swid   = optional_param('swid', 0, PARAM_INT);
-$wid    = optional_param('wid', 0, PARAM_INT);
-$gid    = optional_param('gid', 0, PARAM_INT);
-$uid    = optional_param('uid', 0, PARAM_INT);
+$title = optional_param('title', '', PARAM_TEXT);
+$wid = optional_param('wid', 0, PARAM_INT);
+$swid = optional_param('swid', 0, PARAM_INT);
+$gid = optional_param('gid', 0, PARAM_INT);
+$uid = optional_param('uid', 0, PARAM_INT);
 
 // 'create' action must be submitted by moodle form
 // so sesskey must be checked
@@ -43,22 +42,20 @@ if ($action == 'create') {
     }
 }
 
-$swiki = null;
+if (!empty($swid)) {
+    $subwiki = wiki_get_subwiki($swid);
 
-if (!empty($wid)) {
-    // @TODO: Check for capabilities
-    if (!$swid = wiki_add_subwiki($wid, $gid, $uid)) {
-        print_error('invalidwikiid');
+    if (!$wiki = wiki_get_wiki($subwiki->wikiid)) {
+        print_error('invalidwikiid', 'wiki');
     }
 
-}
+} else {
+    $subwiki = wiki_get_subwiki_by_group($wid, $gid, $uid);
 
-if (!$subwiki = wiki_get_subwiki($swid)) {
-    print_error('invalidswid', 'wiki');
-}
+    if (!$wiki = wiki_get_wiki($wid)) {
+        print_error('invalidwikiid', 'wiki');
+    }
 
-if (!$wiki = wiki_get_wiki($subwiki->wikiid)) {
-    print_error('invalidwikiid', 'wiki');
 }
 
 if (!$cm = get_coursemodule_from_instance('wiki', $wiki->id)) {
@@ -71,12 +68,18 @@ if (!$course = get_course_by_id($cm->course)) {
 
 require_course_login($course->id, true, $cm);
 
-add_to_log($course->id, 'createpage', 'createpage', 'view.php?id='.$cm->id, $wiki->id);
+add_to_log($course->id, 'createpage', 'createpage', 'view.php?id=' . $cm->id, $wiki->id);
 
 $wikipage = new page_wiki_create($wiki, $subwiki, $cm);
 
-$wikipage->set_gid($gid);
-$wikipage->set_swid($swid);
+if (!empty($swid)) {
+    $wikipage->set_gid($subwiki->groupid);
+    $wikipage->set_uid($subwiki->userid);
+} else {
+    $wikipage->set_gid($gid);
+    $wikipage->set_uid($uid);
+}
+
 if (!empty($title)) {
     $wikipage->set_title($title);
 } else {

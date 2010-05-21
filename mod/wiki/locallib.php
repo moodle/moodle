@@ -197,13 +197,6 @@ function wiki_get_version($versionid) {
  */
 function wiki_get_first_page($subwikid, $module = null) {
     global $DB, $USER;
-    // TODO:
-    // not sure if we should use current userid
-
-    $extra = '';
-    if ($module && $module->wikimode == 'individual') {
-        $extra = ' AND p.userid=' . $USER->id;
-    }
 
     $sql = 'SELECT p.* ' .
         'FROM {wiki} w, {wiki_subwikis} s, {wiki_pages} p ' .
@@ -211,7 +204,6 @@ function wiki_get_first_page($subwikid, $module = null) {
         's.wikiid = w.id AND ' .
         'w.firstpagetitle = p.title AND ' .
         'p.subwikiid = s.id';
-    $sql .= $extra;
 
     return $DB->get_record_sql($sql, array($subwikid));
 }

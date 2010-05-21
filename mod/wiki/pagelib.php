@@ -65,6 +65,10 @@ abstract class page_wiki {
     protected $gid;
 
     /**
+     * @var int Current user ID
+     */
+    protected $uid;
+    /**
      * @var array The tabs set used in wiki module
      */
     protected $tabs = array('view', 'edit', 'comments', 'history', 'map');
@@ -192,6 +196,14 @@ abstract class page_wiki {
      */
     function set_gid($gid) {
         $this->gid = $gid;
+    }
+
+    /**
+     * Method to set current user id
+     * @param int $uid Current user id
+     */
+    function set_uid($uid) {
+        $this->uid = $uid;
     }
 
     /**
@@ -346,7 +358,7 @@ class page_wiki_edit extends page_wiki {
         global $CFG, $PAGE;
         parent::__construct($wiki, $subwiki, $cm);
         self::$attachmentoptions = array(
-            'subdirs' => false, 
+            'subdirs' => false,
             'maxfiles' => -1,
             'maxbytes' => $CFG->maxbytes,
             'accepted_types'=>'*'
@@ -522,7 +534,7 @@ class page_wiki_edit extends page_wiki {
             $data->newcontentformat = FORMAT_HTML;
             $data = file_prepare_standard_editor($data, 'newcontent', page_wiki_edit::$attachmentoptions, $context, 'wiki_attachments', $this->subwiki->id);
             break;
-        default: 
+        default:
             //$draftitemid = file_get_submitted_draft_itemid('attachments');
             //file_prepare_draft_area($draftitemid, $context->id, 'wiki_attachments', $this->subwiki->id);
             //$data->attachments = $draftitemid;
@@ -872,10 +884,11 @@ class page_wiki_create extends page_wiki {
     }
 
     function set_action($action) {
+        global $PAGE;
         $this->action = $action;
 
         require_once(dirname(__FILE__) . '/create_form.php');
-        $url = new moodle_url('/mod/wiki/create.php', array('action' => 'create', 'swid' => $this->swid));
+        $url = new moodle_url('/mod/wiki/create.php', array('action' => 'create', 'wid' => $PAGE->activityrecord->id, 'gid' => $this->gid, 'uid' => $this->uid));
         $formats = wiki_get_formats();
         $options = array('formats' => $formats);
         if ($this->title != get_string('newpage', 'wiki')) {
@@ -894,7 +907,6 @@ class page_wiki_create extends page_wiki {
         global $PAGE;
 
         $context = get_context_instance(CONTEXT_MODULE, $PAGE->cm->id);
-        $wiki = wiki_get_wiki($this->swid);
 
         // @TODO: Change this to has_capability and show an alternative interface.
         require_capability('mod/wiki:createpage', $context, NULL, true, 'nocreatepermission', 'wiki');
@@ -909,8 +921,12 @@ class page_wiki_create extends page_wiki {
     }
 
     function create_page() {
-        global $USER, $CFG;
+        global $USER, $CFG, $PAGE;
         $data = $this->mform->get_data();
+        if (empty($this->subwiki)){
+            $swid = wiki_add_subwiki($PAGE->activityrecord->id, $this->gid, $this->uid);
+            $this->subwiki = wiki_get_subwiki($swid);
+        }
         $id = wiki_create_page($this->subwiki->id, $data->pagetitle, $data->pageformat, $USER->id);
         redirect($CFG->wwwroot . '/mod/wiki/edit.php?pageid=' . $id);
     }

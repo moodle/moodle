@@ -36,15 +36,20 @@ require_once($CFG->dirroot . '/mod/wiki/lib.php');
 require_once($CFG->dirroot . '/mod/wiki/locallib.php');
 require_once($CFG->dirroot . '/mod/wiki/pagelib.php');
 
-$currentgroup = optional_param('group', 0, PARAM_INT); // Group ID
-$userid = optional_param('userid', 0, PARAM_INT); // User ID
-$title  = optional_param('title', '', PARAM_TEXT); // Page Title
-$action = optional_param('action', '', PARAM_ALPHA);
-$id     = optional_param('id', 0, PARAM_INT); // Course Module ID
-$swid   = optional_param('swid', 0, PARAM_INT); // Subwiki ID
+$id = optional_param('id', 0, PARAM_INT); // Course Module ID
+
 $pageid = optional_param('pageid', 0, PARAM_INT); // Page ID
-$wid    = optional_param('wid', 0, PARAM_INT); // Wiki ID
-$edit   = optional_param('edit', -1, PARAM_BOOL);
+
+$wid = optional_param('wid', 0, PARAM_INT); // Wiki ID
+$title = optional_param('title', '', PARAM_TEXT); // Page Title
+$currentgroup = optional_param('group', 0, PARAM_INT); // Group ID
+$userid = optional_param('uid', 0, PARAM_INT); // User ID
+$groupanduser = optional_param('groupanduser', 0, PARAM_TEXT);
+
+$edit = optional_param('edit', -1, PARAM_BOOL);
+
+$action = optional_param('action', '', PARAM_ALPHA);
+$swid = optional_param('swid', 0, PARAM_INT); // Subwiki ID
 
 /*
  * Case 0:
@@ -78,38 +83,26 @@ if ($id) {
 
     // Getting current group id
     $currentgroup = groups_get_activity_group($cm);
-    $currentgroup = !empty($currentgroup)?$currentgroup:0;
+    $currentgroup = !empty($currentgroup) ? $currentgroup : 0;
     // Getting current user id
-    if ($wiki->wikimode == 'individual'){
-        if (empty($userid)){
-            $userid = $USER->id;
-        }
+    if ($wiki->wikimode == 'individual') {
+        $userid = $USER->id;
     } else {
         $userid = 0;
     }
-    $subwiki = wiki_get_subwiki_by_group($wiki->id, $currentgroup, $userid);
-    $page = null;
-    if (!empty($subwiki)){
-        $page = wiki_get_first_page($subwiki->id, $wiki);
-    }
-    if (!empty($page)){
-        $pageid = $page->id;
-    } else {
-        // the first page doesn't exist, create first page automatically
-        // Then redirct to editing page
-        $page = null;
-        $title = $wiki->firstpagetitle;
-        $default = $wiki->defaultformat;
-        if (empty($subwiki)) {
-            if (!$swid = wiki_add_subwiki($wiki->id, $currentgroup, $userid)) {
-                print_error('invalidwikiid');
-            }
-        } else {
-            $swid = $subwiki->id;
-        }
 
-        $id = wiki_create_page($swid, $title, $default, $USER->id);
-        redirect($CFG->wwwroot . '/mod/wiki/edit.php?pageid=' . $id);
+    // Getting subwiki. If it does not exists, redirecting to create page
+    if (!$subwiki = wiki_get_subwiki_by_group($wiki->id, $currentgroup, $userid)) {
+        $params = array('wid' => $wiki->id, 'gid' => $currentgroup, 'uid' => $userid, 'title' => $wiki->firstpagetitle);
+        $url = new moodle_url('/mod/wiki/create.php', $params);
+        redirect($url);
+    }
+
+    // Getting first page. If it does not exists, redirecting to create page
+    if (!$page = wiki_get_first_page($subwiki->id, $wiki)) {
+        $params = array('swid' => $wiki->id, 'title' => $wiki->firstpagetitle);
+        $url = new moodle_url('/mod/wiki/create.php', $params);
+        redirect($url);
     }
 
     /*
@@ -117,12 +110,7 @@ if ($id) {
      *
      * A user wants to see a page.
      *
-     * If group is set, system must show the page with the same name from another group.
-     * In this case, is probable that there is no version of that page for the
-     * given group
-     *
      * URL Params: pageid -> page id
-     *             group -> group id (optional)
      *
      */
 } elseif ($pageid) {
@@ -131,24 +119,9 @@ if ($id) {
     if (!$page = wiki_get_page($pageid)) {
         print_error('incorrectpageid', 'wiki');
     }
-    if (!empty($swid)){
-        // User wants to view another subwiki
-        if ($subwiki = wiki_get_subwiki($swid)){
-            // Trying to get the same page but from another subwiki
-            if (!$page = wiki_get_page_by_title($swid, $page->title)) {
-                // That page does not exists
-                // Getting the first page of that wiki
-                $wiki = wiki_get_wiki($subwiki->wikiid);
-                if (!$page = wiki_get_page_by_title($swid, $wiki->firstpagetitle)){
-                    $url = new moodle_url('/mod/wiki/view.php', array('id'=>$subwiki->id));
-                    print_error('individualpagedoesnotexist', 'wiki', $url->out());
-                }
-            }
-        } else {
-            print_error('incorrectsubwikiid', 'wiki');
-        }
 
-    } else if (!$subwiki = wiki_get_subwiki($page->subwikiid)) {
+    // Checking subwiki
+    if (!$subwiki = wiki_get_subwiki($page->subwikiid)) {
         print_error('incorrectsubwikiid', 'wiki');
     }
 
@@ -167,53 +140,30 @@ if ($id) {
         print_error('coursemisconf');
     }
 
-    // Switching to the correct page and subwiki if group param is present
-    if ($currentgroup = groups_get_activity_group($cm)) {
-        if ($subwiki->groupid != $currentgroup) {
-
-            // Setting new subwiki instance
-            // @TODO: Fix call to wiki_get_subwiki_by_group
-            $subwiki = wiki_get_subwiki_by_group($wiki->id, $currentgroup);
-
-            // Setting new page instance or page title
-            $title = $page->title;
-            if ($page = wiki_get_page_by_title($subwiki->id, $page->title)) {
-                unset($title);
-            }
-        }
-    }
-
     /*
      * Case 2:
      *
-     * Trying to read a page by using subwiki->id and title.
+     * Trying to read a page from another group or user
      *
      * Page can exists or not.
      *  * If it exists, page must be shown
      *  * If it does not exists, system must ask for its creation
      *
-     * URL params: swid -> subwiki id
-     *             title -> a page title
+     * URL params: wid -> subwiki id (required)
+     *             title -> a page title (required)
+     *             group -> group id (optional)
+     *             uid -> user id (optional)
+     *             groupanduser -> (optional)
      */
-} elseif ($swid && $title) {
-
-    // Getting subwiki instance
-    if (!$subwiki = wiki_get_subwiki($swid)) {
-        print_error('incorrectsubwikiid', 'wiki');
-    }
-
-    // Checking is there is a page with this title
-    if ($page = wiki_get_page_by_title($swid, $title)) {
-        unset($title);
-    }
+} elseif ($wid && $title) {
 
     // Setting wiki instance
-    if (!$wiki = wiki_get_wiki($subwiki->wikiid)) {
+    if (!$wiki = wiki_get_wiki($wid)) {
         print_error('incorrectwikiid', 'wiki');
     }
 
     // Checking course module
-    if (!$cm = get_coursemodule_from_instance("wiki", $subwiki->wikiid)) {
+    if (!$cm = get_coursemodule_from_instance("wiki", $wiki->id)) {
         print_error('invalidcoursemodule');
     }
 
@@ -222,66 +172,97 @@ if ($id) {
         print_error('coursemisconf');
     }
 
-    /*
-     * Case 3:
-     *
-     * A user switches group when is 'reading' a non-existent page.
-     *
-     * URL Params: wid -> wiki id
-     *             title -> page title
-     *             currentgroup -> group id
-     *
-     */
-} elseif ($wid && $title && $currentgroup) {
-
-    // Checking wiki instance
-    if (!$wiki = wiki_get_wiki($wid)) {
-        print_error('incorrectwikiid', 'wiki');
+    $groupmode = groups_get_activity_groupmode($cm);
+    if (empty($currentgroup)) {
+        $currentgroup = groups_get_activity_group($cm);
+        $currentgroup = !empty($currentgroup) ? $currentgroup : 0;
     }
 
-    // Checking subwiki instance
-    // @TODO: Fix call to wiki_get_subwiki_by_group
-    if (!$currentgroup = groups_get_activity_group($cm)){
-        $currentgroup = 0;
-    }
-    if (!$subwiki = wiki_get_subwiki_by_group($wid, $currentgroup)) {
-        print_error('incorrectsubwikiid', 'wiki');
-    }
-
-    // Checking page instance
-    if ($page = wiki_get_page_by_title($subwiki->id, $title)) {
-        unset($title);
-    }
-
-    // Checking course instance
-    if (!$course = get_course_by_id($wiki->course)) {
-        print_error('coursemisconf');
+    if ($wiki->wikimode == 'individual' && ($groupmode == SEPARATEGROUPS || $groupmode == VISIBLEGROUPS)) {
+        list($gid, $uid) = explode('-', $groupanduser);
+    } else if ($wiki->wikimode == 'individual') {
+        $gid = 0;
+        $uid = $userid;
+    } else if ($groupmode == NOGROUPS) {
+        $gid = 0;
+        $uid = 0;
+    } else {
+        $gid = $currentgroup;
+        $uid = 0;
     }
 
-    // Checking course module instance
-    if (!$cm = get_coursemodule_from_instance("wiki", $wiki->id, $course->id)) {
-        print_error('invalidcoursemodule');
+    // Getting subwiki instance. If it does not exists, redirect to create page
+    if (!$subwiki = wiki_get_subwiki_by_group($wiki->id, $gid, $uid)) {
+        $params = array('wid' => $wiki->id, 'gid' => $gid, 'uid' => $uid, 'title' => $title);
+        $url = new moodle_url('/mod/wiki/create.php', $params);
+        redirect($url);
     }
 
-    $subwiki = null;
-    $page = null;
+    // Checking is there is a page with this title. If it does not exists, redirect to first page
+    if (!$page = wiki_get_page_by_title($subwiki->id, $title)) {
+        $params = array('wid' => $wiki->id, 'gid' => $gid, 'uid' => $uid, 'title' => $wiki->firstpagetitle);
+        $url = new moodle_url('/mod/wiki/view.php', $params);
+        redirect($url);
+    }
 
-    /*
-     * Case 4:
-     *
-     * Error. No more options
-     */
-} else {
+    //    /*
+    //     * Case 3:
+    //     *
+    //     * A user switches group when is 'reading' a non-existent page.
+    //     *
+    //     * URL Params: wid -> wiki id
+    //     *             title -> page title
+    //     *             currentgroup -> group id
+    //     *
+    //     */
+    //} elseif ($wid && $title && $currentgroup) {
+    //
+    //    // Checking wiki instance
+    //    if (!$wiki = wiki_get_wiki($wid)) {
+    //        print_error('incorrectwikiid', 'wiki');
+    //    }
+    //
+    //    // Checking subwiki instance
+    //    // @TODO: Fix call to wiki_get_subwiki_by_group
+    //    if (!$currentgroup = groups_get_activity_group($cm)){
+    //        $currentgroup = 0;
+    //    }
+    //    if (!$subwiki = wiki_get_subwiki_by_group($wid, $currentgroup)) {
+    //        print_error('incorrectsubwikiid', 'wiki');
+    //    }
+    //
+    //    // Checking page instance
+    //    if ($page = wiki_get_page_by_title($subwiki->id, $title)) {
+    //        unset($title);
+    //    }
+    //
+    //    // Checking course instance
+    //    if (!$course = get_course_by_id($wiki->course)) {
+    //        print_error('coursemisconf');
+    //    }
+    //
+    //    // Checking course module instance
+    //    if (!$cm = get_coursemodule_from_instance("wiki", $wiki->id, $course->id)) {
+    //        print_error('invalidcoursemodule');
+    //    }
+    //
+    //    $subwiki = null;
+    //    $page = null;
+    //
+    //    /*
+    //     * Case 4:
+    //     *
+    //     * Error. No more options
+    //     */
+    } else {
     print_error('incorrectparameters');
 }
-
-
 require_course_login($course, true, $cm);
 
 $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 require_capability('mod/wiki:viewpage', $context);
 
-add_to_log($course->id, 'wiki', 'view', 'view.php?id='.$cm->id, $wiki->id);
+add_to_log($course->id, 'wiki', 'view', 'view.php?id=' . $cm->id, $wiki->id);
 
 if (($edit != - 1) and $PAGE->user_allowed_editing()) {
     $USER->editing = $edit;
