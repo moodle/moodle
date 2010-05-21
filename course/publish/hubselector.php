@@ -38,6 +38,16 @@ $PAGE->set_pagelayout('course');
 $PAGE->set_title(get_string('course') . ': ' . $course->fullname);
 $PAGE->set_heading($course->fullname);
 
+$hubmanager = new hub();
+$registeredhubs = $hubmanager->get_registered_on_hubs();
+if (empty($registeredhubs)) {
+    echo $OUTPUT->header();
+    echo $OUTPUT->heading(get_string('publishon', 'hub'), 3, 'main');
+    echo $OUTPUT->box(get_string('notregisteredonhub', 'hub'));
+    echo $OUTPUT->footer();
+    die();
+}
+
 
 $share = optional_param('share', false, PARAM_BOOL);
 $advertise = optional_param('advertise', false, PARAM_BOOL);
