@@ -126,6 +126,8 @@ class question_edit_calculated_form extends question_edit_form {
     }
 
     function set_data($question) {
+        global $QTYPES;
+
         $default_values = array();
         if (isset($question->options)){
             $answers = $question->options->answers;
@@ -144,6 +146,7 @@ class question_edit_calculated_form extends question_edit_form {
             }
           $default_values['synchronize'] = $question->options->synchronize ;
          $QTYPES['numerical']->set_numerical_unit_data($question,$default_values);
+        }
         if (isset($question->options->single)){
             $default_values['single'] =  $question->options->single;
             $default_values['answernumbering'] =  $question->options->answernumbering;
