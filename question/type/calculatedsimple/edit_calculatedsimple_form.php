@@ -547,6 +547,8 @@ class question_edit_calculatedsimple_form extends question_edit_form {
     }
 
     function set_data($question) {
+        global $QTYPES;
+
             $answer = $this->answer;
             $default_values = array();
             if (count($answer)) {
