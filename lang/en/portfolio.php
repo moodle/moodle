@@ -146,7 +146,7 @@ $string['nocommonformats'] = 'No common formats between any available portfolio 
 $string['noinstanceyet'] = 'Not yet selected';
 $string['nologs'] = 'There are no logs to display!';
 $string['nomultipleexports'] = 'Sorry, but the portfolio destination ({$a->plugin}) doesn\'t support multiple exports at the same time.  Please <a href="{$a->link}">finish the current one first</a> and try again';
-$string['nonprimative'] = 'A non primative value was passed as a callback argument to portfolio_add_button.  Refusing to continue.  The key was {$a->key} and the value was {$a->value}';
+$string['nonprimative'] = 'A non primitive value was passed as a callback argument to portfolio_add_button.  Refusing to continue.  The key was {$a->key} and the value was {$a->value}';
 $string['nopermissions'] = 'Sorry but you do not have the required permissions to export files from this area';
 $string['notexportable'] = 'Sorry, but the type of content you are trying to export is not exportable';
 $string['notimplemented'] = 'Sorry, but you are trying to export content in some format that is not yet implemented ({$a})';
