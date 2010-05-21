@@ -244,7 +244,7 @@ function uninstall_plugin($type, $name) {
     // delete the capabilities that were defined by this module
     capabilities_cleanup($component);
 
-    // remove entent handlers and dequeue pending events
+    // remove event handlers and dequeue pending events
     events_uninstall($component);
 
     echo $OUTPUT->notification(get_string('success'), 'notifysuccess');
@@ -292,7 +292,7 @@ function drop_plugin_tables($name, $file, $feedback=true) {
 }
 
 /**
- * Returns names of all known tables == tables that moodle knowns about.
+ * Returns names of all known tables == tables that moodle knows about.
  *
  * @return array Array of lowercase table names
  */
@@ -350,8 +350,8 @@ function get_db_directories() {
 /**
  * Try to obtain or release the cron lock.
  * @param string  $name  name of lock
- * @param int  $until timestamp when this lock considered stale, null means remove lock unconditionaly
- * @param bool $ignorecurrent ignore current lock state, usually entend previous lock, defaults to false
+ * @param int  $until timestamp when this lock considered stale, null means remove lock unconditionally
+ * @param bool $ignorecurrent ignore current lock state, usually extend previous lock, defaults to false
  * @return bool true if lock obtained
  */
 function set_cron_lock($name, $until, $ignorecurrent=false) {
@@ -405,7 +405,7 @@ function admin_critical_warnings_present() {
 /**
  * Detects if float supports at least 10 decimal digits
  *
- * Detects if float supports at least 10 deciman digits
+ * Detects if float supports at least 10 decimal digits
  * and also if float-->string conversion works as expected.
  *
  * @return bool true if problem found
@@ -427,7 +427,7 @@ function is_float_problem() {
  * @uses INSECURE_DATAROOT_WARNING
  * @uses INSECURE_DATAROOT_ERROR
  * @param bool $fetchtest try to test public access by fetching file, default false
- * @return mixed empty means secure, INSECURE_DATAROOT_ERROR found a critical problem, INSECURE_DATAROOT_WARNING migth be problematic
+ * @return mixed empty means secure, INSECURE_DATAROOT_ERROR found a critical problem, INSECURE_DATAROOT_WARNING might be problematic
  */
 function is_dataroot_insecure($fetchtest=false) {
     global $CFG;
@@ -532,9 +532,9 @@ function is_dataroot_insecure($fetchtest=false) {
 /// CLASS DEFINITIONS /////////////////////////////////////////////////////////
 
 /**
- * Pseudointerface for anything appearing in the admin tree
+ * Interface for anything appearing in the admin tree
  *
- * The pseudointerface that is implemented by anything that appears in the admin tree
+ * The interface that is implemented by anything that appears in the admin tree
  * block. It forces inheriting classes to define a method for checking user permissions
  * and methods for finding something in the admin tree.
  *
@@ -589,7 +589,7 @@ interface part_of_admin_tree {
     public function check_access();
 
     /**
-     * Mostly usefull for removing of some parts of the tree in admin tree block.
+     * Mostly useful for removing of some parts of the tree in admin tree block.
      *
      * @return True is hidden from normal list view
      */
@@ -603,9 +603,9 @@ interface part_of_admin_tree {
 }
 
 /**
- * Pseudointerface implemented by any part_of_admin_tree that has children.
+ * Interface implemented by any part_of_admin_tree that has children.
  *
- * The pseudointerface implemented by any part_of_admin_tree that can be a parent
+ * The interface implemented by any part_of_admin_tree that can be a parent
  * to other part_of_admin_tree's. (For now, this only includes admin_category.) Apart
  * from ensuring part_of_admin_tree compliancy, it also ensures inheriting methods
  * include an add method for adding other part_of_admin_tree objects as children.
@@ -746,7 +746,7 @@ class admin_category implements parentable_part_of_admin_tree {
      * Adds a part_of_admin_tree to a child or grandchild (or great-grandchild, and so forth) of this object.
      *
      * @param string $destinationame The internal name of the immediate parent that we want for $something.
-     * @param mixed $something A part_of_admin_tree or setting instanceto be added.
+     * @param mixed $something A part_of_admin_tree or setting instance to be added.
      * @return bool True if successfully added, false if $something can not be added.
      */
     public function add($parentname, $something) {
@@ -774,7 +774,7 @@ class admin_category implements parentable_part_of_admin_tree {
     /**
      * Checks if the user has access to anything in this category.
      *
-     * @return bool True if the user has access to atleast one child in this category, false otherwise.
+     * @return bool True if the user has access to at least one child in this category, false otherwise.
      */
     public function check_access() {
         foreach ($this->children as $child) {
@@ -818,11 +818,11 @@ class admin_root extends admin_category {
     public $errors;
     /** @var string search query */
     public $search;
-    /** @var bool full tree flag - true means all settings required, false onlypages required */
+    /** @var bool full tree flag - true means all settings required, false only pages required */
     public $fulltree;
     /** @var bool flag indicating loaded tree */
     public $loaded;
-    /** @var mixed site custom defaults overriding defaults in setings files*/
+    /** @var mixed site custom defaults overriding defaults in settings files*/
     public $custom_defaults;
 
     /**
@@ -1185,7 +1185,7 @@ class admin_settingpage implements part_of_admin_tree {
     }
 
     /**
-     * Is this settigns page hidden in admin tree block?
+     * Is this settings page hidden in admin tree block?
      *
      * @return bool True if hidden
      */
@@ -1315,7 +1315,7 @@ abstract class admin_setting {
      *
      * @param string $name
      * @param mixed $value Gets converted to string if not null
-     * @return bool Write setting to confix table
+     * @return bool Write setting to config table
      */
     public function config_write($name, $value) {
         global $DB, $USER, $CFG;
@@ -1364,7 +1364,7 @@ abstract class admin_setting {
         if (!empty($adminroot->custom_defaults)) {
             $plugin = is_null($this->plugin) ? 'moodle' : $this->plugin;
             if (isset($adminroot->custom_defaults[$plugin])) {
-                if (array_key_exists($this->name, $adminroot->custom_defaults[$plugin])) { // null is valid valie here ;-)
+                if (array_key_exists($this->name, $adminroot->custom_defaults[$plugin])) { // null is valid value here ;-)
                     return $adminroot->custom_defaults[$plugin][$this->name];
                 }
             }
@@ -1509,7 +1509,7 @@ class admin_setting_configtext extends admin_setting {
     public $size;
 
     /**
-     * Config text contructor
+     * Config text constructor
      *
      * @param string $name unique ascii name, either 'mysetting' for settings that in config, or 'myplugin/mysetting' for ones in config_plugins.
      * @param string $visiblename localised
@@ -1531,7 +1531,7 @@ class admin_setting_configtext extends admin_setting {
     /**
      * Return the setting
      *
-     * @return mixed returns config if successfull else null
+     * @return mixed returns config if successful else null
      */
     public function get_setting() {
         return $this->config_read($this->name);
@@ -2237,7 +2237,7 @@ class admin_setting_configselect extends admin_setting {
     /**
      * Return the setting
      *
-     * @return mixed returns config if successfull else null
+     * @return mixed returns config if successful else null
      */
     public function get_setting() {
         return $this->config_read($this->name);
@@ -2562,10 +2562,10 @@ class admin_setting_configiplist extends admin_setting_configtextarea {
 /**
  * Validate the contents of the textarea as IP addresses
  *
- * Used to validate a new line seperated list of IP addresses collected from
+ * Used to validate a new line separated list of IP addresses collected from
  * a textarea control
  *
- * @param string $data A list of IP Addresses seperated by new lines
+ * @param string $data A list of IP Addresses separated by new lines
  * @return mixed bool true for success or string:error on failure
  */
     public function validate($data) {
@@ -2621,7 +2621,7 @@ class admin_setting_users_with_capability extends admin_setting_configmultiselec
      * @param string $description localised long description
      * @param array $defaultsetting array of usernames
      * @param string $capability string capability name.
-     * @param bool $include admins, include aadministrators
+     * @param bool $includeadmins include administrators
      */
     function __construct($name, $visiblename, $description, $defaultsetting, $capability, $includeadmins = true) {
         $this->capability    = $capability;
@@ -2701,7 +2701,7 @@ class admin_setting_users_with_capability extends admin_setting_configmultiselec
         if (in_array('$@ALL@$', $data)) {
             $data = array('$@ALL@$');
         }
-        // None never needs to be writted to the DB.
+        // None never needs to be written to the DB.
         if (in_array('$@NONE@$', $data)) {
             unset($data[array_search('$@NONE@$', $data)]);
         }
@@ -3025,7 +3025,7 @@ class admin_setting_sitesettext extends admin_setting_configtext {
      * Save the selected setting
      *
      * @param string $data The selected value
-     * @return string emtpy or error message
+     * @return string empty or error message
      */
     public function write_setting($data) {
         global $DB, $SITE;
@@ -3681,7 +3681,7 @@ class admin_setting_special_calendar_weekend extends admin_setting {
         parent::__construct($name, $visiblename, $description, $default);
     }
     /**
-     * Gets the current settins as an array
+     * Gets the current settings as an array
      *
      * @return mixed Null if none, else array of settings
      */
@@ -4133,7 +4133,7 @@ class admin_setting_regradingcheckbox extends admin_setting_configcheckbox {
 }
 
 /**
- * Which roles to show on course decription page
+ * Which roles to show on course description page
  *
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -4416,7 +4416,7 @@ class admin_setting_special_registerauth extends admin_setting_configselect {
     /**
      * Returns the default option
      *
-     * @return string emtpy or default option
+     * @return string empty or default option
      */
     public function get_defaultsetting() {
         $this->load_choices();
@@ -5470,7 +5470,7 @@ function admin_get_root($reload=false, $requirefulltree=true) {
  * This function applies default settings.
  *
  * @param object $node, NULL means complete tree, null by default
- * @param bool $uncoditional if true overrides all values with defaults, null buy default
+ * @param bool $unconditional if true overrides all values with defaults, null buy default
  */
 function admin_apply_default_settings($node=NULL, $unconditional=true) {
     global $CFG;
@@ -5638,7 +5638,7 @@ function admin_search_settings_html($query) {
                     $data = $adminroot->errors[$fullname]->data;
                 } else {
                     $data = $setting->get_setting();
-                // do not use defaults if settings not available - upgrdesettings handles the defaults!
+                // do not use defaults if settings not available - upgradesettings handles the defaults!
                 }
                 $return .= $setting->output_html($data, $query);
             }
@@ -5706,7 +5706,7 @@ function admin_output_new_settings_by_page($node) {
  *
  * @param object $setting
  * @param string $title label element
- * @param string $form form fragment, html code - not highlighed automaticaly
+ * @param string $form form fragment, html code - not highlighted automatically
  * @param string $description
  * @param bool $label link label to id, true by default
  * @param string $warning warning text
@@ -5777,7 +5777,7 @@ function format_admin_setting($setting, $title='', $form='', $description='', $l
  * Looks to find any admin settings that have not been initialized. Returns 1 if it finds any.
  *
  * @param object $node Instance of admin_category, or admin_settingpage
- * @return boolen true if any settings haven't been initialised, false if they all have
+ * @return boolean true if any settings haven't been initialised, false if they all have
  */
 function any_new_admin_settings($node) {
 
