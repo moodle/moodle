@@ -4075,6 +4075,14 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         upgrade_main_savepoint($result, 2010051801);
     }
 
+    if ($result && $oldversion < 2010052100) {
+        // Switch to html purifier as default cleaning engine - KSES is really very bad
+        if (empty($CFG->enablehtmlpurifier)) {
+            unset_config('enablehtmlpurifier');
+        }
+        upgrade_main_savepoint($result, 2010052100);
+    }
+
 
     return $result;
 }

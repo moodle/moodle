@@ -33,6 +33,9 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
     $params->displaysize = display_size($defaultuserquota);
     $temp->add(new admin_setting_configtext('userquota', get_string('userquota', 'admin'), get_string('configuserquota', 'admin', $params), $defaultuserquota));
 
+    $item = new admin_setting_configcheckbox('enablehtmlpurifier', get_string('enablehtmlpurifier', 'admin'), get_string('configenablehtmlpurifier', 'admin'), 1);
+    $item->set_updatedcallback('reset_text_filters_cache');
+    $temp->add($item);
     $temp->add(new admin_setting_configcheckbox('allowobjectembed', get_string('allowobjectembed', 'admin'), get_string('configallowobjectembed', 'admin'), 0));
     $temp->add(new admin_setting_configcheckbox('enabletrusttext', get_string('enabletrusttext', 'admin'), get_string('configenabletrusttext', 'admin'), 0));
     $temp->add(new admin_setting_configselect('maxeditingtime', get_string('maxeditingtime','admin'), get_string('configmaxeditingtime','admin'), 1800,
