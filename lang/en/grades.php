@@ -46,7 +46,6 @@ $string['aggregateonlygraded_help'] = 'An empty grade is a grade which is missin
 This setting determines whether empty grades are not included in the aggregation or are counted as minimal grades, for example 0 for an assignment graded between 0 and 100.';
 $string['aggregateoutcomes'] = 'Include outcomes in aggregation';
 $string['aggregateoutcomes_help'] = 'If enabled, outcomes are included in the aggregation. This may result in an unexpected category total.';
-$string['aggregateoutcomeshelp'] = 'Including outcomes in aggregation may not lead to the desired overall grade, so you have the option to include or leave them out.';
 $string['aggregatesonly'] = 'Aggregates only';
 $string['aggregatesubcats'] = 'Aggregate including subcategories';
 $string['aggregatesubcats_help'] = 'This setting determines whether grades in subcategories are included in the aggregation.';

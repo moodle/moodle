@@ -65,7 +65,7 @@ class edit_category_form extends moodleform {
             $mform->setType('aggregateoutcomes', PARAM_INT);
         } else {
             $mform->addElement('checkbox', 'aggregateoutcomes', get_string('aggregateoutcomes', 'grades'));
-            $mform->setHelpButton('aggregateoutcomes', array('aggregateoutcomes', get_string('aggregateoutcomes', 'grades'), 'grade'), true);
+            $mform->addHelpButton('aggregateoutcomes', 'aggregateoutcomes', 'grades');
             if ((int)$CFG->grade_aggregateoutcomes_flag & 2) {
                 $mform->setAdvanced('aggregateoutcomes');
             }

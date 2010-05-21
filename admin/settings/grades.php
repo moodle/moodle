@@ -100,7 +100,7 @@ if (has_capability('moodle/grade:manage', $systemcontext)
                     get_string('aggregateonlygraded_help', 'grades'), $defaults, $options));
         $defaults = array('value'=>0, 'forced'=>false, 'adv'=>true);
         $temp->add(new admin_setting_gradecat_combo('grade_aggregateoutcomes', get_string('aggregateoutcomes', 'grades'),
-                    get_string('aggregateoutcomeshelp', 'grades'), $defaults, $options));
+                    get_string('aggregateoutcomes_help', 'grades'), $defaults, $options));
         $temp->add(new admin_setting_gradecat_combo('grade_aggregatesubcats', get_string('aggregatesubcats', 'grades'),
                     get_string('aggregatesubcatshelp', 'grades'), $defaults, $options));
 
