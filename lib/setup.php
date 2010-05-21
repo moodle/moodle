@@ -44,8 +44,8 @@ global $CFG;
 $CFG->libdir = $CFG->dirroot .'/lib';
 
 // exact version of currently used yui2 and 3 library
-$CFG->yui2version = '2.8.0r4';
-$CFG->yui3version = '3.1.0';
+$CFG->yui2version = '2.8.1';
+$CFG->yui3version = '3.1.1';
 
 // special support for highly optimised scripts that do not need libraries and DB connection
 if (defined('ABORT_AFTER_CONFIG')) {
