@@ -249,7 +249,7 @@ class page_requirements_manager {
         $this->string_for_js('confirmation', 'admin');
         $this->string_for_js('cancel', 'moodle');
         $this->string_for_js('yes', 'moodle');
-        
+
         if ($page->pagelayout === 'frametop') {
             $this->js_init_call('M.util.init_frametop');
         }
@@ -338,7 +338,7 @@ class page_requirements_manager {
 
         $module = null;
 
-        
+
         if (strpos($component, 'core_') === 0) {
             // must be some core stuff - list here is not complete, this is just the stuff used from multiple places
             // so that we do nto have to repeat the definition of these modules over and over again
@@ -358,7 +358,9 @@ class page_requirements_manager {
                                                         array('saving', 'repository'), array('search', 'repository'), array('searching', 'repository'), array('size', 'repository'),
                                                         array('submit', 'repository'), array('sync', 'repository'), array('title', 'repository'), array('upload', 'repository'),
                                                         array('uploading', 'repository'), array('xhtmlerror', 'repository'),
-                                                        array('xhtml', 'quiz'), array('cancel'), array('chooselicense', 'repository'), array('author', 'repository')));
+                                                        array('xhtml', 'quiz'), array('cancel'), array('chooselicense', 'repository'), array('author', 'repository'),
+                                                        array('ok', 'moodle'), array('error', 'moodle'), array('info', 'moodle')
+                                                    ));
                     break;
                 case 'core_comment':
                     $module = array('name'     => 'core_comment',
@@ -714,8 +716,8 @@ class page_requirements_manager {
      * @param string $function The name of the function to call
      * @param array  $arguments An optional array of argument parameters to pass to the function
      * @return void
-     */    
-    public function event_handler($selector, $event, $function, array $arguments = null) {        
+     */
+    public function event_handler($selector, $event, $function, array $arguments = null) {
         $this->eventhandlers[] = array('selector'=>$selector, 'event'=>$event, 'function'=>$function, 'arguments'=>$arguments);
     }
 

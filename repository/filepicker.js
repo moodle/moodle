@@ -120,14 +120,20 @@ M.core_filepicker.init = function(Y, options) {
                         try {
                             data = Y.JSON.parse(o.responseText);
                         } catch(e) {
-                            Y.one(panel_id).set('innerHTML', 'ERROR: '+M.str.repository.invalidjson);
+                            scope.print_msg(M.str.repository.invalidjson, 'error');
+                            Y.one(panel_id).set('innerHTML', 'ERROR: '+M.str.repository.invalidjson+'<pre>'+stripHTML(o.responseText)+'</pre>');
                             return;
                         }
                         // error checking
                         if (data && data.e) {
-                            Y.one(panel_id).set('innerHTML', 'ERROR: '+data.e);
+                            //Y.one(panel_id).set('innerHTML', 'ERROR: '+data.e);
+                            scope.print_msg(data.e, 'error');
+                            scope.list();
                             return;
                         } else {
+                            if (data.msg) {
+                                scope.print_msg(data.msg, 'info');
+                            }
                             args.callback(id,data,p);
                         }
                     }
@@ -150,7 +156,42 @@ M.core_filepicker.init = function(Y, options) {
                 this.wait('load');
             }
         },
+        print_msg: function(msg, type) {
+            var client_id = this.options.client_id;
+            var dlg_id = 'fp-msg-dlg-'+client_id;
+            function handleYes() {
+                this.hide();
+            }
+            var icon = YAHOO.widget.SimpleDialog.ICON_INFO;
+            if (type=='error') {
+                icon = YAHOO.widget.SimpleDialog.ICON_ALARM;
+            }
+            if (!this.msg_dlg) {
+                this.msg_dlg = new YAHOO.widget.SimpleDialog(dlg_id, 
+                     { width: "300px",
+                       fixedcenter: true,
+                       visible: true,
+                       draggable: true,
+                       close: true,
+                       text: msg,
+                       modal: false,
+                       icon: icon,
+                       zindex: 9999992,
+                       constraintoviewport: true,
+                       buttons: [{ text:M.str.moodle.ok, handler:handleYes, isDefault:true }]
+                     });
+                this.msg_dlg.render(document.body);
+            } else {
+                this.msg_dlg.setBody(msg);
+            }
+            var header = M.str.moodle.info;
+            if (type=='error') {
+                header = M.str.moodle.error;
+            }
+            this.msg_dlg.setHeader(type);
+            this.msg_dlg.show();
 
+        },
         build_tree: function(node, level) {
             var client_id = this.options.client_id;
             var dynload = this.active_repo.dynload;
@@ -236,8 +277,19 @@ M.core_filepicker.init = function(Y, options) {
             Y.one(panel_id).set('innerHTML', '');
 
             this.print_header();
-            var tree = Y.Node.create('<div id="treeview-'+client_id+'"></div>');
+
+            var html = '<div class="fp-tree-panel" id="treeview-'+client_id+'">';
+            if (list.length==0) {
+                html += '<div class="fp-emptylist mdl-align">' +M.str.repository.emptylist+'</div>';
+            }
+            html += '</div>';
+
+            var tree = Y.Node.create(html);
             Y.one(panel_id).appendChild(tree);
+            if (list.length==0) {
+                return;
+            }
+
             this.treeview = new YAHOO.widget.TreeView('treeview-'+client_id);
             if (dynload) {
                 this.treeview.setDynamicLoad(this.treeview_dynload, 1);
@@ -268,7 +320,13 @@ M.core_filepicker.init = function(Y, options) {
 
             this.print_header();
 
-            var gridpanel = Y.Node.create('<div id="fp-grid-panel-'+client_id+'"></div>');
+            var html = '<div class="fp-grid-panel" id="fp-grid-panel-'+client_id+'">';
+            if (list.length==0) {
+                html += '<div class="fp-emptylist mdl-align">' +M.str.repository.emptylist+'</div>';
+            }
+            html += '</div>';
+
+            var gridpanel = Y.Node.create(html);
             Y.one('#panel-'+client_id).appendChild(gridpanel);
             var count = 0;
             for(var k in list) {
@@ -742,9 +800,6 @@ M.core_filepicker.init = function(Y, options) {
                         'callback': function(id, o, args) {
                             scope.parse_repository_options(o);
                             scope.view_files();
-                            if (o.msg) {
-                                // do something
-                            }
                         }
                     }, true);
                 }, this);
@@ -882,9 +937,6 @@ M.core_filepicker.init = function(Y, options) {
                         scope.viewbar.set('disabled', false);
                         scope.parse_repository_options(obj);
                         scope.view_files();
-                    }
-                    if (obj.msg) {
-                        // TODO: Print message
                     }
                 }
             }, true);

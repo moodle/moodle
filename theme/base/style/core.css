@@ -481,13 +481,14 @@ body.tag .managelink {padding: 5px;}
 .file-picker .fp-paging a {padding: .5em;border: 1px solid #CCC;}
 .file-picker .fp-paging a.cur_page {border: 1px solid blue;}
 .file-picker .fp-popup {text-align:center;}
+.file-picker .fp-grid-panel{}
 .file-picker .fp-grid {float:left;text-align:center;}
 .file-picker .fp-grid div {overflow: hidden;}
 .file-picker .fp-grid p {margin:0;padding:0;background: #FFFFCC;}
 .file-picker .fp-grid .label {height:48px;text-align:center;}
 .file-picker .fp-grid span {color:gray;}
 .file-picker .fp-error {padding: 2em 0;margin: 3em 5px;text-align:center;background: #FFBBBB;}
-.file-picker .fp-msg {padding: 2em 0;margin: 3em 5px;text-align:center;background: green;}
+.file-picker .fp-emptylist, .file-picker .fp-msg {padding: 2em 0;margin: 1em;text-align:center;background: green;}
 /* file picker search dialog */
 .file-picker div.bd {text-align:left;}
 
