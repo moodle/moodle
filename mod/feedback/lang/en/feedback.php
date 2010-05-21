@@ -25,7 +25,7 @@
 
 $string['add_item'] = 'Add question to activity';
 $string['add_items'] = 'Add question to activity';
-$string['add_pagebreak'] = 'Add a pagebreak';
+$string['add_pagebreak'] = 'Add a page break';
 $string['adjustment'] = 'Adjustment';
 $string['after_submit'] = 'After submitting';
 $string['allowfullanonymous'] = 'Allow full anonymous';
@@ -35,8 +35,8 @@ $string['anonymous_edit'] = 'Record user names';
 $string['anonymous_entries'] = 'Anonymous entries';
 $string['anonymous_user'] = 'Anonymous user';
 $string['append_new_items'] = 'Append new items';
-$string['autonumbering'] = 'automated numbers';
-$string['autonumbering_help'] = 'enables or disables automated numbers for each question';
+$string['autonumbering'] = 'Automated numbers';
+$string['autonumbering_help'] = 'Enables or disables automated numbers for each question';
 $string['average'] = 'Average';
 $string['bold'] = 'Bold';
 $string['cancel_moving'] = 'Cancel moving';
@@ -48,7 +48,7 @@ $string['captchanotset'] = 'Captcha hasn\'t been set.';
 $string['completed'] = 'completed';
 $string['completed_feedbacks'] = 'Submitted answers';
 $string['complete_the_form'] = 'Answer the questions...';
-$string['configallowfullanonymous'] = 'If this option is set yes so the feedback can be completed whithout any preceding logon. It only affects feedbacks on the mainpage.';
+$string['configallowfullanonymous'] = 'If this option is set yes so the feedback can be completed without any preceding logon. It only affects feedbacks on the homepage.';
 $string['confirmdeleteentry'] = 'Are you sure you want to delete this entry?';
 $string['confirmdeleteitem'] = 'Are you sure you want to delete this element?';
 $string['confirmdeletetemplate'] = 'Are you sure you want to delete this template?';
@@ -64,7 +64,7 @@ $string['delete_template'] = 'Delete template';
 $string['delete_templates'] = 'Delete template...';
 $string['depending'] = 'depending items';
 $string['depending_help'] = 'Depending items allow you to show items depend on values from other items.<br />
-<strong>Here an build expample to use it:</strong><br />
+<strong>Here an build example to use it:</strong><br />
 <ul>
 <li>First create an item on which value other items depends.</li>
 <li>Next add a pagebreak.</li>
@@ -95,7 +95,7 @@ $string['edit_item'] = 'Edit question';
 $string['edit_items'] = 'Edit questions';
 $string['email_notification'] = 'Send e-mail notifications';
 $string['emailnotification'] = 'emailnotifications';
-$string['emailnotification_help'] = 'On the submission of a Feedback response, Administrators will receive email notification';
+$string['emailnotification_help'] = 'If enabled, administrators receive email notification of feedback submissions.';
 $string['emailteachermail'] = '{$a->username} has completed feedback activity : \'{$a->feedback}\'                               
                                        
 You can view it here:                                   
@@ -123,7 +123,7 @@ $string['feedbackopens'] = 'Feedback opens';
 $string['feedback_options'] = 'Feedback options';
 $string['feedback:receivemail'] = 'Receive email notification';
 $string['feedback:view'] = 'View a feedback';
-$string['feedback:viewanalysepage'] = 'View the analysepage after submit';
+$string['feedback:viewanalysepage'] = 'View the analysis page after submit';
 $string['feedback:viewreports'] = 'View reports';
 $string['file'] = 'File';
 $string['filter_by_course'] = 'Filter by course';
@@ -142,32 +142,29 @@ $string['info'] = 'Information';
 $string['infotype'] = 'Information-Type';
 $string['insufficient_responses_for_this_group'] = 'There are insufficient responses for this group';
 $string['insufficient_responses'] = 'insufficient responses';
-$string['insufficient_responses_help'] = 'There are insufficient responses for this group.<br />To keep feedbacks anonymous a minimum of 2 responses must be done.';
+$string['insufficient_responses_help'] = 'There are insufficient responses for this group.
+
+To keep the feedback anonymous, a minimum of 2 responses must be done.';
 $string['item_label'] = 'Label';
 $string['item_name'] = 'Question';
 $string['items_are_required'] = 'Answers are required to starred questions.';
 $string['label'] = 'Label';
 $string['line_values'] = 'Rating';
 $string['mapcourse'] = 'Map course';
-$string['mapcourseinfo'] = 'This is a sitewide feedback that is available to all courses using the feedback block. You can however limit the courses to which it will appear by mapping them. Search the course and map it to this feedback.';
+$string['mapcourseinfo'] = 'This is a site-wide feedback that is available to all courses using the feedback block. You can however limit the courses to which it will appear by mapping them. Search the course and map it to this feedback.';
 $string['mapcoursenone'] = 'No courses mapped. Feedback available to all courses';
 $string['mapcourse'] = 'Map feedback to courses';
-$string['mapcourse_help'] = 'By default Feedback forms created on your Moodle main page are available site wide
-and will appear in all courses using the Feedback block. You can also force the Feedback
-to appear by making it a Sticky Block.<br />
-You can however limit the courses in which a Feedback form will appear by Mapping it
-to specific courses.
-';
+$string['mapcourse_help'] = 'By default, feedback forms created on your homepage are available site-wide
+and will appear in all courses using the feedback block. You can force the feedback form to appear by making it a sticky block or limit the courses in which a feedback form will appear by mapping it to specific courses.';
 $string['mapcourses'] = 'Map feedback to courses';
-$string['mapcourses_help'] = 'Once you have selected the relevant Course(s) and/or Programme(s) from your Search,
-you can associate them with this Feedback using Map Course(s). You can Ctrl select
-multiple Courses or Shift select a series of Courses.<br />
-You can disassociated a Course or Programme from a Feedback at any time.';
+$string['mapcourses_help'] = 'Once you have selected the relevant course(s) from your search,
+you can associate them with this feedback using map course(s). Multiple courses may be selected by holding down the Apple or Ctrl key whilst clicking on the course names. A course may be disassociated from a feedback at any time.';
 $string['mappedcourses'] = 'Mapped courses';
 $string['max_args_exceeded'] = 'Max 6 arguments can be handled, too many arguments for';
 $string['maximal'] = 'maximal';
 $string['mode'] = 'Mode';
 $string['modulename'] = 'Feedback';
+$string['modulename_help'] = 'The feedback modules enables custom surveys to be created.';
 $string['modulenameplural'] = 'Feedback';
 $string['movedown_item'] = 'Move this question down';
 $string['move_here'] = 'Move here';
@@ -177,9 +174,9 @@ $string['multichoice'] = 'Multiple choice';
 $string['multichoicerated'] = 'Multiple choice (rated)';
 $string['multichoicetype'] = 'Multiple choice type';
 $string['multichoice_values'] = 'Multiple choice values';
-$string['multiple_submit'] = 'Multiple submit';
-$string['multiplesubmit'] = 'Multiple submit';
-$string['multiplesubmit_help'] = 'For Anonymous polls Multiple Submit will allow unlimited answers for every user. Where a User\'s name is collected, Multiple Submit will allow them allow to resubmit their Feedback answers.';
+$string['multiple_submit'] = 'Multiple submissions';
+$string['multiplesubmit'] = 'Multiple submissions';
+$string['multiplesubmit_help'] = 'If enabled for anonymous surveys, users can submit feedback an unlimited number of times.';
 $string['name'] = 'Name';
 $string['name_required'] = 'Name required';
 $string['next_page'] = 'Next page';
@@ -211,7 +208,7 @@ $string['picture_file_list'] = 'List of pictures';
 $string['picture_values'] = 'Choose one or more<br />picture files from the list:';
 $string['position'] = 'Position';
 $string['preview'] = 'Preview';
-$string['preview_help'] = 'In the preview you can change the position order of questions.';
+$string['preview_help'] = 'In the preview you can change the order of questions.';
 $string['previous_page'] = 'Previous page';
 $string['public'] = 'Public';
 $string['question'] = 'Question';
@@ -236,17 +233,17 @@ $string['saving_failed'] = 'Saving failed';
 $string['saving_failed_because_missing_or_false_values'] = 'Saving failed because missing or false values';
 $string['search_course'] = 'Search course';
 $string['searchcourses'] = 'Search courses';
-$string['searchcourses_help'] = 'Search for the Code or Name of the Course(s) that you wish to associate with this Feedback.';
+$string['searchcourses_help'] = 'Search for the code or name of the course(s) that you wish to associate with this feedback.';
 $string['selected_dump'] = 'Selected indexes of $SESSION variable are dumped below:';
 $string['send'] = 'send';
 $string['send_message'] = 'send message';
 $string['separator_decimal'] = '.';
 $string['separator_thousand'] = ',';
 $string['show_all'] = 'Show all';
-$string['show_analysepage_after_submit'] = 'Show analysepage after submit';
+$string['show_analysepage_after_submit'] = 'Show analysis page after submit';
 $string['show_entries'] = 'Show responses';
 $string['show_entry'] = 'Show response';
-$string['show_nonrespondents'] = 'Show nonrespondents';
+$string['show_nonrespondents'] = 'Show non-respondents';
 $string['site_after_submit'] = 'Site after submit';
 $string['sort_by_course'] = 'Sort by course';
 $string['start'] = 'Start';
@@ -266,25 +263,19 @@ $string['textfield'] = 'Short text answer';
 $string['textfield_maxlength'] = 'Maximum characters accepted';
 $string['textfield_size'] = 'Textfield width';
 $string['this_feedback_is_already_submitted'] = 'You\'ve already completed this activity.';
-$string['timeclose'] = 'time to close';
-$string['timeclose_help'] = 'You can specify times when the feedback is accessible for people to answer the questions.<br />
-At a time after this time here defined, the feedback will be unavailable.<br />
-If the checkbox is not selected so there is no limit defined.';
-$string['timeopen'] = 'time to open';
-$string['timeopen_help'] = 'You can specify times when the feedback is accessible for people to answer the questions.<br />
-At a time before this time here defined, the feedback will be unavailable.<br />
-If the checkbox is not selected so there is no limit defined.';
+$string['timeclose'] = 'Time to close';
+$string['timeclose_help'] = 'You can specify times when the feedback is accessible for people to answer the questions. If the checkbox is not ticked there is no limit defined.';
+$string['timeopen'] = 'Time to open';
+$string['timeopen_help'] = 'You can specify times when the feedback is accessible for people to answer the questions. If the checkbox is not ticked there is no limit defined.';
 $string['typemissing'] = 'missing value "type"';
 $string['update_item'] = 'Save changes to question';
 $string['url_for_continue'] = 'URL for continue-button';
-$string['url_for_continue_help'] = 'By default after a feedback is submitted the target of the
-continue button is the course page.<br />
-You can define here another target url for this continue-button.';
-$string['url_for_continue_button'] = 'URL for continue-button';
+$string['url_for_continue_help'] = 'By default after a feedback is submitted the target of the continue button is the course page. You can define here another target URL for this continue button.';
+$string['url_for_continue_button'] = 'URL for continue button';
 $string['use_one_line_for_each_value'] = '<br />Use one line for each answer!';
 $string['use_this_template'] = 'Use this template';
 $string['using_templates'] = 'Use a template';
 $string['vertical'] = 'vertical';
 $string['viewcompleted'] = 'completed feedbacks';
-$string['viewcompleted_help'] = 'You may view completed Feedback forms, searchable by Course and/or by Question.
+$string['viewcompleted_help'] = 'You may view completed feedback forms, searchable by course and/or by question.
 Feedback responses may be exported to Excel.';
