@@ -1369,6 +1369,10 @@ class core_renderer extends renderer_base {
             $attributes['value'] = $rating->settings->aggregationmethod;
             $formstart .= html_writer::empty_tag('input', $attributes);
 
+            $attributes['name'] = 'sesskey';
+            $attributes['value'] = sesskey();;
+            $formstart .= html_writer::empty_tag('input', $attributes);
+
             if (empty($ratinghtml)) {
                 $ratinghtml .= $strrate.': ';
             }

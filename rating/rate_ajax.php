@@ -47,6 +47,15 @@ if( !isloggedin() ){
 list($context, $course, $cm) = get_context_info_array($contextid);
 require_login($course, false, $cm);
 
+$contextid = null;//now we have a context object throw away the id from the user
+
+if (!confirm_sesskey() || $USER->id==$rateduserid) {
+    echo $OUTPUT->header();
+    echo get_string('ratepermissiondenied', 'ratings');
+    echo $OUTPUT->footer();
+    die();
+}
+
 //check the module rating permissions
 //doing this check here rather than within rating_manager::get_ratings so we can return a json error response
 $pluginrateallowed = true;
@@ -65,20 +74,16 @@ if (!$pluginrateallowed || !has_capability('moodle/rating:rate',$context)) {
     die();
 }
 
-$userid = $USER->id;
-
 $PAGE->set_url('/lib/rate.php', array(
-        'contextid'=>$contextid
+        'contextid'=>$context->id
     ));
 
-//todo how can we validate the forum post,glossary entry or whatever id?
-//how do we know where to look for the item? how we we work from module to forum_posts, glossary_entries etc?
 
 $ratingoptions = new stdclass;
 $ratingoptions->context = $context;
 $ratingoptions->itemid  = $itemid;
 $ratingoptions->scaleid = $scaleid;
-$ratingoptions->userid  = $userid;
+$ratingoptions->userid  = $USER->id;
 $rating = new rating($ratingoptions);
 
 $rating->update_rating($userrating);
@@ -132,7 +137,7 @@ if($rating->scaleid < 0 ) { //if its a scale (not numeric)
 //we could do this check as "if $userid==$rateduserid" but going to the database to determine item owner id seems more secure
 //if we accept the item owner user id from the http request a user could alter the URL and erroneously get access to the rating aggregate
 if (($userid==$items[0]->rating->itemuserid && has_capability('moodle/rating:view',$context) && $pluginpermissionsarray['view'])
-    || ($userid!=$items[0]->rating->itemuserid && has_capability('moodle/rating:viewany',$context) && $pluginpermissionsarray['viewany'])) {
+ || ($userid!=$items[0]->rating->itemuserid && has_capability('moodle/rating:viewany',$context) && $pluginpermissionsarray['viewany'])) {
     $result->aggregate = $aggregatetoreturn;
     $result->count = $items[0]->rating->count;
     $result->itemid = $rating->itemid;
