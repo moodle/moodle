@@ -197,32 +197,6 @@ class problem_base {
     }
 }
 
-class problem_000001 extends problem_base {
-    function title() {
-        return 'Invalid value for $CFG->dirroot';
-    }
-    function exists() {
-        global $CFG;
-        $dirroot = dirname(realpath('../index.php'));
-        if (!empty($dirroot) && $dirroot != $CFG->dirroot) {
-            return true;
-        }
-        return false;
-    }
-    function severity() {
-        return SEVERITY_CRITICAL;
-    }
-    function description() {
-        global $CFG;
-        return 'Your <strong>config.php</strong> file contains the setting <strong>$CFG-&gt;dirroot = "'.$CFG->dirroot.'"</strong>, which is incorrect. Unless you correct this problem, Moodle will not function correctly, if at all.';
-    }
-    function solution() {
-        global $CFG;
-        $dirroot = dirname(realpath('../index.php'));
-        return 'You need to edit your <strong>config.php</strong> file. Find the line which reads <pre>$CFG->dirroot = \''.$CFG->dirroot.'\';</pre> and change it to read <pre>$CFG->dirroot = \''.$dirroot.'\'</pre>';
-    }
-}
-
 class problem_000002 extends problem_base {
     function title() {
         return 'Extra characters at the end of config.php or other library function';

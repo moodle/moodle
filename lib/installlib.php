@@ -130,10 +130,9 @@ function install_db_validate($database, $dbhost, $dbuser, $dbpass, $dbname, $pre
  *
  * @param moodle_database $database database instance
  * @param object $cfg copy of $CFG
- * @param bool $userealpath allows symbolic links in dirroot
  * @return string
  */
-function install_generate_configphp($database, $cfg, $userealpath=false) {
+function install_generate_configphp($database, $cfg) {
     $configphp = '<?php  // Moodle configuration file' . PHP_EOL . PHP_EOL;
 
     $configphp .= 'unset($CFG);' . PHP_EOL;
@@ -149,19 +148,7 @@ function install_generate_configphp($database, $cfg, $userealpath=false) {
 
     $configphp .= '$CFG->wwwroot   = '.var_export($cfg->wwwroot, true) . ';' . PHP_EOL ;
 
-    if ($userealpath) {
-        $dirroot = str_replace('\\', '/', $cfg->dirroot); // win32 fix
-        $dirroot = rtrim($dirroot, '/');  // no trailing /
-        $configphp .= '$CFG->dirroot   = realpath('.var_export($dirroot, true).');' . PHP_EOL; // fix for sym links
-    } else {
-        $dirroot = str_replace('\\', '/', $cfg->dirroot); // win32 fix
-        $dirroot = rtrim($dirroot, '/');  // no trailing /
-        $configphp .= '$CFG->dirroot   = '.var_export($dirroot, true) . ';' . PHP_EOL;
-    }
-
-    $dataroot = str_replace('\\', '/', $cfg->dataroot); // win32 fix
-    $dataroot = rtrim($dataroot, '/');  // no trailing /
-    $configphp .= '$CFG->dataroot  = '.var_export($dataroot, true) . ';' . PHP_EOL;
+    $configphp .= '$CFG->dataroot  = '.var_export($cfg->dataroot, true) . ';' . PHP_EOL;
 
     $configphp .= '$CFG->admin     = '.var_export($cfg->admin, true) . ';' . PHP_EOL . PHP_EOL;
 
@@ -174,7 +161,7 @@ function install_generate_configphp($database, $cfg, $userealpath=false) {
 
     $configphp .= '$CFG->passwordsaltmain = '.var_export(complex_random_string(), true) . ';' . PHP_EOL . PHP_EOL;
 
-    $configphp .= 'require_once("$CFG->dirroot/lib/setup.php");' . PHP_EOL . PHP_EOL;
+    $configphp .= 'require_once(dirname(__FILE__) . \'/lib/setup.php\');' . PHP_EOL . PHP_EOL;
     $configphp .= '// There is no php closing tag in this file,' . PHP_EOL;
     $configphp .= '// it is intentional because it prevents trailing whitespace problems!' . PHP_EOL;
 

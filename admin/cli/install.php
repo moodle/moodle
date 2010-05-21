@@ -110,7 +110,7 @@ if (version_compare(phpversion(), "5.2.8") < 0) {
 // set up configuration
 $CFG = new stdClass();
 $CFG->lang                 = 'en';
-$CFG->dirroot              = str_replace('\\', '/', dirname(dirname(dirname(__FILE__)))); // Fix for win32
+$CFG->dirroot              = dirname(dirname(dirname(__FILE__)));
 $CFG->libdir               = "$CFG->dirroot/lib";
 $CFG->wwwroot              = "http://localhost";
 $CFG->httpswwwroot         = $CFG->wwwroot;

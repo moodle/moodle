@@ -59,7 +59,7 @@ $CFG->dboptions = array(
 
 
 //=========================================================================
-// 1.5. SECRET PASSWORD SALT
+// 2. SECRET PASSWORD SALT
 //=========================================================================
 // User password salt is very important security feature, it is created
 // automatically in installer, you have to uncomment and modify value
@@ -80,7 +80,7 @@ $CFG->dboptions = array(
 
 
 //=========================================================================
-// 2. WEB SITE LOCATION
+// 3. WEB SITE LOCATION
 //=========================================================================
 // Now you need to tell Moodle where it is located. Specify the full
 // web address to where moodle has been installed.  If your web site
@@ -91,19 +91,6 @@ $CFG->dboptions = array(
 // http://docs.moodle.org/en/masquerading
 
 $CFG->wwwroot   = 'http://example.com/moodle';
-
-
-//=========================================================================
-// 3. SERVER FILES LOCATION
-//=========================================================================
-// Next, specify the full OS directory path to this same location
-// Make sure the upper/lower case is correct.  Some examples:
-//
-//    $CFG->dirroot = 'C:\program files\easyphp\www\moodle';    // Windows
-//    $CFG->dirroot = '/var/www/html/moodle';     // Redhat Linux
-//    $CFG->dirroot = '/home/example/public_html/moodle'; // Cpanel host
-
-$CFG->dirroot   = '/home/example/public_html/moodle';
 
 
 //=========================================================================
@@ -419,24 +406,8 @@ $CFG->admin = 'admin';
 //=========================================================================
 // ALL DONE!  To continue installation, visit your main page with a browser
 //=========================================================================
-if ($CFG->wwwroot == 'http://example.com/moodle') {
-    echo "<p>Error detected in configuration file</p>";
-    echo "<p>Your server address can not be: \$CFG->wwwroot = 'http://example.com/moodle';</p>";
-    die;
-}
 
-if (file_exists("$CFG->dirroot/lib/setup.php"))  {       // Do not edit
-    include_once("$CFG->dirroot/lib/setup.php");
-} else {
-    if ($CFG->dirroot == dirname(__FILE__)) {
-        echo "<p>Could not find this file: $CFG->dirroot/lib/setup.php</p>";
-        echo "<p>Are you sure all your files have been uploaded?</p>";
-    } else {
-        echo "<p>Error detected in config.php</p>";
-        echo "<p>Error in: \$CFG->dirroot = '$CFG->dirroot';</p>";
-        echo "<p>Try this: \$CFG->dirroot = '".dirname(__FILE__)."';</p>";
-    }
-    die;
-}
+require_once(dirname(_FILE_) . '/lib/setup.php'); // Do not edit
+
 // There is no php closing tag in this file,
 // it is intentional because it prevents trailing whitespace problems!

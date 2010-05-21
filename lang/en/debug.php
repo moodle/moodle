@@ -33,7 +33,6 @@ $string['cannotsetuptable'] = '{$a} tables could NOT be set up successfully!';
 $string['codingerror'] = 'Coding error detected, it must be fixed by a programmer: {$a}';
 $string['configmoodle'] = 'Moodle has not been configured yet. You need to edit config.php first.';
 $string['erroroccur'] = 'An error has occurred during this process';
-$string['fixsetting'] = 'Please fix your settings in config.php: <p>You have:</p> <p>$CFG->dirroot = \'{$a->current}\';</p> <p>but it should be:</p> <p>$CFG->dirroot = \'{$a->found}\';</p>';
 $string['invalidarraysize'] = 'Incorrect size of arrays in params of {$a}';
 $string['invalideventdata'] = 'Incorrect eventadata submitted: {$a}';
 $string['invalidparameter'] = 'Invalid parameter value detected, execution can not continue.';

@@ -31,21 +31,87 @@
  * are set in config.php, and the rest are loaded from the config table.
  *
  * Some typical settings in the $CFG global:
- *  - $CFG->wwwroot - Path to moodle index directory in url format.
- *  - $CFG->dataroot - Path to moodle index directory on server's filesystem.
- *  - $CFG->libdir  - Path to moodle's library folder on server's filesystem.
+ *  - $CFG->wwwroot  - Path to moodle index directory in url format.
+ *  - $CFG->dataroot - Path to moodle data files directory on server's filesystem.
+ *  - $CFG->dirroot  - Path to moodle's library folder on server's filesystem.
+ *  - $CFG->libdir   - Path to moodle's library folder on server's filesystem.
  *
  * @global object $CFG
  * @name $CFG
  */
 global $CFG;
 
+// We can detect real dirroot path reliably since PHP 4.0.2,
+// it can not be anything else, there is no point in having this in config.php
+$CFG->dirroot = dirname(dirname(__FILE__));
+
+// Normalise dataroot - we do not want any symbolic links, trailing / or any other weirdness there
+if (!isset($CFG->dataroot)) {
+    header($_SERVER['SERVER_PROTOCOL'] . ' 503 Service Unavailable');
+    echo('Fatal: $CFG->dataroot is not configured! Exiting.');
+    exit(1);
+}
+$CFG->dataroot = realpath($CFG->dataroot);
+if ($CFG->dataroot === false) {
+    header($_SERVER['SERVER_PROTOCOL'] . ' 503 Service Unavailable');
+    echo('Fatal: $CFG->dataroot is not configured properly! Exiting.');
+    exit(1);
+}
+
+// wwwroot is mandatory
+if (!isset($CFG->wwwroot) or $CFG->wwwroot === 'http://example.com/moodle') {
+    // trigger_error() is not correct here, no need to log this
+    header($_SERVER['SERVER_PROTOCOL'] . ' 503 Service Unavailable');
+    echo('Fatal: $CFG->wwwroot is not configured! Exiting.');
+    exit(1);
+}
+
+// Define admin directory
+if (!isset($CFG->admin)) {   // Just in case it isn't defined in config.php
+    $CFG->admin = 'admin';   // This is relative to the wwwroot and dirroot
+}
+
 // Set up some paths.
 $CFG->libdir = $CFG->dirroot .'/lib';
+
+// The current directory in PHP version 4.3.0 and above isn't necessarily the
+// directory of the script when run from the command line. The require_once()
+// would fail, so we'll have to chdir()
+if (!isset($_SERVER['REMOTE_ADDR']) && isset($_SERVER['argv'][0])) {
+    chdir(dirname($_SERVER['argv'][0]));
+}
+
+// sometimes default PHP settings are borked on shared hosting servers, I wonder why they have to do that??
+@ini_set('precision', 14); // needed for upgrades and gradebook
+
+// Scripts may request no debug and error messages in output
+// please note it must be defined before including the config.php script
+// and in some cases you also need to set custom default exception handler
+if (!defined('NO_DEBUG_DISPLAY')) {
+    define('NO_DEBUG_DISPLAY', false);
+}
+
+// Detect CLI scripts - CLI scripts are executed from command line, do not have session and we do not want HTML in output
+// In your new CLI scripts just add: if (isset($_SERVER['REMOTE_ADDR'])) {die;} before requiring config.php.
+if (!defined('CLI_SCRIPT')) {
+    // CLI_SCRIPT is defined in 'fake' CLI script /admin/cron.php, do not abuse this elsewhere!
+    if (isset($_SERVER['REMOTE_ADDR'])) {
+        define('CLI_SCRIPT', false);
+    } else {
+        /** @ignore */
+        define('CLI_SCRIPT', true);
+    }
+}
+
+// Detect ajax scripts - they are similar to CLI because we can not redirect, output html, etc.
+if (!defined('AJAX_SCRIPT')) {
+    define('AJAX_SCRIPT', false);
+}
 
 // exact version of currently used yui2 and 3 library
 $CFG->yui2version = '2.8.1';
 $CFG->yui3version = '3.1.1';
+
 
 // special support for highly optimised scripts that do not need libraries and DB connection
 if (defined('ABORT_AFTER_CONFIG')) {
@@ -182,46 +248,6 @@ global $FULLSCRIPT;
  */
 global $SCRIPT;
 
-// Scripts may request no debug and error messages in output
-// please note it must be defined before including the config.php script
-// and in some cases you also need to set custom default exception handler
-if (!defined('NO_DEBUG_DISPLAY')) {
-    define('NO_DEBUG_DISPLAY', false);
-}
-
-// wwwroot is mandatory
-if (!isset($CFG->wwwroot)) {
-    // trigger_error() is not correct here, no need to log this
-    header($_SERVER['SERVER_PROTOCOL'] . ' 503 Service Unavailable');
-    echo('Fatal: $CFG->wwwroot is not configured! Exiting.');
-    exit(1);
-}
-
-// Detect CLI scripts - CLI scripts are executed from command line, do not have session and we do not want HTML in output
-if (!defined('CLI_SCRIPT')) { // CLI_SCRIPT might be defined in 'fake' CLI scripts like admin/cron.php
-    if (isset($_SERVER['REMOTE_ADDR'])) {
-        define('CLI_SCRIPT', false);
-    } else {
-        /** @ignore */
-        define('CLI_SCRIPT', true);
-    }
-}
-
-// Detect ajax scripts - they are similar to CLI because we can not redirect, output html, etc.
-if (!defined('AJAX_SCRIPT')) {
-    define('AJAX_SCRIPT', false);
-}
-
-// sometimes default PHP settings are borked on shared hosting servers, I wonder why they have to do that??
-@ini_set('precision', 14); // needed for upgrades and gradebook
-
-// The current directory in PHP version 4.3.0 and above isn't necessarily the
-// directory of the script when run from the command line. The require_once()
-// would fail, so we'll have to chdir()
-if (!isset($_SERVER['REMOTE_ADDR']) && isset($_SERVER['argv'][0])) {
-    chdir(dirname($_SERVER['argv'][0]));
-}
-
 // Store settings from config.php in array in $CFG - we can use it later to detect problems and overrides
 $CFG->config_php_settings = (array)$CFG;
 // Forced plugin settings override values from config_plugins table
@@ -253,11 +279,6 @@ if (!empty($_SERVER['HTTP_X_moz']) && $_SERVER['HTTP_X_moz'] === 'prefetch'){
     header($_SERVER['SERVER_PROTOCOL'] . ' 404 Prefetch Forbidden');
     echo('Prefetch request forbidden.');
     exit(1);
-}
-
-// Define admin directory
-if (!isset($CFG->admin)) {   // Just in case it isn't defined in config.php
-    $CFG->admin = 'admin';   // This is relative to the wwwroot and dirroot
 }
 
 if (!isset($CFG->prefix)) {   // Just in case it isn't defined in config.php

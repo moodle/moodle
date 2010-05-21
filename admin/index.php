@@ -74,14 +74,6 @@ if (is_float_problem()) {
     print_error('phpfloatproblem', 'admin', '', $documentationlink);
 }
 
-// Check settings in config.php
-
-$dirroot = dirname(realpath('../index.php'));
-// Check correct dirroot, ignoring slashes (though should be always forward slashes). MDL-18195
-if (!empty($dirroot) and str_replace('\\', '/', $dirroot) != str_replace('\\', '/', $CFG->dirroot)) {
-    print_error('fixsetting', 'debug', '', (object)array('current'=>$CFG->dirroot, 'found'=>str_replace('\\', '/', $dirroot)));
-}
-
 // Set some necessary variables during set-up to avoid PHP warnings later on this page
 if (!isset($CFG->framename)) {
     $CFG->framename = '_top';

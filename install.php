@@ -116,7 +116,6 @@ if (!empty($_POST)) {
     $config->prefix   = trim($_POST['prefix']);
     $config->dbsocket = (int)(!empty($_POST['dbsocket']));
 
-    $config->dirroot  = trim($_POST['dirroot']);
     $config->admin    = empty($_POST['admin']) ? 'admin' : trim($_POST['admin']);
 
     $config->dataroot = trim($_POST['dataroot']);
@@ -132,7 +131,6 @@ if (!empty($_POST)) {
     $config->prefix   = 'mdl_';
     $config->dbsocket = 0;
 
-    $config->dirroot  = str_replace('\\', '/', dirname(__FILE__)); // Fix for win32
     $config->admin    = 'admin';
 
     $config->dataroot = empty($distro->dataroot) ? null  : $distro->dataroot; // initialised later after including libs or by distro
@@ -141,7 +139,7 @@ if (!empty($_POST)) {
 // Fake some settings so that we can use selected functions from moodlelib.php and weblib.php
 $CFG = new stdClass();
 $CFG->lang                 = $config->lang;
-$CFG->dirroot              = str_replace('\\', '/', dirname(__FILE__)); // Fix for win32
+$CFG->dirroot              = dirname(__FILE__);
 $CFG->libdir               = "$CFG->dirroot/lib";
 $CFG->wwwroot              = install_guess_wwwroot(); // can not be changed - ppl must use the real address when installing
 $CFG->httpswwwroot         = $CFG->wwwroot;
@@ -203,7 +201,6 @@ $SITE = $COURSE;
 define('SITEID', 0);
 
 $hint_dataroot = '';
-$hint_dirroot  = '';
 $hint_admindir = '';
 $hint_database = '';
 
@@ -219,7 +216,7 @@ if (isset($_GET['css'])) {
 
 //first time here? find out suitable dataroot
 if (is_null($CFG->dataroot)) {
-    $CFG->dataroot = str_replace('\\', '/', dirname(dirname(__FILE__)).'/moodledata');
+    $CFG->dataroot = dirname(dirname(__FILE__)).DIRECTORY_SEPARATOR.'moodledata';
 
     $i = 0; //safety check - dirname might return some unexpected results
     while(is_dataroot_insecure()) {
@@ -229,7 +226,7 @@ if (is_null($CFG->dataroot)) {
             $CFG->dataroot = ''; //can not find secure location for dataroot
             break;
         }
-        $CFG->dataroot = dirname($parrent).'/moodledata';
+        $CFG->dataroot = dirname($parrent).DIRECTORY_SEPARATOR.'moodledata';
     }
     $config->dataroot = $CFG->dataroot;
     $config->stage    = INSTALL_WELCOME;
@@ -258,14 +255,7 @@ if ($config->stage == INSTALL_SAVE) {
         $hint_database = install_db_validate($database, $config->dbhost, $config->dbuser, $config->dbpass, $config->dbname, $config->prefix, array('dbpersist'=>0, 'dbsocket'=>$config->dbsocket));
 
         if ($hint_database === '') {
-            // extra hackery needed for symbolic link support
-            if  ($CFG->dirroot !== $config->dirroot) {
-                $CFG->dirroot = $config->dirroot;
-                $userealpath = true;
-            } else {
-                $userealpath = false;
-            }
-            $configphp = install_generate_configphp($database, $CFG, $userealpath);
+            $configphp = install_generate_configphp($database, $CFG);
 
             umask(0137);
             if (($fh = @fopen($configfile, 'w')) !== false) {
@@ -324,12 +314,7 @@ if ($config->stage == INSTALL_DOWNLOADLANG) {
         $config->stage = INSTALL_PATHS;
     }
 
-    if ($config->dirroot === '' or !file_exists($config->dirroot)) {
-        $hint_dirroot = get_string('pathswrongdirroot', 'install');
-        $config->stage = INSTALL_PATHS;
-    }
-
-    if ($config->admin === '' or !file_exists($config->dirroot.'/'.$config->admin.'/environment.xml')) {
+    if ($config->admin === '' or !file_exists($CFG->dirroot.'/'.$config->admin.'/environment.xml')) {
         $hint_admindir = get_string('pathswrongadmindir', 'install');
         $config->stage = INSTALL_PATHS;
     }
@@ -534,12 +519,14 @@ if ($config->stage == INSTALL_ENVIRONMENT or $config->stage == INSTALL_PATHS) {
 if ($config->stage == INSTALL_PATHS) {
     $paths = array('wwwroot'  => get_string('wwwroot', 'install'),
                    'dirroot'  => get_string('dirroot', 'install'),
-                   'dataroot' => get_string('dataroot', 'install'),
-                   'admindir' => get_string('admindirname', 'install'));
+                   'dataroot' => get_string('dataroot', 'install'));
 
     $sub = '<dl>';
     foreach ($paths as $path=>$name) {
         $sub .= '<dt>'.$name.'</dt><dd>'.get_string('pathssub'.$path, 'install').'</dd>';
+    }
+    if (!file_exists("$CFG->dirroot/admin/environment.xml")) {
+        $sub .= '<dt>'.get_string('admindirname', 'install').'</dt><dd>'.get_string('pathssubadmindir', 'install').'</dd>';
     }
     $sub .= '</dl>';
 
@@ -556,10 +543,7 @@ if ($config->stage == INSTALL_PATHS) {
     echo '</div>';
 
     echo '<div class="formrow"><label for="id_dirroot" class="formlabel">'.$paths['dirroot'].'</label>';
-    echo '<input id="id_dirroot" name="dirroot" type="text" value="'.s($config->dirroot).'" size="45"class="forminput" />';
-    if ($hint_dirroot !== '') {
-        echo '<div class="hint">'.$hint_dirroot.'</div>';
-    }
+    echo '<input id="id_dirroot" name="dirroot" type="text" value="'.s($CFG->dirroot).'" disabled="disabled" size="45"class="forminput" />';
     echo '</div>';
 
     echo '<div class="formrow"><label for="id_dataroot" class="formlabel">'.$paths['dataroot'].'</label>';
@@ -570,17 +554,14 @@ if ($config->stage == INSTALL_PATHS) {
     echo '</div>';
 
 
-    if (file_exists("$CFG->dirroot/admin/environment.xml")) {
-        $disabled = 'disabled="disabled"';
-    } else {
-        $disabled = '';
+    if (!file_exists("$CFG->dirroot/admin/environment.xml")) {
+        echo '<div class="formrow"><label for="id_admin" class="formlabel">'.$paths['admindir'].'</label>';
+        echo '<input id="id_admin" name="admin" type="text" value="'.s($config->admin).'" size="10" class="forminput" />';
+        if ($hint_admindir !== '') {
+            echo '<div class="hint">'.$hint_admindir.'</div>';
+        }
+        echo '</div>';
     }
-    echo '<div class="formrow"><label for="id_admin" class="formlabel">'.$paths['admindir'].'</label>';
-    echo '<input id="id_admin" name="admin" type="text" value="'.s($config->admin).'" '.$disabled.' size="10" class="forminput" />';
-    if ($hint_admindir !== '') {
-        echo '<div class="hint">'.$hint_admindir.'</div>';
-    }
-    echo '</div>';
 
     echo '</div>';
 
