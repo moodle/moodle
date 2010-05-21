@@ -212,7 +212,7 @@ function install_print_help_page($help) {
 }
 
 /**
- * Prints installation page header, we can no use weblib yet in isntaller.
+ * Prints installation page header, we can no use weblib yet in installer.
  *
  * @global object
  * @param array $config
