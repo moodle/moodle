@@ -10,14 +10,10 @@
   <div class="prompt">
     <?php echo get_string("answer", "quiz").': '; ?>
   </div>
-  <?php if ($question->qtype == 'numerical' || $question->qtype == 'calculated' || $question->qtype == 'calculatedsimple' ){
-        include("$CFG->dirroot/question/type/numerical/display.html");?>
-<?php }else {?>
   <div class="answer">
     <input type="text" class="<?php echo $class; ?>" <?php echo "$readonly $inputname $value"; ?> size="80"/>
     <?php echo $feedbackimg; ?>
   </div>
-<?php  }?>
   <?php if ($feedback) { ?>
     <div class="feedback">
       <?php echo $feedback ?>
