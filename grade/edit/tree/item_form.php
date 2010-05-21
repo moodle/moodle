@@ -257,7 +257,7 @@ class edit_item_form extends moodleform {
                     } else {
                         $mform->insertElementBefore($element, 'id');
                     }
-                    $mform->setHelpButton('aggregationcoef', array($coefstring, get_string($coefstring, 'grades'), 'grade'), true);
+                    $mform->addHelpButton('aggregationcoef', $coefstring, 'grades');
                 }
 
                 $mform->disabledIf('aggregationcoef', 'parentcategory', 'eq', $parent_category->id);

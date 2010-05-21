@@ -102,7 +102,7 @@ class edit_outcomeitem_form extends moodleform {
                     $coefstring = ($coefstring=='' or $coefstring=='aggregationcoefextrasum') ? 'aggregationcoefextrasum' : 'aggregationcoef';
 
                 } else if ($cat->aggregation == GRADE_AGGREGATE_EXTRACREDIT_MEAN) {
-                    $coefstring = ($coefstring=='' or $coefstring=='aggregationcoefextra') ? 'aggregationcoefextra' : 'aggregationcoef';
+                    $coefstring = ($coefstring=='' or $coefstring=='aggregationcoefextraweight') ? 'aggregationcoefextraweight' : 'aggregationcoef';
 
                 } else if ($cat->aggregation == GRADE_AGGREGATE_SUM) {
                     $coefstring = ($coefstring=='' or $coefstring=='aggregationcoefextrasum') ? 'aggregationcoefextrasum' : 'aggregationcoef';
@@ -204,7 +204,7 @@ class edit_outcomeitem_form extends moodleform {
                         $aggcoef = 'aggregationcoefextrasum';
 
                     } else if ($parent_category->aggregation == GRADE_AGGREGATE_EXTRACREDIT_MEAN) {
-                        $aggcoef = 'aggregationcoefextra';
+                        $aggcoef = 'aggregationcoefextraweight';
 
                     } else if ($parent_category->aggregation == GRADE_AGGREGATE_SUM) {
                         $aggcoef = 'aggregationcoefextrasum';

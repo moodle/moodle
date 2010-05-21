@@ -989,7 +989,7 @@ class grade_category extends grade_object {
             $this->coefstring = 'aggregationcoefextrasum';
 
         } else if ($this->aggregation == GRADE_AGGREGATE_EXTRACREDIT_MEAN) {
-            $this->coefstring = 'aggregationcoefextra';
+            $this->coefstring = 'aggregationcoefextraweight';
 
         } else if ($this->aggregation == GRADE_AGGREGATE_SUM) {
             $this->coefstring = 'aggregationcoefextrasum';

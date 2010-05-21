@@ -365,7 +365,7 @@ class grade_edit_tree {
         $aggcoef = $item->get_coefstring();
 
         if ((($aggcoef == 'aggregationcoefweight' || $aggcoef == 'aggregationcoef') && $type == 'weight') ||
-            ($aggcoef == 'aggregationcoefextra' && $type == 'extra')) {
+            ($aggcoef == 'aggregationcoefextraweight' && $type == 'extra')) {
             return '<input type="text" size="6" id="aggregationcoef_'.$item->id.'" name="aggregationcoef_'.$item->id.'"
                 value="'.format_float($item->aggregationcoef, 4).'" />';
         } elseif ($aggcoef == 'aggregationcoefextrasum' && $type == 'extra') {
@@ -460,7 +460,7 @@ class grade_edit_tree {
         if ($element['type'] == 'category') {
             if ($coefstring == 'aggregationcoefweight') {
                 $this->uses_weight = true;
-            } elseif ($coefstring ==  'aggregationcoefextra' || $coefstring == 'aggregationcoefextrasum') {
+            } elseif ($coefstring ==  'aggregationcoefextraweight' || $coefstring == 'aggregationcoefextrasum') {
                 $this->uses_extra_credit = true;
             }
 
@@ -679,7 +679,7 @@ class grade_edit_tree_column_extracredit extends grade_edit_tree_column {
     public function get_header_cell() {
         global $OUTPUT;
         $headercell = clone($this->headercell);
-        $headercell->text = get_string('extracredit', 'grades').$OUTPUT->old_help_icon('aggregationcoefcombo', 'aggregationcoefcombo', 'grade');
+        $headercell->text = get_string('aggregationcoefextra', 'grades').$OUTPUT->help_icon('aggregationcoefextra', 'grades');
         return $headercell;
     }
 
@@ -721,7 +721,7 @@ class grade_edit_tree_column_weight extends grade_edit_tree_column {
     public function get_header_cell() {
         global $OUTPUT;
         $headercell = clone($this->headercell);
-        $headercell->text = get_string('weightuc', 'grades').$OUTPUT->old_help_icon('aggregationcoefweight', 'aggregationcoefweight', 'grade');
+        $headercell->text = get_string('weightuc', 'grades').$OUTPUT->help_icon('aggregationcoefweight', 'grades');
         return $headercell;
     }
 

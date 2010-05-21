@@ -439,7 +439,7 @@ class edit_category_form extends moodleform {
                         $element =& $mform->createElement('text', 'grade_item_aggregationcoef', get_string($coefstring, 'grades'));
                     }
                     $mform->insertElementBefore($element, 'parentcategory');
-                    $mform->setHelpButton('grade_item_aggregationcoef', array($coefstring, get_string($coefstring, 'grades'), 'grade'), true);
+                    $mform->addHelpButton('grade_item_aggregationcoef', $coefstring, 'grades');
                 }
             }
         }
