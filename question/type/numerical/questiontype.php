@@ -730,10 +730,8 @@ class question_numerical_qtype extends question_shortanswer_qtype {
     function get_correct_responses(&$question, &$state) {
         $correct = parent::get_correct_responses($question, $state);
         $unit = $this->get_default_numerical_unit($question);
-        $correct['answer']= $correct[''];
         if (isset($correct['']) && $correct[''] != '*' && $unit) {
             $correct[''] .= ' '.$unit->unit;
-            $correct['unit']= $unit->unit;
         }
         return $correct;
     }
