@@ -316,7 +316,6 @@ class question_shortanswer_qtype extends default_questiontype {
                 $grade->cur = question_format_grade($cmoptions, $state->last_graded->grade);
                 $grade->max = question_format_grade($cmoptions, $question->maxgrade);
                 $grade->raw = question_format_grade($cmoptions, $state->last_graded->raw_grade);
-
                 // let student know wether the answer was correct
                 $class = question_get_feedback_class($state->last_graded->raw_grade /
                         $question->maxgrade);
@@ -330,7 +329,7 @@ class question_shortanswer_qtype extends default_questiontype {
 
                 echo '<div class="gradingdetails">';
                 // print grade for this submission
-                print_string('gradingdetails', 'quiz', $grade);
+                print_string('gradingdetails', 'quiz', $grade) ;
                 if ($cmoptions->penaltyscheme) {
                     // print details of grade adjustment due to penalties
                     if ($state->last_graded->raw_grade > $state->last_graded->grade){
@@ -341,8 +340,12 @@ class question_shortanswer_qtype extends default_questiontype {
                     // penalty is relevant only if the answer is not correct and further attempts are possible
                     if (($state->last_graded->raw_grade < $question->maxgrade) and (QUESTION_EVENTCLOSEANDGRADE != $state->event)) {
                         if ('' !== $state->last_graded->penalty && ((float)$state->last_graded->penalty) > 0.0) {
-                            // A penalty was applied so display it
+                            // A unit penalty for numerical was applied so display it
+                        if(isset($question->raw_unitpenalty) && $question->raw_unitpenalty > 0.0 ){
                             echo ' ';
+                            print_string('unitappliedpenalty','qtype_numerical',question_format_grade($cmoptions, $this->raw_unitpenalty));
+                        } 
+                            echo ' '.$this->raw_unitpenalty ;
                             print_string('gradingdetailspenalty', 'quiz', question_format_grade($cmoptions, $state->last_graded->penalty));
                         } else {
                             /* No penalty was applied even though the answer was
