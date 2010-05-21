@@ -514,7 +514,7 @@ function groups_get_possible_roles($context) {
  * @param int $courseid The id of the course
  * @param int $roleid The role to select users from
  * @param int $cohortid restrict to cohort id
- * @param string $orderby The colum to sort users by
+ * @param string $orderby The column to sort users by
  * @return array An array of the users
  */
 function groups_get_potential_members($courseid, $roleid = null, $cohortid = null, $orderby = 'lastname ASC, firstname ASC') {
