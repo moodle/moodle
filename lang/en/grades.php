@@ -49,7 +49,6 @@ $string['aggregateoutcomes_help'] = 'If enabled, outcomes are included in the ag
 $string['aggregatesonly'] = 'Aggregates only';
 $string['aggregatesubcats'] = 'Aggregate including subcategories';
 $string['aggregatesubcats_help'] = 'This setting determines whether grades in subcategories are included in the aggregation.';
-$string['aggregatesubcatshelp'] = 'The aggregation is usually done only with immediate children, it is also possible to aggregate including individual grades in all subcategories excluding other aggregated grades.';
 $string['aggregatesum'] = 'Sum of grades';
 $string['aggregateweightedmean'] = 'Weighted mean of grades';
 $string['aggregateweightedmean2'] = 'Simple weighted mean of grades';

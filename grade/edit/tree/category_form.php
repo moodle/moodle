@@ -72,7 +72,7 @@ class edit_category_form extends moodleform {
         }
 
         $mform->addElement('advcheckbox', 'aggregatesubcats', get_string('aggregatesubcats', 'grades'));
-        $mform->setHelpButton('aggregatesubcats', array('aggregatesubcats', get_string('aggregatesubcats', 'grades'), 'grade'), true);
+        $mform->addHelpButton('aggregatesubcats', 'aggregatesubcats', 'grades');
 
         if ((int)$CFG->grade_aggregatesubcats_flag & 2) {
             $mform->setAdvanced('aggregatesubcats');

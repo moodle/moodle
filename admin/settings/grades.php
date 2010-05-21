@@ -102,7 +102,7 @@ if (has_capability('moodle/grade:manage', $systemcontext)
         $temp->add(new admin_setting_gradecat_combo('grade_aggregateoutcomes', get_string('aggregateoutcomes', 'grades'),
                     get_string('aggregateoutcomes_help', 'grades'), $defaults, $options));
         $temp->add(new admin_setting_gradecat_combo('grade_aggregatesubcats', get_string('aggregatesubcats', 'grades'),
-                    get_string('aggregatesubcatshelp', 'grades'), $defaults, $options));
+                    get_string('aggregatesubcats_help', 'grades'), $defaults, $options));
 
         $options = array(0 => get_string('none'));
         for ($i=1; $i<=20; $i++) {
