@@ -104,9 +104,9 @@ abstract class moodle_database {
     protected $last_type;
     /** @var string last extra info */
     protected $last_extrainfo;
-    /** @var float last time in seconds with milisocond precision */
+    /** @var float last time in seconds with milisecond precision */
     protected $last_time;
-    /** @var bool flag indicating loggin of query in progress, prevents infinite loops */
+    /** @var bool flag indicating logging of query in progress, prevents infinite loops */
     private $loggingquery = false;
 
     /** @var bool true if db used for db sessions */
@@ -121,7 +121,7 @@ abstract class moodle_database {
     private $fix_sql_params_i;
 
     /**
-     * Contructor - instantiates the database, specifying if it's external (connect to other systems) or no (Moodle DB)
+     * Constructor - instantiates the database, specifying if it's external (connect to other systems) or no (Moodle DB)
      *              note this has effect to decide if prefix checks must be performed or no
      * @param bool true means external database used
      */
@@ -287,8 +287,8 @@ abstract class moodle_database {
      */
     public function dispose() {
         if ($this->transactions) {
-            // this should not happen, it isually indicates wrong catching of exceptions,
-            // because all transactions should be finished manually or in default exception hadnler.
+            // this should not happen, it usually indicates wrong catching of exceptions,
+            // because all transactions should be finished manually or in default exception handler.
             // unfortunately we can not access global $CFG any more and can not print debug,
             // the diagnostic info should be printed in footer instead
             $lowesttransaction = end($this->transactions);
@@ -386,7 +386,7 @@ abstract class moodle_database {
     }
 
     /**
-     * Log ast database query if requested
+     * Log last database query if requested
      * @param mixed string error or false if not error
      * @return void
      */
@@ -493,7 +493,7 @@ abstract class moodle_database {
                 if ($allowed_types & SQL_PARAMS_NAMED) {
                     $normkey = trim(preg_replace('/[^a-zA-Z0-9-_]/', '_', $key), '-_'); // Need to normalize key names
                     $where[] = "$key = :$normkey";                                      // because they can contain, originally,
-                    $params[$normkey] = $value;                                         // spaces and other forbiden chars when
+                    $params[$normkey] = $value;                                         // spaces and other forbidden chars when
                 } else {                                                                // using sql_xxx() functions and friends.
                     $where[] = "$key = ?";
                     $params[] = $value;
@@ -801,7 +801,7 @@ abstract class moodle_database {
     }
 
     /**
-     * Attempt to change db encoding toUTF-8 if poossible
+     * Attempt to change db encoding toUTF-8 if possible
      * @return bool success
      */
     public function change_db_encoding() {
@@ -868,7 +868,7 @@ abstract class moodle_database {
      *
      * If specified, the results will be sorted as specified by $sort. This
      * is added to the SQL as "ORDER BY $sort". Example values of $sort
-     * mightbe "time ASC" or "time DESC".
+     * might be "time ASC" or "time DESC".
      *
      * If $fields is specified, only those fields are returned.
      *
@@ -882,7 +882,7 @@ abstract class moodle_database {
      * or $limitnum is specified, both must be present.
      *
      * The return value is a moodle_recordset
-     * if the query succeeds. If an error occurrs, false is returned.
+     * if the query succeeds. If an error occurs, false is returned.
      *
      * @param string $table the table to query.
      * @param array $conditions optional array $fieldname=>requestedvalue with AND in between
@@ -1451,7 +1451,7 @@ abstract class moodle_database {
      * Given a query that counts rows, return that count. (In fact,
      * given any query, return the first field of the first record
      * returned. However, this method should only be used for the
-     * intended purpose.) If an error occurrs, 0 is returned.
+     * intended purpose.) If an error occurs, 0 is returned.
      *
      * @param string $sql The SQL string you wish to be executed.
      * @param array $params array of sql parameters
@@ -1566,7 +1566,7 @@ abstract class moodle_database {
 
 
 
-/// sql contructs
+/// sql constructs
     /**
      * Returns the FROM clause required by some DBs in all SELECT statements.
      *
@@ -1635,7 +1635,7 @@ abstract class moodle_database {
 
     /**
      * Returns the SQL text to be used in order to perform module '%'
-     * opration - remainder after division
+     * operation - remainder after division
      *
      * @param integer int1 first integer in the operation
      * @param integer int2 second integer in the operation
@@ -1714,7 +1714,7 @@ abstract class moodle_database {
      * Returns the proper SQL to do LIKE in a case-insensitive way.
      *
      * Note the LIKE are case sensitive for Oracle. Oracle 10g is required to use
-     * the caseinsensitive search using regexp_like() or NLS_COMP=LINGUISTIC :-(
+     * the case insensitive search using regexp_like() or NLS_COMP=LINGUISTIC :-(
      * See http://docs.moodle.org/en/XMLDB_Problems#Case-insensitive_searches
      *
      * @return string
@@ -1782,13 +1782,13 @@ abstract class moodle_database {
      * NOTE: this was originally returning only function name
      *
      * @param string $expr some string field, no aggregates
-     * @param mixed $start integer or expresion evaluating to int (1 based value; first char has index 1)
-     * @param mixed $length optional integer or expresion evaluating to int
+     * @param mixed $start integer or expression evaluating to int (1 based value; first char has index 1)
+     * @param mixed $length optional integer or expression evaluating to int
      * @return string sql fragment
      */
     public function sql_substr($expr, $start, $length=false) {
         if (count(func_get_args()) < 2) {
-            throw new coding_exception('moodle_database::sql_substr() requires at least two parameters', 'Originaly this function was only returning name of SQL substring function, it now requires all parameters.');
+            throw new coding_exception('moodle_database::sql_substr() requires at least two parameters', 'Originally this function was only returning name of SQL substring function, it now requires all parameters.');
         }
         if ($length === false) {
             return "SUBSTR($expr, $start)";
@@ -1825,12 +1825,12 @@ abstract class moodle_database {
      *
      * Note that the function behavior strongly relies on the
      * parameters passed describing the field so, please,  be accurate
-     * when speciffying them.
+     * when specifying them.
      *
      * Also, note that this function is not suitable to look for
      * fields having NULL contents at all. It's all for empty values!
      *
-     * This function should be applied in all the places where conditins of
+     * This function should be applied in all the places where conditions of
      * the type:
      *
      *     ... AND fieldname = '';
@@ -1858,7 +1858,7 @@ abstract class moodle_database {
      *
      * Note that the function behavior strongly relies on the
      * parameters passed describing the field so, please,  be accurate
-     * when speciffying them.
+     * when specifying them.
      *
      * This function should be applied in all the places where conditions of
      * the type:
@@ -2013,7 +2013,7 @@ abstract class moodle_database {
      *
      * In many cases you do not need to call this method manually,
      * because all open delegated transactions are rolled back
-     * automatically if exceptions not caucht.
+     * automatically if exceptions not caught.
      *
      * @param moodle_transaction $transaction
      * @param Exception $e exception that caused the problem
@@ -2048,14 +2048,14 @@ abstract class moodle_database {
     }
 
     /**
-     * Driver specific bort of real database transaction,
+     * Driver specific abort of real database transaction,
      * this can not be used directly in code.
      * @return void
      */
     protected abstract function rollback_transaction();
 
     /**
-     * Force rollback of all delegted transaction.
+     * Force rollback of all delegated transaction.
      * Does not trow any exceptions and does not log anything.
      *
      * This method should be used only from default exception handlers and other

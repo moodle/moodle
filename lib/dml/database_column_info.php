@@ -112,7 +112,7 @@ class database_column_info {
     public $unique;
 
     /**
-     * Standardised one cahracter column type, uppercase
+     * Standardised one character column type, uppercase
      * R - counter (integer primary key)
      * I - integers
      * N - numbers (floats)
@@ -126,7 +126,7 @@ class database_column_info {
     public $meta_type;
 
     /**
-     * Contructor
+     * Constructor
      * @param $data mixed object or array with properties
      */
     public function __construct($data) {
