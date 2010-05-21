@@ -218,13 +218,6 @@
     <licenseversion>2.1</licenseversion>
   </library>
   <library>
-    <location>soap</location>
-    <name>SOAP wrappers</name>
-    <license>GPL/LGPL</license>
-    <version></version>
-    <licenseversion></licenseversion>
-  </library>
-  <library>
     <location>spikephpcoverage</location>
     <name>Spike PHPCoverage</name>
     <license>LGPL</license>
