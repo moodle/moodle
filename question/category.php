@@ -38,6 +38,7 @@
         }
     }
     $PAGE->set_url($url);
+    $PAGE->set_pagelayout('standard');
 
     $qcobject = new question_category_object($pagevars['cpage'], $thispageurl, $contexts->having_one_edit_tab_cap('categories'), $param->edit, $pagevars['cat'], $param->delete,
                                 $contexts->having_cap('moodle/question:add'));
@@ -85,27 +86,13 @@
         redirect($thispageurl);
     }
 
-    if (!$param->edit){
-        $PAGE->navbar->add($streditingcategories);
-    } else {
-        $PAGE->navbar->add($streditingcategories, $thispageurl->out());
+    if ($param->edit){
         $PAGE->navbar->add(get_string('editingcategory', 'question'));
     }
 
     $PAGE->set_title($streditingcategories);
+    $PAGE->set_heading($streditingcategories);
     echo $OUTPUT->header();
-
-    // print tabs
-    if ($cm!==null) {
-        $currenttab = 'edit';
-        $mode = 'categories';
-        ${$cm->modname} = $module;
-        include($CFG->dirroot."/mod/{$cm->modname}/tabs.php");
-    } else {
-        $currenttab = 'categories';
-        $context = $contexts->lowest();
-        include('tabs.php');
-    }
 
     // display UI
     if (!empty($param->edit)) {

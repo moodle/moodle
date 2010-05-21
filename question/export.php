@@ -13,6 +13,8 @@
     require_once("editlib.php");
     require_once("export_form.php");
 
+    $PAGE->set_pagelayout('standard');
+
     list($thispageurl, $contexts, $cmid, $cm, $module, $pagevars) =
             question_edit_setup('export', '/question/export.php');
 
@@ -34,21 +36,8 @@
     /// Header
     $PAGE->set_url($thispageurl->out());
     $PAGE->set_title($strexportquestions);
-    if ($cm!==null) {
-        $PAGE->navbar->add($strexportquestions);
-        echo $OUTPUT->header();
-        $currenttab = 'edit';
-        $mode = 'export';
-        ${$cm->modname} = $module;
-        include($CFG->dirroot."/mod/$cm->modname/tabs.php");
-    } else {
-        // Print basic page layout.
-        $PAGE->navbar->add($strexportquestions);
-        echo $OUTPUT->header();
-        // print tabs
-        $currenttab = 'export';
-        include('tabs.php');
-    }
+    $PAGE->set_heading($strexportquestions);
+    echo $OUTPUT->header();
 
     $exportfilename = default_export_filename($COURSE, $category);
     $export_form = new question_export_form($thispageurl, array('contexts'=>$contexts->having_one_edit_tab_cap('export'), 'defaultcategory'=>$pagevars['cat'],

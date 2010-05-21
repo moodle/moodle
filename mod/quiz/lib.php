@@ -1594,18 +1594,36 @@ function quiz_get_extra_capabilities() {
  * body of code as there is no guarantee that during an AJAX request they are
  * available
  *
- * @param navigation_node $navigation The quiz node within the global navigation
+ * @param navigation_node $quiznode The quiz node within the global navigation
  * @param stdClass $course The course object returned from the DB
  * @param stdClass $module The module object returned from the DB
  * @param stdClass $cm The course module isntance returned from the DB
  */
-function quiz_extend_navigation($navigation, $course, $module, $cm) {
-    /**
-     * This is currently just a stub so  that it can be easily expanded upon.
-     * When expanding just remove this comment and the line below and then add
-     * you content.
-     */
-    $navigation->nodetype = navigation_node::NODETYPE_LEAF;
+function quiz_extend_navigation($quiznode, $course, $module, $cm) {
+    global $CFG;
+
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+
+    if (has_capability('mod/quiz:view', $context)) {
+        $url = new moodle_url('/mod/quiz/view.php', array('id'=>$cm->id));
+        $quiznode->add(get_string('info', 'quiz'), $url, navigation_node::TYPE_SETTING, null, null, new pix_icon('i/info', ''));
+    }
+
+    if (has_capability('mod/quiz:viewreports', $context)) {
+        $url = new moodle_url('/mod/quiz/report.php', array('q'=>$cm->instance));
+        $reportnode = $quiznode->add(get_string('results', 'quiz'), $url, navigation_node::TYPE_SETTING, null, null, new pix_icon('i/report', ''));
+
+        require_once($CFG->dirroot.'/mod/quiz/report/reportlib.php');
+        $reportlist = quiz_report_list($context);
+        foreach ($reportlist as $report) {
+            if ($report != 'overview') {
+                $url = new moodle_url('/mod/quiz/report.php', array('q'=>$cm->instance, 'mode'=>$report));
+            } else {
+                $url = new moodle_url('/mod/quiz/report.php', array('q'=>$cm->instance));
+            }
+            $reportnode->add(get_string($report, 'quiz_'.$report), $url, navigation_node::TYPE_SETTING, null, null, new pix_icon('i/item', ''));
+        }
+    }
 }
 
 /**
@@ -1620,27 +1638,35 @@ function quiz_extend_navigation($navigation, $course, $module, $cm) {
 function quiz_extend_settings_navigation($settings, $quiznode) {
     global $PAGE, $CFG;
 
-    if (has_capability('mod/quiz:view', $PAGE->cm->context)) {
-        $url = new moodle_url('/mod/quiz/view.php', array('id'=>$PAGE->cm->id));
-        $quiznode->add(get_string('info', 'quiz'), $url, navigation_node::TYPE_SETTING, null, null, new pix_icon('i/info', ''));
-    }
-    if (has_capability('mod/quiz:viewreports', $PAGE->cm->context)) {
-        $url = new moodle_url('/mod/quiz/report.php', array('q'=>$PAGE->cm->instance));
-        $reportnode = $quiznode->add(get_string('results', 'quiz'), $url, navigation_node::TYPE_SETTING, null, null, new pix_icon('i/report', ''));
+    /**
+     * Require {@link questionlib.php}
+     * Included here as we only ever want to include this file if we really need to.
+     */
+    require_once($CFG->libdir . '/questionlib.php');
 
-        require_once($CFG->dirroot.'/mod/quiz/report/reportlib.php');
-        $reportlist = quiz_report_list($PAGE->cm->context);
-        foreach ($reportlist as $report) {
-            $url = new moodle_url('/mod/quiz/report.php', array('q'=>$PAGE->cm->instance, 'mode'=>$report));
-            $reportnode->add(get_string($report, 'quiz_'.$report), $url, navigation_node::TYPE_SETTING, null, null, new pix_icon('i/item', ''));
-        }
+    if (has_capability('mod/quiz:manageoverrides', $PAGE->cm->context)) {
+        $overrides = $quiznode->add(get_string('settingsoverrides', 'quiz'), null, navigation_node::TYPE_CONTAINER, null, 'overrides');
+
+        $url = new moodle_url('/mod/quiz/overrides.php', array('cmid'=>$PAGE->cm->id));
+        $overrides->add(get_string('groupoverrides', 'quiz'), $url, navigation_node::TYPE_SETTING, null, 'groupoverrides');
+        $overrides->add(get_string('useroverrides', 'quiz'), new moodle_url($url, array('mode'=>'user')), navigation_node::TYPE_SETTING, null, 'useroverrides');
     }
+
+    if (has_capability('mod/quiz:manage', $PAGE->cm->context)) {
+        $editnode = $quiznode->add(get_string('edit'), null, navigation_node::TYPE_CONTAINER, null, 'quizedit');
+        
+        $url = new moodle_url('/mod/quiz/edit.php', array('cmid'=>$PAGE->cm->id));
+        $text = get_string("editinga", "moodle", get_string('modulename', 'quiz'));
+        $editnode->add($text, $url, navigation_node::TYPE_SETTING, null, 'edit', new pix_icon('t/edit', ''));
+
+        $url = new moodle_url('/mod/quiz/edit.php', array('cmid'=>$PAGE->cm->id, 'reordertool'=>'1'));
+        $editnode->add(get_string('orderandpaging','quiz'), $url, navigation_node::TYPE_SETTING, null, 'reorder', new pix_icon('t/edit', ''));
+    }
+
     if (has_capability('mod/quiz:preview', $PAGE->cm->context)) {
         $url = new moodle_url('/mod/quiz/startattempt.php', array('cmid'=>$PAGE->cm->id, 'sesskey'=>sesskey()));
-        $quiznode->add(get_string('preview', 'quiz'), $url, navigation_node::TYPE_SETTING, null, null, new pix_icon('t/preview', ''));
+        $quiznode->add(get_string('preview', 'quiz'), $url, navigation_node::TYPE_SETTING, null, 'preview', new pix_icon('t/preview', ''));
     }
-    if (has_capability('mod/quiz:manage', $PAGE->cm->context)) {
-        $url = new moodle_url('/mod/quiz/edit.php', array('cmid'=>$PAGE->cm->id));
-        $quiznode->add(get_string('edit'), $url, navigation_node::TYPE_SETTING, null, null, new pix_icon('t/edit', ''));
-    }
-    }
+
+    question_extend_settings_navigation($quiznode, $PAGE->context)->trim_if_empty();
+}

@@ -37,6 +37,7 @@
             $attemptobj->get_quizid(), $attemptobj->get_cmid());
 
 /// Print the page header
+    $PAGE->set_pagelayout('popup');
     echo $OUTPUT->header();
     echo $OUTPUT->heading(format_string($attemptobj->get_question($questionid)->name));
 

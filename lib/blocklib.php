@@ -147,6 +147,11 @@ class block_manager {
      */
     protected $movingblock = null;
 
+    /**
+     * Show only fake blocks
+     */
+    protected $fakeblocksonly = false;
+
 /// Constructor ================================================================
 
     /**
@@ -440,6 +445,12 @@ class block_manager {
                 $this->birecordsbyregion = array();
                 return;
             }
+        }
+
+        // Check if we need to load normal blocks
+        if ($this->fakeblocksonly) {
+            $this->birecordsbyregion = $this->prepare_per_region_arrays();
+            return;
         }
 
         if (is_null($includeinvisible)) {
@@ -1315,6 +1326,15 @@ class block_manager {
         $this->page->ensure_param_not_in_url('bui_newregion');
         $this->page->ensure_param_not_in_url('bui_newweight');
         return true;
+    }
+
+    /**
+     * Turns the display of normal blocks either on or off.
+     * 
+     * @param bool $setting
+     */
+    public function show_only_fake_blocks($setting = true) {
+        $this->fakeblocksonly = $setting;
     }
 }
 

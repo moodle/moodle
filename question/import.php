@@ -10,9 +10,8 @@
  */
 
     require_once("../config.php");
-    require_once("editlib.php");
+    require_once("editlib.php"); // Includes lib/questionlib.php
     require_once($CFG->libdir . '/uploadlib.php');
-    require_once($CFG->libdir . '/questionlib.php');
     require_once("import_form.php");
 
     list($thispageurl, $contexts, $cmid, $cm, $module, $pagevars) =
@@ -27,6 +26,8 @@
     if (!$category = $DB->get_record("question_categories", array("id" => $catid))) {
         print_error('nocategory','quiz');
     }
+
+    $PAGE->set_pagelayout('standard');
 
     //this page can be called without courseid or cmid in which case
     //we get the context from the category object.
@@ -56,26 +57,9 @@
     //==========
     // PAGE HEADER
     //==========
-
-    if ($cm!==null) {
-        $PAGE->navbar->add($txt->importquestions);
-        $PAGE->set_title($txt->importquestions);
-        echo $OUTPUT->header();
-
-        $currenttab = 'edit';
-        $mode = 'import';
-        ${$cm->modname} = $module;
-        include($CFG->dirroot."/mod/$cm->modname/tabs.php");
-    } else {
-        // Print basic page layout.
-        $PAGE->navbar->add($txt->importquestions);
-        $PAGE->set_title($txt->importquestions);
-        echo $OUTPUT->header();
-        // print tabs
-        $currenttab = 'import';
-        include('tabs.php');
-    }
-
+    $PAGE->set_title($txt->importquestions);
+    $PAGE->set_heading($txt->importquestions);
+    echo $OUTPUT->header();
 
     // file upload form sumitted
     if ($form = $import_form->get_data()) {

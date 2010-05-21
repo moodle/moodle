@@ -17,7 +17,7 @@ $PAGE->set_url('/mod/quiz/summary.php', array('attempt'=>$attemptid));
 $attemptobj = quiz_attempt::create($attemptid);
 
 /// Check login.
-require_login($attemptobj->get_courseid(), false, $attemptobj->get_cm());
+require_login($attemptobj->get_course(), false, $attemptobj->get_cm());
 
 /// If this is not our own attempt, display an error.
 if ($attemptobj->get_userid() != $USER->id) {
@@ -46,6 +46,10 @@ add_to_log($attemptobj->get_courseid(), 'quiz', 'view summary', 'summary.php?att
 $attemptobj->load_questions();
 $attemptobj->load_question_states();
 
+if (empty($attemptobj->get_quiz()->showblocks)) {
+    $PAGE->blocks->show_only_fake_blocks();
+}
+
 /// Print the page header
 $PAGE->requires->js('/mod/quiz/quiz.js');
 $title = get_string('summaryofattempt', 'quiz');
@@ -54,18 +58,14 @@ if ($accessmanager->securewindow_required($attemptobj->is_preview_user())) {
             format_string($attemptobj->get_quiz_name()), '');
 } elseif ($accessmanager->safebrowser_required($attemptobj->is_preview_user())) {
     $PAGE->set_title($attemptobj->get_course()->shortname . ': '.format_string($attemptobj->get_quiz_name()));
+    $PAGE->set_heading($attemptobj->get_course()->fullname);
     $PAGE->set_cacheable(false);
     echo $OUTPUT->header();
 } else {
     $attemptobj->navigation($title);
     $PAGE->set_title(format_string($attemptobj->get_quiz_name()));
+    $PAGE->set_heading($attemptobj->get_course()->fullname);
     echo $OUTPUT->header();
-}
-
-/// Print tabs if they should be there.
-if ($attemptobj->is_preview_user()) {
-    $currenttab = 'preview';
-    include('tabs.php');
 }
 
 /// Print heading.

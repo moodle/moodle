@@ -126,6 +126,11 @@ $quizsettings->add(new admin_setting_configselect_with_advanced('quiz/questionde
         get_string('decimalplacesquestion', 'quiz'), get_string('configdecimalplacesquestion', 'quiz'),
         array('value' => -1, 'fix' => true), $options));
 
+// Show blocks during quiz attempts
+$quizsettings->add(new admin_setting_configcheckbox_with_advanced('quiz/showblocks',
+        get_string('showblocks', 'quiz'), get_string('configshowblocks', 'quiz'),
+        array('value' => 0, 'adv' => true)));
+
 // Password.
 $quizsettings->add(new admin_setting_configtext_with_advanced('quiz/password',
         get_string('requirepassword', 'quiz'), get_string('configrequirepassword', 'quiz'),

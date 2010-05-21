@@ -58,6 +58,7 @@ if ($overrideid) {
 } else {
     print_error('invalidcoursemodule');
 }
+$course = $DB->get_record('course', array('id'=>$cm->course), '*', MUST_EXIST);
 
 $url = new moodle_url('/mod/quiz/overrideedit.php');
 if ($action) {
@@ -71,7 +72,7 @@ if ($overrideid) {
 
 $PAGE->set_url($url);
 
-require_login($cm->course, false, $cm);
+require_login($course, false, $cm);
 
 $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
@@ -191,7 +192,7 @@ if ($mform->is_cancelled()) {
 $pagetitle = get_string('editoverride', 'quiz');
 $PAGE->navbar->add($pagetitle);
 $PAGE->set_title($pagetitle);
-
+$PAGE->set_heading($course->fullname);
 echo $OUTPUT->header();
 echo $OUTPUT->heading($pagetitle);
 

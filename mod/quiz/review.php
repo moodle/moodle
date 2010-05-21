@@ -27,7 +27,7 @@
     $attemptobj = quiz_attempt::create($attemptid);
 
 /// Check login.
-    require_login($attemptobj->get_courseid(), false, $attemptobj->get_cm());
+    require_login($attemptobj->get_course(), false, $attemptobj->get_cm());
     $attemptobj->check_review_capability();
 
 /// Create an object to manage all the other (non-roles) access rules.
@@ -73,11 +73,16 @@
     add_to_log($attemptobj->get_courseid(), 'quiz', 'review', 'review.php?attempt=' .
             $attemptobj->get_attemptid(), $attemptobj->get_quizid(), $attemptobj->get_cmid());
 
-/// Work out appropriate title.
+/// Work out appropriate title and whether blocks should be shown
     if ($attemptobj->is_preview_user() && $attemptobj->is_own_attempt()) {
+        // Normal blocks
         $strreviewtitle = get_string('reviewofpreview', 'quiz');
     } else {
         $strreviewtitle = get_string('reviewofattempt', 'quiz', $attemptobj->get_attempt_number());
+        if (empty($attemptobj->get_quiz()->showblocks) && !$attemptobj->is_preview_user()) {
+            // Only show pretend blocks
+            $PAGE->blocks->show_only_fake_blocks();
+        }
     }
 
 /// Arrange for the navigation to be displayed.
@@ -94,25 +99,16 @@
         $accessmanager->setup_secure_page($attemptobj->get_course()->shortname.': '.format_string($attemptobj->get_quiz_name()), $headtags);
     } elseif ($accessmanager->safebrowser_required($attemptobj->is_preview_user())) {
         $PAGE->set_title($attemptobj->get_course()->shortname . ': '.format_string($attemptobj->get_quiz_name()));
+        $PAGE->set_heading($attemptobj->get_course()->fullname);
         $PAGE->set_cacheable(false);
         echo $OUTPUT->header();
     } else {
         $attemptobj->navigation($strreviewtitle);
         $PAGE->set_title(format_string($attemptobj->get_quiz_name()));
+        $PAGE->set_heading($attemptobj->get_course()->fullname);
         echo $OUTPUT->header();
     }
     echo '<div id="overDiv" style="position:absolute; visibility:hidden; z-index:1000;"></div>'; // for overlib
-
-/// Print tabs if they should be there.
-    if ($attemptobj->is_preview_user()) {
-        if ($attemptobj->is_own_attempt()) {
-            $currenttab = 'preview';
-        } else {
-            $currenttab = 'reports';
-            $mode = '';
-        }
-        include('tabs.php');
-    }
 
 /// Print heading.
     if ($attemptobj->is_preview_user() && $attemptobj->is_own_attempt()) {

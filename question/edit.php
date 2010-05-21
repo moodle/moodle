@@ -52,7 +52,11 @@
     if (($returnurl = optional_param('returnurl', 0, PARAM_INT)) !== 0) {
         $url->param('returnurl', $returnurl);
     }
+    if (($cmid = optional_param('cmid', 0, PARAM_INT)) !== 0) {
+        $url->param('cmid', $cmid);
+    }
     $PAGE->set_url($url);
+    $PAGE->set_pagelayout('standard');
 
     list($thispageurl, $contexts, $cmid, $cm, $module, $pagevars) =
             question_edit_setup('questions', '/question/edit.php');
@@ -63,25 +67,9 @@
 
     $context = $contexts->lowest();
     $streditingquestions = get_string('editquestions', "quiz");
-    if ($cm!==null) {
-        $PAGE->navbar->add($streditingquestions);
-        $PAGE->set_title($streditingquestions);
-        echo $OUTPUT->header();
-
-        $currenttab = 'edit';
-        $mode = 'questions';
-        ${$cm->modname} = $module;
-        include($CFG->dirroot."/mod/$cm->modname/tabs.php");
-    } else {
-        // Print basic page layout.
-        $PAGE->navbar->add($streditingquestions);
-        $PAGE->set_title($streditingquestions);
-        echo $OUTPUT->header();
-
-        // print tabs
-        $currenttab = 'questions';
-        include('tabs.php');
-    }
+    $PAGE->set_title($streditingquestions);
+    $PAGE->set_heading($streditingquestions);
+    echo $OUTPUT->header();
 
     echo '<div class="questionbankwindow boxwidthwide boxaligncenter">';
     $questionbank->display('questions', $pagevars['qpage'],

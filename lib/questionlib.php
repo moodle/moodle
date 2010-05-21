@@ -868,27 +868,6 @@ function question_move_questions_to_category($questionids, $newcategory) {
 }
 
 /**
- * @global object
- * @global object
- * @param array $row tab objects
- * @param question_edit_contexts $contexts object representing contexts available from this context
- * @param string $querystring to append to urls
- * */
-function questionbank_navigation_tabs(&$row, $contexts, array $params) {
-    global $CFG, $QUESTION_EDITTABCAPS;
-    $tabs = array(
-            'questions' =>array(new moodle_url('/question/edit.php', $params), get_string('questions', 'quiz'), get_string('editquestions', 'quiz')),
-            'categories' =>array(new moodle_url('/question/category.php', $params), get_string('categories', 'quiz'), get_string('editqcats', 'quiz')),
-            'import' =>array(new moodle_url('/question/import.php', $params), get_string('import', 'quiz'), get_string('importquestions', 'quiz')),
-            'export' =>array(new moodle_url('/question/export.php', $params), get_string('export', 'quiz'), get_string('exportquestions', 'quiz')));
-    foreach ($tabs as $tabname => $tabparams){
-        if ($contexts->have_one_edit_tab_cap($tabname)) {
-            $row[] = new tabobject($tabname, $tabparams[0], $tabparams[1], $tabparams[2]);
-        }
-    }
-}
-
-/**
  * Given a list of ids, load the basic information about a set of questions from the questions table.
  * The $join and $extrafields arguments can be used together to pull in extra data.
  * See, for example, the usage in mod/quiz/attemptlib.php, and
@@ -3008,4 +2987,192 @@ function question_get_toggleflag_checksum($attemptid, $questionid, $sessionid, $
         $user = $USER;
     }
     return md5($attemptid . "_" . $user->secret . "_" . $questionid . "_" . $sessionid);
+}
+
+/**
+ * Adds question bank setting links to the given navigaiton node if caps are met.
+ *
+ * @param navigation_node $navigationnode The navigation node to add the question branch to
+ * @param stdClass $context
+ * @return navigation_node Returns the question branch that was added
+ */
+function question_extend_settings_navigation(navigation_node $navigationnode, $context) {
+    global $PAGE;
+
+    if ($context->contextlevel == CONTEXT_COURSE) {
+        $params = array('courseid'=>$context->instanceid);
+    } else if ($context->contextlevel == CONTEXT_MODULE) {
+        $params = array('cmid'=>$context->instanceid);
+    } else {
+        return;
+    }
+
+    $questionnode = $navigationnode->add(get_string('questionbank','question'), new moodle_url('/question/edit.php', $params), navigation_node::TYPE_CONTAINER);
+
+    $contexts = new question_edit_contexts($context);
+    if ($contexts->have_one_edit_tab_cap('questions')) {
+        $questionnode->add(get_string('questions', 'quiz'), new moodle_url('/question/edit.php', $params), navigation_node::TYPE_SETTING);
+    }
+    if ($contexts->have_one_edit_tab_cap('categories')) {
+        $questionnode->add(get_string('categories', 'quiz'), new moodle_url('/question/category.php', $params), navigation_node::TYPE_SETTING);
+    }
+    if ($contexts->have_one_edit_tab_cap('import')) {
+        $questionnode->add(get_string('import', 'quiz'), new moodle_url('/question/import.php', $params), navigation_node::TYPE_SETTING);
+    }
+    if ($contexts->have_one_edit_tab_cap('export')) {
+        $questionnode->add(get_string('export', 'quiz'), new moodle_url('/question/export.php', $params), navigation_node::TYPE_SETTING);
+    }
+
+    return $questionnode;
+}
+
+class question_edit_contexts {
+
+    public static $CAPS = array(
+        'editq' => array('moodle/question:add',
+            'moodle/question:editmine',
+            'moodle/question:editall',
+            'moodle/question:viewmine',
+            'moodle/question:viewall',
+            'moodle/question:usemine',
+            'moodle/question:useall',
+            'moodle/question:movemine',
+            'moodle/question:moveall'),
+        'questions'=>array('moodle/question:add',
+            'moodle/question:editmine',
+            'moodle/question:editall',
+            'moodle/question:viewmine',
+            'moodle/question:viewall',
+            'moodle/question:movemine',
+            'moodle/question:moveall'),
+        'categories'=>array('moodle/question:managecategory'),
+        'import'=>array('moodle/question:add'),
+        'export'=>array('moodle/question:viewall', 'moodle/question:viewmine'));
+
+    protected $allcontexts;
+
+    /**
+     * @param current context
+     */
+    public function question_edit_contexts($thiscontext){
+        $pcontextids = get_parent_contexts($thiscontext);
+        $contexts = array($thiscontext);
+        foreach ($pcontextids as $pcontextid){
+            $contexts[] = get_context_instance_by_id($pcontextid);
+        }
+        $this->allcontexts = $contexts;
+    }
+    /**
+     * @return array all parent contexts
+     */
+    public function all(){
+        return $this->allcontexts;
+    }
+    /**
+     * @return object lowest context which must be either the module or course context
+     */
+    public function lowest(){
+        return $this->allcontexts[0];
+    }
+    /**
+     * @param string $cap capability
+     * @return array parent contexts having capability, zero based index
+     */
+    public function having_cap($cap){
+        $contextswithcap = array();
+        foreach ($this->allcontexts as $context){
+            if (has_capability($cap, $context)){
+                $contextswithcap[] = $context;
+            }
+        }
+        return $contextswithcap;
+    }
+    /**
+     * @param array $caps capabilities
+     * @return array parent contexts having at least one of $caps, zero based index
+     */
+    public function having_one_cap($caps){
+        $contextswithacap = array();
+        foreach ($this->allcontexts as $context){
+            foreach ($caps as $cap){
+                if (has_capability($cap, $context)){
+                    $contextswithacap[] = $context;
+                    break; //done with caps loop
+                }
+            }
+        }
+        return $contextswithacap;
+    }
+    /**
+     * @param string $tabname edit tab name
+     * @return array parent contexts having at least one of $caps, zero based index
+     */
+    public function having_one_edit_tab_cap($tabname){
+        return $this->having_one_cap(self::$CAPS[$tabname]);
+    }
+    /**
+     * Has at least one parent context got the cap $cap?
+     *
+     * @param string $cap capability
+     * @return boolean
+     */
+    public function have_cap($cap){
+        return (count($this->having_cap($cap)));
+    }
+
+    /**
+     * Has at least one parent context got one of the caps $caps?
+     *
+     * @param array $caps capability
+     * @return boolean
+     */
+    public function have_one_cap($caps){
+        foreach ($caps as $cap) {
+            if ($this->have_cap($cap)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    /**
+     * Has at least one parent context got one of the caps for actions on $tabname
+     *
+     * @param string $tabname edit tab name
+     * @return boolean
+     */
+    public function have_one_edit_tab_cap($tabname){
+        return $this->have_one_cap(self::$CAPS[$tabname]);
+    }
+    /**
+     * Throw error if at least one parent context hasn't got the cap $cap
+     *
+     * @param string $cap capability
+     */
+    public function require_cap($cap){
+        if (!$this->have_cap($cap)){
+            print_error('nopermissions', '', '', $cap);
+        }
+    }
+    /**
+     * Throw error if at least one parent context hasn't got one of the caps $caps
+     *
+     * @param array $cap capabilities
+     */
+     public function require_one_cap($caps) {
+        if (!$this->have_one_cap($caps)) {
+            $capsstring = join($caps, ', ');
+            print_error('nopermissions', '', '', $capsstring);
+        }
+    }
+
+    /**
+     * Throw error if at least one parent context hasn't got one of the caps $caps
+     *
+     * @param string $tabname edit tab name
+     */
+    public function require_one_edit_tab_cap($tabname){
+        if (!$this->have_one_edit_tab_cap($tabname)) {
+            print_error('nopermissions', '', '', 'access question edit tab '.$tabname);
+        }
+    }
 }

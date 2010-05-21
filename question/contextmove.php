@@ -196,17 +196,6 @@
     $PAGE->set_title($streditingcategories);
     echo $OUTPUT->header();
 
-    // print tabs
-    if ($cm!==null) {
-        $currenttab = 'edit';
-        $mode = 'categories';
-        ${$cm->modname} = $module;
-        include($CFG->dirroot."/mod/{$cm->modname}/tabs.php");
-    } else {
-        $currenttab = 'categories';
-        $context = $contexts->lowest();
-        include('tabs.php');
-    }
     //parameter for get_string
     $cattomove->contextto = $contexttostring;
     if (count($urls)){

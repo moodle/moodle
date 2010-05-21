@@ -36,7 +36,7 @@
     $attemptobj = quiz_attempt::create($attemptid);
 
 /// Check login.
-    require_login($attemptobj->get_courseid(), false, $attemptobj->get_cm());
+    require_login($attemptobj->get_course(), false, $attemptobj->get_cm());
 
 /// Check that this attempt belongs to this user.
     if ($attemptobj->get_userid() != $USER->id) {
@@ -47,10 +47,12 @@
         }
     }
 
-/// Check capabilites.
-    if ($attemptobj->is_preview_user()) {
-    } else {
+/// Check capabilites and block settings
+    if (!$attemptobj->is_preview_user()) {
         $attemptobj->require_capability('mod/quiz:attempt');
+        if (empty($attemptobj->get_quiz()->showblocks)) {
+            $PAGE->blocks->show_only_fake_blocks();
+        }
     }
 
 /// If the attempt is already closed, send them to the review page.
@@ -88,6 +90,8 @@
     $PAGE->requires->js('/lib/overlib/overlib.js', true);
     $PAGE->requires->js('/lib/overlib/overlib_cssstyle.js', true);
 
+    
+
     // Arrange for the navigation to be displayed.
     $navbc = $attemptobj->get_navigation_panel('quiz_attempt_nav_panel', $page);
     $firstregion = reset($PAGE->blocks->get_regions());
@@ -96,6 +100,7 @@
     // Print the page header
     $title = get_string('attempt', 'quiz', $attemptobj->get_attempt_number());
     $headtags = $attemptobj->get_html_head_contributions($page);
+    $PAGE->set_heading($attemptobj->get_course()->fullname);
     if ($accessmanager->securewindow_required($attemptobj->is_preview_user())) {
         $accessmanager->setup_secure_page($attemptobj->get_course()->shortname . ': ' .
                 format_string($attemptobj->get_quiz_name()), $headtags);
@@ -110,9 +115,8 @@
     echo '<div id="overDiv" style="position:absolute; visibility:hidden; z-index:1000;"></div>'; // for overlib
 
     if ($attemptobj->is_preview_user()) {
-    /// Show the tab bar.
-        $currenttab = 'preview';
-        include('tabs.php');
+
+        $quiz = $attemptobj->get_quiz();
 
     /// Heading and tab bar.
         echo $OUTPUT->heading(get_string('previewquiz', 'quiz', format_string($quiz->name)));

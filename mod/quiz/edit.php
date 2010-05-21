@@ -112,20 +112,24 @@ function module_specific_controls($totalnumber, $recurse, $category, $cmid, $cmo
     return $out;
 }
 
+//these params are only passed from page request to request while we stay on
+//this page otherwise they would go in question_edit_setup
+$quiz_reordertool = optional_param('reordertool', 0, PARAM_BOOL);
+$quiz_qbanktool = optional_param('qbanktool', -1, PARAM_BOOL);
+
 list($thispageurl, $contexts, $cmid, $cm, $quiz, $pagevars) =
         question_edit_setup('editq', '/mod/quiz/edit.php', true);
-$PAGE->set_url($thispageurl);
-$PAGE->set_pagelayout('base');
+$url = new moodle_url($thispageurl);
+if ($quiz_reordertool) {
+    $url->param('reordertool', $quiz_reordertool);
+}
+$PAGE->set_url($url);
 
 $defaultcategoryobj = question_make_default_categories($contexts->all());
 $defaultcategoryid = $defaultcategoryobj->id;
 $defaultcategorycontext = $defaultcategoryobj->contextid;
 $defaultcategory = $defaultcategoryid . ',' . $defaultcategorycontext;
 
-//these params are only passed from page request to request while we stay on
-//this page otherwise they would go in question_edit_setup
-$quiz_reordertool = optional_param('reordertool', 0, PARAM_BOOL);
-$quiz_qbanktool = optional_param('qbanktool', -1, PARAM_BOOL);
 if ($quiz_qbanktool > -1) {
     $thispageurl->param('qbanktool', $quiz_qbanktool);
     set_user_preference('quiz_qbanktool_open', $quiz_qbanktool);
@@ -164,6 +168,8 @@ $questionbank->set_quiz_has_attempts($quizhasattempts);
 // Log this visit.
 add_to_log($cm->course, 'quiz', 'editquestions',
             "view.php?id=$cm->id", "$quiz->id", $cm->id);
+
+$PAGE->set_pagelayout('admin');
 
 // You need mod/quiz:manage in addition to question capabilities to access this page.
 require_capability('mod/quiz:manage', $contexts->lowest());
@@ -435,17 +441,10 @@ $questionbank->process_actions($thispageurl, $cm);
 
 // End of process commands =====================================================
 
-// Print the header.
-$questionbankmanagement = '<a href="'.$CFG->wwwroot.
-        '/question/edit.php?courseid='.$course->id.'">'.
-        get_string('questionbankmanagement', 'quiz').'</a> ';
-
-$PAGE->navbar->add($pagetitle);
 $PAGE->requires->skip_link_to('questionbank',  get_string('skipto', 'access', get_string('questionbank', 'question')));
 $PAGE->requires->skip_link_to('quizcontentsblock',  get_string('skipto', 'access', get_string('questionsinthisquiz', 'quiz')));
-
 $PAGE->set_title($pagetitle);
-$PAGE->set_button($questionbankmanagement);
+$PAGE->set_heading($course->fullname);
 echo $OUTPUT->header();
 
 // Initialise the JavaScript.
@@ -459,13 +458,9 @@ for ($pageiter = 1; $pageiter <= $numberoflisteners; $pageiter++) {
 $PAGE->requires->data_for_js('quiz_edit_config', $quizeditconfig);
 $PAGE->requires->js('/mod/quiz/edit.js');
 
-// Print the tabs.
-$currenttab = 'edit';
-$mode = 'editq';
-if ($quiz_reordertool) {
-    $mode = 'reorder';
+if ($contexts->have_one_edit_tab_cap('editq') && $node = $PAGE->settingsnav->find('quizedit', navigation_node::TYPE_CONTAINER)) {
+    call_user_func_array('print_tabs', $node->get_tabs_array());
 }
-include('tabs.php');
 
 if ($quiz_qbanktool) {
     $bankclass = '';
@@ -568,7 +563,12 @@ if ($quiz_reordertool) {
     echo '</div></fieldset></form></div></div>';
 }
 
-echo '<div class="' . $currenttab . '">';
+if ($quiz_reordertool) {
+    echo '<div class="reorder">';
+} else {
+    echo '<div class="editq">';
+}
+
 quiz_print_question_list($quiz, $thispageurl, true,
         $quiz_reordertool, $quiz_qbanktool, $quizhasattempts);
 echo '</div>';

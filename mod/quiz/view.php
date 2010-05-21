@@ -85,10 +85,6 @@
 
     echo $OUTPUT->header();
 
-/// Print heading and tabs (if there is more than one).
-    $currenttab = 'info';
-    include('tabs.php');
-
 /// Print quiz name and description
     echo $OUTPUT->heading(format_string($quiz->name));
     if (trim(strip_tags($quiz->intro))) {

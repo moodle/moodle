@@ -41,10 +41,11 @@ if (! $quiz = $DB->get_record('quiz', array('id' => $override->quiz))) {
 if (! $cm = get_coursemodule_from_instance("quiz", $quiz->id, $quiz->course)) {
     print_error('invalidcoursemodule');
 }
+$course = $DB->get_record('course', array('id'=>$cm->course), '*', MUST_EXIST);
 
 $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
-require_login($cm->course, false, $cm);
+require_login($course, false, $cm);
 
 // Check the user has the required capabilities to modify an override
 require_capability('mod/quiz:manageoverrides', $context);
@@ -79,7 +80,7 @@ $title = get_string('deletecheck', null, $stroverride);
 $PAGE->set_url($url);
 $PAGE->navbar->add($title);
 $PAGE->set_title($title);
-$PAGE->set_heading($stroverride);
+$PAGE->set_heading($course->fullname);
 
 echo $OUTPUT->header();
 

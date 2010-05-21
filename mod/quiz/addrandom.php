@@ -79,6 +79,7 @@ require_capability('mod/quiz:manage', $contexts->lowest());
 // Print basic page layout.
 $PAGE->navbar->add($streditingquiz);
 $PAGE->set_title($streditingquiz);
+$PAGE->set_heading($course->fullname);
 echo $OUTPUT->header();
 
 if (!$quizname = $DB->get_field($cm->modname, 'name', array('id' => $cm->instance))) {

@@ -39,6 +39,7 @@ if (! $cm = get_coursemodule_from_id('quiz', $cmid)) {
 if (! $quiz = $DB->get_record('quiz', array('id' => $cm->instance))) {
     print_error('invalidcoursemodule');
 }
+$course = $DB->get_record('course', array('id'=>$cm->course), '*', MUST_EXIST);
 
 // Get the course groups
 $groups = groups_get_all_groups($cm->course);
@@ -60,7 +61,7 @@ $url = new moodle_url('/mod/quiz/overrides.php', array('cmid'=>$cm->id, 'mode'=>
 
 $PAGE->set_url($url);
 
-require_login($cm->course, false, $cm);
+require_login($course, false, $cm);
 
 $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
@@ -70,6 +71,7 @@ require_capability('mod/quiz:manageoverrides', $context);
 // Display a list of overrides
 
 $PAGE->set_title(get_string('overrides', 'quiz'));
+$PAGE->set_heading($course->fullname);
 echo $OUTPUT->header();
 
 // Delete orphaned group overrides
@@ -105,10 +107,6 @@ else {
 
 $params = array($quiz->id);
 $overrides = $DB->get_records_sql($sql, $params);
-
-// Print heading and tabs (if there is more than one).
-$currenttab = 'overrides';
-include('tabs.php');
 
 // Initialise table
 $table = new html_table();

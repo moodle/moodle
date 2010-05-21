@@ -36,6 +36,7 @@
     $PAGE->navbar->add($strquizzes);
     $PAGE->set_title($strquizzes);
     $PAGE->set_button($streditquestions);
+    $PAGE->set_heading($course->fullname);
     echo $OUTPUT->header();
 
 // Get all the appropriate data

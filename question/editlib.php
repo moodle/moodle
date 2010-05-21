@@ -1522,7 +1522,7 @@ class question_bank_view {
  * @return array $thispageurl, $contexts, $cmid, $cm, $module, $pagevars
  */
 function question_edit_setup($edittab, $baseurl, $requirecmid = false, $requirecourseid = true) {
-    global $QUESTION_EDITTABCAPS, $DB, $PAGE;
+    global $DB, $PAGE;
 
     //$thispageurl is used to construct urls for all question edit pages we link to from this page. It contains an array
     //of parameters that are passed from page to page.
@@ -1656,158 +1656,12 @@ function question_edit_setup($edittab, $baseurl, $requirecmid = false, $requirec
 
     return array($thispageurl, $contexts, $cmid, $cm, $module, $pagevars);
 }
-class question_edit_contexts{
-    var $allcontexts;
-    /**
-     * @param current context
-     */
-    function question_edit_contexts($thiscontext){
-        $pcontextids = get_parent_contexts($thiscontext);
-        $contexts = array($thiscontext);
-        foreach ($pcontextids as $pcontextid){
-            $contexts[] = get_context_instance_by_id($pcontextid);
-        }
-        $this->allcontexts = $contexts;
-    }
-    /**
-     * @return array all parent contexts
-     */
-    function all(){
-        return $this->allcontexts;
-    }
-    /**
-     * @return object lowest context which must be either the module or course context
-     */
-    function lowest(){
-        return $this->allcontexts[0];
-    }
-    /**
-     * @param string $cap capability
-     * @return array parent contexts having capability, zero based index
-     */
-    function having_cap($cap){
-        $contextswithcap = array();
-        foreach ($this->allcontexts as $context){
-            if (has_capability($cap, $context)){
-                $contextswithcap[] = $context;
-            }
-        }
-        return $contextswithcap;
-    }
-    /**
-     * @param array $caps capabilities
-     * @return array parent contexts having at least one of $caps, zero based index
-     */
-    function having_one_cap($caps){
-        $contextswithacap = array();
-        foreach ($this->allcontexts as $context){
-            foreach ($caps as $cap){
-                if (has_capability($cap, $context)){
-                    $contextswithacap[] = $context;
-                    break; //done with caps loop
-                }
-            }
-        }
-        return $contextswithacap;
-    }
-    /**
-     * @param string $tabname edit tab name
-     * @return array parent contexts having at least one of $caps, zero based index
-     */
-    function having_one_edit_tab_cap($tabname){
-        global $QUESTION_EDITTABCAPS;
-        return $this->having_one_cap($QUESTION_EDITTABCAPS[$tabname]);
-    }
-    /**
-     * Has at least one parent context got the cap $cap?
-     *
-     * @param string $cap capability
-     * @return boolean
-     */
-    function have_cap($cap){
-        return (count($this->having_cap($cap)));
-    }
 
-    /**
-     * Has at least one parent context got one of the caps $caps?
-     *
-     * @param string $cap capability
-     * @return boolean
-     */
-    function have_one_cap($caps){
-        foreach ($caps as $cap){
-            if ($this->have_cap($cap)){
-                return true;
-            }
-        }
-        return false;
-    }
-    /**
-     * Has at least one parent context got one of the caps for actions on $tabname
-     *
-     * @param string $tabname edit tab name
-     * @return boolean
-     */
-    function have_one_edit_tab_cap($tabname){
-        global $QUESTION_EDITTABCAPS;
-        return $this->have_one_cap($QUESTION_EDITTABCAPS[$tabname]);
-    }
-    /**
-     * Throw error if at least one parent context hasn't got the cap $cap
-     *
-     * @param string $cap capability
-     */
-    function require_cap($cap){
-        if (!$this->have_cap($cap)){
-            print_error('nopermissions', '', '', $cap);
-        }
-    }
-    /**
-     * Throw error if at least one parent context hasn't got one of the caps $caps
-     *
-     * @param array $cap capabilities
-     */
-     function require_one_cap($caps){
-        if (!$this->have_one_cap($caps)){
-            $capsstring = join($caps, ', ');
-            print_error('nopermissions', '', '', $capsstring);
-        }
-    }
-    /**
-     * Throw error if at least one parent context hasn't got one of the caps $caps
-     *
-     * @param string $tabname edit tab name
-     */
-     function require_one_edit_tab_cap($tabname){
-        if (!$this->have_one_edit_tab_cap($tabname)){
-            print_error('nopermissions', '', '', 'access question edit tab '.$tabname);
-        }
-    }
-}
-
-//capabilities for each page of edit tab.
-//this determines which contexts' categories are available. At least one
-//page is displayed if user has one of the capability on at least one context
-$QUESTION_EDITTABCAPS = array(
-        'editq' => array('moodle/question:add',
-            'moodle/question:editmine',
-            'moodle/question:editall',
-            'moodle/question:viewmine',
-            'moodle/question:viewall',
-            'moodle/question:usemine',
-            'moodle/question:useall',
-            'moodle/question:movemine',
-            'moodle/question:moveall'),
-        'questions'=>array('moodle/question:add',
-            'moodle/question:editmine',
-            'moodle/question:editall',
-            'moodle/question:viewmine',
-            'moodle/question:viewall',
-            'moodle/question:movemine',
-            'moodle/question:moveall'),
-        'categories'=>array('moodle/question:managecategory'),
-        'import'=>array('moodle/question:add'),
-        'export'=>array('moodle/question:viewall', 'moodle/question:viewmine'));
+/**
+ * Required for legacy reasons. Was originally global then changed to class static
+ * as of Moodle 2.0
+ */
+$QUESTION_EDITTABCAPS = question_edit_contexts::$CAPS;
 
 /**
  * Make sure user is logged in as required in this context.

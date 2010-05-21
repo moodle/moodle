@@ -560,6 +560,49 @@ class navigation_node implements renderable {
         }
         return $nodes;
     }
+
+    /**
+     * Removes this node if it is empty
+     */
+    public function trim_if_empty() {
+        if ($this->children->count() == 0) {
+            $this->remove();
+        }
+    }
+
+    /**
+     * Creates a tab representation of this nodes children that can be used
+     * with print_tabs to produce the tabs on a page.
+     *
+     * call_user_func_array('print_tabs', $node->get_tabs_array());
+     *
+     * @param array $inactive
+     * @param bool $return
+     * @return array Array (tabs, selected, inactive, activated, return)
+     */
+    public function get_tabs_array(array $inactive=array(), $return=false) {
+        $tabs = array();
+        $rows = array();
+        $selected = null;
+        $activated = array();
+        foreach ($this->children as $node) {
+            $tabs[] = new tabobject($node->key, $node->action, $node->get_content(), $node->get_title());
+            if ($node->contains_active_node()) {
+                if ($node->children->count() > 0) {
+                    $activated[] = $node->key;
+                    foreach ($node->children as $child) {
+                        if ($child->contains_active_node()) {
+                            $selected = $child->key;
+                        }
+                        $rows[] = new tabobject($child->key, $child->action, $child->get_content(), $child->get_title());
+                    }
+                } else {
+                    $selected = $node->key;
+                }
+            }
+        }
+        return array(array($tabs, $rows), $selected, $inactive, $activated, $return);
+    }
 }
 
 /**
@@ -2716,23 +2759,9 @@ class settings_navigation extends navigation_node {
             $coursenode->add(get_string('reset'), $url, self::TYPE_SETTING, null, null, new pix_icon('i/return', ''));
         }
 
-        // Manage questions
-        $questioncaps = array('moodle/question:add',
-                              'moodle/question:editmine',
-                              'moodle/question:editall',
-                              'moodle/question:viewmine',
-                              'moodle/question:viewall',
-                              'moodle/question:movemine',
-                              'moodle/question:moveall');
-        if (has_any_capability($questioncaps, $coursecontext)) {
-            $questionlink = $CFG->wwwroot.'/question/edit.php';
-        } else if (has_capability('moodle/question:managecategory', $coursecontext)) {
-            $questionlink = $CFG->wwwroot.'/question/category.php';
-        }
-        if (isset($questionlink)) {
-            $url = new moodle_url($questionlink, array('courseid'=>$course->id));
-            $coursenode->add(get_string('questions','quiz'), $url, self::TYPE_SETTING, null, null, new pix_icon('i/questions', ''));
-        }
+        // Questions
+        require_once($CFG->dirroot.'/question/editlib.php');
+        question_extend_settings_navigation($coursenode, $coursecontext)->trim_if_empty();
 
         // Repository Instances
         require_once($CFG->dirroot.'/repository/lib.php');

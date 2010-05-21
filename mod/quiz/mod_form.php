@@ -233,6 +233,12 @@ class mod_quiz_mod_form extends moodleform_mod {
         $mform->setAdvanced('questiondecimalpoints', $quizconfig->questiondecimalpoints_adv);
         $mform->setDefault('questiondecimalpoints', $quizconfig->questiondecimalpoints);
 
+        // Show blocks during quiz attempt
+        $mform->addElement('selectyesno', 'showblocks', get_string('showblocks', 'quiz'));
+        $mform->setHelpButton('showblocks', array('showblocks', get_string('showblocks', 'quiz'), 'quiz'));
+        $mform->setAdvanced('showblocks', $quizconfig->showblocks_adv);
+        $mform->setDefault('showblocks', $quizconfig->showblocks);
+
 //-------------------------------------------------------------------------------
         $mform->addElement('header', 'security', get_string('extraattemptrestrictions', 'quiz'));
 

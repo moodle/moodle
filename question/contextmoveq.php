@@ -175,16 +175,6 @@ $PAGE->navbar->add($strmovingquestions);
 $PAGE->set_title($strmovingquestions);
 echo $OUTPUT->header();
 
-// print tabs
-if ($cm!==null) {
-    $currenttab = 'edit';
-    $mode = 'questions';
-    ${$cm->modname} = $module;
-    include($CFG->dirroot."/mod/{$cm->modname}/tabs.php");
-} else {
-    $currenttab = 'questions';
-    include('tabs.php');
-}
 //parameter for get_string
 $questionsstr = new object();
 $questionsstr->tocontext = print_context_name($tocat->context);
