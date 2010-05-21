@@ -345,7 +345,7 @@ class question_shortanswer_qtype extends default_questiontype {
                             echo ' ';
                             print_string('unitappliedpenalty','qtype_numerical',question_format_grade($cmoptions, $this->raw_unitpenalty));
                         } 
-                            echo ' '.$this->raw_unitpenalty ;
+                            echo ' ' ;
                             print_string('gradingdetailspenalty', 'quiz', question_format_grade($cmoptions, $state->last_graded->penalty));
                         } else {
                             /* No penalty was applied even though the answer was
