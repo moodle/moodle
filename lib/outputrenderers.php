@@ -1827,7 +1827,7 @@ FMHTML;
                  array('cancel', 'moodle'), array('download', 'moodle'), array('ok', 'moodle'),
                  array('emptylist', 'repository'), array('entername', 'repository'), array('enternewname', 'repository'),
                  array('zip', 'editor'), array('unzip', 'moodle'), array('rename', 'moodle'), array('delete', 'moodle'),
-                 array('setmainfile', 'resource'), array('cannotdeletefile', 'error'), array('confirmdeletefile', 'repository'),
+                 array('cannotdeletefile', 'error'), array('confirmdeletefile', 'repository'),
                  array('nopathselected', 'repository'), array('popupblockeddownload', 'repository'),
                  array('draftareanofiles', 'repository'), array('path', 'moodle'), array('setmainfile', 'repository')
             )

@@ -30,6 +30,7 @@ $string['add'] = 'Add';
 $string['addfile'] = 'Add...';
 $string['addplugin'] = 'Add a repository plugin';
 $string['allowexternallinks'] = 'Allow external links';
+$string['areamainfile'] = 'Main file';
 $string['coursebackup'] = 'Course backups';
 $string['sectionbackup'] = 'Section backups';
 $string['activitybackup'] = 'Activity backup';
