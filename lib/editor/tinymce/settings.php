@@ -1,4 +1,7 @@
 <?php
+
+//TODO: this is very wrong way to do admin settings - this has to be rewritten!!
+
 /**
  * TinyMCE editor settings moodle form class.
  *

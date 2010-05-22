@@ -184,7 +184,8 @@ abstract class texteditor {
     }
 }
 
-require_once($CFG->libdir.'/formslib.php');
+//TODO: this is very wrong way to do admin settings - this has to be rewritten
+require_once($CFG->libdir.'/formslib.php'); 
 /**
  * Editor settings moodle form class.
  *
