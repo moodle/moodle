@@ -354,7 +354,7 @@ abstract class moodle_text_filter {
     }
 
     /**
-     * Override this funciton to actually implement the filtering.
+     * Override this function to actually implement the filtering.
      *
      * @param $text some HTML content.
      * @return the HTML content after the filtering has been applied.
@@ -525,9 +525,9 @@ function filter_get_all_installed() {
  * @param integer $state One of the values TEXTFILTER_ON, TEXTFILTER_OFF or TEXTFILTER_DISABLED.
  * @param integer $sortorder (optional) a position in the sortorder to place this filter.
  *      If not given defaults to:
- *      No change in order if we are updating an exsiting record, and not changing to or from TEXTFILTER_DISABLED.
+ *      No change in order if we are updating an existing record, and not changing to or from TEXTFILTER_DISABLED.
  *      Just after the last currently active filter when adding an unknown filter
- *          in state TEXTFILTER_ON or TEXTFILTER_OFF, or enabling/diabling an exsisting filter.
+ *          in state TEXTFILTER_ON or TEXTFILTER_OFF, or enabling/disabling an existing filter.
  *      Just after the very last filter when adding an unknown filter in state TEXTFILTER_DISABLED
  */
 function filter_set_global_state($filter, $state, $sortorder = false) {
@@ -846,7 +846,7 @@ function filter_get_active_in_context($context) {
 
 /**
  * List all of the filters that are available in this context, and what the
- * local and interited states of that filter are.
+ * local and inherited states of that filter are.
  *
  * @global object
  * @param object $context a context that is not the system context.
