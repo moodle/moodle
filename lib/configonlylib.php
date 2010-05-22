@@ -41,7 +41,7 @@ function min_optional_param($name, $default, $type) {
         $value = $_GET[$name];
 
     } else if (isset($_GET['amp;'.$name])) {
-        // very, very, very ugly hack, unforunately $OUTPUT->pix_url() is not used properly in javascript code :-(
+        // very, very, very ugly hack, unfortunately $OUTPUT->pix_url() is not used properly in javascript code :-(
         $value = $_GET['amp;'.$name];
     }
 
@@ -67,7 +67,7 @@ function min_clean_param($value, $type) {
                          $value = preg_replace('/\.+/', '.', $value);
                          $value = preg_replace('#/+#', '/', $value);
                          break;
-        default:         die("Coding error: incorrent parameter type specified ($type).");
+        default:         die("Coding error: incorrect parameter type specified ($type).");
     }
 
     return $value;
@@ -106,7 +106,7 @@ function min_enable_zlib_compression() {
     @ini_set('output_handler', '');
 
     /*
-     * docs clearly say 'on' means enable and number menas size of bufffer,
+     * docs clearly say 'on' means enable and number means size of buffer,
      * but unfortunately some PHP version break when we set 'on' here.
      * 1 probably sets chunk size to 4096. our CSS and JS scripts are much bigger,
      * so let's try some bigger sizes.
