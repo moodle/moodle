@@ -34,13 +34,29 @@ require_once('Minify.php');
 $file = min_optional_param('file', '', 'RAW');
 $rev  = min_optional_param('rev', 0, 'INT');
 
-if (strpos($file, ',')) {
-    $jsfiles = explode(',', $file);
-    foreach ($jsfiles as $key=>$file) {
-        $jsfiles[$key] = $CFG->dirroot.$file;
+// some security first - pick only files with .js extension in dirroot
+$jsfiles = array();
+$files = explode(',', $file);
+foreach ($files as $fsfile) {
+    $jsfile = realpath($CFG->dirroot.$fsfile);
+    if ($jsfile === false) {
+        // does not exist
+        continue;
     }
-} else {
-    $jsfiles = array($CFG->dirroot.$file);
+    if (strpos($jsfile, $CFG->dirroot . DIRECTORY_SEPARATOR) !== 0) {
+        // hackers - not in dirroot
+        continue;
+    }
+    if (substr($jsfile, -1) !== '.js') {
+        // hackers - not a JS file
+        continue;
+    }
+    $jsfiles[] = $jsfile;
+}
+
+if (!$jsfiles) {
+    // bad luck - no valid files
+    die();
 }
 
 minify($jsfiles);
