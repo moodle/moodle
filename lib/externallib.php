@@ -77,7 +77,7 @@ function external_function_info($function, $strictness=MUST_EXIST) {
 
     //now get the function description
     //TODO: use localised lang pack descriptions, it would be nice to have
-    //      easy to understand descriptiosn in admin UI,
+    //      easy to understand descriptions in admin UI,
     //      on the other hand this is still a bit in a flux and we need to find some new naming
     //      conventions for these descriptions in lang packs
     $function->description = null;
@@ -113,7 +113,7 @@ class external_api {
     private static $contextrestriction;
 
     /**
-     * Set context restriction for all folowing subsequent function calls.
+     * Set context restriction for all following subsequent function calls.
      * @param stdClass $contex
      * @return void
      */
@@ -207,8 +207,8 @@ class external_api {
 
     /**
      * Clean response
-     * If a response attribut is unknown from the description, we just ignore the attribut.
-     * If a response attribut is incorrect, invalid_response_exception is thrown.
+     * If a response attribute is unknown from the description, we just ignore the attribute.
+     * If a response attribute is incorrect, invalid_response_exception is thrown.
      * Note: this function is similar to validate parameters, however it is distinct because
      * parameters validation must be distinct from cleaning return values.
      * @param external_description $description description of the return values
@@ -336,7 +336,7 @@ class external_api {
 abstract class external_description {
     /** @property string $description description of element */
     public $desc;
-    /** @property bool $required element value required, null not alowed */
+    /** @property bool $required element value required, null not allowed */
     public $required;
 
     /**
