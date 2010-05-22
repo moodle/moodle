@@ -60,11 +60,6 @@ class mod_resource_mod_form extends moodleform_mod {
 
         //-------------------------------------------------------
         $mform->addElement('header', 'contentsection', get_string('contentheader', 'resource'));
-        $mainfile = 'mainfile';
-
-        $mform->addElement('text', $mainfile, get_string('selectedfile'));
-        $mform->setType($mainfile, PARAM_PATH);
-        $mform->addRule($mainfile, null, 'required', null, 'client');
 
         $filemanager_options = array();
         // 3 == FILE_EXTERNAL & FILE_INTERNAL
@@ -73,9 +68,13 @@ class mod_resource_mod_form extends moodleform_mod {
         $filemanager_options['accepted_types'] = '*';
         $filemanager_options['maxbytes'] = 0;
         $filemanager_options['maxfiles'] = -1;
-        $filemanager_options['mainfile'] = $mainfile;
+        $filemanager_options['mainfile'] = 'mainfile';
 
         $mform->addElement('filemanager', 'files', get_string('selectfiles'), null, $filemanager_options);
+
+        //TODO: ohlala, it should be hidden when JS file manager loaded, the main file should be somehow highlighted directly in editor
+        $mform->addElement('text', 'mainfile', get_string('areamainfile', 'repository'));
+        $mform->setType('mainfile', PARAM_PATH);
 
         //-------------------------------------------------------
         $mform->addElement('header', 'optionssection', get_string('optionsheader', 'resource'));
