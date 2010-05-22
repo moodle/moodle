@@ -9244,16 +9244,15 @@ function check_dir_exists($dir, $create=false, $recursive=false) {
         return false;
     }
 
-    $status = true;
-
-    if (!is_dir($dir)) {
-        if (!$create) {
-            $status = false;
-        } else {
-            $status = mkdir($dir, $CFG->directorypermissions, $recursive);
-        }
+    if (is_dir($dir)) {
+        return true;
     }
-    return $status;
+
+    if (!$create) {
+        return false;
+    }
+
+    return mkdir($dir, $CFG->directorypermissions, $recursive);
 }
 
 /**
