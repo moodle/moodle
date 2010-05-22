@@ -185,7 +185,7 @@ function addslashes_js($var) {
  *
  * @uses $_SERVER
  * @param boolean $stripquery if true, also removes the query part of the url.
- * @return string The resulting referer or emtpy string
+ * @return string The resulting referer or empty string
  */
 function get_referer($stripquery=true) {
     if (isset($_SERVER['HTTP_REFERER'])) {
@@ -241,7 +241,7 @@ function qualified_me() {
  * It can be used in moodle pages where config.php has been included without any further includes.
  *
  * It is useful for manipulating urls with long lists of params.
- * One situation where it will be useful is a page which links to itself to perfrom various actions
+ * One situation where it will be useful is a page which links to itself to perform various actions
  * and / or to process form data. A moodle_url object :
  * can be created for a page to refer to itself with all the proper get params being passed from page call to
  * page call and methods can be used to output a url including all the params, optionally adding and overriding
@@ -1596,7 +1596,7 @@ function cleanAttributes2($htmlArray){
  * @staticvar array $e
  * @staticvar array $img
  * @staticvar array $emoticons
- * @param string $text Passed by reference. The string to search for smily strings.
+ * @param string $text Passed by reference. The string to search for smiley strings.
  * @return string
  */
 function replace_smilies(&$text) {
@@ -1638,7 +1638,7 @@ function replace_smilies(&$text) {
 
     // Exclude from transformations all the code inside <script> tags
     // Needed to solve Bug 1185. Thanks to jouse 2001 detecting it. :-)
-    // Based on code from glossary fiter by Williams Castillo.
+    // Based on code from glossary filter by Williams Castillo.
     //       - Eloy
 
     // Detect all the <script> zones to take out
@@ -1801,7 +1801,7 @@ function convert_urls_into_links(&$text) {
     // Unicode check, negative assertion and other bits from Moodle.
     static $unicoderegexp;
     if (!isset($unicoderegexp)) {
-        $unicoderegexp = @preg_match('/\pL/u', 'a'); // This will fail silenty, returning false,
+        $unicoderegexp = @preg_match('/\pL/u', 'a'); // This will fail silently, returning false,
     }
 
     //todo: MDL-21296 - use of unicode modifiers may cause a timeout
@@ -2063,18 +2063,18 @@ function get_separator() {
 }
 
 /**
- * Print (or return) a collapisble region, that has a caption that can
+ * Print (or return) a collapsible region, that has a caption that can
  * be clicked to expand or collapse the region.
  *
- * If JavaScript is off, then the region will always be exanded.
+ * If JavaScript is off, then the region will always be expanded.
  *
  * @param string $contents the contents of the box.
  * @param string $classes class names added to the div that is output.
  * @param string $id id added to the div that is output. Must not be blank.
  * @param string $caption text displayed at the top. Clicking on this will cause the region to expand or contract.
- * @param string $userpref the name of the user preference that stores the user's preferred deafault state.
+ * @param string $userpref the name of the user preference that stores the user's preferred default state.
  *      (May be blank if you do not wish the state to be persisted.
- * @param boolean $default Inital collapsed state to use if the user_preference it not set.
+ * @param boolean $default Initial collapsed state to use if the user_preference it not set.
  * @param boolean $return if true, return the HTML as a string, rather than printing it.
  * @return string|void If $return is false, returns nothing, otherwise returns a string of HTML.
  */
@@ -2091,17 +2091,17 @@ function print_collapsible_region($contents, $classes, $id, $caption, $userpref 
 }
 
 /**
- * Print (or return) the start of a collapisble region, that has a caption that can
+ * Print (or return) the start of a collapsible region, that has a caption that can
  * be clicked to expand or collapse the region. If JavaScript is off, then the region
- * will always be exanded.
+ * will always be expanded.
  *
  * @global object
  * @param string $classes class names added to the div that is output.
  * @param string $id id added to the div that is output. Must not be blank.
  * @param string $caption text displayed at the top. Clicking on this will cause the region to expand or contract.
- * @param boolean $userpref the name of the user preference that stores the user's preferred deafault state.
+ * @param boolean $userpref the name of the user preference that stores the user's preferred default state.
  *      (May be blank if you do not wish the state to be persisted.
- * @param boolean $default Inital collapsed state to use if the user_preference it not set.
+ * @param boolean $default Initial collapsed state to use if the user_preference it not set.
  * @param boolean $return if true, return the HTML as a string, rather than printing it.
  * @return string|void if $return is false, returns nothing, otherwise returns a string of HTML.
  */
@@ -2665,7 +2665,7 @@ function obfuscate_text($plaintext) {
  * to generate a fully obfuscated email link, ready to use.
  *
  * @param string $email The email address to display
- * @param string $label The text to dispalyed as hyperlink to $email
+ * @param string $label The text to displayed as hyperlink to $email
  * @param boolean $dimmed If true then use css class 'dimmed' for hyperlink
  * @return string The obfuscated mailto link
  */
@@ -2822,7 +2822,7 @@ function print_tabs($tabrows, $selected=NULL, $inactive=NULL, $activated=NULL, $
  * Converts a nested array tree into HTML ul:li [recursive]
  *
  * @param array $tree A tree array to convert
- * @param int $row Used in identifing the iteration level and in ul classes
+ * @param int $row Used in identifying the iteration level and in ul classes
  * @return string HTML structure
  */
 function convert_tree_to_html($tree, $row=0) {
@@ -2942,7 +2942,7 @@ function get_docs_url($path) {
  *
  * 1)  debugging('a normal debug notice');
  * 2)  debugging('something really picky', DEBUG_ALL);
- * 3)  debugging('annoying debug message only for develpers', DEBUG_DEVELOPER);
+ * 3)  debugging('annoying debug message only for developers', DEBUG_DEVELOPER);
  * 4)  if (debugging()) { perform extra debugging operations (do not use print or echo) }
  *
  * In code blocks controlled by debugging() (such as example 4)
@@ -3050,7 +3050,7 @@ function fix_align_rtl($align) {
  * Returns true if the page is displayed in a popup window.
  * Gets the information from the URL parameter inpopup.
  *
- * @todo Use a central function to create the popup calls allover Moodle and
+ * @todo Use a central function to create the popup calls all over Moodle and
  * In the moment only works with resources and probably questions.
  *
  * @return boolean
@@ -3083,7 +3083,7 @@ class progress_bar {
     private $time_start;
     private $minimum_time = 2; //min time between updates.
     /**
-     * Contructor
+     * Constructor
      *
      * @param string $html_id
      * @param int $width
@@ -3191,7 +3191,7 @@ EOT;
         $this->_update($percent/100, $msg);
     }
     /**
-      * Update progress bar according the nubmer of tasks
+      * Update progress bar according the number of tasks
       *
       * @param int $cur current task number
       * @param int $total total task number
