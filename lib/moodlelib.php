@@ -114,7 +114,7 @@ define('PARAM_BOOL',     'bool');
 
 /**
  * PARAM_CAPABILITY - A capability name, like 'moodle/role:manage'. Actually
- * checked against the list of capabilties in the database.
+ * checked against the list of capabilities in the database.
  */
 define('PARAM_CAPABILITY',   'capability');
 
@@ -220,7 +220,7 @@ define('PARAM_TEXT',  'text');
 define('PARAM_THEME',  'theme');
 
 /**
- * PARAM_URL - expected properly formatted URL. Please note that domain part is required, http://localhost/ is not acceppted but http://localhost.localdomain/ is ok.
+ * PARAM_URL - expected properly formatted URL. Please note that domain part is required, http://localhost/ is not accepted but http://localhost.localdomain/ is ok.
  */
 define('PARAM_URL',      'url');
 
@@ -252,7 +252,7 @@ define('PARAM_INTEGER',  'int');
 define('PARAM_NUMBER',  'float');
 
 /**
- * PARAM_ACTION - deprecated alias for PARAM_ALPHANUMEXT, use for various actions in formas and urls
+ * PARAM_ACTION - deprecated alias for PARAM_ALPHANUMEXT, use for various actions in forms and urls
  * NOTE: originally alias for PARAM_APLHA
  */
 define('PARAM_ACTION',   'alphanumext');
@@ -374,7 +374,7 @@ define('FEATURE_BACKUP_MOODLE2', 'backup_moodle2');
 define('MOD_ARCHETYPE_OTHER', 0);
 /** Resource-like type module */
 define('MOD_ARCHETYPE_RESOURCE', 1);
-/** Assignemnt module archetype */
+/** Assignment module archetype */
 define('MOD_ARCHETYPE_ASSIGNMENT', 2);
 
 /**
@@ -382,7 +382,7 @@ define('MOD_ARCHETYPE_ASSIGNMENT', 2);
  * from external application such as web services.
  * Scripts do not use any session, performance is relatively
  * low because we need to load access info in each request.
- * Scrits are executed in parallel.
+ * Scripts are executed in parallel.
  */
 define('EXTERNAL_TOKEN_PERMANENT', 0);
 
@@ -467,7 +467,7 @@ function optional_param($parname, $default=NULL, $type=PARAM_CLEAN) {
  * to requested PHP type. Internally it is using clean_param, the values
  * before and after cleaning must be equal - otherwise
  * an invalid_parameter_exception is thrown.
- * Onjects and classes are not accepted.
+ * Objects and classes are not accepted.
  *
  * @param mixed $param
  * @param int $type PARAM_ constant
@@ -858,7 +858,7 @@ function get_host_from_url($url) {
  *
  * @param string $string a string containing HTML.
  * @return boolean does the string contain any actual content - that is text,
- * images, objcts, etc.
+ * images, objects, etc.
  */
 function html_is_blank($string) {
     return trim(strip_tags($string, '<img><object><applet><input><select><textarea><hr>')) == '';
@@ -1038,13 +1038,13 @@ function unset_all_config_for_plugin($plugin) {
 }
 
 /**
- * Use this funciton to get a list of users from a config setting of type admin_setting_users_with_capability.
+ * Use this function to get a list of users from a config setting of type admin_setting_users_with_capability.
  *
  * All users are verified if they still have the necessary capability.
  *
  * @param string $value the value of the config setting.
  * @param string $capability the capability - must match the one passed to the admin_setting_users_with_capability constructor.
- * @param bool $include admins, include aadministrators
+ * @param bool $include admins, include administrators
  * @return array of user objects.
  */
 function get_users_from_config($value, $capability, $includeadmins = true) {
@@ -1266,7 +1266,7 @@ function mark_user_preferences_changed($userid) {
  * @global object
  * @global object
  * @param string $name The key to set as preference for the specified user
- * @param string $value The value to set forthe $name key in the specified user's record
+ * @param string $value The value to set for the $name key in the specified user's record
  * @param int $otheruserid A moodle user ID, default null
  * @return bool
  */
@@ -1528,14 +1528,14 @@ function make_timestamp($year, $month=1, $day=1, $hour=0, $minute=0, $second=0, 
  * zeroes as efficiently as possible.
  *
  * If parameter fixday = true (default), then take off leading
- * zero from %d, else mantain it.
+ * zero from %d, else maintain it.
  *
  * @param int $date the timestamp in UTC, as obtained from the database.
  * @param string $format strftime format. You should probably get this using
  *      get_string('strftime...', 'langconfig');
  * @param float $timezone by default, uses the user's time zone.
  * @param bool $fixday If true (default) then the leading zero from %d is removed.
- *      If false then the leading zero is mantained.
+ *      If false then the leading zero is maintained.
  * @return string the formatted date/time.
  */
 function userdate($date, $format = '', $timezone = 99, $fixday = true) {
@@ -1983,7 +1983,7 @@ function dst_changes_for_year($year, $timezone) {
 }
 
 /**
- * Calculates the Daylight Saving Offest for a given date/time (timestamp)
+ * Calculates the Daylight Saving Offset for a given date/time (timestamp)
  *
  * @global object
  * @param int $time must NOT be compensated at all, it has to be a pure timestamp
@@ -2157,7 +2157,7 @@ function get_login_url($loginguest=false) {
  * case they are automatically logged in as guests.
  * If $courseid is given and the user is not enrolled in that course then the
  * user is redirected to the course enrolment page.
- * If $cm is given and the coursemodule is hidden and the user is not a teacher
+ * If $cm is given and the course module is hidden and the user is not a teacher
  * in the course then the user is redirected to the course home page.
  *
  * When $cm parameter specified, this function sets page layout to 'module'.
@@ -2640,7 +2640,7 @@ function update_user_login_times() {
 /**
  * Determines if a user has completed setting up their account.
  *
- * @param user $user A {@link $USER} object to test for the existance of a valid name and email
+ * @param user $user A {@link $USER} object to test for the existence of a valid name and email
  * @return bool
  */
 function user_not_fully_set_up($user) {
@@ -3534,7 +3534,7 @@ function delete_user($user) {
     // unenrol from all roles in all contexts
     role_unassign(0, $user->id); // this might be slow but it is really needed - modules might do some extra cleanup!
 
-    // now do a final accesslib cleanup - removes all role assingments in user context and context itself
+    // now do a final accesslib cleanup - removes all role assignments in user context and context itself
     delete_context(CONTEXT_USER, $user->id);
 
     require_once($CFG->dirroot.'/tag/lib.php');
@@ -3801,7 +3801,7 @@ function hash_internal_user_password($password) {
 }
 
 /**
- * Update pssword hash in user object.
+ * Update password hash in user object.
  *
  * @global object
  * @global object
@@ -3924,10 +3924,10 @@ function get_complete_user_data($field, $value, $mnethostid=null) {
 }
 
 /**
- * Validate a password against the confiured password policy
+ * Validate a password against the configured password policy
  *
  * @global object
- * @param string $password the password to be checked agains the password policy
+ * @param string $password the password to be checked against the password policy
  * @param string $errmsg the error message to display when the password doesn't comply with the policy.
  * @return bool true if the password is valid according to the policy. false otherwise.
  */
@@ -4189,7 +4189,7 @@ function remove_course_contents($courseid, $showfeedback=true) {
  *
  * @global object
  * @global object
- * @param string $modname forum, assignent, etc
+ * @param string $modname forum, assignment, etc
  * @param array $fields array of date fields from mod table
  * @param int $timeshift time difference
  * @param int $courseid
@@ -5462,7 +5462,7 @@ function print_file_upload_error($filearray = '', $returnerror = false) {
  * but this could be used for files/index.php for moving files around.
  * @see check_potential_filename()
  *
- * @param string $destincation destincation folder
+ * @param string $destination destination folder
  * @param array $files
  * @param string $format
  * @return array Array of now resolved file names
@@ -5490,7 +5490,7 @@ function resolve_filename_collisions($destination,$files,$format='%s_%d.%s') {
  *
  * @param string $destination Destination directory
  * @param string $filename Desired filename
- * @param array $files Array of other file naems to check against
+ * @param array $files Array of other file names to check against
  */
 function check_potential_filename($destination,$filename,$files) {
     if (file_exists($destination.'/'.$filename)) {
@@ -5506,7 +5506,7 @@ function check_potential_filename($destination,$filename,$files) {
 /**
  * Returns an array with all the filenames in all subdirectories, relative to the given rootdir.
  *
- * If excludefile is defined, then that file/directory is ignored
+ * If excludefiles is defined, then that file/directory is ignored
  * If getdirs is true, then (sub)directories are included in the output
  * If getfiles is true, then files are included in the output
  * (at least one of these must be true!)
@@ -6349,7 +6349,7 @@ class core_string_manager implements string_manager {
 
 /**
  * Minimalistic string fetching implementation
- * that is used in installer before we getch the wanted
+ * that is used in installer before we fetch the wanted
  * language pack from moodle.org lang download site.
  *
  * @package    moodlecore
@@ -6575,7 +6575,7 @@ class install_string_manager implements string_manager {
  *
  * Example usage of this function involves finding the string you would
  * like a local equivalent of and using its identifier and module information
- * to retrive it.<br/>
+ * to retrieve it.<br/>
  * If you open moodle/lang/en/moodle.php and look near line 278
  * you will find a string to prompt a user for their word for 'course'
  * <code>
@@ -6698,7 +6698,7 @@ function print_string($identifier, $component = '', $a = NULL) {
  * Returns a list of charset codes
  *
  * Returns a list of charset codes. It's hardcoded, so they should be added manually
- * (cheking that such charset is supported by the texlib library!)
+ * (checking that such charset is supported by the texlib library!)
  *
  * @return array And associative array with contents in the form of charset => charset
  */
@@ -7195,12 +7195,12 @@ function get_plugin_list($plugintype) {
 /**
  * Lists plugin-like directories within specified directory
  *
- * This function was originally used for standar Moodle plugins, please use
+ * This function was originally used for standard Moodle plugins, please use
  * new get_plugin_list() now.
  *
- * This function is used for general directory listing and backwards compability.
+ * This function is used for general directory listing and backwards compatility.
  *
- * @param string $directory relatice directory from root
+ * @param string $directory relative directory from root
  * @param string $exclude dir name to exclude from the list (defaults to none)
  * @param string $basedir full path to the base dir where $plugin resides (defaults to $CFG->dirroot)
  * @return array Sorted array of directory names found under the requested parameters
@@ -7975,7 +7975,7 @@ function random_string ($length=15) {
 }
 
 /**
- * Generate a complex random string (usefull for md5 salts)
+ * Generate a complex random string (useful for md5 salts)
  *
  * This function is based on the above {@link random_string()} however it uses a
  * larger pool of characters and generates a string between 24 and 32 characters
@@ -8072,7 +8072,7 @@ function shorten_text($text, $ideal=30, $exact = false, $ending='...') {
                 }
             }
             $truncate .= substr($line_matchings[2], 0, $left+$entities_length);
-            // maximum lenght is reached, so get off the loop
+            // maximum length is reached, so get off the loop
             break;
         } else {
             $truncate .= $line_matchings[2];
@@ -8087,7 +8087,7 @@ function shorten_text($text, $ideal=30, $exact = false, $ending='...') {
 
     // if the words shouldn't be cut in the middle...
     if (!$exact) {
-        // ...search the last occurance of a space...
+        // ...search the last occurence of a space...
         for ($k=strlen($truncate);$k>0;$k--) {
             if (!empty($truncate[$k]) && ($char = $truncate[$k])) {
                 if ($char == '.' or $char == ' ') {
@@ -8220,7 +8220,7 @@ function generate_password($maxlen=10) {
  * Given a float, prints it nicely.
  * Localized floats must not be used in calculations!
  *
- * @param float $flaot The float to print
+ * @param float $float The float to print
  * @param int $places The number of decimal places to print.
  * @param bool $localized use localized decimal separator
  * @return string locale float
@@ -8347,7 +8347,7 @@ function microtime_diff($a, $b) {
  * an array of 1->a, 2->b, 3->c etc
  *
  * @param string $list The string to explode into array bits
- * @param string $separator The seperator used within the list string
+ * @param string $separator The separator used within the list string
  * @return array The now assembled array
  */
 function make_menu_from_list($list, $separator=',') {
@@ -8391,7 +8391,7 @@ function make_grades_menu($gradingtype) {
 }
 
 /**
- * This function returns the nummber of activities
+ * This function returns the number of activities
  * using scaleid in a courseid
  *
  * @todo Finish documenting this function
@@ -8438,7 +8438,7 @@ function course_scale_used($courseid, $scaleid) {
 }
 
 /**
- * This function returns the nummber of activities
+ * This function returns the number of activities
  * using scaleid in the entire site
  *
  * @param int $scaleid
@@ -9225,7 +9225,7 @@ function remove_dir($dir, $content_only=false) {
     if ($content_only) {
         return $result;
     }
-    return rmdir($dir); // if anything left the result will be false, noo need for && $result
+    return rmdir($dir); // if anything left the result will be false, no need for && $result
 }
 
 /**
@@ -9357,7 +9357,7 @@ function is_enabled_enrol($enrol='') {
 }
 
 /**
- * This function will search for browser prefereed languages, setting Moodle
+ * This function will search for browser preferred languages, setting Moodle
  * to use the best one available if $SESSION->lang is undefined
  *
  * @global object
@@ -9591,7 +9591,7 @@ function get_site_identifier() {
  * Check whether the given password has no more than the specified
  * number of consecutive identical characters.
  *
- * @param string $password   password to be checked agains the password policy
+ * @param string $password   password to be checked against the password policy
  * @param integer $maxchars  maximum number of consecutive identical characters
  */
 function check_consecutive_identical_characters($password, $maxchars) {
