@@ -132,7 +132,7 @@ class ddl_change_structure_exception extends ddl_exception {
 }
 
 /**
- * Error changing db structure, caused by some depency found
+ * Error changing db structure, caused by some dependency found
  * like trying to modify one field having related indexes.
  */
 class ddl_dependency_exception extends ddl_exception {
