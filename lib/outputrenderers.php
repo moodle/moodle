@@ -42,7 +42,7 @@ class renderer_base {
     protected $opencontainers;
     /** @var moodle_page the page we are rendering for. */
     protected $page;
-    /** @var requested rendering target conatnt */
+    /** @var requested rendering target */
     protected $target;
 
     /**
@@ -58,7 +58,7 @@ class renderer_base {
 
     /**
      * Returns rendered widget.
-     * @param renderable $widget intence with renderable interface
+     * @param renderable $widget instance with renderable interface
      * @return string
      */
     public function render(renderable $widget) {
@@ -147,7 +147,7 @@ class plugin_renderer_base extends renderer_base {
     protected $output;
 
     /**
-     * Contructor method, calls the parent constructor
+     * Constructor method, calls the parent constructor
      * @param moodle_page $page
      * @param string $target one of rendering target constants
      */
@@ -172,7 +172,7 @@ class plugin_renderer_base extends renderer_base {
 
     /**
      * Magic method used to pass calls otherwise meant for the standard renderer
-     * to it to ensure we don't go causing unnessecary greif.
+     * to it to ensure we don't go causing unnecessary grief.
      *
      * @param string $method
      * @param array $arguments
@@ -846,7 +846,7 @@ class core_renderer extends renderer_base {
     }
 
     /**
-     * Renders a sepcial html link with attached action
+     * Renders a special html link with attached action
      *
      * @param string|moodle_url $url
      * @param string $text HTML fragment
@@ -1196,7 +1196,7 @@ class core_renderer extends renderer_base {
      * Also contains an icon by default. Shown to teachers and admin only.
      * @param string $path The page link after doc root and language, no leading slash.
      * @param string $text The text to be displayed for the link
-     * @retrun string
+     * @return string
      */
     public function doc_link($path, $text) {
         global $CFG;
@@ -1382,7 +1382,7 @@ class core_renderer extends renderer_base {
             //generate an array of values for numeric scales
             $scalearray = $rating->settings->scale->scaleitems;
             if (!is_array($scalearray)) { //almost certainly a numerical scale
-                $intscalearray = intval($scalearray);//just in case theyve passed "5" instead of 5
+                $intscalearray = intval($scalearray);//just in case they've passed "5" instead of 5
                 if( is_int($intscalearray) && $intscalearray>0 ){
                     $scalearray = array();
                     for($i=0; $i<=$rating->settings->scale->scaleitems; $i++) {
