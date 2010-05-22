@@ -32,14 +32,14 @@
  * Normally, the only instance of this  class you will need to work with is the
  * one accessible via $PAGE->requires.
  *
- * Typical useage would be
+ * Typical usage would be
  * <pre>
  *     $PAGE->requires->init_js_call('M.mod_forum.init_view');
  * </pre>
  *
  * It also supports obsoleted coding style withouth YUI3 modules.
  * <pre>
- *     $PAGE->requires->css('/mod/mymod/userstyles.php?id='.$id); // not overriddable via themes!
+ *     $PAGE->requires->css('/mod/mymod/userstyles.php?id='.$id); // not overridable via themes!
  *     $PAGE->requires->js('/mod/mymod/script.js');
  *     $PAGE->requires->js('/mod/mymod/small_but_urgent.js', true);
  *     $PAGE->requires->js_function_call('init_mymod', array($data), true);
@@ -68,7 +68,7 @@ class page_requirements_manager {
      */
     protected $skiplinks = array();
     /**
-     * Javascript code used for initialisation of page, it shoudl be relatively small
+     * Javascript code used for initialisation of page, it should be relatively small
      * @var array
      */
     protected $jsinitcode = array();
@@ -278,14 +278,14 @@ class page_requirements_manager {
     }
 
     /**
-     * Ensure that the specified YUI2 library file, and all its required dependancies,
+     * Ensure that the specified YUI2 library file, and all its required dependencies,
      * are linked to from this page.
      *
      * By default the link is put at the end of the page, since this gives best page-load
      * performance. Optional dependencies are not loaded automatically - if you want
      * them you will need to load them first with other calls to this method.
      *
-     * Even if a particular library is requested more than once (perhaps as a dependancy
+     * Even if a particular library is requested more than once (perhaps as a dependency
      * of other libraries) it will only be linked to once.
      *
      * The library is leaded as soon as possible, if $OUTPUT->header() not used yet it
@@ -329,7 +329,7 @@ class page_requirements_manager {
     }
 
     /**
-     * Find out if JS modulke present and return details.
+     * Find out if JS module present and return details.
      * @param string $component name of component in frankenstyle, ex: core_group, mod_forum
      * @return array description of module or null if not found
      */
@@ -519,7 +519,7 @@ class page_requirements_manager {
      * will be thrown). That normally means you must call this before the call to print_header.
      *
      * If you ask for a particular skip link to be printed, it is then your responsibility
-     * to ensure that the appropraite <a name="..."> tag is printed in the body of the
+     * to ensure that the appropriate <a name="..."> tag is printed in the body of the
      * page, so that the skip link goes somewhere.
      *
      * Even if a particular skip link is requested more than once, only one copy of it will be output.
@@ -548,7 +548,7 @@ class page_requirements_manager {
      * that is what will happen (unlike linking to a CSS or JS file, where only
      * one link will be output).
      *
-     * The main benefit of the mehtod is the automatic encoding of all function parameters.
+     * The main benefit of the method is the automatic encoding of all function parameters.
      *
      * @param string $function the name of the JavaScritp function to call. Can
      *      be a compound name like 'Y.Event.purgeElement'. Can also be
@@ -660,7 +660,7 @@ class page_requirements_manager {
      * <code>
      * $PAGE->strings_for_js(Array('one', 'two', 'three'), 'mymod', Array('a', null, 3));
      *
-     * // The above is identifical to calling
+     * // The above is identitical to calling
      *
      * $PAGE->string_for_js('one', 'mymod', 'a');
      * $PAGE->string_for_js('two', 'mymod');
