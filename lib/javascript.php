@@ -64,10 +64,16 @@ minify($jsfiles);
 function minify($files) {
     global $CFG;
 
+    $cachedir = $CFG->dataroot.'/cache/js';
+    // make sure the cache dir exist
+    if (!file_exists($cachedir)) {
+        @mkdir($cachedir, $CFG->directorypermissions, true);
+    }
+
     if (0 === stripos(PHP_OS, 'win')) {
         Minify::setDocRoot(); // IIS may need help
     }
-    Minify::setCache($CFG->dataroot.'/temp', true);
+    Minify::setCache($cachedir, true);
 
     $options = array(
         // Maximum age to cache

@@ -1004,6 +1004,6 @@ function js_reset_all_caches() {
     require_once("$CFG->libdir/filelib.php");
 
     set_config('jsrev', empty($CFG->jsrev) ? 1 : $CFG->jsrev+1);
-    //fulldelete("$CFG->dataroot/cache/js");
+    fulldelete("$CFG->dataroot/cache/js");
 }
 
