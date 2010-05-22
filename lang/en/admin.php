@@ -98,7 +98,7 @@ $string['clistatusdisabled'] = 'Status: disabled';
 $string['clistatusenabled'] = 'Status: enabled';
 $string['clitypevalue'] = 'type value';
 $string['clitypevaluedefault'] = 'type value, press Enter to use default value ({$a})';
-$string['cliunknowoption'] = 'Unrecognized options:
+$string['cliunknowoption'] = 'Unrecognised options:
   {$a}
 Please use --help option.';
 $string['cliupgradefinished'] = 'Command line upgrade completed successfully.';
@@ -387,12 +387,14 @@ $string['cronerrorclionly'] = 'Sorry, internet access to this page has been disa
 $string['cronerrorpassword'] = 'Sorry, you have not provided a valid password to access this page';
 $string['cronremotepassword'] = 'Cron password for remote access';
 $string['cronwarning'] = 'The <a href="cron.php">cron.php maintenance script</a> has not been run for at least 24 hours.';
+$string['cronwarning_help'] = 'The cron.php maintenance script assists some of Moodle\'s modules to perform tasks on a scheduled basis, such as mailing out copies of new forum posts. A mechanism is required to run the script regularly e.g. every 10 minutes.';
+$string['cronwarning_link'] = 'admin/cron';
 $string['csvdelimiter'] = 'CSV delimiter';
 $string['ctyperecommended'] = 'Installing the optional ctype PHP extension is highly recommended in order to improve site performance, particularly if your site is supporting non-latin languages.';
 $string['ctyperequired'] = 'The ctype PHP extension is now required by Moodle, in order to improve site performance and to offer multilingual compatibility.';
 $string['curlcache'] = 'cURL cache TTL';
 $string['curlrecommended'] = 'Installing the optional cURL library is highly recommended in order to enable Moodle Networking functionality.';
-$string['curlrequired'] = 'The cURL PHP extension is now required by Moodle, in order to commnunicate with Moodle repositories.';
+$string['curlrequired'] = 'The cURL PHP extension is now required by Moodle, in order to communicate with Moodle repositories.';
 $string['customcheck'] = 'Other Checks';
 $string['custommenu'] = 'Custom menu';
 $string['custommenuitems'] = 'Custom menu items';
