@@ -47,7 +47,7 @@
  * @property-read array $alternativeversions Mime type => object with ->url and ->title.
  * @property-read blocks_manager $blocks The blocks manager object for this page.
  * @property-read string $bodyclasses Returns a string to use within the class attribute on the body tag.
- * @property-read string $button The HTML to go where the Turn editing on button normaly goes.
+ * @property-read string $button The HTML to go where the Turn editing on button normally goes.
  * @property-read bool $cacheable Defaults to true. Set to false to stop the page being cached at all.
  * @property-read array $categories An array of all the categories the page course belongs to,
  *      starting with the immediately containing category, and working out to
@@ -63,7 +63,7 @@
  *      course table. (Also available as $COURSE global.) If we are not inside
  *      an actual course, this will be the site course.
  * @property-read string $docspath The path to the Moodle docs for this page.
- * @property-read string $focuscontrol The id of the HTML element to be focussed when the page has loaded.
+ * @property-read string $focuscontrol The id of the HTML element to be focused when the page has loaded.
  * @property-read bool $headerprinted
  * @property-read string $heading The main heading that should be displayed at the top of the <body>.
  * @property-read string $headingmenu The menu (or actions) to display in the heading
@@ -121,7 +121,7 @@ class moodle_page {
     /**
      * This holds any categories that $_course belongs to, starting with the
      * particular category it belongs to, and working out through any parent
-     * categories to the top level. These are loaded progressively, if neaded.
+     * categories to the top level. These are loaded progressively, if needed.
      * There are three states. $_categories = null initially when nothing is
      * loaded; $_categories = array($id => $cat, $parentid => null) when we have
      * loaded $_course->category, but not any parents; and a complete array once
@@ -140,7 +140,7 @@ class moodle_page {
     protected $_pagelayout = 'base';
 
     /**
-     * List of theme layeout options, these are ignored by core.
+     * List of theme layout options, these are ignored by core.
      * To be used in individual theme layout files only.
      * @var array
      */
@@ -182,7 +182,7 @@ class moodle_page {
     protected $_headingmenu = null;
 
     /**
-     * Then the theme is initialsed, we save the stack trace, for use in error messages.
+     * Then the theme is initialised, we save the stack trace, for use in error messages.
      * @var array stack trace.
      */
     protected $_wherethemewasinitialised = null;
@@ -199,7 +199,7 @@ class moodle_page {
     protected $_periodicrefreshdelay = null;
 
     /**
-     * This is simply to improve backwards compatability. If old code relies on
+     * This is simply to improve backwards compatibility. If old code relies on
      * a page class that implements print_header, or complex logic in
      * user_allowed_editing then we stash an instance of that other class here,
      * and delegate to it in certain situations.
@@ -226,7 +226,7 @@ class moodle_page {
     /**
      * Please do not call this method directly, use the ->state syntax. {@link __get()}.
      * @return integer one of the STATE_... constants. You should not normally need
-     * to use this in your code. It is indended for internal use by this class
+     * to use this in your code. It is intended for internal use by this class
      * and its friends like print_header, to check that everything is working as
      * expected. Also accessible as $PAGE->state.
      */
@@ -482,7 +482,7 @@ class moodle_page {
 
     /**
      * Please do not call this method directly, use the ->focuscontrol syntax. {@link __get()}.
-     * @return string the id of the HTML element to be focussed when the page has loaded.
+     * @return string the id of the HTML element to be focused when the page has loaded.
      */
     protected function magic_get_focuscontrol() {
         return $this->_focuscontrol;
@@ -490,7 +490,7 @@ class moodle_page {
 
     /**
      * Please do not call this method directly, use the ->button syntax. {@link __get()}.
-     * @return string the HTML to go where the Turn editing on button normaly goes.
+     * @return string the HTML to go where the Turn editing on button normally goes.
      */
     protected function magic_get_button() {
         return $this->_button;
@@ -722,7 +722,7 @@ class moodle_page {
     /**
      * The course module that this page belongs to (if it does belong to one).
      *
-     * @param objcet $cm a full cm objcet obtained from get_coursemodule_from_id or get_coursemodule_from_instance.
+     * @param objcet $cm a full cm object obtained from get_coursemodule_from_id or get_coursemodule_from_instance.
      */
     public function set_cm($cm, $course = null, $module = null) {
         if (!isset($cm->name) || !isset($cm->modname) || !isset($cm->id)) {
@@ -768,8 +768,8 @@ class moodle_page {
      * @param string $pagetype e.g. 'my-index' or 'mod-quiz-attempt'. Normally
      * you do not need to set this manually, it is automatically created from the
      * script name. However, on some pages this is overridden. For example, the
-     * page type for coures/view.php includes the course format, for example
-     * 'coures-view-weeks'. This gets used as the id attribute on <body> and
+     * page type for course/view.php includes the course format, for example
+     * 'course-view-weeks'. This gets used as the id attribute on <body> and
      * also for determining which blocks are displayed.
      */
     public function set_pagetype($pagetype) {
@@ -844,7 +844,7 @@ class moodle_page {
 
     /**
      * Set the course category this page belongs to manually. This automatically
-     * sets $PAGE->course to be the site coures. You cannot use this method if
+     * sets $PAGE->course to be the site course. You cannot use this method if
      * you have already set $PAGE->course - in that case, the category must be
      * the one that the course belongs to. This also automatically sets the
      * page context to the category context.
@@ -883,7 +883,7 @@ class moodle_page {
      *      $id = optional_param('id', 0, PARAM_INT);
      *      $PAGE->set_url('/course/view.php', array('id' => $id));
      * @param moodle_url|string $url URL relative to $CFG->wwwroot or {@link moodle_url} instance
-     * @param array $params paramters to add to the URL
+     * @param array $params parameters to add to the URL
      */
     public function set_url($url, array $params = null) {
         global $CFG;
@@ -952,9 +952,9 @@ class moodle_page {
     }
 
     /**
-     * Specify a form control should be focussed when the page has loaded.
+     * Specify a form control should be focused when the page has loaded.
      *
-     * @param string $controlid the id of the HTML element to be focussed.
+     * @param string $controlid the id of the HTML element to be focused.
      */
     public function set_focuscontrol($controlid) {
         $this->_focuscontrol = $controlid;
@@ -981,7 +981,7 @@ class moodle_page {
 
     /**
      * Some pages let you turn editing on for reasons other than editing blocks.
-     * If that is the case, you can pass other capabilitise that let the user
+     * If that is the case, you can pass other capabilities that let the user
      * edit this page here.
      * @param string|array $capability either a capability, or an array of capabilities.
      */
