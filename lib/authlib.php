@@ -184,7 +184,7 @@ class auth_plugin_base {
     /**
      * Called when the user record is updated.
      * Modifies user in external database. It takes olduser (before changes) and newuser (after changes)
-     * conpares information saved modified information to external db.
+     * compares information saved modified information to external db.
      *
      * @param mixed $olduser     Userobject before modifications    (without system magic quotes)
      * @param mixed $newuser     Userobject new modified userobject (without system magic quotes)
@@ -297,7 +297,7 @@ class auth_plugin_base {
     /**
      * Read user information from external database and returns it as array().
      * Function should return all information available. If you are saving
-     * this information to moodle user-table you should honor syncronization flags
+     * this information to moodle user-table you should honour synchronisation flags
      *
      * @param string $username username
      *
@@ -343,7 +343,7 @@ class auth_plugin_base {
     }
 
     /**
-     * Hook for overriding behavior of login page.
+     * Hook for overriding behaviour of login page.
      * This method is called from login/index.php page for all enabled auth plugins.
      *
      * @global object
@@ -381,7 +381,7 @@ class auth_plugin_base {
     }
 
     /**
-     * Hook for overriding behavior of logout page.
+     * Hook for overriding behaviour of logout page.
      * This method is called from login/logout.php page for all enabled auth plugins.
      *
      * @global object
@@ -396,7 +396,7 @@ class auth_plugin_base {
 
     /**
      * Hook called before timing out of database session.
-     * This is usueful for SSO and MNET.
+     * This is useful for SSO and MNET.
      *
      * @param object $user
      * @param string $sid session id
