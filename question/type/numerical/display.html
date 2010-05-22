@@ -10,7 +10,7 @@
   <div class="prompt">
     <?php echo get_string("answer", "quiz").': '; ?>
   </div>
-
+<div  class="que numerical clearfix">
 <?php
         $textlength = 20 ;
 ?>
@@ -45,7 +45,7 @@
 <?php
   } else if ($question->options->showunits == NUMERICALQUESTIONUNITTEXTINPUTDISPLAY  ) {// display unit text input
 ?>
-<div class="answer">
+<div class="answer numerical ">
     <fieldset class="clearfix"  id="generalheader">
          <legend class="ftoggler">
             <?php echo get_string('unit', 'quiz'); ?>
@@ -127,7 +127,7 @@
             $classunitvalue = 0 ;
                 $type = 'type="radio"';
              //   $nameunit   = "name=\"".$question->name_prefix;//."unit\"";
-                if (isset($state->responses['unit']) && $state->responses['unit'] != '' ){
+                if ($response != '' && isset($state->responses['unit']) && $state->responses['unit'] != '' ){
                     // we have a unit response
                     // this unit is the one chosen
                     // test if the unit give a valid response 
@@ -213,9 +213,10 @@
    </fieldset>
   </div>
 <?php }
+
         //</div> put a div to enclose the answer and unit elements
 ?>
-
+</div>
 
 
        <div class="feedback">
