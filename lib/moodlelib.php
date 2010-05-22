@@ -5877,8 +5877,8 @@ class core_string_manager implements string_manager {
     protected $countmemcache = 0;
     /** @var int on-disk cache hits counter */
     protected $countdiskcache = 0;
-    /** @var bool use memory and disk cache */
-    protected $usecache;
+    /** @var bool use disk cache */
+    protected $usediskcache;
     /* @var array limit list of translations */
     protected $translist;
 
@@ -5888,15 +5888,15 @@ class core_string_manager implements string_manager {
      * @param string $otherroot location of downlaoded lang packs - usually $CFG->dataroot/lang
      * @param string $localroot usually the same as $otherroot
      * @param string $cacheroot usually lang dir in cache folder
-     * @param bool $usecache use disk and memory cache
+     * @param bool $usediskcache use disk cache
      * @param array $translist limit list of visible translations
      */
-    public function __construct($otherroot, $localroot, $cacheroot, $usecache, $translist) {
-        $this->otherroot  = $otherroot;
-        $this->localroot  = $localroot;
-        $this->cacheroot  = $cacheroot;
-        $this->usecache   = $usecache;
-        $this->translist  = $translist;
+    public function __construct($otherroot, $localroot, $cacheroot, $usediskcache, $translist) {
+        $this->otherroot    = $otherroot;
+        $this->localroot    = $localroot;
+        $this->cacheroot    = $cacheroot;
+        $this->usediskcache = $usediskcache;
+        $this->translist    = $translist;
     }
 
     /**
@@ -5946,7 +5946,7 @@ class core_string_manager implements string_manager {
         }
 
         // try on-disk cache then
-        if ($this->usecache and file_exists($this->cacheroot . "/$lang/$component")) {
+        if ($this->usediskcache and file_exists($this->cacheroot . "/$lang/$component")) {
             $this->countdiskcache++;
             eval('$this->cache[$lang][$component] = ' . file_get_contents($this->cacheroot . "/$lang/$component") . ';');
             return $this->cache[$lang][$component];
@@ -6027,7 +6027,7 @@ class core_string_manager implements string_manager {
         // now we have a list of strings from all possible sources. put it into both in-memory and on-disk
         // caches so we do not need to do all this merging and dependencies resolving again
         $this->cache[$lang][$component] = $string;
-        if ($this->usecache) {
+        if ($this->usediskcache) {
             check_dir_exists("$this->cacheroot/$lang", true, true);
             file_put_contents("$this->cacheroot/$lang/$component", var_export($string, true));
         }
