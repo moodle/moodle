@@ -361,6 +361,7 @@ $string['functiontakesonearg'] = 'The function {$a} must have exactly one argume
 $string['functiontakesoneortwoargs'] = 'The function {$a} must have either one or two arguments';
 $string['functiontakestwoargs'] = 'The function {$a} must have exactly two arguments';
 $string['generalfeedback'] = 'General feedback';
+$string['generalfeedback_help'] = 'General feedback is text which is shown after a question has been attempted. Unlike feedback for a specific question which depends on the response given, the same general feedback is always shown.';
 $string['generatevalue'] = 'Generate a new value between';
 $string['geometric'] = 'Geometric';
 $string['gift'] = 'GIFT format';
@@ -566,6 +567,9 @@ $string['partiallycorrect'] = 'Partially correct';
 $string['passworderror'] = 'The password entered was incorrect';
 $string['penalty'] = 'Penalty';
 $string['penaltyfactor'] = 'Penalty factor';
+$string['penaltyfactor_help'] = 'This setting determines what fraction of the achieved score is subtracted for each wrong response. It is only applicable if the quiz is run in adaptive mode.
+
+The penalty factor should be a number between 0 and 1. A penalty factor of 1 means that the student has to get the answer right in his first response to get any credit for it at all. A penalty factor of 0 means the student can try as often as he likes and still get the full marks.';
 $string['penaltyscheme'] = 'Apply penalties';
 $string['penaltyscheme_help'] = 'If enabled, a penalty is subtracted from the final mark for a question for a wrong response. The amount of penalty is specified in the question settings. This setting only applies if adaptive mode is enabled.';
 $string['percentcorrect'] = 'Percent Correct';
