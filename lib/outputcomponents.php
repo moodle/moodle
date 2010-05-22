@@ -173,7 +173,7 @@ class user_picture implements renderable {
     }
 
     /**
-     * Returns a list of required user fields, usefull when fetching required user info from db.
+     * Returns a list of required user fields, useful when fetching required user info from db.
      *
      * In some cases we have to fetch the user data together with some other information,
      * the idalias is useful there because the id would otherwise override the main
@@ -227,7 +227,7 @@ class old_help_icon implements renderable {
     /**
      * Constructor: sets up the other components in case they are needed
      * @param string $helpidentifier  The keyword that defines a help page
-     * @param string $title A descriptive text for accesibility only
+     * @param string $title A descriptive text for accessibility only
      * @param string $component
      * @param bool $linktext add extra text to icon
      * @return void
@@ -529,7 +529,7 @@ class single_select implements renderable {
     /**
      * Adds help icon.
      * @param string $page  The keyword that defines a help page
-     * @param string $title A descriptive text for accesibility only
+     * @param string $title A descriptive text for accessibility only
      * @param string $component
      * @param bool $linktext add extra text to icon
      * @return void
@@ -637,7 +637,7 @@ class url_select implements renderable {
     /**
      * Adds help icon.
      * @param string $page  The keyword that defines a help page
-     * @param string $title A descriptive text for accesibility only
+     * @param string $title A descriptive text for accessibility only
      * @param string $component
      * @param bool $linktext add extra text to icon
      * @return void
@@ -903,7 +903,7 @@ class html_writer {
      *                array(array('Odd'=>array(1=>'One', 3=>'Three)), array('Even'=>array(2=>'Two')))
      *                array(1=>'One', '--1uniquekey'=>array('More'=>array(2=>'Two', 3=>'Three')))
      * @param string $name name of select element
-     * @param string|array $selected value or arary of values depending on multiple attribute
+     * @param string|array $selected value or array of values depending on multiple attribute
      * @param array|bool $nothing, add nothing selected option, or false of not added
      * @param array $attributes - html select element attributes
      * @return string HTML fragment
@@ -1339,7 +1339,7 @@ class html_writer {
 class js_writer {
     /**
      * Returns javascript code calling the function
-     * @param string $function function name, can be complex lin Y.Event.purgeElement
+     * @param string $function function name, can be complex like Y.Event.purgeElement
      * @param array $arguments parameters
      * @param int $delay execution delay in seconds
      * @return string JS code fragment
@@ -1436,7 +1436,7 @@ class js_writer {
 
     /**
      * Writes event handler attaching code
-     * @param mixed $selector standard YUI selector for elemnts, may be array or string, element id is in the form "#idvalue"
+     * @param mixed $selector standard YUI selector for elements, may be array or string, element id is in the form "#idvalue"
      * @param string $event A valid DOM event (click, mousedown, change etc.)
      * @param string $function The name of the function to call
      * @param array  $arguments An optional array of argument parameters to pass to the function
@@ -1756,7 +1756,7 @@ class paging_bar implements renderable {
     /**
      * Constructor paging_bar with only the required params.
      *
-     * @param int $totalcount Thetotal number of entries available to be paged through
+     * @param int $totalcount The total number of entries available to be paged through
      * @param int $page The page you are currently viewing
      * @param int $perpage The number of entries that should be shown per page
      * @param string|moodle_url $baseurl url of the current page, the $pagevar parameter is added
@@ -1982,7 +1982,7 @@ class block_move_target {
     public $text;
 
     /**
-     * Cosntructor
+     * Constructor
      * @param string $text
      * @param moodle_url $url
      */
@@ -2019,7 +2019,7 @@ class custom_menu_item implements renderable {
      */
     protected $title;
     /**
-     * A sort order for the item, not nessecary if you order things in the CFG var
+     * A sort order for the item, not necessary if you order things in the CFG var
      * @var int
      */
     protected $sort;
