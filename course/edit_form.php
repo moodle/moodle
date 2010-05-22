@@ -159,6 +159,12 @@ class course_edit_form extends moodleform {
         $mform->addHelpButton('maxbytes', 'maximumupload');
         $mform->setDefault('maxbytes', $courseconfig->maxbytes);
 
+        if (!empty($course->legacyfiles)) {
+            $choices = array('1'=>get_string('no'), '2'=>get_string('yes'));
+            $mform->addElement('select', 'legacyfiles', get_string('courselegacyfiles'), $choices);
+            $mform->addHelpButton('legacyfiles', 'courselegacyfiles');
+        }
+
         if (!empty($CFG->allowcoursethemes)) {
             $themeobjects = get_list_of_themes();
             $themes=array();

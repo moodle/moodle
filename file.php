@@ -16,7 +16,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * This script fetches legacy files from the course files in dataroot directory
+ * This script fetches legacy course files in dataroot directory, it is enabled
+ * only if course->legacyfiles == 2.
  *
  * You should use the get_file_url() function, available in lib/filelib.php, to link to file.php.
  * This ensures proper formatting and offers useful options.
@@ -64,8 +65,11 @@ $courseid = (int)array_shift($args);
 $relativepath = '/'.implode('/', $args);
 
 // security: limit access to existing course subdirectories
-if (!$course = $DB->get_record('course', array('id'=>$courseid))) {
-    print_error('invalidcourseid');
+$course = $DB->get_record('course', array('id'=>$courseid), '*', MUST_EXIST);
+
+if ($course->legacyfiles != 2) {
+    // course files disabled
+    send_file_not_found();
 }
 
 if ($course->id != SITEID) {

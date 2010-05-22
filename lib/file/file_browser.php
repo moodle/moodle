@@ -323,6 +323,11 @@ class file_browser {
             $filearea = null;
         }
 
+        if ($filearea === 'course_content' and $course->legacyfiles != 2) {
+            // bad luck, legacy course files not used any more
+            return null;
+        }
+
         $filepath = is_null($filepath) ? '/' : $filepath;
         $filename = is_null($filename) ? '.' : $filename;
 

@@ -2772,7 +2772,7 @@ class settings_navigation extends navigation_node {
         }
 
         // Manage files
-        if (has_capability('moodle/course:managefiles', $coursecontext)) {
+        if ($course->legacyfiles == 2 and has_capability('moodle/course:managefiles', $coursecontext)) {
             $url = new moodle_url('/files/index.php', array('contextid'=>$coursecontext->id, 'itemid'=>0, 'filearea'=>'course_content'));
             $coursenode->add(get_string('files'), $url, self::TYPE_SETTING, null, 'coursefiles', new pix_icon('i/files', ''));
         }

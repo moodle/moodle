@@ -92,8 +92,10 @@ class file_info_course extends file_info {
             $children[] = $child;
         }
 
-        if ($child = $this->browser->get_file_info($this->context, 'course_content', 0)) {
-            $children[] = $child;
+        if ($this->course->legacyfiles == 2) {
+            if ($child = $this->browser->get_file_info($this->context, 'course_content', 0)) {
+                $children[] = $child;
+            }
         }
 
         $modinfo = get_fast_modinfo($this->course);

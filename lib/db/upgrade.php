@@ -528,6 +528,20 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint($result, 2008073111);
     }
 
+    if ($result && $oldversion < 2008073112) {
+        // Define field legacyfiles to be added to course
+        $table = new xmldb_table('course');
+        $field = new xmldb_field('legacyfiles', XMLDB_TYPE_INTEGER, '4', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'maxbytes');
+
+        // Launch add field legacyfiles
+        $dbman->add_field($table, $field);
+        // enable legacy files in all courses
+        $DB->execute("UPDATE {course} SET legacyfiles = 2");
+
+        // Main savepoint reached
+        upgrade_main_savepoint($result, 2008073112);
+    }
+
     if ($result && $oldversion < 2008073113) {
     /// move all course, backup and other files to new filepool based storage
         upgrade_migrate_files_courses();
@@ -4081,6 +4095,22 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
             unset_config('enablehtmlpurifier');
         }
         upgrade_main_savepoint($result, 2010052100);
+    }
+
+    if ($result && $oldversion < 2010052200) {
+        // Define field legacyfiles to be added to course - just in case we are upgrading from PR1
+        $table = new xmldb_table('course');
+        $field = new xmldb_field('legacyfiles', XMLDB_TYPE_INTEGER, '4', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'maxbytes');
+
+        // Conditionally launch add field legacyfiles
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+            // enable legacy files in all courses
+            $DB->execute("UPDATE {course} SET legacyfiles = 2");
+        }
+
+        // Main savepoint reached
+        upgrade_main_savepoint($result, 2010052200);
     }
 
 
