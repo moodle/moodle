@@ -50,7 +50,7 @@ function auth_get_plugin_title($authtype) {
 function get_list_of_languages($refreshcache=false, $returnall=false) {
     debugging('get_list_of_languages() is deprecated, please use get_string_manager()->get_list_of_translations() instead.');
     if ($refreshcache) {
-        // TODO: reset lang cache
+        get_string_manager()->reset_caches();
     }
     return get_string_manager()->get_list_of_translations($returnall);
 }

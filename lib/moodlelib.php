@@ -5748,7 +5748,12 @@ function get_string_manager($forcereload=false) {
     }
     if ($singleton === null) {
         if (empty($CFG->early_install_lang)) {
-            $singleton = new core_string_manager($CFG->langotherroot, $CFG->langlocalroot);
+            if (empty($CFG->langlist)) {
+                 $translist = array();
+            } else {
+                $translist = explode(',', $CFG->langlist);
+            }
+            $singleton = new core_string_manager($CFG->langotherroot, $CFG->langlocalroot, "$CFG->dataroot/cache/lang", !empty($CFG->langstringcache), $translist);
         } else {
             $singleton = new install_string_manager();
         }
@@ -5872,19 +5877,26 @@ class core_string_manager implements string_manager {
     protected $countmemcache = 0;
     /** @var int on-disk cache hits counter */
     protected $countdiskcache = 0;
+    /** @var bool use memory and disk cache */
+    protected $usecache;
+    /* @var array limit list of translations */
+    protected $translist;
 
     /**
      * Crate new instance of string manager
      *
      * @param string $otherroot location of downlaoded lang packs - usually $CFG->dataroot/lang
      * @param string $localroot usually the same as $otherroot
+     * @param string $cacheroot usually lang dir in cache folder
+     * @param bool $usecache use disk and memory cache
+     * @param array $translist limit list of visible translations
      */
-    public function __construct($otherroot, $localroot) {
-        global $CFG;
-
+    public function __construct($otherroot, $localroot, $cacheroot, $usecache, $translist) {
         $this->otherroot  = $otherroot;
         $this->localroot  = $localroot;
-        $this->cacheroot  = "$CFG->dataroot/cache/lang";
+        $this->cacheroot  = $cacheroot;
+        $this->usecache   = $usecache;
+        $this->translist  = $translist;
     }
 
     /**
@@ -5934,7 +5946,7 @@ class core_string_manager implements string_manager {
         }
 
         // try on-disk cache then
-        if (!empty($CFG->langstringcache) and file_exists($this->cacheroot . "/$lang/$component")) {
+        if ($this->usecache and file_exists($this->cacheroot . "/$lang/$component")) {
             $this->countdiskcache++;
             eval('$this->cache[$lang][$component] = ' . file_get_contents($this->cacheroot . "/$lang/$component") . ';');
             return $this->cache[$lang][$component];
@@ -5982,9 +5994,9 @@ class core_string_manager implements string_manager {
                 $file = $plugintype . '_' . $pluginname;
             }
             $string = array();
-            // first load english pack
+            // first load English pack
             if (!file_exists("$location/lang/en/$file.php")) {
-                //english pack does not exist, so do not try to load anything else
+                //English pack does not exist, so do not try to load anything else
                 return array();
             }
             include("$location/lang/en/$file.php");
@@ -6013,11 +6025,11 @@ class core_string_manager implements string_manager {
         $string = array_intersect_key($string, $originalkeys);
 
         // now we have a list of strings from all possible sources. put it into both in-memory and on-disk
-        // caches so we do not need to do all this merging and dependecies resolving again
+        // caches so we do not need to do all this merging and dependencies resolving again
         $this->cache[$lang][$component] = $string;
-        if (!empty($CFG->langstringcache)) {
-            check_dir_exists($this->cacheroot . '/' . $lang, true, true);
-            file_put_contents($this->cacheroot . "/$lang/$component", var_export($string, true));
+        if ($this->usecache) {
+            check_dir_exists("$this->cacheroot/$lang", true, true);
+            file_put_contents("$this->cacheroot/$lang/$component", var_export($string, true));
         }
         return $string;
     }
@@ -6094,7 +6106,7 @@ class core_string_manager implements string_manager {
                 return '';
             }
             if ($identifier === 'parentlanguage' and ($component === 'langconfig' or $component === 'core_langconfig')) {
-                // parentlanguage is a special string, undefined means use english if not defined
+                // parentlanguage is a special string, undefined means use English if not defined
                 return 'en';
             }
             debugging("Invalid get_string() identifier: '$identifier' or component '$component'", DEBUG_DEVELOPER);
@@ -6267,11 +6279,11 @@ class core_string_manager implements string_manager {
 
         $languages = array();
 
-        if (!$returnall && !empty($CFG->langlist)) {
-            // return only languages allowed in langlist admin setting
-            $langlist = explode(',', $CFG->langlist);
-            // find existing langs from langlist
-            foreach ($langlist as $lang) {
+        //TODO: add some translist cache stored in normal cache dir
+
+        if (!$returnall and !empty($this->translist)) {
+            // return only some translations
+            foreach ($this->translist as $lang) {
                 $lang = trim($lang);   //Just trim spaces to be a bit more permissive
                 if (strstr($lang, '_local') !== false) {
                     continue;
@@ -6280,7 +6292,7 @@ class core_string_manager implements string_manager {
                     continue;
                 }
                 if ($lang !== 'en' and !file_exists("$this->otherroot/$lang/langconfig.php")) {
-                    // some broken or missing lang - can not swith to it anyway
+                    // some broken or missing lang - can not switch to it anyway
                     continue;
                 }
                 $string = $this->load_component_strings('langconfig', $lang);
