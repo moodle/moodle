@@ -994,10 +994,10 @@ EOS;
     }
 
     /**
-     * Adds an initialisation call for a standard JavaScript enchancement.
+     * Adds an initialisation call for a standard JavaScript enhancement.
      *
      * This function is designed to add an initialisation call for a JavaScript
-     * enhancment that should exist within javascript-static M.form.init_{enhancementname}.
+     * enhancement that should exist within javascript-static M.form.init_{enhancementname}.
      *
      * Current options:
      *  - Selectboxes
@@ -1076,7 +1076,7 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
     var $_showAdvanced = null;
 
     /**
-     * The form name is derrived from the class name of the wrapper minus the trailing form
+     * The form name is derived from the class name of the wrapper minus the trailing form
      * It is a name with words joined by underscores whereas the id attribute is words joined by
      * underscores.
      *
@@ -1416,7 +1416,7 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
      *
      * @since 2.0
      * @param string $elementname name of the element to add the item to
-     * @param string $identifier help string identifer without _help suffix
+     * @param string $identifier help string identifier without _help suffix
      * @param string $component component name to look the help string in
      * @param string $linktext optional text to display next to the icon
      * @param boolean $suppresscheck set to true if the element may not exist
@@ -1433,7 +1433,7 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
     }
 
     /**
-     * Set constant value not overriden by _POST or _GET
+     * Set constant value not overridden by _POST or _GET
      * note: this does not work for complex names with [] :-(
      *
      * @param string $elname name of element
