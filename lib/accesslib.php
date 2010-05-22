@@ -108,7 +108,7 @@
  * context paths affected by changes. Any check at-or-below
  * a dirty context will trigger a transparent reload of accessdata.
  *
- * Changes at the sytem level will force the reload for everyone.
+ * Changes at the system level will force the reload for everyone.
  *
  * <b>Default role caps</b>
  * The default role assignment is not in the DB, so we
@@ -179,7 +179,7 @@ if (!defined('MAX_CONTEXT_CACHE_SIZE')) {
  *
  * It is just a private implementation detail to accesslib that MUST NOT be used elsewhere.
  * It is used to cache various bits of data between function calls for performance reasons.
- * Sadly, a PHP global variale is the only way to impleemnt this, withough rewriting everything
+ * Sadly, a PHP global variable is the only way to implement this, without rewriting everything
  * as methods of a class, instead of functions.
  *
  * @global stdClass $ACCESSLIB_PRIVATE
@@ -201,7 +201,7 @@ $ACCESSLIB_PRIVATE->capabilities = NULL; // detailed information about the capab
  *
  * This method should ONLY BE USED BY UNIT TESTS. It clears all of
  * accesslib's private caches. You need to do this before setting up test data,
- * and also at the end fo the tests.
+ * and also at the end of the tests.
  * @global object
  * @global object
  * @global object
@@ -434,13 +434,13 @@ function get_guest_role() {
 }
 
 /**
- * Check whether a user has a paritcular capability in a given context.
+ * Check whether a user has a particular capability in a given context.
  *
  * For example::
  *      $context = get_context_instance(CONTEXT_MODULE, $cm->id);
  *      has_capability('mod/forum:replypost',$context)
  *
- * By default checks the capabilties of the current user, but you can pass a
+ * By default checks the capabilities of the current user, but you can pass a
  * different userid. By default will return true for admin users, but you can override that with the fourth argument.
  *
  * Guest and not-logged-in users can never get any dangerous capability - that is any write capability
@@ -784,10 +784,10 @@ function path_inaccessdata($path, $accessdata) {
  *
  * Permission evaluation
  * ---------------------
- * Originaly there was an extremely complicated way
+ * Originally there was an extremely complicated way
  * to determine the user access that dealt with
- * "locality" or role assignemnts and role overrides.
- * Now we simply evaluate access for each roel separately
+ * "locality" or role assignments and role overrides.
+ * Now we simply evaluate access for each role separately
  * and then verify if user has at least one role with allow
  * and at the same time no role with prohibit.
  *
@@ -953,7 +953,7 @@ function require_capability($capability, $context, $userid = NULL, $doanything =
  *      - or where use has a role-assignment (any kind)
  *      - or where the course has an override on for this cap
  *
- *   - walk the courses recordset checking the caps oneach one
+ *   - walk the courses recordset checking the caps on each one
  *     the checks are all in memory and quite fast
  *     (though we could implement a specialised variant of the
  *     has_capability_in_accessdata() code to speed it up)
@@ -1538,7 +1538,7 @@ function load_user_accessdata($userid) {
 }
 
 /**
- * Use shared copy of role definistions stored in ACCESSLIB_PRIVATE->roledefinitions;
+ * Use shared copy of role definitions stored in ACCESSLIB_PRIVATE->roledefinitions;
  *
  * @global object
  * @param array $rdefs array of role definitions in contexts
@@ -1810,7 +1810,7 @@ function get_role_archetypes() {
 }
 
 /**
- * Assign the defaults found in this capabality definition to roles that have
+ * Assign the defaults found in this capability definition to roles that have
  * the corresponding legacy capabilities assigned to them.
  *
  * @param string $capability
@@ -2529,7 +2529,7 @@ function create_role($name, $shortname, $description, $archetype='') {
  * Function that deletes a role and cleanups up after it
  *
  * @param int $roleid id of role to delete
- * @return bool lways true
+ * @return bool always true
  */
 function delete_role($roleid) {
     global $CFG, $DB;
@@ -2678,11 +2678,11 @@ function get_roles_with_capability($capability, $permission=NULL, $context=NULL)
  * @param int $groupid_ignored - never implemented!
  * @param int $contextid id of the context
  * @param int $timestart time this assignment becomes effective defaults to 0
- * @param int $timeend time this assignemnt ceases to be effective defaults to 0
- * @param int $hidden_ignored - use roels with moodle/course:view capability or enrolemnt instead
+ * @param int $timeend time this assignment ceases to be effective defaults to 0
+ * @param int $hidden_ignored - use roels with moodle/course:view capability or enrolment instead
  * @param string $enrol defaults to 'manual'
  * @param string $timemodified defaults to ''
- * @return int new id of the assigment
+ * @return int new id of the assignment
  */
 function role_assign($roleid, $userid, $groupid_ignored, $contextid, $timestart=0, $timeend=0, $hidden_ignored=0, $enrol='manual',$timemodified='') {
     global $USER, $CFG, $DB;
@@ -2851,7 +2851,7 @@ function role_unassign($roleid=0, $userid=0, $groupid_ignored=0, $contextid=0, $
                     }
                 }
 
-                /// now handle metacourse role unassigment and removing from goups if in course context
+                /// now handle metacourse role unassigment and removing from groups if in course context
                 if ($context->contextlevel == CONTEXT_COURSE) {
 
                     // cleanup leftover course groups/subscriptions etc when user has
@@ -3050,7 +3050,7 @@ function is_viewing($context, $user = NULL, $withcapability = '') {
  * this is intended for students and teachers.
  *
  * @param object $context
- * @param int|object $user, if NULL $USER is used, oherwise user object or id expected
+ * @param int|object $user, if NULL $USER is used, otherwise user object or id expected
  * @param string $withcapability extra capability name
  * @return bool
  */
@@ -3430,7 +3430,7 @@ function get_default_capabilities($archetype) {
 /**
  * Reset role capabilities to default according to selected role archetype.
  * If no archetype selected, removes all capabilities.
- * @param int @roleid
+ * @param int $roleid
  */
 function reset_role_capabilities($roleid) {
     global $DB;
@@ -4034,7 +4034,7 @@ function get_course_context($context) {
 }
 
 /**
- * Check if contect is the front page context or a context inside it
+ * Check if context is the front page context or a context inside it
  *
  * Returns true if this context is the front page context, or a context inside it,
  * otherwise false.
@@ -4454,7 +4454,7 @@ function get_roles_used_in_context($context) {
 /**
  * This function is used to print roles column in user profile page.
  * It is using the CFG->profileroles to limit the list to only interesting roles.
- * (The permission tab has full details of user role assingments.)
+ * (The permission tab has full details of user role assignments.)
  *
  * @param int $userid
  * @param int $courseid
@@ -5058,7 +5058,7 @@ function get_users_by_capability($context, $capability, $fields='', $sort='', $l
 
     $caps = (array)$capability;
 
-    // contruct list of context paths bottom-->top
+    // construct list of context paths bottom-->top
     list($contextids, $paths) = get_context_info_list($context);
 
     // we need to find out all roles that have these capabilities either in definition or in overrides
@@ -5590,7 +5590,7 @@ function role_switch($roleid, $context) {
     //   as $USER->access['rsw'][$path] = $roleid
     //
     // - Make sure $USER->access['rdef'] has the roledefs
-    //   it needs to honour the switcheroo
+    //   it needs to honour the switcherole
     //
     // Roledefs will get loaded "deep" here - down to the last child
     // context. Note that
@@ -5599,7 +5599,7 @@ function role_switch($roleid, $context) {
     //   will still work fine - though those ra/rdefs will be ignored
     //   appropriately while the switch is in place
     //
-    // - If a switcheroo happens at a category with tons of courses
+    // - If a switcherole happens at a category with tons of courses
     //   (that have many overrides for switched-to role), the session
     //   will get... quite large. Sometimes you just can't win.
     //
@@ -5683,7 +5683,7 @@ function get_roles_with_assignment_on_context($context) {
 
 
 /**
- * Find all user assignemnt of users for this role, on this context
+ * Find all user assignment of users for this role, on this context
  *
  * @global object
  * @param object $role
@@ -5810,7 +5810,7 @@ function role_fix_names($roleoptions, $context, $rolenamedisplay=ROLENAME_ALIAS)
  * This function helps admin/roles/manage.php etc to detect if a new line should be printed
  * when we read in a new capability.
  * Most of the time, if the 2 components are different we should print a new line, (e.g. course system->rss client)
- * but when we are in grade, all reports/import/export capabilites should be together
+ * but when we are in grade, all reports/import/export capabilities should be together
  *
  * @param string $cap component string a
  * @param string $comp component string b
@@ -6241,7 +6241,7 @@ function role_cap_duplicate($sourcerole, $targetrole) {
 
 /**
  * Returns two lists, this can be used to find out if user has capability.
- * Having any neede role and no forbidden role in this context means
+ * Having any needed role and no forbidden role in this context means
  * user has this capability in this context,
  *
  * @param object $context
