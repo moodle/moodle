@@ -9239,8 +9239,9 @@ function remove_dir($dir, $content_only=false) {
 function check_dir_exists($dir, $create=false, $recursive=false) {
     global $CFG;
 
-    if (strstr(cleardoubleslashes($dir), cleardoubleslashes($CFG->dataroot.'/')) === false) {
+    if (strpos(str_replace('\\', '/', $dir), str_replace('\\', '/', $CFG->dataroot.'/')) !== 0) {
         debugging('Warning. Wrong call to check_dir_exists(). $dir must be an absolute path under $CFG->dataroot ("' . $dir . '" is incorrect)', DEBUG_DEVELOPER);
+        return false;
     }
 
     $status = true;

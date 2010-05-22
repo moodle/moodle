@@ -108,6 +108,16 @@ if (!defined('AJAX_SCRIPT')) {
     define('AJAX_SCRIPT', false);
 }
 
+// File permissions on created directories in the $CFG->dataroot
+if (empty($CFG->directorypermissions)) {
+    $CFG->directorypermissions = 02777;      // Must be octal (that's why it's here)
+}
+if (empty($CFG->filepermissions)) {
+    $CFG->filepermissions = ($CFG->directorypermissions & 0666); // strip execute flags
+}
+// better also set default umask because recursive mkdir() does not apply permissions recursively otherwise
+umask(0000);
+
 // exact version of currently used yui2 and 3 library
 $CFG->yui2version = '2.8.1';
 $CFG->yui3version = '3.1.1';
@@ -475,16 +485,6 @@ if (!empty($CFG->cachetype)) {
     $CFG->cachetype = '';
     $CFG->rcache    = false;
 }
-
-// File permissions on created directories in the $CFG->dataroot
-if (empty($CFG->directorypermissions)) {
-    $CFG->directorypermissions = 0777;      // Must be octal (that's why it's here)
-}
-if (empty($CFG->filepermissions)) {
-    $CFG->filepermissions = ($CFG->directorypermissions & 0666); // strip execute flags
-}
-// better also set default umask because recursive mkdir() does not apply permissions recursively otherwise
-umask(0000);
 
 // Calculate and set $CFG->ostype to be used everywhere. Possible values are:
 // - WINDOWS: for any Windows flavour.
