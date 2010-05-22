@@ -436,7 +436,7 @@ function upgrade_plugins_modules($startcallback, $endcallback, $verbose) {
         if (empty($module->version)) {
             if (isset($module->version)) {
                 // Version is empty but is set - it means its value is 0 or ''. Let us skip such module.
-                // This is inteded for developers so they can work on the early stages of the module.
+                // This is intended for developers so they can work on the early stages of the module.
                 continue;
             }
             throw new plugin_defective_exception($component, 'Missing version value in version.php');
@@ -579,7 +579,7 @@ function upgrade_plugins_blocks($startcallback, $endcallback, $verbose) {
             throw new plugin_defective_exception($component, 'Can not load main class.');
         }
 
-        $blockobj    = new $classname;   // This is what we 'll be testing
+        $blockobj    = new $classname;   // This is what we'll be testing
         $blocktitle  = $blockobj->get_title();
 
         // OK, it's as we all hoped. For further tests, the object will do them itself.
@@ -678,7 +678,7 @@ function upgrade_plugins_blocks($startcallback, $endcallback, $verbose) {
                 $DB->update_record('block', $currblock);
             }
 
-            // Upgrade various componebts
+            // Upgrade various components
             update_capabilities($component);
             external_update_descriptions($component);
             events_update_definition($component);
@@ -837,7 +837,7 @@ function external_update_descriptions($component) {
 }
 
 /**
- * Delete all service and external functions information defined in the specified compoment.
+ * Delete all service and external functions information defined in the specified component.
  * @param string $component name of component (moodle, mod_assignment, etc.)
  * @return void
  */
@@ -982,7 +982,7 @@ function upgrade_started($preinstall=false) {
 }
 
 /**
- * Internal function - executed if upgrade interruped.
+ * Internal function - executed if upgrade interrupted.
  */
 function upgrade_finished_handler() {
     upgrade_finished();
@@ -1053,7 +1053,7 @@ function print_upgrade_separator() {
 /**
  * Default start upgrade callback
  * @param string $plugin
- * @param bool $installation true if installation, false menas upgrade
+ * @param bool $installation true if installation, false means upgrade
  */
 function print_upgrade_part_start($plugin, $installation, $verbose) {
     global $OUTPUT;
@@ -1086,7 +1086,7 @@ function print_upgrade_part_start($plugin, $installation, $verbose) {
 /**
  * Default end upgrade callback
  * @param string $plugin
- * @param bool $installation true if installation, false menas upgrade
+ * @param bool $installation true if installation, false means upgrade
  */
 function print_upgrade_part_end($plugin, $installation, $verbose) {
     global $OUTPUT;
@@ -1111,7 +1111,7 @@ function print_upgrade_part_end($plugin, $installation, $verbose) {
 }
 
 /**
- * Sets up JS code required for all ugprade scripts.
+ * Sets up JS code required for all upgrade scripts.
  * @global object
  */
 function upgrade_init_javascript() {
