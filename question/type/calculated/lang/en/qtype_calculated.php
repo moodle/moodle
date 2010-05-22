@@ -23,7 +23,11 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['addingcalculated'] = 'Adding a Calculated question';
+$string['addingcalculated'] = 'Adding a calculated question';
+$string['addingcalculated_help'] = 'Calculated questions offers a way to create individual numerical question by the use of wildcards that are substituted with individual values when the quiz is taken. ';
+$string['addingcalculated_link'] = 'question/type/calculated';
+$string['addingcalculated_help'] = 'Calculated questions offers a way to create individual numerical question by the use of wildcards that are substituted with individual values when the quiz is taken. ';
+$string['addingcalculated_link'] = 'question/type/calculated';
 $string['additem'] = 'Add Item';
 $string['addmoreanswerblanks'] = 'Add another answer blank.';
 $string['addmoreunitblanks'] = 'Blanks for {$a} More Units';
