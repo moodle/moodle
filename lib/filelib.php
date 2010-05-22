@@ -2084,6 +2084,10 @@ function put_records_csv($file, $records, $table = NULL) {
  * @return bool
  */
 function fulldelete($location) {
+    if (empty($location)) {
+        // extra safety against wrong param
+        return false;
+    }
     if (is_dir($location)) {
         $currdir = opendir($location);
         while (false !== ($file = readdir($currdir))) {
