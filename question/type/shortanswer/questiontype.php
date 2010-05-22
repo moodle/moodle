@@ -341,7 +341,7 @@ class question_shortanswer_qtype extends default_questiontype {
                     if (($state->last_graded->raw_grade < $question->maxgrade) and (QUESTION_EVENTCLOSEANDGRADE != $state->event)) {
                         if ('' !== $state->last_graded->penalty && ((float)$state->last_graded->penalty) > 0.0) {
                             // A unit penalty for numerical was applied so display it
-                        if(isset($question->raw_unitpenalty) && $question->raw_unitpenalty > 0.0 ){
+                        if(isset($this->raw_unitpenalty) && $this->raw_unitpenalty > 0.0 ){
                             echo ' ';
                             print_string('unitappliedpenalty','qtype_numerical',question_format_grade($cmoptions, $this->raw_unitpenalty));
                         } 
