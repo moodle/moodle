@@ -110,7 +110,7 @@ function stats_cron_daily($maxdays=1) {
     // calculate scheduled time
     $scheduledtime = stats_get_base_daily() + $CFG->statsruntimestarthour*60*60 + $CFG->statsruntimestartminute*60;
 
-    // Note: This will work fine for sites running cron each 4 hours or less (hoppefully, 99.99% of sites). MDL-16709
+    // Note: This will work fine for sites running cron each 4 hours or less (hopefully, 99.99% of sites). MDL-16709
     // check to make sure we're due to run, at least 20 hours after last run
     if (isset($CFG->statslastexecution) and ((time() - 20*60*60) < $CFG->statslastexecution)) {
         mtrace("...preventing stats to run, last execution was less than 20 hours ago.");
@@ -137,7 +137,7 @@ function stats_cron_daily($maxdays=1) {
         return false;
     }
 
-    // fisrt delete entries that should not be there yet
+    // first delete entries that should not be there yet
     $DB->delete_records_select('stats_daily',      "timeend > $timestart");
     $DB->delete_records_select('stats_user_daily', "timeend > $timestart");
 
@@ -232,7 +232,7 @@ function stats_cron_daily($maxdays=1) {
         // - enrolment is defined now as having course:view capability in
         //   course context or above, we look 3 cats upwards only and ignore prevent
         //   and prohibit caps to simplify it
-        // - SITEID is specialcased here, because it's all about default enrolment
+        // - SITEID is special case here, because it's all about default enrolment
         //   in that case, we'll count non-deleted users.
         //
 
@@ -466,7 +466,7 @@ function stats_cron_daily($maxdays=1) {
 
     /// how many view actions from guests only in each course - excluding frontpage
     /// (guest is anybody with guest role or no role with course:view in course - this may not work properly if category limit too low)
-    /// normal users may enter course with temporary guest acces too
+    /// normal users may enter course with temporary guest access too
 
         $sql = "INSERT INTO {stats_daily} (stattype, timeend, courseid, roleid, stat1, stat2)
 
@@ -581,7 +581,7 @@ function stats_cron_daily($maxdays=1) {
 
     if ($failed) {
         $days--;
-        mtrace("...error occured, completed $days days of statistics.");
+        mtrace("...error occurred, completed $days days of statistics.");
         return false;
 
     } else {
