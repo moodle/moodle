@@ -24,6 +24,8 @@
  */
 
 $string['addingmultichoice'] = 'Adding a Multiple choice question';
+$string['addingmultichoice_help'] = 'In response to a question (that may include a image) the respondent chooses from multiple answers. There are two types of multiple choice questions - one answer and multiple answer.';
+$string['addingmultichoice_link'] = 'question/type/multichoice';
 $string['addmorechoiceblanks'] = 'Blanks for {no} more choices';
 $string['answerhowmany'] = 'One or multiple answers?';
 $string['answernumbering'] = 'Number the choices?';
@@ -54,4 +56,5 @@ $string['overallincorrectfeedback'] = 'Feedback for any incorrect response';
 $string['overallpartiallycorrectfeedback'] = 'Feedback for any partially correct response';
 $string['partiallycorrectfeedback'] = 'For any partially correct response';
 $string['shuffleanswers'] = 'Shuffle the choices?';
+$string['shuffleanswers_help'] = 'If enabled, the order of the answers is randomly shuffled for each attempt, provided that "Shuffle within questions" in the quiz settings is also enabled.';
 $string['singleanswer'] = 'Choose one answer.';
