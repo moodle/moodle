@@ -47,6 +47,45 @@ define('RESOURCELIB_LEGACYFILES_ACTIVE', 2);
 
 
 /**
+ * Try on demand migration of file from old course files
+ * @param string $filepath old file path
+ * @param int $cmid migrated course module if
+ * @param int $courseid
+ * @param string $filearea new file area
+ * @param int $itemid migrated file item id
+ * @return mixed, false if not found, stored_file instance if migrated to new area
+ */
+function resourcelib_try_file_migration($filepath, $cmid, $courseid, $filearea, $itemid) {
+    $fs = get_file_storage();
+
+    if (stripos($filepath, '/backupdata/') === 0 or stripos($filepath, '/moddata/') === 0) {
+        // do not steal protected files!
+        return false;
+    }
+
+    if (!$context = get_context_instance(CONTEXT_MODULE, $cmid)) {
+        return false;
+    }
+    if (!$coursecontext = get_context_instance(CONTEXT_COURSE, $courseid)) {
+        return false;
+    }
+
+    $pathnamehash = sha1($coursecontext->id.'course_content0'.$filepath);
+    if (!$file = $fs->get_file_by_hash($pathnamehash)) {
+        return false;
+    }
+
+    // copy and keep the same path, name, etc.
+    $file_record = array('contextid'=>$context->id, 'filearea'=>$filearea, 'itemid'=>$itemid);
+    try {
+        return $fs->create_file_from_storedfile($file_record, $file);
+    } catch (Exception $e) {
+        // file may exist - highly unlikely, we do not want upgrades to stop here
+        return false;
+    }
+}
+
+/**
  * Returns list of available display options
  * @param array $enabled list of options enabled in module configuration
  * @param int $current current display options for existing instances
@@ -57,13 +96,13 @@ function resourcelib_get_displayoptions(array $enabled, $current=null) {
         $enabled[] = $current;
     }
 
-    $options = array(RESOURCELIB_DISPLAY_AUTO     => get_string('displayauto', 'resource'),
-                     RESOURCELIB_DISPLAY_EMBED    => get_string('displayembed', 'resource'),
-                     RESOURCELIB_DISPLAY_FRAME    => get_string('displayframe', 'resource'),
-                     RESOURCELIB_DISPLAY_NEW      => get_string('displaynew', 'resource'),
-                     RESOURCELIB_DISPLAY_DOWNLOAD => get_string('displaydownload', 'resource'),
-                     RESOURCELIB_DISPLAY_OPEN     => get_string('displayopen', 'resource'),
-                     RESOURCELIB_DISPLAY_POPUP    => get_string('displaypopup', 'resource'));
+    $options = array(RESOURCELIB_DISPLAY_AUTO     => get_string('resourcedisplayauto'),
+                     RESOURCELIB_DISPLAY_EMBED    => get_string('resourcedisplayembed'),
+                     RESOURCELIB_DISPLAY_FRAME    => get_string('resourcedisplayframe'),
+                     RESOURCELIB_DISPLAY_NEW      => get_string('resourcedisplaynew'),
+                     RESOURCELIB_DISPLAY_DOWNLOAD => get_string('resourcedisplaydownload'),
+                     RESOURCELIB_DISPLAY_OPEN     => get_string('resourcedisplayopen'),
+                     RESOURCELIB_DISPLAY_POPUP    => get_string('resourcedisplaypopup'));
 
     $result = array();
 
@@ -143,7 +182,7 @@ function resourcelib_embed_mp3($fullurl, $title, $clicktoopen) {
     $c .= '&volText='.get_string('vol', 'resource').'&panText='.get_string('pan','resource');
     $id = 'filter_mp3_'.time(); //we need something unique because it might be stored in text cache
 
-    $ufoargs = array('movie'        => $CFG->wwwroot.'/lib/mp3player/mp3player.swf?src='.addslashes_js($fullurl),
+    $ufoargs = array('movie'        => $CFG->wwwroot.'/lib/mp3player/mp3player.swf?src='.urlencode($fullurl),
                      'width'        => 600,
                      'height'       => 70,
                      'majorversion' => 6,
@@ -184,7 +223,7 @@ function resourcelib_embed_flashvideo($fullurl, $title, $clicktoopen) {
 
     $id = 'filter_flv_'.time(); //we need something unique because it might be stored in text cache
 
-    $ufoargs = array('movie'             => $CFG->wwwroot.'/filter/mediaplugin/flvplayer.swf?file='.addslashes_js($fullurl),
+    $ufoargs = array('movie'             => $CFG->wwwroot.'/filter/mediaplugin/flvplayer.swf?file='.urlencode($fullurl),
                      'width'             => 600,
                      'height'            => 400,
                      'majorversion'      => 6,

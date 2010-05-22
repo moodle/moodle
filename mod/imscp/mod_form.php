@@ -28,7 +28,6 @@ if (!defined('MOODLE_INTERNAL')) {
 }
 
 require_once ($CFG->dirroot.'/course/moodleform_mod.php');
-require_once($CFG->dirroot.'/mod/resource/locallib.php');
 require_once($CFG->libdir.'/filelib.php');
 
 class mod_imscp_mod_form extends moodleform_mod {

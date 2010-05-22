@@ -367,8 +367,7 @@ function page_pluginfile($course, $cminfo, $context, $filearea, $args, $forcedow
         if ($page->legacyfiles != RESOURCELIB_LEGACYFILES_ACTIVE) {
             return false;
         }
-        require_once("$CFG->dirroot/mod/resource/db/upgradelib.php");
-        if (!$file = resource_try_file_migration($relativepath, $cminfo->id, $cminfo->course, 'page_content', 0)) {
+        if (!$file = resourcelib_try_file_migration($relativepath, $cminfo->id, $cminfo->course, 'page_content', 0)) {
             return false;
         }
         //file migrate - update flag

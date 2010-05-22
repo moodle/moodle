@@ -32,8 +32,6 @@ define('NO_MOODLE_COOKIES', true);
 require_once(dirname(dirname(dirname(__FILE__))).'/config.php'); // global moodle config file.
 
 require_once($CFG->dirroot.'/course/lib.php');
-require_once($CFG->dirroot.'/mod/resource/lib.php');
-require_once($CFG->dirroot.'/mod/forum/lib.php');
 
 if (!is_enabled_auth('db')) {
     echo "Plugin not enabled!";

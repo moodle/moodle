@@ -28,7 +28,6 @@
 require_once(dirname(__FILE__).'/../config.php');
 require_once($CFG->libdir . '/formslib.php');
 require_once($CFG->dirroot .'/course/lib.php');
-require_once($CFG->dirroot .'/mod/resource/lib.php');
 require_once($CFG->libdir .'/filelib.php');
 
 define('GENERATOR_RANDOM', 0);

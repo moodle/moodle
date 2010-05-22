@@ -18,8 +18,6 @@
 /**
  * This file plays the mediafile set in lesson settings.
  *
- * Almost all of this code is from /mod/resource/type/file/resource.class.php so major props for resource
- *
  *  If there is a way to use the resource class instead of this code, please change to do so
  *
  *
@@ -30,8 +28,6 @@
 
 require_once('../../config.php');
 require_once($CFG->dirroot.'/mod/lesson/locallib.php');
-require_once($CFG->libdir.'/filelib.php');
-require_once($CFG->libdir.'/resourcelib.php');
 
 $id = required_param('id', PARAM_INT);    // Course Module ID
 $printclose = optional_param('printclose', 0, PARAM_INT);

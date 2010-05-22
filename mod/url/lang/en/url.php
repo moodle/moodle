@@ -29,13 +29,7 @@ $string['configframesize'] = 'When a web page or an uploaded file is displayed w
 $string['configrolesinparams'] = 'Enable if you want to include localized role names in list of avaible parameter variables.';
 $string['configsecretphrase'] = 'This secret phrase is used to produce encrypted code value that can be sent to some servers as a parameter.  The encrypted code is produced by an md5 value of the current user IP address concatenated with your secret phrase. ie code = md5(IP.secretphrase). Please note that this is not reliable because IP address may change and is often shared by different computers.';
 $string['contentheader'] = 'Content';
-$string['displayauto'] = 'Automatic';
-$string['displayembed'] = 'Embed';
-$string['displayframe'] = 'In frame';
-$string['displaynew'] = 'New window';
-$string['displayopen'] = 'Open';
 $string['displayoptions'] = 'Available display options';
-$string['displaypopup'] = 'In pop-up';
 $string['displayselect'] = 'Display';
 $string['displayselectexplain'] = 'Choose display type, unfortunately not all types are suitable for all URLs.';
 $string['externalurl'] = 'External URL';

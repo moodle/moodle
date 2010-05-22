@@ -24,45 +24,6 @@
  */
 
 /**
- * Try on demand migration of file from old course files
- * @param string $filepath old file path
- * @param int $cmid migrated course module if
- * @param int $courseid
- * @param string $filearea new file area
- * @param int $itemid migrated file item id
- * @return mixed, false if not found, stored_file instance if migrated to new area
- */
-function resource_try_file_migration($filepath, $cmid, $courseid, $filearea, $itemid) {
-    $fs = get_file_storage();
-
-    if (stripos($filepath, '/backupdata/') === 0 or stripos($filepath, '/moddata/') === 0) {
-        // do not steal protected files!
-        return false;
-    }
-
-    if (!$context = get_context_instance(CONTEXT_MODULE, $cmid)) {
-        return false;
-    }
-    if (!$coursecontext = get_context_instance(CONTEXT_COURSE, $courseid)) {
-        return false;
-    }
-
-    $pathnamehash = sha1($coursecontext->id.'course_content0'.$filepath);
-    if (!$file = $fs->get_file_by_hash($pathnamehash)) {
-        return false;
-    }
-
-    // copy and keep the same path, name, etc.
-    $file_record = array('contextid'=>$context->id, 'filearea'=>$filearea, 'itemid'=>$itemid);
-    try {
-        return $fs->create_file_from_storedfile($file_record, $file);
-    } catch (Exception $e) {
-        // file may exist - highly unlikely, we do not want upgrades to stop here
-        return false;
-    }
-}
-
-/**
  * Migrate resource module data from 1.9 resource_old table to new resource table
  * @return void
  */
@@ -132,7 +93,7 @@ function resource_20_migrate() {
             }
 
             // try migration of main file - ignore if does not exist
-            if ($file = resource_try_file_migration($resource->mainfile, $candidate->cmid, $candidate->course, 'resource_content', 0)) {
+            if ($file = resourcelib_try_file_migration($resource->mainfile, $candidate->cmid, $candidate->course, 'resource_content', 0)) {
                 $resource->mainfile = $file->get_filepath().$file->get_filename();
             }
 
@@ -166,7 +127,7 @@ function resource_20_migrate() {
             }
 
             // try migration of main file - ignore if does not exist
-            if ($file = resource_try_file_migration($resource->mainfile, $candidate->cmid, $candidate->course, 'resource_content', 0)) {
+            if ($file = resourcelib_try_file_migration($resource->mainfile, $candidate->cmid, $candidate->course, 'resource_content', 0)) {
                 $resource->mainfile = $file->get_filepath().$file->get_filename();
             }
         }

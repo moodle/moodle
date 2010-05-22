@@ -24,6 +24,7 @@
  **/
 
 /** Include required libraries */
+//TODO: these dumb includes have to be removed and this script minimised by moving stuff to locallib.php!!!
 require_once($CFG->libdir.'/eventslib.php');
 require_once($CFG->libdir.'/filelib.php');
 require_once($CFG->dirroot.'/calendar/lib.php');
@@ -959,68 +960,6 @@ function lesson_get_file_info($browser, $areas, $course, $cm, $context, $fileare
         return null;
     }
     return new file_info_stored($browser, $context, $storedfile, $urlbase, $filearea, $itemid, true, true, false);
-}
-
-/**
- * This is a function used to detect media types and generate html code.
- *
- * @global object $CFG
- * @global object $PAGE
- * @param object $lesson
- * @param object $context
- * @return string $code the html code of media
- */
-function lesson_get_media_html($lesson, $context) {
-    global $CFG, $PAGE, $OUTPUT;
-
-    // get the media file from file pool
-    $browser = get_file_browser();
-    $file_info  = $browser->get_file_info($context, 'lesson_media_file', $lesson->id, '/', $lesson->mediafile);
-    $url = $file_info->get_url();
-    $title = $lesson->mediafile;
-
-    $clicktoopen = html_writer::link(new moodle_url($url), get_string('download'));
-
-    $mimetype = resourcelib_guess_url_mimetype($url);
-
-    // find the correct type and print it out
-    if (in_array($mimetype, array('image/gif','image/jpeg','image/png'))) {  // It's an image
-        $code = resourcelib_embed_image($url, $title);
-
-    } else if ($mimetype == 'audio/mp3') {
-        // MP3 audio file
-        $code = resourcelib_embed_mp3($url, $title, $clicktoopen);
-
-    } else if ($mimetype == 'video/x-flv') {
-        // Flash video file
-        $code = resourcelib_embed_flashvideo($url, $title, $clicktoopen);
-
-    } else if ($mimetype == 'application/x-shockwave-flash') {
-        // Flash file
-        $code = resourcelib_embed_flash($url, $title, $clicktoopen);
-
-    } else if (substr($mimetype, 0, 10) == 'video/x-ms') {
-        // Windows Media Player file
-        $code = resourcelib_embed_mediaplayer($url, $title, $clicktoopen);
-
-    } else if ($mimetype == 'video/quicktime') {
-        // Quicktime file
-        $code = resourcelib_embed_quicktime($url, $title, $clicktoopen);
-
-    } else if ($mimetype == 'video/mpeg') {
-        // Mpeg file
-        $code = resourcelib_embed_mpeg($url, $title, $clicktoopen);
-
-    } else if ($mimetype == 'audio/x-pn-realaudio-plugin') {
-        // RealMedia file
-        $code = resourcelib_embed_real($url, $title, $clicktoopen);
-
-    } else {
-        // anything else - just try object tag enlarged as much as possible
-        $code = resourcelib_embed_general($url, $title, $clicktoopen, $mimetype);
-    }
-
-    return $code;
 }
 
 /**
