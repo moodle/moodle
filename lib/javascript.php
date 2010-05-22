@@ -47,7 +47,7 @@ foreach ($files as $fsfile) {
         // hackers - not in dirroot
         continue;
     }
-    if (substr($jsfile, -1) !== '.js') {
+    if (substr($jsfile, -3) !== '.js') {
         // hackers - not a JS file
         continue;
     }
