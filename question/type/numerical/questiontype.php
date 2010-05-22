@@ -447,12 +447,15 @@ class question_numerical_qtype extends question_shortanswer_qtype {
 
         $feedback = '';
         $class = '';
+        $classunit = '' ;
         $feedbackimg = '';
         $feedbackimgunit = '' ;
         $answerasterisk = false ;
+        $response = '' ;
 
         if ($options->feedback) {
             $class = question_get_feedback_class(0);
+            $classunit = question_get_feedback_class(0);
             $feedbackimg = question_get_feedback_image(0);
             $feedbackimgunit = question_get_feedback_image(0);
             $classunitvalue = 0 ;
@@ -663,7 +666,7 @@ class question_numerical_qtype extends question_shortanswer_qtype {
                 }
                 $answerasterisk = true ;        
                 $break = 1 ;
-            }else if ($response !== false &&  isset($question->options->units) && count($question->options->units) > 0) {
+            }else if ($response !== false  &&  isset($question->options->units) && count($question->options->units) > 0) {
                 $hasunits = 1 ;
                 foreach($question->options->units as $key => $unit){ 
                     $testresponse = $response /$unit->multiplier ;                        
