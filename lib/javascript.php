@@ -38,7 +38,7 @@ if (strpos($file, ',')) {
     $jsfiles = explode(',', $file);
     foreach ($jsfiles as $key=>$file) {
         $jsfiles[$key] = $CFG->dirroot.$file;
-}
+    }
 } else {
     $jsfiles = array($CFG->dirroot.$file);
 }
@@ -62,4 +62,4 @@ function minify($files) {
 
     Minify::serve('Files', $options);
     die();
-    }
+}
