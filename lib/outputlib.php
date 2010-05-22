@@ -517,7 +517,7 @@ class theme_config {
 
     /**
      * Returns output renderer prefixes, these are used when looking
-     * for the overriden renderers in themes.
+     * for the overridden renderers in themes.
      * @return array
      */
     public function renderer_prefixes() {
@@ -751,7 +751,7 @@ class theme_config {
      * Can be used recursively on the results of {@see css_files}
      *
      * @param array|string $file An array of file paths or a single file path
-     * @param array $keys An array of previous array keys [recusive addition]
+     * @param array $keys An array of previous array keys [recursive addition]
      * @return The converted array or the contents of the single file ($file type)
      */
     protected function css_files_get_contents($file, array $keys) {
@@ -769,7 +769,7 @@ class theme_config {
 
     /**
      * Get the javascript URL of this theme
-     * @param bool $inhead true means haed url, false means footer
+     * @param bool $inhead true means head url, false means footer
      * @return moodle_url
      */
     public function javascript_url($inhead) {
@@ -1205,7 +1205,7 @@ class xhtml_container_stack {
     protected $log = array();
     /**
      * Store whether we are developer debug mode. We need this in several places
-     * including in the destructor where we may no thave access to $CFG.
+     * including in the destructor where we may not have access to $CFG.
      * @var boolean
      */
     protected $isdebugging;

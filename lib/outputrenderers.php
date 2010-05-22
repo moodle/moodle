@@ -158,7 +158,7 @@ class plugin_renderer_base extends renderer_base {
 
     /**
      * Returns rendered widget.
-     * @param renderable $widget intence with renderable interface
+     * @param renderable $widget instance with renderable interface
      * @return string
      */
     public function render(renderable $widget) {
@@ -1331,7 +1331,7 @@ class core_renderer extends renderer_base {
         }
 
         $formstart = null;
-        //if the item doesnt belong to the current user, the user has permission to rate
+        //if the item doesn't belong to the current user, the user has permission to rate
         //and we're within the assessable period
         if ($rating->itemuserid!=$USER->id
             && $rating->settings->permissions->rate
@@ -2027,7 +2027,7 @@ NONJS;
     /**
      * Prints a single paging bar to provide access to other pages  (usually in a search)
      *
-     * @param int $totalcount Thetotal number of entries available to be paged through
+     * @param int $totalcount The total number of entries available to be paged through
      * @param int $page The page you are currently viewing
      * @param int $perpage The number of entries that should be shown per page
      * @param string|moodle_url $baseurl url of the current page, the $pagevar parameter is added
@@ -2343,7 +2343,7 @@ NONJS;
     /**
      * Returns the custom menu if one has been set
      *
-     * A custom menu can be configured by browing to
+     * A custom menu can be configured by browsing to
      *    Settings: Administration > Appearance > Themes > Theme settings
      * and then configuring the custommenu config setting as described.
      *
