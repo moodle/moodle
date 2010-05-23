@@ -506,7 +506,7 @@ function portfolio_instances($visibleonly=true, $useronly=true) {
     if ($useronly) {
         $sql .= ' AND id NOT IN (
                 SELECT instance FROM {portfolio_instance_user}
-                WHERE userid = ? AND name = ? AND value = ?
+                WHERE userid = ? AND name = ? AND ' . $DB->sql_compare_text('value') . ' = ?
             )';
         $values = array_merge($values, array($USER->id, 'visible', 0));
     }
