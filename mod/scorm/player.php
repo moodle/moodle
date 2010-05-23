@@ -296,9 +296,9 @@
             <!--[if IE]>
                 <iframe id="scoframe1" class="scoframe" name="scoframe1" src="<?php echo $fullurl; ?>"></iframe>
             <![endif]-->
-            <!--[if !IE]>
+            <![if !IE]>
                 <object id="scoframe1" class="scoframe" type="text/html" data="<?php echo $fullurl; ?>"></object>
-            <![endif]-->
+            <![endif]>
 <?php
             $PAGE->requires->js_function_call('scorm_resize');
         } else {
