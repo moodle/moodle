@@ -1164,7 +1164,7 @@ s only returning name of SQL substring function, it now requires all parameters.
         parent::release_session_lock($rowid);
 
         $fullname = $this->dbname.'-'.$this->prefix.'-session-'.$rowid;
-        $sql = "sp_releaseapplock '$fullname', 'Exclusive', 'Session'";
+        $sql = "sp_releaseapplock '$fullname', 'Session'";
         $this->query_start($sql, null, SQL_QUERY_AUX);
         $result = mssql_query($sql, $this->mssql);
         $this->query_end($result);
