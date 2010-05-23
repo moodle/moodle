@@ -130,7 +130,7 @@ class question_edit_calculatedsimple_form extends question_edit_form {
             if (''  != optional_param('datasetdef', '', PARAM_RAW) || ''  != optional_param('analyzequestion', '', PARAM_RAW)){
 
                 if  (  $dummyform->answer = optional_param('answer', '', PARAM_NOTAGS)) { // there is always at least one answer...
-                    $tolerance = optional_param('tolerance', '', PARAM_NUMBER);
+                    $fraction = optional_param('fraction', '', PARAM_NUMBER);
                     $tolerance = optional_param('tolerance', '', PARAM_NUMBER);
                     $tolerancetype = optional_param('tolerancetype', '', PARAM_NUMBER);
                     $correctanswerlength = optional_param('correctanswerlength', '', PARAM_INT);
@@ -140,7 +140,7 @@ class question_edit_calculatedsimple_form extends question_edit_form {
                         if(trim($answer) != ''){  // just look for non-empty
                             $this->answer[$key]=new stdClass();
                             $this->answer[$key]->answer = $answer;
-                        //    $this->answer[$key]->fraction = $fraction[$key];
+                            $this->answer[$key]->fraction = $fraction[$key];
                             $this->answer[$key]->tolerance = $tolerance[$key];
                             $this->answer[$key]->tolerancetype = $tolerancetype[$key];
                             $this->answer[$key]->correctanswerlength = $correctanswerlength[$key];
@@ -555,6 +555,7 @@ class question_edit_calculatedsimple_form extends question_edit_form {
                 $key = 0;
                 foreach ($answer as $answer){
                     $default_values['answer['.$key.']'] = $answer->answer; //  is necessary ? to-do test it
+                    $default_values['fraction['.$key.']'] = $answer->fraction;
                     $default_values['tolerance['.$key.']'] = $answer->tolerance;
                     $default_values['tolerancetype['.$key.']'] = $answer->tolerancetype;
                     $default_values['correctanswerlength['.$key.']'] = $answer->correctanswerlength;
