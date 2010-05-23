@@ -348,7 +348,7 @@
                     }
 
                     // Construct the SQL
-                    $select = 'SELECT '.$DB->sql_concat('u.id', '\'#\'', 'COALESCE(st.attempt, 0)').' AS uniqueid, ';
+                    $select = 'SELECT DISTINCT '.$DB->sql_concat('u.id', '\'#\'', 'COALESCE(st.attempt, 0)').' AS uniqueid, ';
                     $select .= 'st.scormid AS scormid, st.attempt AS attempt, ' . 
                             'u.id AS userid, u.idnumber, u.firstname, u.lastname, u.picture, u.imagealt ';
 
@@ -369,7 +369,6 @@
                             $where = ' WHERE u.id IN (' .$allowedlist. ') AND (st.userid IS NOT NULL OR st.userid IS NULL)';
                             break;
                     }
-                    $groupby = ' GROUP BY uniqueid';
                     
                     $countsql = 'SELECT COUNT(DISTINCT('.$DB->sql_concat('u.id', '\'#\'', 'COALESCE(st.attempt, 0)').')) AS nbresults, ';
                     $countsql .= 'COUNT(DISTINCT('.$DB->sql_concat('u.id', '\'#\'','st.attempt').')) AS nbattempts, ';
@@ -420,7 +419,7 @@
 
                     // Fetch the attempts
                     if (!$download) {
-                        $attempts = $DB->get_records_sql($select.$from.$where.$groupby.$sort, array(),
+                        $attempts = $DB->get_records_sql($select.$from.$where.$sort, array(),
                                                 $table->get_page_start(), $table->get_page_size());
                         echo '<div id="scormtablecontainer">';
                         if ($candelete) {
@@ -437,7 +436,7 @@
                         }
                         $table->initialbars($totalinitials>20); // Build table rows
                     } else {
-                        $attempts = $DB->get_records_sql($select.$from.$where.$groupby.$sort);
+                        $attempts = $DB->get_records_sql($select.$from.$where.$sort);
                     }
 
                     if ($attempts) {
