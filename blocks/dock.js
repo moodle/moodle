@@ -301,503 +301,6 @@ M.core_dock = {
             }
             this.Y.log('possible: '+possibleheight+' - used height: '+usedheight);
         }
-    },
-    /**
-     * Namespace containing methods and properties that will be prototyped
-     * to the generic block class and possibly overriden by themes
-     * @namespace
-     */
-    abstract_block_class : {
-
-        Y : null,                   // A YUI instance to use with the block
-        id : null,                  // The block instance id
-        cachedcontentnode : null,   // The cached content node for the actual block
-        blockspacewidth : null,     // The width of the block's original container
-        skipsetposition : false,    // If true the user preference isn't updated
-
-        /**
-         * This function should be called within the block's constructor and is used to
-         * set up the initial controls for swtiching block position as well as an initial
-         * moves that may be required.
-         *
-         * @param {YUI.Node} node The node that contains all of the block's content
-         */
-        init : function(Y, node) {
-
-            this.Y = Y;
-            if (!node) {
-                return;
-            }
-
-            var commands = node.one('.header .title .commands');
-            if (!commands) {
-                commands = this.Y.Node.create('<div class="commands"></div>');
-                if (node.one('.header .title')) {
-                    node.one('.header .title').append(commands);
-                }
-            }
-
-            var moveto = this.Y.Node.create('<input type="image" class="moveto customcommand requiresjs" src="'+M.util.image_url('t/block_to_dock', 'moodle')+'" alt="'+M.str.block.addtodock+'" title="'+M.str.block.addtodock+'" />');
-            moveto.on('movetodock|click', this.move_to_dock, this, commands);
-
-            var blockaction = node.one('.block_action');
-            if (blockaction) {
-                blockaction.prepend(moveto);
-            } else {
-                commands.append(moveto);
-            }
-
-            // Move the block straight to the dock if required
-            if (node.hasClass('dock_on_load')) {
-                node.removeClass('dock_on_load')
-                this.skipsetposition = true;
-                this.move_to_dock(null, commands);
-            }
-        },
-
-        /**
-         * This function is reponsible for moving a block from the page structure onto the
-         * dock
-         * @param {event}
-         */
-        move_to_dock : function(e, commands) {
-            if (e) {
-                e.halt(true);
-            }
-
-            var node = this.Y.one('#inst'+this.id);
-            var blockcontent = node.one('.content');
-            if (!blockcontent) {
-                return;
-            }
-
-            var blockclass = (function(classes){
-                var r = /(^|\s)(block_[a-zA-Z0-9_]+)(\s|$)/;
-                var m = r.exec(classes);
-                return (m)?m[2]:m;
-            })(node.getAttribute('className').toString());
-
-            this.cachedcontentnode = node;
-
-            var placeholder = this.Y.Node.create('<div id="content_placeholder_'+this.id+'" class="block_dock_placeholder"></div>');
-            node.replace(this.Y.Node.getDOMNode(placeholder));
-            node = null;
-
-            var spacewidth = this.resize_block_space(placeholder);
-
-            var blocktitle = this.Y.Node.getDOMNode(this.cachedcontentnode.one('.title h2')).cloneNode(true);
-            blocktitle = this.fix_title_orientation(blocktitle);
-
-            var blockcommands = this.cachedcontentnode.one('.title .commands');
-            if (!blockcommands) {
-                blockcommands = this.Y.Node.create('<div class="commands"></div>');
-                this.cachedcontentnode.one('.title').append(blockcommands);
-            }
-            var moveto = this.Y.Node.create('<a class="moveto customcommand requiresjs"></a>');
-            moveto.append(this.Y.Node.create('<img src="'+M.util.image_url('t/dock_to_block', 'moodle')+'" alt="'+M.str.block.undockitem+'" title="'+M.str.block.undockitem+'" />'));
-            if (location.href.match(/\?/)) {
-                moveto.set('href', location.href+'&dock='+this.id);
-            } else {
-                moveto.set('href', location.href+'?dock='+this.id);
-            }
-            blockcommands.append(moveto);
-
-            // Create a new dock item for the block
-            var dockitem = new M.core_dock.item(this.Y, this.id, blocktitle, blockcontent, blockcommands, blockclass);
-            if (spacewidth !== null && M.core_dock.cfg.display.mindisplaywidth == null) {
-                dockitem.cfg.display.mindisplaywidth = spacewidth;
-            }
-            // Wire the draw events to register remove events
-            dockitem.on('dockeditem:drawcomplete', function(e){
-                // check the contents block [editing=off]
-                this.contents.all('.moveto').on('returntoblock|click', function(e){
-                    e.halt();
-                    M.core_dock.remove(this.id)
-                }, this);
-                // check the commands block [editing=on]
-                this.commands.all('.moveto').on('returntoblock|click', function(e){
-                    e.halt();
-                    M.core_dock.remove(this.id)
-                }, this);
-                // Add a close icon
-                var closeicon = this.Y.Node.create('<span class="hidepanelicon"><img src="'+M.util.image_url('t/dockclose', 'moodle')+'" alt="" style="width:11px;height:11px;cursor:pointer;" /></span>');
-                closeicon.on('forceclose|click', M.core_dock.hide_all, M.core_dock);
-                closeicon.on('forceclose|click', M.core_dock.hide_all, M.core_dock);
-                this.commands.append(closeicon);
-            }, dockitem);
-
-            // Register an event so that when it is removed we can put it back as a block
-            dockitem.on('dockitem:itemremoved', this.return_to_block, this, dockitem);
-            M.core_dock.add(dockitem);
-
-            if (!this.skipsetposition) {
-                // save the users preference
-                M.util.set_user_preference('docked_block_instance_'+this.id, 1);
-            } else {
-                this.skipsetposition = false;
-            }
-        },
-        /**
-         * Corrects the orientation of the title, which for the default
-         * dock just means making it vertical
-         * @param {YUI.Node} node
-         */
-        fix_title_orientation : function(node) {
-            var title = node.firstChild.nodeValue;
-
-            var clockwise = false;
-            if (M.core_dock.cfg.titlerotation == 'counterclockwise') {
-                clockwise = false;
-            } else if (M.core_dock.cfg.titlerotation == 'clockwise') {
-                clockwise = true;
-            } else {
-                clockwise = (M.core_dock.cfg.titleorientation)(M.str.langconfig.thisdirectionvertical=='ttb');
-            }
-
-            if (YAHOO.env.ua.ie > 0) {
-                if (YAHOO.env.ua.ie > 7) {
-                    // IE8 can flip the text via CSS
-                    node.setAttribute('style', 'writing-mode: tb-rl; filter: flipV flipH;');
-                } else {
-                    // IE < 7 can't do anything cool, just settle to stacked letters
-                    title = title.split('').join('<br />');
-                    node.innerHTML = title;
-                }
-                return node;
-            }
-
-            // Cool, we can use SVG!
-            var test = M.core_dock.Y.Node.create('<div><span style="font-size:10pt;">'+title+'</span></div>');
-            M.core_dock.Y.one(document.body).append(test);
-            var height = test.one('span').get('offsetWidth');
-            var width = test.one('span').get('offsetHeight')*2;
-            var qwidth = width/4;
-            test.remove();
-
-            var txt = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-            txt.setAttribute('font-size', '10');
-            if (clockwise) {
-                txt.setAttribute('transform','rotate(90 '+(qwidth/2)+' '+qwidth+')');
-            } else {
-                txt.setAttribute('y', height);
-                txt.setAttribute('transform','rotate(270 '+qwidth+' '+(height-qwidth)+')');
-            }
-            txt.appendChild(document.createTextNode(node.firstChild.nodeValue));
-
-            var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-            svg.setAttribute('version', '1.1');
-            svg.setAttribute('height', height);
-            svg.setAttribute('width', width);
-            svg.appendChild(txt);
-
-            var div = document.createElement(node.nodeName);
-            div.appendChild(svg);
-
-            return div;
-        },
-        /**
-         * Resizes the space that contained blocks if there were no blocks left in
-         * it. e.g. if all blocks have been moved to the dock
-         * @param {Y.Node} node
-         */
-        resize_block_space : function(node) {
-            var blockregions = [];
-            var populatedblockregions = 0;
-            M.core_dock.Y.all('.block-region').each(function(region){
-                var hasblocks = (region.all('.block').size() > 0);
-                if (hasblocks) {
-                    populatedblockregions++;
-                }
-                blockregions[region.get('id')] = {hasblocks: hasblocks, bodyclass: region.get('id').replace(/^region\-/, 'side-')+'-only'};
-            });
-            var bodynode = M.core_dock.Y.one(document.body);
-            var noblocksbodyclass = 'content-only';
-            var i = null;
-            if (populatedblockregions==0) {
-                bodynode.addClass(noblocksbodyclass);
-                for (i in blockregions) {
-                    bodynode.removeClass(blockregions[i].bodyclass);
-                }
-            } else if (populatedblockregions==1) {
-                bodynode.removeClass(noblocksbodyclass);
-                for (i in blockregions) {
-                    if (!blockregions[i].hasblocks) {
-                        bodynode.removeClass(blockregions[i].bodyclass);
-                    } else {
-                        bodynode.addClass(blockregions[i].bodyclass);
-                    }
-                }
-            } else {
-                bodynode.removeClass(noblocksbodyclass);
-                for (i in blockregions) {
-                    bodynode.removeClass(blockregions[i].bodyclass);
-                }
-            }
-            return '200px';
-        },
-        /**
-         * This function removes a block from the dock and puts it back into the page
-         * structure.
-         * @param {M.core_dock.class.item}
-         */
-        return_to_block : function(dockitem) {
-            var placeholder = this.Y.one('#content_placeholder_'+this.id);
-            
-            if (this.cachedcontentnode.one('.header')) {
-                this.cachedcontentnode.one('.header').insert(dockitem.contents, 'after');
-            } else {
-                this.cachedcontentnode.insert(dockitem.contents);
-            }
-
-            placeholder.replace(this.Y.Node.getDOMNode(this.cachedcontentnode));
-            this.cachedcontentnode = this.Y.one('#'+this.cachedcontentnode.get('id'));
-
-            this.resize_block_space(this.cachedcontentnode);
-
-
-            var commands = this.cachedcontentnode.one('.commands');
-            if (commands) {
-                commands.all('.hidepanelicon').remove();
-                commands.all('.moveto').remove();
-                commands.remove();
-            }
-            this.cachedcontentnode.one('.title').append(commands);
-            this.cachedcontentnode = null;
-            M.util.set_user_preference('docked_block_instance_'+this.id, 0);
-            return true;
-        }
-    },
-    /**
-     * This namespace contains the generic properties, methods and events
-     * that will be bound to the M.core_dock.item class.
-     * These can then be overriden to customise the way dock items work/display
-     * @namespace
-     */
-    abstract_item_class : {
-
-        Y : null,               // The YUI instance to use with this dock item
-        id : null,              // The unique id for the item
-        name : null,            // The name of the item
-        title : null,           // The title of the item
-        contents : null,        // The content of the item
-        commands : null,        // The commands for the item
-        active : false,         // True if the item is being shown
-        panel : null,           // The YUI2 panel the item will be shown in
-        preventhide : false,    // If true the next call to hide will be ignored
-        cfg : null,             // The config options for this item by default M.core_dock.cfg
-
-        /**
-         * Initialises all of the items events
-         * @function
-         */
-        init_events : function() {
-            this.publish('dockeditem:drawstart', {prefix:'dockeditem'});
-            this.publish('dockeditem:drawcomplete', {prefix:'dockeditem'});
-            this.publish('dockeditem:showstart', {prefix:'dockeditem'});
-            this.publish('dockeditem:showcomplete', {prefix:'dockeditem'});
-            this.publish('dockeditem:hidestart', {prefix:'dockeditem'});
-            this.publish('dockeditem:hidecomplete', {prefix:'dockeditem'});
-            this.publish('dockeditem:resizestart', {prefix:'dockeditem'});
-            this.publish('dockeditem:resizecomplete', {prefix:'dockeditem'});
-            this.publish('dockeditem:itemremoved', {prefix:'dockeditem'});
-        },
-
-        /**
-         * This function draws the item on the dock
-         */
-        draw : function() {
-            this.fire('dockeditem:drawstart');
-            var dockitemtitle = this.Y.Node.create('<div id="dock_item_'+this.id+'_title" class="'+this.cfg.css.dockedtitle+'"></div>');
-            dockitemtitle.append(this.title);
-            var dockitem = this.Y.Node.create('<div id="dock_item_'+this.id+'" class="'+this.cfg.css.dockeditem+'"></div>');
-            if (M.core_dock.count === 1) {
-                dockitem.addClass('firstdockitem');
-            }
-            dockitem.append(dockitemtitle);
-            M.core_dock.append(dockitem);
-
-            var position = dockitemtitle.getXY();
-            position[0] += parseInt(dockitemtitle.get('offsetWidth'));
-            if (YAHOO.env.ua.ie > 0 && YAHOO.env.ua.ie < 8) {
-                position[0] -= 2;
-            }
-            this.panel = new YAHOO.widget.Panel('dock_item_panel_'+this.id, {
-                close:this.cfg.panel.close,
-                draggable:this.cfg.panel.draggable,
-                underlay:this.cfg.panel.underlay,
-                modal: this.cfg.panel.modal,
-                keylisteners: this.cfg.panel.keylisteners,
-                visible:this.cfg.panel.visible,
-                effect:this.cfg.panel.effect,
-                monitorresize:this.cfg.panel.monitorresize,
-                context: this.cfg.panel.context,
-                fixedcenter: this.cfg.panel.fixedcenter,
-                zIndex: this.cfg.panel.zIndex,
-                constraintoviewport: this.cfg.panel.constraintoviewport,
-                xy:position,
-                autofillheight:this.cfg.panel.autofillheight});
-            this.panel.showEvent.subscribe(this.resize_panel, this, true);
-            this.panel.showMaskEvent.subscribe(function(){
-                this.Y.one(this.panel.mask).setStyle('zIndex', this.cfg.panel.modalzindex);
-            }, this, true);
-            if (this.commands.hasChildNodes) {
-                this.panel.setHeader(this.Y.Node.getDOMNode(this.commands));
-            }
-            this.panel.setBody(this.Y.Node.getDOMNode(this.contents));
-            this.panel.render(M.core_dock.node);
-            this.Y.one(this.panel.body).addClass(this.blockclass);
-            if (this.cfg.display.mindisplaywidth !== null && this.Y.one(this.panel.body).getStyle('minWidth') == '0px') {
-                this.Y.one(this.panel.body).setStyle('minWidth', this.cfg.display.mindisplaywidth);
-                this.Y.one(this.panel.body).setStyle('minHeight', dockitemtitle.get('offsetHeight')+'px');
-            }
-            dockitem.on('showitem|mouseover', this.show, this);
-            dockitem.on('showitem|click', this.show, this);
-            this.fire('dockeditem:drawcomplete');
-        },
-        /**
-         * This function removes the node and destroys it's bits
-         * @param {Event} e
-         */
-        remove : function (e) {
-            this.hide(e);
-            this.Y.one('#dock_item_'+this.id).remove();
-            this.panel.destroy();
-            this.fire('dockitem:itemremoved');
-        },
-        /**
-         * This function toggles makes the item active and shows it
-         * @param {event}
-         */
-        show : function(e) {
-            M.core_dock.hide_all();
-            this.fire('dockeditem:showstart');
-            this.panel.show(e, this);
-            this.active = true;
-            // Add active item class first up
-            this.Y.one('#dock_item_'+this.id+'_title').addClass(this.cfg.css.activeitem);
-            // Remove the two show event listeners
-            this.Y.detach('mouseover', this.show, this.Y.one('#dock_item_'+this.id));
-            this.Y.detach('click', this.show, this.Y.one('#dock_item_'+this.id));
-            // Add control events to ensure we don't cause annoyance
-            this.Y.one('#dock_item_panel_'+this.id).on('dockpreventhide|click', function(){this.preventhide=true;}, this);
-            // Add resize event so we keep it viewable
-            this.Y.get(window).on('dockresize|resize', this.resize_panel, this);
-
-            // If the event was fired by mouse over then we also want to hide when
-            // the user moves the mouse out of the area
-            if (e.type == 'mouseover') {
-                this.Y.one(this.panel.element).on('dockhide|mouseleave', this.delay_hide, this);
-                this.preventhide = true;
-                setTimeout(function(obj){
-                    if (obj.preventhide) {
-                        obj.preventhide = false;
-                    }
-                }, 1000, this);
-            }
-
-            // Attach the default hide events, clicking the heading or the body
-            this.Y.one('#dock_item_'+this.id).on('dockhide|click', this.hide, this);
-            this.Y.get(document.body).on('dockhide|click', this.hide, this);
-            
-            this.fire('dockeditem:showcomplete');
-            return true;
-        },
-        /**
-         * This function hides the item and makes it inactive
-         * @param {event} e
-         * @param {boolean} ignorepreventhide If true preventhide is ignored
-         */
-        hide : function(e) {
-            // Check whether a second argument has been passed
-            var ignorepreventhide = (arguments.length==2 && arguments[1]);
-            // Ignore this call is preventhide is true
-            if (this.preventhide===true && !ignorepreventhide) {
-                this.preventhide = false;
-                if (e) {
-                    // Stop all propagation immediatly or the next element (likely body)
-                    // will fire this event again and the item will hide
-                    e.stopImmediatePropagation();
-                }
-            } else if (this.active) {
-                // Display any hide delay running, mouseleave-mouseenter-click
-                this.delayhiderunning = false;
-                this.fire('dockeditem:hidestart');
-                // No longer active
-                this.active = false;
-                // Remove the active class
-                this.Y.one('#dock_item_'+this.id+'_title').removeClass(this.cfg.css.activeitem);
-                // Add the show event again
-                this.Y.one('#dock_item_'+this.id).on('showitem|mouseover', this.show, this);
-                // Remove the hide events
-                this.Y.detach('mouseleave', this.delayhide, this.Y.one(this.panel.element));
-                this.Y.get(window).detach('dockresize|resize');
-                this.Y.get(document.body).detach('dockhide|click');
-                // Hide the panel
-                this.panel.hide(e, this);
-                this.fire('dockeditem:hidecomplete');
-            }
-        },
-        /**
-         * This function sets the item to hide after a specific delay, that delay is
-         * this.delayhidetimeout.
-         * @param {Event} e
-         */
-        delay_hide : function(e) {
-            // The hide delay timeout is running now
-            this.delayhiderunning = true;
-            // Add the re-enter event to cancel the delay timeout
-            var delayhideevent = this.Y.one(this.panel.element).on('delayhide|mouseover', function(){this.delayhiderunning = false;}, this);
-            // Set the timeout + callback and pass the this for scope and the event so
-            // it can be easily detached
-            setTimeout(function(obj, ev){
-                if (obj.delayhiderunning) {
-                    ev.detach();
-                    obj.hide();
-                }
-            }, this.delayhidetimeout, this, delayhideevent);
-        },
-        /**
-         * This function checks the size and position of the panel and moves/resizes if
-         * required to keep it within the bounds of the window.
-         */
-        resize_panel : function() {
-            this.fire('dockeditem:resizestart');
-
-            var panelheader = this.Y.one(this.panel.header);
-            panelheader = (panelheader)?panelheader.get('offsetHeight'):0;
-            var panelbody = this.Y.one(this.panel.body);
-
-            var buffer = this.cfg.buffer;
-            var screenheight = parseInt(this.Y.get(document.body).get('winHeight'));
-            var panelheight = parseInt(panelheader + panelbody.get('offsetHeight'));
-            var paneltop = parseInt(this.panel.cfg.getProperty('y'));
-            var titletop = parseInt(this.Y.one('#dock_item_'+this.id+'_title').getY());
-            var scrolltop = window.pageYOffset || document.body.scrollTop || 0;
-
-            // This makes sure that the panel is the same height as the dock title to
-            // begin with
-            if (paneltop > (buffer+scrolltop) && paneltop > (titletop+scrolltop)) {
-                this.panel.cfg.setProperty('y', titletop+scrolltop);
-            }
-
-            // This makes sure that if the panel is big it is moved up to ensure we don't
-            // have wasted space above the panel
-            if ((paneltop+panelheight)>(screenheight+scrolltop) && paneltop > buffer) {
-                paneltop = (screenheight-panelheight-buffer);
-                if (paneltop<buffer) {
-                    paneltop = buffer;
-                }
-                this.panel.cfg.setProperty('y', paneltop+scrolltop);
-            }
-
-            // This makes the panel constrain to the screen's height if the panel is big
-            if (paneltop <= buffer && ((panelheight+paneltop*2) > screenheight || panelbody.hasClass('oversized_content'))) {
-                this.panel.cfg.setProperty('height', screenheight-(buffer*3));
-                panelbody.setStyle('height', (screenheight-panelheader-(buffer*3)-10)+'px');
-                panelbody.addClass('oversized_content');
-            }
-            this.fire('dockeditem:resizecomplete');
-        }
     }
 };
 
@@ -806,17 +309,268 @@ M.core_dock = {
  * @class genericblock
  * @constructor
  */
-M.core_dock.genericblock = function() {};
-/** Properties */
-M.core_dock.genericblock.prototype.cachedcontentnode =       M.core_dock.abstract_block_class.cachedcontentnode;
-M.core_dock.genericblock.prototype.blockspacewidth =         M.core_dock.abstract_block_class.blockspacewidth;
-M.core_dock.genericblock.prototype.skipsetposition =         M.core_dock.abstract_block_class.skipsetposition;
-/** Methods **/
-M.core_dock.genericblock.prototype.init =                    M.core_dock.abstract_block_class.init;
-M.core_dock.genericblock.prototype.move_to_dock =            M.core_dock.abstract_block_class.move_to_dock;
-M.core_dock.genericblock.prototype.resize_block_space =      M.core_dock.abstract_block_class.resize_block_space;
-M.core_dock.genericblock.prototype.return_to_block =         M.core_dock.abstract_block_class.return_to_block;
-M.core_dock.genericblock.prototype.fix_title_orientation =   M.core_dock.abstract_block_class.fix_title_orientation;
+M.core_dock.genericblock = function() {
+    // Nothing to actually do here but it needs a constructor!
+};
+M.core_dock.genericblock.prototype = {
+    Y : null,                   // A YUI instance to use with the block
+    id : null,                  // The block instance id
+    cachedcontentnode : null,   // The cached content node for the actual block
+    blockspacewidth : null,     // The width of the block's original container
+    skipsetposition : false,    // If true the user preference isn't updated
+    /**
+     * This function should be called within the block's constructor and is used to
+     * set up the initial controls for swtiching block position as well as an initial
+     * moves that may be required.
+     *
+     * @param {YUI} Y
+     * @param {YUI.Node} node The node that contains all of the block's content
+     */
+    init : function(Y, node) {
+
+        this.Y = Y;
+        if (!node) {
+            return;
+        }
+
+        var commands = node.one('.header .title .commands');
+        if (!commands) {
+            commands = this.Y.Node.create('<div class="commands"></div>');
+            if (node.one('.header .title')) {
+                node.one('.header .title').append(commands);
+            }
+        }
+
+        var moveto = this.Y.Node.create('<input type="image" class="moveto customcommand requiresjs" src="'+M.util.image_url('t/block_to_dock', 'moodle')+'" alt="'+M.str.block.addtodock+'" title="'+M.str.block.addtodock+'" />');
+        moveto.on('movetodock|click', this.move_to_dock, this, commands);
+
+        var blockaction = node.one('.block_action');
+        if (blockaction) {
+            blockaction.prepend(moveto);
+        } else {
+            commands.append(moveto);
+        }
+
+        // Move the block straight to the dock if required
+        if (node.hasClass('dock_on_load')) {
+            node.removeClass('dock_on_load')
+            this.skipsetposition = true;
+            this.move_to_dock(null, commands);
+        }
+    },
+
+    /**
+     * This function is reponsible for moving a block from the page structure onto the
+     * dock
+     * @param {event}
+     */
+    move_to_dock : function(e, commands) {
+        if (e) {
+            e.halt(true);
+        }
+
+        var node = this.Y.one('#inst'+this.id);
+        var blockcontent = node.one('.content');
+        if (!blockcontent) {
+            return;
+        }
+
+        var blockclass = (function(classes){
+            var r = /(^|\s)(block_[a-zA-Z0-9_]+)(\s|$)/;
+            var m = r.exec(classes);
+            return (m)?m[2]:m;
+        })(node.getAttribute('className').toString());
+
+        this.cachedcontentnode = node;
+
+        var placeholder = this.Y.Node.create('<div id="content_placeholder_'+this.id+'" class="block_dock_placeholder"></div>');
+        node.replace(this.Y.Node.getDOMNode(placeholder));
+        node = null;
+
+        var spacewidth = this.resize_block_space(placeholder);
+
+        var blocktitle = this.Y.Node.getDOMNode(this.cachedcontentnode.one('.title h2')).cloneNode(true);
+        blocktitle = this.fix_title_orientation(blocktitle);
+
+        var blockcommands = this.cachedcontentnode.one('.title .commands');
+        if (!blockcommands) {
+            blockcommands = this.Y.Node.create('<div class="commands"></div>');
+            this.cachedcontentnode.one('.title').append(blockcommands);
+        }
+        var moveto = this.Y.Node.create('<a class="moveto customcommand requiresjs"></a>');
+        moveto.append(this.Y.Node.create('<img src="'+M.util.image_url('t/dock_to_block', 'moodle')+'" alt="'+M.str.block.undockitem+'" title="'+M.str.block.undockitem+'" />'));
+        if (location.href.match(/\?/)) {
+            moveto.set('href', location.href+'&dock='+this.id);
+        } else {
+            moveto.set('href', location.href+'?dock='+this.id);
+        }
+        blockcommands.append(moveto);
+
+        // Create a new dock item for the block
+        var dockitem = new M.core_dock.item(this.Y, this.id, blocktitle, blockcontent, blockcommands, blockclass);
+        if (spacewidth !== null && M.core_dock.cfg.display.mindisplaywidth == null) {
+            dockitem.cfg.display.mindisplaywidth = spacewidth;
+        }
+        // Wire the draw events to register remove events
+        dockitem.on('dockeditem:drawcomplete', function(e){
+            // check the contents block [editing=off]
+            this.contents.all('.moveto').on('returntoblock|click', function(e){
+                e.halt();
+                M.core_dock.remove(this.id)
+            }, this);
+            // check the commands block [editing=on]
+            this.commands.all('.moveto').on('returntoblock|click', function(e){
+                e.halt();
+                M.core_dock.remove(this.id)
+            }, this);
+            // Add a close icon
+            var closeicon = this.Y.Node.create('<span class="hidepanelicon"><img src="'+M.util.image_url('t/dockclose', 'moodle')+'" alt="" style="width:11px;height:11px;cursor:pointer;" /></span>');
+            closeicon.on('forceclose|click', M.core_dock.hide_all, M.core_dock);
+            closeicon.on('forceclose|click', M.core_dock.hide_all, M.core_dock);
+            this.commands.append(closeicon);
+        }, dockitem);
+
+        // Register an event so that when it is removed we can put it back as a block
+        dockitem.on('dockitem:itemremoved', this.return_to_block, this, dockitem);
+        M.core_dock.add(dockitem);
+
+        if (!this.skipsetposition) {
+            // save the users preference
+            M.util.set_user_preference('docked_block_instance_'+this.id, 1);
+        } else {
+            this.skipsetposition = false;
+        }
+    },
+    /**
+     * Corrects the orientation of the title, which for the default
+     * dock just means making it vertical
+     * @param {YUI.Node} node
+     */
+    fix_title_orientation : function(node) {
+        var title = node.firstChild.nodeValue;
+
+        var clockwise = false;
+        if (M.core_dock.cfg.titlerotation == 'counterclockwise') {
+            clockwise = false;
+        } else if (M.core_dock.cfg.titlerotation == 'clockwise') {
+            clockwise = true;
+        } else {
+            clockwise = (M.core_dock.cfg.titleorientation)(M.str.langconfig.thisdirectionvertical=='ttb');
+        }
+
+        if (YAHOO.env.ua.ie > 0) {
+            if (YAHOO.env.ua.ie > 7) {
+                // IE8 can flip the text via CSS
+                node.setAttribute('style', 'writing-mode: tb-rl; filter: flipV flipH;');
+            } else {
+                // IE < 7 can't do anything cool, just settle to stacked letters
+                title = title.split('').join('<br />');
+                node.innerHTML = title;
+            }
+            return node;
+        }
+
+        // Cool, we can use SVG!
+        var test = M.core_dock.Y.Node.create('<div><span style="font-size:10pt;">'+title+'</span></div>');
+        M.core_dock.Y.one(document.body).append(test);
+        var height = test.one('span').get('offsetWidth');
+        var width = test.one('span').get('offsetHeight')*2;
+        var qwidth = width/4;
+        test.remove();
+
+        var txt = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        txt.setAttribute('font-size', '10');
+        if (clockwise) {
+            txt.setAttribute('transform','rotate(90 '+(qwidth/2)+' '+qwidth+')');
+        } else {
+            txt.setAttribute('y', height);
+            txt.setAttribute('transform','rotate(270 '+qwidth+' '+(height-qwidth)+')');
+        }
+        txt.appendChild(document.createTextNode(node.firstChild.nodeValue));
+
+        var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        svg.setAttribute('version', '1.1');
+        svg.setAttribute('height', height);
+        svg.setAttribute('width', width);
+        svg.appendChild(txt);
+
+        var div = document.createElement(node.nodeName);
+        div.appendChild(svg);
+
+        return div;
+    },
+    /**
+     * Resizes the space that contained blocks if there were no blocks left in
+     * it. e.g. if all blocks have been moved to the dock
+     * @param {Y.Node} node
+     */
+    resize_block_space : function(node) {
+        var blockregions = [];
+        var populatedblockregions = 0;
+        M.core_dock.Y.all('.block-region').each(function(region){
+            var hasblocks = (region.all('.block').size() > 0);
+            if (hasblocks) {
+                populatedblockregions++;
+            }
+            blockregions[region.get('id')] = {hasblocks: hasblocks, bodyclass: region.get('id').replace(/^region\-/, 'side-')+'-only'};
+        });
+        var bodynode = M.core_dock.Y.one(document.body);
+        var noblocksbodyclass = 'content-only';
+        var i = null;
+        if (populatedblockregions==0) {
+            bodynode.addClass(noblocksbodyclass);
+            for (i in blockregions) {
+                bodynode.removeClass(blockregions[i].bodyclass);
+            }
+        } else if (populatedblockregions==1) {
+            bodynode.removeClass(noblocksbodyclass);
+            for (i in blockregions) {
+                if (!blockregions[i].hasblocks) {
+                    bodynode.removeClass(blockregions[i].bodyclass);
+                } else {
+                    bodynode.addClass(blockregions[i].bodyclass);
+                }
+            }
+        } else {
+            bodynode.removeClass(noblocksbodyclass);
+            for (i in blockregions) {
+                bodynode.removeClass(blockregions[i].bodyclass);
+            }
+        }
+        return '200px';
+    },
+    /**
+     * This function removes a block from the dock and puts it back into the page
+     * structure.
+     * @param {M.core_dock.class.item}
+     */
+    return_to_block : function(dockitem) {
+        var placeholder = this.Y.one('#content_placeholder_'+this.id);
+
+        if (this.cachedcontentnode.one('.header')) {
+            this.cachedcontentnode.one('.header').insert(dockitem.contents, 'after');
+        } else {
+            this.cachedcontentnode.insert(dockitem.contents);
+        }
+
+        placeholder.replace(this.Y.Node.getDOMNode(this.cachedcontentnode));
+        this.cachedcontentnode = this.Y.one('#'+this.cachedcontentnode.get('id'));
+
+        this.resize_block_space(this.cachedcontentnode);
+
+
+        var commands = this.cachedcontentnode.one('.commands');
+        if (commands) {
+            commands.all('.hidepanelicon').remove();
+            commands.all('.moveto').remove();
+            commands.remove();
+        }
+        this.cachedcontentnode.one('.title').append(commands);
+        this.cachedcontentnode = null;
+        M.util.set_user_preference('docked_block_instance_'+this.id, 0);
+        return true;
+    }
+}
 
 /**
  * This class represents an item in the dock
@@ -846,29 +600,240 @@ M.core_dock.item = function(Y, uid, title, contents, commands, blockclass){
     if (blockclass && this.blockclass==null) {
         this.blockclass = blockclass
     }
+    this.cfg = M.core_dock.cfg;
     this.init_events();
 }
-/** Properties */
-M.core_dock.item.prototype.id =                 M.core_dock.abstract_item_class.id;
-M.core_dock.item.prototype.name =               M.core_dock.abstract_item_class.name;
-M.core_dock.item.prototype.title =              M.core_dock.abstract_item_class.title;
-M.core_dock.item.prototype.contents =           M.core_dock.abstract_item_class.contents;
-M.core_dock.item.prototype.commands =           M.core_dock.abstract_item_class.commands;
-M.core_dock.item.prototype.active =             M.core_dock.abstract_item_class.active;
-M.core_dock.item.prototype.panel =              M.core_dock.abstract_item_class.panel;
-M.core_dock.item.prototype.preventhide =        M.core_dock.abstract_item_class.preventhide;
-M.core_dock.item.prototype.cfg =                M.core_dock.cfg;
-M.core_dock.item.prototype.blockclass =         null;
-M.core_dock.item.prototype.delayhiderunning =   false;
-M.core_dock.item.prototype.delayhidetimeout =   1000; // 1 Second
-/** Methods **/
-M.core_dock.item.prototype.init_events =        M.core_dock.abstract_item_class.init_events;
-M.core_dock.item.prototype.draw =               M.core_dock.abstract_item_class.draw;
-M.core_dock.item.prototype.remove =             M.core_dock.abstract_item_class.remove;
-M.core_dock.item.prototype.show =               M.core_dock.abstract_item_class.show;
-M.core_dock.item.prototype.hide =               M.core_dock.abstract_item_class.hide;
-M.core_dock.item.prototype.delay_hide =         M.core_dock.abstract_item_class.delay_hide;
-M.core_dock.item.prototype.resize_panel =       M.core_dock.abstract_item_class.resize_panel;
+/**
+ *
+ */
+M.core_dock.item.prototype = {
+    Y : null,               // The YUI instance to use with this dock item
+    id : null,              // The unique id for the item
+    name : null,            // The name of the item
+    title : null,           // The title of the item
+    contents : null,        // The content of the item
+    commands : null,        // The commands for the item
+    active : false,         // True if the item is being shown
+    panel : null,           // The YUI2 panel the item will be shown in
+    preventhide : false,    // If true the next call to hide will be ignored
+    cfg : null,             // The config options for this item by default M.core_dock.cfg
+    blockclass : null,
+    delayhiderunning : false,
+    delayhidetimeout : 1000, // 1 Second
+
+    /**
+     * Initialises all of the items events
+     * @function
+     */
+    init_events : function() {
+        this.publish('dockeditem:drawstart', {prefix:'dockeditem'});
+        this.publish('dockeditem:drawcomplete', {prefix:'dockeditem'});
+        this.publish('dockeditem:showstart', {prefix:'dockeditem'});
+        this.publish('dockeditem:showcomplete', {prefix:'dockeditem'});
+        this.publish('dockeditem:hidestart', {prefix:'dockeditem'});
+        this.publish('dockeditem:hidecomplete', {prefix:'dockeditem'});
+        this.publish('dockeditem:resizestart', {prefix:'dockeditem'});
+        this.publish('dockeditem:resizecomplete', {prefix:'dockeditem'});
+        this.publish('dockeditem:itemremoved', {prefix:'dockeditem'});
+    },
+
+    /**
+     * This function draws the item on the dock
+     */
+    draw : function() {
+        this.fire('dockeditem:drawstart');
+        var dockitemtitle = this.Y.Node.create('<div id="dock_item_'+this.id+'_title" class="'+this.cfg.css.dockedtitle+'"></div>');
+        dockitemtitle.append(this.title);
+        var dockitem = this.Y.Node.create('<div id="dock_item_'+this.id+'" class="'+this.cfg.css.dockeditem+'"></div>');
+        if (M.core_dock.count === 1) {
+            dockitem.addClass('firstdockitem');
+        }
+        dockitem.append(dockitemtitle);
+        M.core_dock.append(dockitem);
+
+        var position = dockitemtitle.getXY();
+        position[0] += parseInt(dockitemtitle.get('offsetWidth'));
+        if (YAHOO.env.ua.ie > 0 && YAHOO.env.ua.ie < 8) {
+            position[0] -= 2;
+        }
+        this.panel = new YAHOO.widget.Panel('dock_item_panel_'+this.id, {
+            close:this.cfg.panel.close,
+            draggable:this.cfg.panel.draggable,
+            underlay:this.cfg.panel.underlay,
+            modal: this.cfg.panel.modal,
+            keylisteners: this.cfg.panel.keylisteners,
+            visible:this.cfg.panel.visible,
+            effect:this.cfg.panel.effect,
+            monitorresize:this.cfg.panel.monitorresize,
+            context: this.cfg.panel.context,
+            fixedcenter: this.cfg.panel.fixedcenter,
+            zIndex: this.cfg.panel.zIndex,
+            constraintoviewport: this.cfg.panel.constraintoviewport,
+            xy:position,
+            autofillheight:this.cfg.panel.autofillheight});
+        this.panel.showEvent.subscribe(this.resize_panel, this, true);
+        this.panel.showMaskEvent.subscribe(function(){
+            this.Y.one(this.panel.mask).setStyle('zIndex', this.cfg.panel.modalzindex);
+        }, this, true);
+        if (this.commands.hasChildNodes) {
+            this.panel.setHeader(this.Y.Node.getDOMNode(this.commands));
+        }
+        this.panel.setBody(this.Y.Node.getDOMNode(this.contents));
+        this.panel.render(M.core_dock.node);
+        this.Y.one(this.panel.body).addClass(this.blockclass);
+        if (this.cfg.display.mindisplaywidth !== null && this.Y.one(this.panel.body).getStyle('minWidth') == '0px') {
+            this.Y.one(this.panel.body).setStyle('minWidth', this.cfg.display.mindisplaywidth);
+            this.Y.one(this.panel.body).setStyle('minHeight', dockitemtitle.get('offsetHeight')+'px');
+        }
+        dockitem.on('showitem|mouseover', this.show, this);
+        dockitem.on('showitem|click', this.show, this);
+        this.fire('dockeditem:drawcomplete');
+    },
+    /**
+     * This function removes the node and destroys it's bits
+     * @param {Event} e
+     */
+    remove : function (e) {
+        this.hide(e);
+        this.Y.one('#dock_item_'+this.id).remove();
+        this.panel.destroy();
+        this.fire('dockitem:itemremoved');
+    },
+    /**
+     * This function toggles makes the item active and shows it
+     * @param {event}
+     */
+    show : function(e) {
+        M.core_dock.hide_all();
+        this.fire('dockeditem:showstart');
+        this.panel.show(e, this);
+        this.active = true;
+        // Add active item class first up
+        this.Y.one('#dock_item_'+this.id+'_title').addClass(this.cfg.css.activeitem);
+        // Remove the two show event listeners
+        this.Y.detach('mouseover', this.show, this.Y.one('#dock_item_'+this.id));
+        this.Y.detach('click', this.show, this.Y.one('#dock_item_'+this.id));
+        // Add control events to ensure we don't cause annoyance
+        this.Y.one('#dock_item_panel_'+this.id).on('dockpreventhide|click', function(){this.preventhide=true;}, this);
+        // Add resize event so we keep it viewable
+        this.Y.get(window).on('dockresize|resize', this.resize_panel, this);
+
+        // If the event was fired by mouse over then we also want to hide when
+        // the user moves the mouse out of the area
+        if (e.type == 'mouseover') {
+            this.Y.one(this.panel.element).on('dockhide|mouseleave', this.delay_hide, this);
+            this.preventhide = true;
+            setTimeout(function(obj){
+                if (obj.preventhide) {
+                    obj.preventhide = false;
+                }
+            }, 1000, this);
+        }
+
+        // Attach the default hide events, clicking the heading or the body
+        this.Y.one('#dock_item_'+this.id).on('dockhide|click', this.hide, this);
+        this.Y.get(document.body).on('dockhide|click', this.hide, this);
+
+        this.fire('dockeditem:showcomplete');
+        return true;
+    },
+    /**
+     * This function hides the item and makes it inactive
+     * @param {event} e
+     * @param {boolean} ignorepreventhide If true preventhide is ignored
+     */
+    hide : function(e) {
+        // Check whether a second argument has been passed
+        var ignorepreventhide = (arguments.length==2 && arguments[1]);
+        // Ignore this call is preventhide is true
+        if (this.preventhide===true && !ignorepreventhide) {
+            this.preventhide = false;
+            if (e) {
+                // Stop all propagation immediatly or the next element (likely body)
+                // will fire this event again and the item will hide
+                e.stopImmediatePropagation();
+            }
+        } else if (this.active) {
+            // Display any hide delay running, mouseleave-mouseenter-click
+            this.delayhiderunning = false;
+            this.fire('dockeditem:hidestart');
+            // No longer active
+            this.active = false;
+            // Remove the active class
+            this.Y.one('#dock_item_'+this.id+'_title').removeClass(this.cfg.css.activeitem);
+            // Add the show event again
+            this.Y.one('#dock_item_'+this.id).on('showitem|mouseover', this.show, this);
+            // Remove the hide events
+            this.Y.detach('mouseleave', this.delayhide, this.Y.one(this.panel.element));
+            this.Y.get(window).detach('dockresize|resize');
+            this.Y.get(document.body).detach('dockhide|click');
+            // Hide the panel
+            this.panel.hide(e, this);
+            this.fire('dockeditem:hidecomplete');
+        }
+    },
+    /**
+     * This function sets the item to hide after a specific delay, that delay is
+     * this.delayhidetimeout.
+     * @param {Event} e
+     */
+    delay_hide : function(e) {
+        // The hide delay timeout is running now
+        this.delayhiderunning = true;
+        // Add the re-enter event to cancel the delay timeout
+        var delayhideevent = this.Y.one(this.panel.element).on('delayhide|mouseover', function(){this.delayhiderunning = false;}, this);
+        // Set the timeout + callback and pass the this for scope and the event so
+        // it can be easily detached
+        setTimeout(function(obj, ev){
+            if (obj.delayhiderunning) {
+                ev.detach();
+                obj.hide();
+            }
+        }, this.delayhidetimeout, this, delayhideevent);
+    },
+    /**
+     * This function checks the size and position of the panel and moves/resizes if
+     * required to keep it within the bounds of the window.
+     */
+    resize_panel : function() {
+        this.fire('dockeditem:resizestart');
+
+        var panelheader = this.Y.one(this.panel.header);
+        panelheader = (panelheader)?panelheader.get('offsetHeight'):0;
+        var panelbody = this.Y.one(this.panel.body);
+
+        var buffer = this.cfg.buffer;
+        var screenheight = parseInt(this.Y.get(document.body).get('winHeight'));
+        var panelheight = parseInt(panelheader + panelbody.get('offsetHeight'));
+        var paneltop = parseInt(this.panel.cfg.getProperty('y'));
+        var titletop = parseInt(this.Y.one('#dock_item_'+this.id+'_title').getY());
+        var scrolltop = window.pageYOffset || document.body.scrollTop || 0;
+
+        // This makes sure that the panel is the same height as the dock title to
+        // begin with
+        if (paneltop > (buffer+scrolltop) && paneltop > (titletop+scrolltop)) {
+            this.panel.cfg.setProperty('y', titletop+scrolltop);
+        }
+
+        // This makes sure that if the panel is big it is moved up to ensure we don't
+        // have wasted space above the panel
+        if ((paneltop+panelheight)>(screenheight+scrolltop) && paneltop > buffer) {
+            paneltop = (screenheight-panelheight-buffer);
+            if (paneltop<buffer) {
+                paneltop = buffer;
+            }
+            this.panel.cfg.setProperty('y', paneltop+scrolltop);
+        }
+
+        // This makes the panel constrain to the screen's height if the panel is big
+        if (paneltop <= buffer && ((panelheight+paneltop*2) > screenheight || panelbody.hasClass('oversized_content'))) {
+            this.panel.cfg.setProperty('height', screenheight-(buffer*3));
+            panelbody.setStyle('height', (screenheight-panelheader-(buffer*3)-10)+'px');
+            panelbody.addClass('oversized_content');
+        }
+        this.fire('dockeditem:resizecomplete');
+    }
+}
 
 /**
  * This ensures that the first time the dock module is used it is initiatlised.
