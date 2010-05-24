@@ -90,7 +90,7 @@ class course_settings_form extends moodleform {
 
         $options = array(-1=> get_string('defaultprev', 'grades', $CFG->grade_decimalpoints), 0=>0, 1=>1, 2=>2, 3=>3, 4=>4, 5=>5);
         $mform->addElement('select', 'decimalpoints', get_string('decimalpoints', 'grades'), $options);
-        $mform->setHelpButton('decimalpoints', array('decimalpoints', get_string('decimalpoints', 'grades'), 'grade'));
+        $mform->addHelpButton('decimalpoints', 'decimalpoints', 'grades');
 
 // add setting options for plugins
         $types = array('report', 'export', 'import');

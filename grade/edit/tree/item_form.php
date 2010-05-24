@@ -128,7 +128,7 @@ class edit_item_form extends moodleform {
         $default_gradedecimals = grade_get_setting($COURSE->id, 'decimalpoints', $CFG->grade_decimalpoints);
         $options = array(-1=>get_string('defaultprev', 'grades', $default_gradedecimals), 0=>0, 1=>1, 2=>2, 3=>3, 4=>4, 5=>5);
         $mform->addElement('select', 'decimals', get_string('decimalpoints', 'grades'), $options);
-        $mform->setHelpButton('decimals', array('decimalpoints', get_string('decimalpoints', 'grades'), 'grade'), true);
+        $mform->addHelpButton('decimals', 'decimalpoints', 'grades');
         $mform->setDefault('decimals', -1);
         $mform->disabledIf('decimals', 'display', 'eq', GRADE_DISPLAY_TYPE_LETTER);
         if ($default_gradedisplaytype == GRADE_DISPLAY_TYPE_LETTER) {

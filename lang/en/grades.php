@@ -117,7 +117,6 @@ $string['categorytotalfull'] = '{$a->category} total';
 $string['combo'] = 'Tabs and Dropdown menu';
 $string['compact'] = 'Compact';
 $string['configcoursegradedisplaytype'] = 'Select the default display type of grades for this course. You can also select the site default value. Grades can be shown as real grades, as percentages (in reference to the minimum and maximum grades) or as letters (A, B, C etc..). Selecting Letters will allow you to define your own grade letters and boundaries.';
-$string['configdecimalpoints'] = 'Specifies the number of decimal points to display for each grade. This setting may be overridden per grading item.';
 $string['configdisablegradehistory'] = 'Disable history tracking of changes in grades related tables. This may speed up the server a little and conserve space in database.';
 $string['configenableoutcomes'] = 'Support for Outcomes (also known as Competencies, Goals, Standards or Criteria) means that we can grade things using one or more scales that are tied to outcome statements. Enabling outcomes makes such special grading possible throughout the site.';
 $string['configexportdecimalpoints'] = 'The number of decimal points to display for export. This can be overridden during export.';
