@@ -56,7 +56,7 @@ class course_settings_form extends moodleform {
             }
         }
         $mform->addElement('select', 'aggregationposition', get_string('aggregationposition', 'grades'), $options);
-        $mform->setHelpButton('aggregationposition', array('aggregationposition', get_string('aggregationposition', 'grades'), 'grade'));
+        $mform->addHelpButton('aggregationposition', 'aggregationposition', 'grades');
 
         // Grade item settings
         $mform->addElement('header', 'grade_item_settings', get_string('gradeitemsettings', 'grades'));

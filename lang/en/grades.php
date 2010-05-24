@@ -117,7 +117,6 @@ $string['categorytotal'] = 'Category total';
 $string['categorytotalfull'] = '{$a->category} total';
 $string['combo'] = 'Tabs and Dropdown menu';
 $string['compact'] = 'Compact';
-$string['configaggregationposition'] = 'Defines the position of the aggregation total column in the report related to the grades being aggregated.';
 $string['configaggregationview'] = 'Each category can be displayed in three ways: Full mode (aggregated column and grade item columns), the aggregated column only, or the grade items alone.';
 $string['configaveragesdecimalpoints'] = 'Specifies the number of decimal points to display for each column mean. If Inherit is selected, the display type for each column is used.';
 $string['configaveragesdisplaytype'] = 'Specifies how to display the mean for each column. If Inherit is selected, the display type for each column is used.';

@@ -32,7 +32,7 @@ if (has_capability('moodle/grade:manage', $systemcontext)
         $temp->add(new admin_setting_grade_profilereport());
 
         $temp->add(new admin_setting_configselect('grade_aggregationposition', get_string('aggregationposition', 'grades'),
-                                                  get_string('configaggregationposition', 'grades'), GRADE_REPORT_AGGREGATION_POSITION_LAST,
+                                                  get_string('aggregationposition_help', 'grades'), GRADE_REPORT_AGGREGATION_POSITION_LAST,
                                                   array(GRADE_REPORT_AGGREGATION_POSITION_FIRST => get_string('positionfirst', 'grades'),
                                                         GRADE_REPORT_AGGREGATION_POSITION_LAST => get_string('positionlast', 'grades'))));
 
