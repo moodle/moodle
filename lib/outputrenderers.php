@@ -1296,13 +1296,12 @@ class core_renderer extends renderer_base {
             //$scalemax = 0;//no longer displaying scale max
             $aggregatestr = '';
 
-            if ($rating->aggregate) {
-                if (is_array($rating->settings->scale->scaleitems)) {
-                    //$scalemax = $rating->settings->scale->scaleitems[ count($rating->settings->scale->scaleitems) ];
+            //only display aggregate if aggregation method isn't COUNT
+            if ($rating->aggregate && $rating->settings->aggregationmethod!= RATING_AGGREGATE_COUNT) {
+                if ($rating->settings->aggregationmethod!= RATING_AGGREGATE_SUM && is_array($rating->settings->scale->scaleitems)) {
                     $aggregatestr .= $rating->settings->scale->scaleitems[round($rating->aggregate)];//round aggregate as we're using it as an index
                 }
-                else { //its numeric
-                    //$scalemax = $rating->settings->scale->scaleitems;
+                else { //aggregation is SUM or the scale is numeric
                     $aggregatestr .= round($rating->aggregate,1);
                 }
             } else {

@@ -130,12 +130,19 @@ $items = $rm->get_ratings($ratingoptions);
 //this scales weirdness will go away when scales are refactored
 $scalearray = null;
 $aggregatetoreturn = round($items[0]->rating->aggregate,1);
-if($rating->scaleid < 0 ) { //if its a scale (not numeric)
-    $scalerecord = $DB->get_record('scale', array('id' => -$rating->scaleid));
-    if ($scalerecord) {
-        $scalearray = explode(',', $scalerecord->scale);
+
+// Output a dash if aggregation method == COUNT as the count is output next to the aggregate anyway
+if ($items[0]->rating->settings->aggregationmethod==RATING_AGGREGATE_COUNT) {
+    $aggregatetoreturn = ' - ';
+} else if($rating->scaleid < 0) { //if its non-numeric scale
+    //output the numeric aggregate is aggregation method is sum
+    if ($items[0]->rating->settings->aggregationmethod!= RATING_AGGREGATE_SUM) {
+        $scalerecord = $DB->get_record('scale', array('id' => -$rating->scaleid));
+        if ($scalerecord) {
+            $scalearray = explode(',', $scalerecord->scale);
+            $aggregatetoreturn = $scalearray[$aggregatetoreturn-1];
+        }
     }
-    $aggregatetoreturn = $scalearray[$aggregatetoreturn-1];
 }
 
 //See if the user has permission to see the rating aggregate
