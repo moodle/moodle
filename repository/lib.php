@@ -1431,7 +1431,7 @@ abstract class repository {
         $pass = false;
         $accepted_types = optional_param('accepted_types', '', PARAM_RAW);
         $ft = new filetype_parser;
-        $ext = $ft->get_extensions($this->supported_filetypes());
+        //$ext = $ft->get_extensions($this->supported_filetypes());
         if (isset($value['children'])) {
             $pass = true;
             if (!empty($value['children'])) {
@@ -1443,8 +1443,15 @@ abstract class repository {
                 $pass = true;
             } elseif (is_array($accepted_types)) {
                 foreach ($accepted_types as $type) {
-                    if (preg_match('#'.$type.'$#', $value['title'])) {
+                    $extensions = $ft->get_extensions($type);
+                    if (!is_array($extensions)) {
                         $pass = true;
+                    } else {
+                        foreach ($extensions as $ext) {
+                            if (preg_match('#'.$ext.'$#', $value['title'])) {
+                                $pass = true;
+                            }
+                        }
                     }
                 }
             }
