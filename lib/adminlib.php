@@ -5882,6 +5882,7 @@ function print_plugin_tables() {
         'course_list',
         'course_overview',
         'course_summary',
+        'feedback',
         'glossary_random',
         'html',
         'loancalc',
