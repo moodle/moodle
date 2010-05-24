@@ -30,7 +30,6 @@ M.core_dock = {
         buffer:10,                          // Buffer used when containing a panel
         position:'left',                    // position of the dock
         orientation:'vertical',             // vertical || horizontal determines if we change the title
-        titlerotation:'counterclockwise',
         /**
          * Display parameters for the dock
          * @namespace
@@ -449,24 +448,27 @@ M.core_dock.genericblock.prototype = {
     fix_title_orientation : function(node) {
         var title = node.firstChild.nodeValue;
 
-        var clockwise = false;
-        if (M.core_dock.cfg.titlerotation == 'counterclockwise') {
-            clockwise = false;
-        } else if (M.core_dock.cfg.titlerotation == 'clockwise') {
-            clockwise = true;
-        } else {
-            clockwise = (M.core_dock.cfg.titleorientation)(M.str.langconfig.thisdirectionvertical=='ttb');
+        if (YAHOO.env.ua.ie > 0 && YAHOO.env.ua.ie < 8) {
+            M.str.langconfig.thisdirectionvertical = 'ver';
         }
 
-        if (YAHOO.env.ua.ie > 0) {
-            if (YAHOO.env.ua.ie > 7) {
-                // IE8 can flip the text via CSS
-                node.setAttribute('style', 'writing-mode: tb-rl; filter: flipV flipH;');
-            } else {
-                // IE < 7 can't do anything cool, just settle to stacked letters
+        var clockwise = false;
+        switch (M.str.langconfig.thisdirectionvertical) {
+            case 'ver':
                 title = title.split('').join('<br />');
                 node.innerHTML = title;
-            }
+                return node;
+            case 'ttb':
+                clockwise = false;
+                break;
+            case 'btt':
+                clockwise = true;
+                break;
+        }
+
+        if (YAHOO.env.ua.ie > 7) {
+            // IE8 can flip the text via CSS
+            node.setAttribute('style', 'writing-mode: tb-rl; filter: flipV flipH;');
             return node;
         }
 

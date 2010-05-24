@@ -48,6 +48,6 @@ $string['strftimerecent'] = '%d %b, %H:%M';
 $string['strftimerecentfull'] = '%a, %d %b %Y, %I:%M %p';
 $string['strftimetime'] = '%I:%M %p';
 $string['thisdirection'] = 'ltr';
-$string['thisdirectionvertical'] = 'ttb';
+$string['thisdirectionvertical'] = 'btt';
 $string['thislanguage'] = 'English';
 $string['thousandssep'] = ',';
