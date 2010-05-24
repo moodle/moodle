@@ -186,7 +186,6 @@ $string['displayweighted'] = 'Display weighted grades';
 $string['dropdown'] = 'Dropdown menu';
 $string['droplow'] = 'Drop the lowest';
 $string['droplow_help'] = 'This setting enables a specified number of the lowest grades to be excluded from the aggregation.';
-$string['droplowhelp'] = 'If set, this option will drop the X lowest grades, X being the selected value for this option.';
 $string['dropped'] = 'Dropped';
 $string['dropxlowest'] = 'Drop X lowest';
 $string['dropxlowestwarning'] = 'Note: If you use drop x lowest the grading assumes that all items in the category have the same point value. If point values differ results will be unpredictable';

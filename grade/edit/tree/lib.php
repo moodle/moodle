@@ -935,7 +935,7 @@ class grade_edit_tree_column_droplow extends grade_edit_tree_column_category {
     public function get_header_cell() {
         global $OUTPUT;
         $headercell = clone($this->headercell);
-        $headercell->text = get_string('droplow', 'grades').$OUTPUT->old_help_icon('droplow', 'droplow', 'grade');
+        $headercell->text = get_string('droplow', 'grades').$OUTPUT->help_icon('droplow', 'grades');
         return $headercell;
     }
 
