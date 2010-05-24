@@ -218,7 +218,6 @@ $string['errorupdatinggradecategoryaggregateoutcomes'] = 'Error updating the "In
 $string['errorupdatinggradecategoryaggregatesubcats'] = 'Error updating the "Aggregate including subcategories" setting of grade category ID {$a->id}';
 $string['errorupdatinggradecategoryaggregation'] = 'Error updating the aggregation type of grade category ID {$a->id}';
 $string['errorupdatinggradeitemaggregationcoef'] = 'Error updating the aggregation coefficient (weight or extra credit) of grade item ID {$a->id}';
-$string['exceptions'] = 'Exceptions';
 $string['excluded'] = 'Excluded';
 $string['excluded_help'] = 'If ticked, the grade will not be included in any aggregation.';
 $string['excludedhelp'] = 'If -excluded- is switched on, this grade will be excluded from any aggregation performed by any parent grade item or category.';
@@ -268,8 +267,6 @@ $string['gradedisplaytype_help'] = 'This setting determines how grades are displ
 * Percentage
 * Letter - Letters or words are used to represent a range of grades';
 $string['gradedon'] = 'Graded: {$a}';
-$string['gradeexceptions'] = 'Grade exceptions';
-$string['gradeexceptionshelp'] = 'Grade exceptions Help';
 $string['gradeexport'] = 'Grade export';
 $string['gradeexportdecimalpoints'] = 'Grade export decimal points';
 $string['gradeexportdisplaytype'] = 'Grade export display type';
