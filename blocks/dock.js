@@ -30,6 +30,7 @@ M.core_dock = {
         buffer:10,                          // Buffer used when containing a panel
         position:'left',                    // position of the dock
         orientation:'vertical',             // vertical || horizontal determines if we change the title
+        titlerotation:'counterclockwise',
         /**
          * Display parameters for the dock
          * @namespace
@@ -378,7 +379,7 @@ M.core_dock = {
 
             this.cachedcontentnode = node;
 
-            var placeholder = this.Y.Node.create('<div id="content_placeholder_'+this.id+'"></div>');
+            var placeholder = this.Y.Node.create('<div id="content_placeholder_'+this.id+'" class="block_dock_placeholder"></div>');
             node.replace(this.Y.Node.getDOMNode(placeholder));
             node = null;
 
@@ -442,8 +443,57 @@ M.core_dock = {
          * @param {YUI.Node} node
          */
         fix_title_orientation : function(node) {
-            node.innerHTML = node.innerHTML.replace(/(.)/g, "$1<br />");
-            return node;
+            var title = node.firstChild.nodeValue;
+
+            var clockwise = false;
+            if (M.core_dock.cfg.titlerotation == 'counterclockwise') {
+                clockwise = false;
+            } else if (M.core_dock.cfg.titlerotation == 'clockwise') {
+                clockwise = true;
+            } else {
+                clockwise = (M.core_dock.cfg.titleorientation)(M.str.langconfig.thisdirectionvertical=='ttb');
+            }
+
+            if (YAHOO.env.ua.ie > 0) {
+                if (YAHOO.env.ua.ie > 7) {
+                    // IE8 can flip the text via CSS
+                    node.setAttribute('style', 'writing-mode: tb-rl; filter: flipV flipH;');
+                } else {
+                    // IE < 7 can't do anything cool, just settle to stacked letters
+                    title = title.split('').join('<br />');
+                    node.innerHTML = title;
+                }
+                return node;
+            }
+
+            // Cool, we can use SVG!
+            var test = M.core_dock.Y.Node.create('<div><span style="font-size:10pt;">'+title+'</span></div>');
+            M.core_dock.Y.one(document.body).append(test);
+            var height = test.one('span').get('offsetWidth');
+            var width = test.one('span').get('offsetHeight')*2;
+            var qwidth = width/4;
+            test.remove();
+
+            var txt = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            txt.setAttribute('font-size', '10');
+            if (clockwise) {
+                txt.setAttribute('transform','rotate(90 '+(qwidth/2)+' '+qwidth+')');
+            } else {
+                txt.setAttribute('y', height);
+                txt.setAttribute('transform','rotate(270 '+qwidth+' '+(height-qwidth)+')');
+            }
+            txt.appendChild(document.createTextNode(node.firstChild.nodeValue));
+
+            var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+            svg.setAttribute('version', '1.1');
+            svg.setAttribute('height', height);
+            svg.setAttribute('width', width);
+            svg.appendChild(txt);
+
+            var div = document.createElement(node.nodeName);
+            div.appendChild(svg);
+
+            return div;
         },
         /**
          * Resizes the space that contained blocks if there were no blocks left in
@@ -451,22 +501,39 @@ M.core_dock = {
          * @param {Y.Node} node
          */
         resize_block_space : function(node) {
-            node = node.ancestor('.block-region');
-            if (node) {
-                var width =  node.getStyle('width');
-                if (node.all('.block').size() === 0 && this.blockspacewidth === null) {
-                    // If the node has no children then we can shrink it
-                    this.blockspacewidth = width;
-                    node.setStyle('width', '0px');
-                } else if (this.blockspacewidth !== null) {
-                    // Otherwise if it contains children and we have saved a width
-                    // we can reapply the width
-                    node.setStyle('width', this.blockspacewidth);
-                    this.blockspacewidth = null;
+            var blockregions = [];
+            var populatedblockregions = 0;
+            M.core_dock.Y.all('.block-region').each(function(region){
+                var hasblocks = (region.all('.block').size() > 0);
+                if (hasblocks) {
+                    populatedblockregions++;
                 }
-                return width;
+                blockregions[region.get('id')] = {hasblocks: hasblocks, bodyclass: region.get('id').replace(/^region\-/, 'side-')+'-only'};
+            });
+            var bodynode = M.core_dock.Y.one(document.body);
+            var noblocksbodyclass = 'content-only';
+            var i = null;
+            if (populatedblockregions==0) {
+                bodynode.addClass(noblocksbodyclass);
+                for (i in blockregions) {
+                    bodynode.removeClass(blockregions[i].bodyclass);
+                }
+            } else if (populatedblockregions==1) {
+                bodynode.removeClass(noblocksbodyclass);
+                for (i in blockregions) {
+                    if (!blockregions[i].hasblocks) {
+                        bodynode.removeClass(blockregions[i].bodyclass);
+                    } else {
+                        bodynode.addClass(blockregions[i].bodyclass);
+                    }
+                }
+            } else {
+                bodynode.removeClass(noblocksbodyclass);
+                for (i in blockregions) {
+                    bodynode.removeClass(blockregions[i].bodyclass);
+                }
             }
-            return null;
+            return '200px';
         },
         /**
          * This function removes a block from the dock and puts it back into the page
