@@ -83,7 +83,7 @@ $settings->add(new admin_setting_configselect('grade_report_rangesdisplaytype', 
                                                 GRADE_DISPLAY_TYPE_LETTER => $strletter)));
 
 $settings->add(new admin_setting_configselect('grade_report_averagesdecimalpoints', get_string('averagesdecimalpoints', 'grades'),
-                                          get_string('configaveragesdecimalpoints', 'grades'), GRADE_REPORT_PREFERENCE_INHERIT,
+                                          get_string('averagesdecimalpoints_help', 'grades'), GRADE_REPORT_PREFERENCE_INHERIT,
                                           array(GRADE_REPORT_PREFERENCE_INHERIT => $strinherit,
                                                  '0' => '0',
                                                  '1' => '1',

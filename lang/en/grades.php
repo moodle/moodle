@@ -116,7 +116,6 @@ $string['categorytotal'] = 'Category total';
 $string['categorytotalfull'] = '{$a->category} total';
 $string['combo'] = 'Tabs and Dropdown menu';
 $string['compact'] = 'Compact';
-$string['configaveragesdecimalpoints'] = 'Specifies the number of decimal points to display for each column mean. If Inherit is selected, the display type for each column is used.';
 $string['configaveragesdisplaytype'] = 'Specifies how to display the mean for each column. If Inherit is selected, the display type for each column is used.';
 $string['configcoursegradedisplaytype'] = 'Select the default display type of grades for this course. You can also select the site default value. Grades can be shown as real grades, as percentages (in reference to the minimum and maximum grades) or as letters (A, B, C etc..). Selecting Letters will allow you to define your own grade letters and boundaries.';
 $string['configdecimalpoints'] = 'Specifies the number of decimal points to display for each grade. This setting may be overridden per grading item.';
