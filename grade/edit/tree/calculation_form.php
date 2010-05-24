@@ -51,7 +51,7 @@ class edit_calculation_form extends moodleform {
         $mform->addElement('header', 'general', get_string('gradeitem', 'grades'));
         $mform->addElement('static', 'itemname', get_string('itemname', 'grades'));
         $mform->addElement('textarea', 'calculation', get_string('calculation', 'grades'), 'cols="60" rows="5"');
-        $mform->setHelpButton('calculation', array('calculation', get_string('calculation', 'grades'), 'grade'));
+        $mform->addHelpButton('calculation', 'calculation', 'grades');
 
 /// hidden params
         $mform->addElement('hidden', 'id', 0);
