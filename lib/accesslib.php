@@ -4379,7 +4379,7 @@ function get_component_string($component, $contextlevel) {
                 $langname = 'quiz_'.$matches[1];
                 $string = get_string($matches[1].':componentname', $langname);
             } else if (preg_match('|^moodle|', $component)) {
-                $string = get_string('coresystem');
+                $string = get_string('activities');
             } else {
                 $string = get_string('activity').': '.get_string('modulename', preg_replace('#(\w+_)#', '', basename($component)));
             }
