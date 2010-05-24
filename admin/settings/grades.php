@@ -47,7 +47,7 @@ if (has_capability('moodle/grade:manage', $systemcontext)
                                                   get_string('configgradeexportdisplaytype', 'grades'), GRADE_DISPLAY_TYPE_REAL, $display_types));
 
         $temp->add(new admin_setting_configselect('grade_export_decimalpoints', get_string('gradeexportdecimalpoints', 'grades'),
-                                                  get_string('configexportdecimalpoints', 'grades'), 2,
+                                                  get_string('gradeexportdecimalpoints_desc', 'grades'), 2,
                                                   array( '0' => '0',
                                                          '1' => '1',
                                                          '2' => '2',
@@ -127,7 +127,7 @@ if (has_capability('moodle/grade:manage', $systemcontext)
                                                   get_string('configgradedisplaytype', 'grades'), GRADE_DISPLAY_TYPE_REAL, $display_types));
 
         $temp->add(new admin_setting_configselect('grade_decimalpoints', get_string('decimalpoints', 'grades'),
-                                                  get_string('configdecimalpoints', 'grades'), 2,
+                                                  get_string('decimalpoints_help', 'grades'), 2,
                                                   array( '0' => '0',
                                                          '1' => '1',
                                                          '2' => '2',
