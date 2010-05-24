@@ -69,7 +69,7 @@ $settings->add(new admin_setting_configcheckbox('grade_report_shownumberofgrades
                                             get_string('configshownumberofgrades', 'grades'), 0));
 
 $settings->add(new admin_setting_configselect('grade_report_averagesdisplaytype', get_string('averagesdisplaytype', 'grades'),
-                                          get_string('configaveragesdisplaytype', 'grades'), GRADE_REPORT_PREFERENCE_INHERIT,
+                                          get_string('averagesdisplaytype_help', 'grades'), GRADE_REPORT_PREFERENCE_INHERIT,
                                           array(GRADE_REPORT_PREFERENCE_INHERIT => $strinherit,
                                                 GRADE_DISPLAY_TYPE_REAL => $strreal,
                                                 GRADE_DISPLAY_TYPE_PERCENTAGE => $strpercentage,
