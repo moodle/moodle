@@ -172,20 +172,16 @@ class grader_report_preferences_form extends moodleform {
                     $default = $CFG->$full_pref;
                 }
 
-                $help_string = get_string("config$lang_string", 'grades');
-
                 // Replace the '*default*' value with the site default language string - 'default' might collide with custom language packs
                 if (!is_null($options) AND isset($options[GRADE_REPORT_PREFERENCE_DEFAULT]) && $options[GRADE_REPORT_PREFERENCE_DEFAULT] == '*default*') {
                     $options[GRADE_REPORT_PREFERENCE_DEFAULT] = get_string('reportdefault', 'grades', $default);
-                } elseif ($type == 'text') {
-                    $help_string = get_string("config{$lang_string}default", 'grades', $default);
                 }
 
                 $label = get_string($lang_string, 'grades') . $number;
 
                 $mform->addElement($type, $full_pref, $label, $options);
                 if ($lang_string != 'showuserimage') {
-                    $mform->setHelpButton($full_pref, array($lang_string, get_string($lang_string, 'grades'), 'grade'), true);
+                    $mform->addHelpButton($full_pref, $lang_string, 'grades');
                 }
                 $mform->setDefault($full_pref, $pref_value);
                 $mform->setType($full_pref, PARAM_ALPHANUM);
