@@ -39,7 +39,7 @@ $settings->add(new admin_setting_configselect('grade_report_meanselection', get_
                                                 GRADE_REPORT_MEAN_GRADED => get_string('meangraded', 'grades'))));
 
 $settings->add(new admin_setting_configcheckbox('grade_report_enableajax', get_string('enableajax', 'grades'),
-                                            get_string('configenableajax', 'grades'), 0));
+                                            get_string('enableajax_help', 'grades'), 0));
 
 $settings->add(new admin_setting_configcheckbox('grade_report_showcalculations', get_string('showcalculations', 'grades'),
                                             get_string('configshowcalculations', 'grades'), 0));
