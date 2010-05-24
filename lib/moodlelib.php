@@ -5946,9 +5946,9 @@ class core_string_manager implements string_manager {
         }
 
         // try on-disk cache then
-        if ($this->usediskcache and file_exists($this->cacheroot . "/$lang/$component")) {
+        if ($this->usediskcache and file_exists($this->cacheroot . "/$lang/$component.php")) {
             $this->countdiskcache++;
-            eval('$this->cache[$lang][$component] = ' . file_get_contents($this->cacheroot . "/$lang/$component") . ';');
+            include($this->cacheroot . "/$lang/$component.php");
             return $this->cache[$lang][$component];
         }
 
@@ -6029,7 +6029,7 @@ class core_string_manager implements string_manager {
         $this->cache[$lang][$component] = $string;
         if ($this->usediskcache) {
             check_dir_exists("$this->cacheroot/$lang", true, true);
-            file_put_contents("$this->cacheroot/$lang/$component", var_export($string, true));
+            file_put_contents("$this->cacheroot/$lang/$component.php", "<?php \$this->cache['$lang']['$component'] = ".var_export($string, true).";");
         }
         return $string;
     }
