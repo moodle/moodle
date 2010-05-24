@@ -774,6 +774,7 @@ $string['profilefield'] = 'Profile field';
 $string['profilefieldcolumns'] = 'Columns';
 $string['profilefieldispassword'] = 'Is this a password field?';
 $string['profilefieldlink'] = 'Link';
+$string['profilefieldlink_help'] = 'To transform the text into a link, enter a URL containing $$, where $$ will be replaced with the text. For example, to transform a Twitter ID to a link, enter http://twitter.com/$$.';
 $string['profilefieldlinktarget'] = 'Link target';
 $string['profilefieldmaxlength'] = 'Maximum length';
 $string['profilefieldrows'] = 'Rows';
