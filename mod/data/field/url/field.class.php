@@ -26,8 +26,9 @@ class data_field_url extends data_field_base {
     var $type = 'url';
 
     function display_add_field($recordid=0) {
-        global $CFG, $DB;
+        global $CFG, $DB, $OUTPUT, $PAGE;
 
+        $straddlink = get_string('choosealink', 'repository');
         $url = '';
         $text = '';
         if ($recordid) {
@@ -47,6 +48,24 @@ class data_field_url extends data_field_base {
             // Just the URL field
             $str .= '<input type="text" name="field_'.$this->field->id.'_0" id="field_'.$this->field->id.'_0" value="'.s($url).'" size="60" />';
         }
+        $args = new stdclass;
+        $args->accepted_types = '*';
+        $args->return_types = FILE_EXTERNAL;
+        $args->context = $this->context;
+        $args->env = 'url';
+        $fp = new file_picker($args);
+        $options = $fp->options;
+        $options->formelementid = 'field_'.$this->field->id.'_0';
+
+        $str .= '<button id="filepicker-button-'.$options->client_id.'" style="display:none">'.$straddlink.'</button>';
+
+        // print out file picker
+        $str .= $OUTPUT->render($fp);
+
+        $module = array('name'=>'data_urlpicker', 'fullpath'=>'/mod/data/data.js', 'requires'=>array('core_filepicker'));
+        $PAGE->requires->js_init_call('M.data_urlpicker.init', array($options), true, $module);
+        $PAGE->requires->js_function_call('show_item', array('filepicker-button-'.$options->client_id));
+
         $str .= '</div>';
         return $str;
     }

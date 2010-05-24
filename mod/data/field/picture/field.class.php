@@ -28,43 +28,76 @@ class data_field_picture extends data_field_base {
     var $previewheight = 50;
 
     function display_add_field($recordid=0) {
-        global $CFG, $DB;
+        global $CFG, $DB, $OUTPUT, $USER, $PAGE;
 
         $file        = false;
         $content     = false;
         $displayname = '';
         $alttext     = '';
+        $itemid = null;
         $fs = get_file_storage();
-        if ($recordid){
+
+        if ($recordid) {
             if ($content = $DB->get_record('data_content', array('fieldid'=>$this->field->id, 'recordid'=>$recordid))) {
+                file_prepare_draft_area($itemid, $this->context->id, 'data_content', $content->id);
                 if (!empty($content->content)) {
                     if ($file = $fs->get_file($this->context->id, 'data_content', $content->id, '/', $content->content)) {
+                        $usercontext = get_context_instance(CONTEXT_USER, $USER->id);
+                        if (!$files = $fs->get_area_files($usercontext->id, 'user_draft', $itemid, 'id DESC', false)) {
+                            return false;
+                        }
+                        if ($thumbfile = $fs->get_file($usercontext->id, 'user_draft', $itemid, '/', 'thumb_'.$content->content)) {
+                            $thumbfile->delete();
+                        }
                         if (empty($content->content1)) {
-                            $displayname = $file->get_filename();
+                            // Print icon if file already exists
+                            $browser = get_file_browser();
+                            $src     = file_encode_url($CFG->wwwroot.'/draftfile.php/', $usercontext->id.'/user_draft/'.$itemid.'/'.$file->get_filename());
+                            $displayname = '<img src="'.$OUTPUT->pix_url(file_mimetype_icon($file->get_mimetype())).'" class="icon" alt="'.$file->get_mimetype().'" />'. '<a href="'.$src.'" >'.s($file->get_filename()).'</a>';
+
                         } else {
-                            $displayname = $content->content1;
+                            $displayname = get_string('nofilesattached', 'repository');
                         }
                     }
                 }
                 $alttext = $content->content1;
             }
+        } else {
+            $itemid = file_get_unused_draft_itemid();
         }
 
         $str = '<div title="'.s($this->field->description).'">';
         $str .= '<fieldset><legend><span class="accesshide">'.$this->field->name.'</span></legend>';
-        $str .= '<input type="hidden" name ="field_'.$this->field->id.'_file" id="field_'.$this->field->id.'_file"  value="fakevalue" />';
-        $str .= '<label for="field_'.$this->field->id.'">'.get_string('picture','data'). '</label>&nbsp;<input type="file" name ="field_'.$this->field->id.'" id="field_'.$this->field->id.'" /><br />';
-        $str .= '<label for="field_'.$this->field->id.'_alttext">'.get_string('alttext','data') .'</label>&nbsp;<input type="text" name="field_'
-                .$this->field->id.'_alttext" id="field_'.$this->field->id.'_alttext" value="'.s($alttext).'" /><br />';
-        //$str .= '<input type="hidden" name="MAX_FILE_SIZE" value="'.s($this->field->param3).'" />';
         if ($file) {
-            $browser = get_file_browser();
-            $src     = file_encode_url($CFG->wwwroot.'/pluginfile.php', $this->context->id.'/data_content/'.$content->id.'/'.$file->get_filename());
+            $src = file_encode_url($CFG->wwwroot.'/pluginfile.php/', $this->context->id.'/data_content/'.$content->id.'/'.$file->get_filename());
             $str .= '<img width="'.s($this->previewwidth).'" height="'.s($this->previewheight).'" src="'.$src.'" alt="" />';
         }
+
+        $options = new stdclass;
+        $options->maxbytes  = $this->field->param3;
+        $options->itemid    = $itemid;
+        $options->accepted_types = array('image');
+        $options->return_types = FILE_INTERNAL;
+        $options->context = $PAGE->context;
+        if (!empty($file)) {
+            $options->filename = $file->get_filename();
+            $options->filepath = '/';
+        }
+        $fp = new file_picker($options);
+        $str .= $OUTPUT->render($fp);
+
+
+        $str .= '<div class="mdl-left">';
+        $str .= '<input type="hidden" name="field_'.$this->field->id.'_file" value="'.$itemid.'" />';
+        $str .= '<label for="field_'.$this->field->id.'_alttext">'.get_string('alttext','data') .'</label>&nbsp;<input type="text" name="field_'
+                .$this->field->id.'_alttext" id="field_'.$this->field->id.'_alttext" value="'.s($alttext).'" />';
+        $str .= '</div>';
+
         $str .= '</fieldset>';
         $str .= '</div>';
 
+        $module = array('name'=>'data_imagepicker', 'fullpath'=>'/mod/data/data.js', 'requires'=>array('core_filepicker'));
+        $PAGE->requires->js_init_call('M.data_imagepicker.init', array($fp->options), true, $module);
         return $str;
     }
 
@@ -170,7 +203,7 @@ class data_field_picture extends data_field_base {
     }
 
     function update_content($recordid, $value, $name) {
-        global $CFG, $DB;
+        global $CFG, $DB, $USER;
 
         if (!$content = $DB->get_record('data_content', array('fieldid'=>$this->field->id, 'recordid'=>$recordid))) {
         // Quickly make one now!
@@ -184,22 +217,34 @@ class data_field_picture extends data_field_base {
         $names = explode('_', $name);
         switch ($names[2]) {
             case 'file':
-                // file just uploaded
-                $tmpfile = $_FILES[$names[0].'_'.$names[1]];
-                $filename = $tmpfile['name'];
-                $pathanme = $tmpfile['tmp_name'];
-                if ($filename){
-                    $fs = get_file_storage();
-                    // TODO: uploaded file processing will be in file picker ;-)
-                    $fs->delete_area_files($this->context->id, 'data_content', $content->id);
-                    $file_record = array('contextid'=>$this->context->id, 'filearea'=>'data_content', 'itemid'=>$content->id, 'filepath'=>'/', 'filename'=>$filename);
-                    if ($file = $fs->create_file_from_pathname($file_record, $pathanme)) {
-                        $content->content = $file->get_filename();
-                        $DB->update_record('data_content', $content);
-                        // Regenerate the thumbnail
-                        $this->update_thumbnail($content, $file);
+                $fs = get_file_storage();
+                $fs->delete_area_files($this->context->id, 'data_content', $content->id);
+                $usercontext = get_context_instance(CONTEXT_USER, $USER->id);
+                $files = $fs->get_area_files($usercontext->id, 'user_draft', $value);
+                if (count($files)<2) {
+                    // no file
+                } else {
+                    $count = 0;
+                    foreach ($files as $draftfile) {
+                        $file_record = array('contextid'=>$this->context->id, 'itemid'=>$content->id, 'filepath'=>'/', 'filearea'=>'data_content');
+                        if (!$draftfile->is_directory()) {
+                            $file_record['filename'] = $draftfile->get_filename();
+
+                            $content->content = $draftfile->get_filename();
+
+                            $file = $fs->create_file_from_storedfile($file_record, $draftfile);
+                            $DB->update_record('data_content', $content);
+                            $this->update_thumbnail($content, $file);
+
+                            if ($count > 0) {
+                                break;
+                            } else {
+                                $count++;
+                            }
+                        }
                     }
                 }
+
                 break;
 
             case 'alttext':
@@ -228,16 +273,6 @@ class data_field_picture extends data_field_base {
         } catch (Exception $e) {
             return false;
         }
-    }
-
-    function notemptyfield($value, $name) {
-        $names = explode('_',$name);
-        if ($names[2] == 'file') {
-            $filename = $_FILES[$names[0].'_'.$names[1]];
-            return !empty($filename['name']);
-            // if there's a file in $_FILES, not empty
-        }
-        return false;
     }
 
     function text_export_supported() {

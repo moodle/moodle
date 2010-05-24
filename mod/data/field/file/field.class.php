@@ -43,22 +43,16 @@ class data_field_file extends data_field_base {
 
                 if (!empty($content->content)) {
                     if ($file = $fs->get_file($this->context->id, 'data_content', $content->id, '/', $content->content)) {
-                        // move to draft
-
-
-                        $fs = get_file_storage();
                         $usercontext = get_context_instance(CONTEXT_USER, $USER->id);
                         if (!$files = $fs->get_area_files($usercontext->id, 'user_draft', $itemid, 'id DESC', false)) {
                             return false;
                         }
-                        $file = reset($files);
                         if (empty($content->content1)) {
                             // Print icon if file already exists
                             $browser = get_file_browser();
                             $src     = file_encode_url($CFG->wwwroot.'/draftfile.php/', $usercontext->id.'/user_draft/'.$itemid.'/'.$file->get_filename());
                             $displayname = '<img src="'.$OUTPUT->pix_url(file_mimetype_icon($file->get_mimetype())).'" class="icon" alt="'.$file->get_mimetype().'" />'. '<a href="'.$src.'" >'.s($file->get_filename()).'</a>';
 
-                            $fs->delete_area_files($this->context->id, 'data_content', $content->id);
                         } else {
                             $displayname = 'no file added';
                         }
@@ -77,19 +71,22 @@ class data_field_file extends data_field_base {
         // itemid element
         $html .= '<input type="hidden" name="field_'.$this->field->id.'_file" value="'.$itemid.'" />';
 
-        $filemanager_options = new stdclass;
-        $filemanager_options->maxbytes = $this->field->param3;
-        $filemanager_options->maxfiles = 1;
-        $filemanager_options->filearea = 'user_draft';
-        $filemanager_options->itemid   = $itemid;
-        $filemanager_options->subdirs  = 0;
-        $filemanager_options->accepted_types = '*';
-        $filemanager_options->return_types = FILE_INTERNAL;
-        $filemanager_options->context  = $PAGE->context;
-        $html .= $OUTPUT->file_manager($filemanager_options);
+        $options = new stdclass;
+        $options->maxbytes  = $this->field->param3;
+        $options->itemid    = $itemid;
+        $options->accepted_types = '*';
+        $options->return_types = FILE_INTERNAL;
+        $options->context = $PAGE->context;
+
+        $fp = new file_picker($options);
+        // print out file picker
+        $html .= $OUTPUT->render($fp);
 
         $html .= '</fieldset>';
         $html .= '</div>';
+
+        $module = array('name'=>'data_filepicker', 'fullpath'=>'/mod/data/data.js', 'requires'=>array('core_filepicker'));
+        $PAGE->requires->js_init_call('M.data_filepicker.init', array($fp->options), true, $module);
 
         return $html;
     }
@@ -158,8 +155,10 @@ class data_field_file extends data_field_base {
     // content: "a##b" where a is the file name, b is the display name
     function update_content($recordid, $value, $name) {
         global $CFG, $DB, $USER;
+        $fs = get_file_storage();
 
         if (!$content = $DB->get_record('data_content', array('fieldid'=>$this->field->id, 'recordid'=>$recordid))) {
+
         // Quickly make one now!
             $content = new object();
             $content->fieldid  = $this->field->id;
@@ -168,8 +167,10 @@ class data_field_file extends data_field_base {
             $content = $DB->get_record('data_content', array('id'=>$id));
         }
 
+        // delete existing files
+        $fs->delete_area_files($this->context->id, 'data_content', $content->id);
+
         $usercontext = get_context_instance(CONTEXT_USER, $USER->id);
-        $fs = get_file_storage();
         $files = $fs->get_area_files($usercontext->id, 'user_draft', $value);
 
         if (count($files)<2) {
@@ -194,16 +195,6 @@ class data_field_file extends data_field_base {
                 }
             }
         }
-    }
-
-    function notemptyfield($value, $name) {
-        $names = explode('_',$name);
-        if ($names[2] == 'file') {
-            $filename = $_FILES[$names[0].'_'.$names[1]];
-            return !empty($filename['name']);
-            // if there's a file in $_FILES, not empty
-        }
-        return false;
     }
 
     function text_export_supported() {

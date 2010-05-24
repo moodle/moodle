@@ -68,12 +68,17 @@ class file_picker implements renderable {
         if (!empty($options->itemid)) {
             $fs = get_file_storage();
             $usercontext = get_context_instance(CONTEXT_USER, $USER->id);
-            if ($files = $fs->get_area_files($usercontext->id, 'user_draft', $options->itemid, 'id DESC', false)) {
-                $file = reset($files);
+            if (empty($options->filename)) {
+                if ($files = $fs->get_area_files($usercontext->id, 'user_draft', $options->itemid, 'id DESC', false)) {
+                    $file = reset($files);
+                }
+            } else {
+                $file = $fs->get_file($usercontext->id, 'user_draft', $options->itemid, $options->filepath, $options->filename);
+            }
+            if (!empty($file)) {
                 $options->currentfile = html_writer::link(file_encode_url($CFG->wwwroot.'/draftfile.php/', $usercontext->id.'/user_draft/'.$file->get_itemid().'/'.$file->get_filename()), $file->get_filename());
             }
         }
-
 
         // initilise options, getting files in root path
         $this->options = initialise_filepicker($options);
