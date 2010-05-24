@@ -33,7 +33,7 @@ class MoodleQuickForm_url extends HTML_QuickForm_text{
         $this->_hiddenLabel = $hiddenLabel;
     }
     function toHtml(){
-        global $CFG, $COURSE, $USER, $PAGE;
+        global $CFG, $COURSE, $USER, $PAGE, $OUTPUT;
 
         $id     = $this->_attributes['id'];
         $elname = $this->_attributes['name'];
@@ -63,15 +63,16 @@ $straddlink
 </button>
 EOD;
         $args = new stdclass;
-        // need these three to filter repositories list
         $args->accepted_types = '*';
         $args->return_types = FILE_EXTERNAL;
         $args->context = $PAGE->context;
+        $args->client_id = $client_id;
+        $args->env = 'url';
+        $fp = new file_picker($args);
+        $options = $fp->options;
 
-        $options = initialise_filepicker($args);
-
-        $options->client_id = $client_id;
-        $options->env = 'url';
+        // print out file picker
+        $str .= $OUTPUT->render($fp);
 
         $module = array('name'=>'form_url', 'fullpath'=>'/lib/form/url.js', 'requires'=>array('core_filepicker'));
         $PAGE->requires->js_init_call('M.form_url.init', array($options), true, $module);

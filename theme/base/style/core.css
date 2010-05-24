@@ -489,6 +489,7 @@ body.tag .managelink {padding: 5px;}
 .file-picker .fp-grid span {color:gray;}
 .file-picker .fp-error {padding: 2em 0;margin: 3em 5px;text-align:center;background: #FFBBBB;}
 .file-picker .fp-emptylist, .file-picker .fp-msg {padding: 2em 0;margin: 1em;text-align:center;background: green;}
+.filepicker-filelist {padding: 5px;margin: 6px 0;background: #E9F4FF;border: #AACCEE 1px solid}
 /* file picker search dialog */
 .file-picker div.bd {text-align:left;}
 

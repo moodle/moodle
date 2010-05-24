@@ -445,7 +445,7 @@ M.core_filepicker.init = function(Y, options) {
                 // support internal files only
                 le_style = ' style="display:none;"';
             }
-            if (this.options.externallink && this.options.env == 'editor') {
+            if ((this.options.externallink && this.options.env == 'editor')) {
                 html += '<tr'+le_style+'><td></td><td class="mdl-left"><input type="checkbox" id="linkexternal-'+client_id+'" value="" '+le_checked+' />'+M.str.repository.linkexternal+'</td></tr>';
             }
 
@@ -1286,6 +1286,9 @@ M.core_filepicker.init = function(Y, options) {
             this.render();
         }
     });
-
+    var loading = Y.one('#filepicker-loading-'+options.client_id);
+    if (loading) {
+        loading.setStyle('display', 'none');
+    }
     M.core_filepicker.instances[options.client_id] = new FilePickerHelper(options);
 };

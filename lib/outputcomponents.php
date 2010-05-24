@@ -35,6 +35,56 @@ interface renderable {
     // intentionally empty
 }
 
+
+/**
+ * Data structure representing a file picker.
+ *
+ * @copyright 2010 Dongsheng Cai
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since     Moodle 2.0
+ */
+class file_picker implements renderable {
+    public $options;
+    public function __construct(stdClass $options) {
+        global $CFG, $USER, $PAGE;
+        require_once($CFG->dirroot. '/repository/lib.php');
+        $defaults = array(
+            'accepted_types'=>'*',
+            'context'=>$PAGE->context,
+            'return_types'=>FILE_INTERNAL,
+            'env' => 'filepicker',
+            'client_id' => uniqid(),
+            'itemid' => 0,
+            'maxbytes'=>-1,
+            'maxfiles'=>1,
+        );
+        foreach ($defaults as $key=>$value) {
+            if (empty($options->$key)) {
+                $options->$key = $value;
+            }
+        }
+
+        $options->currentfile = '';
+        if (!empty($options->itemid)) {
+            $fs = get_file_storage();
+            $usercontext = get_context_instance(CONTEXT_USER, $USER->id);
+            if ($files = $fs->get_area_files($usercontext->id, 'user_draft', $options->itemid, 'id DESC', false)) {
+                $file = reset($files);
+                $options->currentfile = html_writer::link(file_encode_url($CFG->wwwroot.'/draftfile.php/', $usercontext->id.'/user_draft/'.$file->get_itemid().'/'.$file->get_filename()), $file->get_filename());
+            }
+        }
+
+
+        // initilise options, getting files in root path
+        $this->options = initialise_filepicker($options);
+
+        // copying other options
+        foreach ($options as $name=>$value) {
+            $this->options->$name = $value;
+        }
+    }
+}
+
 /**
  * Data structure representing a file manager.
  *

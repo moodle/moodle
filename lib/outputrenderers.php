@@ -1722,6 +1722,57 @@ class core_renderer extends renderer_base {
 
         return html_writer::tag('a', $output, $attributes);
     }
+    /**
+     * Print the file picker
+     *
+     * <pre>
+     * $OUTPUT->file_picker($options);
+     * </pre>
+     *
+     * @param array $options associative array with file manager options
+     *   options are:
+     *       maxbytes=>-1,
+     *       itemid=>0,
+     *       client_id=>uniqid(),
+     *       acepted_types=>'*',
+     *       return_types=>FILE_INTERNAL,
+     *       context=>$PAGE->context
+     * @return string HTML fragment
+     */
+    public function file_picker($options) {
+        $fp = new file_picker($options);
+        return $this->render($fp);
+    }
+    public function render_file_picker(file_picker $fp) {
+        global $CFG, $OUTPUT, $USER;
+        $options = $fp->options;
+        $client_id = $options->client_id;
+        $strsaved = get_string('filesaved', 'repository');
+        $straddfile = get_string('openpicker', 'repository');
+        $strloading  = get_string('loading', 'repository');
+        $icon_progress = $OUTPUT->pix_icon('i/loading_small', $strloading).'';
+
+        $currentfile = $options->currentfile;
+        if (empty($currentfile)) {
+            $currentfile = get_string('nofilesattached', 'repository');
+        }
+        $html = <<<EOD
+<div class="filemanager-loading mdl-align" id='filepicker-loading-{$client_id}'>
+$icon_progress
+</div>
+<div id="filepicker-wrapper-{$client_id}" class="mdl-left" style="display:none">
+    <div>
+        <button id="filepicker-button-{$client_id}">$straddfile</button>
+    </div>
+EOD;
+        if ($options->env != 'url') {
+            $html .= <<<EOD
+    <div id="file_info_{$client_id}" class="mdl-left filepicker-filelist">$currentfile</div>
+EOD;
+        }
+        $html .= '</div>';
+        return $html;
+    }
 
     /**
      * Print the file manager
@@ -1738,7 +1789,7 @@ class core_renderer extends renderer_base {
      *       itemid=>0,
      *       subdirs=>false,
      *       client_id=>uniqid(),
-     *       ccepted_types=>'*',
+     *       acepted_types=>'*',
      *       return_types=>FILE_INTERNAL,
      *       context=>$PAGE->context
      * @return string HTML fragment
