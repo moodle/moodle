@@ -46,7 +46,7 @@ class edit_category_form extends moodleform {
         $mform->addRule('fullname', null, 'required', null, 'client');
 
         $mform->addElement('select', 'aggregation', get_string('aggregation', 'grades'), $this->aggregation_options);
-        $mform->setHelpButton('aggregation', array('aggregation', get_string('aggregation', 'grades'), 'grade'));
+        $mform->addHelpButton('aggregation', 'aggregation', 'grades');
 
         if ((int)$CFG->grade_aggregation_flag & 2) {
             $mform->setAdvanced('aggregation');

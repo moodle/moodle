@@ -623,7 +623,7 @@ class grade_edit_tree_column_aggregation extends grade_edit_tree_column_category
     public function get_header_cell() {
         global $OUTPUT;
         $headercell = clone($this->headercell);
-        $headercell->text = get_string('aggregation', 'grades').$OUTPUT->old_help_icon('aggregation', 'aggregation', 'grade');
+        $headercell->text = get_string('aggregation', 'grades').$OUTPUT->help_icon('aggregation', 'grades');
         return $headercell;
     }
 
