@@ -54,7 +54,6 @@ define('HUBDIRECTORYURL', "http://hubdirectory.moodle.org");
 define('MOODLEORGHUBURL', "http://hub.moodle.org");
 
 
-
 //// SITE PRIVACY /////
 
 /**
@@ -209,6 +208,11 @@ class hub {
         $DB->update_record('course_published', $publication);
     }
 
+    public function update_publication($publication) {
+        global $DB;
+        $DB->update_record('course_published', $publication);
+    }
+
 
     public function get_publications($hubid, $courseid, $enrollable) {
         global $DB;
@@ -224,11 +228,21 @@ class hub {
 
     public function get_course_publications($courseid) {
         global $DB;
-        $sql = 'SELECT cp.id, cp.timepublished, rh.hubname, rh.huburl, cp.courseid, cp.enrollable, cp.hubcourseid
+        $sql = 'SELECT cp.id, cp.status, cp.timechecked, cp.timepublished, rh.hubname, rh.huburl, cp.courseid, cp.enrollable, cp.hubcourseid
                 FROM {course_published} cp, {registration_hubs} rh
-                WHERE cp.hubid = rh.id
+                WHERE cp.hubid = rh.id and cp.courseid = :courseid
                 ORDER BY cp.enrollable DESC, rh.hubname, cp.timepublished';
-        return $DB->get_records_sql($sql);
+        $params = array('courseid' => $courseid);
+        return $DB->get_records_sql($sql, $params);
+    }
+
+    public function get_registeredhub_by_publication($publicationid) {
+        global $DB;
+        $sql = 'SELECT cp.hubid, rh.hubname, rh.huburl, rh.token
+                FROM {course_published} cp, {registration_hubs} rh
+                WHERE cp.hubid = rh.id and cp.id = :publicationid';
+        $params = array('publicationid' => $publicationid);
+        return $DB->get_record_sql($sql, $params);
     }
 
     public function delete_publication($publicationid) {

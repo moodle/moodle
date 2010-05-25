@@ -4114,6 +4114,30 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
     }
 
 
+     if ($result && $oldversion < 2010052401) {
+
+    /// Define field status to be added to course_published
+        $table = new xmldb_table('course_published');
+        $field = new xmldb_field('status', XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, null, null, '0', 'hubcourseid');
+
+    /// Conditionally launch add field status
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+    /// Define field timechecked to be added to course_published
+        $table = new xmldb_table('course_published');
+        $field = new xmldb_field('timechecked', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null, 'status');
+
+    /// Conditionally launch add field timechecked
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+    /// Main savepoint reached
+        upgrade_main_savepoint($result, 2010052401);
+    }
+
     return $result;
 }
 

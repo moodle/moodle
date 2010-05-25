@@ -37,6 +37,45 @@ require_login($course);
 
 if (has_capability('moodle/course:publish', get_context_instance(CONTEXT_COURSE, $id))) {
 
+    $hubmanager = new hub();
+     $confirmmessage = '';
+
+    //update the courses status
+    $updatestatusid = optional_param('updatestatusid', false, PARAM_INT);
+    if (!empty($updatestatusid) and confirm_sesskey()) {
+        //get the communication token from the publication
+        $hub = $hubmanager->get_registeredhub_by_publication($updatestatusid);
+        if (empty($hub)) {
+            $confirmmessage = $OUTPUT->notification(get_string('nocheckstatusfromunreghub', 'hub'));
+        } else {
+            //get all site courses registered on this hub
+            $function = 'hub_get_courses';
+            $params = array('', 1, 1, array( 'allsitecourses' => 1));
+            $serverurl = $hub->huburl."/local/hub/webservice/webservices.php";
+            require_once($CFG->dirroot."/webservice/xmlrpc/lib.php");
+            $xmlrpcclient = new webservice_xmlrpc_client();
+            $sitecourses = $xmlrpcclient->call($serverurl, $hub->token, $function, $params);
+
+            //update status for all these course
+            foreach ($sitecourses as $sitecourse) {
+                //get the publication from the hub course id
+                $publication = $hubmanager->get_publication($sitecourse['id']);
+                if (!empty($publication)) {
+                    $publication->status = $sitecourse['privacy'];
+                    $publication->timechecked = time();
+                    $hubmanager->update_publication($publication);
+                } else {
+                    $msgparams = new stdClass();
+                    $msgparams->id = $sitecourse['id'];
+                    $msgparams->hubname = html_writer::tag('a', $hub->hubname, array('href' => $hub->huburl));
+                    $confirmmessage .= $OUTPUT->notification(
+                            get_string('detectednotexistingpublication', 'hub', $msgparams));
+                }
+            }
+        }
+    }
+
+
     $PAGE->set_url('/course/publish/index.php', array('id' => $course->id));
     $PAGE->set_pagelayout('course');
     $PAGE->set_title(get_string('course') . ': ' . $course->fullname);
@@ -44,10 +83,8 @@ if (has_capability('moodle/course:publish', get_context_instance(CONTEXT_COURSE,
 
     $renderer = $PAGE->get_renderer('core', 'publish');
 
-    $hub = new hub();
-
+   
     /// UNPUBLISH
-    $confirmmessage = '';
     $cancel = optional_param('cancel', 0, PARAM_BOOL);
     if (!empty($cancel) and confirm_sesskey()) {
         $confirm = optional_param('confirm', 0, PARAM_BOOL);
@@ -68,7 +105,7 @@ if (has_capability('moodle/course:publish', get_context_instance(CONTEXT_COURSE,
         $publication->id = $publicationid;
         if($confirm) {
             //unpublish the publication by web service
-            $registeredhub = $hub->get_registeredhub($huburl);
+            $registeredhub = $hubmanager->get_registeredhub($huburl);
             $function = 'hub_unregister_courses';
             $params = array(array( $publication->hubcourseid));
             $serverurl = $huburl."/local/hub/webservice/webservices.php";
@@ -77,7 +114,7 @@ if (has_capability('moodle/course:publish', get_context_instance(CONTEXT_COURSE,
             $result = $xmlrpcclient->call($serverurl, $registeredhub->token, $function, $params);
 
             //delete the publication from the database
-            $hub->delete_publication($publicationid);
+            $hubmanager->delete_publication($publicationid);
 
             //display confirmation message
             $confirmmessage = $OUTPUT->notification(get_string('courseunpublished', 'hub', $publication), 'notifysuccess');
@@ -106,7 +143,7 @@ if (has_capability('moodle/course:publish', get_context_instance(CONTEXT_COURSE,
     echo $OUTPUT->heading(get_string('publishcourse', 'hub', $course->shortname), 3, 'main');
     echo $renderer->publicationselector($course->id);
 
-    $publications = $hub->get_course_publications($course->id);
+    $publications = $hubmanager->get_course_publications($course->id);
     if (!empty($publications)) {
         echo $OUTPUT->heading(get_string('publishedon', 'hub'), 3, 'main');
         echo $renderer->registeredonhublisting($course->id, $publications);

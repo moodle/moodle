@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/db" VERSION="20100522" COMMENT="XMLDB file for core Moodle tables"
+<XMLDB PATH="lib/db" VERSION="20100525" COMMENT="XMLDB file for core Moodle tables"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
 >
@@ -2618,7 +2618,9 @@
         <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="the id of the published course" PREVIOUS="hubid" NEXT="timepublished"/>
         <FIELD NAME="timepublished" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="The time when the publication occurred" PREVIOUS="courseid" NEXT="enrollable"/>
         <FIELD NAME="enrollable" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" COMMENT="1 = enrollable, 0 = downloadable" PREVIOUS="timepublished" NEXT="hubcourseid"/>
-        <FIELD NAME="hubcourseid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="the course id on the hub server" PREVIOUS="enrollable"/>
+        <FIELD NAME="hubcourseid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="the course id on the hub server" PREVIOUS="enrollable" NEXT="status"/>
+        <FIELD NAME="status" TYPE="int" LENGTH="1" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="is the publication published or not" PREVIOUS="hubcourseid" NEXT="timechecked"/>
+        <FIELD NAME="timechecked" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" COMMENT="the last time the status has been checked" PREVIOUS="status"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
