@@ -178,12 +178,11 @@ function xmldb_wiki_upgrade($oldversion) {
             'LEFT OUTER JOIN {wiki_subwikis} s ' .
             'ON s.wikiid = e.wikiid AND s.groupid = e.groupid AND s.userid = e.userid ' .
             'WHERE p.version = (' .
-            '   SELECT po.version ' .
+            '   SELECT max(po.version) ' .
             '   FROM {wiki_pages_old} po ' .
             '   WHERE p.pagename = po.pagename and ' .
             '   p.wiki = po.wiki ' .
-            '   ORDER BY p.version DESC ' .
-            '   LIMIT 1)';
+            '   )';
         echo $OUTPUT->notification('Migrating old pages to new pages', 'notifysuccess');
 
         $DB->execute($sql, array('**reparse needed**'));
