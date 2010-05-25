@@ -31,4 +31,6 @@ $string['feedbackfalse'] = 'Feedback for the response \'False\'.';
 $string['feedbacktrue'] = 'Feedback for the response \'True\'.';
 $string['true'] = 'True';
 $string['truefalse'] = 'True/False';
+$string['truefalse_help'] = 'In response to a question (that may include a image) the respondent chooses from true or false.';
+$string['truefalse_link'] = 'question/type/truefalse';
 $string['truefalsesummary'] = 'A simple form of multiple choice question with just the two choices \'True\' and \'False\'.';
