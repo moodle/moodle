@@ -24,6 +24,8 @@
  */
 
 $string['addingmatch'] = 'Adding a Matching question';
+$string['addingmatch_help'] = 'Matching questions require the respondent to correctly match a list of names or statements (questions) to another list of names or statements (answers).';
+$string['addingmatch_link'] = 'question/type/match';
 $string['addmoreqblanks'] = '{no} More Sets of Blanks';
 $string['editingmatch'] = 'Editing a Matching question';
 $string['filloutthreeqsandtwoas'] = 'You must provide at least two questions and three answers. You can provide extra wrong answers by giving an answer with a blank question. Entries where both the question and the answer are blank will be ignored.';
