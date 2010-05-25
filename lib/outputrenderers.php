@@ -1722,6 +1722,7 @@ class core_renderer extends renderer_base {
 
         return html_writer::tag('a', $output, $attributes);
     }
+
     /**
      * Print the file picker
      *
@@ -1853,7 +1854,7 @@ FMHTML;
         if (empty($filemanagertemplateloaded)) {
             $filemanagertemplateloaded = true;
             $html .= <<<FMHTML
-<div id="fm-template" style="display:none"><span class="fm-file-menu">___action___</span> <span class="fm-file-name">___fullname___</span></div>
+<div id="fm-template" style="display:none">___fullname___ ___action___</div>
 FMHTML;
         }
 
