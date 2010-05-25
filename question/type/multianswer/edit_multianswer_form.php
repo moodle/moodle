@@ -177,27 +177,30 @@ class question_edit_multianswer_form extends question_edit_form {
             echo '</div>';
             $this->negative_diff =$countsavedsubquestions - $countsubquestions ;
             if ( ($this->negative_diff > 0 ) ||$this->qtype_change || ($this->used_in_quiz && $this->negative_diff != 0)){
-                    $mform->addElement('header', 'additemhdr', "WARNING");
+                    $mform->addElement('header', 'additemhdr', get_string('warningquestionmodified','qtype_multianswer'));
                 }
             if($this->negative_diff > 0) {
                 //$this->used_in_quiz
 
-                            $mform->addElement('static', 'alert1', "<strong>"."Question deleted"."</strong>","<strong>".$this->negative_diff.get_string('questionsless','qtype_multianswer')."</strong>");//$countsubquestions."-".$countsavedsubquestions
+                            $mform->addElement('static', 'alert1', "<strong>".get_string('questiondeleted','qtype_multianswer')."</strong>",get_string('questionsless','qtype_multianswer',$this->negative_diff));
             }
             if($this->qtype_change )
                {
-                            $mform->addElement('static', 'alert1', "<strong>"."Question type change "."</strong>","<strong>".get_string('questiontypechanged','qtype_multianswer')."</strong>");//$countsubquestions."-".$countsavedsubquestions
+                            $mform->addElement('static', 'alert1', "<strong>".get_string('questiontypechanged','qtype_multianswer')."</strong>",get_string('questiontypechangedcomment','qtype_multianswer'));
             }
             echo '</div>';
         }
         if( $this->used_in_quiz){
-        if($this->negative_diff < 0) {
-            $diff = $countsubquestions - $countsavedsubquestions;
-                        $mform->addElement('static', 'alert1', "<strong>"."Question added "."</strong>","<strong>".$diff.get_string(' questions more than in the multtianswer question stored in the database','qtype_multianswer')."</strong>");//$countsubquestions."-".$countsavedsubquestions
+            if($this->negative_diff < 0) {
+                $diff = $countsubquestions - $countsavedsubquestions;
+                $mform->addElement('static', 'alert1', "<strong>".get_string('questionsadded','qtype_multianswer')."</strong>","<strong>".get_string('questionsmore','qtype_multianswer',$diff)."</strong>");
+            }
+            $a = new stdClass ;
+            $a->nb_of_quiz = $this->nb_of_quiz;
+            $a->nb_of_attempts = $this->nb_of_attempts;
+            $mform->addElement('header', 'additemhdr2', get_string('questionusedinquiz','qtype_multianswer',$a));
+            $mform->addElement('static', 'alertas', get_string('youshouldnot','qtype_multianswer'));
         }
-                $mform->addElement('header', 'additemhdr2', "This question is used in $this->nb_of_quiz  quiz(s), total attempt(s) : $this->nb_of_attempts ");
-                             $mform->addElement('static', 'alertas', "<strong>"."YOU SHOULD NOT "."</strong>");//$countsubquestions."-".$countsavedsubquestions
-         }
         if ( ($this->negative_diff > 0 || $this->used_in_quiz && ($this->negative_diff > 0 ||$this->negative_diff < 0 || $this->qtype_change ) ) &&  $this->reload ){
             $mform->addElement('header', 'additemhdr', get_string('questionsaveasedited', 'qtype_multianswer'));
             $mform->addElement('checkbox', 'confirm','' ,get_string('confirmquestionsaveasedited', 'qtype_multianswer'));
@@ -262,6 +265,7 @@ class question_edit_multianswer_form extends question_edit_form {
         }
 
         // set default to $questiondisplay questions elements
+        if ( $this->reload ){
         if (isset($this->questiondisplay->options->questions)) {
             $subquestions = fullclone($this->questiondisplay->options->questions) ;
             if (count($subquestions)) {
@@ -343,6 +347,7 @@ class question_edit_multianswer_form extends question_edit_form {
                 }
             }
         }
+    }
        $default_values['alertas']= "<strong>".get_string('questioninquiz','qtype_multianswer')."</strong>";
 
         if( $default_values != "")   {
