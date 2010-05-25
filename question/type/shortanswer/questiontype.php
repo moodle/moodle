@@ -98,11 +98,6 @@ class question_shortanswer_qtype extends default_questiontype {
 
     function print_question_formulation_and_controls(&$question, &$state, $cmoptions, $options) {
         global $CFG;
-      //  $state->raw_unitgrade = 2 ;
-    //    echo "<p>state <pre>";print_r($state);echo "</pre></p>";
-  //      echo "<p>cmoptions <pre>";print_r($cmoptions);echo "</pre></p>";
-  //      echo "<p>options <pre>";print_r($options);echo "</pre></p>";
-    //    echo "<p> questionoptions <pre>";print_r($question);echo "</pre></p>";
     /// This implementation is also used by question type 'numerical'
         $readonly = empty($options->readonly) ? '' : 'readonly="readonly"';
         $formatoptions = new stdClass;
@@ -266,7 +261,7 @@ class question_shortanswer_qtype extends default_questiontype {
         return $status;
     }
 
-   /**
+    /**
     * Prints the score obtained and maximum score available plus any penalty
     * information
     *
@@ -330,6 +325,13 @@ class question_shortanswer_qtype extends default_questiontype {
                 echo '<div class="gradingdetails">';
                 // print grade for this submission
                 print_string('gradingdetails', 'quiz', $grade) ;
+                // A unit penalty for numerical was applied so display it
+                // a temporary solution for unit rendering in numerical 
+                // waiting for the new question engine code for a permanent one
+                if(isset($state->options->raw_unitpenalty) && $state->options->raw_unitpenalty > 0.0 ){
+                    echo ' ';
+                    print_string('unitappliedpenalty','qtype_numerical',question_format_grade($cmoptions, $state->options->raw_unitpenalty ));
+                } 
                 if ($cmoptions->penaltyscheme) {
                     // print details of grade adjustment due to penalties
                     if ($state->last_graded->raw_grade > $state->last_graded->grade){
@@ -340,11 +342,6 @@ class question_shortanswer_qtype extends default_questiontype {
                     // penalty is relevant only if the answer is not correct and further attempts are possible
                     if (($state->last_graded->raw_grade < $question->maxgrade) and (QUESTION_EVENTCLOSEANDGRADE != $state->event)) {
                         if ('' !== $state->last_graded->penalty && ((float)$state->last_graded->penalty) > 0.0) {
-                            // A unit penalty for numerical was applied so display it
-                        if(isset($this->raw_unitpenalty) && $this->raw_unitpenalty > 0.0 ){
-                            echo ' ';
-                            print_string('unitappliedpenalty','qtype_numerical',question_format_grade($cmoptions, $this->raw_unitpenalty));
-                        } 
                             echo ' ' ;
                             print_string('gradingdetailspenalty', 'quiz', question_format_grade($cmoptions, $state->last_graded->penalty));
                         } else {
