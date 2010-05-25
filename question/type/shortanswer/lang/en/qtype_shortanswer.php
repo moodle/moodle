@@ -30,4 +30,6 @@ $string['answerno'] = 'Answer {$a}';
 $string['editingshortanswer'] = 'Editing a Short answer question';
 $string['filloutoneanswer'] = 'You must provide at least one possible answer. Answers left blank will not be used. \'*\' can be used as a wildcard to match any characters. The first matching answer will be used to determine the score and feedback.';
 $string['shortanswer'] = 'Short answer';
+$string['shortanswer_help'] = 'In response to a question (that may include a image) the respondent types a word or short phrase. There may be several possible correct answers, each with a different grade. If the "Case sensitive" option is selected, then you can have different scores for "Word" or "word".';
+$string['shortanswer_link'] = 'question/type/shortanswer';
 $string['shortanswersummary'] = 'Allows a response of one or a few words that is graded by comparing against various model answers, which may contain wildcards.';
