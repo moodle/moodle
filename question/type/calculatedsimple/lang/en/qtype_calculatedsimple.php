@@ -24,6 +24,8 @@
  */
 
 $string['addingcalculatedsimple'] = 'Adding a Simple Calculated question';
+$string['addingcalculatedsimple_help'] = 'Simple calculated questions enable individual numerical questions to be created using wildcards that are substituted with individual values when the quiz is taken. Simple calculated questions offer the most used features of the calculated question with a simpler creation interface.';
+$string['addingcalculatedsimple_link'] = 'question/type/calculatedsimple';
 $string['atleastonewildcard'] = 'There must be at least one wild card <strong>{x..}</strong> present in the correct answer formulas';
 $string['calculatedsimple'] = 'Calculated Simple';
 $string['calculatedsimple_help'] = '<p>Calculatedsimple questions are similar to calculated questions but can be edited in a single page process, calculated needing a three pages. These question types offers a way to create individual numerical question by the use of wildcards {a},{b}that are substituted with individual values when the quiz is taken.</p>
