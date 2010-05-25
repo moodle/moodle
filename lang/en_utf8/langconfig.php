@@ -11,6 +11,7 @@ $string['locale'] = 'en_AU.UTF-8';
 $string['localewin'] = 'English_Australia.1252';
 $string['localewincharset'] = '';
 $string['oldcharset'] = 'ISO-8859-1';
+$string['parentlanguage'] = '';
 $string['strftimedate'] = '%%d %%B %%Y';
 $string['strftimedateshort'] = '%%d %%B';
 $string['strftimedatetime'] = '%%d %%B %%Y, %%I:%%M %%p';
@@ -26,6 +27,7 @@ $string['strftimetime'] = '%%I:%%M %%p';
 $string['thischarset'] = 'UTF-8';
 $string['thisdirection'] = 'ltr';
 $string['thislanguage'] = 'English';
+$string['thislanguageint'] = 'English';
 $string['thousandssep'] = ','; // thousands separator, for some languages it is '.' or ' '
 
 ?>
