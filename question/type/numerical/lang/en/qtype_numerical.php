@@ -71,9 +71,9 @@ $string['unitnotgraded'] = '<STRONG>UNIT NOT GRADED</STRONG>' ;
 $string['unitnotvalid'] = ' Unit not valid with this numerical value';
 $string['unitunknown'] = ' Undefined unit ';
 $string['unitpenalty'] = 'Penalty for bad unit' ;
-$string['unitappliedpenalty'] = 'This submission attracted a penalty of {$a} for bad unit.' ;
+$string['unitappliedpenalty'] = 'These marks include a penalty of {$a} for bad unit.' ;
 $string['unitposition'] = 'Unit position' ;
 $string['unitshandling'] = 'Units handling' ;
 $string['validnumberformats'] = 'Valid number formats';
-$string['validnumbers'] = ' 13500.67 : 13 500.67 : 13500,67: 13 500,67 : 1.350067 E4 : 1.350067 E04 ';
+$string['validnumbers'] = ' 13500.67 : 13 500.67 : 13,500.67 : 13500,67: 13 500,67 : 1.350067 E4 : 1.350067 E04 ';
 
