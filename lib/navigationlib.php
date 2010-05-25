@@ -2630,7 +2630,7 @@ class settings_navigation extends navigation_node {
                             continue;
                         }
                         if (strpos($activity, '--')===0) {
-                            $subbranch = $sectionresources->add(trim($activity, '-'));
+                            $subbranch = $sectionactivities->add(trim($activity, '-'));
                             continue;
                         }
                         $url = new moodle_url('/course/mod.php', array('id'=>$course->id, 'sesskey'=>sesskey(), 'section'=>$section->section));
@@ -2644,7 +2644,7 @@ class settings_navigation extends navigation_node {
                         if ($subbranch !== false) {
                             $subbranch->add($activity, $url, self::TYPE_SETTING);
                         } else {
-                            $sectionresources->add($activity, $url, self::TYPE_SETTING);
+                            $sectionactivities->add($activity, $url, self::TYPE_SETTING);
                         }
                     }
                 }
