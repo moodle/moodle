@@ -176,6 +176,9 @@ class moodle_user_create_users_form extends moodleform {
         $mform->addElement('text', 'lastname', 'lastname');
         $mform->addElement('text', 'email', 'email');
 
+        $mform->addElement('text', 'customfieldtype', 'customfieldtype');
+        $mform->addElement('text', 'customfieldvalue', 'customfieldvalue');
+
         $mform->addElement('hidden', 'function');
         $mform->setType('function', PARAM_SAFEDIR);
 
@@ -193,6 +196,12 @@ class moodle_user_create_users_form extends moodleform {
         if (!$data = $this->get_data()) {
             return null;
         }
+
+        //set customfields
+        if (!empty($data->customfieldtype)) {
+            $data->customfields = array(array('type' => $data->customfieldtype, 'value' => $data->customfieldvalue));
+        }
+
         // remove unused from form data
         unset($data->submitbutton);
         unset($data->protocol);
@@ -201,6 +210,8 @@ class moodle_user_create_users_form extends moodleform {
         unset($data->wspassword);
         unset($data->token);
         unset($data->authmethod);
+        unset($data->customfieldtype);
+        unset($data->customfieldvalue);
 
         $params = array();
         $params['users'] = array();

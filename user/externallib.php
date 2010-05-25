@@ -85,6 +85,9 @@ class moodle_user_external extends external_api {
     public static function create_users($users) {
         global $CFG, $DB;
         require_once($CFG->dirroot."/user/lib.php");
+        require_once($CFG->dirroot."/user/profile/lib.php"); //required for customfields related function
+                                                             //TODO: move the functions somewhere else as
+                                                             //they are "user" related
 
         // Ensure the current user is allowed to run this function
         $context = get_context_instance(CONTEXT_SYSTEM);
@@ -138,11 +141,21 @@ class moodle_user_external extends external_api {
             }
 
             $user['confirmed'] = true;
-            $newuserid = user_create_user($user);
+            $user['id'] = user_create_user($user);
 
-            //TODO: preferences and custom fields
+            // custom fields
+            if(!empty($user['customfields'])) {
+                foreach($user['customfields'] as $customfield) {
+                    $user["profile_field_".$customfield['type']] = $customfield['value']; //profile_save_data() saves profile file
+                                                                                            //it's expecting a user with the correct id,
+                                                                                            //and custom field to be named profile_field_"shortname"
+                }
+                profile_save_data((object) $user);
+            }
 
-            $userids[] = array('id'=>$newuserid, 'username'=>$user['username']);
+            //TODO: preferences
+
+            $userids[] = array('id'=>$user->id, 'username'=>$user['username']);
         }
 
         $transaction->allow_commit();
