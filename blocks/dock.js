@@ -459,10 +459,10 @@ M.core_dock.genericblock.prototype = {
                 node.innerHTML = title;
                 return node;
             case 'ttb':
-                clockwise = false;
+                clockwise = true;
                 break;
             case 'btt':
-                clockwise = true;
+                clockwise = false;
                 break;
         }
 
