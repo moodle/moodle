@@ -1,7 +1,7 @@
 <?php
 
 function glossary_filter($courseid, $text) {
-    global $CFG, $DB;
+    global $CFG, $DB, $OUTPUT;
 
     // Trivial-cache - keyed on $cachedcourseid
     static $nothingtodo;
