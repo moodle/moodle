@@ -6910,10 +6910,6 @@ class admin_setting_managewebservicetokens extends admin_setting {
                 $delete = "<a href=\"".$tokenpageurl."&amp;action=delete&amp;tokenid=".$token->id."\">";
                 $delete .= get_string('delete')."</a>";
 
-                if (empty($_SERVER['HTTPS'])) {
-                    $token->token = get_string('activatehttps', 'webservice');
-                }
-
                 $validuntil = '';
                 if (!empty($token->validuntil)) {
                     $validuntil = date("F j, Y"); //TODO: language support (look for moodle function)
@@ -6932,7 +6928,6 @@ class admin_setting_managewebservicetokens extends admin_setting {
             }
 
             $return .= html_writer::table($table);
-            $return .= get_string('httpswarning', 'webservice');
         } else {
             $return .= get_string('notoken', 'webservice');
         }

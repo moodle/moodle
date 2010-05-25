@@ -25,7 +25,6 @@
 
 $string['accessexception'] = 'Access control exception';
 $string['accessnotallowed'] = 'Access to web service not allowed';
-$string['activatehttps'] = '******************';
 $string['actwebserviceshhdr'] = 'Active web service protocols';
 $string['addaservice'] = 'Add service';
 $string['addcapabilitytousers'] = 'Check users capability';
@@ -87,7 +86,6 @@ $string['failedtolog'] = 'Failed to log';
 $string['function'] = 'Function';
 $string['functions'] = 'Functions';
 $string['generalstructure'] = 'General structure';
-$string['httpswarning'] = 'Token strings are only displayed if your connection is secured (https)';
 $string['checkusercapability'] = 'Check user capability';
 $string['checkusercapabilitydescription'] = 'To use the web services, a user needs to have a capability matching the web service protocols (\'webservice/rest:use\', \'webservice/soap:use\', ...). <br/>Advice: one way to set this up is to create a new \'Web Service\' system role with protocol capabilities defined. Then you assign this system role to the web service user.';
 $string['information'] = 'Information';
