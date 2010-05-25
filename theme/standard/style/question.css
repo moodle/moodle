@@ -18,14 +18,10 @@
 #qtypechoicecontainer #chooseqtype .qtypes {border-bottom-color: gray;}
 #qtypechoicecontainer #chooseqtype .selected {background: #dddddd;}
 #qtypechoicecontainer #chooseqtype .instruction,
-#qtypechoicecontainer #chooseqtype .qtypesummary {border-left-color: gray;background-color: white;}
-
+#qtypechoicecontainer #chooseqtype .qtypesummary {border-left-color: gray;}
 
 .calculated .answer,
 .numerical .answer,
 .shortanswer .answer {background-color: #EEE;}
 
 .essay .answerreview {background-color: #EEE;}
-
-
-
