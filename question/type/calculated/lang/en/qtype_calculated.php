@@ -24,7 +24,7 @@
  */
 
 $string['addingcalculated'] = 'Adding a calculated question';
-$string['addingcalculated_help'] = 'Calculated questions offers a way to create individual numerical question by the use of wildcards that are substituted with individual values when the quiz is taken. ';
+$string['addingcalculated_help'] = 'Calculated questions enable individual numerical questions to be created using wildcards that are substituted with individual values when the quiz is taken.';
 $string['addingcalculated_link'] = 'question/type/calculated';
 $string['addingcalculated_help'] = 'Calculated questions offers a way to create individual numerical question by the use of wildcards that are substituted with individual values when the quiz is taken. ';
 $string['addingcalculated_link'] = 'question/type/calculated';
