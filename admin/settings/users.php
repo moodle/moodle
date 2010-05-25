@@ -189,13 +189,6 @@ if ($hassiteconfig
                 array('email' => get_string('email'), 'idnumber' => get_string('idnumber'), 'username' => get_string('username'), )));
     }
 
-    $choices = array(
-        HOMEPAGE_SITE => get_string('site'),
-        HOMEPAGE_MY => get_string('mymoodle', 'admin'),
-        HOMEPAGE_USER => get_string('userpreference', 'admin')
-    );
-    $temp->add(new admin_setting_configselect('defaulthomepage', get_string('defaulthomepage', 'admin'), get_string('configdefaulthomepage', 'admin'), HOMEPAGE_SITE, $choices));
-
     $ADMIN->add('roles', $temp);
 
     if (is_siteadmin()) {
