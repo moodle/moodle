@@ -2395,7 +2395,7 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         unset($instanceidstring);
 
         // Now remove the actual block instance
-        $$DB->delete_records_select('block_instances', 'blockname IN ('.$outmodedblocksstring.')');
+        $DB->delete_records_select('block_instances', 'blockname IN ('.$outmodedblocksstring.')');
         unset($outmodedblocksstring);
 
         // Insert the new block instances. Remember they have not been installed yet
