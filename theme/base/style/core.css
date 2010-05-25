@@ -504,14 +504,11 @@ body.tag .managelink {padding: 5px;}
 .filemanager-container {padding: 5px;margin: 6px 0;background: #E9F4FF;border: #AACCEE 1px solid}
 .filemanager-container ul{margin:0;padding:0;}
 .filemanager-container ul li{white-space:nowrap;list-style-type:none;}
-.filemanager-container ul li a{margin:1px;}
-.filemanager-container ul li div.fm-file-name a:hover {margin:0;border: 1px solid #CCC; background: grey; color: white;}
+.filemanager-container ul li a{padding:0}
 .filemanager-loading{display:none}
 .jsenabled .filemanager-loading{display:block}
 #fm-move-div {margin: 6px;}
 #fm-move-div strong{color:red;}
-.fm-file-menu {width:18px;height:18px;}
-.fm-file-name {}
 .fm-file-entry{border: 1px solid red;}
 .fm-operation {font-weight: bold;}
 
