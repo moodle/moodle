@@ -57,7 +57,7 @@ class webservice_soap_server extends webservice_zend_server {
 
         parent::init_zend_server();
         
-        if ($this->simple) {
+        if ($this->authmethod == WEBSERVICE_AUTHMETHOD_USERNAME) {
             $username = optional_param('wsusername', '', PARAM_RAW);
             $password = optional_param('wspassword', '', PARAM_RAW);
             // aparently some clients and zend soap server does not work well with "&" in urls :-(

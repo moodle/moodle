@@ -48,7 +48,7 @@ class webservice_rest_server extends webservice_base_server {
      * @return void
      */
     protected function parse_request() {
-        if ($this->simple) {
+        if ($this->authmethod == WEBSERVICE_AUTHMETHOD_USERNAME) {
             $this->username = isset($_REQUEST['wsusername']) ? $_REQUEST['wsusername'] : null;
             unset($_REQUEST['wsusername']);
 
