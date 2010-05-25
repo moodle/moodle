@@ -507,6 +507,7 @@ body.tag .managelink {padding: 5px;}
 .filemanager-container ul li a{padding:0}
 .filemanager-loading{display:none}
 .jsenabled .filemanager-loading{display:block}
+.fm-menuicon{cursor: pointer;}
 #fm-move-div {margin: 6px;}
 #fm-move-div strong{color:red;}
 .fm-file-entry{border: 1px solid red;}
