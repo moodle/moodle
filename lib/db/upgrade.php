@@ -1931,6 +1931,10 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
     if ($result && $oldversion < 2009050615) {
         $table = new xmldb_table('block_instances');
 
+    /// Arrived here, any block_instances record without blockname is one
+    /// orphan block coming from 1.9. Just delete them. MDL-22503
+        $DB->delete_records_select('block_instances', 'blockname IS NULL');
+
     /// Changing nullability of field blockname on table block_instances to not null
         $field = new xmldb_field('blockname', XMLDB_TYPE_CHAR, '40', null, XMLDB_NOTNULL, null, null, 'id');
         $dbman->change_field_notnull($table, $field);
