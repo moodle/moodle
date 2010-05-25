@@ -166,7 +166,7 @@ if (has_capability('moodle/grade:manage', $systemcontext)
         $outcomes = new admin_externalpage('outcomes', get_string('outcomes', 'grades'), $CFG->wwwroot.'/grade/edit/outcome/index.php', 'moodle/grade:manage');
         $ADMIN->add('grades', $outcomes);
     }
-    $letters = new admin_externalpage('letters', get_string('letters', 'grades'), $CFG->wwwroot.'/grade/edit/letter/edit.php', 'moodle/grade:manageletters');
+    $letters = new admin_externalpage('letters', get_string('letters', 'grades'), $CFG->wwwroot.'/grade/edit/letter/index.php', 'moodle/grade:manageletters');
     $ADMIN->add('grades', $letters);
 
     // The plugins must implement a settings.php file that adds their admin settings to the $settings object

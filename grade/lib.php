@@ -2343,8 +2343,8 @@ abstract class grade_helper {
         $canmanageletters = has_capability('moodle/grade:manageletters', $context);
         if ($canmanage || $canmanageletters) {
             self::$letterinfo = array(
-                'view' => new grade_plugin_info('view', new moodle_url('/grade/edit/letter/index.php', array('id'=>$courseid)), get_string('view')),
-                'edit' => new grade_plugin_info('edit', new moodle_url('/grade/edit/letter/edit.php', array('id'=>$courseid)), get_string('edit'))
+                'view' => new grade_plugin_info('view', new moodle_url('/grade/edit/letter/index.php', array('id'=>$context->id)), get_string('view')),
+                'edit' => new grade_plugin_info('edit', new moodle_url('/grade/edit/letter/index.php', array('edit'=>1,'id'=>$context->id)), get_string('edit'))
             );
         } else {
             self::$letterinfo = false;

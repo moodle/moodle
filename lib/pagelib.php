@@ -664,7 +664,7 @@ class moodle_page {
     public function set_state($state) {
         if ($state != $this->_state + 1 || $state > self::STATE_DONE) {
             throw new coding_exception('Invalid state passed to moodle_page::set_state. We are in state ' .
-                    $this->_state . ' and state ' . $state . ' was requestsed.');
+                    $this->_state . ' and state ' . $state . ' was requested.');
         }
 
         if ($state == self::STATE_PRINTING_HEADER) {
