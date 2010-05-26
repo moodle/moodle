@@ -72,8 +72,7 @@ class mod_resource_mod_form extends moodleform_mod {
 
         $mform->addElement('filemanager', 'files', get_string('selectfiles'), null, $filemanager_options);
 
-        //TODO: ohlala, it should be hidden when JS file manager loaded, the main file should be somehow highlighted directly in editor
-        $mform->addElement('text', 'mainfile', get_string('areamainfile', 'repository'));
+        $mform->addElement('hidden', 'mainfile', get_string('areamainfile', 'repository'), array('id'=>'id_mainfile'));
         $mform->setType('mainfile', PARAM_PATH);
 
         //-------------------------------------------------------
@@ -211,9 +210,8 @@ class mod_resource_mod_form extends moodleform_mod {
             $filepaths[] = $file->get_filepath().$file->get_filename();
         }
         if (!in_array($data['mainfile'], $filepaths)) {
-            $errors['mainfile'] = 'Please type correct main file path'; //TODO: will not be needed, do NOT localize!
+            $errors['files'] = get_string('selectmainfile', 'resource');
         }
         return $errors;
     }
 }
-

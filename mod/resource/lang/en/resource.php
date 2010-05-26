@@ -71,3 +71,4 @@ $string['resourceadministration'] = 'Resource administration';
 $string['resourcecontent'] = 'Files and subfolders';
 $string['resource:exportresource'] = 'Export resource';
 $string['resource:view'] = 'View resource';
+$string['selectmainfile'] = 'Please select the main file by clicking the icon next to file name.';

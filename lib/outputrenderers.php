@@ -1722,7 +1722,6 @@ class core_renderer extends renderer_base {
 
         return html_writer::tag('a', $output, $attributes);
     }
-
     /**
      * Print the file picker
      *
@@ -1876,7 +1875,7 @@ FMHTML;
             'strings' => array(array('loading', 'repository'), array('nomorefiles', 'repository'), array('confirmdeletefile', 'repository'),
                  array('add', 'repository'), array('accessiblefilepicker', 'repository'), array('move', 'moodle'),
                  array('cancel', 'moodle'), array('download', 'moodle'), array('ok', 'moodle'),
-                 array('emptylist', 'repository'), array('entername', 'repository'), array('enternewname', 'repository'),
+                 array('emptylist', 'repository'), array('nofilesattached', 'repository'), array('entername', 'repository'), array('enternewname', 'repository'),
                  array('zip', 'editor'), array('unzip', 'moodle'), array('rename', 'moodle'), array('delete', 'moodle'),
                  array('cannotdeletefile', 'error'), array('confirmdeletefile', 'repository'),
                  array('nopathselected', 'repository'), array('popupblockeddownload', 'repository'),
