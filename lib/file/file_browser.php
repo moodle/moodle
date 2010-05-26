@@ -431,14 +431,14 @@ class file_browser {
     private function get_file_info_section_backup($course, $context, $filearea=null, $itemid=null, $filepath=null, $filename=null) {
         global $CFG, $DB;
 
+        if (!has_capability('moodle/backup:backupcourse', $context) and !has_capability('moodle/restore:restorecourse', $context)) {
+            return null;
+        }
+
         $fs = get_file_storage();
         if (empty($itemid)) {
             // list all sections
             return new file_info_coursesectionbackup($this, $context, $course);
-        }
-
-        if (!has_capability('moodle/backup:backupcourse', $context) and !has_capability('moodle/restore:restorecourse', $context)) {
-            return null;
         }
 
         if (!$section = $DB->get_record('course_sections', array('course'=>$course->id, 'id'=>$itemid))) {
