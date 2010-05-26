@@ -461,6 +461,10 @@ M.core_filepicker.init = function(Y, options) {
                 var licenses = this.options.licenses;
                 html += '<tr><td class="mdl-right"><label for="select-license-'+client_id+'">'+M.str.repository.chooselicense+' :</label></td>';
                 html += '<td class="mdl-left"><select name="license" id="select-license-'+client_id+'">';
+                var recentlicense = YAHOO.util.Cookie.get('recentlicense');
+                if (recentlicense) {
+                    this.options.defaultlicense=recentlicense;
+                }
                 for (var i in licenses) {
                     if (this.options.defaultlicense==licenses[i].shortname) {
                         var selected = ' selected';
@@ -492,6 +496,7 @@ M.core_filepicker.init = function(Y, options) {
                 var license = Y.one('#select-license-'+client_id);
                 if (license) {
                     params['license'] = license.get('value');
+                    YAHOO.util.Cookie.set('recentlicense', license.get('value'));
                 }
                 var author = Y.one('#text-author-'+client_id);
                 if (author){
@@ -569,6 +574,7 @@ M.core_filepicker.init = function(Y, options) {
         },
         render: function() {
             var client_id = this.options.client_id;
+            var scope = this;
             var filepicker_id = 'filepicker-'+client_id;
             var fpnode = Y.Node.create('<div class="file-picker" id="'+filepicker_id+'"></div>');
             Y.one(document.body).appendChild(fpnode);
@@ -596,6 +602,7 @@ M.core_filepicker.init = function(Y, options) {
                         ]
                     });
                     layout.render();
+                    scope.show_recent_repository();
                 });
             });
 
@@ -638,6 +645,7 @@ M.core_filepicker.init = function(Y, options) {
                     list.append('<li id="'+id+'"><a class="fp-repo-name" id="'+link_id+'" href="###">'+r[i].name+'</a></li>');
                     Y.one('#'+link_id).prepend('<img src="'+r[i].icon+'" width="16" height="16" />&nbsp;');
                     Y.one('#'+link_id).on('click', function(e, scope, repository_id) {
+                        YAHOO.util.Cookie.set('recentrepository', repository_id);
                         scope.repository_id = repository_id;
                         Y.all(el+' li a').setStyle('backgroundColor', 'transparent');
                         e.currentTarget.setStyle('backgroundColor', '#CCC');
@@ -963,6 +971,10 @@ M.core_filepicker.init = function(Y, options) {
             str += '<td class="mdl-left">';
             var licenses = this.options.licenses;
             str += '<select name="license" id="select-license-'+client_id+'">';
+            var recentlicense = YAHOO.util.Cookie.get('recentlicense');
+            if (recentlicense) {
+                this.options.defaultlicense=recentlicense;
+            }
             for (var i in licenses) {
                 if (this.options.defaultlicense==licenses[i].shortname) {
                     var selected = ' selected';
@@ -982,6 +994,8 @@ M.core_filepicker.init = function(Y, options) {
             var scope = this;
             Y.one('#'+id+'_action').on('click', function(e) {
                 e.preventDefault(); 
+                var license = Y.one('#select-license-'+client_id).get('value');
+                YAHOO.util.Cookie.set('recentlicense', license);
                 Y.use('io-upload-iframe', function() {
                     scope.request({
                             scope: scope,
@@ -1278,12 +1292,19 @@ M.core_filepicker.init = function(Y, options) {
                 var panel = Y.one('#panel-'+this.options.client_id);
                 panel.set('innerHTML', '');
                 this.mainui.show();
+                this.show_recent_repository();
             } else {
                 this.launch();
             }
         },
         launch: function() {
             this.render();
+        },
+        show_recent_repository: function() {
+            var repository_id = YAHOO.util.Cookie.get('recentrepository');
+            if (this.options.repositories[repository_id]) {
+                this.list({'repo_id':repository_id});
+            }
         }
     });
     var loading = Y.one('#filepicker-loading-'+options.client_id);
