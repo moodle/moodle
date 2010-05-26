@@ -79,30 +79,40 @@ class community {
      * @param integer $courseid
      * @param string $huburl
      */
-    public function download_community_course_backup($courseid, $huburl) {
+    public function download_community_course_backup($course) {
         global $CFG, $USER;
         require_once($CFG->dirroot. "/lib/filelib.php");
         require_once($CFG->dirroot. "/lib/hublib.php");
         //$curl = new curl();
-        $params['courseid'] = $courseid;
+        $params['courseid'] = $course->id;
         $params['filetype'] = BACKUP_FILE_TYPE;
 
-        $url  = new moodle_url($huburl.'/local/hub/webservice/download.php', $params);
-        $path = $CFG->dataroot.'/temp/download/'.'backup_'.$courseid.".zip";
+        if (!file_exists($CFG->dataroot.'/temp/communitydownload')) {
+            mkdir($CFG->dataroot.'/temp/communitydownload/', 0777, true);
+        }
+
+        //get hub id to make the
+
+        $url  = new moodle_url($course->huburl.'/local/hub/webservice/download.php', $params);
+        $path = $CFG->dataroot.'/temp/communitydownload/'.'backup_'.$course->fullname."_".$course->id.".zip";
         $fp = fopen($path, 'w');
-        $ch = curl_init($huburl.'/local/hub/webservice/download.php?filetype='.BACKUP_FILE_TYPE.'&courseid='.$courseid);
+        $ch = curl_init($course->huburl.'/local/hub/webservice/download.php?filetype='.BACKUP_FILE_TYPE.'&courseid='.$course->id);
         curl_setopt($ch, CURLOPT_FILE, $fp);
         $data = curl_exec($ch);
         curl_close($ch);
         fclose($fp);
 
+        $fs = get_file_storage();
         $record->contextid = get_context_instance(CONTEXT_USER, $USER->id)->id;
         $record->filearea = 'user_backup';
         $record->itemid = 0;
-        $record->filename = 'backup_'.$courseid.".zip";
+        $record->filename = 'backup_'.$course->fullname."_".$course->id.".zip";
         $record->filepath = '/';
-        $fs = get_file_storage();
-        $fs->create_file_from_pathname($record, $CFG->dataroot.'/temp/download/'.'backup_'.$courseid.".zip");
+        if (!$fs->file_exists($record->contextid, $record->filearea, 0, $record->filepath, $record->filename)) {
+            $fs->create_file_from_pathname($record, $CFG->dataroot.'/temp/communitydownload/'.'backup_'.$course->fullname."_".$course->id.".zip");
+        }
+        //delete temp file
+        unlink($path);
     }
 
     /**

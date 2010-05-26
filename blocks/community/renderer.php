@@ -105,23 +105,25 @@ class block_community_renderer extends plugin_renderer_base {
                     $language= '';
                 }
 
-                if ($course->enrollable) {
-                    //Add link TODO make it a button and send by post
-                    $addurl = new moodle_url("/blocks/community/communitycourse.php",
-                            array('sesskey' => sesskey(), 'add' => 1, 'confirmed' => 1,
+                if ($course->enrollable) {                 
+                    $params = array('sesskey' => sesskey(), 'add' => 1, 'confirmed' => 1,
                                 'coursefullname' => $course->fullname, 'courseurl' => $courseurl,
-                                'coursedescription' => $course->description));
-                    $addlinkhtml = html_writer::tag('a', get_string('addtocommunityblock', 'block_community'), array('href' => $addurl));
+                                'coursedescription' => $course->description);
+                    $addurl = new moodle_url("/blocks/community/communitycourse.php", $params);
+                    $addbutton = new single_button($addurl, get_string('addtocommunityblock', 'block_community'));
+                    $addbutton->class = 'centeredbutton';
+                    $addbuttonhtml = $OUTPUT->render($addbutton);
                 } else {
-//                    Add link TODO make it a button and send by post
-                    $addurl = new moodle_url("/blocks/community/communitycourse.php",
-                            array('sesskey' => sesskey(), 'download' => 1, 'confirmed' => 1,
-                                'courseid' => $course->id, 'huburl' => $huburl));
-                    $addlinkhtml = html_writer::tag('a', get_string('download', 'block_community'), array('href' => $addurl));
+                    $params = array('sesskey' => sesskey(), 'download' => 1, 'confirmed' => 1,
+                                'courseid' => $course->id, 'huburl' => $huburl, 'coursefullname' => $course->fullname);
+                    $addurl = new moodle_url("/blocks/community/communitycourse.php", $params);
+                    $downloadbutton = new single_button($addurl, get_string('download', 'block_community'));
+                    $downloadbutton->class = 'centeredbutton';
+                    $addbuttonhtml = $OUTPUT->render($downloadbutton);
                 }
 
                 // add a row to the table
-                $cells = array($coursenamehtml, $deschtml, $language, $addlinkhtml);
+                $cells = array($coursenamehtml, $deschtml, $language, $addbuttonhtml);
 
 
                 $row = new html_table_row($cells);

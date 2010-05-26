@@ -62,9 +62,15 @@ if ($add != -1 and $confirm and confirm_sesskey()) {
 $huburl  = optional_param('huburl', false, PARAM_URL);
 $download  = optional_param('download', -1, PARAM_INTEGER);
 $courseid  = optional_param('courseid', '', PARAM_INTEGER);
+$coursefullname  = optional_param('coursefullname', '', PARAM_ALPHANUMEXT);
 if ($download != -1 and !empty($courseid) and confirm_sesskey()) {
-    $community->download_community_course_backup($courseid, $huburl);
-    $notificationmessage = $OUTPUT->notification(get_string('downloadconfirmed', 'hub', 'backup_'.$courseid.".zip"),
+    $course = new stdClass();
+    $course->fullname = $coursefullname;
+    $course->id = $courseid;
+    $course->huburl = $huburl;
+    $community->download_community_course_backup($course);
+    $filename =  'backup_'.$course->fullname."_".$course->id.".zip";
+    $notificationmessage = $OUTPUT->notification(get_string('downloadconfirmed', 'hub', $filename),
             'notifysuccess');
 }
 

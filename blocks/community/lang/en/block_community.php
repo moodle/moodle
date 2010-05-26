@@ -24,6 +24,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['add'] = 'Add';
 $string['addtocommunityblock'] = 'Add to community block';
 $string['addcommunitycourse'] = 'Add community course';
 $string['additionalcoursedesc'] = '{$a->contributornames} - {$a->coverage} - Creator: {$a->creatorname} - Publisher: {$a->publishername} - Subject: {$a->subject}
