@@ -50,22 +50,10 @@ class grade_report_grader_ajax extends grade_report_grader {
     var $tabindex = 0;
 
     /**
-     * Constructor. Sets local copies of user preferences and initialises grade_tree.
-     * @param int $courseid
-     * @param object $gpr grade plugin return tracking object
-     * @param string $context
-     * @param int $page The current page being viewed (when report is paged)
-     * @param int $sortitemid The id of the grade_item by which to sort the table
-     */
-    function grade_report_grader_ajax($courseid, $gpr, $context, $page=null, $sortitemid=null) {
-        parent::__construct($courseid, $gpr, $context, $page, $sortitemid);
-    }
-
-    /**
      * Loads, stores and returns the array of scales used in this course.
      * @return array
      */
-    function get_scales_array() {
+    /*function get_scales_array() {
         global $DB;
 
         if (empty($this->gtree->items)) {
@@ -92,50 +80,14 @@ class grade_report_grader_ajax extends grade_report_grader {
         } else {
             return null;
         }
-    }
-
-    /**
-     * Processes the data sent by the form (grades and feedbacks).
-     * Caller is responsible for all access control checks
-     * @param array $data form submission (with magic quotes)
-     * @return array empty array if success, array of warnings if something fails.
-     */
-    function process_data($data) {
-        return parent::process_data($data);
-    }
-
-    /**
-     * Builds and returns a div with on/off toggles.
-     * @return string HTML code
-     */
-    function get_toggles_html() {
-        return parent::get_toggles_html();
-    }
-
-    /**
-     * Shortcut function for printing the grader report toggles.
-     * @param string $type The type of toggle
-     * @param bool $return Whether to return the HTML string rather than printing it
-     * @return void
-     */
-    function print_toggle($type, $return=false) {
-        return parent::print_toggle($type, $return);
-    }
-
-    /**
-     * Builds and returns the HTML code for the headers.
-     * @return string $headerhtml
-     */
-    function get_headerhtml() {
-        return parent::get_headerhtml();
-    }
+    }*/
 
     /**
      * Builds and return the HTML rows of the table (grades headed by student).
      * @todo MDL-21562 Is this still used anywhere
      * @return string HTML
      */
-    function get_studentshtml() {
+    /*function get_studentshtml() {
         if (empty($this->users)) {
             print_error('nousersloaded', 'grades');
         }
@@ -150,7 +102,7 @@ class grade_report_grader_ajax extends grade_report_grader {
         }
 
         return $studentshtml;
-    }
+    }*/
 
 
     /**
@@ -162,7 +114,7 @@ class grade_report_grader_ajax extends grade_report_grader {
      * @param object $user
      * @return string
      */
-    function get_studentrowhtml($user) {
+    /*function get_studentrowhtml($user) {
         global $CFG, $USER, $OUTPUT;
         $showuserimage = $this->get_pref('showuserimage');
         $showuseridnumber = $this->get_pref('showuseridnumber');
@@ -218,7 +170,7 @@ class grade_report_grader_ajax extends grade_report_grader {
         $studentrowhtml .= '</tr>';
         return $studentrowhtml;
 
-    }
+    }*/
 
     /**
      * Retuns the HTML table cell for a user's grade for a grade_item
@@ -232,7 +184,7 @@ class grade_report_grader_ajax extends grade_report_grader {
      *
      * @return string
      */
-    function get_gradecellhtml($user, $itemid, $columncount, $nexttabindex, $altered=array(), $unknown=array()) {
+    /*function get_gradecellhtml($user, $itemid, $columncount, $nexttabindex, $altered=array(), $unknown=array()) {
         global $CFG, $USER;
 
         $strfeedback  = $this->get_lang_string("feedback");
@@ -442,85 +394,29 @@ class grade_report_grader_ajax extends grade_report_grader {
 
         $gradecellhtml .=  '</td>' . "\n";
         return $gradecellhtml;
-    }
-
-    /**
-     * Builds and return the HTML row of column totals.
-     * @param  bool $grouponly Whether to return only group averages or all averages.
-     * @return string HTML
-     */
-    function get_avghtml($grouponly=false) {
-        return parent::get_avghtml($grouponly);
-    }
-
-    /**
-     * Builds and return the HTML row of ranges for each column (i.e. range).
-     * @return string HTML
-     */
-    function get_rangehtml() {
-        return parent::get_rangehtml();
-    }
-
-    /**
-     * Builds and return the HTML row of ranges for each column (i.e. range).
-     * @return string HTML
-     */
-    function get_iconshtml() {
-        return parent::get_iconshtml();
-    }
-
-    /**
-     * Given a grade_category, grade_item or grade_grade, this function
-     * figures out the state of the object and builds then returns a div
-     * with the icons needed for the grader report.
-     *
-     * @param object $object
-     * @return string HTML
-     */
-    function get_icons($element) {
-        return parent::get_icons($element);
-    }
-
-    /**
-     * Given a category element returns collapsing +/- icon if available
-     * @param object $object
-     * @return string HTML
-     */
-    function get_collapsing_icon($element) {
-        return parent::get_collapsing_icon($element);
-    }
-
-    /**
-     * Processes a single action against a category, grade_item or grade.
-     * @param string $target eid ({type}{id}, e.g. c4 for category4)
-     * @param string $action Which action to take (edit, delete etc...)
-     * @return
-     */
-    function process_action($target, $action) {
-        return parent::process_action($target, $action);
-    }
+    }*/
 
     /**
      * Returns a valid JSON object with feedbacks indexed by userid and itemid.
      * Paging is taken into account: this needs to be reloaded at each new page (not page load, just page of data);
      */
-    function getFeedbackJsArray() {
+    /*function getFeedbackJsArray() {
         if (!empty($this->feedbacks)) {
             return json_encode($this->feedbacks);
         } else {
             return null;
         }
-    }
+    }*/
 
     /**
      * Returns a json_encoded hash of itemid => decimalpoints preferences
      */
-    function getItemsDecimalPoints() {
+    /*function getItemsDecimalPoints() {
         $decimals = array();
         foreach ($this->gtree->items as $itemid=>$item) {
             $decimals[$itemid] = $item->get_decimals();
         }
         return json_encode($decimals);
-    }
+    }*/
 }
 
