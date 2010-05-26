@@ -47,7 +47,7 @@ class grade_report_grader_ajax extends grade_report_grader {
      * Increments by one between each user for the gradevalues, and by 1 + usercount for the gradefeedback
      * @var int $tabindex
      */
-    var $tabindex = 0;
+    //var $tabindex = 0;
 
     /**
      * Loads, stores and returns the array of scales used in this course.
