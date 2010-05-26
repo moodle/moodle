@@ -170,15 +170,18 @@ if (has_capability('moodle/course:publish', get_context_instance(CONTEXT_COURSE,
         // send backup
         if ($share) {
             foreach ($courseids as $courseid) {
+                $params = array();
                 $params['filetype'] = BACKUP_FILE_TYPE;
                 $params['courseid'] = $courseid;
                 $params['file'] = $backupfile;
+                $params['token'] = $registeredhub->token;
                 $curl->post($huburl."/local/hub/webservice/upload.php", $params);
             }
         }
 
 
-        //TODO: Delete the backup from user_tohub
+        //Delete the backup from user_tohub
+        $backupfile->delete();
 
 
         //redirect to the index publis page
