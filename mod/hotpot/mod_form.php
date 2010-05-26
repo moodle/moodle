@@ -23,7 +23,7 @@ class mod_hotpot_mod_form extends moodleform_mod {
         // $mform->setType('name', PARAM_xxx);
         // $mform->setDefault('name', array('elementhelpfilename', get_string('helpicontitlestring', 'hotpot'), 'hotpot'));
 
-        global $CFG, $COURSE;
+        global $CFG, $COURSE, $OUTPUT;
         global $HOTPOT_FEEDBACK, $HOTPOT_GRADEMETHOD, $HOTPOT_LOCATION;
         global $HOTPOT_NAVIGATION, $HOTPOT_OUTPUTFORMAT, $HOTPOT_TEXTSOURCE;
 
