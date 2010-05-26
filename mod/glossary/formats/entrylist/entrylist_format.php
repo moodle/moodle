@@ -12,11 +12,11 @@ function glossary_show_entry_entrylist($course, $cm, $glossary, $entry, $mode=''
     if ($entry) {
         glossary_print_entry_approval($cm, $entry, $mode);
 
-        //<a href=\"showentry.php?courseid=$course->id&amp;eid=$entry->id&amp;displayformat=dictionary\" target=\"_blank\" onclick=\"return openpopup('/mod/glossary/showentry.php?courseid=$course->id&amp;eid=$entry->id&amp;displayformat=dictionary', 'entry', 'menubar=0,location=0,scrollbars,resizable,width=600,height=450', 0);\">
-        $link = "/mod/glossary/showentry.php?courseid={$course->id}&eid={$entry->id}&displayformat=dictionary";
         $anchortagcontents = glossary_print_entry_concept($entry);
-        
+
+        $link = "/mod/glossary/showentry.php?courseid={$course->id}&eid={$entry->id}&displayformat=dictionary";
         $action = new popup_action('click', $link, 'entry',array('title'=>'entry','width'=>600,'height'=>450));
+
         $anchor = $OUTPUT->action_link($link, $anchortagcontents, $action);
 
         echo "<div class=\"concept\">$anchor</div> ";
