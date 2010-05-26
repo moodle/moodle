@@ -1722,6 +1722,60 @@ class core_renderer extends renderer_base {
 
         return html_writer::tag('a', $output, $attributes);
     }
+
+    /**
+     * Print the file tree viewer
+     *
+     * <pre>
+     * $OUTPUT->file_tree_viewer($contextid, $filearea, $itemid, $urlbase);
+     * </pre>
+     *
+     * @param int $contextid
+     * @param string $area
+     * @param int $itemid
+     * @param string $urlbase
+     * @return string HTML fragment
+     */
+    public function file_tree_viewer($contextid, $area, $itemid, $urlbase='') {
+        $tree = new file_tree_viewer($contextid, $area, $itemid, $urlbase);
+        return $this->render($tree);
+    }
+
+    /**
+     * Internal implementation of file tree viewer rendering.
+     * @param file_tree_viewer $tree
+     * @return string
+     */
+    public function render_file_tree_viewer(file_tree_viewer $tree) {
+        $this->page->requires->js_init_call('M.mod_folder.init_tree', array(true));
+        $html = '';
+        $html .= '<div id="folder_tree">';
+        $html .= $this->htmllize_file_tree($tree->dir);
+        $html .= '</div>';
+        return $html;
+    }
+
+    /**
+     * Internal implementation of file tree viewer items rendering.
+     * @param array $dir
+     * @return string
+     */
+    public function htmllize_file_tree($dir) {
+        if (empty($dir['subdirs']) and empty($dir['files'])) {
+            return '';
+        }
+        $result = '<ul>';
+        foreach ($dir['subdirs'] as $subdir) {
+            $result .= '<li>'.s($subdir['dirname']).' '.$this->htmllize_file_tree($subdir).'</li>';
+        }
+        foreach ($dir['files'] as $file) {
+            $filename = $file->get_filename();
+            $result .= '<li><span>'.html_writer::link($file->fileurl, $filename).'</span></li>';
+        }
+        $result .= '</ul>';
+
+        return $result;
+    }
     /**
      * Print the file picker
      *
@@ -1743,6 +1797,11 @@ class core_renderer extends renderer_base {
         $fp = new file_picker($options);
         return $this->render($fp);
     }
+    /**
+     * Internal implementation of file picker rendering.
+     * @param file_picker $fp
+     * @return string
+     */
     public function render_file_picker(file_picker $fp) {
         global $CFG, $OUTPUT, $USER;
         $options = $fp->options;

@@ -35,6 +35,56 @@ interface renderable {
     // intentionally empty
 }
 
+/**
+ * Data structure representing a file tree viewer
+ *
+ * @copyright 2010 Dongsheng Cai
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since     Moodle 2.0
+ */
+class file_tree_viewer implements renderable {
+    public $dir;
+    public $result;
+    public $filearea;
+    /**
+     * Constructor of file_tree_viewer class
+     * @param int $contextid
+     * @param string $area, file area
+     * @param int $itemid
+     * @param string $urlbase, file serving url base
+     */
+    public function __construct($contextid, $area, $itemid, $urlbase='') {
+        global $CFG;
+        $fs = get_file_storage();
+        if (empty($urlbase)) {
+            $this->urlbase = "$CFG->wwwroot/pluginfile.php";
+        } else {
+            $this->urlbase = $urlbase;
+        }
+        $this->contextid = $contextid;
+        $this->filearea = $area;
+        $this->itemid = $itemid;
+        $this->dir = $fs->get_area_tree($contextid, $area, $itemid);
+        $this->tree_view_parser($this->dir);
+    }
+    /**
+     * Pre-process file tree, generate file url
+     * @param array $dir file tree
+     */
+    public function tree_view_parser($dir) {
+        if (empty($dir['subdirs']) and empty($dir['files'])) {
+            return null;
+        }
+        foreach ($dir['subdirs'] as $subdir) {
+            $this->tree_view_parser($subdir);
+        }
+        foreach ($dir['files'] as $file) {
+            $path    = '/'.$this->contextid.'/'.$this->filearea.'/'.$this->itemid.$file->get_filepath().$file->get_filename();
+            $downloadurl = file_encode_url($this->urlbase, $path, true);
+            $file->fileurl = $downloadurl;
+        }
+    }
+}
 
 /**
  * Data structure representing a file picker.
