@@ -105,15 +105,18 @@
 
 
 <?php
-    //display the units as choice
+    //display the units as choice 
     if ( isset($question->options->units)){?>
-          <div class="answer">
+    <div class="answer">
     <fieldset class="clearfix"  id="generalheader">
          <legend class="ftoggler">
             <?php echo get_string('unit', 'quiz');
              ?>
          </legend>
-            <table class="answer">
+      <!--  <div class="que multichoice clearfix">
+            <div class="content"> class="answer"
+                <div class="ablock clearfix"> -->
+                    <table >
 
 <?php       
             // the order is not shuffled
@@ -152,20 +155,13 @@
             $a->class =  '' ;
             $a->feedbackimg = '';
 
-            $a->control = "<input $readonly  $nameunit $checked $type value=\"$key\" />";
+            $a->control = "<input $readonly  $nameunit $checked $type  value=\"$key\" />";
 
             if ($options->correct_responses && $classunitvalue > 0 ) { //$answer->fraction 
                 $a->class = question_get_feedback_class($classunitvalue);
             }
             if (($options->feedback && $chosen) || $options->correct_responses) {
-             /*   if ($type == ' type="checkbox" ') {
-                 //   $a->feedbackimg = question_get_feedback_image($answer->fraction > 0 ? 1 : 0, $chosen && $options->feedback);
                     $a->feedbackimg = question_get_feedback_image($classunitvalue, $chosen && $options->feedback);
-
-                } else {*/
-                    $a->feedbackimg = question_get_feedback_image($classunitvalue, $chosen && $options->feedback);
-
-               // }
             }
 
             // Print the control
@@ -174,27 +170,31 @@
             $row = 0 ;
 
 ?>
-                  <tr class="<?php echo 'r'.$row = $row ? 0 : 1; ?>">
-                    <td class="c0 control">
-                      <?php echo $a->control; ?>
-                    </td>
-                    <td class="c1 text <?php echo $a->class ?>">
-                      <label for="<?php echo $a->id ?>">
-                        <?php echo $a->text; ?>
+                        <tr class="<?php echo 'r'.$row = $row ? 0 : 1; ?>">
+                            <td class="c0 control " style=" ">
+                      <?php echo $a->control.'&nbsp;&nbsp;&nbsp;'; ?>
+                            </td>
+                            <td style=" " class="c1 text <?php echo $a->class ?>">
+                                <label for="<?php echo $a->id ?>">
+                        <?php echo $a->text.'<br />'; ?>
                         <?php echo $a->feedbackimg; 
                         if ($options->feedback &&  $classunitvalue == 0  && $chosen && !$answerasterisk){
                             print_string('unitnotvalid', 'qtype_numerical');
                         }
 ?>
-                      </label>
-                    </td>
-                  </tr>
+                                </label>
+                            </td>
+                        </tr>
                 <?php } ?>
 
-         </table>
-    </fieldset>
+                    </table>
+           <!--     </div> 
+            </div> 
+        </div> -->
+         </fieldset>
+    
 
-         </div>
+    </div>
             <?php } // end unit choices
             // display intructions
             // general message first
