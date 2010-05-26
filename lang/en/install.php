@@ -294,7 +294,12 @@ $string['mysqliextensionisnotpresentinphp'] = 'PHP has not been properly configu
 $string['nativemysqli'] = 'Improved MySQL (native/mysqli)';
 $string['nativemysqlihelp'] = 'Now you need to configure the database where most Moodle data will be stored.
 Database may be created if database user has needed permissions, username and password must already exist. Table prefix is optional.';
+$string['nativemssql'] = 'SQL*Server FreeTDS (native/mssql)';
+$string['nativemssqlhelp'] = 'Now you need to configure the database where most Moodle data will be stored.
+This database must already have been created and a username and password created to access it. Table prefix is mandatory.';
 $string['nativeoci'] = 'Oracle (native/oci)';
+$string['nativeocihelp'] = 'Now you need to configure the database where most Moodle data will be stored.
+This database must already have been created and a username and password created to access it. Table prefix is mandatory.';
 $string['nativepgsql'] = 'PostgreSQL (native/pgsql)';
 $string['nativepgsqlhelp'] = 'Now you need to configure the database where most Moodle data will be stored.
 This database must already have been created and a username and password created to access it. Table prefix is mandatory.';
@@ -345,6 +350,9 @@ $string['sessionautostarthelp'] = '<p>Moodle requires session support and will n
 
 <p>Sessions can be enabled in the php.ini file ... look for the session.auto_start parameter.</p>';
 $string['skipdbencodingtest'] = 'Skip DB Encoding Test';
+$string['nativesqlsrv'] = 'SQL*Server Microsoft (native/sqlsrv)';
+$string['nativesqlsrvhelp'] = 'Now you need to configure the database where most Moodle data will be stored.
+This database must already have been created and a username and password created to access it. Table prefix is mandatory.';
 $string['sqliteextensionisnotpresentinphp'] = 'PHP has not been properly configured with the SQLite extension.  Please check your php.ini file or recompile PHP.';
 $string['upgradingqtypeplugin'] = 'Upgrading Question/type Plugin';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';

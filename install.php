@@ -450,7 +450,7 @@ if ($config->stage == INSTALL_DATABASETYPE) {
                        'pgsql'  => moodle_database::get_driver_instance('pgsql',  'native'),
                        'oci'    => moodle_database::get_driver_instance('oci',    'native'),
                        //'sqlsrv' => moodle_database::get_driver_instance('sqlsrv', 'native'), // new MS sql driver - win32 only
-                       //'mssql'  => moodle_database::get_driver_instance('mssql',  'native'), // FreeTDS driver
+                       'mssql'  => moodle_database::get_driver_instance('mssql',  'native'), // FreeTDS driver
                       );
 
     echo '<div class="userinput">';
