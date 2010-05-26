@@ -22,10 +22,6 @@ require_once("$CFG->dirroot/question/type/shortanswer/questiontype.php");
 class question_numerical_qtype extends question_shortanswer_qtype {
 
     public $virtualqtype = false;
-    public $unitpenalty = 0;
-    public $raw_unitgrade = 0 ;
-    public $raw_unitpenalty = 0.05 ;
-    public $valid_numerical_unit = false ;
     function name() {
         return 'numerical';
     }
@@ -324,13 +320,11 @@ class question_numerical_qtype extends question_shortanswer_qtype {
         $state->responses = array();
         $state->responses['answer'] =  '';
         $state->responses['unit'] = '';
-     //   $state->options->raw_unitpenalty = 0 ;
         
         return true;
     }
     function restore_session_and_responses(&$question, &$state) {
        if(false === strpos($state->responses[''], '|||||')){
-        // temporary
              $state->responses['answer']= $state->responses[''];
              $state->responses['unit'] = '';
              $this->split_old_answer($state->responses[''], $question->options->units, $state->responses['answer'] ,$state->responses['unit'] );
@@ -448,11 +442,13 @@ class question_numerical_qtype extends question_shortanswer_qtype {
         $feedback = '';
         $class = '';
         $classunit = '' ;
+        $classunitvalue = '' ;
         $feedbackimg = '';
         $feedbackimgunit = '' ;
         $answerasterisk = false ;
         $response = '' ;
-
+        $valid_numerical_unit = false ;
+        $rawgrade = 0 ;
         if ($options->feedback) {
             $class = question_get_feedback_class(0);
             $classunit = question_get_feedback_class(0);
@@ -470,60 +466,74 @@ class question_numerical_qtype extends question_shortanswer_qtype {
                 }
                 
                 if ($answer->answer === '*') {
-                        $answerasterisk = true ;
-                        $class = question_get_feedback_class($answer->fraction);
-                        $feedbackimg = question_get_feedback_image($answer->fraction);
-                        $classunitvalue = $class ;
-                        $classunit = question_get_feedback_class($answer->fraction); 
-                        $feedbackimgunit = question_get_feedback_image($answer->fraction, $options->feedback);
-                        if ($answer->feedback) {
-                            $feedback = format_text($answer->feedback, true, $formatoptions, $cmoptions->course);
-                        }
-                        if ( isset($question->options->units)) 
-                        { 
-                            $this->valid_numerical_unit = true ;
-                        }
-                        $break = 1 ;
+                    $answerasterisk = true ;
+                    $rawgrade = $answer->fraction ; 
+                    $class = question_get_feedback_class($answer->fraction);
+                    $feedbackimg = question_get_feedback_image($answer->fraction);
+                    $classunitvalue = $class ;
+                    $classunit = question_get_feedback_class($answer->fraction); 
+                    $feedbackimgunit = question_get_feedback_image($answer->fraction, $options->feedback);
+                    if ($answer->feedback) {
+                        $feedback = format_text($answer->feedback, true, $formatoptions, $cmoptions->course);
+                    }
+                    if ( isset($question->options->units)) 
+                    { 
+                        $valid_numerical_unit = true ;
+                    }
+                    $break = 1 ;
                 } else if ($response !== false && isset($question->options->units) && count($question->options->units) > 0) {
                     $hasunits = 1 ;
                     foreach($question->options->units as $key => $unit){ 
-                            // The student did type a number, so check it with tolerances.
-                            $testresponse = $response /$unit->multiplier ;                        
-                            if($answer->min <= $testresponse && $testresponse <= $answer->max) {
-                                $state->raw_grade = $answer->fraction;
-                                $this->raw_unitgrade = $answer->fraction;
-                                $unittested = $unit->unit ;
-                                $class = question_get_feedback_class($answer->fraction);
-                                $feedbackimg = question_get_feedback_image($answer->fraction);
-                                if ($answer->feedback) {
-                                    $feedback = format_text($answer->feedback, true, $formatoptions, $cmoptions->course);
-                                }
-                                if($state->responses['unit'] == $unit->unit){                                    
-                                    $classunitvalue = $answer->fraction ;
-                                }else {                                    
-                                    $classunitvalue == 0 ;
-                                }
-                                $classunit = question_get_feedback_class($classunitvalue); 
-                                $feedbackimgunit = question_get_feedback_image($classunitvalue, $options->feedback);
-                                    $break = 1 ;
-                                
-                                break;
+                        // The student did type a number, so check it with tolerances.
+                        $testresponse = $response /$unit->multiplier ;                        
+                        if($answer->min <= $testresponse && $testresponse <= $answer->max) {
+                            $unittested = $unit->unit ;
+                            $rawgrade = $answer->fraction ; 
+                            $class = question_get_feedback_class($answer->fraction);
+                            $feedbackimg = question_get_feedback_image($answer->fraction);
+                            if ($answer->feedback) {
+                                $feedback = format_text($answer->feedback, true, $formatoptions, $cmoptions->course);
+                            }
+                            if($state->responses['unit'] == $unit->unit){                                    
+                                $classunitvalue = $answer->fraction ;
+                            }else {                                    
+                                $classunitvalue == 0 ;
+                            }
+                            $classunit = question_get_feedback_class($classunitvalue); 
+                            $feedbackimgunit = question_get_feedback_image($classunitvalue, $options->feedback);
+                            $break = 1 ;                            
+                            break;
                         }
                     }
                 }else if($response !== false && ($answer->min <= $response && $response <= $answer->max) ) {
-                        $state->raw_grade = $answer->fraction;
-                        $this->raw_unitgrade = $answer->fraction;
+                    $rawgrade = $answer->fraction ; 
                     $class = question_get_feedback_class($answer->fraction);
                     $feedbackimg = question_get_feedback_image($answer->fraction);
                     if ($answer->feedback) {
                         $feedback = format_text($answer->feedback, true, $formatoptions, $cmoptions->course);
                     }
-                       $break = 1 ;
-                       // break;
+                   $break = 1 ;
                 }
             if ($break) break;
             }
         }
+        $state->options->raw_unitpenalty = 0 ;
+        $raw_unitpenalty = 0 ;
+        if( $question->options->showunits == NUMERICALQUESTIONUNITNODISPLAY || 
+                $question->options->showunits == NUMERICALQUESTIONUNITTEXTDISPLAY ) {
+                    $classunitvalue = 1 ;
+        }
+                
+
+        if($classunitvalue == 0){
+            if($question->options->unitgradingtype == 1){
+                $raw_unitpenalty = $question->options->unitpenalty * $rawgrade ;
+            }else {
+                $raw_unitpenalty = $question->options->unitpenalty * $question->maxgrade;
+            }
+        $state->options->raw_unitpenalty = $raw_unitpenalty ;
+        }
+
 
         /// Removed correct answer, to be displayed later MDL-7496
         include("$CFG->dirroot/question/type/numerical/display.html");
@@ -588,11 +598,11 @@ class question_numerical_qtype extends question_shortanswer_qtype {
         if (!isset($state->responses['answer']) && isset($state->responses[''])){
            $state->responses['answer'] =  $state->responses[''];
         }
-         $response = $this->extract_numerical_response($state->responses['answer']);
+        $response = $this->extract_numerical_response($state->responses['answer']);
         if ($response === false) {
             return false; // The student did not type a number.
         }
-                // The student did type a number, so check it with tolerances.
+        // The student did type a number, so check it with tolerances.
         $this->get_tolerance_interval($answer);
         if ($answer->min <= $response && $response <= $answer->max){
            return true; 
@@ -642,8 +652,7 @@ class question_numerical_qtype extends question_shortanswer_qtype {
         // however it is used to detect good or bad numbers but also
         // gives false
         $state->raw_grade = 0;
-        $this->raw_unitgrade = 0 ;
-        $this->valid_numerical_unit = false ;
+        $valid_numerical_unit = false ;
         $break = 0 ;
         $unittested = '';
         $hasunits = 0 ;
@@ -660,9 +669,8 @@ class question_numerical_qtype extends question_shortanswer_qtype {
             // if * then everything is OK even unit                
             if ($answer->answer === '*') {
                 $state->raw_grade = $answer->fraction;
-                $this->raw_unitgrade = $answer->fraction;
                 if ( isset($question->options->units)){ 
-                    $this->valid_numerical_unit = true ;
+                    $valid_numerical_unit = true ;
                 }
                 $answerasterisk = true ;        
                 $break = 1 ;
@@ -673,7 +681,6 @@ class question_numerical_qtype extends question_shortanswer_qtype {
                     
                     if($answer->min <= $testresponse && $testresponse <= $answer->max) {
                         $state->raw_grade = $answer->fraction;
-                        $this->raw_unitgrade = $answer->fraction;
                         $unittested = $unit->unit ;
                         $break = 1 ;                        
                         break;
@@ -682,7 +689,6 @@ class question_numerical_qtype extends question_shortanswer_qtype {
             }else if ($response !== false)  {
                 if($this->test_response($question, $state, $answer)) {
                     $state->raw_grade = $answer->fraction;
-                    $this->raw_unitgrade = $answer->fraction;
                     break;
                 }
             }
@@ -692,29 +698,27 @@ class question_numerical_qtype extends question_shortanswer_qtype {
         // in all cases the unit should be tested
         if( $question->options->showunits == NUMERICALQUESTIONUNITNODISPLAY || 
                 $question->options->showunits == NUMERICALQUESTIONUNITTEXTDISPLAY ) {
-            $this->valid_numerical_unit = true ;
+            $valid_numerical_unit = true ;
         }else {
-            // $this->valid_numerical_unit means that the grading was done with the unit defined
+            // $valid_numerical_unit means that the grading was done with the unit defined
             //
             if ($hasunits && !$answerasterisk ){
-                $this->valid_numerical_unit = ($state->responses['unit'] == $unittested) ;
+                $valid_numerical_unit = ($state->responses['unit'] == $unittested) ;
             } else {
-                $this->valid_numerical_unit = true ;
+                $valid_numerical_unit = true ;
             }
         }
         
         // apply unit penalty
-        $question->raw_unitpenalty = 0 ;
-        $this->raw_unitpenalty = 0.1 ;
-        if(!empty($question->options->unitpenalty)&& $this->valid_numerical_unit != true ){
+        $raw_unitpenalty = 0 ;
+        if(!empty($question->options->unitpenalty)&& $valid_numerical_unit != true ){
             if($question->options->unitgradingtype == 1){
-                $question->raw_unitpenalty = $question->options->unitpenalty * $state->raw_grade ;
+                $raw_unitpenalty = $question->options->unitpenalty * $state->raw_grade ;
             }else {
-                $question->raw_unitpenalty = $question->options->unitpenalty * $question->maxgrade;
+                $raw_unitpenalty = $question->options->unitpenalty * $question->maxgrade;
             }
-            $state->raw_grade -= $question->raw_unitpenalty ;
+            $state->raw_grade -= $raw_unitpenalty ;
         }
-        $this->raw_unitpenalty = $question->raw_unitpenalty ;
                 
         // Make sure we don't assign negative or too high marks.
         $state->raw_grade = min(max((float) $state->raw_grade,
@@ -859,7 +863,7 @@ class question_numerical_qtype extends question_shortanswer_qtype {
         // Invalid number. Must be wrong.
         return false;
     }
-        /**
+    /**
      * Checks if the $rawresponse has a unit and applys it if appropriate.
      *
      * @param string $rawresponse  The response string to be converted to a float.
