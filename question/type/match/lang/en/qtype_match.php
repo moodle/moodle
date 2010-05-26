@@ -34,3 +34,5 @@ $string['matchsummary'] = 'The answer to each of a number of sub-question must b
 $string['nomatchinganswerforq'] = 'You must specify an answer for this question.';
 $string['notenoughqsandas'] = 'You must supply at least {$a->q} questions and {$a->a} answers.';
 $string['notenoughquestions'] = 'You must supply at least {$a} question and answer pairs.';
+$string['shuffle'] = 'Shuffle';
+$string['shuffle_help'] = 'If enabled, the order of the statements (answers) is randomly shuffled for each attempt, provided that "Shuffle within questions" in the quiz settings is also enabled.';
