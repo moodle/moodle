@@ -241,22 +241,14 @@ echo $OUTPUT->heading(get_string('langimport', 'admin'));
 $installedlangs = get_string_manager()->get_list_of_translations(true);
 
 $missingparents = array();
-$oldlang = isset($SESSION->lang) ? $SESSION->lang : null; // override current lang
-
-foreach ($installedlangs as $l => $unused) {
-    $SESSION->lang = $l;
-    $parent = get_string('parentlanguage', 'langconfig');
+foreach ($installedlangs as $installedlang => $unused) {
+    $parent = get_parent_language($installedlang);
     if (empty($parent) or ($parent === 'en')) {
         continue;
     }
     if (!isset($installedlangs[$parent])) {
-        $missingparents[$l] = $parent;
+        $missingparents[$installedlang] = $parent;
     }
-}
-if (isset($oldlang)) {
-    $SESSION->lang = $oldlang;
-} else {
-    unset($SESSION->lang);
 }
 
 if ($availablelangs = get_remote_list_of_languages()) {

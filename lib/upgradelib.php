@@ -1125,10 +1125,13 @@ function upgrade_init_javascript() {
 
 /**
  * Try to upgrade the given language pack (or current language)
- * @global object
+ *
+ * @todo hardcoded Moodle version here - shall be provided by version.php or similar script
  */
 function upgrade_language_pack($lang='') {
     global $CFG, $OUTPUT;
+
+    get_string_manager()->reset_caches();
 
     if (empty($lang)) {
         $lang = current_language();
@@ -1145,22 +1148,23 @@ function upgrade_language_pack($lang='') {
     @mkdir ($CFG->dataroot.'/lang/');
 
     require_once($CFG->libdir.'/componentlib.class.php');
-debugging('TODO: add language update');
-/*
-    if ($cd = new component_installer('http://download.moodle.org', 'lang20', $lang.'.zip', 'languages.md5', 'lang')) {
+
+    if ($cd = new component_installer('http://download.moodle.org', 'langpack/2.0', $lang.'.zip', 'languages.md5', 'lang')) {
         $status = $cd->install(); //returns COMPONENT_(ERROR | UPTODATE | INSTALLED)
 
         if ($status == COMPONENT_INSTALLED) {
-            @unlink($CFG->dataroot.'/cache/languages');
+            remove_dir($CFG->dataroot.'/cache/languages');
             if ($parentlang = get_parent_language($lang)) {
-                if ($cd = new component_installer('http://download.moodle.org', 'lang20', $parentlang.'.zip', 'languages.md5', 'lang')) {
+                if ($cd = new component_installer('http://download.moodle.org', 'langpack/2.0', $parentlang.'.zip', 'languages.md5', 'lang')) {
                     $cd->install();
                 }
             }
             echo $OUTPUT->notification(get_string('success'), 'notifysuccess');
         }
     }
-*/
+
+    get_string_manager()->reset_caches();
+
     print_upgrade_separator();
 }
 
