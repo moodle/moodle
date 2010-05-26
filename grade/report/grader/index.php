@@ -107,9 +107,9 @@ if (!empty($target) && !empty($action) && confirm_sesskey()) {
 
 $reportname = get_string('modulename', 'gradereport_grader');
 
-//Initialise the grader report object
-//To determine if its ajax or not we're instantiating it then throwing it away and instantiating it again
-//there has to be a better way.
+//Initialise the grader report object to determine if its ajax
+// We're instantiating it then throwing it away and instantiating it again
+// There has to be a better way.
 $report = new grade_report_grader($courseid, $gpr, $context, $page, $sortitemid);
 if ( $report->get_pref('enableajax') ) {
     $report = new grade_report_grader_ajax($courseid, $gpr, $context, $page, $sortitemid);
