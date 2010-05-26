@@ -39,7 +39,6 @@ class question_dataset_dependent_definitions_form extends moodleform {
     function definition() {
         global $SESSION;
         $mform =& $this->_form;
-        $stringfile = 'qtype_'.$this->question->qtype ;
         $possibledatasets = $this->qtypeobj->find_dataset_names($this->question->questiontext);
         $mandatorydatasets = array();
         if (isset($this->question->options->answers)){
@@ -58,7 +57,7 @@ class question_dataset_dependent_definitions_form extends moodleform {
         $datasetmenus = array();
         $label = "<div class='mdl-align'>".get_string('datasetrole', 'qtype_calculated')."</div>";
         $mform->addElement('html', $label);// explaining the role of datasets so other strings can be shortened
-        $mform->addElement('header', 'mandatoryhdr', get_string('mandatoryhdr', $stringfile));
+        $mform->addElement('header', 'mandatoryhdr', get_string('mandatoryhdr', 'qtype_calculated'));
         $labelsharedwildcard = get_string('sharedwildcard', 'qtype_calculated');
 
         foreach ($mandatorydatasets as $datasetname) {
@@ -76,7 +75,7 @@ class question_dataset_dependent_definitions_form extends moodleform {
                 $key++;
             }
         }
-                        $mform->addElement('header', 'possiblehdr', get_string('possiblehdr', $stringfile));
+                        $mform->addElement('header', 'possiblehdr', get_string('possiblehdr', 'qtype_calculated'));
 
 
         foreach ($possibledatasets as $datasetname) {
@@ -97,7 +96,7 @@ class question_dataset_dependent_definitions_form extends moodleform {
             }
         }
         // temporary strings
-        $mform->addElement('header', 'synchronizehdr', get_string('synchronize', $stringfile));
+        $mform->addElement('header', 'synchronizehdr', get_string('synchronize', 'qtype_calculated'));
         $mform->addElement('checkbox', "synchronize", '', "For each question in a quiz using a given wild card {x..} from a <strong>shared </strong> dataset,  the wild card {x..}will be substituted by the same numerical value.");
         if (isset($this->question->options)&& isset($this->question->options->synchronize) ){
             $mform->setDefault("synchronize", $this->question->options->synchronize);
