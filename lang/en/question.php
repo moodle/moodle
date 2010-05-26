@@ -79,6 +79,18 @@ $string['deletecoursecategorywithquestions'] = 'There are questions in the quest
 $string['disabled'] = 'Disabled';
 $string['disterror'] = 'The distribution {$a} caused problems';
 $string['donothing'] = 'Don\'t copy or move files or change links.';
+$string['editcategories'] = 'Edit categories';
+$string['editcategories_help'] = 'Rather than keeping everything in one big list, questions may be arranged into categories and subcategories.
+
+Each category has a context which determines where the questions in the category can be used:
+
+* Activity context - Questions only available in the activity module
+* Course context - Questions available in all activity modules in the course
+* Course category context - Questions available in all activity modules and courses in the course category 
+* System context - Questions available in all courses and activities on the site
+
+Categories are also used for random questions, as questions are selected from a particular category.';
+$string['editcategories_link'] = 'question/category';
 $string['editingcategory'] = 'Editing a category';
 $string['editingquestion'] = 'Editing a question';
 $string['editthiscategory'] = 'Edit this category';
@@ -158,6 +170,9 @@ $string['notenoughdatatoeditaquestion'] = 'Neither a question id, nor a category
 $string['notenoughdatatomovequestions'] = 'You need to provide the question ids of questions you want to move.';
 $string['notflagged'] = 'Not flagged';
 $string['novirtualquestiontype'] = 'No virtual question type for question type {$a}';
+$string['parentcategory'] = 'Parent category';
+$string['parentcategory_help'] = 'The parent category is the one in which the new category will be placed. "Top" means that this category is not contained in any other category. Category contexts are shown in bold type. There must be at least one category in each context.';
+$string['parentcategory_link'] = 'question/category';
 $string['parenthesisinproperclose'] = 'Parenthesis before ** is not properly closed in {$a}**';
 $string['parenthesisinproperstart'] = 'Parenthesis before ** is not properly started in {$a}**';
 $string['permissionedit'] = 'Edit this question';
