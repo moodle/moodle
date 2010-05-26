@@ -193,6 +193,7 @@ class mssql_native_moodle_database extends moodle_database {
         // Set transactions isolation level to READ_COMMITTED
         // prevents dirty reads when using transactions +
         // is the default isolation level of MSSQL
+        // Requires database to run with READ_COMMITTED_SNAPSHOT ON
         $sql = "SET TRANSACTION ISOLATION LEVEL READ COMMITTED";
         $this->query_start($sql, NULL, SQL_QUERY_AUX);
         $result = mssql_query($sql, $this->mssql);
@@ -1179,7 +1180,8 @@ s only returning name of SQL substring function, it now requires all parameters.
      * this can not be used directly in code.
      * @return void
      */
-        protected function begin_transaction() {
+    protected function begin_transaction() {
+        // requires database to run with READ_COMMITTED_SNAPSHOT ON
         $sql = "BEGIN TRANSACTION"; // Will be using READ COMMITTED isolation
         $this->query_start($sql, NULL, SQL_QUERY_AUX);
         $result = mssql_query($sql, $this->mssql);
@@ -1193,7 +1195,7 @@ s only returning name of SQL substring function, it now requires all parameters.
      * this can not be used directly in code.
      * @return void
      */
-        protected function commit_transaction() {
+    protected function commit_transaction() {
         $sql = "COMMIT TRANSACTION";
         $this->query_start($sql, NULL, SQL_QUERY_AUX);
         $result = mssql_query($sql, $this->mssql);
@@ -1207,7 +1209,7 @@ s only returning name of SQL substring function, it now requires all parameters.
      * this can not be used directly in code.
      * @return void
      */
-        protected function rollback_transaction() {
+    protected function rollback_transaction() {
         $sql = "ROLLBACK TRANSACTION";
         $this->query_start($sql, NULL, SQL_QUERY_AUX);
         $result = mssql_query($sql, $this->mssql);
