@@ -37,7 +37,7 @@
 /////////////////////////////////////////////////////////////////////////////
 
 function string_file_picture_tex($imagefile, $tex= "", $height="", $width="", $align="middle", $alt='') {
-    global $CFG;
+    global $CFG, $OUTPUT;
 
     if ($alt==='') {
         $alt = s($tex);
@@ -93,7 +93,7 @@ function string_file_picture_tex($imagefile, $tex= "", $height="", $width="", $a
             $link = '/filter/tex/displaytex.php?'.urlencode($tex);
             $action = new popup_action('click', $link, 'popup', array('height'=>300,'width'=>240));
         }
-        $output .= $OUTPUT->action_link($link, $anchortagcontents, $action, array('title'=>'TeX'));
+        $output .= $OUTPUT->action_link($link, $anchorcontents, $action, array('title'=>'TeX'));
     } else {
         $output .= "Error: must pass URL or course";
     }

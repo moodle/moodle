@@ -40,7 +40,7 @@
 function string_file_picture_algebra($imagefile, $tex= "", $height="", $width="", $align="middle") {
   // Given the path to a picture file in a course, or a URL,
   // this function includes the picture in the page.
-  global $CFG;
+  global $CFG, $OUTPUT;
 
   $output = "";
   $origtex = $tex;
@@ -76,7 +76,7 @@ function string_file_picture_algebra($imagefile, $tex= "", $height="", $width=""
         $link = '/filter/algebra/displaytex.php?'.urlencode($tex);
         $action = new popup_action('click', $link, 'popup', array('height'=>300,'width'=>240));
     }
-    $output .= $OUTPUT->action_link($link, $anchortagcontents, $action, array('title'=>'TeX'));
+    $output .= $OUTPUT->action_link($link, $anchorcontents, $action, array('title'=>'TeX'));
     
   } else {
     $output .= "Error: must pass URL or course";
