@@ -249,6 +249,7 @@ $string['odbcextensionisnotpresentinphp'] = 'PHP has not been properly configure
 $string['odbc_mssql'] = 'SQL*Server over ODBC (odbc_mssql)';
 $string['ok'] = 'OK';
 $string['opensslrecommended'] = 'Installing the optional OpenSSL library is highly recommended -- it enables Moodle Networking functionality.';
+$string['parentlanguage'] = '';
 $string['pass'] = 'Pass';
 $string['password'] = 'Password';
 $string['pgsqlextensionisnotpresentinphp'] = 'PHP has not been properly configured with the PGSQL extension so that it can communicate with PostgreSQL.  Please check your php.ini file or recompile PHP.';

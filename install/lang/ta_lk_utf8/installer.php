@@ -218,7 +218,6 @@ $string['odbcextensionisnotpresentinphp'] = 'PHP ஆனது சரியாக
 $string['odbc_mssql'] = 'SQL*Server over ODBC (odbc_mssql)';
 $string['ok'] = 'சரி';
 $string['opensslrecommended'] = 'Moodle  இன் வலையமைப்பு வசதிகளை இயலுமைப்படுத்த உதவுவதால், விருப்பத் தேர்வான OpenSSL library ஐ நிறுவுதல் பரிந்துரைக்கப்படுகிறது.';
-$string['parentlanguage'] = '<< மொழிபெயர்ப்பாளர்கள்: If your language has a Parent Language that Moodle should use when strings are missing from your language pack, then specify the code for it here. If you leave this blank then English will be used. Example: nl >>';
 $string['pass'] = 'தேர்ச்சி';
 $string['password'] = 'கடவுச்சொல்';
 $string['pgsqlextensionisnotpresentinphp'] = 'PHP ஆனது சரியாக PGSQL நீட்சியுடன் செம்மைப்படுத்தப்படவில்லை. ஆகவே PostgreSQL உடன் தொடர்புகொள்ள முடியும். தயவு செய்து உமது php.ini கோப்பினை சற்று ஆராய்க அல்லது PHP மீள் தொகுக்க.';
