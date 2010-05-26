@@ -177,12 +177,10 @@ if (has_capability('moodle/course:publish', get_context_instance(CONTEXT_COURSE,
                 $params['token'] = $registeredhub->token;
                 $curl->post($huburl."/local/hub/webservice/upload.php", $params);
             }
+            
+            //Delete the backup from user_tohub
+            $backupfile->delete();
         }
-
-
-        //Delete the backup from user_tohub
-        $backupfile->delete();
-
 
         //redirect to the index publis page
         redirect(new moodle_url('/course/publish/index.php',
