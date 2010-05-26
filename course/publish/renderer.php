@@ -71,16 +71,6 @@ class core_publish_renderer extends plugin_renderer_base {
 
             $updatebuttonhtml = '';
 
-            if ($publication->enrollable) {
-                $params = array('sesskey' => sesskey(), 'id' => $publication->courseid,
-                    'huburl' => $publication->huburl, 'hubname' => $publication->hubname,
-                    'share' => !$publication->enrollable, 'advertise' => $publication->enrollable);
-                $updateurl = new moodle_url("/course/publish/metadata.php", $params);
-                $updatebutton = new single_button($updateurl, get_string('update', 'hub'));
-                $updatebutton->class = 'centeredbutton';
-                $updatebuttonhtml = $OUTPUT->render($updatebutton);
-            }
-
             $params = array('sesskey' => sesskey(), 'id' => $publication->courseid, 'hubcourseid' => $publication->hubcourseid,
                     'huburl' => $publication->huburl, 'hubname' => $publication->hubname,
                     'cancel' => true, 'publicationid' => $publication->id, 'timepublished' => $publication->timepublished);
@@ -89,7 +79,15 @@ class core_publish_renderer extends plugin_renderer_base {
             $cancelbutton->class = 'centeredbutton';
             $cancelbuttonhtml = $OUTPUT->render($cancelbutton);
 
-            if (!empty($updatebuttonhtml)) {    
+            if ($publication->enrollable) {
+                $params = array('sesskey' => sesskey(), 'id' => $publication->courseid,
+                    'huburl' => $publication->huburl, 'hubname' => $publication->hubname,
+                    'share' => !$publication->enrollable, 'advertise' => $publication->enrollable);
+                $updateurl = new moodle_url("/course/publish/metadata.php", $params);
+                $updatebutton = new single_button($updateurl, get_string('update', 'hub'));
+                $updatebutton->class = 'centeredbutton';
+                $updatebuttonhtml = $OUTPUT->render($updatebutton);
+
                 $operations = $updatebuttonhtml . $brtag . $cancelbuttonhtml;
             } else {
                 $operations = $cancelbuttonhtml;
