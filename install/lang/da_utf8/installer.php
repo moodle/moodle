@@ -212,7 +212,6 @@ $string['ociextensionisnotpresentinphp'] = 'PHP er ikke konfigureret ordentligt 
 $string['odbcextensionisnotpresentinphp'] = 'PHP er ikke blevet korrekt konfigureret med PHP\'s ODBC-modul så den kan kommunikere med SQL*Serveren. Kontroller venligst php.ini filen eller rekompiler PHP.';
 $string['odbc_mssql'] = 'SQL*Server over ODBC (odbc_mssql)';
 $string['ok'] = 'OK';
-$string['parentlanguage'] = '<< OVERSÆTTERE: Hvis din sprogpakke har en moderpakke som Moodle skal bruge hvor der er uoversatte strenge, kan du angive det her. Hvis ikke du udfylder dette felt vil den tilsvarende engelske streng blive brugt. Eksempel: nl >>';
 $string['pass'] = 'OK';
 $string['password'] = 'Adgangskode';
 $string['pgsqlextensionisnotpresentinphp'] = 'PHP er ikke blevet korrekt konfigureret med PHP\'s PGSQL-modul så den kan kommunikere med PostgreSQL. Kontroller venligst php.ini filen eller rekompiler PHP.';

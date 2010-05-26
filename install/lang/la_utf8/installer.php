@@ -15,7 +15,6 @@ $string['help'] = 'auxilium';
 $string['language'] = 'lingua';
 $string['name'] = 'nōmen';
 $string['next'] = 'proximus';
-$string['parentlanguage'] = 'en_utf8';
 $string['thischarset'] = 'UTF-8';
 $string['thisdirection'] = 'ltr';
 $string['thislanguage'] = 'Latin';
