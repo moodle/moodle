@@ -505,10 +505,10 @@ class question_calculated_qtype extends default_questiontype {
                 return;
                 break;
             case 'datasetdefinitions':
-                 echo $OUTPUT->heading_with_help(get_string("choosedatasetproperties", "quiz"), 'questiondatasets', 'quiz');
+                 echo $OUTPUT->heading_with_help(get_string("choosedatasetproperties", "qtype_calculated"), 'questiondatasets', 'qtype_calculated');
                 break;
             case 'datasetitems':
-               echo $OUTPUT->heading_with_help(get_string("editdatasets", "quiz"), 'questiondatasets', 'quiz');
+               echo $OUTPUT->heading_with_help(get_string("editdatasets", "qtype_calculated"), 'questiondatasets', 'qtype_calculated');
                 break;
         }
 
