@@ -59,6 +59,7 @@
 
         $cm->timedue        = $cms[$cm->id]->timedue;
         $cm->assignmenttype = $cms[$cm->id]->assignmenttype;
+        $cm->idnumber       = get_field('course_modules', 'idnumber', 'id', $cm->id); //hack
 
         //Show dimmed if the mod is hidden
         $class = $cm->visible ? '' : 'class="dimmed"';
