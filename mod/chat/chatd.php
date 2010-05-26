@@ -225,7 +225,7 @@ class ChatDaemon {
     }
 
     function get_user_window($sessionid) {
-        global $CFG, $PAGE;
+        global $CFG, $PAGE, $OUTPUT;
 
         static $str;
 
@@ -278,10 +278,9 @@ EOD;
             $userinfo = $this->sets_info[$usersessionid];
 
             $lastping = $timenow - $userinfo['chatuser']->lastmessageping;
-            //$popuppar = '\'/user/view.php?id='.$userinfo['user']->id.'&amp;course='.$userinfo['courseid'].'\',\'user'.$userinfo['chatuser']->id.'\',\'\'';
+
             echo '<tr><td width="35">';
 
-            //echo '<a target="_new" onclick="return openpopup('.$popuppar.');" href="'.$CFG->wwwroot.'/user/view.php?id='.$userinfo['chatuser']->id.'&amp;course='.$userinfo['courseid'].'">';
             $link = '/user/view.php?id='.$userinfo['user']->id.'&course='.$userinfo['courseid'];
             $anchortagcontents = $OUTPUT->user_picture($userinfo['user'], array('courseid'=>$userinfo['courseid']));
             
