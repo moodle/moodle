@@ -43,8 +43,8 @@ class moodle_enrol_external extends external_api {
                             'roleid'    => new external_value(PARAM_INT, 'Role to assign to the user'),
                             'userid'    => new external_value(PARAM_INT, 'The user that is going to be assigned'),
                             'contextid' => new external_value(PARAM_INT, 'The context to assign the user into '),
-                            'timestart' => new external_value(PARAM_INT, 'A valid and unique email address', VALUE_DEFAULT, 0, NULL_NOT_ALLOWED),
-                            'timeend'   => new external_value(PARAM_INT, 'Auth plugins include manual, ldap, imap, etc', VALUE_DEFAULT, 0, NULL_NOT_ALLOWED)
+                            'timestart' => new external_value(PARAM_INT, 'A valid and unique email address', VALUE_DEFAULT, 0),
+                            'timeend'   => new external_value(PARAM_INT, 'Auth plugins include manual, ldap, imap, etc', VALUE_DEFAULT, 0)
                         )
                     )
                 )
