@@ -114,6 +114,9 @@ $string['errorprocessingresponses'] = 'An error occurred while processing your r
 $string['errorsavingcomment'] = 'Error saving the comment for question {$a->name} in the database.';
 $string['errorupdatingattempt'] = 'Error updating attempt {$a->id} in the database.';
 $string['exportcategory'] = 'Export category';
+$string['exportcategory_help'] = 'This setting determines the category from which the exported questions will be taken.
+
+Certain import formats, such as GIFT and Moodle XML, permit category and context data to be included in the export file, enabling them to (optionally) be recreated on import. If required, the appropriate checkboxes should be ticked.';
 $string['exporterror'] = 'Errors occur during exporting!';
 $string['exportquestions'] = 'Export questions to file';
 $string['exportquestions_help'] = 'This function enables the export of a complete category (and any subcategories) of questions to file. Please note that, depending on the file format selected, some question data and certain question types may not be exported.';
@@ -131,6 +134,10 @@ $string['changepublishstatuscat'] = '<a href="{$a->caturl}">Category "{$a->name}
 $string['chooseqtypetoadd'] = 'Choose a question type to add';
 $string['ignorebroken'] = 'Ignore broken links';
 $string['impossiblechar'] = 'Impossible character {$a} detected as parenthesis character';
+$string['importcategory'] = 'Import category';
+$string['importcategory_help'] = 'This setting determines the category into which the imported questions will go.
+
+Certain import formats, such as GIFT and Moodle XML, may include category and context data in the import file. To make use of this data, rather than the selected category, the appropriate checkboxes should be ticked. If categories specified in the import file do not exist, they will be created.';
 $string['importquestions'] = 'Import questions from file';
 $string['importquestions_help'] = 'This function enables questions in a variety of formats to be imported via text file. Note that the file must use UTF-8 encoding.';
 $string['importquestions_link'] = 'question/import';
@@ -144,6 +151,11 @@ $string['lastmodifiedby'] = 'Last modified by';
 $string['linkedfiledoesntexist'] = 'Linked file {$a} doesn\'t exist';
 $string['makechildof'] = 'Make Child of \'{$a}\'';
 $string['maketoplevelitem'] = 'Move to top level';
+$string['matchgrades'] = 'Match grades';
+$string['matchgrades_help'] = 'Imported grades must match one of the fixed list of valid grades - 100, 90, 80, 75, 70, 66.666, 60, 50, 40, 33.333, 30, 25, 20, 16.666, 14.2857, 12.5, 11.111, 10, 5, 0 (also negative values). If not, there are two options:
+
+*  Error if grade not listed - If a question contains any grades not found in the list an error is displayed and that question will not be imported
+* Nearest grade if not listed - If a grade is found that does not match a value in the list, the grade is changed to the closest matching value in the list ';
 $string['missingcourseorcmid'] = 'Need to provide courseid or cmid to print_question.';
 $string['missingcourseorcmidtolink'] = 'Need to provide courseid or cmid to get_question_edit_link.';
 $string['missingimportantcode'] = 'This question type is missing important code: {$a}.';
@@ -198,6 +210,8 @@ $string['selectacategory'] = 'Select a category:';
 $string['selectaqtypefordescription'] = 'Select a question type to see its description.';
 $string['selectquestionsforbulk'] = 'Select questions for bulk actions';
 $string['shareincontext'] = 'Share in context for {$a}';
+$string['stoponerror'] = 'Stop on error';
+$string['stoponerror_help'] = 'This setting determines whether the import process stops when an error is detected, resulting in no questions being imported, or whether any questions containing errors are ignored and any valid questions are imported.';
 $string['tofilecategory'] = 'Write category to file';
 $string['tofilecontext'] = 'Write context to file';
 $string['unknown'] = 'Unknown';
