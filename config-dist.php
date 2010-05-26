@@ -407,7 +407,7 @@ $CFG->admin = 'admin';
 // ALL DONE!  To continue installation, visit your main page with a browser
 //=========================================================================
 
-require_once(dirname(_FILE_) . '/lib/setup.php'); // Do not edit
+require_once(dirname(__FILE__) . '/lib/setup.php'); // Do not edit
 
 // There is no php closing tag in this file,
 // it is intentional because it prevents trailing whitespace problems!
