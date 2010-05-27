@@ -120,7 +120,6 @@ $string['configcoursegradedisplaytype'] = 'Select the default display type of gr
 $string['configdisablegradehistory'] = 'Disable history tracking of changes in grades related tables. This may speed up the server a little and conserve space in database.';
 $string['configenableoutcomes'] = 'Support for Outcomes (also known as Competencies, Goals, Standards or Criteria) means that we can grade things using one or more scales that are tied to outcome statements. Enabling outcomes makes such special grading possible throughout the site.';
 $string['configfixedstudents'] = 'Allows grades to scroll horizontally without losing sight of the students column, by making it static.';
-$string['configgradeboundary'] = 'A percentage boundary over which grades will be assigned a grade letter (if the Letter grade display type is used).';
 $string['configgradedisplaytype'] = 'Specifies how to display grades in the grader and user reports. Grades may be shown as actual grades, as percentages (in reference to the minimum and maximum grades) or as letters.';
 $string['configgradeexportdisplaytype'] = 'Grades can be shown as real grades, as percentages (in reference to the minimum and maximum grades) or as letters (A, B, C etc..) during export. This can be overridden during export.';
 $string['configgradehistorylifetime'] = 'This specifies the length of time you want to keep history of changes in grade related tables. It is recommended to keep it as long as possible. If you experience performance problems or have limited database space, try to set lower value.';

@@ -36,8 +36,6 @@ class edit_letter_form extends moodleform {
             $mform->setHelpButton('override', array('overridesitedefaultgradedisplaytype', get_string('overridesitedefaultgradedisplaytype', 'grades'), 'grade'));
         }
 
-        $gradeletterhelp   = get_string('configgradeletter', 'grades');
-        $gradeboundaryhelp = get_string('configgradeboundary', 'grades');
         $gradeletter       = get_string('gradeletter', 'grades');
         $gradeboundary     = get_string('gradeboundary', 'grades');
 
@@ -63,7 +61,7 @@ class edit_letter_form extends moodleform {
 
             $mform->addElement('select', $gradeboundaryname, $gradeboundary." $i", $percentages);
             if ($i == 1) {
-                $mform->setHelpButton($gradeboundaryname, array('gradeboundary', get_string('gradeboundary', 'grades'), 'grade'));
+                $mform->addHelpButton($gradeboundaryname, 'gradeboundary', 'grades');
             }
             $mform->setDefault($gradeboundaryname, -1);
             $mform->setType($gradeboundaryname, PARAM_INT);

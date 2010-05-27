@@ -46,17 +46,9 @@ class grader_report_preferences_form extends moodleform {
         $context = get_context_instance(CONTEXT_COURSE, $course->id);
         $systemcontext = get_context_instance(CONTEXT_SYSTEM);
 
-        $strgradeboundary       = get_string('gradeboundary', 'grades');
-        $strconfiggradeboundary = get_string('configgradeboundary', 'grades');
-        $strgradeletter         = get_string('gradeletter', 'grades');
-        $strconfiggradeletter   = get_string('configgradeletter', 'grades');
-        $stryes                 = get_string('yes');
-        $strno                  = get_string('no');
-
         $canviewhidden = has_capability('moodle/grade:viewhidden', $context);
 
-
-        $checkbox_default = array(GRADE_REPORT_PREFERENCE_DEFAULT => '*default*', 0 => $strno, 1 => $stryes);
+        $checkbox_default = array(GRADE_REPORT_PREFERENCE_DEFAULT => '*default*', 0 => get_string('no'), 1 => get_string('yes'));
 
         $advanced = array();
 /// form definition with preferences defaults
