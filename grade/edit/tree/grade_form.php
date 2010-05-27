@@ -102,7 +102,7 @@ class edit_grade_form extends moodleform {
         // Feedback format is automatically converted to html if user has enabled editor
         $feedbackoptions = array('maxfiles'=>0, 'maxbytes'=>0, 'trusttext'=>true);
         $mform->addElement('editor', 'feedback', get_string('feedback', 'grades'), null, $feedbackoptions);
-        $mform->setHelpButton('feedback', array('feedback', get_string('feedback', 'grades'), 'grade'));
+        $mform->addHelpButton('feedback', 'feedback', 'grades');
         $mform->setType('text', PARAM_RAW); // to be cleaned before display, no XSS risk
 
         // hidden params

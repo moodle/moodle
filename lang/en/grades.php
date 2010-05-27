@@ -231,7 +231,6 @@ $string['feedback'] = 'Feedback';
 $string['feedback_help'] = 'This box enables any comments about the grade to be added.';
 $string['feedbackadd'] = 'Add feedback';
 $string['feedbackedit'] = 'Edit feedback';
-$string['feedbackhelp'] = 'Notes added to the grade by the teacher. They can be extensive, personalised feedback or a simple code that refers to an internal system of feedback.';
 $string['feedbacksaved'] = 'Feedback saved';
 $string['feedbackview'] = 'View feedback';
 $string['finalgrade'] = 'Final grade';
