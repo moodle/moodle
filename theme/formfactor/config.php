@@ -36,7 +36,7 @@ $THEME->enable_dock = false;
 ////////////////////////////////////////////////////
 
 
-$THEME->editor_sheets = array('editor');
+// $THEME->editor_sheets = array('editor');
 
 ////////////////////////////////////////////////////
 // An array of stylesheets to include within the 
