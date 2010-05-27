@@ -85,7 +85,7 @@ class course_settings_form extends moodleform {
             }
         }
         $mform->addElement('select', 'displaytype', get_string('gradedisplaytype', 'grades'), $options);
-        $mform->setHelpButton('displaytype', array('gradedisplaytype', get_string('gradedisplaytype', 'grades'), 'grade'));
+        $mform->addHelpButton('displaytype', 'gradedisplaytype', 'grades');
 
 
         $options = array(-1=> get_string('defaultprev', 'grades', $CFG->grade_decimalpoints), 0=>0, 1=>1, 2=>2, 3=>3, 4=>4, 5=>5);

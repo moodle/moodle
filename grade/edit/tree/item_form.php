@@ -123,7 +123,7 @@ class edit_item_form extends moodleform {
             }
         }
         $mform->addElement('select', 'display', get_string('gradedisplaytype', 'grades'), $options);
-        $mform->setHelpButton('display', array('gradedisplaytype', get_string('gradedisplaytype', 'grades'), 'grade'), true);
+        $mform->addHelpButton('display', 'gradedisplaytype', 'grades');
 
         $default_gradedecimals = grade_get_setting($COURSE->id, 'decimalpoints', $CFG->grade_decimalpoints);
         $options = array(-1=>get_string('defaultprev', 'grades', $default_gradedecimals), 0=>0, 1=>1, 2=>2, 3=>3, 4=>4, 5=>5);

@@ -124,7 +124,7 @@ if (has_capability('moodle/grade:manage', $systemcontext)
     $temp = new admin_settingpage('gradeitemsettings', get_string('gradeitemsettings', 'grades'), 'moodle/grade:manage');
     if ($ADMIN->fulltree) {
         $temp->add(new admin_setting_configselect('grade_displaytype', get_string('gradedisplaytype', 'grades'),
-                                                  get_string('configgradedisplaytype', 'grades'), GRADE_DISPLAY_TYPE_REAL, $display_types));
+                                                  get_string('gradedisplaytype_help', 'grades'), GRADE_DISPLAY_TYPE_REAL, $display_types));
 
         $temp->add(new admin_setting_configselect('grade_decimalpoints', get_string('decimalpoints', 'grades'),
                                                   get_string('decimalpoints_help', 'grades'), 2,
