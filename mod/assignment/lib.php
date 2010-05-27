@@ -3437,33 +3437,4 @@ function assignment_get_file_areas($course, $cm, $context) {
     }
     return $areas;
 }
-/**
- * File browsing support for assignment module content area.
- * @param object $browser
- * @param object $areas
- * @param object $course
- * @param object $cm
- * @param object $context
- * @param string $filearea
- * @param int $itemid
- * @param string $filepath
- * @param string $filename
- * @return object file_info instance or null if not found
- */
-function assignment_get_file_info($browser, $areas, $course, $cm, $context, $filearea, $itemid, $filepath, $filename) {
-     global $CFG, $DB;
 
-    if (!has_capability('moodle/course:managefiles', $context)) {
-        // no peaking here, sorry
-        return null;
-    }
-
-    if ($filearea !== 'assignment_submission') {
-        return null;
-    }
-    //TODO: handle itemid as group id here.
-
-    $fs = get_file_storage();
-    $files = $fs->get_area_files($context->id, $filearea);
-    return $files;
-}
