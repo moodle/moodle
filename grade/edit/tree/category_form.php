@@ -142,7 +142,7 @@ class edit_category_form extends moodleform {
             }
         }
         $mform->addElement('select', 'grade_item_scaleid', get_string('scale'), $options);
-        $mform->setHelpButton('grade_item_scaleid', array('scaleid', get_string('scale'), 'grade'), true);
+        $mform->addHelpButton('grade_item_scaleid', 'typescale', 'grades');
         $mform->disabledIf('grade_item_scaleid', 'grade_item_gradetype', 'noteq', GRADE_TYPE_SCALE);
         $mform->disabledIf('grade_item_scaleid', 'aggregation', 'eq', GRADE_AGGREGATE_SUM);
 

@@ -556,7 +556,6 @@ $string['savechanges'] = 'Save changes';
 $string['savepreferences'] = 'Save preferences';
 $string['scaleconfirmdelete'] = 'Are you sure you wish to delete the scale "{$a}"?';
 $string['scaledpct'] = 'Scaled %';
-$string['scaleidhelp'] = 'When using the scale grade type, a scale can be selected. The scale for an activity-based grade item is selected on the update activity page.';
 $string['scalestandardhelp'] = 'A standard scale is one that is available site-wide, for all courses.';
 $string['seeallcoursegrades'] = 'See all course grades';
 $string['selectalloroneuser'] = 'Select all or one user';
