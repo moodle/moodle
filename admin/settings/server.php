@@ -261,7 +261,7 @@ $temp->add(new admin_setting_configselect('memcachedpconn', get_string('memcache
                                           get_string('configmemcachedpconn', 'admin'), 0,
                                           array( '0' => get_string('no'),
                                                  '1' => get_string('yes'))));
-$ADMIN->add('server', new admin_externalpage('adminregistration', get_string('registration','admin'), "$CFG->wwwroot/$CFG->admin/register.php"));
+$ADMIN->add('server', new admin_externalpage('adminregistration', get_string('registration','admin'), "$CFG->wwwroot/$CFG->admin/registration/index.php"));
 
 $ADMIN->add('server', $temp);
 
