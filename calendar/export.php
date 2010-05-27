@@ -65,14 +65,14 @@ $url = new moodle_url('/calendar/export.php');
 if ($action !== '') {
     $url->param('action', $action);
 }
-if ($cal_d !== 0) {
-    $url->param('cal_d', $cal_d);
+if ($day !== 0) {
+    $url->param('cal_d', $day);
 }
-if ($cal_m !== 0) {
-    $url->param('cal_m', $cal_m);
+if ($mon !== 0) {
+    $url->param('cal_m', $mon);
 }
-if ($cal_y !== 0) {
-    $url->param('cal_y', $cal_y);
+if ($yr !== 0) {
+    $url->param('cal_y', $yr);
 }
 if ($course !== 0) {
     $url->param('course', $course);
@@ -122,9 +122,9 @@ $PAGE->navbar->add(get_string('calendar', 'calendar'), new moodle_url($link));
 $PAGE->navbar->add($pagetitle);
 
 $PAGE->set_title($site->shortname.': '.$strcalendar.': '.$pagetitle);
-$PAGE->set_heading($strcalendar);
+$PAGE->set_heading($COURSE->fullname);
 $PAGE->set_button($prefsbutton);
-$PAGE->set_focuscontrol('eventform.name');
+$PAGE->set_focuscontrol('pw_all');
 
 echo $OUTPUT->header();
 
