@@ -120,20 +120,20 @@ a.skip:active {position: static;display: block;}
 /**
  * Header
  */
-#page-header .headermain {float:left;margin:15px;font-size:2.3em;}
-#page-header .headermenu {float:right;margin:15px;font-size:0.8em;text-align:right;}
+.headermain {float:left;margin:15px;font-size:2.3em;}
+.headermenu {float:right;margin:10px;font-size:0.8em;text-align:right;}
 
 /**
  * Navbar
  */
 .navbar {clear:both;overflow:hidden;}
 .ie6 .navbar {overflow:hidden;height:100%;}
-.navbar .breadcrumb {float:left;}
-.navbar .navbutton {text-align:right;}
-.navbar .breadcrumb ul {padding:0;margin:0;text-indent:0;list-style:none;}
-.navbar .breadcrumb li,
-.navbar .navbutton div,
-.navbar .navbutton form {display:inline;}
+.breadcrumb {float:left;}
+.breadcrumb ul {padding:0;margin:0;text-indent:0;list-style:none;}
+.breadcrumb li,
+.navbutton {text-align:right;}
+.navbutton div,
+.navbutton form {display:inline;}
 
 /**
  * Footer
