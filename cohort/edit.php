@@ -80,6 +80,7 @@ if ($delete and $cohort->id) {
     $strheading = get_string('delcohort', 'cohort');
     $PAGE->navbar->add($strheading);
     $PAGE->set_title($strheading);
+    $PAGE->set_heading($COURSE->fullname);
     echo $OUTPUT->header();
     echo $OUTPUT->heading($strheading);
     $yesurl = new moodle_url('/cohort/edit.php', array('id'=>$cohort->id, 'delete'=>1, 'confirm'=>1,'sesskey'=>sesskey()));
@@ -102,6 +103,7 @@ if ($cohort->id) {
 }
 
 $PAGE->set_title($strheading);
+$PAGE->set_heading($COURSE->fullname);
 $PAGE->navbar->add($strheading);
 
 $editform = new cohort_edit_form(null, array('editoroptions'=>$editoroptions, 'data'=>$cohort));

@@ -67,7 +67,7 @@ if ($course->id != SITEID) {
 $PAGE->navbar->add($strpreferences, new moodle_url('/calendar/view.php'));
 
 $PAGE->set_title("$site->shortname: $strcalendar: $strpreferences");
-$PAGE->set_heading($strcalendar);
+$PAGE->set_heading($COURSE->fullname);
 
 echo $OUTPUT->header();
 

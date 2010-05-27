@@ -151,7 +151,7 @@ $prefsbutton = calendar_preferences_button();
 
 // Print title and header
 $PAGE->set_title("$site->shortname: $strcalendar: $pagetitle");
-$PAGE->set_heading($strcalendar);
+$PAGE->set_heading($COURSE->fullname);
 $PAGE->set_button($prefsbutton);
 
 echo $OUTPUT->header();

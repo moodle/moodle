@@ -58,7 +58,7 @@ $returnurl = $CFG->wwwroot.'/group/groupings.php?id='.$course->id;
 if ($id and $delete) {
     if (!$confirm) {
         $PAGE->set_title(get_string('deletegrouping', 'group'));
-        $PAGE->set_heading(get_string('deletegrouping', 'group'));
+        $PAGE->set_heading($course->fullname. ': '. get_string('deletegrouping', 'group'));
         echo $OUTPUT->header();
         $optionsyes = array('id'=>$id, 'delete'=>1, 'courseid'=>$courseid, 'sesskey'=>sesskey(), 'confirm'=>1);
         $optionsno  = array('id'=>$courseid);
@@ -120,7 +120,7 @@ $PAGE->navbar->add($strheading);
 
 /// Print header
 $PAGE->set_title($strgroupings);
-$PAGE->set_heading(': '.$strgroupings);
+$PAGE->set_heading($course->fullname. ': '.$strgroupings);
 echo $OUTPUT->header();
 echo $OUTPUT->heading($strheading);
 $editform->display();

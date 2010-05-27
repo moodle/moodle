@@ -203,7 +203,7 @@ if ($data) {
 $PAGE->navbar->add($strcalendar, $link);
 $PAGE->navbar->add($title);
 $PAGE->set_title($site->shortname.': '.$strcalendar.': '.$title);
-$PAGE->set_heading($strcalendar);
+$PAGE->set_heading($COURSE->fullname);
 
 echo $OUTPUT->header();
 

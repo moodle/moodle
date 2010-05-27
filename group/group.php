@@ -63,7 +63,7 @@ $returnurl = $CFG->wwwroot.'/group/index.php?id='.$course->id.'&amp;group='.$id;
 if ($id and $delete) {
     if (!$confirm) {
         $PAGE->set_title(get_string('deleteselectedgroup', 'group'));
-        $PAGE->set_heading(get_string('deleteselectedgroup', 'group'));
+        $PAGE->set_heading($course->fullname . ': '. get_string('deleteselectedgroup', 'group'));
         echo $OUTPUT->header();
         $optionsyes = array('id'=>$id, 'delete'=>1, 'courseid'=>$courseid, 'sesskey'=>sesskey(), 'confirm'=>1);
         $optionsno  = array('id'=>$courseid);
@@ -124,7 +124,7 @@ $PAGE->navbar->add($strheading);
 
 /// Print header
 $PAGE->set_title($strgroups);
-$PAGE->set_heading(': '.$strgroups);
+$PAGE->set_heading($course->fullname . ': '.$strgroups);
 echo $OUTPUT->header();
 echo '<div id="grouppicture">';
 if ($id) {

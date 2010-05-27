@@ -223,7 +223,7 @@ $PAGE->navbar->add($strautocreategroups);
 
 /// Print header
 $PAGE->set_title($strgroups);
-$PAGE->set_heading(': '.$strgroups);
+$PAGE->set_heading($course->fullname. ': '.$strgroups);
 echo $OUTPUT->header();
 echo $OUTPUT->heading($strautocreategroups);
 

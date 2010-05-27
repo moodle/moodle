@@ -57,7 +57,7 @@ if ($confirm && data_submitted()) {
     redirect($returnurl);
 } else {
     $PAGE->set_title(get_string('deleteselectedgroup', 'group'));
-    $PAGE->set_heading(get_string('deleteselectedgroup', 'group'));
+    $PAGE->set_heading($course->fullname . ': '. get_string('deleteselectedgroup', 'group'));
     echo $OUTPUT->header();
     $optionsyes = array('courseid'=>$courseid, 'groups'=>$groupids, 'sesskey'=>sesskey(), 'confirm'=>1);
     $optionsno = array('id'=>$courseid);

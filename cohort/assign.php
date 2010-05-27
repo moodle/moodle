@@ -56,6 +56,8 @@ if ($context->contextlevel == CONTEXT_COURSECAT) {
 }
 $PAGE->navbar->add(get_string('cohorts', 'cohort'), new moodle_url('/cohort/', array('contextid'=>$context->id)));
 $PAGE->navbar->add(get_string('assign', 'cohort'));
+$PAGE->set_title(get_string('cohort:assign', 'cohort'));
+$PAGE->set_heading($COURSE->fullname);
 
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('assignto', 'cohort', format_string($cohort->name)));
