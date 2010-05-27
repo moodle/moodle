@@ -347,11 +347,11 @@ if ($config->stage == INSTALL_DOWNLOADLANG) {
         $downloaderror = get_string('cannotcreatelangdir', 'error');
 
 // Download and install lang component
-    } else if ($cd = new component_installer('http://download.moodle.org', 'lang20', $CFG->lang.'.zip', 'languages.md5', 'lang')) {
+    } else if ($cd = new component_installer('http://download.moodle.org', 'langpack/2.0', $CFG->lang.'.zip', 'languages.md5', 'lang')) {
         if ($cd->install() == COMPONENT_ERROR) {
             if ($cd->get_error() == 'remotedownloaderror') {
                 $a = new stdClass();
-                $a->url  = 'http://download.moodle.org/lang20/'.$config->lang.'.zip';
+                $a->url  = 'http://download.moodle.org/langpack/2.0/'.$config->lang.'.zip';
                 $a->dest = $CFG->dataroot.'/lang';
                 $downloaderror = get_string($cd->get_error(), 'error', $a);
             } else {
@@ -360,12 +360,17 @@ if ($config->stage == INSTALL_DOWNLOADLANG) {
         } else {
             // install parent lang if defined
             if ($parentlang = get_parent_language()) {
-                if ($cd = new component_installer('http://download.moodle.org', 'lang20', $parentlang.'.zip', 'languages.md5', 'lang')) {
+                if ($cd = new component_installer('http://download.moodle.org', 'langpack/2.0', $parentlang.'.zip', 'languages.md5', 'lang')) {
                     $cd->install();
                 }
             }
         }
     }
+    // switch the string_manager instance to stop using install/lang/
+    $CFG->early_install_lang = false;
+    $CFG->langotherroot      = $CFG->dataroot.'/lang';
+    $CFG->langlocalroot      = $CFG->dataroot.'/lang';
+    get_string_manager(true);
 
     if ($downloaderror !== '') {
         install_print_header($config, get_string('language'), get_string('langdownloaderror', 'install', $CFG->lang), $downloaderror);

@@ -67,14 +67,14 @@
  * To install one component:
  * <code>
  *     require_once($CFG->libdir.'/componentlib.class.php');
- *     if ($cd = new component_installer('http://download.moodle.org', 'lang20',
+ *     if ($cd = new component_installer('http://download.moodle.org', 'langpack/2.0',
  *                                       'es.zip', 'languages.md5', 'lang')) {
  *         $status = $cd->install(); //returns COMPONENT_(ERROR | UPTODATE | INSTALLED)
  *         switch ($status) {
  *             case COMPONENT_ERROR:
  *                 if ($cd->get_error() == 'remotedownloaderror') {
  *                     $a = new stdClass();
- *                     $a->url = 'http://download.moodle.org/lang20/es.zip';
+ *                     $a->url = 'http://download.moodle.org/langpack/2.0/es.zip';
  *                     $a->dest= $CFG->dataroot.'/lang';
  *                     print_error($cd->get_error(), 'error', '', $a);
  *                 } else {
