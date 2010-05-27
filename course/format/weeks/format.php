@@ -97,7 +97,7 @@
         $summarytext = file_rewrite_pluginfile_urls($thissection->summary, 'pluginfile.php', $coursecontext->id, 'course_section', $thissection->id);
         $summaryformatoptions = new object();
         $summaryformatoptions->noclean = true;
-        echo format_text($summarytext, FORMAT_HTML, $summaryformatoptions);
+        echo format_text($summarytext, $thissection->summaryformat, $summaryformatoptions);
 
         if ($PAGE->user_is_editing() && has_capability('moodle/course:update', get_context_instance(CONTEXT_COURSE, $course->id))) {
             echo '<p><a title="'.$streditsummary.'" '.
@@ -226,7 +226,7 @@
                 $summarytext = file_rewrite_pluginfile_urls($thissection->summary, 'pluginfile.php', $coursecontext->id, 'course_section', $thissection->id);
                 $summaryformatoptions = new object();
                 $summaryformatoptions->noclean = true;
-                echo format_text($summarytext, FORMAT_HTML, $summaryformatoptions);
+                echo format_text($summarytext, $thissection->summaryformat, $summaryformatoptions);
 
                 if ($PAGE->user_is_editing() && has_capability('moodle/course:update', get_context_instance(CONTEXT_COURSE, $course->id))) {
                     echo ' <a title="'.$streditsummary.'" href="editsection.php?id='.$thissection->id.'">'.

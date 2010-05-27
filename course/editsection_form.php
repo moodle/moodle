@@ -12,7 +12,7 @@ class editsection_form extends moodleform {
         global $CFG, $DB;
 
         $mform  = $this->_form;
-        $course = $this->_customdata;
+        $course = $this->_customdata['course'];
 
         $mform->addElement('checkbox', 'usedefaultname', get_string('sectionusedefaultname'));
         $mform->setDefault('usedefaultname', true);
@@ -21,7 +21,9 @@ class editsection_form extends moodleform {
         $mform->setType('name', PARAM_TEXT);
         $mform->disabledIf('name','usedefaultname','checked');
 
-        $mform->addElement('editor', 'summary', get_string('summary'), null, array('changeformat'=>false, 'maxfiles'=>-1));
+        /// Prepare course and the editor
+        
+        $mform->addElement('editor', 'summary', get_string('summary'), null, $this->_customdata['editoroptions']);
 
         $mform->addElement('hidden', 'id');
         $mform->setType('id', PARAM_INT);

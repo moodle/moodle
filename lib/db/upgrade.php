@@ -4142,6 +4142,21 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         upgrade_main_savepoint($result, 2010052401);
     }
 
+    if ($result && $oldversion < 2010052700) {
+
+    /// Define field summaryformat to be added to course sections table
+        $table = new xmldb_table('course_sections');
+        $field = new xmldb_field('summaryformat', XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'summary');
+
+    /// Conditionally launch add field summaryformat
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+    /// Main savepoint reached
+        upgrade_main_savepoint($result, 2010052700);
+    }
+
     return $result;
 }
 

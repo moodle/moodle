@@ -98,6 +98,7 @@
             $section->course = $SITE->id;
             $section->section = 1;
             $section->summary = '';
+            $section->summaryformat = '0';
             $section->sequence = '';
             $section->visible = 1;
             $section->id = $DB->insert_record('course_sections', $section);
@@ -119,7 +120,7 @@
             $summaryformatoptions = new object();
             $summaryformatoptions->noclean = true;
 
-            echo format_text($summarytext, FORMAT_HTML, $summaryformatoptions);
+            echo format_text($summarytext, $section->summaryformat, $summaryformatoptions);
 
             if ($editing) {
                 $streditsummary = get_string('editsummary');

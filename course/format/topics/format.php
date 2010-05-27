@@ -106,7 +106,7 @@ if ($thissection->summary or $thissection->sequence or $PAGE->user_is_editing())
     $summarytext = file_rewrite_pluginfile_urls($thissection->summary, 'pluginfile.php', $coursecontext->id, 'course_section', $thissection->id);
     $summaryformatoptions = new object();
     $summaryformatoptions->noclean = true;
-    echo format_text($summarytext, FORMAT_HTML, $summaryformatoptions);
+    echo format_text($summarytext, $thissection->summaryformat, $summaryformatoptions);
 
     if ($PAGE->user_is_editing() && has_capability('moodle/course:update', $coursecontext)) {
         echo '<a title="'.$streditsummary.'" '.
@@ -232,7 +232,7 @@ while ($section <= $course->numsections) {
                 $summarytext = file_rewrite_pluginfile_urls($thissection->summary, 'pluginfile.php', $coursecontext->id, 'course_section', $thissection->id);
                 $summaryformatoptions = new object();
                 $summaryformatoptions->noclean = true;
-                echo format_text($summarytext, FORMAT_HTML, $summaryformatoptions);
+                echo format_text($summarytext, $thissection->summaryformat, $summaryformatoptions);
             } else {
                echo '&nbsp;';
             }

@@ -184,7 +184,7 @@ class backup_section_structure_step extends backup_structure_step {
         // Define each element separated
 
         $section = new backup_nested_element('section', array('id'), array(
-            'number', 'name', 'summary', 'sequence', 'visible'));
+            'number', 'name', 'summary', 'summaryformat', 'sequence', 'visible'));
 
         // Define sources
 

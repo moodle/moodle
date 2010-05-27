@@ -44,18 +44,11 @@ require_login($course);
 $context = get_context_instance(CONTEXT_COURSE, $course->id);
 require_capability('moodle/course:update', $context);
 
-$draftitemid = file_get_submitted_draft_itemid('summary');
-$currenttext = file_prepare_draft_area($draftitemid, $context->id, 'course_section', $section->id, array('subdirs'=>true), $section->summary);
-
-$mform = new editsection_form(null, $course);
-$data = array(
-    'id'=>$section->id,
-    'usedefaultname'=>(is_null($section->name)),
-    'name'=>$section->name,
-    'summary'=>array('text'=>$currenttext, 'format'=>FORMAT_HTML, 'itemid'=>$draftitemid)
-);
-
-$mform->set_data($data); // set defaults
+$editoroptions = array('maxfiles' => EDITOR_UNLIMITED_FILES, 'maxbytes'=>$CFG->maxbytes, 'trusttext'=>false, 'noclean'=>true);
+$section = file_prepare_standard_editor($section, 'summary', $editoroptions, $context, 'course_section', $section->id);
+$section->usedefaultname = (is_null($section->name));
+$mform = new editsection_form(null, array('course'=>$course, 'editoroptions'=>$editoroptions));
+$mform->set_data($section); // set defaults
 
 /// If data submitted, then process and store.
 if ($mform->is_cancelled()){
@@ -85,6 +78,7 @@ if ($course->format == 'site') {
 }
 
 $PAGE->set_title($stredit);
+$PAGE->set_heading($course->fullname);
 $PAGE->navbar->add($stredit);
 echo $OUTPUT->header();
 

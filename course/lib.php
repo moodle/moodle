@@ -1177,7 +1177,7 @@ function get_all_mods($courseid, &$mods, &$modnames, &$modnamesplural, &$modname
 function get_all_sections($courseid) {
     global $DB;
     return $DB->get_records("course_sections", array("course"=>"$courseid"), "section",
-                       "section, id, course, name, summary, sequence, visible");
+                       "section, id, course, name, summary, summaryformat, sequence, visible");
 }
 
 function course_set_display($courseid, $display=0) {
@@ -2498,6 +2498,7 @@ function get_course_section($section, $courseid) {
     $cw->course   = $courseid;
     $cw->section  = $section;
     $cw->summary  = "";
+    $cw->summaryformat = FORMAT_MOODLE;
     $cw->sequence = "";
     $id = $DB->insert_record("course_sections", $cw);
     return $DB->get_record("course_sections", array("id"=>$id));
@@ -2545,6 +2546,7 @@ function add_mod_to_section($mod, $beforemod=NULL) {
         $section->course   = $mod->course;
         $section->section  = $mod->section;
         $section->summary  = "";
+        $section->summaryformat = FORMAT_MOODLE;
         $section->sequence = $mod->coursemodule;
         return $DB->insert_record("course_sections", $section);
     }
