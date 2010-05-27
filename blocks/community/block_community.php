@@ -33,15 +33,20 @@ class block_community extends block_list {
     }
 
     function get_content() {
-
         global $CFG, $OUTPUT, $USER;
+
+        if ($this->content !== NULL) {
+            return $this->content;
+        }
 
         $this->content = new stdClass();
         $this->content->items = array();
         $this->content->icons = array();
         $this->content->footer = '';
 
-        
+        if (!isloggedin()) {
+            return $this->content;
+        }
 
         $this->content->items[] = '<a href='.$CFG->wwwroot.'/blocks/community/communitycourse.php?add=true>'.get_string('addcourse', 'block_community').'</a>';
         $this->content->icons[] = '<img src="'.$OUTPUT->pix_url('i/group') . '" class="icon" alt="" />';
