@@ -155,7 +155,7 @@ class moodle_user_external extends external_api {
 
             //TODO: preferences
 
-            $userids[] = array('id'=>$user->id, 'username'=>$user['username']);
+            $userids[] = array('id'=>$user['id'], 'username'=>$user['username']);
         }
 
         $transaction->allow_commit();
