@@ -1,0 +1,99 @@
+.pagelayout-frontpage,
+.pagelayout-incourse,
+.pagelayout-general,
+.pagelayout-course,
+.pagelayout-coursecategory,
+.pagelayout-admin,
+.pagelayout-mydashboard,
+.pagelayout-mypublic,
+.pagelayout-login
+{ 
+	background:url([[pix:theme|body]]); 
+}
+
+body,h1,h2,h3,h4,h5,h6,p,ul,ol,dl,input,textarea
+{ 
+	font-family:Georgia, "Times New Roman", Times, serif; 
+	color:#2a2513;
+}
+
+#wrapper
+{ 
+	background:#fff; 
+	margin:2% 5%; 
+	padding:5px;
+	border:1px solid #c1bc9d;
+}
+
+a { 
+	color:#336699; 
+}
+
+a:hover { 
+	text-decoration:underline; 
+}
+
+/* Header
+------------------------*/
+
+#page-header
+{ 
+	background:#ddd6cc url([[pix:theme|header_grass]]) repeat-x 0 100%; 
+}
+
+.headermain { 
+	font-weight:normal;
+	margin:1em 0.5em 0.75em;
+}
+
+/* Blocks
+-------------------------*/
+
+.block
+{ 
+	border-color:#eee; 
+}
+
+.block .header { 
+	background:#9eb1bf;
+	padding-left:5px; 
+}
+
+.block .title { 
+	background:#867f6a;
+	padding-left:5px;
+}
+
+.block .title h2 { 
+	background:#6e6855;
+	margin:0;
+	padding:5px;
+	font-size:1em;
+	color:#fff;
+}
+
+.block_action { 
+	padding:5px 0 0; 
+}
+
+.block .content { 
+	background:#d8d2c6; 
+	border:1px solid #867f6a;
+}
+
+.block .minicalendar td,
+.block .minicalendar th {
+	border-color: #d8d2c6;
+}
+
+
+/* Course
+----------------------------*/
+
+.headingblock { 
+	background: url([[pix:theme|headingblock]]) repeat-x 0 0; 
+	color:#fff;
+	font-weight:normal;
+	border:none;
+	padding:2px 5px;
+}
