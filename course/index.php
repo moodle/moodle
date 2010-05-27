@@ -79,7 +79,7 @@ if (!$adminediting) {
 
         $PAGE->navbar->add($strcategories);
         $PAGE->set_title("$site->shortname: $strcategories");
-        $PAGE->set_heading($strcourses);
+        $PAGE->set_heading($COURSE->fullname);
         $PAGE->set_button(update_category_button());
         echo $OUTPUT->header();
         echo $OUTPUT->heading($strcategories);
@@ -91,7 +91,7 @@ if (!$adminediting) {
     } else {
         $PAGE->navbar->add($strfulllistofcourses);
         $PAGE->set_title("$site->shortname: $strfulllistofcourses");
-        $PAGE->set_heading($strfulllistofcourses);
+        $PAGE->set_heading($COURSE->fullname);
         $PAGE->set_button(update_category_button());
         echo $OUTPUT->header();
         echo $OUTPUT->skip_link_target();
