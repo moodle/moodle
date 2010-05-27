@@ -782,7 +782,7 @@ function get_real_size($size=0) {
  */
 function redirect_if_major_upgrade_required() {
     global $CFG;
-    $lastmajordbchanges = 2010050404;
+    $lastmajordbchanges = 2010052700;
     if (empty($CFG->version) or (int)$CFG->version < $lastmajordbchanges or
             during_initial_install() or !empty($CFG->adminsetuppending)) {
         try {
