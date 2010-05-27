@@ -373,4 +373,14 @@ class hub {
         return $hubs;
     }
 
+     /**
+     * Get an array of all block instances for a given context
+     * @param int $contextid a context id
+     * @return array of block instances.
+     */
+    public function get_block_instances_by_context($contextid, $sort = '') {
+        global $DB;
+        return $DB->get_records('block_instances', array('parentcontextid' => $contextid), $sort);
+    }
+
 }

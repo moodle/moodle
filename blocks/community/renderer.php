@@ -95,6 +95,22 @@ class block_community_renderer extends plugin_renderer_base {
                 $deschtml .= html_writer::empty_tag('br');
                 $additionaldesc = get_string('additionalcoursedesc', 'block_community', $course);
                 $deschtml .= html_writer::tag('span', $additionaldesc, array('class' => 'additionaldesc'));
+                 //add content to the course description
+                if (!empty($course->contents)) {
+                    $activitieshtml = '';
+                    $blockhtml = '';
+                    foreach ($course->contents as $content) {
+                        if ($content['moduletype'] == 'block') {
+                            $blockhtml .= ' - '. $content['modulename']. " (".$content['contentcount'].")";
+                        } else {
+                            $activitieshtml .= ' - '. $content['modulename']. " (".$content['contentcount'].")";
+                        }
+                    }
+                    $deschtml .= html_writer::empty_tag('br').html_writer::tag('span',
+                            get_string('blocks', 'block_community')." : ".$blockhtml, array('class' => 'blockdescription'));
+                    $deschtml .= html_writer::empty_tag('br').html_writer::tag('span',
+                            get_string('activities', 'block_community')." : ".$activitieshtml, array('class' => 'activitiesdescription'));
+                }
 
                 //retrieve language string
                 //construct languages array

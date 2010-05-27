@@ -64,7 +64,11 @@ if (has_capability('moodle/course:publish', get_context_instance(CONTEXT_COURSE,
                     'id' => $id));
     $fromform = $coursepublicationform->get_data();
 
+
+
     if (!empty($fromform)) {
+
+        $hub = new hub();
 
         //retrieve the course information
         $courseinfo = new stdClass();
@@ -91,6 +95,40 @@ if (has_capability('moodle/course:publish', get_context_instance(CONTEXT_COURSE,
         } else {
             $courseinfo->courseurl = $fromform->courseurl;
             $courseinfo->enrollable = true;
+        }
+
+
+        //retrieve the content information from the course
+        $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
+        $courseblocks = $hub->get_block_instances_by_context($coursecontext->id, 'blockname');
+
+        if (!empty($courseblocks)) {
+            $blockname = '';
+            foreach ($courseblocks as $courseblock) {
+                if ($courseblock->blockname != $blockname) {
+                    if (!empty($blockname)) {
+                        $courseinfo->contents[] = $content;
+                    }
+
+                    $blockname = $courseblock->blockname;
+                    $content = new stdClass();
+                    $content->moduletype = 'block';
+                    $content->modulename = $courseblock->blockname;
+                    $content->contentcount = 1;
+                } else {
+                    $content->contentcount = $content->contentcount + 1;
+                }
+            }
+            $courseinfo->contents[] = $content;
+        }
+
+        $activities = get_fast_modinfo($course, $USER->id);
+        foreach ($activities->instances as $activityname => $activitydetails) {
+            $content = new stdClass();
+            $content->moduletype = 'activity';
+            $content->modulename = $activityname;
+            $content->contentcount = count($activities->instances[$activityname]);
+            $courseinfo->contents[] = $content;
         }
 
         //save into screenshots field the references to the screenshot content hash
@@ -122,7 +160,7 @@ if (has_capability('moodle/course:publish', get_context_instance(CONTEXT_COURSE,
         // PUBLISH ACTION
 
         //retrieve the token to call the hub
-        $hub = new hub();
+       
         $registeredhub = $hub->get_registeredhub($huburl);
 
         //publish the course information

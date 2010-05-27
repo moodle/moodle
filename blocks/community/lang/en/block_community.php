@@ -24,6 +24,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['activities'] = 'Activities';
 $string['add'] = 'Add';
 $string['addtocommunityblock'] = 'Add to community block';
 $string['addcommunitycourse'] = 'Add community course';
@@ -32,6 +33,7 @@ $string['additionalcoursedesc'] = '{$a->contributornames} - {$a->coverage} - Cre
 $string['addcourse'] = 'Search';
 $string['audience'] = 'Designed for';
 $string['audience_help'] = 'What kind of course are you looking for?  As well as traditional courses intended for students, you might search for communities of Educators or Moodle Administrators';
+$string['blocks'] = 'Blocks';
 $string['cannotselecttopsubject'] = 'Cannot select a top subject level';
 $string['contributors'] = ' - Contributors: {$a}';
 $string['coursedesc'] = 'Description';
