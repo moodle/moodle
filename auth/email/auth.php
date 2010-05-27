@@ -99,7 +99,7 @@ class auth_plugin_email extends auth_plugin_base {
             $emailconfirm = get_string('emailconfirm');
             $PAGE->navbar->add($emailconfirm);
             $PAGE->set_title($emailconfirm);
-            $PAGE->set_heading($emailconfirm);
+            $PAGE->set_heading($PAGE->course->fullname);
             echo $OUTPUT->header();
             notice(get_string('emailconfirmsent', '', $user->email), "$CFG->wwwroot/index.php");
         } else {

@@ -110,7 +110,7 @@ if ($mform->is_cancelled()) {
     $PAGE->navbar->add($fullname, new moodle_url('/user/view.php', array('id'=>$USER->id, 'course'=>$course->id)));
     $PAGE->navbar->add($strpasswordchanged);
     $PAGE->set_title($strpasswordchanged);
-    $PAGE->set_heading($strpasswordchanged);
+    $PAGE->set_heading($COURSE->fullname);
     echo $OUTPUT->header();
 
     if (empty($SESSION->wantsurl) or $SESSION->wantsurl == $CFG->httpswwwroot.'/login/change_password.php') {
@@ -133,7 +133,7 @@ $fullname = fullname($USER, true);
 $PAGE->navbar->add($fullname, new moodle_url('/user/view.php', array('id'=>$USER->id, 'course'=>$course->id)));
 $PAGE->navbar->add($strchangepassword);
 $PAGE->set_title($strchangepassword);
-$PAGE->set_heading($strchangepassword);
+$PAGE->set_heading($COURSE->fullname);
 echo $OUTPUT->header();
 
 if (get_user_preferences('auth_forcepasswordchange')) {

@@ -48,7 +48,7 @@ if (!$authplugin->can_signup()) {
 
 //HTTPS is potentially required in this page
 httpsrequired();
-
+$PAGE->set_url('/login/signup.php');
 $mform_signup = new login_signup_form();
 
 if ($mform_signup->is_cancelled()) {
@@ -72,9 +72,9 @@ $login      = get_string('login');
 
 $PAGE->navbar->add($login);
 $PAGE->navbar->add($newaccount);
-$PAGE->set_url('/login/signup.php');
+
 $PAGE->set_title($newaccount);
-$PAGE->set_heading($newaccount);
+$PAGE->set_heading($SITE->fullname);
 $PAGE->set_focuscontrol($mform_signup->focus());
 
 echo $OUTPUT->header();

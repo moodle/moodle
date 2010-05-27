@@ -40,7 +40,7 @@ if ($p_secret !== false) {
     update_login_count();
 
     $PAGE->set_title($strforgotten);
-    $PAGE->set_heading($strforgotten);
+    $PAGE->set_heading($COURSE->fullname);
 
     $user = get_complete_user_data('username', $p_username);
     if (!empty($user) and $user->secret === '') {
@@ -133,7 +133,7 @@ if ($mform->is_cancelled()) {
     }
 
     $PAGE->set_title($strforgotten);
-    $PAGE->set_heading($strforgotten);
+    $PAGE->set_heading($COURSE->fullname);
     echo $OUTPUT->header();
 
     if (empty($user->email) or !empty($CFG->protectusernames)) {
@@ -153,7 +153,7 @@ if ($mform->is_cancelled()) {
 
 /// DISPLAY FORM
 $PAGE->set_title($strforgotten);
-$PAGE->set_heading($strforgotten);
+$PAGE->set_heading($COURSE->fullname);
 $PAGE->set_focuscontrol('id_email');
 
 echo $OUTPUT->header();

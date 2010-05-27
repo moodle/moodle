@@ -33,8 +33,9 @@ if (!empty($data) || (!empty($p) && !empty($s))) {
 
     if ($confirmed == AUTH_CONFIRM_ALREADY) {
         $user = get_complete_user_data('username', $username);
+        $PAGE->navbar->add(get_string("alreadyconfirmed"));
         $PAGE->set_title(get_string("alreadyconfirmed"));
-        $PAGE->set_heading(get_string("alreadyconfirmed"));
+        $PAGE->set_heading($COURSE->fullname);
         echo $OUTPUT->header();
         echo $OUTPUT->box_start('generalbox centerpara boxwidthnormal boxaligncenter');
         echo "<h3>".get_string("thanks").", ". fullname($user) . "</h3>\n";
@@ -60,8 +61,9 @@ if (!empty($data) || (!empty($p) && !empty($s))) {
             redirect($goto);
         }
 
+        $PAGE->navbar->add(get_string("confirmed"));
         $PAGE->set_title(get_string("confirmed"));
-        $PAGE->set_heading(get_string("confirmed"));
+        $PAGE->set_heading($COURSE->fullname);
         echo $OUTPUT->header();
         echo $OUTPUT->box_start('generalbox centerpara boxwidthnormal boxaligncenter');
         echo "<h3>".get_string("thanks").", ". fullname($USER) . "</h3>\n";
