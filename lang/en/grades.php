@@ -235,7 +235,6 @@ $string['feedbacksaved'] = 'Feedback saved';
 $string['feedbackview'] = 'View feedback';
 $string['finalgrade'] = 'Final grade';
 $string['finalgrade_help'] = 'If the overridden checkbox is ticked, a grade may be added or amended.';
-$string['finalgradehelp'] = 'The final grade (cached) after all calculations are performed.';
 $string['fixedstudents'] = 'Static students column';
 $string['forceoff'] = 'Force: Off';
 $string['forceon'] = 'Force: On';

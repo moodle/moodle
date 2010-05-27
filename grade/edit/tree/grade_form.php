@@ -51,7 +51,7 @@ class edit_grade_form extends moodleform {
         if ($grade_item->gradetype == GRADE_TYPE_VALUE) {
             // numeric grade
             $mform->addElement('text', 'finalgrade', get_string('finalgrade', 'grades'));
-            $mform->setHelpButton('finalgrade', array('finalgrade', get_string('finalgrade', 'grades'), 'grade'));
+            $mform->addHelpButton('finalgrade', 'finalgrade', 'grades');
             $mform->disabledIf('finalgrade', 'overridden', 'notchecked');
 
         } else if ($grade_item->gradetype == GRADE_TYPE_SCALE) {
@@ -73,7 +73,7 @@ class edit_grade_form extends moodleform {
             }
 
             $mform->addElement('select', 'finalgrade', get_string('finalgrade', 'grades'), $scaleopt);
-            $mform->setHelpButton('finalgrade', array('finalgrade', get_string('finalgrade', 'grades'), 'grade'));
+            $mform->addHelpButton('finalgrade', 'finalgrade', 'finalgrade');
             $mform->disabledIf('finalgrade', 'overridden', 'notchecked');
         }
 
