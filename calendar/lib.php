@@ -1390,7 +1390,7 @@ function calendar_edit_event_allowed($event) {
     }
 
     // if groupid is set, it's definitely a group event
-    if ($event->groupid) {
+    if (!empty($event->groupid)) {
         // Allow users to add/edit group events if:
         // 1) They have manageentries (= entries for whole course)
         // 2) They have managegroupentries AND are in the group
@@ -1399,11 +1399,11 @@ function calendar_edit_event_allowed($event) {
             has_capability('moodle/calendar:manageentries', get_context_instance(CONTEXT_COURSE, $group->courseid)) ||
             (has_capability('moodle/calendar:managegroupentries', get_context_instance(CONTEXT_COURSE, $group->courseid))
                 && groups_is_member($event->groupid)));
-    } else if ($event->courseid) {
+    } else if (!empty($event->courseid)) {
     // if groupid is not set, but course is set,
     // it's definiely a course event
         return has_capability('moodle/calendar:manageentries', get_context_instance(CONTEXT_COURSE, $event->courseid));
-    } else if ($event->userid && $event->userid == $USER->id) {
+    } else if (!empty($event->userid) && $event->userid == $USER->id) {
     // if course is not set, but userid id set, it's a user event
         return (has_capability('moodle/calendar:manageownentries', $sitecontext));
     }
@@ -1905,7 +1905,10 @@ class calendar_event {
     public function update($data) {
         global $CFG, $DB, $USER;
 
-        $this->properties = (object)$data;
+        foreach ($data as $key=>$value) {
+            $this->properties->$key = $value;
+        }
+
         $this->properties->timemodified = time();
         $usingeditor = (!empty($this->properties->description) && is_array($this->properties->description));
 
@@ -2276,7 +2279,7 @@ class calendar_event {
         if($extcalendarinc === false) {
             return false;
         }
-        $hook = $CFG->dirroot .'_'.$action;
+        $hook = $CFG->calendar .'_'.$action;
         if (function_exists($hook)) {
             call_user_func_array($hook, $args);
             return true;
