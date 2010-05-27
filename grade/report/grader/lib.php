@@ -87,6 +87,13 @@ class grade_report_grader extends grade_report {
     var $preferencespage=false;
 
     /**
+     * Length at which feedback will be truncated (to the nearest word) and an ellipsis be added.
+     * TODO replace this by a report preference
+     * @var int $feedback_trunc_length
+     */
+    protected $feedback_trunc_length = 50;
+
+    /**
      * Constructor. Sets local copies of user preferences and initialises grade_tree.
      * @param int $courseid
      * @param object $gpr grade plugin return tracking object
@@ -853,6 +860,7 @@ class grade_report_grader extends grade_report {
                 }
 
                 if (!empty($grade->feedback)) {
+                    //should we be truncating feedback? ie $short_feedback = shorten_text($feedback, $this->feedback_trunc_length);
                     $jsarguments['feedback'][] = array('user'=>$userid, 'item'=>$itemid, 'content'=>wordwrap(trim(format_string($grade->feedback, $grade->feedbackformat)), 34, '<br/ >'));
                 }
 
@@ -977,7 +985,9 @@ class grade_report_grader extends grade_report {
                 $jsarguments['cfg']['scales'][$scale->id] = explode(',',$scale->scale);
             }
             $jsarguments['cfg']['feedbacktrunclength'] =  $this->feedback_trunc_length;
-            $jsarguments['cfg']['feedback'] =  $this->feedbacks;
+
+            //feedbacks are now being stored in $jsarguments['feedback'] in get_right_rows()
+            //$jsarguments['cfg']['feedback'] =  $this->feedbacks;
         }
         $jsarguments['cfg']['isediting'] = (bool)$USER->gradeediting[$this->courseid];
         $jsarguments['cfg']['courseid'] =  $this->courseid;

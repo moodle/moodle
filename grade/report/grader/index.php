@@ -19,7 +19,6 @@ require_once '../../../config.php';
 require_once $CFG->libdir.'/gradelib.php';
 require_once $CFG->dirroot.'/grade/lib.php';
 require_once $CFG->dirroot.'/grade/report/grader/lib.php';
-require_once $CFG->dirroot.'/grade/report/grader/ajaxlib.php';
 
 $courseid      = required_param('id', PARAM_INT);        // course id
 $page          = optional_param('page', 0, PARAM_INT);   // active page
@@ -107,13 +106,9 @@ if (!empty($target) && !empty($action) && confirm_sesskey()) {
 
 $reportname = get_string('modulename', 'gradereport_grader');
 
-//Initialise the grader report object to determine if its ajax
-// We're instantiating it then throwing it away and instantiating it again
-// There has to be a better way.
+//Initialise the grader report object that produces the table
+//the class grade_report_grader_ajax was removed as part of MDL-21562
 $report = new grade_report_grader($courseid, $gpr, $context, $page, $sortitemid);
-if ( $report->get_pref('enableajax') ) {
-    $report = new grade_report_grader_ajax($courseid, $gpr, $context, $page, $sortitemid);
-}
 
 // make sure separate group does not prevent view
 if ($report->currentgroup == -2) {
