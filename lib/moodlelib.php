@@ -7021,6 +7021,7 @@ function get_core_subsystems() {
             'condition'   => NULL,
             'completion'  => NULL,
             'countries'   => NULL,
+            'course'      => 'course',
             'currencies'  => NULL,
             'dbtransfer'  => NULL,
             'debug'       => NULL,

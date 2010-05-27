@@ -250,6 +250,7 @@ $string['clickhere'] = 'Click here ...';
 $string['clicktohideshow'] = 'Click to expand or collapse';
 $string['clicktochange'] = 'Click to change';
 $string['closewindow'] = 'Close this window';
+$string['collapseall'] = 'Collapse all';
 $string['commentincontext'] = 'Find this comment in context';
 $string['comments'] = 'Comments';
 $string['comparelanguage'] = 'Compare and edit current language';
@@ -675,6 +676,7 @@ $string['existingcoursedeleting'] = 'Existing course, deleting it first';
 $string['existingcreators'] = 'Existing course creators';
 $string['existingstudents'] = 'Enrolled students';
 $string['existingteachers'] = 'Existing teachers';
+$string['expandall'] = 'Expand all';
 $string['expirynotify'] = 'Enrolment expiry notification';
 $string['expirynotifyemail'] = 'The following students in this course are expiring after exactly {$a->threshold} days:
 

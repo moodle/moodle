@@ -33,6 +33,8 @@
         print_error('coursehidden', '', $CFG->wwwroot .'/');
     }
 
+    $PAGE->set_context($context);
+    $PAGE->set_pagelayout('course');
     $PAGE->set_url('/course/info.php', array('id' => $course->id));
     $PAGE->set_title(get_string("summaryof", "", $course->fullname));
     $PAGE->set_heading('Course info');

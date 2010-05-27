@@ -196,11 +196,9 @@
             break;
 
             case FRONTPAGECATEGORYCOMBO:
-
                 echo $OUTPUT->heading(get_string('categories'), 2, 'headingblock header');
-                echo $OUTPUT->box_start('generalbox categorybox');
-                print_whole_category_list(NULL, NULL, NULL, -1, true);
-                echo $OUTPUT->box_end();
+                $renderer = $PAGE->get_renderer('core','course');
+                echo $renderer->course_category_tree(get_course_category_tree());
                 print_course_search('', false, 'short');
             break;
 

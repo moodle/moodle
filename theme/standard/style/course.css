@@ -85,3 +85,21 @@
 .categorypicker {text-align:center;margin-bottom:10px;}
 .path-course-report-outline .loginfo {text-align:center;margin: 1em;}
 .categorylist {width: 90%;margin:0 auto;text-align: left;}
+
+/* Course and category combo list on front page */
+.course_category_tree .controls {margin-bottom:5px;text-align:right;float:right;}
+.course_category_tree .controls div {padding-right:2em;font-size:75%;}
+.course_category_tree .category {background-color:#FFF;background-image:url([[pix:theme|hgradient]]);background-repeat: repeat-x;border:1px solid #ddd;margin-bottom:10px;}
+.course_category_tree .category .category {margin:5px;}
+.course_category_tree .category .subcategories {background-color:inherit;padding-left:16px;border:1px solid #FFF;}
+.course_category_tree .category.with_children .category_label {background-position:3px 3px;}
+.course_category_tree .category_link .category_link {font-size:95%;}
+.course_category_tree .category_label {padding-left:13px;}
+.course_category_tree .category_link {display:block;margin:5px;font-size:120%;font-weight:bold;}
+.course_category_tree .category .courses {background-color:inherit;padding-left:16px;}
+.course_category_tree .category .courses .course_link {margin:5px;}
+.course_category_tree .category .course {border:1px solid #f9f9f9;border-bottom-color: #eee;border-right-width:0;}
+.course_category_tree .category .course:last-child {border-bottom-color:#f6f6f6;}
+.course_category_tree .category .course.even {background-color:#f6f6f6;border-color:#eee;border-top-color: #f9f9f9;}
+.course_category_tree .category .course_info {right:3px;top:3px;}
+.course_category_tree .category .course:hover {background-color:#eee;}

@@ -1856,6 +1856,67 @@ function make_categories_list(&$list, &$parents, $requiredcapability = '',
     }
 }
 
+/**
+ * This function generates a structured array of courses and categories.
+ *
+ * The depth of categories is limited by $CFG->maxcategorydepth however there
+ * is no limit on the number of courses!
+ *
+ * Suitable for use with the course renderers course_category_tree method:
+ * $renderer = $PAGE->get_renderer('core','course');
+ * echo $renderer->course_category_tree(get_course_category_tree());
+ *
+ * @global moodle_database $DB
+ * @param int $id
+ * @param int $depth
+ */
+function get_course_category_tree($id = 0, $depth = 0) {
+    global $DB;
+    $viewhiddencats = has_capability('moodle/category:viewhiddencategories', get_context_instance(CONTEXT_SYSTEM));
+    $categories = get_child_categories($id);
+    $categoryids = array();
+    foreach ($categories as $key => &$category) {
+        if (!$category->visible && !$viewhiddencats) {
+            unset($categories[$key]);
+            continue;
+        }
+        $categoryids[$category->id] = $category;
+        if (empty($CFG->maxcategorydepth) || $depth <= $CFG->maxcategorydepth) {
+            list($category->categories, $subcategories) = get_course_category_tree($category->id, $depth+1);
+            $categoryids = array_merge($categoryids, $subcategories);
+            $category->courses = array();
+        }
+    }
+
+    if ($depth > 0) {
+        // This is a recursive call so return the required array
+        return array($categories, $categoryids);
+    }
+
+    // The depth is 0 this function has just been called so we can finish it off
+
+    list($ccselect, $ccjoin) = context_instance_preload_sql('c.id', CONTEXT_COURSE, 'ctx');
+    list($catsql, $catparams) = $DB->get_in_or_equal(array_keys($categoryids));
+    $sql = "SELECT
+            c.id,c.sortorder,c.visible,c.fullname,c.shortname,c.password,c.summary,c.guest,c.cost,c.currency,c.category
+            $ccselect
+            FROM {course} c
+            $ccjoin
+            WHERE c.category $catsql ORDER BY c.sortorder ASC";
+    if ($courses = $DB->get_records_sql($sql, $catparams)) {
+        // loop throught them
+        foreach ($courses as $course) {
+            if ($course->id == SITEID) {
+                continue;
+            }
+            context_instance_preload($course);
+            if (!empty($course->visible) || has_capability('moodle/course:viewhiddencourses', get_context_instance(CONTEXT_COURSE, $course->id))) {
+                $categoryids[$course->category]->courses[$course->id] = $course;
+            }
+        }
+    }
+    return $categories;
+}
 
 /**
  * Recursive function to print out all the categories in a nice format

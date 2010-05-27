@@ -86,3 +86,18 @@
 .topics-format {margin-top: 8px;min-width: 763px;}
 #page-course-user .section {border-width:1px;border-style:solid;padding:10px;}
 .categoryboxcontent {border-width:1px;border-style:solid;}
+
+/* Course and category combo list on front page */
+.course_category_tree .controls {visibility: hidden;}
+.course_category_tree .controls div {display:inline;cursor:pointer;}
+.course_category_tree .category.with_children .category_label {background-image:url([[pix:moodle|t/expanded]]);background-repeat: no-repeat;}
+.course_category_tree .category_label {padding-left:13px;}
+.course_category_tree .category .courses .course_link {display:block;background-image:url([[pix:moodle|i/course]]);background-repeat: no-repeat;padding-left:18px;}
+.course_category_tree .category .course {position:relative;}
+.course_category_tree .category .course_info {position:absolute;right:0;top:0;}
+.course_category_tree .category .course_info a,
+.course_category_tree .category .course_info div {float:left;width:16px;height:16px;}
+.jsenabled .course_category_tree .controls {visibility: visible;}
+.jsenabled .course_category_tree .category.with_children.collapsed .category_label {background-image:url([[pix:moodle|t/collapsed]]);}
+.jsenabled .course_category_tree .category.with_children.collapsed .subcategories,
+.jsenabled .course_category_tree .category.with_children.collapsed .courses {display:none;}

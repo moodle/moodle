@@ -29,6 +29,7 @@ $strgrade = get_string("grade");
 $PAGE->set_url('/mod/assignment/index.php', array('id'=>$course->id));
 $PAGE->navbar->add($strassignments);
 $PAGE->set_title($strassignments);
+$PAGE->set_heading($course->fullname);
 echo $OUTPUT->header();
 
 if (!$cms = get_coursemodules_in_course('assignment', $course->id, 'cm.idnumber, m.assignmenttype, m.timedue')) {
