@@ -82,7 +82,7 @@ class edit_grade_form extends moodleform {
         } else {
             $mform->addElement('advcheckbox', 'excluded', get_string('excluded', 'grades'));
         }
-        $mform->setHelpButton('excluded', array('excluded', get_string('excluded', 'grades'), 'grade'));
+        $mform->addHelpButton('excluded', 'excluded', 'grades');
 
         /// hiding
         /// advcheckbox is not compatible with disabledIf !!

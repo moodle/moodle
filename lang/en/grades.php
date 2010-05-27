@@ -219,7 +219,6 @@ $string['errorupdatinggradecategoryaggregation'] = 'Error updating the aggregati
 $string['errorupdatinggradeitemaggregationcoef'] = 'Error updating the aggregation coefficient (weight or extra credit) of grade item ID {$a->id}';
 $string['excluded'] = 'Excluded';
 $string['excluded_help'] = 'If ticked, the grade will not be included in any aggregation.';
-$string['excludedhelp'] = 'If -excluded- is switched on, this grade will be excluded from any aggregation performed by any parent grade item or category.';
 $string['expand'] = 'Expand Category';
 $string['export'] = 'Export';
 $string['exportalloutcomes'] = 'Export all outcomes';
