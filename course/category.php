@@ -163,9 +163,12 @@
         admin_externalpage_setup('coursemgmt', '', $urlparams, $CFG->wwwroot . '/course/category.php');
         $PAGE->set_context($context);   // Ensure that we are actually showing blocks etc for the cat context
         echo $OUTPUT->header();
-    } else {
+    } else {        
+        $PAGE->navbar->add($strcategories, new moodle_url('/course/index.php'));
+        $PAGE->navbar->add($category->name);
+        $PAGE->navbar->add($strcourses);
         $PAGE->set_title("$site->shortname: $category->name");
-        $PAGE->set_heading("$site->fullname: $strcourses");
+        $PAGE->set_heading($site->fullname);
         $PAGE->set_button(print_course_search('', true, 'navbar'));
         $PAGE->set_pagelayout('coursecategory');
         echo $OUTPUT->header();
