@@ -535,7 +535,11 @@ function file_get_user_used_space() {
  * @return string path
  */
 function file_correct_filepath($str) {
-    return '/'.trim($str, './@#$ ').'/';
+    if ($str == '/' or empty($str)) {
+        return '/';
+    } else {
+        return '/'.trim($str, './@#$ ').'/';
+    }
 }
 
 /**
@@ -1085,7 +1089,7 @@ function download_file_content($url, $headers=null, $postdata=null, $fullrespons
 }
 
 /**
- * internal implementation 
+ * internal implementation
  */
 function download_file_content_header_handler($received, $ch, $header) {
     $received->headers[] = $header;
@@ -1093,7 +1097,7 @@ function download_file_content_header_handler($received, $ch, $header) {
 }
 
 /**
- * internal implementation 
+ * internal implementation
  */
 function download_file_content_write_handler($received, $ch, $data) {
     if (!$received->fh) {
