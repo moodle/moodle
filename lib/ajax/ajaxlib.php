@@ -155,7 +155,7 @@ class jsportal {
         $output .= "    main.portal.strings['resource']='".get_string('resource')."';\n";
         $output .= "    main.portal.strings['activity']='".get_string('activity')."';\n";
         $output .= "    main.portal.strings['sesskey']='".sesskey()."';\n";
-        $output .= "    main.portal.icons['spacerimg']='".$OUTPUT->pix_url('spaces')."';\n";
+        $output .= "    main.portal.icons['spacerimg']='".$OUTPUT->pix_url('spacer')."';\n";
         $output .= "    main.portal.icons['marker']='".$OUTPUT->pix_url('i/marker')."';\n";
         $output .= "    main.portal.icons['ihide']='".$OUTPUT->pix_url('i/hide')."';\n";
         $output .= "    main.portal.icons['move_2d']='".$OUTPUT->pix_url('i/move_2d')."';\n";
