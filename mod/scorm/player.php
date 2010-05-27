@@ -299,7 +299,26 @@
             <![if !IE]>
                 <object id="scoframe1" class="scoframe" type="text/html" data="<?php echo $fullurl; ?>"></object>
             <![endif]>
+
 <?php
+            if (scorm_debugging($scorm)) {
+?>
+                <script>
+                // Add in a JS controlled link for toggling the Debug logging
+                var logButton = document.createElement('a');
+                logButton.id = 'mod-scorm-log-toggle';
+                logButton.name = 'logToggle';
+                logButton.href = 'javascript:toggleLog();';
+                if (getLoggingActive() == "A") {
+                    logButton.innerHTML = '<?php print_string('scormloggingon','scorm') ?>';
+                } else {
+                    logButton.innerHTML = '<?php print_string('scormloggingoff','scorm') ?>';
+                }
+                var content = safeGetElement(document, 'scormpage');
+                content.insertBefore(logButton, content.firstChild);
+                </script>
+<?php
+            }
             $PAGE->requires->js_function_call('scorm_resize');
         } else {
             // Clean the name for the window as IE is fussy

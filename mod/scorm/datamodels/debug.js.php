@@ -1,4 +1,4 @@
-// hopefully fool ie IE proof way of getting DOM element
+<!--// hopefully fool ie IE proof way of getting DOM element
 function safeGetElement(doc, el) {
     return doc.ids ? doc.ids[el] : doc.getElementById ? doc.getElementById(el) : doc.all[el];
 }
@@ -22,21 +22,6 @@ function getElementsByClassName( strClassName, obj ) {
         return null;
     }
 }
-
-// Add in a JS controlled link for toggling the Debug logging
-var logButton = document.createElement('a');
-logButton.id = 'mod-scorm-log-toggle';
-logButton.name = 'logToggle';
-logButton.href = 'javascript:toggleLog();';
-if (getLoggingActive() == "A") {
-    logButton.innerHTML = '<?php print_string('scormloggingon','scorm') ?>';
-} else {
-    logButton.innerHTML = '<?php print_string('scormloggingoff','scorm') ?>';
-}
-var content = safeGetElement(document, 'region-main');
-content = getElementsByClassName( 'region-content', content );
-
-content.appendChild(logButton);
 
 // retrieve cookie data
 function getCookie (cookie_name){
@@ -67,7 +52,7 @@ function toggleLog () {
     if (getLoggingActive() == "A") {
         AppendToLog("Moodle Logging Deactivated", 0);
         setLoggingActive('N');
-        logButton.innerHTML = '<?php print_string('scormloggingoff','scorm') ?>';
+        logButton.innerHTML = '--><?php print_string('scormloggingoff','scorm') ?>';
     } else {
         setLoggingActive('A');
         AppendToLog("Moodle Logging Activated", 0);
