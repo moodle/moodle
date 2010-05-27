@@ -185,7 +185,7 @@ class completion_info {
         global $CFG;
 
         // First check global completion
-        if ($CFG->enablecompletion == COMPLETION_DISABLED) {
+        if (!isset($CFG->enablecompletion) || $CFG->enablecompletion == COMPLETION_DISABLED) {
             return COMPLETION_DISABLED;
         }
 
