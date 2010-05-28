@@ -84,6 +84,8 @@ echo $OUTPUT->doctype() ?>
 
 <!-- END OF CONTENT -->
 
+	</div>
+
 <!-- START OF FOOTER -->
 
     <div id="page-footer">
@@ -99,7 +101,6 @@ echo $OUTPUT->doctype() ?>
     </div>
 
 <!-- END OF FOOTER -->
-	</div>
 </div>
 <?php echo $OUTPUT->standard_end_of_body_html() ?>
 </body>

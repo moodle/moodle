@@ -30,7 +30,6 @@ echo $OUTPUT->doctype() ?>
 <?php if ($hasheading || $hasnavbar) { ?>
 
     <div id="page-header" class="clearfix">
-		<div id="page-header-wrapper">
 	        
 	        <?php if ($hasheading) { ?>
 		    	<h1 class="headermain"><?php echo $PAGE->heading ?></h1>
@@ -45,14 +44,13 @@ echo $OUTPUT->doctype() ?>
 	        	</div>
 	        <?php } ?>        
         	
-	    </div>
     </div>
     
     <?php if ($hasnavbar) { ?>
 	    <div class="navbar clearfix">
     	    <div class="breadcrumb"><?php echo $OUTPUT->navbar(); ?></div>
             <div class="navbutton"> <?php echo $PAGE->button; ?></div>
-        </div>
+      </div>
     <?php } ?>
     
 <?php } ?>
@@ -93,6 +91,8 @@ echo $OUTPUT->doctype() ?>
     </div>
 </div>
 
+    </div>
+
 <!-- START OF FOOTER -->
     <?php if ($hasfooter) { ?>
     <div id="page-footer" class="clearfix">
@@ -104,7 +104,6 @@ echo $OUTPUT->doctype() ?>
         ?>
     </div>
     <?php } ?>
-    </div>
 </div>
 <?php echo $OUTPUT->standard_end_of_body_html() ?>
 </body>

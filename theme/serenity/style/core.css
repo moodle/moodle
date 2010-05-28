@@ -33,18 +33,32 @@ a:hover {
 	text-decoration:underline; 
 }
 
+.pagelayout-frontpage #page-content #region-main-box #region-post-box {
+  padding-top: 0;
+}
+
 /* Header
 ------------------------*/
 
 #page-header
 { 
 	background:#ddd6cc url([[pix:theme|header_grass]]) repeat-x 0 100%; 
+	margin-bottom: 5px;
 }
 
 .headermain { 
 	font-weight:normal;
 	margin:1em 0.5em 0.75em;
 }
+
+/* Navbar 
+-------------------------*/
+
+.navbar {
+	background: #aeb9c6 url([[pix:theme|breadcrumb]]) repeat-x 0 100%; 
+	padding: 5px;
+}
+
 
 /* Blocks
 -------------------------*/
