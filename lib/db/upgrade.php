@@ -4157,11 +4157,11 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         upgrade_main_savepoint($result, 2010052700);
     }
     
-    if ($result && $oldversion < 2010052600) {
+    if ($result && $oldversion < 2010052800) {
     /// Changes to modinfo mean we need to rebuild course cache
         require_once($CFG->dirroot . '/course/lib.php');
         rebuild_course_cache(0, true);
-        upgrade_main_savepoint($result, 2010052600);
+        upgrade_main_savepoint($result, 2010052800);
     }
 
     return $result;
