@@ -74,7 +74,6 @@ foreach ($fieldrecords as $fieldrecord) {
     $fields[]= data_get_field($fieldrecord, $data);
 }
 
-$PAGE->navbar->add(get_string('export','data'));
 
 $mform = new mod_data_export_form('export.php?d='.$data->id, $fields, $cm);
 
@@ -83,6 +82,7 @@ if($mform->is_cancelled()) {
 } elseif (!$formdata = (array) $mform->get_data()) {
     // build header to match the rest of the UI
     $PAGE->set_title($data->name);
+    $PAGE->set_heading($course->fullname);
     echo $OUTPUT->header();
     echo $OUTPUT->heading(format_string($data->name));
 

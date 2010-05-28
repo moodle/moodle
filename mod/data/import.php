@@ -81,7 +81,9 @@ require_capability('mod/data:manageentries', $context);
 /// Print the page header
 $strdata = get_string('modulenameplural','data');
 
+$PAGE->navbar->add(get_string('add', 'data'));
 $PAGE->set_title($data->name);
+$PAGE->set_heading($course->fullname);
 echo $OUTPUT->header();
 echo $OUTPUT->heading(format_string($data->name));
 

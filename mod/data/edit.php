@@ -85,6 +85,7 @@ if (empty($cm->visible) and !has_capability('moodle/course:viewhiddenactivities'
     $strdatabases = get_string("modulenameplural", "data");
 
     $PAGE->set_title(format_string($data->name));
+    $PAGE->set_heading(format_string($course->fullname));
     echo $OUTPUT->header();
     notice(get_string("activityiscurrentlyhidden"));
 }
@@ -134,11 +135,12 @@ $strdata = get_string('modulenameplural','data');
 
 if ($rid) {
     $PAGE->navbar->add(get_string('editentry', 'data'));
-} else {
+} else if ($import) {
     $PAGE->navbar->add(get_string('add', 'data'));
 }
 
 $PAGE->set_title($data->name);
+$PAGE->set_heading($course->fullname);
 echo $OUTPUT->header();
 
 /// Check to see if groups are being used here
@@ -305,9 +307,9 @@ if ($data->addtemplate){
         $patterns[]="[[".$field->field->name."#id]]";
         $replacements[] = 'field_'.$field->field->id;
     }
-    $newtext = str_ireplace($patterns, $replacements, $data->{$mode});
+    $newtext = str_ireplace($patterns, $replacements, $data->{$mode});    
 
-} else {    //if the add template is not yet defined, print the default form!
+} else {    //if the add template is not yet defined, print the default form!    
     echo data_generate_default_template($data, 'addtemplate', $rid, true, false);
     $newtext = '';
 }

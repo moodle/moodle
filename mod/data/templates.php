@@ -88,9 +88,13 @@ $bodytag .= 'if (typeof('.$editorobj.') != \'undefined\') { currEditor = '.$edit
 $bodytag .= 'currTextarea = document.getElementById(\'tempform\').template;';
 $bodytag .= '" ';
 
-$PAGE->navbar->add(get_string($mode,'data'));
+if ($mode == 'singletemplate') {
+    $PAGE->navbar->add(get_string($mode,'data'));
+}
+
 $PAGE->requires->js('/mod/data/data.js');
 $PAGE->set_title($data->name);
+$PAGE->set_heading($course->fullname);
 echo $OUTPUT->header();
 echo $OUTPUT->heading(format_string($data->name));
 

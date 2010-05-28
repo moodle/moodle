@@ -49,6 +49,7 @@ $strdataplural  = get_string('modulenameplural','data');
 
 $PAGE->navbar->add($strdata, new moodle_url('/mod/data/index.php', array('id'=>$course->id)));
 $PAGE->set_title($strdata);
+$PAGE->set_heading($course->fullname);
 echo $OUTPUT->header();
 
 if (! $datas = get_all_instances_in_course("data", $course)) {

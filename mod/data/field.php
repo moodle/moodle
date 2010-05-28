@@ -246,9 +246,10 @@ foreach ($directories as $directory){
     $menufield[$directory] = get_string($directory,'data');    //get from language files
 }
 asort($menufield);    //sort in alphabetical order
+$PAGE->set_title(get_string('course') . ': ' . $course->fullname);
+$PAGE->set_heading($course->fullname);
 
 $PAGE->set_pagetype('mod-data-field-' . $newtype);
-$PAGE->navbar->add(get_string('fields', 'data'));
 if (($mode == 'new') && (!empty($newtype)) && confirm_sesskey()) {          ///  Adding a new field
     data_print_header($course, $cm, $data,'fields');
 

@@ -104,8 +104,8 @@ if ($userid && ($userid != $USER->id) && !has_capability('mod/data:viewalluserpr
 
 /* Need sesskey security check here for import instruction */
 $sesskey = sesskey();
-
-$PAGE->navbar->add(get_string('presets', 'data'));
+$PAGE->set_title(get_string('course') . ': ' . $course->fullname);
+$PAGE->set_heading($course->fullname);
 
 /********************************************************************/
 /* Output */
