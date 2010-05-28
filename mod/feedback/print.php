@@ -44,6 +44,7 @@ $PAGE->navbar->add($strfeedbacks, new moodle_url('/mod/feedback/index.php', arra
 $PAGE->navbar->add(format_string($feedback->name));
 
 $PAGE->set_title(format_string($feedback->name));
+$PAGE->set_heading(format_string($course->fullname));
 echo $OUTPUT->header();
 
 /// Print the main part of the page

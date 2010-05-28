@@ -75,9 +75,8 @@
     /// Print the page header
     $strfeedbacks = get_string("modulenameplural", "feedback");
     $strfeedback  = get_string("modulename", "feedback");
-
-    $PAGE->navbar->add($strfeedbacks, new moodle_url('/mod/feedback/index.php', array('id'=>$course->id)));
-    $PAGE->navbar->add(format_string($feedback->name));
+    
+    $PAGE->navbar->add(get_string('delete_entry', 'feedback'));
     $PAGE->set_heading(format_string($course->fullname));
     $PAGE->set_title(format_string($feedback->name));
     echo $OUTPUT->header();

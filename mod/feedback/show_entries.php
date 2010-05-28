@@ -72,7 +72,6 @@ if($do_show == 'showoneentry') {
 $strfeedbacks = get_string("modulenameplural", "feedback");
 $strfeedback  = get_string("modulename", "feedback");
 
-$PAGE->navbar->add(get_string('show_entries','feedback'));
 $PAGE->set_heading(format_string($course->fullname));
 $PAGE->set_title(format_string($feedback->name));
 echo $OUTPUT->header();

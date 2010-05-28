@@ -146,11 +146,6 @@ $use_template_form->set_data(array('id'=>$id));
 $strfeedbacks = get_string("modulenameplural", "feedback");
 $strfeedback  = get_string("modulename", "feedback");
 
-if ($do_show == 'edit') {
-    $PAGE->navbar->add(get_string('edit_items', 'feedback'));
-} else {
-    $PAGE->navbar->add(get_string($do_show, 'feedback'));
-}
 $PAGE->set_url('/mod/feedback/edit.php', array('id'=>$cm->id, 'do_show'=>$do_show));
 $PAGE->set_heading(format_string($course->fullname));
 $PAGE->set_title(format_string($feedback->name));

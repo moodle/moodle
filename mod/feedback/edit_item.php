@@ -105,8 +105,11 @@ if($itemobj->get_data()) {
 $strfeedbacks = get_string("modulenameplural", "feedback");
 $strfeedback  = get_string("modulename", "feedback");
 
-$PAGE->navbar->add($strfeedbacks, new moodle_url('/mod/feedback/index.php', array('id'=>$course->id)));
-$PAGE->navbar->add(format_string($feedback->name));
+if ($item->id) {
+    $PAGE->navbar->add(get_string('edit_item', 'feedback'));
+} else {
+    $PAGE->navbar->add(get_string('add_item', 'feedback'));
+}
 $PAGE->set_heading(format_string($course->fullname));
 $PAGE->set_title(format_string($feedback->name));
 echo $OUTPUT->header();
