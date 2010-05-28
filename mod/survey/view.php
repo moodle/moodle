@@ -59,6 +59,7 @@
 
     $strsurvey = get_string("modulename", "survey");
     $PAGE->set_title(format_string($survey->name));
+    $PAGE->set_heading($course->fullname);
     echo $OUTPUT->header();
 
 /// Check to see if groups are being used in this survey

@@ -59,6 +59,7 @@
     $strsurveysaved = get_string('surveysaved', 'survey');
 
     $PAGE->set_title($strsurveysaved);
+    $PAGE->set_heading($course->fullname);
     echo $OUTPUT->header();
 
     if (survey_already_done($survey->id, $USER->id)) {

@@ -26,6 +26,7 @@
 
     $PAGE->navbar->add($strsurveys);
     $PAGE->set_title($strsurveys);
+    $PAGE->set_heading($course->fullname);
     echo $OUTPUT->header();
 
     if (! $surveys = get_all_instances_in_course("survey", $course)) {
