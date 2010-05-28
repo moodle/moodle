@@ -2245,6 +2245,10 @@
                             } else {
                                 $sca->userid = $USER->id;
                             }
+                            // If course scale, recode the course field
+                            if ($sca->courseid != 0) {
+                                $sca->courseid = $restore->course_id;
+                            }
                             // If scale is standard, if user lacks perms to manage standar scales
                             // 'downgrade' them to course scales
                             if ($sca->courseid == 0 and !has_capability('moodle/course:managescales', get_context_instance(CONTEXT_SYSTEM), $sca->userid)) {
