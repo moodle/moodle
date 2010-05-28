@@ -126,7 +126,9 @@ if ($tagnew = $tagform->get_data()) {
 
 $PAGE->navbar->add(get_string('tags', 'tag'), new moodle_url('/tag/search.php'));
 $PAGE->navbar->add($tagname);
+$PAGE->navbar->add(get_string('edit'));
 $PAGE->set_title(get_string('tag', 'tag') . ' - '. $tagname);
+$PAGE->set_heading($COURSE->fullname);
 echo $OUTPUT->header();
 echo $OUTPUT->heading($tagname, 2);
 

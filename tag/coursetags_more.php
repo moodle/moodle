@@ -65,6 +65,7 @@ if ($courseid) {
 }
 $PAGE->navbar->add($title);
 $PAGE->set_title($title);
+$PAGE->set_heading($COURSE->fullname);
 echo $OUTPUT->header();
 echo $OUTPUT->heading($title, 2, 'centre');
 

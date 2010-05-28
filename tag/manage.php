@@ -32,7 +32,7 @@ $PAGE->set_blocks_editing_capability('moodle/tag:editblocks');
 $PAGE->navbar->add(get_string('tags', 'tag'), new moodle_url('/tag/search.php'));
 $PAGE->navbar->add(get_string('managetags', 'tag'));
 $PAGE->set_title(get_string('managetags', 'tag'));
-$PAGE->set_heading(get_string('managetags', 'tag'));
+$PAGE->set_heading($COURSE->fullname);
 $PAGE->set_pagelayout('standard');
 echo $OUTPUT->header();
 

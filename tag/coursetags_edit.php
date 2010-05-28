@@ -70,6 +70,7 @@ $coursefullname = format_string($course->fullname);
 $courseshortname = format_string($course->shortname);
 $PAGE->navbar->add($title);
 $PAGE->set_title($title);
+$PAGE->set_heading($course->fullname);
 $PAGE->set_cacheable(false);
 echo $OUTPUT->header();
 

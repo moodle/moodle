@@ -51,6 +51,7 @@ if ($PAGE->user_allowed_editing() ) {
 $PAGE->navbar->add(get_string('tags', 'tag'), new moodle_url('/tag/search.php'));
 $PAGE->navbar->add($tagname);
 $PAGE->set_title($title);
+$PAGE->set_heading($COURSE->fullname);
 $PAGE->set_button($button);
 echo $OUTPUT->header();
 
