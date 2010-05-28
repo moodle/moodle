@@ -1174,7 +1174,9 @@ class core_renderer extends renderer_base {
         // force local URLS, because for security reasons the course/jumpto.php requires urls to start with '/'!
         $urls = array();
         foreach ($select->urls as $k=>$v) {
-            if (strpos($k, $CFG->wwwroot.'/') === 0) {
+            if (empty($k)) {
+                // nothing selected option
+            } else if (strpos($k, $CFG->wwwroot.'/') === 0) {
                 $k = str_replace($CFG->wwwroot, '', $k);
             } else if (strpos($k, '/') !== 0) {
                 debugging("Invalid url_select urls parameter, url '$k' is not local relative url!");
