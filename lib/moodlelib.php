@@ -2880,6 +2880,7 @@ function &get_fast_modinfo(&$course, $userid=0) {
         $cm->instance         = $mod->id;
         $cm->course           = $course->id;
         $cm->modname          = $mod->mod;
+        $cm->idnumber         = $mod->idnumber;
         $cm->name             = $mod->name;
         $cm->visible          = $mod->visible;
         $cm->sectionnum       = $mod->section;
