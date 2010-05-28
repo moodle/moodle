@@ -46,7 +46,6 @@ if ($mode !== 'display') {
     $url->param('mode', $mode);
 }
 $PAGE->set_url($url);
-$PAGE->navbar->add(get_string('manualgrading','lesson'));
 
 /// Handle any preprocessing before header is printed - based on $mode
 switch ($mode) {

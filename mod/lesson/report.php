@@ -74,7 +74,11 @@ if ($pageid !== NULL) {
     $url->param('pageid', $pageid);
 }
 $PAGE->set_url($url);
-$PAGE->navbar->add(get_string('reports', 'lesson'), new moodle_url('/mod/lesson/report.php', array('id'=>$id)));
+if ($action == 'reportoverview') {
+    $PAGE->navbar->add(get_string('reports', 'lesson'));
+    $PAGE->navbar->add(get_string('overview', 'lesson'));
+}
+
 $lessonoutput = $PAGE->get_renderer('mod_lesson');
 
 /// Process any form data before fetching attempts, grades and times
