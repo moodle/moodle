@@ -39,7 +39,7 @@ class backup_resource_activity_structure_step extends backup_activity_structure_
         // Define each element separated
         $resource = new backup_nested_element('resource', array('id'), array(
             'name', 'intro', 'introformat', 'tobemigrated',
-            'mainfile', 'legacyfiles', 'legacyfileslast', 'display',
+            'legacyfiles', 'legacyfileslast', 'display',
             'displayoptions', 'filterfiles', 'revision', 'timemodified'));
 
         // Build the tree
