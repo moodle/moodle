@@ -448,5 +448,13 @@ class stored_file {
     public function get_source() {
         return $this->file_record->source;
     }
-}
 
+    /**
+     * Returns the sort order of file
+     *
+     * @return int
+     */
+    public function get_sortorder() {
+        return $this->file_record->sortorder;
+    }
+}

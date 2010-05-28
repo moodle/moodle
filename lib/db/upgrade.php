@@ -4156,7 +4156,7 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
     /// Main savepoint reached
         upgrade_main_savepoint($result, 2010052700);
     }
-    
+
     if ($result && $oldversion < 2010052800) {
     /// Changes to modinfo mean we need to rebuild course cache
         require_once($CFG->dirroot . '/course/lib.php');
@@ -4164,6 +4164,20 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         upgrade_main_savepoint($result, 2010052800);
     }
 
+    if ($result && $oldversion < 2010052801) {
+
+    /// Define field sortorder to be added to files
+        $table = new xmldb_table('files');
+        $field = new xmldb_field('sortorder', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'timemodified');
+
+    /// Conditionally launch add field sortorder
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+    /// Main savepoint reached
+        upgrade_main_savepoint($result, 2010052801);
+    }
     return $result;
 }
 

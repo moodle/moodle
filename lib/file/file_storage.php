@@ -218,7 +218,7 @@ class file_storage {
      * @param bool $includedirs
      * @return array of stored_files indexed by pathanmehash
      */
-    public function get_area_files($contextid, $filearea, $itemid=false, $sort="itemid, filepath, filename", $includedirs = true) {
+    public function get_area_files($contextid, $filearea, $itemid=false, $sort="sortorder, itemid, filepath, filename", $includedirs = true) {
         global $DB;
 
         $conditions = array('contextid'=>$contextid, 'filearea'=>$filearea);
@@ -247,7 +247,7 @@ class file_storage {
      */
     public function get_area_tree($contextid, $filearea, $itemid) {
         $result = array('dirname'=>'', 'dirfile'=>null, 'subdirs'=>array(), 'files'=>array());
-        $files = $this->get_area_files($contextid, $filearea, $itemid, $sort="itemid, filepath, filename", true);
+        $files = $this->get_area_files($contextid, $filearea, $itemid, $sort="sortorder, itemid, filepath, filename", true);
         // first create directory structure
         foreach ($files as $hash=>$dir) {
             if (!$dir->is_directory()) {
@@ -654,6 +654,14 @@ class file_storage {
             throw new file_exception('storedfileproblem', 'Invalid itemid');
         }
 
+        if (!empty($file_record->sortorder)) {
+            if (!is_number($file_record->sortorder) or $file_record->sortorder < 0) {
+                $file_record->sortorder = 0;
+            }
+        } else {
+            $file_record->sortorder = 0;
+        }
+
         $file_record->filepath = clean_param($file_record->filepath, PARAM_PATH);
         if (strpos($file_record->filepath, '/') !== 0 or strrpos($file_record->filepath, '/') !== strlen($file_record->filepath)-1) {
             // path must start and end with '/'
@@ -683,6 +691,7 @@ class file_storage {
         $newrecord->source       = empty($file_record->source) ? null : $file_record->source;
         $newrecord->author       = empty($file_record->author) ? null : $file_record->author;
         $newrecord->license      = empty($file_record->license) ? null : $file_record->license;
+        $newrecord->sortorder    = $file_record->sortorder;
 
         list($newrecord->contenthash, $newrecord->filesize, $newfile) = $this->add_file_to_pool($pathname);
 
@@ -734,6 +743,14 @@ class file_storage {
             throw new file_exception('storedfileproblem', 'Invalid itemid');
         }
 
+        if (!empty($file_record->sortorder)) {
+            if (!is_number($file_record->sortorder) or $file_record->sortorder < 0) {
+                $file_record->sortorder = 0;
+            }
+        } else {
+            $file_record->sortorder = 0;
+        }
+
         $file_record->filepath = clean_param($file_record->filepath, PARAM_PATH);
         if (strpos($file_record->filepath, '/') !== 0 or strrpos($file_record->filepath, '/') !== strlen($file_record->filepath)-1) {
             // path must start and end with '/'
@@ -763,6 +780,7 @@ class file_storage {
         $newrecord->source       = empty($file_record->source) ? null : $file_record->source;
         $newrecord->author       = empty($file_record->author) ? null : $file_record->author;
         $newrecord->license      = empty($file_record->license) ? null : $file_record->license;
+        $newrecord->sortorder    = $file_record->sortorder;
 
         list($newrecord->contenthash, $newrecord->filesize, $newfile) = $this->add_string_to_pool($content);
 

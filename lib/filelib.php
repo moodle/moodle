@@ -557,6 +557,7 @@ function file_get_user_area_folders($draftitemid, $filepath, &$data, $filearea =
         foreach ($files as $file) {
             if ($file->is_directory()) {
                 $item = new stdclass;
+                $item->sortorder = $file->get_sortorder();
                 $item->filepath = $file->get_filepath();
 
                 $foldername = explode('/', trim($item->filepath, '/'));
@@ -603,6 +604,7 @@ function file_get_user_area_files($draftitemid, $filepath = '/', $filearea = 'us
     }
 
     $list = array();
+    $maxlength = 12;
     if ($files = $fs->get_directory_files($context->id, $filearea, $draftitemid, $filepath, false)) {
         foreach ($files as $file) {
             $item = new stdclass;
@@ -611,10 +613,16 @@ function file_get_user_area_files($draftitemid, $filepath = '/', $filearea = 'us
             $item->fullname = trim($item->filename, '/');
             $filesize = $file->get_filesize();
             $item->filesize = $filesize ? display_size($filesize) : '';
+            if (strlen($item->fullname) >= $maxlength) {
+                $item->shortname = trim(substr($item->fullname, 0, $maxlength)).'...';
+            } else {
+                $item->shortname = $item->fullname;
+            }
 
             $icon = mimeinfo_from_type('icon', $file->get_mimetype());
             $icon = str_replace('.gif', '', $icon);
             $item->icon = $OUTPUT->pix_url('f/' . $icon)->out();
+            $item->sortorder = $file->get_sortorder();
 
             if ($icon == 'zip') {
                 $item->type = 'zip';
@@ -628,10 +636,16 @@ function file_get_user_area_files($draftitemid, $filepath = '/', $filearea = 'us
                 $item->type = 'folder';
                 $foldername = explode('/', trim($item->filepath, '/'));
                 $item->fullname = trim(array_pop($foldername), '/');
+                if (strlen($item->fullname) >= $maxlength) {
+                    $item->shortname = trim(substr($item->fullname, 0, $maxlength)).'...';
+                } else {
+                    $item->shortname = $item->fullname;
+                }
             } else {
                 $fb = get_file_browser();
                 $fileinfo = $fb->get_file_info($context, $file->get_filearea(), $file->get_itemid(), $file->get_filepath(), $file->get_filename());
                 $item->url = $fileinfo->get_url();
+                $item->sortorder = $fileinfo->get_sortorder();
             }
             $list[] = $item;
         }
@@ -740,7 +754,8 @@ function file_save_draft_area_files($draftitemid, $contextid, $filearea, $itemid
         $filecount = 0;
         foreach ($oldfiles as $file) {
             $oldhash = $file->get_pathnamehash();
-            if (isset($newhashes[$oldhash])) {
+            // check if sortorder, filename, filepath, filearea, itemid and contextid changed
+            if (isset($newhashes[$oldhash]) && $file->get_sortorder() == $newhashes[$oldhash]->get_sortorder()) {
                 if (!$file->is_directory()) {
                     $filecount++;
                 }
@@ -795,6 +810,53 @@ function file_save_draft_area_files($draftitemid, $contextid, $filearea, $itemid
     $text = str_ireplace($draftbase, '@@PLUGINFILE@@/', $text);
 
     return $text;
+}
+
+/**
+ * Set file sort order
+ * @global object $DB
+ * @param integer $contextid the context id
+ * @param string $filearea file area.
+ * @param integer $itemid itemid.
+ * @param string $filepath file path.
+ * @param string $filename file name.
+ * @param integer $sortorer the sort order of file.
+ * @return boolean
+ */
+function file_set_sortorder($contextid, $filearea, $itemid, $filepath, $filename, $sortorder) {
+    global $DB;
+    $conditions = array('contextid'=>$contextid, 'filearea'=>$filearea, 'itemid'=>$itemid, 'filepath'=>$filepath, 'filename'=>$filename);
+    if ($file_record = $DB->get_record('files', $conditions)) {
+        $sortorder = (int)$sortorder;
+        $file_record->sortorder = $sortorder;
+        $DB->update_record('files', $file_record);
+        return true;
+    }
+    return false;
+}
+
+/**
+ * reset file sort order number to 0
+ * @global object $DB
+ * @param integer $contextid the context id
+ * @param string $filearea file area.
+ * @param integer $itemid itemid.
+ * @return boolean
+ */
+function file_reset_sortorder($contextid, $filearea, $itemid=false) {
+    global $DB;
+
+    $conditions = array('contextid'=>$contextid, 'filearea'=>$filearea);
+    if ($itemid !== false) {
+        $conditions['itemid'] = $itemid;
+    }
+
+    $file_records = $DB->get_records('files', $conditions);
+    foreach ($file_records as $file_record) {
+        $file_record->sortorder = 0;
+        $DB->update_record('files', $file_record);
+    }
+    return true;
 }
 
 /**

@@ -170,6 +170,14 @@ abstract class file_info {
     }
 
     /**
+     * Returns the sort order of the file
+     * @return int
+     */
+    public function get_sortorder() {
+        return 0;
+    }
+
+    /**
      * Create new directory, may throw exception - make sure
      * params are valid.
      * @param string $newdirname name of new directory

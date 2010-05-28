@@ -84,10 +84,7 @@ function resource_get_post_actions() {
 function resource_add_instance($data, $mform) {
     global $CFG, $DB;
     require_once("$CFG->libdir/resourcelib.php");
-
-    $cmid        = $data->coursemodule;
-    $draftitemid = $data->files;
-
+    $cmid = $data->coursemodule;
     $data->timemodified = time();
     $displayoptions = array();
     if ($data->display == RESOURCELIB_DISPLAY_POPUP) {
@@ -104,23 +101,7 @@ function resource_add_instance($data, $mform) {
 
     // we need to use context now, so we need to make sure all needed info is already in db
     $DB->set_field('course_modules', 'instance', $data->id, array('id'=>$cmid));
-    $context = get_context_instance(CONTEXT_MODULE, $cmid);
-
-    if ($draftitemid) {
-        file_save_draft_area_files($draftitemid, $context->id, 'resource_content', 0, array('subdirs'=>true));
-    }
-
-    $fs = get_file_storage();
-    $files = $fs->get_area_files($context->id, 'resource_content', 0, '', false);
-    if (count($files) == 1) {
-        $file = reset($files);
-        $path = $file->get_filepath().$file->get_filename();
-        if ($path !== $data->mainfile) {
-            $data->mainfile = $path;
-            $DB->set_field('resource', 'mainfile', $path, array('id'=>$data->id));
-        }
-    }
-
+    resource_set_mainfile($data);
     return $data->id;
 }
 
@@ -133,10 +114,6 @@ function resource_add_instance($data, $mform) {
 function resource_update_instance($data, $mform) {
     global $CFG, $DB;
     require_once("$CFG->libdir/resourcelib.php");
-
-    $cmid        = $data->coursemodule;
-    $draftitemid = $data->files;
-
     $data->timemodified = time();
     $data->id           = $data->instance;
     $data->revision++;
@@ -153,23 +130,7 @@ function resource_update_instance($data, $mform) {
     $data->displayoptions = serialize($displayoptions);
 
     $DB->update_record('resource', $data);
-
-    $context = get_context_instance(CONTEXT_MODULE, $cmid);
-    if ($draftitemid) {
-        file_save_draft_area_files($draftitemid, $context->id, 'resource_content', 0, array('subdirs'=>true));
-    }
-
-    $fs = get_file_storage();
-    $files = $fs->get_area_files($context->id, 'resource_content', 0, '', false);
-    if (count($files) == 1) {
-        $file = reset($files);
-        $path = $file->get_filepath().$file->get_filename();
-        if ($path !== $data->mainfile) {
-            $data->mainfile = $path;
-            $DB->set_field('resource', 'mainfile', $path, array('id'=>$data->id));
-        }
-    }
-
+    resource_set_mainfile($data);
     return true;
 }
 
@@ -267,8 +228,9 @@ function resource_get_coursemodule_info($coursemodule) {
     global $CFG, $DB;
     require_once("$CFG->libdir/filelib.php");
     require_once("$CFG->dirroot/mod/resource/locallib.php");
+    $context = get_context_instance(CONTEXT_MODULE, $coursemodule->id);
 
-    if (!$resource = $DB->get_record('resource', array('id'=>$coursemodule->instance), 'id, name, display, displayoptions, tobemigrated, mainfile, revision')) {
+    if (!$resource = $DB->get_record('resource', array('id'=>$coursemodule->instance), 'id, name, display, displayoptions, tobemigrated, revision')) {
         return NULL;
     }
 
@@ -279,8 +241,13 @@ function resource_get_coursemodule_info($coursemodule) {
         $info->icon ='i/cross_red_big';
         return $info;
     }
-
-    $info->icon = str_replace(array('.gif', '.png'), '', file_extension_icon($resource->mainfile));
+    $fs = get_file_storage();
+    $files = $fs->get_area_files($context->id, 'resource_content', 0, 'sortorder');
+    if (count($files) >= 1) {
+        $mainfile = array_pop($files);
+        $info->icon = str_replace(array('.gif', '.png'), '', file_extension_icon($mainfile->get_filename()));
+        $resource->mainfile = $mainfile->get_filename();
+    }
 
     $display = resource_get_final_display_type($resource);
 
@@ -301,9 +268,11 @@ function resource_get_coursemodule_info($coursemodule) {
         $info->extra = "onclick=\"window.location.href ='$fullurl';return false;\"";
 
     } else if ($display == RESOURCELIB_DISPLAY_DOWNLOAD) {
+        if (empty($mainfile)) {
+            return NULL;
+        }
         // do not open any window because it would be left there after download
-        $context = get_context_instance(CONTEXT_MODULE, $coursemodule->id);
-        $path = '/'.$context->id.'/resource_content/'.$resource->revision.$resource->mainfile;
+        $path = '/'.$context->id.'/resource_content/'.$resource->revision.$mainfile->get_filename();
         $fullurl = addslashes_js(file_encode_url($CFG->wwwroot.'/pluginfile.php', $path, true));
 
         // When completion information is enabled for download files, make

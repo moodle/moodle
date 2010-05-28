@@ -90,6 +90,15 @@ case 'delete':
     }
     break;
 
+case 'setmainfile':
+    $filepath = file_correct_filepath($filepath);
+    // reset sort order
+    file_reset_sortorder($user_context->id, $filearea, $itemid);
+    // set main file
+    $return = file_set_sortorder($user_context->id, $filearea, $itemid, $filepath, $filename, 1);
+    echo json_encode($return);
+    break;
+
 case 'renamedir':
     $fs = get_file_storage();
     $fb = get_file_browser();

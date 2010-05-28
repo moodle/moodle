@@ -211,5 +211,40 @@ function xmldb_resource_upgrade($oldversion) {
         upgrade_mod_savepoint($result, 2009063000, 'resource');
     }
 
+    if ($result && $oldversion < 2009080501) {
+        require_once("$CFG->libdir/filelib.php");
+
+        $sql = "SELECT r.id,
+                       r.mainfile,
+                       cm.id AS cmid
+                  FROM {resource} r
+                  JOIN {modules} m ON m.name='resource'
+                  JOIN {course_modules} cm ON (cm.module = m.id AND cm.instance = r.id)";
+
+        if ($instances = $DB->get_recordset_sql($sql)) {
+            foreach ($instances as $instance) {
+                $context  = get_context_instance(CONTEXT_MODULE, $instance->cmid);
+                $filearea = 'resource_content';
+                $itemid   = 0;
+                $filepath = file_correct_filepath(dirname($instance->mainfile));
+                $filename = basename($instance->mainfile);
+                file_set_sortorder($context->id, $filearea, $itemid, $filepath, $filename, 1);
+            }
+        }
+
+     /// Define field mainfile to be dropped from resource
+        $table = new xmldb_table('resource');
+        $field = new xmldb_field('mainfile');
+
+    /// Conditionally launch drop field mainfile
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+    /// resource savepoint reached
+        upgrade_mod_savepoint($result, 2009080501, 'resource');
+    }
+
+
     return $result;
 }

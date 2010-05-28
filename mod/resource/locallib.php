@@ -214,6 +214,7 @@ function resource_print_workaround($resource, $cm, $course, $file) {
     resource_print_heading($resource, $cm, $course, true);
     resource_print_intro($resource, $cm, $course, true);
 
+    $resource->mainfile = $file->get_filename();
     echo '<div class="resourceworkaround">';
     switch (resource_get_final_display_type($resource)) {
         case RESOURCELIB_DISPLAY_POPUP:
@@ -360,7 +361,11 @@ function resource_get_final_display_type($resource) {
                              'application/pdf', 'text/html',
                             );
 
-    $mimetype = mimeinfo('type', $resource->mainfile);
+    if (empty($resource->mainfile)) {
+        return RESOURCELIB_DISPLAY_DOWNLOAD;
+    } else {
+        $mimetype = mimeinfo('type', $resource->mainfile);
+    }
 
     if (in_array($mimetype, $download)) {
         return RESOURCELIB_DISPLAY_DOWNLOAD;
@@ -388,5 +393,23 @@ class resource_content_file_info extends file_info_stored {
             return $this->topvisiblename;
         }
         return parent::get_visible_name();
+    }
+}
+
+function resource_set_mainfile($data) {
+    global $DB;
+    $fs = get_file_storage();
+    $cmid = $data->coursemodule;
+    $draftitemid = $data->files;
+
+    $context = get_context_instance(CONTEXT_MODULE, $cmid);
+    if ($draftitemid) {
+        file_save_draft_area_files($draftitemid, $context->id, 'resource_content', 0, array('subdirs'=>true));
+    }
+    $files = $fs->get_area_files($context->id, 'resource_content', 0, 'sortorder', false);
+    if (count($files) == 1) {
+        // only one file attached, set it as main file automatically
+        $file = reset($files);
+        file_set_sortorder($context->id, 'resource_content', 0, $file->get_filepath(), $file->get_filename(), 1);
     }
 }

@@ -200,6 +200,14 @@ class file_info_stored extends file_info {
     }
 
     /**
+     * Returns the sort order of the file
+     * @return int
+     */
+    public function get_sortorder() {
+        return $this->lf->get_sortorder();
+    }
+
+    /**
      * Returns list of children.
      * @return array of file_info instances
      */

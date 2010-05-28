@@ -68,12 +68,9 @@ class mod_resource_mod_form extends moodleform_mod {
         $filemanager_options['accepted_types'] = '*';
         $filemanager_options['maxbytes'] = 0;
         $filemanager_options['maxfiles'] = -1;
-        $filemanager_options['mainfile'] = 'mainfile';
+        $filemanager_options['mainfile'] = true;
 
         $mform->addElement('filemanager', 'files', get_string('selectfiles'), null, $filemanager_options);
-
-        $mform->addElement('hidden', 'mainfile', get_string('areamainfile', 'repository'), array('id'=>'id_mainfile'));
-        $mform->setType('mainfile', PARAM_PATH);
 
         //-------------------------------------------------------
         $mform->addElement('header', 'optionssection', get_string('optionsheader', 'resource'));
@@ -197,20 +194,25 @@ class mod_resource_mod_form extends moodleform_mod {
 
         $usercontext = get_context_instance(CONTEXT_USER, $USER->id);
         $fs = get_file_storage();
-        if (!$files = $fs->get_area_files($usercontext->id, 'user_draft', $data['files'], 'id', false)) {
+        if (!$files = $fs->get_area_files($usercontext->id, 'user_draft', $data['files'], 'sortorder', false)) {
             $errors['files'] = get_string('required');
             return $errors;
         }
         if (count($files) == 1) {
             // no need to select main file if only one picked
             return $errors;
-        }
-        $filepaths = array();
-        foreach ($files as $file) {
-            $filepaths[] = $file->get_filepath().$file->get_filename();
-        }
-        if (!in_array($data['mainfile'], $filepaths)) {
-            $errors['files'] = get_string('selectmainfile', 'resource');
+        } else if(count($files) > 1) {
+            // looking for main file
+            $mainfile = false;
+            foreach($files as $file) {
+                if ($file->get_sortorder() == 1) {
+                    $mainfile = true;
+                    break;
+                }
+            }
+            if (!$mainfile) {
+                $errors['files'] = get_string('selectmainfile', 'resource');
+            }
         }
         return $errors;
     }

@@ -64,10 +64,12 @@ if ($resource->tobemigrated) {
 }
 
 $fs = get_file_storage();
-$pathnamehash = sha1($context->id.'resource_content0'.$resource->mainfile);
-if (!$file = $fs->get_file_by_hash($pathnamehash)) {
+$files = $fs->get_area_files($context->id, 'resource_content', 0, 'sortorder');
+if (count($files) < 1) {
     resource_print_filenotfound($resource, $cm, $course);
     die;
+} else {
+    $file = array_pop($files);
 }
 
 if ($redirect) {
@@ -78,6 +80,7 @@ if ($redirect) {
     redirect($fullurl);
 }
 
+$resource->mainfile = $file->get_filename();
 switch (resource_get_final_display_type($resource)) {
     case RESOURCELIB_DISPLAY_EMBED:
         resource_display_embed($resource, $cm, $course, $file);
