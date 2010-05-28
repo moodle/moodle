@@ -121,10 +121,11 @@ $strpage = get_string("page");
 if (!$search || $showform) {
 
     $PAGE->navbar->add($strforums, new moodle_url('/mod/forum/index.php', array('id'=>$course->id)));
-    $PAGE->navbar->add($strsearch);
+    $PAGE->navbar->add(get_string('advancedsearch', 'forum'));
 
     $PAGE->set_title($strsearch);
-    $PAGE->set_focuscontrol('search.words');
+    $PAGE->set_heading($course->fullname);
+    $PAGE->set_focuscontrol('words');
     echo $OUTPUT->header();
 
     forum_print_big_search_form($course);
@@ -143,7 +144,8 @@ $PAGE->navbar->add($strsearch, new moodle_url('/mod/forum/search.php', array('id
 $PAGE->navbar->add(s($search, true));
 if (!$posts = forum_search_posts($searchterms, $course->id, $page*$perpage, $perpage, $totalcount)) {
     $PAGE->set_title($strsearchresults);
-    $PAGE->set_focuscontrol('search.words');
+    $PAGE->set_heading($course->fullname);
+    $PAGE->set_focuscontrol('words');
     echo $OUTPUT->header();
     echo $OUTPUT->heading(get_string("nopostscontaining", "forum", $search));
 
@@ -158,6 +160,7 @@ if (!$posts = forum_search_posts($searchterms, $course->id, $page*$perpage, $per
 }
 
 $PAGE->set_title($strsearchresults);
+$PAGE->set_heading($course->fullname);
 $PAGE->set_button($searchform);
 echo $OUTPUT->header();
 echo '<div class="reportlink">';

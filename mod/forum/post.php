@@ -270,7 +270,7 @@ if (!empty($forum)) {      // User is starting a new discussion in a forum
     $post = trusttext_pre_edit($post, 'message', $modcontext);
 
     unset($SESSION->fromdiscussion);
-
+    
 
 }else if (!empty($delete)) {  // User is deleting a post
 
@@ -297,8 +297,8 @@ if (!empty($forum)) {      // User is starting a new discussion in a forum
                 || has_capability('mod/forum:deleteanypost', $modcontext)) ) {
         print_error('cannotdeletepost', 'forum');
     }
-
-
+    
+    
     $replycount = forum_count_replies($post);
 
     if (!empty($confirm) && confirm_sesskey()) {    // User has confirmed the delete
@@ -348,7 +348,9 @@ if (!empty($forum)) {      // User is starting a new discussion in a forum
     } else { // User just asked to delete something
 
         forum_set_return();
-
+        $PAGE->navbar->add(get_string('delete', 'forum'));
+        $PAGE->set_title($course->shortname);
+        $PAGE->set_heading($course->fullname);
         if ($replycount) {
             if (!has_capability('mod/forum:deleteanypost', $modcontext)) {
                 print_error("couldnotdeletereplies", "forum",
@@ -446,6 +448,7 @@ if (!empty($forum)) {      // User is starting a new discussion in a forum
         $PAGE->navbar->add(format_string($post->subject, true), new moodle_url('/mod/forum/discuss.php', array('d'=>$discussion->id)));
         $PAGE->navbar->add(get_string("prune", "forum"));
         $PAGE->set_title(format_string($discussion->name).": ".format_string($post->subject));
+        $PAGE->set_heading($course->fullname);
         echo $OUTPUT->header();
         echo $OUTPUT->heading(get_string('pruneheading', 'forum'));
         echo '<center>';
@@ -792,7 +795,11 @@ if (!empty($discussion->id)) {
 }
 
 if ($post->parent) {
-    $PAGE->navbar->add(get_string('editing', 'forum'));
+    $PAGE->navbar->add(get_string('reply', 'forum'));
+}
+
+if ($edit) {
+    $PAGE->navbar->add(get_string('edit', 'forum'));
 }
 
 $PAGE->set_title("$course->shortname: $strdiscussionname ".format_string($toppost->subject));

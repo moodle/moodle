@@ -94,6 +94,7 @@ if (data_submitted()) {
 $strsubscribers = get_string("subscribers", "forum");
 $PAGE->navbar->add($strsubscribers);
 $PAGE->set_title($strsubscribers);
+$PAGE->set_heading($COURSE->fullname);
 if (has_capability('mod/forum:managesubscriptions', $context)) {
     $PAGE->set_button(forum_update_subscriptions_button($course->id, $id));
     if ($edit != -1) {

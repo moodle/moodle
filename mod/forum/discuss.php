@@ -184,8 +184,7 @@
     }
 
     $searchform = forum_search_form($course);
-
-    $PAGE->navbar->add(format_string($discussion->name), new moodle_url('/mod/forum/discuss.php', array('d'=>$discussion->id)));
+    
     if ($parent != $discussion->firstpost) {
         $PAGE->navbar->add(format_string($post->subject));
     }
