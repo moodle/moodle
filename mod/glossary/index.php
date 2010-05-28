@@ -33,6 +33,7 @@ $strrss = get_string("rss");
 /// Print the header
 $PAGE->navbar->add($strglossarys, "index.php?id=$course->id");
 $PAGE->set_title($strglossarys);
+$PAGE->set_heading($course->fullname);
 echo $OUTPUT->header();
 
 /// Get all the appropriate data

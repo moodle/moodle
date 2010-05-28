@@ -170,10 +170,12 @@ if ($mform->is_cancelled()){
     redirect("view.php?id=$cm->id&amp;mode=entry&amp;hook=$entry->id");
 }
 
-$stredit = empty($entry->id) ? get_string('addentry', 'glossary') : get_string('edit');
+if (!empty($id)) {
+    $PAGE->navbar->add(get_string('edit'));
+}
 
-$PAGE->navbar->add($stredit);
 $PAGE->set_title(format_string($glossary->name));
+$PAGE->set_heading($course->fullname);
 echo $OUTPUT->header();
 echo $OUTPUT->heading(format_string($glossary->name));
 

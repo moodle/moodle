@@ -54,6 +54,8 @@ if ( !$entriesbypage = $glossary->entbypage ) {
 require_course_login($course, true, $cm);
 $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
+$PAGE->set_title(get_string("modulenameplural", "glossary"));
+$PAGE->set_heading($course->fullname);
 echo $OUTPUT->header();
 
 /// Loading the textlib singleton instance. We are going to need it.

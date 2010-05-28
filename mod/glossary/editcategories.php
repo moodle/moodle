@@ -70,9 +70,13 @@ $strglossaries   = get_string("modulenameplural", "glossary");
 $strglossary     = get_string("modulename", "glossary");
 
 $PAGE->navbar->add($strglossaries, new moodle_url('/mod/glossary/index.php', array('id'=>$course->id)));
-$PAGE->navbar->add(format_string($glossary->name),  new moodle_url('/mod/glossary/view.php', array('id'=>$cm->id,'tab'=>'GLOSSARY_CATEGORY_VIEW')));
 $PAGE->navbar->add(get_string("categories","glossary"));
+if (!empty($action)) {
+    $navaction = get_string($action). " " . moodle_strtolower(get_string("category","glossary"));
+    $PAGE->navbar->add($navaction);
+}
 $PAGE->set_title(format_string($glossary->name));
+$PAGE->set_heading($course->fullname);
 echo $OUTPUT->header();
 
 if ( $hook >0 ) {

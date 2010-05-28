@@ -109,7 +109,9 @@ if ($confirm and confirm_sesskey()) { // the operation was confirmed.
     redirect("view.php?id=$cm->id&amp;mode=$prevmode&amp;hook=$hook");
 
 } else {        // the operation has not been confirmed yet so ask the user to do so
+    $PAGE->navbar->add(get_string('delete'));
     $PAGE->set_title(format_string($glossary->name));
+    $PAGE->set_heading($course->fullname);
     echo $OUTPUT->header();
     $areyousure = "<b>".format_string($entry->concept)."</b><p>$strareyousuredelete</p>";
     $linkyes    = 'deleteentry.php';
