@@ -640,15 +640,13 @@ M.core_filepicker.init = function(Y, options) {
                 var list = Y.one(el);
                 var count = 0;
                 for (var i in r) {
-                    var id = 'repository-'+client_id+'-'+count;
+                    var id = 'repository-'+client_id+'-'+r[i].id;
                     var link_id = id + '-link';
                     list.append('<li id="'+id+'"><a class="fp-repo-name" id="'+link_id+'" href="###">'+r[i].name+'</a></li>');
                     Y.one('#'+link_id).prepend('<img src="'+r[i].icon+'" width="16" height="16" />&nbsp;');
                     Y.one('#'+link_id).on('click', function(e, scope, repository_id) {
                         YAHOO.util.Cookie.set('recentrepository', repository_id);
                         scope.repository_id = repository_id;
-                        Y.all(el+' li a').setStyle('backgroundColor', 'transparent');
-                        e.currentTarget.setStyle('backgroundColor', '#CCC');
                         this.list({'repo_id':repository_id});
                     }, this /*handler running scope*/, this/*second argument*/, r[i].id/*third argument of handler*/);
                     count++;
@@ -930,6 +928,11 @@ M.core_filepicker.init = function(Y, options) {
                 path:args.path?args.path:'',
                 page:args.page?args.page:'',
                 callback: function(id, obj, args) {
+                    Y.all('#fp-list-'+scope.options.client_id+' li a').setStyle('backgroundColor', 'transparent');
+                    var el = Y.one('#repository-'+scope.options.client_id+'-'+obj.repo_id+'-link');
+                    if (el) {
+                        el.setStyle('backgroundColor', '#AACCEE');
+                    }
                     if (obj.login) {
                         scope.viewbar.set('disabled', true);
                         scope.print_login(obj);
