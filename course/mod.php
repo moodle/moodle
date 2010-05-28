@@ -107,6 +107,7 @@ if (!empty($add)) {
 
         $PAGE->set_pagetype('mod-' . $cm->modname . '-delete');
         $PAGE->set_title($strdeletecheck);
+        $PAGE->set_heading($course->fullname);
         $PAGE->navbar->add($strdeletecheck);
         echo $OUTPUT->header();
 
