@@ -1140,6 +1140,8 @@ class core_renderer extends renderer_base {
      * @return string HTML fragment
      */
     protected function render_url_select(url_select $select) {
+        global $CFG;
+
         $select = clone($select);
         if (empty($select->formid)) {
             $select->formid = html_writer::random_id('url_select_f');
@@ -1169,8 +1171,20 @@ class core_renderer extends renderer_base {
             $output .= $this->render($select->helpicon);
         }
 
+        // force local URLS, because for security reasons the course/jumpto.php requires urls to start with '/'!
+        $urls = array();
+        foreach ($select->urls as $k=>$v) {
+            if (strpos($k, $CFG->wwwroot.'/') === 0) {
+                $k = str_replace($CFG->wwwroot, '', $k);
+            } else if (strpos($k, '/') !== 0) {
+                debugging("Invalid url_select urls parameter, url '$k' is not local relative url!");
+                continue;
+            }
+            $urls[$k] = $v;
+        }
+
         $output .= html_writer::empty_tag('input', array('type'=>'hidden', 'name'=>'sesskey', 'value'=>sesskey()));
-        $output .= html_writer::select($select->urls, 'jump', $select->selected, $select->nothing, $select->attributes);
+        $output .= html_writer::select($urls, 'jump', $select->selected, $select->nothing, $select->attributes);
 
         $go = html_writer::empty_tag('input', array('type'=>'submit', 'value'=>get_string('go')));
         $output .= html_writer::tag('noscript', $go, array('style'=>'inline'));
