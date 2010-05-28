@@ -138,12 +138,9 @@ if (has_capability('moodle/course:publish', get_context_instance(CONTEXT_COURSE,
             $fs = get_file_storage();
             $files = $fs->get_area_files(get_context_instance(CONTEXT_USER, $USER->id)->id, 'user_draft', $screenshots);
             if (!empty($files)) {
-                $courseinfo->screenshotsids = '';
-                foreach ($files as $file) {
-                    if ($file->is_valid_image()) {
-                        $courseinfo->screenshotsids = $courseinfo->screenshotsids . "notsend:" . $file->get_contenthash() . ";";
-                    }
-                }
+                 $courseinfo->screenshotsids = count($files);
+            } else {
+                $courseinfo->screenshotsids = 0;
             }
         }
 
@@ -192,13 +189,17 @@ if (has_capability('moodle/course:publish', get_context_instance(CONTEXT_COURSE,
         // send screenshots
         if (!empty($fromform->screenshots)) {
             require_once($CFG->dirroot. "/lib/filelib.php");
-            $params = array('token' => $registeredhub->token, 'filetype' => SCREENSHOT_FILE_TYPE,
-                    'courseshortname' => $courseinfo->shortname);
-           
+            $screenshotnumber = 0;
             foreach ($files as $file) {
                 if ($file->is_valid_image()) {
+                    $screenshotnumber = $screenshotnumber + 1;
+                    $params = array();
+                    $params['filetype'] = SCREENSHOT_FILE_TYPE;
                     $params['file'] = $file;
+                    $params['courseid'] = $courseids[0];
                     $params['filename'] = $file->get_filename();
+                    $params['screenshotnumber'] = $screenshotnumber;
+                    $params['token'] = $registeredhub->token;
                     $curl->post($huburl."/local/hub/webservice/upload.php", $params);
                 }
             }
@@ -207,14 +208,12 @@ if (has_capability('moodle/course:publish', get_context_instance(CONTEXT_COURSE,
 
         // send backup
         if ($share) {
-            foreach ($courseids as $courseid) {
-                $params = array();
-                $params['filetype'] = BACKUP_FILE_TYPE;
-                $params['courseid'] = $courseid;
-                $params['file'] = $backupfile;
-                $params['token'] = $registeredhub->token;
-                $curl->post($huburl."/local/hub/webservice/upload.php", $params);
-            }
+            $params = array();
+            $params['filetype'] = BACKUP_FILE_TYPE;
+            $params['courseid'] = $courseids[0];
+            $params['file'] = $backupfile;
+            $params['token'] = $registeredhub->token;
+            $curl->post($huburl."/local/hub/webservice/upload.php", $params);
             
             //Delete the backup from user_tohub
             $backupfile->delete();

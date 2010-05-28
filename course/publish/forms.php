@@ -303,13 +303,13 @@ class course_publication_form extends moodleform {
 
 
 
-//        $mform->addElement('filemanager', 'screenshots', get_string('screenshots','hub'), null,
-//                array('subdirs'=>0,
-//                'maxbytes'=>1000000,
-//                'maxfiles'=>3
-//        ));
-//        $mform->setHelpButton('screenshots', array('screenshots', get_string('screenshots', 'hub'), 'hub'));
-//        $mform->addHelpButton('screenshots', 'screenshots', 'hub');
+        $mform->addElement('filemanager', 'screenshots', get_string('screenshots','hub'), null,
+                array('subdirs'=>0,
+                'maxbytes'=>1000000,
+                'maxfiles'=>3
+        ));
+        $mform->setHelpButton('screenshots', array('screenshots', get_string('screenshots', 'hub'), 'hub'));
+        $mform->addHelpButton('screenshots', 'screenshots', 'hub');
 
         $this->add_action_buttons(false, $buttonlabel);
     }
