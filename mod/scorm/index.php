@@ -30,6 +30,7 @@
     $strlastmodified = get_string("lastmodified");
 
     $PAGE->set_title($strscorms);
+    $PAGE->set_heading($course->fullname);
     $PAGE->navbar->add($strscorms);
     echo $OUTPUT->header();
 
