@@ -248,7 +248,7 @@
         if ($parent == 'en_utf8') {
             continue;
         }
-        if (strpos($parent, '[[') !== false) {
+        if (empty($parent) || strpos($parent, '[[') !== false) {
             continue; // no parent
         }
         if (!isset($installedlangs[$parent])) {
