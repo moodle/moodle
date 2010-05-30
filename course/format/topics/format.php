@@ -143,6 +143,7 @@ while ($section <= $course->numsections) {
         $thissection->course  = $course->id;   // Create a new section structure
         $thissection->section = $section;
         $thissection->summary  = '';
+        $thissection->summaryformat = FORMAT_HTML;
         $thissection->visible  = 1;
         $thissection->id = $DB->insert_record('course_sections', $thissection);
     }
