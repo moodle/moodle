@@ -19,14 +19,14 @@ $string['admindirsettingsub'] = 'Lai piekļūtu vadības panelim vai citai progr
     jauno nosaukumu.  Piemēram: <br /> <br /><b>moodleadmin</b><br /> <br />
     Šādi sistēmā Moodle tiks izlabotas administratoru saites.';
 $string['bypassed'] = 'Apiets';
-$string['cannotcreatelangdir'] = 'Nevar izveidot valodas direktoriju.';
-$string['cannotcreatetempdir'] = 'Nevar izveidot pagaidu direktoriju.';
-$string['cannotdownloadcomponents'] = 'Nevar lejupielādēt komponentus.';
-$string['cannotdownloadzipfile'] = 'Nevar lejupielādēt ZIP failu.';
-$string['cannotfindcomponent'] = 'Nevar atrast komponentu.';
-$string['cannotsavemd5file'] = 'Nevar saglabāt md5 failu.';
-$string['cannotsavezipfile'] = 'Nevar saglabāt ZIP failu.';
-$string['cannotunzipfile'] = 'Nevar tilpatspiest failu.';
+$string['cannotcreatelangdir'] = 'Nevar izveidot valodas direktoriju';
+$string['cannotcreatetempdir'] = 'Nevar izveidot pagaidu direktoriju';
+$string['cannotdownloadcomponents'] = 'Nevar lejupielādēt komponentus';
+$string['cannotdownloadzipfile'] = 'Nevar lejupielādēt ZIP failu';
+$string['cannotfindcomponent'] = 'Nevar atrast komponentu';
+$string['cannotsavemd5file'] = 'Nevar saglabāt md5 failu';
+$string['cannotsavezipfile'] = 'Nevar saglabāt ZIP failu';
+$string['cannotunzipfile'] = 'Nevar atzipot failu';
 $string['caution'] = 'Brīdinājums.';
 $string['check'] = 'Pārbaudīt';
 $string['chooselanguagehead'] = 'Valodas izvēle';
@@ -250,7 +250,7 @@ $string['phpversionhelp'] = '<p>Sistēmā Moodle jāizmanto PHP, kuras versija i
 (Ja PHP versija ir 5.0.x, var arī atkāpties uz versiju 4.4.x)</p>';
 $string['postgres7'] = 'PostgreSQL (postgres7)';
 $string['previous'] = 'Iepriekšējais';
-$string['remotedownloadnotallowed'] = 'Komponentu lejupielāde jūsu serverī nav atļauta (iestatījums allow_url_fopen ir atspējots).<br /><br />Lejupielādējiet šo <a href=\"$a->url\">$a->url</a> failu manuāli, kopējiet to sava servera atrašanās vietā “{$a->dest}” un veiciet tā tilpatspiešanu.';
+$string['remotedownloadnotallowed'] = 'Komponentu lejupielāde jūsu serverī nav atļauta (iestatījums allow_url_fopen ir atspējots).<br /><br />Lejupielādējiet šo <a href=\"$a->url\">$a->url</a> failu manuāli, kopējiet to sava servera atrašanās vietā \"{$a->dest}\" un atzipojiet to tur.';
 $string['report'] = 'Atskaite';
 $string['restricted'] = 'Ierobežots';
 $string['safemode'] = 'Drošais režīms';
