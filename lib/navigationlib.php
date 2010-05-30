@@ -236,7 +236,7 @@ class navigation_node implements renderable {
 
     /**
      * Adds a navigation node as a child of this node.
-     * 
+     *
      * @param string $text
      * @param moodle_url|action_link $action
      * @param int $type
@@ -424,7 +424,7 @@ class navigation_node implements renderable {
 
     /**
      * Checks if this node or any of its children contain the active node.
-     * 
+     *
      * Recursive.
      *
      * @return bool
@@ -500,7 +500,7 @@ class navigation_node implements renderable {
 
     /**
      * Gets the title to use for this node.
-     * 
+     *
      * @return string
      */
     public function get_title() {
@@ -513,7 +513,7 @@ class navigation_node implements renderable {
 
     /**
      * Gets the CSS class to add to this node to describe its type
-     * 
+     *
      * @return string
      */
     public function get_css_type() {
@@ -732,7 +732,7 @@ class navigation_node_collection implements IteratorAggregate {
 
     /**
      * Fetches the last node that was added to this collection
-     * 
+     *
      * @return navigation_node
      */
     public function last() {
@@ -1136,7 +1136,7 @@ class global_navigation extends navigation_node {
             $params = array(SITEID);
             $select = '';
         }
-        
+
         list($ccselect, $ccjoin) = context_instance_preload_sql('c.id', CONTEXT_COURSE, 'ctx');
         $sql = "SELECT c.id,c.sortorder,c.visible,c.fullname,c.shortname,c.category,cat.path AS categorypath $ccselect
                 FROM {course} c
@@ -1223,7 +1223,7 @@ class global_navigation extends navigation_node {
      * Adds a structured category to the navigation in the correct order/place
      *
      * @param object $cat
-     * @param navigation_node $parent 
+     * @param navigation_node $parent
      */
     protected function add_category($cat, navigation_node $parent) {
         $category = $parent->get($cat['category']->id, navigation_node::TYPE_CATEGORY);
@@ -1300,7 +1300,7 @@ class global_navigation extends navigation_node {
      */
     public function load_generic_course_sections(stdClass $course, navigation_node $coursenode, $courseformat='unknown') {
         global $DB, $USER;
-        
+
         $modinfo = get_fast_modinfo($course);
         $sections = array_slice(get_all_sections($course->id), 0, $course->numsections+1, true);
         $viewhiddensections = has_capability('moodle/course:viewhiddensections', $this->page->context);
@@ -1313,7 +1313,7 @@ class global_navigation extends navigation_node {
 
         $namingfunction = 'callback_'.$courseformat.'_get_section_name';
         $namingfunctionexists = (function_exists($namingfunction));
-        
+
         $activeparamfunction = 'callback_'.$courseformat.'_request_key';
         if (function_exists($activeparamfunction)) {
             $activeparam = $activeparamfunction();
@@ -1629,7 +1629,7 @@ class global_navigation extends navigation_node {
     }
     /**
      * Extends the navigation for the given user.
-     * 
+     *
      * @param stdClass $user A user from the database
      */
     public function extend_for_user($user) {
@@ -1802,7 +1802,7 @@ class global_navigation extends navigation_node {
         if (has_capability('moodle/course:viewparticipants', $this->page->context)) {
             $coursenode->add(get_string('participants'), new moodle_url('/user/index.php?id='.$course->id), self::TYPE_CUSTOM, get_string('participants'), 'participants');
         }
-        
+
         $currentgroup = groups_get_course_group($course, true);
         if ($course->id == SITEID) {
             $filterselect = '';
@@ -2074,7 +2074,7 @@ class navbar extends navigation_node {
     }
     /**
      * Returns an array of navigation_node's that make up the navbar.
-     * 
+     *
      * @return array
      */
     public function get_items() {
@@ -2097,7 +2097,7 @@ class navbar extends navigation_node {
 
         // Check if navigation contains the active node
         if (!$this->ignoreactive) {
-            
+
             if ($navigationactivenode && $settingsactivenode) {
                 // Parse a combined navigation tree
                 while ($settingsactivenode && $settingsactivenode->parent !== null) {
@@ -2165,7 +2165,7 @@ class navbar extends navigation_node {
         if ($this->content !== null) {
             debugging('Nav bar items must be printed before $OUTPUT->header() has been called', DEBUG_DEVELOPER);
         }
-        
+
         // Properties array used when creating the new navigation node
         $itemarray = array(
             'text' => $text,
@@ -2224,7 +2224,7 @@ class settings_navigation extends navigation_node {
 
     /**
      * Sets up the object with basic settings and preparse it for use
-     * 
+     *
      * @param moodle_page $page
      */
     public function __construct(moodle_page &$page) {
@@ -2941,7 +2941,7 @@ class settings_navigation extends navigation_node {
         if (isguestuser() || !isloggedin()) {
             return false;
         }
-        
+
         if (count($this->userstoextendfor) > 0) {
             $usernode = null;
             foreach ($this->userstoextendfor as $userid) {
@@ -3156,7 +3156,7 @@ class settings_navigation extends navigation_node {
         if (!empty($CFG->bloglevel)) {
             $blog = $usersetting->add(get_string('blogs', 'blog'), null, navigation_node::TYPE_CONTAINER, null, 'blogs');
             $blog->add(get_string('preferences', 'blog'), new moodle_url('/blog/preferences.php'), navigation_node::TYPE_SETTING);
-            if ($CFG->useexternalblogs && $CFG->maxexternalblogsperuser > 0 && has_capability('moodle/blog:manageexternal', get_context_instance(CONTEXT_SYSTEM))) {
+            if (!empty($CFG->useexternalblogs) && $CFG->maxexternalblogsperuser > 0 && has_capability('moodle/blog:manageexternal', get_context_instance(CONTEXT_SYSTEM))) {
                 $blog->add(get_string('externalblogs', 'blog'), new moodle_url('/blog/external_blogs.php'), navigation_node::TYPE_SETTING);
                 $blog->add(get_string('addnewexternalblog', 'blog'), new moodle_url('/blog/external_blog_edit.php'), navigation_node::TYPE_SETTING);
             }
