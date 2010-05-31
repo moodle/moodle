@@ -633,13 +633,17 @@ abstract class repository {
         $sql = 'SELECT i.*, r.type AS repositorytype, r.sortorder, r.visible FROM {repository} r, {repository_instances} i WHERE ';
         $sql .= 'i.typeid = r.id ';
 
+        if (!empty($args['disable_types']) && is_array($args['disable_types'])) {
+            list($types, $p) = $DB->get_in_or_equal($args['disable_types'], SQL_PARAMS_QM, 'param0000', false);
+            $sql .= ' AND r.type '.$types;
+            $params = array_merge($params, $p);
+        }
+
         if (!empty($args['userid']) && is_numeric($args['userid'])) {
             $sql .= ' AND (i.userid = 0 or i.userid = ?)';
             $params[] = $args['userid'];
         }
-        if (!empty($args['disable_types']) && is_array($args['disable_types'])) {
-            $sql .= ' AND r.type NOT IN ("'.implode('","', $args['disable_types']).'")';
-        }
+
         foreach ($contexts as $context) {
             if (empty($firstcontext)) {
                 $firstcontext = true;
@@ -664,6 +668,7 @@ abstract class repository {
         }
         $sql .= ' order by r.sortorder, i.name';
 
+        var_dump($sql);
         if (!$records = $DB->get_records_sql($sql, $params)) {
             $records = array();
         }
