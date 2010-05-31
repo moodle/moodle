@@ -1112,6 +1112,17 @@ class assignment_base {
         $assignment = $this->assignment;
         $cm         = $this->cm;
 
+        /// Print quickgrade form around the table
+        if ($quickgrade){
+            echo '<form action="submissions.php" id="fastg" method="post">';
+            echo '<div>';
+            echo '<input type="hidden" name="id" value="'.$this->cm->id.'" />';
+            echo '<input type="hidden" name="mode" value="fastgrade" />';
+            echo '<input type="hidden" name="page" value="'.$page.'" />';
+            echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
+            echo '</div>';
+        }
+
         $tabindex = 1; //tabindex for quick grading tabbing; Not working for dropdowns yet
         add_to_log($course->id, 'assignment', 'view submission', 'submissions.php?id='.$this->cm->id, $this->assignment->id, $this->cm->id);
         $PAGE->navbar->add($this->strsubmissions);
@@ -1382,17 +1393,6 @@ class assignment_base {
 
                 $table->add_data($row);
             }
-        }
-
-        /// Print quickgrade form around the table
-        if ($quickgrade){
-            echo '<form action="submissions.php" id="fastg" method="post">';
-            echo '<div>';
-            echo '<input type="hidden" name="id" value="'.$this->cm->id.'" />';
-            echo '<input type="hidden" name="mode" value="fastgrade" />';
-            echo '<input type="hidden" name="page" value="'.$page.'" />';
-            echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
-            echo '</div>';
         }
 
         $table->print_html();  /// Print the whole table
