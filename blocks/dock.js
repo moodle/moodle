@@ -376,7 +376,7 @@ M.core_dock.fixTitleOrientation = function(item, title, text) {
     }
 
     // Cool, we can use SVG!
-    var test = Y.Node.create('<div><span style="font-size:10px;">'+text+'</span></div>');
+    var test = Y.Node.create('<h2><span style="font-size:10px;">'+text+'</span></h2>');
     this.nodes.body.append(test);
     var height = test.one('span').get('offsetWidth')+4;
     var width = test.one('span').get('offsetHeight')*2;
@@ -574,12 +574,14 @@ M.core_dock.resize = function() {
     var screenheight = parseInt(this.nodes.body.get('winHeight'))-(buffer*2);
     var titletop = item.nodes.docktitle.getY() - this.nodes.container.getY();
     var containerheight = this.nodes.container.getY()-this.nodes.dock.getY()+this.nodes.container.get('offsetHeight');
-    panel.contentBody.setStyle('height', 'auto').removeClass('oversized_content');
+    panel.contentBody.setStyle('height', 'auto');
+    panel.removeClass('oversized_content');
     var panelheight = panel.get('offsetHeight');
 
     if (panelheight > screenheight) {
         panel.setStyle('top', (buffer-containerheight)+'px');
-        panel.contentBody.setStyle('height', (screenheight-panel.contentHeader.get('offsetHeight'))+'px').addClass('oversized_content');
+        panel.contentBody.setStyle('height', (screenheight-panel.contentHeader.get('offsetHeight'))+'px');
+        panel.addClass('oversized_content');
     } else if (panelheight > (screenheight-(titletop-buffer))) {
         var difference = panelheight - (screenheight-titletop);
         panel.setStyle('top', (titletop-containerheight-difference+buffer)+'px');
