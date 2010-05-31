@@ -92,8 +92,6 @@ class block_navigation extends block_base {
 
     function get_required_javascript() {
         global $CFG;
-        $this->page->requires->js_module(array('name'=>'core_dock', 'fullpath'=>'/blocks/dock.js', 'requires'=>array('base', 'cookie', 'dom', 'io', 'node', 'event-custom', 'event-mouseenter', 'yui2-container')));
-        $this->page->requires->js_module(array('name'=>'block_navigation', 'fullpath'=>'/blocks/navigation/navigation.js', 'requires'=>array('core_dock', 'io', 'node', 'dom', 'event-custom', 'json-parse')));
         user_preference_allow_ajax_update('docked_block_instance_'.$this->instance->id, PARAM_INT);
     }
 
@@ -162,14 +160,13 @@ class block_navigation extends block_base {
         $navigation->find_expandable($expandable);
 
         // Initialise the JS tree object
-        $module = array('name'=>'block_navigation', 'fullpath'=>'/blocks/navigation/navigation.js', 'requires'=>array('core_dock', 'io', 'node', 'dom', 'event-custom', 'json-parse'));
+        $module = array('name'=>'block_navigation', 'fullpath'=>'/blocks/navigation/navigation.js', 'requires'=>array('core_dock', 'io', 'node', 'dom', 'event-custom', 'json-parse'), 'strings'=>array(array('viewallcourses','moodle')));
         $limit = 20;
         if (!empty($CFG->navcourselimit)) {
             $limit = $CFG->navcourselimit;
         }
         $arguments = array($this->instance->id, array('expansions'=>$expandable, 'instance'=>$this->instance->id, 'candock'=>$this->instance_can_be_docked(), 'courselimit'=>$limit));
         $this->page->requires->js_init_call('M.block_navigation.init_add_tree', $arguments, false, $module);
-        $this->page->requires->string_for_js('viewallcourses','moodle');
 
         // Grab the items to display
         $renderer = $this->page->get_renderer('block_navigation');

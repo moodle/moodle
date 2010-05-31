@@ -413,6 +413,26 @@ class block_manager {
         $this->extracontent[$region][] = $bc;
     }
 
+    /**
+     * Checks to see whether all of the blocks within the given region are docked
+     *
+     * @param string $region
+     * @return bool True if all of the blocks within that region are docked
+     */
+    public function region_completely_docked($region, $output) {
+        if (!$this->page->theme->enable_dock) {
+            return false;
+        }
+        $this->check_is_loaded();
+        $this->ensure_content_created($region, $output);
+        foreach($this->visibleblockcontent[$region] as $instance) {
+            if (!empty($instance->content) && !get_user_preferences('docked_block_instance_'.$instance->blockinstanceid, 0)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
 /// Actions ====================================================================
 
     /**

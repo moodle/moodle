@@ -47,6 +47,7 @@ M.block_navigation = M.block_navigation || {
      * @function
      */
     init:function(Y) {
+        M.core_dock.init(Y);
         if (M.core_dock.genericblock) {
             // Give the tree class the dock block properties
             Y.augment(M.block_navigation.classes.tree, M.core_dock.genericblock);

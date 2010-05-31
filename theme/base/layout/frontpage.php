@@ -2,16 +2,18 @@
 
 $hassidepre = $PAGE->blocks->region_has_content('side-pre', $OUTPUT);
 $hassidepost = $PAGE->blocks->region_has_content('side-post', $OUTPUT);
+$showsidepre = $hassidepre && !$PAGE->blocks->region_completely_docked('side-pre', $OUTPUT);
+$showsidepost = $hassidepost && !$PAGE->blocks->region_completely_docked('side-post', $OUTPUT);
 
 $custommenu = $OUTPUT->custom_menu();
 $hascustommenu = (empty($PAGE->layout_options['nocustommenu']) && !empty($custommenu));
 
 $bodyclasses = array();
-if ($hassidepre && !$hassidepost) {
+if ($showsidepre && !$showsidepost) {
     $bodyclasses[] = 'side-pre-only';
-} else if ($hassidepost && !$hassidepre) {
+} else if ($showsidepost && !$showsidepre) {
     $bodyclasses[] = 'side-post-only';
-} else if (!$hassidepost && !$hassidepre) {
+} else if (!$showsidepost && !$showsidepre) {
     $bodyclasses[] = 'content-only';
 }
 if ($hascustommenu) {

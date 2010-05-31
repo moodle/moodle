@@ -44,6 +44,7 @@ $THEME->sheets = array(
     'blocks',
     'calendar',
     'course',
+    'dock',
     'grade',
     'message',
     'question',

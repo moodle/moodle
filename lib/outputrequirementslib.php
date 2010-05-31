@@ -380,7 +380,7 @@ class page_requirements_manager {
                 case 'core_dock':
                     $module = array('name'     => 'core_dock',
                                     'fullpath' => '/blocks/dock.js',
-                                    'requires' => array('base', 'cookie', 'dom', 'io', 'node', 'event-custom', 'event-mouseenter', 'yui2-container'),
+                                    'requires' => array('base', 'node', 'event-custom', 'event-mouseenter', 'event-resize'),
                                     'strings' => array(array('addtodock', 'block'),array('undockitem', 'block'),array('undockall', 'block'),array('thisdirectionvertical', 'langconfig')));
                     break;
                 case 'core_calendar':
