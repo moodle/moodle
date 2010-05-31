@@ -66,6 +66,7 @@ class block_private_files extends block_base {
             $options->accepted_types = '*';
             $options->return_types = FILE_INTERNAL;
             $options->context   = $PAGE->context;
+            $options->disable_types = array('user');
 
             $this->content = new stdClass;
             $this->content->text = $OUTPUT->file_manager($options);

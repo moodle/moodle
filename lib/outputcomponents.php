@@ -191,6 +191,7 @@ class file_manager implements renderable {
         $params->return_types = $options->return_types;
         $params->context = $options->context;
         $params->env = 'filemanager';
+        $params->disable_types = !empty($options->disable_types)?$options->disable_types:array();
         $filepicker_options = initialise_filepicker($params);
         $this->options->filepicker = $filepicker_options;
     }

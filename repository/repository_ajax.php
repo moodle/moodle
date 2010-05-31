@@ -228,7 +228,7 @@ switch ($action) {
             // We have two special repoisitory type need to deal with
             // local and recent plugins don't added new files to moodle, just add new records to database
             // so we don't check user quota and maxbytes here
-            if ($repo->options['type'] == 'local' || $repo->options['type'] == 'recent' ) {
+            if (in_array($repo->options['type'], array('local', 'recent', 'user'))) {
                 try {
                     $fileinfo = $repo->copy_to_area($source, $saveas_filearea, $itemid, $saveas_path, $saveas_filename);
                 } catch (Exception $e) {
