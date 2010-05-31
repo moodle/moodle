@@ -1216,6 +1216,10 @@ function upgrade_core($version, $verbose) {
     require_once($CFG->libdir.'/db/upgrade.php');    // Defines upgrades
 
     try {
+        // Reset caches before any output
+        upgrade_reset_caches();
+        remove_dir($CFG->dataroot . '/cache', true); // flush cache
+
         // Upgrade current language pack if we can
         if (empty($CFG->skiplangupgrade)) {
             upgrade_language_pack(false);
@@ -1246,6 +1250,7 @@ function upgrade_core($version, $verbose) {
         events_update_definition('moodle');
         message_update_providers('moodle');
 
+        // Reset caches again, just to be sure
         upgrade_reset_caches();
         remove_dir($CFG->dataroot . '/cache', true); // flush cache
 
