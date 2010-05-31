@@ -133,6 +133,7 @@ class repository_user extends repository {
             throw new repository_exception('emptyfilelist', 'repository_user');
         }
         $ret['list'] = $list;
+        $ret['list'] = array_filter($list, array($this, 'filter'));
         return $ret;
     }
 

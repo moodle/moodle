@@ -121,6 +121,7 @@ class repository_recent extends repository {
             throw new repository_exception('emptyfilelist', 'repository_recent');
         }
         $ret['list'] = $list;
+        $ret['list'] = array_filter($list, array($this, 'filter'));
         return $ret;
     }
 
