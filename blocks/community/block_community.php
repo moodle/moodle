@@ -48,25 +48,32 @@ class block_community extends block_list {
             return $this->content;
         }
 
-        $this->content->items[] = '<a href='.$CFG->wwwroot.'/blocks/community/communitycourse.php?add=true>'.get_string('addcourse', 'block_community').'</a>';
-        $this->content->icons[] = '<img src="'.$OUTPUT->pix_url('i/group') . '" class="icon" alt="" />';
+        $searchlink = html_writer::tag('a', get_string('addcourse', 'block_community'),
+                array('href' => $CFG->wwwroot.'/blocks/community/communitycourse.php?add=true'));
+        $this->content->items[] = $searchlink;
+        $icon = html_writer::empty_tag('img', array('src' => $OUTPUT->pix_url('i/group'),
+            'class' => 'icon', 'alt' => get_string('addcourse', 'block_community')));
+        $this->content->icons[] = $icon;
 
         $community = new community();
         $courses = $community->get_community_courses($USER->id);
         if ($courses) {
-            $this->content->items[] = '<hr />';
+            $this->content->items[] = html_writer::empty_tag('hr');
             $this->content->icons[] = '';
             $this->content->items[] = get_string('mycommunities', 'block_community');
             $this->content->icons[] = '';
             foreach ($courses as $course) {
                 //delete link
-                $deleteicon = html_writer::empty_tag('img', array('src' => $OUTPUT->pix_url('i/cross_red_small')));
+                $deleteicon = html_writer::empty_tag('img', 
+                        array('src' => $OUTPUT->pix_url('i/cross_red_small'), 
+                            'alt' => get_string('removecommunitycourse', 'block_community')));
                 $deleteurl = new moodle_url($CFG->wwwroot.'/blocks/community/communitycourse.php',
                         array('remove'=>true, 'communityid'=> $course->id, 'sesskey' => sesskey()));
                 $deleteatag = html_writer::tag('a', $deleteicon, array('href' => $deleteurl));
 
-                $this->content->items[] = '<a href='.$course->courseurl.'>'.$course->coursename.'</a> ' .
-                    $deleteatag;
+                $courselink = html_writer::tag('a', $course->coursename,
+                array('href' => $course->courseurl));
+                $this->content->items[] = $courselink .$deleteatag;
                 $this->content->icons[] = '';
             }
         }

@@ -205,7 +205,8 @@ class course_publication_form extends moodleform {
         $mform->setDefault('courseshortname', $defaultshortname);
         $mform->addHelpButton('courseshortname', 'courseshortname', 'hub');
 
-        $mform->addElement('textarea', 'description', get_string('description'), array('rows'=>10));
+        $mform->addElement('textarea', 'description', get_string('description'), array('rows'=>10,
+            'cols' => 20));
         $mform->addRule('description', $strrequired, 'required', null, 'client');
         $mform->setDefault('description', $defaultsummary);
         $mform->setType('description', PARAM_TEXT);
@@ -301,14 +302,11 @@ class course_publication_form extends moodleform {
         $mform->setType('creatornotes', PARAM_CLEANHTML);
         $mform->addHelpButton('creatornotes', 'creatornotes', 'hub');
 
-
-
         $mform->addElement('filemanager', 'screenshots', get_string('screenshots','hub'), null,
                 array('subdirs'=>0,
                 'maxbytes'=>1000000,
                 'maxfiles'=>3
         ));
-        $mform->setHelpButton('screenshots', array('screenshots', get_string('screenshots', 'hub'), 'hub'));
         $mform->addHelpButton('screenshots', 'screenshots', 'hub');
 
         $this->add_action_buttons(false, $buttonlabel);

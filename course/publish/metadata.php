@@ -138,10 +138,12 @@ if (has_capability('moodle/course:publish', get_context_instance(CONTEXT_COURSE,
             $fs = get_file_storage();
             $files = $fs->get_area_files(get_context_instance(CONTEXT_USER, $USER->id)->id, 'user_draft', $screenshots);
             if (!empty($files)) {
-                 $courseinfo->screenshotsids = count($files);
+                 $courseinfo->screenshotsids = count($files)-1; //minus the ./ directory
             } else {
                 $courseinfo->screenshotsids = 0;
             }
+        } else {
+            $courseinfo->screenshotsids = 0;
         }
 
         // BACKUP ACTION
