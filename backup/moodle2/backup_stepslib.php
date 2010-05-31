@@ -949,7 +949,7 @@ class backup_final_files_structure_step extends backup_structure_step {
             'contenthash', 'contextid', 'filearea', 'itemid',
             'filepath', 'filename', 'userid', 'filesize',
             'mimetype', 'status', 'timecreated', 'timemodified',
-            'source', 'author', 'license'));
+            'source', 'author', 'license', 'sortorder'));
 
         // Build the tree
 
