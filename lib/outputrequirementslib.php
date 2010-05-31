@@ -475,7 +475,7 @@ class page_requirements_manager {
      * Even if a particular style sheet is requested more than once, it will only
      * be linked to once.
      *
-     * Please note sue of this feature is strongly discouraged,
+     * Please note use of this feature is strongly discouraged,
      * it is suitable only for places where CSS is submitted directly by teachers.
      * (Students must not be allowed to submit any external CSS because it may
      * contain embedded javascript!). Example of correct use is mod/data.
