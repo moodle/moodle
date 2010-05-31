@@ -282,7 +282,6 @@ $string['gradeitemsettings'] = 'Grade item settings';
 $string['gradeitemsinc'] = 'Grade items to be included';
 $string['gradeletter'] = 'Grade letter';
 $string['gradeletter_help'] = 'Grade letters are letters, A, B, C, ..., or words, for example Distinction, Merit, Pass, ..., used to represent a range of grades.';
-$string['gradeletterhelp'] = 'Grade letter Help';
 $string['gradeletternote'] = 'To delete a grade letter just empty any of the<br /> three text areas for that letter and click submit.';
 $string['gradeletters'] = 'Grade letters';
 $string['gradelocked'] = 'Grade is locked';

@@ -50,7 +50,7 @@ class edit_letter_form extends moodleform {
 
             $mform->addElement('text', $gradelettername, $gradeletter." $i");
             if ($i == 1) {
-                $mform->setHelpButton($gradelettername, array('gradeletter', get_string('gradeletter', 'grades'), 'grade'));
+                $mform->addHelpButton($gradelettername, 'gradeletter', 'grades');
             }
             $mform->setType($gradelettername, PARAM_TEXT);
 
