@@ -346,11 +346,9 @@ function print_grade_plugin_selector($plugin_info, $active_type, $active_plugin,
 
         $sectionname = $plugin_info['strings'][$plugin_type];
         $section = array();
-        
+
         foreach ($plugins as $plugin) {
-            // TODO: this is messy, fix plugin_info instead...
-            $link = str_replace($CFG->wwwroot, '', $plugin->link);
-            $link = str_replace('&amp;', '&', $link);
+            $link = $plugin->link->out(false);
             $section[$link] = $plugin->string;
             $count++;
             if ($plugin_type === $active_type and $plugin->id === $active_plugin) {

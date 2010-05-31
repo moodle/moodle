@@ -1171,22 +1171,52 @@ class core_renderer extends renderer_base {
             $output .= $this->render($select->helpicon);
         }
 
-        // force local URLS, because for security reasons the course/jumpto.php requires urls to start with '/'!
+        // For security reasons, the script course/jumpto.php requires URL starting with '/'. To keep
+        // backward compatibility, we are removing heading $CFG->wwwroot from URLs here.
         $urls = array();
         foreach ($select->urls as $k=>$v) {
-            if (empty($k)) {
-                // nothing selected option
-            } else if (strpos($k, $CFG->wwwroot.'/') === 0) {
-                $k = str_replace($CFG->wwwroot, '', $k);
-            } else if (strpos($k, '/') !== 0) {
-                debugging("Invalid url_select urls parameter, url '$k' is not local relative url!");
-                continue;
+            if (is_array($v)) {
+                // optgroup structure
+                foreach ($v as $optgrouptitle => $optgroupoptions) {
+                    foreach ($optgroupoptions as $optionurl => $optiontitle) {
+                        if (empty($optionurl)) {
+                            $safeoptionurl = '';
+                        } else if (strpos($optionurl, $CFG->wwwroot.'/') === 0) {
+                            // debugging('URLs passed to url_select should be in local relative form - please fix the code.', DEBUG_DEVELOPER);
+                            $safeoptionurl = str_replace($CFG->wwwroot, '', $optionurl);
+                        } else if (strpos($optionurl, '/') !== 0) {
+                            debugging("Invalid url_select urls parameter inside optgroup: url '$optionurl' is not local relative url!");
+                            continue;
+                        } else {
+                            $safeoptionurl = $optionurl;
+                        }
+                        $urls[$k][$optgrouptitle][$safeoptionurl] = $optiontitle;
+                    }
+                }
+            } else {
+                // plain list structure
+                if (empty($k)) {
+                    // nothing selected option
+                } else if (strpos($k, $CFG->wwwroot.'/') === 0) {
+                    $k = str_replace($CFG->wwwroot, '', $k);
+                } else if (strpos($k, '/') !== 0) {
+                    debugging("Invalid url_select urls parameter: url '$k' is not local relative url!");
+                    continue;
+                }
+                $urls[$k] = $v;
             }
-            $urls[$k] = $v;
+        }
+        $selected = $select->selected;
+        if (!empty($selected)) {
+            if (strpos($select->selected, $CFG->wwwroot.'/') === 0) {
+                $selected = str_replace($CFG->wwwroot, '', $selected);
+            } else if (strpos($selected, '/') !== 0) {
+                debugging("Invalid value of parameter 'selected': url '$selected' is not local relative url!");
+            }
         }
 
         $output .= html_writer::empty_tag('input', array('type'=>'hidden', 'name'=>'sesskey', 'value'=>sesskey()));
-        $output .= html_writer::select($urls, 'jump', $select->selected, $select->nothing, $select->attributes);
+        $output .= html_writer::select($urls, 'jump', $selected, $select->nothing, $select->attributes);
 
         $go = html_writer::empty_tag('input', array('type'=>'submit', 'value'=>get_string('go')));
         $output .= html_writer::tag('noscript', $go, array('style'=>'inline'));
