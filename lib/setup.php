@@ -91,6 +91,12 @@ if (!defined('NO_DEBUG_DISPLAY')) {
     define('NO_DEBUG_DISPLAY', false);
 }
 
+// Servers should define a default timezone in php.ini, but if they don't then make sure something is defined.
+// This is a quick hack.  Ideally we should ask the admin for a value.  See MDL-22625 for more on this.
+if (function_exists('date_default_timezone_set') and function_exists('date_default_timezone_get')) { 
+    @date_default_timezone_set(@date_default_timezone_get()); 
+}
+
 // Detect CLI scripts - CLI scripts are executed from command line, do not have session and we do not want HTML in output
 // In your new CLI scripts just add: if (isset($_SERVER['REMOTE_ADDR'])) {die;} before requiring config.php.
 if (!defined('CLI_SCRIPT')) {
