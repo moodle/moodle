@@ -639,7 +639,7 @@ abstract class repository {
         }
         if (!empty($args['disable_types']) && is_array($args['disable_types'])) {
             $sql .= ' AND r.type NOT IN ("'.implode('","', $args['disable_types']).'")';
-        } 
+        }
         foreach ($contexts as $context) {
             if (empty($firstcontext)) {
                 $firstcontext = true;
@@ -1862,10 +1862,10 @@ function repository_setup_default_plugins() {
     //if the plugin type has no multiple instance (e.g. has no instance option name)
     //repository_type::create will create an instance automatically
     $user_plugin = new repository_type('user', array(), true);
-    $upload_plugin->create(true);
+    $user_plugin->create(true);
 
     $recent_plugin = new repository_type('recent', array(), true);
-    $upload_plugin->create(true);
+    $recent_plugin->create(true);
 
     $upload_plugin = new repository_type('upload', array(), true);
     $upload_plugin->create(true);
