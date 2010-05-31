@@ -68,13 +68,17 @@ class cohort_edit_form extends moodleform {
         $errors = parent::validation($data, $files);
 
         $idnumber = trim($data['idnumber']);
-        if ($data['id']) {
+        if ($idnumber === '') {
+            // fine, empty is ok
+
+        } else if ($data['id']) {
             $current = $DB->get_record('cohort', array('id'=>$data['id']), '*', MUST_EXIST);
             if ($current->idnumber !== $idnumber) {
                 if ($DB->record_exists('cohort', array('idnumber'=>$idnumber))) {
                     $errors['idnumber'] = get_string('duplicateidnumber', 'cohort');
                 }
             }
+
         } else {
             if ($DB->record_exists('cohort', array('idnumber'=>$idnumber))) {
                 $errors['idnumber'] = get_string('duplicateidnumber', 'cohort');
@@ -105,4 +109,4 @@ class cohort_edit_form extends moodleform {
         return $options;
     }
 }
-    
+
