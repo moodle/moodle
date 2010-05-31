@@ -152,6 +152,8 @@ class MoodleQuickForm_filemanager extends HTML_QuickForm_element {
         $html .= $OUTPUT->file_manager($options);
 
         $html .= '<input value="'.$draftitemid.'" name="'.$elname.'" type="hidden" />';
+        // label element needs 'for' attribute work
+        $html .= '<input value="" id="id_'.$elname.'" type="hidden" />';
 
         return $html;
     }

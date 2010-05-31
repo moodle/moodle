@@ -82,6 +82,8 @@ class MoodleQuickForm_filepicker extends HTML_QuickForm_input {
         $options = $fp->options;
         $str .= $OUTPUT->render($fp);
         $str .= '<input type="hidden" name="'.$elname.'" id="'.$id.'" value="'.$draftitemid.'" />';
+        // label element needs 'for' attribute work
+        $html .= '<input value="" id="id_'.$elname.'" type="hidden" />';
         return $str;
     }
 
