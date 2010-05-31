@@ -572,8 +572,10 @@ M.core_dock.resize = function() {
     }
     var buffer = this.cfg.buffer;
     var screenheight = parseInt(this.nodes.body.get('winHeight'))-(buffer*2);
-    var titletop = item.nodes.docktitle.getY() - this.nodes.container.getY();
-    var containerheight = this.nodes.container.getY()-this.nodes.dock.getY()+this.nodes.container.get('offsetHeight');
+    var docky = this.nodes.dock.getY();
+    var titletop = item.nodes.docktitle.getY()-docky-buffer;
+    var containery = this.nodes.container.getY();
+    var containerheight = containery-docky+this.nodes.container.get('offsetHeight');
     panel.contentBody.setStyle('height', 'auto');
     panel.removeClass('oversized_content');
     var panelheight = panel.get('offsetHeight');
