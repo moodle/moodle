@@ -668,7 +668,6 @@ abstract class repository {
         }
         $sql .= ' order by r.sortorder, i.name';
 
-        var_dump($sql);
         if (!$records = $DB->get_records_sql($sql, $params)) {
             $records = array();
         }
