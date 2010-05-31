@@ -2079,7 +2079,7 @@ function get_separator() {
  * @return string|void If $return is false, returns nothing, otherwise returns a string of HTML.
  */
 function print_collapsible_region($contents, $classes, $id, $caption, $userpref = '', $default = false, $return = false) {
-    $output  = print_collapsible_region_start($classes, $id, $caption, $userpref, true);
+    $output  = print_collapsible_region_start($classes, $id, $caption, $userpref, true, true);
     $output .= $contents;
     $output .= print_collapsible_region_end(true);
 
