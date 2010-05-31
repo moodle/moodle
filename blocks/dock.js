@@ -344,7 +344,7 @@ M.core_dock.delayEvent = function(event, options, target) {
  *    btt : Title is rotated counterclockwise so the first letter is at the bottom.
  * @param {string} title
  */
-M.core_dock.fixTitleOrientation = function(title, text) {
+M.core_dock.fixTitleOrientation = function(item, title, text) {
     var Y = this.Y;
 
     var title = Y.one(title);
@@ -401,6 +401,11 @@ M.core_dock.fixTitleOrientation = function(title, text) {
     svg.appendChild(txt);
 
     title.append(svg)
+
+    item.on('dockeditem:drawcomplete', function(txt, title){
+        txt.setAttribute('fill', Y.one(title).getStyle('color'));
+    }, item, txt, title);
+
     return title;
 }
 /**
@@ -778,13 +783,20 @@ M.core_dock.genericblock.prototype = {
  */
 M.core_dock.item = function(Y, uid, title, contents, commands, blockclass){
     this.Y = Y;
+    this.publish('dockeditem:drawstart', {prefix:'dockeditem'});
+    this.publish('dockeditem:drawcomplete', {prefix:'dockeditem'});
+    this.publish('dockeditem:showstart', {prefix:'dockeditem'});
+    this.publish('dockeditem:showcomplete', {prefix:'dockeditem'});
+    this.publish('dockeditem:hidestart', {prefix:'dockeditem'});
+    this.publish('dockeditem:hidecomplete', {prefix:'dockeditem'});
+    this.publish('dockeditem:itemremoved', {prefix:'dockeditem'});
     if (uid && this.id==null) {
         this.id = uid;
     }
     if (title && this.title==null) {
         this.titlestring = title.cloneNode(true);
         this.title = document.createElement(title.nodeName);
-        var fixedtitle = M.core_dock.fixTitleOrientation(this.title, this.titlestring.firstChild.nodeValue);
+        M.core_dock.fixTitleOrientation(this, this.title, this.titlestring.firstChild.nodeValue);
     }
     if (contents && this.contents==null) {
         this.contents = contents;
@@ -798,13 +810,6 @@ M.core_dock.item = function(Y, uid, title, contents, commands, blockclass){
     this.nodes = (function(){
         return {docktitle : null, dockitem : null, container: null}
     })();
-    this.publish('dockeditem:drawstart', {prefix:'dockeditem'});
-    this.publish('dockeditem:drawcomplete', {prefix:'dockeditem'});
-    this.publish('dockeditem:showstart', {prefix:'dockeditem'});
-    this.publish('dockeditem:showcomplete', {prefix:'dockeditem'});
-    this.publish('dockeditem:hidestart', {prefix:'dockeditem'});
-    this.publish('dockeditem:hidecomplete', {prefix:'dockeditem'});
-    this.publish('dockeditem:itemremoved', {prefix:'dockeditem'});
 }
 /**
  *
