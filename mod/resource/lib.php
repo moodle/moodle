@@ -272,7 +272,7 @@ function resource_get_coursemodule_info($coursemodule) {
             return NULL;
         }
         // do not open any window because it would be left there after download
-        $path = '/'.$context->id.'/resource_content/'.$resource->revision.$mainfile->get_filename();
+        $path = '/'.$context->id.'/resource_content/'.$resource->revision.$mainfile->get_filepath().$mainfile->get_filename();
         $fullurl = addslashes_js(file_encode_url($CFG->wwwroot.'/pluginfile.php', $path, true));
 
         // When completion information is enabled for download files, make
@@ -309,7 +309,7 @@ function resource_get_file_areas($course, $cm, $context) {
 }
 
 /**
- * File browsing support for resource module ontent area.
+ * File browsing support for resource module content area.
  * @param object $browser
  * @param object $areas
  * @param object $course
