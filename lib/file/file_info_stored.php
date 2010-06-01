@@ -304,6 +304,8 @@ class file_info_stored extends file_info {
             return null;
         }
 
+        $fs = get_file_storage();
+
         $now = time();
 
         $newrecord = new object();
@@ -313,12 +315,15 @@ class file_info_stored extends file_info {
         $newrecord->filepath  = $this->lf->get_filepath();
         $newrecord->filename  = $newfilename;
 
+        if ($fs->file_exists($newrecord->contextid, $newrecord->filearea, $newrecord->itemid, $newrecord->filepath, $newrecord->filename)) {
+            // file already exists, sorry
+            return null;
+        }
+
         $newrecord->timecreated  = $now;
         $newrecord->timemodified = $now;
         $newrecord->mimetype     = mimeinfo('type', $newfilename);
         $newrecord->userid       = $userid;
-
-        $fs = get_file_storage();
 
         if ($file = $fs->create_file_from_string($newrecord, $content)) {
             return $this->browser->get_file_info($this->context, $file->get_filearea(), $file->get_itemid(), $file->get_filepath(), $file->get_filename());
@@ -389,6 +394,8 @@ class file_info_stored extends file_info {
             return null;
         }
 
+        $fs = get_file_storage();
+
         $now = time();
 
         $newrecord = new object();
@@ -398,12 +405,15 @@ class file_info_stored extends file_info {
         $newrecord->filepath  = $this->lf->get_filepath();
         $newrecord->filename  = $newfilename;
 
+        if ($fs->file_exists($newrecord->contextid, $newrecord->filearea, $newrecord->itemid, $newrecord->filepath, $newrecord->filename)) {
+            // file already exists, sorry
+            return null;
+        }
+
         $newrecord->timecreated  = $now;
         $newrecord->timemodified = $now;
         $newrecord->mimetype     = mimeinfo('type', $newfilename);
         $newrecord->userid       = $userid;
-
-        $fs = get_file_storage();
 
         if ($file = $fs->create_file_from_storedfile($newrecord, $fid)) {
             return $this->browser->get_file_info($this->context, $file->get_filearea(), $file->get_itemid(), $file->get_filepath(), $file->get_filename());
