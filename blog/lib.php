@@ -659,17 +659,20 @@
 
 
     /// Find the base url from $_GET variables, for print_paging_bar
+    /// WARNING:  EVIL EVIL EVIL!  This function directly acesses $_GET which is a big no no. MDL-22631
+    /// I added some clean_param() calls for now but $_GET should just not ever be used directly.  
+    /// The function is totally gone in Moodle 2.0.
     function get_baseurl($filtertype, $filterselect) {
 
-        $getcopy  = $_GET;
-
-        unset($getcopy['blogpage']);
+        unset($_GET['blogpage']);
 
         $strippedurl = strip_querystring(qualified_me());
-        if(!empty($getcopy)) {
+        if(!empty($_GET)) {
             $first = false;
             $querystring = '';
-            foreach($getcopy as $var => $val) {
+            foreach($_GET as $var => $val) {
+                $var = clean_param($var, PARAM_ALPHANUM);   // See MDL-22631
+                $val = clean_param($val, PARAM_CLEAN);
                 if(!$first) {
                     $first = true;
                     if ($var != 'filterselect' && $var != 'filtertype') {
@@ -680,8 +683,8 @@
                     }
                 } else {
                     if ($var != 'filterselect' && $var != 'filtertype') {
-                    $querystring .= '&amp;'.$var.'='.$val;
-                    $hasparam = true;
+                        $querystring .= '&amp;'.$var.'='.$val;
+                        $hasparam = true;
                     }
                 }
             }
