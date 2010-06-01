@@ -1,5 +1,7 @@
 <?php //$Id$
 
+defined('MOODLE_INTERNAL') || die();
+
 /// Sets up blocks and navigation for index.php
 
 require_once($CFG->dirroot .'/blog/lib.php');
