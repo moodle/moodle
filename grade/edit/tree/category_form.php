@@ -157,7 +157,7 @@ class edit_category_form extends moodleform {
         $mform->disabledIf('grade_item_grademin', 'aggregation', 'eq', GRADE_AGGREGATE_SUM);
 
         $mform->addElement('text', 'grade_item_gradepass', get_string('gradepass', 'grades'));
-        $mform->setHelpButton('grade_item_gradepass', array('gradepass', get_string('gradepass', 'grades'), 'grade'), true);
+        $mform->addHelpButton('grade_item_gradepass', 'gradepass', 'grades');
         $mform->disabledIf('grade_item_gradepass', 'grade_item_gradetype', 'eq', GRADE_TYPE_NONE);
         $mform->disabledIf('grade_item_gradepass', 'grade_item_gradetype', 'eq', GRADE_TYPE_TEXT);
 

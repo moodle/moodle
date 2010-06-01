@@ -63,10 +63,6 @@ class edit_outcomeitem_form extends moodleform {
         $mform->setHelpButton('cmid', array('linkedactivity', get_string('linkedactivity', 'grades'), 'grade'), true);
         $mform->setDefault('cmid', 0);
 
-        /*$mform->addElement('text', 'gradepass', get_string('gradepass', 'grades'));
-        $mform->setHelpButton('gradepass', array(false, get_string('gradepass', 'grades'),
-                false, true, false, get_string('gradepasshelp', 'grades')));*/
-
         /// hiding
         /// advcheckbox is not compatible with disabledIf !!
         $mform->addElement('checkbox', 'hidden', get_string('hidden', 'grades'));

@@ -84,7 +84,7 @@ class edit_item_form extends moodleform {
         $mform->disabledIf('grademin', 'gradetype', 'noteq', GRADE_TYPE_VALUE);
 
         $mform->addElement('text', 'gradepass', get_string('gradepass', 'grades'));
-        $mform->setHelpButton('gradepass', array('gradepass', get_string('gradepass', 'grades'), 'grade'), true);
+        $mform->addHelpButton('gradepass', 'gradepass', 'grades');
         $mform->disabledIf('gradepass', 'gradetype', 'eq', GRADE_TYPE_NONE);
         $mform->disabledIf('gradepass', 'gradetype', 'eq', GRADE_TYPE_TEXT);
 
