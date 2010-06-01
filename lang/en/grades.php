@@ -288,7 +288,6 @@ $string['gradelocked'] = 'Grade is locked';
 $string['gradelong'] = '{$a->grade} / {$a->max}';
 $string['grademax'] = 'Maximum grade';
 $string['grademax_help'] = 'This setting determines the maximum grade when using the value grade type. The maximum grade for an activity-based grade item is set on the activity settings page.';
-$string['grademaxhelp'] = 'When using the value grade type, a maximum grade can be set. The maximum grade for an activity-based grade item is set on the update activity page.';
 $string['grademin'] = 'Minimum grade';
 $string['grademin_help'] = 'This setting determines the minimum grade when using the value grade type.';
 $string['grademinhelp'] = 'When using the value grade type, a minimum grade can be set.';
