@@ -320,7 +320,7 @@ class grade_item extends grade_object {
      * @static
      *
      * @param array $params associative arrays varname=>value
-     * @return array array of grade_item insatnces or false if none found.
+     * @return array array of grade_item instances or false if none found.
      */
     public static function fetch_all($params) {
         return grade_object::fetch_all_helper('grade_items', 'grade_item', $params);
