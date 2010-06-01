@@ -302,6 +302,23 @@ class workshop_accumulative_strategy implements workshop_strategy {
         return $diminfo;
     }
 
+    /**
+     * Is a given scale used by the instance of workshop?
+     *
+     * @param int $scaleid id of the scale to check
+     * @param int|null $workshopid id of workshop instance to check, checks all in case of null
+     * @return bool
+     */
+    public static function scale_used($scaleid, $workshopid=null) {
+        global $DB;
+
+        $conditions['grade'] = -$scaleid;
+        if (!is_null($workshopid)) {
+            $conditions['workshopid'] = $workshopid;
+        }
+        return $DB->record_exists('workshopform_accumulative', $conditions);
+    }
+
     ////////////////////////////////////////////////////////////////////////////////
     // Internal methods                                                           //
     ////////////////////////////////////////////////////////////////////////////////

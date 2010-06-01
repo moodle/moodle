@@ -323,9 +323,22 @@ class workshop_numerrors_strategy implements workshop_strategy {
         return $dimrecords;
     }
 
-////////////////////////////////////////////////////////////////////////////////
-// Internal methods                                                           //
-////////////////////////////////////////////////////////////////////////////////
+    /**
+     * Is a given scale used by the instance of workshop?
+     *
+     * This grading strategy does not use scales.
+     *
+     * @param int $scaleid id of the scale to check
+     * @param int|null $workshopid id of workshop instance to check, checks all in case of null
+     * @return bool
+     */
+    public static function scale_used($scaleid, $workshopid=null) {
+        return false;
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////
+    // Internal methods                                                           //
+    ////////////////////////////////////////////////////////////////////////////////
 
     /**
      * Loads the fields of the assessment form currently used in this workshop

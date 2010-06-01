@@ -254,41 +254,70 @@ function workshop_get_participants($workshopid) {
 }
 
 /**
- * This function returns if a scale is being used by one workshop
- * if it has support for grading and scales. Commented code should be
- * modified if necessary. See forum, glossary or journal modules
- * as reference.
+ * Is a given scale used by the instance of workshop?
  *
- * @param int $workshopid ID of an instance of this module
- * @return mixed
- * @todo Finish documenting this function
+ * The function asks all installed grading strategy subplugins. The workshop
+ * core itself does not use scales. Both grade for submission and grade for
+ * assessments do not use scales.
+ *
+ * @param int $workshopid id of workshop instance
+ * @param int $scaleid id of the scale to check
+ * @return bool
  */
 function workshop_scale_used($workshopid, $scaleid) {
-    $return = false;
+    global $CFG; // other files included from here
 
-    //$rec = get_record("workshop","id","$workshopid","scale","-$scaleid");
-    //
-    //if (!empty($rec) && !empty($scaleid)) {
-    //    $return = true;
-    //}
+    $strategies = get_plugin_list('workshopform');
+    foreach ($strategies as $strategy => $strategypath) {
+        $strategylib = $strategypath . '/lib.php';
+        if (is_readable($strategylib)) {
+            require_once($strategylib);
+        } else {
+            throw new coding_exception('the grading forms subplugin must contain library ' . $strategylib);
+        }
+        $classname = 'workshop_' . $strategy . '_strategy';
+        if (method_exists($classname, 'scale_used')) {
+            if (call_user_func_array(array($classname, 'scale_used'), array($scaleid, $workshopid))) {
+                // no need to include any other files - scale is used
+                return true;
+            }
+        }
+    }
 
-    return $return;
+    return false;
 }
 
 /**
- * Checks if scale is being used by any instance of workshop.
- * This function was added in 1.9
+ * Is a given scale used by any instance of workshop?
  *
- * This is used to find out if scale used anywhere
- * @param $scaleid int
- * @return boolean True if the scale is used by any workshop
+ * The function asks all installed grading strategy subplugins. The workshop
+ * core itself does not use scales. Both grade for submission and grade for
+ * assessments do not use scales.
+ *
+ * @param int $scaleid id of the scale to check
+ * @return bool
  */
 function workshop_scale_used_anywhere($scaleid) {
-    if ($scaleid and record_exists('workshop', 'grade', -$scaleid)) {
-        return true;
-    } else {
-        return false;
+    global $CFG; // other files included from here
+
+    $strategies = get_plugin_list('workshopform');
+    foreach ($strategies as $strategy => $strategypath) {
+        $strategylib = $strategypath . '/lib.php';
+        if (is_readable($strategylib)) {
+            require_once($strategylib);
+        } else {
+            throw new coding_exception('the grading forms subplugin must contain library ' . $strategylib);
+        }
+        $classname = 'workshop_' . $strategy . '_strategy';
+        if (method_exists($classname, 'scale_used')) {
+            if (call_user_func(array($classname, 'scale_used'), $scaleid)) {
+                // no need to include any other files - scale is used
+                return true;
+            }
+        }
     }
+
+    return false;
 }
 
 /**

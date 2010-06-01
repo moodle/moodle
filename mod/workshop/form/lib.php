@@ -100,4 +100,18 @@ interface workshop_strategy {
      * @return moodle_recordset
      */
     public function get_assessments_recordset($restrict=null);
+
+    /**
+     * Is a given scale used by the instance of workshop?
+     *
+     * If the grading strategy does not use scales, it should just return false. If the strategy
+     * supports scales, it returns true if the given scale is used.
+     * If workshopid is null, it checks for any workshop instance. If workshopid is provided,
+     * it checks the given instance only.
+     *
+     * @param int $scaleid id of the scale to check
+     * @param int|null $workshopid id of workshop instance to check, checks all in case of null
+     * @return bool
+     */
+    public static function scale_used($scaleid, $workshopid=null);
 }
