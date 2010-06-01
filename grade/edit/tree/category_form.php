@@ -116,7 +116,7 @@ class edit_category_form extends moodleform {
                          GRADE_TYPE_TEXT=>get_string('typetext', 'grades'));
 
         $mform->addElement('select', 'grade_item_gradetype', get_string('gradetype', 'grades'), $options);
-        $mform->setHelpButton('grade_item_gradetype', array('gradetype', get_string('gradetype', 'grades'), 'grade'), true);
+        $mform->addHelpButton('grade_item_gradetype', 'gradetype', 'grades');
         $mform->setDefault('grade_item_gradetype', GRADE_TYPE_VALUE);
         $mform->disabledIf('grade_item_gradetype', 'aggregation', 'eq', GRADE_AGGREGATE_SUM);
 

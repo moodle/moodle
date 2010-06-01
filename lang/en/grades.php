@@ -313,7 +313,6 @@ $string['gradetype_help'] = 'There are 4 grade types:
 * Text - Feedback only
 
 Only value and scale grade types may be aggregated. The grade type for an activity-based grade item is set on the activity settings page.';
-$string['gradetypehelp'] = 'Specifies the type of grade used: none (no grading possible), value (enables the maximum and minimum grade settings), scale (enables the scale setting) or text (feedback only). Only value and scale grade types may be aggregated. The grade type for an activity-based grade item is set on the update activity page.';
 $string['gradeview'] = 'View Grade';
 $string['gradeweighthelp'] = 'Grade weight Help';
 $string['groupavg'] = 'Group average';

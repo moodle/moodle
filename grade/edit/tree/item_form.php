@@ -47,7 +47,7 @@ class edit_item_form extends moodleform {
                          GRADE_TYPE_TEXT=>get_string('typetext', 'grades'));
 
         $mform->addElement('select', 'gradetype', get_string('gradetype', 'grades'), $options);
-        $mform->setHelpButton('gradetype', array('gradetype', get_string('gradetype', 'grades'), 'grade'), true);
+        $mform->addHelpButton('gradetype', 'gradetype', 'grades');
         $mform->setDefault('gradetype', GRADE_TYPE_VALUE);
 
         //$mform->addElement('text', 'calculation', get_string('calculation', 'grades'));
