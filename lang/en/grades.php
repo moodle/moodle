@@ -290,7 +290,6 @@ $string['grademax'] = 'Maximum grade';
 $string['grademax_help'] = 'This setting determines the maximum grade when using the value grade type. The maximum grade for an activity-based grade item is set on the activity settings page.';
 $string['grademin'] = 'Minimum grade';
 $string['grademin_help'] = 'This setting determines the minimum grade when using the value grade type.';
-$string['grademinhelp'] = 'When using the value grade type, a minimum grade can be set.';
 $string['gradeoutcomeitem'] = 'Grade outcome item';
 $string['gradeoutcomes'] = 'Outcomes';
 $string['gradeoutcomescourses'] = 'Course outcomes';
