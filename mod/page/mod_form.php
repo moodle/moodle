@@ -100,7 +100,7 @@ class mod_page_mod_form extends moodleform_mod {
 
         // add legacy files flag only if used
         if (isset($this->current->legacyfiles) and $this->current->legacyfiles != RESOURCELIB_LEGACYFILES_NO) {
-            $options = array(RESOURCE_LEGACYYFILES_DONE     => get_string('legacyfilesdone', 'page'),
+            $options = array(RESOURCELIB_LEGACYFILES_DONE   => get_string('legacyfilesdone', 'page'),
                              RESOURCELIB_LEGACYFILES_ACTIVE => get_string('legacyfilesactive', 'page'));
             $mform->addElement('select', 'legacyfiles', get_string('legacyfiles', 'page'), $options);
             $mform->setAdvanced('legacyfiles', 1);

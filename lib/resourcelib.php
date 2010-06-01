@@ -41,7 +41,7 @@ define('RESOURCELIB_DISPLAY_POPUP', 6);
 /** Legacy files not needed or new resource */
 define('RESOURCELIB_LEGACYFILES_NO', 0);
 /** Legacy files conversion marked as completed */
-define('RESOURCE_LEGACYYFILES_DONE', 1);
+define('RESOURCELIB_LEGACYFILES_DONE', 1);
 /** Legacy files conversion in progress*/
 define('RESOURCELIB_LEGACYFILES_ACTIVE', 2);
 
