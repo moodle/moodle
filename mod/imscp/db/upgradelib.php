@@ -87,6 +87,12 @@ function imscp_20_migrate() {
 
         // migrate extracted package data
         $files = imsc_migrate_get_old_files($root, '');
+        if (empty($files)) {
+            // if ims package doesn't exist, continue loop
+            echo $OUTPUT->notification("IMS package data cannot be found, failed migrating activity: \"$candidate->name\", please fix it manually");
+            continue;
+        }
+
         $file_record = array('contextid'=>$context->id, 'filearea'=>'imscp_content', 'itemid'=>1);
         $error = false;
         foreach ($files as $relname=>$fullpath) {
@@ -126,7 +132,12 @@ function imscp_20_migrate() {
  * Private function returning all extracted IMS content package file
  */
 function imsc_migrate_get_old_files($path, $relative) {
+    global $OUTPUT;
     $result = array();
+    if (!file_exists($path)) {
+        echo $OUTPUT->notification("File path doesn't exist: $path <br/> Please fix it manually.");
+        return array();
+    }
     $items = new DirectoryIterator($path);
     foreach ($items as $item) {
         if ($item->isDot() or $item->isLink()) {
