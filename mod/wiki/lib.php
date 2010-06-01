@@ -367,11 +367,13 @@ function wiki_scale_used($wikiid, $scaleid) {
 function wiki_scale_used_anywhere($scaleid) {
     global $DB;
 
-    if ($scaleid and $DB->record_exists('wiki', array('grade', $scaleid))) {
-        return true;
-    } else {
-        return false;
-    }
+    //if ($scaleid and $DB->record_exists('wiki', array('grade' => -$scaleid))) {
+    //    return true;
+    //} else {
+    //    return false;
+    //}
+
+    return false;
 }
 
 /**
