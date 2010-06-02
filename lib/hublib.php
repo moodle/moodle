@@ -135,9 +135,14 @@ define('EDULEVEL_OTHER', 'other');
 ///// FILE TYPES /////
 
 /**
- * FILE TYPE: SCREENSHOTS
+ * FILE TYPE: COURSE SCREENSHOT
  */
 define('SCREENSHOT_FILE_TYPE', 'screenshot');
+
+/**
+ * FILE TYPE: HUB SCREENSHOT
+ */
+define('HUBSCREENSHOT_FILE_TYPE', 'hubscreenshot');
 
 /**
  * FILE TYPE: BACKUP

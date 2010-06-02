@@ -102,6 +102,14 @@ class block_community_renderer extends plugin_renderer_base {
                 $deschtml = $course->description; //the description
                 /// courses and sites number display under the description, in smaller
                 $deschtml .= html_writer::empty_tag('br');
+                if ($course->contributornames) {
+                    $additionaldesc .= get_string('contributors', 'block_community', $course->contributornames);
+                    $additionaldesc .= ' - ';
+                }
+                if ($course->coverage) {
+                    $additionaldesc .= get_string('coverage', 'block_community', $course->coverage);
+                    $additionaldesc .= ' - ';
+                }
                 $additionaldesc = get_string('additionalcoursedesc', 'block_community', $course);
                 $deschtml .= html_writer::tag('span', $additionaldesc, array('class' => 'additionaldesc'));
                 //add content to the course description
@@ -110,15 +118,24 @@ class block_community_renderer extends plugin_renderer_base {
                     $blockhtml = '';
                     foreach ($course->contents as $content) {
                         if ($content['moduletype'] == 'block') {
-                            $blockhtml .= ' - ' . $content['modulename'] . " (" . $content['contentcount'] . ")";
+                            if (!empty($blockhtml)) {
+                                $blockhtml .= ' - ';
+                            }
+                            $blockhtml .= get_string('pluginname', 'block_'.$content['modulename']). " (".$content['contentcount'].")";
                         } else {
-                            $activitieshtml .= ' - ' . $content['modulename'] . " (" . $content['contentcount'] . ")";
+                            if (!empty($activitieshtml)) {
+                                $activitieshtml .= ' - ';
+                            }
+                            $activitieshtml .= get_string('modulename', $content['modulename']). " (".$content['contentcount'].")";
                         }
                     }
-                    $deschtml .= html_writer::empty_tag('br') . html_writer::tag('span',
-                                    get_string('blocks', 'block_community') . " : " . $blockhtml, array('class' => 'blockdescription'));
-                    $deschtml .= html_writer::empty_tag('br') . html_writer::tag('span',
-                                    get_string('activities', 'block_community') . " : " . $activitieshtml, array('class' => 'activitiesdescription'));
+                    $blocksandactivities = html_writer::tag('span',
+                            get_string('blocks', 'block_community')." : ".$blockhtml);
+                    $blocksandactivities .= html_writer::empty_tag('br').html_writer::tag('span',
+                            get_string('activities', 'block_community')." : ".$activitieshtml);
+
+                    $deschtml .= print_collapsible_region($blocksandactivities, 'blockdescription',
+                            'blocksandactivities', get_string('moredetails','block_community'), '', false,true);
                 }
 
                 //retrieve language string

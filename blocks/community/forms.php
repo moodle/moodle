@@ -53,10 +53,41 @@ class community_hub_search_form extends moodleform {
 
         //Public hub list
         $options = array();
-        $mform->addElement('static','huburlstring',get_string('selecthub', 'block_community'));
-        $mform->addHelpButton('huburlstring', 'selecthub', 'block_community');
+       // $mform->addElement('static','huburlstring',get_string('selecthub', 'block_community'));
+        
         foreach ($hubs as $hub) {
-            $mform->addElement('radio','huburl',null,' '.$hub['name'], $hub['url']);
+            $params = array('hubid' => $hub['id'],
+                'filetype' => HUBSCREENSHOT_FILE_TYPE);
+            $imgurl = new moodle_url(HUBDIRECTORYURL . "/local/hubdirectory/webservice/download.php", $params);
+            $ascreenshothtml = html_writer::empty_tag('img', array('src' => $imgurl, 'alt' => $hub['name']));
+            $brtag = html_writer::empty_tag('br');
+            $hubdescription =   '&nbsp;&nbsp;'.$hub['name'];
+            $hubdescription .= $brtag;
+            $hubdescription .=  html_writer::tag('span', $ascreenshothtml, array('class' => 'hubscreenshot'));
+            $hubdescription .= html_writer::tag('span', $hub['description'], array('class' => 'hubdescription'));
+            $hubdescription .= $brtag;
+            $additionaldesc = get_string('sites', 'block_community'). ': ' . $hub['sites'] . ' - ' .
+                                get_string('courses', 'block_community'). ': ' . $hub['courses'];
+            $hubdescription .= html_writer::tag('span', $additionaldesc, array('class' => 'hubadditionaldesc'));
+            $hubdescription .= $brtag;
+            $hubdescription .= html_writer::tag('span',
+                    $hub['trusted']?get_string('hubtrusted', 'block_community'):get_string('hubnottrusted', 'block_community'),
+                    array('class' => $hub['trusted']?'trusted':'nottrusted'));
+             $hubdescription = html_writer::tag('span',
+                    $hubdescription,
+                    array('class' => $hub['trusted']?'hubtrusted':'hubnottrusted'));
+
+            $radiotitle = '';
+            if (empty($firsthub)) {
+                $radiotitle = get_string('selecthub', 'block_community');                             
+            }
+            $mform->addElement('radio','huburl',$radiotitle, $hubdescription, $hub['url']);
+            if (empty($firsthub)) {
+                $mform->addHelpButton('huburl', 'selecthub', 'block_community');
+                 $mform->setDefault('huburl', true);
+                $firsthub = true;
+            }
+
         }
 
         $options = array(0 => get_string('enrollable', 'block_community'),
