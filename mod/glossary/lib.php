@@ -2054,20 +2054,11 @@ function glossary_generate_export_file($glossary, $hook = "", $hook = 0) {
  * @param string $file
  * @return string
  */
-function glossary_read_imported_file($file) {
+function glossary_read_imported_file($file_content) {
     require_once "../../lib/xmlize.php";
     global $CFG;
 
-    $h = fopen($file,"r");
-    $line = '';
-    if ($h) {
-        while ( !feof($h) ) {
-           $char = fread($h,1024);
-           $line .= $char;
-        }
-        fclose($h);
-    }
-    return xmlize($line, 0);
+    return xmlize($file_content, 0);
 }
 
 /**

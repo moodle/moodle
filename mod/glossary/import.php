@@ -13,6 +13,7 @@ $catsincl = optional_param('catsincl', 0, PARAM_INT);         // Import Categori
 
 $mode     = optional_param('mode', 'letter', PARAM_ALPHA );
 $hook     = optional_param('hook', 'ALL', PARAM_ALPHANUM);
+$file     = optional_param('file', 0, PARAM_INT); // xml file
 
 $url = new moodle_url('/mod/glossary/import.php', array('id'=>$id));
 if ($step !== 0) {
@@ -74,31 +75,40 @@ echo $OUTPUT->header();
 echo $OUTPUT->heading($strimportentries);
 
 if ( !$step ) {
+    // display upload form
     echo $OUTPUT->box_start('glossarydisplay generalbox');
     include("import.html");
     echo $OUTPUT->box_end();
-
     echo $OUTPUT->footer();
     exit;
 }
 
 require_sesskey();
 $form = data_submitted();
-$file = $_FILES["file"];
+$result = true;
+if (empty($file)) {
+    $result = false;
+} else {
+    $fs = get_file_storage();
+    $usercontext = get_context_instance(CONTEXT_USER, $USER->id);
+    $draftfiles = $fs->get_area_files($usercontext->id, 'user_draft', $file, 'id', false);
+    if (count($draftfiles)<1) {
+        $result = false;
+    } else {
+        $xmlfile = array_pop($draftfiles);
+    }
+}
 
-require_once($CFG->dirroot.'/lib/uploadlib.php');
-$um = new upload_manager('file',false,false,$course,false,0);
-
-if (!$um->preprocess_files()) {
+if (!$result) {
     echo $OUTPUT->box_start('glossarydisplay generalbox');
     echo $OUTPUT->continue_button('import.php?id='.$id);
     echo $OUTPUT->box_end();
-
     echo $OUTPUT->footer();
     die();
 }
 
-if ($xml = glossary_read_imported_file($file['tmp_name']) ) {
+if ($xml = glossary_read_imported_file($xmlfile->get_content())) {
+    $xmlfile->delete();
 
     $importedentries = 0;
     $importedcats    = 0;
@@ -357,8 +367,8 @@ if ($xml = glossary_read_imported_file($file['tmp_name']) ) {
 
     // rejected entries
     if ($rejections) {
+        echo $OUTPUT->heading(get_string("rejectionrpt","glossary"), 4);
         echo '<table class="glossaryimportexport">';
-        echo '<tr><td align="center" colspan="2" width="100%"><strong>' . get_string("rejectionrpt","glossary") . '</strong></tr>';
         echo $rejections;
         echo '</table><hr />';
     }
@@ -370,7 +380,10 @@ if ($xml = glossary_read_imported_file($file['tmp_name']) ) {
     }
     echo $OUTPUT->box_end();
 } else {
-    notice(get_string('errorparsingxml', 'glossary'));
+    echo $OUTPUT->box_start('glossarydisplay generalbox');
+    echo get_string('errorparsingxml', 'glossary');
+    echo $OUTPUT->continue_button('import.php?id='.$id);
+    echo $OUTPUT->box_end();
 }
 
 /// Finish the page
