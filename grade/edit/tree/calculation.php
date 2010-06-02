@@ -104,7 +104,7 @@ $strcalculationedit = get_string('editcalculation', 'grades');
 
 grade_build_nav(__FILE__, $strcalculationedit, array('courseid' => $courseid));
 $PAGE->set_title($strgrades . ': ' . $strgraderreport);
-$PAGE->set_heading(': ' . $strcalculationedit);
+$PAGE->set_heading($course->fullname);
 echo $OUTPUT->header();
 
 $mform->display();

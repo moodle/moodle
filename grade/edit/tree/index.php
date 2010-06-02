@@ -163,7 +163,7 @@ switch ($action) {
 
             } else {
                 $PAGE->set_title($strgrades . ': ' . $strgraderreport);
-                $PAGE->set_heading(': ' . $strcategoriesedit);
+                $PAGE->set_heading($course->fullname);
                 echo $OUTPUT->header();
                 $strdeletecheckfull = get_string('deletecheck', '', $object->get_name());
                 $optionsyes = array('eid'=>$eid, 'confirm'=>1, 'sesskey'=>sesskey(), 'id'=>$course->id, 'action'=>'delete');

@@ -272,7 +272,7 @@ grade_build_nav(__FILE__, $strgradeedit, array('courseid' => $courseid));
 
 /*********** BEGIN OUTPUT *************/
 $PAGE->set_title($strgrades . ': ' . $strgraderreport . ': ' . $strgradeedit);
-$PAGE->set_heading(': ' . $strgradeedit);
+$PAGE->set_heading($course->fullname);
 
 echo $OUTPUT->header();
 echo $OUTPUT->heading($strgradeedit);

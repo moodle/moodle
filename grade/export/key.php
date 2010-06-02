@@ -72,7 +72,7 @@ $returnurl = $CFG->wwwroot.'/grade/export/keymanager.php?id='.$course->id;
 if ($id and $delete) {
     if (!$confirm) {
         $PAGE->set_title(get_string('deleteselectedkey'));
-        $PAGE->set_heading(get_string('deleteselectedkey'));
+        $PAGE->set_heading($course->fullname);
         echo $OUTPUT->header();
         $optionsyes = array('id'=>$id, 'delete'=>1, 'courseid'=>$courseid, 'sesskey'=>sesskey(), 'confirm'=>1);
         $optionsno  = array('id'=>$courseid);
@@ -125,7 +125,7 @@ $PAGE->navbar->add($strheading);
 
 /// Print header
 $PAGE->set_title($strkeys);
-$PAGE->set_heading(': '.$strkeys);
+$PAGE->set_heading($course->fullname);
 echo $OUTPUT->header();
 
 $editform->display();
