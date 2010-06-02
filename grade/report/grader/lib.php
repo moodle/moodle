@@ -962,6 +962,10 @@ class grade_report_grader extends grade_report {
                         $itemcell->attributes['class'] .= ' grade_type_text';
                     }
 
+                    if ($this->get_pref('enableajax')) {
+                        $itemcell->attributes['class'] .= ' clickable';
+                    }
+
                     if ($item->needsupdate) {
                         $itemcell->text .= html_writer::tag('span', get_string('error'), array('class'=>"gradingerror$hidden$gradepass"));
                     } else {
