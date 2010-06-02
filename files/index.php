@@ -114,6 +114,8 @@ if ($file_info and $delete) {
         $params = $file_info->get_params();
         $params = array_merge($params, array('delete'=>1));
         $PAGE->set_url("/files/index.php", $params);
+        $PAGE->set_title("$SITE->shortname: " .get_string('files'));
+        $PAGE->set_heading($SITE->fullname);
         echo $OUTPUT->header();
         echo $OUTPUT->notification(get_string('deletecheckwarning').': '.$file_info->get_visible_name());
         $parent_info = $file_info->get_parent();
@@ -199,6 +201,7 @@ function html_header($context, $file_info){
     $PAGE->navbar->add($strfiles);
     $PAGE->set_url("/files/index.php", $file_info->get_params());
     $PAGE->set_title("$SITE->shortname: $strfiles");
+    $PAGE->set_heading($SITE->fullname);
     echo $OUTPUT->header();
 
     echo "<table border=\"0\" style=\"margin-left:auto;margin-right:auto\" cellspacing=\"3\" cellpadding=\"3\" width=\"740\">";
