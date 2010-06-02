@@ -38,7 +38,7 @@ require_login($course);
 if (has_capability('moodle/course:publish', get_context_instance(CONTEXT_COURSE, $id))) {
 
     $hubmanager = new hub();
-     $confirmmessage = '';
+    $confirmmessage = '';
 
     //update the courses status
     $updatestatusid = optional_param('updatestatusid', false, PARAM_INT);
@@ -80,6 +80,16 @@ if (has_capability('moodle/course:publish', get_context_instance(CONTEXT_COURSE,
     $PAGE->set_pagelayout('course');
     $PAGE->set_title(get_string('course') . ': ' . $course->fullname);
     $PAGE->set_heading($course->fullname);
+
+    //if the site os registered on no hub display an error page
+    $registeredhubs = $hubmanager->get_registered_on_hubs();
+    if (empty($registeredhubs)) {
+        echo $OUTPUT->header();
+        echo $OUTPUT->heading(get_string('publishon', 'hub'), 3, 'main');
+        echo $OUTPUT->box(get_string('notregisteredonhub', 'hub'));
+        echo $OUTPUT->footer();
+        die();
+    }
 
     $renderer = $PAGE->get_renderer('core', 'publish');
 
