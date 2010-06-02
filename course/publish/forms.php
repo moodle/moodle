@@ -60,7 +60,7 @@ class hub_publish_selector_form extends moodleform {
                  $hubname = $hub->huburl;
             }
             $mform->addElement('radio','huburl',null,' '.$hubname, $hub->huburl);
-            if ($hub->huburl == MOODLEORGHUBURL) {
+            if ($hub->huburl == HUB_MOODLEORGHUBURL) {
                 $mform->setDefault('huburl', $hub->huburl);
             }
         }
@@ -160,8 +160,8 @@ class course_publication_form extends moodleform {
             $defaultcreatorname = $USER->firstname.' '.$USER->lastname;
             $defaultlicenceshortname = 'cc';
             $defaultsubject = '';
-            $defaultaudience = AUDIENCE_STUDENTS;
-            $defaulteducationallevel = EDULEVEL_TERTIARY;
+            $defaultaudience = HUB_AUDIENCE_STUDENTS;
+            $defaulteducationallevel = HUB_EDULEVEL_TERTIARY;
             $defaultcreatornotes = '';
         }
 
@@ -274,22 +274,22 @@ class course_publication_form extends moodleform {
         $this->init_javascript_enhancement('subject', 'smartselect', array('selectablecategories' => false, 'mode'=>'compact'));
 
         $options = array();
-        $options[AUDIENCE_EDUCATORS] = get_string('audienceeducators', 'hub');
-        $options[AUDIENCE_STUDENTS] = get_string('audiencestudents', 'hub');
-        $options[AUDIENCE_ADMINS] = get_string('audienceadmins', 'hub');
+        $options[HUB_AUDIENCE_EDUCATORS] = get_string('audienceeducators', 'hub');
+        $options[HUB_AUDIENCE_STUDENTS] = get_string('audiencestudents', 'hub');
+        $options[HUB_AUDIENCE_ADMINS] = get_string('audienceadmins', 'hub');
         $mform->addElement('select', 'audience', get_string('audience', 'hub'), $options);
         $mform->setDefault('audience', $defaultaudience);
         unset($options);
         $mform->addHelpButton('audience', 'audience', 'hub');
 
         $options = array();
-        $options[EDULEVEL_PRIMARY] = get_string('edulevelprimary', 'hub');
-        $options[EDULEVEL_SECONDARY] = get_string('edulevelsecondary', 'hub');
-        $options[EDULEVEL_TERTIARY] = get_string('eduleveltertiary', 'hub');
-        $options[EDULEVEL_GOVERNMENT] = get_string('edulevelgovernment', 'hub');
-        $options[EDULEVEL_ASSOCIATION] = get_string('edulevelassociation', 'hub');
-        $options[EDULEVEL_CORPORATE] = get_string('edulevelcorporate', 'hub');
-        $options[EDULEVEL_OTHER] = get_string('edulevelother', 'hub');
+        $options[HUB_EDULEVEL_PRIMARY] = get_string('edulevelprimary', 'hub');
+        $options[HUB_EDULEVEL_SECONDARY] = get_string('edulevelsecondary', 'hub');
+        $options[HUB_EDULEVEL_TERTIARY] = get_string('eduleveltertiary', 'hub');
+        $options[HUB_EDULEVEL_GOVERNMENT] = get_string('edulevelgovernment', 'hub');
+        $options[HUB_EDULEVEL_ASSOCIATION] = get_string('edulevelassociation', 'hub');
+        $options[HUB_EDULEVEL_CORPORATE] = get_string('edulevelcorporate', 'hub');
+        $options[HUB_EDULEVEL_OTHER] = get_string('edulevelother', 'hub');
         $mform->addElement('select', 'educationallevel', get_string('educationallevel', 'hub'), $options);
         $mform->setDefault('educationallevel', $defaulteducationallevel);
         unset($options);

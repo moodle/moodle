@@ -85,7 +85,7 @@ class community {
         require_once($CFG->dirroot. "/lib/hublib.php");
         //$curl = new curl();
         $params['courseid'] = $course->id;
-        $params['filetype'] = BACKUP_FILE_TYPE;
+        $params['filetype'] = HUB_BACKUP_FILE_TYPE;
 
         if (!file_exists($CFG->dataroot.'/temp/communitydownload')) {
             mkdir($CFG->dataroot.'/temp/communitydownload/', 0777, true);
@@ -96,7 +96,7 @@ class community {
         $url  = new moodle_url($course->huburl.'/local/hub/webservice/download.php', $params);
         $path = $CFG->dataroot.'/temp/communitydownload/'.'backup_'.$course->fullname."_".$course->id.".zip";
         $fp = fopen($path, 'w');
-        $ch = curl_init($course->huburl.'/local/hub/webservice/download.php?filetype='.BACKUP_FILE_TYPE.'&courseid='.$course->id);
+        $ch = curl_init($course->huburl.'/local/hub/webservice/download.php?filetype='.HUB_BACKUP_FILE_TYPE.'&courseid='.$course->id);
         curl_setopt($ch, CURLOPT_FILE, $fp);
         $data = curl_exec($ch);
         curl_close($ch);

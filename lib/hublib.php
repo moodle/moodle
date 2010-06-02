@@ -29,14 +29,14 @@
 ///// IMAGE SIZES /////
 
 /**
- * SITEIMAGEHEIGHT - the maximum height size of a site logo
+ * HUB_SITEIMAGEHEIGHT - the maximum height size of a site logo
  */
-define('SITEIMAGEHEIGHT',   150);
+define('HUB_SITEIMAGEHEIGHT',   150);
 
 /**
- * SITEIMAGEWIDTH - the maximum width size of a site logo
+ * HUB_SITEIMAGEWIDTH - the maximum width size of a site logo
  */
-define('SITEIMAGEWIDTH',   150);
+define('HUB_SITEIMAGEWIDTH',   150);
 
 
 
@@ -45,13 +45,13 @@ define('SITEIMAGEWIDTH',   150);
 /**
  * Hub directory url (should be moodle.org)
  */
-define('HUBDIRECTORYURL', "http://hubdirectory.moodle.org");
+define('HUB_HUBDIRECTORYURL', "http://hubdirectory.moodle.org");
 
 
 /**
  * Moodle.org url (should be moodle.org)
  */
-define('MOODLEORGHUBURL', "http://hub.moodle.org");
+define('HUB_MOODLEORGHUBURL', "http://hub.moodle.org");
 
 
 //// SITE PRIVACY /////
@@ -59,17 +59,17 @@ define('MOODLEORGHUBURL', "http://hub.moodle.org");
 /**
  * Site privacy: private
  */
-define('SITENOTPUBLISHED', 'notdisplayed');
+define('HUB_SITENOTPUBLISHED', 'notdisplayed');
 
 /**
  * Site privacy: public
  */
-define('SITENAMEPUBLISHED', 'named');
+define('HUB_SITENAMEPUBLISHED', 'named');
 
 /**
  * Site privacy: public and global
  */
-define('SITELINKPUBLISHED', 'linked');
+define('HUB_SITELINKPUBLISHED', 'linked');
 
 
 
@@ -79,17 +79,17 @@ define('SITELINKPUBLISHED', 'linked');
 /**
  * Audience: educators
  */
-define('AUDIENCE_EDUCATORS', 'educators');
+define('HUB_AUDIENCE_EDUCATORS', 'educators');
 
 /**
  * Audience: students
  */
-define('AUDIENCE_STUDENTS', 'students');
+define('HUB_AUDIENCE_STUDENTS', 'students');
 
 /**
  * Audience: admins
  */
-define('AUDIENCE_ADMINS', 'admins');
+define('HUB_AUDIENCE_ADMINS', 'admins');
 
 
 
@@ -98,37 +98,37 @@ define('AUDIENCE_ADMINS', 'admins');
 /**
  * Educational level: primary
  */
-define('EDULEVEL_PRIMARY', 'primary');
+define('HUB_EDULEVEL_PRIMARY', 'primary');
 
 /**
  * Educational level: secondary
  */
-define('EDULEVEL_SECONDARY', 'secondary');
+define('HUB_EDULEVEL_SECONDARY', 'secondary');
 
 /**
  * Educational level: tertiary
  */
-define('EDULEVEL_TERTIARY', 'tertiary');
+define('HUB_EDULEVEL_TERTIARY', 'tertiary');
 
 /**
  * Educational level: government
  */
-define('EDULEVEL_GOVERNMENT', 'government');
+define('HUB_EDULEVEL_GOVERNMENT', 'government');
 
 /**
  * Educational level: association
  */
-define('EDULEVEL_ASSOCIATION', 'association');
+define('HUB_EDULEVEL_ASSOCIATION', 'association');
 
 /**
  * Educational level: corporate
  */
-define('EDULEVEL_CORPORATE', 'corporate');
+define('HUB_EDULEVEL_CORPORATE', 'corporate');
 
 /**
  * Educational level: other
  */
-define('EDULEVEL_OTHER', 'other');
+define('HUB_EDULEVEL_OTHER', 'other');
 
 
 
@@ -137,17 +137,17 @@ define('EDULEVEL_OTHER', 'other');
 /**
  * FILE TYPE: COURSE SCREENSHOT
  */
-define('SCREENSHOT_FILE_TYPE', 'screenshot');
+define('HUB_SCREENSHOT_FILE_TYPE', 'screenshot');
 
 /**
  * FILE TYPE: HUB SCREENSHOT
  */
-define('HUBSCREENSHOT_FILE_TYPE', 'hubscreenshot');
+define('HUB_HUBSCREENSHOT_FILE_TYPE', 'hubscreenshot');
 
 /**
  * FILE TYPE: BACKUP
  */
-define('BACKUP_FILE_TYPE', 'backup');
+define('HUB_BACKUP_FILE_TYPE', 'backup');
 
 
 
@@ -351,14 +351,14 @@ class hub {
      */
     public function get_site_privacy_string($privacy) {
         switch ($privacy) {
-            case SITENOTPUBLISHED:
-                $privacystring = get_string('publicdirectory0');
+            case HUB_SITENOTPUBLISHED:
+                $privacystring = get_string('siteprivacynotpublished', 'hub');
                 break;
-            case SITENAMEPUBLISHED:
-                $privacystring = get_string('publicdirectory1');
+            case HUB_SITENAMEPUBLISHED:
+                $privacystring = get_string('siteprivacypublished', 'hub');
                 break;
-            case SITELINKPUBLISHED:
-                $privacystring = get_string('publicdirectory2');
+            case HUB_SITELINKPUBLISHED:
+                $privacystring = get_string('siteprivacylinked', 'hub');
                 break;
         }
         if (empty($privacystring)) {

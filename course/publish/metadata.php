@@ -196,7 +196,7 @@ if (has_capability('moodle/course:publish', get_context_instance(CONTEXT_COURSE,
                 if ($file->is_valid_image()) {
                     $screenshotnumber = $screenshotnumber + 1;
                     $params = array();
-                    $params['filetype'] = SCREENSHOT_FILE_TYPE;
+                    $params['filetype'] = HUB_SCREENSHOT_FILE_TYPE;
                     $params['file'] = $file;
                     $params['courseid'] = $courseids[0];
                     $params['filename'] = $file->get_filename();
@@ -211,7 +211,7 @@ if (has_capability('moodle/course:publish', get_context_instance(CONTEXT_COURSE,
         // send backup
         if ($share) {
             $params = array();
-            $params['filetype'] = BACKUP_FILE_TYPE;
+            $params['filetype'] = HUB_BACKUP_FILE_TYPE;
             $params['courseid'] = $courseids[0];
             $params['file'] = $backupfile;
             $params['token'] = $registeredhub->token;

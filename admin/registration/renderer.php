@@ -70,7 +70,7 @@ class core_register_renderer extends plugin_renderer_base {
 
         //Moodle.org button cell
         $registeronmoodleorgurl = new moodle_url("/admin/registration/register.php",
-                array('sesskey' => sesskey(), 'huburl' => MOODLEORGHUBURL
+                array('sesskey' => sesskey(), 'huburl' => HUB_MOODLEORGHUBURL
                         , 'hubname' => 'Moodle.org'));
         $registeronmoodleorgbutton = new single_button($registeronmoodleorgurl, get_string('registeronmoodleorg', 'hub'));
         $registeronmoodleorgbutton->class = 'centeredbutton';

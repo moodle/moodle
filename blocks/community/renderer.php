@@ -174,7 +174,7 @@ class block_community_renderer extends plugin_renderer_base {
                     for ($i = 1; $i <= $course->screenshotsids; $i = $i + 1) {
                         if ($i == 1) {
                             $params = array('courseid' => $course->id,
-                                'filetype' => SCREENSHOT_FILE_TYPE, 'screenshotnumber' => $i);
+                                'filetype' => HUB_SCREENSHOT_FILE_TYPE, 'screenshotnumber' => $i);
                             $imgurl = new moodle_url($huburl . "/local/hub/webservice/download.php", $params);
                         } else {
                             //empty image
@@ -182,7 +182,7 @@ class block_community_renderer extends plugin_renderer_base {
                         }
                         $ascreenshothtml = html_writer::empty_tag('img', array('src' => $imgurl, 'alt' => $course->fullname));
                         $originalparams = array('courseid' => $course->id,
-                            'filetype' => SCREENSHOT_FILE_TYPE, 'screenshotnumber' => $i, 'imagewidth' => 'original');
+                            'filetype' => HUB_SCREENSHOT_FILE_TYPE, 'screenshotnumber' => $i, 'imagewidth' => 'original');
                         $originalimgurl = new moodle_url($huburl . "/local/hub/webservice/download.php", $originalparams);
                         $screenshothtml .= html_writer::tag('a', $ascreenshothtml,
                                         array('rel' => 'lightbox[' . $course->shortname . ']', 'title' => $course->fullname,

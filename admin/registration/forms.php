@@ -48,14 +48,14 @@ class hub_selector_form extends moodleform {
         //retrieve the hub list on the hub directory by web service
         $function = 'hubdirectory_get_hubs';
         $params = array();
-        $serverurl = HUBDIRECTORYURL."/local/hubdirectory/webservice/webservices.php";
+        $serverurl = HUB_HUBDIRECTORYURL."/local/hubdirectory/webservice/webservices.php";
         require_once($CFG->dirroot."/webservice/xmlrpc/lib.php");
         $xmlrpcclient = new webservice_xmlrpc_client();
         $hubs = $xmlrpcclient->call($serverurl, 'publichubdirectory', $function, $params);
 
         //remove moodle.org from the hub list
         foreach ($hubs as $key => $hub) {
-            if ($hub['url'] == MOODLEORGHUBURL) {
+            if ($hub['url'] == HUB_MOODLEORGHUBURL) {
                 unset($hubs[$key]);
             }
         }
@@ -179,9 +179,9 @@ class site_registration_form extends moodleform {
 
         $options = array();
         $hub = new hub();
-        $options[SITENOTPUBLISHED] = $hub->get_site_privacy_string(SITENOTPUBLISHED);
-        $options[SITENAMEPUBLISHED] = $hub->get_site_privacy_string(SITENAMEPUBLISHED);
-        $options[SITELINKPUBLISHED] = $hub->get_site_privacy_string(SITELINKPUBLISHED);
+        $options[HUB_SITENOTPUBLISHED] = $hub->get_site_privacy_string(HUB_SITENOTPUBLISHED);
+        $options[HUB_SITENAMEPUBLISHED] = $hub->get_site_privacy_string(HUB_SITENAMEPUBLISHED);
+        $options[HUB_SITELINKPUBLISHED] = $hub->get_site_privacy_string(HUB_SITELINKPUBLISHED);
         $mform->addElement('select', 'privacy', get_string('siteprivacy', 'hub'), $options);
         $mform->setDefault('privacy', $privacy);
         $mform->addHelpButton('privacy', 'privacy', 'hub');
@@ -268,7 +268,7 @@ class site_registration_form extends moodleform {
         $participantnumberaverage= average_number_of_participants();
         $modulenumberaverage= average_number_of_courses_modules();
 
-        if (MOODLEORGHUBURL != $huburl) {
+        if (HUB_MOODLEORGHUBURL != $huburl) {
             $mform->addElement('checkbox', 'courses',  get_string('sendfollowinginfo', 'hub'),
                     " ".get_string('coursesnumber', 'hub', $coursecount));
             $mform->setDefault('courses', true);
@@ -361,10 +361,10 @@ class site_registration_form extends moodleform {
         $imageurl = $this->_form->_submitValues['imageurl'];
         if (!empty($imageurl)) {
             list($imagewidth, $imageheight, $imagetype, $imageattr)  = getimagesize($imageurl); //getimagesize is a GD function
-            if ($imagewidth > SITEIMAGEWIDTH or $imageheight > SITEIMAGEHEIGHT) {
+            if ($imagewidth > HUB_SITEIMAGEWIDTH or $imageheight > HUB_SITEIMAGEHEIGHT) {
                 $sizestrings = new stdClass();
-                $sizestrings->width = SITEIMAGEWIDTH;
-                $sizestrings->height = SITEIMAGEHEIGHT;
+                $sizestrings->width = HUB_SITEIMAGEWIDTH;
+                $sizestrings->height = HUB_SITEIMAGEHEIGHT;
                 $errors['imageurl'] = get_string('errorbadimageheightwidth', 'hub', $sizestrings);
             }
         }
