@@ -184,6 +184,7 @@ M.core_dock.init = function(Y) {
     this.nodes.body.on('click', this.handleEvent, this,  {cssselector:'body', delay:0});
     this.on('dock:itemschanged', this.resizeBlockSpace, this);
     this.on('dock:itemschanged', this.checkDockVisibility, this);
+    this.on('dock:itemschanged', this.resetFirstItem, this);
     // Inform everyone the dock has been initialised
     this.fire('dock:initialised');
     return true;
@@ -500,6 +501,15 @@ M.core_dock.remove = function(uid) {
     this.fire('dock:itemremoved', uid);
     this.fire('dock:itemschanged', uid);
     return true;
+}
+/**
+ * Ensures the the first item in the dock has the correct class
+ */
+M.core_dock.resetFirstItem = function() {
+    this.nodes.dock.all('.'+this.css.dockeditem+'.firstdockitem').removeClass('firstdockeditem');
+    if (this.nodes.dock.one('.'+this.css.dockeditem)) {
+        this.nodes.dock.one('.'+this.css.dockeditem).addClass('firstdockitem');
+    }
 }
 /**
  * Removes all nodes and puts them back into conventional page sturcture
