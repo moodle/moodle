@@ -34,28 +34,32 @@ M.core_rating={
             on : {
                 complete : function(tid, outcome, args) {
                     try {
-                        var responseobj = this.Y.JSON.parse(outcome.responseText);
-                        var itemid = responseobj.itemid;
+                        if (!outcome) {
+                            alert('IO FATAL');
+                            return false;
+                        }
 
-                        //if the user has access to the aggregate
-                        if (responseobj.aggregate) {
-                            var node = this.Y.one('#ratingaggregate'+itemid);
-                            node.set('innerHTML',responseobj.aggregate);
+                        var data = this.Y.JSON.parse(outcome.responseText);
+                        if (data.success){
+                            //if the user has access to the aggregate then update it
+                            if (data.itemid && data.aggregate && data.count) {
+                                var itemid = data.itemid;
+                                
+                                var node = this.Y.one('#ratingaggregate'+itemid);
+                                node.set('innerHTML',data.aggregate);
 
-                            var node = this.Y.one('#ratingcount'+itemid);
-                            node.set('innerHTML',"("+responseobj.count+")");
+                                var node = this.Y.one('#ratingcount'+itemid);
+                                node.set('innerHTML',"("+data.count+")");
+                            }
+                            return true;
+                        }
+                        else if (data.error){
+                            alert(data.error);
                         }
                     } catch(e) {
-                        //should put up an overlay or similar rather than an alert
                         alert(e.message+" "+outcome.responseText);
                     }
-                    if(outcome.success){
-                        //do nothing
-                    }
-                    else if (outcome.error){
-                        //todo put up an overlay or similar rather than an alert
-                        alert(outcome.error);
-                    }
+                    return false;
                 }
             },
             context : this,
