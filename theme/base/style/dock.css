@@ -10,9 +10,9 @@ body.has_dock {margin-left:30px;}
 #dock {width:30px;position:fixed;top:0px;left:0px;height:100%;background-color:#FFF;border-right:1px solid #000;z-index:11000;}
 #dock.nothingdocked {visibility: hidden;display:none;}
 #dock .dockeditem .firstdockitem {margin-top:1em;}
-#dock .dockeditem .dockedtitle {border-bottom:1px solid #000;border-top:1px solid #000;cursor:pointer;}
-#dock .dockeditem .dockedtitle h2 {font-size:0.8em;line-height:100%;text-align:center;}
-#dock .dockeditem .dockedtitle .filterrotate {margin-left:8px;}
+#dock .dockedtitle {border-bottom:1px solid #000;border-top:1px solid #000;cursor:pointer;}
+#dock .dockedtitle h2 {font-size:0.8em;line-height:100%;text-align:center;}
+#dock .dockedtitle .filterrotate {margin-left:8px;}
 #dock .controls {position:absolute;bottom:1em;text-align:center;width:100%;}
 #dock .controls img {cursor:pointer;}
 
