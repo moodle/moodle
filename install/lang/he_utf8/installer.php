@@ -146,7 +146,7 @@ $string['error'] = 'טעות';
 $string['fail'] = 'כישלון';
 $string['fileuploads'] = 'העלאת קבצים';
 $string['fileuploadserror'] = 'חייב לאפשר זאת';
-$string['fileuploadshelp'] = '<p> העלאת קובץ נראה כמנוטרלת בשרת שלך.</p>
+$string['fileuploadshelp'] = '<p> העלאת קובץ נמנעה בשרת שלך.</p>
 <p> Moodle יכול עדיין להיות מותקן, אך בלי יכולת זו לא תוכל להעלות קבצי קורסים או תמונות פרופילי משתמש חדשות.</p>
 <p> בכדי לאפשר את תכונה זו של העלאת קבצים (בניהול המערכת שלך), תצטרך  לערוך את קובץ php.ini ולשנות את המשתנה <b> file_uploads</b> ל-1 </p>';
 $string['gdversion'] = 'גרסת GD';
@@ -158,7 +158,7 @@ GD היא ספרייה אשר נדרשת ע\"י PHP לאפשר ל-Moodle להפ�
 <p> תחת Windows תוכל בפשטות לערוך את קובץ ה-php.ini ולהסיר את הערה תחת הפרמטר של php_gd2.dll. </p>';
 $string['globalsquotes'] = 'טיפול לא בטוח של משתנים גלובלים';
 $string['globalsquoteserror'] = 'תקן את הגדרות ה-PHP שלך: נטרל את register_globals  ו/או אפשר את magic_quotes_gpc';
-$string['globalsquoteshelp'] = '<p>צירוף נטרול של Magic Quotes GPC ואיפשור Register Globals בו זמנית לא מומלץ.</p>
+$string['globalsquoteshelp'] = '<p>צירוף מניעה של Magic Quotes GPC ואיפשור Register Globals בו זמנית לא מומלץ.</p>
 <p>
 ההגדרה המומלצת היא
 <b>
