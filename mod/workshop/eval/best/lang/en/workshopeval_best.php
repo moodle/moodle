@@ -24,12 +24,12 @@
  */
 
 $string['comparison'] = 'Comparison of assessments';
-$string['comparison_help'] = 'This is a factor that influences the grades for assessments calculated during the grading evaluation. If it is set to strict, then the assessment must be very similar to the best one to get a high grade. If it is set to lax, then the calculation is more benevolent to the differences in the assessments. Experiment with using various levels to get the figures you like most.';
+$string['comparison_help'] = 'This setting specifies how strict the comparison of assessments should be. The stricter the comparison, the more similar the assessments need to be in order for a high grade to be obtained.';
 $string['comparisonlevel1'] = 'very strict';
 $string['comparisonlevel3'] = 'strict';
 $string['comparisonlevel5'] = 'fair';
 $string['comparisonlevel7'] = 'lax';
 $string['comparisonlevel9'] = 'very lax';
-$string['configcomparison'] = 'Default value of the factor that influnce the grading evaluation.';
+$string['configcomparison'] = 'Default value of the factor that influence the grading evaluation.';
 $string['pluginname'] = 'Comparison with the best assessment';
 $string['settings'] = 'Grading evaluation settings';
