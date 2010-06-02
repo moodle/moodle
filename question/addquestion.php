@@ -80,18 +80,19 @@ if (!empty($appendqnumstring)) {
 $PAGE->set_url('/question/addquestion.php', $hiddenparams);
 
 $chooseqtype = get_string('chooseqtypetoadd', 'question');
+$PAGE->set_heading($COURSE->fullname);
 if ($cm !== null) {
     if (stripos($returnurl, "$CFG->wwwroot/mod/{$cm->modname}/view.php")!== 0) {
         //don't need this link if returnurl returns to view.php
         $PAGE->navbar->add(get_string('editinga', 'moodle', get_string('modulename', $cm->modname)),$returnurl);
     }
     $PAGE->navbar->add($chooseqtype);
-    $PAGE->set_title($chooseqtype);
+    $PAGE->set_title($chooseqtype);    
     echo $OUTPUT->header();
 } else {
     $PAGE->navbar->add(get_string('questionbank', 'question'),$returnurl);
     $PAGE->navbar->add($chooseqtype);
-    $PAGE->set_title($chooseqtype);
+    $PAGE->set_title($chooseqtype);    
     echo $OUTPUT->header();
 }
 

@@ -287,6 +287,7 @@ if ($mform->is_cancelled()){
 
     $streditingquestion = $QTYPES[$question->qtype]->get_heading();
     $PAGE->set_title($streditingquestion);
+    $PAGE->set_heading($COURSE->fullname);
     if ($cm !== null) {
         $strmodule = get_string('modulename', $cm->modname);
         $streditingmodule = get_string('editinga', 'moodle', $strmodule);

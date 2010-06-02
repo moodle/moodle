@@ -173,6 +173,7 @@ $strmovingquestions = get_string('movingquestions', 'question');
 $PAGE->set_url($thispageurl->out());
 $PAGE->navbar->add($strmovingquestions);
 $PAGE->set_title($strmovingquestions);
+$PAGE->set_heading($COURSE->fullname);
 echo $OUTPUT->header();
 
 //parameter for get_string

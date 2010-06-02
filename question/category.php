@@ -91,7 +91,7 @@
     }
 
     $PAGE->set_title($streditingcategories);
-    $PAGE->set_heading($streditingcategories);
+    $PAGE->set_heading($COURSE->fullname);
     echo $OUTPUT->header();
 
     // display UI

@@ -209,9 +209,9 @@
     $questionlist = array($id);
     get_html_head_contributions($questionlist, $questions, $states[$historylength]);
     $PAGE->set_title($strpreview);
+    $PAGE->set_heading($COURSE->fullname);
     echo $OUTPUT->header();
-    echo $OUTPUT->heading($strpreview);
-
+    
     if (!empty($quizid)) {
         echo '<p class="quemodname">'.get_string('modulename', 'quiz') . ': ';
         p(format_string($quiz->name));

@@ -67,8 +67,8 @@
 
     $context = $contexts->lowest();
     $streditingquestions = get_string('editquestions', "quiz");
-    $PAGE->set_title($streditingquestions);
-    $PAGE->set_heading($streditingquestions);
+    $PAGE->set_title($streditingquestions);    
+    $PAGE->set_heading($COURSE->fullname);
     echo $OUTPUT->header();
 
     echo '<div class="questionbankwindow boxwidthwide boxaligncenter">';

@@ -35,8 +35,8 @@
 
     /// Header
     $PAGE->set_url($thispageurl->out());
-    $PAGE->set_title($strexportquestions);
-    $PAGE->set_heading($strexportquestions);
+    $PAGE->set_title($strexportquestions);   
+    $PAGE->set_heading($COURSE->fullname);
     echo $OUTPUT->header();
 
     $exportfilename = default_export_filename($COURSE, $category);

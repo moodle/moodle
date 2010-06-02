@@ -58,7 +58,7 @@
     // PAGE HEADER
     //==========
     $PAGE->set_title($txt->importquestions);
-    $PAGE->set_heading($txt->importquestions);
+    $PAGE->set_heading($COURSE->fullname);
     echo $OUTPUT->header();
 
     // file upload form sumitted
