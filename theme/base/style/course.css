@@ -90,8 +90,10 @@
 /* Course and category combo list on front page */
 .course_category_tree .controls {visibility: hidden;}
 .course_category_tree .controls div {display:inline;cursor:pointer;}
-.course_category_tree .category.with_children .category_label {background-image:url([[pix:moodle|t/expanded]]);background-repeat: no-repeat;}
+.course_category_tree .category.with_children>.category_label {background-image:url([[pix:moodle|t/expanded]]);background-repeat: no-repeat;}
 .course_category_tree .category_label {padding-left:13px;}
+.course_category_tree .category .category {margin:5px;}
+.course_category_tree .category .courses {padding-left:16px;}
 .course_category_tree .category .courses .course_link {display:block;background-image:url([[pix:moodle|i/course]]);background-repeat: no-repeat;padding-left:18px;}
 .course_category_tree .category .course {position:relative;}
 .course_category_tree .category .course_info {position:absolute;right:0;top:0;}

@@ -1884,7 +1884,9 @@ function get_course_category_tree($id = 0, $depth = 0) {
         $categoryids[$category->id] = $category;
         if (empty($CFG->maxcategorydepth) || $depth <= $CFG->maxcategorydepth) {
             list($category->categories, $subcategories) = get_course_category_tree($category->id, $depth+1);
-            $categoryids = array_merge($categoryids, $subcategories);
+            foreach ($subcategories as $subid=>$subcat) {
+                $categoryids[$subid] = $subcat;
+            }
             $category->courses = array();
         }
     }
