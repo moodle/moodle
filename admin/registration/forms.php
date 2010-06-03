@@ -187,7 +187,7 @@ class site_registration_form extends moodleform {
         $mform->addHelpButton('privacy', 'privacy', 'hub');
         unset($options);
 
-        $mform->addElement('textarea', 'description', get_string('description'), array('rows'=>10));
+        $mform->addElement('textarea', 'description', get_string('description'), array('rows'=>8, 'cols'=>50));
         $mform->addRule('description', $strrequired, 'required', null, 'client');
         $mform->setDefault('description', $sitedescription);
         $mform->setType('description', PARAM_TEXT);
