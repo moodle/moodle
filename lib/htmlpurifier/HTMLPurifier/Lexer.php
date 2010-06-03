@@ -252,8 +252,10 @@ class HTMLPurifier_Lexer
     public function normalize($html, $config, $context) {
 
         // normalize newlines to \n
-        $html = str_replace("\r\n", "\n", $html);
-        $html = str_replace("\r", "\n", $html);
+        if ($config->get('Output.Newline')!=="\n") {
+            $html = str_replace("\r\n", "\n", $html);
+            $html = str_replace("\r", "\n", $html);
+        }
 
         if ($config->get('HTML.Trusted')) {
             // escape convoluted CDATA
