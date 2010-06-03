@@ -136,6 +136,16 @@ class webservice {
         global $DB;
         $DB->delete_records('external_tokens', array('id'=>$tokenid));
     }
+
+    /**
+     * Get a user token by token
+     * @param string $token
+     * @throws moodle_exception if there is multiple result
+     */
+    public function get_user_ws_token($token) {
+        global $DB;
+        return $DB->get_record('external_tokens', array('token'=>$token), '*', MUST_EXIST);
+    }
 }
 
 
