@@ -1288,7 +1288,7 @@ function workshop_get_agree_logs($course, $timestart) {
                                 {$CFG->prefix}user u
                             WHERE l.time > $timestart AND l.time < $timethen
                                 AND l.course = $course->id AND l.module = 'workshop' AND l.action = 'agree'
-                                AND a.id = l.info AND s.id = a.submissionid AND a.userid = $USER->id
+                                AND a.id = ".sql_cast_char2int('l.info') ." AND s.id = a.submissionid AND a.userid = $USER->id
                                 AND u.id = s.userid AND e.id = a.workshopid");
 }
 
@@ -1355,7 +1355,7 @@ function workshop_get_comment_logs($course, $timestart) {
                                 {$CFG->prefix}user u
                             WHERE l.time > $timestart AND l.time < $timethen
                                 AND l.course = $course->id AND l.module = 'workshop' AND l.action = 'comment'
-                                AND c.id = l.info AND c.userid != $USER->id AND a.id = c.assessmentid
+                                AND c.id = ".sql_cast_char2int('l.info') ." AND c.userid != $USER->id AND a.id = c.assessmentid
                                 AND s.id = a.submissionid AND (s.userid = $USER->id OR a.userid = $USER->id)
                                 AND u.id = a.userid AND e.id = a.workshopid");
 }
