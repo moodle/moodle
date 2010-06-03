@@ -1496,6 +1496,7 @@ function purify_html($text) {
     if ($purifier === false) {
         require_once $CFG->libdir.'/htmlpurifier/HTMLPurifier.safe-includes.php';
         $config = HTMLPurifier_Config::createDefault();
+        $config->set('Output.Newline', "\n");
         $config->set('Core.ConvertDocumentToFragment', true);
         $config->set('Core.Encoding', 'UTF-8');
         $config->set('HTML.Doctype', 'XHTML 1.0 Transitional');
