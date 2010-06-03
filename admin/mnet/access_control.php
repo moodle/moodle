@@ -179,7 +179,7 @@ if (!$acl) {
         }
         $deletecolumn = "<a href=\"?id={$aclrecord->id}&amp;action=delete&amp;sesskey=".sesskey()."\">"
                 . get_string('delete') . "</a>";
-        $table->data[] = array ($aclrecord->username, $aclrecord->mnet_host_id, $accesscolumn, $deletecolumn);
+        $table->data[] = array (s($aclrecord->username), $aclrecord->mnet_host_id, $accesscolumn, $deletecolumn);
     }
 }
 
