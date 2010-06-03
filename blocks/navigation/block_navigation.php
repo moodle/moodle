@@ -172,10 +172,6 @@ class block_navigation extends block_base {
         $renderer = $this->page->get_renderer('block_navigation');
         $this->content->text = $renderer->navigation_tree($navigation, $expansionlimit);
 
-        $reloadlink = new moodle_url($this->page->url, array('regenerate'=>'navigation'));
-
-        $this->content->footer .= $OUTPUT->action_icon($reloadlink, new pix_icon('t/reload', get_string('reload')), null, array('class'=>'customcommand reloadnavigation'));
-
         // Set content generated to true so that we know it has been done
         $this->contentgenerated = true;
 

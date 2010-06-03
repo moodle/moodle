@@ -102,11 +102,6 @@ M.block_navigation.classes.tree = function(Y, id, properties) {
     if (node === null) {
         return;
     }
-
-    var reloadicon = node.one('.footer .reloadnavigation');
-    if (reloadicon) {
-        reloadicon.remove();
-    }
     
     // Attach event to toggle expansion
     node.all('.tree_item.branch').on('click', this.toggleexpansion , this);
@@ -125,10 +120,6 @@ M.block_navigation.classes.tree = function(Y, id, properties) {
     // Call the generic blocks init method to add all the generic stuff
     if (this.candock) {
         this.init(Y, node);
-    }
-
-    if (reloadicon) {
-        node.one('.header .block_action').insert(reloadicon, 0);
     }
 }
 

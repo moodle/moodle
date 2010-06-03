@@ -132,9 +132,6 @@ class block_settings extends block_base {
                 $this->content->footer = '';
             }
 
-            $reloadlink = new moodle_url($this->page->url, array('regenerate'=>'navigation'));
-            $this->content->footer .= $OUTPUT->action_icon($reloadlink, new pix_icon('t/reload', get_string('reload')), null, array('class'=>'customcommand reloadnavigation'));
-
             if (!empty($this->config->enabledock) && $this->config->enabledock == 'yes') {
                 user_preference_allow_ajax_update('nav_in_tab_panel_settingsnav'.block_settings::$navcount, PARAM_INT);
             }
