@@ -2415,7 +2415,7 @@ NONJS;
         $title = $item->get_title();
         if ($item->icon instanceof renderable && !$item->hideicon) {
             $icon = $this->render($item->icon);
-            $content = $icon.'&nbsp;'.$content; // use CSS for spacing of icons
+            $content = $icon.$content; // use CSS for spacing of icons
         }
         if ($item->helpbutton !== null) {
             $content = trim($item->helpbutton).html_writer::tag('span', $content, array('class'=>'clearhelpbutton'));
