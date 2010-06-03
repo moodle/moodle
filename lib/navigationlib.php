@@ -904,7 +904,7 @@ class global_navigation extends navigation_node {
         $this->rootnodes = array();
         if (get_home_page() == HOMEPAGE_SITE) {
             // The home element should be my moodle because the root element is the site
-            if (isloggedin()) {  // Makes no sense if you aren't logged in
+            if (isloggedin() && !isguestuser()) {  // Makes no sense if you aren't logged in
                 $this->rootnodes['home']      = $this->add(get_string('myhome'), new moodle_url('/my/'), self::TYPE_SETTING, null, 'home');
             }
         } else {
@@ -1434,7 +1434,7 @@ class global_navigation extends navigation_node {
         if ($user === null) {
             // We can't require login here but if the user isn't logged in we don't
             // want to show anything
-            if (!isloggedin()) {
+            if (!isloggedin() || isguestuser()) {
                 return false;
             }
             $user = $USER;
