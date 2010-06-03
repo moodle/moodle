@@ -103,8 +103,8 @@ $string['licence_help'] = 'Select the licence you want to distribute your course
 $string['logourl'] = 'Logo URL';
 $string['modulenumberaverage'] = 'Average number of course modules ({$a})';
 $string['moodleorg'] = 'Moodle.org';
-$string['moodleorgregistrationdetail'] = 'The main community hub is Moodle.org.  By registering your site here your information will contribute to the statistics of the worldwide Moodle community.  You also have the option of joining a low-volume mailing list to receive important early notifications of security fixes and new releases of Moodle.';
-$string['moodleorgregistrationdetail2'] = 'This option allows you to register your Moodle site with Moodle.org.  Registration is free.
+$string['moodleorgregistrationdetail'] = 'The main community hub is called MOOCH, at hub.moodle.org.  By registering your site with MOOCH your information will contribute to the statistics of the worldwide Moodle community.  You also have the option of joining a low-volume mailing list to receive important early notifications of security fixes and new releases of Moodle.';
+$string['moodleorgregistrationdetail2'] = 'This option allows you to register your Moodle site with MOOCH, at hub.moodle.org.  Registration is free.
 The main benefit of registering is that you will be added to a low-volume mailing list for important notifications such as security alerts and new releases of Moodle.
 By default, your information will be kept private, and will never be sold or passed on to anyone else.  The only reason for collecting this information is for support purposes, and to help build up a statistical picture of the Moodle community as a whole.
 If you choose, you can allow your site name, country and URL to be added to the public list of Moodle Sites.
@@ -137,8 +137,8 @@ $string['publisheremail_help'] = 'The publisher email address is used by hub adm
 $string['publishername'] = 'Publisher';
 $string['publishername_help'] = 'The publisher is the unique person/organisation publishing the course. Most of the time it should be you, except if you do it on the behalf of someone else.';
 $string['publishon'] = 'Publish on';
-$string['publishonmoodleorg'] = 'Publish on Moodle.org';
-$string['publishonspecifichub'] = 'Publish on a Hub';
+$string['publishonmoodleorg'] = 'Publish on MOOCH';
+$string['publishonspecifichub'] = 'Publish on another Hub';
 $string['questionsnumber'] = 'Number of questions ({$a})';
 $string['registeredcourses'] = 'Registered courses';
 $string['registeredsites'] = 'Registered sites';
@@ -167,7 +167,7 @@ $string['share'] = 'Share this course for people to download';
 $string['shared'] = 'Shared';
 $string['shareon'] = 'Upload this course to {$a}';
 $string['shareonhub'] = 'Upload this course to a hub';
-$string['shareonmoodleorg'] = 'Upload this course to Moodle.org';
+$string['shareonmoodleorg'] = 'Upload this course to MOOCH';
 $string['sharepublication_help'] = 'Uploading this course to a community hub server will enable people to download it and install it on their own Moodle sites.';
 $string['siteadmin'] = 'Administrator';
 $string['sitecreated'] = 'Site created';
