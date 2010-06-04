@@ -43,7 +43,7 @@ if ($entries) {
     foreach ($entries as $key => $entry) {
         // Need to get the course where the entry is,
         // in order to check for visibility/approve permissions there
-        $entrycourse = $DB->get_record('course', array('id', $entry->courseid), '*', MUST_EXIST);
+        $entrycourse = $DB->get_record('course', array('id' => $entry->courseid), '*', MUST_EXIST);
         $modinfo = get_fast_modinfo($entrycourse);
         // make sure the entry is visible
         if (empty($modinfo->cms[$entry->cmid]->uservisible)) {

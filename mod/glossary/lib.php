@@ -787,7 +787,7 @@ function glossary_get_entries_search($concept, $courseid) {
                                         e.glossaryid = g.id  AND
                                         ( (e.casesensitive != 0 AND LOWER(concept) = :conceptlower) OR
                                           (e.casesensitive = 0 and concept = :concept)) AND
-                                        (g.course = courseid2 OR g.globalglossary = 1) AND
+                                        (g.course = :courseid2 OR g.globalglossary = 1) AND
                                          e.usedynalink != 0 AND
                                          g.usedynalink != 0", $params);
 }
