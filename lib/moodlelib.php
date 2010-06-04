@@ -4842,7 +4842,7 @@ function setnew_password_and_mail($user) {
 
     $newpassword = generate_password();
 
-    $DB->set_field('user', 'password', md5($newpassword), array('id'=>$user->id));
+    $DB->set_field('user', 'password', hash_internal_user_password($newpassword), array('id'=>$user->id));
 
     $a = new object();
     $a->firstname   = fullname($user, true);
