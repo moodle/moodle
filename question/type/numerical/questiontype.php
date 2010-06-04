@@ -424,7 +424,9 @@ class question_numerical_qtype extends question_shortanswer_qtype {
         // before i.e. at left or after at rigth of the unit variants.
         $nameunit   = "name=\"".$question->name_prefix."unit\"";
         $nameanswer   = "name=\"".$question->name_prefix."answer\"";
-
+        if (isset($state->responses['']) && $state->responses[''] != ''){
+              $this->split_old_answer($state->responses[''], $question->options->units, $state->responses['answer'] ,$state->responses['unit'] );
+        }
         if (isset($state->responses['answer']) && $state->responses['answer']!='') {
             $valueanswer = ' value="'.s($state->responses['answer']).'" ';
         } else {
