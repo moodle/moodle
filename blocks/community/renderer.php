@@ -171,7 +171,9 @@ class block_community_renderer extends plugin_renderer_base {
                             'alt' => $course->fullname
                         );
                     }
-                    $screenshothtml = $this->output->render(new image_gallery($images, $course->shortname));
+                    $imagegallery = new image_gallery($images, $course->shortname);
+                    $imagegallery->displayfirstimageonly = true;
+                    $screenshothtml = $this->output->render($imagegallery);
                 }
                 $table->data[] = array($coursenamehtml, $deschtml, $screenshothtml, $language, $addbuttonhtml);
             }

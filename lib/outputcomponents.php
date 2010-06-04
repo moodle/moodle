@@ -2412,6 +2412,11 @@ class image_gallery implements renderable {
     public $grouping = null;
 
     /**
+     * If set to true only the first image is visible.
+     */
+    public $displayfirstimageonly = false;
+
+    /**
      * Constructs an image gallery component
      * @param array $images
      * @param string $grouping

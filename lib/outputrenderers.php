@@ -2611,7 +2611,11 @@ NONJS;
         if (count($imagegallery->images) == 0) {
             return '';
         }
-        $content = html_writer::start_tag('div', array('class'=>'image_gallery'));
+        $classes = array('image_gallery');
+        if ($imagegallery->displayfirstimageonly) {
+            $classes[] = 'oneimageonly';
+        }
+        $content = html_writer::start_tag('div', array('class'=>join(' ', $classes)));
         foreach ($imagegallery->images as $image) {
             $content .= html_writer::tag('a', html_writer::empty_tag('img', $image->thumb), $image->link);
         }

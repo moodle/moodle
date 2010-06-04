@@ -588,3 +588,6 @@ body.tag .managelink {padding: 5px;}
 .smartselect.compactmenu .smartselect_menu {z-index: 1000;overflow:hidden;}
 .smartselect.compactmenu .smartselect_submenu .smartselect_submenu {z-index: 1020;}
 .smartselect.compactmenu .smartselect_submenuitem:hover > .smartselect_menuitem_label {font-weight:bold;}
+
+.image_gallery.oneimageonly a.imagelink {display:none;}
+.image_gallery.oneimageonly a#imagelink1 {display:inline;}
