@@ -50,6 +50,13 @@
     <licenseversion>2.1+</licenseversion>
   </library>
   <library>
+      <location>gallery</location>
+      <name>Gallery Lightbox</name>
+      <license>BSD</license>
+      <version>2010.04.21-21-51</version>
+      <licenseversion></licenseversion>
+  </library>
+  <library>
     <location>geoip</location>
     <name>GeoIP</name>
     <license>LGPL</license>

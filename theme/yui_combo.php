@@ -58,7 +58,7 @@ foreach ($parts as $part) {
         continue;
     }
     $version = $bits[0];
-    if ($version != $CFG->yui3version and $version != $CFG->yui2version) {
+    if ($version != $CFG->yui3version and $version != $CFG->yui2version and $version != 'gallery') {
         $content .= "\n// Wrong yui version $part!\n";
         continue;
     }
@@ -70,8 +70,13 @@ foreach ($parts as $part) {
     $filecontent = file_get_contents($contentfile);
 
     if ($mimetype === 'text/css') {
-        // search for all images in yui2 CSS and serve them through the yui_image.php script
-        $filecontent = preg_replace('/([a-z_-]+)\.(png|gif)/', 'yui_image.php?file='.$version.'/$1.$2', $filecontent);
+        if ($version == 'gallery') {
+            // search for all images in gallery module CSS and serve them through the yui_image.php script
+            $filecontent = preg_replace('/([a-z_-]+)\.(png|gif)/', 'yui_image.php?file='.$version.'/'.$bits[1].'/'.$bits[2].'/$1.$2', $filecontent);
+        } else {
+            // search for all images in yui2 CSS and serve them through the yui_image.php script
+            $filecontent = preg_replace('/([a-z_-]+)\.(png|gif)/', 'yui_image.php?file='.$version.'/$1.$2', $filecontent);
+        }
     }
 
     $content .= $filecontent;

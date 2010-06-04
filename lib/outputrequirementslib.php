@@ -150,6 +150,26 @@ class page_requirements_manager {
         $this->M_yui_loader->filter       = ($this->yui3loader->filter == YUI_DEBUG) ? 'debug' : '';
         $this->M_yui_loader->insertBefore = 'firstthemesheet';
         $this->M_yui_loader->modules      = array();
+        if (empty($CFG->useexternalyui) || true) {
+            $this->M_yui_loader->groups = array(
+                'local' => array(
+                    'name' => 'gallery',
+                    'base' => $CFG->wwwroot.'/lib/yui/gallery/',
+                    'comboBase' => $this->yui3loader->comboBase,
+                    'combine' => $this->yui3loader->combine,
+                    'filter' => $this->M_yui_loader->filter,
+                    'ext' => false,
+                    'root' => 'gallery/',
+                    'patterns' => array(
+                        'gallery-' => array(
+                            'group' => 'gallery',
+                            'configFn' => '@GALLERYCONFIGFN@',
+                        ),
+                        'root' => 'gallery'
+                    ),
+                )
+            );
+        }
         $this->add_yui2_modules(); // adds loading info for all YUI2 modules
         $this->js_module($this->find_module('core_filepicker'));
         $this->js_module($this->find_module('core_dock'));
@@ -566,6 +586,40 @@ class page_requirements_manager {
     }
 
     /**
+     * Adds a call to make use of a YUI gallery module.
+     *
+     * This function adds code to the page footer that will tell a YUI instance to
+     * use the requested gallery module(s) and then call the desired function.
+     *
+     * @todo Once YUI support loading skins from the gallery the if to use
+     * external yui libs should be fixed so that it calls;
+     *
+     * @param string|array $modules One or more gallery modules to require
+     * @param string $version
+     * @param string $function
+     * @param array $arguments
+     * @param bool $ondomready
+     */
+    public function js_gallery_module($modules, $version, $function, array $arguments = null, $ondomready = false) {
+        global $CFG;
+        if (!is_array($modules)) {
+            $modules = array($modules);
+        }
+        if (empty($CFG->useexternalyui) || true) {
+            // We need to set the M.yui.galleryversion to the correct version
+            $jscode = 'M.yui.galleryversion='.json_encode($version).';';
+        } else {
+            // Set Y's config.gallery to the version
+            $jscode = 'Y.config.gallery='.json_encode($version).';';
+        }
+        $jscode .= 'Y.use('.join(',', array_map('json_encode', $modules)).',function() {'.js_writer::function_call($function, $arguments).'})';
+        if ($ondomready) {
+            $jscode = "Y.on('domready', function() { $jscode });";
+        }
+        $this->jsinitcode[] = $jscode;
+    }
+
+    /**
      * Ensure that the specified JavaScript function is called from an inline script
      * from page footer.
      *
@@ -875,7 +929,8 @@ class page_requirements_manager {
         // note: in JavaScript just use "YUI(M.yui.loader).use('overlay', function(Y) { .... });"
         // this needs to be done before including any other script
         $js = "var M = {}; M.yui = {}; ";
-        $js .= js_writer::set_variable('M.yui.loader', $this->M_yui_loader, false) . "\n";
+        $js .= "var galleryConfigFn = function(me) {var p = me.path,v=M.yui.galleryversion,f;if(/-skin/.test(me.name)) {me.type = 'css';var p = p.replace(/\-skin/, '').replace(/\.js/, '.css').split('/'), f = p.pop().replace(/\-skin(\-(min|debug))/, '');p.splice(p.length,0,v,'assets','skins','sam', f);} else {var p = p.split('/'), f = p.pop();p.splice(p.length,0,v, f);};me.path = p.join('/');}; ";
+        $js .= str_replace('"@GALLERYCONFIGFN@"', 'galleryConfigFn', js_writer::set_variable('M.yui.loader', $this->M_yui_loader, false) . "\n");
         $js .= js_writer::set_variable('M.cfg', $this->M_cfg, false);
         $output .= html_writer::script($js);
 

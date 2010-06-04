@@ -30,11 +30,6 @@
  */
 class block_community_renderer extends plugin_renderer_base {
 
-    public function __construct(moodle_page $page, $target) {
-        parent::__construct($page, $target);
-        $this->page->requires->css('/lib/gallery/assets/skins/sam/gallery-lightbox-skin.css');
-    }
-
     /**
      * Display a list of courses
      * @param array $courses
@@ -49,22 +44,20 @@ class block_community_renderer extends plugin_renderer_base {
         $table = new html_table();
 
 
-        $table->head = array(get_string('coursename', 'block_community'),
-
+        $table->head = array(
+            get_string('coursename', 'block_community'),
             get_string('coursedesc', 'block_community'),
-             get_string('screenshots', 'block_community'),
+            get_string('screenshots', 'block_community'),
             get_string('courselang', 'block_community'),
-            get_string('operation', 'block_community'));
-
+            get_string('operation', 'block_community')
+        );
         $table->align = array('center', 'left', 'center', 'left', 'center');
         $table->size = array('20%', '45%', '5%', '5%', '5%');
 
 
 
         if (empty($courses)) {
-            if (isset($courses)) {
-                $renderedhtml .= get_string('nocourse', 'block_community');
-            }
+            $renderedhtml .= get_string('nocourse', 'block_community');
         } else {
 
             $table->width = '100%';
@@ -167,39 +160,20 @@ class block_community_renderer extends plugin_renderer_base {
                 // add a row to the table
                 $screenshothtml = '';
                 if (!empty($course->screenshotsids)) {
-
-                    //include gallery lightbox js
-                    $this->page->requires->js('/lib/gallery/gallery-lightbox-min.js');
-
+                    $images = array();
+                    $baseurl = new moodle_url($huburl.'/local/hub/webservice/download.php', array('courseid' => $course->id, 'filetype' => HUB_SCREENSHOT_FILE_TYPE));
                     for ($i = 1; $i <= $course->screenshotsids; $i = $i + 1) {
-                        if ($i == 1) {
-                            $params = array('courseid' => $course->id,
-                                'filetype' => HUB_SCREENSHOT_FILE_TYPE, 'screenshotnumber' => $i);
-                            $imgurl = new moodle_url($huburl . "/local/hub/webservice/download.php", $params);
-                        } else {
-                            //empty image
-                            $imgurl = new moodle_url($CFG->wwwroot . "/pix/spacer.gif");
-                        }
-                        $ascreenshothtml = html_writer::empty_tag('img', array('src' => $imgurl, 'alt' => $course->fullname));
-                        $originalparams = array('courseid' => $course->id,
-                            'filetype' => HUB_SCREENSHOT_FILE_TYPE, 'screenshotnumber' => $i, 'imagewidth' => 'original');
-                        $originalimgurl = new moodle_url($huburl . "/local/hub/webservice/download.php", $originalparams);
-                        $screenshothtml .= html_writer::tag('a', $ascreenshothtml,
-                                        array('rel' => 'lightbox[' . $course->shortname . ']', 'title' => $course->fullname,
-                                            'href' => $originalimgurl));
+                        $params['screenshotnumber'] = $i;
+                        $images[] = array(
+                            'thumburl' => new moodle_url($baseurl, array('screenshotnumber' => $i)),
+                            'imageurl' => new moodle_url($baseurl, array('screenshotnumber' => $i, 'imagewidth' => 'original')),
+                            'title' => $course->fullname,
+                            'alt' => $course->fullname
+                        );
                     }
-
-                    // run the JS
-                    $js = "Y.use(\"gallery-lightbox\", function (Y) { Y.Lightbox.init(); });";
-                    $this->page->requires->js_init_code($js, true);
+                    $screenshothtml = $this->output->render(new image_gallery($images, $course->shortname));
                 }
-
-                $cells = array($coursenamehtml, $deschtml, $screenshothtml, $language, $addbuttonhtml);
-
-
-                $row = new html_table_row($cells);
-
-                $table->data[] = $row;
+                $table->data[] = array($coursenamehtml, $deschtml, $screenshothtml, $language, $addbuttonhtml);
             }
             $renderedhtml .= html_writer::table($table);
         }

@@ -31,15 +31,18 @@ require('../config.php'); // this stops immediately at the beginning of lib/setu
 $path = min_optional_param('file', '', 'SAFEPATH');
 
 $parts = explode('/', $path);
-if (count($parts) != 2) {
-    yui_image_not_found();
-}
-list($version, $image) = $parts;
+$version = array_shift($parts);
 
-if ($version == $CFG->yui3version) {
-    $imagepath = "$CFG->dirroot/lib/yui/$CFG->yui3version/build/assets/skins/sam/$image";
-} else if ($version == $CFG->yui2version) {
-    $imagepath = "$CFG->dirroot/lib/yui/$CFG->yui2version/build/assets/skins/sam/$image";
+if ($version =='gallery' && count($parts)==3) {
+    list($module, $version, $image) = $parts;
+    $imagepath = "$CFG->dirroot/lib/yui/gallery/$module/$version/assets/skins/sam/$image";
+} else if (count($parts) == 1 && ($version == $CFG->yui3version || $version == $CFG->yui2version)) {
+    list($image) = $parts;
+    if ($version == $CFG->yui3version) {
+        $imagepath = "$CFG->dirroot/lib/yui/$CFG->yui3version/build/assets/skins/sam/$image";
+    } else  {
+        $imagepath = "$CFG->dirroot/lib/yui/$CFG->yui2version/build/assets/skins/sam/$image";
+    }
 } else {
     yui_image_not_found();
 }

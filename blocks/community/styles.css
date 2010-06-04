@@ -24,3 +24,6 @@
 #page-blocks-community-communitycourse .additionaldesc {font-size: 80%; color: #aa6666;}
 #page-blocks-community-communitycourse .additionaladmindesc {font-size: 80%; color: #6666ff;}
 #page-blocks-community-communitycourse .blockdescription {font-size: 80%; color: #555555;}
+
+.path-blocks-community .image_gallery a.imagelink {display:none;}
+.path-blocks-community .image_gallery a#imagelink1 {display:inline;}
