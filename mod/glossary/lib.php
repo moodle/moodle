@@ -196,9 +196,8 @@ function glossary_delete_instance($id) {
 
     // Delete any dependent records
     $entry_select = "SELECT id FROM {glossary_entries} WHERE glossaryid = ?";
-    $DB->delete_records_select('comments', "contextid={$context->id} AND commentarea='glossary_entry' AND itemid IN ($entry_select)", array($id));
+    $DB->delete_records_select('comments', "contextid=? AND commentarea=? AND itemid IN ($entry_select)", array($id, $context->id, 'glossary_entry'));
     $DB->delete_records_select('glossary_alias',    "entryid IN ($entry_select)", array($id));
-    $DB->delete_records_select('glossary_ratings',  "entryid IN ($entry_select)", array($id));
 
     $category_select = "SELECT id FROM {glossary_categories} WHERE glossaryid = ?";
     $DB->delete_records_select('glossary_entries_categories', "categoryid IN ($category_select)", array($id));
@@ -2127,6 +2126,7 @@ function glossary_count_unrated_entries($glossaryid, $userid) {
                                           FROM {glossary_entries}
                                          WHERE glossaryid = ? AND userid <> ?", array($glossaryid, $userid))) {
 
+        // XXX: glossary_ratings table has been removed.
         if ($rated = $DB->get_record_sql("SELECT count(*) as num
                                             FROM {glossary_entries} e, {glossary_ratings} r
                                            WHERE e.glossaryid = ? AND e.id = r.entryid
@@ -2391,9 +2391,10 @@ function glossary_reset_userdata($data) {
     if (!empty($data->reset_glossary_all)
          or (!empty($data->reset_glossary_types) and in_array('main', $data->reset_glossary_types) and in_array('secondary', $data->reset_glossary_types))) {
 
+        // TODO: Fix rating removal
         //$DB->delete_records_select('glossary_ratings', "entryid IN ($allentriessql)", $params);
-        // TODO: delete comments
-        //$DB->delete_records_select('comments', "entryid IN ($allentriessql)", array());
+        $params[] = 'glossary_entry';
+        $DB->delete_records_select('comments', "itemid IN ($allentriessql) AND commentarea=?", $params);
         $DB->delete_records_select('glossary_entries', "glossaryid IN ($allglossariessql)", $params);
 
         // now get rid of all attachments
@@ -2426,8 +2427,10 @@ function glossary_reset_userdata($data) {
         $secondaryglossariessql = "$allglossariessql AND g.mainglossary=0";
 
         if (in_array('main', $data->reset_glossary_types)) {
+            // TODO: Fix rating removal
             //$DB->delete_records_select('glossary_ratings', "entryid IN ($mainentriessql)", $params);
-            $DB->delete_records_select('glossary_comments', "entryid IN ($mainentriessql)", $params);
+            $params[] = 'glossary_entry';
+            $DB->delete_records_select('comments', "itemid IN ($mainentriessql) AND commentarea=?", $params);
             $DB->delete_records_select('glossary_entries', "glossaryid IN ($mainglossariessql)", $params);
 
             if ($glossaries = $DB->get_records_sql($mainglossariessql, $params)) {
@@ -2452,8 +2455,10 @@ function glossary_reset_userdata($data) {
             $status[] = array('component'=>$componentstr, 'item'=>get_string('resetglossaries', 'glossary'), 'error'=>false);
 
         } else if (in_array('secondary', $data->reset_glossary_types)) {
-            $DB->delete_records_select('glossary_ratings', "entryid IN ($secondaryentriessql)", $params);
-            $DB->delete_records_select('glossary_comments', "entryid IN ($secondaryentriessql)", $params);
+            // TODO: Fix rating removal
+            //$DB->delete_records_select('glossary_ratings', "entryid IN ($secondaryentriessql)", $params);
+            $params[] = 'glossary_entry';
+            $DB->delete_records_select('comments', "itemid IN ($secondaryentriessql) AND commentarea=?", $params);
             $DB->delete_records_select('glossary_entries', "glossaryid IN ($secondaryglossariessql)", $params);
             // remove exported source flag from entries in main glossary
             $DB->execute("UPDATE {glossary_entries
@@ -2497,8 +2502,9 @@ function glossary_reset_userdata($data) {
             foreach ($rs as $entry) {
                 if (array_key_exists($entry->userid, $notenrolled) or !$entry->userexists or $entry->userdeleted
                   or !is_enrolled($course_context , $entry->userid)) {
-                    $DB->delete_records('glossary_ratings', array('entryid'=>$entry->id));
-                    $DB->delete_records('glossary_comments', array('entryid'=>$entry->id));
+                    // TODO: Fix rating removal
+                    //$DB->delete_records('glossary_ratings', array('entryid'=>$entry->id));
+                    $DB->delete_records('comments', array('commentarea'=>'glossary_entry', 'itemid'=>$entry->id));
                     $DB->delete_records('glossary_entries', array('id'=>$entry->id));
 
                     if ($cm = get_coursemodule_from_instance('glossary', $entry->glossaryid)) {
@@ -2514,7 +2520,8 @@ function glossary_reset_userdata($data) {
 
     // remove all ratings
     if (!empty($data->reset_glossary_ratings)) {
-        $DB->delete_records_select('glossary_ratings', "entryid IN ($allentriessql)", $params);
+        // TODO: Fix rating removal
+        //$DB->delete_records_select('glossary_ratings', "entryid IN ($allentriessql)", $params);
         // remove all grades from gradebook
         if (empty($data->reset_gradebook_grades)) {
             glossary_reset_gradebook($data->courseid);
@@ -2522,9 +2529,10 @@ function glossary_reset_userdata($data) {
         $status[] = array('component'=>$componentstr, 'item'=>get_string('deleteallratings'), 'error'=>false);
     }
 
-    // TODO: remove all comments
+    // remove comments
     if (!empty($data->reset_glossary_comments)) {
-        $DB->delete_records_select('glossary_comments', "entryid IN ($allentriessql)", $params);
+        $params[] = 'glossary_entry';
+        $DB->delete_records_select('comments', "itemid IN ($allentriessql) AND commentarea= ? ", $params);
         $status[] = array('component'=>$componentstr, 'item'=>get_string('deleteallcomments'), 'error'=>false);
     }
 
