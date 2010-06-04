@@ -121,4 +121,4 @@ $THEME->layouts = array(
 
 $THEME->rendererfactory = 'theme_overridden_renderer_factory';
 $THEME->enable_dock = true;
-$THEME->javascripts_footer = array('navigation');
+//$THEME->javascripts_footer = array('navigation');
