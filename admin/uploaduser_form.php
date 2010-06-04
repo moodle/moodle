@@ -12,11 +12,9 @@ class admin_uploaduser_form1 extends moodleform {
 
         $mform =& $this->_form;
 
-        $this->set_upload_manager(new upload_manager('userfile', false, false, null, false, 0, true, true, false));
-
         $mform->addElement('header', 'settingsheader', get_string('upload'));
 
-        $mform->addElement('file', 'userfile', get_string('file'), 'size="40"');
+        $mform->addElement('filepicker', 'userfile', get_string('file'));
         $mform->addRule('userfile', null, 'required');
 
         $choices = csv_import_reader::get_delimiter_list();
