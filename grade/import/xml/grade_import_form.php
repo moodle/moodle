@@ -27,8 +27,6 @@ class grade_import_form extends moodleform {
 
         $mform =& $this->_form;
 
-        $this->set_upload_manager(new upload_manager('userfile', false, false, null, false, 0, true, true, false));
-
         // course id needs to be passed for auth purposes
         $mform->addElement('hidden', 'id', optional_param('id', 0, PARAM_INT));
         $mform->setType('id', PARAM_INT);
@@ -40,8 +38,7 @@ class grade_import_form extends moodleform {
         $mform->setDefault('feedback', 0);
 
         // file upload
-        $mform->addElement('file', 'userfile', get_string('file'));
-        $mform->setType('userfile', PARAM_FILE);
+        $mform->addElement('filepicker', 'userfile', get_string('file'));
         $mform->disabledIf('userfile', 'url', 'noteq', '');
 
         $mform->addElement('text', 'url', get_string('fileurl', 'gradeimport_xml'), 'size="80"');
@@ -83,7 +80,7 @@ class grade_import_form extends moodleform {
 
     function validation($data, $files) {
         $err = parent::validation($data, $files);
-        if (empty($data['url']) and empty($files['userfile'])) {
+        if (empty($data['url']) and empty($data['userfile'])) {
             if (array_key_exists('url', $data)) {
                 $err['url'] = get_string('required');
             }

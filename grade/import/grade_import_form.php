@@ -39,8 +39,7 @@ class grade_import_form extends moodleform {
         $mform->setType('id', PARAM_INT);
         $mform->addElement('header', 'general', get_string('importfile', 'grades'));
         // file upload
-        $mform->addElement('file', 'userfile', get_string('file'));
-        $mform->setType('userfile', PARAM_FILE);
+        $mform->addElement('filepicker', 'userfile', get_string('file'));
         $mform->addRule('userfile', null, 'required');
         $textlib = textlib_get_instance();
         $encodings = $textlib->get_encodings();
@@ -95,8 +94,8 @@ class grade_import_mapping_form extends moodleform {
 
         // add a comment option
 
+        $comments = array();
         if ($gradeitems = $this->_customdata['gradeitems']) {
-            $comments = array();
             foreach ($gradeitems as $itemid => $itemname) {
                 $comments['feedback_'.$itemid] = 'comments for '.$itemname;
             }
@@ -105,14 +104,12 @@ class grade_import_mapping_form extends moodleform {
         if ($header) {
             $i = 0; // index
             foreach ($header as $h) {
-
                 $h = trim($h);
                 // this is what each header maps to
-                $mform->addElement('selectgroups',
-                                   'mapping_'.$i, s($h),
-                                   array('others'=>array('0'=>'ignore', 'new'=>'new gradeitem'),
-                                         'gradeitems'=>$gradeitems,
-                                         'comments'=>$comments));
+                $mform->addElement('selectgroups', 'mapping_'.$i, s($h),
+                    array('others'=>array('0'=>'ignore', 'new'=>'new gradeitem'),
+                    'gradeitems'=>$gradeitems,
+                    'comments'=>$comments));
                 $i++;
             }
         }

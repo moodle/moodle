@@ -130,7 +130,7 @@ if ($formdata = $mform->get_data()) {
     $fp = fopen($filename, "r");
 
     // --- get header (field names) ---
-    $header = split($csv_delimiter, fgets($fp,GRADE_CSV_LINE_LENGTH), PARAM_RAW);
+    $header = explode($csv_delimiter, fgets($fp,GRADE_CSV_LINE_LENGTH));
 
     // print some preview
     $numlines = 0; // 0 preview lines displayed

@@ -15,9 +15,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-require_once '../../../config.php';
-require_once 'lib.php';
-require_once 'grade_import_form.php';
+require_once('../../../config.php');
+require_once('lib.php');
+require_once('grade_import_form.php');
 
 $id = required_param('id', PARAM_INT); // course id
 
