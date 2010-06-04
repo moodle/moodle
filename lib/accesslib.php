@@ -1865,13 +1865,13 @@ function is_safe_capability($capability) {
  **********************************/
 
 /**
- * Create a new context record for use by all roles-related stuff
+ * Context creation - internal implementation.
  *
  * Create a new context record for use by all roles-related stuff
  * assumes that the caller has done the homework.
  *
- * @global object
- * @global object
+ * DO NOT CALL THIS DIRECTLY, instead use {@link get_context_instance}!
+ *
  * @param int $contextlevel
  * @param int $instanceid
  * @param int $strictness

@@ -48,7 +48,7 @@ function user_create_user($user) {
     $newuserid = $DB->insert_record('user', $user);
 
 /// create USER context for this user
-    create_context(CONTEXT_USER, $newuserid);
+    get_context_instance(CONTEXT_USER, $newuserid);
 
     return $newuserid;
 
