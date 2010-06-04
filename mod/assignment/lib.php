@@ -1112,6 +1112,12 @@ class assignment_base {
         $assignment = $this->assignment;
         $cm         = $this->cm;
 
+        $tabindex = 1; //tabindex for quick grading tabbing; Not working for dropdowns yet
+        add_to_log($course->id, 'assignment', 'view submission', 'submissions.php?id='.$this->cm->id, $this->assignment->id, $this->cm->id);
+        $PAGE->navbar->add($this->strsubmissions);
+        $PAGE->set_title(format_string($this->assignment->name,true));
+        echo $OUTPUT->header();
+
         /// Print quickgrade form around the table
         if ($quickgrade){
             echo '<form action="submissions.php" id="fastg" method="post">';
@@ -1122,12 +1128,6 @@ class assignment_base {
             echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
             echo '</div>';
         }
-
-        $tabindex = 1; //tabindex for quick grading tabbing; Not working for dropdowns yet
-        add_to_log($course->id, 'assignment', 'view submission', 'submissions.php?id='.$this->cm->id, $this->assignment->id, $this->cm->id);
-        $PAGE->navbar->add($this->strsubmissions);
-        $PAGE->set_title(format_string($this->assignment->name,true));
-        echo $OUTPUT->header();
 
         $course_context = get_context_instance(CONTEXT_COURSE, $course->id);
         if (has_capability('gradereport/grader:view', $course_context) && has_capability('moodle/grade:viewall', $course_context)) {
