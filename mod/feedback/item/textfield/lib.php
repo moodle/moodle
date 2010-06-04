@@ -33,7 +33,7 @@ class feedback_item_textfield extends feedback_item_base {
         $item->presentation = empty($item->presentation) ? '' : $item->presentation;
         
         $sizeAndLength = explode('|',$item->presentation);
-        $itemsize = isset($sizeAndLength[0]) ? $sizeAndLength[0] : 30;
+        $itemsize = (isset($sizeAndLength[0]) AND $sizeAndLength[0] >= 5) ? $sizeAndLength[0] : 30;
         $itemlength = isset($sizeAndLength[1]) ? $sizeAndLength[1] : 5;
         $item->itemsize = $itemsize;
         $item->itemmaxlength = $itemlength;

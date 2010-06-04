@@ -40,66 +40,7 @@ class feedback_multichoice_form extends feedback_item_form {
 
         $mform->addElement('textarea', 'values', '', 'wrap="virtual" rows="10" cols="65"');
 
-        
-        ////////////////////////////////////////////////////////////////////////
-        //the following is used in all itemforms
-        ////////////////////////////////////////////////////////////////////////
-        //itemdepending
-        if($common['items']) {
-            $mform->addElement('select',
-                                'dependitem',
-                                get_string('dependitem', 'feedback').'&nbsp;',
-                                $common['items']
-                                );
-            $mform->addHelpButton('dependitem', 'depending', 'feedback');
-            $mform->addElement('text', 'dependvalue', get_string('dependvalue', 'feedback'), array('size="'.FEEDBACK_ITEM_LABEL_TEXTBOX_SIZE.'"','maxlength="255"'));
-        }else {
-            $mform->addElement('hidden', 'dependitem', 0);
-            $mform->setType('dependitem', PARAM_INT);
-            $mform->addElement('hidden', 'dependvalue', '');
-            $mform->setType('dependitem', PARAM_ALPHA);
-        }
-        
-        $position_select = $mform->addElement('select',
-                                            'position',
-                                            get_string('position', 'feedback').'&nbsp;',
-                                            $positionlist);
-        $position_select->setValue($position);
-        
-
-        $mform->addElement('hidden', 'cmid', $common['cmid']);
-        $mform->setType('cmid', PARAM_INT);
-        
-        $mform->addElement('hidden', 'id', $common['id']);
-        $mform->setType('id', PARAM_INT);
-        
-        $mform->addElement('hidden', 'feedback', $common['feedback']);
-        $mform->setType('feedback', PARAM_INT);
-        
-        $mform->addElement('hidden', 'template', 0);
-        $mform->setType('template', PARAM_INT);
-        
-        $mform->setType('name', PARAM_RAW);
-        $mform->setType('label', PARAM_ALPHANUM);
-        
-        $mform->addElement('hidden', 'typ', $this->type);
-        $mform->setType('typ', PARAM_ALPHA);
-
-        $mform->addElement('hidden', 'hasvalue', 0);
-        $mform->setType('hasvalue', PARAM_INT);
-
-        $mform->addElement('hidden', 'options', '');
-        $mform->setType('options', PARAM_ALPHA);
-
-        $buttonarray = array();
-        if(!empty($item->id)){
-            $buttonarray[] = &$mform->createElement('submit', 'update_item', get_string('update_item', 'feedback'));
-        }else{
-            $buttonarray[] = &$mform->createElement('submit', 'save_item', get_string('save_item', 'feedback'));
-        }
-        $buttonarray[] = &$mform->createElement('cancel');
-        $mform->addGroup($buttonarray, 'buttonar', '&nbsp;', array(' '), false);
-        
+        parent::definition();
         $this->set_data($item);
 
     }
