@@ -7617,7 +7617,7 @@ class forum_potential_subscriber_selector extends forum_subscriber_selector_base
      * @param string $name
      * @param array $options
      */
-    public function  __construct($name, $options) {
+    public function __construct($name, $options) {
         parent::__construct($name, $options);
         if (isset($options['forcesubscribed'])) {
             $this->forcesubscribed=true;

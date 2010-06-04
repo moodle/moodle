@@ -34,7 +34,7 @@ class backup_generic_setting extends root_backup_setting {}
  */
 class backup_filename_setting extends backup_generic_setting {
 
-    public function  __construct($name, $vtype, $value = null, $visibility = self::VISIBLE, $status = self::NOT_LOCKED) {
+    public function __construct($name, $vtype, $value = null, $visibility = self::VISIBLE, $status = self::NOT_LOCKED) {
         parent::__construct($name, $vtype, $value, $visibility, $status);
     }
 
