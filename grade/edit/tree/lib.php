@@ -367,7 +367,7 @@ class grade_edit_tree {
         if ((($aggcoef == 'aggregationcoefweight' || $aggcoef == 'aggregationcoef') && $type == 'weight') ||
             ($aggcoef == 'aggregationcoefextraweight' && $type == 'extra')) {
             return '<input type="text" size="6" id="aggregationcoef_'.$item->id.'" name="aggregationcoef_'.$item->id.'"
-                value="'.format_float($item->aggregationcoef, 4).'" />';
+                value="'.grade_edit_tree::format_number($item->aggregationcoef).'" />';
         } elseif ($aggcoef == 'aggregationcoefextrasum' && $type == 'extra') {
             $checked = ($item->aggregationcoef > 0) ? 'checked="checked"' : '';
             return '<input type="hidden" name="extracredit_'.$item->id.'" value="0" />
@@ -375,6 +375,10 @@ class grade_edit_tree {
         } else {
             return '';
         }
+    }
+
+    function format_number($number) {
+        return rtrim(rtrim(format_float($number, 4),'0'),'.');
     }
 
     /**
