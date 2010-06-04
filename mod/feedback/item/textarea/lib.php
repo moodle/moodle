@@ -85,7 +85,7 @@ class feedback_item_textarea extends feedback_item_base {
 
 
     //liefert eine Struktur ->name, ->data = array(mit Antworten)
-    function get_analysed($item, $groupid, $courseid = false) {
+    function get_analysed($item, $groupid = false, $courseid = false) {
         global $DB;
 
         $aVal = null;
@@ -270,5 +270,8 @@ class feedback_item_textarea extends feedback_item_base {
     function get_hasvalue() {
         return 1;
     }
+    
+    function can_switch_require() {
+        return true;
+    }
 }
-?>

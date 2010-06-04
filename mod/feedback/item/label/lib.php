@@ -208,5 +208,14 @@ class feedback_item_label extends feedback_item_base {
     function get_hasvalue() {
         return 0;
     }
+    
+    function can_switch_require() {
+        return false;
+    }
+
+    function check_value($value, $item) {}
+    function excelprint_item(&$worksheet, $rowOffset, $xlsFormats, $item, $groupid, $courseid = false) {}
+    function print_analysed($item, $itemnr = '', $groupid = false, $courseid = false) {}
+    function get_printval($item, $value) {}
+    function get_analysed($item, $groupid = false, $courseid = false) {}
 }
-?>

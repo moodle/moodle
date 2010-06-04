@@ -582,6 +582,8 @@ class feedback_item_multichoicerated extends feedback_item_base {
         return false;
     }
     
+    function can_switch_require() {
+        return true;
+    }
 
 }
-?>

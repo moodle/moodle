@@ -168,10 +168,7 @@ if ($courseitemfilter > 0) {
         if($item->hasvalue == 0) continue;
         echo '<table width="100%" class="generalbox">';
         //get the class from item-typ
-        $itemclass = 'feedback_item_'.$item->typ;
-        //get the instance of the item-class
-        require_once($CFG->dirroot.'/mod/feedback/item/'.$item->typ.'/lib.php');
-        $itemobj = new $itemclass();
+        $itemobj = feedback_get_item_class($item->typ);
         $itemnr++;
         if($feedback->autonumbering) {
             $printnr = $itemnr.'.';

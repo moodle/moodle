@@ -1,64 +1,41 @@
 <?php
 
-class feedback_item_base {
+abstract class feedback_item_base {
     var $type;
-    /**
-     * The class constructor
-     *
-     */
-    function feedback_item_base() {
-        $this->init();
-    }
 
     /**
-     * Fake constructor to keep PHP5 happy
+     * constructor
      *
      */
     function __construct() {
-        $this->feedback_item_base();
+        $this->init();
     }
 
-    /**
-     * prints the item-related sequenz on the edit-item form
-     *
-     * @param $item the db-object from feedback_item
-     * @param $usehtmleditor defines whether the editor should be shown or not
-     */
-    function show_edit($item, $usehtmleditor = false) {
+    //this function only can used after the call of build_editform()
+    function show_editform() {
+        $this->item_form->display();
+    }
+    
+    function is_cancelled() {
+        return $this->item_form->is_cancelled();
     }
 
-    /**
-     * returns an Array with three values(typ, name, XXX)
-     * XXX is also an Array (count of responses on type $this->type)
-     * each element is a structure (answertext, answercount)
-     * @param $item the db-object from feedback_item
-     * @param $groupid if given
-     * @param $courseid if given
-     * @return array
-    */
-    function get_analysed($item, $groupid = false, $courseid = false) {
-        return array();
+    function get_data() {
+        if($this->item = $this->item_form->get_data()) {
+            return true;
+        }
+        return false;
     }
-
-    /**
-     * @param object $item the db-object from feedback_item
-     * @param string $value a item-related value from feedback_values
-     * @return string
-    */
-    function get_printval($item, $value) {
-      return '';
-    }
-
-    /**
-     * @param $item the db-object from feedback_item
-     * @param string $itemnr
-     * @param integer $groupid
-     * @param integer $courseid
-     * @return integer the new itemnr
-    */
-    function print_analysed($item, $itemnr = '', $groupid = false, $courseid = false) {
-      return 0;
-    }
+    
+    abstract function init();
+    abstract function build_editform($item, $feedback, $cm);
+    abstract function save_item();
+    abstract function check_value($value, $item);
+    abstract function create_value($data);
+    abstract function compare_value($item, $dbvalue, $dependvalue);
+    abstract function get_presentation($data);
+    abstract function get_hasvalue();
+    abstract function can_switch_require();
 
     /**
      * @param object $worksheet a reference to the pear_spreadsheet-object
@@ -68,36 +45,91 @@ class feedback_item_base {
      * @param integer $courseid
      * @return integer the new rowOffset
     */
-    function excelprint_item(&$worksheet, $rowOffset, $item, $groupid, $courseid = false) {
-      return $rowOffset;
-    }
+    abstract function excelprint_item(&$worksheet, $rowOffset, $xlsFormats, $item, $groupid, $courseid = false);
 
-    function print_item($item, $value = false, $readonly = false, $edit = false, $highlightrequire = false){
-    }
+    /**
+     * @param $item the db-object from feedback_item
+     * @param string $itemnr
+     * @param integer $groupid
+     * @param integer $courseid
+     * @return integer the new itemnr
+    */
+    abstract function print_analysed($item, $itemnr = '', $groupid = false, $courseid = false);
+    
+    /**
+     * @param object $item the db-object from feedback_item
+     * @param string $value a item-related value from feedback_values
+     * @return string
+    */
+    abstract function get_printval($item, $value);
+    
+    /**
+     * returns an Array with three values(typ, name, XXX)
+     * XXX is also an Array (count of responses on type $this->type)
+     * each element is a structure (answertext, answercount)
+     * @param $item the db-object from feedback_item
+     * @param $groupid if given
+     * @param $courseid if given
+     * @return array
+    */
+    abstract function get_analysed($item, $groupid = false, $courseid = false);
+  
+    /**     
+     * print the item at the edit-page of feedback
+     *
+     * @global object
+     * @param object $item
+     * @return void
+     */
+    abstract function print_item_preview($item);
+    
+    /**     
+     * print the item at the complete-page of feedback
+     *
+     * @global object
+     * @param object $item
+     * @param string $value
+     * @param bool $highlightrequire
+     * @return void
+     */
+    abstract function print_item_complete($item, $value = '', $highlightrequire = false);
 
-    function check_value($value, $item) {
-        return true;
-    }
+    /**     
+     * print the item at the complete-page of feedback
+     *
+     * @global object
+     * @param object $item
+     * @param string $value
+     * @return void
+     */
+    abstract function print_item_show_value($item, $value = '');
 
-    function create_value($data) {
-        return '';
-    }
-
-    function get_presentation($data) {
-      return '';
-   }
-
-    function get_hasvalue() {
-        return 0;
-    }
 }
 
 //a dummy class to realize pagebreaks
 class feedback_item_pagebreak extends feedback_item_base {
     var $type = "pagebreak";
-    function init() {
 
-    }
+    function show_editform() {}
+    function is_cancelled() {}
+    function get_data() {}
+    function init() {}
+    function build_editform($item, $feedback, $cm) {}
+    function save_item() {}
+    function check_value($value, $item) {}
+    function create_value($data) {}
+    function compare_value($item, $dbvalue, $dependvalue) {}
+    function get_presentation($data) {}
+    function get_hasvalue() {}
+    function excelprint_item(&$worksheet, $rowOffset, $xlsFormats, $item, $groupid, $courseid = false) {}
+    function print_analysed($item, $itemnr = '', $groupid = false, $courseid = false) {}
+    function get_printval($item, $value) {}
+    function get_analysed($item, $groupid = false, $courseid = false) {}
+    function print_item_preview($item) {}
+    function print_item_complete($item, $value = '', $highlightrequire = false) {}
+    function print_item_show_value($item, $value = '') {}
+    function can_switch_require(){}
+
 }
 
 

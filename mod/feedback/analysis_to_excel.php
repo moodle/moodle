@@ -185,9 +185,7 @@ if (empty($items)) {
 }
 foreach($items as $item) {
     //get the class of item-typ
-    $itemclass = 'feedback_item_'.$item->typ;
-    //get the instance of the item-class
-    $itemobj = new $itemclass();
+    $itemobj = feedback_get_item_class($item->typ);
     $rowOffset1 = $itemobj->excelprint_item($worksheet1, $rowOffset1, $xlsFormats, $item, $mygroupid, $coursefilter);
 }
 
@@ -295,8 +293,7 @@ function feedback_excelprint_detailed_items(&$worksheet, $xlsFormats, $completed
     foreach($items as $item) {
         $value = $DB->get_record('feedback_value', array('item'=>$item->id, 'completed'=>$completed->id));
 
-        $itemclass = 'feedback_item_'.$item->typ;
-        $itemobj = new $itemclass();
+        $itemobj = feedback_get_item_class($item->typ);
         $printval = $itemobj->get_printval($item, $value);
 
         // $worksheet->setFormat('<l><vo>');

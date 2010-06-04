@@ -264,5 +264,8 @@ class feedback_item_textfield extends feedback_item_base {
     function get_hasvalue() {
         return 1;
     }
+
+    function can_switch_require() {
+        return true;
+    }
 }
-?>

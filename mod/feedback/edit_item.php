@@ -84,8 +84,7 @@ if($id and $item = $DB->get_record('feedback_item', array('id'=>$id))) {
 
 require_once($CFG->dirroot.'/mod/feedback/item/'.$typ.'/lib.php');
 
-$itemclass = 'feedback_item_'.$typ;
-$itemobj = new $itemclass();
+$itemobj = feedback_get_item_class($typ);
 
 $itemobj->build_editform($item, $feedback, $cm);
 
@@ -124,48 +123,6 @@ if(isset($error)) {
 feedback_print_errors();
 $itemobj->show_editform();
 
-/*
-echo $OUTPUT->box_start('generalbox boxwidthwide boxaligncenter');
-    echo '<form action="edit_item.php" method="post">';
-    echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
-
-//this div makes the buttons stand side by side
-echo '<div>';
-$itemclass = 'feedback_item_'.$typ;
-$itemobj = new $itemclass();
-$itemobj->show_edit($item, $usehtmleditor);
-echo '</div>';
-    echo '<input type="hidden" name="id" value="'.$id.'" />';
-    echo '<input type="hidden" name="itemid" value="'.(isset($item->id)?$item->id:'').'" />';
-    echo '<input type="hidden" name="typ" value="'.$typ.'" />';
-    echo '<input type="hidden" name="feedbackid" value="'.$feedback->id.'" />';
-
-//choose the position
-$lastposition = $DB->count_records('feedback_item', array('feedback'=>$feedback->id));
-echo get_string('position', 'feedback').'&nbsp;';
-echo '<select name="position">';
-    //Dropdown-Items for choosing the position
-    if($position == -1){
-        feedback_print_numeric_option_list(1, $lastposition + 1, $lastposition + 1);
-    }else {
-        feedback_print_numeric_option_list(1, $lastposition, $item->position);
-    }
-echo '</select><hr />';
-
-//////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////
-if(!empty($item->id)){
-    echo '<input type="hidden" id="updateitem" name="updateitem" value="1" />';
-    echo '<input type="submit" value ="'.get_string('update_item', 'feedback').'" />';
-}else{
-    echo '<input type="hidden" id="saveitem" name="saveitem" value="1" />';
-    echo '<input type="submit" value="'.get_string('save_item', 'feedback').'" />';
-}
-echo '<input type="submit" name="cancel" value="'.get_string('cancel').'" />';
-echo '</form>';
-//////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////
-*/
 // echo $OUTPUT->box_end();
 
 if ($typ!='label') {

@@ -1114,6 +1114,25 @@ function feedback_get_template_list($course, $onlyown = false) {
 ////////////////////////////////////////////////
 
 /**
+ * load the lib.php from item-plugin-dir and returns the instance of the itemclass
+ *
+ * @global object
+ * @param object $item
+ * @return object the instanz of itemclass
+ */
+function feedback_get_item_class($typ) {
+    global $CFG;
+    
+    //get the class of item-typ
+    $itemclass = 'feedback_item_'.$typ;
+    //get the instance of item-class
+    if (!class_exists($itemclass)) {
+        require_once($CFG->dirroot.'/mod/feedback/item/'.$typ.'/lib.php');
+    }
+    return new $itemclass();
+}
+
+/**
  * load the available item plugins from given subdirectory of $CFG->dirroot
  * the default is "mod/feedback/item"
  *
@@ -1213,10 +1232,7 @@ function feedback_create_item($data) {
         $item->label = get_string('no_itemlabel', 'feedback');
     }
 
-    //get the used class from item-typ
-    $itemclass = 'feedback_item_'.$data->typ;
-    //get the instance of the item class
-    $itemobj = new $itemclass();
+    $itemobj = feedback_get_item_class($data->typ);
     // $item->presentation = $itemobj->get_presentation($data);
     $item->presentation = ''; //the date comes from postupdate() of the itemobj
 
@@ -1320,9 +1336,14 @@ function feedback_delete_all_items($feedbackid){
  * @return boolean
  */
 function feedback_switch_item_required($item) {
-    global $DB;
+    global $DB, $CFG;
 
-    return $DB->set_field('feedback_item', 'required', (int)!(bool)$item->required, array('id'=>$item->id));
+    $itemobj = feedback_get_item_class($item->typ);
+
+    if($itemobj->can_switch_require()) {
+        $DB->set_field('feedback_item', 'required', (int)!(bool)$item->required, array('id'=>$item->id));
+    }
+    return true;
 }
 
 /**
@@ -1457,13 +1478,8 @@ function feedback_print_item_preview($item){
     if($item->typ == 'pagebreak') {
         return;
     }
-    //get the class of the given item-typ
-    $itemclass = 'feedback_item_'.$item->typ;
-    if (!class_exists($itemclass)) {
-        require_once($CFG->dirroot.'/mod/feedback/item/'.$item->typ.'/lib.php');
-    }
     //get the instance of the item-class
-    $itemobj = new $itemclass();
+    $itemobj = feedback_get_item_class($item->typ);
     $itemobj->print_item_preview($item);
 }
 
@@ -1482,13 +1498,8 @@ function feedback_print_item_complete($item, $value = false, $highlightrequire =
         return;
     }
 
-    //get the class of the given item-typ
-    $itemclass = 'feedback_item_'.$item->typ;
-    if (!class_exists($itemclass)) {
-        require_once($CFG->dirroot.'/mod/feedback/item/'.$item->typ.'/lib.php');
-    }
     //get the instance of the item-class
-    $itemobj = new $itemclass();
+    $itemobj = feedback_get_item_class($item->typ);
     $itemobj->print_item_complete($item, $value, $highlightrequire);
 }
 
@@ -1506,13 +1517,8 @@ function feedback_print_item_show_value($item, $value = false){
         return;
     }
     
-    //get the class of the given item-typ
-    $itemclass = 'feedback_item_'.$item->typ;
-    if (!class_exists($itemclass)) {
-        require_once($CFG->dirroot.'/mod/feedback/item/'.$item->typ.'/lib.php');
-    }
     //get the instance of the item-class
-    $itemobj = new $itemclass();
+    $itemobj = feedback_get_item_class($item->typ);
     $itemobj->print_item_show_value($item, $value);
 }
 
@@ -1833,12 +1839,9 @@ function feedback_compare_item_value($completedid, $itemid, $dependvalue, $tmp =
     
     //get the class of the given item-typ
     $item = $DB->get_record('feedback_item', array('id'=>$itemid));
-    $itemclass = 'feedback_item_'.$item->typ;
-    if (!class_exists($itemclass)) {
-        require_once($CFG->dirroot.'/mod/feedback/item/'.$item->typ.'/lib.php');
-    }
+
     //get the instance of the item-class
-    $itemobj = new $itemclass();
+    $itemobj = feedback_get_item_class($item->typ);
     return $itemobj->compare_value($item, $dbvalue, $dependvalue); //true or false
 }
 
@@ -1882,15 +1885,8 @@ function feedback_check_values($firstitem, $lastitem) {
             return false;
         }
 
-        //get the class of the item-typ
-        $itemclass = 'feedback_item_'.$item->typ;
-
-        if (!class_exists($itemclass)) {
-            require_once($CFG->dirroot.'/mod/feedback/item/'.$item->typ.'/lib.php');
-        }
-
         //get the instance of the item-class
-        $itemobj = new $itemclass();
+        $itemobj = feedback_get_item_class($item->typ);
 
         //now we let check the value by the item-class
         if(!$itemobj->check_value($value, $item)) {
@@ -1951,13 +1947,7 @@ function feedback_create_values($usrid, $timemodified, $tmp = false, $guestid = 
         $value->course_id = $courseid;
         
         //get the class of item-typ
-        $itemclass = 'feedback_item_'.$item->typ;
-        
-        //get the instance of item-class
-        if (!class_exists($itemclass)) {
-            require_once($CFG->dirroot.'/mod/feedback/item/'.$item->typ.'/lib.php');
-        }
-        $itemobj = new $itemclass();
+        $itemobj = feedback_get_item_class($item->typ);
         
         //the kind of values can be absolutely different so we run create_value directly by the item-class
         $value->value = $itemobj->create_value($itemvalue);
@@ -2003,13 +1993,7 @@ function feedback_update_values($completed, $tmp = false) {
         $newvalue->course_id = $courseid;
 
         //get the class of item-typ
-        $itemclass = 'feedback_item_'.$item->typ;
-        
-        //get the instance of item-class
-        if (!class_exists($itemclass)) {
-            require_once($CFG->dirroot.'/mod/feedback/item/'.$item->typ.'/lib.php');
-        }
-        $itemobj = new $itemclass();
+        $itemobj = feedback_get_item_class($item->typ);
         //the kind of values can be absolutely different so we run create_value directly by the item-class
         $newvalue->value = $itemobj->create_value($itemvalue);
         
