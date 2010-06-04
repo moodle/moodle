@@ -25,9 +25,8 @@
 
 require_once('../../config.php');
 require_once('lib.php');
-require_once($CFG->libdir.'/uploadlib.php');
-
-require_login();
+require_once($CFG->libdir.'/csvlib.class.php');
+require_once('import_form.php');
 
 $id              = optional_param('id', 0, PARAM_INT);  // course module id
 $d               = optional_param('d', 0, PARAM_INT);   // database id
@@ -77,10 +76,9 @@ require_login($course, false, $cm);
 
 $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 require_capability('mod/data:manageentries', $context);
+$form = new mod_data_import_form(new moodle_url('/mod/data/import.php'));
 
 /// Print the page header
-$strdata = get_string('modulenameplural','data');
-
 $PAGE->navbar->add(get_string('add', 'data'));
 $PAGE->set_title($data->name);
 $PAGE->set_heading($course->fullname);
@@ -91,16 +89,20 @@ echo $OUTPUT->heading(format_string($data->name));
 $currentgroup = groups_get_activity_group($cm);
 $groupmode = groups_get_activity_groupmode($cm);
 
-/// Print the tabs
-$currenttab = 'add';
-include('tabs.php');
-
-
-$um = new upload_manager('recordsfile', false, false, null, false, 0);
-
-if ($um->preprocess_files() && confirm_sesskey()) {
-    $filename = $um->files['recordsfile']['tmp_name'];
-
+if (!$formdata = $form->get_data()) {
+    /// Upload records section. Only for teachers and the admin.
+    echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthwide');
+    require_once('import_form.php');
+    echo $OUTPUT->heading(get_string('uploadrecords', 'data'), 3);
+    $form = new mod_data_import_form(new moodle_url('/mod/data/import.php'));
+    $formdata = new stdclass;
+    $formdata->d = $data->id;
+    $form->set_data($formdata);
+    $form->display();
+    echo $OUTPUT->box_end();
+    echo $OUTPUT->footer();
+    die;
+} else {
     // Large files are likely to take their time and memory. Let PHP know
     // that we'll take longer, and that the process should be recycled soon
     // to free up memory.
@@ -110,23 +112,16 @@ if ($um->preprocess_files() && confirm_sesskey()) {
         @apache_child_terminate();
     }
 
-    // Fix mac/dos newlines
-    // TODO: Switch to cvslib when possible
-    $textlib = textlib_get_instance();
-    $text = my_file_get_contents($filename);
-    $text = preg_replace('!\r\n?!',"\n",$text);
-    $text = $textlib->trim_utf8_bom($text); // remove Unicode BOM from first line
-    $fp = fopen($filename, "w");
-    fwrite($fp, $text);
-    fclose($fp);
+    $iid = csv_import_reader::get_new_iid('moddata');
+    $cir = new csv_import_reader($iid, 'moddata');
 
-    $recordsadded = 0;
-
-    if (!$records = data_get_records_csv($filename, $fielddelimiter, $fieldenclosure)) {
+    $readcount = $cir->load_csv_content($form->get_file_content('recordsfile'), $formdata->encoding, $formdata->fielddelimiter);
+    if (empty($readcount)) {
         print_error('csvfailed','data',"{$CFG->wwwroot}/mod/data/edit.php?d={$data->id}");
     } else {
-        $fieldnames = array_shift($records);
-
+        if (!$fieldnames = $cir->get_columns()) {
+            print_error('cannotreadtmpfile', 'error');
+        }
         // check the fieldnames are valid
         $fields = $DB->get_records('data_fields', array('dataid'=>$data->id), '', 'name, id, type');
         $errorfield = '';
@@ -140,7 +135,9 @@ if ($um->preprocess_files() && confirm_sesskey()) {
             print_error('fieldnotmatched','data',"{$CFG->wwwroot}/mod/data/edit.php?d={$data->id}",$errorfield);
         }
 
-        foreach ($records as $record) {
+        $cir->init();
+        $recordsadded = 0;
+        while ($record = $cir->next()) {
             if ($recordid = data_add_record($data, 0)) {  // add instance to data_record
                 $fields = $DB->get_records('data_fields', array('dataid'=>$data->id), '', 'name, id, type');
 
@@ -187,77 +184,18 @@ if ($um->preprocess_files() && confirm_sesskey()) {
                 print get_string('added', 'moodle', $recordsadded) . ". " . get_string('entry', 'data') . " (ID $recordid)<br />\n";
             }
         }
+        $cir->close();
+        $cir->cleanup(true);
     }
 }
 
 if ($recordsadded > 0) {
-    echo $OUTPUT->notification($recordsadded. ' '. get_string('recordssaved', 'data'));
+    echo $OUTPUT->notification($recordsadded. ' '. get_string('recordssaved', 'data'), '');
 } else {
-    echo $OUTPUT->notification(get_string('recordsnotsaved', 'data'));
+    echo $OUTPUT->notification(get_string('recordsnotsaved', 'data'), 'notifysuccess');
 }
-echo '<p />';
 
+echo $OUTPUT->continue_button('import.php?d='.$data->id);
 
 /// Finish the page
 echo $OUTPUT->footer();
-
-
-
-
-function my_file_get_contents($filename, $use_include_path = 0) {
-/// Returns the file as one big long string
-
-    $data = "";
-    $file = @fopen($filename, "rb", $use_include_path);
-    if ($file) {
-        while (!feof($file)) {
-            $data .= fread($file, 1024);
-        }
-        fclose($file);
-    }
-    return $data;
-}
-
-
-
-// Read the records from the given file.
-// Perform a simple field count check for each record.
-function data_get_records_csv($filename, $fielddelimiter=',', $fieldenclosure="\n") {
-    global $DB;
-
-
-    if (empty($fielddelimiter)) {
-        $fielddelimiter = ',';
-    }
-    if (empty($fieldenclosure)) {
-        $fieldenclosure = "\n";
-    }
-
-    if (!$fp = fopen($filename, "r")) {
-        print_error('get_records_csv failed to open '.$filename);
-    }
-    $fieldnames = array();
-    $rows = array();
-
-    $fieldnames = fgetcsv($fp, 4096, $fielddelimiter, $fieldenclosure);
-
-    if (empty($fieldnames)) {
-        fclose($fp);
-        return false;
-    }
-    $rows[] = $fieldnames;
-
-    while (($data = fgetcsv($fp, 4096, $fielddelimiter, $fieldenclosure)) !== false) {
-        if (count($data) > count($fieldnames)) {
-            // For any given record, we can't have more data entities than the number of fields.
-            fclose($fp);
-            return false;
-        }
-        $rows[] = $data;
-    }
-
-    fclose($fp);
-    return $rows;
-}
-
-

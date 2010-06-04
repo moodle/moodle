@@ -30,16 +30,12 @@ require_once("$CFG->libdir/rsslib.php");
 $id    = optional_param('id', 0, PARAM_INT);    // course module id
 $d     = optional_param('d', 0, PARAM_INT);    // database id
 $rid   = optional_param('rid', 0, PARAM_INT);    //record id
-$import   = optional_param('import', 0, PARAM_INT);    // show import form
 $cancel   = optional_param('cancel', '', PARAM_RAW);    // cancel an add
 $mode ='addtemplate';    //define the mode for this page, only 1 mode available
 
 $url = new moodle_url('/mod/data/edit.php');
 if ($rid !== 0) {
     $url->param('rid', $rid);
-}
-if ($import !== 0) {
-    $url->param('import', $import);
 }
 if ($cancel !== '') {
     $url->param('cancel', $cancel);
@@ -124,7 +120,7 @@ if ($data->jstemplate) {
 $possiblefields = $DB->get_records('data_fields', array('dataid'=>$data->id), 'id');
 
 foreach ($possiblefields as $field) {
-    if ($field->type == 'file') {
+    if ($field->type == 'file' || $field->type == 'picture') {
         require_once($CFG->dirroot.'/repository/lib.php');
         break;
     }
@@ -135,8 +131,6 @@ $strdata = get_string('modulenameplural','data');
 
 if ($rid) {
     $PAGE->navbar->add(get_string('editentry', 'data'));
-} else if ($import) {
-    $PAGE->navbar->add(get_string('add', 'data'));
 }
 
 $PAGE->set_title($data->name);
@@ -166,7 +160,6 @@ if ($rid) {
     $editentry = true;  //used in tabs
 }
 include('tabs.php');
-
 
 /// Process incoming data for adding/updating records
 
@@ -276,6 +269,8 @@ if ($datarecord = data_submitted() and confirm_sesskey()) {
     }
 }  // End of form processing
 
+
+
 /// Print the browsing interface
 
 $patterns = array();    //tags to replace
@@ -315,7 +310,7 @@ if ($data->addtemplate){
 }
 
 echo $newtext;
-echo '<div style="text-align:center"><input type="submit" name="saveandview" value="'.get_string('saveandview','data').'" />';
+echo '<div class="mdl-align"><input type="submit" name="saveandview" value="'.get_string('saveandview','data').'" />';
 if ($rid) {
     echo '&nbsp;<input type="submit" name="cancel" value="'.get_string('cancel').'" onclick="javascript:history.go(-1)" />';
 } else {
@@ -324,46 +319,6 @@ if ($rid) {
 echo '</div>';
 echo $OUTPUT->box_end();
 echo '</div></form>';
-
-
-/// Upload records section. Only for teachers and the admin.
-
-if (has_capability('mod/data:manageentries',$context)) {
-    if ($import) {
-        echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthwide');
-        echo $OUTPUT->heading(get_string('uploadrecords', 'data'), 3);
-
-        $maxuploadsize = get_max_upload_file_size();
-        echo '<div style="text-align:center">';
-        echo '<form enctype="multipart/form-data" action="import.php" method="post">';
-        echo '<input type="hidden" name="MAX_FILE_SIZE" value="'.$maxuploadsize.'" />';
-        echo '<input name="d" value="'.$data->id.'" type="hidden" />';
-        echo '<input name="sesskey" value="'.sesskey().'" type="hidden" />';
-        echo '<table align="center" cellspacing="0" cellpadding="2" border="0">';
-        echo '<tr>';
-        echo '<td align="right">'.get_string('csvfile', 'data').':</td>';
-        echo '<td><input type="file" name="recordsfile" size="30" />';
-        echo $OUTPUT->help_icon('csvimport', 'data');
-        echo '</td><tr>';
-        echo '<td align="right">'.get_string('fielddelimiter', 'data').':</td>';
-        echo '<td><input type="text" name="fielddelimiter" size="6" />';
-        echo get_string('defaultfielddelimiter', 'data').'</td>';
-        echo '</tr>';
-        echo '<td align="right">'.get_string('fieldenclosure', 'data').':</td>';
-        echo '<td><input type="text" name="fieldenclosure" size="6" />';
-        echo get_string('defaultfieldenclosure', 'data').'</td>';
-        echo '</tr>';
-        echo '</table>';
-        echo '<input type="submit" value="'.get_string('uploadfile', 'data').'" />';
-        echo '</form>';
-        echo '</div>';
-        echo $OUTPUT->box_end();
-    } else {
-        echo '<div style="text-align:center">';
-        echo '<a href="edit.php?d='.$data->id.'&amp;import=1">'.get_string('uploadrecords', 'data').'</a>';
-        echo '</div>';
-    }
-}
 
 
 /// Finish the page
