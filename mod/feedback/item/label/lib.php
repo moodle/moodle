@@ -81,6 +81,12 @@ class feedback_item_label extends feedback_item_base {
         if(!$item = $this->item_form->get_data()) {
             return false;
         }
+        
+        if($item->clone_item) {
+            $item->id = ''; //to clone this item
+            $item->position++;
+        }
+
         $item->presentation = '';
         
         $item->hasvalue = $this->get_hasvalue();

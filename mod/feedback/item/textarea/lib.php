@@ -73,6 +73,11 @@ class feedback_item_textarea extends feedback_item_base {
             return false;
         }
         
+        if($item->clone_item) {
+            $item->id = ''; //to clone this item
+            $item->position++;
+        }
+        
         $item->hasvalue = $this->get_hasvalue();
         if(!$item->id) {
             $item->id = $DB->insert_record('feedback_item', $item);

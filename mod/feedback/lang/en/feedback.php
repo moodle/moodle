@@ -227,6 +227,7 @@ $string['resetting_feedbacks'] = 'Resetting feedbacks';
 $string['response_nr'] = 'Response Nr.';
 $string['responses'] = 'Responses';
 $string['responsetime'] = 'Responsestime';
+$string['save_as_new_item'] = 'Save as new question';
 $string['save_as_new_template'] = 'Save as new template';
 $string['save_entries'] = 'Submit your answers';
 $string['save_item'] = 'Save question';

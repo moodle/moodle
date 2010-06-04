@@ -77,6 +77,11 @@ class feedback_item_multichoice extends feedback_item_base {
             return false;
         }
         
+        if($item->clone_item) {
+            $item->id = ''; //to clone this item
+            $item->position++;
+        }
+        
         $this->set_ignoreempty($item, $item->ignoreempty);        
         $this->set_hidenoselect($item, $item->hidenoselect);
 
