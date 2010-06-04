@@ -4443,7 +4443,7 @@ function setnew_password_and_mail($user) {
 
     $newpassword = generate_password();
 
-    if (! set_field('user', 'password', md5($newpassword), 'id', $user->id) ) {
+    if (! set_field('user', 'password', hash_internal_user_password($newpassword), 'id', $user->id) ) {
         trigger_error('Could not set user password!');
         return false;
     }
