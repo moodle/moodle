@@ -1824,7 +1824,7 @@ class workshop_user_plan implements renderable {
             $task = new stdclass();
             if ($numofpeerstodo == 0) {
                 $task->completed = true;
-            } elseif ($this->workshop->phase > self::PHASE_ASSESSMENT) {
+            } elseif ($this->workshop->phase > workshop::PHASE_ASSESSMENT) {
                 $task->completed = false;
             }
             $a = new stdclass();
@@ -1839,7 +1839,7 @@ class workshop_user_plan implements renderable {
             $task = new stdclass();
             if ($numofselftodo == 0) {
                 $task->completed = true;
-            } elseif ($this->workshop->phase > self::PHASE_ASSESSMENT) {
+            } elseif ($this->workshop->phase > workshop::PHASE_ASSESSMENT) {
                 $task->completed = false;
             }
             $task->title = get_string('taskassessself', 'workshop');
