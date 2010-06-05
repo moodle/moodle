@@ -422,13 +422,19 @@ class grade_item extends grade_object {
         }
 
         if ($this->itemtype == 'mod' and !$this->is_outcome_item()) {
-            if (!$cm = get_coursemodule_from_instance($this->itemmodule, $this->iteminstance, $this->courseid)) {
-                return false;
-            }
-            if (!empty($cm->idnumber)) {
-                return false;
-            }
-            if ($DB->set_field('course_modules', 'idnumber', $idnumber, array('id' => $cm->id))) {
+            if ($this->itemnumber === 0) {
+                // for activity modules, itemnumber 0 is synced with the course_modules
+                if (!$cm = get_coursemodule_from_instance($this->itemmodule, $this->iteminstance, $this->courseid)) {
+                    return false;
+                }
+                if (!empty($cm->idnumber)) {
+                    return false;
+                }
+                if ($DB->set_field('course_modules', 'idnumber', $idnumber, array('id' => $cm->id))) {
+                    $this->idnumber = $idnumber;
+                    return $this->update();
+                }
+            } else {
                 $this->idnumber = $idnumber;
                 return $this->update();
             }
