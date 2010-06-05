@@ -224,7 +224,11 @@ class edit_item_form extends moodleform {
             } else {
                 if ($grade_item->is_external_item()) {
                     // following items are set up from modules and should not be overrided by user
-                    $mform->hardFreeze('itemname,idnumber,gradetype,grademax,grademin,scaleid');
+                    $mform->hardFreeze('itemname,gradetype,grademax,grademin,scaleid');
+                    if ($grade_item->itemnumber == 0) {
+                        // the idnumber of grade itemnumber 0 is synced with course_modules
+                        $mform->hardFreeze('idnumber');
+                    }
                     //$mform->removeElement('calculation');
                 }
             }

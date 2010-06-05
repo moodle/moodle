@@ -864,6 +864,11 @@ function grade_verify_idnumber($idnumber, $courseid, $grade_item=null, $cm=null)
 
     // keep existing even when not unique
     if ($cm and $cm->idnumber == $idnumber) {
+        if ($grade_item and $grade_item->itemnumber != 0) {
+            // grade item with itemnumber > 0 can't have the same idnumber as the main
+            // itemnumber 0 which is synced with course_modules
+            return false;
+        }
         return true;
     } else if ($grade_item and $grade_item->idnumber == $idnumber) {
         return true;
