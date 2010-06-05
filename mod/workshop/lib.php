@@ -353,7 +353,6 @@ function workshop_grade_item_update(stdclass $workshop, $submissiongrades=null, 
 
     $item = array();
     $item['itemname'] = get_string('gradeitemsubmission', 'workshop', $a);
-    $item['idnumber'] = $workshop->cmidnumber;
     $item['gradetype'] = GRADE_TYPE_VALUE;
     $item['grademax']  = $workshop->grade;
     $item['grademin']  = 0;
@@ -361,7 +360,6 @@ function workshop_grade_item_update(stdclass $workshop, $submissiongrades=null, 
 
     $item = array();
     $item['itemname'] = get_string('gradeitemassessment', 'workshop', $a);
-    $item['idnumber'] = $workshop->cmidnumber;
     $item['gradetype'] = GRADE_TYPE_VALUE;
     $item['grademax']  = $workshop->gradinggrade;
     $item['grademin']  = 0;
