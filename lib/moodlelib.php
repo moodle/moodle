@@ -225,7 +225,7 @@ define('PARAM_THEME',  'theme');
 define('PARAM_URL',      'url');
 
 /**
- * PARAM_USERNAME - Clean username to only contains specified characters.
+ * PARAM_USERNAME - Clean username to only contains allowed characters. This is to be used ONLY when manually creating user accounts, do NOT use when syncing with external systems!!
  */
 define('PARAM_USERNAME',    'username');
 
@@ -505,34 +505,6 @@ function validate_param($param, $type, $allownull=NULL_NOT_ALLOWED, $debuginfo='
  * $selectedgrade_item = clean_param($selectedgrade_item, PARAM_CLEAN);
  * </code>
  *
- * @global object
- * @uses PARAM_RAW
- * @uses PARAM_CLEAN
- * @uses PARAM_CLEANHTML
- * @uses PARAM_INT
- * @uses PARAM_FLOAT
- * @uses PARAM_NUMBER
- * @uses PARAM_ALPHA
- * @uses PARAM_ALPHAEXT
- * @uses PARAM_ALPHANUM
- * @uses PARAM_ALPHANUMEXT
- * @uses PARAM_SEQUENCE
- * @uses PARAM_BOOL
- * @uses PARAM_NOTAGS
- * @uses PARAM_TEXT
- * @uses PARAM_SAFEDIR
- * @uses PARAM_SAFEPATH
- * @uses PARAM_FILE
- * @uses PARAM_PATH
- * @uses PARAM_HOST
- * @uses PARAM_URL
- * @uses PARAM_LOCALURL
- * @uses PARAM_PEM
- * @uses PARAM_BASE64
- * @uses PARAM_TAG
- * @uses PARAM_SEQUENCE
- * @uses PARAM_USERNAME
- * @uses PARAM_STRINGID
  * @param mixed $param the variable we are cleaning
  * @param int $type expected format of param after cleaning.
  * @return mixed
@@ -1056,7 +1028,7 @@ function get_users_from_config($value, $capability, $includeadmins = true) {
 
     // we have to make sure that users still have the necessary capability,
     // it should be faster to fetch them all first and then test if they are present
-    // instead of validating them one-by-one 
+    // instead of validating them one-by-one
     $users = get_users_by_capability(get_context_instance(CONTEXT_SYSTEM), $capability);
     if ($includeadmins) {
         $admins = get_admins();
@@ -2606,8 +2578,8 @@ function delete_user_key($script,$userid) {
 function get_user_key($script, $userid, $instance=null, $iprestriction=null, $validuntil=null) {
     global $DB;
 
-    if ($key = $DB->get_record('user_private_key', array('script'=>$script, 'userid'=>$userid, 
-                                                         'instance'=>$instance, 'iprestriction'=>$iprestriction, 
+    if ($key = $DB->get_record('user_private_key', array('script'=>$script, 'userid'=>$userid,
+                                                         'instance'=>$instance, 'iprestriction'=>$iprestriction,
                                                          'validuntil'=>$validuntil))) {
         return $key->value;
     } else {
@@ -3515,7 +3487,7 @@ function delete_user($user) {
     require_once($CFG->libdir.'/grouplib.php');
     require_once($CFG->libdir.'/gradelib.php');
     require_once($CFG->dirroot.'/message/lib.php');
-  
+
         // delete all grades - backup is kept in grade_grades_history table
         if ($grades = grade_grade::fetch_all(array('userid'=>$user->id))) {
             foreach ($grades as $grade) {
@@ -4181,7 +4153,7 @@ function remove_course_contents($courseid, $showfeedback=true) {
 
     //trigger events
     events_trigger('course_content_removed', $course);
-    
+
     return true;
 }
 

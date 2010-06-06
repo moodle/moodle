@@ -105,8 +105,7 @@ if (empty($CFG->usesid) and $testcookies and (get_moodle_cookie() == '')) {    /
     $frm->username = trim(moodle_strtolower($frm->username));
 
     if (is_enabled_auth('none') ) {
-        $string = clean_param($frm->username, PARAM_USERNAME);
-        if (strcmp($frm->username, $string)) {
+        if ($frm->username !== clean_param($frm->username, PARAM_USERNAME)) {
             $errormsg = get_string('username').': '.get_string("invalidusername");
             $errorcode = 2;
             $user = null;

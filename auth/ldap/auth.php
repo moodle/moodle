@@ -419,7 +419,6 @@ class auth_plugin_ldap extends auth_plugin_base {
             print_error('auth_ldap_create_error', 'auth_ldap');
         }
 
-        //TODO - username required to use PARAM_USERNAME before inserting into user table (MDL-16919)
         if (! ($user->id = $DB->insert_record('user', $user)) ) {
             print_error('auth_emailnoinsert', 'auth_email');
         }
@@ -796,7 +795,6 @@ class auth_plugin_ldap extends auth_plugin_base {
                     $user->lang = $CFG->lang;
                 }
 
-                //TODO - username required to use PARAM_USERNAME before inserting into user table (MDL-16919)
                 if ($id = $DB->insert_record('user', $user)) {
                     echo "\t"; print_string('auth_dbinsertuser', 'auth_db', array('name'=>$user->username, 'id'=>$id)); echo "\n";
                     $userobj = $this->update_user_record($user->username);

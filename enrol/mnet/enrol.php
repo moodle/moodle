@@ -306,7 +306,6 @@ class enrolment_plugin_mnet {
              */
             $userrecord->mnethostid = $remoteclient->id;
 
-            //TODO - username required to use PARAM_USERNAME before inserting into user table (MDL-16919)
             if ($userrecord->id = $DB->insert_record('user', $userrecord)) {
                 $userrecord = $DB->get_record('user', array('id'=>$userrecord->id));
             } else {

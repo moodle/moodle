@@ -98,7 +98,7 @@ class auth_plugin_cas extends auth_plugin_base {
       $username = optional_param("username", '', PARAM_RAW);
 
       if (!empty($username)) {
-          if (isset($SESSION->wantsurl) && (strstr($SESSION->wantsurl, 'ticket') || 
+          if (isset($SESSION->wantsurl) && (strstr($SESSION->wantsurl, 'ticket') ||
                                             strstr($SESSION->wantsurl, 'NOCAS'))) {
               unset($SESSION->wantsurl);
           }
@@ -871,7 +871,6 @@ if ( !is_object($PHPCAS_CLIENT) ) {
                     $user->lang = $CFG->lang;
                 }
 
-                //TODO - username required to use PARAM_USERNAME before inserting into user table (MDL-16919)
                 if ($id = $DB->insert_record('user', $user)) {
                     echo "\t"; print_string('auth_dbinsertuser', 'auth_db', array('name'=>$user->username, 'id'=>$id)); echo "\n";
                     $userobj = $this->update_user_record($user->username);

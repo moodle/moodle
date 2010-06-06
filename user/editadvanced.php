@@ -62,7 +62,7 @@ if ($id == -1) {
     // creating new user
     $user = new object();
     $user->id = -1;
-    $user->auth = 'manual';   
+    $user->auth = 'manual';
     $user->confirmed = 1;
     $user->deleted = 0;
     require_capability('moodle/user:create', $systemcontext);
@@ -131,9 +131,8 @@ if ($usernew = $userform->get_data()) {
     } else {
         $authplugin = get_auth_plugin($usernew->auth);
     }
-   
-    $usernew->username = clean_param($usernew->username, PARAM_USERNAME);
-    $usernew->timemodified = time();    
+
+    $usernew->timemodified = time();
 
     if ($usernew->id == -1) {
         //TODO check out if it makes sense to create account with this auth plugin and what to do with the password
@@ -142,7 +141,7 @@ if ($usernew = $userform->get_data()) {
         $usernew->mnethostid = $CFG->mnet_localhost_id; // always local user
         $usernew->confirmed  = 1;
         $usernew->timecreated = time();
-        $usernew->password = hash_internal_user_password($usernew->newpassword);        
+        $usernew->password = hash_internal_user_password($usernew->newpassword);
         $usernew->id = $DB->insert_record('user', $usernew);
         $usercreated = true;
 
@@ -220,7 +219,7 @@ if ($usernew = $userform->get_data()) {
             redirect("$CFG->wwwroot/user/view.php?id=$USER->id&course=$course->id");
         }
     } else {
-        session_gc(); // remove stale sessions        
+        session_gc(); // remove stale sessions
         redirect("$CFG->wwwroot/$CFG->admin/user.php");
     }
     //never reached

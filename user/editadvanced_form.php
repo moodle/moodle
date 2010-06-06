@@ -114,7 +114,7 @@ class user_editadvanced_form extends moodleform {
         profile_definition_after_data($mform, $userid);
     }
 
-    function validation($usernew, $files) { 
+    function validation($usernew, $files) {
         global $CFG, $DB;
 
         $usernew = (object)$usernew;
@@ -141,9 +141,8 @@ class user_editadvanced_form extends moodleform {
             //check allowed characters
             if ($usernew->username !== moodle_strtolower($usernew->username)) {
                 $err['username'] = get_string('usernamelowercase');
-            } else {                
-                $string = clean_param($usernew->username, PARAM_USERNAME);
-                if ($usernew->username !== $string) {
+            } else {
+                if ($usernew->username !== clean_param($usernew->username, PARAM_USERNAME)) {
                     $err['username'] = get_string('invalidusername');
                 }
             }
