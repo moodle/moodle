@@ -1755,6 +1755,10 @@ function text_to_html($text, $smiley=true, $para=true, $newlines=true) {
 function markdown_to_html($text) {
     global $CFG;
 
+    if ($text === '' or $text === NULL) {
+        return $text;
+    }
+
     require_once($CFG->libdir .'/markdown.php');
 
     return Markdown($text);
