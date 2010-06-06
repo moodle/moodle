@@ -978,7 +978,7 @@ class html_writer {
         $attributes['type']    = 'checkbox';
         $attributes['value']   = $value;
         $attributes['name']    = $name;
-        $attributes['checked'] = $checked ? 'selected' : null;
+        $attributes['checked'] = $checked ? 'checked' : null;
 
         $output .= self::empty_tag('input', $attributes);
 
