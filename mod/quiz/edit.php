@@ -50,8 +50,6 @@
 require_once('../../config.php');
 require_once($CFG->dirroot . '/mod/quiz/editlib.php');
 require_once($CFG->dirroot . '/question/category_class.php');
-$PAGE->requires->yui2_lib('container');
-$PAGE->requires->yui2_lib('dragdrop');
 
 /**
  * Callback function called from question_list() function
@@ -441,6 +439,8 @@ $questionbank->process_actions($thispageurl, $cm);
 
 // End of process commands =====================================================
 
+$PAGE->requires->yui2_lib('container');
+$PAGE->requires->yui2_lib('dragdrop');
 $PAGE->requires->skip_link_to('questionbank',  get_string('skipto', 'access', get_string('questionbank', 'question')));
 $PAGE->requires->skip_link_to('quizcontentsblock',  get_string('skipto', 'access', get_string('questionsinthisquiz', 'quiz')));
 $PAGE->set_title($pagetitle);
