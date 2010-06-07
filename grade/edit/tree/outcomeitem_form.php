@@ -60,7 +60,7 @@ class edit_outcomeitem_form extends moodleform {
             }
         }
         $mform->addElement('select', 'cmid', get_string('linkedactivity', 'grades'), $options);
-        $mform->setHelpButton('cmid', array('linkedactivity', get_string('linkedactivity', 'grades'), 'grade'), true);
+        $mform->addHelpButton('cmid', 'linkedactivity', 'grades');
         $mform->setDefault('cmid', 0);
 
         /// hiding

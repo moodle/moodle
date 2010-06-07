@@ -396,7 +396,6 @@ $string['letterreal'] = 'Letter (real)';
 $string['letters'] = 'Letters';
 $string['linkedactivity'] = 'Linked activity';
 $string['linkedactivity_help'] = 'This setting specifies an activity to which this outcome item is linked. This may be used to measure student performance on criteria not assessed by the activity grade.';
-$string['linkedactivityhelp'] = 'Specifies an optional activity to which this outcome item is linked. This is used to measure student performance on criteria not assessed by the activity grade.';
 $string['linktoactivity'] = 'Link to {$a->name} activity';
 $string['lock'] = 'Lock';
 $string['locked'] = 'Locked';
