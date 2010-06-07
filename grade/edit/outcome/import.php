@@ -44,23 +44,7 @@ if ($courseid) {
 
 require_capability('moodle/grade:manageoutcomes', $context);
 
-$strgrades = get_string('grades');
-$pagename  = get_string('outcomes', 'grades');
-
-$navigation = grade_build_nav(__FILE__, $pagename, $courseid);
-
-$strshortname        = get_string('shortname');
-$strfullname         = get_string('fullname');
-$strscale            = get_string('scale');
-$strstandardoutcome  = get_string('outcomesstandard', 'grades');
-$strcustomoutcomes   = get_string('outcomescustom', 'grades');
-$strdelete           = get_string('delete');
-$stredit             = get_string('edit');
-$srtcreatenewoutcome = get_string('outcomecreate', 'grades');
-$stritems            = get_string('items', 'grades');
-$strcourses          = get_string('courses');
-$stredit             = get_string('edit');
-$strexport           = get_string('export', 'grades');
+$navigation = grade_build_nav(__FILE__, get_string('outcomes', 'grades'), $courseid);
 
 if (!confirm_sesskey()) {
     break;
