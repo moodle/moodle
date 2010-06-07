@@ -36,7 +36,7 @@ class edit_item_form extends moodleform {
 
         $mform->addElement('text', 'itemname', get_string('itemname', 'grades'));
         $mform->addElement('text', 'iteminfo', get_string('iteminfo', 'grades'));
-        $mform->setHelpButton('iteminfo', array('iteminfo', get_string('iteminfo', 'grades'), 'grade'), true);
+        $mform->addHelpButton('iteminfo', 'iteminfo', 'grades');
 
         $mform->addElement('text', 'idnumber', get_string('idnumbermod'));
         $mform->addHelpButton('idnumber', 'idnumbermod');
