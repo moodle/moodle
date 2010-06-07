@@ -337,7 +337,6 @@ $string['hidetotalifhiddenitems'] = 'Hide totals if they contain hidden items';
 $string['hidetotalifhiddenitems_help'] = 'This setting specifies whether totals which contain hidden grade items are shown to students or replaced with a hyphen (-). If shown, the total may be calculated either excluding or including hidden items.
 
 If hidden items are excluded, the total will be different to the total seen by the teacher in the grader report, since the teacher always sees totals calculated from all items, hidden or unhidden. If hidden items are included, students may be able to calculate the hidden items.';
-$string['hidetotalifhiddenitemsdescription'] = 'Whether totals which contain hidden grade items are shown to students (calculated either excluding or including hidden items) or replaced with a hyphen.';
 $string['hidetotalshowexhiddenitems'] = 'Show totals excluding hidden items';
 $string['hidetotalshowinchiddenitems'] = 'Show totals including hidden items';
 $string['hideverbose'] = 'Hide {$a->category} {$a->itemmodule} {$a->itemname}';
