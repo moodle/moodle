@@ -112,7 +112,7 @@ if (has_capability('moodle/grade:manage', $systemcontext)
         $defaults['value'] = 0;
         $defaults['forced'] = true;
         $temp->add(new admin_setting_gradecat_combo('grade_keephigh', get_string('keephigh', 'grades'),
-                    get_string('keephighhelp', 'grades'), $defaults, $options));
+                    get_string('keephigh_help', 'grades'), $defaults, $options));
         $defaults['forced'] = false;
         $temp->add(new admin_setting_gradecat_combo('grade_droplow', get_string('droplow', 'grades'),
                     get_string('droplow_help', 'grades'), $defaults, $options));

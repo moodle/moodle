@@ -85,7 +85,7 @@ class edit_category_form extends moodleform {
         }
 
         $mform->addElement('select', 'keephigh', get_string('keephigh', 'grades'), $options);
-        $mform->setHelpButton('keephigh', array('keephigh', get_string('keephigh', 'grades'), 'grade'), true);
+        $mform->addHelpButton('keephigh', 'keephigh', 'grades');
         if ((int)$CFG->grade_keephigh_flag & 2) {
             $mform->setAdvanced('keephigh');
         }
