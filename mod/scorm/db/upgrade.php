@@ -202,8 +202,12 @@ function xmldb_scorm_upgrade($oldversion) {
                     if ($file = $fs->get_file_by_hash($pathnamehash)) {
                         $file_record = array('scontextid'=>$context->id, 'filearea'=>'scorm_pacakge',
                                              'itemid'=>0, 'filepath'=>'/');
-                        $packagefile = $fs->create_file_from_storedfile($file_record, $file);
-                        $scorm->reference = $packagefile->get_filename();
+                        try {
+                            $fs->create_file_from_storedfile($file_record, $file);
+                        } catch (Exception $x) {
+                        }
+                        $scorm->reference = $file->get_filepath().$file->get_filename();
+
                     } else {
                         $scorm->reference = '';
                     }
