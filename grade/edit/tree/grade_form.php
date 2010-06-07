@@ -95,7 +95,6 @@ class edit_grade_form extends moodleform {
         $mform->addElement('advcheckbox', 'locked', get_string('locked', 'grades'));
         $mform->setHelpButton('locked', array('locked', get_string('locked', 'grades'), 'grade'));
         $mform->addElement('date_time_selector', 'locktime', get_string('locktime', 'grades'), array('optional'=>true));
-        $mform->setHelpButton('locktime', array('lockedafter', get_string('locktime', 'grades'), 'grade'));
         $mform->disabledIf('locktime', 'gradetype', 'eq', GRADE_TYPE_NONE);
 
         // Feedback format is automatically converted to html if user has enabled editor

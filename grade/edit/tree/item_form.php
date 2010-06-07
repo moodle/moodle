@@ -147,7 +147,6 @@ class edit_item_form extends moodleform {
         $mform->setHelpButton('locked', array('locked', get_string('locked', 'grades'), 'grade'));
 
         $mform->addElement('date_time_selector', 'locktime', get_string('locktime', 'grades'), array('optional'=>true));
-        $mform->setHelpButton('locktime', array('lockedafter', get_string('locktime', 'grades'), 'grade'));
         $mform->disabledIf('locktime', 'gradetype', 'eq', GRADE_TYPE_NONE);
 
 /// parent category related settings

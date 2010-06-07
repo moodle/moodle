@@ -74,7 +74,6 @@ class edit_outcomeitem_form extends moodleform {
         $mform->addElement('advcheckbox', 'locked', get_string('locked', 'grades'));
         $mform->setHelpButton('locked', array('locked', get_string('locked', 'grades'), 'grade'));
         $mform->addElement('date_time_selector', 'locktime', get_string('locktime', 'grades'), array('optional'=>true));
-        $mform->setHelpButton('locktime', array('lockedafter', get_string('locktime', 'grades'), 'grade'));
 
 /// parent category related settings
         $mform->addElement('header', 'headerparent', get_string('parentcategory', 'grades'));
