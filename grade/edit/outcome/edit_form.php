@@ -38,7 +38,7 @@ class edit_outcome_form extends moodleform {
         $mform->setType('shortname', PARAM_NOTAGS);
 
         $mform->addElement('advcheckbox', 'standard', get_string('outcomestandard', 'grades'));
-        $mform->setHelpButton('standard', array('outcomestandard', get_string('outcomestandard'), 'grade'));
+        $mform->addHelpButton('standard', 'outcomestandard', 'grades');
 
         $options = array();
 
