@@ -28,15 +28,6 @@ require_once $CFG->dirroot.'/grade/lib.php';
 require_once $CFG->dirroot.'/grade/report/lib.php'; // for preferences
 require_once $CFG->dirroot.'/grade/edit/tree/lib.php';
 
-$PAGE->requires->yui2_lib('event');
-$PAGE->requires->yui2_lib('json');
-$PAGE->requires->yui2_lib('connection');
-$PAGE->requires->yui2_lib('dragdrop');
-$PAGE->requires->yui2_lib('element');
-$PAGE->requires->yui2_lib('container');
-$PAGE->requires->yui2_lib('animation');
-$PAGE->requires->js('/grade/edit/tree/functions.js');
-
 $courseid        = required_param('id', PARAM_INT);
 $action          = optional_param('action', 0, PARAM_ALPHA);
 $eid             = optional_param('eid', 0, PARAM_ALPHANUM);
@@ -59,6 +50,16 @@ if (!$course = $DB->get_record('course', array('id' => $courseid))) {
 require_login($course);
 $context = get_context_instance(CONTEXT_COURSE, $course->id);
 require_capability('moodle/grade:manage', $context);
+
+// todo $PAGE->requires->js_module() should be used here instead
+$PAGE->requires->yui2_lib('event');
+$PAGE->requires->yui2_lib('json');
+$PAGE->requires->yui2_lib('connection');
+$PAGE->requires->yui2_lib('dragdrop');
+$PAGE->requires->yui2_lib('element');
+$PAGE->requires->yui2_lib('container');
+$PAGE->requires->yui2_lib('animation');
+$PAGE->requires->js('/grade/edit/tree/functions.js');
 
 /// return tracking object
 $gpr = new grade_plugin_return(array('type'=>'edit', 'plugin'=>'tree', 'courseid'=>$courseid));
