@@ -1702,7 +1702,7 @@ function use_html_editor($name='', $editorhidebuttons='', $id='') {
 
 /**
  * The old method that was used to include JavaScript libraries.
- * Please use $PAGE->requires->js() or $PAGE->requires->yui2_lib() instead.
+ * Please use $PAGE->requires->js_module() instead.
  *
  * @param mixed $lib The library or libraries to load (a string or array of strings)
  *      There are three way to specify the library:
@@ -1722,8 +1722,7 @@ function require_js($lib) {
         return;
     }
 
-    debugging('Call to deprecated function require_js. Please use $PAGE->requires->js() ' .
-              'or $PAGE->requires->yui2_lib() instead.', DEBUG_DEVELOPER);
+    debugging('Call to deprecated function require_js. Please use $PAGE->requires->js_module() instead.', DEBUG_DEVELOPER);
 
     if (strpos($lib, 'yui_') === 0) {
         $PAGE->requires->yui2_lib(substr($lib, 4));
