@@ -1,64 +1,69 @@
 <?php
 
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /// Load libraries
-    require_once('../../config.php');
-    require_once($CFG->libdir.'/uploadlib.php');
-    require_once($CFG->dirroot.'/enrol/authorize/const.php');
-    require_once($CFG->dirroot.'/enrol/authorize/localfuncs.php');
-    require_once($CFG->libdir.'/eventslib.php');
+require_once('../../config.php');
+require_once($CFG->libdir.'/uploadlib.php');
+require_once($CFG->dirroot.'/enrol/authorize/const.php');
+require_once($CFG->dirroot.'/enrol/authorize/localfuncs.php');
+require_once($CFG->libdir.'/eventslib.php');
+require_once('import_form.php');
 
 /// Require capabilites
-    require_login();
-    require_capability('enrol/authorize:uploadcsv', get_context_instance(CONTEXT_SYSTEM));
+require_login();
+require_capability('enrol/authorize:uploadcsv', get_context_instance(CONTEXT_SYSTEM));
 
 /// Print header
-    $struploadcsv = get_string('uploadcsv', 'enrol_authorize');
-    $managebutton = "<form method='get' action='index.php'><div><input type='submit' value='".get_string('paymentmanagement', 'enrol_authorize')."' /></div></form>";
+$struploadcsv = get_string('uploadcsv', 'enrol_authorize');
+$managebutton = "<form method='get' action='index.php'><input type='submit' value='".get_string('paymentmanagement', 'enrol_authorize')."' /></form>";
 
-    $PAGE->set_url('/enrol/authorize/uploadcsv.php');
-    $PAGE->navbar->add(get_string('paymentmanagement', 'enrol_authorize'), 'index.php');
-    $PAGE->navbar->add($struploadcsv, 'uploadcsv.php');
-    $PAGE->set_title($struploadcsv);
-    $PAGE->set_cacheable(false);
-    $PAGE->set_button($managebutton);
-    echo $OUTPUT->header();
+$form = new enrol_authorize_import_form();
 
-    echo $OUTPUT->heading_with_help($struploadcsv, 'authorize/uploadcsv', 'enrol');
+$PAGE->set_url('/enrol/authorize/uploadcsv.php');
+$PAGE->navbar->add(get_string('paymentmanagement', 'enrol_authorize'), 'index.php');
+$PAGE->navbar->add($struploadcsv, 'uploadcsv.php');
+$PAGE->set_title($struploadcsv);
+$PAGE->set_cacheable(false);
+$PAGE->set_button($managebutton);
+echo $OUTPUT->header();
+echo $OUTPUT->heading($struploadcsv);
 
 /// Handle CSV file
-    if (($form = data_submitted()) && confirm_sesskey()) {
-        $um = new upload_manager('csvfile', false, false, null, false, 0);
-        if ($um->preprocess_files()) {
-            $filename = $um->files['csvfile']['tmp_name'];
-            // Fix mac/dos newlines
-            $text = file_get_contents($filename);
-            $text = preg_replace('!\r\n?!', "\n", $text);
-            $fp = fopen($filename, "w");
-            fwrite($fp, $text);
-            fclose($fp);
-            authorize_process_csv($filename);
-        }
-    }
-
-/// Print submit form
-    $maxuploadsize = get_max_upload_file_size();
-    echo '<center><form method="post" enctype="multipart/form-data" action="uploadcsv.php"><div>
-          <input type="hidden" name="MAX_FILE_SIZE" value="'.$maxuploadsize.'" />
-          <input type="hidden" name="sesskey" value="'.sesskey().'" />';
-          upload_print_form_fragment(1, array('csvfile'), array(get_string('file')));
-    echo '<input type="submit" value="'.get_string('upload').'" />';
-    echo '</div></form></center><br />';
+if (!$form->get_data()) {
+    $form->display();
+} else {
+    $filename = $CFG->dataroot . '/temp/enrolauthorize/importedfile_'.time().'.csv';
+    make_upload_directory('temp/enrolauthorize');
+    // Fix mac/dos newlines
+    $text = $form->get_file_content('csvfile');
+    $text = preg_replace('!\r\n?!', "\n", $text);
+    $fp = fopen($filename, "w");
+    fwrite($fp, $text);
+    fclose($fp);
+    authorize_process_csv($filename);
+}
 
 /// Print footer
-    echo $OUTPUT->footer();
+echo $OUTPUT->footer();
 
-?><?php
-
-function authorize_process_csv($filename)
-{
+function authorize_process_csv($filename) {
     global $CFG, $SITE, $DB;
 
-/// We need these fields
+    /// We need these fields
     $myfields = array(
         'Transaction ID',           // enrol_authorize.transid or enrol_authorize_refunds.transid; See: Reference Transaction ID
         'Transaction Status',       // Under Review,Approved Review,Review Failed,Settled Successfully
@@ -76,7 +81,7 @@ function authorize_process_csv($filename)
         'Customer ID'               // enrol_authorize.userid
     );
 
-/// Open the file and get first line
+    /// Open the file and get first line
     $handle = fopen($filename, "r");
     if (!$handle) {
         print_error('cannotopencsv');
@@ -88,7 +93,7 @@ function authorize_process_csv($filename)
         print_error('csvinvalidcolsnum');
     }
 
-/// Re-sort fields
+    /// Re-sort fields
     $csvfields = array();
     foreach ($myfields as $myfield) {
         $csvindex = array_search($myfield, $firstline);
@@ -103,7 +108,7 @@ function authorize_process_csv($filename)
         print_error('csvinvalidcols');
     }
 
-/// Read lines
+    /// Read lines
     $sendem = array();
     $ignoredlines = '';
 
@@ -224,7 +229,7 @@ function authorize_process_csv($filename)
     }
     fclose($handle);
 
-/// Send email to admin
+    /// Send email to admin
     if (!empty($ignoredlines)) {
         $admin = get_admin();
 
@@ -240,13 +245,11 @@ function authorize_process_csv($filename)
         message_send($eventdata);
     }
 
-/// Send welcome messages to users
+    /// Send welcome messages to users
     if (!empty($sendem)) {
         send_welcome_messages($sendem);
     }
 
-/// Show result
+    /// Show result
     notice("<b>Done...</b><br />Imported: $imported<br />Updated: $updated<br />Ignored: $ignored");
 }
-
-
