@@ -1407,7 +1407,6 @@ class assignment_base {
             echo $OUTPUT->help_icon('enableemailnotification', 'assignment').'</p></div>';
             echo '</div>';
             echo '<div class="fastgbutton"><input type="submit" name="fastg" value="'.get_string('saveallfeedback', 'assignment').'" /></div>';
-            echo '</div>';
             echo '</form>';
         }
         /// End of fast grading form
