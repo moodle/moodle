@@ -206,6 +206,12 @@ function glossary_delete_instance($id) {
     // delete all files
     $fs->delete_area_files($context->id);
 
+    //delete ratings
+    $rm = new rating_manager();
+    $ratingdeloptions = new stdclass();
+    $ratingdeloptions->contextid = $context->id;
+    $rm->delete_ratings($ratingdeloptions);
+
     glossary_grade_item_delete($glossary);
 
     return $DB->delete_records('glossary', array('id'=>$id));
@@ -2097,11 +2103,17 @@ function glossary_count_unrated_entries($glossaryid, $userid) {
                                           FROM {glossary_entries}
                                          WHERE glossaryid = ? AND userid <> ?", array($glossaryid, $userid))) {
 
-        // XXX: glossary_ratings table has been removed.
+        if (!$cm = get_coursemodule_from_instance('glossary', $glossaryid)) {
+            return 0;
+        }
+        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+        
         if ($rated = $DB->get_record_sql("SELECT count(*) as num
-                                            FROM {glossary_entries} e, {glossary_ratings} r
-                                           WHERE e.glossaryid = ? AND e.id = r.entryid
-                                                 AND r.userid = ?", array($glossaryid, $userid))) {
+                                            FROM {glossary_entries} e, {ratings} r
+                                           WHERE e.glossaryid = :glossaryid AND e.id = r.itemid
+                                                 AND r.userid = :userid and r.contextid = :contextid", 
+                array('glossaryid'=>$glossaryid, 'userid'=>$userid, 'contextid'=>$context->id))) {
+
             $difference = $entries->num - $rated->num;
             if ($difference > 0) {
                 return $difference;
@@ -2362,8 +2374,6 @@ function glossary_reset_userdata($data) {
     if (!empty($data->reset_glossary_all)
          or (!empty($data->reset_glossary_types) and in_array('main', $data->reset_glossary_types) and in_array('secondary', $data->reset_glossary_types))) {
 
-        // TODO: Fix rating removal
-        //$DB->delete_records_select('glossary_ratings', "entryid IN ($allentriessql)", $params);
         $params[] = 'glossary_entry';
         $DB->delete_records_select('comments', "itemid IN ($allentriessql) AND commentarea=?", $params);
         $DB->delete_records_select('glossary_entries', "glossaryid IN ($allglossariessql)", $params);
@@ -2398,8 +2408,6 @@ function glossary_reset_userdata($data) {
         $secondaryglossariessql = "$allglossariessql AND g.mainglossary=0";
 
         if (in_array('main', $data->reset_glossary_types)) {
-            // TODO: Fix rating removal
-            //$DB->delete_records_select('glossary_ratings', "entryid IN ($mainentriessql)", $params);
             $params[] = 'glossary_entry';
             $DB->delete_records_select('comments', "itemid IN ($mainentriessql) AND commentarea=?", $params);
             $DB->delete_records_select('glossary_entries', "glossaryid IN ($mainglossariessql)", $params);
@@ -2426,8 +2434,6 @@ function glossary_reset_userdata($data) {
             $status[] = array('component'=>$componentstr, 'item'=>get_string('resetglossaries', 'glossary'), 'error'=>false);
 
         } else if (in_array('secondary', $data->reset_glossary_types)) {
-            // TODO: Fix rating removal
-            //$DB->delete_records_select('glossary_ratings', "entryid IN ($secondaryentriessql)", $params);
             $params[] = 'glossary_entry';
             $DB->delete_records_select('comments', "itemid IN ($secondaryentriessql) AND commentarea=?", $params);
             $DB->delete_records_select('glossary_entries', "glossaryid IN ($secondaryglossariessql)", $params);
@@ -2473,14 +2479,16 @@ function glossary_reset_userdata($data) {
             foreach ($rs as $entry) {
                 if (array_key_exists($entry->userid, $notenrolled) or !$entry->userexists or $entry->userdeleted
                   or !is_enrolled($course_context , $entry->userid)) {
-                    // TODO: Fix rating removal
-                    //$DB->delete_records('glossary_ratings', array('entryid'=>$entry->id));
                     $DB->delete_records('comments', array('commentarea'=>'glossary_entry', 'itemid'=>$entry->id));
                     $DB->delete_records('glossary_entries', array('id'=>$entry->id));
 
                     if ($cm = get_coursemodule_from_instance('glossary', $entry->glossaryid)) {
                         $context = get_context_instance(CONTEXT_MODULE, $cm->id);
                         $fs->delete_area_files($context->id, 'glossary_attachment', $entry->id);
+
+                        //delete ratings
+                        $ratingdeloptions->contextid = $context->id;
+                        $rm->delete_ratings($ratingdeloptions);
                     }
                 }
             }
@@ -2491,8 +2499,20 @@ function glossary_reset_userdata($data) {
 
     // remove all ratings
     if (!empty($data->reset_glossary_ratings)) {
-        // TODO: Fix rating removal
-        //$DB->delete_records_select('glossary_ratings', "entryid IN ($allentriessql)", $params);
+        //remove ratings
+        if ($glossaries = $DB->get_records_sql($allglossariessql, $params)) {
+            foreach ($glossaries as $glossaryid=>$unused) {
+                if (!$cm = get_coursemodule_from_instance('glossary', $glossaryid)) {
+                    continue;
+                }
+                $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+
+                //delete ratings
+                $ratingdeloptions->contextid = $context->id;
+                $rm->delete_ratings($ratingdeloptions);
+            }
+        }
+
         // remove all grades from gradebook
         if (empty($data->reset_gradebook_grades)) {
             glossary_reset_gradebook($data->courseid);
