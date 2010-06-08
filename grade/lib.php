@@ -472,7 +472,7 @@ function grade_get_plugin_info($courseid, $active_type, $active_plugin) {
     if ($reports = grade_helper::get_plugins_reports($courseid)) {
         $plugin_info['report'] = $reports;
     }
-    
+
     if ($edittree = grade_helper::get_info_edit_structure($courseid)) {
         $plugin_info['edittree'] = $edittree;
     }
@@ -483,9 +483,6 @@ function grade_get_plugin_info($courseid, $active_type, $active_plugin) {
 
     if ($outcomes = grade_helper::get_info_outcomes($courseid)) {
         $plugin_info['outcome'] = $outcomes;
-        if ($active_type == 'outcome' && $active_plugin == 'import') {
-            $plugin_info['outcome']['import'] = new grade_plugin_info('import', null, get_string('importoutcomes', 'grades'));
-        }
     }
 
     if ($letters = grade_helper::get_info_letters($courseid)) {
@@ -495,7 +492,7 @@ function grade_get_plugin_info($courseid, $active_type, $active_plugin) {
     if ($imports = grade_helper::get_plugins_import($courseid)) {
         $plugin_info['import'] = $imports;
     }
-    
+
     if ($exports = grade_helper::get_plugins_export($courseid)) {
         $plugin_info['export'] = $exports;
     }
@@ -513,7 +510,7 @@ function grade_get_plugin_info($courseid, $active_type, $active_plugin) {
             }
         }
     }
-    
+
     // Put settings last
     if ($setting = grade_helper::get_info_manage_settings($courseid)) {
         $plugin_info['settings'] = array('course'=>$setting);
@@ -615,9 +612,9 @@ function print_grade_page_head($courseid, $active_type, $active_plugin=null,
                                $heading = false, $return=false,
                                $buttons=false) {
     global $CFG, $OUTPUT, $PAGE;
-    
+
     $plugin_info = grade_get_plugin_info($courseid, $active_type, $active_plugin);
-    
+
     // Determine the string of the active plugin
     $stractive_plugin = ($active_plugin) ? $plugin_info['strings']['active_plugin_str'] : $heading;
     $stractive_type = $plugin_info['strings'][$active_type];
@@ -2297,6 +2294,8 @@ abstract class grade_helper {
                 $outcomes['course'] = new grade_plugin_info('course', $url, get_string('outcomescourse', 'grades'));
                 $url = new moodle_url('/grade/edit/outcome/index.php', array('id'=>$courseid));
                 $outcomes['edit'] = new grade_plugin_info('edit', $url, get_string('editoutcomes', 'grades'));
+                $url = new moodle_url('/grade/edit/outcome/import.php', array('courseid'=>$courseid));
+                $outcomes['import'] = new grade_plugin_info('import', $url, get_string('importoutcomes', 'grades'));
             } else {
                 $url = new moodle_url('/grade/edit/outcome/course.php', array('id'=>$courseid));
                 $outcomes['edit'] = new grade_plugin_info('edit', $url, get_string('outcomescourse', 'grades'));

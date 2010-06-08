@@ -24,25 +24,25 @@ require_once($CFG->dirroot.'/lib/formslib.php');
 class import_outcomes_form extends moodleform {
 
     public function definition() {
-        global $COURSE, $USER;
+        global $PAGE, $USER;
 
         $mform =& $this->_form;
-        //$this->set_upload_manager(new upload_manager('importfile', false, false, null, false, 0, true, true, false));
 
         $mform->addElement('hidden', 'action', 'upload');
         $mform->setType('action', PARAM_ACTION);
-        $mform->addElement('hidden', 'id', $COURSE->id);
+        $mform->addElement('hidden', 'courseid', $PAGE->course->id);
         $mform->setType('id', PARAM_INT);
 
         $scope = array();
-        if (($COURSE->id > 1) && has_capability('moodle/grade:manage', get_context_instance(CONTEXT_SYSTEM))) {
+        if (($PAGE->course->id > 1) && has_capability('moodle/grade:manage', get_context_instance(CONTEXT_SYSTEM))) {
             $mform->addElement('radio', 'scope', get_string('importcustom', 'grades'), null, 'custom');
             $mform->addElement('radio', 'scope', get_string('importstandard', 'grades'), null, 'global');
             $mform->setDefault('scope', 'custom');
         }
 
-        $mform->addElement('file', 'userfile', get_string('importoutcomes', 'grades'));
-        $mform->addHelpButton('userfile', 'importoutcomes', 'grades');
+        $mform->addElement('filepicker', 'userfile', get_string('importoutcomes', 'grades'));
+        $mform->addRule('userfile', get_string('required'), 'required', null, 'server');
+        $mform->setHelpButton('userfile', array('importoutcomes', get_string('importoutcomes', 'grades'), 'grade'));
 
         $mform->addElement('submit', 'save', get_string('uploadthisfile'));
 

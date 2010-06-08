@@ -24,7 +24,6 @@
  */
 
 require_once(dirname(__FILE__).'/../../../config.php');
-require_once($CFG->dirroot.'/lib/formslib.php');
 require_once($CFG->dirroot.'/grade/lib.php');
 require_once($CFG->libdir.'/gradelib.php');
 
@@ -56,14 +55,6 @@ if ($courseid) {
 
 /// return tracking object
 $gpr = new grade_plugin_return(array('type'=>'edit', 'plugin'=>'outcome', 'courseid'=>$courseid));
-
-require_once('import_outcomes_form.php');
-$upload_form = new import_outcomes_form();
-
-if ($upload_form_data = $upload_form->get_data()) {
-    require_once('import.php');
-    exit();
-}
 
 
 $strgrades = get_string('grades');
@@ -253,8 +244,6 @@ if ( !empty($outcomes_tables) ) {
 }
 echo $OUTPUT->container_end();
 
-$upload_form->display();
-
 echo $OUTPUT->footer();
 
 /**
@@ -270,4 +259,3 @@ function grade_print_scale_link($courseid, $scale, $gpr) {
     $url = $gpr->add_url_params($url);
     return html_writer::link($url, $scale->get_name());
 }
-
