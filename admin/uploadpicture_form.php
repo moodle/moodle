@@ -12,11 +12,12 @@ class admin_uploadpicture_form extends moodleform {
 
         $mform =& $this->_form;
 
-        $this->set_upload_manager(new upload_manager('userpicturesfile', false, false, null, false, 0, true, true, false));
-
         $mform->addElement('header', 'settingsheader', get_string('upload'));
 
-        $mform->addElement('file', 'userpicturesfile', get_string('file'), 'size="40"');
+
+        $options = array();
+        $options['filetypes'] = array('archive');
+        $mform->addElement('filepicker', 'userpicturesfile', get_string('file'), 'size="40"', $options);
         $mform->addRule('userpicturesfile', null, 'required');
 
         $choices =& $this->_customdata;

@@ -78,7 +78,7 @@ if ($formdata = $mform->get_data()) {
         // contents.
         $zipdir = my_mktempdir($CFG->dataroot.'/temp/', 'usrpic');
         $dstfile = $zipdir.'/images.zip';
-        
+
         if (!$mform->save_file('userpicturesfile', $dstfile, true)) {
             echo $OUTPUT->notification(get_string('uploadpicture_cannotmovezip','admin'));
             @remove_dir($zipdir);
@@ -198,7 +198,7 @@ function process_file ($file, $userfield, $overwrite) {
     $path_parts = pathinfo(cleardoubleslashes($file));
     $basename  = $path_parts['basename'];
     $extension = $path_parts['extension'];
-   
+
     // The picture file name (without extension) must match the
     // userfield attribute.
     $uservalue = substr($basename, 0,
