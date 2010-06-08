@@ -466,9 +466,6 @@ if ($allentries) {
             }
         }
 
-        $concept = $entry->concept;
-        $definition = $entry->definition;
-
         /// highlight the term if necessary
         if ($mode == 'search') {
             //We have to strip any word starting by + and take out words starting by -

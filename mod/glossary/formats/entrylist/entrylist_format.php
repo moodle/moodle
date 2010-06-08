@@ -12,10 +12,10 @@ function glossary_show_entry_entrylist($course, $cm, $glossary, $entry, $mode=''
     if ($entry) {
         glossary_print_entry_approval($cm, $entry, $mode);
 
-        $anchortagcontents = glossary_print_entry_concept($entry);
+        $anchortagcontents = glossary_print_entry_concept($entry, true);
 
         $link = "/mod/glossary/showentry.php?courseid={$course->id}&eid={$entry->id}&displayformat=dictionary";
-        $action = new popup_action('click', $link, 'entry',array('title'=>'entry','width'=>600,'height'=>450));
+        $action = new popup_action('click', $link.'&popup=1', 'entry',array('title'=>'entry','width'=>600,'height'=>450));
 
         $anchor = $OUTPUT->action_link($link, $anchortagcontents, $action);
 

@@ -7,6 +7,7 @@ $concept  = optional_param('concept', '', PARAM_CLEAN);
 $courseid = optional_param('courseid', 0, PARAM_INT);
 $eid      = optional_param('eid', 0, PARAM_INT); // glossary entry id
 $displayformat = optional_param('displayformat',-1, PARAM_SAFEDIR);
+$popup = optional_param('popup',0, PARAM_INT);
 
 $url = new moodle_url('/mod/glossary/showentry.php');
 $url->param('concept', $concept);
@@ -21,7 +22,7 @@ if ($CFG->forcelogin) {
 
 if ($eid) {
     $entry = $DB->get_record('glossary_entries', array('id'=>$eid), '*', MUST_EXIST);
-    $glossary = $DB->get_record('glossary', 'id', array($entry->glossaryid), '*', MUST_EXIST);
+    $glossary = $DB->get_record('glossary', array('id'=>$entry->glossaryid), '*', MUST_EXIST);
     $cm = get_coursemodule_from_instance('glossary', $glossary->id, 0, false, MUST_EXIST);
     $course = $DB->get_record('course', array('id'=>$cm->course), '*', MUST_EXIST);
     require_course_login($course, true, $cm);
@@ -82,7 +83,9 @@ if ($entries) {
     glossary_print_dynaentry($courseid, $entries, $displayformat);
 }
 
-echo $OUTPUT->close_window_button();
+if ($popup) {
+    echo $OUTPUT->close_window_button();
+}
 
 /// Show one reduced footer
 echo $OUTPUT->footer();

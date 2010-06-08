@@ -135,7 +135,7 @@ function glossary_filter($courseid, $text) {
 
                 //attach the onclick event
                 $link = '/mod/glossary/showentry.php?courseid='.$courseid.'\&amp;concept='.$encodedconcept;
-                $action = new popup_action('click', $link, 'entry', array('height'=>600,'width'=>450));
+                $action = new popup_action('click', $link.'&popup=1', 'entry', array('height'=>600,'width'=>450));
                 $OUTPUT->add_action_handler($action, $randid);
             }
 

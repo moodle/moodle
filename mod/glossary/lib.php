@@ -862,7 +862,7 @@ function glossary_print_entry_default ($entry, $glossary, $cm) {
  * Print glossary concept/term as a heading &lt;h3>
  * @param object $entry
  */
-function  glossary_print_entry_concept($entry) {
+function  glossary_print_entry_concept($entry, $return=false) {
     global $OUTPUT;
     $options = new object();
     $options->para = false;
@@ -870,7 +870,12 @@ function  glossary_print_entry_concept($entry) {
     if (!empty($entry->highlight)) {
         $text = highlight($entry->highlight, $text);
     }
-    echo $text;
+
+    if ($return) {
+        return $text;
+    } else {
+        echo $text;
+    }
 }
 
 /**
