@@ -1501,6 +1501,39 @@ class grade_category extends grade_object {
         return $result;
     }
 
+    public static function set_properties(&$instance, $params) {
+        global $DB;
+
+        parent::set_properties($instance, $params);
+
+        //if theyve changed aggregation type we made need to do some fiddling to provide appropriate defaults
+        if (!empty($params->aggregation)) {
+
+            //weight and extra credit share a column :( Would like a default of 1 for weight and 0 for extra credit
+            //Flip from the default of 0 to 1 (or vice versa) if ALL items in the category are still set to the old default.
+            if ($params->aggregation==GRADE_AGGREGATE_WEIGHTED_MEAN || $params->aggregation==GRADE_AGGREGATE_EXTRACREDIT_MEAN) {
+                $sql = $defaultaggregationcoef = null;
+                
+                if ($params->aggregation==GRADE_AGGREGATE_WEIGHTED_MEAN) {
+                    //if all items in this category have aggregation coefficient of 0 we can change it to 1 ie evenly weighted
+                    $sql = "select count(id) from {grade_items} where categoryid=:categoryid and aggregationcoef!=0";
+                    $defaultaggregationcoef = 1;
+                } else if ($params->aggregation==GRADE_AGGREGATE_EXTRACREDIT_MEAN) {
+                    //if all items in this category have aggregation coefficient of 1 we can change it to 0 ie no extra credit
+                    $sql = "select count(id) from {grade_items} where categoryid=:categoryid and aggregationcoef!=1";
+                    $defaultaggregationcoef = 0;
+                }
+
+                $params = array('categoryid'=>$instance->id);
+                $count = $DB->count_records_sql($sql, $params);
+                if ($count===0) { //category is either empty or all items are set to a default value so we can switch defaults
+                    $params['aggregationcoef'] = $defaultaggregationcoef;
+                    $DB->execute("update {grade_items} set aggregationcoef=:aggregationcoef where categoryid=:categoryid",$params);
+                }
+            }
+        }
+    }
+
     /**
      * Sets the grade_item's hidden variable and updates the grade_item.
      * Method named after grade_item::set_hidden().
