@@ -460,7 +460,7 @@ function setup_validate_php_configuration() {
  */
 function initialise_cfg() {
     global $CFG, $DB;
-    
+
     try {
         if ($DB) {
             $localcfg = $DB->get_records_menu('config', array(), '', 'name,value');
@@ -616,7 +616,12 @@ function setup_get_remote_url() {
          $rurl['scheme']   = ($_SERVER['HTTPS'] == 'off') ? 'http' : 'https';
          $rurl['fullpath'] = $_SERVER['REQUEST_URI']; // TODO: verify this is always properly encoded
 
-    } else {
+     } else if (stripos($_SERVER['SERVER_SOFTWARE'], 'zeus') !== false) {
+         //zeus - not officially supported
+         $rurl['scheme']   = ($_SERVER['HTTPS'] == 'off') ? 'http' : 'https';
+         $rurl['fullpath'] = $_SERVER['REQUEST_URI']; // TODO: verify this is always properly encoded
+
+     } else {
         throw new moodle_exception('unsupportedwebserver', 'error', '', $_SERVER['SERVER_SOFTWARE']);
     }
     return $rurl;
