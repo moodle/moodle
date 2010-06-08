@@ -78,7 +78,7 @@ if ($id and $assess and $canmanage) {
     // such assessment
     require_sesskey();
     if (!$refasid) {
-        $refasid = $workshop->add_allocation($example, $USER->id, false, 1);
+        $refasid = $workshop->add_allocation($example, $USER->id, 1);
     }
     redirect($workshop->exassess_url($refasid));
 }
@@ -89,7 +89,7 @@ if ($id and $assess and $canassess) {
     $asid = $DB->get_field('workshop_assessments', 'id',
             array('submissionid' => $example->id, 'weight' => 0, 'reviewerid' => $USER->id));
     if (!$asid) {
-        $asid = $workshop->add_allocation($example, $USER->id, false, 0);
+        $asid = $workshop->add_allocation($example, $USER->id, 0);
     }
     redirect($workshop->exassess_url($asid));
 }

@@ -112,7 +112,7 @@ case workshop::PHASE_SUBMISSION:
         // make sure the current user has all examples allocated
         foreach ($examples as $exampleid => $example) {
             if (is_null($example->assessmentid)) {
-                $examples[$exampleid]->assessmentid = $workshop->add_allocation($example, $USER->id, false, 0);
+                $examples[$exampleid]->assessmentid = $workshop->add_allocation($example, $USER->id, 0);
             }
             if (is_null($example->grade)) {
                 $todo++;

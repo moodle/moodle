@@ -673,15 +673,23 @@ class workshop {
      *
      * @param stdclass $submission Submission object with at least id property
      * @param int $reviewerid User ID
-     * @param bool $bulk repeated inserts into DB expected
      * @param int $weight of the new assessment, from 0 to 16
+     * @param bool $bulk repeated inserts into DB expected
      * @return int ID of the new assessment or an error code
      */
-    public function add_allocation(stdclass $submission, $reviewerid, $bulk=false, $weight=1) {
+    public function add_allocation(stdclass $submission, $reviewerid, $weight=1, $bulk=false) {
         global $DB;
 
         if ($DB->record_exists('workshop_assessments', array('submissionid' => $submission->id, 'reviewerid' => $reviewerid))) {
             return self::ALLOCATION_EXISTS;
+        }
+
+        $weight = (int)$weight;
+        if ($weight < 0) {
+            $weight = 0;
+        }
+        if ($weight > 16) {
+            $weight = 16;
         }
 
         $now = time();
