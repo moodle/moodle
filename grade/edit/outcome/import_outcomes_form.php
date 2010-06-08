@@ -47,10 +47,6 @@ class import_outcomes_form extends moodleform {
         $mform->addElement('submit', 'save', get_string('uploadthisfile'));
 
     }
-
-    function get_um() {
-        return $this->_upload_manager;
-    }
 }
 
 
