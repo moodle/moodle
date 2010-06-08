@@ -1093,7 +1093,7 @@ function  glossary_print_entry_lower_section($course, $cm, $glossary, $entry, $m
     if ($printicons) {
         $icons   = glossary_print_entry_icons($course, $cm, $glossary, $entry, $mode, $hook,'html');
     }
-    if ($aliases || $icons || $entry->rating) {
+    if ($aliases || $icons || !empty($entry->rating)) {
         echo '<table>';
         if ( $aliases ) {
             echo '<tr valign="top"><td class="aliases">' .
@@ -1783,40 +1783,6 @@ function glossary_sort_entries ( $entry0, $entry1 ) {
  * @return bool
  */
 function  glossary_print_entry_ratings($course, $entry) {
-/*    global $USER, $CFG, $DB;
-
-    $glossary = $DB->get_record('glossary', array('id'=>$entry->glossaryid));
-    $glossarymod = $DB->get_record('modules', array('name'=>'glossary'));
-    $cm = $DB->get_record_sql("SELECT *
-                                 FROM {course_modules}
-                                WHERE course = ? AND module = ? and instance = ?", array($course->id, $glossarymod->id, $glossary->id));
-
-    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-
-    if (!empty($ratings) and isloggedin()) {
-        $useratings = true;
-        if ($entry->rating->settings->assesstimestart and $entry->rating->settings->assesstimefinish) {
-            if ($entry->timecreated < $ratings->assesstimestart or $entry->timecreated > $ratings->assesstimefinish) {
-                $useratings = false;
-            }
-        }
-        if ($useratings) {
-            if (has_capability('mod/glossary:viewrating', $context)) {
-                glossary_print_ratings_mean($entry->id, $ratings->scale);
-                if ($USER->id != $entry->userid) {
-                     glossary_print_rating_menu($entry->id, $USER->id, $ratings->scale);
-                     $ratingsmenuused = true;
-                }
-            } else if ($USER->id == $entry->userid) {
-                glossary_print_ratings_mean($entry->id, $ratings->scale);
-            } else if (!empty($ratings->allow) ) {
-                glossary_print_rating_menu($entry->id, $USER->id, $ratings->scale);
-                $ratingsmenuused = true;
-            }
-        }
-    }
-    return $ratingsmenuused;
-    */
     global $OUTPUT;
     if( !empty($entry->rating) ){
         echo $OUTPUT->render($entry->rating);
