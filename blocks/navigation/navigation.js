@@ -232,10 +232,9 @@ M.block_navigation.classes.tree.prototype.toggleexpansion = function(e) {
         return;
     }
 
-    if (e.target.get('nodeName').toUpperCase() == 'LI') {
-        var target = e.target;
-    } else if (e.target.ancestor('LI')) {
-        var target = e.target.ancestor('LI');
+    var target = e.target;
+    if (!target.test('li')) {
+        target = target.ancestor('li')
     }
 
     if (target && !target.hasClass('depth_1')) {

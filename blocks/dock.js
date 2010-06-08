@@ -110,7 +110,9 @@ M.core_dock.init = function(Y) {
         dock.setStyle('height', dock.get('winHeight')+'px');
     }
     // Add a removeall button
-    var removeall = Y.Node.create('<img src="'+this.cfg.removeallicon+'" alt="'+M.str.block.undockall+'" title="'+M.str.block.undockall+'" />');
+    // Must set the image src seperatly of we get an error with XML strict headers
+    var removeall = Y.Node.create('<img alt="'+M.str.block.undockall+'" title="'+M.str.block.undockall+'" />');
+    removeall.setAttribute('src',this.cfg.removeallicon);
     removeall.on('removeall|click', this.remove_all, this);
     dock.appendChild(Y.Node.create('<div class="'+css.controls+'"></div>').append(removeall));
 
@@ -180,7 +182,9 @@ M.core_dock.init = function(Y) {
     // and all items rather than the same number for the dock AND every item individually
     Y.delegate('click', this.handleEvent, this.nodes.dock, '.'+this.css.dockedtitle, this, {cssselector:'.'+this.css.dockedtitle, delay:0});
     Y.delegate('mouseenter', this.handleEvent, this.nodes.dock, '.'+this.css.dockedtitle, this, {cssselector:'.'+this.css.dockedtitle, delay:0.5, iscontained:true, preventevent:'click', preventdelay:3});
-    Y.delegate('mouseleave', this.handleEvent, this.nodes.body, '#dock', this,  {cssselector:'#dock', delay:0.5, iscontained:false});
+    //Y.delegate('mouseleave', this.handleEvent, this.nodes.body, '#dock', this,  {cssselector:'#dock', delay:0.5, iscontained:false});
+    this.nodes.dock.on('mouseleave', this.handleEvent, this, {cssselector:'#dock', delay:0.5, iscontained:false});
+
     this.nodes.body.on('click', this.handleEvent, this,  {cssselector:'body', delay:0});
     this.on('dock:itemschanged', this.resizeBlockSpace, this);
     this.on('dock:itemschanged', this.checkDockVisibility, this);
@@ -657,7 +661,9 @@ M.core_dock.genericblock.prototype = {
             }
         }
 
-        var moveto = Y.Node.create('<input type="image" class="moveto customcommand requiresjs" src="'+M.util.image_url('t/block_to_dock', 'moodle')+'" alt="'+M.str.block.addtodock+'" title="'+M.str.block.addtodock+'" />');
+        // Must set the image src seperatly of we get an error with XML strict headers
+        var moveto = Y.Node.create('<input type="image" class="moveto customcommand requiresjs" alt="'+M.str.block.addtodock+'" title="'+M.str.block.addtodock+'" />');
+        moveto.setAttribute('src', M.util.image_url('t/block_to_dock', 'moodle'));
         moveto.on('movetodock|click', this.move_to_dock, this, commands);
 
         var blockaction = node.one('.block_action');
@@ -713,7 +719,11 @@ M.core_dock.genericblock.prototype = {
             blockcommands = Y.Node.create('<div class="commands"></div>');
             this.cachedcontentnode.one('.title').append(blockcommands);
         }
-        var moveto = Y.Node.create('<a class="moveto customcommand requiresjs"></a>').append(Y.Node.create('<img src="'+M.util.image_url('t/dock_to_block', 'moodle')+'" alt="'+M.str.block.undockitem+'" title="'+M.str.block.undockitem+'" />'));
+
+        // Must set the image src seperatly of we get an error with XML strict headers
+        var movetoimg = Y.Node.create('<img alt="'+M.str.block.undockitem+'" title="'+M.str.block.undockitem+'" />');
+        movetoimg.setAttribute('src', M.util.image_url('t/dock_to_block', 'moodle'));
+        var moveto = Y.Node.create('<a class="moveto customcommand requiresjs"></a>').append(movetoimg);
         if (location.href.match(/\?/)) {
             moveto.set('href', location.href+'&dock='+this.id);
         } else {
@@ -736,7 +746,9 @@ M.core_dock.genericblock.prototype = {
                 dock.remove(this.id)
             }, this);
             // Add a close icon
-            var closeicon = Y.Node.create('<span class="hidepanelicon"><img src="'+M.util.image_url('t/dockclose', 'moodle')+'" alt="" style="width:11px;height:11px;cursor:pointer;" /></span>');
+            // Must set the image src seperatly of we get an error with XML strict headers
+            var closeicon = Y.Node.create('<span class="hidepanelicon"><img alt="" style="width:11px;height:11px;cursor:pointer;" /></span>');
+            closeicon.one('img').setAttribute('src', M.util.image_url('t/dockclose', 'moodle'));
             closeicon.on('forceclose|click', this.hide, this);
             this.commands.append(closeicon);
         }, dockitem);
