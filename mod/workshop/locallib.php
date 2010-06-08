@@ -170,12 +170,12 @@ class workshop {
      */
     public function __construct(stdclass $dbrecord, stdclass $cm, stdclass $course, stdclass $context=null) {
         foreach ($dbrecord as $field => $value) {
-            $this->{$field} = $value;
+            if (property_exists('workshop', $field)) {
+                $this->{$field} = $value;
+            }
         }
         $this->cm           = $cm;
-        $this->course       = $course;  // beware - this replaces the standard course field in the instance table
-                                        // this is intentional - IMO there should be no such field as it violates
-                                        // 3rd normal form with no real performance gain
+        $this->course       = $course;
         if (is_null($context)) {
             $this->context = get_context_instance(CONTEXT_MODULE, $this->cm->id);
         } else {

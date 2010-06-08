@@ -54,7 +54,6 @@ $PAGE->set_url($workshop->assess_url($assessment->id));
 $PAGE->set_title($workshop->name);
 $PAGE->set_heading($course->fullname);
 $PAGE->navbar->add(get_string('assessingsubmission', 'workshop'));
-$currenttab = 'assessment';
 
 $canviewallassessments  = has_capability('mod/workshop:viewallassessments', $workshop->context);
 $canviewallsubmissions  = has_capability('mod/workshop:viewallsubmissions', $workshop->context);

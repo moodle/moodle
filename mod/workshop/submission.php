@@ -29,6 +29,7 @@ require_once(dirname(__FILE__).'/locallib.php');
 $cmid   = required_param('cmid', PARAM_INT);            // course module id
 $id     = optional_param('id', 0, PARAM_INT);           // submission id
 $edit   = optional_param('edit', false, PARAM_BOOL);    // open for editing?
+$assess = optional_param('assess', false, PARAM_BOOL);  // instant assessment required
 
 $cm     = get_coursemodule_from_id('workshop', $cmid, 0, false, MUST_EXIST);
 $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
@@ -56,6 +57,7 @@ if ($id) { // submission is specified
 $ownsubmission  = $submission->authorid == $USER->id;
 $canviewall     = has_capability('mod/workshop:viewallsubmissions', $workshop->context);
 $cansubmit      = has_capability('mod/workshop:submit', $workshop->context);
+$canallocate    = has_capability('mod/workshop:allocate', $workshop->context);
 $canoverride    = (($workshop->phase == workshop::PHASE_EVALUATION) and has_capability('mod/workshop:overridegrades', $workshop->context));
 $isreviewer     = $DB->record_exists('workshop_assessments', array('submissionid' => $submission->id, 'reviewerid' => $USER->id));
 $editable       = $workshop->submitting_allowed();
@@ -67,6 +69,12 @@ if ($submission->id and ($ownsubmission or $canviewall or $isreviewer)) {
     // ok you can go
 } else {
     print_error('nopermissions');
+}
+
+if ($assess and $submission->id and !$isreviewer and $canallocate and $workshop->assessing_allowed()) {
+    require_sesskey();
+    $assessmentid = $workshop->add_allocation($submission, $USER->id);
+    redirect($workshop->assess_url($assessmentid));
 }
 
 if ($edit and $ownsubmission) {
@@ -111,7 +119,7 @@ if ($edit and $ownsubmission) {
         $formdata = file_postupdate_standard_filemanager($formdata, 'attachment', $attachmentopts, $workshop->context,
                                                            'workshop_submission_attachment', $formdata->id);
         if (empty($formdata->attachment)) {
-            // explicit cas to zero integer
+            // explicit cast to zero integer
             $formdata->attachment = 0;
         }
         // store the updated values or re-save the new submission (re-saving needed because URLs are now rewritten)
@@ -171,6 +179,11 @@ if ($submission->id) {
 if ($ownsubmission and $editable) {
     $url = new moodle_url($PAGE->url, array('edit' => 'on', 'id' => $submission->id));
     echo $OUTPUT->single_button($url, get_string('editsubmission', 'workshop'), 'get');
+}
+
+if ($submission->id and !$edit and !$isreviewer and $canallocate and $workshop->assessing_allowed()) {
+    $url = new moodle_url($PAGE->url, array('assess' => 1));
+    echo $OUTPUT->single_button($url, get_string('assess', 'workshop'), 'post');
 }
 
 // and possibly display the submission's review(s)

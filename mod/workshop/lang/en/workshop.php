@@ -106,7 +106,7 @@ $string['formatpeergrade'] = '<span class="grade">{$a->grade}</span> <span class
 $string['formatpeergradeover'] = '<span class="grade">{$a->grade}</span> <span class="gradinggrade">(<del>{$a->gradinggrade}</del> / <ins>{$a->gradinggradeover}</ins>)</span>';
 $string['formatpeergradeoverweighted'] = '<span class="grade">{$a->grade}</span> <span class="gradinggrade">(<del>{$a->gradinggrade}</del> / <ins>{$a->gradinggradeover}</ins>)</span> @ <span class="weight">{$a->weight}</span>';
 $string['formatpeergradeweighted'] = '<span class="grade">{$a->grade}</span> <span class="gradinggrade">({$a->gradinggrade})</span> @ <span class="weight">{$a->weight}</span>';
-$string['givengrades'] = 'Given grades';
+$string['givengrades'] = 'Grades given';
 $string['gradecalculated'] = 'Calculated grade for submission';
 $string['gradedecimals'] = 'Decimal places in grades';
 $string['gradegivento'] = '&gt;';
@@ -156,7 +156,7 @@ $string['phasesubmission'] = 'Submission phase';
 $string['prepareexamples'] = 'Prepare example submissions';
 $string['previewassessmentform'] = 'Preview';
 $string['reassess'] = 'Re-assess';
-$string['receivedgrades'] = 'Received grades';
+$string['receivedgrades'] = 'Grades received';
 $string['saveandclose'] = 'Save and close';
 $string['saveandcontinue'] = 'Save and continue editing';
 $string['saveandpreview'] = 'Save and preview';
