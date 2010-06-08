@@ -47,11 +47,13 @@ $string['assessmentbyunknown'] = 'Assessment';
 $string['assessmentbyyourself'] = 'Assessment by yourself';
 $string['assessmentdeleted'] = 'Assessment deallocated';
 $string['assessmentend'] = 'Assessing not allowed after';
+$string['assessmentenddatetime'] = 'Assessing ends on {$a->daydatetime} ({$a->distanceday})';
 $string['assessmentform'] = 'Assessment form';
 $string['assessmentreference'] = 'Reference assessment';
 $string['assessmentreferenceneeded'] = 'You have to assess this example submission to provide a reference assessment. Click \'Continue\' button to assess the submission.';
 $string['assessmentsettings'] = 'Assessment settings';
 $string['assessmentstart'] = 'Assessing not allowed before';
+$string['assessmentstartdatetime'] = 'Assessing starts on {$a->daydatetime} ({$a->distanceday})';
 $string['assignedassessments'] = 'Assigned submissions to assess';
 $string['assignedassessmentsnone'] = 'You have no assigned submission to assess';
 $string['backtoeditform'] = 'Back to editing form';
@@ -66,6 +68,11 @@ $string['configgradedecimals'] = 'Default number of digits that should be shown 
 $string['configgradinggrade'] = 'Default maximum grade for assessment in workshops';
 $string['configmaxbytes'] = 'Default maximum submission file size for all workshops on the site (subject to course limits and other local settings)';
 $string['configstrategy'] = 'Default grading strategy for workshops';
+$string['daysago'] = '{$a} days ago';
+$string['daysleft'] = '{$a} days left';
+$string['daystoday'] = 'today';
+$string['daystomorrow'] = 'tomorrow';
+$string['daysyesterday'] = 'yesterday';
 $string['editassessmentform'] = 'Edit assessment form';
 $string['editassessmentformstrategy'] = 'Edit assessment form ({$a})';
 $string['editingassessmentform'] = 'Editing assessment form';
@@ -162,18 +169,20 @@ $string['strategy_help'] = 'The grading strategy determines the assessment form 
 
 * Accumulative grading - Comments and a grade are given regarding specified aspects
 * Comments - Comments are given regarding specified aspects but no grade can be given
-* Number of errors - Comments and a yes/no assessment are given regarding specified assertions 
+* Number of errors - Comments and a yes/no assessment are given regarding specified assertions
 * Rubric - A level assessment is given regarding specified criteria';
 $string['strategyhaschanged'] = 'The workshop grading strategy has changed since the form was opened for editing.';
 $string['submission'] = 'Submission';
 $string['submissionattachment'] = 'Attachment';
 $string['submissioncontent'] = 'Submission content';
 $string['submissionend'] = 'Submitting not allowed after';
+$string['submissionenddatetime'] = 'Submitting ends on {$a->daydatetime} ({$a->distanceday})';
 $string['submissiongrade'] = 'Grade for submission';
 $string['submissiongrade_help'] = 'This setting specifies the maximum grade a student can obtain for their own submission. It is calculated as the weighted mean of all assessments done by peers and/or teachers.';
 $string['submissiongradeof'] = 'Grade for submission (of {$a})';
 $string['submissionsettings'] = 'Submission settings';
 $string['submissionstart'] = 'Submitting not allowed before';
+$string['submissionstartdatetime'] = 'Submitting starts on {$a->daydatetime} ({$a->distanceday})';
 $string['submissiontitle'] = 'Title';
 $string['switchingphase'] = 'Switching phase';
 $string['switchphase'] = 'Switch phase';
