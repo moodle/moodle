@@ -40,8 +40,6 @@ $str->emptysubmission = get_string('emptysubmission','assignment');
 $str->noassignments = get_string('noassignments','assignment');
 $str->onlinetext = get_string('typeonline','assignment');
 $str->submitted = get_string('submitted','assignment');
-$str->topic = get_string('topic');
-$str->week = get_string('week');
 
 $PAGE->navbar->add($str->assignments, new moodle_url('/mod/assignment/index.php', array('id'=>$id)));
 $PAGE->navbar->add($str->onlinetext);
@@ -49,16 +47,7 @@ $PAGE->navbar->add($str->onlinetext);
 // get all the assignments in the course
 $assignments = get_all_instances_in_course('assignment',$course, $USER->id );
 
-// get correct text for course type
-if ($course->format=='weeks') {
-    $courseformat = $str->week;
-
-} else if ($course->format=='topics') {
-    $courseformat = $str->topic;
-
-} else {
-    $courseformat = '';
-}
+$sections = get_all_sections($course->id);
 
 // array to hold display data
 $views = array();
@@ -109,11 +98,7 @@ foreach( $assignments as $assignment ) {
     $view = new stdClass;
 
     // start to build view object
-    if (!empty($courseformat)) {
-        $view->section = "$courseformat {$assignment->section}";
-    } else {
-        $view->section = '';
-    }
+    $view->section = get_section_name($course, $sections[$assignment->section]);
 
     $view->name = $assignment->name;
     $view->submitted = $submitted;

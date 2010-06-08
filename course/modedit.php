@@ -87,13 +87,13 @@ if (!empty($add)) {
         $data->type = $type;
     }
 
-    $sectionname = get_section_name($course->format);
+    $sectionname = get_section_name($course, $cw);
     $fullmodulename = get_string('modulename', $module->name);
 
     if ($data->section && $course->format != 'site') {
         $heading = new object();
         $heading->what = $fullmodulename;
-        $heading->to   = "$sectionname $data->section";
+        $heading->to   = $sectionname;
         $pageheading = get_string('addinganewto', 'moodle', $heading);
     } else {
         $pageheading = get_string('addinganew', 'moodle', $fullmodulename);
@@ -172,13 +172,13 @@ if (!empty($add)) {
         }
     }
 
-    $sectionname = get_section_name($course->format);
+    $sectionname = get_section_name($course, $cw);
     $fullmodulename = get_string('modulename', $module->name);
 
     if ($data->section && $course->format != 'site') {
         $heading = new object();
         $heading->what = $fullmodulename;
-        $heading->in   = "$sectionname $cw->section";
+        $heading->in   = $sectionname;
         $pageheading = get_string('updatingain', 'moodle', $heading);
     } else {
         $pageheading = get_string('updatinga', 'moodle', $fullmodulename);

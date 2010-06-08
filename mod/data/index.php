@@ -41,8 +41,7 @@ $context = get_context_instance(CONTEXT_COURSE, $course->id);
 
 add_to_log($course->id, "data", "view all", "index.php?id=$course->id", "");
 
-$strweek = get_string('week');
-$strtopic = get_string('topic');
+$strsectionname  = get_string('sectionname', 'format_'.$course->format);
 $strname = get_string('name');
 $strdata = get_string('modulename','data');
 $strdataplural  = get_string('modulenameplural','data');
@@ -56,21 +55,21 @@ if (! $datas = get_all_instances_in_course("data", $course)) {
     notice(get_string('thereareno', 'moodle',$strdataplural) , "$CFG->wwwroot/course/view.php?id=$course->id");
 }
 
+$usesections = course_format_uses_sections($course->format);
+if ($usesections) {
+    $sections = get_all_sections($course->id);
+}
+
 $timenow  = time();
 $strname  = get_string('name');
-$strweek  = get_string('week');
-$strtopic = get_string('topic');
 $strdescription = get_string("description");
 $strentries = get_string('entries', 'data');
 $strnumnotapproved = get_string('numnotapproved', 'data');
 
 $table = new html_table();
 
-if ($course->format == 'weeks') {
-    $table->head  = array ($strweek, $strname, $strdescription, $strentries, $strnumnotapproved);
-    $table->align = array ('center', 'center', 'center', 'center', 'center');
-} else if ($course->format == 'topics') {
-    $table->head  = array ($strtopic, $strname, $strdescription, $strentries, $strnumnotapproved);
+if ($usesections) {
+    $table->head  = array ($strsectionname, $strname, $strdescription, $strentries, $strnumnotapproved);
     $table->align = array ('center', 'center', 'center', 'center', 'center');
 } else {
     $table->head  = array ($strname, $strdescription, $strentries, $strnumnotapproved);
@@ -118,10 +117,10 @@ foreach ($datas as $data) {
         $rsslink = rss_get_link($context->id, $USER->id, 'data', $data->id, 'RSS');
     }
 
-    if ($course->format == 'weeks' or $course->format == 'topics') {
+    if ($usesections) {
         if ($data->section !== $currentsection) {
             if ($data->section) {
-                $printsection = $data->section;
+                $printsection = get_section_name($course, $sections[$data->section]);
             }
             if ($currentsection !== '') {
                 $table->data[] = 'hr';

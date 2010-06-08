@@ -23,6 +23,6 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['sectionname'] = 'topic';
+$string['sectionname'] = 'Topic';
 $string['pluginname'] = 'Topics format';
 $string['section0name'] = 'General';

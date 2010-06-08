@@ -17,8 +17,7 @@
     add_to_log($course->id, "survey", "view all", "index.php?id=$course->id", "");
 
     $strsurveys = get_string("modulenameplural", "survey");
-    $strweek = get_string("week");
-    $strtopic = get_string("topic");
+    $strsectionname  = get_string('sectionname', 'format_'.$course->format);
     $strname = get_string("name");
     $strstatus = get_string("status");
     $strdone  = get_string("done", "survey");
@@ -33,17 +32,19 @@
         notice(get_string('thereareno', 'moodle', $strsurveys), "../../course/view.php?id=$course->id");
     }
 
+    $usesections = course_format_uses_sections($course->format);
+    if ($usesections) {
+        $sections = get_all_sections($course->id);
+    }
+
     $table = new html_table();
 
-    if ($course->format == "weeks") {
-        $table->head  = array ($strweek, $strname, $strstatus);
-        $table->align = array ("CENTER", "LEFT", "LEFT");
-    } else if ($course->format == "topics") {
-        $table->head  = array ($strtopic, $strname, $strstatus);
-        $table->align = array ("CENTER", "LEFT", "LEFT");
+    if ($usesections) {
+        $table->head  = array ($strsectionname, $strname, $strintro);
+        $table->align = array ('CENTER', 'LEFT', 'LEFT');
     } else {
-        $table->head  = array ($strname, $strstatus);
-        $table->align = array ("LEFT", "LEFT");
+        $table->head  = array ($strname, $strintro);
+        $table->align = array ('LEFT', 'LEFT');
     }
 
     $currentsection = '';
@@ -55,14 +56,16 @@
             $ss = $strnotdone;
         }
         $printsection = "";
-        if ($survey->section !== $currentsection) {
-            if ($survey->section) {
-                $printsection = $survey->section;
+        if ($usesections) {
+            if ($survey->section !== $currentsection) {
+                if ($survey->section) {
+                    $printsection = get_section_name($course, $sections[$survey->section]);
+                }
+                if ($currentsection !== "") {
+                    $table->data[] = 'hr';
+                }
+                $currentsection = $survey->section;
             }
-            if ($currentsection !== "") {
-                $table->data[] = 'hr';
-            }
-            $currentsection = $survey->section;
         }
         //Calculate the href
         if (!$survey->visible) {
@@ -73,7 +76,7 @@
             $tt_href = "<a href=\"view.php?id=$survey->coursemodule\">".format_string($survey->name,true)."</a>";
         }
 
-        if ($course->format == "weeks" or $course->format == "topics") {
+        if ($usesections) {
             $table->data[] = array ($printsection, $tt_href, "<a href=\"view.php?id=$survey->coursemodule\">$ss</a>");
         } else {
             $table->data[] = array ($tt_href, "<a href=\"view.php?id=$survey->coursemodule\">$ss</a>");

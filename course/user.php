@@ -280,12 +280,8 @@ switch ($mode) {
                     if ($section->sequence) {
                         echo '<div class="section">';
                         echo '<h2>';
-                        switch ($course->format) {
-                            case "weeks": print_string("week"); break;
-                            case "topics": print_string("topic"); break;
-                            default: print_string("section"); break;
-                        }
-                        echo " $i</h2>";
+                        echo get_section_name($course, $section);
+                        echo "</h2>";
 
                         echo '<div class="content">';
 

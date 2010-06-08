@@ -43,24 +43,25 @@ if (! $glossarys = get_all_instances_in_course("glossary", $course)) {
     die;
 }
 
+$usesections = course_format_uses_sections($course->format);
+if ($usesections) {
+    $sections = get_all_sections($course->id);
+}
+
 /// Print the list of instances (your module will probably extend this)
 
 $timenow = time();
+$strsectionname  = get_string('sectionname', 'format_'.$course->format);
 $strname  = get_string("name");
-$strweek  = get_string("week");
-$strtopic  = get_string("topic");
 $strentries  = get_string("entries", "glossary");
 
 $table = new html_table();
 
-if ($course->format == "weeks") {
-    $table->head  = array ($strweek, $strname, $strentries);
-    $table->align = array ("CENTER", "LEFT", "CENTER");
-} else if ($course->format == "topics") {
-    $table->head  = array ($strtopic, $strname, $strentries);
+if ($usesections) {
+    $table->head  = array ($strsectionname, $strname, $strintro);
     $table->align = array ("CENTER", "LEFT", "CENTER");
 } else {
-    $table->head  = array ($strname, $strentries);
+    $table->head  = array ($strname, $strintro);
     $table->align = array ("LEFT", "CENTER");
 }
 
@@ -84,14 +85,16 @@ foreach ($glossarys as $glossary) {
         continue;
     }
     $printsection = "";
-    if ($glossary->section !== $currentsection) {
-        if ($glossary->section) {
-            $printsection = $glossary->section;
+    if ($usesections) {
+        if ($glossary->section !== $currentsection) {
+            if ($glossary->section) {
+                $printsection = get_section_name($course, $sections[$glossary->section]);
+            }
+            if ($currentsection !== "") {
+                $table->data[] = 'hr';
+            }
+            $currentsection = $glossary->section;
         }
-        if ($currentsection !== "") {
-            $table->data[] = 'hr';
-        }
-        $currentsection = $glossary->section;
     }
 
     // TODO: count only approved if not allowed to see them
@@ -114,7 +117,7 @@ foreach ($glossarys as $glossary) {
         }
     }
 
-    if ($course->format == "weeks" or $course->format == "topics") {
+    if ($usesections) {
         $linedata = array ($printsection, $link, $count);
     } else {
         $linedata = array ($link, $count);

@@ -1320,8 +1320,9 @@ class global_navigation extends navigation_node {
         } else {
             $activeparam = 'section';
         }
-
-        foreach ($sections as &$section) {
+        $navigationsections = array();
+        foreach ($sections as $sectionid=>$section) {
+            $section = clone($section);
             if ($course->id == SITEID) {
                 $this->load_section_activities($coursenode, $section->section, $modinfo);
             } else {
@@ -1342,9 +1343,10 @@ class global_navigation extends navigation_node {
                     $this->load_section_activities($sectionnode, $section->section, $modinfo);
                 }
                 $section->sectionnode = $sectionnode;
+                $navigationsections[$sectionid] = $section;
             }
         }
-        return $sections;
+        return $navigationsections;
     }
     /**
      * Loads all of the activities for a section into the navigation structure.
@@ -2580,10 +2582,8 @@ class settings_navigation extends navigation_node {
                     $formatstring = get_string('topic');
                     $formatidentifier = optional_param('topic', 0, PARAM_INT);
                 }
-                if (!$this->cache->cached('coursesections'.$course->id)) {
-                    $this->cache->{'coursesections'.$course->id} = get_all_sections($course->id);
-                }
-                $sections = $this->cache->{'coursesections'.$course->id};
+                
+                $sections = get_all_sections($course->id);
 
                 $addresource = $this->add(get_string('addresource'));
                 $addactivity = $this->add(get_string('addactivity'));

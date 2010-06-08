@@ -1174,11 +1174,25 @@ function get_all_mods($courseid, &$mods, &$modnames, &$modnamesplural, &$modname
     }
 }
 
-
+/**
+ * Returns an array of sections for the requested course id
+ *
+ * This function stores the sections against the course id within a staticvar encase
+ * of subsequent requests. This is used all over + in some standard libs and course
+ * format callbacks so subsequent requests are a reality.
+ *
+ * @staticvar array $coursesections
+ * @param int $courseid
+ * @return array Array of sections
+ */
 function get_all_sections($courseid) {
     global $DB;
-    return $DB->get_records("course_sections", array("course"=>"$courseid"), "section",
-                       "section, id, course, name, summary, summaryformat, sequence, visible");
+    static $coursesections = array();
+    if (!array_key_exists($courseid, $coursesections)) {
+        $coursesections[$courseid] = $DB->get_records("course_sections", array("course"=>"$courseid"), "section",
+                           "section, id, course, name, summary, summaryformat, sequence, visible");
+    }
+    return $coursesections[$courseid];
 }
 
 function course_set_display($courseid, $display=0) {
@@ -3243,11 +3257,68 @@ function move_category($category, $newparentcat) {
 }
 
 /**
- * @param string $format Course format ID e.g. 'weeks'
- * @return Name that the course format prefers for sections
+ * Returns the display name of the given section that the course prefers.
+ *
+ * This function utilizes a callback that can be implemented within the course
+ * formats lib.php file to customize the display name that is used to reference
+ * the section.
+ *
+ * By default (if callback is not defined) the method
+ * {@see get_numeric_section_name} is called instead.
+ *
+ * @param stdClass $course The course to get the section name for
+ * @param stdClass $section Section object from database
+ * @return Display name that the course format prefers, e.g. "Week 2"
+ *
+ * @see get_generic_section_name
  */
-function get_section_name($format) {
-    return get_string('sectionname', "format_$format");
+function get_section_name(stdClass $course, stdClass $section) {
+    global $CFG;
+
+    /// Inelegant hack for bug 3408
+    if ($course->format == 'site') {
+        return get_string('site');
+    }
+
+    // Use course formatter callback if it exists
+    $namingfile = $CFG->dirroot.'/course/format/'.$course->format.'/lib.php';
+    $namingfunction = 'callback_'.$course->format.'_get_section_name';
+    if (!function_exists($namingfunction) && file_exists($namingfile)) {
+        require_once $namingfile;
+    }
+    if (function_exists($namingfunction)) {
+        return $namingfunction($course, $section);
+    }
+
+    // else, default behavior:
+    return get_generic_section_name($course->format, $section);
+}
+
+/**
+ * Gets the generic section name for a courses section.
+ * 
+ * @param string $format Course format ID e.g. 'weeks' $course->format
+ * @param stdClass $section Section object from database
+ * @return Display name that the course format prefers, e.g. "Week 2"
+ */
+function get_generic_section_name($format, stdClass $section) {
+    return get_string('sectionname', "format_$format") . ' ' . $section->section;
+}
+
+
+function course_format_uses_sections($format) {
+    global $CFG;
+
+    $featurefile = $CFG->dirroot.'/course/format/'.$format.'/lib.php';
+    $featurefunction = 'callback_'.$format.'_uses_sections';
+    if (!function_exists($featurefunction) && file_exists($featurefile)) {
+        require_once $featurefile;
+    }
+    if (function_exists($featurefunction)) {
+        return $featurefunction();
+    }
+
+    return false;
 }
 
 /**

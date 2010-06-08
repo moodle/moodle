@@ -27,6 +27,7 @@
     // get message strings for titles
     $strmodulenameplural = get_string("modulenameplural", "hotpot");
     $strmodulename  = get_string("modulename", "hotpot");
+    $strsectionname  = get_string('sectionname', 'format_'.$course->format);
 
     // string translation array for single and double quotes
     $quotes = array("'"=>"\'", '"'=>'&quot;');
@@ -72,6 +73,11 @@
         exit;
     }
     $hotpotids = implode(',', array_keys($hotpots));
+
+    $usesections = course_format_uses_sections($course->format);
+    if ($usesections) {
+        $sections = get_all_sections($course->id);
+    }
 
     if (has_capability('mod/hotpot:grade', $sitecontext)) {
 
@@ -264,17 +270,7 @@
         print '<H3>'.sprintf("%0.3f", microtime_diff($start, microtime())).' secs'."</H3>\n";
     }
 
-    switch ($course->format) {
-        case 'weeks' :
-            $title = get_string("week");
-            break;
-        case 'topics' :
-            $title = get_string("topic");
-            break;
-        default :
-            $title = '';
-            break;
-    }
+    $title = $strsectionname;
     if ($title) {
         array_push($table->head, $title);
         array_push($table->align, "center");
@@ -303,8 +299,8 @@
         $printsection = "";
         if ($hotpot->section != $currentsection) {
             if ($hotpot->section) {
-                $printsection = $hotpot->section;
-                if ($course->format=='weeks' || $course->format=='topics') {
+                if ($usesections) {
+                    $printsection = get_section_name($course, $sections[$hotpot->section]);
                     // Show the zoom boxes
                     if ($displaysection==$hotpot->section) {
                         $strshowall = get_string('showall'.$course->format);
@@ -358,7 +354,7 @@
 
         $data = array ();
 
-        if ($course->format=="weeks" || $course->format=="topics") {
+        if ($usesections) {
             array_push($data, $printsection);
         }
 

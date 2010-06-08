@@ -59,22 +59,23 @@ if (! $workshops = get_all_instances_in_course('workshop', $course)) {
     die();
 }
 
+$usesections = course_format_uses_sections($course->format);
+if ($usesections) {
+    $sections = get_all_sections($course->id);
+}
+
 /// Print the list of instances (your module will probably extend this)
 
 $timenow  = time();
+$strsectionname  = get_string('sectionname', 'format_'.$course->format);
 $strname  = get_string('name');
-$strweek  = get_string('week');
-$strtopic = get_string('topic');
 
-if ($course->format == 'weeks') {
-    $table->head  = array ($strweek, $strname);
+if ($usesections) {
+    $table->head  = array ($strsectionname, $strname);
     $table->align = array ('center', 'left');
-} else if ($course->format == 'topics') {
-    $table->head  = array ($strtopic, $strname);
-    $table->align = array ('center', 'left', 'left', 'left');
 } else {
     $table->head  = array ($strname);
-    $table->align = array ('left', 'left', 'left');
+    $table->align = array ('left');
 }
 
 foreach ($workshops as $workshop) {
@@ -86,8 +87,8 @@ foreach ($workshops as $workshop) {
         $link = "<a href=\"view.php?id=$workshop->coursemodule\">$workshop->name</a>";
     }
 
-    if ($course->format == 'weeks' or $course->format == 'topics') {
-        $table->data[] = array ($workshop->section, $link);
+    if ($usesections) {
+        $table->data[] = array (get_section_name($course, $sections[$workshop->section]), $link);
     } else {
         $table->data[] = array ($link);
     }

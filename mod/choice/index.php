@@ -18,12 +18,18 @@
 
     $strchoice = get_string("modulename", "choice");
     $strchoices = get_string("modulenameplural", "choice");
+    $strsectionname  = get_string('sectionname', 'format_'.$course->format);
     $PAGE->set_title($strchoices);
     $PAGE->navbar->add($strchoices);
     echo $OUTPUT->header();
 
     if (! $choices = get_all_instances_in_course("choice", $course)) {
         notice(get_string('thereareno', 'moodle', $strchoices), "../../course/view.php?id=$course->id");
+    }
+
+    $usesections = course_format_uses_sections($course->format);
+    if ($usesections) {
+        $sections = get_all_sections($course->id);
     }
 
     $sql = "SELECT cha.*
@@ -44,11 +50,8 @@
 
     $table = new html_table();
 
-    if ($course->format == "weeks") {
-        $table->head  = array (get_string("week"), get_string("question"), get_string("answer"));
-        $table->align = array ("center", "left", "left");
-    } else if ($course->format == "topics") {
-        $table->head  = array (get_string("topic"), get_string("question"), get_string("answer"));
+    if ($usesections) {
+        $table->head  = array ($strsectionname, get_string("question"), get_string("answer"));
         $table->align = array ("center", "left", "left");
     } else {
         $table->head  = array (get_string("question"), get_string("answer"));
@@ -68,15 +71,17 @@
         } else {
             $aa = "";
         }
-        $printsection = "";
-        if ($choice->section !== $currentsection) {
-            if ($choice->section) {
-                $printsection = $choice->section;
+        if ($usesections) {
+            $printsection = "";
+            if ($choice->section !== $currentsection) {
+                if ($choice->section) {
+                    $printsection = get_section_name($course, $sections[$choice->section]);
+                }
+                if ($currentsection !== "") {
+                    $table->data[] = 'hr';
+                }
+                $currentsection = $choice->section;
             }
-            if ($currentsection !== "") {
-                $table->data[] = 'hr';
-            }
-            $currentsection = $choice->section;
         }
 
         //Calculate the href
@@ -87,7 +92,7 @@
             //Show normal if the mod is visible
             $tt_href = "<a href=\"view.php?id=$choice->coursemodule\">".format_string($choice->name,true)."</a>";
         }
-        if ($course->format == "weeks" || $course->format == "topics") {
+        if ($usesections) {
             $table->data[] = array ($printsection, $tt_href, $aa);
         } else {
             $table->data[] = array ($tt_href, $aa);

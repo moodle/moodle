@@ -23,6 +23,16 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+
+/**
+ * Indicates this format uses sections.
+ *
+ * @return bool Returns true
+ */
+function callback_topics_uses_sections() {
+    return true;
+}
+
 /**
  * Used to display the course structure for a course where format=topic
  *

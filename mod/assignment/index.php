@@ -18,8 +18,7 @@ add_to_log($course->id, "assignment", "view all", "index.php?id=$course->id", ""
 $strassignments = get_string("modulenameplural", "assignment");
 $strassignment = get_string("modulename", "assignment");
 $strassignmenttype = get_string("assignmenttype", "assignment");
-$strweek = get_string("week");
-$strtopic = get_string("topic");
+$strsectionname  = get_string('sectionname', 'format_'.$course->format);
 $strname = get_string("name");
 $strduedate = get_string("duedate", "assignment");
 $strsubmitted = get_string("submitted", "assignment");
@@ -37,15 +36,17 @@ if (!$cms = get_coursemodules_in_course('assignment', $course->id, 'cm.idnumber,
     die;
 }
 
+$usesections = course_format_uses_sections($course->format);
+if ($usesections) {
+    $sections = get_all_sections($course->id);
+}
+
 $timenow = time();
 
 $table = new html_table();
 
-if ($course->format == "weeks") {
-    $table->head  = array ($strweek, $strname, $strassignmenttype, $strduedate, $strsubmitted, $strgrade);
-    $table->align = array ("center", "left", "left", "left", "right");
-} else if ($course->format == "topics") {
-    $table->head  = array ($strtopic, $strname, $strassignmenttype, $strduedate, $strsubmitted, $strgrade);
+if ($usesections) {
+    $table->head  = array ($strsectionname, $strname, $strassignmenttype, $strduedate, $strsubmitted, $strgrade);
     $table->align = array ("center", "left", "left", "left", "right");
 } else {
     $table->head  = array ($strname, $strassignmenttype, $strduedate, $strsubmitted, $strgrade);
@@ -72,14 +73,16 @@ foreach ($modinfo->instances['assignment'] as $cm) {
     $link = "<a $class href=\"view.php?id=$cm->id\">".format_string($cm->name)."</a>";
 
     $printsection = "";
-    if ($cm->sectionnum !== $currentsection) {
-        if ($cm->sectionnum) {
-            $printsection = $cm->sectionnum;
+    if ($usesections) {
+        if ($cm->sectionnum !== $currentsection) {
+            if ($cm->sectionnum) {
+                $printsection = get_section_name($course, $sections[$cm->sectionnum]);
+            }
+            if ($currentsection !== "") {
+                $table->data[] = 'hr';
+            }
+            $currentsection = $cm->sectionnum;
         }
-        if ($currentsection !== "") {
-            $table->data[] = 'hr';
-        }
-        $currentsection = $cm->sectionnum;
     }
 
     if (!file_exists($CFG->dirroot.'/mod/assignment/type/'.$cm->assignmenttype.'/assignment.class.php')) {
@@ -111,7 +114,7 @@ foreach ($modinfo->instances['assignment'] as $cm) {
 
     $due = $cm->timedue ? userdate($cm->timedue) : '-';
 
-    if ($course->format == "weeks" or $course->format == "topics") {
+    if ($usesections) {
         $table->data[] = array ($printsection, $link, $type, $due, $submitted, $grade);
     } else {
         $table->data[] = array ($link, $type, $due, $submitted, $grade);

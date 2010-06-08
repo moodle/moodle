@@ -22,8 +22,7 @@
 
     $strscorm = get_string("modulename", "scorm");
     $strscorms = get_string("modulenameplural", "scorm");
-    $strweek = get_string("week");
-    $strtopic = get_string("topic");
+    $strsectionname  = get_string('sectionname', 'format_'.$course->format);
     $strname = get_string("name");
     $strsummary = get_string("summary");
     $strreport = get_string("report",'scorm');
@@ -34,7 +33,12 @@
     $PAGE->navbar->add($strscorms);
     echo $OUTPUT->header();
 
-    if ($course->format == "weeks" or $course->format == "topics") {
+    $usesections = course_format_uses_sections($course->format);
+    if ($usesections) {
+        $sections = get_all_sections($course->id);
+    }
+
+    if ($usesections) {
         $sortorder = "cw.section ASC";
     } else {
         $sortorder = "m.timemodified DESC";
@@ -47,11 +51,8 @@
 
     $table = new html_table();
 
-    if ($course->format == "weeks") {
-        $table->head  = array ($strweek, $strname, $strsummary, $strreport);
-        $table->align = array ("center", "left", "left", "left");
-    } else if ($course->format == "topics") {
-        $table->head  = array ($strtopic, $strname, $strsummary, $strreport);
+    if ($usesections) {
+        $table->head  = array ($strsectionname, $strname, $strsummary, $strreport);
         $table->align = array ("center", "left", "left", "left");
     } else {
         $table->head  = array ($strlastmodified, $strname, $strsummary, $strreport);
@@ -62,9 +63,9 @@
 
         $context = get_context_instance(CONTEXT_MODULE,$scorm->coursemodule);
         $tt = "";
-        if ($course->format == "weeks" or $course->format == "topics") {
+        if ($usesections) {
             if ($scorm->section) {
-                $tt = "$scorm->section";
+                $tt = get_section_name($course, $sections[$scorm->section]);
             }
         } else {
             $tt = userdate($scorm->timemodified);

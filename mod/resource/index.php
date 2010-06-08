@@ -36,8 +36,7 @@ add_to_log($course->id, 'resource', 'view all', "index.php?id=$course->id", '');
 
 $strresource     = get_string('modulename', 'resource');
 $strresources    = get_string('modulenameplural', 'resource');
-$strweek         = get_string('week');
-$strtopic        = get_string('topic');
+$strsectionname  = get_string('sectionname', 'format_'.$course->format);
 $strname         = get_string('name');
 $strintro        = get_string('moduleintro');
 $strlastmodified = get_string('lastmodified');
@@ -53,14 +52,16 @@ if (!$resources = get_all_instances_in_course('resource', $course)) {
     exit;
 }
 
+$usesections = course_format_uses_sections($course->format);
+if ($usesections) {
+    $sections = get_all_sections($course->id);
+}
+
 $table = new html_table();
 $table->attributes['class'] = 'generaltable mod_index';
 
-if ($course->format == 'weeks') {
-    $table->head  = array ($strweek, $strname, $strintro);
-    $table->align = array ('center', 'left', 'left');
-} else if ($course->format == 'topics') {
-    $table->head  = array ($strtopic, $strname, $strintro);
+if ($usesections) {
+    $table->head  = array ($strsectionname, $strname, $strintro);
     $table->align = array ('center', 'left', 'left');
 } else {
     $table->head  = array ($strlastmodified, $strname, $strintro);
@@ -71,11 +72,11 @@ $modinfo = get_fast_modinfo($course);
 $currentsection = '';
 foreach ($resources as $resource) {
     $cm = $modinfo->cms[$resource->coursemodule];
-    if ($course->format == 'weeks' or $course->format == 'topics') {
+    if ($usesections) {
         $printsection = '';
         if ($resource->section !== $currentsection) {
             if ($resource->section) {
-                $printsection = $resource->section;
+                $printsection = get_section_name($course, $sections[$resource->section]);
             }
             if ($currentsection !== '') {
                 $table->data[] = 'hr';

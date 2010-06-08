@@ -19,6 +19,7 @@ add_to_log($course->id, 'chat', 'view all', "index.php?id=$course->id", '');
 
 /// Get all required strings
 
+$strsectionname = get_string('sectionname', 'format_'.$course->format);
 $strchats = get_string('modulenameplural', 'chat');
 $strchat  = get_string('modulename', 'chat');
 
@@ -35,24 +36,24 @@ if (! $chats = get_all_instances_in_course('chat', $course)) {
     die();
 }
 
+$usesections = course_format_uses_sections($course->format);
+if ($usesections) {
+    $sections = get_all_sections($course->id);
+}
+
 /// Print the list of instances (your module will probably extend this)
 
 $timenow  = time();
 $strname  = get_string('name');
-$strweek  = get_string('week');
-$strtopic = get_string('topic');
 
 $table = new html_table();
 
-if ($course->format == 'weeks') {
-    $table->head  = array ($strweek, $strname);
+if ($usesections) {
+    $table->head  = array ($strsectionname, $strname);
     $table->align = array ('center', 'left');
-} else if ($course->format == 'topics') {
-    $table->head  = array ($strtopic, $strname);
-    $table->align = array ('center', 'left', 'left', 'left');
 } else {
     $table->head  = array ($strname);
-    $table->align = array ('left', 'left', 'left');
+    $table->align = array ('left');
 }
 
 $currentsection = '';
@@ -67,14 +68,14 @@ foreach ($chats as $chat) {
     $printsection = '';
     if ($chat->section !== $currentsection) {
         if ($chat->section) {
-            $printsection = $chat->section;
+            $printsection = get_section_name($course, $sections[$chat->section]);
         }
         if ($currentsection !== '') {
             $table->data[] = 'hr';
         }
         $currentsection = $chat->section;
     }
-    if ($course->format == 'weeks' or $course->format == 'topics') {
+    if ($usesection) {
         $table->data[] = array ($printsection, $link);
     } else {
         $table->data[] = array ($link);

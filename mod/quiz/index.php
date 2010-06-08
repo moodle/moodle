@@ -44,6 +44,7 @@
         notice(get_string('thereareno', 'moodle', $strquizzes), "../../course/view.php?id=$course->id");
         die;
     }
+    $sections = get_all_sections($course->id);
 
 // Check if we need the closing date header
     $showclosingheader = false;
@@ -69,11 +70,7 @@
         array_push($align, 'left');
     }
 
-    if ($course->format == 'weeks' or $course->format == 'weekscss') {
-        array_unshift($headings, get_string('week'));
-    } else {
-        array_unshift($headings, get_string('section'));
-    }
+    array_unshift($headings, get_string('sectionname', 'format_'.$course->format));
     array_unshift($align, 'center');
 
     $showing = '';  // default
@@ -115,6 +112,7 @@
         if ($quiz->section != $currentsection) {
             if ($quiz->section) {
                 $strsection = $quiz->section;
+                $strsection = get_section_name($course, $sections[$quiz->section]);
             }
             if ($currentsection) {
                 $learningtable->data[] = 'hr';

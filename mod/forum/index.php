@@ -67,8 +67,7 @@ $strunsubscribe  = get_string('unsubscribe', 'forum');
 $stryes          = get_string('yes');
 $strno           = get_string('no');
 $strrss          = get_string('rss');
-$strweek         = get_string('week');
-$strsection      = get_string('section');
+$strsectionname  = get_string('sectionname', 'format_'.$course->format);
 
 $searchform = forum_search_form($course);
 
@@ -103,6 +102,10 @@ if ($show_rss = (($can_subscribe || $course->id == SITEID) &&
     $generaltable->align[] = 'center';
 }
 
+$usesections = course_format_uses_sections($course->format);
+$sections = get_all_sections($course->id);
+
+$table = new html_table();
 
 // Parse and organise all the forums.  Most forums are course modules but
 // some special ones are not.  These get placed in the general forums
@@ -295,11 +298,7 @@ if ($show_rss = (($can_subscribe || $course->id == SITEID) &&
 
 if ($course->id != SITEID) {    // Only real courses have learning forums
     // Add extra field for section number, at the front
-    if ($course->format == 'weeks' or $course->format == 'weekscss') {
-        array_unshift($learningtable->head, $strweek);
-    } else {
-        array_unshift($learningtable->head, $strsection);
-    }
+    array_unshift($learningtable->head, $strsectionname);
     array_unshift($learningtable->align, 'center');
 
 
@@ -344,7 +343,7 @@ if ($course->id != SITEID) {    // Only real courses have learning forums
             $forum->intro = shorten_text(format_module_intro('forum', $forum, $cm->id), $CFG->forum_shortpost);
 
             if ($cm->sectionnum != $currentsection) {
-                $printsection = $cm->sectionnum;
+                $printsection = get_section_name($course, $sections[$cm->sectionnum]);
                 if ($currentsection) {
                     $learningtable->data[] = 'hr';
                 }

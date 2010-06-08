@@ -231,12 +231,8 @@
         // single discussion forum can't be moved.
         $modinfo = get_fast_modinfo($course);
         if (isset($modinfo->instances['forum'])) {
-            if ($course->format == 'weeks') {
-                $strsection = get_string("week");
-            } else {
-                $strsection = get_string("topic");
-            }
             $forummenu = array();
+            $sections = get_all_sections($course->id);
             foreach ($modinfo->instances['forum'] as $forumcm) {
                 if (!$forumcm->uservisible || !has_capability('mod/forum:startdiscussion',
                     get_context_instance(CONTEXT_MODULE,$forumcm->id))) {
@@ -244,12 +240,13 @@
                 }
 
                 $section = $forumcm->sectionnum;
+                $sectionname = get_section_name($course, $sections[$section]);
                 if (empty($forummenu[$section])) {
-                    $forummenu[$section] = array("$strsection $section" => array());
+                    $forummenu[$section] = array($sectionname => array());
                 }
                 if ($forumcm->instance != $forum->id) {
                     $url = "/mod/forum/discuss.php?d=$discussion->id&move=$forumcm->instance&sesskey=".sesskey();
-                    $forummenu[$section]["$strsection $section"][$url] = format_string($forumcm->name);
+                    $forummenu[$section][$sectionname][$url] = format_string($forumcm->name);
                 }
             }
             if (!empty($forummenu)) {

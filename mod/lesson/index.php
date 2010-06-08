@@ -60,22 +60,23 @@ if (! $lessons = get_all_instances_in_course("lesson", $course)) {
     die;
 }
 
+$usesections = course_format_uses_sections($course->format);
+if ($usesections) {
+    $sections = get_all_sections($course->id);
+}
+
 /// Print the list of instances (your module will probably extend this)
 
 $timenow = time();
+$strsectionname  = get_string('sectionname', 'format_'.$course->format);
 $strname  = get_string("name");
 $strgrade  = get_string("grade");
 $strdeadline  = get_string("deadline", "lesson");
-$strweek  = get_string("week");
-$strtopic  = get_string("topic");
 $strnodeadline = get_string("nodeadline", "lesson");
 $table = new html_table();
 
-if ($course->format == "weeks") {
-    $table->head  = array ($strweek, $strname, $strgrade, $strdeadline);
-    $table->align = array ("center", "left", "center", "center");
-} else if ($course->format == "topics") {
-    $table->head  = array ($strtopic, $strname, $strgrade, $strdeadline);
+if ($usesections) {
+    $table->head  = array ($strsectionname, $strname, $strgrade, $strdeadline);
     $table->align = array ("center", "left", "center", "center");
 } else {
     $table->head  = array ($strname, $strgrade, $strdeadline);
@@ -101,7 +102,7 @@ foreach ($lessons as $lesson) {
         $due = "<font color=\"red\">".userdate($lesson->deadline)."</font>";
     }
 
-    if ($course->format == "weeks" or $course->format == "topics") {
+    if ($usesections) {
         if (has_capability('mod/lesson:manage', $context)) {
             $grade_value = $lesson->grade;
         } else {
@@ -111,7 +112,7 @@ foreach ($lessons as $lesson) {
                 $grade_value = $return[$USER->id]->rawgrade;
             }
         }
-        $table->data[] = array ($lesson->section, $link, $grade_value, $due);
+        $table->data[] = array (get_section_name($course, $sections[$lesson->section]), $link, $grade_value, $due);
     } else {
         $table->data[] = array ($link, $lesson->grade, $due);
     }

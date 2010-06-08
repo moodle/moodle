@@ -29,7 +29,7 @@ require_once("$CFG->libdir/resourcelib.php");
 $id = required_param('id', PARAM_INT); // course id
 
 $course = $DB->get_record('course', array('id'=>$id), '*', MUST_EXIST);
-
+$PAGE->set_pagelayout('course');
 require_course_login($course, true);
 
 // get list of all resource-like modules
@@ -52,8 +52,7 @@ foreach ($allmodules as $key=>$module) {
 }
 
 $strresources    = get_string('resources');
-$strweek         = get_string('week');
-$strtopic        = get_string('topic');
+$strsectionname  = get_string('sectionname', 'format_'.$course->format);
 $strname         = get_string('name');
 $strintro        = get_string('moduleintro');
 $strlastmodified = get_string('lastmodified');
@@ -65,6 +64,10 @@ $PAGE->navbar->add($strresources);
 echo $OUTPUT->header();
 
 $modinfo = get_fast_modinfo($course);
+$usesections = course_format_uses_sections($course->format);
+if ($usesections) {
+    $sections = get_all_sections($course->id);
+}
 $cms = array();
 $resources = array();
 foreach ($modinfo->cms as $cm) {
@@ -91,11 +94,8 @@ if (!$cms) {
 $table = new html_table();
 $table->attributes['class'] = 'generaltable mod_index';
 
-if ($course->format == 'weeks') {
-    $table->head  = array ($strweek, $strname, $strintro);
-    $table->align = array ('center', 'left', 'left');
-} else if ($course->format == 'topics') {
-    $table->head  = array ($strtopic, $strname, $strintro);
+if ($usesections) {
+    $table->head  = array ($strsectionname, $strname, $strintro);
     $table->align = array ('center', 'left', 'left');
 } else {
     $table->head  = array ($strlastmodified, $strname, $strintro);
@@ -108,11 +108,11 @@ foreach ($cms as $cm) {
         continue;
     }
     $resource = $resources[$cm->modname][$cm->instance];
-    if ($course->format == 'weeks' or $course->format == 'topics') {
+    if ($usesections) {
         $printsection = '';
         if ($cm->sectionnum !== $currentsection) {
             if ($cm->sectionnum) {
-                $printsection = $cm->sectionnum;
+                $printsection = get_section_name($course, $sections[$cm->sectionnum]);
             }
             if ($currentsection !== '') {
                 $table->data[] = 'hr';

@@ -64,22 +64,23 @@ if (!$wikis = get_all_instances_in_course("wiki", $course)) {
     die;
 }
 
+$usesections = course_format_uses_sections($course->format);
+if ($usesections) {
+    $sections = get_all_sections($course->id);
+}
+
 /// Print the list of instances (your module will probably extend this)
 
 $timenow = time();
+$strsectionname  = get_string('sectionname', 'format_'.$course->format);
 $strname = get_string("name");
-$strweek = get_string("week");
-$strtopic = get_string("topic");
 
-if ($course->format == "weeks") {
-    $table->head = array($strweek, $strname);
+if ($usesections) {
+    $table->head  = array ($strsectionname, $strname);
     $table->align = array("center", "left");
-} else if ($course->format == "topics") {
-    $table->head = array($strtopic, $strname);
-    $table->align = array("center", "left", "left", "left");
 } else {
-    $table->head = array($strname);
-    $table->align = array("left", "left", "left");
+    $table->head  = array ($strname);
+    $table->align = array("left");
 }
 
 foreach ($wikis as $wiki) {
@@ -91,8 +92,8 @@ foreach ($wikis as $wiki) {
         $link = "<a href=\"view.php?id=$wiki->coursemodule\">$wiki->name</a>";
     }
 
-    if ($course->format == "weeks" or $course->format == "topics") {
-        $table->data[] = array($wiki->section, $link);
+    if ($usesections) {
+        $table->data[] = array(get_section_name($course, $sections[$wiki->section]), $link);
     } else {
         $table->data[] = array($link);
     }

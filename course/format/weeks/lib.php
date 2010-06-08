@@ -23,6 +23,16 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+
+/**
+ * Indicates this format uses sections.
+ *
+ * @return bool Returns true
+ */
+function callback_weeks_uses_sections() {
+    return true;
+}
+
 /**
  * Used to display the course structure for a course where format=weeks
  *
@@ -57,7 +67,14 @@ function callback_weeks_request_key() {
     return 'week';
 }
 
-function callback_weeks_get_section_name($course, $section, $sections) {
+/**
+ * Gets the name for the provided section.
+ *
+ * @param stdClass $course
+ * @param stdClass $section
+ * @return string
+ */
+function callback_weeks_get_section_name($course, $section) {
     // We can't add a node without text
     if (!empty($section->name)) {
         // Return the name the user set
@@ -67,6 +84,7 @@ function callback_weeks_get_section_name($course, $section, $sections) {
         return get_string('section0name', 'format_weeks');
     } else {
         // Got to work out the date of the week so that we can show it
+        $sections = get_all_sections($course->id);
         $weekdate = $course->startdate+7200;
         foreach ($sections as $sec) {
             if ($sec->id == $section->id) {

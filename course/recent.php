@@ -91,12 +91,10 @@ if (has_capability('moodle/course:viewhiddensections', $context)) {
     $hiddenfilter = "AND cs.visible = 1";
 }
 $sections = array();
-if ($ss = $DB->get_records_sql("SELECT cs.id, cs.section, cs.sequence, cs.summary, cs.visible
-                                  FROM {course_sections} cs
-                                 WHERE cs.course = ? AND cs.section <= ?
-                                       $hiddenfilter
-                              ORDER BY section", array($course->id, $course->numsections))) {
-    foreach ($ss as $section) {
+$rawsections = array_slice(get_all_sections($course->id), 0, $course->numsections+1, true);
+$canviewhidden = has_capability('moodle/course:viewhiddensections', $context);
+foreach ($rawsections as $section) {
+    if ($canviewhidden || !empty($section->visible)) {
         $sections[$section->section] = $section;
     }
 }
@@ -122,11 +120,6 @@ if ($param->modid === 'all') {
     $sections = array($section->sequence=>$section);
 }
 
-switch ($course->format) {
-    case 'weeks':  $sectiontitle = get_string('week'); break;
-    case 'topics': $sectiontitle = get_string('topic'); break;
-    default: $sectiontitle = get_string('section'); break;
-}
 
 if (is_null($modinfo->groups)) {
     $modinfo->groups = groups_get_user_groups($course->id); // load all my groups and cache it in modinfo
@@ -140,7 +133,7 @@ foreach ($sections as $section) {
     $activity = new object();
     $activity->type = 'section';
     if ($section->section > 0) {
-        $activity->name = $sectiontitle.' '.$section->section;
+        $activity->name = get_section_name($course, $section);
     } else {
         $activity->name = '';
     }

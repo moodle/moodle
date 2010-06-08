@@ -60,6 +60,7 @@
     }
 
     $modinfo = get_fast_modinfo($course);
+    $sections = get_all_sections($course->id);
 
     $sql = "SELECT cm.id, COUNT('x') AS numviews, MAX(time) AS lasttime
               FROM {course_modules} cm
@@ -85,14 +86,9 @@
                 $sectioncell = new html_table_cell();
                 $sectioncell->colspan = count($outlinetable->head);
 
-                $sectiontitle = '';
-                switch ($course->format) {
-                    case 'weeks': $sectiontitle = get_string('week'); break;
-                    case 'topics': $sectiontitle = get_string('topic'); break;
-                    default: $sectiontitle = get_string('section'); break;
-                }
+                $sectiontitle = get_section_name($course, $sections[$sectionnum]);
 
-                $sectioncell->text = $OUTPUT->heading($sectiontitle . ' ' . $sectionnum, 3);
+                $sectioncell->text = $OUTPUT->heading($sectiontitle, 3);
                 $sectionrow->cells[] = $sectioncell;
                 $outlinetable->data[] = $sectionrow;
 

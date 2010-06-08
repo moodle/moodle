@@ -47,30 +47,26 @@ if (! $feedbacks = get_all_instances_in_course("feedback", $course)) {
     die;
 }
 
+$usesections = course_format_uses_sections($course->format);
+if ($usesections) {
+    $sections = get_all_sections($course->id);
+}
+
 /// Print the list of instances (your module will probably extend this)
 
 $timenow = time();
 $strname  = get_string("name");
-$strweek  = get_string("week");
-$strtopic  = get_string("topic");
+$strsectionname = get_string('sectionname', 'format_'.$course->format);
 $strresponses = get_string('responses', 'feedback');
 
 $table = new html_table();
 
-if ($course->format == "weeks") {
+if ($usesections) {
     if(has_capability('mod/feedback:viewreports', $context)) {
-        $table->head  = array ($strweek, $strname, $strresponses);
+        $table->head  = array ($strsectionname, $strname, $strresponses);
         $table->align = array ("center", "left", 'center');
     }else{
-        $table->head  = array ($strweek, $strname);
-        $table->align = array ("center", "left");
-    }
-} else if ($course->format == "topics") {
-    if(has_capability('mod/feedback:viewreports', $context)) {
-        $table->head  = array ($strtopic, $strname, $strresponses);
-        $table->align = array ("center", "left", "center");
-    }else{
-        $table->head  = array ($strtopic, $strname);
+        $table->head  = array ($strsectionname, $strname);
         $table->align = array ("center", "left");
     }
 } else {
@@ -95,8 +91,8 @@ foreach ($feedbacks as $feedback) {
     $dimmedclass = $feedback->visible ? '' : 'class="dimmed"';
     $link = '<a '.$dimmedclass.' href="'.$viewurl->out().'">'.$feedback->name.'</a>';
 
-    if ($course->format == "weeks" or $course->format == "topics") {
-        $tabledata = array ($feedback->section, $link);
+    if ($usesections) {
+        $tabledata = array (get_section_name($course, $sections[$feedback->section]), $link);
     } else {
         $tabledata = array ($link);
     }
