@@ -929,7 +929,7 @@ class page_requirements_manager {
         // note: in JavaScript just use "YUI(M.yui.loader).use('overlay', function(Y) { .... });"
         // this needs to be done before including any other script
         $js = "var M = {}; M.yui = {}; ";
-        $js .= "var galleryConfigFn = function(me) {var p = me.path,v=M.yui.galleryversion,f;if(/-skin/.test(me.name)) {me.type = 'css';var p = p.replace(/\-skin/, '').replace(/\.js/, '.css').split('/'), f = p.pop().replace(/\-skin(\-(min|debug))/, '');p.splice(p.length,0,v,'assets','skins','sam', f);} else {var p = p.split('/'), f = p.pop();p.splice(p.length,0,v, f);};me.path = p.join('/');}; ";
+        $js .= "var galleryConfigFn = function(me) {var p = me.path,v=M.yui.galleryversion,f;if(/-(skin|core)/.test(me.name)) {me.type = 'css';var p = p.replace(/-(skin|core)/, '').replace(/\.js/, '.css').split('/'), f = p.pop().replace(/(\-(min|debug))/, '');if (/-skin/.test(me.name)) {p.splice(p.length,0,v,'assets','skins','sam', f);} else {p.splice(p.length,0,v,'assets', f);};} else {var p = p.split('/'), f = p.pop();p.splice(p.length,0,v, f);};me.path = p.join('/');}; ";
         $js .= str_replace('"@GALLERYCONFIGFN@"', 'galleryConfigFn', js_writer::set_variable('M.yui.loader', $this->M_yui_loader, false) . "\n");
         $js .= js_writer::set_variable('M.cfg', $this->M_cfg, false);
         $output .= html_writer::script($js);
