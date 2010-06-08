@@ -35,18 +35,9 @@ $strusers = get_string("users");
 $strusersnew = get_string("usersnew");
 $strimportgroups = get_string("importgroups");
 
-echo $OUTPUT->heading_with_help($strimportgroups, 'uploadgroups');
-
-$maxuploadsize = get_max_upload_file_size();
-echo '<p align="center">';
-echo $OUTPUT->box_start();
+echo $OUTPUT->heading($strimportgroups);
 
 // use formslib
 include_once('import_form.php');
-$mform_post = new course_import_groups_form($CFG->wwwroot.'/course/import/groups/index.php?id='.$id, array('maxuploadsize'=>$maxuploadsize));
+$mform_post = new course_import_groups_form($CFG->wwwroot.'/course/import/groups/index.php?id='.$id);
 $mform_post ->display();
-
-echo $OUTPUT->box_end();
-
-echo '</p>';
-

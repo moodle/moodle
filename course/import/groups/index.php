@@ -26,6 +26,7 @@
 require_once('../../../config.php');
 require_once($CFG->dirroot.'/course/lib.php');
 require_once($CFG->dirroot.'/group/lib.php');
+include_once('import_form.php');
 
 $id = required_param('id', PARAM_INT);    // Course id
 
@@ -38,29 +39,17 @@ if (!$course = $DB->get_record('course', array('id'=>$id))) {
 require_login($course->id);
 $context = get_context_instance(CONTEXT_COURSE, $id);
 
-
 if (!has_capability('moodle/course:managegroups', $context)) {
     print_error('nopermissiontomanagegroup');
 }
 
-//if (!confirm_sesskey()) {
-//    print_error('confirmsesskeybad', 'error');
-//}
-
-  $strimportgroups = get_string("importgroups");
-
-$csv_encode = '/\&\#44/';
-if (isset($CFG->CSV_DELIMITER)) {
-    $csv_delimiter = '\\' . $CFG->CSV_DELIMITER;
-    $csv_delimiter2 = $CFG->CSV_DELIMITER;
-
-    if (isset($CFG->CSV_ENCODE)) {
-        $csv_encode = '/\&\#' . $CFG->CSV_ENCODE . '/';
-    }
-} else {
-    $csv_delimiter = "\,";
-    $csv_delimiter2 = ",";
-}
+$stradministration = get_string("administration");
+$strimportgroups   = get_string("importgroups");
+$streditmyprofile  = get_string("editmyprofile");
+$strchoose         = get_string("choose");
+$struser           = get_string("user");
+$strusers          = get_string("users");
+$strusersnew       = get_string("usersnew");
 
 /// Print the header
 $PAGE->navbar->add($course->shortname, new moodle_url('/course/view.php', array('id'=>$course->id)));
@@ -71,15 +60,34 @@ $PAGE->set_title("$course->shortname: $strimportgroups");
 $PAGE->set_heading($course->fullname);
 echo $OUTPUT->header();
 
-/// If a file has been uploaded, then process it
+$mform_post = new course_import_groups_form($CFG->wwwroot.'/course/import/groups/index.php?id='.$id);
 
-require_once($CFG->dirroot.'/lib/uploadlib.php');
-$um = new upload_manager('userfile',false,false,null,false,0);
-if ($um->preprocess_files() and confirm_sesskey()) {
-    $filename = $um->files['userfile']['tmp_name'];
+// If a file has been uploaded, then process it
+if (!$mform_post->get_data()) {
+    echo $OUTPUT->heading($strimportgroups);
+    /// Print the form
+    $mform_post ->display();
+    echo $OUTPUT->footer();
+die;
+} else {
+    $csv_encode = '/\&\#44/';
+    if (isset($CFG->CSV_DELIMITER)) {
+        $csv_delimiter = '\\' . $CFG->CSV_DELIMITER;
+        $csv_delimiter2 = $CFG->CSV_DELIMITER;
 
+        if (isset($CFG->CSV_ENCODE)) {
+            $csv_encode = '/\&\#' . $CFG->CSV_ENCODE . '/';
+        }
+    } else {
+        $csv_delimiter = "\,";
+        $csv_delimiter2 = ",";
+    }
+
+    // prepare temp file
+    $filename = $CFG->dataroot . '/temp/groupimport/importedfile_'.time().'.csv';
+    make_upload_directory('temp/groupimport');
     //Fix mac/dos newlines
-    $text = my_file_get_contents($filename);
+    $text = $mform_post->get_file_content('userfile');
     $text = preg_replace('!\r\n?!',"\n",$text);
     $fp = fopen($filename, "w");
     fwrite($fp,$text);
@@ -88,15 +96,15 @@ if ($um->preprocess_files() and confirm_sesskey()) {
     $fp = fopen($filename, "r");
 
     // make arrays of valid fields for error checking
-    $required = array("groupname" => 1, );
-    $optionalDefaults = array("lang" => 1, );
+    $required = array("groupname" => 1);
+    $optionalDefaults = array("lang" => 1);
     $optional = array("coursename" => 1,
-                      "idnumber" =>1,
-                      "description" => 1,
-                      "enrolmentkey" => 1,
-                      "theme" => 1,
-                      "picture" => 1,
-                      "hidepicture" => 1, );
+            "idnumber" => 1,
+            "description" => 1,
+            "enrolmentkey" => 1,
+            "theme" => 1,
+            "picture" => 1,
+            "hidepicture" => 1);
 
     // --- get header (field names) ---
     $header = split($csv_delimiter, fgets($fp,1024));
@@ -106,8 +114,8 @@ if ($um->preprocess_files() and confirm_sesskey()) {
         if ( !(isset($required[$h]) or
             isset($optionalDefaults[$h]) or
             isset($optional[$h])) ) {
-            print_error('invalidfieldname', 'error', 'index.php?id='.$id.'&amp;sesskey='.sesskey(), $h);
-        }
+                print_error('invalidfieldname', 'error', 'index.php?id='.$id.'&amp;sesskey='.sesskey(), $h);
+            }
         if ( isset($required[$h]) ) {
             $required[$h] = 2;
         }
@@ -126,8 +134,8 @@ if ($um->preprocess_files() and confirm_sesskey()) {
         foreach ($optionalDefaults as $key => $value) {
             $newgroup->$key = current_language(); //defaults to current language
         }
-       //Note: commas within a field should be encoded as &#44 (for comma separated csv files)
-       //Note: semicolon within a field should be encoded as &#59 (for semicolon separated csv files)
+        //Note: commas within a field should be encoded as &#44 (for comma separated csv files)
+        //Note: semicolon within a field should be encoded as &#59 (for semicolon separated csv files)
         $line = split($csv_delimiter, fgets($fp,1024));
         foreach ($line as $key => $value) {
             //decode encoded commas
@@ -209,26 +217,8 @@ if ($um->preprocess_files() and confirm_sesskey()) {
         }//close if ($record[$header[0]])
     }//close while($fp)
     fclose($fp);
+    // remove temp file
+    unlink($filename);
 
     echo '<hr />';
 }
-
-/// Print the form
-require('mod.php');
-
-echo $OUTPUT->footer();
-
-function my_file_get_contents($filename, $use_include_path = 0) {
-/// Returns the file as one big long string
-
-    $data = "";
-    $file = @fopen($filename, "rb", $use_include_path);
-    if ($file) {
-        while (!feof($file)) {
-            $data .= fread($file, 1024);
-        }
-        fclose($file);
-    }
-    return $data;
-}
-
