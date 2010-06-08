@@ -25,13 +25,5 @@ class course_import_groups_form extends moodleform {
 
         $this->add_action_buttons(false, $strimportgroups);
     }
-    function get_import_name(){
-        if ($this->is_submitted() and $this->is_validated()) {
-            // return the temporary filename to process
-            return $this->_upload_manager->files['userfile']['tmp_name'];
-        } else {
-            return  NULL;
-        }
-    }
 }
 
