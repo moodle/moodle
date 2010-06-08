@@ -554,7 +554,7 @@ abstract class moodleform {
 
         $element = $this->_form->getElement($elname);
 
-        if ($element instanceof MoodleQuickForm_filepicker) {
+        if ($element instanceof MoodleQuickForm_filepicker || $element instanceof MoodleQuickForm_filemanager) {
             $values = $this->_form->exportValues($elname);
             if (empty($values[$elname])) {
                 return false;
@@ -604,7 +604,7 @@ abstract class moodleform {
 
         $element = $this->_form->getElement($elname);
 
-        if ($element instanceof MoodleQuickForm_filepicker) {
+        if ($element instanceof MoodleQuickForm_filepicker || $element instanceof MoodleQuickForm_filemanager) {
             $values = $this->_form->exportValues($elname);
             if (empty($values[$elname])) {
                 return false;
@@ -624,6 +624,33 @@ abstract class moodleform {
         }
 
         return false;
+    }
+
+    /**
+     * Dispose form element draft files
+     *
+     * @global object $USER
+     * @param string $elname name of element
+     */
+    function dispose($elname) {
+        global $USER;
+
+        if (!$this->is_submitted() or !$this->is_validated()) {
+            return false;
+        }
+
+        $element = $this->_form->getElement($elname);
+
+        if ($element instanceof MoodleQuickForm_filepicker || $element instanceof MoodleQuickForm_filemanager) {
+            $values = $this->_form->exportValues($elname);
+            if (empty($values[$elname])) {
+                return false;
+            }
+            $draftid = $values[$elname];
+            $fs = get_file_storage();
+            $context = get_context_instance(CONTEXT_USER, $USER->id);
+            $fs->delete_area_files($context->id, 'user_draft', $draftid);
+        }
     }
 
     /**
@@ -716,7 +743,7 @@ abstract class moodleform {
 
         $element = $this->_form->getElement($elname);
 
-        if ($element instanceof MoodleQuickForm_filepicker) {
+        if ($element instanceof MoodleQuickForm_filepicker || $element instanceof MoodleQuickForm_filemanager) {
             $values = $this->_form->exportValues($elname);
             if (empty($values[$elname])) {
                 return false;
