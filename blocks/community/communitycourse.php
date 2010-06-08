@@ -42,6 +42,17 @@ $PAGE->navbar->add(get_string('searchcourse', 'block_community'));
 
 $search  = optional_param('search', null, PARAM_TEXT);
 
+//if no capability to search course, display an error message
+$usercansearch = has_capability('moodle/community:add', get_context_instance(CONTEXT_USER, $USER->id));
+$usercandownload = has_capability('moodle/community:download', get_context_instance(CONTEXT_USER, $USER->id));
+if (empty($usercansearch)) {
+    echo $OUTPUT->header();
+    echo $OUTPUT->heading(get_string('searchcommunitycourse', 'block_community'), 3, 'main');
+    echo $OUTPUT->notification(get_string('cannotsearchcommunity', 'hub'));
+    echo $OUTPUT->footer();
+    die();
+}
+
 $community = new community();
 
 /// Check if the page has been called with trust argument
@@ -63,7 +74,7 @@ $huburl  = optional_param('huburl', false, PARAM_URL);
 $download  = optional_param('download', -1, PARAM_INTEGER);
 $courseid  = optional_param('courseid', '', PARAM_INTEGER);
 $coursefullname  = optional_param('coursefullname', '', PARAM_ALPHANUMEXT);
-if ($download != -1 and !empty($courseid) and confirm_sesskey()) {
+if ($usercandownload and $download != -1 and !empty($courseid) and confirm_sesskey()) {
     $course = new stdClass();
     $course->fullname = $coursefullname;
     $course->id = $courseid;

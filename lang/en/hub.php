@@ -45,6 +45,7 @@ $string['cancel'] = 'Cancel';
 $string['community'] = 'Community';
 $string['communityremoved'] = 'That course link has been removed from your list';
 $string['confirmregistration'] = 'Confirm registration';
+$string['cannotsearchcommunity'] = 'Sorry you don\'t have the right permissions to see this page';
 $string['contactable'] = 'Contact from the public';
 $string['contactable_help'] = 'Set to yes, the hub will display your email address.';
 $string['contactemail'] = 'Contact email';

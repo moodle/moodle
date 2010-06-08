@@ -34,8 +34,8 @@ class block_community extends block_list {
 
     function get_content() {
         global $CFG, $OUTPUT, $USER;
-
-        if ($this->content !== NULL) {
+        if (!has_capability('moodle/community:add', get_context_instance(CONTEXT_USER, $USER->id))
+                or $this->content !== NULL) {
             return $this->content;
         }
 
@@ -79,10 +79,6 @@ class block_community extends block_list {
         }
 
         return $this->content;
-    }
-
-    function applicable_formats() {
-        return array('all' => true);
     }
 
 }

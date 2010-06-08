@@ -35,7 +35,7 @@ require_once($CFG->dirroot.'/lib/hublib.php');
 class community_hub_search_form extends moodleform {
 
     public function definition() {
-        global $CFG;
+        global $CFG, $USER;
         $strrequired = get_string('required');
         $mform =& $this->_form;
         $search = $this->_customdata['search'];
@@ -90,11 +90,16 @@ class community_hub_search_form extends moodleform {
 
         }
 
-        $options = array(0 => get_string('enrollable', 'block_community'),
-                1 => get_string('downloadable', 'block_community'));
-        $mform->addElement('select', 'downloadable', get_string('enroldownload', 'block_community'),
-                $options);
-        $mform->addHelpButton('downloadable', 'enroldownload', 'block_community');
+        //display enrol/download select box if the USER has the download capability
+        if (has_capability('moodle/community:download', get_context_instance(CONTEXT_USER, $USER->id))) {
+            $options = array(0 => get_string('enrollable', 'block_community'),
+                    1 => get_string('downloadable', 'block_community'));
+            $mform->addElement('select', 'downloadable', get_string('enroldownload', 'block_community'),
+                    $options);
+            $mform->addHelpButton('downloadable', 'enroldownload', 'block_community');
+        } else {
+            $mform->addElement('hidden', 'downloadable', 0);
+        }
 
         $options = array();
         $options['all'] = get_string('any');
