@@ -267,7 +267,7 @@ case 'downloaddir':
         $filename = trim($draftpath, '/').'.zip';
     } else {
         $parent_path = '/';
-        $filename = 'Files.zip';
+        $filename = get_string('files').'.zip';
     }
 
     if ($newfile = $zipper->archive_to_storage(array($file), $user_context->id, 'user_draft', $itemid, $parent_path, $filename, $USER->id)) {
