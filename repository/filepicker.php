@@ -92,7 +92,7 @@ if ($repository = $DB->get_record_sql($sql, array($repo_id))) {
     }
 }
 
-$url = new moodle_url($CFG->httpswwwroot."/repository/filepicker.php", array('ctx_id' => $contextid, 'itemid' => $itemid, 'env' => $env, 'course'=>$courseid));
+$url = new moodle_url($CFG->httpswwwroot."/repository/filepicker.php", array('ctx_id' => $contextid, 'itemid' => $itemid, 'env' => $env, 'course'=>$courseid, 'filearea'=>$filearea));
 $home_url = new moodle_url($url, array('action' => 'browse'));
 
 switch ($action) {
@@ -261,13 +261,13 @@ case 'downloaddir':
     $zipper = new zip_packer();
     $fs = get_file_storage();
 
-    $file = $fs->get_file($user_context->id, 'user_draft', $itemid, $draftpath, '.');
+    $file = $fs->get_file($user_context->id, $filearea, $itemid, $draftpath, '.');
     if ($file->get_parent_directory()) {
         $parent_path = $file->get_parent_directory()->get_filepath();
         $filename = trim($draftpath, '/').'.zip';
     } else {
         $parent_path = '/';
-        $filename = 'draft_area.zip';
+        $filename = 'Files.zip';
     }
 
     if ($newfile = $zipper->archive_to_storage(array($file), $user_context->id, 'user_draft', $itemid, $parent_path, $filename, $USER->id)) {
@@ -334,14 +334,14 @@ case 'zip':
     $zipper = new zip_packer();
     $fs = get_file_storage();
 
-    $file = $fs->get_file($user_context->id, 'user_draft', $itemid, $draftpath, '.');
+    $file = $fs->get_file($user_context->id, $filearea, $itemid, $draftpath, '.');
     if (!$file->get_parent_directory()) {
         $parent_path = '/';
     } else {
         $parent_path = $file->get_parent_directory()->get_filepath();
     }
 
-    $newfile = $zipper->archive_to_storage(array($file), $user_context->id, 'user_draft', $itemid, $parent_path, $file->get_filepath().'.zip', $USER->id);
+    $newfile = $zipper->archive_to_storage(array($file), $user_context->id, $filearea, $itemid, $parent_path, $file->get_filepath().'.zip', $USER->id);
 
     $url->param('action', 'browse');
     $url->param('draftpath', $parent_path);
@@ -351,9 +351,9 @@ case 'zip':
 case 'unzip':
     $zipper = new zip_packer();
     $fs = get_file_storage();
-    $file = $fs->get_file($user_context->id, 'user_draft', $itemid, $draftpath, $filename);
+    $file = $fs->get_file($user_context->id, $filearea, $itemid, $draftpath, $filename);
 
-    if ($newfile = $file->extract_to_storage($zipper, $user_context->id, 'user_draft', $itemid, $draftpath, $USER->id)) {
+    if ($newfile = $file->extract_to_storage($zipper, $user_context->id, $filearea, $itemid, $draftpath, $USER->id)) {
         $str = get_string('unziped','repository');
     } else {
         $str = get_string('cannotunzip', 'repository');
@@ -366,8 +366,8 @@ case 'unzip':
 case 'movefile':
     if (!empty($targetpath)) {
         $fb = get_file_browser();
-        $file = $fb->get_file_info($user_context, 'user_draft', $itemid, $draftpath, $filename);
-        $file->copy_to_storage($user_context->id, 'user_draft', $itemid, $targetpath, $filename);
+        $file = $fb->get_file_info($user_context, $filearea, $itemid, $draftpath, $filename);
+        $file->copy_to_storage($user_context->id, $filearea, $itemid, $targetpath, $filename);
         if ($file->delete()) {
             $url->param('action', 'browse');
             $url->param('draftpath', $targetpath);
@@ -400,7 +400,7 @@ case 'mkdirform':
 
 case 'mkdir':
     $fs = get_file_storage();
-    $fs->create_directory($user_context->id, 'user_draft', $itemid, file_correct_filepath(file_correct_filepath($draftpath).trim($newdirname, '/')));
+    $fs->create_directory($user_context->id, $filearea, $itemid, file_correct_filepath(file_correct_filepath($draftpath).trim($newdirname, '/')));
     $url->param('action', 'browse');
     $url->param('draftpath', $draftpath);
     if (!empty($newdirname)) {
@@ -413,7 +413,7 @@ case 'mkdir':
 
 case 'rename':
     $fs = get_file_storage();
-    if ($file = $fs->get_file($user_context->id, 'user_draft', $itemid, $draftpath, $filename)) {
+    if ($file = $fs->get_file($user_context->id, $filearea, $itemid, $draftpath, $filename)) {
         if ($file->is_directory()) {
             if ($file->get_parent_directory()) {
                 $draftpath = $file->get_parent_directory()->get_filepath();
@@ -422,12 +422,12 @@ case 'rename':
             }
             // use file storage to create new folder
             $newdir = $draftpath . trim($newfilename , '/') . '/';
-            $fs->create_directory($user_context->id, 'user_draft', $itemid, $newdir);
+            $fs->create_directory($user_context->id, $filearea, $itemid, $newdir);
         } else {
             // use file browser to copy file
             $fb = get_file_browser();
-            $file = $fb->get_file_info($user_context, 'user_draft', $itemid, $draftpath, $filename);
-            $file->copy_to_storage($user_context->id, 'user_draft', $itemid, $draftpath, $newfilename);
+            $file = $fb->get_file_info($user_context, $filearea, $itemid, $draftpath, $filename);
+            $file->copy_to_storage($user_context->id, $filearea, $itemid, $draftpath, $newfilename);
         }
     }
     $file->delete();
@@ -501,7 +501,7 @@ default:
     if (!empty($files)) {
         echo '<ul>';
         foreach ($files as $file) {
-            $drafturl = new moodle_url($CFG->httpswwwroot.'/draftfile.php/'.$user_context->id.'/user_draft/'.$itemid.'/'.$file->get_filename());
+            $drafturl = new moodle_url($CFG->httpswwwroot.'/draftfile.php/'.$user_context->id.'/'.$filearea.'/'.$itemid.'/'.$file->get_filename());
             if ($file->get_filename() != '.') {
                 // a file
                 $fileicon = $CFG->wwwroot.'/pix/'.(file_extension_icon($file->get_filename()));
