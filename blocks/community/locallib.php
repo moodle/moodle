@@ -26,10 +26,6 @@
 
 class block_community_manager {
 
-///////////////////////////
-/// DB Facade functions  //
-///////////////////////////
-
     /**
      * Add a community course
      * @param object $course
@@ -90,8 +86,6 @@ class block_community_manager {
         if (!file_exists($CFG->dataroot.'/temp/communitydownload')) {
             mkdir($CFG->dataroot.'/temp/communitydownload/', 0777, true);
         }
-
-        //get hub id to make the
 
         $url  = new moodle_url($course->huburl.'/local/hub/webservice/download.php', $params);
         $path = $CFG->dataroot.'/temp/communitydownload/'.'backup_'.$course->fullname."_".$course->id.".zip";

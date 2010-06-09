@@ -591,3 +591,8 @@ body.tag .managelink {padding: 5px;}
 
 .image_gallery.oneimageonly a.imagelink {display:none;}
 .image_gallery.oneimageonly a#imagelink1 {display:inline;}
+
+/**
+ * Registration
+ */
+#page-admin-registration-register .registration_textfield {width: 300px;}

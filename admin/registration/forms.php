@@ -172,10 +172,12 @@ class site_registration_form extends moodleform {
         //the input parameters
         $mform->addElement('header', 'moodle', get_string('registrationinfo', 'hub'));
 
-        $mform->addElement('text','name' , get_string('fullsitename'));
+        $mform->addElement('text','name' , get_string('sitename', 'hub'),
+                array('class' => 'registration_textfield'));
         $mform->addRule('name', $strrequired, 'required', null, 'client');
         $mform->setType('name', PARAM_TEXT);
         $mform->setDefault('name', $sitename);
+        $mform->addHelpButton('name', 'sitename', 'hub');
 
         $options = array();
         $hub = new hub();
@@ -187,26 +189,34 @@ class site_registration_form extends moodleform {
         $mform->addHelpButton('privacy', 'privacy', 'hub');
         unset($options);
 
-        $mform->addElement('textarea', 'description', get_string('description'), array('rows'=>8, 'cols'=>50));
+        $mform->addElement('textarea', 'description', get_string('sitedesc', 'hub'),
+                array('rows'=>8, 'cols'=>41));
         $mform->addRule('description', $strrequired, 'required', null, 'client');
         $mform->setDefault('description', $sitedescription);
         $mform->setType('description', PARAM_TEXT);
+        $mform->addHelpButton('description', 'sitedesc', 'hub');
 
         $mform->addElement('static', 'urlstring',get_string('siteurl', 'hub'), $CFG->wwwroot);
+        $mform->addHelpButton('urlstring', 'siteurl', 'hub');
 
         $languages = get_string_manager()->get_list_of_languages();
-        $mform->addElement('static', 'langstring',get_string('language'), $languages[current_language()]);
+        $mform->addElement('static', 'langstring',get_string('sitelang', 'hub'), $languages[current_language()]);
         $mform->addElement('hidden', 'language', current_language());
+        $mform->addHelpButton('langstring', 'sitelang', 'hub');
 
-        $mform->addElement('static', 'versionstring',get_string('moodleversion'), $CFG->version);
+        $mform->addElement('static', 'versionstring',get_string('siteversion', 'hub'), $CFG->version);
         $mform->addElement('hidden', 'moodleversion', $CFG->version);
+        $mform->addHelpButton('versionstring', 'siteversion', 'hub');
 
-        $mform->addElement('static', 'releasestring',get_string('moodlerelease'), $CFG->release);
+        $mform->addElement('static', 'releasestring',get_string('siterelease', 'hub'), $CFG->release);
         $mform->addElement('hidden', 'moodlerelease', $CFG->release);
+        $mform->addHelpButton('releasestring', 'siterelease', 'hub');
 
-        $mform->addElement('textarea','address' , get_string('postaladdress', 'hub'));
+        $mform->addElement('textarea','address' , get_string('postaladdress', 'hub'),
+                array('rows'=>4, 'cols'=>41));
         $mform->setType('address', PARAM_TEXT);
         $mform->setDefault('address', $address);
+        $mform->addHelpButton('address', 'postaladdress', 'hub');
 
         //TODO: use the region array I generated
 //        $mform->addElement('select', 'region', get_string('selectaregion'), array('-' => '-'));
@@ -214,43 +224,51 @@ class site_registration_form extends moodleform {
         $mform->addElement('hidden', 'regioncode', '-');
 
         $countries = get_string_manager()->get_list_of_countries();
-        $mform->addElement('select', 'countrycode', get_string('selectacountry'), $countries);
+        $mform->addElement('select', 'countrycode', get_string('sitecountry', 'hub'), $countries);
         $mform->setDefault('countrycode', $country);
+        $mform->addHelpButton('countrycode', 'sitecountry', 'hub');
 
-        $mform->addElement('text','geolocation' , get_string('geolocation'));
+        $mform->addElement('text','geolocation' , get_string('sitegeolocation', 'hub'),
+                array('class' => 'registration_textfield'));
         $mform->setDefault('geolocation', $geolocation);
-        $mform->addHelpButton('geolocation', 'geolocation', 'hub');
+        $mform->addHelpButton('geolocation', 'sitegeolocation', 'hub');
 
-        $mform->addElement('text', 'contactname', get_string('administrator'));
+        $mform->addElement('text', 'contactname', get_string('siteadmin', 'hub'),
+                array('class' => 'registration_textfield'));
         $mform->addRule('contactname', $strrequired, 'required', null, 'client');
         $mform->setType('contactname', PARAM_TEXT);
         $mform->setDefault('contactname', $contactname);
+        $mform->addHelpButton('contactname', 'siteadmin', 'hub');
 
-        $mform->addElement('text','contactphone' , get_string('phone'));
+        $mform->addElement('text','contactphone' , get_string('sitephone', 'hub'),
+                array('class' => 'registration_textfield'));
         $mform->setType('contactphone', PARAM_TEXT);
-        $mform->addHelpButton('contactphone', 'contactphone', 'hub');
+        $mform->addHelpButton('contactphone', 'sitephone', 'hub');
 
-        $mform->addElement('text', 'contactemail', get_string('email'));
+        $mform->addElement('text', 'contactemail', get_string('siteemail', 'hub'),
+                array('class' => 'registration_textfield'));
         $mform->addRule('contactemail', $strrequired, 'required', null, 'client');
         $mform->setType('contactemail', PARAM_TEXT);
         $mform->setDefault('contactemail', $contactemail);
+        $mform->addHelpButton('contactemail', 'siteemail', 'hub');
 
         $options = array();
         $options[0] = get_string("registrationcontactno");
         $options[1] = get_string("registrationcontactyes");
-        $mform->addElement('select', 'contactable', get_string('registrationcontact'), $options);
+        $mform->addElement('select', 'contactable', get_string('siteregistrationcontact', 'hub'), $options);
         $mform->setDefault('contactable', $contactable);
-        $mform->addHelpButton('contactable', 'contactable', 'hub');
+        $mform->addHelpButton('contactable', 'siteregistrationcontact', 'hub');
         unset($options);
 
         $options = array();
         $options[0] = get_string("registrationno");
         $options[1] = get_string("registrationyes");
-        $mform->addElement('select', 'emailalert', get_string('registrationemail'), $options);
+        $mform->addElement('select', 'emailalert', get_string('siteregistrationemail', 'hub'), $options);
         $mform->setDefault('emailalert', $emailalert);
-        $mform->addHelpButton('emailalert', 'emailalert', 'hub');
+        $mform->addHelpButton('emailalert', 'siteregistrationemail', 'hub');
         unset($options);
 
+        //TODO site logo
 //        $mform->addElement('text','imageurl' , get_string('logourl', 'hub'));
 //        $mform->setType('imageurl', PARAM_URL);
 //        $mform->setDefault('imageurl', $imageurl);
@@ -272,6 +290,7 @@ class site_registration_form extends moodleform {
             $mform->addElement('checkbox', 'courses',  get_string('sendfollowinginfo', 'hub'),
                     " ".get_string('coursesnumber', 'hub', $coursecount));
             $mform->setDefault('courses', true);
+            $mform->addHelpButton('courses', 'sendfollowinginfo', 'hub');
 
             $mform->addElement('checkbox', 'users', '',
                     " ".get_string('usersnumber', 'hub', $usercount));
@@ -304,6 +323,7 @@ class site_registration_form extends moodleform {
             $mform->addElement('static', 'courseslabel',get_string('sendfollowinginfo', 'hub'),
                     " ".get_string('coursesnumber', 'hub', $coursecount));
             $mform->addElement('hidden', 'courses', true);
+             $mform->addHelpButton('courseslabel', 'sendfollowinginfo', 'hub');
 
             $mform->addElement('static', 'userslabel', '',
                     " ".get_string('usersnumber', 'hub', $usercount));
