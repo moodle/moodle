@@ -75,6 +75,7 @@ class mod_wiki_mod_form extends moodleform_mod {
         }
 
         $mform->addElement('text', 'firstpagetitle', get_string('firstpagetitle', 'wiki'), $attr);
+        $mform->addHelpButton('firstpagetitle', 'firstpagetitle', 'wiki');
 
         if (empty($this->_instance)) {
             $mform->addRule('firstpagetitle', null, 'required', null, 'client');
@@ -87,6 +88,7 @@ class mod_wiki_mod_form extends moodleform_mod {
             $wikitype_attr['disabled'] = 'disabled';
         }
         $mform->addElement('select', 'wikimode', get_string('wikimode', 'wiki'), $wikimodeoptions, $wikitype_attr);
+        $mform->addHelpButton('wikimode', 'wikimode', 'wiki');
 
         $formats = wiki_get_formats();
         $editoroptions = array();
@@ -94,7 +96,9 @@ class mod_wiki_mod_form extends moodleform_mod {
             $editoroptions[$format] = get_string($format, 'wiki');
         }
         $mform->addElement('select', 'defaultformat', get_string('defaultformat', 'wiki'), $editoroptions);
+        $mform->addHelpButton('defaultformat', 'defaultformat', 'wiki');
         $mform->addElement('checkbox', 'forceformat', get_string('forceformat', 'wiki'));
+        $mform->addHelpButton('forceformat', 'forceformat', 'wiki');
 
         //-------------------------------------------------------------------------------
         // add standard elements, common to all modules
