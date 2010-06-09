@@ -24,8 +24,6 @@
  * The community block
 */
 
-require_once($CFG->dirroot . '/blocks/community/locallib.php');
-
 class block_community extends block_list {
     function init() {
         $this->title = get_string('pluginname', 'block_community');
@@ -55,8 +53,9 @@ class block_community extends block_list {
             'class' => 'icon', 'alt' => get_string('addcourse', 'block_community')));
         $this->content->icons[] = $icon;
 
-        $community = new community();
-        $courses = $community->get_community_courses($USER->id);
+        require_once($CFG->dirroot . '/blocks/community/locallib.php');
+        $communitymanager = new block_community_manager();
+        $courses = $communitymanager->block_community_get_courses($USER->id);
         if ($courses) {
             $this->content->items[] = html_writer::empty_tag('hr');
             $this->content->icons[] = '';

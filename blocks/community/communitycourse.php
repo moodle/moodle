@@ -53,7 +53,7 @@ if (empty($usercansearch)) {
     die();
 }
 
-$community = new community();
+$communitymanager = new block_community_manager();
 
 /// Check if the page has been called with trust argument
 $add  = optional_param('add', -1, PARAM_INTEGER);
@@ -64,7 +64,7 @@ if ($add != -1 and $confirm and confirm_sesskey()) {
     $course->description  = optional_param('coursedescription', '', PARAM_TEXT);
     $course->url  = optional_param('courseurl', '', PARAM_URL);
     $course->imageurl  = optional_param('courseimageurl', '', PARAM_URL);
-    $community->add_community_course($course, $USER->id);
+    $communitymanager->block_community_add_course($course, $USER->id);
     $notificationmessage = $OUTPUT->notification(get_string('addedtoblock', 'hub'),
             'notifysuccess');
 }
@@ -79,7 +79,7 @@ if ($usercandownload and $download != -1 and !empty($courseid) and confirm_sessk
     $course->fullname = $coursefullname;
     $course->id = $courseid;
     $course->huburl = $huburl;
-    $community->download_community_course_backup($course);
+    $communitymanager->block_community_download_course_backup($course);
     $filename =  'backup_'.$course->fullname."_".$course->id.".zip";
     $notificationmessage = $OUTPUT->notification(get_string('downloadconfirmed', 'hub', $filename),
             'notifysuccess');
@@ -89,7 +89,7 @@ if ($usercandownload and $download != -1 and !empty($courseid) and confirm_sessk
 $remove  = optional_param('remove', '', PARAM_INTEGER);
 $communityid  = optional_param('communityid', '', PARAM_INTEGER);
 if ($remove != -1 and !empty($communityid) and confirm_sesskey()) {
-    $community->remove_community_course($communityid, $USER->id);
+    $communitymanager->block_community_remove_course($communityid, $USER->id);
     $notificationmessage = $OUTPUT->notification(get_string('communityremoved', 'hub'),
             'notifysuccess');
 }

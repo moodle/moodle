@@ -24,7 +24,7 @@
  * Community library
 */
 
-class community {
+class block_community_manager {
 
 ///////////////////////////
 /// DB Facade functions  //
@@ -36,10 +36,10 @@ class community {
      * @param integer $userid
      * @return id of course or false if already added
      */
-    public function add_community_course($course, $userid) {
+    public function block_community_add_course($course, $userid) {
         global $DB;
 
-        $community = $this->get_community_course($course->url, $userid);
+        $community = $this->block_community_get_course($course->url, $userid);
 
         if (empty($community)) {
             $community->userid = $userid;
@@ -58,7 +58,7 @@ class community {
      * @param integer $userid
      * @return array of course
      */
-    public function get_community_courses($userid) {
+    public function block_community_get_courses($userid) {
         global $DB;
         return $DB->get_records('block_community', array('userid' => $userid), 'coursename');
     }
@@ -69,7 +69,7 @@ class community {
      * @param integer $userid
      * @return array of course
      */
-    public function get_community_course($courseurl, $userid) {
+    public function block_community_get_course($courseurl, $userid) {
         global $DB;
         return $DB->get_record('block_community', array('courseurl' => $courseurl, 'userid' => $userid));
     }
@@ -79,7 +79,7 @@ class community {
      * @param integer $courseid
      * @param string $huburl
      */
-    public function download_community_course_backup($course) {
+    public function block_community_download_course_backup($course) {
         global $CFG, $USER;
         require_once($CFG->dirroot. "/lib/filelib.php");
         require_once($CFG->dirroot. "/lib/hublib.php");
@@ -121,31 +121,9 @@ class community {
      * @param integer $userid
      * @return bool true
      */
-    public function remove_community_course($communityid, $userid) {
+    public function block_community_remove_course($communityid, $userid) {
         global $DB, $USER;
         return $DB->delete_records('block_community', array('userid' => $userid, 'id' => $communityid));
-    }
-
-    /**
-     * Decide where to save the file, can be
-     * reused by sub class
-     * @param string filename
-     */
-    public function prepare_file($filename) {
-        global $CFG;
-        if (!file_exists($CFG->dataroot.'/temp/download')) {
-            mkdir($CFG->dataroot.'/temp/download/', 0777, true);
-        }
-        if (is_dir($CFG->dataroot.'/temp/download')) {
-            $dir = $CFG->dataroot.'/temp/download/';
-        }
-        if (empty($filename)) {
-            $filename = uniqid('repo').'_'.time().'.tmp';
-        }
-        if (file_exists($dir.$filename)) {
-            $filename = uniqid('m').$filename;
-        }
-        return $dir.$filename;
     }
 
 }
