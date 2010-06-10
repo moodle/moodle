@@ -86,7 +86,7 @@ class hub_publish_selector_form extends moodleform {
 class course_publication_form extends moodleform {
 
     public function definition() {
-        global $CFG, $DB, $USER;
+        global $CFG, $DB, $USER, $OUTPUT;
 
         $strrequired = get_string('required');
         $mform =& $this->_form;
@@ -124,6 +124,7 @@ class course_publication_form extends moodleform {
 
         if (!empty($publishedcourses)) {
             $publishedcourse = $publishedcourses[0];
+            $hubcourseid = $publishedcourse['id'];
             $defaultfullname = $publishedcourse['fullname'];
             $defaultshortname = $publishedcourse['shortname'];
             $defaultsummary = $publishedcourse['description'];
@@ -138,6 +139,8 @@ class course_publication_form extends moodleform {
             $defaultaudience = $publishedcourse['audience'];
             $defaulteducationallevel = $publishedcourse['educationallevel'];
             $defaultcreatornotes = $publishedcourse['creatornotes'];
+            $screenshotsnumber = $publishedcourse['screenshotsids'];
+            $privacy = $publishedcourse['privacy'];
 
         } else {
             $defaultfullname = $course->fullname;
@@ -163,6 +166,7 @@ class course_publication_form extends moodleform {
             $defaultaudience = HUB_AUDIENCE_STUDENTS;
             $defaulteducationallevel = HUB_EDULEVEL_TERTIARY;
             $defaultcreatornotes = '';
+            $screenshotsnumber = 0;
         }
 
 
@@ -302,7 +306,34 @@ class course_publication_form extends moodleform {
         $mform->setType('creatornotes', PARAM_CLEANHTML);
         $mform->addHelpButton('creatornotes', 'creatornotes', 'hub');
 
-        $mform->addElement('filemanager', 'screenshots', get_string('screenshots','hub'), null,
+        if (!empty($screenshotsnumber)) {
+
+            if (!empty($privacy)) {
+                $images = array();
+                $baseurl = new moodle_url($huburl.'/local/hub/webservice/download.php', array('courseid' => $hubcourseid, 'filetype' => HUB_SCREENSHOT_FILE_TYPE));
+                for ($i = 1; $i <= $screenshotsnumber; $i = $i + 1) {
+                    $params['screenshotnumber'] = $i;
+                    $images[] = array(
+                        'thumburl' => new moodle_url($baseurl, array('screenshotnumber' => $i)),
+                        'imageurl' => new moodle_url($baseurl, array('screenshotnumber' => $i, 'imagewidth' => 'original')),
+                        'title' => $defaultfullname,
+                        'alt' => $defaultfullname
+                    );
+                }
+                $imagegallery = new image_gallery($images, $defaultshortname);
+                $imagegallery->displayfirstimageonly = true;
+                $screenshothtml = $OUTPUT->render($imagegallery);
+            } else {
+                $screenshothtml = get_string('existingscreenshotnumber', 'hub', $screenshotsnumber);
+            }
+            $mform->addElement('static', 'existingscreenshots', get_string('existingscreenshots', 'hub'), $screenshothtml);
+            $mform->addHelpButton('existingscreenshots', 'deletescreenshots', 'hub');
+            $mform->addElement('checkbox', 'deletescreenshots', '', ' '.get_string('deletescreenshots', 'hub'));
+        }
+        
+        $mform->addElement('hidden', 'existingscreenshotnumber', $screenshotsnumber);
+
+        $mform->addElement('filemanager', 'screenshots', get_string('addscreenshots','hub'), null,
                 array('subdirs'=>0,
                 'maxbytes'=>1000000,
                 'maxfiles'=>3

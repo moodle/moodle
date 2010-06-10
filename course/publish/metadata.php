@@ -89,6 +89,9 @@ if (has_capability('moodle/course:publish', get_context_instance(CONTEXT_COURSE,
         $courseinfo->creatornotes = $creatornotes['text'];
         $courseinfo->creatornotesformat = $creatornotes['format'];
         $courseinfo->sitecourseid = $id;
+        if (!empty($fromform->deletescreenshots)) {
+             $courseinfo->deletescreenshots = $fromform->deletescreenshots;
+        }
         if ($share) {
             $courseinfo->demourl = $fromform->demourl;
             $courseinfo->enrollable = false;
@@ -133,18 +136,19 @@ if (has_capability('moodle/course:publish', get_context_instance(CONTEXT_COURSE,
 
         //save into screenshots field the references to the screenshot content hash
         //(it will be like a unique id from the hub perspective)
+        if (!empty($fromform->deletescreenshots)) {
+            $courseinfo->screenshotsids = 0;
+        } else {
+            $courseinfo->screenshotsids = $fromform->existingscreenshotnumber;
+        }
         if (!empty($fromform->screenshots)) {
             $screenshots = $fromform->screenshots;
             $fs = get_file_storage();
             $files = $fs->get_area_files(get_context_instance(CONTEXT_USER, $USER->id)->id, 'user_draft', $screenshots);
             if (!empty($files)) {
-                 $courseinfo->screenshotsids = count($files)-1; //minus the ./ directory
-            } else {
-                $courseinfo->screenshotsids = 0;
+                 $courseinfo->screenshotsids = $courseinfo->screenshotsids + count($files)-1; //minus the ./ directory
             }
-        } else {
-            $courseinfo->screenshotsids = 0;
-        }
+        } 
 
         // BACKUP ACTION
         if ($share) {
@@ -191,7 +195,12 @@ if (has_capability('moodle/course:publish', get_context_instance(CONTEXT_COURSE,
         // send screenshots
         if (!empty($fromform->screenshots)) {
             require_once($CFG->dirroot. "/lib/filelib.php");
-            $screenshotnumber = 0;
+
+            if (!empty($fromform->deletescreenshots)) {
+                $screenshotnumber = 0;
+            } else {
+                $screenshotnumber = $fromform->existingscreenshotnumber;
+            }
             foreach ($files as $file) {
                 if ($file->is_valid_image()) {
                     $screenshotnumber = $screenshotnumber + 1;

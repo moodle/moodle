@@ -591,6 +591,7 @@ body.tag .managelink {padding: 5px;}
 
 .image_gallery.oneimageonly a.imagelink {display:none;}
 .image_gallery.oneimageonly a#imagelink1 {display:inline;}
+.mform .image_gallery.oneimageonly a.imagelink {float:left;}
 
 /**
  * Registration
