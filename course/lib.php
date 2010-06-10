@@ -2515,7 +2515,7 @@ function get_course_section($section, $courseid) {
     $cw->course   = $courseid;
     $cw->section  = $section;
     $cw->summary  = "";
-    $cw->summaryformat = FORMAT_MOODLE;
+    $cw->summaryformat = FORMAT_HTML;
     $cw->sequence = "";
     $id = $DB->insert_record("course_sections", $cw);
     return $DB->get_record("course_sections", array("id"=>$id));
@@ -2563,7 +2563,7 @@ function add_mod_to_section($mod, $beforemod=NULL) {
         $section->course   = $mod->course;
         $section->section  = $mod->section;
         $section->summary  = "";
-        $section->summaryformat = FORMAT_MOODLE;
+        $section->summaryformat = FORMAT_HTML;
         $section->sequence = $mod->coursemodule;
         return $DB->insert_record("course_sections", $section);
     }
@@ -3451,6 +3451,7 @@ function create_course($data) {
         $section = new object();
         $section->course  = $course->id;   // Create a default section.
         $section->section = 0;
+        $section->summaryformat = FORMAT_HTML;
         $section->id = $DB->insert_record('course_sections', $section);
 
         fix_course_sortorder();

@@ -608,6 +608,7 @@ function create_course ($course,$skip_fix_course_sortorder=0){
         $section = new object();
         $section->course  = $newcourseid;   // Create a default section.
         $section->section = 0;
+        $section->summaryformat = FORMAT_HTML;
         $section->id = $DB->insert_record("course_sections", $section);
         $course = $DB->get_record('course', array('id' => $newcourseid));
         blocks_add_default_course_blocks($course);

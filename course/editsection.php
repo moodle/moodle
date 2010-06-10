@@ -32,13 +32,8 @@ $id = required_param('id',PARAM_INT);    // Week/topic ID
 
 $PAGE->set_url('/course/editsection.php', array('id'=>$id));
 
-if (! $section = $DB->get_record("course_sections", array("id"=>$id))) {
-    print_error("sectionnotexist");
-}
-
-if (! $course = $DB->get_record("course", array("id"=>$section->course))) {
-    print_error("invalidcourseid");
-}
+$section = $DB->get_record('course_sections', array('id' => $id), '*', MUST_EXIST);
+$course = $DB->get_record('course', array('id' => $section->course), '*', MUST_EXIST);
 
 require_login($course);
 $context = get_context_instance(CONTEXT_COURSE, $course->id);
@@ -48,7 +43,7 @@ $editoroptions = array('maxfiles' => EDITOR_UNLIMITED_FILES, 'maxbytes'=>$CFG->m
 $section = file_prepare_standard_editor($section, 'summary', $editoroptions, $context, 'course_section', $section->id);
 $section->usedefaultname = (is_null($section->name));
 $mform = new editsection_form(null, array('course'=>$course, 'editoroptions'=>$editoroptions));
-$mform->set_data($section); // set defaults
+$mform->set_data($section); // set current value
 
 /// If data submitted, then process and store.
 if ($mform->is_cancelled()){
@@ -60,7 +55,9 @@ if ($mform->is_cancelled()){
     } else {
         $section->name = null;
     }
-    $section->summary = file_save_draft_area_files($data->summary['itemid'], $context->id, 'course_section', $section->id, array('subdirs'=>true), $data->summary['text']);
+    $data = file_postupdate_standard_editor($data, 'summary', $editoroptions, $context, 'course_section', $section->id);
+    $section->summary = $data->summary;
+    $section->summaryformat = $data->summaryformat;
     $DB->update_record('course_sections', $section);
     add_to_log($course->id, "course", "editsection", "editsection.php?id=$section->id", "$section->section");
     redirect("view.php?id=$course->id");

@@ -229,6 +229,7 @@
             $section->course = $course->id;   // Create a default section.
             $section->section = 0;
             $section->visible = 1;
+            $section->summaryformat = FORMAT_HTML;
             $section->id = $DB->insert_record('course_sections', $section);
         }
         if (! $sections = get_all_sections($course->id) ) {      // Try again

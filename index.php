@@ -98,7 +98,7 @@
             $section->course = $SITE->id;
             $section->section = 1;
             $section->summary = '';
-            $section->summaryformat = '0';
+            $section->summaryformat = FORMAT_HTML;
             $section->sequence = '';
             $section->visible = 1;
             $section->id = $DB->insert_record('course_sections', $section);

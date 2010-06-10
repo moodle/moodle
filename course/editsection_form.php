@@ -22,8 +22,9 @@ class editsection_form extends moodleform {
         $mform->disabledIf('name','usedefaultname','checked');
 
         /// Prepare course and the editor
-        
-        $mform->addElement('editor', 'summary', get_string('summary'), null, $this->_customdata['editoroptions']);
+
+        $mform->addElement('editor', 'summary_editor', get_string('summary'), null, $this->_customdata['editoroptions']);
+        $mform->setType('summary_editor', PARAM_RAW);
 
         $mform->addElement('hidden', 'id');
         $mform->setType('id', PARAM_INT);

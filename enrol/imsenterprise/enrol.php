@@ -545,6 +545,7 @@ function process_group_tag($tagcontents){
                     $section = new object();
                     $section->course = $course->id;   // Create a default section.
                     $section->section = 0;
+                    $section->summaryformat = FORMAT_HTML;
                     $section->id = $DB->insert_record("course_sections", $section);
 
                     add_to_log(SITEID, "course", "new", "view.php?id=$course->id", "$course->fullname (ID $course->id)");
