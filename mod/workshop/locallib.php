@@ -1201,7 +1201,7 @@ class workshop {
                            s.id AS submissionid, s.authorid
                       FROM {workshop_assessments} a
                       JOIN {user} r ON (a.reviewerid = r.id)
-                      JOIN {workshop_submissions} s ON (a.submissionid = s.id)
+                      JOIN {workshop_submissions} s ON (a.submissionid = s.id AND s.example = 0)
                      WHERE a.submissionid $submissionids";
             $reviewers = $DB->get_records_sql($sql, $params);
             foreach ($reviewers as $reviewer) {
@@ -1226,7 +1226,7 @@ class workshop {
                            e.id AS authorid, e.lastname, e.firstname, e.picture, e.imagealt
                       FROM {user} u
                       JOIN {workshop_assessments} a ON (a.reviewerid = u.id)
-                      JOIN {workshop_submissions} s ON (a.submissionid = s.id)
+                      JOIN {workshop_submissions} s ON (a.submissionid = s.id AND s.example = 0)
                       JOIN {user} e ON (s.authorid = e.id)
                      WHERE u.id $participantids AND s.workshopid = :workshopid";
             $reviewees = $DB->get_records_sql($sql, $params);
