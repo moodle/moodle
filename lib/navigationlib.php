@@ -2964,12 +2964,18 @@ class settings_navigation extends navigation_node {
         if (count($this->userstoextendfor) > 0 || count($navusers) > 0) {
             $usernode = null;
             foreach ($this->userstoextendfor as $userid) {
+                if ($userid == $USER->id) {
+                    continue;
+                }
                 $node = $this->generate_user_settings($courseid, $userid, 'userviewingsettings');
                 if (is_null($usernode)) {
                     $usernode = $node;
                 }
             }
             foreach ($navusers as $user) {
+                if ($user->id == $USER->id) {
+                    continue;
+                }
                 $node = $this->generate_user_settings($courseid, $user->id, 'userviewingsettings');
                 if (is_null($usernode)) {
                     $usernode = $node;
@@ -3058,10 +3064,6 @@ class settings_navigation extends navigation_node {
         $key = $gstitle;
         if ($gstitle != 'usercurrentsettings') {
             $key .= $userid;
-        }
-
-        if ($this->get('usercurrentsettings'.$userid) || $this->get($key)) {
-            return true;
         }
 
         // Add a user setting branch
