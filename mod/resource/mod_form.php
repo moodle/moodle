@@ -194,7 +194,7 @@ class mod_resource_mod_form extends moodleform_mod {
 
         $usercontext = get_context_instance(CONTEXT_USER, $USER->id);
         $fs = get_file_storage();
-        if (!$files = $fs->get_area_files($usercontext->id, 'user_draft', $data['files'], 'sortorder', false)) {
+        if (!$files = $fs->get_area_files($usercontext->id, 'user_draft', $data['files'], 'sortorder, id', false)) {
             $errors['files'] = get_string('required');
             return $errors;
         }
@@ -202,7 +202,6 @@ class mod_resource_mod_form extends moodleform_mod {
             // no need to select main file if only one picked
             return $errors;
         } else if(count($files) > 1) {
-            // looking for main file
             $mainfile = false;
             foreach($files as $file) {
                 if ($file->get_sortorder() == 1) {
@@ -210,8 +209,11 @@ class mod_resource_mod_form extends moodleform_mod {
                     break;
                 }
             }
+            // set a default main file
             if (!$mainfile) {
-                $errors['files'] = get_string('selectmainfile', 'resource');
+                $file = reset($files);
+                file_set_sortorder($file->get_contextid(), $file->get_filearea(), $file->get_itemid(),
+                                   $file->get_filepath(), $file->get_filename(), 1);
             }
         }
         return $errors;
