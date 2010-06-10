@@ -520,7 +520,7 @@ class qformat_hotpot extends qformat_default {
         return $this->hotpot_prepare_str($title);
     }
     function hotpot_get_instructions(&$xml) {
-        $text = $xml->xml_value('hotpot-config-file,instructions');
+        $text = $xml->xml_value('hotpot-config-file,'.$xml->quiztype.',instructions');
         if (empty($text)) {
             $text = "Hot Potatoes $xml->quiztype";
         }
