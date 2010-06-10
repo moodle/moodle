@@ -23,7 +23,7 @@
  * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
+require_once($CFG->dirroot . '/rating/lib.php');
 
 define("GLOSSARY_SHOW_ALL_CATEGORIES", 0);
 define("GLOSSARY_SHOW_NOT_CATEGORISED", -1);
@@ -2107,11 +2107,11 @@ function glossary_count_unrated_entries($glossaryid, $userid) {
             return 0;
         }
         $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-        
+
         if ($rated = $DB->get_record_sql("SELECT count(*) as num
                                             FROM {glossary_entries} e, {ratings} r
                                            WHERE e.glossaryid = :glossaryid AND e.id = r.itemid
-                                                 AND r.userid = :userid and r.contextid = :contextid", 
+                                                 AND r.userid = :userid and r.contextid = :contextid",
                 array('glossaryid'=>$glossaryid, 'userid'=>$userid, 'contextid'=>$context->id))) {
 
             $difference = $entries->num - $rated->num;
