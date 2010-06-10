@@ -1879,12 +1879,12 @@ class global_navigation extends navigation_node {
 
     public function get($key, $type = null) {
         $this->initialise();
-        parent::get($key, $type);
+        return parent::get($key, $type);
     }
 
     public function find($key, $type) {
         $this->initialise();
-        parent::find($key, $type);
+        return parent::find($key, $type);
     }
 }
 
@@ -3058,6 +3058,10 @@ class settings_navigation extends navigation_node {
         $key = $gstitle;
         if ($gstitle != 'usercurrentsettings') {
             $key .= $userid;
+        }
+
+        if ($this->get('usercurrentsettings'.$userid) || $this->get($key)) {
+            return true;
         }
 
         // Add a user setting branch
