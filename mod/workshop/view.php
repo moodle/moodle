@@ -101,27 +101,26 @@ case workshop::PHASE_SUBMISSION:
         print_collapsible_region_end();
     }
 
-    $examplesdone = true;
+    $examplesdone = !$workshop->useexamples;
     if ($workshop->assessing_examples_allowed()
             and has_capability('mod/workshop:submit', $workshop->context)
                     and ! has_capability('mod/workshop:manageexamples', $workshop->context)) {
         $examples = $workshop->get_examples_for_reviewer($USER->id);
         $total = count($examples);
-        $done = 0;
-        $todo = 0;
+        $left = 0;
         // make sure the current user has all examples allocated
         foreach ($examples as $exampleid => $example) {
             if (is_null($example->assessmentid)) {
                 $examples[$exampleid]->assessmentid = $workshop->add_allocation($example, $USER->id, 0);
             }
             if (is_null($example->grade)) {
-                $todo++;
-            } else {
-                $done++;
+                $left++;
             }
         }
-        if ($todo > 0 and $workshop->examplesmode != workshop::EXAMPLES_VOLUNTARY) {
+        if ($left > 0 and $workshop->examplesmode != workshop::EXAMPLES_VOLUNTARY) {
             $examplesdone = false;
+        } else {
+            $examplesdone = true;
         }
         print_collapsible_region_start('', 'workshop-viewlet-examples', get_string('exampleassessments', 'workshop'));
         echo $output->box_start('generalbox exampleassessments');

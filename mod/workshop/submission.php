@@ -60,8 +60,19 @@ $cansubmit      = has_capability('mod/workshop:submit', $workshop->context);
 $canallocate    = has_capability('mod/workshop:allocate', $workshop->context);
 $canoverride    = (($workshop->phase == workshop::PHASE_EVALUATION) and has_capability('mod/workshop:overridegrades', $workshop->context));
 $isreviewer     = $DB->record_exists('workshop_assessments', array('submissionid' => $submission->id, 'reviewerid' => $USER->id));
-$editable       = $workshop->submitting_allowed();
-$edit           = ($editable and $edit);
+$editable       = $cansubmit and $ownsubmission and $workshop->submitting_allowed();
+if ($editable and $workshop->useexamples and $workshop->examplesmode == workshop::EXAMPLES_BEFORE_SUBMISSION
+        and !has_capability('mod/workshop:manageexamples', $workshop->context)) {
+    // check that all required examples have been assessed by the user
+    $examples = $workshop->get_examples_for_reviewer($USER->id);
+    foreach ($examples as $exampleid => $example) {
+        if (is_null($example->grade)) {
+            $editable = false;
+            break;
+        }
+    }
+}
+$edit = ($editable and $edit);
 
 if ($submission->id and ($ownsubmission or $canviewall or $isreviewer)) {
     // ok you can go
@@ -77,7 +88,7 @@ if ($assess and $submission->id and !$isreviewer and $canallocate and $workshop-
     redirect($workshop->assess_url($assessmentid));
 }
 
-if ($edit and $ownsubmission) {
+if ($edit) {
     require_once(dirname(__FILE__).'/submission_form.php');
 
     $maxfiles       = $workshop->nattachments;
@@ -161,7 +172,7 @@ echo $OUTPUT->heading(format_string($workshop->name), 2);
 
 // if in edit mode, display the form to edit the submission
 
-if ($edit and $ownsubmission) {
+if ($edit) {
     $mform->display();
     echo $OUTPUT->footer();
     die();
@@ -176,7 +187,7 @@ if ($submission->id) {
     echo $OUTPUT->box(get_string('noyoursubmission', 'workshop'));
 }
 
-if ($ownsubmission and $editable) {
+if ($editable) {
     $url = new moodle_url($PAGE->url, array('edit' => 'on', 'id' => $submission->id));
     echo $OUTPUT->single_button($url, get_string('editsubmission', 'workshop'), 'get');
 }

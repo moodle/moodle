@@ -1004,7 +1004,9 @@ class workshop {
     /**
      * Are reviewers allowed to create/edit their assessments of the example submissions?
      *
-     * Note this does not check other conditions like the number of already submitted examples etc.
+     * Returns null if example submissions are not enabled in this workshop. Otherwise returns
+     * true or false. Note this does not check other conditions like the number of already
+     * assessed examples, examples mode etc.
      *
      * @return null|bool
      */
@@ -1793,6 +1795,28 @@ class workshop_user_plan implements renderable {
                 $task->completed = false;
             }
             $phase->tasks['instructreviewers'] = $task;
+        }
+        if ($this->workshop->useexamples and $this->workshop->examplesmode == workshop::EXAMPLES_BEFORE_SUBMISSION
+                and has_capability('mod/workshop:submit', $workshop->context, $userid, false)
+                    and !has_capability('mod/workshop:manageexamples', $this->workshop->context, $userid)) {
+            $task = new stdclass();
+            $task->title = get_string('exampleassesstask', 'workshop');
+            $examples = $workshop->get_examples_for_reviewer($userid);
+            $a = new stdclass();
+            $a->expected = count($examples);
+            $a->assessed = 0;
+            foreach ($examples as $exampleid => $example) {
+                if (!is_null($example->grade)) {
+                    $a->assessed++;
+                }
+            }
+            $task->details = get_string('exampleassesstaskdetails', 'workshop', $a);
+            if ($a->assessed == $a->expected) {
+                $task->completed = true;
+            } elseif ($this->workshop->phase >= workshop::PHASE_ASSESSMENT) {
+                $task->completed = false;
+            }
+            $phase->tasks['examples'] = $task;
         }
         if (has_capability('mod/workshop:submit', $this->workshop->context, $userid, false)) {
             $task = new stdclass();
