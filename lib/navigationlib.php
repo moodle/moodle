@@ -1482,7 +1482,7 @@ class global_navigation extends navigation_node {
                 $usersnode->action = new moodle_url('/user/index.php', array('id'=>$course->id));
             }
             // Add a branch for the current user
-            $usernode = $usersnode->add(fullname($user, true));
+            $usernode = $usersnode->add(fullname($user, true), null, self::TYPE_USER, null, $user->id);
         }
 
         if ($this->page->context->contextlevel == CONTEXT_USER && $user->id == $this->page->context->instanceid) {
