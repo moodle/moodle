@@ -893,6 +893,7 @@ class global_navigation extends navigation_node {
         if ($this->initialised || during_initial_install()) {
             return true;
         }
+        $this->initialised = true;
 
         // Set up the five base root nodes. These are nodes where we will put our
         // content and are as follows:
@@ -1084,8 +1085,6 @@ class global_navigation extends navigation_node {
                 $this->children->add($child);
             }
         }
-
-        $this->initialised = true;
         return true;
     }
     /**
@@ -1876,6 +1875,16 @@ class global_navigation extends navigation_node {
             }
         }
         return true;
+    }
+
+    public function get($key, $type = null) {
+        $this->initialise();
+        parent::get($key, $type);
+    }
+
+    public function find($key, $type) {
+        $this->initialise();
+        parent::find($key, $type);
     }
 }
 
