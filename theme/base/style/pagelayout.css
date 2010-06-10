@@ -30,7 +30,7 @@
 body {margin:auto 0px;width:auto;}
 #page {width:100%;overflow:hidden;}
 #page-header {float:left;width:100%;}
-#page-content {clear:both;float:left;overflow:hidden;position:relative;width:100%;}
+#page-content {clear:both;float:left;overflow:hidden;position:relative;width:100%;min-width:900px;}
 #page-content #region-main-box {float:left;left:200px;position:relative;width:200%;}
 #page-content #region-main-box #region-post-box {float:left;left:50%;margin-left:-400px;position:relative;width:100%;}
 #page-content #region-main-box #region-post-box #region-main-wrap {float:right;position:relative;right:100%;width:50%;}
