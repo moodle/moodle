@@ -137,16 +137,16 @@ if (has_capability('moodle/course:publish', get_context_instance(CONTEXT_COURSE,
         //save into screenshots field the references to the screenshot content hash
         //(it will be like a unique id from the hub perspective)
         if (!empty($fromform->deletescreenshots)) {
-            $courseinfo->screenshotsids = 0;
+            $courseinfo->screenshots = 0;
         } else {
-            $courseinfo->screenshotsids = $fromform->existingscreenshotnumber;
+            $courseinfo->screenshots = $fromform->existingscreenshotnumber;
         }
         if (!empty($fromform->screenshots)) {
             $screenshots = $fromform->screenshots;
             $fs = get_file_storage();
             $files = $fs->get_area_files(get_context_instance(CONTEXT_USER, $USER->id)->id, 'user_draft', $screenshots);
             if (!empty($files)) {
-                 $courseinfo->screenshotsids = $courseinfo->screenshotsids + count($files)-1; //minus the ./ directory
+                 $courseinfo->screenshots = $courseinfo->screenshots + count($files)-1; //minus the ./ directory
             }
         } 
 

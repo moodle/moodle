@@ -159,10 +159,10 @@ class block_community_renderer extends plugin_renderer_base {
 
                 // add a row to the table
                 $screenshothtml = '';
-                if (!empty($course->screenshotsids)) {
+                if (!empty($course->screenshots)) {
                     $images = array();
                     $baseurl = new moodle_url($huburl.'/local/hub/webservice/download.php', array('courseid' => $course->id, 'filetype' => HUB_SCREENSHOT_FILE_TYPE));
-                    for ($i = 1; $i <= $course->screenshotsids; $i = $i + 1) {
+                    for ($i = 1; $i <= $course->screenshots; $i = $i + 1) {
                         $params['screenshotnumber'] = $i;
                         $images[] = array(
                             'thumburl' => new moodle_url($baseurl, array('screenshotnumber' => $i)),

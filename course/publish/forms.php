@@ -139,7 +139,7 @@ class course_publication_form extends moodleform {
             $defaultaudience = $publishedcourse['audience'];
             $defaulteducationallevel = $publishedcourse['educationallevel'];
             $defaultcreatornotes = $publishedcourse['creatornotes'];
-            $screenshotsnumber = $publishedcourse['screenshotsids'];
+            $screenshotsnumber = $publishedcourse['screenshots'];
             $privacy = $publishedcourse['privacy'];
 
         } else {
