@@ -1636,7 +1636,15 @@ class global_navigation extends navigation_node {
      */
     public function extend_for_user($user) {
         $this->extendforuser[] = $user;
-        $this->page->settingsnav->extend_for_user($user->id);
+    }
+
+    /**
+     * Returns all of the users the navigation is being extended for
+     *
+     * @return array
+     */
+    public function get_extending_users() {
+        return $this->extendforuser;
     }
     /**
      * Adds the given course to the navigation structure.
@@ -2942,10 +2950,18 @@ class settings_navigation extends navigation_node {
             return false;
         }
 
-        if (count($this->userstoextendfor) > 0) {
+        $navusers = $this->page->navigation->get_extending_users();
+
+        if (count($this->userstoextendfor) > 0 || count($navusers) > 0) {
             $usernode = null;
             foreach ($this->userstoextendfor as $userid) {
                 $node = $this->generate_user_settings($courseid, $userid, 'userviewingsettings');
+                if (is_null($usernode)) {
+                    $usernode = $node;
+                }
+            }
+            foreach ($navusers as $user) {
+                $node = $this->generate_user_settings($courseid, $user->id, 'userviewingsettings');
                 if (is_null($usernode)) {
                     $usernode = $node;
                 }
@@ -3030,8 +3046,13 @@ class settings_navigation extends navigation_node {
 
         $fullname = fullname($user, has_capability('moodle/site:viewfullnames', $this->page->context));
 
+        $key = $gstitle;
+        if ($gstitle != 'usercurrentsettings') {
+            $key .= $userid;
+        }
+
         // Add a user setting branch
-        $usersetting = $this->add(get_string($gstitle, 'moodle', $fullname), null, self::TYPE_CONTAINER, null, $gstitle);
+        $usersetting = $this->add(get_string($gstitle, 'moodle', $fullname), null, self::TYPE_CONTAINER, null, $key);
         $usersetting->id = 'usersettings';
 
         // Check if the user has been deleted

@@ -151,7 +151,7 @@ if ($currentuser) {
 
 if (!$currentuser) {
     $PAGE->navigation->extend_for_user($user);
-    if ($node = $PAGE->settingsnav->get('userviewingsettings')) {
+    if ($node = $PAGE->settingsnav->get('userviewingsettings'.$user->id)) {
         $node->forceopen = true;
     }
 } else if ($node = $PAGE->settingsnav->get('usercurrentsettings', navigation_node::TYPE_CONTAINER)) {
