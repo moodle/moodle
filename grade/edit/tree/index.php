@@ -105,9 +105,11 @@ if (!is_null($category) && !is_null($aggregationtype) && confirm_sesskey()) {
     if (!$grade_category = grade_category::fetch(array('id'=>$category, 'courseid'=>$courseid))) {
         print_error('invalidcategoryid');
     }
+
     $data->aggregation = $aggregationtype;
     grade_category::set_properties($grade_category, $data);
     $grade_category->update();
+
     grade_regrade_final_grades($courseid);
 }
 
