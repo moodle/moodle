@@ -731,7 +731,7 @@ class securewindow_access_rule extends quiz_access_rule_base {
             $attempturl = $SESSION->sid_process_url($attempturl);
         }
 
-        echo '<input id="quizstartbuttondiv" type="button" value="' .
+        echo '<input id="quizstartbutton" type="button" value="' .
                 s($buttontext) . '" style="display: none;" onclick="javascript:';
         if ($strconfirmstartattempt) {
             echo "if (confirm('" . addslashes_js($strconfirmstartattempt) . "')) ";
