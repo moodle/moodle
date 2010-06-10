@@ -115,7 +115,7 @@
                     if ($nextcatid == 0){
                         break;
                     }
-                    $catid == $nextcatid;
+                    $catid = $nextcatid;
                     $catno--;
                 }
                 $tocontext = get_context_instance(CONTEXT_COURSECAT, $catid);
