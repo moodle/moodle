@@ -64,7 +64,7 @@ class mod_scorm_mod_form extends moodleform_mod {
 // New local package upload
         $maxbytes = get_max_upload_file_size($CFG->maxbytes, $COURSE->maxbytes);
         $mform->setMaxFileSize($maxbytes);
-        $mform->addElement('file', 'packagefile', get_string('package','scorm'));
+        $mform->addElement('filepicker', 'packagefile', get_string('package','scorm'));
         $mform->disabledIf('packagefile', 'scormtype', 'noteq', SCORM_TYPE_LOCAL);
 
 //-------------------------------------------------------------------------------
@@ -290,6 +290,7 @@ class mod_scorm_mod_form extends moodleform_mod {
     }
 
     function validation($data, $files) {
+        global $CFG;
         $errors = parent::validation($data, $files);
 
         $type = $data['scormtype'];
@@ -298,13 +299,22 @@ class mod_scorm_mod_form extends moodleform_mod {
             if (!empty($data['update'])) {
                 //ok, not required
 
-            } else if (empty($files['packagefile'])) {
+            } else if (empty($data['packagefile'])) {
                 $errors['packagefile'] = get_string('required');
 
             } else {
+                $files = $this->get_draft_files('packagefile');
+                if (count($files)<1) {
+                    $errors['packagefile'] = get_string('required');
+                }
+                $file = reset($files);
+                $filename = $CFG->dataroot.'/temp/scormimport/scrom_'.time();
+                make_upload_directory('temp/scormimport');
+                $file->copy_content_to($filename);
+
                 $packer = get_file_packer('application/zip');
 
-                $filelist = $packer->list_files($files['packagefile']);
+                $filelist = $packer->list_files($filename);
                 if (!is_array($filelist)) {
                     $errors['packagefile'] = 'Incorrect file package - not an archive'; //TODO: localise
                 } else {
@@ -324,6 +334,7 @@ class mod_scorm_mod_form extends moodleform_mod {
                         $errors['packagefile'] = 'Incorrect file package - missing imsmanifest.xml or AICC structure'; //TODO: localise
                     }
                 }
+                unlink($filename);
             }
 
         } else if ($type === SCORM_TYPE_EXTERNAL) {

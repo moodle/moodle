@@ -627,6 +627,39 @@ abstract class moodleform {
     }
 
     /**
+     * Get draft files of a form element
+     * This is a protected method which will be used only inside moodleforms
+     *
+     * @global object $USER
+     * @param string $elname name of element
+     * @return array
+     */
+    protected function get_draft_files($elname) {
+        global $USER;
+
+        if (!$this->is_submitted()) {
+            return false;
+        }
+
+        $element = $this->_form->getElement($elname);
+
+        if ($element instanceof MoodleQuickForm_filepicker || $element instanceof MoodleQuickForm_filemanager) {
+            $values = $this->_form->exportValues($elname);
+            if (empty($values[$elname])) {
+                return false;
+            }
+            $draftid = $values[$elname];
+            $fs = get_file_storage();
+            $context = get_context_instance(CONTEXT_USER, $USER->id);
+            if (!$files = $fs->get_area_files($context->id, 'user_draft', $draftid, 'id DESC', false)) {
+                return null;
+            }
+            return $files;
+        }
+        return null;
+    }
+
+    /**
      * Dispose form element draft files
      *
      * @global object $USER
