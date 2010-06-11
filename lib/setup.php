@@ -48,13 +48,13 @@ $CFG->dirroot = dirname(dirname(__FILE__));
 // Normalise dataroot - we do not want any symbolic links, trailing / or any other weirdness there
 if (!isset($CFG->dataroot)) {
     header($_SERVER['SERVER_PROTOCOL'] . ' 503 Service Unavailable');
-    echo('Fatal: $CFG->dataroot is not configured! Exiting.');
+    echo('Fatal error: $CFG->dataroot is not specified in config.php! Exiting.');
     exit(1);
 }
 $CFG->dataroot = realpath($CFG->dataroot);
 if ($CFG->dataroot === false) {
     header($_SERVER['SERVER_PROTOCOL'] . ' 503 Service Unavailable');
-    echo('Fatal: $CFG->dataroot is not configured properly! Exiting.');
+    echo('Fatal error: $CFG->dataroot is not configured properly, directory does not exist or is not accessible! Exiting.');
     exit(1);
 }
 
@@ -62,7 +62,7 @@ if ($CFG->dataroot === false) {
 if (!isset($CFG->wwwroot) or $CFG->wwwroot === 'http://example.com/moodle') {
     // trigger_error() is not correct here, no need to log this
     header($_SERVER['SERVER_PROTOCOL'] . ' 503 Service Unavailable');
-    echo('Fatal: $CFG->wwwroot is not configured! Exiting.');
+    echo('Fatal error: $CFG->wwwroot is not configured! Exiting.');
     exit(1);
 }
 
@@ -93,8 +93,8 @@ if (!defined('NO_DEBUG_DISPLAY')) {
 
 // Servers should define a default timezone in php.ini, but if they don't then make sure something is defined.
 // This is a quick hack.  Ideally we should ask the admin for a value.  See MDL-22625 for more on this.
-if (function_exists('date_default_timezone_set') and function_exists('date_default_timezone_get')) { 
-    @date_default_timezone_set(@date_default_timezone_get()); 
+if (function_exists('date_default_timezone_set') and function_exists('date_default_timezone_get')) {
+    @date_default_timezone_set(@date_default_timezone_get());
 }
 
 // Detect CLI scripts - CLI scripts are executed from command line, do not have session and we do not want HTML in output
