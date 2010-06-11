@@ -151,7 +151,7 @@ function feedback_pluginfile($course, $cminfo, $context, $filearea, $args, $forc
     if (!$cminfo->uservisible) {
         return false;
     }
-    
+
     if($filearea === 'feedback_template') {
         $usedcontext = get_context_instance(CONTEXT_COURSE, $course->id);
     }else {
@@ -304,7 +304,7 @@ function feedback_get_recent_mod_activity(&$activities, &$index, $timemodified, 
     $modinfo =& get_fast_modinfo($course);
 
     $cm = $modinfo->cms[$cmid];
-    
+
     $sqlargs = array();
 
     $sql = " SELECT fk . * , fc . * , u.firstname, u.lastname, u.email, u.picture
@@ -315,7 +315,7 @@ function feedback_get_recent_mod_activity(&$activities, &$index, $timemodified, 
     if ($groupid) {
         $sql .= " JOIN {groups_members} gm ON  gm.userid=u.id ";
     }
-    
+
     $sql .= " WHERE fc.timemodified > ? AND fk.id = ? ";
     $sqlargs[] = $timemodified;
     $sqlargs[] = $cm->instace;
@@ -329,7 +329,7 @@ function feedback_get_recent_mod_activity(&$activities, &$index, $timemodified, 
         $sql .= " AND gm.groupid = ? ";
         $sqlargs[] = $groupid;
     }
-    
+
     if (!$feedbackitems = $DB->get_records_sql($sql, $sqlargs)) {
         return;
     }
@@ -716,9 +716,9 @@ function feedback_check_is_switchrole(){
  */
 function feedback_get_incomplete_users($cm, $group = false, $sort = '', $startpage = false, $pagecount = false) {
     global $DB;
-    
+
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-    
+
     //first get all user who can complete this feedback
     $cap = 'mod/feedback:complete';
     $fields = 'u.id, u.username';
@@ -732,7 +732,7 @@ function feedback_get_incomplete_users($cm, $group = false, $sort = '', $startpa
         return false;
     }
     $completedusers = array_keys($completedusers);
-    
+
     //now strike all completedusers from allusers
     $allusers = array_diff($allusers, $completedusers);
 
@@ -780,12 +780,12 @@ function feedback_count_complete_users($cm, $group = false) {
         $wheregroup = ' AND g.groupid = ? AND g.userid = c.userid';
         $params[] = $group;
     }
-    
+
     $sql = 'SELECT COUNT(u.id) FROM {user} u, {feedback_completed} c'.$fromgroup.'
               WHERE anonymous_response = ? AND u.id = c.userid AND c.feedback = ?
               '.$wheregroup;
               ;
-              
+
     return $DB->count_records_sql($sql, $params);
 
 }
@@ -820,18 +820,18 @@ function feedback_get_complete_users($cm, $group = false, $where, $sort = '', $s
         $wheregroup = ' AND g.groupid = ? AND g.userid = c.userid';
         $params[] = $group;
     }
-    
+
     if($sort) {
         $sortsql = ' ORDER BY '.$sort;
     }else {
         $sortsql = '';
     }
-    
+
     $sql = 'SELECT DISTINCT u.* FROM {user} u, {feedback_completed} c'.$fromgroup.'
               WHERE '.$where.' anonymous_response = ? AND u.id = c.userid AND c.feedback = ?
               '.$wheregroup.$sortsql;
               ;
-              
+
     if($startpage === false OR $pagecount === false) {
         $startpage = false;
         $pagecount = false;
@@ -918,6 +918,7 @@ function feedback_save_as_template($feedback, $name, $ispublic = 0) {
     global $DB;
     $fs = get_file_storage();
 
+die('TODO: MDL-21227 feedback code must not touch course summary files, code needs to be fixed, sorry');
     if (!$feedbackitems = $DB->get_records('feedback_item', array('feedback'=>$feedback->id))) {
         return false;
     }
@@ -925,22 +926,22 @@ function feedback_save_as_template($feedback, $name, $ispublic = 0) {
     if (!$newtempl = feedback_create_template($feedback->course, $name, $ispublic)) {
         return false;
     }
-    
+
     //files in the template_item are in the context of the current course
     //files in the feedback_item are in the feedback_context of the feedback
     $c_context = get_context_instance(CONTEXT_COURSE, $newtempl->course);
     $cm = get_coursemodule_from_instance('feedback', $feedback->id);
     $f_context = get_context_instance(CONTEXT_MODULE, $cm->id);
-    
+
     //create items of this new template
     //depend items we are storing temporary in an mapping list array(new id => dependitem)
     //we also store a mapping of all items array(oldid => newid)
     $dependitemsmap = array();
     $itembackup = array();
     foreach($feedbackitems as $item) {
-        
+
         $t_item = clone($item);
-        
+
         unset($t_item->id);
         $t_item->feedback = 0;
         $t_item->template     = $newtempl->id;
@@ -955,21 +956,21 @@ function feedback_save_as_template($feedback, $name, $ispublic = 0) {
                 $fs->create_file_from_storedfile($file_record, $ifile);
             }
         }
-        
+
         $itembackup[$item->id] = $t_item->id;
         if($t_item->dependitem) {
             $dependitemsmap[$t_item->id] = $t_item->dependitem;
         }
-        
+
     }
-    
+
     //remapping the dependency
     foreach($dependitemsmap as $key => $dependitem) {
         $newitem = $DB->get_record('feedback_item', array('id'=>$key));
         $newitem->dependitem = $itembackup[$newitem->dependitem];
         $DB->update_record('feedback_item', $newitem);
     }
-    
+
     return true;
 }
 
@@ -984,12 +985,13 @@ function feedback_save_as_template($feedback, $name, $ispublic = 0) {
 function feedback_delete_template($id) {
     global $DB;
 
+die('TODO: MDL-21227 feedback code must not touch course summary files, code needs to be fixed, sorry');
     $template = $DB->get_record("feedback_template", array("id"=>$id));
 
     //deleting the files from the item
     $fs = get_file_storage();
     $context = get_context_instance(CONTEXT_COURSE, $template->course);
-    
+
 
     if($t_items = $DB->get_records("feedback_item", array("template"=>$id))) {
         foreach($t_items as $t_item) {
@@ -1016,6 +1018,8 @@ function feedback_delete_template($id) {
 function feedback_items_from_template($feedback, $templateid, $deleteold = false) {
     global $DB;
     $fs = get_file_storage();
+
+die('TODO: MDL-21227 feedback code must not touch course summary files, code needs to be fixed, sorry');
 
     //get all templateitems
     if(!$templitems = $DB->get_records('feedback_item', array('template'=>$templateid))) {
@@ -1061,7 +1065,7 @@ function feedback_items_from_template($feedback, $templateid, $deleteold = false
         $item->position = $item->position + $positionoffset;
 
         $item->id = $DB->insert_record('feedback_item', $item);
-        
+
         //TODO: moving the files to the new items
         if ($templatefiles = $fs->get_area_files($c_context->id, 'course_summary', $t_item->id, "id", false)) {
             foreach($templatefiles as $tfile) {
@@ -1072,19 +1076,19 @@ function feedback_items_from_template($feedback, $templateid, $deleteold = false
                 $fs->create_file_from_storedfile($file_record, $tfile);
             }
         }
-        
+
         $itembackup[$t_item->id] = $item->id;
         if($item->dependitem) {
             $dependitemsmap[$item->id] = $item->dependitem;
         }
     }
-    
+
     //remapping the dependency
     foreach($dependitemsmap as $key => $dependitem) {
         $newitem = $DB->get_record('feedback_item', array('id'=>$key));
         $newitem->dependitem = $itembackup[$newitem->dependitem];
         $DB->update_record('feedback_item', $newitem);
-    }    
+    }
 }
 
 /**
@@ -1122,7 +1126,7 @@ function feedback_get_template_list($course, $onlyown = false) {
  */
 function feedback_get_item_class($typ) {
     global $CFG;
-    
+
     //get the class of item-typ
     $itemclass = 'feedback_item_'.$typ;
     //get the instance of item-class
@@ -1280,28 +1284,28 @@ function feedback_update_item($item){
  */
 function feedback_delete_item($itemid, $renumber = true){
     global $DB;
-    
-    
+
+
     $item = $DB->get_record('feedback_item', array('id'=>$itemid));
-    
+
     //deleting the files from the item
     $fs = get_file_storage();
     if (!$cm = get_coursemodule_from_instance('feedback', $item->feedback)) {
         return false;
     }
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-    
+
     if ($itemfiles = $fs->get_area_files($context->id, 'feedback_item', $item->id, "id", false)) {
         $fs->delete_area_files($context->id, 'feedback_item', $item->id);
     }
-    
+
     $DB->delete_records("feedback_value", array("item"=>$itemid));
     $DB->delete_records("feedback_valuetmp", array("item"=>$itemid));
-    
+
     //remove all depends
     $DB->set_field('feedback_item', 'dependvalue', '', array('dependitem'=>$itemid));
     $DB->set_field('feedback_item', 'dependitem', 0, array('dependitem'=>$itemid));
-    
+
     $DB->delete_records("feedback_item", array("id"=>$itemid));
     if($renumber) {
         feedback_renumber_items($item->feedback);
@@ -1379,11 +1383,11 @@ function feedback_moveup_item($item){
     if($item->position == 1) {
         return true;
     }
-    
+
     if(!$items = $DB->get_records('feedback_item', array('feedback'=>$item->feedback), 'position')) {
         return false;
     }
-    
+
     $itembefore = null;
     foreach($items as $i) {
         if($i->id == $item->id) {
@@ -1415,7 +1419,7 @@ function feedback_movedown_item($item){
     if(!$items = $DB->get_records('feedback_item', array('feedback'=>$item->feedback), 'position')) {
         return false;
     }
-    
+
     $movedownitem = null;
     foreach($items as $i) {
         if(!is_null($movedownitem) AND $movedownitem->id == $item->id) {
@@ -1516,7 +1520,7 @@ function feedback_print_item_show_value($item, $value = false){
     if($item->typ == 'pagebreak') {
         return;
     }
-    
+
     //get the instance of the item-class
     $itemobj = feedback_get_item_class($item->typ);
     $itemobj->print_item_show_value($item, $value);
@@ -1763,7 +1767,7 @@ function feedback_get_page_to_continue($feedbackid, $courseid = false, $guestid 
  */
 function feedback_save_values($usrid, $tmp = false) {
     global $DB;
-    
+
     $completedid = optional_param('completedid', false, PARAM_INT);
 
     $tmpstr = $tmp ? 'tmp' : '';
@@ -1792,7 +1796,7 @@ function feedback_save_guest_values($guestid) {
     global $DB;
 
     $completedid = optional_param('completedid', false, PARAM_INT);
-    
+
     $timemodified = time();
     if(!$completed = $DB->get_record('feedback_completedtmp', array('id'=>$completedid))) {
         return feedback_create_values(0, $timemodified, true, $guestid);
@@ -1834,9 +1838,9 @@ function feedback_get_item_value($completedid, $itemid, $tmp = false) {
  */
 function feedback_compare_item_value($completedid, $itemid, $dependvalue, $tmp = false) {
     global $DB, $CFG;
-    
+
     $dbvalue = feedback_get_item_value($completedid, $itemid, $tmp);
-    
+
     //get the class of the given item-typ
     $item = $DB->get_record('feedback_item', array('id'=>$itemid));
 
@@ -1877,9 +1881,9 @@ function feedback_check_values($firstitem, $lastitem) {
         //<item-typ>_<item-id> eg. numeric_234
         //this is the key to get the value for the correct item
         $formvalname = $item->typ . '_' . $item->id;
-    
+
         $value = optional_param($formvalname, NULL, PARAM_RAW);
-        
+
         //check if the value is set
         if(is_null($value) AND $item->required == 1) {
             return false;
@@ -1914,7 +1918,7 @@ function feedback_create_values($usrid, $timemodified, $tmp = false, $guestid = 
     $feedbackid = optional_param('feedbackid', false, PARAM_INT);
     $anonymous_response = optional_param('anonymous_response', false, PARAM_INT);
     $courseid = optional_param('courseid', false, PARAM_INT);
-    
+
     $tmpstr = $tmp ? 'tmp' : '';
     //first we create a new completed record
     $completed = new object();
@@ -1930,7 +1934,7 @@ function feedback_create_values($usrid, $timemodified, $tmp = false, $guestid = 
 
     //the keys are in the form like abc_xxx
     //with explode we make an array with(abc, xxx) and (abc=typ und xxx=itemnr)
-    
+
     //get the items of the feedback
     if(!$allitems = $DB->get_records('feedback_item', array('feedback'=>$completed->feedback))) {
         return false;
@@ -1945,10 +1949,10 @@ function feedback_create_values($usrid, $timemodified, $tmp = false, $guestid = 
         $value->item = $item->id;
         $value->completed = $completed->id;
         $value->course_id = $courseid;
-        
+
         //get the class of item-typ
         $itemobj = feedback_get_item_class($item->typ);
-        
+
         //the kind of values can be absolutely different so we run create_value directly by the item-class
         $value->value = $itemobj->create_value($itemvalue);
         $DB->insert_record('feedback_value'.$tmpstr, $value);
@@ -1986,7 +1990,7 @@ function feedback_update_values($completed, $tmp = false) {
         if(is_null($itemvalue)) {
             continue;
         }
-        
+
         $newvalue = new object();
         $newvalue->item = $item->id;
         $newvalue->completed = $completed->id;
@@ -1996,7 +2000,7 @@ function feedback_update_values($completed, $tmp = false) {
         $itemobj = feedback_get_item_class($item->typ);
         //the kind of values can be absolutely different so we run create_value directly by the item-class
         $newvalue->value = $itemobj->create_value($itemvalue);
-        
+
         //check, if we have to create or update the value
         $exist = false;
         foreach($values as $value){
@@ -2039,7 +2043,7 @@ function feedback_get_group_values($item, $groupid = false, $courseid = false, $
         else {
             $ignore_empty_select = "";
         }
-        
+
         $query = 'SELECT fbv .  *
                     FROM {feedback_value} fbv, {feedback_completed} fbc, {groups_members} gm
                    WHERE fbv.item = ?
@@ -2057,7 +2061,7 @@ function feedback_get_group_values($item, $groupid = false, $courseid = false, $
         else {
             $ignore_empty_select = "";
         }
-        
+
         if ($courseid) {
             $values = $DB->get_records_select('feedback_value', "item = ? AND course_id = ? ".$ignore_empty_select, array($item->id, $courseid));
         } else {
