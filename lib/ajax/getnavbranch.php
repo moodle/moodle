@@ -43,7 +43,7 @@ try {
     $PAGE->set_context(get_context_instance(CONTEXT_SYSTEM));
 
     // Create a global nav object
-    $navigation = new global_navigation_for_ajax($PAGE);
+    $navigation = new global_navigation_for_ajax($PAGE, $branchtype, $branchid);
 
     if ($instanceid!==null) {
         // Get the db record for the block instance
@@ -68,8 +68,6 @@ try {
     }
 
     // Create a navigation object to use, we can't guarantee PAGE will be complete
-
-    $expandable = $navigation->initialise($branchtype, $branchid);
     if (!isloggedin() || isguestuser()) {
         $navigation->set_expansion_limit(navigation_node::TYPE_COURSE);
     } else {
@@ -102,7 +100,7 @@ if (empty($branch) || $branch->nodetype !== navigation_node::NODETYPE_BRANCH) {
 }
 
 // Prepare an XML converter for the branch
-$converter->set_expandable($expandable);
+$converter->set_expandable($navigation->get_expandable());
 // Set XML headers
 header('Content-type: text/plain');
 // Convert and output the branch as XML

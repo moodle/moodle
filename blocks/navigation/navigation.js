@@ -162,7 +162,7 @@ M.block_navigation.classes.tree.prototype.init_load_ajax = function(e, branch) {
 M.block_navigation.classes.tree.prototype.load_ajax = function(tid, outcome, args) {
     try {
         var object = this.Y.JSON.parse(outcome.responseText);
-        if (this.add_branch(object, args.target.ancestor('LI') ,1)) {
+        if (this.add_branch(object, args.target.ancestor('li') ,1)) {
             if (this.candock) {
                 M.core_dock.resize();
             }
@@ -298,8 +298,10 @@ M.block_navigation.classes.branch.prototype.construct_from_json = function(obj) 
  */
 M.block_navigation.classes.branch.prototype.inject_into_dom = function(element) {
 
+    var Y = this.tree.Y;
+
     var isbranch = ((this.expandable !== null || this.haschildren) && this.expansionceiling===null);
-    var branchli = this.tree.Y.Node.create('<li></li>');
+    var branchli = Y.Node.create('<li></li>');
     var branchp = this.tree.Y.Node.create('<p class="tree_item"></p>');
 
     if (isbranch) {
@@ -322,7 +324,8 @@ M.block_navigation.classes.branch.prototype.inject_into_dom = function(element) 
     // Prepare the icon, should be an object representing a pix_icon
     var branchicon = false;
     if (this.icon != null && !isbranch) {
-        branchicon = this.tree.Y.Node.create('<img src="'+M.util.image_url(this.icon.pix, this.icon.component)+'" alt="" />');
+        branchicon = Y.Node.create('<img alt="" />');
+        branchicon.setAttribute('src', M.util.image_url(this.icon.pix, this.icon.component));
         branchli.addClass('item_with_icon');
         if (this.icon.alt) {
             branchicon.setAttribute('alt', this.icon.alt);
@@ -343,7 +346,7 @@ M.block_navigation.classes.branch.prototype.inject_into_dom = function(element) 
         }
         branchp.append(this.name.replace(/\n/g, '<br />'));
     } else {
-        var branchlink = this.tree.Y.Node.create('<a title="'+this.title+'" href="'+this.link+'"></a>');
+        var branchlink = Y.Node.create('<a title="'+this.title+'" href="'+this.link+'"></a>');
         if (branchicon) {
             branchlink.appendChild(branchicon);
         }
@@ -356,7 +359,7 @@ M.block_navigation.classes.branch.prototype.inject_into_dom = function(element) 
 
     branchli.appendChild(branchp);
     if (this.haschildren) {
-        var childrenul = this.tree.Y.Node.create('<ul></ul>');
+        var childrenul = Y.Node.create('<ul></ul>');
         branchli.appendChild(childrenul);
         element.appendChild(branchli);
         return childrenul

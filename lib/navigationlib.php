@@ -1878,12 +1878,16 @@ class global_navigation extends navigation_node {
     }
 
     public function get($key, $type = null) {
-        $this->initialise();
+        if (!$this->initialised) {
+            $this->initialise();
+        }
         return parent::get($key, $type);
     }
 
     public function find($key, $type) {
-        $this->initialise();
+        if (!$this->initialised) {
+            $this->initialise();
+        }
         return parent::find($key, $type);
     }
 }
@@ -1912,14 +1916,11 @@ class global_navigation_for_ajax extends global_navigation {
     /**
      * Constructs the navigation for use in AJAX request
      */
-    public function __construct($page) {
-        global $SITE;
+    public function __construct($page, $branchtype, $id) {
         $this->page = $page;
         $this->cache = new navigation_cache(NAVIGATION_CACHE_NAME);
         $this->children = new navigation_node_collection();
-        $this->rootnodes = array();
-        $this->rootnodes['site']      = $this->add_course($SITE);
-        $this->rootnodes['courses'] = $this->add(get_string('courses'), null, self::TYPE_ROOTNODE, null, 'courses');
+        $this->initialise($branchtype, $id);
     }
     /**
      * Initialise the navigation given the type and id for the branch to expand.
@@ -1929,11 +1930,16 @@ class global_navigation_for_ajax extends global_navigation {
      * @return array The expandable nodes
      */
     public function initialise($branchtype, $id) {
-        global $CFG, $DB, $PAGE;
+        global $CFG, $DB, $PAGE, $SITE;
 
         if ($this->initialised || during_initial_install()) {
             return $this->expandable;
         }
+        $this->initialised = true;
+
+        $this->rootnodes = array();
+        $this->rootnodes['site']      = $this->add_course($SITE);
+        $this->rootnodes['courses'] = $this->add(get_string('courses'), null, self::TYPE_ROOTNODE, null, 'courses');
 
         // Branchtype will be one of navigation_node::TYPE_*
         switch ($branchtype) {
@@ -1999,6 +2005,10 @@ class global_navigation_for_ajax extends global_navigation {
                 return $this->expandable;
         }
         $this->find_expandable($this->expandable);
+        return $this->expandable;
+    }
+
+    public function get_expandable() {
         return $this->expandable;
     }
 }
