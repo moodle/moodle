@@ -52,13 +52,22 @@ function limited_load_section_social(&$navigation, $keys, $course, $section) {
 }
 
 /**
+ * Indicates this format uses sections.
+ *
+ * @return bool Returns true
+ */
+function callback_topics_uses_sections() {
+    return false;
+}
+
+/**
  * The string that is used to describe a section of the course
  * e.g. Topic, Week...
  *
  * @return string
  */
 function callback_social_definition() {
-    return get_string('social');
+    return get_string('topic');
 }
 
 /**
