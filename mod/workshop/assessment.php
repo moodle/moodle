@@ -74,6 +74,32 @@ if ($isreviewer and $workshop->assessing_allowed()) {
     $assessmenteditable = false;
 }
 
+// check that all required examples have been assessed by the user
+if ($assessmenteditable and $workshop->useexamples and $workshop->examplesmode == workshop::EXAMPLES_BEFORE_ASSESSMENT
+        and !has_capability('mod/workshop:manageexamples', $workshop->context)) {
+    // the reviewer must have submitted their own submission
+    $reviewersubmission = $workshop->get_submission_by_author($assessment->reviewerid);
+    if (!$reviewersubmission) {
+        // no money, no love
+        $assessmenteditable = false;
+        echo $OUTPUT->header();
+        echo $OUTPUT->heading(get_string('exampleneedsubmission', 'workshop'), 2);
+        echo $OUTPUT->footer();
+        exit;
+    } else {
+        $examples = $workshop->get_examples_for_reviewer($assessment->reviewerid);
+        foreach ($examples as $exampleid => $example) {
+            if (is_null($example->grade)) {
+                $assessmenteditable = false;
+                echo $OUTPUT->header();
+                echo $OUTPUT->heading(get_string('exampleneedassessed', 'workshop'), 2);
+                echo $OUTPUT->footer();
+                exit;
+            }
+        }
+    }
+}
+
 // load the grading strategy logic
 $strategy = $workshop->grading_strategy_instance();
 

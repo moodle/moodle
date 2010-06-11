@@ -1711,10 +1711,14 @@ class workshop {
  */
 class workshop_user_plan implements renderable {
 
+    /** @var int id of the user this plan is for */
+    public $userid;
     /** @var workshop */
     public $workshop;
     /** @var array of (stdclass)tasks */
     public $phases = array();
+    /** @var null|array of example submissions to be assessed by the planner owner */
+    protected $examples = null;
 
     /**
      * Prepare an individual workshop plan for the given user.
@@ -1726,6 +1730,7 @@ class workshop_user_plan implements renderable {
         global $DB;
 
         $this->workshop = $workshop;
+        $this->userid   = $userid;
 
         //---------------------------------------------------------
         // * SETUP | submission | assessment | evaluation | closed
@@ -1733,42 +1738,42 @@ class workshop_user_plan implements renderable {
         $phase = new stdclass();
         $phase->title = get_string('phasesetup', 'workshop');
         $phase->tasks = array();
-        if (has_capability('moodle/course:manageactivities', $this->workshop->context, $userid)) {
+        if (has_capability('moodle/course:manageactivities', $workshop->context, $userid)) {
             $task = new stdclass();
             $task->title = get_string('taskintro', 'workshop');
-            $task->link = $this->workshop->updatemod_url();
-            $task->completed = !(trim(strip_tags($this->workshop->intro)) == '');
+            $task->link = $workshop->updatemod_url();
+            $task->completed = !(trim(strip_tags($workshop->intro)) == '');
             $phase->tasks['intro'] = $task;
         }
-        if (has_capability('moodle/course:manageactivities', $this->workshop->context, $userid)) {
+        if (has_capability('moodle/course:manageactivities', $workshop->context, $userid)) {
             $task = new stdclass();
             $task->title = get_string('taskinstructauthors', 'workshop');
-            $task->link = $this->workshop->updatemod_url();
-            $task->completed = !(trim(strip_tags($this->workshop->instructauthors)) == '');
+            $task->link = $workshop->updatemod_url();
+            $task->completed = !(trim(strip_tags($workshop->instructauthors)) == '');
             $phase->tasks['instructauthors'] = $task;
         }
-        if (has_capability('mod/workshop:editdimensions', $this->workshop->context, $userid)) {
+        if (has_capability('mod/workshop:editdimensions', $workshop->context, $userid)) {
             $task = new stdclass();
             $task->title = get_string('editassessmentform', 'workshop');
-            $task->link = $this->workshop->editform_url();
-            if ($this->workshop->grading_strategy_instance()->form_ready()) {
+            $task->link = $workshop->editform_url();
+            if ($workshop->grading_strategy_instance()->form_ready()) {
                 $task->completed = true;
-            } elseif ($this->workshop->phase > workshop::PHASE_SETUP) {
+            } elseif ($workshop->phase > workshop::PHASE_SETUP) {
                 $task->completed = false;
             }
             $phase->tasks['editform'] = $task;
         }
-        if ($this->workshop->useexamples and has_capability('mod/workshop:manageexamples', $this->workshop->context, $userid)) {
+        if ($workshop->useexamples and has_capability('mod/workshop:manageexamples', $workshop->context, $userid)) {
             $task = new stdclass();
             $task->title = get_string('prepareexamples', 'workshop');
-            if ($DB->count_records('workshop_submissions', array('example' => 1, 'workshopid' => $this->workshop->id)) > 0) {
+            if ($DB->count_records('workshop_submissions', array('example' => 1, 'workshopid' => $workshop->id)) > 0) {
                 $task->completed = true;
-            } elseif ($this->workshop->phase > workshop::PHASE_SETUP) {
+            } elseif ($workshop->phase > workshop::PHASE_SETUP) {
                 $task->completed = false;
             }
             $phase->tasks['prepareexamples'] = $task;
         }
-        if (empty($phase->tasks) and $this->workshop->phase == workshop::PHASE_SETUP) {
+        if (empty($phase->tasks) and $workshop->phase == workshop::PHASE_SETUP) {
             // if we are in the setup phase and there is no task (typical for students), let us
             // display some explanation what is going on
             $task = new stdclass();
@@ -1784,21 +1789,113 @@ class workshop_user_plan implements renderable {
         $phase = new stdclass();
         $phase->title = get_string('phasesubmission', 'workshop');
         $phase->tasks = array();
-        if (($this->workshop->usepeerassessment or $this->workshop->useselfassessment)
-             and has_capability('moodle/course:manageactivities', $this->workshop->context, $userid)) {
+        if (($workshop->usepeerassessment or $workshop->useselfassessment)
+             and has_capability('moodle/course:manageactivities', $workshop->context, $userid)) {
             $task = new stdclass();
             $task->title = get_string('taskinstructreviewers', 'workshop');
-            $task->link = $this->workshop->updatemod_url();
-            if (trim(strip_tags($this->workshop->instructreviewers))) {
+            $task->link = $workshop->updatemod_url();
+            if (trim(strip_tags($workshop->instructreviewers))) {
                 $task->completed = true;
-            } elseif ($this->workshop->phase >= workshop::PHASE_ASSESSMENT) {
+            } elseif ($workshop->phase >= workshop::PHASE_ASSESSMENT) {
                 $task->completed = false;
             }
             $phase->tasks['instructreviewers'] = $task;
         }
-        if ($this->workshop->useexamples and $this->workshop->examplesmode == workshop::EXAMPLES_BEFORE_SUBMISSION
+        if ($workshop->useexamples and $workshop->examplesmode == workshop::EXAMPLES_BEFORE_SUBMISSION
                 and has_capability('mod/workshop:submit', $workshop->context, $userid, false)
-                    and !has_capability('mod/workshop:manageexamples', $this->workshop->context, $userid)) {
+                    and !has_capability('mod/workshop:manageexamples', $workshop->context, $userid)) {
+            $task = new stdclass();
+            $task->title = get_string('exampleassesstask', 'workshop');
+            $examples = $this->get_examples();
+            $a = new stdclass();
+            $a->expected = count($examples);
+            $a->assessed = 0;
+            foreach ($examples as $exampleid => $example) {
+                if (!is_null($example->grade)) {
+                    $a->assessed++;
+                }
+            }
+            $task->details = get_string('exampleassesstaskdetails', 'workshop', $a);
+            if ($a->assessed == $a->expected) {
+                $task->completed = true;
+            } elseif ($workshop->phase >= workshop::PHASE_ASSESSMENT) {
+                $task->completed = false;
+            }
+            $phase->tasks['examples'] = $task;
+        }
+        if (has_capability('mod/workshop:submit', $workshop->context, $userid, false)) {
+            $task = new stdclass();
+            $task->title = get_string('tasksubmit', 'workshop');
+            $task->link = $workshop->submission_url();
+            if ($DB->record_exists('workshop_submissions', array('workshopid'=>$workshop->id, 'example'=>0, 'authorid'=>$userid))) {
+                $task->completed = true;
+            } elseif ($workshop->phase >= workshop::PHASE_ASSESSMENT) {
+                $task->completed = false;
+            } else {
+                $task->completed = null;    // still has a chance to submit
+            }
+            $phase->tasks['submit'] = $task;
+        }
+        if (has_capability('mod/workshop:allocate', $workshop->context, $userid)) {
+            $task = new stdclass();
+            $task->title = get_string('allocate', 'workshop');
+            $task->link = $workshop->allocation_url();
+            $numofauthors = count(get_users_by_capability($workshop->context, 'mod/workshop:submit', 'u.id', '', '', '',
+                    '', '', false, true));
+            $numofsubmissions = $DB->count_records('workshop_submissions', array('workshopid'=>$workshop->id, 'example'=>0));
+            $sql = 'SELECT COUNT(s.id) AS nonallocated
+                      FROM {workshop_submissions} s
+                 LEFT JOIN {workshop_assessments} a ON (a.submissionid=s.id)
+                     WHERE s.workshopid = :workshopid AND s.example=0 AND a.submissionid IS NULL';
+            $params['workshopid'] = $workshop->id;
+            $numnonallocated = $DB->count_records_sql($sql, $params);
+            if ($numofsubmissions == 0) {
+                $task->completed = null;
+            } elseif ($numnonallocated == 0) {
+                $task->completed = true;
+            } elseif ($workshop->phase > workshop::PHASE_SUBMISSION) {
+                $task->completed = false;
+            } else {
+                $task->completed = null;    // still has a chance to allocate
+            }
+            $a = new stdclass();
+            $a->expected    = $numofauthors;
+            $a->submitted   = $numofsubmissions;
+            $a->allocate    = $numnonallocated;
+            $task->details  = get_string('allocatedetails', 'workshop', $a);
+            unset($a);
+            $phase->tasks['allocate'] = $task;
+
+            if ($numofsubmissions < $numofauthors and $workshop->phase >= workshop::PHASE_SUBMISSION) {
+                $task = new stdclass();
+                $task->title = get_string('someuserswosubmission', 'workshop');
+                $task->completed = 'info';
+                $phase->tasks['allocateinfo'] = $task;
+            }
+        }
+        if ($workshop->submissionstart) {
+            $task = new stdclass();
+            $task->title = get_string('submissionstartdatetime', 'workshop', workshop::timestamp_formats($workshop->submissionstart));
+            $task->completed = 'info';
+            $phase->tasks['submissionstartdatetime'] = $task;
+        }
+        if ($workshop->submissionend) {
+            $task = new stdclass();
+            $task->title = get_string('submissionenddatetime', 'workshop', workshop::timestamp_formats($workshop->submissionend));
+            $task->completed = 'info';
+            $phase->tasks['submissionenddatetime'] = $task;
+        }
+        $this->phases[workshop::PHASE_SUBMISSION] = $phase;
+
+        //---------------------------------------------------------
+        // setup | submission | * ASSESSMENT | evaluation | closed
+        //---------------------------------------------------------
+        $phase = new stdclass();
+        $phase->title = get_string('phaseassessment', 'workshop');
+        $phase->tasks = array();
+        $phase->isreviewer = has_capability('mod/workshop:peerassess', $workshop->context, $userid);
+        if ($workshop->useexamples and $workshop->examplesmode == workshop::EXAMPLES_BEFORE_ASSESSMENT
+                and $phase->isreviewer and !has_capability('mod/workshop:manageexamples', $workshop->context, $userid)) {
             $task = new stdclass();
             $task->title = get_string('exampleassesstask', 'workshop');
             $examples = $workshop->get_examples_for_reviewer($userid);
@@ -1813,135 +1910,66 @@ class workshop_user_plan implements renderable {
             $task->details = get_string('exampleassesstaskdetails', 'workshop', $a);
             if ($a->assessed == $a->expected) {
                 $task->completed = true;
-            } elseif ($this->workshop->phase >= workshop::PHASE_ASSESSMENT) {
+            } elseif ($workshop->phase > workshop::PHASE_ASSESSMENT) {
                 $task->completed = false;
             }
             $phase->tasks['examples'] = $task;
         }
-        if (has_capability('mod/workshop:submit', $this->workshop->context, $userid, false)) {
-            $task = new stdclass();
-            $task->title = get_string('tasksubmit', 'workshop');
-            $task->link = $this->workshop->submission_url();
-            if ($DB->record_exists('workshop_submissions', array('workshopid'=>$this->workshop->id, 'example'=>0, 'authorid'=>$userid))) {
-                $task->completed = true;
-            } elseif ($this->workshop->phase >= workshop::PHASE_ASSESSMENT) {
-                $task->completed = false;
-            } else {
-                $task->completed = null;    // still has a chance to submit
+        if (empty($phase->tasks['examples']) or !empty($phase->tasks['examples']->completed)) {
+            $phase->assessments = $workshop->get_assessments_by_reviewer($userid);
+            $numofpeers     = 0;    // number of allocated peer-assessments
+            $numofpeerstodo = 0;    // number of peer-assessments to do
+            $numofself      = 0;    // number of allocated self-assessments - should be 0 or 1
+            $numofselftodo  = 0;    // number of self-assessments to do - should be 0 or 1
+            foreach ($phase->assessments as $a) {
+                if ($a->authorid == $userid) {
+                    $numofself++;
+                    if (is_null($a->grade)) {
+                        $numofselftodo++;
+                    }
+                } else {
+                    $numofpeers++;
+                    if (is_null($a->grade)) {
+                        $numofpeerstodo++;
+                    }
+                }
             }
-            $phase->tasks['submit'] = $task;
-        }
-        if (has_capability('mod/workshop:allocate', $this->workshop->context, $userid)) {
-            $task = new stdclass();
-            $task->title = get_string('allocate', 'workshop');
-            $task->link = $this->workshop->allocation_url();
-            $numofauthors = count(get_users_by_capability($this->workshop->context, 'mod/workshop:submit', 'u.id', '', '', '',
-                    '', '', false, true));
-            $numofsubmissions = $DB->count_records('workshop_submissions', array('workshopid'=>$this->workshop->id, 'example'=>0));
-            $sql = 'SELECT COUNT(s.id) AS nonallocated
-                      FROM {workshop_submissions} s
-                 LEFT JOIN {workshop_assessments} a ON (a.submissionid=s.id)
-                     WHERE s.workshopid = :workshopid AND s.example=0 AND a.submissionid IS NULL';
-            $params['workshopid'] = $this->workshop->id;
-            $numnonallocated = $DB->count_records_sql($sql, $params);
-            if ($numofsubmissions == 0) {
-                $task->completed = null;
-            } elseif ($numnonallocated == 0) {
-                $task->completed = true;
-            } elseif ($this->workshop->phase > workshop::PHASE_SUBMISSION) {
-                $task->completed = false;
-            } else {
-                $task->completed = null;    // still has a chance to allocate
-            }
-            $a = new stdclass();
-            $a->expected    = $numofauthors;
-            $a->submitted   = $numofsubmissions;
-            $a->allocate    = $numnonallocated;
-            $task->details  = get_string('allocatedetails', 'workshop', $a);
             unset($a);
-            $phase->tasks['allocate'] = $task;
-
-            if ($numofsubmissions < $numofauthors and $this->workshop->phase >= workshop::PHASE_SUBMISSION) {
+            if ($workshop->usepeerassessment and $numofpeers) {
                 $task = new stdclass();
-                $task->title = get_string('someuserswosubmission', 'workshop');
-                $task->completed = 'info';
-                $phase->tasks['allocateinfo'] = $task;
-            }
-        }
-        if ($this->workshop->submissionstart) {
-            $task = new stdclass();
-            $task->title = get_string('submissionstartdatetime', 'workshop', workshop::timestamp_formats($this->workshop->submissionstart));
-            $task->completed = 'info';
-            $phase->tasks['submissionstartdatetime'] = $task;
-        }
-        if ($this->workshop->submissionend) {
-            $task = new stdclass();
-            $task->title = get_string('submissionenddatetime', 'workshop', workshop::timestamp_formats($this->workshop->submissionend));
-            $task->completed = 'info';
-            $phase->tasks['submissionenddatetime'] = $task;
-        }
-        $this->phases[workshop::PHASE_SUBMISSION] = $phase;
-
-        //---------------------------------------------------------
-        // setup | submission | * ASSESSMENT | evaluation | closed
-        //---------------------------------------------------------
-        $phase = new stdclass();
-        $phase->title = get_string('phaseassessment', 'workshop');
-        $phase->tasks = array();
-        $phase->isreviewer = has_capability('mod/workshop:peerassess', $this->workshop->context, $userid);
-        $phase->assessments = $this->workshop->get_assessments_by_reviewer($userid);
-        $numofpeers     = 0;    // number of allocated peer-assessments
-        $numofpeerstodo = 0;    // number of peer-assessments to do
-        $numofself      = 0;    // number of allocated self-assessments - should be 0 or 1
-        $numofselftodo  = 0;    // number of self-assessments to do - should be 0 or 1
-        foreach ($phase->assessments as $a) {
-            if ($a->authorid == $userid) {
-                $numofself++;
-                if (is_null($a->grade)) {
-                    $numofselftodo++;
+                if ($numofpeerstodo == 0) {
+                    $task->completed = true;
+                } elseif ($workshop->phase > workshop::PHASE_ASSESSMENT) {
+                    $task->completed = false;
                 }
-            } else {
-                $numofpeers++;
-                if (is_null($a->grade)) {
-                    $numofpeerstodo++;
+                $a = new stdclass();
+                $a->total = $numofpeers;
+                $a->todo  = $numofpeerstodo;
+                $task->title = get_string('taskassesspeers', 'workshop');
+                $task->details = get_string('taskassesspeersdetails', 'workshop', $a);
+                unset($a);
+                $phase->tasks['assesspeers'] = $task;
+            }
+            if ($workshop->useselfassessment and $numofself) {
+                $task = new stdclass();
+                if ($numofselftodo == 0) {
+                    $task->completed = true;
+                } elseif ($workshop->phase > workshop::PHASE_ASSESSMENT) {
+                    $task->completed = false;
                 }
+                $task->title = get_string('taskassessself', 'workshop');
+                $phase->tasks['assessself'] = $task;
             }
         }
-        unset($a);
-        if ($this->workshop->usepeerassessment and $numofpeers) {
+        if ($workshop->assessmentstart) {
             $task = new stdclass();
-            if ($numofpeerstodo == 0) {
-                $task->completed = true;
-            } elseif ($this->workshop->phase > workshop::PHASE_ASSESSMENT) {
-                $task->completed = false;
-            }
-            $a = new stdclass();
-            $a->total = $numofpeers;
-            $a->todo  = $numofpeerstodo;
-            $task->title = get_string('taskassesspeers', 'workshop');
-            $task->details = get_string('taskassesspeersdetails', 'workshop', $a);
-            unset($a);
-            $phase->tasks['assesspeers'] = $task;
-        }
-        if ($this->workshop->useselfassessment and $numofself) {
-            $task = new stdclass();
-            if ($numofselftodo == 0) {
-                $task->completed = true;
-            } elseif ($this->workshop->phase > workshop::PHASE_ASSESSMENT) {
-                $task->completed = false;
-            }
-            $task->title = get_string('taskassessself', 'workshop');
-            $phase->tasks['assessself'] = $task;
-        }
-        if ($this->workshop->assessmentstart) {
-            $task = new stdclass();
-            $task->title = get_string('assessmentstartdatetime', 'workshop', workshop::timestamp_formats($this->workshop->assessmentstart));
+            $task->title = get_string('assessmentstartdatetime', 'workshop', workshop::timestamp_formats($workshop->assessmentstart));
             $task->completed = 'info';
             $phase->tasks['assessmentstartdatetime'] = $task;
         }
-        if ($this->workshop->assessmentend) {
+        if ($workshop->assessmentend) {
             $task = new stdclass();
-            $task->title = get_string('assessmentenddatetime', 'workshop', workshop::timestamp_formats($this->workshop->assessmentend));
+            $task->title = get_string('assessmentenddatetime', 'workshop', workshop::timestamp_formats($workshop->assessmentend));
             $task->completed = 'info';
             $phase->tasks['assessmentenddatetime'] = $task;
         }
@@ -1953,10 +1981,10 @@ class workshop_user_plan implements renderable {
         $phase = new stdclass();
         $phase->title = get_string('phaseevaluation', 'workshop');
         $phase->tasks = array();
-        if (has_capability('mod/workshop:overridegrades', $this->workshop->context)) {
-            $expected = count($this->workshop->get_potential_authors(false));
+        if (has_capability('mod/workshop:overridegrades', $workshop->context)) {
+            $expected = count($workshop->get_potential_authors(false));
             $calculated = $DB->count_records_select('workshop_submissions',
-                    'workshopid = ? AND (grade IS NOT NULL OR gradeover IS NOT NULL)', array($this->workshop->id));
+                    'workshopid = ? AND (grade IS NOT NULL OR gradeover IS NOT NULL)', array($workshop->id));
             $task = new stdclass();
             $task->title = get_string('calculatesubmissiongrades', 'workshop');
             $a = new stdclass();
@@ -1965,14 +1993,14 @@ class workshop_user_plan implements renderable {
             $task->details  = get_string('calculatesubmissiongradesdetails', 'workshop', $a);
             if ($calculated >= $expected) {
                 $task->completed = true;
-            } elseif ($this->workshop->phase > workshop::PHASE_EVALUATION) {
+            } elseif ($workshop->phase > workshop::PHASE_EVALUATION) {
                 $task->completed = false;
             }
             $phase->tasks['calculatesubmissiongrade'] = $task;
 
-            $expected = count($this->workshop->get_potential_reviewers(false));
+            $expected = count($workshop->get_potential_reviewers(false));
             $calculated = $DB->count_records_select('workshop_aggregations',
-                    'workshopid = ? AND gradinggrade IS NOT NULL', array($this->workshop->id));
+                    'workshopid = ? AND gradinggrade IS NOT NULL', array($workshop->id));
             $task = new stdclass();
             $task->title = get_string('calculategradinggrades', 'workshop');
             $a = new stdclass();
@@ -1981,12 +2009,12 @@ class workshop_user_plan implements renderable {
             $task->details  = get_string('calculategradinggradesdetails', 'workshop', $a);
             if ($calculated >= $expected) {
                 $task->completed = true;
-            } elseif ($this->workshop->phase > workshop::PHASE_EVALUATION) {
+            } elseif ($workshop->phase > workshop::PHASE_EVALUATION) {
                 $task->completed = false;
             }
             $phase->tasks['calculategradinggrade'] = $task;
 
-        } elseif ($this->workshop->phase == workshop::PHASE_EVALUATION) {
+        } elseif ($workshop->phase == workshop::PHASE_EVALUATION) {
             $task = new stdclass();
             $task->title = get_string('evaluategradeswait', 'workshop');
             $task->completed = 'info';
@@ -2006,7 +2034,7 @@ class workshop_user_plan implements renderable {
         foreach ($this->phases as $phasecode => $phase) {
             $phase->title       = isset($phase->title)      ? $phase->title     : '';
             $phase->tasks       = isset($phase->tasks)      ? $phase->tasks     : array();
-            if ($phasecode == $this->workshop->phase) {
+            if ($phasecode == $workshop->phase) {
                 $phase->active = true;
             } else {
                 $phase->active = false;
@@ -2024,15 +2052,30 @@ class workshop_user_plan implements renderable {
         }
 
         // Add phase swithing actions
-        if (has_capability('mod/workshop:switchphase', $this->workshop->context, $userid)) {
+        if (has_capability('mod/workshop:switchphase', $workshop->context, $userid)) {
             foreach ($this->phases as $phasecode => $phase) {
                 if (! $phase->active) {
                     $action = new stdclass();
                     $action->type = 'switchphase';
-                    $action->url  = $this->workshop->switchphase_url($phasecode);
+                    $action->url  = $workshop->switchphase_url($phasecode);
                     $phase->actions[] = $action;
                 }
             }
         }
+    }
+
+    /**
+     * Returns example submissions to be assessed by the owner of the planner
+     *
+     * This is here to cache the DB query because the same list is needed later in view.php
+     *
+     * @see workshop::get_examples_for_reviewer() for the format of returned value
+     * @return array
+     */
+    public function get_examples() {
+        if (is_null($this->examples)) {
+            $this->examples = $this->workshop->get_examples_for_reviewer($this->userid);
+        }
+        return $this->examples;
     }
 }

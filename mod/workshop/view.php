@@ -58,12 +58,13 @@ $PAGE->set_title($workshop->name);
 $PAGE->set_heading($course->fullname);
 
 $output = $PAGE->get_renderer('mod_workshop');
+$userplan = new workshop_user_plan($workshop, $USER->id);
 
 /// Output starts here
 
 echo $output->header();
 echo $output->heading_with_help(format_string($workshop->name), 'userplan', 'workshop');
-echo $output->render(new workshop_user_plan($workshop, $USER->id));
+echo $output->render($userplan);
 
 switch ($workshop->phase) {
 case workshop::PHASE_SETUP:
@@ -101,11 +102,11 @@ case workshop::PHASE_SUBMISSION:
         print_collapsible_region_end();
     }
 
-    $examplesdone = !$workshop->useexamples;
+    $examplesdone = (!$workshop->useexamples or has_capability('mod/workshop:manageexamples', $workshop->context));
     if ($workshop->assessing_examples_allowed()
             and has_capability('mod/workshop:submit', $workshop->context)
                     and ! has_capability('mod/workshop:manageexamples', $workshop->context)) {
-        $examples = $workshop->get_examples_for_reviewer($USER->id);
+        $examples = $userplan->get_examples();
         $total = count($examples);
         $left = 0;
         // make sure the current user has all examples allocated
@@ -122,7 +123,7 @@ case workshop::PHASE_SUBMISSION:
         } else {
             $examplesdone = true;
         }
-        print_collapsible_region_start('', 'workshop-viewlet-examples', get_string('exampleassessments', 'workshop'));
+        print_collapsible_region_start('', 'workshop-viewlet-examples', get_string('exampleassessments', 'workshop'), false, $examplesdone);
         echo $output->box_start('generalbox exampleassessments');
         if ($total == 0) {
             echo $output->heading(get_string('noexamples', 'workshop'), 3);
@@ -207,42 +208,78 @@ case workshop::PHASE_ASSESSMENT:
         echo $output->box(format_text($instructions, $workshop->instructreviewersformat), array('generalbox', 'instructions'));
         print_collapsible_region_end();
     }
-    print_collapsible_region_start('', 'workshop-viewlet-assignedassessments', get_string('assignedassessments', 'workshop'));
-    if (! $assessments = $workshop->get_assessments_by_reviewer($USER->id)) {
-        echo $output->box_start('generalbox assessment-none');
-        echo $output->heading(get_string('assignedassessmentsnone', 'workshop'), 3);
-        echo $output->box_end();
-    } else {
-        $shownames = has_capability('mod/workshop:viewauthornames', $PAGE->context);
-        foreach ($assessments as $assessment) {
-            $submission                     = new stdclass();
-            $submission->id                 = $assessment->submissionid;
-            $submission->title              = $assessment->submissiontitle;
-            $submission->timecreated        = $assessment->submissioncreated;
-            $submission->timemodified       = $assessment->submissionmodified;
-            $submission->authorid           = $assessment->authorid;
-            $submission->authorfirstname    = $assessment->authorfirstname;
-            $submission->authorlastname     = $assessment->authorlastname;
-            $submission->authorpicture      = $assessment->authorpicture;
-            $submission->authorimagealt     = $assessment->authorimagealt;
-
-            if (is_null($assessment->grade)) {
-                $class      = ' notgraded';
-                $status     = get_string('nogradeyet', 'workshop');
-                $buttontext = get_string('assess', 'workshop');
-            } else {
-                $class      = ' graded';
-                $status     = get_string('alreadygraded', 'workshop');
-                $buttontext = get_string('reassess', 'workshop');
+    $examplesdone = (!$workshop->useexamples or has_capability('mod/workshop:manageexamples', $workshop->context));
+    if ($workshop->assessing_examples_allowed()
+            and has_capability('mod/workshop:submit', $workshop->context)
+                    and ! has_capability('mod/workshop:manageexamples', $workshop->context)) {
+        $examples = $userplan->get_examples();
+        $total = count($examples);
+        $left = 0;
+        // make sure the current user has all examples allocated
+        foreach ($examples as $exampleid => $example) {
+            if (is_null($example->assessmentid)) {
+                $examples[$exampleid]->assessmentid = $workshop->add_allocation($example, $USER->id, 0);
             }
-            echo $output->box_start('generalbox assessment-summary' . $class);
-            echo $output->submission_summary($submission, $shownames);
-            $aurl = $workshop->assess_url($assessment->id);
-            echo $output->single_button($aurl, $buttontext, 'get');
-            echo $output->box_end();
+            if (is_null($example->grade)) {
+                $left++;
+            }
         }
+        if ($left > 0 and $workshop->examplesmode != workshop::EXAMPLES_VOLUNTARY) {
+            $examplesdone = false;
+        } else {
+            $examplesdone = true;
+        }
+        print_collapsible_region_start('', 'workshop-viewlet-examples', get_string('exampleassessments', 'workshop'), false, $examplesdone);
+        echo $output->box_start('generalbox exampleassessments');
+        if ($total == 0) {
+            echo $output->heading(get_string('noexamples', 'workshop'), 3);
+        } else {
+            foreach ($examples as $example) {
+                $summary = $workshop->prepare_example_summary($example);
+                echo $output->example_summary($summary);
+            }
+        }
+        echo $output->box_end();
+        print_collapsible_region_end();
     }
-    print_collapsible_region_end();
+    if ($examplesdone) {
+        print_collapsible_region_start('', 'workshop-viewlet-assignedassessments', get_string('assignedassessments', 'workshop'));
+        if (! $assessments = $workshop->get_assessments_by_reviewer($USER->id)) {
+            echo $output->box_start('generalbox assessment-none');
+            echo $output->heading(get_string('assignedassessmentsnone', 'workshop'), 3);
+            echo $output->box_end();
+        } else {
+            $shownames = has_capability('mod/workshop:viewauthornames', $PAGE->context);
+            foreach ($assessments as $assessment) {
+                $submission                     = new stdclass();
+                $submission->id                 = $assessment->submissionid;
+                $submission->title              = $assessment->submissiontitle;
+                $submission->timecreated        = $assessment->submissioncreated;
+                $submission->timemodified       = $assessment->submissionmodified;
+                $submission->authorid           = $assessment->authorid;
+                $submission->authorfirstname    = $assessment->authorfirstname;
+                $submission->authorlastname     = $assessment->authorlastname;
+                $submission->authorpicture      = $assessment->authorpicture;
+                $submission->authorimagealt     = $assessment->authorimagealt;
+
+                if (is_null($assessment->grade)) {
+                    $class      = ' notgraded';
+                    $status     = get_string('nogradeyet', 'workshop');
+                    $buttontext = get_string('assess', 'workshop');
+                } else {
+                    $class      = ' graded';
+                    $status     = get_string('alreadygraded', 'workshop');
+                    $buttontext = get_string('reassess', 'workshop');
+                }
+                echo $output->box_start('generalbox assessment-summary' . $class);
+                echo $output->submission_summary($submission, $shownames);
+                $aurl = $workshop->assess_url($assessment->id);
+                echo $output->single_button($aurl, $buttontext, 'get');
+                echo $output->box_end();
+            }
+        }
+        print_collapsible_region_end();
+    }
     break;
 case workshop::PHASE_EVALUATION:
     if (has_capability('mod/workshop:viewallassessments', $PAGE->context)) {
