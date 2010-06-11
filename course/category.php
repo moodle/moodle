@@ -163,7 +163,7 @@
         admin_externalpage_setup('coursemgmt', '', $urlparams, $CFG->wwwroot . '/course/category.php');
         $PAGE->set_context($context);   // Ensure that we are actually showing blocks etc for the cat context
         echo $OUTPUT->header();
-    } else {        
+    } else {
         $PAGE->navbar->add($strcategories, new moodle_url('/course/index.php'));
         $PAGE->navbar->add($category->name);
         $PAGE->navbar->add($strcourses);
@@ -200,7 +200,8 @@
         if (!isset($category->descriptionformat)) {
             $category->descriptionformat = FORMAT_MOODLE;
         }
-        echo format_text($category->description, $category->descriptionformat, $options);
+        $text = file_rewrite_pluginfile_urls($category->description, 'pluginfile.php', $context->id, 'category_description', $category->id);
+        echo format_text($text, $category->descriptionformat, $options);
         echo $OUTPUT->box_end();
     }
 

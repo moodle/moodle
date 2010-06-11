@@ -71,7 +71,7 @@ if (!empty($sendflashupgrader) && (($userplayerversion[0] <  $requiredplayervers
         $lifetime = 0;  // Do not cache
         send_file($path, $filename, $lifetime, 0, false, false, $mimetype);
 
-} else if ($context->contextlevel == CONTEXT_SYSTEM) {   
+} else if ($context->contextlevel == CONTEXT_SYSTEM) {
     if ($filearea === 'blog_attachment' || $filearea === 'blog_post') {
 
         if (empty($CFG->bloglevel)) {
@@ -254,24 +254,40 @@ if (!empty($sendflashupgrader) && (($userplayerversion[0] <  $requiredplayervers
 
 
 } else if ($context->contextlevel == CONTEXT_COURSECAT) {
-    if ($filearea !== 'coursecat_intro') {
+    if ($filearea == 'coursecat_intro') {
+        if ($CFG->forcelogin) {
+            // no login necessary - unless login forced everywhere
+            require_login();
+        }
+
+        $relativepath = '/'.implode('/', $args);
+        $fullpath = $context->id.'coursecat_intro0'.$relativepath;
+
+        if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->get_filename() == '.') {
+            send_file_not_found();
+        }
+
+        session_get_instance()->write_close(); // unlock session during fileserving
+        send_stored_file($file, 60*60, 0, $forcedownload);
+    } else if ($filearea == 'category_description') {
+        if ($CFG->forcelogin) {
+            // no login necessary - unless login forced everywhere
+            require_login();
+        }
+        $itemid = (int)array_shift($args);
+
+        $relativepath = '/'.implode('/', $args);
+        $fullpath = $context->id.'category_description'.$itemid.$relativepath;
+
+        if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->get_filename() == '.') {
+            send_file_not_found();
+        }
+
+        session_get_instance()->write_close(); // unlock session during fileserving
+        send_stored_file($file, 60*60, 0, $forcedownload);
+    } else {
         send_file_not_found();
     }
-
-    if ($CFG->forcelogin) {
-        // no login necessary - unless login forced everywhere
-        require_login();
-    }
-
-    $relativepath = '/'.implode('/', $args);
-    $fullpath = $context->id.'coursecat_intro0'.$relativepath;
-
-    if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->get_filename() == '.') {
-        send_file_not_found();
-    }
-
-    session_get_instance()->write_close(); // unlock session during fileserving
-    send_stored_file($file, 60*60, 0, $forcedownload);
 
 
 } else if ($context->contextlevel == CONTEXT_COURSE) {
@@ -424,11 +440,11 @@ if (!empty($sendflashupgrader) && (($userplayerversion[0] <  $requiredplayervers
 
         session_get_instance()->write_close();
         send_stored_file($file, 60*60, 0, false);
-   
+
     } else if ($filearea === 'user_profile') {
         $userid = (int)array_shift($args);
         $usercontext = get_context_instance(CONTEXT_USER, $userid);
-        
+
         if ($CFG->forcelogin) {
             require_login();
         }
