@@ -34,20 +34,28 @@ class workshop_feedbackreviewer_form extends moodleform {
 
         $current    = $this->_customdata['current'];
         $workshop   = $this->_customdata['workshop'];
-        $opts       = $this->_customdata['feedbackopts'];
+        $editoropts = $this->_customdata['editoropts'];
+        $options    = $this->_customdata['options'];
 
-        $mform->addElement('header', 'feedbackreviewerform', get_string('feedbackreviewer', 'workshop'));
+        $mform->addElement('header', 'assessmentsettings', get_string('assessmentsettings', 'workshop'));
+
+        if (!empty($options['editableweight'])) {
+            $mform->addElement('select', 'weight',
+                    get_string('assessmentweight', 'workshop'), workshop::available_assessment_weights_list());
+            $mform->setDefault('weight', 1);
+        }
 
         $mform->addElement('static', 'gradinggrade', get_string('gradinggradecalculated', 'workshop'));
+        if (!empty($options['overridablegradinggrade'])) {
+            $grades = array('' => get_string('notoverridden', 'workshop'));
+            for ($i = (int)$workshop->gradinggrade; $i >= 0; $i--) {
+                $grades[$i] = $i;
+            }
+            $mform->addElement('select', 'gradinggradeover', get_string('gradinggradeover', 'workshop'), $grades);
 
-        $grades = array('' => get_string('notoverridden', 'workshop'));
-        for ($i = (int)$workshop->gradinggrade; $i >= 0; $i--) {
-            $grades[$i] = $i;
+            $mform->addElement('editor', 'feedbackreviewer_editor', get_string('feedbackreviewer', 'workshop'), null, $editoropts);
+            $mform->setType('feedbackreviewer_editor', PARAM_RAW);
         }
-        $mform->addElement('select', 'gradinggradeover', get_string('gradinggradeover', 'workshop'), $grades);
-
-        $mform->addElement('editor', 'feedbackreviewer_editor', get_string('feedbackreviewer', 'workshop'), null, $opts);
-        $mform->setType('feedbackreviewer_editor', PARAM_RAW);
 
         $mform->addElement('hidden', 'asid');
 

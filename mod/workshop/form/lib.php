@@ -57,8 +57,9 @@ interface workshop_strategy {
      * @param string $mode          Mode to open the form in: preview|assessment
      * @param stdclass $assessment  If opening in the assessment mode, the current assessment record
      * @param bool $editable        Shall the form be opened as editable (true) or read-only (false)
+     * @param array $options        More assessment form options, editableweight implemented only now
      */
-    public function get_assessment_form(moodle_url $actionurl=null, $mode='preview', stdclass $assessment=null, $editable=true);
+    public function get_assessment_form(moodle_url $actionurl=null, $mode='preview', stdclass $assessment=null, $editable=true, $options=array());
 
     /**
      * Saves the filled assessment and returns the grade for submission as suggested by the reviewer

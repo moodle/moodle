@@ -151,8 +151,9 @@ class workshop_comments_strategy implements workshop_strategy {
      * @param string $mode          Mode to open the form in: preview/assessment
      * @param stdclass $assessment  The current assessment
      * @param bool $editable
+     * @param array $options
      */
-    public function get_assessment_form(moodle_url $actionurl=null, $mode='preview', stdclass $assessment=null, $editable=true) {
+    public function get_assessment_form(moodle_url $actionurl=null, $mode='preview', stdclass $assessment=null, $editable=true, $options=array()) {
         global $CFG;    // needed because the included files use it
         global $PAGE;
         global $DB;
@@ -184,6 +185,7 @@ class workshop_comments_strategy implements workshop_strategy {
         $customdata['strategy'] = $this;
         $customdata['workshop'] = $this->workshop;
         $customdata['mode']     = $mode;
+        $customdata['options']  = $options;
 
         // set up strategy-specific custom data
         $customdata['nodims']   = $nodimensions;

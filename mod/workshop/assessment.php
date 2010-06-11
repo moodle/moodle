@@ -57,7 +57,8 @@ $PAGE->navbar->add(get_string('assessingsubmission', 'workshop'));
 
 $canviewallassessments  = has_capability('mod/workshop:viewallassessments', $workshop->context);
 $canviewallsubmissions  = has_capability('mod/workshop:viewallsubmissions', $workshop->context);
-$canoverridegrades      = (($workshop->phase == workshop::PHASE_EVALUATION) and has_capability('mod/workshop:overridegrades', $workshop->context));
+$cansetassessmentweight = has_capability('mod/workshop:allocate', $workshop->context);
+$canoverridegrades      = has_capability('mod/workshop:overridegrades', $workshop->context);
 $isreviewer             = ($USER->id == $assessment->reviewerid);
 $isauthor               = ($USER->id == $submission->authorid);
 
@@ -103,32 +104,50 @@ if ($assessmenteditable and $workshop->useexamples and $workshop->examplesmode =
 // load the grading strategy logic
 $strategy = $workshop->grading_strategy_instance();
 
-// load the assessment form and process the submitted data eventually
-$mform = $strategy->get_assessment_form($PAGE->url, 'assessment', $assessment, $assessmenteditable);
-if ($mform->is_cancelled()) {
-    redirect($workshop->view_url());
-} elseif ($assessmenteditable and ($data = $mform->get_data())) {
-    $rawgrade = $strategy->save_assessment($assessment, $data);
-    if (!is_null($rawgrade) and isset($data->saveandclose)) {
+if (is_null($assessment->grade) and !$assessmenteditable) {
+    $mform = null;
+} else {
+    // load the assessment form and process the submitted data eventually
+    $mform = $strategy->get_assessment_form($PAGE->url, 'assessment', $assessment, $assessmenteditable,
+                                        array('editableweight' => $cansetassessmentweight));
+    $mform->set_data(array('weight' => $assessment->weight)); // other values are set by subplugins
+    if ($mform->is_cancelled()) {
         redirect($workshop->view_url());
-    } else {
-        // either it is not possible to calculate the $rawgrade
-        // or the reviewer has chosen "Save and continue"
-        redirect($PAGE->url);
+    } elseif ($assessmenteditable and ($data = $mform->get_data())) {
+        $rawgrade = $strategy->save_assessment($assessment, $data);
+        if (isset($data->weight) and $cansetassessmentweight) {
+            $DB->set_field('workshop_assessments', 'weight', $data->weight, array('id' => $assessment->id));
+        }
+        if (!is_null($rawgrade) and isset($data->saveandclose)) {
+            redirect($workshop->view_url());
+        } else {
+            // either it is not possible to calculate the $rawgrade
+            // or the reviewer has chosen "Save and continue"
+            redirect($PAGE->url);
+        }
     }
 }
 
-// load the form to override gradinggrade and process the submitted data eventually
-if ($canoverridegrades) {
-    $feedbackform = $workshop->get_feedbackreviewer_form($PAGE->url, $assessment);
+// load the form to override gradinggrade and/or set weight and process the submitted data eventually
+if ($canoverridegrades or $cansetassessmentweight) {
+    $options = array(
+        'editable' => true,
+        'editableweight' => $cansetassessmentweight,
+        'overridablegradinggrade' => $canoverridegrades);
+    $feedbackform = $workshop->get_feedbackreviewer_form($PAGE->url, $assessment, $options);
     if ($data = $feedbackform->get_data()) {
         $data = file_postupdate_standard_editor($data, 'feedbackreviewer', array(), $workshop->context);
         $record = new stdclass();
         $record->id = $assessment->id;
-        $record->gradinggradeover = $workshop->raw_grade_value($data->gradinggradeover, $workshop->gradinggrade);
-        $record->gradinggradeoverby = $USER->id;
-        $record->feedbackreviewer = $data->feedbackreviewer;
-        $record->feedbackreviewerformat = $data->feedbackreviewerformat;
+        if ($cansetassessmentweight) {
+            $record->weight = $data->weight;
+        }
+        if ($canoverridegrades) {
+            $record->gradinggradeover = $workshop->raw_grade_value($data->gradinggradeover, $workshop->gradinggrade);
+            $record->gradinggradeoverby = $USER->id;
+            $record->feedbackreviewer = $data->feedbackreviewer;
+            $record->feedbackreviewerformat = $data->feedbackreviewerformat;
+        }
         $DB->update_record('workshop_assessments', $record);
         redirect($workshop->view_url());
     }
@@ -154,7 +173,11 @@ if ($isreviewer) {
     echo $OUTPUT->heading(get_string('assessmentbyunknown', 'workshop'), 2);
 }
 
-$mform->display();
+if ($mform) {
+    $mform->display();
+} else {
+    echo $OUTPUT->heading(get_string('notassessed', 'workshop'));
+}
 if ($canoverridegrades) {
     $feedbackform->display();
 }

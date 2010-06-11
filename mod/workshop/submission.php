@@ -51,6 +51,10 @@ if ($id) { // submission is specified
         $submission = new stdclass();
         $submission->id = null;
         $submission->authorid = $USER->id;
+        $submission->grade = null;
+        $submission->gradeover = null;
+        $submission->feedbackauthor = null;
+        $submission->feedbackauthorformat = FORMAT_HTML;
     }
 }
 

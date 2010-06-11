@@ -55,12 +55,19 @@ class workshop_assessment_form extends moodleform {
         $this->mode     = $this->_customdata['mode'];       // influences the save buttons
         $this->strategy = $this->_customdata['strategy'];   // instance of the strategy api class
         $this->workshop = $this->_customdata['workshop'];   // instance of the workshop api class
-
-        // add the data common for all subplugins
-        $mform->addElement('hidden', 'strategy', $this->workshop->strategy);
+        $this->options  = $this->_customdata['options'];    // array with addiotional options
 
         // add the strategy-specific fields
         $this->definition_inner($mform);
+
+        // add the data common for all subplugins
+        $mform->addElement('hidden', 'strategy', $this->workshop->strategy);
+        if (!empty($this->options['editableweight']) and !$mform->isFrozen()) {
+            $mform->addElement('header', 'assessmentsettings', get_string('assessmentsettings', 'workshop'));
+            $mform->addElement('select', 'weight',
+                    get_string('assessmentweight', 'workshop'), workshop::available_assessment_weights_list());
+            $mform->setDefault('weight', 1);
+        }
 
         $buttonarray = array();
         if ($this->mode == 'preview') {

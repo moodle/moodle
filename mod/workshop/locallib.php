@@ -292,6 +292,25 @@ class workshop {
     }
 
     /**
+     * Return an array of possible values of assessment weight
+     *
+     * Note there is no real reason why the maximum value here is 16. It used to be 10 in
+     * workshop 1.x and I just decided to use the same number as in the maximum weight of
+     * a single assessment dimension.
+     * The value looks reasonable, though. Teachers who would want to assign themselves
+     * higher weight probably do not want peer assessment really...
+     *
+     * @return array of integers 0, 1, 2, ..., 16
+     */
+    public static function available_assessment_weights_list() {
+        $weights = array();
+        for ($i=16; $i>=0; $i--) {
+            $weights[$i] = $i;
+        }
+        return $weights;
+    }
+
+    /**
      * Helper function returning the greatest common divisor
      *
      * @param int $a
@@ -1202,7 +1221,8 @@ class workshop {
                       FROM {workshop_assessments} a
                       JOIN {user} r ON (a.reviewerid = r.id)
                       JOIN {workshop_submissions} s ON (a.submissionid = s.id AND s.example = 0)
-                     WHERE a.submissionid $submissionids";
+                     WHERE a.submissionid $submissionids
+                  ORDER BY a.weight DESC, r.lastname, r.firstname";
             $reviewers = $DB->get_records_sql($sql, $params);
             foreach ($reviewers as $reviewer) {
                 if (!isset($userinfo[$reviewer->reviewerid])) {
@@ -1228,7 +1248,8 @@ class workshop {
                       JOIN {workshop_assessments} a ON (a.reviewerid = u.id)
                       JOIN {workshop_submissions} s ON (a.submissionid = s.id AND s.example = 0)
                       JOIN {user} e ON (s.authorid = e.id)
-                     WHERE u.id $participantids AND s.workshopid = :workshopid";
+                     WHERE u.id $participantids AND s.workshopid = :workshopid
+                  ORDER BY a.weight DESC, e.lastname, e.firstname";
             $reviewees = $DB->get_records_sql($sql, $params);
             foreach ($reviewees as $reviewee) {
                 if (!isset($userinfo[$reviewee->authorid])) {
@@ -1485,14 +1506,18 @@ class workshop {
     /**
      * Returns the mform the teachers use to put a feedback for the reviewer
      *
+     * @param moodle_url $actionurl
+     * @param stdclass $assessment
+     * @param array $options editable, editableweight, overridablegradinggrade
      * @return workshop_feedbackreviewer_form
      */
-    public function get_feedbackreviewer_form(moodle_url $actionurl, stdclass $assessment, $editable=true) {
+    public function get_feedbackreviewer_form(moodle_url $actionurl, stdclass $assessment, $options=array()) {
         global $CFG;
         require_once(dirname(__FILE__) . '/feedbackreviewer_form.php');
 
         $current = new stdclass();
         $current->asid                      = $assessment->id;
+        $current->weight                    = $assessment->weight;
         $current->gradinggrade              = $this->real_grading_grade($assessment->gradinggrade);
         $current->gradinggradeover          = $this->real_grading_grade($assessment->gradinggradeover);
         $current->feedbackreviewer          = $assessment->feedbackreviewer;
@@ -1500,21 +1525,29 @@ class workshop {
         if (is_null($current->gradinggrade)) {
             $current->gradinggrade = get_string('nullgrade', 'workshop');
         }
+        if (!isset($options['editable'])) {
+            $editable = true;   // by default
+        } else {
+            $editable = (bool)$options['editable'];
+        }
 
         // prepare wysiwyg editor
         $current = file_prepare_standard_editor($current, 'feedbackreviewer', array());
 
         return new workshop_feedbackreviewer_form($actionurl,
-                array('workshop' => $this, 'current' => $current, 'feedbackopts' => array()),
+                array('workshop' => $this, 'current' => $current, 'editoropts' => array(), 'options' => $options),
                 'post', '', null, $editable);
     }
 
     /**
      * Returns the mform the teachers use to put a feedback for the author on their submission
      *
+     * @param moodle_url $actionurl
+     * @param stdclass $submission
+     * @param array $options editable
      * @return workshop_feedbackauthor_form
      */
-    public function get_feedbackauthor_form(moodle_url $actionurl, stdclass $submission, $editable=true) {
+    public function get_feedbackauthor_form(moodle_url $actionurl, stdclass $submission, $options=array()) {
         global $CFG;
         require_once(dirname(__FILE__) . '/feedbackauthor_form.php');
 
@@ -1527,12 +1560,17 @@ class workshop {
         if (is_null($current->grade)) {
             $current->grade = get_string('nullgrade', 'workshop');
         }
+        if (!isset($options['editable'])) {
+            $editable = true;   // by default
+        } else {
+            $editable = (bool)$options['editable'];
+        }
 
         // prepare wysiwyg editor
         $current = file_prepare_standard_editor($current, 'feedbackauthor', array());
 
         return new workshop_feedbackauthor_form($actionurl,
-                array('workshop' => $this, 'current' => $current, 'feedbackopts' => array()),
+                array('workshop' => $this, 'current' => $current, 'feedbackopts' => array(), 'options' => $options),
                 'post', '', null, $editable);
     }
 
