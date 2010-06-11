@@ -29,7 +29,7 @@ $THEME->sheets = array('core');
 ////////////////////////////////////////////////////
 
 
-$THEME->enable_dock = false;
+$THEME->enable_dock = true;
 
 ////////////////////////////////////////////////////
 // Do you want to use the new navigation dock?
