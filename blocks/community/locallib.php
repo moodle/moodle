@@ -78,7 +78,7 @@ class block_community_manager {
     public function block_community_download_course_backup($course) {
         global $CFG, $USER;
         require_once($CFG->dirroot. "/lib/filelib.php");
-        require_once($CFG->dirroot. "/lib/hublib.php");
+        require_once($CFG->dirroot. "/course/publish/lib.php");
         //$curl = new curl();
         $params['courseid'] = $course->id;
         $params['filetype'] = HUB_BACKUP_FILE_TYPE;

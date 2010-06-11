@@ -26,7 +26,7 @@
 
 require('../../config.php');
 
-require_once($CFG->dirroot.'/lib/hublib.php');
+require_once($CFG->dirroot.'/admin/registration/lib.php');
 require_once($CFG->dirroot.'/course/publish/forms.php');
 
 $id = optional_param('id', 0, PARAM_INT);
@@ -38,8 +38,8 @@ $PAGE->set_pagelayout('course');
 $PAGE->set_title(get_string('course') . ': ' . $course->fullname);
 $PAGE->set_heading($course->fullname);
 
-$hubmanager = new hub();
-$registeredhubs = $hubmanager->get_registered_on_hubs();
+$registrationmanager = new registration_manager();
+$registeredhubs = $registrationmanager->get_registered_on_hubs();
 if (empty($registeredhubs)) {
     echo $OUTPUT->header();
     echo $OUTPUT->heading(get_string('publishon', 'hub'), 3, 'main');

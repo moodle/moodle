@@ -31,7 +31,8 @@
 
 
 require_once($CFG->dirroot.'/lib/formslib.php');
-require_once($CFG->dirroot."/lib/hublib.php");
+require_once($CFG->dirroot."/admin/registration/lib.php");
+require_once($CFG->dirroot."/course/publish/lib.php");
 
 /*
  * Hub selector to choose on which hub we want to publish.
@@ -47,8 +48,8 @@ class hub_publish_selector_form extends moodleform {
 
         $mform->addElement('static', 'info', '', get_string('selecthubinfo', 'hub').html_writer::empty_tag('br'));
 
-        $hubmanager = new hub();
-        $registeredhubs = $hubmanager->get_registered_on_hubs();
+        $registrationmanager = new registration_manager();
+        $registeredhubs = $registrationmanager->get_registered_on_hubs();
 
         //Public hub list
         $options = array();
@@ -102,9 +103,10 @@ class course_publication_form extends moodleform {
         $mform->addElement('hidden', 'hubname', $hubname);
 
         //check on the hub if the course has already been published
-        $hub = new hub();
-        $registeredhub = $hub->get_registeredhub($huburl);
-        $publications = $hub->get_publications($registeredhub->id, $course->id, $advertise);
+        $registrationmanager = new registration_manager();
+        $registeredhub = $registrationmanager->get_registeredhub($huburl);
+        $publicationmanager = new course_publish_manager();
+        $publications = $publicationmanager->get_publications($registeredhub->id, $course->id, $advertise);
         
         if (!empty($publications)) {
             //get the last publication of this course

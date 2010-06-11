@@ -235,6 +235,7 @@ $string['updatesite'] = 'Update registration on {$a}';
 $string['updatestatus'] = 'Check it now.';
 $string['uploaded'] = 'Uploaded';
 $string['url'] = 'hub URL';
+$string['urlalreadyregistered'] = 'Your site is already registered on {$a}. It means that your site is not synchronized with {$a} anymore. Alert the hub administrator. Once the hub administrator reset your registration, you will be able to register a new time. Let the hub administrator know if you want to keep your already published courses.';
 $string['usersnumber'] = 'Number of users ({$a})';
 $string['wrongtoken'] = 'The registration failed. Press continue and try again.';
 $string['wrongurlformat'] = 'Bad URL format';

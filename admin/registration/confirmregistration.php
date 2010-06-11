@@ -35,31 +35,39 @@
 
 require('../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
-require_once($CFG->dirroot.'/lib/hublib.php');
-
-admin_externalpage_setup('siteregistrationconfirmed');
+require_once($CFG->dirroot.'/admin/registration/lib.php');
 
 $newtoken        = optional_param('newtoken', '', PARAM_ALPHANUM);
 $url             = optional_param('url', '', PARAM_URL);
 $hubname         = optional_param('hubname', '', PARAM_TEXT);
 $token           = optional_param('token', '', PARAM_ALPHANUM);
+$error           = optional_param('error', '', PARAM_ALPHANUM);
 
-$hub = new hub();
+admin_externalpage_setup('siteregistrationconfirmed');
 
-//check that the token/url couple exist and is not confirmed
-$registeredhub = $hub->get_unconfirmedhub($url);
-if (!empty($registeredhub) and $registeredhub->token == $token) {
-
-    $registeredhub->token = $newtoken;
-    $registeredhub->confirmed = 1;
-    $registeredhub->huname = $hubname;
-    $hub->update_registeredhub($registeredhub);
+//check that we are waiting a confirmation from this hub, and check that the token is correct
+$registrationmanager = new registration_manager();
+$registeredhub = $registrationmanager->get_unconfirmedhub($url);
+if (!empty($registeredhub) and $registeredhub->token == $token) {  
 
     echo $OUTPUT->header();
     echo $OUTPUT->heading(get_string('registrationconfirmed', 'hub'), 3, 'main');
     $hublink = html_writer::tag('a', $hubname, array('href' => $url));
-    echo $OUTPUT->notification(get_string('registrationconfirmedon', 'hub', $hublink), 'notifysuccess');
+
+    if (!empty($error) and $error == 'urlalreadyexist') {
+        $notificationmessage = $OUTPUT->notification(get_string('urlalreadyregistered', 'hub', $hublink));
+    } else {
+        $registeredhub->token = $newtoken;
+        $registeredhub->confirmed = 1;
+        $registeredhub->huname = $hubname;
+        $registrationmanager->update_registeredhub($registeredhub);
+        
+        $notificationmessage = $OUTPUT->notification(get_string('registrationconfirmedon', 'hub', $hublink), 'notifysuccess');
+    }
+
+    echo $notificationmessage;
     echo $OUTPUT->footer();
+    
 } else {
     throw new moodle_exception('wrongtoken', 'hub', $CFG->wwwroot.'/admin/registration/index.php');
 }

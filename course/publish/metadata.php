@@ -31,7 +31,8 @@
 
 require_once('../../config.php');
 require_once($CFG->dirroot.'/course/publish/forms.php');
-require_once($CFG->dirroot.'/lib/hublib.php');
+require_once($CFG->dirroot.'/admin/registration/lib.php');
+require_once($CFG->dirroot.'/course/publish/lib.php');
 require_once($CFG->dirroot.'/lib/filelib.php');
 require_once($CFG->dirroot . '/backup/util/includes/backup_includes.php');
 
@@ -68,8 +69,8 @@ if (has_capability('moodle/course:publish', get_context_instance(CONTEXT_COURSE,
 
     if (!empty($fromform)) {
 
-        $hub = new hub();
-
+        $publicationmanager = new course_publish_manager();
+       
         //retrieve the course information
         $courseinfo = new stdClass();
         $courseinfo->fullname = $fromform->name;
@@ -103,7 +104,7 @@ if (has_capability('moodle/course:publish', get_context_instance(CONTEXT_COURSE,
 
         //retrieve the content information from the course
         $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
-        $courseblocks = $hub->get_block_instances_by_context($coursecontext->id, 'blockname');
+        $courseblocks = $publicationmanager->get_block_instances_by_context($coursecontext->id, 'blockname');
 
         if (!empty($courseblocks)) {
             $blockname = '';
@@ -163,8 +164,8 @@ if (has_capability('moodle/course:publish', get_context_instance(CONTEXT_COURSE,
         // PUBLISH ACTION
 
         //retrieve the token to call the hub
-       
-        $registeredhub = $hub->get_registeredhub($huburl);
+        $registrationmanager = new registration_manager();
+        $registeredhub = $registrationmanager->get_registeredhub($huburl);
 
         //publish the course information
         $function = 'hub_register_courses';
@@ -179,13 +180,13 @@ if (has_capability('moodle/course:publish', get_context_instance(CONTEXT_COURSE,
         }
 
         //save the record into the published course table
-        $publication =  $hub->get_publication($courseids[0]);
+        $publication =  $publicationmanager->get_publication($courseids[0]);
         if (empty($publication)) {
             //if never been published or if we share, we need to save this new publication record
-            $hub->add_course_publication($registeredhub->id, $course->id, !$share, $courseids[0]);
+            $publicationmanager->add_course_publication($registeredhub->id, $course->id, !$share, $courseids[0]);
         } else {
             //if we update the enrollable course publication we update the publication record
-            $hub->update_enrollable_course_publication($publication->id);
+            $publicationmanager->update_enrollable_course_publication($publication->id);
         }
 
 

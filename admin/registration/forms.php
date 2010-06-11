@@ -31,7 +31,7 @@
 
 
 require_once($CFG->dirroot.'/lib/formslib.php');
-require_once($CFG->dirroot.'/lib/hublib.php');
+require_once($CFG->dirroot.'/admin/registration/lib.php');
 
 /**
  * This form display a hub selector.
@@ -180,10 +180,10 @@ class site_registration_form extends moodleform {
         $mform->addHelpButton('name', 'sitename', 'hub');
 
         $options = array();
-        $hub = new hub();
-        $options[HUB_SITENOTPUBLISHED] = $hub->get_site_privacy_string(HUB_SITENOTPUBLISHED);
-        $options[HUB_SITENAMEPUBLISHED] = $hub->get_site_privacy_string(HUB_SITENAMEPUBLISHED);
-        $options[HUB_SITELINKPUBLISHED] = $hub->get_site_privacy_string(HUB_SITELINKPUBLISHED);
+        $registrationmanager = new registration_manager();
+        $options[HUB_SITENOTPUBLISHED] = $registrationmanager->get_site_privacy_string(HUB_SITENOTPUBLISHED);
+        $options[HUB_SITENAMEPUBLISHED] = $registrationmanager->get_site_privacy_string(HUB_SITENAMEPUBLISHED);
+        $options[HUB_SITELINKPUBLISHED] = $registrationmanager->get_site_privacy_string(HUB_SITELINKPUBLISHED);
         $mform->addElement('select', 'privacy', get_string('siteprivacy', 'hub'), $options);
         $mform->setDefault('privacy', $privacy);
         $mform->addHelpButton('privacy', 'privacy', 'hub');
@@ -269,10 +269,6 @@ class site_registration_form extends moodleform {
         unset($options);
 
         //TODO site logo
-//        $mform->addElement('text','imageurl' , get_string('logourl', 'hub'));
-//        $mform->setType('imageurl', PARAM_URL);
-//        $mform->setDefault('imageurl', $imageurl);
-//        $mform->addHelpButton('imageurl', 'imageurl', 'hub');
         $mform->addElement('hidden', 'imageurl', ''); //TODO: temporary
 
         /// Display statistic that are going to be retrieve by the hub
@@ -355,7 +351,7 @@ class site_registration_form extends moodleform {
         }
 
         //check if it's a first registration or update
-        $hubregistered = $hub->get_registeredhub($huburl);
+        $hubregistered = $registrationmanager->get_registeredhub($huburl);
 
         if (!empty($hubregistered)) {
             $buttonlabel = get_string('updatesite', 'hub',
@@ -367,29 +363,6 @@ class site_registration_form extends moodleform {
         }
 
         $this->add_action_buttons(false, $buttonlabel);
-    }
-
-    /**
-     * Check that the image size is correct
-     */
-    function validation($data, $files) {
-        global $CFG;
-
-        $errors = array();
-
-        //check if the image (imageurl) has a correct size
-        $imageurl = $this->_form->_submitValues['imageurl'];
-        if (!empty($imageurl)) {
-            list($imagewidth, $imageheight, $imagetype, $imageattr)  = getimagesize($imageurl); //getimagesize is a GD function
-            if ($imagewidth > HUB_SITEIMAGEWIDTH or $imageheight > HUB_SITEIMAGEHEIGHT) {
-                $sizestrings = new stdClass();
-                $sizestrings->width = HUB_SITEIMAGEWIDTH;
-                $sizestrings->height = HUB_SITEIMAGEHEIGHT;
-                $errors['imageurl'] = get_string('errorbadimageheightwidth', 'hub', $sizestrings);
-            }
-        }
-
-        return $errors;
     }
 
 }

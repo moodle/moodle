@@ -407,6 +407,18 @@ define('HOMEPAGE_MY', 1);
  */
 define('HOMEPAGE_USER', 2);
 
+/**
+ * Hub directory url (should be moodle.org)
+ */
+define('HUB_HUBDIRECTORYURL', "http://hubdirectory.moodle.org");
+
+
+/**
+ * Moodle.org url (should be moodle.org)
+ */
+define('HUB_MOODLEORGHUBURL', "http://hub.moodle.org");
+
+
 /// PARAMETER HANDLING ////////////////////////////////////////////////////
 
 /**

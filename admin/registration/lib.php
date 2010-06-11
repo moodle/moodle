@@ -14,44 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- *
- * Hub library
- *
- * @package   hub
- * @copyright 2010 Moodle Pty Ltd (http://moodle.com)
- * @author    Jerome Mouneyrac
- * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
 
-
-///// IMAGE SIZES /////
-
-/**
- * HUB_SITEIMAGEHEIGHT - the maximum height size of a site logo
- */
-define('HUB_SITEIMAGEHEIGHT',   150);
-
-/**
- * HUB_SITEIMAGEWIDTH - the maximum width size of a site logo
- */
-define('HUB_SITEIMAGEWIDTH',   150);
-
-
-
-///// MOODLE.ORG URLS //////
-
-/**
- * Hub directory url (should be moodle.org)
- */
-define('HUB_HUBDIRECTORYURL', "http://hubdirectory.moodle.org");
-
-
-/**
- * Moodle.org url (should be moodle.org)
- */
-define('HUB_MOODLEORGHUBURL', "http://hub.moodle.org");
 
 
 //// SITE PRIVACY /////
@@ -74,95 +37,36 @@ define('HUB_SITELINKPUBLISHED', 'linked');
 
 
 
-//// AUDIENCE ////
-
 /**
- * Audience: educators
+ *
+ * Site registration library
+ *
+ * @package   course
+ * @copyright 2010 Moodle Pty Ltd (http://moodle.com)
+ * @author    Jerome Mouneyrac
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define('HUB_AUDIENCE_EDUCATORS', 'educators');
-
-/**
- * Audience: students
- */
-define('HUB_AUDIENCE_STUDENTS', 'students');
-
-/**
- * Audience: admins
- */
-define('HUB_AUDIENCE_ADMINS', 'admins');
-
-
-
-///// EDUCATIONAL LEVEL /////
-
-/**
- * Educational level: primary
- */
-define('HUB_EDULEVEL_PRIMARY', 'primary');
-
-/**
- * Educational level: secondary
- */
-define('HUB_EDULEVEL_SECONDARY', 'secondary');
-
-/**
- * Educational level: tertiary
- */
-define('HUB_EDULEVEL_TERTIARY', 'tertiary');
-
-/**
- * Educational level: government
- */
-define('HUB_EDULEVEL_GOVERNMENT', 'government');
-
-/**
- * Educational level: association
- */
-define('HUB_EDULEVEL_ASSOCIATION', 'association');
-
-/**
- * Educational level: corporate
- */
-define('HUB_EDULEVEL_CORPORATE', 'corporate');
-
-/**
- * Educational level: other
- */
-define('HUB_EDULEVEL_OTHER', 'other');
-
-
-
-///// FILE TYPES /////
-
-/**
- * FILE TYPE: COURSE SCREENSHOT
- */
-define('HUB_SCREENSHOT_FILE_TYPE', 'screenshot');
-
-/**
- * FILE TYPE: HUB SCREENSHOT
- */
-define('HUB_HUBSCREENSHOT_FILE_TYPE', 'hubscreenshot');
-
-/**
- * FILE TYPE: BACKUP
- */
-define('HUB_BACKUP_FILE_TYPE', 'backup');
-
-
-
-class hub {
-
-///////////////////////////
-/// DB Facade functions  //
-///////////////////////////
-
+class registration_manager {
+    
+    /**
+     * When the site register on a hub, he must call this function
+     * @param object $hub where the site is registered on
+     * @return integer id of the record
+     */
     public function add_registeredhub($hub) {
         global $DB;
         $id = $DB->insert_record('registration_hubs', $hub);
         return $id;
     }
 
+    /**
+     * Get a hub on which the site is registered for a given url or token
+     * Mostly use to check if the site is registered on a specific hub
+     * @param string $huburl
+     * @param string $token
+     * @return object the  hub
+     */
     public function get_registeredhub($huburl = null, $token = null) {
         global $DB;
 
@@ -178,6 +82,11 @@ class hub {
         return $token;
     }
 
+    /**
+     * Get the hub which has not confirmed that the site is registered on, but for which a request has been sent
+     * @param string $huburl
+     * @return object the  hub
+     */
     public function get_unconfirmedhub($huburl) {
         global $DB;
 
@@ -188,78 +97,23 @@ class hub {
         return $token;
     }
 
+    /**
+     * Update a registered hub (mostly use to update the confirmation status)
+     * @param object $communication the hub
+     */
     public function update_registeredhub($communication) {
         global $DB;
         $DB->update_record('registration_hubs', $communication);
     }
 
-
-    public function add_course_publication($hubid, $courseid, $enrollable, $hubcourseid) {
+    /**
+     * Return all hubs where the site is registered on
+     */
+    public function get_registered_on_hubs() {
         global $DB;
-        $publication = new stdClass();
-        $publication->hubid = $hubid;
-        $publication->courseid = $courseid;
-        $publication->hubcourseid = $hubcourseid;
-        $publication->enrollable = $enrollable;
-        $publication->timepublished = time();
-        $DB->insert_record('course_published', $publication);
+        $hubs = $DB->get_records('registration_hubs', array());
+        return $hubs;
     }
-
-    public function update_enrollable_course_publication($publicationid) {
-        global $DB;
-        $publication = new stdClass();
-        $publication->id = $publicationid;
-        $publication->timepublished = time();
-        $DB->update_record('course_published', $publication);
-    }
-
-    public function update_publication($publication) {
-        global $DB;
-        $DB->update_record('course_published', $publication);
-    }
-
-
-    public function get_publications($hubid, $courseid, $enrollable) {
-        global $DB;
-        return $DB->get_records('course_published',
-                array('hubid' => $hubid, 'courseid' => $courseid, 'enrollable' => $enrollable));
-    }
-
-    public function get_publication($hubcourseid) {
-        global $DB;
-        return $DB->get_record('course_published',
-                array('hubcourseid' => $hubcourseid));
-    }
-
-    public function get_course_publications($courseid) {
-        global $DB;
-        $sql = 'SELECT cp.id, cp.status, cp.timechecked, cp.timepublished, rh.hubname, rh.huburl, cp.courseid, cp.enrollable, cp.hubcourseid
-                FROM {course_published} cp, {registration_hubs} rh
-                WHERE cp.hubid = rh.id and cp.courseid = :courseid
-                ORDER BY cp.enrollable DESC, rh.hubname, cp.timepublished';
-        $params = array('courseid' => $courseid);
-        return $DB->get_records_sql($sql, $params);
-    }
-
-    public function get_registeredhub_by_publication($publicationid) {
-        global $DB;
-        $sql = 'SELECT cp.hubid, rh.hubname, rh.huburl, rh.token
-                FROM {course_published} cp, {registration_hubs} rh
-                WHERE cp.hubid = rh.id and cp.id = :publicationid';
-        $params = array('publicationid' => $publicationid);
-        return $DB->get_record_sql($sql, $params);
-    }
-
-    public function delete_publication($publicationid) {
-        global $DB;
-        $DB->delete_records('course_published', array('id' => $publicationid));
-    }
-
-
-///////////////////////////
-/// Library functions   ///
-///////////////////////////
-
 
     /**
      * Return site information for a specific hub
@@ -366,26 +220,6 @@ class hub {
         }
         return $privacystring;
     }
-
-
-
-    /**
-     * Return all hubs where the site is registered on
-     */
-    public function get_registered_on_hubs() {
-        global $DB;
-        $hubs = $DB->get_records('registration_hubs', array());
-        return $hubs;
-    }
-
-     /**
-     * Get an array of all block instances for a given context
-     * @param int $contextid a context id
-     * @return array of block instances.
-     */
-    public function get_block_instances_by_context($contextid, $sort = '') {
-        global $DB;
-        return $DB->get_records('block_instances', array('parentcontextid' => $contextid), $sort);
-    }
-
 }
+
+?>

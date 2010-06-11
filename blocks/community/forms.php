@@ -30,7 +30,7 @@
 */
 
 require_once($CFG->dirroot.'/lib/formslib.php');
-require_once($CFG->dirroot.'/lib/hublib.php');
+require_once($CFG->dirroot.'/course/publish/lib.php');
 
 class community_hub_search_form extends moodleform {
 

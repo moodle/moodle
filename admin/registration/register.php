@@ -36,7 +36,7 @@ require_once('../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 require_once($CFG->dirroot.'/admin/registration/forms.php');
 require_once($CFG->dirroot.'/webservice/lib.php');
-require_once($CFG->dirroot.'/lib/hublib.php');
+require_once($CFG->dirroot.'/admin/registration/lib.php');
 
 admin_externalpage_setup('registration');
 
@@ -63,9 +63,9 @@ Local Type | Token | Local WS | Remote Type | Remote URL        | Confirmed
 -----------------------------------------------------------------------------
 */
 
-$hub = new hub();
+$registrationmanager = new registration_manager();
 
-$registeredhub = $hub->get_registeredhub($huburl);
+$registeredhub = $registrationmanager->get_registeredhub($huburl);
 
 $siteregistrationform = new site_registration_form('',
         array('alreadyregistered' => !empty($registeredhub->token),
@@ -111,7 +111,7 @@ if ($update and confirm_sesskey()) {
 
     //update the registration
     $function = 'hub_update_site_info';
-    $siteinfo = $hub->get_site_info($huburl);
+    $siteinfo = $registrationmanager->get_site_info($huburl);
     $params = array($siteinfo);
     $serverurl = $huburl."/local/hub/webservice/webservices.php";
     require_once($CFG->dirroot."/webservice/xmlrpc/lib.php");
@@ -127,7 +127,7 @@ if (!empty($fromform) and empty($update) and confirm_sesskey()) {
     if (!empty($fromform) and confirm_sesskey()) { // if the register button has been clicked
         $params = (array) $fromform; //we are using the form input as the redirection parameters (token, url and name)
 
-        $unconfirmedhub = $hub->get_unconfirmedhub($huburl);
+        $unconfirmedhub = $registrationmanager->get_unconfirmedhub($huburl);
         if (empty($unconfirmedhub)) {
             //we save the token into the communication table in order to have a reference
             $unconfirmedhub = new stdClass();
@@ -135,7 +135,7 @@ if (!empty($fromform) and empty($update) and confirm_sesskey()) {
             $unconfirmedhub->huburl = $huburl;
             $unconfirmedhub->hubname = $hubname;
             $unconfirmedhub->confirmed = 0;
-            $unconfirmedhub->id = $hub->add_registeredhub($unconfirmedhub);
+            $unconfirmedhub->id = $registrationmanager->add_registeredhub($unconfirmedhub);
         }
 
         $params['token'] = $unconfirmedhub->token;
