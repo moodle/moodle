@@ -109,6 +109,10 @@ class repository_local extends repository {
                 foreach ($children as $child) {
                     if ($child->is_directory()) {
                         $params = $child->get_params();
+                        $subdir_children = $child->get_children();
+                        if (empty($subdir_children)) {
+                            continue;
+                        }
                         $encodedpath = base64_encode(serialize($params));
                         // hide user_private area from local plugin, user should
                         // use private file plugin to access private files
