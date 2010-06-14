@@ -478,6 +478,7 @@ class mod_workshop_renderer extends plugin_renderer_base {
         foreach ($grades as $participant) {
             $numofreceived  = count($participant->reviewedby);
             $numofgiven     = count($participant->reviewerof);
+            $published      = $participant->submissionpublished;
 
             // compute the number of <tr> table rows needed to display this participant
             if ($numofreceived > 0 and $numofgiven > 0) {
@@ -500,6 +501,9 @@ class mod_workshop_renderer extends plugin_renderer_base {
 
             for ($tr = 0; $tr < $numoftrs; $tr++) {
                 $row = new html_table_row();
+                if ($published) {
+                    $row->attributes['class'] = 'published';
+                }
                 // column #1 - participant - spans over all rows
                 if ($tr == 0) {
                     $cell = new html_table_cell();

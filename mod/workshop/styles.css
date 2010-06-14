@@ -390,6 +390,11 @@
     border: 1px solid #ddd;
 }
 
+.path-mod-workshop .grading-report .userpicture {
+    margin: 0px 3px;
+    vertical-align: middle;
+}
+
 .path-mod-workshop .grading-report del {
     color: red;
     font-size: 90%
@@ -409,6 +414,14 @@
 .path-mod-workshop .grading-report td {
     vertical-align: top;
     border: 1px solid #ddd;
+}
+
+.path-mod-workshop .grading-report tr.published td.submission {
+    background-color: #d2ebff;
+}
+
+.path-mod-workshop .grading-report tr.published td.submission a {
+    font-weight: bold;
 }
 
 .path-mod-workshop .grading-report .assessmentdetails {

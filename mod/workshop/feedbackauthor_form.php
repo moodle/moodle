@@ -34,9 +34,16 @@ class workshop_feedbackauthor_form extends moodleform {
 
         $current    = $this->_customdata['current'];
         $workshop   = $this->_customdata['workshop'];
-        $opts       = $this->_customdata['feedbackopts'];
+        $editoropts = $this->_customdata['editoropts'];
+        $options    = $this->_customdata['options'];
 
         $mform->addElement('header', 'feedbackauthorform', get_string('feedbackauthor', 'workshop'));
+
+        if (!empty($options['editablepublished'])) {
+            $mform->addElement('checkbox', 'published', get_string('publishsubmission', 'workshop'));
+            $mform->addHelpButton('published', 'publishsubmission', 'workshop');
+            $mform->setDefault('published', false);
+        }
 
         $mform->addElement('static', 'grade', get_string('gradecalculated', 'workshop'));
 
@@ -46,7 +53,7 @@ class workshop_feedbackauthor_form extends moodleform {
         }
         $mform->addElement('select', 'gradeover', get_string('gradeover', 'workshop'), $grades);
 
-        $mform->addElement('editor', 'feedbackauthor_editor', get_string('feedbackauthor', 'workshop'), null, $opts);
+        $mform->addElement('editor', 'feedbackauthor_editor', get_string('feedbackauthor', 'workshop'), null, $editoropts);
         $mform->setType('feedbackauthor_editor', PARAM_RAW);
 
         $mform->addElement('hidden', 'submissionid');

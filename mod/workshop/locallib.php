@@ -487,7 +487,7 @@ class workshop {
         global $DB;
 
         $sql = 'SELECT s.id, s.workshopid, s.example, s.authorid, s.timecreated, s.timemodified,
-                       s.title, s.grade, s.gradeover, s.gradeoverby,
+                       s.title, s.grade, s.gradeover, s.gradeoverby, s.published,
                        u.lastname AS authorlastname, u.firstname AS authorfirstname,
                        u.picture AS authorpicture, u.imagealt AS authorimagealt,
                        t.lastname AS overlastname, t.firstname AS overfirstname,
@@ -1273,6 +1273,7 @@ class workshop {
             $grades[$participant->userid]->submissiongrade = null;
             $grades[$participant->userid]->submissiongradeover = null;
             $grades[$participant->userid]->submissiongradeoverby = null;
+            $grades[$participant->userid]->submissionpublished = null;
             $grades[$participant->userid]->reviewedby = array();
             $grades[$participant->userid]->reviewerof = array();
         }
@@ -1285,6 +1286,7 @@ class workshop {
             $grades[$submission->authorid]->submissiongrade = $this->real_grade($submission->grade);
             $grades[$submission->authorid]->submissiongradeover = $this->real_grade($submission->gradeover);
             $grades[$submission->authorid]->submissiongradeoverby = $submission->gradeoverby;
+            $grades[$submission->authorid]->submissionpublished = $submission->published;
         }
         unset($submissions);
         unset($submission);
@@ -1553,6 +1555,7 @@ class workshop {
 
         $current = new stdclass();
         $current->submissionid          = $submission->id;
+        $current->published             = $submission->published;
         $current->grade                 = $this->real_grade($submission->grade);
         $current->gradeover             = $this->real_grade($submission->gradeover);
         $current->feedbackauthor        = $submission->feedbackauthor;
@@ -1570,7 +1573,7 @@ class workshop {
         $current = file_prepare_standard_editor($current, 'feedbackauthor', array());
 
         return new workshop_feedbackauthor_form($actionurl,
-                array('workshop' => $this, 'current' => $current, 'feedbackopts' => array(), 'options' => $options),
+                array('workshop' => $this, 'current' => $current, 'editoropts' => array(), 'options' => $options),
                 'post', '', null, $editable);
     }
 
