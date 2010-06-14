@@ -557,6 +557,26 @@ class workshop {
     }
 
     /**
+     * Returns published submissions with their authors data
+     *
+     * @return array of stdclass
+     */
+    public function get_published_submissions($orderby='finalgrade DESC') {
+        global $DB;
+
+        $sql = "SELECT s.id, s.authorid, s.timecreated, s.timemodified,
+                       s.title, s.grade, s.gradeover, COALESCE(s.gradeover,s.grade) AS finalgrade,
+                       u.lastname AS authorlastname, u.firstname AS authorfirstname, u.id AS authorid,
+                       u.picture AS authorpicture, u.imagealt AS authorimagealt
+                  FROM {workshop_submissions} s
+            INNER JOIN {user} u ON (s.authorid = u.id)
+                 WHERE s.example = 0 AND s.workshopid = :workshopid AND s.published = 1
+              ORDER BY $orderby";
+        $params = array('workshopid' => $this->id);
+        return $DB->get_records_sql($sql, $params);
+    }
+
+    /**
      * Returns full record of the given example submission
      *
      * @param int $id example submission od

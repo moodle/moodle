@@ -360,6 +360,17 @@ case workshop::PHASE_EVALUATION:
     }
     break;
 case workshop::PHASE_CLOSED:
+    if (has_capability('mod/workshop:viewpublishedsubmissions', $workshop->context)) {
+        if ($submissions = $workshop->get_published_submissions()) {
+            print_collapsible_region_start('', 'workshop-viewlet-publicsubmissions', get_string('publishedsubmissions', 'workshop'));
+            foreach ($submissions as $submission) {
+                echo $output->box_start('generalbox submission-summary');
+                echo $output->submission_summary($submission, true);
+                echo $output->box_end();
+            }
+            print_collapsible_region_end();
+        }
+    }
     break;
 default:
 }

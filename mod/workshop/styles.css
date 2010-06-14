@@ -1,3 +1,8 @@
+.path-mod-workshop .collapsibleregioncaption {
+    font-weight: bold;
+    font-size: 120%;
+}
+
 /**
  * Submission - one line summary display
  */

@@ -161,6 +161,7 @@ $string['phasesetup'] = 'Setup phase';
 $string['phasesubmission'] = 'Submission phase';
 $string['prepareexamples'] = 'Prepare example submissions';
 $string['previewassessmentform'] = 'Preview';
+$string['publishedsubmissions'] = 'Published submissions';
 $string['publishsubmission'] = 'Publish submission';
 $string['publishsubmission_help'] = 'Published submissions are available to the others when the workshop is closed.';
 $string['reassess'] = 'Re-assess';
