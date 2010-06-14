@@ -215,7 +215,7 @@ if ((!empty($moveup) or !empty($movedown)) and confirm_sesskey()) {
     if (!empty($moveup)) {
         require_capability('moodle/category:manage', get_context_instance(CONTEXT_COURSECAT, $moveup));
         if ($movecategory = $DB->get_record('course_categories', array('id'=>$moveup))) {
-            if ($swapcategory = $DB->get_records_select('course_categories', "sortorder<? AND parent=?", array($movecategory->sortorder, $movecategory->parent), 'sortorder ASC', '*', 0, 1)) {
+            if ($swapcategory = $DB->get_records_select('course_categories', "sortorder<? AND parent=?", array($movecategory->sortorder, $movecategory->parent), 'sortorder DESC', '*', 0, 1)) {
                 $swapcategory = reset($swapcategory);
             }
         }
