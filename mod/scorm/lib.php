@@ -320,13 +320,13 @@ function scorm_user_complete($course, $user, $mod, $scorm) {
     $lastmodify = 0;
     $sometoreport = false;
     $report = '';
-    
+
     // First Access and Last Access dates for SCOs
     require_once($CFG->dirroot.'/mod/scorm/locallib.php');
     $timetracks = scorm_get_sco_runtime($scorm->id, false, $user->id);
     $firstmodify = $timetracks->start;
     $lastmodify = $timetracks->finish;
-    
+
     $grades = grade_get_grades($course->id, 'mod', 'scorm', $scorm->id, $user->id);
     if (!empty($grades->items[0]->grades)) {
         $grade = reset($grades->items[0]->grades);
@@ -787,9 +787,18 @@ function scorm_get_file_areas($course, $cm, $context) {
 }
 
 /**
- * File browsing support
+ * File browsing support for SCORM file areas
  *
- * @todo Document this function
+ * @param stdclass $browser
+ * @param stdclass $areas
+ * @param stdclass $course
+ * @param stdclass $cm
+ * @param stdclass $context
+ * @param string $filearea
+ * @param int $itemid
+ * @param string $filepath
+ * @param string $filename
+ * @return stdclass file_info instance or null if not found
  */
 function scorm_get_file_info($browser, $areas, $course, $cm, $context, $filearea, $itemid, $filepath, $filename) {
     global $CFG;
@@ -850,7 +859,7 @@ function scorm_get_file_info($browser, $areas, $course, $cm, $context, $filearea
                 return null;
             }
         }
-        return new file_info_stored($browser, $context, $storedfile, $urlbase, $areas[$filearea], false, true, false);
+        return new file_info_stored($browser, $context, $storedfile, $urlbase, $areas[$filearea], false, true, false, false);
     }
 
     // scorm_intro handled in file_browser
