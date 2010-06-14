@@ -126,7 +126,7 @@ table.formtable tbody th {background-color: transparent;background-image: none;}
 .my .courseboxcontent .overview .info {font-size:0.7em;}
 
 /**
- * Tiny MCS
+ * Tiny MCE
  */
 .mceContentBody  {background-color:#FAFAFA;color:#000;}
 
@@ -135,7 +135,7 @@ table.formtable tbody th {background-color: transparent;background-image: none;}
  */
 #layout-table {margin-top: 8px;}
 #layout-table #content {padding-left:12px;padding-right:12px;}
-#redirect {text-align: center;margin-top:10%;}
+.redirectmessage {text-align: center;margin-top:10%;}
 .continuebutton {text-align: center;}
 #grouppicture {text-align: center;}
 .notifyproblem {text-align: center;padding: 10px;}
