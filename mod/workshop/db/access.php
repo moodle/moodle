@@ -169,8 +169,8 @@ $capabilities = array(
         )
     ),
 
-    // Ability to view the assessments of other users' work. Applies to the user's group only
-    // or - if the user is allowed to access all groups - applies to any assessment
+    // Ability to always view the assessments of other users' work and the calculated grades, regardless the phase.
+    // Applies to the user's group only or - if the user is allowed to access all groups - applies to any assessment
     'mod/workshop:viewallassessments' => array(
         'captype' => 'read',
         'contextlevel' => CONTEXT_MODULE,

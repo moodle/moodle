@@ -311,7 +311,7 @@ class mod_workshop_renderer extends plugin_renderer_base {
         if ($summary->status == 'notgraded') {
             $o .= $this->output->container(get_string('nogradeyet', 'workshop'), 'example-info nograde');
         } else {
-            $o .= $this->output->container(get_string('examplegrade', 'workshop' , $summary->gradeinfo), 'example-info grade');
+            $o .= $this->output->container(get_string('gradeinfo', 'workshop' , $summary->gradeinfo), 'example-info grade');
         }
 
         // button to assess

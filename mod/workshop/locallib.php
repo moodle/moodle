@@ -701,7 +701,7 @@ class workshop {
      * Get the complete information about the given assessment
      *
      * @param int $id Assessment ID
-     * @return mixed false if not found, stdclass otherwise
+     * @return stdclass
      */
     public function get_assessment_by_id($id) {
         global $DB;
@@ -718,6 +718,50 @@ class workshop {
         $params = array('id' => $id, 'workshopid' => $this->id);
 
         return $DB->get_record_sql($sql, $params, MUST_EXIST);
+    }
+
+    /**
+     * Get the complete information about the user's assessment of the given submission
+     *
+     * @param int $sid submission ID
+     * @param int $uid user ID of the reviewer
+     * @return false|stdclass false if not found, stdclass otherwise
+     */
+    public function get_assessment_of_submission_by_user($submissionid, $reviewerid) {
+        global $DB;
+
+        $sql = 'SELECT a.*,
+                       reviewer.id AS reviewerid,reviewer.firstname AS reviewerfirstname,reviewer.lastname as reviewerlastname,
+                       s.title,
+                       author.id AS authorid, author.firstname AS authorfirstname,author.lastname as authorlastname
+                  FROM {workshop_assessments} a
+            INNER JOIN {user} reviewer ON (a.reviewerid = reviewer.id)
+            INNER JOIN {workshop_submissions} s ON (a.submissionid = s.id AND s.example = 0)
+            INNER JOIN {user} author ON (s.authorid = author.id)
+                 WHERE s.id = :sid AND reviewer.id = :rid AND s.workshopid = :workshopid';
+        $params = array('sid' => $submissionid, 'rid' => $reviewerid, 'workshopid' => $this->id);
+
+        return $DB->get_record_sql($sql, $params, IGNORE_MISSING);
+    }
+
+    /**
+     * Get the complete information about all assessments of the given submission
+     *
+     * @param int $submissionid
+     * @return array
+     */
+    public function get_assessments_of_submission($submissionid) {
+        global $DB;
+
+        $sql = 'SELECT a.*,
+                       reviewer.id AS reviewerid,reviewer.firstname AS reviewerfirstname,reviewer.lastname AS reviewerlastname
+                  FROM {workshop_assessments} a
+            INNER JOIN {user} reviewer ON (a.reviewerid = reviewer.id)
+            INNER JOIN {workshop_submissions} s ON (a.submissionid = s.id)
+                 WHERE s.example = 0 AND s.id = :submissionid AND s.workshopid = :workshopid';
+        $params = array('submissionid' => $submissionid, 'workshopid' => $this->id);
+
+        return $DB->get_records_sql($sql, $params);
     }
 
     /**
@@ -1068,24 +1112,10 @@ class workshop {
     /**
      * Are the peer-reviews available to the authors?
      *
-     * TODO: this depends on the workshop phase
-     *
      * @return bool
      */
     public function assessments_available() {
-        return true;
-    }
-
-    /**
-     * Can the given grades be displayed to the authors?
-     *
-     * Grades are not displayed if {@link self::assessments_available()} return false. The returned
-     * value may be true (if yes, display grades) or false (no, hide grades yet)
-     *
-     * @return bool
-     */
-    public function grades_available() {
-        return true;
+        return $this->phase == self::PHASE_CLOSED;
     }
 
     /**
