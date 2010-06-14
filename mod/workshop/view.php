@@ -391,6 +391,17 @@ case workshop::PHASE_CLOSED:
             print_collapsible_region_end();
         }
     }
+    if (has_capability('mod/workshop:submit', $PAGE->context)) {
+        print_collapsible_region_start('', 'workshop-viewlet-ownsubmission', get_string('yoursubmission', 'workshop'));
+        echo $output->box_start('generalbox ownsubmission');
+        if ($submission = $workshop->get_submission_by_author($USER->id)) {
+            echo $output->submission_summary($submission, true);
+        } else {
+            echo $output->container(get_string('noyoursubmission', 'workshop'));
+        }
+        echo $output->box_end();
+        print_collapsible_region_end();
+    }
     if (has_capability('mod/workshop:viewpublishedsubmissions', $workshop->context)) {
         if ($submissions = $workshop->get_published_submissions()) {
             print_collapsible_region_start('', 'workshop-viewlet-publicsubmissions', get_string('publishedsubmissions', 'workshop'));
