@@ -14,7 +14,8 @@
 }
 
 .path-mod-workshop .submission-summary .title,
-.path-mod-workshop .submission-summary .userdate {
+.path-mod-workshop .submission-summary .userdate,
+.path-mod-workshop .submission-summary .grade-status {
     margin: 0px 0px 0px 40px;
 }
 
