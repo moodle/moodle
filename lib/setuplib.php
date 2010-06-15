@@ -525,7 +525,9 @@ function initialise_fullme() {
     if (empty($CFG->reverseproxy)) {
         if (($rurl['host'] != $wwwroot['host']) or
                 (!empty($wwwroot['port']) and $rurl['port'] != $wwwroot['port'])) {
-            print_error('wwwrootmismatch', 'error', '', $CFG->wwwroot);
+            // Explain the problem and redirect them to the right URL
+            define('NO_MOODLE_COOKIES', true);
+            redirect($CFG->wwwroot, get_string('wwwrootmismatch', 'error', $CFG->wwwroot), 3);
         }
     }
 
