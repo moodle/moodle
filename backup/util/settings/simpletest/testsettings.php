@@ -119,24 +119,33 @@ class setting_test extends UnitTestCase {
         }
 
         // Instantiate base_setting and try to set wrong ui_type
+        // We need a custom error handler to catch the type hinting error
+        // that should return incorrect_object_passed
         $bs = new mock_base_setting('test', base_setting::IS_BOOLEAN);
+        set_error_handler('backup_setting_error_handler', E_RECOVERABLE_ERROR);
         try {
             $bs->set_ui('one_wrong_ui_type', 'label', array(), array());
             $this->assertTrue(false, 'base_setting_exception expected');
         } catch (exception $e) {
             $this->assertTrue($e instanceof base_setting_exception);
-            $this->assertEqual($e->errorcode, 'setting_invalid_ui_type');
+            $this->assertEqual($e->errorcode, 'incorrect_object_passed');
         }
+        restore_error_handler();
 
         // Instantiate base_setting and try to set wrong ui_label
+        // We need a custom error handler to catch the type hinting error
+        // that should return incorrect_object_passed
         $bs = new mock_base_setting('test', base_setting::IS_BOOLEAN);
+        set_error_handler('backup_setting_error_handler', E_RECOVERABLE_ERROR);
         try {
             $bs->set_ui(base_setting::UI_HTML_CHECKBOX, 'one/wrong/label', array(), array());
             $this->assertTrue(false, 'base_setting_exception expected');
         } catch (exception $e) {
             $this->assertTrue($e instanceof base_setting_exception);
-            $this->assertEqual($e->errorcode, 'setting_invalid_ui_label');
+            $this->assertEqual($e->errorcode, 'incorrect_object_passed');
         }
+        restore_error_handler();
+        
         // Try to change value of locked setting by permission
         $bs = new mock_base_setting('test', base_setting::IS_BOOLEAN, null, null, base_setting::LOCKED_BY_PERMISSION);
         try {
@@ -160,7 +169,7 @@ class setting_test extends UnitTestCase {
         // Try to add same setting twice
         $bs1 = new mock_base_setting('test1', base_setting::IS_INTEGER, null);
         $bs2 = new mock_base_setting('test2', base_setting::IS_INTEGER, null);
-        $bs1->add_dependency($bs2);
+        $bs1->add_dependency($bs2, null, array('value'=>0));
         try {
             $bs1->add_dependency($bs2);
             $this->assertTrue(false, 'base_setting_exception expected');
@@ -186,11 +195,11 @@ class setting_test extends UnitTestCase {
         $bs2 = new mock_base_setting('test2', base_setting::IS_INTEGER, null);
         $bs3 = new mock_base_setting('test3', base_setting::IS_INTEGER, null);
         $bs4 = new mock_base_setting('test4', base_setting::IS_INTEGER, null);
-        $bs1->add_dependency($bs2);
-        $bs2->add_dependency($bs3);
-        $bs3->add_dependency($bs4);
+        $bs1->add_dependency($bs2, null, array('value'=>0));
+        $bs2->add_dependency($bs3, null, array('value'=>0));
+        $bs3->add_dependency($bs4, null, array('value'=>0));
         try {
-            $bs4->add_dependency($bs1);
+            $bs4->add_dependency($bs1, null, array('value'=>0));
             $this->assertTrue(false, 'base_setting_exception expected');
         } catch (exception $e) {
             $this->assertTrue($e instanceof base_setting_exception);
@@ -205,8 +214,8 @@ class setting_test extends UnitTestCase {
         $bs1 = new mock_base_setting('test1', base_setting::IS_INTEGER, null);
         $bs2 = new mock_base_setting('test2', base_setting::IS_INTEGER, null);
         $bs3 = new mock_base_setting('test3', base_setting::IS_INTEGER, null);
-        $bs1->add_dependency($bs2);
-        $bs2->add_dependency($bs3);
+        $bs1->add_dependency($bs2, setting_dependency::DISABLED_NOT_EMPTY);
+        $bs2->add_dependency($bs3, setting_dependency::DISABLED_NOT_EMPTY);
         // Check values are spreaded ok
         $bs1->set_value(123);
         $this->assertEqual($bs1->get_value(), 123);
@@ -215,11 +224,13 @@ class setting_test extends UnitTestCase {
 
         // Add one more setting and set value again
         $bs4 = new mock_base_setting('test4', base_setting::IS_INTEGER, null);
-        $bs2->add_dependency($bs4);
+        $bs2->add_dependency($bs4, setting_dependency::DISABLED_NOT_EMPTY);
         $bs2->set_value(321);
+        // The above change should change
+        $this->assertEqual($bs1->get_value(), 123);
         $this->assertEqual($bs2->get_value(), 321);
-        $this->assertEqual($bs3->get_value(), $bs2->get_value());
-        $this->assertEqual($bs4->get_value(), $bs3->get_value());
+        $this->assertEqual($bs3->get_value(), 321);
+        $this->assertEqual($bs4->get_value(), 321);
 
         // Check visibility is spreaded ok
         $bs1->set_visibility(base_setting::HIDDEN);
@@ -236,8 +247,8 @@ class setting_test extends UnitTestCase {
         $bs1 = new mock_base_setting('test1', base_setting::IS_INTEGER, null);
         $bs2 = new mock_base_setting('test2', base_setting::IS_INTEGER, null);
         $bs3 = new mock_base_setting('test3', base_setting::IS_INTEGER, null);
-        $bs1->add_dependency($bs2);
-        $bs2->add_dependency($bs3);
+        $bs1->add_dependency($bs2, null, array('value'=>0));
+        $bs2->add_dependency($bs3, null, array('value'=>0));
         // Serialize
         $arr = array($bs1, $bs2, $bs3);
         $ser = base64_encode(serialize($arr));
@@ -259,19 +270,6 @@ class setting_test extends UnitTestCase {
         $this->assertEqual($ubs3->get_visibility(), $ubs1->get_visibility());
         $this->assertEqual($ubs2->get_status(), $ubs1->get_status());
         $this->assertEqual($ubs3->get_status(), $ubs1->get_status());
-
-        // Check ui_attributes
-        $bs1 = new mock_base_setting('test1', base_setting::IS_INTEGER, null);
-        $bs1->set_ui(base_setting::UI_HTML_DROPDOWN, 'dropdown', array(1 => 'One', 2 => 'Two'), array('opt1' => 1, 'opt2' => 2));
-        list($type, $label, $values, $options) = $bs1->get_ui_info();
-        $this->assertEqual($type, base_setting::UI_HTML_DROPDOWN);
-        $this->assertEqual($label, 'dropdown');
-        $this->assertEqual(count($values), 2);
-        $this->assertEqual($values[1], 'One');
-        $this->assertEqual($values[2], 'Two');
-        $this->assertEqual(count($options), 2);
-        $this->assertEqual($options['opt1'], 1);
-        $this->assertEqual($options['opt2'], 2);
     }
 
     /*
@@ -284,14 +282,16 @@ class setting_test extends UnitTestCase {
         $this->assertEqual($bs->get_level(), 1);
 
         // Instantiate backup setting class and try to add one non backup_setting dependency
+        set_error_handler('backup_setting_error_handler', E_RECOVERABLE_ERROR);
         $bs = new mock_backup_setting('test', base_setting::IS_INTEGER, null);
         try {
             $bs->add_dependency(new stdclass());
             $this->assertTrue(false, 'backup_setting_exception expected');
         } catch (exception $e) {
             $this->assertTrue($e instanceof backup_setting_exception);
-            $this->assertEqual($e->errorcode, 'dependency_is_not_backkup_setting');
+            $this->assertEqual($e->errorcode, 'incorrect_object_passed');
         }
+        restore_error_handler();
 
         // Try to assing upper level dependency
         $bs1 = new mock_backup_setting('test1', base_setting::IS_INTEGER, null);
@@ -311,7 +311,7 @@ class setting_test extends UnitTestCase {
         $bs1->set_level(1);
         $bs2 = new mock_backup_setting('test2', base_setting::IS_INTEGER, null);
         $bs2->set_level(1); // Same level *must* work
-        $bs1->add_dependency($bs2);
+        $bs1->add_dependency($bs2, setting_dependency::DISABLED_NOT_EMPTY);
         $bs1->set_value(123456);
         $this->assertEqual($bs2->get_value(), $bs1->get_value());
     }
@@ -424,4 +424,28 @@ class mock_course_backup_setting extends course_backup_setting {
     public function process_change($setting, $ctype, $oldv) {
         // Do nothing
     }
+}
+
+/**
+ * This error handler is used to convert errors to excpetions so that simepltest can
+ * catch them.
+ *
+ * This is required in order to catch type hint mismatches that result in a error
+ * being thrown. It should only ever be used to catch E_RECOVERABLE_ERROR's.
+ *
+ * It throws a backup_setting_exception with 'incorrect_object_passed'
+ *
+ * @param int $errno E_RECOVERABLE_ERROR
+ * @param string $errstr
+ * @param string $errfile
+ * @param int $errline
+ * @param array $errcontext
+ * @return null
+ */
+function backup_setting_error_handler($errno, $errstr, $errfile, $errline, $errcontext) {
+    if ($errno !== E_RECOVERABLE_ERROR) {
+        // Currently we only want to deal with type hinting errors
+        return false;
+    }
+    throw new backup_setting_exception('incorrect_object_passed');
 }

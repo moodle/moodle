@@ -108,7 +108,7 @@ abstract class base_setting {
         $this->status      = $status;
 
         // Generate a default ui
-        $this->uisetting = new backup_setting_ui_checkbox($this, $name);
+        $this->uisetting = new base_setting_ui($this);
     }
 
     public function get_name() {
@@ -237,52 +237,16 @@ abstract class base_setting {
     /**
      * Sets the user interface for this setting
      *
-     * @param backup_setting_ui $ui
+     * @param base_setting_ui $ui
      */
     public function set_ui(backup_setting_ui $ui) {
         $this->uisetting = $ui;
     }
 
     /**
-     * Creates and sets a user interface for this setting given appropriate arguments
-     *
-     * @param int $type
-     * @param string $label
-     * @param array $attributes
-     * @param array $options 
-     */
-    public function make_ui($type, $label, array $attributes = null, array $options = null) {
-        $type = $this->validate_ui_type($type);
-        $label = $this->validate_ui_label($label);
-        $this->uisetting = backup_setting_ui::make($this, $type, $label, $attributes, $options);
-        if (is_array($options) || is_object($options)) {
-            $options = (array)$options;
-            switch (get_class($this->uisetting)) {
-                case 'backup_setting_ui_radio' :
-                    // text
-                    if (array_key_exists('text', $options)) {
-                        $this->uisetting->set_text($options['text']);
-                    }
-                case 'backup_setting_ui_checkbox' :
-                    // value
-                    if (array_key_exists('value', $options)) {
-                        $this->uisetting->set_value($options['value']);
-                    }
-                    break;
-                case 'backup_setting_ui_select' :
-                    // options
-                    if (array_key_exists('options', $options)) {
-                        $this->uisetting->set_values($options['options']);
-                    }
-                    break;
-            }
-        }
-    }
-
-    /**
      * Gets the user interface for this setting
      *
-     * @return backup_setting_ui
+     * @return base_setting_ui
      */
     public function get_ui() {
         return $this->uisetting;
@@ -386,6 +350,12 @@ abstract class base_setting {
             case setting_dependency::DISABLED_NOT_CHECKED :
                 $dependency = new setting_dependency_disabledif_not_checked($this, $dependentsetting, $options['defaultvalue']);
                 break;
+            case setting_dependency::DISABLED_EMPTY :
+                $dependency = new setting_dependency_disabledif_empty($this, $dependentsetting, $options['defaultvalue']);
+                break;
+            case setting_dependency::DISABLED_NOT_EMPTY :
+                $dependency = new setting_dependency_disabledif_not_empty($this, $dependentsetting, $options['defaultvalue']);
+                break;
         }
         $this->dependencies[$dependentsetting->get_name()] = $dependency;
         $dependency->get_dependent_setting()->register_dependent_dependency($dependency);
@@ -471,6 +441,12 @@ abstract class base_setting {
         $dependencies = $obj->get_dependencies();
         if (array_key_exists($this->name, $dependencies) || $obj == $this) {
             return true;
+        }
+        // Recurse the dependent settings one by one
+        foreach ($dependencies as $dependency) {
+            if ($dependency->get_dependent_setting()->is_circular_reference($obj)) {
+                return true;
+            }
         }
         return false;
     }

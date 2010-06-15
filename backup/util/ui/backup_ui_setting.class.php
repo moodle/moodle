@@ -31,42 +31,11 @@
  * @copyright 2010 Sam Hemelryk
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-abstract class base_setting_ui {
-    /**
-     * @var base_setting
-     */
-    protected $setting;
-    /**
-     * Constructors are sooooo cool
-     * @param base_setting $setting
-     */
-    public function __construct(base_setting $setting) {
-        $this->setting = $setting;
-    }
-    /**
-     * Get element properties that can be used to make a quickform element
-     * @return array
-     */
-    abstract public function get_element_properties(backup_task $task=null);
-}
-
-/**
- * Abstract class to represent the user interface backup settings have
- * 
- * @copyright 2010 Sam Hemelryk
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-abstract class backup_setting_ui extends base_setting_ui {
-
+class base_setting_ui {
     /**
      * Prefix applied to all inputs/selects
      */
     const NAME_PREFIX = 'setting_';
-    /**
-     * The backup_setting UI type this relates to. One of backup_setting::UI_*;
-     * @var int
-     */
-    protected $type;
     /**
      * The name of the setting
      * @var string
@@ -82,6 +51,86 @@ abstract class backup_setting_ui extends base_setting_ui {
      * @var array
      */
     protected $attributes = array();
+    /**
+     * The backup_setting UI type this relates to. One of backup_setting::UI_*;
+     * @var int
+     */
+    protected $type;
+    /**
+     * @var base_setting
+     */
+    protected $setting;
+    /**
+     * Constructors are sooooo cool
+     * @param base_setting $setting
+     */
+    public function __construct(base_setting $setting) {
+        $this->setting = $setting;
+    }
+    /**
+     * Gets the name of this item including its prefix
+     * @return string
+     */
+    public function get_name() {
+        return self::NAME_PREFIX.$this->name;
+    }
+    /**
+     * Gets the name of this item including its prefix
+     * @return string
+     */
+    public function get_label() {
+        return $this->label;
+    }
+    /**
+     * Gets the type of this element
+     * @return int
+     */
+    public function get_type() {
+        return $this->type;
+    }
+    /**
+     * Gets the HTML attributes for this item
+     * @return array
+     */
+    public function get_attributes() {
+        return $this->attributes;
+    }
+    /**
+     * Gets the value of this setting
+     * @return mixed
+     */
+    public function get_value() {
+        return $this->setting->get_value();
+    }
+    /**
+     * Gets the value to display in a static quickforms element
+     * @return mixed
+     */
+    public function get_static_value() {
+        return $this->setting->get_value();
+    }
+    /**
+     * Sets the label
+     * @param string $label
+     */
+    public function set_label($label) {
+        $this->label = $label;
+    }
+    /**
+     * Disables the UI for this element
+     */
+    public function disable() {
+       $this->attributes['disabled'] = 'disabled';
+    }
+}
+
+/**
+ * Abstract class to represent the user interface backup settings have
+ * 
+ * @copyright 2010 Sam Hemelryk
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+abstract class backup_setting_ui extends base_setting_ui {
     /**
      * An array of options relating to this setting
      * @var array
@@ -99,6 +148,7 @@ abstract class backup_setting_ui extends base_setting_ui {
     public function __construct(backup_setting $setting, $label = null, array $attributes = null, array $options = null) {
         parent::__construct($setting);
         // Improve the inputs name by appending the level to the name
+        if (!($setting instanceof backup_setting)) debug($setting);
         switch ($setting->get_level()) {
             case backup_setting::ROOT_LEVEL :
                 $this->name = 'root_'.$setting->get_name();
@@ -147,6 +197,11 @@ abstract class backup_setting_ui extends base_setting_ui {
         }
     }
     /**
+     * Get element properties that can be used to make a quickform element
+     * @return array
+     */
+    abstract public function get_element_properties(backup_task $task=null);
+    /**
      * Applies config options to a given properties array and then returns it
      * @param array $properties
      * @return array
@@ -156,20 +211,6 @@ abstract class backup_setting_ui extends base_setting_ui {
             $properties['attributes']['size'] = $this->options['size'];
         }
         return $properties;
-    }
-    /**
-     * Gets the name of this item including its prefix
-     * @return string
-     */
-    public function get_name() {
-        return self::NAME_PREFIX.$this->name;
-    }
-    /**
-     * Gets the type of this element
-     * @return int
-     */
-    public function get_type() {
-        return $this->type;
     }
     /**
      * Gets the label for this item
@@ -189,41 +230,6 @@ abstract class backup_setting_ui extends base_setting_ui {
         }
         return $this->label;
     }
-    /**
-     * Gets the HTML attributes for this item
-     * @return array
-     */
-    public function get_attributes() {
-        return $this->attributes;
-    }
-    /**
-     * Gets the value of this setting
-     * @return mixed
-     */
-    public function get_value() {
-        return $this->setting->get_value();
-    }
-    /**
-     * Gets the value to display in a static quickforms element
-     * @return mixed
-     */
-    public function get_static_value() {
-        return $this->setting->get_value();
-    }
-    /**
-     * Sets the label
-     * @param string $label
-     */
-    public function set_label($label) {
-        $this->label = $label;
-    }
-    /**
-     * Disables the UI for this element
-     */
-    public function disable() {
-       $this->attributes['disabled'] = 'disabled';
-    }
-
 }
 
 /**

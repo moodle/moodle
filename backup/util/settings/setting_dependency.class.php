@@ -42,6 +42,8 @@ abstract class setting_dependency {
     const DISABLED_FALSE = 3;
     const DISABLED_CHECKED = 4;
     const DISABLED_NOT_CHECKED = 5;
+    const DISABLED_EMPTY = 6;
+    const DISABLED_NOT_EMPTY = 7;
 
     /**
      * The parent setting (primary)
@@ -293,5 +295,109 @@ class setting_dependency_disabledif_not_checked extends setting_dependency_disab
             'dependenton'=>$this->setting->get_ui_name(),
             'condition'=>'notchecked'
         );
+    }
+}
+
+/**
+ * A dependency that disables the secondary setting if the value of the primary setting
+ * is not empty.
+ *
+ * @copyright 2010 Sam Hemelryk
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class setting_dependency_disabledif_not_empty extends setting_dependency_disabledif_equals {
+    public function __construct(base_setting $setting, base_setting $dependentsetting, $defaultvalue = false) {
+        parent::__construct($setting, $dependentsetting, false, $defaultvalue);
+        $this->value = false;
+    }
+    /**
+     * Returns an array of properties suitable to be used to define a moodleforms
+     * disabled command
+     * @return array
+     */
+    public function get_moodleform_properties() {
+        return array(
+            'setting'=>$this->dependentsetting->get_ui_name(),
+            'dependenton'=>$this->setting->get_ui_name(),
+            'condition'=>'notequal',
+            'value'=>''
+        );
+    }
+    /**
+     * Processes a value change in the primary setting
+     * @param mixed $oldvalue
+     * @return bool
+     */
+    protected function process_value_change($oldvalue) {
+        $prevalue = $this->dependentsetting->get_value();
+        // If the setting is the desired value enact the dependency
+        $value = $this->setting->get_value();
+        if (!empty($value)) {
+            // The dependent setting needs to be locked by hierachy and set to the
+            // default value.
+            $this->dependentsetting->set_status(base_setting::LOCKED_BY_HIERARCHY);
+            if ($this->defaultvalue === false) {
+                $this->dependentsetting->set_value($value);
+            } else {
+                $this->dependentsetting->set_value($this->defaultvalue);
+            }
+        } else if ($this->dependentsetting->get_status() == base_setting::LOCKED_BY_HIERARCHY) {
+            // We can unlock the dependent setting
+            $this->dependentsetting->set_status(base_setting::NOT_LOCKED);
+        }
+        // Return true if the value has changed for the dependent setting
+        return ($prevalue != $this->dependentsetting->get_value());
+    }
+}
+
+/**
+ * A dependency that disables the secondary setting if the value of the primary setting
+ * is empty.
+ *
+ * @copyright 2010 Sam Hemelryk
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class setting_dependency_disabledif_empty extends setting_dependency_disabledif_equals {
+    public function __construct(base_setting $setting, base_setting $dependentsetting, $defaultvalue = false) {
+        parent::__construct($setting, $dependentsetting, false, $defaultvalue);
+        $this->value = false;
+    }
+    /**
+     * Returns an array of properties suitable to be used to define a moodleforms
+     * disabled command
+     * @return array
+     */
+    public function get_moodleform_properties() {
+        return array(
+            'setting'=>$this->dependentsetting->get_ui_name(),
+            'dependenton'=>$this->setting->get_ui_name(),
+            'condition'=>'notequal',
+            'value'=>''
+        );
+    }
+    /**
+     * Processes a value change in the primary setting
+     * @param mixed $oldvalue
+     * @return bool
+     */
+    protected function process_value_change($oldvalue) {
+        $prevalue = $this->dependentsetting->get_value();
+        // If the setting is the desired value enact the dependency
+        $value = $this->setting->get_value();
+        if (empty($value)) {
+            // The dependent setting needs to be locked by hierachy and set to the
+            // default value.
+            $this->dependentsetting->set_status(base_setting::LOCKED_BY_HIERARCHY);
+            if ($this->defaultvalue === false) {
+                $this->dependentsetting->set_value($value);
+            } else {
+                $this->dependentsetting->set_value($this->defaultvalue);
+            }
+        } else if ($this->dependentsetting->get_status() == base_setting::LOCKED_BY_HIERARCHY) {
+            // We can unlock the dependent setting
+            $this->dependentsetting->set_status(base_setting::NOT_LOCKED);
+        }
+        // Return true if the value has changed for the dependent setting
+        return ($prevalue != $this->dependentsetting->get_value());
     }
 }

@@ -35,10 +35,61 @@ abstract class backup_setting extends base_setting implements checksumable {
     const SECTION_LEVEL  = 9;
     const ACTIVITY_LEVEL = 13;
 
+    /**
+     * One of the above constants
+     * @var {int}
+     */
     protected $level;  // level of the setting
 
+    public function __construct($name, $vtype, $value = null, $visibility = self::VISIBLE, $status = self::NOT_LOCKED) {
+        parent::__construct($name, $vtype, $value, $visibility, $status);
+        // Generate a default ui
+        $this->uisetting = new backup_setting_ui_checkbox($this, $name);
+    }
+
+    /**
+     * Returns the level of the setting
+     * 
+     * @return {int} One of the above constants
+     */
     public function get_level() {
         return $this->level;
+    }
+
+    /**
+     * Creates and sets a user interface for this setting given appropriate arguments
+     *
+     * @param int $type
+     * @param string $label
+     * @param array $attributes
+     * @param array $options
+     */
+    public function make_ui($type, $label, array $attributes = null, array $options = null) {
+        $type = $this->validate_ui_type($type);
+        $label = $this->validate_ui_label($label);
+        $this->uisetting = backup_setting_ui::make($this, $type, $label, $attributes, $options);
+        if (is_array($options) || is_object($options)) {
+            $options = (array)$options;
+            switch (get_class($this->uisetting)) {
+                case 'backup_setting_ui_radio' :
+                    // text
+                    if (array_key_exists('text', $options)) {
+                        $this->uisetting->set_text($options['text']);
+                    }
+                case 'backup_setting_ui_checkbox' :
+                    // value
+                    if (array_key_exists('value', $options)) {
+                        $this->uisetting->set_value($options['value']);
+                    }
+                    break;
+                case 'backup_setting_ui_select' :
+                    // options
+                    if (array_key_exists('options', $options)) {
+                        $this->uisetting->set_values($options['options']);
+                    }
+                    break;
+            }
+        }
     }
 
     public function add_dependency(backup_setting $dependentsetting, $type=setting_dependency::DISABLED_VALUE, $options=array()) {
