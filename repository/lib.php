@@ -1139,7 +1139,7 @@ abstract class repository {
     public function prepare_file($filename) {
         global $CFG;
         if (!file_exists($CFG->dataroot.'/temp/download')) {
-            mkdir($CFG->dataroot.'/temp/download/', 0777, true);
+            mkdir($CFG->dataroot.'/temp/download/', $CFG->directorypermissions, true);
         }
         if (is_dir($CFG->dataroot.'/temp/download')) {
             $dir = $CFG->dataroot.'/temp/download/';

@@ -37,7 +37,7 @@ class repository_filesystem extends repository {
         $this->root_path = $root . $subdir . '/';
         if (!empty($options['ajax'])) {
             if (!is_dir($this->root_path)) {
-                $created = mkdir($this->root_path, 0700);
+                $created = mkdir($this->root_path, $CFG->directorypermissions);
                 $ret = array();
                 $ret['msg'] = get_string('invalidpath', 'repository_filesystem');
                 $ret['nosearch'] = true;
