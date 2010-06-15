@@ -19,35 +19,32 @@ class question_edit_calculatedmulti_form extends question_edit_form {
      * @var question_calculatedmulti_qtype
      */
     var $qtypeobj;
+    public $questiondisplay ;
+    public $initialname = '';
+    public $reload = false ;
     function question_edit_calculatedmulti_form(&$submiturl, &$question, &$category, &$contexts, $formeditable = true){
         global $QTYPES, $SESSION, $CFG, $DB;
-        $this->regenerate = true;
         $this->question = $question;
         $this->qtypeobj =& $QTYPES[$this->question->qtype];
+        if  (  "1" == optional_param('reload','', PARAM_INT )) {
+            $this->reload = true ;
+        }else {
+            $this->reload = false ;
+        }
+        if(!$this->reload ){ // use database data as this is first pass
+            if(isset($this->question->id )){
+                // remove prefix #{..}# if exists
+                $this->initialname = $question->name ;
+                $regs= array();
+                if(preg_match('~#\{([^[:space:]]*)#~',$question->name , $regs)){
+                    $question->name = str_replace($regs[0], '', $question->name);
+                };                             
+            }
+        }else {
+        }    
         parent::question_edit_form($submiturl, $question, $category, $contexts, $formeditable);
     }
 
-    /**
-     * Get the list of form elements to repeat, one for each answer.
-     * @param object $mform the form being built.
-     * @param $label the label to use for each option.
-     * @param $gradeoptions the possible grades for each answer.
-     * @param $repeatedoptions reference to array of repeated options to fill
-     * @param $answersoption reference to return the name of $question->options field holding an array of answers
-     * @return array of form fields.
-     */
- /*   function get_per_answer_fields(&$mform, $label, $gradeoptions, &$repeatedoptions, &$answersoption) {
-        $repeated = array();
-        $repeated[] =& $mform->createElement('header', 'answerhdr', $label);
-        $repeated[] =& $mform->createElement('text', 'answer', get_string('answer', 'quiz'), array('size' => 50));
-        $repeated[] =& $mform->createElement('select', 'fraction', get_string('grade'), $gradeoptions);
-        $repeated[] =& $mform->createElement('htmleditor', 'feedback', get_string('feedback', 'quiz'),
-                                array('course' => $this->coursefilesid));
-        $repeatedoptions['answer']['type'] = PARAM_RAW;
-        $repeatedoptions['fraction']['default'] = 0;
-        $answersoption = 'answers';
-        return $repeated;
-    }*/
     function get_per_answer_fields(&$mform, $label, $gradeoptions, &$repeatedoptions, &$answersoption) {
    //     $repeated = parent::get_per_answer_fields($mform, $label, $gradeoptions, $repeatedoptions, $answersoption);
            $repeated = array();
@@ -92,11 +89,15 @@ class question_edit_calculatedmulti_form extends question_edit_form {
        // echo "<p>question ".optional_param('multichoice', '', PARAM_RAW)." optional<pre>";print_r($this->question);echo "</pre></p>";
         $label = get_string("sharedwildcards", "qtype_calculated");
         $mform->addElement('hidden', 'initialcategory', 1);
+        $mform->addElement('hidden', 'reload', 1);
         $mform->setType('initialcategory', PARAM_INT);
 
    //     $html2 = $this->qtypeobj->print_dataset_definitions_category($this->question);
    $html2 ="";
         $mform->insertElementBefore($mform->createElement('static','listcategory',$label,$html2),'name');
+        if(isset($this->question->id )){
+            $mform->insertElementBefore($mform->createElement('static','initialname',get_string('questionstoredname','qtype_calculated'),$this->initialname),'name');
+        };
         $addfieldsname='updatecategory';
         $addstring=get_string("updatecategory", "qtype_calculated");
                 $mform->registerNoSubmitButton($addfieldsname);

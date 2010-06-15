@@ -128,7 +128,11 @@ class question_calculated_qtype extends default_questiontype {
             $options->question = $question->id;
         }
         // as used only by calculated
+        if(isset($question->synchronize)){
         $options->synchronize = $question->synchronize;
+        }else {
+            $options->synchronize = 0 ;
+        }        
         $options->single = 0; //$question->single;
         $options->answernumbering =  $question->answernumbering;
         $options->shuffleanswers = $question->shuffleanswers;
@@ -309,7 +313,7 @@ class question_calculated_qtype extends default_questiontype {
 
     function create_session_and_responses(&$question, &$state, $cmoptions, $attempt) {
         // Find out how many datasets are available
-        global $CFG, $DB, $QTYPES;
+        global $CFG, $DB, $QTYPES, $OUTPUT;
         if(!$maxnumber = (int)$DB->get_field_sql(
                             "SELECT MIN(a.itemcount)
                             FROM {question_dataset_definitions} a,
@@ -328,10 +332,30 @@ class question_calculated_qtype extends default_questiontype {
         if (!$question->options->synchronize || !$records = $DB->get_records_sql($sql, array($question->id))) {
             $synchronize_calculated  =  false ;
         }else {
+           // i.e records is true so test coherence
+           $coherence = true ;
+                $a = new stdClass ;
+                $a->qid = $question->id ;
+                $a->qcat = $question->category ;
+           foreach($records as $def ){
+                if ($def->category != $question->category){
+                    $a->name = $def->name;
+                    $a->sharedcat = $def->category ;
+                    $coherence = false ;
+                    break;
+                }
+            }
+            if(!$coherence){
+                         echo $OUTPUT->notification(get_string('nocoherencequestionsdatyasetcategory','qtype_calculated',$a));
+          } 
             $synchronize_calculated  = true ;
         }
 
         // Choose a random dataset
+        // maxnumber sould not be breater than 100
+        if ($maxnumber > CALCULATEDQUESTIONMAXITEMNUMBER ){
+            $maxnumber = CALCULATEDQUESTIONMAXITEMNUMBER ;
+        }
         if ( $synchronize_calculated === false ) {
             $state->options->datasetitem = rand(1, $maxnumber);
         }else{
@@ -572,6 +596,36 @@ class question_calculated_qtype extends default_questiontype {
         }
      return $datasets ;
      }
+    function addnamecategory(&$question){
+        global $DB;
+                            $categorydatasetdefs = $DB->get_records_sql(
+                "SELECT  a.*
+                   FROM {question_datasets} b,
+                        {question_dataset_definitions} a
+                  WHERE a.id = b.datasetdefinition
+                    AND a.type = '1'
+                    AND a.category != 0
+                    AND b.question = ? ORDER BY a.name ",array($question->id));
+        $questionname = $question->name ;
+        $regs= array();
+        if(preg_match('~#\{([^[:space:]]*)#~',$questionname , $regs)){
+               $questionname = str_replace($regs[0], '', $questionname);
+        };                             
+
+        if (!empty($categorydatasetdefs)){ // there is at least one with the same name
+            $questionname  ="#".$questionname;
+            foreach($categorydatasetdefs as $def) {
+                if(strlen("{$def->name}")+strlen($questionname) < 250 ){
+                    $questionname = '{'.$def->name.'}' 
+                    .$questionname;
+                }
+            }
+            $questionname ="#".$questionname;
+        }
+         if (!$DB->set_field('question', 'name', $questionname, array("id" => $question->id))) {
+            return false ;
+        }
+    }
 
     /**
     * this version save the available data at the different steps of the question editing process
@@ -614,6 +668,9 @@ class question_calculated_qtype extends default_questiontype {
                     $this->preparedatasets($form);
                    $form->id = $question->id;
                    $this->save_dataset_definitions($form);
+                    if(isset($form->synchronize) && $form->synchronize == 2 ){
+                        $this->addnamecategory($question);
+                    }
                 } else if (!empty($form->makecopy)){
                    $questionfromid =  $form->id ;
                    $question = parent::save_question($question, $form, $course);
@@ -621,12 +678,18 @@ class question_calculated_qtype extends default_questiontype {
                     $this->preparedatasets($form,$questionfromid);
                     $form->id = $question->id;
                     $this->save_as_new_dataset_definitions($form,$questionfromid );
+                    if(isset($form->synchronize) && $form->synchronize == 2 ){
+                        $this->addnamecategory($question);
+                    }
                 }  else {// editing a question
                     $question = parent::save_question($question, $form, $course);
                     //prepare the datasets
                     $this->preparedatasets($form,$question->id);
                     $form->id = $question->id;
                     $this->save_dataset_definitions($form);
+                    if(isset($form->synchronize) && $form->synchronize == 2 ){
+                        $this->addnamecategory($question);
+                    }
                 }
                 break;
             case 'datasetdefinitions':
@@ -634,14 +697,17 @@ class question_calculated_qtype extends default_questiontype {
                 // it cannot go here without having done the first page
                 // so the question_calculated_options should exist
                 // only need to update the synchronize field
-                if(isset($form->synchronize) && $form->synchronize == 1 ){
-                    $options_synchronize = 1 ;
+                if(isset($form->synchronize) ){
+                    $options_synchronize = $form->synchronize ;
                 }else {
                     $options_synchronize = 0 ;
                 }
                 if (!$DB->set_field('question_calculated_options', 'synchronize', $options_synchronize, array("question" => $question->id))) {
                     return false;
                 }
+                    if(isset($form->synchronize) && $form->synchronize == 2 ){
+                        $this->addnamecategory($question);
+                    }
 
                 $this->save_dataset_definitions($form);
                 break;
@@ -1030,7 +1096,8 @@ class question_calculated_qtype extends default_questiontype {
     function save_dataset_items($question, $fromform){
         global $CFG, $DB;
         // max datasets = 100 items
-        $max100 = 100 ;
+        $max100 = CALCULATEDQUESTIONMAXITEMNUMBER ;
+        $synchronize = false ;
         if(isset($fromform->nextpageparam["forceregeneration"])) {
             $regenerate = $fromform->nextpageparam["forceregeneration"];
         }else{
@@ -1039,6 +1106,11 @@ class question_calculated_qtype extends default_questiontype {
         if (empty($question->options)) {
             $this->get_question_options($question);
         }
+        if(!empty($question->options->synchronize)){
+            $synchronize = true ;
+        }
+            
+            
         //get the old datasets for this question
         $datasetdefs = $this->get_dataset_definitions($question->id, array());
         // Handle generator options...
@@ -1059,11 +1131,15 @@ class question_calculated_qtype extends default_questiontype {
         }
         // Handle adding and removing of dataset items
         $i = 1;
+        if ($maxnumber > CALCULATEDQUESTIONMAXITEMNUMBER ){
+            $maxnumber = CALCULATEDQUESTIONMAXITEMNUMBER ;
+        }
+            
         ksort($fromform->definition);
         foreach ($fromform->definition as $key => $defid) {
             //if the delete button has not been pressed then skip the datasetitems
             //in the 'add item' part of the form.
-            if ((!isset($fromform->addbutton)) && ($i > (count($datasetdefs)*$maxnumber))) {
+            if ( $i > count($datasetdefs)*$maxnumber ) {
                 break;
             }
             $addeditem = new stdClass();
@@ -1081,7 +1157,8 @@ class question_calculated_qtype extends default_questiontype {
 
             $i++;
         }
-        if (isset($addeditem->itemnumber) && $maxnumber < $addeditem->itemnumber){
+        if (isset($addeditem->itemnumber) && $maxnumber < $addeditem->itemnumber 
+                && $addeditem->itemnumber < CALCULATEDQUESTIONMAXITEMNUMBER ){
             $maxnumber = $addeditem->itemnumber;
             foreach ($datasetdefs as $key => $newdef) {
                 if (isset($newdef->id) && $newdef->itemcount <= $maxnumber) {
@@ -1093,8 +1170,8 @@ class question_calculated_qtype extends default_questiontype {
         }
         // adding supplementary items
         $numbertoadd =0;
-        if (isset($fromform->addbutton) && $fromform->selectadd > 1 && $maxnumber < $max100 ) {
-            $numbertoadd =$fromform->selectadd-1 ;
+        if (isset($fromform->addbutton) && $fromform->selectadd > 1 && $maxnumber < CALCULATEDQUESTIONMAXITEMNUMBER ) {
+            $numbertoadd =$fromform->selectadd ;
             if ( $max100 - $maxnumber < $numbertoadd ) {
                 $numbertoadd = $max100 - $maxnumber ;
             }
@@ -1103,13 +1180,20 @@ class question_calculated_qtype extends default_questiontype {
             foreach ($datasetdefs as $defid => $datasetdef) {
             	// in case that for category datasets some new items has been added
             	// get actual values
+            	// fix regenerate for this datadefs
+            	$defregenerate = 0 ;
+            	if($synchronize && !empty ($fromform->nextpageparam["datasetregenerate[$datasetdef->name"])) {
+            	    $defregenerate = 1 ;
+            	}else if(!$synchronize && (($regenerate == 1 && $datasetdef->category == 0) ||$regenerate == 2 )){
+            	    $defregenerate = 1 ;
+            	}
                 if (isset($datasetdef->id)) {
                 	$datasetdefs[$defid]->items = $this->get_database_dataset_items($datasetdef->id);
                 }
                 for ($numberadded =$maxnumber+1 ; $numberadded <= $maxnumber+$numbertoadd ; $numberadded++){
                     if (isset($datasetdefs[$defid]->items[$numberadded])  ){
 	                    	// in case of regenerate it modifies the already existing record
-	                    	if ( $regenerate ) {
+	                    	if ( $defregenerate  ) {
 		                        $datasetitem = new stdClass;
 		                        $datasetitem->id = $datasetdefs[$defid]->items[$numberadded]->id;
 		                        $datasetitem->definition = $datasetdef->id ;
@@ -1682,13 +1766,20 @@ class question_calculated_qtype extends default_questiontype {
     }
 
     function dataset_options_from_database($form, $name,$prefix='',$langfile='quiz') {
+        global $CFG, $DB;
+        $type = 1 ; // only type = 1 (i.e. old 'LITERAL') has ever been used
 
         // First options - it is not a dataset...
         $options['0'] = get_string($prefix.'nodataset', $langfile);
+        // new question no local
+        if (!isset($form->id) || $form->id == 0 ){
+            $key = "$type-0-$name";
+            $options[$key] = get_string($prefix."newlocal$type", $langfile);
+            $currentdatasetdef = new stdClass;
+            $currentdatasetdef->type = '0';
+        }else {
 
         // Construct question local options
-        global $CFG, $DB;
-        $type = 1 ; // only type = 1 (i.e. old 'LITERAL') has ever been used
         if ( ! $currentdatasetdef = $DB->get_record_sql(
                 "SELECT a.*
                    FROM {question_dataset_definitions} a,
@@ -1706,6 +1797,7 @@ class question_calculated_qtype extends default_questiontype {
         } else {
             $options[$key] = get_string($prefix."newlocal$type", $langfile);
         }
+        }
         // Construct question category options
         $categorydatasetdefs = $DB->get_records_sql(
                 "SELECT b.question, a.*
@@ -1718,7 +1810,7 @@ class question_calculated_qtype extends default_questiontype {
         $type = 1 ;
         $key = "$type-$form->category-$name";
         if (!empty($categorydatasetdefs)){ // there is at least one with the same name
-            if (isset($categorydatasetdefs[$form->id])) {// it is already used by this question
+            if (isset($form->id) && isset($categorydatasetdefs[$form->id])) {// it is already used by this question
                     $options[$key] = get_string($prefix."keptcategory$type", $langfile);
                 } else {
                     $options[$key] = get_string($prefix."existingcategory$type", $langfile);
@@ -2169,6 +2261,10 @@ class question_calculated_qtype extends default_questiontype {
 //// INITIATION - Without this line the question type is not in use... ///
 //////////////////////////////////////////////////////////////////////////
 question_register_questiontype(new question_calculated_qtype());
+
+if ( ! defined ("CALCULATEDQUESTIONMAXITEMNUMBER")) {
+    define("CALCULATEDQUESTIONMAXITEMNUMBER", 100);
+}
 
 function qtype_calculated_calculate_answer($formula, $individualdata,
         $tolerance, $tolerancetype, $answerlength, $answerformat='1', $unit='') {

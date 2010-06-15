@@ -147,7 +147,7 @@ class question_calculatedmulti_qtype extends question_calculated_qtype {
 
     function create_session_and_responses(&$question, &$state, $cmoptions, $attempt) {
         // Find out how many datasets are available
-        global $CFG, $DB, $QTYPES;
+        global $CFG, $DB, $QTYPES, $OUTPUT ;
         if(!$maxnumber = (int)$DB->get_field_sql(
                             "SELECT MIN(a.itemcount)
                             FROM {question_dataset_definitions} a,
@@ -166,10 +166,31 @@ class question_calculatedmulti_qtype extends question_calculated_qtype {
         if (!$question->options->synchronize || !$records = $DB->get_records_sql($sql, array($question->id))) {
             $synchronize_calculated  =  false ; 
         }else {
+           // i.e records is true so test coherence
+           $coherence = true ;
+                $a = new stdClass ;
+                $a->qid = $question->id ;
+                $a->qcat = $question->category ;
+           foreach($records as $def ){
+                if ($def->category != $question->category){
+                    $a->name = $def->name;
+                    $a->sharedcat = $def->category ;
+                    $coherence = false ;
+                    break;
+                }
+            }
+            if(!$coherence){
+                         echo $OUTPUT->notification(get_string('nocoherencequestionsdatyasetcategory','qtype_calculated',$a));
+          } 
+            
             $synchronize_calculated  = true ; 
         }    
 
         // Choose a random dataset
+        // maxnumber sould not be breater than 100
+        if ($maxnumber > CALCULATEDQUESTIONMAXITEMNUMBER ){
+            $maxnumber = CALCULATEDQUESTIONMAXITEMNUMBER ;
+        }
         if ( $synchronize_calculated === false ) {
             $state->options->datasetitem = rand(1, $maxnumber);
         }else{

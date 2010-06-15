@@ -88,9 +88,10 @@ class question_dataset_dependent_items_form extends moodleform {
         $data = array();
         $j = (($this->noofitems) * count($this->datasetdefs))+1;
         foreach ($this->datasetdefs as $defkey => $datasetdef){
-            $name = get_string('wildcard', 'qtype_calculatedsimple', $datasetdef->name);
             if($datasetdef->category |= 0 ) { 
-                $name = "Shared ".$name ;
+                $name = get_string('sharedwildcardname', 'qtype_calculated',$datasetdef->name) ;
+            }else {
+                $name = get_string('wildcard', 'qtype_calculated', $datasetdef->name);
             }
             $mform->addElement('text', "number[$j]", $name);
             $mform->setType("number[$j]", PARAM_NUMBER);
@@ -199,9 +200,9 @@ class question_dataset_dependent_items_form extends moodleform {
 
       //  $mform->addElement('header', 'additemhdr', get_string('showitems', 'moodle'));
         $addgrp1 = array();
-        $addgrp1[] =& $mform->createElement('submit', 'showbutton', get_string('showitems', 'qtype_calculatedsimple'));
+        $addgrp1[] =& $mform->createElement('submit', 'showbutton', get_string('showitems', 'qtype_calculated'));
         $addgrp1[] =& $mform->createElement('select', "selectshow",'' , $showoptions);
-        $addgrp1[] = & $mform->createElement('static',"stat",'',get_string('setwildcardvalues', 'qtype_calculatedsimple'));
+        $addgrp1[] = & $mform->createElement('static',"stat",'',get_string('setwildcardvalues', 'qtype_calculated'));
         $mform->addGroup($addgrp1, 'addgrp1', '', '   ', false);
         $mform->registerNoSubmitButton('showbutton');
         $mform->closeHeaderBefore('addgrp1');
@@ -213,15 +214,15 @@ class question_dataset_dependent_items_form extends moodleform {
         }
         for ($i = $this->noofitems; $i >= 1 ; $i--){
                 if($k > 0  ){ //||  $this->outsidelimit || !empty($this->numbererrors )
-            $mform->addElement('header', '',"<b>".get_string('setno', 'qtype_calculatedsimple', $i)."</b>&nbsp;&nbsp;");
+            $mform->addElement('header', '',"<b>".get_string('setno', 'qtype_calculated', $i)."</b>&nbsp;&nbsp;");
            // $mform->addElement('header', '', get_string('itemno', 'qtype_calculated', $i));
         }
             foreach ($this->datasetdefs as $defkey => $datasetdef){
                 if($k > 0  ){ //||  $this->outsidelimit || !empty($this->numbererrors )
                     if($datasetdef->category == 0 ){
-                        $mform->addElement('text', "number[$j]", get_string('wildcard', 'qtype_calculatedsimple', $datasetdef->name));
+                        $mform->addElement('text', "number[$j]", get_string('wildcard', 'qtype_calculated', $datasetdef->name));
                     }else {
-                        $mform->addElement('text', "number[$j]", get_string('sharedwildcard', 'qtype_calculatedsimple', $datasetdef->name));
+                        $mform->addElement('text', "number[$j]", get_string('sharedwildcardname', 'qtype_calculated', $datasetdef->name));
                     }
                         
             }else {
