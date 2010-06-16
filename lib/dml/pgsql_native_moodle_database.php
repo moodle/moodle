@@ -322,7 +322,7 @@ class pgsql_native_moodle_database extends moodle_database {
                 }
                 $columns = explode(',', $matches[4]);
                 $columns = array_map(array($this, 'trim_quotes'), $columns);
-                $indexes[$matches[2]] = array('unique'=>!empty($matches[1]),
+                $indexes[$row['indexname']] = array('unique'=>!empty($matches[1]),
                                               'columns'=>$columns);
             }
             pg_free_result($result);
