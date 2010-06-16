@@ -6940,3 +6940,96 @@ class admin_setting_managewebservicetokens extends admin_setting {
         return highlight($query, $return);
     }
 }
+
+/**
+ * Colour picker
+ * 
+ * @copyright 2010 Sam Hemelryk
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class admin_setting_configcolourpicker extends admin_setting {
+
+    /**
+     * Information for previewing the colour
+     *
+     * @var array|null
+     */
+    protected $previewconfig = null;
+
+    /**
+     *
+     * @param string $name
+     * @param string $visiblename
+     * @param string $description
+     * @param string $defaultsetting
+     * @param array $previewconfig Array('selector'=>'.some .css .selector','style'=>'backgroundColor');
+     */
+    public function __construct($name, $visiblename, $description, $defaultsetting, array $previewconfig=null) {
+        $this->previewconfig = $previewconfig;
+        parent::__construct($name, $visiblename, $description, $defaultsetting);
+    }
+
+    /**
+     * Return the setting
+     *
+     * @return mixed returns config if successful else null
+     */
+    public function get_setting() {
+        return $this->config_read($this->name);
+    }
+
+    /**
+     * Saves the setting
+     * 
+     * @param string $data
+     * @return bool
+     */
+    public function write_setting($data) {
+        $data = $this->validate($data);
+        if ($data === false) {
+            return  get_string('validateerror', 'admin');
+        }
+        return ($this->config_write($this->name, $data) ? '' : get_string('errorsetting', 'admin'));
+    }
+
+    /**
+     * Validates the colour that was entered by the user
+     *
+     * @param string $data
+     * @return string|false
+     */
+    protected function validate($data) {
+        if (preg_match('/^#?([a-fA-F0-9]{3}){1,2}$/', $data)) {
+            if (strpos($data, '#')!==0) {
+                $data = '#'.$data;
+            }
+            return $data;
+        } else if (preg_match('/^[a-zA-Z]{3, 25}$/')) {
+            return $data;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Generates the HTML for the setting
+     *
+     * @global moodle_page $PAGE
+     * @global core_renderer $OUTPUT
+     * @param string $data
+     * @param string $query
+     */
+    public function output_html($data, $query = '') {
+        global $PAGE, $OUTPUT;
+        $PAGE->requires->js_init_call('M.util.init_colour_picker', array($this->get_id(), $this->previewconfig));
+        $content  = html_writer::start_tag('div', array('class'=>'form-colourpicker defaultsnext'));
+        $content .= html_writer::tag('div', $OUTPUT->pix_icon('i/loading', get_string('loading', 'admin'), 'moodle', array('class'=>'loadingicon')), array('class'=>'admin_colourpicker clearfix'));
+        $content .= html_writer::empty_tag('input', array('type'=>'text','id'=>$this->get_id(), 'name'=>$this->get_full_name(), 'value'=>$this->get_setting(), 'size'=>'12'));
+        if (!empty($this->previewconfig)) {
+            $content .= html_writer::empty_tag('input', array('type'=>'button','id'=>$this->get_id().'_preview', 'value'=>get_string('preview'), 'class'=>'admin_colourpicker_preview'));
+        }
+        $content .= html_writer::end_tag('div');
+        return format_admin_setting($this, $this->visiblename, $content, $this->description, false, '', $this->get_defaultsetting(), $query);
+    }
+
+}

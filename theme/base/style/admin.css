@@ -149,3 +149,12 @@
 
 #adminthemeselector .selectedtheme td.c0 {border:1px solid;border-right-width:0;}
 #adminthemeselector .selectedtheme td.c1 {border:1px solid;border-left-width:0;}
+
+.admin_colourpicker,
+.admin_colourpicker_preview {display:none;}
+.jsenabled .admin_colourpicker_preview {display:inline;}
+.jsenabled .admin_colourpicker {display:block;height:102px;width:410px;margin-bottom:10px;}
+.admin_colourpicker .loadingicon {vertical-align:center;margin-left:auto;}
+.admin_colourpicker .colourdialogue {float:left;border:1px solid #000;}
+.admin_colourpicker .previewcolour {border:1px solid #000;margin-left:301px;}
+.admin_colourpicker .currentcolour {border:1px solid #000;margin-left:301px;border-top-width:0;}
