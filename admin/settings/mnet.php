@@ -4,8 +4,6 @@
 
 if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
 
-require_once($CFG->dirroot.'/mnet/lib.php');
-
 $ADMIN->add('mnet', new admin_externalpage('net', get_string('settings', 'mnet'),
                                            "$CFG->wwwroot/$CFG->admin/mnet/index.php",
                                            'moodle/site:config'));
@@ -20,6 +18,8 @@ $ADMIN->add('mnet', new admin_externalpage('mnetpeers', get_string('managemnetpe
 $ADMIN->add('mnet', new admin_category('mnetpeercat', get_string('mnetpeers', 'mnet')));
 
 if (isset($CFG->mnet_dispatcher_mode) and $CFG->mnet_dispatcher_mode !== 'off') {
+    require_once($CFG->dirroot.'/mnet/lib.php');
+
     $hosts = mnet_get_hosts();
     foreach ($hosts as $host) {
         $ADMIN->add('mnetpeercat',
@@ -42,16 +42,18 @@ $ADMIN->add('mnet', new admin_externalpage('mnetenrol', get_string('mnetenrol', 
 $ADMIN->add('mnet', new admin_externalpage('trustedhosts', get_string('trustedhosts', 'mnet'),
                                            "$CFG->wwwroot/$CFG->admin/mnet/trustedhosts.php",
                                            'moodle/site:config'));
-$profilefields = new admin_settingpage('mnetprofilefields', get_string('profilefields', 'mnet'),
-                                           'moodle/site:config');
-$ADMIN->add('mnet', $profilefields);
 
-$fields = mnet_profile_field_options();
-$forced = implode(', ', $fields['forced']);
+if (isset($CFG->mnet_dispatcher_mode) and $CFG->mnet_dispatcher_mode !== 'off') {
+    $profilefields = new admin_settingpage('mnetprofilefields', get_string('profilefields', 'mnet'),
+                                               'moodle/site:config');
+    $ADMIN->add('mnet', $profilefields);
 
-$profilefields->add(new admin_setting_configmultiselect('mnetprofileexportfields', get_string('profileexportfields', 'mnet'), get_string('profilefielddesc', 'mnet', $forced), $fields['legacy'], $fields['optional']));
-$profilefields->add(new admin_setting_configmultiselect('mnetprofileimportfields', get_string('profileimportfields', 'mnet'), get_string('profilefielddesc', 'mnet', $forced), $fields['legacy'], $fields['optional']));
+    $fields = mnet_profile_field_options();
+    $forced = implode(', ', $fields['forced']);
 
+    $profilefields->add(new admin_setting_configmultiselect('mnetprofileexportfields', get_string('profileexportfields', 'mnet'), get_string('profilefielddesc', 'mnet', $forced), $fields['legacy'], $fields['optional']));
+    $profilefields->add(new admin_setting_configmultiselect('mnetprofileimportfields', get_string('profileimportfields', 'mnet'), get_string('profilefielddesc', 'mnet', $forced), $fields['legacy'], $fields['optional']));
+}
 
 
 } // end of speedup
