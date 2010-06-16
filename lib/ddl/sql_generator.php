@@ -887,7 +887,7 @@ abstract class sql_generator {
 
     /// Replace TABLENAME and INDEXNAME as needed
         $dropsql = str_replace('TABLENAME', $this->getTableName($xmldb_table), $this->drop_index_sql);
-        $dropsql = str_replace('INDEXNAME', $dbindexname, $dropsql);
+        $dropsql = str_replace('INDEXNAME', $this->getEncQuoted($dbindexname), $dropsql);
 
         $results[] = $dropsql;
 
@@ -908,8 +908,8 @@ abstract class sql_generator {
         $dbindexname = $this->mdb->get_manager()->find_index_name($xmldb_table, $xmldb_index);
     /// Replace TABLENAME and INDEXNAME as needed
         $renamesql = str_replace('TABLENAME', $this->getTableName($xmldb_table), $this->rename_index_sql);
-        $renamesql = str_replace('OLDINDEXNAME', $dbindexname, $renamesql);
-        $renamesql = str_replace('NEWINDEXNAME', $newname, $renamesql);
+        $renamesql = str_replace('OLDINDEXNAME', $this->getEncQuoted($dbindexname), $renamesql);
+        $renamesql = str_replace('NEWINDEXNAME', $this->getEncQuoted($newname), $renamesql);
 
         return array($renamesql);
     }
@@ -1004,8 +1004,8 @@ abstract class sql_generator {
         } else {
         /// Always lowercase
             $input = strtolower($input);
-        /// if reserved or quote_all, quote it
-            if ($this->quote_all || in_array($input, $this->reserved_words)) {
+        /// if reserved or quote_all or has hyphens, quote it
+            if ($this->quote_all || in_array($input, $this->reserved_words) || strpos($input, '-') !== false) {
                 $input = $this->quote_string . $input . $this->quote_string;
             }
             return $input;

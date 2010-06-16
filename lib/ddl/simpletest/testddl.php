@@ -1025,6 +1025,8 @@ class ddl_test extends UnitTestCase {
     }
 
     public function testDropIndex() {
+        $DB = $this->tdb; // do not use global $DB!
+
         $dbman = $this->tdb->get_manager();
 
         $table = $this->create_deftable('test_table1');
@@ -1032,6 +1034,24 @@ class ddl_test extends UnitTestCase {
         $index->set_attributes(XMLDB_INDEX_NOTUNIQUE, array('course', 'name'));
         $dbman->add_index($table, $index);
 
+        $dbman->drop_index($table, $index);
+        $this->assertFalse($dbman->find_index_name($table, $index));
+
+        // Test we are able to drop indexes having hyphens. MDL-22804
+        // Create index with hyphens (by hand)
+        $indexname = 'test-index-with-hyphens';
+        switch ($DB->get_dbfamily()) {
+            case 'mysql':
+                $indexname = '`' . $indexname . '`';
+                break;
+            default:
+                $indexname = '"' . $indexname . '"';
+        }
+        $stmt = "CREATE INDEX {$indexname} ON {$DB->get_prefix()}test_table1 (course, name)";
+        $DB->change_database_structure($stmt);
+        $this->assertTrue($dbman->find_index_name($table, $index));
+        // Index created, let's drop it using db manager stuff
+        $index = new xmldb_index('indexname', XMLDB_INDEX_NOTUNIQUE, array('course', 'name'));
         $dbman->drop_index($table, $index);
         $this->assertFalse($dbman->find_index_name($table, $index));
     }
@@ -1140,8 +1160,8 @@ class ddl_test extends UnitTestCase {
         switch ($DB->get_dbfamily()) {
             case 'mysql': // It's ENUM field for mysql
                 $stmt = "ALTER TABLE {$DB->get_prefix()}test_table_cust0 MODIFY type ENUM ('general', 'qanda', 'moodle') NOT NULL DEFAULT 'general'";
-                    break;
-                default: // It's check constraint for "normal" DBs
+                break;
+            default: // It's check constraint for "normal" DBs
                 $stmt = "ALTER TABLE {$DB->get_prefix()}test_table_cust0 ADD CONSTRAINT ttcu0_ck CHECK (type IN ('general', 'qanda', 'moodle'))";
         }
         $DB->change_database_structure($stmt);
