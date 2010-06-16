@@ -1936,7 +1936,8 @@ abstract class moodle_database {
 
     /**
      * On DBs that support it, switch to transaction mode and begin a transaction
-     * you'll need to ensure you call commit() or your changes *will* be lost.
+     * you'll need to ensure you call allow_commit() on the returned object
+     * or your changes *will* be lost.
      *
      * this is _very_ useful for massive updates
      *
