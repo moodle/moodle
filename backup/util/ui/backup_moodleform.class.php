@@ -78,13 +78,18 @@ abstract class backup_moodleform extends moodleform {
         $mform = $this->_form;
         $stage = $mform->addElement('hidden', 'stage', $this->uistage->get_stage());
         $stage = $mform->addElement('hidden', 'backup', $this->uistage->get_backupid());
+        $params = $this->uistage->get_params();
+        if (is_array($params) && count($params) > 0) {
+            foreach ($params as $name=>$value) {
+                $stage = $mform->addElement('hidden', $name, $value);
+    }
+        }
     }
     /**
      * Definition applied after the data is organised.. why's it here? because I want
      * to add elements on the fly.
      */
     function definition_after_data() {
-
         $buttonarray=array();
         if ($this->uistage->get_stage() > backup_ui::STAGE_INITIAL) {
             $buttonarray[] = $this->_form->createElement('submit', 'previous', get_string('previousstage','backup'));

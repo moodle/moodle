@@ -55,11 +55,23 @@ abstract class backup_ui_stage {
      */
     protected $stageform = null;
     /**
+     * Custom form params that will be added as hidden inputs
+     */
+    protected $params = null;
+    /**
      *
      * @param backup_ui $ui
      */
-    public function __construct(backup_ui $ui) {
+    public function __construct(backup_ui $ui, array $params=null) {
         $this->ui = $ui;
+        $this->params = $params;
+    }
+    /**
+     * Returns the custom params for this stage
+     * @return array|null
+     */
+    final public function get_params() {
+        return $this->params;
     }
     /**
      * The current stage
@@ -140,9 +152,9 @@ class backup_ui_stage_initial extends backup_ui_stage {
      * Initial backup stage constructor
      * @param backup_ui $ui
      */
-    public function __construct(backup_ui $ui) {
+    public function __construct(backup_ui $ui, array $params=null) {
         $this->stage = backup_ui::STAGE_INITIAL;
-        parent::__construct($ui);
+        parent::__construct($ui, $params);
     }
 
     /**
@@ -240,9 +252,9 @@ class backup_ui_stage_schema extends backup_ui_stage {
      * Schema stage constructor
      * @param backup_moodleform $ui
      */
-    public function __construct(backup_ui $ui) {
+    public function __construct(backup_ui $ui, array $params=null) {
         $this->stage = backup_ui::STAGE_SCHEMA;
-        parent::__construct($ui);
+        parent::__construct($ui, $params);
     }
     /**
      * Processes the schema stage
@@ -348,9 +360,9 @@ class backup_ui_stage_confirmation extends backup_ui_stage {
      * Constructs the stage
      * @param backup_ui $ui
      */
-    public function __construct($ui) {
+    public function __construct($ui, array $params=null) {
         $this->stage = backup_ui::STAGE_CONFIRMATION;
-        parent::__construct($ui);
+        parent::__construct($ui, $params);
     }
     /**
      * Processes the confirmation stage
@@ -460,9 +472,9 @@ class backup_ui_stage_final extends backup_ui_stage {
      * Constructs the final stage
      * @param backup_ui $ui
      */
-    public function __construct(backup_ui $ui) {
+    public function __construct(backup_ui $ui, array $params=null) {
         $this->stage = backup_ui::STAGE_FINAL;
-        parent::__construct($ui);
+        parent::__construct($ui, $params);
     }
     /**
      * Processes the final stage.
@@ -504,11 +516,12 @@ class backup_ui_stage_complete extends backup_ui_stage_final {
     /**
      * Constructs the complete backup stage
      * @param backup_ui $ui
+     * @param array|null $params
      * @param array $results
      */
-    public function __construct(backup_ui $ui, $results) {
+    public function __construct(backup_ui $ui, array $params=null, array $results=null) {
         $this->results = $results;
-        parent::__construct($ui);
+        parent::__construct($ui, $params);
         $this->stage = backup_ui::STAGE_COMPLETE;
     }
     /**

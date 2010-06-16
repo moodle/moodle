@@ -73,10 +73,10 @@ class backup_ui {
      * Yay for constructors
      * @param backup_controller $controller
      */
-    public function __construct(backup_controller $controller) {
+    public function __construct(backup_controller $controller, array $params=null) {
         $this->controller = $controller;
         $this->progress = self::PROGRESS_INTIAL;
-        $this->stage = $this->initialise_stage();
+        $this->stage = $this->initialise_stage(null, $params);
         // Process UI event before to be safe
         $this->controller->process_ui_event();
     }
@@ -87,22 +87,22 @@ class backup_ui {
      * @param int|null $stage The desired stage to intialise or null for the default
      * @return backup_ui_stage_initial|backup_ui_stage_schema|backup_ui_stage_confirmation|backup_ui_stage_final
      */
-    protected function initialise_stage($stage = null) {
+    protected function initialise_stage($stage = null, array $params=null) {
         if ($stage == null) {
             $stage = optional_param('stage', self::STAGE_INITIAL, PARAM_INT);
         }
         switch ($stage) {
             case backup_ui::STAGE_INITIAL:
-                $stage = new backup_ui_stage_initial($this);
+                $stage = new backup_ui_stage_initial($this, $params);
                 break;
             case backup_ui::STAGE_SCHEMA:
-                $stage = new backup_ui_stage_schema($this);
+                $stage = new backup_ui_stage_schema($this, $params);
                 break;
             case backup_ui::STAGE_CONFIRMATION:
-                $stage = new backup_ui_stage_confirmation($this);
+                $stage = new backup_ui_stage_confirmation($this, $params);
                 break;
             case backup_ui::STAGE_FINAL:
-                $stage = new backup_ui_stage_final($this);
+                $stage = new backup_ui_stage_final($this, $params);
                 break;
             default:
                 $stage = false;
@@ -121,7 +121,7 @@ class backup_ui {
         $this->progress = self::PROGRESS_PROCESSED;
 
         if (optional_param('previous', false, PARAM_BOOL) && $this->stage->get_stage() > self::STAGE_INITIAL) {
-            $this->stage = $this->initialise_stage($this->stage->get_prev_stage());
+            $this->stage = $this->initialise_stage($this->stage->get_prev_stage(), $this->stage->get_params());
             return false;
         }
 
@@ -129,7 +129,7 @@ class backup_ui {
         $processoutcome = $this->stage->process();
 
         if ($processoutcome !== false) {
-            $this->stage = $this->initialise_stage($this->stage->get_next_stage());
+            $this->stage = $this->initialise_stage($this->stage->get_next_stage(), $this->stage->get_params());
         }
 
         // Process UI event after to check changes are valid
@@ -214,7 +214,7 @@ class backup_ui {
         $this->progress = self::PROGRESS_EXECUTED;
         $this->controller->finish_ui();
         $this->controller->execute_plan();
-        $this->stage = new backup_ui_stage_complete($this, $this->controller->get_results());
+        $this->stage = new backup_ui_stage_complete($this, $this->stage->get_params(), $this->controller->get_results());
         return true;
     }
     /**
