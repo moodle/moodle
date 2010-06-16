@@ -1769,11 +1769,61 @@ class core_renderer extends renderer_base {
         return html_writer::tag('a', $output, $attributes);
     }
 
+
     /**
-     * Print the file tree viewer
+     * General moodle file tree viwer
      *
      * <pre>
-     * $OUTPUT->file_tree_viewer($contextid, $filearea, $itemid, $urlbase);
+     * $OUTPUT->moodle_file_tree_viewer($contextid, $filearea, $itemid, $filepath);
+     * </pre>
+     *
+     * @param int $contextid
+     * @param string $area
+     * @param int $itemid
+     * @param string $filepath
+     * @return string HTML fragment
+     */
+    public function moodle_file_tree_viewer($contextid, $filearea, $itemid, $filepath) {
+        $tree = new moodle_file_tree_viewer($contextid, $filearea, $itemid, $filepath);
+        return $this->render($tree);
+    }
+    public function render_moodle_file_tree_viewer(moodle_file_tree_viewer $tree) {
+        $html = '<div>';
+        foreach($tree->path as $path) {
+            $html .= $path;
+            $html .= ' / ';
+        }
+        $html .= '</div>';
+
+        $html .= '<div id="course-file-tree-view" class="filemanager-container">';
+        if (empty($tree->tree)) {
+            $html .= get_string('nofilesavailable', 'repository');
+        } else {
+            $this->page->requires->js_init_call('M.core_filetree.init');
+            $html .= '<ul>';
+            foreach($tree->tree as $node) {
+                $link_attributes = array();
+                if (!empty($node['isdir'])) {
+                    $class = ' class="file-tree-folder"';
+                } else {
+                    $class = ' class="file-tree-file"';
+                    $link_attributes['target'] = '_blank';
+                }
+                $html .= '<li '.$class.'>';
+                $html .= html_writer::link($node['url'], $node['filename'], $link_attributes);
+                $html .= '</li>';
+            }
+            $html .= '</ul>';
+        }
+        $html .= '</div>';
+        return $html;
+    }
+
+    /**
+     * Print the area file tree viewer
+     *
+     * <pre>
+     * $OUTPUT->area_file_tree_viewer($contextid, $filearea, $itemid, $urlbase);
      * </pre>
      *
      * @param int $contextid
@@ -1782,17 +1832,17 @@ class core_renderer extends renderer_base {
      * @param string $urlbase
      * @return string HTML fragment
      */
-    public function file_tree_viewer($contextid, $area, $itemid, $urlbase='') {
-        $tree = new file_tree_viewer($contextid, $area, $itemid, $urlbase);
+    public function area_file_tree_viewer($contextid, $area, $itemid, $urlbase='') {
+        $tree = new area_file_tree_viewer($contextid, $area, $itemid, $urlbase);
         return $this->render($tree);
     }
 
     /**
-     * Internal implementation of file tree viewer rendering.
-     * @param file_tree_viewer $tree
+     * Internal implementation of area file tree viewer rendering.
+     * @param area_file_tree_viewer $tree
      * @return string
      */
-    public function render_file_tree_viewer(file_tree_viewer $tree) {
+    public function render_area_file_tree_viewer(area_file_tree_viewer $tree) {
         $this->page->requires->js_init_call('M.mod_folder.init_tree', array(true));
         $html = '';
         $html .= '<div id="folder_tree">';

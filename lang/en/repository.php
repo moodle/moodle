@@ -114,6 +114,7 @@ $string['manageurl'] = 'Manage';
 $string['manageuserrepository'] = 'Manage individual repository';
 $string['noenter'] = 'Nothing entered';
 $string['nofilesattached'] = 'No files attached';
+$string['nofilesavailable'] = 'No files available';
 $string['nomorefiles'] = 'No more attachments allowed';
 $string['nopathselected'] = 'No destination path select yet (double click tree node to select)';
 $string['nopermissiontoaccess'] = 'No permission to access this repository';

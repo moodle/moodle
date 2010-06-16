@@ -65,6 +65,6 @@ if (trim(strip_tags($folder->intro))) {
 }
 
 echo $OUTPUT->box_start('generalbox foldertree');
-echo $OUTPUT->file_tree_viewer($context->id, 'folder_content', 0);
+echo $OUTPUT->area_file_tree_viewer($context->id, 'folder_content', 0);
 echo $OUTPUT->box_end();
 echo $OUTPUT->footer();

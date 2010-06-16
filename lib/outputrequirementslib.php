@@ -427,6 +427,11 @@ class page_requirements_manager {
                                     'fullpath' => '/rating/module.js',
                                     'requires' => array('node', 'event', 'overlay', 'io', 'json'));
                     break;
+                case 'core_filetree':
+                    $module = array('name'     => 'core_filetree',
+                                    'fullpath' => '/files/module.js',
+                                    'requires' => array('node', 'event', 'overlay', 'io', 'json', 'yui2-treeview'));
+                    break;
             }
 
         } else {

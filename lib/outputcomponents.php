@@ -36,18 +36,18 @@ interface renderable {
 }
 
 /**
- * Data structure representing a file tree viewer
+ * Data structure representing a area file tree viewer
  *
  * @copyright 2010 Dongsheng Cai
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since     Moodle 2.0
  */
-class file_tree_viewer implements renderable {
+class area_file_tree_viewer implements renderable {
     public $dir;
     public $result;
     public $filearea;
     /**
-     * Constructor of file_tree_viewer class
+     * Constructor of area_file_tree_viewer class
      * @param int $contextid
      * @param string $area, file area
      * @param int $itemid
@@ -83,6 +83,66 @@ class file_tree_viewer implements renderable {
             $downloadurl = file_encode_url($this->urlbase, $path, true);
             $file->fileurl = $downloadurl;
         }
+    }
+}
+
+/**
+ * Data structure representing a general moodle file tree viewer
+ *
+ * @copyright 2010 Dongsheng Cai
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since     Moodle 2.0
+ */
+class moodle_file_tree_viewer implements renderable {
+    public $tree;
+    public $path;
+    /**
+     * Constructor of moodle_file_tree_viewer class
+     * @param int $contextid
+     * @param string $area, file area
+     * @param int $itemid
+     * @param string $urlbase, file serving url base
+     */
+    public function __construct($contextid, $filearea, $itemid, $filepath) {
+        global $CFG, $OUTPUT;
+        $this->tree = array();
+        $browser = get_file_browser();
+        $fileinfo = $browser->get_file_info(get_context_instance_by_id($contextid), $filearea, $itemid, $filepath);
+        $children = $fileinfo->get_children();
+        $parent_info = $fileinfo->get_parent();
+
+        $level = $parent_info;
+        $this->path = array();
+        while ($level) {
+            $params = $level->get_params();
+            $url = new moodle_url('/files/index.php', $params);
+            $this->path[] = html_writer::link($url->out(false), $level->get_visible_name());
+            $level = $level->get_parent();
+        }
+        $this->path = array_reverse($this->path);
+        $this->path[] = $fileinfo->get_visible_name();
+
+        foreach ($children as $child) {
+            $filedate = $child->get_timemodified();
+            $filesize = $child->get_filesize();
+            $mimetype = $child->get_mimetype();
+            $params = $child->get_params();
+            $url = new moodle_url('/files/index.php', $params);
+            $fileitem = array(
+                    'params'=>$params,
+                    'filename'=>$child->get_visible_name(),
+                    'filedate'=>$filedate ? userdate($filedate) : '',
+                    'filesize'=>$filesize ? display_size($filesize) : ''
+                    );
+            if ($child->is_directory()) {
+                $fileitem['isdir'] = true;
+                $fileitem['url'] = $url->out(false);
+            } else {
+                $fileitem['url'] = $child->get_url();
+            }
+            $this->tree[] = $fileitem;
+        }
+
     }
 }
 
@@ -2467,10 +2527,10 @@ class image_gallery implements renderable {
         if ($this->grouping !== null) {
             $image->link['rel'] .= "[{$this->grouping}]";
         }
-        
+
         $image->thumb['src'] = new moodle_url($thumburl);
         $image->thumb['alt'] = $alt;
-        
+
         $this->images[] = $image;
     }
 }

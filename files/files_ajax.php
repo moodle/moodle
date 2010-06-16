@@ -43,6 +43,7 @@ if (!confirm_sesskey()) {
 }
 
 $action     = optional_param('action', 'list', PARAM_ALPHA);
+$fileurl    = optional_param('fileurl', '', PARAM_URL);
 $filename   = optional_param('filename', '', PARAM_FILE);
 $filearea   = optional_param('filearea', 'user_draft', PARAM_ALPHAEXT);
 $filepath   = optional_param('filepath', '/', PARAM_PATH);
@@ -54,6 +55,43 @@ $newfilename = optional_param('newfilename', '', PARAM_FILE);
 $user_context = get_context_instance(CONTEXT_USER, $USER->id);
 
 switch ($action) {
+// used by course file tree viewer
+case 'getfiletree':
+    $browser = get_file_browser();
+    $url = new moodle_url($fileurl);
+    $params = $url->params();
+    // fix empty value
+    foreach ($params as $key=>$value) {
+        if ($value==='') {
+            $params[$key] = null;
+        }
+    }
+    $fileinfo = $browser->get_file_info(get_context_instance_by_id($params['contextid']), $params['filearea'], $params['itemid'], $params['filepath']);
+    $children = $fileinfo->get_children();
+    $tree = array();
+    foreach ($children as $child) {
+        $filedate = $child->get_timemodified();
+        $filesize = $child->get_filesize();
+        $mimetype = $child->get_mimetype();
+        $params = $child->get_params();
+        $url = new moodle_url('/files/index.php', $params);
+        $fileitem = array(
+                'params'=>$params,
+                'filename'=>$child->get_visible_name(),
+                'filedate'=>$filedate ? userdate($filedate) : '',
+                'filesize'=>$filesize ? display_size($filesize) : '',
+                );
+        if ($child->is_directory()) {
+            $fileitem['isdir'] = true;
+            $fileitem['url'] = $url->out();
+        } else {
+            $fileitem['url'] = $child->get_url();
+        }
+        $tree[] = $fileitem;
+    }
+    echo json_encode($tree);
+
+    break;
 case 'dir':
     $data = new stdclass;
     file_get_user_area_folders($itemid, $filepath, $data, $filearea);
