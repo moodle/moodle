@@ -471,14 +471,14 @@ width:2000px;
 float:right;
 }
 
-.gradestable th.user,
-.gradestable th.range,
-.flexible th,
-.flexible td,
-.flexible th a,
-.flexible td a,
-.gradestable th.range,
-td {
+.path-grade-report-grader .gradestable th.user,
+.path-grade-report-grader .gradestable th.range,
+.path-grade-report-grader .flexible th,
+.path-grade-report-grader .flexible td,
+.path-grade-report-grader .flexible th a,
+.path-grade-report-grader .flexible td a,
+.path-grade-report-grader .gradestable th.range,
+.path-grade-report-grader td {
 white-space:nowrap;
 }
 
