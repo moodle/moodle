@@ -15,6 +15,15 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 
+/// TIME PERIOD ///
+
+define('HUB_LASTMODIFIED_WEEK', 7);
+
+define('HUB_LASTMODIFIED_FORTEENNIGHT', 14);
+
+define('HUB_LASTMODIFIED_MONTH', 30);
+
+
 
 //// AUDIENCE ////
 
