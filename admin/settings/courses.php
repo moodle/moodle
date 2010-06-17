@@ -135,7 +135,7 @@ if ($hassiteconfig
     // Create a page for general backup defaults
     $temp = new admin_settingpage('backupgeneralsettings', get_string('generalbackdefaults', 'backup'), 'moodle/backup:backupcourse');
     $temp->add(new admin_setting_configcheckbox_with_lock('backup/backup_general_users', get_string('generalusers','backup'), get_string('configgeneralusers','backup'), array('value'=>1, 'locked'=>0)));
-    $temp->add(new admin_setting_configcheckbox_with_lock('backup/backup_general_anonymize', get_string('generalanonymize','backup'), get_string('configgeneralanonymize','backup'), array('value'=>1, 'locked'=>0)));
+    $temp->add(new admin_setting_configcheckbox_with_lock('backup/backup_general_anonymize', get_string('generalanonymize','backup'), get_string('configgeneralanonymize','backup'), array('value'=>0, 'locked'=>0)));
     $temp->add(new admin_setting_configcheckbox_with_lock('backup/backup_general_role_assignments', get_string('generalroleassignments','backup'), get_string('configgeneralroleassignments','backup'), array('value'=>1, 'locked'=>0)));
     $temp->add(new admin_setting_configcheckbox_with_lock('backup/backup_general_user_files', get_string('generaluserfiles','backup'), get_string('configgeneraluserfiles','backup'), array('value'=>1, 'locked'=>0)));
     $temp->add(new admin_setting_configcheckbox_with_lock('backup/backup_general_activities', get_string('generalactivities','backup'), get_string('configgeneralactivities','backup'), array('value'=>1, 'locked'=>0)));
