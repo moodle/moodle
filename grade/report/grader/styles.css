@@ -483,14 +483,14 @@ white-space:nowrap;
 }
 
 table#user-grades .catlevel1,
-.r1,
+table#user-grades .r1,
 .path-grade-report-grader table tr.even td.cell,
 .path-grade-report-grader table tr.even th {
 background-color:#fff;
 }
 
 table#user-grades .catlevel3,
-table tr.odd td.cell {
+.path-grade-report-grader table tr.odd td.cell {
 background-color:#efefef;
 }
 
@@ -531,8 +531,9 @@ border-width:0;
 
 table#user-grades td.useridnumber,
 table#user-grades th,
-div.gradeparent,
-.ie6 form,table#user-grades td.ajax {
+.path-grade-report-grader div.gradeparent,
+.path-grade-report-grader .ie6 form,
+table#user-grades td.ajax {
 text-align:left;
 }
 
@@ -599,28 +600,28 @@ vertical-align:middle;
   display: none;
 }
 
-.ie .right_scroller {
+.path-grade-report-grader.ie .right_scroller {
 overflow-y:hidden;
 }
 
-.ie table#fixed_column th {
+.path-grade-report-grader.ie table#fixed_column th {
 height:4.5em;
 }
 
-.ie table#fixed_column tr.avg th {
+.path-grade-report-grader.ie table#fixed_column tr.avg th {
 height:2.1em;
 }
 
-.ie div.left_scroller td {
+.path-grade-report-grader.ie div.left_scroller td {
 height:4.5em;
 }
 
-.ie6 div.right_scroller {
+.path-grade-report-grader.ie6 div.right_scroller {
 margin-top:4em;
 width:auto;
 position:absolute;
 }
 
-.ie6 .excludedfloater {
+.path-grade-report-grader.ie6 .excludedfloater {
 font-size:7px;
 }
