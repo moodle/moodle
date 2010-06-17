@@ -148,7 +148,6 @@ abstract class backup_setting_ui extends base_setting_ui {
     public function __construct(backup_setting $setting, $label = null, array $attributes = null, array $options = null) {
         parent::__construct($setting);
         // Improve the inputs name by appending the level to the name
-        if (!($setting instanceof backup_setting)) debug($setting);
         switch ($setting->get_level()) {
             case backup_setting::ROOT_LEVEL :
                 $this->name = 'root_'.$setting->get_name();
@@ -230,6 +229,41 @@ abstract class backup_setting_ui extends base_setting_ui {
         }
         return $this->label;
     }
+    /**
+     * Returns true if the setting is changeable.
+     *
+     * A setting is changeable if it meets either of the two following conditions.
+     *
+     * 1. The setting is not locked
+     * 2. The setting is locked but only by settings that are of the same level (same page)
+     *
+     * Condition 2 is really why we have this function
+     *
+     * @return bool
+     */
+    public function is_changeable() {
+        if ($this->setting->get_status() === backup_setting::NOT_LOCKED) {
+            // Its not locked so its chanegable
+            return true;
+        } else if ($this->setting->get_status() !== backup_setting::LOCKED_BY_HIERARCHY) {
+            // Its not changeable because its locked by permission or config
+            return false;
+        } else if ($this->setting->has_dependencies_on_settings()) {
+            foreach ($this->setting->get_settings_depended_on() as $dependency) {
+                if ($dependency->is_locked() && $dependency->get_setting()->get_level() !== $this->setting->get_level()) {
+                    // Its not changeable because one or more dependancies arn't
+                    // changeable.
+                   return false;
+                }
+            }
+            // Its changeable because all dependencies are changeable.
+            return true;
+        }
+        // We should never get here but if we do return false to be safe.
+        // The setting would need to be locked by hierarchy and not have any deps
+        return false;
+    }
+
 }
 
 /**

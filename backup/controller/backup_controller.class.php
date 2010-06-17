@@ -236,6 +236,9 @@ class backup_controller extends backup implements loggable {
         return $this->executiontime;
     }
 
+    /**
+     * @return backup_plan
+     */
     public function get_plan() {
         return $this->plan;
     }
@@ -292,6 +295,7 @@ class backup_controller extends backup implements loggable {
 
     protected function apply_defaults() {
         $this->log('applying plan defaults', backup::LOG_DEBUG);
+        backup_controller_dbops::apply_general_config_defaults($this);
         $this->set_status(backup::STATUS_CONFIGURED);
     }
 }

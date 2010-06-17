@@ -636,6 +636,7 @@ $string['localetext'] = 'Sitewide locale';
 $string['localstringcustomization'] = 'Local string customization';
 $string['location'] = 'Location';
 $string['locationsettings'] = 'Location settings';
+$string['locked'] = 'locked';
 $string['log'] = 'Logs';
 $string['loginhttps'] = 'Use HTTPS for logins';
 $string['loglifetime'] = 'Keep logs for';

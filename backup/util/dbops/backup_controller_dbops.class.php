@@ -344,4 +344,40 @@ abstract class backup_controller_dbops extends backup_dbops {
             set_config('backup_release', backup::RELEASE);
         }
     }
+
+    /**
+     * Sets the controller settings default values from the backup config.
+     * 
+     * @param backup_controller $controller
+     */
+    public static function apply_general_config_defaults(backup_controller $controller) {
+        $settings = array(
+            // Config name                      => Setting name
+            'backup_general_users'              => 'users',
+            'backup_general_anonymize'          => 'anonymize',
+            'backup_general_role_assignments'   => 'role_assignments',
+            'backup_general_user_files'         => 'user_files',
+            'backup_general_activities'         => 'activities',
+            'backup_general_blocks'             => 'blocks',
+            'backup_general_filters'            => 'filters',
+            'backup_general_comments'           => 'comments',
+            'backup_general_userscompletion'    => 'userscompletion',
+            'backup_general_logs'               => 'logs',
+            'backup_general_histories'          => 'grade_histories'
+        );
+        $plan = $controller->get_plan();
+        foreach ($settings as $config=>$settingname) {
+            $value = get_config('backup', $config);
+            $locked = (get_config('backup', $config.'_locked') == true);
+            if ($plan->setting_exists($settingname)) {
+                $setting = $plan->get_setting($settingname);
+                if ($setting->get_value() != $value || 1==1) {
+                    $setting->set_value($value);
+                    if ($locked) {
+                        $setting->set_status(base_setting::LOCKED_BY_CONFIG);
+                    }
+                }
+            }
+        }
+    }
 }

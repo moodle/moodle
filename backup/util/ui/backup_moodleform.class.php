@@ -123,16 +123,9 @@ abstract class backup_moodleform extends moodleform {
      */
     function add_setting(backup_setting $setting, backup_task $task=null) {
 
-        // Check if the setting is locked first up
-        if ($setting->get_status() !== base_setting::NOT_LOCKED) {
-            // If it has no dependencies on other settings we can add it as a
-            // fixed setting instead
-            if (!$setting->has_dependencies_on_settings()) {
-                // Fixed setting it is!
-                return $this->add_fixed_setting($setting);
-            }
-            // Hmm possible to unlock it in the UI so disable instead.
-            $setting->get_ui()->disable();
+        // If the setting cant be changed then add it as a fixed setting.
+        if (!$setting->get_ui()->is_changeable()) {
+            return $this->add_fixed_setting($setting);
         }
 
         // First add the formatting for this setting
@@ -220,11 +213,21 @@ abstract class backup_moodleform extends moodleform {
         $settingui = $setting->get_ui();
         if ($setting->get_visibility() == backup_setting::VISIBLE) {
             $this->add_html_formatting($setting);
-            if ($setting->get_status() != backup_setting::NOT_LOCKED) {
-                $this->_form->addElement('static', 'static_'.$settingui->get_name(), $settingui->get_label(),$settingui->get_static_value().' '.$OUTPUT->pix_icon('i/unlock', get_string('locked', 'backup'), 'moodle', array('class'=>'smallicon lockedicon')));
-            } else {
-                $this->_form->addElement('static','static_'. $settingui->get_name(), $settingui->get_label(), $settingui->get_static_value());
+            switch ($setting->get_status()) {
+                case backup_setting::LOCKED_BY_PERMISSION:
+                    $icon = ' '.$OUTPUT->pix_icon('i/permissionlock', get_string('lockedbypermission', 'backup'), 'moodle', array('class'=>'smallicon lockedicon permissionlock'));
+                    break;
+                case backup_setting::LOCKED_BY_CONFIG:
+                    $icon = ' '.$OUTPUT->pix_icon('i/configlock', get_string('lockedbyconfig', 'backup'), 'moodle', array('class'=>'smallicon lockedicon configlock'));
+                    break;
+                case backup_setting::LOCKED_BY_HIERARCHY:
+                    $icon = ' '.$OUTPUT->pix_icon('i/hierarchylock', get_string('lockedbyhierarchy', 'backup'), 'moodle', array('class'=>'smallicon lockedicon configlock'));
+                    break;
+                default:
+                    $icon = '';
+                    break;
             }
+            $this->_form->addElement('static', 'static_'.$settingui->get_name(), $settingui->get_label(), $settingui->get_static_value().$icon);
             $this->_form->addElement('html', html_writer::end_tag('div'));
         }
         $this->_form->addElement('hidden', $settingui->get_name(), $settingui->get_value());

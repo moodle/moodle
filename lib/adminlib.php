@@ -4005,6 +4005,107 @@ EOT;
 }
 
 /**
+ * Checkbox with an advanced checkbox that controls an additional $name.'_locked' config setting.
+ *
+ * This is nearly a copy/paste of admin_setting_configcheckbox_with_adv
+ *
+ * @copyright 2010 Sam Hemelryk
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class admin_setting_configcheckbox_with_lock extends admin_setting_configcheckbox {
+    /**
+     * Constructor
+     * @param string $name unique ascii name, either 'mysetting' for settings that in config, or 'myplugin/mysetting' for ones in config_plugins.
+     * @param string $visiblename localised
+     * @param string $description long localised info
+     * @param array $defaultsetting ('value'=>string, 'locked'=>bool)
+     * @param string $yes value used when checked
+     * @param string $no value used when not checked
+     */
+    public function __construct($name, $visiblename, $description, $defaultsetting, $yes='1', $no='0') {
+        parent::__construct($name, $visiblename, $description, $defaultsetting, $yes, $no);
+    }
+
+    /**
+     * Loads the current setting and returns array
+     *
+     * @return array Returns array value=>xx, adv=>xx
+     */
+    public function get_setting() {
+        $value = parent::get_setting();
+        $locked = $this->config_read($this->name.'_locked');
+        if (is_null($value) or is_null($locked)) {
+            return NULL;
+        }
+        return array('value' => $value, 'locked' => $locked);
+    }
+
+    /**
+     * Sets the value for the setting
+     *
+     * Sets the value for the setting to either the yes or no values
+     * of the object by comparing $data to yes
+     *
+     * @param mixed $data Gets converted to str for comparison against yes value
+     * @return string empty string or error
+     */
+    public function write_setting($data) {
+        $error = parent::write_setting($data['value']);
+        if (!$error) {
+            $value = empty($data['locked']) ? 0 : 1;
+            $this->config_write($this->name.'_locked', $value);
+        }
+        return $error;
+    }
+
+    /**
+     * Returns an XHTML checkbox field and with extra locked checkbox
+     *
+     * @param string $data If $data matches yes then checkbox is checked
+     * @param string $query
+     * @return string XHTML field
+     */
+    public function output_html($data, $query='') {
+        $defaults = $this->get_defaultsetting();
+        $defaultinfo = array();
+        if (!is_null($defaults)) {
+            if ((string)$defaults['value'] === $this->yes) {
+                $defaultinfo[] = get_string('checkboxyes', 'admin');
+            } else {
+                $defaultinfo[] = get_string('checkboxno', 'admin');
+            }
+            if (!empty($defaults['locked'])) {
+                $defaultinfo[] = get_string('locked', 'admin');
+            }
+        }
+        $defaultinfo = implode(', ', $defaultinfo);
+
+        $fullname    = $this->get_full_name();
+        $novalue     = s($this->no);
+        $yesvalue    = s($this->yes);
+        $id          = $this->get_id();
+
+        $checkboxparams = array('type'=>'checkbox', 'id'=>$id,'name'=>$fullname.'[value]', 'value'=>$yesvalue);
+        if ((string)$data['value'] === $this->yes) { // convert to strings before comparison
+            $checkboxparams['checked'] = 'checked';
+        }
+
+        $lockcheckboxparams = array('type'=>'checkbox', 'id'=>$id.'_locked','name'=>$fullname.'[locked]', 'value'=>1, 'class'=>'form-checkbox');
+        if (!empty($data['locked'])) { // convert to strings before comparison
+            $lockcheckboxparams['checked'] = 'checked';
+        }
+
+        $return  = html_writer::start_tag('div', array('class'=>'form-checkbox defaultsnext'));
+        $return .= html_writer::empty_tag('input', array('type'=>'hidden', 'name'=>$fullname.'[value]', 'value'=>$novalue));
+        $return .= html_writer::empty_tag('input', $checkboxparams);
+        $return .= html_writer::empty_tag('input', $lockcheckboxparams);
+        $return .= html_writer::tag('label', get_string('locked', 'admin'), array('for'=>$id.'_locked'));
+        $return .= html_writer::end_tag('div');
+        return format_admin_setting($this, $this->visiblename, $return, $this->description, true, '', $defaultinfo, $query);
+    }
+}
+
+/**
  * Dropdown menu with an advanced checkbox, that controls a additional $name.'_adv' setting.
  *
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

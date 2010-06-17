@@ -129,8 +129,26 @@ if ($hassiteconfig
                 $CFG->wwwroot . '/course/pending.php', array('moodle/site:approvecourse')));
     }
 
+    // Add a category for backups
+    $ADMIN->add('courses', new admin_category('backups', get_string('backups','admin')));
+
+    // Create a page for general backup defaults
+    $temp = new admin_settingpage('backupgeneralsettings', get_string('generalbackdefaults', 'backup'), 'moodle/backup:backupcourse');
+    $temp->add(new admin_setting_configcheckbox_with_lock('backup/backup_general_users', get_string('generalusers','backup'), get_string('configgeneralusers','backup'), array('value'=>1, 'locked'=>0)));
+    $temp->add(new admin_setting_configcheckbox_with_lock('backup/backup_general_anonymize', get_string('generalanonymize','backup'), get_string('configgeneralanonymize','backup'), array('value'=>1, 'locked'=>0)));
+    $temp->add(new admin_setting_configcheckbox_with_lock('backup/backup_general_role_assignments', get_string('generalroleassignments','backup'), get_string('configgeneralroleassignments','backup'), array('value'=>1, 'locked'=>0)));
+    $temp->add(new admin_setting_configcheckbox_with_lock('backup/backup_general_user_files', get_string('generaluserfiles','backup'), get_string('configgeneraluserfiles','backup'), array('value'=>1, 'locked'=>0)));
+    $temp->add(new admin_setting_configcheckbox_with_lock('backup/backup_general_activities', get_string('generalactivities','backup'), get_string('configgeneralactivities','backup'), array('value'=>1, 'locked'=>0)));
+    $temp->add(new admin_setting_configcheckbox_with_lock('backup/backup_general_blocks', get_string('generalblocks','backup'), get_string('configgeneralblocks','backup'), array('value'=>1, 'locked'=>0)));
+    $temp->add(new admin_setting_configcheckbox_with_lock('backup/backup_general_filters', get_string('generalfilters','backup'), get_string('configgeneralfilters','backup'), array('value'=>1, 'locked'=>0)));
+    $temp->add(new admin_setting_configcheckbox_with_lock('backup/backup_general_comments', get_string('generalcomments','backup'), get_string('configgeneralcomments','backup'), array('value'=>1, 'locked'=>0)));
+    $temp->add(new admin_setting_configcheckbox_with_lock('backup/backup_general_userscompletion', get_string('generaluserscompletion','backup'), get_string('configgeneraluserscompletion','backup'), array('value'=>1, 'locked'=>0)));
+    $temp->add(new admin_setting_configcheckbox_with_lock('backup/backup_general_logs', get_string('generallogs','backup'), get_string('configgenerallogs','backup'), array('value'=>0, 'locked'=>0)));
+    $temp->add(new admin_setting_configcheckbox_with_lock('backup/backup_general_histories', get_string('generalhistories','backup'), get_string('configgeneralhistories','backup'), array('value'=>0, 'locked'=>0)));
+    $ADMIN->add('backups', $temp);
+
 /// "backups" settingpage
-    $temp = new admin_settingpage('backups', get_string('backups','admin'), 'moodle/backup:backupcourse');
+    $temp = new admin_settingpage('scheduled', get_string('scheduledsettings','backup'), 'moodle/backup:backupcourse');
     $temp->add(new admin_setting_configcheckbox('backup/backup_sche_modules', get_string('includemodules'), get_string('backupincludemoduleshelp'), 0));
     $temp->add(new admin_setting_configcheckbox('backup/backup_sche_withuserdata', get_string('includemoduleuserdata'), get_string('backupincludemoduleuserdatahelp'), 0));
     $temp->add(new admin_setting_configcheckbox('backup/backup_sche_metacourse', get_string('metacourse'), get_string('backupmetacoursehelp'), 0));
@@ -166,6 +184,6 @@ if ($hassiteconfig
             get_string('backupexecuteathelp'), array('h' => 0, 'm' => 0)));
     $temp->add(new admin_setting_configdirectory('backup/backup_sche_destination', get_string('saveto'), get_string('backupsavetohelp'), ''));
 
-    $ADMIN->add('courses', $temp);
+    $ADMIN->add('backups', $temp);
 
 } // end of speedup

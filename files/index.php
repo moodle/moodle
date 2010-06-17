@@ -41,6 +41,7 @@ if ($courseid) {
 }
 
 $context = get_context_instance_by_id($contextid, MUST_EXIST);
+$PAGE->set_context($context);
 
 $course = null;
 $cm = null;

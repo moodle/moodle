@@ -170,11 +170,13 @@ abstract class base_setting {
     public function set_status($status) {
         $status = $this->validate_status($status);
 
-        // If this setting is dependent on other settings first check that all
-        // of those settings are not locked
+        // If the setting is being unlocked first check whether an other settings
+        // this setting is dependent on are locked. If they are then we still don't
+        // want to lock this setting.
         if (count($this->dependenton) > 0 && $status == base_setting::NOT_LOCKED) {
             foreach ($this->dependenton as $dependency) {
-                if ($dependency->get_setting()->get_status() != base_setting::NOT_LOCKED) {
+                if ($dependency->is_locked()) {
+                    // It still needs to be locked
                     $status = base_setting::LOCKED_BY_HIERARCHY;
                     break;
                 }
@@ -192,7 +194,7 @@ abstract class base_setting {
      * Gets an array of properties for all of the dependencies that will affect
      * this setting.
      *
-     * This method returns and array rather than the dependencies in order to
+     * This method returns an array rather than the dependencies in order to
      * minimise the memory footprint of for the potentially huge recursive
      * dependency structure that we may be dealing with.
      *
@@ -214,6 +216,16 @@ abstract class base_setting {
             $dependencies = array_merge($dependencies, $dependenton->get_setting()->get_my_dependency_properties($settingname));
         }
         return $dependencies;
+    }
+
+    /**
+     * Returns all of the dependencies that affect this setting.
+     * e.g. settings this setting depends on.
+     *
+     * @return array Array of setting_dependency's
+     */
+    public function get_settings_depended_on() {
+        return $this->dependenton;
     }
 
     /**
