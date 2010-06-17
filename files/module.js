@@ -19,7 +19,6 @@ M.core_filetree = {
                         alert(e.toString());
                         return;
                     }
-                    console.info(data);
                     if (data && data.length==0) {
                         node.isLeaf = true;
                     } else {
