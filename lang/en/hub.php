@@ -117,6 +117,8 @@ If you choose, you can allow your site name, country and URL to be added to the 
 All new registrations are verified manually before they are added to the list, but once you are added you can update your registration (and your entry on the public list) at any time.';
 $string['name'] = 'Name';
 $string['name_help'] = 'This name will be showing in the course listing.';
+$string['neverchecked'] = 'Never checked';
+$string['next'] = 'Next';
 $string['no'] = 'No';
 $string['nocheckstatusfromunreghub'] = 'The site is not registered on the hub, cannot check the status.';
 $string['nohubselected'] = 'No hub selected';

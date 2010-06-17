@@ -34,7 +34,7 @@ require_once($CFG->dirroot.'/course/publish/forms.php');
 require_once($CFG->dirroot.'/admin/registration/lib.php');
 require_once($CFG->dirroot.'/course/publish/lib.php');
 require_once($CFG->dirroot.'/lib/filelib.php');
-require_once($CFG->dirroot . '/backup/util/includes/backup_includes.php');
+
 
 //check user access capability to this page
 $id = optional_param('id', 0, PARAM_INT);
@@ -42,7 +42,7 @@ $course = $DB->get_record('course', array('id'=>$id), '*', MUST_EXIST);
 require_login($course);
 
 if (has_capability('moodle/course:publish', get_context_instance(CONTEXT_COURSE, $id))) {
-    
+
     //page settings
     $PAGE->set_url('/course/publish/metadata.php', array('id' => $course->id));
     $PAGE->set_pagelayout('course');
@@ -151,16 +151,6 @@ if (has_capability('moodle/course:publish', get_context_instance(CONTEXT_COURSE,
             }
         } 
 
-        // BACKUP ACTION
-        if ($share) {
-            $bc = new backup_controller(backup::TYPE_1COURSE, $course->id, backup::FORMAT_MOODLE,
-                    backup::INTERACTIVE_YES, backup::MODE_HUB, $USER->id);
-            $bc->finish_ui();
-            $bc->execute_plan();
-            $backup = $bc->get_results();
-            $backupfile = $backup['backup_destination'];
-        }
-
         // PUBLISH ACTION
 
         //retrieve the token to call the hub
@@ -217,35 +207,25 @@ if (has_capability('moodle/course:publish', get_context_instance(CONTEXT_COURSE,
             }
         }
 
-
-        // send backup
+        //redirect to the backup process page
         if ($share) {
-            $params = array();
-            $params['filetype'] = HUB_BACKUP_FILE_TYPE;
-            $params['courseid'] = $courseids[0];
-            $params['file'] = $backupfile;
-            $params['token'] = $registeredhub->token;
-            $curl->post($huburl."/local/hub/webservice/upload.php", $params);
-            
-            //Delete the backup from user_tohub
-            $backupfile->delete();
+            $params = array('sesskey' => sesskey(), 'id' => $id, 'hubcourseid' => $courseids[0],
+                'huburl' => $huburl, 'hubname' => $hubname);
+            $backupprocessurl = new moodle_url("/course/publish/backup.php", $params);
+            redirect($backupprocessurl);
+        } else {
+            //redirect to the index publis page
+            redirect(new moodle_url('/course/publish/index.php',
+                    array('sesskey' => sesskey(), 'id' => $id, 'published' => true)));
         }
-
-        //redirect to the index publis page
-        redirect(new moodle_url('/course/publish/index.php',
-                array('sesskey' => sesskey(), 'id' => $id, 'published' => true)));
+       
     }
-
 
     /////// OUTPUT SECTION /////////////
 
     echo $OUTPUT->header();
     echo $OUTPUT->heading(get_string('publishcourseon', 'hub', !empty($hubname)?$hubname:$huburl), 3, 'main');
-    if (!empty($courseregisteredmsg)) {
-            echo $courseregisteredmsg;
-    }
     $coursepublicationform->display();
-
     echo $OUTPUT->footer();
 
 }

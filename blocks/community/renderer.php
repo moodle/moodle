@@ -128,7 +128,8 @@ class block_community_renderer extends plugin_renderer_base {
                             get_string('activities', 'block_community')." : ".$activitieshtml);
 
                     $deschtml .= print_collapsible_region($blocksandactivities, 'blockdescription',
-                            'blocksandactivities', get_string('moredetails','block_community'), '', false,true);
+                            'blocksandactivities-'.$course->id.'-'.clean_param($courseurl, PARAM_ALPHANUMEXT),
+                            get_string('moredetails','block_community'), '', false,true);
                 }
 
                 //retrieve language string

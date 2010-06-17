@@ -95,20 +95,25 @@ class core_publish_renderer extends plugin_renderer_base {
 
             $hubname = html_writer::tag('a', $publication->hubname?$publication->hubname:$publication->huburl,
                     array('href' => $publication->huburl));
+            if ($publication->timechecked > 1273127954) { //if the publication check time if bigger than May 2010, it has been checked
+                if ($publication->status == 0) {
+                    $status = get_string('statusunpublished', 'hub');
+                } else {
+                    $status = get_string('statuspublished', 'hub');
+                }
 
-            if ($publication->status == 0) {
-                $status = get_string('statusunpublished', 'hub');
+                $status .= $brtag . html_writer::tag('a', get_string('updatestatus', 'hub'),
+                        array('href' => $CFG->wwwroot.'/course/publish/index.php?id='.$courseid.
+                        "&updatestatusid=".$publication->id."&sesskey=".sesskey())) .
+                        $brtag . get_string('lasttimechecked', 'hub') . ": " . format_time(time() - $publication->timechecked) ;
             } else {
-                $status = get_string('statuspublished', 'hub');
+                $status = get_string('neverchecked', 'hub') . $brtag .html_writer::tag('a', get_string('updatestatus', 'hub'),
+                        array('href' => $CFG->wwwroot.'/course/publish/index.php?id='.$courseid.
+                        "&updatestatusid=".$publication->id."&sesskey=".sesskey()));
             }
-            $status .= $brtag . html_writer::tag('a', get_string('updatestatus', 'hub'),
-                    array('href' => $CFG->wwwroot.'/course/publish/index.php?id='.$courseid.
-                    "&updatestatusid=".$publication->id."&sesskey=".sesskey())) .
-                    $brtag . get_string('lasttimechecked', 'hub') . ": " . userdate($publication->timechecked);
-
             //add button cells     
             $cells = array($publication->enrollable?get_string('advertised', 'hub'):get_string('shared', 'hub'),
-                $hubname,  userdate($publication->timepublished), $status, $operations);
+                $hubname,  userdate($publication->timepublished, get_string('strftimedatetimeshort')), $status, $operations);
             $row = new html_table_row($cells);
             $table->data[] = $row;
 
