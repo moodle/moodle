@@ -712,7 +712,7 @@
                     }
                 }
 
-                if (!isset($user->context)) {
+                if (empty($user->context->id)) {
                     $usercontext = get_context_instance(CONTEXT_USER, $user->id);
                 } else {
                     $usercontext = $user->context;
