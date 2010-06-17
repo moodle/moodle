@@ -84,11 +84,11 @@
 /// process data if submitted
 
         //preprocess data
-        if ($data->enrolstartdisabled){
+        if (!empty($data->enrolstartdisabled)) {
             $data->enrolstartdate = 0;
         }
 
-        if ($data->enrolenddisabled) {
+        if (!empty($data->enrolenddisabled)) {
             $data->enrolenddate = 0;
         }
 
