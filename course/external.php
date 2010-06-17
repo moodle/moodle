@@ -83,21 +83,21 @@ final class course_external extends moodle_external {
      * @subreturn integer $return:course->enablecompletion
      */
     static function get_courses($params) {
-        global $USER;
+        global $USER, $DB;
         if (has_capability('moodle/course:participate', get_context_instance(CONTEXT_SYSTEM))) {
             $courses = array();
             foreach ($params as $param) {
                 $course = new stdClass();
                 if (key_exists('id', $param)) {
                     $param['id'] = clean_param($param['id'], PARAM_INT);
-                    $course = get_course_by_id($param['id']);
+                    $course = $DB->get_record('course', array('id'=>$param['id']));
 
                 } else if (key_exists('idnumber', $param)) {
                     $param['idnumber'] = clean_param($param['idnumber'], PARAM_ALPHANUM);
-                    $course = get_course_by_idnumber($param['idnumber']);
+                    $course = $DB->get_record('course', array('idnumber'=>$param['idnumber']));
                 } else if (key_exists('shortname', $param)) {
                     $param['shortname'] = clean_param($param['shortname'], PARAM_ALPHANUM);
-                    $course = get_course_by_shortname($param['shortname']);
+                    $course = $DB->get_record('course', array('shortname'=>$param['shortname']));
                 }
                 if (!empty($course)) {
                     $returnedcourse = new stdClass();

@@ -356,7 +356,7 @@ function print_log($course, $user=0, $date=0, $order="l.time ASC", $page=0, $per
         get_string('info')
     );
     $table->data = array();
-    
+
     if ($course->id == SITEID) {
         array_unshift($table->align, 'left');
         array_unshift($table->head, get_string('course'));
@@ -400,9 +400,9 @@ function print_log($course, $user=0, $date=0, $order="l.time ASC", $page=0, $per
                 $row[] = "<a href=\"{$CFG->wwwroot}/course/view.php?id={$log->course}\">". format_string($courses[$log->course])."</a>";
             }
         }
-        
+
         $row[] = userdate($log->time, '%a').' '.userdate($log->time, $strftimedatetime);
-        
+
         $link = new moodle_url("/iplookup/index.php?ip=$log->ip&user=$log->userid");
         $row[] = $OUTPUT->action_link($link, $log->ip, new popup_action('click', $link, 'iplookup', array('height' => 440, 'width' => 700)));
 
@@ -3296,7 +3296,7 @@ function get_section_name(stdClass $course, stdClass $section) {
 
 /**
  * Gets the generic section name for a courses section.
- * 
+ *
  * @param string $format Course format ID e.g. 'weeks' $course->format
  * @param stdClass $section Section object from database
  * @return Display name that the course format prefers, e.g. "Week 2"
@@ -3537,21 +3537,6 @@ function update_course($data) {
     }
 
     return false;
-}
-
-function get_course_by_id ($id) {
-    global $DB;
-    return $DB->get_record('course', array('id' => $id));
-}
-
-function get_course_by_shortname ($shortname) {
-    global $DB;
-    return $DB->get_record('course', array('shortname' => $shortname));
-}
-
-function get_course_by_idnumber ($idnumber) {
-    global $DB;
-    return $DB->get_record('course', array('idnumber' => $idnumber));
 }
 
 /**

@@ -60,9 +60,7 @@ if (!$cm = get_coursemodule_from_instance('wiki', $wiki->id)) {
     print_error('invalidcoursemodule');
 }
 
-if (!$course = get_course_by_id($cm->course)) {
-    print_error('coursemisconf');
-}
+$course = $DB->get_record('course', array('id'=>$cm->course), '*', MUST_EXIST);
 
 if ($compare >= $comparewith) {
     print_error("A page version can only be compared with an older version.");
