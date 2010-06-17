@@ -311,7 +311,7 @@ $CFG->httpswwwroot  = $CFG->wwwroot;
 
 //We need dataroot before lang download
 if (!empty($options['dataroot'])) {
-    $CFG->dataroot = clean_param($options['dataroot'], PARAM_SAFEPATH);
+    $CFG->dataroot = $options['dataroot'];
 }
 if ($interactive) {
     cli_separator();
