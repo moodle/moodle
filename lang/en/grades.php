@@ -500,7 +500,6 @@ $string['percentdescending'] = 'Sort by percent descending';
 $string['percentshort'] = '%';
 $string['plusfactor'] = 'Offset';
 $string['plusfactor_help'] = 'The offset is a number that is added to every grade for this grade item, after the multiplicator is applied.';
-$string['plusfactorhelp'] = 'Number that will be added to every grade for this grade item, after the Multiplicator is applied.';
 $string['points'] = 'points';
 $string['pointsascending'] = 'Sort by points ascending';
 $string['pointsdescending'] = 'Sort by points descending';

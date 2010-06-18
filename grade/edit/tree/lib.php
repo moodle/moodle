@@ -1048,7 +1048,7 @@ class grade_edit_tree_column_plusfactor extends grade_edit_tree_column {
     public function get_header_cell() {
         global $OUTPUT;
         $headercell = clone($this->headercell);
-        $headercell->text = get_string('plusfactor', 'grades').$OUTPUT->old_help_icon('plusfactor', 'plusfactor', 'grade');
+        $headercell->text = get_string('plusfactor', 'grades').$OUTPUT->help_icon('plusfactor', 'grades');
         return $headercell;
     }
 
