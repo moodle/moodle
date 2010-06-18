@@ -539,7 +539,6 @@ $string['savechanges'] = 'Save changes';
 $string['savepreferences'] = 'Save preferences';
 $string['scaleconfirmdelete'] = 'Are you sure you wish to delete the scale "{$a}"?';
 $string['scaledpct'] = 'Scaled %';
-$string['scalestandardhelp'] = 'A standard scale is one that is available site-wide, for all courses.';
 $string['seeallcoursegrades'] = 'See all course grades';
 $string['selectalloroneuser'] = 'Select all or one user';
 $string['selectauser'] = 'Select a user';
