@@ -33,7 +33,7 @@ class edit_letter_form extends moodleform {
         // Only show "override site defaults" checkbox if editing the course grade letters
         if (!$admin) {
             $mform->addElement('checkbox', 'override', get_string('overridesitedefaultgradedisplaytype', 'grades'));
-            $mform->setHelpButton('override', array('overridesitedefaultgradedisplaytype', get_string('overridesitedefaultgradedisplaytype', 'grades'), 'grade'));
+            $mform->addHelpButton('override', 'overridesitedefaultgradedisplaytype', 'grades');
         }
 
         $gradeletter       = get_string('gradeletter', 'grades');

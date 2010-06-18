@@ -489,7 +489,6 @@ $string['overriddenhelp'] = 'When on, the overridden flag prevents any future at
 $string['overriddennotice'] = 'Your final grade from this activity was manually adjusted.';
 $string['overridesitedefaultgradedisplaytype'] = 'Override site defaults';
 $string['overridesitedefaultgradedisplaytype_help'] = 'If ticked, grade letters and boundaries for the course may be set, rather than using the site defaults.';
-$string['overridesitedefaultgradedisplaytypehelp'] = 'Tick this checkbox to enable the overriding of the site defaults for the display of grades in the gradebook. This activates form elements allowing you to define the grade letters and boundaries of your choice.';
 $string['parentcategory'] = 'Parent category';
 $string['pctoftotalgrade'] = '% of total grade';
 $string['percent'] = 'Percent';
