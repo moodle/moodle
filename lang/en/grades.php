@@ -129,7 +129,6 @@ $string['confighiddenasdate'] = 'If user can not see hidden grades show date of 
 $string['confighideforcedsettings'] = 'Do not show forced settings in grading UI.';
 $string['configincludescalesinaggregation'] = 'You can change whether scales are to be included as numbers in all aggregated grades across all gradebooks in all courses. CAUTION: changing this setting will force all aggregated grades to be recalculated.';
 $string['configprofilereport'] = 'Grade report used on user profile page.';
-$string['configrangesdisplaytype'] = 'Specifies how to display ranges. If Inherit is selected, the display type for each column is used.';
 $string['configshowactivityicons'] = 'Whether to show activity icons next to activity names.';
 $string['configshowaverages'] = 'Whether to show the mean for each column.';
 $string['configshowcalculations'] = 'Whether to show calculator icons near each grade item and category, tooltips over calculated items and a visual indicator that a column is calculated.';

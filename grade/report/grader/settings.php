@@ -76,7 +76,7 @@ $settings->add(new admin_setting_configselect('grade_report_averagesdisplaytype'
                                                 GRADE_DISPLAY_TYPE_LETTER => $strletter)));
 
 $settings->add(new admin_setting_configselect('grade_report_rangesdisplaytype', get_string('rangesdisplaytype', 'grades'),
-                                          get_string('configrangesdisplaytype', 'grades'), GRADE_REPORT_PREFERENCE_INHERIT,
+                                          get_string('rangesdisplaytype_help', 'grades'), GRADE_REPORT_PREFERENCE_INHERIT,
                                           array(GRADE_REPORT_PREFERENCE_INHERIT => $strinherit,
                                                 GRADE_DISPLAY_TYPE_REAL => $strreal,
                                                 GRADE_DISPLAY_TYPE_PERCENTAGE => $strpercentage,
