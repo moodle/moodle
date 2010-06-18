@@ -77,17 +77,14 @@ class community_hub_search_form extends moodleform {
                     $hubdescription,
                     array('class' => $hub['trusted']?'hubtrusted':'hubnottrusted'));
 
-            $radiotitle = '';
             if (empty($firsthub)) {
-                $radiotitle = get_string('selecthub', 'block_community');                             
-            }
-            $mform->addElement('radio','huburl',$radiotitle, $hubdescription, $hub['url']);
-            if (empty($firsthub)) {
-                $mform->addHelpButton('huburl', 'selecthub', 'block_community');
-                 $mform->setDefault('huburl', true);
+                $mform->addElement('radio','huburl',get_string('selecthub', 'block_community'),
+                        $hubdescription, $hub['url']);
+                $mform->setDefault('huburl', HUB_MOODLEORGHUBURL);
                 $firsthub = true;
+            } else {
+                $mform->addElement('radio','huburl','', $hubdescription, $hub['url']);
             }
-
         }
 
         //display enrol/download select box if the USER has the download capability
