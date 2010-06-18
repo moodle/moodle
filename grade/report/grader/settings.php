@@ -25,7 +25,7 @@ $settings->add(new admin_setting_configtext('grade_report_studentsperpage', get_
                                         get_string('configstudentsperpage', 'grades'), 100));
 
 $settings->add(new admin_setting_configcheckbox('grade_report_quickgrading', get_string('quickgrading', 'grades'),
-                                            get_string('configquickgrading', 'grades'), 1));
+                                            get_string('quickgrading_help', 'grades'), 1));
 
 $settings->add(new admin_setting_configcheckbox('grade_report_showquickfeedback', get_string('quickfeedback', 'grades'),
                                             get_string('configshowquickfeedback', 'grades'), 0));
