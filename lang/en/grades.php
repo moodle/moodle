@@ -128,7 +128,6 @@ $string['configgradepublishing'] = 'Enable publishing in exports and imports: Ex
 $string['confighiddenasdate'] = 'If user can not see hidden grades show date of submission instead of \'-\'.';
 $string['confighideforcedsettings'] = 'Do not show forced settings in grading UI.';
 $string['configincludescalesinaggregation'] = 'You can change whether scales are to be included as numbers in all aggregated grades across all gradebooks in all courses. CAUTION: changing this setting will force all aggregated grades to be recalculated.';
-$string['configmeanselection'] = 'Whether cells with no grade should be included when calculating the mean for each column.';
 $string['configprofilereport'] = 'Grade report used on user profile page.';
 $string['configquickgrading'] = 'Quick grading adds a text input element in each grade cell on the grader report, allowing you to edit many grades at once. You can then click the Update button to perform all these changes at once, instead of one at a time.';
 $string['configrangesdecimalpoints'] = 'Specifies the number of decimal points to display for each range. This setting may be overridden per grading item.';
