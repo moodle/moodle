@@ -45,7 +45,7 @@ $settings->add(new admin_setting_configcheckbox('grade_report_showcalculations',
                                             get_string('showcalculations_help', 'grades'), 0));
 
 $settings->add(new admin_setting_configcheckbox('grade_report_showeyecons', get_string('showeyecons', 'grades'),
-                                            get_string('configshoweyecons', 'grades'), 0));
+                                            get_string('showeyecons_help', 'grades'), 0));
 
 $settings->add(new admin_setting_configcheckbox('grade_report_showaverages', get_string('showaverages', 'grades'),
                                             get_string('showaverages_help', 'grades'), 1));
