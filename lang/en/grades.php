@@ -466,7 +466,6 @@ $string['outcomecategorynew'] = 'New category';
 $string['outcomeconfirmdelete'] = 'Are you sure you wish to delete the outcome "{$a}"?';
 $string['outcomecreate'] = 'Add a new outcome';
 $string['outcomedelete'] = 'Delete Outcome';
-$string['outcomeidhelp'] = 'Specifies the Outcome which this grade item will represent in the gradebook. Only outcomes associated with this course and site-wide outcomes are available';
 $string['outcomeitem'] = 'Outcome item';
 $string['outcomeitemsedit'] = 'Edit outcome item';
 $string['outcomename'] = 'Outcome name';
