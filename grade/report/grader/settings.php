@@ -92,7 +92,7 @@ $settings->add(new admin_setting_configselect('grade_report_averagesdecimalpoint
                                                  '4' => '4',
                                                  '5' => '5')));
 $settings->add(new admin_setting_configselect('grade_report_rangesdecimalpoints', get_string('rangesdecimalpoints', 'grades'),
-                                          get_string('configrangesdecimalpoints', 'grades'), GRADE_REPORT_PREFERENCE_INHERIT,
+                                          get_string('rangesdecimalpoints_help', 'grades'), GRADE_REPORT_PREFERENCE_INHERIT,
                                           array(GRADE_REPORT_PREFERENCE_INHERIT => $strinherit,
                                                  '0' => '0',
                                                  '1' => '1',
