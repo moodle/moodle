@@ -89,7 +89,7 @@ class edit_item_form extends moodleform {
         $mform->disabledIf('gradepass', 'gradetype', 'eq', GRADE_TYPE_TEXT);
 
         $mform->addElement('text', 'multfactor', get_string('multfactor', 'grades'));
-        $mform->setHelpButton('multfactor', array('multfactor', get_string('multfactor', 'grades'), 'grade'), true);
+        $mform->addHelpButton('multfactor', 'multfactor', 'grades');
         $mform->setAdvanced('multfactor');
         $mform->disabledIf('multfactor', 'gradetype', 'eq', GRADE_TYPE_NONE);
         $mform->disabledIf('multfactor', 'gradetype', 'eq', GRADE_TYPE_TEXT);

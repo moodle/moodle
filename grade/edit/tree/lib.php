@@ -1007,7 +1007,7 @@ class grade_edit_tree_column_multfactor extends grade_edit_tree_column {
     public function get_header_cell() {
         global $OUTPUT;
         $headercell = clone($this->headercell);
-        $headercell->text = get_string('multfactor', 'grades').$OUTPUT->old_help_icon('multfactor', 'multfactor', 'grade');
+        $headercell->text = get_string('multfactor', 'grades').$OUTPUT->help_icon('multfactor', 'grades');
         return $headercell;
     }
 

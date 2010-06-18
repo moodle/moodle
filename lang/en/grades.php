@@ -423,7 +423,6 @@ $string['moveselectedto'] = 'Move selected items to';
 $string['movingelement'] = 'Moving {$a}';
 $string['multfactor'] = 'Multiplicator';
 $string['multfactor_help'] = 'The multiplicator is the factor by which all grades for this grade item will be multiplied, with a maximum value of the maximum grade. For example, if the multiplicator is 2 and the maximum grade is 100, then all grades less than 50 are multiplied by 2, and all grades 50 and above are changed to 100.';
-$string['multfactorhelp'] = 'Factor by which all grades for this grade item will be multiplied.';
 $string['mypreferences'] = 'My preferences';
 $string['myreportpreferences'] = 'My report preferences';
 $string['navmethod'] = 'Navigation method';
