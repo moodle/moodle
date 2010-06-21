@@ -95,6 +95,7 @@ $string['errorbadimageheightwidth'] = 'The image should have a maximum size of {
 $string['errorcourseinfo'] = 'An error occured when retrieving course metadata from the hub ({$a}). Please try again to retrieve the course metadata from the hub by reloading this page later. Otherwise you can decide to continue the registration process with the following default metadata. ';
 $string['errorcoursepublish'] = 'An error occured during the course publication ({$a}). Please try again later.';
 $string['errorcoursewronglypublished'] = 'A publication error has been returned by the hub. Please try again later.';
+$string['errorhublisting'] = 'An error occured when retrieving the hub listing from Moodle.org, please try again later. ({$a})';
 $string['errorlangnotrecognized'] = 'Language code is unknown by Moodle. Please contact {$a}';
 $string['errorregistration'] = 'An error occured during registration, please try again later. ({$a})';
 $string['existingscreenshotnumber'] = '{$a} existing screenshots. You will be able to see these screenshots on this page, only once the hub administrator enables your course.';
