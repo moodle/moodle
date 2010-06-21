@@ -449,7 +449,7 @@ function grade_report_user_settings_definition(&$mform) {
     }
 
     $mform->addElement('select', 'report_user_showpercentage', get_string('showpercentage', 'grades'), $options);
-    $mform->setHelpButton('report_user_showpercentage', array('showpercentage', get_string('showpercentage', 'grades'), 'grade'));
+    $mform->addHelpButton('report_user_showpercentage', 'showpercentage', 'grades');
 
     $options = array(-1 => get_string('default', 'grades'),
                       0 => get_string('shownohidden', 'grades'),
