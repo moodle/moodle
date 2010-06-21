@@ -37,9 +37,13 @@ class enrol_cohort_addinstance_form extends moodleform {
 
         $enrol = enrol_get_plugin('cohort');
 
-        //TODO: add only cohorts from parent contexts of this course
         $cohorts = array('' => get_string('choosedots'));
-        $rs = $DB->get_recordset('cohort', array(), 'name ASC', 'id, name, contextid');
+        list($sqlparents, $params) = $DB->get_in_or_equal(get_parent_contexts($coursecontext));
+        $sql = "SELECT id, name, contextid
+                  FROM {cohort}
+                 WHERE contextid $sqlparents
+              ORDER BY name ASC";
+        $rs = $DB->get_recordset_sql($sql, $params);
         foreach ($rs as $c) {
             $context = get_context_instance_by_id($c->contextid);
             if (!has_capability('moodle/cohort:view', $context)) {
