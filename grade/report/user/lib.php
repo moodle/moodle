@@ -463,7 +463,7 @@ function grade_report_user_settings_definition(&$mform) {
     }
 
     $mform->addElement('select', 'report_user_showhiddenitems', get_string('showhiddenitems', 'grades'), $options);
-    $mform->setHelpButton('report_user_showhiddenitems', array('showhiddenitems', get_string('showhiddenitems', 'grades'), 'grade'));
+    $mform->addHelpButton('report_user_showhiddenitems', 'showhiddenitems', 'grades');
 
     //showtotalsifcontainhidden
     $options = array(-1 => get_string('default', 'grades'),

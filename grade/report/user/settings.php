@@ -23,7 +23,7 @@ $settings->add(new admin_setting_configcheckbox('grade_report_user_showpercentag
 $options = array(0 => get_string('shownohidden', 'grades'),
                  1 => get_string('showhiddenuntilonly', 'grades'),
                  2 => get_string('showallhidden', 'grades'));
-$settings->add(new admin_setting_configselect('grade_report_user_showhiddenitems', get_string('showhiddenitems', 'grades'), get_string('configshowhiddenitems', 'grades'), 1, $options));
+$settings->add(new admin_setting_configselect('grade_report_user_showhiddenitems', get_string('showhiddenitems', 'grades'), get_string('showhiddenitems_help', 'grades'), 1, $options));
 
 $settings->add(new admin_setting_configselect('grade_report_user_showtotalsifcontainhidden', get_string('hidetotalifhiddenitems', 'grades'),
                                                   get_string('hidetotalifhiddenitems_help', 'grades'), GRADE_REPORT_HIDE_TOTAL_IF_CONTAINS_HIDDEN,
