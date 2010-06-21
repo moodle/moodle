@@ -84,17 +84,13 @@ if(!empty($processed)) {
         $ids = explode(',', $info);
         if(!empty($ids[2])) {
             $context = get_context_instance(CONTEXT_COURSE, $ids[1]);
-            if( role_assign(5, $ids[0], 0, $context->id) ) {
-                continue;
-            }
+            role_assign(5, $ids[0], $context->id);
         } else {
             if( empty($ids[1] ) ) {
                 continue;
             }
             $context = get_context_instance(CONTEXT_COURSE, $ids[1]);
-            if( role_unassign(5, $ids[0], 0, $context->id) ) {
-                continue;
-            }
+            role_unassign(5, $ids[0], $context->id);
         }
     }
     redirect($return, get_string('changessaved'));
@@ -104,14 +100,12 @@ if(!empty($processed)) {
 echo '<form id="multienrol" name="multienrol" method="post" action="user_bulk_enrol.php">';
 echo '<input type="hidden" name="processed" value="yes" />';
 $count = 0;
-foreach($users as $user)
-{
+foreach($users as $user) {
     $temparray = array (
         '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$user->id.'&amp;course='.SITEID.'">'.$user->fullname.'</a>'
     );
-    $mycourses = get_my_courses($user->id);
-    foreach($courses as $acourse)
-    {
+    $mycourses = enrol_get_users_courses($user->id, false);
+    foreach($courses as $acourse) {
         $state = '';
         if (isset($mycourses[$acourse->id])) {
             $state = 'checked="checked"';

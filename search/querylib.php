@@ -398,7 +398,7 @@ class SearchQuery {
       }
             
         // first check course compatibility against user : enrolled users to that course can see. 
-        $myCourses = get_my_courses($user->id);
+        $myCourses = enrol_get_users_courses($user->id, true);
         $unenroled = !in_array($course_id, array_keys($myCourses));
         
         // if guests are allowed, logged guest can see

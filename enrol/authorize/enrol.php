@@ -1,6 +1,5 @@
 <?php
 
-require_once($CFG->dirroot.'/enrol/enrol.class.php');
 require_once($CFG->dirroot.'/enrol/authorize/const.php');
 require_once($CFG->dirroot.'/enrol/authorize/localfuncs.php');
 require_once($CFG->dirroot.'/enrol/authorize/authorizenet.class.php');
@@ -49,7 +48,7 @@ class enrolment_plugin_authorize
                 print_error('httpsrequired', 'enrol_authorize');
             } else {
                 $wwwsroot = str_replace('http:','https:', $CFG->wwwroot);
-                redirect("$wwwsroot/course/enrol.php?id=$course->id");
+                redirect("$wwwsroot/enrol/index.php?id=$course->id");
                 exit;
             }
         }
@@ -685,7 +684,8 @@ class enrolment_plugin_authorize
                     $timeend = $order->settletime + $course->enrolperiod;
                 }
                 $user = $DB->get_record('user', array('id'=>$order->userid));
-                if (role_assign($role->id, $user->id, 0, $context->id, $timestart, $timeend, 0, 'authorize')) {
+                // TODO: do some real enrolment here
+                if (role_assign($role->id, $user->id, $context->id, 'enrol_authorize')) {
                     $this->log .= "User($user->id) has been enrolled to course($course->id).\n";
                     if (!empty($CFG->enrol_mailstudents)) {
                         $sendem[] = $order->id;

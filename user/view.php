@@ -262,7 +262,7 @@ if (!isset($hiddenfields['groups'])) {
 
 // Show other courses they may be in
 if (!isset($hiddenfields['mycourses'])) {
-    if ($mycourses = get_my_courses($user->id, 'visible DESC,sortorder ASC', null, false, 21)) {
+    if ($mycourses = enrol_get_users_courses($user->id, true, NULL, 'visible DESC,sortorder ASC')) {
         $shown = 0;
         $courselisting = '';
         foreach ($mycourses as $mycourse) {
@@ -270,9 +270,10 @@ if (!isset($hiddenfields['mycourses'])) {
                 if ($mycourse->id != $course->id){
                     $class = '';
                     if ($mycourse->visible == 0) {
-                        // get_my_courses will filter courses $USER cannot see
-                        // if we get one with visible 0 it just means it's hidden
-                        // ... but not from $USER
+                        $ccontext = get_context_instance(CONTEXT_COURSE, $mycourse->id);
+                        if (!has_capability('moodle/course:viewhiddencourses', $ccontext)) {
+                            continue;
+                        }
                         $class = 'class="dimmed"';
                     }
                     $courselisting .= "<a href=\"{$CFG->wwwroot}/user/view.php?id={$user->id}&amp;course={$mycourse->id}\" $class >"

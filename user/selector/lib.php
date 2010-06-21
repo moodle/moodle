@@ -53,7 +53,7 @@ abstract class user_selector_base {
     protected $preserveselected = false;
     /** @var boolean If only one user matches the search, should we select them automatically. */
     protected $autoselectunique = false;
-    /** @var boolean When searching, do we only match the starts of fields (better performace)
+    /** @var boolean When searching, do we only match the starts of fields (better performance)
      * or do we match occurrences anywhere? */
     protected $searchanywhere = false;
     /** @var mixed This is used by get selected users */
@@ -62,7 +62,7 @@ abstract class user_selector_base {
     /**  @var boolean Used to ensure we only output the search options for one user selector on
      * each page. */
     private static $searchoptionsoutput = false;
-    
+
     /** @var array JavaScript YUI3 Module definition */
     protected static $jsmodule = array(
                 'name' => 'user_selector',
@@ -643,7 +643,7 @@ abstract class user_selector_base {
     }
 }
 
-// User selectors for managing group memebers ==================================
+// User selectors for managing group members ==================================
 
 /**
  * Base class to avoid duplicating code.
@@ -821,8 +821,9 @@ END;
                         AND $searchcondition";
         $orderby = "ORDER BY u.lastname, u.firstname";
 
-        $params = array_merge($searchparams, $roleparams, array('groupid'=>$this->groupid), $searchparams);
+        $params = array_merge($searchparams, $roleparams, $enrolparams);
         $params['courseid'] = $this->courseid;
+        $params['groupid']  = $this->groupid;
 
         if (!$this->is_validating()) {
             $potentialmemberscount = $DB->count_records_sql("SELECT COUNT(DISTINCT u.id) $sql", $params);
@@ -835,7 +836,7 @@ END;
         $roles =  groups_calculate_role_people($rs, $context);
 
         //don't hold onto user IDs if we're doing validation
-        if( empty($this->validatinguserids) ) {
+        if (empty($this->validatinguserids) ) {
             if($roles) {
                 foreach($roles as $k=>$v) {
                     if($v) {

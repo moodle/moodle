@@ -897,78 +897,6 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint($result, 2008101300);
     }
 
-    /// New table for storing which roles can be assigned in which contexts.
-    if ($result && $oldversion < 2008110601) {
-
-    /// Define table role_context_levels to be created
-        $table = new xmldb_table('role_context_levels');
-
-    /// Adding fields to table role_context_levels
-        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
-        $table->add_field('roleid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
-        $table->add_field('contextlevel', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
-
-    /// Adding keys to table role_context_levels
-        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
-        $table->add_key('contextlevel-roleid', XMLDB_KEY_UNIQUE, array('contextlevel', 'roleid'));
-        $table->add_key('roleid', XMLDB_KEY_FOREIGN, array('roleid'), 'role', array('id'));
-
-    /// Conditionally launch create table for role_context_levels
-        if (!$dbman->table_exists($table)) {
-            $dbman->create_table($table);
-        }
-
-    /// Main savepoint reached
-        upgrade_main_savepoint($result, 2008110601);
-    }
-
-    /// Now populate the role_context_levels table with the defaults that match
-    /// moodle_install_roles, and any other combinations that exist in this system.
-    if ($result && $oldversion < 2008110602) {
-        $roleids = $DB->get_records_menu('role', array(), '', 'shortname,id');
-
-    /// Defaults, should match moodle_install_roles.
-        $rolecontextlevels = array();
-        if (isset($roleids['coursecreator'])) {
-            $rolecontextlevels[$roleids['coursecreator']] = get_default_contextlevels('coursecreator');
-        }
-        if (isset($roleids['editingteacher'])) {
-            $rolecontextlevels[$roleids['editingteacher']] = get_default_contextlevels('editingteacher');
-        }
-        if (isset($roleids['teacher'])) {
-            $rolecontextlevels[$roleids['teacher']] = get_default_contextlevels('teacher');
-        }
-        if (isset($roleids['student'])) {
-            $rolecontextlevels[$roleids['student']] = get_default_contextlevels('student');
-        }
-        if (isset($roleids['guest'])) {
-            $rolecontextlevels[$roleids['guest']] = get_default_contextlevels('guest');
-        }
-        if (isset($roleids['user'])) {
-            $rolecontextlevels[$roleids['user']] = get_default_contextlevels('user');
-        }
-
-    /// See what other role assignments are in this database, extend the allowed
-    /// lists to allow them too.
-        $existingrolecontextlevels = $DB->get_recordset_sql('SELECT DISTINCT ra.roleid, con.contextlevel FROM
-                {role_assignments} ra JOIN {context} con ON ra.contextid = con.id');
-        foreach ($existingrolecontextlevels as $rcl) {
-            if (!isset($rolecontextlevels[$rcl->roleid])) {
-                $rolecontextlevels[$rcl->roleid] = array($rcl->contextlevel);
-            } else if (!in_array($rcl->contextlevel, $rolecontextlevels[$rcl->roleid])) {
-                $rolecontextlevels[$rcl->roleid][] = $rcl->contextlevel;
-            }
-        }
-
-    /// Put the data into the database.
-        foreach ($rolecontextlevels as $roleid => $contextlevels) {
-            set_role_contextlevels($roleid, $contextlevels);
-        }
-
-    /// Main savepoint reached
-        upgrade_main_savepoint($result, 2008110602);
-    }
-
     /// Drop the deprecated teacher, teachers, student and students columns from the course table.
     if ($result && $oldversion < 2008111200) {
         $table = new xmldb_table('course');
@@ -1128,14 +1056,6 @@ function xmldb_main_upgrade($oldversion) {
     /// Changes to modinfo mean we need to rebuild course cache
         require_once($CFG->dirroot . '/course/lib.php');
         rebuild_course_cache(0, true);
-
-    /// For developer upgrades, turn on the conditional activities and completion
-    /// features automatically (to gain more testing)
-//TODO: remove before 2.0 final!
-        if (debugging('', DEBUG_DEVELOPER)) {
-            set_config('enableavailability', 1);
-            set_config('enablecompletion', 1);
-        }
 
     /// Main savepoint reached
         upgrade_main_savepoint($result, 2008121701);
@@ -3304,14 +3224,6 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
             $DB->delete_records('role_capabilities', array('capability'=>'moodle/site:config', 'roleid'=>$manager->id)); // only site admins may configure servers
             // note: doanything and legacy caps are deleted automatically, they get moodle/course:view later at the end of the upgrade
 
-            // set usable contexts
-            $DB->delete_records('role_context_levels', array('roleid'=>$manager->id));
-            $assignlevels = array(CONTEXT_SYSTEM, CONTEXT_COURSECAT, CONTEXT_COURSE);
-            foreach ($assignlevels as $assignlevel) {
-                $record = (object)array('roleid'=>$manager->id, 'contextlevel'=>$assignlevel);
-                $DB->insert_record('role_context_levels', $record);
-            }
-
             // remove manager role assignments bellow the course context level - admin role was never intended for activities and blocks,
             // the problem is that those assignments would not be visible after upgrade and old style admins in activities make no sense anyway
             $DB->delete_records_select('role_assignments', "roleid = :manager AND contextid IN (SELECT id FROM {context} WHERE contextlevel > 50)", array('manager'=>$manager->id));
@@ -3385,33 +3297,99 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
                     unset_config('guestroleid');
                 }
             } else {
-                upgrade_log(UPGRADE_LOG_NOTICE, null, 'Role specified in Default guest role (guestroleid) doeas not exist, setting cleared.');
+                upgrade_log(UPGRADE_LOG_NOTICE, null, 'Role specified in Default guest role (guestroleid) does not exist, setting cleared.');
                 unset_config('guestroleid');
             }
         }
         // remove all roles of the guest account - the only way to change it is to override the guest role, sorry
-        // the guest account gets all the role assignemnts on the fly whcih works fine in has_capability(),
+        // the guest account gets all the role assignments on the fly which works fine in has_capability(),
         $DB->delete_records_select('role_assignments', "userid IN (SELECT id FROM {user} WHERE username = 'guest')");
 
         upgrade_main_savepoint($result, 2010033102.08);
     }
 
+    /// New table for storing which roles can be assigned in which contexts.
     if ($result && $oldversion < 2010033102.09) {
-        // For MDL-17501. Ensure that any role that has moodle/course:update also has moodle/course:visibility.
-        // Get the roles with 'moodle/course:update'.
-        $systemcontext = get_context_instance(CONTEXT_SYSTEM);
-        $roles = get_roles_with_capability('moodle/course:update', CAP_ALLOW, $systemcontext);
 
-        // Give those roles 'moodle/course:visibility'.
-        foreach ($roles as $role) {
-            assign_capability('moodle/course:visibility', CAP_ALLOW, $role->id, $systemcontext->id);
+    /// Define table role_context_levels to be created
+        $table = new xmldb_table('role_context_levels');
+
+    /// Adding fields to table role_context_levels
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('roleid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+        $table->add_field('contextlevel', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+
+    /// Adding keys to table role_context_levels
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_key('contextlevel-roleid', XMLDB_KEY_UNIQUE, array('contextlevel', 'roleid'));
+        $table->add_key('roleid', XMLDB_KEY_FOREIGN, array('roleid'), 'role', array('id'));
+
+    /// Conditionally launch create table for role_context_levels
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
         }
 
-        // Force all sessions to refresh access data.
-        mark_context_dirty($systemcontext->path);
+    /// Main savepoint reached
+        upgrade_main_savepoint($result, 2010033102.09);
+    }
+
+    if ($result && $oldversion < 2010033102.10) {
+        // Now populate the role_context_levels table with the default values
+        // NOTE: do not use accesslib methods here
+
+        $rolecontextlevels = array();
+        $defaults = array('manager'        => array(CONTEXT_SYSTEM, CONTEXT_COURSECAT, CONTEXT_COURSE),
+                          'coursecreator'  => array(CONTEXT_SYSTEM, CONTEXT_COURSECAT),
+                          'editingteacher' => array(CONTEXT_COURSE, CONTEXT_MODULE),
+                          'teacher'        => array(CONTEXT_COURSE, CONTEXT_MODULE),
+                          'student'        => array(CONTEXT_COURSE, CONTEXT_MODULE),
+                          'guest'          => array(),
+                          'user'           => array(),
+                          'frontpage'      => array());
+
+        $roles = $DB->get_records('role', array(), '', 'id, archetype');
+        foreach ($roles as $role) {
+            if (isset($defaults[$role->archetype])) {
+                $rolecontextlevels[$role->id] = $defaults[$role->archetype];
+            }
+        }
+
+        // add roles without archetypes, it may contain weird things, but we can not fix them
+        $sql = "SELECT DISTINCT ra.roleid, con.contextlevel
+                  FROM {role_assignments} ra
+                  JOIN {context} con ON ra.contextid = con.id";
+        $existingrolecontextlevels = $DB->get_recordset_sql($sql);
+        foreach ($existingrolecontextlevels as $rcl) {
+            if (isset($roleids[$rcl->roleid])) {
+                continue;
+            }
+            if (!isset($rolecontextlevels[$rcl->roleid])) {
+                $rolecontextlevels[$rcl->roleid] = array($rcl->contextlevel);
+            } else if (!in_array($rcl->contextlevel, $rolecontextlevels[$rcl->roleid])) {
+                $rolecontextlevels[$rcl->roleid][] = $rcl->contextlevel;
+            }
+        }
+        $existingrolecontextlevels->close();
+
+        // Put the data into the database.
+        $rcl = new object();
+        foreach ($rolecontextlevels as $roleid => $contextlevels) {
+            $rcl->roleid = $roleid;
+            foreach ($contextlevels as $level) {
+                $rcl->contextlevel = $level;
+                $DB->insert_record('role_context_levels', $rcl, false);
+            }
+        }
+
+        // release memory!!
+        unset($roles);
+        unset($defaults);
+        unset($rcl);
+        unset($existingrolecontextlevels);
+        unset($rolecontextlevels);
 
         // Main savepoint reached
-        upgrade_main_savepoint($result, 2010033102.09);
+        upgrade_main_savepoint($result, 2010033102.10);
     }
 
     if ($result && $oldversion < 2010040700) {
@@ -3564,7 +3542,7 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         $table->add_field('idnumber', XMLDB_TYPE_CHAR, '100', null, null, null, null);
         $table->add_field('description', XMLDB_TYPE_TEXT, 'small', null, null, null, null);
         $table->add_field('descriptionformat', XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
-        $table->add_field('component', XMLDB_TYPE_CHAR, '100', null, null, null, null);
+        $table->add_field('component', XMLDB_TYPE_CHAR, '100', null, XMLDB_NOTNULL, null, null);
         $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
         $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
 
@@ -4117,8 +4095,7 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         upgrade_main_savepoint($result, 2010052200);
     }
 
-
-     if ($result && $oldversion < 2010052401) {
+    if ($result && $oldversion < 2010052401) {
 
     /// Define field status to be added to course_published
         $table = new xmldb_table('course_published');
@@ -4178,11 +4155,668 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
     /// Main savepoint reached
         upgrade_main_savepoint($result, 2010052801);
     }
+
+    if ($result && $oldversion < 2010061900.01) {
+        // Define table enrol to be created
+        $table = new xmldb_table('enrol');
+
+        // Adding fields to table enrol
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('enrol', XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('status', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+        $table->add_field('courseid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+        $table->add_field('sortorder', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+        $table->add_field('name', XMLDB_TYPE_CHAR, '255', null, null, null, null);
+        $table->add_field('enrolperiod', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, '0');
+        $table->add_field('enrolstartdate', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, '0');
+        $table->add_field('enrolenddate', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, '0');
+        $table->add_field('expirynotify', XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, null, null, '0');
+        $table->add_field('expirythreshold', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, '0');
+        $table->add_field('notifyall', XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, null, null, '0');
+        $table->add_field('password', XMLDB_TYPE_CHAR, '50', null, null, null, null);
+        $table->add_field('cost', XMLDB_TYPE_CHAR, '20', null, null, null, null);
+        $table->add_field('currency', XMLDB_TYPE_CHAR, '3', null, null, null, null);
+        $table->add_field('roleid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, '0');
+        $table->add_field('customint1', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
+        $table->add_field('customint2', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
+        $table->add_field('customint3', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
+        $table->add_field('customint4', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
+        $table->add_field('customchar1', XMLDB_TYPE_CHAR, '255', null, null, null, null);
+        $table->add_field('customchar2', XMLDB_TYPE_CHAR, '255', null, null, null, null);
+        $table->add_field('customdec1', XMLDB_TYPE_NUMBER, '12, 7', null, null, null, null);
+        $table->add_field('customdec2', XMLDB_TYPE_NUMBER, '12, 7', null, null, null, null);
+        $table->add_field('customtext1', XMLDB_TYPE_TEXT, 'big', null, null, null, null);
+        $table->add_field('customtext2', XMLDB_TYPE_TEXT, 'big', null, null, null, null);
+        $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+        $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+
+        // Adding keys to table enrol
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_key('courseid', XMLDB_KEY_FOREIGN, array('courseid'), 'course', array('id'));
+
+        // Adding indexes to table enrol
+        $table->add_index('enrol', XMLDB_INDEX_NOTUNIQUE, array('enrol'));
+
+        // launch create table for enrol
+        $dbman->create_table($table);
+
+        // Main savepoint reached
+        upgrade_main_savepoint($result, 2010061900.01);
+    }
+
+    if ($result && $oldversion < 2010061900.02) {
+        // Define table course_participant to be created
+        $table = new xmldb_table('user_enrolments');
+
+        // Adding fields to table course_participant
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('status', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+        $table->add_field('enrolid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+        $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+        $table->add_field('timestart', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+        $table->add_field('timeend', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '2147483647');
+        $table->add_field('modifierid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+        $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+
+        // Adding keys to table course_participant
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_key('enrolid', XMLDB_KEY_FOREIGN, array('enrolid'), 'enrol', array('id'));
+        $table->add_key('userid', XMLDB_KEY_FOREIGN, array('userid'), 'user', array('id'));
+        $table->add_key('modifierid', XMLDB_KEY_FOREIGN, array('modifierid'), 'user', array('id'));
+
+
+        // Adding indexes to table user_enrolments
+        $table->add_index('enrolid-userid', XMLDB_INDEX_UNIQUE, array('enrolid', 'userid'));
+
+        // Launch create table for course_participant
+        $dbman->create_table($table);
+
+        // Main savepoint reached
+        upgrade_main_savepoint($result, 2010061900.02);
+    }
+
+    if ($result && $oldversion < 2010061900.03) {
+        // Define field itemid to be added to role_assignments
+        $table = new xmldb_table('role_assignments');
+        $field = new xmldb_field('itemid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 0, 'enrol');
+
+        // Launch add field itemid
+        $dbman->add_field($table, $field);
+
+        // The new enrol plugins may assign one role several times in one context,
+        // if we did not allow it we would have big problems with roles when unenrolling
+        $table = new xmldb_table('role_assignments');
+        $index = new xmldb_index('contextid-roleid-userid', XMLDB_INDEX_UNIQUE, array('contextid', 'roleid', 'userid'));
+
+        // Conditionally launch drop index contextid-roleid-userid
+        if ($dbman->index_exists($table, $index)) {
+            $dbman->drop_index($table, $index);
+        }
+
+        // Main savepoint reached
+        upgrade_main_savepoint($result, 2010061900.03);
+    }
+
+    if ($result && $oldversion < 2010061900.04) {
+        // there is no default course role any more, each enrol plugin has to handle it separately
+        if (!empty($CFG->defaultcourseroleid)) {
+            $sql = "UPDATE {course} SET defaultrole = :default WHERE defaultrole = 0";
+            $params = array('default' => $CFG->defaultcourseroleid);
+            $DB->execute($sql, $params);
+        }
+        unset_config('defaultcourseroleid');
+
+        // Main savepoint reached
+        upgrade_main_savepoint($result, 2010061900.04);
+    }
+
+    if ($result && $oldversion < 2010061900.05) {
+        // make sure enrol settings make actually sense and tweak defaults a bit
+
+        $sqlempty = $DB->sql_empty();
+
+        // set course->enrol to default value so that other upgrade code is simpler
+        $defaultenrol = empty($CFG->enrol) ? 'manual' : $CFG->enrol;
+        $sql = "UPDATE {course} SET enrol = ? WHERE enrol = '$sqlempty'";
+        $DB->execute($sql, array($defaultenrol));
+        unset_config('enrol');
+
+        if (!isset($CFG->enrol_plugins_enabled) or empty($CFG->enrol_plugins_enabled)) {
+            set_config('enrol_plugins_enabled', 'manual');
+        } else {
+            $enabledplugins = explode(',', $CFG->enrol_plugins_enabled);
+            $enabledplugins = array_unique($enabledplugins);
+            set_config('enrol_plugins_enabled', implode(',', $enabledplugins));
+        }
+
+        // Main savepoint reached
+        upgrade_main_savepoint($result, 2010061900.05);
+    }
+
+    if ($result && $oldversion < 2010061900.06) {
+        $sqlempty = $DB->sql_empty();
+        $params = array('siteid'=>SITEID);
+
+        // enable manual in all courses
+        $sql = "INSERT INTO {enrol} (enrol, status, courseid, sortorder, enrolperiod, expirynotify, expirythreshold, notifyall, roleid, timecreated, timemodified)
+                SELECT 'manual', 0, id, 0, enrolperiod, expirynotify, expirythreshold, notifystudents, defaultrole, timecreated, timemodified
+                  FROM {course}
+                 WHERE id <> :siteid";
+        $DB->execute($sql, $params);
+
+        // enable self enrol only when course enrollable
+        $sql = "INSERT INTO {enrol} (enrol, status, courseid, sortorder, enrolperiod, enrolstartdate, enrolenddate, expirynotify, expirythreshold,
+                                     notifyall, password, roleid, timecreated, timemodified)
+                SELECT 'self', 0, id, 1, enrolperiod, enrolstartdate, enrolenddate, expirynotify, expirythreshold,
+                       notifystudents, password, defaultrole, timecreated, timemodified
+                  FROM {course}
+                 WHERE enrollable = 1 AND id <> :siteid";
+        $DB->execute($sql, $params);
+
+        // enable guest access if previously allowed - separately with or without password
+        $sql = "INSERT INTO {enrol} (enrol, status, courseid, sortorder, timecreated, timemodified)
+                SELECT 'guest', 0, id, 2, timecreated, timemodified
+                  FROM {course}
+                 WHERE guest = 1 AND id <> :siteid";
+        $DB->execute($sql, $params);
+        $sql = "INSERT INTO {enrol} (enrol, status, courseid, sortorder, password, timecreated, timemodified)
+                SELECT 'guest', 0, id, 2, password, timecreated, timemodified
+                  FROM {course}
+                 WHERE guest = 2 and password <> '$sqlempty' AND id <> :siteid";
+        $DB->execute($sql, $params);
+
+        upgrade_main_savepoint($result, 2010061900.06);
+    }
+
+    if ($result && $oldversion < 2010061900.07) {
+        // now migrate old style "interactive" enrol plugins - we know them by looking into course.enrol
+        $params = array('siteid'=>SITEID);
+        $enabledplugins = explode(',', $CFG->enrol_plugins_enabled);
+        $usedplugins = $DB->get_fieldset_sql("SELECT DISTINCT enrol FROM {course}");
+        foreach ($usedplugins as $plugin) {
+            if ($plugin === 'manual') {
+                continue;
+            }
+            $enabled = in_array($plugin, $enabledplugins) ? 0 : 1; // 0 means active, 1 disabled
+            $sql = "INSERT INTO {enrol} (enrol, status, courseid, sortorder, enrolperiod, enrolstartdate, enrolenddate, expirynotify, expirythreshold,
+                                         notifyall, password, cost, currency, roleid, timecreated, timemodified)
+                    SELECT enrol, $enabled, id, 4, enrolperiod, enrolstartdate, enrolenddate, expirynotify, expirythreshold,
+                           notifystudents, password, cost, currency, defaultrole, timecreated, timemodified
+                      FROM {course}
+                     WHERE enrol = :plugin AND id <> :siteid";
+            $params['plugin'] = $plugin;
+            $DB->execute($sql, $params);
+        }
+        upgrade_main_savepoint($result, 2010061900.07);
+    }
+
+    if ($result && $oldversion < 2010061900.08) {
+        // now migrate the rest - these plugins are not in course.enrol, instead we just look for suspicious role assignments,
+        // unfortunately old enrol plugins were doing sometimes weird role assignments :-(
+
+        // enabled
+        $processed = $DB->get_fieldset_sql("SELECT DISTINCT enrol FROM {enrol}");
+        $enabledplugins = explode(',', $CFG->enrol_plugins_enabled);
+        list($sqlnotprocessed, $params) = $DB->get_in_or_equal($processed, SQL_PARAMS_NAMED, 'np00', false);
+        list($sqlenabled, $params2) = $DB->get_in_or_equal($enabledplugins, SQL_PARAMS_NAMED, 'ena00');
+        $params = array_merge($params, $params2);
+        $params['siteid'] = SITEID;
+        $sql = "INSERT INTO {enrol} (enrol, status, courseid, sortorder, enrolperiod, enrolstartdate, enrolenddate, expirynotify, expirythreshold,
+                                     notifyall, password, cost, currency, roleid, timecreated, timemodified)
+                SELECT DISTINCT ra.enrol, 0, c.id, 5, c.enrolperiod, c.enrolstartdate, c.enrolenddate, c.expirynotify, c.expirythreshold,
+                       c.notifystudents, c.password, c.cost, c.currency, c.defaultrole, c.timecreated, c.timemodified
+                  FROM {course} c
+                  JOIN {context} ctx ON (ctx.instanceid = c.id AND ctx.contextlevel = 50)
+                  JOIN {role_assignments} ra ON (ra.contextid = ctx.id)
+                 WHERE c.id <> :siteid AND ra.enrol $sqlnotprocessed AND ra.enrol $sqlenabled";
+        $DB->execute($sql, $params);
+
+        // disabled
+        $processed = $DB->get_fieldset_sql("SELECT DISTINCT enrol FROM {enrol}");
+        list($sqlnotprocessed, $params) = $DB->get_in_or_equal($processed, SQL_PARAMS_NAMED, 'np00', false);
+        $params = array_merge($params, $params2);
+        $params['siteid'] = SITEID;
+        $sql = "INSERT INTO {enrol} (enrol, status, courseid, sortorder, enrolperiod, enrolstartdate, enrolenddate, expirynotify, expirythreshold,
+                                     notifyall, password, cost, currency, roleid, timecreated, timemodified)
+                SELECT DISTINCT ra.enrol, 1, c.id, 5, c.enrolperiod, c.enrolstartdate, c.enrolenddate, c.expirynotify, c.expirythreshold,
+                       c.notifystudents, c.password, c.cost, c.currency, c.defaultrole, c.timecreated, c.timemodified
+                  FROM {course} c
+                  JOIN {context} ctx ON (ctx.instanceid = c.id AND ctx.contextlevel = 50)
+                  JOIN {role_assignments} ra ON (ra.contextid = ctx.id)
+                 WHERE c.id <> :siteid AND ra.enrol $sqlnotprocessed";
+        $DB->execute($sql, $params);
+
+        upgrade_main_savepoint($result, 2010061900.08);
+    }
+
+    if ($result && $oldversion < 2010061900.09) {
+        // unfortunately there may be still some leftovers
+        // after reconfigured, uninstalled or borked enrol plugins,
+        // unfortunately this may be a bit slow - but there should not be many of these
+        $sqlempty = $DB->sql_empty();
+        $sql = "SELECT DISTINCT c.id AS courseid, ra.enrol, e.timecreated, c.timemodified
+                  FROM {course} c
+                  JOIN {context} ctx ON (ctx.instanceid = c.id AND ctx.contextlevel = 50)
+                  JOIN {role_assignments} ra ON (ra.contextid = ctx.id AND ra.enrol <> '$sqlempty')
+             LEFT JOIN {enrol} e ON (e.courseid = c.id AND e.enrol = ra.enrol)
+                 WHERE c.id <> :siteid AND e.id IS NULL";
+        $params = array('siteid'=>SITEID);
+        $rs = $DB->get_recordset_sql($sql, $params);
+        foreach ($rs as $enrol) {
+            $enrol->status = 1; // better disable them
+            $DB->inert_record('enrol', $enrol);
+        }
+        $rs->close();
+        upgrade_main_savepoint($result, 2010061900.09);
+    }
+
+    if ($result && $oldversion < 2010061900.10) {
+        // migrate existing setup of meta courses
+        $sql = "INSERT INTO {enrol} (enrol, status, courseid, sortorder, customint1)
+                SELECT 'meta', 0, parent_course, 5, child_course
+                  FROM {course_meta}";
+        $DB->execute($sql);
+
+        upgrade_main_savepoint($result, 2010061900.10);
+    }
+
+    if ($result && $oldversion < 2010061900.11) {
+        // nuke any old role assignments+enrolments in previous meta courses, we have to start from scratch
+        $select = "SELECT ctx.id
+                     FROM {context} ctx
+                     JOIN {course} c ON (c.id = ctx.instanceid AND ctx.contextlevel = 50 AND c.metacourse = 1)";
+        $DB->delete_records_select('role_assignments', "contextid IN ($select) AND enrol = 'manual'");
+
+        // course_meta to be dropped - we use enrol_meta plugin instead now
+        $table = new xmldb_table('course_meta');
+
+        // Launch drop table for course_meta
+        $dbman->drop_table($table);
+
+        // Main savepoint reached
+        upgrade_main_savepoint($result, 2010061900.11);
+    }
+
+    if ($result && $oldversion < 2010061900.12) {
+        // finally remove all obsolete fields from the course table - yay!
+        // all the information was migrated to the enrol table
+
+        // Define field guest to be dropped from course
+        $table = new xmldb_table('course');
+        $field = new xmldb_field('guest');
+
+        // Conditionally launch drop field guest
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Define field password to be dropped from course
+        $table = new xmldb_table('course');
+        $field = new xmldb_field('password');
+
+        // Conditionally launch drop field password
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Define field enrolperiod to be dropped from course
+        $table = new xmldb_table('course');
+        $field = new xmldb_field('enrolperiod');
+
+        // Conditionally launch drop field enrolperiod
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Define field cost to be dropped from course
+        $table = new xmldb_table('course');
+        $field = new xmldb_field('cost');
+
+        // Conditionally launch drop field cost
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Define field currency to be dropped from course
+        $table = new xmldb_table('course');
+        $field = new xmldb_field('currency');
+
+        // Conditionally launch drop field currency
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Define field metacourse to be dropped from course
+        $table = new xmldb_table('course');
+        $field = new xmldb_field('metacourse');
+
+        // Conditionally launch drop field metacourse
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Define field expirynotify to be dropped from course
+        $table = new xmldb_table('course');
+        $field = new xmldb_field('expirynotify');
+
+        // Conditionally launch drop field expirynotify
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Define field expirythreshold to be dropped from course
+        $table = new xmldb_table('course');
+        $field = new xmldb_field('expirythreshold');
+
+        // Conditionally launch drop field expirythreshold
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Define field notifystudents to be dropped from course
+        $table = new xmldb_table('course');
+        $field = new xmldb_field('notifystudents');
+
+        // Conditionally launch drop field notifystudents
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Define field enrollable to be dropped from course
+        $table = new xmldb_table('course');
+        $field = new xmldb_field('enrollable');
+
+        // Conditionally launch drop field enrollable
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Define field enrolstartdate to be dropped from course
+        $table = new xmldb_table('course');
+        $field = new xmldb_field('enrolstartdate');
+
+        // Conditionally launch drop field enrolstartdate
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Define field enrolenddate to be dropped from course
+        $table = new xmldb_table('course');
+        $field = new xmldb_field('enrolenddate');
+
+        // Conditionally launch drop field enrolenddate
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Define field enrol to be dropped from course
+        $table = new xmldb_table('course');
+        $field = new xmldb_field('enrol');
+
+        // Conditionally launch drop field enrol
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Define field defaultrole to be dropped from course
+        $table = new xmldb_table('course');
+        $field = new xmldb_field('defaultrole');
+
+        // Conditionally launch drop field defaultrole
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        upgrade_main_savepoint($result, 2010061900.12);
+    }
+
+    if ($result && $oldversion < 2010061900.13) {
+        // Define field visibleold to be added to course_categories
+        $table = new xmldb_table('course_categories');
+        $field = new xmldb_field('visibleold', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '1', 'visible');
+
+        // Launch add field visibleold
+        $dbman->add_field($table, $field);
+
+        // Main savepoint reached
+        upgrade_main_savepoint($result, 2010061900.13);
+    }
+
+    if ($result && $oldversion < 2010061900.14) {
+        // keep previous visible state
+        $DB->execute("UPDATE {course_categories} SET visibleold = visible");
+
+        // make sure all subcategories of hidden categories are hidden too, do not rely on category path yet
+        $sql = "SELECT c.id
+                  FROM {course_categories} c
+                  JOIN {course_categories} pc ON (pc.id = c.parent AND pc.visible = 0)
+                 WHERE c.visible = 1";
+        while ($categories = $DB->get_records_sql($sql)) {
+            foreach ($categories as $cat) {
+                $DB->set_field('course_categories', 'visible', 0, array('id'=>$cat->id));
+            }
+        }
+        upgrade_main_savepoint($result, 2010061900.14);
+    }
+
+    if ($result && $oldversion < 2010061900.15) {
+        // Define field visibleold to be added to course
+        $table = new xmldb_table('course');
+        $field = new xmldb_field('visibleold', XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '1', 'visible');
+
+        // Launch add field visibleold
+        $dbman->add_field($table, $field);
+
+        // Main savepoint reached
+        upgrade_main_savepoint($result, 2010061900.15);
+    }
+
+    if ($result && $oldversion < 2010061900.16) {
+        // keep previous visible state
+        $DB->execute("UPDATE {course} SET visibleold = visible");
+
+        // make sure all courses in hidden categories are hidden
+        $DB->execute("UPDATE {course} SET visible = 0 WHERE category IN (SELECT id FROM {course_categories} WHERE visible = 0)");
+
+        upgrade_main_savepoint($result, 2010061900.16);
+    }
+
+    if ($result && $oldversion < 2010061900.20) {
+        // now set up the enrolments - look for roles with course:participate only at course context - the category enrolments are synchronised later by archetype and new capability
+
+        $syscontext = get_context_instance(CONTEXT_SYSTEM);
+        $params = array('syscontext'=>$syscontext->id, 'participate'=>'moodle/course:participate');
+        $roles = $DB->get_fieldset_sql("SELECT DISTINCT roleid FROM {role_capabilities} WHERE contextid = :syscontext AND capability = :participate AND permission = 1", $params);
+        list($sqlroles, $params) = $DB->get_in_or_equal($roles, SQL_PARAMS_NAMED, 'r00');
+
+        $sql = "INSERT INTO {user_enrolments} (status, enrolid, userid, timestart, timeend, modifierid, timemodified)
+
+                SELECT 0, e.id, ra.userid, MIN(ra.timestart), MIN(ra.timeend), 0, MAX(ra.timemodified)
+                  FROM {role_assignments} ra
+                  JOIN {context} c ON (c.id = ra.contextid AND c.contextlevel = 50)
+                  JOIN {enrol} e ON (e.enrol = ra.enrol AND e.courseid = c.instanceid)
+                  JOIN {user} u ON u.id = ra.userid
+                 WHERE u.deleted = 0 AND ra.roleid $sqlroles
+              GROUP BY e.id, ra.userid";
+        $DB->execute($sql, $params);
+
+        upgrade_main_savepoint($result, 2010061900.20);
+    }
+
+    if ($result && $oldversion < 2010061900.21) {
+        // hidden is completely removed, timestart+timeend are now in the user_enrolments table
+
+        // Define field hidden to be dropped from role_assignments
+        $table = new xmldb_table('role_assignments');
+        $field = new xmldb_field('hidden');
+
+        // Conditionally launch drop field hidden
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Define field timestart to be dropped from role_assignments
+        $table = new xmldb_table('role_assignments');
+        $field = new xmldb_field('timestart');
+
+        // Conditionally launch drop field timestart
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Define field timeend to be dropped from role_assignments
+        $table = new xmldb_table('role_assignments');
+        $field = new xmldb_field('timeend');
+
+        // Conditionally launch drop field timeend
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Main savepoint reached
+        upgrade_main_savepoint($result, 2010061900.21);
+    }
+
+    if ($result && $oldversion < 2010061900.22) {
+        // Rename field enrol on table role_assignments to component and update content
+
+        $table = new xmldb_table('role_assignments');
+        $field = new xmldb_field('enrol', XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, null, 'modifierid');
+
+        // Launch rename field enrol
+        $dbman->rename_field($table, $field, 'component');
+
+        // Changing precision of field component on table role_assignments to (100)
+        $table = new xmldb_table('role_assignments');
+        $field = new xmldb_field('component', XMLDB_TYPE_CHAR, '100', null, XMLDB_NOTNULL, null, null, 'modifierid');
+
+        // Launch change of precision for field component
+        $dbman->change_field_precision($table, $field);
+
+        // Manual is a special case - we use empty string instead now
+        $params = array('empty'=>$DB->sql_empty(), 'manual'=>'manual');
+        $sql = "UPDATE {role_assignments}
+                   SET component = :empty
+                 WHERE component = :manual";
+        $DB->execute($sql, $params);
+
+        // Now migrate to real enrol component names
+        $params = array('empty'=>$DB->sql_empty());
+        $concat = $DB->sql_concat("'enrol_'", 'component');
+        $sql = "UPDATE {role_assignments}
+                   SET component = $concat
+                 WHERE component <> :empty
+                       AND contextid IN (
+                           SELECT id
+                             FROM {context}
+                            WHERE contextlevel >= 50)";
+        $DB->execute($sql, $params);
+
+        // Now migrate to real auth component names
+        $params = array('empty'=>$DB->sql_empty());
+        $concat = $DB->sql_concat("'auth_'", 'component');
+        $sql = "UPDATE {role_assignments}
+                   SET component = $concat
+                 WHERE component <> :empty
+                       AND contextid IN (
+                           SELECT id
+                             FROM {context}
+                            WHERE contextlevel < 50)";
+        $DB->execute($sql, $params);
+
+        // Main savepoint reached
+        upgrade_main_savepoint($result, 2010061900.22);
+    }
+
+    if ($result && $oldversion < 2010061900.23) {
+        // add proper itemid to role assignments that were added by enrolment plugins
+        $sql = "UPDATE {role_assignments}
+                   SET itemid = (SELECT MIN({enrol}.id)
+                                    FROM {enrol}
+                                    JOIN {context} ON ({context}.contextlevel = 50 AND {context}.instanceid = {enrol}.courseid)
+                                   WHERE {role_assignments}.component = ".$DB->sql_concat("'enrol_'", "{enrol}.enrol")." AND {context}.id = {role_assignments}.contextid)
+                 WHERE component <> 'enrol_manual' AND component LIKE 'enrol_%'";
+        $DB->execute($sql);
+        // Main savepoint reached
+        upgrade_main_savepoint($result, 2010061900.23);
+    }
+
+    if ($result && $oldversion < 2010061900.30) {
+        // make new list of active enrol plugins - order is important, meta should be always last, manual first
+        $enabledplugins = explode(',', $CFG->enrol_plugins_enabled);
+        $enabledplugins = array_merge(array('manual', 'guest', 'self', 'cohort'), $enabledplugins);
+        if ($DB->record_exists('enrol', array('enrol'=>'meta'))) {
+            $enabledplugins[] = 'meta';
+        }
+        $enabledplugins = array_unique($enabledplugins);
+        set_config('enrol_plugins_enabled', implode(',', $enabledplugins));
+
+        // Main savepoint reached
+        upgrade_main_savepoint($result, 2010061900.30);
+    }
+
+    if ($result && $oldversion < 2010061900.31) {
+        // finalise all new enrol settings and cleanup old settings
+
+        // legacy allowunenrol was deprecated in 1.9 already
+        unset_config('allwunenroll');
+
+        // obsolete course presets
+        unset_config('metacourse', 'moodlecourse');
+        unset_config('enrol', 'moodlecourse');
+        unset_config('enrollable', 'moodlecourse');
+        unset_config('enrolperiod', 'moodlecourse');
+        unset_config('expirynotify', 'moodlecourse');
+        unset_config('notifystudents', 'moodlecourse');
+        unset_config('expirythreshold', 'moodlecourse');
+        unset_config('enrolpassword', 'moodlecourse');
+        unset_config('guest', 'moodlecourse');
+
+        unset_config('backup_sche_metacourse', 'backup');
+
+        unset_config('lastexpirynotify');
+
+        // hidden course categories now prevent only browsing, courses are accessible if you know the URL and course is visible
+        unset_config('allowvisiblecoursesinhiddencategories');
+
+        if (isset($CFG->coursemanager)) {
+            set_config('coursecontact', $CFG->coursemanager);
+            unset_config('coursemanager');
+        }
+
+        // migrate plugin settings - the problem here is we are splitting manual into three different plugins
+        if (isset($CFG->enrol_manual_usepasswordpolicy)) {
+            set_config('usepasswordpolicy', $CFG->enrol_manual_usepasswordpolicy, 'enrol_guest');
+            set_config('usepasswordpolicy', $CFG->enrol_manual_usepasswordpolicy, 'enrol_self');
+            set_config('groupenrolmentkeypolicy', $CFG->enrol_manual_usepasswordpolicy);
+            unset_config('enrol_manual_usepasswordpolicy');
+        }
+        if (isset($CFG->enrol_manual_requirekey)) {
+            set_config('requirepassword', $CFG->enrol_manual_requirekey, 'enrol_guest');
+            set_config('requirepassword', $CFG->enrol_manual_requirekey, 'enrol_self');
+            unset_config('enrol_manual_requirekey');
+        }
+        if (isset($CFG->enrol_manual_showhint)) {
+            set_config('showhint', $CFG->enrol_manual_showhint, 'enrol_guest');
+            set_config('showhint', $CFG->enrol_manual_showhint, 'enrol_self');
+            unset_config('enrol_manual_showhint');
+        }
+
+        upgrade_main_savepoint($result, 2010061900.31);
+    }
+
+    if ($result && $oldversion < 2010061900.32) {
+        // MDL-22797 course completion has to be updated to use new enrol framework, it will not be enabled in final 2.0
+        set_config('enableavailability', 0);
+        set_config('enablecompletion', 0);
+        upgrade_main_savepoint($result, 2010061900.32);
+    }
+
+
     return $result;
 }
 
 //TODO: Cleanup before the 2.0 release - we do not want to drag along these dev machine fixes forever
-// 1/ remove the automatic enabling of completion lib if debug enabled ( in 2008121701 block)
 // 2/ move 2009061300 block to the top of the file so that we may log upgrade queries
 // 3/ remove 2010033101 block
 // 4/ remove 2010032400 block

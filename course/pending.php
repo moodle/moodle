@@ -115,12 +115,7 @@ if (empty($pending)) {
         $course->check_shortname_collision();
 
         $row = array();
-        // Show an enrolment key icon in the first column if applicable.
-        if (!empty($course->password)) {
-            $row[] = $keyicon;
-        } else {
-            $row[] = '';
-        }
+        // TODO: Show an enrolment key icon in the first column if applicable.
         // Info in the other columns.
         $row[] = format_string($course->shortname);
         $row[] = format_string($course->fullname);

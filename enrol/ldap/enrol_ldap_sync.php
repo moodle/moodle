@@ -27,9 +27,4 @@
         $enrol->sync_enrolments($role->shortname, true);
     }
 
-    // sync metacourses
-    if (function_exists('sync_metacourses')) {
-        sync_metacourses();
-    }
-
 

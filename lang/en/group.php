@@ -24,6 +24,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['addgroup'] = 'Add user into group';
 $string['addgroupstogrouping'] = 'Add group to grouping';
 $string['addgroupstogroupings'] = 'Add/remove groups';
 $string['adduserstogroup'] = 'Add/remove users';
@@ -138,6 +139,8 @@ $string['potentialmembs'] = 'Potential members';
 $string['printerfriendly'] = 'Printer-friendly display';
 $string['random'] = 'Randomly';
 $string['removegroupfromselectedgrouping'] = 'Remove group from grouping';
+$string['removefromgroup'] = 'Remove user from group {$a}';
+$string['removefromgroupconfirm'] = 'Do you really want to remove user "{$a->user}" from group "{$a->group}"?';
 $string['removegroupingsmembers'] = 'Remove all groups from groupings';
 $string['removegroupsmembers'] = 'Remove all group members';
 $string['removeselectedusers'] = 'Remove selected users';

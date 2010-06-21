@@ -33,8 +33,6 @@ $PAGE->set_url('/user/action_redir.php', array('formaction'=>$formaction,'id'=>$
 // Add every page will be redirected by this script
 $actions = array(
         'messageselect.php',
-        'extendenrol.php',
-        'groupextendenrol.php',
         'addnote.php',
         'groupaddnote.php',
         );

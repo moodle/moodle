@@ -111,8 +111,8 @@ class grade_report_overview extends grade_report {
     public function fill_table() {
         global $CFG, $DB, $OUTPUT;
 
-        // MDL-11679, only show 'mycourses' instead of all courses
-        if ($courses = get_my_courses($this->user->id, 'c.sortorder ASC', 'id, shortname, showgrades')) {
+        // MDL-11679, only show user's courses instead of all courses
+        if ($courses = enrol_get_users_courses($this->user->id, false, 'id, shortname, showgrades')) {
             $numusers = $this->get_numusers(false);
 
             foreach ($courses as $course) {

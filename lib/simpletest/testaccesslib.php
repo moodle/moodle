@@ -261,10 +261,6 @@ class accesslib_test extends UnitTestCaseUsingDatabase {
         $context = $contexts['cou'];
         $context->id = SYSCONTEXTID + 2;
 
-        $this->load_test_data('capabilities',
-                array('name'), array(
-                array('moodle/course:participate')));
-
         $roles = $this->load_test_data('role',
                    array( 'name', 'shortname', 'description', 'sortorder'), array(
         'admin' => array('admin',     'admin',    'not null',          1),
@@ -274,13 +270,7 @@ class accesslib_test extends UnitTestCaseUsingDatabase {
         $adminid = $roles['admin']->id;
         $r1id = $roles['r1']->id;
         $r2id = $roles['r2']->id;
-        $funnyid = $roles['funny']->id; // strange role to test that roles with 'moodle/course:participate' are not returned.
-
-        $this->load_test_data('role_capabilities',
-                array('roleid',             'capability', 'contextid', 'permission'), array(
-                array(   $r1id,     'moodle/course:participate', SYSCONTEXTID + 1, CAP_ALLOW),
-                array(   $r2id,     'moodle/course:participate', SYSCONTEXTID, CAP_ALLOW),
-                array($funnyid,     'moodle/course:participate', SYSCONTEXTID, CAP_ALLOW)));
+        $funnyid = $roles['funny']->id; // strange role
 
         $this->load_test_data('role_assignments',
                 array('userid', 'contextid',   'roleid'), array(
@@ -294,13 +284,6 @@ class accesslib_test extends UnitTestCaseUsingDatabase {
                 array(  $r2id ,        $r1id),
                 array(  $r2id ,        $r2id),
                 array(  $r2id ,     $funnyid)));
-
-        // Admin should be able to switch to any role with 'moodle/course:participate' in any context.
-        $this->switch_global_user_id(1);
-        accesslib_clear_all_caches_for_unit_testing();
-        $this->assert(new ArraysHaveSameValuesExpectation(array($r2id)), array_keys(get_switchable_roles($syscontext)));
-        $this->assert(new ArraysHaveSameValuesExpectation(array($r2id)), array_keys(get_switchable_roles($context)));
-        $this->revert_global_user_id();
 
         // r1 should be able to switch to r2, but this user only has r1 in $context, not $syscontext.
         $this->switch_global_user_id(2);
@@ -316,21 +299,5 @@ class accesslib_test extends UnitTestCaseUsingDatabase {
         $this->assert(new ArraysHaveSameValuesExpectation(array($r2id)), array_keys(get_switchable_roles($context)));
     }
 
-    function test_get_allowed_switchable_roles() {
-        $this->create_test_table('role_capabilities', 'lib');
-
-        $this->load_test_data('role_capabilities',
-                array('roleid',            'capability', 'contextid', 'permission'), array(
-                array(      1, 'moodle/forum:replypost', SYSCONTEXTID, CAP_ALLOW),
-                array(      2,     'moodle/course:participate', SYSCONTEXTID, CAP_ALLOW),
-                array(      4,     'moodle/course:participate', SYSCONTEXTID, CAP_ALLOW),
-                array(      5,     'moodle/course:participate', SYSCONTEXTID, CAP_ALLOW),
-                array(      6,     'moodle/course:participate', SYSCONTEXTID, CAP_PREVENT),
-                ));
-
-        $this->switch_to_test_db();
-
-        $this->assert(new ArraysHaveSameValuesExpectation(array(2, 5)), array_keys(get_allowed_switchable_roles()));
-    }
 }
 

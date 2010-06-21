@@ -744,9 +744,9 @@ class auth_plugin_ldap extends auth_plugin_base {
                     // update course creators if needed
                     if ($creatorrole !== false) {
                         if ($this->iscreator($user->username)) {
-                            role_assign($creatorrole->id, $user->id, 0, $sitecontext->id, 0, 0, 0, 'ldap');
+                            role_assign($creatorrole->id, $user->id, $sitecontext->id, 'auth_ldap');
                         } else {
-                            role_unassign($creatorrole->id, $user->id, 0, $sitecontext->id, 'ldap');
+                            role_unassign($creatorrole->id, $user->id, $sitecontext->id, 'auth_ldap');
                         }
                     }
                 }
@@ -807,7 +807,7 @@ class auth_plugin_ldap extends auth_plugin_base {
 
                 // add course creators if needed
                 if ($creatorrole !== false and $this->iscreator($user->username)) {
-                    role_assign($creatorrole->id, $user->id, 0, $sitecontext->id, 0, 0, 0, 'ldap');
+                    role_assign($creatorrole->id, $user->id, $sitecontext->id, 'auth_ldap');
                 }
             }
             $transaction->allow_commit();
@@ -1948,10 +1948,10 @@ class auth_plugin_ldap extends auth_plugin_base {
             $systemcontext = get_context_instance(CONTEXT_SYSTEM);
 
             if ($iscreator) { // Following calls will not create duplicates
-                role_assign($creatorrole->id, $user->id, 0, $systemcontext->id, 0, 0, 0, 'ldap');
+                role_assign($creatorrole->id, $user->id, $systemcontext->id, 'auth_ldap');
             } else {
                 //unassign only if previously assigned by this plugin!
-                role_unassign($creatorrole->id, $user->id, 0, $systemcontext->id, 'ldap');
+                role_unassign($creatorrole->id, $user->id, $systemcontext->id, 'auth_ldap');
             }
         }
     }

@@ -25,7 +25,7 @@ class course_reset_form extends moodleform {
         $mform->addElement('header', 'rolesheader', get_string('roles'));
 
         $roles = get_assignable_roles(get_context_instance(CONTEXT_COURSE, $COURSE->id));
-        $mform->addElement('select', 'reset_roles', get_string('unenrolroleusers'), $roles, array('multiple' => 'multiple'));
+        $mform->addElement('select', 'unenrol_users', get_string('unenrolroleusers', 'enrol'), $roles, array('multiple' => 'multiple'));
         $mform->addElement('checkbox', 'reset_roles_overrides', get_string('deletecourseoverrides', 'role'));
         $mform->setAdvanced('reset_roles_overrides');
         $mform->addElement('checkbox', 'reset_roles_local', get_string('deletelocalroles', 'role'));
@@ -101,12 +101,6 @@ class course_reset_form extends moodleform {
         $mform =& $this->_form;
 
         $defaults = array ('reset_events'=>1, 'reset_logs'=>1, 'reset_roles_local'=>1, 'reset_gradebook_grades'=>1, 'reset_notes'=>1);
-
-        if (!empty($COURSE->defaultrole)) {
-            $defaults['reset_roles'] = array($COURSE->defaultrole);
-        } else {
-            $defaults['reset_roles'] = array($CFG->defaultcourseroleid);
-        }
 
         if ($allmods = $DB->get_records('modules') ) {
             foreach ($allmods as $mod) {

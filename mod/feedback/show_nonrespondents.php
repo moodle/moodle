@@ -46,7 +46,7 @@
     if($feedback->anonymous != FEEDBACK_ANONYMOUS_NO OR $feedback->course == SITEID) {
         print_error('error');
     }
-    
+
     $url = new moodle_url('/mod/feedback/show_nonrespondents.php', array('id'=>$cm->id));
 
     $PAGE->set_url($url);
@@ -54,7 +54,7 @@
     if (!$context = get_context_instance(CONTEXT_MODULE, $cm->id)) {
             print_error('badcontext');
     }
-    
+
     //we need the coursecontext to allow sending of mass mails
     if (!$coursecontext = get_context_instance(CONTEXT_COURSE, $course->id)) {
             print_error('badcontext');
@@ -125,22 +125,22 @@
     } else {
         $groupmode = $course->groupmode;
     }
-    
+
     $groupselect = groups_print_activity_menu($cm, $url->out(), true);
     $mygroupid = groups_get_activity_group($cm);
 
     // preparing the table for output
     $baseurl = new moodle_url('/mod/feedback/show_nonrespondents.php');
     $baseurl->params(array('id'=>$id, 'showall'=>$showall));
-    
+
     $tablecolumns = array('userpic', 'fullname', 'status');
     $tableheaders = array(get_string('userpic'), get_string('fullnameuser'), get_string('status'));
-    
+
     if(has_capability('moodle/course:bulkmessaging', $coursecontext)) {
         $tablecolumns[] = 'select';
         $tableheaders[] = get_string('select');
     }
-    
+
     $table = new flexible_table('feedback-shownonrespondents-'.$course->id);
 
     $table->define_columns($tablecolumns);
@@ -157,7 +157,7 @@
                 TABLE_VAR_ILAST   => 'silast',
                 TABLE_VAR_PAGE    => 'spage'
                 ));
-    
+
     $table->no_sorting('select');
     $table->no_sorting('status');
 
@@ -186,10 +186,10 @@
     }else {
         $usedgroupid = false;
     }
-    
+
     $matchcount = feedback_count_incomplete_users($cm, $usedgroupid);
     $table->initialbars(false);
-    
+
     if($showall) {
         $startpage = false;
         $pagecount = false;
@@ -198,7 +198,7 @@
         $startpage = $table->get_page_start();
         $pagecount = $table->get_page_size();
     }
-    
+
     $students = feedback_get_incomplete_users($cm, $usedgroupid, $sort, $startpage, $pagecount);
     //####### viewreports-start
     //print the list of students
@@ -208,7 +208,7 @@
     echo $OUTPUT->box_start('mdl-align');
     // echo '<table><tr><td width="400">';
     if (!$students) {
-        echo $OUTPUT->notification(get_string('noexistingstudents'));
+        echo $OUTPUT->notification(get_string('noexistingparticipants', 'enrol'));
     } else{
         echo print_string('non_respondents_students', 'feedback');
         echo ' ('.$matchcount.')<hr />';
@@ -221,13 +221,13 @@
             //userpicture and link to the profilepage
             $profilelink = '<strong><a href="'.$CFG->wwwroot.'/user/view.php?id='.$user->id.'&amp;course='.$course->id.'">'.fullname($user).'</a></strong>';
             $data = array ($OUTPUT->user_picture($user, array('courseid'=>$course->id)), $profilelink);
-            
+
             if($DB->record_exists('feedback_completedtmp', array('userid'=>$user->id))) {
                 $data[] = get_string('started', 'feedback');
             }else {
                 $data[] = get_string('not_started', 'feedback');
             }
-            
+
             //selections to bulk messaging
             if(has_capability('moodle/course:bulkmessaging', $coursecontext)) {
                 $data[] = '<input type="checkbox" class="usercheckbox" name="messageuser[]" value="'.$user->id.'" />';
@@ -235,9 +235,9 @@
             $table->add_data($data);
         }
         $table->print_html();
-        
+
         $allurl = new moodle_url($baseurl);
-        
+
         if ($showall) {
             $allurl->param('showall', 0);
             echo $OUTPUT->container(html_writer::link($allurl, get_string('showperpage', '', FEEDBACK_DEFAULT_PAGE_COUNT)), array(), 'showall');
@@ -246,7 +246,7 @@
             echo $OUTPUT->container(html_writer::link($allurl, get_string('showall', '', $matchcount)), array(), 'showall');
         }
         if(has_capability('moodle/course:bulkmessaging', $coursecontext)) {
-            $usehtmleditor = can_use_html_editor(); 
+            $usehtmleditor = can_use_html_editor();
             echo '<br /><div class="buttons">';
             echo '<input type="button" id="checkall" value="'.get_string('selectall').'" /> ';
             echo '<input type="button" id="checknone" value="'.get_string('deselectall').'" /> ';

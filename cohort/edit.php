@@ -26,6 +26,7 @@
  */
 
 require('../config.php');
+require($CFG->dirroot.'/course/lib.php');
 require($CFG->dirroot.'/cohort/lib.php');
 require($CFG->dirroot.'/cohort/edit_form.php');
 

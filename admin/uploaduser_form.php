@@ -59,7 +59,7 @@ class admin_uploaduser_form2 extends moodleform {
         // I am the template user, why should it be the administrator? we have roles now, other ppl may use this script ;-)
         $templateuser = $USER;
 
-// upload settings and file
+        // upload settings and file
         $mform->addElement('header', 'settingsheader', get_string('settings'));
         $mform->addElement('static', 'uutypelabel', get_string('uuoptype', 'admin') );
 
@@ -105,7 +105,7 @@ class admin_uploaduser_form2 extends moodleform {
         $mform->addElement('select', 'uubulk', get_string('uubulk', 'admin'), $choices);
         $mform->setDefault('uubulk', 0);
 
-// roles selection
+        // roles selection
         $showroles = false;
         foreach ($columns as $column) {
             if (preg_match('/^type\d+$/', $column)) {
@@ -118,31 +118,41 @@ class admin_uploaduser_form2 extends moodleform {
 
             $choices = uu_allowed_roles(true);
 
-            $choices[0] = get_string('uucoursedefaultrole', 'admin');
             $mform->addElement('select', 'uulegacy1', get_string('uulegacy1role', 'admin'), $choices);
-            $mform->setDefault('uulegacy1', 0);
-            unset($choices[0]);
+            if ($studentroles = get_archetype_roles('student')) {
+                foreach ($studentroles as $role) {
+                    if (isset($choices[$role->id])) {
+                        $mform->setDefault('uulegacy1', $role->id);
+                        break;
+                    }
+                }
+                unset($studentroles);
+            }
 
             $mform->addElement('select', 'uulegacy2', get_string('uulegacy2role', 'admin'), $choices);
             if ($editteacherroles = get_archetype_roles('editingteacher')) {
-                $editteacherrole = array_shift($editteacherroles);   /// Take the first one
-                $mform->setDefault('uulegacy2', $editteacherrole->id);
+                foreach ($editteacherroles as $role) {
+                    if (isset($choices[$role->id])) {
+                        $mform->setDefault('uulegacy2', $role->id);
+                        break;
+                    }
+                }
                 unset($editteacherroles);
-            } else {
-                $mform->setDefault('uulegacy2', $CFG->defaultcourseroleid);
             }
 
             $mform->addElement('select', 'uulegacy3', get_string('uulegacy3role', 'admin'), $choices);
             if ($teacherroles = get_archetype_roles('teacher')) {
-                $teacherrole = array_shift($teacherroles);   /// Take the first one
-                $mform->setDefault('uulegacy3', $teacherrole->id);
+                foreach ($teacherroles as $role) {
+                    if (isset($choices[$role->id])) {
+                        $mform->setDefault('uulegacy3', $role->id);
+                        break;
+                    }
+                }
                 unset($teacherroles);
-            } else {
-                $mform->setDefault('uulegacy3', $CFG->defaultcourseroleid);
             }
         }
 
-// default values
+        // default values
         $mform->addElement('header', 'defaultheader', get_string('defaultvalues', 'admin'));
 
         $mform->addElement('text', 'username', get_string('username'), 'size="20"');
@@ -248,10 +258,10 @@ class admin_uploaduser_form2 extends moodleform {
         $mform->setType('address', PARAM_MULTILANG);
         $mform->setAdvanced('address');
 
-        /// Next the profile defaults
+        // Next the profile defaults
         profile_definition($mform);
 
-// hidden fields
+        // hidden fields
         $mform->addElement('hidden', 'iid');
         $mform->setType('iid', PARAM_INT);
 
@@ -363,7 +373,7 @@ class admin_uploaduser_form2 extends moodleform {
 class admin_uploaduser_form3 extends moodleform {
     function definition (){
         global $CFG, $USER;
-        $mform =& $this->_form;               
+        $mform =& $this->_form;
         $this->add_action_buttons(false, get_string('uploadnewfile'));
     }
 }

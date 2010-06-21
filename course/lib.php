@@ -20,8 +20,11 @@
  *
  * @copyright 1999 Martin Dougiamas  http://dougiamas.com
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @package course
+ * @package core
+ * @subpackage course
  */
+
+defined('MOODLE_INTERNAL') || die;
 
 require_once($CFG->libdir.'/completionlib.php');
 require_once($CFG->libdir.'/filelib.php');
@@ -1915,7 +1918,7 @@ function get_course_category_tree($id = 0, $depth = 0) {
     list($ccselect, $ccjoin) = context_instance_preload_sql('c.id', CONTEXT_COURSE, 'ctx');
     list($catsql, $catparams) = $DB->get_in_or_equal(array_keys($categoryids));
     $sql = "SELECT
-            c.id,c.sortorder,c.visible,c.fullname,c.shortname,c.password,c.summary,c.guest,c.cost,c.currency,c.category
+            c.id,c.sortorder,c.visible,c.fullname,c.shortname,c.summary,c.category
             $ccselect
             FROM {course} c
             $ccjoin
@@ -2004,13 +2007,8 @@ function make_categories_options() {
  */
 function print_category_info($category, $depth, $showcourses = false) {
     global $CFG, $DB, $OUTPUT;
-    static $strallowguests, $strrequireskey, $strsummary;
 
-    if (empty($strsummary)) {
-        $strallowguests = get_string('allowguests');
-        $strrequireskey = get_string('requireskey');
-        $strsummary = get_string('summary');
-    }
+    $strsummary = get_string('summary');
 
     $catlinkcss = $category->visible ? '' : ' class="dimmed" ';
 
@@ -2028,7 +2026,7 @@ function print_category_info($category, $depth, $showcourses = false) {
 
     echo "\n\n".'<table class="categorylist">';
 
-    $courses = get_courses($category->id, 'c.sortorder ASC', 'c.id,c.sortorder,c.visible,c.fullname,c.shortname,c.password,c.summary,c.guest,c.cost,c.currency');
+    $courses = get_courses($category->id, 'c.sortorder ASC', 'c.id,c.sortorder,c.visible,c.fullname,c.shortname,c.summary');
     if ($showcourses and $coursecount) {
 
         echo '<tr>';
@@ -2061,18 +2059,7 @@ function print_category_info($category, $depth, $showcourses = false) {
                 echo '</td><td valign="top" class="course name">';
                 echo '<a '.$linkcss.' href="'.$CFG->wwwroot.'/course/view.php?id='.$course->id.'">'. format_string($course->fullname).'</a>';
                 echo '</td><td align="right" valign="top" class="course info">';
-                if ($course->guest ) {
-                    echo '<a title="'.$strallowguests.'" href="'.$CFG->wwwroot.'/course/view.php?id='.$course->id.'">';
-                    echo '<img alt="'.$strallowguests.'" src="'.$OUTPUT->pix_url('i/guest') . '" /></a>';
-                } else {
-                    echo '<img alt="" style="width:18px;height:16px;" src="'.$OUTPUT->pix_url('spacer') . '" />';
-                }
-                if ($course->password) {
-                    echo '<a title="'.$strrequireskey.'" href="'.$CFG->wwwroot.'/course/view.php?id='.$course->id.'">';
-                    echo '<img alt="'.$strrequireskey.'" src="'.$OUTPUT->pix_url('i/key') . '" /></a>';
-                } else {
-                    echo '<img alt="" style="width:18px;height:16px;" src="'.$OUTPUT->pix_url('spacer') . '" />';
-                }
+                //TODO: add some guest, pay icons
                 if ($course->summary) {
                     $link = new moodle_url('/course/info.php?id='.$course->id);
                     echo $OUTPUT->action_link($link, '<img alt="'.$strsummary.'" src="'.$OUTPUT->pix_url('i/info') . '" />',
@@ -2186,17 +2173,17 @@ function print_courses($category) {
             $category   = array_shift($categories);
             $courses    = get_courses_wmanagers($category->id,
                                                 'c.sortorder ASC',
-                                                array('password','summary','summaryformat','currency'));
+                                                array('summary','summaryformat'));
         } else {
             $courses    = get_courses_wmanagers('all',
                                                 'c.sortorder ASC',
-                                                array('password','summary','summaryformat','currency'));
+                                                array('summary','summaryformat'));
         }
         unset($categories);
     } else {
         $courses    = get_courses_wmanagers($category->id,
                                             'c.sortorder ASC',
-                                            array('password','summary','summaryformat','currency'));
+                                            array('summary','summaryformat'));
     }
 
     if ($courses) {
@@ -2239,7 +2226,7 @@ function print_course($course, $highlightterms = '') {
     $context = get_context_instance(CONTEXT_COURSE, $course->id);
 
     // Rewrite file URLs so that they are correct
-    $course->summary = file_rewrite_pluginfile_urls($course->summary, 'pluginfile.php', $context->id, 'course_summary', $course->id);
+    $course->summary = file_rewrite_pluginfile_urls($course->summary, 'pluginfile.php', $context->id, 'course_summary', NULL);
 
     $linkcss = $course->visible ? '' : ' class="dimmed" ';
 
@@ -2251,8 +2238,8 @@ function print_course($course, $highlightterms = '') {
 
     /// first find all roles that are supposed to be displayed
 
-    if (!empty($CFG->coursemanager)) {
-        $managerroles = split(',', $CFG->coursemanager);
+    if (!empty($CFG->coursecontact)) {
+        $managerroles = split(',', $CFG->coursecontact);
         $namesarray = array();
         if (isset($course->managers)) {
             if (count($course->managers)) {
@@ -2318,9 +2305,7 @@ function print_course($course, $highlightterms = '') {
         }
     }
 
-    require_once("$CFG->dirroot/enrol/enrol.class.php");
-    $enrol = enrolment_factory::factory($course->enrol);
-    echo $enrol->get_access_icons($course);
+    // TODO: print some enrol icons
 
     echo '</div><div class="summary">';
     $options = NULL;
@@ -2345,7 +2330,7 @@ function print_my_moodle() {
         print_error('nopermissions', '', '', 'See My Moodle');
     }
 
-    $courses  = get_my_courses($USER->id, 'visible DESC,sortorder ASC', array('summary'));
+    $courses  = enrol_get_my_courses('summary', 'visible DESC,sortorder ASC');
     $rhosts   = array();
     $rcourses = array();
     if (!empty($CFG->mnet_dispatcher_mode) && $CFG->mnet_dispatcher_mode==='strict') {
@@ -3036,15 +3021,6 @@ function course_format_name ($course,$max=100) {
     }
 }
 
-/**
- * This function will return true if the given course is a child course at all
- */
-function course_in_meta ($course) {
-    global $DB;
-    return $DB->record_exists("course_meta", array("child_course"=>$course->id));
-}
-
-
 function update_restricted_mods($course, $mods) {
     global $DB;
 
@@ -3082,8 +3058,8 @@ function course_allowed_module($course,$mod) {
     }
 
     // Admins and admin-like people who can edit everything can also add anything.
-    // This is a bit wierd, really.  I debated taking it out but it's enshrined in help for the setting.
-    if (has_capability('moodle/course:update', get_context_instance(CONTEXT_SYSTEM))) {
+    // Originally there was a coruse:update test only, but it did not match the test in course edit form
+    if (has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM))) {
         return true;
     }
 
@@ -3201,31 +3177,90 @@ function category_delete_move($category, $newparentid, $showfeedback=true) {
  * sortorder in order.
  *
  * @param $courseids is an array of course ids
+ * @return bool success
  */
 function move_courses($courseids, $categoryid) {
     global $CFG, $DB, $OUTPUT;
 
-    if (!empty($courseids) and $category = $DB->get_record('course_categories', array('id'=>$categoryid))) {
-        $courseids = array_reverse($courseids);
-        $i = 1;
-
-        foreach ($courseids as $courseid) {
-            if (!$course  = $DB->get_record("course", array("id"=>$courseid))) {
-                echo $OUTPUT->notification("Error finding course $courseid");
-            } else {
-                $course->category  = $categoryid;
-                $course->sortorder = $category->sortorder + MAX_COURSES_IN_CATEGORY - $i++;
-
-                $DB->update_record('course', $course);
-
-                $context   = get_context_instance(CONTEXT_COURSE, $course->id);
-                $newparent = get_context_instance(CONTEXT_COURSECAT, $course->category);
-                context_moved($context, $newparent);
-            }
-        }
-        fix_course_sortorder();
+    if (empty($courseids)) {
+        // nothing to do
+        return;
     }
+
+    if (!$category = $DB->get_record('course_categories', array('id'=>$categoryid))) {
+        return false;
+    }
+
+    $courseids = array_reverse($courseids);
+    $i = 1;
+
+    foreach ($courseids as $courseid) {
+        if ($course = $DB->get_record('course', array('id'=>$courseid), 'id, category')) {
+            $course->category  = $category->id;
+            $course->sortorder = $category->sortorder + MAX_COURSES_IN_CATEGORY - $i++;
+            if ($category->visible == 0) {
+                // hide the course when moving into hidden category,
+                // do not update the visibleold flag - we want to get to previous state if somebody unhides the category
+                $course->visible = 0;
+            }
+
+            $DB->update_record('course', $course);
+
+            $context   = get_context_instance(CONTEXT_COURSE, $course->id);
+            $newparent = get_context_instance(CONTEXT_COURSECAT, $course->category);
+            context_moved($context, $newparent);
+        }
+    }
+    fix_course_sortorder();
+
     return true;
+}
+
+/**
+ * Hide course category and child course and subcategories
+ * @param $category
+ * @return void
+ */
+function course_category_hide($category) {
+    global $DB;
+
+    $category->visible = 0;
+    $DB->set_field('course_categories', 'visible', 0, array('id'=>$category->id));
+    $DB->set_field('course_categories', 'visibleold', 0, array('id'=>$category->id));
+    $DB->execute("UPDATE {course} SET visibleold = visible WHERE category = ?", array($category->id)); // store visible flag so that we can return to it if we immediately unhide
+    $DB->set_field('course', 'visible', 0, array('category' => $category->id));
+    // get all child categories and hide too
+    if ($subcats = $DB->get_records_select('course_categories', "path LIKE ?", array("$category->path/%"))) {
+        foreach ($subcats as $cat) {
+            $DB->set_field('course_categories', 'visibleold', $cat->visible, array('id'=>$cat->id));
+            $DB->set_field('course_categories', 'visible', 0, array('id'=>$cat->id));
+            $DB->execute("UPDATE {course} SET visibleold = visible WHERE category = ?", array($cat->id));
+            $DB->set_field('course', 'visible', 0, array('category' => $cat->id));
+        }
+    }
+}
+
+/**
+ * Show course category and child course and subcategories
+ * @param $category
+ * @return void
+ */
+function course_category_show($category) {
+    global $DB;
+
+    $category->visible = 1;
+    $DB->set_field('course_categories', 'visible', 1, array('id'=>$category->id));
+    $DB->set_field('course_categories', 'visibleold', 1, array('id'=>$category->id));
+    $DB->execute("UPDATE {course} SET visible = visibleold WHERE category = ?", array($category->id));
+    // get all child categories and unhide too
+    if ($subcats = $DB->get_records_select('course_categories', "path LIKE ?", array("$category->path/%"))) {
+        foreach ($subcats as $cat) {
+            if ($cat->visibleold) {
+                $DB->set_field('course_categories', 'visible', 1, array('id'=>$cat->id));
+            }
+            $DB->execute("UPDATE {course} SET visible = visibleold WHERE category = ?", array($cat->id));
+        }
+    }
 }
 
 /**
@@ -3237,6 +3272,7 @@ function move_category($category, $newparentcat) {
 
     $context = get_context_instance(CONTEXT_COURSECAT, $category->id);
 
+    $hidecat = false;
     if (empty($newparentcat->id)) {
         $DB->set_field('course_categories', 'parent', 0, array('id'=>$category->id));
 
@@ -3245,6 +3281,11 @@ function move_category($category, $newparentcat) {
     } else {
         $DB->set_field('course_categories', 'parent', $newparentcat->id, array('id'=>$category->id));
         $newparent = get_context_instance(CONTEXT_COURSECAT, $newparentcat->id);
+
+        if (!$newparentcat->visible and $category->visible) {
+            // better hide category when moving into hidden category, teachers may unhide afterwards and the hidden children will be restored properly
+            $hidecat = true;
+        }
     }
 
     context_moved($context, $newparent);
@@ -3254,6 +3295,10 @@ function move_category($category, $newparentcat) {
 
     // and fix the sortorders
     fix_course_sortorder();
+
+    if ($hidecat) {
+        course_category_hide($category);
+    }
 }
 
 /**
@@ -3361,7 +3406,7 @@ function save_local_role_names($courseid, $data) {
     $context = get_context_instance(CONTEXT_COURSE, $courseid);
 
     foreach ($data as $fieldname => $value) {
-        if (!strstr($fieldname, 'role_')) {
+        if (strpos($fieldname, 'role_') !== 0) {
             continue;
         }
         list($ignored, $roleid) = explode('_', $fieldname);
@@ -3385,158 +3430,181 @@ function save_local_role_names($courseid, $data) {
 }
 
 /**
- * Create a course and either return a $course object or false
+ * Create a course and either return a $course object
  *
+ * Please note this functions does not verify any access control,
+ * the calling code is responsible for all validation (usually it is the form definition).
+ *
+ * @param array $editoroptions course description editor options
  * @param object $data  - all the data needed for an entry in the 'course' table
+ * @return object new course instance
  */
-function create_course($data) {
-    global $CFG, $USER, $DB;
+function create_course($data, $editoroptions = NULL) {
+    global $CFG, $DB;
 
-    //check the categoryid
-    if (!empty($data->category) && !$data->category==0) {
-        $category = $DB->get_record('course_categories', array('id'=>$data->category));
-        if (empty($category)) {
-            throw new moodle_exception('noexistingcategory');
-        }
-    }
+    //check the categoryid - must be given for all new courses
+    $category = $DB->get_record('course_categories', array('id'=>$data->category), '*', MUST_EXIST);
 
     //check if the shortname already exist
-    if(!empty($data->shortname)) {
-        $course = $DB->get_record('course', array('shortname' => $data->shortname));
-        if (!empty($course)) {
+    if (!empty($data->shortname)) {
+        if ($DB->record_exists('course', array('shortname' => $data->shortname))) {
             throw new moodle_exception('shortnametaken');
         }
     }
 
     //check if the id number already exist
-    if(!empty($data->idnumber)) {
-        $course = $DB->get_record('course', array('idnumber' => $data->idnumber));
-        if (!empty($course)) {
+    if (!empty($data->idnumber)) {
+        if ($DB->record_exists('course', array('idnumber' => $data->idnumber))) {
             throw new moodle_exception('idnumbertaken');
         }
     }
 
-
-    // preprocess allowed mods
-    $allowedmods = empty($data->allowedmods) ? array() : $data->allowedmods;
-    unset($data->allowedmods);
-    if ($CFG->restrictmodulesfor == 'all') {
-        $data->restrictmodules = 1;
-
-        // if the user is not an admin, get the default allowed modules because
-        // there are no modules passed by the form
-        if(!has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM))) {
-            if(!$allowedmods && $CFG->defaultallowedmodules) {
-                $allowedmods = explode(',', $CFG->defaultallowedmodules);
-            }
-        }
-    } else {
-        $data->restrictmodules = 0;
-    }
-
-    $data->timecreated = time();
+    $data->timecreated  = time();
+    $data->timemodified = $data->timecreated;
 
     // place at beginning of any category
     $data->sortorder = 0;
 
-    if ($newcourseid = $DB->insert_record('course', $data)) {  // Set up new course
-
-        $course = $DB->get_record('course', array('id'=>$newcourseid));
-
-        // Setup the blocks
-        blocks_add_default_course_blocks($course);
-
-        update_restricted_mods($course, $allowedmods);
-
-        $section = new object();
-        $section->course  = $course->id;   // Create a default section.
-        $section->section = 0;
-        $section->summaryformat = FORMAT_HTML;
-        $section->id = $DB->insert_record('course_sections', $section);
-
-        fix_course_sortorder();
-
-        add_to_log(SITEID, 'course', 'new', 'view.php?id='.$course->id, $data->fullname.' (ID '.$course->id.')');
-
-        // Save any custom role names.
-        save_local_role_names($course->id, $data);
-
-        // Trigger events
-        events_trigger('course_created', $course);
-
-        return $course;
+    if ($editoroptions) {
+        // summary text is updated later, we need context to store the files first
+        $data->summary = '';
+        $data->summary_format = FORMAT_HTML;
     }
 
-    return false;   // error
+    // init visible flags
+    if (isset($data->visible)) {
+        $data->visibleold = $data->visible;
+    } else {
+        $data->visibleold = $data->visible = 1;
+    }
+
+    $newcourseid = $DB->insert_record('course', $data);
+    $context = get_context_instance(CONTEXT_COURSE, $newcourseid, MUST_EXIST);
+
+    if ($editoroptions) {
+        // Save the files used in the summary editor and store
+        $data = file_postupdate_standard_editor($data, 'summary', $editoroptions, $context, 'course_summary', 0);
+        $DB->set_field('course', 'summary', $data->summary, array('id'=>$newcourseid));
+        $DB->set_field('course', 'summaryformat', $data->summary_format, array('id'=>$newcourseid));
+    }
+
+    $course = $DB->get_record('course', array('id'=>$newcourseid));
+
+    // Setup the blocks
+    blocks_add_default_course_blocks($course);
+
+    $section = new object();
+    $section->course        = $course->id;   // Create a default section.
+    $section->section       = 0;
+    $section->summaryformat = FORMAT_HTML;
+    $DB->insert_record('course_sections', $section);
+
+    fix_course_sortorder();
+
+    // update module restrictions
+    if ($course->restrictmodules) {
+        if (isset($data->allowedmods)) {
+            update_restricted_mods($course, $allowedmods);
+        } else {
+            if (!empty($CFG->defaultallowedmodules)) {
+                update_restricted_mods($course, explode(',', $CFG->defaultallowedmodules));
+            }
+        }
+    }
+
+    // new context created - better mark it as dirty
+    mark_context_dirty($context->path);
+
+    // Save any custom role names.
+    save_local_role_names($course->id, $data);
+
+    // set up enrolments
+    enrol_course_updated(true, $course, $data);
+
+    add_to_log(SITEID, 'course', 'new', 'view.php?id='.$course->id, $data->fullname.' (ID '.$course->id.')');
+
+    // Trigger events
+    events_trigger('course_created', $course);
+
+    return $course;
 }
 
 /**
- * Update a course and return true or false
+ * Update a course.
+ *
+ * Please note this functions does not verify any access control,
+ * the calling code is responsible for all validation (usually it is the form definition).
  *
  * @param object $data  - all the data needed for an entry in the 'course' table
+ * @param array $editoroptions course description editor options
+ * @return void
  */
-function update_course($data) {
-    global $USER, $CFG, $DB;
+function update_course($data, $editoroptions = NULL) {
+    global $CFG, $DB;
 
-    // Preprocess allowed mods
-    $allowedmods = empty($data->allowedmods) ? array() : $data->allowedmods;
-    unset($data->allowedmods);
+    $data->timemodified = time();
 
-    // Normal teachers can't change setting
-    if (!has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM))) {
-        unset($data->restrictmodules);
+    $oldcourse = $DB->get_record('course', array('id'=>$data->id), '*', MUST_EXIST);
+    $context   = get_context_instance(CONTEXT_COURSE, $oldcourse->id);
+
+    if ($editoroptions) {
+        $data = file_postupdate_standard_editor($data, 'summary', $editoroptions, $context, 'course_summary', 0);
     }
 
-    $movecat = false;
-    $oldcourse = $DB->get_record('course', array('id'=>$data->id)); // should not fail, already tested above
-    // check that course id exist
-    if (empty($oldcourse)) {
-       throw new moodle_exception('courseidnotfound');
-    }
-
-    if (!has_capability('moodle/course:create', get_context_instance(CONTEXT_COURSECAT, $oldcourse->category))
-      or !has_capability('moodle/course:create', get_context_instance(CONTEXT_COURSECAT, $data->category))) {
-        // can not move to new category, keep the old one
+    if (!isset($data->category) or empty($data->category)) {
+        // prevent nulls and 0 in category field
         unset($data->category);
+    }
+    $movecat = (isset($data->category) and $oldcourse->category != $data->category);
 
-    } elseif ($oldcourse->category != $data->category) {
-        $movecat = true;
+    // init visible flags
+    if (isset($data->visible)) {
+        $data->visible = $oldcourse->visible;
+    }
+
+    if ($data->visible != $oldcourse->visible) {
+        // reset the visibleold flag when manually hiding/unhiding course
+        $data->visibleold = $data->visible;
+    } else {
+        if ($movecat) {
+            $newcategory = $DB->get_record('course_categories', array('id'=>$data->category));
+            if (empty($newcategory->visible)) {
+                // make sure when moving into hidden category the course is hidden automatically
+                $data->visible = 0;
+            }
+        }
     }
 
     // Update with the new data
-    if ($DB->update_record('course', $data)) {
+    $DB->update_record('course', $data);
 
-        $course = $DB->get_record('course', array('id'=>$data->id));
+    $course = $DB->get_record('course', array('id'=>$data->id));
 
-        add_to_log($course->id, "course", "update", "edit.php?id=$course->id", $course->id);
-
-        // "Admins" can change allowed mods for a course
-        if (has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM))) {
-            update_restricted_mods($course, $allowedmods);
-        }
-
-        if ($movecat) {
-            $context   = get_context_instance(CONTEXT_COURSE, $course->id);
-            $newparent = get_context_instance(CONTEXT_COURSECAT, $course->category);
-            context_moved($context, $newparent);
-        }
-
-        fix_course_sortorder();
-
-        // Test for and remove blocks which aren't appropriate anymore
-        blocks_remove_inappropriate($course);
-
-        // Save any custom role names.
-        save_local_role_names($course->id, $data);
-
-        // Trigger events
-        events_trigger('course_updated', $course);
-
-        return true;
-
+    if ($movecat) {
+        $newparent = get_context_instance(CONTEXT_COURSECAT, $course->category);
+        context_moved($context, $newparent);
     }
 
-    return false;
+    fix_course_sortorder();
+
+    // Test for and remove blocks which aren't appropriate anymore
+    blocks_remove_inappropriate($course);
+
+    // update module restrictions
+    if (isset($data->allowedmods)) {
+        update_restricted_mods($course, $allowedmods);
+    }
+
+    // Save any custom role names.
+    save_local_role_names($course->id, $data);
+
+    // update enrol settings
+    enrol_course_updated(false, $course, $data);
+
+    add_to_log($course->id, "course", "update", "edit.php?id=$course->id", $course->id);
+
+    // Trigger events
+    events_trigger('course_updated', $course);
 }
 
 /**
@@ -3575,7 +3643,6 @@ function average_number_of_courses_modules() {
  * @property-read int $summarytrust
  * @property-read string $reason
  * @property-read int $requester
- * @property-read string $password
  */
 class course_request {
 
@@ -3845,18 +3912,13 @@ class course_request {
         $course->showgrades         = $courseconfig->showgrades;
         $course->showreports        = $courseconfig->showreports;
         $course->maxbytes           = $courseconfig->maxbytes;
-        $course->enrol              = $courseconfig->enrol;
-        $course->enrollable         = $courseconfig->enrollable;
-        $course->enrolperiod        = $courseconfig->enrolperiod;
-        $course->expirynotify       = $courseconfig->expirynotify;
-        $course->notifystudents     = $courseconfig->notifystudents;
-        $course->expirythreshold    = $courseconfig->expirythreshold;
         $course->groupmode          = $courseconfig->groupmode;
         $course->groupmodeforce     = $courseconfig->groupmodeforce;
         $course->visible            = $courseconfig->visible;
-        $course->enrolpassword      = $courseconfig->enrolpassword;
-        $course->guest              = $courseconfig->guest;
+        $course->visibleold         = $course->visible;
         $course->lang               = $courseconfig->lang;
+
+        //TODO: use standard course creation function !!
 
         // Insert the record
         $course->id = $DB->insert_record('course', $course);
@@ -3864,7 +3926,8 @@ class course_request {
             $course = $DB->get_record('course', array('id' => $course->id));
             blocks_add_default_course_blocks($course);
             $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
-            role_assign($CFG->creatornewroleid, $this->properties->requester, 0, $coursecontext->id); // assing teacher role
+            // TODO: do some real enrolment here
+            role_assign($CFG->creatornewroleid, $this->properties->requester, $coursecontext->id); // assing teacher role
             if (!empty($CFG->restrictmodulesfor) && $CFG->restrictmodulesfor != 'none' && !empty($CFG->restrictbydefault)) {
                 // if we're all or requested we're ok.
                 $allowedmods = explode(',',$CFG->defaultallowedmodules);
@@ -3929,7 +3992,7 @@ class course_request {
             foreach ($files as $file) {
                 $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
                 if (!$file->is_directory()) {
-                    $filerecord = array('contextid'=>$coursecontext->id, 'filearea'=>'course_summary', 'itemid'=>$course->id, 'filepath'=>$file->get_filepath(), 'filename'=>$file->get_filename());
+                    $filerecord = array('contextid'=>$coursecontext->id, 'filearea'=>'course_summary', 'itemid'=>0, 'filepath'=>$file->get_filepath(), 'filename'=>$file->get_filename());
                     $fs->create_file_from_storedfile($filerecord, $file);
                 }
             }

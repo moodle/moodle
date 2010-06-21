@@ -48,7 +48,7 @@ if ($CFG->bloglevel == BLOG_COURSE_LEVEL || $CFG->bloglevel == BLOG_GROUP_LEVEL)
     $a->blogcount = 0;
 
     foreach ($bloggers as $blogger) {
-        $courses = get_my_courses($blogger->userid);
+        $courses = enrol_get_users_courses($blogger->userid, true, 'groupmode,groupmodeforce');
         $blogentries = $DB->get_records('post', array('module' => 'blog', 'userid' => $blogger->userid));
 
         foreach ($courses as $course) {

@@ -220,7 +220,7 @@ if (!empty($sendflashupgrader) && (($userplayerversion[0] <  $requiredplayervers
             if ($USER->id !== $userid) {
                 $usercontext = get_context_instance(CONTEXT_USER, $userid);
                 // The browsing user is not the current user
-                if (!has_coursemanager_role($userid) && !has_capability('moodle/user:viewdetails', $usercontext)) {
+                if (!has_coursecontact_role($userid) && !has_capability('moodle/user:viewdetails', $usercontext)) {
                     send_file_not_found();
                 }
 
@@ -228,7 +228,7 @@ if (!empty($sendflashupgrader) && (($userplayerversion[0] <  $requiredplayervers
                 if (has_capability('moodle/user:viewdetails', $usercontext)) {
                     $canview = true;
                 } else {
-                    $courses = get_my_courses($USER->id);
+                    $courses = enrol_get_my_courses();
                 }
 
                 while (!$canview && count($courses) > 0) {
@@ -309,28 +309,13 @@ if (!empty($sendflashupgrader) && (($userplayerversion[0] <  $requiredplayervers
         session_get_instance()->write_close(); // unlock session during fileserving
         send_stored_file($file, 0, 0, true);
 
-    } else if ($filearea === 'course_intro') {
+    } else if ($filearea === 'course_summary') {
         if ($CFG->forcelogin) {
             require_login();
         }
 
         $relativepath = '/'.implode('/', $args);
-        $fullpath = $context->id.'course_intro0'.$relativepath;
-
-        if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
-            send_file_not_found();
-        }
-
-        session_get_instance()->write_close(); // unlock session during fileserving
-        send_stored_file($file, 60*60, 0, false); // TODO: change timeout?
-
-    } else if ($filearea === 'course_summary') {
-
-        if ($CFG->forcelogin) {
-            require_login();
-        }
-
-        $fullpath = $context->id.$filearea.implode('/', $args);
+        $fullpath = $context->id.'course_summary0'.$relativepath;
 
         if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
             send_file_not_found();
@@ -455,7 +440,7 @@ if (!empty($sendflashupgrader) && (($userplayerversion[0] <  $requiredplayervers
                 print_error('noguest');
             }
 
-            if (!has_coursemanager_role($userid) and !has_capability('moodle/user:viewdetails', $usercontext)) {
+            if (!has_coursecontact_role($userid) and !has_capability('moodle/user:viewdetails', $usercontext)) {
                 print_error('usernotavailable');
             }
             if (!has_capability('moodle/user:viewdetails', $context) &&

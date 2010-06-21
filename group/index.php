@@ -11,9 +11,6 @@
 require_once('../config.php');
 require_once('lib.php');
 
-$PAGE->requires->yui2_lib('connection');
-$PAGE->requires->js('/group/clientlib.js');
-
 $courseid = required_param('id', PARAM_INT);
 $groupid  = optional_param('group', false, PARAM_INT);
 $userid   = optional_param('user', false, PARAM_INT);
@@ -44,6 +41,9 @@ $PAGE->set_url($url);
 
 // Make sure that the user has permissions to manage groups.
 require_login($course);
+
+$PAGE->requires->yui2_lib('connection');
+$PAGE->requires->js('/group/clientlib.js');
 
 $context = get_context_instance(CONTEXT_COURSE, $course->id);
 if (!has_capability('moodle/course:managegroups', $context)) {

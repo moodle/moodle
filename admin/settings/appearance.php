@@ -135,9 +135,9 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
     $temp = new admin_externalpage('profilepage', get_string('myprofile', 'admin'), $CFG->wwwroot . '/user/profilesys.php');
     $ADMIN->add('appearance', $temp);
 
-    // coursemanager is the person responsible for course - usually manages enrolments, receives notification, etc.
-    $temp = new admin_settingpage('coursemanager', get_string('coursemanager', 'admin'));
-    $temp->add(new admin_setting_special_coursemanager());
+    // coursecontact is the person responsible for course - usually manages enrolments, receives notification, etc.
+    $temp = new admin_settingpage('coursecontact', get_string('coursecontact', 'admin'));
+    $temp->add(new admin_setting_special_coursecontact());
     $ADMIN->add('appearance', $temp);
 
     $temp = new admin_settingpage('ajax', get_string('ajaxuse'));

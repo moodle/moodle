@@ -1428,10 +1428,10 @@ function forum_print_recent_activity($course, $viewfullnames, $timestart) {
  */
 function forum_get_user_grades($forum, $userid=0) {
     global $CFG;
-    
+
     require_once($CFG->dirroot.'/rating/lib.php');
     $rm = new rating_manager();
-    
+
     $ratingoptions = new stdclass();
 
     //need these to work backwards to get a context id. Is there a better way to get contextid from a module instance?
@@ -1800,9 +1800,8 @@ function forum_get_readable_forums($userid, $courseid=0) {
         $courses = $DB->get_records('course', array('id' => $courseid));
     } else {
         // If no course is specified, then the user can see SITE + his courses.
-        // And admins can see all courses, so pass the $doanything flag enabled
         $courses1 = $DB->get_records('course', array('id' => SITEID));
-        $courses2 = get_my_courses($userid, null, null, true);
+        $courses2 = enrol_get_users_courses($userid, true);
         $courses = array_merge($courses1, $courses2);
     }
     if (!$courses) {
@@ -5654,34 +5653,29 @@ function forum_update_subscriptions_button($courseid, $forumid) {
 }
 
 /**
- * This function gets run whenever a role is assigned to a user in a context
+ * This function gets run whenever user is enrolled into course
  *
- * @param integer $userid
- * @param object $context
- * @param itn $roleid
- * @return bool
+ * @param object $cp
+ * @return void
  */
-function forum_role_assign($userid, $context, $roleid) {
-    return forum_add_user_default_subscriptions($userid, $context);
+function forum_user_enrolled($cp) {
+    $context = get_context_instance(CONTEXT_COURSE, $cp->courseid);
+    forum_add_user_default_subscriptions($cp->userid, $context);
 }
 
 
 /**
- * This function gets run whenever a role is assigned to a user in a context
+ * This function gets run whenever user is unenrolled from course
  *
- * @param integer $userid
- * @param object $context
- * @return bool
+ * @param object $cp
+ * @return void
  */
-function forum_role_unassign($userid, $context) {
-    if (empty($context->contextlevel)) {
-        return false;
+function forum_user_unenrolled($cp) {
+    if ($cp->lastenrol) {
+        $context = get_context_instance(CONTEXT_COURSE, $cp->courseid);
+        forum_remove_user_subscriptions($cp->userid, $context);
+        forum_remove_user_tracking($cp->userid, $context);
     }
-
-    forum_remove_user_subscriptions($userid, $context);
-    forum_remove_user_tracking($userid, $context);
-
-    return true;
 }
 
 
@@ -5793,7 +5787,6 @@ function forum_remove_user_subscriptions($userid, $context) {
     switch ($context->contextlevel) {
 
         case CONTEXT_SYSTEM:   // For the whole site
-            //if ($courses = get_my_courses($userid)) {
             // find all courses in which this user has a forum subscription
             if ($courses = $DB->get_records_sql("SELECT c.id
                                                   FROM {course} c,
@@ -7003,7 +6996,7 @@ function forum_reset_userdata($data) {
     // remove all ratings in this course's forums
     if (!empty($data->reset_forum_ratings)) {
         $ratingdeloptions = new stdclass();
-        
+
         if ($forums) {
             foreach ($forums as $forumid=>$unused) {
                 if (!$cm = get_coursemodule_from_instance('forum', $forumid)) {
@@ -7373,7 +7366,7 @@ function forum_get_extra_capabilities() {
  */
 function forum_extend_navigation($navref, $course, $module, $cm) {
     global $CFG, $OUTPUT, $USER;
-    
+
     $limit = 5;
 
     $discussions = forum_get_discussions($cm,"d.timemodified DESC", false, -1, $limit);

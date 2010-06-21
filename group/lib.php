@@ -481,31 +481,13 @@ function groups_delete_groupings($courseid, $showfeedback=false) {
 
 /**
  * Obtains a list of the possible roles that group members might come from,
- * on a course. Generally this includes all the roles who would have
- * course:view on that course, except the doanything roles.
+ * on a course. Generally this includes only profile roles.
  * @param object $context Context of course
  * @return Array of role ID integers, or false if error/none.
  */
 function groups_get_possible_roles($context) {
-    $capability = 'moodle/course:participate';
-
-    // find all possible "student" roles
-    if ($possibleroles = get_roles_with_capability($capability, CAP_ALLOW, $context)) {
-        $validroleids = array();
-        foreach ($possibleroles as $possiblerole) {
-            if ($caps = role_context_capabilities($possiblerole->id, $context, $capability)) { // resolved list
-                if (isset($caps[$capability]) && $caps[$capability] > 0) { // resolved capability > 0
-                    $validroleids[] = $possiblerole->id;
-                }
-            }
-        }
-        if (empty($validroleids)) {
-            return false;
-        }
-        return $validroleids;
-    } else {
-        return false;  // No need to continue, since no roles have this capability set
-    }
+    $roles = get_profile_roles($context);
+    return array_keys($roles);
 }
 
 

@@ -352,9 +352,7 @@ class enrolment_plugin_mnet {
         // Are we a *real* user or the shady MNET Daemon?
         // require_capability('moodle/role:assign', $context, NULL, false);
 
-        if (!role_unassign(0, $userrecord->id, 0, $context->id)) {
-            throw new mnet_exception(5015, 'couldnotunenrol', 'enrol_mnet');
-        }
+        role_unassign_all(array('userid'=>$userrecord->id, 'contextiod'=>$context->id, 'component'=>'enrol_mnet'), true, true);
 
         return true;
     }

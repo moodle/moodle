@@ -171,6 +171,8 @@ class completion_criteria_duration extends completion_criteria {
     public function cron() {
         global $DB;
 
+//TODO: MDL-22797 completion needs to be updated to use new enrolment framework
+
         // Get all users who match meet this criteria
         $sql = '
             SELECT DISTINCT

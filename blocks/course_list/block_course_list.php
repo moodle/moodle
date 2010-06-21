@@ -36,11 +36,8 @@ class block_course_list extends block_list {
 
         if (empty($CFG->disablemycourses) and isloggedin() and !isguestuser() and
           !(has_capability('moodle/course:update', get_context_instance(CONTEXT_SYSTEM)) and $adminseesall)) {    // Just print My Courses
-            if ($courses = get_my_courses($USER->id, 'visible DESC, fullname ASC')) {
+            if ($courses = enrol_get_my_courses(NULL, 'visible DESC, fullname ASC')) {
                 foreach ($courses as $course) {
-                    if ($course->id == SITEID) {
-                        continue;
-                    }
                     $linkcss = $course->visible ? "" : " class=\"dimmed\" ";
                     $this->content->items[]="<a $linkcss title=\"" . format_string($course->shortname) . "\" ".
                                "href=\"$CFG->wwwroot/course/view.php?id=$course->id\">" . format_string($course->fullname) . "</a>";

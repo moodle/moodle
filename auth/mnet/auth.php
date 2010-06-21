@@ -87,7 +87,7 @@ class auth_plugin_mnet extends auth_plugin_base {
         }
 
         $userdata['myhosts'] = array();
-        if($courses = get_my_courses($user->id, 'id', 'id, visible')) {
+        if ($courses = enrol_get_users_courses($user->id, false)) {
             $userdata['myhosts'][] = array('name'=> $SITE->shortname, 'url' => $CFG->wwwroot, 'count' => count($courses));
         }
 
@@ -349,41 +349,33 @@ class auth_plugin_mnet extends auth_plugin_base {
             // pass username and an assoc array of "my courses"
             // with info so that the IDP can maintain mnet_enrol_assignments
             $mnetrequest->add_param($remoteuser->username);
-            $fields = 'id, category, sortorder, fullname, shortname, idnumber, summary,
-                       startdate, cost, currency, defaultrole, visible';
-            $courses = get_my_courses($localuser->id, 'visible DESC,sortorder ASC', $fields);
+            $fields = 'id, category, sortorder, fullname, shortname, idnumber, summary, startdate, visible';
+            $courses = enrol_get_users_courses($localuser->id, false, $fields, 'visible DESC,sortorder ASC');
             if (is_array($courses) && !empty($courses)) {
                 // Second request to do the JOINs that we'd have done
-                // inside get_my_courses() if we had been allowed
+                // inside enrol_get_users_courses() if we had been allowed
                 $sql = "SELECT c.id,
-                               cc.name AS cat_name, cc.description AS cat_description,
-                               r.shortname as defaultrolename
+                               cc.name AS cat_name, cc.description AS cat_description
                           FROM {course} c
                           JOIN {course_categories} cc ON c.category = cc.id
-                          LEFT OUTER JOIN {role} r  ON c.defaultrole = r.id
                          WHERE c.id IN (" . join(',',array_keys($courses)) . ')';
                 $extra = $DB->get_records_sql($sql);
 
                 $keys = array_keys($courses);
-                $defaultrolename = $DB->get_field('role', 'shortname', array('id'=>$CFG->defaultcourseroleid));
+                $defaultrole = get_default_course_role($ccache[$shortname]); //TODO: rewrite this completely, there is no default course role any more!!!
                 foreach ($keys AS $id) {
                     if ($courses[$id]->visible == 0) {
                         unset($courses[$id]);
                         continue;
                     }
                     $courses[$id]->cat_id          = $courses[$id]->category;
-                    $courses[$id]->defaultroleid   = $courses[$id]->defaultrole;
+                    $courses[$id]->defaultroleid   = $defaultrole->id;
                     unset($courses[$id]->category);
-                    unset($courses[$id]->defaultrole);
                     unset($courses[$id]->visible);
 
                     $courses[$id]->cat_name        = $extra[$id]->cat_name;
                     $courses[$id]->cat_description = $extra[$id]->cat_description;
-                    if (!empty($extra[$id]->defaultrolename)) {
-                        $courses[$id]->defaultrolename = $extra[$id]->defaultrolename;
-                    } else {
-                        $courses[$id]->defaultrolename = $defaultrolename;
-                    }
+                    $courses[$id]->defaultrolename = $defaultrole->name;
                     // coerce to array
                     $courses[$id] = (array)$courses[$id];
                 }
@@ -486,10 +478,6 @@ class auth_plugin_mnet extends auth_plugin_base {
                     c.idnumber,
                     c.summary,
                     c.startdate,
-                    c.cost,
-                    c.currency,
-                    c.defaultroleid,
-                    c.defaultrolename,
                     a.id as assignmentid
                 FROM
                     {mnet_enrol_course} c

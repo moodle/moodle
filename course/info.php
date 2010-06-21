@@ -29,7 +29,7 @@
     }
 
     $context = get_context_instance(CONTEXT_COURSE, $course->id);
-    if ((!course_parent_visible($course) || (! $course->visible)) && !has_capability('moodle/course:viewhiddencourses', $context)) {
+    if (!$course->visible and !has_capability('moodle/course:viewhiddencourses', $context)) {
         print_error('coursehidden', '', $CFG->wwwroot .'/');
     }
 
@@ -44,6 +44,8 @@
     echo $OUTPUT->header();
     echo $OUTPUT->heading('<a href="view.php?id='.$course->id.'">'.format_string($course->fullname) . '</a><br />(' . format_string($course->shortname) . ')');
 
+    //TODO: add enrol info
+    /*
     if ($course->guest || $course->password) {
         echo $OUTPUT->box_start('generalbox icons');
         if ($course->guest) {
@@ -55,17 +57,17 @@
             echo "<div><img alt=\"\" class=\"icon key\" src=\"" . $OUTPUT->pix_url('i/key') . "\" />&nbsp;$strrequireskey</div>";
         }
         echo $OUTPUT->box_end();
-    }
+    }*/
 
 
     echo $OUTPUT->box_start('generalbox info');
 
-    $course->summary = file_rewrite_pluginfile_urls($course->summary, 'pluginfile.php', $context->id, 'course_summary', $course->id);
+    $course->summary = file_rewrite_pluginfile_urls($course->summary, 'pluginfile.php', $context->id, 'course_summary', NULL);
     echo format_text($course->summary, $course->summaryformat, NULL, $course->id);
 
-    if (!empty($CFG->coursemanager)) {
-        $coursemanagerroles = explode(',', $CFG->coursemanager);
-        foreach ($coursemanagerroles as $roleid) {
+    if (!empty($CFG->coursecontact)) {
+        $coursecontactroles = explode(',', $CFG->coursecontact);
+        foreach ($coursecontactroles as $roleid) {
             $role = $DB->get_record('role', array('id'=>$roleid));
             $roleid = (int) $roleid;
             if ($users = get_role_users($roleid, $context, true)) {
@@ -84,9 +86,7 @@
         }
     }
 
-    require_once("$CFG->dirroot/enrol/enrol.class.php");
-    $enrol = enrolment_factory::factory($course->enrol);
-    echo $enrol->get_access_icons($course);
+// TODO: print some enrol icons
 
     echo $OUTPUT->box_end();
 

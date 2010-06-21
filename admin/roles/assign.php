@@ -31,8 +31,6 @@ define("MAX_USERS_TO_LIST_PER_ROLE", 10);
 
 $contextid      = required_param('contextid',PARAM_INT);
 $roleid         = optional_param('roleid', 0, PARAM_INT);
-$extendperiod   = optional_param('extendperiod', 0, PARAM_INT);
-$extendbase     = optional_param('extendbase', 3, PARAM_INT);
 
 list($context, $course, $cm) = get_context_info_array($contextid);
 
@@ -58,7 +56,6 @@ $PAGE->set_context($context);
 
 $contextname = print_context_name($context);
 $courseid = $course->id;
-$inmeta = $course->metacourse;
 $isfrontpage = ($course->id == SITEID);
 
 // These are needed early because of tabs.php
@@ -87,40 +84,6 @@ if ($roleid) {
     }
 }
 
-// Build the list of options for the enrolment period dropdown.
-$unlimitedperiod = get_string('unlimited');
-for ($i=1; $i<=365; $i++) {
-    $seconds = $i * 86400;
-    $periodmenu[$seconds] = get_string('numdays', '', $i);
-}
-// Work out the apropriate default setting.
-if ($extendperiod) {
-    $defaultperiod = $extendperiod;
-} else {
-    $defaultperiod = $course->enrolperiod;
-}
-
-// Build the list of options for the starting from dropdown.
-$timeformat = get_string('strftimedatefullshort');
-$today = time();
-$today = make_timestamp(date('Y', $today), date('m', $today), date('d', $today), 0, 0, 0);
-
-// MDL-12420, preventing course start date showing up as an option at system context and front page roles.
-if ($course->startdate > 0) {
-    $basemenu[2] = get_string('coursestart') . ' (' . userdate($course->startdate, $timeformat) . ')';
-}
-if ($course->enrollable != 2 || ($course->enrolstartdate == 0 || $course->enrolstartdate <= $today) && ($course->enrolenddate == 0 || $course->enrolenddate > $today)) {
-    $basemenu[3] = get_string('today') . ' (' . userdate($today, $timeformat) . ')' ;
-}
-if ($course->enrollable == 2) {
-    if($course->enrolstartdate > 0) {
-        $basemenu[4] = get_string('courseenrolstart') . ' (' . userdate($course->enrolstartdate, $timeformat) . ')';
-    }
-    if($course->enrolenddate > 0) {
-        $basemenu[5] = get_string('courseenrolend') . ' (' . userdate($course->enrolenddate, $timeformat) . ')';
-    }
-}
-
 // Process any incoming role assignments before printing the header.
 if ($roleid) {
 
@@ -138,46 +101,9 @@ if ($roleid) {
 
             foreach ($userstoassign as $adduser) {
                 $allow = true;
-                if ($inmeta) {
-                    if (has_capability('moodle/course:managemetacourse', $context, $adduser->id)) {
-                        //ok
-                    } else {
-                        $managerroles = get_roles_with_capability('moodle/course:managemetacourse', CAP_ALLOW, $context);
-                        if (!empty($managerroles) and !array_key_exists($roleid, $managerroles)) {
-                            $erruser = $DB->get_record('user', array('id'=>$adduser->id), 'id, firstname, lastname');
-                            $errors[] = get_string('metaassignerror', 'role', fullname($erruser));
-                            $allow = false;
-                        }
-                    }
-                }
 
                 if ($allow) {
-                    switch($extendbase) {
-                        case 2:
-                            $timestart = $course->startdate;
-                            break;
-                        case 3:
-                            $timestart = $today;
-                            break;
-                        case 4:
-                            $timestart = $course->enrolstartdate;
-                            break;
-                        case 5:
-                            $timestart = $course->enrolenddate;
-                            break;
-                    }
-
-                    if($extendperiod > 0) {
-                        $timeend = $timestart + $extendperiod;
-                    } else {
-                        $timeend = 0;
-                    }
-                    if (! role_assign($roleid, $adduser->id, 0, $context->id, $timestart, $timeend)) {
-                        $a = new stdClass;
-                        $a->role = $assignableroles[$roleid];
-                        $a->user = fullname($adduser);
-                        $errors[] = get_string('assignerror', 'role', $a);
-                    }
+                    role_assign($roleid, $adduser->id, $context->id);
                 }
             }
 
@@ -197,18 +123,8 @@ if ($roleid) {
         if (!empty($userstounassign)) {
 
             foreach ($userstounassign as $removeuser) {
-                if (! role_unassign($roleid, $removeuser->id, 0, $context->id)) {
-                    $a = new stdClass;
-                    $a->role = $assignableroles[$roleid];
-                    $a->user = fullname($removeuser);
-                    $errors[] = get_string('unassignerror', 'role', $a);
-                } else if ($inmeta) {
-                    sync_metacourse($courseid);
-                    $newroles = get_user_roles($context, $removeuser->id, false);
-                    if (empty($newroles) || array_key_exists($roleid, $newroles)) {
-                        $errors[] = get_string('metaunassignerror', 'role', fullname($removeuser));
-                    }
-                }
+                //unassign only roles that are added manually, no messing with other components!!!
+                role_unassign($roleid, $removeuser->id, $context->id, '');
             }
 
             $potentialuserselector->invalidate_selected_users();
@@ -224,14 +140,12 @@ if ($roleid) {
 
 $PAGE->set_pagelayout('admin');
 $PAGE->set_title($title);
-$tabfile = $CFG->dirroot.'/'.$CFG->admin.'/roles/tabs.php';
 
 switch ($context->contextlevel) {
     case CONTEXT_SYSTEM:
         admin_externalpage_setup('assignroles', '', array('contextid' => $contextid, 'roleid' => $roleid));
         break;
     case CONTEXT_USER:
-        $tabfile = null;
         if ($isfrontpage) {
             $fullname = fullname($user, has_capability('moodle/site:viewfullnames', $context));
             $PAGE->set_heading($fullname);
@@ -260,10 +174,6 @@ switch ($context->contextlevel) {
 }
 
 echo $OUTPUT->header();
-if ($tabfile) {
-    $currenttab = 'assign';
-    include($tabfile);
-}
 
 // Print heading.
 echo $OUTPUT->heading_with_help($title, 'assignroles', 'role');
@@ -290,16 +200,6 @@ $assignurl = new moodle_url($PAGE->url, array('roleid'=>$roleid));
       <td id="buttonscell">
           <div id="addcontrols">
               <input name="add" id="add" type="submit" value="<?php echo $OUTPUT->larrow().'&nbsp;'.get_string('add'); ?>" title="<?php print_string('add'); ?>" /><br />
-
-              <?php print_collapsible_region_start('', 'assignoptions', get_string('enrolmentoptions', 'role'),
-                    'assignoptionscollapse', true); ?>
-
-              <p><label for="extendperiod"><?php print_string('enrolperiod') ?></label><br />
-              <?php echo html_writer::select($periodmenu, 'extendperiod', $defaultperiod, $unlimitedperiod); ?></p>
-
-              <p><label for="extendbase"><?php print_string('startingfrom') ?></label><br />
-              <?php echo html_writer::select($basemenu, 'extendbase', $extendbase, false); ?></p>
-              <?php print_collapsible_region_end(); ?>
           </div>
 
           <div id="removecontrols">
@@ -351,11 +251,6 @@ $assignurl = new moodle_url($PAGE->url, array('roleid'=>$roleid));
 
     // Print instruction
     echo $OUTPUT->heading(get_string('chooseroletoassign', 'role'), 3);
-
-    // sync metacourse enrolments if needed
-    if ($inmeta) {
-        sync_metacourse($course);
-    }
 
     // Get the names of role holders for roles with between 1 and MAX_USERS_TO_LIST_PER_ROLE users,
     // and so determine whether to show the extra column.

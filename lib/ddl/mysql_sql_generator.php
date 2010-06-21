@@ -66,7 +66,7 @@ class mysql_sql_generator extends sql_generator {
 
     public $alter_column_sql = 'ALTER TABLE TABLENAME MODIFY COLUMN COLUMNSPECS'; //The SQL template to alter columns
 
-    public $drop_index_sql = 'ALTER TABLE TABLENAME DROP INDEX INDEXNAME'; //SQL sentence to drop one index
+    public $drop_index_sql = 'ALTER TABLE TABLENAME DROP INDEX INDEXNAME'; //SQL sentence to drop one index - HACK for MDL-22804
                                                                //TABLENAME, INDEXNAME are dynamically replaced
 
     public $rename_index_sql = null; //SQL sentence to rename one index (MySQL doesn't support this!)
@@ -93,6 +93,7 @@ class mysql_sql_generator extends sql_generator {
         $value++;
         return array("ALTER TABLE $this->prefix$tablename AUTO_INCREMENT = $value");
     }
+
 
     /**
      * Given one correct xmldb_table, returns the SQL statements

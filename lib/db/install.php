@@ -45,8 +45,7 @@ function xmldb_main_install() {
         'rolesactive'           => '0', // marks fully set up system
         'auth'                  => 'email',
         'auth_pop3mailbox'      => 'INBOX',
-        'enrol'                 => 'manual',
-        'enrol_plugins_enabled' => 'manual',
+        'enrol_plugins_enabled' => 'manual,guest,self,cohort',
         'style'                 => 'default',
         'template'              => 'default',
         'theme'                 => theme_config::DEFAULT_THEME,
@@ -126,8 +125,8 @@ function xmldb_main_install() {
     update_log_display_entry('course', 'user report', 'user', 'CONCAT(firstname,\' \',lastname)');
     update_log_display_entry('course', 'view', 'course', 'fullname');
     update_log_display_entry('course', 'update', 'course', 'fullname');
-    update_log_display_entry('course', 'enrol', 'course', 'fullname');
-    update_log_display_entry('course', 'unenrol', 'course', 'fullname');
+    update_log_display_entry('course', 'enrol', 'user', 'course', 'fullname'); // there should be some way to store user id of the enrolled user!
+    update_log_display_entry('course', 'unenrol', 'user', 'course', 'fullname'); // there should be some way to store user id of the enrolled user!
     update_log_display_entry('course', 'report log', 'course', 'fullname');
     update_log_display_entry('course', 'report live', 'course', 'fullname');
     update_log_display_entry('course', 'report outline', 'course', 'fullname');

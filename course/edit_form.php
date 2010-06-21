@@ -1,83 +1,73 @@
 <?php
 
-if (!defined('MOODLE_INTERNAL')) {
-    die('Direct access to this script is forbidden.');    ///  It must be included from a Moodle page
-}
+defined('MOODLE_INTERNAL') || die;
 
 require_once($CFG->libdir.'/formslib.php');
 
 class course_edit_form extends moodleform {
+    protected $course;
+    protected $context;
 
     function definition() {
         global $USER, $CFG, $DB;
 
-        $courseconfig = get_config('moodlecourse');
-        $mform    =& $this->_form;
+        $mform    = $this->_form;
 
-        $course   = $this->_customdata['course'];
-        $category = $this->_customdata['category'];
+        $course        = $this->_customdata['course']; // this contains the data of this form
+        $category      = $this->_customdata['category'];
         $editoroptions = $this->_customdata['editoroptions'];
 
-        $systemcontext = get_context_instance(CONTEXT_SYSTEM);
+        $systemcontext   = get_context_instance(CONTEXT_SYSTEM);
         $categorycontext = get_context_instance(CONTEXT_COURSECAT, $category->id);
 
-        $disable_meta = false; // basic meta course state protection; server-side security checks not needed
         if (!empty($course->id)) {
             $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
             $context = $coursecontext;
-
-            if (course_in_meta($course)) {
-                $disable_meta = get_string('metaalreadyinmeta');
-
-            } else if ($course->metacourse) {
-                if ($DB->count_records('course_meta', array('parent_course'=>$course->id)) > 0) {
-                    $disable_meta = get_string('metaalreadyhascourses');
-                }
-
-            } else {
-                // if users already enrolled directly into coures, do not allow switching to meta,
-                // users with metacourse manage permission are exception
-                // please note that we do not need exact results - anything unexpected here prevents metacourse
-                $managers = get_users_by_capability($coursecontext, 'moodle/course:managemetacourse', 'u.id');
-                $enrolroles = get_roles_with_capability('moodle/course:participate', CAP_ALLOW, $coursecontext);
-                if ($users = get_role_users(array_keys($enrolroles), $coursecontext, false, 'u.id', 'u.id ASC')) {
-                    foreach($users as $user) {
-                        if (!isset($managers[$user->id])) {
-                            $disable_meta = get_string('metaalreadyhasenrolments');
-                            break;
-                        }
-                    }
-                }
-                unset($managers);
-                unset($users);
-                unset($enrolroles);
-            }
         } else {
             $coursecontext = null;
             $context = $categorycontext;
         }
 
+        $courseconfig = get_config('moodlecourse');
+
+        $this->course  = $course;
+        $this->context = $context;
+
 /// form definition with new course defaults
 //--------------------------------------------------------------------------------
         $mform->addElement('header','general', get_string('general', 'form'));
 
-        // Must have create course capability in both categories in order to move course
-        if (has_capability('moodle/course:create', $categorycontext)) {
-            $displaylist = array();
-            $parentlist = array();
-            make_categories_list($displaylist, $parentlist, 'moodle/course:create');
-            $mform->addElement('select', 'category', get_string('category'), $displaylist);
+        // verify permissions to change course category or keep current
+        if (empty($course->id)) {
+            if (has_capability('moodle/course:create', $categorycontext)) {
+                $displaylist = array();
+                $parentlist = array();
+                make_categories_list($displaylist, $parentlist, 'moodle/course:create');
+                $mform->addElement('select', 'category', get_string('category'), $displaylist);
+                $mform->addHelpButton('category', 'category');
+                $mform->setDefault('category', $category->id);
+            } else {
+                $mform->addElement('hidden', 'category', null);
+                $mform->setType('category', PARAM_INT);
+                $mform->setConstant('category', $category->id);
+            }
         } else {
-            $mform->addElement('hidden', 'category', null);
-            $mform->setType('category', PARAM_INT);
-        }
-        $mform->addHelpButton('category', 'category');
-        $mform->setDefault('category', $category->id);
-        $mform->setType('category', PARAM_INT);
-
-        if (!empty($course->id) and !has_capability('moodle/course:changecategory', $coursecontext)) {
-            $mform->hardFreeze('category');
-            $mform->setConstant('category', $category->id);
+            if (has_capability('moodle/course:changecategory', $coursecontext)) {
+                $displaylist = array();
+                $parentlist = array();
+                make_categories_list($displaylist, $parentlist, 'moodle/course:create');
+                if (!isset($displaylist[$course->category])) {
+                    //always keep current
+                    $displaylist[$course->category] = format_string($DB->get_field('course_categories', 'name', array('id'=>$course->category)));
+                }
+                $mform->addElement('select', 'category', get_string('category'), $displaylist);
+                $mform->addHelpButton('category', 'category');
+            } else {
+                //keep current
+                $mform->addElement('hidden', 'category', null);
+                $mform->setType('category', PARAM_INT);
+                $mform->setConstant('category', $course->category);
+            }
         }
 
         $mform->addElement('text','fullname', get_string('fullnamecourse'),'maxlength="254" size="50"');
@@ -175,106 +165,8 @@ class course_edit_form extends moodleform {
             $mform->addElement('select', 'theme', get_string('forcetheme'), $themes);
         }
 
-        $meta=array();
-        $meta[0] = get_string('no');
-        $meta[1] = get_string('yes');
-        if ($disable_meta === false) {
-            $mform->addElement('select', 'metacourse', get_string('managemeta'), $meta);
-            $mform->addHelpButton('metacourse', 'managemeta');
-            $mform->setDefault('metacourse', $courseconfig->metacourse);
-        } else {
-            // no metacourse element - we do not want to change it anyway!
-            $mform->addElement('static', 'nometacourse', get_string('managemeta'),
-                ((empty($course->metacourse)) ? $meta[0] : $meta[1]) . " - $disable_meta ");
-            $mform->addHelpButton('nometacourse', 'managemeta');
-        }
-
 //--------------------------------------------------------------------------------
-        $mform->addElement('header','enrolhdr', get_string('enrolments'));
-
-        $choices = array();
-        $modules = explode(',', $CFG->enrol_plugins_enabled);
-        foreach ($modules as $module) {
-            $name = get_string('enrolname', "enrol_$module");
-            $plugin = enrolment_factory::factory($module);
-            if (method_exists($plugin, 'print_entry')) {
-                $choices[$name] = $module;
-            }
-        }
-        asort($choices);
-        $choices = array_flip($choices);
-        $choices = array_merge(array('' => get_string('sitedefault').' ('.get_string('enrolname', "enrol_$CFG->enrol").')'), $choices);
-        $mform->addElement('select', 'enrol', get_string('enrolmentplugins'), $choices);
-        $mform->addHelpButton('enrol', 'enrolmentplugins');
-        $mform->setDefault('enrol', $courseconfig->enrol);
-
-
-        $roles = get_assignable_roles($context);
-        if (!empty($course->id)) {
-            // add current default role, so that it is selectable even when user can not assign it
-            if ($current_role = $DB->get_record('role', array('id'=>$course->defaultrole))) {
-                $roles[$current_role->id] = strip_tags(format_string($current_role->name, true));
-            }
-        }
-        $choices = array();
-        if ($sitedefaultrole = $DB->get_record('role', array('id'=>$CFG->defaultcourseroleid))) {
-            $choices[0] = get_string('sitedefault').' ('.$sitedefaultrole->name.')';
-        } else {
-            $choices[0] = get_string('sitedefault');
-        }
-        $choices = $choices + $roles;
-
-        // fix for MDL-9197
-        foreach ($choices as $choiceid => $choice) {
-            $choices[$choiceid] = format_string($choice);
-        }
-
-        $mform->addElement('select', 'defaultrole', get_string('defaultrole', 'role'), $choices);
-        $mform->setDefault('defaultrole', 0);
-
-
-        $radio = array();
-        $radio[] = &MoodleQuickForm::createElement('radio', 'enrollable', null, get_string('no'), 0);
-        $radio[] = &MoodleQuickForm::createElement('radio', 'enrollable', null, get_string('yes'), 1);
-        $radio[] = &MoodleQuickForm::createElement('radio', 'enrollable', null, get_string('enroldate'), 2);
-        $mform->addGroup($radio, 'enrollable', get_string('enrollable'), ' ', false);
-        $mform->addHelpButton('enrollable', 'enrollable');
-        $mform->setDefault('enrollable', $courseconfig->enrollable);
-
-        $mform->addElement('date_selector', 'enrolstartdate', get_string('enrolstartdate'), array('optional' => true));
-        $mform->setDefault('enrolstartdate', 0);
-        $mform->disabledIf('enrolstartdate', 'enrollable', 'neq', 2);
-
-        $mform->addElement('date_selector', 'enrolenddate', get_string('enrolenddate'), array('optional' => true));
-        $mform->setDefault('enrolenddate', 0);
-        $mform->disabledIf('enrolenddate', 'enrollable', 'neq', 2);
-
-        $mform->addElement('duration', 'enrolperiod', get_string('enrolperiod'), array('optional' => true, 'defaultunit' => 86400));
-        $mform->setDefault('enrolperiod', $courseconfig->enrolperiod);
-
-
-//--------------------------------------------------------------------------------
-        $mform->addElement('header','expirynotifyhdr', get_string('expirynotify'));
-
-        $choices = array();
-        $choices['0'] = get_string('no');
-        $choices['1'] = get_string('yes');
-        $mform->addElement('select', 'expirynotify', get_string('notify'), $choices);
-        $mform->addHelpButton('expirynotify', 'notify');
-        $mform->setDefault('expirynotify', $courseconfig->expirynotify);
-
-        $mform->addElement('select', 'notifystudents', get_string('expirynotifystudents'), $choices);
-        $mform->addHelpButton('notifystudents', 'expirynotifystudents');
-        $mform->setDefault('notifystudents', $courseconfig->notifystudents);
-
-        $thresholdmenu=array();
-        for ($i=1; $i<=30; $i++) {
-            $seconds = $i * 86400;
-            $thresholdmenu[$seconds] = get_string('numdays', '', $i);
-        }
-        $mform->addElement('select', 'expirythreshold', get_string('expirythreshold'), $thresholdmenu);
-        $mform->addHelpButton('expirythreshold', 'expirythreshold');
-        $mform->setDefault('expirythreshold', $courseconfig->expirythreshold);
+        enrol_course_edit_form($mform, $course, $context);
 
 //--------------------------------------------------------------------------------
         $mform->addElement('header','', get_string('groups', 'group'));
@@ -313,48 +205,6 @@ class course_edit_form extends moodleform {
             $mform->setConstant('visible', $course->visible);
         }
 
-        $mform->addElement('passwordunmask', 'enrolpassword', get_string('enrolmentkey'), 'size="25"');
-        $mform->setDefault('enrolpassword', '');
-        $mform->setDefault('enrolpassword', $courseconfig->enrolpassword);
-        $mform->setType('enrolpassword', PARAM_RAW);
-
-        if (empty($course->id) or ($course->password !== '' and $course->id != SITEID)) {
-            // do not require password in existing courses that do not have password yet - backwards compatibility ;-)
-            if (!empty($CFG->enrol_manual_requirekey)) {
-                $mform->addRule('enrolpassword', get_string('required'), 'required', null, 'client');
-            }
-        }
-
-        $choices = array();
-        $choices['0'] = get_string('guestsno');
-        $choices['1'] = get_string('guestsyes');
-        $choices['2'] = get_string('guestskey');
-        $mform->addElement('select', 'guest', get_string('opentoguests'), $choices);
-        $mform->setDefault('guest', $courseconfig->guest);
-
-        // If we are creating a course, its enrol method isn't yet chosen, BUT the site has a default enrol method which we can use here
-        $enrol_object = $CFG;
-        if (!empty($course->id)) {
-            $enrol_object = $course;
-        }
-        // If the print_entry method exists and the course enrol method isn't manual (both set or inherited from site), show cost
-        if (method_exists(enrolment_factory::factory($enrol_object->enrol), 'print_entry') && !($enrol_object->enrol == 'manual' || (empty($enrol_object->enrol) && $CFG->enrol == 'manual'))) {
-            $costgroup=array();
-            $currencies = get_string_manager()->get_list_of_currencies();
-            $costgroup[]= &MoodleQuickForm::createElement('text','cost', '', 'maxlength="6" size="6"');
-            $costgroup[]= &MoodleQuickForm::createElement('select', 'currency', '', $currencies);
-            $mform->addGroup($costgroup, 'costgrp', get_string('cost'), '&nbsp;', false);
-            //defining a rule for a form element within a group :
-            $costgrprules=array();
-            //set the message to null to tell Moodle to use a default message
-            //available for most rules, fetched from language pack (err_{rulename}).
-            $costgrprules['cost'][]=array(null, 'numeric', null, 'client');
-            $mform->addGroupRule('costgrp',$costgrprules);
-            $mform->setDefault('cost', '');
-            $mform->setDefault('currency', empty($CFG->enrol_currency) ? 'USD' : $CFG->enrol_currency);
-
-        }
-
 //--------------------------------------------------------------------------------
         $mform->addElement('header','', get_string('language'));
 
@@ -386,31 +236,38 @@ class course_edit_form extends moodleform {
         }
 
 //--------------------------------------------------------------------------------
-        if (has_capability('moodle/site:config', $systemcontext) && ((!empty($course->requested) && $CFG->restrictmodulesfor == 'requested') || $CFG->restrictmodulesfor == 'all')) {
-            $mform->addElement('header', '', get_string('restrictmodules'));
+        if (has_capability('moodle/site:config', $systemcontext)) {
+            if (((!empty($course->requested) && $CFG->restrictmodulesfor == 'requested') || $CFG->restrictmodulesfor == 'all')) {
+                $mform->addElement('header', '', get_string('restrictmodules'));
 
-            $options = array();
-            $options['0'] = get_string('no');
-            $options['1'] = get_string('yes');
-            $mform->addElement('select', 'restrictmodules', get_string('restrictmodules'), $options);
-            $mods = array(0=>get_string('allownone'));
-            $mods += $DB->get_records_menu('modules', array(), 'name', 'id, name');
+                $options = array();
+                $options['0'] = get_string('no');
+                $options['1'] = get_string('yes');
+                $mform->addElement('select', 'restrictmodules', get_string('restrictmodules'), $options);
+                if (!empty($CFG->restrictbydefault)) {
+                    $mform->setDefault('restrictmodules', 1);
+                }
 
-
-            $mform->addElement('select', 'allowedmods', get_string('to'), $mods,
-                            array('multiple'=>'multiple', 'size'=>'10'));
-            $mform->disabledIf('allowedmods', 'restrictmodules', 'eq', 0);
+                $mods = array(0=>get_string('allownone'));
+                $mods += $DB->get_records_menu('modules', array('visible'=>1), 'name', 'id, name');
+                $mform->addElement('select', 'allowedmods', get_string('to'), $mods, array('multiple'=>'multiple', 'size'=>'10'));
+                $mform->disabledIf('allowedmods', 'restrictmodules', 'eq', 0);
+                // defaults are already in $course
+            } else {
+                // remove any mod restriction
+                $mform->addElement('hidden', 'restrictmodules', 0);
+                $mform->setType('restrictmodules', PARAM_INT);
+            }
         } else {
-            $mform->addElement('hidden', 'restrictmodules', null);
+            $mform->addElement('hidden', 'restrictmodules');
             $mform->setType('restrictmodules', PARAM_INT);
-        }
-        if ($CFG->restrictmodulesfor == 'all') {
-            $mform->setDefault('allowedmods', explode(',',$CFG->defaultallowedmodules));
-            if (!empty($CFG->restrictbydefault)) {
-                $mform->setDefault('restrictmodules', 1);
+            if (empty($course->id)) {
+                $mform->setConstant('restrictmodules', (int)($CFG->restrictmodulesfor == 'all'));
+            } else {
+                // keep previous
+                $mform->setConstant('restrictmodules', $course->restrictmodules);
             }
         }
-        $mform->setType('restrictmodules', PARAM_INT);
 
 /// customizable role names in this course
 //--------------------------------------------------------------------------------
@@ -439,14 +296,18 @@ class course_edit_form extends moodleform {
 //--------------------------------------------------------------------------------
         $mform->addElement('hidden', 'id', null);
         $mform->setType('id', PARAM_INT);
+
+/// finally set the current form data
+//--------------------------------------------------------------------------------
+        $this->set_data($course);
     }
 
     function definition_after_data() {
         global $DB;
 
-        $mform =& $this->_form;
+        $mform = $this->_form;
 
-        // add availabe groupings
+        // add available groupings
         if ($courseid = $mform->getElementValue('id') and $mform->elementExists('defaultgroupingid')) {
             $options = array();
             if ($groupings = $DB->get_records('groupings', array('courseid'=>$courseid))) {
@@ -478,21 +339,7 @@ class course_edit_form extends moodleform {
             }
         }
 
-        if (!empty($data['enrolstartdate']) && !empty($data['enrolenddate']) &&
-                $data['enrolenddate'] <= $data['enrolstartdate']){
-            $errors['enrolenddate'] = get_string('enrolenddaterror');
-        }
-
-        if (!empty($CFG->enrol_manual_usepasswordpolicy) and isset($data['enrolpassword']) and $data['enrolpassword'] != '') {
-            $course = $this->_customdata['course'];
-            if ($course->password !== $data['enrolpassword']) {
-                // enforce password policy only if changing password - backwards compatibility
-                $errmsg = '';
-                if (!check_password_policy($data['enrolpassword'], $errmsg)) {
-                    $errors['enrolpassword'] = $errmsg;
-                }
-            }
-        }
+        $errors = array_merge($errors, enrol_course_edit_validation($data, $this->context));
 
         return $errors;
     }

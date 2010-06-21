@@ -40,6 +40,8 @@ class backup_final_task extends backup_task {
         $coursectxid = get_context_instance(CONTEXT_COURSE, $this->get_courseid())->id;
         $this->add_setting(new backup_activity_generic_setting(backup::VAR_CONTEXTID, base_setting::IS_INTEGER, $coursectxid));
 
+        //TODO: MDL-22793 add enrol instances of enabled enrol plugins in course,
+
         // Generate the groups file with the final annotated groups and groupings
         // including membership based on setting
         $this->add_step(new backup_groups_structure_step('groups', 'groups.xml'));

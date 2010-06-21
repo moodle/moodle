@@ -92,8 +92,6 @@
         }
         //restoreto
         $restore_restoreto = required_param('restore_restoreto', PARAM_INT);
-        //restore_metacourse
-        $restore_metacourse = required_param('restore_metacourse', PARAM_INT);
         //restore_users
         $restore_users = required_param('restore_users', PARAM_INT);
 
@@ -140,7 +138,6 @@
             }
         }
         $restore->restoreto=$restore_restoreto;
-        $restore->metacourse=$restore_metacourse;
         $restore->users=$restore_users;
         $restore->groups=$restore_groups;
         $restore->logs=$restore_logs;
@@ -220,15 +217,9 @@
     //Check site
     $site = get_site();
 
-    // Non-cached - get accessinfo
-    if (isset($USER->access)) {
-        $accessinfo = $USER->access;
-    } else {
-        $accessinfo = get_user_access_sitewide($USER->id);
-    }
-
     // Get all the courses the user is able to restore to
-    $mycourses = get_user_courses_bycap($USER->id, 'moodle/restore:restorecourse', $accessinfo, true, 'c.sortorder ASC',  array('id', 'fullname', 'shortname', 'visible'));
+    //TODO: use better function which includes all courses for admins
+    $mycourses = get_user_courses_bycap($USER->id, 'moodle/restore:restorecourse');
 
     // Calculate if the user can create courses
     $cancreatecourses = user_can_create_courses();

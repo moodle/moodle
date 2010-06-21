@@ -131,19 +131,28 @@ $functions = array(
         'type'        => 'write',
     ),
 
-    'moodle_enrol_role_assign' => array(
+    'moodle_enrol_get_enrolled_users' => array(
+        'classname'   => 'moodle_enrol_external',
+        'methodname'  => 'get_enrolled_users',
+        'classpath'   => 'enrol/externallib.php',
+        'description' => 'Get list of course participants',
+        'type'        => 'read',
+    ),
+
+    'moodle_role_assign' => array(
         'classname'   => 'moodle_enrol_external',
         'methodname'  => 'role_assign',
         'classpath'   => 'enrol/externallib.php',
-        'description' => 'Enrol users.',
+        'description' => 'Manual role assignments.',
         'type'        => 'write',
     ),
 
-    'moodle_enrol_role_unassign' => array(
+    'moodle_role_unassign' => array(
         'classname'   => 'moodle_enrol_external',
         'methodname'  => 'role_unassign',
         'classpath'   => 'enrol/externallib.php',
-        'description' => 'Unenrol users.',
+        'description' => 'Manual role unassignments.',
         'type'        => 'write',
     ),
+
 );

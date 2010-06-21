@@ -118,7 +118,7 @@ if ($courseid != SITEID) {
     echo '<a name="coursenotes"></a>';
 
     if (!empty($userid)) {
-        $courses = get_my_courses($userid);
+        $courses = enrol_get_users_courses($userid);
         foreach($courses as $c) {
             $header = '<a href="' . $CFG->wwwroot . '/course/view.php?id=' . $c->id . '">' . $c->fullname . '</a>';
             if (has_capability('moodle/notes:manage', get_context_instance(CONTEXT_COURSE, $c->id))) {

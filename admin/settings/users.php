@@ -2,7 +2,6 @@
 
 // This file defines settingpages and externalpages under the "users" category
 
-$ADMIN->add('users', new admin_category('authsettings', get_string('authentication','admin')));
 $ADMIN->add('users', new admin_category('accounts', get_string('accounts', 'admin')));
 $ADMIN->add('users', new admin_category('roles', get_string('permissions', 'role')));
 
@@ -15,54 +14,6 @@ if ($hassiteconfig
  or has_capability('moodle/role:assign', $systemcontext)
  or has_capability('moodle/cohort:manage', $systemcontext)
  or has_capability('moodle/cohort:view', $systemcontext)) { // speedup for non-admins, add all caps used on this page
-
-
-    $temp = new admin_settingpage('manageauths', get_string('authsettings', 'admin'));
-    $temp->add(new admin_setting_manageauths());
-    $temp->add(new admin_setting_heading('manageauthscommonheading', get_string('commonsettings', 'admin'), ''));
-    $temp->add(new admin_setting_special_registerauth());
-    $temp->add(new admin_setting_configselect('guestloginbutton', get_string('guestloginbutton', 'auth'),
-                                              get_string('showguestlogin', 'auth'), '1', array('0'=>get_string('hide'), '1'=>get_string('show'))));
-    $temp->add(new admin_setting_configtext('alternateloginurl', get_string('alternateloginurl', 'auth'),
-                                            get_string('alternatelogin', 'auth', htmlspecialchars(get_login_url())), ''));
-    $temp->add(new admin_setting_configtext('forgottenpasswordurl', get_string('forgottenpasswordurl', 'auth'),
-                                            get_string('forgottenpassword', 'auth'), ''));
-    $temp->add(new admin_setting_confightmleditor('auth_instructions', get_string('instructions', 'auth'),
-                                                get_string('authinstructions', 'auth'), ''));
-    $temp->add(new admin_setting_configtext('allowemailaddresses', get_string('allowemailaddresses', 'admin'), get_string('configallowemailaddresses', 'admin'), '', PARAM_NOTAGS));
-    $temp->add(new admin_setting_configtext('denyemailaddresses', get_string('denyemailaddresses', 'admin'), get_string('configdenyemailaddresses', 'admin'), '', PARAM_NOTAGS));
-    $temp->add(new admin_setting_configcheckbox('verifychangedemail', get_string('verifychangedemail', 'admin'), get_string('configverifychangedemail', 'admin'), 1));
-
-    $temp->add(new admin_setting_configtext('recaptchapublickey', get_string('recaptchapublickey', 'admin'), get_string('configrecaptchapublickey', 'admin'), '', PARAM_NOTAGS));
-    $temp->add(new admin_setting_configtext('recaptchaprivatekey', get_string('recaptchaprivatekey', 'admin'), get_string('configrecaptchaprivatekey', 'admin'), '', PARAM_NOTAGS));
-    $ADMIN->add('authsettings', $temp);
-
-
-    if ($auths = get_plugin_list('auth')) {
-        $authsenabled = get_enabled_auth_plugins();
-        $authbyname = array();
-
-        foreach ($auths as $auth => $authdir) {
-            $strauthname = get_string('pluginname', "auth_{$auth}");
-            $authbyname[$strauthname] = $auth;
-        }
-        ksort($authbyname);
-
-        foreach ($authbyname as $strauthname=>$authname) {
-            if (file_exists($authdir.'/settings.php')) {
-                // do not show disabled auths in tree, keep only settings link on manage page
-                $settings = new admin_settingpage('authsetting'.$authname, $strauthname, 'moodle/site:config', !in_array($authname, $authsenabled));
-                if ($ADMIN->fulltree) {
-                    include($authdir.'/settings.php');
-                }
-                // TODO: finish implementation of common settings - locking, etc.
-                $ADMIN->add('authsettings', $settings);
-
-            } else {
-                $ADMIN->add('authsettings', new admin_externalpage('authsetting'.$authname, $strauthname, "$CFG->wwwroot/$CFG->admin/auth_config.php?auth=$authname", 'moodle/site:config', !in_array($authname, $authsenabled)));
-            }
-        }
-    }
 
 
     if (empty($CFG->loginhttps)) {
@@ -94,7 +45,7 @@ if ($hassiteconfig
             $studentroles    = array();
             $teacherroles    = array();
             $creatornewroles = array();
-            
+
             foreach (get_all_roles() as $role) {
                 $rolename = strip_tags(format_string($role->name)) . ' ('. $role->shortname . ')';
                 $allroles[$role->id] = $rolename;
@@ -135,7 +86,7 @@ if ($hassiteconfig
             $defaultstudentid = key($studentroles);
             reset($teacherroles);
             $defaultteacherid = key($teacherroles);
-            
+
             if ($userroles) {
                 reset($userroles);
                 $defaultuserid = key($userroles);
@@ -155,18 +106,11 @@ if ($hassiteconfig
         $temp->add(new admin_setting_configcheckbox('nodefaultuserrolelists', get_string('nodefaultuserrolelists', 'admin'), get_string('confignodefaultuserrolelists', 'admin'), 0));
 
         if (!during_initial_install()) {
-            $temp->add(new admin_setting_configselect('defaultcourseroleid', get_string('defaultcourseroleid', 'admin'),
-                          get_string('configdefaultcourseroleid', 'admin'), $defaultstudentid, $allroles));
             $temp->add(new admin_setting_configselect('creatornewroleid', get_string('creatornewroleid', 'admin'),
                           get_string('configcreatornewroleid', 'admin'), $defaultteacherid, $creatornewroles));
         }
 
         $temp->add(new admin_setting_configcheckbox('autologinguests', get_string('autologinguests', 'admin'), get_string('configautologinguests', 'admin'), 0));
-
-        if (!during_initial_install()) {
-            $temp->add(new admin_setting_configmultiselect('nonmetacoursesyncroleids', get_string('nonmetacoursesyncroleids', 'admin'),
-                      get_string('confignonmetacoursesyncroleids', 'admin'), array(), $allroles));
-        }
 
         $temp->add(new admin_setting_configmultiselect('hiddenuserfields', get_string('hiddenuserfields', 'admin'),
                    get_string('confighiddenuserfields', 'admin'), array(),

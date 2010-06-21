@@ -69,8 +69,10 @@ class backup_course_task extends backup_task {
         $this->add_step(new create_taskbasepath_directory('create_course_directory'));
 
         // Create the course.xml file with course & category information
-        // annotating some bits, metacourse info, tags and module restrictions
+        // annotating some bits, tags and module restrictions
         $this->add_step(new backup_course_structure_step('course_info', 'course.xml'));
+
+        //TODO: MDL-22793 - add user_enrolments entries
 
         // Annotate the groups used in already annotated groupings
         $this->add_step(new backup_annotate_groups_from_groupings('annotate_groups'));

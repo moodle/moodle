@@ -28,7 +28,7 @@ function xmldb_enrol_authorize_upgrade($oldversion) {
 
     //===== 1.9.0 upgrade line ======//
 
-    if ($result && $oldversion < 2008020500 && is_enabled_enrol('authorize')) {
+    if ($result && $oldversion < 2008020500 && enrol_is_enabled('authorize')) {
         require_once($CFG->dirroot.'/enrol/authorize/localfuncs.php');
         if (!check_curl_available()) {
             echo $OUTPUT->notification("You are using the authorize.net enrolment plugin for payment handling but cUrl is not available.

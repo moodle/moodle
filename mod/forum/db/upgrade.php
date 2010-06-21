@@ -56,34 +56,6 @@ function xmldb_forum_upgrade($oldversion) {
         upgrade_mod_savepoint($result, 2007101511, 'forum');
     }
 
-    if ($result && $oldversion < 2007101512) {
-
-    /// Cleanup the forum subscriptions
-        echo $OUTPUT->notification('Removing stale forum subscriptions', 'notifysuccess');
-
-        $roles = get_roles_with_capability('moodle/course:participate', CAP_ALLOW);
-        $roles = array_keys($roles);
-
-        list($usql, $params) = $DB->get_in_or_equal($roles);
-        $sql = "SELECT fs.userid, f.id AS forumid
-                  FROM {forum} f
-                       JOIN {course} c                 ON c.id = f.course
-                       JOIN {context} ctx              ON (ctx.instanceid = c.id AND ctx.contextlevel = ".CONTEXT_COURSE.")
-                       JOIN {forum_subscriptions} fs   ON fs.forum = f.id
-                       LEFT JOIN {role_assignments} ra ON (ra.contextid = ctx.id AND ra.userid = fs.userid AND ra.roleid $usql)
-                 WHERE ra.id IS NULL";
-
-        if ($rs = $DB->get_recordset_sql($sql, $params)) {
-            foreach ($rs as $remove) {
-                $DB->delete_records('forum_subscriptions', array('userid'=>$remove->userid, 'forum'=>$remove->forumid));
-                echo '.';
-            }
-            $rs->close();
-        }
-
-        upgrade_mod_savepoint($result, 2007101512, 'forum');
-    }
-
     if ($result && $oldversion < 2008072800) {
     /// Define field completiondiscussions to be added to forum
         $table = new xmldb_table('forum');

@@ -192,18 +192,19 @@ if (!empty($move) and ($moveto >= 0) and confirm_sesskey()) {
 }
 
 /// Hide or show a category
-if ((!empty($hide) or !empty($show)) and confirm_sesskey()) {
-    if (!empty($hide)) {
-        $tempcat = $DB->get_record('course_categories', array('id'=>$hide));
-        $visible = 0;
-    } else {
-        $tempcat = $DB->get_record('course_categories', array('id'=>$show));
-        $visible = 1;
+if ($hide and confirm_sesskey()) {
+    if ($tempcat = $DB->get_record('course_categories', array('id'=>$hide))) {
+        require_capability('moodle/category:manage', get_category_or_system_context($tempcat->parent));
+        if ($tempcat->visible == 1) {
+            course_category_hide($tempcat);
+        }
     }
-    require_capability('moodle/category:manage', get_category_or_system_context($tempcat->parent));
-    if ($tempcat) {
-        $DB->set_field('course_categories', 'visible', $visible, array('id'=>$tempcat->id));
-        $DB->set_field('course', 'visible', $visible, array('category' => $tempcat->id));
+} else if ($show and confirm_sesskey()) {
+    if ($tempcat = $DB->get_record('course_categories', array('id'=>$show))) {
+        require_capability('moodle/category:manage', get_category_or_system_context($tempcat->parent));
+        if ($tempcat->visible == 0) {
+            course_category_show($tempcat);
+        }
     }
 }
 

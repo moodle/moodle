@@ -55,7 +55,7 @@ if (!$canview) {
 
 /// Now get the role assignments for this user.
 $sql = "SELECT
-        ra.id, ra.userid, ra.contextid, ra.roleid, ra.enrol,
+        ra.id, ra.userid, ra.contextid, ra.roleid, ra.component, ra.itemid
         c.path,
         r.name AS rolename,
         COALESCE(rn.name, r.name) AS localname

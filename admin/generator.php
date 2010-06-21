@@ -709,23 +709,16 @@ class generator {
 
                 $context = get_context_instance(CONTEXT_COURSE, $courseid);
                 foreach ($users_to_assign as $random_user) {
-                    $success = role_assign(5, $random_user, 0, $context->id);
+                    role_assign(5, $random_user, $context->id);
 
-                    if ($success) {
-                        $assigned_count++;
-                        $course_users[$courseid][] = $random_user;
-                        if (!isset($assigned_users[$random_user])) {
-                            $assigned_users[$random_user] = 1;
-                        } else {
-                            $assigned_users[$random_user]++;
-                        }
-                        $this->verbose("Student $random_user was assigned to course $courseid.");
+                    $assigned_count++;
+                    $course_users[$courseid][] = $random_user;
+                    if (!isset($assigned_users[$random_user])) {
+                        $assigned_users[$random_user] = 1;
                     } else {
-                        $this->verbose("Could not assign student $random_user to course $courseid!");
-                        if (!$this->get('ignore_errors')) {
-                            die();
-                        }
+                        $assigned_users[$random_user]++;
                     }
+                    $this->verbose("Student $random_user was assigned to course $courseid.");
                 }
             }
 

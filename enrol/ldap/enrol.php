@@ -1,7 +1,5 @@
 <?php
 
-require_once("$CFG->dirroot/enrol/enrol.class.php");
-
 class enrolment_plugin_ldap {
 
     var $log;
@@ -81,7 +79,8 @@ function setup_enrolments(&$user) {
 
                 if (!$DB->get_record('role_assignments', array('roleid'=>$role->id, 'userid'=>$user->id, 'contextid'=>$context->id))) {
                     //error_log("[ENROL_LDAP] Assigning role '{$role->name}' to {$user->id} ({$user->username}) in course {$course_obj->id} ({$course_obj->shortname})");
-                    if (!role_assign($role->id, $user->id, 0, $context->id, 0, 0, 0, 'ldap')){
+                    //TODO: some real enrolment here
+                    if (!role_assign($role->id, $user->id, $context->id, 'enrol_ldap')){
                         error_log("[ENROL_LDAP] Failed to assign role '{$role->name}' to $user->id ($user->username) into course $course_obj->id ($course_obj->shortname)");
                     }
                 } else {
@@ -106,7 +105,7 @@ function setup_enrolments(&$user) {
     foreach ($ldap_assignments as $ra) {
         if($ra->enrol === 'ldap') {
             error_log("Unassigning role_assignment with id '{$ra->id}' from user {$user->id} ({$user->username})");
-            role_unassign($ra->roleid, $user->id, 0, $ra->contextid, 'ldap');
+            role_unassign($ra->roleid, $user->id, $ra->contextid, 'enrol_ldap');
         }
     }
 
@@ -265,11 +264,8 @@ function sync_enrolments($type, $enrol = false) {
                         foreach ($todelete as $member) {
                             $member = $member->user;
 
-                            if (role_unassign($role->id, $member, 0, $context->id, 'ldap')) {
-                                print "Unassigned $type from $member for course $course_obj->id ($course_obj->shortname)\n";
-                            } else {
-                                print "Failed to unassign $type from $member for course $course_obj->id ($course_obj->shortname)\n";
-                            }
+                            role_unassign($role->id, $member, $context->id, 'enrol_ldap');
+                            print "Unassigned $type from $member for course $course_obj->id ($course_obj->shortname)\n";
                         }
                     }
 
@@ -287,7 +283,7 @@ function sync_enrolments($type, $enrol = false) {
                         $member = $member->id;
                         if (!$DB->get_record('role_assignments', array('roleid'=>$role->id,
                                              'contextid'=>$context->id, 'userid'=>$member, 'enrol'=>'ldap'))){
-                            if (role_assign($role->id, $member, 0, $context->id, 0, 0, 0, 'ldap')){
+                            if (role_assign($role->id, $member, $context->id, 'enrol_ldap')){
                                 print "Assigned role $type to $member ($ldapmember) for course $course_obj->id ($course_obj->shortname)\n";
                             } else {
                                 print "Failed to assign role $type to $member ($ldapmember) for course $course_obj->id ($course_obj->shortname)\n";

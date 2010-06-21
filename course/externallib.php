@@ -18,11 +18,13 @@
 /**
  * External user API
  *
- * @package    moodlecore
- * @subpackage webservice
+ * @package    core
+ * @subpackage course
  * @copyright  2009 Moodle Pty Ltd (http://moodle.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+defined('MOODLE_INTERNAL') || die;
 
 require_once("$CFG->libdir/externallib.php");
 

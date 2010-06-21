@@ -215,7 +215,8 @@ function authorize_process_csv($filename) {
                     $timestart = time();
                     $timeend = $timestart + $course->enrolperiod;
                 }
-                if (role_assign($role->id, $user->id, 0, $coursecontext->id, $timestart, $timeend, 0, 'authorize')) {
+                //TODO: do some real enrolment here
+                if (role_assign($role->id, $user->id, $coursecontext->id, 'enrol_authorize')) {
                     $imported++;
                     if (!empty($CFG->enrol_mailstudents)) {
                         $sendem[] = $order->id;

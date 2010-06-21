@@ -326,7 +326,7 @@ function resource_check_text_access($path, $itemtype, $this_id, $user, $group_id
     }
 
     //check if user is registered in course or course is open to guests
-    if (!$course->guest && !has_capability('moodle/course:participate', $course_context)) {
+    if (!is_enrolled($course_context) and !is_viewing($course_context)) { //TODO: guest course access is gone, this needs a different solution
         return false;
     }
 

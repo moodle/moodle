@@ -28,25 +28,56 @@ require_once($CFG->dirroot . '/user/selector/lib.php');
 
 /**
  * Add new cohort.
- * @param  object $data
- * @return void
+ *
+ * @param  object $cohort
+ * @return int
  */
-function cohort_add_cohort($data) {
+function cohort_add_cohort($cohort) {
     global $DB;
-    $data->timecreated = time();
-    $data->timemodified = $data->timecreated;
-    $DB->insert_record('cohort', $data);
+
+    if (!isset($cohort->name)) {
+        throw new coding_excetion('Missing cohort name in cohort_add_cohort().');
+    }
+    if (!isset($cohort->idnumber)) {
+        $cohort->idnumber = NULL;
+    }
+    if (!isset($cohort->description)) {
+        $cohort->description = $DB->sql_empty();
+    }
+    if (!isset($cohort->descriptionformat)) {
+        $cohort->descriptionformat = FORMAT_HTML;
+    }
+    if (empty($cohort->component)) {
+        $cohort->component = '';
+    }
+    if (!isset($cohort->timecreated)) {
+        $cohort->timecreated = time();
+    }
+    if (!isset($cohort->timemodified)) {
+        $cohort->timemodified = $cohort->timecreated;
+    }
+
+    $cohort->id = $DB->insert_record('cohort', $cohort);
+
+    events_trigger('cohort_added', $cohort);
+
+    return $cohort->id;
 }
 
 /**
  * Update existing cohort.
- * @param  object $data
+ * @param  object $cohort
  * @return void
  */
-function cohort_update_cohort($data) {
+function cohort_update_cohort($cohort) {
     global $DB;
-    $data->timemodified = time();
-    $DB->update_record('cohort', $data);
+    if (isset($cohort->component) and empty($cohort->component)) {
+        $cohort->component = NULL;
+    }
+    $cohort->timemodified = time();
+    $DB->update_record('cohort', $cohort);
+
+    events_trigger('cohort_updated', $cohort);
 }
 
 /**
@@ -63,6 +94,8 @@ function cohort_delete_cohort($cohort) {
 
     $DB->delete_records('cohort_members', array('cohortid'=>$cohort->id));
     $DB->delete_records('cohort', array('id'=>$cohort->id));
+
+    events_trigger('cohort_deleted', $cohort);
 }
 
 /**
@@ -104,6 +137,8 @@ function cohort_add_member($cohortid, $userid) {
     $record->userid    = $userid;
     $record->timeadded = time();
     $DB->insert_record('cohort_members', $record);
+
+    events_trigger('cohort_member_added', (object)array('cohortid'=>$cohortid, 'userid'=>$userid));
 }
 
 /**
@@ -115,6 +150,8 @@ function cohort_add_member($cohortid, $userid) {
 function cohort_remove_member($cohortid, $userid) {
     global $DB;
     $DB->delete_records('cohort_members', array('cohortid'=>$cohortid, 'userid'=>$userid));
+
+    events_trigger('cohort_member_removed', (object)array('cohortid'=>$cohortid, 'userid'=>$userid));
 }
 
 /**
@@ -268,7 +305,7 @@ class cohort_existing_selector extends user_selector_base {
 
         return array($groupname => $availableusers);
     }
-    
+
     protected function get_options() {
         $options = parent::get_options();
         $options['cohortid'] = $this->cohortid;

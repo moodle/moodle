@@ -761,7 +761,8 @@ function process_membership_tag($tagcontents){
 
                     // Enrol unsing the generic role_assign() function
 
-                    if ((!role_assign($moodleroleid, $memberstoreobj->userid, 0, $rolecontext, $timeframe->begin, $timeframe->end, 0, 'imsenterprise')) && (trim($memberstoreobj->userid)!='')) {
+                    //TODO: some real enrolment here
+                    if ((!role_assign($moodleroleid, $memberstoreobj->userid, $rolecontext, 'enrol_imsenterprise')) && (trim($memberstoreobj->userid)!='')) {
                         $this->log_line("Error enrolling user #$memberstoreobj->userid ($member->idnumber) to role $member->roletype in course $memberstoreobj->course");
                     }else{
                         $this->log_line("Enrolled user #$memberstoreobj->userid ($member->idnumber) to role $member->roletype in course $memberstoreobj->course");
@@ -798,12 +799,9 @@ function process_membership_tag($tagcontents){
                 }elseif($CFG->enrol_imsunenrol){
                     // Unenrol
 
-                    if (! role_unassign($moodleroleid, $memberstoreobj->userid, 0, $rolecontext, 'imsenterprise')) {
-                        $this->log_line("Error unenrolling $memberstoreobj->userid from role $moodleroleid in course");
-                    }else{
-                        $membersuntally++;
-                        $this->log_line("Unenrolled $member->idnumber from role $moodleroleid in course");
-                    }
+                    role_unassign($moodleroleid, $memberstoreobj->userid, 0, $rolecontext, 'imsenterprise');
+                    $membersuntally++;
+                    $this->log_line("Unenrolled $member->idnumber from role $moodleroleid in course");
                 }
 
             }

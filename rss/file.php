@@ -86,27 +86,19 @@ if (!$isblog) {
     if (!in_array(strtolower($modulename), $mods)) {
         rss_not_found();
     }
-    //Get course_module to check it's visible
-    if (!$cm = get_coursemodule_from_instance($modulename,$instance)) {
+    try {
+        $cm = get_coursemodule_from_instance($modulename, $instance, 0, false, MUST_EXIST);
+        require_login($course, false, $cm, false, true);
+    } catch (Exception $e) {
         rss_not_found();
     }
-    $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
-    //will $modcontext always be the same object as $context?
-    $isuser = has_capability('moodle/course:participate', $modcontext);
+
 } else {
-    $isuser = has_capability('moodle/course:participate', $coursecontext);
-}
-
-//Check if course allows guests
-if ($course->id != SITEID) {
-    if ((!$course->guest || $course->password) && (!$isuser)) {
+    try {
+        require_login($course, false, NULL, false, true);
+    } catch (Exception $e) {
         rss_not_found();
     }
-}
-
-//Check for "security" if the course is hidden or the activity is hidden
-if (!$isblog and (!$course->visible || !$cm->visible) && (!has_capability('moodle/course:viewhiddenactivities', $context))) {
-    rss_not_found();
 }
 
 $pathname = null;

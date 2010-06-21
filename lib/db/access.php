@@ -596,19 +596,6 @@ $capabilities = array(
         )
     ),
 
-    'moodle/role:unassignself' => array(
-
-        'captype' => 'write',
-        'contextlevel' => CONTEXT_COURSE,
-        'archetypes' => array(
-            'student' => (empty($CFG->allowunenrol)) ? CAP_INHERIT : CAP_ALLOW,
-            'teacher' => CAP_ALLOW,
-            'editingteacher' => CAP_ALLOW,
-            'coursecreator' => CAP_ALLOW,
-            'manager' => CAP_ALLOW
-        )
-    ),
-
     'moodle/role:switchroles' => array(
 
         'riskbitmask' => RISK_XSS | RISK_PERSONAL,
@@ -725,25 +712,37 @@ $capabilities = array(
         )
     ),
 
-    /* originally this capability was called moodle/course:view,
-     * but since 2.0 it is used for access to course without the enrolment
-     */
-    'moodle/course:participate' => array(
-
-        'captype' => 'read',
-        'contextlevel' => CONTEXT_COURSE,
-        'archetypes' => array(
-            'student' => CAP_ALLOW,
-            'teacher' => CAP_ALLOW,
-            'editingteacher' => CAP_ALLOW
-        )
-    ),
-
     'moodle/course:view' => array(
 
         'captype' => 'read',
         'contextlevel' => CONTEXT_COURSE,
         'archetypes' => array(
+            'manager' => CAP_ALLOW,
+        )
+    ),
+
+    /* review course enrolments - no group restrictions, it is really full access to all participants info*/
+    'moodle/course:enrolreview' => array(
+
+        'riskbitmask' => RISK_PERSONAL,
+
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_COURSE,
+        'archetypes' => array(
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW,
+        )
+    ),
+
+    /* add, remove, hide enrol instances in courses */
+    'moodle/course:enrolconfig' => array(
+
+        'riskbitmask' => RISK_PERSONAL,
+
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_COURSE,
+        'archetypes' => array(
+            'editingteacher' => CAP_ALLOW,
             'manager' => CAP_ALLOW,
         )
     ),
@@ -791,6 +790,7 @@ $capabilities = array(
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSE,
         'archetypes' => array(
+            'editingteacher' => CAP_ALLOW,
             'manager' => CAP_ALLOW
         )
     ),
@@ -810,18 +810,6 @@ $capabilities = array(
     'moodle/course:manageactivities' => array(
 
         'riskbitmask' => RISK_XSS,
-
-        'captype' => 'write',
-        'contextlevel' => CONTEXT_COURSE,
-        'archetypes' => array(
-            'editingteacher' => CAP_ALLOW,
-            'manager' => CAP_ALLOW
-        )
-    ),
-
-    'moodle/course:managemetacourse' => array(
-
-        'riskbitmask' => RISK_XSS | RISK_PERSONAL,
 
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSE,

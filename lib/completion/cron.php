@@ -53,6 +53,8 @@ function completion_cron() {
 function completion_cron_mark_started() {
     global $CFG, $DB;
 
+//TODO: MDL-22797 completion needs to be updated to use new enrolment framework
+
     if (debugging()) {
         mtrace('Marking users as started');
     }

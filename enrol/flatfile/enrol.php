@@ -187,9 +187,10 @@ function get_access_icons($course) {
                     $context = get_context_instance(CONTEXT_COURSE, $course->id);
 
                     if ($fields[0] == 'add') {
-                        role_assign($roleid, $user->id, null, $context->id, $fields[4], $fields[5], 0, 'flatfile');
+                        // TODO: real enrol, and maybe manual
+                        role_assign($roleid, $user->id, $context->id, 'enrol_flatfile');
                     } else {
-                        role_unassign($roleid, $user->id, null, $context->id);
+                        role_unassign($roleid, $user->id, $context->id);
                     }
 
 

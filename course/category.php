@@ -112,9 +112,8 @@
             if ($course) {
                 $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
                 require_capability('moodle/course:visibility', $coursecontext);
-                if (!$DB->set_field('course', 'visible', $visible, array('id' => $course->id))) {
-                    print_error('errorupdatingcoursevisibility');
-                }
+                $DB->set_field('course', 'visible', $visible, array('id' => $course->id));
+                $DB->set_field('course', 'visibleold', $visible, array('id' => $course->id)); // we set the old flag when user manually changes visibility of course
             }
         }
 
@@ -244,7 +243,7 @@
 
 /// Print out all the courses
     $courses = get_courses_page($category->id, 'c.sortorder ASC',
-            'c.id,c.sortorder,c.shortname,c.fullname,c.summary,c.visible,c.guest,c.password',
+            'c.id,c.sortorder,c.shortname,c.fullname,c.summary,c.visible',
             $totalcount, $page*$perpage, $perpage);
     $numcourses = count($courses);
 
@@ -274,7 +273,6 @@
         $strshow = get_string('show');
         $strsummary = get_string('summary');
         $strsettings = get_string('settings');
-        $strassignteachers = get_string('assignteachers');
         $strallowguests = get_string('allowguests');
         $strrequireskey = get_string('requireskey');
 
@@ -401,16 +399,7 @@
                 echo '</td>';
             } else {
                 echo '<td align="right">';
-                if (!empty($acourse->guest)) {
-                    echo '<a href="view.php?id='.$acourse->id.'"><img title="'.
-                         $strallowguests.'" class="icon" src="'.
-                         $OUTPUT->pix_url('i/guest') . '" alt="'.$strallowguests.'" /></a>';
-                }
-                if (!empty($acourse->password)) {
-                    echo '<a href="view.php?id='.$acourse->id.'"><img title="'.
-                         $strrequireskey.'" class="icon" src="'.
-                         $OUTPUT->pix_url('i/key') . '" alt="'.$strrequireskey.'" /></a>';
-                }
+                //TODO: show some icons for plugins - such as guest, pasword, etc.
                 if (!empty($acourse->summary)) {
                     $link = new moodle_url("/course/info.php?id=$acourse->id");
                     echo $OUTPUT->action_link($link, '<img alt="'.get_string('info').'" class="icon" src="'.$OUTPUT->pix_url('i/info') . '" />',

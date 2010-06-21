@@ -50,7 +50,6 @@ if (!during_initial_install()) { //do not use during installation
         $temp->add(new admin_setting_configtext('commentsperpage', get_string('commentsperpage', 'admin'), '', 15, PARAM_INT));
 
         $temp->add(new admin_setting_configtext('coursesperpage', get_string('coursesperpage', 'admin'), get_string('configcoursesperpage', 'admin'), 20, PARAM_INT));
-        $temp->add(new admin_setting_configcheckbox('allowvisiblecoursesinhiddencategories', get_string('allowvisiblecoursesinhiddencategories', 'admin'), get_string('configvisiblecourses', 'admin'), 0));
 
         // front page default role
         $roleoptions = array(0=>get_string('none')); // roles to choose from

@@ -74,7 +74,7 @@ interface moodle_session {
      * @return void
      */
     public function write_close();
-    
+
     /**
      * Check for existing session with id $sid
      * @param unknown_type $sid
@@ -159,7 +159,7 @@ abstract class session_stub implements moodle_session {
         } catch (Exception $ignored) {
             // probably install/upgrade - ignore this problem
         }
-        
+
         if (NO_MOODLE_COOKIES) {
             return;
         }
@@ -372,7 +372,7 @@ class legacy_file_session extends session_stub {
         $sessionfile = clean_param("$CFG->dataroot/sessions/sess_$sid", PARAM_FILE);
         return file_exists($sessionfile);
     }
-    
+
 
 }
 
@@ -401,20 +401,20 @@ class database_session extends session_stub {
             }
         }
     }
-    
+
     public function session_exists($sid){
         global $CFG;
         try {
             $sql = "SELECT * FROM {sessions} WHERE timemodified < ? AND sid=? AND state=?";
             $params = array(time() + $CFG->sessiontimeout, $sid, 0);
-            
+
             return $this->database->record_exists_sql($sql, $params);
         } catch (dml_exception $ex) {
             error_log('Error checking existance of database session');
             return false;
         }
     }
-    
+
     protected function init_session_storage() {
         global $CFG;
 
@@ -878,7 +878,7 @@ function session_set_user($user) {
     unset($_SESSION['USER']->description); // conserve memory
     if (!isset($_SESSION['USER']->access)) {
         // check enrolments and load caps only once
-        check_enrolment_plugins($_SESSION['USER']);
+        enrol_check_plugins($_SESSION['USER']);
         load_all_capabilities();
     }
     sesskey(); // init session key

@@ -1191,11 +1191,11 @@ function install_core($version, $verbose) {
         // store version
         upgrade_main_savepoint(true, $version, false);
 
-        // Continue with the instalation
+        // Continue with the installation
         events_update_definition('moodle');
         message_update_providers('moodle');
 
-        // Write default settings unconditionlly
+        // Write default settings unconditionally
         admin_apply_default_settings(NULL, true);
 
         print_upgrade_part_end(null, true, $verbose);
@@ -1253,6 +1253,8 @@ function upgrade_core($version, $verbose) {
         // Reset caches again, just to be sure
         upgrade_reset_caches();
         remove_dir($CFG->dataroot . '/cache', true); // flush cache
+        $syscontext = get_context_instance(CONTEXT_SYSTEM);
+        mark_context_dirty($syscontext->path);
 
         print_upgrade_part_end('moodle', false, $verbose);
     } catch (Exception $ex) {

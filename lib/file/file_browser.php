@@ -318,7 +318,7 @@ class file_browser {
             return null;
         }
 
-        if (!is_null($filearea) and !in_array($filearea, array('course_intro', 'course_content', 'course_section', 'course_backup', 'section_backup'))) {
+        if (!is_null($filearea) and !in_array($filearea, array('course_summary', 'course_content', 'course_section', 'course_backup', 'section_backup'))) {
             // file area does not exist, sorry
             $filearea = null;
         }
@@ -344,7 +344,7 @@ class file_browser {
         return null;
     }
 
-    private function get_file_info_course_intro($course, $context, $filearea=null, $itemid=null, $filepath=null, $filename=null) {
+    private function get_file_info_course_summary($course, $context, $filearea=null, $itemid=null, $filepath=null, $filename=null) {
         global $CFG;
 
         $fs = get_file_storage();

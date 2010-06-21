@@ -1020,56 +1020,27 @@ abstract class role_assign_user_selector_base extends user_selector_base {
  * when we are assigning in a context below the course level. (CONTEXT_MODULE and
  * some CONTEXT_BLOCK).
  *
- * In this case we replicate part of get_users_by_capability() get the users
- * with moodle/course:participate. We can't use
- * get_users_by_capability() becuase
- *   1) get_users_by_capability() does not deal with searching by name
- *   2) exceptions array can be potentially large for large courses
+ * This returns only enrolled users in this context.
  */
 class potential_assignees_below_course extends role_assign_user_selector_base {
     public function find_users($search) {
         global $DB;
 
-        // Get roles with some assignement to the 'moodle/course:participate' capability.
-        $possibleroles = get_roles_with_capability('moodle/course:participate', CAP_ALLOW, $this->context);
-        if (empty($possibleroles)) {
-            // If there aren't any, we are done.
-            return array();
-        }
-
-        // Now exclude the admin roles, and check the actual permission on
-        // 'moodle/course:participate' to make sure it is allow.
-        $validroleids = array();
-
-        foreach ($possibleroles as $possiblerole) {
-            if ($caps = role_context_capabilities($possiblerole->id, $this->context, 'moodle/course:participate')) { // resolved list
-                if (isset($caps['moodle/course:participate']) && $caps['moodle/course:participate'] > 0) { // resolved capability > 0
-                    $validroleids[] = $possiblerole->id;
-                }
-            }
-        }
-
-        // If there are no valid roles, we are done.
-        if (!$validroleids) {
-            return array();
-        }
+        list($enrolsql, $eparams) = get_enrolled_sql($this->context);
 
         // Now we have to go to the database.
         list($wherecondition, $params) = $this->search_sql($search, 'u');
+        $params = array_merge($params, $eparams);
+
         if ($wherecondition) {
             $wherecondition = ' AND ' . $wherecondition;
         }
-        $roleids =  '('.implode(',', $validroleids).')';
 
-        $fields      = 'SELECT DISTINCT ' . $this->required_fields_sql('u');
-        $countfields = 'SELECT COUNT(DISTINCT u.id)';
+        $fields      = 'SELECT ' . $this->required_fields_sql('u');
+        $countfields = 'SELECT COUNT(u.id)';
 
         $sql   = " FROM {user} u
-                   JOIN {role_assignments} ra ON ra.userid = u.id
-                   JOIN {role} r ON r.id = ra.roleid
-                  WHERE ra.contextid " . get_related_contexts_string($this->context)."
-                        $wherecondition
-                        AND ra.roleid IN $roleids
+                  WHERE u.id IN ($enrolsql) $wherecondition
                         AND u.id NOT IN (
                            SELECT u.id
                              FROM {role_assignments} r, {user} u
@@ -1174,7 +1145,7 @@ class existing_role_holders extends role_assign_user_selector_base {
         $params = array_merge($params, $ctxparams);
         $params['roleid'] = $this->roleid;
 
-        $sql = "SELECT ra.id as raid," . $this->required_fields_sql('u') . ",ra.contextid
+        $sql = "SELECT ra.id as raid," . $this->required_fields_sql('u') . ",ra.contextid,ra.component
                 FROM {role_assignments} ra
                 JOIN {user} u ON u.id = ra.userid
                 JOIN {context} ctx ON ra.contextid = ctx.id
@@ -1182,7 +1153,7 @@ class existing_role_holders extends role_assign_user_selector_base {
                     $wherecondition AND
                     ctx.id $ctxcondition AND
                     ra.roleid = :roleid
-                ORDER BY ctx.depth DESC, u.lastname, u.firstname";
+                ORDER BY ctx.depth DESC, ra.component, u.lastname, u.firstname";
         $contextusers = $DB->get_records_sql($sql, $params);
 
         // No users at all.
@@ -1196,6 +1167,7 @@ class existing_role_holders extends role_assign_user_selector_base {
         $dummyuser = new stdClass;
         $dummyuser->contextid = 0;
         $dummyuser->id = 0;
+        $dummyuser->component = '';
         $contextusers[] = $dummyuser;
         $results = array(); // The results array we are building up.
         $doneusers = array(); // Ensures we only list each user at most once.
@@ -1223,6 +1195,11 @@ class existing_role_holders extends role_assign_user_selector_base {
             if ($currentcontextid != $this->context->id) {
                 $user->disabled = true;
             }
+            if ($user->component !== '') {
+                // bad luck, you can tweak only manual role assignments
+                $user->disabled = true;
+            }
+            unset($user->component);
             $currentgroup[$user->id] = $user;
         }
 
@@ -1465,8 +1442,9 @@ class role_allow_switch_page extends role_allow_role_page {
     }
 
     protected function load_required_roles() {
+        global $DB;
         parent::load_required_roles();
-        $this->allowedtargetroles = get_allowed_switchable_roles();
+        $this->allowedtargetroles = $DB->get_records_menu('roles', NULL, 'id', 'roleid, 1');
     }
 
     protected function set_allow($fromroleid, $targetroleid) {

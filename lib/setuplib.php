@@ -96,6 +96,17 @@ class moodle_exception extends Exception {
 }
 
 /**
+ * Course/activity access exception.
+ *
+ * This exception is thrown from require_login()
+ */
+class require_login_exception extends moodle_exception {
+    function __construct($debuginfo) {
+        parent::__construct('requireloginerror', 'error', '', NULL, $debuginfo);
+    }
+}
+
+/**
  * Web service parameter exception class
  *
  * This exception must be thrown to the web service client when a web service parameter is invalid
@@ -789,7 +800,7 @@ function get_real_size($size=0) {
  */
 function redirect_if_major_upgrade_required() {
     global $CFG;
-    $lastmajordbchanges = 2010052700;
+    $lastmajordbchanges = 2010061600;
     if (empty($CFG->version) or (int)$CFG->version < $lastmajordbchanges or
             during_initial_install() or !empty($CFG->adminsetuppending)) {
         try {

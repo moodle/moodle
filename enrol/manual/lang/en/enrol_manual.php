@@ -23,16 +23,19 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['description'] = 'This is the default form of enrolment. There are two main ways a student can be enrolled in a particular course.
-<ul>
-<li>A teacher or admin can enrol them manually using the link in the Course Administration menu 
-    within the course.</li>
-<li>A course can have a password defined, known as an "enrolment key".  Anyone who knows this key is 
-    able to add themselves to a course.</li>
-</ul>';
-$string['enrol_manual_requirekey'] = 'Require course enrolment keys in new courses and prevent removing of existing keys.';
-$string['enrol_manual_showhint'] = 'Enable this setting to reveal the first character of the enrolment key as a hint if one enters an incorrect key.';
-$string['enrol_manual_usepasswordpolicy'] = 'Use current user password policy for course enrolment keys.';
-$string['enrolmentkeyerror'] = 'That enrolment key was incorrect, please try again.';
-$string['enrolname'] = 'Internal Enrolment';
-$string['keyholderrole'] = 'The role of the user that holds the enrolment key for a course. Displayed to students attempting to enrol on the course.';
+$string['assignrole'] = 'Assignrole';
+$string['defaultperiod'] = 'Default enrolment period';
+$string['defaultperiod_desc'] = 'Default length of the default enrolment period setting (in seconds).'; //TODO: fixme
+$string['enrolledincourserole'] = 'Enrolled in "{$a->course}" as "{$a->role}"';
+$string['enrolusers'] = 'Enrol users';
+$string['manual:config'] = 'Configure manual enrol instances';
+$string['manual:manage'] = 'Manage enrolled users';
+$string['manual:unenrol'] = 'Unenrol users from the course';
+$string['manual:unenrolself'] = 'Unenrol self from the course';
+$string['pluginname'] = 'Manual enrolments';
+$string['pluginname_desc'] = 'Internal enrolments is a basic enrolment plugin which allows simple user enrolments. It should be kept enabled in most cases. Some other plugins such as self enrolment may use this pugin internally.';
+$string['status'] = 'Enable manual enrolments';
+$string['status_desc'] = 'Allow course access of internally enrolled users. This should be kept enabled in most cases.';
+$string['statusenabled'] = 'Enabled';
+$string['statusdisabled'] = 'Disabled';
+$string['unenrolselfconfirm'] = 'Do you really want to unenrol yourself from course "{$a}"?';

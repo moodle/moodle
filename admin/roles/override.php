@@ -65,7 +65,7 @@ if (optional_param('cancel', false, PARAM_BOOL)) {
 
 $role = $DB->get_record('role', array('id'=>$roleid), '*', MUST_EXIST);
 
-// These are needed early 
+// These are needed early
 $assignableroles  = get_assignable_roles($context, ROLENAME_BOTH);
 list($overridableroles, $overridecounts, $nameswithcounts) = get_overridable_roles($context, ROLENAME_BOTH, true);
 
@@ -75,7 +75,6 @@ $straction = get_string('overrideroles', 'role'); // Used by tabs.php
 $a = (object)array('context' => $contextname, 'role' => $overridableroles[$roleid]);
 $title = get_string('overridepermissionsforrole', 'role', $a);
 
-$tabfile = $CFG->dirroot.'/'.$CFG->admin.'/roles/tabs.php';
 $currenttab = 'permissions';
 
 $PAGE->set_pagelayout('admin');
@@ -86,7 +85,6 @@ switch ($context->contextlevel) {
         print_error('cannotoverridebaserole', 'error');
         break;
     case CONTEXT_USER:
-        $tabfile = null;
         if ($isfrontpage) {
             $fullname = fullname($user, has_capability('moodle/site:viewfullnames', $context));
             $PAGE->set_heading($fullname);
@@ -135,9 +133,6 @@ if (optional_param('savechanges', false, PARAM_BOOL) && confirm_sesskey()) {
 
 // Finally start page output
 echo $OUTPUT->header();
-if ($tabfile) {
-    include($tabfile);
-}
 echo $OUTPUT->heading_with_help($title, 'overridepermissions', 'role');
 
 // Show UI for overriding roles.
@@ -152,7 +147,7 @@ if (!empty($capabilities)) {
     echo html_writer::empty_tag('input', array('type'=>'hidden', 'name'=>'sesskey', 'value'=>sesskey()));
     echo html_writer::empty_tag('input', array('type'=>'hidden', 'name'=>'roleid', 'value'=>$roleid));
     echo html_writer::tag('p', get_string('highlightedcellsshowinherit', 'role'), array('class'=>'overridenotice'));
-    
+
     $overridestable->display();
     if ($overridestable->has_locked_capabiltites()) {
         echo '<p class="overridenotice">' . get_string('safeoverridenotice', 'role') . "</p>\n";

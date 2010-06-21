@@ -93,7 +93,7 @@
             // and notify admin
 
             if ($data->payment_status != "Completed" and $data->payment_status != "Pending") {
-                role_unassign(0, $data->userid, 0, $context->id);
+                role_unassign_all(array('userid'=>$data->userid, 'contextid'=>$context->id, 'component'=>'enrol_paypal'), true, true);
                 message_paypal_error_to_admin("Status not completed or pending. User unenrolled from course", $data);
                 die;
             }

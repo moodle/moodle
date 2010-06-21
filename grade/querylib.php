@@ -128,7 +128,7 @@ function grade_get_course_grade($userid, $courseid_or_ids=null) {
 
     if (!is_array($courseid_or_ids)) {
         if (empty($courseid_or_ids)) {
-            if (!$courses = get_my_courses($userid, $sort='visible DESC,sortorder ASC', 'id')) {
+            if (!$courses = enrol_get_users_courses($userid)) {
                 return false;
             }
             $courseids = array_keys($courses);

@@ -358,7 +358,7 @@ function authorize_print_order($orderid)
                     }
                     else {
                         if (!empty($unenrol)) {
-                            role_unassign(0, $order->userid, 0, $coursecontext->id);
+                            role_unassign_all(array('userid'=>$order->userid, 'contextid'=>$coursecontext->id, 'component'=>'enrol_authorize'), true, true);
                         }
                         redirect("$CFG->wwwroot/enrol/authorize/index.php?order=$orderid");
                     }
@@ -383,7 +383,7 @@ function authorize_print_order($orderid)
     elseif (ORDER_DELETE == $do && in_array(ORDER_DELETE, $statusandactions->actions)) {
         if ($confirm && confirm_sesskey()) {
             if (!empty($unenrol)) {
-                role_unassign(0, $order->userid, 0, $coursecontext->id);
+                role_unassign_all(array('userid'=>$order->userid, 'contextid'=>$coursecontext->id, 'component'=>'enrol_authorize'), true, true);
             }
             $DB->delete_records('enrol_authorize', array('id'=>$orderid));
             redirect("$CFG->wwwroot/enrol/authorize/index.php");
@@ -436,7 +436,7 @@ function authorize_print_order($orderid)
                     if (AN_APPROVED == AuthorizeNet::process($suborder, $message, $extra, AN_ACTION_VOID)) {
                         if (empty($CFG->an_test)) {
                             if (!empty($unenrol)) {
-                                role_unassign(0, $order->userid, 0, $coursecontext->id);
+                                role_unassign_all(array('userid'=>$order->userid, 'contextid'=>$coursecontext->id, 'component'=>'enrol_authorize'), true, true);
                             }
                             redirect("$CFG->wwwroot/enrol/authorize/index.php?order=$orderid");
                         }

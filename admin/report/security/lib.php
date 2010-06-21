@@ -58,8 +58,6 @@ function report_security_get_issue_list() {
         'report_security_check_defaultuserrole',
         'report_security_check_guestrole',
         'report_security_check_frontpagerole',
-        'report_security_check_defaultcourserole',
-        'report_security_check_courserole',
 
     );
 }
@@ -587,9 +585,6 @@ function report_security_check_defaultuserrole($detailed=false) {
 
     $riskycount = $DB->count_records_sql($sql, $params);
 
-    // default role can not have view cap in all courses - this would break moodle badly
-    $viewcap = $DB->record_exists('role_capabilities', array('roleid'=>$default_role->id, 'permission'=>CAP_ALLOW, 'capability'=>'moodle/course:participate'));
-
     // it may have either none or 'user' archetype - nothing else, or else it would break during upgrades badly
     if ($default_role->archetype === '' or $default_role->archetype === 'user') {
         $legacyok = true;
@@ -597,7 +592,7 @@ function report_security_check_defaultuserrole($detailed=false) {
         $legacyok = false;
     }
 
-    if ($riskycount or $viewcap or !$legacyok) {
+    if ($riskycount or !$legacyok) {
         $result->status  = REPORT_SECURITY_CRITICAL;
         $result->info    = get_string('check_defaultuserrole_error', 'report_security', format_string($default_role->name));
 
@@ -725,190 +720,6 @@ function report_security_check_frontpagerole($detailed=false) {
 
     if ($detailed) {
         $result->details = get_string('check_frontpagerole_details', 'report_security');
-    }
-
-    return $result;
-}
-
-/**
- * Verifies sanity of site default course role.
- * @param bool $detailed
- * @return object result
- */
-function report_security_check_defaultcourserole($detailed=false) {
-    global $DB, $CFG;
-
-    $problems = array();
-
-    $result = new object();
-    $result->issue   = 'report_security_check_defaultcourserole';
-    $result->name    = get_string('check_defaultcourserole_name', 'report_security');
-    $result->info    = null;
-    $result->details = null;
-    $result->status  = null;
-    $result->link    = "<a href=\"$CFG->wwwroot/$CFG->admin/settings.php?section=userpolicies\">".get_string('userpolicies', 'admin').'</a>';;
-
-    if ($detailed) {
-        $result->details = get_string('check_defaultcourserole_details', 'report_security');
-    }
-
-    if (!$student_role = $DB->get_record('role', array('id'=>$CFG->defaultcourseroleid))) {
-        $result->status  = REPORT_SECURITY_WARNING;
-        $result->info    = get_string('check_defaultcourserole_notset', 'report_security');
-        $result->details = get_string('check_defaultcourserole_details', 'report_security');
-
-        return $result;
-    }
-
-    // risky caps - usually very dangerous
-    $params = array('capallow'=>CAP_ALLOW, 'roleid'=>$student_role->id);
-    $sql = "SELECT DISTINCT rc.contextid
-              FROM {role_capabilities} rc
-              JOIN {capabilities} cap ON cap.name = rc.capability
-             WHERE ".$DB->sql_bitand('cap.riskbitmask', (RISK_XSS | RISK_CONFIG | RISK_DATALOSS))." <> 0
-                   AND rc.permission = :capallow
-                   AND rc.roleid = :roleid";
-
-    if ($riskycontexts = $DB->get_records_sql($sql, $params)) {
-        foreach($riskycontexts as $contextid=>$unused) {
-            if ($contextid == SYSCONTEXTID) {
-                $a = "$CFG->wwwroot/$CFG->admin/roles/define.php?action=view&amp;roleid=$CFG->defaultcourseroleid";
-            } else {
-                $a = "$CFG->wwwroot/$CFG->admin/roles/override.php?contextid=$contextid&amp;roleid=$CFG->defaultcourseroleid";
-            }
-            $problems[] = get_string('check_defaultcourserole_risky', 'report_security', $a);
-        }
-    }
-
-    // course creator or administrator does not make any sense here
-    if ($student_role->archetype === 'coursecreator' or $student_role->archetype === 'manager') {
-        $problems[] = get_string('check_defaultcourserole_legacy', 'report_security');
-    }
-
-    if ($problems) {
-        $result->status  = REPORT_SECURITY_CRITICAL;
-        $result->info    = get_string('check_defaultcourserole_error', 'report_security', format_string($student_role->name));
-        if ($detailed) {
-            $result->details .= "<ul>";
-            foreach ($problems as $problem) {
-                $result->details .= "<li>$problem</li>";
-            }
-            $result->details .= "</ul>";
-        }
-
-    } else {
-        $result->status  = REPORT_SECURITY_OK;
-        $result->info    = get_string('check_defaultcourserole_ok', 'report_security');
-    }
-
-    return $result;
-}
-
-/**
- * Verifies sanity of default roles in courses.
- * @param bool $detailed
- * @return object result
- */
-function report_security_check_courserole($detailed=false) {
-    global $DB, $CFG, $SITE;
-
-    $problems = array();
-
-    $result = new object();
-    $result->issue   = 'report_security_check_courserole';
-    $result->name    = get_string('check_courserole_name', 'report_security');
-    $result->info    = null;
-    $result->details = null;
-    $result->status  = null;
-    $result->link    = null;
-
-    if ($detailed) {
-        $result->details = get_string('check_courserole_details', 'report_security');
-    }
-
-    // get list of all student roles selected in courses excluding the default course role
-    $params = array('siteid'=>$SITE->id, 'defaultcourserole'=>$CFG->defaultcourseroleid);
-    $sql = "SELECT r.*
-              FROM {role} r
-              JOIN {course} c ON c.defaultrole = r.id
-             WHERE c.id <> :siteid AND r.id <> :defaultcourserole";
-
-    if (!$student_roles = $DB->get_records_sql($sql, $params)) {
-        $result->status  = REPORT_SECURITY_OK;
-        $result->info    = get_string('check_courserole_notyet', 'report_security');
-        $result->details = get_string('check_courserole_details', 'report_security');
-
-        return $result;
-    }
-
-    $roleids = array_keys($student_roles);
-
-    $sql = "SELECT DISTINCT rc.roleid
-              FROM {role_capabilities} rc
-              JOIN {role} r ON r.id = rc.roleid
-             WHERE (r.archetype = :coursecreator OR r.archetype = :teacher OR r.archetype = :editingteacher OR r.archetype = :manager)";
-    $params = array('coursecreator'  => 'coursecreator',
-                    'teacher'        => 'teacher',
-                    'editingteacher' => 'editingteacher',
-                    'manager'        => 'manager');
-
-    $riskyroleids = $DB->get_records_sql($sql, $params);
-    $riskyroleids = array_keys($riskyroleids);
-
-    // any XSS legacy cap does not make any sense here!
-    list($inroles, $params) = $DB->get_in_or_equal($roleids, SQL_PARAMS_NAMED, 'r0', true);
-    $sql = "SELECT DISTINCT c.id, c.shortname
-              FROM {course} c
-             WHERE c.defaultrole $inroles
-          ORDER BY c.sortorder";
-    if ($courses = $DB->get_records_sql($sql, $params)) {
-        foreach ($courses as $course) {
-            $a = (object)array('url'=>"$CFG->wwwroot/course/edit.php?id=$course->id", 'shortname'=>$course->shortname);
-            $problems[] = get_string('check_courserole_riskylegacy', 'report_security', $a);
-        }
-    }
-
-    // risky caps in any level - usually very dangerous!!
-    if ($checkroles = array_diff($roleids, $riskyroleids)) {
-        list($inroles, $params) = $DB->get_in_or_equal($checkroles, SQL_PARAMS_NAMED, 'r0', true);
-        $params = array_merge($params, array('capallow'=>CAP_ALLOW));
-        $sql = "SELECT rc.roleid, rc.contextid
-                  FROM {role_capabilities} rc
-                  JOIN {capabilities} cap ON cap.name = rc.capability
-                 WHERE ".$DB->sql_bitand('cap.riskbitmask', (RISK_XSS | RISK_CONFIG | RISK_DATALOSS))." <> 0
-                       AND rc.permission = :capallow
-                       AND rc.roleid $inroles
-              GROUP BY rc.roleid, rc.contextid
-              ORDER BY rc.roleid, rc.contextid";
-        $rs = $DB->get_recordset_sql($sql, $params);
-        foreach($rs as $res) {
-            $roleid    = $res->roleid;
-            $contextid = $res->contextid;
-            if ($contextid == SYSCONTEXTID) {
-                $a = "$CFG->wwwroot/$CFG->admin/roles/define.php?action=view&amp;roleid=$roleid";
-            } else {
-                $a = "$CFG->wwwroot/$CFG->admin/roles/override.php?contextid=$contextid&amp;roleid=$roleid";
-            }
-            $problems[] = get_string('check_courserole_risky', 'report_security', $a);
-        }
-        $rs->close();
-    }
-
-
-    if ($problems) {
-        $result->status  = REPORT_SECURITY_CRITICAL;
-        $result->info    = get_string('check_courserole_error', 'report_security');
-        if ($detailed) {
-            $result->details .= "<ul>";
-            foreach ($problems as $problem) {
-                $result->details .= "<li>$problem</li>";
-            }
-            $result->details .= "</ul>";
-        }
-
-    } else {
-        $result->status  = REPORT_SECURITY_OK;
-        $result->info    = get_string('check_courserole_ok', 'report_security');
     }
 
     return $result;

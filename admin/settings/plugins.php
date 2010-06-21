@@ -50,6 +50,84 @@ if ($hassiteconfig) {
         }
     }
 
+    // authentication plugins
+    $ADMIN->add('modules', new admin_category('authsettings', get_string('authentication', 'admin')));
+
+    $temp = new admin_settingpage('manageauths', get_string('authsettings', 'admin'));
+    $temp->add(new admin_setting_manageauths());
+    $temp->add(new admin_setting_heading('manageauthscommonheading', get_string('commonsettings', 'admin'), ''));
+    $temp->add(new admin_setting_special_registerauth());
+    $temp->add(new admin_setting_configselect('guestloginbutton', get_string('guestloginbutton', 'auth'),
+                                              get_string('showguestlogin', 'auth'), '1', array('0'=>get_string('hide'), '1'=>get_string('show'))));
+    $temp->add(new admin_setting_configtext('alternateloginurl', get_string('alternateloginurl', 'auth'),
+                                            get_string('alternatelogin', 'auth', htmlspecialchars(get_login_url())), ''));
+    $temp->add(new admin_setting_configtext('forgottenpasswordurl', get_string('forgottenpasswordurl', 'auth'),
+                                            get_string('forgottenpassword', 'auth'), ''));
+    $temp->add(new admin_setting_confightmleditor('auth_instructions', get_string('instructions', 'auth'),
+                                                get_string('authinstructions', 'auth'), ''));
+    $temp->add(new admin_setting_configtext('allowemailaddresses', get_string('allowemailaddresses', 'admin'), get_string('configallowemailaddresses', 'admin'), '', PARAM_NOTAGS));
+    $temp->add(new admin_setting_configtext('denyemailaddresses', get_string('denyemailaddresses', 'admin'), get_string('configdenyemailaddresses', 'admin'), '', PARAM_NOTAGS));
+    $temp->add(new admin_setting_configcheckbox('verifychangedemail', get_string('verifychangedemail', 'admin'), get_string('configverifychangedemail', 'admin'), 1));
+
+    $temp->add(new admin_setting_configtext('recaptchapublickey', get_string('recaptchapublickey', 'admin'), get_string('configrecaptchapublickey', 'admin'), '', PARAM_NOTAGS));
+    $temp->add(new admin_setting_configtext('recaptchaprivatekey', get_string('recaptchaprivatekey', 'admin'), get_string('configrecaptchaprivatekey', 'admin'), '', PARAM_NOTAGS));
+    $ADMIN->add('authsettings', $temp);
+
+
+    if ($auths = get_plugin_list('auth')) {
+        $authsenabled = get_enabled_auth_plugins();
+        $authbyname = array();
+
+        foreach ($auths as $auth => $authdir) {
+            $strauthname = get_string('pluginname', "auth_{$auth}");
+            $authbyname[$strauthname] = $auth;
+        }
+        ksort($authbyname);
+
+        foreach ($authbyname as $strauthname=>$authname) {
+            if (file_exists($authdir.'/settings.php')) {
+                // do not show disabled auths in tree, keep only settings link on manage page
+                $settings = new admin_settingpage('authsetting'.$authname, $strauthname, 'moodle/site:config', !in_array($authname, $authsenabled));
+                if ($ADMIN->fulltree) {
+                    include($authdir.'/settings.php');
+                }
+                // TODO: finish implementation of common settings - locking, etc.
+                $ADMIN->add('authsettings', $settings);
+
+            } else {
+                $ADMIN->add('authsettings', new admin_externalpage('authsetting'.$authname, $strauthname, "$CFG->wwwroot/$CFG->admin/auth_config.php?auth=$authname", 'moodle/site:config', !in_array($authname, $authsenabled)));
+            }
+        }
+    }
+
+
+    // Enrolment plugins
+    $ADMIN->add('modules', new admin_category('enrolments', get_string('enrolments', 'enrol')));
+    $temp = new admin_settingpage('manageenrols', get_string('manageenrols', 'enrol'));
+    $temp->add(new admin_setting_manageenrols());
+    if (empty($CFG->enrol_plugins_enabled)) {
+        $enabled = array();
+    } else {
+        $enabled = explode(',', $CFG->enrol_plugins_enabled);
+    }
+    $enrols = get_plugin_list('enrol');
+    $ADMIN->add('enrolments', $temp);
+    foreach($enrols as $enrol=>$enrolpath) {
+        if (!file_exists("$enrolpath/settings.php")) {
+            continue;
+        }
+
+        $settings = new admin_settingpage('enrolsettings'.$enrol, get_string('pluginname', 'enrol_'.$enrol), 'moodle/site:config', !in_array($enrol, $enabled));
+        // settings.php may create a subcategory or unset the settings completely
+        include("$enrolpath/settings.php");
+        if ($settings) {
+            $ADMIN->add('enrolments', $settings);
+        }
+
+    }
+    unset($enabled);
+    unset($enrols);
+
 
 /// Editor plugins
     $ADMIN->add('modules', new admin_category('editorsettings', get_string('editors', 'editor')));
@@ -63,7 +141,7 @@ if ($hassiteconfig) {
         if (file_exists($CFG->dirroot . '/lib/editor/'.$editor.'/settings.php')) {
             $editor_setting = new admin_externalpage('editorsettings'.$editor, $editorstr, $url.'&amp;action=edit&amp;editor='.$editor);
             $ADMIN->add('editorsettings', $editor_setting);
-        } 
+        }
     }
 /// License types
     $ADMIN->add('modules', new admin_category('licensesettings', get_string('license')));
@@ -284,7 +362,7 @@ if ($hassiteconfig) {
         $temp->add(new admin_setting_heading('webservicesaredisabled', '', get_string('disabledwarning', 'webservice')));
     }
     $ADMIN->add('webservicesettings', $temp);
-    
+
 
 if ($hassiteconfig || has_capability('moodle/question:config', $systemcontext)) {
     // Question type settings.

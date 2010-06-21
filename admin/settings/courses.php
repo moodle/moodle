@@ -11,8 +11,6 @@ if ($hassiteconfig
     $ADMIN->add('courses', new admin_externalpage('coursemgmt', get_string('coursemgmt', 'admin'), $CFG->wwwroot . '/course/index.php?categoryedit=on',
             array('moodle/category:manage', 'moodle/course:create')));
 
-    $ADMIN->add('courses', new admin_enrolment_page());
-
 /// Course Default Settings Page
 /// NOTE: these settings must be applied after all other settings because they depend on them
     ///main course settings
@@ -41,45 +39,6 @@ if ($hassiteconfig
         $choices = get_max_upload_sizes();
     }
     $temp->add(new admin_setting_configselect('moodlecourse/maxbytes', get_string('maximumupload'), get_string('coursehelpmaximumupload'), key($choices), $choices));
-    $temp->add(new admin_setting_configselect('moodlecourse/metacourse', get_string('metacourse'), get_string('coursehelpmetacourse'), 0,array(0 => get_string('no'), 1 => get_string('yes'))));
-
-    ///enrolement course settings
-    $temp->add(new admin_setting_heading('enrolhdr', get_string('enrolments'), ''));
-    require_once($CFG->dirroot.'/enrol/enrol.class.php');
-    $choices = array();
-    $modules = explode(',', $CFG->enrol_plugins_enabled);
-    foreach ($modules as $module) {
-        $name = get_string('enrolname', "enrol_$module");
-        $plugin = enrolment_factory::factory($module);
-        if (method_exists($plugin, 'print_entry')) {
-            $choices[$name] = $module;
-        }
-    }
-    asort($choices);
-    $choices = array_flip($choices);
-    $choices = array_merge(array('' => get_string('sitedefault').' ('.get_string('enrolname', "enrol_$CFG->enrol").')'), $choices);
-    $temp->add(new admin_setting_configselect('moodlecourse/enrol', get_string('enrolmentplugins'), get_string('coursehelpenrolmentplugins'), key($choices),$choices));
-    $choices = array(0 => get_string('no'), 1 => get_string('yes'), 2 => get_string('enroldate'));
-    $temp->add(new admin_setting_configselect('moodlecourse/enrollable', get_string('enrollable'), get_string('coursehelpenrollable'), 1,$choices));
-    $periodmenu=array();
-    $periodmenu[0] = get_string('unlimited');
-    for ($i=1; $i<=365; $i++) {
-        $seconds = $i * 86400;
-        $periodmenu[$seconds] = get_string('numdays', '', $i);
-    }
-    $temp->add(new admin_setting_configselect('moodlecourse/enrolperiod', get_string('enrolperiod'), '', 0,$periodmenu));
-
-    ///
-    $temp->add(new admin_setting_heading('expirynotifyhdr', get_string('expirynotify'), ''));
-    $temp->add(new admin_setting_configselect('moodlecourse/expirynotify', get_string('notify'), get_string('coursehelpnotify'), 0,array(0 => get_string('no'), 1 => get_string('yes'))));
-    $temp->add(new admin_setting_configselect('moodlecourse/notifystudents', get_string('expirynotifystudents'), get_string('coursehelpexpirynotifystudents'), 0,array(0 => get_string('no'), 1 => get_string('yes'))));
-    $thresholdmenu=array();
-    for ($i=1; $i<=30; $i++) {
-        $seconds = $i * 86400;
-        $thresholdmenu[$seconds] = get_string('numdays', '', $i);
-    }
-    $temp->add(new admin_setting_configselect('moodlecourse/expirythreshold', get_string('expirythreshold'), get_string('coursehelpexpirythreshold'), 10 * 86400,$thresholdmenu));
-
 
     $temp->add(new admin_setting_heading('groups', get_string('groups', 'group'), ''));
     $choices = array();
@@ -95,12 +54,6 @@ if ($hassiteconfig
     $choices['0'] = get_string('courseavailablenot');
     $choices['1'] = get_string('courseavailable');
     $temp->add(new admin_setting_configselect('moodlecourse/visible', get_string('visible'), '', 1,$choices));
-    $temp->add(new admin_setting_configpasswordunmask('moodlecourse/enrolpassword', get_string('enrolmentkey'), get_string('coursehelpenrolmentkey'),''));
-    $choices = array();
-    $choices['0'] = get_string('guestsno');
-    $choices['1'] = get_string('guestsyes');
-    $choices['2'] = get_string('guestskey');
-    $temp->add(new admin_setting_configselect('moodlecourse/guest', get_string('opentoguests'), '', 0,$choices));
 
 
     $temp->add(new admin_setting_heading('language', get_string('language'), ''));
@@ -151,7 +104,6 @@ if ($hassiteconfig
     $temp = new admin_settingpage('scheduled', get_string('scheduledsettings','backup'), 'moodle/backup:backupcourse');
     $temp->add(new admin_setting_configcheckbox('backup/backup_sche_modules', get_string('includemodules'), get_string('backupincludemoduleshelp'), 0));
     $temp->add(new admin_setting_configcheckbox('backup/backup_sche_withuserdata', get_string('includemoduleuserdata'), get_string('backupincludemoduleuserdatahelp'), 0));
-    $temp->add(new admin_setting_configcheckbox('backup/backup_sche_metacourse', get_string('metacourse'), get_string('backupmetacoursehelp'), 0));
     $temp->add(new admin_setting_configselect('backup/backup_sche_users', get_string('users'), get_string('backupusershelp'),
             0, array(0 => get_string('all'), 1 => get_string('course'))));
     $temp->add(new admin_setting_configcheckbox('backup/backup_sche_logs', get_string('logs'), get_string('backuplogshelp'), 0));

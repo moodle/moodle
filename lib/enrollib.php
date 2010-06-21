@@ -1,0 +1,1284 @@
+<?php
+
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * This library includes the basic parts of enrol api.
+ * It is available on each page.
+ *
+ * @package   moodlecore
+ * @copyright 2010 Petr Skoda {@link http://skodak.org}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+
+/** Course enrol instance enabled. (used in enrol->status) */
+define('ENROL_INSTANCE_ENABLED', 0);
+
+/** Course enrol instance disabled, user may enter course if other enrol instance enabled. (used in enrol->status)*/
+define('ENROL_INSTANCE_DISABLED', 1);
+
+/** User is active participant (used in user_enrolments->status)*/
+define('ENROL_USER_ACTIVE', 0);
+
+/** User participation in course is suspended (used in user_enrolments->status) */
+define('ENROL_USER_SUSPENDED', 1);
+
+/** Enrol info is cached for this number of seconds in require_login() */
+define('ENROL_REQUIRE_LOGIN_CACHE_PERIOD', 1800);
+
+/**
+ * Returns instances of enrol plugins
+ * @param bool $enable return enabled only
+ * @return array of enrol plugins name=>instance
+ */
+function enrol_get_plugins($enabled) {
+    global $CFG;
+
+    $result = array();
+
+    if ($enabled) {
+        // sorted by enabled plugin order
+        $enabled = explode(',', $CFG->enrol_plugins_enabled);
+        $plugins = array();
+        foreach ($enabled as $plugin) {
+            $plugins[$plugin] = "$CFG->dirroot/enrol/$plugin";
+        }
+    } else {
+        // sorted alphabetically
+        $plugins = get_plugin_list('enrol');
+        ksort($plugins);
+    }
+
+    foreach ($plugins as $plugin=>$location) {
+        if (!file_exists("$location/lib.php")) {
+            continue;
+        }
+        include_once("$location/lib.php");
+        $class = "enrol_{$plugin}_plugin";
+        if (!class_exists($class)) {
+            continue;
+        }
+
+        $result[$plugin] = new $class();
+    }
+
+    return $result;
+}
+
+/**
+ * Returns instance of enrol plugin
+ * @param  string $name name of enrol plugin ('manual', 'guest', ...)
+ * @return enrol_plugin
+ */
+function enrol_get_plugin($name) {
+    global $CFG;
+
+    if ($name !== clean_param($name, PARAM_SAFEDIR)) {
+        // ignore malformed plugin names completely
+        return null;
+    }
+
+    $location = "$CFG->dirroot/enrol/$name";
+
+    if (!file_exists("$location/lib.php")) {
+        return null;
+    }
+    include_once("$location/lib.php");
+    $class = "enrol_{$name}_plugin";
+    if (!class_exists($class)) {
+        return null;
+    }
+
+    return new $class();
+}
+
+/**
+ * Returns enrolment instances in given course.
+ * @param int $courseid
+ * @param bool $enabled
+ * @return array of enrol instances
+ */
+function enrol_get_instances($courseid, $enabled) {
+    global $DB, $CFG;
+
+    if (!$enabled) {
+        return $DB->get_records('enrol', array('courseid'=>$courseid), 'sortorder,id');
+    }
+
+    $result = $DB->get_records('enrol', array('courseid'=>$courseid, 'status'=>ENROL_INSTANCE_ENABLED), 'sortorder,id');
+
+    $enabled = $enabled = explode(',', $CFG->enrol_plugins_enabled);
+    foreach ($result as $key=>$instance) {
+        if (!in_array($instance->enrol, $enabled)) {
+            unset($result[$key]);
+            continue;
+        }
+        if (!file_exists("$CFG->dirroot/enrol/$instance->enrol/lib.php")) {
+            // broken plugin
+            unset($result[$key]);
+            continue;
+        }
+    }
+
+    return $result;
+}
+
+/**
+ * Checks if a given plugin is in the list of enabled enrolment plugins.
+ *
+ * @param string $enrol Enrolment plugin name
+ * @return boolean Whether the plugin is enabled
+ */
+function enrol_is_enabled($enrol) {
+    global $CFG;
+
+    if (empty($CFG->enrol_plugins_enabled)) {
+        return false;
+    }
+    return in_array($enrol, explode(',', $CFG->enrol_plugins_enabled));
+}
+
+/**
+ * Check all the login enrolment information for the given user object
+ * by querying the enrolment plugins
+ *
+ * @param object $user
+ * @return void
+ */
+function enrol_check_plugins($user) {
+    global $CFG;
+
+    if (empty($user->id) or isguestuser($user)) {
+        // shortcut - there is no enrolment work for guests and not-logged-in users
+        return;
+    }
+
+    static $inprogress = array();  // To prevent this function being called more than once in an invocation
+
+    if (!empty($inprogress[$user->id])) {
+        return;
+    }
+
+    $inprogress[$user->id] = true;  // Set the flag
+
+    $enabled = enrol_get_plugins(true);
+
+    foreach($enabled as $enrol) {
+        $enrol->sync_user_enrolments($user);
+    }
+
+    unset($inprogress[$user->id]);  // Unset the flag
+}
+
+/**
+ * This function adds necessary enrol plugins UI into the course edit form.
+ *
+ * @param MoodleQuickForm $mform
+ * @param object $data course edit form data
+ * @param object $context context of existing course or parent category if course does not exist
+ * @return void
+ */
+function enrol_course_edit_form(MoodleQuickForm $mform, $data, $context) {
+    $plugins = enrol_get_plugins(true);
+    if (!empty($data->id)) {
+        $instances = enrol_get_instances($data->id, false);
+        foreach ($instances as $instance) {
+            if (!isset($plugins[$instance->enrol])) {
+                continue;
+            }
+            $plugin = $plugins[$instance->enrol];
+            $plugin->course_edit_form($instance, $mform, $data, $context);
+        }
+    } else {
+        foreach ($plugins as $plugin) {
+            $plugin->course_edit_form(NULL, $mform, $data, $context);
+        }
+    }
+}
+
+/**
+ * Validate course edit form data
+ *
+ * @param array $data raw form data
+ * @param object $context context of existing course or parent category if course does not exist
+ * @return array errors array
+ */
+function enrol_course_edit_validation(array $data, $context) {
+    $errors = array();
+    $plugins = enrol_get_plugins(true);
+
+    if (!empty($data['id'])) {
+        $instances = enrol_get_instances($data['id'], false);
+        foreach ($instances as $instance) {
+            if (!isset($plugins[$instance->enrol])) {
+                continue;
+            }
+            $plugin = $plugins[$instance->enrol];
+            $errors = array_merge($errors, $plugin->course_edit_validation($instance, $data, $context));
+        }
+    } else {
+        foreach ($plugins as $plugin) {
+            $errors = array_merge($errors, $plugin->course_edit_validation(NULL, $data, $context));
+        }
+    }
+
+    return $errors;
+}
+
+/**
+ * Update enrol instances after course edit form submission
+ * @param bool $inserted true means new course added, false course already existed
+ * @param object $course
+ * @param object $data form data
+ * @return void
+ */
+function enrol_course_updated($inserted, $course, $data) {
+    global $DB, $CFG;
+
+    $plugins = enrol_get_plugins(true);
+
+    foreach ($plugins as $plugin) {
+        $plugin->course_updated($inserted, $course, $data);
+    }
+}
+
+/**
+ * Add navigation nodes
+ * @param navigation_node $coursenode
+ * @param object $course
+ * @return void
+ */
+function enrol_add_course_navigation(navigation_node $coursenode, $course) {
+
+    $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
+
+    $instances = enrol_get_instances($course->id, true);
+    $plugins   = enrol_get_plugins(true);
+
+    // we do not want to break all course pages if there is some borked enrol plugin, right?
+    foreach ($instances as $k=>$instance) {
+        if (!isset($plugins[$instance->enrol])) {
+            unset($instances[$k]);
+        }
+    }
+
+    $usersnode = $coursenode->add(get_string('users'), null, navigation_node::TYPE_CONTAINER);
+
+    if ($course->id != SITEID) {
+        // list all participants - allows assing roles, groups, etc.
+        if (has_capability('moodle/course:enrolreview', $coursecontext)) {
+            $url = new moodle_url('/enrol/users.php', array('id'=>$course->id));
+            $usersnode->add(get_string('enrolledusers', 'enrol'), $url, navigation_node::TYPE_SETTING, null, null, new pix_icon('i/users', ''));
+        }
+
+        // manage enrol plugin instances
+        if (has_capability('moodle/course:enrolconfig', $coursecontext) or has_capability('moodle/course:enrolreview', $coursecontext)) {
+            $url = new moodle_url('/enrol/instances.php', array('id'=>$course->id));
+        } else {
+            $url = NULL;
+        }
+        $instancesnode = $usersnode->add(get_string('enrolmentinstances', 'enrol'), $url);
+
+        // each instance decides how to configure itself or how many other nav items are exposed
+        foreach ($instances as $instance) {
+            if (!isset($plugins[$instance->enrol])) {
+                continue;
+            }
+            $plugins[$instance->enrol]->add_course_navigation($instancesnode, $instance);
+        }
+
+        if (!$url) {
+            $instancesnode->trim_if_empty();
+        }
+    }
+
+    // Manage groups in this course or even frontpage
+    if (($course->groupmode || !$course->groupmodeforce) && has_capability('moodle/course:managegroups', $coursecontext)) {
+        $url = new moodle_url('/group/index.php', array('id'=>$course->id));
+        $usersnode->add(get_string('groups'), $url, navigation_node::TYPE_SETTING, null, 'groups', new pix_icon('i/group', ''));
+    }
+
+     if (has_any_capability(array( 'moodle/role:assign', 'moodle/role:safeoverride','moodle/role:override', 'moodle/role:review'), $coursecontext)) {
+        // Override roles
+        if (has_capability('moodle/role:review', $coursecontext)) {
+            $url = new moodle_url('/admin/roles/permissions.php', array('contextid'=>$coursecontext->id));
+        } else {
+            $url = NULL;
+        }
+        $permissionsnode = $usersnode->add(get_string('permissions', 'role'), $url);
+
+        // Add assign or override roles if allowed
+        if ($course->id == SITEID or (!empty($CFG->adminsassignrolesincourse) and is_siteadmin())) {
+            if (has_capability('moodle/role:assign', $coursecontext)) {
+                $url = new moodle_url('/admin/roles/assign.php', array('contextid'=>$coursecontext->id));
+                $permissionsnode->add(get_string('assignedroles', 'role'), $url, navigation_node::TYPE_SETTING, null, null, new pix_icon('i/roles', ''));
+            }
+        }
+        // Check role permissions
+        if (has_any_capability(array('moodle/role:assign', 'moodle/role:safeoverride','moodle/role:override', 'moodle/role:assign'), $coursecontext)) {
+            $url = new moodle_url('/admin/roles/check.php', array('contextid'=>$coursecontext->id));
+            $permissionsnode->add(get_string('checkpermissions', 'role'), $url, navigation_node::TYPE_SETTING, null, null, new pix_icon('i/checkpermissions', ''));
+        }
+     }
+
+     // Deal somehow with users that are not enrolled but still got a role somehow
+    if ($course->id != SITEID) {
+        //TODO, create some new UI for role assignments at course level
+        if (has_capability('moodle/role:assign', $coursecontext)) {
+            $url = new moodle_url('/enrol/otherusers.php', array('id'=>$course->id));
+            $usersnode->add(get_string('notenrolledusers', 'enrol'), $url, navigation_node::TYPE_SETTING, null, null, new pix_icon('i/roles', ''));
+        }
+    }
+
+    // just in case nothing was actually added
+    $usersnode->trim_if_empty();
+
+    if ($course->id != SITEID) {
+        // Unenrol link
+        $unenrolprinted = false;
+        foreach ($instances as $instance) {
+            if (!isset($plugins[$instance->enrol])) {
+                continue;
+            }
+            $plugin = $plugins[$instance->enrol];
+            if ($unenrollink = $plugin->get_unenrolself_link($instance)) {
+                $coursenode->add(get_string('unenrolme', 'core_enrol', format_string($course->shortname)), $unenrollink, navigation_node::TYPE_SETTING, null, 'unenrolself', new pix_icon('i/user', ''));
+                $unenrolprinted = true;
+                //TODO. deal with multiple unenrol links - not likely case, but still...
+            }
+        }
+        // Enrol link
+        if (!$unenrolprinted and !is_viewing($coursecontext) and !is_enrolled($coursecontext)) {
+            $url = new moodle_url('/enrol/index.php', array('id'=>$course->id));
+            $coursenode->add(get_string('enrolme', 'core_enrol', format_string($course->shortname)), $url, navigation_node::TYPE_SETTING, null, 'enrolself', new pix_icon('i/user', ''));
+        }
+    }
+}
+
+/**
+ * Returns list of courses current $USER is enrolled in and can access
+ *
+ * - $fields is an array of field names to ADD
+ *   so name the fields you really need, which will
+ *   be added and uniq'd
+ *
+ * @param strin|array $fields
+ * @param string $sort
+ * @param int $limit max number of courses
+ * @return array
+ */
+function enrol_get_my_courses($fields = NULL, $sort = 'visible DESC,sortorder ASC', $limit = 0) {
+    global $DB, $USER;
+
+    // Guest account does not have any courses
+    if (isguestuser() or !isloggedin()) {
+        return(array());
+    }
+
+    $basefields = array('id', 'category', 'sortorder',
+                        'shortname', 'fullname', 'idnumber',
+                        'startdate', 'visible',
+                        'groupmode', 'groupmodeforce');
+
+    if (empty($fields)) {
+        $fields = $basefields;
+    } else if (is_string($fields)) {
+        // turn the fields from a string to an array
+        $fields = explode(',', $fields);
+        $fields = array_map('trim', $fields);
+        $fields = array_unique(array_merge($basefields, $fields));
+    } else if (is_array($fields)) {
+        $fields = array_unique(array_merge($basefields, $fields));
+    } else {
+        throw new coding_exception('Invalid $fileds parameter in enrol_get_my_courses()');
+    }
+    if (in_array('*', $fields)) {
+        $fields = array('*');
+    }
+
+    $orderby = "";
+    $sort    = trim($sort);
+    if (!empty($sort)) {
+        $rawsorts = explode(',', $sort);
+        $sorts = array();
+        foreach ($rawsorts as $rawsort) {
+            $rawsort = trim($rawsort);
+            if (strpos($rawsort, 'c.') === 0) {
+                $rawsort = substr($rawsort, 2);
+            }
+            $sorts[] = trim($rawsort);
+        }
+        $sort = 'c.'.implode(',c.', $sorts);
+        $orderby = "ORDER BY $sort";
+    }
+
+    $wheres = array("c.id <> :siteid");
+    $params = array('siteid'=>SITEID);
+
+    if (isset($USER->loginascontext) and $USER->loginascontext->contextlevel == CONTEXT_COURSE) {
+        // list _only_ this course - anything else is asking for trouble...
+        $wheres[] = "courseid = :loginas";
+        $params['loginas'] = $USER->loginascontext->instanceid;
+    }
+
+    $coursefields = 'c.' .join(',c.', $fields);
+    list($ccselect, $ccjoin) = context_instance_preload_sql('c.id', CONTEXT_COURSE, 'ctx');
+    $wheres = " AND ".implode(" AND ", $wheres);
+
+    $sql = "SELECT DISTINCT $coursefields $ccselect
+              FROM {course} c
+              JOIN {enrol} e ON (e.courseid = c.id AND e.status = :enabled)
+              JOIN {user_enrolments} ue ON (ue.enrolid = e.id AND ue.userid = :userid AND ue.status = :active)
+           $ccjoin
+             WHERE ue.timestart < :now1 AND (ue.timeend = 0 OR ue.timeend > :now2)
+                   $wheres
+          $orderby";
+    $params['userid']  = $USER->id;
+    $params['active']  = ENROL_USER_ACTIVE;
+    $params['enabled'] = ENROL_INSTANCE_ENABLED;
+    $params['now1']    = round(time(), -2); // improves db caching
+    $params['now2']    = $params['now1'];
+
+    $courses = $DB->get_records_sql($sql, $params, 0, $limit);
+
+    // preload contexts and check visibility
+    foreach ($courses as $id=>$course) {
+        context_instance_preload($course);
+        if (!$course->visible) {
+            if (!$context = get_context_instance(CONTEXT_COURSE, $id)) {
+                unset($course[$id]);
+                continue;
+            }
+            if (!has_capability('moodle/course:viewhiddencourses', $context)) {
+                unset($course[$id]);
+                continue;
+            }
+        }
+        $courses[$id] = $course;
+    }
+
+    //wow! Is that really all? :-D
+
+    return $courses;
+}
+
+/**
+ * Returns list of courses user is enrolled into.
+ *
+ * - $fields is an array of fieldnames to ADD
+ *   so name the fields you really need, which will
+ *   be added and uniq'd
+ *
+ * @param int $userid
+ * @param bool $onlyactive return only active enrolments in courses user may see
+ * @param strin|array $fields
+ * @param string $sort
+ * @return array
+ */
+function enrol_get_users_courses($userid, $onlyactive = false, $fields = NULL, $sort = 'visible DESC,sortorder ASC') {
+    global $DB;
+
+    // Guest account does not have any courses
+    if (isguestuser($userid) or !empty($userid)) {
+        return(array());
+    }
+
+    $basefields = array('id', 'category', 'sortorder',
+                        'shortname', 'fullname', 'idnumber',
+                        'startdate', 'visible',
+                        'groupmode', 'groupmodeforce');
+
+    if (empty($fields)) {
+        $fields = $basefields;
+    } else if (is_string($fields)) {
+        // turn the fields from a string to an array
+        $fields = explode(',', $fields);
+        $fields = array_map('trim', $fields);
+        $fields = array_unique(array_merge($basefields, $fields));
+    } else if (is_array($fields)) {
+        $fields = array_unique(array_merge($basefields, $fields));
+    } else {
+        throw new coding_exception('Invalid $fileds parameter in enrol_get_my_courses()');
+    }
+    if (in_array('*', $fields)) {
+        $fields = array('*');
+    }
+
+    $orderby = "";
+    $sort    = trim($sort);
+    if (!empty($sort)) {
+        $rawsorts = explode(',', $sort);
+        $sorts = array();
+        foreach ($rawsorts as $rawsort) {
+            $rawsort = trim($rawsort);
+            if (strpos($rawsort, 'c.') === 0) {
+                $rawsort = substr($rawsort, 2);
+            }
+            $sorts[] = trim($rawsort);
+        }
+        $sort = 'c.'.implode(',c.', $sorts);
+        $orderby = "ORDER BY $sort";
+    }
+
+    $wheres = array("c.id <> :siteid");
+    $params = array('siteid'=>SITEID);
+
+    if ($onlyactive) {
+        $wheres[] = "ue.status = :active";
+        $wheres[] = "e.status = :enabled";
+        $wheres[] = "ue.timestart < :now1 AND (ue.timeend = 0 OR ue.timeend > :now2)";
+        $params['now1']    = round(time(), -2); // improves db caching
+        $params['now2']    = $params['now1'];
+        $params['active']  = ENROL_USER_ACTIVE;
+        $params['enabled'] = ENROL_INSTANCE_ENABLED;
+    }
+
+    $coursefields = 'c.' .join(',c.', $fields);
+    list($ccselect, $ccjoin) = context_instance_preload_sql('c.id', CONTEXT_COURSE, 'ctx');
+    $wheres = "WHERE ".implode(" AND ", $wheres);
+
+    $sql = "SELECT DISTINCT $coursefields $ccselect
+              FROM {course} c
+              JOIN {enrol} e ON (e.courseid = c.id)
+              JOIN {user_enrolments} ue ON (ue.enrolid = e.id AND ue.userid = :userid)
+           $ccjoin
+           $wheres
+          $orderby";
+    $params['userid']  = $USER->id;
+
+    $courses = $DB->get_records_sql($sql, $params);
+
+    // preload contexts and check visibility
+    foreach ($courses as $id=>$course) {
+        context_instance_preload($course);
+        if ($onlyactive) {
+            if (!$course->visible) {
+                if (!$context = get_context_instance(CONTEXT_COURSE, $id)) {
+                    unset($course[$id]);
+                    continue;
+                }
+                if (!has_capability('moodle/course:viewhiddencourses', $context, $userid)) {
+                    unset($course[$id]);
+                    continue;
+                }
+            }
+        }
+        $courses[$id] = $course;
+    }
+
+    //wow! Is that really all? :-D
+
+    return $courses;
+
+}
+
+/**
+ * Called when user is about to be deleted.
+ * @param object $user
+ * @return void
+ */
+function enrol_user_delete($user) {
+    global $DB;
+
+    $plugins = enrol_get_plugins(true);
+    foreach ($plugins as $plugin) {
+        $plugin->user_delete($user);
+    }
+
+    // force cleanup of all broken enrolments
+    $DB->delete_records('user_enrolments', array('userid'=>$user->id));
+}
+
+/**
+ * Try to enrol user via default internal auth plugin.
+ *
+ * For now this is always using the manual enrol plugin...
+ *
+ * @param $courseid
+ * @param $userid
+ * @param $roleid
+ * @param $timestart
+ * @param $timeend
+ * @return bool success
+ */
+function enrol_try_internal_enrol($courseid, $userid, $roleid = null, $timestart = 0, $timeend = 0) {
+    global $DB;
+
+    //note: this is hardcoded to manual plugin for now
+
+    if (!enrol_is_enabled('manual')) {
+        return false;
+    }
+
+    if (!$enrol = enrol_get_plugin('manual')) {
+        return false;
+    }
+    if (!$instances = $DB->get_records('enrol', array('enrol'=>'manual', 'courseid'=>$courseid, 'status'=>ENROL_INSTANCE_ENABLED), 'sortorder,id ASC')) {
+        return false;
+    }
+    $instance = reset($instances);
+
+    $enrol->enrol_user($instance, $userid, $roleid, $timestart, $timeend);
+
+    return true;
+}
+
+/**
+ * All enrol plugins should be based on this class,
+ * this is also the main source of documentation.
+ */
+abstract class enrol_plugin {
+    protected $config = null;
+
+    /**
+     * Returns name of this enrol plugin
+     * @return string
+     */
+    public function get_name() {
+        // second word in class is always enrol name
+        $words = explode('_', get_class($this));
+        return $words[1];
+    }
+
+    /**
+     * Returns localised name of enrol instance
+     *
+     * @param object $instance (null is accepted too)
+     * @return string
+     */
+    public function get_instance_name($instance) {
+        if (empty($instance->name)) {
+            $enrol = $this->get_name();
+            return get_string('pluginname', 'enrol_'.$enrol);
+        } else {
+            return format_string($instance->name);
+        }
+    }
+
+    /**
+     * Makes sure config is loaded and cached.
+     * @return void
+     */
+    protected function load_config() {
+        if (!isset($this->config)) {
+            $name = $this->get_name();
+            if (!$config = get_config("enrol_$name")) {
+                $config = new object();
+            }
+            $this->config = $config;
+        }
+    }
+
+    /**
+     * Returns plugin config value
+     * @param  string $name
+     * @param  string $default value if config does not exist yet
+     * @return string value or default
+     */
+    public function get_config($name, $default = NULL) {
+        $this->load_config();
+        return isset($this->config->$name) ? $this->config->$name : $default;
+    }
+
+    /**
+     * Sets plugin config value
+     * @param  string $name name of config
+     * @param  string $value string config value, null means delete
+     * @return string value
+     */
+    public function set_config($name, $value) {
+        $name = $this->get_name();
+        $this->load_config();
+        if ($value === NULL) {
+            unset($this->config->$name);
+        } else {
+            $this->config->$name = $value;
+        }
+        set_config($name, $value, "enrol_$name");
+    }
+
+    /**
+     * Does this plugin assign protected roles are can they be manually removed?
+     * @return bool - false means anybody may tweak roles, it does not use itemid and component when assigning roles
+     */
+    public function roles_protected() {
+        return true;
+    }
+
+    /**
+     * Does this plugin allow manual unenrolments?
+     *
+     * @param stdClass $instance course enrol instance
+     * ALl plugins allowing this must implement 'enrol/xxx:unenrol' capability
+     *
+     * @return bool - true means anybody may unenrol others freely, trues means nobody may touch user_enrolments
+     */
+    public function allow_unenrol(stdClass $instance) {
+        return false;
+    }
+
+    /**
+     * Does this plugin allow manual changes in user_enrolments table?
+     *
+     * ALl plugins allowing this must implement 'enrol/xxx:manage' capability
+     *
+     * @param stdClass $instance course enrol instance
+     * @return bool - true means it is possible to change enrol period and status in user_enrolments table
+     */
+    public function allow_manage(stdClass $instance) {
+        return false;
+    }
+
+    /**
+     * Attempt to automatically enrol current user in course without any interaction,
+     * calling code has to make sure the plugin and instance are active.
+     *
+     * @param stdClass $instance course enrol instance
+     * @param stdClass $user record
+     * @return bool|int false means not enrolled, integer means timeend
+     */
+    public function try_autoenrol(stdClass $instance) {
+        global $USER;
+
+        return false;
+    }
+
+    /**
+     * Attempt to automatically gain temporary guest access to course,
+     * calling code has to make sure the plugin and instance are active.
+     *
+     * @param stdClass $instance course enrol instance
+     * @param stdClass $user record
+     * @return bool|int false means no guest access, integer means timeend
+     */
+    public function try_guestaccess(stdClass $instance) {
+        global $USER;
+
+        return false;
+    }
+
+    /**
+     * Enrol user into course via enrol instance.
+     *
+     * @param stdClass $instance
+     * @param int $userid
+     * @param int $roleid optional role id
+     * @param int $timestart
+     * @param int $timeend
+     * @return void
+     */
+    public function enrol_user(stdClass $instance, $userid, $roleid = null, $timestart = 0, $timeend = 0) {
+        global $DB, $USER, $CFG; // CFG necessary!!!
+
+        if ($instance->courseid == SITEID) {
+            throw new coding_exception('invalid attempt to enrol into frontpage course!');
+        }
+
+        $name = $this->get_name();
+        $courseid = $instance->courseid;
+
+        if ($instance->enrol !== $name) {
+            throw new coding_exception('invalid enrol instance!');
+        }
+        $context = get_context_instance(CONTEXT_COURSE, $instance->courseid, MUST_EXIST);
+
+        $inserted = false;
+        if ($ue = $DB->get_record('user_enrolments', array('enrolid'=>$instance->id, 'userid'=>$userid))) {
+            if ($ue->timestart != $timestart or $ue->timeend != $timeend) {
+                $ue->timestart    = $timestart;
+                $ue->timeend      = $timeend;
+                $ue->modifier     = $USER->id;
+                $ue->timemodified = time();
+                $DB->update_record('user_enrolments', $ue);
+            }
+        } else {
+            $ue = new object();
+            $ue->enrolid      = $instance->id;
+            $ue->status       = ENROL_USER_ACTIVE;
+            $ue->userid       = $userid;
+            $ue->timestart    = $timestart;
+            $ue->timeend      = $timeend;
+            $ue->modifier     = $USER->id;
+            $ue->timemodified = time();
+            $ue->id = $DB->insert_record('user_enrolments', $ue);
+
+            $inserted = true;
+        }
+
+        if ($roleid) {
+            if ($this->roles_protected()) {
+                role_assign($roleid, $userid, $context->id, 'enrol_'.$name, $instance->id);
+            } else {
+                role_assign($roleid, $userid, $context->id);
+            }
+        }
+
+        if ($inserted) {
+            // add extra info and trigger event
+            $ue->courseid  = $courseid;
+            $ue->enrol     = $name;
+            events_trigger('user_enrolled', $ue);
+        }
+
+        // reset primitive require_login() caching
+        if ($userid == $USER->id) {
+            if (isset($USER->enrol['enrolled'][$courseid])) {
+                unset($USER->enrol['enrolled'][$courseid]);
+            }
+            if (isset($USER->enrol['tempguest'][$courseid])) {
+                unset($USER->enrol['tempguest'][$courseid]);
+                $USER->access = remove_temp_roles($context, $USER->access);
+            }
+        }
+    }
+
+    /**
+     * Store user_enrolments changes and trigger event.
+     *
+     * @param object $ue
+     * @param int $user id
+     * @param int $status
+     * @param int $timestart
+     * @param int $timeend
+     * @return void
+     */
+    public function update_user_enrol(stdClass $instance, $userid, $status = NULL, $timestart = NULL, $timeend = NULL) {
+        global $DB, $USER;
+
+        $name = $this->get_name();
+
+        if ($instance->enrol !== $name) {
+            throw new coding_exception('invalid enrol instance!');
+        }
+
+        if (!$ue = $DB->get_record('user_enrolments', array('enrolid'=>$instance->id, 'userid'=>$userid))) {
+            // weird, user not enrolled
+            return;
+        }
+
+        $modified = false;
+        if (isset($status) and $ue->status != $status) {
+            $ue->status = $status;
+            $modified = true;
+        }
+        if (isset($timestart) and $ue->timestart != $timestart) {
+            $ue->timestart = $timestart;
+            $modified = true;
+        }
+        if (isset($timeend) and $ue->timeend != $timeend) {
+            $ue->timeend = $timeend;
+            $modified = true;
+        }
+
+        if (!$modified) {
+            // no change
+            return;
+        }
+
+        $ue->modifierid = $USER->id;
+        $DB->update_record('user_enrolments', $ue);
+
+        // trigger event
+        $ue->courseid  = $instance->courseid;
+        $ue->enrol     = $instance->name;
+        events_trigger('user_unenrol_modified', $ue);
+    }
+
+    /**
+     * Unenrol user from course,
+     * the last unenrolment removes all remaining roles.
+     *
+     * @param stdClass $instance
+     * @param int $userid
+     * @return void
+     */
+    public function unenrol_user(stdClass $instance, $userid) {
+        global $CFG, $USER, $DB;
+
+        $name = $this->get_name();
+        $courseid = $instance->courseid;
+
+        if ($instance->enrol !== $name) {
+            throw new coding_exception('invalid enrol instance!');
+        }
+        $context = get_context_instance(CONTEXT_COURSE, $instance->courseid, MUST_EXIST);
+
+        if (!$ue = $DB->get_record('user_enrolments', array('enrolid'=>$instance->id, 'userid'=>$userid))) {
+            // weird, user not enrolled
+            return;
+        }
+
+        role_unassign_all(array('userid'=>$userid, 'contextid'=>$context->id, 'component'=>'enrol_'.$name, 'itemid'=>$instance->id));
+        $DB->delete_records('user_enrolments', array('id'=>$ue->id));
+
+        // add extra info and trigger event
+        $ue->courseid  = $courseid;
+        $ue->enrol     = $name;
+
+        $sql = "SELECT 'x'
+                  FROM {user_enrolments} ue
+                  JOIN {enrol} e ON (e.id = ue.enrolid)
+                  WHERE ue.userid = :userid AND e.courseid = :courseid";
+        if ($DB->record_exists_sql($sql, array('userid'=>$userid, 'courseid'=>$courseid))) {
+            $ue->lastenrol = false;
+            events_trigger('user_unenrolled', $ue);
+            // user still has some enrolments, no big cleanup yet
+        } else {
+            // the big cleanup IS necessary!
+
+            require_once("$CFG->dirroot/group/lib.php");
+            require_once("$CFG->libdir/gradelib.php");
+
+            // remove all remaining roles
+            role_unassign_all(array('userid'=>$userid, 'contextid'=>$context->id), true, false);
+
+            //clean up ALL invisible user data from course if this is the last enrolment - groups, grades, etc.
+            groups_delete_group_members($courseid, $userid);
+
+            grade_user_unenrol($courseid, $userid);
+
+            $DB->delete_records('user_lastaccess', array('userid'=>$userid, 'courseid'=>$courseid));
+
+            $ue->lastenrol = false;
+            events_trigger('user_unenrolled', $ue);
+        }
+        // reset primitive require_login() caching
+        if ($userid == $USER->id) {
+            if (isset($USER->enrol['enrolled'][$courseid])) {
+                unset($USER->enrol['enrolled'][$courseid]);
+            }
+            if (isset($USER->enrol['tempguest'][$courseid])) {
+                unset($USER->enrol['tempguest'][$courseid]);
+                $USER->access = remove_temp_roles($context, $USER->access);
+            }
+        }
+    }
+
+    /**
+     * Forces synchronisation of user enrolments.
+     *
+     * This is important especially for external enrol plugins,
+     * this function is called for all enabled enrol plugins
+     * right after every user login.
+     *
+     * @param object $user user record
+     * @return void
+     */
+    public function sync_user_enrolments($user) {
+        // override if necessary
+    }
+
+    /**
+     * Returns link to page which may be used to add new instance of enrolment plugin in course.
+     * @param int $courseid
+     * @return moodle_url page url
+     */
+    public function get_candidate_link($courseid) {
+        // override for most plugins, check if instance already exists in cases only one instance is supported
+        return NULL;
+    }
+
+    /**
+     * Is it possible to delete enrol instance via standard UI?
+     *
+     * @param object $instance
+     * @return bool
+     */
+    public function instance_deleteable($instance) {
+        return true;
+    }
+
+    /**
+     * Returns link to manual enrol UI if exists.
+     * Does the access control tests automatically.
+     *
+     * @param object $instance
+     * @return moodle_url
+     */
+    public function get_manual_enrol_link($instance) {
+        return NULL;
+    }
+
+    /**
+     * Returns list of unenrol links for all enrol instances in course.
+     *
+     * @param int $courseid
+     * @return moodle_url
+     */
+    public function get_unenrolself_link($instance) {
+        global $USER, $CFG, $DB;
+
+        $name = $this->get_name();
+        if ($instance->enrol !== $name) {
+            throw new coding_exception('invalid enrol instance!');
+        }
+
+        if ($instance->courseid == SITEID) {
+            return NULL;
+        }
+
+        if (!enrol_is_enabled($name)) {
+            return NULL;
+        }
+
+        if ($instance->status != ENROL_INSTANCE_ENABLED) {
+            return NULL;
+        }
+
+        $context = get_context_instance(CONTEXT_COURSE, $instance->courseid, MUST_EXIST);
+        $courseid = $instance->courseid;
+
+        if (!file_exists("$CFG->dirroot/enrol/$name/unenrolself.php")) {
+            return NULL;
+        }
+
+        $context = get_context_instance(CONTEXT_COURSE, $courseid);
+        if (!has_capability("enrol/$name:unenrolself", $context)) {
+            return NULL;
+        }
+
+        if (!$DB->record_exists('user_enrolments', array('enrolid'=>$instance->id, 'userid'=>$USER->id, 'status'=>ENROL_USER_ACTIVE))) {
+            return NULL;
+        }
+
+        return new moodle_url("/enrol/$name/unenrolself.php", array('enrolid'=>$instance->id));;
+    }
+
+    /**
+     * Adds enrol instance UI to course edit form
+     *
+     * @param object $instance enrol instance or null if does not exist yet
+     * @param MoodleQuickForm $mform
+     * @param object $data
+     * @param object $context context of existing course or parent category if course does not exist
+     * @return void
+     */
+    public function course_edit_form($instance, MoodleQuickForm $mform, $data, $context) {
+        // override - usually at least enable/disable switch, has to add own form header
+    }
+
+    /**
+     * Validates course edit form data
+     *
+     * @param object $instance enrol instance or null if does not exist yet
+     * @param array $data
+     * @param object $context context of existing course or parent category if course does not exist
+     * @return array errors array
+     */
+    public function course_edit_validation($instance, array $data, $context) {
+        return array();
+    }
+
+    /**
+     * Called after updating/inserting course.
+     *
+     * @param bool $inserted true if course just inserted
+     * @param object $course
+     * @param object $data form data
+     * @return void
+     */
+    public function course_updated($inserted, $course, $data) {
+        // override if settings on course edit page or some automatic sync needed
+    }
+
+    /**
+     * Add new instance of enrol plugin settings.
+     * @param object $course
+     * @param array instance fields
+     * @return int id of new instance
+     */
+    public function add_instance($course, array $fields = NULL) {
+        global $DB;
+
+        if ($course->id == SITEID) {
+            throw new coding_exception('Invalid request to add enrol instance to frontpage.');
+        }
+
+        $instance = new object();
+        $instance->enrol          = $this->get_name();
+        $instance->status         = ENROL_INSTANCE_ENABLED;
+        $instance->courseid       = $course->id;
+        $instance->enrolstartdate = 0;
+        $instance->enrolenddate   = 0;
+        $instance->timemodified   = time();
+        $instance->timecreated    = $instance->timemodified;
+        $instance->sortorder      = $DB->get_field('enrol', 'COALESCE(MAX(sortorder), -1) + 1', array('courseid'=>$course->id));
+
+        $fields = (array)$fields;
+        unset($fields['enrol']);
+        unset($fields['courseid']);
+        unset($fields['sortorder']);
+        foreach($fields as $field=>$value) {
+            $instance->$field = $value;
+        }
+
+        return $DB->insert_record('enrol', $instance);
+    }
+
+    /**
+     * Add new instance of enrol plugin with default settings,
+     * called when adding new instance manually or when adding new course.
+     *
+     * Not all plugins support this.
+     *
+     * @param object $course
+     * @return int id of new instance or null if no default supported
+     */
+    public function add_default_instance($course) {
+        return null;
+    }
+
+    /**
+     * Delete course enrol plugin instance, unenrol all users.
+     * @param object $instance
+     * @return void
+     */
+    public function delete_instance($instance) {
+        global $DB;
+
+        $name = $this->get_name();
+        if ($instance->enrol !== $name) {
+            throw new coding_exception('invalid enrol instance!');
+        }
+
+        //first unenrol all users
+        $participants = $DB->get_recordset('user_enrolments', array('enrolid'=>$instance->id));
+        foreach ($participants as $participant) {
+            $this->unenrol_user($instance, $participant->userid);
+        }
+        $participants->close();
+
+        // now clean up all remainders that were not removed correctly
+        $DB->delete_records('role_assignments', array('itemid'=>$instance->id, 'component'=>$name));
+        $DB->delete_records('user_enrolments', array('enrolid'=>$instance->id));
+
+        // finally drop the enrol row
+        $DB->delete_records('enrol', array('id'=>$instance->id));
+    }
+
+    /**
+     * Creates course enrol form, checks if form submitted
+     * and enrols user if necessary. It can also redirect.
+     *
+     * @param stdClass $instance
+     * @return string html text, usually a form in a text box
+     */
+    public function enrol_page_hook(stdClass $instance) {
+        return null;
+    }
+
+    /**
+     * Adds navigation links into course admin block.
+     *
+     * By defaults looks for manage links only.
+     *
+     * @param navigation_node $instancesnode
+     * @param object $instance
+     * @return moodle_url;
+     */
+    public function add_course_navigation($instancesnode, stdClass $instance) {
+        if ($managelink = $this->get_manage_link($instance)) {
+            $instancesnode->add($this->get_instance_name($instance), $managelink, navigation_node::TYPE_SETTING);
+        }
+    }
+
+    /**
+     * Returns enrolment instance manage link.
+     *
+     * By defaults looks for manage.php file and tests for manage capability.
+     *
+     * @param object $instance
+     * @return moodle_url;
+     */
+    public function get_manage_link($instance) {
+        global $CFG, $DB;
+
+        $name = $this->get_name();
+
+        if ($instance->enrol !== $name) {
+             throw new coding_exception('Invalid enrol instance type!');
+        }
+
+        if (!file_exists("$CFG->dirroot/enrol/$name/manage.php")) {
+            return NULL;
+        }
+
+        if ($instance->courseid == SITEID) {
+            // no enrolments on the frontpage, only roles there allowed
+            return NULL;
+        }
+
+        $context = get_context_instance(CONTEXT_COURSE, $instance->courseid);
+        if (!has_capability('enrol/'.$name.':manage', $context)) {
+            return NULL;
+        }
+
+        return new moodle_url("/enrol/$name/manage.php", array('enrolid'=>$instance->id));
+    }
+
+    /**
+     * Reads version.php and determines if it is necessary
+     * to execute the cron job now.
+     * @return bool
+     */
+    public function is_cron_required() {
+        global $CFG;
+
+        $name = $this->get_name();
+        $versionfile = "$CFG->dirroot/enrol/$name/version.php";
+        $plugin = new object();
+        include($versionfile);
+        if (empty($plugin->cron)) {
+            return false;
+        }
+        $lastexecuted = $this->get_config('lastcron', 0);
+        if ($lastexecuted + $plugin->cron < time()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Called for all enabled enrol plugins that returned true from is_cron_required().
+     * @return void
+     */
+    public function cron() {
+    }
+
+    /**
+     * Called when user is about to be deleted
+     * @param object $user
+     * @return void
+     */
+    public function user_delete($user) {
+        global $DB;
+
+        $sql = "SELECT e.*
+                  FROM {enrol} e
+                  JOIN {user_enrolments} ue ON (ue.courseid = e.courseid)
+                 WHERE e.enrol = :meta AND ue.userid = :userid";
+        $params = array('name'=>$this->get_name(), 'userid'=>$user->id);
+
+        $rs = $DB->get_records_recordset($sql, $params);
+        foreach($rs as $instance) {
+            $this->unenrol_user($instance, $user->id);
+        }
+        $rs->close();
+    }
+}
+

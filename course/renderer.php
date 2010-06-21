@@ -80,7 +80,7 @@ class core_course_renderer extends plugin_renderer_base {
         $content .= html_writer::tag('div', get_string('expandall'), array('class'=>'removefromall collapseall'));
         $content .= html_writer::end_tag('div');
         $content .= html_writer::end_tag('div');
-        
+
         // Return the course category tree HTML
         return $content;
     }
@@ -128,18 +128,10 @@ class core_course_renderer extends plugin_renderer_base {
                 $content .= html_writer::link(new moodle_url('/course/view.php', array('id'=>$course->id)), $course->fullname, array('class'=>'course_link'));
                 $content .= html_writer::start_tag('div', array('class'=>'course_info clearfix'));
 
-                if ($course->guest ) {
-                    $image = html_writer::empty_tag('img', array('src'=>$this->output->pix_url('i/guest'), 'alt'=>$this->strings->allowguests, 'title'=>$this->strings->allowguests));
-                    $content .= html_writer::tag('div', $image, array('class'=>'course_info_spacer'));
-                } else {
-                    $content .= html_writer::tag('div', '', array('class'=>'course_info_spacer'));
-                }
-                if ($course->password) {
-                    $image = html_writer::empty_tag('img', array('src'=>$this->output->pix_url('i/key'), 'alt'=>$this->strings->requireskey, 'title'=>$this->strings->requireskey));
-                    $content .= html_writer::tag('div', $image, array('class'=>'course_info_spacer'));
-                } else {
-                    $content .= html_writer::tag('div', '', array('class'=>'course_info_spacer'));
-                }
+                //TODO: add enrol info
+                $content .= html_writer::tag('div', '', array('class'=>'course_info_spacer'));
+                $content .= html_writer::tag('div', '', array('class'=>'course_info_spacer'));
+
                 if ($course->summary) {
                     $image = html_writer::empty_tag('img', array('src'=>$this->output->pix_url('i/info'), 'alt'=>$this->strings->summary));
                     $content .= html_writer::link(new moodle_url('/course/info.php', array('id'=>$course->id)), $image, array('title'=>$this->strings->summary));

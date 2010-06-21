@@ -2147,60 +2147,65 @@ function get_login_url($loginguest=false) {
  * When $cm parameter specified, this function sets page layout to 'module'.
  * You need to change it manually later if some other layout needed.
  *
- * @global object
- * @global object
- * @global object
- * @global object
- * @global string
- * @global object
- * @global object
- * @global object
- * @uses SITEID Define
  * @param mixed $courseorid id of the course or course object
  * @param bool $autologinguest default true
  * @param object $cm course module object
  * @param bool $setwantsurltome Define if we want to set $SESSION->wantsurl, defaults to
  *             true. Used to avoid (=false) some scripts (file.php...) to set that variable,
  *             in order to keep redirects working properly. MDL-14495
+ * @param bool $preventredirect set to true in scripts that can not redirect (CLI, rss feeds, etc.), throws exceptions
  * @return mixed Void, exit, and die depending on path
  */
-function require_login($courseorid=0, $autologinguest=true, $cm=null, $setwantsurltome=true) {
-    global $CFG, $SESSION, $USER, $COURSE, $FULLME, $PAGE, $SITE, $DB, $OUTPUT;
+function require_login($courseorid = NULL, $autologinguest = true, $cm = NULL, $setwantsurltome = true, $preventredirect = false) {
+    global $CFG, $SESSION, $USER, $FULLME, $PAGE, $SITE, $DB, $OUTPUT;
 
-/// setup global $COURSE, themes, language and locale
+    // setup global $COURSE, themes, language and locale
     if (!empty($courseorid)) {
         if (is_object($courseorid)) {
             $course = $courseorid;
         } else if ($courseorid == SITEID) {
             $course = clone($SITE);
         } else {
-            $course = $DB->get_record('course', array('id' => $courseorid));
-            if (!$course) {
-                throw new moodle_exception('invalidcourseid');
-            }
+            $course = $DB->get_record('course', array('id' => $courseorid), '*', MUST_EXIST);
         }
         if ($cm) {
+            if ($cm->course != $course->id) {
+                throw new coding_exception('course and cm parameters in require_login() call do not match!!');
+            }
             $PAGE->set_cm($cm, $course); // set's up global $COURSE
             $PAGE->set_pagelayout('incourse');
         } else {
             $PAGE->set_course($course); // set's up global $COURSE
         }
     } else {
-        // do not touch global $COURSE via $PAGE->set_course() !!
+        // do not touch global $COURSE via $PAGE->set_course(),
+        // the reasons is we need to be able to call require_login() at any time!!
+        $course = $SITE;
+        if ($cm) {
+            throw new coding_exception('cm parameter in require_login() requires valid course parameter!');
+        }
     }
 
-/// If the user is not even logged in yet then make sure they are
+    // If the user is not even logged in yet then make sure they are
     if (!isloggedin()) {
         //NOTE: $USER->site check was obsoleted by session test cookie,
         //      $USER->confirmed test is in login/index.php
+        if ($preventredirect) {
+            throw new require_login_exception('You are not logged in');
+        }
+
         if ($setwantsurltome) {
             $SESSION->wantsurl = $FULLME;
         }
         if (!empty($_SERVER['HTTP_REFERER'])) {
             $SESSION->fromurl  = $_SERVER['HTTP_REFERER'];
         }
-        if ($autologinguest and !empty($CFG->guestloginbutton) and !empty($CFG->autologinguests) and ($COURSE->id == SITEID or $COURSE->guest) ) {
-            $loginguest = true;
+        if ($autologinguest and !empty($CFG->guestloginbutton) and !empty($CFG->autologinguests)) {
+            if ($course->id == SITEID) {
+                $loginguest = true;
+            } else {
+                $loginguest = false;
+            }
         } else {
             $loginguest = false;
         }
@@ -2208,19 +2213,19 @@ function require_login($courseorid=0, $autologinguest=true, $cm=null, $setwantsu
         exit; // never reached
     }
 
-/// loginas as redirection if needed
-    if ($COURSE->id != SITEID and session_is_loggedinas()) {
+    // loginas as redirection if needed
+    if ($course->id != SITEID and session_is_loggedinas()) {
         if ($USER->loginascontext->contextlevel == CONTEXT_COURSE) {
-            if ($USER->loginascontext->instanceid != $COURSE->id) {
+            if ($USER->loginascontext->instanceid != $course->id) {
                 print_error('loginasonecourse', '', $CFG->wwwroot.'/course/view.php?id='.$USER->loginascontext->instanceid);
             }
         }
     }
 
-/// check whether the user should be changing password (but only if it is REALLY them)
+    // check whether the user should be changing password (but only if it is REALLY them)
     if (get_user_preferences('auth_forcepasswordchange') && !session_is_loggedinas()) {
         $userauth = get_auth_plugin($USER->auth);
-        if ($userauth->can_change_password()) {
+        if ($userauth->can_change_password() and !$preventredirect) {
             $SESSION->wantsurl = $FULLME;
             if ($changeurl = $userauth->change_password_url()) {
                 //use plugin custom url
@@ -2239,46 +2244,212 @@ function require_login($courseorid=0, $autologinguest=true, $cm=null, $setwantsu
         }
     }
 
-/// Check that the user account is properly set up
+    // Check that the user account is properly set up
     if (user_not_fully_set_up($USER)) {
+        if ($preventredirect) {
+            throw new require_login_exception('User not fully set-up');
+        }
         $SESSION->wantsurl = $FULLME;
         redirect($CFG->wwwroot .'/user/edit.php?id='. $USER->id .'&amp;course='. SITEID);
     }
 
-/// Make sure the USER has a sesskey set up.  Used for checking script parameters.
+    // Make sure the USER has a sesskey set up. Used for CSRF protection.
     sesskey();
+
+    // Do not bother admins with any formalities, no last access updates either
+    if (is_siteadmin()) {
+        return;
+    }
 
     // Check that the user has agreed to a site policy if there is one
     if (!empty($CFG->sitepolicy)) {
+        if ($preventredirect) {
+            throw new require_login_exception('Policy not agreed');
+        }
         if (!$USER->policyagreed) {
             $SESSION->wantsurl = $FULLME;
             redirect($CFG->wwwroot .'/user/policy.php');
         }
     }
 
-    // Fetch the system context, we are going to use it a lot.
+    // Fetch the system context, the course context, and prefetch its child contexts
     $sysctx = get_context_instance(CONTEXT_SYSTEM);
+    $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id, MUST_EXIST);
+    if ($cm) {
+        $cmcontext = get_context_instance(CONTEXT_MODULE, $cm->id, MUST_EXIST);
+    } else {
+        $cmcontext = null;
+    }
 
-/// If the site is currently under maintenance, then print a message
+    // If the site is currently under maintenance, then print a message
     if (!empty($CFG->maintenance_enabled) and !has_capability('moodle/site:config', $sysctx)) {
+        if ($preventredirect) {
+            throw new require_login_exception('Maintenance in progress');
+        }
+
         print_maintenance_message();
     }
 
-/// groupmembersonly access control
+    // make sure the course itself is not hidden
+    if ($course->id == SITEID) {
+        // frontpage can not be hidden
+    } else {
+        if (!empty($USER->access['rsw'][$coursecontext->path])) {
+            // when switching roles ignore the hidden flag - user had to be in course to do the switch
+        } else {
+            if (!$course->visible and !has_capability('moodle/course:viewhiddencourses', $coursecontext)) {
+                // originally there was also test of parent category visibility,
+                // BUT is was very slow in complex queries involving "my courses"
+                // now it is also possible to simply hide all courses user is not enrolled in :-)
+                if ($preventredirect) {
+                    throw new require_login_exception('Course is hidden');
+                }
+                notice(get_string('coursehidden'), $CFG->wwwroot .'/');
+            }
+        }
+    }
+
+    // is the user enrolled?
+    if ($course->id == SITEID) {
+        // everybody is enrolled on the frontpage
+
+    } else {
+        if (session_is_loggedinas()) {
+            // Make sure the REAL person can access this course first
+            $realuser = session_get_realuser();
+            if (!is_enrolled($coursecontext, $realuser->id, '', true) and !is_viewing($coursecontext, $realuser->id) and !is_siteadmin($realuser->id)) {
+                if ($preventredirect) {
+                    throw new require_login_exception('Invalid course login-as access');
+                }
+                echo $OUTPUT->header();
+                notice(get_string('studentnotallowed', '', fullname($USER, true)), $CFG->wwwroot .'/');
+            }
+        }
+
+        // very simple enrolment caching - changes in course setting are not reflected immediately
+        if (!isset($USER->enrol)) {
+            $USER->enrol = array();
+            $USER->enrol['enrolled'] = array();
+            $USER->enrol['tempguest'] = array();
+        }
+
+        $access = false;
+
+        if (is_viewing($coursecontext, $USER)) {
+            // ok, no need to mess with enrol
+            $access = true;
+
+        } else {
+            if (isset($USER->enrol['enrolled'][$course->id])) {
+                if ($USER->enrol['enrolled'][$course->id] == 0) {
+                    $access = true;
+                } else if ($USER->enrol['enrolled'][$course->id] > time()) {
+                    $access = true;
+                } else {
+                    //expired
+                    unset($USER->enrol['enrolled'][$course->id]);
+                }
+            }
+            if (isset($USER->enrol['tempguest'][$course->id])) {
+                if ($USER->enrol['tempguest'][$course->id] == 0) {
+                    $access = true;
+                } else if ($USER->enrol['tempguest'][$course->id] > time()) {
+                    $access = true;
+                } else {
+                    //expired
+                    unset($USER->enrol['tempguest'][$course->id]);
+                    $USER->access = remove_temp_roles($coursecontext, $USER->access);
+                }
+            }
+
+            if ($access) {
+                // cache ok
+            } else if (is_enrolled($coursecontext, $USER, '', true)) {
+                // active participants may always access
+                // TODO: refactor this into some new function
+                $now = time();
+                $sql = "SELECT MAX(ue.timeend)
+                          FROM {user_enrolments} ue
+                          JOIN {enrol} e ON (e.id = ue.enrolid AND e.courseid = :courseid)
+                          JOIN {user} u ON u.id = ue.userid
+                         WHERE ue.userid = :userid AND ue.status = :active AND e.status = :enabled AND u.deleted = 0
+                               AND ue.timestart < :now1 AND (ue.timeend = 0 OR ue.timeend > :now2)";
+                $params = array('enabled'=>ENROL_INSTANCE_ENABLED, 'active'=>ENROL_USER_ACTIVE,
+                                'userid'=>$USER->id, 'courseid'=>$coursecontext->instanceid, 'now1'=>$now, 'now2'=>$now);
+                $until = $DB->get_field_sql($sql, $params);
+                if (!$until or $until > time() + ENROL_REQUIRE_LOGIN_CACHE_PERIOD) {
+                    $until = time() + ENROL_REQUIRE_LOGIN_CACHE_PERIOD;
+                }
+
+                $USER->enrol['enrolled'][$course->id] = $until;
+                $access = true;
+
+                // remove traces of previous temp guest access
+                $USER->access = remove_temp_roles($coursecontext, $USER->access);
+
+            } else {
+                $instances = $DB->get_records('enrol', array('courseid'=>$course->id, 'status'=>ENROL_INSTANCE_ENABLED), 'sortorder, id ASC');
+                $enrols = enrol_get_plugins(true);
+                // first ask all enabled enrol instances in course if they want to auto enrol user
+                foreach($instances as $instance) {
+                    if (!isset($enrols[$instance->enrol])) {
+                        continue;
+                    }
+                    $until = $enrols[$instance->enrol]->try_autoenrol($instance);
+                    if ($until !== false) {
+                        $USER->enrol['enrolled'][$course->id] = $until;
+                        $USER->access = remove_temp_roles($coursecontext, $USER->access);
+                        $access = true;
+                        break;
+                    }
+                }
+                // if not enrolled yet try to gain temporary guest access
+                if (!$access) {
+                    foreach($instances as $instance) {
+                        if (!isset($enrols[$instance->enrol])) {
+                            continue;
+                        }
+                        $until = $enrols[$instance->enrol]->try_guestaccess($instance);
+                        if ($until !== false) {
+                            $USER->enrol['tempguest'][$course->id] = $until;
+                            $access = true;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        if (!$access) {
+            if ($preventredirect) {
+                throw new require_login_exception('Not enrolled');
+            }
+            $SESSION->wantsurl = $FULLME;
+            redirect($CFG->wwwroot .'/enrol/index.php?id='. $course->id);
+        }
+    }
+
+    // test visibility
+    if ($cm && !$cm->visible && !has_capability('moodle/course:viewhiddenactivities', $cmcontext)) {
+        if ($preventredirect) {
+            throw new require_login_exception('Activity is hidden');
+        }
+        redirect($CFG->wwwroot, get_string('activityiscurrentlyhidden'));
+    }
+
+    // groupmembersonly access control
     if (!empty($CFG->enablegroupmembersonly) and $cm and $cm->groupmembersonly and !has_capability('moodle/site:accessallgroups', get_context_instance(CONTEXT_MODULE, $cm->id))) {
         if (isguestuser() or !groups_has_membership($cm)) {
+            if ($preventredirect) {
+                throw new require_login_exception('Not member of a group');
+            }
             print_error('groupmembersonlyerror', 'group', $CFG->wwwroot.'/course/view.php?id='.$cm->course);
         }
     }
 
-    // Fetch the course context, and prefetch its child contexts
-    $coursecontext = get_context_instance(CONTEXT_COURSE, $COURSE->id, MUST_EXIST);
-    if ($cm) {
-        $cmcontext = get_context_instance(CONTEXT_MODULE, $cm->id, MUST_EXIST);
-    }
-
     // Conditional activity access control
     if (!empty($CFG->enableavailability) and $cm) {
+        // TODO: this is going to work with login-as-user, sorry!
         // We cache conditional access in session
         if (!isset($SESSION->conditionaccessok)) {
             $SESSION->conditionaccessok = array();
@@ -2299,93 +2470,8 @@ function require_login($courseorid=0, $autologinguest=true, $cm=null, $setwantsu
         }
     }
 
-    if ($COURSE->id == SITEID) {
-        /// Eliminate hidden site activities straight away
-        if ($cm && !$cm->visible && !has_capability('moodle/course:viewhiddenactivities', $cmcontext)) {
-            redirect($CFG->wwwroot, get_string('activityiscurrentlyhidden'));
-        }
-        user_accesstime_log($COURSE->id); /// Access granted, update lastaccess times
-        return;
-
-    } else {
-
-        /// Check if the user can be in a particular course
-        if (empty($USER->access['rsw'][$coursecontext->path])) {
-            //
-            // MDL-13900 - If the course or the parent category are hidden
-            // and the user hasn't the 'course:viewhiddencourses' capability, prevent access
-            //
-            if ( !($COURSE->visible && course_parent_visible($COURSE)) && !has_capability('moodle/course:viewhiddencourses', $coursecontext)) {
-                echo $OUTPUT->header();
-                notice(get_string('coursehidden'), $CFG->wwwroot .'/');
-            }
-        }
-
-        if (is_enrolled($coursecontext) or is_viewing($coursecontext)) {
-            // Enrolled user or allowed to visit course (managers, inspectors, etc.)
-            if (session_is_loggedinas()) {   // Make sure the REAL person can also access this course
-                $realuser = session_get_realuser();
-                if (!is_enrolled($coursecontext, $realuser->id) and !is_viewing($coursecontext, $realuser->id) and !is_siteadmin($realuser->id)) {
-                    echo $OUTPUT->header();
-                    notice(get_string('studentnotallowed', '', fullname($USER, true)), $CFG->wwwroot .'/');
-                }
-            }
-
-            // Make sure they can read this activity too, if specified
-            if ($cm && !$cm->visible && !has_capability('moodle/course:viewhiddenactivities', $cmcontext)) {
-                redirect($CFG->wwwroot.'/course/view.php?id='.$cm->course, get_string('activityiscurrentlyhidden'));
-            }
-            user_accesstime_log($COURSE->id); /// Access granted, update lastaccess times
-            return;   // User is allowed to see this course
-
-        } else {
-            // guest access
-            switch ($COURSE->guest) {    /// Check course policy about guest access
-
-                case 1:    /// Guests always allowed
-                    if ($cm and !$cm->visible) { // Not allowed to see module, send to course page
-                        redirect($CFG->wwwroot.'/course/view.php?id='.$cm->course,
-                                 get_string('activityiscurrentlyhidden'));
-                    }
-
-                    if ($USER->username != 'guest' and !empty($CFG->guestroleid)) {
-                        // Non-guests who don't currently have access, check if they can be allowed in as a guest
-                        // Temporarily assign them guest role for this context, if it fails later user is asked to enrol
-                        $USER->access = load_temp_role($coursecontext, $CFG->guestroleid, $USER->access);
-                    }
-
-                    user_accesstime_log($COURSE->id); /// Access granted, update lastaccess times
-                    return;   // User is allowed to see this course
-
-                case 2:    /// Guests allowed with key
-                    if (!empty($USER->enrolkey[$COURSE->id])) {   // Set by enrol/manual/enrol.php
-                        user_accesstime_log($COURSE->id); /// Access granted, update lastaccess times
-                        return true;
-                    }
-                    //  otherwise drop through to logic below (--> enrol.php)
-                    break;
-
-                default:    /// Guests not allowed
-                    $strloggedinasguest = get_string('loggedinasguest');
-                    $PAGE->navbar->add($strloggedinasguest);
-                    echo $OUTPUT->header();
-                    if (empty($USER->access['rsw'][$coursecontext->path])) {  // Normal guest
-                        notice(get_string('guestsnotallowed', '', format_string($COURSE->fullname)), get_login_url());
-                    } else {
-                        echo $OUTPUT->notification(get_string('guestsnotallowed', '', format_string($COURSE->fullname)));
-                        echo '<div class="notifyproblem">'.switchroles_form($COURSE->id).'</div>';
-                        echo $OUTPUT->footer();
-                        exit;
-                    }
-                    break;
-            }
-        }
-
-        // Currently not enrolled in the course, so see if they want to enrol
-        $SESSION->wantsurl = $FULLME;
-        redirect($CFG->wwwroot .'/course/enrol.php?id='. $COURSE->id);
-        die;
-    }
+    // Finally access granted, update lastaccess times
+    user_accesstime_log($course->id);
 }
 
 
@@ -2425,26 +2511,28 @@ function require_logout() {
  * @param bool $setwantsurltome Define if we want to set $SESSION->wantsurl, defaults to
  *             true. Used to avoid (=false) some scripts (file.php...) to set that variable,
  *             in order to keep redirects working properly. MDL-14495
+ * @param bool $preventredirect set to true in scripts that can not redirect (CLI, rss feeds, etc.), throws exceptions
+ * @return void
  */
-function require_course_login($courseorid, $autologinguest=true, $cm=null, $setwantsurltome=true) {
+function require_course_login($courseorid, $autologinguest = true, $cm = NULL, $setwantsurltome = true, $preventredirect = false) {
     global $CFG, $PAGE, $SITE;
     if (!empty($CFG->forcelogin)) {
         // login required for both SITE and courses
-        require_login($courseorid, $autologinguest, $cm, $setwantsurltome);
+        require_login($courseorid, $autologinguest, $cm, $setwantsurltome, $preventredirect);
 
     } else if (!empty($cm) and !$cm->visible) {
         // always login for hidden activities
-        require_login($courseorid, $autologinguest, $cm, $setwantsurltome);
+        require_login($courseorid, $autologinguest, $cm, $setwantsurltome, $preventredirect);
 
     } else if ((is_object($courseorid) and $courseorid->id == SITEID)
           or (!is_object($courseorid) and $courseorid == SITEID)) {
               //login for SITE not required
         if ($cm and empty($cm->visible)) {
             // hidden activities are not accessible without login
-            require_login($courseorid, $autologinguest, $cm, $setwantsurltome);
+            require_login($courseorid, $autologinguest, $cm, $setwantsurltome, $preventredirect);
         } else if ($cm and !empty($CFG->enablegroupmembersonly) and $cm->groupmembersonly) {
             // not-logged-in users do not have any group membership
-            require_login($courseorid, $autologinguest, $cm, $setwantsurltome);
+            require_login($courseorid, $autologinguest, $cm, $setwantsurltome, $preventredirect);
         } else {
             // We still need to instatiate PAGE vars properly so that things
             // that rely on it like navigation function correctly.
@@ -2455,6 +2543,9 @@ function require_course_login($courseorid, $autologinguest=true, $cm=null, $setw
                     $course = clone($SITE);
                 }
                 if ($cm) {
+                    if ($cm->course != $course->id) {
+                        throw new coding_exception('course and cm parameters in require_course_login() call do not match!!');
+                    }
                     $PAGE->set_cm($cm, $course);
                     $PAGE->set_pagelayout('incourse');
                 } else {
@@ -2472,7 +2563,7 @@ function require_course_login($courseorid, $autologinguest=true, $cm=null, $setw
 
     } else {
         // course login always required
-        require_login($courseorid, $autologinguest, $cm, $setwantsurltome);
+        require_login($courseorid, $autologinguest, $cm, $setwantsurltome, $preventredirect);
     }
 }
 
@@ -2755,25 +2846,6 @@ function reset_login_count() {
 }
 
 /**
- * Sync all meta courses
- * Goes through all enrolment records for the courses inside all metacourses and syncs with them.
- * @see sync_metacourse()
- *
- * @global object
- */
-function sync_metacourses() {
-    global $DB;
-
-    if (!$courses = $DB->get_records('course', array('metacourse'=>1))) {
-        return;
-    }
-
-    foreach ($courses as $course) {
-        sync_metacourse($course);
-    }
-}
-
-/**
  * Returns reference to full info about modules in course (including visibility).
  * Cached and as fast as possible (0 or 1 db query).
  *
@@ -2968,157 +3040,6 @@ function &get_fast_modinfo(&$course, $userid=0) {
     }
 
     return $cache[$course->id];
-}
-
-/**
- * Goes through all enrolment records for the courses inside the metacourse and sync with them.
- *
- * @todo finish timeend and timestart maybe we could rely on cron
- *       job to do the cleaning from time to time
- *
- * @global object
- * @global object
- * @uses CONTEXT_COURSE
- * @param mixed $course the metacourse to synch. Either the course object itself, or the courseid.
- * @return bool Success
- */
-function sync_metacourse($course) {
-    global $CFG, $DB;
-
-    // Check the course is valid.
-    if (!is_object($course)) {
-        if (!$course = $DB->get_record('course', array('id'=>$course))) {
-            return false; // invalid course id
-        }
-    }
-
-    // Check that we actually have a metacourse.
-    if (empty($course->metacourse)) {
-        return false;
-    }
-
-    // Get a list of roles that should not be synced.
-    if (!empty($CFG->nonmetacoursesyncroleids)) {
-        $roleexclusions = 'ra.roleid NOT IN (' . $CFG->nonmetacoursesyncroleids . ') AND';
-    } else {
-        $roleexclusions = '';
-    }
-
-    // Get the context of the metacourse.
-    $context = get_context_instance(CONTEXT_COURSE, $course->id); // SITEID can not be a metacourse
-
-    // We do not ever want to unassign the list of metacourse manager, so get a list of them.
-    if ($users = get_users_by_capability($context, 'moodle/course:managemetacourse')) {
-        $managers = array_keys($users);
-    } else {
-        $managers = array();
-    }
-
-    // Get assignments of a user to a role that exist in a child course, but
-    // not in the meta coure. That is, get a list of the assignments that need to be made.
-    if (!$assignments = $DB->get_records_sql("
-            SELECT ra.id, ra.roleid, ra.userid
-              FROM {role_assignments} ra, {context} con, {course_meta} cm
-             WHERE ra.contextid = con.id AND
-                   con.contextlevel = ".CONTEXT_COURSE." AND
-                   con.instanceid = cm.child_course AND
-                   cm.parent_course = ? AND
-                   $roleexclusions
-                   NOT EXISTS (
-                     SELECT 1
-                       FROM {role_assignments} ra2
-                      WHERE ra2.userid = ra.userid AND
-                            ra2.roleid = ra.roleid AND
-                            ra2.contextid = ?
-                  )", array($course->id, $context->id))) {
-        $assignments = array();
-    }
-
-    // Get assignments of a user to a role that exist in the meta course, but
-    // not in any child courses. That is, get a list of the unassignments that need to be made.
-    if (!$unassignments = $DB->get_records_sql("
-            SELECT ra.id, ra.roleid, ra.userid
-              FROM {role_assignments} ra
-             WHERE ra.contextid = ? AND
-                   $roleexclusions
-                   NOT EXISTS (
-                    SELECT 1
-                      FROM {role_assignments} ra2, {context} con2, {course_meta} cm
-                    WHERE ra2.userid = ra.userid AND
-                          ra2.roleid = ra.roleid AND
-                          ra2.contextid = con2.id AND
-                          con2.contextlevel = " . CONTEXT_COURSE . " AND
-                          con2.instanceid = cm.child_course AND
-                          cm.parent_course = ?
-                  )", array($context->id, $course->id))) {
-        $unassignments = array();
-    }
-
-    $success = true;
-
-    // Make the unassignments, if they are not managers.
-    foreach ($unassignments as $unassignment) {
-        if (!in_array($unassignment->userid, $managers)) {
-            $success = role_unassign($unassignment->roleid, $unassignment->userid, 0, $context->id) && $success;
-        }
-    }
-
-    // Make the assignments.
-    foreach ($assignments as $assignment) {
-        $success = role_assign($assignment->roleid, $assignment->userid, 0, $context->id, 0, 0) && $success;
-    }
-
-    return $success;
-
-// TODO: finish timeend and timestart
-// maybe we could rely on cron job to do the cleaning from time to time
-}
-
-/**
- * Adds a record to the metacourse table and calls sync_metacoures
- *
- * @global object
- * @param int $metacourseid The Metacourse ID for the metacourse to add to
- * @param int $courseid The Course ID of the course to add
- * @return bool Success
- */
-function add_to_metacourse ($metacourseid, $courseid) {
-    global $DB;
-
-    if (!$metacourse = $DB->get_record("course", array("id"=>$metacourseid))) {
-        return false;
-    }
-
-    if (!$course = $DB->get_record("course", array("id"=>$courseid))) {
-        return false;
-    }
-
-    if (!$record = $DB->get_record("course_meta", array("parent_course"=>$metacourseid, "child_course"=>$courseid))) {
-        $rec = new object();
-        $rec->parent_course = $metacourseid;
-        $rec->child_course  = $courseid;
-        $DB->insert_record('course_meta', $rec);
-        return sync_metacourse($metacourseid);
-    }
-    return true;
-
-}
-
-/**
- * Removes the record from the metacourse table and calls sync_metacourse
- *
- * @global object
- * @param int $metacourseid The Metacourse ID for the metacourse to remove from
- * @param int $courseid The Course ID of the course to remove
- * @return bool Success
- */
-function remove_from_metacourse($metacourseid, $courseid) {
-    global $DB;
-
-    if ($DB->delete_records('course_meta', array('parent_course'=>$metacourseid, 'child_course'=>$courseid))) {
-        return sync_metacourse($metacourseid);
-    }
-    return false;
 }
 
 /**
@@ -3487,12 +3408,10 @@ function truncate_userinfo($info) {
  * Marks user deleted in internal user database and notifies the auth plugin.
  * Also unenrols user from all roles and does other cleanup.
  *
- * @todo Decide if this transaction is really needed (look for internal TODO:)
+ * Any plugin that needs to purge user data should register the 'user_deleted' event.
  *
- * @global object
- * @global object
- * @param object $user Userobject before delete    (without system magic quotes)
- * @return boolean success
+ * @param object $user User object before delete
+ * @return boolean always true
  */
 function delete_user($user) {
     global $CFG, $DB;
@@ -3500,12 +3419,8 @@ function delete_user($user) {
     require_once($CFG->libdir.'/gradelib.php');
     require_once($CFG->dirroot.'/message/lib.php');
 
-        // delete all grades - backup is kept in grade_grades_history table
-        if ($grades = grade_grade::fetch_all(array('userid'=>$user->id))) {
-            foreach ($grades as $grade) {
-                $grade->delete('userdelete');
-            }
-        }
+    // delete all grades - backup is kept in grade_grades_history table
+    grade_user_delete($user->id);
 
     //move unread messages from this user to read
     message_move_userfrom_unread2read($user->id);
@@ -3516,10 +3431,19 @@ function delete_user($user) {
     // remove from all groups
     $DB->delete_records('groups_members', array('userid'=>$user->id));
 
-    // unenrol from all roles in all contexts
-    role_unassign(0, $user->id); // this might be slow but it is really needed - modules might do some extra cleanup!
+    // brute force unenrol from all courses
+    $DB->delete_records('user_enrolments', array('userid'=>$user->id));
 
-    // now do a final accesslib cleanup - removes all role assignments in user context and context itself
+    // purge user preferences
+    $DB->delete_records('user_preferences', array('userid'=>$user->id));
+
+    // purge user extra profile info
+    $DB->delete_records('user_info_data', array('userid'=>$user->id));
+
+    // last course access not necessary either
+    $DB->delete_records('user_lastaccess', array('userid'=>$user->id));
+
+    // final accesslib cleanup - removes all role assignments in user context and context itself
     delete_context(CONTEXT_USER, $user->id);
 
     require_once($CFG->dirroot.'/tag/lib.php');
@@ -3546,6 +3470,7 @@ function delete_user($user) {
     $authplugin = get_auth_plugin($user->auth);
     $authplugin->user_delete($user);
 
+    // any plugin that needs to cleanup should register this event
     events_trigger('user_deleted', $user);
 
     return true;
@@ -4129,26 +4054,6 @@ function remove_course_contents($courseid, $showfeedback=true) {
         $DB->delete_records($table, array($col=>$course->id));
     }
 
-
-/// Clean up metacourse stuff
-
-    if ($course->metacourse) {
-        $DB->delete_records("course_meta", array("parent_course"=>$course->id));
-        sync_metacourse($course->id); // have to do it here so the enrolments get nuked. sync_metacourses won't find it without the id.
-        if ($showfeedback) {
-            echo $OUTPUT->notification("$strdeleted course_meta");
-        }
-    } else {
-        if ($parents = $DB->get_records("course_meta", array("child_course"=>$course->id))) {
-            foreach ($parents as $parent) {
-                remove_from_metacourse($parent->parent_course,$parent->child_course); // this will do the unenrolments as well.
-            }
-            if ($showfeedback) {
-                echo $OUTPUT->notification("$strdeleted course_meta");
-            }
-        }
-    }
-
 /// Delete questions and question categories
     question_delete_course($course, $showfeedback);
 
@@ -4280,7 +4185,7 @@ function reset_course_userdata($data) {
     if (!empty($data->reset_roles_local)) {
         $children = get_child_contexts($context);
         foreach ($children as $child) {
-            role_unassign(0, 0, 0, $child->id);
+            role_unassign_all(array('contextid'=>$child->id));
         }
         //force refresh for logged in users
         mark_context_dirty($context->path);
@@ -4289,20 +4194,40 @@ function reset_course_userdata($data) {
 
     // First unenrol users - this cleans some of related user data too, such as forum subscriptions, tracking, etc.
     $data->unenrolled = array();
-    if (!empty($data->reset_roles)) {
-        foreach($data->reset_roles as $roleid) {
-            if ($users = get_role_users($roleid, $context, false, 'u.id', 'u.id ASC')) {
-                foreach ($users as $user) {
-                    role_unassign($roleid, $user->id, 0, $context->id);
-                    if (!is_enrolled($context, $user->id)) {
-                        $data->unenrolled[$user->id] = $user->id;
-                    }
+    if (!empty($data->unenrol_users)) {
+        $plugins = enrol_get_plugins(true);
+        $instances = enrol_get_instances($data->courseid, true);
+        foreach ($instances as $key=>$instance) {
+            if (!isset($plugins[$instance->enrol])) {
+                unset($instances[$key]);
+                continue;
+            }
+            if (!$plugins[$instance->enrol]->allow_unenrol($instance)) {
+                unset($instances[$key]);
+            }
+        }
+
+        $sqlempty = $DB->sql_empty();
+        foreach($data->unenrol_users as $withroleid) {
+            $sql = "SELECT DISTINCT ue.userid, ue.enrolid
+                      FROM {user_enrolments} ue
+                      JOIN {enrol} e ON (e.id = ue.enrolid AND e.courseid = :courseid)
+                      JOIN {context} c ON (c.contextlevel = :courselevel AND c.instanceid = e.courseid)
+                      JOIN {role_assignments} ra ON (ra.contextid = c.id AND ra.roleid = :roleid AND ra.userid = ue.userid)";
+            $params = array('courseid'=>$data->courseid, 'roleid'=>$withroleid, 'courselevel'=>CONTEXT_COURSE);
+
+            $rs = $DB->get_recordset_sql($sql, $params);
+            foreach ($rs as $ue) {
+                if (!isset($instances[$ue->enrolid])) {
+                    continue;
                 }
+                $plugins[$instances[$ue->enrolid]->enrol]->unenrol_user($instances[$ue->enrolid], $ue->userid);
+                $data->unenrolled[$ue->userid] = $ue->userid;
             }
         }
     }
     if (!empty($data->unenrolled)) {
-        $status[] = array('component'=>$componentstr, 'item'=>get_string('unenrol').' ('.count($data->unenrolled).')', 'error'=>false);
+        $status[] = array('component'=>$componentstr, 'item'=>get_string('unenrol', 'enrol').' ('.count($data->unenrolled).')', 'error'=>false);
     }
 
 
@@ -5046,58 +4971,6 @@ function email_is_not_allowed($email) {
     }
 
     return false;
-}
-
-/**
- * Send welcome email to specified user
- *
- * @global object
- * @global object
- * @param object $course
- * @param user $user A {@link $USER} object
- * @return bool
- */
-function email_welcome_message_to_user($course, $user=NULL) {
-    global $CFG, $USER;
-
-    if (isset($CFG->sendcoursewelcomemessage) and !$CFG->sendcoursewelcomemessage) {
-        return;
-    }
-
-    if (empty($user)) {
-        if (!isloggedin()) {
-            return false;
-        }
-        $user = $USER;
-    }
-
-    if (!empty($course->welcomemessage)) {
-        $message = $course->welcomemessage;
-    } else {
-        $a = new object();
-        $a->coursename = $course->fullname;
-        if ($course->id == SITEID) {
-            $a->profileurl = "$CFG->wwwroot/user/profile.php?id=$user->id";
-        } else {
-            $a->profileurl = "$CFG->wwwroot/user/view.php?id=$user->id&course=$course->id";
-        }
-        $message = get_string("welcometocoursetext", "", $a);
-    }
-
-    /// If you don't want a welcome message sent, then make the message string blank.
-    if (!empty($message)) {
-        $subject = get_string('welcometocourse', '', format_string($course->fullname));
-
-         $context = get_context_instance(CONTEXT_COURSE, $course->id);
-        // TODO: replace with $CFG->coursemanager test, 'moodle/course:update' is very wrong!!
-        if ($users = get_users_by_capability($context, 'moodle/course:update', 'u.*', 'u.id ASC','', '', '', '', false, true)) {
-            $users = sort_by_roleassignment_authority($users, $context);
-            $teacher = array_shift($users);
-        } else {
-            $teacher = get_admin();
-        }
-        email_to_user($user, $teacher, $subject, $message);
-    }
 }
 
 /// FILE HANDLING  /////////////////////////////////////////////
@@ -7013,6 +6886,7 @@ function get_core_subsystems() {
             'dock'        => NULL,
             'editor'      => 'lib/editor',
             'edufields'   => NULL,
+            'enrol'       => 'enrol',
             'error'       => NULL,
             'filepicker'  => NULL,
             'filters'     => NULL,
@@ -9338,24 +9212,7 @@ function is_mnet_remote_user($user) {
 }
 
 /**
- * Checks if a given plugin is in the list of enabled enrolment plugins.
- *
- * @global object
- * @param string $auth Enrolment plugin.
- * @return boolean Whether the plugin is enabled.
- */
-function is_enabled_enrol($enrol='') {
-    global $CFG;
-
-    // use the global default if not specified
-    if ($enrol == '') {
-        $enrol = $CFG->enrol;
-    }
-    return in_array($enrol, explode(',', $CFG->enrol_plugins_enabled));
-}
-
-/**
- * This function will search for browser preferred languages, setting Moodle
+ * This function will search for browser prefereed languages, setting Moodle
  * to use the best one available if $SESSION->lang is undefined
  *
  * @global object
@@ -9569,7 +9426,7 @@ function is_primary_admin($userid){
     }
 }
 
- /**
+/**
  * Returns the site identifier
  *
  * @global object

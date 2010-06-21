@@ -1,6 +1,8 @@
 <?PHP
-       // enrol_config.php - allows admin to edit all enrollment variables
+       // enrol_config.php - allows admin to edit all enrolment variables
        //                    Yes, enrol is correct English spelling.
+
+die('TODO: ment enrolments are not reimplemented yet, sorry.');
 
     require_once(dirname(__FILE__) . "/../../config.php");
     require_once($CFG->libdir.'/adminlib.php');
@@ -13,8 +15,7 @@
 
     admin_externalpage_setup('mnetenrol');
 
-    require_once("$CFG->dirroot/enrol/enrol.class.php");   /// Open the factory class
-    $enrolment = enrolment_factory::factory('mnet');
+    $enrolment = enrol_get_plugin('mnet');
 
     $mnethost = required_param('host', PARAM_INT);
     $host = $DB->get_record('mnet_host', array('id'=>$mnethost));

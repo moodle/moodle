@@ -202,7 +202,7 @@ class backup_section_structure_step extends backup_structure_step {
 
 /**
  * structure step that will generate the course.xml file for the course, including
- * course category reference, tags, metacourse, modules restriction information
+ * course category reference, tags, modules restriction information
  * and some annotations (files & groupings)
  */
 class backup_course_structure_step extends backup_structure_step {
@@ -213,16 +213,15 @@ class backup_course_structure_step extends backup_structure_step {
         // Define each element separated
 
         $course = new backup_nested_element('course', array('id', 'contextid'), array(
-            'shortname', 'fullname', 'idnumber', 'password',
+            'shortname', 'fullname', 'idnumber',
             'summary', 'summaryformat', 'format', 'showgrades',
-            'newsitems', 'guest', 'startdate', 'enrolperiod',
+            'newsitems', 'startdate',
             'numsections', 'marker', 'maxbytes', 'showreports',
             'visible', 'hiddensections', 'groupmode', 'groupmodeforce',
-            'defaultgroupingid', 'lang', 'theme', 'cost',
-            'currency', 'timecreated', 'timemodified', 'metacourse',
-            'requested', 'restrictmodules', 'expirynotify', 'expirythreshold',
-            'notifystudents', 'enrollable', 'enrolstartdate', 'enrolenddate',
-            'enrol', 'defaultrole', 'enablecompletion'));
+            'defaultgroupingid', 'lang', 'theme',
+            'timecreated', 'timemodified',
+            'requested', 'restrictmodules',
+            'enablecompletion'));
 
         $category = new backup_nested_element('category', array('id'), array(
             'name', 'description'));
@@ -272,7 +271,6 @@ class backup_course_structure_step extends backup_structure_step {
 
         // Some annotations
 
-        $course->annotate_ids('role', 'defaultrole');
         $course->annotate_ids('grouping', 'defaultgroupingid');
 
         $course->annotate_files(array('course_summary', 'course_content'), null);
@@ -307,8 +305,7 @@ class backup_roles_structure_step extends backup_structure_step {
         $assignments = new backup_nested_element('role_assignments');
 
         $assignment = new backup_nested_element('assignment', array('id'), array(
-            'roleid', 'userid', 'hidden', 'timestart',
-            'timeend', 'timemodified', 'modifierid', 'enrol',
+            'roleid', 'userid', 'timemodified', 'modifierid', 'component', //TODO: MDL-22793 add itemid here
             'sortorder'));
 
         // Build the tree
@@ -714,8 +711,7 @@ class backup_users_structure_step extends backup_structure_step {
         $assignments = new backup_nested_element('role_assignments');
 
         $assignment = new backup_nested_element('assignment', array('id'), array(
-            'roleid', 'userid', 'hidden', 'timestart',
-            'timeend', 'timemodified', 'modifierid', 'enrol',
+            'roleid', 'userid', 'timemodified', 'modifierid', 'component', //TODO: MDL-22793 add itemid here
             'sortorder'));
 
         // Build the tree

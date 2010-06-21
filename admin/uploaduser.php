@@ -162,26 +162,21 @@ if ($formdata = $mform->is_cancelled()) {
     $weakpasswords = 0;
 
     // caches
-    $ccache    = array(); // course cache - do not fetch all courses here, we  will not probably use them all anyway!
-    $rolecache = array(); // roles lookup cache
+    $ccache       = array(); // course cache - do not fetch all courses here, we  will not probably use them all anyway!
+    $rolecache    = uu_allowed_roles_cache(); // roles lookup cache
+    $manualcacche = array(); // cache of used manual enrol plugins in each course
 
     $allowedauths   = uu_allowed_auths();
     $allowedauths   = array_keys($allowedauths);
     $availableauths = get_plugin_list('auth');
     $availableauths = array_keys($availableauths);
 
-    $allowedroles = uu_allowed_roles(true);
-    foreach ($allowedroles as $rid=>$rname) {
-        $rolecache[$rid] = new object();
-        $rolecache[$rid]->id = $rid;
-        $rolecache[$rid]->name = $rname;
-        if (!is_numeric($rname)) { // only non-numeric shornames are supported!!!
-            $rolecache[$rname] = new object();
-            $rolecache[$rname]->id = $rid;
-            $rolecache[$rname]->name = $rname;
-        }
+    // we use only manual enrol plugin here, if it is disabled no enrol is done
+    if (enrol_is_enabled('manual')) {
+        $manual = enrol_get_plugin('manual');
+    } else {
+        $manual = NULL;
     }
-    unset($allowedroles);
 
     // clear bulk selection
     if ($bulk) {
@@ -210,7 +205,7 @@ if ($formdata = $mform->is_cancelled()) {
         // add fields to user object
         foreach ($line as $key => $value) {
             if ($value !== '') {
-                $key = $columns[$key];                
+                $key = $columns[$key];
                 // password is special field
                 if ($key == 'password') {
                     if ($value !== '') {
@@ -365,16 +360,11 @@ if ($formdata = $mform->is_cancelled()) {
                     $renameerrors++;
                     continue;
                 }
-                if ($DB->set_field('user', 'username', $user->username, array('id'=>$olduser->id))) {
-                    $upt->track('username', '', 'normal', false); // clear previous
-                    $upt->track('username', $oldusername.'-->'.$user->username, 'info');
-                    $upt->track('status', $struserrenamed);
-                    $renames++;
-                } else {
-                    $upt->track('status', $strusernotrenamedexists, 'error');
-                    $renameerrors++;
-                    continue;
-                }
+                $DB->set_field('user', 'username', $user->username, array('id'=>$olduser->id));
+                $upt->track('username', '', 'normal', false); // clear previous
+                $upt->track('username', $oldusername.'-->'.$user->username, 'info');
+                $upt->track('status', $struserrenamed);
+                $renames++;
             } else {
                 $upt->track('status', $strusernotrenamedmissing, 'error');
                 $renameerrors++;
@@ -501,14 +491,9 @@ if ($formdata = $mform->is_cancelled()) {
                     $upt->track('auth', $struserauthunsupported, 'warning');
                 }
 
-                if ($DB->update_record('user', $existinguser)) {
-                    $upt->track('status', $struserupdated);
-                    $usersupdated++;
-                } else {
-                    $upt->track('status', $strusernotupdated, 'error');
-                    $userserrors++;
-                    continue;
-                }
+                $DB->update_record('user', $existinguser);
+                $upt->track('status', $struserupdated);
+                $usersupdated++;
                 // save custom profile fields data from csv file
                 profile_save_data($existinguser);
             }
@@ -555,26 +540,21 @@ if ($formdata = $mform->is_cancelled()) {
                 }
             }
 
-            if ($user->id = $DB->insert_record('user', $user)) {
-                $info = ': ' . $user->username .' (ID = ' . $user->id . ')';
-                $upt->track('status', $struseradded);
-                $upt->track('id', $user->id, 'normal', false);
-                $usersnew++;
-                if ($createpasswords and empty($user->password)) {
-                    // passwords will be created and sent out on cron
-                    set_user_preference('create_password', 1, $user->id);
-                    set_user_preference('auth_forcepasswordchange', 1, $user->id);
-                    $upt->track('password', get_string('new'));
-                }
-                if ($forcechangepassword) {
-                    set_user_preference('auth_forcepasswordchange', 1, $user->id);
-                }
-            } else {
-                // Record not added -- possibly some other error
-                $upt->track('status', $strusernotaddederror, 'error');
-                $userserrors++;
-                continue;
+            $user->id = $DB->insert_record('user', $user);
+            $info = ': ' . $user->username .' (ID = ' . $user->id . ')';
+            $upt->track('status', $struseradded);
+            $upt->track('id', $user->id, 'normal', false);
+            $usersnew++;
+            if ($createpasswords and empty($user->password)) {
+                // passwords will be created and sent out on cron
+                set_user_preference('create_password', 1, $user->id);
+                set_user_preference('auth_forcepasswordchange', 1, $user->id);
+                $upt->track('password', get_string('new'));
             }
+            if ($forcechangepassword) {
+                set_user_preference('auth_forcepasswordchange', 1, $user->id);
+            }
+
             // save custom profile fields data
             profile_save_data($user);
 
@@ -595,9 +575,12 @@ if ($formdata = $mform->is_cancelled()) {
             }
             $i = substr($column, 6);
 
+            if (empty($user->{'course'.$i})) {
+                continue;
+            }
             $shortname = $user->{'course'.$i};
             if (!array_key_exists($shortname, $ccache)) {
-                if (!$course = $DB->get_record('course', array('shortname'=>$shortname), 'id, shortname, defaultrole')) {
+                if (!$course = $DB->get_record('course', array('shortname'=>$shortname), 'id, shortname')) {
                     $upt->track('enrolments', get_string('unknowncourse', 'error', $shortname), 'error');
                     continue;
                 }
@@ -606,62 +589,61 @@ if ($formdata = $mform->is_cancelled()) {
             }
             $courseid      = $ccache[$shortname]->id;
             $coursecontext = get_context_instance(CONTEXT_COURSE, $courseid);
-
-            // find role
-            $rid = false;
-            if (!empty($user->{'role'.$i})) {
-                $addrole = $user->{'role'.$i};
-                if (array_key_exists($addrole, $rolecache)) {
-                    $rid = $rolecache[$addrole]->id;
+            if (!isset($manualcache[$courseid])) {
+                if ($instances = enrol_get_instances($courseid, false)) {
+                    $manualcache[$courseid] = reset($instances);
                 } else {
-                    $upt->track('enrolments', get_string('unknownrole', 'error', $addrole), 'error');
-                    continue;
+                    $manualcache[$courseid] = false;
                 }
+            }
 
-            } else if (!empty($user->{'type'.$i})) {
-                // if no role, then find "old" enrolment type
-                $addtype = $user->{'type'.$i};
-                if ($addtype < 1 or $addtype > 3) {
-                    $upt->track('enrolments', $strerror.': typeN = 1|2|3', 'error');
-                    continue;
-                } else if ($addtype == 1 and empty($formdata->uulegacy1)) {
-                    if (empty($ccache[$shortname]->defaultrole)) {
-                        $rid = $CFG->defaultcourseroleid;
+            if ($manual and $manualcache[$courseid]) {
+
+                // find role
+                $rid = false;
+                if (!empty($user->{'role'.$i})) {
+                    $addrole = $user->{'role'.$i};
+                    if (array_key_exists($addrole, $rolecache)) {
+                        $rid = $rolecache[$addrole]->id;
                     } else {
-                        $rid = $ccache[$shortname]->defaultrole;
+                        $upt->track('enrolments', get_string('unknownrole', 'error', $addrole), 'error');
+                        continue;
+                    }
+
+                } else if (!empty($user->{'type'.$i})) {
+                    // if no role, then find "old" enrolment type
+                    $addtype = $user->{'type'.$i};
+                    if ($addtype < 1 or $addtype > 3) {
+                        $upt->track('enrolments', $strerror.': typeN = 1|2|3', 'error');
+                        continue;
+                    } else if (empty($formdata->{'uulegacy'.$addtype})) {
+                        continue;
+                    } else {
+                        $rid = $formdata->{'uulegacy'.$addtype};
                     }
                 } else {
-                    $rid = $formdata->{'uulegacy'.$addtype};
+                    // no role specified, use the default from manual enrol plugin
+                    $rid = $manualcache[$courseid]->roleid;
                 }
 
-            } else {
-                // no role specified, use the default
-                if (empty($ccache[$shortname]->defaultrole)) {
-                    $rid = $CFG->defaultcourseroleid;
-                } else {
-                    $rid = $ccache[$shortname]->defaultrole;
-                }
-            }
+                if ($rid) {
+                    // find duration
+                    $timestart = 0;
+                    $timeend   = 0;
+                    if (!empty($user->{'enrolperiod'.$i})) {
+                        $duration = (int)$user->{'enrolperiod'.$i} * 86400; // convert days to seconds
+                        if ($duration > 0) { // sanity check
+                            $timestart = time();
+                            $timeend   = $timestart + $duration;
+                        }
+                    }
 
-            // find duration
-            $timestart = 0;
-            $timeend   = 0;
-            if (!empty($user->{'enrolperiod'.$i})) {
-                $duration = (int)$user->{'enrolperiod'.$i} * 86400; // convert days to seconds
-                if ($duration > 0) { // sanity check
-                    $timestart = time();
-                    $timeend   = $timestart + $duration;
-                }
-            }
+                    $manual->enrol_user($manualcache[$courseid], $user->id, $rid, $timestart, $timeend, true);
 
-            if ($rid) {
-                $a = new object();
-                $a->course = $shortname;
-                $a->role   = $rolecache[$rid]->name;
-                if (role_assign($rid, $user->id, 0, $coursecontext->id, $timestart, $timeend)) {
-                    $upt->track('enrolments', get_string('enrolledincourserole', '', $a));
-                } else {
-                    $upt->track('enrolments', get_string('enrolledincoursenotrole', '', $a), 'error');
+                    $a = new object();
+                    $a->course = $shortname;
+                    $a->role   = $rolecache[$rid]->name;
+                    $upt->track('enrolments', get_string('enrolledincourserole', 'enrol_manual', $a));
                 }
             }
 
@@ -708,6 +690,8 @@ if ($formdata = $mform->is_cancelled()) {
                 try {
                     if (groups_add_member($gid, $user->id)) {
                         $upt->track('enrolments', get_string('addedtogroup', '', $gname));
+                    }  else {
+                        $upt->track('enrolments', get_string('addedtogroupnot', '', $gname), 'error');
                     }
                 } catch (moodle_exception $e) {
                     $upt->track('enrolments', get_string('addedtogroupnot', '', $gname), 'error');
@@ -971,7 +955,7 @@ class uu_progress_tracker {
         echo '<th class="header c'.$ci++.'" scope="col">'.get_string('email').'</th>';
         echo '<th class="header c'.$ci++.'" scope="col">'.get_string('password').'</th>';
         echo '<th class="header c'.$ci++.'" scope="col">'.get_string('authentication').'</th>';
-        echo '<th class="header c'.$ci++.'" scope="col">'.get_string('enrolments').'</th>';
+        echo '<th class="header c'.$ci++.'" scope="col">'.get_string('enrolments', 'enrol').'</th>';
         echo '<th class="header c'.$ci++.'" scope="col">'.get_string('delete').'</th>';
         echo '</tr>';
         $this->_row = null;
@@ -1149,7 +1133,7 @@ function uu_allowed_auths() {
     global $CFG;
 
     // only following plugins are guaranteed to work properly
-    // TODO: add support for more plguins in 2.0
+    // TODO: add support for more plugins in 2.0
     $whitelist = array('manual', 'nologin', 'none', 'email');
     $plugins = get_enabled_auth_plugins();
     $choices = array();
@@ -1161,21 +1145,25 @@ function uu_allowed_auths() {
 }
 
 /**
- * Returns list of non administrator roles
+ * Returns list of roles that are assignable in courses
  */
-function uu_allowed_roles($shortname=false) {
-    global $CFG;
-
-    $roles = get_all_roles();
-    $choices = array();
-    foreach($roles as $role) {
-        if ($shortname) {
-            $choices[$role->id] = $role->shortname;
-        } else {
-            $choices[$role->id] = format_string($role->name);
-        }
-    }
-
-    return $choices;
+function uu_allowed_roles() {
+    // let's cheat a bit, frontpage is guaranteed to exist and has the same list of roles ;-)
+    $roles = get_assignable_roles(get_context_instance(CONTEXT_COURSE, SITEID), ROLENAME_ORIGINALANDSHORT);
+    return array_reverse($roles, true);
 }
 
+function uu_allowed_roles_cache() {
+    $allowedroles = get_assignable_roles(get_context_instance(CONTEXT_COURSE, SITEID), ROLENAME_SHORT);
+    foreach ($allowedroles as $rid=>$rname) {
+        $rolecache[$rid] = new object();
+        $rolecache[$rid]->id   = $rid;
+        $rolecache[$rid]->name = $rname;
+        if (!is_numeric($rname)) { // only non-numeric shortnames are supported!!!
+            $rolecache[$rname] = new object();
+            $rolecache[$rname]->id   = $rid;
+            $rolecache[$rname]->name = $rname;
+        }
+    }
+    return $rolecache;
+}

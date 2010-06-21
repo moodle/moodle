@@ -72,11 +72,6 @@ class course_request_form extends moodleform {
         $mform->addHelpButton('summary_editor', 'coursesummary');
         $mform->setType('summary_editor', PARAM_RAW);
 
-        $mform->addElement('passwordunmask', 'password', get_string('enrolmentkey'), 'size="25"');
-        $mform->setHelpButton('password', array('enrolmentkey', get_string('enrolmentkey')), true);
-        $mform->setDefault('password', '');
-        $mform->setType('password', PARAM_RAW);
-
         $mform->addElement('header','requestreason', get_string('courserequestreason'));
 
         $mform->addElement('textarea', 'reason', get_string('courserequestsupport'), array('rows'=>'15', 'cols'=>'50'));

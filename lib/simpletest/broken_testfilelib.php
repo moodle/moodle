@@ -135,7 +135,7 @@ class filelib_test extends UnitTestCaseUsingDatabase {
         $this->user->id = create_user($this->user);
 
         // Assign user to course
-        // role_assign(5, $this->user->id, 0, get_context_instance(CONTEXT_COURSE, $this->course->id)->id);
+        // role_assign(5, $this->user->id, get_context_instance(CONTEXT_COURSE, $this->course->id)->id);
 
         // Create a module
         $module = new stdClass();

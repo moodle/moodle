@@ -162,10 +162,7 @@
     function backup_get_enrolled_users ($courseid) {
         global $CFG;
 
-        // get all users with moodle/course:participate capability, this will include people
-        // assigned at cat level, or site level
-        // but it should be ok if they have no direct assignment at course, mod, block level
-        return get_users_by_capability(get_context_instance(CONTEXT_COURSE, $courseid), 'moodle/course:participate', '', '', '', '', '', '', false);
+        return get_enrolled_users(get_context_instance(CONTEXT_COURSE, $courseid));
     }
 
     //Returns all users ids (every record in users table)

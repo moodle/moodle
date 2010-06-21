@@ -77,11 +77,6 @@
         }
     }
 
-    //Check other parameters
-    if (!isset($restore_metacourse)) {
-        $restore_metacourse = 1;
-    }
-
     if (!isset($restore_users)) {
         $restore_users = 1;
     }
@@ -201,14 +196,8 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
 
     // permission should have been checked already
 
-    // Non-cached - get accessinfo
-    if (isset($USER->access)) {
-        $accessinfo = $USER->access;
-    } else {
-        $accessinfo = get_user_access_sitewide($USER->id);
-    }
-
-    $mycourses = get_user_courses_bycap($USER->id, 'moodle/restore:restorecourse', $accessinfo, true);
+    //TODO: use better function which includes all courses for admins
+    $mycourses = get_user_courses_bycap($USER->id, 'moodle/restore:restorecourse');
 
     // if the user can restore to current course, grant the "current" options
     if (has_capability('moodle/restore:restorecourse', get_context_instance(CONTEXT_COURSE, $id))){
@@ -418,22 +407,6 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
         //Line
         echo "<tr><td colspan=\"4\">$nonrestmod<hr /></td></tr>";
 
-        //Now print the Metacourse tr
-        echo "<tr>";
-        echo "<td align=\"right\" colspan=\"2\"><b>";
-        echo '<label for="menurestore_metacourse">'.get_string ("metacourse").'</label>';
-        echo "</b></td><td colspan=\"2\">";
-        //If metacourse are in the backup file, show menu, else fixed to no
-        if ($info->backup_metacourse == "true") {
-            $metacourse_options = array();
-            $metacourse_options[0] = get_string("no");
-            $metacourse_options[1] = get_string("yes");
-            echo html_writer::select($metacourse_options, "restore_metacourse", $restore_metacourse, false);
-        } else {
-            echo get_string("no");
-            echo "<input type=\"hidden\" id=\"menurestore_metacourse\" name=\"restore_metacourse\" value=\"0\" />";
-        }
-        echo "</td></tr>";
         //Now print the Users tr
         echo "<tr>";
         echo "<td align=\"right\" colspan=\"2\"><b>";

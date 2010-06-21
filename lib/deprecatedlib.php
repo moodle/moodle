@@ -39,6 +39,39 @@ function auth_get_plugin_title($authtype) {
     return get_string('pluginname', "auth_{$authtype}");
 }
 
+
+/**
+ * Enrol someone without using the default role in a course
+ * @deprecated
+ */
+function enrol_into_course($course, $user, $enrol) {
+    error('Function enrol_into_course() was removed, please use new enrol plugins instead!');
+}
+
+/**
+ * Returns a role object that is the default role for new enrolments in a given course
+ *
+ * @deprecated
+ * @param object $course
+ * @return object returns a role or NULL if none set
+ */
+function get_default_course_role($course) {
+    debugging('Function get_default_course_role() is deprecated, please use individual enrol plugin settings instead!');
+
+    $student = get_archetype_roles('student');
+    $student = reset($student);
+
+    return $student;
+}
+
+/**
+ * Extremely slow enrolled courses query.
+ * @deprecated
+ */
+function get_my_courses($userid, $sort='visible DESC,sortorder ASC', $fields=NULL, $doanything=false,$limit=0) {
+    error('Function get_my_courses() was removed, please use new enrol_get_my_courses() or enrol_get_users_courses()!');
+}
+
 /**
  * Was returning list of translations, use new string_manager instead
  *

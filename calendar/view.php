@@ -636,7 +636,7 @@ function calendar_course_filter_selector($getvars = '') {
     if (has_capability('moodle/calendar:manageentries', get_context_instance(CONTEXT_SYSTEM)) && !empty($CFG->calendar_adminseesall)) {
         $courses = get_courses('all', 'c.shortname','c.id,c.shortname');
     } else {
-        $courses = get_my_courses($USER->id, 'shortname');
+        $courses = enrol_get_my_courses();
     }
 
     unset($courses[SITEID]);

@@ -378,7 +378,7 @@ class page_requirements_manager {
                                                         array('saving', 'repository'), array('search', 'repository'), array('searching', 'repository'), array('size', 'repository'),
                                                         array('submit', 'repository'), array('sync', 'repository'), array('title', 'repository'), array('upload', 'repository'),
                                                         array('uploading', 'repository'), array('xhtmlerror', 'repository'),
-                                                        array('xhtml', 'quiz'), array('cancel'), array('chooselicense', 'repository'), array('author', 'repository'),
+                                                        array('xhtml', 'quiz'), array('chooselicense', 'repository'), array('author', 'repository'),
                                                         array('ok', 'moodle'), array('error', 'moodle'), array('info', 'moodle')
                                                     ));
                     break;
@@ -702,9 +702,9 @@ class page_requirements_manager {
         if (!$component) {
             throw new coding_exception('The $module parameter is required for page_requirements_manager::string_for_js.');
         }
-        if (isset($this->stringsforjs[$component][$identifier]) && $this->stringsforjs[$component][$identifier] != $string) {
+        if (isset($this->stringsforjs[$component][$identifier]) && $this->stringsforjs[$component][$identifier] !== $string) {
             throw new coding_exception("Attempt to re-define already required string '$identifier' " .
-                    "from lang file '$component'. Did you already ask for it with a different \$a?");
+                    "from lang file '$component'. Did you already ask for it with a different \$a? {$this->stringsforjs[$component][$identifier]} !== $string");
         }
         $this->stringsforjs[$component][$identifier] = $string;
     }

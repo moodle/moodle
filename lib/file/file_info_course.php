@@ -78,7 +78,7 @@ class file_info_course extends file_info {
     public function get_children() {
         $children = array();
 
-        if ($child = $this->browser->get_file_info($this->context, 'course_intro', 0)) {
+        if ($child = $this->browser->get_file_info($this->context, 'course_summary', 0)) {
             $children[] = $child;
         }
         if ($child = $this->browser->get_file_info($this->context, 'course_section')) {

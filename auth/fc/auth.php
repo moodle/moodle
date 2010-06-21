@@ -183,10 +183,10 @@ class auth_plugin_fc extends auth_plugin_base {
             $systemcontext = get_context_instance(CONTEXT_SYSTEM);
 
             if ($iscreator) { // Following calls will not create duplicates
-                role_assign($creatorrole->id, $user->id, 0, $systemcontext->id, 0, 0, 0, 'fc');
+                role_assign($creatorrole->id, $user->id, $systemcontext->id, 'auth_fc');
             } else {
                 //unassign only if previously assigned by this plugin!
-                role_unassign($creatorrole->id, $user->id, 0, $systemcontext->id, 'fc');
+                role_unassign($creatorrole->id, $user->id, $systemcontext->id, 'auth_fc');
             }
         }
     }

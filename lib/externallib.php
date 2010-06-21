@@ -307,25 +307,7 @@ class external_api {
 
         if ($context->contextlevel >= CONTEXT_COURSE) {
             list($context, $course, $cm) = get_context_info_array($context->id);
-            // must be enrolled or viewing
-            if (!is_enrolled($context) and !is_viewing($context)) {
-                throw new invalid_parameter_exception('Must be enrolled in course or be allowed to inspect it.');
-            }
-            // make sure the course is actually visible
-            if (!($course->visible && course_parent_visible($COURSE)) && !has_capability('moodle/course:viewhiddencourses', get_context_instance(CONTEXT_COURSE, $course->id))) {
-                throw new invalid_parameter_exception('Invalid course.');
-            }
-            // make sure the activity is actually visible
-            if ($cm && !$cm->visible && !has_capability('moodle/course:viewhiddenactivities', get_context_instance(CONTEXT_MODULE, $cm->id))) {
-                throw new invalid_parameter_exception('Invalid activity.');
-            }
-            // verify group memebers
-            if (!empty($CFG->enablegroupmembersonly) and $cm and $cm->groupmembersonly and !has_capability('moodle/site:accessallgroups', get_context_instance(CONTEXT_MODULE, $cm->id))) {
-                if (!groups_has_membership($cm)) {
-                    throw new invalid_parameter_exception('Must be member of at least one group.');
-                }
-            }
-            //TODO: verify course completion
+            require_login($course, false, $cm, false, true);
         }
     }
 }
@@ -468,7 +450,7 @@ function external_generate_token($tokentype, $serviceorid, $userid, $contextorid
     return $newtoken->token;
 }
 /**
- * Create and return a session linked token. Token to be used for html embedded client apps that want to communicate 
+ * Create and return a session linked token. Token to be used for html embedded client apps that want to communicate
  * with the Moodle server through web services. The token is linked to the current session for the current page request.
  * It is expected this will be called in the script generating the html page that is embedding the client app and that the
  * returned token will be somehow passed into the client app being embedded in the page.

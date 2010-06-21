@@ -60,7 +60,6 @@
     $undeletableroles[$CFG->notloggedinroleid] = 1;
     $undeletableroles[$CFG->guestroleid] = 1;
     $undeletableroles[$CFG->defaultuserroleid] = 1;
-    $undeletableroles[$CFG->defaultcourseroleid] = 1;
 
 ///.Process submitted data.
     $confirmed = optional_param('confirm', false, PARAM_BOOL) && data_submitted() && confirm_sesskey();

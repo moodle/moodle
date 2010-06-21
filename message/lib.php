@@ -319,7 +319,7 @@ function message_print_search_results($frm) {
 
         if (optional_param('mycourses', 0, PARAM_BOOL)) {
             $users = array();
-            $mycourses = get_my_courses($USER->id);
+            $mycourses = enrol_get_my_courses();
             foreach ($mycourses as $mycourse) {
                 if (is_array($susers = message_search_users($mycourse->id, $frm->name))) {
                     foreach ($susers as $suser) $users[$suser->id] = $suser;

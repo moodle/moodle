@@ -98,11 +98,14 @@ function user_delete_user($user) {
     //move unread messages from this user to read
     message_move_userfrom_unread2read($user->id);
 
+    // unconditionally unenrol from all courses
+    enrol_user_delete($user);
+
     // remove from all groups
     $DB->delete_records('groups_members', array('userid'=>$user->id));
 
     // unenrol from all roles in all contexts
-    role_unassign(0, $user->id); // this might be slow but it is really needed - modules might do some extra cleanup!
+    role_unassign_all(array('userid'=>$user->id)); // this might be slow but it is really needed - modules might do some extra cleanup!
 
     // now do a final accesslib cleanup - removes all role assingments in user context and context itself
     delete_context(CONTEXT_USER, $user->id);

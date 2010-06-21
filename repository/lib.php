@@ -549,7 +549,7 @@ abstract class repository {
         $level = $context->contextlevel;
 
         if ($level == CONTEXT_COURSE) {
-            if (!has_capability('moodle/course:participate', $context)) {
+            if (!is_enrolled($context)) { //TODO: this looks a bit too simple, verify!
                 return false;
             } else {
                 return true;

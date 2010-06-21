@@ -33,7 +33,7 @@ $allowed_time = array('weeknow', 'weeknext', 'monthnow', 'monthnext', 'recentupc
 
 if(!empty($what) && !empty($time)) {
     if(in_array($what, $allowed_what) && in_array($time, $allowed_time)) {
-        $courses = get_my_courses($user->id, NULL, 'id, visible, shortname');
+        $courses = enrol_get_users_courses($user->id, true, 'id, visible, shortname');
 
         if ($what == 'all') {
             $users = $user->id;

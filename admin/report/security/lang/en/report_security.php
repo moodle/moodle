@@ -35,24 +35,6 @@ $string['check_cookiesecure_details'] = '<p>If you enable https communication it
 $string['check_cookiesecure_error'] = 'Please enable secure cookies';
 $string['check_cookiesecure_name'] = 'Secure cookies';
 $string['check_cookiesecure_ok'] = 'Secure cookies enabled.';
-$string['check_courserole_anything'] = 'The "doanything" capability must not be allowed in this <a href="{$a}">context</a>.';
-$string['check_courserole_details'] = '<p>Each course has one default enrolment role specified. Please make sure no risky capabilities are allowed for this role.</p>
-<p>The only supported legacy type for the default course role is <em>Student</em>.</p>';
-$string['check_courserole_error'] = 'Incorrectly defined default course roles detected!';
-$string['check_courserole_name'] = 'Default roles (courses)';
-$string['check_courserole_notyet'] = 'Used only default course role.';
-$string['check_courserole_ok'] = 'Default course role definitions is OK.';
-$string['check_courserole_risky'] = 'Risky capabilities detected in <a href="{$a}">context</a>.';
-$string['check_courserole_riskylegacy'] = 'Risky legacy type detected in <a href="{$a->url}">{$a->shortname}</a>.';
-$string['check_defaultcourserole_anything'] = 'The "doanything" capability must not be allowed in this <a href="{$a}">context</a>.';
-$string['check_defaultcourserole_details'] = '<p>The default student role for course enrolment specifies the default role for courses. Please make sure no risky capabilities are allowed in this role.</p>
-<p>The only supported legacy type for default role is <em>Student</em>.</p>';
-$string['check_defaultcourserole_error'] = 'Incorrectly defined default course role "{$a}" detected!';
-$string['check_defaultcourserole_legacy'] = 'Risky legacy type detected.';
-$string['check_defaultcourserole_name'] = 'Default course role (global)';
-$string['check_defaultcourserole_notset'] = 'Default role is not set.';
-$string['check_defaultcourserole_ok'] = 'Site default role definition is OK.';
-$string['check_defaultcourserole_risky'] = 'Risky capabilities detected in <a href="{$a}">context</a>.';
 $string['check_defaultuserrole_details'] = '<p>All logged in users are given capabilities of the default user role. Please make sure no risky capabilities are allowed in this role.</p>
 <p>The only supported legacy type for the default user role is <em>Authenticated user</em>. The course view capability must not be enabled.</p>';
 $string['check_defaultuserrole_error'] = 'The default user role "{$a}" is incorrectly defined!';

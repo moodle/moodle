@@ -88,7 +88,7 @@ function print_mnet_log_selector_form($hostid, $course, $selecteduser=0, $select
 
     // If looking at a different host, we're interested in all our site users
     if ($hostid == $CFG->mnet_localhost_id && $course->id != SITEID) {
-        $courseusers = get_users_by_capability($context, 'moodle/course:participate', 'u.id, u.firstname, u.lastname, u.idnumber', 'lastname ASC, firstname ASC', $limitfrom, $limitnum, $selectedgroup,'', false);
+        $courseusers = get_enrolled_users($context, '', $selectedgroup, 'u.id, u.firstname, u.lastname, u.idnumber', 'lastname ASC, firstname ASC', $limitfrom, $limitnum);
     } else {
         // this may be a lot of users :-(
         $courseusers = $DB->get_records('user', array('deleted'=>0), 'lastaccess DESC', 'id, firstname, lastname, idnumber', $limitfrom, $limitnum);
@@ -356,12 +356,7 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate='today'
     // Get all the possible users
     $users = array();
 
-    if ($course->id != SITEID) {
-        $courseusers = get_users_by_capability($context, 'moodle/course:participate', 'u.id, u.firstname, u.lastname, u.idnumber', 'lastname ASC, firstname ASC', '','',$selectedgroup,null, false);
-    } else {
-        // this may be a lot of users :-(
-        $courseusers = $DB->get_records('user', array('deleted'=>0), 'lastaccess DESC', 'id, firstname, lastname, idnumber');
-    }
+    $courseusers = get_enrolled_users($context, '', $selectedgroup, 'u.id, u.firstname, u.lastname, u.idnumber', 'lastname ASC, firstname ASC');
 
     if (count($courseusers) < COURSE_MAX_USERS_PER_DROPDOWN && !$showusers) {
         $showusers = 1;

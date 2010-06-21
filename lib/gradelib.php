@@ -1209,6 +1209,34 @@ function grade_uninstalled_module($modname) {
 }
 
 /**
+ * Deletes all user data from gradebook.
+ * @param $userid
+ */
+function grade_user_delete($userid) {
+    if ($grades = grade_grade::fetch_all(array('userid'=>$userid))) {
+        foreach ($grades as $grade) {
+            $grade->delete('userdelete');
+        }
+    }
+}
+
+/**
+ * Purge course data when user unenrolled.
+ * @param $userid
+ */
+function grade_user_unenrol($courseid, $userid) {
+    if ($items = grade_item::fetch_all(array('courseid'=>$courseid))) {
+        foreach ($items as $item) {
+            if ($grades = grade_grade::fetch_all(array('userid'=>$userid, 'itemid'=>$item->id))) {
+                foreach ($grades as $grade) {
+                    $grade->delete('userdelete');
+                }
+            }
+        }
+    }
+}
+
+/**
  * Grading cron job
  *
  * @global object

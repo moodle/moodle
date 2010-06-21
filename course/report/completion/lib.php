@@ -35,6 +35,8 @@ function completion_report_extend_navigation($navigation, $course, $context) {
     global $CFG, $OUTPUT;
 
     if (has_capability('coursereport/completion:view', $context)) {
+        require_once($CFG->libdir.'/completionlib.php');
+
         $url = new moodle_url('/course/report/completion/index.php', array('course'=>$course->id));
         $navigation->add(get_string('pluginname','coursereport_completion'), $url, navigation_node::TYPE_SETTING, null, null, new pix_icon('i/report', ''));
     }

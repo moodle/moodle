@@ -97,7 +97,7 @@ class question_randomsamatch_qtype extends question_match_qtype {
         $count  = count($saquestions);
         $wanted = $question->options->choose;
         $errorstr = '';
-        if ($count < $wanted && has_coursemanager_role()) { //TODO: this teacher test is far from optimal
+        if ($count < $wanted && has_coursecontact_role()) { //TODO: this teacher test is far from optimal
             if ($count >= 2) {
                 $errorstr =  "Error: could not get enough Short-Answer questions!
                  Got $count Short-Answer questions, but wanted $wanted.

@@ -205,34 +205,6 @@
     }
     mtrace('Finished admin reports');
 
-    mtrace('Removing expired enrolments ...', '');     // See MDL-8785
-    $timenow = time();
-    $somefound = false;
-    // The preferred way saves memory, datablib
-    // find courses where limited enrolment is enabled
-    $sql = "SELECT ra.roleid, ra.userid, ra.contextid
-              FROM {course} c
-              JOIN {context} cx ON cx.instanceid = c.id
-              JOIN {role_assignments} ra ON ra.contextid = cx.id
-             WHERE cx.contextlevel = '".CONTEXT_COURSE."'
-                   AND ra.timeend > 0
-                   AND ra.timeend < ?
-                   AND c.enrolperiod > 0";
-    if ($rs = $DB->get_recordset_sql($sql, array($timenow))) {
-        foreach ($rs as $oldenrolment) {
-            role_unassign($oldenrolment->roleid, $oldenrolment->userid, 0, $oldenrolment->contextid);
-            $somefound = true;
-        }
-        $rs->close();
-    }
-    if ($somefound) {
-        mtrace('Done');
-    } else {
-        mtrace('none found');
-    }
-
-
-
     mtrace('Starting main gradebook job ...');
     grade_cron();
     mtrace('done.');
@@ -269,41 +241,6 @@
 
     if ($random100 < 20) {     // Approximately 20% of the time.
         mtrace("Running clean-up tasks...");
-
-        /// Unenrol users who haven't logged in for $CFG->longtimenosee
-
-        if ($CFG->longtimenosee) { // value in days
-            $cuttime = $timenow - ($CFG->longtimenosee * 3600 * 24);
-            $rs = $DB->get_recordset_sql ("SELECT id, userid, courseid
-                                             FROM {user_lastaccess}
-                                            WHERE courseid != ".SITEID."
-                                                  AND timeaccess < ?", array($cuttime));
-            foreach ($rs as $assign) {
-                if ($context = get_context_instance(CONTEXT_COURSE, $assign->courseid)) {
-                    if (role_unassign(0, $assign->userid, 0, $context->id)) {
-                        mtrace("removing user $assign->userid from course $assign->courseid as they have not accessed the course for over $CFG->longtimenosee days");
-                    }
-                }
-            }
-            $rs->close();
-        /// Execute the same query again, looking for remaining records and deleting them
-        /// if the user hasn't moodle/course:participate in the CONTEXT_COURSE context (orphan records)
-            $rs = $DB->get_recordset_sql ("SELECT id, userid, courseid
-                                             FROM {user_lastaccess}
-                                            WHERE courseid != ".SITEID."
-                                                  AND timeaccess < ?", array($cuttime));
-            foreach ($rs as $assign) {
-                if ($context = get_context_instance(CONTEXT_COURSE, $assign->courseid)) {
-                    if (!is_enrolled($context, $assign->userid) and !is_viewing($context, $assign->userid)) {
-                        $DB->delete_records('user_lastaccess', array('userid'=>$assign->userid, 'courseid'=>$assign->courseid));
-                        mtrace("Deleted orphan user_lastaccess for user $assign->userid from course $assign->courseid");
-                    }
-                }
-            }
-            $rs->close();
-        }
-        flush();
-
 
         /// Delete users who haven't confirmed within required period
 
@@ -369,9 +306,6 @@
             mtrace('Notified login failured');
         }
         flush();
-
-        sync_metacourses();
-        mtrace('Synchronised metacourses');
 
         //
         // generate new password emails for users
@@ -464,20 +398,16 @@
         unset($authplugin);
     }
 
-/// Run the enrolment cron, if any
-    if (!($plugins = explode(',', $CFG->enrol_plugins_enabled))) {
-        $plugins = array($CFG->enrol);
-    }
-    require_once($CFG->dirroot .'/enrol/enrol.class.php');
-    foreach ($plugins as $p) {
-        $enrol = enrolment_factory::factory($p);
-        if (method_exists($enrol, 'cron')) {
-            $enrol->cron();
+    mtrace("Running enrol crons if required...");
+    $enrols = enrol_get_plugins(true);
+    foreach($enrols as $ename=>$enrol) {
+        // do this for all plugins, disabled plugins might want to cleanup stuff such as roles
+        if (!$enrol->is_cron_required()) {
+            continue;
         }
-        if (!empty($enrol->log)) {
-            mtrace($enrol->log);
-        }
-        unset($enrol);
+        mtrace("Running cron for enrol_$ename...");
+        $enrol->cron();
+        $enrol->set_config('lastcron', time());
     }
 
     if (!empty($CFG->enablestats) and empty($CFG->disablestatsprocessing)) {

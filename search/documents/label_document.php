@@ -165,7 +165,7 @@ function label_check_text_access($path, $itemtype, $this_id, $user, $group_id, $
     $course_context = get_context_instance(CONTEXT_COURSE, $r->course);
 
     //check if englobing course is visible
-    if (!has_capability('moodle/course:participate', $course_context)){
+    if (!is_enrolled($course_context) and !is_viewing($course_context)) {
         return false;
     }
 

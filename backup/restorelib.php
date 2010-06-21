@@ -1555,9 +1555,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                 if(!isset($restore->userswhocanviewcourse)) {
                     // Because this is only used here, there is no point requesting
                     // anything except id
-                    $restore->userswhocanviewcourse=get_users_by_capability(
-                        get_context_instance(CONTEXT_COURSE, $restore->course_id),
-                        'moodle/course:participate','u.id');
+                    $restore->userswhocanviewcourse = get_enrolled_users(get_context_instance(CONTEXT_COURSE, $restore->course_id), '', 0, 'u.id');
                 }
 
                 foreach($info->completiondata as $data) {
@@ -9703,13 +9701,7 @@ WHERE
             return true;
         }
 
-        // Non-cached - get accessinfo
-        if (isset($USER->access)) {
-            $accessinfo = $USER->access;
-        } else {
-            $accessinfo = get_user_access_sitewide($USER->id);
-        }
-        $courses = get_user_courses_bycap($USER->id, 'moodle/restore:rolldates', $accessinfo, true);
+        $courses = get_user_courses_bycap($USER->id, 'moodle/restore:rolldates');
         return !empty($courses);
     }
 

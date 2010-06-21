@@ -21,10 +21,12 @@ class autogroup_form extends moodleform {
         $options = array(0=>get_string('all'));
         $options += $this->_customdata['roles'];
         $mform->addElement('select', 'roleid', get_string('selectfromrole', 'group'), $options);
-        if (!empty($COURSE->defaultrole) and array_key_exists($COURSE->defaultrole, $options)) {
-            $mform->setDefault('roleid', $COURSE->defaultrole);
-        } else if (!empty($CFG->defaultcourseroleid) and array_key_exists($CFG->defaultcourseroleid, $options)) {
-            $mform->setDefault('roleid', $CFG->defaultcourseroleid);
+
+        $student = get_archetype_roles('student');
+        $student = reset($student);
+
+        if ($student and array_key_exists($student->id, $options)) {
+            $mform->setDefault('roleid', $student->id);
         }
 
         $context = get_context_instance(CONTEXT_COURSE, $COURSE->id);

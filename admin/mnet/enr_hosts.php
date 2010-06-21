@@ -6,11 +6,11 @@
     require_once($CFG->libdir.'/adminlib.php');
     require_once($CFG->dirroot.'/mnet/lib.php');
 
+die('TODO: MDL-22787 mnet enrolments are not reimplemented yet, sorry.');
+
     admin_externalpage_setup('mnetenrol');
 
-    require_once("$CFG->dirroot/enrol/enrol.class.php");   /// Open the factory class
-
-    $enrolment = enrolment_factory::factory('mnet');
+    $enrolment = enrol_get_plugin('mnet');
 
 /// Otherwise fill and print the form.
 

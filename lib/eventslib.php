@@ -472,6 +472,12 @@ function events_trigger($eventname, $eventdata) {
                     $dump = '';
                     $callers = debug_backtrace();
                     foreach ($callers as $caller) {
+                        if (!isset($caller['line'])) {
+                            $caller['line'] = '?';
+                        }
+                        if (!isset($caller['file'])) {
+                            $caller['file'] = '?';
+                        }
                         $dump .= 'line ' . $caller['line'] . ' of ' . substr($caller['file'], strlen($CFG->dirroot) + 1);
                         if (isset($caller['function'])) {
                             $dump .= ': call to ';

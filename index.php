@@ -77,7 +77,7 @@
     if (get_config('local_hub', 'hubenabled') && file_exists($CFG->dirroot.'/local/hub/lib.php')) {
         require_once($CFG->dirroot.'/local/hub/lib.php');
         $hub = new local_hub();
-        $hub->display_homepage();   
+        $hub->display_homepage();
         exit;
     }
 

@@ -11,7 +11,6 @@
     define('SHOW_ALL_PAGE_SIZE', 5000);
     define('MODE_BRIEF', 0);
     define('MODE_USERDETAILS', 1);
-    define('MODE_ENROLDETAILS', 2);
 
     $page         = optional_param('page', 0, PARAM_INT);                     // which page to show
     $perpage      = optional_param('perpage', DEFAULT_PAGE_SIZE, PARAM_INT);  // how many per page
@@ -199,7 +198,7 @@
     $controlstable->data[] = new html_table_row();
 
 /// Print my course menus
-    if ($mycourses = get_my_courses($USER->id)) {
+    if ($mycourses = enrol_get_my_courses()) {
         $courselist = array();
         $popupurl = new moodle_url('/user/index.php?roleid='.$roleid.'&sifirst=&silast=');
         foreach ($mycourses as $mycourse) {
@@ -273,27 +272,8 @@
         }
     }
 
-    // Decide wheteher we will fetch extra enrolment/groups data.
-    //
-    // MODE_ENROLDETAILS is expensive, and only suitable where the listing is small
-    // (at or below DEFAULT_PAGE_SIZE) and $USER can enrol/unenrol
-    // (will take 1 extra DB query - 2 on Oracle)
-    //
-    if (!$isfrontpage && ($perpage <= DEFAULT_PAGE_SIZE) && has_capability('moodle/role:assign',$context)) {
-        $allowenroldetails = true;
-    } else {
-        $allowenroldetails = false;
-        if ($mode === MODE_ENROLDETAILS) {
-            // conditions haven't been met - reset
-            $mode = MODE_BRIEF;
-        }
-    }
-
     $formatmenu = array( '0' => get_string('brief'),
                          '1' => get_string('userdetails'));
-    if ($allowenroldetails) {
-        $formatmenu['2']= get_string('enroldetails');
-    }
     $select = new single_select($baseurl, 'mode', $formatmenu, $mode, null, 'formatmenu');
     $select->set_label(get_string('userlist'));
     $userlistcell = new html_table_cell();
@@ -350,22 +330,6 @@
         $tableheaders[] = get_string('lastaccess');
     }
 
-    if ($course->enrolperiod and $roleid) {
-        $tablecolumns[] = 'timeend';
-        $tableheaders[] = get_string('enrolmentend');
-    }
-
-    if ($mode === MODE_ENROLDETAILS) {
-        $tablecolumns[] = 'roles';
-        $tableheaders[] = get_string('roles');
-        if ($groupmode != 0) {
-            $tablecolumns[] = 'groups';
-            $tableheaders[] = get_string('groups');
-            $tablecolumns[] = 'groupings';
-            $tableheaders[] = get_string('groupings', 'group');
-        }
-    }
-
     if ($bulkoperations) {
         $tablecolumns[] = 'select';
         $tableheaders[] = get_string('select');
@@ -403,7 +367,7 @@
     // we are looking for all users with this role assigned in this context or higher
     $contextlist = get_related_contexts_string($context);
 
-    list($esql, $params) = get_enrolled_sql($context, NULL, $currentgroup, 'eu');
+    list($esql, $params) = get_enrolled_sql($context, NULL, $currentgroup);
     $joins = array("FROM {user} u");
     $wheres = array();
 
@@ -427,16 +391,6 @@
         $params['courseid'] = $course->id;
         if ($accesssince) {
             $wheres[] = get_course_lastaccess_sql($accesssince);
-        }
-
-        if ($course->enrolperiod) {
-            // note: this is extremely tricky now, we do not know which ra assignment
-            //       is the one causing enrolment - better show it onl when filtering by roles
-
-            if ($roleid) {
-                $select .= ", (SELECT MAX(rax.timeend) FROM {role_assignments} rax WHERE rax.userid = u.id AND rax.contextid $contextlist AND rax.roleid = :raxroleid) AS timeend";
-                $params['raxroleid'] = $roleid;
-            }
         }
     }
 
@@ -494,17 +448,6 @@
 
     // list of users at the current visible page - paging makes it relatively short
     $userlist = $DB->get_recordset_sql("$select $from $where $sort", $params, $table->get_page_start(), $table->get_page_size());
-
-    //
-    // The SELECT behind get_participants_extra() is cheaper if we pass an array
-    // if IDs. We could pass the SELECT we did before (with the limit bits - tricky!)
-    // but this is much cheaper. And in any case, it is only doable with limited numbers
-    // of rows anyway. On a large course it will explode badly...
-    //
-    if ($mode === MODE_ENROLDETAILS) {
-        $userids = $DB->get_fieldset_sql("SELECT u.id $from $where", $params, $table->get_page_start(),  $table->get_page_size());
-        $userlist_extra = get_participants_extra($userids, $course, $context);
-    }
 
     /// If there are multiple Roles in the course, then show a drop down menu for switching
     if (count($rolenames) > 1) {
@@ -709,10 +652,6 @@
                         $links[] = html_writer::link(new moodle_url('/course/user.php?id='. $course->id .'&user='. $user->id), get_string('activity'));
                     }
 
-                    if (has_capability('moodle/role:assign', $context) and get_user_roles($context, $user->id, false)) {  // I can unassign and user has some role
-                        $links[] = html_writer::link(new moodle_url('/course/unenrol.php?id='. $course->id .'&user='. $user->id), get_string('unenrol'));
-                    }
-
                     if ($USER->id != $user->id && !session_is_loggedinas() && has_capability('moodle/user:loginas', $context) && !is_siteadmin($user->id)) {
                         $links[] = html_writer::link(new moodle_url('/course/loginas.php?id='. $course->id .'&user='. $user->id .'&sesskey='. sesskey()), get_string('loginas'));
                     }
@@ -739,14 +678,6 @@
 
 
         if ($userlist)  {
-
-            // only show the plugin if multiple enrolment plugins
-            // are enabled...
-            if (strpos($CFG->enrol_plugins_enabled, ',')=== false) {
-                $showenrolplugin = true;
-            } else {
-                $showenrolplugin = false;
-            }
 
             $usersprinted = array();
             foreach ($userlist as $user) {
@@ -794,13 +725,6 @@
                 if (!isset($hiddenfields['lastaccess'])) {
                     $data[] = $lastaccess;
                 }
-                if ($course->enrolperiod and $roleid) {
-                    if ($user->timeend) {
-                        $data[] = userdate($user->timeend, $timeformat);
-                    } else {
-                        $data[] = get_string('unlimited');
-                    }
-                }
 
                 if (isset($userlist_extra) && isset($userlist_extra[$user->id])) {
                     $ras = $userlist_extra[$user->id]['ra'];
@@ -813,11 +737,6 @@
                             $rastring .= $rolename. ' - ' . get_string('globalrole','role');
                         } else {
                             $rastring .= $rolename;
-                        }
-                        if ($showenrolplugin) {
-                            $rastring .= '<br />';
-                        } else {
-                            $rastring .= ' ('. $ra['enrolplugin'] .')<br />';
                         }
                     }
                     $data[] = $rastring;
@@ -849,11 +768,6 @@
         if (!empty($CFG->enablenotes) && has_capability('moodle/notes:manage', $context) && $context->id != $frontpagectx->id) {
             $displaylist['addnote.php'] = get_string('addnewnote', 'notes');
             $displaylist['groupaddnote.php'] = get_string('groupaddnewnote', 'notes');
-        }
-
-        if ($context->id != $frontpagectx->id) {
-            $displaylist['extendenrol.php'] = get_string('extendenrol');
-            $displaylist['groupextendenrol.php'] = get_string('groupextendenrol');
         }
 
         echo $OUTPUT->old_help_icon("participantswithselectedusers", get_string("withselectedusers"));
@@ -947,7 +861,6 @@ function get_participants_extra ($userids, $course, $context) {
                    ctx.contextlevel AS ctxlevel, ctx.instanceid AS ctxinstanceid,
                    cc.name  AS ccname,
                    ra.roleid AS roleid,
-                   ra.enrol AS enrolplugin,
                    g.id     AS gid, g.name AS gname
                    $gpselect
               FROM {role_assignments} ra
@@ -981,11 +894,6 @@ function get_participants_extra ($userids, $course, $context) {
     //                                                       ctxname => 'name' (categories only)
     //                                                       ctxinstid =>
     //                                                       roleid => $roleid
-    //                                                       enrol => $pluginname
-    //
-    // Might be interesting to add to RA timestart, timeend, timemodified,
-    // and modifierid (with an outer join to mdl_user!
-    //
 
     foreach ($rs as $rec) {
         $userid = $rec->userid;
@@ -1009,8 +917,7 @@ function get_participants_extra ($userids, $course, $context) {
                                                   'ctxlevel'       => $rec->ctxlevel,
                                                   'ctxinstanceid' => $rec->ctxinstanceid,
                                                   'ccname'        => $rec->ccname,
-                                                  'roleid'        => $rec->roleid,
-                                                  'enrolplugin'   => $rec->enrolplugin);
+                                                  'roleid'        => $rec->roleid);
 
         }
     }
