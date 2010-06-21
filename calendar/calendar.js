@@ -62,11 +62,12 @@ M.core_calendar = {
                         visible:false,
                         draggable:false,
                         close:false,
-                        constraintoviewport:true
+                        constraintoviewport:true,
+                        context: [this.id, 'tl', 'br', ["beforeShow", "windowResize"]]
                     });
                     this.panel.setHeader(this.title);
                     this.panel.setBody(this.content);
-                    this.panel.render(this.id);
+                    this.panel.render(Y.one(document.body));
                     this.panel.show();
                     this.displayed = true;
                 }
