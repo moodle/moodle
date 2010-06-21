@@ -51,7 +51,7 @@ $settings->add(new admin_setting_configcheckbox('grade_report_showaverages', get
                                             get_string('showaverages_help', 'grades'), 1));
 
 $settings->add(new admin_setting_configcheckbox('grade_report_showlocks', get_string('showlocks', 'grades'),
-                                            get_string('configshowlocks', 'grades'), 0));
+                                            get_string('showlocks_help', 'grades'), 0));
 
 $settings->add(new admin_setting_configcheckbox('grade_report_showranges', get_string('showranges', 'grades'),
                                             get_string('configshowranges', 'grades'), 0));
