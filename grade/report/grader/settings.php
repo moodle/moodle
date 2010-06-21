@@ -66,7 +66,7 @@ $settings->add(new admin_setting_configcheckbox('grade_report_showactivityicons'
                                             get_string('showactivityicons_help', 'grades'), 1));
 
 $settings->add(new admin_setting_configcheckbox('grade_report_shownumberofgrades', get_string('shownumberofgrades', 'grades'),
-                                            get_string('configshownumberofgrades', 'grades'), 0));
+                                            get_string('shownumberofgrades_help', 'grades'), 0));
 
 $settings->add(new admin_setting_configselect('grade_report_averagesdisplaytype', get_string('averagesdisplaytype', 'grades'),
                                           get_string('averagesdisplaytype_help', 'grades'), GRADE_REPORT_PREFERENCE_INHERIT,
