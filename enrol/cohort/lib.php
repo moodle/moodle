@@ -65,11 +65,26 @@ class enrol_cohort_plugin extends enrol_plugin {
     public function get_candidate_link($courseid) {
         global $DB;
 
-        if (!has_capability('moodle/course:enrolconfig', get_context_instance(CONTEXT_COURSE, $courseid, MUST_EXIST))) {
+        $coursecontext = get_context_instance(CONTEXT_COURSE, $courseid);
+        if (!has_capability('moodle/course:enrolconfig', $coursecontext)) {
             return NULL;
         }
-        if (!$DB->record_exists('cohort', array())) {
-            //TODO: consider only parent contexts
+
+        list($sqlparents, $params) = $DB->get_in_or_equal(get_parent_contexts($coursecontext));
+        $sql = "SELECT id, contextid
+                  FROM {cohort}
+                 WHERE contextid $sqlparents
+              ORDER BY name ASC";
+        $cohorts = $DB->get_records_sql($sql, $params);
+        $found = false;
+        foreach ($cohorts as $c) {
+            $context = get_context_instance_by_id($c->contextid);
+            if (has_capability('moodle/cohort:view', $context)) {
+                $found = true;
+                break;
+            }
+        }
+        if (!$found) {
             return NULL;
         }
         // multiple instances supported - multiple parent courses linked
