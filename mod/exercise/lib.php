@@ -1,4 +1,4 @@
-<?php  // $Id: lib.php,v 1.1 23 Aug 2003
+<?php  // $Id$
 
 // exercise constants and standard moodle functions plus those functions called directly
 // see locallib.php for other non-standard exercise functions

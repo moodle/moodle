@@ -1,4 +1,4 @@
-<?php  // $Id: lesson.php, v 1.0 25 Jan 2004
+<?php  // $Id$
 /**
  * Handles lesson actions
  * 
