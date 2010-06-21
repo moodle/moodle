@@ -68,8 +68,10 @@ echo $OUTPUT->box_start('generalbox foldertree');
 echo $OUTPUT->area_file_tree_viewer($context->id, 'folder_content', 0);
 echo $OUTPUT->box_end();
 
-echo $OUTPUT->container_start('mdl-align');
-echo $OUTPUT->single_button(new moodle_url('/mod/folder/edit.php', array('id'=>$id)), get_string('edit'));
-echo $OUTPUT->container_end();
+if (has_capability('moodle/course:managefiles', $context)) {
+    echo $OUTPUT->container_start('mdl-align');
+    echo $OUTPUT->single_button(new moodle_url('/mod/folder/edit.php', array('id'=>$id)), get_string('edit'));
+    echo $OUTPUT->container_end();
+}
 
 echo $OUTPUT->footer();

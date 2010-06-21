@@ -31,12 +31,12 @@ require_once("$CFG->dirroot/repository/lib.php");
 $id = required_param('id', PARAM_INT);  // Course module ID
 
 $cm = get_coursemodule_from_id('folder', $id, 0, false, MUST_EXIST);
+$context = get_context_instance(CONTEXT_MODULE, $cm->id);
 $folder = $DB->get_record('folder', array('id'=>$cm->instance), '*', MUST_EXIST);
-
 $course = $DB->get_record('course', array('id'=>$cm->course), '*', MUST_EXIST);
 
-require_course_login($course, true, $cm);
-$context = get_context_instance(CONTEXT_MODULE, $cm->id);
+require_login($course, true, $cm);
+require_capability('moodle/course:managefiles', $context);
 
 add_to_log($course->id, 'folder', 'edit', 'edit.php?id='.$cm->id, $folder->id, $cm->id);
 
