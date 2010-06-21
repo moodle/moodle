@@ -121,7 +121,7 @@ function enrol_get_instances($courseid, $enabled) {
 
     $result = $DB->get_records('enrol', array('courseid'=>$courseid, 'status'=>ENROL_INSTANCE_ENABLED), 'sortorder,id');
 
-    $enabled = $enabled = explode(',', $CFG->enrol_plugins_enabled);
+    $enabled = explode(',', $CFG->enrol_plugins_enabled);
     foreach ($result as $key=>$instance) {
         if (!in_array($instance->enrol, $enabled)) {
             unset($result[$key]);
