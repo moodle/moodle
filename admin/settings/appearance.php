@@ -71,6 +71,8 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
               172800 => get_string('numdays', '', 2),
               604800 => get_string('numdays', '', 7))));
     $temp->add(new admin_setting_configtext('maxexternalblogsperuser', get_string('maxexternalblogsperuser','blog'), get_string('configmaxexternalblogsperuser', 'blog'), 1));
+    $temp->add(new admin_setting_configcheckbox('blogusecomments', get_string('enablecomments', 'admin'), get_string('configenablecomments', 'admin'), 1));
+    $temp->add(new admin_setting_configcheckbox('blogshowcommentscount', get_string('showcommentscount', 'admin'), get_string('configshowcommentscount', 'admin'), 1));
     $ADMIN->add('appearance', $temp);
 
     // Navigation settings

@@ -98,14 +98,18 @@ class blog_entry {
         global $USER, $CFG, $COURSE, $DB, $OUTPUT, $PAGE;
 
         $user = $DB->get_record('user', array('id'=>$this->userid));
-        // Comments
-        $cmt = new stdClass();
-        $cmt->context = get_context_instance(CONTEXT_USER, $user->id);
-        $cmt->courseid = $PAGE->course->id;
-        $cmt->area = 'format_blog';
-        $cmt->env = 'blog';
-        $cmt->itemid = $this->id;
-        $options->comments = $cmt;
+        $options = new stdclass;
+        if ($CFG->blogusecomments) {
+            // Comments
+            $cmt = new stdClass();
+            $cmt->context = get_context_instance(CONTEXT_USER, $user->id);
+            $cmt->courseid = $PAGE->course->id;
+            $cmt->area = 'format_blog';
+            $cmt->env = 'blog';
+            $cmt->itemid = $this->id;
+            $cmt->showcount = $CFG->blogshowcommentscount;
+            $options->comments = $cmt;
+        }
         $this->summary = file_rewrite_pluginfile_urls($this->summary, 'pluginfile.php', SYSCONTEXTID, 'blog_post', $this->id);
 
         $template['body'] = format_text($this->summary, $this->summaryformat, $options);
