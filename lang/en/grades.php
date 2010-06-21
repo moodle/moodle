@@ -476,7 +476,6 @@ $string['overridden'] = 'Overridden';
 $string['overridden_help'] = 'If ticked, the grade can no longer be changed from within the related activity.
 
 When a grade is edited in the grader report, the overridden checkbox is ticked automatically. However it may be un-ticked to allow the grade to be changed via the related activity.';
-$string['overriddenhelp'] = 'When on, the overridden flag prevents any future attempts to automatically adjust the value of the grade. This flag is often set internally by the gradebook, but can be switched on and off manually using this form element.';
 $string['overriddennotice'] = 'Your final grade from this activity was manually adjusted.';
 $string['overridesitedefaultgradedisplaytype'] = 'Override site defaults';
 $string['overridesitedefaultgradedisplaytype_help'] = 'If ticked, grade letters and boundaries for the course may be set, rather than using the site defaults.';

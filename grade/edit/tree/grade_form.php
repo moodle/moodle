@@ -45,7 +45,7 @@ class edit_grade_form extends moodleform {
         $mform->addElement('static', 'itemname', get_string('itemname', 'grades'));
 
         $mform->addElement('checkbox', 'overridden', get_string('overridden', 'grades'));
-        $mform->setHelpButton('overridden', array('overridden', get_string('overridden', 'grades'), 'grade'));
+        $mform->addHelpButton('overridden', 'overridden', 'grades');
 
         /// actual grade - numeric or scale
         if ($grade_item->gradetype == GRADE_TYPE_VALUE) {
