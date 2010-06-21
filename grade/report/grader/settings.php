@@ -54,7 +54,7 @@ $settings->add(new admin_setting_configcheckbox('grade_report_showlocks', get_st
                                             get_string('showlocks_help', 'grades'), 0));
 
 $settings->add(new admin_setting_configcheckbox('grade_report_showranges', get_string('showranges', 'grades'),
-                                            get_string('configshowranges', 'grades'), 0));
+                                            get_string('showranges_help', 'grades'), 0));
 
 $settings->add(new admin_setting_configcheckbox('grade_report_showuserimage', get_string('showuserimage', 'grades'),
                                             get_string('configshowuserimage', 'grades'), 1));
