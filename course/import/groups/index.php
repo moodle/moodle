@@ -1,4 +1,4 @@
-<?php // $Id: uploadgroups.php, 2005/10/31 19:09:31
+<?php // $Id$
 
 /// Bulk group creation registration script from a comma separated file
 
