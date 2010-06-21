@@ -17,6 +17,8 @@
 #page-blocks-community-communitycourse .hubtrusted { }
 #page-blocks-community-communitycourse .hubnottrusted {}
 
+#page-blocks-community-communitycourse .coursescreenshot {float:left;margin-right: 8px;}
+
 #page-blocks-community-communitycourse .trustedtr {background-color: #ffe1c3;}
 #page-blocks-community-communitycourse .prioritisetr {background-color: #ffd4ff;}
 #page-blocks-community-communitycourse .additionaldesc {font-size: 80%; color: #aa6666;}

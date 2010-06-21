@@ -163,7 +163,7 @@ class community_hub_search_form extends moodleform {
         $mform->addElement('text','search' , get_string('keywords', 'block_community'));
         $mform->addHelpButton('search', 'keywords', 'block_community');
 
-        $this->add_action_buttons(false, get_string('search', 'block_community'));
+        $mform->addElement('submit', 'submitbutton', get_string('search', 'block_community'));
     }
 
     function validation($data, $files) {

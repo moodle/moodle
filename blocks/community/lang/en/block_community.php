@@ -28,7 +28,7 @@ $string['activities'] = 'Activities';
 $string['add'] = 'Add';
 $string['addtocommunityblock'] = 'Add to community block';
 $string['addcommunitycourse'] = 'Add community course';
-$string['additionalcoursedesc'] = 'Creator: {$a->creatorname} - Publisher: {$a->publishername} - Subject: {$a->subject}
+$string['additionalcoursedesc'] = '{$a->lang} Creator: {$a->creatorname} - Publisher: {$a->publishername} - Subject: {$a->subject}
     - Audience: {$a->audience} - Educational level: {$a->educationallevel}';
 $string['addcourse'] = 'Search';
 $string['audience'] = 'Designed for';
@@ -56,6 +56,7 @@ $string['hubnottrusted'] = 'Not trusted';
 $string['hubtrusted'] = 'This hub is trusted by Moodle.org';
 $string['keywords'] = 'Keywords';
 $string['keywords_help'] = 'You can search for courses containing specific text in the name, description and other fields of the database.';
+$string['langdesc'] = 'Language: {$a} - ';
 $string['language'] = 'Language';
 $string['language_help'] = 'You can search for courses written in a specific language.';
 $string['licence'] = 'License';

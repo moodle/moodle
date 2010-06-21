@@ -47,8 +47,6 @@ class block_community_renderer extends plugin_renderer_base {
         $table->head = array(
             get_string('coursename', 'block_community'),
             get_string('coursedesc', 'block_community'),
-            get_string('screenshots', 'block_community'),
-            get_string('courselang', 'block_community'),
             get_string('operation', 'block_community')
         );
         $table->align = array('center', 'left', 'center', 'left', 'center');
@@ -57,7 +55,9 @@ class block_community_renderer extends plugin_renderer_base {
 
 
         if (empty($courses)) {
-            $renderedhtml .= get_string('nocourse', 'block_community');
+            if (isset($courses)) {
+                $renderedhtml .= get_string('nocourse', 'block_community');
+            }
         } else {
 
             $table->width = '100%';
@@ -82,6 +82,27 @@ class block_community_renderer extends plugin_renderer_base {
                 $coursenamehtml = html_writer::tag('span', $courseatag, array());
 
 
+                // add a row to the table
+                $screenshothtml = '';
+                if (!empty($course->screenshots)) {
+                    $images = array();
+                    $baseurl = new moodle_url($huburl.'/local/hub/webservice/download.php',
+                            array('courseid' => $course->id, 'filetype' => HUB_SCREENSHOT_FILE_TYPE));
+                    for ($i = 1; $i <= $course->screenshots; $i = $i + 1) {
+                        $params['screenshotnumber'] = $i;
+                        $images[] = array(
+                            'thumburl' => new moodle_url($baseurl, array('screenshotnumber' => $i)),
+                            'imageurl' => new moodle_url($baseurl, array('screenshotnumber' => $i, 'imagewidth' => 'original')),
+                            'title' => $course->fullname,
+                            'alt' => $course->fullname
+                        );
+                    }
+                    $imagegallery = new image_gallery($images, $course->shortname);
+                    $imagegallery->displayfirstimageonly = true;
+                    $screenshothtml = $this->output->render($imagegallery);
+                }
+                $deschtml = html_writer::tag('div', $screenshothtml, array('class' => 'coursescreenshot'));
+
                 //create description to display
                 $course->subject = get_string($course->subject, 'edufields');
                 $course->audience = get_string('audience' . $course->audience, 'hub');
@@ -92,10 +113,11 @@ class block_community_renderer extends plugin_renderer_base {
                 if (!empty($course->coverage)) {
                     $course->coverage = get_string('coverage', 'block_community', $course->coverage);
                 }
-                $deschtml = $course->description; //the description
+                $deschtml .= $course->description; //the description
                 /// courses and sites number display under the description, in smaller
                 $deschtml .= html_writer::empty_tag('br');
-                if ($course->contributornames) {
+                $additionaldesc = '';
+                 if ($course->contributornames) {
                     $additionaldesc .= get_string('contributors', 'block_community', $course->contributornames);
                     $additionaldesc .= ' - ';
                 }
@@ -103,7 +125,17 @@ class block_community_renderer extends plugin_renderer_base {
                     $additionaldesc .= get_string('coverage', 'block_community', $course->coverage);
                     $additionaldesc .= ' - ';
                 }
-                $additionaldesc = get_string('additionalcoursedesc', 'block_community', $course);
+                //retrieve language string
+                //construct languages array
+
+                if (!empty($course->language)) {
+                    $languages = get_string_manager()->get_list_of_languages();
+                    $course->lang = get_string('langdesc', 'block_community', $languages[$course->language]);
+                } else {
+                    $course->lang = '';
+                }
+                $additionaldesc .= get_string('additionalcoursedesc', 'block_community', $course);
+
                 $deschtml .= html_writer::tag('span', $additionaldesc, array('class' => 'additionaldesc'));
                 //add content to the course description
                 if (!empty($course->contents)) {
@@ -123,23 +155,16 @@ class block_community_renderer extends plugin_renderer_base {
                         }
                     }
                     $blocksandactivities = html_writer::tag('span',
-                            get_string('blocks', 'block_community')." : ".$blockhtml);
+                            get_string('activities', 'block_community')." : ". $activitieshtml);
                     $blocksandactivities .= html_writer::empty_tag('br').html_writer::tag('span',
-                            get_string('activities', 'block_community')." : ".$activitieshtml);
+                            get_string('blocks', 'block_community')." : ". $blockhtml);
 
                     $deschtml .= print_collapsible_region($blocksandactivities, 'blockdescription',
                             'blocksandactivities-'.$course->id.'-'.clean_param($courseurl, PARAM_ALPHANUMEXT),
                             get_string('moredetails','block_community'), '', false,true);
                 }
 
-                //retrieve language string
-                //construct languages array
-                if (!empty($course->language)) {
-                    $languages = get_string_manager()->get_list_of_languages();
-                    $language = $languages[$course->language];
-                } else {
-                    $language = '';
-                }
+                
 
                 if ($course->enrollable) {
                     $params = array('sesskey' => sesskey(), 'add' => 1, 'confirmed' => 1,
@@ -158,25 +183,8 @@ class block_community_renderer extends plugin_renderer_base {
                     $addbuttonhtml = $OUTPUT->render($downloadbutton);
                 }
 
-                // add a row to the table
-                $screenshothtml = '';
-                if (!empty($course->screenshots)) {
-                    $images = array();
-                    $baseurl = new moodle_url($huburl.'/local/hub/webservice/download.php', array('courseid' => $course->id, 'filetype' => HUB_SCREENSHOT_FILE_TYPE));
-                    for ($i = 1; $i <= $course->screenshots; $i = $i + 1) {
-                        $params['screenshotnumber'] = $i;
-                        $images[] = array(
-                            'thumburl' => new moodle_url($baseurl, array('screenshotnumber' => $i)),
-                            'imageurl' => new moodle_url($baseurl, array('screenshotnumber' => $i, 'imagewidth' => 'original')),
-                            'title' => $course->fullname,
-                            'alt' => $course->fullname
-                        );
-                    }
-                    $imagegallery = new image_gallery($images, $course->shortname);
-                    $imagegallery->displayfirstimageonly = true;
-                    $screenshothtml = $this->output->render($imagegallery);
-                }
-                $table->data[] = array($coursenamehtml, $deschtml, $screenshothtml, $language, $addbuttonhtml);
+                
+                $table->data[] = array($coursenamehtml, $deschtml, $addbuttonhtml);
             }
             $renderedhtml .= html_writer::table($table);
         }
