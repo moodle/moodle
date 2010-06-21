@@ -25,7 +25,6 @@
 
 class mod_folder_edit_form extends moodleform {
     function definition() {
-        global $CFG, $editoroptions;
         $mform =& $this->_form;
         $cmid = $this->_customdata['id'];
         $mform->addElement('hidden', 'id', $cmid);

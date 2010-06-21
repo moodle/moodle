@@ -28,7 +28,7 @@ require_once("$CFG->dirroot/mod/folder/locallib.php");
 require_once("$CFG->dirroot/mod/folder/edit_form.php");
 require_once("$CFG->dirroot/repository/lib.php");
 
-$id = required_param('id', 0, PARAM_INT);  // Course module ID
+$id = required_param('id', PARAM_INT);  // Course module ID
 
 $cm = get_coursemodule_from_id('folder', $id, 0, false, MUST_EXIST);
 $folder = $DB->get_record('folder', array('id'=>$cm->instance), '*', MUST_EXIST);
