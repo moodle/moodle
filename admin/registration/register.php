@@ -1,4 +1,5 @@
 <?php
+
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
 // This file is part of Moodle - http://moodle.org/                      //
@@ -29,14 +30,14 @@
  * This page displays the site registration form.
  * It handles redirection to the hub to continue the registration workflow process.
  * It also handles update operation by web service.
-*/
+ */
 
 
 require_once('../../config.php');
-require_once($CFG->libdir.'/adminlib.php');
-require_once($CFG->dirroot.'/admin/registration/forms.php');
-require_once($CFG->dirroot.'/webservice/lib.php');
-require_once($CFG->dirroot.'/admin/registration/lib.php');
+require_once($CFG->libdir . '/adminlib.php');
+require_once($CFG->dirroot . '/admin/registration/forms.php');
+require_once($CFG->dirroot . '/webservice/lib.php');
+require_once($CFG->dirroot . '/admin/registration/lib.php');
 
 admin_externalpage_setup('registration');
 
@@ -49,75 +50,76 @@ if (empty($huburl) or !confirm_sesskey()) {
 }
 
 /* TO DO
-if DB config plugin table is not good for dealing with token reference and token confirmation
- => create other DB table
------------------------------------------------------------------------------
-Local Type | Token | Local WS | Remote Type | Remote URL        | Confirmed
------------------------------------------------------------------------------
+  if DB config plugin table is not good for dealing with token reference and token confirmation
+  => create other DB table
+  -----------------------------------------------------------------------------
+  Local Type | Token | Local WS | Remote Type | Remote URL        | Confirmed
+  -----------------------------------------------------------------------------
   HUB        4er4e   server    HUB-DIRECTORY  http...moodle.org      Yes
   HUB        73j53   client    HUB-DIRECTORY  http...moodle.org      Yes
   SITE       dfsd7   server    HUB            http...hub             Yes
   SITE       fd8fd   client    HUB            http...hub             Yes
   HUB        ds78s   server    SITE           http...site.com        Yes
   HUB-DIR.   d7d8s   server    HUB            http...hub             Yes
------------------------------------------------------------------------------
-*/
+  -----------------------------------------------------------------------------
+ */
 
 $registrationmanager = new registration_manager();
 
 $registeredhub = $registrationmanager->get_registeredhub($huburl);
 
 $siteregistrationform = new site_registration_form('',
-        array('alreadyregistered' => !empty($registeredhub->token),
-                'huburl' => $huburl, 'hubname' => $hubname,
-                'password' => $password));
+                array('alreadyregistered' => !empty($registeredhub->token),
+                    'huburl' => $huburl, 'hubname' => $hubname,
+                    'password' => $password));
 $fromform = $siteregistrationform->get_data();
 
 if (!empty($fromform) and confirm_sesskey()) {
     //save the settings
     $cleanhuburl = clean_param($huburl, PARAM_ALPHANUMEXT);
-    set_config('site_name_'.$cleanhuburl, $fromform->name, 'hub');
-    set_config('site_description_'.$cleanhuburl, $fromform->description, 'hub');
-    set_config('site_contactname_'.$cleanhuburl, $fromform->contactname, 'hub');
-    set_config('site_contactemail_'.$cleanhuburl, $fromform->contactemail, 'hub');
-    set_config('site_contactphone_'.$cleanhuburl, $fromform->contactphone, 'hub');
-    set_config('site_imageurl_'.$cleanhuburl, $fromform->imageurl, 'hub');
-    set_config('site_privacy_'.$cleanhuburl, $fromform->privacy, 'hub');
-    set_config('site_address_'.$cleanhuburl, $fromform->address, 'hub');
-    set_config('site_region_'.$cleanhuburl, $fromform->regioncode, 'hub');
-    set_config('site_country_'.$cleanhuburl, $fromform->countrycode, 'hub');
-    set_config('site_geolocation_'.$cleanhuburl, $fromform->geolocation, 'hub');
-    set_config('site_contactable_'.$cleanhuburl, $fromform->contactable, 'hub');
-    set_config('site_emailalert_'.$cleanhuburl, $fromform->emailalert, 'hub');
-    set_config('site_coursesnumber_'.$cleanhuburl, $fromform->courses, 'hub');
-    set_config('site_usersnumber_'.$cleanhuburl, $fromform->users, 'hub');
-    set_config('site_roleassignmentsnumber_'.$cleanhuburl, $fromform->roleassignments, 'hub');
-    set_config('site_postsnumber_'.$cleanhuburl, $fromform->posts, 'hub');
-    set_config('site_questionsnumber_'.$cleanhuburl, $fromform->questions, 'hub');
-    set_config('site_resourcesnumber_'.$cleanhuburl, $fromform->resources, 'hub');
-    set_config('site_modulenumberaverage_'.$cleanhuburl, $fromform->modulenumberaverage, 'hub');
-    set_config('site_participantnumberaverage_'.$cleanhuburl, $fromform->participantnumberaverage, 'hub');
+    set_config('site_name_' . $cleanhuburl, $fromform->name, 'hub');
+    set_config('site_description_' . $cleanhuburl, $fromform->description, 'hub');
+    set_config('site_contactname_' . $cleanhuburl, $fromform->contactname, 'hub');
+    set_config('site_contactemail_' . $cleanhuburl, $fromform->contactemail, 'hub');
+    set_config('site_contactphone_' . $cleanhuburl, $fromform->contactphone, 'hub');
+    set_config('site_imageurl_' . $cleanhuburl, $fromform->imageurl, 'hub');
+    set_config('site_privacy_' . $cleanhuburl, $fromform->privacy, 'hub');
+    set_config('site_address_' . $cleanhuburl, $fromform->address, 'hub');
+    set_config('site_region_' . $cleanhuburl, $fromform->regioncode, 'hub');
+    set_config('site_country_' . $cleanhuburl, $fromform->countrycode, 'hub');
+    set_config('site_geolocation_' . $cleanhuburl, $fromform->geolocation, 'hub');
+    set_config('site_contactable_' . $cleanhuburl, $fromform->contactable, 'hub');
+    set_config('site_emailalert_' . $cleanhuburl, $fromform->emailalert, 'hub');
+    set_config('site_coursesnumber_' . $cleanhuburl, $fromform->courses, 'hub');
+    set_config('site_usersnumber_' . $cleanhuburl, $fromform->users, 'hub');
+    set_config('site_roleassignmentsnumber_' . $cleanhuburl, $fromform->roleassignments, 'hub');
+    set_config('site_postsnumber_' . $cleanhuburl, $fromform->posts, 'hub');
+    set_config('site_questionsnumber_' . $cleanhuburl, $fromform->questions, 'hub');
+    set_config('site_resourcesnumber_' . $cleanhuburl, $fromform->resources, 'hub');
+    set_config('site_modulenumberaverage_' . $cleanhuburl, $fromform->modulenumberaverage, 'hub');
+    set_config('site_participantnumberaverage_' . $cleanhuburl, $fromform->participantnumberaverage, 'hub');
 }
 
 /////// UNREGISTER ACTION //////
-// TODO
-
+//TO DO
 
 /////// UPDATE ACTION ////////
-
 // update the hub registration
-$update     = optional_param('update', 0, PARAM_INT);
+$update = optional_param('update', 0, PARAM_INT);
 if ($update and confirm_sesskey()) {
 
     //update the registration
     $function = 'hub_update_site_info';
     $siteinfo = $registrationmanager->get_site_info($huburl);
     $params = array($siteinfo);
-    $serverurl = $huburl."/local/hub/webservice/webservices.php";
-    require_once($CFG->dirroot."/webservice/xmlrpc/lib.php");
+    $serverurl = $huburl . "/local/hub/webservice/webservices.php";
+    require_once($CFG->dirroot . "/webservice/xmlrpc/lib.php");
     $xmlrpcclient = new webservice_xmlrpc_client();
-    $result = $xmlrpcclient->call($serverurl, $registeredhub->token, $function, $params);
-
+    try {
+        $result = $xmlrpcclient->call($serverurl, $registeredhub->token, $function, $params);
+    } catch (Exception $e) {
+        $error = $OUTPUT->notification(get_string('errorregistration', 'hub', $e->getMessage()));
+    }
 }
 
 /////// FORM REGISTRATION ACTION //////
@@ -131,7 +133,7 @@ if (!empty($fromform) and empty($update) and confirm_sesskey()) {
         if (empty($unconfirmedhub)) {
             //we save the token into the communication table in order to have a reference
             $unconfirmedhub = new stdClass();
-            $unconfirmedhub->token = md5(uniqid(rand(),1));
+            $unconfirmedhub->token = md5(uniqid(rand(), 1));
             $unconfirmedhub->huburl = $huburl;
             $unconfirmedhub->hubname = $hubname;
             $unconfirmedhub->confirmed = 0;
@@ -140,8 +142,7 @@ if (!empty($fromform) and empty($update) and confirm_sesskey()) {
 
         $params['token'] = $unconfirmedhub->token;
         $params['url'] = $CFG->wwwroot;
-        redirect(new moodle_url(HUB_MOODLEORGHUBURL.'/local/hub/siteregistration.php', $params));
-
+        redirect(new moodle_url(HUB_MOODLEORGHUBURL . '/local/hub/siteregistration.php', $params));
     }
 }
 
@@ -154,8 +155,10 @@ if (!empty($registeredhub->confirmed)) {
         echo $OUTPUT->notification(get_string('siteregistrationupdated', 'hub'), 'notifysuccess');
     }
 }
+
+if (!empty($error)) {
+    echo $error;
+}
+
 $siteregistrationform->display();
-
-
-
 echo $OUTPUT->footer();

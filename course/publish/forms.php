@@ -120,7 +120,12 @@ class course_publication_form extends moodleform {
             $serverurl = $huburl."/local/hub/webservice/webservices.php";
             require_once($CFG->dirroot."/webservice/xmlrpc/lib.php");
             $xmlrpcclient = new webservice_xmlrpc_client();
-            $publishedcourses = $xmlrpcclient->call($serverurl, $registeredhub->token, $function, $params);
+            try {
+                $publishedcourses = $xmlrpcclient->call($serverurl, $registeredhub->token, $function, $params);
+            } catch (Exception $e) {
+                $error = $OUTPUT->notification(get_string('errorcourseinfo', 'hub', $e->getMessage()));
+                $mform->addElement('static', 'errorhub', '', $error);
+            }
         }
 
 
