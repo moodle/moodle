@@ -98,20 +98,17 @@ function calendar_get_mini($courses, $groups, $users, $cal_month = false, $cal_y
             // Navigated to this month
             $date = $thisdate;
             $display->thismonth = true;
-        }
-        else {
+        } else {
             // Navigated to other month, let's do a nice trick and save us a lot of work...
             if(!checkdate($cal_month, 1, $cal_year)) {
                 $date = array('mday' => 1, 'mon' => $thisdate['mon'], 'year' => $thisdate['year']);
                 $display->thismonth = true;
-            }
-            else {
+            } else {
                 $date = array('mday' => 1, 'mon' => $cal_month, 'year' => $cal_year);
                 $display->thismonth = false;
             }
         }
-    }
-    else {
+    } else {
         $date = usergetdate(time()); // Date and time the user sees at his location
         $display->thismonth = true;
     }
@@ -533,73 +530,19 @@ function calendar_add_event_metadata($event) {
     return $event;
 }
 
+/**
+ * Prints a calendar event
+ *
+ * @deprecated 2.0
+ */
 function calendar_print_event($event, $showactions=true) {
     global $CFG, $USER, $OUTPUT;
-
-    static $strftimetime;
-
-    $event = calendar_add_event_metadata($event);
+    debugging('calendar_print_event is deprecated please update your code', DEBUG_DEVELOPER);
+    $renderer = $PAGE->get_renderer('core_calendar');
     if (!($event instanceof calendar_event)) {
         $event = new calendar_event($event);
     }
-    echo '<a name="event_'.$event->id.'"></a><table class="event" cellspacing="0">';
-    echo '<tr><td class="picture">';
-    if (!empty($event->icon)) {
-        echo $event->icon;
-    } else {
-        echo $OUTPUT->spacer(array('height'=>16, 'width'=>16, 'br'=>true)); // should be done with CSS instead
-    }
-    echo '</td>';
-    echo '<td class="topic">';
-
-    if (!empty($event->referer)) {
-        echo '<div class="referer">'.$event->referer.'</div>';
-    } else {
-        echo '<div class="name">'.$event->name."</div>";
-    }
-    if (!empty($event->courselink)) {
-        echo '<div class="course">'.$event->courselink.' </div>';
-    }
-    if (!empty($event->time)) {
-        echo '<span class="date">'.$event->time.'</span>';
-    } else {
-        echo '<span class="date">'.calendar_time_representation($event->timestart).'</span>';
-    }
-
-    echo '</td></tr>';
-    echo '<tr><td class="side">&nbsp;</td>';
-    if (isset($event->cssclass)) {
-        echo '<td class="description '.$event->cssclass.'">';
-    } else {
-        echo '<td class="description">';
-    }
-
-    echo $event->description;
-    if (calendar_edit_event_allowed($event) && $showactions) {
-        echo '<div class="commands">';
-        $calendarcourseid = '';
-        if (!empty($event->calendarcourseid)) {
-            $calendarcourseid = '&amp;course='.$event->calendarcourseid;
-        }
-        if (empty($event->cmid)) {
-            $editlink   = CALENDAR_URL.'event.php?action=edit&amp;id='.$event->id.$calendarcourseid;
-            $deletelink = CALENDAR_URL.'delete.php?id='.$event->id.$calendarcourseid;
-        } else {
-            $editlink   = $CFG->wwwroot.'/course/mod.php?update='.$event->cmid.'&amp;return=true&amp;sesskey='.sesskey();
-            $deletelink = ''; // deleting activities directly from calendar is dangerous/confusing - see MDL-11843
-        }
-        echo ' <a href="'.$editlink.'"><img
-                  src="'.$OUTPUT->pix_url('t/edit') . '" alt="'.get_string('tt_editevent', 'calendar').'"
-                  title="'.get_string('tt_editevent', 'calendar').'" /></a>';
-        if ($deletelink) {
-            echo ' <a href="'.$deletelink.'"><img
-                      src="'.$OUTPUT->pix_url('t/delete') . '" alt="'.get_string('tt_deleteevent', 'calendar').'"
-                      title="'.get_string('tt_deleteevent', 'calendar').'" /></a>';
-        }
-        echo '</div>';
-    }
-    echo '</td></tr></table>';
-
+    echo $renderer->event($event);
 }
 
 /**
@@ -627,18 +570,15 @@ function calendar_get_events($tstart, $tend, $users, $groups, $courses, $withdur
         // Events from a number of users
         if(!empty($whereclause)) $whereclause .= ' OR';
         $whereclause .= ' (userid IN ('.implode(',', $users).') AND courseid = 0 AND groupid = 0)';
-    }
-    else if(is_numeric($users)) {
+    } else if(is_numeric($users)) {
         // Events from one user
         if(!empty($whereclause)) $whereclause .= ' OR';
         $whereclause .= ' (userid = '.$users.' AND courseid = 0 AND groupid = 0)';
-    }
-    else if($users === true) {
+    } else if($users === true) {
         // Events from ALL users
         if(!empty($whereclause)) $whereclause .= ' OR';
         $whereclause .= ' (userid != 0 AND courseid = 0 AND groupid = 0)';
-    }
-    else if($users === false) {
+    } else if($users === false) {
         // No user at all, do nothing
     }
 
@@ -646,38 +586,27 @@ function calendar_get_events($tstart, $tend, $users, $groups, $courses, $withdur
         // Events from a number of groups
         if(!empty($whereclause)) $whereclause .= ' OR';
         $whereclause .= ' groupid IN ('.implode(',', $groups).')';
-    }
-    else if(is_numeric($groups)) {
+    } else if(is_numeric($groups)) {
         // Events from one group
         if(!empty($whereclause)) $whereclause .= ' OR ';
         $whereclause .= ' groupid = '.$groups;
-    }
-    else if($groups === true) {
+    } else if($groups === true) {
         // Events from ALL groups
         if(!empty($whereclause)) $whereclause .= ' OR ';
         $whereclause .= ' groupid != 0';
     }
     // boolean false (no groups at all): we don't need to do anything
 
-    if(is_array($courses)) {
-        // A number of courses (maybe none at all!)
-        if(!empty($courses)) {
-            if(!empty($whereclause)) {
-                $whereclause .= ' OR';
-            }
-            $whereclause .= ' (groupid = 0 AND courseid IN ('.implode(',', $courses).'))';
+    if(is_array($courses) && !empty($courses)) {
+        if(!empty($whereclause)) {
+            $whereclause .= ' OR';
         }
-        else {
-            // This means NO courses, not that we don't care!
-            // No need to do anything
-        }
-    }
-    else if(is_numeric($courses)) {
+        $whereclause .= ' (groupid = 0 AND courseid IN ('.implode(',', $courses).'))';
+    } else if(is_numeric($courses)) {
         // One course
         if(!empty($whereclause)) $whereclause .= ' OR';
         $whereclause .= ' (groupid = 0 AND courseid = '.$courses.')';
-    }
-    else if($courses === true) {
+    } else if ($courses === true) {
         // Events from ALL courses
         if(!empty($whereclause)) $whereclause .= ' OR';
         $whereclause .= ' (groupid = 0 AND courseid != 0)';
@@ -1529,11 +1458,9 @@ function calendar_format_event_time($event, $now, $morehref, $usecommonwords = t
 
 function calendar_print_month_selector($name, $selected) {
     $months = array();
-
     for ($i=1; $i<=12; $i++) {
         $months[$i] = userdate(gmmktime(12, 0, 0, $i, 15, 2000), '%B');
     }
-
     echo html_writer::select($months, $name, $selected, false);
 }
 
@@ -2321,5 +2248,120 @@ class calendar_event {
         } else {
             return false;
         }
+    }
+}
+
+/**
+ * Calendar information class
+ *
+ * This class is used simply to organise the information pertaining to a calendar
+ * and is used primarily to make information easily available.
+ */
+class calendar_information {
+    /**
+     * The day
+     * @var int
+     */
+    public $day;
+    /**
+     * The month
+     * @var int
+     */
+    public $month;
+    /**
+     * The year
+     * @var int
+     */
+    public $year;
+
+    /**
+     * A course id
+     * @var int
+     */
+    public $courseid = null;
+    /**
+     * An array of courses
+     * @var array
+     */
+    public $courses = array();
+    /**
+     * An array of groups
+     * @var array
+     */
+    public $groups = array();
+    /**
+     * An array of users
+     * @var array
+     */
+    public $users = array();
+
+    /**
+     * Creates a new instance
+     *
+     * @param int $day
+     * @param int $month
+     * @param int $year
+     */
+    public function __construct($day, $month, $year) {
+        $this->day = $day;
+        $this->month = $month;
+        $this->year = $year;
+    }
+
+    /**
+     * Ensures the date for the calendar is correct and either sets it to now
+     * or throws a moodle_exception if not
+     *
+     * @param bool $defaultonow
+     * @return bool
+     */
+    public function checkdate($defaultonow = true) {
+        if (!checkdate($this->month, $this->day, $this->year)) {
+            if ($defaultonow) {
+                $now = usergetdate(time());
+                $this->day = intval($now['mday']);
+                $this->month = intval($now['mon']);
+                $this->year = intval($now['year']);
+                return true;
+            } else {
+                throw new moodle_exception('invaliddate');
+            }
+        }
+        return true;
+    }
+    /**
+     * Gets todays timestamp for the calendar
+     * @return int
+     */
+    public function timestamp_today() {
+        return make_timestamp($this->year, $this->month, $this->day);
+    }
+    /**
+     * Gets tomorrows timestamp for the calendar
+     * @return int
+     */
+    public function timestamp_tomorrow() {
+        return make_timestamp($this->year, $this->month, $this->day+1);
+    }
+    /**
+     * Adds the pretend blocks for teh calendar
+     *
+     * @param core_calendar_renderer $renderer
+     * @param bool $showfilters
+     * @param string|null $view
+     */
+    public function add_sidecalendar_blocks(core_calendar_renderer $renderer, $showfilters=false, $view=null) {
+        if ($showfilters) {
+            $filters = new block_contents();
+            $filters->content = $renderer->fake_block_filters($this->courseid, $this->day, $this->month, $this->year, $view, $this->courses);
+            $filters->footer = '';
+            $filters->title = get_string('eventskey', 'calendar');
+            $renderer->add_pretend_calendar_block($filters, BLOCK_POS_RIGHT);
+        }
+        $block = new block_contents;
+        $block->content = $renderer->fake_block_threemonths($this);
+        $block->footer = '';
+        $block->title = get_string('monthlyview', 'calendar');
+        $renderer->add_pretend_calendar_block($block, BLOCK_POS_RIGHT);
     }
 }

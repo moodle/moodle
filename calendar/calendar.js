@@ -85,5 +85,28 @@ M.core_calendar = {
         if (M.core_calendar.showdelayevent !== null)  {
             M.core_calendar.events[M.core_calendar.showdelayevent].show();
         }
+    },
+    init_basic_export : function(Y, allowthisweek, allownextweek, allownextmonth, username, authtoken) {
+        Y.one('#generateurl').on('click', function(){
+            var presetwhat = 'all';
+            if (Y.one('#pw_course').get('checked')) {
+                presetwhat = 'courses';
+            }
+
+            var presettime = 'recentupcoming';
+            if (allowthisweek && Y.one('#pt_wknow').get('checked')) {
+                presettime = 'weeknow';
+            } else if (allownextweek && Y.one('#pt_wknext').get('checked')) {
+                presettime = 'weeknext';
+            } else if (allownextmonth && Y.one('#pt_monnext').get('checked')) {
+                presettime = 'monthnext';
+            } else if (Y.one('#pt_monnow').get('checked')) {
+                presettime = 'monthnow';
+            }
+
+            var urlstr = M.cfg.wwwroot+'/calendar/export_execute.php?preset_what='+presetwhat+'&amp;preset_time='+presettime+'&amp;username='+username+'&amp;authtoken='+authtoken;
+            Y.one('#url').setContent(urlstr);
+            Y.one('#urlbox').setStyle('display', 'block');
+        }, this);
     }
 }

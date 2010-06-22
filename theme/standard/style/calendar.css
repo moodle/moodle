@@ -1,19 +1,10 @@
 /** Calendar **/
-.path-calendar h1 {font-size:1.0em;margin:0;}
-.path-calendar h2,
-.path-calendar h3 {text-align: center;}
-.path-calendar .maincalendar div.header {font-weight:bold;padding:2px 4px 6px;}
-
-.path-calendar .sidecalendar {border-color: #DDDDDD;}
-.path-calendar .sidecalendar .filters {font-size:0.8em;}
-.path-calendar .sidecalendar abbr {border-width:0;}
-.path-calendar .sidecalendar .filters {padding: 5px;}
-.path-calendar .sidecalendar .filters table {background-color: #EEEEEE;}
-.path-calendar .sidecalendar .minicalendartop {padding-top:10px;}
-.path-calendar .sidecalendar .minicalendarblock {padding: 0px 4px;}
-.path-calendar .sidecalendar .calendartable td {border-width:0;}
+.path-calendar .region-main h1 {font-size:1.0em;margin:0;}
+.path-calendar .region-main h2,
+.path-calendar .region-main h3 {text-align: center;}
 
 .path-calendar .maincalendar {border:1px solid #DDDDDD;}
+.path-calendar .maincalendar div.header {font-weight:bold;padding:2px 4px 6px;}
 .path-calendar .maincalendar .filters {width:98%;margin:10px auto;}
 .path-calendar .maincalendar .filters table {background-color: #EEEEEE;}
 .path-calendar .maincalendar .eventlist {padding: 10px;}
@@ -32,6 +23,7 @@
 .path-calendar .maincalendar .day {font-weight: bold;}
 .path-calendar .maincalendar .cal_courses_flt {text-align:center;margin:5px;}
 .path-calendar .maincalendar .calendar-controls .current {font-weight: bold;}
+
 .path-calendar .minicalendarblock h3 {font-size:1.0em;margin:0;font-weight:normal;text-align:center;}
 
 .calendartable a {color:#000077;}
@@ -57,4 +49,11 @@
 .calendartable .nottoday {border-color:#EEEEEE;}
 .calendartable .eventnone a {text-decoration:none;color:black;cursor:text;}
 
-.calendartable.minicalendar {font-size:0.85em;border:1px solid #DDDDDD;margin: 10px 0;border-collapse:separate;border-spacing:1px;}
+.block .minicalendar {font-size:0.85em;border:1px solid #DDDDDD;margin: 10px 0;border-collapse:separate;border-spacing:1px;}
+.block .calendar_filters.filters {background-color: #EEEEEE;}
+.block .calendar_filters.filters table {width:100%;}
+
+.calendar_event_global {border-color: #D6F8CD; background-color:#D6F8CD;}
+.calendar_event_course {border-color: #FFD3BD; background-color:#FFD3BD;}
+.calendar_event_user {border-color: #DCE7EC; background-color:#DCE7EC;}
+.calendar_event_group {border-color: #FEE7AE; background-color:#FEE7AE;}

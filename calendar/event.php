@@ -71,6 +71,8 @@ if ($cal_y !== 0) $url->param('cal_y', $cal_y);
 if ($cal_m !== 0) $url->param('cal_m', $cal_m);
 if ($cal_d !== 0) $url->param('cal_d', $cal_d);
 $PAGE->set_url($url);
+$PAGE->set_context(get_context_instance(CONTEXT_SYSTEM));
+$PAGE->set_pagelayout('standard');
 
 if ($action === 'delete' && $eventid>0) {
     $deleteurl = new moodle_url('/calendar/delete.php', array('id'=>$eventid));
@@ -121,6 +123,9 @@ if (!empty($SESSION->cal_course_referer)) {
 
 require_login($course, false);
 
+$calendar = new calendar_information($cal_d, $cal_m, $cal_y);
+$calendar->courseid = $courseid;
+
 $strcalendar = get_string('calendar', 'calendar');
 $link = clone($viewcalendarurl);
 $link->param('view', 'upcoming');
@@ -132,7 +137,7 @@ if ($eventid !== 0) {
     $event = calendar_event::load($eventid);
     if (!calendar_edit_event_allowed($event)) {
         print_error('nopermissions');
-                }
+    }
     $event->action = $action;
     $event->course = $courseid;
     $event->timedurationuntil = $event->timestart + $event->timeduration;
@@ -140,8 +145,8 @@ if ($eventid !== 0) {
 
     if (!calendar_add_event_allowed($event)) {
         print_error('nopermissions');
-        }
-            } else {
+    }
+} else {
     $title = get_string('newevent', 'calendar');
     calendar_get_allowed_types($formoptions->eventtypes, $USER->id);
     $event = new calendar_event();
@@ -156,22 +161,20 @@ if ($eventid !== 0) {
             unset($formoptions->eventtypes->courses);
             unset($formoptions->eventtypes->groups);
         }
-        }
-
-        if($cal_y && $cal_m && $cal_d && checkdate($cal_m, $cal_d, $cal_y)) {
+    }
+    if($cal_y && $cal_m && $cal_d && checkdate($cal_m, $cal_d, $cal_y)) {
         $event->timestart = make_timestamp($cal_y, $cal_m, $cal_d, 0, 0, 0);
     } else if($cal_y && $cal_m && checkdate($cal_m, 1, $cal_y)) {
-            if($cal_y == $now['year'] && $cal_m == $now['mon']) {
+        if($cal_y == $now['year'] && $cal_m == $now['mon']) {
             $event->timestart = make_timestamp($cal_y, $cal_m, $now['mday'], 0, 0, 0);
         } else {
             $event->timestart = make_timestamp($cal_y, $cal_m, 1, 0, 0, 0);
-            }
-            }
-
+        }
+    }
     if (!calendar_add_event_allowed($event)) {
         print_error('nopermissions');
-        }
-        }
+    }
+}
 
 $properties = $event->properties(true);
 $formoptions->event = $event;
@@ -205,46 +208,13 @@ $PAGE->navbar->add($title);
 $PAGE->set_title($site->shortname.': '.$strcalendar.': '.$title);
 $PAGE->set_heading($COURSE->fullname);
 
+calendar_set_filters($calendar->courses, $calendar->groups, $calendar->users);
+$renderer = $PAGE->get_renderer('core_calendar');
+$calendar->add_sidecalendar_blocks($renderer);
+
 echo $OUTPUT->header();
-
-
-echo '<table class="calendarlayout">';
-echo '<tr><td class="maincalendar">';
+echo $renderer->start_layout();
 echo $OUTPUT->heading($title);
 $mform->display();
-echo '</td>';
-
-// when adding an event you can not be a guest, so it's reasonalbe to ignore defaultcourses MDL-10353
-calendar_set_filters($courses, $groups, $users);
-list($prevmon, $prevyr) = calendar_sub_month((int)$now['mon'], (int)$now['year']);
-list($nextmon, $nextyr) = calendar_add_month((int)$now['mon'], (int)$now['year']);
-
-echo '<td class="sidecalendar">';
-
-$block = $OUTPUT->box_start('block');
-$block .= $OUTPUT->box($OUTPUT->heading(get_string('eventskey', 'calendar')), 'header');
-$block .= $OUTPUT->box(calendar_filter_controls('event', 'action='.$action.'&amp;id='.$event->id), 'filters content');
-$block .= $OUTPUT->box_end();
-$block .= $OUTPUT->box_start('block');
-$block .= $OUTPUT->box($OUTPUT->heading(get_string('monthlyview', 'calendar')), 'header');
-$block .= $OUTPUT->box_start('content');
-$block .= $OUTPUT->box_start('minicalendarblock minicalendartop');
-$block .= calendar_top_controls('display', array('id' => $courseid, 'm' => $prevmon, 'y' => $prevyr));
-$block .= calendar_get_mini($courses, $groups, $users, $prevmon, $prevyr);
-$block .= $OUTPUT->box_end();
-$block .= $OUTPUT->box_start('minicalendarblock');
-$block .= calendar_top_controls('display', array('id' => $courseid, 'm' => (int)$now['mon'], 'y' => (int)$now['year']));
-$block .= calendar_get_mini($courses, $groups, $users, (int)$now['mon'], (int)$now['year']);
-$block .= $OUTPUT->box_end();
-$block .= $OUTPUT->box_start('minicalendarblock');
-$block .= calendar_top_controls('display', array('id' => $courseid, 'm' => $nextmon, 'y' => $nextyr));
-$block .= calendar_get_mini($courses, $groups, $users, $nextmon, $nextyr);
-$block .= $OUTPUT->box_end();
-$block .= $OUTPUT->box_end();
-$block .= $OUTPUT->box_end();
-echo $block;
-
-echo '</td></tr>';
-echo '</table>';
-
+echo $renderer->complete_layout();
 echo $OUTPUT->footer();

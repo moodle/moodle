@@ -8,16 +8,15 @@
 .calendar_event_group {background-color:#FEE7AE;}
 .calendar_event_user {background-color:#DCE7EC;}
 
-.calendar .calendar-controls .previous,
-.calendar .calendar-controls .next,
-.calendar .calendar-controls .current {display: block;float: left;width: 12%;}
-.calendar .calendar-controls .previous {text-align: left;}
-.calendar .calendar-controls .current {text-align: center;width: 76%;}
-.calendar .calendar-controls .next {text-align: right;}
+.path-calendar .calendar-controls .previous,
+.path-calendar .calendar-controls .next,
+.path-calendar .calendar-controls .current {display: block;float: left;width: 12%;}
+.path-calendar .calendar-controls .previous {text-align: left;}
+.path-calendar .calendar-controls .current {text-align: center;width: 76%;}
+.path-calendar .calendar-controls .next {text-align: right;}
 
-.path-calendar {width: 100%;height:100%;border-spacing: 5px;border-collapse: separate;}
-.path-calendar .sidecalendar {vertical-align: top;padding: 0;width: 25%;}
-.path-calendar .maincalendar {vertical-align: top;padding: 0;height: 100%;}
+.path-calendar {}
+.path-calendar .maincalendar {vertical-align: top;padding:0;}
 .path-calendar .maincalendar .bottom {text-align: center;padding:5px 0 0 0;}
 .path-calendar .maincalendar .heightcontainer {height: 100%;position: relative;}
 .path-calendar .maincalendar .calendarmonth {width:98%;margin:10px auto;}
@@ -37,3 +36,13 @@
 .path-calendar .maincalendar .header .buttons {float: right;}
 .path-calendar .filters table {border-collapse:separate;border-spacing: 2px;width: 100%;}
 #page-calendar-export .indent {padding-left: 20px;}
+
+.block .minicalendar {width:100%;margin:10px auto;}
+.block .minicalendar th,
+.block .minicalendar td {padding:2px;font-size:0.8em;}
+.block .minicalendar td.weekend {color:#A00;}
+.block .calendar-controls .previous {text-align: left;display: block;float: left;width: 12%;}
+.block .calendar-controls .current {float:left;text-align: center;display: block;width:76%;}
+.block .calendar-controls .next {text-align: right;display: block;float: left;width: 12%;}
+.block .filters table {border-collapse:separate;border-spacing: 2px;padding: 2px;width: 100%;}
+.block .content h3.eventskey {margin-top:0.5em;margin-bottom:0;margin-left:0.5em;}

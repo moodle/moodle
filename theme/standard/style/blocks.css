@@ -36,12 +36,6 @@
 /** Calendar Month **/
 .block_calendar_month abbr {border-width:0;}
 .block_calendar_month .eventnone a {text-decoration:none;color:black;cursor:text;}
-.block_calendar_month .filters table {background-color: #EEEEEE;}
-.block_calendar_month .filters table td {font-size:1.1em;}
-.calendar_event_global {border-color: #D6F8CD; background-color:#D6F8CD;}
-.calendar_event_course {border-color: #FFD3BD; background-color:#FFD3BD;}
-.calendar_event_user {border-color: #DCE7EC; background-color:#DCE7EC;}
-.calendar_event_group {border-color: #FEE7AE; background-color:#FEE7AE;}
 
 /** Calendar Upcoming **/
 

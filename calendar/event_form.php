@@ -115,7 +115,7 @@ class event_form extends moodleform {
         $mform->addElement('radio', 'duration', get_string('eventduration', 'calendar'), get_string('durationnone', 'calendar'), 0);
 
         $mform->addElement('radio', 'duration', null, get_string('durationuntil', 'calendar'), 1);
-        $mform->addElement('date_time_selector', 'timedurationuntil', null);
+        $mform->addElement('date_time_selector', 'timedurationuntil', '&nbsp;');
         $mform->disabledIf('timedurationuntil','duration','noteq', 1);
 
         $mform->addElement('radio', 'duration', null, get_string('durationminutes', 'calendar'), 2);
