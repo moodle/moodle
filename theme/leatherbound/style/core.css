@@ -1,0 +1,170 @@
+/********************************************************
+**
+** Theme name: Leatherbound
+** Description: A GPL theme for the Moodle core.
+** Creation Date: 11/24/09
+** Author: Patrick Malley
+** Author URI: http://newschoollearning.com
+**
+** Customize, edit, poke, prod, and adapt to your needs.
+**
+*********************************************************/
+
+/* Global 
+------------------------*/
+
+body {
+	background: #fff;
+	margin: 0;
+	padding: 0;
+	color: #281f18;
+}
+
+body,h1,h2,h3,h4,h5,h6,p,ul,ol,dl,input,textarea {
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+.wrapper {
+	margin: 0 25px;
+}
+
+a:link,a:visited {
+	color: #DA5013;
+}
+
+a:hover,a:active {
+	color: #251c17;
+}
+
+a img {
+	border: none;
+}
+
+a:active {
+	outline: none;
+}
+
+/* Header 
+-----------------------*/
+
+#page-header {
+	float: none;
+	padding: 10px 0 0;
+	background: url([[pix:theme|header]]);
+	border-bottom: 5px solid #DA5013;
+	color: #fff;
+}
+
+#page-header h1 {
+	font-size: 2.25em;
+	margin: 30px 0 20px;
+}
+
+#page-header h1.inside {
+	font-size: 1.8em;
+	margin: 20px 0 10px;
+}
+
+.headermenu {
+	margin: 0;
+	font-size: 0.9em;
+}
+
+/* Navbar
+-----------------------*/
+
+.navbar {
+	border-width: 0 0 1px 0;
+	border-color: #ddddd7;
+	background: #f7f6f1;
+	margin: 0;
+	padding: 5px 0;
+}
+
+.navbar .navbutton {
+	margin-top: 0;
+}
+
+.breadcrumb .sep {
+	font-size: 0.8em;
+	color: #999;
+}
+
+/* Content
+-----------------------*/
+
+#page-content-wrapper {
+	float: none;
+	margin-top: 5px;
+}
+
+/* Blocks
+-----------------------*/
+
+.block {
+	margin-bottom: 20px;
+	border: none;
+}
+
+.block .header {
+	border-top: 2px solid #da5013;
+	background: #f7f6f1;
+	padding: 4px 5px 5px;
+}
+
+.block .title h2 {
+	color: #35251B;
+	font-weight: normal;
+	font-size: 1.2em;
+	margin: 0;
+}
+
+/* Forum
+------------------------*/
+
+.forumpost .topic {
+	background: #dbd6c7;
+	border-bottom-color: #da5013;
+}
+
+.forumpost .topic .subject {
+	font-weight: bold;
+	font-size: 1.1em;
+}
+
+.forumpost .topic .author {
+	font-size: 0.9em;
+}
+
+.forumpost .content {
+	background: #f7f5f1;
+	border-width: 0 1px 1px;
+	border-style: solid;
+	border-color: #d9d8d4;
+}
+
+/* Course
+---------------------------*/
+
+h2.headingblock {
+	border-width: 0 0 1px 0;
+	padding: 5px 5px 2px;
+	font-weight: normal;
+	font-size: 1.2em;
+	background: #f7f5f1;
+	color: #251c17;
+}
+
+.course-content .section.main {
+	background: #f7f5f1;
+	border: 1px solid #ddd
+}
+
+.course-content .section.current {
+	background: #da5013;
+	color: #fff;
+}
+
+.course-content .section.main .content {
+	background: #fff;
+}
