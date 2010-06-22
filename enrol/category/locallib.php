@@ -152,6 +152,16 @@ function enrol_category_sync_course($course) {
     $syscontext = get_context_instance(CONTEXT_SYSTEM);
     $roles = get_roles_with_capability('enrol/category:synchronised', CAP_ALLOW, $syscontext);
 
+    if (!$roles) {
+        //nothing to sync, so remove the instance completely if exists
+        if ($instances = $DB->get_records('enrol', array('courseid'=>$course->id, 'enrol'=>'category'))) {
+            foreach ($instances as $instance) {
+                $plugin->delete_instance($instance);
+            }
+        }
+        return;
+    }
+
     // first find out if any parent category context contains interesting role assignments
     $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
     $contextids = get_parent_contexts($coursecontext);
