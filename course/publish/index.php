@@ -31,6 +31,8 @@ require_once($CFG->dirroot.'/admin/registration/lib.php');
 require_once($CFG->dirroot.'/course/publish/lib.php');
 
 $id = optional_param('id', 0, PARAM_INT);
+$hubname = optional_param('hubname', 0, PARAM_TEXT);
+$huburl = optional_param('huburl', 0, PARAM_URL);
 
 $course = $DB->get_record('course', array('id'=>$id), '*', MUST_EXIST);
 
@@ -99,9 +101,7 @@ if (has_capability('moodle/course:publish', get_context_instance(CONTEXT_COURSE,
     /// UNPUBLISH
     $cancel = optional_param('cancel', 0, PARAM_BOOL);
     if (!empty($cancel) and confirm_sesskey()) {
-        $confirm = optional_param('confirm', 0, PARAM_BOOL);
-        $hubname = optional_param('hubname', 0, PARAM_TEXT);
-        $huburl = optional_param('huburl', 0, PARAM_URL);
+        $confirm = optional_param('confirm', 0, PARAM_BOOL);      
         $hubcourseid = optional_param('hubcourseid', 0, PARAM_INT);
         $publicationid = optional_param('publicationid', 0, PARAM_INT);
         $timepublished = optional_param('timepublished', 0, PARAM_INT);
@@ -144,7 +144,8 @@ if (has_capability('moodle/course:publish', get_context_instance(CONTEXT_COURSE,
 
     //check if a course was published
     if (optional_param('published', 0, PARAM_TEXT)) {
-        $confirmmessage = $OUTPUT->notification(get_string('coursepublished', 'hub'), 'notifysuccess');
+        $confirmmessage = $OUTPUT->notification(get_string('coursepublished', 'hub',
+                empty($hubname)?$huburl:$hubname), 'notifysuccess');
     }
 
  

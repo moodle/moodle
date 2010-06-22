@@ -217,7 +217,8 @@ if (has_capability('moodle/course:publish', get_context_instance(CONTEXT_COURSE,
         } else {
             //redirect to the index publis page
             redirect(new moodle_url('/course/publish/index.php',
-                            array('sesskey' => sesskey(), 'id' => $id, 'published' => true)));
+                            array('sesskey' => sesskey(), 'id' => $id, 'published' => true, 
+                                'hubname' => $hubname, 'huburl' => $huburl)));
         }
     }
 
