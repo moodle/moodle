@@ -206,9 +206,6 @@ M.core_filepicker.init = function(Y, options) {
                 thumbnail:node.thumbnail,
                 path:node.path?node.path:[]
             };
-            var tmpNode = new YAHOO.widget.TextNode(info, level, false);
-            //var tooltip = new YAHOO.widget.Tooltip(tmpNode.labelElId, {
-                //context:tmpNode.labelElId, text:info.title});
             if(node.repo_id) {
                 tmpNode.repo_id=node.repo_id;
             }else{
@@ -337,10 +334,14 @@ M.core_filepicker.init = function(Y, options) {
                 var title = document.createElement('DIV');
                 title.id = 'grid-title-'+client_id+'-'+String(count);
                 title.className = 'label';
+                var filename = node.title;
+                console.info(node);
                 if (node.shorttitle) {
-                    node.title = node.shorttitle;
+                    filename = node.shorttitle;
                 }
-                title.innerHTML += '<a href="###"><span>'+node.title+"</span></a>";
+                var filename_id = 'filname-link-'+client_id+'-'+String(count);
+                title.innerHTML += '<a href="###" id="'+filename_id+'" title="'+node.title+'"><span>'+filename+"</span></a>";
+ 
 
                 if(node.thumbnail_width){
                     grid.style.width = node.thumbnail_width+'px';
@@ -355,6 +356,7 @@ M.core_filepicker.init = function(Y, options) {
                 }
                 var img = document.createElement('img');
                 img.src = node.thumbnail;
+                img.title = node.title;
                 if(node.thumbnail_alt) {
                     img.alt = node.thumbnail_alt;
                 }
@@ -650,6 +652,13 @@ M.core_filepicker.init = function(Y, options) {
                         this.list({'repo_id':repository_id});
                     }, this /*handler running scope*/, this/*second argument*/, r[i].id/*third argument of handler*/);
                     count++;
+                }
+                if (count==0) {
+                    if (this.options.externallink) {
+                        list.set('innerHTML', M.str.repository.norepositoriesavexternalailable);
+                    } else {
+                        list.set('innerHTML', M.str.repository.norepositoriesavailable);
+                    }
                 }
             }, '#fp-list-'+client_id, this /* handler running scope */, '#fp-list-'+client_id /*first argument of handler*/);
         },

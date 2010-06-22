@@ -107,6 +107,7 @@ class repository_local extends repository {
                 // build file tree
                 $children = $fileinfo->get_children();
                 foreach ($children as $child) {
+                    $shorttitle = $this->get_short_filename($child->get_visible_name(), 12);
                     if ($child->is_directory()) {
                         $params = $child->get_params();
                         $subdir_children = $child->get_children();
@@ -121,6 +122,7 @@ class repository_local extends repository {
                         }
                         $node = array(
                             'title' => $child->get_visible_name(),
+                            'shorttitle'=>$shorttitle,
                             'size' => 0,
                             'date' => '',
                             'path' => $encodedpath,
@@ -133,6 +135,7 @@ class repository_local extends repository {
                         $icon = 'f/'.str_replace('.gif', '', mimeinfo('icon', $child->get_visible_name())).'-32';
                         $node = array(
                             'title' => $child->get_visible_name(),
+                            'shorttitle'=>$shorttitle,
                             'size' => 0,
                             'date' => '',
                             'source'=> $encodedpath,

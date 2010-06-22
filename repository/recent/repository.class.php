@@ -110,6 +110,7 @@ class repository_recent extends repository {
                 $icon = 'f/'.str_replace('.gif', '', mimeinfo('icon', $file['filename'])) . '-32';
                 $node = array(
                     'title' => $file['filename'],
+                    'shorttitle' => $this->get_short_filename($file['filename'], 12),
                     'size' => 0,
                     'date' => '',
                     'source'=> $params,

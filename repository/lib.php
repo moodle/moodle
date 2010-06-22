@@ -1606,6 +1606,13 @@ abstract class repository {
     public static function get_instance_option_names() {
         return array();
     }
+    public function get_short_filename($str, $maxlength) {
+        if (strlen($str) >= $maxlength) {
+            return trim(substr($str, 0, $maxlength)).'...';
+        } else {
+            return $str;
+        }
+    }
 
 }
 

@@ -378,8 +378,8 @@ class page_requirements_manager {
                                                         array('saving', 'repository'), array('search', 'repository'), array('searching', 'repository'), array('size', 'repository'),
                                                         array('submit', 'repository'), array('sync', 'repository'), array('title', 'repository'), array('upload', 'repository'),
                                                         array('uploading', 'repository'), array('xhtmlerror', 'repository'),
-                                                        array('xhtml', 'quiz'), array('chooselicense', 'repository'), array('author', 'repository'),
-                                                        array('ok', 'moodle'), array('error', 'moodle'), array('info', 'moodle')
+                                                        array('xhtml', 'quiz'), array('cancel'), array('chooselicense', 'repository'), array('author', 'repository'),
+                                                        array('ok', 'moodle'), array('error', 'moodle'), array('info', 'moodle'), array('norepositoriesavailable', 'repository'), array('norepositoriesavexternalailable', 'repository')
                                                     ));
                     break;
                 case 'core_comment':
