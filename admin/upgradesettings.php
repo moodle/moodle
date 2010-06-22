@@ -13,6 +13,7 @@ require_login(0, false);
 
 admin_externalpage_setup('upgradesettings'); // now hidden page
 $PAGE->set_pagelayout('maintenance'); // do not print any blocks or other rubbish, we want to force saving
+$PAGE->blocks->show_only_fake_blocks();
 $adminroot = admin_get_root(); // need all settings
 
 // now we'll deal with the case that the admin has submitted the form with new settings
