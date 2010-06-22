@@ -25,6 +25,7 @@
 
 require('../../config.php');
 require_once("$CFG->dirroot/mod/folder/locallib.php");
+require_once($CFG->libdir . '/completionlib.php');
 
 $id = optional_param('id', 0, PARAM_INT);  // Course module ID
 $f  = optional_param('f', 0, PARAM_INT);   // Folder instance id
