@@ -59,6 +59,15 @@ a:active {
   margin: 0;
 }
 
+#page-header.inside {
+	height: 75px;
+}
+
+#page-header.inside h1 {
+	font-size: 1.7em;
+	padding-top: 40px;
+}
+
 #page-header a:link,
 #page-header a:visited {
 	color: #fff;

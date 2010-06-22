@@ -28,10 +28,10 @@ echo $OUTPUT->doctype() ?>
 
 <div id="page">
 <?php if ($hasheading || $hasnavbar) { ?>
-    <div id="page-header">
+    <div id="page-header" class="inside">
 		<div id="page-header-wrapper" class="wrapper clearfix">
 	        <?php if ($hasheading) { ?>
-    		    <h1 class="headermain inside"><?php echo $PAGE->heading ?></h1>
+    		    <h1 class="headermain"><?php echo $PAGE->heading ?></h1>
 		        <div class="headermenu"><?php
         	    	echo $OUTPUT->login_info();
             			if (!empty($PAGE->layout_options['langmenu'])) {
