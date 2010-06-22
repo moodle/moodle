@@ -1783,8 +1783,8 @@ class core_renderer extends renderer_base {
      * @param string $filepath
      * @return string HTML fragment
      */
-    public function moodle_file_tree_viewer($contextid, $filearea, $itemid, $filepath) {
-        $tree = new moodle_file_tree_viewer($contextid, $filearea, $itemid, $filepath);
+    public function moodle_file_tree_viewer($contextid, $filearea, $itemid, $filepath, $options = array()) {
+        $tree = new moodle_file_tree_viewer($contextid, $filearea, $itemid, $filepath, $options);
         return $this->render($tree);
     }
     public function render_moodle_file_tree_viewer(moodle_file_tree_viewer $tree) {

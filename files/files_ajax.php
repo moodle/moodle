@@ -58,6 +58,7 @@ switch ($action) {
 // used by course file tree viewer
 case 'getfiletree':
     $browser = get_file_browser();
+    $fs = get_file_storage();
     $url = new moodle_url($fileurl);
     $params = $url->params();
     // fix empty value
@@ -84,6 +85,17 @@ case 'getfiletree':
         if ($child->is_directory()) {
             $fileitem['isdir'] = true;
             $fileitem['url'] = $url->out();
+
+            // hide empty folder
+            if (!empty($params['itemid'])) {
+                $itemid = $params['itemid'];
+            } else {
+                $itemid = false;
+            }
+            $draftfiles = $fs->get_area_files($params['contextid'], $params['filearea'], $itemid, 'id', false);
+            if (count($draftfiles) == 0) {
+                continue;
+            }
         } else {
             $fileitem['url'] = $child->get_url();
         }

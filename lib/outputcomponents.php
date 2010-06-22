@@ -96,6 +96,7 @@ class area_file_tree_viewer implements renderable {
 class moodle_file_tree_viewer implements renderable {
     public $tree;
     public $path;
+    private $enabled_fileareas;
     /**
      * Constructor of moodle_file_tree_viewer class
      * @param int $contextid
@@ -103,18 +104,29 @@ class moodle_file_tree_viewer implements renderable {
      * @param int $itemid
      * @param string $urlbase, file serving url base
      */
-    public function __construct($contextid, $filearea, $itemid, $filepath) {
+    public function __construct($contextid, $filearea, $itemid, $filepath, $options=array()) {
         global $CFG, $OUTPUT;
         $this->tree = array();
         $browser = get_file_browser();
+        $fs = get_file_storage();
         $fileinfo = $browser->get_file_info(get_context_instance_by_id($contextid), $filearea, $itemid, $filepath);
         $children = $fileinfo->get_children();
         $parent_info = $fileinfo->get_parent();
+        if (!empty($options['enabled_fileareas']) && is_array($options['enabled_fileareas'])) {
+            $this->enabled_fileareas = $options['enabled_fileareas'];
+        } else {
+            unset($this->enabled_fileareas);
+        }
 
         $level = $parent_info;
         $this->path = array();
         while ($level) {
             $params = $level->get_params();
+            $context = get_context_instance_by_id($params['contextid']);
+            // lock user in course level
+            if ($context->contextlevel == CONTEXT_COURSECAT or $context->contextlevel == CONTEXT_SYSTEM) {
+                break;
+            }
             $url = new moodle_url('/files/index.php', $params);
             $this->path[] = html_writer::link($url->out(false), $level->get_visible_name());
             $level = $level->get_parent();
@@ -137,6 +149,21 @@ class moodle_file_tree_viewer implements renderable {
             if ($child->is_directory()) {
                 $fileitem['isdir'] = true;
                 $fileitem['url'] = $url->out(false);
+                if (isset($this->enabled_fileareas)) {
+                    if (!in_array($params['filearea'], $this->enabled_fileareas)) {
+                        continue;
+                    } else {
+                        if (!empty($params['itemid'])) {
+                            $itemid = $params['itemid'];
+                        } else {
+                            $itemid = false;
+                        }
+                        $draftfiles = $fs->get_area_files($contextid, $params['filearea'], $itemid, 'id', false);
+                        if (count($draftfiles) == 0) {
+                            continue;
+                        }
+                    }
+                }
             } else {
                 $fileitem['url'] = $child->get_url();
             }

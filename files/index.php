@@ -90,8 +90,10 @@ $PAGE->set_title("$SITE->shortname: $strfiles");
 $PAGE->set_heading($SITE->fullname);
 echo $OUTPUT->header();
 
+$options = array();
+$options['enabled_fileareas'] = array('section_backup', 'course_backup', 'course_content', 'user_backup');
 echo $OUTPUT->box_start();
-echo $OUTPUT->moodle_file_tree_viewer($context->id, $filearea, $itemid, $filepath);
+echo $OUTPUT->moodle_file_tree_viewer($context->id, $filearea, $itemid, $filepath, $options);
 echo $OUTPUT->box_end();
 
 echo $OUTPUT->footer();
