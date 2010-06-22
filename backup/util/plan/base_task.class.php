@@ -89,10 +89,6 @@ abstract class base_task implements checksumable, executable, loggable {
         return $this->get_setting($name)->get_value();
     }
 
-    public function get_backupid() {
-        return $this->plan->get_backupid();
-    }
-
     public function get_courseid() {
         return $this->plan->get_courseid();
     }

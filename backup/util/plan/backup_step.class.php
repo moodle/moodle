@@ -38,6 +38,13 @@ abstract class backup_step extends base_step {
         }
         parent::__construct($name, $task);
     }
+
+    protected function get_backupid() {
+        if (is_null($this->task)) {
+            throw new backup_step_exception('not_specified_backup_task');
+        }
+        return $this->task->get_backupid();
+    }
 }
 
 /*

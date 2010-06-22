@@ -87,13 +87,6 @@ abstract class base_step implements executable, loggable {
         return $this->task->get_setting_value($name);
     }
 
-    protected function get_backupid() {
-        if (is_null($this->task)) {
-            throw new base_step_exception('not_specified_base_task');
-        }
-        return $this->task->get_backupid();
-    }
-
     protected function get_courseid() {
         if (is_null($this->task)) {
             throw new base_step_exception('not_specified_base_task');

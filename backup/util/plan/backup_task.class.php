@@ -38,6 +38,10 @@ abstract class backup_task extends base_task {
         }
         parent::__construct($name, $plan);
     }
+
+    public function get_backupid() {
+        return $this->plan->get_backupid();
+    }
 }
 
 /*
