@@ -4355,11 +4355,8 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         // unfortunately old enrol plugins were doing sometimes weird role assignments :-(
 
         // enabled
-        $processed = $DB->get_fieldset_sql("SELECT DISTINCT enrol FROM {enrol}");
         $enabledplugins = explode(',', $CFG->enrol_plugins_enabled);
-        list($sqlnotprocessed, $params) = $DB->get_in_or_equal($processed, SQL_PARAMS_NAMED, 'np00', false);
-        list($sqlenabled, $params2) = $DB->get_in_or_equal($enabledplugins, SQL_PARAMS_NAMED, 'ena00');
-        $params = array_merge($params, $params2);
+        list($sqlenabled, $params) = $DB->get_in_or_equal($enabledplugins, SQL_PARAMS_NAMED, 'ena00');
         $params['siteid'] = SITEID;
         $sql = "INSERT INTO {enrol} (enrol, status, courseid, sortorder, enrolperiod, enrolstartdate, enrolenddate, expirynotify, expirythreshold,
                                      notifyall, password, cost, currency, roleid, timecreated, timemodified)
@@ -4368,14 +4365,17 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
                   FROM {course} c
                   JOIN {context} ctx ON (ctx.instanceid = c.id AND ctx.contextlevel = 50)
                   JOIN {role_assignments} ra ON (ra.contextid = ctx.id)
-                 WHERE c.id <> :siteid AND ra.enrol $sqlnotprocessed AND ra.enrol $sqlenabled";
+                 WHERE c.id <> :siteid AND ra.enrol $sqlenabled";
+        $processed = $DB->get_fieldset_sql("SELECT DISTINCT enrol FROM {enrol}");
+        if ($processed) {
+            list($sqlnotprocessed, $params2) = $DB->get_in_or_equal($processed, SQL_PARAMS_NAMED, 'np00', false);
+            $params = array_merge($params, $params2);
+            $sql = "$sql AND ra.enrol $sqlnotprocessed";
+        }
         $DB->execute($sql, $params);
 
         // disabled
-        $processed = $DB->get_fieldset_sql("SELECT DISTINCT enrol FROM {enrol}");
-        list($sqlnotprocessed, $params) = $DB->get_in_or_equal($processed, SQL_PARAMS_NAMED, 'np00', false);
-        $params = array_merge($params, $params2);
-        $params['siteid'] = SITEID;
+        $params = array('siteid' => SITEID);
         $sql = "INSERT INTO {enrol} (enrol, status, courseid, sortorder, enrolperiod, enrolstartdate, enrolenddate, expirynotify, expirythreshold,
                                      notifyall, password, cost, currency, roleid, timecreated, timemodified)
                 SELECT DISTINCT ra.enrol, 1, c.id, 5, c.enrolperiod, c.enrolstartdate, c.enrolenddate, c.expirynotify, c.expirythreshold,
@@ -4383,7 +4383,13 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
                   FROM {course} c
                   JOIN {context} ctx ON (ctx.instanceid = c.id AND ctx.contextlevel = 50)
                   JOIN {role_assignments} ra ON (ra.contextid = ctx.id)
-                 WHERE c.id <> :siteid AND ra.enrol $sqlnotprocessed";
+                 WHERE c.id <> :siteid";
+        $processed = $DB->get_fieldset_sql("SELECT DISTINCT enrol FROM {enrol}");
+        if ($processed) {
+            list($sqlnotprocessed, $params2) = $DB->get_in_or_equal($processed, SQL_PARAMS_NAMED, 'np00', false);
+            $params = array_merge($params, $params2);
+            $sql = "$sql AND ra.enrol $sqlnotprocessed";
+        }
         $DB->execute($sql, $params);
 
         upgrade_main_savepoint($result, 2010061900.08);
