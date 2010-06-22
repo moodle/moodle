@@ -1882,6 +1882,10 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         );
         $stickyblocks = $DB->get_recordset('block_pinned_old');
         foreach ($stickyblocks as $stickyblock) {
+            // Only if the block exists (avoid orphaned sticky blocks)
+            if (!isset($blocks[$stickyblock->blockid]) || empty($blocks[$stickyblock->blockid]->name)) {
+                continue;
+            }
             $newblock = new object();
             $newblock->blockname = $blocks[$stickyblock->blockid]->name;
             $newblock->contextid = $syscontext->id;
