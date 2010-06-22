@@ -132,12 +132,6 @@ if ($isfrontpage) {
     $PAGE->set_title($title);
     $PAGE->set_pagelayout('admin');
     echo $OUTPUT->header();
-    
-    // These are because of /roles/tabs.php
-    $currenttab = 'filters';
-    $assignableroles = get_assignable_roles($context, ROLENAME_BOTH);
-    $overridableroles = get_overridable_roles($context, ROLENAME_BOTH);
-    include($CFG->dirroot . '/' . $CFG->admin . '/roles/tabs.php');
 }
 
 /// Print heading.

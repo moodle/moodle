@@ -43,7 +43,7 @@ if (!empty($return)) {
 if (!empty($add)) {
     $url->param('add', $add);
     $PAGE->set_url($url);
-    
+
     $section = required_param('section', PARAM_INT);
     $course  = required_param('course', PARAM_INT);
 
@@ -229,7 +229,7 @@ if ($mform->is_cancelled()) {
         $course = $DB->get_record('course', array('id'=>$fromform->course), '*', MUST_EXIST);
         $fromform->instance     = '';
         $fromform->coursemodule = '';
-    } else { 
+    } else {
         // Update
         $cm = get_coursemodule_from_id('', $fromform->coursemodule, 0, false, MUST_EXIST);
         $course = $DB->get_record('course', array('id'=>$cm->course), '*', MUST_EXIST);
@@ -580,14 +580,6 @@ if ($mform->is_cancelled()) {
     $PAGE->set_focuscontrol($mform->focus());
     $PAGE->set_cacheable(false);
     echo $OUTPUT->header();
-
-    if (!empty($cm->id)) {
-        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-        $overridableroles = get_overridable_roles($context);
-        $assignableroles  = get_assignable_roles($context);
-        $currenttab = 'update';
-        require($CFG->dirroot.'/'.$CFG->admin.'/roles/tabs.php');
-    }
 
     if (get_string_manager()->string_exists('modulename_help', $module->name)) {
         echo $OUTPUT->heading_with_help($pageheading, 'modulename', $module->name, 'icon');
