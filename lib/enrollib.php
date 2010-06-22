@@ -493,7 +493,7 @@ function enrol_get_users_courses($userid, $onlyactive = false, $fields = NULL, $
     global $DB;
 
     // Guest account does not have any courses
-    if (isguestuser($userid) or !empty($userid)) {
+    if (isguestuser($userid) or empty($userid)) {
         return(array());
     }
 
@@ -558,7 +558,7 @@ function enrol_get_users_courses($userid, $onlyactive = false, $fields = NULL, $
            $ccjoin
            $wheres
           $orderby";
-    $params['userid']  = $USER->id;
+    $params['userid']  = $userid;
 
     $courses = $DB->get_records_sql($sql, $params);
 
