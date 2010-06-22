@@ -29,6 +29,8 @@ require('../config.php');
 $PAGE->set_url('/user/managetoken.php');
 $PAGE->set_title(get_string('securitykeys', 'webservice'));
 $PAGE->set_heading(get_string('securitykeys', 'webservice'));
+$PAGE->set_context(get_system_context());
+$PAGE->set_pagelayout('standard');
 
 require_login();
 require_sesskey();
@@ -88,7 +90,6 @@ if (!empty($CFG->enablerssfeeds)) {
         $rsstokenboxhtml = $rssrenderer->user_rss_token_box($token); //display the box for the user's RSS token
     }
 }
-
 
 // PAGE OUTPUT
 echo $OUTPUT->header();
