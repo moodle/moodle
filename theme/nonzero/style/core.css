@@ -1,0 +1,130 @@
+/********************************************************
+**
+** Theme name: Nonzero
+** Description: A GPL theme for the Moodle core.
+** Creation Date: 06/22/10
+** Author: Patrick Malley
+** Author URI: http://newschoollearning.com
+**
+** Customize, edit, poke, prod, and adapt to your needs.
+**
+*********************************************************/
+
+/* Global
+--------------------------*/
+
+body {
+	background: #fff;
+	margin: 0;
+	padding: 0;
+	color: #281f18;
+}
+
+body,h1,h2,h3,h4,h5,h6,p,ul,ol,dl,input,textarea {
+  font-family:"Trebuchet MS", Helvetica, Arial, sans-serif;
+}
+
+.wrapper {
+	margin: 0 35px;
+}
+
+a:link,a:visited {
+  color: #27608d;
+}
+
+a:hover,a:active {
+	color: #000;
+}
+
+a img {
+	border: none;
+}
+
+a:active {
+	outline: none;
+}
+
+/* Header
+---------------------------*/
+
+#page-header {
+	background: url([[pix:theme|n1]]) repeat-x 0 100%;
+	color: #fff;
+	height: 122px;
+}
+
+#page-header h1 {
+  font-size:2.5em;
+  padding-top:70px;
+  margin: 0;
+}
+
+#page-header a:link,
+#page-header a:visited {
+	color: #fff;
+	text-decoration: underline;
+}
+
+/* Navbar
+--------------------------*/
+
+.navbar {
+	padding-top: 3px;
+}
+
+.breadcrumb .sep {
+	color: #777;
+	font-size: 0.8em;
+}
+
+/* Content
+--------------------------*/
+
+#top {
+	background:url([[pix:theme|n2]]) repeat-x 0 0;
+}
+
+/* Blocks
+---------------------------*/
+
+.block {
+	border: none;
+	margin-bottom: 25px;
+}
+
+.block .header {
+	border-bottom: 1px solid #ccc;
+	text-transform: lowercase;
+}
+
+.block .title h2 {
+	font-weight: normal;
+	font-size: 1.2em;
+	margin: 0;
+}
+
+.block .content {
+	font-size: 0.95em;
+}
+
+.
+/* Forums
+---------------------------*/
+
+.forumpost .subject {
+	font-size: 1.2em;
+}
+
+.forumpost .author {
+	font-size: 0.9em;
+}
+
+.forumpost .content {
+  border-bottom:5px solid #aaa;
+  padding:5px 7px 10px 7px;
+}
+
+.forumpost .topic {
+	background: #eee;
+	border-bottom: 1px solid #aaa;
+}
