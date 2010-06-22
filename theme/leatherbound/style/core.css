@@ -168,3 +168,119 @@ h2.headingblock {
 .course-content .section.main .content {
 	background: #fff;
 }
+
+/* Dock
+---------------------------*/
+
+#dock {
+	background-color: #f7f5f1;
+	border-right-color: #433b30;
+}
+
+#dock .dockeditem_container {
+	margin-top: 10px;
+}
+
+#dock .dockeditem {
+	background-color: #fff;
+}
+
+#dock .firstdockitem {
+	margin-top: 1em;
+}
+
+#dock .dockeditem .dockedtitle {
+	border-color: #dddddd;
+	border-top-color: #fff;
+}
+
+#dock .dockeditem .dockedtitle.activeitem {
+	background: #f7f5f1;
+	border-top-color:#f7f5f1 ;
+}
+
+#dock .firstdockitem .dockedtitle {
+	border-top-color: #ddd;	
+}
+	
+#dock .dockeditem .dockedtitle h2 {
+	margin: 12px 0 12px 7px;
+}
+
+#dockeditempanel .dockeditempanel_content {
+	border-color: #433b30;
+}
+
+#dockeditempanel .dockeditempanel_hd {
+	border-bottom: none;
+	padding: 3px 5px;
+	background: #f7f6f1;
+	text-align: left;
+}
+
+#dockeditempanel .dockeditempanel_hd h2 {
+	color: #333;
+	text-align: left;
+	font-weight: normal;
+	font-size: 1.25em;
+	padding: 0 2px;
+}
+
+#dockeditempanel .dockeditempanel_hd .commands {
+	float: right;
+}
+/* block expansion code */
+
+.block_js_expansion .block_tree {
+	overflow-x: scroll;
+}
+
+.block_js_expansion.mouseover .content {
+	width: 200%;
+	z-index: 1000;
+	position: relative;
+}
+
+.block_js_expansion.mouseover .content .block_tree {
+	width: 100%;
+	background-color: #FAFAFA;
+	padding-bottom: 0px;
+}
+
+/** IE stylings */
+
+.ie6 .block .block_tree {
+	width: 160px;
+	overflow-x: scroll;
+}
+
+.ie6 .block_tree .tree_item {
+	width: 100%;
+}
+
+.ie6 #dock {
+	position: absolute;
+}
+
+.ie6 #dock hr {
+	display: none;
+	margin: 0px;
+	height: 0px;
+	padding: 0px;
+}
+
+.ie6 #dock li p {
+	background-color: inherit;
+}
+
+.ie6 #dock .bd.oversized_content .content, .ie7 #dock .bd.oversized_content .content {
+	padding-bottom: 0px;
+}
+
+.ie6 .block_js_expansion.mouseover .content, .ie7 .block_js_expansion.mouseover .content {
+	padding-bottom: 2px;
+}
+
+.ie6 #dock .bd.oversized_content {
+	width: 100%;
+}
