@@ -65,36 +65,35 @@ if ($usercourseid !== SITEID) {
     $url->param('usercourseid', $usercourseid);
 }
 
-$PAGE->set_url($url);
-
-require_login(SITEID, false);
-
 $context = get_context_instance_by_id($contextid);
+
+$PAGE->set_url($url);
+$PAGE->set_context($context);
 
 /// Security: make sure we're allowed to do this operation
 if ($context->contextlevel == CONTEXT_COURSE) {
     $pagename = get_string("repositorycourse",'repository');
 
-    // If the user is allowed to edit this course, he's allowed to edit list of repository instances
-    require_capability('moodle/course:update',  $context);
-
     if ( !$course = $DB->get_record('course', array('id'=>$context->instanceid))) {
         print_error('invalidcourseid');
     }
+    require_login($course, false);
+    // If the user is allowed to edit this course, he's allowed to edit list of repository instances
+    require_capability('moodle/course:update',  $context);
+
 
 } else if ($context->contextlevel == CONTEXT_USER) {
+    require_login();
     $pagename = get_string("personalrepositories",'repository');
     //is the user looking at its own repository instances
     if ($USER->id != $context->instanceid){
         print_error('notyourinstances', 'repository');
     }
     $user = $USER;
-
+    $PAGE->set_pagelayout('mydashboard');
 } else {
     print_error('invalidcontext');
 }
-
-
 
 /// Security: we cannot perform any action if the type is not visible or if the context has been disabled
 if (!empty($new)){
@@ -139,10 +138,7 @@ if ($context->contextlevel == CONTEXT_USER) {
     }
 }
 
-echo $OUTPUT->heading($pagename);
-
 $return = true;
-
 if (!empty($edit) || !empty($new)) {
     if (!empty($edit)) {
         $instance = repository::get_instance($edit);
@@ -186,15 +182,13 @@ if (!empty($edit) || !empty($new)) {
         }
         if ($success) {
             $savedstr = get_string('configsaved', 'repository');
-            //echo $OUTPUT->header();
             echo $OUTPUT->heading($savedstr);
-            redirect($baseurl, $savedstr, 3);
+            redirect($baseurl);
         } else {
             print_error('instancenotsaved', 'repository', $baseurl);
         }
         exit;
     } else {     // Display the form
-        // echo $OUTPUT->header();
         echo $OUTPUT->heading(get_string('configplugin', 'repository_'.$plugin));
         $OUTPUT->box_start();
         $mform->display();

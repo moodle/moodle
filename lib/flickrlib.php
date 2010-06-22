@@ -1096,43 +1096,43 @@ class phpFlickr {
      * @return boolean
      */
 
-    function upload ($photo, $title = null, $description = null, $tags = null, $is_public = null, $is_friend = null, $is_family = null) { 	 
+    function upload ($photo, $title = null, $description = null, $tags = null, $is_public = null, $is_friend = null, $is_family = null) {
         global $SESSION;
-        $args = array("async" => 1, "api_key" => $this->api_key, "title" => $title, "description" => $description, "tags" => $tags, "is_public" => $is_public, "is_friend" => $is_friend, "is_family" => $is_family); 	 
-        if (!empty($this->email)) { 	 
-            $args = array_merge($args, array("email" => $this->email)); 	 
-        } 	 
-        if (!empty($this->password)) { 	 
-            $args = array_merge($args, array("password" => $this->password)); 	 
-        } 	 
+        $args = array("async" => 1, "api_key" => $this->api_key, "title" => $title, "description" => $description, "tags" => $tags, "is_public" => $is_public, "is_friend" => $is_friend, "is_family" => $is_family);
+        if (!empty($this->email)) {
+            $args = array_merge($args, array("email" => $this->email));
+        }
+        if (!empty($this->password)) {
+            $args = array_merge($args, array("password" => $this->password));
+        }
         // TODO:
         // should we request a token if it is not valid?
-        if (!empty($this->token)) { 	 
-            $args = array_merge($args, array("auth_token" => $this->token)); 	 
-        } 
+        if (!empty($this->token)) {
+            $args = array_merge($args, array("auth_token" => $this->token));
+        }
 
-        ksort($args); 	 
-        $auth_sig = ""; 	 
-        foreach ($args as $key => $data) { 	 
-            if ($data !== null) { 	 
-                $auth_sig .= $key . $data; 	 
+        ksort($args);
+        $auth_sig = "";
+        foreach ($args as $key => $data) {
+            if ($data !== null) {
+                $auth_sig .= $key . $data;
             } else {
                 unset($args[$key]);
-            }     
-        } 	 
-        if (!empty($this->secret)) { 	 
-            $api_sig = md5($this->secret . $auth_sig); 	 
+            }
+        }
+        if (!empty($this->secret)) {
+            $api_sig = md5($this->secret . $auth_sig);
             $args['api_sig'] = $api_sig;
-        } 	 
+        }
 
-        $photo = realpath($photo); 	 
+        $photo = realpath($photo);
         $args['photo'] = '@'.$photo;
 
-        if ($response = $this->curl->post($this->Upload, $args)) { 	 
+        if ($response = $this->curl->post($this->Upload, $args)) {
             return true;
-        } else { 	 
+        } else {
             return false;
-        } 	 
+        }
     }
 }
 ?>

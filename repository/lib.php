@@ -1272,7 +1272,7 @@ abstract class repository {
      * @param integer $readonly whether to create it readonly or not (defaults to not)
      * @return mixed
      */
-    final public static function create($type, $userid, $context, $params, $readonly=0) {
+    public static function create($type, $userid, $context, $params, $readonly=0) {
         global $CFG, $DB;
         $params = (array)$params;
         require_once($CFG->dirroot . '/repository/'. $type . '/repository.class.php');
@@ -1613,7 +1613,6 @@ abstract class repository {
             return $str;
         }
     }
-
 }
 
 /**
@@ -1642,17 +1641,7 @@ class repository_exception extends moodle_exception {
 final class repository_instance_form extends moodleform {
     protected $instance;
     protected $plugin;
-
-    public function definition() {
-        global $CFG;
-        // type of plugin, string
-        $this->plugin = $this->_customdata['plugin'];
-        $this->typeid = $this->_customdata['typeid'];
-        $this->contextid = $this->_customdata['contextid'];
-        $this->instance = (isset($this->_customdata['instance'])
-                && is_subclass_of($this->_customdata['instance'], 'repository'))
-            ? $this->_customdata['instance'] : null;
-
+    protected function add_defaults() {
         $mform =& $this->_form;
         $strrequired = get_string('required');
 
@@ -1669,17 +1658,35 @@ final class repository_instance_form extends moodleform {
 
         $mform->addElement('text', 'name', get_string('name'), 'maxlength="100" size="30"');
         $mform->addRule('name', $strrequired, 'required', null, 'client');
+    }
 
+    public function definition() {
+        global $CFG;
+        // type of plugin, string
+        $this->plugin = $this->_customdata['plugin'];
+        $this->typeid = $this->_customdata['typeid'];
+        $this->contextid = $this->_customdata['contextid'];
+        $this->instance = (isset($this->_customdata['instance'])
+                && is_subclass_of($this->_customdata['instance'], 'repository'))
+            ? $this->_customdata['instance'] : null;
 
+        $mform =& $this->_form;
+
+        $this->add_defaults();
         //add fields
         if (!$this->instance) {
             $result = repository::static_function($this->plugin, 'instance_config_form', $mform);
-        }
-        else {
+            if ($result === false) {
+                $mform->removeElement('name');
+            }
+        } else {
             $data = array();
             $data['name'] = $this->instance->name;
             if (!$this->instance->readonly) {
                 $result = $this->instance->instance_config_form($mform);
+                if ($result === false) {
+                    $mform->removeElement('name');
+                }
                 // and set the data if we have some.
                 foreach ($this->instance->get_instance_option_names() as $config) {
                     if (!empty($this->instance->options[$config])) {
@@ -1692,7 +1699,11 @@ final class repository_instance_form extends moodleform {
             $this->set_data($data);
         }
 
-        $this->add_action_buttons(true, get_string('save','repository'));
+        if ($result === false) {
+            $mform->addElement('cancel');
+        } else {
+            $this->add_action_buttons(true, get_string('save','repository'));
+        }
     }
 
     public function validation($data) {

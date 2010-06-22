@@ -18,8 +18,8 @@
 /**
  * repository_flickr_public class
  * This one is used to create public repository
- * You can set up a public account in admin page, so everyone can
- * access photos in this public account
+ * You can set up a public account in admin page, so everyone can access
+ * flickr photos from this plugin
  *
  * @since 2.0
  * @package moodlecore
@@ -34,6 +34,42 @@ require_once($CFG->libdir.'/flickrlib.php');
 class repository_flickr_public extends repository {
     private $flickr;
     public $photos;
+
+    /**
+     * constructor method
+     *
+     * @global object $CFG
+     * @global object $SESSION
+     * @param int $repositoryid
+     * @param int $context
+     * @param array $options
+     * @param boolean $readonly
+     */
+    public function __construct($repositoryid, $context = SYSCONTEXTID, $options = array(), $readonly=0) {
+        global $CFG, $SESSION;
+        parent::__construct($repositoryid, $context, $options,$readonly);
+        $this->api_key = $this->get_option('api_key');
+        $this->flickr  = new phpFlickr($this->api_key);
+        $this->flickr_account = $this->get_option('email_address');
+
+        $account  = optional_param('flickr_account', '', PARAM_RAW);
+        $fulltext = optional_param('flickr_fulltext', '', PARAM_RAW);
+        if (empty($fulltext)) {
+            $fulltext = optional_param('s', '', PARAM_RAW);
+        }
+        $tag      = optional_param('flickr_tag', '', PARAM_RAW);
+        $license  = optional_param('flickr_license', '', PARAM_RAW);
+
+        $this->sess_account = 'flickr_public_'.$this->id.'_account';
+        $this->sess_tag     = 'flickr_public_'.$this->id.'_tag';
+        $this->sess_text    = 'flickr_public_'.$this->id.'_text';
+
+        if (!empty($account) or !empty($fulltext) or !empty($tag) or !empty($license)) {
+            $SESSION->{$this->sess_tag}  = $tag;
+            $SESSION->{$this->sess_text} = $fulltext;
+            $SESSION->{$this->sess_account} = $account;
+        }
+    }
 
     /**
      * save api_key in config table
@@ -77,43 +113,7 @@ class repository_flickr_public extends repository {
     }
 
     /**
-     * constructor method
-     *
-     * @global object $CFG
-     * @global object $SESSION
-     * @param int $repositoryid
-     * @param int $context
-     * @param array $options
-     * @param boolean $readonly
-     */
-    public function __construct($repositoryid, $context = SYSCONTEXTID, $options = array(), $readonly=0) {
-        global $CFG, $SESSION;
-        parent::__construct($repositoryid, $context, $options,$readonly);
-        $this->api_key = $this->get_option('api_key');
-        $this->flickr  = new phpFlickr($this->api_key);
-        $this->flickr_account = $this->get_option('email_address');
-
-        $account  = optional_param('flickr_account', '', PARAM_RAW);
-        $fulltext = optional_param('flickr_fulltext', '', PARAM_RAW);
-        if (empty($fulltext)) {
-            $fulltext = optional_param('s', '', PARAM_RAW);
-        }
-        $tag      = optional_param('flickr_tag', '', PARAM_RAW);
-        $license  = optional_param('flickr_license', '', PARAM_RAW);
-
-        $this->sess_account = 'flickr_public_'.$this->id.'_account';
-        $this->sess_tag     = 'flickr_public_'.$this->id.'_tag';
-        $this->sess_text    = 'flickr_public_'.$this->id.'_text';
-
-        if (!empty($account) or !empty($fulltext) or !empty($tag) or !empty($license)) {
-            $SESSION->{$this->sess_tag}  = $tag;
-            $SESSION->{$this->sess_text} = $fulltext;
-            $SESSION->{$this->sess_account} = $account;
-        }
-    }
-
-    /**
-     * check flickr account
+     * check if flickr account
      * @return boolean
      */
     public function check_login() {
@@ -469,7 +469,7 @@ class repository_flickr_public extends repository {
 
     /**
      * Names of the plugin settings
-     * @return array 
+     * @return array
      */
     public static function get_type_option_names() {
         return array('api_key');

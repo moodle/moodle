@@ -33,7 +33,7 @@ class repository_wikimedia extends repository {
     public function __construct($repositoryid, $context = SYSCONTEXTID, $options = array()) {
         parent::__construct($repositoryid, $context, $options);
         $this->keyword = optional_param('wikimedia_keyword', '', PARAM_RAW);
-        if (empty($this->keyword)) {   
+        if (empty($this->keyword)) {
             $this->keyword = optional_param('s', '', PARAM_RAW);
         }
     }

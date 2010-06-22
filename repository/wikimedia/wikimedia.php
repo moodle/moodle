@@ -21,7 +21,7 @@
  *
  * @author Dongsheng Cai <dongsheng@moodle.com>, Raul Kern <raunator@gmail.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
-*/
+ */
 
 define('WIKIMEDIA_THUMBS_PER_PAGE', 24);
 define('WIKIMEDIA_FILE_NS', 6);
@@ -30,10 +30,12 @@ define('WIKIMEDIA_IMAGE_SIDE_LENGTH', 1024);
 class wikimedia {
     private $_conn  = null;
     private $_param = array();
-    
+
     public function __construct($url = '') {
         if (empty($url)) {
             $this->api = 'http://commons.wikimedia.org/w/api.php';
+        } else {
+            $this->api = $url;
         }
         $this->_param['format'] = 'php';
         $this->_param['redirects'] = true;
@@ -108,7 +110,7 @@ class wikimedia {
      */
     public function get_thumb_url($image_url, $orig_width, $orig_height, $thumb_width=75) {
         global $OUTPUT;
-    
+
         if ($orig_width <= $thumb_width AND $orig_height <= $thumb_width) {
             return $image_url;
         } else {
@@ -116,7 +118,7 @@ class wikimedia {
             $commons_main_dir = 'http://upload.wikimedia.org/wikipedia/commons/';
             if ($image_url) {
                 $short_path = str_replace($commons_main_dir, '', $image_url);
-                $extension = pathinfo($short_path, PATHINFO_EXTENSION); 
+                $extension = pathinfo($short_path, PATHINFO_EXTENSION);
                 if (strcmp($extension, 'gif') == 0) {  //no thumb for gifs
                     return $OUTPUT->pix_url(file_extension_icon('xx.jpg', 32));
                 }

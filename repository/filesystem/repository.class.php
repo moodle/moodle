@@ -150,30 +150,44 @@ class repository_filesystem extends repository {
         return $ret;
     }
     public function instance_config_form($mform) {
-        global $CFG;
-        $path = $CFG->dataroot . '/repository/';
-        if (!is_dir($path)) {
-            mkdir($path);
-        }
-        if ($handle = opendir($path)) {
-            $fieldname = get_string('path', 'repository_filesystem');
-            $choices = array();
-            while (false !== ($file = readdir($handle))) {
-                if (is_dir($path.$file) && $file != '.' && $file!= '..') {
-                    $choices[$file] = $file;
-                    $fieldname = '';
+        global $CFG, $PAGE;
+        if (has_capability('moodle/site:config', $PAGE->context)) {
+            $path = $CFG->dataroot . '/repository/';
+            if (!is_dir($path)) {
+                mkdir($path);
+            }
+            if ($handle = opendir($path)) {
+                $fieldname = get_string('path', 'repository_filesystem');
+                $choices = array();
+                while (false !== ($file = readdir($handle))) {
+                    if (is_dir($path.$file) && $file != '.' && $file!= '..') {
+                        $choices[$file] = $file;
+                        $fieldname = '';
+                    }
                 }
+                if (empty($choices)) {
+                    $mform->addElement('static', '', '', get_string('nosubdir', 'repository_filesystem', $path));
+                } else {
+                    $mform->addElement('select', 'fs_path', $fieldname, $choices);
+                    $mform->addElement('static', null, '',  get_string('information','repository_filesystem', $path));
+                }
+                closedir($handle);
             }
-            if (empty($choices)) {
-                $mform->addElement('static', '', '', get_string('nosubdir', 'repository_filesystem', $path));
-            } else {
-                $mform->addElement('select', 'fs_path', $fieldname, $choices);
-                $mform->addElement('static', null, '',  get_string('information','repository_filesystem', $path));
-            }
-            closedir($handle);
+        } else {
+            $mform->addElement('static', null, '',  get_string('nopermissions', 'error', get_string('configplugin', 'repository_filesystem')));
+            return false;
         }
     }
     public function supported_returntypes() {
         return FILE_INTERNAL;
+    }
+    public static function create($type, $userid, $context, $params, $readonly=0) {
+        global $PAGE;
+        if (has_capability('moodle/site:config', $PAGE->context)) {
+            return parent::create($type, $userid, $context, $params, $readonly);
+        } else {
+            require_capability('moodle/site:config', $PAGE->context);
+            return false;
+        }
     }
 }
