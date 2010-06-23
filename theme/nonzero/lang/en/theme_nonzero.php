@@ -26,4 +26,4 @@
 $string['pluginname'] = 'Nonzero';
 $string['region-side-post'] = 'Right';
 $string['region-side-pre'] = 'Left';
-$string['choosereadme'] = 'Nonzero, a Moodle 2.0 theme developed by Patrick Malley (<a href="http://newschoollearning.com/">newschoollearning.com</a>). Credit for the original design of this theme belongs to <a href="http://nodethirtythree.com/">NodeThirtyThree</a>;
+$string['choosereadme'] = 'Nonzero, a Moodle 2.0 theme developed by Patrick Malley (<a href="http://newschoollearning.com/">newschoollearning.com</a>). Credit for the original design of this theme belongs to <a href="http://nodethirtythree.com/">NodeThirtyThree</a>';
