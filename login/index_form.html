@@ -7,6 +7,11 @@ if ($show_instructions) {
 ?>
 <div class="loginbox clearfix <?php echo $columns ?>">
   <div class="loginpanel">
+<?php
+  if (($CFG->registerauth == 'email') || !empty($CFG->registerauth)) { ?>
+      <div class="skiplinks"><a class="skip" href="signup.php"><?php print_string("tocreatenewaccount"); ?></a></div>
+<?php
+  } ?>       
     <h2><?php print_string("returningtosite") ?></h2>
       <div class="subcontent loginsub">
         <div class="desc">
