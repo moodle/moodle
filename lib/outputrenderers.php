@@ -588,7 +588,7 @@ class core_renderer extends renderer_base {
         $this->opencontainers->push('header/footer', $footer);
         $this->page->set_state(moodle_page::STATE_IN_BODY);
 
-        return $header . $this->skip_link_target();
+        return $header . $this->skip_link_target('maincontent');
     }
 
     /**
@@ -2166,7 +2166,7 @@ NONJS;
             }
             $this->page->set_url('/'); // no url
             //$this->page->set_pagelayout('base'); //TODO: MDL-20676 blocks on error pages are weird, unfortunately it somehow detect the pagelayout from URL :-(
-            $this->page->set_title(get_string('error'));
+            $this->page->set_title(get_string('error'));            
             $output .= $this->header();
         }
 
