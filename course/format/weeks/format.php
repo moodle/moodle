@@ -62,6 +62,7 @@
 
     echo $OUTPUT->heading(get_string('weeklyoutline'), 2, 'headingblock header outline');
 
+    echo "<span id='maincontent'></span>";
     // Note, an ordered list would confuse - "1" could be the clipboard or summary.
     echo "<ul class='weeks'>\n";
 
@@ -107,7 +108,7 @@
         echo '</div>';
 
         print_section($course, $thissection, $mods, $modnamesused);
-
+         
         if ($PAGE->user_is_editing()) {
             print_section_add_menus($course, $section, $modnames);
         }
@@ -236,7 +237,7 @@
                 echo '</div>';
 
                 print_section($course, $thissection, $mods, $modnamesused);
-
+                
                 if ($PAGE->user_is_editing()) {
                     print_section_add_menus($course, $section, $modnames);
                 }

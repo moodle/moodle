@@ -72,6 +72,7 @@ $completioninfo->print_help_icon();
 
 echo $OUTPUT->heading(get_string('topicoutline'), 2, 'headingblock header outline');
 
+echo "<span id='maincontent'></span>";
 // Note, an ordered list would confuse - "1" could be the clipboard or summary.
 echo "<ul class='topics'>\n";
 
