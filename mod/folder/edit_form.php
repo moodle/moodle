@@ -30,6 +30,6 @@ class mod_folder_edit_form extends moodleform {
         $mform->addElement('hidden', 'id', $cmid);
         $mform->addElement('filemanager', 'files_filemanager', get_string('files'), null, array('subdirs'=>1, 'accepted_types'=>'*', 'return_types'=>FILE_INTERNAL));
         $submit_string = get_string('submit');
-        $this->add_action_buttons(false, $submit_string);
+        $this->add_action_buttons(true, $submit_string);
     }
 }
