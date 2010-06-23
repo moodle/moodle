@@ -91,7 +91,7 @@
     echo $OUTPUT->header();
 
 /// Print Section
-    if ($SITE->numsections > 0) {
+    if ($SITE->numsections > 0) { 
 
         if (!$section = $DB->get_record('course_sections', array('course'=>$SITE->id, 'section'=>1))) {
             $DB->delete_records('course_sections', array('course'=>$SITE->id, 'section'=>1)); // Just in case
@@ -104,7 +104,7 @@
             $section->id = $DB->insert_record('course_sections', $section);
         }
 
-        if (!empty($section->sequence) or !empty($section->summary) or $editing) {
+        if (!empty($section->sequence) or !empty($section->summary) or $editing) { 
             echo $OUTPUT->box_start('generalbox sitetopic');
 
             /// If currently moving a file then show the current clipboard
@@ -139,13 +139,13 @@
         }
     }
 
-    if (isloggedin() and !isguestuser() and isset($CFG->frontpageloggedin)) {
+    if (isloggedin() and !isguestuser() and isset($CFG->frontpageloggedin)) { 
         $frontpagelayout = $CFG->frontpageloggedin;
     } else {
         $frontpagelayout = $CFG->frontpage;
     }
 
-    foreach (explode(',',$frontpagelayout) as $v) {
+    foreach (explode(',',$frontpagelayout) as $v) {  
         switch ($v) {     /// Display the main part of the front page.
             case FRONTPAGENEWS:
                 if ($SITE->newsitems) { // Print forums only when needed
@@ -154,6 +154,7 @@
                     if (! $newsforum = forum_get_course_forum($SITE->id, 'news')) {
                         print_error('cannotfindorcreateforum', 'forum');
                     }
+                    echo html_writer::tag('a', get_string('skipa', 'access', moodle_strtolower($newsforum->name)), array('href'=>'#skipsitenews', 'class'=>'skip-block'));
 
                     if (isloggedin()) {
                         $SESSION->fromdiscussion = $CFG->wwwroot;
@@ -172,35 +173,42 @@
                     }
 
                     forum_print_latest_discussions($SITE, $newsforum, $SITE->newsitems, 'plain', 'p.modified DESC');
+                    echo html_writer::tag('span', '', array('class'=>'skip-block-to', 'id'=>'skipsitenews'));
                 }
             break;
 
-            case FRONTPAGECOURSELIST:
-
+            case FRONTPAGECOURSELIST:                
                 if (isloggedin() and !has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM)) and !isguestuser() and empty($CFG->disablemycourses)) {
+                    echo html_writer::tag('a', get_string('skipa', 'access', moodle_strtolower(get_string('mycourses'))), array('href'=>'#skipmycourses', 'class'=>'skip-block'));
                     echo $OUTPUT->heading(get_string('mycourses'), 2, 'headingblock header');
                     print_my_moodle();
+                    echo html_writer::tag('span', '', array('class'=>'skip-block-to', 'id'=>'skipmycourses'));
                 } else if ((!has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM)) and !isguestuser()) or ($DB->count_records('course') <= FRONTPAGECOURSELIMIT)) {
                     // admin should not see list of courses when there are too many of them
+                    echo html_writer::tag('a', get_string('skipa', 'access', moodle_strtolower(get_string('availablecourses'))), array('href'=>'#skipavailablecourses', 'class'=>'skip-block'));
                     echo $OUTPUT->heading(get_string('availablecourses'), 2, 'headingblock header');
                     print_courses(0);
-                }
+                    echo html_writer::tag('span', '', array('class'=>'skip-block-to', 'id'=>'skipavailablecourses'));
+                }                
             break;
 
             case FRONTPAGECATEGORYNAMES:
-
+                echo html_writer::tag('a', get_string('skipa', 'access', moodle_strtolower(get_string('categories'))), array('href'=>'#skipcategories', 'class'=>'skip-block'));
                 echo $OUTPUT->heading(get_string('categories'), 2, 'headingblock header');
                 echo $OUTPUT->box_start('generalbox categorybox');
                 print_whole_category_list(NULL, NULL, NULL, -1, false);
                 echo $OUTPUT->box_end();
                 print_course_search('', false, 'short');
+                echo html_writer::tag('span', '', array('class'=>'skip-block-to', 'id'=>'skipcategories'));
             break;
 
             case FRONTPAGECATEGORYCOMBO:
-                echo $OUTPUT->heading(get_string('categories'), 2, 'headingblock header');
+                echo html_writer::tag('a', get_string('skipa', 'access', moodle_strtolower(get_string('courses'))), array('href'=>'#skipcourses', 'class'=>'skip-block'));
+                echo $OUTPUT->heading(get_string('courses'), 2, 'headingblock header');
                 $renderer = $PAGE->get_renderer('core','course');
                 echo $renderer->course_category_tree(get_course_category_tree());
                 print_course_search('', false, 'short');
+                echo html_writer::tag('span', '', array('class'=>'skip-block-to', 'id'=>'skipcourses'));
             break;
 
             case FRONTPAGETOPICONLY:    // Do nothing!!  :-)
