@@ -1,5 +1,6 @@
 <?php
 require_once($CFG->libdir.'/formslib.php');
+require_once($CFG->libdir . '/portfoliolib.php');
 require_once($CFG->dirroot . '/mod/assignment/lib.php');
 /**
  * Extend the base assignment class for assignments where you upload a single file
@@ -128,8 +129,13 @@ class assignment_online extends assignment_base {
             }
             echo $OUTPUT->box_end();
             if (!$editmode && $editable) {
+                if (!empty($submission)) {
+                    $submitbutton = "editmysubmission";
+                } else {
+                    $submitbutton = "addsubmission";
+                }
                 echo "<div style='text-align:center'>";
-                echo $OUTPUT->single_button(new moodle_url('view.php', array('id'=>$this->cm->id, 'edit'=>'1')), get_string('editmysubmission', 'assignment'));
+                echo $OUTPUT->single_button(new moodle_url('view.php', array('id'=>$this->cm->id, 'edit'=>'1')), get_string($submitbutton, 'assignment'));
                 echo "</div>";
             }
 

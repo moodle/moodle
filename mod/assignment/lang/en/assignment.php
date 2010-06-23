@@ -72,6 +72,7 @@ $string['duedate'] = 'Due date';
 $string['duedateno'] = 'No due date';
 $string['early'] = '{$a} early';
 $string['editmysubmission'] = 'Edit my submission';
+$string['addsubmission'] = 'Add submission';
 $string['emailstudents'] = 'Email alerts to students';
 $string['emailteachermail'] = '{$a->username} has updated their assignment submission
 for \'{$a->assignment}\'
