@@ -127,8 +127,7 @@ function useredit_shared_definition(&$mform, $editoroptions = null) {
     $choices['0'] = get_string('textformat');
     $choices['1'] = get_string('htmlformat');
     $mform->addElement('select', 'mailformat', get_string('emailformat'), $choices);
-    $mform->setDefault('mailformat', 1);
-    $mform->setAdvanced('mailformat');
+    $mform->setDefault('mailformat', 1);    
 
     if (!empty($CFG->allowusermailcharset)) {
         $choices = array();
@@ -139,8 +138,7 @@ function useredit_shared_definition(&$mform, $editoroptions = null) {
             $choices['0'] = get_string('site').' (UTF-8)';
         }
         $choices = array_merge($choices, $charsets);
-        $mform->addElement('select', 'preference_mailcharset', get_string('emailcharset'), $choices);
-        $mform->setAdvanced('preference_mailcharset');
+        $mform->addElement('select', 'preference_mailcharset', get_string('emailcharset'), $choices);        
     }
 
     $choices = array();
@@ -149,14 +147,12 @@ function useredit_shared_definition(&$mform, $editoroptions = null) {
     $choices['2'] = get_string('emaildigestsubjects');
     $mform->addElement('select', 'maildigest', get_string('emaildigest'), $choices);
     $mform->setDefault('maildigest', 0);
-    $mform->setAdvanced('maildigest');
 
     $choices = array();
     $choices['1'] = get_string('autosubscribeyes');
     $choices['0'] = get_string('autosubscribeno');
     $mform->addElement('select', 'autosubscribe', get_string('autosubscribe'), $choices);
     $mform->setDefault('autosubscribe', 1);
-    $mform->setAdvanced('autosubscribe');
 
     if (!empty($CFG->forum_trackreadposts)) {
         $choices = array();
@@ -164,7 +160,6 @@ function useredit_shared_definition(&$mform, $editoroptions = null) {
         $choices['1'] = get_string('trackforumsyes');
         $mform->addElement('select', 'trackforums', get_string('trackforums'), $choices);
         $mform->setDefault('trackforums', 0);
-        $mform->setAdvanced('trackforums');
     }
 /* TODO: reimplement editor preferences
     if (!empty($CFG->htmleditor)) {
@@ -173,19 +168,16 @@ function useredit_shared_definition(&$mform, $editoroptions = null) {
         $choices['1'] = get_string('htmleditor');
         $mform->addElement('select', 'htmleditor', get_string('textediting'), $choices);
         $mform->setDefault('htmleditor', 1);
-        $mform->setAdvanced('htmleditor');
     }
 */
     if (empty($CFG->enableajax)) {
         $mform->addElement('static', 'ajaxdisabled', get_string('ajaxuse'), get_string('ajaxno'));
-        $mform->setAdvanced('ajaxdisabled');
     } else {
         $choices = array();
         $choices['0'] = get_string('ajaxno');
         $choices['1'] = get_string('ajaxyes');
         $mform->addElement('select', 'ajax', get_string('ajaxuse'), $choices);
         $mform->setDefault('ajax', 0);
-        $mform->setAdvanced('ajax');
     }
 
     $choices = array();
@@ -193,7 +185,6 @@ function useredit_shared_definition(&$mform, $editoroptions = null) {
     $choices['1'] = get_string('screenreaderyes');
     $mform->addElement('select', 'screenreader', get_string('screenreaderuse'), $choices);
     $mform->setDefault('screenreader', 0);
-    $mform->setAdvanced('screenreader');
 
     $mform->addElement('text', 'city', get_string('city'), 'maxlength="20" size="21"');
     $mform->setType('city', PARAM_MULTILANG);
@@ -229,8 +220,7 @@ function useredit_shared_definition(&$mform, $editoroptions = null) {
                 $choices[$key] = $theme->name;
             }
         }
-        $mform->addElement('select', 'theme', get_string('preferredtheme'), $choices);
-        $mform->setAdvanced('theme');
+        $mform->addElement('select', 'theme', get_string('preferredtheme'), $choices);        
     }
 
     $mform->addElement('editor', 'description_editor', get_string('userdescription'), null, $editoroptions);
@@ -260,8 +250,7 @@ function useredit_shared_definition(&$mform, $editoroptions = null) {
     }
 
     /// Moodle optional fields
-    $mform->addElement('header', 'moodle_optional', get_string('optional', 'form'));
-    $mform->setAdvanced('moodle_optional');
+    $mform->addElement('header', 'moodle_optional', get_string('optional', 'form'));   
 
     $mform->addElement('text', 'url', get_string('webpage'), 'maxlength="255" size="50"');
     $mform->setType('url', PARAM_URL);
