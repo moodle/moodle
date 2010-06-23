@@ -7264,12 +7264,12 @@ function check_php_version($version='5.2.4') {
 
       case 'Camino':   /// Mozilla Firefox browsers
 
-              if (preg_match("/Camino\/([0-9\.]+)/i", $agent, $match)) {
-                  if (version_compare($match[1], $version) >= 0) {
-                      return true;
-                  }
+          if (preg_match("/Camino\/([0-9\.]+)/i", $agent, $match)) {
+              if (version_compare($match[1], $version) >= 0) {
+                  return true;
               }
-              break;
+          }
+          break;
 
 
       case 'Firefox':   /// Mozilla Firefox browsers
@@ -7342,6 +7342,15 @@ function check_php_version($version='5.2.4') {
               }
           }
 
+          break;
+
+      case 'Safari iOS':  /// Safari on iPhone and iPad
+          if (strpos($agent, 'iPhone')) {
+              return true;
+          }
+          if (strpos($agent, 'iPad')) {
+              return true;
+          }
           break;
 
     }

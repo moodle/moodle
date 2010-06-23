@@ -30,13 +30,15 @@ class tinymce_texteditor extends texteditor {
             return true;
         } else if (check_browser_version('Gecko', 20030516)) {
             return true;
+        } else if (check_browser_version('Safari iOS')) {
+            return false;
         } else if (check_browser_version('Safari', 3)) {
             return true;
         } else if (check_browser_version('Opera', 9)) {
             return true;
         }
 
-        return true;
+        return false;
     }
 
     public function get_supported_formats() {
