@@ -377,10 +377,15 @@ class grade_edit_tree {
         }
     }
 
-    //Trim's trailing zeros. Used on the 'categories and items' page for grade items settings like aggregation co-efficient
+    //Trim's trailing zeros
+    //Used on the 'categories and items' page for grade items settings like aggregation co-efficient
     //Grader report has its own decimal place settings so they are handled elsewhere
     function format_number($number) {
-        return rtrim(rtrim(format_float($number, 4),'0'),'.');
+        $formatted = rtrim(format_float($number, 4),'0');
+        if (substr($formatted, -1)=='.') { //if last char is the decimal point
+            $formatted .= '0';
+        }
+        return $formatted;
     }
 
     /**
