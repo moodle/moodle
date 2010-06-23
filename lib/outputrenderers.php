@@ -2167,6 +2167,7 @@ NONJS;
             $this->page->set_url('/'); // no url
             //$this->page->set_pagelayout('base'); //TODO: MDL-20676 blocks on error pages are weird, unfortunately it somehow detect the pagelayout from URL :-(
             $this->page->set_title(get_string('error'));
+            $this->page->set_heading($this->page->course->fullname);
             $output .= $this->header();
         }
 
