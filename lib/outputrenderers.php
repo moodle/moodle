@@ -2166,7 +2166,7 @@ NONJS;
             }
             $this->page->set_url('/'); // no url
             //$this->page->set_pagelayout('base'); //TODO: MDL-20676 blocks on error pages are weird, unfortunately it somehow detect the pagelayout from URL :-(
-            $this->page->set_title(get_string('error'));            
+            $this->page->set_title(get_string('error'));
             $output .= $this->header();
         }
 
@@ -2456,8 +2456,11 @@ NONJS;
             $htmlblocks[] = $content;
         }
 
+        //accessibility: heading for navbar list  (MDL-20446)
+        $navbarcontent = html_writer::tag('span', get_string('pagepath'), array('class'=>'accesshide'));
+        $navbarcontent .= html_writer::tag('ul', join('', $htmlblocks));
         // XHTML
-        return html_writer::tag('ul', join('', $htmlblocks));
+        return $navbarcontent;
     }
 
     protected function render_navigation_node(navigation_node $item) {
