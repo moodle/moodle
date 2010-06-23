@@ -25,6 +25,7 @@
 
 require('../../config.php');
 require_once("$CFG->dirroot/mod/imscp/locallib.php");
+require_once($CFG->libdir . '/completionlib.php');
 
 $id = optional_param('id', 0, PARAM_INT);  // Course module ID
 $i  = optional_param('i', 0, PARAM_INT);   // IMS CP instance id
