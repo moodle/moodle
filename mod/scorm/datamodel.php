@@ -1,6 +1,6 @@
 <?php
     require_once('../../config.php');
-    require_once('locallib.php');
+    require_once($CFG->dirroot.'/mod/scorm/locallib.php');
         
     $id = optional_param('id', '', PARAM_INT);       // Course Module ID, or
     $a = optional_param('a', '', PARAM_INT);         // scorm ID
@@ -45,7 +45,7 @@
                 }
                 if (substr($element,0,15) == 'adl.nav.request') {
                     // SCORM 2004 Sequencing Request
-                    require_once('datamodels/sequencinglib.php');
+                    require_once($CFG->dirroot.'/mod/scorm/datamodels/sequencinglib.php');
 
                     $search = array('@continue@', '@previous@', '@\{target=(\S+)\}choice@', '@exit@', '@exitAll@', '@abandon@', '@abandonAll@');
                     $replace = array('continue_', 'previous_', '\1', 'exit_', 'exitall_', 'abandon_', 'abandonall');

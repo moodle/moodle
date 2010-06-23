@@ -169,7 +169,7 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
                             $previd = $sco->id;
                         }
                     }
-                    require_once('sequencinglib.php');
+                    require_once($CFG->dirroot.'/mod/scorm/datamodels/sequencinglib.php');
                     if (scorm_seq_evaluate($sco->id,$usertracks)) {
                         if ($sco->id == $scoid) {
                             $result->prerequisites = true;

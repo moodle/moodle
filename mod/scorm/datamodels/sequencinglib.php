@@ -1,5 +1,5 @@
 <?php // $Id$
-require ('scormlib.php');
+require ($CFG->dirroot.'/mod/scorm/datamodels/scormlib.php');
 
 function scorm_seq_evaluate($scoid,$usertracks) {
     return true;

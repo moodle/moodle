@@ -297,6 +297,7 @@ function scorm_get_scoes($id,$organisation=false) {
 }
 
 function scorm_insert_track($userid,$scormid,$scoid,$attempt,$element,$value) {
+    global $CFG;
     $id = null;
     if ($track = get_record_select('scorm_scoes_track',"userid='$userid' AND scormid='$scormid' AND scoid='$scoid' AND attempt='$attempt' AND element='$element'")) {
         if ($element != 'x.start.time' ) { //don't update x.start.time - keep the original value.
@@ -319,7 +320,7 @@ function scorm_insert_track($userid,$scormid,$scoid,$attempt,$element,$value) {
         (($element == 'cmi.core.lesson_status' || $element == 'cmi.completion_status') && ($track->value == 'completed' || $track->value == 'passed'))) {
         $scorm = get_record('scorm', 'id', $scormid);
         $grademethod = $scorm->grademethod % 10;
-        include_once('lib.php');
+        include_once($CFG->dirroot.'/mod/scorm/lib.php');
         scorm_update_grades($scorm, $userid);
     }
 
