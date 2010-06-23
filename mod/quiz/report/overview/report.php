@@ -133,7 +133,7 @@ class quiz_report extends quiz_default_report {
             require_capability('mod/quiz:deleteattempts', $context);
             foreach ($attemptids as $attemptid) {
                 $attempt = get_record('quiz_attempts', 'id', $attemptid);
-                if ($groupstudents && !in_array($attempt->userid, $groupstudents)) {
+                if ($groupstudents && !array_key_exists($attempt->userid, $groupstudents)) {
                     continue;
                 }
                 add_to_log($course->id, 'quiz', 'delete attempt', 'report.php?id=' . $cm->id,
