@@ -56,7 +56,7 @@ function limited_load_section_social(&$navigation, $keys, $course, $section) {
  *
  * @return bool Returns true
  */
-function callback_topics_uses_sections() {
+function callback_social_uses_sections() {
     return false;
 }
 
