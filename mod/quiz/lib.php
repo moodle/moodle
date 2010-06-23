@@ -713,6 +713,9 @@ function quiz_print_recent_mod_activity($activity, $courseid, $detail, $modnames
  * @param object $quiz The variables set on the form.
  */
 function quiz_process_options(&$quiz) {
+    global $CFG;
+    require_once($CFG->libdir . '/questionlib.php');
+
     $quiz->timemodified = time();
 
     // Quiz open time.
