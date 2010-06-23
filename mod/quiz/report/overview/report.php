@@ -622,7 +622,7 @@ class quiz_overview_report extends quiz_default_report {
         global $DB, $COURSE;
         foreach($attemptids as $attemptid) {
             $attempt = $DB->get_record('quiz_attempts', array('id' => $attemptid));
-            if ($groupstudents && !in_array($attempt->userid, $groupstudents)) {
+            if ($groupstudents && !array_key_exists($attempt->userid, $groupstudents)) {
                 continue;
             }
             add_to_log($COURSE->id, 'quiz', 'delete attempt', 'report.php?id=' . $cm->id,
