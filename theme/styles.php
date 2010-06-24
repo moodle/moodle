@@ -78,7 +78,7 @@ $theme = theme_config::load($themename);
 
 if ($type === 'editor') {
     $css = $theme->editor_css_content();
-    store_css($candidatesheet, $css);
+    store_css($theme, $candidatesheet, $css);
 } else {
     $css = $theme->css_files();
     $allfiles = array();
