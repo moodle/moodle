@@ -198,14 +198,22 @@ function SCORMapi1_2() {
                     if (<?php echo $scorm->auto ?> == 1) {
                         setTimeout('top.document.location=top.next;',500);
                     }
-                }    
+                }
+               <?php
+                    if (debugging('',DEBUG_DEVELOPER)) {
+                        echo 'LogAPICall("LMSFinish", "AJAXResult", result, 0);';
+                    }
+                ?>
+                result = ('true' == result) ? 'true' : 'false';
+                errorCode = (result == 'true')? '0' : '101';
                 <?php 
                     if (debugging('',DEBUG_DEVELOPER)) {
                         //echo 'alert("Finished SCORM 1.2");';
+                        echo 'LogAPICall("LMSFinish", "result", result, 0);';
                         echo 'LogAPICall("LMSFinish", param, "", 0);';
                     }
                 ?>
-                return "true";
+                return result;
             } else {
                 errorCode = "301";
             }
