@@ -148,8 +148,8 @@ require_once($CFG->libdir.'/environmentlib.php');
 $databases = array('mysqli' => moodle_database::get_driver_instance('mysqli', 'native'),
                    'pgsql'  => moodle_database::get_driver_instance('pgsql',  'native'),
                    'oci'    => moodle_database::get_driver_instance('oci',    'native'),
-                   //'sqlsrv' => moodle_database::get_driver_instance('sqlsrv', 'native'), // new MS sql driver - win32 only
-                   //'mssql'  => moodle_database::get_driver_instance('mssql',  'native'), // FreeTDS driver
+                   'sqlsrv' => moodle_database::get_driver_instance('sqlsrv', 'native'), // MS SQL*Server PHP driver
+                   'mssql'  => moodle_database::get_driver_instance('mssql',  'native'), // FreeTDS driver
                   );
 foreach ($databases as $type=>$database) {
     if ($database->driver_installed() !== true) {
