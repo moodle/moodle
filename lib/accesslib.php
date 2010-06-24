@@ -2736,7 +2736,7 @@ function is_guest($context, $user = NULL) {
 
 
 /**
- * Returns true if user has course:inspect capability in course,
+ * Returns true if the user has moodle/course:view capability in the course,
  * this is intended for admins, managers (aka small admins), inspectors, etc.
  *
  * @param object $context
