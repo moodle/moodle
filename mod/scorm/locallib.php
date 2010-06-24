@@ -90,8 +90,9 @@ function scorm_get_hidetoc_array(){
  */
 function scorm_get_updatefreq_array(){
     return array(0 => get_string('never'),
-                 1 => get_string('everyday','scorm'),
-                 2 => get_string('everytime','scorm'));
+                 //1 => get_string('onchanges','scorm'),
+                 2 => get_string('everyday','scorm'),
+                 3 => get_string('everytime','scorm'));
 }
 
 /**
