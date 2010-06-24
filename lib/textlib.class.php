@@ -63,6 +63,9 @@ function textlib_get_instance() {
             $GLOBALS['TYPO3_CONF_VARS']['SYS']['t3lib_cs_utils'] = '';
         }
 
+    /// Tell Typo3 we are curl enabled always (mandatory since 2.0)
+        $GLOBALS['TYPO3_CONF_VARS']['SYS']['curlUse'] = '1';
+
     /// And this directory must exist to allow Typo to cache conversion
     /// tables when using internal functions
         make_upload_directory('temp/typo3temp/cs');
