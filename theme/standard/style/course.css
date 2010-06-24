@@ -11,7 +11,7 @@
 .coursebox .info .name {margin:3px 0;}
 .coursebox .info .teachers {margin:0 1em;font-size:0.9em;}
 .coursebox .cost {font-size:0.9em;padding-top: 20px;}
-.coursebox .summary {margin:5px 5px 5px 51%;font-size:0.9em;}
+.coursebox .summary {margin:5px;font-size:0.9em;}
 
 #page-course-recent h2.main {font-size:1.1em;}
 #page-course-recent .user {font-size:0.75em;}
