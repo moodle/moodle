@@ -80,7 +80,8 @@
     } else {
         include_once($CFG->dirroot.'/mod/scorm/datamodels/scorm_12.js.php');
     }
-
+    // set the start time of this SCO
+    scorm_insert_track($USER->id,$scorm->id,$scoid,$attempt,'x.start.time',time());
 ?>
 
 var errorCode = "0";
