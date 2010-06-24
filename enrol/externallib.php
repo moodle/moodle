@@ -38,7 +38,7 @@ class moodle_enrol_external extends external_api {
      * Returns description of method parameters
      * @return external_function_parameters
      */
-    public static function get_enrolled_users() {
+    public static function get_enrolled_users_parameters() {
         return new external_function_parameters(
             array(
                 'courseid'       => new external_value(PARAM_INT, 'Course id'),
@@ -63,7 +63,7 @@ class moodle_enrol_external extends external_api {
 
         // Do basic automatic PARAM checks on incoming data, using params description
         // If any problems are found then exceptions are thrown with helpful error messages
-        $params = self::validate_parameters(self::get_enrolled_users(), array('courseid'=>$courseid, 'withcapability'=>$withcapability, 'groupid'=>$groupid, 'onlyactive'=>$onlyactive));
+        $params = self::validate_parameters(self::get_enrolled_users_parameters(), array('courseid'=>$courseid, 'withcapability'=>$withcapability, 'groupid'=>$groupid, 'onlyactive'=>$onlyactive));
 
         $coursecontext = get_context_instance(CONTEXT_COURSE, $params['courseid']);
         if ($courseid == SITEID) {
