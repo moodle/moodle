@@ -986,3 +986,61 @@ function scorm_write_log($type, $text, $scoid) {
         @file_put_contents($logfile, date('Y/m/d H:i:s O')." DEBUG $text\r\n", FILE_APPEND);
     }
 }
+/**
+ * writes overview info for course_overview block - displays upcoming scorm objects that have a due date
+ *
+ * @param object $type - type of log(aicc,scorm12,scorm13) used as prefix for filename
+ * @param array $htmlarray
+ * @return mixed 
+ */
+function scorm_print_overview($courses, &$htmlarray) {
+    global $USER, $CFG, $DB;
+
+    if (empty($courses) || !is_array($courses) || count($courses) == 0) {
+        return array();
+    }
+
+    if (!$scorms = get_all_instances_in_courses('scorm',$courses)) {
+        return;
+    }
+
+    $scormids = array();
+
+    // Do scorm::isopen() here without loading the whole thing for speed
+    foreach ($scorms as $key => $scorm) {
+        $time = time();
+        if ($scorm->timeopen) {
+            $isopen = ($scorm->timeopen <= $time && $time <= $scorm->timeclose);
+        }
+        if (empty($isopen) || empty($scorm->timeclose)) {
+            unset($scorms[$key]);
+        }else{
+            $scormids[] = $scorm->id;
+        }
+    }
+
+    if(empty($scormids)){
+        // no assigments to look at - we're done
+        return true;
+    }
+    $strscorm   = get_string('modulename', 'scorm');
+    $strduedate = get_string('duedate', 'scorm');
+
+    foreach ($scorms as $scorm) {
+        $str = '<div class="scorm overview"><div class="name">'.$strscorm. ': '.
+               '<a '.($scorm->visible ? '':' class="dimmed"').
+               'title="'.$strscorm.'" href="'.$CFG->wwwroot.
+               '/mod/assignment/view.php?id='.$scorm->coursemodule.'">'.
+               $scorm->name.'</a></div>';
+        if ($scorm->timeclose) {
+            $str .= '<div class="info">'.$strduedate.': '.userdate($scorm->timeclose).'</div>';
+        }
+
+        $str .= '</div>';
+        if (empty($htmlarray[$scorm->course]['scorm'])) {
+            $htmlarray[$scorm->course]['scorm'] = $str;
+        } else {
+            $htmlarray[$scorm->course]['scorm'] .= $str;
+        }
+    }
+}

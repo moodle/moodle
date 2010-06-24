@@ -71,6 +71,7 @@ $string['displaycoursestructure_help'] = 'If enabled, the table of contents is d
 $string['displaycoursestructuredesc'] = 'This preference sets the default value for the display course structure on entry page setting';
 $string['displaydesc'] = 'This preference sets the default of whether to display the package or not for an activity';
 $string['domxml'] = 'DOMXML external library';
+$string['duedate'] = 'Due date';
 $string['element'] = 'Element';
 $string['enter'] = 'Enter';
 $string['entercourse'] = 'Enter course';
