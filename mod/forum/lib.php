@@ -3637,8 +3637,10 @@ function forum_search_form($course, $search='') {
     $output .= '<form action="'.$CFG->wwwroot.'/mod/forum/search.php" style="display:inline">';
     $output .= '<fieldset class="invisiblefieldset">';
     $output .= $OUTPUT->old_help_icon('search', get_string('search'));
-    $output .= '<input name="search" type="text" size="18" value="'.s($search, true).'" alt="search" />';
-    $output .= '<input value="'.get_string('searchforums', 'forum').'" type="submit" />';
+    $output .= '<label class="accesshide" for="search" >'.get_string('search', 'forum').'</label>';
+    $output .= '<input id="search" name="search" type="text" size="18" value="'.s($search, true).'" alt="search" />';
+    $output .= '<label class="accesshide" for="searchforums" >'.get_string('searchforums', 'forum').'</label>';
+    $output .= '<input id="searchforums" value="'.get_string('searchforums', 'forum').'" type="submit" />';
     $output .= '<input name="id" type="hidden" value="'.$course->id.'" />';
     $output .= '</fieldset>';
     $output .= '</form>';
