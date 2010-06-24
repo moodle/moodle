@@ -200,8 +200,15 @@ function SCORMapi1_2() {
                 }
                 <?php
                     if (scorm_debugging($scorm)) {
+                        echo 'LogAPICall("LMSFinish", "AJAXResult", result, 0);';
+                    }
+                ?>
+                result = ('true' == result) ? 'true' : 'false';
+                errorCode = (result == 'true')? '0' : '101';
+                <?php
+                    if (scorm_debugging($scorm)) {
                         //echo 'alert("Finished SCORM 1.2");';
-                        echo 'LogAPICall("LMSResult", param, "", result);';
+                        echo 'LogAPICall("LMSFinish", "result", result, 0);';
                         echo 'LogAPICall("LMSFinish", param, "", 0);';
                     }
                 ?>
