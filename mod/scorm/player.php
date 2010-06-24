@@ -342,8 +342,8 @@
             </noscript>
 <?php
             //Added incase javascript popups are blocked
-            $link = '<a href="'.$CFG->wwwroot.'/mod/scorm/loadSCO.php?id='.$cm->id.$scoidstr.$modestr.'" target="new">'.get_string('popupblockedlinkname','scorm').'</a>';
-            echo $OUTPUT->box(get_string('popupblocked','scorm',$link));
+            $link = '<a href="'.$CFG->wwwroot.'/mod/scorm/loadSCO.php?id='.$cm->id.$scoidstr.$modestr.'" target="_blank">'.get_string('popupblockedlinkname','scorm').'</a>';
+            echo $OUTPUT->box(get_string('popupblocked','scorm',$link), 'generalbox', 'altpopuplink');
         }
     } else {
         echo $OUTPUT->box(get_string('noprerequisites','scorm'));
