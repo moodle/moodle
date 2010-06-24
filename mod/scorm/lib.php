@@ -965,3 +965,24 @@ function scorm_extend_navigation($navigation, $course, $module, $cm) {
      */
     $navigation->nodetype = navigation_node::NODETYPE_LEAF;
 }
+/**
+ * writes log output to a temp log file
+ *
+ * @param string $type - type of log(aicc,scorm12,scorm13) used as prefix for filename
+ * @param string $text - text to be written to file.
+ * @param integer $scoid - scoid of object this log entry is for.
+ */
+function scorm_write_log($type, $text, $scoid) {
+    global $CFG, $USER;
+
+    $debugenablelog = debugging('', DEBUG_DEVELOPER);
+    if (!$debugenablelog || empty($text)) {
+        return ;
+    }
+    if (make_upload_directory('temp/scormlogs/')) {
+        $logpath = $CFG->dataroot.'/temp/scormlogs';
+
+        $logfile = $logpath.'/'.$type.'debug_'.$USER->id.'_'.$scoid.'.log';
+        @file_put_contents($logfile, date('Y/m/d H:i:s O')." DEBUG $text\r\n", FILE_APPEND);
+    }
+}

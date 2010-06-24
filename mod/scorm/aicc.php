@@ -55,6 +55,14 @@
         } else {
             print_error('cannotcallscript');
         }
+        scorm_write_log("aicc", "scoid: $scoid", $scoid);
+        scorm_write_log("aicc", "mode: $mode", $scoid);
+        scorm_write_log("aicc", "status: $status", $scoid);
+        scorm_write_log("aicc", "attempt: $attempt", $scoid);
+        scorm_write_log("aicc", "command: $command", $scoid);
+        scorm_write_log("aicc", "sessionid: $sessionid", $scoid);
+        scorm_write_log("aicc", "aiccdata:\r\n$aiccdata", $scoid);
+        ob_start();
 
         if ($scorm = $DB->get_record('scorm','id',$sco->scorm)) {
             switch ($command) {
@@ -377,3 +385,6 @@
             echo "error=3\r\nerror_text=Invalid Session ID\r\n";
         }
     }
+    $aiccresponse = ob_get_contents();
+    scorm_write_log("aicc", "response:\r\n$aiccresponse", $scoid);
+    ob_end_flush();
