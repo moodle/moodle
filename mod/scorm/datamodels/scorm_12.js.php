@@ -415,7 +415,21 @@ function SCORMapi1_2() {
                         //echo 'alert("Data Commited");';
                     }
                 ?>
-                return "true";
+                <?php
+                    if (debugging('',DEBUG_DEVELOPER)) {
+                        echo 'LogAPICall("LMSCommit", "AJAXResult", result, 0);';
+                    }
+                ?>
+                result = ('true' == result) ? 'true' : 'false';
+                errorCode = (result ==' true')? '0' : '101';
+                <?php 
+                    if (debugging('',DEBUG_DEVELOPER)) {
+                        //echo 'alert("Finished SCORM 1.2");';
+                        echo 'LogAPICall("LMSCommit", "result", result, 0);';
+                        echo 'LogAPICall("LMSCommit", param, "", 0);';
+                    }
+                ?>
+                return result;
             } else {
                 errorCode = "301";
             }
