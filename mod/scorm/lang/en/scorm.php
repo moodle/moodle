@@ -187,7 +187,7 @@ $string['package_help'] = 'The package file is a zip (or pif) file containing SC
 $string['packagedir'] = 'Filesystem Error: Can\'t create package directory';
 $string['packagefile'] = 'No package file specified';
 $string['packageurl'] = 'URL';
-$string['packageurl_help'] = 'The URL allows you to provide a direct link to a SCORM object not contained within the Moodle file area.';
+$string['packageurl_help'] = 'This setting enables a URL for the SCORM package to be specified, rather than choosing a file via the file picker.';
 $string['passed'] = 'Passed';
 $string['php5'] = 'PHP 5 (DOMXML native library)';
 $string['popup'] = 'New window';
@@ -222,14 +222,12 @@ $string['scormresponsedeleted'] = 'Deleted user attempts';
 $string['scorm:savetrack'] = 'Save tracks';
 $string['scorm:skipview'] = 'Skip overview';
 $string['scormtype'] = 'Type';
-$string['scormtype_help'] = 'The SCORM Type is the method of accessing the SCORM object. 
+$string['scormtype_help'] = 'This setting determines how the package is included in the course. There are up to 4 options:
 
-There are up to 4 different types:
-
-* Uploaded Package - this is the standard method of selecting a SCORM using the Moodle file picker.
-* External SCORM Manifest - this allows a direct url to an imsmanifest.xml file to be selected. WARNING: If this link uses a different domain name than your Moodle site then Grades cannot be saved.
-* Downloaded Package - This is a direct url to a SCORM zip package, this is a safe way to link to a file on a different domain than your Moodle site.
-* Local IMS content repository - If an IMS repository has been created, you can select a SCORM object within the repository using this option.';
+* Uploaded package - Enables a SCORM package to be chosen via the file picker
+* External SCORM manifest - Enables an imsmanifest.xml URL to be specified. Note: If the URL has a different domain name than your site, then "Downloaded package" is a better option, since otherwise grades are not saved.
+* Downloaded package - Enables a package URL to be specified. The package will be unzipped and saved locally, and updated when the external SCORM package is updated.
+* Local IMS content repository - Enables a package to be selected from within an IMS repository';
 $string['scorm:viewreport'] = 'View reports';
 $string['scorm:viewscores'] = 'View scores';
 $string['scrollbars'] = 'Allow the window to be scrolled';
