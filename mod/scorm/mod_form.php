@@ -51,14 +51,15 @@ class mod_scorm_mod_form extends moodleform_mod {
             $options[SCORM_TYPE_IMSREPOSITORY] = get_string('typeimsrepository', 'scorm');
         }
 
-        $mform->addElement('select', 'scormtype', get_string('scormtype', 'scorm'), $options);
-
 // Reference
         if (count($options) > 1) {
+            $mform->addElement('select', 'scormtype', get_string('scormtype', 'scorm'), $options);
             $mform->addElement('text', 'packageurl', get_string('url', 'scorm'), array('size'=>60));
             $mform->setType('packageurl', PARAM_RAW);
             $mform->addHelpButton('packageurl', 'package', 'scorm');
             $mform->disabledIf('packageurl', 'scormtype', 'eq', SCORM_TYPE_LOCAL);
+        } else {
+            $mform->addElement('hidden', 'scormtype', SCORM_TYPE_LOCAL);
         }
 
 // New local package upload
