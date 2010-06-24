@@ -69,17 +69,17 @@ table.minicalendar {
 }
 
 .sitetopiccontent {
-  -moz-border-radius: 15px;
-  -webkit-border-radius: 15px;
-  border-radius: 15px;
+  -moz-border-radius: 10px;
+  -webkit-border-radius: 10px;
+  border-radius: 10px;
 }
 
 .block_course_summary,
 .block_course_summary .content,
 #page-course-user .section {
-  -moz-border-radius:20px;
-  -webkit-border-radius: 20px;
-  border-radius: 20px;
+  -moz-border-radius:10px;
+  -webkit-border-radius: 10px;
+  border-radius: 10px;
 }
 
 .generalbox,
@@ -175,30 +175,30 @@ table.minicalendar {
 .forumpost,
 .block .content,
 .glossarycomment {
-  -moz-border-radius-bottomright:20px;
-  -moz-border-radius-bottomleft:20px;
-  -webkit-border-bottom-left-radius: 20px;
-  -webkit-border-bottom-right-radius: 20px;
-  border-bottom-left-radius: 20px;
-  border-bottom-right-radius: 20px;
+  -moz-border-radius-bottomright:10px;
+  -moz-border-radius-bottomleft:10px;
+  -webkit-border-bottom-left-radius: 10px;
+  -webkit-border-bottom-right-radius: 10px;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
 }
 
 .loginbox .content.left.
 #page-user-view .left,
 .forumpost .side,
 .glossarycomment .side {
-  -moz-border-radius-bottomleft:20px;
-  -webkit-border-bottom-left-radius: 20px;
-  border-bottom-left-radius: 20px;
+  -moz-border-radius-bottomleft:10px;
+  -webkit-border-bottom-left-radius: 10px;
+  border-bottom-left-radius: 10px;
 }
 
 .loginbox .content.right,
 .forumpost .content,
 .forumpost .message,
 .glossarycomment .entry {
-  -moz-border-radius-bottomright:20px;
-  -webkit-border-bottom-right-radius: 20px;
-  border-bottom-right-radius: 20px;
+  -moz-border-radius-bottomright:10px;
+  -webkit-border-bottom-right-radius: 10px;
+  border-bottom-right-radius: 10px;
 }
 
 #quiznavigation .qnbutton {

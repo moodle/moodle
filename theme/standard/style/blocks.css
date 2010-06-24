@@ -38,8 +38,10 @@
 .block_calendar_month .eventnone a {text-decoration:none;color:black;cursor:text;}
 
 /** Calendar Upcoming **/
-
 .block_calendar_upcoming .event .date {text-align:right;}
+
+/** Course Overview **/
+.block_course_overview .coursebox h3 {margin: 10px;}
 
 /** Login Block **/
 .block_login .loginform .c1 {margin:0.3em 0.8em;text-align:right;}
