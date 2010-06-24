@@ -26,4 +26,4 @@
 $string['pluginname'] = 'leatherbound';
 $string['region-side-post'] = 'Right';
 $string['region-side-pre'] = 'Left';
-$string['choosereadme'] = 'Leatherbound, a Moodle 2.0 theme by Patrick Malley (<a href="http://newschoollearning.com/">newschoollearning.com</a>)';
+$string['choosereadme'] = 'Leatherbound, a Moodle 2.0 theme by Patrick Malley';

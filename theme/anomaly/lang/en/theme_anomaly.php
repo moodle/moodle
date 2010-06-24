@@ -25,7 +25,8 @@
 
 $string['choosereadme'] = '<div style="text-align:center;">
 <h2 style="margin-bottom:2px;">Anomaly Theme Pack</h2>
-<h3 style="margin:0">by <a href="http://newschoollearning.com" title="NewSchool Learning: Standards Based Moodle Designs">Patrick Malley</a></h3><h4 style="margin:3px">Version: 20090119</h4>
+<h3 style="margin:0">by Patrick Malley</h3>
+<h4 style="margin:3px">Version: 20090119</h4>
 </div>
 <div>&nbsp;
 </div>
