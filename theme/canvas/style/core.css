@@ -1,3 +1,13 @@
+html {
+	height: 100%;
+}
+
+body {
+	min-height: 100%;
+	margin: 0;
+	padding: 0;
+}
+
 .sitetopic {
 	border: none;
 }
@@ -19,6 +29,10 @@
 .singleselect {
 	text-align: center;
 	margin: 1em 0;
+}
+
+.navbutton .singlebutton {
+	margin: 0;
 }
 
 .generalbox {
@@ -311,28 +325,28 @@
 }
 
 .path-user .descriptionbox {
-    margin-left: 110px;
+	margin-left: 110px;
 	border: 1px solid #ddd;
 	padding: 10px;
 }
 
 .path-user .description {
-    padding-bottom: 15px;
-    border-bottom: 1px solid #eee;
+	padding-bottom: 15px;
+	border-bottom: 1px solid #eee;
 }
 
 .userprofile .list {
-    margin-top: 10px;
+	margin-top: 10px;
 }
 
 .userprofile .list td {
-    padding-top: 3px;
-    padding-bottom: 3px;
+	padding-top: 3px;
+	padding-bottom: 3px;
 }
 
 .userprofile .list .c0 {
-    padding-left: 0;
-    font-weight: bold;
+	padding-left: 0;
+	font-weight: bold;
 }
 
 #page-user-view .buttons {
@@ -385,13 +399,12 @@
 }
 
 .path-admin-roles .generaltable th {
-  vertical-align: middle;
+	vertical-align: middle;
 }
 
 .path-admin-roles .generaltable .lastcol {
-  width:15%;
+	width: 15%;
 }
-
 
 .path-admin-roles .backlink {
 	text-align: center;
@@ -403,7 +416,7 @@
 .blog_entry .audience {
 	color: #444;
 	margin: 0 0 0.5em;
-    font-size: 0.9em;
+	font-size: 0.9em;
 }
 
 .blog_entry .tags {
@@ -440,7 +453,7 @@
 }
 
 #tag-user-table {
-	width:95%;
+	width: 95%;
 	margin: 0 auto;
 }
 
@@ -505,6 +518,15 @@
 
 /* Footer
 -----------------------*/
+
+#page-footer .logininfo {
+	padding: 1em 0;
+}
+
+#page-footer .homelink,
+#page-footer .sitelink {
+	padding: 1em 0;
+}
 
 .homelink a {
 	text-decoration: none;
