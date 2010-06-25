@@ -191,6 +191,9 @@
             } else {
                 $status = false;
             }
+            if ($status && !empty($sub_info['#']['SCO_DATAS'])) {
+                $status = scorm_scoes_data_restore_mods($newid, $sub_info['#']['SCO_DATAS'], $restore);
+            }
         }
 
         //Now check if want to restore user data and do it.
@@ -211,6 +214,37 @@
         return $status;
     }
 
+    //Restore scorm_scoes_data contents (executed from scorm_scoes_restore_mods)
+    function scorm_scoes_data_restore_mods ($new_scoe_id, $scoes_old_datas, $restore) {
+        global $CFG;
+
+        $status = true;
+ 
+        $scoe_old_datas = $scoes_old_datas['0']['#']['SCO_DATA'];
+
+        //Iterate over scoe_data
+        for($i = 0; $i < sizeof($scoe_old_datas); $i++) {
+            $scoe_old_data = $scoe_old_datas[$i];
+            unset($scoe_new_data);
+
+            $scoe_new_data->scoid   = $new_scoe_id;
+            $scoe_new_data->name    = backup_todb($scoe_old_data['#']['NAME']['0']['#']);
+            $scoe_new_data->value   = backup_todb($scoe_old_data['#']['VALUE']['0']['#']);
+
+            //The structure is equal to the db, so insert the scorm_scoes_data table
+            $new_scoe_data_id = insert_record ("scorm_scoes_data",$scoe_new_data);
+
+            $old_scoe_data_id = backup_todb($scoe_old_data['#']['ID']['0']['#']);
+
+            if ($new_scoe_data_id) {
+                //We have the newid, update backup_ids
+                backup_putid($restore->backup_unique_code,"scorm_scoes_data", $old_scoe_data_id, $new_scoe_data_id);
+            } else {
+                $status = false;
+            }
+        }
+        return $status;
+    }
 
      function scorm_scoes_seq_objective_restore_mods($sco_id,$info,$restore) {
 
