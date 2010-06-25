@@ -1521,6 +1521,13 @@ class global_navigation extends navigation_node {
             }
         }
 
+        $messageargs = null;
+        if ($USER->id!=$user->id) {
+            $messageargs = array('id'=>$user->id);
+        }
+        $url = new moodle_url('/message/contacts_messages.php',$messageargs);
+        $usernode->add(get_string('messages', 'message'), $url, self::TYPE_SETTING, null, 'messages');
+
         // Add a node to view the users notes if permitted
         if (!empty($CFG->enablenotes) && has_any_capability(array('moodle/notes:manage', 'moodle/notes:view'), $coursecontext)) {
             $url = new moodle_url('/notes/index.php',array('user'=>$user->id));
@@ -3080,6 +3087,12 @@ class settings_navigation extends navigation_node {
                 $passwordchangeurl->param('id', $course->id);
                 $usersetting->add(get_string("changepassword"), $passwordchangeurl, self::TYPE_SETTING);
             }
+        }
+
+        // Messaging
+        if (has_capability('moodle/user:editownmessageprofile', $systemcontext)) {
+            $url = new moodle_url('/message/edit.php', array('id'=>$user->id, 'course'=>$course->id));
+            $usersetting->add(get_string('editmymessage', 'message'), $url, self::TYPE_SETTING);
         }
 
         // View the roles settings
