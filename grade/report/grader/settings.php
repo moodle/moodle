@@ -60,7 +60,7 @@ $settings->add(new admin_setting_configcheckbox('grade_report_showuserimage', ge
                                             get_string('configshowuserimage', 'grades'), 1));
 
 $settings->add(new admin_setting_configcheckbox('grade_report_showuseridnumber', get_string('showuseridnumber', 'grades'),
-                                            get_string('configshowuseridnumber', 'grades'), 0));
+                                            get_string('showuseridnumber_help', 'grades'), 0));
 
 $settings->add(new admin_setting_configcheckbox('grade_report_showactivityicons', get_string('showactivityicons', 'grades'),
                                             get_string('showactivityicons_help', 'grades'), 1));
