@@ -5786,9 +5786,10 @@ class core_string_manager implements string_manager {
      * Load all strings for one component
      * @param string $component The module the string is associated with
      * @param string $lang
+     * @param bool $disablecache Do not use caches, force fetching the strings from sources
      * @return array of all string for given component and lang
      */
-    public function load_component_strings($component, $lang) {
+    public function load_component_strings($component, $lang, $disablecache=false) {
         global $CFG;
 
         list($plugintype, $pluginname) = normalize_component($component);
@@ -5798,17 +5799,19 @@ class core_string_manager implements string_manager {
             $component = $plugintype . '_' . $pluginname;
         }
 
-        // try in-memory cache first
-        if (isset($this->cache[$lang][$component])) {
-            $this->countmemcache++;
-            return $this->cache[$lang][$component];
-        }
+        if (!$disablecache) {
+            // try in-memory cache first
+            if (isset($this->cache[$lang][$component])) {
+                $this->countmemcache++;
+                return $this->cache[$lang][$component];
+            }
 
-        // try on-disk cache then
-        if ($this->usediskcache and file_exists($this->cacheroot . "/$lang/$component.php")) {
-            $this->countdiskcache++;
-            include($this->cacheroot . "/$lang/$component.php");
-            return $this->cache[$lang][$component];
+            // try on-disk cache then
+            if ($this->usediskcache and file_exists($this->cacheroot . "/$lang/$component.php")) {
+                $this->countdiskcache++;
+                include($this->cacheroot . "/$lang/$component.php");
+                return $this->cache[$lang][$component];
+            }
         }
 
         // no cache found - let us merge all possible sources of the strings
@@ -5911,7 +5914,7 @@ class core_string_manager implements string_manager {
             return false;
         }
         $lang = current_language();
-        $string = $this->load_component_strings($component, $lang);
+        $string = $this->load_component_strings($component, $lang, true);
         return isset($string[$identifier]);
     }
 
@@ -5968,8 +5971,15 @@ class core_string_manager implements string_manager {
                 // parentlanguage is a special string, undefined means use English if not defined
                 return 'en';
             }
-            debugging("Invalid get_string() identifier: '$identifier' or component '$component'", DEBUG_DEVELOPER);
-            return "[[$identifier]]";
+            if ($this->usediskcache) {
+                // maybe the on-disk cache is dirty - let the last attempt be to find the string in original sources
+                $string = $this->load_component_strings($component, $lang, true);
+            }
+            if (!isset($string[$identifier])) {
+                // the string is still missing - should be fixed by developer
+                debugging("Invalid get_string() identifier: '$identifier' or component '$component'", DEBUG_DEVELOPER);
+                return "[[$identifier]]";
+            }
         }
 
         $string = $string[$identifier];
