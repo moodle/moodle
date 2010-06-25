@@ -5914,7 +5914,7 @@ class core_string_manager implements string_manager {
             return false;
         }
         $lang = current_language();
-        $string = $this->load_component_strings($component, $lang, true);
+        $string = $this->load_component_strings($component, $lang);
         return isset($string[$identifier]);
     }
 
