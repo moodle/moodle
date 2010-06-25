@@ -102,7 +102,7 @@ if (has_capability('moodle/site:sendmessage', get_context_instance(CONTEXT_SYSTE
                    '<span class="time">['.$time.']</span>: '.
                    '<span class="content">'.$message.'</span></div>';
         //$PAGE->requires->js_function_call('parent.messages.document.write', Array($message));
-        $PAGE->requires->js_function_call('add_message', Array($message));
+        $PAGE->requires->js_function_call('parent.refresh.add_message', Array($message));
         $PAGE->requires->js_function_call('parent.messages.scroll', Array(1,5000000));
 
         add_to_log(SITEID, 'message', 'write', 'history.php?user1='.$user->id.'&amp;user2='.$USER->id.'#m'.$messageid, $user->id);

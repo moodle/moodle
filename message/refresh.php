@@ -76,7 +76,7 @@ if ($messages ) {
     }
 }
 
-$PAGE->requires->js_init_call('M.core_message.init_refresh_parent_frame', array($jsmessages, $jsmessages));
+$PAGE->requires->js_init_call('M.core_message.init_refresh_parent_frame', array(count($jsmessages), $jsmessages));
 
 echo $OUTPUT->header();
 if (!empty($playbeep)) {

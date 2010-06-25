@@ -29,6 +29,30 @@ require_once($CFG->libdir.'/eventslib.php');
 define ('MESSAGE_SHORTLENGTH', 300);
 define ('MESSAGE_WINDOW', true);          // We are in a message window (so don't pop up a new one!)
 
+define ('MESSAGE_DISCUSSION_WIDTH',600);
+define ('MESSAGE_DISCUSSION_HEIGHT',500);
+
+define ('MESSAGE_SHORTVIEW_LIMIT', 8);//the maximum number of messages to show on the short message history
+
+define ('CONTACT_ID','id');
+
+define('MESSAGE_HISTORY_SHORT',0);
+define('MESSAGE_HISTORY_ALL',1);
+
+//some constants used as function arguments. Just to make function calls a bit more understandable
+define('IS_CONTACT',true);
+define('IS_NOT_CONTACT',false);
+
+define('IS_BLOCKED',true);
+define('IS_NOT_BLOCKED',false);
+
+define('VIEW_UNREAD_MESSAGES','unread');
+define('VIEW_CONTACTS','contacts');
+define('VIEW_BLOCKED','blockedusers');
+define('VIEW_COURSE','course_');
+
+define('SHOW_ACTION_LINKS_IN_CONTACT_LIST', false);
+
 if (!isset($CFG->message_contacts_refresh)) {  // Refresh the contacts list every 60 seconds
     $CFG->message_contacts_refresh = 60;
 }
@@ -39,9 +63,160 @@ if (!isset($CFG->message_offline_time)) {
     $CFG->message_offline_time = 300;
 }
 
+function message_print_contact_selector($countunreadtotal, $usergroup, $user1, $user2, $blockedusers, $onlinecontacts, $offlinecontacts, $strangers, $showcontactactionlinks) {
+    global $PAGE;
+    
+    echo html_writer::start_tag('div', array('class'=>'contactselector mdl-align'));
 
-function message_print_contacts() {
-    global $USER, $CFG, $DB, $PAGE, $OUTPUT;
+        //if 0 unread messages and they've requested unread messages then show contacts
+        if ($countunreadtotal==0 && $usergroup==VIEW_UNREAD_MESSAGES) {
+            $usergroup = VIEW_CONTACTS;
+        }
+
+        $onlyactivecourses = true;
+        $courses = enrol_get_users_courses($user1->id, $onlyactivecourses);
+        $coursecontexts = message_get_course_contexts($courses);//we need one of these again so holding on to them
+
+        message_print_usergroup_selector($usergroup, $courses, $coursecontexts, $countunreadtotal, count($blockedusers));
+
+        $refreshpage = false;
+
+        if ($usergroup==VIEW_UNREAD_MESSAGES) {
+            message_print_contacts($onlinecontacts, $offlinecontacts, $strangers, $refreshpage, $PAGE->url, 1, $showcontactactionlinks,$strunreadmessages, $user2);
+        } else if ($usergroup==VIEW_CONTACTS) {
+            message_print_contacts($onlinecontacts, $offlinecontacts, $strangers, $refreshpage, $PAGE->url, 0, $showcontactactionlinks, null, $user2);
+        } else if ($usergroup==VIEW_BLOCKED) {
+            message_print_blocked_users($blockedusers, $PAGE->url, $showcontactactionlinks, null, $user2);
+        } else if (substr($usergroup, 0, 7)==VIEW_COURSE) {
+            $courseidtoshow = intval(substr($usergroup, 7));
+
+            if (!empty($courseidtoshow)
+                && array_key_exists($courseidtoshow, $coursecontexts)
+                && has_capability('moodle/course:viewparticipants', $coursecontexts[$courseidtoshow])) {
+
+                message_print_participants($coursecontexts[$courseidtoshow], $courseidtoshow, $PAGE->url, $showcontactactionlinks);
+            } else {
+                //shouldnt get here. User trying to access a course theyre not in perhaps.
+                add_to_log(SITEID, 'message', 'view', 'contacts_messages.php', $usergroup);
+            }
+        }
+
+        echo html_writer::start_tag('form', array('action'=>'contacts.php?advanced=1'));
+            echo html_writer::start_tag('fieldset');
+                $managebuttonclass = 'hiddenelement';
+                if ($usergroup == VIEW_CONTACTS) {
+                    $managebuttonclass = 'visible';
+                }
+                $strmanagecontacts = get_string('managecontacts','message');
+                echo html_writer::empty_tag('input', array('type'=>'submit','value'=>$strmanagecontacts,'class'=>$managebuttonclass));
+            echo html_writer::end_tag('fieldset');
+        echo html_writer::end_tag('form');
+    echo html_writer::end_tag('div');
+}
+
+function message_print_participants($context, $courseid, $contactselecturl=null, $showactionlinks=true, $titletodisplay=null) {
+    global $DB, $USER;
+
+    $participants = get_enrolled_users($context);
+    
+    echo '<table id="message_participants" class="boxaligncenter" cellspacing="2" cellpadding="0" border="0">';
+
+    if (!empty($titletodisplay)) {
+        echo "<tr><td colspan='3' class='heading'>$titletodisplay</td></tr>";
+    }
+
+    if (empty($titletodisplay)) {
+        echo '<tr><td colspan="3" class="heading">';
+        echo get_string('participants');
+        echo '</td></tr>';
+    }
+
+    //todo these need to come from somewhere if the course participants list is to show users with unread messages
+    $iscontact = true;
+    $isblocked = false;
+    foreach ($participants as $participant) {
+        if ($participant->id != $USER->id) {
+            $participant->messagecount = 0;//todo it would be nice if the course participant could report new messages
+            message_print_contactlist_user($participant, $iscontact, $isblocked, $contactselecturl, $showactionlinks);
+        }
+    }
+    //$participants->close();
+
+    echo '</table>';
+}
+
+function message_get_blocked_users($user1=null, &$user2=null) {
+    global $DB, $USER;
+
+    if (empty($user1)) {
+        $user1 = $USER;
+    }
+
+    if (!empty($user2)) {
+        $user2->isblocked = false;
+    }
+
+    $blockeduserssql = "SELECT u.id, u.firstname, u.lastname, u.picture,
+                               u.imagealt, u.lastaccess, count(m.id) as messagecount
+                            FROM {message_contacts} mc
+                            JOIN {user} u ON u.id = mc.contactid
+                            LEFT OUTER JOIN {message} m ON m.useridfrom = mc.contactid AND m.useridto = :user1id1
+                            WHERE mc.userid = :user1id2 AND mc.blocked = 1
+                        GROUP BY u.id, u.firstname, u.lastname, u.picture,
+                                 u.imagealt, u.lastaccess
+                        ORDER BY u.firstname ASC";
+    $rs =  $DB->get_recordset_sql($blockeduserssql, array('user1id1'=>$user1->id, 'user1id2'=>$user1->id));
+
+    $blockedusers = array();
+    if (!empty($rs)) {
+        foreach($rs as $rd) {
+            $blockedusers[] = $rd;
+
+            if (!empty($user2) && $user2->id==$rd->id) {
+                $user2->isblocked = true;
+            }
+        }
+        unset($rd);
+        $rs->close();
+    }
+
+    return $blockedusers;
+}
+
+function message_print_blocked_users(&$blockedusers, $contactselecturl=null, $showactionlinks=true, $titletodisplay=null) {
+    global $DB, $USER;
+
+    $countblocked = count($blockedusers);
+
+    echo '<table id="message_contacts" class="boxaligncenter" cellspacing="2" cellpadding="0" border="0">';
+
+    if (!empty($titletodisplay)) {
+        echo "<tr><td colspan='3' class='heading'>$titletodisplay</td></tr>";
+    }
+
+    if ($countblocked) {
+        echo '<tr><td colspan="3" class="heading">';
+        echo get_string('blockedusers', 'message', $countblocked);
+        echo '</td></tr>';
+
+        foreach ($blockedusers as $blockeduser) {
+            message_print_contactlist_user($blockeduser, IS_NOT_CONTACT, IS_BLOCKED, $contactselecturl, $showactionlinks);
+        }
+    }
+
+    echo '</table>';
+}
+
+function message_get_contacts($user1=null, &$user2=null) {
+    global $DB, $CFG, $USER;
+
+    if (empty($user1)) {
+        $user1 = $USER;
+    }
+
+    if (!empty($user2)) {
+        $user2->iscontact = false;
+    }
 
     $timetoshowusers = 300; //Seconds default
     if (isset($CFG->block_online_users_timetosee)) {
@@ -56,8 +231,7 @@ function message_print_contacts() {
     // people in our contactlist who are offline
     $offlinecontacts = array();
     // people who are not in our contactlist but have sent us a message
-    $strangers       = array();
-
+    $strangers       = array();    
 
     // get all in our contactlist who are not blocked in our contact list
     // and count messages we have waiting from each of them
@@ -71,20 +245,24 @@ function message_print_contacts() {
                           u.imagealt, u.lastaccess
                  ORDER BY u.firstname ASC";
 
-    if ($rs = $DB->get_recordset_sql($contactsql, array($USER->id, $USER->id))){
+    if ($rs = $DB->get_recordset_sql($contactsql, array($user1->id, $user1->id))){
         foreach($rs as $rd){
 
             if($rd->lastaccess >= $timefrom){
                 // they have been active recently, so are counted online
                 $onlinecontacts[] = $rd;
+
             }else{
                 $offlinecontacts[] = $rd;
+            }
+
+            if (!empty($user2) && $user2->id==$rd->id) {
+                $user2->iscontact = true;
             }
         }
         unset($rd);
         $rs->close();
     }
-
 
     // get messages from anyone who isn't in our contact list and count the number
     // of messages we have from each of them
@@ -106,6 +284,12 @@ function message_print_contacts() {
         $rs->close();
     }
 
+    return array($onlinecontacts, $offlinecontacts, $strangers);
+}
+
+function message_print_contacts($onlinecontacts, $offlinecontacts, $strangers, $refresh=true, $contactselecturl=null, $minmessages=0, $showactionlinks=true, $titletodisplay=null) {
+    global $CFG, $PAGE, $OUTPUT;
+
     $countonlinecontacts  = count($onlinecontacts);
     $countofflinecontacts = count($offlinecontacts);
     $countstrangers       = count($strangers);
@@ -115,34 +299,45 @@ function message_print_contacts() {
         print_string('contactlistempty', 'message');
         echo '</div>';
         echo '<div class="note">';
-        print_string('addsomecontacts', 'message', $CFG->wwwroot.'/message/index.php?tab=search');
+        print_string('addsomecontacts', 'message', message_remove_url_params($PAGE->url).'?tab=search');
         echo '</div>';
     }
 
     echo '<table id="message_contacts" class="boxaligncenter" cellspacing="2" cellpadding="0" border="0">';
 
+    if (!empty($titletodisplay)) {
+        echo "<tr><td colspan='3' class='heading'>$titletodisplay</td></tr>";
+    }
+
     if($countonlinecontacts) {
         /// print out list of online contacts
 
-        echo '<tr><td colspan="3" class="heading">';
-        echo get_string('onlinecontacts', 'message', $countonlinecontacts);
-        echo '</td></tr>';
+        if (empty($titletodisplay)) {
+            echo '<tr><td colspan="3" class="heading">';
+            echo get_string('onlinecontacts', 'message', $countonlinecontacts);
+            echo '</td></tr>';
+        }
 
         foreach ($onlinecontacts as $contact) {
-            message_print_contactlist_user($contact);
+            if ($minmessages==0 || $contact->messagecount>=$minmessages) {
+                message_print_contactlist_user($contact, IS_CONTACT, IS_NOT_BLOCKED, $contactselecturl, $showactionlinks);
+            }
         }
     }
-    echo '<tr><td colspan="3">&nbsp;</td></tr>';
 
     if ($countofflinecontacts) {
         /// print out list of offline contacts
 
-        echo '<tr><td colspan="3" class="heading">';
-        echo get_string('offlinecontacts', 'message', $countofflinecontacts);
-        echo '</td></tr>';
+        if (empty($titletodisplay)) {
+            echo '<tr><td colspan="3" class="heading">';
+            echo get_string('offlinecontacts', 'message', $countofflinecontacts);
+            echo '</td></tr>';
+        }
 
         foreach ($offlinecontacts as $contact) {
-            message_print_contactlist_user($contact);
+            if ($minmessages==0 || $contact->messagecount>=$minmessages) {
+                message_print_contactlist_user($contact, IS_CONTACT, IS_NOT_BLOCKED, $contactselecturl, $showactionlinks);
+            }
         }
         echo '<tr><td colspan="3">&nbsp;</td></tr>';
     }
@@ -154,7 +349,9 @@ function message_print_contacts() {
         echo '</td></tr>';
 
         foreach ($strangers as $stranger) {
-            message_print_contactlist_user($stranger, false);
+            if ($minmessages==0 || $contact->messagecount>=$minmessages) {
+                message_print_contactlist_user($stranger, IS_NOT_CONTACT, IS_NOT_BLOCKED, $contactselecturl, $showactionlinks);
+            }
         }
     }
 
@@ -168,15 +365,81 @@ function message_print_contacts() {
 
     echo '<br />';
 
-    $PAGE->requires->js_init_call('M.core_message.init_refresh_page', array(60*1000, $PAGE->url->out(false)));
+    if ($refresh) {
+        $PAGE->requires->js_init_call('M.core_message.init_refresh_page', array(60*1000, $PAGE->url->out(false)));
 
-    echo $OUTPUT->container_start('messagejsautorefresh note center');
-    echo get_string('pagerefreshes', 'message', $CFG->message_contacts_refresh);
-    echo $OUTPUT->container_end();
+        echo $OUTPUT->container_start('messagejsautorefresh note center');
+        echo get_string('pagerefreshes', 'message', $CFG->message_contacts_refresh);
+        echo $OUTPUT->container_end();
+    }
 
     echo $OUTPUT->container_start('messagejsmanualrefresh aligncenter');
-    echo $OUTPUT->single_button('index.php', get_string('refresh'));
+    echo $OUTPUT->single_button(message_remove_url_params($PAGE->url), get_string('refresh'));
     echo $OUTPUT->container_end();
+}
+
+function message_print_usergroup_selector($usergroup, &$courses, &$coursecontexts, $countunreadtotal, $countblocked) {
+    $strunreadmessages = $strblockedusers = null;
+
+    if ($countunreadtotal>0) { //if there are unread messages
+        $strunreadmessages = get_string('unreadmessages','message', $countunreadtotal);
+        $options = array(VIEW_UNREAD_MESSAGES=>$strunreadmessages);
+    } else {
+        //if 0 unread messages and they've requested unread messages then show contacts
+        if ($usergroup==VIEW_UNREAD_MESSAGES) {
+            $usergroup = VIEW_CONTACTS;
+        }
+    }
+
+    if ($countblocked>0) {
+        $strblockedusers = get_string('blockedusers','message', $countblocked);
+        $options = array(VIEW_BLOCKED=>$strblockedusers);
+    } else {
+        //if 0 blocked users and they've requested blocked users then show contacts
+        if ($usergroup==VIEW_BLOCKED) {
+            $usergroup = VIEW_CONTACTS;
+        }
+    }
+
+    $strcontacts = get_string('mycontacts', 'message');
+    $options[VIEW_CONTACTS] = $strcontacts;
+
+    if (!empty($courses)) {
+        $courses_options = array();
+
+        foreach($courses as $course) {
+            if (has_capability('moodle/course:viewparticipants', $coursecontexts[$course->id])) {
+                $courses_options[VIEW_COURSE.$course->id] = $course->fullname;
+            }
+        }
+
+        if (!empty($courses_options)) {
+            $options[] = array(get_string('courses')=>$courses_options);
+        }
+    }
+
+    echo html_writer::start_tag('form', array('id'=>'usergroupform','method'=>'get','action'=>''));
+        echo html_writer::select($options, 'usergroup', $usergroup, false, array('id'=>'usergroup','onchange'=>'this.form.submit()'));
+    echo html_writer::end_tag('form');
+}
+
+function message_get_course_contexts(&$courses) {
+    $coursecontexts = array();
+
+    foreach($courses as $course) {
+        $coursecontexts[$course->id] = get_context_instance(CONTEXT_COURSE, $course->id);
+    }
+
+    return $coursecontexts;
+}
+
+function message_remove_url_params($moodleurl) {
+    //this should work but doesnt for some reason
+    //return $PAGE->url->out(true);
+    
+    $newurl = new moodle_url($moodleurl);
+    $newurl->remove_params('addcontact','removecontact','blockcontact','unblockcontact');
+    return $newurl->out();
 }
 
 
@@ -196,14 +459,91 @@ function message_count_messages($messagearray, $field='', $value='') {
     return $count;
 }
 
+/**
+ * Returns the count of unread messages for user. Either from a specific user or from all users.
+ * @global <type> $USER
+ * @global <type> $DB
+ * @param object $user1 the first user. Defaults to $USER
+ * @param object $user2 the second user. If null this function will count all of user 1's unread messages.
+ * @return int the count of $user1's unread messages
+ */
+function message_count_unread_messages($user1=null, $user2=null) {
+    global $USER, $DB;
 
-function message_print_search() {
-    global $USER, $OUTPUT;
+    if (empty($user1)) {
+        $user1 = $USER;
+    }
 
-    if ($frm = data_submitted()) {
+    if (!empty($user2)) {
+        return $DB->count_records_select('message', "useridto = ? AND useridfrom = ?",
+            array($user1->id, $user2->id), "COUNT('id')");
+    } else {
+        return $DB->count_records_select('message', "useridto = ?",
+            array($user1->id), "COUNT('id')");
+    }
+}
 
-        message_print_search_results($frm);
+function message_count_blocked_users($user1=null) {
+    global $USER, $DB;
 
+    if (empty($user1)) {
+        $user1 = $USER;
+    }
+
+    $sql = "SELECT count(mc.id)
+            FROM {message_contacts} mc
+            WHERE mc.userid = :userid AND mc.blocked = 1";
+    $params = array('userid'=>$user1->id);
+
+    return $DB->count_records_sql($sql, $params);
+}
+
+/**
+ *
+ * @global <type> $USER
+ * @global <type> $PAGE
+ * @global <type> $OUTPUT
+ * @param  boolean advancedsearch show basic or advanced search form
+ * @return boolean was a search performed?
+ */
+function message_print_search($advancedsearch = false, $user1=null) {
+    global $USER, $PAGE, $OUTPUT;
+
+    $frm = data_submitted();
+    
+    $doingsearch = false;
+    if ($frm) {
+        $doingsearch = !empty($frm->combinedsubmit) || !empty($frm->keywords) || (!empty($frm->personsubmit) and !empty($frm->name));
+    }
+
+    if (!empty($frm->combinedsearch)) {
+        $combinedsearchstring = $frm->combinedsearch;
+    } else {
+        $combinedsearchstring = get_string('searchcombined','message').'...';
+    }
+
+    $PAGE->requires->js_init_call('M.core_message.init_search_page', array($combinedsearchstring));
+
+    if ($doingsearch) {
+        if ($advancedsearch) {
+            
+            $messagesearch = '';
+            if (!empty($frm->keywords)) {
+                $messagesearch = $frm->keywords;
+            }
+            $personsearch = '';
+            if (!empty($frm->name)) {
+                $personsearch = $frm->name;
+            }
+            include('search_advanced.html');
+        } else {
+            include('search.html');
+        }
+
+        $showicontext = false;
+        message_print_search_results($frm, $showicontext, $user1);
+
+        return true;
     } else {
 /*
 /// unfinished buggy code disabled in search.html anyway
@@ -217,7 +557,14 @@ function message_print_search() {
             $cs .= '</select>';
         }
 */
-        include('search.html');
+
+        if ($advancedsearch) {
+            $personsearch = $messagesearch = '';
+            include('search_advanced.html');
+        } else {
+            include('search.html');
+        }
+        return false;
     }
 }
 
@@ -239,7 +586,7 @@ function message_print_settings() {
 
         set_user_preferences($pref);
 
-        redirect('index.php', get_string('settingssaved', 'message'), 1);
+        redirect(message_remove_url_params($PAGE->url), get_string('settingssaved', 'message'), 1);
     }
 
     $cbshowmessagewindow = (get_user_preferences('message_showmessagewindow', 1) == '1') ? 'checked="checked"' : '';
@@ -309,60 +656,81 @@ function message_get_contact($contactid) {
 
 
 
-function message_print_search_results($frm) {
-    global $USER, $CFG, $DB, $OUTPUT;
+function message_print_search_results($frm, $showicontext=false, $user1=null) {
+    global $USER, $CFG, $DB, $OUTPUT, $PAGE;
 
-    echo '<div class="mdl-align">';
+    if (empty($user1)) {
+        $user1 = $USER;
+    }
+
+    echo '<div class="mdl-left">';
+
+    $personsearch = false;
+    $personsearchstring = null;
+    if (!empty($frm->personsubmit) and !empty($frm->name)) {
+        $personsearch = true;
+        $personsearchstring = $frm->name;
+    } else if (!empty($frm->combinedsubmit) and !empty($frm->combinedsearch)) {
+        $personsearch = true;
+        $personsearchstring = $frm->combinedsearch;
+    }
 
     /// search for person
-    if (!empty($frm->personsubmit) and !empty($frm->name)) {
-
+    if ($personsearch) {
         if (optional_param('mycourses', 0, PARAM_BOOL)) {
             $users = array();
             $mycourses = enrol_get_my_courses();
             foreach ($mycourses as $mycourse) {
-                if (is_array($susers = message_search_users($mycourse->id, $frm->name))) {
+                if (is_array($susers = message_search_users($mycourse->id, $personsearchstring))) {
                     foreach ($susers as $suser) $users[$suser->id] = $suser;
                 }
             }
         } else {
-            $users = message_search_users(SITEID, $frm->name);
+            $users = message_search_users(SITEID, $personsearchstring);
         }
 
         if (!empty($users)) {
             echo '<strong>'.get_string('userssearchresults', 'message', count($users)).'</strong>';
-            echo '<table class="message_users">';
+            echo '<table class="messagesearchresults">';
             foreach ($users as $user) {
 
                 if ( $user->contactlistid )  {
                     if ($user->blocked == 0) { /// not blocked
-                        $strcontact = message_contact_link($user->id, 'remove', true);
-                        $strblock   = message_contact_link($user->id, 'block', true);
+                        $strcontact = message_contact_link($user->id, 'remove', true, null, $showicontext);
+                        $strblock   = message_contact_link($user->id, 'block', true, null, $showicontext);
                     } else { // blocked
-                        $strcontact = message_contact_link($user->id, 'add', true);
-                        $strblock   = message_contact_link($user->id, 'unblock', true);
+                        $strcontact = message_contact_link($user->id, 'add', true, null, $showicontext);
+                        $strblock   = message_contact_link($user->id, 'unblock', true, null, $showicontext);
                     }
                 } else {
-                    $strcontact = message_contact_link($user->id, 'add', true);
-                    $strblock   = message_contact_link($user->id, 'block', true);
+                    $strcontact = message_contact_link($user->id, 'add', true, null, $showicontext);
+                    $strblock   = message_contact_link($user->id, 'block', true, null, $showicontext);
                 }
-                $strhistory = message_history_link($user->id, 0, true, '', '', 'icon');
+
+                //should we show just the icon or icon and text?
+                $histicontext = 'icon';
+                if ($showicontext) {
+                    $histicontext = 'both';
+                }
+                $strhistory = message_history_link($USER->id, $user->id, true, '', '', $histicontext);
 
                 echo '<tr><td class="pix">';
                 echo $OUTPUT->user_picture($user, array('size'=>20, 'courseid'=>SITEID));
                 echo '</td>';
                 echo '<td class="contact">';
                 $popupoptions = array(
-                        'height' => 500,
-                        'width' => 500,
+                        'height' => MESSAGE_DISCUSSION_HEIGHT,
+                        'width' => MESSAGE_DISCUSSION_WIDTH,
                         'menubar' => false,
                         'location' => false,
                         'status' => true,
                         'scrollbars' => true,
                         'resizable' => true);
 
-                $link = new moodle_url("/message/discussion.php?id=$user->id");
-                $action = new popup_action('click', $link, "message_$user->id", $popupoptions);
+                //$link = new moodle_url("/message/discussion.php?id=$user->id");
+                $link = new moodle_url("/message/contacts_messages.php?id=$user->id");
+                //$action = new popup_action('click', $link, "message_$user->id", $popupoptions);
+                $action = null;
                 echo $OUTPUT->action_link($link, fullname($user), $action, array('title'=>get_string('sendmessageto', 'message', fullname($user))));
 
                 echo '</td>';
@@ -375,21 +743,34 @@ function message_print_search_results($frm) {
             echo '</table>';
 
         } else {
-            echo $OUTPUT->notification(get_string('nosearchresults', 'message'));
+            echo get_string('userssearchresults', 'message', 0).'<br /><br />';
         }
+    }
 
+    // search messages for keywords
+    $messagesearch = false;
+    $messagesearchstring = null;
+    if (!empty($frm->keywords)) {
+        $messagesearch = true;
+        $messagesearchstring = clean_text(trim($frm->keywords));
+    } else if (!empty($frm->combinedsubmit) and !empty($frm->combinedsearch)) {
+        $messagesearch = true;
+        $messagesearchstring = clean_text(trim($frm->combinedsearch));
+    }
 
-    /// search messages for keywords
-    } else if (!empty($frm->keywordssubmit)) {
-        $keywordstring = clean_text(trim($frm->keywords));
-        if ($keywordstring) {
-            $keywords = explode(' ', $keywordstring);
+    if ($messagesearch) {
+        if ($messagesearchstring) {
+            $keywords = explode(' ', $messagesearchstring);
         } else {
             $keywords = array();
         }
         $tome     = false;
         $fromme   = false;
         $courseid = 'none';
+
+        if (empty($frm->keywordsoption)) {
+            $frm->keywordsoption = 'allmine';
+        }
 
         switch ($frm->keywordsoption) {
             case 'tome':
@@ -421,10 +802,10 @@ function message_print_search_results($frm) {
             }
 
         /// print heading with number of results
-            echo '<p class="heading">'.get_string('keywordssearchresults', 'message', count($messages)).' ("'.s($keywordstring).'")</p>';
+            echo '<p class="heading">'.get_string('keywordssearchresults', 'message', count($messages)).' ("'.s($messagesearchstring).'")</p>';
 
         /// print table headings
-            echo '<table class="searchresults" cellspacing="0">';
+            echo '<table class="messagesearchresults" cellspacing="0">';
             echo '<tr>';
             echo '<td><strong>'.get_string('from').'</strong></td>';
             echo '<td><strong>'.get_string('to').'</strong></td>';
@@ -480,15 +861,23 @@ function message_print_search_results($frm) {
             /// print out message row
                 echo '<tr valign="top">';
                 echo '<td class="contact">';
-                message_print_user($userfrom, $fromcontact, $fromblocked);
+                message_print_user($userfrom, $fromcontact, $fromblocked, $showicontext);
                 echo '</td>';
                 echo '<td class="contact">';
-                message_print_user($userto, $tocontact, $toblocked);
+                message_print_user($userto, $tocontact, $toblocked, $showicontext);
                 echo '</td>';
                 echo '<td class="summary">'.message_get_fragment($message->fullmessage, $keywords);
                 echo '<br /><div class="link">';
-                message_history_link($message->useridto, $message->useridfrom, false,
-                                     $keywordstring, 'm'.$message->id, $strcontext);
+
+                //find the user involved that isnt the current user
+                $user2id = null;
+                if ($user1->id == $message->useridto) {
+                    $user2id = $message->useridfrom;
+                } else {
+                    $user2id = $message->useridto;
+                }
+                message_history_link($user1->id, $user2id, false,
+                                     $messagesearchstring, 'm'.$message->id, $strcontext);
                 echo '</div>';
                 echo '</td>';
                 echo '<td class="date">'.userdate($message->timecreated, $dateformat).'</td>';
@@ -502,54 +891,59 @@ function message_print_search_results($frm) {
             echo '</table>';
 
         } else {
-            echo $OUTPUT->notification(get_string('nosearchresults', 'message'));
+            echo '<p class="heading">'.get_string('keywordssearchresults', 'message', 0).' ("'.s($messagesearchstring).'")</p>';
         }
+    }
 
-
-    /// what the ????, probably an empty search string, duh!
-    } else {
+    if (!$personsearch && !$messagesearch) {
+        //they didnt enter any search terms
         echo $OUTPUT->notification(get_string('emptysearchstring', 'message'));
     }
 
     echo '<br />';
-    echo $OUTPUT->single_button(new moodle_url('index.php', array('tab' => 'search')), get_string('newsearch', 'message'));
+    echo $OUTPUT->single_button(new moodle_url($PAGE->url, array('tab' => 'search')), get_string('newsearch', 'message'));
 
     echo '</div>';
 }
 
 
-function message_print_user ($user=false, $iscontact=false, $isblocked=false) {
+function message_print_user ($user=false, $iscontact=false, $isblocked=false, $includeicontext=false) {
     global $USER, $OUTPUT;
 
     if ($user === false) {
         echo $OUTPUT->user_picture($USER, array('size'=>20, 'courseid'=>SITEID));
     } else {
-        echo $OUTPUT->user_picture($USE, array('size'=>20, 'courseid'=>SITEID));
+        echo $OUTPUT->user_picture($USER, array('size'=>20, 'courseid'=>SITEID));
         echo '&nbsp;';
+
+        $return = false;
+        $script = null;
         if ($iscontact) {
-            message_contact_link($user->id, 'remove');
+            message_contact_link($user->id, 'remove', $return, $script, $includeicontext);
         } else {
-            message_contact_link($user->id, 'add');
+            message_contact_link($user->id, 'add', $return, $script, $includeicontext);
         }
         echo '&nbsp;';
         if ($isblocked) {
-            message_contact_link($user->id, 'unblock');
+            message_contact_link($user->id, 'unblock', $return, $script, $includeicontext);
         } else {
-            message_contact_link($user->id, 'block');
+            message_contact_link($user->id, 'block', $return, $script, $includeicontext);
         }
         echo '<br />';
 
         $popupoptions = array(
-                'height' => 500,
-                'width' => 500,
+                'height' => MESSAGE_DISCUSSION_HEIGHT,
+                'width' => MESSAGE_DISCUSSION_WIDTH,
                 'menubar' => false,
                 'location' => false,
                 'status' => true,
                 'scrollbars' => true,
                 'resizable' => true);
 
-        $link = new moodle_url("/message/discussion.php?id=$user->id");
-        $action = new popup_action('click', $link, "message_$user->id", $popupoptions);
+        //$link = new moodle_url("/message/discussion.php?id=$user->id");
+        $link = new moodle_url("/message/contacts_messages.php?id=$user->id");
+        //$action = new popup_action('click', $link, "message_$user->id", $popupoptions);
+        $action = null;
         echo $OUTPUT->action_link($link, fullname($user), $action, array('title'=>get_string('sendmessageto', 'message', fullname($user))));
 
     }
@@ -557,10 +951,15 @@ function message_print_user ($user=false, $iscontact=false, $isblocked=false) {
 
 
 /// linktype can be: add, remove, block, unblock
-function message_contact_link($userid, $linktype='add', $return=false, $script="index.php?tab=contacts", $text=false) {
-    global $USER, $CFG, $OUTPUT;
+function message_contact_link($userid, $linktype='add', $return=false, $script=null, $text=false, $icon=true) {
+    global $USER, $CFG, $OUTPUT, $PAGE;
 
     static $str;
+
+    if (empty($script)) {
+        //$script = "index.php?tab=contacts";
+        $script = message_remove_url_params($PAGE->url).'?tab=contacts';
+    }
 
     if (empty($str->blockcontact)) {
        $str->blockcontact   =  get_string('blockcontact', 'message');
@@ -574,25 +973,31 @@ function message_contact_link($userid, $linktype='add', $return=false, $script="
     $alttext = $text ? '' : $string;
     $text = $text ? '&nbsp;'.$string : '';
 
+    $iconpath = null;
     switch ($linktype) {
         case 'block':
-            $icon = 't/go';
+            $iconpath = 't/block';
             break;
         case 'unblock':
-            $icon = 't/stop';
+            $iconpath = 't/userblue';
             break;
         case 'remove':
-            $icon = 't/user';
+            $iconpath = 'i/cross_red_big';
             break;
         case 'add':
         default:
-            $icon = 't/usernot';
+            $iconpath = 't/addgreen';
     }
 
-    $output = '<span class="'.$linktype.'">'.
+    $img = '';
+    if ($icon) {
+        $img = '<img src="'.$OUTPUT->pix_url($iconpath).'" class="iconsmall" alt="'.s($alttext).'" />';
+    }
+
+    $output = '<span class="'.$linktype.'contact">'.
               '<a href="'.$script.'&amp;'.$command.'='.$userid.
               '&amp;sesskey='.sesskey().'" title="'.s($string).'">'.
-              '<img src="'.$OUTPUT->pix_url($icon).'" class="iconsmall" alt="'.s($alttext).'" />'.
+              $img.
               $text.'</a></span>';
 
     if ($return) {
@@ -603,7 +1008,7 @@ function message_contact_link($userid, $linktype='add', $return=false, $script="
     }
 }
 
-function message_history_link($userid1, $userid2=0, $returnstr=false, $keywords='', $position='', $linktext='') {
+function message_history_link($userid1, $userid2, $returnstr=false, $keywords='', $position='', $linktext='') {
     global $USER, $CFG, $OUTPUT;
 
     static $strmessagehistory;
@@ -612,9 +1017,10 @@ function message_history_link($userid1, $userid2=0, $returnstr=false, $keywords=
         $strmessagehistory = get_string('messagehistory', 'message');
     }
 
-    if (!$userid2) {
-        $userid2 = $USER->id;
-    }
+//todo andrew user1 is generally the current user
+    //if (!$userid2) {
+//        $userid2 = $USER->id;
+    //}
     if ($position) {
         $position = "#$position";
     }
@@ -642,8 +1048,9 @@ function message_history_link($userid1, $userid2=0, $returnstr=false, $keywords=
             'scrollbars' => true,
             'resizable' => true);
 
-    $link = new moodle_url("/message/history.php?user1=$userid1&user2=$userid2$keywords$position");
-    $action = new popup_action('click', $link, "message_history_$userid1", $popupoptions);
+    $link = new moodle_url('/message/contacts_messages.php?history='.MESSAGE_HISTORY_ALL."&user=$userid1&id=$userid2$keywords$position");
+    //$action = new popup_action('click', $link, "message_history_$userid1", $popupoptions);
+    $action = null;
     $str = $OUTPUT->action_link($link, $fulllink, $action, array('title'=>$strmessagehistory));
 
     $str = '<span class="history">'.$str.'</span>';
@@ -790,7 +1197,6 @@ function message_search($searchterms, $fromme=true, $tome=true, $courseid='none'
     } else {
         $searchcond = implode(" AND ", $searchcond);
     }
-
 
     /// There are several possibilities
     /// 1. courseid = SITEID : The admin is searching messages by all users
@@ -953,21 +1359,111 @@ function message_get_fragment($message, $keywords) {
     return $fragment;
 }
 
-
-function message_get_history($user1, $user2) {
+//retrieve the messages between two users
+function message_get_history($user1, $user2, $limitnum=0) {
     global $DB;
 
-    $messages = $DB->get_records_select('message_read', "(useridto = ? AND useridfrom = ?) OR
+    $messages = array();
+
+    //we want messages sorted oldest to newest but if getting a subset of messages we need to sort
+    //desc to get the last $limitnum messages then flip the order in php
+    $sort = 'asc';
+    if ($limitnum>0) {
+        $sort = 'desc';
+    }
+
+    if ($messages_read = $DB->get_records_select('message_read', "(useridto = ? AND useridfrom = ?) OR
                                                     (useridto = ? AND useridfrom = ?)", array($user1->id, $user2->id, $user2->id, $user1->id),
-                                                    'timecreated');
-    if ($messages_new =  $DB->get_records_select('message', "(useridto = ? AND useridfrom = ?) OR
-                                                    (useridto = ? AND useridfrom = ?)", array($user1->id, $user2->id, $user2->id, $user1->id),
-                                                    'timecreated')) {
-        foreach ($messages_new as $message) {
-            $messages[] = $message;
+                                                    "timecreated $sort", '*', 0, $limitnum)) {
+        foreach ($messages_read as $message) {
+            $messages[$message->timecreated] = $message;
         }
     }
+    if ($messages_new =  $DB->get_records_select('message', "(useridto = ? AND useridfrom = ?) OR
+                                                    (useridto = ? AND useridfrom = ?)", array($user1->id, $user2->id, $user2->id, $user1->id),
+                                                    "timecreated $sort", '*', 0, $limitnum)) {
+        foreach ($messages_new as $message) {
+            $messages[$message->timecreated] = $message;
+        }
+    }
+
+    //if we only want the last $limitnum messages
+    if ($limitnum>0) {
+        ksort($messages);
+        $messages = array_slice($messages, count($messages)-$limitnum, $limitnum, true);
+    }
+    
     return $messages;
+}
+
+function message_print_message_history($user1,$user2,$search='',$messagelimit=0, $messagehistorylink=false) {
+    global $CFG, $OUTPUT;
+
+    echo $OUTPUT->box_start('center');
+    echo '<table cellpadding="10" class="message_user_pictures"><tr>';
+    echo '<td align="center" id="user1">';
+    echo $OUTPUT->user_picture($user1, array('size'=>100, 'courseid'=>SITEID));
+    echo '<div class="heading">'.fullname($user1).'</div>';
+    echo '</td>';
+    echo '<td align="center">';
+    echo '<img src="'.$CFG->wwwroot.'/pix/t/left.gif" alt="'.get_string('from').'" />';
+    echo '<img src="'.$CFG->wwwroot.'/pix/t/right.gif" alt="'.get_string('to').'" />';
+    echo '</td>';
+    echo '<td align="center" id="user2">';
+    echo $OUTPUT->user_picture($user2, array('size'=>100, 'courseid'=>SITEID));
+    echo '<div class="heading">'.fullname($user2).'</div>';
+
+    if (isset($user2->iscontact) && isset($user2->isblocked)) {
+        $incontactlist = $user2->iscontact;
+        $isblocked = $user2->isblocked;
+
+        $script = null;
+        $text = true;
+        $icon = false;
+
+        $strcontact = message_get_contact_add_remove_link($incontactlist, $isblocked, $user2, $script, $text, $icon);
+        $strblock   = message_get_contact_block_link($incontactlist, $isblocked, $user2, $script, $text, $icon);
+        echo $strcontact.$strblock;
+    }
+
+    echo '</td>';
+    echo '</tr></table>';
+    echo $OUTPUT->box_end();
+
+    if (!empty($messagehistorylink)) {
+        echo $messagehistorylink;
+    }
+
+    /// Get all the messages and print them
+    if ($messages = message_get_history($user1, $user2, $messagelimit)) {
+        $tablecontents = '';
+
+        $current->mday = '';
+        $current->month = '';
+        $current->year = '';
+        $messagedate = get_string('strftimetime');
+        $blockdate   = get_string('strftimedaydate');
+        foreach ($messages as $message) {
+            $date = usergetdate($message->timecreated);
+            if ($current->mday != $date['mday'] | $current->month != $date['month'] | $current->year != $date['year']) {
+                $current->mday = $date['mday'];
+                $current->month = $date['month'];
+                $current->year = $date['year'];
+
+                $tablecontents .= '<div class="mdl-align heading"><a name="'.$date['year'].$date['mon'].$date['mday'].'"></a>';
+                $tablecontents .= $OUTPUT->heading(userdate($message->timecreated, $blockdate), 4, 'center').'</div>';
+            }
+            if ($message->useridfrom == $user1->id) {
+                $tablecontents .= '<div class="mdl-left left">'.message_format_message($message, $user1, $messagedate, $search, 'me').'</div><br />';
+            } else {
+                $tablecontents .= '<div class="mdl-left right">'.message_format_message($message, $user2, $messagedate, $search, 'other').'</div><br />';
+            }
+        }
+
+        echo html_writer::nonempty_tag('div', $tablecontents, array('class'=>'mdl-left messagehistory'));
+    } else {
+        echo $OUTPUT->heading(get_string('nomessagesfound', 'message'), 1);
+    }
 }
 
 function message_format_message(&$message, &$user, $format='', $keywords='', $class='other') {
@@ -988,7 +1484,8 @@ function message_format_message(&$message, &$user, $format='', $keywords='', $cl
     if ($keywords) {
         $messagetext = highlight($keywords, $messagetext);
     }
-    return '<div class="message '.$class.'"><a name="m'.$message->id.'"></a><span class="author">'.s(fullname($user)).'</span> <span class="time">['.$time.']</span>: <span class="content">'.$messagetext.'</span></div>';
+    //return '<div class="message '.$class.'"><a name="m'.$message->id.'"></a><span class="author">'.s(fullname($user)).'</span> <span class="time">['.$time.']</span>: <span class="content">'.$messagetext.'</span></div>';
+    return '<div class="message '.$class.'"><a name="m'.$message->id.'"></a> <span class="time">['.$time.']</span>: <span class="content">'.$messagetext.'</span></div>';
 }
 
 /**
@@ -1005,7 +1502,7 @@ function message_post_message($userfrom, $userto, $message, $format, $messagetyp
     $eventdata->userto           = $userto;
     $eventdata->subject          = "IM";
     $eventdata->fullmessage      = $message;
-    $eventdata->fullmessageformat = FORMAT_PLAIN;
+    $eventdata->fullmessageformat = $format;
     $eventdata->fullmessagehtml  = '';
     $eventdata->smallmessage     = '';
     $eventdata->timecreated     = time();
@@ -1035,9 +1532,10 @@ function message_get_participants() {
  * block links etc
  * @param $contact contact object containing all fields required for $OUTPUT->user_picture()
  * @param $incontactlist is the user a contact of ours?
+ * @param $selectcontacturl string the url to send the user to when a contact's name is clicked
  */
-function message_print_contactlist_user($contact, $incontactlist = true){
-    global $OUTPUT;
+function message_print_contactlist_user($contact, $incontactlist = true, $isblocked = false, $selectcontacturl = null, $showactionlinks = true) {
+    global $OUTPUT, $USER;
     $fullname  = fullname($contact);
     $fullnamelink  = $fullname;
 
@@ -1046,16 +1544,13 @@ function message_print_contactlist_user($contact, $incontactlist = true){
         $fullnamelink = '<strong>'.$fullnamelink.' ('.$contact->messagecount.')</strong>';
     }
 
+    $strcontact = $strblock = $strhistory = null;
 
-    if($incontactlist){
-        $strcontact = message_contact_link($contact->id, 'remove', true);
-        $strblock   = '';
-    }else{
-        $strcontact = message_contact_link($contact->id, 'add', true);
-        $strblock   = '&nbsp;'. message_contact_link($contact->id, 'block', true);
+    if ($showactionlinks) {
+        $strcontact = message_get_contact_add_remove_link($incontactlist, $isblocked, $contact);
+        $strblock   = message_get_contact_block_link($incontactlist, $isblocked, $contact);
+        $strhistory = message_history_link($USER->id, $contact->id, true, '', '', 'icon');
     }
-
-    $strhistory = message_history_link($contact->id, 0, true, '', '', 'icon');
 
     echo '<tr><td class="pix">';
     echo $OUTPUT->user_picture($contact, array('size'=>20, 'courseid'=>SITEID));
@@ -1063,21 +1558,57 @@ function message_print_contactlist_user($contact, $incontactlist = true){
     echo '<td class="contact">';
 
     $popupoptions = array(
-            'height' => 500,
-            'width' => 500,
+            'height' => MESSAGE_DISCUSSION_HEIGHT,
+            'width' => MESSAGE_DISCUSSION_WIDTH,
             'menubar' => false,
             'location' => false,
             'status' => true,
             'scrollbars' => true,
             'resizable' => true);
 
-    $link = new moodle_url("/message/discussion.php?id=$contact->id");
-    $action = new popup_action('click', $link, "message_$contact->id", $popupoptions);
+    $link = $action = null;
+    if (!empty($selectcontacturl)) {
+        $link = new moodle_url($selectcontacturl.'&'.CONTACT_ID.'='.$contact->id);
+    } else {
+        //I suspect this else clause can be removed and maybe the $selectcontacturl arg can be removed and hardcoded
+        $link = new moodle_url("/message/discussion.php?id=$contact->id");
+        $action = new popup_action('click', $link, "message_$contact->id", $popupoptions);
+    }
     echo $OUTPUT->action_link($link, $fullnamelink, $action, array('title'=>get_string('sendmessageto', 'message', $fullname)));
 
     echo '</td>';
     echo '<td class="link">&nbsp;'.$strcontact.$strblock.'&nbsp;'.$strhistory.'</td>';
     echo '</tr>';
+}
+
+function message_get_contact_add_remove_link($incontactlist, $isblocked, $contact, $script=null, $text=false, $icon=true) {
+    $strcontact = '';
+
+    if($incontactlist){
+        $strcontact = message_contact_link($contact->id, 'remove', true, $script, $text, $icon);
+    } else if ($isblocked) {
+        $strcontact = message_contact_link($contact->id, 'add', true, $script, $text, $icon);
+    } else{
+        $strcontact = message_contact_link($contact->id, 'add', true, $script, $text, $icon);
+    }
+
+    return $strcontact;
+}
+
+function message_get_contact_block_link($incontactlist, $isblocked, $contact, $script=null, $text=false, $icon=true) {
+    $strblock   = '';
+
+    //commented out to allow the user to block a contact without having to remove them first
+    /*if ($incontactlist) {
+        //$strblock = '';
+    } else*/
+    if ($isblocked) {
+        $strblock   = '&nbsp;'.message_contact_link($contact->id, 'unblock', true, $script, $text, $icon);
+    } else{
+        $strblock   = '&nbsp;'.message_contact_link($contact->id, 'block', true, $script, $text, $icon);
+    }
+
+    return $strblock;
 }
 
  /**
@@ -1137,4 +1668,26 @@ function message_get_popup_messages($destuserid, $fromuserid=NULL){
         }
     }
     return $messages;
+}
+
+//marks all messages being sent from $fromuserid to $destuserid as read
+function message_mark_messages_read($destuserid, $fromuserid){
+    global $DB;
+
+    $sql = 'SELECT m.*, mw.id AS mwid FROM {message} m JOIN {message_working} mw ON m.id=mw.unreadmessageid WHERE m.useridto=:useridto AND m.useridfrom=:useridfrom';
+    $messages = $DB->get_recordset_sql($sql, array('useridto'=>$destuserid,'useridfrom'=>$fromuserid));
+
+    foreach ($messages as $message) {
+        $message->timeread = time();
+        $messageid = $message->id;
+        unset($message->id);//unset because it will get a new id on insert into message_read
+
+        //delete what we've processed and check if can move message
+        $DB->delete_records('message_working', array('id' => $message->mwid));
+        if ( $DB->count_records('message_working', array('unreadmessageid'=>$messageid)) == 0){
+            if ($DB->insert_record('message_read', $message)) {
+                $DB->delete_records('message', array('id' => $messageid));
+            }
+        }
+    }
 }

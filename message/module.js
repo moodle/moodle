@@ -5,7 +5,6 @@ M.core_message.init_focus = function(Y, eid) {
 }
 
 M.core_message.init_refresh_parent_frame = function(Y, msgcount, msg) {
-
 	var add_message = function (messagestr) {
 	    var messageblock = parent.messages.document.getElementById('messages');
 	    var message = document.createElement('div');
@@ -27,4 +26,19 @@ M.core_message.init_refresh_page = function(Y, delay, url) {
 		document.location.replace(url);
 	}
 	setTimeout(delay_callback, delay);
+}
+
+M.core_message.init_search_page = function(Y, defaultsearchterm) {
+    this.Y = Y;
+    this.defaultsearchterm = defaultsearchterm;
+
+    var combinedsearchbox = this.Y.one('#combinedsearch');
+    combinedsearchbox.on('focus', this.combinedsearchgotfocus, this);
+}
+
+
+M.core_message.combinedsearchgotfocus = function(e) {
+    if (e.target.get('value')==this.defaultsearchterm) {
+        e.target.select();
+    }
 }

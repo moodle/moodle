@@ -1,0 +1,61 @@
+<form id="personsearch" method="post">
+<div><input type="hidden" name="tab" value="search" /></div>
+
+
+<div id="advancedcontactssearchspan">
+<table cellpadding="5" class="message_form mdl-left">
+    <tr>
+        <td colspan="3" class="message_heading mdl-left"><div id="hideadvancedsearch" class="mdl-align"><a href="contacts.php" id="combinedcontactsearchlink"><?php print_string('hideadvanced','form') ?></a></div></td>
+    </tr>
+    <tr>
+        <td colspan="3" class="message_heading mdl-left"><p class="heading"><?php echo get_string('searchforperson', 'message') ?></p></td>
+    </tr>
+    <tr>
+        <td><label for="name"><?php print_string('name') ?></label></td>
+        <td><input type="text" name="name" size="50" id="name" value="<? echo $personsearch ?>" /></td>
+        <td><input type="submit" name="personsubmit" value="<?php print_string('search') ?>" /></td>
+    </tr>
+    <tr>
+        <td>&nbsp;</td>
+        <td colspan="2">
+            <input type="checkbox" name="mycourses" id="mycourses" /><label for="mycourses"><?php print_string('onlymycourses', 'message') ?></label></td>
+    </tr>
+
+    <tr><td colspan="3"></td></tr>
+
+
+    <tr>
+        <td colspan="3" class="message_heading"><p class="heading"><?php echo get_string('searchmessages', 'message') ?></p></td>
+    </tr>
+    <tr>
+        <td><label for="keywords"><?php print_string('keywords', 'message') ?></label></td>
+        <td><input type="text" name="keywords" id="keywords" size="50" value="<? echo $messagesearch ?>" /></td>
+        <td><input type="submit" name="keywordssubmit" value="<?php print_string('search') ?>" /></td>
+    </tr>
+
+    <tr>
+        <td>&nbsp;</td>
+        <td colspan="2">
+            <input type="checkbox" name="includeblocked" id="includeblocked" /><label for="includeblocked"><?php print_string('includeblockedusers', 'message') ?></label></td>
+    </tr>
+
+    <tr><td>&nbsp;</td><td colspan="2"><input type="radio" name="keywordsoption" id="keywordsoption1" value="tome" /><label for="keywordsoption1"><?php print_string('onlytome', 'message') ?></label></td></tr>
+    <tr><td>&nbsp;</td><td colspan="2"><input type="radio" name="keywordsoption" id="keywordsoption2" value="fromme" /><label for="keywordsoption2"><?php print_string('onlyfromme', 'message') ?></label></td></tr>
+    <tr><td>&nbsp;</td><td colspan="2"><input type="radio" checked="checked" name="keywordsoption" id="keywordsoption3" value="allmine" /><label for="keywordsoption3"><?php print_string('allmine', 'message') ?></label></td></tr>
+
+    <?php if (has_capability('moodle/site:readallmessages', get_context_instance(CONTEXT_SYSTEM))) { ?>
+    <tr><td>&nbsp;</td><td colspan="2"><input type="radio" name="keywordsoption" id="keywordsoption4" value="allusers" /><label for="keywordsoption4"><?php print_string('allusers', 'message') ?></label></td></tr>
+    <?php } ?>
+
+<?php
+/* Potential abuse problems - temporarily disabled
+    echo '<tr><td colspan="3"><input type="radio" name="keywordsoption" alt="'.get_string('allstudents', 'message').'" value="courseusers" />'.get_string('allstudents', 'message').'<br />&nbsp;&nbsp;&nbsp;'.$cs.'; </td></tr>';
+
+*/
+
+?>
+
+</table>
+</div>
+
+</form>

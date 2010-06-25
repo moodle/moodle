@@ -12,19 +12,21 @@ class send_form extends moodleform {
 
         $mform =& $this->_form;
 
-        $editoroptions = array('maxfiles'=>0, 'maxbytes'=>0, 'trusttext'=>false);
+        //$editoroptions = array('maxfiles'=>0, 'maxbytes'=>0, 'trusttext'=>false);
+        $editoroptions = array();
+
+        //width handled by css so cols is empty. Still present so the page validates.
+        $displayoptions = array('rows'=>'4', 'cols'=>'', 'class'=>'messagesendbox');
 
         $mform->addElement('hidden', 'id');
         $mform->setType('id', PARAM_INT);
 
-        $systemcontext   = get_context_instance(CONTEXT_SYSTEM);
-
-        $mform->addElement('html', '<div class="message-send-box">');
-        $mform->addElement('editor', 'message_editor', get_string('message', 'message'), null, $editoroptions);
-        $mform->addElement('html', '</div>');
+        //$mform->addElement('html', '<div class="message-send-box">');
+            $mform->addElement('textarea', 'message', get_string('message', 'message'), $displayoptions, $editoroptions);
+            //$mform->addElement('editor', 'message_editor', get_string('message', 'message'), null, $editoroptions);
+        //$mform->addElement('html', '</div>');
 
         $this->add_action_buttons(false, get_string('sendmessage', 'message'));
-
     }
 
     /**
@@ -34,7 +36,7 @@ class send_form extends moodleform {
      */
     function set_data($data) {
 
-        $data->message = array('text'=>$data->message, 'format'=>$data->messageformat);
+        //$data->message = array('text'=>$data->message, 'format'=>$data->messageformat);
 
         parent::set_data($data);
     }
@@ -47,10 +49,10 @@ class send_form extends moodleform {
     function get_data() {
         $data = parent::get_data();
 
-        if ($data !== null) {
-            $data->messageformat = $data->message_editor['format'];
-            $data->message = clean_text($data->message_editor['text'], $data->messageformat);
-        }
+        /*if ($data !== null) {
+            //$data->messageformat = $data->message_editor['format'];
+            //$data->message = clean_text($data->message_editor['text'], $data->messageformat);
+        }*/
 
         return $data;
     }
@@ -62,9 +64,9 @@ class send_form extends moodleform {
      * re-display the form but with an empty message so the user can type the next
      * thing into it
      */
-    function reset_message() {
-        $this->_form->_elements[$this->_form->_elementIndex['message_editor']]->setValue(array('text'=>''));
-    }
+    //function reset_message() {
+        //$this->_form->_elements[$this->_form->_elementIndex['message']]->setValue(array('text'=>''));
+    //}
 
 }
 

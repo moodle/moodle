@@ -65,6 +65,8 @@ $systemcontext   = get_context_instance(CONTEXT_SYSTEM);
 $personalcontext = get_context_instance(CONTEXT_USER, $user->id);
 $coursecontext   = get_context_instance(CONTEXT_COURSE, $course->id);
 
+$PAGE->set_context(get_context_instance(CONTEXT_USER, $USER->id));
+$PAGE->set_pagelayout('course');
 
 // check access control
 if ($user->id == $USER->id) {
@@ -95,11 +97,14 @@ if (($form = data_submitted()) && confirm_sesskey()) {
     foreach ( $providers as $providerid => $provider){
         foreach (array('loggedin', 'loggedoff') as $state){
             $linepref = '';
-            foreach ($form->{$provider->component.'_'.$provider->name.'_'.$state} as $process=>$one){
-                if ($linepref == ''){
-                    $linepref = $process;
-                } else {
-                    $linepref .= ','.$process;
+            $componentproviderstate = $provider->component.'_'.$provider->name.'_'.$state;
+            if (array_key_exists($componentproviderstate, $form)) {
+                foreach ($form->{$componentproviderstate} as $process=>$one){
+                    if ($linepref == ''){
+                        $linepref = $process;
+                    } else {
+                        $linepref .= ','.$process;
+                    }
                 }
             }
             $preferences['message_provider_'.$provider->component.'_'.$provider->name.'_'.$state] = $linepref;
@@ -171,12 +176,17 @@ $streditmymessage = get_string('editmymessage', 'message');
 $strparticipants  = get_string('participants');
 $userfullname     = fullname($user, true);
 
-if (has_capability('moodle/course:viewparticipants', $coursecontext) ||
-    has_capability('moodle/site:viewparticipants', $systemcontext)) {
-    $PAGE->navbar->add($strparticipants, new moodle_url('/message/index.php', array('id'=>$course->id)));
+if ($user->id==$USER->id) {
+    $PAGE->navigation->extend_for_user($USER);
+} else {
+    if (has_capability('moodle/course:viewparticipants', $coursecontext) ||
+        has_capability('moodle/site:viewparticipants', $systemcontext)) {
+        $PAGE->navbar->add($strparticipants, new moodle_url('/message/index.php', array('id'=>$course->id)));
+    }
+    $PAGE->navbar->add($userfullname, new moodle_url('/user/view.php', array('id'=>$user->id, 'course'=>$course->id)));
+    $PAGE->navbar->add($streditmymessage);
 }
-$PAGE->navbar->add($userfullname, new moodle_url('/user/view.php', array('id'=>$user->id, 'course'=>$course->id)));
-$PAGE->navbar->add($streditmymessage);
+
 $PAGE->set_title("$course->shortname: $streditmymessage");
 if ($course->id != SITEID) {
     $PAGE->set_heading("$course->fullname: $streditmymessage");
