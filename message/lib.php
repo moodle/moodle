@@ -77,7 +77,12 @@ function message_print_contact_selector($countunreadtotal, $usergroup, $user1, $
         $courses = enrol_get_users_courses($user1->id, $onlyactivecourses);
         $coursecontexts = message_get_course_contexts($courses);//we need one of these again so holding on to them
 
-        message_print_usergroup_selector($usergroup, $courses, $coursecontexts, $countunreadtotal, count($blockedusers));
+        $strunreadmessages = null;
+        if ($countunreadtotal>0) { //if there are unread messages
+            $strunreadmessages = get_string('unreadmessages','message', $countunreadtotal);
+        }
+
+        message_print_usergroup_selector($usergroup, $courses, $coursecontexts, $countunreadtotal, count($blockedusers), $strunreadmessages);
 
         $refreshpage = false;
 
@@ -378,11 +383,10 @@ function message_print_contacts($onlinecontacts, $offlinecontacts, $strangers, $
     echo $OUTPUT->container_end();
 }
 
-function message_print_usergroup_selector($usergroup, &$courses, &$coursecontexts, $countunreadtotal, $countblocked) {
-    $strunreadmessages = $strblockedusers = null;
+function message_print_usergroup_selector($usergroup, &$courses, &$coursecontexts, $countunreadtotal, $countblocked, $strunreadmessages) {
+    $strblockedusers = null;
 
     if ($countunreadtotal>0) { //if there are unread messages
-        $strunreadmessages = get_string('unreadmessages','message', $countunreadtotal);
         $options = array(VIEW_UNREAD_MESSAGES=>$strunreadmessages);
     } else {
         //if 0 unread messages and they've requested unread messages then show contacts
