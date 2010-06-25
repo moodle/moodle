@@ -973,7 +973,7 @@ class t3lib_cs {
 	 */
 	function initCharset($charset)	{
 			// Only process if the charset is not yet loaded:
-		if (!is_array($this->parsedCharsets[$charset]))	{
+		if (empty($this->parsedCharsets[$charset]) || !is_array($this->parsedCharsets[$charset]))	{
 
 				// Conversion table filename:
 			$charsetConvTableFile = PATH_t3lib.'csconvtbl/'.$charset.'.tbl';

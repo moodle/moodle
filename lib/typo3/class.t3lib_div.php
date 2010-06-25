@@ -129,7 +129,7 @@
  * 2242:     function xmlGetHeaderAttribs($xmlData)
  *
  *              SECTION: FILES FUNCTIONS
- * 2275:     function getURL($url, $includeHeader=0)
+ * 2275:     function getUrl($url, $includeHeader=0)
  * 2342:     function writeFile($file,$content)
  * 2367:     function fixPermissions($file)
  * 2384:     function writeFileToTypo3tempDir($filepath,$content)
@@ -2705,7 +2705,7 @@ final class t3lib_div {
 	 * @param	array			Error code/message and, if $includeHeader is 1, response meta data (HTTP status and content type)
 	 * @return	string	The content from the resource given as input. FALSE if an error has occured.
 	 */
-	public static function getURL($url, $includeHeader = 0, $requestHeaders = false, &$report = NULL)	{
+	public static function getUrl($url, $includeHeader = 0, $requestHeaders = false, &$report = NULL)	{
 		$content = false;
 
 		if (isset($report))	{
