@@ -205,10 +205,10 @@ $temp->add(new admin_setting_configselect('loglifetime', get_string('loglifetime
 
 
 $temp->add(new admin_setting_configcheckbox('disablegradehistory', get_string('disablegradehistory', 'grades'),
-                                            get_string('configdisablegradehistory', 'grades'), 0, PARAM_INT));
+                                            get_string('disablegradehistory_help', 'grades'), 0, PARAM_INT));
 
 $temp->add(new admin_setting_configselect('gradehistorylifetime', get_string('gradehistorylifetime', 'grades'),
-                                          get_string('configgradehistorylifetime', 'grades'), 0, array(0 => get_string('neverdeletehistory', 'grades'),
+                                          get_string('gradehistorylifetime_help', 'grades'), 0, array(0 => get_string('neverdeletehistory', 'grades'),
                                                                                                    1000 => get_string('numdays', '', 1000),
                                                                                                     365 => get_string('numdays', '', 365),
                                                                                                     180 => get_string('numdays', '', 180),

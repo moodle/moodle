@@ -31,7 +31,7 @@ $settings->add(new admin_setting_configcheckbox('grade_report_showquickfeedback'
                                             get_string('showquickfeedback_help', 'grades'), 0));
 
 $settings->add(new admin_setting_configcheckbox('grade_report_fixedstudents', get_string('fixedstudents', 'grades'),
-                                            get_string('configfixedstudents', 'grades'), 0));
+                                            get_string('fixedstudents_help', 'grades'), 0));
 
 $settings->add(new admin_setting_configselect('grade_report_meanselection', get_string('meanselection', 'grades'),
                                           get_string('meanselection_help', 'grades'), GRADE_REPORT_MEAN_GRADED,
@@ -57,7 +57,7 @@ $settings->add(new admin_setting_configcheckbox('grade_report_showranges', get_s
                                             get_string('showranges_help', 'grades'), 0));
 
 $settings->add(new admin_setting_configcheckbox('grade_report_showuserimage', get_string('showuserimage', 'grades'),
-                                            get_string('configshowuserimage', 'grades'), 1));
+                                            get_string('showuserimage_help', 'grades'), 1));
 
 $settings->add(new admin_setting_configcheckbox('grade_report_showuseridnumber', get_string('showuseridnumber', 'grades'),
                                             get_string('showuseridnumber_help', 'grades'), 0));

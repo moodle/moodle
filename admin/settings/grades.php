@@ -27,7 +27,7 @@ if (has_capability('moodle/grade:manage', $systemcontext)
         $temp->add(new admin_setting_special_gradebookroles());
 
         // enable outcomes checkbox
-        $temp->add(new admin_setting_configcheckbox('enableoutcomes', get_string('enableoutcomes', 'grades'), get_string('configenableoutcomes', 'grades'), 0));
+        $temp->add(new admin_setting_configcheckbox('enableoutcomes', get_string('enableoutcomes', 'grades'), get_string('enableoutcomes_help', 'grades'), 0));
 
         $temp->add(new admin_setting_grade_profilereport());
 
@@ -36,12 +36,12 @@ if (has_capability('moodle/grade:manage', $systemcontext)
                                                   array(GRADE_REPORT_AGGREGATION_POSITION_FIRST => get_string('positionfirst', 'grades'),
                                                         GRADE_REPORT_AGGREGATION_POSITION_LAST => get_string('positionlast', 'grades'))));
 
-        $temp->add(new admin_setting_regradingcheckbox('grade_includescalesinaggregation', get_string('includescalesinaggregation', 'grades'), get_string('configincludescalesinaggregation', 'grades'), 1));
+        $temp->add(new admin_setting_regradingcheckbox('grade_includescalesinaggregation', get_string('includescalesinaggregation', 'grades'), get_string('includescalesinaggregation_help', 'grades'), 1));
 
-        $temp->add(new admin_setting_configcheckbox('grade_hiddenasdate', get_string('hiddenasdate', 'grades'), get_string('confighiddenasdate', 'grades'), 0));
+        $temp->add(new admin_setting_configcheckbox('grade_hiddenasdate', get_string('hiddenasdate', 'grades'), get_string('hiddenasdate_help', 'grades'), 0));
 
         // enable publishing in exports/imports
-        $temp->add(new admin_setting_configcheckbox('gradepublishing', get_string('gradepublishing', 'grades'), get_string('configgradepublishing', 'grades'), 0));
+        $temp->add(new admin_setting_configcheckbox('gradepublishing', get_string('gradepublishing', 'grades'), get_string('gradepublishing_help', 'grades'), 0));
 
         $temp->add(new admin_setting_configselect('grade_export_displaytype', get_string('gradeexportdisplaytype', 'grades'),
                                                   get_string('gradeexportdisplaytype_desc', 'grades'), GRADE_DISPLAY_TYPE_REAL, $display_types));
@@ -68,7 +68,7 @@ if (has_capability('moodle/grade:manage', $systemcontext)
     /// Grade category settings
     $temp = new admin_settingpage('gradecategorysettings', get_string('gradecategorysettings', 'grades'), 'moodle/grade:manage');
     if ($ADMIN->fulltree) {
-        $temp->add(new admin_setting_configcheckbox('grade_hideforcedsettings', get_string('hideforcedsettings', 'grades'), get_string('confighideforcedsettings', 'grades'), '1'));
+        $temp->add(new admin_setting_configcheckbox('grade_hideforcedsettings', get_string('hideforcedsettings', 'grades'), get_string('hideforcedsettings_help', 'grades'), '1'));
 
         $strnoforce = get_string('noforce', 'grades');
 
@@ -135,7 +135,7 @@ if (has_capability('moodle/grade:manage', $systemcontext)
                                                          '4' => '4',
                                                          '5' => '5')));
 
-        $temp->add(new admin_setting_configmultiselect('grade_item_advanced', get_string('gradeitemadvanced', 'grades'), get_string('configgradeitemadvanced', 'grades'),
+        $temp->add(new admin_setting_configmultiselect('grade_item_advanced', get_string('gradeitemadvanced', 'grades'), get_string('gradeitemadvanced_help', 'grades'),
                                                        array('iteminfo', 'idnumber', 'gradepass', 'plusfactor', 'multfactor', 'display', 'decimals', 'hiddenuntil', 'locktime'),
                                                        array('iteminfo' => get_string('iteminfo', 'grades'),
                                                              'idnumber' => get_string('idnumbermod'),

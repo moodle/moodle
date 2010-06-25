@@ -2,7 +2,7 @@
 
 if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
 
-    $optionalsubsystems->add(new admin_setting_configcheckbox('enableoutcomes', get_string('enableoutcomes', 'grades'), get_string('configenableoutcomes', 'grades'), 0));
+    $optionalsubsystems->add(new admin_setting_configcheckbox('enableoutcomes', get_string('enableoutcomes', 'grades'), get_string('enableoutcomes_help', 'grades'), 0));
     $optionalsubsystems->add(new admin_setting_configcheckbox('usecomments', get_string('enablecomments', 'admin'), get_string('configenablecomments', 'admin'), 1));
 
     $optionalsubsystems->add(new admin_setting_configcheckbox('usetags', get_string('usetags','admin'),get_string('configusetags', 'admin'), '1'));
