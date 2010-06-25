@@ -736,14 +736,17 @@ function scorm_view_display ($user, $scorm, $action, $cm, $boxwidth='') {
           </div>
 <?php
 }
-function scorm_simple_play($scorm,$user) {
+function scorm_simple_play($scorm,$user, $context) {
     $result = false;
 
     if ($scorm->updatefreq == UPDATE_EVERYTIME) {
         scorm_parse($scorm);
     }
+    if (has_capability('mod/scorm:viewreport', $context)) { //if this user can view reports, don't skipview so they can see links to reports. 
+        return $result;
+    }
 
-    $scoes = get_records_select('scorm_scoes','scorm='.$scorm->id.' AND launch<>\''.sql_empty().'\'');
+    $scoes = get_records_select('scorm_scoes','scorm='.$scorm->id.' AND launch<>\''.sql_empty().'\'', 'id', 'id');
 
     if ($scoes) {
         if ($scorm->skipview >= 1) {
@@ -759,26 +762,7 @@ function scorm_simple_play($scorm,$user) {
     }
     return $result;
 }
-/*
-function scorm_simple_play($scorm,$user) {
-    $result = false;
-    if ($scoes = get_records_select('scorm_scoes','scorm='.$scorm->id.' AND launch<>""')) {
-        if (count($scoes) == 1) {
-            if ($scorm->skipview >= 1) {
-                $sco = current($scoes);
-                if (scorm_get_tracks($sco->id,$user->id) === false) {
-                    header('Location: player.php?a='.$scorm->id.'&scoid='.$sco->id);
-                    $result = true;
-                } else if ($scorm->skipview == 2) {
-                    header('Location: player.php?a='.$scorm->id.'&scoid='.$sco->id);
-                    $result = true;
-                }
-            }
-        }
-    }
-    return $result;
-}
-*/
+
 function scorm_parse($scorm) {
     global $CFG;
 

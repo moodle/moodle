@@ -34,6 +34,7 @@
     require_login($course->id, false, $cm);
 
     $context = get_context_instance(CONTEXT_COURSE, $course->id);
+    $contextmodule = get_context_instance(CONTEXT_MODULE,$cm->id);
 
     if (isset($SESSION->scorm_scoid)) {
         unset($SESSION->scorm_scoid);
@@ -46,7 +47,7 @@
 
     add_to_log($course->id, 'scorm', 'pre-view', 'view.php?id='.$cm->id, "$scorm->id", $cm->id);
 
-    if ((has_capability('mod/scorm:skipview', get_context_instance(CONTEXT_MODULE,$cm->id))) && scorm_simple_play($scorm,$USER)) {
+    if ((has_capability('mod/scorm:skipview', $contextmodule)) && scorm_simple_play($scorm,$USER, $contextmodule)) {
         exit;
     }
 
