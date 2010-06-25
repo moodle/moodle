@@ -22,7 +22,7 @@ $strletter              = get_string('letter', 'grades');
 
 /// Add settings for this module to the $settings object (it's already defined)
 $settings->add(new admin_setting_configtext('grade_report_studentsperpage', get_string('studentsperpage', 'grades'),
-                                        get_string('configstudentsperpage', 'grades'), 100));
+                                        get_string('studentsperpage_help', 'grades'), 100));
 
 $settings->add(new admin_setting_configcheckbox('grade_report_quickgrading', get_string('quickgrading', 'grades'),
                                             get_string('quickgrading_help', 'grades'), 1));
