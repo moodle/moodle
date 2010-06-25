@@ -112,5 +112,6 @@ $backupfile->delete();
 
 //redirect to the index publication page
 redirect(new moodle_url('/course/publish/index.php',
-                array('sesskey' => sesskey(), 'id' => $id, 'published' => true)));
+                array('sesskey' => sesskey(), 'id' => $id, 
+                    'published' => true, 'huburl' => $huburl, 'hubname' => $hubname)));
 ?>

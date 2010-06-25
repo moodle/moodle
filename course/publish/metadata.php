@@ -175,7 +175,7 @@ if (has_capability('moodle/course:publish', get_context_instance(CONTEXT_COURSE,
         $publication = $publicationmanager->get_publication($courseids[0]);
         if (empty($publication)) {
             //if never been published or if we share, we need to save this new publication record
-            $publicationmanager->add_course_publication($registeredhub->id, $course->id, !$share, $courseids[0]);
+            $publicationmanager->add_course_publication($registeredhub->huburl, $course->id, !$share, $courseids[0]);
         } else {
             //if we update the enrollable course publication we update the publication record
             $publicationmanager->update_enrollable_course_publication($publication->id);

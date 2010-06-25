@@ -35,6 +35,62 @@ require_once($CFG->dirroot . '/lib/formslib.php');
 require_once($CFG->dirroot . '/admin/registration/lib.php');
 
 /**
+ * This form display a unregistration form.
+ */
+class site_unregistration_form extends moodleform {
+
+    public function definition() {
+        $mform = & $this->_form;
+        $mform->addElement('header', 'site', get_string('unregister', 'hub'));
+
+        $huburl = $this->_customdata['huburl'];
+        $hubname = $this->_customdata['hubname'];
+
+        $unregisterlabel = get_string('unregister', 'hub');
+        $mform->addElement('checkbox', 'unpublishalladvertisedcourses', '',
+                ' ' . get_string('unpublishalladvertisedcourses', 'hub'));
+        $mform->addElement('checkbox', 'unpublishalluploadedcourses', '',
+                ' ' . get_string('unpublishalluploadedcourses', 'hub'));
+
+        $mform->addElement('hidden', 'confirm', 1);
+        $mform->addElement('hidden', 'unregistration', 1);
+        $mform->addElement('hidden', 'huburl', $huburl);
+        $mform->addElement('hidden', 'hubname', $hubname);
+
+        $this->add_action_buttons(true, $unregisterlabel);
+    }
+
+}
+
+/**
+ * This form display a clean registration data form.
+ */
+class site_clean_registration_data_form extends moodleform {
+
+    public function definition() {
+        $mform = & $this->_form;
+        $mform->addElement('header', 'site', get_string('unregister', 'hub'));
+
+        $huburl = $this->_customdata['huburl'];
+        $hubname = $this->_customdata['hubname'];
+
+
+        $unregisterlabel = get_string('forceunregister', 'hub');
+        $mform->addElement('static', '', get_string('warning', 'hub'), get_string('forceunregisterconfirmation', 'hub', $hubname));
+
+
+        $mform->addElement('hidden', 'confirm', 1);
+        $mform->addElement('hidden', 'unregistration', 1);
+        $mform->addElement('hidden', 'cleanregdata', 1);
+        $mform->addElement('hidden', 'huburl', $huburl);
+        $mform->addElement('hidden', 'hubname', $hubname);
+
+        $this->add_action_buttons(true, $unregisterlabel);
+    }
+
+}
+
+/**
  * This form display a hub selector.
  * The hub list is retrieved from Moodle.org hub directory.
  * Also displayed, a text field to enter private hub url + its password
@@ -373,5 +429,4 @@ class site_registration_form extends moodleform {
     }
 
 }
-
 

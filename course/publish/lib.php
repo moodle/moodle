@@ -1,4 +1,5 @@
 <?php
+
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -13,8 +14,6 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-
-
 /// TIME PERIOD ///
 
 define('HUB_LASTMODIFIED_WEEK', 7);
@@ -100,8 +99,6 @@ define('HUB_HUBSCREENSHOT_FILE_TYPE', 'hubscreenshot');
  */
 define('HUB_BACKUP_FILE_TYPE', 'backup');
 
-
-
 /**
  *
  * Course publication library
@@ -112,7 +109,6 @@ define('HUB_BACKUP_FILE_TYPE', 'backup');
  * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 class course_publish_manager {
 
     /**
@@ -122,10 +118,10 @@ class course_publish_manager {
      * @param int $enrollable if the course is enrollable = 1, if downloadable = 0
      * @param int $hubcourseid the course id from the hub point of view
      */
-    public function add_course_publication($hubid, $courseid, $enrollable, $hubcourseid) {
+    public function add_course_publication($huburl, $courseid, $enrollable, $hubcourseid) {
         global $DB;
         $publication = new stdClass();
-        $publication->hubid = $hubid;
+        $publication->huburl = $huburl;
         $publication->courseid = $courseid;
         $publication->hubcourseid = $hubcourseid;
         $publication->enrollable = $enrollable;
@@ -155,16 +151,29 @@ class course_publish_manager {
     }
 
     /**
-     * Get courses publication for a given hub, a given course and a given type (enrollable or downloadable)
-     * @param int $hubid
-     * @param int $courseid
-     * @param int $enrollable
+     * Get courses publications
+     * @param int $hubid specify a hub
+     * @param int $courseid specify a course
+     * @param int $enrollable specify type of publication (enrollable or downloadable)
      * @return array of publications
      */
-    public function get_publications($hubid, $courseid, $enrollable) {
+    public function get_publications($huburl = null, $courseid = null, $enrollable = -1) {
         global $DB;
-        return $DB->get_records('course_published',
-                array('hubid' => $hubid, 'courseid' => $courseid, 'enrollable' => $enrollable));
+        $params = array();
+
+        if (!empty($huburl)) {
+            $params['huburl'] = $huburl;
+        }
+
+        if (!empty($courseid)) {
+            $params['courseid'] = $courseid;
+        }
+
+        if ($enrollable != -1) {
+            $params['enrollable'] = $enrollable;
+        }
+
+        return $DB->get_records('course_published', $params);
     }
 
     /**
@@ -187,9 +196,10 @@ class course_publish_manager {
      */
     public function get_course_publications($courseid) {
         global $DB;
-        $sql = 'SELECT cp.id, cp.status, cp.timechecked, cp.timepublished, rh.hubname, rh.huburl, cp.courseid, cp.enrollable, cp.hubcourseid
+        $sql = 'SELECT cp.id, cp.status, cp.timechecked, cp.timepublished, rh.hubname,
+                       rh.huburl, cp.courseid, cp.enrollable, cp.hubcourseid
                 FROM {course_published} cp, {registration_hubs} rh
-                WHERE cp.hubid = rh.id and cp.courseid = :courseid
+                WHERE cp.huburl = rh.huburl and cp.courseid = :courseid
                 ORDER BY cp.enrollable DESC, rh.hubname, cp.timepublished';
         $params = array('courseid' => $courseid);
         return $DB->get_records_sql($sql, $params);
@@ -202,9 +212,9 @@ class course_publish_manager {
      */
     public function get_registeredhub_by_publication($publicationid) {
         global $DB;
-        $sql = 'SELECT cp.hubid, rh.hubname, rh.huburl, rh.token
+        $sql = 'SELECT rh.huburl, rh.hubname, rh.token
                 FROM {course_published} cp, {registration_hubs} rh
-                WHERE cp.hubid = rh.id and cp.id = :publicationid';
+                WHERE cp.huburl = rh.huburl and cp.id = :publicationid';
         $params = array('publicationid' => $publicationid);
         return $DB->get_record_sql($sql, $params);
     }
@@ -217,7 +227,27 @@ class course_publish_manager {
         global $DB;
         $DB->delete_records('course_published', array('id' => $publicationid));
     }
-  
+
+    /**
+     * Delete publications for a hub
+     * @param string $huburl
+     * @param int $enrollable
+     */
+    public function delete_hub_publications($huburl, $enrollable = -1) {
+        global $DB;
+
+        $params = array();
+
+        if (!empty($huburl)) {
+            $params['huburl'] = $huburl;
+        }
+
+        if ($enrollable != -1) {
+            $params['enrollable'] = $enrollable;
+        }
+
+        $DB->delete_records('course_published', $params);
+    }
 
     /**
      * Get an array of all block instances for a given context
@@ -228,6 +258,6 @@ class course_publish_manager {
         global $DB;
         return $DB->get_records('block_instances', array('parentcontextid' => $contextid), $sort);
     }
-}
 
+}
 ?>

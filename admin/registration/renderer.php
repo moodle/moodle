@@ -1,4 +1,5 @@
 <?php
+
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
 // This file is part of Moodle - http://moodle.org/                      //
@@ -19,7 +20,6 @@
 //                                                                       //
 ///////////////////////////////////////////////////////////////////////////
 
-
 /**
  * Registration renderer.
  * @package   moodle
@@ -37,8 +37,8 @@ class core_register_renderer extends plugin_renderer_base {
      */
     public function registration_confirmation($confirmationmessage) {
         global $OUTPUT;
-        $linktositelist = html_writer::tag('a', get_string('sitelist','hub'), array('href' => new moodle_url('/local/hub/index.php')));
-        $message = $confirmationmessage.html_writer::empty_tag('br').$linktositelist;
+        $linktositelist = html_writer::tag('a', get_string('sitelist', 'hub'), array('href' => new moodle_url('/local/hub/index.php')));
+        $message = $confirmationmessage . html_writer::empty_tag('br') . $linktositelist;
         return $OUTPUT->box($message);
     }
 
@@ -49,18 +49,17 @@ class core_register_renderer extends plugin_renderer_base {
         global $OUTPUT;
 
         $table = new html_table();
-        $table->head  = array(get_string('moodleorg', 'hub'), get_string('specifichub', 'hub'));
+        $table->head = array(get_string('moodleorg', 'hub'), get_string('specifichub', 'hub'));
         $table->size = array('50%', '50%');
         //$table->attributes['class'] = 'registerindextable';
-
         //Moodle.org information cell
         $moodleorgcell = get_string('moodleorgregistrationdetail', 'hub');
-        $moodleorgcell .= html_writer::empty_tag('br').html_writer::empty_tag('br');
+        $moodleorgcell .= html_writer::empty_tag('br') . html_writer::empty_tag('br');
         $moodleorgcell = html_writer::tag('div', $moodleorgcell, array('class' => 'justifytext'));
 
         //Specific hub information cell
         $specifichubcell = get_string('specifichubregistrationdetail', 'hub');
-        $specifichubcell .= html_writer::empty_tag('br').html_writer::empty_tag('br');
+        $specifichubcell .= html_writer::empty_tag('br') . html_writer::empty_tag('br');
         $specifichubcell = html_writer::tag('div', $specifichubcell, array('class' => 'justifytext'));
 
         //add information cells
@@ -70,8 +69,8 @@ class core_register_renderer extends plugin_renderer_base {
 
         //Moodle.org button cell
         $registeronmoodleorgurl = new moodle_url("/admin/registration/register.php",
-                array('sesskey' => sesskey(), 'huburl' => HUB_MOODLEORGHUBURL
-                        , 'hubname' => 'Moodle.org'));
+                        array('sesskey' => sesskey(), 'huburl' => HUB_MOODLEORGHUBURL
+                            , 'hubname' => 'Moodle.org'));
         $registeronmoodleorgbutton = new single_button($registeronmoodleorgurl, get_string('registeronmoodleorg', 'hub'));
         $registeronmoodleorgbutton->class = 'centeredbutton';
         $registeronmoodleorgbuttonhtml = $OUTPUT->render($registeronmoodleorgbutton);
@@ -79,7 +78,7 @@ class core_register_renderer extends plugin_renderer_base {
 
         //Specific hub button cell
         $registeronspecifichuburl = new moodle_url("/admin/registration/hubselector.php",
-                array('sesskey' => sesskey()));
+                        array('sesskey' => sesskey()));
         $registeronspecifichubbutton = new single_button($registeronspecifichuburl, get_string('registeronspecifichub', 'hub'));
         $registeronspecifichubbutton->class = 'centeredbutton';
         $registeronspecifichubbuttonhtml = $OUTPUT->render($registeronspecifichubbutton);
@@ -91,7 +90,36 @@ class core_register_renderer extends plugin_renderer_base {
         $table->data[] = $row;
 
         return html_writer::table($table);
+    }
 
+    /**
+     * Display the listing of registered on hub
+     */
+    public function registeredonhublisting($hubs) {
+        global $OUTPUT;
+
+        $table = new html_table();
+        $table->head = array(get_string('hub', 'hub'), get_string('operation', 'hub'));
+        $table->size = array('80%', '20%');
+
+        foreach ($hubs as $hub) {
+            $hublink = html_writer::tag('a', $hub->hubname, array('href' => $hub->huburl));
+            $hublinkcell = html_writer::tag('div', $hublink, array('class' => 'registeredhubrow'));
+
+            $unregisterhuburl = new moodle_url("/admin/registration/index.php",
+                            array('sesskey' => sesskey(), 'huburl' => $hub->huburl, 'unregistration' => 1));
+            $unregisterbutton = new single_button($unregisterhuburl,
+                            get_string('unregister', 'hub'));
+            $unregisterbutton->class = 'centeredbutton';
+            $unregisterbuttonhtml = $OUTPUT->render($unregisterbutton);
+
+            //add button cells
+            $cells = array($hublinkcell, $unregisterbuttonhtml);
+            $row = new html_table_row($cells);
+            $table->data[] = $row;
+        }
+
+        return html_writer::table($table);
     }
 
 }

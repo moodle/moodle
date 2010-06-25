@@ -4359,7 +4359,7 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         // unfortunately old enrol plugins were doing sometimes weird role assignments :-(
 
         // enabled
-        $enabledplugins = explode(',', $CFG->enrol_plugins_enabled);
+            $enabledplugins = explode(',', $CFG->enrol_plugins_enabled);
         list($sqlenabled, $params) = $DB->get_in_or_equal($enabledplugins, SQL_PARAMS_NAMED, 'ena00');
         $params['siteid'] = SITEID;
         $sql = "INSERT INTO {enrol} (enrol, status, courseid, sortorder, enrolperiod, enrolstartdate, enrolenddate, expirynotify, expirythreshold,
@@ -4821,6 +4821,31 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         set_config('enablecompletion', 0);
         upgrade_main_savepoint($result, 2010061900.32);
     }
+
+    if ($result && $oldversion < 2010062101) {
+
+    /// Define field huburl to be dropped from course_published
+        $table = new xmldb_table('course_published');
+        $field = new xmldb_field('hubid');
+
+    /// Conditionally launch drop field huburl
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+    /// Define field huburl to be added to course_published
+        $table = new xmldb_table('course_published');
+        $field = new xmldb_field('huburl', XMLDB_TYPE_CHAR, '255', null, null, null, null, 'id');
+
+    /// Conditionally launch add field huburl
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+    /// Main savepoint reached
+        upgrade_main_savepoint($result, 2010062101);
+    }
+
 
 
     return $result;

@@ -61,6 +61,15 @@ class registration_manager {
     }
 
     /**
+     * When a site unregister from a hub, he must call this function
+     * @param string $huburl the huburl to delete
+     */
+     public function delete_registeredhub($huburl) {
+        global $DB;
+        $DB->delete_records('registration_hubs', array('huburl' => $huburl));
+    }
+
+    /**
      * Get a hub on which the site is registered for a given url or token
      * Mostly use to check if the site is registered on a specific hub
      * @param string $huburl
@@ -111,7 +120,7 @@ class registration_manager {
      */
     public function get_registered_on_hubs() {
         global $DB;
-        $hubs = $DB->get_records('registration_hubs', array());
+        $hubs = $DB->get_records('registration_hubs', array('confirmed' => 1));
         return $hubs;
     }
 

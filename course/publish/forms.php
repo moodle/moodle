@@ -106,7 +106,7 @@ class course_publication_form extends moodleform {
         $registrationmanager = new registration_manager();
         $registeredhub = $registrationmanager->get_registeredhub($huburl);
         $publicationmanager = new course_publish_manager();
-        $publications = $publicationmanager->get_publications($registeredhub->id, $course->id, $advertise);
+        $publications = $publicationmanager->get_publications($registeredhub->huburl, $course->id, $advertise);
         
         if (!empty($publications)) {
             //get the last publication of this course
