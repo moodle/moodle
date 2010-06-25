@@ -41,8 +41,8 @@ class key_form extends moodleform {
         $mform->addElement('text', 'iprestriction', get_string('keyiprestriction', 'userkey'), array('size'=>80));
         $mform->addElement('date_time_selector', 'validuntil', get_string('keyvaliduntil', 'userkey'), array('optional'=>true));
 
-        $mform->setHelpButton('iprestriction', array('keyiprestriction', get_string('keyiprestriction', 'userkey'), 'userkey'));
-        $mform->setHelpButton('validuntil', array('keyvaliduntil', get_string('keyvaliduntil', 'userkey'), 'userkey'));
+        $mform->addHelpButton('iprestriction', 'keyiprestriction', 'userkey');
+        $mform->addHelpButton('validuntil', 'keyvaliduntil', 'userkey');
 
         $mform->addElement('hidden','id');
         $mform->setType('id', PARAM_INT);

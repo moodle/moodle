@@ -55,16 +55,16 @@ class grade_import_form extends moodleform {
                 }
             }
             $mform->addElement('select', 'key', get_string('userkey', 'userkey'), $options);
-            $mform->setHelpButton('key', array('userkey', get_string('userkey', 'userkey'), 'grade'));
+            $mform->addHelpButton('key', 'userkey', 'userkey');
             $mform->addElement('static', 'keymanagerlink', get_string('keymanager', 'userkey'),
                     '<a href="'.$CFG->wwwroot.'/grade/import/keymanager.php?id='.$COURSE->id.'">'.get_string('keymanager', 'userkey').'</a>');
 
             $mform->addElement('text', 'iprestriction', get_string('keyiprestriction', 'userkey'), array('size'=>80));
-            $mform->setHelpButton('iprestriction', array('keyiprestriction', get_string('keyiprestriction', 'userkey'), 'userkey'));
+            $mform->addHelpButton('iprestriction', 'keyiprestriction', 'userkey');
             $mform->setDefault('iprestriction', getremoteaddr()); // own IP - just in case somebody does not know what user key is
 
             $mform->addElement('date_time_selector', 'validuntil', get_string('keyvaliduntil', 'userkey'), array('optional'=>true));
-            $mform->setHelpButton('validuntil', array('keyvaliduntil', get_string('keyvaliduntil', 'userkey'), 'userkey'));
+            $mform->addHelpButton('validuntil', 'keyvaliduntil', 'userkey');
             $mform->setDefault('validuntil', time()+3600*24*7); // only 1 week default duration - just in case somebody does not know what user key is
 
             $mform->disabledIf('iprestriction', 'key', 'noteq', 1);
