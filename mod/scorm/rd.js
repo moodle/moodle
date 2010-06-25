@@ -96,8 +96,8 @@ function scorm_resize () {
         var scoframe2 = document.getElementById('scoframe1');
         document.getElementById('scormobject').style.height = finalheight + 'px';
     }else{
-        var scoframe2 = document.getElementById('scoframe1');
         document.getElementById('scormobject').style.height = finalheight + 'px';
+        document.getElementById('scormpage').style.height = finalheight + 'px';
     }
 
     // resize the content container too to move the footer below the SCORM content
