@@ -212,7 +212,7 @@ function grade_report_overview_settings_definition(&$mform) {
     }
 
     $mform->addElement('select', 'report_overview_showrank', get_string('showrank', 'grades'), $options);
-    $mform->setHelpButton('report_overview_showrank', array('showrank', get_string('showrank', 'grades'), 'grade'));
+    $mform->addHelpButton('report_overview_showrank', 'showrank');
 
     //showtotalsifcontainhidden
     $options = array(-1 => get_string('default', 'grades'),
