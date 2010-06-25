@@ -23,7 +23,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['pluginname'] = 'Frameworked';
+$string['pluginname'] = 'Canvas';
 $string['region-side-post'] = 'Right';
 $string['region-side-pre'] = 'Left';
-$string['choosereadme'] = 'Frameworked, a Moodle 2.0 theme by Patrick Malley';
+$string['choosereadme'] = 'Canvas, a Moodle 2.0 parent theme by Patrick Malley.';
