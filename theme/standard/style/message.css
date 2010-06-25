@@ -4,16 +4,12 @@
 
 .message .noframesjslink {font-size:0.8em;}
 .message .link {font-size:0.8em;}
-.message_form {font-size:0.8em;}
+
 .message .heading {font-size:1.0em;font-weight:bold;}
-.message .date,
-.message .contact,
-.message .summary {font-size:0.9em;}
-.message .note,
-.message .pix {font-size:0.8em;}
-.message .author {font-weight: bold;font-size:0.8em;}
-.message .time {font-style: italic;font-size:0.8em;}
-.message .content {font-size:0.8em;}
+
+.message .author {font-weight: bold;}
+.message .time {font-style: italic;}
+.message .content {}
 
 #page-message-user .commands span {font-size:0.7em;}
 #page-message-user .name {font-weight: bold;font-size:1.1em;}
@@ -29,3 +25,23 @@ table.message_search_results td {border-color:#DDDDDD;}
 
 .message .note {padding:10px;}
 table.message .searchresults td {padding:5px;}
+
+.message .contactselector {width:24%;float:left;}
+
+.message .messagearea  {padding-left:1%;border-left:1px solid LightGrey;width:74%;float:right;min-height:200px;}
+
+.message .messagearea .messagehistory .message_user_pictures {margin-left: auto;margin-right: auto;}
+.message .messagearea .messagehistory .message_user_pictures #user1 {vertical-align:top;width:200px;}
+.message .messagearea .messagehistory .message_user_pictures #user2 {vertical-align:top;width:200px;}
+.message .messagearea .messagehistory .heading {width:100%;clear:both;}
+.message .messagearea .messagehistory .left {padding-bottom:10px;width:50%;float:left;clear:both;padding-left:10%;}
+.message .messagearea .messagehistory .right {padding-bottom:10px;width:40%;float:right;clear:both;}
+.message .messagearea .messagesend {padding-top:20px;float:center;clear:both;}
+.message .messagearea .messagesend .messagesendbox {width:100%}
+
+.message .hiddenelement  {display:none;} /** not just using hidden as mform adds that class to its fieldset */
+.message .visible {display:inline;}
+
+.messagesearchresults {margin-bottom:40px;}
+.messagesearchresults td {padding:0px 10px 0px 20px;}
+.messagesearchresults td span {white-space:nowrap;}

@@ -9,8 +9,7 @@
 #page-message-history .userpicture {width: 100px;height: 100px;}
 
 .message .summary .link {text-align:right;}
-.message .heading,
-.message .note {text-align:center;}
+
 .message .noframesjslink {margin-top:20px;}
 .message .link {vertical-align:middle;}
 .message .searchresults td {border-width:1px;border-style:solid;border-collapse:collapse;border-spacing:0px;}
