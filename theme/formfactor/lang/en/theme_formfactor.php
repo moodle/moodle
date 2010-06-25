@@ -18,8 +18,8 @@
 /**
  * Strings for component 'theme_formfactor', language 'en', branch 'MOODLE_20_STABLE'
  *
- * @package   theme_boxxie
- * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @package   moodlecore
+ * @copyright 2010 Patrick Malley
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 

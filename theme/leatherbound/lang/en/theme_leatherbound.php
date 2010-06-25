@@ -16,14 +16,14 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for component 'theme_formfactor', language 'en', branch 'MOODLE_20_STABLE'
+ * Strings for component 'theme_leatherbound', language 'en', branch 'MOODLE_20_STABLE'
  *
- * @package   theme_boxxie
- * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @package   moodlecore
+ * @copyright 2010 Patrick Malley
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['pluginname'] = 'leatherbound';
+$string['pluginname'] = 'Leatherbound';
 $string['region-side-post'] = 'Right';
 $string['region-side-pre'] = 'Left';
 $string['choosereadme'] = 'Leatherbound, a Moodle 2.0 theme by Patrick Malley';
