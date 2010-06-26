@@ -4414,7 +4414,7 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         $rs = $DB->get_recordset_sql($sql, $params);
         foreach ($rs as $enrol) {
             $enrol->status = 1; // better disable them
-            $DB->inert_record('enrol', $enrol);
+            $DB->insert_record('enrol', $enrol);
         }
         $rs->close();
         upgrade_main_savepoint($result, 2010061900.09);
