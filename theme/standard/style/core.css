@@ -204,7 +204,7 @@ form.popupform label {margin-right: 0.5em;}
 /**
  * Moodle Forms
  */
-.mform {margin: 0 auto;width: 80%;}
+.mform {}
 .mform fieldset {border: 1px solid #DDDDDD;padding: 10px 0;margin: 0.7em 0;width:100%;}
 .mform .fitem fieldset.felement {margin-top:0;padding-top:0;margin-bottom:0;padding-bottom:0;}
 .mform .fpassword .unmask input {margin-left:5px;margin-right:3px;}
