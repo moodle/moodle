@@ -3670,9 +3670,10 @@ function validate_internal_user_password(&$user, $password) {
     // get password original encoding in case it was not updated to unicode yet
     //$textlib = textlib_get_instance();
     //$convpassword = $textlib->convert($password, 'utf-8', get_string('oldcharset', 'langconfig'));
+    //if ($user->password == md5($password.$CFG->passwordsaltmain) or $user->password == md5($password)
+    //    or $user->password == md5($convpassword.$CFG->passwordsaltmain) or $user->password == md5($convpassword)) {
 
-    if ($user->password == md5($password.$CFG->passwordsaltmain) or $user->password == md5($password)
-        or $user->password == md5($convpassword.$CFG->passwordsaltmain) or $user->password == md5($convpassword)) {
+    if ($user->password == md5($password.$CFG->passwordsaltmain) or $user->password == md5($password)) {
         $validated = true;
     } else {
         for ($i=1; $i<=20; $i++) { //20 alternative salts should be enough, right?
