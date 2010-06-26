@@ -49,7 +49,7 @@
         }
 
         if ($sco = scorm_get_sco($scoid, SCO_ONLY)) {
-            if (!$scorm = $DB->get_record('scorm','id',$sco->scorm)) {
+            if (!$scorm = $DB->get_record('scorm',array('id'=>$sco->scorm))) {
                 print_error('cannotcallscript');
             }
         } else {
@@ -64,7 +64,7 @@
         scorm_write_log("aicc", "aiccdata:\r\n$aiccdata", $scoid);
         ob_start();
 
-        if ($scorm = $DB->get_record('scorm','id',$sco->scorm)) {
+        if ($scorm = $DB->get_record('scorm',array('id'=>$sco->scorm))) {
             switch ($command) {
                 case 'getparam':
                     if ($status == 'Not Initialized') {
