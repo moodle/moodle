@@ -46,7 +46,6 @@ class blog_edit_form extends moodleform {
 
         $mform->setType('summary_editor', PARAM_RAW);
         $mform->addRule('summary_editor', get_string('emptybody', 'blog'), 'required', null, 'client');
-        $mform->setHelpButton('summary_editor', array('writing', 'richtext2'), false, 'editorhelpbutton');
 
         $mform->addElement('format', 'summaryformat', get_string('format'));
 

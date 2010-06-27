@@ -2850,62 +2850,6 @@ function editorhelpbutton(){
     return '';
 
     /// TODO: MDL-21215
-
-    global $CFG, $SESSION, $OUTPUT;
-    $items = func_get_args();
-    $i = 1;
-    $urlparams = array();
-    $titles = array();
-    foreach ($items as $item){
-        if (is_array($item)){
-            $urlparams[] = "keyword$i=".urlencode($item[0]);
-            $urlparams[] = "title$i=".urlencode($item[1]);
-            if (isset($item[2])){
-                $urlparams[] = "module$i=".urlencode($item[2]);
-            }
-            $titles[] = trim($item[1], ". \t");
-        } else if (is_string($item)) {
-            $urlparams[] = "button$i=".urlencode($item);
-            switch ($item) {
-                case 'reading' :
-                    $titles[] = get_string("helpreading");
-                    break;
-                case 'writing' :
-                    $titles[] = get_string("helpwriting");
-                    break;
-                case 'questions' :
-                    $titles[] = get_string("helpquestions");
-                    break;
-                case 'emoticons2' :
-                    $titles[] = get_string("helpemoticons");
-                    break;
-                case 'richtext2' :
-                    $titles[] = get_string('helprichtext');
-                    break;
-                case 'text2' :
-                    $titles[] = get_string('helptext');
-                    break;
-                default :
-                    print_error('unknownhelp', '', '', $item);
-            }
-        }
-        $i++;
-    }
-    if (count($titles)>1){
-        //join last two items with an 'and'
-        $a = new object();
-        $a->one = $titles[count($titles) - 2];
-        $a->two = $titles[count($titles) - 1];
-        $titles[count($titles) - 2] = get_string('and', '', $a);
-        unset($titles[count($titles) - 1]);
-    }
-    $alttag = join (', ', $titles);
-
-    $paramstring = join('&', $urlparams);
-    $linkobject = '<img alt="'.$alttag.'" class="iconhelp" src="'.$OUTPUT->pix_url('help') . '" />';
-    $link = moodle_url('/lib/form/editorhelp.php?'.$paramstring);
-    $action = new popup_action('click', $link->url, 'popup', array('height' => 400, 'width' => 500));
-    return $OUTPUT->action_link($link, $linkobject, $action, array('title'=>$alttag));
 }
 
 /**

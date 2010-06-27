@@ -1001,7 +1001,6 @@ class assignment_base {
             } else {
                 echo '<div class="format">';
                 echo html_writer::select(format_text_menu(), "format", $submission->format, false);
-                echo $OUTPUT->old_help_icon("textformat", get_string("helpformatting"));
                 echo '</div>';
             }
         }

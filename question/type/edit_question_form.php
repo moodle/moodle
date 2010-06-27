@@ -109,7 +109,6 @@ class question_edit_form extends moodleform {
         $mform->addElement('htmleditor', 'questiontext', get_string('questiontext', 'quiz'),
                 array('rows' => 15, 'course' => $this->coursefilesid));
         $mform->setType('questiontext', PARAM_RAW);
-        //$mform->setHelpButton('questiontext', array(array('questiontext', get_string('questiontext', 'quiz'), 'quiz'), 'richtext2'), false, 'editorhelpbutton');
         $mform->addElement('format', 'questiontextformat', get_string('format'));
 
         make_upload_directory($this->coursefilesid);    // Just in case

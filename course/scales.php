@@ -19,6 +19,7 @@
  * Allows a creator to edit custom scales, and also display help about scales
  *
  * @copyright 1999 Martin Dougiamas  http://dougiamas.com
+ * @deprecated - TODO remove this file or replace it with an alternative solution for scales overview
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @package course
  */
@@ -43,16 +44,9 @@ require_login($course);
 $context = get_context_instance(CONTEXT_COURSE, $course->id);
 require_capability('moodle/course:viewscales', $context);
 
-$strscale = get_string("scale");
 $strscales = get_string("scales");
-$strcustomscale = get_string("scalescustom");
-$strstandardscale = get_string("scalesstandard");
 $strcustomscales = get_string("scalescustom");
 $strstandardscales = get_string("scalesstandard");
-$strname = get_string("name");
-$strdescription = get_string("description");
-$strhelptext = get_string("helptext");
-$stractivities = get_string("activities");
 
 $PAGE->set_title($strscales);
 echo $OUTPUT->header();

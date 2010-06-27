@@ -67,7 +67,6 @@ class MoodleQuickForm_format extends MoodleQuickForm_select{
             case 'createElement':
                 $menu = format_text_menu();
                 $this->load($menu);
-                //$this->setHelpButton(array('textformat', get_string('helpformatting')));
                 break;
             case 'updateValue' :
                 $value = $this->_findValue($caller->_constantValues);

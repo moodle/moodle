@@ -57,7 +57,6 @@ class mod_wiki_mod_form extends moodleform_mod {
         //    	$mform->addElement('htmleditor', 'intro', get_string('wikiintro', 'wiki'));
         //		$mform->setType('intro', PARAM_RAW);
         //		$mform->addRule('intro', get_string('required'), 'required', null, 'client');
-        //        $mform->setHelpButton('intro', array('writing', 'richtext2'), false, 'editorhelpbutton');
         //
         //        $mform->addElement('format', 'introformat', get_string('format'));
         $this->add_intro_editor(true, get_string('wikiintro', 'wiki'));
