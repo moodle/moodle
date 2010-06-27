@@ -563,9 +563,11 @@ function SCORMapi1_2() {
                             if ((typeof eval('datamodel["'+elementmodel+'"].defaultvalue')) != "undefined") {
                                 if (eval('datamodel["'+elementmodel+'"].defaultvalue') != data[property] || eval('typeof(datamodel["'+elementmodel+'"].defaultvalue)') != typeof(data[property])) {
                                     datastring += elementstring;
+                                    eval('datamodel["'+elementmodel+'"].defaultvalue=data[property];');
                                 }
                             } else {
                                 datastring += elementstring;
+                                eval('datamodel["'+elementmodel+'"].defaultvalue=data[property];');
                             }
                         }
                     }
