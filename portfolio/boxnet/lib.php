@@ -1,4 +1,5 @@
 <?php
+require_once($CFG->libdir.'/portfolio/plugin.php');
 require_once($CFG->libdir.'/filelib.php');
 require_once($CFG->libdir.'/boxlib.php');
 
