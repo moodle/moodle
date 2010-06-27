@@ -4404,7 +4404,7 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         // after reconfigured, uninstalled or borked enrol plugins,
         // unfortunately this may be a bit slow - but there should not be many of these
         $sqlempty = $DB->sql_empty();
-        $sql = "SELECT DISTINCT c.id AS courseid, ra.enrol, e.timecreated, c.timemodified
+        $sql = "SELECT DISTINCT c.id AS courseid, ra.enrol, c.timecreated, c.timemodified
                   FROM {course} c
                   JOIN {context} ctx ON (ctx.instanceid = c.id AND ctx.contextlevel = 50)
                   JOIN {role_assignments} ra ON (ra.contextid = ctx.id AND ra.enrol <> '$sqlempty')
