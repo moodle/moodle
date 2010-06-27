@@ -344,6 +344,8 @@
             //Added incase javascript popups are blocked
             $link = '<a href="'.$CFG->wwwroot.'/mod/scorm/loadSCO.php?id='.$cm->id.$scoidstr.$modestr.'" target="_blank">'.get_string('popupblockedlinkname','scorm').'</a>';
             echo $OUTPUT->box(get_string('popupblocked','scorm',$link), 'generalbox', 'altpopuplink');
+            $linkcourse = '<a href="'.$CFG->wwwroot.'/course/view.php?id='.$scorm->course.'">' . get_string('finishscormlinkname','scorm') . '</a>';
+            echo $OUTPUT->box(get_string('finishscorm','scorm',$linkcourse), 'generalbox', 'altfinishlink');
         }
     } else {
         echo $OUTPUT->box(get_string('noprerequisites','scorm'));
