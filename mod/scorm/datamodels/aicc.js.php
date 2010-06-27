@@ -497,8 +497,7 @@ function AICCapi() {
         if (storetotaltime) {
             if (cmi.core.lesson_mode == 'normal') {
                 if (cmi.core.credit == 'credit') {
-                    cmi.core.lesson_status = 'completed';
-                    if (cmi.student_data.mastery_score != '') {
+                    if (cmi.student_data.mastery_score != '' && cmi.core.score.raw != '') {
                         if (cmi.core.score.raw >= cmi.student_data.mastery_score) {
                             cmi.core.lesson_status = 'passed';
                         } else {
@@ -508,7 +507,7 @@ function AICCapi() {
                 }
             }
             if (cmi.core.lesson_mode == 'browse') {
-                if (datamodel['cmi.core.lesson_status'].defaultvalue == '') {
+                if (datamodel['cmi.core.lesson_status'].defaultvalue == '' && cmi.core.lesson_status == 'not attempted') {
                     cmi.core.lesson_status = 'browsed';
                 }
             }
