@@ -105,7 +105,7 @@ function xmldb_forum_upgrade($oldversion) {
 
         $count = $DB->count_records_sql("SELECT COUNT('x') $sqlfrom");
 
-        if ($rs = $DB->get_recordset_sql("SELECT p.id, p.attachment, d.forum, f.course, cm.id AS cmid $sqlfrom ORDER BY f.course, f.id, d.id")) {
+        if ($rs = $DB->get_recordset_sql("SELECT p.id, p.attachment, p.userid, d.forum, f.course, cm.id AS cmid $sqlfrom ORDER BY f.course, f.id, d.id")) {
 
             $pbar = new progress_bar('migrateforumfiles', 500, true);
 
