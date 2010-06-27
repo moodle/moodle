@@ -121,7 +121,7 @@ class edit_outcomeitem_form extends moodleform {
             } else {
                 $mform->addElement('text', 'aggregationcoef', get_string($coefstring, 'grades'));
             }
-            $mform->setHelpButton('aggregationcoef', array($coefstring, get_string($coefstring, 'grades'), 'grade'), true);
+            $mform->addHelpButton('aggregationcoef', $coefstring, 'grades');
         }
 
 /// hidden params
@@ -206,7 +206,7 @@ class edit_outcomeitem_form extends moodleform {
 
                     if ($aggcoef !== '') {
                         $agg_el->setLabel(get_string($aggcoef, 'grades'));
-                        $mform->setHelpButton('aggregationcoef', array($aggcoef, get_string($aggcoef, 'grades'), 'grade'));
+                        $mform->addHelpButton('aggregationcoef', $aggcoef, 'grades');
                     }
                 }
             }
