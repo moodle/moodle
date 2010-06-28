@@ -90,9 +90,11 @@ class block_myprofile extends block_base {
 
         if(!isset($this->config->display_country) || $this->config->display_country == 1) {
             $countries = get_string_manager()->get_list_of_countries();
-            $this->content->text .= '<div class="myprofileitem country">';
-            $this->content->text .= get_string('country') . ': ' . $countries[$user->country];
-            $this->content->text .= '</div>';
+            if (isset($countries[$user->country])) {
+                $this->content->text .= '<div class="myprofileitem country">';
+                $this->content->text .= get_string('country') . ': ' . $countries[$user->country];
+                $this->content->text .= '</div>';
+            }
         }
 
         if(!isset($this->config->display_city) || $this->config->display_city == 1) {
