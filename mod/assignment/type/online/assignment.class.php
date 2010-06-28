@@ -70,10 +70,12 @@ class assignment_online extends assignment_base {
             redirect('view.php?id='.$this->cm->id);
         }
 
-        if ($data = $mform->get_data()) {      // No incoming data?
-            if ($editable && $this->update_submission($data)) {
+        if ($mform->is_submitted()) {
+            if ($editable) {
+                $submission = $this->get_submission(0,true); //create the submission if needed & its id
+                $data = $mform->get_data($submission->id);
+                $this->update_submission($data);
                 //TODO fix log actions - needs db upgrade
-                $submission = $this->get_submission();
                 add_to_log($this->course->id, 'assignment', 'upload',
                         'view.php?a='.$this->assignment->id, $this->assignment->id, $this->cm->id);
                 $this->email_teachers($submission);
@@ -196,7 +198,7 @@ class assignment_online extends assignment_base {
 
         $submission = $this->get_submission($USER->id);
         $this->update_grade($submission);
-        return true;
+        return $submission;
     }
 
 
@@ -233,25 +235,20 @@ class assignment_online extends assignment_base {
                   $popup .
                   '</div>';
 
-        ///Stolen code from file.php
-
-        echo $OUTPUT->box_start('generalbox boxaligncenter', 'wordcount');
+        $wordcount = '<p id="wordcount">';
     /// Decide what to count
         if ($CFG->assignment_itemstocount == ASSIGNMENT_COUNT_WORDS) {
-            echo ' ('.get_string('numwords', '', count_words(format_text($submission->data1, $submission->data2))).')';
+            $wordcount .= ' ('.get_string('numwords', '', count_words(format_text($submission->data1, $submission->data2))).')';
         } else if ($CFG->assignment_itemstocount == ASSIGNMENT_COUNT_LETTERS) {
-            echo ' ('.get_string('numletters', '', count_letters(format_text($submission->data1, $submission->data2))).')';
+            $wordcount .= ' ('.get_string('numletters', '', count_letters(format_text($submission->data1, $submission->data2))).')';
         }
-        echo $OUTPUT->box_end();
-        echo $OUTPUT->box(format_text($submission->data1, $submission->data2), 'generalbox boxaligncenter boxwidthwide');
+        $wordcount .= '</p>';
 
-        ///End of stolen code from file.php
+        $text = file_rewrite_pluginfile_urls($submission->data1, 'pluginfile.php', $this->context->id, 'assignment_online_submission', $submission->id);
+        return $wordcount . format_text($text, $submission->data2);
 
-        if ($return) {
-            //return $output;
+
         }
-        //echo $output;
-    }
 
     function preprocess_submission(&$submission) {
         if ($this->assignment->var1 && empty($submission->submissioncomment)) {  // comment inline
@@ -463,13 +460,13 @@ class mod_assignment_online_edit_form extends moodleform {
         return parent::set_data($data);
     }
 
-    public function get_data() {
+    public function get_data($submission_id = null) {
         $data = parent::get_data();
 
         if (!empty($this->_customdata->submission->id)) {
             $itemid = $this->_customdata->submission->id;
         } else {
-            $itemid = null;
+            $itemid = $submission_id;
         }
 
         if ($data) {

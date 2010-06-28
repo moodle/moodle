@@ -563,26 +563,40 @@ class assignment_base {
         global $USER, $OUTPUT, $DB, $PAGE;
 
         $mailinfo = optional_param('mailinfo', null, PARAM_BOOL);
+        $saved = optional_param('saved', null, PARAM_BOOL);
+
+        if(optional_param('next', null, PARAM_BOOL)) {
+            $mode='next';
+        }
+        if(optional_param('saveandnext', null, PARAM_BOOL)) {
+            $mode='saveandnext';
+        }
+
         if (is_null($mailinfo)) {
             $mailinfo = get_user_preferences('assignment_mailinfo', 0);
         } else {
             set_user_preference('assignment_mailinfo', $mailinfo);
         }
 
+        if($saved) {
+            $OUTPUT->heading(get_string('changessaved'));
+        }
+
         switch ($mode) {
-            case 'grade':                         // We are in a popup window grading
+            case 'grade':                         // We are in a main window grading
                 if ($submission = $this->process_feedback()) {
-                    //IE needs proper header with encoding
-                    $PAGE->set_title(get_string('feedback', 'assignment').':'.format_string($this->assignment->name));
-                    echo $OUTPUT->header();
-                    echo $OUTPUT->heading(get_string('changessaved'));
-                    print $this->update_main_listing($submission);
+                    $this->display_submissions(get_string('changessaved'));
+                } else {
+                    $this->display_submissions();
                 }
-                close_window();
                 break;
 
-            case 'single':                        // We are in a popup window displaying submission
-                $this->display_submission();
+            case 'single':                        // We are in a main window displaying one submission
+                if ($submission = $this->process_feedback()) {
+                    $this->display_submissions(get_string('changessaved'));
+                } else {
+                    $this->display_submission();
+                }
                 break;
 
             case 'all':                          // Main window, display everything
@@ -591,7 +605,6 @@ class assignment_base {
 
             case 'fastgrade':
                 ///do the fast grading stuff  - this process should work for all 3 subclasses
-
                 $grading    = false;
                 $commenting = false;
                 $col        = false;
@@ -682,24 +695,24 @@ class assignment_base {
                 break;
 
 
-            case 'next':
-                /// We are currently in pop up, but we want to skip to next one without saving.
-                ///    This turns out to be similar to a single case
-                /// The URL used is for the next submission.
-
-                $this->display_submission();
-                break;
-
             case 'saveandnext':
                 ///We are in pop up. save the current one and go to the next one.
                 //first we save the current changes
                 if ($submission = $this->process_feedback()) {
                     //print_heading(get_string('changessaved'));
-                    $extra_javascript = $this->update_main_listing($submission);
+                    //$extra_javascript = $this->update_main_listing($submission);
                 }
 
-                //then we display the next submission
-                $this->display_submission($extra_javascript);
+            case 'next':
+                /// We are currently in pop up, but we want to skip to next one without saving.
+                ///    This turns out to be similar to a single case
+                /// The URL used is for the next submission.
+                $offset = required_param('offset', PARAM_INT);
+                $nextid = required_param('nextid', PARAM_INT);
+                $id = required_param('id', PARAM_INT);
+                $offset = (int)$offset+1;
+                //$this->display_submission($offset+1 , $nextid);
+                redirect('submissions.php?id='.$id.'&userid='. $nextid . '&mode=single&offset='.$offset);
                 break;
 
             default:
@@ -854,13 +867,12 @@ class assignment_base {
      * @global object
      * @param string $extra_javascript
      */
-    function display_submission($extra_javascript = '') {
+    function display_submission( $offset=-1 , $userid =-1) {
         global $CFG, $DB, $PAGE, $OUTPUT;
         require_once($CFG->libdir.'/gradelib.php');
         require_once($CFG->libdir.'/tablelib.php');
-
-        $userid = required_param('userid', PARAM_INT);
-        $offset = required_param('offset', PARAM_INT);//offset for where to start looking for student.
+        if($userid==-1) $userid = required_param('userid', PARAM_INT);
+        if($offset==-1) $offset = required_param('offset', PARAM_INT);//offset for where to start looking for student.
 
         if (!$user = $DB->get_record('user', array('id'=>$userid))) {
             print_error('nousers');
@@ -876,7 +888,7 @@ class assignment_base {
         }
 
         $grading_info = grade_get_grades($this->course->id, 'mod', 'assignment', $this->assignment->id, array($user->id));
-        $disabled = $grading_info->items[0]->grades[$userid]->locked || $grading_info->items[0]->grades[$userid]->overridden;
+        $gradingdisabled = $grading_info->items[0]->grades[$userid]->locked || $grading_info->items[0]->grades[$userid]->overridden;
 
     /// construct SQL, using current offset to find the data of the next student
         $course     = $this->course;
@@ -913,141 +925,70 @@ class assignment_base {
             if ($sort = flexible_table::get_sort_for_table('mod-assignment-submissions')) {
                 $sort = 'ORDER BY '.$sort.' ';
             }
+            $auser = $DB->get_records_sql($select.$sql.$sort, null, $offset, 2);
 
-            $auser = $DB->get_records_sql($select.$sql.$sort, null, $offset+1, 1);
-            if (is_array($auser) && count($auser)>0) {
-                $nextuser = array_shift($auser);
+            if (is_array($auser) && count($auser)>1) {
+                $nextuser = next($auser);
             /// Calculate user status
                 $nextuser->status = ($nextuser->timemarked > 0) && ($nextuser->timemarked >= $nextuser->timemodified);
                 $nextid = $nextuser->id;
             }
         }
-        $PAGE->set_pagelayout('popup');
-        $PAGE->set_title(get_string('feedback', 'assignment').':'.fullname($user, true).':'.format_string($this->assignment->name));
-        echo $OUTPUT->header();
 
-        /// Print any extra javascript needed for saveandnext
-        echo $extra_javascript;
-        echo html_writer::script(js_writer::function_call('initNext', array($nextid, $userid)));
-
-        echo '<table cellspacing="0" class="feedback '.$subtype.'" >';
-
-        ///Start of teacher info row
-
-        echo '<tr>';
-        echo '<td class="picture teacher">';
         if ($submission->teacher) {
             $teacher = $DB->get_record('user', array('id'=>$submission->teacher));
         } else {
             global $USER;
             $teacher = $USER;
         }
-        echo $OUTPUT->user_picture($teacher);
-        echo '</td>';
-        echo '<td class="content">';
-        echo '<form id="submitform" action="submissions.php" method="post">';
-        echo '<div>'; // xhtml compatibility - invisiblefieldset was breaking layout here
-        echo '<input type="hidden" name="offset" value="'.($offset+1).'" />';
-        echo '<input type="hidden" name="userid" value="'.$userid.'" />';
-        echo '<input type="hidden" name="id" value="'.$this->cm->id.'" />';
-        echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
-        echo '<input type="hidden" name="mode" value="grade" />';
-        echo '<input type="hidden" name="menuindex" value="0" />';//selected menu index
-
-        //new hidden field, initialized to -1.
-        echo '<input type="hidden" name="saveuserid" value="-1" />';
-
-        if ($submission->timemarked) {
-            echo '<div class="from">';
-            echo '<div class="fullname">'.fullname($teacher, true).'</div>';
-            echo '<div class="time">'.userdate($submission->timemarked).'</div>';
-            echo '</div>';
-        }
-        echo '<div class="grade"><label for="menugrade">'.get_string('grade').'</label> ';
-        $attributes = array();
-        $attributes['disabled'] = $disabled ? 'disabled' : null;
-        echo html_writer::select(make_grades_menu($this->assignment->grade),'grade', $submission->grade, array(-1=>get_string('nograde')), $attributes);
-        echo '</div>';
-
-        echo '<div class="clearer"></div>';
-        echo '<div class="finalgrade">'.get_string('finalgrade', 'grades').': '.$grading_info->items[0]->grades[$userid]->str_grade.'</div>';
-        echo '<div class="clearer"></div>';
-
-        if (!empty($CFG->enableoutcomes)) {
-            foreach($grading_info->outcomes as $n=>$outcome) {
-                echo '<div class="outcome"><label for="menuoutcome_'.$n.'">'.$outcome->name.'</label> ';
-                $options = make_grades_menu(-$outcome->scaleid);
-                if ($outcome->grades[$submission->userid]->locked) {
-                    $options[0] = get_string('nooutcome', 'grades');
-                    echo $options[$outcome->grades[$submission->userid]->grade];
-                } else {
-                    echo html_writer::select($options, 'outcome_'.$n.'['.$userid.']', $outcome->grades[$submission->userid]->grade, get_string('nooutcome', 'grades'), array('id' => 'menuoutcome_'.$n));
-                }
-                echo '</div>';
-                echo '<div class="clearer"></div>';
-            }
-        }
-
 
         $this->preprocess_submission($submission);
 
-        if ($disabled) {
-            echo '<div class="disabledfeedback">'.$grading_info->items[0]->grades[$userid]->str_feedback.'</div>';
+        $mformdata = new stdclass;
+        $mformdata->context = $this->context;
+        $mformdata->maxbytes = $this->course->maxbytes;
+        $mformdata->courseid = $this->course->id;
+        $mformdata->teacher = $teacher;
+        $mformdata->assignment = $assignment;
+        $mformdata->submission = $submission;
+        $mformdata->lateness = $this->display_lateness($submission->timemodified);
+        $mformdata->auser = $auser;
+        $mformdata->user = $user;
+        $mformdata->offset = $offset;
+        $mformdata->userid = $userid;
+        $mformdata->cm = $this->cm;
+        $mformdata->grading_info = $grading_info;
+        $mformdata->enableoutcomes = $CFG->enableoutcomes;
+        $mformdata->grade = $this->assignment->grade;
+        $mformdata->gradingdisabled = $gradingdisabled;
+        $mformdata->usehtmleditor = $this->usehtmleditor;
+        $mformdata->nextid = $nextid;
+        $mformdata->submissioncomment= $submission->submissioncomment;
+        $mformdata->submissioncommentformat= FORMAT_HTML;
+        $mformdata->submission_content= $this->print_user_files($user->id, true);
 
-        } else {
-            print_textarea($this->usehtmleditor, 14, 58, 0, 0, 'submissioncomment', $submission->submissioncomment, $this->course->id);
-            if ($this->usehtmleditor) {
-                echo '<input type="hidden" name="format" value="'.FORMAT_HTML.'" />';
-            } else {
-                echo '<div class="format">';
-                echo html_writer::select(format_text_menu(), "format", $submission->format, false);
-                echo '</div>';
-            }
+        $submitform = new mod_assignment_online_grading_form( null, $mformdata );
+
+        if($submitform->is_cancelled()) {
+            redirect('submissions.php?id='.$this->cm->id);
         }
 
-        $lastmailinfo = get_user_preferences('assignment_mailinfo', 1) ? 'checked="checked"' : '';
+        $submitform->set_data($mformdata);
 
-        ///Print Buttons in Single View
-        echo '<input type="hidden" name="mailinfo" value="0" />';
-        echo '<input type="checkbox" id="mailinfo" name="mailinfo" value="1" '.$lastmailinfo.' /><label for="mailinfo">'.get_string('enableemailnotification','assignment').'</label>';
-        echo '<div class="buttons">';
-        echo '<input type="submit" name="submit" value="'.get_string('savechanges').'" onclick = "document.getElementById(\'submitform\').menuindex.value = document.getElementById(\'submitform\').grade.selectedIndex" />';
-        echo '<input type="submit" name="cancel" value="'.get_string('cancel').'" />';
-        //if there are more to be graded.
-        if ($nextid) {
-            echo '<input type="submit" name="saveandnext" value="'.get_string('saveandnext').'" onclick="saveNext()" />';
-            echo '<input type="submit" name="next" value="'.get_string('next').'" onclick="setNext();" />';
-        }
-        echo '</div>';
-        echo '</div></form>';
+        $PAGE->set_title($this->course->fullname . ': ' .get_string('feedback', 'assignment').' - '.fullname($user, true));
+        $PAGE->set_heading($this->course->fullname);
+        $PAGE->navbar->add( get_string('submissions', 'assignment') );
+
+        echo $OUTPUT->header();
+        echo $OUTPUT->heading(get_string('feedback', 'assignment').': '.fullname($user, true));
+
+        // display mform here...
+        $submitform->display();
 
         $customfeedback = $this->custom_feedbackform($submission, true);
         if (!empty($customfeedback)) {
             echo $customfeedback;
         }
-
-        echo '</td></tr>';
-
-        ///End of teacher info row, Start of student info row
-        echo '<tr>';
-        echo '<td class="picture user">';
-        echo $OUTPUT->user_picture($user);
-        echo '</td>';
-        echo '<td class="topic">';
-        echo '<div class="from">';
-        echo '<div class="fullname">'.fullname($user, true).'</div>';
-        if ($submission->timemodified) {
-            echo '<div class="time">'.userdate($submission->timemodified).
-                                     $this->display_lateness($submission->timemodified).'</div>';
-        }
-        echo '</div>';
-        $this->print_user_files($user->id);
-        echo '</td>';
-        echo '</tr>';
-
-        ///End of student info row
-
-        echo '</table>';
 
         echo $OUTPUT->footer();
     }
@@ -1113,8 +1054,9 @@ class assignment_base {
 
         $tabindex = 1; //tabindex for quick grading tabbing; Not working for dropdowns yet
         add_to_log($course->id, 'assignment', 'view submission', 'submissions.php?id='.$this->cm->id, $this->assignment->id, $this->cm->id);
-        $PAGE->navbar->add($this->strsubmissions);
+        
         $PAGE->set_title(format_string($this->assignment->name,true));
+        $PAGE->set_heading($this->course->fullname);
         echo $OUTPUT->header();
 
         /// Print quickgrade form around the table
@@ -1216,6 +1158,7 @@ class assignment_base {
 
         if (empty($users)) {
             echo $OUTPUT->heading(get_string('nosubmitusers','assignment'));
+            echo '</div>';
             return true;
         }
         if ($this->assignment->assignmenttype=='upload' || $this->assignment->assignmenttype=='online' || $this->assignment->assignmenttype=='uploadsingle') {
@@ -1356,8 +1299,7 @@ class assignment_base {
                 $popup_url = '/mod/assignment/submissions.php?id='.$this->cm->id
                            . '&userid='.$auser->id.'&mode=single'.'&offset='.$offset++;
 
-                $action = new popup_action('click', $popup_url, 'grade'.$auser->id, array('height' => 600, 'width' => 700));
-                $button = $OUTPUT->action_link($popup_url, $buttontext, $action);
+                    $button = $OUTPUT->action_link($popup_url, $buttontext);
 
                 $status  = '<div id="up'.$auser->id.'" class="s'.$auser->status.'">'.$button.'</div>';
 
@@ -1403,7 +1345,8 @@ class assignment_base {
             echo '<label for="mailinfo">'.get_string('enableemailnotification','assignment').'</label>';
             echo '<input type="hidden" name="mailinfo" value="0" />';
             echo '<input type="checkbox" id="mailinfo" name="mailinfo" value="1" '.$lastmailinfo.' />';
-            echo $OUTPUT->help_icon('enableemailnotification', 'assignment').'</p></div>';
+            echo $OUTPUT->help_icon('enableemailnotification', 'assignment');
+            echo '</div>';
             echo '</div>';
             echo '<div class="fastgbutton"><input type="submit" name="fastg" value="'.get_string('saveallfeedback', 'assignment').'" /></div>';
             echo '</form>';
@@ -1427,8 +1370,9 @@ class assignment_base {
         echo '<td>';
         $checked = $quickgrade ? 'checked="checked"' : '';
         echo '<input type="checkbox" id="quickgrade" name="quickgrade" value="1" '.$checked.' />';
-        echo $OUTPUT->help_icon('quickgrade', 'assignment').'</p></div>';
-        echo '</td></tr>';
+        echo '<p>'.$OUTPUT->help_icon('quickgrade', 'assignment').'</p>';
+        echo '</td>';
+        echo '</tr>';
         echo '<tr><td colspan="2">';
         echo '<input type="submit" value="'.get_string('savepreferences').'" />';
         echo '</td></tr></table>';
@@ -1474,11 +1418,11 @@ class assignment_base {
 
         $submission = $this->get_submission($feedback->userid, true);  // Get or make one
 
-        if (!$grading_info->items[0]->grades[$feedback->userid]->locked and
-            !$grading_info->items[0]->grades[$feedback->userid]->overridden) {
+        if (!($grading_info->items[0]->grades[$feedback->userid]->locked ||
+            $grading_info->items[0]->grades[$feedback->userid]->overridden) ) {
 
-            $submission->grade      = $feedback->grade;
-            $submission->submissioncomment    = $feedback->submissioncomment;
+            $submission->grade      = $feedback->xgrade;
+            $submission->submissioncomment    = $feedback->submissioncomment_editor['text'];
             $submission->format     = $feedback->format;
             $submission->teacher    = $USER->id;
             $mailinfo = get_user_preferences('assignment_mailinfo', 0);
@@ -2118,6 +2062,202 @@ class mod_assignment_upload_file_form extends moodleform {
     }
 }
 
+
+class mod_assignment_online_grading_form extends moodleform {
+
+    function definition() {
+        global $OUTPUT;
+        $mform =& $this->_form;
+
+        $formattr = $mform->getAttributes();
+        $formattr['id'] = 'submitform';
+        $mform->setAttributes($formattr);
+        // hidden params
+        $mform->addElement('hidden', 'offset', ($this->_customdata->offset+1));
+        $mform->setType('offset', PARAM_INT);
+        $mform->addElement('hidden', 'userid', $this->_customdata->userid);
+        $mform->setType('userid', PARAM_INT);
+        $mform->addElement('hidden', 'nextid', $this->_customdata->nextid);
+        $mform->setType('nextid', PARAM_INT);
+        $mform->addElement('hidden', 'id', $this->_customdata->cm->id);
+        $mform->setType('id', PARAM_INT);
+        $mform->addElement('hidden', 'sesskey', sesskey());
+        $mform->setType('sesskey', PARAM_ALPHANUM);
+        $mform->addElement('hidden', 'mode', 'grade');
+        $mform->setType('mode', PARAM_INT);
+        $mform->addElement('hidden', 'menuindex', "0");
+        $mform->setType('menuindex', PARAM_INT);
+        $mform->addElement('hidden', 'saveuserid', "-1");
+        $mform->setType('saveuserid', PARAM_INT);
+
+        $mform->addElement('static', 'picture', $OUTPUT->user_picture($this->_customdata->user),
+                                                fullname($this->_customdata->user, true) . '<br/>' .
+                                                userdate($this->_customdata->submission->timemodified) .
+                                                $this->_customdata->lateness );
+
+        $this->add_grades_section();
+
+        $this->add_feedback_section();
+
+        if($this->_customdata->submission->timemarked){
+            $mform->addElement('header', 'Last Grade', get_string('lastgrade', 'assignment'));
+            $mform->addElement('static', 'picture', $OUTPUT->user_picture($this->_customdata->teacher) ,
+                                                    fullname($this->_customdata->teacher,true).
+                                                    '<br/>'.
+                                                    userdate($this->_customdata->submission->timemarked));
+        }
+        // buttons
+        $this->add_action_buttons();
+
+        $this->add_submission_content();
+    }
+
+    function add_grades_section() {
+        global $CFG;
+        $mform =& $this->_form;
+        $attributes = array();
+        if($this->_customdata->gradingdisabled) $attributes['disabled'] ='disabled';
+
+        $grademenu = make_grades_menu($this->_customdata->assignment->grade);
+        $grademenu['-1'] = get_string('nograde');
+
+        $mform->addElement('header', 'Grades', get_string('grades', 'grades'));
+        $mform->addElement('select', 'xgrade', get_string('grade').':', $grademenu, $attributes);
+        $mform->setDefault('xgrade', $this->_customdata->submission->grade ); //@fixme some bug when element called 'grade' makes it break
+        $mform->setType('xgrade', PARAM_INT);
+
+        if(!empty($this->_customdata->enableoutcomes)){
+            foreach($this->_customdata->grading_info->outcomes as $n=>$outcome) {
+                $options = make_grades_menu(-$outcome->scaleid);
+                if ($outcome->grades[$this->_customdata->submission->userid]->locked) {
+                    $options[0] = get_string('nooutcome', 'grades');
+                    echo $options[$outcome->grades[$this->_customdata->submission->userid]->grade];
+                } else {
+                    $options[''] = get_string('nooutcome', 'grades');
+                    $attributes = array('id' => 'menuoutcome_'.$n );
+                    $mform->addElement('select', 'outcome_'.$n.'['.$this->_customdata->userid.']', $outcome->name.':', $options, $attributes );
+                    $mform->setType('outcome_'.$n.'['.$this->_customdata->userid.']', PARAM_INT);
+                    $mform->setDefault('outcome_'.$n.'['.$this->_customdata->userid.']', $outcome->grades[$this->_customdata->submission->userid]->grade );
+                }
+            }
+        }
+        $mform->addElement('static', 'finalgrade', get_string('currentgrade', 'assignment').':' ,
+                     '<a href="'.$CFG->wwwroot.'/grade/report/grader/index.php?id='. $this->_customdata->courseid .'" >'.
+                        $this->_customdata->grading_info->items[0]->grades[$this->_customdata->userid]->str_grade . '</a>');
+        $mform->setType('finalgrade', PARAM_INT);
+    }
+
+    /**
+     *
+     * @global core_renderer $OUTPUT
+     */
+    function add_feedback_section() {
+        global $OUTPUT;
+        $mform =& $this->_form;
+        $mform->addElement('header', 'Feed Back', get_string('feedback', 'grades'));
+
+        if($this->_customdata->gradingdisabled){
+            $mform->addElement('static', 'disabledfeedback', $this->_customdata->grading_info->items[0]->grades[$this->_customdata->userid]->str_feedback );
+        } else {
+            // visible elements
+
+            $mform->addElement('editor', 'submissioncomment_editor', get_string('feedback', 'assignment').':', null, $this->get_editor_options() );
+            $mform->setType('submissioncomment_editor', PARAM_RAW); // to be cleaned before display
+            $mform->setDefault('submissioncomment_editor', $this->_customdata->submission->submissioncomment);
+            //$mform->addRule('submissioncomment', get_string('required'), 'required', null, 'client');
+
+            if ($this->_customdata->usehtmleditor) {
+                $mform->addElement('hidden', 'format', FORMAT_HTML);
+                $mform->setType('format', PARAM_INT);
+            } else {
+                //format menu
+                $format_menu = format_text_menu();
+                $mform->addElement('select', 'format', get_string('format'), $format_menu, array('selected' => $this->_customdata->submission->format ) );
+                $mform->setType('format', PARAM_INT);
+            }
+            $lastmailinfo = get_user_preferences('assignment_mailinfo', 1) ? array('checked'=>'checked') : array();
+            $mform->addElement('hidden', 'mailinfo_h', "0");
+            $mform->setType('mailinfo_h', PARAM_INT);
+            $mform->addElement('checkbox', 'mailinfo',get_string('enableemailnotification','assignment').
+                    $OUTPUT->help_icon('enableemailnotification', 'assignment') .':' );
+            $mform->updateElementAttr('mailinfo', $lastmailinfo);
+            $mform->setType('mailinfo', PARAM_INT);
+        }
+    }
+
+    function add_action_buttons() {
+        $mform =& $this->_form;
+        $mform->addElement('header', 'Operation', get_string('operation', 'assignment'));
+        //if there are more to be graded.
+        if($this->_customdata->nextid>0){
+            $buttonarray=array();
+            $buttonarray[] = &$mform->createElement('submit', 'submitbutton', get_string('savechanges'));
+            //@todo: fix accessibility: javascript dependency not necessary
+            $buttonarray[] = &$mform->createElement('submit', 'saveandnext', get_string('saveandnext'));
+            $buttonarray[] = &$mform->createElement('submit', 'next', get_string('next'));
+            $buttonarray[] = &$mform->createElement('cancel');
+        } else {
+            $buttonarray=array();
+            $buttonarray[] = &$mform->createElement('submit', 'submitbutton', get_string('savechanges'));
+            $buttonarray[] = &$mform->createElement('cancel');
+        }
+        $mform->addGroup($buttonarray, 'grading_buttonar', '', array(' '), false);
+        $mform->setType('grading_buttonar', PARAM_RAW);
+    }
+
+    function add_submission_content() {
+        $mform =& $this->_form;
+        $mform->addElement('header', 'Submission', get_string('submission', 'assignment'));
+        $mform->addElement('static', '', '' , $this->_customdata->submission_content );
+    }
+    
+    protected function get_editor_options() {
+        $editoroptions = array();
+        $editoroptions['filearea'] = 'assignment_online_submission';
+        $editoroptions['noclean'] = false;
+        $editoroptions['maxfiles'] = EDITOR_UNLIMITED_FILES;
+        $editoroptions['maxbytes'] = $this->_customdata->maxbytes;
+        return $editoroptions;
+    }
+
+    public function set_data($data) {
+        $editoroptions = $this->get_editor_options();
+        if (!isset($data->text)) {
+            $data->text = '';
+        }
+        if (!isset($data->format)) {
+            $data->textformat = FORMAT_HTML;
+        } else {
+            $data->textformat = $data->format;
+        }
+
+        if (!empty($this->_customdata->submission->id)) {
+            $itemid = $this->_customdata->submission->id;
+        } else {
+            $itemid = null;
+        }
+
+        $data = file_prepare_standard_editor($data, 'submissioncomment', $editoroptions, $this->_customdata->context, $editoroptions['filearea'], $itemid);
+        return parent::set_data($data);
+    }
+
+    public function get_data() {
+        $data = parent::get_data();
+
+        if (!empty($this->_customdata->submission->id)) {
+            $itemid = $this->_customdata->submission->id;
+        } else {
+            $itemid = null;
+        }
+
+        if ($data) {
+            $editoroptions = $this->get_editor_options();
+            $data = file_postupdate_standard_editor($data, 'submissioncomment', $editoroptions, $this->_customdata->context, $editoroptions['filearea'], $itemid);
+            $data->format = $data->textformat;
+        }
+        return $data;
+    }
+}
 
 /// OTHER STANDARD FUNCTIONS ////////////////////////////////////////////////////////
 
