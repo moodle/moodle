@@ -423,7 +423,9 @@ function message_print_usergroup_selector($usergroup, &$courses, &$coursecontext
     }
 
     echo html_writer::start_tag('form', array('id'=>'usergroupform','method'=>'get','action'=>''));
-        echo html_writer::select($options, 'usergroup', $usergroup, false, array('id'=>'usergroup','onchange'=>'this.form.submit()'));
+        echo html_writer::start_tag('fieldset');
+            echo html_writer::select($options, 'usergroup', $usergroup, false, array('id'=>'usergroup','onchange'=>'this.form.submit()'));
+        echo html_writer::end_tag('fieldset');
     echo html_writer::end_tag('form');
 }
 
@@ -1497,7 +1499,7 @@ function message_format_message(&$message, &$user, $format='', $keywords='', $cl
         $messagetext = highlight($keywords, $messagetext);
     }
     //return '<div class="message '.$class.'"><a name="m'.$message->id.'"></a><span class="author">'.s(fullname($user)).'</span> <span class="time">['.$time.']</span>: <span class="content">'.$messagetext.'</span></div>';
-    return '<div class="message '.$class.'"><a name="m'.$message->id.'"></a> <span class="time">['.$time.']</span>: <span class="content">'.$messagetext.'</span></div>';
+    return '<div class="message '.$class.'"><a name="m'.$message->id.'"></a> <span class="time">'.$time.'</span>: <span class="content">'.$messagetext.'</span></div>';
 }
 
 /**
