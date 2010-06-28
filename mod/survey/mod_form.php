@@ -35,7 +35,7 @@ class mod_survey_mod_form extends moodleform_mod {
         $options = array(''=>get_string('choose').'...') + $options;
         $mform->addElement('select', 'template', get_string("surveytype", "survey"), $options);
         $mform->addRule('template', $strrequired, 'required', null, 'client');
-        $mform->setHelpButton('template', array('surveys', get_string('helpsurveys', 'survey')));
+        $mform->addHelpButton('template', 'surveytype', 'survey');
 
         $this->add_intro_editor(false, get_string('customintro', 'survey'));
 
