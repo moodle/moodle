@@ -218,13 +218,15 @@ class backup_structure_test extends UnitTestCaseUsingDatabase {
         $forum->add_child($inventeds);
         $inventeds->add_child($invented);
 
-        // Let's add 1 optigroup with 3 elements
+        // Let's add 1 optigroup with 4 elements
         $alternative1 = new backup_optigroup_element('alternative1',
                                                      array('name', 'value'), '../../id', 1);
         $alternative2 = new backup_optigroup_element('alternative2',
                                                      array('name', 'value'), backup::VAR_PARENTID, 2);
         $alternative3 = new backup_optigroup_element('alternative3',
                                                      array('name', 'value'), '/forum/discussions/discussion/posts/post/id', 3);
+        $alternative4 = new backup_optigroup_element('alternative4',
+                                                     array('forumtype', 'forumname')); // Alternative without conditions
         // Create the optigroup, adding one element
         $optigroup = new backup_optigroup('alternatives', $alternative1, false);
         // Add second opti element
@@ -234,6 +236,8 @@ class backup_structure_test extends UnitTestCaseUsingDatabase {
         $post->add_optigroup($optigroup);
         // Add third opti element, on purpose after the add_optigroup() line above to check param evaluation works ok
         $optigroup->add_child($alternative3);
+        // Add 4th opti element (the one without conditions, so will be present always)
+        $optigroup->add_child($alternative4);
 
         /// Create some new nested elements, both named 'dupetest1', and add them to alternative1 and alternative2
         /// (not problem as far as the optigroup in not unique)
@@ -272,6 +276,13 @@ class backup_structure_test extends UnitTestCaseUsingDatabase {
         // Skip alternative2 source definition on purpose (will be tested)
         // $alternative2->set_source_array(array((object)array('name' => 'alternative2', 'value' => 2))); // 1 object array
         $alternative3->set_source_array(array((object)array('name' => 'alternative3', 'value' => 3))); // 1 object array
+        // Alternative 4 source is the forum type and name, so we'll get that in ALL posts (no conditions) that
+        // have not another alternative (post4 in our testing data in the only not matching any other alternative)
+        $alternative4->set_source_sql('SELECT type AS forumtype, name AS forumname
+                                         FROM {forum}
+                                        WHERE id = ?',
+                                     array('/forum/id')
+                                    );
         // Set children of optigroup_element source
         $dupetest1->set_source_array(array((object)array('field1' => '1', 'field2' => 1))); // 1 object array
         $dupetest2->set_source_array(array((object)array('field1' => '2', 'field2' => 2))); // 1 object array
@@ -406,6 +417,23 @@ class backup_structure_test extends UnitTestCaseUsingDatabase {
         $result = $xpath->query($query);
         $this->assertEqual($result->length, 0);
 
+        // Check 1st, 2nd and 3rd posts have no forumtype element
+        $query = '/forum/discussions/discussion/posts/post[@id="1"]/forumtype';
+        $result = $xpath->query($query);
+        $this->assertEqual($result->length, 0);
+        $query = '/forum/discussions/discussion/posts/post[@id="2"]/forumtype';
+        $result = $xpath->query($query);
+        $this->assertEqual($result->length, 0);
+        $query = '/forum/discussions/discussion/posts/post[@id="3"]/forumtype';
+        $result = $xpath->query($query);
+        $this->assertEqual($result->length, 0);
+
+        // Check 4th post has one forumtype element with value "general"
+        // (because it doesn't matches alternatives 1, 2, 3, then alternative 4,
+        // the one without conditions is being applied)
+        $query = '/forum/discussions/discussion/posts/post[@id="4"][forumtype="general"]';
+        $result = $xpath->query($query);
+        $this->assertEqual($result->length, 1);
 
         // Check annotations information against DB
         // Count records in original tables
