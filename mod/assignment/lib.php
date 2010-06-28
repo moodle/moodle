@@ -1054,7 +1054,7 @@ class assignment_base {
 
         $tabindex = 1; //tabindex for quick grading tabbing; Not working for dropdowns yet
         add_to_log($course->id, 'assignment', 'view submission', 'submissions.php?id='.$this->cm->id, $this->assignment->id, $this->cm->id);
-        
+
         $PAGE->set_title(format_string($this->assignment->name,true));
         $PAGE->set_heading($this->course->fullname);
         echo $OUTPUT->header();
@@ -2210,12 +2210,12 @@ class mod_assignment_online_grading_form extends moodleform {
         $mform->addElement('header', 'Submission', get_string('submission', 'assignment'));
         $mform->addElement('static', '', '' , $this->_customdata->submission_content );
     }
-    
+
     protected function get_editor_options() {
         $editoroptions = array();
         $editoroptions['filearea'] = 'assignment_online_submission';
         $editoroptions['noclean'] = false;
-        $editoroptions['maxfiles'] = EDITOR_UNLIMITED_FILES;
+        $editoroptions['maxfiles'] = 0; //TODO: no files for now, we need to first implement assignment_feedback area
         $editoroptions['maxbytes'] = $this->_customdata->maxbytes;
         return $editoroptions;
     }
@@ -3485,7 +3485,7 @@ function assignment_supports($feature) {
 
 /**
  * Adds module specific settings to the settings block
- * 
+ *
  * @param settings_navigation $settings The settings navigation object
  * @param navigation_node $assignmentnode The node to add module settings to
  */
@@ -3494,7 +3494,7 @@ function assignment_extend_settings_navigation(settings_navigation $settings, na
 
     $assignmentrow = $DB->get_record("assignment", array("id" => $PAGE->cm->instance));
     require_once "$CFG->dirroot/mod/assignment/type/$assignmentrow->assignmenttype/assignment.class.php";
-    
+
     $assignmentclass = 'assignment_'.$assignmentrow->assignmenttype;
     $assignmentinstance = new $assignmentclass($PAGE->cm->id, $assignmentrow, $PAGE->cm, $PAGE->course);
 
