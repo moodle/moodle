@@ -182,7 +182,7 @@ function get_recent_enrolments($courseid, $timestart) {
 
     $context = get_context_instance(CONTEXT_COURSE, $courseid);
 
-    $sql = "SELECT DISTINCT u.id, u.firstname, u.lastname, l.time
+    $sql = "SELECT u.id, u.firstname, u.lastname, MAX(l.time)
               FROM {user} u, {role_assignments} ra, {log} l
              WHERE l.time > ?
                    AND l.course = ?
@@ -191,7 +191,8 @@ function get_recent_enrolments($courseid, $timestart) {
                    AND ".$DB->sql_cast_char2int('l.info')." = u.id
                    AND u.id = ra.userid
                    AND ra.contextid ".get_related_contexts_string($context)."
-          ORDER BY l.time ASC";
+          GROUP BY u.id, u.firstname, u.lastname
+          ORDER BY MAX(l.time) ASC";
     $params = array($timestart, $courseid);
     return $DB->get_records_sql($sql, $params);
 }
