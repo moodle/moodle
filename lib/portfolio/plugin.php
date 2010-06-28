@@ -466,6 +466,7 @@ abstract class portfolio_plugin_base {
         $classname = 'portfolio_plugin_'  . $plugin;
         $obj = new $classname($newid);
         $obj->set_config($config);
+        $obj->save();
         return $obj;
     }
 

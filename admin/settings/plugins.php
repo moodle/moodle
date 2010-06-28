@@ -266,12 +266,11 @@ if ($hassiteconfig) {
             new admin_externalpage(
                 'portfoliosettings' . $portfolio->get('id'),
                 $portfolio->get('name'),
-                $url . '?edit=' . $portfolio->get('id'),
-                'moodle/site:config',
-                !$portfolio->get('visible')
+                $url . '?action=edit&pf=' . $portfolio->get('id'),
+                'moodle/site:config'
             ),
             $portfolio->get('name'),
-            $url . ' ?edit=' . $portfolio->get('id')
+            $url . '?action=edit&pf=' . $portfolio->get('id')
         );
     }
 

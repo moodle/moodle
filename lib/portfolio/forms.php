@@ -125,6 +125,9 @@ final class portfolio_admin_form extends moodleform {
 
     protected $instance;
     protected $plugin;
+    protected $portfolio;
+    protected $action;
+    protected $visible;
 
     public function definition() {
         global $CFG;
@@ -132,14 +135,19 @@ final class portfolio_admin_form extends moodleform {
         $this->instance = (isset($this->_customdata['instance'])
                 && is_subclass_of($this->_customdata['instance'], 'portfolio_plugin_base'))
             ? $this->_customdata['instance'] : null;
+        $this->portfolio = $this->_customdata['portfolio'];
+        $this->action = $this->_customdata['action'];
+        $this->visible = $this->_customdata['visible'];
 
         $mform =& $this->_form;
         $strrequired = get_string('required');
 
-        $mform->addElement('hidden', 'edit',  ($this->instance) ? $this->instance->get('id') : 0);
-        $mform->setType('edit', PARAM_INT);
-        $mform->addElement('hidden', 'new',   $this->plugin);
-        $mform->setType('new', PARAM_INT);
+        $mform->addElement('hidden', 'pf', $this->portfolio);
+        $mform->setType('pf', PARAM_ALPHA);
+        $mform->addElement('hidden', 'action', $this->action);
+        $mform->setType('action', PARAM_ALPHA);
+        $mform->addElement('hidden', 'visible', $this->visible);
+        $mform->setType('visible', PARAM_INT);
         $mform->addElement('hidden', 'plugin', $this->plugin);
         $mform->setType('plugin', PARAM_SAFEDIR);
 

@@ -5488,6 +5488,15 @@ class admin_setting_manageportfolio extends admin_setting {
     }
 
     /**
+     * Helper function that generates a moodle_url object
+     * relevant to the portfolio
+     */
+
+    function portfolio_action_url($portfolio) {
+        return new moodle_url($this->baseurl, array('sesskey'=>sesskey(), 'pf'=>$portfolio));
+    }
+
+    /**
      * Searches the portfolio types for the specified type(string)
      *
      * @param string $query The string to search for
@@ -5524,15 +5533,35 @@ class admin_setting_manageportfolio extends admin_setting {
     public function output_html($data, $query='') {
         global $CFG, $OUTPUT;
 
-        $output = $OUTPUT->box_start('generalbox');
+        // Get strings that are used
+        $strshow = get_string('on', 'portfolio');
+        $strhide = get_string('off', 'portfolio');
+        $strdelete = get_string('disabledinstance', 'portfolio');
+        $strsettings = get_string('settings');
 
-        $namestr = get_string('name');
-        $pluginstr = get_string('plugin', 'portfolio');
+        $actionchoicesforexisting = array(
+            'show' => $strshow,
+            'hide' => $strhide,
+            'delete' => $strdelete
+        );
+
+        $actionchoicesfornew = array(
+            'newon' => $strshow,
+            'newoff' => $strhide,
+            'delete' => $strdelete
+        );
+
+        $actionchoicesforinsane = array(
+            'hide' => $strhide,
+            'delete' => $strdelete
+        );
+
+        $output = $OUTPUT->box_start('generalbox');
 
         $plugins = get_plugin_list('portfolio');
         $plugins = array_keys($plugins);
         $instances = portfolio_instances(false, false);
-        $alreadyplugins = array();
+        $usedplugins = array();
 
         // to avoid notifications being sent out while admin is editing the page
         define('ADMIN_EDITING_PORTFOLIO', true);
@@ -5544,44 +5573,47 @@ class admin_setting_manageportfolio extends admin_setting {
         $output .= portfolio_report_insane($insaneinstances, $instances, true);
 
         $table = new html_table();
-        $table->head = array($namestr, $pluginstr, '');
+        $table->head = array(get_string('plugin', 'portfolio'), '', '');
         $table->data = array();
 
         foreach ($instances as $i) {
-            $row = '';
-            $row .= '<a href="' . $this->baseurl . '&edit=' . $i->get('id') . '"><img src="' . $OUTPUT->pix_url('t/edit') . '" alt="' . get_string('edit') . '" /></a>' . "\n";
-            $row .= '<a href="' . $this->baseurl . '&delete=' .  $i->get('id') . '"><img src="' . $OUTPUT->pix_url('t/delete') . '" alt="' . get_string('delete') . '" /></a>' . "\n";
+            $settings = '<a href="' . $this->baseurl . '&amp;action=edit&amp;pf=' . $i->get('id') . '">' . $strsettings .'</a>';
+
+            // Check if the instance is misconfigured
             if (array_key_exists($i->get('plugin'), $insane) || array_key_exists($i->get('id'), $insaneinstances)) {
-                $row .=  '<img src="' . $OUTPUT->pix_url('t/show') . '" alt="' . get_string('hidden', 'portfolio') . '" />' . "\n";
+                $select = new single_select($this->portfolio_action_url($i->get('id'), 'pf'), 'action', $actionchoicesforinsane, 'hide', null, 'applyto' . $i->get('id'));
+                $table->data[] = array($i->get('name') . " <strong>(" . get_string('portfoliomisconfigured', 'portfolio') . ")</strong>", $OUTPUT->render($select), $settings);
             } else {
-                $row .= ' <a href="' . $this->baseurl . '&hide=' . $i->get('id') . '"><img src="' .
-                    $OUTPUT->pix_url('t/' . ($i->get('visible') ? 'hide' : 'show')) . '" alt="' . get_string($i->get('visible') ? 'hide' : 'show') . '" /></a>' . "\n";
+                if ($i->get('visible')) {
+                    $currentaction = 'show';
+                } else {
+                    $currentaction = 'hide';
+                }
+                $select = new single_select($this->portfolio_action_url($i->get('id'), 'pf'), 'action', $actionchoicesforexisting, $currentaction, null, 'applyto' . $i->get('id'));
+                $table->data[] = array($i->get('name'), $OUTPUT->render($select), $settings);
             }
-            $table->data[] = array($i->get('name'), $i->get_name() . ' (' . $i->get('plugin') . ')', $row);
-            if (!in_array($i->get('plugin'), $alreadyplugins)) {
-                $alreadyplugins[] = $i->get('plugin');
+            if (!in_array($i->get('plugin'), $usedplugins)) {
+                $usedplugins[] = $i->get('plugin');
+            }
+        }
+
+        if (!empty($plugins)) {
+            foreach ($plugins as $p) {
+                // Check if it can not have multiple instances and has already been used
+                if (!portfolio_static_function($p, 'allows_multiple_instances') && in_array($p, $usedplugins)) {
+                    continue;
+                }
+                // Check if it is misconfigured
+                if (array_key_exists($p, $insane)) {
+                    continue;
+                }
+                $select = new single_select($this->portfolio_action_url($p, 'pf'), 'action', $actionchoicesfornew, 'delete', null, 'applyto' . $p);
+                $table->data[] = array(portfolio_static_function($p, 'get_name'), $OUTPUT->render($select), '');
             }
         }
 
         $output .= html_writer::table($table);
 
-        $instancehtml = '<br /><br />' . get_string('addnewportfolio', 'portfolio') . ': <br /><br />';
-        $addable = 0;
-        foreach ($plugins as $p) {
-            if (!portfolio_static_function($p, 'allows_multiple_instances') && in_array($p, $alreadyplugins)) {
-                continue;
-            }
-            if (array_key_exists($p, $insane)) {
-                continue;
-            }
-
-            $instancehtml .= '<a href="' . $this->baseurl . '&amp;new=' . $p . '">' . portfolio_static_function($p, 'get_name') . ' (' . s($p) . ')' . '</a><br />' . "\n";
-            $addable++;
-        }
-
-        if ($addable) {
-            $output .= $instancehtml;
-        }
         $output .= $OUTPUT->box_end();
 
         return highlight($query, $output);
@@ -6378,7 +6410,7 @@ class admin_setting_managerepository extends admin_setting {
      */
 
     function repository_action_url($repository) {
-        return new moodle_url('/admin/repository.php', array('sesskey'=>sesskey(), 'repos'=>$repository));
+        return new moodle_url($this->baseurl, array('sesskey'=>sesskey(), 'repos'=>$repository));
     }
 
     /**
@@ -6391,16 +6423,21 @@ class admin_setting_managerepository extends admin_setting {
     public function output_html($data, $query='') {
         global $CFG, $USER, $OUTPUT;
 
+        // Get strings that are used
+        $strshow = get_string('on', 'repository');
+        $strhide = get_string('off', 'repository');
+        $strdelete = get_string('disabled', 'repository');
+
         $actionchoicesforexisting = array(
-            'show' => get_string('on', 'repository'),
-            'hide' => get_string('off', 'repository'),
-            'delete' => get_string('disabled', 'repository')
+            'show' => $strshow,
+            'hide' => $strhide,
+            'delete' => $strdelete
         );
 
         $actionchoicesfornew = array(
-            'newon' => get_string('on', 'repository'),
-            'newoff' => get_string('off', 'repository'),
-            'delete' => get_string('disabled', 'repository')
+            'newon' => $strshow,
+            'newoff' => $strhide,
+            'delete' => $strdelete
         );
 
         $return = '';
