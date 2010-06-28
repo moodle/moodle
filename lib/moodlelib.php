@@ -5704,9 +5704,10 @@ interface string_manager {
      * Load all strings for one component
      * @param string $component The module the string is associated with
      * @param string $lang
+     * @param bool $disablecache Do not use caches, force fetching the strings from sources
      * @return array of all string for given component and lang
      */
-    public function load_component_strings($component, $lang);
+    public function load_component_strings($component, $lang, $disablecache=false);
 
     /**
      * Invalidates all caches, should the implementation use any
@@ -6254,9 +6255,10 @@ class install_string_manager implements string_manager {
      * Load all strings for one component
      * @param string $component The module the string is associated with
      * @param string $lang
+     * @param bool $disablecache Do not use caches, force fetching the strings from sources
      * @return array of all string for given component and lang
      */
-    public function load_component_strings($component, $lang) {
+    public function load_component_strings($component, $lang, $disablecache=false) {
         // not needed in installer
         return array();
     }
