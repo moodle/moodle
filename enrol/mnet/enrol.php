@@ -171,7 +171,7 @@ class enrolment_plugin_mnet {
                 co.cost,
                 co.currency,
                 co.defaultrole as defaultroleid,
-                r.name
+                r.name as defaultrolename
             FROM
                 {$CFG->prefix}course_categories ca
             JOIN
@@ -206,7 +206,7 @@ class enrolment_plugin_mnet {
                     co.cost,
                     co.currency,
                     co.defaultrole as defaultroleid,
-                    r.name
+                    r.name as defaultrolename
                 FROM
                     {$CFG->prefix}course_categories ca
                 JOIN
