@@ -554,7 +554,6 @@ $string['guestroleid'] = 'Role for guest';
 $string['helpadminseesall'] = 'Do admins see all calendar events or just those that apply to themselves?';
 $string['helpcalendarsettings'] = 'Configure various calendar and date/time-related aspects of Moodle';
 $string['helpforcetimezone'] = 'You can allow users to individually select their timezone, or force a timezone for everyone.';
-$string['helpprofilefieldlink'] = 'Create a link from the user data';
 $string['helpsitemaintenance'] = 'For upgrades and other work';
 $string['helpstartofweek'] = 'Which day starts the week in the calendar?';
 $string['helpupcominglookahead'] = 'How many days in the future does the calendar look for upcoming events by default?';

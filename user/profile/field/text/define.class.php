@@ -25,7 +25,7 @@ class profile_define_text extends profile_define_base {
         /// Param 4 for text type contains a link
         $form->addElement('text', 'param4', get_string('profilefieldlink', 'admin'));
         $form->setType('param4', PARAM_URL);
-        $form->setHelpButton('param4', array('profilefieldlink', get_string('helpprofilefieldlink', 'admin')));
+        $form->addHelpButton('param4', 'profilefieldlink', 'admin');
 
         /// Param 5 for text type contains link target
         $targetoptions = array( ''       => get_string('linktargetnone', 'editor'),
