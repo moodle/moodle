@@ -52,6 +52,11 @@ if ($ajax) {
     echo $OUTPUT->header();
 }
 
+if (!$sm->string_exists($identifier.'_help', $component)) {
+    // strings on-diskc cache may be dirty - try to rebuild it and check again
+    $sm->load_component_strings($component, current_language(), true);
+}
+
 if ($sm->string_exists($identifier.'_help', $component)) {
     $options = new object;
     $options->trusted = false;
