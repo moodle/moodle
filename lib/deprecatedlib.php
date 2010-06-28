@@ -3669,6 +3669,17 @@ function navmenu($course, $cm=NULL, $targetwindow='self') {
     return '';
 }
 
+/**
+ * Returns a little popup menu for switching roles
+ *
+ * @deprecated in Moodle 2.0
+ * @param int $courseid The course  to update by id as found in 'course' table
+ * @return string
+ */
+function switchroles_form($courseid) {
+    debugging('switchroles_form() has been deprecated and replaced by an item in the global settings block');
+    return '';
+}
 
 /**
  * Print header for admin page

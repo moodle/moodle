@@ -2266,48 +2266,6 @@ function print_recent_activity_note($time, $user, $text, $link, $return=false, $
 }
 
 /**
- * Returns a little popup menu for switching roles
- *
- * @global object
- * @global object
- * @uses CONTEXT_COURSE
- * @param int $courseid The course  to update by id as found in 'course' table
- * @return string
- */
-function switchroles_form($courseid) {
-
-    global $CFG, $USER, $OUTPUT;
-
-
-    if (!$context = get_context_instance(CONTEXT_COURSE, $courseid)) {
-        return '';
-    }
-
-    if (!empty($USER->access['rsw'][$context->path])){  // Just a button to return to normal
-        $options = array();
-        $options['id'] = $courseid;
-        $options['sesskey'] = sesskey();
-        $options['switchrole'] = 0;
-
-        return $OUTPUT->single_button(new moodle_url('/course/view.php', $options), get_string('switchrolereturn'));
-    }
-
-    if (has_capability('moodle/role:switchroles', $context)) {
-        if (!$roles = get_switchable_roles($context)) {
-            return '';   // Nothing to show!
-        }
-        // unset default user role - it would not work
-        unset($roles[$CFG->guestroleid]);
-        $popupurl = new moodle_url('/course/view.php', array('id'=>$courseid, 'sesskey'=>sesskey()));
-        $select = new single_select($popupurl, 'switchrole', $roles, null, array(''=>get_string('switchroleto')), 'switchrole');
-        $select->set_old_help_icon('switchrole', get_string('switchroleto'));
-        return $OUTPUT->render($select);
-    }
-
-    return '';
-}
-
-/**
  * Returns a popup menu with course activity modules
  *
  * Given a course
