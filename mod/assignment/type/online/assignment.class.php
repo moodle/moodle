@@ -14,8 +14,7 @@ class assignment_online extends assignment_base {
     }
 
     function view() {
-
-        global $OUTPUT, $CFG;
+        global $OUTPUT, $CFG, $USER, $PAGE;
 
         $edit  = optional_param('edit', 0, PARAM_BOOL);
         $saved = optional_param('saved', 0, PARAM_BOOL);
@@ -23,69 +22,58 @@ class assignment_online extends assignment_base {
         $context = get_context_instance(CONTEXT_MODULE, $this->cm->id);
         require_capability('mod/assignment:view', $context);
 
-        $submission = $this->get_submission();
+        $submission = $this->get_submission($USER->id, false);
 
         //Guest can not submit nor edit an assignment (bug: 4604)
         if (!has_capability('mod/assignment:submit', $context)) {
-            $editable = null;
+            $editable = false;
         } else {
             $editable = $this->isopen() && (!$submission || $this->assignment->resubmit || !$submission->timemarked);
         }
         $editmode = ($editable and $edit);
 
         if ($editmode) {
-            //guest can not edit or submit assignment
-            if (!has_capability('mod/assignment:submit', $context)) {
-                print_error('guestnosubmit', 'assignment');
+            // prepare form and process submitted data
+            $editoroptions = array('noclean'=>false, 'maxfiles'=>EDITOR_UNLIMITED_FILES, 'maxbytes'=>$this->course->maxbytes);
+
+            $data = new object();
+            $data->id         = $this->cm->id;
+            $data->edit       = 1;
+            if ($submission) {
+                $data->sid        = $submission->id;
+                $data->text       = $submission->data1;
+                $data->textformat = $submission->data2;
+            } else {
+                $data->sid        = NULL;
+                $data->text       = '';
+                $data->textformat = NULL;
+            }
+
+            $data = file_prepare_standard_editor($data, 'text', $editoroptions, $this->context, 'assignment_online_submission', $data->sid);
+
+            $mform = new mod_assignment_online_edit_form(null, array($data, $editoroptions));
+
+            if ($mform->is_cancelled()) {
+                redirect($PAGE->url);
+            }
+
+            if ($data = $mform->get_data()) {
+                $submission = $this->get_submission($USER->id, true); //create the submission if needed & its id
+
+                $data = file_postupdate_standard_editor($data, 'text', $editoroptions, $this->context, 'assignment_online_submission', $submission->id);
+
+                $submission = $this->update_submission($data);
+
+                //TODO fix log actions - needs db upgrade
+                add_to_log($this->course->id, 'assignment', 'upload', 'view.php?a='.$this->assignment->id, $this->assignment->id, $this->cm->id);
+                $this->email_teachers($submission);
+
+                //redirect to get updated submission date and word count
+                redirect(new moodle_url($PAGE->url, array('saved'=>1)));
             }
         }
 
         add_to_log($this->course->id, "assignment", "view", "view.php?id={$this->cm->id}", $this->assignment->id, $this->cm->id);
-
-/// prepare form and process submitted data
-        $mformdata = new stdClass;
-        $mformdata->context = $this->context;
-        $mformdata->maxbytes = $this->course->maxbytes;
-        $mformdata->submission = $submission;
-        $mform = new mod_assignment_online_edit_form(null, $mformdata);
-
-        $defaults = new object();
-        $defaults->id = $this->cm->id;
-        if (!empty($submission)) {
-            if ($this->usehtmleditor) {
-                $options = new object();
-                $options->smiley = false;
-                $options->filter = false;
-
-                $defaults->text   = format_text($submission->data1, $submission->data2, $options);
-                $defaults->format = FORMAT_HTML;
-            } else {
-                $defaults->text   = clean_text($submission->data1, $submission->data2);
-                $defaults->format = $submission->data2;
-            }
-        }
-        $mform->set_data($defaults);
-
-        if ($mform->is_cancelled()) {
-            redirect('view.php?id='.$this->cm->id);
-        }
-
-        if ($mform->is_submitted()) {
-            if ($editable) {
-                $submission = $this->get_submission(0,true); //create the submission if needed & its id
-                $data = $mform->get_data($submission->id);
-                $this->update_submission($data);
-                //TODO fix log actions - needs db upgrade
-                add_to_log($this->course->id, 'assignment', 'upload',
-                        'view.php?a='.$this->assignment->id, $this->assignment->id, $this->cm->id);
-                $this->email_teachers($submission);
-                //redirect to get updated submission date and word count
-                redirect('view.php?id='.$this->cm->id.'&saved=1');
-            } else {
-                // TODO: add better error message
-                echo $OUTPUT->notification(get_string("error")); //submitting not allowed!
-            }
-        }
 
 /// print header, etc. and display form if needed
         if ($editmode) {
@@ -191,7 +179,7 @@ class assignment_online extends assignment_base {
         $update = new object();
         $update->id           = $submission->id;
         $update->data1        = $data->text;
-        $update->data2        = $data->format;
+        $update->data2        = $data->textformat;
         $update->timemodified = time();
 
         $DB->update_record('assignment_submissions', $update);
@@ -397,7 +385,7 @@ class assignment_online extends assignment_base {
     public function download_submissions() {
         global $CFG, $DB;
         require_once($CFG->libdir.'/filelib.php');
-        
+
         $submissions = $this->get_submissions('','');
         if (empty($submissions)) {
             error("there are no submissions to download");
@@ -428,7 +416,7 @@ class assignment_online extends assignment_base {
                 fwrite( $fd, $submissioncontent);
                 fclose( $fd );
                 $filesforzipping[$fileforzipname] = $tempdir.$fileforzipname;
-            }    
+            }
         }      //end of foreach
         if ($zipfile = assignment_pack_files($filesforzipping)) {
             remove_dir($tempdir); //remove old tempdir with individual files.
@@ -438,68 +426,27 @@ class assignment_online extends assignment_base {
 }
 
 class mod_assignment_online_edit_form extends moodleform {
-
-    public function set_data($data) {
-        $editoroptions = $this->get_editor_options();
-        if (!isset($data->text)) {
-            $data->text = '';
-        }
-        if (!isset($data->format)) {
-            $data->textformat = FORMAT_HTML;
-        } else {
-            $data->textformat = $data->format;
-        }
-
-        if (!empty($this->_customdata->submission->id)) {
-            $itemid = $this->_customdata->submission->id;
-        } else {
-            $itemid = null;
-        }
-
-        $data = file_prepare_standard_editor($data, 'text', $editoroptions, $this->_customdata->context, $editoroptions['filearea'], $itemid);
-        return parent::set_data($data);
-    }
-
-    public function get_data($submission_id = null) {
-        $data = parent::get_data();
-
-        if (!empty($this->_customdata->submission->id)) {
-            $itemid = $this->_customdata->submission->id;
-        } else {
-            $itemid = $submission_id;
-        }
-
-        if ($data) {
-            $editoroptions = $this->get_editor_options();
-            $data = file_postupdate_standard_editor($data, 'text', $editoroptions, $this->_customdata->context, $editoroptions['filearea'], $itemid);
-            $data->format = $data->textformat;
-        }
-        return $data;
-    }
-
     function definition() {
-        $mform =& $this->_form;
+        $mform = $this->_form;
+
+        list($data, $editoroptions) = $this->_customdata;
 
         // visible elements
-        $mform->addElement('editor', 'text_editor', get_string('submission', 'assignment'), null, $this->get_editor_options());
+        $mform->addElement('editor', 'text_editor', get_string('submission', 'assignment'), null, $editoroptions);
         $mform->setType('text_editor', PARAM_RAW); // to be cleaned before display
         $mform->addRule('text_editor', get_string('required'), 'required', null, 'client');
 
         // hidden params
-        $mform->addElement('hidden', 'id', 0);
+        $mform->addElement('hidden', 'id');
         $mform->setType('id', PARAM_INT);
+
+        $mform->addElement('hidden', 'edit', 1);
+        $mform->setType('edit', PARAM_INT);
 
         // buttons
         $this->add_action_buttons();
-    }
 
-    protected function get_editor_options() {
-        $editoroptions = array();
-        $editoroptions['filearea'] = 'assignment_online_submission';
-        $editoroptions['noclean'] = false;
-        $editoroptions['maxfiles'] = EDITOR_UNLIMITED_FILES;
-        $editoroptions['maxbytes'] = $this->_customdata->maxbytes;
-        return $editoroptions;
+        $this->set_data($data);
     }
 }
 
