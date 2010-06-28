@@ -440,7 +440,7 @@ class mod_assignment_online_edit_form extends moodleform {
         $mform->addElement('hidden', 'id');
         $mform->setType('id', PARAM_INT);
 
-        $mform->addElement('hidden', 'edit', 1);
+        $mform->addElement('hidden', 'edit');
         $mform->setType('edit', PARAM_INT);
 
         // buttons
