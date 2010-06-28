@@ -142,7 +142,7 @@ if (!empty($fromform) and empty($update) and confirm_sesskey()) {
 
         $params['token'] = $unconfirmedhub->token;
         $params['url'] = $CFG->wwwroot;
-        redirect(new moodle_url(HUB_MOODLEORGHUBURL . '/local/hub/siteregistration.php', $params));
+        redirect(new moodle_url($huburl . '/local/hub/siteregistration.php', $params));
     }
 }
 
