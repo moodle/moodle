@@ -30,6 +30,7 @@ table.message .searchresults td {padding:5px;}
 .message .contactselector .contact {text-align:left;}
 
 .message .messagearea  {padding-left:1%;border-left:1px solid LightGrey;width:74%;float:right;min-height:200px;}
+.message .messagearea .messagehistorytype {clear:both;padding-bottom:20px;}
 
 .message .messagearea .messagehistory .message_user_pictures {margin-left: auto;margin-right: auto;}
 .message .messagearea .messagehistory .message_user_pictures #user1 {vertical-align:top;width:200px;}

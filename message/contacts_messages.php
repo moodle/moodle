@@ -147,7 +147,7 @@ if ($currentuser && !empty($user2) && has_capability('moodle/site:sendmessage', 
         $defaultmessage->message = '';
 
         $data = $mform->get_data();
-        if (!empty($data)) {   /// Current user has just sent a message
+        if (!empty($data) && !empty($data->message)) {   /// Current user has just sent a message
             if (!confirm_sesskey()) {
                 print_error('invalidsesskey');
             }
@@ -225,7 +225,7 @@ echo html_writer::start_tag('div', array('class'=>'messagearea mdl-align'));
                 }
             }
 
-            $messagehistorylink =  html_writer::start_tag('div', array('class'=>'mdl-align','style'=>'clear:both;padding-bottom:20px;'));
+            $messagehistorylink =  html_writer::start_tag('div', array('class'=>'mdl-align messagehistorytype'));
                 $messagehistorylink .= html_writer::link($PAGE->url->out(false).'&history='.MESSAGE_HISTORY_ALL,
                     get_string('messagehistoryfull','message'),
                     array('class'=>$historyclass));
