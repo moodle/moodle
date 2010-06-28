@@ -62,7 +62,7 @@ if (has_capability('moodle/course:publish', get_context_instance(CONTEXT_COURSE,
             //update status for all these course
             foreach ($sitecourses as $sitecourse) {
                 //get the publication from the hub course id
-                $publication = $publicationmanager->get_publication($sitecourse['id']);
+                $publication = $publicationmanager->get_publication($sitecourse['id'], $hub->huburl);
                 if (!empty($publication)) {
                     $publication->status = $sitecourse['privacy'];
                     $publication->timechecked = time();

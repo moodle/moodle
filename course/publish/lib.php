@@ -177,16 +177,17 @@ class course_publish_manager {
     }
 
     /**
-     * Get a publication for a course id on the hub
+     * Get a publication for a course id on a hub
      * (which is either the id of the unique possible enrollable publication of a course,
      * either an id of one of the downloadable publication)
      * @param int $hubcourseid
+     * @param string $huburl
      * @return object publication
      */
-    public function get_publication($hubcourseid) {
+    public function get_publication($hubcourseid, $huburl) {
         global $DB;
         return $DB->get_record('course_published',
-                array('hubcourseid' => $hubcourseid));
+                array('hubcourseid' => $hubcourseid, 'huburl' => $huburl));
     }
 
     /**
