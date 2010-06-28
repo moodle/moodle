@@ -34,6 +34,8 @@ table.message .searchresults td {padding:5px;}
 .message .messagearea .messagehistory .message_user_pictures {margin-left: auto;margin-right: auto;}
 .message .messagearea .messagehistory .message_user_pictures #user1 {vertical-align:top;width:200px;}
 .message .messagearea .messagehistory .message_user_pictures #user2 {vertical-align:top;width:200px;}
+.message .messagearea .messagehistory .message_user_pictures .useractionlinks {font-size:0.9em;}
+
 .message .messagearea .messagehistory .heading {width:100%;clear:both;}
 .message .messagearea .messagehistory .left {padding-bottom:10px;width:50%;float:left;clear:both;padding-left:10%;}
 .message .messagearea .messagehistory .right {padding-bottom:10px;width:40%;float:right;clear:both;}

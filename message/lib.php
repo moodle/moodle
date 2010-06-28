@@ -1433,7 +1433,9 @@ function message_print_message_history($user1,$user2,$search='',$messagelimit=0,
 
         $strcontact = message_get_contact_add_remove_link($incontactlist, $isblocked, $user2, $script, $text, $icon);
         $strblock   = message_get_contact_block_link($incontactlist, $isblocked, $user2, $script, $text, $icon);
-        echo $strcontact.$strblock;
+        $useractionlinks = $strcontact.'&nbsp;|'.$strblock;
+
+        echo html_writer::tag('div', $useractionlinks, array('class'=>'useractionlinks'));
     }
 
     echo '</td>';
