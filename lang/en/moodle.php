@@ -1467,7 +1467,6 @@ $string['shortnameuser'] = 'User short name';
 $string['shortsitename'] = 'Short name for site (eg single word)';
 $string['show'] = 'Show';
 $string['showactions'] = 'Show actions';
-$string['showactions_help'] = 'Actions shown can be views and/or posts (making a change, such as add, update or delete).';
 $string['showadvancedsettings'] = 'Show advanced settings';
 $string['showall'] = 'Show all {$a}';
 $string['showallcourses'] = 'Show all courses';

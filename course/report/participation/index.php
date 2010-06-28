@@ -131,7 +131,6 @@
     echo html_writer::select($roleoptions,'roleid',$roleid,false);
     echo '<label for="menuaction">'.get_string('showactions').'</label>'."\n";
     echo html_writer::select($actionoptions,'action',$action,false);
-    echo $OUTPUT->old_help_icon('participationreport', get_string('participationreport'));
     echo '<input type="submit" value="'.get_string('go').'" />'."\n</div></form>\n";
 
     $baseurl =  $CFG->wwwroot.'/course/report/participation/index.php?id='.$course->id.'&amp;roleid='
