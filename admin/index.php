@@ -363,8 +363,7 @@ if (defined('WARN_DISPLAY_ERRORS_ENABLED')) {
 // If no recently cron run
 $lastcron = $DB->get_field_sql('SELECT MAX(lastcron) FROM {modules}');
 if (time() - $lastcron > 3600 * 24) {
-    $strinstallation = get_string('installation', 'install');
-    $helpbutton = $OUTPUT->old_help_icon('install', $strinstallation);
+    $helpbutton = $OUTPUT->help_icon('cron', 'admin');
     echo $OUTPUT->box(get_string('cronwarning', 'admin').'&nbsp;'.$helpbutton, 'generalbox adminwarning');
 }
 
