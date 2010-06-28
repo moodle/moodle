@@ -282,7 +282,7 @@ Handling of Multiple Attempts
 
 * The option to start a new attempt is provided by a checkbox above the Enter button on the content structure page, so be sure you\'re providing access to that page if you want to allow more than one attempt.
 * Some scorm packages are intelligent about new attempts, many are not. What this means is that if the learner re-enters an existing attempt, if the SCORM content does not have internal logic to avoid overwriting previous attempts they can be overwritten, even though the attempt was \'completed\' or \'passed\'.
-* The settings "Force completed", "Force new attempt" and "Lock after final attempt also provide further management of multiple attempts.';
+* The settings "Force completed", "Force new attempt" and "Lock after final attempt" also provide further management of multiple attempts.';
 $string['whatgradedesc'] = 'This preference sets the default attempts grading';
 $string['width'] = 'Width';
 $string['window'] = 'Window';
