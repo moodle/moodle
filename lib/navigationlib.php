@@ -3090,12 +3090,6 @@ class settings_navigation extends navigation_node {
             }
         }
 
-        // Messaging
-        if (has_capability('moodle/user:editownmessageprofile', $systemcontext)) {
-            $url = new moodle_url('/message/edit.php', array('id'=>$user->id, 'course'=>$course->id));
-            $usersetting->add(get_string('editmymessage', 'message'), $url, self::TYPE_SETTING);
-        }
-
         // View the roles settings
         if (has_any_capability(array('moodle/role:assign', 'moodle/role:safeoverride','moodle/role:override', 'moodle/role:manage'), $usercontext)) {
             $roles = $usersetting->add(get_string('roles'), null, self::TYPE_SETTING);
