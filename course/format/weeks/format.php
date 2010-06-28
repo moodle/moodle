@@ -89,7 +89,7 @@
         echo '<div class="content">';
 
         if (!empty($thissection->name)) {
-            echo html_writer::tag('h3', $thissection->name, 'sectionname');
+            echo $OUTPUT->heading($thissection->name, 3, 'sectionname');
         }
 
         echo '<div class="summary">';
@@ -108,7 +108,7 @@
         echo '</div>';
 
         print_section($course, $thissection, $mods, $modnamesused);
-         
+
         if ($PAGE->user_is_editing()) {
             print_section_add_menus($course, $section, $modnames);
         }
@@ -237,7 +237,7 @@
                 echo '</div>';
 
                 print_section($course, $thissection, $mods, $modnamesused);
-                
+
                 if ($PAGE->user_is_editing()) {
                     print_section_add_menus($course, $section, $modnames);
                 }
