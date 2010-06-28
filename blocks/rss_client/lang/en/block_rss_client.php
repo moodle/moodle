@@ -76,5 +76,4 @@ $string['timeout'] = 'Time in minutes before an RSS feed expires in cache. Note 
 $string['timeoutdesc'] = 'Time in minutes for an RSS feed to live in cache.';
 $string['timeout2'] = 'Timeout';
 $string['updatefeed'] = 'Update a news feed URL:';
-$string['validatefeed'] = 'Validate feed';
 $string['viewfeed'] = 'View feed';

@@ -53,7 +53,7 @@ class feed_edit_form extends moodleform {
         $mform->addElement('checkbox', 'autodiscovery', get_string('enableautodiscovery', 'block_rss_client'));
         $mform->setDefault('autodiscovery', 1);
         $mform->setAdvanced('autodiscovery');
-        $mform->setHelpButton('autodiscovery', array('feedautodiscovery',  get_string('validatefeed', 'block_rss_client'), 'rss_client'), true);
+        $mform->addHelpButton('autodiscovery', 'enableautodiscovery', 'block_rss_client');
 
         $mform->addElement('text', 'preferredtitle', get_string('customtitlelabel', 'block_rss_client'), array('size' => 60));
         $mform->setType('preferredtitle', PARAM_NOTAGS);
