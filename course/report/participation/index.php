@@ -280,10 +280,10 @@
         }
         echo '</div>';
         echo '<div>';
-        echo '<label for="formaction">'.get_string("withselectedusers").'</label>';
+        echo '<label for="formaction">'.get_string('withselectedusers').'</label>';
         $displaylist['messageselect.php'] = get_string('messageselectadd');
         echo html_writer::select($displaylist, 'formaction', '', array(''=>'choosedots'), array('id'=>'formactionselect'));
-        echo $OUTPUT->old_help_icon("participantswithselectedusers", get_string("withselectedusers"));
+        echo $OUTPUT->help_icon('withselectedusers');
         echo '<input type="submit" value="' . get_string('ok') . '" />'."\n";
         echo '</div>';
         echo '</div>'."\n";

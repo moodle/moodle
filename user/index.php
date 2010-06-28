@@ -770,7 +770,7 @@
             $displaylist['groupaddnote.php'] = get_string('groupaddnewnote', 'notes');
         }
 
-        echo $OUTPUT->old_help_icon("participantswithselectedusers", get_string("withselectedusers"));
+        echo $OUTPUT->help_icon('withselectedusers');
         echo html_writer::tag('label', get_string("withselectedusers"), array('for'=>'formactionid'));
         echo html_writer::select($displaylist, 'formaction', '', array(''=>'choosedots'), array('id'=>'formactionid'));
 
