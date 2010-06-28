@@ -100,16 +100,18 @@ if (empty($cancel) and $unregistration and $confirm and confirm_sesskey()) {
                 $cleanregdata = 1;
             }
         }
+    }
 
-        //course unpublish went ok, unregister the site now
-        if ($confirm) {
-            $function = 'hub_unregister_site';
-            $params = array();
-            $serverurl = $huburl . "/local/hub/webservice/webservices.php";
-            $xmlrpcclient = new webservice_xmlrpc_client();
-            try {
-                $result = $xmlrpcclient->call($serverurl, $hub->token, $function, $params);
-            } catch (Exception $e) {
+    //course unpublish went ok, unregister the site now
+    if ($confirm) {
+        $function = 'hub_unregister_site';
+        $params = array();
+        $serverurl = $huburl . "/local/hub/webservice/webservices.php";
+        $xmlrpcclient = new webservice_xmlrpc_client();
+        try {
+            $result = $xmlrpcclient->call($serverurl, $hub->token, $function, $params);
+        } catch (Exception $e) {
+            if (!$cleanregdata) {
                 $errormessage = $e->getMessage();
                 $confirm = false;
                 $cleanregdata = 1;
