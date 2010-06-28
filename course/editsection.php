@@ -72,7 +72,7 @@ $PAGE->set_heading($course->fullname);
 $PAGE->navbar->add($stredit);
 echo $OUTPUT->header();
 
-echo $OUTPUT->heading_with_help($strsummaryof, 'summaries');
+echo $OUTPUT->heading($strsummaryof);
 
 $mform->display();
 echo $OUTPUT->footer();
