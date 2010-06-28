@@ -168,8 +168,15 @@ if (!empty($messageerror)) {
 }
 
 $strmessages = get_string('messages', 'message');
-$PAGE->set_title("$SITE->shortname: $strmessages");
-$PAGE->set_heading("$SITE->shortname: $strmessages");
+if (!empty($user2)) {
+    $user2fullname = fullname($user2);
+
+    $PAGE->set_title("$strmessages: $user2fullname");
+    $PAGE->set_heading("$strmessages: $user2fullname");
+} else {
+    $PAGE->set_title("$SITE->shortname: $strmessages");
+    $PAGE->set_heading("$SITE->shortname: $strmessages");
+}
 
 //now the page contents
 echo $OUTPUT->header();
