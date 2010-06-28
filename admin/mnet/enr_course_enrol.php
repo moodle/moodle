@@ -130,7 +130,7 @@
                 a.courseid
             FROM
                 {$CFG->prefix}user u
-            LEFT JOIN
+            JOIN
                 {$CFG->prefix}mnet_enrol_assignments a
             ON
                 a.userid = u.id AND a.courseid={$courseid}
