@@ -135,7 +135,7 @@ if ($isfrontpage) {
 }
 
 /// Print heading.
-echo $OUTPUT->heading_with_help($title, 'localfiltersettings', 'filters');
+echo $OUTPUT->heading_with_help($title, 'filtersettings', 'filters');
 
 if (empty($availablefilters)) {
     echo '<p class="centerpara">' . get_string('nofiltersenabled', 'filters') . "</p>\n";
