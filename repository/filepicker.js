@@ -335,7 +335,6 @@ M.core_filepicker.init = function(Y, options) {
                 title.id = 'grid-title-'+client_id+'-'+String(count);
                 title.className = 'label';
                 var filename = node.title;
-                console.info(node);
                 if (node.shorttitle) {
                     filename = node.shorttitle;
                 }

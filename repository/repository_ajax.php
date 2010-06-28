@@ -59,6 +59,11 @@ header('Expires: Sat, 26 Jul 1997 05:00:00 GMT');
 $err = new stdclass;
 $err->client_id = $client_id;
 
+if (!confirm_sesskey()) {
+    $err->error = get_string('invalidsesskey');
+    die(json_encode($err));
+}
+
 /// Check permissions
 if (! (isloggedin() && repository::check_context($contextid)) ) {
     $err->e = get_string('nopermissiontoaccess', 'repository');
