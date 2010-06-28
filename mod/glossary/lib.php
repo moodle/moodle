@@ -196,7 +196,7 @@ function glossary_delete_instance($id) {
 
     // Delete any dependent records
     $entry_select = "SELECT id FROM {glossary_entries} WHERE glossaryid = ?";
-    $DB->delete_records_select('comments', "contextid=? AND commentarea=? AND itemid IN ($entry_select)", array($id, $context->id, 'glossary_entry'));
+    $DB->delete_records_select('comments', "contextid=? AND commentarea=? AND itemid IN ($entry_select)", array($id, 'glossary_entry', $context->id));
     $DB->delete_records_select('glossary_alias',    "entryid IN ($entry_select)", array($id));
 
     $category_select = "SELECT id FROM {glossary_categories} WHERE glossaryid = ?";
