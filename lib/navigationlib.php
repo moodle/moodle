@@ -1665,11 +1665,12 @@ class global_navigation extends navigation_node {
         $issite = ($course->id == SITEID);
         $ismycourse = (array_key_exists($course->id, $this->mycourses) && !$forcegeneric);
         $displaycategories = (!$ismycourse && !$issite && !empty($CFG->navshowcategories));
+        $shortname = $course->shortname;
 
         if ($issite) {
             $parent = $this;
             $url = null;
-            $course->shortname = get_string('sitepages');
+            $shortname = get_string('sitepages');
         } else if ($ismycourse) {
             $parent = $this->rootnodes['mycourses'];
             $url = new moodle_url('/course/view.php', array('id'=>$course->id));
@@ -1719,7 +1720,7 @@ class global_navigation extends navigation_node {
             return $coursenode;
         }
 
-        $coursenode = $parent->add($course->shortname, $url, self::TYPE_COURSE, $course->shortname, $course->id);
+        $coursenode = $parent->add($shortname, $url, self::TYPE_COURSE, $shortname, $course->id);
         $coursenode->nodetype = self::NODETYPE_BRANCH;
         $coursenode->hidden = (!$course->visible);
         $coursenode->title($course->fullname);
