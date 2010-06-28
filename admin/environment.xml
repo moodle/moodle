@@ -252,9 +252,9 @@
           <ON_CHECK message="tokenizerrecommended" />
         </FEEDBACK>
       </PHP_EXTENSION>
-      <PHP_EXTENSION name="xmlrpc" level="optional">
+      <PHP_EXTENSION name="xmlrpc" level="required">
         <FEEDBACK>
-          <ON_CHECK message="xmlrpcrecommended" />
+          <ON_CHECK message="xmlrpcrequired" />
         </FEEDBACK>
       </PHP_EXTENSION>
       <PHP_EXTENSION name="soap" level="optional">
