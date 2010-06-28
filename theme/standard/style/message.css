@@ -42,6 +42,7 @@ table.message .searchresults td {padding:5px;}
 .message .messagearea .messagehistory .right {padding-bottom:10px;width:40%;float:right;clear:both;}
 .message .messagearea .messagesend {padding-top:20px;float:center;clear:both;}
 .message .messagearea .messagesend .messagesendbox {width:100%}
+.message .messagearea .messagesend fieldset {padding:0px;margin:0;} /** bring the message send button closer to the message box */
 
 .message .hiddenelement  {display:none;} /** not just using hidden as mform adds that class to its fieldset */
 .message .visible {display:inline;}
