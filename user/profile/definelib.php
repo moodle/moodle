@@ -46,7 +46,7 @@ class profile_define_base {
         $choices[PROFILE_VISIBLE_PRIVATE] = get_string('profilevisibleprivate', 'admin');
         $choices[PROFILE_VISIBLE_ALL]     = get_string('profilevisibleall', 'admin');
         $form->addElement('select', 'visible', get_string('profilevisible', 'admin'), $choices);
-        $form->setHelpButton('visible', array('profilevisible', get_string('profilevisible','admin')));
+        $form->addHelpButton('visible', 'profilevisible', 'admin');
         $form->setDefault('visible', PROFILE_VISIBLE_ALL);
 
         $choices = profile_list_categories();
