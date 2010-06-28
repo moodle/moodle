@@ -26,7 +26,7 @@
 $string['apikey'] = 'API Key';
 $string['boxnet:view'] = 'View box.net repository';
 $string['configplugin'] = 'Box.net configuration';
-$string['information'] = '<div>Get <a href="http://enabled.box.net/my-projects/">Box.net API Key</a> for your Moodle site. </div>';
+$string['information'] = 'Get an API key from the <a href="http://www.box.net/developers/services">Box.net developer page</a> for your Moodle site.';
 $string['invalidpassword'] = 'Invalid password';
 $string['nullfilelist'] = 'There are no files in this repository';
 $string['password'] = 'Password';
