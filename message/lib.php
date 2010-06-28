@@ -958,6 +958,7 @@ function message_print_user ($user=false, $iscontact=false, $isblocked=false, $i
 function message_contact_link($userid, $linktype='add', $return=false, $script=null, $text=false, $icon=true) {
     global $USER, $CFG, $OUTPUT, $PAGE;
 
+    //hold onto the strings as we're probably creating a bunch of links
     static $str;
 
     if (empty($script)) {
@@ -974,35 +975,40 @@ function message_contact_link($userid, $linktype='add', $return=false, $script=n
 
     $command = $linktype.'contact';
     $string  = $str->{$command};
-    $alttext = $text ? '' : $string;
-    $text = $text ? '&nbsp;'.$string : '';
 
-    $iconpath = null;
-    switch ($linktype) {
-        case 'block':
-            $iconpath = 't/block';
-            break;
-        case 'unblock':
-            $iconpath = 't/userblue';
-            break;
-        case 'remove':
-            $iconpath = 'i/cross_red_big';
-            break;
-        case 'add':
-        default:
-            $iconpath = 't/addgreen';
+    $safealttext = s($string);
+
+    $safestring = '';
+    if (!empty($text)) { 
+        $safestring = $safealttext;
     }
 
     $img = '';
     if ($icon) {
-        $img = '<img src="'.$OUTPUT->pix_url($iconpath).'" class="iconsmall" alt="'.s($alttext).'" />';
+        $iconpath = null;
+        switch ($linktype) {
+            case 'block':
+                $iconpath = 't/block';
+                break;
+            case 'unblock':
+                $iconpath = 't/userblue';
+                break;
+            case 'remove':
+                $iconpath = 'i/cross_red_big';
+                break;
+            case 'add':
+            default:
+                $iconpath = 't/addgreen';
+        }
+
+        $img = '<img src="'.$OUTPUT->pix_url($iconpath).'" class="iconsmall" alt="'.$safealttext.'" />';
     }
 
     $output = '<span class="'.$linktype.'contact">'.
               '<a href="'.$script.'&amp;'.$command.'='.$userid.
-              '&amp;sesskey='.sesskey().'" title="'.s($string).'">'.
+              '&amp;sesskey='.sesskey().'" title="'.$safestring.'">'.
               $img.
-              $text.'</a></span>';
+              $safestring.'</a></span>';
 
     if ($return) {
         return $output;

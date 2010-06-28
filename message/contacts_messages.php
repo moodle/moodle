@@ -227,7 +227,7 @@ echo html_writer::start_tag('div', array('class'=>'messagearea mdl-align'));
                     $messagehistorylink .= get_string('messagehistoryfull','message');
                 $messagehistorylink .= html_writer::end_tag('span');
 
-                $messagehistorylink .= '/'.html_writer::link($PAGE->url->out(false).'&history='.MESSAGE_HISTORY_SHORT,
+                $messagehistorylink .= '&nbsp;|&nbsp;'.html_writer::link($PAGE->url->out(false).'&history='.MESSAGE_HISTORY_SHORT,
                     get_string('mostrecent','message'),
                     array('class'=>$recentclass));
 
