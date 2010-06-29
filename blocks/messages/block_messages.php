@@ -30,7 +30,7 @@ class block_messages extends block_base {
         }
 
         $link = '/message/index.php';
-        $action = new popup_action('click', $link, 'message');
+        $action = null; //this was using popup_action() but popping up a fullsize window seems wrong
         $this->content->footer = $OUTPUT->action_link($link, get_string('messages', 'message'), $action);
 
         $users = $DB->get_records_sql("SELECT m.useridfrom AS id, COUNT(m.useridfrom) AS count,
