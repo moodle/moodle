@@ -58,7 +58,7 @@ $context = $usercontext = get_context_instance(CONTEXT_USER, $userid, MUST_EXIST
 if (!$currentuser &&
     !empty($CFG->forceloginforprofiles) && 
     !has_capability('moodle/user:viewdetails', $context) && 
-    !has_coursemanager_role($userid)) {
+    !has_coursecontact_role($userid)) {
     // Course managers can be browsed at site level. If not forceloginforprofiles, allow access (bug #4366)
     $struser = get_string('user');
     $PAGE->set_title("$SITE->shortname: $struser");
