@@ -3010,7 +3010,7 @@ class settings_navigation extends navigation_node {
             // Check that the user can view the profile
             $usercontext = get_context_instance(CONTEXT_USER, $user->id);       // User context
             if ($course->id==SITEID) {
-                if ($CFG->forceloginforprofiles && !!has_coursecontact_role($user->id) && !has_capability('moodle/user:viewdetails', $usercontext)) {  // Reduce possibility of "browsing" userbase at site level
+                if ($CFG->forceloginforprofiles && !has_coursecontact_role($user->id) && !has_capability('moodle/user:viewdetails', $usercontext)) {  // Reduce possibility of "browsing" userbase at site level
                     // Teachers can browse and be browsed at site level. If not forceloginforprofiles, allow access (bug #4366)
                     return false;
                 }
