@@ -1,4 +1,5 @@
 <?php
+
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
 // This file is part of Moodle - http://moodle.org/                      //
@@ -27,26 +28,27 @@
  * @copyright  (C) 1999 onwards Martin Dougiamas  http://dougiamas.com
  *
  * The forms used for course publication
-*/
+ */
 
 
-require_once($CFG->dirroot.'/lib/formslib.php');
-require_once($CFG->dirroot."/admin/registration/lib.php");
-require_once($CFG->dirroot."/course/publish/lib.php");
+require_once($CFG->dirroot . '/lib/formslib.php');
+require_once($CFG->dirroot . "/admin/registration/lib.php");
+require_once($CFG->dirroot . "/course/publish/lib.php");
 
 /*
  * Hub selector to choose on which hub we want to publish.
-*/
+ */
+
 class hub_publish_selector_form extends moodleform {
 
     public function definition() {
         global $CFG;
-        $mform =& $this->_form;
+        $mform = & $this->_form;
         $share = $this->_customdata['share'];
 
         $mform->addElement('header', 'site', get_string('selecthub', 'hub'));
 
-        $mform->addElement('static', 'info', '', get_string('selecthubinfo', 'hub').html_writer::empty_tag('br'));
+        $mform->addElement('static', 'info', '', get_string('selecthubinfo', 'hub') . html_writer::empty_tag('br'));
 
         $registrationmanager = new registration_manager();
         $registeredhubs = $registrationmanager->get_registered_on_hubs();
@@ -54,13 +56,13 @@ class hub_publish_selector_form extends moodleform {
         //Public hub list
         $options = array();
         foreach ($registeredhubs as $hub) {
-            
+
             $hubname = $hub->hubname;
             $mform->addElement('hidden', clean_param($hub->huburl, PARAM_ALPHANUMEXT), $hubname);
             if (empty($hubname)) {
-                 $hubname = $hub->huburl;
+                $hubname = $hub->huburl;
             }
-            $mform->addElement('radio','huburl',null,' '.$hubname, $hub->huburl);
+            $mform->addElement('radio', 'huburl', null, ' ' . $hubname, $hub->huburl);
             if ($hub->huburl == HUB_MOODLEORGHUBURL) {
                 $mform->setDefault('huburl', $hub->huburl);
             }
@@ -83,14 +85,15 @@ class hub_publish_selector_form extends moodleform {
 
 /*
  * Course publication form
-*/
+ */
+
 class course_publication_form extends moodleform {
 
     public function definition() {
         global $CFG, $DB, $USER, $OUTPUT;
 
         $strrequired = get_string('required');
-        $mform =& $this->_form;
+        $mform = & $this->_form;
         $huburl = $this->_customdata['huburl'];
         $hubname = $this->_customdata['hubname'];
         $course = $this->_customdata['course'];
@@ -107,7 +110,7 @@ class course_publication_form extends moodleform {
         $registeredhub = $registrationmanager->get_registeredhub($huburl);
         $publicationmanager = new course_publish_manager();
         $publications = $publicationmanager->get_publications($registeredhub->huburl, $course->id, $advertise);
-        
+
         if (!empty($publications)) {
             //get the last publication of this course
             $publication = array_pop($publications);
@@ -117,8 +120,8 @@ class course_publication_form extends moodleform {
             $options->ids = array($publication->hubcourseid);
             $options->allsitecourses = 1;
             $params = array('', $share, !$share, $options);
-            $serverurl = $huburl."/local/hub/webservice/webservices.php";
-            require_once($CFG->dirroot."/webservice/xmlrpc/lib.php");
+            $serverurl = $huburl . "/local/hub/webservice/webservices.php";
+            require_once($CFG->dirroot . "/webservice/xmlrpc/lib.php");
             $xmlrpcclient = new webservice_xmlrpc_client();
             try {
                 $publishedcourses = $xmlrpcclient->call($serverurl, $registeredhub->token, $function, $params);
@@ -148,28 +151,27 @@ class course_publication_form extends moodleform {
             $defaultcreatornotes = $publishedcourse['creatornotes'];
             $screenshotsnumber = $publishedcourse['screenshots'];
             $privacy = $publishedcourse['privacy'];
-
         } else {
             $defaultfullname = $course->fullname;
             $defaultshortname = $course->shortname;
-            $defaultsummary =  $course->summary;
+            $defaultsummary = $course->summary;
             if (empty($course->lang)) {
                 $language = get_site()->lang;
                 if (empty($language)) {
-                    $defaultlanguage =  current_language();
+                    $defaultlanguage = current_language();
                 } else {
-                    $defaultlanguage =  $language;
+                    $defaultlanguage = $language;
                 }
             } else {
-                $defaultlanguage =  $course->lang;
+                $defaultlanguage = $course->lang;
             }
-            $defaultpublishername = $USER->firstname.' '.$USER->lastname;
+            $defaultpublishername = $USER->firstname . ' ' . $USER->lastname;
             $defaultpublisheremail = $USER->email;
             $defaultcontributornames = '';
             $defaultcoverage = '';
-            $defaultcreatorname = $USER->firstname.' '.$USER->lastname;
+            $defaultcreatorname = $USER->firstname . ' ' . $USER->lastname;
             $defaultlicenceshortname = 'cc';
-            $defaultsubject = '';
+            $defaultsubject = 'none';
             $defaultaudience = HUB_AUDIENCE_STUDENTS;
             $defaulteducationallevel = HUB_EDULEVEL_TERTIARY;
             $defaultcreatornotes = '';
@@ -180,7 +182,7 @@ class course_publication_form extends moodleform {
         //the input parameters
         $mform->addElement('header', 'moodle', get_string('publicationinfo', 'hub'));
 
-        $mform->addElement('text','name' , get_string('coursename', 'hub'));
+        $mform->addElement('text', 'name', get_string('coursename', 'hub'));
         $mform->addRule('name', $strrequired, 'required', null, 'client');
         $mform->setType('name', PARAM_TEXT);
         $mform->setDefault('name', $defaultfullname);
@@ -189,34 +191,34 @@ class course_publication_form extends moodleform {
         $mform->addElement('hidden', 'id', $this->_customdata['id']);
 
         if ($share) {
-            $buttonlabel = get_string('shareon', 'hub', !empty($hubname)?$hubname:$huburl);
-           
+            $buttonlabel = get_string('shareon', 'hub', !empty($hubname) ? $hubname : $huburl);
+
             $mform->addElement('hidden', 'share', $share);
 
             $mform->addElement('text', 'demourl', get_string('demourl', 'hub'));
             $mform->setType('demourl', PARAM_URL);
-            $mform->setDefault('demourl', new moodle_url("/course/view.php?id=".$course->id));
+            $mform->setDefault('demourl', new moodle_url("/course/view.php?id=" . $course->id));
             $mform->addHelpButton('demourl', 'demourl', 'hub');
         }
 
         if ($advertise) {
             if (empty($publishedcourses)) {
-               $buttonlabel = get_string('advertiseon', 'hub', !empty($hubname)?$hubname:$huburl);
+                $buttonlabel = get_string('advertiseon', 'hub', !empty($hubname) ? $hubname : $huburl);
             } else {
-               $buttonlabel = get_string('readvertiseon', 'hub', !empty($hubname)?$hubname:$huburl);
+                $buttonlabel = get_string('readvertiseon', 'hub', !empty($hubname) ? $hubname : $huburl);
             }
             $mform->addElement('hidden', 'advertise', $advertise);
-            $mform->addElement('hidden', 'courseurl', $CFG->wwwroot."/course/view.php?id=".$course->id);
+            $mform->addElement('hidden', 'courseurl', $CFG->wwwroot . "/course/view.php?id=" . $course->id);
             $mform->addElement('static', 'courseurlstring', get_string('courseurl', 'hub'));
-            $mform->setDefault('courseurlstring', new moodle_url("/course/view.php?id=".$course->id));
+            $mform->setDefault('courseurlstring', new moodle_url("/course/view.php?id=" . $course->id));
             $mform->addHelpButton('courseurlstring', 'courseurl', 'hub');
         }
 
-        $mform->addElement('text', 'courseshortname',get_string('courseshortname', 'hub'));
+        $mform->addElement('text', 'courseshortname', get_string('courseshortname', 'hub'));
         $mform->setDefault('courseshortname', $defaultshortname);
         $mform->addHelpButton('courseshortname', 'courseshortname', 'hub');
 
-        $mform->addElement('textarea', 'description', get_string('description'), array('rows'=>10,
+        $mform->addElement('textarea', 'description', get_string('description'), array('rows' => 10,
             'cols' => 20));
         $mform->addRule('description', $strrequired, 'required', null, 'client');
         $mform->setDefault('description', $defaultsummary);
@@ -225,17 +227,17 @@ class course_publication_form extends moodleform {
 
         $languages = get_string_manager()->get_list_of_languages();
         asort($languages, SORT_LOCALE_STRING);
-        $mform->addElement('select', 'language',get_string('language'), $languages);    
+        $mform->addElement('select', 'language', get_string('language'), $languages);
         $mform->setDefault('language', $defaultlanguage);
         $mform->addHelpButton('language', 'language', 'hub');
 
 
-        $mform->addElement('text', 'publishername',get_string('publishername', 'hub'));
+        $mform->addElement('text', 'publishername', get_string('publishername', 'hub'));
         $mform->setDefault('publishername', $defaultpublishername);
         $mform->addRule('publishername', $strrequired, 'required', null, 'client');
         $mform->addHelpButton('publishername', 'publishername', 'hub');
 
-        $mform->addElement('text', 'publisheremail',get_string('publisheremail', 'hub'));
+        $mform->addElement('text', 'publisheremail', get_string('publisheremail', 'hub'));
         $mform->setDefault('publisheremail', $defaultpublisheremail);
         $mform->addRule('publisheremail', $strrequired, 'required', null, 'client');
         $mform->addHelpButton('publisheremail', 'publisheremail', 'hub');
@@ -250,14 +252,14 @@ class course_publication_form extends moodleform {
         $mform->setDefault('contributornames', $defaultcontributornames);
         $mform->addHelpButton('contributornames', 'contributornames', 'hub');
 
-        $mform->addElement('text','coverage' , get_string('tags', 'hub'));
+        $mform->addElement('text', 'coverage', get_string('tags', 'hub'));
         $mform->setType('coverage', PARAM_TEXT);
         $mform->setDefault('coverage', $defaultcoverage);
         $mform->addHelpButton('coverage', 'tags', 'hub');
 
-       
 
-        require_once($CFG->dirroot."/lib/licenselib.php");
+
+        require_once($CFG->dirroot . "/lib/licenselib.php");
         $licensemanager = new license_manager();
         $licences = $licensemanager->get_licenses();
         $options = array();
@@ -269,20 +271,25 @@ class course_publication_form extends moodleform {
         unset($options);
         $mform->addHelpButton('licence', 'licence', 'hub');
 
-        $options = get_string_manager()->load_component_strings('edufields', current_language());
+        $options = $publicationmanager->get_sorted_subjects();
+
+        //prepare data for the smartselect
         foreach ($options as $key => &$option) {
-            $keylength = strlen ( $key );
-            if ( $keylength == 10) {
+            $keylength = strlen($key);
+            if ($keylength == 10) {
                 $option = "&nbsp;&nbsp;" . $option;
-            } else  if ( $keylength == 12) {
+            } else if ($keylength == 12) {
                 $option = "&nbsp;&nbsp;&nbsp;&nbsp;" . $option;
             }
         }
+
+        $options = array('none' => get_string('none', 'hub')) + $options;
         $mform->addElement('select', 'subject', get_string('subject', 'hub'), $options);
         unset($options);
         $mform->addHelpButton('subject', 'subject', 'hub');
         $mform->setDefault('subject', $defaultsubject);
-        $this->init_javascript_enhancement('subject', 'smartselect', array('selectablecategories' => false, 'mode'=>'compact'));
+        $mform->addRule('subject', $strrequired, 'required', null, 'client');
+        $this->init_javascript_enhancement('subject', 'smartselect', array('selectablecategories' => false, 'mode' => 'compact'));
 
         $options = array();
         $options[HUB_AUDIENCE_EDUCATORS] = get_string('audienceeducators', 'hub');
@@ -306,7 +313,7 @@ class course_publication_form extends moodleform {
         unset($options);
         $mform->addHelpButton('educationallevel', 'educationallevel', 'hub');
 
-        $editoroptions = array('maxfiles'=>0, 'maxbytes'=>0, 'trusttext'=>false, 'forcehttps'=>false);
+        $editoroptions = array('maxfiles' => 0, 'maxbytes' => 0, 'trusttext' => false, 'forcehttps' => false);
         $mform->addElement('editor', 'creatornotes', get_string('creatornotes', 'hub'), '', $editoroptions);
         $mform->addRule('creatornotes', $strrequired, 'required', null, 'client');
         $mform->setDefault('creatornotes', $defaultcreatornotes);
@@ -317,7 +324,7 @@ class course_publication_form extends moodleform {
 
             if (!empty($privacy)) {
                 $images = array();
-                $baseurl = new moodle_url($huburl.'/local/hub/webservice/download.php', array('courseid' => $hubcourseid, 'filetype' => HUB_SCREENSHOT_FILE_TYPE));
+                $baseurl = new moodle_url($huburl . '/local/hub/webservice/download.php', array('courseid' => $hubcourseid, 'filetype' => HUB_SCREENSHOT_FILE_TYPE));
                 for ($i = 1; $i <= $screenshotsnumber; $i = $i + 1) {
                     $params['screenshotnumber'] = $i;
                     $images[] = array(
@@ -335,15 +342,15 @@ class course_publication_form extends moodleform {
             }
             $mform->addElement('static', 'existingscreenshots', get_string('existingscreenshots', 'hub'), $screenshothtml);
             $mform->addHelpButton('existingscreenshots', 'deletescreenshots', 'hub');
-            $mform->addElement('checkbox', 'deletescreenshots', '', ' '.get_string('deletescreenshots', 'hub'));
+            $mform->addElement('checkbox', 'deletescreenshots', '', ' ' . get_string('deletescreenshots', 'hub'));
         }
-        
+
         $mform->addElement('hidden', 'existingscreenshotnumber', $screenshotsnumber);
 
-        $mform->addElement('filemanager', 'screenshots', get_string('addscreenshots','hub'), null,
-                array('subdirs'=>0,
-                'maxbytes'=>1000000,
-                'maxfiles'=>3
+        $mform->addElement('filemanager', 'screenshots', get_string('addscreenshots', 'hub'), null,
+                array('subdirs' => 0,
+                    'maxbytes' => 1000000,
+                    'maxfiles' => 3
         ));
         $mform->addHelpButton('screenshots', 'screenshots', 'hub');
 
@@ -355,15 +362,12 @@ class course_publication_form extends moodleform {
 
         $errors = array();
 
-        if (!(strlen($this->_form->_submitValues['subject']) == 12 or $this->_form->_submitValues['subject'] == 'all')) {
-            $errors['subject'] = get_string('cannotselecttopsubject', 'block_community');
+        if ($this->_form->_submitValues['subject'] == 'none') {
+            $errors['subject'] = get_string('mustselectsubject', 'hub');
         }
 
         return $errors;
     }
 
-
-
 }
-
 ?>

@@ -127,7 +127,8 @@ if (!empty($fromform)) {
     }
 
     $function = 'hub_get_courses';
-    $params = array($search, $downloadable, !$downloadable, $options);
+    $params = array('search' => $search, 'downloadable' => $downloadable,
+        'enrollable' => !$downloadable, 'options' => $options);
     $serverurl = $huburl . "/local/hub/webservice/webservices.php";
     require_once($CFG->dirroot . "/webservice/xmlrpc/lib.php");
     $xmlrpcclient = new webservice_xmlrpc_client();

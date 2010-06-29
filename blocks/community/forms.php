@@ -130,7 +130,8 @@ class community_hub_search_form extends moodleform {
             unset($options);
             $mform->addHelpButton('educationallevel', 'educationallevel', 'block_community');
 
-            $options = get_string_manager()->load_component_strings('edufields', current_language());
+            $publicationmanager = new course_publish_manager();
+            $options = $publicationmanager->get_sorted_subjects();
             foreach ($options as $key => &$option) {
                 $keylength = strlen($key);
                 if ($keylength == 10) {
