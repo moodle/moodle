@@ -52,6 +52,7 @@ $string['errorcallingprocessor'] = 'Error calling defined processor';
 $string['formorethan'] = 'For more than';
 $string['guestnoeditmessage'] = 'Guest user can not edit messaging options';
 $string['guestnoeditmessageother'] = 'Guest user can not edit other user messaging options';
+$string['gotomessages'] = 'Go to messages';
 $string['includeblockedusers'] = 'Include blocked users';
 $string['incomingcontacts'] = 'Incoming contacts ({$a})';
 $string['keywords'] = 'Keywords';
