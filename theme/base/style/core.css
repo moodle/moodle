@@ -286,10 +286,11 @@ a.skip:active {position: static;display: block;}
 /**
  * My Moodle
  */
-.my .coursebox .overview .info {margin-left:20px;}
-.my .coursebox .overview {margin-bottom:10px;}
-#page-my-index .coursebox .info {float: none;}
-#page-my-index .name {margin-left: 5px;}
+.path-my .coursebox .overview .name {margin-left:20px;}
+.path-my .coursebox .overview .info {margin-left:25px;}
+.path-my .coursebox .overview .details {margin-left:25px;}
+.path-my .coursebox .overview {margin-bottom:10px;}
+.path-my .coursebox .info {float: none;}
 
 /**
  * Logs

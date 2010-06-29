@@ -3237,12 +3237,12 @@ function assignment_print_overview($courses, &$htmlarray) {
         }
         if (empty($isopen) || empty($assignment->timedue)) {
             unset($assignments[$key]);
-        }else{
+        } else {
             $assignmentids[] = $assignment->id;
         }
     }
 
-    if(empty($assignmentids)){
+    if (empty($assignmentids)){
         // no assigments to look at - we're done
         return true;
     }
@@ -3298,18 +3298,20 @@ function assignment_print_overview($courses, &$htmlarray) {
             // count how many people can submit
             $submissions = 0; // init
             if ($students = get_users_by_capability($context, 'mod/assignment:submit', 'u.id', '', '', '', 0, '', false)) {
-                foreach($students as $student){
-                    if(isset($unmarkedsubmissions[$assignment->id][$student->id])){
+                foreach ($students as $student) {
+                    if (isset($unmarkedsubmissions[$assignment->id][$student->id])) {
                         $submissions++;
                     }
                 }
             }
 
             if ($submissions) {
-                $str .= get_string('submissionsnotgraded', 'assignment', $submissions);
+                $link = new moodle_url('/mod/assignment/submissions.php', array('id'=>$assignment->coursemodule));
+                $str .= '<div class="details"><a href="'.$link.'">'.get_string('submissionsnotgraded', 'assignment', $submissions).'</a></div>';
             }
         } else {
-            if(isset($mysubmissions[$assignment->id])){
+            $str .= '<div class="details">';
+            if (isset($mysubmissions[$assignment->id])) {
 
                 $submission = $mysubmissions[$assignment->id];
 
@@ -3323,6 +3325,7 @@ function assignment_print_overview($courses, &$htmlarray) {
             } else {
                 $str .= $strnotsubmittedyet . ' ' . assignment_display_lateness(time(), $assignment->timedue);
             }
+            $str .= '</div>';
         }
         $str .= '</div>';
         if (empty($htmlarray[$assignment->course]['assignment'])) {
