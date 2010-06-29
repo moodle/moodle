@@ -429,8 +429,10 @@ class data_field_base {     // Base class for Database Field Types (see field/*/
     function image() {
         global $OUTPUT;
 
-        $str = '<a href="field.php?d='.$this->data->id.'&amp;fid='.$this->field->id.'&amp;mode=display&amp;sesskey='.sesskey().'">';
-        $str .= '<img src="'.$OUTPUT->pix_url('/field/' . $this->type . '/icon', 'data') . '" ';
+        $params = array('d'=>$this->data->id, 'fid'=>$this->field->id, 'mode'=>'display', 'sesskey'=>sesskey());
+        $link = new moodle_url('/mod/data/field.php', $params);
+        $str = '<a href="'.$link->out().'">';
+        $str .= '<img src="'.$OUTPUT->pix_url('field/'.$this->type, 'data') . '" ';
         $str .= 'height="'.$this->iconheight.'" width="'.$this->iconwidth.'" alt="'.$this->type.'" title="'.$this->type.'" /></a>';
         return $str;
     }
