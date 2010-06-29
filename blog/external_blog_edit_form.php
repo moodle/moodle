@@ -51,6 +51,7 @@ class blog_edit_external_form extends moodleform {
             $mform->addElement('text', 'filtertags', get_string('filtertags', 'blog'), array('size' => 50));
             $mform->setHelpButton('filtertags', array('filtertags', get_string('filtertags', 'blog'), 'blog'));
             $mform->addElement('text', 'autotags', get_string('autotags', 'blog'), array('size' => 50));
+            $mform->setHelpButton('autotags', array('autotags', get_string('autotags', 'blog'), 'blog'));
         }
 
         $this->add_action_buttons();
