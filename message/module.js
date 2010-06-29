@@ -42,3 +42,18 @@ M.core_message.combinedsearchgotfocus = function(e) {
         e.target.select();
     }
 }
+
+M.core_message.init_notification = function(Y, title, content, url) {
+    Y.use('overlay', function() {
+        var o = new Y.Overlay({
+            headerContent :  title,
+            bodyContent : content,
+            centered : true
+        });
+        o.render(Y.one(document.body));
+        Y.one('#buttondontreadmessage').on('click', o.hide, o);
+        Y.one('#buttonreadmessage').on('click', function() {
+            window.location.href = url;
+        }, o);
+    });
+}

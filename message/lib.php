@@ -94,7 +94,7 @@ function message_print_contact_selector($countunreadtotal, $usergroup, $user1, $
         if ($usergroup==VIEW_UNREAD_MESSAGES) {
             message_print_contacts($onlinecontacts, $offlinecontacts, $strangers, $refreshpage, $PAGE->url, 1, $showcontactactionlinks,$strunreadmessages, $user2);
         } else if ($usergroup==VIEW_CONTACTS) {
-            message_print_contacts($onlinecontacts, $offlinecontacts, $strangers, $refreshpage, $PAGE->url, 0, $showcontactactionlinks, null, $user2);
+            message_print_contacts($onlinecontacts, $offlinecontacts, $strangers, $refreshpage, $PAGE->url, 0, $showcontactactionlinks, $strunreadmessages, $user2);
         } else if ($usergroup==VIEW_BLOCKED) {
             message_print_blocked_users($blockedusers, $PAGE->url, $showcontactactionlinks, null, $user2);
         } else if (substr($usergroup, 0, 7)==VIEW_COURSE) {
