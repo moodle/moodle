@@ -53,44 +53,22 @@ class message_output_popup extends message_output{
 
     function config_form($preferences) {
         return '<table>'.
-               '<tr><td align="right">'.get_string('showmessagewindow', 'message').':</td><td><input type="checkbox" name="showmessagewindow" '.($preferences->showmessagewindow==1?" checked=\"checked\"":"").' /></td></tr>'.
                '<tr><td align="right">'.get_string('blocknoncontacts', 'message').':</td><td><input type="checkbox" name="blocknoncontacts" '.($preferences->blocknoncontacts==1?" checked=\"checked\"":"").' /></td></tr>'.
                '<tr><td align="right">'.get_string('beepnewmessage', 'message').':</td><td><input type="checkbox" name="beepnewmessage" '.($preferences->beepnewmessage==1?" checked=\"checked\"":"").' /></td></tr>'.
-               '<tr><td align="right">'.get_string('htmleditor').':</td><td><input type="checkbox" name="usehtmleditor" '.($preferences->usehtmleditor==1?" checked=\"checked\"":"").' /></td></tr>'.
-               '<tr><td align="right">'.get_string('noframesjs', 'message').':</td><td><input type="checkbox" name="noframesjs" '.($preferences->noframesjs==1?" checked=\"checked\"":"").' /></td></tr>'.
-               '<tr><td align="right">'.get_string('emailmessages', 'message').':</td><td><input type="checkbox" name="emailmessages" '.($preferences->emailmessages==1?" checked=\"checked\"":"").' /></td></tr>'.
-               '<tr><td align="right">'.get_string('formorethan', 'message').':</td><td><input type="text" name="emailtimenosee" id="emailtimenosee" size="2" value="'.$preferences->emailtimenosee.'" /> '.get_string('mins').'</td></tr>'.
-               '<tr><td align="right">'.get_string('email').':</td><td><input type="text" name="emailaddress" id="emailaddress" size="20" value="'.$preferences->emailaddress.'" /></td></tr>'.
-               '<tr><td align="right">'.get_string('format').':</td><td>'.$preferences->formatselect.'</td></tr>'.
                '</table>';
     }
 
     public function process_form($form, &$preferences) {
-        $preferences['message_showmessagewindow'] = !empty($form->showmessagewindow)?1:0;
         $preferences['message_blocknoncontacts']  = !empty($form->blocknoncontacts)?1:0;
         $preferences['message_beepnewmessage']    = !empty($form->beepnewmessage)?1:0;
-        $preferences['message_usehtmleditor']     = !empty($form->usehtmleditor)?1:0;
-        $preferences['message_noframesjs']        = !empty($form->noframesjs)?1:0;
-        $preferences['message_emailmessages']     = !empty($form->emailmessages)?1:0;
-        $preferences['message_emailtimenosee']    = $form->emailtimenosee;
-        $preferences['message_emailaddress']      = $form->emailaddress;
-        $preferences['message_emailformat']       = $form->emailformat;
 
         return true;
     }
     public function load_data(&$preferences, $userid) {
         global $USER;
-        $preferences->showmessagewindow =  get_user_preferences( 'message_showmessagewindow', 1, $userid);
+
         $preferences->blocknoncontacts  =  get_user_preferences( 'message_blocknoncontacts', '', $userid);
         $preferences->beepnewmessage    =  get_user_preferences( 'message_beepnewmessage', '', $userid);
-        $preferences->usehtmleditor     =  get_user_preferences( 'message_usehtmleditor', '', $userid);
-        $preferences->noframesjs        =  get_user_preferences( 'message_noframesjs', '', $userid);
-        $preferences->emailmessages     =  get_user_preferences( 'message_emailmessages', 1, $userid);
-        $preferences->emailtimenosee    =  get_user_preferences( 'message_emailtimenosee', 10, $userid);
-        $preferences->emailaddress      =  get_user_preferences( 'message_emailaddress', $USER->email, $userid);
-        $preferences->formatselect      =  html_writer::select(array(FORMAT_PLAIN => get_string('formatplain'),
-                                                                FORMAT_HTML  => get_string('formathtml')),
-                                                                'emailformat', get_user_preferences('message_emailformat', FORMAT_PLAIN));
 
         return true;
     }

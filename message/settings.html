@@ -8,48 +8,13 @@
 <table cellpadding="5"  class="message_form boxaligncenter">
 
     <tr valign="top">
-        <td align="right"><input type="checkbox" name="showmessagewindow" id="showmessagewindow" <?php echo $cbshowmessagewindow ?> /></td>
-        <td colspan="2"><label for="showmessagewindow"><?php print_string('showmessagewindow', 'message') ?></label></td>
-    </tr>
-    <tr valign="top">
         <td align="right"><input type="checkbox" name="blocknoncontacts" id="blocknoncontacts" <?php echo $cbblocknoncontacts ?>  /></td>
         <td colspan="2"><label for="blocknoncontacts"><?php print_string('blocknoncontacts', 'message') ?></label></td>
     </tr>
     <tr valign="top">
         <td align="right"><input type="checkbox" name="beepnewmessage" id="beepnewmessage" <?php echo $cbbeepnewmessage ?>  /></td>
         <td colspan="2"><label for="beepnewmessage"><?php print_string('beepnewmessage', 'message') ?></label></td>
-    </tr>
-    <tr valign="top">
-        <td align="right"><input type="checkbox" name="usehtmleditor" id="usehtmleditor" <?php echo $cbusehtmleditor ?>  /></td>
-        <td colspan="2"><label for="usehtmleditor"><?php print_string('htmleditor') ?></label></td>
-    </tr>
-    <tr valign="top">
-        <td align="right"><input type="checkbox" name="noframesjs" id="noframesjs" <?php echo $cbnoframesjs ?>  /></td>
-        <td colspan="2"><label for="noframesjs"><?php print_string('noframesjs', 'message') ?></label></td>
-    </tr>
-
-
-    <tr valign="top">
-        <td><input type="checkbox" name="emailmessages" id="emailmessages" <?php echo $cbemailmessages ?>  /></td>
-        <td colspan="2"><label for="emailmessages"><?php print_string('emailmessages', 'message') ?></label></td>
-    </tr>
-    <tr valign="top">
-        <td>&nbsp;</td>
-        <td align="right"><label for="emailtimenosee"><?php print_string('formorethan', 'message') ?></label></td>
-        <td><input type="text" name="emailtimenosee" id="emailtimenosee" size="2" value="<?php p($txemailtimenosee) ?>" /> <?php print_string('mins') ?></td>
-    </tr>
-
-    <tr valign="top">
-        <td>&nbsp;</td>
-        <td align="right"><label for="emailaddress"><?php print_string('email') ?></label></td>
-        <td><input type="text" name="emailaddress" id="emailaddress" size="20" value="<?php p($txemailaddress) ?>" /></td>
-    </tr>
-    <tr valign="top">
-        <td>&nbsp;</td>
-        <td align="right"><label for="menuemailformat"><?php print_string('format') ?></label></td>
-        <td><?php echo $format_select ?>
-        </td>
-    </tr>
+    </tr> 
 
     <tr valign="top">
         <td colspan="3" align="center"><br /><input type="submit" value="<?php print_string('savemysettings', 'message') ?>" /></td>

@@ -73,6 +73,11 @@ function message_print_contact_selector($countunreadtotal, $usergroup, $user1, $
             $usergroup = VIEW_CONTACTS;
         }
 
+        //if they have no blocked users and they've requested blocked users switch them over to contacts
+        if (count($blockedusers)==0 && $usergroup==VIEW_BLOCKED) {
+            $usergroup = VIEW_CONTACTS;
+        }
+
         $onlyactivecourses = true;
         $courses = enrol_get_users_courses($user1->id, $onlyactivecourses);
         $coursecontexts = message_get_course_contexts($courses);//we need one of these again so holding on to them
@@ -303,9 +308,9 @@ function message_print_contacts($onlinecontacts, $offlinecontacts, $strangers, $
         echo '<div class="heading">';
         print_string('contactlistempty', 'message');
         echo '</div>';
-        echo '<div class="note">';
-        print_string('addsomecontacts', 'message', message_remove_url_params($PAGE->url).'?tab=search');
-        echo '</div>';
+        //echo '<div class="note">';
+        //print_string('addsomecontacts', 'message', message_remove_url_params($PAGE->url).'?tab=search');
+        //echo '</div>';
     }
 
     echo '<table id="message_contacts" class="boxaligncenter" cellspacing="2" cellpadding="0" border="0">';
@@ -385,24 +390,15 @@ function message_print_contacts($onlinecontacts, $offlinecontacts, $strangers, $
 
 function message_print_usergroup_selector($usergroup, &$courses, &$coursecontexts, $countunreadtotal, $countblocked, $strunreadmessages) {
     $strblockedusers = null;
+    $options = array();
 
     if ($countunreadtotal>0) { //if there are unread messages
-        $options = array(VIEW_UNREAD_MESSAGES=>$strunreadmessages);
-    } else {
-        //if 0 unread messages and they've requested unread messages then show contacts
-        if ($usergroup==VIEW_UNREAD_MESSAGES) {
-            $usergroup = VIEW_CONTACTS;
-        }
+        $options[VIEW_UNREAD_MESSAGES] = $strunreadmessages;
     }
 
     if ($countblocked>0) {
         $strblockedusers = get_string('blockedusers','message', $countblocked);
-        $options = array(VIEW_BLOCKED=>$strblockedusers);
-    } else {
-        //if 0 blocked users and they've requested blocked users then show contacts
-        if ($usergroup==VIEW_BLOCKED) {
-            $usergroup = VIEW_CONTACTS;
-        }
+        $options[VIEW_BLOCKED] = $strblockedusers;
     }
 
     $strcontacts = get_string('mycontacts', 'message');
@@ -580,32 +576,16 @@ function message_print_settings() {
     if ($frm = data_submitted() and confirm_sesskey()) {
 
         $pref = array();
-        $pref['message_showmessagewindow'] = (isset($frm->showmessagewindow)) ? '1' : '0';
         $pref['message_beepnewmessage'] = (isset($frm->beepnewmessage)) ? '1' : '0';
         $pref['message_blocknoncontacts'] = (isset($frm->blocknoncontacts)) ? '1' : '0';
-        $pref['message_usehtmleditor'] = (isset($frm->usehtmleditor)) ? '1' : '0';
-        $pref['message_noframesjs'] = (isset($frm->noframesjs)) ? '1' : '0';
-        $pref['message_emailmessages'] = (isset($frm->emailmessages)) ? '1' : '0';
-        $pref['message_emailtimenosee'] = ((int)$frm->emailtimenosee > 0) ? (int)$frm->emailtimenosee : '10';
-        $pref['message_emailaddress'] = (!empty($frm->emailaddress)) ? $frm->emailaddress : $USER->email;
-        $pref['message_emailformat'] = (isset($frm->emailformat)) ? $frm->emailformat : FORMAT_PLAIN;
 
         set_user_preferences($pref);
 
         redirect(message_remove_url_params($PAGE->url), get_string('settingssaved', 'message'), 1);
     }
 
-    $cbshowmessagewindow = (get_user_preferences('message_showmessagewindow', 1) == '1') ? 'checked="checked"' : '';
     $cbbeepnewmessage = (get_user_preferences('message_beepnewmessage', 0) == '1') ? 'checked="checked"' : '';
     $cbblocknoncontacts = (get_user_preferences('message_blocknoncontacts', 0) == '1') ? 'checked="checked"' : '';
-    $cbusehtmleditor = (get_user_preferences('message_usehtmleditor', 0) == '1') ? 'checked="checked"' : '';
-    $cbnoframesjs = (get_user_preferences('message_noframesjs', 0) == '1') ? 'checked="checked"' : '';
-    $cbemailmessages = (get_user_preferences('message_emailmessages', 1) == '1') ? 'checked="checked"' : '';
-    $txemailaddress = get_user_preferences('message_emailaddress', $USER->email);
-    $txemailtimenosee = get_user_preferences('message_emailtimenosee', 10);
-    $format_select = html_writer::select(array(FORMAT_PLAIN => get_string('formatplain'),
-                                                     FORMAT_HTML  => get_string('formathtml')),
-                                              'emailformat', get_user_preferences('message_emailformat', FORMAT_PLAIN));
 
     include('settings.html');
 }
