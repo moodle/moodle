@@ -1,5 +1,4 @@
-#page-mod-resource-view .resourcecontent.resourcepdf {width: 100%;}
 .path-mod-resource .popupnotice {text-align:center;margin:40px;}
 
 .resourcecontent object {height:480px;width:600px;}
-.resourcecontent.resourcepdf object{height: 800px;width: 800px;}
+.resourcecontent.resourcepdf object{height: 800px;width: 100%;}

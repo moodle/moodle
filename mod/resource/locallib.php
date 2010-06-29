@@ -73,6 +73,10 @@ function resource_display_embed($resource, $cm, $course, $file) {
     if (in_array($mimetype, array('image/gif','image/jpeg','image/png'))) {  // It's an image
         $code = resourcelib_embed_image($fullurl, $title);
 
+    } else if ($mimetype == 'application/pdf') {
+        // PDF document
+        $code = resourcelib_embed_pdf($fullurl, $title, $clicktoopen);
+
     } else if ($mimetype == 'audio/mp3') {
         // MP3 audio file
         $code = resourcelib_embed_mp3($fullurl, $title, $clicktoopen);

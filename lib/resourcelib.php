@@ -410,6 +410,30 @@ EOT;
 }
 
 /**
+ * Returns general link or pdf embedding html.
+ * @param string $fullurl
+ * @param string $title
+ * @param string $clicktoopen
+ * @return string html
+ */
+function resourcelib_embed_pdf($fullurl, $title, $clicktoopen) {
+    global $CFG, $PAGE;
+
+    $code = <<<EOT
+<div class="resourcecontent resourcepdf">
+  <object id="resourceobject" data="$fullurl" type="application/pdf">
+    <param name="src" value="$fullurl" />
+    $clicktoopen
+  </object>
+</div>
+EOT;
+    //$PAGE->requires->js_init_call('M.util.init_maximised_embed', array('resourceobject'), true);
+
+    return $code;
+}
+
+
+/**
  * Returns general link or file embedding html.
  * @param string $fullurl
  * @param string $title
@@ -448,7 +472,7 @@ EOT;
   </object>
 </div>
 EOT;
-        $PAGE->requires->js_init_call('M.util.init_maximised_embed', array('resourceobject'), true);
+        //$PAGE->requires->js_init_call('M.util.init_maximised_embed', array('resourceobject'), true);
     }
 
     return $code;
