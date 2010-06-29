@@ -50,3 +50,5 @@ table.message .searchresults td {padding:5px;}
 .messagesearchresults {margin-bottom:40px;}
 .messagesearchresults td {padding:0px 10px 0px 20px;}
 .messagesearchresults td span {white-space:nowrap;}
+
+#newmessageoverlay {background-color:LightGrey;padding:20px;}

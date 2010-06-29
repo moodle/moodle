@@ -8903,7 +8903,7 @@ function moodle_request_shutdown() {
  * JavaScript required to pop up the messaging window.
  */
 function message_popup_window() {
-    global $USER, $DB, $PAGE, $CFG;
+    global $USER, $DB, $PAGE, $CFG, $SITE;
 
     if (defined('MESSAGE_WINDOW') || empty($CFG->messaging)) {
         return;
@@ -8926,10 +8926,23 @@ function message_popup_window() {
 JOIN {message_working} mw ON m.id=mw.unreadmessageid
 JOIN {message_processors} p ON mw.processorid=p.id
 WHERE m.useridto = :userid AND m.timecreated > :ts AND p.name='popup'";
-    if ($DB->count_records_sql($sql, array('userid'=>$USER->id, 'ts'=>$USER->message_lastpopup))) {
+    $count = $DB->count_records_sql($sql, array('userid'=>$USER->id, 'ts'=>$USER->message_lastpopup));
+    if ($count) {
 
-        $jsobj = array('url'=>'/message/index.php?ts='.$USER->message_lastpopup, 'name'=>'message', 'options'=>'menubar=0,location=0,scrollbars,status,resizable,width=400', 'fullscreen'=>0);
-        $PAGE->requires->js_function_call('openpopup', array(null, $jsobj));
+        $strmessages = get_string('unreadmessages', 'message', $count);
+        $strgomessage = get_string('gotomessages', 'message');
+        $strstaymessage = get_string('ignore','admin');
+
+        $content =  html_writer::start_tag('div', array('id'=>'newmessageoverlay')).
+                        html_writer::start_tag('div', array('id'=>'newmessagemessage')).
+                            $strmessages.
+                        html_writer::end_tag('div').
+                        html_writer::tag('button', $strgomessage, array('id'=>'buttonreadmessage')).' '.
+                        html_writer::tag('button', $strstaymessage, array('id'=>'buttondontreadmessage')).
+                    html_writer::end_tag('div');
+
+        $url = $CFG->wwwroot.'/message/contacts_messages.php';
+        $PAGE->requires->js_init_call('M.core_message.init_notification', array('', $content, $url));
 
         $USER->message_lastpopup = time();
     }
