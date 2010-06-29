@@ -359,7 +359,7 @@ function message_print_contacts($onlinecontacts, $offlinecontacts, $strangers, $
         echo '</td></tr>';
 
         foreach ($strangers as $stranger) {
-            if ($minmessages==0 || $contact->messagecount>=$minmessages) {
+            if ($minmessages==0 || $stranger->messagecount>=$minmessages) {
                 message_print_contactlist_user($stranger, IS_NOT_CONTACT, IS_NOT_BLOCKED, $contactselecturl, $showactionlinks);
             }
         }
