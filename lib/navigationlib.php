@@ -1525,7 +1525,7 @@ class global_navigation extends navigation_node {
         if ($USER->id!=$user->id) {
             $messageargs = array('id'=>$user->id);
         }
-        $url = new moodle_url('/message/contacts_messages.php',$messageargs);
+        $url = new moodle_url('/message/index.php',$messageargs);
         $usernode->add(get_string('messages', 'message'), $url, self::TYPE_SETTING, null, 'messages');
 
         // Add a node to view the users notes if permitted

@@ -107,7 +107,7 @@ function message_print_contact_selector($countunreadtotal, $usergroup, $user1, $
                 message_print_participants($coursecontexts[$courseidtoshow], $courseidtoshow, $PAGE->url, $showcontactactionlinks);
             } else {
                 //shouldnt get here. User trying to access a course theyre not in perhaps.
-                add_to_log(SITEID, 'message', 'view', 'contacts_messages.php', $usergroup);
+                add_to_log(SITEID, 'message', 'view', 'index.php', $usergroup);
             }
         }
 
@@ -714,7 +714,7 @@ function message_print_search_results($frm, $showicontext=false, $user1=null) {
                         'resizable' => true);
 
                 //$link = new moodle_url("/message/discussion.php?id=$user->id");
-                $link = new moodle_url("/message/contacts_messages.php?id=$user->id");
+                $link = new moodle_url("/message/index.php?id=$user->id");
                 //$action = new popup_action('click', $link, "message_$user->id", $popupoptions);
                 $action = null;
                 echo $OUTPUT->action_link($link, fullname($user), $action, array('title'=>get_string('sendmessageto', 'message', fullname($user))));
@@ -927,7 +927,7 @@ function message_print_user ($user=false, $iscontact=false, $isblocked=false, $i
                 'resizable' => true);
 
         //$link = new moodle_url("/message/discussion.php?id=$user->id");
-        $link = new moodle_url("/message/contacts_messages.php?id=$user->id");
+        $link = new moodle_url("/message/index.php?id=$user->id");
         //$action = new popup_action('click', $link, "message_$user->id", $popupoptions);
         $action = null;
         echo $OUTPUT->action_link($link, fullname($user), $action, array('title'=>get_string('sendmessageto', 'message', fullname($user))));
@@ -1040,7 +1040,7 @@ function message_history_link($userid1, $userid2, $returnstr=false, $keywords=''
             'scrollbars' => true,
             'resizable' => true);
 
-    $link = new moodle_url('/message/contacts_messages.php?history='.MESSAGE_HISTORY_ALL."&user=$userid1&id=$userid2$keywords$position");
+    $link = new moodle_url('/message/index.php?history='.MESSAGE_HISTORY_ALL."&user=$userid1&id=$userid2$keywords$position");
     //$action = new popup_action('click', $link, "message_history_$userid1", $popupoptions);
     $action = null;
     $str = $OUTPUT->action_link($link, $fulllink, $action, array('title'=>$strmessagehistory));

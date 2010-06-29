@@ -69,7 +69,7 @@ $PAGE->set_url($url);
 if ($addcontact and confirm_sesskey()) {
     add_to_log(SITEID, 'message', 'add contact', 'history.php?user1='.$addcontact.'&amp;user2='.$USER->id, $addcontact);
     message_add_contact($addcontact);
-    redirect($CFG->wwwroot . '/message/contacts_messages.php?usergroup=contacts&id='.$addcontact);
+    redirect($CFG->wwwroot . '/message/index.php?usergroup=contacts&id='.$addcontact);
 }
 if ($removecontact and confirm_sesskey()) {
     add_to_log(SITEID, 'message', 'remove contact', 'history.php?user1='.$removecontact.'&amp;user2='.$USER->id, $removecontact);
@@ -95,7 +95,7 @@ $strmycontacts = get_string('mycontacts', 'message');
 $strcontacts = get_string('contacts', 'message');
 
 $PAGE->navbar->add(get_string('myprofile'));
-$PAGE->navbar->add(get_string('messages','message'), 'contacts_messages.php');
+$PAGE->navbar->add(get_string('messages','message'), 'index.php');
 $PAGE->navbar->add($strcontacts);
 
 $PAGE->set_title(fullname($USER).': '.$strcontacts);
@@ -105,12 +105,6 @@ $PAGE->set_heading("$SITE->shortname: $strcontacts");
 echo $OUTPUT->header();
 
 echo $OUTPUT->box_start('message');
-
-/*echo html_writer::start_tag('div', array('class'=>'contactselector mdl-align'));
-    $refreshpage = false;
-    $showcontactactionlinks = true;
-    message_print_contacts($onlinecontacts, $offlinecontacts, $strangers, $refreshpage, 'contacts_messages.php?usergroup=contacts', 0, $showactionlinks);
-echo html_writer::end_tag('div');*/
 
 $user1 = $USER;//we'll need a way to specify this if we want to view this page as a different user
 $user2 = null;

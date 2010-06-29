@@ -8929,7 +8929,7 @@ WHERE m.useridto = :userid AND m.timecreated > :ts AND p.name='popup'";
     $count = $DB->count_records_sql($sql, array('userid'=>$USER->id, 'ts'=>$USER->message_lastpopup));
     if ($count) {
 
-        $strmessages = get_string('unreadmessages', 'message', $count);
+        $strmessages = get_string('unreadnewmessages', 'message', $count);
         $strgomessage = get_string('gotomessages', 'message');
         $strstaymessage = get_string('ignore','admin');
 
@@ -8941,7 +8941,7 @@ WHERE m.useridto = :userid AND m.timecreated > :ts AND p.name='popup'";
                         html_writer::tag('button', $strstaymessage, array('id'=>'buttondontreadmessage')).
                     html_writer::end_tag('div');
 
-        $url = $CFG->wwwroot.'/message/contacts_messages.php';
+        $url = $CFG->wwwroot.'/message/index.php';
         $PAGE->requires->js_init_call('M.core_message.init_notification', array('', $content, $url));
 
         $USER->message_lastpopup = time();
