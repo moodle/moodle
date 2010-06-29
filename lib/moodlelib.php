@@ -8903,13 +8903,13 @@ function moodle_request_shutdown() {
  * JavaScript required to pop up the messaging window.
  */
 function message_popup_window() {
-    global $USER, $DB, $PAGE;
+    global $USER, $DB, $PAGE, $CFG;
 
     if (defined('MESSAGE_WINDOW') || empty($CFG->messaging)) {
         return;
     }
 
-    if (!isset($USER->id) || isguestuser()) {
+    if (!isloggedin() || isguestuser()) {
         return;
     }
 
@@ -8922,14 +8922,16 @@ function message_popup_window() {
         return;
     }
 
-    if (!get_user_preferences('message_showmessagewindow', 1)) {
-        return;
-    }
+    $sql = "SELECT COUNT(mw.id) FROM {message} m
+JOIN {message_working} mw ON m.id=mw.unreadmessageid
+JOIN {message_processors} p ON mw.processorid=p.id
+WHERE m.useridto = :userid AND m.timecreated > :ts AND p.name='popup'";
+    if ($DB->count_records_sql($sql, array('userid'=>$USER->id, 'ts'=>$USER->message_lastpopup))) {
 
-    if ($DB->count_records_select('message', 'useridto = ? AND timecreated > ?', array($USER->id, $USER->message_lastpopup))) {
+        $jsobj = array('url'=>'/message/index.php?ts='.$USER->message_lastpopup, 'name'=>'message', 'options'=>'menubar=0,location=0,scrollbars,status,resizable,width=400', 'fullscreen'=>0);
+        $PAGE->requires->js_function_call('openpopup', array(null, $jsobj));
+
         $USER->message_lastpopup = time();
-        $PAGE->requires->js_function_call('openpopup', array('/message/index.php', 'message',
-                'menubar=0,location=0,scrollbars,status,resizable,width=400,height=500', 0));
     }
 }
 
