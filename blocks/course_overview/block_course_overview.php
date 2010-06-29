@@ -42,7 +42,7 @@ class block_course_overview extends block_base {
      * @return object
      */
     public function get_content() {
-        global $USER;
+        global $USER, $CFG;
         if($this->content !== NULL) {
             return $this->content;
         }
@@ -92,7 +92,10 @@ class block_course_overview extends block_base {
             $content[] = get_string('nocourses','my');
         } else {
             ob_start();
+
+            require_once $CFG->dirroot."/course/lib.php";
             print_overview($courses);
+
             $content[] = ob_get_contents();
             ob_end_clean();
         }
