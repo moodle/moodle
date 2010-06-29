@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="mod/lesson/db" VERSION="20091208" COMMENT="XMLDB file for Moodle mod/lesson"
+<XMLDB PATH="mod/lesson/db" VERSION="20100629" COMMENT="XMLDB file for Moodle mod/lesson"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -67,7 +67,8 @@
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="display" NEXT="timemodified"/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="timecreated" NEXT="title"/>
         <FIELD NAME="title" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="timemodified" NEXT="contents"/>
-        <FIELD NAME="contents" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" PREVIOUS="title"/>
+        <FIELD NAME="contents" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" PREVIOUS="title" NEXT="contentsformat"/>
+        <FIELD NAME="contentsformat" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="contents"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="lessonid"/>

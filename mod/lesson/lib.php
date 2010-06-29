@@ -2007,7 +2007,8 @@ abstract class lesson_page extends lesson_base {
             $this->answers = array();
             $answers = $DB->get_records('lesson_answers', array('pageid'=>$this->properties->id, 'lessonid'=>$this->lesson->id), 'id');
             if (!$answers) {
-                print_error('cannotfindanswer', 'lesson');
+                debugging(get_string('cannotfindanswer', 'lesson'));
+                return array();
             }
             foreach ($answers as $answer) {
                 $this->answers[count($this->answers)] = new lesson_page_answer($answer);
@@ -2233,13 +2234,19 @@ abstract class lesson_page extends lesson_base {
      * @param object $properties
      * @return bool
      */
-    public function update($properties,$context, $maxbytes) {
-        global $DB;
+    public function update($properties, $context = null, $maxbytes = null) {
+        global $DB, $PAGE;
         $answers  = $this->get_answers();
         $properties->id = $this->properties->id;
         $properties->lessonid = $this->lesson->id;
         if (empty($properties->qoption)) {
             $properties->qoption = '0';
+        }
+        if (empty($context)) {
+            $context = $PAGE->context;
+        }
+        if ($maxbytes === null) {
+            $maxbytes =get_max_upload_file_size();
         }
         $properties = file_postupdate_standard_editor($properties, 'contents', array('noclean'=>true, 'maxfiles'=>EDITOR_UNLIMITED_FILES, 'maxbytes'=>$maxbytes), $context, 'lesson_page_contents', $properties->id);
         $DB->update_record("lesson_pages", $properties);

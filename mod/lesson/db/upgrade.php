@@ -156,6 +156,21 @@ function xmldb_lesson_upgrade($oldversion) {
         $dbman->drop_table($table);
         upgrade_mod_savepoint($result, 2009120800, 'lesson');
     }
+    if ($result && $oldversion < 2009120801) {
+
+    /// Define field contentsformat to be added to lesson_pages
+        $table = new xmldb_table('lesson_pages');
+        $field = new xmldb_field('contentsformat', XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'contents');
+
+    /// Conditionally launch add field contentsformat
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+    /// lesson savepoint reached
+        upgrade_mod_savepoint($result, 2009120801, 'lesson');
+    }
+
 
     return $result;
 }

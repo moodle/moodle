@@ -354,14 +354,13 @@ if ($pageid != LESSON_EOL) {
         }
         $lessoncontent = $lessonoutput->display_page($lesson, $page, $attempt);
     } else {
-
-        $nextpage = $lesson->get_next_page($page->nextpageid);
-
         $data = new stdClass;
         $data->id = $PAGE->cm->id;
-        $data->newpageid = $nextpage->id;
+        if ($nextpage = $lesson->get_next_page($page->nextpageid)) {
+            $data->newpageid = $nextpage->id;
+        }
 
-        $mform = lesson_page_without_answers();
+        $mform = new lesson_page_without_answers();
         $mform->set_data($data);
         ob_start();
         $mform->display();

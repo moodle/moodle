@@ -270,6 +270,7 @@ class lesson_add_page_form_branchtable extends lesson_add_page_form_base {
 
         $mform->addElement('text', 'title', get_string("pagetitle", "lesson"), array('size'=>70));
         $mform->setType('title', PARAM_TEXT);
+        $mform->addRule('title', null, 'required', null, 'server');
 
         $this->editoroptions = array('noclean'=>true, 'maxfiles'=>EDITOR_UNLIMITED_FILES, 'maxbytes'=>$PAGE->course->maxbytes);
         $mform->addElement('editor', 'contents_editor', get_string("pagecontents", "lesson"), null, $this->editoroptions);
@@ -285,6 +286,10 @@ class lesson_add_page_form_branchtable extends lesson_add_page_form_base {
             $mform->addElement('header', 'headeranswer'.$i, get_string('branch', 'lesson').' '.($i+1));
             $mform->addElement('textarea', 'answer['.$i.']', get_string("description", "lesson"), array('rows'=>10, 'cols'=>70, 'width'=>630, 'height'=>300));
             $mform->setType('answer['.$i.']', PARAM_CLEANHTML);
+            if ($i == 0) {
+                // we should have one required branch
+                $mform->addRule('answer['.$i.']', null, 'required', null, 'server');
+            }
 
             $mform->addElement('select', 'jumpto['.$i.']', get_string("jump", "lesson"), $jumptooptions);
             if ($i === 0) {
