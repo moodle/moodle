@@ -174,8 +174,8 @@ if (!empty($user2)) {
     $PAGE->set_title("$strmessages: $user2fullname");
     $PAGE->set_heading("$strmessages: $user2fullname");
 } else {
-    $PAGE->set_title("$SITE->shortname: $strmessages");
-    $PAGE->set_heading("$SITE->shortname: $strmessages");
+    $PAGE->set_title("{$SITE->shortname}: $strmessages");
+    $PAGE->set_heading("{$SITE->shortname}: $strmessages");
 }
 
 //now the page contents
