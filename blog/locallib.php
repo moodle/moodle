@@ -113,13 +113,12 @@ class blog_entry {
         $this->summary = file_rewrite_pluginfile_urls($this->summary, 'pluginfile.php', SYSCONTEXTID, 'blog_post', $this->id);
 
         $template['body'] = format_text($this->summary, $this->summaryformat, $options);
-        $template['title'] = '<a id="b'. s($this->id) .'" />';
-        $template['title'] .= '<span class="nolink">'. format_string($this->subject) .'</span>';
+        $template['title'] = format_string($this->subject);
         $template['userid'] = $user->id;
         $template['author'] = fullname($user);
         $template['created'] = userdate($this->created);
 
-        if($this->created != $this->lastmodified){
+        if ($this->created != $this->lastmodified) {
             $template['lastmod'] = userdate($this->lastmodified);
         }
 
@@ -140,6 +139,7 @@ class blog_entry {
         $table = new html_table();
         $table->cellspacing = 0;
         $table->attributes['class'] = 'forumpost blog_entry blog'. ($unassociatedentry ? 'draft' : $template['publishstate']);
+        $table->attributes['id'] = 'b'.$this->id;
         $table->width = '100%';
 
         $picturecell = new html_table_cell();
@@ -150,7 +150,8 @@ class blog_entry {
 
         $topiccell = new html_table_cell();
         $topiccell->attributes['class'] = 'topic starter';
-        $topiccell->text = $OUTPUT->container($template['title'], 'subject');
+        $titlelink =  html_writer::link(new moodle_url('/blog/index.php', array('entryid' => $this->id)), $template['title']);
+        $topiccell->text = $OUTPUT->container($titlelink, 'subject');
         $topiccell->text .= $OUTPUT->container_start('author');
 
         $fullname = fullname($user, has_capability('moodle/site:viewfullnames', get_context_instance(CONTEXT_COURSE, $PAGE->course->id)));
@@ -164,7 +165,7 @@ class blog_entry {
         if ($this->uniquehash && $this->content) {
             if ($externalblog = $DB->get_record('blog_external', array('id' => $this->content))) {
                 $urlparts = parse_url($externalblog->url);
-                $topiccell->text .= $OUTPUT->container(get_string('retrievedfrom', 'blog') . html_writer::link($urlparts['scheme'].'://'.$urlparts['host'], $externalblog->name), 'externalblog');
+                $topiccell->text .= $OUTPUT->container(get_string('retrievedfrom', 'blog') .': '. html_writer::link($urlparts['scheme'].'://'.$urlparts['host'], $externalblog->name), 'externalblog');
             }
         }
 

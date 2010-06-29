@@ -24,7 +24,7 @@
  */
 
 $string['addnewentry'] = 'Add a new entry';
-$string['addnewexternalblog'] = 'Register an external blog...';
+$string['addnewexternalblog'] = 'Register an external blog';
 $string['assocdescription'] = 'If you are writing about a course and/or activity modules, select them here.';
 $string['associated'] = 'Associated {$a}';
 $string['associatewithcourse'] = 'Blog about course {$a->coursename}';
@@ -67,6 +67,7 @@ $string['courseblogdisable'] = 'Course blogs are not enabled';
 $string['courseblogs'] = 'Users can only see blogs for people who share a course';
 $string['deleteblogassociations'] = 'Delete blog associations';
 $string['deleteblogassociations_help'] = 'If ticked then blog entries will no longer be associated with this course or any course activities or resources.  The blog entries themselves will not be deleted.';
+$string['deleteexternalblog'] = 'Unregister this external blog';
 $string['deleteotagswarn'] = 'Are you sure you want to remove these tags from all blog posts and remove it from the system?';
 $string['description'] = 'Description';
 $string['description_help'] = 'Enter a sentence or two summarising the contents of your external blog. (If no description is supplied, the description recorded in your external blog will be used).';

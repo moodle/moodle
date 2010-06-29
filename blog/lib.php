@@ -149,7 +149,7 @@ function blog_sync_external_entries($externalblog) {
         $externalblog->failedlastsync = 1;
         $DB->update_record('blog_external', $externalblog);
         return false;
-    } else if ($externalblog->failedlastsync) {
+    } else if (!empty($externalblog->failedlastsync)) {
         $externalblog->failedlastsync = 0;
         $DB->update_record('blog_external', $externalblog);
     }
