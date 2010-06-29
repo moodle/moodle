@@ -106,6 +106,7 @@ $string['timenosee'] = 'Minutes since I was last seen online';
 $string['timesent'] = 'Time Sent';
 $string['unblockcontact'] = 'Unblock contact';
 $string['unreadmessages'] = '{$a} unread messages';
+$string['unreadnewmessages'] = '{$a} new unread messages';
 $string['userisblockingyou'] = 'This user has blocked you from sending messages to them';
 $string['userisblockingyounoncontact'] = 'This user is only accepting messages from people listed as contacts, and you are not currently on the list.';
 $string['userssearchresults'] = 'Search results: {$a} users found';
