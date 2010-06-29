@@ -2141,9 +2141,14 @@ class mod_assignment_online_grading_form extends moodleform {
                 }
             }
         }
-        $mform->addElement('static', 'finalgrade', get_string('currentgrade', 'assignment').':' ,
-                     '<a href="'.$CFG->wwwroot.'/grade/report/grader/index.php?id='. $this->_customdata->courseid .'" >'.
-                        $this->_customdata->grading_info->items[0]->grades[$this->_customdata->userid]->str_grade . '</a>');
+        $course_context = get_context_instance(CONTEXT_MODULE , $this->_customdata->cm->id);
+        if (has_capability('gradereport/grader:view', $course_context) && has_capability('moodle/grade:viewall', $course_context)) {
+            $grade = '<a href="'.$CFG->wwwroot.'/grade/report/grader/index.php?id='. $this->_customdata->courseid .'" >'.
+                        $this->_customdata->grading_info->items[0]->grades[$this->_customdata->userid]->str_grade . '</a>';
+        }else{
+            $grade = $this->_customdata->grading_info->items[0]->grades[$this->_customdata->userid]->str_grade;
+        }
+        $mform->addElement('static', 'finalgrade', get_string('currentgrade', 'assignment').':' ,$grade);
         $mform->setType('finalgrade', PARAM_INT);
     }
 
