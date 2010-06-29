@@ -66,7 +66,7 @@ class webservice_rest_server extends webservice_base_server {
 
             $this->functionname = isset($_REQUEST['wsfunction']) ? $_REQUEST['wsfunction'] : null;
             unset($_REQUEST['wsfunction']);
-
+           
             $this->parameters = $_REQUEST;
         }
     }
@@ -151,7 +151,7 @@ class webservice_rest_server extends webservice_base_server {
             $single = '<SINGLE>'."\n";
             foreach ($desc->keys as $key=>$subdesc) {
                 if (!array_key_exists($key, $returns)) {
-                    if ($subdesc->required) {
+                    if ($subdesc->required == VALUE_REQUIRED) {
                         $single .= '<ERROR>Missing required key "'.$key.'"</ERROR>';
                         continue;
                     } else {
