@@ -108,7 +108,7 @@ function url_add_instance($data, $mform) {
     }
     $data->displayoptions = serialize($displayoptions);
 
-    if (strpos($data->externalurl, '://') === false) {
+    if (!empty($data->externalurl) && (strpos($data->externalurl, '://') === false) && (strpos($data->externalurl, '/', 0) === false)) {
         $data->externalurl = 'http://'.$data->externalurl;
     }
 
@@ -149,7 +149,7 @@ function url_update_instance($data, $mform) {
     }
     $data->displayoptions = serialize($displayoptions);
 
-    if (strpos($data->externalurl, '://') === false) {
+    if (!empty($data->externalurl) && (strpos($data->externalurl, '://') === false) && (strpos($data->externalurl, '/', 0) === false)) {
         $data->externalurl = 'http://'.$data->externalurl;
     }
 

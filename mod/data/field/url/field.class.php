@@ -36,8 +36,7 @@ class data_field_url extends data_field_base {
                 $url  = $content->content;
                 $text = $content->content1;
             }
-        }
-        $url = empty($url) ? 'http://' : $url;
+        }        
         $str = '<div title="'.s($this->field->description).'">';
         if (!empty($this->field->param1) and empty($this->field->param2)) {
             $str .= '<table><tr><td align="right">';
@@ -124,6 +123,7 @@ class data_field_url extends data_field_base {
         $content->fieldid = $this->field->id;
         $content->recordid = $recordid;
         $names = explode('_', $name);
+        
         switch ($names[2]) {
             case 0:
                 // update link
@@ -137,6 +137,10 @@ class data_field_url extends data_field_base {
                 break;
         }
 
+        if (!empty($content->content) && (strpos($content->content, '://') === false) && (strpos($content->content, '/', 0) === false)) {
+            $content->content = 'http://' . $content->content;
+        }  
+        
         if ($oldcontent = $DB->get_record('data_content', array('fieldid'=>$this->field->id, 'recordid'=>$recordid))) {
             $content->id = $oldcontent->id;
             return $DB->update_record('data_content', $content);
