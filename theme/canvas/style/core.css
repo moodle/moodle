@@ -156,19 +156,11 @@ body {
 /* Calendar 
 -----------------------*/
 
-.calendarlayout {
-	width: 100%;
-}
-
 .calendarlayout .sidecalendar {
 	padding-left: 15px;
 }
 
-.calendarlayout .sidecalendar .block {
-	width: 210px;
-}
-
-.calendarlayout .block .minicalendarblock h3 {
+.minicalendarblock h3 {
 	text-align: center;
 	font-size: 1.2em;
 }
@@ -185,7 +177,7 @@ body {
 }
 
 .maincalendar .calendarmonth th,
-.calendarlayout .sidecalendar .minicalendar th {
+.minicalendar th {
 	background: url([[pix:theme|gradient-sb]]) repeat-x 0 0;
 }
 
@@ -223,7 +215,7 @@ body {
 	border: none;
 }
 
-.sidecalendar .filters td,
+.calendar_filters td,
 .minicalendar td,
 .minicalendar th {
 	padding: 2px;
@@ -319,12 +311,12 @@ body {
 	border: none;
 }
 
-.path-user .profilepicture {
+.profilepicture {
 	float: left;
 	margin-right: 10px;
 }
 
-.path-user .descriptionbox {
+.descriptionbox {
 	margin-left: 110px;
 	border: 1px solid #ddd;
 	padding: 10px;

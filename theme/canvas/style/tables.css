@@ -9,10 +9,13 @@
 .plugincompattable th,
 .plugincompattable td,
 .environmenttable th,
-.environmenttable td {
+.environmenttable td,
+.forumheaderlist td,
+.forumheaderlist th {
 	border: 1px solid #ddd;
 	border-collapse: collapse;
 }
+
 
 #page-admin-course-category .generalbox th,
 .editcourse .header,
@@ -20,7 +23,8 @@
 #attempts .header,
 .generaltable .header,
 .plugincompattable th,
-.environmenttable th {
+.environmenttable th,
+.forumheaderlist th {
 	background: #f3f3f3;
 	border-bottom-width: 2px;
 }
