@@ -827,7 +827,8 @@ function feedback_get_complete_users($cm, $group = false, $where, $sort = '', $s
         $sortsql = '';
     }
 
-    $sql = 'SELECT DISTINCT u.* FROM {user} u, {feedback_completed} c'.$fromgroup.'
+    $ufields = user_picture::fields('u');
+    $sql = 'SELECT DISTINCT '.$ufields.' FROM {user} u, {feedback_completed} c'.$fromgroup.'
               WHERE '.$where.' anonymous_response = ? AND u.id = c.userid AND c.feedback = ?
               '.$wheregroup.$sortsql;
               ;

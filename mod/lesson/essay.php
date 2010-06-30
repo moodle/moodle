@@ -242,9 +242,10 @@ switch ($mode) {
             list($usql, $parameters) = $DB->get_in_or_equal(array_keys($pages));
             if ($essayattempts = $DB->get_records_select('lesson_attempts', 'pageid '.$usql, $parameters)) {
                 // Get all the users who have taken this lesson, order by their last name
+                $ufields = user_picture::fields('u');
                 if (!empty($cm->groupingid)) {
                     $params["groupinid"] = $cm->groupingid;
-                    $sql = "SELECT DISTINCT u.*
+                    $sql = "SELECT DISTINCT $ufields
                             FROM {lesson_attempts} a
                                 INNER JOIN {user} u ON u.id = a.userid
                                 INNER JOIN {groups_members} gm ON gm.userid = u.id
@@ -252,7 +253,7 @@ switch ($mode) {
                             WHERE a.lessonid = :lessonid
                             ORDER BY u.lastname";
                 } else {
-                    $sql = "SELECT DISTINCT u.*
+                    $sql = "SELECT DISTINCT $ufields
                             FROM {user} u,
                                  {lesson_attempts} a
                             WHERE a.lessonid = :lessonid and

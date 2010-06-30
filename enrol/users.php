@@ -299,7 +299,8 @@ $sqltotal = "SELECT COUNT(DISTINCT u.id)
                JOIN {enrol} e ON (e.id = ue.enrolid)";
 $totalusers = $DB->count_records_sql($sqltotal, $params);
 
-$sql = "SELECT DISTINCT u.*, ul.timeaccess AS lastseen
+$ufields = user_picture::fields('u');
+$sql = "SELECT DISTINCT $ufields, ul.timeaccess AS lastseen
           FROM {user} u
           JOIN {user_enrolments} ue ON (ue.userid = u.id  AND ue.enrolid $instancessql)
           JOIN {enrol} e ON (e.id = ue.enrolid)
