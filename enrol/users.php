@@ -278,6 +278,8 @@ echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('enrolledusers', 'enrol'));
 $PAGE->set_title(get_string('enrolledusers', 'enrol'));
 
+notify('NOTICE TO TESTERS: This interface will shortly be replaced with a new one.');   // TODO FIXME REMOVE THIS
+
 if ($ifilter) {
     $instancessql = " = :ifilter";
     $params = array('ifilter'=>$ifilter);
