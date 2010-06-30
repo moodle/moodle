@@ -5319,13 +5319,12 @@ function forum_print_discussion($course, $cm, $forum, $discussion, $post, $mode,
  * @param object $discussion
  * @param object $post
  * @param object $mode
- * @param object $ratings
  * @param bool $reply
  * @param bool $forumtracked
  * @param array $posts
  * @return void
  */
-function forum_print_posts_flat($course, &$cm, $forum, $discussion, $post, $mode, $ratings, $reply, $forumtracked, $posts) {
+function forum_print_posts_flat($course, &$cm, $forum, $discussion, $post, $mode, $reply, $forumtracked, $posts) {
     global $USER, $CFG;
 
     $link  = false;
@@ -5345,7 +5344,7 @@ function forum_print_posts_flat($course, &$cm, $forum, $discussion, $post, $mode
 
         $postread = !empty($post->postread);
 
-        forum_print_post($post, $discussion, $forum, $cm, $course, $ownpost, $reply, $link, $ratings,
+        forum_print_post($post, $discussion, $forum, $cm, $course, $ownpost, $reply, $link, 
                              '', '', $postread, true, $forumtracked);
     }
 }
@@ -5378,7 +5377,7 @@ function forum_print_posts_threaded($course, &$cm, $forum, $discussion, $parent,
 
                 $postread = !empty($post->postread);
 
-                forum_print_post($post, $discussion, $forum, $cm, $course, $ownpost, $reply, $link, $ratings,
+                forum_print_post($post, $discussion, $forum, $cm, $course, $ownpost, $reply, $link, 
                                      '', '', $postread, true, $forumtracked);
             } else {
                 if (!forum_user_can_see_post($forum, $discussion, $post, NULL, $cm)) {
@@ -5404,7 +5403,7 @@ function forum_print_posts_threaded($course, &$cm, $forum, $discussion, $parent,
                 echo "</span>";
             }
 
-            forum_print_posts_threaded($course, $cm, $forum, $discussion, $post, $depth-1, $ratings, $reply, $forumtracked, $posts);
+            forum_print_posts_threaded($course, $cm, $forum, $discussion, $post, $depth-1, $reply, $forumtracked, $posts);
             echo "</div>\n";
         }
     }
