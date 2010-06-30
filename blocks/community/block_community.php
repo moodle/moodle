@@ -30,9 +30,26 @@ class block_community extends block_list {
         $this->version = 2010042701;
     }
 
+    function user_can_addto($page) {
+        // Don't allow people to add the block if they can't even use it
+        if (!has_capability('moodle/community:add', get_context_instance(CONTEXT_SYSTEM))) {  // Should be page context?
+            return false;
+        }
+        parent::user_can_addto($page);
+    }
+
+    function user_can_edit() {
+        // Don't allow people to edit the block if they can't even use it
+        if (!has_capability('moodle/community:add', get_context_instance(CONTEXT_SYSTEM))) {  // Should be page context?
+            return false;
+        }
+        parent::user_can_edit();
+    }
+
     function get_content() {
         global $CFG, $OUTPUT, $USER;
-        if (!has_capability('moodle/community:add', get_context_instance(CONTEXT_USER, $USER->id))
+
+        if (!has_capability('moodle/community:add', get_context_instance(CONTEXT_SYSTEM))  // Should be page context?
                 or $this->content !== NULL) {
             return $this->content;
         }
