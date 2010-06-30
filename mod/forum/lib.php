@@ -3616,10 +3616,11 @@ function forum_shorten_post($message) {
  */
 function forum_print_mode_form($id, $mode, $forumtype='') {
     global $OUTPUT;
-    $select = new single_select(new moodle_url("/mod/forum/view.php", array('f'=>$id)), 'mode', forum_get_layout_modes(), $mode, null, "mode");
-
     if ($forumtype == 'single') {
+        $select = new single_select(new moodle_url("/mod/forum/view.php", array('f'=>$id)), 'mode', forum_get_layout_modes(), $mode, null, "mode");
         $select->class = "forummode";
+    } else {
+        $select = new single_select(new moodle_url("/mod/forum/discuss.php", array('d'=>$id)), 'mode', forum_get_layout_modes(), $mode, null, "mode");
     }
     echo $OUTPUT->render($select);
 }
