@@ -8898,10 +8898,13 @@ function moodle_request_shutdown() {
     }
 }
 
-/**
- * If new messages are waiting for the current user, then load the
- * JavaScript required to pop up the messaging window.
- */
+ /**
+  * If new messages are waiting for the current user, then insert
+  * JavaScript to pop up the messaging window into the page
+  *
+  * @global moodle_page $PAGE
+  * @return void
+  */
 function message_popup_window() {
     global $USER, $DB, $PAGE, $CFG, $SITE;
 
