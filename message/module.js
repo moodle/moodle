@@ -1,4 +1,4 @@
-M.core_message = {};
+M.core_message = M.core_message || {};
 
 M.core_message.init_focus = function(Y, eid) {
     document.getElementById(eid).focus();
@@ -47,15 +47,17 @@ M.core_message.init_notification = function(Y, title, content, url) {
     Y.use('overlay', function() {
         var o = new Y.Overlay({
             headerContent :  title,
-            bodyContent : content,
-            //centered : true
+            bodyContent : content
         });
         o.render(Y.one(document.body));
 
-        //align the bottom right corner of the overlay with the bottom right of the viewport
-        o.set("align", {
-            points:[Y.WidgetPositionAlign.BR, Y.WidgetPositionAlign.BR]
-        });
+        if (Y.UA.ie > 0 && Y.UA.ie < 7) {
+            // Adjust for IE 6 (can't handle fixed pos)
+            //align the bottom right corner of the overlay with the bottom right of the viewport
+            o.set("align", {
+                points:[Y.WidgetPositionAlign.BR, Y.WidgetPositionAlign.BR]
+            });
+        }        
 
         Y.one('#notificationyes').on('click', function(e) {
             window.location.href = url;
