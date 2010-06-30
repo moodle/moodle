@@ -1,0 +1,161 @@
+/* Global
+--------------------------*/
+
+body {
+	background: #555;
+	margin: 0;
+	padding: 0;
+	color: #000;
+}
+
+body,h1,h2,h3,h4,h5,h6,p,ul,ol,dl,input,textarea {
+  font-family:"Trebuchet MS", Helvetica, Arial, sans-serif;
+}
+
+
+#wrapper {
+	margin: 25px 75px;
+	background: #fff;
+	-webkit-border-radius: 6px;
+	-moz-border-radius: 6px;
+	border-radius: 6px;	
+	-webkit-box-shadow: 0px 0px 10px #000000;
+	-moz-box-shadow: 0px 0px 10px #000000;
+	box-shadow: 0px 0px 10px #000000;
+	padding: 10px;
+}
+
+a:link,a:visited {
+  color: #f14e16;
+}
+
+a:hover,a:active {
+	color:#fb961c;
+}
+
+a img {
+	border: none;
+}
+
+a:active {
+	outline: none;
+}
+
+fieldset#general {
+	border-color: #ddd;
+}
+
+/* Header
+------------------------------*/
+
+#page-header {
+	background: #f04916 url([[pix:theme|header]]) repeat-x 0 0;
+	-webkit-border-radius: 6px;
+	-moz-border-radius: 6px;
+	border-radius: 6px;	
+}
+
+#page-header .headermain {
+	color: #fff;
+	padding: 0.8em 0.5em;
+	font-size: 2.75em;
+}
+
+.headermenu {
+	color: #fff;
+}
+
+.headermenu a {
+	text-decoration: underline;
+	color: #fff;
+}
+
+.navbar {
+	font-size: 0.9em;
+	padding: 10px;color: #555;
+}
+
+.navbar .sep {
+	font-size: 0.85em;
+	padding-left: 5px;
+}
+
+/* Blocks 
+-----------------------------*/
+
+.block {
+	border: none;
+}
+
+.block .header {
+	background: #fb931c url([[pix:theme|sideblock]]) repeat-x 0 50%;
+	padding: 2px 5px;
+	-webkit-border-radius: 6px;
+	-moz-border-radius: 6px;
+	border-radius: 6px;
+}
+
+.block .header h2 {
+	color: #fff;
+	font-size: 1.25em;
+}
+
+.block .header .commands {
+	padding: 2px 10px;
+}
+
+.block .content {
+	padding:10px;
+}
+
+/* Course
+-------------------------------*/
+
+.course-content .main {
+	border: 1px solid #eee;
+	background: #eee;
+}
+
+.course-content .current {
+	background: #f14e16;
+	color: #fff;
+}
+
+.course-content .main .content {
+	background: #fff;
+}
+
+/* Forum 
+--------------------------*/
+
+.forumpost .topic {
+	background: #fb931c url([[pix:theme|header]]) repeat-x 0 50%;
+	color: #fff;
+	border: none;
+	padding: 0 10px;
+	-webkit-border-radius: 6px;
+	-moz-border-radius: 6px;
+	border-radius: 6px;
+}
+
+.forumpost .subject {
+	font-size: 1.2em;
+	font-weight: bold;
+}
+
+.forumpost .author {
+	font-size: 0.85em;
+	font-style: italic;
+}
+
+.forumpost .topic a:link,
+.forumpost .topic a:visited {
+	color: #fff;
+	text-decoration: underline;
+}
+/* Footer
+--------------------------*/
+
+#page-footer {
+	color: #fff;
+}
