@@ -211,12 +211,12 @@ if (is_mnet_remote_user($user)) {
     }
 }
 
-echo '<div class="profilepicture">';
+echo '<div class="userprofilebox clearfix"><div class="profilepicture">';
 echo $OUTPUT->user_picture($user, array('size'=>100));
 echo '</div>';
 
 // Print the description
-echo '<div class="description">';
+echo '<div class="descriptionbox"><div class="description">';
 if ($user->description && !isset($hiddenfields['description'])) {
     if (!empty($CFG->profilesforenrolledusersonly) && !$DB->record_exists('role_assignments', array('userid'=>$id))) {
         echo get_string('profilenotshown', 'moodle');
@@ -293,7 +293,7 @@ if (!isset($hiddenfields['mycourses'])) {
     }
 }
 
-echo "</table>";
+echo "</table></div></div>";
 
 echo '<div class="fullprofilelink">';
 echo html_writer::link($CFG->wwwroot.'/user/profile.php?id='.$id, get_string('fullprofile'));
