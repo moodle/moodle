@@ -8917,31 +8917,53 @@ function message_popup_window() {
         $USER->message_lastpopup = 0;
     }
 
-    $popuplimit = 30;     // Minimum seconds between popups
-    if ((time() - $USER->message_lastpopup) <= $popuplimit) {  /// It's been long enough
-        return;
-    }
+    $message_users = null;
 
-    $sql = "SELECT COUNT(mw.id) FROM {message} m
+    $sql = "SELECT m.id, u.firstname, u.lastname FROM {message} m
 JOIN {message_working} mw ON m.id=mw.unreadmessageid
 JOIN {message_processors} p ON mw.processorid=p.id
+JOIN {user} u ON m.useridfrom=u.id
 WHERE m.useridto = :userid AND m.timecreated > :ts AND p.name='popup'";
-    $count = $DB->count_records_sql($sql, array('userid'=>$USER->id, 'ts'=>$USER->message_lastpopup));
-    if ($count) {
+    $message_users = $DB->get_records_sql($sql, array('userid'=>$USER->id, 'ts'=>$USER->message_lastpopup));
+    if (empty($message_users)) {
 
-        $strmessages = get_string('unreadnewmessages', 'message', $count);
+        //if the user was last notified over an hour ago remind them of any new messages regardless of when they were sent
+        $canrenotify = (time() - $USER->message_lastpopup) > 3600;
+        if ($canrenotify) {
+            $sql = "SELECT m.id, u.firstname, u.lastname FROM {message} m
+JOIN {message_working} mw ON m.id=mw.unreadmessageid
+JOIN {message_processors} p ON mw.processorid=p.id
+JOIN {user} u ON m.useridfrom=u.id
+WHERE m.useridto = :userid AND p.name='popup'";
+            $message_users = $DB->get_records_sql($sql, array('userid'=>$USER->id));
+        }
+    }
+
+    //if we have new messages to notify the user about
+    if (!empty($message_users)) {
+
+        $strmessages = '';
+        if (count($message_users)>1) {
+            $strmessages = get_string('unreadnewmessages', 'message', count($message_users));
+        } else {
+            $strmessages = get_string('unreadnewmessage', 'message', fullname(reset($message_users)) );
+        }
+        
         $strgomessage = get_string('gotomessages', 'message');
         $strstaymessage = get_string('ignore','admin');
 
-        $content =  html_writer::start_tag('div', array('id'=>'newmessageoverlay')).
-                        html_writer::start_tag('div', array('id'=>'newmessagemessage')).
+        $url = $CFG->wwwroot.'/message/index.php';
+        $content =  html_writer::start_tag('div', array('id'=>'newmessageoverlay','class'=>'mdl-align')).
+                        html_writer::start_tag('div', array('id'=>'newmessagetext')).
                             $strmessages.
                         html_writer::end_tag('div').
-                        html_writer::tag('button', $strgomessage, array('id'=>'buttonreadmessage')).' '.
-                        html_writer::tag('button', $strstaymessage, array('id'=>'buttondontreadmessage')).
+
+                        html_writer::start_tag('div', array('id'=>'newmessagelinks')).
+                            html_writer::link($url, $strgomessage, array('id'=>'notificationyes')).'&nbsp;&nbsp;&nbsp;'.
+                            html_writer::link('', $strstaymessage, array('id'=>'notificationno')).
+                        html_writer::end_tag('div');
                     html_writer::end_tag('div');
 
-        $url = $CFG->wwwroot.'/message/index.php';
         $PAGE->requires->js_init_call('M.core_message.init_notification', array('', $content, $url));
 
         $USER->message_lastpopup = time();
