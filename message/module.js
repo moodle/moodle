@@ -48,12 +48,22 @@ M.core_message.init_notification = function(Y, title, content, url) {
         var o = new Y.Overlay({
             headerContent :  title,
             bodyContent : content,
-            centered : true
+            //centered : true
         });
         o.render(Y.one(document.body));
-        Y.one('#buttondontreadmessage').on('click', o.hide, o);
-        Y.one('#buttonreadmessage').on('click', function() {
+
+        //align the bottom right corner of the overlay with the bottom right of the viewport
+        o.set("align", {
+            points:[Y.WidgetPositionAlign.BR, Y.WidgetPositionAlign.BR]
+        });
+
+        Y.one('#notificationyes').on('click', function(e) {
             window.location.href = url;
+        }, o);
+        Y.one('#notificationno').on('click', function(e) {
+            o.hide();
+            e.preventDefault();
+            return false;
         }, o);
     });
 }
