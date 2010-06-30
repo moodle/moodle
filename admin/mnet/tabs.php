@@ -7,6 +7,10 @@
 if (!defined('MOODLE_INTERNAL')) {
     die('Direct access to this script is forbidden.'); // It must be included from a Moodle page
 }
+$strmnetservices   = get_string('mnetservices', 'mnet');
+$strmnetlog        = get_string('mnetlog', 'mnet');
+$strmnetedithost   = get_string('reviewhostdetails', 'mnet');
+$strmnetthemes     = get_string('mnetthemes', 'mnet');
 
 $logurl = $CFG->wwwroot.
           '/course/report/log/index.php?chooselog=1&amp;showusers=1&amp;showcourses=1&amp;host_course='.$mnet_peer->id.
