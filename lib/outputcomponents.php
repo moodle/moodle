@@ -296,7 +296,7 @@ class user_picture implements renderable {
      * List of mandatory fields in user record here.
      * @var string
      */
-    const FIELDS = 'id,picture,firstname,lastname,imagealt,email'; //note: the email will be useful for gravatar support int the future ;-)
+    const FIELDS = 'id,picture,firstname,lastname,imagealt'; //TODO: add email, but first update all places that call user_picture(), this is necessary for gravatar support
 
     /**
      * @var object $user A user object with at least fields all columns specified in FIELDS constant set.
