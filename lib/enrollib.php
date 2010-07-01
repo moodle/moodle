@@ -437,15 +437,18 @@ function enrol_get_my_courses($fields = NULL, $sort = 'visible DESC,sortorder AS
 
     $coursefields = 'c.' .join(',c.', $fields);
     list($ccselect, $ccjoin) = context_instance_preload_sql('c.id', CONTEXT_COURSE, 'ctx');
-    $wheres = " AND ".implode(" AND ", $wheres);
+    $wheres = implode(" AND ", $wheres);
 
-    $sql = "SELECT DISTINCT $coursefields $ccselect
+    //note: we can not use DISTINCT + text fields due to Oracle and MS limitations, that is why we have the subselect there
+    $sql = "SELECT $coursefields $ccselect
               FROM {course} c
-              JOIN {enrol} e ON (e.courseid = c.id AND e.status = :enabled)
-              JOIN {user_enrolments} ue ON (ue.enrolid = e.id AND ue.userid = :userid AND ue.status = :active)
+              JOIN (SELECT DISTINCT e.courseid
+                      FROM {enrol} e
+                      JOIN {user_enrolments} ue ON (ue.enrolid = e.id AND ue.userid = :userid)
+                     WHERE ue.status = :active AND e.status = :enabled AND ue.timestart < :now1 AND (ue.timeend = 0 OR ue.timeend > :now2)
+                   ) en ON (en.courseid = c.id)
            $ccjoin
-             WHERE ue.timestart < :now1 AND (ue.timeend = 0 OR ue.timeend > :now2)
-                   $wheres
+             WHERE $wheres
           $orderby";
     $params['userid']  = $USER->id;
     $params['active']  = ENROL_USER_ACTIVE;
@@ -534,29 +537,31 @@ function enrol_get_users_courses($userid, $onlyactive = false, $fields = NULL, $
         $orderby = "ORDER BY $sort";
     }
 
-    $wheres = array("c.id <> :siteid");
     $params = array('siteid'=>SITEID);
 
     if ($onlyactive) {
-        $wheres[] = "ue.status = :active";
-        $wheres[] = "e.status = :enabled";
-        $wheres[] = "ue.timestart < :now1 AND (ue.timeend = 0 OR ue.timeend > :now2)";
+        $subwhere = "WHERE ue.status = :active AND e.status = :enabled AND ue.timestart < :now1 AND (ue.timeend = 0 OR ue.timeend > :now2)";
         $params['now1']    = round(time(), -2); // improves db caching
         $params['now2']    = $params['now1'];
         $params['active']  = ENROL_USER_ACTIVE;
         $params['enabled'] = ENROL_INSTANCE_ENABLED;
+    } else {
+        $subwhere = "";
     }
 
     $coursefields = 'c.' .join(',c.', $fields);
     list($ccselect, $ccjoin) = context_instance_preload_sql('c.id', CONTEXT_COURSE, 'ctx');
-    $wheres = "WHERE ".implode(" AND ", $wheres);
 
-    $sql = "SELECT DISTINCT $coursefields $ccselect
+    //note: we can not use DISTINCT + text fields due to Oracle and MS limitations, that is why we have the subselect there
+    $sql = "SELECT $coursefields $ccselect
               FROM {course} c
-              JOIN {enrol} e ON (e.courseid = c.id)
-              JOIN {user_enrolments} ue ON (ue.enrolid = e.id AND ue.userid = :userid)
+              JOIN (SELECT DISTINCT e.courseid
+                      FROM {enrol} e
+                      JOIN {user_enrolments} ue ON (ue.enrolid = e.id AND ue.userid = :userid)
+                 $subwhere
+                   ) en ON (en.courseid = c.id)
            $ccjoin
-           $wheres
+             WHERE c.id <> :siteid
           $orderby";
     $params['userid']  = $userid;
 
