@@ -5551,11 +5551,6 @@ class admin_setting_manageportfolio extends admin_setting {
             'delete' => $strdelete
         );
 
-        $actionchoicesforinsane = array(
-            'hide' => $strhide,
-            'delete' => $strdelete
-        );
-
         $output = $OUTPUT->box_start('generalbox');
 
         $plugins = get_plugin_list('portfolio');
@@ -5569,46 +5564,62 @@ class admin_setting_manageportfolio extends admin_setting {
         $insane = portfolio_plugin_sanity_check($plugins);
         $insaneinstances = portfolio_instance_sanity_check($instances);
 
-        $output .= portfolio_report_insane($insane, null, true);
-        $output .= portfolio_report_insane($insaneinstances, $instances, true);
-
         $table = new html_table();
         $table->head = array(get_string('plugin', 'portfolio'), '', '');
         $table->data = array();
 
         foreach ($instances as $i) {
             $settings = '<a href="' . $this->baseurl . '&amp;action=edit&amp;pf=' . $i->get('id') . '">' . $strsettings .'</a>';
+            // Set some commonly used variables
+            $pluginid = $i->get('id');
+            $plugin = $i->get('plugin');
+            $pluginname = $i->get('name');
 
             // Check if the instance is misconfigured
-            if (array_key_exists($i->get('plugin'), $insane) || array_key_exists($i->get('id'), $insaneinstances)) {
-                $select = new single_select($this->portfolio_action_url($i->get('id'), 'pf'), 'action', $actionchoicesforinsane, 'hide', null, 'applyto' . $i->get('id'));
-                $table->data[] = array($i->get('name') . " <strong>(" . get_string('portfoliomisconfigured', 'portfolio') . ")</strong>", $OUTPUT->render($select), $settings);
+            if (array_key_exists($plugin, $insane) || array_key_exists($pluginid, $insaneinstances)) {
+                if (!empty($insane[$plugin])) {
+                    $information = $insane[$plugin];
+                } else if (!empty($insaneinstances[$pluginid])) {
+                    $information = $insaneinstances[$pluginid];
+                }
+                $table->data[] = array($pluginname, $strdelete  . " " . $OUTPUT->help_icon($information, 'portfolio_' .  $plugin), $settings);
             } else {
                 if ($i->get('visible')) {
                     $currentaction = 'show';
                 } else {
                     $currentaction = 'hide';
                 }
-                $select = new single_select($this->portfolio_action_url($i->get('id'), 'pf'), 'action', $actionchoicesforexisting, $currentaction, null, 'applyto' . $i->get('id'));
-                $table->data[] = array($i->get('name'), $OUTPUT->render($select), $settings);
+                $select = new single_select($this->portfolio_action_url($pluginid, 'pf'), 'action', $actionchoicesforexisting, $currentaction, null, 'applyto' . $pluginid);
+                $table->data[] = array($pluginname, $OUTPUT->render($select), $settings);
             }
-            if (!in_array($i->get('plugin'), $usedplugins)) {
-                $usedplugins[] = $i->get('plugin');
+            if (!in_array($plugin, $usedplugins)) {
+                $usedplugins[] = $plugin;
             }
         }
 
+        // Create insane plugin array
+        $insaneplugins = array();
         if (!empty($plugins)) {
             foreach ($plugins as $p) {
                 // Check if it can not have multiple instances and has already been used
                 if (!portfolio_static_function($p, 'allows_multiple_instances') && in_array($p, $usedplugins)) {
                     continue;
                 }
-                // Check if it is misconfigured
+
+                // Check if it is misconfigured - if so store in array then display later
                 if (array_key_exists($p, $insane)) {
-                    continue;
+                    $insaneplugins[] = $p;
+                } else {
+                    $select = new single_select($this->portfolio_action_url($p, 'pf'), 'action', $actionchoicesfornew, 'delete', null, 'applyto' . $p);
+                    $table->data[] = array(portfolio_static_function($p, 'get_name'), $OUTPUT->render($select), '');
                 }
-                $select = new single_select($this->portfolio_action_url($p, 'pf'), 'action', $actionchoicesfornew, 'delete', null, 'applyto' . $p);
-                $table->data[] = array(portfolio_static_function($p, 'get_name'), $OUTPUT->render($select), '');
+            }
+        }
+
+        // Loop through all the insane plugins
+        if (!empty($insaneplugins)) {
+            foreach ($insaneplugins as $p) {
+                $table->data[] = array(portfolio_static_function($p, 'get_name'), $strdelete . " " . $OUTPUT->help_icon($insane[$p], 'portfolio_' .  $p), '');
             }
         }
 
