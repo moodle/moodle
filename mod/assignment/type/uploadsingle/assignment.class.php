@@ -50,14 +50,15 @@ class assignment_uploadsingle extends assignment_base {
 
         $this->view_dates();
 
-        $filecount = $this->count_user_files($USER->id);
+        $filecount = false;
 
-        if ($submission = $this->get_submission()) {
+        if ($submission = $this->get_submission($USER->id)) {
+            $filecount = $this->count_user_files($submission->id);
             if ($submission->timemarked) {
                 $this->view_feedback();
             }
             if ($filecount) {
-                echo $OUTPUT->box($this->print_user_files($USER->id, true), 'generalbox boxaligncenter');
+                echo $OUTPUT->box($this->print_user_files($submission->id, true), 'generalbox boxaligncenter');
             }
         }
 
@@ -82,15 +83,13 @@ class assignment_uploadsingle extends assignment_base {
 
         require_capability('mod/assignment:submit', get_context_instance(CONTEXT_MODULE, $this->cm->id));
 
-        $this->view_header(get_string('upload'));
-
         $filecount = $this->count_user_files($USER->id);
         $submission = $this->get_submission($USER->id);
         if ($this->isopen() && (!$filecount || $this->assignment->resubmit || !$submission->timemarked)) {
             if ($submission = $this->get_submission($USER->id)) {
                 //TODO: change later to ">= 0", to prevent resubmission when graded 0
                 if (($submission->grade > 0) and !$this->assignment->resubmit) {
-                    echo $OUTPUT->notification(get_string('alreadygraded', 'assignment'));
+                    redirect('view.php?id='.$this->cm->id, get_string('alreadygraded', 'assignment'));
                 }
             }
 
@@ -99,17 +98,22 @@ class assignment_uploadsingle extends assignment_base {
                 $fs = get_file_storage();
                 $filename = $mform->get_new_filename('newfile');
                 if ($filename !== false) {
-                    $fs->delete_area_files($this->context->id, 'assignment_submission', $USER->id);
-                    if ($file = $mform->save_stored_file('newfile', $this->context->id, 'assignment_submission', $USER->id, '/', $filename, false, $USER->id)) {
+                    $fs->delete_area_files($this->context->id, 'assignment_submission', $submission->id);
+
+                    if (empty($submission->id)) {
                         $submission = $this->get_submission($USER->id, true); //create new submission if needed
-                        $submission->timemodified = time();
-                        $submission->numfiles     = 1;
-                        if ($DB->update_record('assignment_submissions', $submission)) {
+                    }
+
+                    if ($file = $mform->save_stored_file('newfile', $this->context->id, 'assignment_submission', $submission->id, '/', $filename, false, $USER->id)) {
+                        $updates = new object(); //just enough data for updating the submission
+                        $updates->timemodified = time();
+                        $updates->numfiles     = 1;
+                        $updates->id     = $submission->id;
+                        if ($DB->update_record('assignment_submissions', $updates)) {
                             add_to_log($this->course->id, 'assignment', 'upload',
                                     'view.php?a='.$this->assignment->id, $this->assignment->id, $this->cm->id);
                             $this->update_grade($submission);
                             $this->email_teachers($submission);
-                            echo $OUTPUT->heading(get_string('uploadedfile'));
                             //trigger event with information about this file.
                             $eventdata = new object();
                             $eventdata->component  = 'mod/assignment';
@@ -120,21 +124,19 @@ class assignment_uploadsingle extends assignment_base {
                             $eventdata->file       = $file;
                             events_trigger('assignment_file_sent', $eventdata);
 
-                            redirect('view.php?id='.$this->cm->id);
+                            redirect('view.php?id='.$this->cm->id, get_string('uploadedfile'));
                         } else {
-                            echo $OUTPUT->notification(get_string("uploadnotregistered", "assignment", $newfile_name) );
                             $file->delete();
+                            redirect('view.php?id='.$this->cm->id, get_string('uploadnotregistered', 'assignment', $newfile_name));
                         }
                     }
                 }
             } else {
-                echo $OUTPUT->notification(get_string("uploaderror", "assignment")); //submitting not allowed!
+                redirect('view.php?id='.$this->cm->id, get_string('uploaderror', 'assignment'));  //submitting not allowed!
             }
         }
 
-        echo $OUTPUT->continue_button('view.php?id='.$this->cm->id);
-
-        $this->view_footer();
+        redirect('view.php?id='.$this->cm->id);
     }
 
     function setup_elements(&$mform) {

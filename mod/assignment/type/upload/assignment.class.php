@@ -38,8 +38,8 @@ class assignment_upload extends assignment_base {
         $this->view_dates();
 
         if (has_capability('mod/assignment:submit', $this->context)) {
-            $filecount = $this->count_user_files($USER->id);
             $submission = $this->get_submission($USER->id);
+            $filecount = $this->count_user_files($submission->id);
 
             $this->view_feedback();
 
@@ -344,16 +344,16 @@ class assignment_upload extends assignment_base {
         $fs = get_file_storage();
         $browser = get_file_browser();
 
-        if ($files = $fs->get_area_files($this->context->id, 'assignment_submission', $userid, "timemodified", false)) {
+        if ($files = $fs->get_area_files($this->context->id, 'assignment_submission', $submission->id, "timemodified", false)) {
             $button = new portfolio_add_button();
             foreach ($files as $file) {
                 $filename = $file->get_filename();
                 $mimetype = $file->get_mimetype();
-                $path = file_encode_url($CFG->wwwroot.'/pluginfile.php', '/'.$this->context->id.'/assignment_submission/'.$userid.'/'.$filename);
+                $path = file_encode_url($CFG->wwwroot.'/pluginfile.php', '/'.$this->context->id.'/assignment_submission/'.$submission->id.'/'.$filename);
                 $output .= '<a href="'.$path.'" ><img src="'.$OUTPUT->pix_url(file_mimetype_icon($mimetype)).'" class="icon" alt="'.$mimetype.'" />'.s($filename).'</a>';
 
                 if ($candelete) {
-                    $delurl  = "$CFG->wwwroot/mod/assignment/delete.php?id={$this->cm->id}&amp;file=".rawurlencode($filename)."&amp;userid={$submission->userid}&amp;mode=$mode&amp;offset=$offset";
+                    $delurl  = "$CFG->wwwroot/mod/assignment/delete.php?id={$this->cm->id}&amp;file=".rawurlencode($filename)."&amp;userid=$userid&amp;submissionid={$submission->id}&amp;mode=$mode&amp;offset=$offset";
 
                     $output .= '<a href="'.$delurl.'">&nbsp;'
                               .'<img title="'.$strdelete.'" src="'.$OUTPUT->pix_url('t/delete') . '" class="iconsmall" alt="" /></a> ';
@@ -575,11 +575,13 @@ class assignment_upload extends assignment_base {
             $fs = get_file_storage();
             $filename = $mform->get_new_filename('newfile');
             if ($filename !== false) {
-                if (!$fs->file_exists($this->context->id, 'assignment_submission', $USER->id, '/', $filename)) {
-                    if ($file = $mform->save_stored_file('newfile', $this->context->id, 'assignment_submission', $USER->id, '/', $filename, false, $USER->id)) {
                         $submission = $this->get_submission($USER->id, true); //create new submission if needed
-                        $submission->timemodified = time();
-                        if ($DB->update_record('assignment_submissions', $submission)) {
+                if (!$fs->file_exists($this->context->id, 'assignment_submission', $submission->id, '/', $filename)) {
+                    if ($file = $mform->save_stored_file('newfile', $this->context->id, 'assignment_submission', $submission->id, '/', $filename, false, $USER->id)) {
+                        $updates = new object();
+                        $updates->id = $submission->id;
+                        $updates->timemodified = time();
+                        if ($DB->update_record('assignment_submissions', $updates)) {
                             add_to_log($this->course->id, 'assignment', 'upload',
                                     'view.php?a='.$this->assignment->id, $this->assignment->id, $this->cm->id);
                             $this->update_grade($submission);
@@ -823,6 +825,7 @@ class assignment_upload extends assignment_base {
 
         $file     = required_param('file', PARAM_FILE);
         $userid   = required_param('userid', PARAM_INT);
+        $submissionid   = required_param('submissionid', PARAM_INT);
         $confirm  = optional_param('confirm', 0, PARAM_BOOL);
         $mode     = optional_param('mode', '', PARAM_ALPHA);
         $offset   = optional_param('offset', 0, PARAM_INT);
@@ -849,7 +852,7 @@ class assignment_upload extends assignment_base {
         }
 
         if (!data_submitted() or !$confirm or !confirm_sesskey()) {
-            $optionsyes = array ('id'=>$this->cm->id, 'file'=>$file, 'userid'=>$userid, 'confirm'=>1, 'sesskey'=>sesskey(), 'mode'=>$mode, 'offset'=>$offset, 'sesskey'=>sesskey());
+            $optionsyes = array ('id'=>$this->cm->id, 'file'=>$file, 'userid'=>$userid, 'submissionid'=>$submissionid, 'confirm'=>1, 'sesskey'=>sesskey(), 'mode'=>$mode, 'offset'=>$offset, 'sesskey'=>sesskey());
             if (empty($mode)) {
                 $this->view_header(get_string('delete'));
             } else {
@@ -867,7 +870,7 @@ class assignment_upload extends assignment_base {
         }
 
         $fs = get_file_storage();
-        if ($file = $fs->get_file($this->context->id, 'assignment_submission', $userid, '/', $file)) {
+        if ($file = $fs->get_file($this->context->id, 'assignment_submission', $submissionid, '/', $file)) {
             if ($file->delete()) {
                 $submission->timemodified = time();
                 if ($DB->update_record('assignment_submissions', $submission)) {

@@ -68,15 +68,18 @@ function xmldb_assignment_upgrade($oldversion) {
                 $context = get_context_instance(CONTEXT_MODULE, $submission->cmid);
 
                 // migrate submitted files first
-                $path = $basepath;
+                $newpath = "$CFG->dataroot/$submission->course/$CFG->moddata/assignment/$submission->assignment/$submission->id/";
+                if (!file_exists($newpath)) {
+                    mkdir($newpath);
+                }
                 $filearea = 'assignment_submission';
-                $items = new DirectoryIterator($path);
+                $items = new DirectoryIterator($basepath);
                 foreach ($items as $item) {
                     if (!$item->isFile()) {
                         continue;
                     }
                     if (!$item->isReadable()) {
-                        echo $OUTPUT->notification(" File not readable, skipping: ".$path.$item->getFilename());
+                        echo $OUTPUT->notification(" File not readable, skipping: ".$basepath.$item->getFilename());
                         continue;
                     }
                     $filename = clean_param($item->getFilename(), PARAM_FILE);
@@ -84,19 +87,20 @@ function xmldb_assignment_upgrade($oldversion) {
                         continue;
                     }
                     if (!$fs->file_exists($context->id, $filearea, $submission->userid, '/', $filename)) {
-                        $file_record = array('contextid'=>$context->id, 'filearea'=>$filearea, 'itemid'=>$submission->userid, 'filepath'=>'/', 'filename'=>$filename, 'userid'=>$submission->userid);
-                        if ($fs->create_file_from_pathname($file_record, $path.$item->getFilename())) {
-                            unlink($path.$item->getFilename());
+                        $file_record = array('contextid'=>$context->id, 'filearea'=>$filearea, 'itemid'=>$submission->id, 'filepath'=>'/', 'filename'=>$filename, 'userid'=>$submission->userid);
+                        if ($fs->create_file_from_pathname($file_record, $basepath.$item->getFilename())) {
+                            unlink($basepath.$item->getFilename());
                         }
                     }
                 }
                 unset($items); //release file handles
 
                 // migrate teacher response files
-                $path = $basepath.'responses/';
-                if (file_exists($path)) {
+                $basepath = $basepath.'responses/';
+                $newpath = $newpath.'responses/';
+                if (file_exists($basepath)) {
                     $filearea = 'assignment_response';
-                    $items = new DirectoryIterator($path);
+                    $items = new DirectoryIterator($basepath);
                     foreach ($items as $item) {
                         if (!$item->isFile()) {
                             continue;
@@ -106,13 +110,13 @@ function xmldb_assignment_upgrade($oldversion) {
                             continue;
                         }
                         if (!$fs->file_exists($context->id, $filearea, $submission->userid, '/', $filename)) {
-                            $file_record = array('contextid'=>$context->id, 'filearea'=>$filearea, 'itemid'=>$submission->userid, 'filepath'=>'/', 'filename'=>$filename,
+                            $file_record = array('contextid'=>$context->id, 'filearea'=>$filearea, 'itemid'=>$submission->id, 'filepath'=>'/', 'filename'=>$filename,
                                                  'timecreated'=>$item->getCTime(), 'timemodified'=>$item->getMTime());
                             if ($submission->teacher) {
                                 $file_record['userid'] = $submission->teacher;
                             }
-                            if ($fs->create_file_from_pathname($file_record, $path.$item->getFilename())) {
-                                unlink($path.$item->getFilename());
+                            if ($fs->create_file_from_pathname($file_record, $basepath.$item->getFilename())) {
+                                unlink($basepath.$item->getFilename());
                             }
                         }
                     }
