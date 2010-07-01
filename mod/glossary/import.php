@@ -41,7 +41,6 @@ $strglossary = get_string("modulename", "glossary");
 $strallcategories = get_string("allcategories", "glossary");
 $straddentry = get_string("addentry", "glossary");
 $strnoentries = get_string("noentries", "glossary");
-$strsearchconcept = get_string("searchconcept", "glossary");
 $strsearchindefinition = get_string("searchindefinition", "glossary");
 $strsearch = get_string("search");
 $strimportentries = get_string('importentriesfromxml', 'glossary');
