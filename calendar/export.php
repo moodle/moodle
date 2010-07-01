@@ -128,7 +128,6 @@ $PAGE->navbar->add($pagetitle);
 $PAGE->set_title($site->shortname.': '.$strcalendar.': '.$pagetitle);
 $PAGE->set_heading($COURSE->fullname);
 $PAGE->set_button($prefsbutton);
-$PAGE->set_focuscontrol('pw_all');
 $PAGE->set_pagelayout('standard');
 
 $renderer = $PAGE->get_renderer('core_calendar');

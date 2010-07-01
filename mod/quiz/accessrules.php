@@ -206,7 +206,7 @@ class quiz_access_manager {
      * @param boolean $unfinished whether the button is to continue an existing attempt,
      * or start a new one. This affects whether a javascript alert is shown.
      */
-    public function print_start_attempt_button($canpreview, $buttontext, $unfinished) {
+    public function print_start_attempt_button($canpreview, $buttontext, $unfinished) { 
     /// Do we need a confirm javascript alert?
         global $OUTPUT;
         if ($unfinished) {
@@ -647,8 +647,7 @@ class password_access_rule extends quiz_access_rule_base {
         $output = '';
 
     /// Start the page and print the quiz intro, if any.
-        if (!$return) {
-            $PAGE->set_focuscontrol('quizpassword');
+        if (!$return) {            
             echo $OUTPUT->header();
         }
         if (trim(strip_tags($this->_quiz->intro))) {

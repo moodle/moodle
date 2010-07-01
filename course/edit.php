@@ -148,7 +148,6 @@ if (!empty($course->id)) {
 
 $PAGE->set_title($title);
 $PAGE->set_heading($fullname);
-$PAGE->set_focuscontrol($editform->focus());
 
 echo $OUTPUT->header();
 echo $OUTPUT->heading($streditcoursesettings);

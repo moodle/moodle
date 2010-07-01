@@ -576,8 +576,7 @@ if ($mform->is_cancelled()) {
     }
 
     $PAGE->set_heading($course->fullname);
-    $PAGE->set_title($streditinga);
-    $PAGE->set_focuscontrol($mform->focus());
+    $PAGE->set_title($streditinga);    
     $PAGE->set_cacheable(false);
     echo $OUTPUT->header();
 

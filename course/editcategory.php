@@ -109,7 +109,6 @@ if ($id) {
 
 $PAGE->set_title($title);
 $PAGE->set_heading($fullname);
-$PAGE->set_focuscontrol($mform->focus());
 echo $OUTPUT->header();
 echo $OUTPUT->heading($strtitle);
 

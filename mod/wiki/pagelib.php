@@ -94,8 +94,6 @@ abstract class page_wiki {
 
         // initialise wiki renderer
         $this->wikioutput = $PAGE->get_renderer('mod_wiki');
-
-        $PAGE->set_focuscontrol('');
         $PAGE->set_cacheable(true);
         $PAGE->set_cm($cm);
         $PAGE->set_activity_record($wiki);

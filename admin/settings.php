@@ -58,7 +58,6 @@ if ($PAGE->user_allowed_editing() && $adminediting != -1) {
 }
 
 /// print header stuff ------------------------------------------------------------
-$PAGE->set_focuscontrol($focus);
 if (empty($SITE->fullname)) {
     $PAGE->set_title($settingspage->visiblename);
     $PAGE->set_heading($settingspage->visiblename);

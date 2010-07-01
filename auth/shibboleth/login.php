@@ -69,8 +69,7 @@ httpsrequired();
     $PAGE->set_url('/auth/shibboleth/login.php');
     $PAGE->navbar->add($loginsite);
     $PAGE->set_title("$site->fullname: $loginsite");
-    $PAGE->set_heading($site->fullname);
-    $PAGE->set_focuscontrol('idp');
+    $PAGE->set_heading($site->fullname);   
 
     echo $OUTPUT->header();
     include("index_form.html");

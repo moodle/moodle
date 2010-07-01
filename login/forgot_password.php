@@ -154,7 +154,6 @@ if ($mform->is_cancelled()) {
 /// DISPLAY FORM
 $PAGE->set_title($strforgotten);
 $PAGE->set_heading($COURSE->fullname);
-$PAGE->set_focuscontrol('id_email');
 
 echo $OUTPUT->header();
 echo $OUTPUT->box(get_string('passwordforgotteninstructions2'), 'generalbox boxwidthnormal boxaligncenter');

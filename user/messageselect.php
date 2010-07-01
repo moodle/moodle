@@ -111,10 +111,6 @@ $PAGE->navbar->add(get_string('participants'), $link);
 $PAGE->navbar->add($strtitle);
 $PAGE->set_title($strtitle);
 $PAGE->set_heading($strtitle);
-if (empty($messagebody)) {
-    $PAGE->set_focuscontrol('theform.messagebody');
-}
-
 echo $OUTPUT->header();
 // if messaging is disabled on site, we can still allow users with capabilities to send emails instead
 if (empty($CFG->messaging)) {

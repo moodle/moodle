@@ -75,7 +75,6 @@ $PAGE->navbar->add($newaccount);
 
 $PAGE->set_title($newaccount);
 $PAGE->set_heading($SITE->fullname);
-$PAGE->set_focuscontrol($mform_signup->focus());
 
 echo $OUTPUT->header();
 $mform_signup->display();

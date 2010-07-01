@@ -2132,8 +2132,7 @@ function print_header($title='', $heading='', $navigation='', $focus='',
 
     $PAGE->set_title($title);
     $PAGE->set_heading($heading);
-    $PAGE->set_cacheable($cache);
-    $PAGE->set_focuscontrol($focus);
+    $PAGE->set_cacheable($cache);    
     if ($button == '') {
         $button = '&nbsp;';
     }
@@ -2198,8 +2197,7 @@ function print_header_simple($title='', $heading='', $navigation='', $focus='', 
     }
 
     $PAGE->set_title($title);
-    $PAGE->set_heading($heading);
-    $PAGE->set_focuscontrol($focus);
+    $PAGE->set_heading($heading);   
     $PAGE->set_cacheable(true);
     $PAGE->set_button($button);
 
