@@ -5553,6 +5553,8 @@ function current_language() {
         $return = 'en';
     }
 
+    $return = str_replace('_utf8', '', $return);  // Just in case this slipped in from somewhere by accident
+
     return $return;
 }
 
