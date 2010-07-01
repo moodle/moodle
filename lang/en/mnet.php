@@ -210,6 +210,7 @@ $string['remoteenrolhosts_desc'] = 'Enrol and unenrol users from your Moodle ins
 $string['remotehost'] = 'Remote Hub';
 $string['remotehosts'] = 'Remote hosts';
 $string['remotemoodles'] = 'Remote Moodles';
+$string['remoteuserinfo'] = 'Remote {$a->remotetype} user - profile fetched from <a href="{$a->remoteurl}">{$a->remotename}</a>';
 $string['requiresopenssl'] = 'Networking requires the OpenSSL extension';
 $string['restore'] = 'Restore';
 $string['returnvalue'] = 'Return value';

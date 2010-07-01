@@ -491,7 +491,6 @@ $string['editorfontsize'] = 'Default font-size';
 $string['editorresettodefaults'] = 'Reset to default values';
 $string['editorsettings'] = 'Editor settings';
 $string['editorshortcutkeys'] = 'Editor shortcut keys';
-$string['editremoteprofile'] = 'Edit remote profile';
 $string['editsummary'] = 'Edit summary';
 $string['editthisactivity'] = 'Edit this activity';
 $string['editthiscategory'] = 'Edit this category';
@@ -723,7 +722,6 @@ $string['general'] = 'General';
 $string['geolocation'] = 'latitude - longitude';
 $string['gettheselogs'] = 'Get these logs';
 $string['go'] = 'Go';
-$string['gotoyourserver'] = '(Links back to your server)';
 $string['gpl'] = 'Copyright (C) 1999 onwards  Martin Dougiamas  (http://moodle.com)
 
 This program is free software; you can redistribute it and/or modify

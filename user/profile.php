@@ -184,25 +184,18 @@ echo '<div class="userprofile">';
 echo $OUTPUT->heading(fullname($user));
 
 if (is_mnet_remote_user($user)) {
-    $sql = "
-         SELECT DISTINCT h.id, h.name, h.wwwroot,
-                a.name as application, a.display_name
-           FROM {mnet_host} h, {mnet_application} a
-          WHERE h.id = ? AND h.applicationid = a.id
-       ORDER BY a.display_name, h.name";
+    $sql = "SELECT h.id, h.name, h.wwwroot,
+                   a.name as application, a.display_name
+              FROM {mnet_host} h, {mnet_application} a
+             WHERE h.id = ? AND h.applicationid = a.id";
 
     $remotehost = $DB->get_record_sql($sql, array($user->mnethostid));
+    $a = new stdclass();
+    $a->remotetype = $remotehost->display_name;
+    $a->remotename = $remotehost->name;
+    $a->remoteurl  = $remotehost->wwwroot;
 
-    echo '<p class="errorboxcontent">'.get_string('remoteappuser', $remotehost->application)." <br />\n";
-    if ($currentuser) {
-        if ($remotehost->application =='moodle') {
-            echo "Remote {$remotehost->display_name}: <a href=\"{$remotehost->wwwroot}/user/edit.php\">{$remotehost->name}</a> ".get_string('editremoteprofile')." </p>\n";
-        } else {
-            echo "Remote {$remotehost->display_name}: <a href=\"{$remotehost->wwwroot}/\">{$remotehost->name}</a> ".get_string('gotoyourserver')." </p>\n";
-        }
-    } else {
-        echo "Remote {$remotehost->display_name}: <a href=\"{$remotehost->wwwroot}/\">{$remotehost->name}</a></p>\n";
-    }
+    echo $OUTPUT->box(get_string('remoteuserinfo', 'mnet', $a), 'remoteuserinfo');
 }
 
 echo '<div class="userprofilebox clearfix"><div class="profilepicture">';

@@ -186,7 +186,7 @@ form.popupform label {margin-right: 0.5em;}
 .arrow_button {margin-top:3em;}
 .arrow_button input {padding:0.3em;}
 
-/** 
+/**
  * User
  **/
 #userselector_options {font-size: 0.75em;}
@@ -200,6 +200,7 @@ form.popupform label {margin-right: 0.5em;}
 #page-user-index h2 {text-align: center;}
 #page-user-index #longtimenosee,
 #page-user-index #showall {text-align: center;}
+#page-user-profile .remoteuserinfo, #page-user-view .remoteuserinfo{background-color:#D2EBFF;text-align:center;padding:3px;}
 
 /**
  * Moodle Forms
