@@ -1648,7 +1648,7 @@ global $CFG;
 function glossary_print_alphabet_links($cm, $glossary, $mode, $hook, $sortkey, $sortorder) {
 global $CFG;
      if ( $glossary->showalphabet) {
-          $alphabet = explode(",", get_string("alphabet"));
+          $alphabet = explode(",", get_string('alphabet', 'langconfig'));
           $letters_by_line = 14;
           for ($i = 0; $i < count($alphabet); $i++) {
               if ( $hook == $alphabet[$i] and $hook) {
