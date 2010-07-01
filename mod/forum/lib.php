@@ -3196,6 +3196,7 @@ function forum_print_post($post, $discussion, $forum, &$cm, $course, $ownpost=fa
     $postuser->lastname  = $post->lastname;
     $postuser->imagealt  = $post->imagealt;
     $postuser->picture   = $post->picture;
+    $postuser->email     = $post->email;
 
     echo '<tr class="header"><td class="picture left">';
     echo $OUTPUT->user_picture($postuser, array('courseid'=>$course->id));
@@ -3473,6 +3474,7 @@ function forum_print_discussion_header(&$post, $forum, $group=-1, $datestring=""
     $postuser->lastname = $post->lastname;
     $postuser->imagealt = $post->imagealt;
     $postuser->picture = $post->picture;
+    $postuser->email = $post->email;
 
     echo '<td class="picture">';
     echo $OUTPUT->user_picture($postuser, array('courseid'=>$forum->course));
