@@ -565,10 +565,10 @@ class assignment_base {
         $mailinfo = optional_param('mailinfo', null, PARAM_BOOL);
         $saved = optional_param('saved', null, PARAM_BOOL);
 
-        if(optional_param('next', null, PARAM_BOOL)) {
+        if (optional_param('next', null, PARAM_BOOL)) {
             $mode='next';
         }
-        if(optional_param('saveandnext', null, PARAM_BOOL)) {
+        if (optional_param('saveandnext', null, PARAM_BOOL)) {
             $mode='saveandnext';
         }
 
@@ -578,7 +578,7 @@ class assignment_base {
             set_user_preference('assignment_mailinfo', $mailinfo);
         }
 
-        if($saved) {
+        if ($saved) {
             $OUTPUT->heading(get_string('changessaved'));
         }
 
@@ -867,12 +867,16 @@ class assignment_base {
      * @global object
      * @param string $extra_javascript
      */
-    function display_submission( $offset=-1 , $userid =-1) {
+    function display_submission($offset=-1,$userid =-1) {
         global $CFG, $DB, $PAGE, $OUTPUT;
         require_once($CFG->libdir.'/gradelib.php');
         require_once($CFG->libdir.'/tablelib.php');
-        if($userid==-1) $userid = required_param('userid', PARAM_INT);
-        if($offset==-1) $offset = required_param('offset', PARAM_INT);//offset for where to start looking for student.
+        if ($userid==-1) {
+            $userid = required_param('userid', PARAM_INT);
+        }
+        if ($offset==-1) {
+            $offset = required_param('offset', PARAM_INT);//offset for where to start looking for student.
+        }
 
         if (!$user = $DB->get_record('user', array('id'=>$userid))) {
             print_error('nousers');
@@ -969,7 +973,7 @@ class assignment_base {
 
         $submitform = new mod_assignment_online_grading_form( null, $mformdata );
 
-        if($submitform->is_cancelled()) {
+        if ($submitform->is_cancelled()) {
             redirect('submissions.php?id='.$this->cm->id);
         }
 
@@ -1060,7 +1064,7 @@ class assignment_base {
         echo $OUTPUT->header();
 
         /// Print quickgrade form around the table
-        if ($quickgrade){
+        if ($quickgrade) {
             echo '<form action="submissions.php" id="fastg" method="post">';
             echo '<div>';
             echo '<input type="hidden" name="id" value="'.$this->cm->id.'" />';
@@ -1299,7 +1303,7 @@ class assignment_base {
                 $popup_url = '/mod/assignment/submissions.php?id='.$this->cm->id
                            . '&userid='.$auser->id.'&mode=single'.'&offset='.$offset++;
 
-                    $button = $OUTPUT->action_link($popup_url, $buttontext);
+                $button = $OUTPUT->action_link($popup_url, $buttontext);
 
                 $status  = '<div id="up'.$auser->id.'" class="s'.$auser->status.'">'.$button.'</div>';
 
@@ -2099,7 +2103,7 @@ class mod_assignment_online_grading_form extends moodleform {
 
         $this->add_feedback_section();
 
-        if($this->_customdata->submission->timemarked){
+        if ($this->_customdata->submission->timemarked) {
             $mform->addElement('header', 'Last Grade', get_string('lastgrade', 'assignment'));
             $mform->addElement('static', 'picture', $OUTPUT->user_picture($this->_customdata->teacher) ,
                                                     fullname($this->_customdata->teacher,true).
@@ -2116,7 +2120,9 @@ class mod_assignment_online_grading_form extends moodleform {
         global $CFG;
         $mform =& $this->_form;
         $attributes = array();
-        if($this->_customdata->gradingdisabled) $attributes['disabled'] ='disabled';
+        if ($this->_customdata->gradingdisabled) {
+            $attributes['disabled'] ='disabled';
+        }
 
         $grademenu = make_grades_menu($this->_customdata->assignment->grade);
         $grademenu['-1'] = get_string('nograde');
@@ -2126,7 +2132,7 @@ class mod_assignment_online_grading_form extends moodleform {
         $mform->setDefault('xgrade', $this->_customdata->submission->grade ); //@fixme some bug when element called 'grade' makes it break
         $mform->setType('xgrade', PARAM_INT);
 
-        if(!empty($this->_customdata->enableoutcomes)){
+        if (!empty($this->_customdata->enableoutcomes)) {
             foreach($this->_customdata->grading_info->outcomes as $n=>$outcome) {
                 $options = make_grades_menu(-$outcome->scaleid);
                 if ($outcome->grades[$this->_customdata->submission->userid]->locked) {
@@ -2161,7 +2167,7 @@ class mod_assignment_online_grading_form extends moodleform {
         $mform =& $this->_form;
         $mform->addElement('header', 'Feed Back', get_string('feedback', 'grades'));
 
-        if($this->_customdata->gradingdisabled){
+        if ($this->_customdata->gradingdisabled) {
             $mform->addElement('static', 'disabledfeedback', $this->_customdata->grading_info->items[0]->grades[$this->_customdata->userid]->str_feedback );
         } else {
             // visible elements
@@ -2194,7 +2200,7 @@ class mod_assignment_online_grading_form extends moodleform {
         $mform =& $this->_form;
         $mform->addElement('header', 'Operation', get_string('operation', 'assignment'));
         //if there are more to be graded.
-        if($this->_customdata->nextid>0){
+        if ($this->_customdata->nextid>0) {
             $buttonarray=array();
             $buttonarray[] = &$mform->createElement('submit', 'submitbutton', get_string('savechanges'));
             //@todo: fix accessibility: javascript dependency not necessary
