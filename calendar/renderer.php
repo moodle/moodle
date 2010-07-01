@@ -612,7 +612,7 @@ class core_calendar_renderer extends plugin_renderer_base {
                 // Convert to calendar_event object so that we transform description
                 // accordingly
                 $event = new calendar_event($event);
-                $event->calendarcourseid = $courseid;
+                $event->calendarcourseid = $calendar->courseid;
                 $output .= $this->event($event);
             }
             $output .= html_writer::end_tag('div');
