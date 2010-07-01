@@ -57,12 +57,19 @@ foreach ($parts as $part) {
         $content .= "\n// Wrong combo resource $part!\n";
         continue;
     }
-    $version = $bits[0];
-    if ($version != $CFG->yui3version and $version != $CFG->yui2version and $version != 'gallery') {
-        $content .= "\n// Wrong yui version $part!\n";
-        continue;
+    //debug($bits);
+    $version = array_shift($bits);
+    if ($version == 'moodle') {
+        $frankenstyle = array_shift($bits);
+        $dir = get_component_directory($frankenstyle);
+        $contentfile = $dir.'/yui/'.join('/', $bits);
+    } else {
+        if ($version != $CFG->yui3version and $version != $CFG->yui2version and $version != 'gallery') {
+            $content .= "\n// Wrong yui version $part!\n";
+            continue;
+        }
+        $contentfile = "$CFG->libdir/yui/$part";
     }
-    $contentfile = "$CFG->libdir/yui/$part";
     if (!file_exists($contentfile) or !is_file($contentfile)) {
         $content .= "\n// Combo resource $part not found!\n";
         continue;
@@ -72,7 +79,7 @@ foreach ($parts as $part) {
     if ($mimetype === 'text/css') {
         if ($version == 'gallery') {
             // search for all images in gallery module CSS and serve them through the yui_image.php script
-            $filecontent = preg_replace('/([a-z_-]+)\.(png|gif)/', 'yui_image.php?file='.$version.'/'.$bits[1].'/'.$bits[2].'/$1.$2', $filecontent);
+            $filecontent = preg_replace('/([a-z_-]+)\.(png|gif)/', 'yui_image.php?file='.$version.'/'.$bits[0].'/'.$bits[1].'/$1.$2', $filecontent);
         } else {
             // search for all images in yui2 CSS and serve them through the yui_image.php script
             $filecontent = preg_replace('/([a-z_-]+)\.(png|gif)/', 'yui_image.php?file='.$version.'/$1.$2', $filecontent);

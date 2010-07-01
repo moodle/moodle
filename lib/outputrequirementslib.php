@@ -150,26 +150,40 @@ class page_requirements_manager {
         $this->M_yui_loader->filter       = ($this->yui3loader->filter == YUI_DEBUG) ? 'debug' : '';
         $this->M_yui_loader->insertBefore = 'firstthemesheet';
         $this->M_yui_loader->modules      = array();
-        if (empty($CFG->useexternalyui) || true) {
-            $this->M_yui_loader->groups = array(
-                'local' => array(
-                    'name' => 'gallery',
-                    'base' => $CFG->wwwroot.'/lib/yui/gallery/',
-                    'comboBase' => $this->yui3loader->comboBase,
-                    'combine' => $this->yui3loader->combine,
-                    'filter' => $this->M_yui_loader->filter,
-                    'ext' => false,
-                    'root' => 'gallery/',
-                    'patterns' => array(
-                        'gallery-' => array(
-                            'group' => 'gallery',
-                            'configFn' => '@GALLERYCONFIGFN@',
-                        ),
-                        'root' => 'gallery'
+        $this->M_yui_loader->groups       = array(
+            'moodle' => array(
+                'name' => 'moodle',
+                'base' => $CFG->httpswwwroot . '/theme/yui_combo.php?moodle/',
+                'comboBase' => $CFG->httpswwwroot . '/theme/yui_combo.php?',
+                'combine' => $this->yui3loader->combine,
+                'filter' => '',
+                'ext' => false,
+                'root' => 'moodle/',
+                'patterns' => array(
+                    'moodle-' => array(
+                        'group' => 'moodle',
+                        'configFn' => '@MOODLECONFIGFN@'
                     ),
+                    'root' => 'moodle'
                 )
-            );
-        }
+            ),
+            'local' => array(
+                'name' => 'gallery',
+                'base' => $CFG->wwwroot.'/lib/yui/gallery/',
+                'comboBase' => $CFG->httpswwwroot . '/theme/yui_combo.php?',
+                'combine' => $this->yui3loader->combine,
+                'filter' => $this->M_yui_loader->filter,
+                'ext' => false,
+                'root' => 'gallery/',
+                'patterns' => array(
+                    'gallery-' => array(
+                        'group' => 'gallery',
+                        'configFn' => '@GALLERYCONFIGFN@',
+                    ),
+                    'root' => 'gallery'
+                )
+            )
+        );
         $this->add_yui2_modules(); // adds loading info for all YUI2 modules
         $this->js_module($this->find_module('core_filepicker'));
         $this->js_module($this->find_module('core_dock'));
@@ -591,13 +605,9 @@ class page_requirements_manager {
     }
 
     /**
-     * Adds a call to make use of a YUI gallery module.
+     * Adds a call to make use of a YUI gallery module. DEPRECATED DO NOT USE!!!
      *
-     * This function adds code to the page footer that will tell a YUI instance to
-     * use the requested gallery module(s) and then call the desired function.
-     *
-     * @todo Once YUI support loading skins from the gallery the if to use
-     * external yui libs should be fixed so that it calls;
+     * @deprecated DO NOT USE
      *
      * @param string|array $modules One or more gallery modules to require
      * @param string $version
@@ -607,15 +617,35 @@ class page_requirements_manager {
      */
     public function js_gallery_module($modules, $version, $function, array $arguments = null, $ondomready = false) {
         global $CFG;
+        debugging('This function will be removed before 2.0 is released please change it from js_gallery_module to yui_module', DEBUG_DEVELOPER);
+        $this->yui_module($modules, $function, $arguments, $version, $ondomready);
+    }
+
+    /**
+     * Creates a JavaScript function call that requires one or more modules to be loaded
+     *
+     * This function can be used to include all of the standard YUI module types within JavaScript:
+     *     - YUI3 modules    [node, event, io]
+     *     - YUI2 modules    [yui2-*]
+     *     - Moodle modules  [moodle-*]
+     *     - Gallery modules [gallery-*]
+     *
+     * @param array|string $modules One or more modules
+     * @param string $function The function to call once modules have been loaded
+     * @param array $arguments An array of arguments to pass to the function
+     * @param string $galleryversion The gallery version to use
+     * @param bool $ondomready
+     */
+    public function yui_module($modules, $function, array $arguments = null, $galleryversion = '2010.04.08-12-35', $ondomready = false) {
         if (!is_array($modules)) {
             $modules = array($modules);
         }
         if (empty($CFG->useexternalyui) || true) {
             // We need to set the M.yui.galleryversion to the correct version
-            $jscode = 'M.yui.galleryversion='.json_encode($version).';';
+            $jscode = 'M.yui.galleryversion='.json_encode($galleryversion).';';
         } else {
             // Set Y's config.gallery to the version
-            $jscode = 'Y.config.gallery='.json_encode($version).';';
+            $jscode = 'Y.config.gallery='.json_encode($galleryversion).';';
         }
         $jscode .= 'Y.use('.join(',', array_map('json_encode', $modules)).',function() {'.js_writer::function_call($function, $arguments).'})';
         if ($ondomready) {
@@ -933,10 +963,12 @@ class page_requirements_manager {
         // set up global YUI3 loader object - this should contain all code needed by plugins
         // note: in JavaScript just use "YUI(M.yui.loader).use('overlay', function(Y) { .... });"
         // this needs to be done before including any other script
-        $js = "var M = {}; M.yui = {}; ";
-        $js .= "var galleryConfigFn = function(me) {var p = me.path,v=M.yui.galleryversion,f;if(/-(skin|core)/.test(me.name)) {me.type = 'css';var p = p.replace(/-(skin|core)/, '').replace(/\.js/, '.css').split('/'), f = p.pop().replace(/(\-(min|debug))/, '');if (/-skin/.test(me.name)) {p.splice(p.length,0,v,'assets','skins','sam', f);} else {p.splice(p.length,0,v,'assets', f);};} else {var p = p.split('/'), f = p.pop();p.splice(p.length,0,v, f);};me.path = p.join('/');}; ";
-        $js .= str_replace('"@GALLERYCONFIGFN@"', 'galleryConfigFn', js_writer::set_variable('M.yui.loader', $this->M_yui_loader, false) . "\n");
+        $js = "var M = {}; M.yui = {}; var moodleConfigFn = function(me) {var p = me.path, b = me.name.replace(/^moodle-/,'').split('-', 3), n = b.pop();if (/(skin|core)/.test(n)) {n = b.pop();me.type = 'css';};me.path = b.join('-')+'/'+n+'/'+n+'.'+me.type;}; var galleryConfigFn = function(me) {var p = me.path,v=M.yui.galleryversion,f;if(/-(skin|core)/.test(me.name)) {me.type = 'css';p = p.replace(/-(skin|core)/, '').replace(/\.js/, '.css').split('/'), f = p.pop().replace(/(\-(min|debug))/, '');if (/-skin/.test(me.name)) {p.splice(p.length,0,v,'assets','skins','sam', f);} else {p.splice(p.length,0,v,'assets', f);};} else {p = p.split('/'), f = p.pop();p.splice(p.length,0,v, f);};me.path = p.join('/');};\n";
+        $js .= js_writer::set_variable('M.yui.loader', $this->M_yui_loader, false) . "\n";
         $js .= js_writer::set_variable('M.cfg', $this->M_cfg, false);
+        $js = str_replace('"@GALLERYCONFIGFN@"', 'galleryConfigFn', $js);
+        $js = str_replace('"@MOODLECONFIGFN@"', 'moodleConfigFn', $js);
+
         $output .= html_writer::script($js);
 
         // link our main JS file, all core stuff should be there
