@@ -151,10 +151,6 @@ class block_navigation extends block_base {
         }
         $this->trim($navigation, $trimmode, $trimlength, ceil($trimlength/2));
 
-        if (!empty($this->config->showmyhistory) && $this->config->showmyhistory=='yes') {
-            $this->showmyhistory();
-        }
-
         // Get the expandable items so we can pass them to JS
         $expandable = array();
         $navigation->find_expandable($expandable);
@@ -202,122 +198,6 @@ class block_navigation extends block_base {
             $attributes['class'] .= ' block_js_expansion';
         }
         return $attributes;
-    }
-
-    /**
-     * This function maintains a history of the active pages that a user has visited
-     * and displays it back to the user as part of the navigation structure
-     *
-     * @return bool
-     */
-    protected function showmyhistory() {
-        global $USER, $PAGE;
-
-        // Create a navigation cache so that we can store the history
-        $cache = new navigation_cache('navigationhistory', 60*60);
-
-        // If the user isn't logged in or is a guest we don't want to display anything
-        if (!isloggedin() || isguestuser()) {
-            return false;
-        }
-
-        // Check the cache to see if we have loaded my courses already
-        // there is a very good chance that we have
-        if (!$cache->cached('history')) {
-            $cache->history = array();
-        }
-        $history = $cache->history;
-        $historycount = count($history);
-
-        // Find the initial active node
-        $child = false;
-        if ($PAGE->navigation->contains_active_node()) {
-            $child = $PAGE->navigation->find_active_node();
-        } else if ($PAGE->settingsnav->contains_active_node()) {
-            $child = $PAGE->settingsnav->find_active_node();
-        }
-        // Check that we found an active child node
-        if ($child!==false) {
-            $properties = array();
-            // Check whether this child contains another active child node
-            // this can happen if we are looking at a module
-            if ($child->contains_active_node()) {
-                $titlebits = array();
-                // Loop while the child contains active nodes and in each iteration
-                // find the next node in the correct direction
-                while ($child!==null && $child->contains_active_node()) {
-                    if (!empty($child->shorttext)) {
-                        $titlebits[] = $child->shorttext;
-                    } else {
-                        $titlebits[] = $child->text;
-                    }
-                    foreach ($child->children as $child) {
-                        if ($child->contains_active_node() || $child->isactive) {
-                            // We have found the active child or one of its parents
-                            // so break the foreach so we can proceed in the while
-                            break;
-                        }
-                    }
-                }
-                if (!empty($child->shorttext)) {
-                    $titlebits[] = $child->shorttext;
-                } else {
-                    $titlebits[] = $child->text;
-                }
-                $properties['text'] = join(' - ', $titlebits);
-                $properties['shorttext'] = join(' - ', $titlebits);
-            } else {
-                $properties['text'] = $child->text;
-                $properties['shorttext'] = $child->shorttext;
-            }
-            $properties['action'] = $child->action;
-            $properties['key'] = $child->key;
-            $properties['type'] = $child->type;
-            $properties['icon'] = $child->icon;
-
-            // Create a new navigation node object free of the main structure
-            // so that it is easily storeable and customised
-            $child = new navigation_node($properties);
-
-            // Check that this page isn't already in the history array. If it is
-            // we will remove it so that it gets added at the top and we dont get
-            // duplicate entries
-            foreach ($history as $key=>$node) {
-                if ($node->key == $child->key && $node->type == $child->type) {
-                    if ($node->action instanceof moodle_url && $child->action instanceof moodle_url && $node->action->compare($child->action)) {
-                        unset($history[$key]);
-                    } else if ($child->action instanceof moodle_url && $child->action->out_omit_querystring() == $node->action) {
-                        unset($history[$key]);
-                    } else if ($child->action == $node->action) {
-                        unset($history[$key]);
-                    }
-                }
-            }
-            // If there is more than 5 elements in the array remove the first one
-            // We want a fifo array
-            if (count($history) > 5) {
-                array_shift($history);
-            }
-            $child->nodetype = navigation_node::NODETYPE_LEAF;
-            $child->children = array();
-            // Add the child to the history array
-            array_push($history,$child);
-        }
-
-        // If we have `more than nothing` in the history display it :D
-        if ($historycount > 0) {
-            // Add a branch to hold the users history
-            $mymoodle = $PAGE->navigation->get('myprofile', navigation_node::TYPE_USER);
-            $myhistorybranch = $mymoodle->add(get_string('showmyhistorytitle', $this->blockname), null, navigation_node::TYPE_CUSTOM, null, 'myhistory');
-            foreach (array_reverse($history) as $node) {
-                $myhistorybranch->children->add($node);
-            }
-        }
-
-        // Cache the history (or update the cached history as it is)
-        $cache->history = $history;
-
-        return true;
     }
 
     /**
