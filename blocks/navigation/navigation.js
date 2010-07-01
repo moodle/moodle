@@ -106,10 +106,18 @@ M.block_navigation.classes.tree = function(Y, id, properties) {
     // Attach event to toggle expansion
     node.all('.tree_item.branch').on('click', this.toggleexpansion , this);
 
-    // Attache events to expand by AJAX
+    // Attach events to expand by AJAX
+    //var expandablenode;
     for (var i in this.expansions) {
-        this.Y.one('#'+this.expansions[i].id).on('ajaxload|click', this.init_load_ajax, this, this.expansions[i]);
-        M.block_navigation.expandablebranchcount++;
+        var expandablenode = Y.one('#'+this.expansions[i].id);
+        if (expandablenode) {
+           expandablenode.on('ajaxload|click', this.init_load_ajax, this, this.expansions[i]);
+            M.block_navigation.expandablebranchcount++;
+        } else if (M.cfg.debug) {
+            Y.one(document.body).append(Y.Node.create('<div class="notification" style="font-size:6pt;">Expandable node within navigation was missing [#'+this.expansions[i].id+']</div>'));
+        } else {
+            // Failing over silently
+        }
     }
 
     if (node.hasClass('block_js_expansion')) {
@@ -133,16 +141,16 @@ M.block_navigation.classes.tree.prototype.init_load_ajax = function(e, branch) {
     if (e.target.get('nodeName').toUpperCase() != 'P') {
         return true;
     }
-    var cfginstance = '';
+    var cfginstance = '', Y = this.Y;
     if (this.instance != null) {
         cfginstance = '&instance='+this.instance
     }
-    this.Y.io(M.cfg.wwwroot+'/lib/ajax/getnavbranch.php', {
+    Y.io(M.cfg.wwwroot+'/lib/ajax/getnavbranch.php', {
         method:'POST',
         data:'elementid='+branch.id+'&id='+branch.branchid+'&type='+branch.type+'&sesskey='+M.cfg.sesskey+cfginstance,
         on: {
             complete:this.load_ajax,
-            success:function() {this.Y.detach('click', this.init_load_ajax, e.target);}
+            success:function() {Y.detach('click', this.init_load_ajax, e.target);}
         },
         context:this,
         arguments:{
@@ -187,12 +195,12 @@ M.block_navigation.classes.tree.prototype.add_branch = function(branchobj, targe
 
     // Make the new branch into an object
     var branch = new M.block_navigation.classes.branch(this, branchobj);
-    var childrenul = false;
+    var childrenul = false, Y = this.Y;
     if (depth === 1) {
         if (!branch.children) {
             return false;
         }
-        childrenul = this.Y.Node.create('<ul></ul>');
+        childrenul = Y.Node.create('<ul></ul>');
         target.appendChild(childrenul);
     } else {
         childrenul = branch.inject_into_dom(target);
@@ -302,7 +310,7 @@ M.block_navigation.classes.branch.prototype.inject_into_dom = function(element) 
 
     var isbranch = ((this.expandable !== null || this.haschildren) && this.expansionceiling===null);
     var branchli = Y.Node.create('<li></li>');
-    var branchp = this.tree.Y.Node.create('<p class="tree_item"></p>');
+    var branchp = Y.Node.create('<p class="tree_item"></p>');
 
     if (isbranch) {
         branchli.addClass('collapsed');

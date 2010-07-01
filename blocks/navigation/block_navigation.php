@@ -158,6 +158,13 @@ class block_navigation extends block_base {
         // Get the expandable items so we can pass them to JS
         $expandable = array();
         $navigation->find_expandable($expandable);
+        if ($expansionlimit) {
+            foreach ($expandable as $key=>$node) {
+                if ($node['type'] > $expansionlimit && !($expansionlimit == navigation_node::TYPE_COURSE && $node['type'] == $expansionlimit && $node['branchid'] == SITEID)) {
+                    unset($expandable[$key]);
+                }
+            }
+        }
 
         // Initialise the JS tree object
         $module = array('name'=>'block_navigation', 'fullpath'=>'/blocks/navigation/navigation.js', 'requires'=>array('core_dock', 'io', 'node', 'dom', 'event-custom', 'json-parse'), 'strings'=>array(array('viewallcourses','moodle')));

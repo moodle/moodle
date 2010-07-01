@@ -1875,7 +1875,16 @@ class global_navigation extends navigation_node {
     public function set_expansion_limit($type) {
         $nodes = $this->find_all_of_type($type);
         foreach ($nodes as &$node) {
+            // We need to generate the full site node
+            if ($type == self::TYPE_COURSE && $node->key == SITEID) {
+                continue;
+            }
             foreach ($node->children as &$child) {
+                // We still want to show course reports and participants containers
+                // or there will be navigation missing.
+                if ($type == self::TYPE_COURSE && $child->type === self::TYPE_CONTAINER) {
+                    continue;
+                }
                 $child->display = false;
             }
         }
