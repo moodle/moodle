@@ -28,7 +28,11 @@
 #page-mod-forum-subscribers .subscribertable tr td.potential {width:42%;}
 
 /** Styles for discuss.php **/
-#page-mod-forum-discuss .discussioncontrols td {width: 33%;text-align:center;}
+#page-mod-forum-discuss .discussioncontrols {width:100%;margin:5px;}
+#page-mod-forum-discuss .displaymode {float:left;width:55%;}
+#page-mod-forum-discuss .exporttoportfolio {float:left;width:15%;text-align:right;}
+#page-mod-forum-discuss .movediscussion .movediscussionoption {float:right;width:25%;text-align:right;padding-right:10px;}
+#page-mod-forum-discuss .discussioncontrols .displaymode .singleselect {text-align:right;margin: 0;}
 
 /** Styles for view.php **/
 #page-mod-forum-view .forumaddnew {margin-bottom: 20px;}

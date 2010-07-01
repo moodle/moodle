@@ -207,26 +207,26 @@
     }
 
 /// Print the controls across the top
-
-    echo '<table width="100%" class="discussioncontrols"><tr><td>';
+    echo '<div class="discussioncontrols">';
 
     // groups selector not needed here
-
-    echo "</td><td>";
+    echo '<div class="displaymode">';
     forum_print_mode_form($discussion->id, $displaymode);
-    echo "</td><td>";
+    echo "</div>";
 
-    if (has_capability('mod/forum:exportdiscussion', $modcontext)) {
+    if (has_capability('mod/forum:exportdiscussion', $modcontext) && (!empty($CFG->enableportfolios))) {
+        echo '<div class="exporttoportfolio">';
         require_once($CFG->libdir.'/portfoliolib.php');
         $button = new portfolio_add_button();
         $button->set_callback_options('forum_portfolio_caller', array('discussionid' => $discussion->id), '/mod/forum/locallib.php');
-        $button->render();
-        echo '</td><td>';
+        $button->render();        
+        echo '</div>';        
     }
 
     if ($forum->type != 'single'
                 && has_capability('mod/forum:movediscussions', $modcontext)) {
 
+        echo '<div class="movediscussion">';
         // Popup menu to move discussions to other forums. The discussion in a
         // single discussion forum can't be moved.
         $modinfo = get_fast_modinfo($course);
@@ -250,15 +250,16 @@
                 }
             }
             if (!empty($forummenu)) {
-
-                echo "<div style=\"float:right;\">";
+                echo '<div class="movediscussionoption">';
                 $select = new url_select($forummenu, '', array(''=>get_string("movethisdiscussionto", "forum")), 'forummenu');
                 echo $OUTPUT->render($select);
                 echo "</div>";
             }
         }
+        echo "</div>";
     }
-    echo "</td></tr></table>";
+    echo '<div class="clearfloat">&nbsp;</div>';
+    echo "</div>";
 
     if (!empty($forum->blockafter) && !empty($forum->blockperiod)) {
         $a = new object();
