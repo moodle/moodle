@@ -166,8 +166,8 @@ function message_get_blocked_users($user1=null, &$user2=null) {
         $user2->isblocked = false;
     }
 
-    $blockeduserssql = "SELECT u.id, u.firstname, u.lastname, u.picture,
-                               u.imagealt, u.lastaccess, count(m.id) as messagecount
+    $userfields = user_picture::fields('u');
+    $blockeduserssql = "SELECT $userfields, u.lastaccess, count(m.id) as messagecount
                             FROM {message_contacts} mc
                             JOIN {user} u ON u.id = mc.contactid
                             LEFT OUTER JOIN {message} m ON m.useridfrom = mc.contactid AND m.useridto = :user1id1
@@ -241,12 +241,13 @@ function message_get_contacts($user1=null, &$user2=null) {
     // people in our contactlist who are offline
     $offlinecontacts = array();
     // people who are not in our contactlist but have sent us a message
-    $strangers       = array();    
+    $strangers       = array();
+
+    $userfields = user_picture::fields('u');
 
     // get all in our contactlist who are not blocked in our contact list
     // and count messages we have waiting from each of them
-    $contactsql = "SELECT u.id, u.firstname, u.lastname, u.picture,
-                          u.imagealt, u.lastaccess, count(m.id) as messagecount
+    $contactsql = "SELECT $userfields, u.lastaccess, count(m.id) as messagecount
                      FROM {message_contacts} mc
                      JOIN {user} u ON u.id = mc.contactid
                      LEFT OUTER JOIN {message} m ON m.useridfrom = mc.contactid AND m.useridto = ?
@@ -276,8 +277,7 @@ function message_get_contacts($user1=null, &$user2=null) {
 
     // get messages from anyone who isn't in our contact list and count the number
     // of messages we have from each of them
-    $strangersql = "SELECT u.id, u.firstname, u.lastname, u.picture,
-                           u.imagealt, u.lastaccess, count(m.id) as messagecount
+    $strangersql = "SELECT $userfields, u.lastaccess, count(m.id) as messagecount
                       FROM {message} m
                       JOIN {user} u  ON u.id = m.useridfrom
                       LEFT OUTER JOIN {message_contacts} mc ON mc.contactid = m.useridfrom AND mc.userid = m.useridto
