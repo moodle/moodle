@@ -7315,7 +7315,7 @@ class admin_setting_configcolourpicker extends admin_setting {
         } else if (preg_match('/^[a-zA-Z]{3, 25}$/', $data)) {
             return $data;
         } else if (empty($data)) {
-            return null;
+            return $this->defaultsetting;
         } else {
             return false;
         }
