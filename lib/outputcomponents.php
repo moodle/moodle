@@ -743,7 +743,7 @@ class single_select implements renderable {
     }
 
     /**
-     * Set's select lable
+     * Sets select's label
      * @param string $label
      * @return void
      */
@@ -851,7 +851,7 @@ class url_select implements renderable {
     }
 
     /**
-     * Set's select lable
+     * Sets select's label
      * @param string $label
      * @return void
      */
@@ -1521,6 +1521,50 @@ class html_writer {
         return $output;
     }
 
+    /**
+     * Renders form element label
+     *
+     * By default, the label is suffixed with a label separator defined in the
+     * current language pack (colon by default in the English lang pack).
+     * Adding the colon can be explicitly disabled if needed. Label separators
+     * are put outside the label tag itself so they are not read by
+     * screenreaders (accessibility).
+     *
+     * Parameter $for explicitly associates the label with a form control. When
+     * set, the value of this attribute must be the same as the value of
+     * the id attribute of the form control in the same document. When null,
+     * the label being defined is associated with the control inside the label
+     * element.
+     *
+     * @param string $text content of the label tag
+     * @param string|null $for id of the element this label is associated with, null for no association
+     * @param bool $colonize add label separator (colon) to the label text, if it is not there yet
+     * @param array $attributes to be inserted in the tab, for example array('accesskey' => 'a')
+     * @return string HTML of the label element
+     */
+    public static function label($text, $for, $colonize=true, array $attributes=array()) {
+        if (!is_null($for)) {
+            $attributes = array_merge($attributes, array('for' => $for));
+        }
+        $text = trim($text);
+        $label = self::tag('label', $text, $attributes);
+
+        if ($colonize) {
+            // the $text may end with the colon already, though it is bad string definition style
+            $colon = get_string('labelsep', 'langconfig');
+            if (!empty($colon)) {
+                $trimmed = trim($colon);
+                if ((substr($text, -strlen($trimmed)) == $trimmed) or (substr($text, -1) == ':')) {
+                    //debugging('The label text should not end with colon or other label separator,
+                    //           please fix the string definition.', DEBUG_DEVELOPER);
+                } else {
+                    $label .= $colon;
+                }
+            }
+        }
+
+        return $label;
+    }
 }
 
 // ==== JS writer and helper classes, will be probably moved elsewhere ======

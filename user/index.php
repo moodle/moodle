@@ -459,7 +459,7 @@
     } else if (count($rolenames) == 1) {
         // when all users with the same role - print its name
         echo '<div class="rolesform">';
-        echo get_string('role').': ';
+        echo get_string('role').get_string('labelsep', 'langconfig');
         $rolename = reset($rolenames);
         echo $rolename;
         echo '</div>';
@@ -499,9 +499,9 @@
             $strallparticipants = get_string('allparticipants');
         }
         if ($matchcount < $totalcount) {
-            echo $OUTPUT->heading($strallparticipants.': '.$matchcount.'/'.$totalcount . $editlink, 3);
+            echo $OUTPUT->heading($strallparticipants.get_string('labelsep', 'langconfig').$matchcount.'/'.$totalcount . $editlink, 3);
         } else {
-            echo $OUTPUT->heading($strallparticipants.': '.$matchcount . $editlink, 3);
+            echo $OUTPUT->heading($strallparticipants.get_string('labelsep', 'langconfig').$matchcount . $editlink, 3);
         }
     }
 
@@ -603,14 +603,14 @@
                     $row->cells[1]->text .= $OUTPUT->container_start('info');
 
                     if (!empty($user->role)) {
-                        $row->cells[1]->text .= get_string('role') .': '. $user->role .'<br />';
+                        $row->cells[1]->text .= get_string('role').get_string('labelsep', 'langconfig').$user->role.'<br />';
                     }
                     if ($user->maildisplay == 1 or ($user->maildisplay == 2 and ($course->id != SITEID) and !isguestuser()) or
                                 has_capability('moodle/course:viewhiddenuserfields', $context)) {
-                        $row->cells[1]->text .= get_string('email') .': ' . html_writer::link("mailto:$user->email", $user->email) . '<br />';
+                        $row->cells[1]->text .= get_string('email').get_string('labelsep', 'langconfig').html_writer::link("mailto:$user->email", $user->email) . '<br />';
                     }
                     if (($user->city or $user->country) and (!isset($hiddenfields['city']) or !isset($hiddenfields['country']))) {
-                        $row->cells[1]->text .= get_string('city') .': ';
+                        $row->cells[1]->text .= get_string('city').get_string('labelsep', 'langconfig');
                         if ($user->city && !isset($hiddenfields['city'])) {
                             $row->cells[1]->text .= $user->city;
                         }
@@ -625,10 +625,10 @@
 
                     if (!isset($hiddenfields['lastaccess'])) {
                         if ($user->lastaccess) {
-                            $row->cells[1]->text .= get_string('lastaccess') .': '. userdate($user->lastaccess);
+                            $row->cells[1]->text .= get_string('lastaccess').get_string('labelsep', 'langconfig').userdate($user->lastaccess);
                             $row->cells[1]->text .= '&nbsp; ('. format_time(time() - $user->lastaccess, $datestring) .')';
                         } else {
-                            $row->cells[1]->text .= get_string('lastaccess') .': '. get_string('never');
+                            $row->cells[1]->text .= get_string('lastaccess').get_string('labelsep', 'langconfig').get_string('never');
                         }
                     }
 

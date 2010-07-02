@@ -1091,7 +1091,7 @@ class core_renderer extends renderer_base {
         }
 
         if ($select->label) {
-            $output .= html_writer::tag('label', $select->label, array('for'=>$select->attributes['id']));
+            $output .= html_writer::label($select->label, $select->attributes['id']);
         }
 
         if ($select->helpicon instanceof help_icon) {
@@ -1162,7 +1162,7 @@ class core_renderer extends renderer_base {
         $output = '';
 
         if ($select->label) {
-            $output .= html_writer::tag('label', $select->label, array('for'=>$select->attributes['id']));
+            $output .= html_writer::label($select->label, $select->attributes['id']);
         }
 
         if ($select->helpicon instanceof help_icon) {
@@ -1369,9 +1369,9 @@ class core_renderer extends renderer_base {
                 $popuplink = new moodle_url("$url&popup=1");
 
                 $action = new popup_action('click', $popuplink, 'ratings', array('height' => 400, 'width' => 600));
-                $ratinghtml .= $aggregatelabel.': '.$this->action_link($nonpopuplink, $aggregatehtml, $action);
+                $ratinghtml .= $aggregatelabel.get_string('labelsep', 'langconfig').$this->action_link($nonpopuplink, $aggregatehtml, $action);
             } else {
-                $ratinghtml .= "{$aggregatelabel}: $aggregatehtml";
+                $ratinghtml .= $aggregatelabel.get_string('labelsep', 'langconfig').$aggregatehtml;
             }
         }
 

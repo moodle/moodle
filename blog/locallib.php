@@ -165,7 +165,7 @@ class blog_entry {
         if ($this->uniquehash && $this->content) {
             if ($externalblog = $DB->get_record('blog_external', array('id' => $this->content))) {
                 $urlparts = parse_url($externalblog->url);
-                $topiccell->text .= $OUTPUT->container(get_string('retrievedfrom', 'blog') .': '. html_writer::link($urlparts['scheme'].'://'.$urlparts['host'], $externalblog->name), 'externalblog');
+                $topiccell->text .= $OUTPUT->container(get_string('retrievedfrom', 'blog').get_string('labelsep', 'langconfig').html_writer::link($urlparts['scheme'].'://'.$urlparts['host'], $externalblog->name), 'externalblog');
             }
         }
 

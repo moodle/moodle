@@ -29,6 +29,7 @@ $string['decsep'] = '.';
 $string['firstdayofweek'] = '0';
 $string['iso6391'] = 'en';
 $string['iso6392'] = 'eng';
+$string['labelsep'] = ': ';
 $string['listsep'] = ',';
 $string['locale'] = 'en_AU.UTF-8';
 $string['localewin'] = 'English_Australia.1252';
