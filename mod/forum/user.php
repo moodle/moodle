@@ -27,7 +27,7 @@ require_once('../../config.php');
 require_once('lib.php');
 
 // Course ID
-$course  = required_param('course', PARAM_INT);
+$course  = optional_param('course', SITEID, PARAM_INT);
 // User ID
 $id      = optional_param('id', 0, PARAM_INT);
 $mode    = optional_param('mode', 'posts', PARAM_ALPHA);
