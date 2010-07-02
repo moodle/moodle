@@ -83,7 +83,7 @@ function xmldb_assignment_upgrade($oldversion) {
                     if ($filename === '') {
                         continue;
                     }
-                    if (!$fs->file_exists($context->id, $filearea, $submission->userid, '/', $filename)) {
+                    if (!$fs->file_exists($context->id, $filearea, $submission->id, '/', $filename)) {
                         $file_record = array('contextid'=>$context->id, 'filearea'=>$filearea, 'itemid'=>$submission->id, 'filepath'=>'/', 'filename'=>$filename, 'userid'=>$submission->userid);
                         if ($fs->create_file_from_pathname($file_record, $path.$item->getFilename())) {
                             unlink($path.$item->getFilename());
@@ -105,7 +105,7 @@ function xmldb_assignment_upgrade($oldversion) {
                         if ($filename === '') {
                             continue;
                         }
-                        if (!$fs->file_exists($context->id, $filearea, $submission->userid, '/', $filename)) {
+                        if (!$fs->file_exists($context->id, $filearea, $submission->id, '/', $filename)) {
                             $file_record = array('contextid'=>$context->id, 'filearea'=>$filearea, 'itemid'=>$submission->id, 'filepath'=>'/', 'filename'=>$filename,
                                                  'timecreated'=>$item->getCTime(), 'timemodified'=>$item->getMTime());
                             if ($submission->teacher) {
