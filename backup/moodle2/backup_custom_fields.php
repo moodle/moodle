@@ -101,3 +101,9 @@ class file_nested_element extends backup_nested_element {
         backup_file_manager::copy_file_moodle2backup($this->backupid, $values);
     }
 }
+
+/**
+ * Implementation of backup_optigroup_element to be used by subplugins stuff.
+ * Split just for better separation and future especialitation
+ */
+class backup_subplugin_element extends backup_optigroup_element { }

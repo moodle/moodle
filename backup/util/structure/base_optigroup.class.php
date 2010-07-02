@@ -131,7 +131,7 @@ abstract class base_optigroup extends base_nested_element {
      * Recalculate all the used elements in the optigroup, observing
      * restrictions and passing the new used to outer level
      */
-    function add_used($element) {
+    protected function add_used($element) {
         $newused = array();
         // Iterate over all the element useds, filling $newused and
         // observing the multiple setting

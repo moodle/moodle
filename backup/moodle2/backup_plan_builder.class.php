@@ -30,6 +30,7 @@ require_once($CFG->dirroot . '/backup/moodle2/backup_final_task.class.php');
 require_once($CFG->dirroot . '/backup/moodle2/backup_block_task.class.php');
 require_once($CFG->dirroot . '/backup/moodle2/backup_default_block_task.class.php');
 require_once($CFG->dirroot . '/backup/moodle2/backup_xml_transformer.class.php');
+require_once($CFG->dirroot . '/backup/moodle2/backup_subplugin.class.php');
 require_once($CFG->dirroot . '/backup/moodle2/backup_settingslib.php');
 require_once($CFG->dirroot . '/backup/moodle2/backup_stepslib.php');
 require_once($CFG->dirroot . '/backup/moodle2/backup_custom_fields.php');
