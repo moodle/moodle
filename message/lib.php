@@ -435,10 +435,10 @@ function message_get_course_contexts(&$courses) {
     return $coursecontexts;
 }
 
+/**
+ * strip off action parameters like 'removecontact'
+ */
 function message_remove_url_params($moodleurl) {
-    //this should work but doesnt for some reason
-    //return $PAGE->url->out(true);
-    
     $newurl = new moodle_url($moodleurl);
     $newurl->remove_params('addcontact','removecontact','blockcontact','unblockcontact');
     return $newurl->out();
@@ -944,8 +944,14 @@ function message_contact_link($userid, $linktype='add', $return=false, $script=n
     static $str;
 
     if (empty($script)) {
-        //$script = "index.php?tab=contacts";
-        $script = message_remove_url_params($PAGE->url).'?tab=contacts';
+        //strip off previous action params like 'removecontact'
+        $theurl = message_remove_url_params($PAGE->url);
+
+        if (strpos($theurl, '?')===false) {
+            $script = $theurl.'?tab=contacts';
+        } else {
+            $script = $theurl.'&amp;tab=contacts';
+        }
     }
 
     if (empty($str->blockcontact)) {
