@@ -60,9 +60,16 @@ foreach ($parts as $part) {
     //debug($bits);
     $version = array_shift($bits);
     if ($version == 'moodle') {
+        require_once($CFG->libdir.'/moodlelib.php');
         $frankenstyle = array_shift($bits);
+        $filename = array_pop($bits);
         $dir = get_component_directory($frankenstyle);
-        $contentfile = $dir.'/yui/'.join('/', $bits);
+        if ($mimetype == 'text/css') {
+            $bits[] = 'assets';
+            $bits[] = 'skins';
+            $bits[] = 'sam';
+        }
+        $contentfile = $dir.'/yui/'.join('/', $bits).'/'.$filename;
     } else {
         if ($version != $CFG->yui3version and $version != $CFG->yui2version and $version != 'gallery') {
             $content .= "\n// Wrong yui version $part!\n";
@@ -77,7 +84,9 @@ foreach ($parts as $part) {
     $filecontent = file_get_contents($contentfile);
 
     if ($mimetype === 'text/css') {
-        if ($version == 'gallery') {
+        if ($version == 'moodle') {
+            $filecontent = preg_replace('/([a-z_-]+)\.(png|gif)/', 'yui_image.php?file='.$version.'/'.$frankenstyle.'/'.array_shift($bits).'/$1.$2', $filecontent);
+        } else if ($version == 'gallery') {
             // search for all images in gallery module CSS and serve them through the yui_image.php script
             $filecontent = preg_replace('/([a-z_-]+)\.(png|gif)/', 'yui_image.php?file='.$version.'/'.$bits[0].'/'.$bits[1].'/$1.$2', $filecontent);
         } else {
