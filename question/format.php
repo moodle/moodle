@@ -307,7 +307,7 @@ class qformat_default {
                 if ($this->catfromfile) {
                     // find/create category object
                     $catpath = $question->category;
-                    $newcategory = $this->create_category_path( $catpath, '/');
+                    $newcategory = $this->create_category_path($catpath);
                     if (!empty($newcategory)) {
                         $this->category = $newcategory;
                     }
@@ -381,32 +381,33 @@ class qformat_default {
      * but if $getcontext is set then ignore the context and use selected category context.
      *
      * @param string catpath delimited category path
-     * @param string delimiter path delimiting character
      * @param int courseid course to search for categories
      * @return mixed category object or null if fails
      */
-    function create_category_path($catpath, $delimiter='/') {
-        $catpath = clean_param($catpath, PARAM_PATH);
-        $catnames = explode($delimiter, $catpath);
+    function create_category_path($catpath) {
+        $catnames = $this->split_category_path($catpath);
         $parent = 0;
         $category = null;
 
         // check for context id in path, it might not be there in pre 1.9 exports
         $matchcount = preg_match('/^\$([a-z]+)\$$/', $catnames[0], $matches);
-        if ($matchcount==1) {
+        if ($matchcount == 1) {
             $contextid = $this->translator->string_to_context($matches[1]);
             array_shift($catnames);
         } else {
-            $contextid = FALSE;
+            $contextid = false;
         }
-        if ($this->contextfromfile && ($contextid !== FALSE)){
+
+        if ($this->contextfromfile && $contextid !== false) {
             $context = get_context_instance_by_id($contextid);
             require_capability('moodle/question:add', $context);
         } else {
             $context = get_context_instance_by_id($this->category->contextid);
         }
+
+        // Now create any categories that need to be created.
         foreach ($catnames as $catname) {
-            if ($category = get_record( 'question_categories', 'name', $catname, 'contextid', $context->id, 'parent', $parent)) {
+            if ($category = get_record('question_categories', 'name', $catname, 'contextid', $context->id, 'parent', $parent)) {
                 $parent = $category->id;
             } else {
                 require_capability('moodle/question:managecategory', $context);
@@ -697,16 +698,16 @@ class qformat_default {
             if ($this->cattofile) {
                 if ($question->category != $trackcategory) {
                     $trackcategory = $question->category;
-                    $categoryname = $this->get_category_path($trackcategory, '/', $this->contexttofile);
+                    $categoryname = $this->get_category_path($trackcategory, $this->contexttofile);
 
                     // create 'dummy' question for category export
                     $dummyquestion = new object;
                     $dummyquestion->qtype = 'category';
                     $dummyquestion->category = $categoryname;
-                    $dummyquestion->name = "switch category to $categoryname";
+                    $dummyquestion->name = 'Switch category to ' . $categoryname;
                     $dummyquestion->id = 0;
                     $dummyquestion->questiontextformat = '';
-                    $expout .= $this->writequestion( $dummyquestion ) . "\n";
+                    $expout .= $this->writequestion($dummyquestion) . "\n";
                 }
             }
 
@@ -745,31 +746,76 @@ class qformat_default {
     /**
      * get the category as a path (e.g., tom/dick/harry)
      * @param int id the id of the most nested catgory
-     * @param string delimiter the delimiter you want
      * @return string the path
      */
-    function get_category_path($id, $delimiter='/', $includecontext = true) {
-        $path = '';
-        if (!$firstcategory = get_record('question_categories','id',$id)) {
-            error( "Error getting category record from db - " . $id );
+    function get_category_path($id, $includecontext = true) {
+
+        if (!$category = get_record('question_categories','id',$id)) {
+            error('Error getting category record from db - ' . $id);
         }
-        $category = $firstcategory;
         $contextstring = $this->translator->context_to_string($category->contextid);
+
+        $pathsections = array();
         do {
-            $name = $category->name;
+            $pathsections[] = $category->name;
             $id = $category->parent;
-            if (!empty($path)) {
-                $path = "{$name}{$delimiter}{$path}";
-            }
-            else {
-                $path = $name;
-            }
-        } while ($category = get_record( 'question_categories','id',$id ));
+        } while ($category = get_record('question_categories', 'id', $id));
 
         if ($includecontext){
-            $path = '$'.$contextstring.'$'."{$delimiter}{$path}";
+            $pathsections[] = '$' . $contextstring . '$';
         }
+
+        $path = $this->assemble_category_path(array_reverse($pathsections));
+
         return $path;
+    }
+
+    /**
+     * Convert a list of category names, possibly preceeded by one of the
+     * context tokens like $course$, into a string representation of the
+     * category path.
+     *
+     * Names are separated by / delimiters. And /s in the name are replaced by //.
+     *
+     * To reverse the process and split the paths into names, use
+     * {@link split_category_path()}.
+     *
+     * @param array $names
+     * @return string
+     */
+    protected function assemble_category_path($names) {
+        $escapednames = array();
+        foreach ($names as $name) {
+            $escapedname = str_replace('/', '//', $name);
+            if (substr($escapedname, 0, 1) == '/') {
+                $escapedname = ' ' . $escapedname;
+            }
+            if (substr($escapedname, -1) == '/') {
+                $escapedname = $escapedname . ' ';
+            }
+            $escapednames[] = $escapedname;
+        }
+        return implode('/', $escapednames);
+    }
+
+    /**
+     * Convert a string, as returned by {@link assemble_category_path()},
+     * back into an array of category names.
+     *
+     * Each category name is cleaned by a call to clean_param(, PARAM_MULTILANG),
+     * which matches the cleaning in question/category_form.php. Not that this
+     * addslashes the names, ready for insertion into the database.
+     *
+     * @param string $path
+     * @return array of category names.
+     */
+    protected function split_category_path($path) {
+        $rawnames = preg_split('~(?<!/)/(?!/)~', $path);
+        $names = array();
+        foreach ($rawnames as $rawname) {
+            $names[] = clean_param(trim(str_replace('//', '/', $rawname)), PARAM_MULTILANG);
+        }
+        return $names;
     }
 
     /**
