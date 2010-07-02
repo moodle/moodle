@@ -38,6 +38,22 @@ $course = $DB->get_record('course', array('id'=>$id), '*', MUST_EXIST);
 
 require_login($course);
 
+$PAGE->set_url('/course/publish/index.php', array('id' => $course->id));
+$PAGE->set_pagelayout('course');
+$PAGE->set_title(get_string('course') . ': ' . $course->fullname);
+$PAGE->set_heading($course->fullname);
+
+//check that the PHP xmlrpc extension is enabled
+if (!extension_loaded('xmlrpc')) {
+    $notificationerror = $OUTPUT->doc_link('admin/environment/php_extension/xmlrpc', '');
+    $notificationerror .= get_string('xmlrpcdisabledpublish', 'hub');
+    echo $OUTPUT->header();
+    echo $OUTPUT->heading(get_string('publishcourse', 'hub', $course->shortname), 3, 'main');
+    echo $OUTPUT->notification($notificationerror);
+    echo $OUTPUT->footer();
+    die();
+}
+
 if (has_capability('moodle/course:publish', get_context_instance(CONTEXT_COURSE, $id))) {
 
     $publicationmanager = new course_publish_manager();
@@ -78,12 +94,6 @@ if (has_capability('moodle/course:publish', get_context_instance(CONTEXT_COURSE,
         }
     }
 
-
-    $PAGE->set_url('/course/publish/index.php', array('id' => $course->id));
-    $PAGE->set_pagelayout('course');
-    $PAGE->set_title(get_string('course') . ': ' . $course->fullname);
-    $PAGE->set_heading($course->fullname);
-
     //if the site os registered on no hub display an error page
     $registrationmanager = new registration_manager();
     $registeredhubs = $registrationmanager->get_registered_on_hubs();
@@ -96,8 +106,7 @@ if (has_capability('moodle/course:publish', get_context_instance(CONTEXT_COURSE,
     }
 
     $renderer = $PAGE->get_renderer('core', 'publish');
-
-   
+  
     /// UNPUBLISH
     $cancel = optional_param('cancel', 0, PARAM_BOOL);
     if (!empty($cancel) and confirm_sesskey()) {

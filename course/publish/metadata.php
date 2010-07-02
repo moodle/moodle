@@ -47,13 +47,24 @@ if (empty($id)) {
 $course = $DB->get_record('course', array('id' => $id), '*', MUST_EXIST);
 require_login($course);
 
-if (has_capability('moodle/course:publish', get_context_instance(CONTEXT_COURSE, $id))) {
+//page settings
+$PAGE->set_url('/course/publish/metadata.php', array('id' => $course->id));
+$PAGE->set_pagelayout('course');
+$PAGE->set_title(get_string('course') . ': ' . $course->fullname);
+$PAGE->set_heading($course->fullname);
 
-    //page settings
-    $PAGE->set_url('/course/publish/metadata.php', array('id' => $course->id));
-    $PAGE->set_pagelayout('course');
-    $PAGE->set_title(get_string('course') . ': ' . $course->fullname);
-    $PAGE->set_heading($course->fullname);
+//check that the PHP xmlrpc extension is enabled
+if (!extension_loaded('xmlrpc')) {
+    $errornotification = $OUTPUT->doc_link('admin/environment/php_extension/xmlrpc', '');
+    $errornotification .= get_string('xmlrpcdisabledpublish', 'hub');
+    echo $OUTPUT->header();
+    echo $OUTPUT->heading(get_string('publishcourse', 'hub', $course->shortname), 3, 'main');
+    echo $OUTPUT->notification($errornotification);
+    echo $OUTPUT->footer();
+    die();
+}
+
+if (has_capability('moodle/course:publish', get_context_instance(CONTEXT_COURSE, $id))) {
 
     //retrieve hub name and hub url
     $huburl = optional_param('huburl', '', PARAM_URL);

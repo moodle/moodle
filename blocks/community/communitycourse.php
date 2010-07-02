@@ -47,9 +47,15 @@ $search = optional_param('search', null, PARAM_TEXT);
 $usercansearch = has_capability('moodle/community:add', get_context_instance(CONTEXT_USER, $USER->id));
 $usercandownload = has_capability('moodle/community:download', get_context_instance(CONTEXT_USER, $USER->id));
 if (empty($usercansearch)) {
+    $notificationerror =  get_string('cannotsearchcommunity', 'hub');
+} else if (!extension_loaded('xmlrpc')) {
+    $notificationerror = $OUTPUT->doc_link('admin/environment/php_extension/xmlrpc', '');
+    $notificationerror .= get_string('xmlrpcdisabledcommunity', 'hub');
+}
+if (!empty($notificationerror) ) {
     echo $OUTPUT->header();
     echo $OUTPUT->heading(get_string('searchcommunitycourse', 'block_community'), 3, 'main');
-    echo $OUTPUT->notification(get_string('cannotsearchcommunity', 'hub'));
+    echo $OUTPUT->notification($notificationerror);
     echo $OUTPUT->footer();
     die();
 }

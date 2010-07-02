@@ -260,4 +260,6 @@ $string['usersnumber'] = 'Number of users ({$a})';
 $string['warning'] = 'WARNING';
 $string['wrongtoken'] = 'The registration failed for some unknown reason (network?). Please try again.';
 $string['wrongurlformat'] = 'Bad URL format';
-
+$string['xmlrpcdisabledcommunity'] = 'The XML-RPC extension is not enabled on the server. You can not search and download courses.';
+$string['xmlrpcdisabledpublish'] = 'The XML-RPC extension is not enabled on the server. You can not publish courses or manage published courses.';
+$string['xmlrpcdisabledregistration'] = 'The XML-RPC extension is not enabled on the server. You will not be able to unregister or update your registration until you enable it.';
