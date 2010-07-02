@@ -16,187 +16,88 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Web services function UI
+ * Web services services UI
  *
  * @package   webservice
  * @copyright 2009 Moodle Pty Ltd (http://moodle.com)
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 require_once('../../config.php');
-require_once($CFG->libdir.'/adminlib.php');
-require_once($CFG->dirroot.'/admin/webservice/lib.php');
+require_once($CFG->libdir . '/adminlib.php');
+require_once($CFG->dirroot . '/admin/webservice/lib.php');
+require_once($CFG->dirroot . '/webservice/lib.php');
 
 $id = required_param('id', PARAM_INT);
 
-$PAGE->set_url('/admin/webservice/service_users.php', array('id'=>$id));
+$PAGE->set_url('/admin/webservice/service_users.php', array('id' => $id));
 $PAGE->navbar->ignore_active(true);
 $PAGE->navbar->add(get_string('administrationsite'));
 $PAGE->navbar->add(get_string('plugins', 'admin'));
 $PAGE->navbar->add(get_string('webservices', 'webservice'));
-$PAGE->navbar->add(get_string('externalservices', 'webservice'), new moodle_url('/admin/settings.php?section=externalservices'));
+$PAGE->navbar->add(get_string('externalservices', 'webservice'),
+        new moodle_url('/admin/settings.php?section=externalservices'));
 $PAGE->navbar->add(get_string('serviceusers', 'webservice'));
 
-$PAGE->requires->js('/admin/webservice/script.js');
-
 admin_externalpage_setup('externalserviceusers');
-echo $OUTPUT->header();
 
+$webservicemanager = new webservice();
 
 /// Get the user_selector we will need.
-$potentialuserselector = new service_user_selector('addselect', array('serviceid' => $id, 'displayallowedusers' => 0));
-$alloweduserselector = new service_user_selector('removeselect', array('serviceid' => $id, 'displayallowedusers' => 1));
+$potentialuserselector = new service_user_selector('addselect',
+                array('serviceid' => $id, 'displayallowedusers' => 0));
+$alloweduserselector = new service_user_selector('removeselect',
+                array('serviceid' => $id, 'displayallowedusers' => 1));
 
 /// Process incoming user assignments to the service
-        if (optional_param('add', false, PARAM_BOOL) && confirm_sesskey()) {
-            $userstoassign = $potentialuserselector->get_selected_users();
-            if (!empty($userstoassign)) {
-
-                foreach ($userstoassign as $adduser) {
-                    $serviceuser = new object();
-                    $serviceuser->externalserviceid = $id;
-                    $serviceuser->userid = $adduser->id;
-                    $serviceuser->timecreated = mktime();
-                    $DB->insert_record('external_services_users', $serviceuser);
-                    add_to_log(1, 'core', 'assign', $CFG->admin.'/webservice/service_users.php?id='.$id, 'add', '', $adduser->id);
-                }
-
-                $potentialuserselector->invalidate_selected_users();
-                $alloweduserselector->invalidate_selected_users();
-                }
+if (optional_param('add', false, PARAM_BOOL) && confirm_sesskey()) {
+    $userstoassign = $potentialuserselector->get_selected_users();
+    if (!empty($userstoassign)) {
+        foreach ($userstoassign as $adduser) {
+            $serviceuser = new object();
+            $serviceuser->externalserviceid = $id;
+            $serviceuser->userid = $adduser->id;
+            $webservicemanager->add_ws_authorised_user($serviceuser);
+            add_to_log(1, 'core', 'assign', $CFG->admin . '/webservice/service_users.php?id='
+                    . $id, 'add', '', $adduser->id);
         }
+        $potentialuserselector->invalidate_selected_users();
+        $alloweduserselector->invalidate_selected_users();
+    }
+}
 
 /// Process removing user assignments to the service
-        if (optional_param('remove', false, PARAM_BOOL) && confirm_sesskey()) {
-         $userstoremove = $alloweduserselector->get_selected_users();
-            if (!empty($userstoremove)) {
-
-                foreach ($userstoremove as $removeuser) {
-                    $DB->delete_records('external_services_users', array('externalserviceid' => $id, 'userid' => $removeuser->id));
-                    add_to_log(1, 'core', 'assign', $CFG->admin.'/webservice/service_users.php?id='.$id, 'remove', '', $removeuser->id);
-                }
-
-                $potentialuserselector->invalidate_selected_users();
-                $alloweduserselector->invalidate_selected_users();
-                }
+if (optional_param('remove', false, PARAM_BOOL) && confirm_sesskey()) {
+    $userstoremove = $alloweduserselector->get_selected_users();
+    if (!empty($userstoremove)) {
+        foreach ($userstoremove as $removeuser) {
+            $webservicemanager->remove_ws_authorised_user($removeuser, $id);
+            add_to_log(1, 'core', 'assign', $CFG->admin . '/webservice/service_users.php?id='
+                    . $id, 'remove', '', $removeuser->id);
         }
+        $potentialuserselector->invalidate_selected_users();
+        $alloweduserselector->invalidate_selected_users();
+    }
+}
 /// Print the form.
 /// display the UI
-?>
-<form id="assignform" method="post" action="service_users.php?id=<?php echo $id ?>"><div>
-  <input type="hidden" name="sesskey" value="<?php echo sesskey() ?>" />
+$renderer = $PAGE->get_renderer('core', 'webservice');
 
-  <table summary="" class="roleassigntable generaltable generalbox boxaligncenter" cellspacing="0">
-    <tr>
-      <td id="existingcell">
-          <p><label for="removeselect"><?php print_string('serviceusers', 'webservice'); ?></label></p>
-          <?php $alloweduserselector->display() ?>
-      </td>
-      <td id="buttonscell">
-          <div id="addcontrols">
-              <input name="add" id="add" type="submit" value="<?php echo $OUTPUT->larrow().'&nbsp;'.get_string('add'); ?>" title="<?php print_string('add'); ?>" /><br />
-          </div>
+echo $OUTPUT->header();
 
-          <div id="removecontrols">
-              <input name="remove" id="remove" type="submit" value="<?php echo get_string('remove').'&nbsp;'.$OUTPUT->rarrow(); ?>" title="<?php print_string('remove'); ?>" />
-          </div>
-      </td>
-      <td id="potentialcell">
-          <p><label for="addselect"><?php print_string('potusers', 'webservice'); ?></label></p>
-          <?php $potentialuserselector->display() ?>
-      </td>
-    </tr>
-  </table>
-</div></form>
-
-<?php
-
-/// save user settings (administrator clicked on update button)
-if (optional_param('updateuser', false, PARAM_BOOL) && confirm_sesskey()) {
-    $useridtoupdate = optional_param('userid', false, PARAM_INT);
-    $iprestriction = optional_param('iprestriction', '', PARAM_TEXT);
-    $serviceuserid = optional_param('serviceuserid', '', PARAM_INT);
-    $fromday = optional_param('fromday'.$useridtoupdate, '', PARAM_INT);
-    $frommonth = optional_param('frommonth'.$useridtoupdate, '', PARAM_INT);
-    $fromyear = optional_param('fromyear'.$useridtoupdate, '', PARAM_INT);
-    $addcap = optional_param('addcap', false, PARAM_INT);
-    $enablevaliduntil = optional_param('enablevaliduntil', false, PARAM_INT);
-    if (!empty($fromday) && !empty($frommonth) && !empty($fromyear)) {
-        $validuntil = mktime(23, 59, 59, $frommonth, $fromday, $fromyear);
-    } else {
-        $validuntil = "";
-    }
-
-    $serviceuser = new object();
-    $serviceuser->id = $serviceuserid;
-    if ($enablevaliduntil) {
-        $serviceuser->validuntil = $validuntil;
-    } else {
-        $serviceuser->validuntil = null; //the valid until field is disabled, we reset the value
-    }
-    $serviceuser->iprestriction = $iprestriction;
-    $DB->update_record('external_services_users', $serviceuser);
-
-    //TODO: assign capability
-}
+echo $OUTPUT->heading(get_string('selectauthorisedusers', 'webservice'), 3, 'main');
+$selectoroptions = new stdClass();
+$selectoroptions->serviceid = $id;
+$selectoroptions->alloweduserselector = $alloweduserselector;
+$selectoroptions->potentialuserselector = $potentialuserselector;
+echo $renderer->admin_authorised_user_selector($selectoroptions);
 
 //display the list of allowed users with their options (ip/timecreated / validuntil...)
 //check that the user has the service required capability (if needed)
-$sql = " SELECT u.id as id, esu.id as serviceuserid, u.email as email, u.firstname as firstname, u.lastname as lastname,
-                  esu.iprestriction as iprestriction, esu.validuntil as validuntil,
-                  esu.timecreated as timecreated
-                  FROM {user} u, {external_services_users} esu
-                  WHERE username <> 'guest' AND deleted = 0 AND confirmed = 1
-                        AND esu.userid = u.id
-                        AND esu.externalserviceid = ?";
-$allowedusers = $DB->get_records_sql($sql, array($id));
+$allowedusers = $webservicemanager->get_ws_authorised_users($id);
 if (!empty($allowedusers)) {
-    echo $OUTPUT->box_start('generalbox', 'alloweduserlist');
-
-    echo "<label><strong>".get_string('serviceuserssettings', 'webservice').":</strong></label>";
-    echo "<br/><br/><span style=\"font-size:85%\">"; //reduce font of the user settings
-    foreach($allowedusers as $user) {
-
-        echo print_collapsible_region_start('', 'usersettings'.$user->id,$user->firstname." ".$user->lastname.", ".$user->email,false,true,true);
-
-        //user settings form
-        $contents = "<div class=\"fcontainer clearfix\">";
-
-        //ip restriction textfield
-        $iprestid = 'iprest'.$user->id;
-        $contents .= "<div class=\"fitem\"><div class=\"fitemtitle\"><label for=\"$iprestid\">".get_string('iprestriction','webservice')." </label></div><div class=\"felement\">";
-        $contents .= '<input type="text" id="'.$iprestid.'" name="iprestriction" style="width: 30em;" value="'.s($user->iprestriction).'" />';
-        $contents .= "</div></div>";
-        //valid until date selector
-        $contents .= "<div class=\"fitem\"><div class=\"fitemtitle\"><label>".get_string('validuntil','webservice')." </label></div><div class=\"felement\">";
-        // the following date selector needs to have specific day/month/year field ids because we use javascript (enable/disable).
-        $contents .= html_writer::select_time('days', 'fromday'.$user->id, $user->validuntil);
-        $contents .= html_writer::select_time('months', 'frommonth'.$user->id, $user->validuntil);
-        $contents .= html_writer::select_time('years', 'fromyear'.$user->id, $user->validuntil);;
-        $contents .= html_writer::checkbox('enablevaliduntil', 1, !empty($user->validuntil), get_string('enabled', 'webservice'), array('id'=>'enablevaliduntil'.$user->id));
-        // TODO: init date selector using standard $PAGE->requires->js_init_call();
-
-        $contents .= "</div></div>";
-        //TO IMPLEMENT : assign the required capability (if needed)
-        $contents .=  "<div class=\"fitem\"><div class=\"fitemtitle\"><label>".get_string('addrequiredcapability','webservice')." </label></div><div class=\"felement fcheckbox\">";
-        $contents .= html_writer::checkbox('addcap', 1, 'TODO:'.get_string('addrequiredcapability', 'webservice'));
-        $contents .= '<div><input type="submit" name="submit" value="'.s(get_string('update')).'" /></div>';
-        $contents .= '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
-        $contents .= '<input type="hidden" name="id" value="'.$id.'" />';
-        $contents .= '<input type="hidden" name="userid" value="'.$user->id.'" />';
-        $contents .= '<input type="hidden" name="serviceuserid" value="'.$user->serviceuserid.'" />';
-        $contents .= '<input type="hidden" name="updateuser" value="1" />';
-        $contents .= "</div>";
-
-        echo html_writer::tag('form', array('target'=>'service_users.php', 'method'=>'post', 'id'=>'usersetting'.$user->id), $contents);
-
-        echo print_collapsible_region_end(true);
-
-
-    }
-    echo "</span>";
-    echo $OUTPUT->box_end();
+    $renderer = $PAGE->get_renderer('core', 'webservice');
+    echo $OUTPUT->heading(get_string('serviceuserssettings', 'webservice'), 3, 'main');
+    echo $renderer->admin_authorised_user_list($allowedusers, $id);
 }
-
 
 echo $OUTPUT->footer();

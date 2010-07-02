@@ -25,6 +25,32 @@
 
 require_once $CFG->libdir.'/formslib.php';
 
+/**
+ * Display the authorised user settings form
+ * Including IP Restriction, Valid until and (TODO) capability
+ */
+class external_service_authorised_user_settings_form extends moodleform {
+    function definition() {
+        global $CFG, $USER, $DB;
+
+        $mform = $this->_form;
+        $data = $this->_customdata;
+
+        $mform->addElement('header', 'serviceusersettings', get_string('serviceusersettings', 'webservice'));
+
+        $mform->addElement('text', 'iprestriction', get_string('iprestriction', 'webservice'));
+        $mform->addHelpButton('iprestriction', 'iprestriction', 'webservice');
+
+        $mform->addElement('date_selector', 'validuntil', get_string('validuntil', 'webservice'), array('optional'=>true));
+        $mform->addHelpButton('validuntil', 'validuntil', 'webservice');
+
+        $this->add_action_buttons(true, get_string('updateusersettings', 'webservice'));
+
+        $this->set_data($data);
+    }
+}
+
+
 class external_service_form extends moodleform {
     function definition() {
         global $CFG, $USER;

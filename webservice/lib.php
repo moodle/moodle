@@ -35,6 +35,84 @@ define('WEBSERVICE_AUTHMETHOD_SESSION_TOKEN', 2);
 class webservice {
 
     /**
+     * Add a user to the list of authorised user of a given service
+     * @param object $user
+     */
+    public function add_ws_authorised_user($user) {
+        global $DB;
+        $serviceuser->timecreated = mktime();
+        $DB->insert_record('external_services_users', $user);
+    }
+
+    /**
+     * Remove a user from a list of allowed user of a service
+     * @param object $user
+     * @param int $serviceid
+     */
+    public function remove_ws_authorised_user($user, $serviceid) {
+        global $DB;
+        $DB->delete_records('external_services_users',
+                array('externalserviceid' => $serviceid, 'userid' => $user->id));
+    }
+
+    /**
+     * Update service allowed user settings
+     * @param object $user
+     */
+    public function update_ws_authorised_user($user) {
+        global $DB;
+        $DB->update_record('external_services_users', $user);
+    }
+
+    /**
+     * Return list of allowed users with their options (ip/timecreated / validuntil...)
+     * for a given service
+     * @param int $serviceid
+     * @return array $users
+     */
+    public function get_ws_authorised_users($serviceid) {
+        global $DB;
+        $params = array($serviceid);
+        $sql = " SELECT u.id as id, esu.id as serviceuserid, u.email as email, u.firstname as firstname,
+                u.lastname as lastname,
+                  esu.iprestriction as iprestriction, esu.validuntil as validuntil,
+                  esu.timecreated as timecreated
+                  FROM {user} u, {external_services_users} esu
+                  WHERE username <> 'guest' AND deleted = 0 AND confirmed = 1
+                        AND esu.userid = u.id
+                        AND esu.externalserviceid = ?";
+        if (!empty($userid)) {
+            $sql .= ' AND u.id = ?';
+            $params[] = $userid;
+        }
+
+        $users = $DB->get_records_sql($sql, $params);
+        return $users;
+    }
+
+    /**
+     * Return a authorised user with his options (ip/timecreated / validuntil...)
+     * @param int $serviceid
+     * @param int $userid
+     * @return object
+     */
+    public function get_ws_authorised_user($serviceid, $userid) {
+        global $DB;
+        $params = array($serviceid, $userid);
+        $sql = " SELECT u.id as id, esu.id as serviceuserid, u.email as email, u.firstname as firstname,
+                u.lastname as lastname,
+                  esu.iprestriction as iprestriction, esu.validuntil as validuntil,
+                  esu.timecreated as timecreated
+                  FROM {user} u, {external_services_users} esu
+                  WHERE username <> 'guest' AND deleted = 0 AND confirmed = 1
+                        AND esu.userid = u.id
+                        AND esu.externalserviceid = ?
+                        AND u.id = ?";
+        $user = $DB->get_record_sql($sql, $params);
+        return $user;
+    }
+
+    /**
      * Generate all ws token needed by a user
      * @param int $userid
      */

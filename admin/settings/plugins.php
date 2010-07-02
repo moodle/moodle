@@ -330,6 +330,7 @@ if ($hassiteconfig) {
     $ADMIN->add('webservicesettings', new admin_externalpage('externalservice', get_string('externalservice', 'webservice'), "$CFG->wwwroot/$CFG->admin/webservice/service.php", 'moodle/site:config', true));
     $ADMIN->add('webservicesettings', new admin_externalpage('externalservicefunctions', get_string('externalservicefunctions', 'webservice'), "$CFG->wwwroot/$CFG->admin/webservice/service_functions.php", 'moodle/site:config', true));
     $ADMIN->add('webservicesettings', new admin_externalpage('externalserviceusers', get_string('externalserviceusers', 'webservice'), "$CFG->wwwroot/$CFG->admin/webservice/service_users.php", 'moodle/site:config', true));
+    $ADMIN->add('webservicesettings', new admin_externalpage('externalserviceusersettings', get_string('serviceusersettings', 'webservice'), "$CFG->wwwroot/$CFG->admin/webservice/service_user_settings.php", 'moodle/site:config', true));
     /// manage protocol page link
     $temp = new admin_settingpage('webserviceprotocols', get_string('manageprotocols', 'webservice'));
     $temp->add(new admin_setting_managewebserviceprotocols());
