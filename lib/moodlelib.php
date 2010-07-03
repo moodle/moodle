@@ -7189,31 +7189,47 @@ function plugin_callback($type, $name, $feature, $action, $options = null, $defa
  * Checks whether a plugin supports a specified feature.
  *
  * @param string $type Plugin type e.g. 'mod'
- * @param string $name Plugin name
+ * @param string $name Plugin name e.g. 'forum'
  * @param string $feature Feature code (FEATURE_xx constant)
  * @param mixed $default default value if feature support unknown
  * @return mixed Feature result (false if not supported, null if feature is unknown,
  *         otherwise usually true but may have other feature-specific value such as array)
  */
-function plugin_supports($type, $name, $feature, $default=null) {
+function plugin_supports($type, $name, $feature, $default = NULL) {
     global $CFG;
 
     $name = clean_param($name, PARAM_SAFEDIR); //bit of extra security
+
+    $function = null;
 
     if ($type === 'mod') {
         // we need this special case because we support subplugins in modules,
         // otherwise it would end up in infinite loop
         if ($name === 'NEWMODULE') {
-            //somebody forgot to rename the module template
+            //somebody forgot to rename the module template or module not installed
             return false;
         }
-        include_once("$CFG->dirroot/mod/$name/lib.php");
+        if (file_exists("$CFG->dirroot/mod/$name/lib.php")) {
+            include_once("$CFG->dirroot/mod/$name/lib.php");
+            $function = $type.'_'.$name.'_supports';
+            if (!function_exists($function)) {
+                // legacy non-frankenstyle function name
+                $function = $name.'_supports';
+            }
+        }
 
-        $function = $name.'_supports';
-
+    } else {
+        if (!$path = get_plugin_directory($type, $name)) {
+            // non existent plugin type
+            return false;
+        }
+        if (file_exists("$path/lib.php")) {
+            include_once("$path/lib.php");
+            $function = $type.'_'.$name.'_supports';
+        }
     }
 
-    if (function_exists($function)) {
+    if ($function and function_exists($function)) {
         $supports = $function($feature);
         if (is_null($supports)) {
             // plugin does not know - use default
@@ -8954,7 +8970,7 @@ WHERE m.useridto = :userid AND p.name='popup'";
         } else {
             $strmessages = get_string('unreadnewmessage', 'message', fullname(reset($message_users)) );
         }
-        
+
         $strgomessage = get_string('gotomessages', 'message');
         $strstaymessage = get_string('ignore','admin');
 
