@@ -7206,7 +7206,7 @@ function plugin_supports($type, $name, $feature, $default = NULL) {
         // we need this special case because we support subplugins in modules,
         // otherwise it would end up in infinite loop
         if ($name === 'NEWMODULE') {
-            //somebody forgot to rename the module template or module not installed
+            //somebody forgot to rename the module template
             return false;
         }
         if (file_exists("$CFG->dirroot/mod/$name/lib.php")) {
