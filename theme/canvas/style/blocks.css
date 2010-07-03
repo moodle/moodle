@@ -55,10 +55,6 @@
 	margin: 0.5em 0;
 }
 
-.block_loancalc table td {
-	padding: 0;
-}
-
 .block_messages .info,
 .block_online_users .info {
 	text-align: center;
