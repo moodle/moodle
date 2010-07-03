@@ -31,18 +31,22 @@ abstract class backup_subplugin {
 
     protected $subplugintype;
     protected $subpluginname;
+    protected $connectionpoint;
 
     public function __construct($subplugintype, $subpluginname) {
         $this->subplugintype = $subplugintype;
         $this->subpluginname = $subpluginname;
+        $this->connectionpoint = '';
     }
 
     public function define_subplugin_structure($connectionpoint) {
 
+        $this->connectionpoint = $connectionpoint;
+
         $methodname = 'define_' . $connectionpoint . '_subplugin_structure';
 
         if (method_exists($this, $methodname)) {
-            return $this->$methodname($connectionpoint);
+            return $this->$methodname();
         }
 
         return false;
@@ -52,10 +56,10 @@ abstract class backup_subplugin {
      * Factory method that will return one backup_subplugin_element (backup_optigroup_element)
      * with its name automatically calculated, based one the subplugin being handled (type, name)
      */
-    protected function get_subplugin_element($connectionpoint, $final_elements = null, $conditionparam = null, $conditionvalue = null) {
+    protected function get_subplugin_element($final_elements = null, $conditionparam = null, $conditionvalue = null) {
         // Something exclusive for this backup_subplugin_element (backup_optigroup_element)
         // because it hasn't XML representation
-        $name = 'optigroup_' . $this->subplugintype . '_' . $this->subpluginname . '_' . $connectionpoint;
+        $name = 'optigroup_' . $this->subplugintype . '_' . $this->subpluginname . '_' . $this->connectionpoint;
         return new backup_subplugin_element($name, $final_elements, $conditionparam, $conditionvalue);
     }
 
@@ -63,8 +67,8 @@ abstract class backup_subplugin {
      * Simple helper function that suggests one name for the main nested element in subplugins
      * It's not mandatory to use it but recommended ;-)
      */
-    protected function get_recommended_name($connectionpoint) {
-        return 'subplugin_' . $this->subplugintype . '_' . $this->subpluginname . '_' . $connectionpoint;
+    protected function get_recommended_name() {
+        return 'subplugin_' . $this->subplugintype . '_' . $this->subpluginname . '_' . $this->connectionpoint;
     }
 
 }
