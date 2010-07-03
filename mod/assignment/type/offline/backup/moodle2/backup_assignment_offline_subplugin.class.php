@@ -36,7 +36,7 @@ class backup_assignment_offline_subplugin extends backup_subplugin {
     /**
      * Returns the subplugin information to attach at assignment element
      */
-    protected function define_assignment_subplugin_structure($connectionpoint) {
+    protected function define_assignment_subplugin_structure() {
 
         return false; // This subplugin backup is only one example. Skip it.
 
@@ -62,20 +62,20 @@ class backup_assignment_offline_subplugin extends backup_subplugin {
          * levels (get_recommended_name() and 'config' in the example below). That will make things
          * on restore easier, as far as subplugin information will be clearly separted from module information.
          */
-        $subplugin = $this->get_subplugin_element($connectionpoint, null, '/assignment/assignmenttype', 'offline');
+        $subplugin = $this->get_subplugin_element(null, '/assignment/assignmenttype', 'offline');
 
         /**
          * Here we define the real structure the subplugin is going to generate - see note above. Obviously the
          * example below hasn't sense at all, we are exporting the whole config table that is 100% unrelated
          * with assignments. Take it as just one example. The only important bit is that it's highly recommened to
          * use some exclusive name in the main nested element (something that won't conflict with other subplugins/parts).
-         * So we are using 'assignment_assignment_offline' as name here (the type of the subplugin, the name of the
+         * So we are using 'subplugin_assignment_offline_assignment' as name here (the type of the subplugin, the name of the
          * subplugin and the name of the connection point). get_recommended_name() will help, in any case ;-)
          *
          * All the code below is 100% standard backup structure code, so you define the structure, the sources,
          * annotations... whatever you need
          */
-        $assassoff = new backup_nested_element($this->get_recommended_name($connectionpoint));
+        $assassoff = new backup_nested_element($this->get_recommended_name());
         $config = new backup_nested_element('config', null, array('name', 'value'));
 
         $subplugin->add_child($assassoff);
@@ -89,15 +89,15 @@ class backup_assignment_offline_subplugin extends backup_subplugin {
     /**
      * Returns the subplugin information to attach at submission element
      */
-    protected function define_submission_subplugin_structure($connectionpoint) {
+    protected function define_submission_subplugin_structure() {
 
         return false; // This subplugin backup is only one example. Skip it.
 
         // remember this has not XML representation
-        $subplugin = $this->get_subplugin_element($connectionpoint, null, '/assignment/assignmenttype', 'offline');
+        $subplugin = $this->get_subplugin_element(null, '/assignment/assignmenttype', 'offline');
 
         // type of the subplugin, name of the subplugin and name of the connection point (recommended)
-        $asssuboff = new backup_nested_element($this->get_recommended_name($connectionpoint));
+        $asssuboff = new backup_nested_element($this->get_recommended_name());
         // Why 'submission_config' name? Because it must be unique in the hierharchy and we
         // already are using 'config' above withing the same file
         $config = new backup_nested_element('submission_config', null, array('name', 'value'));
