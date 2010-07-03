@@ -79,7 +79,7 @@ if (!empty($add)) {
 
     if (plugin_supports('mod', $data->modulename, FEATURE_MOD_INTRO, true)) {
         $draftid_editor = file_get_submitted_draft_itemid('introeditor');
-        file_prepare_draft_area($draftid_editor, null, null, null);
+        file_prepare_draft_area($draftid_editor, null, null, null, null);
         $data->introeditor = array('text'=>'', 'format'=>FORMAT_HTML, 'itemid'=>$draftid_editor); // TODO: add better default
     }
 
@@ -140,7 +140,7 @@ if (!empty($add)) {
 
     if (plugin_supports('mod', $data->modulename, FEATURE_MOD_INTRO, true)) {
         $draftid_editor = file_get_submitted_draft_itemid('introeditor');
-        $currentintro = file_prepare_draft_area($draftid_editor, $context->id, $data->modulename.'_intro', 0, array('subdirs'=>true), $data->intro);
+        $currentintro = file_prepare_draft_area($draftid_editor, $context->id, 'mod_'.$data->modulename, 'intro', 0, array('subdirs'=>true), $data->intro);
         $data->introeditor = array('text'=>$currentintro, 'format'=>$data->introformat, 'itemid'=>$draftid_editor);
     }
 
@@ -321,7 +321,7 @@ if ($mform->is_cancelled()) {
         // update embedded links and save files
         if (plugin_supports('mod', $fromform->modulename, FEATURE_MOD_INTRO, true)) {
             $fromform->intro = file_save_draft_area_files($fromform->introeditor['itemid'], $modcontext->id,
-                                                          $fromform->modulename.'_intro', 0,
+                                                          'mod_'.$fromform->modulename, 'intro', 0,
                                                           array('subdirs'=>true), $fromform->introeditor['text']);
             $fromform->introformat = $fromform->introeditor['format'];
             unset($fromform->introeditor);
@@ -425,7 +425,7 @@ if ($mform->is_cancelled()) {
         $modcontext = get_context_instance(CONTEXT_MODULE, $fromform->coursemodule);
         if (plugin_supports('mod', $fromform->modulename, FEATURE_MOD_INTRO, true)) {
             $fromform->intro = file_save_draft_area_files($introeditor['itemid'], $modcontext->id,
-                                                          $fromform->modulename.'_intro', 0,
+                                                          'mod_'.$fromform->modulename, 'intro', 0,
                                                           array('subdirs'=>true), $introeditor['text']);
             $DB->set_field($fromform->modulename, 'intro', $fromform->intro, array('id'=>$fromform->instance));
         }

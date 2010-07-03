@@ -9,7 +9,7 @@ class feedback_item_label extends feedback_item_base {
     var $item_form;
     var $context;
     var $item;
-    
+
     function init() {
         global $CFG;
         $this->presentationoptions = array('maxfiles' => EDITOR_UNLIMITED_FILES, 'trusttext'=>true);
@@ -43,8 +43,8 @@ class feedback_item_label extends feedback_item_base {
                              'feedback'=>$feedback->id);
 
         $this->context = get_context_instance(CONTEXT_MODULE, $cm->id);
-        
-        
+
+
         //preparing the editor for new file-api
         $item->presentationformat = FORMAT_HTML;
         $item->presentationtrust = 1;
@@ -52,18 +52,19 @@ class feedback_item_label extends feedback_item_base {
                                             'presentation', //name of the form element
                                             $this->presentationoptions,
                                             $this->context,
-                                            'feedback_item', //the filearea
+                                            'mod_feedback',
+                                            'item', //the filearea
                                             $item->id);
-        
+
         //build the form
         $this->item_form = new feedback_label_form('edit_item.php', array('item'=>$item, 'common'=>$commonparams, 'positionlist'=>$positionlist, 'position'=>$position, 'presentationoptions'=>$this->presentationoptions));
     }
-    
+
     //this function only can used after the call of build_editform()
     function show_editform() {
         $this->item_form->display();
     }
-    
+
     function is_cancelled() {
         return $this->item_form->is_cancelled();
     }
@@ -77,37 +78,38 @@ class feedback_item_label extends feedback_item_base {
 
     function save_item() {
         global $DB;
-        
+
         if(!$item = $this->item_form->get_data()) {
             return false;
         }
-        
+
         if($item->clone_item) {
             $item->id = ''; //to clone this item
             $item->position++;
         }
 
         $item->presentation = '';
-        
+
         $item->hasvalue = $this->get_hasvalue();
         if(!$item->id) {
             $item->id = $DB->insert_record('feedback_item', $item);
         }else {
             $DB->update_record('feedback_item', $item);
         }
-        
+
         $item = file_postupdate_standard_editor($item,
                                                 'presentation',
                                                 $this->presentationoptions,
                                                 $this->context,
-                                                'feedback_item',
+                                                'mod_feedback',
+                                                'item',
                                                 $item->id);
-        
+
         $DB->update_record('feedback_item', $item);
-        
+
         return $DB->get_record('feedback_item', array('id'=>$item->id));
     }
-    
+
     function print_item($item){
         global $DB;
 
@@ -115,21 +117,21 @@ class feedback_item_label extends feedback_item_base {
         if(!$item->feedback AND $item->template) {
             $template = $DB->get_record('feedback_template', array('id'=>$item->template));
             $context = get_context_instance(CONTEXT_COURSE, $template->course);
-            $filearea = 'course_summary';
+            $filearea = 'template';
         }else {
             $cm = get_coursemodule_from_instance('feedback', $item->feedback);
             $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-            $filearea = 'feedback_item';
+            $filearea = 'item';
         }
-        
+
         $item->presentationformat = FORMAT_HTML;
         $item->presentationtrust = 1;
-        
-        $output = file_rewrite_pluginfile_urls($item->presentation, 'pluginfile.php', $context->id, $filearea, $item->id);
+
+        $output = file_rewrite_pluginfile_urls($item->presentation, 'pluginfile.php', $context->id, 'mod_feedback', $filearea, $item->id);
         echo format_text($output, FORMAT_HTML);
     }
 
-    /**     
+    /**
      * print the item at the edit-page of feedback
      *
      * @global object
@@ -138,7 +140,7 @@ class feedback_item_label extends feedback_item_base {
      */
     function print_item_preview($item) {
         global $OUTPUT, $DB;
-        
+
         if($item->dependitem) {
             if($dependitem = $DB->get_record('feedback_item', array('id'=>$item->dependitem))) {
                 echo ' <span class="feedback_depend">('.$dependitem->label.'-&gt;'.$item->dependvalue.')</span>';
@@ -146,8 +148,8 @@ class feedback_item_label extends feedback_item_base {
         }
         $this->print_item($item);
     }
-    
-    /**     
+
+    /**
      * print the item at the complete-page of feedback
      *
      * @global object
@@ -160,7 +162,7 @@ class feedback_item_label extends feedback_item_base {
         $this->print_item($item);
     }
 
-    /**     
+    /**
      * print the item at the complete-page of feedback
      *
      * @global object
@@ -179,19 +181,19 @@ class feedback_item_label extends feedback_item_base {
     function compare_value($item, $dbvalue, $dependvalue) {
         return false;
     }
-    
+
     //used by create_item and update_item functions,
     //when provided $data submitted from feedback_show_edit
     function get_presentation($data) {
         // $context = get_context_instance(CONTEXT_MODULE, $data->cmid);
-        
+
         // $presentation = new object();
         // $presentation->id = null;
         // $presentation->definition = '';
         // $presentation->format = FORMAT_HTML;
-        
+
         // $draftid_editor = file_get_submitted_draft_itemid('presentation');
-        // $currenttext = file_prepare_draft_area($draftid_editor, $context->id, 'feedback_item_label', $presentation->id, array('subdirs'=>true), $presentation->definition);
+        // $currenttext = file_prepare_draft_area($draftid_editor, $context->id, 'mod_feedback', 'item_label', $presentation->id, array('subdirs'=>true), $presentation->definition);
         // $presentation->entry = array('text'=>$currenttext, 'format'=>$presentation->format, 'itemid'=>$draftid_editor);
 
         // return $data->presentation;
@@ -199,9 +201,9 @@ class feedback_item_label extends feedback_item_base {
 
     function postupdate($item) {
         global $DB;
-        
+
         $context = get_context_instance(CONTEXT_MODULE, $item->cmid);
-        $item = file_postupdate_standard_editor($item, 'presentation', $this->presentationoptions, $context, 'feedback_item', $item->id);
+        $item = file_postupdate_standard_editor($item, 'presentation', $this->presentationoptions, $context, 'mod_feedback', 'item', $item->id);
 
         // $item = new object();
         // $item->id = $data->id
@@ -210,11 +212,11 @@ class feedback_item_label extends feedback_item_base {
         }
         return false;
     }
-    
+
     function get_hasvalue() {
         return 0;
     }
-    
+
     function can_switch_require() {
         return false;
     }

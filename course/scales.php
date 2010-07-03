@@ -84,7 +84,7 @@ if ($scales = $DB->get_records("scale", array("courseid"=>$course->id), "name AS
 
     foreach ($scales as $scale) {
 
-        $scale->description = file_rewrite_pluginfile_urls($scale->description, 'pluginfile.php', $systemcontext->id, 'grade_scale', $scale->id);
+        $scale->description = file_rewrite_pluginfile_urls($scale->description, 'pluginfile.php', $systemcontext->id, 'grade', 'scale', $scale->id);
 
         $scalemenu = make_menu_from_list($scale->scale);
 
@@ -110,7 +110,7 @@ if ($scales = $DB->get_records("scale", array("courseid"=>0), "name ASC")) {
     echo $OUTPUT->heading($strstandardscales);
     foreach ($scales as $scale) {
 
-        $scale->description = file_rewrite_pluginfile_urls($scale->description, 'pluginfile.php', $systemcontext->id, 'grade_scale', $scale->id);
+        $scale->description = file_rewrite_pluginfile_urls($scale->description, 'pluginfile.php', $systemcontext->id, 'grade', 'scale', $scale->id);
 
         $scalemenu = make_menu_from_list($scale->scale);
 

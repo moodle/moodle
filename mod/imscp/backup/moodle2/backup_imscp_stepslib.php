@@ -51,7 +51,7 @@ class backup_imscp_activity_structure_step extends backup_activity_structure_ste
         // (none)
 
         // Define file annotations
-        $imscp->annotate_files(array('imscp_intro'), null); // This file area hasn't itemid
+        $imscp->annotate_files('mod_imscp', 'intro', null); // This file area hasn't itemid
         /**
          * Don't annotate contents for now. It breaks backup as far as it's using itemid for storing
          * revisions. Each element only can have one files anotation and itemid must be null or id for all them
@@ -62,7 +62,7 @@ class backup_imscp_activity_structure_step extends backup_activity_structure_ste
          *
          * TODO: To decide MDL-22315 comments about this.
          */
-        // $imscp->annotate_files(array('imscp_content'), 'revision'); // This file area uses 'revision' as itemid
+        $imscp->annotate_files('mod_imscp', 'content', null); // TODO: backup everything as is for now, the revision would be the same after restore
 
         // Return the root element (imscp), wrapped into standard activity structure
         return $this->prepare_activity_structure($imscp);

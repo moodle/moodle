@@ -26,8 +26,7 @@ if (has_capability('moodle/grade:manage', $systemcontext)
         // new CFG variable for gradebook (what roles to display)
         $temp->add(new admin_setting_special_gradebookroles());
 
-        // enable outcomes checkbox
-        $temp->add(new admin_setting_configcheckbox('enableoutcomes', get_string('enableoutcomes', 'grades'), get_string('enableoutcomes_help', 'grades'), 0));
+        // enable outcomes checkbox now in subsystems area
 
         $temp->add(new admin_setting_grade_profilereport());
 

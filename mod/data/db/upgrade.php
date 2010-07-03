@@ -107,14 +107,14 @@ function xmldb_data_upgrade($oldversion) {
                     continue;
                 }
 
-                $filearea = 'data_content';
+                $filearea = 'content';
                 $oldfilename = $content->content;
                 $filename    = clean_param($oldfilename, PARAM_FILE);
                 if ($filename === '') {
                     continue;
                 }
-                if (!$fs->file_exists($context->id, $filearea, $content->id, '/', $filename)) {
-                    $file_record = array('contextid'=>$context->id, 'filearea'=>$filearea, 'itemid'=>$content->id, 'filepath'=>'/', 'filename'=>$filename, 'userid'=>$content->userid);
+                if (!$fs->file_exists($context->id, 'mod_data', $filearea, $content->id, '/', $filename)) {
+                    $file_record = array('contextid'=>$context->id, 'component'=>'mod_data', 'filearea'=>$filearea, 'itemid'=>$content->id, 'filepath'=>'/', 'filename'=>$filename, 'userid'=>$content->userid);
                     if ($fs->create_file_from_pathname($file_record, $filepath)) {
                         unlink($filepath);
                         if ($oldfilename !== $filename) {
@@ -124,7 +124,7 @@ function xmldb_data_upgrade($oldversion) {
                         if ($content->type == 'picture') {
                             // migrate thumb
                             $filepath = "$CFG->dataroot/$content->course/$CFG->moddata/data/$content->dataid/$content->fieldid/$content->recordid/thumb/$content->content";
-                            if (!$fs->file_exists($context->id, $filearea, $content->id, '/', 'thumb_'.$filename)) {
+                            if (!$fs->file_exists($context->id, 'mod_data', $filearea, $content->id, '/', 'thumb_'.$filename)) {
                                 $file_record['filename'] = 'thumb_'.$file_record['filename'];
                                 $fs->create_file_from_pathname($file_record, $filepath);
                                 unlink($filepath);

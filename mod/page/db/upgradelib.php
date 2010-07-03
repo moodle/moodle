@@ -111,15 +111,15 @@ function page_20_migrate_candidate($candidate, $fs, $format) {
     $page = resource_migrate_to_module('page', $candidate, $page);
 
     // now try to migrate files from site files
-    // noite: this can not work for html pages or files with other relatively linked files :-(
+    // note: this can not work for html pages or files with other relatively linked files :-(
     $siteid = get_site()->id;
     if (preg_match_all("|$CFG->wwwroot/file.php(\?file=)?/$siteid(/[^\s'\"&\?#]+)|", $page->content, $matches)) {
         $context     = get_context_instance(CONTEXT_MODULE, $candidate->cmid);
         $sitecontext = get_context_instance(CONTEXT_COURSE, $siteid);
-        $file_record = array('contextid'=>$context->id, 'filearea'=>'page_content', 'itemid'=>0);
+        $file_record = array('contextid'=>$context->id, 'component'=>'mod_page', 'filearea'=>'content', 'itemid'=>0);
         $fs = get_file_storage();
         foreach ($matches[2] as $i=>$sitefile) {
-            if (!$file = $fs->get_file_by_hash(sha1($sitecontext->id.'course_content0'.$sitefile))) {
+            if (!$file = $fs->get_file_by_hash(sha1("/$sitecontext->id/course/legacy/0".$sitefile))) {
                 continue;
             }
             try {

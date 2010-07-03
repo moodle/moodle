@@ -75,6 +75,7 @@ class repository_local extends repository {
                 $itemid   = $params['itemid'];
                 $filename = $params['filename'];
                 $filearea = $params['filearea'];
+                $component = $params['component'];
                 $filepath = $params['filepath'];
                 $context  = get_context_instance_by_id($params['contextid']);
             }
@@ -82,6 +83,7 @@ class repository_local extends repository {
             $itemid   = null;
             $filename = null;
             $filearea = null;
+            $component = null;
             $filepath = null;
             $context  = get_system_context();
         }
@@ -89,7 +91,7 @@ class repository_local extends repository {
         try {
             $browser = get_file_browser();
 
-            if ($fileinfo = $browser->get_file_info($context, $filearea, $itemid, $filepath, $filename)) {
+            if ($fileinfo = $browser->get_file_info($context, $component, $filearea, $itemid, $filepath, $filename)) {
                 // build path navigation
                 $pathnodes = array();
                 $encodedpath = base64_encode(serialize($fileinfo->get_params()));
@@ -117,7 +119,7 @@ class repository_local extends repository {
                         $encodedpath = base64_encode(serialize($params));
                         // hide user_private area from local plugin, user should
                         // use private file plugin to access private files
-                        if ($params['filearea'] == 'user_private') {
+                        if ($params['component'] = 'user' and $params['filearea'] == 'private') {
                             continue;
                         }
                         $node = array(
@@ -182,7 +184,7 @@ class repository_local extends repository {
      * @param string $new_filepath the new path in draft area
      * @return array The information of file
      */
-    public function copy_to_area($encoded, $new_filearea='user_draft', $new_itemid = '', $new_filepath = '/', $new_filename = '') {
+    public function copy_to_area($encoded, $new_filearea='ignored', $new_itemid = '', $new_filepath = '/', $new_filename = '') {
         global $USER, $DB;
         $info = array();
 
@@ -191,14 +193,15 @@ class repository_local extends repository {
         $user_context = get_context_instance(CONTEXT_USER, $USER->id);
         // the final file
         $contextid  = $params['contextid'];
+        $component  = $params['component'];
         $filearea   = $params['filearea'];
         $filepath   = $params['filepath'];
         $filename   = $params['filename'];
         $fileitemid = $params['itemid'];
         $context    = get_context_instance_by_id($contextid);
         try {
-            $file_info = $browser->get_file_info($context, $filearea, $fileitemid, $filepath, $filename);
-            $file_info->copy_to_storage($user_context->id, $new_filearea, $new_itemid, $new_filepath, $new_filename);
+            $file_info = $browser->get_file_info($context, $component, $filearea, $fileitemid, $filepath, $filename);
+            $file_info->copy_to_storage($user_context->id, 'user', 'draft', $new_itemid, $new_filepath, $new_filename);
         } catch (Exception $e) {
             throw $e;
         }

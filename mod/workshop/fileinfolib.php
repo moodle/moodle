@@ -54,6 +54,7 @@ class workshop_file_info_submissions_container extends file_info {
      */
     public function get_params() {
         return array('contextid'=>$this->context->id,
+                     'component'=>'mod_workshop',
                      'filearea' =>$this->filearea,
                      'itemid'   =>null,
                      'filepath' =>null,
@@ -92,7 +93,7 @@ class workshop_file_info_submissions_container extends file_info {
         global $DB;
 
         $children = array();
-        $itemids = $DB->get_records('files', array('contextid' => $this->context->id, 'filearea' => $this->filearea),
+        $itemids = $DB->get_records('files', array('contextid' => $this->context->id, 'component' => 'mod_workshop', 'filearea' => $this->filearea),
             'itemid', "DISTINCT itemid");
         foreach ($itemids as $itemid => $unused) {
             if ($child = $this->browser->get_file_info($this->context, $this->filearea, $itemid)) {

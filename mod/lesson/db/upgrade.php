@@ -121,7 +121,7 @@ function xmldb_lesson_upgrade($oldversion) {
                     continue;
                 }
 
-                $filearea = 'lesson_media_file';
+                $filearea = 'media_file';
                 $filename = clean_param($lesson->mediafile, PARAM_FILE);
                 if ($filename === '') {
                     echo $OUTPUT->notification("Unsupported lesson filename, skipping: ".$filepath);
@@ -130,8 +130,8 @@ function xmldb_lesson_upgrade($oldversion) {
                 }
 
                 $context = get_context_instance(CONTEXT_MODULE, $lesson->cmid);
-                if (!$fs->file_exists($context->id, $filearea, $lesson->id, '/', $filename)) {
-                    $file_record = array('contextid'=>$context->id, 'filearea'=>$filearea, 'itemid'=>$lesson->id, 'filepath'=>'/', 'filename'=>$filename);
+                if (!$fs->file_exists($context->id, 'mod_lesson', $filearea, $lesson->id, '/', $filename)) {
+                    $file_record = array('contextid'=>$context->id, 'component'=>'mod_lesson', 'filearea'=>$filearea, 'itemid'=>$lesson->id, 'filepath'=>'/', 'filename'=>$filename);
                     if ($fs->create_file_from_pathname($file_record, $filepath)) {
                         if ($DB->set_field('lesson', 'mediafile', $filename, array('id'=>$lesson->id))) {
                             unlink($filepath);

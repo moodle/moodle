@@ -74,10 +74,10 @@ if (!empty($course)) {
         }
     }
     $course->allowedmods = $allowedmods;
-    $course = file_prepare_standard_editor($course, 'summary', $editoroptions, $coursecontext, 'course_summary', 0);
+    $course = file_prepare_standard_editor($course, 'summary', $editoroptions, $coursecontext, 'course', 'summary', 0);
 
 } else {
-    $course = file_prepare_standard_editor($course, 'summary', $editoroptions, null, 'course_summary', null);
+    $course = file_prepare_standard_editor($course, 'summary', $editoroptions, null, 'course', 'summary', null);
 }
 
 // first create the form

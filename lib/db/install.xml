@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/db" VERSION="20100624" COMMENT="XMLDB file for core Moodle tables"
+<XMLDB PATH="lib/db" VERSION="20100625" COMMENT="XMLDB file for core Moodle tables"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
 >
@@ -2262,13 +2262,14 @@
         <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="primary key of the table, please edit me"/>
       </KEYS>
     </TABLE>
-    <TABLE NAME="files" COMMENT="description of files, content stored in sha1 file pool" PREVIOUS="message_working" NEXT="repository">
+    <TABLE NAME="files" COMMENT="description of files, content is stored in sha1 file pool" PREVIOUS="message_working" NEXT="repository">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="contenthash"/>
         <FIELD NAME="contenthash" TYPE="char" LENGTH="40" NOTNULL="true" SEQUENCE="false" COMMENT="sha1 hash of file content" PREVIOUS="id" NEXT="pathnamehash"/>
         <FIELD NAME="pathnamehash" TYPE="char" LENGTH="40" NOTNULL="true" SEQUENCE="false" COMMENT="complete file path sha1 hash - unique for each file" PREVIOUS="contenthash" NEXT="contextid"/>
-        <FIELD NAME="contextid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="The context id defined in context table - identifies the instance of plugin owning the file" PREVIOUS="pathnamehash" NEXT="filearea"/>
-        <FIELD NAME="filearea" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false" COMMENT="Like &quot;coursefiles&quot;. &quot;submission&quot;, &quot;intro&quot; and &quot;content&quot; (images and swf linked from summaries), etc." PREVIOUS="contextid" NEXT="itemid"/>
+        <FIELD NAME="contextid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="The context id defined in context table - identifies the instance of plugin owning the file" PREVIOUS="pathnamehash" NEXT="component"/>
+        <FIELD NAME="component" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false" COMMENT="Full name of the component owning the area" PREVIOUS="contextid" NEXT="filearea"/>
+        <FIELD NAME="filearea" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false" COMMENT="Like &quot;coursefiles&quot;. &quot;submission&quot;, &quot;intro&quot; and &quot;content&quot; (images and swf linked from summaries), etc." PREVIOUS="component" NEXT="itemid"/>
         <FIELD NAME="itemid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Optional - some plugin specific item id (eg. forum post, blog entry or assignment submission, user id for user files)" PREVIOUS="filearea" NEXT="filepath"/>
         <FIELD NAME="filepath" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="Optional - relative path to file from module content root, useful in Scorm and Resource mod - most of the mods do not need this" PREVIOUS="itemid" NEXT="filename"/>
         <FIELD NAME="filename" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="The full Unicode name of this file (case sensitive) - some chars are not allowed though" PREVIOUS="filepath" NEXT="userid"/>
@@ -2289,8 +2290,8 @@
         <KEY NAME="userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id" PREVIOUS="contextid"/>
       </KEYS>
       <INDEXES>
-        <INDEX NAME="filearea-contextid-itemid" UNIQUE="false" FIELDS="filearea, contextid, itemid" NEXT="contenthash"/>
-        <INDEX NAME="contenthash" UNIQUE="false" FIELDS="contenthash" PREVIOUS="filearea-contextid-itemid" NEXT="pathnamehash"/>
+        <INDEX NAME="component-filearea-contextid-itemid" UNIQUE="false" FIELDS="component, filearea, contextid, itemid" NEXT="contenthash"/>
+        <INDEX NAME="contenthash" UNIQUE="false" FIELDS="contenthash" PREVIOUS="component-filearea-contextid-itemid" NEXT="pathnamehash"/>
         <INDEX NAME="pathnamehash" UNIQUE="true" FIELDS="pathnamehash" PREVIOUS="contenthash"/>
       </INDEXES>
     </TABLE>

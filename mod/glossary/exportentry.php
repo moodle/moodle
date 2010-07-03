@@ -106,13 +106,13 @@ if (!data_submitted() or !$confirm or !confirm_sesskey()) {
     // move attachments too
     $fs = get_file_storage();
 
-    if ($oldfiles = $fs->get_area_files($context->id, 'glossary_attachment', $entry->id)) {
+    if ($oldfiles = $fs->get_area_files($context->id, 'mod_glossary', 'attachment', $entry->id)) {
         foreach ($oldfiles as $oldfile) {
             $file_record = new object();
             $file_record->contextid = $maincontext->id;
             $fs->create_file_from_storedfile($file_record, $oldfile);
         }
-        $fs->delete_area_files($context->id, 'glossary_attachment', $entry->id);
+        $fs->delete_area_files($context->id, 'mod_glossary', 'attachment', $entry->id);
         $entry->attachment = '1';
     } else {
         $entry->attachment = '0';

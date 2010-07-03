@@ -202,7 +202,7 @@ class mod_workshop_renderer extends plugin_renderer_base {
 
         $content = format_text($submission->content, $submission->contentformat);
         $content = file_rewrite_pluginfile_urls($content, 'pluginfile.php', $this->page->context->id,
-                                                        'workshop_submission_content', $submission->id);
+                                                        'workshop_submission', 'content', $submission->id);
         $o .= $this->output->container($content, 'content');
 
         $o .= $this->submission_attachments($submission);
@@ -228,7 +228,7 @@ class mod_workshop_renderer extends plugin_renderer_base {
 
         $fs     = get_file_storage();
         $ctx    = $this->page->context;
-        $files  = $fs->get_area_files($ctx->id, 'workshop_submission_attachment', $submission->id);
+        $files  = $fs->get_area_files($ctx->id, 'mod_workshop', 'submission_attachment', $submission->id);
 
         $outputimgs     = "";   // images to be displayed inline
         $outputfiles    = "";   // list of attachment files
@@ -241,7 +241,7 @@ class mod_workshop_renderer extends plugin_renderer_base {
             $filepath   = $file->get_filepath();
             $filename   = $file->get_filename();
             $fileurl    = file_encode_url($CFG->wwwroot . '/pluginfile.php',
-                                '/' . $ctx->id . '/workshop_submission_attachment/' . $submission->id . $filepath . $filename, true);
+                                '/' . $ctx->id . '/mod_workshop/submission_attachment/' . $submission->id . $filepath . $filename, true);
             $type       = $file->get_mimetype();
             $type       = mimeinfo_from_type("type", $type);
             $image      = html_writer::empty_tag('img', array('src'=>$this->output->pix_url(file_mimetype_icon($type)), 'alt'=>$type, 'class'=>'icon'));
@@ -349,7 +349,7 @@ class mod_workshop_renderer extends plugin_renderer_base {
 
         $content = format_text($example->content, $example->contentformat);
         $content = file_rewrite_pluginfile_urls($content, 'pluginfile.php', $this->page->context->id,
-                                                        'workshop_submission_content', $example->id);
+                                                        'workshop_submission', 'content', $example->id);
         $o .= $this->output->container($content, 'content');
 
         $o .= $this->submission_attachments($example);

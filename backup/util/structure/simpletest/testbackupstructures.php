@@ -82,14 +82,14 @@ class backup_structure_test extends UnitTestCaseUsingDatabase {
         // With two related file
         $f1_forum_data = (object)array(
                                      'contenthash' => 'testf1', 'contextid' => $this->contextid,
-                                     'filearea' => 'forum_intro', 'filename' => 'tf1', 'itemid' => 0,
+                                     'component'=>'mod_forum', 'filearea' => 'intro', 'filename' => 'tf1', 'itemid' => 0,
                                      'filesize' => 123, 'timecreated' => 0, 'timemodified' => 0,
                                      'pathnamehash' => 'testf1'
                                  );
         $DB->insert_record('files', $f1_forum_data);
         $f2_forum_data = (object)array(
                                      'contenthash' => 'tesft2', 'contextid' => $this->contextid,
-                                     'filearea' => 'forum_intro', 'filename' => 'tf2', 'itemid' => 0,
+                                     'component'=>'mod_forum', 'filearea' => 'intro', 'filename' => 'tf2', 'itemid' => 0,
                                      'filesize' => 123, 'timecreated' => 0, 'timemodified' => 0,
                                      'pathnamehash' => 'testf2'
                                  );
@@ -112,15 +112,15 @@ class backup_structure_test extends UnitTestCaseUsingDatabase {
         $p4id = $DB->insert_record('forum_posts', $post4);
         // With two related file
         $f1_post1 = (object)array(
-                                'contenthash' => 'testp1', 'contextid' => $this->contextid,
-                                'filearea' => 'forum_post', 'filename' => 'tp1', 'itemid' => $p1id,
+                                'contenthash' => 'testp1', 'contextid' => $this->contextid, 'component'=>'mod_forum',
+                                'filearea' => 'post', 'filename' => 'tp1', 'itemid' => $p1id,
                                 'filesize' => 123, 'timecreated' => 0, 'timemodified' => 0,
                                 'pathnamehash' => 'testp1'
                             );
         $DB->insert_record('files', $f1_post1);
         $f1_post2 = (object)array(
-                                'contenthash' => 'testp2', 'contextid' => $this->contextid,
-                                'filearea' => 'forum_attachment', 'filename' => 'tp2', 'itemid' => $p2id,
+                                'contenthash' => 'testp2', 'contextid' => $this->contextid, 'component'=>'mod_forum',
+                                'filearea' => 'attachment', 'filename' => 'tp2', 'itemid' => $p2id,
                                 'filesize' => 123, 'timecreated' => 0, 'timemodified' => 0,
                                 'pathnamehash' => 'testp2'
                             );
@@ -293,10 +293,11 @@ class backup_structure_test extends UnitTestCaseUsingDatabase {
         $rating->set_source_alias('rating', 'post_rating'); // Map the 'rating' value from DB to 'post_rating' final element
 
         // Mark to detect files of type 'forum_intro' in forum (and not item id)
-        $forum->annotate_files(array('forum_intro'), null);
+        $forum->annotate_files('mod_forum', 'intro', null);
 
         // Mark to detect file of type 'forum_post' and 'forum_attachment' in post (with itemid being post->id)
-        $post->annotate_files(array('forum_post', 'forum_attachment'), 'id');
+        $post->annotate_files('mod_forun', 'post', 'id');
+        $post->annotate_files('mod_forum', 'attachment', 'id');
 
         // Mark various elements to be annotated
         $discussion->annotate_ids('user1', 'userid');
@@ -569,30 +570,21 @@ class backup_structure_test extends UnitTestCaseUsingDatabase {
         }
 
         // Try various incorrect file annotations
-        $ne = new backup_nested_element('test', 'one', 'two', 'three');
-        try {
-            $ne->annotate_files('notanarray', null); // Incorrect first param
-            $this->assertTrue(false, 'base_element_struct_exception expected');
-        } catch (exception $e) {
-            $this->assertTrue($e instanceof base_element_struct_exception);
-            $this->assertEqual($e->errorcode, 'annotate_files_requires_array_of_areas');
-            $this->assertEqual($e->a, 'notanarray');
-        }
 
         $ne = new backup_nested_element('test', 'one', 'two', 'three');
-        $ne->annotate_files(array('test_filearea'), null);
+        $ne->annotate_files('test', 'filearea', null);
         try {
-            $ne->annotate_files(array('test_filearea'), null); // Try to add annotations twice
+            $ne->annotate_files('test', 'filearea', null); // Try to add annotations twice
             $this->assertTrue(false, 'base_element_struct_exception expected');
         } catch (exception $e) {
             $this->assertTrue($e instanceof base_element_struct_exception);
-            $this->assertEqual($e->errorcode, 'annotate_files_already_defined');
+            $this->assertEqual($e->errorcode, 'annotate_files_duplicate_annotation');
             $this->assertEqual($e->a, 'test');
         }
 
         $ne = new backup_nested_element('test', 'one', 'two', 'three');
         try {
-            $ne->annotate_files(array('test_filearea'), 'four'); // Incorrect element
+            $ne->annotate_files('test', 'filearea', 'four'); // Incorrect element
             $this->assertTrue(false, 'base_element_struct_exception expected');
         } catch (exception $e) {
             $this->assertTrue($e instanceof base_element_struct_exception);

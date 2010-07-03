@@ -25,7 +25,7 @@ class assignment_online extends assignment_base {
         $submission = $this->get_submission($USER->id, false);
 
         //Guest can not submit nor edit an assignment (bug: 4604)
-        if (!has_capability('mod/assignment:submit', $context)) {
+        if (!is_enrolled($this->context, $USER, 'mod/assignment:submit')) {
             $editable = false;
         } else {
             $editable = $this->isopen() && (!$submission || $this->assignment->resubmit || !$submission->timemarked);
@@ -49,7 +49,7 @@ class assignment_online extends assignment_base {
                 $data->textformat = NULL;
             }
 
-            $data = file_prepare_standard_editor($data, 'text', $editoroptions, $this->context, 'assignment_online_submission', $data->sid);
+            $data = file_prepare_standard_editor($data, 'text', $editoroptions, $this->context, 'mod_assignment', 'online_submission', $data->sid);
 
             $mform = new mod_assignment_online_edit_form(null, array($data, $editoroptions));
 
@@ -60,7 +60,7 @@ class assignment_online extends assignment_base {
             if ($data = $mform->get_data()) {
                 $submission = $this->get_submission($USER->id, true); //create the submission if needed & its id
 
-                $data = file_postupdate_standard_editor($data, 'text', $editoroptions, $this->context, 'assignment_online_submission', $submission->id);
+                $data = file_postupdate_standard_editor($data, 'text', $editoroptions, $this->context, 'mod_assignment', 'online_submission', $submission->id);
 
                 $submission = $this->update_submission($data);
 
@@ -90,29 +90,27 @@ class assignment_online extends assignment_base {
             echo $OUTPUT->notification(get_string('submissionsaved', 'assignment'), 'notifysuccess');
         }
 
-        if (has_capability('mod/assignment:submit', $context)) {
+        if (is_enrolled($this->context, $USER, 'mod/assignment:submit')) {
             if ($editmode) {
                 echo $OUTPUT->box_start('generalbox', 'onlineenter');
                 $mform->display();
             } else {
                 echo $OUTPUT->box_start('generalbox boxwidthwide boxaligncenter', 'online');
                 if ($submission && has_capability('mod/assignment:exportownsubmission', $this->context)) {
-                    $text = file_rewrite_pluginfile_urls($submission->data1, 'pluginfile.php', $this->context->id, 'assignment_online_submission', $submission->id);
+                    $text = file_rewrite_pluginfile_urls($submission->data1, 'pluginfile.php', $this->context->id, 'mod_assignment', 'online_submission', $submission->id);
                     echo format_text($text, $submission->data2);
                     if ($CFG->enableportfolios) {
                         require_once($CFG->libdir . '/portfoliolib.php');
                         $button = new portfolio_add_button();
                         $button->set_callback_options('assignment_portfolio_caller', array('id' => $this->cm->id), '/mod/assignment/locallib.php');
                         $fs = get_file_storage();
-                        if ($files = $fs->get_area_files($this->context->id, 'assignment_online_submission', $submission->id, "timemodified", false)) {
+                        if ($files = $fs->get_area_files($this->context->id, 'mod_assignment', 'online_submission', $submission->id, "timemodified", false)) {
                             $button->set_formats(PORTFOLIO_FORMAT_RICHHTML);
                         } else {
                             $button->set_formats(PORTFOLIO_FORMAT_PLAINHTML);
                         }
                         $button->render();
                     }
-                } else if (!has_capability('mod/assignment:submit', $context)) { //fix for #4604
-                    echo '<div style="text-align:center">'. get_string('guestnosubmit', 'assignment').'</div>';
                 } else if ($this->isopen()){    //fix for #4206
                     echo '<div style="text-align:center">'.get_string('emptysubmission', 'assignment').'</div>';
                 }
@@ -232,7 +230,7 @@ class assignment_online extends assignment_base {
         }
         $wordcount .= '</p>';
 
-        $text = file_rewrite_pluginfile_urls($submission->data1, 'pluginfile.php', $this->context->id, 'assignment_online_submission', $submission->id);
+        $text = file_rewrite_pluginfile_urls($submission->data1, 'pluginfile.php', $this->context->id, 'mod_assignment', 'online_submission', $submission->id);
         return $wordcount . format_text($text, $submission->data2);
 
 
@@ -278,7 +276,7 @@ class assignment_online extends assignment_base {
     function portfolio_load_data($caller) {
         $submission = $this->get_submission();
         $fs = get_file_storage();
-        if ($files = $fs->get_area_files($this->context->id, 'assignment_online_submission', $submission->id, "timemodified", false)) {
+        if ($files = $fs->get_area_files($this->context->id, 'mod_assignment', 'online_submission', $submission->id, "timemodified", false)) {
             $caller->set('multifiles', $files);
         }
     }
@@ -296,7 +294,7 @@ class assignment_online extends assignment_base {
     function portfolio_prepare_package($exporter, $user) {
         $submission = $this->get_submission($user->id);
         $html = format_text($submission->data1, $submission->data2);
-        $html = portfolio_rewrite_pluginfile_urls($html, $this->context->id, 'assignment_online_submission', $submission->id, $exporter->get('format'));
+        $html = portfolio_rewrite_pluginfile_urls($html, $this->context->id, 'mod_assignment', 'online_submission', $submission->id, $exporter->get('format'));
         if (in_array($exporter->get('formatclass'), array(PORTFOLIO_FORMAT_PLAINHTML, PORTFOLIO_FORMAT_RICHHTML))) {
             if ($files = $exporter->get('caller')->get('multifiles')) {
                 foreach ($files as $f) {
@@ -329,7 +327,7 @@ class assignment_online extends assignment_base {
 
         // get users submission if there is one
         $submission = $this->get_submission();
-        if (has_capability('mod/assignment:submit', $PAGE->cm->context)) {
+        if (is_enrolled($PAGE->cm->context, $USER, 'mod/assignment:submit')) {
             $editable = $this->isopen() && (!$submission || $this->assignment->resubmit || !$submission->timemarked);
         } else {
             $editable = false;
@@ -364,7 +362,7 @@ class assignment_online extends assignment_base {
         global $USER;
         require_capability('mod/assignment:view', $this->context);
 
-        $fullpath = $this->context->id.$filearea.implode('/', $args);
+        $fullpath = "/{$this->context->id}/mod_assignment/$filearea/".implode('/', $args);
 
         $fs = get_file_storage();
         if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {

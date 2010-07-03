@@ -5057,7 +5057,7 @@ function get_file_packer($mimetype='application/zip') {
             return false;
     }
 
-    require_once("$CFG->libdir/packer/$classname.php");
+    require_once("$CFG->libdir/filestorage/$classname.php");
     $fp[$mimetype] = new $classname();
 
     return $fp[$mimetype];
@@ -6905,6 +6905,7 @@ function get_core_subsystems() {
             'enrol'       => 'enrol',
             'error'       => NULL,
             'filepicker'  => NULL,
+            'files'       => 'files',
             'filters'     => NULL,
             'flashdetect' => NULL,
             'fonts'       => NULL,

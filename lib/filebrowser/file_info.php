@@ -19,14 +19,21 @@
 /**
  * Base for all file browsing classes.
  *
- * @package    moodlecore
- * @subpackage file-browser
+ * @package    core
+ * @subpackage filebrowser
  * @copyright  2008 Petr Skoda (http://skodak.org)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 /**
  * Base class for things in the tree navigated by @see{file_browser}.
+ *
+ * @package    core
+ * @subpackage filebrowser
+ * @copyright  2008 Petr Skoda (http://skodak.org)
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class file_info {
 
@@ -43,9 +50,16 @@ abstract class file_info {
      * Returns list of standard virtual file/directory identification.
      * The difference from stored_file parameters is that null values
      * are allowed in all fields
-     * @return array with keys contextid, filearea, itemid, filepath and filename
+     * @return array with keys contextid, component, filearea, itemid, filepath and filename
      */
-    public abstract function get_params();
+    public function get_params() {
+        return array('contextid' => $this->context->id,
+                     'component' => null,
+                     'filearea'  => null,
+                     'itemid'    => null,
+                     'filepath'  => null,
+                     'filename'  => null);
+    }
 
     /**
      * Returns localised visible name.
@@ -79,6 +93,7 @@ abstract class file_info {
         $params = $this->get_params();
         $encoded = array();
         $encoded[] = 'contextid='.$params['contextid'];
+        $encoded[] = 'component='.$params['component'];
         $encoded[] = 'filearea='.$params['filearea'];
         $encoded[] = 'itemid='.(is_null($params['itemid']) ? -1 : $params['itemid']);
         $encoded[] = 'filepath='.(is_null($params['filepath']) ? '' : rawurlencode($params['filepath']));
@@ -184,7 +199,7 @@ abstract class file_info {
      * @param int id of author, default $USER->id
      * @return file_info new directory
      */
-    public function create_directory($newdirname, $userid=null) {
+    public function create_directory($newdirname, $userid = NULL) {
         return null;
     }
 
@@ -196,7 +211,7 @@ abstract class file_info {
      * @param int id of author, default $USER->id
      * @return file_info new file
      */
-    public function create_file_from_string($newfilename, $content, $userid=null) {
+    public function create_file_from_string($newfilename, $content, $userid = NULL) {
         return null;
     }
 
@@ -208,7 +223,7 @@ abstract class file_info {
      * @param int id of author, default $USER->id
      * @return file_info new file
      */
-    public function create_file_from_pathname($newfilename, $pathname, $userid=null) {
+    public function create_file_from_pathname($newfilename, $pathname, $userid = NULL) {
         return null;
     }
 
@@ -220,7 +235,7 @@ abstract class file_info {
      * @param int id of author, default $USER->id
      * @return file_info new file
      */
-    public function create_file_from_storedfile($newfilename, $fid, $userid=null) {
+    public function create_file_from_storedfile($newfilename, $fid, $userid = NULL) {
         return null;
     }
 
@@ -235,13 +250,14 @@ abstract class file_info {
     /**
      * Copy content of this file to local storage, overriding current file if needed.
      * @param int $contextid
+     * @param string $component
      * @param string $filearea
      * @param int $itemid
      * @param string $filepath
      * @param string $filename
      * @return boolean success
      */
-    public function copy_to_storage($contextid, $filearea, $itemid, $filepath, $filename) {
+    public function copy_to_storage($contextid, $component, $filearea, $itemid, $filepath, $filename) {
         return false;
     }
 

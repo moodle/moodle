@@ -74,6 +74,7 @@ class mod_wiki_edit_form extends moodleform {
             $mform->addElement('filemanager', 'attachments', get_string('attachments', 'wiki'), null, page_wiki_edit::$attachmentoptions);
             $fileinfo = array(
                 'contextid'=>$contextid,
+                'component'=>'mod_wiki',
                 'filearea'=>$filearea,
                 'itemid'=>$fileitemid,
                 );

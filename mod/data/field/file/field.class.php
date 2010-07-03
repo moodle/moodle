@@ -39,18 +39,17 @@ class data_field_file extends data_field_base {
         if ($recordid){
             if ($content = $DB->get_record('data_content', array('fieldid'=>$this->field->id, 'recordid'=>$recordid))) {
 
-                file_prepare_draft_area($itemid, $this->context->id, 'data_content', $content->id);
+                file_prepare_draft_area($itemid, $this->context->id, 'mod_data', 'content', $content->id);
 
                 if (!empty($content->content)) {
-                    if ($file = $fs->get_file($this->context->id, 'data_content', $content->id, '/', $content->content)) {
+                    if ($file = $fs->get_file($this->context->id, 'mod_data', 'content', $content->id, '/', $content->content)) {
                         $usercontext = get_context_instance(CONTEXT_USER, $USER->id);
-                        if (!$files = $fs->get_area_files($usercontext->id, 'user_draft', $itemid, 'id DESC', false)) {
+                        if (!$files = $fs->get_area_files($usercontext->id, 'user', 'draft', $itemid, 'id DESC', false)) {
                             return false;
                         }
                         if (empty($content->content1)) {
                             // Print icon if file already exists
-                            $browser = get_file_browser();
-                            $src     = file_encode_url($CFG->wwwroot.'/draftfile.php/', $usercontext->id.'/user_draft/'.$itemid.'/'.$file->get_filename());
+                            $src     = file_draftfile_url($itemid, '/', $file->get_filename());
                             $displayname = '<img src="'.$OUTPUT->pix_url(file_mimetype_icon($file->get_mimetype())).'" class="icon" alt="'.$file->get_mimetype().'" />'. '<a href="'.$src.'" >'.s($file->get_filename()).'</a>';
 
                         } else {
@@ -118,7 +117,7 @@ class data_field_file extends data_field_base {
             }
         }
         $fs = get_file_storage();
-        if (!$file = $fs->get_file($this->context->id, 'data_content', $content->id, '/', $content->content)) {
+        if (!$file = $fs->get_file($this->context->id, 'mod_data', 'content', $content->id, '/', $content->content)) {
             return null;
         }
 
@@ -136,13 +135,12 @@ class data_field_file extends data_field_base {
             return '';
         }
 
-        $browser = get_file_browser();
         if (!$file = $this->get_file($recordid, $content)) {
             return '';
         }
 
         $name   = empty($content->content1) ? $file->get_filename() : $content->content1;
-        $src    = file_encode_url($CFG->wwwroot.'/pluginfile.php', '/'.$this->context->id.'/data_content/'.$content->id.'/'.$file->get_filename());
+        $src    = file_encode_url($CFG->wwwroot.'/pluginfile.php', '/'.$this->context->id.'/mod_data/content/'.$content->id.'/'.$file->get_filename());
         $width  = $this->field->param1 ? ' width  = "'.s($this->field->param1).'" ':' ';
         $height = $this->field->param2 ? ' height = "'.s($this->field->param2).'" ':' ';
 
@@ -168,17 +166,17 @@ class data_field_file extends data_field_base {
         }
 
         // delete existing files
-        $fs->delete_area_files($this->context->id, 'data_content', $content->id);
+        $fs->delete_area_files($this->context->id, 'mod_data', 'content', $content->id);
 
         $usercontext = get_context_instance(CONTEXT_USER, $USER->id);
-        $files = $fs->get_area_files($usercontext->id, 'user_draft', $value);
+        $files = $fs->get_area_files($usercontext->id, 'user', 'draft', $value);
 
         if (count($files)<2) {
             // no file
         } else {
             $count = 0;
             foreach ($files as $draftfile) {
-                $file_record = array('contextid'=>$this->context->id, 'itemid'=>$content->id, 'filepath'=>'/', 'filearea'=>'data_content');
+                $file_record = array('contextid'=>$this->context->id, 'component'=>'mod_data', 'filearea'=>'content', 'itemid'=>$content->id, 'filepath'=>'/');
                 if (!$draftfile->is_directory()) {
                     $file_record['filename'] = $draftfile->get_filename();
 

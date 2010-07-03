@@ -135,7 +135,7 @@ profile_load_data($user);
 
 // Prepare the editor and create form
 $editoroptions = array('maxfiles'=>EDITOR_UNLIMITED_FILES, 'maxbytes'=>$CFG->maxbytes, 'trusttext'=>false, 'forcehttps'=>false);
-$user = file_prepare_standard_editor($user, 'description', $editoroptions, $personalcontext, 'user_profile', $user->id);
+$user = file_prepare_standard_editor($user, 'description', $editoroptions, $personalcontext, 'user', 'profile', 0);
 $userform = new user_edit_form(null, array('editoroptions'=>$editoroptions));
 if (empty($user->country)) {
     // MDL-16308 - we must unset the value here so $CFG->country can be used as default one
@@ -172,7 +172,7 @@ if ($usernew = $userform->get_data()) {
 
     // description editor element may not exist!
     if (isset($usernew->description_editor)) {
-        $usernew = file_postupdate_standard_editor($usernew, 'description', $editoroptions, $personalcontext, 'user_profile', $usernew->id);
+        $usernew = file_postupdate_standard_editor($usernew, 'description', $editoroptions, $personalcontext, 'user', 'profile', 0);
     }
 
     $DB->update_record('user', $usernew);

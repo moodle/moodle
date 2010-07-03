@@ -562,7 +562,7 @@ abstract class moodleform {
             $draftid = $values[$elname];
             $fs = get_file_storage();
             $context = get_context_instance(CONTEXT_USER, $USER->id);
-            if (!$files = $fs->get_area_files($context->id, 'user_draft', $draftid, 'id DESC', false)) {
+            if (!$files = $fs->get_area_files($context->id, 'user', 'draft', $draftid, 'id DESC', false)) {
                 return false;
             }
             $file = reset($files);
@@ -612,7 +612,7 @@ abstract class moodleform {
             $draftid = $values[$elname];
             $fs = get_file_storage();
             $context = get_context_instance(CONTEXT_USER, $USER->id);
-            if (!$files = $fs->get_area_files($context->id, 'user_draft', $draftid, 'id DESC', false)) {
+            if (!$files = $fs->get_area_files($context->id, 'user', 'draft', $draftid, 'id DESC', false)) {
                 return false;
             }
             $file = reset($files);
@@ -651,39 +651,12 @@ abstract class moodleform {
             $draftid = $values[$elname];
             $fs = get_file_storage();
             $context = get_context_instance(CONTEXT_USER, $USER->id);
-            if (!$files = $fs->get_area_files($context->id, 'user_draft', $draftid, 'id DESC', false)) {
+            if (!$files = $fs->get_area_files($context->id, 'user', 'draft', $draftid, 'id DESC', false)) {
                 return null;
             }
             return $files;
         }
         return null;
-    }
-
-    /**
-     * Dispose form element draft files
-     *
-     * @global object $USER
-     * @param string $elname name of element
-     */
-    function dispose($elname) {
-        global $USER;
-
-        if (!$this->is_submitted() or !$this->is_validated()) {
-            return false;
-        }
-
-        $element = $this->_form->getElement($elname);
-
-        if ($element instanceof MoodleQuickForm_filepicker || $element instanceof MoodleQuickForm_filemanager) {
-            $values = $this->_form->exportValues($elname);
-            if (empty($values[$elname])) {
-                return false;
-            }
-            $draftid = $values[$elname];
-            $fs = get_file_storage();
-            $context = get_context_instance(CONTEXT_USER, $USER->id);
-            $fs->delete_area_files($context->id, 'user_draft', $draftid);
-        }
     }
 
     /**
@@ -699,7 +672,7 @@ abstract class moodleform {
      * @param int $newuserid - new userid if required
      * @return mixed stored_file object or false if error; may throw exception if duplicate found
      */
-    function save_stored_file($elname, $newcontextid, $newfilearea, $newitemid, $newfilepath='/',
+    function save_stored_file($elname, $newcontextid, $newcomponent, $newfilearea, $newitemid, $newfilepath='/',
                               $newfilename=null, $overwrite=false, $newuserid=null) {
         global $USER;
 
@@ -721,7 +694,7 @@ abstract class moodleform {
             }
             $draftid = $values[$elname];
             $context = get_context_instance(CONTEXT_USER, $USER->id);
-            if (!$files = $fs->get_area_files($context->id, 'user_draft', $draftid, 'id DESC', false)) {
+            if (!$files = $fs->get_area_files($context->id, 'user' ,'draft', $draftid, 'id DESC', false)) {
                 return false;
             }
             $file = reset($files);
@@ -730,14 +703,14 @@ abstract class moodleform {
             }
 
             if ($overwrite) {
-                if ($oldfile = $fs->get_file($newcontextid, $newfilearea, $newitemid, $newfilepath, $newfilename)) {
+                if ($oldfile = $fs->get_file($newcontextid, $newcomponent, $newfilearea, $newitemid, $newfilepath, $newfilename)) {
                     if (!$oldfile->delete()) {
                         return false;
                     }
                 }
             }
 
-            $file_record = array('contextid'=>$newcontextid, 'filearea'=>$newfilearea, 'itemid'=>$newitemid,
+            $file_record = array('contextid'=>$newcontextid, 'component'=>$newcomponent, 'filearea'=>$newfilearea, 'itemid'=>$newitemid,
                                  'filepath'=>$newfilepath, 'filename'=>$newfilename, 'userid'=>$newuserid);
             return $fs->create_file_from_storedfile($file_record, $file);
 
@@ -745,14 +718,14 @@ abstract class moodleform {
             $filename = is_null($newfilename) ? $_FILES[$elname]['name'] : $newfilename;
 
             if ($overwrite) {
-                if ($oldfile = $fs->get_file($newcontextid, $newfilearea, $newitemid, $newfilepath, $newfilename)) {
+                if ($oldfile = $fs->get_file($newcontextid, $newcomponent, $newfilearea, $newitemid, $newfilepath, $newfilename)) {
                     if (!$oldfile->delete()) {
                         return false;
                     }
                 }
             }
 
-            $file_record = array('contextid'=>$newcontextid, 'filearea'=>$newfilearea, 'itemid'=>$newitemid,
+            $file_record = array('contextid'=>$newcontextid, 'component'=>$newcomponent, 'filearea'=>$newfilearea, 'itemid'=>$newitemid,
                                  'filepath'=>$newfilepath, 'filename'=>$newfilename, 'userid'=>$newuserid);
             return $fs->create_file_from_pathname($file_record, $_FILES[$elname]['tmp_name']);
         }
@@ -784,7 +757,7 @@ abstract class moodleform {
             $draftid = $values[$elname];
             $fs = get_file_storage();
             $context = get_context_instance(CONTEXT_USER, $USER->id);
-            if (!$files = $fs->get_area_files($context->id, 'user_draft', $draftid, 'id DESC', false)) {
+            if (!$files = $fs->get_area_files($context->id, 'user', 'draft', $draftid, 'id DESC', false)) {
                 return false;
             }
             $file = reset($files);

@@ -18,7 +18,7 @@
 /**
  * This script serves draft files of current user
  *
- * @package    moodlecore
+ * @package    core
  * @subpackage file
  * @copyright  2008 Petr Skoda (http://skodak.org)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -52,11 +52,17 @@ if (count($args) == 0) { // always at least user id
 }
 
 $contextid = (int)array_shift($args);
-$filearea = array_shift($args);
+$component = array_shift($args);
+$filearea  = array_shift($args);
+$draftid   = (int)array_shift($args);
+
+if ($component !== 'user' or $filearea !== 'draft') {
+    send_file_not_found();
+}
 
 $context = get_context_instance_by_id($contextid);
 if ($context->contextlevel != CONTEXT_USER) {
-    print_error('invalidarguments');
+    send_file_not_found();
 }
 
 $userid = $context->instanceid;
@@ -64,20 +70,11 @@ if ($USER->id != $userid) {
     print_error('invaliduserid');
 }
 
-switch ($filearea) {
-    case 'user_draft':
-        $itemid = (int)array_shift($args);
-        break;
-    default:
-        send_file_not_found();
-}
-
-$relativepath = '/'.implode('/', $args);
-
 
 $fs = get_file_storage();
 
-$fullpath = $context->id.$filearea.$itemid.$relativepath;
+$relativepath = implode('/', $args);
+$fullpath = "/$context->id/user/draft/$draftid/$relativepath";
 
 if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->get_filename() == '.') {
     send_file_not_found();

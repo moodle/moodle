@@ -57,7 +57,7 @@ class backup_chat_activity_structure_step extends backup_activity_structure_step
         $message->annotate_ids('group', 'groupid');
 
         // Annotate the file areas in chat module
-        $chat->annotate_files(array('chat_intro'), null); // chat_intro area don't use itemid
+        $chat->annotate_files('mod_chat', 'intro', null); // chat_intro area don't use itemid
 
         // Return the root element (chat), wrapped into standard activity structure
         return $this->prepare_activity_structure($chat);

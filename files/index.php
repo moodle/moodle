@@ -18,7 +18,7 @@
 /**
  * Moodle file tree viewer based on YUI2 Treeview
  *
- * @package    moodlecore
+ * @package    core
  * @subpackage file
  * @copyright  2010 Dongsheng Cai <dongsheng@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -26,34 +26,18 @@
 
 require('../config.php');
 
-$courseid   = optional_param('id', 0, PARAM_INT);
-
 $contextid  = optional_param('contextid', SYSCONTEXTID, PARAM_INT);
+$component  = optional_param('component', '', PARAM_ALPHAEXT);
 $filearea   = optional_param('filearea', '', PARAM_ALPHAEXT);
 $itemid     = optional_param('itemid', -1, PARAM_INT);
 $filepath   = optional_param('filepath', '', PARAM_PATH);
 $filename   = optional_param('filename', '', PARAM_FILE);
 
-if ($courseid) {
-    $course = $DB->get_record('course', array('id'=>$courseid), '*', MUST_EXIST);
-    $context = get_context_instance(CONTEXT_COURSE, $course->id, MUST_EXIST);
-    redirect(new moodle_url('index.php', array('contextid' => $context->id, 'itemid'=> 0, 'filearea' => 'course_content')));
+$PAGE->set_url('/files/index.php', array('contextid'=>$contextid, 'component'=>$component, 'filearea'=>$filearea, 'itemid'=>$itemid, 'filepath'=>$filepath, 'filename'=>$filename));
+
+if ($component === '') {
+    $component = null;
 }
-
-$context = get_context_instance_by_id($contextid, MUST_EXIST);
-$PAGE->set_context($context);
-
-$course = null;
-$cm = null;
-if ($context->contextlevel == CONTEXT_MODULE) {
-    $cm = get_coursemodule_from_id(null, $context->instanceid, 0, false, MUST_EXIST);
-    $course = $DB->get_record('course', array('id'=>$cm->course), '*', MUST_EXIST);
-} else if ($context->contextlevel == CONTEXT_COURSE) {
-    $course = $DB->get_record('course', array('id'=>$context->instanceid), '*', MUST_EXIST);
-}
-
-require_login($course, false, $cm);
-require_capability('moodle/course:managefiles', $context);
 
 if ($filearea === '') {
     $filearea = null;
@@ -71,11 +55,21 @@ if ($filename === '') {
     $filename = null;
 }
 
+list($context, $course, $cm) = get_context_info_array($contextid);
+
+require_login($course, false, $cm);
+require_capability('moodle/course:managefiles', $context);
+
 $browser = get_file_browser();
 
-$file_info = $browser->get_file_info($context, $filearea, $itemid, $filepath, $filename);
+$file_info = $browser->get_file_info($context, $component, $filearea, $itemid, $filepath, $filename);
 
 $strfiles = get_string("files");
+
+$PAGE->navbar->add($strfiles);
+$PAGE->set_title("$SITE->shortname: $strfiles");
+$PAGE->set_heading($SITE->fullname);
+
 if ($context->contextlevel == CONTEXT_MODULE) {
     $PAGE->set_pagelayout('incourse');
 } else if ($context->contextlevel == CONTEXT_COURSE) {
@@ -84,16 +78,20 @@ if ($context->contextlevel == CONTEXT_MODULE) {
     $PAGE->set_pagelayout('admin');
 }
 
-$PAGE->navbar->add($strfiles);
-$PAGE->set_url("/files/index.php", $file_info->get_params());
-$PAGE->set_title("$SITE->shortname: $strfiles");
-$PAGE->set_heading($SITE->fullname);
-echo $OUTPUT->header();
+$output = $PAGE->get_renderer('core', 'files');
 
-$options = array();
-$options['enabled_fileareas'] = array('section_backup', 'course_backup', 'course_content', 'user_backup');
-echo $OUTPUT->box_start();
-echo $OUTPUT->moodle_file_tree_viewer($context->id, $filearea, $itemid, $filepath, $options);
-echo $OUTPUT->box_end();
+echo $output->header();
+echo $output->box_start();
 
-echo $OUTPUT->footer();
+if ($file_info) {
+    $options = array();
+    //$options['visible_areas'] = array('backup'=>array('section', 'course'), 'course'=>array('legacy'), 'user'=>array('backup'));
+    echo $output->files_tree_viewer($file_info, $options);
+} else {
+    notify(get_string('nofilesavailable', 'repository'));
+}
+
+echo $output->box_end();
+
+echo $output->footer();
+

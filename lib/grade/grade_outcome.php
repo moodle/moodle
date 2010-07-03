@@ -98,7 +98,7 @@ class grade_outcome extends grade_object {
         if (parent::delete($source)) {
             $context = get_context_instance(CONTEXT_SYSTEM);
             $fs = get_file_storage();
-            $files = $fs->get_area_files($context->id, 'grade_outcome', $this->id);
+            $files = $fs->get_area_files($context->id, 'grade', 'outcome', $this->id);
             foreach ($files as $file) {
                 $file->delete();
             }
@@ -277,7 +277,7 @@ class grade_outcome extends grade_object {
         $options = new stdClass;
         $options->noclean = true;
         $systemcontext = get_context_instance(CONTEXT_SYSTEM);
-        $description = file_rewrite_pluginfile_urls($this->description, 'pluginfile.php', $systemcontext->id, 'grade_outcome', $this->id);
+        $description = file_rewrite_pluginfile_urls($this->description, 'pluginfile.php', $systemcontext->id, 'grade', 'outcome', $this->id);
         return format_text($description, $this->descriptionformat, $options);
     }
 

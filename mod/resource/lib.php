@@ -242,7 +242,7 @@ function resource_get_coursemodule_info($coursemodule) {
         return $info;
     }
     $fs = get_file_storage();
-    $files = $fs->get_area_files($context->id, 'resource_content', 0, 'sortorder');
+    $files = $fs->get_area_files($context->id, 'mod_resource', 'content', 0, 'sortorder');
     if (count($files) >= 1) {
         $mainfile = array_pop($files);
         $info->icon = str_replace(array('.gif', '.png'), '', file_extension_icon($mainfile->get_filename()));
@@ -272,7 +272,7 @@ function resource_get_coursemodule_info($coursemodule) {
             return NULL;
         }
         // do not open any window because it would be left there after download
-        $path = '/'.$context->id.'/resource_content/'.$resource->revision.$mainfile->get_filepath().$mainfile->get_filename();
+        $path = '/'.$context->id.'/mod_resource/content/'.$resource->revision.$mainfile->get_filepath().$mainfile->get_filename();
         $fullurl = addslashes_js(file_encode_url($CFG->wwwroot.'/pluginfile.php', $path, true));
 
         // When completion information is enabled for download files, make
@@ -302,9 +302,7 @@ function resource_get_coursemodule_info($coursemodule) {
  */
 function resource_get_file_areas($course, $cm, $context) {
     $areas = array();
-    if (has_capability('moodle/course:managefiles', $context)) {
-        $areas['resource_content'] = get_string('resourcecontent', 'resource');
-    }
+    $areas['content'] = get_string('resourcecontent', 'resource');
     return $areas;
 }
 
@@ -324,25 +322,28 @@ function resource_get_file_areas($course, $cm, $context) {
 function resource_get_file_info($browser, $areas, $course, $cm, $context, $filearea, $itemid, $filepath, $filename) {
     global $CFG;
 
-    $canwrite = has_capability('moodle/course:managefiles', $context);
+    if (!has_capability('moodle/course:managefiles', $context)) {
+        // students can not peak here!
+        return null;
+    }
 
     $fs = get_file_storage();
 
-    if ($filearea === 'resource_content') {
+    if ($filearea === 'content') {
         $filepath = is_null($filepath) ? '/' : $filepath;
         $filename = is_null($filename) ? '.' : $filename;
 
         $urlbase = $CFG->wwwroot.'/pluginfile.php';
-        if (!$storedfile = $fs->get_file($context->id, $filearea, 0, $filepath, $filename)) {
+        if (!$storedfile = $fs->get_file($context->id, 'mod_resource', 'content', 0, $filepath, $filename)) {
             if ($filepath === '/' and $filename === '.') {
-                $storedfile = new virtual_root_file($context->id, $filearea, 0);
+                $storedfile = new virtual_root_file($context->id, 'mod_resource', 'content', 0);
             } else {
                 // not found
                 return null;
             }
         }
         require_once("$CFG->dirroot/mod/resource/locallib.php");
-        return new resource_content_file_info($browser, $context, $storedfile, $urlbase, $areas[$filearea], true, true, $canwrite, false);
+        return new resource_content_file_info($browser, $context, $storedfile, $urlbase, $areas[$filearea], true, true, true, false);
     }
 
     // note: resource_intro handled in file_browser automatically
@@ -353,43 +354,39 @@ function resource_get_file_info($browser, $areas, $course, $cm, $context, $filea
 /**
  * Serves the resource files.
  * @param object $course
- * @param object $cminfo
+ * @param object $cm
  * @param object $context
  * @param string $filearea
  * @param array $args
  * @param bool $forcedownload
  * @return bool false if file not found, does not return if found - justsend the file
  */
-function resource_pluginfile($course, $cminfo, $context, $filearea, $args, $forcedownload) {
+function resource_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload) {
     global $CFG, $DB;
     require_once("$CFG->libdir/resourcelib.php");
 
-    if (!$cminfo->uservisible) {
-        return false;
-    }
-
-    if ($filearea !== 'resource_content') {
-        // intro is handled automatically in pluginfile.php
-        return false;
-    }
-
-    if (!$cm = get_coursemodule_from_instance('resource', $cminfo->instance, $course->id)) {
+    if ($context->contextlevel != CONTEXT_MODULE) {
         return false;
     }
 
     require_course_login($course, true, $cm);
 
+    if ($filearea !== 'content') {
+        // intro is handled automatically in pluginfile.php
+        return false;
+    }
+
     array_shift($args); // ignore revision - designed to prevent caching problems only
 
     $fs = get_file_storage();
-    $relativepath = '/'.implode('/', $args);
-    $fullpath = $context->id.$filearea.'0'.$relativepath;
+    $relativepath = implode('/', $args);
+    $fullpath = "/$context->id/mod_resource/$filearea/0/$relativepath";
     if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
         $resource = $DB->get_record('resource', array('id'=>$cminfo->instance), 'id, legacyfiles', MUST_EXIST);
         if ($resource->legacyfiles != RESOURCELIB_LEGACYFILES_ACTIVE) {
             return false;
         }
-        if (!$file = resourcelib_try_file_migration($relativepath, $cminfo->id, $cminfo->course, 'resource_content', 0)) {
+        if (!$file = resourcelib_try_file_migration('/'.$relativepath, $cm->id, $cm->course, 'mod_resource', 'content', 0)) {
             return false;
         }
         // file migrate - update flag
@@ -400,7 +397,7 @@ function resource_pluginfile($course, $cminfo, $context, $filearea, $args, $forc
     // should we apply filters?
     $mimetype = $file->get_mimetype();
     if ($mimetype = 'text/html' or $mimetype = 'text/plain') {
-        $filter = $DB->get_field('resource', 'filterfiles', array('id'=>$cminfo->instance));
+        $filter = $DB->get_field('resource', 'filterfiles', array('id'=>$cm->instance));
     } else {
         $filter = 0;
     }

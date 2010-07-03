@@ -163,9 +163,10 @@ function xmldb_workshop_upgrade($oldversion) {
                         echo $OUTPUT->notification('Unsupported submission filename: ' . $filepath);
                         continue;
                     }
-                    if (! $fs->file_exists($context->id, 'workshop_submission_attachment', $submission->id, '/', $filename)) {
+                    if (! $fs->file_exists($context->id, 'mod_workshop', 'submission_attachment', $submission->id, '/', $filename)) {
                         $filerecord = array('contextid' => $context->id,
-                                            'filearea'  => 'workshop_submission_attachment',
+                                            'component' => 'mod_workshop',
+                                            'filearea'  => 'submission_attachment',
                                             'itemid'    => $submission->id,
                                             'filepath'  => '/',
                                             'filename'  => $filename,

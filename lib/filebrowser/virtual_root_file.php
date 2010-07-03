@@ -19,26 +19,35 @@
 /**
  * Class simulating empty directories.
  *
- * @package    moodlecore
- * @subpackage file-browser
+ * @package    core
+ * @subpackage filebrowser
  * @copyright  2008 Petr Skoda (http://skodak.org)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 /**
  * Represents the root directory of an empty file area in the tree navigated by
  * @see{file_browser}.
+ *
+ * @package    core
+ * @subpackage filebrowser
+ * @copyright  2008 Petr Skoda (http://skodak.org)
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class virtual_root_file {
     protected $contextid;
+    protected $component;
     protected $filearea;
     protected $itemid;
 
     /**
      * Constructor
      */
-    public function __construct($contextid, $filearea, $itemid) {
+    public function __construct($contextid, $component, $filearea, $itemid) {
         $this->contextid = $contextid;
+        $this->component = $component;
         $this->filearea  = $filearea;
         $this->itemid    = $itemid;
     }
@@ -125,13 +134,14 @@ class virtual_root_file {
      * Extract file to given file path (real OS filesystem), existing files are overwrited
      * @param object $file_packer
      * @param int $contextid
+     * @param string $component
      * @param string $filearea
      * @param int $itemid
      * @param string $pathbase
      * @param int $userid
      * @return mixed list of processed files; false if error
      */
-    public function extract_to_storage(file_packer $packer, $contextid, $filearea, $itemid, $pathbase, $userid=null) {
+    public function extract_to_storage(file_packer $packer, $contextid, $component, $filearea, $itemid, $pathbase, $userid = NULL) {
         return false;
     }
 
@@ -155,6 +165,10 @@ class virtual_root_file {
 
     public function get_contextid() {
         return $this->contextid;
+    }
+
+    public function get_component() {
+        return $this->component;
     }
 
     public function get_filearea() {
@@ -206,7 +220,22 @@ class virtual_root_file {
     }
 
     public function get_pathnamehash() {
-        return sha1($this->get_contextid().$this->get_filearea().$this->get_itemid().$this->get_filepath().$this->get_filename());
+        return sha1('/'.$this->get_contextid().'/'.$this->get_component().'/'.$this->get_filearea().'/'.$this->get_itemid().$this->get_filepath().$this->get_filename());
     }
 
+    public function get_license() {
+        return null;
+    }
+
+    public function get_author() {
+        return null;
+    }
+
+    public function get_source() {
+        return null;
+    }
+
+    public function get_sortorder() {
+        return null;
+    }
 }

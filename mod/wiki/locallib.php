@@ -574,7 +574,7 @@ function wiki_parse_content($markup, $pagecontent, $options = array()) {
     $cm = get_coursemodule_from_instance("wiki", $subwiki->wikiid);
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
-    $parser_options = array('link_callback' => '/mod/wiki/locallib.php:wiki_parser_link', 'link_callback_args' => array('swid' => $options['swid']), 'table_callback' => '/mod/wiki/locallib.php:wiki_parser_table', 'real_path_callback' => '/mod/wiki/locallib.php:wiki_parser_real_path', 'real_path_callback_args' => array('context' => $context, 'filearea' => 'wiki_attachments', 'pageid' => $options['pageid']), 'pageid' => $options['pageid'], 'pretty_print' => (isset($options['pretty_print']) && $options['pretty_print']), 'printable' => (isset($options['printable']) && $options['printable']));
+    $parser_options = array('link_callback' => '/mod/wiki/locallib.php:wiki_parser_link', 'link_callback_args' => array('swid' => $options['swid']), 'table_callback' => '/mod/wiki/locallib.php:wiki_parser_table', 'real_path_callback' => '/mod/wiki/locallib.php:wiki_parser_real_path', 'real_path_callback_args' => array('context' => $context, 'component' => 'mod_wiki', 'filearea' => 'attachments', 'pageid' => $options['pageid']), 'pageid' => $options['pageid'], 'pretty_print' => (isset($options['pretty_print']) && $options['pretty_print']), 'printable' => (isset($options['printable']) && $options['printable']));
 
     return wiki_parser_proxy::parse($pagecontent, $markup, $parser_options);
 }
@@ -1016,7 +1016,7 @@ function wiki_process_attachments($draftitemid, $deleteuploads, $contextid, $fil
     $usercontext = get_context_instance(CONTEXT_USER, $USER->id);
     $fs = get_file_storage();
 
-    $oldfiles = $fs->get_area_files($contextid, $filearea, $itemid, 'id');
+    $oldfiles = $fs->get_area_files($contextid, 'mod_wiki', 'attachments', $itemid, 'id');
 
     foreach ($oldfiles as $file) {
         if (in_array($file->get_pathnamehash(), $deleteuploads)) {
@@ -1024,14 +1024,14 @@ function wiki_process_attachments($draftitemid, $deleteuploads, $contextid, $fil
         }
     }
 
-    $draftfiles = $fs->get_area_files($usercontext->id, 'user_draft', $draftitemid, 'id');
-    $oldfiles = $fs->get_area_files($contextid, $filearea, $itemid, 'id');
+    $draftfiles = $fs->get_area_files($usercontext->id, 'user', 'draft', $draftitemid, 'id');
+    $oldfiles = $fs->get_area_files($contextid, 'mod_wiki', 'attachments', $itemid, 'id');
 
-    $file_record = array('contextid' => $contextid, 'filearea' => $filearea, 'itemid' => $itemid);
+    $file_record = array('contextid' => $contextid, 'component'=>'mod_wiki', 'filearea' => 'attachments', 'itemid' => $itemid);
     //more or less a merge...
     $newhashes = array();
     foreach ($draftfiles as $file) {
-        $newhash = sha1($contextid . $filearea . $itemid . $file->get_filepath() . $file->get_filename());
+        $newhash = sha1("/$contextid/mod_wiki/attachments/$itemid" . $file->get_filepath() . $file->get_filename());
         $newhashes[$newhash] = $file;
     }
 
@@ -1065,7 +1065,7 @@ function wiki_process_attachments($draftitemid, $deleteuploads, $contextid, $fil
     }
 
     //delete all draft files
-    $fs->delete_area_files($usercontext->id, 'user_draft', $draftitemid);
+    $fs->delete_area_files($usercontext->id, 'user', 'draft', $draftitemid);
 
     return $errors;
 }
@@ -1215,7 +1215,7 @@ function wiki_print_page_content($page, $context, $subwikiid) {
             echo $OUTPUT->box($box);
         }
     }
-    $html = file_rewrite_pluginfile_urls($page->cachedcontent, 'pluginfile.php', $context->id, 'wiki_attachments', $subwikiid);
+    $html = file_rewrite_pluginfile_urls($page->cachedcontent, 'pluginfile.php', $context->id, 'mod_wiki', 'attachments', $subwikiid);
     echo $OUTPUT->box($html);
 
     if (!empty($CFG->usetags)) {
@@ -1307,8 +1307,7 @@ function wiki_print_upload_table($context, $filearea, $fileitemid, $deleteupload
     $htmltable->head = array(get_string('deleteupload', 'wiki'), get_string('uploadname', 'wiki'), get_string('uploadactions', 'wiki'));
 
     $fs = get_file_storage();
-    $browser = get_file_browser();
-    $files = $fs->get_area_files($context->id, $filearea, $fileitemid);
+    $files = $fs->get_area_files($context->id, 'mod_wiki', $filearea, $fileitemid); //TODO: this is weird (skodak)
 
     foreach ($files as $file) {
         if (!$file->is_directory()) {

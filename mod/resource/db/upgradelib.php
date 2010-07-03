@@ -67,8 +67,8 @@ function resource_20_migrate() {
 
             $context     = get_context_instance(CONTEXT_MODULE, $candidate->cmid);
             $sitecontext = get_context_instance(CONTEXT_COURSE, $siteid);
-            $file_record = array('contextid'=>$context->id, 'filearea'=>'resource_content', 'itemid'=>0);
-            if ($file = $fs->get_file_by_hash(sha1($sitecontext->id.'course_content0'.$path))) {
+            $file_record = array('contextid'=>$context->id, 'component'=>'mod_resourse', 'filearea'=>'content', 'itemid'=>0);
+            if ($file = $fs->get_file_by_hash(sha1("/$sitecontext->id/course/legacy/content/0".$path))) {
                 try {
                     $fs->create_file_from_storedfile($file_record, $file);
                 } catch (Exception $x) {
@@ -93,7 +93,7 @@ function resource_20_migrate() {
             }
 
             // try migration of main file - ignore if does not exist
-            if ($file = resourcelib_try_file_migration($resource->mainfile, $candidate->cmid, $candidate->course, 'resource_content', 0)) {
+            if ($file = resourcelib_try_file_migration($resource->mainfile, $candidate->cmid, $candidate->course, 'mod_resource', 'content', 0)) {
                 $resource->mainfile = $file->get_filepath().$file->get_filename();
             }
 
@@ -127,7 +127,7 @@ function resource_20_migrate() {
             }
 
             // try migration of main file - ignore if does not exist
-            if ($file = resourcelib_try_file_migration($resource->mainfile, $candidate->cmid, $candidate->course, 'resource_content', 0)) {
+            if ($file = resourcelib_try_file_migration($resource->mainfile, $candidate->cmid, $candidate->course, 'mod_resource', 'content', 0)) {
                 $resource->mainfile = $file->get_filepath().$file->get_filename();
             }
         }

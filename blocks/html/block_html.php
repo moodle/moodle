@@ -1,5 +1,28 @@
 <?php
 
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Form for editing HTML block instances.
+ *
+ * @package   block_html
+ * @copyright 1999 onwards Martin Dougiamas (http://dougiamas.com)
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 class block_html extends block_base {
 
     function init() {
@@ -36,7 +59,7 @@ class block_html extends block_base {
         $this->content->footer = '';
         if (isset($this->config->text)) {
             // rewrite url
-            $this->config->text['text'] = file_rewrite_pluginfile_urls($this->config->text['text'], 'pluginfile.php', $this->context->id, 'block_html', $this->instance->id);
+            $this->config->text['text'] = file_rewrite_pluginfile_urls($this->config->text['text'], 'pluginfile.php', $this->context->id, 'block_html', 'content', NULL);
             $this->content->text = format_text($this->config->text['text'], $this->config->text['format'], $filteropt);
         } else {
             $this->content->text = '';
@@ -55,7 +78,7 @@ class block_html extends block_base {
         global $DB;
 
         // Move embedded files into a proper filearea and adjust HTML links to match
-        $data->text['text'] = file_save_draft_area_files($data->text['itemid'], $this->context->id, 'block_html', $this->instance->id, array('subdirs'=>true), $data->text['text']);
+        $data->text['text'] = file_save_draft_area_files($data->text['itemid'], $this->context->id, 'block_html', 'content', 0, array('subdirs'=>true), $data->text['text']);
 
         parent::instance_config_save($data, $nolongerused);
     }
@@ -63,7 +86,7 @@ class block_html extends block_base {
     function instance_delete() {
         global $DB;
         $fs = get_file_storage();
-        $fs->delete_area_files($this->context->id, 'block_html', $this->instance->id);
+        $fs->delete_area_files($this->context->id, 'block_html');
         return true;
     }
 
@@ -120,17 +143,5 @@ class block_html extends block_base {
         }
 
         return true;
-    }
-
-    function send_file($context, $filearea, $itemid, $filepath, $filename) {
-        $fs = get_file_storage();
-        $fullpath = $context->id.'block_html'.$itemid.$filepath.$filename;
-
-        if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
-            send_file_not_found();
-        }
-
-        session_get_instance()->write_close();
-        send_stored_file($file, 60*60, 0, false);
     }
 }

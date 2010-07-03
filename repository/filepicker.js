@@ -99,7 +99,6 @@ M.core_filepicker.init = function(Y, options) {
             params['accepted_types']=this.options.accepted_types;
             params['sesskey']=M.cfg.sesskey;
             params['client_id'] = args.client_id;
-            params['filearea'] = this.options.filearea?this.options.filearea:'user_draft';
             params['itemid'] = this.options.itemid?this.options.itemid:0;
             params['maxbytes'] = this.options.maxbytes?this.options.maxbytes:-1;
             if (args['params']) {

@@ -262,7 +262,7 @@ class assignment_base {
         global $USER, $CFG, $DB, $OUTPUT;
         require_once($CFG->libdir.'/gradelib.php');
 
-        if (!has_capability('mod/assignment:submit', $this->context, $USER->id, false)) {
+        if (!is_enrolled($this->context, $USER, 'mod/assignment:submit')) {
             // can not submit assignments -> no feedback
             return;
         }
@@ -903,7 +903,7 @@ class assignment_base {
         /// Get all ppl that can submit assignments
 
         $currentgroup = groups_get_activity_group($cm);
-        if ($users = get_users_by_capability($context, 'mod/assignment:submit', 'u.id', '', '', '', $currentgroup, '', false)) {
+        if ($users = get_enrolled_users($context, 'mod/assignment:submit', $currentgroup, 'u.id')) {
             $users = array_keys($users);
         }
 
@@ -1094,7 +1094,7 @@ class assignment_base {
         groups_print_activity_menu($cm, $CFG->wwwroot . '/mod/assignment/submissions.php?id=' . $this->cm->id);
 
         /// Get all ppl that are allowed to submit assignments
-        if ($users = get_users_by_capability($context, 'mod/assignment:submit', 'u.id', '', '', '', $currentgroup, '', false)) {
+        if ($users = get_enrolled_users($context, 'mod/assignment:submit', $currentgroup, 'u.id')) {
             $users = array_keys($users);
         }
 
@@ -1165,7 +1165,7 @@ class assignment_base {
             echo '</div>';
             return true;
         }
-        if ($this->assignment->assignmenttype=='upload' || $this->assignment->assignmenttype=='online' || $this->assignment->assignmenttype=='uploadsingle') {
+        if ($this->assignment->assignmenttype=='upload' || $this->assignment->assignmenttype=='online' || $this->assignment->assignmenttype=='uploadsingle') { //TODO: this is an ugly hack, where is the plugin spirit? (skodak)
             echo '<div style="text-align:right"><a href="submissions.php?id='.$this->cm->id.'&amp;download=zip">'.get_string('downloadall', 'assignment').'</a></div>';
         }
     /// Construct the SQL
@@ -1727,11 +1727,10 @@ class assignment_base {
         $output = '';
 
         $fs = get_file_storage();
-        $browser = get_file_browser();
 
         $found = false;
 
-        if ($files = $fs->get_area_files($this->context->id, 'assignment_submission', $userid, "timemodified", false)) {
+        if ($files = $fs->get_area_files($this->context->id, 'mod_assignment', 'submission', $userid, "timemodified", false)) {
             require_once($CFG->libdir.'/portfoliolib.php');
             require_once($CFG->dirroot . '/mod/assignment/locallib.php');
             $button = new portfolio_add_button();
@@ -1739,7 +1738,7 @@ class assignment_base {
                 $filename = $file->get_filename();
                 $found = true;
                 $mimetype = $file->get_mimetype();
-                $path = file_encode_url($CFG->wwwroot.'/pluginfile.php', '/'.$this->context->id.'/assignment_submission/'.$userid.'/'.$filename);
+                $path = file_encode_url($CFG->wwwroot.'/pluginfile.php', '/'.$this->context->id.'/mod_assignment/submission/'.$userid.'/'.$filename);
                 $output .= '<a href="'.$path.'" ><img src="'.$OUTPUT->pix_url(file_mimetype_icon($mimetype)).'" class="icon" alt="'.$mimetype.'" />'.s($filename).'</a>';
                 if ($this->portfolio_exportable() && has_capability('mod/assignment:exportownsubmission', $this->context)) {
                     $button->set_callback_options('assignment_portfolio_caller', array('id' => $this->cm->id, 'fileid' => $file->get_id()), '/mod/assignment/locallib.php');
@@ -1769,7 +1768,7 @@ class assignment_base {
      */
     function count_user_files($userid) {
         $fs = get_file_storage();
-        $files = $fs->get_area_files($this->context->id, 'assignment_submission', $userid, "id", false);
+        $files = $fs->get_area_files($this->context->id, 'mod_assignment', 'submission', $userid, "id", false);
         return count($files);
     }
 
@@ -1837,9 +1836,8 @@ class assignment_base {
         if ($submission = $this->get_submission($user->id)) {
 
             $fs = get_file_storage();
-            $browser = get_file_browser();
 
-            if ($files = $fs->get_area_files($this->context->id, 'assignment_submission', $user->id, "timemodified", false)) {
+            if ($files = $fs->get_area_files($this->context->id, 'mod_assignment', 'submission', $user->id, "timemodified", false)) {
                 $countfiles = count($files)." ".get_string("uploadedfiles", "assignment");
                 foreach ($files as $file) {
                     $countfiles .= "; ".$file->get_filename();
@@ -1946,8 +1944,8 @@ class assignment_base {
                         continue;
                     }
                     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-                    $fs->delete_area_files($context->id, 'assignment_submission');
-                    $fs->delete_area_files($context->id, 'assignment_response');
+                    $fs->delete_area_files($context->id, 'mod_assignment', 'submission');
+                    $fs->delete_area_files($context->id, 'mod_assignment', 'response');
                 }
             }
 
@@ -2067,7 +2065,7 @@ class mod_assignment_upload_file_form extends moodleform {
 }
 
 
-class mod_assignment_online_grading_form extends moodleform {
+class mod_assignment_online_grading_form extends moodleform { // TODO: why "online" in the name of this class? (skodak)
 
     function definition() {
         global $OUTPUT;
@@ -2224,9 +2222,10 @@ class mod_assignment_online_grading_form extends moodleform {
 
     protected function get_editor_options() {
         $editoroptions = array();
-        $editoroptions['filearea'] = 'assignment_online_submission';
+        $editoroptions['component'] = 'mod_assignment';
+        $editoroptions['filearea'] = 'feedback';
         $editoroptions['noclean'] = false;
-        $editoroptions['maxfiles'] = 0; //TODO: no files for now, we need to first implement assignment_feedback area
+        $editoroptions['maxfiles'] = 0; //TODO: no files for now, we need to first implement assignment_feedback area, integration with gradebook, files support in quickgrading, etc. (skodak)
         $editoroptions['maxbytes'] = $this->_customdata->maxbytes;
         return $editoroptions;
     }
@@ -2248,7 +2247,7 @@ class mod_assignment_online_grading_form extends moodleform {
             $itemid = null;
         }
 
-        $data = file_prepare_standard_editor($data, 'submissioncomment', $editoroptions, $this->_customdata->context, $editoroptions['filearea'], $itemid);
+        $data = file_prepare_standard_editor($data, 'submissioncomment', $editoroptions, $this->_customdata->context, $editoroptions['component'], $editoroptions['filearea'], $itemid);
         return parent::set_data($data);
     }
 
@@ -2258,12 +2257,12 @@ class mod_assignment_online_grading_form extends moodleform {
         if (!empty($this->_customdata->submission->id)) {
             $itemid = $this->_customdata->submission->id;
         } else {
-            $itemid = null;
+            $itemid = null; //TODO: this is wrong, itemid MUST be known when saving files!! (skodak)
         }
 
         if ($data) {
             $editoroptions = $this->get_editor_options();
-            $data = file_postupdate_standard_editor($data, 'submissioncomment', $editoroptions, $this->_customdata->context, $editoroptions['filearea'], $itemid);
+            $data = file_postupdate_standard_editor($data, 'submissioncomment', $editoroptions, $this->_customdata->context, $editoroptions['component'], $editoroptions['filearea'], $itemid);
             $data->format = $data->textformat;
         }
         return $data;
@@ -2665,27 +2664,28 @@ function assignment_get_participants($assignmentid) {
 }
 
 /**
- * Serves assingment submissions and otehr files.
+ * Serves assignment submissions and other files.
  *
  * @param object $course
- * @param object $cminfo
+ * @param object $cm
  * @param object $context
  * @param string $filearea
  * @param array $args
  * @param bool $forcedownload
- * @return bool false if file not found, does not return if found - justsend the file
+ * @return bool false if file not found, does not return if found - just send the file
  */
-function assignment_pluginfile($course, $cminfo, $context, $filearea, $args, $forcedownload) {
+function assignment_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload) {
     global $CFG, $DB;
 
-    if (!$assignment = $DB->get_record('assignment', array('id'=>$cminfo->instance))) {
-        return false;
-    }
-    if (!$cm = get_coursemodule_from_instance('assignment', $assignment->id, $course->id)) {
+    if ($context->contextlevel != CONTEXT_MODULE) {
         return false;
     }
 
     require_login($course, false, $cm);
+
+    if (!$assignment = $DB->get_record('assignment', array('id'=>$cm->instance))) {
+        return false;
+    }
 
     require_once($CFG->dirroot.'/mod/assignment/type/'.$assignment->assignmenttype.'/assignment.class.php');
     $assignmentclass = 'assignment_'.$assignment->assignmenttype;
@@ -3096,7 +3096,7 @@ function assignment_count_real_submissions($cm, $groupid=0) {
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
     // this is all the users with this capability set, in this context or higher
-    if ($users = get_users_by_capability($context, 'mod/assignment:submit', 'u.id', '', '', '', $groupid, '', false)) {
+    if ($users = get_enrolled_users($context, 'mod/assignment:submit', $groupid, 'u.id')) {
         $users = array_keys($users);
     }
 
@@ -3303,7 +3303,7 @@ function assignment_print_overview($courses, &$htmlarray) {
 
             // count how many people can submit
             $submissions = 0; // init
-            if ($students = get_users_by_capability($context, 'mod/assignment:submit', 'u.id', '', '', '', 0, '', false)) {
+            if ($users = get_enrolled_users($context, 'mod/assignment:submit', 0, 'u.id')) {
                 foreach ($students as $student) {
                     if (isset($unmarkedsubmissions[$assignment->id][$student->id])) {
                         $submissions++;
@@ -3586,7 +3586,7 @@ function assignment_create_temp_dir($dir, $prefix='', $mode=0700) {
 function assignment_get_file_areas($course, $cm, $context) {
     $areas = array();
     if (has_capability('moodle/course:managefiles', $context)) {
-        $areas['assignment_submission'] = get_string('assignmentsubmission', 'assignment');
+        $areas['submission'] = get_string('assignmentsubmission', 'assignment');
     }
     return $areas;
 }

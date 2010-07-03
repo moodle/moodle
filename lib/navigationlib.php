@@ -2669,7 +2669,7 @@ class settings_navigation extends navigation_node {
 
         // Restore to this course
         if (has_capability('moodle/restore:restorecourse', $coursecontext)) {
-            $url = new moodle_url('/files/index.php', array('id'=>$course->id, 'wdir'=>'/backupdata'));
+            $url = new moodle_url('/files/index.php', array('contextid'=>$coursecontext->id, 'itemid'=>0, 'component' => 'backup', 'filearea'=>'course'));
             $url = null; // Disabled until restore is implemented. MDL-21432
             $coursenode->add(get_string('restore'), $url, self::TYPE_SETTING, null, 'restore', new pix_icon('i/restore', ''));
         }
@@ -2707,7 +2707,7 @@ class settings_navigation extends navigation_node {
 
         // Manage files
         if ($course->legacyfiles == 2 and has_capability('moodle/course:managefiles', $coursecontext)) {
-            $url = new moodle_url('/files/index.php', array('contextid'=>$coursecontext->id, 'itemid'=>0, 'filearea'=>'course_content'));
+            $url = new moodle_url('/files/index.php', array('contextid'=>$coursecontext->id, 'itemid'=>0, 'component' => 'course', 'filearea'=>'legacy'));
             $coursenode->add(get_string('files'), $url, self::TYPE_SETTING, null, 'coursefiles', new pix_icon('i/files', ''));
         }
 
@@ -3327,7 +3327,8 @@ class settings_navigation extends navigation_node {
 
         // Restore to this course
         if (has_capability('moodle/restore:restorecourse', $coursecontext)) {
-            $url = new moodle_url('/files/index.php', array('id'=>$course->id, 'wdir'=>'/backupdata'));
+            $url = new moodle_url('/files/index.php', array('contextid'=>$coursecontext->id, 'itemid'=>0, 'component' => 'backup', 'filearea'=>'course'));
+
             $url = null; // Disabled until restore is implemented. MDL-21432
             $frontpage->add(get_string('restore'), $url, self::TYPE_SETTING, null, null, new pix_icon('i/restore', ''));
         }
@@ -3352,7 +3353,8 @@ class settings_navigation extends navigation_node {
 
         // Manage files
         if (has_capability('moodle/course:managefiles', $this->context)) {
-            $url = new moodle_url('/files/index.php', array('id'=>$course->id));
+            //TODO: hide in new installs
+            $url = new moodle_url('/files/index.php', array('contextid'=>$coursecontext->id, 'itemid'=>0, 'component' => 'course', 'filearea'=>'legacy'));
             $frontpage->add(get_string('files'), $url, self::TYPE_SETTING, null, null, new pix_icon('i/files', ''));
         }
         return $frontpage;

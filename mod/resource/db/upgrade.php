@@ -224,11 +224,12 @@ function xmldb_resource_upgrade($oldversion) {
         if ($instances = $DB->get_recordset_sql($sql)) {
             foreach ($instances as $instance) {
                 $context  = get_context_instance(CONTEXT_MODULE, $instance->cmid);
-                $filearea = 'resource_content';
+                $component = 'mod_resource';
+                $filearea = 'content';
                 $itemid   = 0;
                 $filepath = file_correct_filepath(dirname($instance->mainfile));
                 $filename = basename($instance->mainfile);
-                file_set_sortorder($context->id, $filearea, $itemid, $filepath, $filename, 1);
+                file_set_sortorder($context->id, $component, $filearea, $itemid, $filepath, $filename, 1);
             }
         }
 

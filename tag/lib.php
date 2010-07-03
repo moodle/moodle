@@ -532,7 +532,7 @@ function tag_delete($tagids) {
             $success &= (bool) $DB->delete_records('tag', array('id'=>$tagid));
             // Delete all files associated with this tag
             $fs = get_file_storage();
-            $files = $fs->get_area_files($context->id, 'tag_description', $tagid);
+            $files = $fs->get_area_files($context->id, 'tag', 'description', $tagid);
             foreach ($files as $file) {
                 $file->delete();
             }

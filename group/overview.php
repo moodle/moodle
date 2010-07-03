@@ -159,7 +159,7 @@ foreach ($members as $gpgid=>$groupdata) {
         }
         $line = array();
         $name = format_string($groups[$gpid]->name);
-        $description = file_rewrite_pluginfile_urls($groups[$gpid]->description, 'pluginfile.php', $context->id, 'course_group_description', $gpid);
+        $description = file_rewrite_pluginfile_urls($groups[$gpid]->description, 'pluginfile.php', $context->id, 'group', 'description', $gpid);
         $options = new stdClass;
         $options->noclean = true;
         $jsdescription = trim(format_text($description, $groups[$gpid]->descriptionformat, $options));
@@ -184,7 +184,7 @@ foreach ($members as $gpgid=>$groupdata) {
         echo $OUTPUT->heading($strnotingrouping, 3);
     } else {
         echo $OUTPUT->heading(format_string($groupings[$gpgid]->name), 3);
-        $description = file_rewrite_pluginfile_urls($groupings[$gpgid]->description, 'pluginfile.php', $context->id, 'course_grouping_description', $gpgid);
+        $description = file_rewrite_pluginfile_urls($groupings[$gpgid]->description, 'pluginfile.php', $context->id, 'grouping', 'description', $gpgid);
         $options = new stdClass;
         $options->noclean = true;
         echo $OUTPUT->box(format_text($description, $groupings[$gpgid]->descriptionformat, $options), 'generalbox boxwidthnarrow boxaligncenter');

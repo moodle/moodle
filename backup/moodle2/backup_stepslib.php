@@ -232,7 +232,7 @@ class backup_section_structure_step extends backup_structure_step {
         $section->set_source_alias('section', 'number');
 
         // Set annotations
-        $section->annotate_files(array('course_section'), 'id');
+        $section->annotate_files('course', 'section', 'id');
 
         return $section;
     }
@@ -311,7 +311,8 @@ class backup_course_structure_step extends backup_structure_step {
 
         $course->annotate_ids('grouping', 'defaultgroupingid');
 
-        $course->annotate_files(array('course_summary', 'course_content'), null);
+        $course->annotate_files('course', 'summary', null);
+        $course->annotate_files('course', 'legacy', null);
 
         // Return root element ($course)
 
@@ -656,8 +657,9 @@ class backup_groups_structure_step extends backup_structure_step {
 
         // Define file annotations
 
-        // TODO: Change "course_group_image" file area to the one finally used for group images
-        $group->annotate_files(array('course_group_description', 'course_group_image'), 'id');
+        //TODO: not implemented yet
+        $group->annotate_files('group', 'description', 'id');
+        $group->annotate_files('group', 'image', 'id');
 
         // Return the root element (groups)
         return $groups;
@@ -980,7 +982,7 @@ class backup_final_files_structure_step extends backup_structure_step {
         $files = new backup_nested_element('files');
 
         $file = new file_nested_element('file', array('id'), array(
-            'contenthash', 'contextid', 'filearea', 'itemid',
+            'contenthash', 'contextid', 'component', 'filearea', 'itemid',
             'filepath', 'filename', 'userid', 'filesize',
             'mimetype', 'status', 'timecreated', 'timemodified',
             'source', 'author', 'license', 'sortorder'));
@@ -1238,9 +1240,8 @@ class backup_annotate_all_user_files extends backup_execution_step {
         global $DB;
 
         // List of fileareas we are going to annotate
-        // TODO: Change "user_image" file area to the one finally used for user images
-        $fileareas = array(
-            'user_private', 'user_profile', 'user_image');
+        // TODO: user image not implemented yet
+        $fileareas = array('private', 'profile', 'image');
 
         // Fetch all annotated (final) users
         $rs = $DB->get_recordset('backup_ids_temp', array(
@@ -1252,7 +1253,7 @@ class backup_annotate_all_user_files extends backup_execution_step {
             foreach ($fileareas as $filearea) {
                 // We don't need to specify itemid ($userid - 4th param) as far as by
                 // context we can get all the associated files. See MDL-22092
-                backup_structure_dbops::annotate_files($this->get_backupid(), $userctxid, $filearea, null);
+                backup_structure_dbops::annotate_files($this->get_backupid(), $userctxid, 'user', $filearea, null);
             }
         }
         $rs->close();

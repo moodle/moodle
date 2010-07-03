@@ -42,7 +42,7 @@ if ($id) {
 }
 
 $editoroptions = array('maxfiles' => EDITOR_UNLIMITED_FILES, 'maxbytes'=>$CFG->maxbytes, 'trusttext'=>true);
-$category = file_prepare_standard_editor($category, 'description', $editoroptions, $editorcontext, 'category_description', $category->id);
+$category = file_prepare_standard_editor($category, 'description', $editoroptions, $editorcontext, 'coursecat', 'description', 0);
 
 $mform = new editcategory_form('editcategory.php', compact('category', 'editoroptions'));
 $mform->set_data($category);
@@ -82,7 +82,7 @@ if ($mform->is_cancelled()) {
         mark_context_dirty($newcategory->context->path);
     }
 
-    $newcategory = file_postupdate_standard_editor($newcategory, 'description', $editoroptions, $categorycontext, 'category_description', $newcategory->id);
+    $newcategory = file_postupdate_standard_editor($newcategory, 'description', $editoroptions, $categorycontext, 'coursecat', 'description', 0);
     $DB->update_record('course_categories', $newcategory);
     fix_course_sortorder();
 

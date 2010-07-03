@@ -497,6 +497,7 @@ function xmldb_main_upgrade($oldversion) {
         $table->add_field('contenthash', XMLDB_TYPE_CHAR, '40', null, XMLDB_NOTNULL, null, null);
         $table->add_field('pathnamehash', XMLDB_TYPE_CHAR, '40', null, XMLDB_NOTNULL, null, null);
         $table->add_field('contextid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+        $table->add_field('component', XMLDB_TYPE_CHAR, '100', null, XMLDB_NOTNULL, null, null);
         $table->add_field('filearea', XMLDB_TYPE_CHAR, '50', null, XMLDB_NOTNULL, null, null);
         $table->add_field('itemid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
         $table->add_field('filepath', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
@@ -517,7 +518,7 @@ function xmldb_main_upgrade($oldversion) {
         $table->add_key('userid', XMLDB_KEY_FOREIGN, array('userid'), 'user', array('id'));
 
     /// Adding indexes to table files
-        $table->add_index('filearea-contextid-itemid', XMLDB_INDEX_NOTUNIQUE, array('filearea', 'contextid', 'itemid'));
+        $table->add_index('component-filearea-contextid-itemid', XMLDB_INDEX_NOTUNIQUE, array('component', 'filearea', 'contextid', 'itemid'));
         $table->add_index('contenthash', XMLDB_INDEX_NOTUNIQUE, array('contenthash'));
         $table->add_index('pathnamehash', XMLDB_INDEX_UNIQUE, array('pathnamehash'));
 
@@ -4846,6 +4847,64 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         upgrade_main_savepoint($result, 2010062101);
     }
 
+    if ($result && $oldversion < 2010070300) {
+        //TODO: this is a temporary hack for upgrade from PR3, to be removed later
+
+        // Define field component to be added to files
+        $table = new xmldb_table('files');
+        $field = new xmldb_field('component', XMLDB_TYPE_CHAR, '100', null, XMLDB_NOTNULL, null, null, 'contextid');
+
+        // Conditionally upgrade from PR3
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+            $index = new xmldb_index('filearea-contextid-itemid', XMLDB_INDEX_NOTUNIQUE, array('filearea', 'contextid', 'itemid'));
+            $dbman->drop_index($table, $index);
+            $index = new xmldb_index('component-filearea-contextid-itemid', XMLDB_INDEX_NOTUNIQUE, array('component', 'filearea', 'contextid', 'itemid'));
+            $dbman->add_index($table, $index);
+
+            // Rename areas as add proper component
+            $areas = $DB->get_fieldset_sql("SELECT DISTINCT filearea FROM {files}");
+            if ($areas) {
+                // fix incorrect itemids
+                $DB->execute("UPDATE {files} SET itemid = 0 WHERE filearea = 'category_description'"); // context identifies instances
+                $DB->execute("UPDATE {files} SET itemid = 0 WHERE filearea = 'user_profile'"); // context identifies instances
+                $DB->execute("UPDATE {files} SET itemid = 0 WHERE filearea = 'block_html'"); // context identifies instances
+                foreach ($areas as $area) {
+                    // rename areas
+                    if ($area === 'course_backup') {
+                        $area = 'backup_course';
+                    } else if ($area === 'section_backup') {
+                        $area = 'backup_section';
+                    } else if ($area === 'activity_backup') {
+                        $area = 'backup_activity';
+                    } else if ($area === 'category_description') {
+                        $area = 'coursecat_description';
+                    }
+                    if ($area === 'block_html') {
+                        $component = 'block_html';
+                        $filearea = 'content';
+                    } else {
+                        list($component, $filearea) = explode('_', $area, 2);
+                        // note this is just a hack which guesses plugin from old PRE3 files code, the whole point of adding component is to get rid of this guessing
+                        if (file_exists("$CFG->dirroot/mod/$component/lib.php")) {
+                            $component = 'mod_'.$component;
+                        }
+                    }
+                    $DB->execute("UPDATE {files} SET component = :component, filearea = :filearea WHERE filearea = :area", array('component'=>$component, 'filearea'=>$filearea, 'area'=>$area));
+                }
+                // Update all hashes
+                $rs = $DB->get_recordset('files', array());
+                foreach ($rs as $file) {
+                    $pathnamehash = sha1("/$file->contextid/$file->component/$file->filearea/$file->itemid".$file->filepath.$file->filename);
+                    $DB->set_field('files', 'pathnamehash', $pathnamehash, array('id'=>$file->id));
+                }
+                $rs->close();
+            }
+        }
+
+        // Main savepoint reached
+        upgrade_main_savepoint($result, 2010070300);
+    }
 
 
     return $result;

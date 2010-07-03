@@ -701,7 +701,7 @@ class moodle_url {
         $urlbase = "$CFG->httpswwwroot/draftfile.php";
         $context = get_context_instance(CONTEXT_USER, $USER->id);
 
-        return self::make_file_url($urlbase, '/'.$context->id.'/user_draft/'.$itemid.$pathname.$filename, $forcedownload);
+        return self::make_file_url($urlbase, '/'.$context->id.'/user/draft/'.$itemid.$pathname.$filename, $forcedownload);
     }
 
     /**
@@ -1356,7 +1356,7 @@ function format_module_intro($module, $activity, $cmid, $filter=true) {
     require_once("$CFG->libdir/filelib.php");
     $options = (object)array('noclean'=>true, 'para'=>false, 'filter'=>false);
     $context = get_context_instance(CONTEXT_MODULE, $cmid);
-    $intro = file_rewrite_pluginfile_urls($activity->intro, 'pluginfile.php', $context->id, $module.'_intro', null);
+    $intro = file_rewrite_pluginfile_urls($activity->intro, 'pluginfile.php', $context->id, 'mod_'.$module, 'intro', null);
     return trim(format_text($intro, $activity->introformat, $options));
 }
 

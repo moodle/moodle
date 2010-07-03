@@ -51,11 +51,12 @@ define('RESOURCELIB_LEGACYFILES_ACTIVE', 2);
  * @param string $filepath old file path
  * @param int $cmid migrated course module if
  * @param int $courseid
+ * @param string $component
  * @param string $filearea new file area
  * @param int $itemid migrated file item id
  * @return mixed, false if not found, stored_file instance if migrated to new area
  */
-function resourcelib_try_file_migration($filepath, $cmid, $courseid, $filearea, $itemid) {
+function resourcelib_try_file_migration($filepath, $cmid, $courseid, $component, $filearea, $itemid) {
     $fs = get_file_storage();
 
     if (stripos($filepath, '/backupdata/') === 0 or stripos($filepath, '/moddata/') === 0) {
@@ -70,13 +71,13 @@ function resourcelib_try_file_migration($filepath, $cmid, $courseid, $filearea, 
         return false;
     }
 
-    $pathnamehash = sha1($coursecontext->id.'course_content0'.$filepath);
+    $pathnamehash = sha1("/$coursecontext->id/course/legacy/0".$filepath);
     if (!$file = $fs->get_file_by_hash($pathnamehash)) {
         return false;
     }
 
     // copy and keep the same path, name, etc.
-    $file_record = array('contextid'=>$context->id, 'filearea'=>$filearea, 'itemid'=>$itemid);
+    $file_record = array('contextid'=>$context->id, 'component'=>$component, 'filearea'=>$filearea, 'itemid'=>$itemid);
     try {
         return $fs->create_file_from_storedfile($file_record, $file);
     } catch (Exception $e) {

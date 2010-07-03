@@ -583,10 +583,9 @@ function lesson_get_media_html($lesson, $context) {
     global $CFG, $PAGE, $OUTPUT;
     require_once("$CFG->libdir/resourcelib.php");
 
-    // get the media file from file pool
-    $browser = get_file_browser();
-    $file_info  = $browser->get_file_info($context, 'lesson_media_file', $lesson->id, '/', $lesson->mediafile);
-    $url = $file_info->get_url();
+    // get the media file link
+    $path = '/'.$context->id.'/media_file/'.$lesson->id->revision.'/'.$lesson->mediafile;
+    $url = file_encode_url($CFG->wwwroot.'/pluginfile.php', $path, false);
     $title = $lesson->mediafile;
 
     $clicktoopen = html_writer::link(new moodle_url($url), get_string('download'));

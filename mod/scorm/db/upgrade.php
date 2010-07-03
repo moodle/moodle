@@ -120,7 +120,7 @@ function xmldb_scorm_upgrade($oldversion) {
 
             $fullpathname = $base.$path;
             $fs           = get_file_storage();
-            $filearea     = 'scorm_content';
+            $filearea     = 'content';
             $items        = new DirectoryIterator($fullpathname);
 
             foreach ($items as $item) {
@@ -151,8 +151,8 @@ function xmldb_scorm_upgrade($oldversion) {
                         unset($item); // release file handle
                     }
 
-                    if (!$fs->file_exists($context->id, $filearea, '0', $filepath, $filename)) {
-                        $file_record = array('contextid'=>$context->id, 'filearea'=>$filearea, 'itemid'=>0, 'filepath'=>$filepath, 'filename'=>$filename,
+                    if (!$fs->file_exists($context->id, 'mod_scorm', $filearea, '0', $filepath, $filename)) {
+                        $file_record = array('contextid'=>$context->id, 'component'=>'mod_scorm', 'filearea'=>$filearea, 'itemid'=>0, 'filepath'=>$filepath, 'filename'=>$filename,
                                              'timecreated'=>$item->getCTime(), 'timemodified'=>$item->getMTime());
                         unset($item); // release file handle
                         if ($fs->create_file_from_pathname($file_record, $oldpathname)) {
@@ -197,10 +197,10 @@ function xmldb_scorm_upgrade($oldversion) {
 
                 // first copy local packages if found - do not delete in case they are shared ;-)
                 if ($scorm->scormtype === 'local' and preg_match('/.*(\.zip|\.pif)$/i', $scorm->reference)) {
-                    $packagefile = '/'.clean_param($scorm->reference, PARAM_PATH);
-                    $pathnamehash = sha1($coursecontext->id.'course_content0'.$packagefile);
+                    $packagefile = clean_param($scorm->reference, PARAM_PATH);
+                    $pathnamehash = sha1("/$coursecontext->id/course/legacy/0/$packagefile");
                     if ($file = $fs->get_file_by_hash($pathnamehash)) {
-                        $file_record = array('scontextid'=>$context->id, 'filearea'=>'scorm_pacakge',
+                        $file_record = array('scontextid'=>$context->id, 'component'=>'mod_scorm', 'filearea'=>'package',
                                              'itemid'=>0, 'filepath'=>'/');
                         try {
                             $fs->create_file_from_storedfile($file_record, $file);

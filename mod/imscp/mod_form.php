@@ -74,7 +74,7 @@ class mod_imscp_mod_form extends moodleform_mod {
         $usercontext = get_context_instance(CONTEXT_USER, $USER->id);
         $fs = get_file_storage();
 
-        if (!$files = $fs->get_area_files($usercontext->id, 'user_draft', $data['package'], 'id', false)) {
+        if (!$files = $fs->get_area_files($usercontext->id, 'user', 'draft', $data['package'], 'id', false)) {
             if (!$this->current->instance) {
                 $errors['package'] = get_string('required');
                 return $errors;
@@ -86,7 +86,7 @@ class mod_imscp_mod_form extends moodleform_mod {
         if ($file->get_mimetype() != 'application/zip') {
             $errors['package'] = get_string('invalidfiletype', 'error', '', $file);
             // better delete current file, it is not usable anyway
-            $fs->delete_area_files($usercontext->id, 'user_draft', $data['package']);
+            $fs->delete_area_files($usercontext->id, 'user', 'draft', $data['package']);
         }
 
         return $errors;

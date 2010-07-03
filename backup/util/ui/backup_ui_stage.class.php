@@ -140,7 +140,7 @@ abstract class backup_ui_stage {
 
 /**
  * Class representing the initial stage of a backup.
- * 
+ *
  * In this stage the user is required to set the root level settings.
  *
  * @copyright 2010 Sam Hemelryk
@@ -243,7 +243,7 @@ class backup_ui_stage_initial extends backup_ui_stage {
  *
  * During the schema stage the user is required to set the settings that relate
  * to the area that they are backing up as well as its children.
- * 
+ *
  * @copyright 2010 Sam Hemelryk
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -298,7 +298,7 @@ class backup_ui_stage_schema extends backup_ui_stage {
             return $changes;
         } else {
             return false;
-        }        
+        }
     }
     /**
      * Creates the backup_schema_form instance for this stage
@@ -439,7 +439,7 @@ class backup_ui_stage_confirmation extends backup_ui_stage {
                 foreach ($task->get_settings() as $setting) {
                     // For this stage only the filename setting should be editable
                     if ($setting->get_name() != 'filename') {
-                        $form->add_fixed_setting($setting);   
+                        $form->add_fixed_setting($setting);
                     }
                 }
             }
@@ -534,12 +534,13 @@ class backup_ui_stage_complete extends backup_ui_stage_final {
      */
     public function display() {
         global $OUTPUT;
-        
+
         // Get the resulting stored_file record
         $file = $this->results['backup_destination'];
         // Turn it into a url for the file browser
         $fileurl = new moodle_url('/files/index.php', array(
             'contextid' => $file->get_contextid(),
+            'component' => $file->get_component(),
             'filearea' => $file->get_filearea(),
             'itemid' => $file->get_itemid(),
             'filepath' => $file->get_filepath()

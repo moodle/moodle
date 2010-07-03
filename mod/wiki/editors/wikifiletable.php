@@ -83,9 +83,8 @@ class MoodleQuickForm_wikifiletable extends HTML_QuickForm_element {
         $htmltable->head = array(get_string('deleteupload', 'wiki'), get_string('uploadname', 'wiki'), get_string('uploadactions', 'wiki'));
 
         $fs = get_file_storage();
-        $browser = get_file_browser();
 
-        $files = $fs->get_area_files($this->_fileinfo['contextid'], $this->_fileinfo['filearea'], $this->_fileinfo['itemid']);
+        $files = $fs->get_area_files($this->_fileinfo['contextid'], 'mod_wiki', 'attachments', $this->_fileinfo['itemid']); //TODO: verify where this is coming from, all params must be validated (skodak)
 
         if (count($files) < 2) {
             return get_string('noattachments', 'wiki');
@@ -107,7 +106,7 @@ class MoodleQuickForm_wikifiletable extends HTML_QuickForm_element {
 
                 //actions
                 $icon = mimeinfo_from_type('icon', $file->get_mimetype());
-                $file_url = file_encode_url($CFG->wwwroot.'/pluginfile.php', "/{$this->_contextid}/{$this->_filearea}/{$this->_fileareaitemid}/".$file->get_filename());
+                $file_url = file_encode_url($CFG->wwwroot.'/pluginfile.php', "/{$this->_contextid}/mod_wiki/attachments/{$this->_fileareaitemid}/".$file->get_filename());
 
                 $action_icons = "";
                 if(!empty($tags['attach'])) {
@@ -117,7 +116,7 @@ class MoodleQuickForm_wikifiletable extends HTML_QuickForm_element {
                 $action_icons .= "&nbsp;&nbsp;<a href=\"javascript:void(0)\" class=\"wiki-attachment-link\" ".$this->printInsertTags($tags['link'], $file_url)." title=\"".get_string('attachmentlink', 'wiki')."\"><img src=\"".$OUTPUT->pix_url('f/web')->out()."\" alt=\"Link\" /></a>";
 
                 if ($icon == 'image.gif') {
-                    $action_icons .= "&nbsp;&nbsp;<a href=\"javascript:void(0)\" class=\"wiki-attachment-image\" ".$this->printInsertTags($tags['image'], $file->get_filename())." title=\"".get_string('attachmentimage', 'wiki')."\"><img src=\"".$OUTPUT->pix_url('f/image')->out()."\" alt=\"Image\" /></a>";
+                    $action_icons .= "&nbsp;&nbsp;<a href=\"javascript:void(0)\" class=\"wiki-attachment-image\" ".$this->printInsertTags($tags['image'], $file->get_filename())." title=\"".get_string('attachmentimage', 'wiki')."\"><img src=\"".$OUTPUT->pix_url('f/image')->out()."\" alt=\"Image\" /></a>"; //TODO: localize
                 }
 
                 $htmltable->data[] = array($checkbox, '<a href="'.$file_url.'">'.$file->get_filename().'</a>', $action_icons);

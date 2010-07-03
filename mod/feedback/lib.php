@@ -138,32 +138,30 @@ function feedback_update_instance($feedback) {
  * Serves the files included in feedback items like label. Implements needed access control ;-)
  *
  * @param object $course
- * @param object $cminfo
+ * @param object $cm
  * @param object $context
  * @param string $filearea
  * @param array $args
  * @param bool $forcedownload
  * @return bool false if file not found, does not return if found - justsend the file
  */
-function feedback_pluginfile($course, $cminfo, $context, $filearea, $args, $forcedownload) {
+function feedback_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload) {
     global $CFG, $DB;
 
-    if (!$cminfo->uservisible) {
+    if ($context->contextlevel != CONTEXT_MODULE) {
         return false;
     }
 
-    if($filearea === 'feedback_template') {
+    require_login($course, false, $cm);
+
+    if ($filearea === 'template') {
         $usedcontext = get_context_instance(CONTEXT_COURSE, $course->id);
     }else {
         $usedcontext = $context;
     }
 
-    if ($filearea === 'feedback_item' OR $filearea === 'feedback_template') {
+    if ($filearea === 'item' OR $filearea === 'template') {
         $itemid = (int)array_shift($args);
-
-        if (!$cm = get_coursemodule_from_instance('feedback', $cminfo->instance, $course->id)) {
-            return false;
-        }
 
         require_course_login($course, true, $cm);
 
@@ -171,7 +169,7 @@ function feedback_pluginfile($course, $cminfo, $context, $filearea, $args, $forc
             return false;
         }
 
-        if (!$feedback = $DB->get_record('feedback', array('id'=>$cminfo->instance))) {
+        if (!$feedback = $DB->get_record('feedback', array('id'=>$cm->instance))) {
             return false;
         }
 
@@ -179,14 +177,14 @@ function feedback_pluginfile($course, $cminfo, $context, $filearea, $args, $forc
             return false;
         }
 
-        if ($item->feedback == $cminfo->instance) {
+        if ($item->feedback == $cm->instance) {
             $filecontext = $usedcontext;
         } else {
             return false;
         }
 
-        $relativepath = '/'.implode('/', $args);
-        $fullpath = $filecontext->id.$filearea.$itemid.$relativepath;
+        $relativepath = implode('/', $args);
+        $fullpath = "/$filecontext->id/mod_feedback/$filearea/$itemid/$relativepath";
 
         $fs = get_file_storage();
         if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
@@ -919,7 +917,6 @@ function feedback_save_as_template($feedback, $name, $ispublic = 0) {
     global $DB;
     $fs = get_file_storage();
 
-die('TODO: MDL-21227 feedback code must not touch course summary files, code needs to be fixed, sorry');
     if (!$feedbackitems = $DB->get_records('feedback_item', array('feedback'=>$feedback->id))) {
         return false;
     }
@@ -948,11 +945,12 @@ die('TODO: MDL-21227 feedback code must not touch course summary files, code nee
         $t_item->template     = $newtempl->id;
         $t_item->id = $DB->insert_record('feedback_item', $t_item);
         //copy all included files to the feedback_template filearea
-        if ($itemfiles = $fs->get_area_files($f_context->id, 'feedback_item', $item->id, "id", false)) {
+        if ($itemfiles = $fs->get_area_files($f_context->id, 'mod_feedback', 'item', $item->id, "id", false)) {
             foreach($itemfiles as $ifile) {
                 $file_record = new object();
                 $file_record->contextid = $c_context->id;
-                $file_record->filearea = 'course_summary';
+                $file_record->component = 'mod_feedback';
+                $file_record->filearea = 'template';
                 $file_record->itemid = $t_item->id;
                 $fs->create_file_from_storedfile($file_record, $ifile);
             }
@@ -986,7 +984,6 @@ die('TODO: MDL-21227 feedback code must not touch course summary files, code nee
 function feedback_delete_template($id) {
     global $DB;
 
-die('TODO: MDL-21227 feedback code must not touch course summary files, code needs to be fixed, sorry');
     $template = $DB->get_record("feedback_template", array("id"=>$id));
 
     //deleting the files from the item
@@ -996,8 +993,8 @@ die('TODO: MDL-21227 feedback code must not touch course summary files, code nee
 
     if($t_items = $DB->get_records("feedback_item", array("template"=>$id))) {
         foreach($t_items as $t_item) {
-            if ($templatefiles = $fs->get_area_files($context->id, 'course_summary', $t_item->id, "id", false)) {
-                $fs->delete_area_files($context->id, 'course_summary', $t_item->id);
+            if ($templatefiles = $fs->get_area_files($context->id, 'mod_feedback', 'template', $t_item->id, "id", false)) {
+                $fs->delete_area_files($context->id, 'mod_feedback', 'template', $t_item->id);
             }
         }
     }
@@ -1019,8 +1016,6 @@ die('TODO: MDL-21227 feedback code must not touch course summary files, code nee
 function feedback_items_from_template($feedback, $templateid, $deleteold = false) {
     global $DB;
     $fs = get_file_storage();
-
-die('TODO: MDL-21227 feedback code must not touch course summary files, code needs to be fixed, sorry');
 
     //get all templateitems
     if(!$templitems = $DB->get_records('feedback_item', array('template'=>$templateid))) {
@@ -1068,11 +1063,12 @@ die('TODO: MDL-21227 feedback code must not touch course summary files, code nee
         $item->id = $DB->insert_record('feedback_item', $item);
 
         //TODO: moving the files to the new items
-        if ($templatefiles = $fs->get_area_files($c_context->id, 'course_summary', $t_item->id, "id", false)) {
+        if ($templatefiles = $fs->get_area_files($c_context->id, 'mod_feedback', 'template', $t_item->id, "id", false)) {
             foreach($templatefiles as $tfile) {
                 $file_record = new object();
                 $file_record->contextid = $f_context->id;
-                $file_record->filearea = 'feedback_item';
+                $file_record->component = 'mod_feedback';
+                $file_record->filearea = 'item';
                 $file_record->itemid = $item->id;
                 $fs->create_file_from_storedfile($file_record, $tfile);
             }
@@ -1296,8 +1292,8 @@ function feedback_delete_item($itemid, $renumber = true){
     }
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
-    if ($itemfiles = $fs->get_area_files($context->id, 'feedback_item', $item->id, "id", false)) {
-        $fs->delete_area_files($context->id, 'feedback_item', $item->id);
+    if ($itemfiles = $fs->get_area_files($context->id, 'mod_feedback', 'item', $item->id, "id", false)) {
+        $fs->delete_area_files($context->id, 'mod_feedback', 'item', $item->id);
     }
 
     $DB->delete_records("feedback_value", array("item"=>$itemid));

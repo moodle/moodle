@@ -91,7 +91,7 @@
     echo $OUTPUT->header();
 
 /// Print Section
-    if ($SITE->numsections > 0) { 
+    if ($SITE->numsections > 0) {
 
         if (!$section = $DB->get_record('course_sections', array('course'=>$SITE->id, 'section'=>1))) {
             $DB->delete_records('course_sections', array('course'=>$SITE->id, 'section'=>1)); // Just in case
@@ -104,7 +104,7 @@
             $section->id = $DB->insert_record('course_sections', $section);
         }
 
-        if (!empty($section->sequence) or !empty($section->summary) or $editing) { 
+        if (!empty($section->sequence) or !empty($section->summary) or $editing) {
             echo $OUTPUT->box_start('generalbox sitetopic');
 
             /// If currently moving a file then show the current clipboard
@@ -116,7 +116,7 @@
             }
 
             $context = get_context_instance(CONTEXT_COURSE, SITEID);
-            $summarytext = file_rewrite_pluginfile_urls($section->summary, 'pluginfile.php', $context->id, 'course_section', $section->id);
+            $summarytext = file_rewrite_pluginfile_urls($section->summary, 'pluginfile.php', $context->id, 'course', 'section', $section->id);
             $summaryformatoptions = new object();
             $summaryformatoptions->noclean = true;
 
@@ -139,13 +139,13 @@
         }
     }
 
-    if (isloggedin() and !isguestuser() and isset($CFG->frontpageloggedin)) { 
+    if (isloggedin() and !isguestuser() and isset($CFG->frontpageloggedin)) {
         $frontpagelayout = $CFG->frontpageloggedin;
     } else {
         $frontpagelayout = $CFG->frontpage;
     }
 
-    foreach (explode(',',$frontpagelayout) as $v) {  
+    foreach (explode(',',$frontpagelayout) as $v) {
         switch ($v) {     /// Display the main part of the front page.
             case FRONTPAGENEWS:
                 if ($SITE->newsitems) { // Print forums only when needed
@@ -177,7 +177,7 @@
                 }
             break;
 
-            case FRONTPAGECOURSELIST:                
+            case FRONTPAGECOURSELIST:
                 if (isloggedin() and !has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM)) and !isguestuser() and empty($CFG->disablemycourses)) {
                     echo html_writer::tag('a', get_string('skipa', 'access', moodle_strtolower(get_string('mycourses'))), array('href'=>'#skipmycourses', 'class'=>'skip-block'));
                     echo $OUTPUT->heading(get_string('mycourses'), 2, 'headingblock header');
@@ -189,7 +189,7 @@
                     echo $OUTPUT->heading(get_string('availablecourses'), 2, 'headingblock header');
                     print_courses(0);
                     echo html_writer::tag('span', '', array('class'=>'skip-block-to', 'id'=>'skipavailablecourses'));
-                }                
+                }
             break;
 
             case FRONTPAGECATEGORYNAMES:

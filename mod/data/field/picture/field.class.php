@@ -39,20 +39,19 @@ class data_field_picture extends data_field_base {
 
         if ($recordid) {
             if ($content = $DB->get_record('data_content', array('fieldid'=>$this->field->id, 'recordid'=>$recordid))) {
-                file_prepare_draft_area($itemid, $this->context->id, 'data_content', $content->id);
+                file_prepare_draft_area($itemid, $this->context->id, 'mod_data', 'content', $content->id);
                 if (!empty($content->content)) {
-                    if ($file = $fs->get_file($this->context->id, 'data_content', $content->id, '/', $content->content)) {
+                    if ($file = $fs->get_file($this->context->id, 'mod_data', 'content', $content->id, '/', $content->content)) {
                         $usercontext = get_context_instance(CONTEXT_USER, $USER->id);
-                        if (!$files = $fs->get_area_files($usercontext->id, 'user_draft', $itemid, 'id DESC', false)) {
+                        if (!$files = $fs->get_area_files($usercontext->id, 'user', 'draft', $itemid, 'id DESC', false)) {
                             return false;
                         }
-                        if ($thumbfile = $fs->get_file($usercontext->id, 'user_draft', $itemid, '/', 'thumb_'.$content->content)) {
+                        if ($thumbfile = $fs->get_file($usercontext->id, 'user', 'draft', $itemid, '/', 'thumb_'.$content->content)) {
                             $thumbfile->delete();
                         }
                         if (empty($content->content1)) {
                             // Print icon if file already exists
-                            $browser = get_file_browser();
-                            $src     = file_encode_url($CFG->wwwroot.'/draftfile.php/', $usercontext->id.'/user_draft/'.$itemid.'/'.$file->get_filename());
+                            $src     = file_draftfile_url($itemid, '/', $file->get_filename());
                             $displayname = '<img src="'.$OUTPUT->pix_url(file_mimetype_icon($file->get_mimetype())).'" class="icon" alt="'.$file->get_mimetype().'" />'. '<a href="'.$src.'" >'.s($file->get_filename()).'</a>';
 
                         } else {
@@ -69,7 +68,7 @@ class data_field_picture extends data_field_base {
         $str = '<div title="'.s($this->field->description).'">';
         $str .= '<fieldset><legend><span class="accesshide">'.$this->field->name.'</span></legend>';
         if ($file) {
-            $src = file_encode_url($CFG->wwwroot.'/pluginfile.php/', $this->context->id.'/data_content/'.$content->id.'/'.$file->get_filename());
+            $src = file_encode_url($CFG->wwwroot.'/pluginfile.php/', $this->context->id.'/mod_data/content/'.$content->id.'/'.$file->get_filename());
             $str .= '<img width="'.s($this->previewwidth).'" height="'.s($this->previewheight).'" src="'.$src.'" alt="" />';
         }
 
@@ -111,7 +110,7 @@ class data_field_picture extends data_field_base {
             }
         }
         $fs = get_file_storage();
-        if (!$file = $fs->get_file($this->context->id, 'data_content', $content->id, '/', $content->content)) {
+        if (!$file = $fs->get_file($this->context->id, 'mod_data', 'content', $content->id, '/', $content->content)) {
             return null;
         }
 
@@ -148,18 +147,16 @@ class data_field_picture extends data_field_base {
             return '';
         }
 
-        $browser = get_file_browser();
-
         $alt   = $content->content1;
         $title = $alt;
 
         if ($template == 'listtemplate') {
-            $src = file_encode_url($CFG->wwwroot.'/pluginfile.php', '/'.$this->context->id.'/data_content/'.$content->id.'/'.'thumb_'.$content->content);
+            $src = file_encode_url($CFG->wwwroot.'/pluginfile.php', '/'.$this->context->id.'/mod_data/content/'.$content->id.'/'.'thumb_'.$content->content);
             // no need to add width/height, because the thumb is resized properly
             $str = '<a href="view.php?d='.$this->field->dataid.'&amp;rid='.$recordid.'"><img src="'.$src.'" alt="'.s($alt).'" title="'.s($title).'" style="border:0px" /></a>';
 
         } else {
-            $src = file_encode_url($CFG->wwwroot.'/pluginfile.php', '/'.$this->context->id.'/data_content/'.$content->id.'/'.$content->content);
+            $src = file_encode_url($CFG->wwwroot.'/pluginfile.php', '/'.$this->context->id.'/mod_data/content/'.$content->id.'/'.$content->content);
             $width  = $this->field->param1 ? ' width="'.s($this->field->param1).'" ':' ';
             $height = $this->field->param2 ? ' height="'.s($this->field->param2).'" ':' ';
             $str = '<a href="'.$src.'"><img '.$width.$height.' src="'.$src.'" alt="'.s($alt).'" title="'.s($title).'" style="border:0px" /></a>';
@@ -187,10 +184,10 @@ class data_field_picture extends data_field_base {
                     ob_flush();
                 }
                 foreach ($contents as $content) {
-                    if (!$file = $fs->get_file($this->context->id, 'data_content', $content->id, '/', $content->content)) {
+                    if (!$file = $fs->get_file($this->context->id, 'mod_data', 'content', $content->id, '/', $content->content)) {
                         continue;
                     }
-                    if ($thumbfile = $fs->get_file($this->context->id, 'data_content', $content->id, '/', 'thumb_'.$content->content)) {
+                    if ($thumbfile = $fs->get_file($this->context->id, 'mod_data', 'content', $content->id, '/', 'thumb_'.$content->content)) {
                         $thumbfile->delete();
                     }
                     @set_time_limit(300);
@@ -218,15 +215,15 @@ class data_field_picture extends data_field_base {
         switch ($names[2]) {
             case 'file':
                 $fs = get_file_storage();
-                $fs->delete_area_files($this->context->id, 'data_content', $content->id);
+                $fs->delete_area_files($this->context->id, 'mod_data', 'content', $content->id);
                 $usercontext = get_context_instance(CONTEXT_USER, $USER->id);
-                $files = $fs->get_area_files($usercontext->id, 'user_draft', $value);
+                $files = $fs->get_area_files($usercontext->id, 'user', 'draft', $value);
                 if (count($files)<2) {
                     // no file
                 } else {
                     $count = 0;
                     foreach ($files as $draftfile) {
-                        $file_record = array('contextid'=>$this->context->id, 'itemid'=>$content->id, 'filepath'=>'/', 'filearea'=>'data_content');
+                        $file_record = array('contextid'=>$this->context->id, 'component'=>'mod_data', 'filearea'=>'content', 'itemid'=>$content->id, 'filepath'=>'/');
                         if (!$draftfile->is_directory()) {
                             $file_record['filename'] = $draftfile->get_filename();
 
@@ -263,7 +260,7 @@ class data_field_picture extends data_field_base {
         // If thumbnail width and height are BOTH not specified then no thumbnail is generated, and
         // additionally an attempted delete of the existing thumbnail takes place.
         $fs = get_file_storage();
-        $file_record = array('contextid'=>$file->get_contextid(), 'filearea'=>$file->get_filearea(),
+        $file_record = array('contextid'=>$file->get_contextid(), 'component'=>$file->get_component(), 'filearea'=>$file->get_filearea(),
                              'itemid'=>$file->get_itemid(), 'filepath'=>$file->get_filepath(),
                              'filename'=>'thumb_'.$file->get_filename(), 'userid'=>$file->get_userid());
         try {

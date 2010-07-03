@@ -94,7 +94,7 @@ if ($id) {
     $userid = $entry->userid;
     $entry->subject      = clean_text($entry->subject);
     $entry->summary      = clean_text($entry->summary, $entry->format);
-    
+
 } else {
     if (!has_capability('moodle/blog:create', $sitecontext)) {
         print_error('noentry', 'blog'); // manageentries is not enough for adding
@@ -163,8 +163,8 @@ $attachmentoptions = array('subdirs'=>false, 'maxfiles'=> 99, 'maxbytes'=>$CFG->
 
 $blogeditform = new blog_edit_form(null, compact('entry', 'summaryoptions', 'attachmentoptions', 'sitecontext', 'courseid', 'modid'));
 
-$entry = file_prepare_standard_editor($entry, 'summary', $summaryoptions, $sitecontext, 'blog_post', $entry->id);
-$entry = file_prepare_standard_filemanager($entry, 'attachment', $attachmentoptions, $sitecontext, 'blog_attachment', $entry->id);
+$entry = file_prepare_standard_editor($entry, 'summary', $summaryoptions, $sitecontext, 'blog', 'post', $entry->id);
+$entry = file_prepare_standard_filemanager($entry, 'attachment', $attachmentoptions, $sitecontext, 'blog', 'attachment', $entry->id);
 
 if (!empty($CFG->usetags) && !empty($entry->id)) {
     include_once($CFG->dirroot.'/tag/lib.php');

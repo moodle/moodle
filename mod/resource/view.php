@@ -65,7 +65,7 @@ if ($resource->tobemigrated) {
 }
 
 $fs = get_file_storage();
-$files = $fs->get_area_files($context->id, 'resource_content', 0, 'sortorder');
+$files = $fs->get_area_files($context->id, 'mod_resource', 'content', 0, 'sortorder');
 if (count($files) < 1) {
     resource_print_filenotfound($resource, $cm, $course);
     die;
@@ -76,7 +76,7 @@ if (count($files) < 1) {
 if ($redirect) {
     // coming from course page or url index page
     // this redirect trick solves caching problems when tracking views ;-)
-    $path = '/'.$context->id.'/resource_content/'.$resource->revision.$file->get_filepath().$file->get_filename();
+    $path = '/'.$context->id.'/mod_resource/content/'.$resource->revision.$file->get_filepath().$file->get_filename();
     $fullurl = file_encode_url($CFG->wwwroot.'/pluginfile.php', $path, false);
     redirect($fullurl);
 }

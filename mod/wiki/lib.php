@@ -381,25 +381,29 @@ function wiki_scale_used_anywhere($scaleid) {
  *
  * @author Josep Arus
  */
-function wiki_pluginfile($course, $cminfo, $context, $filearea, $args, $forcedownload) {
+function wiki_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload) {
     global $CFG;
+
+    if ($context->contextlevel != CONTEXT_MODULE) {
+        return false;
+    }
+
+    require_course_login($course, true, $cm);
 
     require_once($CFG->dirroot . "/mod/wiki/locallib.php");
 
-    if ($filearea == 'wiki_attachments') {
+    if ($filearea == 'attachments') {
         $swid = (int) array_shift($args);
 
         if (!$subwiki = wiki_get_subwiki($swid)) {
             return false;
         }
 
-        require_course_login($course->id, true, $cm);
-
         require_capability('mod/wiki:viewpage', $context);
 
-        $relativepath = '/' . implode('/', $args);
+        $relativepath = implode('/', $args);
 
-        $fullpath = $context->id . 'wiki_attachments' . $swid . $relativepath;
+        $fullpath = "/$context->id/mod_wiki/attachments/$swid/$relativepath";
 
         $fs = get_file_storage();
         if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
@@ -411,6 +415,7 @@ function wiki_pluginfile($course, $cminfo, $context, $filearea, $args, $forcedow
         send_stored_file($file, $lifetime, 0);
     }
 }
+
 function wiki_search_form($cm, $search='') {
     global $CFG, $OUTPUT;
 

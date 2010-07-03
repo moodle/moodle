@@ -88,8 +88,8 @@ function scorm_add_instance($scorm, $mform=null) {
             $filename = $mform->get_new_filename('packagefile');
             if ($filename !== false) {
                 $fs = get_file_storage();
-                $fs->delete_area_files($context->id, 'scorm_package');
-                $mform->save_stored_file('packagefile', $context->id, 'scorm_package', 0, '/', $filename);
+                $fs->delete_area_files($context->id, 'mod_scorm', 'package');
+                $mform->save_stored_file('packagefile', $context->id, 'mod_scorm', 'package', 0, '/', $filename);
                 $scorm->reference = $filename;
             }
         }
@@ -165,8 +165,8 @@ function scorm_update_instance($scorm, $mform=null) {
             if ($filename !== false) {
                 $scorm->reference = $filename;
                 $fs = get_file_storage();
-                $fs->delete_area_files($context->id, 'scorm_package');
-                $mform->save_stored_file('packagefile', $context->id, 'scorm_package', 0, '/', $filename);
+                $fs->delete_area_files($context->id, 'mod_scorm', 'package');
+                $mform->save_stored_file('packagefile', $context->id, 'mod_scorm', 'package', 0, '/', $filename);
             }
         }
 
@@ -782,10 +782,8 @@ function scorm_get_extra_capabilities() {
  */
 function scorm_get_file_areas($course, $cm, $context) {
     $areas = array();
-    if (has_capability('moodle/course:managefiles', $context)) {
-        $areas['scorm_content'] = get_string('areacontent', 'scorm');
-        $areas['scorm_package'] = get_string('areapackage', 'scorm');
-    }
+    $areas['content'] = get_string('areacontent', 'scorm');
+    $areas['package'] = get_string('areapackage', 'scorm');
     return $areas;
 }
 
@@ -814,49 +812,31 @@ function scorm_get_file_info($browser, $areas, $course, $cm, $context, $filearea
 
     $fs = get_file_storage();
 
-    if ($filearea === 'scorm_content') {
+    if ($filearea === 'content') {
 
         $filepath = is_null($filepath) ? '/' : $filepath;
         $filename = is_null($filename) ? '.' : $filename;
 
         $urlbase = $CFG->wwwroot.'/pluginfile.php';
-        if (!$storedfile = $fs->get_file($context->id, $filearea, 0, $filepath, $filename)) {
+        if (!$storedfile = $fs->get_file($context->id, 'mod_scorm', 'content', 0, $filepath, $filename)) {
             if ($filepath === '/' and $filename === '.') {
-                $storedfile = new virtual_root_file($context->id, $filearea, 0);
+                $storedfile = new virtual_root_file($context->id, 'mod_scorm', 'content', 0);
             } else {
                 // not found
                 return null;
             }
         }
-        /**
-         * @package   mod-scorm
-         * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
-         * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
-         */
-        class scorm_package_file_info extends file_info_stored {
-            public function get_parent() {
-                if ($this->lf->get_filepath() === '/' and $this->lf->get_filename() === '.') {
-                    return $this->browser->get_file_info($this->context);
-                }
-                return parent::get_parent();
-            }
-            public function get_visible_name() {
-                if ($this->lf->get_filepath() === '/' and $this->lf->get_filename() === '.') {
-                    return $this->topvisiblename;
-                }
-                return parent::get_visible_name();
-            }
-        }
+        require_once("$CFG->dirroot/mod/scorm/locallib.php");
         return new scorm_package_file_info($browser, $context, $storedfile, $urlbase, $areas[$filearea], true, true, false, false);
 
-    } else if ($filearea === 'scorm_package') {
+    } else if ($filearea === 'package') {
         $filepath = is_null($filepath) ? '/' : $filepath;
         $filename = is_null($filename) ? '.' : $filename;
 
         $urlbase = $CFG->wwwroot.'/pluginfile.php';
-        if (!$storedfile = $fs->get_file($context->id, $filearea, 0, $filepath, $filename)) {
+        if (!$storedfile = $fs->get_file($context->id, 'mod_scorm', 'package', 0, $filepath, $filename)) {
             if ($filepath === '/' and $filename === '.') {
-                $storedfile = new virtual_root_file($context->id, $filearea, 0);
+                $storedfile = new virtual_root_file($context->id, 'mod_scorm', 'package', 0);
             } else {
                 // not found
                 return null;
@@ -874,40 +854,36 @@ function scorm_get_file_info($browser, $areas, $course, $cm, $context, $filearea
  * Serves scorm content, introduction images and packages. Implements needed access control ;-)
  *
  * @param object $course
- * @param object $cminfo
+ * @param object $cm
  * @param object $context
  * @param string $filearea
  * @param array $args
  * @param bool $forcedownload
  * @return bool false if file not found, does not return if found - just send the file
  */
-function scorm_pluginfile($course, $cminfo, $context, $filearea, $args, $forcedownload) {
+function scorm_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload) {
     global $CFG;
 
-    if (!$cminfo->uservisible) {
-        return false; // probably hidden
-    }
-
-    $lifetime = isset($CFG->filelifetime) ? $CFG->filelifetime : 86400;
-
-    if (!$cm = get_coursemodule_from_instance('scorm', $cminfo->instance, $course->id)) {
+    if ($context->contextlevel != CONTEXT_MODULE) {
         return false;
     }
 
     require_login($course, true, $cm);
 
-    if ($filearea === 'scorm_content') {
+    $lifetime = isset($CFG->filelifetime) ? $CFG->filelifetime : 86400;
+
+    if ($filearea === 'content') {
         $revision = (int)array_shift($args); // prevents caching problems - ignored here
-        $relativepath = '/'.implode('/', $args);
-        $fullpath = $context->id.'scorm_content0'.$relativepath;
+        $relativepath = implode('/', $args);
+        $fullpath = "$context->id/mod_scorm/content/0/$relativepath";
         // TODO: add any other access restrictions here if needed!
 
-    } else if ($filearea === 'scorm_package') {
+    } else if ($filearea === 'package') {
         if (!has_capability('moodle/course:manageactivities', $context)) {
             return false;
         }
-        $relativepath = '/'.implode('/', $args);
-        $fullpath = $context->id.'scorm_package0'.$relativepath;
+        $relativepath = implode('/', $args);
+        $fullpath = "/$context->id/mod_scorm/package/0/$relativepath";
         $lifetime = 0; // no caching here
 
     } else {
@@ -994,7 +970,7 @@ function scorm_write_log($type, $text, $scoid) {
  *
  * @param object $type - type of log(aicc,scorm12,scorm13) used as prefix for filename
  * @param array $htmlarray
- * @return mixed 
+ * @return mixed
  */
 function scorm_print_overview($courses, &$htmlarray) {
     global $USER, $CFG, $DB;

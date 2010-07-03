@@ -80,9 +80,9 @@ if ($id and $delete) {
 // Prepare the description editor: We do support files for grouping descriptions
 $editoroptions = array('maxfiles'=>EDITOR_UNLIMITED_FILES, 'maxbytes'=>$course->maxbytes, 'trust'=>true, 'context'=>$context, 'noclean'=>true);
 if (!empty($grouping->id)) {
-    $grouping = file_prepare_standard_editor($grouping, 'description', $editoroptions, $context, 'course_grouping_description', $grouping->id);
+    $grouping = file_prepare_standard_editor($grouping, 'description', $editoroptions, $context, 'grouping', 'description', $grouping->id);
 } else {
-    $grouping = file_prepare_standard_editor($grouping, 'description', $editoroptions, $context, 'course_grouping_description', null);
+    $grouping = file_prepare_standard_editor($grouping, 'description', $editoroptions, $context, 'grouping', 'description', null);
 }
 
 /// First create the form

@@ -115,7 +115,8 @@ class backup_wiki_activity_structure_step extends backup_activity_structure_step
         $comment->annotate_ids('user', 'userid');
 
         // Define file annotations
-        $wiki->annotate_files(array('wiki_intro'), null); // This file area hasn't itemid
+        $wiki->annotate_files('mod_wiki', 'intro', null); // This file area hasn't itemid
+        //TODO: where are the attachments? (skodak)
 
         // Return the root element (wiki), wrapped into standard activity structure
         return $this->prepare_activity_structure($wiki);

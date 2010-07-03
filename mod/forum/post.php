@@ -51,7 +51,7 @@ $page_params = array('reply'=>$reply, 'forum'=>$forum, 'edit'=>$edit);
 $sitecontext = get_context_instance(CONTEXT_SYSTEM);
 
 if (!isloggedin() or isguestuser()) {
-    
+
     if (!isloggedin() and !get_referer()) {
         // No referer+not logged in - probably coming in via email  See MDL-9052
         require_login();
@@ -270,7 +270,7 @@ if (!empty($forum)) {      // User is starting a new discussion in a forum
     $post = trusttext_pre_edit($post, 'message', $modcontext);
 
     unset($SESSION->fromdiscussion);
-    
+
 
 }else if (!empty($delete)) {  // User is deleting a post
 
@@ -297,8 +297,8 @@ if (!empty($forum)) {      // User is starting a new discussion in a forum
                 || has_capability('mod/forum:deleteanypost', $modcontext)) ) {
         print_error('cannotdeletepost', 'forum');
     }
-    
-    
+
+
     $replycount = forum_count_replies($post);
 
     if (!empty($confirm) && confirm_sesskey()) {    // User has confirmed the delete
@@ -493,7 +493,7 @@ require_once('post_form.php');
 $mform_post = new mod_forum_post_form('post.php', array('course'=>$course, 'cm'=>$cm, 'coursecontext'=>$coursecontext, 'modcontext'=>$modcontext, 'forum'=>$forum, 'post'=>$post));
 
 $draftitemid = file_get_submitted_draft_itemid('attachments');
-file_prepare_draft_area($draftitemid, $modcontext->id, 'forum_attachment', empty($post->id)?null:$post->id);
+file_prepare_draft_area($draftitemid, $modcontext->id, 'mod_forum', 'attachment', empty($post->id)?null:$post->id);
 
 //load data into form NOW!
 
@@ -531,7 +531,7 @@ if (forum_is_subscribed($USER->id, $forum->id)) {
 }
 
 $draftid_editor = file_get_submitted_draft_itemid('message');
-$currenttext = file_prepare_draft_area($draftid_editor, $modcontext->id, 'forum_post', empty($post->id) ? null : $post->id, array('subdirs'=>true), $post->message);
+$currenttext = file_prepare_draft_area($draftid_editor, $modcontext->id, 'mod_forum', 'post', empty($post->id) ? null : $post->id, array('subdirs'=>true), $post->message);
 $mform_post->set_data(array(        'attachments'=>$draftitemid,
                                     'general'=>$heading,
                                     'subject'=>$post->subject,

@@ -182,7 +182,7 @@ abstract class backup_helper {
 
         // Extract useful information to decide
         $hasusers  = (bool)$sinfo['users']->value;     // Backup has users
-        $isannon   = (bool)$sinfo['anonymize']->value; // Backup is annonymzed
+        $isannon   = (bool)$sinfo['anonymize']->value; // Backup is anonymised
         $filename  = $sinfo['filename']->value;        // Backup filename
         $backupmode= $dinfo[0]->mode;                  // Backup mode backup::MODE_GENERAL/IMPORT/HUB
         $backuptype= $dinfo[0]->type;                  // Backup type backup::TYPE_1ACTIVITY/SECTION/COURSE
@@ -203,24 +203,28 @@ abstract class backup_helper {
         }
 
         // Calculate file storage options of id being backup
-        $ctxid    = 0;
-        $filearea = '';
-        $itemid   = 0;
+        $ctxid     = 0;
+        $filearea  = '';
+        $component = '';
+        $itemid    = 0;
         switch ($backuptype) {
             case backup::TYPE_1ACTIVITY:
-                $ctxid    = get_context_instance(CONTEXT_MODULE, $id)->id;
-                $filearea = 'activity_backup';
-                $itemid   = 0;
+                $ctxid     = get_context_instance(CONTEXT_MODULE, $id)->id;
+                $component = 'backup';
+                $filearea  = 'activity';
+                $itemid    = 0;
                 break;
             case backup::TYPE_1SECTION:
-                $ctxid    = get_context_instance(CONTEXT_COURSE, $courseid)->id;
-                $filearea = 'section_backup';
-                $itemid   = $id;
+                $ctxid     = get_context_instance(CONTEXT_COURSE, $courseid)->id;
+                $component = 'backup';
+                $filearea  = 'section';
+                $itemid    = $id;
                 break;
             case backup::TYPE_1COURSE:
-                $ctxid    = get_context_instance(CONTEXT_COURSE, $courseid)->id;
-                $filearea = 'course_backup';
-                $itemid   = 0;
+                $ctxid     = get_context_instance(CONTEXT_COURSE, $courseid)->id;
+                $component = 'backup';
+                $filearea  = 'course';
+                $itemid    = 0;
                 break;
         }
 
@@ -228,25 +232,28 @@ abstract class backup_helper {
         // are sent to user's "user_tohub" file area. The upload process
         // will be responsible for cleaning that filearea once finished
         if ($backupmode == backup::MODE_HUB) {
-            $ctxid = get_context_instance(CONTEXT_USER, $userid)->id;
-            $filearea = 'user_tohub';
-            $itemid   = 0;
+            $ctxid     = get_context_instance(CONTEXT_USER, $userid)->id;
+            $component = 'user';
+            $filearea  = 'tohub';
+            $itemid    = 0;
         }
 
-        // Backups without user info or withe the anoymise functionality
+        // Backups without user info or with the anonymise functionality
         // enabled are sent to user's "user_backup"
         // file area. Maintenance of such area is responsibility of
         // the user via corresponding file manager frontend
         if ($backupmode == backup::MODE_GENERAL && (!$hasusers || $isannon)) {
-            $ctxid = get_context_instance(CONTEXT_USER, $userid)->id;
-            $filearea = 'user_backup';
-            $itemid   = 0;
+            $ctxid     = get_context_instance(CONTEXT_USER, $userid)->id;
+            $component = 'user';
+            $filearea  = 'backup';
+            $itemid    = 0;
         }
 
         // Let's send the file to file storage, everything already defined
         $fs = get_file_storage();
         $fr = array(
             'contextid'   => $ctxid,
+            'component'   => $component,
             'filearea'    => $filearea,
             'itemid'      => $itemid,
             'filepath'    => '/',
@@ -257,8 +264,8 @@ abstract class backup_helper {
         // If file already exists, delete if before
         // creating it again. This is BC behaviour - copy()
         // overwrites by default
-        if ($fs->file_exists($fr['contextid'], $fr['filearea'], $fr['itemid'], $fr['filepath'], $fr['filename'])) {
-            $pathnamehash = $fs->get_pathname_hash($fr['contextid'], $fr['filearea'], $fr['itemid'], $fr['filepath'], $fr['filename']);
+        if ($fs->file_exists($fr['contextid'], $fr['component'], $fr['filearea'], $fr['itemid'], $fr['filepath'], $fr['filename'])) {
+            $pathnamehash = $fs->get_pathname_hash($fr['contextid'], $fr['component'], $fr['filearea'], $fr['itemid'], $fr['filepath'], $fr['filename']);
             $sf = $fs->get_file_by_hash($pathnamehash);
             $sf->delete();
         }

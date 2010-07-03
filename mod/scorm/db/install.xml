@@ -24,7 +24,7 @@
         <FIELD NAME="displayattemptstatus" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="false" DEFAULT="1" SEQUENCE="false" PREVIOUS="lastattemptlock" NEXT="displaycoursestructure"/>
         <FIELD NAME="displaycoursestructure" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="false" DEFAULT="1" SEQUENCE="false" PREVIOUS="displayattemptstatus" NEXT="updatefreq"/>
         <FIELD NAME="updatefreq" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Define when the package must be automatically update" PREVIOUS="displaycoursestructure" NEXT="sha1hash"/>
-        <FIELD NAME="sha1hash" TYPE="char" LENGTH="40" NOTNULL="false" SEQUENCE="false" COMMENT="pacakge content or ext path hash" PREVIOUS="updatefreq" NEXT="md5hash"/>
+        <FIELD NAME="sha1hash" TYPE="char" LENGTH="40" NOTNULL="false" SEQUENCE="false" COMMENT="package content or ext path hash" PREVIOUS="updatefreq" NEXT="md5hash"/>
         <FIELD NAME="md5hash" TYPE="char" LENGTH="32" NOTNULL="true" SEQUENCE="false" COMMENT="MD5 Hash of package file" PREVIOUS="sha1hash" NEXT="revision"/>
         <FIELD NAME="revision" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="revison number" PREVIOUS="md5hash" NEXT="launch"/>
         <FIELD NAME="launch" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="revision" NEXT="skipview"/>

@@ -530,17 +530,18 @@ class page_wiki_edit extends page_wiki {
         switch ($format) {
         case 'html':
             $data->newcontentformat = FORMAT_HTML;
-            $data = file_prepare_standard_editor($data, 'newcontent', page_wiki_edit::$attachmentoptions, $context, 'wiki_attachments', $this->subwiki->id);
+            $data = file_prepare_standard_editor($data, 'newcontent', page_wiki_edit::$attachmentoptions, $context, 'mod_wiki', 'attachments', $this->subwiki->id);
             break;
         default:
             //$draftitemid = file_get_submitted_draft_itemid('attachments');
-            //file_prepare_draft_area($draftitemid, $context->id, 'wiki_attachments', $this->subwiki->id);
+            //file_prepare_draft_area($draftitemid, $context->id, 'mod_wiki', 'attachments', $this->subwiki->id);
             //$data->attachments = $draftitemid;
         }
 
         if ($version->contentformat != 'html') {
-            $params['contextid'] = $context->id;
-            $params['filearea'] = 'wiki_attachments';
+            $params['contextid']  = $context->id;
+            $params['component']  = 'mod_wiki';
+            $params['filearea']   = 'attachments';
             $params['fileitemid'] = $this->subwiki->id;
         }
 
@@ -575,9 +576,9 @@ class page_wiki_edit extends page_wiki {
         global $PAGE, $OUTPUT;
 
         if ($this->upload) {
-            file_save_draft_area_files($this->attachments, $context->id, 'wiki_attachments', $this->subwiki->id);
+            file_save_draft_area_files($this->attachments, $context->id, 'mod_wiki', 'attachments', $this->subwiki->id);
             return null;
-            //return wiki_process_attachments($this->attachments, $this->deleteuploads, $context->id, 'wiki_attachments', $this->subwiki->id);
+            //return wiki_process_attachments($this->attachments, $this->deleteuploads, $context->id, 'mod_wiki', 'attachments', $this->subwiki->id);
         }
     }
 }
@@ -1907,8 +1908,9 @@ class page_wiki_save extends page_wiki_edit {
         $params = array('attachmentoptions' => page_wiki_edit::$attachmentoptions, 'format' => $this->format, 'version' => $this->versionnumber);
 
         if ($this->format != 'html') {
-            $params['contextid'] = $context->id;
-            $params['filearea'] = 'wiki_attachments';
+            $params['contextid']  = $context->id;
+            $params['component']  = 'mod_wiki';
+            $params['filearea']   = 'attachments';
             $params['fileitemid'] = $this->page->id;
         }
 
@@ -1918,7 +1920,7 @@ class page_wiki_save extends page_wiki_edit {
         $data = false;
         if ($data = $form->get_data()) {
             if ($this->format == 'html') {
-                $data = file_postupdate_standard_editor($data, 'newcontent', page_wiki_edit::$attachmentoptions, $context, 'wiki_attachments', $this->subwiki->id);
+                $data = file_postupdate_standard_editor($data, 'newcontent', page_wiki_edit::$attachmentoptions, $context, 'mod_wiki', 'attachments', $this->subwiki->id);
             }
 
             if (isset($this->section)) {

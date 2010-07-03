@@ -199,7 +199,7 @@
         if (!isset($category->descriptionformat)) {
             $category->descriptionformat = FORMAT_MOODLE;
         }
-        $text = file_rewrite_pluginfile_urls($category->description, 'pluginfile.php', $context->id, 'category_description', $category->id);
+        $text = file_rewrite_pluginfile_urls($category->description, 'pluginfile.php', $context->id, 'coursecat', 'description', null);
         echo format_text($text, $category->descriptionformat, $options);
         echo $OUTPUT->box_end();
     }

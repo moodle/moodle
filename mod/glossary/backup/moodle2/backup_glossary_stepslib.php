@@ -118,9 +118,10 @@ class backup_glossary_activity_structure_step extends backup_activity_structure_
         $rating->annotate_ids('user', 'userid');
 
         // Define file annotations
-        $glossary->annotate_files(array('glossary_intro'), null); // This file area hasn't itemid
+        $glossary->annotate_files('mod_glossary', 'intro', null); // This file area hasn't itemid
 
-        $entry->annotate_files(array('glossary_entry', 'glossary_attachment'), 'id');
+        $entry->annotate_files('mod_glossary', 'entry', 'id');
+        $entry->annotate_files('mod_glossary', 'attachment', 'id');
 
         // Return the root element (glossary), wrapped into standard activity structure
         return $this->prepare_activity_structure($glossary);

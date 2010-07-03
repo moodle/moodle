@@ -1181,7 +1181,7 @@ function portfolio_existing_exports_by_plugin($userid) {
  * callback function from {@link portfolio_rewrite_pluginfile_urls}
  * looks through preg_replace matches and replaces content with whatever the active portfolio export format says
  */
-function portfolio_rewrite_pluginfile_url_callback($contextid,  $filearea, $itemid, $format, $options, $matches) {
+function portfolio_rewrite_pluginfile_url_callback($contextid, $component, $filearea, $itemid, $format, $options, $matches) {
     $matches = $matches[0]; // no internal matching
     $dom = new DomDocument();
     if (!$dom->loadXML($matches)) {
@@ -1208,8 +1208,8 @@ function portfolio_rewrite_pluginfile_url_callback($contextid,  $filearea, $item
         $filename = array_pop($bits);
         $filepath = implode('/', $bits);
     }
-    if (!$file = $fs->get_file($contextid, $filearea, $itemid, $filepath, $filename)) {
-        debugging("Couldn\t find a file from the embedded path info context $contextid filearea $filearea itemid $itemid filepath $filepath name $filename");
+    if (!$file = $fs->get_file($contextid, $component, $filearea, $itemid, $filepath, $filename)) {
+        debugging("Couldn\t find a file from the embedded path info context $contextid component $component filearea $filearea itemid $itemid filepath $filepath name $filename");
         return $matches;
     }
     if (empty($options)) {
@@ -1227,6 +1227,7 @@ function portfolio_rewrite_pluginfile_url_callback($contextid,  $filearea, $item
  *
  * @param string           $text the text to search through
  * @param int              $contextid normal file_area arguments
+ * @param string           $component
  * @param string           $filearea  normal file_area arguments
  * @param int              $itemid    normal file_area arguments
  * @param portfolio_format $format    the portfolio export format
@@ -1234,9 +1235,9 @@ function portfolio_rewrite_pluginfile_url_callback($contextid,  $filearea, $item
  *
  * @return string
  */
-function portfolio_rewrite_pluginfile_urls($text, $contextid, $filearea, $itemid, $format, $options=null) {
+function portfolio_rewrite_pluginfile_urls($text, $contextid, $component, $filearea, $itemid, $format, $options=null) {
     $pattern = '/(<[^<]*?="@@PLUGINFILE@@\/[^>]*?(?:\/>|>.*?<\/[^>]*?>))/';
-    $callback = partial('portfolio_rewrite_pluginfile_url_callback', $contextid, $filearea, $itemid, $format, $options);
+    $callback = partial('portfolio_rewrite_pluginfile_url_callback', $contextid, $component, $filearea, $itemid, $format, $options);
     return preg_replace_callback($pattern, $callback, $text);
 }
 // this function has to go last, because the regexp screws up syntax highlighting in some editors

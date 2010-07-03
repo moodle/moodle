@@ -51,7 +51,8 @@ class backup_folder_activity_structure_step extends backup_activity_structure_st
         // (none)
 
         // Define file annotations
-        $folder->annotate_files(array('folder_intro', 'folder_content'), null); // This file area hasn't itemid
+        $folder->annotate_files('mod_folder', 'intro', null);
+        $folder->annotate_files('mod_folder', 'content', null);
 
         // Return the root element (folder), wrapped into standard activity structure
         return $this->prepare_activity_structure($folder);

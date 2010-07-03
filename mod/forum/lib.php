@@ -3103,7 +3103,7 @@ function forum_print_post($post, $discussion, $forum, &$cm, $course, $ownpost=fa
 
     $post->course = $course->id;
     $post->forum  = $forum->id;
-    $post->message = file_rewrite_pluginfile_urls($post->message, 'pluginfile.php', $modcontext->id, 'forum_post', $post->id);
+    $post->message = file_rewrite_pluginfile_urls($post->message, 'pluginfile.php', $modcontext->id, 'mod_forum', 'post', $post->id);
 
     // caching
     if (!isset($cm->cache)) {
@@ -3717,13 +3717,13 @@ function forum_move_attachments($discussion, $forumfrom, $forumto) {
     // loop through all posts, better not use attachment flag ;-)
     if ($posts = $DB->get_records('forum_posts', array('discussion'=>$discussion->id), '', 'id, attachment')) {
         foreach ($posts as $post) {
-            if ($oldfiles = $fs->get_area_files($oldcontext->id, 'forum_attachment', $post->id, "id", false)) {
+            if ($oldfiles = $fs->get_area_files($oldcontext->id, 'mod_forum', 'attachment', $post->id, "id", false)) {
                 foreach ($oldfiles as $oldfile) {
                     $file_record = new object();
                     $file_record->contextid = $newcontext->id;
                     $fs->create_file_from_storedfile($file_record, $oldfile);
                 }
-                $fs->delete_area_files($oldcontext->id, 'forum_attachment', $post->id);
+                $fs->delete_area_files($oldcontext->id, 'mod_forum', 'attachment', $post->id);
                 if ($post->attachment != '1') {
                     //weird - let's fix it
                     $post->attachment = '1';
@@ -3770,7 +3770,6 @@ function forum_print_attachments($post, $cm, $type) {
     $strattachment = get_string('attachment', 'forum');
 
     $fs = get_file_storage();
-    $browser = get_file_browser();
 
     $imagereturn = '';
     $output = '';
@@ -3778,13 +3777,13 @@ function forum_print_attachments($post, $cm, $type) {
     $canexport = (has_capability('mod/forum:exportpost', $context) || ($post->userid == $USER->id && has_capability('mod/forum:exportownpost', $context)));
 
     require_once($CFG->libdir.'/portfoliolib.php');
-    if ($files = $fs->get_area_files($context->id, 'forum_attachment', $post->id, "timemodified", false)) {
+    if ($files = $fs->get_area_files($context->id, 'mod_forum', 'attachment', $post->id, "timemodified", false)) {
         $button = new portfolio_add_button();
         foreach ($files as $file) {
             $filename = $file->get_filename();
             $mimetype = $file->get_mimetype();
             $iconimage = '<img src="'.$OUTPUT->pix_url(file_mimetype_icon($mimetype)).'" class="icon" alt="'.$mimetype.'" />';
-            $path = file_encode_url($CFG->wwwroot.'/pluginfile.php', '/'.$context->id.'/forum_attachment/'.$post->id.'/'.$filename);
+            $path = file_encode_url($CFG->wwwroot.'/pluginfile.php', '/'.$context->id.'/mod_forum/attachment/'.$post->id.'/'.$filename);
 
             if ($type == 'html') {
                 $output .= "<a href=\"$path\">$iconimage</a> ";
@@ -3847,32 +3846,28 @@ function forum_get_file_areas($course, $cm, $context) {
  * Serves the forum attachments. Implements needed access control ;-)
  *
  * @param object $course
- * @param object $cminfo
+ * @param object $cm
  * @param object $context
  * @param string $filearea
  * @param array $args
  * @param bool $forcedownload
  * @return bool false if file not found, does not return if found - justsend the file
  */
-function forum_pluginfile($course, $cminfo, $context, $filearea, $args, $forcedownload) {
+function forum_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload) {
     global $CFG, $DB;
 
-    if (!$cminfo->uservisible) {
+    if ($context->contextlevel != CONTEXT_MODULE) {
         return false;
     }
 
-    $fileareas = array('forum_attachment', 'forum_post');
+    require_course_login($course, true, $cm);
+
+    $fileareas = array('attachment', 'post');
     if (!in_array($filearea, $fileareas)) {
         return false;
     }
 
     $postid = (int)array_shift($args);
-
-    if (!$cm = get_coursemodule_from_instance('forum', $cminfo->instance, $course->id)) {
-        return false;
-    }
-
-    require_course_login($course, true, $cm);
 
     if (!$post = $DB->get_record('forum_posts', array('id'=>$postid))) {
         return false;
@@ -3882,19 +3877,19 @@ function forum_pluginfile($course, $cminfo, $context, $filearea, $args, $forcedo
         return false;
     }
 
-    if (!$forum = $DB->get_record('forum', array('id'=>$cminfo->instance))) {
+    if (!$forum = $DB->get_record('forum', array('id'=>$cm->instance))) {
         return false;
     }
 
     $fs = get_file_storage();
-    $relativepath = '/'.implode('/', $args);
-    $fullpath = $context->id.$filearea.$postid.$relativepath;
+    $relativepath = implode('/', $args);
+    $fullpath = "/$context->id/mod_forum/$filearea/$postid/$relativepath";
     if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
         return false;
     }
 
     // Make sure groups allow this user to see this file
-    if ($discussion->groupid > 0 and $groupmode = groups_get_activity_groupmode($cminfo, $course)) {   // Groups are being used
+    if ($discussion->groupid > 0 and $groupmode = groups_get_activity_groupmode($cm, $course)) {   // Groups are being used
         if (!groups_group_exists($discussion->groupid)) { // Can't find group
             return false;                           // Be safe and don't send it to anyone
         }
@@ -3941,7 +3936,7 @@ function forum_add_attachment($post, $forum, $cm, $mform=null, &$message=null) {
 
     $info = file_get_draft_area_info($post->attachments);
     $present = ($info['filecount']>0) ? '1' : '';
-    file_save_draft_area_files($post->attachments, $context->id, 'forum_attachment', $post->id);
+    file_save_draft_area_files($post->attachments, $context->id, 'mod_forum', 'attachment', $post->id);
 
     $DB->set_field('forum_posts', 'attachment', $present, array('id'=>$post->id));
 
@@ -3974,7 +3969,7 @@ function forum_add_new_post($post, $mform, &$message) {
     $post->attachment = "";
 
     $post->id = $DB->insert_record("forum_posts", $post);
-    $message = file_save_draft_area_files($post->itemid, $context->id, 'forum_post', $post->id, array('subdirs'=>true), $message);
+    $message = file_save_draft_area_files($post->itemid, $context->id, 'mod_forum', 'post', $post->id, array('subdirs'=>true), $message);
     $DB->set_field('forum_posts', 'message', $message, array('id'=>$post->id));
     forum_add_attachment($post, $forum, $cm, $mform, $message);
 
@@ -4020,7 +4015,7 @@ function forum_update_post($post, $mform, &$message) {
         $discussion->timestart = $post->timestart;
         $discussion->timeend   = $post->timeend;
     }
-    $post->message = file_save_draft_area_files($post->itemid, $context->id, 'forum_post', $post->id, array('subdirs'=>true), $post->message);
+    $post->message = file_save_draft_area_files($post->itemid, $context->id, 'mod_forum', 'post', $post->id, array('subdirs'=>true), $post->message);
     $DB->set_field('forum_posts', 'message', $post->message, array('id'=>$post->id));
 
     $DB->update_record('forum_discussions', $discussion);
@@ -4083,7 +4078,7 @@ function forum_add_discussion($discussion, $mform=null, &$message=null, $userid=
     // TODO: Fix the calling code so that there always is a $cm when this function is called
     if (!empty($cm->id) && !empty($discussion->itemid)) {   // In "single simple discussions" this may not exist yet
         $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-        $text = file_save_draft_area_files($discussion->itemid, $context->id, 'forum_post', $post->id, array('subdirs'=>true), $post->message);
+        $text = file_save_draft_area_files($discussion->itemid, $context->id, 'mod_forum', 'post', $post->id, array('subdirs'=>true), $post->message);
         $DB->set_field('forum_posts', 'message', $text, array('id'=>$post->id));
     }
 
@@ -4198,7 +4193,7 @@ function forum_delete_post($post, $children, $course, $cm, $forum, $skipcompleti
 
     //delete attachments
     $fs = get_file_storage();
-    $fs->delete_area_files($context->id, 'forum_attachment', $post->id);
+    $fs->delete_area_files($context->id, 'mod_forum', 'attachment', $post->id);
 
     if ($DB->delete_records("forum_posts", array("id" => $post->id))) {
 
@@ -6959,7 +6954,7 @@ function forum_reset_userdata($data) {
                     continue;
                 }
                 $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-                $fs->delete_area_files($context->id, 'forum_attachment');
+                $fs->delete_area_files($context->id, 'mod_forum', 'attachment');
 
                 //remove ratings
                 $ratingdeloptions->contextid = $context->id;

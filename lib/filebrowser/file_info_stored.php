@@ -19,15 +19,22 @@
 /**
  * Utility class for browsing of stored files.
  *
- * @package    moodlecore
- * @subpackage file-browser
+ * @package    core
+ * @subpackage filebrowser
  * @copyright  2008 Petr Skoda (http://skodak.org)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 /**
  * Represents an actual file or folder - a row in the file table -
  * in the tree navigated by @see{file_browser}.
+ *
+ * @package    core
+ * @subpackage filebrowser
+ * @copyright  2008 Petr Skoda (http://skodak.org)
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class file_info_stored extends file_info {
     protected $lf;
@@ -38,7 +45,20 @@ class file_info_stored extends file_info {
     protected $writeaccess;
     protected $areaonly;
 
-    public function __construct($browser, $context, $storedfile, $urlbase, $topvisiblename, $itemidused, $readaccess, $writeaccess, $areaonly) {
+    /**
+     * Constructor
+     *
+     * @param file_browser $browser
+     * @param object $context
+     * @param stored_file $storedfile
+     * @param string $urlbase the serving script - usually the $CFG->wwwroot/.'pluginfile.php'
+     * @param string $topvisiblename the human readable name of this area
+     * @param string $itemidused false if itemid  always 0 and not included in URL
+     * @param string $readaccess allow file reading
+     * @param string $writeaccess allow file write, delete
+     * @param string $areaonly do not show links to parent context/area
+     */
+    public function __construct(file_browser $browser, $context, $storedfile, $urlbase, $topvisiblename, $itemidused, $readaccess, $writeaccess, $areaonly) {
         parent::__construct($browser, $context);
 
         $this->lf             = $storedfile;
@@ -54,10 +74,11 @@ class file_info_stored extends file_info {
      * Returns list of standard virtual file/directory identification.
      * The difference from stored_file parameters is that null values
      * are allowed in all fields
-     * @return array with keys contextid, filearea, itemid, filepath and filename
+     * @return array with keys contextid, component, filearea, itemid, filepath and filename
      */
     public function get_params() {
         return array('contextid'=>$this->context->id,
+                     'component' =>$this->lf->get_component(),
                      'filearea' =>$this->lf->get_filearea(),
                      'itemid'   =>$this->lf->get_itemid(),
                      'filepath' =>$this->lf->get_filepath(),
@@ -94,8 +115,6 @@ class file_info_stored extends file_info {
      * @return string url
      */
     public function get_url($forcedownload=false, $https=false) {
-        global $CFG;
-
         if (!$this->is_readable()) {
             return null;
         }
@@ -106,15 +125,16 @@ class file_info_stored extends file_info {
 
         $this->urlbase;
         $contextid = $this->lf->get_contextid();
+        $component = $this->lf->get_component();
         $filearea  = $this->lf->get_filearea();
         $filepath  = $this->lf->get_filepath();
         $filename  = $this->lf->get_filename();
         $itemid    = $this->lf->get_itemid();
 
         if ($this->itemidused) {
-            $path = '/'.$contextid.'/'.$filearea.'/'.$itemid.$filepath.$filename;
+            $path = '/'.$contextid.'/'.$component.'/'.$filearea.'/'.$itemid.$filepath.$filename;
         } else {
-            $path = '/'.$contextid.'/'.$filearea.$filepath.$filename;
+            $path = '/'.$contextid.'/'.$component.'/'.$filearea.$filepath.$filename;
         }
         return file_encode_url($this->urlbase, $path, $forcedownload, $https);
     }
@@ -219,7 +239,7 @@ class file_info_stored extends file_info {
         $result = array();
         $fs = get_file_storage();
 
-        $storedfiles = $fs->get_directory_files($this->context->id, $this->lf->get_filearea(), $this->lf->get_itemid(),
+        $storedfiles = $fs->get_directory_files($this->context->id, $this->lf->get_component(), $this->lf->get_filearea(), $this->lf->get_itemid(),
                                                 $this->lf->get_filepath(), false, true, "filepath, filename");
         foreach ($storedfiles as $file) {
             $result[] = new file_info_stored($this->browser, $this->context, $file, $this->urlbase, $this->topvisiblename,
@@ -238,14 +258,14 @@ class file_info_stored extends file_info {
             if ($this->areaonly) {
                 return null;
             } else if ($this->itemidused) {
-                return $this->browser->get_file_info($this->context, $this->lf->get_filearea());
+                return $this->browser->get_file_info($this->context, $this->lf->get_component(), $this->lf->get_filearea());
             } else {
                 return $this->browser->get_file_info($this->context);
             }
         }
 
         if (!$this->lf->is_directory()) {
-            return $this->browser->get_file_info($this->context, $this->lf->get_filearea(), $this->lf->get_itemid(), $this->lf->get_filepath(), '.');
+            return $this->browser->get_file_info($this->context, $this->lf->get_component(), $this->lf->get_filearea(), $this->lf->get_itemid(), $this->lf->get_filepath(), '.');
         }
 
         $filepath = $this->lf->get_filepath();
@@ -255,7 +275,7 @@ class file_info_stored extends file_info {
         $filepath = implode('/', $dirs);
         $filepath = ($filepath === '') ? '/' : "/$filepath/";
 
-        return $this->browser->get_file_info($this->context, $this->lf->get_filearea(), $this->lf->get_itemid(), $filepath, '.');
+        return $this->browser->get_file_info($this->context, $this->lf->get_component(), $this->lf->get_filearea(), $this->lf->get_itemid(), $filepath, '.');
     }
 
     /**
@@ -265,7 +285,7 @@ class file_info_stored extends file_info {
      * @param int id of author, default $USER->id
      * @return file_info new directory
      */
-    public function create_directory($newdirname, $userid=null) {
+    public function create_directory($newdirname, $userid = NULL) {
         if (!$this->is_writable() or !$this->lf->is_directory()) {
             return null;
         }
@@ -279,8 +299,8 @@ class file_info_stored extends file_info {
 
         $fs = get_file_storage();
 
-        if ($file = $fs->create_directory($this->lf->get_contextid(), $this->lf->get_filearea(), $this->lf->get_itemid(), $filepath, $userid)) {
-            return $this->browser->get_file_info($this->context, $file->get_filearea(), $file->get_itemid(), $file->get_filepath(), $file->get_filename());
+        if ($file = $fs->create_directory($this->lf->get_contextid(), $this->lf->get_component(), $this->lf->get_filearea(), $this->lf->get_itemid(), $filepath, $userid)) {
+            return $this->browser->get_file_info($this->context, $this->lf->get_component(), $file->get_filearea(), $file->get_itemid(), $file->get_filepath(), $file->get_filename());
         }
         return null;
     }
@@ -294,7 +314,7 @@ class file_info_stored extends file_info {
      * @param int id of author, default $USER->id
      * @return file_info new file
      */
-    public function create_file_from_string($newfilename, $content, $userid=null) {
+    public function create_file_from_string($newfilename, $content, $userid = NULL) {
         if (!$this->is_writable() or !$this->lf->is_directory()) {
             return null;
         }
@@ -310,12 +330,13 @@ class file_info_stored extends file_info {
 
         $newrecord = new object();
         $newrecord->contextid = $this->lf->get_contextid();
+        $newrecord->component = $this->lf->get_component();
         $newrecord->filearea  = $this->lf->get_filearea();
         $newrecord->itemid    = $this->lf->get_itemid();
         $newrecord->filepath  = $this->lf->get_filepath();
         $newrecord->filename  = $newfilename;
 
-        if ($fs->file_exists($newrecord->contextid, $newrecord->filearea, $newrecord->itemid, $newrecord->filepath, $newrecord->filename)) {
+        if ($fs->file_exists($newrecord->contextid, $newrecord->component, $newrecord->filearea, $newrecord->itemid, $newrecord->filepath, $newrecord->filename)) {
             // file already exists, sorry
             return null;
         }
@@ -326,7 +347,7 @@ class file_info_stored extends file_info {
         $newrecord->userid       = $userid;
 
         if ($file = $fs->create_file_from_string($newrecord, $content)) {
-            return $this->browser->get_file_info($this->context, $file->get_filearea(), $file->get_itemid(), $file->get_filepath(), $file->get_filename());
+            return $this->browser->get_file_info($this->context, $file->get_component(), $file->get_filearea(), $file->get_itemid(), $file->get_filepath(), $file->get_filename());
         }
         return null;
     }
@@ -339,7 +360,7 @@ class file_info_stored extends file_info {
      * @param int id of author, default $USER->id
      * @return file_info new file
      */
-    public function create_file_from_pathname($newfilename, $pathname, $userid=null) {
+    public function create_file_from_pathname($newfilename, $pathname, $userid = NULL) {
         if (!$this->is_writable() or !$this->lf->is_directory()) {
             return null;
         }
@@ -355,12 +376,13 @@ class file_info_stored extends file_info {
 
         $newrecord = new object();
         $newrecord->contextid = $this->lf->get_contextid();
+        $newrecord->component = $this->lf->get_component();
         $newrecord->filearea  = $this->lf->get_filearea();
         $newrecord->itemid    = $this->lf->get_itemid();
         $newrecord->filepath  = $this->lf->get_filepath();
         $newrecord->filename  = $newfilename;
 
-        if ($fs->file_exists($newrecord->contextid, $newrecord->filearea, $newrecord->itemid, $newrecord->filepath, $newrecord->filename)) {
+        if ($fs->file_exists($newrecord->contextid, $newrecord->component, $newrecord->filearea, $newrecord->itemid, $newrecord->filepath, $newrecord->filename)) {
             // file already exists, sorry
             return null;
         }
@@ -371,7 +393,7 @@ class file_info_stored extends file_info {
         $newrecord->userid       = $userid;
 
         if ($file = $fs->create_file_from_pathname($newrecord, $pathname)) {
-            return $this->browser->get_file_info($this->context, $file->get_filearea(), $file->get_itemid(), $file->get_filepath(), $file->get_filename());
+            return $this->browser->get_file_info($this->context, $file->get_component(), $file->get_filearea(), $file->get_itemid(), $file->get_filepath(), $file->get_filename());
         }
         return null;
     }
@@ -384,7 +406,7 @@ class file_info_stored extends file_info {
      * @param int id of author, default $USER->id
      * @return file_info new file
      */
-    public function create_file_from_storedfile($newfilename, $fid, $userid=null) {
+    public function create_file_from_storedfile($newfilename, $fid, $userid = NULL) {
         if (!$this->is_writable() or $this->lf->get_filename() !== '.') {
             return null;
         }
@@ -400,12 +422,13 @@ class file_info_stored extends file_info {
 
         $newrecord = new object();
         $newrecord->contextid = $this->lf->get_contextid();
+        $newrecord->component = $this->lf->get_component();
         $newrecord->filearea  = $this->lf->get_filearea();
         $newrecord->itemid    = $this->lf->get_itemid();
         $newrecord->filepath  = $this->lf->get_filepath();
         $newrecord->filename  = $newfilename;
 
-        if ($fs->file_exists($newrecord->contextid, $newrecord->filearea, $newrecord->itemid, $newrecord->filepath, $newrecord->filename)) {
+        if ($fs->file_exists($newrecord->contextid, $newrecord->component, $newrecord->filearea, $newrecord->itemid, $newrecord->filepath, $newrecord->filename)) {
             // file already exists, sorry
             return null;
         }
@@ -416,7 +439,7 @@ class file_info_stored extends file_info {
         $newrecord->userid       = $userid;
 
         if ($file = $fs->create_file_from_storedfile($newrecord, $fid)) {
-            return $this->browser->get_file_info($this->context, $file->get_filearea(), $file->get_itemid(), $file->get_filepath(), $file->get_filename());
+            return $this->browser->get_file_info($this->context, $file->get_component(), $file->get_filearea(), $file->get_itemid(), $file->get_filepath(), $file->get_filename());
         }
         return null;
     }
@@ -433,7 +456,7 @@ class file_info_stored extends file_info {
         if ($this->is_directory()) {
             $filepath = $this->lf->get_filepath();
             $fs = get_file_storage();
-            $storedfiles = $fs->get_area_files($this->context->id, $this->lf->get_filearea(), $this->lf->get_itemid(), "");
+            $storedfiles = $fs->get_area_files($this->context->id, $file->get_component(), $this->lf->get_filearea(), $this->lf->get_itemid(), "");
             foreach ($storedfiles as $file) {
                 if (strpos($file->get_filepath(), $filepath) === 0) {
                     $file->delete();
@@ -453,16 +476,16 @@ class file_info_stored extends file_info {
      * @param string $filename
      * @return boolean success
      */
-    public function copy_to_storage($contextid, $filearea, $itemid, $filepath, $filename) {
+    public function copy_to_storage($contextid, $component, $filearea, $itemid, $filepath, $filename) {
         if (!$this->is_readable() or $this->is_directory()) {
             return false;
         }
 
         $fs = get_file_storage();
-        if ($existing = $fs->get_file($contextid, $filearea, $itemid, $filepath, $filename)) {
+        if ($existing = $fs->get_file($contextid, $component, $filearea, $itemid, $filepath, $filename)) {
             $existing->delete();
         }
-        $file_record = array('contextid'=>$contextid, 'filearea'=>$filearea, 'itemid'=>$itemid, 'filepath'=>$filepath, 'filename'=>$filename);
+        $file_record = array('contextid'=>$contextid, 'component'=>$component, 'filearea'=>$filearea, 'itemid'=>$itemid, 'filepath'=>$filepath, 'filename'=>$filename);
         $fs->create_file_from_storedfile($file_record, $this->lf);
 
         return true;

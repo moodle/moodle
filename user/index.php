@@ -302,7 +302,7 @@
                     $contentheading .= '&nbsp;' . $OUTPUT->action_icon($aurl, new pix_icon('t/edit', get_string('editgroupprofile')));
                 }
 
-                $group->description = file_rewrite_pluginfile_urls($group->description, 'pluginfile.php', $context->id, 'course_group_description', $group->id);
+                $group->description = file_rewrite_pluginfile_urls($group->description, 'pluginfile.php', $context->id, 'group', 'description', $group->id);
                 if (!isset($group->descriptionformat)) {
                     $group->descriptionformat = FORMAT_MOODLE;
                 }

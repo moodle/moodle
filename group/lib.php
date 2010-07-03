@@ -148,7 +148,7 @@ function groups_create_group($data, $editform=false, $editoroptions=null) {
             $description = new stdClass;
             $description->id = $data->id;
             $description->description_editor = $data->description_editor;
-            $description = file_postupdate_standard_editor($description, 'description', $editoroptions, $editoroptions['context'], 'course_group_description', $description->id);
+            $description = file_postupdate_standard_editor($description, 'description', $editoroptions, $editoroptions['context'], 'group', 'description', $description->id);
             $DB->update_record('groups', $description);
         }
     }
@@ -185,7 +185,7 @@ function groups_create_grouping($data, $editoroptions=null) {
         $description = new stdClass;
         $description->id = $data->id;
         $description->description_editor = $data->description_editor;
-        $description = file_postupdate_standard_editor($description, 'description', $editoroptions, $editoroptions['context'], 'course_grouping_description', $description->id);
+        $description = file_postupdate_standard_editor($description, 'description', $editoroptions, $editoroptions['context'], 'grouping', 'description', $description->id);
         $DB->update_record('groupings', $description);
     }
 
@@ -209,7 +209,7 @@ function groups_update_group($data, $editform=false) {
 
     if ($editform && method_exists($editform, 'get_editor_options')) {
         $editoroptions = $editform->get_editor_options();
-        $data = file_postupdate_standard_editor($data, 'description', $editoroptions, $editoroptions['context'], 'course_group_description', $data->id);
+        $data = file_postupdate_standard_editor($data, 'description', $editoroptions, $editoroptions['context'], 'group', 'description', $data->id);
     }
 
     $DB->update_record('groups', $data);
@@ -238,7 +238,7 @@ function groups_update_grouping($data, $editoroptions=null) {
     $data->timemodified = time();
     $data->name         = trim($data->name);
     if ($editoroptions !== null) {
-        $data = file_postupdate_standard_editor($data, 'description', $editoroptions, $editoroptions['context'], 'course_grouping_description', $data->id);
+        $data = file_postupdate_standard_editor($data, 'description', $editoroptions, $editoroptions['context'], 'grouping', 'description', $data->id);
     }
     $DB->update_record('groupings', $data);
     //trigger groups events
@@ -282,7 +282,7 @@ function groups_delete_group($grouporid) {
     // Delete all files associated with this group
     $context = get_context_instance(CONTEXT_COURSE, $group->courseid);
     $fs = get_file_storage();
-    $files = $fs->get_area_files($context->id, 'course_group_description', $groupid);
+    $files = $fs->get_area_files($context->id, 'group', 'description', $groupid);
     foreach ($files as $file) {
         $file->delete();
     }
@@ -323,7 +323,7 @@ function groups_delete_grouping($groupingorid) {
 
     $context = get_context_instance(CONTEXT_COURSE, $grouping->courseid);
     $fs = get_file_storage();
-    $files = $fs->get_area_files($context->id, 'course_grouping_description', $groupingid);
+    $files = $fs->get_area_files($context->id, 'grouping', 'description', $groupingid);
     foreach ($files as $file) {
         $file->delete();
     }
@@ -388,8 +388,6 @@ function groups_delete_groupings_groups($courseid, $showfeedback=false) {
 
     // Delete all files associated with groupings for this course
     $context = get_context_instance(CONTEXT_COURSE, $courseid);
-    $fs = get_file_storage();
-    $fs->delete_area_files($context->id, 'course_group_description');
 
     //trigger groups events
     events_trigger('groups_groupings_groups_removed', $courseid);
@@ -427,6 +425,10 @@ function groups_delete_groups($courseid, $showfeedback=false) {
     $groupssql = "SELECT id FROM {groups} g WHERE g.courseid = ?";
     $DB->delete_records_select('event', "groupid IN ($groupssql)", array($courseid));
 
+    $context = get_context_instance(CONTEXT_COURSE, $courseid);
+    $fs = get_file_storage();
+    $fs->delete_area_files($context->id, 'group');
+
     $DB->delete_records('groups', array('courseid'=>$courseid));
 
     //trigger groups events
@@ -458,12 +460,12 @@ function groups_delete_groupings($courseid, $showfeedback=false) {
     // remove the groupingid from all course modules
     $DB->set_field('course_modules', 'groupingid', 0, array('course'=>$courseid));
 
-    $DB->delete_records('groupings', array('courseid'=>$courseid));
-
     // Delete all files associated with groupings for this course
     $context = get_context_instance(CONTEXT_COURSE, $courseid);
     $fs = get_file_storage();
-    $fs->delete_area_files($context->id, 'course_grouping_description');
+    $fs->delete_area_files($context->id, 'grouping');
+
+    $DB->delete_records('groupings', array('courseid'=>$courseid));
 
     //trigger groups events
     events_trigger('groups_groupings_deleted', $courseid);
@@ -508,7 +510,7 @@ function groups_get_potential_members($courseid, $roleid = null, $cohortid = nul
     $listofcontexts = get_related_contexts_string($context);
 
     list($esql, $params) = get_enrolled_sql($context);
-    
+
     if ($roleid) {
         $params['roleid'] = $roleid;
         $where = "WHERE u.id IN (SELECT userid

@@ -152,7 +152,8 @@ class backup_scorm_activity_structure_step extends backup_activity_structure_ste
         $scotrack->annotate_ids('user', 'userid');
 
         // Define file annotations
-        $scorm->annotate_files(array('scorm_intro', 'scorm_content'), null); // This file area hasn't itemid
+        $scorm->annotate_files('mod_scorm', 'intro', null); // This file area hasn't itemid
+        $scorm->annotate_files('mod_scorm', 'content', null); // This file area hasn't itemid
 
         // Return the root element (scorm), wrapped into standard activity structure
         return $this->prepare_activity_structure($scorm);

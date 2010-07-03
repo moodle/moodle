@@ -19,32 +19,42 @@
 /**
  * Utility class for browsing of system files.
  *
- * @package    moodlecore
- * @subpackage file-browser
+ * @package    core
+ * @subpackage filebrowser
  * @copyright  2008 Petr Skoda (http://skodak.org)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 /**
  * Represents the system context in the tree navigated by @see{file_browser}.
+ *
+ * @package    core
+ * @subpackage filebrowser
+ * @copyright  2008 Petr Skoda (http://skodak.org)
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class file_info_system extends file_info {
-    public function __construct($browser) {
-        parent::__construct($browser, get_context_instance(CONTEXT_SYSTEM));
+class file_info_context_system extends file_info {
+    public function __construct($browser, $context) {
+        parent::__construct($browser, $context);
     }
 
     /**
-     * Returns list of standard virtual file/directory identification.
-     * The difference from stored_file parameters is that null values
-     * are allowed in all fields
-     * @return array with keys contextid, filearea, itemid, filepath and filename
+     * Return information about this specific part of context level
+     * @param $component
+     * @param $filearea
+     * @param $itemid
+     * @param $filepath
+     * @param $filename
      */
-    public function get_params() {
-        return array('contextid'=>$this->context->id,
-                     'filearea' =>null,
-                     'itemid'   =>null,
-                     'filepath' =>null,
-                     'filename' =>null);
+    public function get_file_info($component, $filearea, $itemid, $filepath, $filename) {
+        if (empty($component)) {
+            return $this;
+        }
+
+        // no components supported at this level yet
+        return null;
     }
 
     /**
@@ -84,10 +94,10 @@ class file_info_system extends file_info {
             $children[] = $child;
         }
 
-        $course_cats = $DB->get_records('course_categories', array('parent'=>0), 'sortorder');
+        $course_cats = $DB->get_records('course_categories', array('parent'=>0), 'sortorder', 'id,visible');
         foreach ($course_cats as $category) {
             $context = get_context_instance(CONTEXT_COURSECAT, $category->id);
-            if (!$category->visible and !has_capability('moodle/course:viewhiddencourses', $context)) {
+            if (!$category->visible and !has_capability('moodle/category:viewhiddencategories', $context)) {
                 continue;
             }
             if ($child = $this->browser->get_file_info($context)) {
@@ -95,7 +105,7 @@ class file_info_system extends file_info {
             }
         }
 
-        $courses = $DB->get_records('course', array('category'=>0), 'sortorder');
+        $courses = $DB->get_records('course', array('category'=>0), 'sortorder', 'id,visible');
         foreach ($courses as $course) {
             if (!$course->visible and !has_capability('moodle/course:viewhiddencourses', $context)) {
                 continue;

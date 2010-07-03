@@ -90,9 +90,9 @@ $returnurl = $gpr->get_return_url('index.php?id='.$courseid);
 $editoroptions = array('maxfiles'=>EDITOR_UNLIMITED_FILES, 'maxbytes'=>$CFG->maxbytes, 'trusttext'=>false, 'noclean'=>true);
 
 if (!empty($scale_rec->id)) {
-    $scale_rec = file_prepare_standard_editor($scale_rec, 'description', $editoroptions, $systemcontext, 'grade_scale', $scale_rec->id);
+    $scale_rec = file_prepare_standard_editor($scale_rec, 'description', $editoroptions, $systemcontext, 'grade', 'scale', $scale_rec->id);
 } else {
-    $scale_rec = file_prepare_standard_editor($scale_rec, 'description', $editoroptions, $systemcontext, 'grade_scale', null);
+    $scale_rec = file_prepare_standard_editor($scale_rec, 'description', $editoroptions, $systemcontext, 'grade', 'scale', null);
 }
 $mform = new edit_scale_form(null, compact('gpr', 'editoroptions'));
 
@@ -113,10 +113,10 @@ if ($mform->is_cancelled()) {
         }
         $scale->courseid = !empty($data->standard) ? 0 : $courseid;
         $scale->insert();
-        $data = file_postupdate_standard_editor($data, 'description', $editoroptions, $systemcontext, 'grade_scale', $scale->id);
+        $data = file_postupdate_standard_editor($data, 'description', $editoroptions, $systemcontext, 'grade', 'scale', $scale->id);
         $DB->set_field($scale->table, 'description', $data->description, array('id'=>$scale->id));
     } else {
-        $data = file_postupdate_standard_editor($data, 'description', $editoroptions, $systemcontext, 'grade_scale', $id);
+        $data = file_postupdate_standard_editor($data, 'description', $editoroptions, $systemcontext, 'grade', 'scale', $id);
         grade_scale::set_properties($scale, $data);
         if (isset($data->standard)) {
             $scale->courseid = !empty($data->standard) ? 0 : $courseid;

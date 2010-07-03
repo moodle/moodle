@@ -62,8 +62,7 @@ class repository_dropbox extends repository {
             $this->logged = true;
         }
 
-        $this->callback = new moodle_url($CFG->wwwroot.'/repository/repository_ajax.php', array(
-            'callback'=>'yes',
+        $this->callback = new moodle_url($CFG->wwwroot.'/repository/repository_callback.php', array(
             'repo_id'=>$repositoryid
             ));
 

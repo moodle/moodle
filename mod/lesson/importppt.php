@@ -72,15 +72,15 @@ if ($data = $mform->get_data()) {
     if (!$filename = $mform->get_new_filename('pptzip')) {
         print_error('invalidfile', 'lesson');
     }
-    if (!$package = $mform->save_stored_file('pptzip', $context->id, 'lesson_ppt_imports', $lesson->id, '/', $filename, true)) {
+    if (!$package = $mform->save_stored_file('pptzip', $context->id, 'mod_lesson', 'ppt_imports', $lesson->id, '/', $filename, true)) {
         print_error('unabletosavefile', 'lesson');
     }
     // extract package content
     $packer = get_file_packer('application/zip');
-    $package->extract_to_storage($packer, $context->id, 'lesson_imported_files', $lesson->id, '/');
+    $package->extract_to_storage($packer, $context->id, 'mod_lesson', 'imported_files', $lesson->id, '/');
 
     $fs = get_file_storage();
-    if ($files = $fs->get_area_files($context->id, 'lesson_imported_files', $lesson->id)) {
+    if ($files = $fs->get_area_files($context->id, 'mod_lesson', 'imported_files', $lesson->id)) {
 
         $pages = array();
         foreach ($files as $key=>$file) {
@@ -167,7 +167,7 @@ if ($data = $mform->get_data()) {
             $id = $DB->insert_record('lesson_pages', $branchtable->page);
 
             if (!empty($branchtable->page->images)) {
-                $changes = array('contextid'=>$context->id, 'filearea'=>'lesson_page_contents', 'itemid'=>$id, 'timemodified'=>time());
+                $changes = array('contextid'=>$context->id, 'component'=>'mod_lesson', 'filearea'=>'page_contents', 'itemid'=>$id, 'timemodified'=>time());
                 foreach ($branchtable->page->images as $image) {
                     $fs->create_file_from_storedfile($changes, $image);
                 }
@@ -194,7 +194,7 @@ if ($data = $mform->get_data()) {
     }
 
     // Remove all unzipped files!
-    $fs->delete_area_files($context->id, 'lesson_imported_files', $lesson->id);
+    $fs->delete_area_files($context->id, 'mod_lesson', 'imported_files', $lesson->id);
 
     redirect("$CFG->wwwroot/mod/$modname/view.php?id=$cm->id", get_string('pptsuccessfullimport', 'lesson'), 5);
 }

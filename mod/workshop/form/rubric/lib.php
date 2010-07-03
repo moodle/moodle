@@ -28,6 +28,41 @@ defined('MOODLE_INTERNAL') || die();
 require_once(dirname(dirname(__FILE__)) . '/lib.php');  // interface definition
 require_once($CFG->libdir . '/gradelib.php');           // to handle float vs decimal issues
 
+function workshopform_rubric_pluginfile($course, $cm, $context, $filearea, array $args, $forcedownload) {
+    global $DB;
+
+    if ($context->contextlevel != CONTEXT_MODULE) {
+        return false;
+    }
+
+    require_login($course, true, $cm);
+
+    if ($filearea !== 'description') {
+        return false;
+    }
+
+    $itemid = (int)array_shift($args); // the id of the assessment form dimension
+    if (!$workshop = $DB->get_record('workshop', array('id' => $cm->instance))) {
+        send_file_not_found();
+    }
+
+    if (!$dimension = $DB->get_record('workshopform_rubric', array('id' => $itemid ,'workshopid' => $workshop->id))) {
+        send_file_not_found();
+    }
+
+    // TODO now make sure the user is allowed to see the file
+    // (media embedded into the dimension description)
+    $fs = get_file_storage();
+    $relativepath = implode('/', $args);
+    $fullpath = "/$context->id/workshopform_rubric/$filearea/$itemid/$relativepath";
+    if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
+        return false;
+    }
+
+    // finally send the file
+    send_stored_file($file);
+}
+
 /**
  * Rubric grading strategy logic.
  */
@@ -94,7 +129,7 @@ class workshop_rubric_strategy implements workshop_strategy {
         for ($i = 0; $i < $nodimensions; $i++) {
             // prepare all editor elements
             $fields = file_prepare_standard_editor($fields, 'description__idx_'.$i, $this->descriptionopts,
-                $this->workshop->context, 'workshopform_rubric_description', $fields->{'dimensionid__idx_'.$i});
+                $this->workshop->context, 'workshopform_rubric', 'description', $fields->{'dimensionid__idx_'.$i});
         }
 
         $customdata = array();
@@ -160,7 +195,7 @@ class workshop_rubric_strategy implements workshop_strategy {
             }
             // re-save with correct path to embeded media files
             $record = file_postupdate_standard_editor($record, 'description', $this->descriptionopts,
-                                                      $this->workshop->context, 'workshopform_rubric_description', $record->id);
+                                                      $this->workshop->context, 'workshopform_rubric', 'description', $record->id);
             $DB->update_record('workshopform_rubric', $record);
 
             // create/update the criterion levels
@@ -205,7 +240,7 @@ class workshop_rubric_strategy implements workshop_strategy {
         // rewrite URLs to the embeded files
         for ($i = 0; $i < $nodimensions; $i++) {
             $fields->{'description__idx_'.$i} = file_rewrite_pluginfile_urls($fields->{'description__idx_'.$i},
-                'pluginfile.php', $this->workshop->context->id, 'workshopform_rubric_description',
+                'pluginfile.php', $this->workshop->context->id, 'workshopform_rubric', 'description',
                 $fields->{'dimensionid__idx_'.$i});
 
         }
@@ -448,7 +483,7 @@ class workshop_rubric_strategy implements workshop_strategy {
         $fs = get_file_storage();
         foreach ($ids as $id) {
             if (!empty($id)) {   // to prevent accidental removal of all files in the area
-                $fs->delete_area_files($this->workshop->context->id, 'workshopform_rubric_description', $id);
+                $fs->delete_area_files($this->workshop->context->id, 'workshopform_rubric', 'description', $id);
             }
         }
         $DB->delete_records_list('workshopform_rubric', 'id', $ids);

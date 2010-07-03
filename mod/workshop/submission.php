@@ -102,9 +102,9 @@ if ($edit) {
     $contentopts    = array('trusttext' => true, 'subdirs' => false, 'maxfiles' => $maxfiles, 'maxbytes' => $maxbytes);
     $attachmentopts = array('subdirs' => true, 'maxfiles' => $maxfiles, 'maxbytes' => $maxbytes);
     $submission     = file_prepare_standard_editor($submission, 'content', $contentopts, $workshop->context,
-                                        'workshop_submission_content', $submission->id);
+                                        'mod_workshop', 'submission_content', $submission->id);
     $submission     = file_prepare_standard_filemanager($submission, 'attachment', $attachmentopts, $workshop->context,
-                                        'workshop_submission_attachment', $submission->id);
+                                        'mod_workshop', 'submission_attachment', $submission->id);
 
     $mform          = new workshop_submission_form($PAGE->url, array('current' => $submission, 'workshop' => $workshop,
                                                     'contentopts' => $contentopts, 'attachmentopts' => $attachmentopts));
@@ -132,9 +132,9 @@ if ($edit) {
         }
         // save and relink embedded images and save attachments
         $formdata = file_postupdate_standard_editor($formdata, 'content', $contentopts, $workshop->context,
-                                                      'workshop_submission_content', $formdata->id);
+                                                      'mod_workshop', 'submission_content', $formdata->id);
         $formdata = file_postupdate_standard_filemanager($formdata, 'attachment', $attachmentopts, $workshop->context,
-                                                           'workshop_submission_attachment', $formdata->id);
+                                                           'mod_workshop', 'submission_attachment', $formdata->id);
         if (empty($formdata->attachment)) {
             // explicit cast to zero integer
             $formdata->attachment = 0;

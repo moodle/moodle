@@ -18,7 +18,7 @@
 /**
  * Form for editing HTML block instances.
  *
- * @package   moodlecore
+ * @package   block_html
  * @copyright 2009 Tim Hunt
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -50,7 +50,7 @@ class block_html_edit_form extends block_edit_form {
         } else {
             $currenttext = $block->config->text['text'];
         }
-        $block->config->text['text'] = file_prepare_draft_area($draftid_editor, $block->context->id, 'block_html', $block->instance->id, array('subdirs'=>true), $currenttext);
+        $block->config->text['text'] = file_prepare_draft_area($draftid_editor, $block->context->id, 'block_html', 'content', 0, array('subdirs'=>true), $currenttext);
         $block->config->text['itemid'] = $draftid_editor;
         parent::set_data($defaults);
     }

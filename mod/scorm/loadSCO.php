@@ -122,7 +122,7 @@
         //note: do not convert this to use get_file_url()!
         //      SCORM does not work without slasharguments anyway and there might be some extra ?xx=yy params
         //      see MDL-16060
-        $result = "$CFG->wwwroot/pluginfile.php/$context->id/scorm_content/$scorm->revision/$launcher";
+        $result = "$CFG->wwwroot/pluginfile.php/$context->id/mod_scorm/content/$scorm->revision/$launcher";
     }
 
     // which API are we looking for

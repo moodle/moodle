@@ -52,7 +52,8 @@ class backup_page_activity_structure_step extends backup_activity_structure_step
         // (none)
 
         // Define file annotations
-        $page->annotate_files(array('page_intro', 'page_content'), null); // This file areas haven't itemid
+        $page->annotate_files('mod_page', 'intro', null); // This file areas haven't itemid
+        $page->annotate_files('mod_page', 'content', null); // This file areas haven't itemid
 
         // Return the root element (page), wrapped into standard activity structure
         return $this->prepare_activity_structure($page);

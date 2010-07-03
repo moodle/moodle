@@ -75,8 +75,8 @@ class glossary_full_portfolio_caller extends portfolio_module_caller_base {
         $this->multifiles = array();
         foreach (array_keys($entries) as $entry) {
             $this->keyedfiles[$entry] = array_merge(
-                $fs->get_area_files($context->id, 'glossary_attachment', $entry, "timemodified", false),
-                $fs->get_area_files($context->id, 'glossary_entry', $entry, "timemodified", false)
+                $fs->get_area_files($context->id, 'mod_glossary', 'attachment', $entry, "timemodified", false),
+                $fs->get_area_files($context->id, 'mod_glossary', 'entry', $entry, "timemodified", false)
             );
             $this->multifiles = array_merge($this->multifiles, $this->keyedfiles[$entry]);
         }
@@ -262,8 +262,8 @@ class glossary_entry_portfolio_caller extends portfolio_module_caller_base {
         $this->aliases = $DB->get_records('glossary_alias', array('entryid'=>$this->entryid));
         $fs = get_file_storage();
         $this->multifiles = array_merge(
-            $fs->get_area_files($context->id, 'glossary_attachment', $this->entry->id, "timemodified", false),
-            $fs->get_area_files($context->id, 'glossary_entry', $this->entry->id, "timemodified", false)
+            $fs->get_area_files($context->id, 'mod_glossary', 'attachment', $this->entry->id, "timemodified", false),
+            $fs->get_area_files($context->id, 'mod_glossary', 'entry', $this->entry->id, "timemodified", false)
         );
     }
 
@@ -388,7 +388,7 @@ class glossary_entry_portfolio_caller extends portfolio_module_caller_base {
 
         $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
-        $entry->definition = portfolio_rewrite_pluginfile_urls($entry->definition, $context->id, 'glossary_entry', $entry->id, $format);
+        $entry->definition = portfolio_rewrite_pluginfile_urls($entry->definition, $context->id, 'mod_glossary', 'entry', $entry->id, $format);
 
         $output .= format_text($entry->definition, $entry->definitionformat, $options);
         if (isset($entry->footer)) {
@@ -418,7 +418,7 @@ class glossary_entry_portfolio_caller extends portfolio_module_caller_base {
             $filecontext = $context;
         }
         $fs = get_file_storage();
-        if ($files = $fs->get_area_files($filecontext->id, 'glossary_attachment', $entry->id, "timemodified", false)) {
+        if ($files = $fs->get_area_files($filecontext->id, 'mod_glossary', 'attachment', $entry->id, "timemodified", false)) {
             $output .= '<table border="0" width="100%"><tr><td>' . "\n";
 
             foreach ($files as $file) {

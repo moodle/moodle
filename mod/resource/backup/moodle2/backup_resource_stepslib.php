@@ -52,7 +52,8 @@ class backup_resource_activity_structure_step extends backup_activity_structure_
         // (none)
 
         // Define file annotations
-        $resource->annotate_files(array('resource_intro', 'resource_content'), null); // This file areas haven't itemid
+        $resource->annotate_files('mod_resource', 'intro', null); // This file areas haven't itemid
+        $resource->annotate_files('mod_resource', 'content', null); // This file areas haven't itemid
 
         // Return the root element (resource), wrapped into standard activity structure
         return $this->prepare_activity_structure($resource);

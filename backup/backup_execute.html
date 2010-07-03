@@ -76,7 +76,7 @@
         //Print final message
         echo $OUTPUT->box(get_string("backupfinished"));
         $context = get_context_instance(CONTEXT_COURSE, $course->id);
-        echo $OUTPUT->continue_button("$CFG->wwwroot/files/index.php?contextid=".$context->id."&filearea=course_backup&itemid=0");
+        echo $OUTPUT->continue_button("$CFG->wwwroot/files/index.php?contextid=".$context->id."&component=backup&filearea=course&itemid=0");
     } else {
         echo $OUTPUT->box(get_string('importdataexported'));
         if (!empty($preferences->backup_destination)) {

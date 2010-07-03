@@ -110,7 +110,7 @@ class blog_entry {
             $cmt->showcount = $CFG->blogshowcommentscount;
             $options->comments = $cmt;
         }
-        $this->summary = file_rewrite_pluginfile_urls($this->summary, 'pluginfile.php', SYSCONTEXTID, 'blog_post', $this->id);
+        $this->summary = file_rewrite_pluginfile_urls($this->summary, 'pluginfile.php', SYSCONTEXTID, 'blog', 'post', $this->id);
 
         $template['body'] = format_text($this->summary, $this->summaryformat, $options);
         $template['title'] = format_string($this->subject);
@@ -369,8 +369,8 @@ class blog_entry {
             $entry->$var = $val;
         }
 
-        $entry = file_postupdate_standard_editor($entry, 'summary', $summaryoptions, $sitecontext, 'blog_post', $entry->id);
-        $entry = file_postupdate_standard_filemanager($entry, 'attachment', $attachmentoptions, $sitecontext, 'blog_attachment', $entry->id);
+        $entry = file_postupdate_standard_editor($entry, 'summary', $summaryoptions, $sitecontext, 'blog', 'post', $entry->id);
+        $entry = file_postupdate_standard_filemanager($entry, 'attachment', $attachmentoptions, $sitecontext, 'blog', 'attachment', $entry->id);
 
         if (!empty($CFG->useblogassociations)) {
             $entry->add_associations();
@@ -462,8 +462,8 @@ class blog_entry {
      */
     public function delete_attachments() {
         $fs = get_file_storage();
-        $fs->delete_area_files(SYSCONTEXTID, 'blog_attachment', $this->id);
-        $fs->delete_area_files(SYSCONTEXTID, 'blog_post', $this->id);
+        $fs->delete_area_files(SYSCONTEXTID, 'blog', 'attachment', $this->id);
+        $fs->delete_area_files(SYSCONTEXTID, 'blog', 'post', $this->id);
     }
 
     /**
@@ -480,9 +480,8 @@ class blog_entry {
         require_once($CFG->libdir.'/filelib.php');
 
         $fs = get_file_storage();
-        $browser = get_file_browser();
 
-        $files = $fs->get_area_files(SYSCONTEXTID, 'blog_attachment', $this->id);
+        $files = $fs->get_area_files(SYSCONTEXTID, 'blog', 'attachment', $this->id);
 
         $imagereturn = "";
         $output = "";
@@ -495,7 +494,7 @@ class blog_entry {
             }
 
             $filename = $file->get_filename();
-            $ffurl    = file_encode_url($CFG->wwwroot.'/pluginfile.php', '/'.SYSCONTEXTID.'/blog_attachment/'.$this->id.'/'.$filename);
+            $ffurl    = file_encode_url($CFG->wwwroot.'/pluginfile.php', '/'.SYSCONTEXTID.'/blog/attachment/'.$this->id.'/'.$filename);
             $mimetype = $file->get_mimetype();
 
             $icon     = substr(mimeinfo_from_type("icon", $mimetype), 0, -4);

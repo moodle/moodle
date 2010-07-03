@@ -2,7 +2,7 @@
 // Author: Dongsheng Cai <dongsheng@moodle.com>
 M.core_filetree = {
     y3: null,
-    api: M.cfg.wwwroot+'/files/files_ajax.php',
+    api: M.cfg.wwwroot+'/files/filebrowser_ajax.php',
     request: function(url, node, cb) {
         var api = this.api + '?action=getfiletree';
         var params = [];

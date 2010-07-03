@@ -134,9 +134,10 @@ class backup_forum_activity_structure_step extends backup_activity_structure_ste
 
         // Define file annotations
 
-        $forum->annotate_files(array('forum_intro'), null); // This file area hasn't itemid
+        $forum->annotate_files('mod_forum', 'intro', null); // This file area hasn't itemid
 
-        $post->annotate_files(array('forum_post', 'forum_attachment'), 'id');
+        $post->annotate_files('mod_forum', 'post', 'id');
+        $post->annotate_files('mod_forum', 'attachment', 'id');
 
         // Return the root element (forum), wrapped into standard activity structure
         return $this->prepare_activity_structure($forum);

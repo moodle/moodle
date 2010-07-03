@@ -125,7 +125,7 @@ function xmldb_forum_upgrade($oldversion) {
                 }
                 $context = get_context_instance(CONTEXT_MODULE, $post->cmid);
 
-                $filearea = 'forum_attachment';
+                $filearea = 'attachment';
                 $filename = clean_param($post->attachment, PARAM_FILE);
                 if ($filename === '') {
                     echo $OUTPUT->notification("Unsupported post filename, skipping: ".$filepath);
@@ -133,8 +133,8 @@ function xmldb_forum_upgrade($oldversion) {
                     $DB->update_record('forum_posts', $post);
                     continue;
                 }
-                if (!$fs->file_exists($context->id, $filearea, $post->id, '/', $filename)) {
-                    $file_record = array('contextid'=>$context->id, 'filearea'=>$filearea, 'itemid'=>$post->id, 'filepath'=>'/', 'filename'=>$filename, 'userid'=>$post->userid);
+                if (!$fs->file_exists($context->id, 'mod_form', $filearea, $post->id, '/', $filename)) {
+                    $file_record = array('contextid'=>$context->id, 'component'=>'mod_form', 'filearea'=>$filearea, 'itemid'=>$post->id, 'filepath'=>'/', 'filename'=>$filename, 'userid'=>$post->userid);
                     if ($fs->create_file_from_pathname($file_record, $filepath)) {
                         $post->attachment = '1';
                         if ($DB->update_record('forum_posts', $post)) {

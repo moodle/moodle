@@ -35,7 +35,6 @@ require_login();
 /// Parameters
 $action    = optional_param('action', '', PARAM_ALPHA);
 $repo_id   = optional_param('repo_id', 0, PARAM_INT);           // Pepository ID
-$callback  = optional_param('callback', '', PARAM_CLEANHTML);   // Is this a callback from external site?
 $client_id = optional_param('client_id', '', PARAM_RAW);        // Client ID
 $contextid = optional_param('ctx_id', SYSCONTEXTID, PARAM_INT); // Context ID
 $env       = optional_param('env', 'filepicker', PARAM_ALPHA);  // Opened in editor or moodleform
@@ -46,7 +45,6 @@ $itemid    = optional_param('itemid', 0, PARAM_INT);            // Itemid
 $page      = optional_param('page', '', PARAM_RAW);             // Page
 $maxbytes  = optional_param('maxbytes', 0, PARAM_INT);          // Maxbytes
 $req_path  = optional_param('p', '', PARAM_RAW);                // Path
-$saveas_filearea = optional_param('filearea', 'user_draft', PARAM_TEXT);
 $saveas_filename = optional_param('title', '', PARAM_FILE);     // save as file name
 $saveas_path   = optional_param('savepath', '/', PARAM_PATH);   // save as file path
 $search_text   = optional_param('s', '', PARAM_CLEANHTML);
@@ -140,41 +138,6 @@ if (file_exists($CFG->dirroot.'/repository/'.$type.'/repository.class.php')) {
     die(json_encode($err));
 }
 
-
-if (!empty($callback)) {
-    // post callback
-    $repo->callback();
-    // call opener window to refresh repository
-    // the callback url should be something like this:
-    // http://xx.moodle.com/repository/repository_ajax.php?callback=yes&repo_id=1&sid=xxx
-    // sid is the attached auth token from external source
-    // If Moodle is working on HTTPS mode, then we are not allowed to access
-    // parent window, in this case, we need to alert user to refresh the repository
-    // manually.
-    $strhttpsbug = get_string('cannotaccessparentwin', 'repository');
-    $strrefreshnonjs = get_string('refreshnonjsfilepicker', 'repository');
-    $js =<<<EOD
-<html>
-<head>
-    <script type="text/javascript">
-    if(window.opener){
-        window.opener.M.core_filepicker.active_filepicker.list();
-        window.close();
-    } else {
-        alert("{$strhttpsbug }");
-    }
-    </script>
-</head>
-<body>
-    <noscript>
-    {$strrefreshnonjs}
-    </noscript>
-</body>
-</html>
-EOD;
-    die($js);
-}
-
 /// These actions all occur on the currently active repository instance
 switch ($action) {
     case 'sign':
@@ -235,7 +198,7 @@ switch ($action) {
             // so we don't check user quota and maxbytes here
             if (in_array($repo->options['type'], array('local', 'recent', 'user'))) {
                 try {
-                    $fileinfo = $repo->copy_to_area($source, $saveas_filearea, $itemid, $saveas_path, $saveas_filename);
+                    $fileinfo = $repo->copy_to_area($source, 'draft', $itemid, $saveas_path, $saveas_filename);
                 } catch (Exception $e) {
                     throw $e;
                 }
@@ -296,7 +259,8 @@ switch ($action) {
                     $record = new stdclass;
                     $record->filepath = $saveas_path;
                     $record->filename = $saveas_filename;
-                    $record->filearea = $saveas_filearea;
+                    $record->component = 'user';
+                    $record->filearea = 'draft';
                     $record->itemid   = $itemid;
 
                     if (!empty($file['license'])) {

@@ -40,7 +40,7 @@ $context = get_context_instance(CONTEXT_COURSE, $course->id);
 require_capability('moodle/course:update', $context);
 
 $editoroptions = array('maxfiles' => EDITOR_UNLIMITED_FILES, 'maxbytes'=>$CFG->maxbytes, 'trusttext'=>false, 'noclean'=>true);
-$section = file_prepare_standard_editor($section, 'summary', $editoroptions, $context, 'course_section', $section->id);
+$section = file_prepare_standard_editor($section, 'summary', $editoroptions, $context, 'course', 'section', $section->id);
 $section->usedefaultname = (is_null($section->name));
 $mform = new editsection_form(null, array('course'=>$course, 'editoroptions'=>$editoroptions));
 $mform->set_data($section); // set current value
@@ -55,7 +55,7 @@ if ($mform->is_cancelled()){
     } else {
         $section->name = null;
     }
-    $data = file_postupdate_standard_editor($data, 'summary', $editoroptions, $context, 'course_section', $section->id);
+    $data = file_postupdate_standard_editor($data, 'summary', $editoroptions, $context, 'course', 'section', $section->id);
     $section->summary = $data->summary;
     $section->summaryformat = $data->summaryformat;
     $DB->update_record('course_sections', $section);

@@ -2637,7 +2637,7 @@
             //Define zip destination (course dir)
             $context = get_context_instance(CONTEXT_COURSE, $preferences->backup_course);
             $fs = get_file_storage();
-            $file_record = array('contextid'=>$context->id, 'filearea'=>'course_backup',
+            $file_record = array('contextid'=>$context->id, 'component'=>'backup', 'filearea'=>'course',
                     'itemid'=>0, 'filepath'=>'/', 'filename'=>$preferences->backup_name,
                     'timecreated'=>time(), 'timemodified'=>time());
             $fs->create_file_from_pathname($file_record, $from_zip_file);

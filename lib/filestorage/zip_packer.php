@@ -19,17 +19,24 @@
 /**
  * Implementation of zip packer.
  *
- * @package    moodlecore
- * @subpackage file-packer
+ * @package    core
+ * @subpackage filestorage
  * @copyright  2008 Petr Skoda (http://skodak.org)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once("$CFG->libdir/packer/file_packer.php");
-require_once("$CFG->libdir/packer/zip_archive.php");
+defined('MOODLE_INTERNAL') || die();
+
+require_once("$CFG->libdir/filestorage/file_packer.php");
+require_once("$CFG->libdir/filestorage/zip_archive.php");
 
 /**
  * Utility class - handles all zipping and unzipping operations.
+ *
+ * @package    core
+ * @subpackage filestorage
+ * @copyright  2008 Petr Skoda (http://skodak.org)
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class zip_packer extends file_packer {
 
@@ -37,13 +44,14 @@ class zip_packer extends file_packer {
      * Zip files and store the result in file storage
      * @param array $files array with full zip paths (including directory information) as keys (archivepath=>ospathname or archivepath/subdir=>stored_file)
      * @param int $contextid
+     * @param string $component
      * @param string $filearea
      * @param int $itemid
      * @param string $filepath
      * @param string $filename
      * @return mixed false if error stored file instance if ok
      */
-    public function archive_to_storage($files, $contextid, $filearea, $itemid, $filepath, $filename, $userid=null) {
+    public function archive_to_storage($files, $contextid, $component, $filearea, $itemid, $filepath, $filename, $userid = NULL) {
         global $CFG;
 
         $fs = get_file_storage();
@@ -52,7 +60,7 @@ class zip_packer extends file_packer {
         $tmpfile = tempnam($CFG->dataroot.'/temp/zip', 'zipstor');
 
         if ($result = $this->archive_to_pathname($files, $tmpfile)) {
-            if ($file = $fs->get_file($contextid, $filearea, $itemid, $filepath, $filename)) {
+            if ($file = $fs->get_file($contextid, $component, $filearea, $itemid, $filepath, $filename)) {
                 if (!$file->delete()) {
                     @unlink($tmpfile);
                     return false;
@@ -60,6 +68,7 @@ class zip_packer extends file_packer {
             }
             $file_record = new object();
             $file_record->contextid = $contextid;
+            $file_record->component = $component;
             $file_record->filearea  = $filearea;
             $file_record->itemid    = $itemid;
             $file_record->filepath  = $filepath;
@@ -118,7 +127,7 @@ class zip_packer extends file_packer {
 
         $baselength = strlen($file->get_filepath());
         $fs = get_file_storage();
-        $files = $fs->get_directory_files($file->get_contextid(), $file->get_filearea(), $file->get_itemid(),
+        $files = $fs->get_directory_files($file->get_contextid(), $file->get_component(), $file->get_filearea(), $file->get_itemid(),
                                           $file->get_filepath(), true, true);
         foreach ($files as $file) {
             $path = $file->get_filepath();
@@ -257,16 +266,17 @@ class zip_packer extends file_packer {
      * Unzip file to given file path (real OS filesystem), existing files are overwrited
      * @param mixed $archivefile full pathname of zip file or stored_file instance
      * @param int $contextid
+     * @param string $component
      * @param string $filearea
      * @param int $itemid
      * @param string $filepath
      * @return mixed list of processed files; false if error
      */
-    public function extract_to_storage($archivefile, $contextid, $filearea, $itemid, $pathbase, $userid=null) {
+    public function extract_to_storage($archivefile, $contextid, $component, $filearea, $itemid, $pathbase, $userid = NULL) {
         global $CFG;
 
         if (!is_string($archivefile)) {
-            return $archivefile->extract_to_pathname($this, $contextid, $filearea, $itemid, $pathbase, $userid);
+            return $archivefile->extract_to_pathname($this, $contextid, $component, $filearea, $itemid, $pathbase, $userid);
         }
 
         check_dir_exists($CFG->dataroot.'/temp/zip', true, true);
@@ -293,7 +303,7 @@ class zip_packer extends file_packer {
 
             if ($info->is_directory) {
                 $newfilepath = $pathbase.$name.'/';
-                $fs->create_directory($contextid, $filearea, $itemid, $newfilepath, $userid);
+                $fs->create_directory($contextid, $component, $filearea, $itemid, $newfilepath, $userid);
                 $processed[$name] = true;
                 continue;
             }
@@ -323,7 +333,7 @@ class zip_packer extends file_packer {
                     continue;
                 }
 
-                if ($file = $fs->get_file($contextid, $filearea, $itemid, $filepath, $filename)) {
+                if ($file = $fs->get_file($contextid, $component, $filearea, $itemid, $filepath, $filename)) {
                     if (!$file->delete()) {
                         $processed[$name] = 'Can not delete existing file'; // TODO: localise
                         continue;
@@ -331,6 +341,7 @@ class zip_packer extends file_packer {
                 }
                 $file_record = new object();
                 $file_record->contextid = $contextid;
+                $file_record->component = $component;
                 $file_record->filearea  = $filearea;
                 $file_record->itemid    = $itemid;
                 $file_record->filepath  = $filepath;
@@ -370,7 +381,7 @@ class zip_packer extends file_packer {
                     continue;
                 }
 
-                if ($file = $fs->get_file($contextid, $filearea, $itemid, $filepath, $filename)) {
+                if ($file = $fs->get_file($contextid, $component, $filearea, $itemid, $filepath, $filename)) {
                     if (!$file->delete()) {
                         @unlink($tmpfile);
                         $processed[$name] = 'Can not delete existing file'; // TODO: localise
@@ -379,6 +390,7 @@ class zip_packer extends file_packer {
                 }
                 $file_record = new object();
                 $file_record->contextid = $contextid;
+                $file_record->component = $component;
                 $file_record->filearea  = $filearea;
                 $file_record->itemid    = $itemid;
                 $file_record->filepath  = $filepath;

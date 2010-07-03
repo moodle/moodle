@@ -96,7 +96,7 @@ case workshop::PHASE_SETUP:
 case workshop::PHASE_SUBMISSION:
     if (trim(strip_tags($workshop->instructauthors))) {
         $instructions = file_rewrite_pluginfile_urls($workshop->instructauthors, 'pluginfile.php', $PAGE->context->id,
-            'workshop_instructauthors', 0, workshop::instruction_editors_options($PAGE->context));
+            'mod_workshop', 'instructauthors', 0, workshop::instruction_editors_options($PAGE->context));
         print_collapsible_region_start('', 'workshop-viewlet-instructauthors', get_string('instructauthors', 'workshop'));
         echo $output->box(format_text($instructions, $workshop->instructauthorsformat), array('generalbox', 'instructions'));
         print_collapsible_region_end();
@@ -201,7 +201,7 @@ case workshop::PHASE_ASSESSMENT:
     }
     if (trim(strip_tags($workshop->instructreviewers))) {
         $instructions = file_rewrite_pluginfile_urls($workshop->instructreviewers, 'pluginfile.php', $PAGE->context->id,
-            'workshop_instructreviewers', 0, workshop::instruction_editors_options($PAGE->context));
+            'mod_workshop', 'instructreviewers', 0, workshop::instruction_editors_options($PAGE->context));
         print_collapsible_region_start('', 'workshop-viewlet-instructreviewers', get_string('instructreviewers', 'workshop'));
         echo $output->box(format_text($instructions, $workshop->instructreviewersformat), array('generalbox', 'instructions'));
         print_collapsible_region_end();

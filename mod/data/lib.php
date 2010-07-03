@@ -359,7 +359,7 @@ class data_field_base {     // Base class for Database Field Types (see field/*/
         if ($rs = $DB->get_recordset('data_content', $conditions)) {
             $fs = get_file_storage();
             foreach ($rs as $content) {
-                $fs->delete_area_files($this->context->id, 'data_content', $content->id);
+                $fs->delete_area_files($this->context->id, 'mod_data', 'content', $content->id);
             }
             $rs->close();
         }
@@ -902,7 +902,7 @@ function data_delete_instance($id) {    // takes the dataid
 
     // files
     $fs = get_file_storage();
-    $fs->delete_area_files($context->id, 'data_content');
+    $fs->delete_area_files($context->id, 'mod_data');
 
     // get all the records in this data
     $sql = "SELECT r.id
@@ -2710,24 +2710,26 @@ function data_get_file_areas($course, $cm, $context) {
  * Serves the data attachments. Implements needed access control ;-)
  *
  * @param object $course
- * @param object $cminfo
+ * @param object $cm
  * @param object $context
  * @param string $filearea
  * @param array $args
  * @param bool $forcedownload
  * @return bool false if file not found, does not return if found - justsend the file
  */
-function data_pluginfile($course, $cminfo, $context, $filearea, $args, $forcedownload) {
+function data_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload) {
     global $CFG, $DB;
 
-    if (!$cminfo->uservisible) {
+    if ($context->contextlevel != CONTEXT_MODULE) {
         return false;
     }
 
-    if ($filearea === 'data_content') {
+    require_login($course, false, $cm);
+
+    if ($filearea === 'content') {
         $contentid = (int)array_shift($args);
 
-        if (!$cm = get_coursemodule_from_instance('data', $cminfo->instance, $course->id)) {
+        if (!$cm = get_coursemodule_from_instance('data', $cm->instance, $course->id)) {
             return false;
         }
 
@@ -2766,8 +2768,8 @@ function data_pluginfile($course, $cminfo, $context, $filearea, $args, $forcedow
 
         $fieldobj = data_get_field($field, $data, $cm);
 
-        $relativepath = '/'.implode('/', $args);
-        $fullpath = $context->id.'data_content'.$content->id.$relativepath;
+        $relativepath = implode('/', $args);
+        $fullpath = "/$context->id/mod_data/content/$content->id/$relativepath";
 
         if (!$fieldobj->file_ok($relativepath)) {
             return false;

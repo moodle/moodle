@@ -69,7 +69,6 @@ function xmldb_assignment_upgrade($oldversion) {
 
                 // migrate submitted files first
                 $path = $basepath;
-                $filearea = 'assignment_submission';
                 $items = new DirectoryIterator($path);
                 foreach ($items as $item) {
                     if (!$item->isFile()) {
@@ -83,8 +82,8 @@ function xmldb_assignment_upgrade($oldversion) {
                     if ($filename === '') {
                         continue;
                     }
-                    if (!$fs->file_exists($context->id, $filearea, $submission->id, '/', $filename)) {
-                        $file_record = array('contextid'=>$context->id, 'filearea'=>$filearea, 'itemid'=>$submission->id, 'filepath'=>'/', 'filename'=>$filename, 'userid'=>$submission->userid);
+                    if (!$fs->file_exists($context->id, 'mod_assignment', 'submission', $submission->id, '/', $filename)) {
+                        $file_record = array('contextid'=>$context->id, 'component'=>'mod_assignment', 'filearea'=>'submission', 'itemid'=>$submission->id, 'filepath'=>'/', 'filename'=>$filename, 'userid'=>$submission->userid);
                         if ($fs->create_file_from_pathname($file_record, $path.$item->getFilename())) {
                             unlink($path.$item->getFilename());
                         }
@@ -92,10 +91,9 @@ function xmldb_assignment_upgrade($oldversion) {
                 }
                 unset($items); //release file handles
 
-                // migrate teacher response files
+                // migrate teacher response files for "upload" subtype, unfortunately we do not
                 $path = $basepath.'responses/';
                 if (file_exists($path)) {
-                    $filearea = 'assignment_response';
                     $items = new DirectoryIterator($path);
                     foreach ($items as $item) {
                         if (!$item->isFile()) {
@@ -105,8 +103,8 @@ function xmldb_assignment_upgrade($oldversion) {
                         if ($filename === '') {
                             continue;
                         }
-                        if (!$fs->file_exists($context->id, $filearea, $submission->id, '/', $filename)) {
-                            $file_record = array('contextid'=>$context->id, 'filearea'=>$filearea, 'itemid'=>$submission->id, 'filepath'=>'/', 'filename'=>$filename,
+                        if (!$fs->file_exists($context->id, 'mod_assignment', 'response', $submission->id, '/', $filename)) {
+                            $file_record = array('contextid'=>$context->id, 'component'=>'mod_assignment', 'filearea'=>'response', 'itemid'=>$submission->id, 'filepath'=>'/', 'filename'=>$filename,
                                                  'timecreated'=>$item->getCTime(), 'timemodified'=>$item->getMTime());
                             if ($submission->teacher) {
                                 $file_record['userid'] = $submission->teacher;

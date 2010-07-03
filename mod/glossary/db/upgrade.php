@@ -71,7 +71,7 @@ function xmldb_glossary_upgrade($oldversion) {
                 }
                 $context = get_context_instance(CONTEXT_MODULE, $entry->cmid);
 
-                $filearea = 'glossary_attachment';
+                $filearea = 'attachment';
                 $filename = clean_param($entry->attachment, PARAM_FILE);
                 if ($filename === '') {
                     echo $OUTPUT->notification("Unsupported entry filename, skipping: ".$filepath);
@@ -79,8 +79,8 @@ function xmldb_glossary_upgrade($oldversion) {
                     $DB->update_record('glossary_entries', $entry);
                     continue;
                 }
-                if (!$fs->file_exists($context->id, $filearea, $entry->id, '/', $filename)) {
-                    $file_record = array('contextid'=>$context->id, 'filearea'=>$filearea, 'itemid'=>$entry->id, 'filepath'=>'/', 'filename'=>$filename, 'userid'=>$entry->userid);
+                if (!$fs->file_exists($context->id, 'mod_glossary', $filearea, $entry->id, '/', $filename)) {
+                    $file_record = array('contextid'=>$context->id, 'component'=>'mod_glossary', 'filearea'=>$filearea, 'itemid'=>$entry->id, 'filepath'=>'/', 'filename'=>$filename, 'userid'=>$entry->userid);
                     if ($fs->create_file_from_pathname($file_record, $filepath)) {
                         $entry->attachment = '1';
                         if ($DB->update_record('glossary_entries', $entry)) {

@@ -77,7 +77,8 @@ function imscp_20_migrate() {
             $fullpath = $root.'/'.$package;
             if (file_exists($fullpath)) {
                 $file_record = array('contextid' => $context->id,
-                                     'filearea'  => 'imscp_backup',
+                                     'component' => 'mod_imscp',
+                                     'filearea'  => 'backup',
                                      'itemid'    => 1,
                                      'filepath'  => '/',
                                      'filename'  => $package);
@@ -93,7 +94,7 @@ function imscp_20_migrate() {
             continue;
         }
 
-        $file_record = array('contextid'=>$context->id, 'filearea'=>'imscp_content', 'itemid'=>1);
+        $file_record = array('contextid'=>$context->id, 'component'=>'mod_imscp', 'filearea'=>'content', 'itemid'=>1);
         $error = false;
         foreach ($files as $relname=>$fullpath) {
             $parts = explode('/', $relname);

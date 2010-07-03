@@ -19,12 +19,22 @@
 /**
  * Abstraction of general file archives.
  *
- * @package    moodlecore
- * @subpackage file-packer
+ * @package    core
+ * @subpackage filestorage
  * @copyright  2008 Petr Skoda (http://skodak.org)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
+/**
+ * Each file arcive type must extend this class.
+ *
+ * @package    core
+ * @subpackage filestorage
+ * @copyright  2008 Petr Skoda (http://skodak.org)
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 abstract class file_archive implements Iterator {
 
     /** Open archive if exists, fail if does not exist. */

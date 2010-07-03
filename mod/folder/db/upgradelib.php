@@ -72,8 +72,8 @@ function folder_20_migrate() {
         // copy files in given directory, skip moddata and backups!
         $context       = get_context_instance(CONTEXT_MODULE, $candidate->cmid);
         $coursecontext = get_context_instance(CONTEXT_COURSE, $candidate->course);
-        $files = $fs->get_directory_files($coursecontext->id, 'course_content', 0, $directory, true, true);
-        $file_record = array('contextid'=>$context->id, 'filearea'=>'folder_content', 'itemid'=>0);
+        $files = $fs->get_directory_files($coursecontext->id, 'course', 'legacy', 0, $directory, true, true);
+        $file_record = array('contextid'=>$context->id, 'component'=>'mod_folder', 'filearea'=>'content', 'itemid'=>0);
         foreach ($files as $file) {
             $path = $file->get_filepath();
             if (stripos($path, '/backupdata/') === 0 or stripos($path, '/moddata/') === 0) {

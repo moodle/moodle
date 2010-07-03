@@ -36,144 +36,6 @@ interface renderable {
 }
 
 /**
- * Data structure representing a area file tree viewer
- *
- * @copyright 2010 Dongsheng Cai
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since     Moodle 2.0
- */
-class area_file_tree_viewer implements renderable {
-    public $dir;
-    public $result;
-    public $filearea;
-    /**
-     * Constructor of area_file_tree_viewer class
-     * @param int $contextid
-     * @param string $area, file area
-     * @param int $itemid
-     * @param string $urlbase, file serving url base
-     */
-    public function __construct($contextid, $area, $itemid, $urlbase='') {
-        global $CFG;
-        $fs = get_file_storage();
-        if (empty($urlbase)) {
-            $this->urlbase = "$CFG->wwwroot/pluginfile.php";
-        } else {
-            $this->urlbase = $urlbase;
-        }
-        $this->contextid = $contextid;
-        $this->filearea = $area;
-        $this->itemid = $itemid;
-        $this->dir = $fs->get_area_tree($contextid, $area, $itemid);
-        $this->tree_view_parser($this->dir);
-    }
-    /**
-     * Pre-process file tree, generate file url
-     * @param array $dir file tree
-     */
-    public function tree_view_parser($dir) {
-        if (empty($dir['subdirs']) and empty($dir['files'])) {
-            return null;
-        }
-        foreach ($dir['subdirs'] as $subdir) {
-            $this->tree_view_parser($subdir);
-        }
-        foreach ($dir['files'] as $file) {
-            $path    = '/'.$this->contextid.'/'.$this->filearea.'/'.$this->itemid.$file->get_filepath().$file->get_filename();
-            $downloadurl = file_encode_url($this->urlbase, $path, true);
-            $file->fileurl = $downloadurl;
-        }
-    }
-}
-
-/**
- * Data structure representing a general moodle file tree viewer
- *
- * @copyright 2010 Dongsheng Cai
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since     Moodle 2.0
- */
-class moodle_file_tree_viewer implements renderable {
-    public $tree;
-    public $path;
-    private $enabled_fileareas;
-    /**
-     * Constructor of moodle_file_tree_viewer class
-     * @param int $contextid
-     * @param string $area, file area
-     * @param int $itemid
-     * @param string $urlbase, file serving url base
-     */
-    public function __construct($contextid, $filearea, $itemid, $filepath, $options=array()) {
-        global $CFG, $OUTPUT;
-        $this->tree = array();
-        $browser = get_file_browser();
-        $fs = get_file_storage();
-        $fileinfo = $browser->get_file_info(get_context_instance_by_id($contextid), $filearea, $itemid, $filepath);
-        $children = $fileinfo->get_children();
-        $parent_info = $fileinfo->get_parent();
-        if (!empty($options['enabled_fileareas']) && is_array($options['enabled_fileareas'])) {
-            $this->enabled_fileareas = $options['enabled_fileareas'];
-        } else {
-            unset($this->enabled_fileareas);
-        }
-
-        $level = $parent_info;
-        $this->path = array();
-        while ($level) {
-            $params = $level->get_params();
-            $context = get_context_instance_by_id($params['contextid']);
-            // lock user in course level
-            if ($context->contextlevel == CONTEXT_COURSECAT or $context->contextlevel == CONTEXT_SYSTEM) {
-                break;
-            }
-            $url = new moodle_url('/files/index.php', $params);
-            $this->path[] = html_writer::link($url->out(false), $level->get_visible_name());
-            $level = $level->get_parent();
-        }
-        $this->path = array_reverse($this->path);
-        $this->path[] = $fileinfo->get_visible_name();
-
-        foreach ($children as $child) {
-            $filedate = $child->get_timemodified();
-            $filesize = $child->get_filesize();
-            $mimetype = $child->get_mimetype();
-            $params = $child->get_params();
-            $url = new moodle_url('/files/index.php', $params);
-            $fileitem = array(
-                    'params'=>$params,
-                    'filename'=>$child->get_visible_name(),
-                    'filedate'=>$filedate ? userdate($filedate) : '',
-                    'filesize'=>$filesize ? display_size($filesize) : ''
-                    );
-            if ($child->is_directory()) {
-                $fileitem['isdir'] = true;
-                $fileitem['url'] = $url->out(false);
-                if (isset($this->enabled_fileareas)) {
-                    if (!in_array($params['filearea'], $this->enabled_fileareas)) {
-                        continue;
-                    } else {
-                        if (!empty($params['itemid'])) {
-                            $itemid = $params['itemid'];
-                        } else {
-                            $itemid = false;
-                        }
-                        $draftfiles = $fs->get_area_files($contextid, $params['filearea'], $itemid, 'id', false);
-                        if (count($draftfiles) == 0) {
-                            continue;
-                        }
-                    }
-                }
-            } else {
-                $fileitem['url'] = $child->get_url();
-            }
-            $this->tree[] = $fileitem;
-        }
-
-    }
-}
-
-/**
  * Data structure representing a file picker.
  *
  * @copyright 2010 Dongsheng Cai
@@ -187,7 +49,7 @@ class file_picker implements renderable {
         require_once($CFG->dirroot. '/repository/lib.php');
         $defaults = array(
             'accepted_types'=>'*',
-            'context'=>$PAGE->context,
+            'context'=>$PAGE->context, //TODO: no PAGE in components allowed!! (skodak)
             'return_types'=>FILE_INTERNAL,
             'env' => 'filepicker',
             'client_id' => uniqid(),
@@ -206,14 +68,14 @@ class file_picker implements renderable {
             $fs = get_file_storage();
             $usercontext = get_context_instance(CONTEXT_USER, $USER->id);
             if (empty($options->filename)) {
-                if ($files = $fs->get_area_files($usercontext->id, 'user_draft', $options->itemid, 'id DESC', false)) {
+                if ($files = $fs->get_area_files($usercontext->id, 'user', 'draft', $options->itemid, 'id DESC', false)) {
                     $file = reset($files);
                 }
             } else {
-                $file = $fs->get_file($usercontext->id, 'user_draft', $options->itemid, $options->filepath, $options->filename);
+                $file = $fs->get_file($usercontext->id, 'user', 'draft', $options->itemid, $options->filepath, $options->filename);
             }
             if (!empty($file)) {
-                $options->currentfile = html_writer::link(file_encode_url($CFG->wwwroot.'/draftfile.php/', $usercontext->id.'/user_draft/'.$file->get_itemid().'/'.$file->get_filename()), $file->get_filename());
+                $options->currentfile = html_writer::link(file_draftfile_url($file->get_itemid(), $file->get_filename(), $file->get_filename()), $file->get_filename());
             }
         }
 
@@ -224,63 +86,6 @@ class file_picker implements renderable {
         foreach ($options as $name=>$value) {
             $this->options->$name = $value;
         }
-    }
-}
-
-/**
- * Data structure representing a file manager.
- *
- * @copyright 2010 Dongsheng Cai
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since     Moodle 2.0
- */
-class file_manager implements renderable {
-    public $options;
-    public function __construct(stdClass $options) {
-        global $CFG, $USER, $PAGE;
-        require_once($CFG->dirroot. '/repository/lib.php');
-        $defaults = array(
-            'maxbytes'=>-1,
-            'maxfiles'=>-1,
-            'filearea'=>'user_draft',
-            'itemid'=>0,
-            'subdirs'=>0,
-            'client_id'=>uniqid(),
-            'accepted_types'=>'*',
-            'return_types'=>FILE_INTERNAL,
-            'context'=>$PAGE->context
-            );
-        foreach ($defaults as $key=>$value) {
-            if (empty($options->$key)) {
-                $options->$key = $value;
-            }
-        }
-
-        $fs = get_file_storage();
-
-        // initilise options, getting files in root path
-        $this->options = file_get_user_area_files($options->itemid, '/', $options->filearea);
-
-        // calculate file count
-        $usercontext = get_context_instance(CONTEXT_USER, $USER->id);
-        $files = $fs->get_area_files($usercontext->id, $options->filearea, $options->itemid, 'id', false);
-        $filecount = count($files);
-        $this->options->filecount = $filecount;
-
-        // copying other options
-        foreach ($options as $name=>$value) {
-            $this->options->$name = $value;
-        }
-
-        // building file picker options
-        $params = new stdclass;
-        $params->accepted_types = $options->accepted_types;
-        $params->return_types = $options->return_types;
-        $params->context = $options->context;
-        $params->env = 'filemanager';
-        $params->disable_types = !empty($options->disable_types)?$options->disable_types:array();
-        $filepicker_options = initialise_filepicker($params);
-        $this->options->filepicker = $filepicker_options;
     }
 }
 

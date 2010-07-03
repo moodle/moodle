@@ -21,7 +21,7 @@
  * @copyright 2010 onwards Andrew Davis
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
- 
+
 /**
  * Define all the backup steps that will be used by the backup_url_activity_task
  */
@@ -32,7 +32,7 @@
 class backup_url_activity_structure_step extends backup_activity_structure_step {
 
     protected function define_structure() {
- 
+
         //the URL module stores no user info
 
         // Define each element separated
@@ -51,7 +51,7 @@ class backup_url_activity_structure_step extends backup_activity_structure_step 
         //module has no id annotations
 
         // Define file annotations
-        $url->annotate_files(array('url_intro'), null); // This file area hasn't itemid
+        $url->annotate_files('mod_url', 'intro', null); // This file area hasn't itemid
 
         // Return the root element (url), wrapped into standard activity structure
         return $this->prepare_activity_structure($url);

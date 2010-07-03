@@ -59,7 +59,7 @@ function lesson_add_instance($data, $mform) {
     $lesson = $DB->get_record('lesson', array('id'=>$lessonid), '*', MUST_EXIST);
 
     if ($filename = $mform->get_new_filename('mediafile')) {
-        if ($file = $mform->save_stored_file('mediafile', $context->id, 'lesson_media_file', $lesson->id, '/', $filename)) {
+        if ($file = $mform->save_stored_file('mediafile', $context->id, 'mod_lesson', 'media_file', $lesson->id, '/', $filename)) {
             $DB->set_field('lesson', 'mediafile', $file->get_filename(), array('id'=>$lesson->id));
         }
     }
@@ -95,7 +95,7 @@ function lesson_update_instance($data, $mform) {
 
     $context = get_context_instance(CONTEXT_MODULE, $cmid);
     if ($filename = $mform->get_new_filename('mediafile')) {
-        if ($file = $mform->save_stored_file('mediafile', $context->id, 'lesson_media_file', $data->id, '/', $filename, true)) {
+        if ($file = $mform->save_stored_file('mediafile', $context->id, 'mod_lesson', 'media_file', $data->id, '/', $filename, true)) {
             $DB->set_field('lesson', 'mediafile', $file->get_filename(), array('id'=>$data->id));
         }
     }
@@ -878,17 +878,17 @@ function lesson_get_import_export_formats($type) {
  * Serves the lesson attachments. Implements needed access control ;-)
  *
  * @param object $course
- * @param object $cminfo
+ * @param object $cm
  * @param object $context
  * @param string $filearea
  * @param array $args
  * @param bool $forcedownload
  * @return bool false if file not found, does not return if found - justsend the file
  */
-function lesson_pluginfile($course, $cminfo, $context, $filearea, $args, $forcedownload) {
+function lesson_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload) {
     global $CFG, $DB;
 
-    if (!$cminfo->uservisible) {
+    if ($context->contextlevel != CONTEXT_MODULE) {
         return false;
     }
 
@@ -897,25 +897,22 @@ function lesson_pluginfile($course, $cminfo, $context, $filearea, $args, $forced
         return false;
     }
 
-    if (!$cm = get_coursemodule_from_instance('lesson', $cminfo->instance, $course->id)) {
-        return false;
-    }
-
-    if (!$lesson = $DB->get_record('lesson', array('id'=>$cminfo->instance))) {
+    if (!$lesson = $DB->get_record('lesson', array('id'=>$cm->instance))) {
         return false;
     }
 
     require_course_login($course, true, $cm);
 
-    if ($filearea === 'lesson_page_content') {
+    if ($filearea === 'page_contents') {
         $pageid = (int)array_shift($args);
         if (!$page = $DB->get_record('lesson_pages', array('id'=>$pageid))) {
             return false;
         }
-        $fullpath = $context->id.$filearea.$pageid.'/'.implode('/', $args);
-        $forcedownload = true;
+        $fullpath = "/$context->id/mod_lesson/$filearea/$pageid/".implode('/', $args);
+        $forcedownload = true; //TODO: this is strange (skodak)
     } else {
-        $fullpath = $context->id.$filearea.implode('/', $args);
+
+        $fullpath = "/$context->id/mod_lesson/$filearea/".implode('/', $args);
     }
 
     $fs = get_file_storage();
@@ -932,7 +929,9 @@ function lesson_pluginfile($course, $cminfo, $context, $filearea, $args, $forced
  * @return array
  */
 function lesson_get_file_areas() {
-    return array('lesson_page_contents'=>'lesson_page_contents', 'lesson_media_file'=>'lesson_media_file');
+    $areas = array();
+    $areas['page_contents'] = 'page_contents'; //TODO: localize!!!!
+    $areas['media_files'] = 'media_files'; //TODO: localize!!!!
 }
 
 /**
@@ -952,11 +951,16 @@ function lesson_get_file_areas() {
  */
 function lesson_get_file_info($browser, $areas, $course, $cm, $context, $filearea, $itemid, $filepath, $filename) {
     global $CFG;
+    if (has_capability('moodle/course:managefiles', $context)) {
+        // no peaking here for students!!
+        return null;
+    }
+
     $fs = get_file_storage();
     $filepath = is_null($filepath) ? '/' : $filepath;
     $filename = is_null($filename) ? '.' : $filename;
     $urlbase = $CFG->wwwroot.'/pluginfile.php';
-    if (!$storedfile = $fs->get_file($context->id, $filearea, $itemid, $filepath, $filename)) {
+    if (!$storedfile = $fs->get_file($context->id, 'mod_lesson', $filearea, $itemid, $filepath, $filename)) {
         return null;
     }
     return new file_info_stored($browser, $context, $storedfile, $urlbase, $filearea, $itemid, true, true, false);
@@ -1887,7 +1891,7 @@ abstract class lesson_page extends lesson_base {
         $editor = new stdClass;
         $editor->id = $newpage->id;
         $editor->contents_editor = $properties->contents_editor;
-        $editor = file_postupdate_standard_editor($editor, 'contents', array('noclean'=>true, 'maxfiles'=>EDITOR_UNLIMITED_FILES, 'maxbytes'=>$maxbytes), $context, 'lesson_page_contents', $editor->id);
+        $editor = file_postupdate_standard_editor($editor, 'contents', array('noclean'=>true, 'maxfiles'=>EDITOR_UNLIMITED_FILES, 'maxbytes'=>$maxbytes), $context, 'mod_lesson', 'page_contents', $editor->id);
         $DB->update_record("lesson_pages", $editor);
 
         if ($newpage->prevpageid > 0) {
@@ -2235,7 +2239,7 @@ abstract class lesson_page extends lesson_base {
      * @return bool
      */
     public function update($properties, $context = null, $maxbytes = null) {
-        global $DB, $PAGE;
+        global $DB;
         $answers  = $this->get_answers();
         $properties->id = $this->properties->id;
         $properties->lessonid = $this->lesson->id;
@@ -2248,7 +2252,7 @@ abstract class lesson_page extends lesson_base {
         if ($maxbytes === null) {
             $maxbytes =get_max_upload_file_size();
         }
-        $properties = file_postupdate_standard_editor($properties, 'contents', array('noclean'=>true, 'maxfiles'=>EDITOR_UNLIMITED_FILES, 'maxbytes'=>$maxbytes), $context, 'lesson_page_contents', $properties->id);
+        $properties = file_postupdate_standard_editor($properties, 'contents', array('noclean'=>true, 'maxfiles'=>EDITOR_UNLIMITED_FILES, 'maxbytes'=>$maxbytes), $context, 'mod_lesson', 'page_contents', $properties->id);
         $DB->update_record("lesson_pages", $properties);
 
         for ($i = 0; $i < $this->lesson->maxanswers; $i++) {
@@ -2492,7 +2496,7 @@ abstract class lesson_page extends lesson_base {
                 $this->properties->contentsformat = FORMAT_HTML;
             }
             $context = get_context_instance(CONTEXT_MODULE, $PAGE->cm->id);
-            return file_rewrite_pluginfile_urls($this->properties->contents, 'pluginfile.php', $context->id, 'lesson_page_contents', $this->properties->id);
+            return file_rewrite_pluginfile_urls($this->properties->contents, 'pluginfile.php', $context->id, 'mod_lesson', 'page_contents', $this->properties->id);
         } else {
             return '';
         }
@@ -2916,7 +2920,7 @@ abstract class lesson_add_page_form_base extends moodleform {
      * @param int $pageid
      */
     public final function set_data($data, $context=null, $pageid=null) {
-        $data = file_prepare_standard_editor($data, 'contents', $this->editoroptions, $context, 'lesson_page_contents', $pageid);
+        $data = file_prepare_standard_editor($data, 'contents', $this->editoroptions, $context, 'mod_lesson', 'page_contents', $pageid);
         parent::set_data($data);
     }
 

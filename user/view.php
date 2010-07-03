@@ -214,7 +214,12 @@ if ($user->description && !isset($hiddenfields['description'])) {
     if (!empty($CFG->profilesforenrolledusersonly) && !$DB->record_exists('role_assignments', array('userid'=>$id))) {
         echo get_string('profilenotshown', 'moodle');
     } else {
-        $user->description = file_rewrite_pluginfile_urls($user->description, 'pluginfile.php', $usercontext->id, 'user_profile', $id);
+        if ($courseid == SITEID) {
+            $user->description = file_rewrite_pluginfile_urls($user->description, 'pluginfile.php', $usercontext->id, 'user', 'profile', null);
+        } else {
+            // we have to make a little detour thought the course context to verify the access control for course profile
+            $user->description = file_rewrite_pluginfile_urls($user->description, 'pluginfile.php', $coursecontext->id, 'user', 'profile', $user->id);
+        }
         echo format_text($user->description, $user->descriptionformat);
     }
 }

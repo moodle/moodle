@@ -16,20 +16,29 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * A moodle form to manage files
+ * A moodle form to manage folder files
  *
- * @package   mod-folder
+ * @package   mod_folder
  * @copyright 2010 Dongsheng Cai <dongsheng@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
+require_once("$CFG->libdir/formslib.php");
+
 class mod_folder_edit_form extends moodleform {
     function definition() {
-        $mform =& $this->_form;
-        $cmid = $this->_customdata['id'];
-        $mform->addElement('hidden', 'id', $cmid);
-        $mform->addElement('filemanager', 'files_filemanager', get_string('files'), null, array('subdirs'=>1, 'accepted_types'=>'*', 'return_types'=>FILE_INTERNAL));
+        $mform = $this->_form;
+
+        $data    = $this->_customdata['data'];
+        $options = $this->_customdata['options'];
+
+        $mform->addElement('hidden', 'id', $data->id);
+        $mform->addElement('filemanager', 'files_filemanager', get_string('files'), null, $options);
         $submit_string = get_string('submit');
         $this->add_action_buttons(true, $submit_string);
+
+        $this->set_data($data);
     }
 }

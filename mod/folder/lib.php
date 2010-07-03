@@ -23,6 +23,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 /**
  * List of features supported in Folder module
  * @param string $feature FEATURE_xx constant for requested feature
@@ -97,7 +99,7 @@ function folder_add_instance($data, $mform) {
     $context = get_context_instance(CONTEXT_MODULE, $cmid);
 
     if ($draftitemid) {
-        file_save_draft_area_files($draftitemid, $context->id, 'folder_content', 0, array('subdirs'=>true));
+        file_save_draft_area_files($draftitemid, $context->id, 'mod_folder', 'content', 0, array('subdirs'=>true));
     }
 
     return $data->id;
@@ -123,7 +125,7 @@ function folder_update_instance($data, $mform) {
 
     $context = get_context_instance(CONTEXT_MODULE, $cmid);
     if ($draftitemid = file_get_submitted_draft_itemid('files')) {
-        file_save_draft_area_files($draftitemid, $context->id, 'folder_content', 0, array('subdirs'=>true));
+        file_save_draft_area_files($draftitemid, $context->id, 'mod_folder', 'content', 0, array('subdirs'=>true));
     }
 
     return true;
@@ -218,9 +220,8 @@ function folder_get_participants($folderid) {
  */
 function folder_get_file_areas($course, $cm, $context) {
     $areas = array();
-    if (has_capability('moodle/course:managefiles', $context)) {
-        $areas['folder_content'] = get_string('foldercontent', 'folder');
-    }
+    $areas['content'] = get_string('foldercontent', 'folder');
+
     return $areas;
 }
 
@@ -240,24 +241,26 @@ function folder_get_file_areas($course, $cm, $context) {
 function folder_get_file_info($browser, $areas, $course, $cm, $context, $filearea, $itemid, $filepath, $filename) {
     global $CFG;
 
-    $canwrite = has_capability('moodle/course:managefiles', $context);
 
-    $fs = get_file_storage();
+    if ($filearea === 'content') {
+        $fs = get_file_storage();
 
-    if ($filearea === 'folder_content') {
         $filepath = is_null($filepath) ? '/' : $filepath;
         $filename = is_null($filename) ? '.' : $filename;
-
-        $urlbase = $CFG->wwwroot.'/pluginfile.php';
-        if (!$storedfile = $fs->get_file($context->id, $filearea, 0, $filepath, $filename)) {
+        if (!$storedfile = $fs->get_file($context->id, 'mod_folder', 'content', 0, $filepath, $filename)) {
             if ($filepath === '/' and $filename === '.') {
-                $storedfile = new virtual_root_file($context->id, $filearea, 0);
+                $storedfile = new virtual_root_file($context->id, 'mod_folder', 'content', 0);
             } else {
                 // not found
                 return null;
             }
         }
+
         require_once("$CFG->dirroot/mod/folder/locallib.php");
+        $urlbase = $CFG->wwwroot.'/pluginfile.php';
+
+        // students may read files here
+        $canwrite = has_capability('moodle/course:managefiles', $context);
         return new folder_content_file_info($browser, $context, $storedfile, $urlbase, $areas[$filearea], true, true, $canwrite, false);
     }
 
@@ -270,36 +273,32 @@ function folder_get_file_info($browser, $areas, $course, $cm, $context, $fileare
  * Serves the folder files.
  *
  * @param object $course
- * @param object $cminfo
+ * @param object $cm
  * @param object $context
  * @param string $filearea
  * @param array $args
  * @param bool $forcedownload
  * @return bool false if file not found, does not return if found - justsend the file
  */
-function folder_pluginfile($course, $cminfo, $context, $filearea, $args, $forcedownload) {
+function folder_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload) {
     global $CFG, $DB;
 
-    if (!$cminfo->uservisible) {
-        return false;
-    }
-
-    if ($filearea !== 'folder_content') {
-        // intro is handled automatically in pluginfile.php
-        return false;
-    }
-
-    if (!$cm = get_coursemodule_from_instance('folder', $cminfo->instance, $course->id)) {
+    if ($context->contextlevel != CONTEXT_MODULE) {
         return false;
     }
 
     require_course_login($course, true, $cm);
 
+    if ($filearea !== 'content') {
+        // intro is handled automatically in pluginfile.php
+        return false;
+    }
+
     array_shift($args); // ignore revision - designed to prevent caching problems only
 
     $fs = get_file_storage();
-    $relativepath = '/'.implode('/', $args);
-    $fullpath = $context->id.$filearea.'0'.$relativepath;
+    $relativepath = implode('/', $args);
+    $fullpath = "/$context->id/mod_folder/content/0/$relativepath";
     if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
         return false;
     }

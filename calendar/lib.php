@@ -1627,11 +1627,6 @@ class calendar_event {
      */
     protected $_description = null;
     /**
-     * The filearea to use with this event
-     * @var string
-     */
-    protected static $filearea = 'calendar_event_description';
-    /**
      * The options to use with this description editor
      * @var array
      */
@@ -1790,7 +1785,7 @@ class calendar_event {
             }
 
             // Convert file paths in the description so that things display correctly
-            $this->_description = file_rewrite_pluginfile_urls($this->properties->description, 'pluginfile.php', $this->editorcontext->id, self::$filearea, $itemid);
+            $this->_description = file_rewrite_pluginfile_urls($this->properties->description, 'pluginfile.php', $this->editorcontext->id, 'calendar', 'event_description', $itemid);
             // Clean the text so no nasties get through
             $this->_description = clean_text($this->_description, $this->properties->format);
         }
@@ -1883,7 +1878,8 @@ class calendar_event {
                 $this->properties->description = file_save_draft_area_files(
                                                 $editor['itemid'],
                                                 $this->editorcontext->id,
-                                                self::$filearea,
+                                                'calendar',
+                                                'event_description',
                                                 $this->properties->id,
                                                 $this->editoroptions,
                                                 $editor['text'],
@@ -1914,7 +1910,7 @@ class calendar_event {
                     // If the context has been set delete all associated files
                     if ($usingeditor) {
                         $fs = get_file_storage();
-                        $files = $fs->get_area_files($this->editorcontext->id, self::$filearea, $this->properties->id);
+                        $files = $fs->get_area_files($this->editorcontext->id, 'calendar', 'event_description', $this->properties->id);
                         foreach ($files as $file) {
                             $fs->create_file_from_storedfile(array('itemid'=>$eventcopyid), $file);
                         }
@@ -1940,7 +1936,8 @@ class calendar_event {
                     $this->properties->description = file_save_draft_area_files(
                                                     $this->properties->description['itemid'],
                                                     $this->editorcontext->id,
-                                                    self::$filearea,
+                                                    'calendar',
+                                                    'event_description',
                                                     $this->properties->id,
                                                     $this->editoroptions,
                                                     $this->properties->description['text'],
@@ -2035,7 +2032,7 @@ class calendar_event {
         // If the context has been set delete all associated files
         if ($this->editorcontext !== null) {
             $fs = get_file_storage();
-            $files = $fs->get_area_files($this->editorcontext->id, self::$filearea, $this->properties->id);
+            $files = $fs->get_area_files($this->editorcontext->id, 'calendar', 'event_description', $this->properties->id);
             foreach ($files as $file) {
                 $file->delete();
             }
@@ -2133,7 +2130,7 @@ class calendar_event {
                 // Just encase it has already been submitted
                 $draftiddescription = file_get_submitted_draft_itemid('description');
                 // Prepare the draft area, this copies existing files to the draft area as well
-                $properties->description = file_prepare_draft_area($draftiddescription, $contextid, self::$filearea, $properties->id, $this->editoroptions, $properties->description);
+                $properties->description = file_prepare_draft_area($draftiddescription, $contextid, 'calendar', 'event_description', $properties->id, $this->editoroptions, $properties->description);
             } else {
                 $draftiddescription = 0;
             }

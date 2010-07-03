@@ -65,20 +65,23 @@ class repository_recent extends repository {
 
     private function get_recent_files($limitfrom = 0, $limit = DEFAULT_RECENT_FILES_NUM) {
         global $USER, $DB;
-        // TODO: should exclude user_draft area files?
+
+        // TODO: this is not really secure, we should validate the result with file_browser (skodak)
+
         $sql = 'SELECT * FROM {files} files1
                 JOIN (SELECT contenthash, filename, MAX(id) AS id
                 FROM {files}
-                WHERE userid = ? AND filename != ? AND filearea != ?
+                WHERE userid = :userid AND filename != :filename AND filearea != :filearea
                 GROUP BY contenthash, filename) files2 ON files1.id = files2.id
                 ORDER BY files1.timemodified DESC';
-        $params = array('userid'=>$USER->id, 'filename'=>'.', 'filearea'=>'user_draft');
+        $params = array('userid'=>$USER->id, 'filename'=>'.', 'filearea'=>'draft');
         $rs = $DB->get_recordset_sql($sql, $params, $limitfrom, $limit);
         $result = array();
         foreach ($rs as $file_record) {
             $info = array();
             $info['contextid'] = $file_record->contextid;
             $info['itemid'] = $file_record->itemid;
+            $info['component'] = $file_record->component;
             $info['filearea'] = $file_record->filearea;
             $info['filepath'] = $file_record->filepath;
             $info['filename'] = $file_record->filename;
@@ -162,13 +165,13 @@ class repository_recent extends repository {
      *
      * @global object $USER
      * @global object $DB
-     * @param string $encoded The information of file, it is base64 encoded php seriablized data
+     * @param string $encoded The information of file, it is base64 encoded php serialized data
      * @param string $new_filename The intended name of file
      * @param string $new_itemid itemid
      * @param string $new_filepath the new path in draft area
      * @return array The information of file
      */
-    public function copy_to_area($encoded, $new_filearea='user_draft', $new_itemid = '', $new_filepath = '/', $new_filename = '') {
+    public function copy_to_area($encoded, $new_filearea='ignored', $new_itemid = '', $new_filepath = '/', $new_filename = '') {
         global $USER, $DB;
         $info = array();
         $fs = get_file_storage();
@@ -176,7 +179,10 @@ class repository_recent extends repository {
         $params = unserialize(base64_decode($encoded));
         $user_context = get_context_instance(CONTEXT_USER, $USER->id);
 
+        //TODO: this is really HORRIBLE!!! Where is any security check??????? (skodak)
+
         $contextid  = $params['contextid'];
+        $component  = $params['component'];
         $filearea   = $params['filearea'];
         $filepath   = $params['filepath'];
         $filename   = $params['filename'];
@@ -185,14 +191,17 @@ class repository_recent extends repository {
         // XXX:
         // When user try to pick a file from other filearea, normally file api will use file browse to
         // operate the files with capability check, but in some areas, users don't have permission to
-        // browse the files (for example, forum_attachment area).
+        // browse the files (for example, forum attachment area).
         //
         // To get 'recent' plugin working, we need to use lower level file_stoarge class to bypass the
         // capability check, we will use a better workaround to improve it.
-        if ($stored_file = $fs->get_file($contextid, $filearea, $fileitemid, $filepath, $filename)) {
-            $file_record = array('contextid'=>$user_context->id, 'filearea'=>$new_filearea,
+        //
+        // TODO: no this is a BIG security hole, we should really use file_browser here and instead filter the available files (skodak)
+        //
+        if ($stored_file = $fs->get_file($contextid, $component, $filearea, $fileitemid, $filepath, $filename)) {
+            $file_record = array('contextid'=>$user_context->id, 'component'=>'user', 'filearea'=>'draft',
                 'itemid'=>$new_itemid, 'filepath'=>$new_filepath, 'filename'=>$new_filename);
-            if ($file = $fs->get_file($user_context->id, $new_filearea, $new_itemid, $new_filepath, $new_filename)) {
+            if ($file = $fs->get_file($user_context->id, 'user' ,'draft', $new_itemid, $new_filepath, $new_filename)) {
                 $file->delete();
             }
             $fs->create_file_from_storedfile($file_record, $stored_file);

@@ -67,13 +67,15 @@ class backup_structure_processor extends base_processor {
 
     public function process_nested_element(base_nested_element $nested) {
         // Proceed with all the file annotations for this element
-        list($fileareas, $element) = $nested->get_file_annotations();
-        if ($fileareas) { // If there are areas to search
-            $backupid = $this->get_var(backup::VAR_BACKUPID);
-            $contextid= $this->get_var(backup::VAR_CONTEXTID);
-            $itemid   = !is_null($element) ? $element->get_value() : null;
-            foreach ($fileareas as $filearea) {
-                backup_structure_dbops::annotate_files($backupid, $contextid, $filearea, $itemid);
+        $fileannotations = $nested->get_file_annotations();
+        if ($fileannotations) { // If there are areas to search
+            $backupid  = $this->get_var(backup::VAR_BACKUPID);
+            $contextid = $this->get_var(backup::VAR_CONTEXTID);
+            foreach ($fileannotations as $component=>$area) {
+                foreach ($area as $filearea=>$element) {
+                    $itemid = !is_null($element) ? $element->get_value() : null;
+                    backup_structure_dbops::annotate_files($backupid, $contextid, $component, $filearea, $itemid);
+                }
             }
         }
     }

@@ -330,7 +330,7 @@ class mod_lesson_mod_form extends moodleform_mod {
         if (!empty($this->_cm) && !empty($default_values['mediafile'])) {
             $context = get_context_instance(CONTEXT_MODULE, $this->_cm->id);
             $draftitemid = file_get_submitted_draft_itemid('mediafile');
-            file_prepare_draft_area($draftitemid, $context->id, 'lesson_media_file', $this->_cm->instance, array('subdirs' => 0, 'maxbytes' => $this->course->maxbytes, 'maxfiles' => 1));
+            file_prepare_draft_area($draftitemid, $context->id, 'mod_lesson', 'media_file', $this->_cm->instance, array('subdirs' => 0, 'maxbytes' => $this->course->maxbytes, 'maxfiles' => 1));
             $default_values['mediafile'] = $draftitemid;
         }
     }

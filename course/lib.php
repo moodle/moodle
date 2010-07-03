@@ -2226,7 +2226,7 @@ function print_course($course, $highlightterms = '') {
     $context = get_context_instance(CONTEXT_COURSE, $course->id);
 
     // Rewrite file URLs so that they are correct
-    $course->summary = file_rewrite_pluginfile_urls($course->summary, 'pluginfile.php', $context->id, 'course_summary', NULL);
+    $course->summary = file_rewrite_pluginfile_urls($course->summary, 'pluginfile.php', $context->id, 'course', 'summary', NULL);
 
     $linkcss = $course->visible ? '' : ' class="dimmed" ';
 
@@ -3483,7 +3483,7 @@ function create_course($data, $editoroptions = NULL) {
 
     if ($editoroptions) {
         // Save the files used in the summary editor and store
-        $data = file_postupdate_standard_editor($data, 'summary', $editoroptions, $context, 'course_summary', 0);
+        $data = file_postupdate_standard_editor($data, 'summary', $editoroptions, $context, 'course', 'summary', 0);
         $DB->set_field('course', 'summary', $data->summary, array('id'=>$newcourseid));
         $DB->set_field('course', 'summaryformat', $data->summary_format, array('id'=>$newcourseid));
     }
@@ -3548,7 +3548,7 @@ function update_course($data, $editoroptions = NULL) {
     $context   = get_context_instance(CONTEXT_COURSE, $oldcourse->id);
 
     if ($editoroptions) {
-        $data = file_postupdate_standard_editor($data, 'summary', $editoroptions, $context, 'course_summary', 0);
+        $data = file_postupdate_standard_editor($data, 'summary', $editoroptions, $context, 'course', 'summary', 0);
     }
 
     if (!isset($data->category) or empty($data->category)) {
@@ -3631,6 +3631,9 @@ function average_number_of_courses_modules() {
  * This class pertains to course requests and contains methods associated with
  * create, approving, and removing course requests.
  *
+ * Please note we do not allow embedded images here because there is no context
+ * to store them with proper access control.
+ *
  * @copyright 2009 Sam Hemelryk
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since Moodle 2.0
@@ -3662,22 +3665,6 @@ class course_request {
     protected static $summaryeditoroptions;
 
     /**
-     * The context used when working with files for the summary editor
-     * This is initially set by {@link summary_editor_context()}
-     * @var stdClass
-     * @static
-     */
-    protected static $summaryeditorcontext;
-
-    /**
-     * The string used to identify the file area for course_requests
-     * This is initially set by {@link summary_editor_context()}
-     * @var string
-     * @static
-     */
-    protected static $summaryeditorfilearea = 'course_request_summary';
-
-    /**
      * Static function to prepare the summary editor for working with a course
      * request.
      *
@@ -3692,7 +3679,7 @@ class course_request {
         if ($data === null) {
             $data = new stdClass;
         }
-        $data = file_prepare_standard_editor($data, 'summary', self::summary_editor_options(), self::summary_editor_context(), self::summary_editor_filearea(), null);
+        $data = file_prepare_standard_editor($data, 'summary', self::summary_editor_options());
         return $data;
     }
 
@@ -3709,19 +3696,13 @@ class course_request {
     public static function create($data) {
         global $USER, $DB, $CFG;
         $data->requester = $USER->id;
-        $editorused = (!empty($data->summary_editor));
-        // Has summary_editor been set. If so we have come through with a editor and
-        // may need to save files
-        if ($editorused && empty($data->summary)) {
-            // Summary is a required field so copy the text over
-            $data->summary = $data->summary_editor['text'];
-        }
+
+        // Summary is a required field so copy the text over
+        $data->summary       = $data->summary_editor['text'];
+        $data->summaryformat = $data->summary_editor['format'];
+
         $data->id = $DB->insert_record('course_request', $data);
-        if ($editorused) {
-            // Save any files and then update the course with the fixed data
-            $data = file_postupdate_standard_editor($data, 'summary', self::summary_editor_options(), self::summary_editor_context(), self::summary_editor_filearea(), $data->id);
-            $DB->update_record('course_request', $data);
-        }
+
         // Create a new course_request object and return it
         $request = new course_request($data);
 
@@ -3750,29 +3731,9 @@ class course_request {
     public static function summary_editor_options() {
         global $CFG;
         if (self::$summaryeditoroptions === null) {
-            self::$summaryeditoroptions = array('maxfiles' => 0, 'maxbytes'=>0, 'trusttext'=>true);
+            self::$summaryeditoroptions = array('maxfiles' => 0, 'maxbytes'=>0);
         }
         return self::$summaryeditoroptions;
-    }
-
-    /**
-     * Returns the context to use with the summary editor
-     *
-     * @uses course_request::$summaryeditorcontext
-     * @return stdClass The context to use
-     */
-    public static function summary_editor_context() {
-        return null;
-    }
-
-    /**
-     * Returns the filearea to use with the summary editor
-     *
-     * @uses course_request::$summaryeditorfilearea
-     * @return string The filearea to use with the summary editor
-     */
-    public static function summary_editor_filearea() {
-        return self::$summaryeditorfilearea;
     }
 
     /**
@@ -3810,9 +3771,6 @@ class course_request {
      * @return mixed
      */
     public function __get($key) {
-        if ($key === 'summary' && self::summary_editor_context() !== null) {
-            return file_rewrite_pluginfile_urls($this->properties->summary, 'pluginfile.php', self::summary_editor_context()->id, self::summary_editor_filearea(), $this->properties->id);
-        }
         return $this->properties->$key;
     }
 
@@ -3927,13 +3885,12 @@ class course_request {
             blocks_add_default_course_blocks($course);
             $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
             // TODO: do some real enrolment here
-            role_assign($CFG->creatornewroleid, $this->properties->requester, $coursecontext->id); // assing teacher role
+            role_assign($CFG->creatornewroleid, $this->properties->requester, $coursecontext->id); // assign teacher role
             if (!empty($CFG->restrictmodulesfor) && $CFG->restrictmodulesfor != 'none' && !empty($CFG->restrictbydefault)) {
                 // if we're all or requested we're ok.
                 $allowedmods = explode(',',$CFG->defaultallowedmodules);
                 update_restricted_mods($course, $allowedmods);
             }
-            $this->copy_summary_files_to_course($course);
             $this->delete();
             fix_course_sortorder();
 
@@ -3967,36 +3924,6 @@ class course_request {
     public function delete() {
         global $DB;
         $DB->delete_records('course_request', array('id' => $this->properties->id));
-        if (self::summary_editor_context() !== null) {
-            $fs = get_file_storage();
-            $files = $fs->get_area_files(self::summary_editor_context()->id, self::summary_editor_filearea(), $this->properties->id);
-            foreach ($files as $file) {
-                $file->delete();
-            }
-        }
-    }
-
-    /**
-     * This function copies all files used in the summary for the request to the
-     * summary of the course.
-     *
-     * This function copies, original files are left associated with the request
-     * and are removed only when the request is deleted
-     *
-     * @param stdClass $course An object representing the course to copy files to
-     */
-    protected function copy_summary_files_to_course($course) {
-        if (self::summary_editor_context() !== null) {
-            $fs = get_file_storage();
-            $files = $fs->get_area_files(self::summary_editor_context()->id, self::summary_editor_filearea(), $this->properties->id);
-            foreach ($files as $file) {
-                $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
-                if (!$file->is_directory()) {
-                    $filerecord = array('contextid'=>$coursecontext->id, 'filearea'=>'course_summary', 'itemid'=>0, 'filepath'=>$file->get_filepath(), 'filename'=>$file->get_filename());
-                    $fs->create_file_from_storedfile($filerecord, $file);
-                }
-            }
-        }
     }
 
     /**

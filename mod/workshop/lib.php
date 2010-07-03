@@ -83,13 +83,13 @@ function workshop_add_instance(stdclass $workshop) {
 
     // process the custom wysiwyg editors
     if ($draftitemid = $workshop->instructauthorseditor['itemid']) {
-        $workshop->instructauthors = file_save_draft_area_files($draftitemid, $context->id, 'workshop_instructauthors',
+        $workshop->instructauthors = file_save_draft_area_files($draftitemid, $context->id, 'mod_workshop', 'instructauthors',
                 0, workshop::instruction_editors_options($context), $workshop->instructauthorseditor['text']);
         $workshop->instructauthorsformat = $workshop->instructauthorseditor['format'];
     }
 
     if ($draftitemid = $workshop->instructreviewerseditor['itemid']) {
-        $workshop->instructreviewers = file_save_draft_area_files($draftitemid, $context->id, 'workshop_instructreviewers',
+        $workshop->instructreviewers = file_save_draft_area_files($draftitemid, $context->id, 'mod_workshop', 'instructreviewers',
                 0, workshop::instruction_editors_options($context), $workshop->instructreviewerseditor['text']);
         $workshop->instructreviewersformat = $workshop->instructreviewerseditor['format'];
     }
@@ -130,13 +130,13 @@ function workshop_update_instance(stdclass $workshop) {
 
     // process the custom wysiwyg editors
     if ($draftitemid = $workshop->instructauthorseditor['itemid']) {
-        $workshop->instructauthors = file_save_draft_area_files($draftitemid, $context->id, 'workshop_instructauthors',
+        $workshop->instructauthors = file_save_draft_area_files($draftitemid, $context->id, 'mod_workshop', 'instructauthors',
                 0, workshop::instruction_editors_options($context), $workshop->instructauthorseditor['text']);
         $workshop->instructauthorsformat = $workshop->instructauthorseditor['format'];
     }
 
     if ($draftitemid = $workshop->instructreviewerseditor['itemid']) {
-        $workshop->instructreviewers = file_save_draft_area_files($draftitemid, $context->id, 'workshop_instructreviewers',
+        $workshop->instructreviewers = file_save_draft_area_files($draftitemid, $context->id, 'mod_workshop', 'instructreviewers',
                 0, workshop::instruction_editors_options($context), $workshop->instructreviewerseditor['text']);
         $workshop->instructreviewersformat = $workshop->instructreviewerseditor['format'];
     }
@@ -428,7 +428,7 @@ function workshop_update_grades(stdclass $workshop, $userid=0) {
  * Returns the lists of all browsable file areas within the given module context
  *
  * The file area workshop_intro for the activity introduction field is added automatically
- * by {@link file_browser::get_file_info_module()}
+ * by {@link file_browser::get_file_info_context_module()}
  *
  * @param stdclass $course
  * @param stdclass $cm
@@ -437,12 +437,11 @@ function workshop_update_grades(stdclass $workshop, $userid=0) {
  */
 function workshop_get_file_areas($course, $cm, $context) {
     $areas = array();
-    if (has_capability('moodle/course:managefiles', $context)) {
-        $areas['workshop_instructauthors']          = get_string('areainstructauthors', 'workshop');
-        $areas['workshop_instructreviewers']        = get_string('areainstructreviewers', 'workshop');
-        $areas['workshop_submission_content']       = get_string('areasubmissioncontent', 'workshop');
-        $areas['workshop_submission_attachment']    = get_string('areasubmissionattachment', 'workshop');
-    }
+    $areas['instructauthors']          = get_string('areainstructauthors', 'workshop');
+    $areas['instructreviewers']        = get_string('areainstructreviewers', 'workshop');
+    $areas['submission_content']       = get_string('areasubmissioncontent', 'workshop');
+    $areas['submission_attachment']    = get_string('areasubmissionattachment', 'workshop');
+
     return $areas;
 }
 
@@ -454,37 +453,35 @@ function workshop_get_file_areas($course, $cm, $context) {
  * the fileareas workshop_submission_content and workshop_submission_attachment are used.
  * The access rights to the files are checked here. The user must be either a peer-reviewer
  * of the submission or have capability ... (todo) to access the submission files.
- * Besides that, areas workshop_instructauthors and workshop_instructreviewers contain the media
+ * Besides that, areas workshop_instructauthors and mod_workshop instructreviewers contain the media
  * embedded using the mod_form.php.
  *
  * @param stdclass $course
- * @param stdclass $cminfo
+ * @param stdclass $cm
  * @param stdclass $context
  * @param string $filearea
  * @param array $args
  * @param bool $forcedownload
  * @return void this should never return to the caller
  */
-function workshop_pluginfile($course, $cminfo, $context, $filearea, array $args, $forcedownload) {
+function workshop_pluginfile($course, $cm, $context, $filearea, array $args, $forcedownload) {
     global $DB;
 
-    if (!$cminfo->uservisible) {
-        send_file_not_found();
+    if ($context->contextlevel != CONTEXT_MODULE) {
+        return false;
     }
-    if (!$cm = get_coursemodule_from_instance('workshop', $cminfo->instance, $course->id)) {
-        send_file_not_found();
-    }
+
     require_login($course, true, $cm);
 
-    if ($filearea === 'workshop_instructauthors') {
+    if ($filearea === 'instructauthors') {
         // submission instructions may contain sensitive data
         if (!has_any_capability(array('moodle/course:manageactivities', 'mod/workshop:submit'), $context)) {
             send_file_not_found();
         }
 
         array_shift($args); // we do not use itemids here
-        $relativepath = '/' . implode('/', $args);
-        $fullpath = $context->id . $filearea . '0' . $relativepath; // beware, slashes are not used here!
+        $relativepath = implode('/', $args);
+        $fullpath = "/$context->id/mod_workshop/$filearea/0/$relativepath"; // beware, slashes are not used here!
 
         $fs = get_file_storage();
         if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
@@ -497,15 +494,15 @@ function workshop_pluginfile($course, $cminfo, $context, $filearea, array $args,
         send_stored_file($file, $lifetime, 0);
     }
 
-    if ($filearea === 'workshop_instructreviewers') {
+    if ($filearea === 'instructreviewers') {
         // submission instructions may contain sensitive data
         if (!has_any_capability(array('moodle/course:manageactivities', 'mod/workshop:peerassess'), $context)) {
             send_file_not_found();
         }
 
         array_shift($args); // we do not use itemids here
-        $relativepath = '/' . implode('/', $args);
-        $fullpath = $context->id . $filearea . '0' . $relativepath; // beware, slashes are not used here!
+        $relativepath = implode('/', $args);
+        $fullpath = "/$context->id/mod_workshop/$filearea/0/$relativepath"; // beware, slashes are not used here!
 
         $fs = get_file_storage();
         if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
@@ -516,67 +513,19 @@ function workshop_pluginfile($course, $cminfo, $context, $filearea, array $args,
 
         // finally send the file
         send_stored_file($file, $lifetime, 0);
-    }
 
-    // the following file areas are for the files embedded into the assessment forms
-    // TODO this should be rewritten to using callbacks into subplugins
-    if (in_array($filearea, array(
-            'workshopform_comments_description',
-            'workshopform_accumulative_description',
-            'workshopform_numerrors_description',
-            'workshopform_rubric_description',
-        ))) {
-        $itemid = (int)array_shift($args); // the id of the assessment form dimension
-        if (!$workshop = $DB->get_record('workshop', array('id' => $cminfo->instance))) {
-            send_file_not_found();
-        }
-        switch ($filearea) {
-            case 'workshopform_comments_description':
-                $dimension = $DB->get_record('workshopform_comments', array('id' => $itemid));
-                break;
-            case 'workshopform_accumulative_description':
-                $dimension = $DB->get_record('workshopform_accumulative', array('id' => $itemid));
-                break;
-            case 'workshopform_numerrors_description':
-                $dimension = $DB->get_record('workshopform_numerrors', array('id' => $itemid));
-                break;
-            case 'workshopform_rubric_description':
-                $dimension = $DB->get_record('workshopform_rubric', array('id' => $itemid));
-                break;
-            default:
-                $dimension = false;
-        }
-        if (empty($dimension)) {
-            send_file_not_found();
-        }
-        if ($workshop->id != $dimension->workshopid) {
-            // this should never happen but just in case
-            send_file_not_found();
-        }
-        // TODO now make sure the user is allowed to see the file
-        // (media embedded into the dimension description)
-        $fs = get_file_storage();
-        $relativepath = '/' . implode('/', $args);
-        $fullpath = $context->id . $filearea . $itemid . $relativepath;
-        if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
-            return false;
-        }
-        // finally send the file
-        send_stored_file($file);
-    }
-
-    if ($filearea == 'workshop_submission_content' or $filearea == 'workshop_submission_attachment') {
+    } else if ($filearea === 'submission_content' or $filearea === 'submission_attachment') {
         $itemid = (int)array_shift($args);
-        if (!$submission = $DB->get_record('workshop_submissions', array('id' => $itemid))) {
+        if (!$workshop = $DB->get_record('workshop', array('id' => $cm->instance))) {
             return false;
         }
-        if (!$workshop = $DB->get_record('workshop', array('id' => $cminfo->instance))) {
+        if (!$submission = $DB->get_record('workshop_submissions', array('id' => $itemid, 'workshopid' => $workshop->id))) {
             return false;
         }
         // TODO now make sure the user is allowed to see the file
         $fs = get_file_storage();
-        $relativepath = '/' . implode('/', $args);
-        $fullpath = $context->id . $filearea . $itemid . $relativepath;
+        $relativepath = implode('/', $args);
+        $fullpath = "/$context->id/mod_workshop/$filearea/$itemid/$relativepath";
         if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
             return false;
         }
@@ -611,7 +560,7 @@ function workshop_get_file_info($browser, $areas, $course, $cm, $context, $filea
 
     $fs = get_file_storage();
 
-    if ($filearea === 'workshop_submission_content' or $filearea === 'workshop_submission_attachment') {
+    if ($filearea === 'content' or $filearea === 'attachment') {
 
         if (is_null($itemid)) {
             require_once($CFG->dirroot . '/mod/workshop/fileinfolib.php');
@@ -623,9 +572,9 @@ function workshop_get_file_info($browser, $areas, $course, $cm, $context, $filea
         $filepath = is_null($filepath) ? '/' : $filepath;
         $filename = is_null($filename) ? '.' : $filename;
 
-        if (!$storedfile = $fs->get_file($context->id, $filearea, $itemid, $filepath, $filename)) {
+        if (!$storedfile = $fs->get_file($context->id, 'mod_workshop', $filearea, $itemid, $filepath, $filename)) {
             if ($filepath === '/' and $filename === '.') {
-                $storedfile = new virtual_root_file($context->id, $filearea, $itemid);
+                $storedfile = new virtual_root_file($context->id, 'mod_workshop', $filearea, $itemid);
             } else {
                 // not found
                 return null;
@@ -647,16 +596,16 @@ function workshop_get_file_info($browser, $areas, $course, $cm, $context, $filea
         return new file_info_stored($browser, $context, $storedfile, $urlbase, $topvisiblename, true, true, false, false);
     }
 
-    if ($filearea == 'workshop_instructauthors' or $filearea == 'workshop_instructreviewers') {
+    if ($filearea == 'instructauthors' or $filearea == 'instructreviewers') {
         // always only itemid 0
 
         $filepath = is_null($filepath) ? '/' : $filepath;
         $filename = is_null($filename) ? '.' : $filename;
 
         $urlbase = $CFG->wwwroot.'/pluginfile.php';
-        if (!$storedfile = $fs->get_file($context->id, $filearea, 0, $filepath, $filename)) {
+        if (!$storedfile = $fs->get_file($context->id, 'mod_workshop', $filearea, 0, $filepath, $filename)) {
             if ($filepath === '/' and $filename === '.') {
-                $storedfile = new virtual_root_file($context->id, $filearea, 0);
+                $storedfile = new virtual_root_file($context->id, 'mod_workshop', $filearea, 0);
             } else {
                 // not found
                 return null;

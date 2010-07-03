@@ -18,28 +18,41 @@
 /**
  * File handling related exceptions.
  *
- * @package    moodlecore
- * @subpackage file
+ * @package    core
+ * @subpackage filestorage
  * @copyright  2008 Petr Skoda (http://skodak.org)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 /**
  * Basic file related exception class
+ *
+ * @package    core
+ * @subpackage filestorage
+ * @copyright  2008 Petr Skoda (http://skodak.org)
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class file_exception extends moodle_exception {
-    function __construct($errorcode, $a=NULL, $debuginfo=null) {
+    function __construct($errorcode, $a=NULL, $debuginfo = NULL) {
         parent::__construct($errorcode, '', '', $a, $debuginfo);
     }
 }
 
 /**
  * Can not create file exception
+ *
+ * @package    core
+ * @subpackage filestorage
+ * @copyright  2008 Petr Skoda (http://skodak.org)
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class stored_file_creation_exception extends file_exception {
-    function __construct($contextid, $filearea, $itemid, $filepath, $filename, $debuginfo=null) {
+    function __construct($contextid, $component, $filearea, $itemid, $filepath, $filename, $debuginfo = NULL) {
         $a = new object();
         $a->contextid = $contextid;
+        $a->component = $component;
         $a->filearea  = $filearea;
         $a->itemid    = $itemid;
         $a->filepath  = $filepath;
@@ -50,18 +63,28 @@ class stored_file_creation_exception extends file_exception {
 
 /**
  * No file access exception.
+ *
+ * @package    core
+ * @subpackage filestorage
+ * @copyright  2008 Petr Skoda (http://skodak.org)
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class file_access_exception extends file_exception {
-    function __construct($debuginfo=null) {
+    function __construct($debuginfo = NULL) {
         parent::__construct('nopermissions', NULL, $debuginfo);
     }
 }
 
 /**
  * Hash file content problem exception.
+ *
+ * @package    core
+ * @subpackage filestorage
+ * @copyright  2008 Petr Skoda (http://skodak.org)
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class file_pool_content_exception extends file_exception {
-    function __construct($contenthash, $debuginfo=null) {
+    function __construct($contenthash, $debuginfo = NULL) {
         parent::__construct('hashpoolproblem', $contenthash, $debuginfo);
     }
 }

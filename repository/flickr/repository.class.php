@@ -302,7 +302,7 @@ class repository_flickr extends repository {
             $mform->addElement('static', null, '',  $callbackurl);
         } else {
             $instance = array_shift($instances);
-            $callbackurl = $CFG->wwwroot.'/repository/repository_ajax.php?callback=yes&amp;repo_id='.$instance->id;
+            $callbackurl = $CFG->wwwroot.'/repository/repository_callback.php?repo_id='.$instance->id;
             $mform->addElement('static', 'callbackurl', '', get_string('callbackurltext', 'repository_flickr', $callbackurl));
         }
 

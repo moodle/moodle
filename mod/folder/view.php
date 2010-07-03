@@ -25,6 +25,7 @@
 
 require('../../config.php');
 require_once("$CFG->dirroot/mod/folder/locallib.php");
+require_once("$CFG->dirroot/repository/lib.php");
 require_once($CFG->libdir . '/completionlib.php');
 
 $id = optional_param('id', 0, PARAM_INT);  // Course module ID
@@ -55,24 +56,28 @@ $PAGE->set_url('/mod/folder/view.php', array('id' => $cm->id));
 $PAGE->set_title($course->shortname.': '.$folder->name);
 $PAGE->set_heading($course->fullname);
 $PAGE->set_activity_record($folder);
-echo $OUTPUT->header();
 
-echo $OUTPUT->heading(format_string($folder->name), 2);
+
+$output = $PAGE->get_renderer('mod_folder');
+
+echo $output->header();
+
+echo $output->heading(format_string($folder->name), 2);
 
 if (trim(strip_tags($folder->intro))) {
-    echo $OUTPUT->box_start('mod_introbox', 'pageintro');
+    echo $output->box_start('mod_introbox', 'pageintro');
     echo format_module_intro('folder', $folder, $cm->id);
-    echo $OUTPUT->box_end();
+    echo $output->box_end();
 }
 
-echo $OUTPUT->box_start('generalbox foldertree');
-echo $OUTPUT->area_file_tree_viewer($context->id, 'folder_content', 0);
-echo $OUTPUT->box_end();
+echo $output->box_start('generalbox foldertree');
+echo $output->folder_tree($folder, $cm, $course);
+echo $output->box_end();
 
 if (has_capability('moodle/course:managefiles', $context)) {
-    echo $OUTPUT->container_start('mdl-align');
-    echo $OUTPUT->single_button(new moodle_url('/mod/folder/edit.php', array('id'=>$id)), get_string('edit'));
-    echo $OUTPUT->container_end();
+    echo $output->container_start('mdl-align');
+    echo $output->single_button(new moodle_url('/mod/folder/edit.php', array('id'=>$id)), get_string('edit'));
+    echo $output->container_end();
 }
 
-echo $OUTPUT->footer();
+echo $output->footer();

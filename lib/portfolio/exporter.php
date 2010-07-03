@@ -493,7 +493,7 @@ class portfolio_exporter {
         }
         $DB->delete_records('portfolio_tempdata', array('id' => $this->id));
         $fs = get_file_storage();
-        $fs->delete_area_files(SYSCONTEXTID, 'portfolio_exporter', $this->id);
+        $fs->delete_area_files(SYSCONTEXTID, 'portfolio', 'exporter', $this->id);
         $this->deleted = true;
         return true;
     }
@@ -805,7 +805,7 @@ class portfolio_exporter {
     */
     public function get_tempfiles($skipfile='portfolio-export.zip') {
         $fs = get_file_storage();
-        $files = $fs->get_area_files(SYSCONTEXTID, 'portfolio_exporter', $this->id, '', false);
+        $files = $fs->get_area_files(SYSCONTEXTID, 'portfolio', 'exporter', $this->id, '', false);
         if (empty($files)) {
             return array();
         }
@@ -831,8 +831,9 @@ class portfolio_exporter {
     public function get_base_filearea() {
         return array(
             'contextid' => SYSCONTEXTID,
-            'filearea' => 'portfolio_exporter',
-            'itemid'   => $this->id,
+            'component' => 'portfolio',
+            'filearea'  => 'exporter',
+            'itemid'    => $this->id,
         );
     }
 

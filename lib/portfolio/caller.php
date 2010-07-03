@@ -376,6 +376,7 @@ abstract class portfolio_caller_base {
      *                   - array of file ids or stored_file objects
      *                   - null
      * @param int    $contextid   (optional), passed to {@link see file_storage::get_area_files}
+     * @param string $component   (optional), passed to {@link see file_storage::get_area_files}
      * @param string $filearea    (optional), passed to {@link see file_storage::get_area_files}
      * @param int    $itemid      (optional), passed to {@link see file_storage::get_area_files}
      * @param string $sort        (optional), passed to {@link see file_storage::get_area_files}
@@ -401,7 +402,7 @@ abstract class portfolio_caller_base {
                 }
             }
         } else if (count($args) != 0) {
-            if (count($args) < 3) {
+            if (count($args) < 4) {
                 throw new portfolio_caller_exception('invalidfileareaargs', 'portfolio');
             }
             $files = array_values(call_user_func_array(array($fs, 'get_area_files'), $args));

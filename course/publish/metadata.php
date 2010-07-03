@@ -159,7 +159,7 @@ if (has_capability('moodle/course:publish', get_context_instance(CONTEXT_COURSE,
         if (!empty($fromform->screenshots)) {
             $screenshots = $fromform->screenshots;
             $fs = get_file_storage();
-            $files = $fs->get_area_files(get_context_instance(CONTEXT_USER, $USER->id)->id, 'user_draft', $screenshots);
+            $files = $fs->get_area_files(get_context_instance(CONTEXT_USER, $USER->id)->id, 'user', 'draft', $screenshots);
             if (!empty($files)) {
                 $courseinfo->screenshots = $courseinfo->screenshots + count($files) - 1; //minus the ./ directory
             }
@@ -179,7 +179,7 @@ if (has_capability('moodle/course:publish', get_context_instance(CONTEXT_COURSE,
         try {
             $courseids = $xmlrpcclient->call($serverurl, $registeredhub->token, $function, $params);
         } catch (Exception $e) {
-            throw new moodle_exception('errorcoursepublish', 'hub', 
+            throw new moodle_exception('errorcoursepublish', 'hub',
                     new moodle_url('/course/view.php', array('id' => $id)), $e->getMessage());
         }
 
@@ -233,7 +233,7 @@ if (has_capability('moodle/course:publish', get_context_instance(CONTEXT_COURSE,
         } else {
             //redirect to the index publis page
             redirect(new moodle_url('/course/publish/index.php',
-                            array('sesskey' => sesskey(), 'id' => $id, 'published' => true, 
+                            array('sesskey' => sesskey(), 'id' => $id, 'published' => true,
                                 'hubname' => $hubname, 'huburl' => $huburl)));
         }
     }

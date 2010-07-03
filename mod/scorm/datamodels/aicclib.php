@@ -103,7 +103,7 @@ function scorm_parse_aicc($scorm) {
 
     $fs = get_file_storage();
 
-    $files = $fs->get_area_files($context->id, 'scorm_content', 0, '', false);
+    $files = $fs->get_area_files($context->id, 'mod_scorm', 'content', 0, '', false);
 
 
     $version = 'AICC';

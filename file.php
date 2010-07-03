@@ -62,7 +62,7 @@ if (count($args) == 0) { // always at least courseid, may search for index.html 
 }
 
 $courseid = (int)array_shift($args);
-$relativepath = '/'.implode('/', $args);
+$relativepath = implode('/', $args);
 
 // security: limit access to existing course subdirectories
 $course = $DB->get_record('course', array('id'=>$courseid), '*', MUST_EXIST);
@@ -77,8 +77,8 @@ if ($course->id != SITEID) {
 
 } else if ($CFG->forcelogin) {
     if (!empty($CFG->sitepolicy)
-        and ($CFG->sitepolicy == $CFG->wwwroot.'/file.php'.$relativepath
-             or $CFG->sitepolicy == $CFG->wwwroot.'/file.php?file='.$relativepath)) {
+        and ($CFG->sitepolicy == $CFG->wwwroot.'/file.php/'.$relativepath
+             or $CFG->sitepolicy == $CFG->wwwroot.'/file.php?file=/'.$relativepath)) {
         //do not require login for policy file
     } else {
         require_login(0, true, null, false);
@@ -89,7 +89,7 @@ $context = get_context_instance(CONTEXT_COURSE, $course->id);
 
 $fs = get_file_storage();
 
-$fullpath = $context->id.'course_content0'.$relativepath;
+$fullpath = "/$context->id/course/legacy/0/$relativepath";
 
 if (!$file = $fs->get_file_by_hash(sha1($fullpath))) {
     if (strrpos($fullpath, '/') !== strlen($fullpath) -1 ) {

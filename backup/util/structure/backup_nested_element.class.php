@@ -35,8 +35,7 @@ class backup_nested_element extends base_nested_element implements processable {
     protected $params;    // Unprocessed params as specified in the set_source() call
     protected $procparams;// Processed (path resolved) params array
     protected $aliases;   // Define DB->final element aliases
-    protected $fileannotelement; // Element to be used as itemid for file annotations
-    protected $fileannotareas;   // array of file areas to be searched by file annotations
+    protected $fileannotations;   // array of file areas to be searched by file annotations
     protected $counter;   // Number of instances of this element that have been processed
 
     /**
@@ -54,8 +53,7 @@ class backup_nested_element extends base_nested_element implements processable {
         $this->params    = null;
         $this->procparams= null;
         $this->aliases   = array();
-        $this->fileannotelement = null;
-        $this->fileannotareas   = array();
+        $this->fileannotations = array();
         $this->counter   = 0;
     }
 
@@ -148,21 +146,21 @@ class backup_nested_element extends base_nested_element implements processable {
         }
     }
 
-    public function annotate_files($areas, $elementname) {
-        if (!is_array($areas)) { // Check we are passing array
-            throw new base_element_struct_exception('annotate_files_requires_array_of_areas', $areas);
+    public function annotate_files($component, $filearea, $elementname) {
+        // note: it is possible to annotate areas ONLY in current context, ie modules may backup only from module context
+        if (!array_key_exists($component, $this->fileannotations)) {
+            $this->fileannotations[$component] = array();
         }
-        $annotations = $this->get_file_annotations();
-        if (!empty($annotations[0])) { // Check we haven't defined file annotations already
-            throw new base_element_struct_exception('annotate_files_already_defined', $this->get_name());
-        }
+
         if ($elementname !== null) { // Check elementname is valid
-            $element = $this->find_element($elementname);
-            // Annotate the element
-            $this->fileannotelement= $element;
+            $elementname = $this->find_element($elementname); //TODO: no warning here? (skodak)
         }
-        // Annotate the areas
-        $this->fileannotareas  = $areas;
+
+        if (array_key_exists($filearea, $this->fileannotations[$component])) {
+            throw new base_element_struct_exception('annotate_files_duplicate_annotation', "$component/$filearea/$elementname");
+        }
+
+        $this->fileannotations[$component][$filearea] = $elementname;
     }
 
     public function annotate_ids($itemname, $elementname) {
@@ -175,10 +173,7 @@ class backup_nested_element extends base_nested_element implements processable {
      * @backup_structure and the areas to be searched
      */
     public function get_file_annotations() {
-        if (empty($this->fileannotareas)) {
-            return array(null, null);
-        }
-        return array($this->fileannotareas, $this->fileannotelement);
+        return $this->fileannotations;
     }
 
     public function get_source_array() {

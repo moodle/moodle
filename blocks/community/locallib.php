@@ -98,11 +98,12 @@ class block_community_manager {
 
         $fs = get_file_storage();
         $record->contextid = get_context_instance(CONTEXT_USER, $USER->id)->id;
-        $record->filearea = 'user_backup';
+        $record->component = 'user';
+        $record->filearea = 'backup';
         $record->itemid = 0;
         $record->filename = 'backup_'.$course->fullname."_".$course->id.".zip";
         $record->filepath = '/';
-        if (!$fs->file_exists($record->contextid, $record->filearea, 0, $record->filepath, $record->filename)) {
+        if (!$fs->file_exists($record->contextid, $record->component, $record->filearea, 0, $record->filepath, $record->filename)) {
             $fs->create_file_from_pathname($record, $CFG->dataroot.'/temp/communitydownload/'.'backup_'.$course->fullname."_".$course->id.".zip");
         }
         //delete temp file

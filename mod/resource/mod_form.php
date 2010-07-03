@@ -158,7 +158,7 @@ class mod_resource_mod_form extends moodleform_mod {
     function data_preprocessing(&$default_values) {
         if ($this->current->instance and !$this->current->tobemigrated) {
             $draftitemid = file_get_submitted_draft_itemid('files');
-            file_prepare_draft_area($draftitemid, $this->context->id, 'resource_content', 0, array('subdirs'=>true));
+            file_prepare_draft_area($draftitemid, $this->context->id, 'mod_resource', 'content', 0, array('subdirs'=>true));
             $default_values['files'] = $draftitemid;
         }
         if (!empty($default_values['displayoptions'])) {
@@ -194,7 +194,7 @@ class mod_resource_mod_form extends moodleform_mod {
 
         $usercontext = get_context_instance(CONTEXT_USER, $USER->id);
         $fs = get_file_storage();
-        if (!$files = $fs->get_area_files($usercontext->id, 'user_draft', $data['files'], 'sortorder, id', false)) {
+        if (!$files = $fs->get_area_files($usercontext->id, 'user', 'draft', $data['files'], 'sortorder, id', false)) {
             $errors['files'] = get_string('required');
             return $errors;
         }
@@ -212,7 +212,7 @@ class mod_resource_mod_form extends moodleform_mod {
             // set a default main file
             if (!$mainfile) {
                 $file = reset($files);
-                file_set_sortorder($file->get_contextid(), $file->get_filearea(), $file->get_itemid(),
+                file_set_sortorder($file->get_contextid(), $file->get_component(), $file->get_filearea(), $file->get_itemid(),
                                    $file->get_filepath(), $file->get_filename(), 1);
             }
         }

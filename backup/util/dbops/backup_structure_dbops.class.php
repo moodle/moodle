@@ -103,13 +103,14 @@ abstract class backup_structure_dbops extends backup_dbops {
         }
     }
 
-    public static function annotate_files($backupid, $contextid, $filearea, $itemid) {
+    public static function annotate_files($backupid, $contextid, $component, $filearea, $itemid) {
         global $DB;
         $sql = 'SELECT id
                   FROM {files}
                  WHERE contextid = ?
+                   AND component = ?
                    AND filearea = ?';
-        $params = array($contextid, $filearea);
+        $params = array($contextid, $component, $filearea);
 
         if (!is_null($itemid)) { // Add itemid to query and params if necessary
             $sql .= ' AND itemid = ?';

@@ -137,7 +137,6 @@ class MoodleQuickForm_filemanager extends HTML_QuickForm_element {
         // filemanager options
         $options = new stdclass;
         $options->mainfile  = $this->_options['mainfile'];
-        $options->filearea  = 'user_draft';
         $options->maxbytes  = $this->_options['maxbytes'];
         $options->maxfiles  = $this->getMaxfiles();
         $options->client_id = $client_id;
@@ -149,7 +148,7 @@ class MoodleQuickForm_filemanager extends HTML_QuickForm_element {
         $options->context = $PAGE->context;
 
         $html = $this->_getTabs();
-        $html .= $OUTPUT->file_manager($options);
+        $html .= form_filemanager_render($options);
 
         $html .= '<input value="'.$draftitemid.'" name="'.$elname.'" type="hidden" />';
         // label element needs 'for' attribute work
@@ -157,4 +156,184 @@ class MoodleQuickForm_filemanager extends HTML_QuickForm_element {
 
         return $html;
     }
+}
+
+
+
+/**
+ * Data structure representing a file manager.
+ *
+ * @copyright 2010 Dongsheng Cai
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since     Moodle 2.0
+ */
+class form_filemanaer_x {
+    //TODO: do not use this abstraction (skodak)
+
+    public $options;
+    public function __construct(stdClass $options) {
+        global $CFG, $USER, $PAGE;
+        require_once($CFG->dirroot. '/repository/lib.php');
+        $defaults = array(
+            'maxbytes'=>-1,
+            'maxfiles'=>-1,
+            'itemid'=>0,
+            'subdirs'=>0,
+            'client_id'=>uniqid(),
+            'accepted_types'=>'*',
+            'return_types'=>FILE_INTERNAL,
+            'context'=>$PAGE->context
+            );
+        foreach ($defaults as $key=>$value) {
+            if (empty($options->$key)) {
+                $options->$key = $value;
+            }
+        }
+
+        $fs = get_file_storage();
+
+        // initilise options, getting files in root path
+        $this->options = file_get_drafarea_files($options->itemid, '/');
+
+        // calculate file count
+        $usercontext = get_context_instance(CONTEXT_USER, $USER->id);
+        $files = $fs->get_area_files($usercontext->id, 'user', 'draft', $options->itemid, 'id', false);
+        $filecount = count($files);
+        $this->options->filecount = $filecount;
+
+        // copying other options
+        foreach ($options as $name=>$value) {
+            $this->options->$name = $value;
+        }
+
+        // building file picker options
+        $params = new stdclass;
+        $params->accepted_types = $options->accepted_types;
+        $params->return_types = $options->return_types;
+        $params->context = $options->context;
+        $params->env = 'filemanager';
+        $params->disable_types = !empty($options->disable_types)?$options->disable_types:array();
+        $filepicker_options = initialise_filepicker($params);
+        $this->options->filepicker = $filepicker_options;
+    }
+}
+
+/**
+ * Print the file manager
+ *
+ * <pre>
+ * $OUTPUT->file_manager($options);
+ * </pre>
+ *
+ * @param array $options associative array with file manager options
+ *   options are:
+ *       maxbytes=>-1,
+ *       maxfiles=>-1,
+ *       itemid=>0,
+ *       subdirs=>false,
+ *       client_id=>uniqid(),
+ *       acepted_types=>'*',
+ *       return_types=>FILE_INTERNAL,
+ *       context=>$PAGE->context
+ * @return string HTML fragment
+ */
+function form_filemanager_render($options) {
+    global $CFG, $OUTPUT, $PAGE;
+
+    $fm = new form_filemanaer_x($options); //TODO: this is unnecessary here, the nested options are getting too complex
+
+    static $filemanagertemplateloaded;
+
+    $html = '';
+    $nonjsfilemanager = optional_param('usenonjsfilemanager', 0, PARAM_INT);
+    $options = $fm->options;
+    $options->usenonjs = $nonjsfilemanager;
+    $straddfile  = get_string('add', 'repository') . '...';
+    $strmakedir  = get_string('makeafolder', 'moodle');
+    $strdownload = get_string('downloadfolder', 'repository');
+    $strloading  = get_string('loading', 'repository');
+
+    $icon_add_file = $OUTPUT->pix_icon('t/addfile', $straddfile).'';
+    $icon_add_folder = $OUTPUT->pix_icon('t/adddir', $strmakedir).'';
+    $icon_download = $OUTPUT->pix_icon('t/download', $strdownload).'';
+    $icon_progress = $OUTPUT->pix_icon('i/loading_small', $strloading).'';
+
+    $client_id = $options->client_id;
+    $itemid    = $options->itemid;
+
+    if (empty($options->filecount)) {
+        $extra = ' style="display:none"';
+    } else {
+        $extra = '';
+    }
+
+    $html .= <<<FMHTML
+<div class="filemanager-loading mdl-align" id='filemanager-loading-{$client_id}'>
+$icon_progress
+</div>
+<div id="filemanager-wrapper-{$client_id}" style="display:none">
+    <div class="fm-breadcrumb" id="fm-path-{$client_id}"></div>
+    <div class="filemanager-toolbar">
+        <button id="btnadd-{$client_id}" onclick="return false">{$icon_add_file} $straddfile</button>
+        <button id="btncrt-{$client_id}" onclick="return false">{$icon_add_folder} $strmakedir</button>
+        <button id="btndwn-{$client_id}" onclick="return false" {$extra}>{$icon_download} $strdownload</button>
+    </div>
+    <div class="filemanager-container" id="filemanager-{$client_id}">
+        <ul id="draftfiles-{$client_id}" class="fm-filelist">
+            <li>Loading...</li>
+        </ul>
+    </div>
+</div>
+<div class='clearer'></div>
+FMHTML;
+    if (empty($filemanagertemplateloaded)) {
+        $filemanagertemplateloaded = true;
+        $html .= <<<FMHTML
+<div id="fm-template" style="display:none">___fullname___ ___action___</div>
+FMHTML;
+    }
+
+    $filemanagerurl = new moodle_url('/repository/filepicker.php', array(
+        'env'=>'filemanager',
+        'action'=>'embedded',
+        'itemid'=>$itemid,
+        'subdirs'=>'/',
+        'maxbytes'=>$options->maxbytes,
+        'ctx_id'=>$PAGE->context->id,
+        'course'=>$PAGE->course->id,
+        ));
+
+    $module = array(
+        'name'=>'form_filemanager',
+        'fullpath'=>'/lib/form/filemanager.js',
+        'requires' => array('core_filepicker', 'base', 'io', 'node', 'json', 'yui2-button', 'yui2-container', 'yui2-layout', 'yui2-menu', 'yui2-treeview'),
+        'strings' => array(array('loading', 'repository'), array('nomorefiles', 'repository'), array('confirmdeletefile', 'repository'),
+             array('add', 'repository'), array('accessiblefilepicker', 'repository'), array('move', 'moodle'),
+             array('cancel', 'moodle'), array('download', 'moodle'), array('ok', 'moodle'),
+             array('emptylist', 'repository'), array('nofilesattached', 'repository'), array('entername', 'repository'), array('enternewname', 'repository'),
+             array('zip', 'editor'), array('unzip', 'moodle'), array('rename', 'moodle'), array('delete', 'moodle'),
+             array('cannotdeletefile', 'error'), array('confirmdeletefile', 'repository'),
+             array('nopathselected', 'repository'), array('popupblockeddownload', 'repository'),
+             array('draftareanofiles', 'repository'), array('path', 'moodle'), array('setmainfile', 'repository')
+        )
+    );
+    $PAGE->requires->js_module($module);
+    $PAGE->requires->js_init_call('M.form_filemanager.init', array($options), true, $module);
+
+    // non javascript file manager
+    if (!empty($nonjsfilemanager)) {
+        $html = '<div id="nonjs-filemanager-'.$client_id.'">';
+        $html .= <<<NONJS
+<object type="text/html" data="$filemanagerurl" height="160" width="600" style="border:1px solid #000">Error</object>
+NONJS;
+        $html .= '</div>';
+    } else {
+        $url = new moodle_url($PAGE->url, array('usenonjsfilemanager'=>1));
+        $html .= '<div id="nonjs-filemanager-'.$client_id.'" class="mdl-align">';
+        $html .= html_writer::link($url, get_string('usenonjsfilemanager', 'repository'));
+        $html .= '</div>';
+    }
+
+
+    return $html;
 }

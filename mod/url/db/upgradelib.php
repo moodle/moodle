@@ -50,7 +50,6 @@ function url_20_migrate() {
     if (!$candidates = $DB->get_recordset('resource_old', array('type'=>'file', 'migrated'=>0))) {
         return;
     }
-    $fs = get_file_storage();
 
     foreach ($candidates as $candidate) {
         $path = $candidate->reference;

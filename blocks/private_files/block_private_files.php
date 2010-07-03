@@ -19,8 +19,7 @@
 /**
  * Manage user private area files
  *
- * @package    moodlecore
- * @subpackage repository
+ * @package    block_private_files
  * @copyright  2010 Dongsheng Cai <dongsheng@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -47,12 +46,14 @@ class block_private_files extends block_base {
 
     function get_content() {
         global $CFG, $USER, $PAGE, $OUTPUT;
+
         if ($this->content !== NULL) {
             return $this->content;
         }
         if (empty($this->instance)) {
             return null;
         }
+
         $this->content->text = '';
         $this->content->footer = '';
         if (isloggedin() && !isguestuser()) {   // Show the block
@@ -60,16 +61,18 @@ class block_private_files extends block_base {
             $options = new stdclass;
             $options->maxbytes  = -1;
             $options->maxfiles  = -1;
-            $options->filearea  = 'user_private';
-            $options->itemid    = 0;
             $options->subdirs   = true;
             $options->accepted_types = '*';
             $options->return_types = FILE_INTERNAL;
             $options->context   = $PAGE->context;
             $options->disable_types = array('user');
 
-            $this->content = new stdClass;
-            $this->content->text = $OUTPUT->file_manager($options);
+            $this->content = new object();
+
+            //TODO: add capability check here!
+
+            //TODO: add list of available files here
+            $this->content->text = $OUTPUT->single_button(new moodle_url('/blocks/private_files/edit.php'), get_string('edit'), 'get');
 ;
             $this->content->footer = '';
 

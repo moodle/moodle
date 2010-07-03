@@ -19,13 +19,15 @@
 /**
  * Core file storage class definition.
  *
- * @package    moodlecore
- * @subpackage file-storage
+ * @package    core
+ * @subpackage filestorage
  * @copyright  2008 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once("$CFG->libdir/file/stored_file.php");
+defined('MOODLE_INTERNAL') || die();
+
+require_once("$CFG->libdir/filestorage/stored_file.php");
 
 /**
  * File storage class used for low level access to stored files.
@@ -105,27 +107,29 @@ class file_storage {
      * performance and overcome db index size limits.
      *
      * @param int $contextid
+     * @param string $component
      * @param string $filearea
      * @param int $itemid
      * @param string $filepath
      * @param string $filename
      * @return string sha1 hash
      */
-    public static function get_pathname_hash($contextid, $filearea, $itemid, $filepath, $filename) {
-        return sha1($contextid.$filearea.$itemid.$filepath.$filename);
+    public static function get_pathname_hash($contextid, $component, $filearea, $itemid, $filepath, $filename) {
+        return sha1("/$contextid/$component/$filearea/$itemid".$filepath.$filename);
     }
 
     /**
      * Does this file exist?
      *
      * @param int $contextid
+     * @param string $component
      * @param string $filearea
      * @param int $itemid
      * @param string $filepath
      * @param string $filename
      * @return bool
      */
-    public function file_exists($contextid, $filearea, $itemid, $filepath, $filename) {
+    public function file_exists($contextid, $component, $filearea, $itemid, $filepath, $filename) {
         $filepath = clean_param($filepath, PARAM_PATH);
         $filename = clean_param($filename, PARAM_FILE);
 
@@ -133,7 +137,7 @@ class file_storage {
             $filename = '.';
         }
 
-        $pathnamehash = $this->get_pathname_hash($contextid, $filearea, $itemid, $filepath, $filename);
+        $pathnamehash = $this->get_pathname_hash($contextid, $component, $filearea, $itemid, $filepath, $filename);
         return $this->file_exists_by_hash($pathnamehash);
     }
 
@@ -188,13 +192,14 @@ class file_storage {
      * Fetch locally stored file.
      *
      * @param int $contextid
+     * @param string $component
      * @param string $filearea
      * @param int $itemid
      * @param string $filepath
      * @param string $filename
      * @return stored_file instance if exists, false if not
      */
-    public function get_file($contextid, $filearea, $itemid, $filepath, $filename) {
+    public function get_file($contextid, $component, $filearea, $itemid, $filepath, $filename) {
         global $DB;
 
         $filepath = clean_param($filepath, PARAM_PATH);
@@ -204,7 +209,7 @@ class file_storage {
             $filename = '.';
         }
 
-        $pathnamehash = $this->get_pathname_hash($contextid, $filearea, $itemid, $filepath, $filename);
+        $pathnamehash = $this->get_pathname_hash($contextid, $component, $filearea, $itemid, $filepath, $filename);
         return $this->get_file_by_hash($pathnamehash);
     }
 
@@ -212,16 +217,17 @@ class file_storage {
      * Returns all area files (optionally limited by itemid)
      *
      * @param int $contextid
+     * @param string $component
      * @param string $filearea
      * @param int $itemid (all files if not specified)
      * @param string $sort
      * @param bool $includedirs
      * @return array of stored_files indexed by pathanmehash
      */
-    public function get_area_files($contextid, $filearea, $itemid=false, $sort="sortorder, itemid, filepath, filename", $includedirs = true) {
+    public function get_area_files($contextid, $component, $filearea, $itemid=false, $sort="sortorder, itemid, filepath, filename", $includedirs = true) {
         global $DB;
 
-        $conditions = array('contextid'=>$contextid, 'filearea'=>$filearea);
+        $conditions = array('contextid'=>$contextid, 'component'=>$component, 'filearea'=>$filearea);
         if ($itemid !== false) {
             $conditions['itemid'] = $itemid;
         }
@@ -241,13 +247,14 @@ class file_storage {
      * Returns array based tree structure of area files
      *
      * @param int $contextid
+     * @param string $component
      * @param string $filearea
      * @param int $itemid
      * @return array each dir represented by dirname, subdirs, files and dirfile array elements
      */
-    public function get_area_tree($contextid, $filearea, $itemid) {
+    public function get_area_tree($contextid, $component, $filearea, $itemid) {
         $result = array('dirname'=>'', 'dirfile'=>null, 'subdirs'=>array(), 'files'=>array());
-        $files = $this->get_area_files($contextid, $filearea, $itemid, $sort="sortorder, itemid, filepath, filename", true);
+        $files = $this->get_area_files($contextid, $component, $filearea, $itemid, $sort="sortorder, itemid, filepath, filename", true);
         // first create directory structure
         foreach ($files as $hash=>$dir) {
             if (!$dir->is_directory()) {
@@ -291,6 +298,7 @@ class file_storage {
      * Returns all files and optionally directories
      *
      * @param int $contextid
+     * @param string $component
      * @param string $filearea
      * @param int $itemid
      * @param int $filepath directory path
@@ -299,10 +307,10 @@ class file_storage {
      * @param string $sort
      * @return array of stored_files indexed by pathanmehash
      */
-    public function get_directory_files($contextid, $filearea, $itemid, $filepath, $recursive = false, $includedirs = true, $sort = "filepath, filename") {
+    public function get_directory_files($contextid, $component, $filearea, $itemid, $filepath, $recursive = false, $includedirs = true, $sort = "filepath, filename") {
         global $DB;
 
-        if (!$directory = $this->get_file($contextid, $filearea, $itemid, $filepath, '.')) {
+        if (!$directory = $this->get_file($contextid, $component, $filearea, $itemid, $filepath, '.')) {
             return array();
         }
 
@@ -313,12 +321,12 @@ class file_storage {
 
             $sql = "SELECT *
                       FROM {files}
-                     WHERE contextid = :contextid AND filearea = :filearea AND itemid = :itemid
+                     WHERE contextid = :contextid AND component = :component AND filearea = :filearea AND itemid = :itemid
                            AND ".$DB->sql_substr("filepath", 1, $length)." = :filepath
                            AND id <> :dirid
                            $dirs
                   ORDER BY $sort";
-            $params = array('contextid'=>$contextid, 'filearea'=>$filearea, 'itemid'=>$itemid, 'filepath'=>$filepath, 'dirid'=>$directory->get_id());
+            $params = array('contextid'=>$contextid, 'component'=>$component, 'filearea'=>$filearea, 'itemid'=>$itemid, 'filepath'=>$filepath, 'dirid'=>$directory->get_id());
 
             $files = array();
             $dirs  = array();
@@ -334,14 +342,14 @@ class file_storage {
 
         } else {
             $result = array();
-            $params = array('contextid'=>$contextid, 'filearea'=>$filearea, 'itemid'=>$itemid, 'filepath'=>$filepath, 'dirid'=>$directory->get_id());
+            $params = array('contextid'=>$contextid, 'component'=>$component, 'filearea'=>$filearea, 'itemid'=>$itemid, 'filepath'=>$filepath, 'dirid'=>$directory->get_id());
 
             $length = textlib_get_instance()->strlen($filepath);
 
             if ($includedirs) {
                 $sql = "SELECT *
                           FROM {files}
-                         WHERE contextid = :contextid AND filearea = :filearea
+                         WHERE contextid = :contextid AND component = :component AND filearea = :filearea
                                AND itemid = :itemid AND filename = '.'
                                AND ".$DB->sql_substr("filepath", 1, $length)." = :filepath
                                AND id <> :dirid
@@ -358,7 +366,7 @@ class file_storage {
 
             $sql = "SELECT *
                       FROM {files}
-                     WHERE contextid = :contextid AND filearea = :filearea AND itemid = :itemid
+                     WHERE contextid = :contextid AND component = :component AND filearea = :filearea AND itemid = :itemid
                            AND filepath = :filepath AND filename <> '.'
                   ORDER BY $sort";
 
@@ -375,14 +383,18 @@ class file_storage {
      * Delete all area files (optionally limited by itemid).
      *
      * @param int $contextid
+     * @param string $component
      * @param string $filearea (all areas in context if not specified)
      * @param int $itemid (all files if not specified)
      * @return bool success
      */
-    public function delete_area_files($contextid, $filearea = false, $itemid = false) {
+    public function delete_area_files($contextid, $component = false, $filearea = false, $itemid = false) {
         global $DB;
 
         $conditions = array('contextid'=>$contextid);
+        if ($component !== false) {
+            $conditions['component'] = $component;
+        }
         if ($filearea !== false) {
             $conditions['filearea'] = $filearea;
         }
@@ -403,13 +415,14 @@ class file_storage {
      * Recursively creates directory.
      *
      * @param int $contextid
+     * @param string $component
      * @param string $filearea
      * @param int $itemid
      * @param string $filepath
      * @param string $filename
      * @return bool success
      */
-    public function create_directory($contextid, $filearea, $itemid, $filepath, $userid = null) {
+    public function create_directory($contextid, $component, $filearea, $itemid, $filepath, $userid = null) {
         global $DB;
 
         // validate all parameters, we do not want any rubbish stored in database, right?
@@ -417,8 +430,11 @@ class file_storage {
             throw new file_exception('storedfileproblem', 'Invalid contextid');
         }
 
-        $filearea = clean_param($filearea, PARAM_ALPHAEXT);
-        if ($filearea === '') {
+        if ($component === '' or $component !== clean_param($component, PARAM_ALPHAEXT)) {
+            throw new file_exception('storedfileproblem', 'Invalid component');
+        }
+
+        if ($filearea === '' or $filearea !== clean_param($filearea, PARAM_ALPHAEXT)) {
             throw new file_exception('storedfileproblem', 'Invalid filearea');
         }
 
@@ -432,7 +448,7 @@ class file_storage {
             throw new file_exception('storedfileproblem', 'Invalid file path');
         }
 
-        $pathnamehash = $this->get_pathname_hash($contextid, $filearea, $itemid, $filepath, '.');
+        $pathnamehash = $this->get_pathname_hash($contextid, $component, $filearea, $itemid, $filepath, '.');
 
         if ($dir_info = $this->get_file_by_hash($pathnamehash)) {
             return $dir_info;
@@ -448,6 +464,7 @@ class file_storage {
 
         $dir_record = new object();
         $dir_record->contextid = $contextid;
+        $dir_record->component = $component;
         $dir_record->filearea  = $filearea;
         $dir_record->itemid    = $itemid;
         $dir_record->filepath  = $filepath;
@@ -472,7 +489,7 @@ class file_storage {
             array_pop($filepath);
             $filepath = implode('/', $filepath);
             $filepath = ($filepath === '') ? '/' : "/$filepath/";
-            $this->create_directory($contextid, $filearea, $itemid, $filepath, $userid);
+            $this->create_directory($contextid, $component, $filearea, $itemid, $filepath, $userid);
         }
 
         return $dir_info;
@@ -515,9 +532,14 @@ class file_storage {
                 throw new file_exception('storedfileproblem', 'Invalid contextid');
             }
 
+            if ($key == 'component') {
+                if ($value === '' or $value !== clean_param($value, PARAM_ALPHAEXT)) {
+                    throw new file_exception('storedfileproblem', 'Invalid component');
+                }
+            }
+
             if ($key == 'filearea') {
-                $value = clean_param($value, PARAM_ALPHAEXT);
-                if ($value === '') {
+                if ($value === '' or $value !== clean_param($value, PARAM_ALPHAEXT)) {
                     throw new file_exception('storedfileproblem', 'Invalid filearea');
                 }
             }
@@ -546,11 +568,11 @@ class file_storage {
             $newrecord->$key = $value;
         }
 
-        $newrecord->pathnamehash = $this->get_pathname_hash($newrecord->contextid, $newrecord->filearea, $newrecord->itemid, $newrecord->filepath, $newrecord->filename);
+        $newrecord->pathnamehash = $this->get_pathname_hash($newrecord->contextid, $newrecord->component, $newrecord->filearea, $newrecord->itemid, $newrecord->filepath, $newrecord->filename);
 
         if ($newrecord->filename === '.') {
             // special case - only this function supports directories ;-)
-            $directory = $this->create_directory($newrecord->contextid, $newrecord->filearea, $newrecord->itemid, $newrecord->filepath, $newrecord->userid);
+            $directory = $this->create_directory($newrecord->contextid, $newrecord->component, $newrecord->filearea, $newrecord->itemid, $newrecord->filepath, $newrecord->userid);
             // update the existing directory with the new data
             $newrecord->id = $directory->get_id();
             $DB->update_record('files', $newrecord);
@@ -564,11 +586,11 @@ class file_storage {
         }
 
         if (!$newrecord->id) {
-            throw new stored_file_creation_exception($newrecord->contextid, $newrecord->filearea, $newrecord->itemid,
+            throw new stored_file_creation_exception($newrecord->contextid, $newrecord->component, $newrecord->filearea, $newrecord->itemid,
                                                      $newrecord->filepath, $newrecord->filename);
         }
 
-        $this->create_directory($newrecord->contextid, $newrecord->filearea, $newrecord->itemid, $newrecord->filepath, $newrecord->userid);
+        $this->create_directory($newrecord->contextid, $newrecord->component, $newrecord->filearea, $newrecord->itemid, $newrecord->filepath, $newrecord->userid);
 
         return new stored_file($this, $newrecord);
     }
@@ -645,8 +667,11 @@ class file_storage {
             throw new file_exception('storedfileproblem', 'Invalid contextid');
         }
 
-        $file_record->filearea = clean_param($file_record->filearea, PARAM_ALPHAEXT);
-        if ($file_record->filearea === '') {
+        if ($file_record->component === '' or $file_record->component !== clean_param($file_record->component, PARAM_ALPHAEXT)) {
+            throw new file_exception('storedfileproblem', 'Invalid component');
+        }
+
+        if ($file_record->filearea === '' or $file_record->filearea !== clean_param($file_record->filearea, PARAM_ALPHAEXT)) {
             throw new file_exception('storedfileproblem', 'Invalid filearea');
         }
 
@@ -679,6 +704,7 @@ class file_storage {
         $newrecord = new object();
 
         $newrecord->contextid = $file_record->contextid;
+        $newrecord->component = $file_record->component;
         $newrecord->filearea  = $file_record->filearea;
         $newrecord->itemid    = $file_record->itemid;
         $newrecord->filepath  = $file_record->filepath;
@@ -695,7 +721,7 @@ class file_storage {
 
         list($newrecord->contenthash, $newrecord->filesize, $newfile) = $this->add_file_to_pool($pathname);
 
-        $newrecord->pathnamehash = $this->get_pathname_hash($newrecord->contextid, $newrecord->filearea, $newrecord->itemid, $newrecord->filepath, $newrecord->filename);
+        $newrecord->pathnamehash = $this->get_pathname_hash($newrecord->contextid, $newrecord->component, $newrecord->filearea, $newrecord->itemid, $newrecord->filepath, $newrecord->filename);
 
         try {
             $newrecord->id = $DB->insert_record('files', $newrecord);
@@ -707,11 +733,11 @@ class file_storage {
             if ($newfile) {
                 $this->deleted_file_cleanup($newrecord->contenthash);
             }
-            throw new stored_file_creation_exception($newrecord->contextid, $newrecord->filearea, $newrecord->itemid,
+            throw new stored_file_creation_exception($newrecord->contextid, $newrecord->component, $newrecord->filearea, $newrecord->itemid,
                                                     $newrecord->filepath, $newrecord->filename);
         }
 
-        $this->create_directory($newrecord->contextid, $newrecord->filearea, $newrecord->itemid, $newrecord->filepath, $newrecord->userid);
+        $this->create_directory($newrecord->contextid, $newrecord->component, $newrecord->filearea, $newrecord->itemid, $newrecord->filepath, $newrecord->userid);
 
         return new stored_file($this, $newrecord);
     }
@@ -734,8 +760,11 @@ class file_storage {
             throw new file_exception('storedfileproblem', 'Invalid contextid');
         }
 
-        $file_record->filearea = clean_param($file_record->filearea, PARAM_ALPHAEXT);
-        if ($file_record->filearea === '') {
+        if ($file_record->component === '' or $file_record->component !== clean_param($file_record->component, PARAM_ALPHAEXT)) {
+            throw new file_exception('storedfileproblem', 'Invalid component');
+        }
+
+        if ($file_record->filearea === '' or $file_record->filearea !== clean_param($file_record->filearea, PARAM_ALPHAEXT)) {
             throw new file_exception('storedfileproblem', 'Invalid filearea');
         }
 
@@ -768,6 +797,7 @@ class file_storage {
         $newrecord = new object();
 
         $newrecord->contextid = $file_record->contextid;
+        $newrecord->component = $file_record->component;
         $newrecord->filearea  = $file_record->filearea;
         $newrecord->itemid    = $file_record->itemid;
         $newrecord->filepath  = $file_record->filepath;
@@ -784,7 +814,7 @@ class file_storage {
 
         list($newrecord->contenthash, $newrecord->filesize, $newfile) = $this->add_string_to_pool($content);
 
-        $newrecord->pathnamehash = $this->get_pathname_hash($newrecord->contextid, $newrecord->filearea, $newrecord->itemid, $newrecord->filepath, $newrecord->filename);
+        $newrecord->pathnamehash = $this->get_pathname_hash($newrecord->contextid, $newrecord->component, $newrecord->filearea, $newrecord->itemid, $newrecord->filepath, $newrecord->filename);
 
         try {
             $newrecord->id = $DB->insert_record('files', $newrecord);
@@ -796,11 +826,11 @@ class file_storage {
             if ($newfile) {
                 $this->deleted_file_cleanup($newrecord->contenthash);
             }
-            throw new stored_file_creation_exception($newrecord->contextid, $newrecord->filearea, $newrecord->itemid,
+            throw new stored_file_creation_exception($newrecord->contextid, $newrecord->component, $newrecord->filearea, $newrecord->itemid,
                                                     $newrecord->filepath, $newrecord->filename);
         }
 
-        $this->create_directory($newrecord->contextid, $newrecord->filearea, $newrecord->itemid, $newrecord->filepath, $newrecord->userid);
+        $this->create_directory($newrecord->contextid, $newrecord->component, $newrecord->filearea, $newrecord->itemid, $newrecord->filepath, $newrecord->userid);
 
         return new stored_file($this, $newrecord);
     }
@@ -1118,6 +1148,10 @@ class file_storage {
      */
     public function cron() {
         global $CFG, $DB;
+        //TODO: find out all stale draft areas (older than 1 day) and purge them
+        //      those are identified by time stamp of the /. root dir
+
+
         // remove trash pool files once a day
         // if you want to disable purging of trash put $CFG->fileslastcleanup=time(); into config.php
         if (empty($CFG->fileslastcleanup) or $CFG->fileslastcleanup < time() - 60*60*24) {

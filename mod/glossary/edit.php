@@ -69,8 +69,8 @@ $maxbytes = $course->maxbytes; // TODO: add some setting
 $definitionoptions = array('trusttext'=>true, 'subdirs'=>false, 'maxfiles'=>$maxfiles, 'maxbytes'=>$maxbytes, 'context'=>$context);
 $attachmentoptions = array('subdirs'=>false, 'maxfiles'=>$maxfiles, 'maxbytes'=>$maxbytes);
 
-$entry = file_prepare_standard_editor($entry, 'definition', $definitionoptions, $context, 'glossary_entry', $entry->id);
-$entry = file_prepare_standard_filemanager($entry, 'attachment', $attachmentoptions, $context, 'glossary_attachment', $entry->id);
+$entry = file_prepare_standard_editor($entry, 'definition', $definitionoptions, $context, 'mod_glossary', 'entry', $entry->id);
+$entry = file_prepare_standard_filemanager($entry, 'attachment', $attachmentoptions, $context, 'mod_glossary', 'attachment', $entry->id);
 
 $entry->cmid = $cm->id;
 
@@ -131,8 +131,8 @@ if ($mform->is_cancelled()){
     }
 
     // save and relink embedded images and save attachments
-    $entry = file_postupdate_standard_editor($entry, 'definition', $definitionoptions, $context, 'glossary_entry', $entry->id);
-    $entry = file_postupdate_standard_filemanager($entry, 'attachment', $attachmentoptions, $context, 'glossary_attachment', $entry->id);
+    $entry = file_postupdate_standard_editor($entry, 'definition', $definitionoptions, $context, 'mod_glossary', 'entry', $entry->id);
+    $entry = file_postupdate_standard_filemanager($entry, 'attachment', $attachmentoptions, $context, 'mod_glossary', 'attachment', $entry->id);
 
     // store the updated value values
     $DB->update_record('glossary_entries', $entry);

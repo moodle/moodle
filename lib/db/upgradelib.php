@@ -105,11 +105,13 @@ function upgrade_migrate_files_course($context, $path, $delete) {
         }
 
         if (strpos($path, '/backupdata/') === 0) {
-            $filearea = 'course_backup';
-            $filepath = substr($path, strlen('/backupdata'));
+            $component = 'backup';
+            $filearea  = 'course';
+            $filepath  = substr($path, strlen('/backupdata'));
         } else {
-            $filearea = 'course_content';
-            $filepath = $path;
+            $component = 'course';
+            $filearea  = 'legacy';
+            $filepath  = $path;
         }
 
         if ($item->isFile()) {
@@ -126,8 +128,8 @@ function upgrade_migrate_files_course($context, $path, $delete) {
                 continue;
             }
 
-            if (!$fs->file_exists($context->id, $filearea, '0', $filepath, $filename)) {
-                $file_record = array('contextid'=>$context->id, 'filearea'=>$filearea, 'itemid'=>0, 'filepath'=>$filepath, 'filename'=>$filename,
+            if (!$fs->file_exists($context->id, $component, $filearea, '0', $filepath, $filename)) {
+                $file_record = array('contextid'=>$context->id, 'component'=>$component, 'filearea'=>$filearea, 'itemid'=>0, 'filepath'=>$filepath, 'filename'=>$filename,
                                      'timecreated'=>$item->getCTime(), 'timemodified'=>$item->getMTime());
                 if ($fs->create_file_from_pathname($file_record, $fullpathname.$item->getFilename())) {
                     if ($delete_this) {
@@ -148,7 +150,7 @@ function upgrade_migrate_files_course($context, $path, $delete) {
             }
             $filepath = ($filepath.$dirname.'/');
             if ($filepath !== '/backupdata/') {
-                $fs->create_directory($context->id, $filearea, 0, $filepath);
+                $fs->create_directory($context->id, $component, $filearea, 0, $filepath);
             }
 
             //migrate recursively all subdirectories
@@ -203,8 +205,8 @@ function upgrade_migrate_files_blog() {
                 continue;
             }
 
-            if (!$fs->file_exists(SYSCONTEXTID, 'blog', $entry->id, '/', $filename)) {
-                $file_record = array('contextid'=>SYSCONTEXTID, 'filearea'=>'blog_attachment', 'itemid'=>$entry->id, 'filepath'=>'/', 'filename'=>$filename,
+            if (!$fs->file_exists(SYSCONTEXTID, 'blog', 'attachment', $entry->id, '/', $filename)) {
+                $file_record = array('contextid'=>SYSCONTEXTID, 'component'=>'blog', 'filearea'=>'attachment', 'itemid'=>$entry->id, 'filepath'=>'/', 'filename'=>$filename,
                                      'timecreated'=>filectime($pathname), 'timemodified'=>filemtime($pathname), 'userid'=>$entry->userid);
                 $fs->create_file_from_pathname($file_record, $pathname);
             }

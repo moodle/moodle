@@ -28,8 +28,6 @@ if (!defined('MOODLE_INTERNAL')) {
 }
 
 require_once($CFG->libdir.'/filelib.php');
-require_once($CFG->libdir.'/file/file_browser.php');
-require_once($CFG->libdir.'/file/file_info_course.php');
 
 require_once($CFG->dirroot.'/user/lib.php');
 require_once($CFG->dirroot.'/mod/forum/lib.php');
@@ -259,19 +257,19 @@ class file_browser_test extends filelib_test {
     }
 }
 
-class test_file_info_system extends filelib_test {
+class test_file_info_context_system extends filelib_test {
     public function test_get_children() {
         $context = get_context_instance(CONTEXT_SYSTEM);
 
-        $fis = new file_info_system(new file_browser(), $context);
+        $fis = new file_info_context_system(new file_browser(), $context);
         $children = $fis->get_children();
 
         $found_coursecat = false;
         $context_coursecat = get_context_instance(CONTEXT_COURSECAT, $this->coursecat->id);
-        $file_info_coursecat = new file_info_coursecat(new file_browser(), $context_coursecat, $this->coursecat);
+        $file_info_context_coursecat = new file_info_context_coursecat(new file_browser(), $context_coursecat, $this->coursecat);
 
         foreach ($children as $child) {
-            if ($child == $file_info_coursecat) {
+            if ($child == $file_info_context_coursecat) {
                 $found_coursecat = true;
             }
         }
@@ -279,13 +277,13 @@ class test_file_info_system extends filelib_test {
     }
 }
 
-class test_file_info_coursecat extends filelib_test {
+class test_file_info_context_coursecat extends filelib_test {
     private $fileinfo;
 
     public function setup() {
         parent::setup();
         $context = get_context_instance(CONTEXT_COURSECAT, $this->coursecat->id);
-        $this->fileinfo = new file_info_coursecat(new file_browser(), $context, $this->coursecat);
+        $this->fileinfo = new file_info_context_coursecat(new file_browser(), $context, $this->coursecat);
     }
 
     public function test_get_children() {
@@ -298,25 +296,25 @@ class test_file_info_coursecat extends filelib_test {
         $this->assertEqual('file_info_stored', get_class($children[0]));
 
         $context_course = get_context_instance(CONTEXT_COURSE, $this->course->id);
-        $fic = new file_info_course(new file_browser(), $context_course, $this->course);
+        $fic = new file_info_context_course(new file_browser(), $context_course, $this->course);
         $this->assertEqual($fic, $children[1]);
     }
 
     public function test_get_parent() {
         $context = get_context_instance(CONTEXT_SYSTEM);
-        $fis = new file_info_system(new file_browser(), $context);
+        $fis = new file_info_context_system(new file_browser(), $context);
         $parent = $this->fileinfo->get_parent();
         $this->assertEqual($parent, $fis);
     }
 }
 
-class test_file_info_course extends filelib_test {
+class test_file_info_context_course extends filelib_test {
     private $fileinfo;
 
     public function setup() {
         parent::setup();
         $context = get_context_instance(CONTEXT_COURSE, $this->course->id);
-        $this->fileinfo = new file_info_course(new file_browser(), $context, $this->course);
+        $this->fileinfo = new file_info_context_course(new file_browser(), $context, $this->course);
     }
 
     public function test_get_children() {
@@ -330,7 +328,7 @@ class test_file_info_course extends filelib_test {
         $this->assertEqual('file_info_stored', get_class($children[0]));
 
         $context_course = get_context_instance(CONTEXT_COURSE, $this->course->id);
-        $fics = new file_info_coursesection(new file_browser(), $context_course, $this->course);
+        $fics = new file_info_area_course_section(new file_browser(), $context_course, $this->course);
         $this->assertEqual($fics, $children[1]);
 
         $this->assertEqual('Backups', $children[2]->get_visible_name());
@@ -339,30 +337,30 @@ class test_file_info_course extends filelib_test {
 
         $this->assertEqual('Course files', $children[3]->get_visible_name());
         $this->assertEqual('', $children[3]->get_url());
-        $this->assertEqual('file_info_coursefile', get_class($children[3]));
+        $this->assertEqual('file_info_area_course_legacy', get_class($children[3]));
 
     }
 
     public function test_get_parent() {
         $context = get_context_instance(CONTEXT_COURSECAT, $this->coursecat->id);
-        $fic = new file_info_coursecat(new file_browser(), $context, $this->coursecat);
+        $fic = new file_info_context_coursecat(new file_browser(), $context, $this->coursecat);
         $parent = $this->fileinfo->get_parent();
         $this->assertEqual($parent, $fic);
     }
 }
 
-class test_file_info_user extends filelib_test {
+class test_file_info_context_user extends filelib_test {
     private $fileinfo;
 
     public function setup() {
         parent::setup();
         $context = get_context_instance(CONTEXT_USER, $this->user->id);
-        $this->fileinfo = new file_info_user(new file_browser(), $context, $this->user);
+        $this->fileinfo = new file_info_context_user(new file_browser(), $context, $this->user);
     }
 
     public function test_get_parent() {
         $context = get_context_instance(CONTEXT_SYSTEM);
-        $fic = new file_info_system(new file_browser(), $context);
+        $fic = new file_info_context_system(new file_browser(), $context);
         $parent = $this->fileinfo->get_parent();
         $this->assertEqual($parent, $fic);
     }
@@ -381,19 +379,19 @@ class test_file_info_user extends filelib_test {
     }
 }
 
-class test_file_info_module extends filelib_test {
+class test_file_info_context_module extends filelib_test {
     private $fileinfo;
 
     public function setup() {
         global $DB;
         parent::setup();
         $context = get_context_instance(CONTEXT_MODULE, $DB->get_field('course_modules', 'id', array('instance' => $this->module->instance)));
-        $this->fileinfo = new file_info_module(new file_browser(), $this->course, $this->module->instance, $context, array());
+        $this->fileinfo = new file_info_context_module(new file_browser(), $this->course, $this->module->instance, $context, array());
     }
 
     public function test_get_parent() {
         $context = get_context_instance(CONTEXT_COURSE, $this->course->id);
-        $fic = new file_info_course(new file_browser(), $context, $this->course);
+        $fic = new file_info_context_course(new file_browser(), $context, $this->course);
         $parent = $this->fileinfo->get_parent();
         $this->assertEqual($parent, $fic);
     }

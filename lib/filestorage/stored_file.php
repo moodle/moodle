@@ -19,13 +19,15 @@
 /**
  * Definition of a class stored_file.
  *
- * @package    moodlecore
- * @subpackage file-storage
+ * @package    core
+ * @subpackage filestorage
  * @copyright  2008 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once("$CFG->libdir/file/stored_file.php");
+defined('MOODLE_INTERNAL') || die();
+
+require_once("$CFG->libdir/filestorage/stored_file.php");
 
 /**
  * Class representing local files stored in a sha1 file pool.
@@ -201,15 +203,16 @@ class stored_file {
      *
      * @param file_packer $file_packer
      * @param int $contextid
+     * @param string $component
      * @param string $filearea
      * @param int $itemid
      * @param string $pathbase
      * @param int $userid
      * @return array|bool list of processed files; false if error
      */
-    public function extract_to_storage(file_packer $packer, $contextid, $filearea, $itemid, $pathbase, $userid = NULL) {
+    public function extract_to_storage(file_packer $packer, $contextid, $component, $filearea, $itemid, $pathbase, $userid = NULL) {
         $archivefile = $this->get_content_file_location();
-        return $packer->extract_to_storage($archivefile, $contextid, $filearea, $itemid, $pathbase);
+        return $packer->extract_to_storage($archivefile, $contextid, $component, $filearea, $itemid, $pathbase);
     }
 
     /**
@@ -282,7 +285,7 @@ class stored_file {
         }
 
         if ($this->file_record->filename !== '.') {
-            return $this->fs->create_directory($this->file_record->contextid, $this->file_record->filearea, $this->file_record->itemid, $this->file_record->filepath);
+            return $this->fs->create_directory($this->file_record->contextid, $this->file_record->component, $this->file_record->filearea, $this->file_record->itemid, $this->file_record->filepath);
         }
 
         $filepath = $this->file_record->filepath;
@@ -292,7 +295,7 @@ class stored_file {
         $filepath = implode('/', $dirs);
         $filepath = ($filepath === '') ? '/' : "/$filepath/";
 
-        return $this->fs->create_directory($this->file_record->contextid, $this->file_record->filearea, $this->file_record->itemid, $filepath);
+        return $this->fs->create_directory($this->file_record->contextid, $this->file_record->component, $this->file_record->filearea, $this->file_record->itemid, $filepath);
     }
 
     /**
@@ -305,8 +308,18 @@ class stored_file {
     }
 
     /**
-     * Returns file area name, the areas do not have to be unique,
-     * but usually have form component_typeofarea such as forum_attachments.
+     * Returns component name - this is the owner of the areas,
+     * nothing else is allowed to read or modify the files directly!!
+     *
+     * @return string
+     */
+    public function get_component() {
+        return $this->file_record->component;
+    }
+
+    /**
+     * Returns file area name, this divides files of one component into groups with different access control.
+     * All files in one area have the same access control.
      *
      * @return string
      */
@@ -414,7 +427,7 @@ class stored_file {
     }
 
     /**
-     * Returns sha1 hash of all file path components sha1("contextid/filearea/itemid/dir/dir/filename.ext").
+     * Returns sha1 hash of all file path components sha1("contextid/component/filearea/itemid/dir/dir/filename.ext").
      *
      * @return string
      */

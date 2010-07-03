@@ -19,14 +19,24 @@
 /**
  * Implementation of zip file archive.
  *
- * @package    moodlecore
- * @subpackage file-packer
+ * @package    core
+ * @subpackage filestorage
  * @copyright  2008 Petr Skoda (http://skodak.org)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once("$CFG->libdir/packer/file_archive.php");
+defined('MOODLE_INTERNAL') || die();
 
+require_once("$CFG->libdir/filestorage/file_archive.php");
+
+/**
+ * zip file archive class.
+ *
+ * @package    core
+ * @subpackage filestorage
+ * @copyright  2008 Petr Skoda (http://skodak.org)
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class zip_archive extends file_archive {
 
     /** Pathname of archive */

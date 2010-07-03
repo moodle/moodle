@@ -54,7 +54,7 @@ if (can_use_html_editor()) {
 $errorstring = '';
 
 $editoroptions = array('maxfiles'=>EDITOR_UNLIMITED_FILES, 'maxbytes'=>$CFG->maxbytes, 'trusttext'=>false);
-$tag = file_prepare_standard_editor($tag, 'description', $editoroptions, $systemcontext, 'tag_description', $tag->id);
+$tag = file_prepare_standard_editor($tag, 'description', $editoroptions, $systemcontext, 'tag', 'description', $tag->id);
 
 $tagform = new tag_edit_form(null, compact('editoroptions'));
 if ( $tag->tagtype == 'official' ) {
@@ -93,7 +93,7 @@ if ($tagnew = $tagform->get_data()) {
 
     if (empty($errorstring)) {    // All is OK, let's save it
 
-        $tagnew = file_postupdate_standard_editor($tagnew, 'description', $editoroptions, $systemcontext, 'tag_description', $tag->id);
+        $tagnew = file_postupdate_standard_editor($tagnew, 'description', $editoroptions, $systemcontext, 'tag', 'description', $tag->id);
 
         tag_description_set($tag_id, $tagnew->description, $tagnew->descriptionformat);
 

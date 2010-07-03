@@ -96,9 +96,9 @@ $returnurl = $gpr->get_return_url('index.php?id='.$courseid);
 $editoroptions = array('maxfiles'=>EDITOR_UNLIMITED_FILES, 'maxbytes'=>$CFG->maxbytes, 'trusttext'=>false, 'noclean'=>true);
 
 if (!empty($outcome_rec->id)) {
-    $outcome_rec = file_prepare_standard_editor($outcome_rec, 'description', $editoroptions, $systemcontext, 'grade_outcome', $outcome_rec->id);
+    $outcome_rec = file_prepare_standard_editor($outcome_rec, 'description', $editoroptions, $systemcontext, 'grade', 'outcome', $outcome_rec->id);
 } else {
-    $outcome_rec = file_prepare_standard_editor($outcome_rec, 'description', $editoroptions, $systemcontext, 'grade_outcome', null);
+    $outcome_rec = file_prepare_standard_editor($outcome_rec, 'description', $editoroptions, $systemcontext, 'grade', 'outcome', null);
 }
 
 $mform = new edit_outcome_form(null, compact('gpr', 'editoroptions'));
@@ -124,10 +124,10 @@ if ($mform->is_cancelled()) {
         }
         $outcome->insert();
 
-        $data = file_postupdate_standard_editor($data, 'description', $editoroptions, $systemcontext, 'grade_outcome', $outcome->id);
+        $data = file_postupdate_standard_editor($data, 'description', $editoroptions, $systemcontext, 'grade', 'outcome', $outcome->id);
         $DB->set_field($outcome->table, 'description', $data->description, array('id'=>$outcome->id));
     } else {
-        $data = file_postupdate_standard_editor($data, 'description', $editoroptions, $systemcontext, 'grade_outcome', $id);
+        $data = file_postupdate_standard_editor($data, 'description', $editoroptions, $systemcontext, 'grade', 'outcome', $id);
         grade_outcome::set_properties($outcome, $data);
         if (isset($data->standard)) {
             $outcome->courseid = !empty($data->standard) ? null : $courseid;

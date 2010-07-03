@@ -24,14 +24,15 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 /** @var string unique string constant. */
 define('BYTESERVING_BOUNDARY', 's1k2o3d4a5k6s7');
 
-require_once("$CFG->libdir/file/file_exceptions.php");
-require_once("$CFG->libdir/file/file_storage.php");
-require_once("$CFG->libdir/file/file_browser.php");
-
-require_once("$CFG->libdir/packer/zip_packer.php");
+require_once("$CFG->libdir/filestorage/file_exceptions.php");
+require_once("$CFG->libdir/filestorage/file_storage.php");
+require_once("$CFG->libdir/filestorage/zip_packer.php");
+require_once("$CFG->libdir/filebrowser/file_browser.php");
 
 /**
  * Given a physical path to a file, returns the URL through which it can be reached in Moodle.
@@ -45,6 +46,8 @@ require_once("$CFG->libdir/packer/zip_packer.php");
  */
 function get_file_url($path, $options=null, $type='coursefile') {
     global $CFG, $HTTPSPAGEREQUIRED;
+
+    //TODO: deprecate this
 
     $path = str_replace('//', '/', $path);
     $path = trim($path, '/'); // no leading and trailing slashes
@@ -104,6 +107,18 @@ function get_file_url($path, $options=null, $type='coursefile') {
     return $ffurl;
 }
 
+/**
+ * Returns a draft file url.
+ *
+ * @param int $draftid itemid of the draft area of current user
+ * @param string $filepath must start and end with /
+ * @param string $filename
+ */
+function file_draftfile_url($draftid, $filepath, $filename) {
+    global $CFG, $USER;
+    $usercontext = get_context_instance(CONTEXT_USER, $USER->id);
+    return file_encode_url("$CFG->wwwroot/draftfile.php", '/'.$usercontext->id.'/user/draft/'.$draftid.$filepath.$filename, false);
+}
 
 /**
  * Encodes file serving url
@@ -156,11 +171,12 @@ function file_encode_url($urlbase, $path, $forcedownload=false, $https=false) {
  * @param string $field the name of the database field that holds the html text with embedded media
  * @param array $options editor options (like maxifiles, maxbytes etc.)
  * @param object $context context of the editor
+ * @param string $component
  * @param string $filearea file area name
  * @param int $itemid item id, required if item exists
  * @return object modified data object
  */
-function file_prepare_standard_editor($data, $field, array $options, $context=null, $filearea=null, $itemid=null) {
+function file_prepare_standard_editor($data, $field, array $options, $context=null, $component=null, $filearea=null, $itemid=null) {
     $options = (array)$options;
     if (!isset($options['trusttext'])) {
         $options['trusttext'] = false;
@@ -208,7 +224,7 @@ function file_prepare_standard_editor($data, $field, array $options, $context=nu
 
     if ($options['maxfiles'] != 0) {
         $draftid_editor = file_get_submitted_draft_itemid($field);
-        $currenttext = file_prepare_draft_area($draftid_editor, $contextid, $filearea, $itemid, $options, $data->{$field});
+        $currenttext = file_prepare_draft_area($draftid_editor, $contextid, $component, $filearea, $itemid, $options, $data->{$field});
         $data->{$field.'_editor'} = array('text'=>$currenttext, 'format'=>$data->{$field.'format'}, 'itemid'=>$draftid_editor);
     } else {
         $data->{$field.'_editor'} = array('text'=>$data->{$field}, 'format'=>$data->{$field.'format'}, 'itemid'=>0);
@@ -232,11 +248,12 @@ function file_prepare_standard_editor($data, $field, array $options, $context=nu
  * @param string $field name of the database field containing the html with embedded media files
  * @param array $options editor options (trusttext, subdirs, maxfiles, maxbytes etc.)
  * @param object $context context, required for existing data
+ * @param string component
  * @param string $filearea file area name
  * @param int $itemid item id, required if item exists
  * @return object modified data object
  */
-function file_postupdate_standard_editor($data, $field, array $options, $context, $filearea=null, $itemid=null) {
+function file_postupdate_standard_editor($data, $field, array $options, $context, $component=null, $filearea=null, $itemid=null) {
     $options = (array)$options;
     if (!isset($options['trusttext'])) {
         $options['trusttext'] = false;
@@ -265,7 +282,7 @@ function file_postupdate_standard_editor($data, $field, array $options, $context
     if ($options['maxfiles'] == 0 or is_null($filearea) or is_null($itemid) or empty($editor['itemid'])) {
         $data->{$field} = $editor['text'];
     } else {
-        $data->{$field} = file_save_draft_area_files($editor['itemid'], $context->id, $filearea, $itemid, $options, $editor['text'], $options['forcehttps']);
+        $data->{$field} = file_save_draft_area_files($editor['itemid'], $context->id, $component, $filearea, $itemid, $options, $editor['text'], $options['forcehttps']);
     }
     $data->{$field.'format'} = $editor['format'];
 
@@ -279,11 +296,12 @@ function file_postupdate_standard_editor($data, $field, array $options, $context
  * @param string $field name of data field
  * @param array $options various options
  * @param object $context context - must already exist
+ * @param string $component
  * @param string $filearea file area name
  * @param int $itemid must already exist, usually means data is in db
  * @return object modified data obejct
  */
-function file_prepare_standard_filemanager($data, $field, array $options, $context=null, $filearea=null, $itemid=null) {
+function file_prepare_standard_filemanager($data, $field, array $options, $context=null, $component=null, $filearea=null, $itemid=null) {
     $options = (array)$options;
     if (!isset($options['subdirs'])) {
         $options['subdirs'] = false;
@@ -296,7 +314,7 @@ function file_prepare_standard_filemanager($data, $field, array $options, $conte
     }
 
     $draftid_editor = file_get_submitted_draft_itemid($field.'_filemanager');
-    file_prepare_draft_area($draftid_editor, $contextid, $filearea, $itemid, $options);
+    file_prepare_draft_area($draftid_editor, $contextid, $component, $filearea, $itemid, $options);
     $data->{$field.'_filemanager'} = $draftid_editor;
 
     return $data;
@@ -309,11 +327,12 @@ function file_prepare_standard_filemanager($data, $field, array $options, $conte
  * @param string $field name of data field
  * @param array $options various options
  * @param object $context context - must already exist
+ * @param string $component
  * @param string $filearea file area name
  * @param int $itemid must already exist, usually means data is in db
  * @return object modified data obejct
  */
-function file_postupdate_standard_filemanager($data, $field, array $options, $context, $filearea, $itemid) {
+function file_postupdate_standard_filemanager($data, $field, array $options, $context, $component, $filearea, $itemid) {
     $options = (array)$options;
     if (!isset($options['subdirs'])) {
         $options['subdirs'] = false;
@@ -329,11 +348,11 @@ function file_postupdate_standard_filemanager($data, $field, array $options, $co
         $data->$field = '';
 
     } else {
-        file_save_draft_area_files($data->{$field.'_filemanager'}, $context->id, $filearea, $itemid, $options);
+        file_save_draft_area_files($data->{$field.'_filemanager'}, $context->id, $component, $filearea, $itemid, $options);
         $fs = get_file_storage();
 
-        if ($fs->get_area_files($context->id, $filearea, $itemid)) {
-            $data->$field = '1'; // TODO: this is an ugly hack
+        if ($fs->get_area_files($context->id, $component, $filearea, $itemid)) {
+            $data->$field = '1'; // TODO: this is an ugly hack (skodak)
         } else {
             $data->$field = '';
         }
@@ -358,11 +377,10 @@ function file_get_unused_draft_itemid() {
     }
 
     $contextid = get_context_instance(CONTEXT_USER, $USER->id)->id;
-    $filearea  = 'user_draft';
 
     $fs = get_file_storage();
     $draftitemid = rand(1, 999999999);
-    while ($files = $fs->get_area_files($contextid, $filearea, $draftitemid)) {
+    while ($files = $fs->get_area_files($contextid, 'user', 'draft', $draftitemid)) {
         $draftitemid = rand(1, 999999999);
     }
 
@@ -378,13 +396,14 @@ function file_get_unused_draft_itemid() {
  * @global object
  * @param int &$draftitemid the id of the draft area to use, or 0 to create a new one, in which case this parameter is updated.
  * @param integer $contextid This parameter and the next two identify the file area to copy files from.
+ * @param string $component
  * @param string $filearea helps indentify the file area.
  * @param integer $itemid helps identify the file area. Can be null if there are no files yet.
  * @param array $options text and file options ('subdirs'=>false, 'forcehttps'=>false)
  * @param string $text some html content that needs to have embedded links rewritten to point to the draft area.
  * @return string if $text was passed in, the rewritten $text is returned. Otherwise NULL.
  */
-function file_prepare_draft_area(&$draftitemid, $contextid, $filearea, $itemid, array $options=null, $text=null) {
+function file_prepare_draft_area(&$draftitemid, $contextid, $component, $filearea, $itemid, array $options=null, $text=null) {
     global $CFG, $USER;
 
     $options = (array)$options;
@@ -401,9 +420,14 @@ function file_prepare_draft_area(&$draftitemid, $contextid, $filearea, $itemid, 
     if (empty($draftitemid)) {
         // create a new area and copy existing files into
         $draftitemid = file_get_unused_draft_itemid();
-        $file_record = array('contextid'=>$usercontext->id, 'filearea'=>'user_draft', 'itemid'=>$draftitemid);
-        if (!is_null($itemid) and $files = $fs->get_area_files($contextid, $filearea, $itemid)) {
+        $file_record = array('contextid'=>$usercontext->id, 'component'=>'user', 'filearea'=>'draft', 'itemid'=>$draftitemid);
+        if (!is_null($itemid) and $files = $fs->get_area_files($contextid, $component, $filearea, $itemid)) {
             foreach ($files as $file) {
+                if ($file->is_directory() and $file->get_filepath() === '/') {
+                    // we need a way to mark the age of each draft area,
+                    // by not copying the root dir we force it to be created automatically with current timestamp
+                    continue;
+                }
                 if (!$options['subdirs'] and ($file->is_directory() or $file->get_filepath() !== '/')) {
                     continue;
                 }
@@ -419,7 +443,7 @@ function file_prepare_draft_area(&$draftitemid, $contextid, $filearea, $itemid, 
     }
 
     // relink embedded files - editor can not handle @@PLUGINFILE@@ !
-    return file_rewrite_pluginfile_urls($text, 'draftfile.php', $usercontext->id, 'user_draft', $draftitemid, $options);
+    return file_rewrite_pluginfile_urls($text, 'draftfile.php', $usercontext->id, 'user', 'draft', $draftitemid, $options);
 }
 
 /**
@@ -429,12 +453,13 @@ function file_prepare_draft_area(&$draftitemid, $contextid, $filearea, $itemid, 
  * @param string $text The content that may contain ULRs in need of rewriting.
  * @param string $file The script that should be used to serve these files. pluginfile.php, draftfile.php, etc.
  * @param integer $contextid This parameter and the next two identify the file area to use.
+ * @param string $component
  * @param string $filearea helps identify the file area.
  * @param integer $itemid helps identify the file area.
  * @param array $options text and file options ('forcehttps'=>false)
  * @return string the processed text.
  */
-function file_rewrite_pluginfile_urls($text, $file, $contextid, $filearea, $itemid, array $options=null) {
+function file_rewrite_pluginfile_urls($text, $file, $contextid, $component, $filearea, $itemid, array $options=null) {
     global $CFG;
 
     $options = (array)$options;
@@ -446,7 +471,7 @@ function file_rewrite_pluginfile_urls($text, $file, $contextid, $filearea, $item
         $file = $file . '?file=';
     }
 
-    $baseurl = "$CFG->wwwroot/$file/$contextid/$filearea/";
+    $baseurl = "$CFG->wwwroot/$file/$contextid/$component/$filearea/";
 
     if ($itemid !== null) {
         $baseurl .= "$itemid/";
@@ -478,22 +503,7 @@ function file_get_draft_area_info($draftitemid) {
     $results = array();
 
     // The number of files
-    $draftfiles = $fs->get_area_files($usercontext->id, 'user_draft', $draftitemid, 'id', false);
-    $results['filecount'] = count($draftfiles);
-
-    return $results;
-}
-
-function file_get_user_area_info($draftitemid, $filearea = 'user_draft') {
-    global $CFG, $USER;
-
-    $usercontext = get_context_instance(CONTEXT_USER, $USER->id);
-    $fs = get_file_storage();
-
-    $results = array();
-
-    // The number of files
-    $draftfiles = $fs->get_area_files($usercontext->id, $filearea, $draftitemid, 'id', false);
+    $draftfiles = $fs->get_area_files($usercontext->id, 'user', 'draft', $draftitemid, 'id', false);
     $results['filecount'] = count($draftfiles);
 
     return $results;
@@ -507,14 +517,11 @@ function file_get_user_used_space() {
     global $DB, $CFG, $USER;
 
     $usercontext = get_context_instance(CONTEXT_USER, $USER->id);
-    $fs = get_file_storage();
-
-    // only count files in user context
-    $conditions = array('contextid'=>$usercontext->id);
 
     $totalbytes = 0;
     $files = array();
-    $file_records = $DB->get_records('files', $conditions);
+    //TODO: rewrite to true sql SUM(), this is goign to run out of memory if limits are hight!
+    $file_records = $DB->get_records('files', "contextid = ? AND component = 'user' AND filearea != 'draft'", array($usercontext->id));
     foreach ($file_records as $file_record) {
         if ($file_record->filename === '.') {
             continue;
@@ -534,7 +541,7 @@ function file_get_user_used_space() {
  * @param string $str
  * @return string path
  */
-function file_correct_filepath($str) {
+function file_correct_filepath($str) { //TODO: what is this? (skodak)
     if ($str == '/' or empty($str)) {
         return '/';
     } else {
@@ -546,14 +553,14 @@ function file_correct_filepath($str) {
  * Generate a folder tree of draft area of current USER recursively
  * @param int $itemid
  * @param string $filepath
- * @param mixed $data
+ * @param mixed $data //TODO: use normal return value instead, this does not fit the rest of api here (skodak)
  */
-function file_get_user_area_folders($draftitemid, $filepath, &$data, $filearea = 'user_draft') {
+function file_get_drafarea_folders($draftitemid, $filepath, &$data) {
     global $USER, $OUTPUT, $CFG;
     $data->children = array();
     $context = get_context_instance(CONTEXT_USER, $USER->id);
     $fs = get_file_storage();
-    if ($files = $fs->get_directory_files($context->id, $filearea, $draftitemid, $filepath, false)) {
+    if ($files = $fs->get_directory_files($context->id, 'user', 'draft', $draftitemid, $filepath, false)) {
         foreach ($files as $file) {
             if ($file->is_directory()) {
                 $item = new stdclass;
@@ -564,7 +571,7 @@ function file_get_user_area_folders($draftitemid, $filepath, &$data, $filearea =
                 $item->fullname = trim(array_pop($foldername), '/');
 
                 $item->id = uniqid();
-                file_get_user_area_folders($draftitemid, $item->filepath, $item);
+                file_get_drafarea_folders($draftitemid, $item->filepath, $item);
                 $data->children[] = $item;
             } else {
                 continue;
@@ -580,7 +587,7 @@ function file_get_user_area_folders($draftitemid, $filepath, &$data, $filearea =
  * @param string $filepath
  * @return mixed
  */
-function file_get_user_area_files($draftitemid, $filepath = '/', $filearea = 'user_draft') {
+function file_get_drafarea_files($draftitemid, $filepath = '/') {
     global $USER, $OUTPUT, $CFG;
 
     $context = get_context_instance(CONTEXT_USER, $USER->id);
@@ -605,7 +612,7 @@ function file_get_user_area_files($draftitemid, $filepath = '/', $filearea = 'us
 
     $list = array();
     $maxlength = 12;
-    if ($files = $fs->get_directory_files($context->id, $filearea, $draftitemid, $filepath, false)) {
+    if ($files = $fs->get_directory_files($context->id, 'user', 'draft', $draftitemid, $filepath, false)) {
         foreach ($files as $file) {
             $item = new stdclass;
             $item->filename = $file->get_filename();
@@ -642,10 +649,8 @@ function file_get_user_area_files($draftitemid, $filepath = '/', $filearea = 'us
                     $item->shortname = $item->fullname;
                 }
             } else {
-                $fb = get_file_browser();
-                $fileinfo = $fb->get_file_info($context, $file->get_filearea(), $file->get_itemid(), $file->get_filepath(), $file->get_filename());
-                $item->url = $fileinfo->get_url();
-                $item->sortorder = $fileinfo->get_sortorder();
+                // do NOT use file browser here!
+                $item->url = file_draftfile_url($draftitemid, $item->filepath, $item->filename);
             }
             $list[] = $item;
         }
@@ -686,6 +691,7 @@ function file_get_submitted_draft_itemid($elname) {
  * @param integer $draftitemid the id of the draft area to use. Normally obtained
  *      from file_get_submitted_draft_itemid('elementname') or similar.
  * @param integer $contextid This parameter and the next two identify the file area to save to.
+ * @param string $component
  * @param string $filearea indentifies the file area.
  * @param integer $itemid helps identifies the file area.
  * @param array $options area options (subdirs=>false, maxfiles=-1, maxbytes=0)
@@ -694,7 +700,7 @@ function file_get_submitted_draft_itemid($elname) {
  * @param boolean $forcehttps force https urls.
  * @return string if $text was passed in, the rewritten $text is returned. Otherwise NULL.
  */
-function file_save_draft_area_files($draftitemid, $contextid, $filearea, $itemid, array $options=null, $text=null, $forcehttps=false) {
+function file_save_draft_area_files($draftitemid, $contextid, $component, $filearea, $itemid, array $options=null, $text=null, $forcehttps=false) {
     global $CFG, $USER;
 
     $usercontext = get_context_instance(CONTEXT_USER, $USER->id);
@@ -711,17 +717,17 @@ function file_save_draft_area_files($draftitemid, $contextid, $filearea, $itemid
         $options['maxbytes'] = 0; // unlimited
     }
 
-    $draftfiles = $fs->get_area_files($usercontext->id, 'user_draft', $draftitemid, 'id');
-    $oldfiles   = $fs->get_area_files($contextid, $filearea, $itemid, 'id');
+    $draftfiles = $fs->get_area_files($usercontext->id, 'user', 'draft', $draftitemid, 'id');
+    $oldfiles   = $fs->get_area_files($contextid, $component, $filearea, $itemid, 'id');
 
     if (count($draftfiles) < 2) {
         // means there are no files - one file means root dir only ;-)
-        $fs->delete_area_files($contextid, $filearea, $itemid);
+        $fs->delete_area_files($contextid, $component, $filearea, $itemid);
 
     } else if (count($oldfiles) < 2) {
         $filecount = 0;
         // there were no files before - one file means root dir only ;-)
-        $file_record = array('contextid'=>$contextid, 'filearea'=>$filearea, 'itemid'=>$itemid);
+        $file_record = array('contextid'=>$contextid, 'component'=>$component, 'filearea'=>$filearea, 'itemid'=>$itemid);
         foreach ($draftfiles as $file) {
             if (!$options['subdirs']) {
                 if ($file->get_filepath() !== '/' or $file->is_directory()) {
@@ -744,17 +750,17 @@ function file_save_draft_area_files($draftitemid, $contextid, $filearea, $itemid
 
     } else {
         // we have to merge old and new files - we want to keep file ids for files that were not changed
-        $file_record = array('contextid'=>$contextid, 'filearea'=>$filearea, 'itemid'=>$itemid);
+        $file_record = array('contextid'=>$contextid, 'component'=>$component, 'filearea'=>$filearea, 'itemid'=>$itemid);
 
         $newhashes = array();
         foreach ($draftfiles as $file) {
-            $newhash = sha1($contextid.$filearea.$itemid.$file->get_filepath().$file->get_filename());
+            $newhash = $fs->get_pathname_hash($contextid, $component, $filearea, $itemid, $file->get_filepath(), $file->get_filename());
             $newhashes[$newhash] = $file;
         }
         $filecount = 0;
         foreach ($oldfiles as $file) {
             $oldhash = $file->get_pathnamehash();
-            // check if sortorder, filename, filepath, filearea, itemid and contextid changed
+            // check if sortorder, filename, filepath
             if (isset($newhashes[$oldhash]) && $file->get_sortorder() == $newhashes[$oldhash]->get_sortorder()) {
                 if (!$file->is_directory()) {
                     $filecount++;
@@ -762,7 +768,7 @@ function file_save_draft_area_files($draftitemid, $contextid, $filearea, $itemid
                 // unchanged file already there
                 unset($newhashes[$oldhash]);
             } else {
-                // delete files not needed any more
+                // delete files not needed any more - deleted by user
                 $file->delete();
             }
         }
@@ -789,8 +795,8 @@ function file_save_draft_area_files($draftitemid, $contextid, $filearea, $itemid
         }
     }
 
-    // purge the draft area
-    $fs->delete_area_files($usercontext->id, 'user_draft', $draftitemid);
+    // note: do not purge the draft area - we clean up areas later in cron,
+    //       the reason is that user might press submit twice and they would loose the files
 
     if (is_null($text)) {
         return null;
@@ -798,9 +804,9 @@ function file_save_draft_area_files($draftitemid, $contextid, $filearea, $itemid
 
     // relink embedded files if text submitted - no absolute links allowed in database!
     if ($CFG->slasharguments) {
-        $draftbase = "$CFG->wwwroot/draftfile.php/$usercontext->id/user_draft/$draftitemid/";
+        $draftbase = "$CFG->wwwroot/draftfile.php/$usercontext->id/user/draft/$draftitemid/";
     } else {
-        $draftbase = "$CFG->wwwroot/draftfile.php?file=/$usercontext->id/user_draft/$draftitemid/";
+        $draftbase = "$CFG->wwwroot/draftfile.php?file=/$usercontext->id/user/draft/$draftitemid/";
     }
 
     if ($forcehttps) {
@@ -816,6 +822,7 @@ function file_save_draft_area_files($draftitemid, $contextid, $filearea, $itemid
  * Set file sort order
  * @global object $DB
  * @param integer $contextid the context id
+ * @param string $component
  * @param string $filearea file area.
  * @param integer $itemid itemid.
  * @param string $filepath file path.
@@ -823,9 +830,9 @@ function file_save_draft_area_files($draftitemid, $contextid, $filearea, $itemid
  * @param integer $sortorer the sort order of file.
  * @return boolean
  */
-function file_set_sortorder($contextid, $filearea, $itemid, $filepath, $filename, $sortorder) {
+function file_set_sortorder($contextid, $component, $filearea, $itemid, $filepath, $filename, $sortorder) {
     global $DB;
-    $conditions = array('contextid'=>$contextid, 'filearea'=>$filearea, 'itemid'=>$itemid, 'filepath'=>$filepath, 'filename'=>$filename);
+    $conditions = array('contextid'=>$contextid, 'component'=>$component, 'filearea'=>$filearea, 'itemid'=>$itemid, 'filepath'=>$filepath, 'filename'=>$filename);
     if ($file_record = $DB->get_record('files', $conditions)) {
         $sortorder = (int)$sortorder;
         $file_record->sortorder = $sortorder;
@@ -839,14 +846,15 @@ function file_set_sortorder($contextid, $filearea, $itemid, $filepath, $filename
  * reset file sort order number to 0
  * @global object $DB
  * @param integer $contextid the context id
+ * @param string $component
  * @param string $filearea file area.
  * @param integer $itemid itemid.
  * @return boolean
  */
-function file_reset_sortorder($contextid, $filearea, $itemid=false) {
+function file_reset_sortorder($contextid, $component, $filearea, $itemid=false) {
     global $DB;
 
-    $conditions = array('contextid'=>$contextid, 'filearea'=>$filearea);
+    $conditions = array('contextid'=>$contextid, 'component'=>$component, 'filearea'=>$filearea);
     if ($itemid !== false) {
         $conditions['itemid'] = $itemid;
     }
@@ -2964,7 +2972,7 @@ class filetype_parser {
     public function __construct($file = '') {
         global $CFG;
         if (empty($file)) {
-            $this->file = $CFG->libdir.'/file/file_types.mm';
+            $this->file = $CFG->libdir.'/filestorage/file_types.mm';
         } else {
             $this->file = $file;
         }
@@ -3041,7 +3049,7 @@ class filetype_parser {
                 }
             }
         } else {
-            exit('Failed to open file');
+            exit('Failed to open file lib/filestorage/file_types.mm');
         }
         return $this->result;
     }

@@ -63,7 +63,7 @@ class mod_wiki_renderer extends plugin_renderer_base {
             $table->head = array('title' => $page->title . ' (' . html_writer::link($CFG->wwwroot . '/mod/wiki/view.php?pageid=' . $page->id, get_string('view', 'wiki')) . ')');
             $table->align = array('title' => 'left');
             $table->width = '100%';
-            $table->data = array(array(file_rewrite_pluginfile_urls($page->cachedcontent, 'pluginfile.php', $context->id, 'wiki_attachments', $page->id)));
+            $table->data = array(array(file_rewrite_pluginfile_urls($page->cachedcontent, 'pluginfile.php', $context->id, 'mod_wiki', 'attachments', $page->id)));
             $table->colclasses = array('wikisearchresults');
             $html .= html_writer::table($table);
         }

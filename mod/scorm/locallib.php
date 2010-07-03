@@ -1,6 +1,7 @@
 <?php
 
 require_once("$CFG->dirroot/mod/scorm/lib.php");
+require_once("$CFG->libdir/filelib.php");
 
 /// Constants and settings for module scorm
 define('UPDATE_NEVER', '0');
@@ -23,6 +24,26 @@ define('FIRSTATTEMPT', '2');
 define('LASTATTEMPT', '3');
 
 /// Local Library of functions for module scorm
+
+/**
+ * @package   mod-scorm
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class scorm_package_file_info extends file_info_stored {
+    public function get_parent() {
+        if ($this->lf->get_filepath() === '/' and $this->lf->get_filename() === '.') {
+            return $this->browser->get_file_info($this->context);
+        }
+        return parent::get_parent();
+    }
+    public function get_visible_name() {
+        if ($this->lf->get_filepath() === '/' and $this->lf->get_filename() === '.') {
+            return $this->topvisiblename;
+        }
+        return parent::get_visible_name();
+    }
+}
 
 /**
  * Returns an array of the popup options for SCORM and each options default value
@@ -149,7 +170,7 @@ function scorm_parse($scorm, $full) {
         $packagefile = false;
 
         if ($scorm->scormtype === SCORM_TYPE_LOCAL) {
-            if ($packagefile = $fs->get_file($context->id, 'scorm_package', 0, '/', $scorm->reference)) {
+            if ($packagefile = $fs->get_file($context->id, 'mod_scorm', 'package', 0, '/', $scorm->reference)) {
                 $newhash = $packagefile->get_contenthash();
             } else {
                 $newhash = null;
@@ -160,8 +181,8 @@ function scorm_parse($scorm, $full) {
                 return;
             }
             if ($scorm->reference !== '' and (!$full or $scorm->sha1hash !== sha1($scorm->reference))) {
-                $fs->delete_area_files($context->id, 'scorm_package');
-                $file_record = array('contextid'=>$context->id, 'filearea'=>'scorm_package', 'itemid'=>0, 'filepath'=>'/');
+                $fs->delete_area_files($context->id, 'mod_scorm', 'package');
+                $file_record = array('contextid'=>$context->id, 'component'=>'mod_scorm', 'filearea'=>'package', 'itemid'=>0, 'filepath'=>'/');
                 if ($packagefile = $fs->create_file_from_url($file_record, $scorm->reference)) {
                     $newhash = sha1($scorm->reference);
                 } else {
@@ -173,7 +194,7 @@ function scorm_parse($scorm, $full) {
         if ($packagefile) {
             if (!$full and $packagefile and $scorm->sha1hash === $newhash) {
                 if (strpos($scorm->version, 'SCORM') !== false) {
-                    if ($fs->get_file($context->id, 'scorm_content', 0, '/', 'imsmanifest.xml')) {
+                    if ($fs->get_file($context->id, 'mod_scorm', 'content', 0, '/', 'imsmanifest.xml')) {
                         // no need to update
                         return;
                     }
@@ -184,17 +205,17 @@ function scorm_parse($scorm, $full) {
             }
 
             // now extract files
-            $fs->delete_area_files($context->id, 'scorm_content');
+            $fs->delete_area_files($context->id, 'mod_scorm', 'content');
 
             $packer = get_file_packer('application/zip');
-            $packagefile->extract_to_storage($packer, $context->id, 'scorm_content', 0, '/');
+            $packagefile->extract_to_storage($packer, $context->id, 'mod_scorm', 'content', 0, '/');
 
         } else if (!$full) {
             return;
         }
 
 
-        if ($manifest = $fs->get_file($context->id, 'scorm_content', 0, '/', 'imsmanifest.xml')) {
+        if ($manifest = $fs->get_file($context->id, 'mod_scorm', 'content', 0, '/', 'imsmanifest.xml')) {
             require_once("$CFG->dirroot/mod/scorm/datamodels/scormlib.php");
             // SCORM
             if (!scorm_parse_scorm($scorm, $manifest)) {
@@ -832,7 +853,7 @@ function scorm_simple_play($scorm,$user, $context) {
     if ($scorm->updatefreq == UPDATE_EVERYTIME) {
         scorm_parse($scorm, false);
     }
-    if (has_capability('mod/scorm:viewreport', $context)) { //if this user can view reports, don't skipview so they can see links to reports. 
+    if (has_capability('mod/scorm:viewreport', $context)) { //if this user can view reports, don't skipview so they can see links to reports.
         return $result;
     }
 
@@ -1189,8 +1210,8 @@ function scorm_format_date_time($datetime) {
     $strdays = get_string('numdays');
     $strhours = get_string('numhours');
     $strminutes = get_string('numminutes');
-    $strseconds = get_string('numseconds'); 
-    
+    $strseconds = get_string('numseconds');
+
     if ($datetime[0] == 'P') {
         // if timestamp starts with 'P' - it's a SCORM 2004 format
         // this regexp discards empty sections, takes Month/Minute ambiguity into consideration,
@@ -1210,7 +1231,7 @@ function scorm_format_date_time($datetime) {
         //$pattern = '##';
         //$replace = '';
     }
-    
+
     $result = preg_replace($pattern, $replace, $datetime);
 
     return $result;

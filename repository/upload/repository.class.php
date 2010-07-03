@@ -41,7 +41,6 @@ class repository_upload extends repository {
         $this->itemid = optional_param('itemid', '', PARAM_INT);
         $this->license = optional_param('license', $CFG->sitedefaultlicense, PARAM_TEXT);
         $this->author = optional_param('author', '', PARAM_TEXT);
-        $this->filearea = optional_param('filearea', 'user_draft', PARAM_TEXT);
         $this->filepath = urldecode(optional_param('savepath', '/', PARAM_PATH));
     }
 
@@ -62,7 +61,8 @@ class repository_upload extends repository {
     public function upload() {
         try {
             $record = new stdclass;
-            $record->filearea = $this->filearea;;
+            $record->filearea = 'draft';;
+            $record->component = 'user';;
             $record->filepath = $this->filepath;
             $record->itemid   = $this->itemid;
             $record->license  = $this->license;
@@ -110,17 +110,15 @@ class repository_upload extends repository {
     /**
      * Upload file to local filesystem pool
      * @param string $elname name of element
-     * @param string $filearea
-     * @param string $filepath
-     * @param string $filename - use specified filename, if not specified name of uploaded file used
+     * @param object $record
      * @param bool $override override file if exists
      * @return mixed stored_file object or false if error; may throw exception if duplicate found
      */
     public function upload_to_filepool($elname, $record, $override = true) {
         global $USER, $CFG;
         $context = get_context_instance(CONTEXT_USER, $USER->id);
+
         $fs = get_file_storage();
-        $browser = get_file_browser();
 
         if ($record->filepath !== '/') {
             $record->filepath = trim($record->filepath, '/');
@@ -139,16 +137,11 @@ class repository_upload extends repository {
             $record->filename = $_FILES[$elname]['name'];
         }
 
-        $userquota = file_get_user_used_space();
-        if (filesize($_FILES[$elname]['tmp_name'])+$userquota>=(int)$CFG->userquota) {
-            throw new file_exception('userquotalimit');
-        }
-
         if (empty($record->itemid)) {
             $record->itemid = 0;
         }
 
-        if ($file = $fs->get_file($context->id, $record->filearea, $record->itemid, $record->filepath, $record->filename)) {
+        if ($file = $fs->get_file($context->id, 'user', 'draft', $record->itemid, $record->filepath, $record->filename)) {
             if ($override) {
                 $file->delete();
             } else {
@@ -157,19 +150,21 @@ class repository_upload extends repository {
         }
 
         $record->contextid = $context->id;
+        $record->component = 'user';
+        $record->filearea  = 'draft';
         $record->userid    = $USER->id;
         $record->source    = '';
 
         try {
             $file = $fs->create_file_from_pathname($record, $_FILES[$elname]['tmp_name']);
         } catch (Exception $e) {
+            //TODO: ??? (skodak)
             $e->obj = $_FILES[$elname];
             throw $e;
         }
 
-        $info = $browser->get_file_info($context, $file->get_filearea(), $file->get_itemid(), $file->get_filepath(), $file->get_filename());
         return array(
-            'url'=>$info->get_url(),
+            'url'=>file_draftfile_url($file->get_itemid(), $file->get_filepath(), $file->get_filename()),
             'id'=>$record->itemid,
             'file'=>$file->get_filename()
         );

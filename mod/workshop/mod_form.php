@@ -192,7 +192,7 @@ class mod_workshop_mod_form extends moodleform_mod {
             // editing an existing workshop - let us prepare the added editor elements (intro done automatically)
             $draftitemid = file_get_submitted_draft_itemid('instructauthors');
             $data['instructauthorseditor']['text'] = file_prepare_draft_area($draftitemid, $this->context->id,
-                                'workshop_instructauthors', false,
+                                'mod_workshop', 'instructauthors', false,
                                 workshop::instruction_editors_options($this->context),
                                 $data['instructauthors']);
             $data['instructauthorseditor']['format'] = $data['instructauthorsformat'];
@@ -200,7 +200,7 @@ class mod_workshop_mod_form extends moodleform_mod {
 
             $draftitemid = file_get_submitted_draft_itemid('instructreviewers');
             $data['instructreviewerseditor']['text'] = file_prepare_draft_area($draftitemid, $this->context->id,
-                                'workshop_instructreviewers', false,
+                                'mod_workshop', 'instructreviewers', false,
                                 workshop::instruction_editors_options($this->context),
                                 $data['instructreviewers']);
             $data['instructreviewerseditor']['format'] = $data['instructreviewersformat'];
