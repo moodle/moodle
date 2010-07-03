@@ -1191,13 +1191,13 @@ abstract class repository {
      * @return object
      */
     final public function get_meta() {
-        global $CFG;
+        global $CFG, $OUTPUT;
         $ft = new filetype_parser;
         $meta = new stdclass;
         $meta->id   = $this->id;
         $meta->name = $this->get_name();
         $meta->type = $this->options['type'];
-        $meta->icon = $CFG->httpswwwroot.'/repository/'.$meta->type.'/icon.png';
+        $meta->icon = $OUTPUT->pix_url('icon', 'repository_'.$meta->type)->out(false);
         $meta->supported_types = $ft->get_extensions($this->supported_filetypes());
         $meta->return_types = $this->supported_returntypes();
         return $meta;
