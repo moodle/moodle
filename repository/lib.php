@@ -630,26 +630,27 @@ abstract class repository {
         $returntypes   = isset($args['return_types']) ? $args['return_types'] : 3;
 
         $params = array();
-        $sql = 'SELECT i.*, r.type AS repositorytype, r.sortorder, r.visible FROM {repository} r, {repository_instances} i WHERE ';
-        $sql .= 'i.typeid = r.id ';
+        $sql = "SELECT i.*, r.type AS repositorytype, r.sortorder, r.visible
+                  FROM {repository} r, {repository_instances} i
+                 WHERE i.typeid = r.id ";
 
         if (!empty($args['disable_types']) && is_array($args['disable_types'])) {
             list($types, $p) = $DB->get_in_or_equal($args['disable_types'], SQL_PARAMS_QM, 'param0000', false);
-            $sql .= ' AND r.type '.$types;
+            $sql .= " AND r.type $types";
             $params = array_merge($params, $p);
         }
 
         if (!empty($args['userid']) && is_numeric($args['userid'])) {
-            $sql .= ' AND (i.userid = 0 or i.userid = ?)';
+            $sql .= " AND (i.userid = 0 or i.userid = ?)";
             $params[] = $args['userid'];
         }
 
         foreach ($contexts as $context) {
             if (empty($firstcontext)) {
                 $firstcontext = true;
-                $sql .= ' AND ((i.contextid = ?)';
+                $sql .= " AND ((i.contextid = ?)";
             } else {
-                $sql .= ' OR (i.contextid = ?)';
+                $sql .= " OR (i.contextid = ?)";
             }
             $params[] = $context->id;
         }
@@ -659,14 +660,14 @@ abstract class repository {
         }
 
         if ($onlyvisible == true) {
-            $sql .= ' AND (r.visible = 1)';
+            $sql .= " AND (r.visible = 1)";
         }
 
         if (isset($type)) {
-            $sql .= ' AND (r.type = ?)';
+            $sql .= " AND (r.type = ?)";
             $params[] = $type;
         }
-        $sql .= ' order by r.sortorder, i.name';
+        $sql .= " ORDER BY r.sortorder, i.name";
 
         if (!$records = $DB->get_records_sql($sql, $params)) {
             $records = array();
@@ -748,11 +749,12 @@ abstract class repository {
      */
     public static function get_instance($id) {
         global $DB, $CFG;
-        $sql = 'SELECT i.*, r.type AS repositorytype, r.visible FROM {repository} r, {repository_instances} i WHERE ';
-        $sql .= 'i.typeid = r.id AND ';
-        $sql .= 'i.id = '.$id;
+        $sql = "SELECT i.*, r.type AS repositorytype, r.visible
+                  FROM {repository} r
+                  JOIN {repository_instances} i ON i.typeid = r.id
+                 WHERE i.id = ?";
 
-        if(!$instance = $DB->get_record_sql($sql)) {
+        if (!$instance = $DB->get_record_sql($sql, array($id))) {
             return false;
         }
         require_once($CFG->dirroot . '/repository/'. $instance->repositorytype
@@ -1650,7 +1652,9 @@ final class repository_instance_form extends moodleform {
         global $DB;
 
         $errors = array();
-        $sql = "SELECT count('x') FROM {repository_instances} i, {repository} r WHERE r.type=:plugin AND r.id=i.typeid AND i.name=:name";
+        $sql = "SELECT count('x')
+                  FROM {repository_instances} i, {repository} r
+                 WHERE r.type=:plugin AND r.id=i.typeid AND i.name=:name";
         if ($DB->count_records_sql($sql, array('name' => $data['name'], 'plugin' => $data['plugin'])) > 1) {
             $errors = array('name' => get_string('err_uniquename', 'repository'));
         }
