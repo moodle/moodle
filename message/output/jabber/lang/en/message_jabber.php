@@ -23,5 +23,5 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['jabber'] = 'Jabber message';
+$string['pluginname'] = 'Jabber message';
 $string['jabberid'] = 'Jabber ID';

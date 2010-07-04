@@ -23,4 +23,4 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['email'] = 'Email';
+$string['pluginname'] = 'Email';
