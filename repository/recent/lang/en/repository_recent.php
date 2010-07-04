@@ -28,5 +28,5 @@ $string['recentfilesnumber'] = 'Number of recent files';
 $string['emptyfilelist'] = 'There are no files to show';
 $string['notitle'] = 'notitle';
 $string['recent:view'] = 'View recent files repsitory plugin';
-$string['repositorydesc'] = 'Files recently used by current user';
+$string['pluginname_help'] = 'Files recently used by current user';
 $string['pluginname'] = 'Recent files';

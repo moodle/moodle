@@ -30,7 +30,7 @@ $string['information'] = 'Get an API key from the <a href="http://www.box.net/de
 $string['invalidpassword'] = 'Invalid password';
 $string['nullfilelist'] = 'There are no files in this repository';
 $string['password'] = 'Password';
-$string['repositorydesc'] = 'Repository on Box.net';
+$string['pluginname_help'] = 'Repository on Box.net';
 $string['pluginname'] = 'Box.net';
 $string['saved'] = 'Box.net data saved';
 $string['shareurl'] = 'Share URL';

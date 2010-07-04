@@ -26,7 +26,7 @@
 $string['configplugin'] = 'Dropbox configuration';
 $string['notitle'] = 'notitle';
 $string['remember'] = 'Remember me';
-$string['repositorydesc'] = '';
+$string['pluginname_help'] = '';
 $string['pluginname'] = 'Dropbox';
 $string['apikey'] = 'Dropbox API Key';
 $string['secret'] = 'Dropbox Secret';
