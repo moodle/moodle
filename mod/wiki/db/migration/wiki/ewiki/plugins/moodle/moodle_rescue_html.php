@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 /*
      Can be used to allow preserving of certain "safe" HTML <tags>
@@ -23,11 +23,11 @@ function ewiki_moodle_rescue_html(&$wiki_source) {
 
    $rescue_html = array(
       "br", "tt", "b", "i", "strong", "em", "s", "kbd", "var", "xmp", "sup", "sub",
-      "pre", "q", "h1", "h2", "h3", "h4", "h5", "h6", "cite", "code", "u", 
+      "pre", "q", "h1", "h2", "h3", "h4", "h5", "h6", "cite", "code", "u",
    );
 
-   
-   
+
+
    #-- unescape allowed html
    if ($safe_html) {
     /*
@@ -42,5 +42,3 @@ function ewiki_moodle_rescue_html(&$wiki_source) {
 
 }
 
-
-?>
