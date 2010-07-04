@@ -5,13 +5,13 @@
 /**
  * TinyMCE editor settings moodle form class.
  *
+ * @package    editor_tinymce
  * @copyright  2010 Dongsheng Cai
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @package moodlecore
  */
 class editor_settings_tinymce extends editor_settings_form {
     public function definition() {
-        $mform =& $this->_form;
+        $mform = $this->_form;
         $options = array(
             'PSpell'=>'PSpell',
             'GoogleSpell'=>'Google Spell',
@@ -22,6 +22,7 @@ class editor_settings_tinymce extends editor_settings_form {
 
         parent::definition();
     }
+
     static public function option_names() {
         return array('editor_tinymce_spellengine');
     }

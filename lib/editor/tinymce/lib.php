@@ -18,13 +18,15 @@
 /**
  * TinyMCE text editor integration.
  *
- * @package    moodlecore
- * @subpackage editor
+ * @package    editor_tinymce
  * @copyright  2009 Petr Skoda (http://skodak.org)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 class tinymce_texteditor extends texteditor {
+    /** @var string active version - directory name */
+    public $version = '3.3.8';
+
     public function supported_by_browser() {
         if (check_browser_version('MSIE', 5.5)) {
             return true;
@@ -55,10 +57,10 @@ class tinymce_texteditor extends texteditor {
 
     public function head_setup() {
     }
-    
+
     public function use_editor($elementid, array $options=null, $fpoptions=null) {
         global $PAGE;
-        $PAGE->requires->js('/lib/editor/tinymce/tiny_mce_src.js');
+        $PAGE->requires->js('/lib/editor/tinymce/tiny_mce/'.$this->version.'/tiny_mce.js');
         $PAGE->requires->js_init_call('M.editor_tinymce.init_editor', array($elementid, $this->get_init_params($elementid, $options)), true);
         if ($fpoptions) {
             $PAGE->requires->js_init_call('M.editor_tinymce.init_filepicker', array($elementid, $fpoptions), true);
@@ -68,7 +70,7 @@ class tinymce_texteditor extends texteditor {
     protected function get_init_params($elementid, array $options=null) {
         global $CFG, $PAGE;
 
-        //TODO: we need to implement user preferences that affec tthe editor setup too
+        //TODO: we need to implement user preferences that affect the editor setup too
 
         //TODO: reimplement rulesets, maybe it would be better to implement it some other way
         //$xmlruleset     = file_get_contents('extra/xhtml_ruleset.txt');
@@ -79,13 +81,12 @@ class tinymce_texteditor extends texteditor {
         $lang           = current_language();
         $contentcss     = $PAGE->theme->editor_css_url()->out(false);
 
+        $xmedia = '';
         $context = empty($options['context']) ? get_context_instance(CONTEXT_SYSTEM) : $options['context'];
         if (!empty($options['legacy'])) {
             $xmedia = 'moodlemedia,';
         } else {
             if (!empty($options['noclean']) or !empty($options['trusted'])) {
-            } else {
-                $xmedia = '';
             }
         }
 
@@ -129,7 +130,7 @@ class tinymce_texteditor extends texteditor {
                     'theme_advanced_resizing' => true,
                     'theme_advanced_toolbar_location' => "top",
                     'theme_advanced_statusbar_location' => "bottom",
-                    'spellchecker_rpc_url' => $CFG->wwwroot."/lib/editor/tinymce/plugins/spellchecker/rpc.php"
+                    'spellchecker_rpc_url' => $CFG->wwwroot."/lib/editor/tinymce/tiny_mce/'.$this->version.'/plugins/spellchecker/rpc.php"
                   );
 
         if (empty($options['legacy'])) {

@@ -16,10 +16,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Failsafe textare editor support.
+ * Failsafe textarea editor support.
  *
- * @package    moodlecore
- * @subpackage editor
+ * @package    editor_textarea
  * @copyright  2009 Petr Skoda (http://skodak.org)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

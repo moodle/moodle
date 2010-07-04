@@ -1,17 +1,17 @@
-Index: lib/editor/tinymce/utils/form_utils.js
+Index: form_utils.js
 ===================================================================
-RCS file: /cvsroot/moodle/moodle/lib/editor/tinymce/utils/form_utils.js,v
+RCS file: /cvsroot/moodle/moodle/lib/editor/tinymce/tiny_mce/3.3.8/utils/form_utils.js,v
 retrieving revision 1.1
 diff -u -r1.1 form_utils.js
---- lib/editor/tinymce/utils/form_utils.js	16 May 2009 20:54:46 -0000	1.1
-+++ lib/editor/tinymce/utils/form_utils.js	10 Nov 2009 08:06:02 -0000
-@@ -48,9 +48,21 @@
- 	if (!cb)
- 		return "";
+--- form_utils.js   4 Jul 2010 19:22:17 -0000   1.1
++++ form_utils.js   4 Jul 2010 20:10:43 -0000
+@@ -49,9 +49,21 @@
+    if (!cb)
+        return "";
  
--	html = "";
--	html += '<a id="' + id + '_link" href="javascript:openBrowser(\'' + id + '\',\'' + target_form_element + '\', \'' + type + '\',\'' + option + '\');" onmousedown="return false;" class="browse">';
--	html += '<span id="' + id + '" title="' + tinyMCEPopup.getLang('browse') + '">&nbsp;</span></a>';
+-   html = "";
+-   html += '<a id="' + id + '_link" href="javascript:openBrowser(\'' + id + '\',\'' + target_form_element + '\', \'' + type + '\',\'' + option + '\');" onmousedown="return false;" class="browse">';
+-   html += '<span id="' + id + '" title="' + tinyMCEPopup.getLang('browse') + '">&nbsp;</span></a>';
 +    html = "";
 +    if (id=='filebrowser') {
 +        // for moodlemedia plugin
@@ -28,14 +28,14 @@ diff -u -r1.1 form_utils.js
 +        html += '<span id="' + id + '" title="' + tinyMCEPopup.getLang('browse') + '">&nbsp;</span></a>';
 +    }
  
- 	return html;
+    return html;
  }
-@@ -58,7 +70,7 @@
+@@ -59,7 +71,7 @@
  function openBrowser(img_id, target_form_element, type, option) {
- 	var img = document.getElementById(img_id);
+    var img = document.getElementById(img_id);
  
--	if (img.className != "mceButtonDisabled")
-+	if (!img || img.className != "mceButtonDisabled")
- 		tinyMCEPopup.openBrowser(target_form_element, type, option);
+-   if (img.className != "mceButtonDisabled")
++   if (!img || img.className != "mceButtonDisabled")
+        tinyMCEPopup.openBrowser(target_form_element, type, option);
  }
  

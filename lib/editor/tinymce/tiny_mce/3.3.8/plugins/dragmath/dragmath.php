@@ -2,7 +2,7 @@
 
 define('NO_MOODLE_COOKIES', true);
 
-require("../../../../../config.php");
+require("../../../../../../../config.php");
 
 $lang = required_param('elanguage', PARAM_SAFEDIR);
 
@@ -35,11 +35,11 @@ if (!file_exists("$CFG->dirroot/lib/dragmath/applet/lang/$lang.xml")) {
 </head>
 <body>
 
-<applet 
-	name="dragmath" 
-	codebase="<?php echo $CFG->httpswwwroot.'/lib/dragmath/applet' ?>" 
-	code="Display/MainApplet.class" 
-	archive="DragMath.jar,lib/AbsoluteLayout.jar,lib/swing-layout-1.0.jar,lib/jdom.jar,lib/jep.jar" 
+<applet
+	name="dragmath"
+	codebase="<?php echo $CFG->httpswwwroot.'/lib/dragmath/applet' ?>"
+	code="Display/MainApplet.class"
+	archive="DragMath.jar,lib/AbsoluteLayout.jar,lib/swing-layout-1.0.jar,lib/jdom.jar,lib/jep.jar"
 	width="540" height="300"
 >
 	<param name="language" value="<?php echo $lang; ?>" />

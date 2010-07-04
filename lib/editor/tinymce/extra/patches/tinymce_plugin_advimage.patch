@@ -1,68 +1,10 @@
-Index: lib/editor/tinymce/plugins/advimage/image.htm
+Index: css/advimage.css
 ===================================================================
-RCS file: /cvsroot/moodle/moodle/lib/editor/tinymce/plugins/advimage/image.htm,v
-retrieving revision 1.1
-diff -u -r1.1 image.htm
---- lib/editor/tinymce/plugins/advimage/image.htm	16 May 2009 20:53:41 -0000	1.1
-+++ lib/editor/tinymce/plugins/advimage/image.htm	11 Nov 2009 05:18:39 -0000
-@@ -26,14 +26,15 @@
- 						<legend>{#advimage_dlg.general}</legend>
- 
- 						<table class="properties">
-+                            <tr>
-+								<td class="column1">&nbsp;</td>
-+                                <td align="left" id="srcbrowsercontainer">&nbsp;</td>
-+                            </tr>
- 							<tr>
- 								<td class="column1"><label id="srclabel" for="src">{#advimage_dlg.src}</label></td>
--								<td colspan="2"><table border="0" cellspacing="0" cellpadding="0">
--									<tr> 
--									  <td><input name="src" type="text" id="src" value="" class="mceFocus" onchange="ImageDialog.showPreviewImage(this.value);" /></td> 
--									  <td id="srcbrowsercontainer">&nbsp;</td>
--									</tr>
--								  </table></td>
-+								<td>
-+                                <input name="src" type="text" id="src" value="" class="mceFocus" onchange="ImageDialog.showPreviewImage(this.value);" /> 
-+								</td>
- 							</tr>
- 							<tr>
- 								<td><label for="src_list">{#advimage_dlg.image_list}</label></td>
-@@ -41,12 +42,8 @@
- 							</tr>
- 							<tr> 
- 								<td class="column1"><label id="altlabel" for="alt">{#advimage_dlg.alt}</label></td> 
--								<td colspan="2"><input id="alt" name="alt" type="text" value="" /></td> 
-+								<td><input id="alt" name="alt" type="text" value="" /></td> 
- 							</tr> 
--							<tr> 
--								<td class="column1"><label id="titlelabel" for="title">{#advimage_dlg.title}</label></td> 
--								<td colspan="2"><input id="title" name="title" type="text" value="" /></td> 
--							</tr>
- 						</table>
- 				</fieldset>
- 
-@@ -180,10 +177,13 @@
- 
- 					<table border="0" cellpadding="4" cellspacing="0">
- 						<tr>
-+							<td class="column1"><label id="titlelabel" for="title">{#advimage_dlg.title}</label></td> 
-+							<td><input id="title" name="title" type="text" value="" /></td> 
-+						</tr>
-+						<tr>
- 							<td class="column1"><label id="idlabel" for="id">{#advimage_dlg.id}</label></td> 
- 							<td><input id="id" name="id" type="text" value="" /></td> 
- 						</tr>
--
- 						<tr>
- 							<td class="column1"><label id="dirlabel" for="dir">{#advimage_dlg.langdir}</label></td> 
- 							<td>
-Index: lib/editor/tinymce/plugins/advimage/css/advimage.css
-===================================================================
-RCS file: /cvsroot/moodle/moodle/lib/editor/tinymce/plugins/advimage/css/advimage.css,v
+RCS file: /cvsroot/moodle/moodle/lib/editor/tinymce/tiny_mce/3.3.8/plugins/advimage/css/advimage.css,v
 retrieving revision 1.1
 diff -u -r1.1 advimage.css
---- lib/editor/tinymce/plugins/advimage/css/advimage.css	16 May 2009 20:54:52 -0000	1.1
-+++ lib/editor/tinymce/plugins/advimage/css/advimage.css	11 Nov 2009 05:18:39 -0000
+--- css/advimage.css    4 Jul 2010 19:22:23 -0000   1.1
++++ css/advimage.css    4 Jul 2010 20:09:24 -0000
 @@ -1,13 +1,15 @@
  #src_list, #over_list, #out_list {width:280px;}
  .mceActionPanel {margin-top:7px;}
@@ -81,3 +23,61 @@ diff -u -r1.1 advimage.css
  #constrain, #onmousemovecheck {width:auto;}
 -#id, #dir, #lang, #usemap, #longdesc {width:200px;}
 +#id, #title, #dir, #lang, #usemap, #longdesc {width:200px;}
+Index: image.htm
+===================================================================
+RCS file: /cvsroot/moodle/moodle/lib/editor/tinymce/tiny_mce/3.3.8/plugins/advimage/image.htm,v
+retrieving revision 1.1
+diff -u -r1.1 image.htm
+--- image.htm   4 Jul 2010 19:21:49 -0000   1.1
++++ image.htm   4 Jul 2010 20:09:24 -0000
+@@ -26,14 +26,15 @@
+                        <legend>{#advimage_dlg.general}</legend>
+ 
+                        <table class="properties">
++                            <tr>
++                               <td class="column1">&nbsp;</td>
++                                <td align="left" id="srcbrowsercontainer">&nbsp;</td>
++                            </tr>
+                            <tr>
+                                <td class="column1"><label id="srclabel" for="src">{#advimage_dlg.src}</label></td>
+-                               <td colspan="2"><table border="0" cellspacing="0" cellpadding="0">
+-                                   <tr> 
+-                                     <td><input name="src" type="text" id="src" value="" class="mceFocus" onchange="ImageDialog.showPreviewImage(this.value);" /></td> 
+-                                     <td id="srcbrowsercontainer">&nbsp;</td>
+-                                   </tr>
+-                                 </table></td>
++                               <td>
++                                <input name="src" type="text" id="src" value="" class="mceFocus" onchange="ImageDialog.showPreviewImage(this.value);" /> 
++                               </td>
+                            </tr>
+                            <tr>
+                                <td><label for="src_list">{#advimage_dlg.image_list}</label></td>
+@@ -41,12 +42,8 @@
+                            </tr>
+                            <tr> 
+                                <td class="column1"><label id="altlabel" for="alt">{#advimage_dlg.alt}</label></td> 
+-                               <td colspan="2"><input id="alt" name="alt" type="text" value="" /></td> 
++                               <td><input id="alt" name="alt" type="text" value="" /></td> 
+                            </tr> 
+-                           <tr> 
+-                               <td class="column1"><label id="titlelabel" for="title">{#advimage_dlg.title}</label></td> 
+-                               <td colspan="2"><input id="title" name="title" type="text" value="" /></td> 
+-                           </tr>
+                        </table>
+                </fieldset>
+ 
+@@ -180,10 +177,13 @@
+ 
+                    <table border="0" cellpadding="4" cellspacing="0">
+                        <tr>
++                           <td class="column1"><label id="titlelabel" for="title">{#advimage_dlg.title}</label></td> 
++                           <td><input id="title" name="title" type="text" value="" /></td> 
++                       </tr>
++                       <tr>
+                            <td class="column1"><label id="idlabel" for="id">{#advimage_dlg.id}</label></td> 
+                            <td><input id="id" name="id" type="text" value="" /></td> 
+                        </tr>
+-
+                        <tr>
+                            <td class="column1"><label id="dirlabel" for="dir">{#advimage_dlg.langdir}</label></td> 
+                            <td>

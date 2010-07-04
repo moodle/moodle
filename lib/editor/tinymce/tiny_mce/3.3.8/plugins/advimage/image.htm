@@ -26,14 +26,15 @@
 						<legend>{#advimage_dlg.general}</legend>
 
 						<table class="properties">
+                            <tr>
+								<td class="column1">&nbsp;</td>
+                                <td align="left" id="srcbrowsercontainer">&nbsp;</td>
+                            </tr>
 							<tr>
 								<td class="column1"><label id="srclabel" for="src">{#advimage_dlg.src}</label></td>
-								<td colspan="2"><table border="0" cellspacing="0" cellpadding="0">
-									<tr> 
-									  <td><input name="src" type="text" id="src" value="" class="mceFocus" onchange="ImageDialog.showPreviewImage(this.value);" /></td> 
-									  <td id="srcbrowsercontainer">&nbsp;</td>
-									</tr>
-								  </table></td>
+								<td>
+                                <input name="src" type="text" id="src" value="" class="mceFocus" onchange="ImageDialog.showPreviewImage(this.value);" /> 
+								</td>
 							</tr>
 							<tr>
 								<td><label for="src_list">{#advimage_dlg.image_list}</label></td>
@@ -41,12 +42,8 @@
 							</tr>
 							<tr> 
 								<td class="column1"><label id="altlabel" for="alt">{#advimage_dlg.alt}</label></td> 
-								<td colspan="2"><input id="alt" name="alt" type="text" value="" /></td> 
+								<td><input id="alt" name="alt" type="text" value="" /></td> 
 							</tr> 
-							<tr> 
-								<td class="column1"><label id="titlelabel" for="title">{#advimage_dlg.title}</label></td> 
-								<td colspan="2"><input id="title" name="title" type="text" value="" /></td> 
-							</tr>
 						</table>
 				</fieldset>
 
@@ -180,10 +177,13 @@
 
 					<table border="0" cellpadding="4" cellspacing="0">
 						<tr>
+							<td class="column1"><label id="titlelabel" for="title">{#advimage_dlg.title}</label></td> 
+							<td><input id="title" name="title" type="text" value="" /></td> 
+						</tr>
+						<tr>
 							<td class="column1"><label id="idlabel" for="id">{#advimage_dlg.id}</label></td> 
 							<td><input id="id" name="id" type="text" value="" /></td> 
 						</tr>
-
 						<tr>
 							<td class="column1"><label id="dirlabel" for="dir">{#advimage_dlg.langdir}</label></td> 
 							<td>

@@ -1,7 +1,7 @@
-Description of TinyMCE v3.2.5 library integration in Moodle
+Description of TinyMCE v3.3.8 library integration in Moodle
 =========================================================================================
 
-Copyright: (c) 2004-2008, Moxiecode Systems AB, All rights reserved.
+Copyright: (c) 2004-2010, Moxiecode Systems AB, All rights reserved.
 License: GNU LESSER GENERAL PUBLIC LICENSE Version 2.1, February 1999
 
 Moodle maintainer: Petr Skoda (skodak)
@@ -9,15 +9,14 @@ Moodle maintainer: Petr Skoda (skodak)
 =========================================================================================
 Upgrade procedure:
  1/ Download latest dev package from http://tinymce.moxiecode.com/download.php
- 2/ replace tiny_mce*.* files, themes/*, utils/* and plugins/*
-    (keep dragmath, moodlenolink, spellchecker)
- 3/ copy tinymce/jscripts/tiny_mce/classes/Popup.js to Popup.js
- 4/ apply strings & form_utils.js & tinymce_plugin_advimage patches
- 5/ copy yuicompressor.jar from dev package into extra/tools/, use shell
+ 2/ copy TinyMCE files to tiny_mce/version/
+ 3/ copy extra dragmath, moodlenolink, spellchecker, moodlemedia
+ 4/ copy tinymce/jscripts/tiny_mce/classes/Popup.js to Popup.js
+ 5/ apply strings & form_utils.js & tinymce_plugin_advimage patches
+ 6/ copy yuicompressor.jar from dev package into extra/tools/, use shell
     script extra/tools/compress.sh to compress modified files
- 6/ download all TinyMCE lang files (extra/tools/download_langs.sh)
- 7/ update moodle lang string files (extra/tools/update_lang_files.php)
- 8/ apply tinymce_lang_string.patch which contains language string for moodlemedia plugin
+ 7/ download all TinyMCE lang files (extra/tools/download_langs.sh)
+ 8/ update moodle lang string files (extra/tools/update_lang_files.php)
 
 =========================================================================================
 Added:
@@ -33,3 +32,6 @@ Modified:
 
 Removed:
  *
+
+ TODO:
+ * update strings to integrate with AMOS

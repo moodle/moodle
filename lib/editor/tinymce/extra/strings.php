@@ -18,8 +18,7 @@
 /**
  * On-the-fly conversion of Moodle lang strings to TinyMCE expected JS format.
  *
- * @package    moodlecore
- * @subpackage editor
+ * @package    editor_tinymce
  * @copyright  2009 Petr Skoda (http://skodak.org)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -38,7 +37,7 @@ if (!get_string_manager()->translation_exists($lang, false)) {
 
 $string = get_string_manager()->load_component_strings('editor_tinymce', $lang);
 
-//process the $strings to match expected tinymce lang array stucture
+//process the $strings to match expected tinymce lang array structure
 $result = array();
 
 foreach ($string as $key=>$value) {
@@ -47,7 +46,6 @@ foreach ($string as $key=>$value) {
         // incorrect string - ignore
         continue;
     }
-    $value = str_replace("%%","%",$value);              // Unescape % characters
 
     $result[$parts[0]][$parts[1]] = $value;
 }

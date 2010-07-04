@@ -1,51 +1,41 @@
-Index: lib/editor/tinymce/Popup.js
+Index: tiny_mce_src.js
 ===================================================================
-RCS file: /cvsroot/moodle/moodle/lib/editor/tinymce/Popup.js,v
-retrieving revision 1.1
-diff -u -r1.1 Popup.js
---- lib/editor/tinymce/Popup.js 17 May 2009 07:37:42 -0000  1.1
-+++ lib/editor/tinymce/Popup.js 17 May 2009 08:05:08 -0000
-@@ -167,6 +167,7 @@
-     * when you open the window it will load the <plugin url>/langs/<code>_dlg.js lang pack file.
-     */
-    requireLangPack : function() {
-+       return; // not needed in Moodle - we load all lang packs in one request
-        var t = this, u = t.getWindowArg('plugin_url') || t.getWindowArg('theme_url');
- 
-        if (u && t.editor.settings.language && t.features.translate_i18n !== false) {
-Index: lib/editor/tinymce/tiny_mce_src.js
-===================================================================
-RCS file: /cvsroot/moodle/moodle/lib/editor/tinymce/tiny_mce_src.js,v
+RCS file: /cvsroot/moodle/moodle/lib/editor/tinymce/tiny_mce/3.3.8/tiny_mce_src.js,v
 retrieving revision 1.1
 diff -u -r1.1 tiny_mce_src.js
---- lib/editor/tinymce/tiny_mce_src.js  16 May 2009 20:54:06 -0000  1.1
-+++ lib/editor/tinymce/tiny_mce_src.js  17 May 2009 08:05:14 -0000
-@@ -8057,6 +8057,7 @@
+--- tiny_mce_src.js 4 Jul 2010 19:21:59 -0000   1.1
++++ tiny_mce_src.js 4 Jul 2010 20:11:25 -0000
+@@ -8744,6 +8744,7 @@
         },
  
         requireLangPack : function(n) {
 +           return; // not needed in Moodle - we load all lang packs in one request
-            var u, s = tinymce.EditorManager.settings;
+            var s = tinymce.settings;
  
-            if (s && s.language) {
-@@ -8159,9 +8160,10 @@
-            // If page not loaded and strict mode isn't enabled then load them
-            if (!Event.domLoaded && !s.strict_loading_mode) {
-                // Load language
-+               /* not needed in Moodle - we load one lang file only
-                if (s.language)
-                    sl.add(tinymce.baseURL + '/langs/' + s.language + '.js');
--
-+               */
-                // Load theme
-                if (s.theme && s.theme.charAt(0) != '-' && !ThemeManager.urls[s.theme])
-                    ThemeManager.load(s.theme, 'themes/' + s.theme + '/editor_template' + tinymce.suffix + '.js');
-@@ -8677,7 +8679,7 @@
+            if (s && s.language)
+@@ -9334,7 +9335,8 @@
             // Load scripts
             function loadScripts() {
                 if (s.language)
 -                   sl.add(tinymce.baseURL + '/langs/' + s.language + '.js');
-+                   sl.add(tinymce.baseURL + '/extra/strings.php?elanguage=' + s.language + '&etheme=' + s.theme); // Moodle modification - load one huge strings file
++                   sl.add(tinymce.baseURL + '/../../extra/strings.php?elanguage=' + s.language + '&etheme=' + s.theme); // Moodle modification - load one huge strings file
++                   //sl.add(tinymce.baseURL + '/langs/' + s.language + '.js');
  
                 if (s.theme && s.theme.charAt(0) != '-' && !ThemeManager.urls[s.theme])
                     ThemeManager.load(s.theme, 'themes/' + s.theme + '/editor_template' + tinymce.suffix + '.js');
+Index: Popup.js
+===================================================================
+RCS file: /cvsroot/moodle/moodle/lib/editor/tinymce/tiny_mce/3.3.8/Popup.js,v
+retrieving revision 1.1
+diff -u -r1.1 Popup.js
+--- Popup.js    4 Jul 2010 19:21:59 -0000   1.1
++++ Popup.js    4 Jul 2010 20:11:19 -0000
+@@ -187,6 +187,8 @@
+     * @method requireLangPack
+     */
+    requireLangPack : function() {
++       return; // not needed in Moodle - we load all lang packs in one request
++
+        var t = this, u = t.getWindowArg('plugin_url') || t.getWindowArg('theme_url');
+ 
+        if (u && t.editor.settings.language && t.features.translate_i18n !== false) {
