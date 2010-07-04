@@ -681,7 +681,7 @@ if ($component === 'blog') {
     if (!file_exists("$dir/lib.php")) {
         send_file_not_found();
     }
-    require_once("$dir/lib.php");
+    include_once("$dir/lib.php");
 
     $filefunction = $component.'_pluginfile';
     if (function_exists($filefunction)) {
