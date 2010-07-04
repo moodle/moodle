@@ -104,7 +104,6 @@ $string['invalidgroupid'] = 'Invalid group ID';
 $string['invalidurl'] = 'This URL is unreachable';
 $string['linktooriginalentry'] = 'Link to original blog entry';
 $string['maxexternalblogsperuser'] = 'Maximum number of external blogs per user';
-$string['modulename'] = 'Blog';
 $string['mustassociatecourse'] = 'If you are publishing to course or group members, you must associate a course with this entry';
 $string['name'] = 'Name';
 $string['name_help'] = 'Enter a descriptive name for your external blog. (If no name is supplied, the title of your external blog will be used).';
