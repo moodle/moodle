@@ -3902,7 +3902,7 @@ function forum_pluginfile($course, $cm, $context, $filearea, $args, $forcedownlo
     }
 
     // Make sure we're allowed to see it...
-    if (!forum_user_can_see_post($forum, $discussion, $post, NULL, $cminfo)) {
+    if (!forum_user_can_see_post($forum, $discussion, $post, NULL, $cm)) {
         return false;
     }
 
