@@ -106,7 +106,7 @@ function get_texteditor($editorname) {
 function get_available_editors() {
     $editors = array();
     foreach (get_plugin_list('editor') as $editorname => $dir) {
-        $editors[$editorname] = get_string('modulename', 'editor_'.$editorname);
+        $editors[$editorname] = get_string('pluginname', 'editor_'.$editorname);
     }
     return $editors;
 }
@@ -185,7 +185,7 @@ abstract class texteditor {
 }
 
 //TODO: this is very wrong way to do admin settings - this has to be rewritten
-require_once($CFG->libdir.'/formslib.php'); 
+require_once($CFG->libdir.'/formslib.php');
 /**
  * Editor settings moodle form class.
  *
