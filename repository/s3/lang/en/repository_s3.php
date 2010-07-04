@@ -26,6 +26,6 @@
 $string['access_key'] = 'Access key';
 $string['configplugin'] = 'Amazon S3 settings';
 $string['needaccesskey'] = 'Access key must be provided';
-$string['repositoryname'] = 'Amazon S3';
+$string['pluginname'] = 'Amazon S3';
 $string['secret_key'] = 'Secret key';
 $string['s3:view'] = 'View amazon s3 repository';

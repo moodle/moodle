@@ -144,7 +144,7 @@ class repository_alfresco extends repository {
             $ret['manage'] = $matches[1].'faces/jsp/dashboards/container.jsp';
         }
 
-        $ret['path'] = array(array('name'=>get_string('repositoryname', 'repository_alfresco'), 'path'=>''));
+        $ret['path'] = array(array('name'=>get_string('pluginname', 'repository_alfresco'), 'path'=>''));
 
         try {
             if (empty($uuid)) {

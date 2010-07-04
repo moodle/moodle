@@ -173,7 +173,7 @@ class repository_type {
      * @return string user-friendly type name
      */
     public function get_readablename() {
-        return get_string('repositoryname','repository_'.$this->_typename);
+        return get_string('pluginname','repository_'.$this->_typename);
     }
 
     /**
@@ -1044,7 +1044,7 @@ abstract class repository {
                 if (!empty($type) && $type->get_visible()) {
                     $instanceoptionnames = repository::static_function($type->get_typename(), 'get_instance_option_names');
                     if (!empty($instanceoptionnames)) {
-                        $instancehtml .= '<li><a href="'.$baseurl.'&amp;new='.$type->get_typename().'">'.get_string('createxxinstance', 'repository', get_string('repositoryname', 'repository_'.$type->get_typename()))
+                        $instancehtml .= '<li><a href="'.$baseurl.'&amp;new='.$type->get_typename().'">'.get_string('createxxinstance', 'repository', get_string('pluginname', 'repository_'.$type->get_typename()))
                             .'</a></li>';
                         $addable++;
                     }

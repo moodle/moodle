@@ -24,5 +24,5 @@
  */
 
 $string['keyword'] = 'Full text';
-$string['repositoryname'] = 'Wikimedia';
+$string['pluginname'] = 'Wikimedia';
 $string['wikimedia:view'] = 'View wikimedia repository';

@@ -27,7 +27,7 @@ $string['configplugin'] = 'Dropbox configuration';
 $string['notitle'] = 'notitle';
 $string['remember'] = 'Remember me';
 $string['repositorydesc'] = '';
-$string['repositoryname'] = 'Dropbox';
+$string['pluginname'] = 'Dropbox';
 $string['apikey'] = 'Dropbox API Key';
 $string['secret'] = 'Dropbox Secret';
 $string['instruction'] = 'You can get your API Key and secret from <a href="http://www.dropbox.com/developers/apps">Dropbox developers</a>';

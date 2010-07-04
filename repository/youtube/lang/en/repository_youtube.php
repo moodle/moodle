@@ -23,6 +23,6 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['repositoryname'] = 'Youtube videos';
+$string['pluginname'] = 'Youtube videos';
 $string['search'] = 'Search videos';
 $string['youtube:view'] = 'Use youtube in file picker';

@@ -32,4 +32,4 @@ $string['invalidpath'] = 'Invalid root path';
 $string['path'] = 'Select a subdirectory';
 $string['nosubdir'] = 'You need to create at least one folder inside the <b>{$a}</b> directory so you can select it here.';
 $string['repositorydesc'] = 'Create repository from local directory';
-$string['repositoryname'] = 'File system';
+$string['pluginname'] = 'File system';

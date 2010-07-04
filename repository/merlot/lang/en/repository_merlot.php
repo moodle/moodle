@@ -26,5 +26,5 @@
 $string['configplugin'] = 'Merlot.org configuration';
 $string['licensekey'] = 'License Key';
 $string['repositorydesc'] = 'Merlot.org';
-$string['repositoryname'] = 'Merlot.org';
+$string['pluginname'] = 'Merlot.org';
 $string['merlot:view'] = 'View the Merlot repository';

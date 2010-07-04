@@ -25,5 +25,5 @@
 
 $string['configplugin'] = 'Configuration for upload plugin';
 $string['repositorydesc'] = 'Upload a file to Moodle';
-$string['repositoryname'] = 'Upload a file';
+$string['pluginname'] = 'Upload a file';
 $string['upload:view'] = 'Use uploading in file picker';

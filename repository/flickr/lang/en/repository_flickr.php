@@ -40,6 +40,6 @@ $string['notitle'] = 'notitle';
 $string['nullphotolist'] = 'There are no photos in this account';
 $string['remember'] = 'Remember me';
 $string['repositorydesc'] = 'Repository on flickr.com';
-$string['repositoryname'] = 'Flickr';
+$string['pluginname'] = 'Flickr';
 $string['secret'] = 'Secret';
 $string['username'] = 'Flickr account email';

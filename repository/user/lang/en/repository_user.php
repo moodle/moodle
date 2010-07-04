@@ -26,6 +26,6 @@
 
 $string['configplugin'] = 'Configuration for user private files repository';
 $string['repositorydesc'] = 'Files in user private area';
-$string['repositoryname'] = 'Private files';
+$string['pluginname'] = 'Private files';
 $string['emptyfilelist'] = 'There are no files to show';
 $string['user:view'] = 'View user private files';

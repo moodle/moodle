@@ -25,7 +25,7 @@
 
 $string['download'] = 'Download';
 $string['rename'] = 'Name';
-$string['repositoryname'] = 'URL Downloader';
+$string['pluginname'] = 'URL Downloader';
 $string['url'] = 'URL';
 $string['url:view'] = 'Use url downloader in file picker';
 $string['validname'] = 'You must provide a valid file name';

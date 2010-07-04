@@ -26,7 +26,7 @@
 $string['configplugin'] = 'WebDav configuration';
 $string['http'] = 'HTTP';
 $string['https'] = 'HTTPS';
-$string['repositoryname'] = 'WebDAV repository';
+$string['pluginname'] = 'WebDAV repository';
 $string['webdav_password'] = 'WebDAV server password';
 $string['webdav_port'] = 'WebDAV server port';
 $string['webdav_server'] = 'WebDAV server';

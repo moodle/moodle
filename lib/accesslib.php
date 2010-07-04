@@ -4053,7 +4053,7 @@ function get_component_string($component, $contextlevel) {
                 $langname = str_replace('/', '_', $component);
                 $string = get_string('local');
             } else if (preg_match('|^repository|', $component)) {
-                $string = get_string('repository', 'repository').': '.get_string('repositoryname', $component);
+                $string = get_string('repository', 'repository').': '.get_string('pluginname', $component);
             } else if (preg_match('|^report|', $component)) {
                 $string = get_string('reports');
             } else {

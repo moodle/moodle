@@ -136,7 +136,7 @@ class repository_recent extends repository {
      * @return string repository name
      */
     public function get_name(){
-        return get_string('repositoryname', 'repository_recent');;
+        return get_string('pluginname', 'repository_recent');;
     }
 
     public static function get_type_option_names() {

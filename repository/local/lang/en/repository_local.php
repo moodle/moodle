@@ -30,4 +30,4 @@ $string['local:view'] = 'View server repository';
 $string['notitle'] = 'notitle';
 $string['remember'] = 'Remember me';
 $string['repositorydesc'] = 'Files previously uploaded to the Moodle server';
-$string['repositoryname'] = 'Server files';
+$string['pluginname'] = 'Server files';

@@ -112,7 +112,7 @@ class repository_picasa extends repository {
     }
 
     public function get_name(){
-        return get_string('repositoryname', 'repository_picasa');
+        return get_string('pluginname', 'repository_picasa');
     }
     public function supported_filetypes() {
         return array('web_image');

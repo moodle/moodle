@@ -109,7 +109,7 @@ class repository_googledocs extends repository {
     }
 
     public function get_name(){
-        return get_string('repositoryname', 'repository_googledocs');
+        return get_string('pluginname', 'repository_googledocs');
     }
 
     public function get_file($url, $file) {

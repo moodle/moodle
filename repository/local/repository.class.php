@@ -161,7 +161,7 @@ class repository_local extends repository {
      * @return string repository name
      */
     public function get_name(){
-        return get_string('repositoryname', 'repository_local');;
+        return get_string('pluginname', 'repository_local');;
     }
 
     /**
