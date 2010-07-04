@@ -693,6 +693,7 @@ function xmldb_main_upgrade($oldversion) {
 
         upgrade_main_savepoint(true, 2008081900);
     }
+
     if ($oldversion < 2008082602) {
 
     /// Define table repository to be dropped
@@ -719,6 +720,7 @@ function xmldb_main_upgrade($oldversion) {
         if (!$dbman->table_exists($table)) {
             $dbman->create_table($table);
         }
+
     /// Define table repository_instances to be created
         $table = new xmldb_table('repository_instances');
 
@@ -732,6 +734,7 @@ function xmldb_main_upgrade($oldversion) {
         $table->add_field('password', XMLDB_TYPE_CHAR, '255', null, null, null, null);
         $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null);
         $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null);
+        $table->add_field('readonly', XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
 
     /// Adding keys to table repository_instances
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
@@ -792,50 +795,6 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2008082900);
     }
 
-    if ($oldversion < 2008090108) {
-        $repo = new object();
-        $repo->type      = 'upload';
-        $repo->visible   = 1;
-        $repo->sortorder = 1;
-        if (!$DB->record_exists('repository', array('type'=>'upload'))) {
-            $typeid = $DB->insert_record('repository', $repo);
-        }else{
-            $record = $DB->get_record('repository', array('type'=>'upload'));
-            $typeid = $record->id;
-        }
-        if (!$DB->record_exists('repository_instances', array('typeid'=>$typeid))) {
-            $instance = new object();
-            $instance->name      = get_string('repositoryname', 'repository_upload');
-            $instance->typeid    = $typeid;
-            $instance->userid    = 0;
-            $instance->contextid = SITEID;
-            $instance->timecreated  = time();
-            $instance->timemodified = time();
-            $DB->insert_record('repository_instances', $instance);
-        }
-        $repo->type      = 'local';
-        $repo->visible   = 1;
-        $repo->sortorder = 1;
-        if (!$DB->record_exists('repository', array('type'=>'local'))) {
-            $typeid = $DB->insert_record('repository', $repo);
-        }else{
-            $record = $DB->get_record('repository', array('type'=>'local'));
-            $typeid = $record->id;
-        }
-        if (!$DB->record_exists('repository_instances', array('typeid'=>$typeid))) {
-            $instance = new object();
-            $instance->name      = get_string('repositoryname', 'repository_local');
-            $instance->typeid    = $typeid;
-            $instance->userid    = 0;
-            $instance->contextid = SITEID;
-            $instance->timecreated  = time();
-            $instance->timemodified = time();
-            $DB->insert_record('repository_instances', $instance);
-        }
-
-        upgrade_main_savepoint(true, 2008090108);
-    }
-
     // MDL-16411 Move all plugintype_pluginname_version values from config to config_plugins.
     if ($oldversion < 2008091000) {
         foreach (get_object_vars($CFG) as $name => $value) {
@@ -860,23 +819,6 @@ function xmldb_main_upgrade($oldversion) {
             unset_config($name);
         }
         upgrade_main_savepoint(true, 2008091000);
-    }
-
-    //Add a readonly field to the repository_instances table
-    //in order to support instance created automatically by a repository plugin
-     if ($oldversion < 2008091611) {
-
-    /// Define field readonly to be added to repository_instances
-        $table = new xmldb_table('repository_instances');
-        $field = new xmldb_field('readonly', XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'timemodified');
-
-    /// Conditionally launch add field readonly
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-
-    /// Main savepoint reached
-        upgrade_main_savepoint(true, 2008091611);
     }
 
     if ($oldversion < 2008092300) {
@@ -1336,13 +1278,6 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         set_config('missingtype_sortorder', 12, 'question');
 
         upgrade_main_savepoint(true, 2009030300);
-    }
-    if ($oldversion < 2009030501) {
-    /// setup default repository plugins
-        require_once($CFG->dirroot . '/repository/lib.php');
-        repository_setup_default_plugins();
-    /// Main savepoint reached
-        upgrade_main_savepoint(true, 2009030501);
     }
 
     /// MDL-18132 replace the use a new Role allow switch settings page, instead of
@@ -3985,16 +3920,6 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
 
     /// Main savepoint reached
         upgrade_main_savepoint(true, 2010050403);
-    }
-
-    // fix repository_alfresco version number
-    if ($oldversion < 2010050411) {
-        // force to change repository_alfresco version number to upgrade smoothly (from preview 1 -> preview 2)
-        if ($repository_plugin = $DB->get_record('config_plugins', array('plugin'=>'repository_alfresco', 'name'=>'version'))) {
-            $repository_plugin->value = '2008000000';
-            $DB->update_record('config_plugins', $repository_plugin);
-        }
-        upgrade_main_savepoint(true, 2010050411);
     }
 
     if ($oldversion < 2010051500) {

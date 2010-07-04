@@ -1815,30 +1815,3 @@ function initialise_filepicker($args) {
     }
     return $return;
 }
-
-/**
- * The plugins should be enabled by defaulted once moodle installed
- *
- * @global object $OUTPUT
- *
- * @return boolean
- */
-function repository_setup_default_plugins() {
-    global $OUTPUT;
-    //if the plugin type has no multiple instance (e.g. has no instance option name)
-    //repository_type::create will create an instance automatically
-    $user_plugin = new repository_type('user', array(), true);
-    $user_plugin->create(true);
-
-    $recent_plugin = new repository_type('recent', array(), true);
-    $recent_plugin->create(true);
-
-    $upload_plugin = new repository_type('upload', array(), true);
-    $upload_plugin->create(true);
-
-    $local_plugin = new repository_type('local', array(), true);
-    $local_plugin->create(true);
-
-    echo $OUTPUT->notification(get_string('setupdefaultplugins', 'repository'), 'notifysuccess');
-    return true;
-}
