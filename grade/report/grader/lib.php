@@ -340,7 +340,8 @@ class grade_report_grader extends grade_report {
             // the MAX() magic is required in order to please PG
             $sort = "MAX(g.finalgrade) $this->sortorder";
 
-            $sql = "SELECT u.id, u.firstname, u.lastname, u.imagealt, u.picture, u.idnumber
+            $ufields = user_picture::fields('u', array('idnumber'));
+            $sql = "SELECT $ufields
                       FROM {user} u
                            JOIN {role_assignments} ra ON ra.userid = u.id
                            $this->groupsql
@@ -348,7 +349,7 @@ class grade_report_grader extends grade_report {
                      WHERE ra.roleid $usql AND u.deleted = 0
                            $this->groupwheresql
                            AND ra.contextid ".get_related_contexts_string($this->context)."
-                  GROUP BY u.id, u.firstname, u.lastname, u.imagealt, u.picture, u.idnumber
+                  GROUP BY $ufields
                   ORDER BY $sort";
 
         } else {
@@ -364,8 +365,8 @@ class grade_report_grader extends grade_report {
 
             $params = array_merge($gbrparams, $this->groupwheresql_params);
 
-            $userfields = user_picture::fields('u');
-            $sql = "SELECT DISTINCT $userfields, u.idnumber
+            $userfields = user_picture::fields('u', array('idnumber'));
+            $sql = "SELECT DISTINCT $userfields
                       FROM {user} u
                            JOIN {role_assignments} ra ON u.id = ra.userid
                            $this->groupsql

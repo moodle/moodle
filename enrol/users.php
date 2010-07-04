@@ -374,7 +374,7 @@ foreach ($users as $user) {
     $picture = $OUTPUT->user_picture($user, array('courseid'=>$course->id));
 
     if ($user->lastseen) {
-        $strlastaccess = format_time(time() - $user->lastaccess);
+        $strlastaccess = userdate($user->lastseen);
     } else {
         $strlastaccess = get_string('never');
     }

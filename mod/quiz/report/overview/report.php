@@ -214,7 +214,7 @@ class quiz_overview_report extends quiz_default_report {
             }
 
             $fields .='qa.uniqueid AS attemptuniqueid, qa.id AS attempt, ' .
-                'u.id AS userid, u.idnumber, u.firstname, u.lastname, u.picture, u.imagealt, '.
+                'u.id AS userid, u.idnumber, u.firstname, u.lastname, u.picture, u.imagealt, u.email, '.
                 'qa.sumgrades, qa.timefinish, qa.timestart, qa.timefinish - qa.timestart AS duration ';
 
             // This part is the same for all cases - join users and quiz_attempts tables

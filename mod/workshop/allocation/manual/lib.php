@@ -204,7 +204,7 @@ class workshop_manual_allocator implements workshop_allocator {
         }
 
         // this will hold the information needed to display user names and pictures
-        $userinfo = $DB->get_records_list('user', 'id', array_keys($participants), '', 'id,lastname,firstname,picture,imagealt');
+        $userinfo = $DB->get_records_list('user', 'id', array_keys($participants), '', user_picture::fields());
 
         // load the participants' submissions
         $submissions = $this->workshop->get_submissions(array_keys($participants));
@@ -216,6 +216,7 @@ class workshop_manual_allocator implements workshop_allocator {
                 $userinfo[$submission->authorid]->lastname  = $submission->authorlastname;
                 $userinfo[$submission->authorid]->picture   = $submission->authorpicture;
                 $userinfo[$submission->authorid]->imagealt  = $submission->authorimagealt;
+                $userinfo[$submission->authorid]->email     = $submission->authoremail;
             }
         }
 
@@ -224,7 +225,7 @@ class workshop_manual_allocator implements workshop_allocator {
         if ($submissions) {
             list($submissionids, $params) = $DB->get_in_or_equal(array_keys($submissions), SQL_PARAMS_NAMED);
             $sql = "SELECT a.id AS assessmentid, a.submissionid,
-                           r.id AS reviewerid, r.lastname, r.firstname, r.picture, r.imagealt,
+                           r.id AS reviewerid, r.lastname, r.firstname, r.picture, r.imagealt, e.email,
                            s.id AS submissionid, s.authorid
                       FROM {workshop_assessments} a
                       JOIN {user} r ON (a.reviewerid = r.id)
@@ -239,6 +240,7 @@ class workshop_manual_allocator implements workshop_allocator {
                     $userinfo[$reviewer->reviewerid]->lastname  = $reviewer->lastname;
                     $userinfo[$reviewer->reviewerid]->picture   = $reviewer->picture;
                     $userinfo[$reviewer->reviewerid]->imagealt  = $reviewer->imagealt;
+                    $userinfo[$reviewer->reviewerid]->email     = $reviewer->email;
                 }
             }
         }
@@ -251,7 +253,7 @@ class workshop_manual_allocator implements workshop_allocator {
             $sql = "SELECT a.id AS assessmentid, a.submissionid,
                            u.id AS reviewerid,
                            s.id AS submissionid,
-                           e.id AS revieweeid, e.lastname, e.firstname, e.picture, e.imagealt
+                           e.id AS revieweeid, e.lastname, e.firstname, e.picture, e.imagealt, e.email
                       FROM {user} u
                       JOIN {workshop_assessments} a ON (a.reviewerid = u.id)
                       JOIN {workshop_submissions} s ON (a.submissionid = s.id)
@@ -266,6 +268,7 @@ class workshop_manual_allocator implements workshop_allocator {
                     $userinfo[$reviewee->revieweeid]->lastname  = $reviewee->lastname;
                     $userinfo[$reviewee->revieweeid]->picture   = $reviewee->picture;
                     $userinfo[$reviewee->revieweeid]->imagealt  = $reviewee->imagealt;
+                    $userinfo[$reviewee->revieweeid]->email     = $reviewee->email;
                 }
             }
         }
@@ -340,7 +343,7 @@ class workshop_manual_allocator implements workshop_allocator {
         $params['workshopid'] = $this->workshop->id;
 
         $sql = "SELECT author.id AS authorid, author.firstname AS authorfirstname, author.lastname AS authorlastname,
-                       author.picture AS authorpicture, author.imagealt AS authorimagealt,
+                       author.picture AS authorpicture, author.imagealt AS authorimagealt, author.email AS authoremail,
                        s.id AS submissionid, s.title AS submissiontitle, s.grade AS submissiongrade,
                        a.id AS assessmentid, a.timecreated AS timeallocated, a.reviewerid,
                        reviewer.firstname AS reviewerfirstname, reviewer.lastname AS reviewerlastname,

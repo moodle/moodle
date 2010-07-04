@@ -174,7 +174,7 @@ class rating_manager {
     */
     public function delete_ratings($options) {
         global $DB;
-        
+
         if( !empty($options->ratingid) ) {
             //delete a single rating
             $DB->delete_records('rating', array('contextid'=>$options->contextid, 'id'=>$options->ratingid) );
@@ -207,9 +207,8 @@ class rating_manager {
             $sortclause = "ORDER BY $options->sort";
         }
 
-        $userfields = user_picture::fields('u','uid');
-        $sql = "SELECT r.id, r.rating, r.itemid, r.userid, r.timemodified,
-                    $userfields
+        $userfields = user_picture::fields('u', null, 'uid');
+        $sql = "SELECT r.id, r.rating, r.itemid, r.userid, r.timemodified, $userfields
                 FROM {rating} r
                 LEFT JOIN {user} u ON r.userid = u.id
                 WHERE r.contextid = :contextid AND
@@ -350,7 +349,7 @@ class rating_manager {
         $plugintype = !empty($options->plugintype) ? $options->plugintype : null;
         $pluginname = !empty($options->pluginname) ? $options->pluginname : null;
         $pluginpermissionsarray = $this->get_plugin_permissions_array($options->context->id, $plugintype, $pluginname);
-        
+
         $settings->pluginpermissions = new stdclass();
         $settings->pluginpermissions->view = $pluginpermissionsarray['view'];
         $settings->pluginpermissions->viewany = $pluginpermissionsarray['viewany'];
@@ -462,7 +461,7 @@ class rating_manager {
         else if ( !empty($options->modulename) && !empty($options->moduleid) ) {
             $modulename = $options->modulename;
             $moduleid   = $options->moduleid;
-            
+
             //going direct to the db for the context id seems wrong
             list($ctxselect, $ctxjoin) = context_instance_preload_sql('cm.id', CONTEXT_MODULE, 'ctx');
             $sql = "SELECT cm.* $ctxselect
@@ -485,7 +484,7 @@ class rating_manager {
 
         $sql = "SELECT :userid1 as id, :userid2 AS userid, $aggregationstring(r.rating) AS rawgrade
                 FROM {rating} r
-                WHERE r.contextid=:contextid 
+                WHERE r.contextid=:contextid
                     AND r.itemid IN (SELECT i.id AS itemid FROM {{$itemtable}} i WHERE i.{$itemtableusercolumn} = :userid3)";
 
         $results = $DB->get_records_sql($sql, $params);
@@ -593,7 +592,7 @@ class rating_manager {
                     return true;
                 }
             }
-            
+
             return false;//item doesn't exist or belongs to the current user
         } else {
             return true;//callback doesn't exist

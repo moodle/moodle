@@ -19,7 +19,7 @@
  * Comment is helper class to add/delete comments anywhere in moodle
  *
  * @package   comment
- * @copyright 2010 Dongsheng Cai <dongsheng@moodle.com> 
+ * @copyright 2010 Dongsheng Cai <dongsheng@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -107,7 +107,7 @@ class comment {
         } else {
             $this->cid = uniqid();
         }
-        
+
         // setup context
         if (!empty($options->context)) {
             $this->context = $options->context;
@@ -132,7 +132,7 @@ class comment {
         if (!empty($options->pluginname)) {
             $this->pluginname = $options->pluginname;
         }
-        
+
         // setup coursemodule
         if (!empty($options->cm)) {
             $this->cm = $options->cm;
@@ -403,34 +403,38 @@ EOD;
         $this->page = $page;
         $params = array();
         $start = $page * $CFG->commentsperpage;
-        $sql = "SELECT c.id, c.userid, c.content, c.format, c.timecreated, u.picture, u.imagealt, u.username, u.firstname, u.lastname
-            FROM {comments} c, {user} u WHERE u.id=c.userid AND c.contextid=? AND c.commentarea=? AND c.itemid=?
-            ORDER BY c.timecreated DESC";
-        $params[] = $this->contextid;
-        $params[] = $this->commentarea;
-        $params[] = $this->itemid;
+        $ufields = user_picture::fields('u');
+        $sql = "SELECT $ufields, c.id AS cid, c.content AS c.content, c.format AS cformat, c.timecreated AS ctimecreated
+                  FROM {comments} c
+                  JOIN {user} u ON u.id = c.userid
+                 WHERE c.contextid = :contextid AND c.commentarea = :commentarea AND c.itemid = :itemid
+              ORDER BY c.timecreated DESC";
+        $params['contextid'] = $this->contextid;
+        $params['commentarea'] = $this->commentarea;
+        $params['itemid'] = $this->itemid;
 
         $comments = array();
         $candelete = has_capability('moodle/comment:delete', $this->context);
-        if ($records = $DB->get_records_sql($sql, $params, $start, $CFG->commentsperpage)) {
-            foreach ($records as &$c) {
-                $url = $CFG->httpswwwroot.'/user/view.php?id='.$c->userid.'&amp;course='.$this->courseid;
-                $c->username = '<a href="'.$url.'">'.fullname($c).'</a>';
-                $c->time = userdate($c->timecreated, get_string('strftimerecent', 'langconfig'));
-                $user = new stdclass;
-                $user->id = $c->userid;
-                $user->picture = $c->picture;
-                $user->firstname = $c->firstname;
-                $user->lastname  = $c->lastname;
-                $user->imagealt  = $c->imagealt;
-                $c->content = format_text($c->content, $c->format);
-                $c->avatar = $OUTPUT->user_picture($user, array('size'=>18));
-                if (($USER->id == $c->userid) || !empty($candelete)) {
-                    $c->delete = true;
-                }
-                $comments[] = $c;
+        $rs = $DB->get_recordset_sql($sql, $params, $start, $CFG->commentsperpage);
+        foreach ($records as $u) {
+            $c = new object();
+            $c->id          = $u->cid;
+            $c->content     = $u->ccontent;
+            $c->format      = $u->cformat;
+            $c->timecreated = $u->ctimecreated;
+            $url = $CFG->httpswwwroot.'/user/view.php?id='.$c->id.'&amp;course='.$this->courseid;
+            $c->username = '<a href="'.$url.'">'.fullname($u).'</a>';
+            $c->time = userdate($c->timecreated, get_string('strftimerecent', 'langconfig'));
+            $c->content = format_text($c->content, $c->format);
+
+            $c->avatar = $OUTPUT->user_picture($u, array('size'=>18));
+            if (($USER->id == $u->id) || !empty($candelete)) {
+                $c->delete = true;
             }
+            $comments[] = $c;
         }
+        $rs->close();
+
         if (!empty($this->plugintype)) {
             // moodle module will filter comments
             $comments = plugin_callback($this->plugintype, $this->pluginname, FEATURE_COMMENT, 'display', array($comments, $this->args), $comments);

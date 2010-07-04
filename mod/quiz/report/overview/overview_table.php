@@ -125,6 +125,7 @@ class quiz_report_overview_table extends table_sql {
         $user->firstname = $attempt->firstname;
         $user->imagealt = $attempt->imagealt;
         $user->picture = $attempt->picture;
+        $user->email = $attempt->email;
         return $OUTPUT->user_picture($user);
     }
 

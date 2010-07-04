@@ -157,7 +157,7 @@
 
                 // We only want to show the checkbox to delete attempts
                 // if the user has permissions and if the report mode is showing attempts.
-                $candelete = has_capability('mod/scorm:deleteresponses',$contextmodule) 
+                $candelete = has_capability('mod/scorm:deleteresponses',$contextmodule)
                         && ($attemptsmode!= SCORM_REPORT_ATTEMPTS_STUDENTS_WITH_NO);
                 // select the students
                 $nostudents = false;
@@ -180,14 +180,14 @@
                     }
                     $allowedlist = join(',', array_keys($groupstudents));
                 }
-                
+
                 if( !$nostudents ) {
-                    
+
                     // Now check if asked download of data
                     if ($download) {
                         $filename = clean_filename("$course->shortname ".format_string($scorm->name,true));
                     }
-                
+
                     // Define table columns
                     $columns = array();
                     $headers = array();
@@ -224,21 +224,21 @@
                     } else {
                         $scoes = NULL;
                     }
-                    
+
                     if (!$download) {
                         $table = new flexible_table('mod-scorm-report');
-            
+
                         $table->define_columns($columns);
                         $table->define_headers($headers);
                         $table->define_baseurl($reporturlwithdisplayoptions->out());
-            
+
                         $table->sortable(true);
                         $table->collapsible(true);
-                        
+
                         $table->column_suppress('picture');
                         $table->column_suppress('fullname');
                         $table->column_suppress('idnumber');
-                        
+
                         $table->no_sorting('start');
                         $table->no_sorting('finish');
                         $table->no_sorting('score');
@@ -249,20 +249,20 @@
                                 }
                             }
                         }
-                        
+
                         $table->column_class('picture', 'picture');
                         $table->column_class('fullname', 'bold');
                         $table->column_class('score', 'bold');
-            
+
                         $table->set_attribute('cellspacing', '0');
                         $table->set_attribute('id', 'attempts');
                         $table->set_attribute('class', 'generaltable generalbox');
-                        
+
                         // Start working -- this is necessary as soon as the niceties are over
                         $table->setup();
                     } else if ($download =='ODS') {
                         require_once("$CFG->libdir/odslib.class.php");
-            
+
                         $filename .= ".ods";
                         // Creating a workbook
                         $workbook = new MoodleODSWorkbook("-");
@@ -292,7 +292,7 @@
                         $formatg->set_color('green');
                         $formatg->set_align('center');
                         // Here starts workshhet headers
-            
+
                         $colnum = 0;
                         foreach ($headers as $item) {
                             $myxls->write(0,$colnum,$item,$formatbc);
@@ -301,7 +301,7 @@
                         $rownum=1;
                     } else if ($download =='Excel') {
                         require_once("$CFG->libdir/excellib.class.php");
-            
+
                         $filename .= ".xls";
                         // Creating a workbook
                         $workbook = new MoodleExcelWorkbook("-");
@@ -330,7 +330,7 @@
                         $formatg->set_bold(1);
                         $formatg->set_color('green');
                         $formatg->set_align('center');
-            
+
                         $colnum = 0;
                         foreach ($headers as $item) {
                             $myxls->write(0,$colnum,$item,$formatbc);
@@ -349,8 +349,8 @@
 
                     // Construct the SQL
                     $select = 'SELECT DISTINCT '.$DB->sql_concat('u.id', '\'#\'', 'COALESCE(st.attempt, 0)').' AS uniqueid, ';
-                    $select .= 'st.scormid AS scormid, st.attempt AS attempt, ' . 
-                            'u.id AS userid, u.idnumber, u.firstname, u.lastname, u.picture, u.imagealt ';
+                    $select .= 'st.scormid AS scormid, st.attempt AS attempt, ' .
+                            'u.id AS userid, u.idnumber, u.firstname, u.lastname, u.picture, u.imagealt, u.email ';
 
                     // This part is the same for all cases - join users and scorm_scoes_track tables
                     $from = 'FROM '.$CFG->prefix.'user u ';
@@ -369,12 +369,12 @@
                             $where = ' WHERE u.id IN (' .$allowedlist. ') AND (st.userid IS NOT NULL OR st.userid IS NULL)';
                             break;
                     }
-                    
+
                     $countsql = 'SELECT COUNT(DISTINCT('.$DB->sql_concat('u.id', '\'#\'', 'COALESCE(st.attempt, 0)').')) AS nbresults, ';
                     $countsql .= 'COUNT(DISTINCT('.$DB->sql_concat('u.id', '\'#\'','st.attempt').')) AS nbattempts, ';
                     $countsql .= 'COUNT(DISTINCT(u.id)) AS nbusers ';
                     $countsql .= $from.$where;
-                    
+
                     if (!$download) {
                         $sort = $table->get_sql_sort();
                     }
@@ -405,7 +405,7 @@
                         }
 
                         $table->pagesize($pagesize, $total);
-                        
+
                         echo '<div class="quizattemptcounts">';
                         if ( $count->nbresults == $count->nbattempts ) {
                             echo get_string('reportcountattempts','scorm', $count);
@@ -454,8 +454,9 @@
                             }
                             if (in_array('picture', $columns)){
                                 $user = (object)array('id'=>$scouser->userid,
-                                                      'picture'=>$scouser->picture, 
-                                                      'imagealt'=>$scouser->imagealt, 
+                                                      'picture'=>$scouser->picture,
+                                                      'imagealt'=>$scouser->imagealt,
+                                                      'email'=>$scouser->email,
                                                       'firstname'=>$scouser->firstname,
                                                       'lastname'=>$scouser->lastname);
                                 $row[] = $OUTPUT->user_picture($user, array('courseid'=>$course->id));
@@ -480,7 +481,7 @@
                                 else $row[] = userdate($timetracks->start);
                                 if ($download =='ODS' || $download =='Excel' ) $row[] = userdate($timetracks->finish, get_string('strftimedatetime', 'langconfig'));
                                 else $row[] = userdate($timetracks->finish);
-                                
+
                                 $row[] = scorm_grade_user_attempt($scorm, $scouser->userid, $scouser->attempt);
                             }
                             // print out all scores of attempt
@@ -527,7 +528,7 @@
                                     }
                                 }
                             }
-                            
+
                             if (!$download) {
                                 $table->add_data($row);
                             } else if ($download == 'Excel' or $download == 'ODS') {

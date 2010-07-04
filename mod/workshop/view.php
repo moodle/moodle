@@ -259,6 +259,7 @@ case workshop::PHASE_ASSESSMENT:
                 $submission->authorlastname     = $assessment->authorlastname;
                 $submission->authorpicture      = $assessment->authorpicture;
                 $submission->authorimagealt     = $assessment->authorimagealt;
+                $submission->authoremail        = $assessment->authoremail;
                 if (is_null($assessment->grade)) {
                     $class = ' notgraded';
                     $submission->status = 'notgraded';
@@ -342,6 +343,7 @@ case workshop::PHASE_EVALUATION:
             $submission->authorlastname     = $assessment->authorlastname;
             $submission->authorpicture      = $assessment->authorpicture;
             $submission->authorimagealt     = $assessment->authorimagealt;
+            $submission->authoremail        = $assessment->authoremail;
 
             if (is_null($assessment->grade)) {
                 $class = ' notgraded';

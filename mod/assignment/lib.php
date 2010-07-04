@@ -917,10 +917,11 @@ class assignment_base {
         $nextid = 0;
 
         if ($users) {
-            $select = 'SELECT u.id, u.firstname, u.lastname, u.picture, u.imagealt,
+            $userfields = user_picture::fields('u', array('lastaccess'));
+            $select = "SELECT $userfields,
                               s.id AS submissionid, s.grade, s.submissioncomment,
                               s.timemodified, s.timemarked,
-                              COALESCE(SIGN(SIGN(s.timemarked) + SIGN(s.timemarked - s.timemodified)), 0) AS status ';
+                              COALESCE(SIGN(SIGN(s.timemarked) + SIGN(s.timemarked - s.timemodified)), 0) AS status ";
             $sql = 'FROM {user} u '.
                    'LEFT JOIN {assignment_submissions} s ON u.id = s.userid
                                                                       AND s.assignment = '.$this->assignment->id.' '.
@@ -1178,10 +1179,11 @@ class assignment_base {
             $sort = ' ORDER BY '.$sort;
         }
 
-        $select = 'SELECT u.id, u.firstname, u.lastname, u.picture, u.imagealt,
+        $ufields = user_picture::fields('u');
+        $select = "SELECT $ufields,
                           s.id AS submissionid, s.grade, s.submissioncomment,
                           s.timemodified, s.timemarked,
-                          COALESCE(SIGN(SIGN(s.timemarked) + SIGN(s.timemarked - s.timemodified)), 0) AS status ';
+                          COALESCE(SIGN(SIGN(s.timemarked) + SIGN(s.timemarked - s.timemodified)), 0) AS status ";
         $sql = 'FROM {user} u '.
                'LEFT JOIN {assignment_submissions} s ON u.id = s.userid
                                                                   AND s.assignment = '.$this->assignment->id.' '.

@@ -96,7 +96,7 @@ class mod_workshop_renderer extends plugin_renderer_base {
      * Display a short summary of the submission
      *
      * The passed submission object must define at least: id, title, timecreated, timemodified,
-     * authorid, authorfirstname, authorlastname, authorpicture and authorimagealt. Optional
+     * authorid, authorfirstname, authorlastname, authorpicture, authorimagealt and email. Optional
      * property is status (graded, notgraded).
      *
      * @param stdclass $submission     The submission record
@@ -122,6 +122,7 @@ class mod_workshop_renderer extends plugin_renderer_base {
             $author->lastname   = $submission->authorlastname;
             $author->picture    = $submission->authorpicture;
             $author->imagealt   = $submission->authorimagealt;
+            $author->email      = $submission->authoremail;
             $userpic            = $this->output->user_picture($author, array('courseid' => $this->page->course->id, 'size' => 35));
             $userurl            = new moodle_url('/user/view.php',
                                             array('id' => $author->id, 'course' => $this->page->course->id));
@@ -180,6 +181,7 @@ class mod_workshop_renderer extends plugin_renderer_base {
             $author->lastname   = $submission->authorlastname;
             $author->picture    = $submission->authorpicture;
             $author->imagealt   = $submission->authorimagealt;
+            $author->email      = $submission->authoremail;
             $userpic            = $this->output->user_picture($author, array('courseid' => $this->page->course->id, 'size' => 64));
             $userurl            = new moodle_url('/user/view.php',
                                             array('id' => $author->id, 'course' => $this->page->course->id));

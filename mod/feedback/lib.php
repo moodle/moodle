@@ -305,7 +305,8 @@ function feedback_get_recent_mod_activity(&$activities, &$index, $timemodified, 
 
     $sqlargs = array();
 
-    $sql = " SELECT fk . * , fc . * , u.firstname, u.lastname, u.email, u.picture
+    //TODO: user user_picture::fields;
+    $sql = " SELECT fk . * , fc . * , u.firstname, u.lastname, u.email, u.picture, u.email
                                             FROM {feedback_completed} fc
                                                 JOIN {feedback} fk ON fk.id = fc.feedback
                                                 JOIN {user} u ON u.id = fc.userid ";
@@ -369,6 +370,7 @@ function feedback_get_recent_mod_activity(&$activities, &$index, $timemodified, 
         $tmpactivity->content->feedbackid = $feedbackitem->id;
         $tmpactivity->content->feedbackuserid = $feedbackitem->userid;
 
+        //TODO: add all necessary user fields, this is not enough for user_picture
         $tmpactivity->user->userid   = $feedbackitem->userid;
         $tmpactivity->user->fullname = fullname($feedbackitem, $viewfullnames);
         $tmpactivity->user->picture  = $feedbackitem->picture;

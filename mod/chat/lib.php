@@ -539,11 +539,12 @@ function chat_get_users($chatid, $groupid=0, $groupingid=0) {
         $groupingjoin = '';
     }
 
-    return $DB->get_records_sql("SELECT
-        DISTINCT u.id, u.firstname, u.lastname, u.picture, c.lastmessageping, c.firstping, u.imagealt
-        FROM {chat_users} c JOIN {user} u ON u.id = c.userid $groupingjoin
-        WHERE c.chatid = :chatid $groupselect
-        ORDER BY c.firstping ASC", $params);
+    $ufields = user_picture::fields('u');
+    return $DB->get_records_sql("SELECT DISTINCT $ufields, c.lastmessageping, c.firstping
+                                   FROM {chat_users} c
+                                   JOIN {user} u ON u.id = c.userid $groupingjoin
+                                  WHERE c.chatid = :chatid $groupselect
+                               ORDER BY c.firstping ASC", $params);
 }
 
 /**
@@ -888,7 +889,7 @@ function chat_format_message($message, $courseid, $currentuser, $chat_lastrow=NU
 
     if (isset($users[$message->userid])) {
         $user = $users[$message->userid];
-    } else if ($user = $DB->get_record('user', array('id'=>$message->userid), 'id,picture,firstname,lastname,imagealt')) {
+    } else if ($user = $DB->get_record('user', array('id'=>$message->userid), user_image::fields())) {
         $users[$message->userid] = $user;
     } else {
         return NULL;
@@ -917,7 +918,7 @@ function chat_format_message_theme ($message, $courseid, $currentuser, $theme = 
 
     if (isset($users[$message->userid])) {
         $sender = $users[$message->userid];
-    } else if ($sender = $DB->get_record('user', array('id'=>$message->userid), 'id,picture,firstname,lastname,imagealt')) {
+    } else if ($sender = $DB->get_record('user', array('id'=>$message->userid), user_picture::fields())) {
         $users[$message->userid] = $sender;
     } else {
         return NULL;

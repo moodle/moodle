@@ -489,9 +489,9 @@ class workshop {
         $sql = 'SELECT s.id, s.workshopid, s.example, s.authorid, s.timecreated, s.timemodified,
                        s.title, s.grade, s.gradeover, s.gradeoverby, s.published,
                        u.lastname AS authorlastname, u.firstname AS authorfirstname,
-                       u.picture AS authorpicture, u.imagealt AS authorimagealt,
+                       u.picture AS authorpicture, u.imagealt AS authorimagealt, u.email AS authoremail,
                        t.lastname AS overlastname, t.firstname AS overfirstname,
-                       t.picture AS overpicture, t.imagealt AS overimagealt
+                       t.picture AS overpicture, t.imagealt AS overimagealt, t.email AS overemail
                   FROM {workshop_submissions} s
             INNER JOIN {user} u ON (s.authorid = u.id)
              LEFT JOIN {user} t ON (s.gradeoverby = t.id)
@@ -526,7 +526,7 @@ class workshop {
         // from other instances
         $sql = 'SELECT s.*,
                        u.lastname AS authorlastname, u.firstname AS authorfirstname, u.id AS authorid,
-                       u.picture AS authorpicture, u.imagealt AS authorimagealt
+                       u.picture AS authorpicture, u.imagealt AS authorimagealt, u.email AS authoremail
                   FROM {workshop_submissions} s
             INNER JOIN {user} u ON (s.authorid = u.id)
                  WHERE s.example = 0 AND s.workshopid = :workshopid AND s.id = :id';
@@ -548,7 +548,7 @@ class workshop {
         }
         $sql = 'SELECT s.*,
                        u.lastname AS authorlastname, u.firstname AS authorfirstname, u.id AS authorid,
-                       u.picture AS authorpicture, u.imagealt AS authorimagealt
+                       u.picture AS authorpicture, u.imagealt AS authorimagealt, u.email AS authoremail
                   FROM {workshop_submissions} s
             INNER JOIN {user} u ON (s.authorid = u.id)
                  WHERE s.example = 0 AND s.workshopid = :workshopid AND s.authorid = :authorid';
@@ -567,7 +567,7 @@ class workshop {
         $sql = "SELECT s.id, s.authorid, s.timecreated, s.timemodified,
                        s.title, s.grade, s.gradeover, COALESCE(s.gradeover,s.grade) AS finalgrade,
                        u.lastname AS authorlastname, u.firstname AS authorfirstname, u.id AS authorid,
-                       u.picture AS authorpicture, u.imagealt AS authorimagealt
+                       u.picture AS authorpicture, u.imagealt AS authorimagealt, u.email AS authoremail
                   FROM {workshop_submissions} s
             INNER JOIN {user} u ON (s.authorid = u.id)
                  WHERE s.example = 0 AND s.workshopid = :workshopid AND s.published = 1
@@ -778,7 +778,7 @@ class workshop {
                        s.id AS submissionid, s.title AS submissiontitle, s.timecreated AS submissioncreated,
                        s.timemodified AS submissionmodified,
                        author.id AS authorid, author.firstname AS authorfirstname,author.lastname AS authorlastname,
-                       author.picture AS authorpicture, author.imagealt AS authorimagealt
+                       author.picture AS authorpicture, author.imagealt AS authorimagealt, author.email AS authoremail
                   FROM {workshop_assessments} a
             INNER JOIN {user} reviewer ON (a.reviewerid = reviewer.id)
             INNER JOIN {workshop_submissions} s ON (a.submissionid = s.id)
@@ -1219,7 +1219,7 @@ class workshop {
             $params['workshopid1'] = $this->id;
             $params['workshopid2'] = $this->id;
             $sqlsort = $sortby . ' ' . $sorthow . ',u.lastname,u.firstname,u.id';
-            $sql = "SELECT u.id AS userid,u.firstname,u.lastname,u.picture,u.imagealt,
+            $sql = "SELECT u.id AS userid,u.firstname,u.lastname,u.picture,u.imagealt,u.email,
                            s.title AS submissiontitle, s.grade AS submissiongrade, ag.gradinggrade
                       FROM {user} u
                  LEFT JOIN {workshop_submissions} s ON (s.authorid = u.id AND s.workshopid = :workshopid1 AND s.example = 0)
@@ -1243,6 +1243,7 @@ class workshop {
                 $userinfo[$participant->userid]->lastname  = $participant->lastname;
                 $userinfo[$participant->userid]->picture   = $participant->picture;
                 $userinfo[$participant->userid]->imagealt  = $participant->imagealt;
+                $userinfo[$participant->userid]->email     = $participant->email;
             }
         }
 
@@ -1258,6 +1259,7 @@ class workshop {
                 $userinfo[$submission->gradeoverby]->lastname  = $submission->overlastname;
                 $userinfo[$submission->gradeoverby]->picture   = $submission->overpicture;
                 $userinfo[$submission->gradeoverby]->imagealt  = $submission->overimagealt;
+                $userinfo[$submission->gradeoverby]->email     = $submission->overemail;
             }
         }
 
@@ -1266,7 +1268,7 @@ class workshop {
         if ($submissions) {
             list($submissionids, $params) = $DB->get_in_or_equal(array_keys($submissions), SQL_PARAMS_NAMED);
             $sql = "SELECT a.id AS assessmentid, a.submissionid, a.grade, a.gradinggrade, a.gradinggradeover, a.weight,
-                           r.id AS reviewerid, r.lastname, r.firstname, r.picture, r.imagealt,
+                           r.id AS reviewerid, r.lastname, r.firstname, r.picture, r.imagealt, r.email,
                            s.id AS submissionid, s.authorid
                       FROM {workshop_assessments} a
                       JOIN {user} r ON (a.reviewerid = r.id)
@@ -1282,6 +1284,7 @@ class workshop {
                     $userinfo[$reviewer->reviewerid]->lastname  = $reviewer->lastname;
                     $userinfo[$reviewer->reviewerid]->picture   = $reviewer->picture;
                     $userinfo[$reviewer->reviewerid]->imagealt  = $reviewer->imagealt;
+                    $userinfo[$reviewer->reviewerid]->email     = $reviewer->email;
                 }
             }
         }
@@ -1293,7 +1296,7 @@ class workshop {
             $params['workshopid'] = $this->id;
             $sql = "SELECT a.id AS assessmentid, a.submissionid, a.grade, a.gradinggrade, a.gradinggradeover, a.reviewerid, a.weight,
                            s.id AS submissionid,
-                           e.id AS authorid, e.lastname, e.firstname, e.picture, e.imagealt
+                           e.id AS authorid, e.lastname, e.firstname, e.picture, e.imagealt, e.email
                       FROM {user} u
                       JOIN {workshop_assessments} a ON (a.reviewerid = u.id)
                       JOIN {workshop_submissions} s ON (a.submissionid = s.id AND s.example = 0)
@@ -1309,6 +1312,7 @@ class workshop {
                     $userinfo[$reviewee->authorid]->lastname  = $reviewee->lastname;
                     $userinfo[$reviewee->authorid]->picture   = $reviewee->picture;
                     $userinfo[$reviewee->authorid]->imagealt  = $reviewee->imagealt;
+                    $userinfo[$reviewee->authorid]->email     = $reviewee->email;
                 }
             }
         }

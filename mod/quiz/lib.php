@@ -901,6 +901,7 @@ function quiz_get_recent_mod_activity(&$activities, &$index, $timestart,
         $tmpactivity->user->fullname = fullname($attempt, $viewfullnames);
         $tmpactivity->user->picture  = $attempt->picture;
         $tmpactivity->user->imagealt = $attempt->imagealt;
+        $tmpactivity->user->email = $attempt->email;
 
         $activities[$index++] = $tmpactivity;
     }
@@ -1654,7 +1655,7 @@ function quiz_extend_settings_navigation($settings, $quiznode) {
 
     if (has_capability('mod/quiz:manage', $PAGE->cm->context)) {
         $editnode = $quiznode->add(get_string('edit'), null, navigation_node::TYPE_CONTAINER, null, 'quizedit');
-        
+
         $url = new moodle_url('/mod/quiz/edit.php', array('cmid'=>$PAGE->cm->id));
         $text = get_string("editinga", "moodle", get_string('modulename', 'quiz'));
         $editnode->add($text, $url, navigation_node::TYPE_SETTING, null, 'edit', new pix_icon('t/edit', ''));

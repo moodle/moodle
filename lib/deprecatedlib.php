@@ -2132,7 +2132,7 @@ function print_header($title='', $heading='', $navigation='', $focus='',
 
     $PAGE->set_title($title);
     $PAGE->set_heading($heading);
-    $PAGE->set_cacheable($cache);    
+    $PAGE->set_cacheable($cache);
     if ($button == '') {
         $button = '&nbsp;';
     }
@@ -2197,7 +2197,7 @@ function print_header_simple($title='', $heading='', $navigation='', $focus='', 
     }
 
     $PAGE->set_title($title);
-    $PAGE->set_heading($heading);   
+    $PAGE->set_heading($heading);
     $PAGE->set_cacheable(true);
     $PAGE->set_button($button);
 
@@ -2663,7 +2663,7 @@ function print_file_picture($path, $courseid=0, $height='', $width='', $link='',
  *
  * @global object
  * @global object
- * @param mixed $user Should be a $user object with at least fields id, picture, imagealt, firstname, lastname
+ * @param mixed $user Should be a $user object with at least fields id, picture, imagealt, firstname, lastname, email
  *      If any of these are missing, or if a userid is passed, the the database is queried. Avoid this
  *      if at all possible, particularly for reports. It is very bad for performance.
  * @param int $courseid The course id. Used when constructing the link to the user's profile.

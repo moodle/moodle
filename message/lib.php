@@ -65,7 +65,7 @@ if (!isset($CFG->message_offline_time)) {
 
 function message_print_contact_selector($countunreadtotal, $usergroup, $user1, $user2, $blockedusers, $onlinecontacts, $offlinecontacts, $strangers, $showcontactactionlinks) {
     global $PAGE;
-    
+
     echo html_writer::start_tag('div', array('class'=>'contactselector mdl-align'));
 
         //if 0 unread messages and they've requested unread messages then show contacts
@@ -128,7 +128,7 @@ function message_print_participants($context, $courseid, $contactselecturl=null,
     global $DB, $USER;
 
     $participants = get_enrolled_users($context);
-    
+
     echo '<table id="message_participants" class="boxaligncenter" cellspacing="2" cellpadding="0" border="0">';
 
     if (!empty($titletodisplay)) {
@@ -166,15 +166,14 @@ function message_get_blocked_users($user1=null, &$user2=null) {
         $user2->isblocked = false;
     }
 
-    $userfields = user_picture::fields('u');
-    $blockeduserssql = "SELECT $userfields, u.lastaccess, count(m.id) as messagecount
-                            FROM {message_contacts} mc
-                            JOIN {user} u ON u.id = mc.contactid
-                            LEFT OUTER JOIN {message} m ON m.useridfrom = mc.contactid AND m.useridto = :user1id1
-                            WHERE mc.userid = :user1id2 AND mc.blocked = 1
-                        GROUP BY u.id, u.firstname, u.lastname, u.picture,
-                                 u.imagealt, u.lastaccess
-                        ORDER BY u.firstname ASC";
+    $userfields = user_picture::fields('u', array('lastaccess'));
+    $blockeduserssql = "SELECT $userfields, COUNT(m.id) AS messagecount
+                          FROM {message_contacts} mc
+                          JOIN {user} u ON u.id = mc.contactid
+                          LEFT OUTER JOIN {message} m ON m.useridfrom = mc.contactid AND m.useridto = :user1id1
+                         WHERE mc.userid = :user1id2 AND mc.blocked = 1
+                      GROUP BY $userfields
+                      ORDER BY u.firstname ASC";
     $rs =  $DB->get_recordset_sql($blockeduserssql, array('user1id1'=>$user1->id, 'user1id2'=>$user1->id));
 
     $blockedusers = array();
@@ -243,17 +242,16 @@ function message_get_contacts($user1=null, &$user2=null) {
     // people who are not in our contactlist but have sent us a message
     $strangers       = array();
 
-    $userfields = user_picture::fields('u');
+    $userfields = user_picture::fields('u', array('lastaccess'));
 
     // get all in our contactlist who are not blocked in our contact list
     // and count messages we have waiting from each of them
-    $contactsql = "SELECT $userfields, u.lastaccess, count(m.id) as messagecount
+    $contactsql = "SELECT $userfields, COUNT(m.id) AS messagecount
                      FROM {message_contacts} mc
                      JOIN {user} u ON u.id = mc.contactid
                      LEFT OUTER JOIN {message} m ON m.useridfrom = mc.contactid AND m.useridto = ?
                     WHERE mc.userid = ? AND mc.blocked = 0
-                 GROUP BY u.id, u.firstname, u.lastname, u.picture,
-                          u.imagealt, u.lastaccess
+                 GROUP BY $userfields
                  ORDER BY u.firstname ASC";
 
     if ($rs = $DB->get_recordset_sql($contactsql, array($user1->id, $user1->id))){
@@ -277,13 +275,12 @@ function message_get_contacts($user1=null, &$user2=null) {
 
     // get messages from anyone who isn't in our contact list and count the number
     // of messages we have from each of them
-    $strangersql = "SELECT $userfields, u.lastaccess, count(m.id) as messagecount
+    $strangersql = "SELECT $userfields, count(m.id) as messagecount
                       FROM {message} m
                       JOIN {user} u  ON u.id = m.useridfrom
                       LEFT OUTER JOIN {message_contacts} mc ON mc.contactid = m.useridfrom AND mc.userid = m.useridto
                      WHERE mc.id IS NULL AND m.useridto = ?
-                  GROUP BY u.id, u.firstname, u.lastname, u.picture,
-                           u.imagealt, u.lastaccess
+                  GROUP BY $userfields
                   ORDER BY u.firstname ASC";
 
     if($rs = $DB->get_recordset_sql($strangersql, array($USER->id))){
@@ -512,7 +509,7 @@ function message_print_search($advancedsearch = false, $user1=null) {
     global $USER, $PAGE, $OUTPUT;
 
     $frm = data_submitted();
-    
+
     $doingsearch = false;
     if ($frm) {
         $doingsearch = !empty($frm->combinedsubmit) || !empty($frm->keywords) || (!empty($frm->personsubmit) and !empty($frm->name));
@@ -528,7 +525,7 @@ function message_print_search($advancedsearch = false, $user1=null) {
 
     if ($doingsearch) {
         if ($advancedsearch) {
-            
+
             $messagesearch = '';
             if (!empty($frm->keywords)) {
                 $messagesearch = $frm->keywords;
@@ -967,7 +964,7 @@ function message_contact_link($userid, $linktype='add', $return=false, $script=n
     $safealttext = s($string);
 
     $safestring = '';
-    if (!empty($text)) { 
+    if (!empty($text)) {
         $safestring = $safealttext;
     }
 
@@ -1095,32 +1092,30 @@ function message_search_users($courseid, $searchtext, $sort='', $exceptions='') 
         $order = '';
     }
 
-    $select = 'u.deleted = \'0\' AND u.confirmed = \'1\'';
-    $fields = 'u.id, u.firstname, u.lastname, u.picture, u.imagealt, mc.id as contactlistid, mc.blocked';
-
+    $ufields = user_picture::fields('u');
     if (!$courseid or $courseid == SITEID) {
         $params = array($USER->id, "%$searchtext%");
-        return $DB->get_records_sql("SELECT $fields
+        return $DB->get_records_sql("SELECT $ufields, mc.id as contactlistid, mc.blocked
                                        FROM {user} u
                                        LEFT JOIN {message_contacts} mc
                                             ON mc.contactid = u.id AND mc.userid = ?
-                                      WHERE $select
+                                      WHERE u.deleted = '0' AND u.confirmed = '1'
                                             AND ($fullname $LIKE ?)
                                             $except
                                      $order", $params);
     } else {
-
+//TODO: add enabled enrolment join here (skodak)
         $context = get_context_instance(CONTEXT_COURSE, $courseid);
         $contextlists = get_related_contexts_string($context);
 
         // everyone who has a role assignement in this course or higher
         $params = array($USER->id, "%$searchtext%");
-        $users = $DB->get_records_sql("SELECT $fields
-                                         FROM {user} u
+        $users = $DB->get_records_sql("SELECT $ufields,
+                                         FROM {user} u, mc.id as contactlistid, mc.blocked
                                          JOIN {role_assignments} ra ON ra.userid = u.id
                                          LEFT JOIN {message_contacts} mc
                                               ON mc.contactid = u.id AND mc.userid = ?
-                                        WHERE $select
+                                        WHERE u.deleted = '0' AND u.confirmed = '1'
                                               AND ra.contextid $contextlists
                                               AND ($fullname $LIKE ?)
                                               $except
@@ -1390,7 +1385,7 @@ function message_get_history($user1, $user2, $limitnum=0) {
         ksort($messages);
         $messages = array_slice($messages, count($messages)-$limitnum, $limitnum, true);
     }
-    
+
     return $messages;
 }
 

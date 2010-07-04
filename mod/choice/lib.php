@@ -520,7 +520,7 @@ function choice_show_results($choice, $course, $cm, $allresponses, $forcepublish
             if ($choice->showunanswered) {
                 echo "<td></td>";
             }
-            
+
             foreach ($choice->option as $optionid => $optiontext) {
                 echo "<td align=\"center\" class=\"col$count count\">";
                 if ($choice->limitanswers) {
@@ -865,7 +865,7 @@ function choice_get_response_data($choice, $cm, $groupmode) {
 
 /// First get all the users who have access here
 /// To start with we assume they are all "unanswered" then move them later
-    $allresponses[0] = get_enrolled_users($context, 'mod/choice:choose', $currentgroup, 'u.id, u.picture, u.imagealt, u.firstname, u.lastname, u.idnumber', 'u.lastname ASC,u.firstname ASC');
+    $allresponses[0] = get_enrolled_users($context, 'mod/choice:choose', $currentgroup, user_picture::fields('u', array('idnumber')), 'u.lastname ASC,u.firstname ASC');
 
 /// Get all the recorded responses for this choice
     $rawresponses = $DB->get_records('choice_answers', array('choiceid' => $choice->id));

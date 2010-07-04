@@ -54,7 +54,7 @@ class block_online_users extends block_base {
             $params['currentgroup'] = $currentgroup;
         }
 
-        $userfields = user_picture::fields('u').', username';
+        $userfields = user_picture::fields('u', array('username'));
 
         if ($this->page->course->id == SITEID) {  // Site-level
             $sql = "SELECT $userfields, MAX(u.lastaccess) AS lastaccess

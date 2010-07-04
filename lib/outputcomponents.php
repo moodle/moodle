@@ -98,13 +98,12 @@ class file_picker implements renderable {
  */
 class user_picture implements renderable {
     /**
-     * List of mandatory fields in user record here.
-     * @var string
+     * @var array List of mandatory fields in user record here. (do not include TEXT columns because it would break SELECT DISTINCT in MSSQL and ORACLE)
      */
-    const FIELDS = 'id,picture,firstname,lastname,imagealt'; //TODO: add email, but first update all places that call user_picture(), this is necessary for gravatar support
+    protected static $fields = array('id', 'picture', 'firstname', 'lastname', 'imagealt', 'email');
 
     /**
-     * @var object $user A user object with at least fields all columns specified in FIELDS constant set.
+     * @var object $user A user object with at least fields all columns specified in $fields array constant set.
      */
     public $user;
     /**
@@ -143,18 +142,13 @@ class user_picture implements renderable {
     public function __construct(stdClass $user) {
         global $DB;
 
-        static $fields = null;
-        if (is_null($fields)) {
-            $fields = explode(',', self::FIELDS);
-        }
-
         if (empty($user->id)) {
             throw new coding_exception('User id is required when printing user avatar image.');
         }
 
         // only touch the DB if we are missing data and complain loudly...
         $needrec = false;
-        foreach ($fields as $field) {
+        foreach (self::$fields as $field) {
             if (!array_key_exists($field, $user)) {
                 $needrec = true;
                 debugging('Missing '.$field.' property in $user object, this is a performance problem that needs to be fixed by a developer. '
@@ -164,7 +158,7 @@ class user_picture implements renderable {
         }
 
         if ($needrec) {
-            $this->user = $DB->get_record('user', array('id'=>$user->id), self::FIELDS, MUST_EXIST);
+            $this->user = $DB->get_record('user', array('id'=>$user->id), self::fields(), MUST_EXIST);
         } else {
             $this->user = clone($user);
         }
@@ -178,19 +172,33 @@ class user_picture implements renderable {
      * id of the result record. Please note it has to be converted back to id before rendering.
      *
      * @param string $tableprefix name of database table prefix in query
+     * @param array $extrafields extra fields to be included in result (do not include TEXT columns because it would break SELECT DISTINCT in MSSQL and ORACLE)
      * @param string $idalias alias of id field
      * @return string
      */
-    public static function fields($tableprefix = '', $idalias = '') {
-        if ($tableprefix === '' and $idalias === '') {
-            return self::FIELDS;
+    public static function fields($tableprefix = '', array $extrafields = NULL, $idalias = 'id') {
+        if (!$tableprefix and !$extrafields and !$idalias) {
+            return implode(',', self::$fields);
         }
-        $fields = explode(',', self::FIELDS);
-        foreach ($fields as $key=>$field) {
-            if ($field === 'id' and $idalias !== '') {
-                $field = "$field AS $idalias";
+        if ($tableprefix) {
+            $tableprefix .= '.';
+        }
+        $fields = array();
+        foreach (self::$fields as $field) {
+            if ($field === 'id' and $idalias and $idalias !== 'id') {
+                $fields[$field] = "$tableprefix.$field AS $idalias";
+            } else {
+                $fields[$field] = $tableprefix.$field;
             }
-            $fields[$key] = "$tableprefix.$field";
+        }
+        // add extra fields if not already there
+        if ($extrafields) {
+            foreach ($extrafields as $e) {
+                if ($e === 'id' or isset($fields[$e])) {
+                    continue;
+                }
+                $fields[$e] = $tableprefix.$e;
+            }
         }
         return implode(',', $fields);
     }
