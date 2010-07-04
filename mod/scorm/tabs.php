@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 /**
  * Sets up the tabs used by the scorm pages based on the users capabilites.
  *
