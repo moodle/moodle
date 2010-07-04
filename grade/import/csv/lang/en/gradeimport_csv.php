@@ -24,4 +24,4 @@
  */
 
 $string['csv:view'] = 'Import grades from CSV';
-$string['modulename'] = 'CSV file';
+$string['pluginname'] = 'CSV file';

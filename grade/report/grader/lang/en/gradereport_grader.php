@@ -30,5 +30,5 @@ $string['ajaxfieldchanged'] = 'The field you are currently editing has changed, 
 $string['ajaxchoosescale'] = 'Choose';
 $string['grader:manage'] = 'Manage the grader report';
 $string['grader:view'] = 'View the grader report';
-$string['modulename'] = 'Grader report';
+$string['pluginname'] = 'Grader report';
 $string['preferences'] = 'Grader report preferences';

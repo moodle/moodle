@@ -33,7 +33,7 @@ $context = get_context_instance(CONTEXT_COURSE, $id);
 require_capability('moodle/grade:export', $context);
 require_capability('gradeexport/ods:view', $context);
 
-print_grade_page_head($COURSE->id, 'export', 'ods', get_string('exportto', 'grades') . ' ' . get_string('modulename', 'gradeexport_ods'));
+print_grade_page_head($COURSE->id, 'export', 'ods', get_string('exportto', 'grades') . ' ' . get_string('pluginname', 'gradeexport_ods'));
 
 if (!empty($CFG->gradepublishing)) {
     $CFG->gradepublishing = has_capability('gradeexport/ods:publish', $context);

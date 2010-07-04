@@ -35,7 +35,7 @@ require_capability('gradeimport/xml:view', $context);
 
 // print header
 $strgrades = get_string('grades', 'grades');
-$actionstr = get_string('modulename', 'gradeimport_xml');
+$actionstr = get_string('pluginname', 'gradeimport_xml');
 
 if (!empty($CFG->gradepublishing)) {
     $CFG->gradepublishing = has_capability('gradeimport/xml:publish', $context);

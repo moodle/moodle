@@ -23,6 +23,6 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['modulename'] = 'OpenDocument spreadsheet';
+$string['pluginname'] = 'OpenDocument spreadsheet';
 $string['ods:publish'] = 'Publish ODS grade export';
 $string['ods:view'] = 'Use OpenDocument grade export';

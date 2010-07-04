@@ -19,7 +19,7 @@
     $tabcontext = get_context_instance(CONTEXT_COURSE, $COURSE->id);
     $row[] = new tabobject('graderreport',
                            $CFG->wwwroot.'/grade/report/grader/index.php?id='.$courseid,
-                           get_string('modulename', 'gradereport_grader'));
+                           get_string('pluginname', 'gradereport_grader'));
     if (has_capability('moodle/grade:manage',$tabcontext ) ||
         has_capability('moodle/grade:edit', $tabcontext) ||
         has_capability('gradereport/grader:view', $tabcontext)) {

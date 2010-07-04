@@ -954,7 +954,7 @@ function grade_build_nav($path, $pagename=null, $id=null) {
             break;
         case 4:
             if ($path_elements[2] == 'grader' AND $path_elements[3] != 'index.php') {
-                $PAGE->navbar->add(get_string('modulename', 'gradereport_grader'), new moodle_url('/grade/report/grader/index.php', $linkparams));
+                $PAGE->navbar->add(get_string('pluginname', 'gradereport_grader'), new moodle_url('/grade/report/grader/index.php', $linkparams));
             }
             $PAGE->navbar->add($pagename);
             break;
@@ -1024,7 +1024,7 @@ class grade_structure {
                     }
 
                 } else if ($element['object']->itemtype == 'mod') {
-                    $strmodname = get_string('modulename', $element['object']->itemmodule);
+                    $strmodname = get_string('pluginname', $element['object']->itemmodule);
                     return '<img src="'.$OUTPUT->pix_url('icon',
                             $element['object']->itemmodule) . '" ' .
                             'class="icon itemicon" title="' .s($strmodname).
@@ -1091,7 +1091,7 @@ class grade_structure {
         if ($withlink and $itemtype=='mod' and $iteminstance and $itemmodule) {
             if ($cm = get_coursemodule_from_instance($itemmodule, $iteminstance, $this->courseid)) {
 
-                $a->name = get_string('modulename', $element['object']->itemmodule);
+                $a->name = get_string('pluginname', $element['object']->itemmodule);
                 $title = get_string('linktoactivity', 'grades', $a);
                 $dir = $CFG->dirroot.'/mod/'.$itemmodule;
 
@@ -2219,7 +2219,7 @@ abstract class grade_helper {
                 continue;
             }
 
-            $pluginstr = get_string('modulename', 'gradereport_'.$plugin);
+            $pluginstr = get_string('pluginname', 'gradereport_'.$plugin);
             $url = new moodle_url('/grade/report/'.$plugin.'/index.php', array('id'=>$courseid));
             $gradereports[$plugin] = new grade_plugin_info($plugin, $url, $pluginstr);
 
@@ -2367,7 +2367,7 @@ abstract class grade_helper {
                 if (!has_capability('gradeimport/'.$plugin.':view', $context)) {
                     continue;
                 }
-                $pluginstr = get_string('modulename', 'gradeimport_'.$plugin);
+                $pluginstr = get_string('pluginname', 'gradeimport_'.$plugin);
                 $url = new moodle_url('/grade/import/'.$plugin.'/index.php', array('id'=>$courseid));
                 $importplugins[$plugin] = new grade_plugin_info($plugin, $url, $pluginstr);
             }
@@ -2405,7 +2405,7 @@ abstract class grade_helper {
                 if (!has_capability('gradeexport/'.$plugin.':view', $context)) {
                     continue;
                 }
-                $pluginstr = get_string('modulename', 'gradeexport_'.$plugin);
+                $pluginstr = get_string('pluginname', 'gradeexport_'.$plugin);
                 $url = new moodle_url('/grade/export/'.$plugin.'/index.php', array('id'=>$courseid));
                 $exportplugins[$plugin] = new grade_plugin_info($plugin, $url, $pluginstr);
             }

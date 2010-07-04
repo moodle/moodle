@@ -23,6 +23,6 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['modulename'] = 'Excel spreadsheet';
+$string['pluginname'] = 'Excel spreadsheet';
 $string['xls:publish'] = 'Publish XLS grade export';
 $string['xls:view'] = 'Use Excel grade export';

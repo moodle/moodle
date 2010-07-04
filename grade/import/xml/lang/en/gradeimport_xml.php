@@ -31,6 +31,6 @@ $string['errincorrectidnumber'] = 'Error - incorrect idnumber';
 $string['errincorrectuseridnumber'] = 'Error - idnumber \'{$a}\' from the import file does not match any user.';
 $string['error'] = 'Errors occur';
 $string['fileurl'] = 'Remote file URL';
-$string['modulename'] = 'XML file';
+$string['pluginname'] = 'XML file';
 $string['xml:publish'] = 'Publish import grades from XML';
 $string['xml:view'] = 'Import grades from XML';

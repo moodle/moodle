@@ -23,6 +23,6 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['modulename'] = 'Plain text file';
+$string['pluginname'] = 'Plain text file';
 $string['txt:publish'] = 'Publish TXT grade export';
 $string['txt:view'] = 'Use text grade export';

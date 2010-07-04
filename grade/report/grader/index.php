@@ -104,7 +104,7 @@ if (!empty($target) && !empty($action) && confirm_sesskey()) {
     grade_report_grader::process_action($target, $action);
 }
 
-$reportname = get_string('modulename', 'gradereport_grader');
+$reportname = get_string('pluginname', 'gradereport_grader');
 
 //Initialise the grader report object that produces the table
 //the class grade_report_grader_ajax was removed as part of MDL-21562
