@@ -1,29 +1,35 @@
 <?php
 
-//TODO: this is very wrong way to do admin settings - this has to be rewritten!!
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * TinyMCE editor settings moodle form class.
+ * TinyMCE admin settings
  *
  * @package    editor_tinymce
- * @copyright  2010 Dongsheng Cai
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2009 Petr Skoda (http://skodak.org)
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class editor_settings_tinymce extends editor_settings_form {
-    public function definition() {
-        $mform = $this->_form;
-        $options = array(
-            'PSpell'=>'PSpell',
-            'GoogleSpell'=>'Google Spell',
-            'PSpellShell'=>'PSpellShell');
-        // options must be started with editor_ to get stored
-        $mform->addElement('select', 'editor_tinymce_spellengine',  get_string('spellengine', 'admin'), $options);
-        $mform->addElement('hidden', 'editor', 'tinymce');
 
-        parent::definition();
-    }
+defined('MOODLE_INTERNAL') || die;
 
-    static public function option_names() {
-        return array('editor_tinymce_spellengine');
-    }
+if ($ADMIN->fulltree) {
+    $options = array(
+        'PSpell'=>'PSpell',
+        'GoogleSpell'=>'Google Spell',
+        'PSpellShell'=>'PSpellShell');
+    $settings->add(new admin_setting_configselect('editor_tinymce/spellengine', get_string('spellengine', 'admin'), '', 'GoogleSpell', $options));
 }
+

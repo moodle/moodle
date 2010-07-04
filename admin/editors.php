@@ -17,7 +17,6 @@ $action = optional_param('action', '', PARAM_ACTION);
 $editor = optional_param('editor', '', PARAM_SAFEDIR);
 
 // get currently installed and enabled auth plugins
-$settingsurl = "$CFG->wwwroot/$CFG->admin/editors.php?sesskey=".sesskey()."&amp;action=edit&amp;editor=$editor";
 $available_editors = get_available_editors();
 if (!empty($editor) and empty($available_editors[$editor])) {
     redirect ($returnurl);
@@ -76,45 +75,6 @@ switch ($action) {
                 $fsave = $active_editors[$key];
                 $active_editors[$key] = $active_editors[$key - 1];
                 $active_editors[$key - 1] = $fsave;
-            }
-        }
-        break;
-
-    case 'edit':
-
-        $form_file = $CFG->dirroot . '/lib/editor/'.$editor.'/settings.php';
-        if (file_exists($form_file)) {
-            require_once($form_file);
-            $classname = 'editor_settings_' . $editor;
-            $pagename = 'editorsettings' . $editor;
-            admin_externalpage_setup($pagename);
-            $form = new $classname();
-            $options = call_user_func($classname . '::option_names');
-            $data = $form->get_data();
-
-            if ($form->is_cancelled()){
-                // do nothing
-            } else if (!empty($data)) {
-                foreach ($data as $key=>$value) {
-                    // editor options must be started with 'editor_'
-                    if (strpos($key, 'editor_') === 0 && in_array($key, $options)) {
-                        set_config($key, $value, 'editor');
-                    }
-                }
-            } else {
-                $data = array();
-                foreach ($options as $key) {
-                    $data[$key] = get_config('editor', $key);
-                }
-                $form->set_data($data);
-                $PAGE->set_pagetype('admin-editors-' . $editor);
-                echo $OUTPUT->header();
-                echo $OUTPUT->heading(get_string('pluginname', 'editor_'.$editor));
-                $OUTPUT->box_start();
-                $form->display();
-                $OUTPUT->box_end();
-                echo $OUTPUT->footer();
-                $return = false;
             }
         }
         break;

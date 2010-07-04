@@ -136,13 +136,17 @@ if ($hassiteconfig) {
     $ADMIN->add('editorsettings', $temp);
 
     $editors_available = get_available_editors();
-    $url = $CFG->wwwroot.'/'.$CFG->admin.'/editors.php?sesskey='.sesskey();
     foreach ($editors_available as $editor=>$editorstr) {
         if (file_exists($CFG->dirroot . '/lib/editor/'.$editor.'/settings.php')) {
-            $editor_setting = new admin_externalpage('editorsettings'.$editor, $editorstr, $url.'&amp;action=edit&amp;editor='.$editor);
-            $ADMIN->add('editorsettings', $editor_setting);
+            $settings = new admin_settingpage('editorsettings'.$editor, get_string('pluginname', 'editor_'.$editor), 'moodle/site:config');
+            // settings.php may create a subcategory or unset the settings completely
+            include($CFG->dirroot . '/lib/editor/'.$editor.'/settings.php');
+            if ($settings) {
+                $ADMIN->add('editorsettings', $settings);
+            }
         }
     }
+
 /// License types
     $ADMIN->add('modules', new admin_category('licensesettings', get_string('license')));
     $temp = new admin_settingpage('managelicenses', get_string('license'));
