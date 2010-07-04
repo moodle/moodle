@@ -49,11 +49,10 @@ function xmldb_resource_upgrade($oldversion) {
     require_once("$CFG->dirroot/mod/resource/db/upgradelib.php");
 
     $dbman = $DB->get_manager();
-    $result = true;
 
 //===== 1.9.0 upgrade line ======//
 
-    if ($result && $oldversion < 2009042000) {
+    if ($oldversion < 2009042000) {
        // Rename field summary on table resource to intro
         $table = new xmldb_table('resource');
         $field = new xmldb_field('summary', XMLDB_TYPE_TEXT, 'small', null, null, null, null, 'reference');
@@ -62,10 +61,10 @@ function xmldb_resource_upgrade($oldversion) {
         $dbman->rename_field($table, $field, 'intro');
 
         // resource savepoint reached
-        upgrade_mod_savepoint($result, 2009042000, 'resource');
+        upgrade_mod_savepoint(true, 2009042000, 'resource');
     }
 
-    if ($result && $oldversion < 2009042001) {
+    if ($oldversion < 2009042001) {
         // Define field introformat to be added to resource
         $table = new xmldb_table('resource');
         $field = new xmldb_field('introformat', XMLDB_TYPE_INTEGER, '4', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'intro');
@@ -77,23 +76,23 @@ function xmldb_resource_upgrade($oldversion) {
         $DB->set_field('resource', 'introformat', FORMAT_MOODLE, array());
 
         // resource savepoint reached
-        upgrade_mod_savepoint($result, 2009042001, 'resource');
+        upgrade_mod_savepoint(true, 2009042001, 'resource');
     }
 
-    if ($result && $oldversion < 2009062500) {
+    if ($oldversion < 2009062500) {
         // fix log actions
         update_log_display_entry('resource', 'view all', 'resource', 'name');
         // resource savepoint reached
-        upgrade_mod_savepoint($result, 2009062500, 'resource');
+        upgrade_mod_savepoint(true, 2009062500, 'resource');
     }
 
-    if ($result && $oldversion < 2009062501) {
+    if ($oldversion < 2009062501) {
         resource_20_prepare_migration();
         // resource savepoint reached
-        upgrade_mod_savepoint($result, 2009062501, 'resource');
+        upgrade_mod_savepoint(true, 2009062501, 'resource');
     }
 
-    if ($result && $oldversion < 2009062600) {
+    if ($oldversion < 2009062600) {
         $res_count = $DB->count_records('resource');
         $old_count = $DB->count_records('resource_old', array('migrated'=>0));
         if ($res_count != $old_count) {
@@ -111,10 +110,10 @@ function xmldb_resource_upgrade($oldversion) {
         }
 
         // resource savepoint reached
-        upgrade_mod_savepoint($result, 2009062600, 'resource');
+        upgrade_mod_savepoint(true, 2009062600, 'resource');
     }
 
-    if ($result && $oldversion < 2009062601) {
+    if ($oldversion < 2009062601) {
         $table = new xmldb_table('resource');
         // Define field tobemigrated to be added to resource
         $field = new xmldb_field('tobemigrated', XMLDB_TYPE_INTEGER, '4', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'introformat');
@@ -169,15 +168,15 @@ function xmldb_resource_upgrade($oldversion) {
         $DB->set_field('resource', 'tobemigrated', 1, array());
 
         // resource savepoint reached
-        upgrade_mod_savepoint($result, 2009062601, 'resource');
+        upgrade_mod_savepoint(true, 2009062601, 'resource');
     }
 
-    if ($result && $oldversion < 2009062603) {
+    if ($oldversion < 2009062603) {
         resource_20_migrate();
-        upgrade_mod_savepoint($result, 2009062603, 'resource');
+        upgrade_mod_savepoint(true, 2009062603, 'resource');
     }
 
-    if ($result && $oldversion < 2009063000) {
+    if ($oldversion < 2009063000) {
         //migrate and prune old settings - admins need to review and set up all module settings anyway
         if (!empty($CFG->resource_framesize)) {
             set_config('framesize', $CFG->resource_framesize, 'resource');
@@ -208,10 +207,10 @@ function xmldb_resource_upgrade($oldversion) {
             unset_config($setting);
         }
 
-        upgrade_mod_savepoint($result, 2009063000, 'resource');
+        upgrade_mod_savepoint(true, 2009063000, 'resource');
     }
 
-    if ($result && $oldversion < 2009080501) {
+    if ($oldversion < 2009080501) {
         require_once("$CFG->libdir/filelib.php");
 
         $sql = "SELECT r.id,
@@ -243,9 +242,9 @@ function xmldb_resource_upgrade($oldversion) {
         }
 
     /// resource savepoint reached
-        upgrade_mod_savepoint($result, 2009080501, 'resource');
+        upgrade_mod_savepoint(true, 2009080501, 'resource');
     }
 
 
-    return $result;
+    return true;
 }

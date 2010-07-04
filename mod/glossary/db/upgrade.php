@@ -24,11 +24,10 @@ function xmldb_glossary_upgrade($oldversion) {
     global $CFG, $DB, $OUTPUT;
 
     $dbman = $DB->get_manager();
-    $result = true;
 
 //===== 1.9.0 upgrade line ======//
 
-    if ($result && $oldversion < 2008081900) {
+    if ($oldversion < 2008081900) {
 
         /////////////////////////////////////
         /// new file storage upgrade code ///
@@ -97,10 +96,10 @@ function xmldb_glossary_upgrade($oldversion) {
             $rs->close();
         }
 
-        upgrade_mod_savepoint($result, 2008081900, 'glossary');
+        upgrade_mod_savepoint(true, 2008081900, 'glossary');
     }
 
-    if ($result && $oldversion < 2009042000) {
+    if ($oldversion < 2009042000) {
 
     /// Rename field definitionformat on table glossary_entries to definitionformat
         $table = new xmldb_table('glossary_entries');
@@ -110,10 +109,10 @@ function xmldb_glossary_upgrade($oldversion) {
         $dbman->rename_field($table, $field, 'definitionformat');
 
     /// glossary savepoint reached
-        upgrade_mod_savepoint($result, 2009042000, 'glossary');
+        upgrade_mod_savepoint(true, 2009042000, 'glossary');
     }
 
-    if ($result && $oldversion < 2009042001) {
+    if ($oldversion < 2009042001) {
 
     /// Define field definitiontrust to be added to glossary_entries
         $table = new xmldb_table('glossary_entries');
@@ -123,10 +122,10 @@ function xmldb_glossary_upgrade($oldversion) {
         $dbman->add_field($table, $field);
 
     /// glossary savepoint reached
-        upgrade_mod_savepoint($result, 2009042001, 'glossary');
+        upgrade_mod_savepoint(true, 2009042001, 'glossary');
     }
 
-    if ($result && $oldversion < 2009042002) {
+    if ($oldversion < 2009042002) {
 
     /// Rename field format on table glossary_comments to NEWNAMEGOESHERE
         $table = new xmldb_table('glossary_comments');
@@ -136,10 +135,10 @@ function xmldb_glossary_upgrade($oldversion) {
         $dbman->rename_field($table, $field, 'entrycommentformat');
 
     /// glossary savepoint reached
-        upgrade_mod_savepoint($result, 2009042002, 'glossary');
+        upgrade_mod_savepoint(true, 2009042002, 'glossary');
     }
 
-    if ($result && $oldversion < 2009042003) {
+    if ($oldversion < 2009042003) {
 
     /// Define field entrycommenttrust to be added to glossary_comments
         $table = new xmldb_table('glossary_comments');
@@ -151,10 +150,10 @@ function xmldb_glossary_upgrade($oldversion) {
         }
 
     /// glossary savepoint reached
-        upgrade_mod_savepoint($result, 2009042003, 'glossary');
+        upgrade_mod_savepoint(true, 2009042003, 'glossary');
     }
 
-    if ($result && $oldversion < 2009042004) {
+    if ($oldversion < 2009042004) {
         $trustmark = '#####TRUSTTEXT#####';
         $rs = $DB->get_recordset_sql("SELECT * FROM {glossary_entries} WHERE definition LIKE '$trustmark%'");
         foreach ($rs as $entry) {
@@ -169,10 +168,10 @@ function xmldb_glossary_upgrade($oldversion) {
         $rs->close();
 
     /// glossary savepoint reached
-        upgrade_mod_savepoint($result, 2009042004, 'glossary');
+        upgrade_mod_savepoint(true, 2009042004, 'glossary');
     }
 
-    if ($result && $oldversion < 2009042005) {
+    if ($oldversion < 2009042005) {
         $trustmark = '#####TRUSTTEXT#####';
         $rs = $DB->get_recordset_sql("SELECT * FROM {glossary_comments} WHERE entrycomment LIKE '$trustmark%'");
         foreach ($rs as $comment) {
@@ -187,10 +186,10 @@ function xmldb_glossary_upgrade($oldversion) {
         $rs->close();
 
     /// glossary savepoint reached
-        upgrade_mod_savepoint($result, 2009042005, 'glossary');
+        upgrade_mod_savepoint(true, 2009042005, 'glossary');
     }
 
-    if ($result && $oldversion < 2009042006) {
+    if ($oldversion < 2009042006) {
 
     /// Define field introformat to be added to glossary
         $table = new xmldb_table('glossary');
@@ -202,9 +201,9 @@ function xmldb_glossary_upgrade($oldversion) {
         }
 
     /// glossary savepoint reached
-        upgrade_mod_savepoint($result, 2009042006, 'glossary');
+        upgrade_mod_savepoint(true, 2009042006, 'glossary');
     }
-    if ($result && $oldversion < 2009110800) {
+    if ($oldversion < 2009110800) {
         require_once($CFG->dirroot . '/comment/lib.php');
         upgrade_set_timeout(60*20);
 
@@ -258,10 +257,10 @@ function xmldb_glossary_upgrade($oldversion) {
         }
 
     /// glossary savepoint reached
-        upgrade_mod_savepoint($result, 2009110800, 'glossary');
+        upgrade_mod_savepoint(true, 2009110800, 'glossary');
     }
 
-    if ($result && $oldversion < 2010042800) {
+    if ($oldversion < 2010042800) {
         //migrate glossary_ratings to the central rating table
         require_once($CFG->dirroot . '/lib/db/upgradelib.php');
 
@@ -288,10 +287,10 @@ function xmldb_glossary_upgrade($oldversion) {
             $dbman->drop_table($table);
         }
 
-        upgrade_mod_savepoint($result, 2010042800, 'glossary');
+        upgrade_mod_savepoint(true, 2010042800, 'glossary');
     }
 
-    return $result;
+    return true;
 }
 
 

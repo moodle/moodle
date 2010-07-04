@@ -70,19 +70,18 @@ function xmldb_wiki_upgrade($oldversion) {
     global $CFG, $DB, $OUTPUT;
 
     $dbman = $DB->get_manager();
-    $result = true;
 
     // Step 0: Add new fields to main wiki table
-    if ($result && $oldversion < 2010040100) {
+    if ($oldversion < 2010040100) {
         require_once(dirname(__FILE__) . '/upgradelib.php');
         echo $OUTPUT->notification('Adding new fields to wiki table', 'notifysuccess');
         wiki_add_wiki_fields();
 
-        upgrade_mod_savepoint($result, 2010040100, 'wiki');
+        upgrade_mod_savepoint(true, 2010040100, 'wiki');
     }
 
     // Step 1: Rename old tables
-    if ($result && $oldversion < 2010040101) {
+    if ($oldversion < 2010040101) {
         $tables = array('wiki_pages', 'wiki_locks', 'wiki_entries');
 
         echo $OUTPUT->notification('Renaming old wiki module tables', 'notifysuccess');
@@ -94,19 +93,19 @@ function xmldb_wiki_upgrade($oldversion) {
                 }
             }
         }
-        upgrade_mod_savepoint($result, 2010040101, 'wiki');
+        upgrade_mod_savepoint(true, 2010040101, 'wiki');
     }
 
     // Step 2: Creating new tables
-    if ($result && $oldversion < 2010040102) {
+    if ($oldversion < 2010040102) {
         require_once(dirname(__FILE__) . '/upgradelib.php');
         echo $OUTPUT->notification('Installing new wiki module tables', 'notifysuccess');
         wiki_upgrade_install_20_tables();
-        upgrade_mod_savepoint($result, 2010040102, 'wiki');
+        upgrade_mod_savepoint(true, 2010040102, 'wiki');
     }
 
     // Step 3: migrating wiki instances
-    if ($result && $oldversion < 2010040103) {
+    if ($oldversion < 2010040103) {
         upgrade_set_timeout();
 
         // Setting up wiki configuration
@@ -142,11 +141,11 @@ function xmldb_wiki_upgrade($oldversion) {
         }
 
         echo $OUTPUT->notification('Migrating old wikis to new wikis', 'notifysuccess');
-        upgrade_mod_savepoint($result, 2010040103, 'wiki');
+        upgrade_mod_savepoint(true, 2010040103, 'wiki');
     }
 
     // Step 4: migrating wiki entries to new subwikis
-    if ($result && $oldversion < 2010040104) {
+    if ($oldversion < 2010040104) {
         /**
          * Migrating wiki entries to new subwikis
          */
@@ -157,11 +156,11 @@ function xmldb_wiki_upgrade($oldversion) {
 
         $DB->execute($sql, array());
 
-        upgrade_mod_savepoint($result, 2010040104, 'wiki');
+        upgrade_mod_savepoint(true, 2010040104, 'wiki');
     }
 
     // Step 5: Migrating pages
-    if ($result && $oldversion < 2010040105) {
+    if ($oldversion < 2010040105) {
         /**
          * Filling pages table with latest versions of every page.
          *
@@ -187,19 +186,19 @@ function xmldb_wiki_upgrade($oldversion) {
 
         $DB->execute($sql, array('**reparse needed**'));
 
-        upgrade_mod_savepoint($result, 2010040105, 'wiki');
+        upgrade_mod_savepoint(true, 2010040105, 'wiki');
     }
 
     // Step 6: Migrating versions
-    if ($result && $oldversion < 2010040106) {
+    if ($oldversion < 2010040106) {
         require_once(dirname(__FILE__) . '/upgradelib.php');
         echo $OUTPUT->notification('Migrating old history to new history', 'notifysuccess');
         wiki_upgrade_migrate_versions();
-        upgrade_mod_savepoint($result, 2010040106, 'wiki');
+        upgrade_mod_savepoint(true, 2010040106, 'wiki');
     }
 
     // Step 7: refresh cachedcontent and fill wiki links table
-    if ($result && $oldversion < 2010040107) {
+    if ($oldversion < 2010040107) {
         require_once($CFG->dirroot. '/mod/wiki/locallib.php');
         upgrade_set_timeout();
 
@@ -214,10 +213,10 @@ function xmldb_wiki_upgrade($oldversion) {
         $pages->close();
 
         echo $OUTPUT->notification('Caching content', 'notifysuccess');
-        upgrade_mod_savepoint($result, 2010040107, 'wiki');
+        upgrade_mod_savepoint(true, 2010040107, 'wiki');
     }
     // Step 8, migrating files
-    if ($result && $oldversion < 2010040108) {
+    if ($oldversion < 2010040108) {
         $fs = get_file_storage();
         $sql = "SELECT DISTINCT po.pagename, w.id AS wikiid, po.userid,
             po.meta AS filemeta, eo.id AS entryid, eo.groupid, s.id AS subwiki,
@@ -281,11 +280,11 @@ function xmldb_wiki_upgrade($oldversion) {
             }
         }
         $rs->close();
-        upgrade_mod_savepoint($result, 2010040108, 'wiki');
+        upgrade_mod_savepoint(true, 2010040108, 'wiki');
     }
 
     // Step 9: clean wiki table
-    if ($result && $oldversion < 2010040109) {
+    if ($oldversion < 2010040109) {
         $fields = array('summary', 'pagename', 'wtype', 'ewikiprinttitle', 'htmlmode', 'ewikiacceptbinary', 'disablecamelcase', 'setpageflags', 'strippages', 'removepages', 'revertchanges', 'initialcontent');
         $table = new xmldb_table('wiki');
         foreach ($fields as $fieldname) {
@@ -296,13 +295,13 @@ function xmldb_wiki_upgrade($oldversion) {
 
         }
         echo $OUTPUT->notification('Cleaning wiki table', 'notifysuccess');
-        upgrade_mod_savepoint($result, 2010040109, 'wiki');
+        upgrade_mod_savepoint(true, 2010040109, 'wiki');
     }
 
     // TODO: Will hold the old tables so we will have chance to fix problems
     // Will remove old tables once migrating 100% stable
     // Step 10: delete old tables
-    if ($result && $oldversion < 2010040120) {
+    if ($oldversion < 2010040120) {
         //$tables = array('wiki_pages', 'wiki_locks', 'wiki_entries');
 
         //foreach ($tables as $tablename) {
@@ -312,8 +311,8 @@ function xmldb_wiki_upgrade($oldversion) {
             //}
         //}
         //echo $OUTPUT->notification('Droping old tables', 'notifysuccess');
-        //upgrade_mod_savepoint($result, 2010040120, 'wiki');
+        //upgrade_mod_savepoint(true, 2010040120, 'wiki');
     }
 
-    return $result;
+    return true;
 }

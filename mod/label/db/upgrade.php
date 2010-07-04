@@ -24,17 +24,16 @@ function xmldb_label_upgrade($oldversion) {
     global $CFG, $DB;
 
     $dbman = $DB->get_manager();
-    $result = true;
 
 //===== 1.9.0 upgrade line ======//
 
-    if ($result && $oldversion < 2007101510) {
+    if ($oldversion < 2007101510) {
         $sql = "UPDATE {log_display} SET mtable = 'label' WHERE module = 'label'";
-        $result = $DB->execute($sql);
-        upgrade_mod_savepoint($result, 2007101510, 'label');
+        $DB->execute($sql);
+        upgrade_mod_savepoint(true, 2007101510, 'label');
     }
 
-    if ($result && $oldversion < 2009042200) {
+    if ($oldversion < 2009042200) {
 
     /// Rename field content on table label to intro
         $table = new xmldb_table('label');
@@ -44,10 +43,10 @@ function xmldb_label_upgrade($oldversion) {
         $dbman->rename_field($table, $field, 'intro');
 
     /// label savepoint reached
-        upgrade_mod_savepoint($result, 2009042200, 'label');
+        upgrade_mod_savepoint(true, 2009042200, 'label');
     }
 
-    if ($result && $oldversion < 2009042201) {
+    if ($oldversion < 2009042201) {
 
     /// Define field introformat to be added to label
         $table = new xmldb_table('label');
@@ -57,10 +56,10 @@ function xmldb_label_upgrade($oldversion) {
         $dbman->add_field($table, $field);
 
     /// label savepoint reached
-        upgrade_mod_savepoint($result, 2009042201, 'label');
+        upgrade_mod_savepoint(true, 2009042201, 'label');
     }
 
-    if ($result && $oldversion < 2009080400) {
+    if ($oldversion < 2009080400) {
 
     /// Define field introformat to be added to label
         $table = new xmldb_table('label');
@@ -73,10 +72,10 @@ function xmldb_label_upgrade($oldversion) {
         $DB->set_field('label', 'introformat', 0, array('introformat' => 4));
 
     /// label savepoint reached
-        upgrade_mod_savepoint($result, 2009080400, 'label');
+        upgrade_mod_savepoint(true, 2009080400, 'label');
     }
 
-    return $result;
+    return true;
 }
 
 

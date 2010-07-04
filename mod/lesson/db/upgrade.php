@@ -45,11 +45,10 @@ function xmldb_lesson_upgrade($oldversion) {
     global $CFG, $DB, $OUTPUT;
 
     $dbman = $DB->get_manager();
-    $result = true;
 
 //===== 1.9.0 upgrade line ======//
 
-    if ($result && $oldversion < 2007072201) {
+    if ($oldversion < 2007072201) {
 
         $table = new xmldb_table('lesson');
         $field = new xmldb_field('usegrademax');
@@ -63,18 +62,18 @@ function xmldb_lesson_upgrade($oldversion) {
             $dbman->rename_field($table, $field, 'usemaxgrade');
         }
 
-        upgrade_mod_savepoint($result, 2007072201, 'lesson');
+        upgrade_mod_savepoint(true, 2007072201, 'lesson');
     }
 
-    if ($result && $oldversion < 2008112601) {
+    if ($oldversion < 2008112601) {
         require_once($CFG->dirroot.'/mod/lesson/lib.php');
 
         lesson_upgrade_grades();
 
-        upgrade_mod_savepoint($result, 2008112601, 'lesson');
+        upgrade_mod_savepoint(true, 2008112601, 'lesson');
     }
 
-    if ($result && $oldversion < 2009111600) {
+    if ($oldversion < 2009111600) {
         /**
          * Change the grade field within lesson_answers to an unsigned int and increment
          * the length by one to ensure that no values are changed (reduced)
@@ -83,10 +82,10 @@ function xmldb_lesson_upgrade($oldversion) {
         $field = new xmldb_field('grade');
         $field->set_attributes(XMLDB_TYPE_INTEGER, '4', false, XMLDB_NOTNULL, null, '0', 'jumpto');
         $dbman->change_field_type($table, $field);
-        upgrade_mod_savepoint($result, 2009111600, 'lesson');
+        upgrade_mod_savepoint(true, 2009111600, 'lesson');
     }
 
-    if ($result && $oldversion < 2009120400) {
+    if ($oldversion < 2009120400) {
 
         /**
          * Move any media files associated with the lesson to use the new file
@@ -144,19 +143,19 @@ function xmldb_lesson_upgrade($oldversion) {
             }
         }
 
-        upgrade_mod_savepoint($result, 2009120400, 'lesson');
+        upgrade_mod_savepoint(true, 2009120400, 'lesson');
     }
 
-    if ($result && $oldversion < 2009120800) {
+    if ($oldversion < 2009120800) {
         /**
          * Drop the lesson_default table, as of Moodle 2.0 it is no longer used
          * the module now has a settings.php instead
          */
         $table = new xmldb_table('lesson_default');
         $dbman->drop_table($table);
-        upgrade_mod_savepoint($result, 2009120800, 'lesson');
+        upgrade_mod_savepoint(true, 2009120800, 'lesson');
     }
-    if ($result && $oldversion < 2009120801) {
+    if ($oldversion < 2009120801) {
 
     /// Define field contentsformat to be added to lesson_pages
         $table = new xmldb_table('lesson_pages');
@@ -168,11 +167,11 @@ function xmldb_lesson_upgrade($oldversion) {
         }
 
     /// lesson savepoint reached
-        upgrade_mod_savepoint($result, 2009120801, 'lesson');
+        upgrade_mod_savepoint(true, 2009120801, 'lesson');
     }
 
 
-    return $result;
+    return true;
 }
 
 

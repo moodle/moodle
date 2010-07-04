@@ -24,9 +24,8 @@ function xmldb_feedback_upgrade($oldversion) {
     global $CFG, $DB;
 
     $dbman = $DB->get_manager();
-    $result = true;
 
-    if ($result && $oldversion < 2007012310) {
+    if ($oldversion < 2007012310) {
 
         //create a new table feedback_completedtmp and the field-definition
         $table = new xmldb_table('feedback_completedtmp');
@@ -99,10 +98,10 @@ function xmldb_feedback_upgrade($oldversion) {
 
         $dbman->create_table($table);
         ////////////////////////////////////////////////////////////
-        upgrade_mod_savepoint($result, 2007012310, 'feedback');
+        upgrade_mod_savepoint(true, 2007012310, 'feedback');
     }
 
-    if ($result && $oldversion < 2007050504) {
+    if ($oldversion < 2007050504) {
 
         /// Define field random_response to be added to feedback_completed
         $table = new xmldb_table('feedback_completed');
@@ -129,10 +128,10 @@ function xmldb_feedback_upgrade($oldversion) {
         $dbman->add_field($table, $field);
 
         ////////////////////////////////////////////////////////////
-        upgrade_mod_savepoint($result, 2007050504, 'feedback');
+        upgrade_mod_savepoint(true, 2007050504, 'feedback');
     }
 
-    if ($result && $oldversion < 2007102600) {
+    if ($oldversion < 2007102600) {
         // public is a reserved word on Oracle
 
         $table = new xmldb_table('feedback_template');
@@ -140,118 +139,116 @@ function xmldb_feedback_upgrade($oldversion) {
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
-        upgrade_mod_savepoint($result, 2007102600, 'feedback');
+        upgrade_mod_savepoint(true, 2007102600, 'feedback');
     }
 
-    if ($result && $oldversion < 2008042400) { //New version in version.php
+    if ($oldversion < 2008042400) { //New version in version.php
         if ($all_nonanonymous_feedbacks = $DB->get_records('feedback', 'anonymous', 2)) {
             $update_sql = 'UPDATE {feedback_completed} SET anonymous_response = 2 WHERE feedback = ';
             foreach ($all_nonanonymous_feedbacks as $fb) {
-                $result = $result && $DB->execute($update_sql.$fb->id);
+                $DB->execute($update_sql.$fb->id);
             }
         }
-        upgrade_mod_savepoint($result, 2008042400, 'feedback');
+        upgrade_mod_savepoint(true, 2008042400, 'feedback');
     }
 
-    if ($result && $oldversion < 2008042401) { //New version in version.php
-        if ($result) {
-            $concat_radio    = $DB->sql_concat("'r>>>>>'",'presentation');
-            $concat_check    = $DB->sql_concat("'c>>>>>'",'presentation');
-            $concat_dropdown = $DB->sql_concat("'d>>>>>'",'presentation');
+    if ($oldversion < 2008042401) { //New version in version.php
+        $concat_radio    = $DB->sql_concat("'r>>>>>'",'presentation');
+        $concat_check    = $DB->sql_concat("'c>>>>>'",'presentation');
+        $concat_dropdown = $DB->sql_concat("'d>>>>>'",'presentation');
 
-            $update_sql1 = "UPDATE {feedback_item} SET presentation = ".$concat_radio." WHERE typ IN('radio','radiorated')";
-            $update_sql2 = "UPDATE {feedback_item} SET presentation = ".$concat_dropdown." WHERE typ IN('dropdown','dropdownrated')";
-            $update_sql3 = "UPDATE {feedback_item} SET presentation = ".$concat_check." WHERE typ = 'check'";
+        $update_sql1 = "UPDATE {feedback_item} SET presentation = ".$concat_radio." WHERE typ IN('radio','radiorated')";
+        $update_sql2 = "UPDATE {feedback_item} SET presentation = ".$concat_dropdown." WHERE typ IN('dropdown','dropdownrated')";
+        $update_sql3 = "UPDATE {feedback_item} SET presentation = ".$concat_check." WHERE typ = 'check'";
 
-            $result = $result && $DB->execute($update_sql1);
-            $result = $result && $DB->execute($update_sql2);
-            $result = $result && $DB->execute($update_sql3);
-        }
-        if ($result) {
-            $update_sql1 = "UPDATE {feedback_item} SET typ = 'multichoice' WHERE typ IN('radio','check','dropdown')";
-            $update_sql2 = "UPDATE {feedback_item} SET typ = 'multichoicerated' WHERE typ IN('radiorated','dropdownrated')";
-            $result = $result && $DB->execute($update_sql1);
-            $result = $result && $DB->execute($update_sql2);
-        }
-        upgrade_mod_savepoint($result, 2008042401, 'feedback');
+        $DB->execute($update_sql1);
+        $DB->execute($update_sql2);
+        $DB->execute($update_sql3);
+
+        $update_sql1 = "UPDATE {feedback_item} SET typ = 'multichoice' WHERE typ IN('radio','check','dropdown')";
+        $update_sql2 = "UPDATE {feedback_item} SET typ = 'multichoicerated' WHERE typ IN('radiorated','dropdownrated')";
+        $DB->execute($update_sql1);
+        $DB->execute($update_sql2);
+
+        upgrade_mod_savepoint(true, 2008042401, 'feedback');
     }
 
-    if ($result && $oldversion < 2008042801) {
+    if ($oldversion < 2008042801) {
         $new_log_display = new object();
         $new_log_display->module = 'feedback';
         $new_log_display->action = 'startcomplete';
         $new_log_display->mtable = 'feedback';
         $new_log_display->field = 'name';
-        $result = $result && $DB->insert_record('log_display', $new_log_display);
+        $DB->insert_record('log_display', $new_log_display);
 
         $new_log_display = clone($new_log_display);
         $new_log_display->action = 'submit';
-        $result = $result && $DB->insert_record('log_display', $new_log_display);
+        $DB->insert_record('log_display', $new_log_display);
 
         $new_log_display = clone($new_log_display);
         $new_log_display->action = 'delete';
-        $result = $result && $DB->insert_record('log_display', $new_log_display);
+        $DB->insert_record('log_display', $new_log_display);
 
         $new_log_display = clone($new_log_display);
         $new_log_display->action = 'view';
-        $result = $result && $DB->insert_record('log_display', $new_log_display);
+        $DB->insert_record('log_display', $new_log_display);
 
         $new_log_display = clone($new_log_display);
         $new_log_display->action = 'view all';
         $new_log_display->mtable = 'course';
         $new_log_display->field = 'shortname';
-        $result = $result && $DB->insert_record('log_display', $new_log_display);
+        $DB->insert_record('log_display', $new_log_display);
 
-        upgrade_mod_savepoint($result, 2008042801, 'feedback');
+        upgrade_mod_savepoint(true, 2008042801, 'feedback');
     }
 
-    if ($result && $oldversion < 2008042900) {
+    if ($oldversion < 2008042900) {
         /// Define field autonumbering to be added to feedback
         $table = new xmldb_table('feedback');
         $field = new xmldb_field('autonumbering', XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '1', 'multiple_submit');
         /// Launch add field2
         $dbman->add_field($table, $field);
 
-        upgrade_mod_savepoint($result, 2008042900, 'feedback');
+        upgrade_mod_savepoint(true, 2008042900, 'feedback');
     }
 
-    if ($result && $oldversion < 2008050104) {
+    if ($oldversion < 2008050104) {
         /// Define field site_after_submit to be added to feedback
         $table = new xmldb_table('feedback');
         $field = new xmldb_field('site_after_submit', XMLDB_TYPE_CHAR, '255', null, null, false, '', 'autonumbering');
         /// Launch add field2
         $dbman->add_field($table, $field);
 
-        upgrade_mod_savepoint($result, 2008050104, 'feedback');
+        upgrade_mod_savepoint(true, 2008050104, 'feedback');
     }
 
-    if ($result && $oldversion < 2008050105) {
+    if ($oldversion < 2008050105) {
         //field count is not more needed
         $table = new xmldb_table('feedback_tracking');
         $field = new xmldb_field('count');
         $dbman->drop_field($table, $field);
 
-        upgrade_mod_savepoint($result, 2008050105, 'feedback');
+        upgrade_mod_savepoint(true, 2008050105, 'feedback');
     }
 
-    if ($result && $oldversion < 2008073002) {
+    if ($oldversion < 2008073002) {
         $update_sql = "UPDATE {feedback_item} SET presentation = '-|-' WHERE " . $DB->sql_compare_text('presentation') . " = '0|0' AND typ = 'numeric'";
-        $result = $result && $DB->execute($update_sql);
+        $DB->execute($update_sql);
 
-        upgrade_mod_savepoint($result, 2008073002, 'feedback');
+        upgrade_mod_savepoint(true, 2008073002, 'feedback');
     }
 
-    if ($result && $oldversion < 2009031301) {
+    if ($oldversion < 2009031301) {
         /// Define field label to be added to feedback_item
         $table = new xmldb_table('feedback_item');
         $field = new xmldb_field('label', XMLDB_TYPE_CHAR, '255', null, null, false, '', 'name');
         /// Launch add field2
         $dbman->add_field($table, $field);
 
-        upgrade_mod_savepoint($result, 2009031301, 'feedback');
+        upgrade_mod_savepoint(true, 2009031301, 'feedback');
     }
 
-    if ($result && $oldversion < 2009042000) {
+    if ($oldversion < 2009042000) {
 
     /// Rename field summary on table feedback to intro
         $table = new xmldb_table('feedback');
@@ -261,10 +258,10 @@ function xmldb_feedback_upgrade($oldversion) {
         $dbman->rename_field($table, $field, 'intro');
 
     /// feedback savepoint reached
-        upgrade_mod_savepoint($result, 2009042000, 'feedback');
+        upgrade_mod_savepoint(true, 2009042000, 'feedback');
     }
 
-    if ($result && $oldversion < 2009042001) {
+    if ($oldversion < 2009042001) {
 
     /// Define field introformat to be added to feedback
         $table = new xmldb_table('feedback');
@@ -274,10 +271,10 @@ function xmldb_feedback_upgrade($oldversion) {
         $dbman->add_field($table, $field);
 
     /// feedback savepoint reached
-        upgrade_mod_savepoint($result, 2009042001, 'feedback');
+        upgrade_mod_savepoint(true, 2009042001, 'feedback');
     }
 
-    if ($result && $oldversion < 2009112000) {
+    if ($oldversion < 2009112000) {
         /// Define field page_after_submitformat to be added to feedback
         $table = new xmldb_table('feedback');
         $field = new xmldb_field('page_after_submitformat', XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'page_after_submit');
@@ -288,40 +285,40 @@ function xmldb_feedback_upgrade($oldversion) {
         }
 
         // feedback savepoint reached
-        upgrade_mod_savepoint($result, 2009112000, 'feedback');
+        upgrade_mod_savepoint(true, 2009112000, 'feedback');
     }
 
-    if ($result && $oldversion < 2010051101) {
+    if ($oldversion < 2010051101) {
         /// Define field options to be added to feedback_item
         $table = new xmldb_table('feedback_item');
         $field = new xmldb_field('options', XMLDB_TYPE_CHAR, '255', null, null, false, '', 'required');
         /// Launch add field
         $dbman->add_field($table, $field);
 
-        upgrade_mod_savepoint($result, 2010051101, 'feedback');
+        upgrade_mod_savepoint(true, 2010051101, 'feedback');
     }
 
-    if ($result && $oldversion < 2010051600) {
+    if ($oldversion < 2010051600) {
         /// Define field options to be added to feedback_item
         $table = new xmldb_table('feedback_item');
         $field = new xmldb_field('dependitem', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'required');
         /// Launch add field
         $dbman->add_field($table, $field);
 
-        upgrade_mod_savepoint($result, 2010051600, 'feedback');
+        upgrade_mod_savepoint(true, 2010051600, 'feedback');
     }
 
-    if ($result && $oldversion < 2010051601) {
+    if ($oldversion < 2010051601) {
         /// Define field options to be added to feedback_item
         $table = new xmldb_table('feedback_item');
         $field = new xmldb_field('dependvalue', XMLDB_TYPE_CHAR, '255', null, null, false, '', 'dependitem');
         /// Launch add field
         $dbman->add_field($table, $field);
 
-        upgrade_mod_savepoint($result, 2010051601, 'feedback');
+        upgrade_mod_savepoint(true, 2010051601, 'feedback');
     }
 
-    return $result;
+    return true;
 }
 
 

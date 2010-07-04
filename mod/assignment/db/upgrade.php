@@ -24,18 +24,17 @@ function xmldb_assignment_upgrade($oldversion) {
     global $CFG, $DB, $OUTPUT;
 
     $dbman = $DB->get_manager();
-    $result = true;
 
 //===== 1.9.0 upgrade line ======//
 
-    if ($result && $oldversion < 2007101511) {
+    if ($oldversion < 2007101511) {
         // change grade typo to text if no grades MDL-13920
         require_once $CFG->dirroot.'/mod/assignment/lib.php';
         assignment_upgrade_grades();
-        upgrade_mod_savepoint($result, 2007101511, 'assignment');
+        upgrade_mod_savepoint(true, 2007101511, 'assignment');
     }
 
-    if ($result && $oldversion < 2008081900) {
+    if ($oldversion < 2008081900) {
 
         /////////////////////////////////////
         /// new file storage upgrade code ///
@@ -127,10 +126,10 @@ function xmldb_assignment_upgrade($oldversion) {
 
         }
 
-        upgrade_mod_savepoint($result, 2008081900, 'assignment');
+        upgrade_mod_savepoint(true, 2008081900, 'assignment');
     }
 
-    if ($result && $oldversion < 2009042000) {
+    if ($oldversion < 2009042000) {
 
     /// Rename field description on table assignment to intro
         $table = new xmldb_table('assignment');
@@ -140,10 +139,10 @@ function xmldb_assignment_upgrade($oldversion) {
         $dbman->rename_field($table, $field, 'intro');
 
     /// assignment savepoint reached
-        upgrade_mod_savepoint($result, 2009042000, 'assignment');
+        upgrade_mod_savepoint(true, 2009042000, 'assignment');
     }
 
-    if ($result && $oldversion < 2009042001) {
+    if ($oldversion < 2009042001) {
 
     /// Rename field format on table assignment to introformat
         $table = new xmldb_table('assignment');
@@ -153,10 +152,10 @@ function xmldb_assignment_upgrade($oldversion) {
         $dbman->rename_field($table, $field, 'introformat');
 
     /// assignment savepoint reached
-        upgrade_mod_savepoint($result, 2009042001, 'assignment');
+        upgrade_mod_savepoint(true, 2009042001, 'assignment');
     }
 
-    return $result;
+    return true;
 }
 
 

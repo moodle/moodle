@@ -48,8 +48,8 @@ function xmldb_page_upgrade($oldversion) {
     require_once("$CFG->dirroot/mod/page/db/upgradelib.php");
 
     $dbman = $DB->get_manager();
-    $result = true;
 
 
-    return $result;
+
+    return true;
 }

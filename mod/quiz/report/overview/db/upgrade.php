@@ -4,11 +4,10 @@ function xmldb_quiz_overview_upgrade($oldversion) {
     global $CFG, $DB;
 
     $dbman = $DB->get_manager();
-    $result = true;
 
 //===== 1.9.0 upgrade line ======//
 
-    if ($result && $oldversion < 2009091400) {
+    if ($oldversion < 2009091400) {
 
     /// Define table quiz_question_regrade to be created
         $table = new xmldb_table('quiz_question_regrade');
@@ -31,10 +30,10 @@ function xmldb_quiz_overview_upgrade($oldversion) {
         }
 
     /// overview savepoint reached
-        upgrade_plugin_savepoint($result, 2009091400, 'quizreport', 'overview');
+        upgrade_plugin_savepoint(true, 2009091400, 'quizreport', 'overview');
     }
 
-    return $result;
+    return true;
 }
 
 

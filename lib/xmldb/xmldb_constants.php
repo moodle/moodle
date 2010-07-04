@@ -68,5 +68,5 @@
 
 /// Some strings used widely
     define ('XMLDB_LINEFEED', "\n");
-    define ('XMLDB_PHP_HEADER', '    if ($result && $oldversion < XXXXXXXXXX) {' . XMLDB_LINEFEED);
+    define ('XMLDB_PHP_HEADER', '    if ($oldversion < XXXXXXXXXX) {' . XMLDB_LINEFEED);
     define ('XMLDB_PHP_FOOTER', '    }' . XMLDB_LINEFEED);

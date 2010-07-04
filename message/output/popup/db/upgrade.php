@@ -35,20 +35,19 @@ function xmldb_message_popup_upgrade($oldversion) {
     global $CFG, $DB;
 
     $dbman = $DB->get_manager();
-    $result = true;
 
-    if ($result && $oldversion < 2008072401) {
+    if ($oldversion < 2008072401) {
         $processor = new object();
         $processor->name  = 'popup';
         if (! $DB->record_exists('message_processors', array('name' => $processor->name))){
-            $result = $result && $DB->insert_record('message_processors', $processor);
+            $DB->insert_record('message_processors', $processor);
         }
 
     /// popup savepoint reached
-        upgrade_plugin_savepoint($result, 2008072401, 'message', 'popup');
+        upgrade_plugin_savepoint(true, 2008072401, 'message', 'popup');
     }
 
-    return $result;
+    return true;
 }
 
 

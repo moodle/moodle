@@ -24,11 +24,10 @@ function xmldb_data_upgrade($oldversion) {
     global $CFG, $DB, $OUTPUT;
 
     $dbman = $DB->get_manager();
-    $result = true;
 
 //===== 1.9.0 upgrade line ======//
 
-    if ($result && $oldversion < 2007101512) {
+    if ($oldversion < 2007101512) {
     /// Launch add field asearchtemplate again if does not exists yet - reported on several sites
 
         $table = new xmldb_table('data');
@@ -37,14 +36,14 @@ function xmldb_data_upgrade($oldversion) {
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
-        upgrade_mod_savepoint($result, 2007101512, 'data');
+        upgrade_mod_savepoint(true, 2007101512, 'data');
     }
 
-    if ($result && $oldversion < 2007101513) {
+    if ($oldversion < 2007101513) {
         // Upgrade all the data->notification currently being
         // NULL to 0
         $sql = "UPDATE {data} SET notification=0 WHERE notification IS NULL";
-        $result = $DB->execute($sql);
+        $DB->execute($sql);
 
         $table = new xmldb_table('data');
         $field = new xmldb_field('notification', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'editany');
@@ -52,10 +51,10 @@ function xmldb_data_upgrade($oldversion) {
         $dbman->change_field_notnull($table, $field);
         // Second step, Set default to 0
         $dbman->change_field_default($table, $field);
-        upgrade_mod_savepoint($result, 2007101513, 'data');
+        upgrade_mod_savepoint(true, 2007101513, 'data');
     }
 
-    if ($result && $oldversion < 2008081400) {
+    if ($oldversion < 2008081400) {
         if ($rs = $DB->get_recordset('data')) {
             $pattern = '/\#\#delete\#\#(\s+)\#\#approve\#\#/';
             $replacement = '##delete##$1##approve##$1##export##';
@@ -66,10 +65,10 @@ function xmldb_data_upgrade($oldversion) {
             }
             $rs->close();
         }
-        upgrade_mod_savepoint($result, 2008081400, 'data');
+        upgrade_mod_savepoint(true, 2008081400, 'data');
     }
 
-    if ($result && $oldversion < 2008091400) {
+    if ($oldversion < 2008091400) {
 
         /////////////////////////////////////
         /// new file storage upgrade code ///
@@ -143,10 +142,10 @@ function xmldb_data_upgrade($oldversion) {
             }
             $rs->close();
         }
-        upgrade_mod_savepoint($result, 2008091400, 'data');
+        upgrade_mod_savepoint(true, 2008091400, 'data');
     }
 
-    if ($result && $oldversion < 2008112700) {
+    if ($oldversion < 2008112700) {
         if (!get_config('data', 'requiredentriesfixflag')) {
             $databases = $DB->get_records_sql("SELECT d.*, c.fullname
                                                  FROM {data} d, {course} c
@@ -164,10 +163,10 @@ function xmldb_data_upgrade($oldversion) {
             }
         }
         unset_config('requiredentriesfixflag', 'data'); // remove old flag
-        upgrade_mod_savepoint($result, 2008112700, 'data');
+        upgrade_mod_savepoint(true, 2008112700, 'data');
     }
 
-    if ($result && $oldversion < 2009042000) {
+    if ($oldversion < 2009042000) {
 
     /// Define field introformat to be added to data
         $table = new xmldb_table('data');
@@ -177,10 +176,10 @@ function xmldb_data_upgrade($oldversion) {
         $dbman->add_field($table, $field);
 
     /// data savepoint reached
-        upgrade_mod_savepoint($result, 2009042000, 'data');
+        upgrade_mod_savepoint(true, 2009042000, 'data');
     }
 
-    if ($result && $oldversion < 2009111701) {
+    if ($oldversion < 2009111701) {
         upgrade_set_timeout(60*20);
 
     /// Define table data_comments to be dropped
@@ -233,10 +232,10 @@ function xmldb_data_upgrade($oldversion) {
         }
 
     /// data savepoint reached
-        upgrade_mod_savepoint($result, 2009111701, 'data');
+        upgrade_mod_savepoint(true, 2009111701, 'data');
     }
 
-    if ($result && $oldversion < 2010031602) {
+    if ($oldversion < 2010031602) {
         //add assesstimestart and assesstimefinish columns to data
         $table = new xmldb_table('data');
 
@@ -252,10 +251,10 @@ function xmldb_data_upgrade($oldversion) {
             $dbman->add_field($table, $field);
         }
 
-        upgrade_mod_savepoint($result, 2010031602, 'data');
+        upgrade_mod_savepoint(true, 2010031602, 'data');
     }
 
-    if ($result && $oldversion < 2010042800) {
+    if ($oldversion < 2010042800) {
         //migrate data ratings to the central rating table
         require_once($CFG->dirroot . '/lib/db/upgradelib.php');
         $table = new xmldb_table('data_ratings');
@@ -280,10 +279,10 @@ function xmldb_data_upgrade($oldversion) {
             $dbman->drop_table($table);
         }
 
-        upgrade_mod_savepoint($result, 2010042800, 'data');
+        upgrade_mod_savepoint(true, 2010042800, 'data');
     }
 
-    return $result;
+    return true;
 }
 
 

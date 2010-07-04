@@ -24,11 +24,10 @@ function xmldb_enrol_authorize_upgrade($oldversion) {
     global $CFG, $DB, $OUTPUT;
 
     $dbman = $DB->get_manager();
-    $result = true;
 
     //===== 1.9.0 upgrade line ======//
 
-    if ($result && $oldversion < 2008020500 && enrol_is_enabled('authorize')) {
+    if ($oldversion < 2008020500 && enrol_is_enabled('authorize')) {
         require_once($CFG->dirroot.'/enrol/authorize/localfuncs.php');
         if (!check_curl_available()) {
             echo $OUTPUT->notification("You are using the authorize.net enrolment plugin for payment handling but cUrl is not available.
@@ -36,10 +35,10 @@ function xmldb_enrol_authorize_upgrade($oldversion) {
         }
 
         /// authorize savepoint reached
-        upgrade_plugin_savepoint($result, 2008020500, 'enrol', 'authorize');
+        upgrade_plugin_savepoint(true, 2008020500, 'enrol', 'authorize');
     }
 
-    if ($result && $oldversion < 2008092700) {
+    if ($oldversion < 2008092700) {
         /// enrol_authorize.transid
         /// Define index transid (not unique) to be dropped form enrol_authorize
         $table = new xmldb_table('enrol_authorize');
@@ -77,11 +76,11 @@ function xmldb_enrol_authorize_upgrade($oldversion) {
         $dbman->add_index($table, $index);
 
         /// authorize savepoint reached
-        upgrade_plugin_savepoint($result, 2008092700, 'enrol', 'authorize');
+        upgrade_plugin_savepoint(true, 2008092700, 'enrol', 'authorize');
     }
 
     /// Dropping all enums/check contraints from core. MDL-18577
-    if ($result && $oldversion < 2009042700) {
+    if ($oldversion < 2009042700) {
 
     /// Changing list of values (enum) of field paymentmethod on table enrol_authorize to none
         $table = new xmldb_table('enrol_authorize');
@@ -91,10 +90,10 @@ function xmldb_enrol_authorize_upgrade($oldversion) {
         $dbman->drop_enum_from_field($table, $field);
 
         /// authorize savepoint reached
-        upgrade_plugin_savepoint($result, 2009042700, 'enrol', 'authorize');
+        upgrade_plugin_savepoint(true, 2009042700, 'enrol', 'authorize');
     }
 
-    return $result;
+    return true;
 }
 
 

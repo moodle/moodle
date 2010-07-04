@@ -24,41 +24,26 @@ function xmldb_qtype_multianswer_upgrade($oldversion) {
     global $CFG, $DB;
 
     $dbman = $DB->get_manager();
-    $result = true;
 
-    if ($result && $oldversion < 2008050800) {
-        question_multianswer_fix_subquestion_parents_and_categories();
-    /// multianswer savepoint reached
-        upgrade_plugin_savepoint($result, 2008050800, 'qtype', 'multianswer');
-    }
+    if ($oldversion < 2008050800) {
+        //hey - no functions here in this file !!!!!!!
 
-    return $result;
-}
-
-/**
- * Due to MDL-14750, subquestions of multianswer questions restored from backup will
- * have the wrong parent, and due to MDL-10899 subquestions of multianswer questions
- * that have been moved between categories will be in the wrong category, This code fixes these up.
- */
-function question_multianswer_fix_subquestion_parents_and_categories() {
-    global $CFG, $DB;
-
-    $result = true;
-    $rs = $DB->get_recordset_sql('SELECT q.id, q.category, qma.sequence
-                                    FROM {question} q JOIN {question_multianswer} qma ON q.id = qma.question');
-    if ($rs) {
+        $rs = $DB->get_recordset_sql("SELECT q.id, q.category, qma.sequence
+                                        FROM {question} q
+                                        JOIN {question_multianswer} qma ON q.id = qma.question");
         foreach ($rs as $q) {
             if (!empty($q->sequence)) {
-                $result = $result && $DB->execute("UPDATE {question}
-                                                      SET parent = ?, category = ?
-                                                    WHERE id IN ($q->sequence) AND parent <> 0",
-                                                  array($q->id, $q->category));
+                $DB->execute("UPDATE {question}
+                                 SET parent = ?, category = ?
+                               WHERE id IN ($q->sequence) AND parent <> 0",
+                             array($q->id, $q->category));
             }
         }
         $rs->close();
-    } else {
-        $result = false;
-    }
-    return $result;
-}
 
+        /// multianswer savepoint reached
+        upgrade_plugin_savepoint(true, 2008050800, 'qtype', 'multianswer');
+    }
+
+    return true;
+}

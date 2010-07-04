@@ -24,11 +24,10 @@ function xmldb_choice_upgrade($oldversion) {
     global $CFG, $DB;
 
     $dbman = $DB->get_manager();
-    $result = true;
 
 //===== 1.9.0 upgrade line ======//
 
-    if ($result && $oldversion < 2009042000) {
+    if ($oldversion < 2009042000) {
 
     /// Rename field text on table choice to NEWNAMEGOESHERE
         $table = new xmldb_table('choice');
@@ -38,10 +37,10 @@ function xmldb_choice_upgrade($oldversion) {
         $dbman->rename_field($table, $field, 'intro');
 
     /// choice savepoint reached
-        upgrade_mod_savepoint($result, 2009042000, 'choice');
+        upgrade_mod_savepoint(true, 2009042000, 'choice');
     }
 
-    if ($result && $oldversion < 2009042001) {
+    if ($oldversion < 2009042001) {
 
     /// Rename field format on table choice to NEWNAMEGOESHERE
         $table = new xmldb_table('choice');
@@ -51,10 +50,10 @@ function xmldb_choice_upgrade($oldversion) {
         $dbman->rename_field($table, $field, 'introformat');
 
     /// choice savepoint reached
-        upgrade_mod_savepoint($result, 2009042001, 'choice');
+        upgrade_mod_savepoint(true, 2009042001, 'choice');
     }
 
-    return $result;
+    return true;
 }
 
 

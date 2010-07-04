@@ -24,12 +24,11 @@ function xmldb_scorm_upgrade($oldversion) {
     global $CFG, $DB;
 
     $dbman = $DB->get_manager();
-    $result = true;
 
 //===== 1.9.0 upgrade line ======//
 
     // Adding missing 'whatgrade' field to table scorm
-    if ($result && $oldversion < 2008073000) {
+    if ($oldversion < 2008073000) {
         $table = new xmldb_table('scorm');
         $field = new xmldb_field('whatgrade');
         $field->set_attributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'grademethod');
@@ -39,10 +38,10 @@ function xmldb_scorm_upgrade($oldversion) {
             $dbman->add_field($table, $field);
         }
 
-        upgrade_mod_savepoint($result, 2008073000, 'scorm');
+        upgrade_mod_savepoint(true, 2008073000, 'scorm');
     }
 
-     if ($result && $oldversion < 2008082500) {
+     if ($oldversion < 2008082500) {
 
     /// Define field scormtype to be added to scorm
         $table = new xmldb_table('scorm');
@@ -52,10 +51,10 @@ function xmldb_scorm_upgrade($oldversion) {
         $dbman->add_field($table, $field);
 
     /// scorm savepoint reached
-        upgrade_mod_savepoint($result, 2008082500, 'scorm');
+        upgrade_mod_savepoint(true, 2008082500, 'scorm');
     }
 
-    if ($result && $oldversion < 2008090300) {
+    if ($oldversion < 2008090300) {
 
     /// Define field sha1hash to be added to scorm
         $table = new xmldb_table('scorm');
@@ -65,10 +64,10 @@ function xmldb_scorm_upgrade($oldversion) {
         $dbman->add_field($table, $field);
 
     /// scorm savepoint reached
-        upgrade_mod_savepoint($result, 2008090300, 'scorm');
+        upgrade_mod_savepoint(true, 2008090300, 'scorm');
     }
 
-    if ($result && $oldversion < 2008090301) {
+    if ($oldversion < 2008090301) {
 
     /// Define field revision to be added to scorm
         $table = new xmldb_table('scorm');
@@ -78,10 +77,10 @@ function xmldb_scorm_upgrade($oldversion) {
         $dbman->add_field($table, $field);
 
     /// scorm savepoint reached
-        upgrade_mod_savepoint($result, 2008090301, 'scorm');
+        upgrade_mod_savepoint(true, 2008090301, 'scorm');
     }
 
-    if ($result && $oldversion < 2008090302) {
+    if ($oldversion < 2008090302) {
         $sql = "UPDATE {scorm}
                    SET scormtype = 'external'
                  WHERE reference LIKE ? OR reference LIKE ? OR reference LIKE ?";
@@ -97,19 +96,19 @@ function xmldb_scorm_upgrade($oldversion) {
         $DB->execute($sql, array('#%'));
 
     /// scorm savepoint reached
-        upgrade_mod_savepoint($result, 2008090302, 'scorm');
+        upgrade_mod_savepoint(true, 2008090302, 'scorm');
     }
 
-    if ($result && $oldversion < 2008090303) {
+    if ($oldversion < 2008090303) {
         //remove obsoleted config settings
         unset_config('scorm_advancedsettings');
         unset_config('scorm_windowsettings');
 
     /// scorm savepoint reached
-        upgrade_mod_savepoint($result, 2008090303, 'scorm');
+        upgrade_mod_savepoint(true, 2008090303, 'scorm');
     }
 
-    if ($result && $oldversion < 2008090304) {
+    if ($oldversion < 2008090304) {
 
         /////////////////////////////////////
         /// new file storage upgrade code ///
@@ -232,11 +231,11 @@ function xmldb_scorm_upgrade($oldversion) {
         }
 
     /// scorm savepoint reached
-        upgrade_mod_savepoint($result, 2008090304, 'scorm');
+        upgrade_mod_savepoint(true, 2008090304, 'scorm');
     }
 
 
-    if ($result && $oldversion < 2008090305) {
+    if ($oldversion < 2008090305) {
 
     /// Define new fields forcecompleted, forcenewattempt, displayattemptstatus, and displaycoursestructure to be added to scorm
         $table = new xmldb_table('scorm');
@@ -262,12 +261,12 @@ function xmldb_scorm_upgrade($oldversion) {
         }
 
     /// scorm savepoint reached
-        upgrade_mod_savepoint($result, 2008090305, 'scorm');
+        upgrade_mod_savepoint(true, 2008090305, 'scorm');
     }
 
 
     // remove redundant config values
-    if ($result && $oldversion < 2008090306) {
+    if ($oldversion < 2008090306) {
         /*
          * comment this out as it is handled by the update mark 2008090310 below
          * left for historical documentation as some early adopters may have done
@@ -289,13 +288,13 @@ function xmldb_scorm_upgrade($oldversion) {
         }
          */
         /// scorm savepoint reached
-        upgrade_mod_savepoint($result, 2008090306, 'scorm');
+        upgrade_mod_savepoint(true, 2008090306, 'scorm');
     }
 
 
 
     // remove redundant config values
-    if ($result && $oldversion < 2008090307) {
+    if ($oldversion < 2008090307) {
         /*
          * comment this out as it is handled by the update mark 2008090310 below
          * left for historical documentation as some early adopters may have done
@@ -336,10 +335,10 @@ function xmldb_scorm_upgrade($oldversion) {
          */
 
         /// scorm savepoint reached
-        upgrade_mod_savepoint($result, 2008090307, 'scorm');
+        upgrade_mod_savepoint(true, 2008090307, 'scorm');
     }
 
-    if ($result && $oldversion < 2008090308) {
+    if ($oldversion < 2008090308) {
         $table = new xmldb_table('scorm');
         $field = new xmldb_field('timeopen', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'height');
         if (!$dbman->field_exists($table,$field)) {
@@ -351,11 +350,11 @@ function xmldb_scorm_upgrade($oldversion) {
         }
 
         /// scorm savepoint reached
-        upgrade_mod_savepoint($result, 2008090308, 'scorm');
+        upgrade_mod_savepoint(true, 2008090308, 'scorm');
     }
 
 
-    if ($result && $oldversion < 2008090310) {
+    if ($oldversion < 2008090310) {
         // take above blocks that delete config and move the values in to config_plugins
 
         $redundant_config = array(
@@ -395,16 +394,16 @@ function xmldb_scorm_upgrade($oldversion) {
         foreach ($redundant_config as $rcfg) {
             if (isset($CFG->$rcfg)) {
                 $shortname = substr($rcfg, 6);
-                $result = $result && set_config($shortname, $CFG->$rcfg, 'scorm');
-                $result = $result && unset_config($rcfg);
+                set_config($shortname, $CFG->$rcfg, 'scorm');
+                unset_config($rcfg);
             }
         }
 
         /// scorm savepoint reached
-        upgrade_mod_savepoint($result, 2008090310, 'scorm');
+        upgrade_mod_savepoint(true, 2008090310, 'scorm');
     }
 
-    if ($result && $oldversion < 2009042000) {
+    if ($oldversion < 2009042000) {
 
     /// Rename field summary on table scorm to intro
         $table = new xmldb_table('scorm');
@@ -414,10 +413,10 @@ function xmldb_scorm_upgrade($oldversion) {
         $dbman->rename_field($table, $field, 'intro');
 
     /// scorm savepoint reached
-        upgrade_mod_savepoint($result, 2009042000, 'scorm');
+        upgrade_mod_savepoint(true, 2009042000, 'scorm');
     }
 
-    if ($result && $oldversion < 2009042001) {
+    if ($oldversion < 2009042001) {
 
     /// Define field introformat to be added to scorm
         $table = new xmldb_table('scorm');
@@ -427,10 +426,10 @@ function xmldb_scorm_upgrade($oldversion) {
         $dbman->add_field($table, $field);
 
     /// scorm savepoint reached
-        upgrade_mod_savepoint($result, 2009042001, 'scorm');
+        upgrade_mod_savepoint(true, 2009042001, 'scorm');
     }
 
-    if ($result && $oldversion < 2009042002) {
+    if ($oldversion < 2009042002) {
 
     /// Define field introformat to be added to scorm
         $table = new xmldb_table('scorm_scoes');
@@ -440,10 +439,10 @@ function xmldb_scorm_upgrade($oldversion) {
         $dbman->change_field_type($table, $field);
 
     /// scorm savepoint reached
-        upgrade_mod_savepoint($result, 2009042002, 'scorm');
+        upgrade_mod_savepoint(true, 2009042002, 'scorm');
     }
 
-    return $result;
+    return true;
 }
 
 

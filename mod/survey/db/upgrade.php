@@ -24,11 +24,10 @@ function xmldb_survey_upgrade($oldversion) {
     global $CFG, $DB;
 
     $dbman = $DB->get_manager();
-    $result = true;
 
 //===== 1.9.0 upgrade line ======//
 
-    if ($result && $oldversion < 2009042002) {
+    if ($oldversion < 2009042002) {
 
     /// Define field introformat to be added to survey
         $table = new xmldb_table('survey');
@@ -38,10 +37,10 @@ function xmldb_survey_upgrade($oldversion) {
         $dbman->add_field($table, $field);
 
     /// survey savepoint reached
-        upgrade_mod_savepoint($result, 2009042002, 'survey');
+        upgrade_mod_savepoint(true, 2009042002, 'survey');
     }
 
-    return $result;
+    return true;
 }
 
 

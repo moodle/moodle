@@ -24,11 +24,10 @@ function xmldb_chat_upgrade($oldversion) {
     global $CFG, $DB;
 
     $dbman = $DB->get_manager();
-    $result = true;
 
     //===== 1.9.0 upgrade line ======//
 
-    if ($result && $oldversion < 2010050100) {
+    if ($oldversion < 2010050100) {
 
     /// Changing precision of field ip on table chat_users to (45)
         $table = new xmldb_table('chat_users');
@@ -38,10 +37,10 @@ function xmldb_chat_upgrade($oldversion) {
         $dbman->change_field_precision($table, $field);
 
     /// chat savepoint reached
-        upgrade_mod_savepoint($result, 2010050100, 'chat');
+        upgrade_mod_savepoint(true, 2010050100, 'chat');
     }
 
-    if ($result && $oldversion < 2010050101) {
+    if ($oldversion < 2010050101) {
 
     /// Define field introformat to be added to chat
         $table = new xmldb_table('chat');
@@ -53,11 +52,11 @@ function xmldb_chat_upgrade($oldversion) {
         }
 
     /// chat savepoint reached
-        upgrade_mod_savepoint($result, 2010050101, 'chat');
+        upgrade_mod_savepoint(true, 2010050101, 'chat');
     }
 
     /// Creating chat_messages_current to hold latest chat messages
-    if ($result && $oldversion < 2010050102) {
+    if ($oldversion < 2010050102) {
 
     /// Define table chat_messages_current to be created
         $table = new xmldb_table('chat_messages_current');
@@ -86,9 +85,9 @@ function xmldb_chat_upgrade($oldversion) {
         }
 
     /// chat savepoint reached
-        upgrade_mod_savepoint($result, 2010050102, 'chat');
+        upgrade_mod_savepoint(true, 2010050102, 'chat');
     }
-    return $result;
+    return true;
 }
 
 

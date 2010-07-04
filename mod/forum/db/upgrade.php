@@ -45,18 +45,17 @@ function xmldb_forum_upgrade($oldversion) {
     global $CFG, $DB, $OUTPUT;
 
     $dbman = $DB->get_manager(); // loads ddl manager and xmldb classes
-    $result = true;
 
 //===== 1.9.0 upgrade line ======//
 
-    if ($result && $oldversion < 2007101511) {
+    if ($oldversion < 2007101511) {
         //MDL-13866 - send forum ratins to gradebook again
         require_once($CFG->dirroot.'/mod/forum/lib.php');
         forum_upgrade_grades();
-        upgrade_mod_savepoint($result, 2007101511, 'forum');
+        upgrade_mod_savepoint(true, 2007101511, 'forum');
     }
 
-    if ($result && $oldversion < 2008072800) {
+    if ($oldversion < 2008072800) {
     /// Define field completiondiscussions to be added to forum
         $table = new xmldb_table('forum');
         $field = new xmldb_field('completiondiscussions');
@@ -83,10 +82,10 @@ function xmldb_forum_upgrade($oldversion) {
         if(!$dbman->field_exists($table,$field)) {
             $dbman->add_field($table, $field);
         }
-        upgrade_mod_savepoint($result, 2008072800, 'forum');
+        upgrade_mod_savepoint(true, 2008072800, 'forum');
     }
 
-    if ($result && $oldversion < 2008081900) {
+    if ($oldversion < 2008081900) {
 
         /////////////////////////////////////
         /// new file storage upgrade code ///
@@ -151,10 +150,10 @@ function xmldb_forum_upgrade($oldversion) {
             $rs->close();
         }
 
-        upgrade_mod_savepoint($result, 2008081900, 'forum');
+        upgrade_mod_savepoint(true, 2008081900, 'forum');
     }
 
-    if ($result && $oldversion < 2008090800) {
+    if ($oldversion < 2008090800) {
 
     /// Define field maxattachments to be added to forum
         $table = new xmldb_table('forum');
@@ -166,10 +165,10 @@ function xmldb_forum_upgrade($oldversion) {
         }
 
     /// forum savepoint reached
-        upgrade_mod_savepoint($result, 2008090800, 'forum');
+        upgrade_mod_savepoint(true, 2008090800, 'forum');
     }
 
-    if ($result && $oldversion < 2009042000) {
+    if ($oldversion < 2009042000) {
 
     /// Rename field format on table forum_posts to messageformat
         $table = new xmldb_table('forum_posts');
@@ -179,10 +178,10 @@ function xmldb_forum_upgrade($oldversion) {
         $dbman->rename_field($table, $field, 'messageformat');
 
     /// forum savepoint reached
-        upgrade_mod_savepoint($result, 2009042000, 'forum');
+        upgrade_mod_savepoint(true, 2009042000, 'forum');
     }
 
-    if ($result && $oldversion < 2009042001) {
+    if ($oldversion < 2009042001) {
 
     /// Define field messagetrust to be added to forum_posts
         $table = new xmldb_table('forum_posts');
@@ -192,10 +191,10 @@ function xmldb_forum_upgrade($oldversion) {
         $dbman->add_field($table, $field);
 
     /// forum savepoint reached
-        upgrade_mod_savepoint($result, 2009042001, 'forum');
+        upgrade_mod_savepoint(true, 2009042001, 'forum');
     }
 
-    if ($result && $oldversion < 2009042002) {
+    if ($oldversion < 2009042002) {
         $trustmark = '#####TRUSTTEXT#####';
         $rs = $DB->get_recordset_sql("SELECT * FROM {forum_posts} WHERE message LIKE '$trustmark%'");
         foreach ($rs as $post) {
@@ -210,10 +209,10 @@ function xmldb_forum_upgrade($oldversion) {
         $rs->close();
 
     /// forum savepoint reached
-        upgrade_mod_savepoint($result, 2009042002, 'forum');
+        upgrade_mod_savepoint(true, 2009042002, 'forum');
     }
 
-    if ($result && $oldversion < 2009042003) {
+    if ($oldversion < 2009042003) {
 
     /// Define field introformat to be added to forum
         $table = new xmldb_table('forum');
@@ -223,19 +222,19 @@ function xmldb_forum_upgrade($oldversion) {
         $dbman->add_field($table, $field);
 
     /// forum savepoint reached
-        upgrade_mod_savepoint($result, 2009042003, 'forum');
+        upgrade_mod_savepoint(true, 2009042003, 'forum');
     }
 
-    if ($result && $oldversion < 2009042004) {
+    if ($oldversion < 2009042004) {
     /// set format to current
         $DB->set_field('forum', 'introformat', FORMAT_MOODLE, array());
 
     /// quiz savepoint reached
-        upgrade_mod_savepoint($result, 2009042004, 'forum');
+        upgrade_mod_savepoint(true, 2009042004, 'forum');
     }
 
     /// Dropping all enums/check contraints from core. MDL-18577
-    if ($result && $oldversion < 2009042700) {
+    if ($oldversion < 2009042700) {
 
     /// Changing list of values (enum) of field type on table forum to none
         $table = new xmldb_table('forum');
@@ -245,19 +244,19 @@ function xmldb_forum_upgrade($oldversion) {
         $dbman->drop_enum_from_field($table, $field);
 
     /// forum savepoint reached
-        upgrade_mod_savepoint($result, 2009042700, 'forum');
+        upgrade_mod_savepoint(true, 2009042700, 'forum');
     }
 
-    if ($result && $oldversion < 2009050400) {
+    if ($oldversion < 2009050400) {
 
     /// Clean existing wrong rates. MDL-18227
         $DB->delete_records('forum_ratings', array('post' => 0));
 
     /// forum savepoint reached
-        upgrade_mod_savepoint($result, 2009050400, 'forum');
+        upgrade_mod_savepoint(true, 2009050400, 'forum');
     }
 
-    if ($result && $oldversion < 2010042800) {
+    if ($oldversion < 2010042800) {
         //migrate forumratings to the central rating table
         require_once($CFG->dirroot . '/lib/db/upgradelib.php');
         $table = new xmldb_table('forum_ratings');
@@ -282,10 +281,10 @@ function xmldb_forum_upgrade($oldversion) {
             $dbman->drop_table($table);
         }
 
-        upgrade_mod_savepoint($result, 2010042800, 'forum');
+        upgrade_mod_savepoint(true, 2010042800, 'forum');
     }
 
-    return $result;
+    return true;
 }
 
 

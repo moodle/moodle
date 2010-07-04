@@ -24,13 +24,12 @@ function xmldb_qtype_multichoice_upgrade($oldversion) {
     global $CFG, $DB, $QTYPES;
 
     $dbman = $DB->get_manager();
-    $result = true;
 
     // This upgrade actually belongs to the random question type,
     // but that does not have a DB upgrade script. Therefore, multichoice
     // is doing it.
     // Rename random questions to give them more helpful names.
-    if ($result && $oldversion < 2008021800) {
+    if ($oldversion < 2008021800) {
         require_once($CFG->libdir . '/questionlib.php');
         // Get all categories containing random questions.
         $categories = $DB->get_recordset_sql("
@@ -44,16 +43,16 @@ function xmldb_qtype_multichoice_upgrade($oldversion) {
         $where = "qtype = 'random' AND category = ? AND " . $DB->sql_compare_text('questiontext') . " = ?";
         foreach ($categories as $cat) {
             $randomqname = $QTYPES[RANDOM]->question_name($cat, false);
-            $result = $result && $DB->set_field_select('question', 'name', $randomqname, $where, array($cat->id, '0'));
+            $DB->set_field_select('question', 'name', $randomqname, $where, array($cat->id, '0'));
 
             $randomqname = $QTYPES[RANDOM]->question_name($cat, true);
-            $result = $result && $DB->set_field_select('question', 'name', $randomqname, $where, array($cat->id, '1'));
+            $DB->set_field_select('question', 'name', $randomqname, $where, array($cat->id, '1'));
         }
 
-        upgrade_plugin_savepoint($result, 2008021800, 'qtype', 'multichoice');
+        upgrade_plugin_savepoint(true, 2008021800, 'qtype', 'multichoice');
     }
 
-    return $result;
+    return true;
 }
 
 

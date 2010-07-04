@@ -27,8 +27,7 @@ function xmldb_imscp_upgrade($oldversion) {
     global $CFG, $DB;
 
     $dbman = $DB->get_manager();
-    $result = true;
 
 
-    return $result;
+    return true;
 }

@@ -24,16 +24,16 @@ function xmldb_qtype_calculated_upgrade($oldversion) {
     global $CFG, $DB;
 
     $dbman = $DB->get_manager();
-    $result = true;
 
     // MDL-16505.
-    if ($result && $oldversion < 2008091700 ) { //New version in version.php
+    if ($oldversion < 2008091700 ) { //New version in version.php
         if (get_config('qtype_datasetdependent', 'version')) {
-            $result = $result && unset_config('version', 'qtype_datasetdependent');
+            unset_config('version', 'qtype_datasetdependent');
         }
-        upgrade_plugin_savepoint($result, 2008091700, 'qtype', 'calculated');
+        upgrade_plugin_savepoint(true, 2008091700, 'qtype', 'calculated');
     }
-    if ($result && $oldversion < 2009082000 ) { //New version in version.php
+
+    if ($oldversion < 2009082000) { //New version in version.php
 
 // this should be changed if merged to 1.9
 //    let if ($dbman->table_exists()) replace the normal $oldversion test
@@ -56,9 +56,10 @@ function xmldb_qtype_calculated_upgrade($oldversion) {
             // $dbman->create_table doesnt return a result, we just have to trust it
             $dbman->create_table($table);
         }
-        upgrade_plugin_savepoint($result, 2009082000 , 'qtype', 'calculated');
+        upgrade_plugin_savepoint(true, 2009082000 , 'qtype', 'calculated');
     }
-    if ( $result && $oldversion < 2009092000 ) { //New version in version.php
+
+    if ( $oldversion < 2009092000) { //New version in version.php
 
     /// Define field multichoice to be added to question_calculated_options
     ///ALTER TABLE `moodle`.`mdl_question_calculated_options` DROP COLUMN `multichoice`;
@@ -119,30 +120,25 @@ function xmldb_qtype_calculated_upgrade($oldversion) {
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
-        upgrade_plugin_savepoint($result, 2009092000, 'qtype', 'calculated');
+        upgrade_plugin_savepoint(true, 2009092000, 'qtype', 'calculated');
     }
 
-   if ($result && $oldversion < 2010020800) {
+    if ($oldversion < 2010020800) {
 
     /// Define field multiplechoice to be dropped from question_calculated_options
         $table = new xmldb_table('question_calculated_options');
         $field = new xmldb_field('multichoice');
-        
+
     /// Conditionally launch drop field multiplechoice
         if ($dbman->field_exists($table, $field)) {
             $dbman->drop_field($table, $field);
         }
 
     /// calculated savepoint reached
-        upgrade_plugin_savepoint($result, 2010020800, 'qtype', 'calculated');
+        upgrade_plugin_savepoint(true, 2010020800, 'qtype', 'calculated');
     }
-/// calculated savepoint reached
-/// if ($result && $oldversion < YYYYMMDD00) { //New version in version.php
-///     $result = result of database_manager methods
-///     upgrade_plugin_savepoint($result, YYYYMMDD00, 'qtype', 'calculated');
-/// }
 
-    return $result;
+    return true;
 }
 
 

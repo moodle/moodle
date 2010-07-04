@@ -24,10 +24,9 @@ function xmldb_qtype_numerical_upgrade($oldversion) {
     global $CFG, $DB;
 
     $dbman = $DB->get_manager();
-    $result = true;
 
 //===== 1.9.0 upgrade line ======//
-    if ($result && $oldversion < 2009100100 ) { //New version in version.php
+    if ($oldversion < 2009100100 ) { //New version in version.php
 
     /// Define table question_numerical_options to be created
         $table = new xmldb_table('question_numerical_options');
@@ -49,10 +48,10 @@ function xmldb_qtype_numerical_upgrade($oldversion) {
             // $dbman->create_table doesnt return a result, we just have to trust it
             $dbman->create_table($table);
         }//else
-        upgrade_plugin_savepoint($result, 2009100100, 'qtype', 'numerical');
+        upgrade_plugin_savepoint(true, 2009100100, 'qtype', 'numerical');
     }
 
-    return $result;
+    return true;
 }
 
 

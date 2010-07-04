@@ -47,9 +47,8 @@ function xmldb_block_community_upgrade($oldversion) {
     global $CFG, $DB;
 
     $dbman = $DB->get_manager();
-    $result = true;
 
-    if ($result && $oldversion < 2010042701) {
+    if ($oldversion < 2010042701) {
 
         /// Define table block_community to be created
         $table = new xmldb_table('block_community');
@@ -71,9 +70,9 @@ function xmldb_block_community_upgrade($oldversion) {
         }
 
         /// community savepoint reached
-        upgrade_block_savepoint($result, 2010042701, 'community');
+        upgrade_block_savepoint(true, 2010042701, 'community');
     }
 
 
-    return $result;
+    return true;
 }

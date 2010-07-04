@@ -35,20 +35,19 @@ function xmldb_message_email_upgrade($oldversion) {
     global $CFG, $DB;
 
     $dbman = $DB->get_manager();
-    $result = true;
 
-    if ($result && $oldversion < 2008072401) {
+    if ($oldversion < 2008072401) {
         $processor = new object();
         $processor->name  = 'email';
-        if (! $DB->record_exists('message_processors', array('name' => $processor->name)) ){
-            $result = $result && $DB->insert_record('message_processors', $processor);
+        if (!$DB->record_exists('message_processors', array('name' => $processor->name)) ){
+            $DB->insert_record('message_processors', $processor);
         }
 
     /// email savepoint reached
-        upgrade_plugin_savepoint($result, 2008072401, 'message', 'email');
+        upgrade_plugin_savepoint(true, 2008072401, 'message', 'email');
     }
 
-    return $result;
+    return true;
 }
 
 
