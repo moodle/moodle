@@ -126,7 +126,16 @@
         if (!file_exists("$CFG->dirroot/blocks/$blockname/block_$blockname.php")) {
             $blockobject  = false;
             $strblockname = '<span class="notifyproblem">'.$blockname.' ('.get_string('missingfromdisk').')</span>';
+            $plugin = new object();
+            $plugin->version = $block->version;
+
         } else {
+            $plugin = new object();
+            $plugin->version = '???';
+            if (file_exists("$CFG->dirroot/blocks/$blockname/version.php")) {
+                include("$CFG->dirroot/blocks/$blockname/version.php");
+            }
+
             if (!$blockobject  = block_instance($block->name)) {
                 $incompatible[] = $block;
                 continue;
@@ -172,14 +181,17 @@
             $class = ' class="dimmed_text"'; // Leading space required!
         }
 
-
-        if ($blockobject) {
-            $blockobject->get_version();
+        if ($block->version == $plugin->version) {
+            $version = $block->version;
+        } else {
+            $version = "$block->version ($plugin->version)";
         }
+
+
         $table->add_data(array(
             '<span'.$class.'>'.$strblockname.'</span>',
             $blocklist,
-            '<span'.$class.'>'.$block->version.'</span>',
+            '<span'.$class.'>'.$version.'</span>',
             $visible,
             $delete,
             $settings

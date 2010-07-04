@@ -1,5 +1,7 @@
 <?php
 
+//TODO: fix these sloppy constant names or move them elsewhere!
+
 define('BLOGDEFAULTTIMEWITHIN', 90);
 define('BLOGDEFAULTNUMBEROFTAGS', 20);
 define('BLOGDEFAULTSORT', 'name');
@@ -8,7 +10,6 @@ require_once($CFG->dirroot .'/blog/lib.php');
 
 class block_blog_tags extends block_base {
     function init() {
-        $this->version = 2007101509;
         $this->title = get_string('pluginname', 'block_blog_tags');
     }
 

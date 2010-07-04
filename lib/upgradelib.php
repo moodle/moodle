@@ -568,10 +568,19 @@ function upgrade_plugins_blocks($startcallback, $endcallback, $verbose) {
 
         $component = 'block_'.$blockname;
 
+        if (!is_readable($fullblock.'/version.php')) {
+            throw new plugin_defective_exception('block/'.$blockname, 'Missing version.php file.');
+        }
+        $plugin = new object();
+        $plugin->version = NULL;
+        $plugin->cron    = 0;
+        include($fullblock.'/version.php');
+        $block = $plugin;
+
         if (!is_readable($fullblock.'/block_'.$blockname.'.php')) {
             throw new plugin_defective_exception('block/'.$blockname, 'Missing main block class file.');
         }
-        require_once($fullblock.'/block_'.$blockname.'.php');
+        include_once($fullblock.'/block_'.$blockname.'.php');
 
         $classname = 'block_'.$blockname;
 
@@ -587,10 +596,7 @@ function upgrade_plugins_blocks($startcallback, $endcallback, $verbose) {
             throw new plugin_defective_exception($component, 'Self test failed.');
         }
 
-        $block           = new object();     // This may be used to update the db below
         $block->name     = $blockname;   // The name MUST match the directory
-        $block->version  = $blockobj->get_version();
-        $block->cron     = !empty($blockobj->cron) ? $blockobj->cron : 0;
         $block->multiple = $blockobj->instance_allow_multiple() ? 1 : 0;
 
         if (empty($block->version)) {

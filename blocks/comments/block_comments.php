@@ -6,7 +6,6 @@ class block_comments extends block_base {
 
     function init() {
         $this->title = get_string('pluginname', 'block_comments');
-        $this->version = 2009072000;
     }
 
     function specialization() {

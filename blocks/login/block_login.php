@@ -3,7 +3,6 @@
 class block_login extends block_base {
     function init() {
         $this->title = get_string('pluginname', 'block_login');
-        $this->version = 2007101509;
     }
 
     function applicable_formats() {

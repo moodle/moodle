@@ -34,7 +34,6 @@ class block_completionstatus extends block_base {
 
     public function init() {
         $this->title   = get_string('completionstatus', 'block_completionstatus');
-        $this->version = 2009072800;
     }
 
     public function get_content() {

@@ -37,7 +37,6 @@ class block_myprofile extends block_base {
      */
     public function init() {
         $this->title   = get_string('pluginname', 'block_myprofile');
-        $this->version = 2009123100;
     }
 
     /**

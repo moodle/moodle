@@ -6,10 +6,7 @@ define('BGR_NEXTONE',      '2');
 
 class block_glossary_random extends block_base {
     function init() {
-
         $this->title = get_string('pluginname','block_glossary_random');
-        $this->version = 2007101509;
-
     }
 
     function specialization() {

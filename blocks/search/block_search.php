@@ -15,8 +15,6 @@ class block_search extends block_base {
 
     function init() {
       $this->title = get_string('pluginname', 'block_search');
-      $this->cron = 1;
-      $this->version = 2008031500;
     } //init
 
     // only one instance of this block is required

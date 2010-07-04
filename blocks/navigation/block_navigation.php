@@ -59,7 +59,6 @@ class block_navigation extends block_base {
         global $CFG;
         $this->blockname = get_class($this);
         $this->title = get_string('pluginname', $this->blockname);
-        $this->version = 2009082800;
     }
 
     /**

@@ -8,36 +8,35 @@ class block_feedback extends block_base {
 
     function init() {
         $this->title = get_string('feedback', 'block_feedback');
-        $this->version = 2010050200;
     }
-    
+
     function applicable_formats() {
         return array('site' => true, 'course' => true);
     }
 
     function get_content() {
         global $CFG, $OUTPUT;
-        
+
         if ($this->content !== NULL) {
             return $this->content;
         }
-        
+
         if (!defined('FEEDBACK_BLOCK_LIB_IS_OK')) {
             $this->content = new stdClass;
             $this->content->text = get_string('missing_feedback_module', 'block_feedback');
             $this->content->footer = '';
             return $this->content;
         }
-        
+
         $courseid = $this->page->course->id;
         if ($courseid <= 0) {
             $courseid = SITEID;
         }
-        
+
         $this->content = new stdClass;
         $this->content->text = '';
         $this->content->footer = '';
-        
+
 
         if (empty($this->instance->pageid)) {
             $this->instance->pageid = SITEID;

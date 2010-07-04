@@ -2,7 +2,6 @@
 
 class block_tags extends block_base {
     function init() {
-        $this->version = 2008063001;
         $this->title = get_string('pluginname', 'block_tags');
         // the cron function goes through all users, so only do daily
         // (this creates rss feeds for personal course tags)

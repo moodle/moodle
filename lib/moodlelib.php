@@ -7553,18 +7553,15 @@ function moodle_needs_upgrading() {
         if ($blockname === 'NEWBLOCK') {   // Someone has unzipped the template, ignore it
             continue;
         }
-        if (!is_readable($fullblock.'/block_'.$blockname.'.php')) {
+        if (!is_readable($fullblock.'/version.php')) {
             continue;
         }
-        include_once($fullblock.'/block_'.$blockname.'.php');
-        $classname = 'block_'.$blockname;
-        if (!class_exists($classname)) {
-            continue;
-        }
-        $blockobj = new $classname;
+        $plugin = new object();
+        $plugin->version = NULL;
+        include($fullblock.'/version.php');
         if (empty($installed[$blockname])) {
             return true;
-        } else if ($blockobj->get_version() > $installed[$blockname]->version) {
+        } else if ($plugin->version > $installed[$blockname]->version) {
             return true;
         }
     }

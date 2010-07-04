@@ -1,15 +1,11 @@
 <?php
 
-require_once($CFG->dirroot.'/tag/lib.php');
-require_once($CFG->libdir . '/filelib.php');
-
 define('DEFAULT_NUMBER_OF_VIDEOS', 5);
 
 class block_tag_youtube extends block_base {
 
     function init() {
         $this->title = get_string('pluginname','block_tag_youtube');
-        $this->version = 2007101509;
     }
 
     function applicable_formats() {
@@ -32,6 +28,11 @@ class block_tag_youtube extends block_base {
     }
 
     function get_content() {
+        global $CFG;
+
+        //note: do NOT include files at the top of this file
+        require_once($CFG->dirroot.'/tag/lib.php');
+        require_once($CFG->libdir . '/filelib.php');
 
         if ($this->content !== NULL) {
             return $this->content;

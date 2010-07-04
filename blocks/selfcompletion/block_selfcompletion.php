@@ -37,7 +37,6 @@ class block_selfcompletion extends block_base {
 
     public function init() {
         $this->title   = get_string('selfcompletion', 'block_selfcompletion');
-        $this->version = 2009072800;
     }
 
     public function get_content() {

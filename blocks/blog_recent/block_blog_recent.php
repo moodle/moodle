@@ -37,7 +37,6 @@ class block_blog_recent extends block_base {
     function init() {
         $this->title = get_string('pluginname', 'block_blog_recent');
         $this->content_type = BLOCK_TYPE_TEXT;
-        $this->version = 2009070900;
     }
 
     function applicable_formats() {

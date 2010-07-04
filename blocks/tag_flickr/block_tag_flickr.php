@@ -1,8 +1,5 @@
 <?php
 
-require_once($CFG->dirroot.'/tag/lib.php');
-require_once($CFG->libdir . '/filelib.php');
-
 define('FLICKR_DEV_KEY', '4fddbdd7ff2376beec54d7f6afad425e');
 define('DEFAULT_NUMBER_OF_PHOTOS', 6);
 
@@ -10,7 +7,6 @@ class block_tag_flickr extends block_base {
 
     function init() {
         $this->title = get_string('pluginname','block_tag_flickr');
-        $this->version = 2007101509;
     }
 
     function applicable_formats() {
@@ -30,8 +26,11 @@ class block_tag_flickr extends block_base {
     }
 
     function get_content() {
-
         global $CFG, $USER;
+
+        //note: do NOT include files at the top of this file
+        require_once($CFG->dirroot.'/tag/lib.php');
+        require_once($CFG->libdir . '/filelib.php');
 
         if ($this->content !== NULL) {
             return $this->content;

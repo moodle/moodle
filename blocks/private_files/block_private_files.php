@@ -31,7 +31,6 @@ class block_private_files extends block_base {
 
     function init() {
         $this->title = get_string('areauserpersonal', 'repository');
-        $this->version = 2010030100;
     }
 
     function specialization() {

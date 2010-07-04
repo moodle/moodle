@@ -37,7 +37,6 @@ class block_blog_menu extends block_base {
 
     function init() {
         $this->title = get_string('pluginname', 'block_blog_menu');
-        $this->version = 2009071700;
     }
 
     function instance_allow_multiple() {
@@ -57,7 +56,7 @@ class block_blog_menu extends block_base {
     }
 
     function get_content() {
-        
+
         // Check if we've already generated content
         if (!empty($this->content)) {
             return $this->content;
@@ -79,7 +78,7 @@ class block_blog_menu extends block_base {
             }
             return $this->content;
         }
-        
+
         // Iterate the option types
         $menulist = array();
         foreach ($options as $types) {

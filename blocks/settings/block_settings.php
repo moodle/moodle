@@ -50,7 +50,6 @@ class block_settings extends block_base {
     function init() {
         $this->blockname = get_class($this);
         $this->title = get_string('pluginname', $this->blockname);
-        $this->version = 2009082800;
     }
 
     /**

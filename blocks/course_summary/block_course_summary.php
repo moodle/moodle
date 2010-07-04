@@ -3,7 +3,6 @@
 class block_course_summary extends block_base {
     function init() {
         $this->title = get_string('pluginname', 'block_course_summary');
-        $this->version = 2007101509;
     }
 
     function specialization() {

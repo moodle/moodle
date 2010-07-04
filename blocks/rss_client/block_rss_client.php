@@ -27,8 +27,6 @@
 
     function init() {
         $this->title = get_string('feedstitle', 'block_rss_client');
-        $this->version = 2009072901;
-        $this->cron = 300; /// Set min time between cron executions to 300 secs (5 mins)
     }
 
     function preferred_width() {

@@ -3,7 +3,6 @@
 class block_news_items extends block_base {
     function init() {
         $this->title = get_string('pluginname', 'block_news_items');
-        $this->version = 2007101509;
     }
 
     function get_content() {

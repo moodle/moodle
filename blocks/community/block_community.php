@@ -27,7 +27,6 @@
 class block_community extends block_list {
     function init() {
         $this->title = get_string('pluginname', 'block_community');
-        $this->version = 2010042701;
     }
 
     function user_can_addto($page) {
@@ -80,8 +79,8 @@ class block_community extends block_list {
             $this->content->icons[] = '';
             foreach ($courses as $course) {
                 //delete link
-                $deleteicon = html_writer::empty_tag('img', 
-                        array('src' => $OUTPUT->pix_url('i/cross_red_small'), 
+                $deleteicon = html_writer::empty_tag('img',
+                        array('src' => $OUTPUT->pix_url('i/cross_red_small'),
                             'alt' => get_string('removecommunitycourse', 'block_community')));
                 $deleteurl = new moodle_url($CFG->wwwroot.'/blocks/community/communitycourse.php',
                         array('remove'=>true, 'communityid'=> $course->id, 'sesskey' => sesskey()));

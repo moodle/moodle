@@ -3,9 +3,8 @@
 class block_site_main_menu extends block_list {
     function init() {
         $this->title = get_string('pluginname', 'block_site_main_menu');
-        $this->version = 2007101509;
     }
-    
+
     function applicable_formats() {
         return array('site' => true);
     }

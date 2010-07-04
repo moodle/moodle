@@ -8,7 +8,6 @@
 class block_online_users extends block_base {
     function init() {
         $this->title = get_string('pluginname','block_online_users');
-        $this->version = 2007101510;
     }
 
     function has_config() {return true;}
@@ -80,7 +79,7 @@ class block_online_users extends block_base {
 
             $sql = "SELECT $userfields, MAX(ul.timeaccess) AS lastaccess
                       FROM {user_lastaccess} ul, {user} u $groupmembers $rafrom
-                      JOIN ($esqljoin) euj ON euj.id = u.id     
+                      JOIN ($esqljoin) euj ON euj.id = u.id
                      WHERE ul.timeaccess > $timefrom
                            AND u.id = ul.userid
                            AND ul.courseid = :courseid

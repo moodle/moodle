@@ -77,12 +77,6 @@ class block_base {
     var $edit_controls = NULL;
 
     /**
-     * The current version that the block type defines.
-     * @var string $version
-     */
-    var $version       = NULL;
-
-    /**
      * The initialized instance of this block object.
      * @var block $instance
      */
@@ -116,19 +110,11 @@ class block_base {
 /// Class Functions
 
     /**
-     * The class constructor
-     *
-     */
-    function block_base() {
-        $this->init();
-    }
-
-    /**
      * Fake constructor to keep PHP5 happy
      *
      */
     function __construct() {
-        $this->block_base();
+        $this->init();
     }
 
     /**
@@ -301,19 +287,6 @@ class block_base {
     }
 
     /**
-     * Returns the class $version var value.
-     *
-     * Intentionally doesn't check if a version is set.
-     * This is already done in {@link _self_test()}
-     *
-     * @return string $this->version
-     */
-    function get_version() {
-        // Intentionally doesn't check if a version is set. This is already done in _self_test()
-        return $this->version;
-    }
-
-    /**
      * Returns true or false, depending on whether this block has any content to display
      * and whether the user has permission to view the block
      *
@@ -444,11 +417,6 @@ class block_base {
             $errors[] = 'content_not_set';
             $correct = false;
         }*/
-        if ($this->get_version() === NULL) {
-            $errors[] = 'version_not_set';
-            $correct = false;
-        }
-
         $formats = $this->applicable_formats();
         if (empty($formats) || array_sum($formats) === 0) {
             $errors[] = 'no_formats';

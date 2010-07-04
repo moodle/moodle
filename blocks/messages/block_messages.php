@@ -3,7 +3,6 @@
 class block_messages extends block_base {
     function init() {
         $this->title = get_string('pluginname', 'block_messages');
-        $this->version = 2007101509;
     }
 
     function get_content() {
@@ -52,7 +51,7 @@ class block_messages extends block_base {
 
                 $link = '/message/discussion.php?id='.$user->id;
                 $anchortagcontents = '<img class="iconsmall" src="'.$OUTPUT->pix_url('t/message') . '" alt="" />&nbsp;'.$user->count;
-                
+
                 $action = new popup_action('click', $link, 'message_'.$user->id);
                 $anchortag = $OUTPUT->action_link($link, $anchortagcontents, $action);
 
