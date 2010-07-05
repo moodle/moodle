@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Service
  * @subpackage ReCaptcha
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
@@ -28,7 +28,7 @@ require_once 'Zend/Service/ReCaptcha.php';
  * @category   Zend
  * @package    Zend_Service
  * @subpackage ReCaptcha
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -56,6 +56,11 @@ class Zend_Service_ReCaptcha_MailHide extends Zend_Service_ReCaptcha
      * @var string
      */
     protected $_email = null;
+
+    /**
+     * @var Zend_Validate_Interface
+     */
+    protected $_emailValidator;
 
     /**
      * Binary representation of the private key
@@ -110,6 +115,34 @@ class Zend_Service_ReCaptcha_MailHide extends Zend_Service_ReCaptcha
         }
     }
 
+
+    /**
+     * Get emailValidator
+     *
+     * @return Zend_Validate_Interface
+     */
+    public function getEmailValidator()
+    {
+        if (null === $this->_emailValidator) {
+            require_once 'Zend/Validate/EmailAddress.php';
+            $this->setEmailValidator(new Zend_Validate_EmailAddress());
+        }
+        return $this->_emailValidator;
+    }
+
+    /**
+     * Set email validator
+     *
+     * @param  Zend_Validate_Interface $validator
+     * @return Zend_Service_ReCaptcha_MailHide
+     */
+    public function setEmailValidator(Zend_Validate_Interface $validator)
+    {
+        $this->_emailValidator = $validator;
+        return $this;
+    }
+
+
     /**
      * See if the mcrypt extension is available
      *
@@ -153,6 +186,7 @@ class Zend_Service_ReCaptcha_MailHide extends Zend_Service_ReCaptcha
     public function getDefaultOptions()
     {
         return array(
+            'encoding'       => 'UTF-8',
             'linkTitle'      => 'Reveal this e-mail address',
             'linkHiddenText' => '...',
             'popupWidth'     => 500,
@@ -189,6 +223,12 @@ class Zend_Service_ReCaptcha_MailHide extends Zend_Service_ReCaptcha
     public function setEmail($email)
     {
         $this->_email = $email;
+
+        $validator = $this->getEmailValidator();
+        if (!$validator->isValid($email)) {
+            require_once 'Zend/Service/ReCaptcha/MailHide/Exception.php';
+            throw new Zend_Service_ReCaptcha_MailHide_Exception('Invalid email address provided');
+        }
 
         $emailParts = explode('@', $email, 2);
 
@@ -248,32 +288,43 @@ class Zend_Service_ReCaptcha_MailHide extends Zend_Service_ReCaptcha
     {
         if ($email !== null) {
             $this->setEmail($email);
-        } else if ($this->_email === null) {
+        } elseif (null === ($email = $this->getEmail())) {
             /** @see Zend_Service_ReCaptcha_MailHide_Exception */
             require_once 'Zend/Service/ReCaptcha/MailHide/Exception.php';
-
             throw new Zend_Service_ReCaptcha_MailHide_Exception('Missing email address');
         }
 
         if ($this->_publicKey === null) {
             /** @see Zend_Service_ReCaptcha_MailHide_Exception */
             require_once 'Zend/Service/ReCaptcha/MailHide/Exception.php';
-
             throw new Zend_Service_ReCaptcha_MailHide_Exception('Missing public key');
         }
 
         if ($this->_privateKey === null) {
             /** @see Zend_Service_ReCaptcha_MailHide_Exception */
             require_once 'Zend/Service/ReCaptcha/MailHide/Exception.php';
-
             throw new Zend_Service_ReCaptcha_MailHide_Exception('Missing private key');
         }
 
         /* Generate the url */
         $url = $this->_getUrl();
 
+        $enc = $this->getOption('encoding');
+
         /* Genrate the HTML used to represent the email address */
-        $html = htmlentities($this->_emailLocalPart) . '<a href="' . htmlentities($url) . '" onclick="window.open(\'' . htmlentities($url) . '\', \'\', \'toolbar=0,scrollbars=0,location=0,statusbar=0,menubar=0,resizable=0,width=' . $this->_options['popupWidth'] . ',height=' . $this->_options['popupHeight'] . '\'); return false;" title="' . $this->_options['linkTitle'] . '">' . $this->_options['linkHiddenText'] . '</a>@' . htmlentities($this->_emailDomainPart);
+        $html = htmlentities($this->getEmailLocalPart(), ENT_COMPAT, $enc) 
+            . '<a href="' 
+                . htmlentities($url, ENT_COMPAT, $enc) 
+                . '" onclick="window.open(\'' 
+                    . htmlentities($url, ENT_COMPAT, $enc) 
+                    . '\', \'\', \'toolbar=0,scrollbars=0,location=0,statusbar=0,menubar=0,resizable=0,width='
+                    . $this->_options['popupWidth'] 
+                    . ',height=' 
+                    . $this->_options['popupHeight'] 
+                . '\'); return false;" title="' 
+                . $this->_options['linkTitle'] 
+                . '">' . $this->_options['linkHiddenText'] . '</a>@' 
+                . htmlentities($this->getEmailDomainPart(), ENT_COMPAT, $enc);
 
         return $html;
     }

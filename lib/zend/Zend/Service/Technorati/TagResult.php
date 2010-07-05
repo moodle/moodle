@@ -15,34 +15,34 @@
  * @category   Zend
  * @package    Zend_Service
  * @subpackage Technorati
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
 
 
-/** 
- * @see Zend_Service_Technorati_Result 
+/**
+ * @see Zend_Service_Technorati_Result
  */
 require_once 'Zend/Service/Technorati/Result.php';
 
 
 /**
- * Represents a single Technorati Tag query result object. 
- * It is never returned as a standalone object, 
+ * Represents a single Technorati Tag query result object.
+ * It is never returned as a standalone object,
  * but it always belongs to a valid Zend_Service_Technorati_TagResultSet object.
- * 
+ *
  * @category   Zend
  * @package    Zend_Service
  * @subpackage Technorati
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Service_Technorati_TagResult extends Zend_Service_Technorati_Result
 {
     /**
      * Technorati weblog object corresponding to queried keyword.
-     * 
+     *
      * @var     Zend_Service_Technorati_Weblog
      * @access  protected
      */
@@ -50,15 +50,15 @@ class Zend_Service_Technorati_TagResult extends Zend_Service_Technorati_Result
 
     /**
      * The title of the entry.
-     * 
+     *
      * @var     string
      * @access  protected
      */
     protected $_title;
-    
+
     /**
      * The blurb from entry with search term highlighted.
-     * 
+     *
      * @var     string
      * @access  protected
      */
@@ -66,30 +66,30 @@ class Zend_Service_Technorati_TagResult extends Zend_Service_Technorati_Result
 
     /**
      * The datetime the entry was created.
-     * 
+     *
      * @var     Zend_Date
      * @access  protected
      */
     protected $_created;
-    
+
     /**
      * The datetime the entry was updated.
      * Called 'postupdate' in original XML response,
      * it has been renamed to provide more coherence.
-     * 
+     *
      * @var     Zend_Date
      * @access  protected
      */
     protected $_updated;
-    
+
     /**
      * The permalink of the blog entry.
-     * 
+     *
      * @var     Zend_Uri_Http
      * @access  protected
      */
     protected $_permalink;
-    
+
 
     /**
      * Constructs a new object object from DOM Element.
@@ -116,56 +116,56 @@ class Zend_Service_Technorati_TagResult extends Zend_Service_Technorati_Result
 
     /**
      * Returns the weblog object that links queried URL.
-     * 
+     *
      * @return  Zend_Service_Technorati_Weblog
      */
     public function getWeblog() {
         return $this->_weblog;
     }
-    
+
     /**
      * Returns the title of the entry.
-     * 
+     *
      * @return  string
      */
     public function getTitle() {
         return $this->_title;
     }
-    
+
     /**
      * Returns the blurb from entry with search term highlighted.
-     * 
+     *
      * @return  string
      */
     public function getExcerpt() {
         return $this->_excerpt;
     }
-        
+
     /**
      * Returns the datetime the entry was created.
-     * 
+     *
      * @return  Zend_Date
      */
     public function getCreated() {
         return $this->_created;
     }
-        
+
     /**
      * Returns the datetime the entry was updated.
-     * 
+     *
      * @return  Zend_Date
      */
     public function getUpdated() {
         return $this->_updated;
     }
-    
+
     /**
      * Returns the permalink of the blog entry.
-     * 
+     *
      * @return  Zend_Uri_Http
      */
     public function getPermalink() {
         return $this->_permalink;
     }
-    
+
 }

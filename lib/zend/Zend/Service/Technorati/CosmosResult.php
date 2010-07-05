@@ -15,34 +15,34 @@
  * @category   Zend
  * @package    Zend_Service
  * @subpackage Technorati
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
 
 
-/** 
- * @see Zend_Service_Technorati_Result 
+/**
+ * @see Zend_Service_Technorati_Result
  */
 require_once 'Zend/Service/Technorati/Result.php';
 
 
 /**
- * Represents a single Technorati Cosmos query result object. 
- * It is never returned as a standalone object, 
+ * Represents a single Technorati Cosmos query result object.
+ * It is never returned as a standalone object,
  * but it always belongs to a valid Zend_Service_Technorati_CosmosResultSet object.
- * 
+ *
  * @category   Zend
  * @package    Zend_Service
  * @subpackage Technorati
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Service_Technorati_CosmosResult extends Zend_Service_Technorati_Result
 {
     /**
      * Technorati weblog object that links queried URL.
-     * 
+     *
      * @var     Zend_Service_Technorati_Weblog
      * @access  protected
      */
@@ -50,7 +50,7 @@ class Zend_Service_Technorati_CosmosResult extends Zend_Service_Technorati_Resul
 
     /**
      * The nearest permalink tracked for queried URL.
-     * 
+     *
      * @var     Zend_Uri_Http
      * @access  protected
      */
@@ -58,7 +58,7 @@ class Zend_Service_Technorati_CosmosResult extends Zend_Service_Technorati_Resul
 
     /**
      * The excerpt of the blog/page linking queried URL.
-     * 
+     *
      * @var     string
      * @access  protected
      */
@@ -66,7 +66,7 @@ class Zend_Service_Technorati_CosmosResult extends Zend_Service_Technorati_Resul
 
     /**
      * The the datetime the link was created.
-     * 
+     *
      * @var     Zend_Date
      * @access  protected
      */
@@ -74,7 +74,7 @@ class Zend_Service_Technorati_CosmosResult extends Zend_Service_Technorati_Resul
 
     /**
      * The URL of the specific link target page
-     * 
+     *
      * @var     Zend_Uri_Http
      * @access  protected
      */
@@ -96,7 +96,7 @@ class Zend_Service_Technorati_CosmosResult extends Zend_Service_Technorati_Resul
 
         // weblog object field
         $this->_parseWeblog();
-        
+
         // filter fields
         $this->_nearestPermalink = Zend_Service_Technorati_Utils::normalizeUriHttp($this->_nearestPermalink);
         $this->_linkUrl = Zend_Service_Technorati_Utils::normalizeUriHttp($this->_linkUrl);
@@ -105,7 +105,7 @@ class Zend_Service_Technorati_CosmosResult extends Zend_Service_Technorati_Resul
 
     /**
      * Returns the weblog object that links queried URL.
-     * 
+     *
      * @return  Zend_Service_Technorati_Weblog
      */
     public function getWeblog() {
@@ -114,7 +114,7 @@ class Zend_Service_Technorati_CosmosResult extends Zend_Service_Technorati_Resul
 
     /**
      * Returns the nearest permalink tracked for queried URL.
-     * 
+     *
      * @return  Zend_Uri_Http
      */
     public function getNearestPermalink() {
@@ -123,30 +123,30 @@ class Zend_Service_Technorati_CosmosResult extends Zend_Service_Technorati_Resul
 
     /**
      * Returns the excerpt of the blog/page linking queried URL.
-     * 
+     *
      * @return  string
      */
     public function getExcerpt() {
         return $this->_excerpt;
     }
-    
+
     /**
      * Returns the datetime the link was created.
-     * 
+     *
      * @return  Zend_Date
      */
     public function getLinkCreated() {
         return $this->_linkCreated;
     }
-    
+
     /**
      * If queried URL is a valid blog,
      * returns the URL of the specific link target page.
-     * 
+     *
      * @return  Zend_Uri_Http
      */
     public function getLinkUrl() {
         return $this->_linkUrl;
     }
-    
+
 }

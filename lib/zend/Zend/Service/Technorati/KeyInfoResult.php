@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Service
  * @subpackage Technorati
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -24,11 +24,11 @@
 /**
  * Represents a single Technorati KeyInfo query result object.
  * It provides information about your Technorati API Key daily usage.
- * 
+ *
  * @category   Zend
  * @package    Zend_Service
  * @subpackage Technorati
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Service_Technorati_KeyInfoResult
@@ -56,7 +56,7 @@ class Zend_Service_Technorati_KeyInfoResult
      * @access  protected
      */
     protected $_maxQueries;
-    
+
 
     /**
      * Constructs a new object from DOM Element.
@@ -75,39 +75,39 @@ class Zend_Service_Technorati_KeyInfoResult
         $this->_maxQueries   = (int) $xpath->query('/tapi/document/result/maxqueries/text()')->item(0)->data;
         $this->setApiKey($apiKey);
     }
-    
-    
+
+
     /**
      * Returns API Key string.
-     * 
+     *
      * @return  string  API Key string
      */
     public function getApiKey() {
         return $this->_apiKey;
     }
-    
+
     /**
      * Returns the number of queries sent today.
-     * 
+     *
      * @return  int     number of queries sent today
      */
     public function getApiQueries() {
         return $this->_apiQueries;
     }
-    
+
     /**
      * Returns Key's daily query limit.
-     * 
+     *
      * @return  int     maximum number of available queries per day
      */
     public function getMaxQueries() {
         return $this->_maxQueries;
     }
-    
-    
+
+
     /**
      * Sets API Key string.
-     * 
+     *
      * @param   string $apiKey  the API Key
      * @return  Zend_Service_Technorati_KeyInfoResult $this instance
      */

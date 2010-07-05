@@ -15,11 +15,11 @@
  * @category   Zend
  * @package    Zend_Service
  * @subpackage Nirvanix
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
- 
+
 /**
  * @see Zend_Http_Client
  */
@@ -34,11 +34,11 @@ require_once 'Zend/Service/Nirvanix/Response.php';
  * The Nirvanix web services are split into namespaces.  This is a proxy class
  * representing one namespace.  It allows calls to the namespace to be made by
  * PHP object calls rather than by having to construct HTTP client requests.
- * 
+ *
  * @category   Zend
  * @package    Zend_Service
  * @subpackage Nirvanix
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Service_Nirvanix_Namespace_Base
@@ -49,7 +49,7 @@ class Zend_Service_Nirvanix_Namespace_Base
      * @var Zend_Http_Client
      */
     protected $_httpClient;
-    
+
     /**
      * Host to use for calls to this Nirvanix namespace.  It is possible
      * that the user will wish to use different hosts for different namespaces.
@@ -67,19 +67,19 @@ class Zend_Service_Nirvanix_Namespace_Base
      * Defaults for POST parameters.  When a request to the service is to be
      * made, the POST parameters are merged into these.  This is a convenience
      * feature so parameters that are repeatedly required like sessionToken
-     * do not need to be supplied again and again by the user. 
+     * do not need to be supplied again and again by the user.
      *
      * @param array
      */
-    protected $_defaults = array();    
+    protected $_defaults = array();
 
     /**
-     * Class constructor.  
+     * Class constructor.
      *
      * @param  $options  array  Options and dependency injection
      */
     public function __construct($options = array())
-    {   
+    {
         if (isset($options['baseUrl'])) {
             $this->_host = $options['baseUrl'];
         }
@@ -97,19 +97,19 @@ class Zend_Service_Nirvanix_Namespace_Base
         }
         $this->_httpClient = $options['httpClient'];
     }
-    
+
     /**
      * When a method call is made against this proxy, convert it to
-     * an HTTP request to make against the Nirvanix REST service.  
+     * an HTTP request to make against the Nirvanix REST service.
      *
      * $imfs->DeleteFiles(array('filePath' => 'foo'));
      *
-     * Assuming this object was proxying the IMFS namespace, the 
+     * Assuming this object was proxying the IMFS namespace, the
      * method call above would call the DeleteFiles command.  The
-     * POST parameters would be filePath, merged with the 
+     * POST parameters would be filePath, merged with the
      * $this->_defaults (containing the sessionToken).
      *
-     * @param  string  $methodName  Name of the command to call 
+     * @param  string  $methodName  Name of the command to call
      *                              on this namespace.
      * @param  array   $args        Only the first is used and it must be
      *                              an array.  It contains the POST params.
@@ -121,7 +121,7 @@ class Zend_Service_Nirvanix_Namespace_Base
         $uri = $this->_makeUri($methodName);
         $this->_httpClient->setUri($uri);
 
-        if (!isset($args[0]) || !is_array($args[0])) { 
+        if (!isset($args[0]) || !is_array($args[0])) {
             $args[0] = array();
         }
 
@@ -148,19 +148,19 @@ class Zend_Service_Nirvanix_Namespace_Base
     /**
      * Make a complete URI from an RPC method name.  All Nirvanix REST
      * service URIs use the same format.
-     * 
+     *
      * @param  string  $methodName  RPC method name
-     * @return string    
+     * @return string
      */
     protected function _makeUri($methodName)
     {
         $methodName = ucfirst($methodName);
         return "{$this->_host}/ws/{$this->_namespace}/{$methodName}.ashx";
     }
-    
+
     /**
      * All Nirvanix REST service calls return an XML payload.  This method
-     * makes a Zend_Service_Nirvanix_Response from that XML payload.  
+     * makes a Zend_Service_Nirvanix_Response from that XML payload.
      *
      * @param  Zend_Http_Response  $httpResponse  Raw response from Nirvanix
      * @return Zend_Service_Nirvanix_Response     Wrapped response

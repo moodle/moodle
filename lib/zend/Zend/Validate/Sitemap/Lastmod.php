@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Validate
  * @subpackage Sitemap
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -33,7 +33,7 @@ require_once 'Zend/Validate/Abstract.php';
  * @category   Zend
  * @package    Zend_Validate
  * @subpackage Sitemap
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Validate_Sitemap_Lastmod extends Zend_Validate_Abstract
@@ -42,13 +42,14 @@ class Zend_Validate_Sitemap_Lastmod extends Zend_Validate_Abstract
      * Regular expression to use when validating
      *
      */
-    const LASTMOD_REGEX = '/^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])(T([0-1][0-9]|2[0-3])(:[0-5][0-9]){2}(\\+|-)([0-1][0-9]|2[0-3]):[0-5][0-9])?$/m';
+    const LASTMOD_REGEX = '/^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])(T([0-1][0-9]|2[0-3])(:[0-5][0-9])(:[0-5][0-9])?(\\+|-)([0-1][0-9]|2[0-3]):[0-5][0-9])?$/';
 
     /**
      * Validation key for not valid
      *
      */
-    const NOT_VALID = 'invalidSitemapLastmod';
+    const NOT_VALID = 'sitemapLastmodNotValid';
+    const INVALID   = 'sitemapLastmodInvalid';
 
     /**
      * Validation failure message template definitions
@@ -56,7 +57,8 @@ class Zend_Validate_Sitemap_Lastmod extends Zend_Validate_Abstract
      * @var array
      */
     protected $_messageTemplates = array(
-        self::NOT_VALID => "'%value%' is not a valid sitemap lastmod",
+        self::NOT_VALID => "'%value%' is no valid sitemap lastmod",
+        self::INVALID   => "Invalid type given, the value should be a string",
     );
 
     /**
@@ -69,13 +71,18 @@ class Zend_Validate_Sitemap_Lastmod extends Zend_Validate_Abstract
      */
     public function isValid($value)
     {
-        $this->_setValue($value);
-
         if (!is_string($value)) {
+            $this->_error(self::INVALID);
             return false;
         }
 
-        return @preg_match(self::LASTMOD_REGEX, $value) == 1;
-    }
+        $this->_setValue($value);
+        $result = @preg_match(self::LASTMOD_REGEX, $value);
+        if ($result != 1) {
+            $this->_error(self::NOT_VALID);
+            return false;
+        }
 
+        return true;
+    }
 }

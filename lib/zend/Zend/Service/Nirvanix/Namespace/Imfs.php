@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Service
  * @subpackage Nirvanix
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -23,15 +23,15 @@
 /**
  * @see Zend_Service_Nirvanix_Namespace_Base
  */
-require_once 'Zend/Service/Nirvanix/Namespace/Base.php'; 
- 
+require_once 'Zend/Service/Nirvanix/Namespace/Base.php';
+
 /**
  * Namespace proxy with additional convenience methods for the IMFS namespace.
- * 
+ *
  * @category   Zend
  * @package    Zend_Service
  * @subpackage Nirvanix
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Service_Nirvanix_Namespace_Imfs extends Zend_Service_Nirvanix_Namespace_Base
@@ -43,7 +43,7 @@ class Zend_Service_Nirvanix_Namespace_Imfs extends Zend_Service_Nirvanix_Namespa
      * @param  string  $filePath    Remote path and filename
      * @param  integer $expiration  Number of seconds that Nirvanix
      *                              make the file available for download.
-     * @return string               Contents of file  
+     * @return string               Contents of file
      */
     public function getContents($filePath, $expiration = 3600)
     {
@@ -88,7 +88,7 @@ class Zend_Service_Nirvanix_Namespace_Imfs extends Zend_Service_Nirvanix_Namespa
 
         return new Zend_Service_Nirvanix_Response($response->getBody());
     }
-    
+
     /**
      * Convenience function to remove a file from the Nirvanix IMFS.
      * Analog to PHP's unlink().

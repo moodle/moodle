@@ -14,7 +14,7 @@
  *
  * @category   Zend
  * @package    Zend_Server
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -25,7 +25,7 @@
  * @todo       Implement iterator
  * @category   Zend
  * @package    Zend_Server
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Server_Definition implements Countable, Iterator
@@ -42,8 +42,8 @@ class Zend_Server_Definition implements Countable, Iterator
 
     /**
      * Constructor
-     * 
-     * @param  null|array $methods 
+     *
+     * @param  null|array $methods
      * @return void
      */
     public function __construct($methods = null)
@@ -55,8 +55,8 @@ class Zend_Server_Definition implements Countable, Iterator
 
     /**
      * Set flag indicating whether or not overwriting existing methods is allowed
-     * 
-     * @param mixed $flag 
+     *
+     * @param mixed $flag
      * @return void
      */
     public function setOverwriteExistingMethods($flag)
@@ -67,9 +67,9 @@ class Zend_Server_Definition implements Countable, Iterator
 
     /**
      * Add method to definition
-     * 
-     * @param  array|Zend_Server_Method_Definition $method 
-     * @param  null|string $name 
+     *
+     * @param  array|Zend_Server_Method_Definition $method
+     * @param  null|string $name
      * @return Zend_Server_Definition
      * @throws Zend_Server_Exception if duplicate or invalid method provided
      */
@@ -106,7 +106,7 @@ class Zend_Server_Definition implements Countable, Iterator
 
     /**
      * Add multiple methods
-     * 
+     *
      * @param  array $methods Array of Zend_Server_Method_Definition objects or arrays
      * @return Zend_Server_Definition
      */
@@ -120,7 +120,7 @@ class Zend_Server_Definition implements Countable, Iterator
 
     /**
      * Set all methods at once (overwrite)
-     * 
+     *
      * @param  array $methods Array of Zend_Server_Method_Definition objects or arrays
      * @return Zend_Server_Definition
      */
@@ -133,8 +133,8 @@ class Zend_Server_Definition implements Countable, Iterator
 
     /**
      * Does the definition have the given method?
-     * 
-     * @param  string $method 
+     *
+     * @param  string $method
      * @return bool
      */
     public function hasMethod($method)
@@ -144,8 +144,8 @@ class Zend_Server_Definition implements Countable, Iterator
 
     /**
      * Get a given method definition
-     * 
-     * @param  string $method 
+     *
+     * @param  string $method
      * @return null|Zend_Server_Method_Definition
      */
     public function getMethod($method)
@@ -158,7 +158,7 @@ class Zend_Server_Definition implements Countable, Iterator
 
     /**
      * Get all method definitions
-     * 
+     *
      * @return array Array of Zend_Server_Method_Definition objects
      */
     public function getMethods()
@@ -168,8 +168,8 @@ class Zend_Server_Definition implements Countable, Iterator
 
     /**
      * Remove a method definition
-     * 
-     * @param  string $method 
+     *
+     * @param  string $method
      * @return Zend_Server_Definition
      */
     public function removeMethod($method)
@@ -182,7 +182,7 @@ class Zend_Server_Definition implements Countable, Iterator
 
     /**
      * Clear all method definitions
-     * 
+     *
      * @return Zend_Server_Definition
      */
     public function clearMethods()
@@ -193,7 +193,7 @@ class Zend_Server_Definition implements Countable, Iterator
 
     /**
      * Cast definition to an array
-     * 
+     *
      * @return array
      */
     public function toArray()
@@ -207,7 +207,7 @@ class Zend_Server_Definition implements Countable, Iterator
 
     /**
      * Countable: count of methods
-     * 
+     *
      * @return int
      */
     public function count()
@@ -217,7 +217,7 @@ class Zend_Server_Definition implements Countable, Iterator
 
     /**
      * Iterator: current item
-     * 
+     *
      * @return mixed
      */
     public function current()
@@ -227,7 +227,7 @@ class Zend_Server_Definition implements Countable, Iterator
 
     /**
      * Iterator: current item key
-     * 
+     *
      * @return int|string
      */
     public function key()
@@ -237,7 +237,7 @@ class Zend_Server_Definition implements Countable, Iterator
 
     /**
      * Iterator: advance to next method
-     * 
+     *
      * @return void
      */
     public function next()
@@ -247,7 +247,7 @@ class Zend_Server_Definition implements Countable, Iterator
 
     /**
      * Iterator: return to first method
-     * 
+     *
      * @return void
      */
     public function rewind()
@@ -257,7 +257,7 @@ class Zend_Server_Definition implements Countable, Iterator
 
     /**
      * Iterator: is the current index valid?
-     * 
+     *
      * @return bool
      */
     public function valid()

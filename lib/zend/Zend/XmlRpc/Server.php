@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_XmlRpc
  * @subpackage Server
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -111,7 +111,7 @@ require_once 'Zend/Server/Reflection/Method.php';
  * @category   Zend
  * @package    Zend_XmlRpc
  * @subpackage Server
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_XmlRpc_Server extends Zend_Server_Abstract
@@ -145,29 +145,35 @@ class Zend_XmlRpc_Server extends Zend_Server_Abstract
      * @var array
      */
     protected $_typeMap = array(
-        'i4'               => 'i4',
-        'int'              => 'int',
-        'integer'          => 'int',
-        'double'           => 'double',
-        'float'            => 'double',
-        'real'             => 'double',
-        'boolean'          => 'boolean',
-        'bool'             => 'boolean',
-        'true'             => 'boolean',
-        'false'            => 'boolean',
-        'string'           => 'string',
-        'str'              => 'string',
-        'base64'           => 'base64',
-        'dateTime.iso8601' => 'dateTime.iso8601',
-        'date'             => 'dateTime.iso8601',
-        'time'             => 'dateTime.iso8601',
-        'time'             => 'dateTime.iso8601',
-        'array'            => 'array',
-        'struct'           => 'struct',
-        'null'             => 'nil',
-        'nil'              => 'nil',
-        'void'             => 'void',
-        'mixed'            => 'struct'
+        'i4'                         => 'i4',
+        'int'                        => 'int',
+        'integer'                    => 'int',
+        'Zend_Crypt_Math_BigInteger' => 'i8',
+        'i8'                         => 'i8',
+        'ex:i8'                      => 'i8',
+        'double'                     => 'double',
+        'float'                      => 'double',
+        'real'                       => 'double',
+        'boolean'                    => 'boolean',
+        'bool'                       => 'boolean',
+        'true'                       => 'boolean',
+        'false'                      => 'boolean',
+        'string'                     => 'string',
+        'str'                        => 'string',
+        'base64'                     => 'base64',
+        'dateTime.iso8601'           => 'dateTime.iso8601',
+        'date'                       => 'dateTime.iso8601',
+        'time'                       => 'dateTime.iso8601',
+        'time'                       => 'dateTime.iso8601',
+        'Zend_Date'                  => 'dateTime.iso8601',
+        'DateTime'                   => 'dateTime.iso8601',
+        'array'                      => 'array',
+        'struct'                     => 'struct',
+        'null'                       => 'nil',
+        'nil'                        => 'nil',
+        'ex:nil'                     => 'nil',
+        'void'                       => 'void',
+        'mixed'                      => 'struct',
     );
 
     /**
@@ -386,6 +392,7 @@ class Zend_XmlRpc_Server extends Zend_Server_Abstract
     public function setEncoding($encoding)
     {
         $this->_encoding = $encoding;
+        Zend_XmlRpc_Value::setEncoding($encoding);
         return $this;
     }
 

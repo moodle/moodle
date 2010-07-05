@@ -16,7 +16,7 @@
  * @category   Zend
  * @package    Zend_Gdata
  * @subpackage Docs
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -34,7 +34,7 @@ require_once('Zend/Gdata/Query.php');
  * @category   Zend
  * @package    Zend_Gdata
  * @subpackage Docs
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Gdata_Docs_Query extends Zend_Gdata_Query
@@ -55,8 +55,8 @@ class Zend_Gdata_Docs_Query extends Zend_Gdata_Query
     protected $_defaultFeedUri = self::DOCUMENTS_LIST_FEED_URI;
 
     /**
-     * The visibility to be used when querying for the feed. A request for a 
-     * feed with private visbility requires the user to be authenricated. 
+     * The visibility to be used when querying for the feed. A request for a
+     * feed with private visbility requires the user to be authenricated.
      * Private is the only avilable visibility for the documents list.
      *
      * @var string
@@ -81,7 +81,7 @@ class Zend_Gdata_Docs_Query extends Zend_Gdata_Query
     }
 
     /**
-     * Sets the projection for this query. Common values for projection 
+     * Sets the projection for this query. Common values for projection
      * include 'full'.
      *
      * @param string $value
@@ -127,7 +127,7 @@ class Zend_Gdata_Docs_Query extends Zend_Gdata_Query
 
     /**
      * Sets the title attribute for this query. The title parameter is used
-     * to restrict the results to documents whose titles either contain or 
+     * to restrict the results to documents whose titles either contain or
      * completely match the title.
      *
      * @param string $value

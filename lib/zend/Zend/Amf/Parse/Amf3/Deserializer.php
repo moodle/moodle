@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Amf
  * @subpackage Parse_Amf3
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -31,10 +31,10 @@ require_once 'Zend/Amf/Parse/TypeLoader.php';
  *
  * @todo       readObject to handle Typed Objects
  * @todo       readXMLStrimg to be implemented.
- * @todo       Class could be implmented as Factory Class with each data type it's own class.
+ * @todo       Class could be implemented as Factory Class with each data type it's own class.
  * @package    Zend_Amf
  * @subpackage Parse_Amf3
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Amf_Parse_Amf3_Deserializer extends Zend_Amf_Parse_Deserializer
@@ -291,7 +291,7 @@ class Zend_Amf_Parse_Amf3_Deserializer extends Zend_Amf_Parse_Deserializer
             }
             $returnObject = $this->_referenceObjects[$ref];
         } else {
-            // Check if the Object is in the stored Definistions reference table
+            // Check if the Object is in the stored Definitions reference table
             $storedClass = ($traitsInfo & 0x01) == 0;
             $traitsInfo  = $traitsInfo >> 1;
             if ($storedClass) {
@@ -319,7 +319,7 @@ class Zend_Amf_Parse_Amf3_Deserializer extends Zend_Amf_Parse_Deserializer
                 $returnObject = new stdClass();
             } else {
                 // Defined object
-                // Typed object lookup agsinst registered classname maps
+                // Typed object lookup against registered classname maps
                 if ($loader = Zend_Amf_Parse_TypeLoader::loadType($className)) {
                     $returnObject = new $loader();
                 } else {
@@ -329,7 +329,7 @@ class Zend_Amf_Parse_Amf3_Deserializer extends Zend_Amf_Parse_Deserializer
                 }
             }
 
-            // Add the Object ot the reference table
+            // Add the Object to the reference table
             $this->_referenceObjects[] = $returnObject;
 
             $properties = array(); // clear value
@@ -355,7 +355,7 @@ class Zend_Amf_Parse_Amf3_Deserializer extends Zend_Amf_Parse_Deserializer
                             'propertyNames' => $propertyNames,
                         );
                     }
-                    // not a refrence object read name value properties from byte stream
+                    // not a reference object read name value properties from byte stream
                     do {
                         $property = $this->readString();
                         if ($property != "") {
@@ -371,7 +371,7 @@ class Zend_Amf_Parse_Amf3_Deserializer extends Zend_Amf_Parse_Deserializer
                         for($i=0; $i< $count; $i++) {
                             $propertyNames[] = $this->readString();
                         }
-                        // Add a refrence to the class.
+                        // Add a reference to the class.
                         $this->_referenceDefinitions[] = array(
                             'className'     => $className,
                             'encoding'      => $encoding,
@@ -390,18 +390,18 @@ class Zend_Amf_Parse_Amf3_Deserializer extends Zend_Amf_Parse_Deserializer
                     $returnObject->$key = $value;
                 }
             }
-			
-		  
+
+
         }
-		
-	   if($returnObject instanceof Zend_Amf_Value_Messaging_ArrayCollection) {
-		if(isset($returnObject->externalizedData)) {
-			$returnObject = $returnObject->externalizedData;
-		} else {
-			$returnObject = get_object_vars($returnObject);
-		}
-	   }
-	   
+
+       if ($returnObject instanceof Zend_Amf_Value_Messaging_ArrayCollection) {
+            if (isset($returnObject->externalizedData)) {
+                $returnObject = $returnObject->externalizedData;
+            } else {
+                $returnObject = get_object_vars($returnObject);
+            }
+       }
+
         return $returnObject;
     }
 

@@ -16,7 +16,7 @@
  * @category   Zend
  * @package    Zend_Gdata
  * @subpackage Gdata
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -33,7 +33,7 @@ require_once 'Zend/Http/Client/Adapter/Proxy.php';
  * @category   Zend
  * @package    Zend_Gdata
  * @subpackage Gdata
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Gdata_HttpAdapterStreamingProxy extends Zend_Http_Client_Adapter_Proxy
@@ -59,7 +59,7 @@ class Zend_Gdata_HttpAdapterStreamingProxy extends Zend_Http_Client_Adapter_Prox
     {
         // If no proxy is set, throw an error
         if (! $this->config['proxy_host']) {
-        	require_once 'Zend/Http/Client/Adapter/Exception.php';
+            require_once 'Zend/Http/Client/Adapter/Exception.php';
             throw new Zend_Http_Client_Adapter_Exception('No proxy host set!');
         }
 
@@ -86,13 +86,13 @@ class Zend_Gdata_HttpAdapterStreamingProxy extends Zend_Http_Client_Adapter_Prox
                 $this->config['proxy_user'], $this->config['proxy_pass'], $this->config['proxy_auth']
             );
         }
-                
+
         // if we are proxying HTTPS, preform CONNECT handshake with the proxy
         if ($uri->getScheme() == 'https' && (! $this->negotiated)) {
             $this->connectHandshake($uri->getHost(), $uri->getPort(), $http_ver, $headers);
             $this->negotiated = true;
         }
-        
+
         // Save request method for later
         $this->method = $method;
 

@@ -15,21 +15,24 @@
  * @category   Zend
  * @package    Zend_Amf
  * @subpackage Parse_Amf0
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
 
-/** Zend_Amf_Parse_Serializer */
+/** Zend_Amf_Constants */
+require_once 'Zend/Amf/Constants.php';
+
+/** @see Zend_Amf_Parse_Serializer */
 require_once 'Zend/Amf/Parse/Serializer.php';
 
 /**
- * Serializer php misc types back to there corresponding AMF0 Type Marker.
+ * Serializer PHP misc types back to there corresponding AMF0 Type Marker.
  *
  * @uses       Zend_Amf_Parse_Serializer
  * @package    Zend_Amf
  * @subpackage Parse_Amf0
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Amf_Parse_Amf0_Serializer extends Zend_Amf_Parse_Serializer
@@ -38,7 +41,7 @@ class Zend_Amf_Parse_Amf0_Serializer extends Zend_Amf_Parse_Serializer
      * @var string Name of the class to be returned
      */
     protected $_className = '';
-    
+
     /**
      * An array of reference objects
      * @var array
@@ -52,17 +55,22 @@ class Zend_Amf_Parse_Amf0_Serializer extends Zend_Amf_Parse_Serializer
      * auto negotiates the type or relies on the user defined markerType to
      * serialize the data into amf
      *
-     * @param  misc $data
-     * @param  misc $markerType
+     * @param  mixed $data
+     * @param  mixed $markerType
+     * @param  mixed $dataByVal
      * @return Zend_Amf_Parse_Amf0_Serializer
      * @throws Zend_Amf_Exception for unrecognized types or data
      */
-    public function writeTypeMarker($data, $markerType = null)
+    public function writeTypeMarker(&$data, $markerType = null, $dataByVal = false)
     {
+        // Workaround for PHP5 with E_STRICT enabled complaining about "Only 
+        // variables should be passed by reference" 
+        if ((null === $data) && ($dataByVal !== false)) {
+            $data = &$dataByVal;
+        }
         if (null !== $markerType) {
-            //try to refrence the given object
-            if( !$this->writeObjectReference($data, $markerType) ) {
-            
+            //try to reference the given object
+            if (!$this->writeObjectReference($data, $markerType)) {
                 // Write the Type Marker to denote the following action script data type
                 $this->_stream->writeByte($markerType);
                 switch($markerType) {
@@ -109,11 +117,11 @@ class Zend_Amf_Parse_Amf0_Serializer extends Zend_Amf_Parse_Serializer
                 }
             }
         } else {
-            if(is_resource($data)) {
+            if (is_resource($data)) {
                 $data = Zend_Amf_Parse_TypeLoader::handleResource($data);
             }
             switch (true) {
-            	case (is_int($data) || is_float($data)):
+                case (is_int($data) || is_float($data)):
                     $markerType = Zend_Amf_Constants::AMF0_NUMBER;
                     break;
                 case (is_bool($data)):
@@ -149,13 +157,13 @@ class Zend_Amf_Parse_Amf0_Serializer extends Zend_Amf_Parse_Serializer
                     $i = 0;
                     foreach (array_keys($data) as $key) {
                         // check if it contains non-integer keys
-                        if (!is_numeric($key) || intval($key) != $key) { 
-                            $markerType = Zend_Amf_Constants::AMF0_OBJECT; 
-                            break; 
+                        if (!is_numeric($key) || intval($key) != $key) {
+                            $markerType = Zend_Amf_Constants::AMF0_OBJECT;
+                            break;
                             // check if it is a sparse indexed array
-                         } else if ($key != $i) { 
-                             $markerType = Zend_Amf_Constants::AMF0_MIXEDARRAY; 
-                             break; 
+                         } else if ($key != $i) {
+                             $markerType = Zend_Amf_Constants::AMF0_MIXEDARRAY;
+                             break;
                          }
                          $i++;
                     }
@@ -174,22 +182,30 @@ class Zend_Amf_Parse_Amf0_Serializer extends Zend_Amf_Parse_Serializer
         }
         return $this;
     }
-    
-	/**
+
+    /**
      * Check if the given object is in the reference table, write the reference if it exists,
      * otherwise add the object to the reference table
-     * 
-     * @param mixed $object object to check for reference
+     *
+     * @param mixed $object object reference to check for reference
      * @param $markerType AMF type of the object to write
+     * @param mixed $objectByVal object to check for reference
      * @return Boolean true, if the reference was written, false otherwise
      */
-    protected function writeObjectReference($object, $markerType){
-        if( $markerType == Zend_Amf_Constants::AMF0_OBJECT ||
-            $markerType == Zend_Amf_Constants::AMF0_MIXEDARRAY ||
-            $markerType == Zend_Amf_Constants::AMF0_ARRAY ||
-            $markerType == Zend_Amf_Constants::AMF0_TYPEDOBJECT ) {
-                
-            $ref = array_search($object, $this->_referenceObjects,true);
+    protected function writeObjectReference(&$object, $markerType, $objectByVal = false) 
+    {
+        // Workaround for PHP5 with E_STRICT enabled complaining about "Only 
+        // variables should be passed by reference"
+        if ((null === $object) && ($objectByVal !== false)) {
+            $object = &$objectByVal;
+        }
+
+        if ($markerType == Zend_Amf_Constants::AMF0_OBJECT 
+            || $markerType == Zend_Amf_Constants::AMF0_MIXEDARRAY 
+            || $markerType == Zend_Amf_Constants::AMF0_ARRAY 
+            || $markerType == Zend_Amf_Constants::AMF0_TYPEDOBJECT 
+        ) {
+            $ref = array_search($object, $this->_referenceObjects, true);
             //handle object reference
             if($ref !== false){
                 $this->writeTypeMarker($ref,Zend_Amf_Constants::AMF0_REFERENCE);
@@ -198,12 +214,12 @@ class Zend_Amf_Parse_Amf0_Serializer extends Zend_Amf_Parse_Serializer
 
             $this->_referenceObjects[] = $object;
         }
-        
+
         return false;
     }
 
     /**
-     * Write a php array with string or mixed keys.
+     * Write a PHP array with string or mixed keys.
      *
      * @param object $data
      * @return Zend_Amf_Parse_Amf0_Serializer
@@ -211,9 +227,9 @@ class Zend_Amf_Parse_Amf0_Serializer extends Zend_Amf_Parse_Serializer
     public function writeObject($object)
     {
         // Loop each element and write the name of the property.
-        foreach ($object as $key => $value) {
-            // skip variables starting with an _ provate transient
-            if( $key[0] == "_")	continue;
+        foreach ($object as $key => &$value) {
+            // skip variables starting with an _ private transient
+            if( $key[0] == "_") continue;
             $this->_stream->writeUTF($key);
             $this->writeTypeMarker($value);
         }
@@ -231,14 +247,14 @@ class Zend_Amf_Parse_Amf0_Serializer extends Zend_Amf_Parse_Serializer
      * @param array $array
      * @return Zend_Amf_Parse_Amf0_Serializer
      */
-    public function writeArray($array)
+    public function writeArray(&$array)
     {
         $length = count($array);
         if (!$length < 0) {
             // write the length of the array
             $this->_stream->writeLong(0);
         } else {
-            // Write the length of the numberic array
+            // Write the length of the numeric array
             $this->_stream->writeLong($length);
             for ($i=0; $i<$length; $i++) {
                 $value = isset($array[$i]) ? $array[$i] : null;
@@ -290,12 +306,12 @@ class Zend_Amf_Parse_Amf0_Serializer extends Zend_Amf_Parse_Serializer
 
     /**
      * Encountered and AMF3 Type Marker use AMF3 serializer. Once AMF3 is
-     * enountered it will not return to AMf0.
+     * encountered it will not return to AMf0.
      *
      * @param  string $data
      * @return Zend_Amf_Parse_Amf0_Serializer
      */
-    public function writeAmf3TypeMarker($data)
+    public function writeAmf3TypeMarker(&$data)
     {
         require_once 'Zend/Amf/Parse/Amf3/Serializer.php';
         $serializer = new Zend_Amf_Parse_Amf3_Serializer($this->_stream);
@@ -332,9 +348,9 @@ class Zend_Amf_Parse_Amf0_Serializer extends Zend_Amf_Parse_Serializer
             case ($object instanceof stdClass):
                 $className = '';
                 break;
-		// By default, use object's class name
+        // By default, use object's class name
             default:
-		$className = get_class($object);
+        $className = get_class($object);
                 break;
         }
         if(!$className == '') {

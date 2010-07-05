@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_XmlRpc
  * @subpackage Value
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -29,7 +29,7 @@ require_once 'Zend/XmlRpc/Value/Scalar.php';
 /**
  * @package    Zend_XmlRpc
  * @subpackage Value
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_XmlRpc_Value_String extends Zend_XmlRpc_Value_Scalar
@@ -45,18 +45,16 @@ class Zend_XmlRpc_Value_String extends Zend_XmlRpc_Value_Scalar
         $this->_type = self::XMLRPC_TYPE_STRING;
 
         // Make sure this value is string and all XML characters are encoded
-        $this->_value = $this->_escapeXmlEntities($value);
+        $this->_value = (string)$value;
     }
 
     /**
      * Return the value of this object, convert the XML-RPC native string value into a PHP string
-     * Decode all encoded risky XML entities back to normal characters
      *
      * @return string
      */
     public function getValue()
     {
-        return $this->_decodeXmlEntities($this->_value);
+        return (string)$this->_value;
     }
 }
-

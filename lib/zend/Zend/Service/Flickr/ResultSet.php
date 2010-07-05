@@ -16,7 +16,7 @@
  * @category   Zend
  * @package    Zend_Service
  * @subpackage Flickr
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -32,7 +32,7 @@ require_once 'Zend/Service/Flickr/Result.php';
  * @category   Zend
  * @package    Zend_Service
  * @subpackage Flickr
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Service_Flickr_ResultSet implements SeekableIterator
@@ -99,7 +99,7 @@ class Zend_Service_Flickr_ResultSet implements SeekableIterator
         $perPage = $photos->getAttribute('perpage');
         $total   = $photos->getAttribute('total');
 
-        $this->totalResultsReturned  = ($page == $pages) ? ($total - ($page - 1) * $perPage) : (int) $perPage;
+        $this->totalResultsReturned  = ($page == $pages || $pages == 0) ? ($total - ($page - 1) * $perPage) : (int) $perPage;
         $this->firstResultPosition   = ($page - 1) * $perPage + 1;
         $this->totalResultsAvailable = (int) $total;
 

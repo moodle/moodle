@@ -15,25 +15,25 @@
  * @category   Zend
  * @package    Zend_Service
  * @subpackage Technorati
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
 
 
-/** 
- * @see Zend_Service_Technorati_ResultSet 
+/**
+ * @see Zend_Service_Technorati_ResultSet
  */
 require_once 'Zend/Service/Technorati/ResultSet.php';
 
 
 /**
  * Represents a Technorati Cosmos query result set.
- * 
+ *
  * @category   Zend
  * @package    Zend_Service
  * @subpackage Technorati
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Service_Technorati_CosmosResultSet extends Zend_Service_Technorati_ResultSet
@@ -98,7 +98,7 @@ class Zend_Service_Technorati_CosmosResultSet extends Zend_Service_Technorati_Re
         $result = $this->_xpath->query('/tapi/document/result/url/text()');
         if ($result->length == 1) {
             try {
-                // fetched URL often doens't include schema 
+                // fetched URL often doens't include schema
                 // and this issue causes the following line to fail
                 $this->_url = Zend_Service_Technorati_Utils::normalizeUriHttp($result->item(0)->data);
             } catch(Zend_Service_Technorati_Exception $e) {
@@ -124,7 +124,7 @@ class Zend_Service_Technorati_CosmosResultSet extends Zend_Service_Technorati_Re
 
     /**
      * Returns the weblog URL.
-     * 
+     *
      * @return  Zend_Uri_Http
      */
     public function getUrl() {
@@ -133,7 +133,7 @@ class Zend_Service_Technorati_CosmosResultSet extends Zend_Service_Technorati_Re
 
     /**
      * Returns the weblog.
-     * 
+     *
      * @return  Zend_Service_Technorati_Weblog
      */
     public function getWeblog() {
@@ -142,20 +142,20 @@ class Zend_Service_Technorati_CosmosResultSet extends Zend_Service_Technorati_Re
 
     /**
      * Returns number of unique blogs linking this blog.
-     * 
+     *
      * @return  integer the number of inbound blogs
      */
-    public function getInboundBlogs() 
+    public function getInboundBlogs()
     {
         return $this->_inboundBlogs;
     }
 
     /**
      * Returns number of incoming links to this blog.
-     * 
+     *
      * @return  integer the number of inbound links
      */
-    public function getInboundLinks() 
+    public function getInboundLinks()
     {
         return $this->_inboundLinks;
     }

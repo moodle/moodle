@@ -16,7 +16,7 @@
  * @category   Zend
  * @package    Zend_Gdata
  * @subpackage YouTube
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -72,7 +72,7 @@ require_once 'Zend/Gdata/YouTube/Extension/QueryString.php';
  * @category   Zend
  * @package    Zend_Gdata
  * @subpackage YouTube
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Gdata_YouTube_SubscriptionEntry extends Zend_Gdata_Entry
@@ -86,35 +86,35 @@ class Zend_Gdata_YouTube_SubscriptionEntry extends Zend_Gdata_Entry
      * @var array
      */
     protected $_feedLink = array();
-    
+
     /**
      * The username of this entry.
      *
      * @var Zend_Gdata_YouTube_Extension_Username
      */
     protected $_username = null;
-    
+
     /**
      * The playlist title for this entry.
-     * 
+     *
      * This element is only used on subscriptions to playlists.
      *
      * @var Zend_Gdata_YouTube_Extension_PlaylistTitle
      */
     protected $_playlistTitle = null;
-    
+
     /**
      * The playlist id for this entry.
-     * 
+     *
      * This element is only used on subscriptions to playlists.
      *
      * @var Zend_Gdata_YouTube_Extension_PlaylistId
      */
     protected $_playlistId = null;
-    
+
     /**
      * The media:thumbnail element for this entry.
-     * 
+     *
      * This element is only used on subscriptions to playlists.
      *
      * @var Zend_Gdata_Media_Extension_MediaThumbnail
@@ -276,7 +276,7 @@ class Zend_Gdata_YouTube_SubscriptionEntry extends Zend_Gdata_Entry
             return null;
         }
     }
-    
+
     /**
      * Get the playlist title for a 'playlist' subscription.
      *
@@ -299,7 +299,7 @@ class Zend_Gdata_YouTube_SubscriptionEntry extends Zend_Gdata_Entry
     /**
      * Sets the yt:playlistId element for a new playlist subscription.
      *
-     * @param Zend_Gdata_YouTube_Extension_PlaylistId $id The id of 
+     * @param Zend_Gdata_YouTube_Extension_PlaylistId $id The id of
      *        the playlist to which to subscribe to.
      * @throws Zend_Gdata_App_VersionException
      * @return Zend_Gdata_YouTube_SubscriptionEntry Provides a fluent interface
@@ -363,7 +363,7 @@ class Zend_Gdata_YouTube_SubscriptionEntry extends Zend_Gdata_Entry
     /**
      * Sets the yt:playlistTitle element for a new playlist subscription.
      *
-     * @param Zend_Gdata_YouTube_Extension_PlaylistTitle $title The title of 
+     * @param Zend_Gdata_YouTube_Extension_PlaylistTitle $title The title of
      *        the playlist to which to subscribe to.
      * @throws Zend_Gdata_App_VersionException
      * @return Zend_Gdata_YouTube_SubscriptionEntry Provides a fluent interface
@@ -419,7 +419,7 @@ class Zend_Gdata_YouTube_SubscriptionEntry extends Zend_Gdata_Entry
             return $this->_mediaThumbnail;
         }
     }
-    
+
     /**
      * Get the username for a channel subscription.
      *
@@ -433,7 +433,7 @@ class Zend_Gdata_YouTube_SubscriptionEntry extends Zend_Gdata_Entry
     /**
      * Sets the username for a new channel subscription.
      *
-     * @param Zend_Gdata_YouTube_Extension_Username $username The username of 
+     * @param Zend_Gdata_YouTube_Extension_Username $username The username of
      *        the channel to which to subscribe to.
      * @return Zend_Gdata_YouTube_SubscriptionEntry Provides a fluent interface
      */

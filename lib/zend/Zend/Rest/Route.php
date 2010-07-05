@@ -12,28 +12,29 @@
  * obtain it through the world-wide-web, please send an email
  * to license@zend.com so we can send you a copy immediately.
  *
+ * @category   Zend
  * @package    Zend_Rest
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
 
-/** 
- * @see Zend_Controller_Router_Route_Interface 
+/**
+ * @see Zend_Controller_Router_Route_Interface
  */
 require_once 'Zend/Controller/Router/Route/Interface.php';
 
-/** 
+/**
  * @see Zend_Controller_Router_Route_Module
  */
 require_once 'Zend/Controller/Router/Route/Module.php';
 
-/** 
+/**
  * @see Zend_Controller_Dispatcher_Interface
  */
 require_once 'Zend/Controller/Dispatcher/Interface.php';
 
-/** 
+/**
  * @see Zend_Controller_Request_Abstract
  */
 require_once 'Zend/Controller/Request/Abstract.php';
@@ -43,8 +44,9 @@ require_once 'Zend/Controller/Request/Abstract.php';
  *
  * Request-aware route for RESTful modular routing
  *
+ * @category   Zend
  * @package    Zend_Rest
- * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Rest_Route extends Zend_Controller_Router_Route_Module
@@ -52,15 +54,15 @@ class Zend_Rest_Route extends Zend_Controller_Router_Route_Module
     /**
      * Specific Modules to receive RESTful routes
      * @var array
-     */ 
-    protected $_restfulModules = null; 
- 
+     */
+    protected $_restfulModules = null;
+
     /**
      * Specific Modules=>Controllers to receive RESTful routes
      * @var array
-     */ 
-    protected $_restfulControllers = null; 
-     
+     */
+    protected $_restfulControllers = null;
+
     /**
      * @var Zend_Controller_Front
      */
@@ -88,6 +90,27 @@ class Zend_Rest_Route extends Zend_Controller_Router_Route_Module
     }
 
     /**
+     * Instantiates route based on passed Zend_Config structure
+     */
+    public static function getInstance(Zend_Config $config)
+    {
+        $frontController = Zend_Controller_Front::getInstance();
+        $defaultsArray = array();
+        $restfulConfigArray = array();
+        foreach ($config as $key => $values) {
+        	if ($key == 'type') {
+        		// do nothing
+        	} elseif ($key == 'defaults') {
+        		$defaultsArray = $values->toArray();
+        	} else {
+        		$restfulConfigArray[$key] = explode(',', $values);
+        	}
+        }
+        $instance = new self($frontController, $defaultsArray, $restfulConfigArray);
+        return $instance;
+    }
+
+    /**
      * Matches a user submitted request. Assigns and returns an array of variables
      * on a successful match.
      *
@@ -98,7 +121,7 @@ class Zend_Rest_Route extends Zend_Controller_Router_Route_Module
      * @param Zend_Controller_Request_Http $request Request used to match against this routing ruleset
      * @return array An array of assigned values or a false on a mismatch
      */
-    public function match($request)
+    public function match($request, $partial = false)
     {
         if (!$request instanceof Zend_Controller_Request_Http) {
             $request = $this->_front->getRequest();
@@ -107,14 +130,13 @@ class Zend_Rest_Route extends Zend_Controller_Router_Route_Module
         $this->_setRequestKeys();
 
         $path   = $request->getPathInfo();
+        $params = $request->getParams();
         $values = array();
-        $params = array();
         $path   = trim($path, self::URI_DELIMITER);
 
         if ($path != '') {
 
             $path = explode(self::URI_DELIMITER, $path);
-
             // Determine Module
             $moduleName = $this->_defaults[$this->_moduleKey];
             $dispatcher = $this->_front->getDispatcher();
@@ -138,21 +160,26 @@ class Zend_Rest_Route extends Zend_Controller_Router_Route_Module
                     // Controller, return false to fall back to other routes
                     return false;
                 }
+            } elseif ($this->_checkRestfulController($moduleName, $controllerName)) {
+            	$values[$this->_controllerKey] = $controllerName;
+            	$values[$this->_actionKey] = 'get';
+            } else {
+            	return false;
             }
 
             //Store path count for method mapping
             $pathElementCount = count($path);
-            
-            // Check for leading "special get" URI's 
+
+            // Check for "special get" URI's
             $specialGetTarget = false;
-            if ($pathElementCount && array_search($path[0], array('index', 'new')) > -1) { 
+            if ($pathElementCount && array_search($path[0], array('index', 'new')) > -1) {
                 $specialGetTarget = array_shift($path);
             } elseif ($pathElementCount && $path[$pathElementCount-1] == 'edit') {
                 $specialGetTarget = 'edit';
                 $params['id'] = $path[$pathElementCount-2];
             } elseif ($pathElementCount == 1) {
-                $params['id'] = array_shift($path);
-            } elseif ($pathElementCount == 0 || $pathElementCount > 1) {
+                $params['id'] = urldecode(array_shift($path));
+            } elseif ($pathElementCount == 0 && !isset($params['id'])) {
                 $specialGetTarget = 'index';
             }
 
@@ -190,17 +217,22 @@ class Zend_Rest_Route extends Zend_Controller_Router_Route_Module
                         $values[$this->_actionKey] = 'put';
                         break;
                 }
-                
-            } elseif ($specialGetTarget) {  
-                $values[$this->_actionKey] = $specialGetTarget; 
-            } 
-              
-        }  
+
+            } elseif ($specialGetTarget) {
+                $values[$this->_actionKey] = $specialGetTarget;
+            }
+
+        }
         $this->_values = $values + $params;
-         
-        return $this->_values + $this->_defaults;  
-    } 
-  
+
+        $result = $this->_values + $this->_defaults;
+
+        if ($partial && $result)
+            $this->setMatchedPath($request->getPathInfo());
+
+        return $result;
+    }
+
     /**
      * Assembles user submitted parameters forming a URL path defined by this route
      *
@@ -243,37 +275,38 @@ class Zend_Rest_Route extends Zend_Controller_Router_Route_Module
         unset($params[$this->_controllerKey]);
 
         unset($params[$this->_actionKey]);
-        
+
         if (isset($params['index']) && $params['index']) {
             unset($params['index']);
             $url .= '/index';
             foreach ($params as $key => $value) {
+                if ($encode) $value = urlencode($value);
                 $url .= '/' . $key . '/' . $value;
             }
         } elseif (isset($params['id'])) {
             $url .= '/' . $params['id'];
         }
-  
-        if (!empty($url) || $controller !== $this->_defaults[$this->_controllerKey]) {  
-            $url = '/' . $controller . $url;  
-        }  
-  
-        if (isset($module)) {  
-            $url = '/' . $module . $url;  
-        }  
-  
-        return ltrim($url, self::URI_DELIMITER);  
-    } 
-     
+
+        if (!empty($url) || $controller !== $this->_defaults[$this->_controllerKey]) {
+            $url = '/' . $controller . $url;
+        }
+
+        if (isset($module)) {
+            $url = '/' . $module . $url;
+        }
+
+        return ltrim($url, self::URI_DELIMITER);
+    }
+
     /**
      * Tells Rewrite Router which version this Route is
      *
      * @return int Route "version"
-     */ 
-    public function getVersion() 
-    { 
-        return 2; 
-    } 
+     */
+    public function getVersion()
+    {
+        return 2;
+    }
 
     /**
      * Parses the responders array sent to constructor to know
@@ -281,7 +314,7 @@ class Zend_Rest_Route extends Zend_Controller_Router_Route_Module
      *
      * @param array $responders
      */
-    private function _parseResponders($responders)
+    protected function _parseResponders($responders)
     {
         $modulesOnly = true;
         foreach ($responders as $responder) {
@@ -303,7 +336,7 @@ class Zend_Rest_Route extends Zend_Controller_Router_Route_Module
      * @param string $moduleName
      * @return bool
      */
-    private function _checkRestfulModule($moduleName)
+    protected function _checkRestfulModule($moduleName)
     {
         if ($this->_allRestful()) {
             return true;
@@ -325,7 +358,7 @@ class Zend_Rest_Route extends Zend_Controller_Router_Route_Module
      * @param string $controllerName
      * @return bool
      */
-    private function _checkRestfulController($moduleName, $controllerName)
+    protected function _checkRestfulController($moduleName, $controllerName)
     {
         if ($this->_allRestful()) {
             return true;
@@ -333,7 +366,7 @@ class Zend_Rest_Route extends Zend_Controller_Router_Route_Module
         if ($this->_fullRestfulModule($moduleName)) {
             return true;
         }
-        if ($this->_checkRestfulModule($moduleName) 
+        if ($this->_checkRestfulModule($moduleName)
             && $this->_restfulControllers
             && (false !== array_search($controllerName, $this->_restfulControllers[$moduleName]))
         ) {
@@ -347,10 +380,10 @@ class Zend_Rest_Route extends Zend_Controller_Router_Route_Module
      *
      * @return bool
      */
-    private function _allRestful() 
-    { 
-        return (!$this->_restfulModules && !$this->_restfulControllers); 
-    } 
+    protected function _allRestful()
+    {
+        return (!$this->_restfulModules && !$this->_restfulControllers);
+    }
 
     /**
      * Determines if RESTful routing applies to an entire module
@@ -358,10 +391,10 @@ class Zend_Rest_Route extends Zend_Controller_Router_Route_Module
      * @param string $moduleName
      * @return bool
      */
-    private function _fullRestfulModule($moduleName)
+    protected function _fullRestfulModule($moduleName)
     {
         return (
-            $this->_restfulModules 
+            $this->_restfulModules
             && (false !==array_search($moduleName, $this->_restfulModules))
         );
     }

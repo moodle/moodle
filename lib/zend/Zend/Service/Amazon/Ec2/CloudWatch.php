@@ -15,11 +15,14 @@
  * @category   Zend
  * @package    Zend_Service_Amazon
  * @subpackage Ec2
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
 
+/**
+ * @see Zend_Service_Amazon_Ec2_Abstract
+ */
 require_once 'Zend/Service/Amazon/Ec2/Abstract.php';
 
 /**
@@ -29,7 +32,7 @@ require_once 'Zend/Service/Amazon/Ec2/Abstract.php';
  * @category   Zend
  * @package    Zend_Service_Amazon
  * @subpackage Ec2
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Service_Amazon_Ec2_CloudWatch extends Zend_Service_Amazon_Ec2_Abstract
@@ -274,8 +277,12 @@ class Zend_Service_Amazon_Ec2_CloudWatch extends Zend_Service_Amazon_Ec2_Abstrac
             $x = 1;
             foreach($options['Dimensions'] as $dimKey=>$dimVal) {
                 if(!in_array($dimKey, $this->_validDimensionsKeys, true)) continue;
-                $options[$dimKey . '.member.' . $x++] = $dimVal;
+                $options['Dimensions.member.' . $x . '.Name'] = $dimKey;
+                $options['Dimensions.member.' . $x . '.Value'] = $dimVal;
+                $x++;
             }
+            
+            unset($options['Dimensions']);
         }
 
         $params = array_merge($params, $options);
@@ -310,8 +317,8 @@ class Zend_Service_Amazon_Ec2_CloudWatch extends Zend_Service_Amazon_Ec2_Abstrac
      * Return the Metrics that are aviable for your current monitored instances
      *
      * @param string $nextToken     The NextToken parameter is an optional parameter
-     * 								that allows you to retrieve the next set of results
-     * 								for your ListMetrics query.
+     *                                 that allows you to retrieve the next set of results
+     *                                 for your ListMetrics query.
      * @return array
      */
     public function listMetrics($nextToken = null)

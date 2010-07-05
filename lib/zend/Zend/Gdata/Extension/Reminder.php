@@ -16,7 +16,7 @@
  * @category   Zend
  * @package    Zend_Gdata
  * @subpackage Gdata
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -32,7 +32,7 @@ require_once 'Zend/Gdata/Extension.php';
  * @category   Zend
  * @package    Zend_Gdata
  * @subpackage Gdata
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Gdata_Extension_Reminder extends Zend_Gdata_Extension
@@ -102,16 +102,16 @@ class Zend_Gdata_Extension_Reminder extends Zend_Gdata_Extension
 
     public function __toString()
     {
-        $s;
-        if ($absoluteTime)
-            $s = "at" . $absoluteTime;
-        else if ($days)
-            $s = "in" . $days . "days";
-        else if ($hours)
-            $s = "in" . $hours . "hours";
-        else if ($minutes)
-            $s = "in" . $minutes . "minutes";
-        return $method . $s;
+        $s = '';
+        if ($this->_absoluteTime)
+            $s = " at " . $this->_absoluteTime;
+        else if ($this->_days)
+            $s = " in " . $this->_days . " days";
+        else if ($this->_hours)
+            $s = " in " . $this->_hours . " hours";
+        else if ($this->_minutes)
+            $s = " in " . $this->_minutes . " minutes";
+        return $this->_method . $s;
     }
 
     public function getAbsoluteTime()

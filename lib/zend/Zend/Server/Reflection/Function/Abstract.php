@@ -14,7 +14,7 @@
  *
  * @category   Zend
  * @package    Zend_Server
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
@@ -46,7 +46,7 @@ require_once 'Zend/Server/Reflection/Prototype.php';
  * @category   Zend
  * @package    Zend_Server
  * @subpackage Reflection
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version $Id$
  */
@@ -237,7 +237,7 @@ abstract class Zend_Server_Reflection_Function_Abstract
             $return = new Zend_Server_Reflection_ReturnValue(array_shift($signature), $this->_returnDesc);
             $tmp    = array();
             foreach ($signature as $key => $type) {
-                $param = new Zend_Server_Reflection_Parameter($params[$key], $type, $this->_paramDesc[$key]);
+                $param = new Zend_Server_Reflection_Parameter($params[$key], $type, (isset($this->_paramDesc[$key]) ? $this->_paramDesc[$key] : null));
                 $param->setPosition($key);
                 $tmp[] = $param;
             }
@@ -339,8 +339,7 @@ abstract class Zend_Server_Reflection_Function_Abstract
             require_once 'Zend/Server/Reflection/Exception.php';
             throw new Zend_Server_Reflection_Exception(
                'Variable number of arguments is not supported for services (except optional parameters). '
-             . 'Number of function arguments must correspond to actual number of arguments described in a docblock '
-             . '(function was ' . $function->getName() . ')');
+             . 'Number of function arguments must correspond to actual number of arguments described in a docblock.');
         }
 
         $paramTypes = array();

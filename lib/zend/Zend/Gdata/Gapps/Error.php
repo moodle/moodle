@@ -16,7 +16,7 @@
  * @category   Zend
  * @package    Zend_Gdata
  * @subpackage Gapps
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -28,26 +28,26 @@
 require_once 'Zend/Gdata/App/Base.php';
 
 /**
- * Gdata Gapps Error class. This class is used to represent errors returned  
- * within an AppsForYourDomainErrors message received from the Google Apps 
+ * Gdata Gapps Error class. This class is used to represent errors returned
+ * within an AppsForYourDomainErrors message received from the Google Apps
  * servers.
  *
- * Several different errors may be represented by this class, determined by 
- * the error code returned by the server. For a list of error codes 
+ * Several different errors may be represented by this class, determined by
+ * the error code returned by the server. For a list of error codes
  * available at the time of this writing, see getErrorCode.
  *
  * @category   Zend
  * @package    Zend_Gdata
  * @subpackage Gapps
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Gdata_Gapps_Error extends Zend_Gdata_App_Base
 {
-    
-    // Error codes as defined at 
+
+    // Error codes as defined at
     // http://code.google.com/apis/apps/gdata_provisioning_api_v2.0_reference.html#appendix_d
-    
+
     const UNKNOWN_ERROR = 1000;
     const USER_DELETED_RECENTLY = 1100;
     const USER_SUSPENDED = 1101;
@@ -68,34 +68,34 @@ class Zend_Gdata_Gapps_Error extends Zend_Gdata_App_Base
     const INVALID_EMAIL_ADDRESS = 1406;
     const INVALID_QUERY_PARAMETER_VALUE = 1407;
     const TOO_MANY_RECIPIENTS_ON_EMAIL_LIST = 1500;
-    
+
     protected $_errorCode = null;
     protected $_reason = null;
     protected $_invalidInput = null;
-    
-    public function __construct($errorCode = null, $reason = null, 
+
+    public function __construct($errorCode = null, $reason = null,
             $invalidInput = null) {
         parent::__construct("Google Apps error received: $errorCode ($reason)");
         $this->_errorCode = $errorCode;
         $this->_reason = $reason;
         $this->_invalidInput = $invalidInput;
     }
-    
+
     /**
-     * Set the error code for this exception. For more information about 
+     * Set the error code for this exception. For more information about
      * error codes, see getErrorCode.
-     * 
+     *
      * @see getErrorCode
      * @param integer $value The new value for the error code.
      */
     public function setErrorCode($value) {
        $this->_errorCode = $value;
     }
-    
-    /** 
-     * Get the error code for this exception. Currently valid values are 
+
+    /**
+     * Get the error code for this exception. Currently valid values are
      * available as constants within this class. These values are:
-     * 
+     *
      *   UNKNOWN_ERROR (1000)
      *   USER_DELETED_RECENTLY (1100)
      *   USER_SUSPENDED (1101)
@@ -116,14 +116,14 @@ class Zend_Gdata_Gapps_Error extends Zend_Gdata_App_Base
      *   INVALID_EMAIL_ADDRESS (1406)
      *   INVALID_QUERY_PARAMETER_VALUE (1407)
      *   TOO_MANY_RECIPIENTS_ON_EMAIL_LIST (1500)
-     * 
-     * Numbers in parenthesis indicate the actual integer value of the 
-     * constant. This list should not be treated as exhaustive, as additional 
+     *
+     * Numbers in parenthesis indicate the actual integer value of the
+     * constant. This list should not be treated as exhaustive, as additional
      * error codes may be added at any time.
-     * 
-     * For more information about these codes and their meaning, please 
+     *
+     * For more information about these codes and their meaning, please
      * see Appendix D of the Google Apps Provisioning API Reference.
-     * 
+     *
      * @link http://code.google.com/apis/apps/gdata_provisioning_api_v2.0_reference.html#appendix_d Google Apps Provisioning API Reference: Appendix D - Gdata Error Codes
      * @see setErrorCode
      * @return integer The error code returned by the Google Apps server.
@@ -131,20 +131,20 @@ class Zend_Gdata_Gapps_Error extends Zend_Gdata_App_Base
     public function getErrorCode() {
         return $this->_errorCode;
     }
-    
+
     /**
      * Set human-readable text describing the reason this exception occurred.
-     * 
+     *
      * @see getReason
      * @param string $value The reason this exception occurred.
      */
     public function setReason($value) {
        $this->_reason = $value;
     }
-    
+
     /**
      * Get human-readable text describing the reason this exception occurred.
-     * 
+     *
      * @see setReason
      * @return string The reason this exception occurred.
      */
@@ -154,24 +154,24 @@ class Zend_Gdata_Gapps_Error extends Zend_Gdata_App_Base
 
     /**
      * Set the invalid input which caused this exception.
-     * 
+     *
      * @see getInvalidInput
      * @param string $value The invalid input that triggered this exception.
      */
     public function setInvalidInput($value) {
        $this->_invalidInput = $value;
     }
-    
+
     /**
      * Set the invalid input which caused this exception.
-     * 
+     *
      * @see setInvalidInput
      * @return string The reason this exception occurred.
      */
     public function getInvalidInput() {
        return $this->_invalidInput;
     }
-    
+
     /**
      * Retrieves a DOMElement which corresponds to this element and all
      * child properties.  This is used to build an entry back into a DOM
@@ -195,7 +195,7 @@ class Zend_Gdata_Gapps_Error extends Zend_Gdata_App_Base
         }
         return $element;
     }
-    
+
     /**
      * Given a DOMNode representing an attribute, tries to map the data into
      * instance members.  If no mapping is defined, the name and value are
@@ -219,10 +219,10 @@ class Zend_Gdata_Gapps_Error extends Zend_Gdata_App_Base
             parent::takeAttributeFromDOM($attribute);
         }
     }
-    
+
     /**
      * Get a human readable version of this exception.
-     * 
+     *
      * @return string
      */
     public function __toString() {

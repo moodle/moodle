@@ -16,7 +16,7 @@
  * @category   Zend
  * @package    Zend_Gdata
  * @subpackage Docs
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -37,32 +37,52 @@ require_once 'Zend/Gdata/Docs/DocumentListFeed.php';
 require_once 'Zend/Gdata/Docs/DocumentListEntry.php';
 
 /**
+ * @see Zend_Gdata_App_Extension_Category
+ */
+require_once 'Zend/Gdata/App/Extension/Category.php';
+
+/**
+ * @see Zend_Gdata_App_Extension_Title
+ */
+require_once 'Zend/Gdata/App/Extension/Title.php';
+
+/**
  * Service class for interacting with the Google Document List data API
  * @link http://code.google.com/apis/documents/
  *
  * @category   Zend
  * @package    Zend_Gdata
  * @subpackage Docs
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Gdata_Docs extends Zend_Gdata
 {
 
     const DOCUMENTS_LIST_FEED_URI = 'http://docs.google.com/feeds/documents/private/full';
+    const DOCUMENTS_FOLDER_FEED_URI = 'http://docs.google.com/feeds/folders/private/full';
+    const DOCUMENTS_CATEGORY_SCHEMA = 'http://schemas.google.com/g/2005#kind';
+    const DOCUMENTS_CATEGORY_TERM = 'http://schemas.google.com/docs/2007#folder';
     const AUTH_SERVICE_NAME = 'writely';
 
     protected $_defaultPostUri = self::DOCUMENTS_LIST_FEED_URI;
 
     private static $SUPPORTED_FILETYPES = array(
+      'TXT'=>'text/plain',
       'CSV'=>'text/csv',
+      'TSV'=>'text/tab-separated-values',
+      'TAB'=>'text/tab-separated-values',
+      'HTML'=>'text/html',
+      'HTM'=>'text/html',
       'DOC'=>'application/msword',
       'ODS'=>'application/vnd.oasis.opendocument.spreadsheet',
       'ODT'=>'application/vnd.oasis.opendocument.text',
       'RTF'=>'application/rtf',
       'SXW'=>'application/vnd.sun.xml.writer',
-      'TXT'=>'text/plain',
-      'XLS'=>'application/vnd.ms-excel');
+      'XLS'=>'application/vnd.ms-excel',
+      'XLSX'=>'application/vnd.ms-excel',
+      'PPT'=>'application/vnd.ms-powerpoint',
+      'PPS'=>'application/vnd.ms-powerpoint');
 
     /**
      * Create Gdata_Docs object
@@ -80,11 +100,11 @@ class Zend_Gdata_Docs extends Zend_Gdata
 
     /**
      * Looks up the mime type based on the file name extension. For example,
-     * calling this method with 'csv' would return 
-     * 'text/comma-separated-values'. The Mime type is sent as a header in 
+     * calling this method with 'csv' would return
+     * 'text/comma-separated-values'. The Mime type is sent as a header in
      * the upload HTTP POST request.
      *
-     * @param string $fileExtension 
+     * @param string $fileExtension
      * @return string The mime type to be sent to the server to tell it how the
      *          multipart mime data should be interpreted.
      */
@@ -135,14 +155,14 @@ class Zend_Gdata_Docs extends Zend_Gdata
      *
      * This method builds the URL where this item is stored using the type
      * and the id of the document.
-     * @param string $docId The URL key for the document. Examples: 
+     * @param string $docId The URL key for the document. Examples:
      *     dcmg89gw_62hfjj8m, pKq0CzjiF3YmGd0AIlHKqeg
      * @param string $docType The type of the document as used in the Google
      *     Document List URLs. Examples: document, spreadsheet, presentation
      * @return Zend_Gdata_Docs_DocumentListEntry
      */
     public function getDoc($docId, $docType) {
-        $location = 'http://docs.google.com/feeds/documents/private/full/' . 
+        $location = 'http://docs.google.com/feeds/documents/private/full/' .
             $docType . '%3A' . $docId;
         return $this->getDocumentListEntry($location);
     }
@@ -150,27 +170,27 @@ class Zend_Gdata_Docs extends Zend_Gdata
     /**
      * Retreive entry object for the desired word processing document.
      *
-     * @param string $id The URL id for the document. Example: 
+     * @param string $id The URL id for the document. Example:
      *     dcmg89gw_62hfjj8m
      */
     public function getDocument($id) {
       return $this->getDoc($id, 'document');
     }
-    
+
     /**
      * Retreive entry object for the desired spreadsheet.
      *
-     * @param string $id The URL id for the document. Example: 
+     * @param string $id The URL id for the document. Example:
      *     pKq0CzjiF3YmGd0AIlHKqeg
      */
     public function getSpreadsheet($id) {
       return $this->getDoc($id, 'spreadsheet');
     }
-    
+
     /**
      * Retreive entry object for the desired presentation.
      *
-     * @param string $id The URL id for the document. Example: 
+     * @param string $id The URL id for the document. Example:
      *     dcmg89gw_21gtrjcn
      */
     public function getPresentation($id) {
@@ -178,35 +198,35 @@ class Zend_Gdata_Docs extends Zend_Gdata
     }
 
     /**
-     * Upload a local file to create a new Google Document entry. 
+     * Upload a local file to create a new Google Document entry.
      *
      * @param string $fileLocation The full or relative path of the file to
      *         be uploaded.
-     * @param string $title The name that this document should have on the 
+     * @param string $title The name that this document should have on the
      *         server. If set, the title is used as the slug header in the
-     *         POST request. If no title is provided, the location of the 
-     *         file will be used as the slug header in the request. If no 
+     *         POST request. If no title is provided, the location of the
+     *         file will be used as the slug header in the request. If no
      *         mimeType is provided, this method attempts to determine the
-     *         mime type based on the slugHeader by looking for .doc, 
+     *         mime type based on the slugHeader by looking for .doc,
      *         .csv, .txt, etc. at the end of the file name.
      *         Example value: 'test.doc'.
      * @param string $mimeType Describes the type of data which is being sent
-     *         to the server. This must be one of the accepted mime types 
+     *         to the server. This must be one of the accepted mime types
      *         which are enumerated in SUPPORTED_FILETYPES.
-     * @param string $uri (optional) The URL to which the upload should be 
+     * @param string $uri (optional) The URL to which the upload should be
      *         made.
      *         Example: 'http://docs.google.com/feeds/documents/private/full'.
-     * @return Zend_Gdata_Docs_DocumentListEntry The entry for the newly 
+     * @return Zend_Gdata_Docs_DocumentListEntry The entry for the newly
      *         created Google Document.
      */
-    public function uploadFile($fileLocation, $title=null, $mimeType=null, 
+    public function uploadFile($fileLocation, $title=null, $mimeType=null,
                                $uri=null)
     {
         // Set the URI to which the file will be uploaded.
         if ($uri === null) {
             $uri = $this->_defaultPostUri;
         }
-        
+
         // Create the media source which describes the file.
         $fs = $this->newMediaFileSource($fileLocation);
         if ($title !== null) {
@@ -214,9 +234,9 @@ class Zend_Gdata_Docs extends Zend_Gdata
         } else {
             $slugHeader = $fileLocation;
         }
-        
-        // Set the slug header to tell the Google Documents server what the 
-        // title of the document should be and what the file extension was 
+
+        // Set the slug header to tell the Google Documents server what the
+        // title of the document should be and what the file extension was
         // for the original file.
         $fs->setSlug($slugHeader);
 
@@ -226,28 +246,55 @@ class Zend_Gdata_Docs extends Zend_Gdata
           $fileExtension = end($filenameParts);
           $mimeType = self::lookupMimeType($fileExtension);
         }
-        
+
         // Set the mime type for the upload request.
         $fs->setContentType($mimeType);
-        
+
         // Send the data to the server.
         return $this->insertDocument($fs, $uri);
     }
 
     /**
+     * Creates a new folder in Google Docs
+     *
+     * @param string $folderName The folder name to create
+     * @param string|null $folderResourceId The parent folder to create it in
+     *        ("folder%3Amy_parent_folder")
+     * @return Zend_Gdata_Entry The folder entry created.
+     * @todo ZF-8732: This should return a *subclass* of Zend_Gdata_Entry, but
+     *       the appropriate type doesn't exist yet.
+     */
+    public function createFolder($folderName, $folderResourceId=null) {
+        $category = new Zend_Gdata_App_Extension_Category(self::DOCUMENTS_CATEGORY_TERM, 
+                                                          self::DOCUMENTS_CATEGORY_SCHEMA);
+        $title = new Zend_Gdata_App_Extension_Title($folderName);
+        $entry = new Zend_Gdata_Entry();
+
+        $entry->setCategory(array($category));
+        $entry->setTitle($title);
+
+        $uri = self::DOCUMENTS_LIST_FEED_URI;
+        if ($folderResourceId != null) {
+            $uri = self::DOCUMENTS_FOLDER_FEED_URI . '/' . $folderResourceId;
+        }
+
+        return $this->insertEntry($entry, $uri);
+    }
+
+    /**
      * Inserts an entry to a given URI and returns the response as an Entry.
      *
-     * @param mixed  $data The Zend_Gdata_Docs_DocumentListEntry or media 
+     * @param mixed  $data The Zend_Gdata_Docs_DocumentListEntry or media
      *         source to post. If it is a DocumentListEntry, the mediaSource
-     *         should already have been set. If $data is a mediaSource, it 
+     *         should already have been set. If $data is a mediaSource, it
      *         should have the correct slug header and mime type.
      * @param string $uri POST URI
-     * @param string $className (optional) The class of entry to be returned. 
+     * @param string $className (optional) The class of entry to be returned.
      *         The default is a 'Zend_Gdata_Docs_DocumentListEntry'.
-     * @return Zend_Gdata_Docs_DocumentListEntry The entry returned by the 
+     * @return Zend_Gdata_Docs_DocumentListEntry The entry returned by the
      *     service after insertion.
      */
-    public function insertDocument($data, $uri, 
+    public function insertDocument($data, $uri,
         $className='Zend_Gdata_Docs_DocumentListEntry')
     {
         return $this->insertEntry($data, $uri, $className);

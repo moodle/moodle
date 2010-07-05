@@ -14,12 +14,12 @@
  *
  * @category   Zend
  * @package    Zend_Amf
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
 
-/** Zend_Auth_Adapter_Interface */
+/** @see Zend_Auth_Adapter_Interface */
 require_once 'Zend/Auth/Adapter/Interface.php';
 
 /**
@@ -27,16 +27,16 @@ require_once 'Zend/Auth/Adapter/Interface.php';
  *
  * @package    Zend_Amf
  * @subpackage Auth
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 abstract class Zend_Amf_Auth_Abstract implements Zend_Auth_Adapter_Interface
 {
     protected $_username;
     protected $_password;
-    
+
     public function setCredentials($username, $password) {
-		$this->_username = $username;
-		$this->_password = $password;
-	}
+        $this->_username = $username;
+        $this->_password = $password;
+    }
 }

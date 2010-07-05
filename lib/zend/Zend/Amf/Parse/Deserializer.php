@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Amf
  * @subpackage Parse
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -23,14 +23,14 @@
 /**
  * Abstract cass that all deserializer must implement.
  *
- * Logic for deserialization of the AMF envelop is based on resources supplied 
- * by Adobe Blaze DS. For and example of deserialization please review the BlazeDS 
+ * Logic for deserialization of the AMF envelop is based on resources supplied
+ * by Adobe Blaze DS. For and example of deserialization please review the BlazeDS
  * source tree.
  *
  * @see        http://opensource.adobe.com/svn/opensource/blazeds/trunk/modules/core/src/java/flex/messaging/io/amf/
  * @package    Zend_Amf
  * @subpackage Parse
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 abstract class Zend_Amf_Parse_Deserializer

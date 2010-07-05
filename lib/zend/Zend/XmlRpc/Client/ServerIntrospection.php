@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_XmlRpc
  * @subpackage Client
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -26,7 +26,7 @@
  * @category   Zend
  * @package    Zend_XmlRpc
  * @subpackage Client
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_XmlRpc_Client_ServerIntrospection
@@ -144,6 +144,11 @@ class Zend_XmlRpc_Client_ServerIntrospection
     public function getMethodSignature($method)
     {
         $signature = $this->_system->methodSignature($method);
+        if (!is_array($signature)) {
+            $error = 'Invalid signature for method "' . $method . '"';
+            require_once 'Zend/XmlRpc/Client/IntrospectException.php';
+            throw new Zend_XmlRpc_Client_IntrospectException($error);
+        }
         return $signature;
     }
 

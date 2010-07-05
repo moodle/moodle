@@ -16,7 +16,7 @@
  * @category   Zend
  * @package    Zend_Gdata
  * @subpackage Gdata
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -39,7 +39,7 @@ require_once 'Zend/Version.php';
  * @category   Zend
  * @package    Zend_Gdata
  * @subpackage Gdata
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Gdata_ClientLogin
@@ -71,7 +71,7 @@ class Zend_Gdata_ClientLogin
      * @param string $loginToken The token identifier as provided by the server.
      * @param string $loginCaptcha The user's response to the CAPTCHA challenge.
      * @param string $accountType An optional string to identify whether the
-     * account to be authenticated is a google or a hosted account. Defaults to 
+     * account to be authenticated is a google or a hosted account. Defaults to
      * 'HOSTED_OR_GOOGLE'. See: http://code.google.com/apis/accounts/docs/AuthForInstalledApps.html#Request
      * @throws Zend_Gdata_App_AuthException
      * @throws Zend_Gdata_App_HttpException
@@ -119,7 +119,7 @@ class Zend_Gdata_ClientLogin
         if ($loginToken || $loginCaptcha) {
             if($loginToken && $loginCaptcha) {
                 $client->setParameterPost('logintoken', (string) $loginToken);
-                $client->setParameterPost('logincaptcha', 
+                $client->setParameterPost('logincaptcha',
                         (string) $loginCaptcha);
             }
             else {

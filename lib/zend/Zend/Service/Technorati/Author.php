@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Service
  * @subpackage Technorati
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -29,11 +29,11 @@ require_once 'Zend/Service/Technorati/Utils.php';
 
 /**
  * Represents a weblog Author object. It usually belongs to a Technorati account.
- * 
+ *
  * @category   Zend
  * @package    Zend_Service
  * @subpackage Technorati
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Service_Technorati_Author
@@ -53,7 +53,7 @@ class Zend_Service_Technorati_Author
      * @access  protected
      */
     protected $_lastName;
-    
+
     /**
      * Technorati account username
      *
@@ -61,7 +61,7 @@ class Zend_Service_Technorati_Author
      * @access  protected
      */
     protected $_username;
-    
+
     /**
      * Technorati account description
      *
@@ -98,27 +98,27 @@ class Zend_Service_Technorati_Author
 
         $result = $xpath->query('./firstname/text()', $dom);
         if ($result->length == 1) $this->setFirstName($result->item(0)->data);
-        
+
         $result = $xpath->query('./lastname/text()', $dom);
         if ($result->length == 1) $this->setLastName($result->item(0)->data);
-        
+
         $result = $xpath->query('./username/text()', $dom);
         if ($result->length == 1) $this->setUsername($result->item(0)->data);
-        
+
         $result = $xpath->query('./description/text()', $dom);
         if ($result->length == 1) $this->setDescription($result->item(0)->data);
-        
+
         $result = $xpath->query('./bio/text()', $dom);
         if ($result->length == 1) $this->setBio($result->item(0)->data);
 
         $result = $xpath->query('./thumbnailpicture/text()', $dom);
         if ($result->length == 1) $this->setThumbnailPicture($result->item(0)->data);
     }
-    
+
 
     /**
      * Returns Author first name.
-     * 
+     *
      * @return  string  Author first name
      */
     public function getFirstName() {
@@ -127,7 +127,7 @@ class Zend_Service_Technorati_Author
 
     /**
      * Returns Author last name.
-     * 
+     *
      * @return  string  Author last name
      */
     public function getLastName() {
@@ -136,7 +136,7 @@ class Zend_Service_Technorati_Author
 
     /**
      * Returns Technorati account username.
-     * 
+     *
      * @return  string  Technorati account username
      */
     public function getUsername() {
@@ -145,7 +145,7 @@ class Zend_Service_Technorati_Author
 
     /**
      * Returns Technorati account description.
-     * 
+     *
      * @return  string  Technorati account description
      */
     public function getDescription() {
@@ -154,7 +154,7 @@ class Zend_Service_Technorati_Author
 
     /**
      * Returns Technorati account biography.
-     * 
+     *
      * @return  string  Technorati account biography
      */
     public function getBio() {
@@ -163,7 +163,7 @@ class Zend_Service_Technorati_Author
 
     /**
      * Returns Technorati account thumbnail picture.
-     * 
+     *
      * @return  null|Zend_Uri_Http  Technorati account thumbnail picture
      */
     public function getThumbnailPicture() {
@@ -173,8 +173,8 @@ class Zend_Service_Technorati_Author
 
     /**
      * Sets author first name.
-     * 
-     * @param   string $input   first Name input value 
+     *
+     * @param   string $input   first Name input value
      * @return  Zend_Service_Technorati_Author  $this instance
      */
     public function setFirstName($input) {
@@ -184,8 +184,8 @@ class Zend_Service_Technorati_Author
 
     /**
      * Sets author last name.
-     * 
-     * @param   string $input   last Name input value 
+     *
+     * @param   string $input   last Name input value
      * @return  Zend_Service_Technorati_Author  $this instance
      */
     public function setLastName($input) {
@@ -195,8 +195,8 @@ class Zend_Service_Technorati_Author
 
     /**
      * Sets Technorati account username.
-     * 
-     * @param   string $input   username input value 
+     *
+     * @param   string $input   username input value
      * @return  Zend_Service_Technorati_Author  $this instance
      */
     public function setUsername($input) {
@@ -206,7 +206,7 @@ class Zend_Service_Technorati_Author
 
     /**
      * Sets Technorati account biography.
-     * 
+     *
      * @param   string $input   biography input value
      * @return  Zend_Service_Technorati_Author  $this instance
      */
@@ -217,7 +217,7 @@ class Zend_Service_Technorati_Author
 
     /**
      * Sets Technorati account description.
-     * 
+     *
      * @param   string $input   description input value
      * @return  Zend_Service_Technorati_Author  $this instance
      */
@@ -228,7 +228,7 @@ class Zend_Service_Technorati_Author
 
     /**
      * Sets Technorati account thumbnail picture.
-     * 
+     *
      * @param   string|Zend_Uri_Http $input thumbnail picture URI
      * @return  Zend_Service_Technorati_Author  $this instance
      * @throws  Zend_Service_Technorati_Exception if $input is an invalid URI

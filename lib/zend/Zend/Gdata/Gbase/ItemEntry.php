@@ -16,7 +16,7 @@
  * @category   Zend
  * @package    Zend_Gdata
  * @subpackage Gbase
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -34,7 +34,7 @@ require_once 'Zend/Gdata/Gbase/Entry.php';
  * @category   Zend
  * @package    Zend_Gdata
  * @subpackage Gbase
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Gdata_Gbase_ItemEntry extends Zend_Gdata_Gbase_Entry
@@ -49,7 +49,7 @@ class Zend_Gdata_Gbase_ItemEntry extends Zend_Gdata_Gbase_Entry
     /**
      * Set the value of the itme_type
      *
-     * @param Zend_Gdata_Gbase_Extension_ItemType $value The desired value for the item_type 
+     * @param Zend_Gdata_Gbase_Extension_ItemType $value The desired value for the item_type
      * @return Zend_Gdata_Gbase_ItemEntry Provides a fluent interface
      */
     public function setItemType($value)
@@ -60,7 +60,7 @@ class Zend_Gdata_Gbase_ItemEntry extends Zend_Gdata_Gbase_Entry
 
     /**
      * Adds a custom attribute to the entry in the following format:
-     * &lt;g:[$name] type='[$type]'&gt;[$value]&lt;/g:[$name]&gt;      
+     * &lt;g:[$name] type='[$type]'&gt;[$value]&lt;/g:[$name]&gt;
      *
      * @param string $name The name of the attribute
      * @param string $value The text value of the attribute
@@ -76,7 +76,7 @@ class Zend_Gdata_Gbase_ItemEntry extends Zend_Gdata_Gbase_Entry
 
     /**
      * Removes a Base attribute from the current list of Base attributes
-     * 
+     *
      * @param Zend_Gdata_Gbase_Extension_BaseAttribute $baseAttribute The attribute to be removed
      * @return Zend_Gdata_Gbase_ItemEntry Provides a fluent interface
      */

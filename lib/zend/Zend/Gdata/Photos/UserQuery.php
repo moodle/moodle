@@ -16,7 +16,7 @@
  * @category   Zend
  * @package    Zend_Gdata
  * @subpackage Photos
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -37,7 +37,7 @@ require_once('Zend/Gdata/Gapps/Query.php');
  * @category   Zend
  * @package    Zend_Gdata
  * @subpackage Photos
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Gdata_Photos_UserQuery extends Zend_Gdata_Query
@@ -50,7 +50,7 @@ class Zend_Gdata_Photos_UserQuery extends Zend_Gdata_Query
      * @var string
      */
     protected $_projection = 'api';
-    
+
     /**
      * Indicates whether to request a feed or entry in queries. Default
      * value is 'feed';
@@ -58,7 +58,7 @@ class Zend_Gdata_Photos_UserQuery extends Zend_Gdata_Query
      * @var string
      */
     protected $_type = 'feed';
-    
+
     /**
      * A string which, if not null, indicates which user should
      * be retrieved by this query. If null, the default user will be used
@@ -67,7 +67,7 @@ class Zend_Gdata_Photos_UserQuery extends Zend_Gdata_Query
      * @var string
      */
     protected $_user = Zend_Gdata_Photos::DEFAULT_USER;
-    
+
     /**
      * Create a new Query object with default values.
      */
@@ -75,9 +75,9 @@ class Zend_Gdata_Photos_UserQuery extends Zend_Gdata_Query
     {
         parent::__construct();
     }
-    
+
     /**
-     * Set's the format of data returned in Atom feeds. Can be either 
+     * Set's the format of data returned in Atom feeds. Can be either
      * 'api' or 'base'. Normally, 'api' will be desired. Default is 'api'.
      *
      * @param string $value
@@ -99,9 +99,9 @@ class Zend_Gdata_Photos_UserQuery extends Zend_Gdata_Query
     {
         return $this->_projection;
     }
-    
+
     /**
-     * Set's the type of data returned in queries. Can be either 
+     * Set's the type of data returned in queries. Can be either
      * 'feed' or 'entry'. Normally, 'feed' will be desired. Default is 'feed'.
      *
      * @param string $value
@@ -153,13 +153,13 @@ class Zend_Gdata_Photos_UserQuery extends Zend_Gdata_Query
     }
 
     /**
-     * Set the visibility filter for entries returned. Only entries which 
-     * match this value will be returned. If null or unset, the default 
+     * Set the visibility filter for entries returned. Only entries which
+     * match this value will be returned. If null or unset, the default
      * value will be used instead.
-     * 
-     * Valid values are 'all' (default), 'public', and 'private'. 
      *
-     * @param string $value The visibility to filter by, or null to use the 
+     * Valid values are 'all' (default), 'public', and 'private'.
+     *
+     * @param string $value The visibility to filter by, or null to use the
      *          default value.
      */
      public function setAccess($value)
@@ -184,10 +184,10 @@ class Zend_Gdata_Photos_UserQuery extends Zend_Gdata_Query
     }
 
     /**
-     * Set the tag for entries that are returned. Only entries which 
+     * Set the tag for entries that are returned. Only entries which
      * match this value will be returned. If null or unset, this filter will
      * not be applied.
-     * 
+     *
      * See http://code.google.com/apis/picasaweb/reference.html#Parameters
      * for a list of valid values.
      *
@@ -214,12 +214,12 @@ class Zend_Gdata_Photos_UserQuery extends Zend_Gdata_Query
     {
         return $this->_params['tag'];
     }
-    
+
     /**
-     * Set the kind of entries that are returned. Only entries which 
+     * Set the kind of entries that are returned. Only entries which
      * match this value will be returned. If null or unset, this filter will
      * not be applied.
-     * 
+     *
      * See http://code.google.com/apis/picasaweb/reference.html#Parameters
      * for a list of valid values.
      *
@@ -246,12 +246,12 @@ class Zend_Gdata_Photos_UserQuery extends Zend_Gdata_Query
     {
         return $this->_params['kind'];
     }
-    
+
     /**
-     * Set the maximum image size for entries returned. Only entries which 
+     * Set the maximum image size for entries returned. Only entries which
      * match this value will be returned. If null or unset, this filter will
      * not be applied.
-     * 
+     *
      * See http://code.google.com/apis/picasaweb/reference.html#Parameters
      * for a list of valid values.
      *
@@ -278,12 +278,12 @@ class Zend_Gdata_Photos_UserQuery extends Zend_Gdata_Query
     {
         return $this->_params['imgmax'];
     }
-    
+
     /**
-     * Set the thumbnail size filter for entries returned. Only entries which 
+     * Set the thumbnail size filter for entries returned. Only entries which
      * match this value will be returned. If null or unset, this filter will
      * not be applied.
-     * 
+     *
      * See http://code.google.com/apis/picasaweb/reference.html#Parameters
      * for a list of valid values.
      *
@@ -310,7 +310,7 @@ class Zend_Gdata_Photos_UserQuery extends Zend_Gdata_Query
     {
         return $this->_params['thumbsize'];
     }
-    
+
     /**
      * Returns the URL generated for this query, based on it's current
      * parameters.
@@ -321,7 +321,7 @@ class Zend_Gdata_Photos_UserQuery extends Zend_Gdata_Query
     public function getQueryUrl($incomingUri = null)
     {
         $uri = Zend_Gdata_Photos::PICASA_BASE_URI;
-        
+
         if ($this->getType() !== null) {
             $uri .= '/' . $this->getType();
         } else {
@@ -329,7 +329,7 @@ class Zend_Gdata_Photos_UserQuery extends Zend_Gdata_Query
             throw new Zend_Gdata_App_InvalidArgumentException(
                     'Type must be feed or entry, not null');
         }
-        
+
         if ($this->getProjection() !== null) {
             $uri .= '/' . $this->getProjection();
         } else {
@@ -337,7 +337,7 @@ class Zend_Gdata_Photos_UserQuery extends Zend_Gdata_Query
             throw new Zend_Gdata_App_InvalidArgumentException(
                     'Projection must not be null');
         }
-        
+
         if ($this->getUser() !== null) {
             $uri .= '/user/' . $this->getUser();
         } else {
@@ -346,7 +346,7 @@ class Zend_Gdata_Photos_UserQuery extends Zend_Gdata_Query
             throw new Zend_Gdata_App_InvalidArgumentException(
                     'User must not be null');
         }
-        
+
         $uri .= $incomingUri;
         $uri .= $this->getQueryString();
         return $uri;

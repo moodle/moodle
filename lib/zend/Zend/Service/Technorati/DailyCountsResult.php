@@ -15,47 +15,47 @@
  * @category   Zend
  * @package    Zend_Service
  * @subpackage Technorati
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
 
 
-/** 
- * @see Zend_Service_Technorati_Result 
+/**
+ * @see Zend_Service_Technorati_Result
  */
 require_once 'Zend/Service/Technorati/Result.php';
 
 
 /**
- * Represents a single Technorati DailyCounts query result object. 
- * It is never returned as a standalone object, 
+ * Represents a single Technorati DailyCounts query result object.
+ * It is never returned as a standalone object,
  * but it always belongs to a valid Zend_Service_Technorati_DailyCountsResultSet object.
- * 
+ *
  * @category   Zend
  * @package    Zend_Service
  * @subpackage Technorati
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Service_Technorati_DailyCountsResult extends Zend_Service_Technorati_Result
 {
     /**
      * Date of count.
-     * 
+     *
      * @var     Zend_Date
      * @access  protected
      */
     protected $_date;
-    
+
     /**
      * Number of posts containing query on given date.
-     * 
+     *
      * @var     int
      * @access  protected
      */
     protected $_count;
-    
+
 
     /**
      * Constructs a new object object from DOM Document.
@@ -67,7 +67,7 @@ class Zend_Service_Technorati_DailyCountsResult extends Zend_Service_Technorati_
         $this->_fields = array( '_date'   => 'date',
                                 '_count'  => 'count');
         parent::__construct($dom);
-        
+
         // filter fields
         $this->_date  = new Zend_Date(strtotime($this->_date));
         $this->_count = (int) $this->_count;
@@ -75,16 +75,16 @@ class Zend_Service_Technorati_DailyCountsResult extends Zend_Service_Technorati_
 
     /**
      * Returns the date of count.
-     * 
+     *
      * @return  Zend_Date
      */
     public function getDate() {
         return $this->_date;
     }
-    
+
     /**
      * Returns the number of posts containing query on given date.
-     * 
+     *
      * @return  int
      */
     public function getCount() {

@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Service
  * @subpackage SlideShare
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -44,7 +44,7 @@ require_once 'Zend/Service/SlideShare/SlideShow.php';
  * @package    Zend_Service
  * @subpackage SlideShare
  * @throws     Zend_Service_SlideShare_Exception
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Service_SlideShare
@@ -354,7 +354,7 @@ class Zend_Service_SlideShare
             $response = $client->request('POST');
         } catch(Zend_Http_Client_Exception $e) {
             require_once 'Zend/Service/SlideShare/Exception.php';
-            throw new Zend_Service_SlideShare_Exception("Service Request Failed: {$e->getMessage()}");
+            throw new Zend_Service_SlideShare_Exception("Service Request Failed: {$e->getMessage()}", 0, $e);
         }
 
         $sxe = simplexml_load_string($response->getBody());
@@ -406,7 +406,7 @@ class Zend_Service_SlideShare
                 $response = $client->request('POST');
             } catch(Zend_Http_Client_Exception $e) {
                 require_once 'Zend/Service/SlideShare/Exception.php';
-                throw new Zend_Service_SlideShare_Exception("Service Request Failed: {$e->getMessage()}");
+                throw new Zend_Service_SlideShare_Exception("Service Request Failed: {$e->getMessage()}", 0, $e);
             }
 
             $sxe = simplexml_load_string($response->getBody());
@@ -544,7 +544,7 @@ class Zend_Service_SlideShare
                 $response = $client->request('POST');
             } catch(Zend_Http_Client_Exception $e) {
                 require_once 'Zend/Service/SlideShare/Exception.php';
-                throw new Zend_Service_SlideShare_Exception("Service Request Failed: {$e->getMessage()}");
+                throw new Zend_Service_SlideShare_Exception("Service Request Failed: {$e->getMessage()}", 0, $e);
             }
 
             $sxe = simplexml_load_string($response->getBody());

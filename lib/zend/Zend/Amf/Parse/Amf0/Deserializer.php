@@ -15,28 +15,31 @@
  * @category   Zend
  * @package    Zend_Amf
  * @subpackage Parse_Amf0
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
 
-/** Zend_Amf_Parse_Deserializer */
+/** Zend_Amf_Constants */
+require_once 'Zend/Amf/Constants.php';
+
+/** @see Zend_Amf_Parse_Deserializer */
 require_once 'Zend/Amf/Parse/Deserializer.php';
 
 /**
  * Read an AMF0 input stream and convert it into PHP data types
  *
  * @todo       Implement Typed Object Class Mapping
- * @todo       Class could be implmented as Factory Class with each data type it's own class
+ * @todo       Class could be implemented as Factory Class with each data type it's own class
  * @package    Zend_Amf
  * @subpackage Parse_Amf0
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Amf_Parse_Amf0_Deserializer extends Zend_Amf_Parse_Deserializer
 {
     /**
-     * An array of objects used for recursivly deserializing an object.
+     * An array of objects used for recursively deserializing an object.
      * @var array
      */
     protected $_reference = array();
@@ -167,7 +170,7 @@ class Zend_Amf_Parse_Amf0_Deserializer extends Zend_Amf_Parse_Deserializer
     /**
      * Read reference objects
      *
-     * Used to gain access to the private array of refrence objects.
+     * Used to gain access to the private array of reference objects.
      * Called when marker type is 7.
      *
      * @return object
@@ -200,7 +203,7 @@ class Zend_Amf_Parse_Amf0_Deserializer extends Zend_Amf_Parse_Deserializer
     }
 
     /**
-     * Converts numberically indexed actiosncript arrays into php arrays.
+     * Converts numerically indexed actiosncript arrays into php arrays.
      *
      * Called when marker type is 10
      *
@@ -270,9 +273,9 @@ class Zend_Amf_Parse_Amf0_Deserializer extends Zend_Amf_Parse_Deserializer
                 $returnObject->$key = $value;
             }
         }
-	   if($returnObject instanceof Zend_Amf_Value_Messaging_ArrayCollection) {
-			$returnObject = get_object_vars($returnObject);
-	   }
+        if($returnObject instanceof Zend_Amf_Value_Messaging_ArrayCollection) {
+            $returnObject = get_object_vars($returnObject);
+        }
         return $returnObject;
     }
 
@@ -284,7 +287,7 @@ class Zend_Amf_Parse_Amf0_Deserializer extends Zend_Amf_Parse_Deserializer
      */
     public function readAmf3TypeMarker()
     {
-    	require_once 'Zend/Amf/Parse/Amf3/Deserializer.php';
+        require_once 'Zend/Amf/Parse/Amf3/Deserializer.php';
         $deserializer = new Zend_Amf_Parse_Amf3_Deserializer($this->_stream);
         $this->_objectEncoding = Zend_Amf_Constants::AMF3_OBJECT_ENCODING;
         return $deserializer->readTypeMarker();

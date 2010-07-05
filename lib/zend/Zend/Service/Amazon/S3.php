@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Service
  * @subpackage Amazon_S3
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -36,7 +36,7 @@ require_once 'Zend/Crypt/Hmac.php';
  * @category   Zend
  * @package    Zend_Service
  * @subpackage Amazon_S3
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @see        http://docs.amazonwebservices.com/AmazonS3/2006-03-01/
  */
@@ -281,14 +281,19 @@ class Zend_Service_Amazon_S3 extends Zend_Service_Amazon_Abstract
     /**
      * List the objects in a bucket.
      *
-     * Provides the list of object keys that are contained in the bucket.
+     * Provides the list of object keys that are contained in the bucket.  Valid params include the following.
+     * prefix - Limits the response to keys which begin with the indicated prefix. You can use prefixes to separate a bucket into different sets of keys in a way similar to how a file system uses folders.
+     * marker - Indicates where in the bucket to begin listing. The list will only include keys that occur lexicographically after marker. This is convenient for pagination: To get the next page of results use the last key of the current page as the marker.
+     * max-keys - The maximum number of keys you'd like to see in the response body. The server might return fewer than this many keys, but will not return more.
+     * delimiter - Causes keys that contain the same string between the prefix and the first occurrence of the delimiter to be rolled up into a single result element in the CommonPrefixes collection. These rolled-up keys are not returned elsewhere in the response.
      *
      * @param  string $bucket
+     * @param array $params S3 GET Bucket Paramater
      * @return array|false
      */
-    public function getObjectsByBucket($bucket)
+    public function getObjectsByBucket($bucket, $params = array())
     {
-        $response = $this->_makeRequest('GET', $bucket);
+        $response = $this->_makeRequest('GET', $bucket, $params);
 
         if ($response->getStatus() != 200) {
             return false;
@@ -353,10 +358,39 @@ class Zend_Service_Amazon_S3 extends Zend_Service_Amazon_Abstract
     }
 
     /**
+     * Get an object using streaming
+     *
+     * Can use either provided filename for storage or create a temp file if none provided.
+     *
+     * @param  string $object Object path
+     * @param  string $streamfile File to write the stream to
+     * @param  bool   $paidobject This is "requestor pays" object
+     * @return Zend_Http_Response_Stream|false
+     */
+    public function getObjectStream($object, $streamfile = null, $paidobject=false)
+    {
+        $object = $this->_fixupObjectName($object);
+        self::getHttpClient()->setStream($streamfile?$streamfile:true);
+        if ($paidobject) {
+            $response = $this->_makeRequest('GET', $object, null, array(self::S3_REQUESTPAY_HEADER => 'requester'));
+        }
+        else {
+            $response = $this->_makeRequest('GET', $object);
+        }
+        self::getHttpClient()->setStream(null);
+
+        if ($response->getStatus() != 200 || !($response instanceof Zend_Http_Response_Stream)) {
+            return false;
+        }
+
+        return $response;
+    }
+
+    /**
      * Upload an object by a PHP string
      *
      * @param  string $object Object name
-     * @param  string $data   Object data
+     * @param  string|resource $data   Object data (can be string or stream)
      * @param  array  $meta   Metadata
      * @return boolean
      */
@@ -365,7 +399,9 @@ class Zend_Service_Amazon_S3 extends Zend_Service_Amazon_Abstract
         $object = $this->_fixupObjectName($object);
         $headers = (is_array($meta)) ? $meta : array();
 
-        $headers['Content-MD5'] = base64_encode(md5($data, true));
+        if(!is_resource($data)) {
+            $headers['Content-MD5'] = base64_encode(md5($data, true));
+        }
         $headers['Expect'] = '100-continue';
 
         if (!isset($headers[self::S3_CONTENT_TYPE_HEADER])) {
@@ -379,7 +415,7 @@ class Zend_Service_Amazon_S3 extends Zend_Service_Amazon_Abstract
             // It is escaped by double quotes for some reason
             $etag = str_replace('"', '', $response->getHeader('Etag'));
 
-            if ($etag == md5($data)) {
+            if (is_resource($data) || $etag == md5($data)) {
                 return true;
             }
         }
@@ -418,6 +454,40 @@ class Zend_Service_Amazon_S3 extends Zend_Service_Amazon_Abstract
     }
 
     /**
+     * Put file to S3 as object, using streaming
+     *
+     * @param string $path   File name
+     * @param string $object Object name
+     * @param array  $meta   Metadata
+     * @return boolean
+     */
+    public function putFileStream($path, $object, $meta=null)
+    {
+        $data = @fopen($path, "rb");
+        if ($data === false) {
+            /**
+             * @see Zend_Service_Amazon_S3_Exception
+             */
+            require_once 'Zend/Service/Amazon/S3/Exception.php';
+            throw new Zend_Service_Amazon_S3_Exception("Cannot open file $path");
+        }
+
+        if (!is_array($meta)) {
+            $meta = array();
+        }
+
+        if (!isset($meta[self::S3_CONTENT_TYPE_HEADER])) {
+           $meta[self::S3_CONTENT_TYPE_HEADER] = self::getMimeType($path);
+        }
+
+        if(!isset($meta['Content-MD5'])) {
+            $headers['Content-MD5'] = base64_encode(md5_file($path, true));
+        }
+
+        return $this->putObject($object, $data, $meta);
+    }
+
+    /**
      * Remove a given object
      *
      * @param  string $object
@@ -435,11 +505,11 @@ class Zend_Service_Amazon_S3 extends Zend_Service_Amazon_Abstract
     /**
      * Make a request to Amazon S3
      *
-     * @param  string $method
-     * @param  string $path
-     * @param  array  $params
-     * @param  array  $headers
-     * @param  string $data
+     * @param  string $method	Request method
+     * @param  string $path		Path to requested object
+     * @param  array  $params	Request parameters
+     * @param  array  $headers	HTTP headers
+     * @param  string|resource $data		Request data
      * @return Zend_Http_Response
      */
     public function _makeRequest($method, $path='', $params=null, $headers=array(), $data=null)
@@ -451,6 +521,14 @@ class Zend_Service_Amazon_S3 extends Zend_Service_Amazon_Abstract
         }
 
         $headers['Date'] = gmdate(DATE_RFC1123, time());
+
+        if(is_resource($data) && $method != 'PUT') {
+            /**
+             * @see Zend_Service_Amazon_S3_Exception
+             */
+            require_once 'Zend/Service/Amazon/S3/Exception.php';
+            throw new Zend_Service_Amazon_S3_Exception("Only PUT request supports stream data");
+        }
 
         // build the end point out
         $parts = explode('/', $path, 2);
@@ -474,6 +552,7 @@ class Zend_Service_Amazon_S3 extends Zend_Service_Amazon_Abstract
         $client = self::getHttpClient();
 
         $client->resetParameters();
+        $client->setUri($endpoint);
         $client->setAuth(false);
         // Work around buglet in HTTP client - it doesn't clean headers
         // Remove when ZHC is fixed
@@ -482,7 +561,6 @@ class Zend_Service_Amazon_S3 extends Zend_Service_Amazon_Abstract
                                   'Range'       => null,
                                   'x-amz-acl'   => null));
 
-        $client->setUri($endpoint);
         $client->setHeaders($headers);
 
         if (is_array($params)) {
@@ -597,8 +675,6 @@ class Zend_Service_Amazon_S3 extends Zend_Service_Amazon_Abstract
     /**
      * Attempt to get the content-type of a file based on the extension
      *
-     * TODO: move this to Zend_Mime
-     *
      * @param  string $path
      * @return string
      */
@@ -611,7 +687,7 @@ class Zend_Service_Amazon_S3 extends Zend_Service_Amazon_Abstract
             return 'binary/octet-stream';
         }
 
-        switch ($ext) {
+        switch (strtolower($ext)) {
             case 'xls':
                 $content_type = 'application/excel';
                 break;

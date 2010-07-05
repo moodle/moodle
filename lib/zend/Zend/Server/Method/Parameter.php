@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Server
  * @subpackage Method
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -26,7 +26,7 @@
  * @category   Zend
  * @package    Zend_Server
  * @subpackage Method
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Server_Method_Parameter
@@ -58,8 +58,8 @@ class Zend_Server_Method_Parameter
 
     /**
      * Constructor
-     * 
-     * @param  null|array $options 
+     *
+     * @param  null|array $options
      * @return void
      */
     public function __construct($options = null)
@@ -71,8 +71,8 @@ class Zend_Server_Method_Parameter
 
     /**
      * Set object state from array of options
-     * 
-     * @param  array $options 
+     *
+     * @param  array $options
      * @return Zend_Server_Method_Parameter
      */
     public function setOptions(array $options)
@@ -154,8 +154,8 @@ class Zend_Server_Method_Parameter
 
     /**
      * Set optional flag
-     * 
-     * @param  bool $flag 
+     *
+     * @param  bool $flag
      * @return Zend_Server_Method_Parameter
      */
     public function setOptional($flag)
@@ -166,7 +166,7 @@ class Zend_Server_Method_Parameter
 
     /**
      * Is the parameter optional?
-     * 
+     *
      * @return bool
      */
     public function isOptional()
@@ -176,8 +176,8 @@ class Zend_Server_Method_Parameter
 
     /**
      * Set parameter type
-     * 
-     * @param  string $type 
+     *
+     * @param  string $type
      * @return Zend_Server_Method_Parameter
      */
     public function setType($type)
@@ -188,7 +188,7 @@ class Zend_Server_Method_Parameter
 
     /**
      * Retrieve parameter type
-     * 
+     *
      * @return string
      */
     public function getType()
@@ -198,7 +198,7 @@ class Zend_Server_Method_Parameter
 
     /**
      * Cast to array
-     * 
+     *
      * @return array
      */
     public function toArray()

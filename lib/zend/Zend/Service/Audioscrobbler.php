@@ -16,7 +16,7 @@
  * @category   Zend
  * @package    Zend_Service
  * @subpackage Audioscrobbler
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -32,7 +32,7 @@ require_once 'Zend/Http/Client.php';
  * @category   Zend
  * @package    Zend_Service
  * @subpackage Audioscrobbler
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Service_Audioscrobbler
@@ -76,7 +76,7 @@ class Zend_Service_Audioscrobbler
 
     /**
      * Set Http Client
-     * 
+     *
      * @param Zend_Http_Client $client
      */
     public function setHttpClient(Zend_Http_Client $client)
@@ -86,7 +86,7 @@ class Zend_Service_Audioscrobbler
 
     /**
      * Get current http client.
-     * 
+     *
      * @return Zend_Http_Client
      */
     public function getHttpClient()
@@ -201,7 +201,7 @@ class Zend_Service_Audioscrobbler
 
     /**
     * Utility function to get Audioscrobbler profile information (eg: Name, Gender)
-     * 
+     *
     * @return array containing information
     */
     public function userGetProfileInformation()
@@ -212,7 +212,7 @@ class Zend_Service_Audioscrobbler
 
     /**
      * Utility function get this user's 50 most played artists
-     * 
+     *
      * @return array containing info
     */
     public function userGetTopArtists()
@@ -244,7 +244,7 @@ class Zend_Service_Audioscrobbler
 
     /**
      * Utility function to get this user's 50 most used tags
-     * 
+     *
      * @return SimpleXMLElement object containing result set
      */
     public function userGetTopTags()
@@ -301,7 +301,7 @@ class Zend_Service_Audioscrobbler
 
     /**
      * Utility function that returns a list of people with similar listening preferences to this user
-     * 
+     *
      * @return SimpleXMLElement object containing result set
      */
     public function userGetNeighbours()
@@ -445,7 +445,7 @@ class Zend_Service_Audioscrobbler
 
     /**
      * Utility function that returns a list of this artist's top-rated tracks
-     * 
+     *
      * @return SimpleXMLElement object containing result set
      */
     public function artistGetTopTracks()
@@ -456,7 +456,7 @@ class Zend_Service_Audioscrobbler
 
     /**
      * Utility function that returns a list of this artist's top-rated albums
-     * 
+     *
      * @return SimpleXMLElement object containing result set
      */
     public function artistGetTopAlbums()
@@ -467,7 +467,7 @@ class Zend_Service_Audioscrobbler
 
     /**
      * Utility function that returns a list of this artist's top-rated tags
-     * 
+     *
      * @return SimpleXMLElement object containing result set
      */
     public function artistGetTopTags()
@@ -490,7 +490,7 @@ class Zend_Service_Audioscrobbler
 
     /**
      * Get top fans of the current track.
-     * 
+     *
      * @return SimpleXMLElement
      */
     public function trackGetTopFans()
@@ -534,7 +534,7 @@ class Zend_Service_Audioscrobbler
 
     /**
      * Get top artists by current tag.
-     * 
+     *
      * @return SimpleXMLElement
      */
     public function tagGetTopArtists()
@@ -611,7 +611,7 @@ class Zend_Service_Audioscrobbler
 
     /**
      * Retrieve Weekly album charts.
-     * 
+     *
      * @param int $from
      * @param int $to
      * @return SimpleXMLElement

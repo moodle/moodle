@@ -15,15 +15,30 @@
  * @category   Zend
  * @package    Zend_Soap
  * @subpackage AutoDiscover
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
 
+/**
+ * @see Zend_Server_Interface
+ */
 require_once 'Zend/Server/Interface.php';
+/**
+ * @see Zend_Soap_Wsdl
+ */
 require_once 'Zend/Soap/Wsdl.php';
+/**
+ * @see Zend_Server_Reflection
+ */
 require_once 'Zend/Server/Reflection.php';
+/**
+ * @see Zend_Server_Abstract
+ */
 require_once 'Zend/Server/Abstract.php';
+/**
+ * @see Zend_Uri
+ */
 require_once 'Zend/Uri.php';
 
 /**
@@ -33,7 +48,8 @@ require_once 'Zend/Uri.php';
  * @package    Zend_Soap
  * @subpackage AutoDiscover
  */
-class Zend_Soap_AutoDiscover implements Zend_Server_Interface {
+class Zend_Soap_AutoDiscover implements Zend_Server_Interface
+{
     /**
      * @var Zend_Soap_Wsdl
      */

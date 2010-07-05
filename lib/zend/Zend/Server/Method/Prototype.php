@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Server
  * @subpackage Method
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -26,7 +26,7 @@
  * @category   Zend
  * @package    Zend_Server
  * @subpackage Method
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Server_Method_Prototype
@@ -47,9 +47,9 @@ class Zend_Server_Method_Prototype
     protected $_parameters = array();
 
     /**
-     * Constructor 
-     * 
-     * @param  null|array $options 
+     * Constructor
+     *
+     * @param  null|array $options
      * @return void
      */
     public function __construct($options = null)
@@ -83,8 +83,8 @@ class Zend_Server_Method_Prototype
 
     /**
      * Add a parameter
-     * 
-     * @param  string $parameter 
+     *
+     * @param  string $parameter
      * @return Zend_Server_Method_Prototype
      */
     public function addParameter($parameter)
@@ -106,8 +106,8 @@ class Zend_Server_Method_Prototype
 
     /**
      * Add parameters
-     * 
-     * @param  array $parameter 
+     *
+     * @param  array $parameter
      * @return Zend_Server_Method_Prototype
      */
     public function addParameters(array $parameters)
@@ -148,7 +148,7 @@ class Zend_Server_Method_Prototype
 
     /**
      * Get parameter objects
-     * 
+     *
      * @return array
      */
     public function getParameterObjects()
@@ -158,8 +158,8 @@ class Zend_Server_Method_Prototype
 
     /**
      * Retrieve a single parameter by name or index
-     * 
-     * @param  string|int $index 
+     *
+     * @param  string|int $index
      * @return null|Zend_Server_Method_Parameter
      */
     public function getParameter($index)
@@ -178,8 +178,8 @@ class Zend_Server_Method_Prototype
 
     /**
      * Set object state from array
-     * 
-     * @param  array $options 
+     *
+     * @param  array $options
      * @return Zend_Server_Method_Prototype
      */
     public function setOptions(array $options)
@@ -195,7 +195,7 @@ class Zend_Server_Method_Prototype
 
     /**
      * Serialize to array
-     * 
+     *
      * @return array
      */
     public function toArray()

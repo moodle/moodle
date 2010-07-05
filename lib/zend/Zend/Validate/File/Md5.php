@@ -14,7 +14,7 @@
  *
  * @category  Zend
  * @package   Zend_Validate
- * @copyright Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd     New BSD License
  * @version   $Id$
  */
@@ -29,7 +29,7 @@ require_once 'Zend/Validate/File/Hash.php';
  *
  * @category  Zend
  * @package   Zend_Validate
- * @copyright Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Validate_File_Md5 extends Zend_Validate_File_Hash
@@ -45,9 +45,9 @@ class Zend_Validate_File_Md5 extends Zend_Validate_File_Hash
      * @var array Error message templates
      */
     protected $_messageTemplates = array(
-        self::DOES_NOT_MATCH => "The file '%value%' does not match the given md5 hashes",
-        self::NOT_DETECTED   => "There was no md5 hash detected for the given file",
-        self::NOT_FOUND      => "The file '%value%' could not be found"
+        self::DOES_NOT_MATCH => "File '%value%' does not match the given md5 hashes",
+        self::NOT_DETECTED   => "A md5 hash could not be evaluated for the given file",
+        self::NOT_FOUND      => "File '%value%' could not be found",
     );
 
     /**
@@ -123,7 +123,7 @@ class Zend_Validate_File_Md5 extends Zend_Validate_File_Hash
      * Adds the md5 hash for one or multiple files
      *
      * @param  string|array $options
-     * @param  string       $algorithm (Depreciated) Algorithm to use, fixed to md5
+     * @param  string       $algorithm (Deprecated) Algorithm to use, fixed to md5
      * @return Zend_Validate_File_Hash Provides a fluent interface
      */
     public function addHash($options)

@@ -15,19 +15,19 @@
  * @category   Zend
  * @package    Zend_Service
  * @subpackage Technorati
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
 
 
-/** 
+/**
  * @see Zend_Date
  */
 require_once 'Zend/Date.php';
 
-/** 
- * @see Zend_Service_Technorati_ResultSet 
+/**
+ * @see Zend_Service_Technorati_ResultSet
  */
 require_once 'Zend/Service/Technorati/ResultSet.php';
 
@@ -39,11 +39,11 @@ require_once 'Zend/Service/Technorati/Utils.php';
 
 /**
  * Represents a Technorati Tag query result set.
- * 
+ *
  * @category   Zend
  * @package    Zend_Service
  * @subpackage Technorati
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Service_Technorati_DailyCountsResultSet extends Zend_Service_Technorati_ResultSet
@@ -58,7 +58,7 @@ class Zend_Service_Technorati_DailyCountsResultSet extends Zend_Service_Technora
 
     /**
      * Number of days for which counts provided.
-     * 
+     *
      * @var     Zend_Service_Technorati_Weblog
      * @access  protected
      */
@@ -73,7 +73,7 @@ class Zend_Service_Technorati_DailyCountsResultSet extends Zend_Service_Technora
     public function __construct(DomDocument $dom, $options = array())
     {
         parent::__construct($dom, $options);
-        
+
         // default locale prevent Zend_Date to fail
         // when script is executed via shell
         // Zend_Locale::setDefault('en');
@@ -93,7 +93,7 @@ class Zend_Service_Technorati_DailyCountsResultSet extends Zend_Service_Technora
 
     /**
      * Returns the search URL for given query.
-     * 
+     *
      * @return  Zend_Uri_Http
      */
     public function getSearchUrl() {
@@ -102,7 +102,7 @@ class Zend_Service_Technorati_DailyCountsResultSet extends Zend_Service_Technora
 
     /**
      * Returns the number of days for which counts provided.
-     * 
+     *
      * @return  int
      */
     public function getDays() {

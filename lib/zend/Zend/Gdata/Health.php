@@ -16,7 +16,7 @@
  * @category   Zend
  * @package    Zend_Gdata
  * @subpackage Health
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -54,7 +54,7 @@ require_once 'Zend/Gdata/Health/ProfileEntry.php';
  * @category   Zend
  * @package    Zend_Gdata
  * @subpackage Health
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Gdata_Health extends Zend_Gdata
@@ -62,19 +62,19 @@ class Zend_Gdata_Health extends Zend_Gdata
     /**
      * URIs of the AuthSub/OAuth feeds.
      */
-    const AUTHSUB_PROFILE_FEED_URI = 
+    const AUTHSUB_PROFILE_FEED_URI =
         'https://www.google.com/health/feeds/profile/default';
-    const AUTHSUB_REGISTER_FEED_URI = 
+    const AUTHSUB_REGISTER_FEED_URI =
         'https://www.google.com/health/feeds/register/default';
 
     /**
      * URIs of the ClientLogin feeds.
      */
-    const CLIENTLOGIN_PROFILELIST_FEED_URI = 
+    const CLIENTLOGIN_PROFILELIST_FEED_URI =
         'https://www.google.com/health/feeds/profile/list';
-    const CLIENTLOGIN_PROFILE_FEED_URI = 
+    const CLIENTLOGIN_PROFILE_FEED_URI =
         'https://www.google.com/health/feeds/profile/ui';
-    const CLIENTLOGIN_REGISTER_FEED_URI = 
+    const CLIENTLOGIN_REGISTER_FEED_URI =
         'https://www.google.com/health/feeds/register/ui';
 
     /**

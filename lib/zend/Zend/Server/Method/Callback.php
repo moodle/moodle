@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Server
  * @subpackage Method
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -26,7 +26,7 @@
  * @category   Zend
  * @package    Zend_Server
  * @subpackage Method
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Server_Method_Callback
@@ -58,8 +58,8 @@ class Zend_Server_Method_Callback
 
     /**
      * Constructor
-     * 
-     * @param  null|array $options 
+     *
+     * @param  null|array $options
      * @return void
      */
     public function __construct($options = null)
@@ -71,8 +71,8 @@ class Zend_Server_Method_Callback
 
     /**
      * Set object state from array of options
-     * 
-     * @param  array $options 
+     *
+     * @param  array $options
      * @return Zend_Server_Method_Callback
      */
     public function setOptions(array $options)
@@ -88,8 +88,8 @@ class Zend_Server_Method_Callback
 
     /**
      * Set callback class
-     * 
-     * @param  string $class 
+     *
+     * @param  string $class
      * @return Zend_Server_Method_Callback
      */
     public function setClass($class)
@@ -103,7 +103,7 @@ class Zend_Server_Method_Callback
 
     /**
      * Get callback class
-     * 
+     *
      * @return string|null
      */
     public function getClass()
@@ -113,8 +113,8 @@ class Zend_Server_Method_Callback
 
     /**
      * Set callback function
-     * 
-     * @param  string $function 
+     *
+     * @param  string $function
      * @return Zend_Server_Method_Callback
      */
     public function setFunction($function)
@@ -126,7 +126,7 @@ class Zend_Server_Method_Callback
 
     /**
      * Get callback function
-     * 
+     *
      * @return null|string
      */
     public function getFunction()
@@ -136,8 +136,8 @@ class Zend_Server_Method_Callback
 
     /**
      * Set callback class method
-     * 
-     * @param  string $method 
+     *
+     * @param  string $method
      * @return Zend_Server_Method_Callback
      */
     public function setMethod($method)
@@ -148,7 +148,7 @@ class Zend_Server_Method_Callback
 
     /**
      * Get callback class  method
-     * 
+     *
      * @return null|string
      */
     public function getMethod()
@@ -158,8 +158,8 @@ class Zend_Server_Method_Callback
 
     /**
      * Set callback type
-     * 
-     * @param  string $type 
+     *
+     * @param  string $type
      * @return Zend_Server_Method_Callback
      * @throws Zend_Server_Exception
      */
@@ -175,7 +175,7 @@ class Zend_Server_Method_Callback
 
     /**
      * Get callback type
-     * 
+     *
      * @return string
      */
     public function getType()
@@ -185,7 +185,7 @@ class Zend_Server_Method_Callback
 
     /**
      * Cast callback to array
-     * 
+     *
      * @return array
      */
     public function toArray()
