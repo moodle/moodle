@@ -902,7 +902,7 @@ class grade_edit_tree_column_aggregateoutcomes extends grade_edit_tree_column_ca
         $headercell = clone($this->headercell);
         $headercell->style .= 'width: 40px;';
         $headercell->text = get_string('aggregateoutcomes', 'grades')
-              .$OUTPUT->help_icon('aggregateoutcomes', 'grade');
+              .$OUTPUT->help_icon('aggregateoutcomes', 'grades');
         return $headercell;
     }
 
