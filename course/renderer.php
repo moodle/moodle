@@ -125,7 +125,7 @@ class core_course_renderer extends plugin_renderer_base {
                 $coursecount ++;
                 $classes[] = ($coursecount%2)?'odd':'even';
                 $content .= html_writer::start_tag('div', array('class'=>join(' ', $classes)));
-                $content .= html_writer::link(new moodle_url('/course/view.php', array('id'=>$course->id)), $course->fullname, array('class'=>'course_link'));
+                $content .= html_writer::link(new moodle_url('/course/view.php', array('id'=>$course->id)), s($course->fullname), array('class'=>'course_link'));
                 $content .= html_writer::start_tag('div', array('class'=>'course_info clearfix'));
 
                 //TODO: add enrol info
