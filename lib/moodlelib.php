@@ -3522,6 +3522,11 @@ function authenticate_user_login($username, $password) {
 
     if ($user = get_complete_user_data('username', $username)) {
         $auth = empty($user->auth) ? 'manual' : $user->auth;  // use manual if auth not set
+        if ($user->suspended) {
+            add_to_log(0, 'login', 'error', 'index.php', $username);
+            error_log('[client '.getremoteaddr()."]  $CFG->wwwroot  Suspended Login:  $username  ".$_SERVER['HTTP_USER_AGENT']);
+            return false;
+        }
         if ($auth=='nologin' or !is_enabled_auth($auth)) {
             add_to_log(0, 'login', 'error', 'index.php', $username);
             error_log('[client '.getremoteaddr()."]  $CFG->wwwroot  Disabled Login:  $username  ".$_SERVER['HTTP_USER_AGENT']);
@@ -3577,9 +3582,17 @@ function authenticate_user_login($username, $password) {
             $hauth->user_authenticated_hook($user, $username, $password);
         }
 
-        if ($user->id===0) {
+        if (empty($user->id)) {
             return false;
         }
+
+        if ($user->suspended) {
+            // just in case some auth plugin suspended account
+            add_to_log(0, 'login', 'error', 'index.php', $username);
+            error_log('[client '.getremoteaddr()."]  $CFG->wwwroot  Suspended Login:  $username  ".$_SERVER['HTTP_USER_AGENT']);
+            return false;
+        }
+
         return $user;
     }
 
