@@ -296,7 +296,7 @@ function choice_show_form($choice, $user, $cm, $allresponses) {
         } else {
             echo "<input type=\"submit\" value=\"".get_string("savemychoice","choice")."\" />";
         }
-        if ($choice->allowupdate && $aaa = $DB->get_record('choice_answers', 'choiceid', $choice->id, 'userid', $user->id)) {
+        if ($choice->allowupdate && $aaa = $DB->get_record('choice_answers', array('choiceid'=> $choice->id, 'userid'=> $user->id))) {
             echo "<br /><a href='view.php?id=".$cm->id."&amp;action=delchoice&amp;sesskey=".sesskey()."'>".get_string("removemychoice","choice")."</a>";
         }
     } else {
