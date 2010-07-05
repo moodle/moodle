@@ -714,7 +714,8 @@ class '.$classname.' {
     protected function service_class_method_body($function, $params){
         $descriptionmethod = $function->methodname.'_returns()';
         $callforreturnvaluedesc = $function->classname.'::'.$descriptionmethod;
-        return '    if ('.$callforreturnvaluedesc.' == null)  {
+        return '    if ('.$callforreturnvaluedesc.' == null)  {'.
+                        $function->classname.'::'.$function->methodname.'('.$params.'); 
                         return null;
                     }
                     return external_api::clean_returnvalue('.$callforreturnvaluedesc.', '.$function->classname.'::'.$function->methodname.'('.$params.'));';
