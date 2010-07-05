@@ -27,7 +27,7 @@ echo $OUTPUT->doctype() ?>
 
 <div id="page">
 
-	<div id="wrapper">
+	<div id="wrapper" class="clearfix">
 
 <!-- START OF HEADER -->
 
@@ -78,22 +78,21 @@ echo $OUTPUT->doctype() ?>
 
 <!-- END OF CONTENT -->
 
-<!-- START OF FOOTER -->
+	</div> <!-- END #wrapper -->
 
-	    <div id="page-footer" class="wrapper">
-    	    <p class="helplink"><?php echo page_doc_link(get_string('moodledocslink')) ?></p>
-	        <?php
-    		    echo $OUTPUT->login_info();
-        		echo $OUTPUT->home_link();
-		        echo $OUTPUT->standard_footer_html();
-    	    ?>
-    	</div>
+<!-- START OF FOOTER -->
+    <div id="page-footer" class="wrapper clearfix">
+   	    <p class="helplink"><?php echo page_doc_link(get_string('moodledocslink')) ?></p>
+        <?php
+   		    echo $OUTPUT->login_info();
+       		echo $OUTPUT->home_link();
+	        echo $OUTPUT->standard_footer_html();
+   	    ?>
+   	</div>
 
 <!-- END OF FOOTER -->
 	
-	</div>
-	
-</div>
+</div> <!-- END #page -->
 
 <?php echo $OUTPUT->standard_end_of_body_html() ?>
 </body>

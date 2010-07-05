@@ -100,8 +100,12 @@ fieldset#general {
 	font-size: 1.25em;
 }
 
-.block .header .commands {
+.editing .block .header .commands {
 	padding: 2px 10px;
+}
+
+.block .header .block_action {
+	margin-top: 3px;
 }
 
 .block .content {
