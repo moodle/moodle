@@ -707,8 +707,9 @@
         <FIELD NAME="auth" TYPE="char" LENGTH="20" NOTNULL="true" DEFAULT="manual" SEQUENCE="false" PREVIOUS="id" NEXT="confirmed"/>
         <FIELD NAME="confirmed" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="auth" NEXT="policyagreed"/>
         <FIELD NAME="policyagreed" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="confirmed" NEXT="deleted"/>
-        <FIELD NAME="deleted" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="policyagreed" NEXT="mnethostid"/>
-        <FIELD NAME="mnethostid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="deleted" NEXT="username"/>
+        <FIELD NAME="deleted" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="policyagreed" NEXT="suspended"/>
+        <FIELD NAME="suspended" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" COMMENT="suspended flag prevents users to log in" PREVIOUS="deleted" NEXT="mnethostid"/>
+        <FIELD NAME="mnethostid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="suspended" NEXT="username"/>
         <FIELD NAME="username" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false" PREVIOUS="mnethostid" NEXT="password"/>
         <FIELD NAME="password" TYPE="char" LENGTH="32" NOTNULL="true" SEQUENCE="false" PREVIOUS="username" NEXT="idnumber"/>
         <FIELD NAME="idnumber" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="password" NEXT="firstname"/>

@@ -4844,6 +4844,21 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         upgrade_main_savepoint(true, 2010070500);
     }
 
+    if ($oldversion < 2010070501) {
+
+    /// Define field suspended to be added to user
+        $table = new xmldb_table('user');
+        $field = new xmldb_field('suspended', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0', 'deleted');
+
+    /// Conditionally launch add field suspended
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+    /// Main savepoint reached
+        upgrade_main_savepoint(true, 2010070501);
+    }
+
 
     return true;
 }
