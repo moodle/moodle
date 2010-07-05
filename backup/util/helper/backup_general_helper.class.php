@@ -55,4 +55,47 @@ abstract class backup_general_helper extends backup_helper {
         }
         return $checksum;
     }
+
+    /**
+     * Given one temp/backup/xxx dir, detect its format
+     *
+     * TODO: Move harcoded detection here to delegated classes under backup/format (moodle1, imscc..)
+     *       conversion code will be there too.
+     */
+    public static function detect_backup_format($tempdir) {
+        global $CFG;
+
+        // First look for MOODLE (moodle2) format
+        $filepath = $CFG->dataroot . '/temp/backup/' . $tempdir . '/moodle_backup.xml';
+        if (file_exists($filepath)) { // Looks promising, lets load some information
+            $handle = fopen ($filepath, "r");
+            $first_chars = fread($handle,200);
+            $status = fclose ($handle);
+            // Check if it has the required strings
+            if (strpos($first_chars,'<?xml version="1.0" encoding="UTF-8"?>') !== false &&
+                strpos($first_chars,'<moodle_backup>') !== false &&
+                strpos($first_chars,'<information>') !== false) {
+                    return backup::FORMAT_MOODLE;
+            }
+        }
+
+        // Then look for MOODLE1 (moodle1) format
+        $filepath = $CFG->dataroot . '/temp/backup/' . $tempdir . '/moodle.xml';
+        if (file_exists($filepath)) { // Looks promising, lets load some information
+            $handle = fopen ($filepath, "r");
+            $first_chars = fread($handle,200);
+            $status = fclose ($handle);
+            // Check if it has the required strings
+            if (strpos($first_chars,'<?xml version="1.0" encoding="UTF-8"?>') !== false &&
+                strpos($first_chars,'<MOODLE_BACKUP>') !== false &&
+                strpos($first_chars,'<INFO>') !== false) {
+                    return backup::FORMAT_MOODLE1;
+            }
+        }
+
+        // Other formats
+
+        // Arrived here, unknown format
+        return backup::FORMAT_UNKNOWN;
+    }
 }

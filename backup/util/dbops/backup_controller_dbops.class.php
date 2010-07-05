@@ -45,6 +45,7 @@ abstract class backup_controller_dbops extends backup_dbops {
         // Get all the columns
         $rec = new stdclass();
         $rec->backupid     = $controller->get_backupid();
+        $rec->operation    = $controller->get_operation();
         $rec->type         = $controller->get_type();
         $rec->itemid       = $controller->get_id();
         $rec->format       = $controller->get_format();

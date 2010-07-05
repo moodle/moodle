@@ -51,6 +51,7 @@ class backup_controller extends backup implements loggable {
     protected $interactive; // yes/no
     protected $mode;   // Purpose of the backup (default settings)
     protected $userid; // user id executing the backup
+    protected $operation; // Type of operation (backup/restore)
 
     protected $status; // Current status of the controller (created, planned, configured...)
 
@@ -75,6 +76,7 @@ class backup_controller extends backup implements loggable {
 
         // Apply some defaults
         $this->execution = backup::EXECUTION_INMEDIATE;
+        $this->operation = backup::OPERATION_BACKUP;
         $this->executiontime = 0;
         $this->checksum = '';
 
@@ -179,6 +181,7 @@ class backup_controller extends backup implements loggable {
                             'interactive-'. $this->interactive .
                             'mode-'       . $this->mode .
                             'userid-'     . $this->userid .
+                            'operation-'  . $this->operation .
                             'status-'     . $this->status .
                             'execution-'  . $this->execution .
                             'plan-'       . backup_general_helper::array_checksum_recursive(array($this->plan)) .
@@ -198,6 +201,10 @@ class backup_controller extends backup implements loggable {
 
     public function get_type() {
         return $this->type;
+    }
+
+    public function get_operation() {
+        return $this->operation;
     }
 
     public function get_id() {
@@ -259,17 +266,6 @@ class backup_controller extends backup implements loggable {
         backup_helper::log($message, $level, $a, $depth, $display, $this->logger);
     }
 
-
-// Protected API starts here
-
-    protected function calculate_backupid() {
-        // Current epoch time + type + id + format + interactive + mode + userid
-        // should be unique enough. Add one random part at the end
-        $this->backupid = md5(time() . '-' . $this->type . '-' . $this->id . '-' . $this->format . '-' .
-                              $this->interactive . '-' . $this->mode . '-' . $this->userid . '-' .
-                              random_string(20));
-    }
-
     public function save_controller() {
         // Going to save controller to persistent storage, calculate checksum for later checks and save it
         // TODO: flag the controller as NA. Any operation on it should be forbidden util loaded back
@@ -284,6 +280,16 @@ class backup_controller extends backup implements loggable {
         $controller = backup_controller_dbops::load_controller($backupid);
         $controller->log('loading controller from db', backup::LOG_DEBUG);
         return $controller;
+    }
+
+// Protected API starts here
+
+    protected function calculate_backupid() {
+        // Current epoch time + type + id + format + interactive + mode + userid + operation
+        // should be unique enough. Add one random part at the end
+        $this->backupid = md5(time() . '-' . $this->type . '-' . $this->id . '-' . $this->format . '-' .
+                              $this->interactive . '-' . $this->mode . '-' . $this->userid . '-' .
+                              $this->operation . '-' . random_string(20));
     }
 
     protected function load_plan() {
