@@ -34,20 +34,16 @@ class HTMLPurifier_AttrDef_CSS_URI extends HTMLPurifier_AttrDef_URI
             $uri = substr($uri, 1, $new_length - 1);
         }
 
-        $keys   = array(  '(',   ')',   ',',   ' ',   '"',   "'");
-        $values = array('\\(', '\\)', '\\,', '\\ ', '\\"', "\\'");
-        $uri = str_replace($values, $keys, $uri);
+        $uri = $this->expandCSSEscape($uri);
 
         $result = parent::validate($uri, $config, $context);
 
         if ($result === false) return false;
 
-        // escape necessary characters according to CSS spec
-        // except for the comma, none of these should appear in the
-        // URI at all
-        $result = str_replace($keys, $values, $result);
+        // extra sanity check; should have been done by URI
+        $result = str_replace(array('"', "\\", "\n", "\x0c", "\r"), "", $result);
 
-        return "url('$result')";
+        return "url(\"$result\")";
 
     }
 

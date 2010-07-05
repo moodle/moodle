@@ -34,37 +34,10 @@ class HTMLPurifier_AttrDef_CSS_FontFamily extends HTMLPurifier_AttrDef
                 $quote = $font[0];
                 if ($font[$length - 1] !== $quote) continue;
                 $font = substr($font, 1, $length - 2);
-
-                $new_font = '';
-                for ($i = 0, $c = strlen($font); $i < $c; $i++) {
-                    if ($font[$i] === '\\') {
-                        $i++;
-                        if ($i >= $c) {
-                            $new_font .= '\\';
-                            break;
-                        }
-                        if (ctype_xdigit($font[$i])) {
-                            $code = $font[$i];
-                            for ($a = 1, $i++; $i < $c && $a < 6; $i++, $a++) {
-                                if (!ctype_xdigit($font[$i])) break;
-                                $code .= $font[$i];
-                            }
-                            // We have to be extremely careful when adding
-                            // new characters, to make sure we're not breaking
-                            // the encoding.
-                            $char = HTMLPurifier_Encoder::unichr(hexdec($code));
-                            if (HTMLPurifier_Encoder::cleanUTF8($char) === '') continue;
-                            $new_font .= $char;
-                            if ($i < $c && trim($font[$i]) !== '') $i--;
-                            continue;
-                        }
-                        if ($font[$i] === "\n") continue;
-                    }
-                    $new_font .= $font[$i];
-                }
-
-                $font = $new_font;
             }
+
+            $font = $this->expandCSSEscape($font);
+
             // $font is a pure representation of the font name
 
             if (ctype_alnum($font) && $font !== '') {
@@ -73,12 +46,21 @@ class HTMLPurifier_AttrDef_CSS_FontFamily extends HTMLPurifier_AttrDef
                 continue;
             }
 
-            // complicated font, requires quoting
+            // bugger out on whitespace.  form feed (0C) really
+            // shouldn't show up regardless
+            $font = str_replace(array("\n", "\t", "\r", "\x0C"), ' ', $font);
 
-            // armor single quotes and new lines
-            $font = str_replace("\\", "\\\\", $font);
-            $font = str_replace("'", "\\'", $font);
-            $final .= "'$font', ";
+            // These ugly transforms don't pose a security
+            // risk (as \\ and \" might).  We could try to be clever and
+            // use single-quote wrapping when there is a double quote
+            // present, but I have choosen not to implement that.
+            // (warning: this code relies on the selection of quotation
+            // mark below)
+            $font = str_replace('\\', '\\5C ', $font);
+            $font = str_replace('"',  '\\22 ', $font);
+
+            // complicated font, requires quoting
+            $final .= "\"$font\", "; // note that this will later get turned into &quot;
         }
         $final = rtrim($final, ', ');
         if ($final === '') return false;
