@@ -404,7 +404,7 @@ EOD;
         $params = array();
         $start = $page * $CFG->commentsperpage;
         $ufields = user_picture::fields('u');
-        $sql = "SELECT $ufields, c.id AS cid, c.content AS c.content, c.format AS cformat, c.timecreated AS ctimecreated
+        $sql = "SELECT $ufields, c.id AS cid, c.content AS ccontent, c.format AS cformat, c.timecreated AS ctimecreated
                   FROM {comments} c
                   JOIN {user} u ON u.id = c.userid
                  WHERE c.contextid = :contextid AND c.commentarea = :commentarea AND c.itemid = :itemid
@@ -416,7 +416,7 @@ EOD;
         $comments = array();
         $candelete = has_capability('moodle/comment:delete', $this->context);
         $rs = $DB->get_recordset_sql($sql, $params, $start, $CFG->commentsperpage);
-        foreach ($records as $u) {
+        foreach ($rs as $u) {
             $c = new object();
             $c->id          = $u->cid;
             $c->content     = $u->ccontent;
