@@ -403,7 +403,7 @@ if(!$csv) {
 
             case COMPLETION_CRITERIA_TYPE_COURSE:
                 // Load course
-                $crs = get_record('course', 'id', $criterion->courseinstance);
+                $crs = $DB->get_record('course', array('id' => $criterion->courseinstance));
 
                 // Display icon
                 $iconlink = $CFG->wwwroot.'/course/view.php?id='.$criterion->courseinstance;

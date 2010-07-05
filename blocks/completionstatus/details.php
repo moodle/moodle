@@ -43,7 +43,7 @@ $course = $DB->get_record('course', array('id' => $id));
 
 // Load user
 if ($userid) {
-    if (!$user = get_record('user', 'id', $userid)) {
+    if (!$user = $DB->get_record('user', array('id' => $userid))) {
         error('User ID incorrect');
     }
 } else {

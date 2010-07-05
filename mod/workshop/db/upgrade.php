@@ -76,7 +76,7 @@ function xmldb_workshop_upgrade($oldversion) {
                 'workshop_grades', 'workshop_comments', 'workshop_stockcomments') as $tableorig) {
             $tablearchive = $tableorig . '_old';
             if ($dbman->table_exists($tableorig)) {
-                $dbman->rename_table(new XMLDBTable($tableorig), $tablearchive);
+                $dbman->rename_table(new xmldb_table($tableorig), $tablearchive);
             }
             // append a new field 'newplugin' into every archived table. In this field, the name of the subplugin
             // who adopted the record during the migration is stored. null value means the record is not migrated yet

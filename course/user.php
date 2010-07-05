@@ -363,12 +363,12 @@ switch ($mode) {
             SELECT DISTINCT
                 c.id AS id
             FROM
-                {$CFG->prefix}course c
+                {course} c
             INNER JOIN
-                {$CFG->prefix}context con
+                {context} con
              ON con.instanceid = c.id
             INNER JOIN
-                {$CFG->prefix}role_assignments ra
+                {role_assignments} ra
              ON ra.contextid = con.id
             AND ra.userid = {$user->id}
         ";
@@ -395,7 +395,7 @@ switch ($mode) {
         }
 
         // Check if result is empty
-        if (!$rs = get_recordset_sql($sql)) {
+        if (!$rs = $DB->get_recordset_sql($sql)) {
 
             if ($course->id != 1) {
                 $error = get_string('nocompletions', 'coursereport_completion');
@@ -459,7 +459,7 @@ switch ($mode) {
                 foreach ($infos as $c_info) {
 
                     // Get course info
-                    $c_course = get_record('course', 'id', $c_info->course_id);
+                    $c_course = $DB->get_record('course', array('id' => $c_info->course_id));
                     $course_name = $c_course->fullname;
 
                     // Get completions

@@ -353,8 +353,8 @@
                             'u.id AS userid, u.idnumber, u.firstname, u.lastname, u.picture, u.imagealt, u.email ';
 
                     // This part is the same for all cases - join users and scorm_scoes_track tables
-                    $from = 'FROM '.$CFG->prefix.'user u ';
-                    $from .= 'LEFT JOIN '.$CFG->prefix.'scorm_scoes_track st ON st.userid = u.id AND st.scormid = '.$scorm->id;
+                    $from = 'FROM {user} u ';
+                    $from .= 'LEFT JOIN {scorm_scoes_track} st ON st.userid = u.id AND st.scormid = '.$scorm->id;
                     switch ($attemptsmode){
                         case SCORM_REPORT_ATTEMPTS_STUDENTS_WITH:
                             // Show only students with attempts

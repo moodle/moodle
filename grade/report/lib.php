@@ -347,8 +347,8 @@ abstract class grade_report {
             $items = grade_item::fetch_all(array('courseid'=>$courseid));
             $grades = array();
             $sql = "SELECT g.*
-                      FROM {$CFG->prefix}grade_grades g
-                      JOIN {$CFG->prefix}grade_items gi ON gi.id = g.itemid
+                      FROM {grade_grades} g
+                      JOIN {grade_items} gi ON gi.id = g.itemid
                      WHERE g.userid = {$this->user->id} AND gi.courseid = {$courseid}";
             if ($gradesrecords = $DB->get_records_sql($sql)) {
                 foreach ($gradesrecords as $grade) {

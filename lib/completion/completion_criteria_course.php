@@ -93,8 +93,9 @@ class completion_criteria_course extends completion_criteria {
      * @return  boolean
      */
     public function review($completion, $mark = true) {
+        global $DB;
 
-        $course = get_record('course', 'id', $this->courseinstance);
+        $course = $DB->get_record('course', array('id' => $this->courseinstance));
         $info = new completion_info($course);
 
         // If the course is complete
@@ -125,7 +126,9 @@ class completion_criteria_course extends completion_criteria {
      * @return  string
      */
     public function get_title_detailed() {
-        $prereq = get_record('course', 'id', $this->courseinstance);
+        global $DB;
+
+        $prereq = $DB->get_record('course', array('id' => $this->courseinstance));
         return shorten_text(urldecode($prereq->fullname));
     }
 
@@ -199,14 +202,14 @@ class completion_criteria_course extends completion_criteria {
      * @return  array
      */
     public function get_details($completion) {
-        global $CFG;
+        global $CFG, $DB;
 
         // Get completion info
         $course = new object();
         $course->id = $completion->course;
         $info = new completion_info($course);
 
-        $prereq = get_record('course', 'id', $this->courseinstance);
+        $prereq = $DB->get_record('course', array('id' => $this->courseinstance));
         $prereq_info = new completion_info($prereq);
 
         $details = array();
