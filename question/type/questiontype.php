@@ -806,60 +806,48 @@ class default_questiontype {
      * Hook to allow question types to include required JavaScrip or CSS on pages
      * where they are going to be printed.
      *
-     * If this question type requires extra CSS or JavaScript to function,
+     * If this question type requires JavaScript to function,
      * then this method, which will be called before print_header on any page
      * where this question is going to be printed, is a chance to call
-     * $PAGE->requires->js, $PAGE->requiers->css, and so on.
+     * $PAGE->requires->js, and so on.
      *
      * The two parameters match the first two parameters of print_question.
      *
      * @param object $question The question object.
      * @param object $state    The state object.
-     *
-     * @return array Deprecated. An array of bits of HTML to add to the head of
-     * pages where this question is print_question-ed in the body. The array
-     * should use integer array keys, which have no significance.
      */
     function get_html_head_contributions(&$question, &$state) {
         // We only do this once for this question type, no matter how often this
         // method is called on one page.
         if ($this->htmlheadalreadydone) {
-            return array();
+            return;
         }
         $this->htmlheadalreadydone = true;
 
-        // By default, we link to any of the files styles.css, styles.php,
-        // script.js or script.php that exist in the plugin folder.
-        // Core question types should not use this mechanism. Their styles
-        // should be included in the standard theme.
-        $this->find_standard_scripts_and_css();
+        // By default, we link to any of the files script.js or script.php that
+        // exist in the plugin folder.
+        $this->find_standard_scripts();
     }
 
     /**
      * Like @see{get_html_head_contributions}, but this method is for CSS and
      * JavaScript required on the question editing page question/question.php.
-     *
-     * @return an array of bits of HTML to add to the head of pages where
-     * this question is print_question-ed in the body. The array should use
-     * integer array keys, which have no significance.
      */
     function get_editing_head_contributions() {
         // By default, we link to any of the files styles.css, styles.php,
         // script.js or script.php that exist in the plugin folder.
         // Core question types should not use this mechanism. Their styles
         // should be included in the standard theme.
-        $this->find_standard_scripts_and_css();
+        $this->find_standard_scripts();
     }
 
     /**
      * Utility method used by @see{get_html_head_contributions} and
      * @see{get_editing_head_contributions}. This looks for any of the files
-     * styles.css, styles.php, script.js or script.php that exist in the plugin
-     * folder and ensures they get included.
-     *
-     * @return array as required by get_html_head_contributions or get_editing_head_contributions.
+     * script.js or script.php that exist in the plugin folder and ensures they
+     * get included.
      */
-    protected function find_standard_scripts_and_css() {
+    protected function find_standard_scripts() {
         global $PAGE;
 
         $plugindir = $this->plugin_dir();
