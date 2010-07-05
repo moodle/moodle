@@ -159,3 +159,91 @@ fieldset#general {
 #page-footer {
 	color: #fff;
 }
+
+/* Dock
+-----------------------------*/
+
+body.has_dock { 
+	margin: 0;
+}
+
+#dock { 
+	left: 75px;
+	margin-left: -30px;
+	border-width: 0;
+	background-color: transparent;
+}
+
+#dock .controls { 
+	bottom: auto;
+	background-color: #fb931c;
+	-webkit-border-bottom-left-radius: 6px;
+	-moz-border-radius-botomleft: 6px;
+	border-bottom-left-radius: 6px;	
+}
+
+#dock .dockeditem_container { 
+	position: relative;
+}
+
+#dock .dockeditem.firstdockitem { 
+	margin-top: 50px;
+	-webkit-border-top-left-radius: 6px;
+	-moz-border-radius-topleft: 6px;
+	border-top-left-radius: 6px;	
+}
+
+#dock .dockeditem { 
+	background-color: #fff;
+	padding: 2px;
+	padding-right: 0px;
+}
+
+#dock .dockedtitle { 
+	border-width: 0;
+}
+
+#dock .dockedtitle h2 { 
+	margin: 0;
+	padding: 10px 3px;
+}
+
+#dock .dockedtitle.activeitem { 
+	background-color: #fb931c;
+	width: 35px;
+	-webkit-border-top-left-radius: 6px;
+	-moz-border-radius-topleft: 6px;
+	border-top-left-radius: 6px;	
+	-webkit-border-bottom-left-radius: 6px;
+	-moz-border-radius-botomleft: 6px;
+	border-bottom-left-radius: 6px;	
+}
+
+#dockeditempanel { 
+	margin-left: 4px;
+}
+
+#dockeditempanel .dockeditempanel_content { 
+	background-color: #fff;
+	margin: 0 3px;
+	position: relative;
+	min-height: 100px;
+	border-color: #fb931c;
+	-webkit-border-radius: 6px;
+	-webkit-border-top-left-radius: 0;
+	-moz-border-radius: 6px;
+	-moz-border-radius-topleft: 0;
+	border-radius: 6px;
+	border-top-left-radius: 0;
+}
+
+#dockeditempanel .dockeditempanel_hd { 
+	border-width: 0;
+	background: #fb931c;
+	padding: 2px;
+}
+
+#dockeditempanel .dockeditempanel_hd h2 { 
+	font-size: 0.9em;
+	color: #fff;
+}
