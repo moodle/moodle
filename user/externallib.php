@@ -141,6 +141,7 @@ class moodle_user_external extends external_api {
             }
 
             $user['confirmed'] = true;
+            $user['mnethostid'] = $CFG->mnet_localhost_id;
             $user['id'] = user_create_user($user);
 
             // custom fields
