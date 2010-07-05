@@ -210,7 +210,7 @@ abstract class backup_controller_dbops extends backup_dbops {
             }
             $settinginfo = array(
                 'level'    => 'section',
-                'section ' => $prefix,
+                'section'  => $prefix,
                 'name'     => $setting->get_name(),
                 'value'    => $setting->get_value());
             $settingsinfo[$setting->get_name()] = (object)$settinginfo;

@@ -1076,7 +1076,7 @@ class backup_main_structure_step extends backup_structure_step {
         $settings = new backup_nested_element('settings');
 
         $setting = new backup_nested_element('setting', null, array(
-            'level', 'activity', 'name', 'value'));
+            'level', 'section', 'activity', 'name', 'value'));
 
         // Build the tree
 
