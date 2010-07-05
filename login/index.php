@@ -68,8 +68,8 @@ $site = get_site();
 $loginsite = get_string("loginsite");
 $PAGE->navbar->add($loginsite);
 
-if ($user !== false or $frm !== false) {
-    // some auth plugin already supplied these
+if ($user !== false or $frm !== false or $errormsg !== '') {
+    // some auth plugin already supplied full user, fake form data or prevented user login with error message
 
 } else if ((!empty($SESSION->wantsurl) and strstr($SESSION->wantsurl,'username=guest')) or $loginguest) {
     /// Log in as guest automatically (idea from Zbigniew Fiedorowicz)
