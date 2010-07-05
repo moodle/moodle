@@ -57,6 +57,7 @@ $string['modulenameplural'] = 'Files';
 $string['neverseen'] = 'Never seen';
 $string['notmigrated'] = 'This legacy resource type ({$a}) was not yet migrated, sorry.';
 $string['optionsheader'] = 'Options';
+$string['pluginname'] = 'File';
 $string['popupheight'] = 'Popup height (in pixels)';
 $string['popupheightexplain'] = 'Specifies default height of popup windows.';
 $string['popupresource'] = 'This resource should appear in a popup window.';

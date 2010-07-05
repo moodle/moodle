@@ -35,4 +35,5 @@ $string['modulename_help'] = 'An IMS content package allows for packages created
 $string['modulenameplural'] = 'IMS content packages';
 $string['navigation'] = 'Navigation';
 $string['packagefile'] = 'Package file';
+$string['pluginname'] = 'IMS content package';
 $string['toc'] = 'TOC';

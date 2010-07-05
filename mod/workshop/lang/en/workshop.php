@@ -160,6 +160,7 @@ $string['phaseclosed'] = 'Closed';
 $string['phaseevaluation'] = 'Grading evaluation phase';
 $string['phasesetup'] = 'Setup phase';
 $string['phasesubmission'] = 'Submission phase';
+$string['pluginname'] = 'Workshop';
 $string['prepareexamples'] = 'Prepare example submissions';
 $string['previewassessmentform'] = 'Preview';
 $string['publishedsubmissions'] = 'Published submissions';

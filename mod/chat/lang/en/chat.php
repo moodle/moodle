@@ -91,6 +91,7 @@ $string['notallowenter'] = 'You are not allow to enter the chat room.';
 $string['notlogged'] = 'Not logged in!';
 $string['oldping'] = 'Disconnect timeout';
 $string['pastchats'] = 'Past chat sessions';
+$string['pluginname'] = 'Chat';
 $string['refreshroom'] = 'Refresh room';
 $string['refreshuserlist'] = 'Refresh user list';
 $string['removemessages'] = 'Remove all messages';

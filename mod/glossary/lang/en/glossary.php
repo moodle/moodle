@@ -218,6 +218,7 @@ $string['nopermissiontoviewresult'] = 'You can only look at results for your own
 $string['notcategorised'] = 'Not categorised';
 $string['numberofentries'] = 'Number of entries';
 $string['onebyline'] = '(one per line)';
+$string['pluginname'] = 'Glossary';
 $string['popupformat'] = 'Popup format';
 $string['printerfriendly'] = 'Printer-friendly version';
 $string['printviewnotallowed'] = 'Print view isn\'t allowed';

@@ -215,6 +215,7 @@ $string['notdone'] = 'Not done yet';
 $string['notes'] = 'Your private analysis and notes';
 $string['othercomments'] = 'Do you have any other comments?';
 $string['peoplecompleted'] = '{$a} people have completed this survey so far';
+$string['pluginname'] = 'Survey';
 $string['preferred'] = 'Preferred';
 $string['preferredclass'] = 'Class preferred';
 $string['preferredstudent'] = '{$a} preferred';

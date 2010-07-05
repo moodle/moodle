@@ -129,6 +129,7 @@ $string['outputformat_v5_plus'] = 'v5+';
 $string['outputformat_v6'] = 'v6';
 $string['outputformat_v6_plus'] = 'v6+';
 $string['penalties'] = 'Penalties';
+$string['pluginname'] = 'Hot Potatoes Quiz';
 $string['questionshort'] = 'Q-{$a}';
 $string['quiztype'] = 'Quiz type';
 $string['quizunavailable'] = 'Quiz is unavailable at the moment';

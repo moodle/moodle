@@ -572,6 +572,7 @@ $string['penaltyscheme'] = 'Apply penalties';
 $string['penaltyscheme_help'] = 'If enabled, a penalty is subtracted from the final mark for a question for a wrong response. The amount of penalty is specified in the question settings. This setting only applies if adaptive mode is enabled.';
 $string['percentcorrect'] = 'Percent Correct';
 $string['pleaseclose'] = 'Your request has been processed. You can now close this window';
+$string['pluginname'] = 'Quiz';
 $string['popup'] = 'Show quiz in a &quot;secure&quot; window';
 $string['popupblockerwarning'] = 'This section of the test is in secure mode, this means that you need to take the quiz in a secure window. Please turn off your popup blocker. Thank you.';
 $string['popupnotice'] = 'Students will see this quiz in a secure window';

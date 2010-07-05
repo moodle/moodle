@@ -41,6 +41,7 @@ $string['neverseen'] = 'Never seen';
 $string['optionsheader'] = 'Options';
 $string['parameterinfo'] = 'parameter=variable';
 $string['parametersheader'] = 'Parameters';
+$string['pluginname'] = 'URL';
 $string['popupheight'] = 'Popup height (in pixels)';
 $string['popupheightexplain'] = 'Specifies default height of popup windows.';
 $string['popupwidth'] = 'Popup width (in pixels)';

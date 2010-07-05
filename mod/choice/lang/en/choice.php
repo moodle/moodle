@@ -63,6 +63,7 @@ $string['noresultsviewable'] = 'The results are not currently viewable.';
 $string['notanswered'] = 'Not answered yet';
 $string['notopenyet'] = 'Sorry, this activity is not available until {$a}';
 $string['option'] = 'Option';
+$string['pluginname'] = 'Choice';
 $string['privacy'] = 'Privacy of results';
 $string['publish'] = 'Publish results';
 $string['publishafteranswer'] = 'Show results to students after they answer';

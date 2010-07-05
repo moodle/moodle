@@ -152,6 +152,7 @@ $string['onceassignmentsent'] = 'Once the assignment is sent for marking, you wi
 $string['operation'] = 'Operation';
 $string['overwritewarning'] = 'Warning: uploading again will REPLACE your current submission';
 $string['pagesize'] = 'Submissions shown per page';
+$string['pluginname'] = 'Assignment';
 $string['preventlate'] = 'Prevent late submissions';
 $string['quickgrade'] = 'Allow quick grading';
 $string['quickgrade_help'] = 'If enabled, multiple assignments can be graded on one page. Add grades and comments then click the "Save all my feedback" button to save all changes for that page.';

@@ -315,6 +315,7 @@ $string['pleaseenteryouranswerinthebox'] = 'Please enter your answer in the box'
 $string['pleasecheckoneanswer'] = 'Please check one answer';
 $string['pleasecheckoneormoreanswers'] = 'Please check one or more answers';
 $string['pleasematchtheabovepairs'] = 'Please match the above pairs';
+$string['pluginname'] = 'Lesson';
 $string['pointsearned'] = 'Points earned';
 $string['postprocesserror'] = 'Error occurred during post-processing!';
 $string['postsuccess'] = 'Post successful';

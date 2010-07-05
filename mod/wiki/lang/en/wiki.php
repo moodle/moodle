@@ -110,6 +110,7 @@ $string['pageislocked'] = 'Someone is editing this page right now. Try to edit i
 $string['pageindex'] = 'Page index';
 $string['pagelist'] = 'Page list';
 $string['peerreview'] = 'Peer review';
+$string['pluginname'] = 'Wiki';
 $string['prettyprint'] = 'Printer-friendly version';
 $string['previewwarning'] = 'This is a preview. Changes have not been saved yet.';
 $string['rated']='You rated this page as a {$a}';

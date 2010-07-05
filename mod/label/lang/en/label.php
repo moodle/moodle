@@ -27,3 +27,4 @@ $string['labeltext'] = 'Label text';
 $string['modulename'] = 'Label';
 $string['modulename_help'] = 'A label enables text and images to be inserted among the activity links on the course page.';
 $string['modulenameplural'] = 'Labels';
+$string['pluginname'] = 'Label';

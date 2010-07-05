@@ -256,6 +256,7 @@ $string['pagesize'] = 'Entries per page';
 $string['participants'] = 'Participants';
 $string['picture'] = 'Picture';
 $string['pleaseaddsome'] = 'Please create some below or <a href="{$a}">choose a predefined set</a> to get started.';
+$string['pluginname'] = 'Database';
 $string['portfolionotfile'] = 'Export to a portfolio rather than a file (csv and leap2a only)';
 $string['presetinfo'] = 'Saving as a preset will publish this template. Other users may be able to use it in their databases.';
 $string['presets'] = 'Presets';

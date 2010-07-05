@@ -207,6 +207,7 @@ $string['parameters_missing'] = 'Parameters missing from';
 $string['picture'] = 'Picture';
 $string['picture_file_list'] = 'List of pictures';
 $string['picture_values'] = 'Choose one or more<br />picture files from the list:';
+$string['pluginname'] = 'Feedback';
 $string['position'] = 'Position';
 $string['preview'] = 'Preview';
 $string['preview_help'] = 'In the preview you can change the order of questions.';

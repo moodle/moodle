@@ -37,6 +37,7 @@ $string['modulename_help'] = 'A page enables a web page to be displayed and edit
 $string['modulenameplural'] = 'Pages';
 $string['optionsheader'] = 'Options';
 $string['pageadministration'] = 'Page administration';
+$string['pluginname'] = 'Page';
 $string['popupheight'] = 'Popup height (in pixels)';
 $string['popupheightexplain'] = 'Specifies default height of popup windows.';
 $string['popupwidth'] = 'Popup width (in pixels)';
