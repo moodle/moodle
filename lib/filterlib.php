@@ -68,7 +68,7 @@ class filter_manager {
 
     /**
      * @global object
-     * @return object the singleton instance.
+     * @return filter_manager the singleton instance.
      */
     public static function instance() {
         if (is_null(self::$singletoninstance)) {
