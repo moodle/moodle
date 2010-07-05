@@ -32,7 +32,7 @@ require_once('lib.php');
 /// Wait as long as it takes for this script to finish
 set_time_limit(0);
 
-die('TODO: sorry, needs to be converted to use new component and security rules');
+debugging('TODO: needs to be converted to use new component and security rules', DEBUG_DEVELOPER);
 
 require_login();
 
