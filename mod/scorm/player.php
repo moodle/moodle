@@ -354,4 +354,8 @@
             </div> <!-- SCORM object -->
         </div> <!-- SCORM box  -->
     </div> <!-- SCORM page -->
-<?php echo $OUTPUT->footer(); ?>
+<?php 
+$completion=new completion_info($course);
+$completion->set_module_viewed($cm);
+
+echo $OUTPUT->footer();
