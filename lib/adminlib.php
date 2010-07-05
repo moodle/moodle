@@ -4342,7 +4342,7 @@ class admin_setting_special_gradeexport extends admin_setting_configmulticheckbo
 
         if ($plugins = get_plugin_list('gradeexport')) {
             foreach($plugins as $plugin => $unused) {
-                $this->choices[$plugin] = get_string('modulename', 'gradeexport_'.$plugin);
+                $this->choices[$plugin] = get_string('pluginname', 'gradeexport_'.$plugin);
             }
         }
         return true;
@@ -4514,7 +4514,7 @@ class admin_setting_grade_profilereport extends admin_setting_configselect {
                 require_once($plugindir.'/lib.php');
                 $functionname = 'grade_report_'.$plugin.'_profilereport';
                 if (function_exists($functionname)) {
-                    $this->choices[$plugin] = get_string('modulename', 'gradereport_'.$plugin);
+                    $this->choices[$plugin] = get_string('pluginname', 'gradereport_'.$plugin);
                 }
             }
         }
