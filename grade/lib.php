@@ -1024,7 +1024,7 @@ class grade_structure {
                     }
 
                 } else if ($element['object']->itemtype == 'mod') {
-                    $strmodname = get_string('pluginname', $element['object']->itemmodule);
+                    $strmodname = get_string('modulename', $element['object']->itemmodule);
                     return '<img src="'.$OUTPUT->pix_url('icon',
                             $element['object']->itemmodule) . '" ' .
                             'class="icon itemicon" title="' .s($strmodname).
@@ -1091,7 +1091,7 @@ class grade_structure {
         if ($withlink and $itemtype=='mod' and $iteminstance and $itemmodule) {
             if ($cm = get_coursemodule_from_instance($itemmodule, $iteminstance, $this->courseid)) {
 
-                $a->name = get_string('pluginname', $element['object']->itemmodule);
+                $a->name = get_string('modulename', $element['object']->itemmodule);
                 $title = get_string('linktoactivity', 'grades', $a);
                 $dir = $CFG->dirroot.'/mod/'.$itemmodule;
 
