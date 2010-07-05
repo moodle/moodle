@@ -87,10 +87,6 @@
     $attemptobj->load_question_states($questionids);
 
 /// Print the quiz page ////////////////////////////////////////////////////////
-    $PAGE->requires->js('/lib/overlib/overlib.js', true);
-    $PAGE->requires->js('/lib/overlib/overlib_cssstyle.js', true);
-
-    
 
     // Arrange for the navigation to be displayed.
     $navbc = $attemptobj->get_navigation_panel('quiz_attempt_nav_panel', $page);
@@ -112,7 +108,6 @@
         $PAGE->set_title(format_string($attemptobj->get_quiz_name()));
         echo $OUTPUT->header();
     }
-    echo '<div id="overDiv" style="position:absolute; visibility:hidden; z-index:1000;"></div>'; // for overlib
 
     if ($attemptobj->is_preview_user()) {
 

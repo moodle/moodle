@@ -276,8 +276,21 @@ class embedded_cloze_qtype extends default_questiontype {
         return $details;
     }
 
+    function get_html_head_contributions(&$question, &$state) {
+        global $PAGE;
+        parent::get_html_head_contributions($question, $state);
+        $PAGE->requires->js('/lib/overlib/overlib.js', true);
+        $PAGE->requires->js('/lib/overlib/overlib_cssstyle.js', true);
+    }
+
     function print_question_formulation_and_controls(&$question, &$state, $cmoptions, $options) {
         global $QTYPES, $CFG, $USER, $OUTPUT, $PAGE;
+
+        static $overlibdivoutput = false;
+        if (!$overlibdivoutput) {
+            echo '<div id="overDiv" style="position:absolute; visibility:hidden; z-index:1000;"></div>'; // for overlib
+            $overlibdivoutput = true;
+        }
 
         $readonly = empty($options->readonly) ? '' : 'readonly="readonly"';
         $disabled = empty($options->readonly) ? '' : 'disabled="disabled"';
@@ -306,11 +319,6 @@ class embedded_cloze_qtype extends default_questiontype {
 
         // The regex will recognize text snippets of type {#X}
         // where the X can be any text not containg } or white-space characters.
-
-        // TODO: stop using overlib, use YUI instead
-        echo html_writer::script('', $CFG->wwwroot.'/lib/overlib/overlib.js');
-        echo html_writer::script('', $CFG->wwwroot.'/lib/overlib/overlib_cssstyle.js');
-
         while (preg_match('~\{#([^[:space:]}]*)}~', $qtextremaining, $regs)) {
             $qtextsplits = explode($regs[0], $qtextremaining, 2);
             echo $qtextsplits[0];

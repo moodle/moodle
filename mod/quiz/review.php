@@ -90,9 +90,6 @@
     $firstregion = reset($PAGE->blocks->get_regions());
     $PAGE->blocks->add_pretend_block($navbc, $firstregion);
 
-    $PAGE->requires->js('/lib/overlib/overlib.js', true);
-    $PAGE->requires->js('/lib/overlib/overlib_cssstyle.js', true);
-
 /// Print the page header
     $headtags = $attemptobj->get_html_head_contributions($page);
     if ($accessmanager->securewindow_required($attemptobj->is_preview_user())) {
@@ -108,7 +105,6 @@
         $PAGE->set_heading($attemptobj->get_course()->fullname);
         echo $OUTPUT->header();
     }
-    echo '<div id="overDiv" style="position:absolute; visibility:hidden; z-index:1000;"></div>'; // for overlib
 
 /// Print heading.
     if ($attemptobj->is_preview_user() && $attemptobj->is_own_attempt()) {

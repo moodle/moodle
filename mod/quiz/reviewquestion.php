@@ -67,15 +67,11 @@
             ($stateid ? '&state=' . $stateid : ''),
             $attemptobj->get_quizid(), $attemptobj->get_cmid());
 
-    $PAGE->requires->js('/lib/overlib/overlib.js', true);
-    $PAGE->requires->js('/lib/overlib/overlib_cssstyle.js', true);
-
 /// Print the page header
     $attemptobj->get_question_html_head_contributions($questionid);
     $PAGE->set_title($attemptobj->get_course()->shortname . ': '.format_string($attemptobj->get_quiz_name()));
     $PAGE->set_heading($COURSE->fullname);
     echo $OUTPUT->header();
-    echo '<div id="overDiv" style="position:absolute; visibility:hidden; z-index:1000;"></div>'; // for overlib
 
 /// Print infobox
     $rows = array();

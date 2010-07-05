@@ -53,11 +53,7 @@ class quiz_grading_report extends quiz_default_report {
             $viewoptions += array('gradenextungraded'=> $gradenextungraded);
         }
 
-
         $this->cm = $cm;
-
-        echo html_writer::script('', $CFG->wwwroot.'/lib/overlib/overlib.js');
-        echo html_writer::script('', $CFG->wwwroot.'/lib/overlib/overlib_cssstyle.js');
 
         $this->print_header_and_tabs($cm, $course, $quiz, $reportmode="grading");
 
@@ -109,8 +105,6 @@ class quiz_grading_report extends quiz_default_report {
         }
 
         add_to_log($course->id, "quiz", "manualgrading", "report.php?mode=grading&amp;q=$quiz->id", "$quiz->id", "$cm->id");
-
-        echo '<div id="overDiv" style="position:absolute; visibility:hidden; z-index:1000;"></div>'; // for overlib
 
         if ($data = data_submitted()) {  // post data submitted, process it
             if (confirm_sesskey() && $this->users){
