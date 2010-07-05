@@ -172,7 +172,7 @@ $THEME->layouts = array(
 // specific page.
 ///////////////////////////////////////////////////////////////
 
-// $THEME->csspostprocess
+$THEME->csspostprocess = 'nonzero_process_css';
 	
 ////////////////////////////////////////////////////
 // Allows the user to provide the name of a function 

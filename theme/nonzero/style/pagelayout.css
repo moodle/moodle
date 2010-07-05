@@ -1,13 +1,7 @@
 /** Path: theme pagelayout **/
 
-/*********************************************************************************************
 
-	left column: 250px
-	right column: 350px
-	padding left/right column: 10px
-	padding center column: 30px
 
-**********************************************************************************************/
 body {margin:auto 0px;width:auto;}
 #page {width:100%;overflow:hidden;}
 #page-content {
@@ -19,7 +13,7 @@ body {margin:auto 0px;width:auto;}
 
 #page-content #region-main-box {
 	float: left;
-	margin-left: -200px;
+	margin-left: -[[setting:regionpostwidth]];;
 	position: relative;
 	width: 200%;
 	right: 100%;
@@ -27,7 +21,7 @@ body {margin:auto 0px;width:auto;}
 
 #page-content #region-main-box #region-post-box {
 	float: left;
-	margin-left: -200px;
+	margin-left: -[[setting:regionprewidth]];;
 	width: 100%;
 }
 
@@ -39,22 +33,22 @@ body {margin:auto 0px;width:auto;}
 #page-content #region-main-box #region-post-box #region-main-wrap #region-main {
 	overflow: hidden;
 	position: relative;
-	margin-left: 400px;
+	margin-left: [[setting:regionsumwidth]];
 	left: 100%;
 }
 
 #page-content #region-main-box #region-post-box #region-pre {
 	float: right;
 	position: relative;
-	left: 200px;
-	width: 200px;
+	width: [[setting:regionprewidth]];
+	left: [[setting:regionprewidth]];
 }
 
 #page-content #region-main-box #region-post-box #region-post {
 	float: right;
 	position: relative;
-	left: 600px;
-	width: 200px;
+	left: [[setting:regiondoublepresumwidth]];
+ 	width: [[setting:regionpostwidth]];
 }
 
 #page-content #region-main-box #region-post-box #region-main-wrap #region-main .region-content {
@@ -81,16 +75,16 @@ body {margin:auto 0px;width:auto;}
 }
 
 .side-pre-only #page-content #region-main-box #region-post-box {
-	margin-left: -200px;
+	margin-left: -[[setting:regionprewidth]];
 }
 
 .side-pre-only #page-content #region-main-box #region-post-box #region-main-wrap #region-main {
-	margin-left: 200px;
+	margin-left: [[setting:regionprewidth]];
 }
 
 .side-pre-only #page-content #region-main-box #region-post-box #region-pre {
-	left: 200px;
-	width: 200px;
+	left: [[setting:regionprewidth]];
+ 	width: [[setting:regionprewidth]];
 }
 
 .side-pre-only #page-content #region-main-box #region-post-box #region-post {
@@ -104,20 +98,20 @@ body {margin:auto 0px;width:auto;}
 }
 
 .side-post-only #page-content #region-main-box #region-post-box {
-	margin-left: -200px;
+	margin-left: -[[setting:regionpostwidth]];
 }
 
 .side-post-only #page-content #region-main-box #region-post-box #region-main-wrap #region-main {
-	margin-left: 200px;
+	margin-left: [[setting:regionpostwidth]];
 }
 
 .side-post-only #page-content #region-main-box #region-post-box #region-post {
-	left: 200px;
-	width: 200px;
+	left: [[setting:regionpostwidth]];
+	width: [[setting:regionpostwidth]];
 }
 
 .has_dock.side-post-only .page-middle #region-main-box #region-post-box #region-main-wrap #region-main {
-	margin-left: 200px;
+	margin-left: [[setting:regionprewidth]];
 }
 
 /** No blocks whatsoever **/
