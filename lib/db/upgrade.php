@@ -4859,6 +4859,28 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         upgrade_main_savepoint(true, 2010070501);
     }
 
+    if ($oldversion < 2010070502) {
+
+    /// Define field newitemid to be added to backup_ids_template
+        $table = new xmldb_table('backup_ids_template');
+        $field = new xmldb_field('newitemid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'itemid');
+    /// Conditionally launch add field newitemid
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+    /// Define field info to be added to backup_ids_template
+        $table = new xmldb_table('backup_ids_template');
+        $field = new xmldb_field('info', XMLDB_TYPE_TEXT, 'medium', null, null, null, null, 'parentitemid');
+    /// Conditionally launch add field info
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+    /// Main savepoint reached
+        upgrade_main_savepoint(true, 2010070502);
+    }
+
 
     return true;
 }

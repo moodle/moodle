@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/db" VERSION="20100705" COMMENT="XMLDB file for core Moodle tables"
+<XMLDB PATH="lib/db" VERSION="20100706" COMMENT="XMLDB file for core Moodle tables"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
 >
@@ -2648,8 +2648,10 @@
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="backupid"/>
         <FIELD NAME="backupid" TYPE="char" LENGTH="32" NOTNULL="true" SEQUENCE="false" COMMENT="unique id of the backup" PREVIOUS="id" NEXT="itemname"/>
         <FIELD NAME="itemname" TYPE="char" LENGTH="30" NOTNULL="true" SEQUENCE="false" COMMENT="name of the component this id belongs to (usually table names)" PREVIOUS="backupid" NEXT="itemid"/>
-        <FIELD NAME="itemid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="id of the component (usually table-&amp;gt;id values)" PREVIOUS="itemname" NEXT="parentitemid"/>
-        <FIELD NAME="parentitemid" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" COMMENT="other id that can be useful to represent parent-child relations" PREVIOUS="itemid"/>
+        <FIELD NAME="itemid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="id of the component (usually table-&amp;gt;id values)" PREVIOUS="itemname" NEXT="newitemid"/>
+        <FIELD NAME="newitemid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="new id of the component after restore" PREVIOUS="itemid" NEXT="parentitemid"/>
+        <FIELD NAME="parentitemid" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" COMMENT="other id that can be useful to represent parent-child relations" PREVIOUS="newitemid" NEXT="info"/>
+        <FIELD NAME="info" TYPE="text" LENGTH="medium" NOTNULL="false" SEQUENCE="false" COMMENT="to store information related with the item, base64(serialize())" PREVIOUS="parentitemid"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="backupid_itemname_itemid_uk"/>
