@@ -926,11 +926,12 @@ function file_get_upload_error($errorcode) {
  */
 function format_array_postdata_for_curlcall($arraydata, $currentdata, &$data) {
         foreach ($arraydata as $k=>$v) {
+            $newcurrentdata = $currentdata;
             if (is_array($v)) { //the value is an array, call the function recursively
-                $currentdata = $currentdata.'['.urlencode($k).']';
-                format_array_postdata_for_curlcall($v, $currentdata, $data);
+                $newcurrentdata = $newcurrentdata.'['.urlencode($k).']';
+                format_array_postdata_for_curlcall($v, $newcurrentdata, $data);
             }  else { //add the POST parameter to the $data array
-                $data[] = $currentdata.'['.urlencode($k).']='.urlencode($v);
+                $data[] = $newcurrentdata.'['.urlencode($k).']='.urlencode($v);
             }
         }
 }

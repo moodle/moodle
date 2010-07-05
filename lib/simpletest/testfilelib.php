@@ -68,8 +68,15 @@ class filelib_test extends UnitTestCase {
         $postdata = format_postdata_for_curlcall($postdatatoconvert);
         $this->assertEqual($postdata, $expectedresult);
 
-
-
-       
+        //POST params with other complex types
+        $postdatatoconvert = array ('members' =>
+            array(
+            array('groupid' => 1, 'userid' => 1)
+            , array('groupid' => 1, 'userid' => 2)
+                )
+            );
+        $expectedresult = "members[0][groupid]=1&members[0][userid]=1&members[1][groupid]=1&members[1][userid]=2";
+        $postdata = format_postdata_for_curlcall($postdatatoconvert);
+        $this->assertEqual($postdata, $expectedresult);
     }
 }
