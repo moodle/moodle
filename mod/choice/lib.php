@@ -543,11 +543,11 @@ function choice_show_results($choice, $course, $cm, $allresponses, $forcepublish
             /// Print "Select all" etc.
             if ($viewresponses and has_capability('mod/choice:deleteresponses',$context)) {
                 echo '<tr><td></td><td>';
-                echo '<a href="javascript:select_all_in(\'DIV\',null,\'tablecontainer\');">'.get_string('selectall', 'quiz').'</a> / ';
-                echo '<a href="javascript:deselect_all_in(\'DIV\',null,\'tablecontainer\');">'.get_string('selectnone', 'quiz').'</a> ';
+                echo '<a href="javascript:select_all_in(\'DIV\',null,\'tablecontainer\');">'.get_string('selectall').'</a> / ';
+                echo '<a href="javascript:deselect_all_in(\'DIV\',null,\'tablecontainer\');">'.get_string('deselectall').'</a> ';
                 echo '&nbsp;&nbsp;';
-                echo html_writer::label(get_string('withselected', 'quiz'), 'menuaction');
-                echo html_writer::select(array('delete' => get_string('delete')), 'action', '', array(''=>get_string('moveselectedcoursesto')), array('id'=>'menuaction'));
+                echo html_writer::label(get_string('withselected', 'choice'), 'menuaction');
+                echo html_writer::select(array('delete' => get_string('delete')), 'action', '', array(''=>get_string('withselectedusers')), array('id'=>'menuaction'));
                 $PAGE->requires->js_init_call('M.util.init_select_autosubmit', array('attemptsform', 'menuaction', ''));
                 echo '<noscript id="noscriptmenuaction" style="display:inline">';
                 echo '<div>';
