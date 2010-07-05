@@ -16,20 +16,20 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * repository_user class is used to browse user private files
+ * repository_local class is used to browse moodle files
  *
  * @since 2.0
  * @package moodlecore
  * @subpackage repository
- * @copyright 2010 Dongsheng Cai
+ * @copyright 2009 Dongsheng Cai
  * @author Dongsheng Cai <dongsheng@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-class repository_user extends repository {
+class repository_local extends repository {
 
     /**
-     * initialize user plugin
+     * initialize local plugin
      * @param int $repositoryid
      * @param int $context
      * @param array $options
@@ -39,7 +39,7 @@ class repository_user extends repository {
     }
 
     /**
-     * user plugin doesn't require login
+     * local plugin doesn't require login, so list all files
      * @return mixed
      */
     public function print_login() {
@@ -69,49 +69,60 @@ class repository_user extends repository {
         $ret['nologin'] = true;
         $list = array();
 
-        //TODO: this is weird, why not only user context? (skodak)
-
         if (!empty($encodedpath)) {
             $params = unserialize(base64_decode($encodedpath));
             if (is_array($params)) {
                 $itemid   = $params['itemid'];
                 $filename = $params['filename'];
                 $filearea = $params['filearea'];
-                $component = $params['component'];
                 $filepath = $params['filepath'];
                 $context  = get_context_instance_by_id($params['contextid']);
             }
         } else {
-            $itemid   = 0;
+            $itemid   = null;
             $filename = null;
-            $component = 'user';
-            $filearea = 'private';
-            $filepath = '/';
-            $context = get_context_instance(CONTEXT_USER, $USER->id);
+            $filearea = null;
+            $filepath = null;
+            $context  = get_system_context();
         }
 
         try {
             $browser = get_file_browser();
 
-            if ($fileinfo = $browser->get_file_info($context, $component, $filearea, $itemid, $filepath, $filename)) {
+            if ($fileinfo = $browser->get_file_info($context, $filearea, $itemid, $filepath, $filename)) {
+                // build path navigation
                 $pathnodes = array();
-                $level = $fileinfo;
-                $params = $fileinfo->get_params();
-                while ($level && $params['filearea'] == 'private' && $params['component'] == 'user') {
+                $encodedpath = base64_encode(serialize($fileinfo->get_params()));
+                $pathnodes[] = array('name'=>$fileinfo->get_visible_name(), 'path'=>$encodedpath);
+                $level = $fileinfo->get_parent();
+                while ($level) {
                     $encodedpath = base64_encode(serialize($level->get_params()));
                     $pathnodes[] = array('name'=>$level->get_visible_name(), 'path'=>$encodedpath);
                     $level = $level->get_parent();
-                    $params = $level->get_params();
                 }
-                $ret['path'] = array_reverse($pathnodes);
-
+                if (!empty($pathnodes) && is_array($pathnodes)) {
+                    $pathnodes = array_reverse($pathnodes);
+                    $ret['path'] = $pathnodes;
+                }
                 // build file tree
                 $children = $fileinfo->get_children();
                 foreach ($children as $child) {
+                    $shorttitle = $this->get_short_filename($child->get_visible_name(), 12);
                     if ($child->is_directory()) {
-                        $encodedpath = base64_encode(serialize($child->get_params()));
+                        $params = $child->get_params();
+                        $subdir_children = $child->get_children();
+                        if (empty($subdir_children)) {
+                            continue;
+                        }
+                        $encodedpath = base64_encode(serialize($params));
+                        // hide user_private area from local plugin, user should
+                        // use private file plugin to access private files
+                        if ($params['filearea'] == 'user_private') {
+                            continue;
+                        }
                         $node = array(
                             'title' => $child->get_visible_name(),
+                            'shorttitle'=>$shorttitle,
                             'size' => 0,
                             'date' => '',
                             'path' => $encodedpath,
@@ -124,6 +135,7 @@ class repository_user extends repository {
                         $icon = 'f/'.str_replace('.gif', '', mimeinfo('icon', $child->get_visible_name())).'-32';
                         $node = array(
                             'title' => $child->get_visible_name(),
+                            'shorttitle'=>$shorttitle,
                             'size' => 0,
                             'date' => '',
                             'source'=> $encodedpath,
@@ -134,7 +146,7 @@ class repository_user extends repository {
                 }
             }
         } catch (Exception $e) {
-            throw new repository_exception('emptyfilelist', 'repository_user');
+            throw new repository_exception('emptyfilelist', 'repository_local');
         }
         $ret['list'] = $list;
         $ret['list'] = array_filter($list, array($this, 'filter'));
@@ -147,11 +159,11 @@ class repository_user extends repository {
      * @return string repository name
      */
     public function get_name(){
-        return get_string('areauserpersonal', 'repository');;
+        return get_string('pluginname', 'repository_local');;
     }
 
     /**
-     * User file don't support to link to external links
+     * Local file don't support to link to external links
      *
      * @return int
      */
@@ -170,7 +182,7 @@ class repository_user extends repository {
      * @param string $new_filepath the new path in draft area
      * @return array The information of file
      */
-    public function copy_to_area($encoded, $new_filearea='ignored', $new_itemid = '', $new_filepath = '/', $new_filename = '') {
+    public function copy_to_area($encoded, $new_filearea='user_draft', $new_itemid = '', $new_filepath = '/', $new_filename = '') {
         global $USER, $DB;
         $info = array();
 
@@ -179,15 +191,14 @@ class repository_user extends repository {
         $user_context = get_context_instance(CONTEXT_USER, $USER->id);
         // the final file
         $contextid  = $params['contextid'];
-        $component  = $params['component'];
         $filearea   = $params['filearea'];
         $filepath   = $params['filepath'];
         $filename   = $params['filename'];
         $fileitemid = $params['itemid'];
         $context    = get_context_instance_by_id($contextid);
         try {
-            $file_info = $browser->get_file_info($context, $component, $filearea, $fileitemid, $filepath, $filename);
-            $file_info->copy_to_storage($user_context->id, 'user', 'draft', $new_itemid, $new_filepath, $new_filename);
+            $file_info = $browser->get_file_info($context, $filearea, $fileitemid, $filepath, $filename);
+            $file_info->copy_to_storage($user_context->id, $new_filearea, $new_itemid, $new_filepath, $new_filename);
         } catch (Exception $e) {
             throw $e;
         }

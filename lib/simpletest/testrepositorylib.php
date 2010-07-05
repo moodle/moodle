@@ -42,7 +42,7 @@ require_once("$CFG->dirroot/$CFG->admin/generator.php");
 $repository_plugins = get_list_of_plugins('repository');
 
 foreach ($repository_plugins as $plugin) {
-    require_once($CFG->dirroot . "/repository/$plugin/repository.class.php");
+    require_once($CFG->dirroot . "/repository/$plugin/lib.php");
     Mock::generatePartial("repository_$plugin", "partialmock_$plugin", array('send_package'));
 }
 

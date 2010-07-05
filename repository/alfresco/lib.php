@@ -202,8 +202,8 @@ class repository_alfresco extends repository {
         return array('path'=>$path, 'url'=>$url);
     }
 
-    public function print_search($client_id) {
-        $str = parent::print_search($client_id);
+    public function print_search() {
+        $str = parent::print_search();
         $str .= '<label>Space: </label><br /><select name="space">';
         foreach ($this->user_session->stores as $v) {
             $str .= '<option ';

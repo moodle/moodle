@@ -97,7 +97,7 @@ M.core_filepicker.init = function(Y, options) {
             params['env']=this.options.env;
             // the form element only accept certain file types
             params['accepted_types']=this.options.accepted_types;
-            params['sesskey']=M.cfg.sesskey;
+            params['sesskey'] = M.cfg.sesskey;
             params['client_id'] = args.client_id;
             params['itemid'] = this.options.itemid?this.options.itemid:0;
             params['maxbytes'] = this.options.maxbytes?this.options.maxbytes:-1;
@@ -124,9 +124,8 @@ M.core_filepicker.init = function(Y, options) {
                             return;
                         }
                         // error checking
-                        if (data && data.e) {
-                            //Y.one(panel_id).set('innerHTML', 'ERROR: '+data.e);
-                            scope.print_msg(data.e, 'error');
+                        if (data && data.error) {
+                            scope.print_msg(data.error, 'error');
                             scope.list();
                             return;
                         } else {
@@ -189,7 +188,6 @@ M.core_filepicker.init = function(Y, options) {
             }
             this.msg_dlg.setHeader(type);
             this.msg_dlg.show();
-
         },
         build_tree: function(node, level) {
             var client_id = this.options.client_id;
@@ -653,7 +651,7 @@ M.core_filepicker.init = function(Y, options) {
                 }
                 if (count==0) {
                     if (this.options.externallink) {
-                        list.set('innerHTML', M.str.repository.norepositoriesavexternalailable);
+                        list.set('innerHTML', M.str.repository.norepositoriesexternalavailable);
                     } else {
                         list.set('innerHTML', M.str.repository.norepositoriesavailable);
                     }
@@ -962,6 +960,7 @@ M.core_filepicker.init = function(Y, options) {
         create_upload_form: function(data) {
             var client_id = this.options.client_id;
             Y.one('#panel-'+client_id).set('innerHTML', '');
+            var types = this.options.accepted_types;
 
             this.print_header();
             var id = data.upload.id+'_'+client_id;
@@ -971,8 +970,11 @@ M.core_filepicker.init = function(Y, options) {
             str += '<tr><td class="mdl-right">';
             str += '<label for="'+id+'_file">'+data.upload.label+': </label></td>';
             str += '<td class="mdl-left"><input type="file" id="'+id+'_file" name="repo_upload_file" />';
-            str += '<input type="hidden" name="itemid" value="'+this.options.itemid+'" /></tr>';
-            str += '<tr>';
+            str += '<input type="hidden" name="itemid" value="'+this.options.itemid+'" />';
+            for (var i in types) {
+                str += '<input type="hidden" name="accepted_types[]" value="'+types[i]+'" />';
+            }
+            str += '</td></tr><tr>';
             str += '<td class="mdl-right"><label>'+M.str.repository.author+': </label></td>';
             str += '<td class="mdl-left"><input type="text" name="author" value="'+this.options.author+'" /></td>';
             str += '</tr>';

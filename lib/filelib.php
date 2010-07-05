@@ -514,26 +514,17 @@ function file_get_draft_area_info($draftitemid) {
  * @return int total bytes
  */
 function file_get_user_used_space() {
-    global $DB, $CFG, $USER;
+    global $DB, $USER;
 
     $usercontext = get_context_instance(CONTEXT_USER, $USER->id);
-
-    $totalbytes = 0;
-    $files = array();
-    //TODO: rewrite to true sql SUM(), this is goign to run out of memory if limits are hight!
-    $file_records = $DB->get_records('files', "contextid = ? AND component = 'user' AND filearea != 'draft'", array($usercontext->id));
-    foreach ($file_records as $file_record) {
-        if ($file_record->filename === '.') {
-            continue;
-        }
-        // doesn't count same files
-        if (!isset($files[$file_record->contenthash])) {
-            $totalbytes += $file_record->filesize;
-        } else {
-            $files[$file_record->contenthash] = true;
-        }
-    }
-    return (int)$totalbytes;
+    $sql = "SELECT SUM(files1.filesize) AS totalbytes FROM {files} files1
+            JOIN (SELECT contenthash, filename, MAX(id) AS id
+            FROM {files}
+            WHERE contextid = ? AND component = ? AND filearea != ?
+            GROUP BY contenthash, filename) files2 ON files1.id = files2.id";
+    $params = array('contextid'=>$usercontext->id, 'component'=>'user', 'filearea'=>'draft');
+    $record = $DB->get_record_sql($sql, $params);
+    return (int)$record->totalbytes;
 }
 
 /**
@@ -2874,7 +2865,7 @@ class curl_cache {
     }
 
     /**
-     * @todo Document this function
+     * Get cached value
      *
      * @global object
      * @global object
@@ -2901,10 +2892,10 @@ class curl_cache {
     }
 
     /**
-     * @todo Document this function
+     * Set cache value
      *
-     * @global object
-     * @global object
+     * @global object $CFG
+     * @global object $USER
      * @param mixed $param
      * @param mixed $val
      */
@@ -2917,7 +2908,7 @@ class curl_cache {
     }
 
     /**
-     * @todo Document this function
+     * Remove cache files
      *
      * @param int $expire The number os seconds before expiry
      */
@@ -2936,8 +2927,8 @@ class curl_cache {
     /**
      * delete current user's cache file
      *
-     * @global object
-     * @global object
+     * @global object $CFG
+     * @global object $USER
      */
     public function refresh(){
         global $CFG, $USER;

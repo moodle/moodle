@@ -101,6 +101,7 @@ $string['instancesforadmin'] = 'common instance(s)';
 $string['instancesforothers'] = 'private instance(s)';
 $string['invalidjson'] = 'Invalid JSON string';
 $string['invalidplugin'] = 'Invalid repository {$a} plug-in';
+$string['invalidfiletype'] = '{$a} filetype cannot be accepted.';
 $string['invalidrepositoryid'] = 'Invalid repository ID';
 $string['isactive'] = 'Active?';
 $string['keyword'] = 'Keyword';

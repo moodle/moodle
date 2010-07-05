@@ -26,6 +26,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+define('AJAX_SCRIPT', true);
+
 require_once(dirname(dirname(__FILE__)).'/config.php');
 require_once(dirname(dirname(__FILE__)).'/lib/filelib.php');
 require_once(dirname(__FILE__).'/lib.php');
@@ -35,7 +37,6 @@ require_login();
 /// Parameters
 $action    = optional_param('action', '', PARAM_ALPHA);
 $repo_id   = optional_param('repo_id', 0, PARAM_INT);           // Pepository ID
-$client_id = optional_param('client_id', '', PARAM_RAW);        // Client ID
 $contextid = optional_param('ctx_id', SYSCONTEXTID, PARAM_INT); // Context ID
 $env       = optional_param('env', 'filepicker', PARAM_ALPHA);  // Opened in editor or moodleform
 $license   = optional_param('license', $CFG->sitedefaultlicense, PARAM_TEXT);
@@ -45,6 +46,7 @@ $itemid    = optional_param('itemid', 0, PARAM_INT);            // Itemid
 $page      = optional_param('page', '', PARAM_RAW);             // Page
 $maxbytes  = optional_param('maxbytes', 0, PARAM_INT);          // Maxbytes
 $req_path  = optional_param('p', '', PARAM_RAW);                // Path
+$accepted_types  = optional_param('accepted_types', '*', PARAM_RAW);
 $saveas_filename = optional_param('title', '', PARAM_FILE);     // save as file name
 $saveas_path   = optional_param('savepath', '/', PARAM_PATH);   // save as file path
 $search_text   = optional_param('s', '', PARAM_CLEANHTML);
@@ -55,7 +57,6 @@ header('Cache-Control: no-cache, must-revalidate');
 header('Expires: Sat, 26 Jul 1997 05:00:00 GMT');
 
 $err = new stdclass;
-$err->client_id = $client_id;
 
 if (!confirm_sesskey()) {
     $err->error = get_string('invalidsesskey');
@@ -64,7 +65,7 @@ if (!confirm_sesskey()) {
 
 /// Check permissions
 if (! (isloggedin() && repository::check_context($contextid)) ) {
-    $err->e = get_string('nopermissiontoaccess', 'repository');
+    $err->error = get_string('nopermissiontoaccess', 'repository');
     die(json_encode($err));
 }
 
@@ -88,20 +89,14 @@ switch ($action) {
         $list = array();
         foreach($repos as $repo){
             if ($repo->global_search()) {
-                try {
-                    $ret = $repo->search($search_text);
-                    array_walk($ret['list'], 'repository_attach_id', $repo->id);  // See function below
-                    $tmp = array_merge($list, $ret['list']);
-                    $list = $tmp;
-                } catch (repository_exception $e) {
-                    $err->e = $e->getMessage();
-                    die(json_encode($err));
-                }
+                $ret = $repo->search($search_text);
+                array_walk($ret['list'], 'repository_attach_id', $repo->id);  // See function below
+                $tmp = array_merge($list, $ret['list']);
+                $list = $tmp;
             }
         }
         $listing = array('list'=>$list);
         $listing['gsearch'] = true;
-        $listing['client_id'] = $client_id;
         die(json_encode($listing));
         break;
 
@@ -118,23 +113,18 @@ $sql = 'SELECT i.name, i.typeid, r.type FROM {repository} r, {repository_instanc
        'WHERE i.id=? AND i.typeid=r.id';
 
 if (!$repository = $DB->get_record_sql($sql, array($repo_id))) {
-    $err->e = get_string('invalidrepositoryid', 'repository');
+    $err->error = get_string('invalidrepositoryid', 'repository');
     die(json_encode($err));
 } else {
     $type = $repository->type;
 }
 
-if (file_exists($CFG->dirroot.'/repository/'.$type.'/repository.class.php')) {
-    require_once($CFG->dirroot.'/repository/'.$type.'/repository.class.php');
+if (file_exists($CFG->dirroot.'/repository/'.$type.'/lib.php')) {
+    require_once($CFG->dirroot.'/repository/'.$type.'/lib.php');
     $classname = 'repository_' . $type;
-    try {
-        $repo = new $classname($repo_id, $contextid, array('ajax'=>true, 'name'=>$repository->name, 'type'=>$type, 'client_id'=>$client_id));
-    } catch (repository_exception $e){
-        $err->e = $e->getMessage();
-        die(json_encode($err));
-    }
+    $repo = new $classname($repo_id, $contextid, array('ajax'=>true, 'name'=>$repository->name, 'type'=>$type));
 } else {
-    $err->e = get_string('invalidplugin', 'repository', $type);
+    $err->error = get_string('invalidplugin', 'repository', $type);
     die(json_encode($err));
 }
 
@@ -144,160 +134,132 @@ switch ($action) {
     case 'signin':
     case 'list':
         if ($repo->check_login()) {
-            try {
-                $listing = $repo->get_listing($req_path, $page);
-                $listing['client_id'] = $client_id;
-                $listing['repo_id'] = $repo_id;
-                echo json_encode($listing);
-            } catch (repository_exception $e) {
-                $err->e = $e->getMessage();
-                die(json_encode($err));
-            }
+            $listing = $repo->get_listing($req_path, $page);
+            $listing['repo_id'] = $repo_id;
+            echo json_encode($listing);
             break;
         } else {
             $action = 'login';
         }
     case 'login':
-        try {
-            $listing = $repo->print_login();
-            $listing['client_id'] = $client_id;
-            $listing['repo_id'] = $repo_id;
-            echo json_encode($listing);
-        } catch (repository_exception $e){
-            $err->e = $e->getMessage();
-            die(json_encode($err));
-        }
+        $listing = $repo->print_login();
+        $listing['repo_id'] = $repo_id;
+        echo json_encode($listing);
         break;
     case 'logout':
         $logout = $repo->logout();
-        $logout['client_id'] = $client_id;
         $logout['repo_id'] = $repo_id;
         echo json_encode($logout);
         break;
     case 'searchform':
-        $search_form['form'] = $repo->print_search($client_id);
-        $search_form['client_id'] = $client_id;
+        $search_form['form'] = $repo->print_search();
         echo json_encode($search_form);
         break;
     case 'search':
-        try {
-            $search_result = $repo->search($search_text, (int)$page);
-            $search_result['client_id'] = $client_id;
-            $search_result['repo_id'] = $repo_id;
-            $search_result['search_result'] = true;
-            echo json_encode($search_result);
-        } catch (repository_exception $e) {
-            $err->e = $e->getMessage();
-            die(json_encode($err));
-        }
+        $search_result = $repo->search($search_text, (int)$page);
+        $search_result['repo_id'] = $repo_id;
+        $search_result['search_result'] = true;
+        echo json_encode($search_result);
         break;
     case 'download':
-        try {
-            // We have two special repoisitory type need to deal with
-            // local and recent plugins don't added new files to moodle, just add new records to database
-            // so we don't check user quota and maxbytes here
-            if (in_array($repo->options['type'], array('local', 'recent', 'user'))) {
-                try {
-                    $fileinfo = $repo->copy_to_area($source, 'draft', $itemid, $saveas_path, $saveas_filename);
-                } catch (Exception $e) {
-                    throw $e;
-                }
+        // validate mimetype
+        $mimetypes = array();
+        if (in_array('*', $accepted_types) or $accepted_types == '*') {
+            $mimetypes = '*';
+        } else {
+            foreach ($accepted_types as $type) {
+                $mimetypes = mimeinfo('type', $type);
+            }
+            if (!in_array(mimeinfo('type', $saveas_filename), $mimetypes)) {
+                throw new moodle_exception('invalidfiletype', 'repository', '', mimeinfo('type', $_FILES[$elname]['name']));
+            }
+        }
+
+        // We have two special repoisitory type need to deal with
+        // local and recent plugins don't added new files to moodle, just add new records to database
+        // so we don't check user quota and maxbytes here
+        if (in_array($repo->options['type'], array('local', 'recent', 'user'))) {
+            $fileinfo = $repo->copy_to_area($source, 'draft', $itemid, $saveas_path, $saveas_filename);
+            $info = array();
+            $info['file'] = $fileinfo['title'];
+            $info['id'] = $itemid;
+            $info['url'] = $CFG->httpswwwroot.'/draftfile.php/'.$fileinfo['contextid'].'/user_draft/'.$itemid.'/'.$fileinfo['title'];
+            $filesize = $fileinfo['filesize'];
+            if (($maxbytes!==-1) && ($filesize>$maxbytes)) {
+                throw new file_exception('maxbytes');
+            }
+            echo json_encode($info);
+            die; // ends here!!
+        } else {
+            $allowexternallink = (int)get_config(null, 'repositoryallowexternallinks');
+            if (!empty($allowexternallink)) {
+                $allowexternallink = true;
+            } else {
+                $allowexternallink = false;
+            }
+            // allow external links in url element all the time
+            $allowexternallink = ($allowexternallink || ($env == 'url'));
+
+            // Use link of the files
+            if ($allowexternallink and $linkexternal === 'yes' and ($repo->supported_returntypes() & FILE_EXTERNAL)) {
+                // use external link
+                $link = $repo->get_link($source);
                 $info = array();
-                $info['client_id'] = $client_id;
-                $info['file'] = $fileinfo['title'];
-                $info['id'] = $itemid;
-                $info['url'] = $CFG->httpswwwroot.'/draftfile.php/'.$fileinfo['contextid'].'/user_draft/'.$itemid.'/'.$fileinfo['title'];
-                $filesize = $fileinfo['filesize'];
-                if (($maxbytes!==-1) && ($filesize>$maxbytes)) {
+                $info['filename'] = $saveas_filename;
+                $info['type'] = 'link';
+                $info['url'] = $link;
+                echo json_encode($info);
+                die;
+            } else {
+                // Download file to moodle
+                $file = $repo->get_file($source, $saveas_filename);
+                if ($file['path'] === false) {
+                    $err->error = get_string('cannotdownload', 'repository');
+                    die(json_encode($err));
+                }
+
+                // check if exceed maxbytes
+                if (($maxbytes!==-1) && (filesize($file['path']) > $maxbytes)) {
                     throw new file_exception('maxbytes');
                 }
+
+                // check if exceed user quota
+                $userquota = file_get_user_used_space();
+                if (filesize($file['path'])+$userquota>=(int)$CFG->userquota) {
+                    throw new file_exception('userquotalimit');
+                }
+
+                $record = new stdclass;
+                $record->filepath = $saveas_path;
+                $record->filename = $saveas_filename;
+                $record->component = 'user';
+                $record->filearea = 'draft';
+                $record->itemid   = $itemid;
+
+                if (!empty($file['license'])) {
+                    $record->license  = $file['license'];
+                } else {
+                    $record->license  = $license;
+                }
+                if (!empty($file['author'])) {
+                    $record->author   = $file['author'];
+                } else {
+                    $record->author   = $author;
+                }
+                $record->source = !empty($file['url']) ? $file['url'] : '';
+
+                $info = repository::move_to_filepool($file['path'], $record);
+                if (empty($info)) {
+                    $info['e'] = get_string('error', 'moodle');
+                }
                 echo json_encode($info);
-                die; // ends here!!
-            } else {
-                $allowexternallink = (int)get_config(null, 'repositoryallowexternallinks');
-                if (!empty($allowexternallink)) {
-                    $allowexternallink = true;
-                } else {
-                    $allowexternallink = false;
-                }
-                // allow external links in url element all the time
-                $allowexternallink = ($allowexternallink || ($env == 'url'));
-
-                // Use link of the files
-                if ($allowexternallink and $linkexternal === 'yes' and ($repo->supported_returntypes() || FILE_EXTERNAL)) {
-                    // use external link
-                    try {
-                        $link = $repo->get_link($source);
-                    } catch (repository_exception $e){
-                        throw $e;
-                    }
-                    $info = array();
-                    $info['filename'] = $saveas_filename;
-                    $info['type'] = 'link';
-                    $info['url'] = $link;
-                    echo json_encode($info);
-                    die;
-                } else {
-                    // Download file to moodle
-                    $file = $repo->get_file($source, $saveas_filename);
-                    if ($file['path'] === false) {
-                        $err->e = get_string('cannotdownload', 'repository');
-                        die(json_encode($err));
-                    }
-
-                    // check if exceed maxbytes
-                    if (($maxbytes!==-1) && (filesize($file['path']) > $maxbytes)) {
-                        throw new file_exception('maxbytes');
-                    }
-
-                    // check if exceed user quota
-                    $userquota = file_get_user_used_space();
-                    if (filesize($file['path'])+$userquota>=(int)$CFG->userquota) {
-                        throw new file_exception('userquotalimit');
-                    }
-
-                    $record = new stdclass;
-                    $record->filepath = $saveas_path;
-                    $record->filename = $saveas_filename;
-                    $record->component = 'user';
-                    $record->filearea = 'draft';
-                    $record->itemid   = $itemid;
-
-                    if (!empty($file['license'])) {
-                        $record->license  = $file['license'];
-                    } else {
-                        $record->license  = $license;
-                    }
-                    if (!empty($file['author'])) {
-                        $record->author   = $file['author'];
-                    } else {
-                        $record->author   = $author;
-                    }
-                    $record->source = !empty($file['url']) ? $file['url'] : '';
-
-                    $info = repository::move_to_filepool($file['path'], $record);
-                    if (empty($info)) {
-                        $info['e'] = get_string('error', 'moodle');
-                    }
-                    echo json_encode($info);
-                    die;
-                }
+                die;
             }
-        } catch (Exception $e) {
-            $err->e = $e->getMessage();
-            die(json_encode($err));
         }
         break;
     case 'upload':
-        try {
-            $result = $repo->upload();
-            $result['client_id'] = $client_id;
-            echo json_encode($result);
-        } catch (Exception $e){
-            $err->e = $e->getMessage();
-            $err->client_id = $client_id;
-            die(json_encode($err));
-        }
+        $result = $repo->upload();
+        echo json_encode($result);
         break;
 }
 

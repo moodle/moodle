@@ -17,7 +17,7 @@
 
 
 /**
- * The Web service script that is called from the filepicker front end
+ * Repository instance callback script
  *
  * @since 2.0
  * @package moodlecore
@@ -33,36 +33,27 @@ require_once(dirname(__FILE__).'/lib.php');
 require_login();
 
 /// Parameters
-
-$repo_id   = required_param('repo_id', PARAM_INT);           // Repository ID
-
-$client_id = optional_param('client_id', '', PARAM_RAW);        // Client ID
-$contextid = optional_param('ctx_id', SYSCONTEXTID, PARAM_INT); // Context ID
+$repo_id   = required_param('repo_id', PARAM_INT); // Repository ID
 
 /// Headers to make it not cacheable
 header('Cache-Control: no-cache, must-revalidate');
 header('Expires: Sat, 26 Jul 1997 05:00:00 GMT');
 
-/// Check permissions
-if (repository::check_context($contextid)) { //TODO: this is weird (skodak)
-    print_error('nopermissiontoaccess', 'repository');
-}
-
 /// Wait as long as it takes for this script to finish
 set_time_limit(0);
 
 /// Get repository instance information
-$sql = 'SELECT i.name, i.typeid, r.type FROM {repository} r, {repository_instances} i '.
+$sql = 'SELECT i.name, i.typeid, r.type, i.contextid FROM {repository} r, {repository_instances} i '.
        'WHERE i.id=? AND i.typeid=r.id';
 
 $repository = $DB->get_record_sql($sql, array($repo_id), '*', MUST_EXIST);
 
 $type = $repository->type;
 
-if (file_exists($CFG->dirroot.'/repository/'.$type.'/repository.class.php')) {
-    require_once($CFG->dirroot.'/repository/'.$type.'/repository.class.php');
+if (file_exists($CFG->dirroot.'/repository/'.$type.'/lib.php')) {
+    require_once($CFG->dirroot.'/repository/'.$type.'/lib.php');
     $classname = 'repository_' . $type;
-    $repo = new $classname($repo_id, $contextid, array('ajax'=>true, 'name'=>$repository->name, 'type'=>$type, 'client_id'=>$client_id)); //TODO: this is very weird constructor! (skodak)
+    $repo = new $classname($repo_id, $repository->contextid);
 } else {
     print_error('invalidplugin', 'repository', $type);
 }
