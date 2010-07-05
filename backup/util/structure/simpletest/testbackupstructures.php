@@ -296,7 +296,7 @@ class backup_structure_test extends UnitTestCaseUsingDatabase {
         $forum->annotate_files('mod_forum', 'intro', null);
 
         // Mark to detect file of type 'forum_post' and 'forum_attachment' in post (with itemid being post->id)
-        $post->annotate_files('mod_forun', 'post', 'id');
+        $post->annotate_files('mod_forum', 'post', 'id');
         $post->annotate_files('mod_forum', 'attachment', 'id');
 
         // Mark various elements to be annotated
@@ -579,7 +579,7 @@ class backup_structure_test extends UnitTestCaseUsingDatabase {
         } catch (exception $e) {
             $this->assertTrue($e instanceof base_element_struct_exception);
             $this->assertEqual($e->errorcode, 'annotate_files_duplicate_annotation');
-            $this->assertEqual($e->a, 'test');
+            $this->assertEqual($e->a, 'test/filearea/');
         }
 
         $ne = new backup_nested_element('test', 'one', 'two', 'three');
