@@ -469,8 +469,11 @@
     $quiz->thispageurl = $CFG->wwwroot . '/mod/quiz/attempt.php?q=' . s($quiz->id) . '&amp;page=' . s($page);
     $quiz->cmid = $cm->id;
     echo '<form id="responseform" method="post" action="', $quiz->thispageurl . '" enctype="multipart/form-data"' .
-            ' onclick="this.autocomplete=\'off\'" onkeypress="return check_enter(event);" accept-charset="utf-8">', "\n";
-    if($quiz->timelimit > 0) {
+            ' onkeypress="return check_enter(event);" accept-charset="utf-8">', "\n";
+    echo '<script type="text/javascript">', "\n",
+            'document.getElementById("responseform").setAttribute("autocomplete", "off")', "\n",
+            "</script>\n";
+    if ($quiz->timelimit > 0) {
         // Make sure javascript is enabled for time limited quizzes
         ?>
         <script type="text/javascript">
