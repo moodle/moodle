@@ -43,6 +43,7 @@
     }
 
     $PAGE->set_title(format_string($choice->name));
+    $PAGE->set_heading($course->fullname);
     echo $OUTPUT->header();
 
 /// Submit any new data if there is any
