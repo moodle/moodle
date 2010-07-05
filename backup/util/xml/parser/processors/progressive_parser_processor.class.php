@@ -59,8 +59,24 @@ abstract class progressive_parser_processor {
         $this->chunks   = 0;
     }
 
+    /**
+     * Receive one chunk of information from the parser
+     */
     abstract public function process_chunk($data);
 
+    /**
+     * The parser fires this each time one path is going to be parsed
+     */
+    public function before_path($path) { }
+
+    /**
+     * The parser fires this each time one path has been parsed
+     */
+    public function after_path($path) { }
+
+    /**
+     * Perform custom transformations in the processed cdata
+     */
     public function process_cdata($cdata) {
         return $cdata;
     }

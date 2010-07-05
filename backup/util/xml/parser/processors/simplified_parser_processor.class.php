@@ -25,7 +25,7 @@
 require_once($CFG->dirroot.'/backup/util/xml/parser/processors/progressive_parser_processor.class.php');
 
 /**
- * Abstract xml parser processor to be to simplify and dispatch parsed chunks
+ * Abstract xml parser processor to to simplify and dispatch parsed chunks
  *
  * This @progressive_parser_processor handles the requested paths,
  * performing some conversions from the original "propietary array format"
@@ -44,13 +44,18 @@ abstract class simplified_parser_processor extends progressive_parser_processor 
 
     public function __construct(array $paths) {
         parent::__construct();
-        $this->paths = $paths;
+        $this->paths = array();
         $this->parentpaths = array();
         $this->parentsinfo = array();
-        // Add parent paths. We are looking for attributes there
+        // Add paths and parentpaths. We are looking for attributes there
         foreach ($paths as $key => $path) {
-            $this->parentpaths[$key] = dirname($path);
+            $this->add_path($path);
         }
+    }
+
+    public function add_path($path) {
+        $this->paths[] = $path;
+        $this->parentpaths[] = dirname($path);
     }
 
     /**
@@ -105,9 +110,10 @@ abstract class simplified_parser_processor extends progressive_parser_processor 
                 $data['tags'][$key] = isset($value['cdata']) ? $value['cdata'] : null;
             }
 
-            // Arrived here, if the chunk has tags, send it to dispatcher
+            // Arrived here, if the chunk has tags, send it to postprocess filter that
+            // will decide about dispatching
             if (!empty($data['tags'])) {
-                return $this->dispatch_chunk($data);
+                return $this->postprocess_chunk($data);
             } else {
                  $this->chunks--; // Chunk skipped
             }
@@ -118,6 +124,10 @@ abstract class simplified_parser_processor extends progressive_parser_processor 
     }
 
 // Protected API starts here
+
+    protected function postprocess_chunk($data) {
+        $this->dispatch_chunk($data);
+    }
 
     protected function path_is_selected($path) {
         return in_array($path, $this->paths);

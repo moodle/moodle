@@ -75,6 +75,9 @@
           <alias id="2">
             <alias_text>cats</alias_text>
           </alias>
+          <alias id="3">
+            <alias_text>felines</alias_text>
+          </alias>
         </aliases>
         <ratings>
           <rating id="1">
@@ -89,5 +92,20 @@
     </entries>
     <categories>
     </categories>
+    <onetest>
+      <name>1</name>
+      <value>1</value>
+    </onetest>
+    <onetest>
+      <name>2</name>
+      <value>2</value>
+    </onetest>
+    <othertest>
+      <name>3</name>
+      <value>3</value>
+      <name>4</name><!-- Only last will be processed. We don't allow repeated final tags in our parser -->
+      <value>4</value>
+      <value>5</value><!-- Only last will be processed. We don't allow repeated final tags in our parser -->
+    </othertest>
   </glossary>
 </activity>
