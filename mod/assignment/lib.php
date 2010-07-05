@@ -3305,7 +3305,7 @@ function assignment_print_overview($courses, &$htmlarray) {
 
             // count how many people can submit
             $submissions = 0; // init
-            if ($users = get_enrolled_users($context, 'mod/assignment:submit', 0, 'u.id')) {
+            if ($students = get_enrolled_users($context, 'mod/assignment:submit', 0, 'u.id')) {
                 foreach ($students as $student) {
                     if (isset($unmarkedsubmissions[$assignment->id][$student->id])) {
                         $submissions++;
