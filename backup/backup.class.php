@@ -64,10 +64,11 @@ abstract class backup implements checksumable {
     const STATUS_PLANNED     = 300;
     const STATUS_CONFIGURED  = 400;
     const STATUS_SETTING_UI  = 500;
-    const STATUS_AWAITING    = 600;
-    const STATUS_EXECUTING   = 700;
-    const STATUS_FINISHED_ERR= 800;
-    const STATUS_FINISHED_OK = 900;
+    const STATUS_NEED_PRECHECK=600;
+    const STATUS_AWAITING    = 700;
+    const STATUS_EXECUTING   = 800;
+    const STATUS_FINISHED_ERR= 900;
+    const STATUS_FINISHED_OK =1000;
 
     // Logging levels
     const LOG_DEBUG   = 50;

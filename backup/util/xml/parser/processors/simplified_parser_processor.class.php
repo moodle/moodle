@@ -61,7 +61,7 @@ abstract class simplified_parser_processor extends progressive_parser_processor 
     /**
      * Get the already simplified chunk and dispatch it
      */
-    abstract public function dispatch_chunk($data);
+    abstract protected function dispatch_chunk($data);
 
     /**
      * Get one chunk of parsed data and make it simpler
