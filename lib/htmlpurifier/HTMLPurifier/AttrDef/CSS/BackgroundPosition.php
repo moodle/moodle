@@ -59,7 +59,8 @@ class HTMLPurifier_AttrDef_CSS_BackgroundPosition extends HTMLPurifier_AttrDef
         $keywords = array();
         $keywords['h'] = false; // left, right
         $keywords['v'] = false; // top, bottom
-        $keywords['c'] = false; // center
+        $keywords['ch'] = false; // center (first word)
+        $keywords['cv'] = false; // center (second word)
         $measures = array();
 
         $i = 0;
@@ -79,6 +80,13 @@ class HTMLPurifier_AttrDef_CSS_BackgroundPosition extends HTMLPurifier_AttrDef
             $lbit = ctype_lower($bit) ? $bit : strtolower($bit);
             if (isset($lookup[$lbit])) {
                 $status = $lookup[$lbit];
+                if ($status == 'c') {
+                    if ($i == 0) {
+                        $status = 'ch';
+                    } else {
+                        $status = 'cv';
+                    }
+                }
                 $keywords[$status] = $lbit;
                 $i++;
             }
@@ -101,20 +109,19 @@ class HTMLPurifier_AttrDef_CSS_BackgroundPosition extends HTMLPurifier_AttrDef
 
         if (!$i) return false; // no valid values were caught
 
-
         $ret = array();
 
         // first keyword
         if     ($keywords['h'])     $ret[] = $keywords['h'];
-        elseif (count($measures))   $ret[] = array_shift($measures);
-        elseif ($keywords['c']) {
-            $ret[] = $keywords['c'];
-            $keywords['c'] = false; // prevent re-use: center = center center
+        elseif ($keywords['ch']) {
+            $ret[] = $keywords['ch'];
+            $keywords['cv'] = false; // prevent re-use: center = center center
         }
+        elseif (count($measures))   $ret[] = array_shift($measures);
 
         if     ($keywords['v'])     $ret[] = $keywords['v'];
+        elseif ($keywords['cv'])    $ret[] = $keywords['cv'];
         elseif (count($measures))   $ret[] = array_shift($measures);
-        elseif ($keywords['c'])     $ret[] = $keywords['c'];
 
         if (empty($ret)) return false;
         return implode(' ', $ret);

@@ -384,7 +384,7 @@ class HTMLPurifier_Lexer_DirectLex extends HTMLPurifier_Lexer
                 }
             }
             if ($value === false) $value = '';
-            return array($key => $value);
+            return array($key => $this->parseData($value));
         }
 
         // setup loop environment

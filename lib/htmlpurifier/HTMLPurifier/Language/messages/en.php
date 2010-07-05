@@ -23,6 +23,7 @@ $messages = array(
 'Lexer: Missing gt'            => 'Missing greater-than sign (>), previous less-than sign (<) should be escaped',
 'Lexer: Missing attribute key' => 'Attribute declaration has no key',
 'Lexer: Missing end quote'     => 'Attribute declaration has no end quote',
+'Lexer: Extracted body'        => 'Removed document metadata tags',
 
 'Strategy_RemoveForeignElements: Tag transform'              => '<$1> element transformed into $CurrentToken.Serialized',
 'Strategy_RemoveForeignElements: Missing required attribute' => '$CurrentToken.Compact element missing required attribute $1',

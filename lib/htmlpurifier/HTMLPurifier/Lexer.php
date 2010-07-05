@@ -267,7 +267,15 @@ class HTMLPurifier_Lexer
 
         // extract body from document if applicable
         if ($config->get('Core.ConvertDocumentToFragment')) {
-            $html = $this->extractBody($html);
+            $e = false;
+            if ($config->get('Core.CollectErrors')) {
+                $e =& $context->get('ErrorCollector');
+            }
+            $new_html = $this->extractBody($html);
+            if ($e && $new_html != $html) {
+                $e->send(E_WARNING, 'Lexer: Extracted body');
+            }
+            $html = $new_html;
         }
 
         // expand entities that aren't the big five
