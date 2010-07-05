@@ -875,7 +875,7 @@ function scorm_pluginfile($course, $cm, $context, $filearea, $args, $forcedownlo
     if ($filearea === 'content') {
         $revision = (int)array_shift($args); // prevents caching problems - ignored here
         $relativepath = implode('/', $args);
-        $fullpath = "$context->id/mod_scorm/content/0/$relativepath";
+        $fullpath = "/$context->id/mod_scorm/content/0/$relativepath";
         // TODO: add any other access restrictions here if needed!
 
     } else if ($filearea === 'package') {
