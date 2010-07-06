@@ -203,6 +203,7 @@ M.core_filepicker.init = function(Y, options) {
                 thumbnail:node.thumbnail,
                 path:node.path?node.path:[]
             };
+            var tmpNode = new YAHOO.widget.TextNode(info, level, false);
             if(node.repo_id) {
                 tmpNode.repo_id=node.repo_id;
             }else{
