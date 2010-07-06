@@ -1,0 +1,86 @@
+<?php
+
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * @package    moodlecore
+ * @subpackage backup-dbops
+ * @copyright  2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+/**
+ * Non instantiable helper class providing DB support to the @restore_controller
+ *
+ * This class contains various static methods available for all the DB operations
+ * performed by the restore_controller class
+ *
+ * TODO: Finish phpdocs
+ */
+abstract class restore_controller_dbops extends restore_dbops {
+
+    public static function save_controller($controller, $checksum) {
+        global $DB;
+        // Check we are going to save one backup_controller
+        if (! $controller instanceof restore_controller) {
+            throw new backup_controller_exception('restore_controller_expected');
+        }
+        // Check checksum is ok. Sounds silly but it isn't ;-)
+        if (!$controller->is_checksum_correct($checksum)) {
+            throw new restore_dbops_exception('restore_controller_dbops_saving_checksum_mismatch');
+        }
+        // Get all the columns
+        $rec = new stdclass();
+        $rec->backupid     = $controller->get_restoreid();
+        $rec->operation    = $controller->get_operation();
+        $rec->type         = $controller->get_type();
+        $rec->itemid       = $controller->get_courseid();
+        $rec->format       = $controller->get_format();
+        $rec->interactive  = $controller->get_interactive();
+        $rec->purpose      = $controller->get_mode();
+        $rec->userid       = $controller->get_userid();
+        $rec->status       = $controller->get_status();
+        $rec->execution    = $controller->get_execution();
+        $rec->executiontime= $controller->get_executiontime();
+        $rec->checksum     = $checksum;
+        // Serialize information
+        $rec->controller = base64_encode(serialize($controller));
+        // Send it to DB
+        if ($recexists = $DB->get_record('backup_controllers', array('backupid' => $rec->backupid))) {
+            $rec->id = $recexists->id;
+            $rec->timemodified = time();
+            $DB->update_record('backup_controllers', $rec);
+        } else {
+            $rec->timecreated = time();
+            $rec->timemodified = 0;
+            $rec->id = $DB->insert_record('backup_controllers', $rec);
+        }
+        return $rec->id;
+    }
+
+    public static function load_controller($restoreid) {
+        global $DB;
+        if (! $controllerrec = $DB->get_record('backup_controllers', array('backupid' => $restoreid))) {
+            throw new backup_dbops_exception('restore_controller_dbops_nonexisting');
+        }
+        $controller = unserialize(base64_decode($controllerrec->controller));
+        // Check checksum is ok. Sounds silly but it isn't ;-)
+        if (!$controller->is_checksum_correct($controllerrec->checksum)) {
+            throw new backup_dbops_exception('restore_controller_dbops_loading_checksum_mismatch');
+        }
+        return $controller;
+    }
+}
