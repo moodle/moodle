@@ -4826,5 +4826,7 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
 }
 
 //TODO: Cleanup before the 2.0 release - we do not want to drag along these dev machine fixes forever
+// 1/ drop block_pinned_old table here and in install.xml
+// 2/ drop block_instance_old table here and in install.xml
 // 3/ remove 2010033101 block
 // 4/ remove 2010032400 block

@@ -2428,7 +2428,7 @@
         <INDEX NAME="parentcontextid-showinsubcontexts-pagetypepattern-subpagepattern" UNIQUE="false" FIELDS="parentcontextid, showinsubcontexts, pagetypepattern, subpagepattern"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="block_positions" COMMENT="Stores the position of a sticky block_instance on a another page than the one where it was added." PREVIOUS="block_instances" NEXT="comments">
+    <TABLE NAME="block_positions" COMMENT="Stores the position of a sticky block_instance on a another page than the one where it was added." PREVIOUS="block_instances" NEXT="block_pinned_old">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="blockinstanceid"/>
         <FIELD NAME="blockinstanceid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="The block_instance this position relates to." PREVIOUS="id" NEXT="contextid"/>
@@ -2448,7 +2448,46 @@
         <INDEX NAME="blockinstanceid-contextid-pagetype-subpage" UNIQUE="true" FIELDS="blockinstanceid, contextid, pagetype, subpage"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="comments" COMMENT="moodle comments module" PREVIOUS="block_positions" NEXT="external_services">
+    <TABLE NAME="block_pinned_old" COMMENT="backup of 1.9 pinned blocks - to be deleted" PREVIOUS="block_positions" NEXT="block_instance_old">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="blockid"/>
+        <FIELD NAME="blockid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="pagetype"/>
+        <FIELD NAME="pagetype" TYPE="char" LENGTH="20" NOTNULL="true" SEQUENCE="false" PREVIOUS="blockid" NEXT="position"/>
+        <FIELD NAME="position" TYPE="char" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="pagetype" NEXT="weight"/>
+        <FIELD NAME="weight" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="position" NEXT="visible"/>
+        <FIELD NAME="visible" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="weight" NEXT="configdata"/>
+        <FIELD NAME="configdata" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" PREVIOUS="visible"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="blockid"/>
+        <KEY NAME="blockid" TYPE="foreign" FIELDS="blockid" REFTABLE="block" REFFIELDS="id" PREVIOUS="primary"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="pagetype" UNIQUE="false" FIELDS="pagetype"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="block_instance_old" COMMENT="backup of 1.9 block instances - to be deleted" PREVIOUS="block_pinned_old" NEXT="comments">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="oldid"/>
+        <FIELD NAME="oldid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" PREVIOUS="id" NEXT="blockid"/>
+        <FIELD NAME="blockid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="oldid" NEXT="pageid"/>
+        <FIELD NAME="pageid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="blockid" NEXT="pagetype"/>
+        <FIELD NAME="pagetype" TYPE="char" LENGTH="20" NOTNULL="true" SEQUENCE="false" PREVIOUS="pageid" NEXT="position"/>
+        <FIELD NAME="position" TYPE="char" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="pagetype" NEXT="weight"/>
+        <FIELD NAME="weight" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="position" NEXT="visible"/>
+        <FIELD NAME="visible" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="weight" NEXT="configdata"/>
+        <FIELD NAME="configdata" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" PREVIOUS="visible"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="blockid"/>
+        <KEY NAME="blockid" TYPE="foreign" FIELDS="blockid" REFTABLE="block" REFFIELDS="id" PREVIOUS="primary"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="pageid" UNIQUE="false" FIELDS="pageid" NEXT="pagetype"/>
+        <INDEX NAME="pagetype" UNIQUE="false" FIELDS="pagetype" PREVIOUS="pageid"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="comments" COMMENT="moodle comments module" PREVIOUS="block_instance_old" NEXT="external_services">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="contextid"/>
         <FIELD NAME="contextid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="id" NEXT="commentarea"/>
