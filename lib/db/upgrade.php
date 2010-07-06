@@ -602,7 +602,7 @@ function xmldb_main_upgrade($oldversion) {
 
     if ($oldversion < 2008080500) {
 
-        /// Define table portfolio_tempdata to be created
+    /// Define table portfolio_tempdata to be created
         $table = new xmldb_table('portfolio_tempdata');
 
     /// Adding fields to table portfolio_tempdata
