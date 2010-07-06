@@ -175,9 +175,9 @@ function resource_20_migrate() {
 }
 
 /**
- * This function creates resource_old table adn copies all data
+ * This function creates resource_old table and copies all data
  * from resource table, this functions has to be called from
- * all modules that are sucessors of old resource module types.
+ * all modules that are successors of old resource module types.
  * @return bool true if migration required, false if not
  */
 function resource_20_prepare_migration() {
@@ -185,7 +185,7 @@ function resource_20_prepare_migration() {
 
     $dbman = $DB->get_manager();
 
-    // If tresource not created yet, this is probably a new install
+    // If the resource not created yet, this is probably a new install
     $table = new xmldb_table('resource');
     if (!$dbman->table_exists($table)) {
         return false;
@@ -258,7 +258,7 @@ function resource_20_prepare_migration() {
  * Migrate old resource type to new module, updates all related info, keeps the context id.
  * @param string $modname name of new module
  * @param object $candidate old instance from resource_old
- * @param object $newinstance new module instance to be insterted into db
+ * @param object $newinstance new module instance to be inserted into db
  * @return mixed false if error, object new instance with id if success
  */
 function resource_migrate_to_module($modname, $candidate, $newinstance) {
