@@ -2631,23 +2631,6 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         upgrade_main_savepoint(true, 2010031900);
     }
 
-
-    if ($oldversion < 2010032400) {
-        // Upgrade all of those using the standardold theme to the use the standard
-        // theme instead
-        if ($CFG->theme == 'standardold') {
-            // The config setting that affects the whole site
-            set_config('theme', 'standard');
-        }
-        // Course Categories
-        $DB->execute('UPDATE {course_categories} SET theme=? WHERE theme=?', array('standard', 'standardold'));
-        // Course
-        $DB->execute('UPDATE {course} SET theme=? WHERE theme=?', array('standard', 'standardold'));
-        // User
-        $DB->execute('UPDATE {user} SET theme=? WHERE theme=?', array('standard', 'standardold'));
-        upgrade_main_savepoint(true, 2010032400);
-    }
-
     if ($oldversion < 2010033101.02) {
 
     /// Define table license to be created
@@ -4731,4 +4714,3 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
 //TODO: Cleanup before the 2.0 release - we do not want to drag along these dev machine fixes forever
 // 1/ drop block_pinned_old table here and in install.xml
 // 2/ drop block_instance_old table here and in install.xml
-// 4/ remove 2010032400 block
