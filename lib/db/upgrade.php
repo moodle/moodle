@@ -2298,6 +2298,7 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         $table->add_field('externalserviceid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
         $table->add_field('sid', XMLDB_TYPE_CHAR, '128', null, null, null, null);
         $table->add_field('contextid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+        $table->add_field('creatorid', XMLDB_TYPE_INTEGER, '20', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '1');
         $table->add_field('iprestriction', XMLDB_TYPE_CHAR, '255', null, null, null, null);
         $table->add_field('validuntil', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null);
         $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
@@ -2308,6 +2309,7 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         $table->add_key('userid', XMLDB_KEY_FOREIGN, array('userid'), 'user', array('id'));
         $table->add_key('externalserviceid', XMLDB_KEY_FOREIGN, array('externalserviceid'), 'external_services', array('id'));
         $table->add_key('contextid', XMLDB_KEY_FOREIGN, array('contextid'), 'context', array('id'));
+        $table->add_key('creatorid', XMLDB_KEY_FOREIGN, array('creatorid'), 'user', array('id'));
 
     /// Launch create table for external_tokens
         $dbman->create_table($table);
@@ -2428,28 +2430,6 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
             upgrade_log(UPGRADE_LOG_NOTICE, null, $subject, $description);
         }
         upgrade_main_savepoint(true, 2009112400);
-    }
-
-    if ($oldversion < 2010010601) {
-
-    /// Define field creatorid to be added to external_tokens
-        $table = new xmldb_table('external_tokens');
-        $field = new xmldb_field('creatorid', XMLDB_TYPE_INTEGER, '20', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '1', 'contextid');
-
-    /// Conditionally launch add field creatorid
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-
-    /// Define key creatorid (foreign) to be added to external_tokens
-        $table = new xmldb_table('external_tokens');
-        $key = new xmldb_key('creatorid', XMLDB_KEY_FOREIGN, array('creatorid'), 'user', array('id'));
-
-    /// Launch add key creatorid
-        $dbman->add_key($table, $key);
-
-    /// Main savepoint reached
-        upgrade_main_savepoint(true, 2010010601);
     }
 
     if ($oldversion < 2010011200) {
