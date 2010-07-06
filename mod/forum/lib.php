@@ -898,7 +898,7 @@ function forum_cron() {
                 }
                 $posthtml .= '</body>';
 
-                if ($userto->mailformat != 1) {
+                if (empty($userto->mailformat) || $userto->mailformat != 1) {
                     // This user DOESN'T want to receive HTML
                     $posthtml = '';
                 }

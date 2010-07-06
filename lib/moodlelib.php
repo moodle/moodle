@@ -4520,16 +4520,19 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml='', $a
     static $mnetjumps = array();
 
     if (empty($user) || empty($user->email)) {
+        mtrace('Error: lib/moodlelib.php email_to_user(): User is null or has no email');
         return false;
     }
 
     if (!empty($user->deleted)) {
         // do not mail delted users
+        mtrace('Error: lib/moodlelib.php email_to_user(): User is deleted');
         return false;
     }
 
     if (!empty($CFG->noemailever)) {
         // hidden setting for development sites, set in config.php if needed
+        mtrace('Error: lib/moodlelib.php email_to_user(): Not sending email due to noemailever config setting');
         return true;
     }
 
@@ -4549,7 +4552,9 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml='', $a
     }
 
     if (over_bounce_threshold($user)) {
-        error_log("User $user->id (".fullname($user).") is over bounce threshold! Not sending.");
+        $bouncemsg = "User $user->id (".fullname($user).") is over bounce threshold! Not sending.";
+        error_log($bouncemsg);
+        mtrace('Error: lib/moodlelib.php email_to_user(): '.$bouncemsg);
         return false;
     }
 
@@ -4626,7 +4631,7 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml='', $a
         $mail->Priority = $from->priority;
     }
 
-    if ($messagehtml && $user->mailformat == 1) { // Don't ever send HTML to users who don't want it
+    if ($messagehtml && !empty($user->mailformat) && $user->mailformat == 1) { // Don't ever send HTML to users who don't want it
         $mail->IsHTML(true);
         $mail->Encoding = 'quoted-printable';           // Encoding to use
         $mail->Body    =  $messagehtml;

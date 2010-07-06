@@ -40,18 +40,17 @@ class message_output_email extends message_output {
     function send_message($message) {
         global $DB;
 
-        //send an email
-        //if fails saved as read message
-
-        //first try to get preference
-        $usertoemail = get_user_preferences( 'message_processor_email_email', '', $message->useridto);
-        //if fails use user profile default
-        if ( $usertoemail == NULL){
-            $userto   = $DB->get_record('user', array('id' => $message->useridto));
-            $usertoemail = $userto->email;
-        }
+        $userto = $DB->get_record('user', array('id' => $message->useridto));
         $userfrom = $DB->get_record('user', array('id' => $message->useridfrom));
-        $result = email_to_user($usertoemail, $userfrom->email,
+
+        //check user preference for where user wants email sent
+        $usertoemailaddress = get_user_preferences('message_processor_email_email', '', $message->useridto);
+
+        if ( !empty($usertoemailaddress)) {
+            $userto->email = $usertoemailaddress;
+        }
+
+        $result = email_to_user($userto, $userfrom,
             $message->subject, $message->fullmessage,
             $message->fullmessagehtml);
 
