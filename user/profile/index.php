@@ -77,7 +77,7 @@ switch ($action) {
         echo $OUTPUT->header();
         echo $OUTPUT->heading($strheading);
         $formcontinue = new single_button(new moodle_url($redirect, $optionsyes), get_string('yes'), 'post');
-        $formcancel = new single_button($redirect, get_string('no'), 'get');
+        $formcancel = new single_button(new moodle_url($redirect), get_string('no'), 'get');
         echo $OUTPUT->confirm(get_string('profileconfirmfielddeletion', 'admin', $datacount), $formcontinue, $formcancel);
         echo $OUTPUT->footer();
         die;
