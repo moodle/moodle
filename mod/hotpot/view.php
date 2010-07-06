@@ -49,7 +49,7 @@
 
     $button = update_module_button($cm->id, $course->id, get_string("modulename", "hotpot"));
     $button = '<div style="font-size:0.75em;">'.$button.'</div>';
-    $loggedinas = '<span class="logininfo">'.user_login_string($course, $USER).'</span>';
+    $loggedinas = user_login_string($course, $USER);
     $time = time();
     $hppassword = optional_param('hppassword', '');
     if (HOTPOT_FIRST_ATTEMPT && !has_capability('mod/hotpot:grade', $context)) {
