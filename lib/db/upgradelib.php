@@ -232,7 +232,7 @@ function upgrade_migrate_files_blog() {
  *
  * Implemented because, at some point, specially in old installations upgraded along
  * multiple versions, sometimes the stuff above has ended being inconsistent, causing
- * problems here and there (noticeablely in backup/restore). MDL-16879
+ * problems here and there (noticeably in backup/restore). MDL-16879
  */
 function upgrade_fix_incorrect_mnethostids() {
 
