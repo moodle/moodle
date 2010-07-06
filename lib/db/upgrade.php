@@ -1915,19 +1915,6 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         upgrade_main_savepoint(true, 2009051700);
     }
 
-    if ($oldversion < 2009060200) {
-    /// Define table files_cleanup to be dropped - not needed
-        $table = new xmldb_table('files_cleanup');
-
-    /// Conditionally launch drop table for files_cleanup
-        if ($dbman->table_exists($table)) {
-            $dbman->drop_table($table);
-        }
-
-    /// Main savepoint reached
-        upgrade_main_savepoint(true, 2009060200);
-    }
-
     /// Repeat 2009050607 upgrade step, which Petr commented out because of XMLDB
     /// stupidity, so lots of people will have missed.
     if ($oldversion < 2009061600) {
