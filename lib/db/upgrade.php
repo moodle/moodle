@@ -2008,26 +2008,6 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         upgrade_main_savepoint(true, 2009071000);
     }
 
-    if ($oldversion < 2009071300) {
-
-    /// Create contexts for every block. In the past, only non-sticky course block had contexts.
-    /// This is a copy of the code in create_contexts.
-        $sql = "INSERT INTO {context} (contextlevel, instanceid)
-                SELECT " . CONTEXT_BLOCK . ", bi.id
-                  FROM {block_instances} bi
-                 WHERE NOT EXISTS (SELECT 'x'
-                                     FROM {context} ctx
-                                    WHERE bi.id = ctx.instanceid AND ctx.contextlevel=" . CONTEXT_BLOCK . ")";
-        $DB->execute($sql);
-
-    /// TODO MDL-19776 We should not really use API functions in upgrade.
-    /// If MDL-19776 is done, we can remove this whole upgrade block.
-        build_context_path();
-
-    /// Main savepoint reached
-        upgrade_main_savepoint(true, 2009071300);
-    }
-
     if ($oldversion < 2009071600) {
 
     /// Define field summaryformat to be added to post
@@ -2096,7 +2076,7 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         // The new global navigation block instance as a stdClass
         $newblockinstances['globalnavigation']->blockname = 'global_navigation_tree';
         $newblockinstances['globalnavigation']->parentcontextid = $syscontext->id; // System context
-        $newblockinstances['globalnavigation']->showinsubcontexts = true; // Show absolutly everywhere
+        $newblockinstances['globalnavigation']->showinsubcontexts = true; // Show absolutely everywhere
         $newblockinstances['globalnavigation']->pagetypepattern = '*'; // Thats right everywhere
         $newblockinstances['globalnavigation']->subpagetypepattern = null;
         $newblockinstances['globalnavigation']->defaultregion = BLOCK_POS_LEFT;

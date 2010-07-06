@@ -1259,6 +1259,11 @@ function upgrade_core($version, $verbose) {
         // Reset caches again, just to be sure
         upgrade_reset_caches();
         remove_dir($CFG->dataroot . '/cache', true); // flush cache
+
+        // Clean up contexts - more and more stuff depends on existence of paths and contexts
+        cleanup_contexts();
+        create_contexts();
+        build_context_path();
         $syscontext = get_context_instance(CONTEXT_SYSTEM);
         mark_context_dirty($syscontext->path);
 
