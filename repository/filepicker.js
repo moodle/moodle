@@ -140,8 +140,7 @@ M.core_filepicker.init = function(Y, options) {
                     scope: scope
                 },
                 headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
-                    'User-Agent': 'MoodleFilePicker/3.0'
+                    'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
                 },
                 data: build_querystring(params),
                 context: this
