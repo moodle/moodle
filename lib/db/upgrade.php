@@ -2443,7 +2443,6 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         upgrade_main_savepoint(true, 2010011200);
     }
 
-
     if ($oldversion < 2010012500) {
         upgrade_fix_incorrect_mnethostids();
         upgrade_main_savepoint(true, 2010012500);
@@ -2647,35 +2646,6 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         // User
         $DB->execute('UPDATE {user} SET theme=? WHERE theme=?', array('standard', 'standardold'));
         upgrade_main_savepoint(true, 2010032400);
-    }
-
-    if ($oldversion < 2010033101.01) {
-
-    /// Define field source to be added to files
-        $table = new xmldb_table('files');
-
-        $field = new xmldb_field('source', XMLDB_TYPE_TEXT, 'small', null, null, null, null, 'status');
-
-    /// Conditionally launch add field source
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-
-        $field = new xmldb_field('author', XMLDB_TYPE_CHAR, '255', null, null, null, null, 'source');
-
-    /// Conditionally launch add field author
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-
-        $field = new xmldb_field('license', XMLDB_TYPE_CHAR, '255', null, null, null, null, 'author');
-
-    /// Conditionally launch add field license
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-
-        upgrade_main_savepoint(true, 2010033101.01);
     }
 
     if ($oldversion < 2010033101.02) {
@@ -4761,5 +4731,4 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
 //TODO: Cleanup before the 2.0 release - we do not want to drag along these dev machine fixes forever
 // 1/ drop block_pinned_old table here and in install.xml
 // 2/ drop block_instance_old table here and in install.xml
-// 3/ remove 2010033101 block
 // 4/ remove 2010032400 block
