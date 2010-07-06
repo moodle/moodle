@@ -969,7 +969,7 @@ function scorm_debug_log_filename($type, $scoid) {
  */
 function scorm_debug_log_write($type, $text, $scoid) {
 
-    $debugenablelog = debugging('', DEBUG_DEVELOPER);
+    $debugenablelog = get_config('scorm', 'allowapidebug');
     if (!$debugenablelog || empty($text)) {
         return ;
     }
@@ -988,7 +988,7 @@ function scorm_debug_log_write($type, $text, $scoid) {
  */
 function scorm_debug_log_remove($type, $scoid) {
 
-    $debugenablelog = debugging('', DEBUG_DEVELOPER);
+    $debugenablelog = get_config('scorm', 'allowapidebug');
     $logfile = scorm_debug_log_filename($type, $scoid);
     if (!$debugenablelog || !file_exists($logfile)) {
         return false;
