@@ -526,6 +526,8 @@ function forum_cron() {
                     continue;
                 }
 
+                //if we want to check that userto and userfrom are not the same person this is probably the spot to do it
+
                 // setup global $COURSE properly - needed for roles and languages
                 cron_setup_user($userto, $course);
 
@@ -605,7 +607,7 @@ function forum_cron() {
                 mtrace('Sending ', '');
 
                 $eventdata = new object();
-                $eventdata->component        = 'mod/forum';
+                $eventdata->component        = 'mod_forum';
                 $eventdata->name             = 'posts';
                 $eventdata->userfrom         = $userfrom;
                 $eventdata->userto           = $userto;
@@ -614,15 +616,17 @@ function forum_cron() {
                 $eventdata->fullmessageformat = FORMAT_PLAIN;
                 $eventdata->fullmessagehtml  = $posthtml;
                 $eventdata->smallmessage     = '';
-                if (!message_send($eventdata)){
 
-                    mtrace("Error: mod/forum/cron.php: Could not send out mail for id $post->id to user $userto->id".
+                $mailresult = message_send($eventdata);
+                if (!$mailresult){
+                    mtrace("Error: mod/forum/lib.php forum_cron(): Could not send out mail for id $post->id to user $userto->id".
                          " ($userto->email) .. not trying again.");
                     add_to_log($course->id, 'forum', 'mail error', "discuss.php?d=$discussion->id#p$post->id",
                                substr(format_string($post->subject,true),0,30), $cm->id, $userto->id);
                     $errorcount[$post->id]++;
                 } else if ($mailresult === 'emailstop') {
                     // should not be reached anymore - see check above
+                    mtrace("Error: mod/forum/lib.php forum_cron(): received 'emailstop' while sending out mail for id $post->id to user $userto->id ($userto->email)");
                 } else {
                     $mailcount[$post->id]++;
 

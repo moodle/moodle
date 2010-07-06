@@ -39,15 +39,17 @@ class message_output_popup extends message_output{
     public function send_message($message) {
         global $DB;
 
-        //put the process record into db
+        //do we want to prevent users from messaging themselves?
+        //if ($message->useridfrom==$message->useridto) {
+            
         $processor = $DB->get_record('message_processors', array('name'=>'popup'));
         $procmessage = new object();
         $procmessage->unreadmessageid = $message->id;
         $procmessage->processorid     = $processor->id;
 
+        //save this message for later delivery
         $DB->insert_record('message_working', $procmessage);
 
-        //should only save this message for later delivery
         return true;
     }
 
