@@ -54,6 +54,13 @@ abstract class backup implements checksumable {
     const MODE_HUB      = 30;
     const MODE_SAMESITE = 40;
 
+    // Target (new/existing/current/adding/deleting)
+    const TARGET_CURRENT_DELETING = 0;
+    const TARGET_CURRENT_ADDING   = 1;
+    const TARGET_NEW_COURSE       = 2;
+    const TARGET_EXISTING_DELETING= 3;
+    const TARGET_EXISTING_ADDING  = 4;
+
     // Execution mode
     const EXECUTION_INMEDIATE = 1;
     const EXECUTION_DELAYED   = 2;

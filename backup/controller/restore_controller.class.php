@@ -1,0 +1,375 @@
+<?php
+
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * @package moodlecore
+ * @subpackage backup-controller
+ * @copyright 2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+/**
+ * Class implementing the controller of any restore process
+ *
+ * This final class is in charge of controlling all the restore architecture, for any
+ * type of backup.
+ *
+ * TODO: Finish phpdocs
+ */
+class restore_controller extends backup implements loggable {
+
+    protected $tempdir;   // Directory under dataroot/temp/backup awaiting restore
+    protected $restoreid; // Unique identificator for this restore
+
+    protected $courseid; // courseid where restore is going to happen
+
+    protected $type;   // Type of backup (activity, section, course)
+    protected $format; // Format of backup (moodle, imscc)
+    protected $interactive; // yes/no
+    protected $mode;   // Purpose of the backup (default settings)
+    protected $userid; // user id executing the restore
+    protected $operation; // Type of operation (backup/restore)
+    protected $target;    // Restoring to new/existing/current_adding/_deleting
+
+    protected $status; // Current status of the controller (created, planned, configured...)
+
+    protected $info;   // Information retrieved from backup contents
+    protected $plan;   // Restore execution plan
+
+    protected $execution;     // inmediate/delayed
+    protected $executiontime; // epoch time when we want the restore to be executed (requires cron to run)
+
+    protected $logger;      // Logging chain object (moodle, inline, fs, db, syslog)
+
+    protected $checksum; // Cache @checksumable results for lighter @is_checksum_correct() uses
+
+    public function __construct($tempdir, $courseid, $interactive, $mode, $userid, $target){
+        $this->tempdir = $tempdir;
+        $this->courseid = $courseid;
+        $this->interactive = $interactive;
+        $this->mode = $mode;
+        $this->userid = $userid;
+        $this->target = $target;
+
+        // Apply some defaults
+        $this->type = '';
+        $this->format = backup::FORMAT_UNKNOWN;
+        $this->execution = backup::EXECUTION_INMEDIATE;
+        $this->operation = backup::OPERATION_RESTORE;
+        $this->executiontime = 0;
+        $this->checksum = '';
+
+        // Apply current backup version and release if necessary
+        backup_controller_dbops::apply_version_and_release();
+
+        // Check courseid is correct
+        restore_check::check_courseid($this->courseid);
+
+        // Check user is correct
+        restore_check::check_user($this->userid);
+
+        // Calculate unique $restoreid
+        $this->calculate_restoreid();
+
+        // Default logger chain (based on interactive/execution)
+        $this->logger = backup_factory::get_logger_chain($this->interactive, $this->execution, $this->restoreid);
+
+        // Instantiate the output_controller singleton and active it if interactive and inmediate
+        $oc = output_controller::get_instance();
+        if ($this->interactive == backup::INTERACTIVE_YES && $this->execution == backup::EXECUTION_INMEDIATE) {
+            $oc->set_active(true);
+        }
+
+        $this->log('instantiating restore controller', backup::LOG_INFO, $this->restoreid);
+
+        // Set initial status
+        $this->set_status(backup::STATUS_CREATED);
+
+        // Calculate original restore format
+        $this->format = backup_general_helper::detect_backup_format($tempdir);
+
+        // If format is not moodle2, set to conversion needed
+        if ($this->format !== backup::FORMAT_MOODLE) {
+            $this->set_status(backup::STATUS_REQUIRE_CONV);
+
+        // Else, format is moodle2, load plan, apply security and set status based on interactivity
+        } else {
+            // Load plan
+            $this->load_plan();
+
+            // Perform all initial security checks and apply (2nd param) them to settings automatically
+            restore_check::check_security($this, true);
+
+            if ($this->interactive == backup::INTERACTIVE_YES) {
+                $this->set_status(backup::STATUS_SETTING_UI);
+            } else {
+                $this->set_status(backup::STATUS_NEED_PRECHECK);
+            }
+        }
+    }
+
+    public function finish_ui() {
+        if ($this->status != backup::STATUS_SETTING_UI) {
+            throw new backup_controller_exception('cannot_finish_ui_if_not_setting_ui');
+        }
+        $this->set_status(backup::STATUS_NEED_PRECHECK);
+    }
+
+    public function process_ui_event() {
+
+        // Perform security checks throwing exceptions (2nd param) if something is wrong
+        restore_check::check_security($this, false);
+    }
+
+    public function set_status($status) {
+        $this->log('setting controller status to', backup::LOG_DEBUG, $status);
+        // TODO: Check it's a correct status
+        $this->status = $status;
+        // Ensure that, once set to backup::STATUS_AWAITING | STATUS_NEED_PRECHECK, controller is stored in DB
+        if ($status == backup::STATUS_AWAITING || $status == backup::STATUS_NEED_PRECHECK) {
+            $this->save_controller();
+            $this->logger = self::load_controller($this->restoreid)->logger; // wakeup loggers
+        }
+    }
+
+    public function set_execution($execution, $executiontime = 0) {
+        $this->log('setting controller execution', backup::LOG_DEBUG);
+        // TODO: Check valid execution mode
+        // TODO: Check time in future
+        // TODO: Check time = 0 if inmediate
+        $this->execution = $execution;
+        $this->executiontime = $executiontime;
+
+        // Default logger chain (based on interactive/execution)
+        $this->logger = backup_factory::get_logger_chain($this->interactive, $this->execution, $this->restoreid);
+    }
+
+// checksumable interface methods
+
+    public function calculate_checksum() {
+        // Reset current checksum to take it out from calculations!
+        $this->checksum = '';
+        // Init checksum
+        $tempchecksum = md5('tempdir-'    . $this->tempdir .
+                            'restoreid-'  . $this->restoreid .
+                            'courseid-'   . $this->courseid .
+                            'type-'       . $this->type .
+                            'format-'     . $this->format .
+                            'interactive-'. $this->interactive .
+                            'mode-'       . $this->mode .
+                            'userid-'     . $this->userid .
+                            'target-'     . $this->target .
+                            'operation-'  . $this->operation .
+                            'status-'     . $this->status .
+                            'execution-'  . $this->execution .
+                            'plan-'       . backup_general_helper::array_checksum_recursive(array($this->plan)) .
+                            'info-'       . backup_general_helper::array_checksum_recursive(array($this->info)) .
+                            'logger-'     . backup_general_helper::array_checksum_recursive(array($this->logger)));
+        $this->log('calculating controller checksum', backup::LOG_DEBUG, $tempchecksum);
+        return $tempchecksum;
+    }
+
+    public function is_checksum_correct($checksum) {
+        return $this->checksum === $checksum;
+    }
+
+    public function get_tempdir() {
+        return $this->tempdir;
+    }
+
+    public function get_restoreid() {
+        return $this->restoreid;
+    }
+
+    public function get_type() {
+        return $this->type;
+    }
+
+    public function get_operation() {
+        return $this->operation;
+    }
+
+    public function get_courseid() {
+        return $this->courseid;
+    }
+
+    public function get_format() {
+        return $this->format;
+    }
+
+    public function get_interactive() {
+        return $this->interactive;
+    }
+
+    public function get_mode() {
+        return $this->mode;
+    }
+
+    public function get_userid() {
+        return $this->userid;
+    }
+
+    public function get_target() {
+        return $this->target;
+    }
+
+    public function get_status() {
+        return $this->status;
+    }
+
+    public function get_execution() {
+        return $this->execution;
+    }
+
+    public function get_executiontime() {
+        return $this->executiontime;
+    }
+
+    public function get_plan() {
+        return $this->plan;
+    }
+
+    public function get_info() {
+        return $this->info;
+    }
+
+    public function get_logger() {
+        return $this->logger;
+    }
+
+    public function execute_plan() {
+        return $this->plan->execute();
+    }
+
+    public function execute_precheck() {
+        debugging ('TODO: Not applying prechecks yet, need to link them to proper restore_precheck class!', DEBUG_DEVELOPER);
+        $this->set_status(backup::STATUS_AWAITING); // TODO: Delete this once prechecks and steps are in place
+        //return $this->precheck->execute();
+        return true;
+    }
+
+    public function get_results() {
+        return $this->plan->get_results();
+    }
+
+    public function get_precheck_results() {
+        debugging ('TODO: Not applying prechecks yet, need to link them to proper restore_precheck class!', DEBUG_DEVELOPER);
+        return array();
+        //return $this->precheck->get_results();
+    }
+
+    public function log($message, $level, $a = null, $depth = null, $display = false) {
+        backup_helper::log($message, $level, $a, $depth, $display, $this->logger);
+    }
+
+    public function save_controller() {
+        // Going to save controller to persistent storage, calculate checksum for later checks and save it
+        // TODO: flag the controller as NA. Any operation on it should be forbidden util loaded back
+        $this->log('saving controller to db', backup::LOG_DEBUG);
+        $this->checksum = $this->calculate_checksum();
+        restore_controller_dbops::save_controller($this, $this->checksum);
+    }
+
+    public static function load_controller($restoreid) {
+        // Load controller from persistent storage
+        // TODO: flag the controller as available. Operations on it can continue
+        $controller = restore_controller_dbops::load_controller($restoreid);
+        $controller->log('loading controller from db', backup::LOG_DEBUG);
+        return $controller;
+    }
+
+    /**
+     * class method to provide pseudo random unique "correct" tempdir names
+     */
+    public static function get_tempdir_name($courseid = 0, $userid = 0) {
+        // Current epoch time + courseid + userid + random bits
+        return md5(time() . '-' . $courseid . '-'. $userid . '-'. random_string(20));
+    }
+
+    /**
+     * convert from current format to backup::MOODLE format
+     */
+    public function convert() {
+        if ($this->status != backup::STATUS_REQUIRE_CONV) {
+            throw new restore_controller_exception('cannot_convert_not_required_status');
+        }
+        if ($this->format == backup::FORMAT_UNKNOWN) {
+            throw new restore_controller_exception('cannot_convert_from_unknown_format');
+        }
+        if ($this->format == backup::FORMAT_MOODLE1) {
+            // TODO: Implement moodle1 => moodle2 conversion
+            throw new restore_controller_exception('cannot_convert_yet_from_moodle1_format');
+        }
+
+        // Once conversions have finished, we check again the format
+        $newformat = backup_general_helper::detect_backup_format($tempdir);
+
+        // If format is moodle2, load plan, apply security and set status based on interactivity
+        if ($newformat === backup::FORMAT_MOODLE) {
+            // Load plan
+            $this->load_plan();
+
+            // Perform all initial security checks and apply (2nd param) them to settings automatically
+            restore_check::check_security($this, true);
+
+            if ($this->interactive == backup::INTERACTIVE_YES) {
+                $this->set_status(backup::STATUS_SETTING_UI);
+            } else {
+                $this->set_status(backup::STATUS_NEED_PRECHECK);
+            }
+        } else {
+            throw new restore_controller_exception('conversion_ended_with_wrong_format', $newformat);
+        }
+    }
+
+// Protected API starts here
+
+    protected function calculate_restoreid() {
+        // Current epoch time + tempdir + courseid + interactive + mode + userid + target + operation + random bits
+        $this->restoreid = md5(time() . '-' . $this->tempdir . '-' . $this->courseid . '-'. $this->interactive . '-' .
+                               $this->mode . '-' . $this->userid . '-'. $this->target . '-' . $this->operation . '-' .
+                               random_string(20));
+    }
+
+    protected function load_plan() {
+        // First of all, we need to introspect the moodle_backup.xml file
+        // in order to detect all the required stuff. So, create the
+        // monster $info structure where everything will be defined
+        $this->log('loading backup info', backup::LOG_DEBUG);
+        $this->info = backup_general_helper::get_backup_information($this->tempdir);
+
+        // Set the controller type to the one found in the information
+        $this->type = $this->info->type;
+
+        // Now we load the plan that will be configured following the
+        // information provided by the $info
+        $this->log('loading controller plan', backup::LOG_DEBUG);
+        $this->plan = new restore_plan($this);
+        $this->plan->build(); // Build plan for this controller
+        $this->set_status(backup::STATUS_PLANNED);
+    }
+}
+
+/*
+ * Exception class used by all the @restore_controller stuff
+ */
+class restore_controller_exception extends backup_exception {
+
+    public function __construct($errorcode, $a=NULL, $debuginfo=null) {
+        parent::__construct($errorcode, $a, $debuginfo);
+    }
+}
