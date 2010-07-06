@@ -944,6 +944,22 @@ function scorm_extend_navigation($navigation, $course, $module, $cm) {
      */
     $navigation->nodetype = navigation_node::NODETYPE_LEAF;
 }
+
+/**
+ * Get the filename for a temp log file
+ *
+ * @param string $type - type of log(aicc,scorm12,scorm13) used as prefix for filename
+ * @param integer $scoid - scoid of object this log entry is for
+ * @return string The filename as an absolute path 
+*/
+function scorm_debug_log_filename($type, $scoid) {
+    global $CFG, $USER;
+
+    $logpath = $CFG->dataroot.'/temp/scormlogs';
+    $logfile = $logpath.'/'.$type.'debug_'.$USER->id.'_'.$scoid.'.log';
+    return $logfile;
+}
+
 /**
  * writes log output to a temp log file
  *
@@ -951,20 +967,36 @@ function scorm_extend_navigation($navigation, $course, $module, $cm) {
  * @param string $text - text to be written to file.
  * @param integer $scoid - scoid of object this log entry is for.
  */
-function scorm_write_log($type, $text, $scoid) {
-    global $CFG, $USER;
+function scorm_debug_log_write($type, $text, $scoid) {
 
     $debugenablelog = debugging('', DEBUG_DEVELOPER);
     if (!$debugenablelog || empty($text)) {
         return ;
     }
     if (make_upload_directory('temp/scormlogs/')) {
-        $logpath = $CFG->dataroot.'/temp/scormlogs';
-
-        $logfile = $logpath.'/'.$type.'debug_'.$USER->id.'_'.$scoid.'.log';
+        $logfile = scorm_debug_log_filename($type, $scoid);
         @file_put_contents($logfile, date('Y/m/d H:i:s O')." DEBUG $text\r\n", FILE_APPEND);
     }
 }
+
+ /**
+ * Remove debug log file
+ *
+ * @param string $type - type of log(aicc,scorm12,scorm13) used as prefix for filename
+ * @param integer $scoid - scoid of object this log entry is for
+ * @return boolean True if the file is successfully deleted, false otherwise
+ */
+function scorm_debug_log_remove($type, $scoid) {
+
+    $debugenablelog = debugging('', DEBUG_DEVELOPER);
+    $logfile = scorm_debug_log_filename($type, $scoid);
+    if (!$debugenablelog || !file_exists($logfile)) {
+        return false;
+    }
+
+    return @unlink($logfile);
+}
+
 /**
  * writes overview info for course_overview block - displays upcoming scorm objects that have a due date
  *

@@ -55,13 +55,14 @@
         } else {
             print_error('cannotcallscript');
         }
-        scorm_write_log("aicc", "scoid: $scoid", $scoid);
-        scorm_write_log("aicc", "mode: $mode", $scoid);
-        scorm_write_log("aicc", "status: $status", $scoid);
-        scorm_write_log("aicc", "attempt: $attempt", $scoid);
-        scorm_write_log("aicc", "command: $command", $scoid);
-        scorm_write_log("aicc", "sessionid: $sessionid", $scoid);
-        scorm_write_log("aicc", "aiccdata:\r\n$aiccdata", $scoid);
+        $aiccrequest = "MOODLE scoid: $scoid"
+                     . "\r\nMOODLE mode: $mode"
+                     . "\r\nMOODLE status: $status"
+                     . "\r\nMOODLE attempt: $attempt"
+                     . "\r\nAICC sessionid: $sessionid"
+                     . "\r\nAICC command: $command"
+                     . "\r\nAICC aiccdata:\r\n$aiccdata";
+        scorm_debug_log_write("aicc", "HACP Request:\r\n$aiccrequest", $scoid);
         ob_start();
 
         if ($scorm = $DB->get_record('scorm',array('id'=>$sco->scorm))) {
@@ -386,5 +387,5 @@
         }
     }
     $aiccresponse = ob_get_contents();
-    scorm_write_log("aicc", "response:\r\n$aiccresponse", $scoid);
+    scorm_debug_log_write("aicc", "HACP Response:\r\n$aiccresponse", $scoid);
     ob_end_flush();
