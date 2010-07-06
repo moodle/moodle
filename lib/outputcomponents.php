@@ -1362,7 +1362,7 @@ class html_writer {
         $text = trim($text);
         $label = self::tag('label', $text, $attributes);
 
-        if ($colonize) {
+        if (!empty($text) and $colonize) {
             // the $text may end with the colon already, though it is bad string definition style
             $colon = get_string('labelsep', 'langconfig');
             if (!empty($colon)) {
