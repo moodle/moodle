@@ -164,14 +164,14 @@ switch ($action) {
     case 'download':
         // validate mimetype
         $mimetypes = array();
-        if (in_array('*', $accepted_types) or $accepted_types == '*') {
+        if ((is_array($accepted_types) and in_array('*', $accepted_types)) or $accepted_types == '*') {
             $mimetypes = '*';
         } else {
             foreach ($accepted_types as $type) {
                 $mimetypes[] = mimeinfo('type', $type);
             }
             if (!in_array(mimeinfo('type', $saveas_filename), $mimetypes)) {
-                throw new moodle_exception('invalidfiletype', 'repository', '', mimeinfo('type', $_FILES[$elname]['name']));
+                throw new moodle_exception('invalidfiletype', 'repository', '', mimeinfo('type', $saveas_filename));
             }
         }
 
