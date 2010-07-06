@@ -599,15 +599,20 @@ function xmldb_main_upgrade($oldversion) {
 
     if ($oldversion < 2008080500) {
 
-   /// Define table portfolio_tempdata to be created
+        /// Define table portfolio_tempdata to be created
         $table = new xmldb_table('portfolio_tempdata');
 
     /// Adding fields to table portfolio_tempdata
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
         $table->add_field('data', XMLDB_TYPE_TEXT, 'big', null, null, null, null);
+        $table->add_field('expirytime', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+        $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+        $table->add_field('instance', XMLDB_TYPE_INTEGER, '10', null, null, null, '0');
 
     /// Adding keys to table portfolio_tempdata
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_key('userfk', XMLDB_KEY_FOREIGN, array('userid'), 'user', array('id'));
+        $table->add_key('instance', XMLDB_KEY_FOREIGN, array('instance'), 'portfolio_instance', array('id'));
 
     /// Conditionally launch create table for portfolio_tempdata
         if (!$dbman->table_exists($table)) {
@@ -616,22 +621,6 @@ function xmldb_main_upgrade($oldversion) {
 
     /// Main savepoint reached
         upgrade_main_savepoint(true, 2008080500);
-    }
-
-    if ($oldversion < 2008080600) {
-
-        $DB->delete_records('portfolio_tempdata'); // there shouldnt' be any, and it will cause problems with this upgrade.
-    /// Define field expirytime to be added to portfolio_tempdata
-        $table = new xmldb_table('portfolio_tempdata');
-        $field = new xmldb_field('expirytime', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, 'data');
-
-    /// Conditionally launch add field expirytime
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-
-    /// Main savepoint reached
-        upgrade_main_savepoint(true, 2008080600);
     }
 
     if ($oldversion < 2008081500) {
@@ -691,34 +680,6 @@ function xmldb_main_upgrade($oldversion) {
 
     /// Main savepoint reached
         upgrade_main_savepoint(true, 2008081600);
-    }
-
-    if ($oldversion < 2008081900) {
-    /// Define field userid to be added to portfolio_tempdata
-        $table = new xmldb_table('portfolio_tempdata');
-        $field = new xmldb_field('userid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null, 'expirytime');
-
-    /// Conditionally launch add field userid
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-        $DB->set_field('portfolio_tempdata', 'userid', 0);
-    /// now change it to be notnull
-
-    /// Changing nullability of field userid on table portfolio_tempdata to not null
-        $field = new xmldb_field('userid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, 'expirytime');
-
-    /// Launch change of nullability for field userid
-        $dbman->change_field_notnull($table, $field);
-
-    /// Define key userfk (foreign) to be added to portfolio_tempdata
-        $table = new xmldb_table('portfolio_tempdata');
-        $key = new xmldb_key('userfk', XMLDB_KEY_FOREIGN, array('userid'), 'user', array('id'));
-
-    /// Launch add key userfk
-        $dbman->add_key($table, $key);
-
-        upgrade_main_savepoint(true, 2008081900);
     }
 
     if ($oldversion < 2008082602) {
@@ -2500,26 +2461,6 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
 
     /// Main savepoint reached
         upgrade_main_savepoint(true, 2009110605);
-    }
-
-    if ($oldversion < 2009111600) {
-
-    /// Define field instance to be added to portfolio_tempdata
-        $table = new xmldb_table('portfolio_tempdata');
-        $field = new xmldb_field('instance', XMLDB_TYPE_INTEGER, '10', null, null, null, '0', 'userid');
-
-    /// Conditionally launch add field instance
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-
-       $key = new xmldb_key('instancefk', XMLDB_KEY_FOREIGN, array('instance'), 'portfolio_instance', array('id'));
-
-    /// Launch add key instancefk
-        $dbman->add_key($table, $key);
-
-    /// Main savepoint reached
-        upgrade_main_savepoint(true, 2009111600);
     }
 
     if ($oldversion < 2009111700) {
