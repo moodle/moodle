@@ -24,7 +24,7 @@
  *
  * The upgrade function in this file will attempt
  * to perform all the necessary actions to upgrade
- * your older installtion to the current version.
+ * your older installation to the current version.
  *
  * @package mod-wiki-2.0
  * @copyrigth 2009 Marc Alier, Jordi Piguillem marc.alier@upc.edu

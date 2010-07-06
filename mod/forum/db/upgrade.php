@@ -25,7 +25,7 @@
  *
  * The upgrade function in this file will attempt
  * to perform all the necessary actions to upgrade
- * your older installtion to the current version.
+ * your older installation to the current version.
  *
  * If there's something it cannot do itself, it
  * will tell you what you need to do.
