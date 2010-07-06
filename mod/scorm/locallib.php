@@ -1048,7 +1048,7 @@ function scorm_element_cmp($a, $b) {
 function scorm_get_attempt_status($user, $scorm) {
     global $DB;
 
-    $attempts = $DB->get_records_select('scorm_scoes_track',"element='cmi.core.score.raw' AND userid=? AND scormid=?", array($user->id, $scorm->id),'attempt','attempt AS attemptnumber, value AS grade');
+    $attempts = scorm_get_attempt_count($user, $scorm, true);
     if(empty($attempts)) {
         $attemptcount = 0;
     } else {
@@ -1083,7 +1083,7 @@ function scorm_get_attempt_status($user, $scorm) {
     if(!empty($attempts)) {
         foreach($attempts as $attempt) {
             $gradereported = scorm_grade_user_attempt($scorm, $user->id, $attempt->attemptnumber);
-            $result .= get_string('gradeforattempt', 'scorm').' ' . $attempt->attemptnumber . ': ' . $attempt->grade .'%<BR>';
+            $result .= get_string('gradeforattempt', 'scorm').' ' . $attempt->attemptnumber . ': ' . $gradereported->score .'%<BR>';
         }
     }
 
@@ -1105,16 +1105,20 @@ function scorm_get_attempt_status($user, $scorm) {
 *
 * @param object $user Current context user
 * @param object $scorm a moodle scrom object - mdl_scorm
+* @param bool $attempts return the list of attempts
 * @return int - no. of attempts so far
 */
-function scorm_get_attempt_count($user, $scorm) {
+function scorm_get_attempt_count($user, $scorm, $attempts_only=false) {
     global $DB;
     $attemptcount = 0;
     $element = 'cmi.core.score.raw';
     if ($scorm->version == 'scorm1_3') {
         $element = 'cmi.score.raw';
     }
-    $attempts = $DB->get_records_select('scorm_scoes_track',"element=? AND userid=? AND scormid=?", array($element, $user->id, $scorm->id),'attempt','attempt AS attemptnumber, value AS grade');
+    $attempts = $DB->get_records_select('scorm_scoes_track',"element=? AND userid=? AND scormid=?", array($element, $user->id, $scorm->id),'attempt','DISTINCT attempt AS attemptnumber');
+    if ($attempts_only) {
+        return $attempts;
+    }
     if(!empty($attempts)) {
         $attemptcount = count($attempts);
     }
