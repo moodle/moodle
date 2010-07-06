@@ -2026,18 +2026,6 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         upgrade_main_savepoint(true, 2009061705);
     }
 
-    if ($oldversion < 2009061706) {
-        // change component string in message_providers records to new "_" format
-        if ($mps = $DB->get_records('message_providers')) {
-            foreach ($mps as $mp) {
-                $mp->component = str_replace('/', '_', $mp->component);
-                $DB->update_record('message_providers', $cap);
-            }
-        }
-        unset($caps);
-        upgrade_main_savepoint(true, 2009061706);
-    }
-
     if ($oldversion < 2009063000) {
         // upgrade format of _with_advanced settings - quiz only
         // note: this can be removed later, not needed for upgrades from 1.9.x
