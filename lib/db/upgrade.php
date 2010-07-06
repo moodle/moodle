@@ -2189,18 +2189,6 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         upgrade_main_savepoint(true, 2009090800);
     }
 
-    if ($oldversion < 2009100601) {
-        // drop all previous tables defined during the dev phase
-        $dropold = array('external_services_users', 'external_services_functions', 'external_services', 'external_functions');
-        foreach ($dropold as $tablename) {
-            $table = new xmldb_table($tablename);
-            if ($dbman->table_exists($table)) {
-                $dbman->drop_table($table);
-            }
-        }
-        upgrade_main_savepoint(true, 2009100601);
-    }
-
     if ($oldversion < 2009100602) {
     /// Define table external_functions to be created
         $table = new xmldb_table('external_functions');
@@ -2227,7 +2215,7 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
     }
 
     if ($oldversion < 2009100603) {
-    /// Define table external_services to be created
+        /// Define table external_services to be created
         $table = new xmldb_table('external_services');
 
     /// Adding fields to table external_services
@@ -2237,6 +2225,8 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         $table->add_field('requiredcapability', XMLDB_TYPE_CHAR, '150', null, null, null, null);
         $table->add_field('restrictedusers', XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
         $table->add_field('component', XMLDB_TYPE_CHAR, '100', null, null, null, null);
+        $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+        $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null);
 
     /// Adding keys to table external_services
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
@@ -2429,30 +2419,6 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         unset($extendtables);
 
         upgrade_main_savepoint(true, 2009110400);
-    }
-
-    if ($oldversion < 2009110605) {
-
-    /// Define field timecreated to be added to external_services
-        $table = new xmldb_table('external_services');
-        $field = new xmldb_field('timecreated', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'component');
-
-    /// Conditionally launch add field timecreated
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-
-    /// Define field timemodified to be added to external_services
-        $table = new xmldb_table('external_services');
-        $field = new xmldb_field('timemodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null, 'timecreated');
-
-    /// Conditionally launch add field timemodified
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-
-    /// Main savepoint reached
-        upgrade_main_savepoint(true, 2009110605);
     }
 
     if ($oldversion < 2009112400) {
