@@ -21,22 +21,11 @@
  * @since 2.0
  * @package moodlecore
  * @subpackage repository
- * @copyright 2010 Dongsheng Cai
- * @author Dongsheng Cai <dongsheng@moodle.com>
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright 2010 Dongsheng Cai <dongsheng@moodle.com>
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 class repository_user extends repository {
-
-    /**
-     * initialize user plugin
-     * @param int $repositoryid
-     * @param int $context
-     * @param array $options
-     */
-    public function __construct($repositoryid, $context = SYSCONTEXTID, $options = array()) {
-        parent::__construct($repositoryid, $context, $options);
-    }
 
     /**
      * user plugin doesn't require login
@@ -44,15 +33,6 @@ class repository_user extends repository {
      */
     public function print_login() {
         return $this->get_listing();
-    }
-
-    /**
-     * Not supported by File API yet
-     * @param string $search_text
-     * @return mixed
-     */
-    public function search($search_text) {
-        return array();
     }
 
     /**
@@ -72,11 +52,11 @@ class repository_user extends repository {
         if (!empty($encodedpath)) {
             $params = unserialize(base64_decode($encodedpath));
             if (is_array($params)) {
-                $itemid   = $params['itemid'];
-                $filename = $params['filename'];
-                $filearea = $params['filearea'];
-                $filepath = $params['filepath'];
-                $context  = get_context_instance_by_id($params['contextid']);
+                $itemid   = clean_param($params['itemid'], PARAM_INT);
+                $filename = clean_param($params['filename'], PARAM_FILE);
+                $filearea = clean_param($params['filearea'], PARAM_ALPHAEXT);
+                $filepath = clean_param($params['filepath'], PARAM_PATH);;
+                $context  = get_context_instance_by_id(clean_param($params['contextid'], PARAM_INT));
             }
         } else {
             $itemid   = 0;
@@ -166,27 +146,24 @@ class repository_user extends repository {
      * @param string $new_filepath the new path in draft area
      * @return array The information of file
      */
-    public function copy_to_area($encoded, $new_filearea='user_draft', $new_itemid = '', $new_filepath = '/', $new_filename = '') {
+    public function copy_to_area($encoded, $new_filearea='draft', $new_itemid = '', $new_filepath = '/', $new_filename = '') {
         global $USER, $DB;
-        $info = array();
 
         $browser = get_file_browser();
         $params = unserialize(base64_decode($encoded));
         $user_context = get_context_instance(CONTEXT_USER, $USER->id);
-        // the final file
-        $contextid  = $params['contextid'];
-        $filearea   = $params['filearea'];
-        $filepath   = $params['filepath'];
-        $filename   = $params['filename'];
-        $fileitemid = $params['itemid'];
-        $context    = get_context_instance_by_id($contextid);
-        try {
-            $file_info = $browser->get_file_info($context, $filearea, $fileitemid, $filepath, $filename);
-            $file_info->copy_to_storage($user_context->id, $new_filearea, $new_itemid, $new_filepath, $new_filename);
-        } catch (Exception $e) {
-            throw $e;
-        }
 
+        $contextid  = clean_param($params['contextid'], PARAM_INT);
+        $fileitemid = clean_param($params['itemid'], PARAM_INT);
+        $filename = clean_param($params['filename'], PARAM_FILE);
+        $filepath = clean_param($params['filepath'], PARAM_PATH);;
+        $filearea = clean_param($params['filearea'], PARAM_ALPHAEXT);
+
+        $context    = get_context_instance_by_id($contextid);
+        $file_info = $browser->get_file_info($context, $filearea, $fileitemid, $filepath, $filename);
+        $file_info->copy_to_storage($user_context->id, $new_filearea, $new_itemid, $new_filepath, $new_filename);
+
+        $info = array();
         $info['itemid'] = $new_itemid;
         $info['title']  = $new_filename;
         $info['contextid'] = $user_context->id;
