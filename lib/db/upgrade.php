@@ -4881,6 +4881,93 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         upgrade_main_savepoint(true, 2010070502);
     }
 
+    if ($oldversion < 2010070601) {
+        // delete loan calc if not used - it was moved to contrib
+        if (!file_exists("$CFG->dirroot/blocks/loancalc/version.php")) {
+            if (!$DB->record_exists('block_instances', array('blockname'=>'loancalc'))) {
+                $DB->delete_records('block', array('name'=>'loancalc'));
+            }
+        }
+        upgrade_main_savepoint(true, 2010070601);
+    }
+
+    if ($oldversion < 2010070602) {
+        // delete exercise if not used and not installed - now in contrib (do not use adminlib uninstall functions, they may change)
+        if (!file_exists("$CFG->dirroot/mod/exercise/version.php")) {
+            if ($module = $DB->get_record('modules', array('name'=>'exercise'))) {
+                if (!$DB->record_exists('course_modules', array('module'=>$module->id))) {
+                    //purge capabilities
+                    $DB->delete_records_select('capabilities', "name LIKE ?", array('mod/exercise:%'));
+                    $DB->delete_records_select('role_capabilities', "capability LIKE ?", array('mod/exercise:%'));
+                    $tables = array('exercise', 'exercise_submissions', 'exercise_assessments', 'exercise_elements', 'exercise_rubrics', 'exercise_grades');
+                    foreach ($tables as $tname) {
+                        $table = new xmldb_table($tname);
+                        if ($dbman->table_exists($table)) {
+                            $dbman->drop_table($table);
+                        }
+                    }
+                    $DB->delete_records('event', array('modulename' => 'exercise'));
+                    $DB->delete_records('log', array('module' => 'exercise'));
+                    $DB->delete_records('log_display', array('module' => 'exercise'));
+                    $DB->delete_records('modules', array('name'=>'exercise'));
+                }
+            }
+        }
+        upgrade_main_savepoint(true, 2010070602);
+    }
+
+    if ($oldversion < 2010070603) {
+        // delete journal if not used and not installed - now in contrib (do not use adminlib uninstall functions, they may change)
+        if (!file_exists("$CFG->dirroot/mod/journal/version.php")) {
+            if ($module = $DB->get_record('modules', array('name'=>'journal'))) {
+                if (!$DB->record_exists('course_modules', array('module'=>$module->id))) {
+                    //purge capabilities
+                    $DB->delete_records_select('capabilities', "name LIKE ?", array('mod/journal:%'));
+                    $DB->delete_records_select('role_capabilities', "capability LIKE ?", array('mod/journal:%'));
+                    $tables = array('journal', 'journal_entries');
+                    foreach ($tables as $tname) {
+                        $table = new xmldb_table($tname);
+                        if ($dbman->table_exists($table)) {
+                            $dbman->drop_table($table);
+                        }
+                    }
+                    $DB->delete_records('event', array('modulename' => 'journal'));
+                    $DB->delete_records('log', array('module' => 'journal'));
+                    $DB->delete_records('log_display', array('module' => 'journal'));
+                    $DB->delete_records('modules', array('name'=>'journal'));
+                    unset_config('journal_initialdisable');
+                }
+            }
+        }
+        upgrade_main_savepoint(true, 2010070603);
+    }
+
+    if ($oldversion < 2010070604) {
+        // delete lams if not used and not installed - now in contrib (do not use adminlib uninstall functions, they may change)
+        if (!file_exists("$CFG->dirroot/mod/lams/version.php")) {
+            if ($module = $DB->get_record('modules', array('name'=>'lams'))) {
+                if (!$DB->record_exists('course_modules', array('module'=>$module->id))) {
+                    //purge capabilities
+                    $DB->delete_records_select('capabilities', "name LIKE ?", array('mod/lams:%'));
+                    $DB->delete_records_select('role_capabilities', "capability LIKE ?", array('mod/lams:%'));
+                    $tables = array('lams', '');
+                    foreach ($tables as $tname) {
+                        $table = new xmldb_table($tname);
+                        if ($dbman->table_exists($table)) {
+                            $dbman->drop_table($table);
+                        }
+                    }
+                    $DB->delete_records('event', array('modulename' => 'lams'));
+                    $DB->delete_records('log', array('module' => 'lams'));
+                    $DB->delete_records('log_display', array('module' => 'lams'));
+                    $DB->delete_records('modules', array('name'=>'lams'));
+                    unset_config('lams_initialdisable');
+                }
+            }
+        }
+        upgrade_main_savepoint(true, 2010070604);
+    }
+
 
     return true;
 }
