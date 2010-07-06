@@ -42,6 +42,10 @@ abstract class restore_task extends base_task {
     public function get_restoreid() {
         return $this->plan->get_restoreid();
     }
+
+    public function get_info() {
+        return $this->plan->get_info();
+    }
 }
 
 /*

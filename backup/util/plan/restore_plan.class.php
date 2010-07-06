@@ -42,7 +42,7 @@ class restore_plan extends base_plan implements loggable {
             throw new restore_plan_exception('wrong_restore_controller_specified');
         }
         $this->controller = $controller;
-        $this->basepath   = $CFG->dataroot . '/temp/backup/' . $controller->get_restoreid();
+        $this->basepath   = $CFG->dataroot . '/temp/backup/' . $controller->get_tempdir();
         parent::__construct('restore_plan');
     }
 
@@ -65,6 +65,10 @@ class restore_plan extends base_plan implements loggable {
 
     public function get_logger() {
         return $this->controller->get_logger();
+    }
+
+    public function get_info() {
+        return $this->controller->get_info();
     }
 
     public function log($message, $level, $a = null, $depth = null, $display = false) {
