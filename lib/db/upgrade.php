@@ -2020,7 +2020,7 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
                                     WHERE bi.id = ctx.instanceid AND ctx.contextlevel=" . CONTEXT_BLOCK . ")";
         $DB->execute($sql);
 
-    /// TODO MDL-19776 We should not really use API funcitons in upgrade.
+    /// TODO MDL-19776 We should not really use API functions in upgrade.
     /// If MDL-19776 is done, we can remove this whole upgrade block.
         build_context_path();
 
