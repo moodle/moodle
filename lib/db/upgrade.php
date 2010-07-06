@@ -470,6 +470,9 @@ function xmldb_main_upgrade($oldversion) {
         $table->add_field('caller_class', XMLDB_TYPE_CHAR, '150', null, XMLDB_NOTNULL, null, null);
         $table->add_field('caller_file', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
         $table->add_field('caller_sha1', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('tempdataid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('returnurl', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('continueurl', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
 
     /// Adding keys to table portfolio_log
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
@@ -2461,51 +2464,6 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
 
     /// Main savepoint reached
         upgrade_main_savepoint(true, 2009110605);
-    }
-
-    if ($oldversion < 2009111700) {
-
-    /// Define field tempdataid to be added to portfolio_log
-        $table = new xmldb_table('portfolio_log');
-        $field = new xmldb_field('tempdataid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'caller_sha1');
-
-    /// Conditionally launch add field tempdataid
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-
-    /// Main savepoint reached
-        upgrade_main_savepoint(true, 2009111700);
-    }
-
-    if ($oldversion < 2009111701) {
-
-    /// Define field returnurl to be added to portfolio_log
-        $table = new xmldb_table('portfolio_log');
-        $field = new xmldb_field('returnurl', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, 'tempdataid');
-
-    /// Conditionally launch add field returnurl
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-
-    /// Main savepoint reached
-        upgrade_main_savepoint(true, 2009111701);
-    }
-
-    if ($oldversion < 2009111702) {
-
-    /// Define field continueurl to be added to portfolio_log
-        $table = new xmldb_table('portfolio_log');
-        $field = new xmldb_field('continueurl', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, 'returnurl');
-
-    /// Conditionally launch add field continueurl
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-
-    /// Main savepoint reached
-        upgrade_main_savepoint(true, 2009111702);
     }
 
     if ($oldversion < 2009112400) {
