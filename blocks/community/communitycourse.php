@@ -30,6 +30,7 @@
 require('../../config.php');
 require_once($CFG->dirroot . '/blocks/community/locallib.php');
 require_once($CFG->dirroot . '/blocks/community/forms.php');
+require_once($CFG->dirroot . '/admin/registration/lib.php');
 
 require_login();
 
@@ -132,6 +133,16 @@ if (!empty($fromform)) {
         $options->language = $fromform->language;
     }
 
+    //check if the selected hub is from the registered list (in this case we use the private token)
+    $token = 'publichub';
+    $registrationmanager = new registration_manager();
+    $registeredhubs = $registrationmanager->get_registered_on_hubs();
+    foreach ($registeredhubs as $registeredhub) {
+        if ($huburl == $registeredhub->huburl) {
+            $token = $registeredhub->token;
+        }
+    }
+
     $function = 'hub_get_courses';
     $params = array('search' => $search, 'downloadable' => $downloadable,
         'enrollable' => !$downloadable, 'options' => $options);
@@ -139,7 +150,7 @@ if (!empty($fromform)) {
     require_once($CFG->dirroot . "/webservice/xmlrpc/lib.php");
     $xmlrpcclient = new webservice_xmlrpc_client();
     try {
-        $courses = $xmlrpcclient->call($serverurl, 'publichub', $function, $params);
+        $courses = $xmlrpcclient->call($serverurl, $token, $function, $params);
     } catch (Exception $e) {
         $hubs = array();
         $errormessage = $OUTPUT->notification(get_string('errorcourselisting', 'block_community', $e->getMessage()));
