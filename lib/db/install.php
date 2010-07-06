@@ -46,8 +46,6 @@ function xmldb_main_install() {
         'auth'                  => 'email',
         'auth_pop3mailbox'      => 'INBOX',
         'enrol_plugins_enabled' => 'manual,guest,self,cohort',
-        'style'                 => 'default',
-        'template'              => 'default',
         'theme'                 => theme_config::DEFAULT_THEME,
         'filter_multilang_converted' => 1,
         'siteidentifier'        => random_string(32).get_host_from_url($CFG->wwwroot),
