@@ -1,0 +1,13 @@
+.block .content {background-color:[[setting:backgroundcolor]];}
+#page-content #region-main-box {left:[[setting:regionwidth]];}
+#page-content #region-main-box #region-post-box {margin-left:-[[setting:regionwidthdouble]];}
+#page-content #region-main-box #region-post-box #region-pre {width:[[setting:regionwidth]];left:[[setting:regionwidth]];}
+#page-content #region-main-box #region-post-box #region-post {width:[[setting:regionwidth]];}
+#page-content #region-main-box #region-post-box #region-main-wrap #region-main {margin-left:[[setting:regionwidthdouble]];}
+.side-pre-only #page-content #region-main-box #region-post-box {margin-left:-[[setting:regionwidth]];}
+.side-pre-only #page-content #region-main-box #region-post-box #region-main-wrap #region-main {margin-left:[[setting:regionwidth]];}
+/* #page {width:[[setting:regionwidth]]%;margin:15px (100-[[setting:regionwidth])/2% 0;} */
+/* #page {min-width: 934px;} */
+
+/** Custom CSS **/
+[[setting:customcss]]
