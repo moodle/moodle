@@ -262,8 +262,6 @@ function xmldb_glossary_upgrade($oldversion) {
 
     if ($oldversion < 2010042800) {
         //migrate glossary_ratings to the central rating table
-        require_once($CFG->dirroot . '/lib/db/upgradelib.php');
-
         $table = new xmldb_table('glossary_ratings');
         if ($dbman->table_exists($table)) {
             //glossary ratings only have a single time column so use it for both time created and modified
