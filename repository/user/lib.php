@@ -56,20 +56,22 @@ class repository_user extends repository {
                 $filename = clean_param($params['filename'], PARAM_FILE);
                 $filearea = clean_param($params['filearea'], PARAM_ALPHAEXT);
                 $filepath = clean_param($params['filepath'], PARAM_PATH);;
+                $component = clean_param($params['component'], PARAM_ALPHAEXT);
                 $context  = get_context_instance_by_id(clean_param($params['contextid'], PARAM_INT));
             }
         } else {
             $itemid   = 0;
             $filename = null;
-            $filearea = 'user_private';
+            $filearea = 'private';
             $filepath = '/';
+            $component = 'user';
             $context = get_context_instance(CONTEXT_USER, $USER->id);
         }
 
         try {
             $browser = get_file_browser();
 
-            if ($fileinfo = $browser->get_file_info($context, $filearea, $itemid, $filepath, $filename)) {
+            if ($fileinfo = $browser->get_file_info($context, $component, $filearea, $itemid, $filepath, $filename)) {
                 $pathnodes = array();
                 $level = $fileinfo;
                 $params = $fileinfo->get_params();
@@ -158,10 +160,11 @@ class repository_user extends repository {
         $filename = clean_param($params['filename'], PARAM_FILE);
         $filepath = clean_param($params['filepath'], PARAM_PATH);;
         $filearea = clean_param($params['filearea'], PARAM_ALPHAEXT);
+        $component = clean_param($params['component'], PARAM_ALPHAEXT);
 
         $context    = get_context_instance_by_id($contextid);
-        $file_info = $browser->get_file_info($context, $filearea, $fileitemid, $filepath, $filename);
-        $file_info->copy_to_storage($user_context->id, $new_filearea, $new_itemid, $new_filepath, $new_filename);
+        $file_info = $browser->get_file_info($context, $component, $filearea, $fileitemid, $filepath, $filename);
+        $file_info->copy_to_storage($user_context->id, 'user', 'draft', $new_itemid, $new_filepath, $new_filename);
 
         $info = array();
         $info['itemid'] = $new_itemid;

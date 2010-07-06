@@ -70,6 +70,7 @@ class repository_recent extends repository {
             $info['contextid'] = $file_record->contextid;
             $info['itemid'] = $file_record->itemid;
             $info['filearea'] = $file_record->filearea;
+            $info['component'] = $file_record->component;
             $info['filepath'] = $file_record->filepath;
             $info['filename'] = $file_record->filename;
             $result[$file_record->pathnamehash] = $info;
@@ -171,6 +172,7 @@ class repository_recent extends repository {
         $filename = clean_param($params['filename'], PARAM_FILE);
         $filepath = clean_param($params['filepath'], PARAM_PATH);;
         $filearea = clean_param($params['filearea'], PARAM_ALPHAEXT);
+        $component = clean_param($params['component'], PARAM_ALPHAEXT);
 
         // XXX:
         // When user try to pick a file from other filearea, normally file api will use file browse to
@@ -179,10 +181,10 @@ class repository_recent extends repository {
         //
         // To get 'recent' plugin working, we need to use lower level file_stoarge class to bypass the
         // capability check, we will use a better workaround to improve it.
-        if ($stored_file = $fs->get_file($contextid, $filearea, $fileitemid, $filepath, $filename)) {
-            $file_record = array('contextid'=>$user_context->id, 'filearea'=>$new_filearea,
+        if ($stored_file = $fs->get_file($contextid, $component, $filearea, $fileitemid, $filepath, $filename)) {
+            $file_record = array('contextid'=>$user_context->id, 'component'=>'user', 'filearea'=>'draft',
                 'itemid'=>$new_itemid, 'filepath'=>$new_filepath, 'filename'=>$new_filename);
-            if ($file = $fs->get_file($user_context->id, $new_filearea, $new_itemid, $new_filepath, $new_filename)) {
+            if ($file = $fs->get_file($user_context->id, 'user', 'draft', $new_itemid, $new_filepath, $new_filename)) {
                 $file->delete();
             }
             $fs->create_file_from_storedfile($file_record, $stored_file);

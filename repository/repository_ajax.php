@@ -168,7 +168,7 @@ switch ($action) {
             $mimetypes = '*';
         } else {
             foreach ($accepted_types as $type) {
-                $mimetypes = mimeinfo('type', $type);
+                $mimetypes[] = mimeinfo('type', $type);
             }
             if (!in_array(mimeinfo('type', $saveas_filename), $mimetypes)) {
                 throw new moodle_exception('invalidfiletype', 'repository', '', mimeinfo('type', $_FILES[$elname]['name']));
@@ -183,7 +183,7 @@ switch ($action) {
             $info = array();
             $info['file'] = $fileinfo['title'];
             $info['id'] = $itemid;
-            $info['url'] = $CFG->httpswwwroot.'/draftfile.php/'.$fileinfo['contextid'].'/user_draft/'.$itemid.'/'.$fileinfo['title'];
+            $info['url'] = $CFG->httpswwwroot.'/draftfile.php/'.$fileinfo['contextid'].'/user/draft/'.$itemid.'/'.$fileinfo['title'];
             $filesize = $fileinfo['filesize'];
             if (($maxbytes!==-1) && ($filesize>$maxbytes)) {
                 throw new file_exception('maxbytes');
