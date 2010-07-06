@@ -1206,6 +1206,7 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
     /// Main savepoint reached
         upgrade_main_savepoint(true, 2009021800);
     }
+
     if ($oldversion < 2009021801) {
     /// Define field backuptype to be added to backup_log
         $table = new xmldb_table('backup_log');
@@ -1219,6 +1220,7 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
     /// Main savepoint reached
         upgrade_main_savepoint(true, 2009021801);
     }
+
     /// Add default sort order for question types.
     if ($oldversion < 2009030300) {
         set_config('multichoice_sortorder', 1, 'question');
