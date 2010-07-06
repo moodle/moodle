@@ -22,6 +22,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+// TODO: Reduce these to the minimum because ui/dependencies are 100% separated
+
 // Root backup settings
 
 /**
