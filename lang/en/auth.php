@@ -23,7 +23,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['actauthhdr'] = 'Active authentication plugins';
+$string['actauthhdr'] = 'Available authentication plugins';
 $string['alternatelogin'] = 'If you enter a URL here, it will be used as the login page for this site. The page should contain a form which has the action property set to <strong>\'{$a}\'</strong> and return fields <strong>username</strong> and <strong>password</strong>.<br />Be careful not to enter an incorrect URL as you may lock yourself out of this site.<br />Leave this setting blank to use the default login page.';
 $string['alternateloginurl'] = 'Alternate login URL';
 $string['auth_common_settings'] = 'Common settings';

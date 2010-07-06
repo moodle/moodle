@@ -24,7 +24,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['actenrolshhdr'] = 'Active course enrolment plugins';
+$string['actenrolshhdr'] = 'Available course enrolment plugins';
 $string['addinstance'] = 'Add method';
 $string['configenrolplugins'] = 'Please select all required plugins and arrange then in appropriate order.';
 $string['defaultenrol'] = 'Add instance to new courses';
