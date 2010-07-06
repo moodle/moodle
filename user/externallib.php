@@ -354,7 +354,7 @@ class moodle_user_external extends external_api {
 
                 $userarray = (array) $user; //we want to return an array not an object
                 /// now we transfert all profile_field_xxx into the customfields external_multiple_structure required by description
-                $userarray['customfields'] = null;
+                $userarray['customfields'] = array();
                 $customfields = profile_user_record($user->id);
                 $customfields = (array) $customfields;
                 foreach ($customfields as $key => $value) {
