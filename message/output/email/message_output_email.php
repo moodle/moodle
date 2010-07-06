@@ -51,32 +51,12 @@ class message_output_email extends message_output {
             $usertoemail = $userto->email;
         }
         $userfrom = $DB->get_record('user', array('id' => $message->useridfrom));
-        if ( email_to_user($usertoemail, $userfrom->email,
+        $result = email_to_user($usertoemail, $userfrom->email,
             $message->subject, $message->fullmessage,
-            $message->fullmessagehtml)
-        ){
-            /// Move the entry to the other table
-            $message->timeread = time();
-            $messageid = $message->id;
-            unset($message->id);
+            $message->fullmessagehtml);
 
-            //if there is no more processor that want to process this can move message
-            if ( $DB->count_records('message_working', array('unreadmessageid' => $messageid)) == 0){
-                if ($DB->insert_record('message_read', $message)) {
-                    $DB->delete_records('message', array('id' => $messageid));
-                }
-            }
-        }else{
-            //delete what we've processed and check if can move message
-            $messageid = $message->id;
-            unset($message->id);
-            if ( $DB->count_records('message_working', array('unreadmessageid' => $messageid)) == 0){
-                if ($DB->insert_record('message_read', $message)) {
-                    $DB->delete_records('message', array('id' => $messageid));
-                }
-            }
-        }
-        return true;
+        //return $result===true; //email_to_user() can return true, false or "emailstop"
+        return true;//do we want to report an error if email sending fails?
     }
 
     /**

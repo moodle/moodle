@@ -50,20 +50,21 @@ function message_send($eventdata) {
     //TODO: we need to solve problems with database transactions here somehow, for now we just prevent transactions - sorry
     $DB->transactions_forbidden();
 
+    //after how long inactive should the user be considered logged off?
     if (isset($CFG->block_online_users_timetosee)) {
         $timetoshowusers = $CFG->block_online_users_timetosee * 60;
     } else {
-        $timetoshowusers = 300;
+        $timetoshowusers = 300;//5 minutes
     }
 
-/// Work out if the user is logged in or not
-    if ((time() - $eventdata->userto->lastaccess) > $timetoshowusers) {
-        $userstate = 'loggedoff';
-    } else {
+    // Work out if the user is logged in or not
+    if ((time() - $timetoshowusers) < $eventdata->userto->lastaccess) {
         $userstate = 'loggedin';
+    } else {
+        $userstate = 'loggedoff';
     }
 
-/// Create the message object
+    // Create the message object
     $savemessage = new object();
     $savemessage->useridfrom        = $eventdata->userfrom->id;
     $savemessage->useridto          = $eventdata->userto->id;
@@ -74,9 +75,10 @@ function message_send($eventdata) {
     $savemessage->smallmessage      = $eventdata->smallmessage;
     $savemessage->timecreated       = time();
 
-/// Find out what processors are defined currently
-/// When a user doesn't have settings none gets return, if he doesn't want contact "" gets returned
-    $processor = get_user_preferences('message_provider_'.$eventdata->component.'_'.$eventdata->name.'_'.$userstate, NULL, $eventdata->userto->id);
+    // Find out what processors are defined currently
+    // When a user doesn't have settings none gets return, if he doesn't want contact "" gets returned
+    $preferencename = 'message_provider_'.$eventdata->component.'_'.$eventdata->name.'_'.$userstate;
+    $processor = get_user_preferences($preferencename, NULL, $eventdata->userto->id);
 
     if ($processor == NULL) { //this user never had a preference, save default
         if (!message_set_default_message_preferences($eventdata->userto)) {
@@ -124,6 +126,17 @@ function message_send($eventdata) {
                 return false;
             }
         }
+
+            $savemessage->timeread = time();
+            $messageid = $savemessage->id;
+            unset($savemessage->id);
+
+            //if there is no more processors that want to process this we can move message to message_read
+            if ( $DB->count_records('message_working', array('unreadmessageid' => $messageid)) == 0){
+                if ($DB->insert_record('message_read', $savemessage)) {
+                    $DB->delete_records('message', array('id' => $messageid));
+                }
+            }
     }
 
     return true;

@@ -1491,7 +1491,7 @@ function message_post_message($userfrom, $userto, $message, $format, $messagetyp
     global $CFG, $SITE, $USER, $DB;
 
     $eventdata = new object();
-    $eventdata->component        = 'message';
+    $eventdata->component        = 'moodle';
     $eventdata->name             = 'instantmessage';
     $eventdata->userfrom         = $userfrom;
     $eventdata->userto           = $userto;
@@ -1665,20 +1665,24 @@ function message_get_popup_messages($destuserid, $fromuserid=NULL){
     return $messages;
 }
 
-//marks all messages being sent from $fromuserid to $destuserid as read
-function message_mark_messages_read($destuserid, $fromuserid){
+//marks ALL messages being sent from $fromuserid to $touserid as read
+function message_mark_messages_read($touserid, $fromuserid){
     global $DB;
 
     $sql = 'SELECT m.*, mw.id AS mwid FROM {message} m JOIN {message_working} mw ON m.id=mw.unreadmessageid WHERE m.useridto=:useridto AND m.useridfrom=:useridfrom';
-    $messages = $DB->get_recordset_sql($sql, array('useridto'=>$destuserid,'useridfrom'=>$fromuserid));
+    $messages = $DB->get_recordset_sql($sql, array('useridto'=>$touserid,'useridfrom'=>$fromuserid));
+
+    //todo surely we can do this with one query rather than with a loop
 
     foreach ($messages as $message) {
         $message->timeread = time();
         $messageid = $message->id;
         unset($message->id);//unset because it will get a new id on insert into message_read
 
-        //delete what we've processed and check if can move message
+        //indicate the message is read
         $DB->delete_records('message_working', array('id' => $message->mwid));
+
+        //have all message processors completed dealing with this message?
         if ( $DB->count_records('message_working', array('unreadmessageid'=>$messageid)) == 0){
             if ($DB->insert_record('message_read', $message)) {
                 $DB->delete_records('message', array('id' => $messageid));
