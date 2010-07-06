@@ -40,7 +40,7 @@ function xmldb_main_upgrade($oldversion) {
     ////////////////////////////////////////
 
     if ($oldversion < 2008030600) {
-        //NOTE: this table was added much later, that is why this step is repeated later in this file
+        //NOTE: this table was added much later later in dev cycle, but we need it here, upgrades from pre PR1 not supported
 
     /// Define table upgrade_log to be created
         $table = new xmldb_table('upgrade_log');
@@ -72,6 +72,33 @@ function xmldb_main_upgrade($oldversion) {
     }
 
     if ($oldversion < 2008030601) {
+        //NOTE: this table was added much later later in dev cycle, but we need it here, upgrades from pre PR1 not supported
+
+    /// Define table log_queries to be created
+        $table = new xmldb_table('log_queries');
+
+    /// Adding fields to table log_queries
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('qtype', XMLDB_TYPE_INTEGER, '5', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+        $table->add_field('sqltext', XMLDB_TYPE_TEXT, 'medium', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('sqlparams', XMLDB_TYPE_TEXT, 'big', null, null, null, null);
+        $table->add_field('error', XMLDB_TYPE_INTEGER, '5', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+        $table->add_field('info', XMLDB_TYPE_TEXT, 'small', null, null, null, null);
+        $table->add_field('backtrace', XMLDB_TYPE_TEXT, 'small', null, null, null, null);
+        $table->add_field('exectime', XMLDB_TYPE_NUMBER, '10, 5', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('timelogged', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+
+    /// Adding keys to table log_queries
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+
+    /// Conditionally launch create table for log_queries
+        $dbman->create_table($table);
+
+    /// Main savepoint reached
+        upgrade_main_savepoint(true, 2008030601);
+    }
+
+    if ($oldversion < 2008030602) {
         @unlink($CFG->dataroot.'/cache/languages');
 
         // rename old lang directory so that the new and old langs do not mix
@@ -88,7 +115,7 @@ function xmldb_main_upgrade($oldversion) {
 
 
         // Main savepoint reached
-        upgrade_main_savepoint(true, 2008030601);
+        upgrade_main_savepoint(true, 2008030602);
     }
 
     if ($oldversion < 2008030700) {
@@ -1195,40 +1222,6 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2009011900);
     }
 
-    if ($oldversion < 2009012901) {
-        // NOTE: this table may already exist, see beginning of this file ;-)
-
-    /// Define table upgrade_log to be created
-        $table = new xmldb_table('upgrade_log');
-
-    /// Adding fields to table upgrade_log
-        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
-        $table->add_field('type', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
-        $table->add_field('plugin', XMLDB_TYPE_CHAR, '100', null, null, null, null);
-        $table->add_field('version', XMLDB_TYPE_CHAR, '100', null, null, null, null);
-        $table->add_field('info', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
-        $table->add_field('details', XMLDB_TYPE_TEXT, 'small', null, null, null, null);
-        $table->add_field('backtrace', XMLDB_TYPE_TEXT, 'small', null, null, null, null);
-        $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
-        $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
-
-    /// Adding keys to table upgrade_log
-        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
-        $table->add_key('userid', XMLDB_KEY_FOREIGN, array('userid'), 'user', array('id'));
-
-    /// Adding indexes to table upgrade_log
-        $table->add_index('timemodified', XMLDB_INDEX_NOTUNIQUE, array('timemodified'));
-        $table->add_index('type-timemodified', XMLDB_INDEX_NOTUNIQUE, array('type', 'timemodified'));
-
-    /// Conditionally launch create table for upgrade_log
-        if (!$dbman->table_exists($table)) {
-            $dbman->create_table($table);
-        }
-
-    /// Main savepoint reached
-        upgrade_main_savepoint(true, 2009012901);
-    }
-
     if ($oldversion < 2009021800) {
         // Converting format of grade conditions, if any exist, to percentages.
         $DB->execute("
@@ -1969,37 +1962,8 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         upgrade_main_savepoint(true, 2009060200);
     }
 
-    if ($oldversion < 2009061300) {
-        //TODO: copy this to the very beginning of this upgrade script so that we may log upgrade queries
-
-    /// Define table log_queries to be created
-        $table = new xmldb_table('log_queries');
-
-    /// Adding fields to table log_queries
-        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
-        $table->add_field('qtype', XMLDB_TYPE_INTEGER, '5', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
-        $table->add_field('sqltext', XMLDB_TYPE_TEXT, 'medium', null, XMLDB_NOTNULL, null, null);
-        $table->add_field('sqlparams', XMLDB_TYPE_TEXT, 'big', null, null, null, null);
-        $table->add_field('error', XMLDB_TYPE_INTEGER, '5', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
-        $table->add_field('info', XMLDB_TYPE_TEXT, 'small', null, null, null, null);
-        $table->add_field('backtrace', XMLDB_TYPE_TEXT, 'small', null, null, null, null);
-        $table->add_field('exectime', XMLDB_TYPE_NUMBER, '10, 5', null, XMLDB_NOTNULL, null, null);
-        $table->add_field('timelogged', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
-
-    /// Adding keys to table log_queries
-        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
-
-    /// Conditionally launch create table for log_queries
-        if (!$dbman->table_exists($table)) {
-            $dbman->create_table($table);
-        }
-
-    /// Main savepoint reached
-        upgrade_main_savepoint(true, 2009061300);
-    }
-
-    /// Repeat 2009050607 upgrade step, which Petr commented out becuase of XMLDB
-    /// stupidity, so lots of peopel will have missed.
+    /// Repeat 2009050607 upgrade step, which Petr commented out because of XMLDB
+    /// stupidity, so lots of people will have missed.
     if ($oldversion < 2009061600) {
     /// Changing precision of field defaultregion on table block_instances to (16)
         $table = new xmldb_table('block_instances');
@@ -4973,6 +4937,5 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
 }
 
 //TODO: Cleanup before the 2.0 release - we do not want to drag along these dev machine fixes forever
-// 2/ move 2009061300 block to the top of the file so that we may log upgrade queries
 // 3/ remove 2010033101 block
 // 4/ remove 2010032400 block
