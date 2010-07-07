@@ -561,7 +561,27 @@ function has_capability($capability, $context, $user = NULL, $doanything=true) {
     // and it is not possible to switch to admin role either.
     if ($doanything) {
         if (is_siteadmin($userid)) {
-            return true;
+            if ($userid != $USER->id) {
+                return true;
+            }
+            // make sure switchrole is not used in this context
+            if (empty($USER->access['rsw'])) {
+                return true;
+            }
+            $parts = explode('/', trim($context->path, '/'));
+            $path = '';
+            $switched = false;
+            foreach ($parts as $part) {
+                $path .= '/' . $part;
+                if (!empty($USER->access['rsw'][$path])) {
+                    $switched = true;
+                    break;
+                }
+            }
+            if (!$switched) {
+                return true;
+            }
+            //ok, admin switched role in this context, let's use normal access control rules
         }
     }
 
