@@ -6,7 +6,12 @@ M.core_filetree = {
     request: function(url, node, cb) {
         var api = this.api + '?action=getfiletree';
         var params = [];
-        params['fileurl'] = url;
+        params['contextid'] = this.get_param(url, 'contextid', -1);
+        params['component'] = this.get_param(url, 'component', null);
+        params['filearea'] = this.get_param(url, 'filearea', null);
+        params['itemid'] = this.get_param(url, 'itemid', -1);
+        params['filepath'] = this.get_param(url, 'filepath', null);
+        params['filename'] = this.get_param(url, 'filename', null);
         var scope = this;
         params['sesskey']=M.cfg.sesskey;
         var cfg = {
@@ -50,7 +55,7 @@ M.core_filetree = {
         };
         this.y3.io(api, cfg);
     },
-    init : function(Y, options){
+    init : function(Y){
         var tree = new YAHOO.widget.TreeView('course-file-tree-view');
         tree.setDynamicLoad(this.dynload);
         tree.subscribe("clickEvent", this.onclick);
@@ -71,5 +76,16 @@ M.core_filetree = {
     },
     onclick: function(e) {
         YAHOO.util.Event.preventDefault(e); 
+    },
+    get_param: function(url, name, val) {
+        name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
+        var regexS = "[\\?&]"+name+"=([^&#]*)";
+        var regex = new RegExp( regexS );
+        var results = regex.exec(url);
+        if( results == null ) {
+            return val;
+        } else {
+            return unescape(results[1]);
+        }
     }
 }

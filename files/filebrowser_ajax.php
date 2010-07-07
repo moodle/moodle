@@ -34,7 +34,6 @@ $action = optional_param('action', 'list', PARAM_ALPHA);
 require_login();
 
 $err = new stdclass;
-
 if (isguestuser()) {
     $err->error = get_string('noguest');
     die(json_encode($err));
@@ -43,7 +42,6 @@ if (isguestuser()) {
 switch ($action) {
     // used by course file tree viewer
     case 'getfiletree':
-
         $contextid  = required_param('contextid', PARAM_INT);
         $component  = required_param('component', PARAM_ALPHAEXT);
         $filearea   = required_param('filearea', PARAM_ALPHAEXT);
@@ -51,13 +49,6 @@ switch ($action) {
         $filepath   = required_param('filepath', PARAM_PATH);
 
         $browser = get_file_browser();
-        $params = $url->params();
-        // fix empty value
-        foreach ($params as $key=>$value) {
-            if ($value==='') {
-                $params[$key] = null;
-            }
-        }
         $fileinfo = $browser->get_file_info(get_context_instance_by_id($contextid), $component, $filearea, $itemid, $filepath);
         $children = $fileinfo->get_children();
         $tree = array();
@@ -75,14 +66,13 @@ switch ($action) {
                     );
             if ($child->is_directory()) {
                 $fileitem['isdir'] = true;
-                $fileitem['url'] = $url->out();
+                $fileitem['url'] = $url->out(false);
             } else {
                 $fileitem['url'] = $child->get_url();
             }
             $tree[] = $fileitem;
         }
         echo json_encode($tree);
-
         break;
 
     default:
