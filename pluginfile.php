@@ -117,7 +117,7 @@ if ($component === 'blog') {
     }
 
     $filename = array_pop($args);
-    $filepath = '/'.implode('/', $args);
+    $filepath = $args ? '/'.implode('/', $args).'/' : '/';
 
     if (!$file = $fs->get_file($context->id, $component, $filearea, $entryid, $filepath, $filename) or $file->is_directory()) {
         send_file_not_found();
@@ -204,7 +204,7 @@ if ($component === 'blog') {
 
         // Get the file and serve if successful
         $filename = array_pop($args);
-        $filepath = '/'.implode('/', $args);
+        $filepath = $args ? '/'.implode('/', $args).'/' : '/';
         if (!$file = $fs->get_file($context->id, $component, $filearea, $eventid, $filepath, $filename) or $file->is_directory()) {
             send_file_not_found();
         }
@@ -232,7 +232,7 @@ if ($component === 'blog') {
 
         // Get the file and serve if successful
         $filename = array_pop($args);
-        $filepath = '/'.implode('/', $args);
+        $filepath = $args ? '/'.implode('/', $args).'/' : '/';
         if (!$file = $fs->get_file($context->id, $component, $filearea, $eventid, $filepath, $filename) or $file->is_directory()) {
             send_file_not_found();
         }
@@ -279,7 +279,7 @@ if ($component === 'blog') {
 
         // If we get this far we can serve the file
         $filename = array_pop($args);
-        $filepath = '/'.implode('/', $args);
+        $filepath = $args ? '/'.implode('/', $args).'/' : '/';
         if (!$file = $fs->get_file($context->id, $component, $filearea, $eventid, $filepath, $filename) or $file->is_directory()) {
             send_file_not_found();
         }
@@ -305,7 +305,7 @@ if ($component === 'blog') {
         }
 
         $filename = array_pop($args);
-        $filepath = '/'.implode('/', $args);
+        $filepath = $args ? '/'.implode('/', $args).'/' : '/';
         if (!$file = $fs->get_file($context->id, $component, $filearea, 0, $filepath, $filename) or $file->is_directory()) {
             send_file_not_found();
         }
@@ -352,7 +352,7 @@ if ($component === 'blog') {
         }
 
         $filename = array_pop($args);
-        $filepath = '/'.implode('/', $args);
+        $filepath = $args ? '/'.implode('/', $args).'/' : '/';
         if (!$file = $fs->get_file($context->id, $component, $filearea, 0, $filepath, $filename) or $file->is_directory()) {
             send_file_not_found();
         }
@@ -390,7 +390,7 @@ if ($component === 'blog') {
         }
 
         $filename = array_pop($args);
-        $filepath = '/'.implode('/', $args);
+        $filepath = $args ? '/'.implode('/', $args).'/' : '/';
         if (!$file = $fs->get_file($context->id, 'user', 'profile', 0, $filepath, $filename) or $file->is_directory()) {
             send_file_not_found();
         }
@@ -409,7 +409,7 @@ if ($component === 'blog') {
         }
 
         $filename = array_pop($args);
-        $filepath = '/'.implode('/', $args);
+        $filepath = $args ? '/'.implode('/', $args).'/' : '/';
         if (!$file = $fs->get_file($context->id, 'user', 'backup', 0, $filepath, $filename) or $file->is_directory()) {
             send_file_not_found();
         }
@@ -434,7 +434,7 @@ if ($component === 'blog') {
         }
 
         $filename = array_pop($args);
-        $filepath = '/'.implode('/', $args);
+        $filepath = $args ? '/'.implode('/', $args).'/' : '/';
         if (!$file = $fs->get_file($context->id, 'coursecat', 'description', 0, $filepath, $filename) or $file->is_directory()) {
             send_file_not_found();
         }
@@ -457,7 +457,7 @@ if ($component === 'blog') {
         }
 
         $filename = array_pop($args);
-        $filepath = '/'.implode('/', $args);
+        $filepath = $args ? '/'.implode('/', $args).'/' : '/';
         if (!$file = $fs->get_file($context->id, 'course', 'summary', 0, $filepath, $filename) or $file->is_directory()) {
             send_file_not_found();
         }
@@ -483,7 +483,7 @@ if ($component === 'blog') {
         }
 
         $filename = array_pop($args);
-        $filepath = '/'.implode('/', $args);
+        $filepath = $args ? '/'.implode('/', $args).'/' : '/';
         if (!$file = $fs->get_file($context->id, 'course', 'section', $sectionid, $filepath, $filename) or $file->is_directory()) {
             send_file_not_found();
         }
@@ -514,7 +514,7 @@ if ($component === 'blog') {
         //TODO: implement group image storage in file pool
 
         $filename = array_pop($args);
-        $filepath = '/'.implode('/', $args);
+        $filepath = $args ? '/'.implode('/', $args).'/' : '/';
         if (!$file = $fs->get_file($context->id, 'group', 'description', $group->id, $filepath, $filename) or $file->is_directory()) {
             send_file_not_found();
         }
@@ -539,7 +539,7 @@ if ($component === 'blog') {
     if ($filearea === 'description') {
 
         $filename = array_pop($args);
-        $filepath = '/'.implode('/', $args);
+        $filepath = $args ? '/'.implode('/', $args).'/' : '/';
         if (!$file = $fs->get_file($context->id, 'grouping', 'description', $groupingid->id, $filepath, $filename) or $file->is_directory()) {
             send_file_not_found();
         }
@@ -558,7 +558,7 @@ if ($component === 'blog') {
         require_capability('moodle/backup:downloadfile', $context);
 
         $filename = array_pop($args);
-        $filepath = '/'.implode('/', $args);
+        $filepath = $args ? '/'.implode('/', $args).'/' : '/';
         if (!$file = $fs->get_file($context->id, 'backup', 'course', 0, $filepath, $filename) or $file->is_directory()) {
             send_file_not_found();
         }
@@ -573,7 +573,7 @@ if ($component === 'blog') {
         $sectionid = (int)array_shift($args);
 
         $filename = array_pop($args);
-        $filepath = '/'.implode('/', $args);
+        $filepath = $args ? '/'.implode('/', $args).'/' : '/';
         if (!$file = $fs->get_file($context->id, 'backup', 'section', $sectionid, $filepath, $filename) or $file->is_directory()) {
             send_file_not_found();
         }
@@ -586,7 +586,7 @@ if ($component === 'blog') {
         require_capability('moodle/backup:downloadfile', $context);
 
         $filename = array_pop($args);
-        $filepath = '/'.implode('/', $args);
+        $filepath = $args ? '/'.implode('/', $args).'/' : '/';
         if (!$file = $fs->get_file($context->id, 'backup', 'activity', 0, $filepath, $filename) or $file->is_directory()) {
             send_file_not_found();
         }
@@ -621,7 +621,7 @@ if ($component === 'blog') {
 
         // all users may access it
         $filename = array_pop($args);
-        $filepath = '/'.implode('/', $args);
+        $filepath = $args ? '/'.implode('/', $args).'/' : '/';
         if (!$file = $fs->get_file($context->id, 'mod_'.$modname, 'intro', 0, $filepath, $filename) or $file->is_directory()) {
             send_file_not_found();
         }
