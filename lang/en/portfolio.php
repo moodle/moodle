@@ -24,7 +24,7 @@
  */
 
 $string['activeexport'] = 'Resolve active export';
-$string['activeportfolios'] = 'Active portfolios';
+$string['activeportfolios'] = 'Available portfolios';
 $string['addalltoportfolio'] = 'Save all...';
 $string['addnewportfolio'] = 'Add a new portfolio';
 $string['addtoportfolio'] = 'Save...';

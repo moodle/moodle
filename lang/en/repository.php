@@ -25,7 +25,7 @@
 
 $string['accessiblefilepicker'] = 'Accessible file picker';
 $string['activaterep'] = 'Active repositories';
-$string['activerepository'] = 'Active repository plugins';
+$string['activerepository'] = 'Available repository plugins';
 $string['add'] = 'Add';
 $string['addfile'] = 'Add...';
 $string['addplugin'] = 'Add a repository plugin';

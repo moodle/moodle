@@ -25,7 +25,7 @@
 
 $string['about'] = 'About this editor';
 $string['absbottom'] = 'Absbottom';
-$string['acteditorshhdr'] = 'Active text editors';
+$string['acteditorshhdr'] = 'Available text editors';
 $string['address'] = 'Address';
 $string['alertnoselectedtext'] = 'You must select text first!';
 $string['alignment'] = 'Alignment';
