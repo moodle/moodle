@@ -3,7 +3,8 @@
 .block .header {border-bottom:1px solid #DDD;border-color: #dddddd;}
 .block .header h2 {margin-top:2px;font-size:1em;}
 .block .header .block_action {margin:0 4px;}
-.block .header .block_action img {width:11px; height:11px;}
+.block .header .block_action img,
+.block .header .block_action input {width:11px; height:11px;}
 .block .content {border-color: #dddddd;background-color:#FCFCFC;}
 .block .content hr {border-top-color:#999999;}
 .block .header .commands {font-size:0.9em;clear:both;}
@@ -14,7 +15,7 @@
 .block h2.header {text-align: left;margin:0;padding:4px;padding-top:0;border-bottom-width: 0;}
 .block .content h2 {text-align: left;margin:1.5em 0 0;padding:0;}
 .block .content h3 {text-align: left;}
-.block .content hr {height:1px;margin-top:4px;margin-bottom:4px;border:none;border-top:1px solid;}
+.block .content hr {height:1px;margin-top:4px;margin-bottom:4px;border:none;border-top:1px solid;padding:0;}
 .block .content .head {margin-top: 10px;}
 .block .header .icon.hide,
 .block .header .icon.edit {margin-right: 6px;}

@@ -606,7 +606,7 @@ class theme_config {
         $urls = array();
 
         if ($rev > -1) {
-            if (check_browser_version('MSIE', 5) and !check_browser_version('MSIE', 8)) {
+            if (check_browser_version('MSIE', 5)) {
                 // We need to split the CSS files for IE
                 $urls[] = new moodle_url($CFG->httpswwwroot.'/theme/styles.php', array('theme'=>$this->name,'rev'=>$rev, 'type'=>'plugins'));
                 $urls[] = new moodle_url($CFG->httpswwwroot.'/theme/styles.php', array('theme'=>$this->name,'rev'=>$rev, 'type'=>'parents'));
@@ -646,7 +646,10 @@ class theme_config {
             if (check_browser_version('MSIE', 5)) {
                 // lalala, IE does not allow more than 31 linked CSS files from main document
                 $urls[] = new moodle_url($CFG->httpswwwroot.'/theme/styles_debug.php', array('theme'=>$this->name, 'type'=>'ie', 'subtype'=>'plugins'));
-                $urls[] = new moodle_url($CFG->httpswwwroot.'/theme/styles_debug.php', array('theme'=>$this->name, 'type'=>'ie', 'subtype'=>'parents'));
+                foreach ($css['parents'] as $parent=>$sheets) {
+                    // We need to serve parents individually otherwise we may easily exceed the style limit IE imposes (4096)
+                    $urls[] = new moodle_url($CFG->httpswwwroot.'/theme/styles_debug.php', array('theme'=>$this->name,'type'=>'ie', 'subtype'=>'parents', 'sheet'=>$parent));
+                }
                 $urls[] = new moodle_url($CFG->httpswwwroot.'/theme/styles_debug.php', array('theme'=>$this->name, 'type'=>'ie', 'subtype'=>'theme'));
 
             } else {

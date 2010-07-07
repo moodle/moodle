@@ -860,7 +860,7 @@ class page_requirements_manager {
      * @return string
      */
     protected function get_yui3lib_headcode() {
-        $code = $this->yui3loader->css() . $this->yui3loader->script();
+        $code = $this->yui3loader->tags();
         // unfortunately yui loader does not produce xhtml strict code, so let's fix it for now
         $code = str_replace('&amp;', '&', $code);
         $code = str_replace('&', '&amp;', $code);

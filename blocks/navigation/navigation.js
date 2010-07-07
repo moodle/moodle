@@ -111,7 +111,7 @@ M.block_navigation.classes.tree = function(Y, id, properties) {
     for (var i in this.expansions) {
         var expandablenode = Y.one('#'+this.expansions[i].id);
         if (expandablenode) {
-           expandablenode.on('ajaxload|click', this.init_load_ajax, this, this.expansions[i]);
+            expandablenode.on('ajaxload|click', this.init_load_ajax, this, this.expansions[i]);
             M.block_navigation.expandablebranchcount++;
         } else if (M.cfg.debug) {
             Y.one(document.body).append(Y.Node.create('<div class="notification" style="font-size:6pt;">Expandable node within navigation was missing [#'+this.expansions[i].id+']</div>'));

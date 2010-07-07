@@ -38,7 +38,7 @@ $parts = trim($parts, '&');
 // find out what we are serving - only one type per request
 $content = '';
 if (substr($parts, -3) === '.js') {
-    $mimetype = 'application/x-javascript';
+    $mimetype = 'application/javascript';
 } else if (substr($parts, -4) === '.css') {
     $mimetype = 'text/css';
 } else {

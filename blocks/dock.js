@@ -91,24 +91,32 @@ M.core_dock.init = function(Y) {
         }
     }
 
-    // Start the construction of the dock
-    dock = Y.Node.create('<div id="dock" class="'+css.dock+' '+css.dock+'_'+this.cfg.position+'_'+this.cfg.orientation+'"></div>');
-    this.nodes.container = Y.Node.create('<div class="'+css.dockeditemcontainer+'"></div>');
-    dock.append(this.nodes.container);
+    var dock = Y.one('#dock');
+    if (!dock) {
+        // Start the construction of the dock
+        dock = Y.Node.create('<div id="dock" class="'+css.dock+' '+css.dock+'_'+this.cfg.position+'_'+this.cfg.orientation+'"></div>')
+                    .append(Y.Node.create('<div class="'+css.dockeditemcontainer+'"></div>'));
+        this.nodes.body.append(dock);
+    } else {
+        dock.addClass(css.dock+'_'+this.cfg.position+'_'+this.cfg.orientation);
+    }
+    if (Y.UA.ie > 0 && Y.UA.ie < 7) {
+        // Adjust for IE 6 (can't handle fixed pos)
+        dock.setStyle('height', dock.get('winHeight')+'px');
+    }
+    // Store the dock
+    this.nodes.dock = dock;
+    this.nodes.container = dock.one('.'+css.dockeditemcontainer);
+
     if (Y.all('.block.dock_on_load').size() == 0) {
         // Nothing on the dock... hide it using CSS
         dock.addClass('nothingdocked');
     } else {
         this.nodes.body.addClass(this.css.body);
     }
-    // Store the dock
-    this.nodes.dock = dock;
+
     this.fire('dock:beforedraw');
-    this.nodes.body.append(dock);
-    if (Y.UA.ie > 0 && Y.UA.ie < 7) {
-        // Adjust for IE 6 (can't handle fixed pos)
-        dock.setStyle('height', dock.get('winHeight')+'px');
-    }
+
     // Add a removeall button
     // Must set the image src seperatly of we get an error with XML strict headers
     var removeall = Y.Node.create('<img alt="'+M.str.block.undockall+'" title="'+M.str.block.undockall+'" />');

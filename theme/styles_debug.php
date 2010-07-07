@@ -67,8 +67,21 @@ if ($type === 'ie') {
 
     } else if ($subtype === 'parents') {
         $sendcss = array();
-        foreach ($css['parents'] as $parent=>$sheets) {
-            $sendcss = array_merge($sendcss, $sheets);
+        if (empty($sheet)) {
+            // If not specific parent has been specified as $sheet then build a
+            // collection of @import statements into this one sheet.
+            // We shouldn't ever actually get here, but none the less we'll deal
+            // with it incase we ever do.
+            // @import statements arn't processed until after concurrent CSS requests
+            // making them slightly evil.
+            foreach (array_keys($css['parents']) as $sheet) {
+                $sendcss[] = "@import url(styles_debug.php?theme=$themename&type=$type&subtype=$subtype&sheet=$sheet);";
+            }
+        } else {
+            // Build up the CSS for that parent so we can serve it as one file.
+            foreach ($css[$subtype][$sheet] as $parent=>$css) {
+                $sendcss[] = $css;
+            }
         }
         $sendcss = implode("\n\n", $sendcss);
         $sendcss = str_replace("\n", "\r\n", $sendcss);
