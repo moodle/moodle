@@ -24,9 +24,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-
-require_once($CFG->dirroot. '/repository/lib.php');
-
 class block_private_files extends block_base {
 
     function init() {
@@ -56,23 +53,13 @@ class block_private_files extends block_base {
         $this->content->text = '';
         $this->content->footer = '';
         if (isloggedin() && !isguestuser()) {   // Show the block
-
-            $options = new stdclass;
-            $options->maxbytes  = -1;
-            $options->maxfiles  = -1;
-            $options->subdirs   = true;
-            $options->accepted_types = '*';
-            $options->return_types = FILE_INTERNAL;
-            $options->context   = $PAGE->context;
-            $options->disable_types = array('user');
-
             $this->content = new object();
 
             //TODO: add capability check here!
 
-            //TODO: add list of available files here
-            $this->content->text = $OUTPUT->single_button(new moodle_url('/blocks/private_files/edit.php'), get_string('edit'), 'get');
-;
+            $renderer = $this->page->get_renderer('block_private_files');
+            $this->content->text = $renderer->private_files_tree();
+            $this->content->text .= $OUTPUT->single_button(new moodle_url('/blocks/private_files/edit.php'), get_string('edit'), 'get');
             $this->content->footer = '';
 
         }
