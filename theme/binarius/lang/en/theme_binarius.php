@@ -16,7 +16,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for component 'theme_nonzero', language 'en', branch 'MOODLE_20_STABLE'
+ * Strings for component 'theme_binarius', language 'en', branch 'MOODLE_20_STABLE'
  *
  * @package   moodlecore
  * @copyright 2010 Patrick Malley
