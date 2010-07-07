@@ -271,6 +271,16 @@ abstract class backup_helper {
         }
         return $fs->create_file_from_pathname($fr, $filepath);
     }
+
+    /**
+     * This function simply marks one param to be considered as straight sql
+     * param, so it won't be searched in the structure tree nor converted at
+     * all. Useful for better integration of definition of sources in structure
+     * and DB stuff
+     */
+    public static function is_sqlparam($value) {
+        return array('sqlparam' => $value);
+    }
 }
 
 /*

@@ -309,7 +309,7 @@ class backup_course_structure_step extends backup_structure_step {
                                 JOIN {tag_instance} ti ON ti.tagid = t.id
                                WHERE ti.itemtype = ?
                                  AND ti.itemid = ?', array(
-                                     $this->is_sqlparam('course'),
+                                     backup_helper::is_sqlparam('course'),
                                      backup::VAR_PARENTID));
 
         $module->set_source_sql('SELECT m.name AS modulename
@@ -795,9 +795,9 @@ class backup_users_structure_step extends backup_structure_step {
                                 WHERE bi.backupid = ?
                                   AND bi.itemname = ?
                                   AND c.contextlevel = ?', array(
-                                      $this->is_sqlparam($this->get_backupid()),
-                                      $this->is_sqlparam('userfinal'),
-                                      $this->is_sqlparam(CONTEXT_USER)));
+                                      backup_helper::is_sqlparam($this->get_backupid()),
+                                      backup_helper::is_sqlparam('userfinal'),
+                                      backup_helper::is_sqlparam(CONTEXT_USER)));
 
         // All the rest on information is only added if we arent
         // in an anonymized backup
@@ -816,7 +816,7 @@ class backup_users_structure_step extends backup_structure_step {
                                     JOIN {tag_instance} ti ON ti.tagid = t.id
                                    WHERE ti.itemtype = ?
                                      AND ti.itemid = ?', array(
-                                         $this->is_sqlparam('user'),
+                                         backup_helper::is_sqlparam('user'),
                                          backup::VAR_PARENTID));
 
             $preference->set_source_table('user_preferences', array('userid' => backup::VAR_PARENTID));
@@ -948,7 +948,7 @@ class backup_inforef_structure_step extends backup_structure_step {
                      FROM {backup_ids_temp}
                     WHERE backupid = ?
                       AND itemname = ?",
-                   array(backup::VAR_BACKUPID, $this->is_sqlparam($itemname)));
+                   array(backup::VAR_BACKUPID, backup_helper::is_sqlparam($itemname)));
             }
         }
 

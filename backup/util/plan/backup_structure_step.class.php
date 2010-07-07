@@ -96,17 +96,6 @@ abstract class backup_structure_step extends backup_step {
 // Protected API starts here
 
     /**
-     * This function simply marks one param to be considered as straight sql
-     * param, so it won't be searched in the structure tree nor converted at
-     * all. Useful for better integration of definition of sources in structure
-     * and DB stuff.
-     */
-    protected function is_sqlparam($value) {
-        return array('sqlparam' => $value);
-    }
-
-
-    /**
      * Function that will return the structure to be processed by this backup_step.
      * Must return one backup_nested_element
      */

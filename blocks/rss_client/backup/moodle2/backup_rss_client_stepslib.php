@@ -45,7 +45,7 @@ class backup_rss_client_block_structure_step extends backup_block_structure_step
             list($in_sql, $in_params) = $DB->get_in_or_equal($feedids);
             // Define all the in_params as sqlparams
             foreach ($in_params as $key => $value) {
-                $in_params[$key] = $this->is_sqlparam($value);
+                $in_params[$key] = backup_helper::is_sqlparam($value);
             }
         }
 
