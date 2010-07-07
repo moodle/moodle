@@ -1735,7 +1735,7 @@ class html_table_cell {
      */
     public $style = null;
     /**
-     * @var array attributes of additional HTML attributes for the <tr> element
+     * @var array attributes of additional HTML attributes for the <td> element
      */
     public $attributes = array();
 
