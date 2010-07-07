@@ -2469,7 +2469,7 @@
     <TABLE NAME="block_instance_old" COMMENT="backup of 1.9 block instances - to be deleted" PREVIOUS="block_pinned_old" NEXT="comments">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="oldid"/>
-        <FIELD NAME="oldid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" PREVIOUS="id" NEXT="blockid"/>
+        <FIELD NAME="oldid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="id" NEXT="blockid"/>
         <FIELD NAME="blockid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="oldid" NEXT="pageid"/>
         <FIELD NAME="pageid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="blockid" NEXT="pagetype"/>
         <FIELD NAME="pagetype" TYPE="char" LENGTH="20" NOTNULL="true" SEQUENCE="false" PREVIOUS="pageid" NEXT="position"/>
