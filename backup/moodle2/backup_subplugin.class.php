@@ -32,10 +32,12 @@ abstract class backup_subplugin {
     protected $subplugintype;
     protected $subpluginname;
     protected $connectionpoint;
+    protected $optigroup; // Optigroup, parent of all optigroup elements
 
-    public function __construct($subplugintype, $subpluginname) {
+    public function __construct($subplugintype, $subpluginname, $optigroup) {
         $this->subplugintype = $subplugintype;
         $this->subpluginname = $subpluginname;
+        $this->optigroup     = $optigroup;
         $this->connectionpoint = '';
     }
 
@@ -46,10 +48,8 @@ abstract class backup_subplugin {
         $methodname = 'define_' . $connectionpoint . '_subplugin_structure';
 
         if (method_exists($this, $methodname)) {
-            return $this->$methodname();
+            $this->$methodname();
         }
-
-        return false;
     }
 
     /**
@@ -60,7 +60,9 @@ abstract class backup_subplugin {
         // Something exclusive for this backup_subplugin_element (backup_optigroup_element)
         // because it hasn't XML representation
         $name = 'optigroup_' . $this->subplugintype . '_' . $this->subpluginname . '_' . $this->connectionpoint;
-        return new backup_subplugin_element($name, $final_elements, $conditionparam, $conditionvalue);
+        $optigroup_element = new backup_subplugin_element($name, $final_elements, $conditionparam, $conditionvalue);
+        $this->optigroup->add_child($optigroup_element);  // Add optigroup_element to stay connected since beginning
+        return $optigroup_element;
     }
 
     /**

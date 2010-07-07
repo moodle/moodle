@@ -106,6 +106,7 @@ abstract class backup_activity_structure_step extends backup_structure_step {
         // Arrived here, subplugin is correct, let's create the optigroup
         $optigroupname = $subplugintype . '_' . $element->get_name() . '_subplugin';
         $optigroup = new backup_optigroup($optigroupname, null, $multiple);
+        $element->add_child($optigroup); // Add optigroup to stay connected since beginning
 
         // Get all the optigroup_elements, looking across al the subplugin dirs
         $elements = array();
@@ -115,15 +116,11 @@ abstract class backup_activity_structure_step extends backup_structure_step {
             $backupfile = $subpluginsdir . '/backup/moodle2/' . $classname . '.class.php';
             if (file_exists($backupfile)) {
                 require_once($backupfile);
-                $backupsubplugin = new $classname($subplugintype, $name);
-                // Add subplugin returned structure to optigroup (must be optigroup_element instance)
-                if ($subpluginstructure = $backupsubplugin->define_subplugin_structure($element->get_name())) {
-                    $optigroup->add_child($subpluginstructure);
-                }
+                $backupsubplugin = new $classname($subplugintype, $name, $optigroup);
+                // Add subplugin returned structure to optigroup
+                $backupsubplugin->define_subplugin_structure($element->get_name());
             }
         }
-        // Finished, add optigroup to element
-        $element->add_child($optigroup);
     }
 
     /**

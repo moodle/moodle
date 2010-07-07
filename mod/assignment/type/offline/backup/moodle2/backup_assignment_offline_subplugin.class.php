@@ -81,7 +81,7 @@ class backup_assignment_offline_subplugin extends backup_subplugin {
         $subplugin->add_child($assassoff);
         $assassoff->add_child($config);
 
-        $config->set_source_table('config', array());
+        $config->set_source_table('config', array('id' => '/assignment/id'));
 
         return $subplugin; // And we return the root subplugin element
     }
@@ -105,7 +105,7 @@ class backup_assignment_offline_subplugin extends backup_subplugin {
         $subplugin->add_child($asssuboff);
         $asssuboff->add_child($config);
 
-        $config->set_source_table('config', array());
+        $config->set_source_table('config', array('id' => backup::VAR_PARENTID));
 
         return $subplugin; // And we return the root subplugin element
     }
