@@ -148,52 +148,48 @@ function feedback_update_instance($feedback) {
 function feedback_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload) {
     global $CFG, $DB;
 
-    if ($context->contextlevel != CONTEXT_MODULE) {
+    require_login($course, false, $cm);
+
+    $itemid = (int)array_shift($args);
+
+    require_course_login($course, true, $cm);
+
+    if (!$item = $DB->get_record('feedback_item', array('id'=>$itemid))) {
         return false;
     }
 
-    require_login($course, false, $cm);
-
-    if ($filearea === 'template') {
-        $usedcontext = get_context_instance(CONTEXT_COURSE, $course->id);
-    }else {
-        $usedcontext = $context;
+    if (!has_capability('mod/feedback:view', $context)) {
+        return false;
     }
 
-    if ($filearea === 'item' OR $filearea === 'template') {
-        $itemid = (int)array_shift($args);
-
-        require_course_login($course, true, $cm);
-
-        if (!$item = $DB->get_record('feedback_item', array('id'=>$itemid))) {
+    if ($context->contextlevel == CONTEXT_MODULE) {
+        if ($filearea !== 'item') {
             return false;
         }
-
-        if (!$feedback = $DB->get_record('feedback', array('id'=>$cm->instance))) {
-            return false;
-        }
-
-        if (!has_capability('mod/feedback:view', $context)) {
-            return false;
-        }
-
+        
         if ($item->feedback == $cm->instance) {
-            $filecontext = $usedcontext;
+            $filecontext = $context;
         } else {
             return false;
         }
+    }
 
-        $relativepath = implode('/', $args);
-        $fullpath = "/$filecontext->id/mod_feedback/$filearea/$itemid/$relativepath";
-
-        $fs = get_file_storage();
-        if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
+    if ($context->contextlevel == CONTEXT_COURSE) {
+        if ($filearea !== 'template') {
             return false;
         }
-
-        // finally send the file
-        send_stored_file($file, 0, 0, true); // download MUST be forced - security!
     }
+    
+    $relativepath = implode('/', $args);
+    $fullpath = "/$context->id/mod_feedback/$filearea/$itemid/$relativepath";
+
+    $fs = get_file_storage();
+    if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
+        return false;
+    }
+
+    // finally send the file
+    send_stored_file($file, 0, 0, true); // download MUST be forced - security!
 
     return false;
 }
