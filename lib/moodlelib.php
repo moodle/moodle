@@ -3524,7 +3524,7 @@ function authenticate_user_login($username, $password) {
 
     if ($user = get_complete_user_data('username', $username)) {
         $auth = empty($user->auth) ? 'manual' : $user->auth;  // use manual if auth not set
-        if (!empty($user->suspended) && $user->suspended) {
+        if (!empty($user->suspended)) {
             add_to_log(0, 'login', 'error', 'index.php', $username);
             error_log('[client '.getremoteaddr()."]  $CFG->wwwroot  Suspended Login:  $username  ".$_SERVER['HTTP_USER_AGENT']);
             return false;
@@ -3588,7 +3588,7 @@ function authenticate_user_login($username, $password) {
             return false;
         }
 
-        if (!empty($user->suspended) && $user->suspended) {
+        if (!empty($user->suspended)) {
             // just in case some auth plugin suspended account
             add_to_log(0, 'login', 'error', 'index.php', $username);
             error_log('[client '.getremoteaddr()."]  $CFG->wwwroot  Suspended Login:  $username  ".$_SERVER['HTTP_USER_AGENT']);
