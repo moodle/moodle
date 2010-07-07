@@ -72,6 +72,7 @@ function workshop_add_instance(stdclass $workshop) {
     $workshop->usepeerassessment    = (int)!empty($workshop->usepeerassessment);    // unticked checkbox hack
     $workshop->useselfassessment    = (int)!empty($workshop->useselfassessment);    // unticked checkbox hack
     $workshop->latesubmissions      = (int)!empty($workshop->latesubmissions);      // unticked checkbox hack
+    $workshop->evaluation           = 'best';
 
     // insert the new record so we get the id
     $workshop->id = $DB->insert_record('workshop', $workshop);
@@ -121,6 +122,7 @@ function workshop_update_instance(stdclass $workshop) {
     $workshop->usepeerassessment    = (int)!empty($workshop->usepeerassessment);    // unticked checkbox hack
     $workshop->useselfassessment    = (int)!empty($workshop->useselfassessment);    // unticked checkbox hack
     $workshop->latesubmissions      = (int)!empty($workshop->latesubmissions);      // unticked checkbox hack
+    $workshop->evaluation           = 'best';
 
     // todo - if the grading strategy is being changed, we must replace all aggregated peer grades with nulls
     // todo - if maximum grades are being changed, we should probably recalculate or invalidate them

@@ -115,6 +115,9 @@ class workshop {
     /** @var string type of the current grading strategy used in this workshop, for example 'accumulative' */
     public $strategy;
 
+    /** @var string the name of the evaluation plugin to use for grading grades calculation */
+    public $evaluation;
+
     /** @var int number of digits that should be shown after the decimal point when displaying grades */
     public $gradedecimals;
 
@@ -141,9 +144,6 @@ class workshop {
 
     /** @var int if greater than 0 then the peer assessment is not allowed after this timestamp */
     public $assessmentend;
-
-    /** @var string the name of the evaluation plugin to use for grading grades calculation */
-    public $evaluation;
 
     /**
      * @var workshop_strategy grading strategy instance

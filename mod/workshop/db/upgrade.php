@@ -215,5 +215,25 @@ function xmldb_workshop_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2009121800, 'workshop');
     }
 
+    /**
+     * Add 'evaluation' field into workshop
+     */
+    if ($oldversion < 2010070700) {
+        $table = new xmldb_table('workshop');
+        $field = new xmldb_field('evaluation', XMLDB_TYPE_CHAR, '30', null, XMLDB_NOTNULL, null, null, 'strategy');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        upgrade_mod_savepoint(true, 2010070700, 'workshop');
+    }
+
+    /**
+     * Set the value of the new 'evaluation' field to 'best', there is no alternative at the moment
+     */
+    if ($oldversion < 2010070701) {
+        $DB->set_field('workshop', 'evaluation', 'best');
+        upgrade_mod_savepoint(true, 2010070701, 'workshop');
+    }
+
     return true;
 }
