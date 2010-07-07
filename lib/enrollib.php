@@ -706,14 +706,14 @@ abstract class enrol_plugin {
      * @return string value
      */
     public function set_config($name, $value) {
-        $name = $this->get_name();
+        $pluginname = $this->get_name();
         $this->load_config();
         if ($value === NULL) {
             unset($this->config->$name);
         } else {
             $this->config->$name = $value;
         }
-        set_config($name, $value, "enrol_$name");
+        set_config($name, $value, "enrol_$pluginname");
     }
 
     /**
