@@ -30,7 +30,7 @@ require_once("$CFG->libdir/formslib.php");
 
 class enrol_users_assign_form extends moodleform {
     function definition() {
-        global $CFG, $DB, $PAGE;
+        global $CFG, $DB;
 
         $mform = $this->_form;
 
@@ -75,14 +75,13 @@ class enrol_users_assign_form extends moodleform {
 
         $this->add_action_buttons();
 
-        $this->set_data($PAGE->url->params());
         $this->set_data(array('action'=>'assign', 'user'=>$user->id));
     }
 }
 
 class enrol_users_addmember_form extends moodleform {
     function definition() {
-        global $CFG, $DB, $PAGE;
+        global $CFG, $DB;
 
         $mform = $this->_form;
 
@@ -130,14 +129,13 @@ class enrol_users_addmember_form extends moodleform {
 
         $this->add_action_buttons();
 
-        $this->set_data($PAGE->url->params());
         $this->set_data(array('action'=>'addmember', 'user'=>$user->id));
     }
 }
 
 class enrol_users_edit_form extends moodleform {
     function definition() {
-        global $CFG, $DB, $PAGE;
+        global $CFG, $DB;
 
         $mform = $this->_form;
 
@@ -184,7 +182,6 @@ class enrol_users_edit_form extends moodleform {
 
         $this->add_action_buttons();
 
-        $this->set_data($PAGE->url->params());
         $this->set_data(array('action'=>'edit', 'ue'=>$ue->id, 'status'=>$ue->status, 'timestart'=>$ue->timestart, 'timeend'=>$ue->timeend));
     }
 

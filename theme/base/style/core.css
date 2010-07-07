@@ -598,3 +598,26 @@ body.tag .managelink {padding: 5px;}
  * Registration
  */
 #page-admin-registration-register .registration_textfield {width: 300px;}
+
+/**
+ * Enrol
+ */
+.userenrolment {width:100%;border-collapse: collapse;}
+.userenrolment td {padding:0;height:41px;}
+.userenrolment .subfield {margin-right:5px;}
+.userenrolment .col_userdetails .subfield_picture {float:left;}
+.userenrolment .col_lastseen {width:150px;}
+.userenrolment .col_role {width:262px;}
+.userenrolment .col_role .roles {margin-right:30px;}
+.userenrolment .col_role .role {float:left;padding:3px;margin:3px;}
+.userenrolment .col_role .role a {margin-left:3px;cursor:pointer;}
+.userenrolment .col_role .addrole {float:right;width:18px;margin:3px;height:18px;text-align:center;}
+.userenrolment .col_role .addrole a img {vertical-align:bottom;}
+.userenrolment .hasAllRoles .col_role .addrole {display:none;}
+.userenrolment .col_group .groups {margin-right:30px;}
+.userenrolment .col_group .group {float:left;padding:3px;margin:3px;white-space:nowrap;}
+.userenrolment .col_group .group a {margin-left:3px;cursor:pointer;}
+.userenrolment .col_group .addgroup {float:right;width:18px;margin:3px;height:18px;text-align:center;}
+.userenrolment .col_group .addgroup a img {vertical-align:bottom;}
+.userenrolment .col_enrol .enrolment {float:left;padding:3px;margin:3px;}
+.userenrolment .col_enrol .enrolment a {float:right;margin-left:3px;}

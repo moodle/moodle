@@ -25,6 +25,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+define('AJAX_SCRIPT', true);
+
 /** Include config */
 require_once(dirname(__FILE__) . '/../../config.php');
 /** Include course lib for its functions */

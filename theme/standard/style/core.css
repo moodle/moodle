@@ -417,3 +417,25 @@ table#tag-management-list {margin: 10px auto;width: 80%;}
 .smartselect .smartselect_submenu {border-color:#999;}
 .smartselect .smartselect_menu,
 .smartselect .smartselect_submenu {-moz-border-radius:4px;-webkit-border-radius: 5px;}
+
+/**
+ * Enrol
+ */
+.userenrolment {font-size:90%;border:1px solid #999;}
+.userenrolment tr.r0 {background-color:#F9F9F9;}
+.userenrolment tr.r1 {background-color:#F3F3F3;}
+.userenrolment td {border:1px solid #E9E9E9;border-top-color:#F6F6F6;border-right-color:#EEE;border-left-color:#F3F3F3;}
+.userenrolment td.c0 {border-left-color:#999;}
+.userenrolment td.c4 {border-right-color:#999;}
+.userenrolment .col_userdetails {padding:3px;min-width:35%;}
+.userenrolment .col_role .roles {position:relative;}
+.userenrolment .col_role .role {line-height:10px;font-size:10px;}
+.userenrolment .col_role .role a img {height:8px;}
+.userenrolment .col_role .addrole {background-color:#DDD;border:1px outset #EEE;-moz-border-radius:5px;}
+.userenrolment .col_group {max-width:300px;}
+.userenrolment .col_group .group {line-height:10px;font-size:10px;}
+.userenrolment .col_group .group a img {height:8px;}
+.userenrolment .col_group .addgroup {background-color:#DDD;border:1px outset #EEE;-moz-border-radius:5px;}
+.userenrolment .col_enrol {max-width:300px;}
+.userenrolment .col_enrol .enrolment {border:1px outset #E6E6E6;background-color:#EEE;line-height:10px;font-size:10px;-moz-border-radius:5px;}
+.path-enrol .enrolusersbutton.instance1 {float:right;}
