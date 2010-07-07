@@ -166,15 +166,13 @@ class external_api {
                     if ($subdesc->required == VALUE_REQUIRED) {
                         throw new invalid_parameter_exception(get_string('errormissingkey', 'webservice', $key));
                     }
-                    if ($subdesc instanceof external_value) {
-                            if ($subdesc->required == VALUE_DEFAULT) {
-                                try {
-                                    $result[$key] = self::validate_parameters($subdesc, $subdesc->default);
-                                } catch (invalid_parameter_exception $e) {
-                                    throw new webservice_parameter_exception('invalidextparam',$key);
-                                }
-                            }
+                    if ($subdesc->required == VALUE_DEFAULT) {
+                        try {
+                            $result[$key] = self::validate_parameters($subdesc, $subdesc->default);
+                        } catch (invalid_parameter_exception $e) {
+                            throw new webservice_parameter_exception('invalidextparam',$key);
                         }
+                    }
                 } else {
                     try {
                         $result[$key] = self::validate_parameters($subdesc, $params[$key]);
@@ -320,15 +318,19 @@ abstract class external_description {
     public $desc;
     /** @property bool $required element value required, null not allowed */
     public $required;
+    /** @property mixed $default default value */
+    public $default;
 
     /**
      * Contructor
      * @param string $desc
      * @param bool $required
+     * @param mixed $default
      */
-    public function __construct($desc, $required) {
+    public function __construct($desc, $required, $default) {
         $this->desc = $desc;
         $this->required = $required;
+        $this->default = $default;
     }
 }
 
@@ -338,8 +340,6 @@ abstract class external_description {
 class external_value extends external_description {
     /** @property mixed $type value type PARAM_XX */
     public $type;
-    /** @property mixed $default default value */
-    public $default;
     /** @property bool $allownull allow null values */
     public $allownull;
 
@@ -351,10 +351,10 @@ class external_value extends external_description {
      * @param mixed $default
      * @param bool $allownull
      */
-    public function __construct($type, $desc='', $required=VALUE_REQUIRED, $default=null, $allownull=NULL_ALLOWED) {
-        parent::__construct($desc, $required);
-        $this->type      = $type;
-        $this->default   = $default;
+    public function __construct($type, $desc='', $required=VALUE_REQUIRED,
+            $default=null, $allownull=NULL_ALLOWED) {
+        parent::__construct($desc, $required, $default);
+        $this->type      = $type;        
         $this->allownull = $allownull;
     }
 }
@@ -371,9 +371,11 @@ class external_single_structure extends external_description {
      * @param array $keys
      * @param string $desc
      * @param bool $required
+     * @param array $default
      */
-    public function __construct(array $keys, $desc='', $required=VALUE_REQUIRED) {
-        parent::__construct($desc, $required);
+    public function __construct(array $keys, $desc='',
+            $required=VALUE_REQUIRED, $default=null) {
+        parent::__construct($desc, $required, $default);
         $this->keys = $keys;
     }
 }
@@ -390,9 +392,11 @@ class external_multiple_structure extends external_description {
      * @param external_description $content
      * @param string $desc
      * @param bool $required
+     * @param array $default
      */
-    public function __construct(external_description $content, $desc='', $required=VALUE_REQUIRED) {
-        parent::__construct($desc, $required);
+    public function __construct(external_description $content, $desc='',
+            $required=VALUE_REQUIRED, $default=null) {
+        parent::__construct($desc, $required, $default);
         $this->content = $content;
     }
 }

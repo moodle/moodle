@@ -637,8 +637,17 @@ class '.$classname.' {
                     throw new moodle_exception('parametercannotbevalueoptional');
                 }
             } else { //for the moment we do not support default for other structure types
-                 if ($keydesc->required == VALUE_OPTIONAL or $keydesc->required == VALUE_DEFAULT) {
-                     throw new moodle_exception('paramdefaultarraynotsupported');
+                 if ($keydesc->required == VALUE_DEFAULT) {
+                     //accept empty array as default
+                     if (isset($keydesc->default) and is_array($keydesc->default)
+                             and empty($keydesc->default)) {
+                         $param .= '=array()';
+                     } else {
+                        throw new moodle_exception('errornotemptydefaultparamarray', 'webservice', '', $name);
+                     }
+                 }
+                 if ($keydesc->required == VALUE_OPTIONAL) {
+                     throw new moodle_exception('erroroptionalparamarray', 'webservice', '', $name);
                  }
             }
             $params[]      = $param;
