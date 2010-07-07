@@ -225,7 +225,7 @@ class workshop_manual_allocator implements workshop_allocator {
         if ($submissions) {
             list($submissionids, $params) = $DB->get_in_or_equal(array_keys($submissions), SQL_PARAMS_NAMED);
             $sql = "SELECT a.id AS assessmentid, a.submissionid,
-                           r.id AS reviewerid, r.lastname, r.firstname, r.picture, r.imagealt, e.email,
+                           r.id AS reviewerid, r.lastname, r.firstname, r.picture, r.imagealt, r.email,
                            s.id AS submissionid, s.authorid
                       FROM {workshop_assessments} a
                       JOIN {user} r ON (a.reviewerid = r.id)
