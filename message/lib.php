@@ -53,6 +53,8 @@ define('VIEW_COURSE','course_');
 
 define('SHOW_ACTION_LINKS_IN_CONTACT_LIST', false);
 
+define('MESSAGE_SEARCH_MAX_RESULTS', 200);
+
 if (!isset($CFG->message_contacts_refresh)) {  // Refresh the contacts list every 60 seconds
     $CFG->message_contacts_refresh = 60;
 }
@@ -673,7 +675,10 @@ function message_print_search_results($frm, $showicontext=false, $user1=null) {
         }
 
         if (!empty($users)) {
-            echo '<strong>'.get_string('userssearchresults', 'message', count($users)).'</strong>';
+            echo html_writer::start_tag('p', array('class'=>'heading searchresultcount'));
+            echo get_string('userssearchresults', 'message', count($users));
+            echo html_writer::end_tag('p');
+
             echo '<table class="messagesearchresults">';
             foreach ($users as $user) {
 
@@ -726,7 +731,9 @@ function message_print_search_results($frm, $showicontext=false, $user1=null) {
             echo '</table>';
 
         } else {
+            echo html_writer::start_tag('p', array('class'=>'heading searchresultcount'));
             echo get_string('userssearchresults', 'message', 0).'<br /><br />';
+            echo html_writer::end_tag('p');
         }
     }
 
@@ -785,15 +792,25 @@ function message_print_search_results($frm, $showicontext=false, $user1=null) {
             }
 
         /// print heading with number of results
-            echo '<p class="heading">'.get_string('keywordssearchresults', 'message', count($messages)).' ("'.s($messagesearchstring).'")</p>';
+            echo html_writer::start_tag('p', array('class'=>'heading searchresultcount'));
+            $countresults = count($messages);
+            if ($countresults==MESSAGE_SEARCH_MAX_RESULTS) {
+                echo get_string('keywordssearchresultstoomany', 'message', $countresults).' ("'.s($messagesearchstring).'")';
+            } else {
+                echo get_string('keywordssearchresults', 'message', $countresults).' ("'.s($messagesearchstring).'")';
+            }
+            echo html_writer::end_tag('p');
 
         /// print table headings
             echo '<table class="messagesearchresults" cellspacing="0">';
+
+            $headertdstart = html_writer::start_tag('td', array('class'=>'messagesearchresultscol'));
+            $headertdend   = html_writer::end_tag('td');
             echo '<tr>';
-            echo '<td><strong>'.get_string('from').'</strong></td>';
-            echo '<td><strong>'.get_string('to').'</strong></td>';
-            echo '<td><strong>'.get_string('message', 'message').'</strong></td>';
-            echo '<td><strong>'.get_string('timesent', 'message').'</strong></td>';
+            echo $headertdstart.get_string('from').$headertdend;
+            echo $headertdstart.get_string('to').$headertdend;
+            echo $headertdstart.get_string('message', 'message').$headertdend;
+            echo $headertdstart.get_string('timesent', 'message').$headertdend;
             echo "</tr>\n";
 
             $blockedcount = 0;
@@ -1149,12 +1166,21 @@ function message_search($searchterms, $fromme=true, $tome=true, $courseid='none'
     $params = array();
     $i = 0;
 
+    //preprocess search terms to check whether we have at least 1 eligible search term
+    //if we do we can drop words around it like 'a'
+    $dropshortwords = false;
+    foreach ($searchterms as $searchterm) {
+        if (strlen($searchterm) >= 2) {
+            $dropshortwords = true;
+        }
+    }
+
     foreach ($searchterms as $searchterm) {
         $i++;
 
         $NOT = ''; /// Initially we aren't going to perform NOT LIKE searches, only MSSQL and Oracle
 
-        if (strlen($searchterm) < 2) {
+        if ($dropshortwords && strlen($searchterm) < 2) {
             continue;
         }
     /// Under Oracle and MSSQL, trim the + and - operators and perform
@@ -1203,10 +1229,10 @@ function message_search($searchterms, $fromme=true, $tome=true, $courseid='none'
     if ($courseid == SITEID) { /// admin is searching all messages
         $m_read   = $DB->get_records_sql("SELECT m.id, m.useridto, m.useridfrom, m.fullmessage, m.timecreated
                                             FROM {message_read} m
-                                           WHERE $searchcond", $params);
+                                           WHERE $searchcond", $params, 0, MESSAGE_SEARCH_MAX_RESULTS);
         $m_unread = $DB->get_records_sql("SELECT m.id, m.useridto, m.useridfrom, m.fullmessage, m.timecreated
                                             FROM {message} m
-                                           WHERE $searchcond", $params);
+                                           WHERE $searchcond", $params, 0, MESSAGE_SEARCH_MAX_RESULTS);
 
     } else if ($courseid !== 'none') {
         /// This has not been implemented due to security concerns
@@ -1231,10 +1257,10 @@ function message_search($searchterms, $fromme=true, $tome=true, $courseid='none'
 
         $m_read   = $DB->get_records_sql("SELECT m.id, m.useridto, m.useridfrom, m.fullmessage, m.timecreated
                                             FROM {message_read} m
-                                           WHERE $searchcond", $params);
+                                           WHERE $searchcond", $params, 0, MESSAGE_SEARCH_MAX_RESULTS);
         $m_unread = $DB->get_records_sql("SELECT m.id, m.useridto, m.useridfrom, m.fullmessage, m.timecreated
                                             FROM {message} m
-                                           WHERE $searchcond", $params);
+                                           WHERE $searchcond", $params, 0, MESSAGE_SEARCH_MAX_RESULTS);
 
     }
 

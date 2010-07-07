@@ -57,6 +57,7 @@ $string['includeblockedusers'] = 'Include blocked users';
 $string['incomingcontacts'] = 'Incoming contacts ({$a})';
 $string['keywords'] = 'Keywords';
 $string['keywordssearchresults'] = 'Search results: {$a} messages found';
+$string['keywordssearchresultstoomany'] = 'Search results: More than {$a} messages found. Refine your search.';
 $string['loggedin'] = 'Online';
 $string['loggedoff'] = 'Not online';
 $string['managecontacts'] = 'Manage my contacts';
