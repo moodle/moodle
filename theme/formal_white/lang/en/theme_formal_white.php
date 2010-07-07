@@ -25,13 +25,8 @@
 
 $string['choosereadme'] = '<div style="text-align:center;">
 <h2 style="margin-bottom:2px;">Formal White theme pack - Preview Release 1</h2>
-<h3 style="margin:0">by <a href="http://www.mediatouch.it/" title="MediaTouch 2000 Moodle Partner">MediaTouch 2000  - Italian Moodle Partner</a></h3><h4 style="margin:3px">Version: 20100601</h4>
+<h3 style="margin:0">by MediaTouch 2000</h3><h4 style="margin:3px">Version: 20100601</h4>
 </div>
-<div>&nbsp;</div>
-<h3 style="margin-bottom:5px; margin-top:5px;">Formal White for Moodle 2.0 - Preview Release 1</h3>
-<p>Meadiatouch is pleased to announce that the first pre-release of its famous and worldwide adopted "Formal white" theme has been finally made available for Moodle 2</p>
-<h3 style="margin-bottom:5px; margin-top:5px;">Licensing</h3>
-<p>This theme is licensed under <a href="http://docs.moodle.org/en/License">Moodle\'s GNU General Public License</a>. Feel free to use it, share it and edit it to fit your needs.</p>
 <p>Enjoy this theme.</p>';
 $string['pluginname'] = 'Formal white';
 
