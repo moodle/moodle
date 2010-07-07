@@ -58,7 +58,7 @@ switch ($action) {
                 $params[$key] = null;
             }
         }
-        $fileinfo = $browser->get_file_info(get_context_instance_by_id($contextid, $component, $filearea, $itemid, $filepath));
+        $fileinfo = $browser->get_file_info(get_context_instance_by_id($contextid), $component, $filearea, $itemid, $filepath);
         $children = $fileinfo->get_children();
         $tree = array();
         foreach ($children as $child) {
