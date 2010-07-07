@@ -11,10 +11,10 @@ $hook = optional_param('hook', 'ALL', PARAM_CLEAN);
 $url = new moodle_url('/mod/glossary/approve.php', array('eid'=>$eid,'mode'=>$mode, 'hook'=>$hook));
 $PAGE->set_url($url);
 
-$entry = $DB->get_record('glossary_entries', 'id', $eid, '*', MUST_EXIST);
-$glossary = $DB->get_record('glossary', 'id', $entry->glossaryid, '*', MUST_EXIST);
+$entry = $DB->get_record('glossary_entries', array('id'=> $eid), '*', MUST_EXIST);
+$glossary = $DB->get_record('glossary', array('id'=> $entry->glossaryid), '*', MUST_EXIST);
 $cm = get_coursemodule_from_instance('glossary', $glossary->id, 0, false, MUST_EXIST);
-$course = $DB->get_record('course', 'id', $cm->course, '*', MUST_EXIST);
+$course = $DB->get_record('course', array('id'=> $cm->course), '*', MUST_EXIST);
 
 require_login($course, false, $cm);
 

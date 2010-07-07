@@ -634,7 +634,7 @@ class moodle_page {
         if ($this->_legacypageobject) {
             return $this->_legacypageobject->user_allowed_editing();
         }
-        return has_any_capability($this->all_editing_caps(), $this->context, null, false );
+        return has_any_capability($this->all_editing_caps(), $this->context, null, false);
     }
 
     /**
