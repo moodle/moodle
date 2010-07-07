@@ -100,7 +100,6 @@ throw new coding_exception('File browsing api function is not implemented yet, s
                     $params = $child->get_params();
                     if ($child->is_directory()) {
                         $node = array(
-                            //TODO: this is wrong, you need to fetch info from the child node!!!!
                             'contextid' => $params['contextid'],
                             'component' => $params['component'],
                             'filearea'  => $params['filearea'],
@@ -113,7 +112,6 @@ throw new coding_exception('File browsing api function is not implemented yet, s
                         $list[] = $node;
                     } else {
                         $node = array(
-                            //TODO: this is wrong, you need to fetch info from the child node!!!!
                             'contextid' => $params['contextid'],
                             'component' => $params['component'],
                             'filearea'  => $params['filearea'],
