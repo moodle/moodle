@@ -34,152 +34,106 @@
  */
 
 
-$THEME->parents = array();
+$THEME->parents = array('standard', 'base');
 
 // TODO: All old styles are now moved into this standard theme because
 //       we need to go through all these and fix them.
 //       This means we will gradually put these back into plugins
 //       directories
-$THEME->sheets = array(
-    'styles_hacks',
-    'styles_layout',
-    'styles_fonts',
-    'styles_color',
-    'styles_moz',
-    'block_blog_tags',
-    'block_calendar_month',
-    'block_calendar_upcoming',
-    'block_course_summary',
-    'block_login',
-    'block_news_items',
-    'block_quiz_results',
-    'block_rss_client',
-    'block_search_forums',
-    'block_tags',
-    'blog_tags',
-    'gradebook',
-    'mod_assignment',
-    'mod_chat',
-    'mod_choice',
-    'mod_data',
-    'mod_feedback',
-    'mod_folder',
-    'mod_forum',
-    'mod_glossary',
-    'mod_lesson',
-    'mod_page',
-    'mod_quiz',
-    'mod_resource',
-    'mod_scorm',
-    'mod_survey',
-    'mod_wiki',
-);
+$THEME->sheets = array('pagelayout');
 
-$THEME->editor_sheets = array('styles_tinymce');
+$THEME->parents_exclude_sheets = array('base'=>array('pagelayout'));
 
 $THEME->layouts = array(
     // Most backwards compatible layout without the blocks - this is the layout used by default
     'base' => array(
-        'theme' => 'standardold',
-        'file' => 'normal.php',
+        'file' => 'general.php',
         'regions' => array(),
     ),
     // Standard layout with blocks, this is recommended for most pages with general information
     'standard' => array(
-        'theme' => 'standardold',
-        'file' => 'normal.php',
+        'file' => 'general.php',
         'regions' => array('side-pre', 'side-post'),
         'defaultregion' => 'side-post',
     ),
     // Main course page
     'course' => array(
-        'theme' => 'standardold',
-        'file' => 'normal.php',
+        'file' => 'general.php',
         'regions' => array('side-pre', 'side-post'),
         'defaultregion' => 'side-post',
         'options' => array('langmenu'=>true),
     ),
     'coursecategory' => array(
-        'theme' => 'standardold',
         'file' => 'general.php',
         'regions' => array('side-pre', 'side-post'),
         'defaultregion' => 'side-post',
     ),
-    // Standard module pages - default page layout if $cm specified in require_login()
+    // part of course, typical for modules - default page layout if $cm specified in require_login()
     'incourse' => array(
-        'theme' => 'standardold',
-        'file' => 'normal.php',
+        'file' => 'general.php',
         'regions' => array('side-pre', 'side-post'),
         'defaultregion' => 'side-post',
     ),
     // The site home page.
     'frontpage' => array(
-        'theme' => 'standardold',
-        'file' => 'home.php',
+        'file' => 'frontpage.php',
         'regions' => array('side-pre', 'side-post'),
         'defaultregion' => 'side-post',
     ),
     // Server administration scripts.
     'admin' => array(
-        'theme' => 'standardold',
-        'file' => 'normal.php',
+        'file' => 'general.php',
         'regions' => array('side-pre'),
         'defaultregion' => 'side-pre',
     ),
     // My dashboard page
     'mydashboard' => array(
-        'theme' => 'standardold',
-        'file' => 'normal.php',
+        'file' => 'general.php',
         'regions' => array('side-pre', 'side-post'),
         'defaultregion' => 'side-post',
         'options' => array('langmenu'=>true),
     ),
     // My public page
     'mypublic' => array(
-        'theme' => 'standardold',
-        'file' => 'normal.php',
+        'file' => 'general.php',
         'regions' => array('side-pre', 'side-post'),
-        'defaultregion' => 'side-post'
+        'defaultregion' => 'side-post',
     ),
     'login' => array(
-        'theme' => 'standardold',
-        'file' => 'normal.php',
+        'file' => 'general.php',
         'regions' => array(),
         'options' => array('langmenu'=>true),
     ),
-    
+
     // Pages that appear in pop-up windows - no navigation, no blocks, no header.
     'popup' => array(
-        'theme' => 'standardold',
-        'file' => 'minimal.php',
+        'file' => 'general.php',
         'regions' => array(),
+        'options' => array('nofooter'=>true, 'nonavbar'=>true, 'nocustommenu'=>true),
     ),
     // No blocks and minimal footer - used for legacy frame layouts only!
     'frametop' => array(
-        'theme' => 'standardold',
-        'file' => 'frametop.php',
+        'file' => 'general.php',
         'regions' => array(),
+        'options' => array('nofooter'=>true),
     ),
     // Embeded pages, like iframe/object embeded in moodleform - it needs as much space as possible
     'embedded' => array(
-        'theme' => 'standardold',
         'file' => 'embedded.php',
         'regions' => array(),
+        'options' => array('nofooter'=>true, 'nonavbar'=>true, 'nocustommenu'=>true),
     ),
     // Used during upgrade and install, and for the 'This site is undergoing maintenance' message.
     // This must not have any blocks, and it is good idea if it does not have links to
     // other places - for example there should not be a home link in the footer...
     'maintenance' => array(
-        'theme' => 'standardold',
-        'file' => 'minimal.php',
+        'file' => 'general.php',
         'regions' => array(),
+        'options' => array('noblocks'=>true, 'nofooter'=>true, 'nonavbar'=>true, 'nocustommenu'=>true),
     ),
 );
-
-/** List of javascript files that need to included on each page */
-$THEME->javascripts_footer = array('navigation');
 
 /**
  * This enables the dock on the side of the page as this theme supports it.
  */
-$THEME->enable_dock = true;
+$THEME->enable_dock = false;
