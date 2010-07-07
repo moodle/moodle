@@ -248,7 +248,8 @@ $CFG->admin = 'admin';
 //      $CFG->mailprefix = 'mdl-'; // - is the separator for qmail
 //      $CFG->maildomain = 'youremaildomain.com';
 //
-// Enable when setting up advanced reverse proxy load balancing configurations.
+// Enable when setting up advanced reverse proxy load balancing configurations,
+// it may be also necessary to enable this when using port forwarding.
 //      $CFG->reverseproxy = true;
 //
 // Enable when using external SSL appliance for performance reasons.
