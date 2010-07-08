@@ -36,8 +36,12 @@ function xmldb_scorm_upgrade($oldversion) {
         /// Launch add field whatgrade
         if (!$dbman->field_exists($table,$field)) {
             $dbman->add_field($table, $field);
-            /// fix bad usage of whatgrade/grading method. - I hope this works in all dbs
-            $DB->execute('UPDATE {scorm} SET whatgrade = grademethod/10');
+            /// fix bad usage of whatgrade/grading method.
+            $scorms = $DB->get_records('scorm');
+            foreach ($scorms as $scorm) {
+                $scorm->whatgrade = $scorm->grademethod/10;
+                $DB->update_record('scorm', $scorm);
+            }
         }
 
         upgrade_mod_savepoint(true, 2008073000, 'scorm');
@@ -445,7 +449,11 @@ function xmldb_scorm_upgrade($oldversion) {
     }
     if ($oldversion < 2010070800) {
     /// fix bad usage of whatgrade/grading method. - I hope this works in all dbs
-        $DB->execute('UPDATE {scorm} SET grademethod = grademethod%10');
+            $scorms = $DB->get_records('scorm');
+            foreach ($scorms as $scorm) {
+                $scorm->grademethod = $scorm->grademethod%10;
+                $DB->update_record('scorm', $scorm);
+            }
     /// scorm savepoint reached
         upgrade_mod_savepoint(true, 2010070800, 'scorm');
     }
