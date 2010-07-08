@@ -3391,7 +3391,7 @@ function truncate_userinfo($info) {
                     'institution' =>  40,
                     'department'  =>  30,
                     'address'     =>  70,
-                    'city'        => 100,
+                    'city'        => 120,
                     'country'     =>   2,
                     'url'         => 255,
                     );

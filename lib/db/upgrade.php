@@ -4687,7 +4687,7 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         upgrade_main_savepoint(true, 2010070604);
     }
 
-    if ($oldversion < 2010070701) {
+    if ($oldversion < 2010070801) {
     /// Before changing the field, drop dependent indexes
     /// Define index shortname (not unique) to be dropped form course_request
         $table = new xmldb_table('user');
@@ -4696,8 +4696,8 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         if ($dbman->index_exists($table, $index)) {
             $dbman->drop_index($table, $index);
         }
-    /// Changing precision of field city on table user to (100)
-        $field = new xmldb_field('city', XMLDB_TYPE_CHAR, '100', null, XMLDB_NOTNULL, null, null, 'address');
+    /// Changing precision of field city on table user to (120)
+        $field = new xmldb_field('city', XMLDB_TYPE_CHAR, '120', null, XMLDB_NOTNULL, null, null, 'address');
 
     /// Launch change of precision for field city
         $dbman->change_field_precision($table, $field);
@@ -4707,7 +4707,7 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
             $dbman->add_index($table, $index);
         }
     /// Main savepoint reached
-        upgrade_main_savepoint(true, 2010070701);
+        upgrade_main_savepoint(true, 2010070801);
     }
 
     return true;

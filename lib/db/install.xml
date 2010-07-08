@@ -727,7 +727,7 @@
         <FIELD NAME="institution" TYPE="char" LENGTH="40" NOTNULL="true" SEQUENCE="false" PREVIOUS="phone2" NEXT="department"/>
         <FIELD NAME="department" TYPE="char" LENGTH="30" NOTNULL="true" SEQUENCE="false" PREVIOUS="institution" NEXT="address"/>
         <FIELD NAME="address" TYPE="char" LENGTH="70" NOTNULL="true" SEQUENCE="false" PREVIOUS="department" NEXT="city"/>
-        <FIELD NAME="city" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false" PREVIOUS="address" NEXT="country"/>
+        <FIELD NAME="city" TYPE="char" LENGTH="120" NOTNULL="true" SEQUENCE="false" PREVIOUS="address" NEXT="country"/>
         <FIELD NAME="country" TYPE="char" LENGTH="2" NOTNULL="true" SEQUENCE="false" PREVIOUS="city" NEXT="lang"/>
         <FIELD NAME="lang" TYPE="char" LENGTH="30" NOTNULL="true" DEFAULT="en" SEQUENCE="false" PREVIOUS="country" NEXT="theme"/>
         <FIELD NAME="theme" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false" PREVIOUS="lang" NEXT="timezone"/>
