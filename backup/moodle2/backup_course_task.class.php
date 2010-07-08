@@ -72,7 +72,8 @@ class backup_course_task extends backup_task {
         // annotating some bits, tags and module restrictions
         $this->add_step(new backup_course_structure_step('course_info', 'course.xml'));
 
-        //TODO: MDL-22793 - add user_enrolments entries
+        // Generate the enrolment file
+        $this->add_step(new backup_enrolments_structure_step('course_enrolments', 'enrolments.xml'));
 
         // Annotate the groups used in already annotated groupings
         $this->add_step(new backup_annotate_groups_from_groupings('annotate_groups'));

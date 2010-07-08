@@ -331,6 +331,65 @@ class backup_course_structure_step extends backup_structure_step {
 }
 
 /**
+ * structure step that will generate the enrolments.xml file for the given course
+ */
+class backup_enrolments_structure_step extends backup_structure_step {
+
+    protected function define_structure() {
+
+        // To know if we are including users
+        $users = $this->get_setting_value('users');
+
+        // Define each element separated
+
+        $enrolments = new backup_nested_element('enrolments');
+
+        $enrols = new backup_nested_element('enrols');
+
+        $enrol = new backup_nested_element('enrol', array('id'), array(
+            'enrol', 'status', 'courseid', 'sortorder', 'name', 'enrolperiod', 'enrolstartdate',
+            'enrolenddate', 'expirynotify', 'expirytreshold', 'notifyall',
+            'password', 'cost', 'currency', 'roleid', 'customint1', 'customint2', 'customint3',
+            'customint4', 'customchar1', 'customchar2', 'customdec1', 'customdec2',
+            'customtext1', 'customtext2', 'timecreated', 'timemodified'));
+
+        $userenrolments = new backup_nested_element('user_enrolments');
+
+        $enrolment = new backup_nested_element('enrolment', array('id'), array(
+            'status', 'enrolid', 'userid', 'timestart', 'timeend', 'modifierid',
+            'timemodified'));
+
+        // Build the tree
+        $enrolments->add_child($enrols);
+        $enrols->add_child($enrol);
+        $enrol->add_child($userenrolments);
+        $userenrolments->add_child($enrolment);
+
+        // Define sources
+
+        $enrol->set_source_table('enrol', array('courseid' => backup::VAR_COURSEID));
+
+        // User enrolments only added if specified
+        if ($users) {
+            $enrolment->set_source_table('user_enrolments', array('enrolid' => backup::VAR_PARENTID));
+        }
+
+        // Define id annotations
+        $enrol->annotate_ids('course', 'courseid');
+        $enrol->annotate_ids('role', 'roleid');
+        $enrol->annotate_ids('user', 'modifierid');
+
+        $enrolment->annotate_ids('user', 'userid');
+        $enrolment->annotate_ids('enrol', 'enrolid');
+        $enrolment->annotate_ids('user', 'modifierid');
+
+        //TODO: let plugins annotate custom fields too and add more children
+
+        return $enrolments;
+    }
+}
+
+/**
  * structure step that will generate the roles.xml file for the given context, observing
  * the role_assignments setting to know if that part needs to be included
  */
@@ -354,7 +413,7 @@ class backup_roles_structure_step extends backup_structure_step {
         $assignments = new backup_nested_element('role_assignments');
 
         $assignment = new backup_nested_element('assignment', array('id'), array(
-            'roleid', 'userid', 'timemodified', 'modifierid', 'component', //TODO: MDL-22793 add itemid here
+            'roleid', 'userid', 'timemodified', 'modifierid', 'component', 'itemid',
             'sortorder'));
 
         // Build the tree
@@ -379,6 +438,8 @@ class backup_roles_structure_step extends backup_structure_step {
         $assignment->annotate_ids('role', 'roleid');
 
         $assignment->annotate_ids('user', 'userid');
+
+        //TODO: how do we annotate the itemid? the meaning depends on the content of component table (skodak)
 
         return $roles;
     }
