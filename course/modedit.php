@@ -338,13 +338,15 @@ if ($mform->is_cancelled()) {
             // set cm idnumber - uniqueness is already verified by form validation
             set_coursemodule_idnumber($fromform->coursemodule, $fromform->cmidnumber);
         }
-        //trigger event with information about this module.
+
+        // Trigger mod_updated event with information about this module.
         $eventdata = new object();
-        $eventdata->component = 'mod/'.$fromform->modulename;
-        $eventdata->course    = $course->id;
-        $eventdata->cm        = $fromform->coursemodule;
-        $eventdata->user      = $USER;
-        events_trigger($fromform->modulename.'_mod_updated', $eventdata);
+        $eventdata->modulename = $fromform->modulename;
+        $eventdata->name       = $fromform->name;
+        $eventdata->cmid       = $fromform->coursemodule;
+        $eventdata->courseid   = $course->id;
+        $eventdata->userid     = $USER->id;
+        events_trigger('mod_updated', $eventdata);
 
         add_to_log($course->id, "course", "update mod",
                    "../mod/$fromform->modulename/view.php?id=$fromform->coursemodule",
@@ -448,13 +450,15 @@ if ($mform->is_cancelled()) {
         if ($CFG->enableavailability) {
             condition_info::update_cm_from_form((object)array('id'=>$fromform->coursemodule), $fromform, false);
         }
-        //trigger event with information about this module.
+
+        // Trigger mod_created event with information about this module.
         $eventdata = new object();
-        $eventdata->component = 'mod/'.$fromform->modulename;
-        $eventdata->course    = $course->id;
-        $eventdata->cm        = $fromform->coursemodule;
-        $eventdata->user      = $USER;
-        events_trigger($fromform->modulename.'_mod_created', $eventdata);
+        $eventdata->modulename = $fromform->modulename;
+        $eventdata->name       = $fromform->name;
+        $eventdata->cmid       = $fromform->coursemodule;
+        $eventdata->courseid   = $course->id;
+        $eventdata->userid     = $USER->id;
+        events_trigger('mod_created', $eventdata);
 
         add_to_log($course->id, "course", "add mod",
                    "../mod/$fromform->modulename/view.php?id=$fromform->coursemodule",

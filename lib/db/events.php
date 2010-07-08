@@ -107,10 +107,10 @@ groups_groupings_deleted        - int course id - deleted all course groupings
 role_assigned         - object role_assignments table record
 role_unassigned       - object role_assignments table record
 
-==== Module Related events ====
+==== activity module events ====
 
-modulename_mod_deleted - int courseid, int cmid - happens when a module is deleted -eg quiz_mod_deleted
-modulename_mod_created - int courseid, int cmid - happens when a module is created -eg quiz_mod_created
-modulename_mod_updated - int courseid, int cmid - happens when a module is updated -eg quiz_mod_updated
+mod_deleted - int courseid, int cmid, text modulename - happens when a module is deleted
+mod_created - int courseid, int cmid, text modulename - happens when a module is created
+mod_updated - int courseid, int cmid, text modulename - happens when a module is updated
 
 */

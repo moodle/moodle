@@ -147,12 +147,13 @@ if (!empty($add)) {
         echo $OUTPUT->notification("Could not delete the $cm->modname from that section");
     }
 
-    //trigger event with information about this module.
+    // Trigger a mod_deleted event with information about this module.
     $eventdata = new object();
-    $eventdata->component = 'mod/'.$cm->modname;
-    $eventdata->course    = $course->id;
-    $eventdata->cm        = $cm->id;
-    events_trigger($cm->modname.'_mod_deleted', $eventdata);
+    $eventdata->modulename = $cm->modname;
+    $eventdata->cmid       = $cm->id;
+    $eventdata->courseid   = $course->id;
+    $eventdata->userid     = $USER->id;
+    events_trigger('mod_deleted', $eventdata);
 
     add_to_log($course->id, 'course', "delete mod",
                "view.php?id=$cm->course",
