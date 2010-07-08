@@ -40,6 +40,25 @@ define('ENROL_USER_SUSPENDED', 1);
 /** Enrol info is cached for this number of seconds in require_login() */
 define('ENROL_REQUIRE_LOGIN_CACHE_PERIOD', 1800);
 
+/** When user disappears from external source, the enrolment is completely removed */
+define('ENROL_EXT_REMOVED_UNENROL', 0);
+
+/** When user disappears from external source, the enrolment is kept as is - one way sync */
+define('ENROL_EXT_REMOVED_KEEP', 1);
+
+/**
+ * When user disappears from external source, user enrolment is suspended, roles are kept as is.
+ * In some cases user needs a role with some capability to be visible in UI - suc has in gradebook,
+ * assignments, etc.
+ */
+define('ENROL_EXT_REMOVED_SUSPEND', 2);
+
+/**
+ * When user disappears from external source, the enrolment is suspended and roles assigned
+ * by enrol instance are removed. Please note that user may "disappear" from gradebook and other areas.
+ * */
+define('ENROL_EXT_REMOVED_SUSPENDNOROLES', 3);
+
 /**
  * Returns instances of enrol plugins
  * @param bool $enable return enabled only

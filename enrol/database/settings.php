@@ -86,8 +86,11 @@ if ($ADMIN->fulltree) {
 
     $settings->add(new admin_setting_configcheckbox('enrol_database/ignorehiddencourses', get_string('ignorehiddencourses', 'enrol_database'), get_string('ignorehiddencourses_desc', 'enrol_database'), 0));
 
-    $options = array(0=>get_string('unenrolactionunenrol', 'enrol_database'), 1=>get_string('unenrolactionkeep', 'enrol_database'), 2=>get_string('unenrolactiondisable', 'enrol_database'));
-    $settings->add(new admin_setting_configselect('enrol_database/unenrolaction', get_string('unenrolaction', 'enrol_database'), get_string('unenrolaction_desc', 'enrol_database'), 0, $options));
+    $options = array(ENROL_EXT_REMOVED_UNENROL        => get_string('extremovedunenrol', 'enrol'),
+                     ENROL_EXT_REMOVED_KEEP           => get_string('extremovedkeep', 'enrol'),
+                     ENROL_EXT_REMOVED_SUSPEND        => get_string('extremovedsuspend', 'enrol'),
+                     ENROL_EXT_REMOVED_SUSPENDNOROLES => get_string('extremovedsuspendnoroles', 'enrol'));
+    $settings->add(new admin_setting_configselect('enrol_database/unenrolaction', get_string('extremovedaction', 'enrol'), get_string('extremovedaction_help', 'enrol'), ENROL_EXT_REMOVED_UNENROL, $options));
 
 
 

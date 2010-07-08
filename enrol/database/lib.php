@@ -255,7 +255,7 @@ class enrol_database_plugin extends enrol_plugin {
             }
 
             // deal with enrolments removed from external table
-            if ($unenrolaction == 0) {
+            if ($unenrolaction == ENROL_EXT_REMOVED_UNENROL) {
                 // unenrol
                 if (!empty($requested_roles)) {
                     // we might get some error or connection problem, better not unenrol everybody
@@ -267,10 +267,10 @@ class enrol_database_plugin extends enrol_plugin {
                     }
                 }
 
-            } else if ($unenrolaction == 1) {
+            } else if ($unenrolaction == ENROL_EXT_REMOVED_KEEP) {
                 // keep - only adding enrolments
 
-            } else if ($unenrolaction == 2) {
+            } else if ($unenrolaction == ENROL_EXT_REMOVED_SUSPEND or $unenrolaction == ENROL_EXT_REMOVED_SUSPENDNOROLES) {
                 // disable
                 foreach ($current_status as $userid=>$status) {
                     if (isset($requested_roles[$userid])) {
@@ -278,6 +278,9 @@ class enrol_database_plugin extends enrol_plugin {
                     }
                     if ($status != ENROL_USER_SUSPENDED) {
                         $DB->set_field('user_enrolments', 'status', ENROL_USER_SUSPENDED, array('enrolid'=>$instance->id, 'userid'=>$userid));
+                    }
+                    if ($unenrolaction == ENROL_EXT_REMOVED_SUSPENDNOROLES) {
+                        role_unassign_all(array('contextid'=>$context->id, 'userid'=>$userid, 'component'=>'enrol_database', 'itemid'=>$instance->id));
                     }
                 }
             }
