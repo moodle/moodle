@@ -311,7 +311,6 @@ foreach($authsequence as $authname) {
 
 $PAGE->set_title("$site->fullname: $loginsite");
 $PAGE->set_heading("$site->fullname");
-$PAGE->set_focuscontrol($focus);
 
 echo $OUTPUT->header();
 include("index_form.html");
