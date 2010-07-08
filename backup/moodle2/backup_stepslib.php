@@ -374,6 +374,8 @@ class backup_enrolments_structure_step extends backup_structure_step {
             $enrolment->set_source_table('user_enrolments', array('enrolid' => backup::VAR_PARENTID));
         }
 
+        $enrol->annotate_ids('role', 'roleid');
+
         //TODO: let plugins annotate custom fields too and add more children
 
         return $enrolments;
