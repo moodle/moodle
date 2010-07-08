@@ -59,6 +59,16 @@
     </tr>
 </table>
 
+<?php
+if (has_capability('moodle/grade:manageoutcomes', $context)) {
+?>
+    <p class="mdl-align">
+        <a href="<?php echo $CFG->wwwroot ?>/grade/edit/outcome/index.php"><?php echo get_string('editoutcomes','grades'); ?></a>
+    </p>
+<?php
+}
+?>
+
 <input name="id" type="hidden" value="<?php echo $courseid?>"/>
 <input type="hidden" name="sesskey" value="<?php echo sesskey() ?>" />
 </div>
