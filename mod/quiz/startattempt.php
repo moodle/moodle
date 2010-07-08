@@ -121,7 +121,7 @@ foreach ($quizobj->get_questions() as $i => $question) {
 }
 /// Trigger event
 $eventdata = new object();
-$eventdata->component  = 'mod/quiz';
+$eventdata->component  = 'mod_quiz';
 $eventdata->course     = $quizobj->get_courseid();
 $eventdata->quiz       = $quizobj->get_quizid();
 $eventdata->cm         = $quizobj->get_cmid();

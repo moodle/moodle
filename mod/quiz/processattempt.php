@@ -197,7 +197,7 @@ $accessmanager->clear_password_access();
 
 /// Trigger event
 $eventdata = new object();
-$eventdata->component  = 'mod/quiz';
+$eventdata->component  = 'mod_quiz';
 $eventdata->course     = $attemptobj->get_courseid();
 $eventdata->quiz       = $attemptobj->get_quizid();
 $eventdata->cm         = $attemptobj->get_cmid();
