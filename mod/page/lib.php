@@ -280,7 +280,7 @@ function page_get_coursemodule_info($coursemodule) {
  */
 function page_get_file_areas($course, $cm, $context) {
     $areas = array();
-    $areas['content'] = get_string('pagecontent', 'page');
+    $areas['content'] = get_string('content', 'page');
     return $areas;
 }
 
