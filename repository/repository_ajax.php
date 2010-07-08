@@ -32,6 +32,13 @@ require_once(dirname(dirname(__FILE__)).'/config.php');
 require_once(dirname(dirname(__FILE__)).'/lib/filelib.php');
 require_once(dirname(__FILE__).'/lib.php');
 
+$err = new stdclass;
+
+if (!isloggedin()) {
+    $err->error = get_string('loggedinnot');
+    die(json_encode($err));
+}
+
 require_login();
 
 /// Parameters
@@ -55,8 +62,6 @@ $linkexternal  = optional_param('linkexternal', '', PARAM_ALPHA);
 /// Headers to make it not cacheable
 header('Cache-Control: no-cache, must-revalidate');
 header('Expires: Sat, 26 Jul 1997 05:00:00 GMT');
-
-$err = new stdclass;
 
 if (!confirm_sesskey()) {
     $err->error = get_string('invalidsesskey');
