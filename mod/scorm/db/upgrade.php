@@ -441,7 +441,12 @@ function xmldb_scorm_upgrade($oldversion) {
     /// scorm savepoint reached
         upgrade_mod_savepoint(true, 2009042002, 'scorm');
     }
-
+    if ($oldversion < 2010070800) {
+    /// fix bad usage of whatgrade/grading method. - I hope this works in all dbs
+        $DB->execute('UPDATE {scorm} SET grademethod = grademethod%10');
+    /// scorm savepoint reached
+        upgrade_mod_savepoint(true, 2010070800, 'scorm');
+    }
     return true;
 }
 

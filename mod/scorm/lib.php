@@ -72,7 +72,6 @@ function scorm_add_instance($scorm, $mform=null) {
     if (!isset($scorm->whatgrade)) {
         $scorm->whatgrade = 0;
     }
-    $scorm->grademethod = ($scorm->whatgrade * 10) + $scorm->grademethod;
 
     $id = $DB->insert_record('scorm', $scorm);
 
@@ -191,7 +190,6 @@ function scorm_update_instance($scorm, $mform=null) {
     if (!isset($scorm->whatgrade)) {
         $scorm->whatgrade = 0;
     }
-    $scorm->grademethod  = ($scorm->whatgrade * 10) + $scorm->grademethod;
 
     $DB->update_record('scorm', $scorm);
 
