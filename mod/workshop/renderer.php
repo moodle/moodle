@@ -204,7 +204,7 @@ class mod_workshop_renderer extends plugin_renderer_base {
 
         $content = format_text($submission->content, $submission->contentformat);
         $content = file_rewrite_pluginfile_urls($content, 'pluginfile.php', $this->page->context->id,
-                                                        'workshop_submission', 'content', $submission->id);
+                                                        'mod_workshop', 'submission_content', $submission->id);
         $o .= $this->output->container($content, 'content');
 
         $o .= $this->submission_attachments($submission);
@@ -351,7 +351,7 @@ class mod_workshop_renderer extends plugin_renderer_base {
 
         $content = format_text($example->content, $example->contentformat);
         $content = file_rewrite_pluginfile_urls($content, 'pluginfile.php', $this->page->context->id,
-                                                        'workshop_submission', 'content', $example->id);
+                                                        'mod_workshop', 'submission_content', $example->id);
         $o .= $this->output->container($content, 'content');
 
         $o .= $this->submission_attachments($example);
