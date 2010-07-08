@@ -114,15 +114,16 @@ class assignment_uploadsingle extends assignment_base {
                                 'view.php?a='.$this->assignment->id, $this->assignment->id, $this->cm->id);
                         $this->update_grade($submission);
                         $this->email_teachers($submission);
-                        //trigger event with information about this file.
+
+                        // Let Moodle know that an assessable file was uploaded (eg for plagiarism detection)
                         $eventdata = new object();
-                        $eventdata->component  = 'mod/assignment';
-                        $eventdata->course     = $this->course;
-                        $eventdata->assignment = $this->assignment;
-                        $eventdata->cm         = $this->cm;
-                        $eventdata->user       = $USER;
-                        $eventdata->file       = $file;
-                        events_trigger('assignment_file_sent', $eventdata);
+                        $eventdata->modulename   = 'assignment';
+                        $eventdata->cmid         = $this->cm->id;
+                        $eventdata->itemid       = $submission->id;
+                        $eventdata->courseid     = $this->course->id;
+                        $eventdata->userid       = $USER->id;
+                        $eventdata->file         = $file;
+                        events_trigger('assessable_file_uploaded', $eventdata);
 
                         redirect('view.php?id='.$this->cm->id, get_string('uploadedfile'));
                     }

@@ -594,15 +594,16 @@ class assignment_upload extends assignment_base {
                             if (!$this->drafts_tracked()) {
                                 $this->email_teachers($submission);
                             }
-                            //trigger event with information about this file.
+                            
+                            // Let Moodle know that an assessable file was uploaded (eg for plagiarism detection)
                             $eventdata = new object();
-                            $eventdata->component  = 'mod/assignment';
-                            $eventdata->course     = $this->course;
-                            $eventdata->assignment = $this->assignment;
-                            $eventdata->cm         = $this->cm;
-                            $eventdata->user       = $USER;
-                            $eventdata->file       = $file;
-                            events_trigger('assignment_file_sent', $eventdata);
+                            $eventdata->modulename   = 'assignment';
+                            $eventdata->cmid         = $this->cm->id;
+                            $eventdata->itemid       = $submission->id;
+                            $eventdata->courseid     = $this->course->id;
+                            $eventdata->userid       = $USER->id;
+                            $eventdata->file         = $file;
+                            events_trigger('assessable_file_uploaded', $eventdata);
 
                             redirect('view.php?id='.$this->cm->id);
                         } else {
@@ -709,14 +710,15 @@ class assignment_upload extends assignment_base {
             $this->view_footer();
             die;
         }
-        //trigger event with information about this file.
+
+        // Trigger assessable_files_done event to show files are complete
         $eventdata = new object();
-        $eventdata->component  = 'mod/assignment';
-        $eventdata->course     = $this->course;
-        $eventdata->assignment = $this->assignment;
-        $eventdata->cm         = $this->cm;
-        $eventdata->user       = $USER;
-        events_trigger('assignment_finalize_sent', $eventdata);
+        $eventdata->modulename   = 'assignment';
+        $eventdata->cmid         = $this->cm->id;
+        $eventdata->itemid       = $submission->id;
+        $eventdata->courseid     = $this->course->id;
+        $eventdata->userid       = $USER->id;
+        events_trigger('assessable_files_done', $eventdata);
 
         redirect($returnurl);
     }
