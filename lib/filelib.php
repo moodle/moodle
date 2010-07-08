@@ -611,11 +611,6 @@ function file_get_drafarea_files($draftitemid, $filepath = '/') {
             $item->fullname = trim($item->filename, '/');
             $filesize = $file->get_filesize();
             $item->filesize = $filesize ? display_size($filesize) : '';
-            if (strlen($item->fullname) >= $maxlength) {
-                $item->shortname = trim(substr($item->fullname, 0, $maxlength)).'...';
-            } else {
-                $item->shortname = $item->fullname;
-            }
 
             $icon = mimeinfo_from_type('icon', $file->get_mimetype());
             $icon = str_replace('.gif', '', $icon);
@@ -634,11 +629,6 @@ function file_get_drafarea_files($draftitemid, $filepath = '/') {
                 $item->type = 'folder';
                 $foldername = explode('/', trim($item->filepath, '/'));
                 $item->fullname = trim(array_pop($foldername), '/');
-                if (strlen($item->fullname) >= $maxlength) {
-                    $item->shortname = trim(substr($item->fullname, 0, $maxlength)).'...';
-                } else {
-                    $item->shortname = $item->fullname;
-                }
             } else {
                 // do NOT use file browser here!
                 $item->url = file_draftfile_url($draftitemid, $item->filepath, $item->filename);
