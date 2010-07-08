@@ -72,8 +72,8 @@ if (has_capability('moodle/course:publish', get_context_instance(CONTEXT_COURSE,
             $params = array('', 1, 1, array( 'allsitecourses' => 1));
             $serverurl = $hub->huburl."/local/hub/webservice/webservices.php";
             require_once($CFG->dirroot."/webservice/xmlrpc/lib.php");
-            $xmlrpcclient = new webservice_xmlrpc_client();
-            $sitecourses = $xmlrpcclient->call($serverurl, $hub->token, $function, $params);
+            $xmlrpcclient = new webservice_xmlrpc_client($serverurl, $hub->token);
+            $sitecourses = $xmlrpcclient->call($function, $params);
 
             //update status for all these course
             foreach ($sitecourses as $sitecourse) {
@@ -131,8 +131,8 @@ if (has_capability('moodle/course:publish', get_context_instance(CONTEXT_COURSE,
             $params = array(array( $publication->hubcourseid));
             $serverurl = $huburl."/local/hub/webservice/webservices.php";
             require_once($CFG->dirroot."/webservice/xmlrpc/lib.php");
-            $xmlrpcclient = new webservice_xmlrpc_client();
-            $result = $xmlrpcclient->call($serverurl, $registeredhub->token, $function, $params);
+            $xmlrpcclient = new webservice_xmlrpc_client($serverurl, $registeredhub->token);
+            $result = $xmlrpcclient->call($function, $params);
 
             //delete the publication from the database
             $publicationmanager->delete_publication($publicationid);

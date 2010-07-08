@@ -48,9 +48,9 @@ class community_hub_search_form extends moodleform {
         $params = array();
         $serverurl = HUB_HUBDIRECTORYURL . "/local/hubdirectory/webservice/webservices.php";
         require_once($CFG->dirroot . "/webservice/xmlrpc/lib.php");
-        $xmlrpcclient = new webservice_xmlrpc_client();
+        $xmlrpcclient = new webservice_xmlrpc_client($serverurl, 'publichubdirectory');
         try {
-            $hubs = $xmlrpcclient->call($serverurl, 'publichubdirectory', $function, $params);
+            $hubs = $xmlrpcclient->call($function, $params);
         } catch (Exception $e) {
             $hubs = array();
             $error = $OUTPUT->notification(get_string('errorhublisting', 'block_community', $e->getMessage()));

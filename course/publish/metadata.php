@@ -175,9 +175,9 @@ if (has_capability('moodle/course:publish', get_context_instance(CONTEXT_COURSE,
         $params = array(array($courseinfo));
         $serverurl = $huburl . "/local/hub/webservice/webservices.php";
         require_once($CFG->dirroot . "/webservice/xmlrpc/lib.php");
-        $xmlrpcclient = new webservice_xmlrpc_client();
+        $xmlrpcclient = new webservice_xmlrpc_client($serverurl, $registeredhub->token);
         try {
-            $courseids = $xmlrpcclient->call($serverurl, $registeredhub->token, $function, $params);
+            $courseids = $xmlrpcclient->call($function, $params);
         } catch (Exception $e) {
             throw new moodle_exception('errorcoursepublish', 'hub',
                     new moodle_url('/course/view.php', array('id' => $id)), $e->getMessage());

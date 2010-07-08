@@ -82,9 +82,9 @@ if (empty($cancel) and $unregistration and $confirm and confirm_sesskey()) {
             $function = 'hub_unregister_courses';
             $params = array($hubcourseids);
             $serverurl = $huburl . "/local/hub/webservice/webservices.php";
-            $xmlrpcclient = new webservice_xmlrpc_client();
+            $xmlrpcclient = new webservice_xmlrpc_client($serverurl, $hub->token);
             try {
-                $result = $xmlrpcclient->call($serverurl, $hub->token, $function, $params);
+                $result = $xmlrpcclient->call($function, $params);
                 //delete the published courses
                 if (!empty($enrollablecourses)) {
                     $publicationmanager->delete_hub_publications($huburl, 1);
@@ -107,9 +107,9 @@ if (empty($cancel) and $unregistration and $confirm and confirm_sesskey()) {
         $function = 'hub_unregister_site';
         $params = array();
         $serverurl = $huburl . "/local/hub/webservice/webservices.php";
-        $xmlrpcclient = new webservice_xmlrpc_client();
+        $xmlrpcclient = new webservice_xmlrpc_client($serverurl, $hub->token);
         try {
-            $result = $xmlrpcclient->call($serverurl, $hub->token, $function, $params);
+            $result = $xmlrpcclient->call($function, $params);
         } catch (Exception $e) {
             if (!$cleanregdata) {
                 $errormessage = $e->getMessage();

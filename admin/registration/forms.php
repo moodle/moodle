@@ -107,9 +107,9 @@ class hub_selector_form extends moodleform {
         $params = array();
         $serverurl = HUB_HUBDIRECTORYURL . "/local/hubdirectory/webservice/webservices.php";
         require_once($CFG->dirroot . "/webservice/xmlrpc/lib.php");
-        $xmlrpcclient = new webservice_xmlrpc_client();
+        $xmlrpcclient = new webservice_xmlrpc_client($serverurl, 'publichubdirectory');
         try {
-            $hubs = $xmlrpcclient->call($serverurl, 'publichubdirectory', $function, $params);
+            $hubs = $xmlrpcclient->call($function, $params);
         } catch (Exception $e) {
             $error = $OUTPUT->notification(get_string('errorhublisting', 'hub', $e->getMessage()));
             $mform->addElement('static', 'errorhub', '', $error);

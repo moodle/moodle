@@ -148,9 +148,9 @@ if (!empty($fromform)) {
         'enrollable' => !$downloadable, 'options' => $options);
     $serverurl = $huburl . "/local/hub/webservice/webservices.php";
     require_once($CFG->dirroot . "/webservice/xmlrpc/lib.php");
-    $xmlrpcclient = new webservice_xmlrpc_client();
+    $xmlrpcclient = new webservice_xmlrpc_client($serverurl, $token);
     try {
-        $courses = $xmlrpcclient->call($serverurl, $token, $function, $params);
+        $courses = $xmlrpcclient->call($function, $params);
     } catch (Exception $e) {
         $hubs = array();
         $errormessage = $OUTPUT->notification(get_string('errorcourselisting', 'block_community', $e->getMessage()));

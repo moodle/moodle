@@ -114,9 +114,9 @@ if ($update and confirm_sesskey()) {
     $params = array($siteinfo);
     $serverurl = $huburl . "/local/hub/webservice/webservices.php";
     require_once($CFG->dirroot . "/webservice/xmlrpc/lib.php");
-    $xmlrpcclient = new webservice_xmlrpc_client();
+    $xmlrpcclient = new webservice_xmlrpc_client($serverurl, $registeredhub->token);
     try {
-        $result = $xmlrpcclient->call($serverurl, $registeredhub->token, $function, $params);
+        $result = $xmlrpcclient->call($function, $params);
     } catch (Exception $e) {
         $error = $OUTPUT->notification(get_string('errorregistration', 'hub', $e->getMessage()));
     }
