@@ -51,4 +51,5 @@ $string['printheadingexplain'] = 'Display URL name above content? Some display t
 $string['printintro'] = 'Display URL description';
 $string['printintroexplain'] = 'Display URL description bellow content? Some display types may not display description even if enabled.';
 $string['rolesinparams'] = 'Include role names in parameters';
+$string['serverurl'] = 'Server URL';
 $string['urladministration'] = 'URL administration';

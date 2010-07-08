@@ -347,7 +347,7 @@ function url_get_variable_options($config) {
 
     $options[get_string('miscellaneous')] = array(
         'sitename'        => get_string('fullsitename'),
-        'serverurl'       => get_string('serverurl', 'resource', (object)array('wwwroot'=>$CFG->wwwroot)),
+        'serverurl'       => get_string('serverurl', 'url'),
         'currenttime'     => get_string('time'),
         'lang'            => get_string('language'),
     );
