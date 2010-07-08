@@ -284,6 +284,15 @@ function xmldb_forum_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2010042800, 'forum');
     }
 
+    if ($oldversion < 2010070800) {
+
+        // Remove the forum digests message provider MDL-23145
+        $DB->delete_records('message_providers', array('name' => 'digests','component'=>'mod_forum'));
+
+        // forum savepoint reached
+        upgrade_mod_savepoint(true, 2010070800, 'forum');
+    }
+
     return true;
 }
 

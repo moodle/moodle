@@ -27,10 +27,6 @@ $messageproviders = array (
 
 /// Ordinary single forum posts
     'posts' => array (
-    ),
-
-/// Digests
-    'digests' => array (
     )
 
 );

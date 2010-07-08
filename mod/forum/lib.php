@@ -903,17 +903,11 @@ function forum_cron() {
                     $posthtml = '';
                 }
 
-                $eventdata = new object();
-                $eventdata->component        = 'mod/forum';
-                $eventdata->name             = 'digests';
-                $eventdata->userfrom         = $site->shortname;
-                $eventdata->userto           = $userto;
-                $eventdata->subject          = $postsubject;
-                $eventdata->fullmessage      = $posttext;
-                $eventdata->fullmessageformat = FORMAT_PLAIN;
-                $eventdata->fullmessagehtml  = $posthtml;
-                $eventdata->smallmessage     = '';
-                if (!message_send($eventdata)){
+                $attachment = $attachname='';
+                $usetrueaddress = true;
+                $mailresult = email_to_user($userto, $userfrom, $postsubject, $posttext, $posthtml, $attachment, $attachname, $usetrueaddress, $CFG->forum_replytouser);
+
+                if (!$mailresult) {
                     mtrace("ERROR!");
                     echo "Error: mod/forum/cron.php: Could not send out digest mail to user $userto->id ($userto->email)... not trying again.\n";
                     add_to_log($course->id, 'forum', 'mail digest error', '', '', $cm->id, $userto->id);
