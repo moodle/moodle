@@ -24,12 +24,12 @@
     text-align: center;
 }
 
-.path-mod-workshop .assessmentform.rubric.grid .fitem {
+.path-mod-workshop .assessmentform.rubric.grid #rubric-grid-wrapper .fitem {
     text-align: center;
 }
 
 .path-mod-workshop .mform.frozen #rubric-grid-wrapper .fitem .fitemtitle,
-.path-mod-workshop .assessmentform.rubric.grid .fitem .fitemtitle {
+.path-mod-workshop .assessmentform.rubric.grid #rubric-grid-wrapper .fitem .fitemtitle {
     display: none;
 }
 
@@ -39,7 +39,7 @@
 }
 
 .path-mod-workshop .mform.frozen #rubric-grid-wrapper .fitem .felement,
-.path-mod-workshop .assessmentform.rubric.grid .fitem .felement {
+.path-mod-workshop .assessmentform.rubric.grid #rubric-grid-wrapper .fitem .felement {
     width: 100%;
     margin-left: auto;
     margin-right: auto;
@@ -49,12 +49,12 @@
     border: none;
 }
 
-.path-mod-workshop .assessmentform.rubric.grid .fitem .felement span {
+.path-mod-workshop .assessmentform.rubric.grid #rubric-grid-wrapper .fitem .felement span {
     display: block;
     text-align: center;
 }
 
-.path-mod-workshop .assessmentform.rubric.grid .fitem .felement span label {
+.path-mod-workshop .assessmentform.rubric.grid #rubric-grid-wrapper .fitem .felement span label {
     display: block;
     text-align: center;
 }
@@ -62,7 +62,7 @@
 /* Rubric - list layout */
 
 .path-mod-workshop .mform.frozen .fitem.description.rubric + .fitem .fitemtitle,
-.path-mod-workshop .assessmentform.rubric.list .fitem .fitemtitle {
+.path-mod-workshop .assessmentform.rubric.list #rubric-grid-wrapper .fitem .fitemtitle {
     display: none;
 }
 
