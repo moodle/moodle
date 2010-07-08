@@ -909,12 +909,16 @@ class page_requirements_manager {
         // Please note custom CSS is strongly discouraged,
         // because it can not be overridden by themes!
         // It is suitable only for things like mod/data which accepts CSS from teachers.
+        $attributes = array('rel'=>'stylesheet', 'type'=>'text/css');
 
-        $code = '';
-        $attributes = array('id'=>'firstthemesheet', 'rel'=>'stylesheet', 'type'=>'text/css');
+        // This line of code may look funny but it is currently required in order
+        // to avoid MASSIVE display issues in Internet Explorer.
+        // As of IE8 + YUI3.1.1 the reference stylesheet (firstthemesheet) gets
+        // ignored whenever another resource is added until such time as a redraw
+        // is forced, usually by moving the mouse over the affected element.
+        $code = html_writer::tag('script', '/** Required in order to fix style inclusion problems in IE with YUI **/', $attributes+array('id'=>'firstthemesheet'));
 
         $urls = $this->cssthemeurls + $this->cssurls;
-
         foreach ($urls as $url) {
             $attributes['href'] = $url;
             $code .= html_writer::empty_tag('link', $attributes) . "\n";
