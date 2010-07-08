@@ -40,7 +40,6 @@ function scorm_add_instance($scorm) {
         if (!isset($scorm->whatgrade)) {
             $scorm->whatgrade = 0;
         }
-        $scorm->grademethod = ($scorm->whatgrade * 10) + $scorm->grademethod;
 
         $id = insert_record('scorm', $scorm);
 
@@ -108,7 +107,6 @@ function scorm_update_instance($scorm) {
     if (!isset($scorm->whatgrade)) {
         $scorm->whatgrade = 0;
     }
-    $scorm->grademethod = ($scorm->whatgrade * 10) + $scorm->grademethod;
 
     // Check if scorm manifest needs to be reparsed
     if ($scorm->parse == 1) {

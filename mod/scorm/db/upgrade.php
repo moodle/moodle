@@ -300,9 +300,24 @@ function xmldb_scorm_upgrade($oldversion=0) {
         if (!field_exists($table, $field)) {
             $field->setAttributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'grademethod');
             $result = $result && add_field($table, $field);
+            /// fix bad usage of whatgrade/grading method.
+            $scorms = get_records('scorm');
+            foreach ($scorms as $scorm) {
+                $scorm->whatgrade = $scorm->grademethod/10;
+                update_record('scorm', $scorm);
+            }
+            set_config('whatgradefixed', '1', 'scorm'); //set this so that when upgrade to Moodle 2.0 we don't do this again.
         }
     }
-    
+    if ($result && $oldversion < 2007110503) {
+        /// fix bad usage of whatgrade/grading method
+        $scorms = get_records('scorm');
+        foreach ($scorms as $scorm) {
+            $scorm->grademethod = $scorm->grademethod%10;
+            update_record('scorm', $scorm);
+        }
+        set_config('grademethodfixed', '1', 'scorm'); //set this so that when upgrade to Moodle 2.0 we don't do this again.
+    }
     
 //===== 1.9.0 upgrade line ======//
 

@@ -192,8 +192,7 @@ class mod_scorm_mod_form extends moodleform_mod {
             }
         }
         if (isset($default_values['grademethod'])) {
-            $default_values['whatgrade'] = intval($default_values['grademethod'] / 10);
-            $default_values['grademethod'] = $default_values['grademethod'] % 10;
+            $default_values['grademethod'] = intval($default_values['grademethod']);
         }
         if (isset($default_value['width']) && (strpos($default_value['width'],'%') === false) && ($default_value['width'] <= 100)) {
             $default_value['width'] .= '%';
