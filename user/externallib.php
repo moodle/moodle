@@ -52,7 +52,7 @@ class moodle_user_external extends external_api {
                             'theme'       => new external_value(PARAM_SAFEDIR, 'Theme name such as "standard", must exist on server', VALUE_OPTIONAL),
                             'timezone'    => new external_value(PARAM_ALPHANUMEXT, 'Timezone code such as Australia/Perth, or 99 for default', VALUE_OPTIONAL),
                             'mailformat'  => new external_value(PARAM_INTEGER, 'Mail format code is 0 for plain text, 1 for HTML etc', VALUE_OPTIONAL),
-                            'description' => new external_value(PARAM_TEXT, 'User profile description, as HTML', VALUE_OPTIONAL),
+                            'description' => new external_value(PARAM_TEXT, 'User profile description, no HTML', VALUE_OPTIONAL),
                             'city'        => new external_value(PARAM_NOTAGS, 'Home city of the user', VALUE_OPTIONAL),
                             'country'     => new external_value(PARAM_ALPHA, 'Home country code of the user, such as AU or CZ', VALUE_OPTIONAL),
                             'preferences' => new external_multiple_structure(
@@ -88,16 +88,16 @@ class moodle_user_external extends external_api {
         require_once($CFG->dirroot."/user/profile/lib.php"); //required for customfields related function
                                                              //TODO: move the functions somewhere else as
                                                              //they are "user" related
-
+                                                          
         // Ensure the current user is allowed to run this function
         $context = get_context_instance(CONTEXT_SYSTEM);
         self::validate_context($context);
         require_capability('moodle/user:create', $context);
-        
+
         // Do basic automatic PARAM checks on incoming data, using params description
         // If any problems are found then exceptions are thrown with helpful error messages
         $params = self::validate_parameters(self::create_users_parameters(), array('users'=>$users));
-
+  
         $availableauths  = get_plugin_list('auth');
         unset($availableauths['mnet']);       // these would need mnethostid too
         unset($availableauths['webservice']); // we do not want new webservice users for now
@@ -154,7 +154,12 @@ class moodle_user_external extends external_api {
                 profile_save_data((object) $user);
             }
 
-            //TODO: preferences
+            //preferences
+            if (!empty($user['preferences'])) {
+                foreach($user['preferences'] as $preference) {
+                    set_user_preference($preference['type'], $preference['value'],$user['id']);
+                }
+            }
 
             $userids[] = array('id'=>$user['id'], 'username'=>$user['username']);
         }
@@ -249,7 +254,7 @@ class moodle_user_external extends external_api {
                             'theme'       => new external_value(PARAM_SAFEDIR, 'Theme name such as "standard", must exist on server', VALUE_OPTIONAL),
                             'timezone'    => new external_value(PARAM_ALPHANUMEXT, 'Timezone code such as Australia/Perth, or 99 for default', VALUE_OPTIONAL),
                             'mailformat'  => new external_value(PARAM_INTEGER, 'Mail format code is 0 for plain text, 1 for HTML etc', VALUE_OPTIONAL),
-                            'description' => new external_value(PARAM_TEXT, 'User profile description, as HTML', VALUE_OPTIONAL),
+                            'description' => new external_value(PARAM_TEXT, 'User profile description, no HTML', VALUE_OPTIONAL),
                             'city'        => new external_value(PARAM_NOTAGS, 'Home city of the user', VALUE_OPTIONAL),
                             'country'     => new external_value(PARAM_ALPHA, 'Home country code of the user, such as AU or CZ', VALUE_OPTIONAL),
                             'customfields' => new external_multiple_structure(
@@ -258,7 +263,14 @@ class moodle_user_external extends external_api {
                                         'type'  => new external_value(PARAM_ALPHANUMEXT, 'The name of the custom field'),
                                         'value' => new external_value(PARAM_RAW, 'The value of the custom field')
                                     )
-                                ), 'User custom fields', VALUE_OPTIONAL)
+                                ), 'User custom fields', VALUE_OPTIONAL),
+                            'preferences' => new external_multiple_structure(
+                                new external_single_structure(
+                                    array(
+                                        'type'  => new external_value(PARAM_ALPHANUMEXT, 'The name of the preference'),
+                                        'value' => new external_value(PARAM_RAW, 'The value of the preference')
+                                    )
+                                ), 'User preferences', VALUE_OPTIONAL),
                         )
                     )
                 )
@@ -293,6 +305,13 @@ class moodle_user_external extends external_api {
                                                                                             //and custom field to be named profile_field_"shortname"
                 }
                 profile_save_data((object) $user);
+            }
+
+            //preferences
+            if (!empty($user['preferences'])) {
+                foreach($user['preferences'] as $preference) {
+                    set_user_preference($preference['type'], $preference['value'],$user['id']);
+                }
             }
         }
 

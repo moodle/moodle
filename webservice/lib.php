@@ -484,7 +484,7 @@ abstract class webservice_zend_server extends webservice_server {
 
         // tell server what functions are available
         $this->zend_server->setClass($this->service_class);
-        
+
         //log the web service request
         add_to_log(1, 'webservice', '', '' , $this->zend_class." ".getremoteaddr() , 0, $this->userid);
 
@@ -663,7 +663,7 @@ class '.$classname.' {
                         $type = 'string';
                 }
             } else if ($keydesc instanceof external_single_structure) {
-                $type = 'object|struct'; //only 'object' is supported by SOAP, 'struct' by XML-RPC MDL-23083
+                $type = 'struct';
             } else if ($keydesc instanceof external_multiple_structure) {
                 $type = 'array';
             }
