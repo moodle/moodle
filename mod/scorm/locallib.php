@@ -405,7 +405,7 @@ function scorm_get_sco_runtime($scormid, $scoid, $userid, $attempt=1) {
         $tracks = array_values($tracks);
     }
 
-	if ($tracks) {
+    if ($tracks) {
         $timedata->start = $tracks[0]->timemodified;
     }
     else {
