@@ -905,7 +905,7 @@ function forum_cron() {
 
                 $attachment = $attachname='';
                 $usetrueaddress = true;
-                $mailresult = email_to_user($userto, $userfrom, $postsubject, $posttext, $posthtml, $attachment, $attachname, $usetrueaddress, $CFG->forum_replytouser);
+                $mailresult = email_to_user($userto, $site->shortname, $postsubject, $posttext, $posthtml, $attachment, $attachname, $usetrueaddress, $CFG->forum_replytouser);
 
                 if (!$mailresult) {
                     mtrace("ERROR!");
