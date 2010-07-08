@@ -347,7 +347,7 @@ class backup_enrolments_structure_step extends backup_structure_step {
         $enrols = new backup_nested_element('enrols');
 
         $enrol = new backup_nested_element('enrol', array('id'), array(
-            'enrol', 'status', 'courseid', 'sortorder', 'name', 'enrolperiod', 'enrolstartdate',
+            'enrol', 'status', 'sortorder', 'name', 'enrolperiod', 'enrolstartdate',
             'enrolenddate', 'expirynotify', 'expirytreshold', 'notifyall',
             'password', 'cost', 'currency', 'roleid', 'customint1', 'customint2', 'customint3',
             'customint4', 'customchar1', 'customchar2', 'customdec1', 'customdec2',
@@ -356,7 +356,7 @@ class backup_enrolments_structure_step extends backup_structure_step {
         $userenrolments = new backup_nested_element('user_enrolments');
 
         $enrolment = new backup_nested_element('enrolment', array('id'), array(
-            'status', 'enrolid', 'userid', 'timestart', 'timeend', 'modifierid',
+            'status', 'userid', 'timestart', 'timeend', 'modifierid',
             'timemodified'));
 
         // Build the tree
@@ -369,19 +369,10 @@ class backup_enrolments_structure_step extends backup_structure_step {
 
         $enrol->set_source_table('enrol', array('courseid' => backup::VAR_COURSEID));
 
-        // User enrolments only added if specified
+        // User enrolments only added only if users included
         if ($users) {
             $enrolment->set_source_table('user_enrolments', array('enrolid' => backup::VAR_PARENTID));
         }
-
-        // Define id annotations
-        $enrol->annotate_ids('course', 'courseid');
-        $enrol->annotate_ids('role', 'roleid');
-        $enrol->annotate_ids('user', 'modifierid');
-
-        $enrolment->annotate_ids('user', 'userid');
-        $enrolment->annotate_ids('enrol', 'enrolid');
-        $enrolment->annotate_ids('user', 'modifierid');
 
         //TODO: let plugins annotate custom fields too and add more children
 
