@@ -167,7 +167,7 @@ class plugin_renderer_base extends renderer_base {
             return $this->$rendermethod($widget);
         }
         // pass to core renderer if method not found here
-        $this->output->render($widget);
+        return $this->output->render($widget);
     }
 
     /**
