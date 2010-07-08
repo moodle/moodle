@@ -113,6 +113,7 @@ $string['category'] = 'Category';
 $string['categoryedit'] = 'Edit category';
 $string['categoryname'] = 'Category name';
 $string['categorytotal'] = 'Category total';
+$string['categorytotalname'] = 'Category total name';
 $string['categorytotalfull'] = '{$a->category} total';
 $string['combo'] = 'Tabs and Dropdown menu';
 $string['compact'] = 'Compact';

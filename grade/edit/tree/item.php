@@ -28,6 +28,7 @@ if ($id !== 0) {
     $url->param('id', $id);
 }
 $PAGE->set_url($url);
+$PAGE->set_pagelayout('admin');
 
 if (!$course = $DB->get_record('course', array('id' => $courseid))) {
     print_error('nocourseid');
@@ -164,7 +165,10 @@ if ($mform->is_cancelled()) {
     redirect($returnurl);
 }
 
-print_grade_page_head($courseid, 'edittree', null, $heading);
+$return = false;
+$buttons = false;
+$shownavigation = false;
+print_grade_page_head($courseid, 'edittree', null, $heading, $return, $buttons, $shownavigation);
 
 $mform->display();
 
