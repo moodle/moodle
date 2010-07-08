@@ -1083,7 +1083,7 @@ function scorm_get_attempt_status($user, $scorm) {
     if(!empty($attempts)) {
         foreach($attempts as $attempt) {
             $gradereported = scorm_grade_user_attempt($scorm, $user->id, $attempt->attemptnumber);
-            $result .= get_string('gradeforattempt', 'scorm').' ' . $attempt->attemptnumber . ': ' . $gradereported->score .'%<BR>';
+            $result .= get_string('gradeforattempt', 'scorm').' ' . $attempt->attemptnumber . ': ' . $gradereported .'%<BR>';
         }
     }
 
