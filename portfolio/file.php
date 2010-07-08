@@ -35,7 +35,6 @@ if (empty($CFG->enableportfolios)) {
 
 require_once($CFG->libdir . '/portfoliolib.php');
 require_once($CFG->libdir . '/portfolio/exporter.php');
-require_once($CFG->libdir . '/file/stored_file.php');
 require_once($CFG->libdir . '/filelib.php');
 
 // exporter id

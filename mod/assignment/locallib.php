@@ -18,6 +18,7 @@
 // this file contains all the functions that aren't needed by core moodle
 // but start becoming required once we're actually inside the assignment module.
 
+require_once($CFG->dirroot . '/mod/assignment/lib.php');
 require_once($CFG->libdir . '/portfolio/caller.php');
 
 /**
