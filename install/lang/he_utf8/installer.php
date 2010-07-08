@@ -98,7 +98,7 @@ $string['databasesettingssub_postgres7'] = '<b>סוג:</b> PostgreSQL<br />
 <b>סיסמה:</b> סיסמת מסד הנתונים שלך<br />
 <b>תחילית הטבלאות:</b> תחילית רשות לכל שמות הטבלאות (אפשרי)';
 $string['databasesettingswillbecreated'] = '<b>הערה: </b> ההתקנה תנסה ליצור את מסד הנתונים אוטומטית אם הוא לא קיים.';
-$string['dataroot'] = 'ספריית הנתנים';
+$string['dataroot'] = 'ספריית הנתונים';
 $string['datarooterror'] = 'ספריית \"נתוני Moodle\" שציינת לא נמצאה או יכלה להיווצר. אנא תקן את נתיב זה או צור את ספרייה זו באופן ידני.';
 $string['datarootpublicerror'] = 'ספריית ה-\'Data Directory\' שציינת ניתנת לגישה ישירות מהרשת. אתה מוכרח להשתמש בספרייה אחרת.';
 $string['dbconnectionerror'] = 'לא הצלחנו להתחבר למסד הנתונים שציינת. אנא בדוק את הגדרות מסד הנתונים שלך.';
