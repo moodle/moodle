@@ -79,6 +79,10 @@ echo $wsoutput->example_full($example, true);
 
 if (!empty($mformreference)) {
     echo $OUTPUT->heading(get_string('assessmentreference', 'workshop'), 2);
+    $a = new stdclass();
+    $a->received = $workshop->real_grade($reference->grade);
+    $a->max = $workshop->real_grade(100);
+    echo $OUTPUT->heading(get_string('gradeinfo', 'workshop' , $a), 3);
     $mformreference->display();
 }
 
@@ -90,6 +94,10 @@ if ($isreviewer) {
     $reviewer->lastname = $assessment->reviewerlastname;
     echo $OUTPUT->heading(get_string('assessmentbyknown', 'workshop', fullname($reviewer)), 2);
 }
+$a = new stdclass();
+$a->received = $workshop->real_grade($assessment->grade);
+$a->max = $workshop->real_grade(100);
+echo $OUTPUT->heading(get_string('gradeinfo', 'workshop' , $a), 3);
 $mformassessment->display();
 echo $OUTPUT->container_start('buttonsbar');
 if ($isreviewer and $workshop->assessing_examples_allowed()) {
