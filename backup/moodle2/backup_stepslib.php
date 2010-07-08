@@ -372,6 +372,7 @@ class backup_enrolments_structure_step extends backup_structure_step {
         // User enrolments only added only if users included
         if ($users) {
             $enrolment->set_source_table('user_enrolments', array('enrolid' => backup::VAR_PARENTID));
+            $enrolment->annotate_ids('user', 'userid');
         }
 
         $enrol->annotate_ids('role', 'roleid');
