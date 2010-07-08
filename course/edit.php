@@ -84,8 +84,8 @@ if (!empty($course)) {
 $editform = new course_edit_form(NULL, array('course'=>$course, 'category'=>$category, 'editoroptions'=>$editoroptions));
 
 if ($editform->is_cancelled()) {
-    if (empty($course)) {
-        redirect($CFG->wwwroot.'/');
+    if (empty($course->id)) {
+        redirect($CFG->wwwroot.'/course');
     } else {
         redirect($CFG->wwwroot.'/course/view.php?id='.$course->id);
     }
