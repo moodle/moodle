@@ -1410,6 +1410,7 @@ $string['scalestip2'] = 'To create custom scales, click the Grades link in the c
 $string['screenreaderno'] = 'No';
 $string['screenreaderuse'] = 'Screen reader';
 $string['screenreaderyes'] = 'Yes';
+$string['screenreaderuse_help'] = 'If set to yes, a more accessible interface is provided in various places such as chat.';
 $string['screenshot'] = 'Screenshot';
 $string['search'] = 'Search'; // TODO rename to searchforums and move to mod_forum
 $string['search_help'] = 'For basic searching of one or more words anywhere in the text, just type them separated by spaces. All words longer than two characters are used.

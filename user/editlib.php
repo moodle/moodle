@@ -185,6 +185,7 @@ function useredit_shared_definition(&$mform, $editoroptions = null) {
     $choices['1'] = get_string('screenreaderyes');
     $mform->addElement('select', 'screenreader', get_string('screenreaderuse'), $choices);
     $mform->setDefault('screenreader', 0);
+    $mform->addHelpButton('screenreader', 'screenreaderuse');
 
     $mform->addElement('text', 'city', get_string('city'), 'maxlength="20" size="21"');
     $mform->setType('city', PARAM_MULTILANG);
