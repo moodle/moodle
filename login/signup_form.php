@@ -54,7 +54,7 @@ class login_signup_form extends moodleform {
         $mform->setType('lastname', PARAM_TEXT);
         $mform->addRule('lastname', get_string('missinglastname'), 'required', null, 'server');
 
-        $mform->addElement('text', 'city', get_string('city'), 'maxlength="20" size="20"');
+        $mform->addElement('text', 'city', get_string('city'), 'maxlength="100" size="20"');
         $mform->setType('city', PARAM_TEXT);
         $mform->addRule('city', get_string('missingcity'), 'required', null, 'server');
 

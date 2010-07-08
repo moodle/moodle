@@ -4687,6 +4687,28 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         upgrade_main_savepoint(true, 2010070604);
     }
 
+    if ($oldversion < 2010070701) {
+    /// Before changing the field, drop dependent indexes
+    /// Define index shortname (not unique) to be dropped form course_request
+        $table = new xmldb_table('user');
+        $index = new xmldb_index('city', XMLDB_INDEX_NOTUNIQUE, array('city'));
+    /// Conditionally launch drop index shortname
+        if ($dbman->index_exists($table, $index)) {
+            $dbman->drop_index($table, $index);
+        }
+    /// Changing precision of field city on table user to (100)
+        $field = new xmldb_field('city', XMLDB_TYPE_CHAR, '100', null, XMLDB_NOTNULL, null, null, 'address');
+
+    /// Launch change of precision for field city
+        $dbman->change_field_precision($table, $field);
+        
+    /// Conditionally launch add index typeitem_ix
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+    /// Main savepoint reached
+        upgrade_main_savepoint(true, 2010070701);
+    }
 
     return true;
 }
