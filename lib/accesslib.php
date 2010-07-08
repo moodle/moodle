@@ -4622,7 +4622,7 @@ function get_overridable_roles($context, $rolenamedisplay = ROLENAME_ALIAS, $wit
 function get_default_enrol_roles($context, $addroleid = null) {
     global $DB;
 
-    $params = array('level'=>CONTEXT_COURSE);
+    $params = array('contextlevel'=>CONTEXT_COURSE);
     if ($addroleid) {
         $addrole = "OR r.id = :addroleid";
         $params['addroleid'] = $addroleid;
@@ -4631,7 +4631,7 @@ function get_default_enrol_roles($context, $addroleid = null) {
     }
     $sql = "SELECT r.id, r.name
               FROM {role} r
-         LEFT JOIN {role_context_levels} rcl ON (rcl.roleid = r.id AND rcl.contextlevel = :level)
+         LEFT JOIN {role_context_levels} rcl ON (rcl.roleid = r.id AND rcl.contextlevel = :contextlevel)
              WHERE rcl.id IS NOT NULL $addrole
           ORDER BY sortorder DESC";
 
