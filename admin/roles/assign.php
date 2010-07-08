@@ -42,7 +42,7 @@ if (!$course) {
         $user = $DB->get_record('user', array('id'=>$context->instanceid), '*', MUST_EXIST);
         $url->param('courseid', $course->id);
         $url->param('userid', $user->id);
-    } else {
+    } else if(!($context->contextlevel == CONTEXT_COURSECAT)) { //course categories contexts shouldn't be main frontpage site.
         $course = $SITE;
     }
 }
@@ -55,8 +55,11 @@ $PAGE->set_url($url);
 $PAGE->set_context($context);
 
 $contextname = print_context_name($context);
-$courseid = $course->id;
-$isfrontpage = ($course->id == SITEID);
+$isfrontpage = false;
+if ($course) {
+    $courseid = $course->id;
+    $isfrontpage = ($course->id == SITEID);
+}
 
 // These are needed early because of tabs.php
 list($assignableroles, $assigncounts, $nameswithcounts) = get_assignable_roles($context, ROLENAME_BOTH, true);
