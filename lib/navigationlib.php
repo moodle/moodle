@@ -2615,7 +2615,7 @@ class settings_navigation extends navigation_node {
 
             // Add the course settings link
             $url = new moodle_url('/course/edit.php', array('id'=>$course->id));
-            $coursenode->add(get_string('settings'), $url, self::TYPE_SETTING, null, null, new pix_icon('i/settings', ''));
+            $coursenode->add(get_string('editsettings'), $url, self::TYPE_SETTING, null, null, new pix_icon('i/settings', ''));
 
             // Add the course completion settings link
             if ($CFG->enablecompletion && $course->enablecompletion) {
@@ -2859,7 +2859,7 @@ class settings_navigation extends navigation_node {
         // Settings for the module
         if (has_capability('moodle/course:manageactivities', $this->page->cm->context)) {
             $url = new moodle_url('/course/modedit.php', array('update' => $this->page->cm->id, 'return' => true, 'sesskey' => sesskey()));
-            $modulenode->add(get_string('settings'), $url, navigation_node::TYPE_SETTING);
+            $modulenode->add(get_string('editsettings'), $url, navigation_node::TYPE_SETTING);
         }
         // Assign local roles
         if (count(get_assignable_roles($this->page->cm->context))>0) {
@@ -3307,7 +3307,7 @@ class settings_navigation extends navigation_node {
 
             // Add the course settings link
             $url = new moodle_url('/admin/settings.php', array('section'=>'frontpagesettings'));
-            $frontpage->add(get_string('settings'), $url, self::TYPE_SETTING, null, null, new pix_icon('i/settings', ''));
+            $frontpage->add(get_string('editsettings'), $url, self::TYPE_SETTING, null, null, new pix_icon('i/settings', ''));
         }
 
         // add enrol nodes
