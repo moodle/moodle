@@ -648,7 +648,7 @@ function blog_get_headers() {
         $course = $DB->get_record('course', array('id' => $group->courseid));
     }
 
-    $PAGE->set_pagelayout('standard');
+    $PAGE->set_pagelayout('general');
 
     if (!empty($modid) && $CFG->useblogassociations && has_capability('moodle/blog:associatemodule', $sitecontext)) { // modid always overrides courseid, so the $course object may be reset here
         $headers['filters']['module'] = $modid;
