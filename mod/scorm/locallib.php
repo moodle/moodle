@@ -127,7 +127,7 @@ function scorm_get_updatefreq_array(){
  * @return array an array of popup display options
  */
 function scorm_get_popup_display_array(){
-    return array(0 => get_string('iframe', 'scorm'),
+    return array(0 => get_string('currentwindow', 'scorm'),
                  1 => get_string('popup', 'scorm'));
 }
 
