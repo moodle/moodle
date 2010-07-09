@@ -60,7 +60,7 @@ if (!empty($registeredhub) and $registeredhub->token == $token) {
     } else {
         $registeredhub->token = $newtoken;
         $registeredhub->confirmed = 1;
-        $registeredhub->huname = $hubname;
+        $registeredhub->hubname = $hubname;
         $registrationmanager->update_registeredhub($registeredhub);
 
         $notificationmessage = $OUTPUT->notification(get_string('registrationconfirmedon', 'hub', $hublink), 'notifysuccess');
