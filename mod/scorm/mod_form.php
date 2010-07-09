@@ -304,6 +304,7 @@ class mod_scorm_mod_form extends moodleform_mod {
                 $files = $this->get_draft_files('packagefile');
                 if (count($files)<1) {
                     $errors['packagefile'] = get_string('required');
+                    return $errors;
                 }
                 $file = reset($files);
                 $filename = $CFG->dataroot.'/temp/scormimport/scrom_'.time();
