@@ -2039,33 +2039,6 @@ class assignment_base {
 
 } ////// End of the assignment_base class
 
-/**
- * @package   mod-assignment
- * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class mod_assignment_upload_file_form extends moodleform {
-    function definition() {
-        $mform = $this->_form;
-        $instance = $this->_customdata;
-
-        //TODO: improve upload size checking
-        $mform->setMaxFileSize($instance->assignment->maxbytes);
-
-        // visible elements
-        $mform->addElement('file', 'newfile', get_string('uploadafile'));
-
-        // hidden params
-        $mform->addElement('hidden', 'id', $instance->cm->id);
-        $mform->setType('id', PARAM_INT);
-        $mform->addElement('hidden', 'action', 'uploadfile');
-        $mform->setType('action', PARAM_ALPHA);
-
-        // buttons
-        $this->add_action_buttons(false, get_string('uploadthisfile'));
-    }
-}
-
 
 class mod_assignment_online_grading_form extends moodleform { // TODO: why "online" in the name of this class? (skodak)
 

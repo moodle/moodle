@@ -1,9 +1,29 @@
 <?php
 
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
  * Extend the base assignment class for assignments where you upload a single file
  *
+ * @package   mod-assignment
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+require_once($CFG->dirroot.'/mod/assignment/lib.php');
+require_once(dirname(__FILE__).'/upload_form.php');
+
 class assignment_uploadsingle extends assignment_base {
 
 
@@ -15,7 +35,7 @@ class assignment_uploadsingle extends assignment_base {
 
         $output = '';
 
-        if ($submission = $this->get_submission($USER->id)) {
+        if ($submission = $this->get_submission($userid)) {
             if ($files = $fs->get_area_files($this->context->id, 'mod_assignment', 'submission', $submission->id, "timemodified", false)) {
                 foreach ($files as $file) {
                     $filename = $file->get_filename();
@@ -72,18 +92,29 @@ class assignment_uploadsingle extends assignment_base {
 
 
     function view_upload_form() {
-        $mform = new mod_assignment_upload_file_form('upload.php', $this);
-		echo "<div class=\"uploadbox\">";
-        $mform->display();
-        echo "</div>";
+        global $OUTPUT, $USER;
+        echo $OUTPUT->box_start('uploadbox');
+        $fs = get_file_storage();
+        // edit files in another page
+        if ($submission = $this->get_submission($USER->id)) {
+            if ($files = $fs->get_area_files($this->context->id, 'mod_assignment', 'submission', $submission->id, "timemodified", false)) {
+                $str = get_string('editthisfile', 'assignment');
+            } else {
+                $str = get_string('uploadafile', 'assignment');
+            }
+        } else {
+            $str = get_string('uploadafile', 'assignment');
+        }
+        echo $OUTPUT->single_button(new moodle_url('/mod/assignment/type/uploadsingle/upload.php', array('contextid'=>$this->context->id)), $str, 'get');
+        echo $OUTPUT->box_end();
     }
 
 
-    function upload() {
+    function upload($mform) {
         global $CFG, $USER, $DB, $OUTPUT;
-
+        $viewurl = new moodle_url('/mod/assignment/view.php', array('id'=>$this->cm->id));
         if (!is_enrolled($this->context, $USER, 'mod/assignment:submit')) {
-            redirect('view.php?id='.$this->cm->id);
+            redirect($viewurl);
         }
 
         $filecount = $this->count_user_files($USER->id);
@@ -92,48 +123,46 @@ class assignment_uploadsingle extends assignment_base {
             if ($submission = $this->get_submission($USER->id)) {
                 //TODO: change later to ">= 0", to prevent resubmission when graded 0
                 if (($submission->grade > 0) and !$this->assignment->resubmit) {
-                    redirect('view.php?id='.$this->cm->id, get_string('alreadygraded', 'assignment'));
+                    redirect($viewurl, get_string('alreadygraded', 'assignment'));
                 }
             }
 
-            $mform = new mod_assignment_upload_file_form('upload.php', $this);
-            if ($mform->get_data()) {
+            if ($formdata = $mform->get_data()) {
                 $fs = get_file_storage();
-                $filename = $mform->get_new_filename('newfile');
-                if ($filename !== false) {
-                    $submission = $this->get_submission($USER->id, true); //create new submission if needed
-                    $fs->delete_area_files($this->context->id, 'mod_assignment', 'submission', $submission->id);
+                $submission = $this->get_submission($USER->id, true); //create new submission if needed
+                $fs->delete_area_files($this->context->id, 'mod_assignment', 'submission', $submission->id);
 
-                    if ($file = $mform->save_stored_file('newfile', $this->context->id, 'mod_assignment', 'submission', $submission->id, '/', $filename, false, $USER->id)) {
-                        $updates = new object(); //just enough data for updating the submission
-                        $updates->timemodified = time();
-                        $updates->numfiles     = 1;
-                        $updates->id     = $submission->id;
-                        $DB->update_record('assignment_submissions', $updates);
-                        add_to_log($this->course->id, 'assignment', 'upload',
-                                'view.php?a='.$this->assignment->id, $this->assignment->id, $this->cm->id);
-                        $this->update_grade($submission);
-                        $this->email_teachers($submission);
+                if ($newfilename = $mform->get_new_filename('assignment_file')) {
+                    $file = $mform->save_stored_file('assignment_file', $this->context->id, 'mod_assignment', 'submission',
+                        $submission->id, '/', $newfilename);
 
-                        // Let Moodle know that an assessable file was uploaded (eg for plagiarism detection)
-                        $eventdata = new object();
-                        $eventdata->modulename   = 'assignment';
-                        $eventdata->cmid         = $this->cm->id;
-                        $eventdata->itemid       = $submission->id;
-                        $eventdata->courseid     = $this->course->id;
-                        $eventdata->userid       = $USER->id;
-                        $eventdata->file         = $file;
-                        events_trigger('assessable_file_uploaded', $eventdata);
+                    $updates = new object(); //just enough data for updating the submission
+                    $updates->timemodified = time();
+                    $updates->numfiles     = 1;
+                    $updates->id     = $submission->id;
+                    $DB->update_record('assignment_submissions', $updates);
+                    add_to_log($this->course->id, 'assignment', 'upload', 'view.php?a='.$this->assignment->id, $this->assignment->id, $this->cm->id);
+                    $this->update_grade($submission);
+                    $this->email_teachers($submission);
 
-                        redirect('view.php?id='.$this->cm->id, get_string('uploadedfile'));
-                    }
+                    // Let Moodle know that an assessable file was uploaded (eg for plagiarism detection)
+                    $eventdata = new object();
+                    $eventdata->modulename   = 'assignment';
+                    $eventdata->cmid         = $this->cm->id;
+                    $eventdata->itemid       = $submission->id;
+                    $eventdata->courseid     = $this->course->id;
+                    $eventdata->userid       = $USER->id;
+                    $eventdata->file         = $file;
+                    events_trigger('assessable_file_uploaded', $eventdata);
                 }
+
+                redirect($viewurl, get_string('uploadedfile'));
             } else {
-                redirect('view.php?id='.$this->cm->id, get_string('uploaderror', 'assignment'));  //submitting not allowed!
+                redirect($viewurl, get_string('uploaderror', 'assignment'));  //submitting not allowed!
             }
         }
 
-        redirect('view.php?id='.$this->cm->id);
+        redirect($viewurl);
     }
 
     function setup_elements(&$mform) {
@@ -153,7 +182,6 @@ class assignment_uploadsingle extends assignment_base {
         $choices[0] = get_string('courseuploadlimit') . ' ('.display_size($COURSE->maxbytes).')';
         $mform->addElement('select', 'maxbytes', get_string('maximumsize', 'assignment'), $choices);
         $mform->setDefault('maxbytes', $CFG->assignment_maxbytes);
-
     }
 
     function portfolio_exportable() {
@@ -181,7 +209,7 @@ class assignment_uploadsingle extends assignment_base {
         }
 
         $relativepath = implode('/', $args);
-        $fullpath = "/$this->context->id/mod_assignment/submission/$submissionid/$relativepath";
+        $fullpath = '/'.$this->context->id.'/mod_assignment/submission/'.$submissionid.'/'.$relativepath;
 
         $fs = get_file_storage();
 

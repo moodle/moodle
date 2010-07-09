@@ -73,6 +73,8 @@ $string['duedate'] = 'Due date';
 $string['duedateno'] = 'No due date';
 $string['early'] = '{$a} early';
 $string['editmysubmission'] = 'Edit my submission';
+$string['editthesefiles'] = 'Edit these files';
+$string['editthisfile'] = 'Update this file';
 $string['addsubmission'] = 'Add submission';
 $string['emailstudents'] = 'Email alerts to students';
 $string['emailteachermail'] = '{$a->username} has updated their assignment submission
@@ -102,22 +104,22 @@ $string['graded'] = 'Graded';
 $string['guestnosubmit'] = 'Sorry, guests are not allowed to submit an assignment. You have to log in/ register before you can submit your answer.';
 $string['guestnoupload'] = 'Sorry, guests are not allowed to upload';
 $string['helpoffline'] = '<p>This is useful when the assignment is performed outside of Moodle.  It could be
-   something elsewhere on the web or face-to-face.</p><p>Students can see a description of the assignment, 
-   but can\'t upload files or anything.  Grading works normally, and students will get notifications of 
+   something elsewhere on the web or face-to-face.</p><p>Students can see a description of the assignment,
+   but can\'t upload files or anything.  Grading works normally, and students will get notifications of
    their grades.</p>';
 $string['helponline'] = '<p>This assignment type asks users to edit a text, using the normal
    editing tools.  Teachers can grade them online, and even add inline comments or changes.</p>
    <p>(If you are familiar with older versions of Moodle, this Assignment
    type does the same thing as the old Journal module used to do.)</p>';
-$string['helpupload'] = '<p>This type of assignment allows each participant to upload one or more files in any format. 
+$string['helpupload'] = '<p>This type of assignment allows each participant to upload one or more files in any format.
    These might be a Word processor documents, images, a zipped web site, or anything you ask them to submit.</p>
    <p>This type also allows you to upload multiple response files. Response files can be also uploaded before submission which
    can be used to give each participant different file to work with.</p>
    <p>Participants may also enter notes describing the submitted files, progress status or any other text information.</p>
    <p>Submission of this type of assignment must be manually finalised by the participant. You can review the current status
    at any time, unfinished assignments are marked as Draft. You can revert any ungraded assignment back to draft status.</p>';
-$string['helpuploadsingle'] = '<p>This type of assignment allows each participant to upload a 
-   single file, of any type.</p> <p>This might be a Word processor document, an image, 
+$string['helpuploadsingle'] = '<p>This type of assignment allows each participant to upload a
+   single file, of any type.</p> <p>This might be a Word processor document, an image,
    a zipped web site, or anything you ask them to submit.</p>';
 $string['hideintro'] = 'Hide description before available date';
 $string['hideintro_help'] = 'If enabled, the assignment description is hidden before the "Available from" date. Only the assignment name is displayed.';
@@ -182,6 +184,8 @@ $string['typeupload'] = 'Advanced uploading of files';
 $string['typeuploadsingle'] = 'Upload a single file';
 $string['unfinalize'] = 'Revert to draft';
 $string['unfinalizeerror'] = 'An error occurred and that submission could not be reverted to draft';
+$string['uploadafile'] = 'Upload a file';
+$string['uploadfiles'] = 'Upload files';
 $string['uploadbadname'] = 'This filename contained strange characters and couldn\'t be uploaded';
 $string['uploadedfiles'] = 'uploaded files';
 $string['uploaderror'] = 'An error happened while saving the file on the server';
