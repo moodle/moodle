@@ -1,3 +1,7 @@
+.path-mod-workshop .collapsibleregion {
+    margin-bottom: 0.75em;
+}
+
 .path-mod-workshop .collapsibleregioncaption {
     font-weight: bold;
     font-size: 120%;
@@ -386,9 +390,14 @@
     display: inline;
 }
 
+.path-mod-workshop .toolboxaction {
+    margin-right: 1em;
+}
+
 .path-mod-workshop .toolboxaction,
-.path-mod-workshop .toolboxaction form,
-.path-mod-workshop .toolboxaction form div {
+.path-mod-workshop .toolboxaction .singlebutton,
+.path-mod-workshop .toolboxaction .singlebutton form,
+.path-mod-workshop .toolboxaction .singlebutton form div {
     display: inline;
 }
 

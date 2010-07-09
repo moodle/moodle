@@ -1456,6 +1456,30 @@ class workshop {
     }
 
     /**
+     * Sets the given grades and received grading grades to null
+     *
+     * This does not clear the information about how the peers filled the assessment forms, but
+     * clears the calculated grades in workshop_assessments. Therefore reviewers have to re-assess
+     * the allocated submissions.
+     *
+     * @return void
+     */
+    public function clear_assessments() {
+        global $DB;
+
+        $submissions = $this->get_submissions();
+        if (empty($submissions)) {
+            // no money, no love
+            return;
+        }
+        $submissions = array_keys($submissions);
+        list($sql, $params) = $DB->get_in_or_equal($submissions, SQL_PARAMS_NAMED);
+        $sql = "submissionid $sql";
+        $DB->set_field_select('workshop_assessments', 'grade', null, $sql, $params);
+        $DB->set_field_select('workshop_assessments', 'gradinggrade', null, $sql, $params);
+    }
+
+    /**
      * Sets the grades for submission to null
      *
      * @param null|int|array $restrict If null, update all authors, otherwise update just grades for the given author(s)
