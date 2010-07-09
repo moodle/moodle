@@ -315,7 +315,7 @@ function mediaplugin_filter_wmp_callback($link, $autostart=false) {
 function mediaplugin_filter_qt_callback($link, $autostart=false) {
     $url = $link[1];
     if (empty($link[3]) or empty($link[4])) {
-        $size = 'width="280" height="210"';
+        $size = 'width="440" height="315"';
     } else {
         $size = 'width="'.$link[3].'" height="'.$link[4].'"';
     }
