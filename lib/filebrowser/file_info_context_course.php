@@ -151,7 +151,7 @@ class file_info_context_course extends file_info {
         $filename = is_null($filename) ? '.' : $filename;
         if (!$storedfile = $fs->get_file($this->context->id, 'course', 'legacy', 0, $filepath, $filename)) {
             if ($filepath === '/' and $filename === '.') {
-                $storedfile = new virtual_root_file($this->context->id, $filearea, 0);
+                $storedfile = new virtual_root_file($this->context->id, 'course', 'legacy', 0);
             } else {
                 // not found
                 return null;
