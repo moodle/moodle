@@ -176,7 +176,7 @@ switch ($action) {
                 $mimetypes[] = mimeinfo('type', $type);
             }
             if (!in_array(mimeinfo('type', $saveas_filename), $mimetypes)) {
-                throw new moodle_exception('invalidfiletype', 'repository', '', mimeinfo('type', $saveas_filename));
+                throw new moodle_exception('invalidfiletype', 'repository', '', get_string(mimeinfo('type', $saveas_filename), 'mimetypes'));
             }
         }
 

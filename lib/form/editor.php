@@ -170,7 +170,7 @@ class MoodleQuickForm_editor extends HTML_QuickForm_element {
 
             $image_options = initialise_filepicker($args);
 
-            $args->accepted_types = array('video', 'media');
+            $args->accepted_types = array('video', 'audio');
             $media_options = initialise_filepicker($args);
 
             $image_options->client_id = uniqid();
