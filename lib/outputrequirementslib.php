@@ -417,11 +417,6 @@ class page_requirements_manager {
                                     'requires' => array('base', 'node', 'event-custom', 'event-mouseenter', 'event-resize'),
                                     'strings' => array(array('addtodock', 'block'),array('undockitem', 'block'),array('undockall', 'block'),array('thisdirectionvertical', 'langconfig')));
                     break;
-                case 'core_calendar':
-                    $module = array('name'     => 'core_calendar',
-                                    'fullpath' => '/calendar/calendar.js',
-                                    'requires' => array('dom', 'event', 'node', 'yui2-container', 'event-mouseenter'));
-                    break;
                 case 'core_message':
                     $module = array('name'     => 'core_message',
                                     'fullpath' => '/message/module.js');

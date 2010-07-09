@@ -349,7 +349,7 @@ function calendar_get_mini($courses, $groups, $users, $cal_month = false, $cal_y
 /**
  * calendar_get_popup, called at multiple points in from calendar_get_mini.
  *        Copied and modified from calendar_get_mini.
- * @uses OverLib popup.
+ * @global moodle_page $PAGE
  * @param $is_today bool, false except when called on the current day.
  * @param $event_timestart mixed, $events[$eventid]->timestart, OR false if there are no events.
  * @param $popupcontent string.
@@ -373,7 +373,7 @@ function calendar_get_popup($is_today, $event_timestart, $popupcontent='') {
         $popupcaption .= get_string('eventsfor', 'calendar', userdate($event_timestart, get_string('strftimedayshort')));
     }
     $id = 'calendar_tooltip_'.$popupcount;
-    $PAGE->requires->js_init_call("M.core_calendar.init", array(array('id'=>$id,'title'=>$popupcaption, 'content'=>$popupcontent)));
+    $PAGE->requires->yui_module('moodle-calendar-eventmanager', 'M.core_calendar.add_event', array(array('eventId'=>$id,'title'=>$popupcaption, 'content'=>$popupcontent)));
 
     $popupcount++;
     return 'id="'.$id.'"';

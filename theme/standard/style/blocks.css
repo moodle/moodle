@@ -37,6 +37,7 @@
 /** Calendar Month **/
 .block_calendar_month abbr {border-width:0;}
 .block_calendar_month .eventnone a {text-decoration:none;color:black;cursor:text;}
+.calendar-event-panel .yui3-widget-hd {background-image:url([[pix:theme|hgradient]]);background-repeat: repeat-x;background-color:#e1e1df;border-bottom:1px solid #ddd;}
 
 /** Calendar Upcoming **/
 .block_calendar_upcoming .event .date {text-align:right;}

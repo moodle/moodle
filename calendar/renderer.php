@@ -102,7 +102,7 @@ class core_calendar_renderer extends plugin_renderer_base {
         $output .= html_writer::tag('div', '', array('id'=>'url', 'style'=>'overflow:scroll;width:650px;'));
         $output .= html_writer::end_tag('div');
 
-        $this->page->requires->js_init_call('M.core_calendar.init_basic_export', array($allowthisweek, $allownextweek, $allownextmonth, $username, $authtoken));
+        $this->page->requires->yui_module('moodle-calendar-eventmanager', 'M.core_calendar.init_basic_export', array($allowthisweek, $allownextweek, $allownextmonth, $username, $authtoken));
 
         return $output;
     }
