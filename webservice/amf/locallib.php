@@ -25,7 +25,7 @@
 
 require_once("$CFG->dirroot/webservice/lib.php");
 require_once( "{$CFG->dirroot}/webservice/amf/introspector.php");
-
+require_once 'Zend/Amf/Server.php';
 /**
  * Exception indicating an invalid return value from a function.
  * Used when an externallib function does not return values of the expected structure. 
@@ -36,7 +36,7 @@ class invalid_return_value_exception extends moodle_exception {
      * @param string $debuginfo some detailed information
      */
     function __construct($debuginfo=null) {
-        parent::__construct('invalidreturnvalue', 'debug', '', null, $debuginfo);
+        parent::__construct('invalidreturnvalue', 'webservice_amf', '', $debuginfo, $debuginfo);
     }
 }
 
@@ -50,8 +50,7 @@ class webservice_amf_server extends webservice_zend_server {
      * @param integer $authmethod authentication method - one of WEBSERVICE_AUTHMETHOD_*
      */
     public function __construct($authmethod) {
-        require_once 'Zend/Amf/Server.php';
-        parent::__construct($authmethod, 'Zend_Amf_Server');
+        parent::__construct($authmethod, 'Moodle_Amf_Server');
         $this->wsname = 'amf';
     }
     protected function init_service_class(){
@@ -62,13 +61,22 @@ class webservice_amf_server extends webservice_zend_server {
     }
     
     protected function service_class_method_body($function, $params){
+        //cast the param from object to array (validate_parameters except array only)
+        $castingcode = '';
         if ($params){
-            $params = "webservice_amf_server::cast_objects_to_array($params)";
+            $paramstocast = split(',', $params);
+            foreach ($paramstocast as $paramtocast) {
+                $paramtocast = trim($paramtocast);
+                $castingcode .= $paramtocast .
+                '=webservice_zend_server::cast_objects_to_array('.$paramtocast.');';
         }
+
+        }
+
         $externallibcall = $function->classname.'::'.$function->methodname.'('.$params.')';
         $descriptionmethod = $function->methodname.'_returns()';
         $callforreturnvaluedesc = $function->classname.'::'.$descriptionmethod;
-        return
+        return $castingcode . 
 '        return webservice_amf_server::validate_and_cast_values('.$callforreturnvaluedesc.', '.$externallibcall.');';
     }
     /**
@@ -138,27 +146,7 @@ class webservice_amf_server extends webservice_zend_server {
             throw new invalid_return_value_exception('Invalid external api description.');
         }
     }    
-    /**
-     * Recursive function to recurse down into a complex variable and convert all
-     * objects to arrays. Doesn't recurse down into objects or cast objects other than stdClass
-     * which is represented in Flash / Flex as an object. 
-     * @param mixed $params value to cast
-     * @return mixed Cast value
-     */
-    public static function cast_objects_to_array($params){
-        if ($params instanceof stdClass){
-            $params = (array)$params;
-        }
-        if (is_array($params)){
-            $toreturn = array();
-            foreach ($params as $key=> $param){
-                $toreturn[$key] = self::cast_objects_to_array($param);
-            }
-            return $toreturn;
-        } else {
-            return $params;
-        }
-    }
+    
     /**
      * Set up zend service class
      * @return void
@@ -171,6 +159,44 @@ class webservice_amf_server extends webservice_zend_server {
     }
 
 
+}
+class Moodle_Amf_Server extends Zend_Amf_Server{
+    /**
+     * Raise a server fault
+     *
+     * @param  string|Exception $fault
+     * @return void
+     */
+    public function fault($fault = null, $code = 404)
+    {
+        if (!$fault instanceof Exception) {
+            $fault = new Exception($fault);
+        }
+        $request = $this->getRequest();
+        // Get the object encoding of the request.
+        $objectEncoding = $request->getObjectEncoding();
+
+        // create a response object to place the output from the services.
+        $response = $this->getResponse();
+
+        // set reponse encoding
+        $response->setObjectEncoding($objectEncoding);
+        
+        $responseBody = $request->getAmfBodies();
+
+        foreach($responseBody as $body){
+            $return = $this->_errorMessage($objectEncoding, $fault->getMessage(), 
+                $fault->getMessage(), $fault->getTraceAsString(),$fault->getCode(),  $fault->getLine());
+            $responseType = Zend_AMF_Constants::STATUS_METHOD;
+    
+    
+            $responseURI = $body->getResponseURI() . $responseType;
+            $newBody     = new Zend_Amf_Value_MessageBody($responseURI, null, $return);
+            $response->addAmfBody($newBody);
+        }
+        $response->finalize();
+        echo $response;
+    }
 }
 
 // TODO: implement AMF test client somehow, maybe we could use moodle form to feed the data to the flash app somehow
