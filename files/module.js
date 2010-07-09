@@ -48,7 +48,7 @@ M.core_filetree = {
                 scope: scope
             },
             headers: {
-                'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+                'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
             },
             data: build_querystring(params),
             context: this
