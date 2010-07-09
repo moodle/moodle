@@ -387,7 +387,7 @@ body {
 ------------------------*/
 
 .path-admin-roles .generaltable {
-	width: 65%;
+	/* width: 65%; hiding because it's causing problems on role/assign */
 }
 
 .path-admin-roles .generaltable th {
