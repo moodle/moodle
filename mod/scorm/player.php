@@ -7,7 +7,7 @@
     //
     // Checkin' script parameters
     //
-    $id = optional_param('id', '', PARAM_INT);       // Course Module ID, or
+    $id = optional_param('cm', '', PARAM_INT);       // Course Module ID, or
     $a = optional_param('a', '', PARAM_INT);         // scorm ID
     $scoid = required_param('scoid', PARAM_INT);  // sco ID
     $mode = optional_param('mode', 'normal', PARAM_ALPHA); // navigation mode
@@ -43,7 +43,7 @@
         print_error('missingparameter');
     }
 
-    $url = new moodle_url('/mod/scorm/player.php', array('scoid'=>$scoid, 'id'=>$cm->id));
+    $url = new moodle_url('/mod/scorm/player.php', array('scoid'=>$scoid, 'cm'=>$cm->id));
     if ($mode !== 'normal') {
         $url->param('mode', $mode);
     }
@@ -122,7 +122,7 @@
         }
     }
 
-    add_to_log($course->id, 'scorm', 'view', "player.php?id=$cm->id&scoid=$sco->id", "$scorm->id", $cm->id);
+    add_to_log($course->id, 'scorm', 'view', "player.php?cm=$cm->id&scoid=$sco->id", "$scorm->id", $cm->id);
 
 
     $scoidstr = '&amp;scoid='.$sco->id;
