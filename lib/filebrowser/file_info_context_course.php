@@ -141,7 +141,7 @@ class file_info_context_course extends file_info {
             // bad luck, legacy course files not used any more
         }
 
-        if (empty($itemid)) {
+        if (is_null($itemid)) {
             return $this;
         }
 
