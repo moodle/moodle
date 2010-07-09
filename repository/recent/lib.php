@@ -182,6 +182,9 @@ class repository_recent extends repository {
         // To get 'recent' plugin working, we need to use lower level file_stoarge class to bypass the
         // capability check, we will use a better workaround to improve it.
         if ($stored_file = $fs->get_file($contextid, $component, $filearea, $fileitemid, $filepath, $filename)) {
+            if ($USER->id != $stored_file->get_userid()) {
+                throw new moodle_exception('errornotyourfile', 'repository');
+            }
             $file_record = array('contextid'=>$user_context->id, 'component'=>'user', 'filearea'=>'draft',
                 'itemid'=>$new_itemid, 'filepath'=>$new_filepath, 'filename'=>$new_filename);
             if ($file = $fs->get_file($user_context->id, 'user', 'draft', $new_itemid, $new_filepath, $new_filename)) {

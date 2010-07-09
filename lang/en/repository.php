@@ -84,6 +84,7 @@ $string['enter'] = 'Enter';
 $string['entername'] = 'Please enter folder name';
 $string['enternewname'] = 'Please enter the new file name';
 $string['error'] = 'An unknown error occurred!';
+$string['errornotyourfile'] = 'You cannot pick file which is not added by your';
 $string['existingrepository'] = 'This repository already exists';
 $string['federatedsearch'] = 'Federated search';
 $string['filename'] = 'Filename';
