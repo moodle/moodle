@@ -313,7 +313,7 @@ EOD;
             return $this->print_comments(self::$comment_page, $return, true);
         }
 
-        $strsubmit = get_string('submit');
+        $strsubmit = get_string('savecomment');
         $strcancel = get_string('cancel');
         $sesskey = sesskey();
         $html = '';

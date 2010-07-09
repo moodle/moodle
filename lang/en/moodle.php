@@ -1392,6 +1392,7 @@ $string['savedat'] = 'Saved at:';
 $string['savechanges'] = 'Save changes';
 $string['savechangesanddisplay'] = 'Save and display';
 $string['savechangesandreturntocourse'] = 'Save and return to course';
+$string['savecomment'] = 'Save comment';
 $string['savepreferences'] = 'Save preferences';
 $string['saveto'] = 'Save to';
 $string['scale'] = 'Scale';
