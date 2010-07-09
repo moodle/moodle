@@ -34,7 +34,8 @@ class block_community extends block_list {
         if (!has_capability('moodle/community:add', get_context_instance(CONTEXT_SYSTEM))) {  // Should be page context?
             return false;
         }
-        parent::user_can_addto($page);
+        
+        return parent::user_can_addto($page);
     }
 
     function user_can_edit() {
