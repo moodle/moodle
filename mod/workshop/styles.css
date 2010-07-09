@@ -386,6 +386,12 @@
     display: inline;
 }
 
+.path-mod-workshop .toolboxaction,
+.path-mod-workshop .toolboxaction form,
+.path-mod-workshop .toolboxaction form div {
+    display: inline;
+}
+
 .path-mod-workshop div.buttonwithhelp div {
     display: inline;
 }

@@ -1039,6 +1039,14 @@ class workshop {
     }
 
     /**
+     * @return moodle_url of this workshop's toolbox page
+     */
+    public function toolbox_url($tool) {
+        global $CFG;
+        return new moodle_url('/mod/workshop/toolbox.php', array('id' => $this->cm->id, 'tool' => $tool));
+    }
+
+    /**
      * Are users allowed to create/edit their submissions?
      *
      * @return bool
@@ -1448,6 +1456,31 @@ class workshop {
     }
 
     /**
+     * Sets the grades for submission to null
+     *
+     * @param null|int|array $restrict If null, update all authors, otherwise update just grades for the given author(s)
+     * @return void
+     */
+    public function clear_submission_grades($restrict=null) {
+        global $DB;
+
+        $sql = "workshopid = :workshopid AND example = 0";
+        $params = array('workshopid' => $this->id);
+
+        if (is_null($restrict)) {
+            // update all users - no more conditions
+        } elseif (!empty($restrict)) {
+            list($usql, $uparams) = $DB->get_in_or_equal($restrict, SQL_PARAMS_NAMED);
+            $sql .= " AND authorid $usql";
+            $params = array_merge($params, $uparams);
+        } else {
+            throw new coding_exception('Empty value is not a valid parameter here');
+        }
+
+        $DB->set_field_select('workshop_submissions', 'grade', null, $sql, $params);
+    }
+
+    /**
      * Calculates grades for submission for the given participant(s) and updates it in the database
      *
      * @param null|int|array $restrict If null, update all authors, otherwise update just grades for the given author(s)
@@ -1499,6 +1532,31 @@ class workshop {
         // do not forget to process the last batch!
         $this->aggregate_submission_grades_process($batch);
         $rs->close();
+    }
+
+    /**
+     * Sets the aggregated grades for assessment to null
+     *
+     * @param null|int|array $restrict If null, update all reviewers, otherwise update just grades for the given reviewer(s)
+     * @return void
+     */
+    public function clear_grading_grades($restrict=null) {
+        global $DB;
+
+        $sql = "workshopid = :workshopid";
+        $params = array('workshopid' => $this->id);
+
+        if (is_null($restrict)) {
+            // update all users - no more conditions
+        } elseif (!empty($restrict)) {
+            list($usql, $uparams) = $DB->get_in_or_equal($restrict, SQL_PARAMS_NAMED);
+            $sql .= " AND userid $usql";
+            $params = array_merge($params, $uparams);
+        } else {
+            throw new coding_exception('Empty value is not a valid parameter here');
+        }
+
+        $DB->set_field_select('workshop_aggregations', 'gradinggrade', null, $sql, $params);
     }
 
     /**
