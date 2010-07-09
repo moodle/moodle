@@ -163,13 +163,13 @@
     $PAGE->requires->js_function_call('attach_resize_event');
     if (($sco->previd != 0) && ((!isset($sco->previous)) || ($sco->previous == 0))) {
         $scostr = '&scoid='.$sco->previd;
-        $PAGE->requires->js_function_call('scorm_set_prev', Array($CFG->wwwroot.'/mod/scorm/player.php?id='.$cm->id.$orgstr.$modepop.$scostr));
+        $PAGE->requires->js_function_call('scorm_set_prev', Array($CFG->wwwroot.'/mod/scorm/player.php?cm='.$cm->id.$orgstr.$modepop.$scostr));
     } else {
         $PAGE->requires->js_function_call('scorm_set_prev', Array($CFG->wwwroot.'/mod/scorm/view.php?id='.$cm->id));
     }
     if (($sco->nextid != 0) && ((!isset($sco->next)) || ($sco->next == 0))) {
         $scostr = '&scoid='.$sco->nextid;
-        $PAGE->requires->js_function_call('scorm_set_next', Array($CFG->wwwroot.'/mod/scorm/player.php?id='.$cm->id.$orgstr.$modepop.$scostr));
+        $PAGE->requires->js_function_call('scorm_set_next', Array($CFG->wwwroot.'/mod/scorm/player.php?cm='.$cm->id.$orgstr.$modepop.$scostr));
     } else {
         $PAGE->requires->js_function_call('scorm_set_next', Array($CFG->wwwroot.'/mod/scorm/view.php?id='.$cm->id));
     }
@@ -184,13 +184,13 @@
 ?>
             <!-- Bottons nav at left-->
             <div id="tochead">
-                <form name="tochead" method="post" action="player.php?id=<?php echo $cm->id ?>" target="_top">
+                <form name="tochead" method="post" action="player.php?cm=<?php echo $cm->id ?>" target="_top">
 <?php
             $orgstr = '&amp;currentorg='.$currentorg;
             if (($scorm->hidenav == 0) && ($sco->previd != 0) && (!isset($sco->previous) || $sco->previous == 0)) {
                 // Print the prev LO button
                 $scostr = '&amp;scoid='.$sco->previd;
-                $url = $CFG->wwwroot.'/mod/scorm/player.php?id='.$cm->id.$orgstr.$modestr.$scostr;
+                $url = $CFG->wwwroot.'/mod/scorm/player.php?cm='.$cm->id.$orgstr.$modestr.$scostr;
 ?>
                     <input name="prev" type="button" value="<?php print_string('prev','scorm') ?>" onClick="document.location.href=' <?php echo $url; ?> '"/>
 <?php
@@ -198,7 +198,7 @@
             if (($scorm->hidenav == 0) && ($sco->nextid != 0) && (!isset($sco->next) || $sco->next == 0)) {
                 // Print the next LO button
                 $scostr = '&amp;scoid='.$sco->nextid;
-                $url = $CFG->wwwroot.'/mod/scorm/player.php?id='.$cm->id.$orgstr.$modestr.$scostr;
+                $url = $CFG->wwwroot.'/mod/scorm/player.php?cm='.$cm->id.$orgstr.$modestr.$scostr;
 ?>
                     <input name="next" type="button" value="<?php print_string('next','scorm') ?>" onClick="document.location.href=' <?php echo $url; ?> '"/>
 <?php
@@ -252,9 +252,9 @@
             if (($scorm->hidenav == 0) && ($sco->previd != 0) && (!isset($sco->previous) || $sco->previous == 0) && (($scorm->hidetoc == 2) || ($scorm->hidetoc == 1)) ) {
                 // Print the prev LO button
                 $scostr = '&amp;scoid='.$sco->previd;
-                $url = $CFG->wwwroot.'/mod/scorm/player.php?id='.$cm->id.$orgstr.$modestr.$scostr;
+                $url = $CFG->wwwroot.'/mod/scorm/player.php?cm='.$cm->id.$orgstr.$modestr.$scostr;
 ?>
-                    <form name="scormnavprev" method="post" action="player.php?id=<?php echo $cm->id ?>" target="_top" style= "display:inline">
+                    <form name="scormnavprev" method="post" action="player.php?cm=<?php echo $cm->id ?>" target="_top" style= "display:inline">
                         <input name="prev" type="button" value="<?php print_string('prev','scorm') ?>" onClick="document.location.href=' <?php echo $url; ?> '"/>
                     </form>
 <?php
@@ -265,9 +265,9 @@
             if (($scorm->hidenav == 0) && ($sco->nextid != 0) && (!isset($sco->next) || $sco->next == 0) && (($scorm->hidetoc == 2) || ($scorm->hidetoc == 1))) {
                 // Print the next LO button
                 $scostr = '&amp;scoid='.$sco->nextid;
-                $url = $CFG->wwwroot.'/mod/scorm/player.php?id='.$cm->id.$orgstr.$modestr.$scostr;
+                $url = $CFG->wwwroot.'/mod/scorm/player.php?cm='.$cm->id.$orgstr.$modestr.$scostr;
 ?>
-                    <form name="scormnavnext" method="post" action="player.php?id=<?php echo $cm->id ?>" target="_top" style= "display:inline">
+                    <form name="scormnavnext" method="post" action="player.php?cm=<?php echo $cm->id ?>" target="_top" style= "display:inline">
                         <input name="next" type="button" value="<?php print_string('next','scorm') ?>" onClick="document.location.href=' <?php echo $url; ?> '"/>
                     </form>
 <?php
