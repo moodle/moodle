@@ -663,7 +663,7 @@ class '.$classname.' {
                         $type = 'string';
                 }
             } else if ($keydesc instanceof external_single_structure) {
-                $type = 'struct';
+                $type = 'object|struct';
             } else if ($keydesc instanceof external_multiple_structure) {
                 $type = 'array';
             }
@@ -721,13 +721,46 @@ class '.$classname.' {
      * @return string body of the method for $function ie. everything within the {} of the method declaration.
      */
     protected function service_class_method_body($function, $params){
+        //cast the param from object to array (validate_parameters except array only)
+        $castingcode = '';
+        if ($params){
+            $paramstocast = split(',', $params);
+            foreach ($paramstocast as $paramtocast) {
+                $paramtocast = trim($paramtocast);
+                $castingcode .= $paramtocast .
+                '=webservice_zend_server::cast_objects_to_array('.$paramtocast.');';
+            }
+
+        }
+
         $descriptionmethod = $function->methodname.'_returns()';
         $callforreturnvaluedesc = $function->classname.'::'.$descriptionmethod;
-        return '    if ('.$callforreturnvaluedesc.' == null)  {'.
-                        $function->classname.'::'.$function->methodname.'('.$params.'); 
+        return $castingcode . '    if ('.$callforreturnvaluedesc.' == null)  {'.
+                        $function->classname.'::'.$function->methodname.'('.$params.');
                         return null;
                     }
                     return external_api::clean_returnvalue('.$callforreturnvaluedesc.', '.$function->classname.'::'.$function->methodname.'('.$params.'));';
+    }
+
+    /**
+     * Recursive function to recurse down into a complex variable and convert all
+     * objects to arrays.
+     * @param mixed $param value to cast
+     * @return mixed Cast value
+     */
+    public static function cast_objects_to_array($param){
+        if (is_object($param)){
+            $param = (array)$param;
+        }
+        if (is_array($param)){
+            $toreturn = array();
+            foreach ($param as $key=> $param){
+                $toreturn[$key] = self::cast_objects_to_array($param);
+            }
+            return $toreturn;
+        } else {
+            return $param;
+        }
     }
 
     /**
