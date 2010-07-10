@@ -329,7 +329,6 @@ $string['configsmtphosts'] = 'Give the full name of one or more local SMTP serve
 $string['configsmtpmaxbulk'] = 'Maximum number of messages sent per SMTP session. Grouping messages may speed up the sending of emails. Values lower than 2 force creation of new SMTP session for each email.';
 $string['configsmtpuser'] = 'If you have specified an SMTP server above, and the server requires authentication, then enter the username and password here.';
 $string['configstartwday'] = 'Start of Week';
-$string['configstatscatdepth'] = 'Statistics code uses simplified course enrolment logic, overrides are ignored and there is a maximum number of verified parent course categories. Number 0 means detect only direct role assignments on site and course level, 1 means detect also role assignments in parent category of course, etc. Higher numbers result in much higher database server load during stats processing.';
 $string['configstatsfirstrun'] = 'This specifies how far back the logs should be processed <b>the first time</b> the cronjob wants to process statistics. If you have a lot of traffic and are on shared hosting, it\'s probably not a good idea to go too far back, as it could take a long time to run and be quite resource intensive. (Note that for this setting, 1 month = 28 days. In the graphs and reports generated, 1 month = 1 calendar month.)';
 $string['configstatsmaxruntime'] = 'Stats processing can be quite intensive, so use a combination of this field and the next one to specify when it will run and how long for.';
 $string['configstatsmaxruntime2'] = 'Stats processing can be quite intensive, specify maximum time allowed for gathering of one day of statistics. Maximum number of days processed in one cron execution is 31.';
@@ -892,7 +891,6 @@ $string['smtpuser'] = 'SMTP username';
 $string['soaprecommended'] = 'Installing the optional soap extension is useful for web services and some contrib modules.';
 $string['spellengine'] = 'Spell engine';
 $string['stats'] = 'Statistics';
-$string['statscatdepth'] = 'Maximum parent categories';
 $string['statsfirstrun'] = 'Maximum processing interval';
 $string['statsmaxruntime'] = 'Maximum runtime';
 $string['statsruntimedays'] = 'Days to process';

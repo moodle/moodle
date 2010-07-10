@@ -118,9 +118,6 @@ $temp->add(new admin_setting_configselect('statsmaxruntime', get_string('statsma
 $temp->add(new admin_setting_configtext('statsruntimedays', get_string('statsruntimedays', 'admin'), get_string('configstatsruntimedays', 'admin'), 31, PARAM_INT));
 $temp->add(new admin_setting_configtime('statsruntimestarthour', 'statsruntimestartminute', get_string('statsruntimestart', 'admin'), get_string('configstatsruntimestart', 'admin'), array('h' => 0, 'm' => 0)));
 $temp->add(new admin_setting_configtext('statsuserthreshold', get_string('statsuserthreshold', 'admin'), get_string('configstatsuserthreshold', 'admin'), 0, PARAM_INT));
-
-$options = array(0=>0, 1=>1, 2=>2, 3=>3, 4=>4, 5=>5, 6=>6);
-$temp->add(new admin_setting_configselect('statscatdepth', get_string('statscatdepth', 'admin'), get_string('configstatscatdepth', 'admin'), 1, $options));
 $ADMIN->add('server', $temp);
 
 
