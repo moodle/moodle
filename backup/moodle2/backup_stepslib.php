@@ -904,7 +904,7 @@ class backup_block_instance_structure_step extends backup_structure_step {
 
         // Define each element separated
 
-        $block = new backup_nested_element('block', array('id', 'version'), array(
+        $block = new backup_nested_element('block', array('id', 'contextid', 'version'), array(
             'blockname', 'showinsubcontexts', 'pagetypepattern', 'subpagepattern',
             'defaultregion', 'defaultweight', 'configdata'));
 
@@ -927,6 +927,7 @@ class backup_block_instance_structure_step extends backup_structure_step {
             }
             $blockrec->configdata = base64_encode(serialize((object)$configdata));
         }
+        $blockrec->contextid = $this->task->get_contextid();
         // Get the version of the block
         $blockrec->version = $DB->get_field('block', 'version', array('name' => $this->task->get_blockname()));
 

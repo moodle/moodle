@@ -47,6 +47,21 @@ class backup_xml_transformer extends xml_contenttransformer {
 
     public function process($content) {
 
+        // Array or object, debug and try our best recursively, shouldn't happen but...
+        if (is_array($content)) {
+            debugging('Backup XML transformer should process arrays but plain content always', DEBUG_DEVELOPER);
+            foreach($content as $key => $plaincontent) {
+                $content[$key] = $this->process($plaincontent);
+            }
+            return $content;
+        } else if (is_object($content)) {
+            debugging('Backup XML transformer should not process objects but plain content always', DEBUG_DEVELOPER);
+            foreach((array)$content as $key => $plaincontent) {
+                $content[$key] = $this->process($plaincontent);
+            }
+            return (object)$content;
+        }
+
         if (is_null($content)) {  // Some cases we know we can skip complete processing
             return '$@NULL@$';
         } else if ($content === '') {
