@@ -3843,65 +3843,65 @@ class course_request {
      */
     public function approve() {
         global $CFG, $DB, $USER;
+
+        $user = $DB->get_record('user', array('id' => $this->properties->requester, 'deleted'=>0), '*', MUST_EXIST);
+
         $category = get_course_category($CFG->defaultrequestcategory);
         $courseconfig = get_config('moodlecourse');
 
         // Transfer appropriate settings
-        $course = clone($this->properties);
-        unset($course->id);
-        unset($course->reason);
-        unset($course->requester);
+        $data = clone($this->properties);
+        unset($data->id);
+        unset($data->reason);
+        unset($data->requester);
 
         // Set category
-        $course->category = $category->id;
-        $course->sortorder = $category->sortorder; // place as the first in category
+        $data->category = $category->id;
+        $data->sortorder = $category->sortorder; // place as the first in category
 
         // Set misc settings
-        $course->requested = 1;
+        $data->requested = 1;
         if (!empty($CFG->restrictmodulesfor) && $CFG->restrictmodulesfor != 'none' && !empty($CFG->restrictbydefault)) {
-            $course->restrictmodules = 1;
+            $data->restrictmodules = 1;
         }
 
         // Apply course default settings
-        $course->format             = $courseconfig->format;
-        $course->numsections        = $courseconfig->numsections;
-        $course->hiddensections     = $courseconfig->hiddensections;
-        $course->newsitems          = $courseconfig->newsitems;
-        $course->showgrades         = $courseconfig->showgrades;
-        $course->showreports        = $courseconfig->showreports;
-        $course->maxbytes           = $courseconfig->maxbytes;
-        $course->groupmode          = $courseconfig->groupmode;
-        $course->groupmodeforce     = $courseconfig->groupmodeforce;
-        $course->visible            = $courseconfig->visible;
-        $course->visibleold         = $course->visible;
-        $course->lang               = $courseconfig->lang;
+        $data->format             = $courseconfig->format;
+        $data->numsections        = $courseconfig->numsections;
+        $data->hiddensections     = $courseconfig->hiddensections;
+        $data->newsitems          = $courseconfig->newsitems;
+        $data->showgrades         = $courseconfig->showgrades;
+        $data->showreports        = $courseconfig->showreports;
+        $data->maxbytes           = $courseconfig->maxbytes;
+        $data->groupmode          = $courseconfig->groupmode;
+        $data->groupmodeforce     = $courseconfig->groupmodeforce;
+        $data->visible            = $courseconfig->visible;
+        $data->visibleold         = $data->visible;
+        $data->lang               = $courseconfig->lang;
 
-        //TODO: use standard course creation function !!
+        $course = create_course($data);
+        $context = get_context_instance(CONTEXT_COURSE, $course->id, MUST_EXIST);
 
-        // Insert the record
-        $course->id = $DB->insert_record('course', $course);
-        if ($course->id) {
-            $course = $DB->get_record('course', array('id' => $course->id));
-            blocks_add_default_course_blocks($course);
-            $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
-            // TODO: do some real enrolment here
-            role_assign($CFG->creatornewroleid, $this->properties->requester, $coursecontext->id); // assign teacher role
-            if (!empty($CFG->restrictmodulesfor) && $CFG->restrictmodulesfor != 'none' && !empty($CFG->restrictbydefault)) {
-                // if we're all or requested we're ok.
-                $allowedmods = explode(',',$CFG->defaultallowedmodules);
-                update_restricted_mods($course, $allowedmods);
+        // add enrol instances
+        if (!$DB->record_exists('enrol', array('courseid'=>$course->id, 'enrol'=>'manual'))) {
+            if ($manual = enrol_get_plugin('manual')) {
+                $manual->add_default_instance($course);
             }
-            $this->delete();
-            fix_course_sortorder();
-
-            $user = $DB->get_record('user', array('id' => $this->properties->requester));
-            $a->name = $course->fullname;
-            $a->url = $CFG->wwwroot.'/course/view.php?id=' . $course->id;
-            $this->notify($user, $USER, 'courserequestapproved', get_string('courseapprovedsubject'), get_string('courseapprovedemail2', 'moodle', $a));
-
-            return $course->id;
         }
-        return false;
+
+        // enrol the requester as teacher if necessary
+        if (!empty($CFG->creatornewroleid) and !is_viewing($context, $user, 'moodle/role:assign') and !is_enrolled($context, $user, 'moodle/role:assign')) {
+            enrol_try_internal_enrol($course->id, $user->id, $CFG->creatornewroleid);
+        }
+
+        $this->delete();
+
+        $a = new object();
+        $a->name = $course->fullname;
+        $a->url = $CFG->wwwroot.'/course/view.php?id=' . $course->id;
+        $this->notify($user, $USER, 'courserequestapproved', get_string('courseapprovedsubject'), get_string('courseapprovedemail2', 'moodle', $a));
+
+        return $course->id;
     }
 
     /**
@@ -3913,7 +3913,8 @@ class course_request {
      * @param string $notice The message to display to the user
      */
     public function reject($notice) {
-        global $USER;
+        global $USER, $DB;
+        $user = $DB->get_record('user', array('id' => $this->properties->requester), '*', MUST_EXIST);
         $this->notify($user, $USER, 'courserequestrejected', get_string('courserejectsubject'), get_string('courserejectemail', 'moodle', $notice));
         $this->delete();
     }
