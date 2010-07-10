@@ -127,7 +127,7 @@ function useredit_shared_definition(&$mform, $editoroptions = null) {
     $choices['0'] = get_string('textformat');
     $choices['1'] = get_string('htmlformat');
     $mform->addElement('select', 'mailformat', get_string('emailformat'), $choices);
-    $mform->setDefault('mailformat', 1);    
+    $mform->setDefault('mailformat', 1);
 
     if (!empty($CFG->allowusermailcharset)) {
         $choices = array();
@@ -138,7 +138,7 @@ function useredit_shared_definition(&$mform, $editoroptions = null) {
             $choices['0'] = get_string('site').' (UTF-8)';
         }
         $choices = array_merge($choices, $charsets);
-        $mform->addElement('select', 'preference_mailcharset', get_string('emailcharset'), $choices);        
+        $mform->addElement('select', 'preference_mailcharset', get_string('emailcharset'), $choices);
     }
 
     $choices = array();
@@ -161,7 +161,7 @@ function useredit_shared_definition(&$mform, $editoroptions = null) {
         $mform->addElement('select', 'trackforums', get_string('trackforums'), $choices);
         $mform->setDefault('trackforums', 0);
     }
-/* TODO: reimplement editor preferences
+
     if (!empty($CFG->htmleditor)) {
         $choices = array();
         $choices['0'] = get_string('texteditor');
@@ -169,7 +169,7 @@ function useredit_shared_definition(&$mform, $editoroptions = null) {
         $mform->addElement('select', 'htmleditor', get_string('textediting'), $choices);
         $mform->setDefault('htmleditor', 1);
     }
-*/
+
     if (empty($CFG->enableajax)) {
         $mform->addElement('static', 'ajaxdisabled', get_string('ajaxuse'), get_string('ajaxno'));
     } else {
@@ -221,7 +221,7 @@ function useredit_shared_definition(&$mform, $editoroptions = null) {
                 $choices[$key] = $theme->name;
             }
         }
-        $mform->addElement('select', 'theme', get_string('preferredtheme'), $choices);        
+        $mform->addElement('select', 'theme', get_string('preferredtheme'), $choices);
     }
 
     $mform->addElement('editor', 'description_editor', get_string('userdescription'), null, $editoroptions);
@@ -251,7 +251,7 @@ function useredit_shared_definition(&$mform, $editoroptions = null) {
     }
 
     /// Moodle optional fields
-    $mform->addElement('header', 'moodle_optional', get_string('optional', 'form'));   
+    $mform->addElement('header', 'moodle_optional', get_string('optional', 'form'));
 
     $mform->addElement('text', 'url', get_string('webpage'), 'maxlength="255" size="50"');
     $mform->setType('url', PARAM_URL);

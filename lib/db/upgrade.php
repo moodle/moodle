@@ -4701,13 +4701,25 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
 
     /// Launch change of precision for field city
         $dbman->change_field_precision($table, $field);
-        
+
     /// Conditionally launch add index typeitem_ix
         if (!$dbman->index_exists($table, $index)) {
             $dbman->add_index($table, $index);
         }
     /// Main savepoint reached
         upgrade_main_savepoint(true, 2010070801);
+    }
+
+    if ($oldversion < 2010070900) {
+        //purge unused editor settings
+        unset_config('editorbackgroundcolor');
+        unset_config('editorfontfamily');
+        unset_config('editorfontsize');
+        unset_config('editorkillword');
+        unset_config('editorhidebuttons');
+        unset_config('editorfontlist');
+
+        upgrade_main_savepoint(true, 2010070900);
     }
 
     return true;

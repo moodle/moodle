@@ -89,38 +89,10 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
 
     $ADMIN->add('appearance', $temp);
 
-/* TODO: reimplement editor settings and preferences, editors are now full plugins ;-)
-    // "htmleditor" settingpage
-    $ADMIN->add('appearance', new admin_category('htmleditor', get_string('htmleditor', 'admin')));
-
-    $temp = new admin_settingpage('htmleditorsettings', get_string('htmleditorsettings', 'admin'));
-
-    $htmleditors = get_available_editors();
-
-    $temp->add(new admin_setting_configselect('defaulthtmleditor', get_string('defaulthtmleditor', 'admin'), null, 'tinymce', $htmleditors));
-    $temp->add(new admin_setting_configcheckbox('htmleditor', get_string('usehtmleditor', 'admin'), get_string('confightmleditor','admin'), 1));
-    $temp->add(new admin_setting_emoticons());
-    $ADMIN->add('htmleditor', $temp);
-
-
- TODO: before deleting these settings migrate or drop config values!
-    $temp = new admin_settingpage('htmlarea', get_string('htmlarea', 'admin'));
-    $temp->add(new admin_setting_configtext('editorbackgroundcolor', get_string('editorbackgroundcolor', 'admin'), get_string('edhelpbgcolor'), '#ffffff', PARAM_NOTAGS));
-    $temp->add(new admin_setting_configtext('editorfontfamily', get_string('editorfontfamily', 'admin'), get_string('edhelpfontfamily'), 'Trebuchet MS,Verdana,Arial,Helvetica,sans-serif', PARAM_NOTAGS));
-    $temp->add(new admin_setting_configtext('editorfontsize', get_string('editorfontsize', 'admin'), get_string('edhelpfontsize'), '', PARAM_NOTAGS));
-    $temp->add(new admin_setting_special_editorfontlist());
-    $temp->add(new admin_setting_configcheckbox('editorkillword', get_string('editorkillword', 'admin'), get_string('edhelpcleanword'), 1));
-    $temp->add(new admin_setting_special_editorhidebuttons());
-    $ADMIN->add('htmleditor', $temp);
-
-    $temp = new admin_settingpage('tinymce', 'TinyMCE');
-    // add tinymce configuration options here
-    $ADMIN->add('htmleditor', $temp);
-*/
-
     // "htmlsettings" settingpage
     $temp = new admin_settingpage('htmlsettings', get_string('htmlsettings', 'admin'));
     $temp->add(new admin_setting_configcheckbox('formatstringstriptags', get_string('stripalltitletags', 'admin'), get_string('configstripalltitletags', 'admin'), 1));
+    $temp->add(new admin_setting_emoticons());
     $ADMIN->add('appearance', $temp);
 
     // "documentation" settingpage
