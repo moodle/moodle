@@ -19,11 +19,15 @@
  * This file contains the generic moodleform bridge for the backup user interface
  * as well as the individual forms that relate to the different stages the user
  * interface can exist within.
- * 
+ *
  * @package   moodlecore
  * @copyright 2010 Sam Hemelryk
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+defined('MOODLE_INTERNAL') || die();
+
+require_once($CFG->libdir . '/formslib.php');
 
 /**
  * Backup moodleform bridge
