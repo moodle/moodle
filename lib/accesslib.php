@@ -4099,11 +4099,11 @@ function get_component_string($component, $contextlevel) {
                 $langname = str_replace('/', '_', $component);
                 $string = get_string('pluginname', $langname);
             } else if (preg_match('|^gradeimport|', $component)) {
-                $string = get_string('gradeimport', 'grades').': '.get_string('modulename', $component);
+                $string = get_string('gradeimport', 'grades').': '.get_string('pluginname', $component);
             } else if (preg_match('|^gradeexport|', $component)) {
-                $string = get_string('gradeexport', 'grades').': '.get_string('modulename', $component);
+                $string = get_string('gradeexport', 'grades').': '.get_string('pluginname', $component);
             } else if (preg_match('|^gradereport|', $component)) {
-                $string = get_string('gradereport', 'grades').': '.get_string('modulename', $component);
+                $string = get_string('gradereport', 'grades').': '.get_string('pluginname', $component);
             } else if (preg_match('|^coursereport|', $component)) {
                 $string = get_string('coursereport').': '.get_string('pluginname', $component);
             } else if (preg_match('|^webservice|', $component)) {
