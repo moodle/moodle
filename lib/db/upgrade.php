@@ -4710,7 +4710,7 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         upgrade_main_savepoint(true, 2010070801);
     }
 
-    if ($oldversion < 2010070900) {
+    if ($oldversion < 2010071000) {
         //purge unused editor settings
         unset_config('editorbackgroundcolor');
         unset_config('editorfontfamily');
@@ -4719,7 +4719,7 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         unset_config('editorhidebuttons');
         unset_config('editorfontlist');
 
-        upgrade_main_savepoint(true, 2010070900);
+        upgrade_main_savepoint(true, 2010071000);
     }
 
     return true;
