@@ -123,19 +123,58 @@ switch ($action) {
         die;
 
     case 'renamedir':
-        $filepath   = required_param('filepath', PARAM_PATH);
-        $newdirname = required_param('newdirname', PARAM_FILE);
-
-        //TODO: we must update all children too - I am going to implement low level move in file_storage (skodak)
-        echo json_encode(false);
-        die;
-
     case 'movedir':
-        $filepath    = required_param('filepath', PARAM_PATH);
-        $newfilepath = required_param('newfilepath', PARAM_PATH);
 
-        //TODO: we must update all children too - I am going to implement low level move in file_storage (skodak)
-        echo json_encode(false);
+        $filepath = required_param('filepath', PARAM_PATH);
+        $fs = get_file_storage();
+
+        if (!$dir = $fs->get_file($user_context->id, 'user', 'draft', $draftid, $filepath, '.')) {
+            echo json_encode(false);
+            die;
+        }
+        if ($action === 'renamedir') {
+            $newdirname = required_param('newdirname', PARAM_FILE);
+            $parent = clean_param(dirname($filepath) . '/', PARAM_PATH);
+            $newfilepath = $parent . $newdirname . '/';
+        } else {
+            $newfilepath = required_param('newfilepath', PARAM_PATH);
+            $parts = explode('/', trim($dir->get_filepath(), '/'));
+            $dirname = end($parts);
+            $newfilepath = clean_param($newfilepath . '/' . $dirname . '/', PARAM_PATH);
+        }
+
+        //we must update directory and all children too
+        if ($fs->get_directory_files($user_context->id, 'user', 'draft', $draftid, $newfilepath, true)) {
+            //bad luck, we can not rename if something already exists there
+            echo json_encode(false);
+            die;
+        }
+
+        $xfilepath = preg_quote($filepath, '|');
+
+        $files = $fs->get_area_files($user_context->id, 'user', 'draft', $draftid);
+        $moved = array();
+        foreach ($files as $file) {
+            if (!preg_match("|^$xfilepath|", $file->get_filepath())) {
+                continue;
+            }
+            // move one by one
+            $path = preg_replace("|^$xfilepath|", $newfilepath, $file->get_filepath());
+            $fs->create_file_from_storedfile(array('filepath'=>$path), $file);
+            $moved[] = $file;
+        }
+        foreach ($moved as $file) {
+            // delete all old
+            $file->delete();
+        }
+
+        $return = new object();
+        if ($action === 'renamedir') {
+            $return->filepath = $parent;
+        } else {
+            $return->filepath = $newfilepath;
+        }
+        echo json_encode($return);
         die;
 
     case 'movefile':
