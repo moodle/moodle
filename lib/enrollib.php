@@ -186,6 +186,12 @@ function enrol_check_plugins($user) {
         return;
     }
 
+    if (is_siteadmin()) {
+        // no sync for admin user, please use admin accounts only for admin tasks like the unix root user!
+        // if plugin fails on sync admins need to be able to log in
+        return;
+    }
+
     static $inprogress = array();  // To prevent this function being called more than once in an invocation
 
     if (!empty($inprogress[$user->id])) {
@@ -943,6 +949,7 @@ abstract class enrol_plugin {
 
         if (!$ue = $DB->get_record('user_enrolments', array('enrolid'=>$instance->id, 'userid'=>$userid))) {
             // weird, user not enrolled
+echo "grrrr";
             return;
         }
 
