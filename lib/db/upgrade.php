@@ -4722,6 +4722,7 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         upgrade_main_savepoint(true, 2010071000);
     }
 
+
     return true;
 }
 
