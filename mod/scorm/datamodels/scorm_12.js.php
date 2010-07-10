@@ -25,7 +25,7 @@ function SCORMapi1_2() {
     CMIInteger = '^\\d+$';
     CMISInteger = '^-?([0-9]+)$';
     CMIDecimal = '^-?([0-9]{0,3})(\.[0-9]{1,2})?$';
-    CMIIdentifier = '^\\w{1,255}$';
+    CMIIdentifier = '^[\\u0021-\\u007E]{0,255}$';
     CMIFeedback = CMIString256; // This must be redefined
     CMIIndex = '[._](\\d+).';
     // Vocabulary Data Type Definition
