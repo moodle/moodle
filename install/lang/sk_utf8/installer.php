@@ -268,6 +268,6 @@ $string['wrongsourcebase'] = 'Chybné URL zdrojového serveru';
 $string['wrongzipfilename'] = 'Chybné meno súboru ZIP';
 $string['wwwroot'] = 'Web adresa';
 $string['wwwrooterror'] = 'Táto web adresa pravdepodobne nie je platná - táto inštalácia Moodle tu pravdepodobne nie je.';
-$string['xmlrpcrecommended'] = 'Pre beh sieťových funkcionalít (\"Moodle Networking\") je treba nainštalovať voliteľnú knižnicu xlmrpc.';
+$string['xmlrpcrecommended'] = 'Pre beh sieťových funkcionalít (\"Moodle Networking\") je treba nainštalovať voliteľnú knižnicu xlmrpc.'; // ORPHANED
 $string['ziprequired'] = 'Moodle v súčasnosti vyžaduje PHP zásuvný modul ZIP. Knižnice info-ZIP alebo PclZip už nie sú používané.';
 ?>
