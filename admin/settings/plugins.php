@@ -133,12 +133,10 @@ if ($hassiteconfig) {
     $ADMIN->add('modules', new admin_category('editorsettings', get_string('editors', 'editor')));
     $temp = new admin_settingpage('manageeditors', get_string('editorsettings', 'editor'));
     $temp->add(new admin_setting_manageeditors());
-    $htmleditors = get_available_editors();
-    $temp->add(new admin_setting_configselect('defaulthtmleditor', get_string('defaulthtmleditor', 'admin'), null, 'tinymce', $htmleditors));
-    $temp->add(new admin_setting_configcheckbox('htmleditor', get_string('usehtmleditor', 'admin'), get_string('confightmleditor','admin'), 1));
+    $htmleditors = editors_get_available();
     $ADMIN->add('editorsettings', $temp);
 
-    $editors_available = get_available_editors();
+    $editors_available = editors_get_available();
     foreach ($editors_available as $editor=>$editorstr) {
         if (file_exists($CFG->dirroot . '/lib/editor/'.$editor.'/settings.php')) {
             $settings = new admin_settingpage('editorsettings'.$editor, get_string('pluginname', 'editor_'.$editor), 'moodle/site:config');

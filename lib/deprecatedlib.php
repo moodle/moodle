@@ -2761,7 +2761,7 @@ function print_textarea($usehtmleditor, $rows, $cols, $width, $height, $name, $v
 
     if ($usehtmleditor) {
         editors_head_setup();
-        $editor = get_preferred_texteditor(FORMAT_HTML);
+        $editor = editors_get_preferred_editor(FORMAT_HTML);
         $editor->use_editor($id, array('legacy'=>true));
     } else {
         $editorclass = '';

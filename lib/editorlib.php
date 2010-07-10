@@ -18,7 +18,7 @@
 /**
  * Utility classes and functions for text editor integration.
  *
- * @package    moodlecore
+ * @package    core
  * @subpackage editor
  * @copyright  2009 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -27,40 +27,42 @@
 /**
  * Returns users preferred editor for given format
  *
- * @todo  implement user preferences for text editors
- *
- * @global object
- * @global object
  * @param int $format text format or null of none
  * @return texteditor object
  */
-function get_preferred_texteditor($format=null) {
-    global $CFG, $USER;
+function editors_get_preferred_editor($format = NULL) {
+    global $USER;
 
-    if (empty($CFG->texteditors)) {
-        $CFG->texteditors = 'tinymce,textarea';
-    }
-    $active = explode(',', $CFG->texteditors);
+    $enabled = editors_get_enabled();
 
-    // TODO: implement user preferences for text editors
+    $preventhtml = (count($enabled) > 1 and empty($USER->htmleditor));
 
     // now find some plugin that supports format and is available
     $editor = false;
-    foreach ($active as $editorname) {
-        if (!$e = get_texteditor($editorname)) {
-            continue;
-        }
+    foreach ($enabled as $e) {
         if (!$e->supported_by_browser()) {
             // bad luck, this editor is not compatible
             continue;
         }
+        if ($preventhtml and $format == FORMAT_HTML and $e->get_preferred_format() == FORMAT_HTML) {
+            // this is really not what we want but we could use it if nothing better found
+            $editor = $e;
+            continue;
+        }
         if (!$supports = $e->get_supported_formats()) {
+            // buggy editor!
             continue;
         }
         if (is_null($format)) {
             // format does not matter
-            $editor = $e;
-            break;
+            if ($preventhtml and $e->get_preferred_format() == FORMAT_HTML) {
+                // this is really not what we want but we could use it if nothing better found
+                $editor = $e;
+                continue;
+            } else {
+                $editor = $e;
+                break;
+            }
         }
         if (in_array($format, $supports)) {
             // editor supports this format, yay!
@@ -77,9 +79,58 @@ function get_preferred_texteditor($format=null) {
 }
 
 /**
+ * Returns users preferred text format.
+ * @return int standard text format
+ */
+function editors_get_preferred_format() {
+    global $USER;
+
+    $editors = editors_get_enabled();
+    if (count($editors) == 1) {
+        $editor = reset($editors);
+        return $editor->get_preferred_format();
+    }
+
+    foreach ($editors as $editor) {
+        if (empty($USER->htmleditor) and $editor->get_preferred_format() == FORMAT_HTML) {
+            // we do not prefer this one
+            continue;
+        }
+        return $editor->get_preferred_format();
+    }
+
+    // user did not want html editor, but there is no other choice, sorry
+    $editor = reset($editors);
+    return $editor->get_preferred_format();
+}
+
+/**
+ * Returns list of enabled text editors
+ * @return array of name=>texteditor
+ */
+function editors_get_enabled() {
+    global $CFG;
+
+    if (empty($CFG->texteditors)) {
+        $CFG->texteditors = 'tinymce,textarea';
+    }
+    $active = array();
+    foreach(explode(',', $CFG->texteditors) as $e) {
+        if ($editor = get_texteditor($e)) {
+            $active[$e] = $editor;
+        }
+    }
+
+    if (empty($active)) {
+        return array('textarea'=>get_texteditor('textarea')); // must exist and can edit anything
+    }
+
+    return $active;
+}
+
+/**
  * Returns instance of text editor
  *
- * @global object
  * @param string $editorname name of editor (textarea, tinymce, ...)
  * @return object|bool texeditor instance or false if does not exist
  */
@@ -103,7 +154,7 @@ function get_texteditor($editorname) {
  *
  * @return array Array ('editorname'=>'localised editor name')
  */
-function get_available_editors() {
+function editors_get_available() {
     $editors = array();
     foreach (get_plugin_list('editor') as $editorname => $dir) {
         $editors[$editorname] = get_string('pluginname', 'editor_'.$editorname);
@@ -184,16 +235,28 @@ abstract class texteditor {
     }
 }
 
-//=== DEPRECATED =====================
+//=== TO BE DEPRECATED in 2.1 =====================
+
 /**
- * can_use_html_editor is deprecated...
- * @deprecated
- * @todo Deprecated: eradicate completely, replace with something else
+ * Does the user want and can edit using rich text html editor?
+ * @todo Deprecate: eradicate completely, replace with something else in the future
  * @return bool
  */
 function can_use_html_editor() {
-    //TODO: eradicate completely, replace with something else
+    global $USER;
 
-    $tinymyce = get_texteditor('tinymce');
-    return $tinymyce->supported_by_browser();
+    $editors = editors_get_enabled();
+    if (count($editors) > 1) {
+        if (empty($USER->htmleditor)) {
+            return false;
+        }
+    }
+
+    foreach ($editors as $editor) {
+        if ($editor->get_preferred_format() == FORMAT_HTML) {
+            return true;
+        }
+    }
+
+    return false;
 }

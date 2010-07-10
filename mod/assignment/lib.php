@@ -135,11 +135,7 @@ class assignment_base {
         // get current group only when really needed
 
     /// Set up things for a HTML editor if it's needed
-        if ($this->usehtmleditor = can_use_html_editor()) {
-            $this->defaultformat = FORMAT_HTML;
-        } else {
-            $this->defaultformat = FORMAT_MOODLE;
-        }
+        $this->defaultformat = editors_get_preferred_format();
     }
 
     /**

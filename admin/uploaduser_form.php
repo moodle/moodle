@@ -50,9 +50,6 @@ class admin_uploaduser_form2 extends moodleform {
     function definition (){
         global $CFG, $USER;
 
-        //no editors here - we need proper empty fields
-        $CFG->htmleditor = null;
-
         $mform   =& $this->_form;
         $columns =& $this->_customdata;
 
@@ -188,16 +185,18 @@ class admin_uploaduser_form2 extends moodleform {
         $mform->addElement('select', 'autosubscribe', get_string('autosubscribe'), $choices);
         $mform->setDefault('autosubscribe', 1);
 
-/* TODO: reimplement editor preferences
-        if ($CFG->htmleditor) {
-            $choices = array(0 => get_string('texteditor'), 1 => get_string('htmleditor'));
+        $editors = editors_get_enabled();
+        if (count($editors) > 1) {
+            $choices = array();
+            $choices['0'] = get_string('texteditor');
+            $choices['1'] = get_string('htmleditor');
             $mform->addElement('select', 'htmleditor', get_string('textediting'), $choices);
             $mform->setDefault('htmleditor', 1);
         } else {
-            $mform->addElement('static', 'htmleditor', get_string('textediting'), get_string('texteditor'));
+            $mform->addElement('hidden', 'htmleditor');
+            $mform->setDefault('htmleditor', 1);
+            $mform->setType('htmleditor', PARAM_INT);
         }
-        $mform->setAdvanced('htmleditor');
-*/
 
         if (empty($CFG->enableajax)) {
             $mform->addElement('static', 'ajax', get_string('ajaxuse'), get_string('ajaxno'));

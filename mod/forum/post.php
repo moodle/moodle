@@ -138,7 +138,7 @@ if (!empty($forum)) {      // User is starting a new discussion in a forum
     $post->subject       = '';
     $post->userid        = $USER->id;
     $post->message       = '';
-    $post->messageformat = FORMAT_HTML; // TODO: better default
+    $post->messageformat = editors_get_preferred_format();
     $post->messagetrust  = 0;
 
     if (isset($groupid)) {
@@ -537,7 +537,7 @@ $mform_post->set_data(array(        'attachments'=>$draftitemid,
                                     'subject'=>$post->subject,
                                     'message'=>array(
                                         'text'=>$currenttext,
-                                        'format'=>empty($post->messageformat) ? FORMAT_HTML : $post->messageformat, //TODO: add some better default
+                                        'format'=>empty($post->messageformat) ? editors_get_preferred_format() : $post->messageformat,
                                         'itemid'=>$draftid_editor
                                     ),
                                     'subscribe'=>$subscribe?1:0,

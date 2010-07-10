@@ -38,10 +38,10 @@
     //                                 |                     forum_posts
     //                                 |-------------(UL,pk->id,fk->discussion,
     //                                 |                  nt->parent,files)
-    //                                 |                         
-    //                                 |                         
-    //                                 |                         
-    //                            forum_read                
+    //                                 |
+    //                                 |
+    //                                 |
+    //                            forum_read
     //                       (UL,pk->id,fk->post
     //
     // Meaning: pk->primary key field of the table
@@ -150,11 +150,6 @@
                     //Load forum/lib.php
                     require_once ($CFG->dirroot.'/mod/forum/lib.php');
                     // Calculate the default format
-                    if (can_use_html_editor()) {
-                        $defaultformat = FORMAT_HTML;
-                    } else {
-                        $defaultformat = FORMAT_MOODLE;
-                    }
                     //Create discussion/post data
                     $sd = new stdClass;
                     $sd->course   = $forum->course;
@@ -162,7 +157,7 @@
                     $sd->name     = $forum->name;
                     $sd->assessed = $forum->assessed;
                     $sd->message       = $forum->intro;
-                    $sd->messageformat = $defaultformat;
+                    $sd->messageformat = $forum->introformat;
                     $sd->mailnow  = false;
                     //Insert dicussion/post data
                     $sdid = forum_add_discussion($sd, $sd->intro, $forum);

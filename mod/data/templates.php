@@ -157,7 +157,7 @@ if (empty($data->addtemplate) and empty($data->singletemplate) and
 
 editors_head_setup();
 $format = FORMAT_HTML;
-$editor = get_preferred_texteditor($format);
+$editor = editors_get_preferred_editor($format);
 $strformats = format_text_menu();
 $formats =  $editor->get_supported_formats();
 foreach ($formats as $fid) {

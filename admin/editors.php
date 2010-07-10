@@ -17,7 +17,7 @@ $action = optional_param('action', '', PARAM_ACTION);
 $editor = optional_param('editor', '', PARAM_SAFEDIR);
 
 // get currently installed and enabled auth plugins
-$available_editors = get_available_editors();
+$available_editors = editors_get_available();
 if (!empty($editor) and empty($available_editors[$editor])) {
     redirect ($returnurl);
 }

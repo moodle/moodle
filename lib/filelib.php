@@ -201,7 +201,7 @@ function file_prepare_standard_editor($data, $field, array $options, $context=nu
             $data->{$field} = '';
         }
         if (!isset($data->{$field.'format'})) {
-            $data->{$field.'format'} = FORMAT_HTML; // TODO: use better default based on user preferences and browser capabilities
+            $data->{$field.'format'} = editors_get_preferred_format();
         }
         if (!$options['noclean']) {
             $data->{$field} = clean_text($data->{$field}, $data->{$field.'format'});

@@ -1673,14 +1673,7 @@ class calendar_event {
             $data->description = $data->description['text'];
         } else if (empty($data->description)) {
             $data->description = '';
-        }
-
-        if (empty($data->format)) {
-            if (can_use_html_editor()) {
-                $data->format = FORMAT_HTML;
-            } else {
-                $data->format = FORMAT_MOODLE;
-            }
+            $data->format = editors_get_preferred_format();
         }
 
         $this->properties = $data;

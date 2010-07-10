@@ -34,11 +34,6 @@ if ($confirm and !empty($msg) and confirm_sesskey()) {
     redirect($return);
 }
 
-// disable html editor if not enabled in preferences
-if (!get_user_preferences('message_usehtmleditor', 0)) {
-    $CFG->htmleditor = '';
-}
-
 $msgform = new user_message_form('user_bulk_message.php');
 
 if ($msgform->is_cancelled()) {

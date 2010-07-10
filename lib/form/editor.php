@@ -143,7 +143,7 @@ class MoodleQuickForm_editor extends HTML_QuickForm_element {
         $str = $this->_getTabs();
         $str .= '<div>';
 
-        $editor = get_preferred_texteditor($format);
+        $editor = editors_get_preferred_editor($format);
         $strformats = format_text_menu();
         $formats =  $editor->get_supported_formats();
         foreach ($formats as $fid) {

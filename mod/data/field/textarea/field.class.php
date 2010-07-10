@@ -60,7 +60,7 @@ class data_field_textarea extends data_field_base {
             $format = FORMAT_PLAIN;
         }
 
-        $editor = get_preferred_texteditor($format);
+        $editor = editors_get_preferred_editor($format);
         $strformats = format_text_menu();
         $formats =  $editor->get_supported_formats();
         foreach ($formats as $fid) {

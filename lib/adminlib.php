@@ -1690,7 +1690,7 @@ class admin_setting_confightmleditor extends admin_setting_configtext {
             $defaultinfo = "\n".$default;
         }
 
-        $editor = get_preferred_texteditor(FORMAT_HTML);
+        $editor = editors_get_preferred_editor(FORMAT_HTML);
         $editor->use_editor($this->get_id(), array('noclean'=>true));
 
         return format_admin_setting($this, $this->visiblename,
@@ -4929,7 +4929,7 @@ class admin_setting_manageeditors extends admin_setting {
         }
 
         $textlib = textlib_get_instance();
-        $editors_available = get_available_editors();
+        $editors_available = editors_get_available();
         foreach ($editors_available as $editor=>$editorstr) {
             if (strpos($editor, $query) !== false) {
                 return true;
@@ -4956,7 +4956,7 @@ class admin_setting_manageeditors extends admin_setting {
             'up', 'down', 'none'));
         $txt->updown = "$txt->up/$txt->down";
 
-        $editors_available = get_available_editors();
+        $editors_available = editors_get_available();
         $active_editors = explode(',', $CFG->texteditors);
 
         $active_editors = array_reverse($active_editors);

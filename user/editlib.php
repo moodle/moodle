@@ -162,12 +162,17 @@ function useredit_shared_definition(&$mform, $editoroptions = null) {
         $mform->setDefault('trackforums', 0);
     }
 
-    if (!empty($CFG->htmleditor)) {
+    $editors = editors_get_enabled();
+    if (count($editors) > 1) {
         $choices = array();
         $choices['0'] = get_string('texteditor');
         $choices['1'] = get_string('htmleditor');
         $mform->addElement('select', 'htmleditor', get_string('textediting'), $choices);
         $mform->setDefault('htmleditor', 1);
+    } else {
+        $mform->addElement('hidden', 'htmleditor');
+        $mform->setDefault('htmleditor', 1);
+        $mform->setType('htmleditor', PARAM_INT);
     }
 
     if (empty($CFG->enableajax)) {
