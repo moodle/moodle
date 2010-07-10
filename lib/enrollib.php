@@ -949,7 +949,6 @@ abstract class enrol_plugin {
 
         if (!$ue = $DB->get_record('user_enrolments', array('enrolid'=>$instance->id, 'userid'=>$userid))) {
             // weird, user not enrolled
-echo "grrrr";
             return;
         }
 
