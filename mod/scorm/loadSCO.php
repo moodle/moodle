@@ -120,7 +120,7 @@
 
     } else if ($scorm->scormtype === SCORM_TYPE_LOCAL or $scorm->scormtype === SCORM_TYPE_LOCALSYNC) {
         $result = new moodle_url('/pluginfile.php');
-        $result->set_slashargument("/$context->id/mod_scorm/content/$scorm->revision/$launcher")->out();
+        $result->set_slashargument("/$context->id/mod_scorm/content/$scorm->revision/$launcher");
     }
 
     // which API are we looking for
