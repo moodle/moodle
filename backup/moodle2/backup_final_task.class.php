@@ -53,7 +53,7 @@ class backup_final_task extends backup_task {
             $this->add_step(new backup_annotate_all_user_files('user_files'));
         }
 
-        // Generate the users file (conditonally) with the final annotated users
+        // Generate the users file (conditionally) with the final annotated users
         // including custom profile fields, preferences, tags, role assignments and
         // overrides
         if ($this->get_setting_value('users')) {
@@ -90,7 +90,7 @@ class backup_final_task extends backup_task {
         // Copy the generated zip file to final destination
         $this->add_step(new backup_store_backup_file('save_backupfile'));
 
-        // Clean the temp dir (conditionaly) and drop temp table
+        // Clean the temp dir (conditionally) and drop temp table
         $this->add_step(new drop_and_clean_temp_stuff('drop_and_clean_temp_stuff'));
 
         $this->built = true;
