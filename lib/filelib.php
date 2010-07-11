@@ -37,8 +37,8 @@ require_once("$CFG->libdir/filebrowser/file_browser.php");
 /**
  * Given a physical path to a file, returns the URL through which it can be reached in Moodle.
  *
- * @global object
- * @global string
+ * @deprecated use moodle_url factory methods instead
+ *
  * @param string $path Physical path to a file
  * @param array $options associative array of GET variables to append to the URL
  * @param string $type (questionfile|rssfile|user|usergroup|httpscoursefile|coursefile)
@@ -47,7 +47,7 @@ require_once("$CFG->libdir/filebrowser/file_browser.php");
 function get_file_url($path, $options=null, $type='coursefile') {
     global $CFG, $HTTPSPAGEREQUIRED;
 
-    //TODO: deprecate this
+//TODO: deprecate this
 
     $path = str_replace('//', '/', $path);
     $path = trim($path, '/'); // no leading and trailing slashes
@@ -123,7 +123,8 @@ function file_draftfile_url($draftid, $filepath, $filename) {
 /**
  * Encodes file serving url
  *
- * @todo decide if we really need this
+ * @deprecated use moodle_url factory methods instead
+ *
  * @global object
  * @param string $urlbase
  * @param string $path /filearea/itemid/dir/dir/file.exe
@@ -133,6 +134,8 @@ function file_draftfile_url($draftid, $filepath, $filename) {
  */
 function file_encode_url($urlbase, $path, $forcedownload=false, $https=false) {
     global $CFG;
+
+//TODO: deprecate this
 
     if ($CFG->slasharguments) {
         $parts = explode('/', $path);

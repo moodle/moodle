@@ -627,7 +627,7 @@ class moodle_url {
      * @param bool $supported usually null, then it depends on $CFG->slasharguments, use true or false for other servers
      * @return void
      */
-    public function set_slashargument($path, $parameter='file', $supported=null) {
+    public function set_slashargument($path, $parameter = 'file', $supported = NULL) {
         global $CFG;
         if (is_null($supported)) {
             $supported = $CFG->slasharguments;
@@ -655,7 +655,7 @@ class moodle_url {
      * @param bool $forcedownload
      * @return moodle_url
      */
-    public static function make_file_url($urlbase, $path, $forcedownload=false) {
+    public static function make_file_url($urlbase, $path, $forcedownload = false) {
         global $CFG;
 
         $params = array();
@@ -674,6 +674,7 @@ class moodle_url {
      * Please note this method can be used only from the plugins to
      * create urls of own files, it must not be used outside of plugins!
      * @param int $contextid
+     * @param string $component
      * @param string $area
      * @param int $itemid
      * @param string $pathname
@@ -681,10 +682,14 @@ class moodle_url {
      * @param bool $forcedownload
      * @return moodle_url
      */
-    public static function make_pluginfile_url($contextid, $area, $itemid, $pathname, $filename, $forcedownload=false) {
+    public static function make_pluginfile_url($contextid, $component, $area, $itemid, $pathname, $filename, $forcedownload = false) {
         global $CFG;
         $urlbase = "$CFG->httpswwwroot/pluginfile.php";
-        return self::make_file_url($urlbase, '/'.$contextid.'/'.$area.'/'.$itemid.$pathname.$filename, $forcedownload);
+        if ($itemid === NULL) {
+            return self::make_file_url($urlbase, "/$contextid/$component/$area".$pathname.$filename, $forcedownload);
+        } else {
+            return self::make_file_url($urlbase, "/$contextid/$component/$area/$itemid".$pathname.$filename, $forcedownload);
+        }
     }
 
     /**
@@ -696,12 +701,12 @@ class moodle_url {
      * @param bool $forcedownload
      * @return moodle_url
      */
-    public static function make_draftfile_url($itemid, $pathname, $filename, $forcedownload=false) {
+    public static function make_draftfile_url($itemid, $pathname, $filename, $forcedownload = false) {
         global $CFG, $USER;
         $urlbase = "$CFG->httpswwwroot/draftfile.php";
         $context = get_context_instance(CONTEXT_USER, $USER->id);
 
-        return self::make_file_url($urlbase, '/'.$context->id.'/user/draft/'.$itemid.$pathname.$filename, $forcedownload);
+        return self::make_file_url($urlbase, "/$context->id/user/draft/$itemid".$pathname.$filename, $forcedownload);
     }
 
     /**
@@ -712,7 +717,7 @@ class moodle_url {
      * @param bool $forcedownload
      * @return moodle_url
      */
-    public static function make_legacyfile_url($courseid, $filepath, $forcedownload=false) {
+    public static function make_legacyfile_url($courseid, $filepath, $forcedownload = false) {
         global $CFG;
 
         $urlbase = "$CFG->wwwroot/file.php";
