@@ -722,9 +722,8 @@ class backup_groups_structure_step extends backup_structure_step {
 
         // Define file annotations
 
-        //TODO: not implemented yet
         $group->annotate_files('group', 'description', 'id');
-        $group->annotate_files('group', 'image', 'id');
+        $group->annotate_files('group', 'icon', 'id');
 
         // Return the root element (groups)
         return $groups;
@@ -1306,8 +1305,7 @@ class backup_annotate_all_user_files extends backup_execution_step {
         global $DB;
 
         // List of fileareas we are going to annotate
-        // TODO: user image not implemented yet
-        $fileareas = array('private', 'profile', 'image');
+        $fileareas = array('private', 'profile', 'icon');
 
         // Fetch all annotated (final) users
         $rs = $DB->get_recordset('backup_ids_temp', array(
@@ -1317,7 +1315,7 @@ class backup_annotate_all_user_files extends backup_execution_step {
             $userctxid = get_context_instance(CONTEXT_USER, $userid)->id;
             // Proceed with every user filearea
             foreach ($fileareas as $filearea) {
-                // We don't need to specify itemid ($userid - 4th param) as far as by
+                // We don't need to specify itemid ($userid - 5th param) as far as by
                 // context we can get all the associated files. See MDL-22092
                 backup_structure_dbops::annotate_files($this->get_backupid(), $userctxid, 'user', $filearea, null);
             }

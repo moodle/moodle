@@ -46,7 +46,7 @@ class backup_final_task extends backup_task {
         // including membership based on setting
         $this->add_step(new backup_groups_structure_step('groups', 'groups.xml'));
 
-        // Annotate all the user files (conditionally) (private files, and profile)
+        // Annotate all the user files (conditionally) (private profile and icon files)
         // Because each user has its own context, we need a separate/specialised step here
         // This step also ensures that the contexts for all the users exist, so next
         // step can be safely executed (join between users and contexts)
