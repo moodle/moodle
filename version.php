@@ -13,6 +13,6 @@
                               // Do not use more than two decimal points as we have
                               // hit the float limit
 
-   $release = '1.8.13+ (Build: 20100710)';     // Human-friendly version name
+   $release = '1.8.13+ (Build: 20100711)';     // Human-friendly version name
 
 ?>
