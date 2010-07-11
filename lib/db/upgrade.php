@@ -4723,10 +4723,16 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         upgrade_main_savepoint(true, 2010071000);
     }
 
-    if ($oldversion < 2010071001) {
+    if ($oldversion < 2010071001) {
         // purge obsolete stats settings
         unset_config('statscatdepth');
         upgrade_main_savepoint(true, 2010071001);
+    }
+
+    if ($oldversion < 2010071100) {
+        // move user icons to file storage pool
+        upgrade_migrate_user_icons();
+        upgrade_main_savepoint(true, 2010071100);
     }
 
 

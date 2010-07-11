@@ -1728,9 +1728,13 @@ class core_renderer extends renderer_base {
 
         $class = $userpicture->class;
 
-        if (!empty($user->picture)) {
-            require_once($CFG->libdir.'/filelib.php');
-            $src = new moodle_url(get_file_url($user->id.'/'.$file.'.jpg', null, 'user'));
+        if ($user->picture == 1) {
+            $usercontext = get_context_instance(CONTEXT_USER, $user->id);
+            $src = moodle_url::make_pluginfile_url($usercontext->id, 'user', 'icon', NULL, '/', $file);
+
+        } else if ($user->picture == 2) {
+            //TODO: gravatar user icon support
+
         } else { // Print default user pictures (use theme version if available)
             $class .= ' defaultuserpic';
             $src = $this->pix_url('u/' . $file);

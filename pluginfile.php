@@ -293,7 +293,22 @@ if ($component === 'blog') {
 
 // ========================================================================================================================
 } else if ($component === 'user') {
-    if ($filearea === 'private' and $context->contextlevel == CONTEXT_USER) {
+    if ($filearea === 'icon' and $context->contextlevel == CONTEXT_USER) {
+        if (!empty($CFG->forcelogin) and !isloggedin()) {
+            // protect images if login required and not logged in;
+            // do not use require_login() because it is expensive and not suitable here anyway
+            redirect($OUTPUT->pix_url('u/f1'));
+        }
+        $filename = array_pop($args);
+        if ($filename !== 'f1' and $filename !== 'f2') {
+            redirect($OUTPUT->pix_url('u/f1'));
+        }
+        if (!$file = $fs->get_file($context->id, 'user', 'icon', 0, '/', $filename.'/.jpg')) {
+            redirect($OUTPUT->pix_url('u/f1'));
+        }
+        send_stored_file($file, 60*60*24); // enable long caching, there are many images on each page
+
+    } else if ($filearea === 'private' and $context->contextlevel == CONTEXT_USER) {
         require_login();
 
         if (isguestuser()) {

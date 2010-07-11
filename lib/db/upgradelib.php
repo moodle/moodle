@@ -82,6 +82,58 @@ function upgrade_migrate_files_courses() {
 /**
  * Internal function - do not use directly
  */
+function upgrade_migrate_user_icons() {
+    global $CFG, $OUTPUT, $DB;
+
+    $fs = get_file_storage();
+
+    $icon = array('component'=>'user', 'filearea'=>'icon', 'itemid'=>0, 'filepath'=>'/');
+
+    $count = $DB->count_records('user', array('picture'=>1, 'deleted'=>0));
+    $pbar = new progress_bar('migratecoursefiles', 500, true);
+
+    $rs = $DB->get_recordset('user', array('picture'=>1, 'deleted'=>0), 'id ASC', 'id, picture');
+    $i = 0;
+    foreach ($rs as $user) {
+        $i++;
+        upgrade_set_timeout(60); /// Give upgrade at least 60 more seconds
+        $pbar->update($i, $count, "Migrated course files - course $i/$count.");
+
+        $context = get_context_instance(CONTEXT_USER, $user->id);
+
+        if ($fs->file_exists($context->id, 'user', 'icon', 0, '/', 'f1.jpg')) {
+            // already converted!
+            continue;
+        }
+
+        $level1 = floor($user->id / 1000) * 1000;
+        $userdir = "$CFG->dataroot/user/$level1/$user->id";
+        if (!file_exists("$userdir/f1.jpg") or !file_exists("$userdir/f2.jpg")) {
+            $userdir = "$CFG->dataroot/users/$user->id";
+            if (!file_exists("$userdir/f1.jpg") or !file_exists("$userdir/f2.jpg")) {
+                // no image found, sorry
+                $user->picture = 0;
+                $DB->update_record('user', $user);
+                continue;
+            }
+        }
+
+        $icon['contextid'] = $context->id;
+        $icon['filename']  = 'f1.jpg';
+        $fs->create_file_from_pathname($icon, "$userdir/f1.jpg");
+        $icon['filename']  = 'f2.jpg';
+        $fs->create_file_from_pathname($icon, "$userdir/f2.jpg");
+    }
+    $rs->close();
+
+    // purge all old user image dirs
+//    remove_dir("$CFG->dataroot/user");
+//    remove_dir("$CFG->dataroot/users");
+}
+
+/**
+ * Internal function - do not use directly
+ */
 function upgrade_migrate_files_course($context, $path, $delete) {
     global $CFG, $OUTPUT;
 

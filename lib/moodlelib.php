@@ -3445,7 +3445,7 @@ function delete_user($user) {
     // last course access not necessary either
     $DB->delete_records('user_lastaccess', array('userid'=>$user->id));
 
-    // final accesslib cleanup - removes all role assignments in user context and context itself
+    // final accesslib cleanup - removes all role assignments in user context and context itself, files, etc.
     delete_context(CONTEXT_USER, $user->id);
 
     require_once($CFG->dirroot.'/tag/lib.php');

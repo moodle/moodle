@@ -17,10 +17,8 @@
 
 /**
  * This script fetches legacy course files in dataroot directory, it is enabled
- * only if course->legacyfiles == 2.
+ * only if course->legacyfiles == 2. DO not link to this file in new code.
  *
- * You should use the get_file_url() function, available in lib/filelib.php, to link to file.php.
- * This ensures proper formatting and offers useful options.
  * Syntax:      file.php/courseid/dir/dir/dir/filename.ext
  *              file.php/courseid/dir/dir/dir/filename.ext?forcedownload=1 (download instead of inline)
  *              file.php/courseid/dir (returns index.html from dir)

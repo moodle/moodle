@@ -591,7 +591,6 @@ abstract class moodleform {
         if (!$this->is_submitted() or !$this->is_validated()) {
             return false;
         }
-
         if (file_exists($pathname)) {
             if ($override) {
                 if (!@unlink($pathname)) {
@@ -624,6 +623,31 @@ abstract class moodleform {
         }
 
         return false;
+    }
+
+    /**
+     * Returns a temporary file, do not forget to delete after not needed any more.
+     *
+     * @param string $elname
+     * @return string or false
+     */
+    function save_temp_file($elname) {
+        if (!$this->get_new_filename($elname)) {
+            return false;
+        }
+        if (!$dir = make_upload_directory('temp/forms')) {
+            return false;
+        }
+        if (!$tempfile = tempnam($dir, 'tempup_')) {
+            return false;
+        }
+        if (!$this->save_file($elname, $tempfile, true)) {
+            // something went wrong
+            @unlink($tempfile);
+            return false;
+        }
+
+        return $tempfile;
     }
 
     /**

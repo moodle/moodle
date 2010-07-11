@@ -36,14 +36,18 @@ function useredit_update_user_preference($usernew) {
 function useredit_update_picture(&$usernew, $userform) {
     global $CFG, $DB;
 
+    $fs = get_file_storage();
+    $context = get_context_instance(CONTEXT_USER, $usernew->id, MUST_EXIST);
+
     if (isset($usernew->deletepicture) and $usernew->deletepicture) {
-        $location = make_user_directory($usernew->id, true);
-        @remove_dir($location);
+        $fs->delete_area_files($context->id, 'user', 'icon'); // drop all areas
         $DB->set_field('user', 'picture', 0, array('id'=>$usernew->id));
 
-    } else if ($userform->get_new_filename('imagefile')) {
-        $usernew->picture = (int)save_profile_image($usernew->id, $userform, 'user', 'imagefile');
-        $DB->set_field('user', 'picture', $usernew->picture, array('id'=>$usernew->id));
+    } else if ($iconfile = $userform->save_temp_file('imagefile')) {
+        if (process_new_icon($context, 'user', 'icon', 0, $iconfile)) {
+            $DB->set_field('user', 'picture', 1, array('id'=>$usernew->id));
+        }
+        @unlink($iconfile);
     }
 }
 
@@ -239,7 +243,7 @@ function useredit_shared_definition(&$mform, $editoroptions = null) {
         $mform->addElement('static', 'currentpicture', get_string('currentpicture'));
 
         $mform->addElement('checkbox', 'deletepicture', get_string('delete'));
-        $mform->setDefault('deletepicture',false);
+        $mform->setDefault('deletepicture', 0);
 
         $mform->addElement('filepicker', 'imagefile', get_string('newpicture'));
         $mform->addHelpButton('imagefile', 'newpicture');

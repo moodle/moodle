@@ -95,6 +95,8 @@ function ImageCopyBicubic ($dst_img, $src_img, $dst_x, $dst_y, $src_x, $src_y, $
 function delete_profile_image($id, $dir='users') {
     global $CFG;
 
+//TODO: deprecate
+
     require_once $CFG->libdir.'/filelib.php';
     $location = $CFG->dataroot .'/'. $dir .'/'. $id;
 
@@ -116,6 +118,8 @@ function delete_profile_image($id, $dir='users') {
  */
 function create_profile_image_destination($id, $dir='user') {
     global $CFG;
+
+//TODO: deprecate
 
     umask(0000);
 
@@ -140,6 +144,121 @@ function create_profile_image_destination($id, $dir='user') {
 }
 
 /**
+ * Stores optimised icon images in icon file area
+ *
+ * @param $context
+ * @param component
+ * @param $itemid
+ * @param $originalfile
+ * @return success
+ */
+function process_new_icon($context, $component, $filearea, $itemid, $originalfile) {
+    global $CFG;
+
+    if (empty($CFG->gdversion)) {
+        return false;
+    }
+
+    if (!is_file($originalfile)) {
+        return false;
+    }
+
+    $imageinfo = GetImageSize($originalfile);
+
+    if (empty($imageinfo)) {
+        return false;
+    }
+
+    $image->width  = $imageinfo[0];
+    $image->height = $imageinfo[1];
+    $image->type   = $imageinfo[2];
+
+    switch ($image->type) {
+        case IMAGETYPE_GIF:
+            if (function_exists('ImageCreateFromGIF')) {
+                $im = ImageCreateFromGIF($originalfile);
+            } else {
+                debugging('GIF not supported on this server');
+                return false;
+            }
+            break;
+        case IMAGETYPE_JPEG:
+            if (function_exists('ImageCreateFromJPEG')) {
+                $im = ImageCreateFromJPEG($originalfile);
+            } else {
+                debugging('JPEG not supported on this server');
+                return false;
+            }
+            break;
+        case IMAGETYPE_PNG:
+            if (function_exists('ImageCreateFromPNG')) {
+                $im = ImageCreateFromPNG($originalfile);
+            } else {
+                debugging('PNG not supported on this server');
+                return false;
+            }
+            break;
+        default:
+            return false;
+    }
+
+
+    if (function_exists('ImageCreateTrueColor') and $CFG->gdversion >= 2) {
+        $im1 = ImageCreateTrueColor(100,100);
+        $im2 = ImageCreateTrueColor(35,35);
+    } else {
+        $im1 = ImageCreate(100,100);
+        $im2 = ImageCreate(35,35);
+    }
+
+    $cx = $image->width / 2;
+    $cy = $image->height / 2;
+
+    if ($image->width < $image->height) {
+        $half = floor($image->width / 2.0);
+    } else {
+        $half = floor($image->height / 2.0);
+    }
+
+    ImageCopyBicubic($im1, $im, 0, 0, $cx-$half, $cy-$half, 100, 100, $half*2, $half*2);
+    ImageCopyBicubic($im2, $im, 0, 0, $cx-$half, $cy-$half, 35, 35, $half*2, $half*2);
+
+    if (!function_exists('ImageJpeg')) {
+        debugging('Jpeg not supported on this server, please fix server configuration');
+        return false;
+    }
+
+    $fs = get_file_storage();
+
+    $icon = array('contextid'=>$context->id, 'component'=>$component, 'filearea'=>$filearea, 'itemid'=>$itemid, 'filepath'=>'/');
+
+    ob_start();
+    if (!ImageJpeg($im1, NULL, 90)) {
+        // keep old icons
+        ob_end_clean();
+        return false;
+    }
+    $data = ob_get_clean();
+    ImageDestroy($im1);
+    $icon['filename'] = 'f1.jpg';
+    $fs->delete_area_files($context->id, $component, $filearea, $itemid);
+    $fs->create_file_from_string($icon, $data);
+
+    ob_start();
+    if (!ImageJpeg($im2, NULL, 95)) {
+        ob_end_clean();
+        $fs->delete_area_files($context->id, $component, $filearea, $itemid);
+        return false;
+    }
+    $data = ob_get_clean();
+    ImageDestroy($im2);
+    $icon['filename'] = 'f2.jpg';
+    $fs->create_file_from_string($icon, $data);
+
+    return true;
+}
+
+/**
  * Given an upload manager with the right settings, this function performs a virus scan, and then scales and crops
  * it and saves it in the right place to be a "user" or "group" image.
  *
@@ -149,6 +268,8 @@ function create_profile_image_destination($id, $dir='user') {
  * @return boolean success
  */
 function save_profile_image($id, $userform, $dir='user') {
+
+//TODO: deprecate
 
     $destination = create_profile_image_destination($id, $dir);
     if ($destination === false) {
@@ -176,6 +297,8 @@ function save_profile_image($id, $userform, $dir='user') {
  */
 function process_profile_image($originalfile, $destination) {
     global $CFG, $OUTPUT;
+
+//TODO: deprecate
 
     if(!(is_file($originalfile) && is_dir($destination))) {
         return false;
@@ -279,6 +402,8 @@ function process_profile_image($originalfile, $destination) {
  */
 function upgrade_profile_image($id, $dir='users') {
     global $CFG, $OUTPUT;
+
+//TODO: deprecate
 
     $im = ImageCreateFromJPEG($CFG->dataroot .'/'. $dir .'/'. $id .'/f1.jpg');
 

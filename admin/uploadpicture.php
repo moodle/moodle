@@ -241,12 +241,8 @@ function process_file ($file, $userfield, $overwrite) {
  * @return bool
  */
 function my_save_profile_image($id, $originalfile) {
-    $destination = create_profile_image_destination($id, 'user');
-    if ($destination === false) {
-        return false;
-    }
-
-    return process_profile_image($originalfile, $destination);
+    $context = get_context_instance(CONTEXT_USER, $id);
+    return process_new_icon($context, 'user', 'icon', 0, $originalfile);
 }
 
 
