@@ -904,8 +904,8 @@ class backup_block_instance_structure_step extends backup_structure_step {
         // Define each element separated
 
         $block = new backup_nested_element('block', array('id', 'contextid', 'version'), array(
-            'blockname', 'showinsubcontexts', 'pagetypepattern', 'subpagepattern',
-            'defaultregion', 'defaultweight', 'configdata'));
+            'blockname', 'parentcontextid', 'showinsubcontexts', 'pagetypepattern',
+            'subpagepattern', 'defaultregion', 'defaultweight', 'configdata'));
 
         $positions = new backup_nested_element('block_positions', null, array(
             'contextid', 'pagetype', 'subpage', 'visible',
