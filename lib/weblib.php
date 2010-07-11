@@ -695,18 +695,18 @@ class moodle_url {
     /**
      * Factory method for creation of url pointing to draft
      * file of current user.
-     * @param int $itemid draft item id
+     * @param int $draftid draft item id
      * @param string $pathname
      * @param string $filename
      * @param bool $forcedownload
      * @return moodle_url
      */
-    public static function make_draftfile_url($itemid, $pathname, $filename, $forcedownload = false) {
+    public static function make_draftfile_url($draftid, $pathname, $filename, $forcedownload = false) {
         global $CFG, $USER;
         $urlbase = "$CFG->httpswwwroot/draftfile.php";
         $context = get_context_instance(CONTEXT_USER, $USER->id);
 
-        return self::make_file_url($urlbase, "/$context->id/user/draft/$itemid".$pathname.$filename, $forcedownload);
+        return self::make_file_url($urlbase, "/$context->id/user/draft/$draftid".$pathname.$filename, $forcedownload);
     }
 
     /**
