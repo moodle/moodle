@@ -108,7 +108,7 @@ abstract class backup_activity_task extends backup_task {
         // Create the activity directory
         $this->add_step(new create_taskbasepath_directory('create_activity_directory'));
 
-        // Generate the module.xml file, contaning general information for the
+        // Generate the module.xml file, containing general information for the
         // activity and from its related course_modules record and availability
         $this->add_step(new backup_module_structure_step('module_info', 'module.xml'));
 

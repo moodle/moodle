@@ -43,7 +43,7 @@ class create_and_clean_temp_stuff extends backup_execution_step {
 /**
  * delete the temp dir used by backup/restore (conditionally),
  * delete old directories and drop tem ids table. Note we delete
- * the directory but not the correspondig log file that will be
+ * the directory but not the corresponding log file that will be
  * there for, at least, 4 hours - only delete_old_backup_dirs()
  * deletes log files (for easier access to them)
  */
@@ -74,7 +74,7 @@ class create_taskbasepath_directory extends backup_execution_step {
 }
 
 /**
- * Abtract tructure step, parent of all the activity structure steps. Used to wrap the
+ * Abstract structure step, parent of all the activity structure steps. Used to wrap the
  * activity structure definition within the main <activity ...> tag. Also provides
  * subplugin support for activities (that must be properly declared)
  */
@@ -108,7 +108,7 @@ abstract class backup_activity_structure_step extends backup_structure_step {
         $optigroup = new backup_optigroup($optigroupname, null, $multiple);
         $element->add_child($optigroup); // Add optigroup to stay connected since beginning
 
-        // Get all the optigroup_elements, looking across al the subplugin dirs
+        // Get all the optigroup_elements, looking across all the subplugin dirs
         $elements = array();
         $subpluginsdirs = get_plugin_list($subplugintype);
         foreach ($subpluginsdirs as $name => $subpluginsdir) {
@@ -150,7 +150,7 @@ abstract class backup_activity_structure_step extends backup_structure_step {
 }
 
 /**
- * Abtract structure step, parent of all the block structure steps. Used to wrap the
+ * Abstract structure step, parent of all the block structure steps. Used to wrap the
  * block structure definition within the main <block ...> tag
  */
 abstract class backup_block_structure_step extends backup_structure_step {
@@ -178,7 +178,7 @@ abstract class backup_block_structure_step extends backup_structure_step {
 
 /**
  * structure step that will generate the module.xml file for the activity,
- * acummulating various information about the activity, annotating groupings
+ * accumulating various information about the activity, annotating groupings
  * and completion/avail conf
  */
 class backup_module_structure_step extends backup_structure_step {
@@ -222,7 +222,7 @@ class backup_module_structure_step extends backup_structure_step {
 }
 
 /**
- * structure step that will genereate the section.xml file for the section
+ * structure step that will generate the section.xml file for the section
  * annotating files
  */
 class backup_section_structure_step extends backup_structure_step {
@@ -893,7 +893,7 @@ class backup_users_structure_step extends backup_structure_step {
 
 /**
  * structure step in charge of constructing the block.xml file for one
- * given block (intance and positions). If the block has custom DB structure
+ * given block (instance and positions). If the block has custom DB structure
  * that will go to a separate file (different step defined in block class)
  */
 class backup_block_instance_structure_step extends backup_structure_step {
@@ -1294,7 +1294,7 @@ class backup_annotate_scales_from_outcomes extends backup_execution_step {
 
 /**
  * This step will generate all the user annotations for the already
- * annottated (final) users. Need to do this here because each user
+ * annotated (final) users. Need to do this here because each user
  * has its own context and structure tasks only are able to handle
  * one context. Also, this step will guarantee that every user has
  * its context created (req for other steps)

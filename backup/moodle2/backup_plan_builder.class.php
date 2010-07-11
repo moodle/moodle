@@ -83,7 +83,7 @@ abstract class backup_plan_builder {
                 break;
         }
 
-        // Add the final task, responsible for outputing
+        // Add the final task, responsible for outputting
         // all the global xml files (groups, users,
         // gradebook, questions, roles, files...) and
         // the main moodle_backup.xml file
@@ -108,7 +108,7 @@ abstract class backup_plan_builder {
 
         $plan = $controller->get_plan();
 
-        // Add the activity task, responsible for outputing
+        // Add the activity task, responsible for outputting
         // all the module related information
         $plan->add_task(backup_factory::get_backup_activity_task($controller->get_format(), $id));
 
@@ -126,7 +126,7 @@ abstract class backup_plan_builder {
 
         $plan = $controller->get_plan();
 
-        // Add the section task, responsible for outputing
+        // Add the section task, responsible for outputting
         // all the section related information
         $plan->add_task(backup_factory::get_backup_section_task($controller->get_format(), $id));
 
@@ -148,7 +148,7 @@ abstract class backup_plan_builder {
 
         $plan = $controller->get_plan();
 
-        // Add the course task, responsible for outputing
+        // Add the course task, responsible for outputting
         // all the course related information
         $plan->add_task(backup_factory::get_backup_course_task($controller->get_format(), $id));
 

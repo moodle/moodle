@@ -78,7 +78,7 @@ class mnethosturl_final_element extends backup_final_element {
  *
  * This class overwrites the standard fill_values() method, so it gets intercepted
  * for each file record being set to xml, in order to copy, at the same file, the
- * phisical file from moodle file storage to backup file storage
+ * physical file from moodle file storage to backup file storage
  *
  * TODO: Finish phpdocs
  */
@@ -104,6 +104,6 @@ class file_nested_element extends backup_nested_element {
 
 /**
  * Implementation of backup_optigroup_element to be used by subplugins stuff.
- * Split just for better separation and future especialitation
+ * Split just for better separation and future specialisation
  */
 class backup_subplugin_element extends backup_optigroup_element { }

@@ -63,7 +63,7 @@ class backup_activities_setting extends backup_generic_setting {}
 /**
  * root setting to control if backup will generate anonymized
  * user info or no, depends of @backup_users_setting so only is
- * availabe if the former is enabled (apart from security
+ * available if the former is enabled (apart from security
  * that can change it
  */
 class backup_anonymize_setting extends root_backup_setting {}

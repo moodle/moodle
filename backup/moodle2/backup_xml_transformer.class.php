@@ -39,7 +39,7 @@ class backup_xml_transformer extends xml_contenttransformer {
         $this->absolute_links_encoders = array();
         $this->courseid = $courseid;
         // Check if we support unicode modifiers in regular expressions
-        $this->unicoderegexp = @preg_match('/\pL/u', 'a'); // This will fail silenty, returning false,
+        $this->unicoderegexp = @preg_match('/\pL/u', 'a'); // This will fail silently, returning false,
                                                            // if regexp libraries don't support unicode
         // Register all the available content link encoders
         $this->absolute_links_encoders = $this->register_link_encoders();
