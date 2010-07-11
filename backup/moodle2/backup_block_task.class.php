@@ -127,6 +127,15 @@ abstract class backup_block_task extends backup_task {
             return;
         }
 
+        // If "child" of activity task and it has been excluded, nothing to do
+        if (!empty($this->moduleid)) {
+            $includedsetting = $this->modulename . '_' . $this->moduleid . '_included';
+            if (!$this->get_setting_value($includedsetting)) {
+                $this->built = true;
+                return;
+            }
+        }
+
         // Add some extra settings that related processors are going to need
         $this->add_setting(new backup_activity_generic_setting(backup::VAR_BLOCKID, base_setting::IS_INTEGER, $this->blockid));
         $this->add_setting(new backup_activity_generic_setting(backup::VAR_BLOCKNAME, base_setting::IS_FILENAME, $this->blockname));
