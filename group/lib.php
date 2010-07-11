@@ -299,8 +299,6 @@ function groups_delete_group($grouporid) {
     $DB->delete_records('groupings_groups', array('groupid'=>$groupid));
     //delete members
     $DB->delete_records('groups_members', array('groupid'=>$groupid));
-    //then imge
-    delete_profile_image($groupid, 'groups');
     //group itself last
     $DB->delete_records('groups', array('id'=>$groupid));
 
@@ -430,19 +428,16 @@ function groups_delete_groupings_groups($courseid, $showfeedback=false) {
  */
 function groups_delete_groups($courseid, $showfeedback=false) {
     global $CFG, $DB, $OUTPUT;
-    require_once($CFG->libdir.'/gdlib.php');
 
     // delete any uses of groups
     // Any associated files are deleted as part of groups_delete_groupings_groups
     groups_delete_groupings_groups($courseid, $showfeedback);
     groups_delete_group_members($courseid, 0, $showfeedback);
 
-    // delete group pictures
-    if ($groups = $DB->get_records('groups', array('courseid'=>$courseid))) {
-        foreach($groups as $group) {
-            delete_profile_image($group->id, 'groups');
-        }
-    }
+    // delete group pictures and descriptions
+    $context = get_context_instance(CONTEXT_COURSE, $courseid);
+    $fs = get_file_storage();
+    $fs->delete_area_files($context->id, 'group');
 
     // delete group calendar events
     $groupssql = "SELECT id FROM {groups} g WHERE g.courseid = ?";
@@ -472,6 +467,9 @@ function groups_delete_groups($courseid, $showfeedback=false) {
  */
 function groups_delete_groupings($courseid, $showfeedback=false) {
     global $DB, $OUTPUT;
+
+    $context = get_context_instance(CONTEXT_COURSE, $courseid);
+    $fs = get_file_storage();
 
     // delete any uses of groupings
     $sql = "DELETE FROM {groupings_groups}
