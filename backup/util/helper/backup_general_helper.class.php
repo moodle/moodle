@@ -57,6 +57,51 @@ abstract class backup_general_helper extends backup_helper {
     }
 
     /**
+     * Load all the blocks information needed for a given path within moodle2 backup
+     *
+     * This function, given one full path (course, activities/xxxx) will look for all the
+     * blocks existing in the backup file, returning one array used to build the
+     * proper restore plan by the @restore_plan_builder
+     */
+    public static function get_blocks_from_path($path) {
+        global $DB;
+
+        $blocks = array(); // To return results
+
+        static $availableblocks = array(); // Get and cache available blocks
+        if (empty($availableblocks)) {
+            $availableblocks = array_keys(get_plugin_list('block'));
+        }
+
+        $path = $path . '/blocks'; // Always look under blocks subdir
+
+        if (!is_dir($path)) {
+            return array();
+        }
+
+        $dir = opendir($path);
+        while (false !== ($file = readdir($dir))) {
+            if ($file == '.' || $file == '..') { // Skip dots
+                continue;
+            }
+            if (is_dir($path .'/' . $file)) { // Dir found, check it's a valid block
+                if (!file_exists($path .'/' . $file . '/block.xml')) { // Skip if xml file not found
+                    continue;
+                }
+                // Extract block name
+                $blockname = preg_replace('/(.*)_\d+/', '\\1', $file);
+                // Check block exists and is installed
+                if (in_array($blockname, $availableblocks) && $DB->record_exists('block', array('name' => $blockname))) {
+                    $blocks[$path .'/' . $file] = $blockname;
+                }
+            }
+        }
+        closedir($dir);
+
+        return $blocks;
+    }
+
+    /**
      * Load and format all the needed information from moodle_backup.xml
      *
      * This function loads and process all the moodle_backup.xml
@@ -159,9 +204,14 @@ abstract class backup_general_helper extends backup_helper {
      */
     public static function detect_backup_format($tempdir) {
         global $CFG;
+        $filepath = $CFG->dataroot . '/temp/backup/' . $tempdir . '/moodle_backup.xml';
+
+        // Does tempdir exist and is dir
+        if (!is_dir(dirname($filepath))) {
+            throw new backup_helper_exception('tmp_backup_directory_not_found', dirname($filepath));
+        }
 
         // First look for MOODLE (moodle2) format
-        $filepath = $CFG->dataroot . '/temp/backup/' . $tempdir . '/moodle_backup.xml';
         if (file_exists($filepath)) { // Looks promising, lets load some information
             $handle = fopen ($filepath, "r");
             $first_chars = fread($handle,200);

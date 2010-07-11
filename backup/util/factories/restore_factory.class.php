@@ -40,22 +40,15 @@ abstract class restore_factory {
         }
     }
 
-    public static function get_restore_block_task($format, $blockid, $moduleid = null) {
-        global $CFG, $DB;
+    public static function get_restore_block_task($blockname, $basepath) {
 
-        // Check blockid exists
-        if (!$block = $DB->get_record('block_instances', array('id' => $blockid))) {
-            throw new restore_task_exception('block_task_block_instance_not_found', $blockid);
-        }
-
-        // Set default block backup task
         $classname = 'restore_default_block_task';
-        $testname  = 'restore_' . $block->blockname . '_block_task';
+        $testname  = 'restore_' . $blockname . '_block_task';
         // If the block has custom backup/restore task class (testname), use it
         if (class_exists($testname)) {
             $classname = $testname;
         }
-        return new $classname($block->blockname, $blockid, $moduleid);
+        return new $classname($blockname, $basepath);
     }
 
     public static function get_restore_section_task($info) {
