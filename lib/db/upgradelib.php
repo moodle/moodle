@@ -127,8 +127,8 @@ function upgrade_migrate_user_icons() {
     $rs->close();
 
     // purge all old user image dirs
-//    remove_dir("$CFG->dataroot/user");
-//    remove_dir("$CFG->dataroot/users");
+    remove_dir("$CFG->dataroot/user");
+    remove_dir("$CFG->dataroot/users");
 }
 
 /**
