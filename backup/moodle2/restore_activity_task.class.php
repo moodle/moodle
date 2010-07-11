@@ -45,7 +45,7 @@ abstract class restore_activity_task extends restore_task {
      * Activity tasks have their own directory to read files
      */
     public function get_taskbasepath() {
-        return $this->get_basepath() . '/activities/' . $info->modulename . '_' . $info->moduleid;
+        return $this->get_basepath() . '/activities/' . $this->info->modulename . '_' . $this->info->moduleid;
     }
 
     /**
@@ -59,7 +59,7 @@ abstract class restore_activity_task extends restore_task {
             return;
         }
 
-        // TODO: Link all the section steps here
+        // TODO: Link all the activity steps here
 
         // At the end, mark it as built
         $this->built = true;
@@ -176,7 +176,7 @@ abstract class restore_activity_task extends restore_task {
     abstract protected function define_my_steps();
 
      /**
-     * Code the transformations to perform in the course in
+     * Code the transformations to perform by the activity in
      * order to get encoded transformed back to working links
      */
     abstract static public function decode_content_links($content);

@@ -27,8 +27,8 @@ require_once($CFG->dirroot . '/backup/moodle2/restore_course_task.class.php');
 require_once($CFG->dirroot . '/backup/moodle2/restore_section_task.class.php');
 require_once($CFG->dirroot . '/backup/moodle2/restore_activity_task.class.php');
 require_once($CFG->dirroot . '/backup/moodle2/restore_final_task.class.php');
-//require_once($CFG->dirroot . '/backup/moodle2/restore_block_task.class.php');
-//require_once($CFG->dirroot . '/backup/moodle2/restore_default_block_task.class.php');
+require_once($CFG->dirroot . '/backup/moodle2/restore_block_task.class.php');
+require_once($CFG->dirroot . '/backup/moodle2/restore_default_block_task.class.php');
 //require_once($CFG->dirroot . '/backup/moodle2/restore_subplugin.class.php');
 require_once($CFG->dirroot . '/backup/moodle2/restore_settingslib.php');
 //require_once($CFG->dirroot . '/backup/moodle2/restore_stepslib.php');
@@ -111,14 +111,18 @@ abstract class restore_plan_builder {
         // as far as the module can be missing on restore
         if ($task = restore_factory::get_restore_activity_task($infoactivity)) { // can be missing
             $plan->add_task($task);
-        }
 
-        // For the given activity, add as many block tasks as necessary
-        // TODO: Add blocks, we need to introspect xml here
-        //$blockids = backup_plan_dbops::get_blockids_from_moduleid($id);
-        //foreach ($blockids as $blockid) {
-        //    $plan->add_task(backup_factory::get_backup_block_task($controller->get_format(), $blockid, $id));
-        //}
+            // For the given activity path, add as many block tasks as necessary
+            // TODO: Add blocks, we need to introspect xml here
+            $blocks = backup_general_helper::get_blocks_from_path($task->get_taskbasepath());
+            foreach ($blocks as $basepath => $name) {
+                if ($task = restore_factory::get_restore_block_task($name, $basepath)) {
+                    $plan->add_task($task);
+                } else {
+                    // TODO: Debug information about block not supported
+                }
+            }
+        }
     }
 
     /**
@@ -156,18 +160,23 @@ abstract class restore_plan_builder {
 
         // Add the course task, responsible for restoring
         // all the course related information
-        $plan->add_task(restore_factory::get_restore_course_task($info->course, $courseid));
+        $task = restore_factory::get_restore_course_task($info->course, $courseid);
+        $plan->add_task($task);
 
         // For the given course, add as many section tasks as necessary
         foreach ($info->sections as $sectionid => $section) {
             self::build_section_plan($controller, $sectionid);
         }
 
-        // For the given course, add as many block tasks as necessary
+        // For the given course path, add as many block tasks as necessary
         // TODO: Add blocks, we need to introspect xml here
-        //$blockids = backup_plan_dbops::get_blockids_from_courseid($id);
-        //foreach ($blockids as $blockid) {
-        //    $plan->add_task(restore_factory::get_restore_block_task($controller->get_format(), $blockid));
-        //}
+        $blocks = backup_general_helper::get_blocks_from_path($task->get_taskbasepath());
+        foreach ($blocks as $basepath => $name) {
+            if ($task = restore_factory::get_restore_block_task($name, $basepath)) {
+                $plan->add_task($task);
+            } else {
+                // TODO: Debug information about block not supported
+            }
+        }
     }
 }
