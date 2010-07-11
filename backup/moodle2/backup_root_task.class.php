@@ -23,7 +23,7 @@
  */
 
 /**
- * Start task that provides all the settings common to all backups and some initializaton steps
+ * Start task that provides all the settings common to all backups and some initialization steps
  *
  * TODO: Finish phpdocs
  */
@@ -76,7 +76,7 @@ class backup_root_task extends backup_task {
         $users->add_dependency($userfiles);
         $anonymize->add_dependency($userfiles, setting_dependency::DISABLED_TRUE);
 
-        // Define activitites
+        // Define activities
         $activities = new backup_activities_setting('activities', base_setting::IS_BOOLEAN, true);
         $activities->set_ui(new backup_setting_ui_select($activities, $activities->get_name(), array(1=>get_string('yes'), 0=>get_string('no'))));
         $this->add_setting($activities);
