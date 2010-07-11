@@ -111,7 +111,7 @@ class repository_upload extends repository {
         $stored_file = $fs->create_file_from_pathname($record, $_FILES[$elname]['tmp_name']);
 
         return array(
-            'url'=>file_draftfile_url($record->itemid, $record->filepath, $record->filename),
+            'url'=>moodle_url::make_draftfile_url($record->itemid, $record->filepath, $record->filename)->out(),
             'id'=>$record->itemid,
             'file'=>$record->filename);
     }

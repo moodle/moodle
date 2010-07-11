@@ -35,92 +35,6 @@ require_once("$CFG->libdir/filestorage/zip_packer.php");
 require_once("$CFG->libdir/filebrowser/file_browser.php");
 
 /**
- * Given a physical path to a file, returns the URL through which it can be reached in Moodle.
- *
- * @deprecated use moodle_url factory methods instead
- *
- * @param string $path Physical path to a file
- * @param array $options associative array of GET variables to append to the URL
- * @param string $type (questionfile|rssfile|user|usergroup|httpscoursefile|coursefile)
- * @return string URL to file
- */
-function get_file_url($path, $options=null, $type='coursefile') {
-    global $CFG, $HTTPSPAGEREQUIRED;
-
-//TODO: deprecate this
-
-    $path = str_replace('//', '/', $path);
-    $path = trim($path, '/'); // no leading and trailing slashes
-
-    // type of file
-    switch ($type) {
-       case 'questionfile':
-            $url = $CFG->wwwroot."/question/exportfile.php";
-            break;
-       case 'rssfile':
-            $url = $CFG->wwwroot."/rss/file.php";
-            break;
-        case 'user':
-            if (!empty($HTTPSPAGEREQUIRED)) {
-                $wwwroot = $CFG->httpswwwroot;
-            }
-            else {
-                $wwwroot = $CFG->wwwroot;
-            }
-            $url = $wwwroot."/user/pix.php";
-            break;
-        case 'usergroup':
-            $url = $CFG->wwwroot."/user/grouppix.php";
-            break;
-        case 'httpscoursefile':
-            $url = $CFG->httpswwwroot."/file.php";
-            break;
-         case 'coursefile':
-        default:
-            $url = $CFG->wwwroot."/file.php";
-    }
-
-    if ($CFG->slasharguments) {
-        $parts = explode('/', $path);
-        foreach ($parts as $key => $part) {
-        /// anchor dash character should not be encoded
-            $subparts = explode('#', $part);
-            $subparts = array_map('rawurlencode', $subparts);
-            $parts[$key] = implode('#', $subparts);
-        }
-        $path  = implode('/', $parts);
-        $ffurl = $url.'/'.$path;
-        $separator = '?';
-    } else {
-        $path = rawurlencode('/'.$path);
-        $ffurl = $url.'?file='.$path;
-        $separator = '&amp;';
-    }
-
-    if ($options) {
-        foreach ($options as $name=>$value) {
-            $ffurl = $ffurl.$separator.$name.'='.$value;
-            $separator = '&amp;';
-        }
-    }
-
-    return $ffurl;
-}
-
-/**
- * Returns a draft file url.
- *
- * @param int $draftid itemid of the draft area of current user
- * @param string $filepath must start and end with /
- * @param string $filename
- */
-function file_draftfile_url($draftid, $filepath, $filename) {
-    global $CFG, $USER;
-    $usercontext = get_context_instance(CONTEXT_USER, $USER->id);
-    return file_encode_url("$CFG->wwwroot/draftfile.php", '/'.$usercontext->id.'/user/draft/'.$draftid.$filepath.$filename, false);
-}
-
-/**
  * Encodes file serving url
  *
  * @deprecated use moodle_url factory methods instead
@@ -634,7 +548,7 @@ function file_get_drafarea_files($draftitemid, $filepath = '/') {
                 $item->fullname = trim(array_pop($foldername), '/');
             } else {
                 // do NOT use file browser here!
-                $item->url = file_draftfile_url($draftitemid, $item->filepath, $item->filename);
+                $item->url = moodle_url::make_draftfile_url($draftitemid, $item->filepath, $item->filename)->out();
             }
             $list[] = $item;
         }

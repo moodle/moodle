@@ -29,6 +29,65 @@
  */
 
 /**
+ * Given a physical path to a file, returns the URL through which it can be reached in Moodle.
+ *
+ * @deprecated use moodle_url factory methods instead
+ *
+ * @param string $path Physical path to a file
+ * @param array $options associative array of GET variables to append to the URL
+ * @param string $type (questionfile|rssfile|httpscoursefile|coursefile)
+ * @return string URL to file
+ */
+function get_file_url($path, $options=null, $type='coursefile') {
+    global $CFG, $HTTPSPAGEREQUIRED;
+
+    $path = str_replace('//', '/', $path);
+    $path = trim($path, '/'); // no leading and trailing slashes
+
+    // type of file
+    switch ($type) {
+       case 'questionfile':
+            $url = $CFG->wwwroot."/question/exportfile.php";
+            break;
+       case 'rssfile':
+            $url = $CFG->wwwroot."/rss/file.php";
+            break;
+        case 'httpscoursefile':
+            $url = $CFG->httpswwwroot."/file.php";
+            break;
+         case 'coursefile':
+        default:
+            $url = $CFG->wwwroot."/file.php";
+    }
+
+    if ($CFG->slasharguments) {
+        $parts = explode('/', $path);
+        foreach ($parts as $key => $part) {
+        /// anchor dash character should not be encoded
+            $subparts = explode('#', $part);
+            $subparts = array_map('rawurlencode', $subparts);
+            $parts[$key] = implode('#', $subparts);
+        }
+        $path  = implode('/', $parts);
+        $ffurl = $url.'/'.$path;
+        $separator = '?';
+    } else {
+        $path = rawurlencode('/'.$path);
+        $ffurl = $url.'?file='.$path;
+        $separator = '&amp;';
+    }
+
+    if ($options) {
+        foreach ($options as $name=>$value) {
+            $ffurl = $ffurl.$separator.$name.'='.$value;
+            $separator = '&amp;';
+        }
+    }
+
+    return $ffurl;
+}
+
+/**
  * Return the authentication plugin title
  *
  * @param string $authtype plugin type

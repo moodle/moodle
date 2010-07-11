@@ -18,8 +18,6 @@
 /**
  * This script serves files from dataroot/codecoverage
  *
- * You should use the get_file_url() function, available in lib/filelib.php, to link to file.php.
- * This ensures proper formatting and offers useful options.
  * Syntax:      coveragefile.php/path/to/file/file.html
  *              coveragefile.php?file=path/to/file/file.html
  *

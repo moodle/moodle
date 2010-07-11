@@ -51,7 +51,7 @@ class data_field_picture extends data_field_base {
                         }
                         if (empty($content->content1)) {
                             // Print icon if file already exists
-                            $src     = file_draftfile_url($itemid, '/', $file->get_filename());
+                            $src = moodle_url::make_draftfile_url($itemid, '/', $file->get_filename());
                             $displayname = '<img src="'.$OUTPUT->pix_url(file_mimetype_icon($file->get_mimetype())).'" class="icon" alt="'.$file->get_mimetype().'" />'. '<a href="'.$src.'" >'.s($file->get_filename()).'</a>';
 
                         } else {

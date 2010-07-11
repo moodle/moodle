@@ -119,10 +119,8 @@
         $result = $CFG->repositorywebroot.substr($scorm->reference, 1).'/'.$sco->launch;
 
     } else if ($scorm->scormtype === SCORM_TYPE_LOCAL or $scorm->scormtype === SCORM_TYPE_LOCALSYNC) {
-        //note: do not convert this to use get_file_url()!
-        //      SCORM does not work without slasharguments anyway and there might be some extra ?xx=yy params
-        //      see MDL-16060
-        $result = "$CFG->wwwroot/pluginfile.php/$context->id/mod_scorm/content/$scorm->revision/$launcher";
+        $result = new moodle_url('/pluginfile.php');
+        $result->set_slashargument("/$context->id/mod_scorm/content/$scorm->revision/$launcher")->out();
     }
 
     // which API are we looking for

@@ -854,7 +854,7 @@ abstract class repository {
                 unset($CFG->repository_no_delete);
             }
             return array(
-                'url'=>file_draftfile_url($file->get_itemid(), $file->get_filepath(), $file->get_filename()),
+                'url'=>moodle_url::make_draftfile_url($file->get_itemid(), $file->get_filepath(), $file->get_filename())->out(),
                 'id'=>$file->get_itemid(),
                 'file'=>$file->get_filename(),
                 'icon' => $OUTPUT->pix_url(file_extension_icon($thefile, 32))->out(),

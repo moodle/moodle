@@ -75,7 +75,7 @@ class file_picker implements renderable {
                 $file = $fs->get_file($usercontext->id, 'user', 'draft', $options->itemid, $options->filepath, $options->filename);
             }
             if (!empty($file)) {
-                $options->currentfile = html_writer::link(file_draftfile_url($file->get_itemid(), $file->get_filename(), $file->get_filename()), $file->get_filename());
+                $options->currentfile = html_writer::link(moodle_url::make_draftfile_url($file->get_itemid(), $file->get_filename(), $file->get_filename()), $file->get_filename());
             }
         }
 

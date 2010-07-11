@@ -240,7 +240,7 @@ switch ($action) {
         $newdraftitemid = file_get_unused_draft_itemid();
         if ($newfile = $zipper->archive_to_storage(array($stored_file), $user_context->id, 'user', 'draft', $newdraftitemid, '/', $filename, $USER->id)) {
             $return = new stdclass;
-            $return->fileurl  = file_draftfile_url($newdraftitemid, '/', $filename);
+            $return->fileurl  = moodle_url::make_draftfile_url($newdraftitemid, '/', $filename)->out();
             $return->filepath = $parent_path;
             echo json_encode($return);
         } else {

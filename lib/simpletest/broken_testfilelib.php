@@ -175,62 +175,6 @@ class filelib_test extends UnitTestCaseUsingDatabase {
     }
 }
 
-class filelib_public_api_test extends filelib_test {
-    public function test_get_file_url() {
-        global $CFG, $HTTPSPAGEREQUIRED;
-
-        // Slasharguments off
-        $CFG->slasharguments = false;
-
-        $path = '/path/to/file/file.txt';
-        $this->assertEqual($CFG->wwwroot.'/file.php?file=%2Fpath%2Fto%2Ffile%2Ffile.txt', get_file_url($path));
-
-        $options = array('var1' => 'value1', 'var2' => 'value2');
-        $this->assertEqual($CFG->wwwroot.'/file.php?file=%2Fpath%2Fto%2Ffile%2Ffile.txt&amp;var1=value1&amp;var2=value2', get_file_url($path, $options));
-
-        $this->assertEqual($CFG->httpswwwroot.'/file.php?file=%2Fpath%2Fto%2Ffile%2Ffile.txt&amp;var1=value1&amp;var2=value2', get_file_url($path, $options, 'httpscoursefile'));
-
-        $path = 'C:\\path\\to\\file.txt';
-        $this->assertEqual($CFG->wwwroot.'/file.php?file=%2FC%3A%5Cpath%5Cto%5Cfile.txt&amp;var1=value1&amp;var2=value2', get_file_url($path, $options));
-
-        // With slasharguments on
-        $CFG->slasharguments = true;
-
-        $path = '/path/to/file/file.txt';
-        $this->assertEqual($CFG->wwwroot.'/file.php'.$path, get_file_url($path));
-
-        $options = array('var1' => 'value1', 'var2' => 'value2');
-        $this->assertEqual($CFG->wwwroot.'/file.php'.$path.'?var1=value1&amp;var2=value2', get_file_url($path, $options));
-
-        $this->assertEqual($CFG->httpswwwroot.'/file.php'.$path.'?var1=value1&amp;var2=value2', get_file_url($path, $options, 'httpscoursefile'));
-
-        $path = 'C:\\path\\to\\file.txt';
-        $this->assertEqual($CFG->wwwroot.'/file.php/C%3A%5Cpath%5Cto%5Cfile.txt?var1=value1&amp;var2=value2', get_file_url($path, $options));
-
-        $path = '/path/to/file/file.txt';
-
-        $HTTPSPAGEREQUIRED = true;
-        $this->assertEqual($CFG->httpswwwroot.'/user/pix.php'.$path, get_file_url($path, null, 'user'));
-        $HTTPSPAGEREQUIRED = false;
-        $this->assertEqual($CFG->wwwroot.'/user/pix.php'.$path, get_file_url($path, null, 'user'));
-
-        $this->assertEqual($CFG->wwwroot.'/question/exportfile.php'.$path, get_file_url($path, null, 'questionfile'));
-        $this->assertEqual($CFG->wwwroot.'/rss/file.php'.$path, get_file_url($path, null, 'rssfile'));
-
-        // Test relative path
-        $path = 'relative/path/to/file.txt';
-        $this->assertEqual($CFG->wwwroot.'/file.php/'.$path, get_file_url($path));
-
-        // Test with anchor in path
-        $path = 'relative/path/to/index.html#anchor1';
-        $this->assertEqual($CFG->wwwroot.'/file.php/'.$path, get_file_url($path));
-
-        // Test with anchor and funny characters in path
-        $path = 'rela89èà7(##&$tive/path/to /indéx.html#anchor1';
-        $this->assertEqual($CFG->wwwroot.'/file.php/rela89%C3%A8%C3%A07%28##%26%24tive/path/to%20/ind%C3%A9x.html#anchor1', get_file_url($path));
-    }
-}
-
 /**
  * Tests for file_browser class
  */
