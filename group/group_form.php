@@ -10,9 +10,7 @@
  * @package groups
  */
 
-if (!defined('MOODLE_INTERNAL')) {
-    die('Direct access to this script is forbidden.');    ///  It must be included from a Moodle page
-}
+defined('MOODLE_INTERNAL') || die;
 
 require_once($CFG->dirroot.'/lib/formslib.php');
 
@@ -37,9 +35,7 @@ class group_form extends moodleform {
         $mform->setHelpButton('enrolmentkey', array('groupenrolmentkey', get_string('enrolmentkey', 'group')), true);
         $mform->setType('enrolmentkey', PARAM_RAW);
 
-        $maxbytes = get_max_upload_file_size($CFG->maxbytes, $COURSE->maxbytes);
-
-        if (!empty($CFG->gdversion) and $maxbytes) {
+        if (!empty($CFG->gdversion)) {
             $options = array(get_string('no'), get_string('yes'));
             $mform->addElement('select', 'hidepicture', get_string('hidepicture'), $options);
 

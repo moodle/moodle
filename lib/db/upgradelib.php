@@ -97,7 +97,7 @@ function upgrade_migrate_user_icons() {
     foreach ($rs as $user) {
         $i++;
         upgrade_set_timeout(60); /// Give upgrade at least 60 more seconds
-        $pbar->update($i, $count, "Migrated course files - course $i/$count.");
+        $pbar->update($i, $count, "Migrated user icons $i/$count.");
 
         $context = get_context_instance(CONTEXT_USER, $user->id);
 
@@ -129,6 +129,54 @@ function upgrade_migrate_user_icons() {
     // purge all old user image dirs
     remove_dir("$CFG->dataroot/user");
     remove_dir("$CFG->dataroot/users");
+}
+
+/**
+ * Internal function - do not use directly
+ */
+function upgrade_migrate_group_icons() {
+    global $CFG, $OUTPUT, $DB;
+
+    $fs = get_file_storage();
+
+    $icon = array('component'=>'group', 'filearea'=>'icon', 'filepath'=>'/');
+
+    $count = $DB->count_records('groups', array('picture'=>1));
+    $pbar = new progress_bar('migrategroupfiles', 500, true);
+
+    $rs = $DB->get_recordset('groups', array('picture'=>1), 'courseid ASC', 'id, picture, courseid');
+    $i = 0;
+    foreach ($rs as $group) {
+        $i++;
+        upgrade_set_timeout(60); /// Give upgrade at least 60 more seconds
+        $pbar->update($i, $count, "Migrated group icons  $i/$count.");
+
+        $context = get_context_instance(CONTEXT_COURSE, $group->courseid);
+
+        if ($fs->file_exists($context->id, 'group', 'icon', $group->id, '/', 'f1.jpg')) {
+            // already converted!
+            continue;
+        }
+
+        $groupdir = "$CFG->dataroot/groups/$group->id";
+        if (!file_exists("$groupdir/f1.jpg") or !file_exists("$groupdir/f2.jpg")) {
+            // no image found, sorry
+            $group->picture = 0;
+            $DB->update_record('groups', $group);
+            continue;
+        }
+
+        $icon['contextid'] = $context->id;
+        $icon['itemid']    = $group->id;
+        $icon['filename']  = 'f1.jpg';
+        $fs->create_file_from_pathname($icon, "$groupdir/f1.jpg");
+        $icon['filename']  = 'f2.jpg';
+        $fs->create_file_from_pathname($icon, "$groupdir/f2.jpg");
+    }
+    $rs->close();
+
+    // purge all old group image dirs
+    remove_dir("$CFG->dataroot/groups");
 }
 
 /**

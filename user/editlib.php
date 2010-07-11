@@ -35,6 +35,7 @@ function useredit_update_user_preference($usernew) {
 
 function useredit_update_picture(&$usernew, $userform) {
     global $CFG, $DB;
+    require_once("$CFG->libdir/gdlib.php");
 
     $fs = get_file_storage();
     $context = get_context_instance(CONTEXT_USER, $usernew->id, MUST_EXIST);

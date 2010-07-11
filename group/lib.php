@@ -112,56 +112,53 @@ function groups_remove_member($grouporid, $userorid) {
 
 /**
  * Add a new group
- * @param object $data group properties (with magic quotes)
+ * @param object $data group properties
  * @param object $um upload manager with group picture
  * @return id of group or false if error
  */
-function groups_create_group($data, $editform=false, $editoroptions=null) {
+function groups_create_group($data, $editform = false, $editoroptions = false) {
     global $CFG, $DB;
-    require_once("$CFG->libdir/gdlib.php");
 
     //check that courseid exists
     $course = $DB->get_record('course', array('id' => $data->courseid), '*', MUST_EXIST);
+    $context = get_context_instance(CONTEXT_COURSE, $course->id);
 
     $data->timecreated  = time();
     $data->timemodified = $data->timecreated;
     $data->name         = trim($data->name);
 
-    if ($editform) {
+    if ($editform and $editoroptions) {
         $data->description = $data->description_editor['text'];
         $data->descriptionformat = $data->description_editor['format'];
     }
 
-    $id = $DB->insert_record('groups', $data);
+    $data->id = $DB->insert_record('groups', $data);
 
-    $data->id = $id;
+    if ($editform and $editoroptions) {
+        // Update description from editor with fixed files
+        $data = file_postupdate_standard_editor($data, 'description', $editoroptions, $context, 'group', 'description', $data->id);
+        $upd = new object();
+        $upd->id                = $data->id;
+        $upd->description       = $data->description;
+        $upd->descriptionformat = $data->descriptionformat;
+        $DB->update_record('groups', $upd);
+    }
+
+    $group = $DB->get_record('groups', array('id'=>$data->id));
+
     if ($editform) {
-        //update image
-        if (save_profile_image($id, $editform, 'groups')) {
-            $DB->set_field('groups', 'picture', 1, array('id'=>$id));
-        }
-        $data->picture = 1;
-
-        if (method_exists($editform, 'get_editor_options')) {
-            // Update description from editor with fixed files
-            $editoroptions = $editform->get_editor_options();
-            $description = new stdClass;
-            $description->id = $data->id;
-            $description->description_editor = $data->description_editor;
-            $description = file_postupdate_standard_editor($description, 'description', $editoroptions, $editoroptions['context'], 'group', 'description', $description->id);
-            $DB->update_record('groups', $description);
-        }
+        groups_update_group_icon($group, $data, $editform);
     }
 
     //trigger groups events
-    events_trigger('groups_group_created', $data);
+    events_trigger('groups_group_created', $group);
 
-    return $id;
+    return $group->id;
 }
 
 /**
  * Add a new grouping
- * @param object $data grouping properties (with magic quotes)
+ * @param object $data grouping properties
  * @return id of grouping or false if error
  */
 function groups_create_grouping($data, $editoroptions=null) {
@@ -195,35 +192,63 @@ function groups_create_grouping($data, $editoroptions=null) {
 }
 
 /**
- * Update group
- * @param object $data group properties (with magic quotes)
- * @param object $um upload manager with group picture
- * @return boolean true or exception
+ * Update the group icon from form data
+ * @param $group
+ * @param $data
+ * @param $editform
  */
-function groups_update_group($data, $editform=false) {
+function groups_update_group_icon($group, $data, $editform) {
     global $CFG, $DB;
     require_once("$CFG->libdir/gdlib.php");
+
+    $fs = get_file_storage();
+    $context = get_context_instance(CONTEXT_COURSE, $group->courseid, MUST_EXIST);
+
+    //TODO: it would make sense to allow picture deleting too (skodak)
+
+    if ($iconfile = $editform->save_temp_file('imagefile')) {
+        if (process_new_icon($context, 'group', 'icon', $group->id, $iconfile)) {
+            $DB->set_field('groups', 'picture', 1, array('id'=>$group->id));
+            $group->picture = 1;
+        } else {
+            $fs->delete_area_files($context->id, 'group', 'icon', $group->id);
+            $DB->set_field('groups', 'picture', 0, array('id'=>$group->id));
+            $group->picture = 0;
+        }
+        @unlink($iconfile);
+    }
+}
+
+/**
+ * Update group
+ * @param object $data group properties (with magic quotes)
+ * @param object $editform
+ * @param array $editoroptions
+ * @return boolean true or exception
+ */
+function groups_update_group($data, $editform = false, $editoroptions = false) {
+    global $CFG, $DB;
+
+    $context = get_context_instance(CONTEXT_COURSE, $data->courseid);
 
     $data->timemodified = time();
     $data->name         = trim($data->name);
 
-    if ($editform && method_exists($editform, 'get_editor_options')) {
-        $editoroptions = $editform->get_editor_options();
-        $data = file_postupdate_standard_editor($data, 'description', $editoroptions, $editoroptions['context'], 'group', 'description', $data->id);
+    if ($editform and $editoroptions) {
+        $data = file_postupdate_standard_editor($data, 'description', $editoroptions, $context, 'group', 'description', $data->id);
     }
 
     $DB->update_record('groups', $data);
 
+    $group = $DB->get_record('groups', array('id'=>$data->id));
+
     if ($editform) {
-        //update image
-        if (save_profile_image($data->id, $editform, 'groups')) {
-        $DB->set_field('groups', 'picture', 1, array('id'=>$data->id));
-            $data->picture = 1;
-        }
+        groups_update_group_icon($group, $data, $editform);
     }
 
     //trigger groups events
-    events_trigger('groups_group_updated', $data);
+    events_trigger('groups_group_updated', $group);
+
 
     return true;
 }
@@ -282,10 +307,8 @@ function groups_delete_group($grouporid) {
     // Delete all files associated with this group
     $context = get_context_instance(CONTEXT_COURSE, $group->courseid);
     $fs = get_file_storage();
-    $files = $fs->get_area_files($context->id, 'group', 'description', $groupid);
-    foreach ($files as $file) {
-        $file->delete();
-    }
+    $fs->delete_area_files($context->id, 'group', 'description', $groupid);
+    $fs->delete_area_files($context->id, 'group', 'icon', $groupid);
 
     //trigger groups events
     events_trigger('groups_group_deleted', $group);

@@ -4735,6 +4735,12 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         upgrade_main_savepoint(true, 2010071100);
     }
 
+    if ($oldversion < 2010071101) {
+        // move user icons to file storage pool
+        upgrade_migrate_group_icons();
+        upgrade_main_savepoint(true, 2010071101);
+    }
+
 
     return true;
 }

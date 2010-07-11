@@ -100,7 +100,7 @@ if ($rs = $DB->get_recordset_sql($sql, $params)) {
     $rs->close();
 }
 
-$PAGE->settingsnav->get('courseadmin')->get('groups')->make_active();
+//$PAGE->settingsnav->get('courseadmin')->get('groups')->make_active(); // TODO: this breaks stuff
 $PAGE->navbar->add(get_string('overview', 'group'));
 
 /// Print header
@@ -158,7 +158,7 @@ foreach ($members as $gpgid=>$groupdata) {
             continue;
         }
         $line = array();
-        $name = format_string($groups[$gpid]->name);
+        $name = print_group_picture($groups[$gpid], $course->id, false, true, false) . format_string($groups[$gpid]->name);
         $description = file_rewrite_pluginfile_urls($groups[$gpid]->description, 'pluginfile.php', $context->id, 'group', 'description', $gpid);
         $options = new stdClass;
         $options->noclean = true;

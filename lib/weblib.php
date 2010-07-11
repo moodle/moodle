@@ -2214,9 +2214,7 @@ function print_group_picture($group, $courseid, $large=false, $return=false, $li
         $file = 'f2';
     }
 
-    // Print custom group picture
-    require_once($CFG->libdir.'/filelib.php');
-    $grouppictureurl = get_file_url($group->id.'/'.$file.'.jpg', null, 'usergroup');
+    $grouppictureurl = moodle_url::make_pluginfile_url($context->id, 'group', 'icon', $group->id, '/', $file);
     $output .= '<img class="grouppicture" src="'.$grouppictureurl.'"'.
         ' alt="'.s(get_string('group').' '.$group->name).'" title="'.s($group->name).'"/>';
 

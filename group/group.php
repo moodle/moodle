@@ -58,7 +58,7 @@ require_login($course);
 $context = get_context_instance(CONTEXT_COURSE, $course->id);
 require_capability('moodle/course:managegroups', $context);
 
-$returnurl = $CFG->wwwroot.'/group/index.php?id='.$course->id.'&amp;group='.$id;
+$returnurl = $CFG->wwwroot.'/group/index.php?id='.$course->id.'&group='.$id;
 
 if ($id and $delete) {
     if (!$confirm) {
@@ -100,10 +100,10 @@ if ($editform->is_cancelled()) {
 } elseif ($data = $editform->get_data()) {
 
     if ($data->id) {
-        groups_update_group($data, $editform);
+        groups_update_group($data, $editform, $editoroptions);
     } else {
-        $id = groups_create_group($data, $editform);
-        $returnurl = $CFG->wwwroot.'/group/index.php?id='.$course->id.'&amp;group='.$id;
+        $id = groups_create_group($data, $editform, $editoroptions);
+        $returnurl = $CFG->wwwroot.'/group/index.php?id='.$course->id.'&group='.$id;
     }
 
     redirect($returnurl);
