@@ -228,13 +228,23 @@ if ($table->get_sql_where()) {
     $where = '';
 }
 
-$query = 'SELECT tg.id, tg.name, tg.rawname, tg.tagtype, COUNT(ti.id) AS count, u.id AS owner, tg.flag, tg.timemodified, u.firstname, u.lastname
-            FROM {tag_instance} ti RIGHT JOIN {tag} tg ON tg.id = ti.tagid LEFT JOIN {user} u ON tg.userid = u.id
-        '.$where.'
-        GROUP BY tg.id, tg.name, tg.rawname, tg.tagtype, u.id, tg.flag, tg.timemodified, u.firstname, u.lastname
-         '.$sort;
-$totalcount = $DB->count_records_sql('SELECT COUNT(DISTINCT(tg.id))
-                                   FROM {tag} tg LEFT JOIN {user} u ON u.id = tg.userid '. $where, $params);
+$query = "
+        SELECT tg.id, tg.name, tg.rawname, tg.tagtype, tg.flag, tg.timemodified,
+               u.id AS owner, u.firstname, u.lastname,
+               COUNT(ti.id) AS count
+          FROM {tag} tg
+     LEFT JOIN {tag_instance} ti ON ti.tagid = tg.id
+     LEFT JOIN {user} u ON u.id = tg.userid
+               $where
+      GROUP BY tg.id, tg.name, tg.rawname, tg.tagtype, tg.flag, tg.timemodified,
+               u.id, u.firstname, u.lastname
+         $sort";
+
+$totalcount = $DB->count_records_sql("
+        SELECT COUNT(DISTINCT(tg.id))
+          FROM {tag} tg
+     LEFT JOIN {user} u ON u.id = tg.userid
+        $where", $params);
 
 $table->initialbars(true); // always initial bars
 $table->pagesize($perpage, $totalcount);
@@ -244,11 +254,8 @@ echo '<form class="tag-management-form" method="post" action="'.$CFG->wwwroot.'/
 //retrieve tags from DB
 if ($tagrecords = $DB->get_records_sql($query, $params, $table->get_page_start(),  $table->get_page_size())) {
 
-    $taglist = array_values($tagrecords);
-
-    //print_tag_cloud(array_values($DB->get_records_sql($query)), false);
     //populate table with data
-    foreach ($taglist as $tag ){
+    foreach ($tagrecords as $tag) {
         $id             =   $tag->id;
         $name           =   '<a href="'.$CFG->wwwroot.'/tag/index.php?id='.$tag->id.'">'. tag_display_name($tag) .'</a>';
         $owner          =   '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$tag->owner.'">' . fullname($tag) . '</a>';
