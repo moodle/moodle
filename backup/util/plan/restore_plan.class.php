@@ -71,6 +71,10 @@ class restore_plan extends base_plan implements loggable {
         return $this->controller->get_info();
     }
 
+    public function get_target() {
+        return $this->controller->get_target();
+    }
+
     public function log($message, $level, $a = null, $depth = null, $display = false) {
         backup_helper::log($message, $level, $a, $depth, $display, $this->get_logger());
     }
