@@ -408,7 +408,7 @@ function message_print_usergroup_selector($usergroup, &$courses, &$coursecontext
 
         foreach($courses as $course) {
             if (has_capability('moodle/course:viewparticipants', $coursecontexts[$course->id])) {
-                $courses_options[VIEW_COURSE.$course->id] = $course->fullname;
+                $courses_options[VIEW_COURSE.$course->id] = $course->shortname;
             }
         }
 
