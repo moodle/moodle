@@ -32,6 +32,11 @@ class enrol_manual_plugin extends enrol_plugin {
         return false;
     }
 
+    public function allow_enrol(stdClass $instance) {
+        // users with enrol cap may unenrol other users manually manually
+        return true;
+    }
+
     public function allow_unenrol(stdClass $instance) {
         // users with unenrol cap may unenrol other users manually manually
         return true;
@@ -65,7 +70,7 @@ class enrol_manual_plugin extends enrol_plugin {
 
         $context = get_context_instance(CONTEXT_COURSE, $instance->courseid, MUST_EXIST);
 
-        if (!has_capability('enrol/manual:manage', $context)) {
+        if (!has_capability('enrol/manual:manage', $context) or !has_capability('enrol/manual:enrol', $context) or !has_capability('enrol/manual:unenrol', $context)) {
             return NULL;
         }
 

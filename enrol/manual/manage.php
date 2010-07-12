@@ -35,7 +35,9 @@ $course = $DB->get_record('course', array('id'=>$instance->courseid), '*', MUST_
 $context = get_context_instance(CONTEXT_COURSE, $course->id, MUST_EXIST);
 
 require_login($course);
+require_capability('enrol/manual:enrol', $context);
 require_capability('enrol/manual:manage', $context);
+require_capability('enrol/manual:unenrol', $context);
 
 $instance = $DB->get_record('enrol', array('id'=>$enrolid, 'enrol'=>'manual'), '*', MUST_EXIST);
 if ($roleid < 0) {

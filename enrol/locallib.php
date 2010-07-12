@@ -629,7 +629,7 @@ class course_enrolment_manager {
     public function enrol_cohort_users($cohortid, $roleid) {
         global $DB;
         require_capability('moodle/course:enrolconfig', $this->get_context());
-        require_capability('enrol/manual:manage', $this->get_context());
+        require_capability('enrol/manual:enrol', $this->get_context());
         $instances = $this->get_enrolment_instances();
         $instance = false;
         foreach ($instances as $i) {
@@ -643,7 +643,7 @@ class course_enrolment_manager {
         }
         $plugin = enrol_get_plugin('manual');
 
-        $sql = "SELECT com.userid 
+        $sql = "SELECT com.userid
                 FROM {cohort_members} com
                 LEFT JOIN (
                     SELECT *

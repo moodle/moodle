@@ -750,12 +750,24 @@ abstract class enrol_plugin {
     }
 
     /**
+     * Does this plugin allow manual enrolments?
+     *
+     * @param stdClass $instance course enrol instance
+     * All plugins allowing this must implement 'enrol/xxx:enrol' capability
+     *
+     * @return bool - true means user with 'enrol/xxx:enrol' may enrol others freely, trues means nobody may add more enrolments manually
+     */
+    public function allow_enrol(stdClass $instance) {
+        return false;
+    }
+
+    /**
      * Does this plugin allow manual unenrolments?
      *
      * @param stdClass $instance course enrol instance
-     * ALl plugins allowing this must implement 'enrol/xxx:unenrol' capability
+     * All plugins allowing this must implement 'enrol/xxx:unenrol' capability
      *
-     * @return bool - true means anybody may unenrol others freely, trues means nobody may touch user_enrolments
+     * @return bool - true means user with 'enrol/xxx:unenrol' may unenrol others freely, trues means nobody may touch user_enrolments
      */
     public function allow_unenrol(stdClass $instance) {
         return false;
@@ -764,7 +776,7 @@ abstract class enrol_plugin {
     /**
      * Does this plugin allow manual changes in user_enrolments table?
      *
-     * ALl plugins allowing this must implement 'enrol/xxx:manage' capability
+     * All plugins allowing this must implement 'enrol/xxx:manage' capability
      *
      * @param stdClass $instance course enrol instance
      * @return bool - true means it is possible to change enrol period and status in user_enrolments table

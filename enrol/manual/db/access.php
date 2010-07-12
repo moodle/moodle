@@ -34,7 +34,7 @@ $capabilities = array(
         )
     ),
 
-    'enrol/manual:manage' => array(
+    'enrol/manual:enrol' => array(
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSE,
         'legacy' => array(
@@ -43,6 +43,14 @@ $capabilities = array(
         )
     ),
 
+    'enrol/manual:manage' => array(
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_COURSE,
+        'legacy' => array(
+            'manager' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+        )
+    ),
 
     'enrol/manual:unenrol' => array(
         'captype' => 'write',
