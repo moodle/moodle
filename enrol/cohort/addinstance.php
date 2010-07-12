@@ -35,6 +35,16 @@ $context = get_context_instance(CONTEXT_COURSE, $course->id, MUST_EXIST);
 require_login($course);
 require_capability('moodle/course:enrolconfig', $context);
 
+$PAGE->set_url('/enrol/cohort/addinstance.php', array('id'=>$course->id));
+$PAGE->set_pagelayout('standard');
+
+// Try and make the manage instances node on the navigation active
+$courseadmin = $PAGE->settingsnav->get('courseadmin');
+if ($courseadmin && $courseadmin->get('users') && $courseadmin->get('users')->get('manageinstances')) {
+    $courseadmin->get('users')->get('manageinstances')->make_active();
+}
+
+
 $enrol = enrol_get_plugin('cohort');
 if (!$enrol->get_candidate_link($course->id)) {
     redirect(new moodle_url('/enrol/instances.php', array('id'=>$course->id)));
@@ -51,10 +61,9 @@ if ($mform->is_cancelled()) {
     redirect(new moodle_url('/enrol/instances.php', array('id'=>$course->id)));
 }
 
-$PAGE->set_url('/enrol/cohort/addinstance.php', array('id'=>$course->id));
+$PAGE->set_heading($course->fullname);
+$PAGE->set_title(get_string('pluginname', 'enrol_cohort'));
 
 echo $OUTPUT->header();
-
 $mform->display();
-
 echo $OUTPUT->footer();
