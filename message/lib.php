@@ -1483,7 +1483,7 @@ function message_print_message_history($user1,$user2,$search='',$messagelimit=0,
 
         echo html_writer::nonempty_tag('div', $tablecontents, array('class'=>'mdl-left messagehistory'));
     } else {
-        echo $OUTPUT->heading(get_string('nomessagesfound', 'message'), 1);
+        echo html_writer::nonempty_tag('div', '('.get_string('nomessagesfound', 'message').')', array('class'=>'mdl-align messagehistory'));
     }
 }
 
