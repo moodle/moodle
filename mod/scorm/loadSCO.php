@@ -119,6 +119,8 @@
         $result = $CFG->repositorywebroot.substr($scorm->reference, 1).'/'.$sco->launch;
 
     } else if ($scorm->scormtype === SCORM_TYPE_LOCAL or $scorm->scormtype === SCORM_TYPE_LOCALSYNC) {
+        //note: do not convert this to use get_file_url() or moodle_url()
+        //SCORM does not work without slasharguments and moodle_url() encodes querystring vars
         $result = "$CFG->wwwroot/pluginfile.php/$context->id/mod_scorm/content/$scorm->revision/$launcher";
     }
 
