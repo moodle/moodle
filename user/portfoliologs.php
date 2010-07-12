@@ -57,7 +57,7 @@ if ($perpage !== 0) {
 $PAGE->set_url($url);
 $PAGE->set_title("$course->fullname: $fullname: $strportfolios");
 $PAGE->set_heading($course->fullname);
-$PAGE->set_context(get_system_context());
+$PAGE->set_context(get_context_instance(CONTEXT_USER, $user->id));
 $PAGE->set_pagelayout('standard');
 
 echo $OUTPUT->header();
