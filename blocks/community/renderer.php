@@ -126,15 +126,26 @@ class block_community_renderer extends plugin_renderer_base {
                     $additionaldesc .= ' - ';
                 }
                 //retrieve language string
-                //construct languages array
-
                 if (!empty($course->language)) {
                     $languages = get_string_manager()->get_list_of_languages();
                     $course->lang = get_string('langdesc', 'block_community', $languages[$course->language]);
                 } else {
                     $course->lang = '';
                 }
+
+                //licence
+                require_once($CFG->dirroot . "/lib/licenselib.php");
+                $licensemanager = new license_manager();
+                $licenses = $licensemanager->get_licenses();
+                foreach ($licenses as $license) {
+                    if ($license->shortname == $course->licenceshortname) {
+                        $course->license = $license->fullname;
+                    }
+                }
+
                 $additionaldesc .= get_string('additionalcoursedesc', 'block_community', $course);
+
+
 
                 $deschtml .= html_writer::tag('span', $additionaldesc, array('class' => 'additionaldesc'));
                 //add content to the course description

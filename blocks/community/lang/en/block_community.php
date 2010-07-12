@@ -29,7 +29,7 @@ $string['add'] = 'Add';
 $string['addtocommunityblock'] = 'Add to community block';
 $string['addcommunitycourse'] = 'Add community course';
 $string['additionalcoursedesc'] = '{$a->lang} Creator: {$a->creatorname} - Publisher: {$a->publishername} - Subject: {$a->subject}
-    - Audience: {$a->audience} - Educational level: {$a->educationallevel}';
+    - Audience: {$a->audience} - Educational level: {$a->educationallevel} - License: {$a->license}';
 $string['addcourse'] = 'Search';
 $string['audience'] = 'Designed for';
 $string['audience_help'] = 'What kind of course are you looking for?  As well as traditional courses intended for students, you might search for communities of Educators or Moodle Administrators';
