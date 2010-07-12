@@ -221,9 +221,9 @@ class course_enrolment_table extends html_table implements renderable {
 
     /**
      * The default number of items per page.
-     * Default: 20
+     * Default: 100
      */
-    const DEFAULTPERPAGE = 20;
+    const DEFAULTPERPAGE = 100;
 
     /**
      * The default sort, options are course_enrolment_table::$sortablefields
@@ -642,7 +642,8 @@ class course_enrolment_table extends html_table implements renderable {
                     'courseid'=>$course->id,
                     'ajaxurl'=>'/enrol/ajax.php',
                     'url'=>$url->out(false),
-                    'optionsStartDate'=>$startdateoptions));
+                    'optionsStartDate'=>$startdateoptions,
+                    'defaultRole'=>get_config('enrol_manual', 'roleid')));
                 $page->requires->yui_module(array('moodle-enrol-enrolmentmanager', 'moodle-enrol-enrolmentmanager-skin'), 'M.enrol.enrolmentmanager.init', $arguments);
             }
             return $control;

@@ -50,9 +50,11 @@ YUI.add('moodle-enrol-quickcohortenrolment', function(Y) {
             });
             panel.get('boundingBox').addClass(CSS.PANEL);
             panel.render(Y.one(document.body));
-            this.on('show', panel.show, panel);
+            this.on('show', function(){
+                this.set('centered', true);
+                this.show();
+            }, panel);
             this.on('hide', function() {
-                this.set('bodyContent', Y.Node.create('<div class="loading"></div>').append(Y.Node.create('<img alt="loading" />').setAttribute('src', M.cfg.loadingicon)));
                 this.hide();
             }, panel);
             this.on('assignablerolesloaded', this.updateContent, this, panel);
@@ -96,7 +98,7 @@ YUI.add('moodle-enrol-quickcohortenrolment', function(Y) {
                         cohorts[i].on('enrolusers', this.enrolCohort, this, cohorts[i], panel.get('contentBox'), true);
                         content.append(cohorts[i].toHTML(supportmanual).addClass((count%2)?'even':'odd'));
                     }
-                    panel.get('contentBox').one('.'+CSS.PANELCOHORTS).append(content);
+                    panel.get('contentBox').one('.'+CSS.PANELCOHORTS).setContent(content);
                     break;
                 case 'assignablerolesloaded':
                     roles = this.get(ASSIGNABLEROLES);

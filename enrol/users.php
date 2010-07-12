@@ -210,7 +210,7 @@ foreach ($users as $userid=>&$user) {
 }
 $table->set_users($users);
 
-$PAGE->set_title(get_string('enrolledusers', 'enrol'));
+$PAGE->set_title($PAGE->course->fullname.': '.get_string('enrolledusers', 'enrol'));
 $PAGE->set_heading($PAGE->course->fullname);
 
 echo $OUTPUT->header();

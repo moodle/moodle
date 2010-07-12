@@ -462,8 +462,7 @@ YUI.add('moodle-enrol-enrolmentmanager', function(Y) {
                 validator : Y.Lang.isObject
             },
             defaultRole : {
-                value : 0,
-                validator : Y.Lang.isNumber
+                value : 0
             },
             defaultStartDate : {
                 value : 2,
