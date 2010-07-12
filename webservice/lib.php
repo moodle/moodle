@@ -610,25 +610,29 @@ class '.$classname.' {
 
         $function = external_function_info($function);
 
+        //arguments in function declaration line with defaults.
+        $paramanddefaults      = array();
+        //arguments used as parameters for external lib call.
         $params      = array();
         $params_desc = array();
         foreach ($function->parameters_desc->keys as $name=>$keydesc) {
             $param = '$'.$name;
+            $paramanddefault = $param;
             //need to generate the default if there is any
             if ($keydesc instanceof external_value) {
                 if ($keydesc->required == VALUE_DEFAULT) {
                     if ($keydesc->default===null) {
-                        $param .= '=null';
+                        $paramanddefault .= '=null';
                     } else {
                         switch($keydesc->type) {
                             case PARAM_BOOL:
-                                $param .= $keydesc->default; break;
+                                $paramanddefault .= '='.$keydesc->default; break;
                             case PARAM_INT:
-                                $param .= $keydesc->default; break;
+                                $paramanddefault .= '='.$keydesc->default; break;
                             case PARAM_FLOAT;
-                                $param .= $keydesc->default; break;
+                                $paramanddefault .= '='.$keydesc->default; break;
                             default:
-                                $param .= '=\''.$keydesc->default.'\'';
+                                $paramanddefault .= '=\''.$keydesc->default.'\'';
                         }
                     }
                 } else if ($keydesc->required == VALUE_OPTIONAL) {
@@ -650,7 +654,8 @@ class '.$classname.' {
                      throw new moodle_exception('erroroptionalparamarray', 'webservice', '', $name);
                  }
             }
-            $params[]      = $param;
+            $params[] = $param;
+            $paramanddefaults[] = $paramanddefault;
             $type = 'string';
             if ($keydesc instanceof external_value) {
                 switch($keydesc->type) {
@@ -669,8 +674,9 @@ class '.$classname.' {
             }
             $params_desc[] = '     * @param '.$type.' $'.$name.' '.$keydesc->desc;
         }
-        $params      = implode(', ', $params);
-        $params_desc = implode("\n", $params_desc);
+        $params                = implode(', ', $params);
+        $paramanddefaults      = implode(', ', $paramanddefaults);
+        $params_desc           = implode("\n", $params_desc);
         
         $serviceclassmethodbody = $this->service_class_method_body($function, $params);
 
@@ -705,7 +711,7 @@ class '.$classname.' {
 '.$params_desc.'
 '.$return.'
      */
-    public function '.$function->name.'('.$params.') {
+    public function '.$function->name.'('.$paramanddefaults.') {
 '.$serviceclassmethodbody.'
     }
 ';
