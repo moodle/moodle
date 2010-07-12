@@ -28,8 +28,8 @@ class mod_assignment_renderer extends plugin_renderer_base {
     /**
      * @return string
      */
-    public function assignment_files($context, $itemid) {
-        return $this->render(new assignment_files($context, $itemid));
+    public function assignment_files($context, $itemid, $filearea='submission') {
+        return $this->render(new assignment_files($context, $itemid, $filearea));
     }
 
     public function render_assignment_files(assignment_files $tree) {
@@ -74,10 +74,10 @@ class mod_assignment_renderer extends plugin_renderer_base {
 class assignment_files implements renderable {
     public $context;
     public $dir;
-    public function __construct($context, $itemid) {
+    public function __construct($context, $itemid, $filearea='submission') {
         global $USER;
         $this->context = $context;
         $fs = get_file_storage();
-        $this->dir = $fs->get_area_tree($this->context->id, 'mod_assignment', 'submission', $itemid);
+        $this->dir = $fs->get_area_tree($this->context->id, 'mod_assignment', $filearea, $itemid);
     }
 }

@@ -400,7 +400,7 @@ class assignment_upload extends assignment_base {
         if ($submission = $this->get_submission($userid)) {
             $renderer = $PAGE->get_renderer('mod_assignment');
             $output = $OUTPUT->box_start('responsefiles').$output;
-            $output .= $renderer->assignment_files($this->context, $submission->id);
+            $output .= $renderer->assignment_files($this->context, $submission->id, 'response');
             $output .= $OUTPUT->box_end();
         }
 
@@ -419,7 +419,7 @@ class assignment_upload extends assignment_base {
      */
     function upload($mform = null, $filemanager_options = null) {
         $action = required_param('action', PARAM_ALPHA);
-
+        error_log($action);
         switch ($action) {
             case 'finalize':
                 $this->finalize();
@@ -516,8 +516,7 @@ class assignment_upload extends assignment_base {
         $mode   = required_param('mode', PARAM_ALPHA);
         $offset = required_param('offset', PARAM_INT);
 
-        $returnurl = "submissions.php?id={$this->cm->id}&amp;userid=$userid&amp;mode=$mode&amp;offset=$offset";
-
+        $returnurl = new moodle_url("submissions.php?id={$this->cm->id}&userid=$userid&mode=$mode&offset=$offset"); //not xhtml, just url.
         $mform = new mod_assignment_upload_response_form(null, $this);
         if ($mform->get_data() and $this->can_manage_responsefiles()) {
             $fs = get_file_storage();
@@ -526,7 +525,7 @@ class assignment_upload extends assignment_base {
                 $submission = $this->get_submission($userid, true, true);
                 if (!$fs->file_exists($this->context->id, 'mod_assignment', 'response', $submission->id, '/', $filename)) {
                     if ($file = $mform->save_stored_file('newfile', $this->context->id, 'mod_assignment', 'response', $submission->id, '/', $filename, false, $USER->id)) {
-                        redirect($returnurl);
+                        redirect($returnurl->out(false));
                     }
                 }
             }
@@ -534,7 +533,7 @@ class assignment_upload extends assignment_base {
         $PAGE->set_title(get_string('upload'));
         echo $OUTPUT->header();
         echo $OUTPUT->notification(get_string('uploaderror', 'assignment'));
-        echo $OUTPUT->continue_button($returnurl);
+        echo $OUTPUT->continue_button($returnurl->out(true));
         echo $OUTPUT->footer();
         die;
     }
