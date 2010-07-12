@@ -15,6 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+require_once($CFG->libdir.'/formslib.php');//putting this is as a safety as i got a class not found error.
 /**
  * @package   mod-assignment
  * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
