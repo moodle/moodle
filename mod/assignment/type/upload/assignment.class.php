@@ -516,7 +516,7 @@ class assignment_upload extends assignment_base {
         $mode   = required_param('mode', PARAM_ALPHA);
         $offset = required_param('offset', PARAM_INT);
 
-        $returnurl = new moodle_url("submissions.php?id={$this->cm->id}&userid=$userid&mode=$mode&offset=$offset"); //not xhtml, just url.
+        $returnurl = new moodle_url("submissions.php", array('id'=>$this->cm->id,'userid'=>$userid,'mode'=>$mode,'offset'=>$offset)); //not xhtml, just url.
         $mform = new mod_assignment_upload_response_form(null, $this);
         if ($mform->get_data() and $this->can_manage_responsefiles()) {
             $fs = get_file_storage();
