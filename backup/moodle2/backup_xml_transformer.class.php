@@ -68,8 +68,8 @@ class backup_xml_transformer extends xml_contenttransformer {
             return '';
         } else if (is_numeric($content)) {
             return $content;
-        } else if (strlen($content) < 36) { // Impossible to have one link in 36cc
-            return $content;                // (http://10.0.0.1/mod/url/view.php?id=)
+        } else if (strlen($content) < 32) { // Impossible to have one link in 32cc
+            return $content;                // (http://10.0.0.1/file.php/1/1.jpg, http://10.0.0.1/mod/url/view.php?id=)
         }
 
         $content = $this->process_filephp_links($content); // Replace all calls to file.php by $@FILEPHP@$ in a normalised way
@@ -80,6 +80,10 @@ class backup_xml_transformer extends xml_contenttransformer {
 
     private function process_filephp_links($content) {
         global $CFG;
+
+        if (strpos($content, 'file.php') === false) { // No file.php, nothing to convert
+            return $content;
+        }
 
         //First, we check for every call to file.php inside the course
         $search = array($CFG->wwwroot.'/file.php/' . $this->courseid,
