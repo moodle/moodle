@@ -77,7 +77,7 @@ class mnet_review_host_form extends moodleform {
         $mform->addElement('text', 'name', get_string('site'));
         $mform->setType('name', PARAM_NOTAGS);
         $mform->addElement('text', 'wwwroot', get_string('hostname', 'mnet'));
-        $mform->setType('name', PARAM_URL);
+        $mform->setType('wwwroot', PARAM_URL);
         $mform->addElement('textarea', 'public_key', get_string('publickey', 'mnet'), array('rows' => 17, 'cols' => 100, 'class' => 'smalltext'));
         $mform->setType('public_key', PARAM_PEM);
 
