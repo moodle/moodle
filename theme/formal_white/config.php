@@ -51,7 +51,7 @@ $THEME->layouts = array(
     'standard' => array(
         'file' => $layoutpage,
         'regions' => array('side-pre'),
-        'defaultregion' => 'side-post'
+        'defaultregion' => 'side-pre'
     ),
     // Course page
     'course' => array(
