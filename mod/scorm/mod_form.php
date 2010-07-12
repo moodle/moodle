@@ -266,6 +266,11 @@ class mod_scorm_mod_form extends moodleform_mod {
         }
         $scorms = get_all_instances_in_course('scorm', $COURSE);
         $coursescorm = current($scorms);
+
+        $draftitemid = file_get_submitted_draft_itemid('packagefile');
+        file_prepare_draft_area(&$draftitemid, $this->context->id, 'mod_scorm', 'package', 0);
+        $default_values['packagefile'] = $draftitemid;
+
         if (($COURSE->format == 'scorm') && ((count($scorms) == 0) || ($default_values['instance'] == $coursescorm->id))) {
             $default_values['redirect'] = 'yes';
             $default_values['redirecturl'] = '../course/view.php?id='.$default_values['course'];
