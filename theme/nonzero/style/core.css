@@ -137,3 +137,20 @@ a:active {
 	background: #eee;
 	border-bottom: 1px solid #aaa;
 }
+
+/* Course
+-------------------------------*/
+
+.course-content .main {
+	border: 1px solid #eee;
+	background: #eee;
+}
+
+.course-content .current {
+	background: #1f5480;
+	color: #fff;
+}
+
+.course-content .main .content {
+	background: #fff;
+}

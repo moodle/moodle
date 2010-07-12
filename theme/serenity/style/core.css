@@ -105,6 +105,20 @@ a:hover {
 	padding: 2px 5px;
 }
 
+.course-content .main {
+	border: 1px solid #eee;
+	background: #eee;
+}
+
+.course-content .current {
+	background: #9ca7b4;
+	color: #fff;
+}
+
+.course-content .main .content {
+	background: #fff;
+}
+
 /* Forums 
 -----------------------------*/
 

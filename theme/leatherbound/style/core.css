@@ -155,17 +155,17 @@ h2.headingblock {
 	color: #251c17;
 }
 
-.course-content .section.main {
+.course-content .main {
 	background: #f7f5f1;
 	border: 1px solid #ddd
 }
 
-.course-content .section.current {
+.course-content .current {
 	background: #da5013;
 	color: #fff;
 }
 
-.course-content .section.main .content {
+.course-content .main .content {
 	background: #fff;
 }
 

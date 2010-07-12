@@ -305,16 +305,16 @@ h2.headingblock {
 	padding: 2px;
 }
 
-#page-course-view-weeks .course-content .section.main { 
+.course-content .main {
   background:#f3f8ed;
  }
 
-#page-course-view-weeks .course-content .section.current { 
+.course-content .current {
   background:#69804e;
   color:#fff;
  }
  
-#page-course-view-weeks .course-content .section .content {
+.course-content .main .content {
 	padding: 10px;
 	background:#fff;
 }
