@@ -36,7 +36,7 @@ class block_private_files_form extends moodleform {
 
         $mform->addElement('filemanager', 'files_filemanager', get_string('files'), null, $options);
 
-        $this->add_action_buttons(true, get_string('submit'));
+        $this->add_action_buttons(true, get_string('savechanges'));
 
         $this->set_data($data);
     }
