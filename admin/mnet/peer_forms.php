@@ -15,14 +15,16 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
  * This file contains two forms for adding/editing mnet hosts, used by peers.php
  *
- * @package    moodlecore
+ * @package    core
+ * @subpackage mnet
  * @copyright  2010 Penny Leach
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir . '/formslib.php');
 
@@ -33,12 +35,15 @@ require_once($CFG->libdir . '/formslib.php');
 class mnet_simple_host_form extends moodleform {
     function definition() {
         global $DB;
-        $mform =& $this->_form;
-        $mform->addElement('text', 'wwwroot', get_string('hostname', 'mnet'));
-        $mform->addElement('select', 'applicationid', get_string('applicationtype', 'mnet'), $DB->get_records_menu('mnet_application', array(), 'id,display_name'));
 
+        $mform = $this->_form;
+
+        $mform->addElement('text', 'wwwroot', get_string('hostname', 'mnet'));
         $mform->setType('wwwroot', PARAM_URL);
         $mform->addRule('wwwroot', null, 'required', null, 'client');
+
+        $mform->addElement('select', 'applicationid', get_string('applicationtype', 'mnet'),
+                           $DB->get_records_menu('mnet_application', array(), 'id,display_name'));
         $mform->addRule('applicationid', null, 'required', null, 'client');
 
         $this->add_action_buttons(false, get_string('addhost', 'mnet'));
@@ -46,6 +51,7 @@ class mnet_simple_host_form extends moodleform {
 
     function validation($data) {
         global $DB;
+
         $wwwroot = $data['wwwroot'];
         // ensure the wwwroot starts with a http or https prefix
         if (strtolower(substr($wwwroot, 0, 4)) != 'http') {
@@ -66,7 +72,8 @@ class mnet_simple_host_form extends moodleform {
 class mnet_review_host_form extends moodleform {
     function definition() {
         global $OUTPUT;
-        $mform =& $this->_form;
+
+        $mform = $this->_form;
         $mnet_peer = $this->_customdata['peer'];
 
         $mform->addElement('hidden', 'last_connect_time');
@@ -76,15 +83,16 @@ class mnet_review_host_form extends moodleform {
 
         $mform->addElement('text', 'name', get_string('site'));
         $mform->setType('name', PARAM_NOTAGS);
+
         $mform->addElement('text', 'wwwroot', get_string('hostname', 'mnet'));
         $mform->setType('wwwroot', PARAM_URL);
         $mform->addElement('textarea', 'public_key', get_string('publickey', 'mnet'), array('rows' => 17, 'cols' => 100, 'class' => 'smalltext'));
         $mform->setType('public_key', PARAM_PEM);
 
         if ($mnet_peer && !empty($mnet_peer->deleted)) {
-            $radioarray=array();
-            $radioarray[] = &MoodleQuickForm::createElement('radio', 'deleted', '', get_string('yes'), 1);
-            $radioarray[] = &MoodleQuickForm::createElement('radio', 'deleted', '', get_string('no'), 0);
+            $radioarray = array();
+            $radioarray[] = MoodleQuickForm::createElement('radio', 'deleted', '', get_string('yes'), 1);
+            $radioarray[] = MoodleQuickForm::createElement('radio', 'deleted', '', get_string('no'), 0);
             $mform->addGroup($radioarray, 'radioar', get_string('deleted'), array(' '), false);
         } else {
             $mform->addElement('hidden', 'deleted');

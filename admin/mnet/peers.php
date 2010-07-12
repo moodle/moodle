@@ -36,7 +36,6 @@ require_login();
 $context = get_context_instance(CONTEXT_SYSTEM);
 require_capability('moodle/site:config', $context, $USER->id, true, 'nopermissions');
 
-
 /// Initialize variables.
 $hostid = optional_param('hostid', 0, PARAM_INT);
 $updra = optional_param('updateregisterall', 0, PARAM_INT);
@@ -71,11 +70,9 @@ if (!isset($CFG->mnet_dispatcher_mode)) {
     set_config('mnet_dispatcher_mode', 'off');
 }
 
-
 $mnet_peer = new mnet_peer();
 $simpleform = new mnet_simple_host_form(); // the one that goes on the bottom of the main page
 $reviewform = null; // set up later in different code branches, so mnet_peer can be passed to the constructor
-
 
 // if the first form has been submitted, bootstrap the peer and load up the review form
 if ($formdata = $simpleform->get_data()) {
@@ -167,7 +164,6 @@ if ($formdata = $reviewform->get_data()) {
     $mnet_peer->updateparams->public_key = addslashes($formdata->public_key);
     $mnet_peer->public_key_expires = $mnet_peer->check_common_name($formdata->public_key);
     $mnet_peer->updateparams->public_key_expires = $mnet_peer->check_common_name($formdata->public_key);
-
 
     $credentials = $mnet_peer->check_credentials($mnet_peer->public_key);
     $mnet_peer->public_key_expires = $credentials['validTo_time_t'];
