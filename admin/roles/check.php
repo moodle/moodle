@@ -76,7 +76,7 @@ $PAGE->set_title($title);
 
 switch ($context->contextlevel) {
     case CONTEXT_SYSTEM:
-        admin_externalpage_setup('assignroles', '', array('contextid' => $contextid));
+        admin_externalpage_setup('checkpermissions', '', array('contextid' => $contextid));
         break;
     case CONTEXT_USER:
         if ($isfrontpage) {
