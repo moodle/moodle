@@ -726,12 +726,6 @@ class '.$classname.' {
         if ($params){
             $paramstocast = split(',', $params);
             foreach ($paramstocast as $paramtocast) {
-                //clean the parameter name from any potential default value assignment
-                // i.e. if the param is: $search = ''
-                // we only want: $search
-                $paramtocast = split('=', $paramtocast);
-                $paramtocast = $paramtocast[0];
-
                 //clean the parameter from any white space
                 $paramtocast = trim($paramtocast);                
                 $castingcode .= $paramtocast .
