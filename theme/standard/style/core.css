@@ -201,6 +201,7 @@ form.popupform label {margin-right: 0.5em;}
 #page-user-index #longtimenosee,
 #page-user-index #showall {text-align: center;}
 #page-user-profile .remoteuserinfo, #page-user-view .remoteuserinfo{background-color:#D2EBFF;text-align:center;padding:3px;}
+#page-user-profile .messagebox {text-align:center;margin-left:auto;margin-right:auto;padding:5px;}
 
 /**
  * Moodle Forms

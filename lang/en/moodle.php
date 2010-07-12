@@ -989,8 +989,8 @@ $string['messageprovider:notices'] = 'Notices about minor problems';
 $string['messageprovider:notices_help'] = 'These are notices that an administrator might be interested in seeing.';
 $string['messageprovider:instantmessage'] = 'Personal messages between users';
 $string['messageprovider:instantmessage_help'] = 'This section configures what happens to messages that are sent to you directly from other users on this site.';
-$string['messageselect'] = 'Select this user as an email recipient';
-$string['messageselectadd'] = 'Add / send message';
+$string['messageselect'] = 'Select this user as a message recipient';
+$string['messageselectadd'] = 'Send a message';
 $string['migratinggrades'] = 'Migrating grades';
 $string['min'] = 'min';
 $string['mins'] = 'mins';
@@ -1766,7 +1766,7 @@ $string['windowclosing'] = 'This window should close automatically. If not, plea
 $string['withchosenfiles'] = 'With chosen files';
 $string['withoutuserdata'] = 'without user data';
 $string['withselectedusers'] = 'With selected users...';
-$string['withselectedusers_help'] = '* Add / send message - For sending a message to one or more participants
+$string['withselectedusers_help'] = '* Send message - For sending a message to one or more participants
 * Add a new note - For adding a note to a selected participant
 * Add a common note - For adding the same note to more than one participant
 * Extend enrolment (individual) - For extending a selected student\'s access to the course, even when an enrolment period is set

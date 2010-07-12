@@ -215,6 +215,7 @@ if ($user->description && !isset($hiddenfields['description'])) {
 }
 echo '</div>';
 
+
 // Print all the little details in a list
 
 echo '<table class="list" summary="">';
@@ -370,6 +371,14 @@ echo "</table></div></div>";
 
 
 echo $OUTPUT->blocks_for_region('content');
+
+// Print messaging link if allowed
+if (isloggedin() && has_capability('moodle/site:sendmessage', $context)
+    && !empty($CFG->messaging) && !isguestuser() && ($user->username != 'guest') && ($USER->id != $user->id)) {
+    echo '<div class="messagebox">';
+    echo '<a href="'.$CFG->wwwroot.'/message/index.php?id='.$user->id.'">'.get_string('messageselectadd').'</a>';
+    echo '</div>';
+}
 
 if ($CFG->debugdisplay && debugging('', DEBUG_DEVELOPER) && $currentuser) {  // Show user object
     echo '<br /><br /><hr />';
