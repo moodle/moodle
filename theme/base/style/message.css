@@ -1,31 +1,55 @@
-/* Message */
-.message .messagejsmanualrefresh,
-.jsenabled .messagejsautorefresh {display:block;}
+/** Message **/
+.message-discussion-noframes h1 {font-size:1em;}
+.message-discussion-noframes #userinfo .commands {font-size:0.8em;}
 
-.message .messagejsautorefresh,
-.jsenabled .messagejsmanualrefresh {display:none;}
+.message .noframesjslink {font-size:0.8em;}
+.message .link {font-size:0.8em;}
 
-#page-message-user .userpicture,
-#page-message-history .userpicture {width: 100px;height: 100px;}
+.message .heading {font-size:1.0em;font-weight:bold;}
 
-.message .summary .link {text-align:right;}
+.message .author {font-weight: bold;}
+.message .time {font-style: italic;}
+.message .content {}
 
-.message .noframesjslink {margin-top:20px;}
-.message .link {vertical-align:middle;}
-.message .searchresults td {border-width:1px;border-style:solid;border-collapse:collapse;border-spacing:0px;}
+#page-message-user .commands span {font-size:0.7em;}
+#page-message-user .name {font-weight: bold;font-size:1.1em;}
+table.message_search_results td {border-color:#DDDDDD;}
 
-.message-discussion-noframes #userinfo .userpicture {float:left;}
-.message-discussion-noframes #userinfo .name {text-align:center;margin-left:60px;}
-.message-discussion-noframes #send h1,
-.message-discussion-noframes #userinfo .name h1 {margin:0;}
-.message-discussion-noframes #userinfo .commands {text-align:left;margin-left:60px;}
-.message-discussion-noframes #userinfo .commands ul {margin:0;padding:0;list-style-type:none;}
-.message-discussion-noframes #userinfo .commands ul li {display:inline;padding-right:16px;}
-.message-discussion-noframes #send {padding-top:10px;clear:both;}
-.message-discussion-noframes #messages {padding-top:10px;}
-.message-discussion-noframes #messages ul.messagelist {margin:0;padding:0;}
+.message .time {color: #999999;}
+.message.me .author {color: #999999;}
+.message.other .author {color: #8888CC;}
 
-#page-message-user .commands span {margin-left:10px;margin-right:10px;white-space:nowrap;}
+#page-message-messages {padding:10px;}
+#page-message-send .notifysuccess {padding:1px;}
+#page-message-send td.fixeditor {text-align:center;}
 
-#page-message-edit fieldset {padding: 20px;}
-#page-message-edit th {padding-top: 10px;padding-left: 20px;}
+.message .note {padding:10px;}
+table.message .searchresults td {padding:5px;}
+
+.message .contactselector {width:24%;float:left;}
+.message .contactselector .contact {text-align:left;}
+
+.message .messagearea  {padding-left:1%;border-left:1px solid LightGrey;width:74%;float:right;min-height:200px;}
+.message .messagearea .messagehistorytype {clear:both;padding-bottom:20px;}
+
+.message .messagearea .messagehistory .message_user_pictures {margin-left: auto;margin-right: auto;}
+.message .messagearea .messagehistory .message_user_pictures #user1 {vertical-align:top;width:200px;}
+.message .messagearea .messagehistory .message_user_pictures #user2 {vertical-align:top;width:200px;}
+.message .messagearea .messagehistory .message_user_pictures .useractionlinks {font-size:0.9em;}
+
+.message .messagearea .messagehistory .heading {width:100%;clear:both;}
+.message .messagearea .messagehistory .left {padding-bottom:10px;width:50%;float:left;clear:both;padding-left:10%;}
+.message .messagearea .messagehistory .right {padding-bottom:10px;width:40%;float:right;clear:both;}
+.message .messagearea .messagesend {padding-top:20px;float:center;clear:both;}
+.message .messagearea .messagesend .messagesendbox {width:100%}
+.message .messagearea .messagesend fieldset {padding:0px;margin:0;} /** bring the message send button closer to the message box */
+
+.message .hiddenelement  {display:none;} /** not just using hidden as mform adds that class to its fieldset */
+.message .visible {display:inline;}
+
+.messagesearchresults {margin-bottom:40px;}
+.messagesearchresults td {padding:0px 10px 0px 20px;}
+.messagesearchresults td span {white-space:nowrap;}
+
+#newmessageoverlay {background-color:LightGrey;padding:20px;position:fixed;bottom:0;right:0;}
+.ie6 #newmessageoverlay {position:static;}
