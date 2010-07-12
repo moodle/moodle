@@ -176,6 +176,7 @@ class block_community_renderer extends plugin_renderer_base {
                     $addbuttonhtml = $OUTPUT->render($addbutton);
                 } else {
                     $params = array('sesskey' => sesskey(), 'download' => 1, 'confirmed' => 1,
+                         'remotemoodleurl' => $CFG->wwwroot,
                         'courseid' => $course->id, 'huburl' => $huburl, 'coursefullname' => $course->fullname);
                     $addurl = new moodle_url("/blocks/community/communitycourse.php", $params);
                     $downloadbutton = new single_button($addurl, get_string('download', 'block_community'));
