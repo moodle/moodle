@@ -171,7 +171,7 @@ if ($component === 'blog') {
             require_login();
         }
 
-        $fullpath = "/$context->id/tage/description/".implode('/', $args);
+        $fullpath = "/$context->id/tag/description/".implode('/', $args);
 
         if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
             send_file_not_found();
