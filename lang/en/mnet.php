@@ -145,7 +145,6 @@ $string['mnetpeers'] = 'Peers';
 $string['mnetservices'] = 'Services';
 $string['mnet_session_prohibited'] = 'Users from your home server are not currently permitted to roam to {$a}.';
 $string['mnetsettings'] = 'Moodle network settings';
-$string['mnetthemes'] = 'Themes';
 $string['moodle_home_help'] = 'The path to the homepage of Moodle on the remote host, e.g. /moodle/.';
 $string['moodleloc'] = 'Moodle location';
 $string['name'] = 'Name';

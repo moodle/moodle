@@ -86,6 +86,13 @@ class mnet_review_host_form extends moodleform {
 
         $mform->addElement('text', 'wwwroot', get_string('hostname', 'mnet'));
         $mform->setType('wwwroot', PARAM_URL);
+
+        $themes = array('' => get_string('forceno'));
+        foreach (array_keys(get_plugin_list('theme')) as $themename) {
+            $themes[$themename] = get_string('pluginname', 'theme_'.$themename);
+        }
+        $mform->addElement('select', 'theme', get_string('forcetheme'), $themes);
+
         $mform->addElement('textarea', 'public_key', get_string('publickey', 'mnet'), array('rows' => 17, 'cols' => 100, 'class' => 'smalltext'));
         $mform->setType('public_key', PARAM_PEM);
 

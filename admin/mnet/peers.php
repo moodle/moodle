@@ -159,6 +159,14 @@ if ($formdata = $reviewform->get_data()) {
         $mnet_peer->set_name($formdata->name);
     }
 
+    if (empty($formdata->theme)) {
+        $mnet_peer->force_theme = 0;
+        $mnet_peer->theme = null;
+    } else {
+        $mnet_peer->force_theme = 1;
+        $mnet_peer->theme = $formdata->theme;
+    }
+
     $mnet_peer->updateparams->deleted = $formdata->deleted;
     $oldkey = $mnet_peer->public_key;
     $mnet_peer->public_key = $formdata->public_key;
