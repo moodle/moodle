@@ -153,11 +153,8 @@ class block_online_users extends block_base {
                     $this->content->text .= '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$user->id.'&amp;course='.$this->page->course->id.'" title="'.$timeago.'">'.$user->fullname.'</a></div>';
                 }
                 if ($canshowicon and ($USER->id != $user->id) and  $user->username != 'guest') {  // Only when logged in and messaging active etc
-                    $link = '/message/discussion.php?id='.$user->id;
                     $anchortagcontents = '<img class="iconsmall" src="'.$OUTPUT->pix_url('t/message') . '" alt="'. get_string('messageselectadd') .'" />';
-
-                    $action = new popup_action('click', $link, 'message_'.$user->id, array('width'=>400,'height'=>500));
-                    $anchortag = $OUTPUT->action_link($link, $anchortagcontents, $action, array('title'=>get_string('messageselectadd')));
+                    $anchortag = '<a href="'.$CFG->wwwroot.'/message/index.php?id='.$user->id.'" title="'.get_string('messageselectadd').'">'.$anchortagcontents .'</a>';
 
                     $this->content->text .= '<div class="message">'.$anchortag.'</div>';
                 }
