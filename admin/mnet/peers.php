@@ -77,7 +77,8 @@ $reviewform = null; // set up later in different code branches, so mnet_peer can
 // if the first form has been submitted, bootstrap the peer and load up the review form
 if ($formdata = $simpleform->get_data()) {
     // ensure we remove trailing slashes
-    $formdata->wwwroot = preg_replace(':/$:', '', $formdata->wwwroot);
+    $formdata->wwwroot = trim($formdata->wwwroot);
+    $formdata->wwwroot = rtrim($formdata->wwwroot, '/');
 
     // ensure the wwwroot starts with a http or https prefix
     if (strtolower(substr($formdata->wwwroot, 0, 4)) != 'http') {
