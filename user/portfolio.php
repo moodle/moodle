@@ -32,20 +32,18 @@ if (empty($CFG->enableportfolios)) {
 require_once($CFG->libdir . '/portfoliolib.php');
 require_once($CFG->libdir . '/portfolio/forms.php');
 
-$config = optional_param('config', 0, PARAM_INT);
-$hide = optional_param('hide', 0, PARAM_INT);
-$course  = optional_param('course', SITEID, PARAM_INT);
+$config   = optional_param('config', 0, PARAM_INT);
+$hide     = optional_param('hide', 0, PARAM_INT);
+$courseid = optional_param('courseid', SITEID, PARAM_INT);
 
-$url = new moodle_url('/user/portfolio.php', array('course'=>$course));
+$url = new moodle_url('/user/portfolio.php', array('courseid'=>$courseid));
 if ($hide !== 0) {
     $url->param('hide', $hide);
 }
 if ($config !== 0) {
     $url->param('config', $config);
 }
-$PAGE->set_url($url);
-
-if (! $course = $DB->get_record("course", array("id"=>$course))) {
+if (! $course = $DB->get_record("course", array("id"=>$courseid))) {
     print_error('invalidcourseid');
 }
 
@@ -61,10 +59,14 @@ $display = true; // set this to false in the conditions to stop processing
 
 require_login($course, false);
 
+$PAGE->set_url($url);
+$PAGE->set_context(get_system_context());
+$PAGE->set_title("$course->fullname: $fullname: $strportfolios");
+$PAGE->set_heading($course->fullname);
+$PAGE->set_pagelayout('standard');
+
 echo $OUTPUT->header();
-$currenttab = 'portfolioconf';
 $showroles = 1;
-include('tabs.php');
 
 if (!empty($config)) {
     $instance = portfolio_instance($config);

@@ -3134,8 +3134,28 @@ class settings_navigation extends navigation_node {
             require_once($CFG->libdir . '/portfoliolib.php');
             if (portfolio_instances(true, false)) {
                 $portfolio = $usersetting->add(get_string('portfolios', 'portfolio'), null, self::TYPE_SETTING);
-                $portfolio->add(get_string('configure', 'portfolio'), new moodle_url('/user/portfolio.php'), self::TYPE_SETTING);
-                $portfolio->add(get_string('logs', 'portfolio'), new moodle_url('/user/portfoliologs.php'), self::TYPE_SETTING);
+
+                $config  = optional_param('config', 0, PARAM_INT);
+                $hide    = optional_param('hide', 0, PARAM_INT);
+                $url = new moodle_url('/user/portfolio.php', array('courseid'=>$course->id));
+                if ($hide !== 0) {
+                    $url->param('hide', $hide);
+                }
+                if ($config !== 0) {
+                    $url->param('config', $config);
+                }
+                $portfolio->add(get_string('configure', 'portfolio'), $url, self::TYPE_SETTING);
+
+                $page = optional_param('page', 0, PARAM_INT);
+                $perpage = optional_param('perpage', 10, PARAM_INT);
+                $url = new moodle_url('/user/portfoliologs.php', array('courseid'=>$course->id));
+                if ($page !== 0) {
+                    $url->param('page', $page);
+                }
+                if ($perpage !== 0) {
+                    $url->param('perpage', $perpage);
+                }
+                $portfolio->add(get_string('logs', 'portfolio'), $url, self::TYPE_SETTING);
             }
         }
 
