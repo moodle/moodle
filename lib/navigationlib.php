@@ -1528,6 +1528,12 @@ class global_navigation extends navigation_node {
         $url = new moodle_url('/message/index.php',$messageargs);
         $usernode->add(get_string('messages', 'message'), $url, self::TYPE_SETTING, null, 'messages');
 
+        // TODO: Private file capability check
+        if ($iscurrentuser) {
+            $url = new moodle_url('/blocks/private_files/edit.php');
+            $usernode->add(get_string('privatefiles', 'block_private_files'), $url, self::TYPE_SETTING);
+        }
+
         // Add a node to view the users notes if permitted
         if (!empty($CFG->enablenotes) && has_any_capability(array('moodle/notes:manage', 'moodle/notes:view'), $coursecontext)) {
             $url = new moodle_url('/notes/index.php',array('user'=>$user->id));
@@ -1597,6 +1603,7 @@ class global_navigation extends navigation_node {
 
         // If the user is the current user add the repositories for the current user
         if ($iscurrentuser) {
+
             require_once($CFG->dirroot . '/repository/lib.php');
             $editabletypes = repository::get_editable_types($usercontext);
             if (!empty($editabletypes)) {

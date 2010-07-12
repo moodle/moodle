@@ -34,8 +34,15 @@ if (isguestuser()) {
 //TODO: add capability check here!
 
 $context = get_context_instance(CONTEXT_USER, $USER->id);
+$title = get_string('privatefiles', 'block_private_files');
+$struser = get_string('user');
 
-$PAGE->set_url('/blocks/private/edit.php');
+$PAGE->set_url('/blocks/private_files/edit.php');
+$PAGE->set_context($context);
+$PAGE->set_title($title);
+$PAGE->set_heading($title);
+$PAGE->set_pagelayout('mydashboard');
+$PAGE->set_pagetype('user-private-files');
 
 $data = new object();
 $options = array('subdirs'=>1, 'maxbytes'=>$CFG->userquota, 'maxfiles'=>-1, 'accepted_types'=>'*', 'return_types'=>FILE_INTERNAL);
