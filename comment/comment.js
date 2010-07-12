@@ -169,7 +169,11 @@ bodyContent: '<div class="comment-delete-confirm"><a href="#" id="confirmdelete-
                 for(var i in list) {
                     var htmlid = 'comment-'+list[i].id+'-'+this.client_id;
                     var val = template.get('innerHTML');
-                    val = val.replace('___name___', list[i].username);
+                    if (list[i].profileurl) {
+                        val = val.replace('___name___', '<a href="'+list[i].profileurl+'">'+list[i].fullname+'</a>');
+                    } else {
+                        val = val.replace('___name___', list[i].fullname);
+                    }
                     if (list[i]['delete']||newcmt) {
                         list[i].content = '<div class="comment-delete"><a href="#" id ="comment-delete-'+this.client_id+'-'+list[i].id+'" title="'+M.str.moodle.deletecomment+'"><img src="'+M.util.image_url('t/delete', 'core')+'" /></a></div>' + list[i].content;
                     }

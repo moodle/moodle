@@ -389,6 +389,7 @@ EOD;
 
     /**
      * Return matched comments
+     *
      * @param  int $page
      * @return mixed
      */
@@ -403,7 +404,7 @@ EOD;
         $this->page = $page;
         $params = array();
         $start = $page * $CFG->commentsperpage;
-        $ufields = user_picture::fields('u');
+        $ufields = user_picture::fields('u', array('username'));
         $sql = "SELECT $ufields, c.id AS cid, c.content AS ccontent, c.format AS cformat, c.timecreated AS ctimecreated
                   FROM {comments} c
                   JOIN {user} u ON u.id = c.userid
@@ -422,8 +423,10 @@ EOD;
             $c->content     = $u->ccontent;
             $c->format      = $u->cformat;
             $c->timecreated = $u->ctimecreated;
-            $url = $CFG->httpswwwroot.'/user/view.php?id='.$c->id.'&amp;course='.$this->courseid;
-            $c->username = '<a href="'.$url.'">'.fullname($u).'</a>';
+            $url = new moodle_url('/user/view.php', array('id'=>$c->id, 'course'=>$this->courseid));
+            $c->username = $u->username;
+            $c->profileurl = $url;
+            $c->fullname = fullname($u);
             $c->time = userdate($c->timecreated, get_string('strftimerecent', 'langconfig'));
             $c->content = format_text($c->content, $c->format);
 
@@ -511,7 +514,10 @@ EOD;
         if (!empty($cmt_id)) {
             $newcmt->id = $cmt_id;
             $newcmt->time = userdate($now, get_string('strftimerecent', 'langconfig'));
-            $newcmt->username = fullname($USER);
+            $newcmt->username = $USER->username;
+            $newcmt->fullname = fullname($USER);
+            $url = new moodle_url('/user/view.php', array('id'=>$USER->id, 'course'=>$this->courseid));
+            $newcmt->profileurl = $url->out();
             $newcmt->content = format_text($newcmt->content);
             $newcmt->avatar = $OUTPUT->user_picture($USER, array('size'=>16));
             return $newcmt;
@@ -624,7 +630,7 @@ EOD;
         $patterns[] = '___content___';
         $patterns[] = '___time___';
         $replacements[] = $cmt->avatar;
-        $replacements[] = fullname($cmt);
+        $replacements[] = html_writer::link($cmt->profileurl, $cmt->fullname);
         $replacements[] = $cmt->content;
         $replacements[] = userdate($cmt->timecreated, get_string('strftimerecent', 'langconfig'));
 
