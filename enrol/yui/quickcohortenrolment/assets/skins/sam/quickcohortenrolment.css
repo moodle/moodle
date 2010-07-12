@@ -1,0 +1,22 @@
+.qce-panel {background-color:#666;border:2px solid #666;border-width:0 2px 2px 0;width:420px;}
+.qce-panel .yui3-widget-hd {background:url("sprite.png");background-repeat:repeat-x;background-color:#DDD;background-position: 0 -15px;border-bottom:1px solid #555;border-top:1px solid #fff;}
+.qce-panel .yui3-widget-hd h2 {margin:3px 5px 2px;padding:0;font-size:110%;}
+.qce-panel .yui3-widget-hd .close {width:25px;height:15px;position:absolute;top:3px;right:1em;cursor:pointer;background:url("sprite.png") no-repeat scroll 0 0 transparent;}
+.qce-panel .yui3-overlay-content {background-color:#F6F6F6;border:1px solid #555;margin-top:-2px;margin-left:-2px;}
+.qce-panel .yui3-widget-bd .loading {height:300px;text-align:center;}
+.qce-panel .yui3-widget-bd .loading img {margin-top:130px;}
+.qce-panel .qce-enrollable-cohorts {overflow:auto;margin:5px;}
+.qce-panel .qce-cohorts {border:1px solid #666;width:408px;background-color:#FFF;height:250px;}
+.qce-panel .qce-cohort {width:100%;position:relative;clear:both;height:24px;}
+.qce-panel .qce-cohort.odd {background-color:#f4f4f4;}
+.qce-panel .qce-cohort .qce-cohort-button {width:70px;float:left;text-align:center;display:inline-block;font-size:80%;height:22px;line-height:22px;overflow:hidden;}
+.qce-panel .qce-cohort .qce-cohort-button.notenrolled {background-color:#ddd;border:1px outset #CCC;background:url("sprite.png");background-repeat:repeat-x;background-color:#DDD;background-position: 0 -25px;color:inherit;}
+.qce-panel .qce-cohort .qce-cohort-button.notenrolled:hover {background-position:0 -15px;cursor:pointer;}
+.qce-panel .qce-cohort .qce-cohort-button.alreadyenrolled {font-weight:bold;margin:2px;}
+.qce-panel .qce-cohort .qce-cohort-name {margin-left:80px;margin-right:40px;line-height:24px;}
+.qce-panel .canenrolusers .qce-cohort .qce-cohort-button.alreadyenrolled {width:140px;}
+.qce-panel .canenrolusers .qce-cohort .qce-cohort-name {margin-left:150px;margin-right:40px;line-height:24px;}
+.qce-panel .qce-cohort .qce-cohort-users {position:absolute;right:5px;top:0;width:30px;text-align:right;height:24px;line-height:24px;}
+.qce-panel .qce-assignable-roles {margin:3px 5px 2px;}
+.qce-panel .qce-cohort.headings {font-weight:bold;border-width:0;}
+.qce-panel .qce-cohort.headings .qce-cohort-button {display:none;}

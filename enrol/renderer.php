@@ -43,6 +43,10 @@ class core_enrol_renderer extends plugin_renderer_base {
         if ($enrolmentselector) {
             $content .= $this->output->render($enrolmentselector);
         }
+        $cohortenroller = $table->get_cohort_enrolment_control($this->page);
+        if ($cohortenroller) {
+            $content .= $this->output->render($cohortenroller);
+        }
         $content  .= $this->output->render($table->get_enrolment_type_filter());
         $content .= $this->output->render($table->get_paging_bar());
         $content .= html_writer::table($table);
@@ -50,6 +54,10 @@ class core_enrol_renderer extends plugin_renderer_base {
         $enrolmentselector = $table->get_enrolment_selector($this->page);
         if ($enrolmentselector) {
             $content .= $this->output->render($enrolmentselector);
+        }
+        $cohortenroller = $table->get_cohort_enrolment_control($this->page);
+        if ($cohortenroller) {
+            $content .= $this->output->render($cohortenroller);
         }
         return $content;
     }
@@ -504,9 +512,60 @@ class course_enrolment_table extends html_table implements renderable {
      */
     public function get_enrolment_type_filter() {
         $url = new moodle_url($this->pageurl, $this->manager->get_url_params()+$this->get_url_params());
-        $selector = new single_select($url, 'ifilter', array(0=>get_string('all')) + $this->manager->get_enrolment_instance_names(), $this->manager->get_enrolment_filter(), array());
+        $selector = new single_select($url, 'ifilter', array(0=>get_string('all')) + (array)$this->manager->get_enrolment_instance_names(), $this->manager->get_enrolment_filter(), array());
         $selector->set_label( get_string('enrolmentinstances', 'enrol'));
         return $selector;
+    }
+
+    /**
+     * Returns a button to enrol cohorts or thier users
+     *
+     * @staticvar int $count
+     * @param moodle_page $page
+     * @return single_button|false
+     */
+    public function get_cohort_enrolment_control(moodle_page $page) {
+        static $count = 0;
+
+        // First make sure that cohorts is enabled
+        $plugins = $this->manager->get_enrolment_plugins();
+        if (!array_key_exists('cohort', $plugins)) {
+            return false;
+        }
+        $count ++;
+        $course = $this->manager->get_course();
+        $cohorturl = new moodle_url('/enrol/cohort/addinstance.php', array('id'=>$course->id));
+        $control = new single_button($cohorturl, get_string('enrolcohort', 'enrol'), 'get');
+        $control->class = 'singlebutton enrolcohortbutton instance'.$count;
+        $control->formid = 'manuallyenrol_single_'+$count;
+        if ($count == 1) {
+            $page->requires->strings_for_js(array('enrol','synced','enrolcohort','enrolcohortusers'), 'enrol');
+            $page->requires->string_for_js('assignroles', 'role');
+            $page->requires->string_for_js('cohort', 'cohort');
+            $page->requires->string_for_js('users', 'moodle');
+            $url = new moodle_url($this->pageurl, $this->manager->get_url_params()+$this->get_url_params());
+
+            $hasmanualinstance = false;
+            // No point showing this at all if the user cant manually enrol users
+            if (has_capability('enrol/manual:manage', $this->manager->get_context())) {
+                // Make sure manual enrolments instance exists
+                $instances = $this->manager->get_enrolment_instances();
+                foreach ($instances as $instance) {
+                    if ($instance->enrol == 'manual') {
+                        $hasmanualinstance = true;
+                        break;
+                    }
+                }
+            }
+            
+            $arguments = array(array(
+                'courseid'=>$course->id,
+                'ajaxurl'=>'/enrol/ajax.php',
+                'url'=>$url->out(false),
+                'manualEnrolment'=>$hasmanualinstance));
+            $page->requires->yui_module(array('moodle-enrol-quickcohortenrolment', 'moodle-enrol-quickcohortenrolment-skin'), 'M.enrol.quickcohortenrolment.init', $arguments);
+        }
+        return $control;
     }
 
     /**

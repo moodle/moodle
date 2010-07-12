@@ -102,7 +102,28 @@ switch ($action) {
         $outcome->success = true;
         $outcome->response = $manager->get_assignable_roles();
         break;
-
+    case 'getcohorts':
+        require_capability('moodle/course:enrolconfig', $context);
+        $outcome->success = true;
+        $outcome->response = $manager->get_cohorts();
+        break;
+    case 'enrolcohort':
+        require_capability('moodle/course:enrolconfig', $context);
+        $roleid = required_param('roleid', PARAM_INT);
+        $cohortid = required_param('cohortid', PARAM_INT);
+        $outcome->success = $manager->enrol_cohort($cohortid, $roleid);
+        break;
+    case 'enrolcohortusers':
+        require_capability('moodle/course:enrolconfig', $context);
+        $roleid = required_param('roleid', PARAM_INT);
+        $cohortid = required_param('cohortid', PARAM_INT);
+        $result = $manager->enrol_cohort_users($cohortid, $roleid);
+        if ($result !== false) {
+            $outcome->success = true;
+            $outcome->response->users = $result;
+            $outcome->response->message = get_string('enrollednewusers', 'enrol', $result);
+        }
+        break;
     case 'searchusers':
         $enrolid = required_param('enrolid', PARAM_INT);
         $search  = optional_param('search', '', PARAM_CLEAN);

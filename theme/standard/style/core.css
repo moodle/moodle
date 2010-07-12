@@ -438,4 +438,7 @@ table#tag-management-list {margin: 10px auto;width: 80%;}
 .userenrolment .col_group .addgroup {background-color:#DDD;border:1px outset #EEE;-moz-border-radius:5px;}
 .userenrolment .col_enrol {max-width:300px;}
 .userenrolment .col_enrol .enrolment {border:1px outset #E6E6E6;background-color:#EEE;line-height:10px;font-size:10px;-moz-border-radius:5px;}
-.path-enrol .enrolusersbutton.instance1 {float:right;}
+.path-enrol .enrolusersbutton,
+.path-enrol .enrolcohortbutton {float:left;}
+.path-enrol .enrolusersbutton.instance1,
+.path-enrol .enrolcohortbutton.instance1 {float:right;}

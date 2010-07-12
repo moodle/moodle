@@ -554,6 +554,115 @@ class course_enrolment_manager {
     }
 
     /**
+     * Gets all the cohorts the user is able to view.
+     *
+     * @global moodle_database $DB
+     * @return array
+     */
+    public function get_cohorts() {
+        global $DB;
+        $context = $this->get_context();
+        $cohorts = array();
+        $instances = $this->get_enrolment_instances();
+        $enrolled = array();
+        foreach ($instances as $instance) {
+            if ($instance->enrol == 'cohort') {
+                $enrolled[] = $instance->customint1;
+            }
+        }
+        list($sqlparents, $params) = $DB->get_in_or_equal(get_parent_contexts($context));
+        $sql = "SELECT id, name, contextid
+                  FROM {cohort}
+                 WHERE contextid $sqlparents
+              ORDER BY name ASC";
+        $rs = $DB->get_recordset_sql($sql, $params);
+        foreach ($rs as $c) {
+            $context = get_context_instance_by_id($c->contextid);
+            if (!has_capability('moodle/cohort:view', $context)) {
+                continue;
+            }
+            $cohorts[$c->id] = array(
+                'cohortid'=>$c->id,
+                'name'=>format_string($c->name),
+                'users'=>$DB->count_records('cohort_members', array('cohortid'=>$c->id)),
+                'enrolled'=>in_array($c->id, $enrolled)
+            );
+        }
+        $rs->close();
+        return $cohorts;
+    }
+
+    /**
+     * Enrols a cohort in a course.
+     *
+     * Essentially this just adds a cohort enrolment plugin instance to the course
+     *
+     * @param int $cohortid
+     * @param int $roleid
+     * @return bool
+     */
+    public function enrol_cohort($cohortid, $roleid) {
+        global $CFG;
+        require_capability('moodle/course:enrolconfig', $this->get_context());
+        require_once($CFG->dirroot.'/enrol/cohort/locallib.php');
+        $roles = $this->get_assignable_roles();
+        $cohorts = $this->get_cohorts();
+        if (!array_key_exists($cohortid, $cohorts) || !array_key_exists($roleid, $roles)) {
+            return false;
+        }
+        $enrol = enrol_get_plugin('cohort');
+        $enrol->add_instance($this->course, array('customint1'=>$cohortid, 'roleid'=>$roleid));
+        enrol_cohort_sync($this->course->id);
+        return true;
+    }
+
+    /**
+     * Enrols all of the users in a cohort within this course.
+     *
+     * Note this is VERY different from creating an enrolment instance for a cohort.
+     *
+     * @global moodle_database $DB
+     * @param int $cohortid
+     * @param int $roleid
+     * @return bool
+     */
+    public function enrol_cohort_users($cohortid, $roleid) {
+        global $DB;
+        require_capability('moodle/course:enrolconfig', $this->get_context());
+        require_capability('enrol/manual:manage', $this->get_context());
+        $instances = $this->get_enrolment_instances();
+        $instance = false;
+        foreach ($instances as $i) {
+            if ($i->enrol == 'manual') {
+                $instance = $i;
+                break;
+            }
+        }
+        if (!$instance) {
+            return false;
+        }
+        $plugin = enrol_get_plugin('manual');
+
+        $sql = "SELECT com.userid 
+                FROM {cohort_members} com
+                LEFT JOIN (
+                    SELECT *
+                    FROM {user_enrolments} ue
+                    WHERE ue.enrolid = :enrolid
+                ) ue ON ue.userid=com.userid
+                WHERE com.cohortid = :cohortid AND ue.id IS NULL";
+        $params = array('cohortid'=>$cohortid, 'enrolid'=>$instance->id);
+        $rs = $DB->get_recordset_sql($sql, $params);
+        $count = 0;
+        foreach ($rs as $user) {
+            $count++;
+            $plugin->enrol_user($instance, $user->userid, $roleid);
+        }
+        $rs->close();
+        return $count;
+    }
+
+    /**
      * Gets an array of users for display, this includes minimal user information
      * as well as minimal information on the users roles, groups, and enrolments.
      *
