@@ -68,7 +68,7 @@ class repository_googledocs extends repository {
             $ret = array();
             $popup_btn = new stdclass;
             $popup_btn->type = 'popup';
-            $returnurl = $CFG->wwwroot.'/repository/repository_ajax.php?callback=yes&repo_id='.$this->id;
+            $returnurl = $CFG->wwwroot.'/repository/repository_callback.php?callback=yes&repo_id='.$this->id;
             $popup_btn->url = google_authsub::login_url($returnurl, google_docs::REALM);
             $ret['login'] = array($popup_btn);
             return $ret;
@@ -108,7 +108,7 @@ class repository_googledocs extends repository {
         return parent::logout();
     }
 
-    public function get_name(){
+    public function get_name() {
         return get_string('pluginname', 'repository_googledocs');
     }
 

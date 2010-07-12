@@ -65,7 +65,7 @@ class repository_picasa extends repository {
 
     public function print_login(){
         global $CFG;
-        $returnurl = $CFG->wwwroot.'/repository/repository_ajax.php?callback=yes&repo_id='.$this->id;
+        $returnurl = $CFG->wwwroot.'/repository/repository_callback.php?callback=yes&repo_id='.$this->id;
         $authurl = google_authsub::login_url($returnurl, google_picasa::REALM);
         if($this->options['ajax']){
             $ret = array();
