@@ -31,7 +31,7 @@ package customValidators
             }
             if (this.required && JSONstring == ''){
             	errors.push(new ValidationResult(true, null, "Required", 
-	                    "You must enter a value for this argument."));
+	                    "You must enter a value for this argument - for a string argument an empty string can be entered as \"\" or you can disable an optional argument."));
             }
             return errors;
         }
