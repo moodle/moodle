@@ -374,22 +374,34 @@ function enrol_add_course_navigation(navigation_node $coursenode, $course) {
 
     if ($course->id != SITEID) {
         // Unenrol link
-        $unenrolprinted = false;
-        foreach ($instances as $instance) {
-            if (!isset($plugins[$instance->enrol])) {
-                continue;
+        if (is_enrolled($coursecontext)) {
+            foreach ($instances as $instance) {
+                if (!isset($plugins[$instance->enrol])) {
+                    continue;
+                }
+                $plugin = $plugins[$instance->enrol];
+                if ($unenrollink = $plugin->get_unenrolself_link($instance)) {
+                    $coursenode->add(get_string('unenrolme', 'core_enrol', format_string($course->shortname)), $unenrollink, navigation_node::TYPE_SETTING, null, 'unenrolself', new pix_icon('i/user', ''));
+                    break;
+                    //TODO. deal with multiple unenrol links - not likely case, but still...
+                }
             }
-            $plugin = $plugins[$instance->enrol];
-            if ($unenrollink = $plugin->get_unenrolself_link($instance)) {
-                $coursenode->add(get_string('unenrolme', 'core_enrol', format_string($course->shortname)), $unenrollink, navigation_node::TYPE_SETTING, null, 'unenrolself', new pix_icon('i/user', ''));
-                $unenrolprinted = true;
-                //TODO. deal with multiple unenrol links - not likely case, but still...
+        } else {
+            if (is_viewing($coursecontext)) {
+                // better not show any enrol link, this is intended for managers and inspectors
+            } else {
+                foreach ($instances as $instance) {
+                    if (!isset($plugins[$instance->enrol])) {
+                        continue;
+                    }
+                    $plugin = $plugins[$instance->enrol];
+                    if ($plugin->show_enrolme_link($instance)) {
+                        $url = new moodle_url('/enrol/index.php', array('id'=>$course->id));
+                        $coursenode->add(get_string('enrolme', 'core_enrol', format_string($course->shortname)), $url, navigation_node::TYPE_SETTING, null, 'enrolself', new pix_icon('i/user', ''));
+                        break;
+                    }
+                }
             }
-        }
-        // Enrol link
-        if (!$unenrolprinted and !is_viewing($coursecontext) and !is_enrolled($coursecontext)) {
-            $url = new moodle_url('/enrol/index.php', array('id'=>$course->id));
-            $coursenode->add(get_string('enrolme', 'core_enrol', format_string($course->shortname)), $url, navigation_node::TYPE_SETTING, null, 'enrolself', new pix_icon('i/user', ''));
         }
     }
 }
@@ -786,6 +798,17 @@ abstract class enrol_plugin {
     }
 
     /**
+     * Does this plugin support some way to user to self enrol?
+     *
+     * @param stdClass $instance course enrol instance
+     *
+     * @return bool - true means show "Enrol me in this course" link in course UI
+     */
+    public function show_enrolme_link(stdClass $instance) {
+        return false;
+    }
+
+    /**
      * Attempt to automatically enrol current user in course without any interaction,
      * calling code has to make sure the plugin and instance are active.
      *
@@ -1058,8 +1081,8 @@ abstract class enrol_plugin {
     /**
      * Returns list of unenrol links for all enrol instances in course.
      *
-     * @param int $courseid
-     * @return moodle_url
+     * @param int $instance
+     * @return moodle_url or NULL if self unernolmnet not supported
      */
     public function get_unenrolself_link($instance) {
         global $USER, $CFG, $DB;
@@ -1081,14 +1104,12 @@ abstract class enrol_plugin {
             return NULL;
         }
 
-        $context = get_context_instance(CONTEXT_COURSE, $instance->courseid, MUST_EXIST);
-        $courseid = $instance->courseid;
-
         if (!file_exists("$CFG->dirroot/enrol/$name/unenrolself.php")) {
             return NULL;
         }
 
-        $context = get_context_instance(CONTEXT_COURSE, $courseid);
+        $context = get_context_instance(CONTEXT_COURSE, $instance->courseid, MUST_EXIST);
+
         if (!has_capability("enrol/$name:unenrolself", $context)) {
             return NULL;
         }

@@ -67,6 +67,10 @@ class enrol_self_plugin extends enrol_plugin {
         return true;
     }
 
+    public function show_enrolme_link(stdClass $instance) {
+        return ($instance->status == ENROL_INSTANCE_ENABLED);
+    }
+
     /**
      * Returns link to page which may be used to add new instance of enrolment plugin in course.
      * @param int $courseid
