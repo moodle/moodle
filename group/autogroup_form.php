@@ -70,7 +70,7 @@ class autogroup_form extends moodleform {
         $mform->setAdvanced('allocateby');
 
         $mform->addElement('text', 'namingscheme', get_string('namingscheme', 'group'));
-        $mform->setHelpButton('namingscheme', array('namingscheme', get_string('namingschemehelp', 'group'), 'group'));
+        $mform->addHelpButton('namingscheme', 'namingscheme', 'group');
         $mform->addRule('namingscheme', get_string('required'), 'required', null, 'client');
         $mform->setType('namingscheme', PARAM_MULTILANG);
         // there must not be duplicate group names in course
