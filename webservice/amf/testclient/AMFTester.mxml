@@ -137,6 +137,7 @@
 						methods.push({label: cls+'.'+meth, docs: api.data[cls]['methods'][meth]['docs'], args: api.data[cls]['methods'][meth]['params']});
 					}
 				}
+				methods.sortOn('label', Array.CASEINSENSITIVE);
 				
 				this.panelDebug.enabled = true;
 				this.maintabs.selectedIndex = 1;
@@ -154,9 +155,13 @@
 			protected function process(event:Event):void
 			{
 				if (api.error) {
-					push(input, time() + ": Exception (faultString: "+api.data.faultString+", extendedData: "+api.data.extendedData+", faultDetail: "+api.data.faultDetail+")\n");
+					var keys:String = '';
+					for (var key:String in api.data){
+						keys += key+' ';
+					}
+					push(output, time() + ": Exception (code: "+api.data.code+", description: "+api.data.description+" (line: "+api.data.line+") detail:\n "+api.data.detail+")\n");
 				} else {
-					push(input, time() + ": "+JSON.encode(api.data)+"\n");
+					push(output, time() + ": "+JSON.encode(api.data)+"\n");
 				}
 //				MonsterDebugger.trace(this, {"data":api.data, "error":api.error});
 //				MonsterDebugger.trace(this, api.data);
@@ -175,18 +180,31 @@
 					this['arg'+i].includeInLayout = false;
 					this['larg'+i].visible = false;
 					this['larg'+i].includeInLayout = false;
+					this['cbarg'+i].visible = false;
+					this['cbarg'+i].includeInLayout = false;
 					this['JSONV'+i].enabled = false;
 				}
 				i = 1;
 				for (var arg:String in func.selectedItem.args) {
 					(this['arg'+i] as TextInput).visible = true;
 					(this['arg'+i] as TextInput).includeInLayout = true;
+					if (func.selectedItem.args[arg]['required']){
+						(this['arg'+i] as TextInput).enabled = true;
+						this['cbarg'+i].selected = true;
+					}
 					(this['larg'+i] as Label).visible = true;
 					(this['larg'+i] as Label).includeInLayout = true;
-					this['JSONV'+i].enabled = true;
-					this['JSONV'+i].required = func.selectedItem.args[arg]['required'];
+					this['cbarg'+i].visible = !func.selectedItem.args[arg]['required'];
+					this['cbarg'+i].includeInLayout = !func.selectedItem.args[arg]['required'];
+					this['JSONV'+i].enabled = this['cbarg'+i].selected;
+					this['JSONV'+i].required = true;
 					
-					(this['larg'+i++] as Label).text = func.selectedItem.args[arg]['name'] + (func.selectedItem.args[arg]['required'] ? "*":"");
+					(this['larg'+i] as Label).text = func.selectedItem.args[arg]['name'] + (func.selectedItem.args[arg]['required'] ? "*":"");
+					i++;
+				}
+				while (i <= 7) {
+					this['cbarg'+i].selected = false;
+					i++;
 				}
 				if (func.selectedItem.docs == ""){
 					(this.methodDescription as TextArea).text = "";
@@ -196,6 +214,23 @@
 					(this.methodDescription as TextArea).text = func.selectedItem.docs.replace(/[\n\r\f]+/g, "\n");
 					(this.methodDescription as TextArea).visible = true;
 					(this.methodDescription as TextArea).includeInLayout = true;
+				}
+			}
+			
+			public function toggleCheckBoxes(startAt:uint):void{
+				var i:uint= startAt;
+				if (this['cbarg'+i].selected){
+					i--;
+					while (i >= 1){
+						this['cbarg'+i].selected = true;
+						i--;
+					}
+				} else {
+					i++;
+					while (i <= 7){
+						this['cbarg'+i].selected = false;
+						i++;
+					}
 				}
 			}
 			
@@ -211,12 +246,14 @@
 //					MonsterDebugger.trace(this, argumentErrors);
 					return;
 				}
-				for(var i:int = 1; i < 8; i++)
+				for(var i:int = 1; i <= 7; i++)
 				{
 					input = this['arg' +i] as TextInput;
-					if(input)
+					if(input && input.visible)
 					{
-						if (input.text.indexOf("{") == 0 || input.text.indexOf("[") == 0)
+						if (!this['cbarg' +i].selected){
+							break;
+						} else if (input.text.indexOf("\"") == 0 || input.text.indexOf("{") == 0 || input.text.indexOf("[") == 0)
 							try {
 								argumentArray.push(JSON.decode(input.text));
 							} catch (err:Error){
@@ -228,7 +265,7 @@
 				}
 				
 				
-				api.exec(func.selectedLabel, argumentArray[0], argumentArray[1], argumentArray[2], argumentArray[3], argumentArray[4], argumentArray[5], argumentArray[6]);
+				api.exec(func.selectedLabel, argumentArray);
 //				MonsterDebugger.trace(this, [func.selectedLabel, argumentArray[0], argumentArray[1], argumentArray[2], argumentArray[3], argumentArray[4], argumentArray[5], argumentArray[6]]);
 				push(output, time() + ": Calling "+func.selectedLabel+" with arguments - "+JSON.encode(argumentArray));
 			}
@@ -238,7 +275,7 @@
 			 */
 			protected function clear():void
 			{
-				input.text = output.text = "";
+				output.text = output.text = "";
 			}
 			
 			/**
@@ -266,7 +303,7 @@
 			 */
 			public function netStatusHandler(event:NetStatusEvent):void 
 			{
-				push(input, time() + ": Error("+event.type+"): "+event.info.code+", "+event.info.description+", "+event.info.details);
+				push(output, time() + ": Error("+event.type+"): "+event.info.code+", "+event.info.description+", "+event.info.details);
 			}
 			
 			/**
@@ -274,7 +311,7 @@
 			 */
 			public function securityErrorHandler(event:SecurityErrorEvent):void
 			{
-				push(input, time() + ": Error("+event.type+"): "+event.text);
+				push(output, time() + ": Error("+event.type+"): "+event.text);
 			}
 		
 			/**
@@ -282,7 +319,7 @@
 			 */
 			public function ioErrorHandler(event:IOErrorEvent):void 
 			{
-				push(input, time() + ": Error("+event.type+"): "+event.text);
+				push(output, time() + ": Error("+event.type+"): "+event.text);
 			}
 			
 			/**
@@ -297,13 +334,13 @@
 		]]>
 	</mx:Script>
 	<mx:Array id="argumentValidators">
-		<cv:JSONValidator id="JSONV1" required="false"  source="{arg1}"  property="text" />
-		<cv:JSONValidator id="JSONV2" required="false"  source="{arg2}"  property="text" />
-		<cv:JSONValidator id="JSONV3" required="false"  source="{arg3}"  property="text" />
-		<cv:JSONValidator id="JSONV4" required="false"  source="{arg4}"  property="text" />
-		<cv:JSONValidator id="JSONV5" required="false"  source="{arg5}"  property="text" />
-		<cv:JSONValidator id="JSONV6" required="false"  source="{arg6}"  property="text" />
-		<cv:JSONValidator id="JSONV7" required="false"  source="{arg7}"  property="text" />
+		<cv:JSONValidator id="JSONV1" required="true" enabled="{cbarg1.selected}" source="{arg1}"  property="text" />
+		<cv:JSONValidator id="JSONV2" required="true" enabled="{cbarg2.selected}" source="{arg2}"  property="text" />
+		<cv:JSONValidator id="JSONV3" required="true" enabled="{cbarg3.selected}" source="{arg3}"  property="text" />
+		<cv:JSONValidator id="JSONV4" required="true" enabled="{cbarg4.selected}" source="{arg4}"  property="text" />
+		<cv:JSONValidator id="JSONV5" required="true" enabled="{cbarg5.selected}" source="{arg5}"  property="text" />
+		<cv:JSONValidator id="JSONV6" required="true" enabled="{cbarg6.selected}" source="{arg6}"  property="text" />
+		<cv:JSONValidator id="JSONV7" required="true" enabled="{cbarg7.selected}" source="{arg7}"  property="text" />
 	</mx:Array>
 		
 
@@ -359,38 +396,44 @@
 			<mx:TextArea id="methodDescription" text="" width="100%" height="120"/>
 			<mx:HBox width="100%">
 				<mx:Label id="larg1" text="Arg 1"/>
-				<mx:TextInput id="arg1" toolTip="{argumentToolTip}" width="100%"/>
+				<mx:CheckBox id="cbarg1" click="toggleCheckBoxes(1)"/>
+				<mx:TextInput id="arg1" toolTip="{argumentToolTip}" width="100%" enabled="{cbarg1.selected}"/>
 			</mx:HBox>
 			<mx:HBox width="100%">
 				<mx:Label id="larg2" text="Arg 2"/>
-				<mx:TextInput id="arg2" toolTip="{argumentToolTip}" width="100%"/>
+				<mx:CheckBox id="cbarg2" click="toggleCheckBoxes(2)"/>
+				<mx:TextInput id="arg2" toolTip="{argumentToolTip}" width="100%" enabled="{cbarg2.selected}"/>
 			</mx:HBox>
 			<mx:HBox width="100%">
 				<mx:Label id="larg3" text="Arg 3"/>
-				<mx:TextInput id="arg3" toolTip="{argumentToolTip}" width="100%"/>
+				<mx:CheckBox id="cbarg3" click="toggleCheckBoxes(3)"/>
+				<mx:TextInput id="arg3" toolTip="{argumentToolTip}" width="100%" enabled="{cbarg3.selected}"/>
 			</mx:HBox>
 			<mx:HBox width="100%">
 				<mx:Label id="larg4" text="Arg 4"/>
-				<mx:TextInput id="arg4" toolTip="{argumentToolTip}" width="100%"/>
+				<mx:CheckBox id="cbarg4" click="toggleCheckBoxes(4)"/>
+				<mx:TextInput id="arg4" toolTip="{argumentToolTip}" width="100%" enabled="{cbarg4.selected}"/>
 			</mx:HBox>
 			<mx:HBox width="100%">
 				<mx:Label id="larg5" text="Arg 5"/>
-				<mx:TextInput id="arg5" toolTip="{argumentToolTip}" width="100%"/>
+				<mx:CheckBox id="cbarg5" click="toggleCheckBoxes(5)"/>
+				<mx:TextInput id="arg5" toolTip="{argumentToolTip}" width="100%" enabled="{cbarg5.selected}"/>
 			</mx:HBox>
 			<mx:HBox width="100%">
 				<mx:Label id="larg6" text="Arg 6"/>
-				<mx:TextInput id="arg6" toolTip="{argumentToolTip}" width="100%"/>
+				<mx:CheckBox id="cbarg6" click="toggleCheckBoxes(6)"/>
+				<mx:TextInput id="arg6" toolTip="{argumentToolTip}" width="100%" enabled="{cbarg6.selected}"/>
 			</mx:HBox>
 			<mx:HBox width="100%">
 				<mx:Label id="larg7" text="Arg 7"/>
-				<mx:TextInput id="arg7" toolTip="{argumentToolTip}" width="100%"/>
+				<mx:CheckBox id="cbarg7" click="toggleCheckBoxes(7)"/>
+				<mx:TextInput id="arg7" toolTip="{argumentToolTip}" width="100%" enabled="{cbarg7.selected}"/>
 			</mx:HBox>
 			<mx:HBox width="100%">
 				<mx:Button id="call" label="Call" click="execute()"/>
 				<mx:Button label="Clear" click="clear()"/>
 			</mx:HBox>
-			<mx:TextArea id="output"  width="100%" height="100"/>
-			<mx:TextArea id="input"  width="100%" height="300"/>
+			<mx:TextArea id="output"  width="100%" height="400"/>
 		</mx:Panel>
     </mx:TabNavigator>
 	

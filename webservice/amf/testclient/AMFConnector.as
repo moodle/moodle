@@ -30,9 +30,9 @@ package {
 		/**
 		 * executes a command on the remote server, passing all the given arguments along
 		 */
-		public function exec(command:String, ... args:Array):void
+		public function exec(command:String, args:Array = null):void
 		{
-			if (!args) args = [];
+			if (args == null) args = [];
 			args.unshift(responder);
 			args.unshift(command);
 			(call as Function).apply(this, args);
