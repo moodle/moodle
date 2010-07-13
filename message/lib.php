@@ -380,11 +380,11 @@ function message_print_contacts($onlinecontacts, $offlinecontacts, $strangers, $
         echo $OUTPUT->container_start('messagejsautorefresh note center');
         echo get_string('pagerefreshes', 'message', $CFG->message_contacts_refresh);
         echo $OUTPUT->container_end();
-    }
 
-    echo $OUTPUT->container_start('messagejsmanualrefresh aligncenter');
-    echo $OUTPUT->single_button(message_remove_url_params($PAGE->url), get_string('refresh'));
-    echo $OUTPUT->container_end();
+        echo $OUTPUT->container_start('messagejsmanualrefresh aligncenter');
+        echo $OUTPUT->single_button(message_remove_url_params($PAGE->url), get_string('refresh'));
+        echo $OUTPUT->container_end();
+    }
 }
 
 function message_print_usergroup_selector($usergroup, &$courses, &$coursecontexts, $countunreadtotal, $countblocked, $strunreadmessages) {
