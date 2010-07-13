@@ -41,6 +41,7 @@ if (!$course = $DB->get_record('course', array('id' => $courseid))) {
 }
 $usercontext = get_context_instance(CONTEXT_USER, $user->id);
 $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
+$systemcontext = get_context_instance(CONTEXT_SYSTEM);
 
 $baseurl = new moodle_url('/admin/roles/usersroles.php', array('userid'=>$userid, 'courseid'=>$courseid));
 $PAGE->set_url($baseurl);
