@@ -43,7 +43,9 @@ if ($frm = data_submitted() and confirm_sesskey()) {
         }
     }
 } else {
-    $frm = get_config("auth/$auth");
+    $frmlegacystyle = get_config('auth/'.$auth);
+    $frmnewstyle    = get_config('auth_'.$auth);
+    $frm = (object)array_merge((array)$frmlegacystyle, (array)$frmnewstyle);
 }
 
 $user_fields = $authplugin->userfields;
