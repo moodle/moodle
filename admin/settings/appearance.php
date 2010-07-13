@@ -120,6 +120,7 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
     $temp->add(new admin_setting_configcheckbox('enableajax', get_string('enableajax', 'admin'), get_string('configenableajax', 'admin'), 1));
     $temp->add(new admin_setting_configcheckbox('useexternalyui', get_string('useexternalyui', 'admin'), get_string('configuseexternalyui', 'admin'), 0));
     $temp->add(new admin_setting_configcheckbox('yuicomboloading', get_string('yuicomboloading', 'admin'), get_string('configyuicomboloading', 'admin'), 1));
+    $temp->add(new admin_setting_configcheckbox('cachejs', get_string('cachejs', 'admin'), get_string('cachejs_help', 'admin'), 1));
     $temp->add(new admin_setting_configcheckbox('disablecourseajax', get_string('disablecourseajax', 'admin'), get_string('configdisablecourseajax', 'admin'),
                                                 isset($CFG->disablecourseajax) ? 1 : empty($CFG->enableajax)));
     $ADMIN->add('appearance', $temp);
