@@ -477,18 +477,46 @@ class rating_manager {
         $params['contextid']= $contextid;
         $itemtable          = $options->itemtable;
         $itemtableusercolumn= $options->itemtableusercolumn;
-        $scaleid            = $options->scaleid;
-        $params['userid1'] = $params['userid2'] = $params['userid3']  = $options->userid;
-
+        $scaleid            = $options->scaleid;        
         $aggregationstring = $this->get_aggregation_method($options->aggregationmethod);
 
-        $sql = "SELECT :userid1 as id, :userid2 AS userid, $aggregationstring(r.rating) AS rawgrade
-                FROM {rating} r
-                WHERE r.contextid=:contextid
-                    AND r.itemid IN (SELECT i.id AS itemid FROM {{$itemtable}} i WHERE i.{$itemtableusercolumn} = :userid3)";
+        //if userid is 0 we want all user grades within this context
+        if ($options->userid!=0) {
+            $params['userid1'] = $params['userid2'] = $params['userid3']  = $options->userid;
+            $sql = "SELECT :userid1 AS id, :userid2 AS userid, $aggregationstring(r.rating) AS rawgrade
+                    FROM {rating} r
+                    JOIN {{$itemtable}} i ON r.itemid=i.id
+                    WHERE r.contextid=:contextid
+                    AND i.{$itemtableusercolumn} = :userid3";
+        } else {
+            $sql = "SELECT u.id as id, u.id AS userid, $aggregationstring(r.rating) AS rawgrade
+                    FROM {user} u
+                    LEFT JOIN {{$itemtable}} i ON u.id=i.{$itemtableusercolumn}
+                    LEFT JOIN {rating} r ON r.itemid=i.id
+                    WHERE (r.contextid is null or r.contextid=:contextid)
+                    GROUP BY u.id";
+        }
 
         $results = $DB->get_records_sql($sql, $params);
+
         if ($results) {
+
+            $scale = null;
+            $max = 0;
+            if ($options->scaleid >= 0) {
+                //numeric
+                $max = $options->scaleid;
+            } else {
+                //custom scales
+                $scale = $DB->get_record('scale', array('id' => -$options->scaleid));
+                if ($scale) {
+                    $scale = explode(',', $scale->scale);
+                    $max = count($scale);
+                } else {
+                    debugging('rating_manager::get_user_grades() received a scale ID that doesnt exist');
+                }
+            }
+
             // it could throw off the grading if count and sum returned a rawgrade higher than scale
             // so to prevent it we review the results and ensure that rawgrade does not exceed the scale, if it does we set rawgrade = scale (i.e. full credit)
             foreach ($results as $rid=>$result) {
@@ -499,16 +527,13 @@ class rating_manager {
                     }
                 } else {
                     //scales
-                    if ($scale = $DB->get_record('scale', array('id' => -$options->scaleid))) {
-                        $scale = explode(',', $scale->scale);
-                        $max = count($scale);
-                        if ($result->rawgrade > $max) {
-                            $results[$rid]->rawgrade = $max;
-                        }
+                    if (!empty($scale) && $result->rawgrade > $max) {
+                        $results[$rid]->rawgrade = $max;
                     }
                 }
             }
         }
+
         return $results;
     }
 
