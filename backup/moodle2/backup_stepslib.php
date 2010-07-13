@@ -620,6 +620,15 @@ class backup_comments_structure_step extends backup_structure_step {
  */
 class backup_gradebook_structure_step extends backup_structure_step {
 
+    /**
+     * We need to decide conditionally, based on dynamic information
+     * about the execution of this step. Only will be executed if all
+     * the module gradeitems have been already included in backup
+     */
+    protected function execute_condition() {
+        return backup_plan_dbops::require_gradebook_backup($this->get_courseid(), $this->get_backupid());
+    }
+
     protected function define_structure() {
 
         // are we including user info?
@@ -650,8 +659,8 @@ class backup_gradebook_structure_step extends backup_structure_step {
 
         //grade_categories
         $grade_categories = new backup_nested_element('grade_categories');
-        $grade_category   = new backup_nested_element('grade_category', null, array('courseid', 
-                'parent', 'depth', 'path', 'fullname', 'aggregation', 'keephigh', 
+        $grade_category   = new backup_nested_element('grade_category', null, array('courseid',
+                'parent', 'depth', 'path', 'fullname', 'aggregation', 'keephigh',
                 'dropload', 'aggregateonlygraded', 'aggregateoutcomes', 'aggregatesubcats',
                 'timecreated', 'timemodified'));
 
@@ -679,7 +688,7 @@ class backup_gradebook_structure_step extends backup_structure_step {
 
         //if itemtype == manual then item is a calculated item so isn't attached to an activity and we need to back it up here
         $grade_items_array = grade_item::fetch_all(array('itemtype' => 'manual', 'courseid' => $this->get_courseid()));
-        
+
         //$grade_items_array==false and not an empty array if no items. set_source_array() fails if you pass a bool
         if ($grade_items_array) {
             $grade_item->set_source_array($grade_items_array);

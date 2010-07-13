@@ -40,6 +40,10 @@ class backup_final_task extends backup_task {
         $coursectxid = get_context_instance(CONTEXT_COURSE, $this->get_courseid())->id;
         $this->add_setting(new backup_activity_generic_setting(backup::VAR_CONTEXTID, base_setting::IS_INTEGER, $coursectxid));
 
+        // Set the backup::VAR_COURSEID setting to course, we'll need that in some steps
+        $courseid = $this->get_courseid();
+        $this->add_setting(new backup_activity_generic_setting(backup::VAR_COURSEID, base_setting::IS_INTEGER, $courseid));
+
         // Generate the groups file with the final annotated groups and groupings
         // including membership based on setting
         $this->add_step(new backup_groups_structure_step('groups', 'groups.xml'));
@@ -74,6 +78,10 @@ class backup_final_task extends backup_task {
         // Migrate the pending annotations to final (prev steps may have added some files)
         // This must be executed before backup files
         $this->add_step(new move_inforef_annotations_to_final('migrate_inforef'));
+
+        // Generate the gradebook file with categories and course grade items. Do it conditionally, using
+        // execute_condition() so only will be excuted if ALL module grade_items in course have been exported
+        $this->add_step(new backup_gradebook_structure_step('course_gradebook','gradebook.xml'));
 
         // Generate the files.xml file with all the (final) annotated files. At the same
         // time copy all the files from moodle storage to backup storage (uses custom
