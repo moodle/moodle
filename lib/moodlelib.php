@@ -1065,6 +1065,34 @@ function get_users_from_config($value, $capability, $includeadmins = true) {
     return $result;
 }
 
+
+/**
+ * Invalidates browser caches and cached data in temp
+ * @return void
+ */
+function purge_all_caches() {
+    global $CFG;
+
+    remove_dir("$CFG->dataroot/rss", true);
+
+    reset_text_filters_cache();
+    js_reset_all_caches();
+    theme_reset_all_caches();
+    get_string_manager()->reset_caches();
+
+    // purge all other caches: simplepie, etc.
+    remove_dir($CFG->dataroot.'/cache', true);
+
+    // some more diagnostics in case site is misconfigured
+    if (!check_dir_exists($CFG->dataroot.'/cache', true, true)) {
+        debugging('Can not create cache directory, please check permissions in dataroot.');
+    } else if (!is_writeable($CFG->dataroot.'/cache')) {
+        debugging('Cache directory is not writeable, please verify permissions in dataroot.');
+    }
+
+    clearstatcache();
+}
+
 /**
  * Get volatile flags
  *

@@ -378,6 +378,7 @@ if (!empty($CFG->maintenance_enabled)) {
     echo $OUTPUT->box(get_string('sitemaintenancewarning2', 'admin', "$CFG->wwwroot/$CFG->admin/settings.php?section=maintenancemode"), 'generalbox adminwarning');
 }
 
+echo $OUTPUT->single_button(new moodle_url('/admin/purgecaches.php'), get_string('purgecaches', 'admin'), 'post');
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 ////  IT IS ILLEGAL AND A VIOLATION OF THE GPL TO HIDE, REMOVE OR MODIFY THIS COPYRIGHT NOTICE ///
