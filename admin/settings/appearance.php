@@ -26,7 +26,11 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
     foreach (get_plugin_list('theme') as $theme => $themedir) {
         $settings_path = "$themedir/settings.php";
         if (file_exists($settings_path)) {
+            $settings = new admin_settingpage('themesetting'.$theme, get_string('pluginname', 'theme_'.$theme));
             include($settings_path);
+            if ($settings) {
+                $ADMIN->add('themes', $settings);
+            }
         }
     }
 

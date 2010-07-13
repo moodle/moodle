@@ -7,6 +7,8 @@
  * @package quiz
  */
 
+defined('MOODLE_INTERNAL') || die;
+
 require_once($CFG->dirroot . '/mod/quiz/lib.php');
 require_once($CFG->dirroot . '/mod/quiz/settingslib.php');
 
@@ -165,6 +167,7 @@ if (empty($reportsbyname)) {
 /// Add the report pages for the settings.php files in sub directories of mod/quiz/report
     foreach ($reportsbyname as $strreportname => $report) {
         $reportname = $report;
+
         $settings = new admin_settingpage('modsettingsquizcat'.$reportname, $strreportname, 'moodle/site:config', !$module->visible);
         if ($ADMIN->fulltree) {
             include($CFG->dirroot."/mod/quiz/report/$reportname/settings.php");
@@ -172,3 +175,5 @@ if (empty($reportsbyname)) {
         $ADMIN->add('modsettingsquizcat', $settings);
     }
 }
+
+$settings = NULL; // we do not want standard settings link

@@ -17,16 +17,21 @@
 
 /// Add settings for this module to the $settings object (it's already defined)
 
-$settings->add(new admin_setting_configcheckbox('grade_report_user_showrank', get_string('showrank', 'grades'), get_string('showrank_help', 'grades'), 0, PARAM_INT));
-$settings->add(new admin_setting_configcheckbox('grade_report_user_showpercentage', get_string('showpercentage', 'grades'), get_string('showpercentage_help', 'grades'), 2, PARAM_INT));
+defined('MOODLE_INTERNAL') || die;
 
-$options = array(0 => get_string('shownohidden', 'grades'),
-                 1 => get_string('showhiddenuntilonly', 'grades'),
-                 2 => get_string('showallhidden', 'grades'));
-$settings->add(new admin_setting_configselect('grade_report_user_showhiddenitems', get_string('showhiddenitems', 'grades'), get_string('showhiddenitems_help', 'grades'), 1, $options));
+if ($ADMIN->fulltree) {
 
-$settings->add(new admin_setting_configselect('grade_report_user_showtotalsifcontainhidden', get_string('hidetotalifhiddenitems', 'grades'),
-                                                  get_string('hidetotalifhiddenitems_help', 'grades'), GRADE_REPORT_HIDE_TOTAL_IF_CONTAINS_HIDDEN,
-                                                  array(GRADE_REPORT_HIDE_TOTAL_IF_CONTAINS_HIDDEN => get_string('hide'),
-                                                        GRADE_REPORT_SHOW_TOTAL_IF_CONTAINS_HIDDEN => get_string('hidetotalshowexhiddenitems', 'grades'),
-                                                        GRADE_REPORT_SHOW_REAL_TOTAL_IF_CONTAINS_HIDDEN => get_string('hidetotalshowinchiddenitems', 'grades'))));
+    $settings->add(new admin_setting_configcheckbox('grade_report_user_showrank', get_string('showrank', 'grades'), get_string('showrank_help', 'grades'), 0, PARAM_INT));
+    $settings->add(new admin_setting_configcheckbox('grade_report_user_showpercentage', get_string('showpercentage', 'grades'), get_string('showpercentage_help', 'grades'), 2, PARAM_INT));
+
+    $options = array(0 => get_string('shownohidden', 'grades'),
+                     1 => get_string('showhiddenuntilonly', 'grades'),
+                     2 => get_string('showallhidden', 'grades'));
+    $settings->add(new admin_setting_configselect('grade_report_user_showhiddenitems', get_string('showhiddenitems', 'grades'), get_string('showhiddenitems_help', 'grades'), 1, $options));
+
+    $settings->add(new admin_setting_configselect('grade_report_user_showtotalsifcontainhidden', get_string('hidetotalifhiddenitems', 'grades'),
+                                                      get_string('hidetotalifhiddenitems_help', 'grades'), GRADE_REPORT_HIDE_TOTAL_IF_CONTAINS_HIDDEN,
+                                                      array(GRADE_REPORT_HIDE_TOTAL_IF_CONTAINS_HIDDEN => get_string('hide'),
+                                                            GRADE_REPORT_SHOW_TOTAL_IF_CONTAINS_HIDDEN => get_string('hidetotalshowexhiddenitems', 'grades'),
+                                                            GRADE_REPORT_SHOW_REAL_TOTAL_IF_CONTAINS_HIDDEN => get_string('hidetotalshowinchiddenitems', 'grades'))));
+}

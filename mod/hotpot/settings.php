@@ -1,9 +1,11 @@
 <?php
 
-$settings->add(new admin_setting_configcheckbox('hotpot_showtimes', get_string('showtimes', 'hotpot'),
-                    get_string('configshowtimes', 'hotpot'), 0) );
+defined('MOODLE_INTERNAL') || die;
 
-$settings->add(new admin_setting_configtext('hotpot_excelencodings', get_string('excelencodings', 'hotpot'),
-                   get_string('configexcelencodings', 'hotpot'), '') );
+if ($ADMIN->fulltree) {
+    $settings->add(new admin_setting_configcheckbox('hotpot_showtimes', get_string('showtimes', 'hotpot'),
+                        get_string('configshowtimes', 'hotpot'), 0) );
 
-
+    $settings->add(new admin_setting_configtext('hotpot_excelencodings', get_string('excelencodings', 'hotpot'),
+                       get_string('configexcelencodings', 'hotpot'), '') );
+}

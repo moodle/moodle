@@ -7090,6 +7090,7 @@ function get_plugin_list($plugintype) {
         unset($items);
     }
 
+    //TODO: implement better sorting once we migrated all plugin names to 'pluginname', ksort does not work for unicode, that is why we have to sort by the dir name, not the strings!
     ksort($result);
     return $result;
 }

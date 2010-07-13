@@ -14,15 +14,13 @@ if ($hassiteconfig) {
             continue;
         }
         $strmodulename = get_string('modulename', 'mod_'.$modulename);
-        if (file_exists($CFG->dirroot.'/mod/'.$modulename.'/settingstree.php')) {
-            include($CFG->dirroot.'/mod/'.$modulename.'/settingstree.php');
-        } else if (file_exists($CFG->dirroot.'/mod/'.$modulename.'/settings.php')) {
+        if (file_exists($CFG->dirroot.'/mod/'.$modulename.'/settings.php')) {
             // do not show disabled modules in tree, keep only settings link on manage page
             $settings = new admin_settingpage('modsetting'.$modulename, $strmodulename, 'moodle/site:config', !$module->visible);
-            if ($ADMIN->fulltree) {
-                include($CFG->dirroot.'/mod/'.$modulename.'/settings.php');
+            include($CFG->dirroot.'/mod/'.$modulename.'/settings.php');
+            if ($settings) {
+                $ADMIN->add('modsettings', $settings);
             }
-            $ADMIN->add('modsettings', $settings);
         }
     }
 
@@ -40,13 +38,10 @@ if ($hassiteconfig) {
         $strblockname = get_string('pluginname', 'block_'.$blockname);
         if (file_exists($CFG->dirroot.'/blocks/'.$blockname.'/settings.php')) {
             $settings = new admin_settingpage('blocksetting'.$blockname, $strblockname, 'moodle/site:config', !$block->visible);
-            if ($ADMIN->fulltree) {
-                include($CFG->dirroot.'/blocks/'.$blockname.'/settings.php');
+            include($CFG->dirroot.'/blocks/'.$blockname.'/settings.php');
+            if ($settings) {
+                $ADMIN->add('blocksettings', $settings);
             }
-            $ADMIN->add('blocksettings', $settings);
-
-        } else if (file_exists($CFG->dirroot.'/blocks/'.$blockname.'/config_global.html')) {
-            $ADMIN->add('blocksettings', new admin_externalpage('blocksetting'.$blockname, $strblockname, "$CFG->wwwroot/$CFG->admin/block.php?block=$block->id", 'moodle/site:config', !$block->visible));
         }
     }
 
@@ -74,29 +69,22 @@ if ($hassiteconfig) {
     $ADMIN->add('authsettings', $temp);
 
 
-    if ($auths = get_plugin_list('auth')) {
-        $authsenabled = get_enabled_auth_plugins();
-        $authbyname = array();
-
-        foreach ($auths as $auth => $authdir) {
-            $strauthname = get_string('pluginname', "auth_{$auth}");
-            $authbyname[$strauthname] = $auth;
-        }
-        ksort($authbyname);
-
-        foreach ($authbyname as $strauthname=>$authname) {
-            if (file_exists($authdir.'/settings.php')) {
-                // do not show disabled auths in tree, keep only settings link on manage page
-                $settings = new admin_settingpage('authsetting'.$authname, $strauthname, 'moodle/site:config', !in_array($authname, $authsenabled));
-                if ($ADMIN->fulltree) {
-                    include($authdir.'/settings.php');
-                }
-                // TODO: finish implementation of common settings - locking, etc.
+    $auths = get_plugin_list('auth');
+    $authsenabled = get_enabled_auth_plugins();
+    foreach ($auths as $authname => $authdir) {
+        $strauthname = get_string('pluginname', "auth_{$authname}");
+        // do not show disabled auths in tree, keep only settings link on manage page
+        $enabled = in_array($authname, $authsenabled);
+        if (file_exists($authdir.'/settings.php')) {
+            // TODO: finish implementation of common settings - locking, etc.
+            $settings = new admin_settingpage('authsetting'.$authname, $strauthname, 'moodle/site:config', !$enabled);
+            include($authdir.'/settings.php');
+            if ($settings) {
                 $ADMIN->add('authsettings', $settings);
-
-            } else {
-                $ADMIN->add('authsettings', new admin_externalpage('authsetting'.$authname, $strauthname, "$CFG->wwwroot/$CFG->admin/auth_config.php?auth=$authname", 'moodle/site:config', !in_array($authname, $authsenabled)));
             }
+
+        } else {
+            $ADMIN->add('authsettings', new admin_externalpage('authsetting'.$authname, $strauthname, "$CFG->wwwroot/$CFG->admin/auth_config.php?auth=$authname", 'moodle/site:config', !$enabled));
         }
     }
 
@@ -212,10 +200,10 @@ if ($hassiteconfig) {
         if (file_exists("$CFG->dirroot/$filterpath/filtersettings.php")) {
             $settings = new admin_settingpage('filtersetting'.str_replace('/', '', $filterpath),
                     $strfiltername, 'moodle/site:config', !isset($activefilters[$filterpath]));
-            if ($ADMIN->fulltree) {
-                include("$CFG->dirroot/$filterpath/filtersettings.php");
+            include("$CFG->dirroot/$filterpath/filtersettings.php");
+            if ($settings) {
+                $ADMIN->add('filtersettings', $settings);
             }
-            $ADMIN->add('filtersettings', $settings);
         }
     }
 
@@ -353,10 +341,10 @@ if ($hassiteconfig) {
         if (file_exists("$location/settings.php")) {
             $name = get_string('pluginname', 'webservice_'.$webservice);
             $settings = new admin_settingpage('webservicesetting'.$webservice, $name, 'moodle/site:config', !in_array($webservice, $active_webservices) or empty($CFG->enablewebservices));
-            if ($ADMIN->fulltree) {
-                include("$location/settings.php");
+            include("$location/settings.php");
+            if ($settings) {
+                $ADMIN->add('webservicesettings', $settings);
             }
-            $ADMIN->add('webservicesettings', $settings);
         }
     }
     /// manage token page link
@@ -380,10 +368,10 @@ if ($hassiteconfig || has_capability('moodle/question:config', $systemcontext)) 
         if (file_exists($settingsfile)) {
             $settings = new admin_settingpage('qtypesetting' . $qtype->name(),
                     $qtype->local_name(), 'moodle/question:config');
-            if ($ADMIN->fulltree) {
-                include($settingsfile);
+            include($settingsfile);
+            if ($settings) {
+                $ADMIN->add('qtypesettings', $settings);
             }
-            $ADMIN->add('qtypesettings', $settings);
         }
     }
 }

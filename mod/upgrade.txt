@@ -38,6 +38,7 @@ required changes in code:
 * replace helps with new 'xxx_hlp' strings
 
 optional - no changes needed in older code:
+* settingstree.php replaced by settings.php - just unset the $settings if you want to make custom part of settings admin tree
 * support for new mforms editor element and embedded files
   (not finished yet)
 * portfolio support

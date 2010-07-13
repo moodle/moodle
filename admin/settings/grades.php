@@ -176,10 +176,10 @@ if (has_capability('moodle/grade:manage', $systemcontext)
      // Include all the settings commands for this plugin if there are any
         if (file_exists($plugindir.'/settings.php')) {
             $settings = new admin_settingpage('gradereport'.$plugin, get_string('pluginname', 'gradereport_'.$plugin), 'moodle/grade:manage');
-            if ($ADMIN->fulltree) {
-                include($plugindir.'/settings.php');
+            include($plugindir.'/settings.php');
+            if ($settings) {
+                $ADMIN->add('gradereports', $settings);
             }
-            $ADMIN->add('gradereports', $settings);
         }
     }
 
@@ -190,10 +190,10 @@ if (has_capability('moodle/grade:manage', $systemcontext)
      // Include all the settings commands for this plugin if there are any
         if (file_exists($plugindir.'/settings.php')) {
             $settings = new admin_settingpage('gradeimport'.$plugin, get_string('pluginname', 'gradeimport_'.$plugin), 'moodle/grade:manage');
-            if ($ADMIN->fulltree) {
-                include($plugindir.'/settings.php');
+            include($plugindir.'/settings.php');
+            if ($settings) {
+                $ADMIN->add('gradeimports', $settings);
             }
-            $ADMIN->add('gradeimports', $settings);
         }
     }
 
@@ -204,10 +204,10 @@ if (has_capability('moodle/grade:manage', $systemcontext)
      // Include all the settings commands for this plugin if there are any
         if (file_exists($plugindir.'/settings.php')) {
             $settings = new admin_settingpage('gradeexport'.$plugin, get_string('pluginname', 'gradeexport_'.$plugin), 'moodle/grade:manage');
-            if ($ADMIN->fulltree) {
-                include($plugindir.'/settings.php');
+            include($plugindir.'/settings.php');
+            if ($settings) {
+                $ADMIN->add('gradeexports', $settings);
             }
-            $ADMIN->add('gradeexports', $settings);
         }
     }
 
