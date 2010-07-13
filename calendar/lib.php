@@ -681,10 +681,19 @@ function calendar_top_controls($type, $data) {
             list($nextmonth, $nextyear) = calendar_add_month($data['m'], $data['y']);
             $nextlink = calendar_get_link_next(get_string('monthnext', 'access'), 'index.php?', 0, $nextmonth, $nextyear, $accesshide=true);
             $prevlink = calendar_get_link_previous(get_string('monthprev', 'access'), 'index.php?', 0, $prevmonth, $prevyear, true);
-            $content .= "\n".'<div class="calendar-controls">'. $prevlink;
-            $content .= '<span class="hide"> | </span><span class="current"><a href="'.calendar_get_link_href(CALENDAR_URL.'view.php?view=month'.$courseid.'&amp;', 1, $data['m'], $data['y']).'">'.userdate($time, get_string('strftimemonthyear')).'</a></span>';
-            $content .= '<span class="hide"> | </span>'. $nextlink ."\n";
-            $content .= "<span class=\"clearer\"><!-- --></span></div>\n";
+            
+            if (right_to_left()) {
+                $content .= "\n".'<div class="calendar-controls">'. $nextlink;
+                $content .= '<span class="hide"> | </span><span class="current"><a href="'.calendar_get_link_href(CALENDAR_URL.'view.php?view=month'.$courseid.'&amp;', 1, $data['m'], $data['y']).'">'.userdate($time, get_string('strftimemonthyear')).'</a></span>';
+                $content .= '<span class="hide"> | </span>'. $prevlink ."\n";
+                $content .= "<span class=\"clearer\"><!-- --></span></div>\n";
+            } else {
+                $content .= "\n".'<div class="calendar-controls">'. $prevlink;
+                $content .= '<span class="hide"> | </span><span class="current"><a href="'.calendar_get_link_href(CALENDAR_URL.'view.php?view=month'.$courseid.'&amp;', 1, $data['m'], $data['y']).'">'.userdate($time, get_string('strftimemonthyear')).'</a></span>';
+                $content .= '<span class="hide"> | </span>'. $nextlink ."\n";
+                $content .= "<span class=\"clearer\"><!-- --></span></div>\n";
+            }
+            
         break;
         case 'course':
             list($prevmonth, $prevyear) = calendar_sub_month($data['m'], $data['y']);
@@ -925,6 +934,7 @@ function calendar_get_link_previous($text, $linkbase, $d, $m, $y, $accesshide=fa
 function calendar_get_link_next($text, $linkbase, $d, $m, $y, $accesshide=false) {
     $href = calendar_get_link_href($linkbase, $d, $m, $y);
     if(empty($href)) return $text;
+    
     return link_arrow_right($text, $href, $accesshide, 'next');
 }
 

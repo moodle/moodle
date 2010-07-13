@@ -83,7 +83,9 @@ body {
 	margin: 0 auto;
 	text-align: left;
 }
-
+.dir-rtl .loginbox .loginform .form-label {
+	text-align: right;
+}
 .loginbox .loginform .form-input {
 	float: none;
 	width: 100%;

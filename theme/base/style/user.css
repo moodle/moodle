@@ -41,3 +41,8 @@
 #userselector_options .collapsibleregioncaption {font-weight: bold;}
 #userselector_options p {margin:0.2em 0;text-align:left;}
 #page-user-profile .messagebox {text-align:center;margin-left:auto;margin-right:auto;}
+
+/** Overide for RTL layout **/
+.dir-rtl .userprofile .profilepicture {float:right; margin-left:20px;margin-right:0px;}
+.dir-rtl .descriptionbox {margin-right: 110px;margin-left: 0px; }=======
+

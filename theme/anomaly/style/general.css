@@ -219,3 +219,7 @@ html, body {background-color:#C8C9C7;}
 .user #participantsform td {text-align:left;}
 .user table.controls {margin:5px auto;border:1px solid #DDD;background-color:#EEE;border-collapse: collapse;}
 .user table.controls td {border-width:0px;}
+
+/** Overide for RTL layout **/
+.dir-rtl #page-header .navbar .breadcrumb {float:right;}
+.dir-rtl #page-header .navbar .navbutton {float:left;}

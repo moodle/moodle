@@ -192,6 +192,8 @@ a.skip:active {position: static;display: block;}
 .mform fieldset.fdate_selector label {display:inline;float: none;width: auto;}
 .mform .ftags label.accesshide {display: block;position: static;}
 .mform .ftags select {margin-bottom: 0.7em;min-width: 22em;}
+.mform .fitem .felement {margin-right:16%;}
+
 /** Browser corrections for mforms **/
 .ie .mform .fitem .felement {margin-left:0;text-align:left;float:left;}
 /** Fix IE double margin + float bugs **/
@@ -621,3 +623,13 @@ body.tag .managelink {padding: 5px;}
 .userenrolment .col_group .addgroup a img {vertical-align:bottom;}
 .userenrolment .col_enrol .enrolment {float:left;padding:3px;margin:3px;}
 .userenrolment .col_enrol .enrolment a {float:right;margin-left:3px;}
+
+/** Overide for RTL layout **/
+.dir-rtl .headermain {float:right;}
+.dir-rtl .headermenu {float:left;}
+.dir-rtl .breadcrumb {float:right;}
+.dir-rtl .navbutton {float: left;}
+.dir-rtl .breadcrumb ul li { float: right; margin-left: 5px;}
+.dir-rtl .mform .fitem .fitemtitle {float:right;}
+.dir-rtl .loginbox .loginform .form-label {float:right;text-align:left;}
+.dir-rtl .loginbox .loginform .form-input {text-align: right;}

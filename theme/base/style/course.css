@@ -103,3 +103,10 @@
 .jsenabled .course_category_tree .category.with_children.collapsed .category_label {background-image:url([[pix:moodle|t/collapsed]]);}
 .jsenabled .course_category_tree .category.with_children.collapsed .subcategories,
 .jsenabled .course_category_tree .category.with_children.collapsed .courses {display:none;}
+
+/** Overide for RTL layout **/
+.dir-rtl .coursebox .info {float: right; text-align: right;}
+.dir-rtl .coursebox .summary {text-align:right;}
+.dir-rtl .course_category_tree .category.with_children> .category_label {background-position: center right; padding-right: 18px;}
+.dir-rtl .course_category_tree .category_label, .dir-rtl .course_category_tree .category .course {padding-right:18px;}
+.dir-rtl.jsenabled .course_category_tree .category.with_children.collapsed .category_label {background-image:url([[pix:moodle|t/collapsed_rtl]]);}

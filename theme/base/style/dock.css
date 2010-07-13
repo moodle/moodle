@@ -26,3 +26,6 @@ body.has_dock {margin-left:30px;}
 #dockeditempanel .dockeditempanel_hd h2 {display:inline;margin:0;padding-right:1em;}
 #dockeditempanel .dockeditempanel_hd .commands {display:inline;}
 #dockeditempanel .dockeditempanel_hd .commands img {margin-right:2px;vertical-align:middle;}
+
+/** Overide for RTL layout **/
+.dir-rtl #dockeditempanel {left:670%;}
