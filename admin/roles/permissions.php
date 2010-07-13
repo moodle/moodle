@@ -42,7 +42,10 @@ list($context, $course, $cm) = get_context_info_array($contextid);
 
 $url = new moodle_url('/admin/roles/permissions.php', array('contextid' => $contextid));
 
-if (!$course) {
+if ($course) {
+    $isfrontpage = ($course->id == SITEID);
+} else {
+    $isfrontpage = false;
     if ($context->contextlevel == CONTEXT_USER) {
         $course = $DB->get_record('course', array('id'=>optional_param('courseid', SITEID, PARAM_INT)), '*', MUST_EXIST);
         $user = $DB->get_record('user', array('id'=>$context->instanceid), '*', MUST_EXIST);
@@ -59,7 +62,6 @@ require_capability('moodle/role:review', $context);
 $PAGE->set_url($url);
 $PAGE->set_context($context);
 $courseid = $course->id;
-$isfrontpage = ($course->id == SITEID);
 
 
 // These are needed early because of tabs.php
@@ -84,12 +86,8 @@ switch ($context->contextlevel) {
         print_error('cannotoverridebaserole', 'error');
         break;
     case CONTEXT_USER:
-        if ($isfrontpage) {
-            $fullname = fullname($user, has_capability('moodle/site:viewfullnames', $context));
-            $PAGE->set_heading($fullname);
-        } else {
-            $PAGE->set_heading($course->fullname);
-        }
+        $fullname = fullname($user, has_capability('moodle/site:viewfullnames', $context));
+        $PAGE->set_heading($fullname);
         $showroles = 1;
         break;
     case CONTEXT_COURSECAT:

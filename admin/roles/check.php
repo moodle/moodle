@@ -33,7 +33,10 @@ list($context, $course, $cm) = get_context_info_array($contextid);
 
 $url = new moodle_url('/admin/roles/check.php', array('contextid' => $contextid));
 
-if (!$course) {
+if ($course) {
+    $isfrontpage = ($course->id == SITEID);
+} else {
+    $isfrontpage = false;
     if ($context->contextlevel == CONTEXT_USER) {
         $course = $DB->get_record('course', array('id'=>optional_param('courseid', SITEID, PARAM_INT)), '*', MUST_EXIST);
         $user = $DB->get_record('user', array('id'=>$context->instanceid), '*', MUST_EXIST);
@@ -54,7 +57,6 @@ $PAGE->set_context($context);
 
 $courseid = $course->id;
 $contextname = print_context_name($context);
-$isfrontpage = ($course->id == SITEID);
 
 // Get the user_selector we will need.
 // Teachers within a course just get to see the same list of people they can
@@ -79,12 +81,8 @@ switch ($context->contextlevel) {
         admin_externalpage_setup('checkpermissions', '', array('contextid' => $contextid));
         break;
     case CONTEXT_USER:
-        if ($isfrontpage) {
-            $fullname = fullname($user, has_capability('moodle/site:viewfullnames', $context));
-            $PAGE->set_heading($fullname);
-        } else {
-            $PAGE->set_heading($course->fullname);
-        }
+        $fullname = fullname($user, has_capability('moodle/site:viewfullnames', $context));
+        $PAGE->set_heading($fullname);
         $showroles = 1;
         break;
     case CONTEXT_COURSECAT:
