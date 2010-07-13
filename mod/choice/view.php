@@ -140,7 +140,7 @@
         } else if (!is_enrolled($context)) {
             // Only people enrolled can make a choice
             $SESSION->wantsurl = $FULLME;
-            $SESSION->enrolcancel = $_SERVER['HTTP_REFERER'];
+            $SESSION->enrolcancel = (!empty($_SERVER['HTTP_REFERER'])) ? $_SERVER['HTTP_REFERER'] : '';
 
             echo $OUTPUT->box_start('generalbox', 'notice');
             echo '<p align="center">'. get_string('noguestchoose', 'choice') .'</p>';
