@@ -423,7 +423,7 @@ EOD;
             $c->content     = $u->ccontent;
             $c->format      = $u->cformat;
             $c->timecreated = $u->ctimecreated;
-            $url = new moodle_url('/user/view.php', array('id'=>$c->id, 'course'=>$this->courseid));
+            $url = new moodle_url('/user/view.php', array('id'=>$u->id, 'course'=>$this->courseid));
             $c->username = $u->username;
             $c->profileurl = $url;
             $c->fullname = fullname($u);
