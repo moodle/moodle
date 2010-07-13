@@ -317,6 +317,7 @@ class assignment_upload extends assignment_base {
             $output .= '&nbsp;';
         }
 
+
         $renderer = $PAGE->get_renderer('mod_assignment');
         $output = $OUTPUT->box_start('files').$output;
         $output .= $renderer->assignment_files($this->context, $submission->id);
@@ -346,7 +347,7 @@ class assignment_upload extends assignment_base {
             $userid = $USER->id;
         }
 
-        $output = '';
+        $output = $OUTPUT->box_start('files');
 
         $submission = $this->get_submission($userid);
 
@@ -373,7 +374,6 @@ class assignment_upload extends assignment_base {
         }
 
         $renderer = $PAGE->get_renderer('mod_assignment');
-        $output = $OUTPUT->box_start('files').$output;
         $output .= $renderer->assignment_files($this->context, $submission->id);
         $output .= $OUTPUT->box_end();
 
@@ -389,7 +389,7 @@ class assignment_upload extends assignment_base {
         $mode    = optional_param('mode', '', PARAM_ALPHA);
         $offset  = optional_param('offset', 0, PARAM_INT);
 
-        $output = '';
+        $output = $OUTPUT->box_start('responsefiles');
 
         $candelete = $this->can_manage_responsefiles();
         $strdelete   = get_string('delete');
@@ -399,7 +399,6 @@ class assignment_upload extends assignment_base {
 
         if ($submission = $this->get_submission($userid)) {
             $renderer = $PAGE->get_renderer('mod_assignment');
-            $output = $OUTPUT->box_start('responsefiles').$output;
             $output .= $renderer->assignment_files($this->context, $submission->id, 'response');
             $output .= $OUTPUT->box_end();
         }

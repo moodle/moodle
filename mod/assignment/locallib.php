@@ -74,7 +74,10 @@ class assignment_portfolio_caller extends portfolio_module_caller_base {
         if (is_callable(array($this->assignment, 'portfolio_load_data'))) {
             return $this->assignment->portfolio_load_data($this);
         }
-        $this->set_file_and_format_data($this->fileid, $this->assignment->context->id, 'mod_assignment', 'submission', $this->user->id, 'timemodified', false);
+
+        $submission = $DB->get_record('assignment_submissions', array('assignment'=>$assignment->id, 'userid'=>$this->user->id));
+
+        $this->set_file_and_format_data($this->fileid, $this->assignment->context->id, 'mod_assignment', 'submission', $submission->id, 'timemodified', false);
     }
 
     public function prepare_package() {

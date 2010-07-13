@@ -24,7 +24,6 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  **/
 class mod_assignment_renderer extends plugin_renderer_base {
-
     /**
      * @return string
      */
@@ -34,11 +33,9 @@ class mod_assignment_renderer extends plugin_renderer_base {
 
     public function render_assignment_files(assignment_files $tree) {
         $module = array('name'=>'mod_assignment_files', 'fullpath'=>'/mod/assignment/assignment.js', 'requires'=>array('yui2-treeview'));
-        $htmlid = 'assignment_files_tree_'.uniqid();
-        $this->page->requires->js_init_call('M.mod_assignment.init_tree', array(true, $htmlid));
-        $html = '<div id="'.$htmlid.'">';
-        $html .= $this->htmllize_tree($tree, $tree->dir);
-        $html .= '</div>';
+        $this->htmlid = 'assignment_files_tree_'.uniqid();
+        $this->page->requires->js_init_call('M.mod_assignment.init_tree', array(true, $this->htmlid));
+        $html = $this->htmllize_tree($tree, $tree->dir);
         return $html;
     }
 
@@ -53,19 +50,26 @@ class mod_assignment_renderer extends plugin_renderer_base {
         if (empty($dir['subdirs']) and empty($dir['files'])) {
             return '';
         }
-        $result = '<ul>';
+        $result = '<div id="'.$this->htmlid.'">';
+        $result .= '<ul>';
         foreach ($dir['subdirs'] as $subdir) {
             $image = $this->output->pix_icon("/f/folder", $subdir['dirname'], 'moodle', array('class'=>'icon'));
             $result .= '<li yuiConfig=\''.json_encode($yuiconfig).'\'><div>'.$image.' '.s($subdir['dirname']).'</div> '.$this->htmllize_tree($tree, $subdir).'</li>';
         }
+
         foreach ($dir['files'] as $file) {
-            $url = file_encode_url("$CFG->wwwroot/pluginfile.php", '/'.$tree->context->id.'/mod_assignment/submission/'.$file->get_itemid().'/'.$file->get_filepath().$file->get_filename(), true);
             $filename = $file->get_filename();
             $icon = substr(mimeinfo("icon", $filename), 0, -4);
             $image = $this->output->pix_icon("/f/$icon", $filename, 'moodle', array('class'=>'icon'));
-            $result .= '<li yuiConfig=\''.json_encode($yuiconfig).'\'><div>'.$image.' '.html_writer::link($url, $filename).'</div></li>';
+            $result .= '<li yuiConfig=\''.json_encode($yuiconfig).'\'><div>'.$image.' '.html_writer::link($file->fileurl, $filename).' '.$file->portfoliobutton.'</div></li>';
         }
+
         $result .= '</ul>';
+        $result .= '</div>';
+
+        if ($tree->portfolioform) {
+            $result .= $tree->portfolioform;
+        }
 
         return $result;
     }
@@ -74,10 +78,42 @@ class mod_assignment_renderer extends plugin_renderer_base {
 class assignment_files implements renderable {
     public $context;
     public $dir;
+    public $portfolioform;
     public function __construct($context, $itemid, $filearea='submission') {
-        global $USER;
+        global $USER, $CFG;
+        require_once($CFG->libdir . '/portfoliolib.php');
         $this->context = $context;
+        list($context, $course, $cm) = get_context_info_array($context->id);
+        $this->cm = $cm;
+        $this->course = $course;
         $fs = get_file_storage();
         $this->dir = $fs->get_area_tree($this->context->id, 'mod_assignment', $filearea, $itemid);
+        $files = $fs->get_area_files($this->context->id, 'mod_assignment', 'submission', $itemid, "timemodified", false);
+        if (count($files) >= 1 && has_capability('mod/assignment:exportownsubmission', $this->context)) {
+            $button = new portfolio_add_button();
+            $button->set_callback_options('assignment_portfolio_caller', array('id' => $this->cm->id), '/mod/assignment/locallib.php');
+            $button->reset_formats();
+            $this->portfolioform = $button->to_html();
+        }
+        $this->preprocess($this->dir);
+    }
+    public function preprocess($dir) {
+        global $CFG;
+        foreach ($dir['subdirs'] as $subdir) {
+            $this->preprocess($subdir);
+        }
+        foreach ($dir['files'] as $file) {
+            $button = new portfolio_add_button();
+            if (has_capability('mod/assignment:exportownsubmission', $this->context)) {
+                $button->set_callback_options('assignment_portfolio_caller', array('id' => $this->cm->id, 'fileid' => $file->get_id()), '/mod/assignment/locallib.php');
+                $button->set_format_by_file($file);
+                $file->portfoliobutton = $button->to_html(PORTFOLIO_ADD_ICON_LINK);
+            } else {
+                $file->portfoliobutton = '';
+            }
+            $url = file_encode_url("$CFG->wwwroot/pluginfile.php", '/'.$this->context->id.'/mod_assignment/submission/'.$file->get_itemid().'/'.$file->get_filepath().$file->get_filename(), true);
+            $filename = $file->get_filename();
+            $file->fileurl = html_writer::link($url, $filename);
+        }
     }
 }
