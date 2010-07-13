@@ -65,14 +65,17 @@ $systemcontext   = get_context_instance(CONTEXT_SYSTEM);
 $personalcontext = get_context_instance(CONTEXT_USER, $user->id);
 $coursecontext   = get_context_instance(CONTEXT_COURSE, $course->id);
 
-$PAGE->set_context(get_context_instance(CONTEXT_USER, $USER->id));
+$PAGE->set_context($personalcontext);
 $PAGE->set_pagelayout('course');
 
 // check access control
 if ($user->id == $USER->id) {
     //editing own message profile
     require_capability('moodle/user:editownmessageprofile', $systemcontext);
-
+    if ($course->id != SITEID && $node = $PAGE->navigation->find($course->id, navigation_node::TYPE_COURSE)) {
+        $node->make_active();
+        $PAGE->navbar->includesettingsbase = true;
+    }
 } else {
     // teachers, parents, etc.
     require_capability('moodle/user:editmessageprofile', $personalcontext);
@@ -85,6 +88,7 @@ if ($user->id == $USER->id) {
     if ($user->id == $mainadmin->id) {
         print_error('adminprimarynoedit');
     }
+    $PAGE->navigation->extend_for_user($user);
 }
 
 /// Save new preferences if data was submited
@@ -175,17 +179,6 @@ foreach ( $processors as $processorid => $processor){
 $streditmymessage = get_string('editmymessage', 'message');
 $strparticipants  = get_string('participants');
 $userfullname     = fullname($user, true);
-
-if ($user->id==$USER->id) {
-    $PAGE->navigation->extend_for_user($USER);
-} else {
-    if (has_capability('moodle/course:viewparticipants', $coursecontext) ||
-        has_capability('moodle/site:viewparticipants', $systemcontext)) {
-        $PAGE->navbar->add($strparticipants, new moodle_url('/message/index.php', array('id'=>$course->id)));
-    }
-    $PAGE->navbar->add($userfullname, new moodle_url('/user/view.php', array('id'=>$user->id, 'course'=>$course->id)));
-    $PAGE->navbar->add($streditmymessage);
-}
 
 $PAGE->set_title("$course->shortname: $streditmymessage");
 if ($course->id != SITEID) {

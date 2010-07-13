@@ -72,7 +72,14 @@ if ($id == -1) {
     require_capability('moodle/user:update', $systemcontext);
     $user = $DB->get_record('user', array('id'=>$id), '*', MUST_EXIST);
     $PAGE->set_context(get_context_instance(CONTEXT_USER, $user->id));
-    $PAGE->navigation->extend_for_user($user);
+    if ($user->id == $USER->id) {
+        if ($course->id != SITEID && $node = $PAGE->navigation->find($course->id, navigation_node::TYPE_COURSE)) {
+            $node->make_active();
+            $PAGE->navbar->includesettingsbase = true;
+        }
+    } else {
+        $PAGE->navigation->extend_for_user($user);
+    }
 }
 
 // remote users cannot be edited
