@@ -256,7 +256,9 @@ class auth_plugin_mnet extends auth_plugin_base {
 
         // the user may roam from Moodle 1.x where lang has _utf8 suffix
         // also, make sure that the lang is actually installed, otherwise set site default
-        $remoteuser->lang = clean_param(str_replace('_utf8', '', $remoteuser->lang), PARAM_LANG);
+        if (isset($remoteuser->lang)) {
+            $remoteuser->lang = clean_param(str_replace('_utf8', '', $remoteuser->lang), PARAM_LANG);
+        }
         if (empty($remoteuser->lang)) {
             if (!empty($CFG->lang)) {
                 $remoteuser->lang = $CFG->lang;
