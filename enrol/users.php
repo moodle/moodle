@@ -62,110 +62,128 @@ if ($action) {
     $pagecontent = null;
 
     switch ($action) {
+        /**
+         * Unenrols a user from this course
+         */
         case 'unenrol':
             $ue = $DB->get_record('user_enrolments', array('id'=>required_param('ue', PARAM_INT)), '*', MUST_EXIST);
-            if ($confirm && $manager->unenrol_user($ue)) {
-                redirect($pageurl);
-            } else {
-                $user = $DB->get_record('user', array('id'=>$ue->userid), '*', MUST_EXIST);
-                $yesurl = new moodle_url($pageurl, array('action'=>'unenrol', 'ue'=>$ue->id, 'confirm'=>1, 'sesskey'=>sesskey()));
-                $message = get_string('unenrolconfirm', 'enrol', array('user'=>fullname($user, true), 'course'=>format_string($course->fullname)));
-                $pagetitle = get_string('unenrol', 'enrol');
-                $pagecontent = $OUTPUT->confirm($message, $yesurl, $pageurl);
-            }
-            $actiontaken = true;
-            break;
-
-        case 'unassign':
-            $role = required_param('role', PARAM_INT);
-            $user = required_param('user', PARAM_INT);
-            if ($confirm && $manager->unassign_role_from_user($user, $role)) {
-                redirect($pageurl);
-            } else {
-                $user = $DB->get_record('user', array('id'=>$user), '*', MUST_EXIST);
-                $allroles = $manager->get_all_roles();
-                $role = $allroles[$role];
-                $yesurl = new moodle_url($pageurl, array('action'=>'unassign', 'role'=>$role->id, 'user'=>$user->id, 'confirm'=>1, 'sesskey'=>sesskey()));
-                $message = get_string('unassignconfirm', 'role', array('user'=>fullname($user, true), 'role'=>$role->localname));
-                $pagetitle = get_string('unassignarole', 'role', $role->localname);
-                $pagecontent = $OUTPUT->confirm($message, $yesurl, $pageurl);
-            }
-            $actiontaken = true;
-            break;
-
-        case 'assign':
-            $user = required_param('user', PARAM_INT);
-            $user = $DB->get_record('user', array('id'=>$user), '*', MUST_EXIST);
-
-            if (!is_enrolled($context, $user)) {
-                break; // no roles without enrolments here in this script
-            }
-
-            $mform = new enrol_users_assign_form(NULL, array('user'=>$user, 'course'=>$course, 'assignable'=>$manager->get_assignable_roles()));
-            $mform->set_data($pageurl->params());
-            $data = $mform->get_data();
-            if ($mform->is_cancelled() || ($data && $manager->assign_role_to_user($data->roleid, $user->id))) {
-                redirect($pageurl);
-            } else {
-                $pagetitle = get_string('assignroles', 'role');
-            }
-            $actiontaken = true;
-            break;
-
-        case 'removemember':
-            $groupid = required_param('group', PARAM_INT);
-            $userid  = required_param('user', PARAM_INT);
-            $user = $DB->get_record('user', array('id'=>$userid), '*', MUST_EXIST);
-            if ($confirm && $manager->remove_user_from_group($user, $groupid)) {
-                redirect($pageurl);
-            } else {
-                $group = $manager->get_group($groupid);
-                if (!$group) {
-                    break;
+            list ($instance, $plugin) = $manager->get_user_enrolment_components($ue);
+            if ($instance && $plugin && $plugin->allow_unenrol($instance) && has_capability("enrol/$instance->enrol:unenrol", $manager->get_context())) {
+                if ($confirm && $manager->unenrol_user($ue)) {
+                    redirect($pageurl);
+                } else {
+                    $user = $DB->get_record('user', array('id'=>$ue->userid), '*', MUST_EXIST);
+                    $yesurl = new moodle_url($pageurl, array('action'=>'unenrol', 'ue'=>$ue->id, 'confirm'=>1, 'sesskey'=>sesskey()));
+                    $message = get_string('unenrolconfirm', 'enrol', array('user'=>fullname($user, true), 'course'=>format_string($course->fullname)));
+                    $pagetitle = get_string('unenrol', 'enrol');
+                    $pagecontent = $OUTPUT->confirm($message, $yesurl, $pageurl);
                 }
-                $yesurl = new moodle_url($pageurl, array('action'=>'removemember', 'group'=>$groupid, 'user'=>$userid, 'confirm'=>1, 'sesskey'=>sesskey()));
-                $message = get_string('removefromgroupconfirm', 'group', array('user'=>fullname($user, true), 'group'=>$group->name));
-                $pagetitle = get_string('removefromgroup', 'group', $group->name);
-                $pagecontent = $OUTPUT->confirm($message, $yesurl, $pageurl);
+                $actiontaken = true;
             }
-            $actiontaken = true;
             break;
-
+        /**
+         * Removes a role from the user with this course
+         */
+        case 'unassign':
+            if (has_capability('moodle/role:assign', $manager->get_context())) {
+                $role = required_param('role', PARAM_INT);
+                $user = required_param('user', PARAM_INT);
+                if ($confirm && $manager->unassign_role_from_user($user, $role)) {
+                    redirect($pageurl);
+                } else {
+                    $user = $DB->get_record('user', array('id'=>$user), '*', MUST_EXIST);
+                    $allroles = $manager->get_all_roles();
+                    $role = $allroles[$role];
+                    $yesurl = new moodle_url($pageurl, array('action'=>'unassign', 'role'=>$role->id, 'user'=>$user->id, 'confirm'=>1, 'sesskey'=>sesskey()));
+                    $message = get_string('unassignconfirm', 'role', array('user'=>fullname($user, true), 'role'=>$role->localname));
+                    $pagetitle = get_string('unassignarole', 'role', $role->localname);
+                    $pagecontent = $OUTPUT->confirm($message, $yesurl, $pageurl);
+                }
+                $actiontaken = true;
+            }
+            break;
+        /**
+         * Assigns a new role to a user enrolled within this course.
+         * A user must be enrolled in the course in order for this script to action
+         */
+        case 'assign':
+            $user = $DB->get_record('user', array('id'=>required_param('user', PARAM_INT)), '*', MUST_EXIST);
+            if (is_enrolled($context, $user) && has_capability('moodle/role:assign', $manager->get_context())) {
+                $mform = new enrol_users_assign_form(NULL, array('user'=>$user, 'course'=>$course, 'assignable'=>$manager->get_assignable_roles()));
+                $mform->set_data($pageurl->params());
+                $data = $mform->get_data();
+                if ($mform->is_cancelled() || ($data && $manager->assign_role_to_user($data->roleid, $user->id))) {
+                    redirect($pageurl);
+                } else {
+                    $pagetitle = get_string('assignroles', 'role');
+                }
+                $actiontaken = true;
+            }
+            break;
+        /**
+         * Removes the user from the given group
+         */
+        case 'removemember':
+            if (has_capability('moodle/course:managegroups', $manager->get_context())) {
+                $groupid = required_param('group', PARAM_INT);
+                $userid  = required_param('user', PARAM_INT);
+                $user = $DB->get_record('user', array('id'=>$userid), '*', MUST_EXIST);
+                if ($confirm && $manager->remove_user_from_group($user, $groupid)) {
+                    redirect($pageurl);
+                } else {
+                    $group = $manager->get_group($groupid);
+                    if (!$group) {
+                        break;
+                    }
+                    $yesurl = new moodle_url($pageurl, array('action'=>'removemember', 'group'=>$groupid, 'user'=>$userid, 'confirm'=>1, 'sesskey'=>sesskey()));
+                    $message = get_string('removefromgroupconfirm', 'group', array('user'=>fullname($user, true), 'group'=>$group->name));
+                    $pagetitle = get_string('removefromgroup', 'group', $group->name);
+                    $pagecontent = $OUTPUT->confirm($message, $yesurl, $pageurl);
+                }
+                $actiontaken = true;
+            }
+            break;
+        /**
+         * Makes the user a member of a given group
+         */
         case 'addmember':
-            $userid = required_param('user', PARAM_INT);
-            $user = $DB->get_record('user', array('id'=>$userid), '*', MUST_EXIST);
+            if (has_capability('moodle/course:managegroups', $manager->get_context())) {
+                $userid = required_param('user', PARAM_INT);
+                $user = $DB->get_record('user', array('id'=>$userid), '*', MUST_EXIST);
 
-            $mform = new enrol_users_addmember_form(NULL, array('user'=>$user, 'course'=>$course, 'allgroups'=>$manager->get_all_groups()));
-            $mform->set_data($pageurl->params());
-            $data = $mform->get_data();
-            if ($mform->is_cancelled() || ($data && $manager->add_user_to_group($user, $data->groupid))) {
-                redirect($pageurl);
-            } else {
-                $pagetitle = get_string('addgroup', 'group');
+                $mform = new enrol_users_addmember_form(NULL, array('user'=>$user, 'course'=>$course, 'allgroups'=>$manager->get_all_groups()));
+                $mform->set_data($pageurl->params());
+                $data = $mform->get_data();
+                if ($mform->is_cancelled() || ($data && $manager->add_user_to_group($user, $data->groupid))) {
+                    redirect($pageurl);
+                } else {
+                    $pagetitle = get_string('addgroup', 'group');
+                }
+                $actiontaken = true;
             }
-            $actiontaken = true;
             break;
-
+        /**
+         * Edits the details of a users enrolment in the course
+         */
         case 'edit':
-            $ue = required_param('ue', PARAM_INT);
-            if (!$ue = $DB->get_record('user_enrolments', array('id'=>$ue))) {
-                $actiontaken = false;
-                break;
+            $ue = $DB->get_record('user_enrolments', array('id'=>required_param('ue', PARAM_INT)), '*', MUST_EXIST);
+            list($instance, $plugin) = $manager->get_user_enrolment_components($ue);
+            if ($instance && $plugin && $plugin->allow_manage($instance) && has_capability("enrol/$instance->enrol:manage", $manager->get_context())) {
+                $user = $DB->get_record('user', array('id'=>$ue->userid), '*', MUST_EXIST);
+                $mform = new enrol_users_edit_form(NULL, array('user'=>$user, 'course'=>$course, 'ue'=>$ue));
+                $mform->set_data($pageurl->params());
+                $data = $mform->get_data();
+                if ($mform->is_cancelled() || ($data && $manager->edit_enrolment($ue, $data))) {
+                    redirect($pageurl);
+                } else {
+                    $pagetitle = fullname($user);
+                }
+                $actiontaken = true;
             }
-            $user = $DB->get_record('user', array('id'=>$ue->userid), '*', MUST_EXIST);
-
-            $mform = new enrol_users_edit_form(NULL, array('user'=>$user, 'course'=>$course, 'ue'=>$ue));
-            $mform->set_data($pageurl->params());
-            $data = $mform->get_data();
-            if ($mform->is_cancelled() || ($data && $manager->edit_enrolment($ue, $data))) {
-                redirect($pageurl);
-            } else {
-                $pagetitle = fullname($user);
-            }
-            $actiontaken = true;
             break;
     }
 
+    // If we took an action display we need to display something special.
     if ($actiontaken) {
         if (empty($pageheading)) {
             $pageheading = $pagetitle;

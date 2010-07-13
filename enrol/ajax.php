@@ -61,9 +61,9 @@ if (!confirm_sesskey()) {
 
 switch ($action) {
     case 'unenrol':
-
         $ue = $DB->get_record('user_enrolments', array('id'=>required_param('ue', PARAM_INT)), '*', MUST_EXIST);
-        if ($manager->unenrol_user($ue)) {
+        list ($instance, $plugin) = $manager->get_user_enrolment_components($ue);
+        if ($instance && $plugin && $plugin->allow_unenrol($instance) && has_capability("enrol/$instance->enrol:unenrol", $manager->get_context()) && $manager->unenrol_user($ue)) {
             $outcome->success = true;
         } else {
             $outcome->error = 'unabletounenrol';
@@ -72,7 +72,7 @@ switch ($action) {
     case 'unassign':
         $role = required_param('role', PARAM_INT);
         $user = required_param('user', PARAM_INT);
-        if ($manager->unassign_role_from_user($user, $role)) {
+        if (has_capability('moodle/role:assign', $manager->get_context()) && $manager->unassign_role_from_user($user, $role)) {
             $outcome->success = true;
         } else {
             $outcome->error = 'unabletounassign';
@@ -80,9 +80,7 @@ switch ($action) {
         break;
 
     case 'assign':
-
-        $user = required_param('user', PARAM_INT);
-        $user = $DB->get_record('user', array('id'=>$user), '*', MUST_EXIST);
+        $user = $DB->get_record('user', array('id'=>required_param('user', PARAM_INT)), '*', MUST_EXIST);
         $roleid = required_param('roleid', PARAM_INT);
 
         if (!is_enrolled($context, $user)) {
@@ -90,7 +88,7 @@ switch ($action) {
             break; // no roles without enrolments here in this script
         }
 
-        if ($manager->assign_role_to_user($roleid, $user->id)) {
+        if (has_capability('moodle/role:assign', $manager->get_context()) && $manager->assign_role_to_user($roleid, $user->id)) {
             $outcome->success = true;
             $outcome->response->roleid = $roleid;
         } else {
@@ -134,7 +132,6 @@ switch ($action) {
             $user->fullname = fullname($user);
         }
         $outcome->success = true;
-
         break;
 
     case 'enrol':
@@ -175,10 +172,15 @@ switch ($action) {
         }
         $instance = $instances[$enrolid];
         $plugin = $plugins[$instance->enrol];
-        try {
-            $plugin->enrol_user($instance, $user->id, $roleid, $timestart, $timeend);
-        } catch (Exception $e) {
-            $outcome->error = 'unabletoenrol';
+        if ($plugin->allow_enrol($instance) && require_capability('enrol/'.$plugin->get_name().':enrol', $context)) {
+            try {
+                $plugin->enrol_user($instance, $user->id, $roleid, $timestart, $timeend);
+            } catch (Exception $e) {
+                $outcome->error = 'unabletoenrol';
+                break;
+            }
+        } else {
+            $outcome->error = 'unablenotallowed';
             break;
         }
         $outcome->success = true;
