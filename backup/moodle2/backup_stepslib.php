@@ -615,6 +615,101 @@ class backup_comments_structure_step extends backup_structure_step {
 }
 
 /**
+ * structure step in charge of constructing the gradebook.xml file for all the gradebook config in the course
+ * NOTE: the backup of the grade items themselves is handled by backup_activity_grades_structure_step
+ */
+class backup_gradebook_structure_step extends backup_structure_step {
+
+    protected function define_structure() {
+
+        // are we including user info?
+        $userinfo = $this->get_setting_value('users');
+
+        $gradebook = new backup_nested_element('gradebook');
+
+        //grade_letters are done in backup_activity_grades_structure_step()
+
+        //calculated grade items
+        $grade_items = new backup_nested_element('grade_items');
+        $grade_item = new backup_nested_element('grade_item', array('id'), array(
+            'categoryid', 'itemname', 'itemtype', 'itemmodule',
+            'iteminstance', 'itemnumber', 'iteminfo', 'idnumber',
+            'calculation', 'gradetype', 'grademax', 'grademin',
+            'scaleid', 'outcomeid', 'gradepass', 'multfactor',
+            'plusfactor', 'aggregationcoef', 'sortorder', 'display',
+            'decimals', 'hidden', 'locked', 'locktime',
+            'needsupdate', 'timecreated', 'timemodified'));
+
+        $grade_grades = new backup_nested_element('grade_grades');
+        $grade_grade = new backup_nested_element('grade_grade', array('id'), array(
+            'userid', 'rawgrade', 'rawgrademax', 'rawgrademin',
+            'rawscaleid', 'usermodified', 'finalgrade', 'hidden',
+            'locked', 'locktime', 'exported', 'overridden',
+            'excluded', 'feedback', 'feedbackformat', 'information',
+            'informationformat', 'timecreated', 'timemodified'));
+
+        //grade_categories
+        $grade_categories = new backup_nested_element('grade_categories');
+        $grade_category   = new backup_nested_element('grade_category', null, array('courseid', 
+                'parent', 'depth', 'path', 'fullname', 'aggregation', 'keephigh', 
+                'dropload', 'aggregateonlygraded', 'aggregateoutcomes', 'aggregatesubcats',
+                'timecreated', 'timemodified'));
+
+        $letters = new backup_nested_element('grade_letters');
+        $letter = new backup_nested_element('grade_letter', 'id', array(
+            'lowerboundary', 'letter'));
+
+
+        // Build the tree
+
+        $gradebook->add_child($grade_items);
+        $grade_items->add_child($grade_item);
+        $grade_item->add_child($grade_grades);
+        $grade_grades->add_child($grade_grade);
+
+        //$grade_item->add_child($grade_scale);
+
+        $gradebook->add_child($grade_categories);
+        $grade_categories->add_child($grade_category);
+
+        $gradebook->add_child($letters);
+        $letters->add_child($letter);
+
+        // Define sources
+
+        //if itemtype == manual then item is a calculated item so isn't attached to an activity and we need to back it up here
+        $grade_items_array = grade_item::fetch_all(array('itemtype' => 'manual', 'courseid' => $this->get_courseid()));
+        
+        //$grade_items_array==false and not an empty array if no items. set_source_array() fails if you pass a bool
+        if ($grade_items_array) {
+            $grade_item->set_source_array($grade_items_array);
+        }
+
+        if ($userinfo) {
+            $grade_grade->set_source_table('grade_grades', array('itemid' => backup::VAR_PARENTID));
+        }
+
+        $grade_category_sql = "SELECT gc.*, gi.sortorder
+                               FROM {grade_categories} gc
+                               JOIN {grade_items} gi ON (gi.iteminstance = gc.id)
+                               WHERE gc.courseid = :courseid
+                               AND (gi.itemtype='course' OR gi.itemtype='category')
+                               ORDER BY gc.parent ASC";//need parent categories before their children
+        $grade_category_params = array('courseid'=>backup::VAR_COURSEID);
+        $grade_category->set_source_sql($grade_category_sql, $grade_category_params);
+
+        $letter->set_source_table('grade_letters', array('contextid' => backup::VAR_CONTEXTID));
+
+        // Annotations
+        $grade_item->annotate_ids('scalefinal', 'scaleid'); // Straight as scalefinal because it's > 0
+        $grade_item->annotate_ids('outcome', 'outcomeid');
+
+        // Return the root element
+        return $gradebook;
+    }
+}
+
+/**
  * structure step in charge if constructing the completion.xml file for all the users completion
  * information in a given activity
  */
@@ -1377,12 +1472,11 @@ class backup_activity_grades_structure_step extends backup_structure_step {
 
         // Define sources
 
-        $item->set_source_sql("
-            SELECT gi.*
-              FROM {grade_items} gi
-              JOIN {backup_ids_temp} bi ON gi.id = bi.itemid
-             WHERE bi.backupid = ?
-               AND bi.itemname = 'grade_item'", array(backup::VAR_BACKUPID));
+        $item->set_source_sql("SELECT gi.*
+                               FROM {grade_items} gi
+                               JOIN {backup_ids_temp} bi ON gi.id = bi.itemid
+                               WHERE bi.backupid = ?
+                               AND bi.itemname = 'grade_item'", array(backup::VAR_BACKUPID));
 
         // This only happens if we are including user info
         if ($userinfo) {

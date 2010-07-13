@@ -172,4 +172,25 @@ abstract class backup_plan_dbops extends backup_dbops {
         return $backupword . '-' . $format . '-' . $type . '-' .
                $name . '-' . $date . $info . '.zip';
     }
+
+    /**
+    * Returns a flag indicating the need to backup gradebook elements like calculated grade items and category visibility
+    * If all activity related grade items are being backed up we can also backup calculated grade items and categories
+    */
+    public static function require_gradebook_backup($courseid, $backupid) {
+        global $DB;
+
+        $backupgradebook = true;
+
+        $sql = "SELECT count(id)
+FROM {grade_items}
+WHERE courseid=:courseid AND itemtype = 'mod'
+AND id NOT IN (SELECT bi.id FROM {backup_ids_temp} bi WHERE bi.itemname = 'grade_item_final' AND bi.backupid = :backupid)";
+        $params = array('courseid'=>$courseid, 'backupid'=>$backupid);
+
+        $count = $DB->count_records_sql($sql, $params);
+
+        //if there are 0 activity grade items not already included in the backup
+        return $count==0;
+    }
 }

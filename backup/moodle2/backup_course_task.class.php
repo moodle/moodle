@@ -91,6 +91,11 @@ class backup_course_task extends backup_task {
             $this->add_step(new backup_comments_structure_step('course_comments', 'comments.xml'));
         }
 
+        if (backup_plan_dbops::require_gradebook_backup($this->get_courseid(), $this->get_backupid())) {
+            $this->add_step(new backup_gradebook_structure_step('course_gradebook','gradebook.xml'));
+        }
+
+
         // Generate the logs file (conditionally)
         if ($this->get_setting_value('logs')) {
             //$this->add_step(new backup_course_logs_structure_step('course_logs', 'logs.xml'));
