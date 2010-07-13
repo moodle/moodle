@@ -8,6 +8,7 @@
 .block .content {border-color: #dddddd;background-color:#FCFCFC;}
 .block .content hr {border-top-color:#999999;}
 .block .header .commands {font-size:0.9em;clear:both;}
+.block .header .commands .icon { padding-left:2px;padding-right:2px;margin-right:2px;}
 .block .footer {font-size:0.9em;text-align:center;clear:both;}
 .block.beingmoved {border-color: #f88;}
 
