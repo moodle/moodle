@@ -227,7 +227,7 @@ $ADMIN->add('server', new admin_externalpage('phpinfo', get_string('phpinfo'), "
 $temp = new admin_settingpage('performance', get_string('performance', 'admin'));
 
 $temp->add(new admin_setting_configselect('extramemorylimit', get_string('extramemorylimit', 'admin'),
-                                          get_string('configextramemorylimit', 'admin'), '128M',
+                                          get_string('configextramemorylimit', 'admin'), '512M',
                                           // if this option is set to 0, default 128M will be used
                                           array( '64M' => '64M',
                                                  '128M' => '128M',
@@ -235,6 +235,10 @@ $temp->add(new admin_setting_configselect('extramemorylimit', get_string('extram
                                                  '512M' => '512M',
                                                  '1024M' => '1024M'
                                              )));
+$temp->add(new admin_setting_configtext('curlcache', get_string('curlcache', 'admin'),
+                                        get_string('configcurlcache', 'admin'), 120, PARAM_INT));
+
+/* //TODO: we need to fix code instead of relying on slow rcache, enable this once we have some code that is actually using it
 $temp->add(new admin_setting_special_selectsetup('cachetype', get_string('cachetype', 'admin'),
                                           get_string('configcachetype', 'admin'), '',
                                           array( '' => get_string('none'),
@@ -250,17 +254,17 @@ $temp->add(new admin_setting_configtext('rcachettl', get_string('rcachettl', 'ad
                                         get_string('configrcachettl', 'admin'), 10));
 $temp->add(new admin_setting_configtext('intcachemax', get_string('intcachemax', 'admin'),
                                         get_string('configintcachemax', 'admin'), 10));
-$temp->add(new admin_setting_configtext('curlcache', get_string('curlcache', 'admin'),
-                                        get_string('configcurlcache', 'admin'), 120, PARAM_INT));
 $temp->add(new admin_setting_configtext('memcachedhosts', get_string('memcachedhosts', 'admin'),
                                         get_string('configmemcachedhosts', 'admin'), ''));
 $temp->add(new admin_setting_configselect('memcachedpconn', get_string('memcachedpconn', 'admin'),
                                           get_string('configmemcachedpconn', 'admin'), 0,
                                           array( '0' => get_string('no'),
                                                  '1' => get_string('yes'))));
-$ADMIN->add('server', new admin_externalpage('adminregistration', get_string('registration','admin'), "$CFG->wwwroot/$CFG->admin/registration/index.php"));
-
+*/
 $ADMIN->add('server', $temp);
+
+
+$ADMIN->add('server', new admin_externalpage('adminregistration', get_string('registration','admin'), "$CFG->wwwroot/$CFG->admin/registration/index.php"));
 
 $dbfamily = $DB->get_dbfamily();
 
