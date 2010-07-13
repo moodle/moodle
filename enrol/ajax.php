@@ -172,7 +172,7 @@ switch ($action) {
         }
         $instance = $instances[$enrolid];
         $plugin = $plugins[$instance->enrol];
-        if ($plugin->allow_enrol($instance) && require_capability('enrol/'.$plugin->get_name().':enrol', $context)) {
+        if ($plugin->allow_enrol($instance) && has_capability('enrol/'.$plugin->get_name().':enrol', $context)) {
             try {
                 $plugin->enrol_user($instance, $user->id, $roleid, $timestart, $timeend);
             } catch (Exception $e) {
