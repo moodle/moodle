@@ -387,6 +387,9 @@ class course_enrolment_manager {
      */
     public function assign_role_to_user($roleid, $userid) {
         require_capability('moodle/role:assign', $this->context);
+        if (!array_key_exists($roleid, $this->get_assignable_roles())) {
+            return false;
+        }
         return role_assign($roleid, $userid, $this->context->id, '', NULL);
     }
 

@@ -87,6 +87,10 @@ switch ($action) {
             $outcome->error = 'mustbeenrolled';
             break; // no roles without enrolments here in this script
         }
+        if (!array_key_exists($roleid, $manager->get_assignable_roles())) {
+            $outcome->error = 'invalidrole';
+            break;
+        }
 
         if (has_capability('moodle/role:assign', $manager->get_context()) && $manager->assign_role_to_user($roleid, $user->id)) {
             $outcome->success = true;
