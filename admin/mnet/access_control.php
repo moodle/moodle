@@ -130,7 +130,7 @@ if (!is_enabled_auth('mnet')) {
     $warn .= '<p>' .  get_string('authmnetdisabled','mnet').'</p>';
 }
 
-if (get_config('auth/mnet', 'auto_add_remote_users') != true) {
+if (get_config('auth_mnet', 'auto_add_remote_users') != true) {
     $warn .= '<p>' .  get_string('authmnetautoadddisabled','mnet').'</p>';
 }
 if (!empty($warn)) {

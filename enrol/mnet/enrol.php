@@ -300,7 +300,7 @@ class enrolment_plugin_mnet {
 
         if ($userrecord == false) {
             $userrecord = mnet_strip_user((object)$user, mnet_fields_to_import($remoteclient));
-            /* there used to be a setting in auth/mnet called auto_create_users
+            /* there used to be a setting in auth_mnet called auto_add_remote_users
              * which we should have been checking here (but weren't).
              * this setting has now been removed. See MDL-21327
              */

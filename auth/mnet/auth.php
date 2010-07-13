@@ -28,7 +28,7 @@ class auth_plugin_mnet extends auth_plugin_base {
      */
     function auth_plugin_mnet() {
         $this->authtype = 'mnet';
-        $this->config = get_config('auth/mnet');
+        $this->config = get_config('auth_mnet');
         $this->mnet = get_mnet_environment();
     }
 
@@ -154,7 +154,7 @@ class auth_plugin_mnet extends auth_plugin_base {
         // set RPC timeout to 30 seconds if not configured
         // TODO: Is this needed/useful/problematic?
         if (empty($this->config->rpc_negotiation_timeout)) {
-            set_config('rpc_negotiation_timeout', '30', 'auth/mnet');
+            set_config('rpc_negotiation_timeout', '30', 'auth_mnet');
         }
 
         // get the host info
@@ -679,11 +679,11 @@ class auth_plugin_mnet extends auth_plugin_base {
         if (!isset ($config->auto_add_remote_users)) {
             $config->auto_add_remote_users = '0';
         } See MDL-21327   for why this is commented out
-        set_config('auto_add_remote_users',   $config->auto_add_remote_users,   'auth/mnet');
+        set_config('auto_add_remote_users',   $config->auto_add_remote_users,   'auth_mnet');
         */
 
         // save settings
-        set_config('rpc_negotiation_timeout', $config->rpc_negotiation_timeout, 'auth/mnet');
+        set_config('rpc_negotiation_timeout', $config->rpc_negotiation_timeout, 'auth_mnet');
 
         return true;
     }
