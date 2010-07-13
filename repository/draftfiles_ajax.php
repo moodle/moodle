@@ -38,6 +38,7 @@ require_sesskey();
 
 $action  = required_param('action', PARAM_ALPHA);
 $draftid = required_param('itemid', PARAM_INT);
+$filepath = optional_param('filepath', '/', PARAM_PATH);
 
 $user_context = get_context_instance(CONTEXT_USER, $USER->id);
 
