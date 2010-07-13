@@ -152,8 +152,8 @@ class auth_plugin_mnet extends auth_plugin_base {
         }
 
         // set RPC timeout to 30 seconds if not configured
-        // TODO: Is this needed/useful/problematic?
         if (empty($this->config->rpc_negotiation_timeout)) {
+            $this->config->rpc_negotiation_timeout = 30;
             set_config('rpc_negotiation_timeout', '30', 'auth_mnet');
         }
 
