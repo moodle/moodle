@@ -120,12 +120,11 @@ class enrol_self_plugin extends enrol_plugin {
         if ($instance->id == $instanceid) {
             if ($data = $form->get_data()) {
                 $enrol = enrol_get_plugin('self');
+                $timestart = time();
                 if ($instance->enrolperiod) {
-                    $timestart = time();
-                    $tineend   = $timestart + $instance->enrolperiod;
+                    $tineend = $timestart + $instance->enrolperiod;
                 } else {
-                    $timestart = 0;
-                    $tineend   = 0;
+                    $tineend = 0;
                 }
 
                 $this->enrol_user($instance, $USER->id, $instance->roleid, $timestart, $tineend);

@@ -3863,6 +3863,7 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         $table->add_field('timestart', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
         $table->add_field('timeend', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '2147483647');
         $table->add_field('modifierid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+        $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
         $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
 
         // Adding keys to table course_participant
@@ -4282,9 +4283,9 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         $roles = $DB->get_fieldset_sql("SELECT DISTINCT roleid FROM {role_capabilities} WHERE contextid = :syscontext AND capability = :participate AND permission = 1", $params);
         list($sqlroles, $params) = $DB->get_in_or_equal($roles, SQL_PARAMS_NAMED, 'r00');
 
-        $sql = "INSERT INTO {user_enrolments} (status, enrolid, userid, timestart, timeend, modifierid, timemodified)
+        $sql = "INSERT INTO {user_enrolments} (status, enrolid, userid, timestart, timeend, modifierid, timecreated, timemodified)
 
-                SELECT 0, e.id, ra.userid, MIN(ra.timestart), MIN(ra.timeend), 0, MAX(ra.timemodified)
+                SELECT 0, e.id, ra.userid, MIN(ra.timestart), MIN(ra.timeend), 0, MIN(ra.timemodified), MAX(ra.timemodified)
                   FROM {role_assignments} ra
                   JOIN {context} c ON (c.id = ra.contextid AND c.contextlevel = 50)
                   JOIN {enrol} e ON (e.enrol = ra.enrol AND e.courseid = c.instanceid)
@@ -4739,6 +4740,25 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         // move user icons to file storage pool
         upgrade_migrate_group_icons();
         upgrade_main_savepoint(true, 2010071101);
+    }
+
+    if ($oldversion < 2010071300) {
+        // Define field timecreated to be added to user_enrolments
+        $table = new xmldb_table('user_enrolments');
+        $field = new xmldb_field('timecreated', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 0, 'modifierid');
+
+        // Launch add field timecreated
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // now try to guess the time created
+        $sql = "UPDATE {user_enrolments} SET timecreated = timemodified WHERE timecreated = 0";
+        $DB->execute($sql);
+        $sql = "UPDATE {user_enrolments} SET timecreated = timestart WHERE timestart <> 0 AND timestart < timemodified";
+        $DB->execute($sql);
+
+        upgrade_main_savepoint(true, 2010071300);
     }
 
 

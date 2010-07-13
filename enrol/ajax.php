@@ -161,7 +161,6 @@ switch ($action) {
                 break;
         }
         if ($duration <= 0) {
-            $timestart = 0;
             $timeend = 0;
         } else {
             $timeend = $timestart + ($duration*24*60*60);

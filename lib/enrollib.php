@@ -842,8 +842,8 @@ abstract class enrol_plugin {
      * @param stdClass $instance
      * @param int $userid
      * @param int $roleid optional role id
-     * @param int $timestart
-     * @param int $timeend
+     * @param int $timestart 0 means unknown
+     * @param int $timeend 0 means forever
      * @return void
      */
     public function enrol_user(stdClass $instance, $userid, $roleid = null, $timestart = 0, $timeend = 0) {
@@ -878,7 +878,8 @@ abstract class enrol_plugin {
             $ue->timestart    = $timestart;
             $ue->timeend      = $timeend;
             $ue->modifier     = $USER->id;
-            $ue->timemodified = time();
+            $ue->timecreated  = time();
+            $ue->timemodified = $ue->timecreated;
             $ue->id = $DB->insert_record('user_enrolments', $ue);
 
             $inserted = true;

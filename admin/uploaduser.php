@@ -72,6 +72,9 @@ $errorstr                   = get_string('error');
 $returnurl = $CFG->wwwroot.'/'.$CFG->admin.'/uploaduser.php';
 $bulknurl  = $CFG->wwwroot.'/'.$CFG->admin.'/user/user_bulk.php';
 
+$today = time();
+$today = make_timestamp(date('Y', $today), date('m', $today), date('d', $today), 0, 0, 0);
+
 // array of all valid fields for validation
 $STD_FIELDS = array('id', 'firstname', 'lastname', 'username', 'email',
         'city', 'country', 'lang', 'auth', 'timezone', 'mailformat',
@@ -628,17 +631,15 @@ if ($formdata = $mform->is_cancelled()) {
 
                 if ($rid) {
                     // find duration
-                    $timestart = 0;
                     $timeend   = 0;
                     if (!empty($user->{'enrolperiod'.$i})) {
                         $duration = (int)$user->{'enrolperiod'.$i} * 86400; // convert days to seconds
                         if ($duration > 0) { // sanity check
-                            $timestart = time();
-                            $timeend   = $timestart + $duration;
+                            $timeend   = $today + $duration;
                         }
                     }
 
-                    $manual->enrol_user($manualcache[$courseid], $user->id, $rid, $timestart, $timeend, true);
+                    $manual->enrol_user($manualcache[$courseid], $user->id, $rid, $today, $timeend, true);
 
                     $a = new object();
                     $a->course = $shortname;
