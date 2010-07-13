@@ -200,7 +200,7 @@ class assignment_upload extends assignment_base {
             } else {
                 $str = get_string('uploadfiles', 'assignment');
             }
-            echo $OUTPUT->single_button(new moodle_url('/mod/assignment/type/upload/upload.php', array('contextid'=>$this->context->id)), $str, 'get');
+            echo $OUTPUT->single_button(new moodle_url('/mod/assignment/type/upload/upload.php', array('contextid'=>$this->context->id, 'userid'=>$submission->userid)), $str, 'get');
         }
 
     }
@@ -265,21 +265,23 @@ class assignment_upload extends assignment_base {
     }
 
     function custom_feedbackform($submission, $return=false) {
-        global $CFG;
+        global $CFG, $OUTPUT;
 
         $mode         = optional_param('mode', '', PARAM_ALPHA);
         $offset       = optional_param('offset', 0, PARAM_INT);
         $forcerefresh = optional_param('forcerefresh', 0, PARAM_BOOL);
 
-        $mform = new mod_assignment_upload_response_form("$CFG->wwwroot/mod/assignment/upload.php", $this);
-
-        $mform->set_data(array('id'=>$this->cm->id, 'offset'=>$offset, 'forcerefresh'=>$forcerefresh, 'userid'=>$submission->userid, 'mode'=>$mode));
+        if ($this->count_responsefiles($submission->userid) > 0) {
+            $str = get_string('editthesefiles', 'assignment');
+        } else {
+            $str = get_string('uploadfiles', 'assignment');
+        }
 
         $output = get_string('responsefiles', 'assignment').': ';
 
-        ob_start();
-        $mform->display();
-        $output = ob_get_clean();
+        $output .= $OUTPUT->single_button(new moodle_url('/mod/assignment/type/upload/upload.php',
+                    array('contextid'=>$this->context->id,'id'=>$this->cm->id, 'offset'=>$offset,
+                          'forcerefresh'=>$forcerefresh, 'userid'=>$submission->userid, 'mode'=>$mode)), $str, 'get');
 
         if ($forcerefresh) {
             $output .= $this->update_main_listing($submission);
@@ -418,7 +420,6 @@ class assignment_upload extends assignment_base {
      */
     function upload($mform = null, $filemanager_options = null) {
         $action = required_param('action', PARAM_ALPHA);
-        error_log($action);
         switch ($action) {
             case 'finalize':
                 $this->finalize();
@@ -430,7 +431,7 @@ class assignment_upload extends assignment_base {
                 $this->unfinalize();
                 break;
             case 'uploadresponse':
-                $this->upload_responsefile();
+                $this->upload_responsefile($mform, $filemanager_options);
                 break;
             case 'uploadfile':
                 $this->upload_file($mform, $filemanager_options);
@@ -508,7 +509,7 @@ class assignment_upload extends assignment_base {
         die;
     }
 
-    function upload_responsefile() {
+    function upload_responsefile($mform, $options) {
         global $CFG, $USER, $OUTPUT, $PAGE;
 
         $userid = required_param('userid', PARAM_INT);
@@ -516,17 +517,13 @@ class assignment_upload extends assignment_base {
         $offset = required_param('offset', PARAM_INT);
 
         $returnurl = new moodle_url("submissions.php", array('id'=>$this->cm->id,'userid'=>$userid,'mode'=>$mode,'offset'=>$offset)); //not xhtml, just url.
-        $mform = new mod_assignment_upload_response_form(null, $this);
-        if ($mform->get_data() and $this->can_manage_responsefiles()) {
+
+        if ($formdata = $mform->get_data() and $this->can_manage_responsefiles()) {
             $fs = get_file_storage();
-            $filename = $mform->get_new_filename('newfile');
-            if ($filename !== false) {
-                $submission = $this->get_submission($userid, true, true);
-                if (!$fs->file_exists($this->context->id, 'mod_assignment', 'response', $submission->id, '/', $filename)) {
-                    if ($file = $mform->save_stored_file('newfile', $this->context->id, 'mod_assignment', 'response', $submission->id, '/', $filename, false, $USER->id)) {
-                        redirect($returnurl->out(false));
-                    }
-                }
+            $submission = $this->get_submission($userid, true, true);
+            if ($formdata = file_postupdate_standard_filemanager($formdata, 'files', $options, $this->context, 'mod_assignment', 'response', $submission->id)) {
+                $returnurl = new moodle_url("/mod/assignment/submissions.php", array('id'=>$this->cm->id,'userid'=>$formdata->userid,'mode'=>$formdata->mode,'offset'=>$formdata->offset));
+                redirect($returnurl->out(false));
             }
         }
         $PAGE->set_title(get_string('upload'));
@@ -1187,20 +1184,22 @@ class mod_assignment_upload_response_form extends moodleform {
         $instance = $this->_customdata;
 
         // visible elements
-        $mform->addElement('file', 'newfile', get_string('uploadafile'));
+        $mform->addElement('filemanager', 'files_filemanager', get_string('uploadafile'), null, $instance->options);
 
         // hidden params
         $mform->addElement('hidden', 'id', $instance->cm->id);
         $mform->setType('id', PARAM_INT);
+        $mform->addElement('hidden', 'contextid', $instance->contextid);
+        $mform->setType('contextid', PARAM_INT);
         $mform->addElement('hidden', 'action', 'uploadresponse');
         $mform->setType('action', PARAM_ALPHA);
-        $mform->addElement('hidden', 'mode');
+        $mform->addElement('hidden', 'mode', $instance->mode);
         $mform->setType('mode', PARAM_ALPHA);
-        $mform->addElement('hidden', 'offset');
+        $mform->addElement('hidden', 'offset', $instance->offset);
         $mform->setType('offset', PARAM_INT);
-        $mform->addElement('hidden', 'forcerefresh');
+        $mform->addElement('hidden', 'forcerefresh' , $instance->forcerefresh);
         $mform->setType('forcerefresh', PARAM_INT);
-        $mform->addElement('hidden', 'userid');
+        $mform->addElement('hidden', 'userid', $instance->userid);
         $mform->setType('userid', PARAM_INT);
 
         // buttons

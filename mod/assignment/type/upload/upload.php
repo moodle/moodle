@@ -28,8 +28,16 @@ require_once(dirname(__FILE__).'/assignment.class.php');
 require_once("$CFG->dirroot/repository/lib.php");
 
 $contextid = required_param('contextid', PARAM_INT);
+$id = optional_param('id', null, PARAM_INT);
 
-$url = new moodle_url('/mod/assignment/type/upload/upload.php', array('contextid'=>$contextid));
+$formdata = new object();
+$formdata->userid = required_param('userid', PARAM_INT);
+$formdata->offset = optional_param('offset', null, PARAM_INT);
+$formdata->forcerefresh = optional_param('forcerefresh', null, PARAM_INT);
+$formdata->mode = optional_param('mode', null, PARAM_ALPHA);
+
+$url = new moodle_url('/mod/assignment/type/upload/upload.php', array('contextid'=>$contextid,
+                            'id'=>$id,'offset'=>$formdata->offset,'forcerefresh'=>$formdata->forcerefresh,'userid'=>$formdata->userid,'mode'=>$formdata->mode));
 
 list($context, $course, $cm) = get_context_info_array($contextid);
 
@@ -49,14 +57,26 @@ $PAGE->set_title($title);
 $PAGE->set_heading($title);
 
 $instance = new assignment_upload($cm->id, $assignment, $cm, $course);
-$submission = $instance->get_submission($USER->id, true);
+$submission = $instance->get_submission($formdata->userid, true);
 
 $filemanager_options = array('subdirs'=>1, 'maxbytes'=>$assignment->maxbytes, 'maxfiles'=>$assignment->var1, 'accepted_types'=>'*', 'return_types'=>FILE_INTERNAL);
 
-$mform = new mod_assignment_upload_form(null, array('contextid'=>$contextid, 'options'=>$filemanager_options));
+if ($id==null) {
+    $mform = new mod_assignment_upload_form(null, array('contextid'=>$contextid, 'userid'=>$formdata->userid, 'options'=>$filemanager_options));
+} else {
+    $formdata->cm->id = $id;
+    $formdata->contextid = $contextid;
+    $formdata->options = $filemanager_options;
+    $mform = new mod_assignment_upload_response_form(null, $formdata);
+}
 
 if ($mform->is_cancelled()) {
-    redirect(new moodle_url('/mod/assignment/view.php', array('id'=>$cm->id)));
+    if ($id==null) {
+        redirect(new moodle_url('/mod/assignment/view.php', array('id'=>$cm->id)));
+    } else {
+        $instance->display_submission($formdata->offset, $formdata->userid);
+        die();
+    }
 } else if ($formdata = $mform->get_data()) {
     $instance->upload($mform, $filemanager_options);
     die;
@@ -71,6 +91,12 @@ if ($instance->can_upload_file($submission)) {
     $data = file_prepare_standard_filemanager($data, 'files', $filemanager_options, $context, 'mod_assignment', 'submission', $submission->id);
     // set file manager itemid, so it will find the files in draft area
     $mform->set_data($data);
+    $mform->display();
+} else if ($instance->can_manage_responsefiles() && !($id==null)) { //a 'response' files upload
+    // move submission files to user draft area
+    $formdata = file_prepare_standard_filemanager($formdata, 'files', $filemanager_options, $context, 'mod_assignment', 'response', $submission->id);
+    // set file manager itemid, so it will find the files in draft area
+    $mform->set_data($formdata);
     $mform->display();
 } else {
     echo $OUTPUT->notification(get_string('uploaderror', 'assignment'));
