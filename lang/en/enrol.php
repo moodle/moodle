@@ -70,6 +70,7 @@ $string['periodstart'] = 'from {$a}';
 $string['periodstartend'] = 'from {$a->start} until {$a->end}';
 $string['startdatetoday'] = 'Today';
 $string['synced'] = 'Synced';
+$string['totalenrolledusers'] = '{$a} enrolled users';
 $string['unenrol'] = 'Unenrol';
 $string['unenrolconfirm'] = 'Do you really want to unenrol user "{$a->user}" from course "{$a->course}"?';
 $string['unenrolme'] = 'Unenrol me from {$a}';
