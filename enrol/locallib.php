@@ -327,7 +327,7 @@ class course_enrolment_manager {
      * @return bool
      */
     public function unenrol_user($ue) {
-        global $DB;   
+        global $DB;
         list ($instance, $plugin) = $this->get_user_enrolment_components($ue);
         if ($instance && $plugin && $plugin->allow_unenrol($instance) && has_capability("enrol/$instance->enrol:unenrol", $this->context)) {
             $plugin->unenrol_user($instance, $ue->userid);
@@ -345,7 +345,7 @@ class course_enrolment_manager {
      */
     public function get_user_enrolment_components($userenrolment) {
         global $DB;
-        if (!is_numeric($userenrolment)) {
+        if (is_numeric($userenrolment)) {
             $userenrolment = $DB->get_record('user_enrolments', array('id'=>(int)$userenrolment));
         }
         $instances = $this->get_enrolment_instances();
