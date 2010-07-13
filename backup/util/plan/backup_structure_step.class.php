@@ -48,6 +48,10 @@ abstract class backup_structure_step extends backup_step {
 
     public function execute() {
 
+        if (!$this->execute_condition()) { // Check any condition to execute this
+            return;
+        }
+
         $fullpath = $this->task->get_taskbasepath();
 
         // We MUST have one fullpath here, else, error
@@ -94,6 +98,18 @@ abstract class backup_structure_step extends backup_step {
     }
 
 // Protected API starts here
+
+    /**
+     * To conditionally decide if one step will be executed or no
+     *
+     * For steps needing to be executed conditionally, based in dynamic
+     * conditions (at execution time vs at declaration time) you must
+     * override this function. It will return true if the step must be
+     * executed and false if not
+     */
+    protected function execute_condition() {
+        return true;
+    }
 
     /**
      * Function that will return the structure to be processed by this backup_step.
