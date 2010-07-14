@@ -93,7 +93,7 @@ function get_file_url($path, $options=null, $type='coursefile') {
  * @deprecated removed - use new file api
  */
 function print_file_upload_error($filearray = '', $returnerror = false) {
-    throw new coding_error('print_file_upload_error() can not be used any more, please use new file API');
+    throw new coding_exception('print_file_upload_error() can not be used any more, please use new file API');
 }
 
 /**
@@ -102,7 +102,7 @@ function print_file_upload_error($filearray = '', $returnerror = false) {
  */
 
 function resolve_filename_collisions($destination,$files,$format='%s_%d.%s') {
-    throw new coding_error('resolve_filename_collisions() can not be used any more, please use new file API');
+    throw new coding_exception('resolve_filename_collisions() can not be used any more, please use new file API');
 }
 
 /**
@@ -110,7 +110,7 @@ function resolve_filename_collisions($destination,$files,$format='%s_%d.%s') {
  * @deprecated removed - use new file api
  */
 function check_potential_filename($destination,$filename,$files) {
-    throw new coding_error('check_potential_filename() can not be used any more, please use new file API');
+    throw new coding_exception('check_potential_filename() can not be used any more, please use new file API');
 }
 
 /**
@@ -118,7 +118,7 @@ function check_potential_filename($destination,$filename,$files) {
  * @deprecated removed - use new file api
  */
 function upload_print_form_fragment($numfiles=1, $names=null, $descriptions=null, $uselabels=false, $labelnames=null, $coursebytes=0, $modbytes=0, $return=false) {
-    throw new coding_error('upload_print_form_fragment() can not be used any more, please use new file API');
+    throw new coding_exception('upload_print_form_fragment() can not be used any more, please use new file API');
 }
 
 /**

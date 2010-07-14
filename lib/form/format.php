@@ -23,7 +23,7 @@ class MoodleQuickForm_format extends MoodleQuickForm_select{
      */
     function MoodleQuickForm_format($elementName=null, $elementLabel=null, $attributes=null, $useHtmlEditor=null)
     {
-        throw new coding_error('MFORMS: Coding error, text formats are handled only by new editor element.');
+        throw new coding_exception('MFORMS: Coding error, text formats are handled only by new editor element.');
     } //end constructor
 
 }

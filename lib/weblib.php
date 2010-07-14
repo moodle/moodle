@@ -461,13 +461,13 @@ class moodle_url {
         $params = $this->params;
         foreach ($overrideparams as $key=>$value) {
             if (is_int($key)) {
-                throw new coding_error('Overriden parameters can not have numeric keys!');
+                throw new coding_exception('Overridden parameters can not have numeric keys!');
             }
             if (is_array($value)) {
-                throw new coding_error('Overriden parameters values can not be arrays!');
+                throw new coding_exception('Overridden parameters values can not be arrays!');
             }
             if (is_object($value) and !method_exists($value, '__toString')) {
-                throw new coding_error('Overriden parameters values can not be objects, unless __toString() is defined!');
+                throw new coding_exception('Overridden parameters values can not be objects, unless __toString() is defined!');
             }
             $params[$key] = (string)$value;
         }
