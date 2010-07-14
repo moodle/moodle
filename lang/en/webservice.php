@@ -76,6 +76,7 @@ $string['errormissingkey'] = 'Missing required key in single structure: {$a}';
 $string['errornotemptydefaultparamarray'] = 'The web service description parameter named \'{$a}\' is an single or multiple structure. The default can only be empty array. Check web service description.';
 $string['erroronlyarray'] = 'Only arrays accepted.';
 $string['erroroptionalparamarray'] = 'The web service description parameter named \'{$a}\' is an single or multiple structure. It can not be set as VALUE_OPTIONAL. Check web service description.';
+$string['errorresponsemissingkey'] = 'Error in response - Missing following required key in a single structure: {$a}';
 $string['errorscalartype'] = 'Scalar type expected, array or object received.';
 $string['errorunexpectedkey'] = 'Unexpected keys detected in parameter array.';
 $string['execute'] = 'Execute';

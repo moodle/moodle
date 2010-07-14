@@ -235,7 +235,7 @@ class external_api {
             foreach ($description->keys as $key=>$subdesc) {
                 if (!array_key_exists($key, $response)) {
                     if ($subdesc->required == VALUE_REQUIRED) {
-                        throw new invalid_response_exception(get_string('errormissingkey', 'webservice', $key));
+                        throw new webservice_parameter_exception('errorresponsemissingkey', $key);
                     }
                     if ($subdesc instanceof external_value) {
                             if ($subdesc->required == VALUE_DEFAULT) {
