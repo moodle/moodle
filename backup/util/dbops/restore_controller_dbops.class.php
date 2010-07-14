@@ -83,4 +83,17 @@ abstract class restore_controller_dbops extends restore_dbops {
         }
         return $controller;
     }
+
+    public static function create_backup_ids_temp_table($restoreid) {
+        global $CFG, $DB;
+        $dbman = $DB->get_manager(); // We are going to use database_manager services
+
+        if ($dbman->table_exists('backup_ids_temp')) { // Table exists, from restore prechecks
+            // TODO: Improve this by inserting/selecting some record to see there is restoreid match
+            // TODO: If not match, exception, table corresponds to another backup/restore operation
+            return true;
+        }
+        backup_controller_dbops::create_backup_ids_temp_table($restoreid); // Create ids temp table
+        return false;
+    }
 }

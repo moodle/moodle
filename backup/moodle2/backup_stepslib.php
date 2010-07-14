@@ -859,7 +859,7 @@ class backup_users_structure_step extends backup_structure_step {
         $normalfields = array(
             'confirmed', 'policyagreed', 'deleted',
             'lang', 'theme', 'timezone', 'firstaccess',
-            'lastaccess', 'lastlogin', 'currentlogin', 'secret',
+            'lastaccess', 'lastlogin', 'currentlogin',
             'mailformat', 'maildigest', 'maildisplay', 'htmleditor',
             'ajax', 'autosubscribe', 'trackforums', 'timecreated',
             'timemodified', 'trustbitmask', 'screenreader');
@@ -867,7 +867,10 @@ class backup_users_structure_step extends backup_structure_step {
         // Then, the fields potentially needing anonymization
         $anonfields = array(
             'username', 'idnumber', 'firstname', 'lastname',
-            'email', 'emailstop', 'lastip', 'picture',
+            'email', 'emailstop', 'icq', 'skype',
+            'yahoo', 'aim', 'msn', 'phone1',
+            'phone2', 'institution', 'department', 'address',
+            'city', 'country', 'lastip', 'picture',
             'url', 'description', 'description_format', 'imagealt', 'auth');
 
         // Add anonymized fields to $userfields with custom final element
@@ -1086,9 +1089,8 @@ class backup_inforef_structure_step extends backup_structure_step {
 
     protected function define_structure() {
 
-        // Items we want to include in the inforef file. NOTE: Important to keep this
-        // list 100% sync with the one in next step! Until we get better place for it (backup:CONST)
-        $items = array('user', 'grouping', 'group', 'role', 'file', 'scale', 'outcome', 'grade_item');
+        // Items we want to include in the inforef file.
+        $items = backup_helper::get_inforef_itemnames();
 
         // Build the tree
 
@@ -1098,7 +1100,7 @@ class backup_inforef_structure_step extends backup_structure_step {
         foreach ($items as $itemname) {
             if (backup_structure_dbops::annotations_exist($this->get_backupid(), $itemname)) {
                 $elementroot = new backup_nested_element($itemname . 'ref');
-                $element = new backup_nested_element($itemname, array('id'));
+                $element = new backup_nested_element($itemname, array(), array('id'));
                 $inforef->add_child($elementroot);
                 $elementroot->add_child($element);
                 $element->set_source_sql("
@@ -1125,9 +1127,8 @@ class move_inforef_annotations_to_final extends backup_execution_step {
 
     protected function define_execution() {
 
-        // Items we want to include in the inforef file. NOTE: Important to keep this
-        // list 100% sync with the one in prev step! Until we get better place for it (backup:CONST)
-        $items = array('user', 'grouping', 'group', 'role', 'file', 'scale', 'outcome', 'grade_item');
+        // Items we want to include in the inforef file
+        $items = backup_helper::get_inforef_itemnames();
         foreach ($items as $itemname) {
             // Delegate to dbops
             backup_structure_dbops::move_annotations_to_final($this->get_backupid(), $itemname);
@@ -1191,7 +1192,7 @@ class backup_main_structure_step extends backup_structure_step {
         $info['backup_date']    = time();
         $info['backup_uniqueid']= $this->get_backupid();
         $info['original_wwwroot']=$CFG->wwwroot;
-        $info['original_site_identifier'] = get_site_identifier();
+        $info['original_site_identifier_hash'] = md5(get_site_identifier());
         $info['original_course_id'] = $this->get_courseid();
 
         // Get more information from controller
@@ -1204,7 +1205,7 @@ class backup_main_structure_step extends backup_structure_step {
         $information = new backup_nested_element('information', null, array(
             'name', 'moodle_version', 'moodle_release', 'backup_version',
             'backup_release', 'backup_date', 'original_wwwroot',
-            'original_site_identifier', 'original_course_id'));
+            'original_site_identifier_hash', 'original_course_id'));
 
         $details = new backup_nested_element('details');
 

@@ -34,7 +34,19 @@ class restore_root_task extends restore_task {
      */
     public function build() {
 
-        // TODO: Link all the preloading/precreation steps here
+        // Conditionally create the temp table (can exist from prechecks) and delete old stuff
+        $this->add_step(new restore_create_and_clean_temp_stuff('create_and_clean_temp_stuff'));
+
+        // If we haven't preloaded information, load all the included inforef records to temp_ids table
+        $this->add_step(new restore_load_included_inforef_records('load_inforef_records'));
+
+        // If we haven't preloaded information and are restoring user info, load all the needed users to temp_ids table
+        $this->add_step(new restore_load_included_users('load_user_records'));
+
+        // If we haven't preloaded information and are restoring user info, process all those needed users
+        // creating/mapping them as needed. Any problem here will cause exception as far as prechecks have
+        // performed the same process so, it's not possible to have errors here
+        $this->add_step(new restore_process_included_users('process_user_records'));
 
         // At the end, mark it as built
         $this->built = true;

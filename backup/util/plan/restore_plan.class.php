@@ -31,6 +31,7 @@ class restore_plan extends base_plan implements loggable {
 
     protected $controller; // The restore controller building/executing this plan
     protected $basepath;   // Fullpath to dir where backup is available
+    protected $preloaded;  // When executing the plan, do we have preloaded (from checks) info
 
     /**
      * Constructor - instantiates one object of this class
@@ -43,6 +44,7 @@ class restore_plan extends base_plan implements loggable {
         }
         $this->controller = $controller;
         $this->basepath   = $CFG->dataroot . '/temp/backup/' . $controller->get_tempdir();
+        $this->preloaded  = false;
         parent::__construct('restore_plan');
     }
 
@@ -73,6 +75,22 @@ class restore_plan extends base_plan implements loggable {
 
     public function get_target() {
         return $this->controller->get_target();
+    }
+
+    public function get_userid() {
+        return $this->controller->get_userid();
+    }
+
+    public function is_samesite() {
+        return $this->controller->is_samesite();
+    }
+
+    public function set_preloaded_information() {
+        $this->preloaded = true;
+    }
+
+    public function get_preloaded_information() {
+        return $this->preloaded;
     }
 
     public function log($message, $level, $a = null, $depth = null, $display = false) {

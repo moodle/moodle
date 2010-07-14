@@ -36,7 +36,7 @@ abstract class restore_block_task extends restore_task {
      * Constructor - instantiates one object of this class
      */
     public function __construct($name, $taskbasepath, $plan = null) {
-        $this->$taskbasepath = $taskbasepath;
+        $this->taskbasepath = $taskbasepath;
         parent::__construct($name, $plan);
     }
 
@@ -44,7 +44,7 @@ abstract class restore_block_task extends restore_task {
      * Block tasks have their own directory to write files
      */
     public function get_taskbasepath() {
-        return $this->$taskbasepath;
+        return $this->taskbasepath;
     }
 
     /**
@@ -57,6 +57,9 @@ abstract class restore_block_task extends restore_task {
             $this->built = true;
             return;
         }
+
+        // TODO: See backup. If "child" of activity task and it has been excluded, nothing to do
+
 
         // TODO: Link all the activity steps here
 

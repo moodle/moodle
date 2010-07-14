@@ -44,6 +44,7 @@ class restore_controller extends backup implements loggable {
     protected $userid; // user id executing the restore
     protected $operation; // Type of operation (backup/restore)
     protected $target;    // Restoring to new/existing/current_adding/_deleting
+    protected $samesite;  // Are we restoring to the same site where the backup was generated
 
     protected $status; // Current status of the controller (created, planned, configured...)
 
@@ -71,6 +72,7 @@ class restore_controller extends backup implements loggable {
         $this->execution = backup::EXECUTION_INMEDIATE;
         $this->operation = backup::OPERATION_RESTORE;
         $this->executiontime = 0;
+        $this->samesite = false;
         $this->checksum = '';
 
         // Apply current backup version and release if necessary
@@ -173,6 +175,7 @@ class restore_controller extends backup implements loggable {
                             'mode-'       . $this->mode .
                             'userid-'     . $this->userid .
                             'target-'     . $this->target .
+                            'samesite-'   . $this->samesite .
                             'operation-'  . $this->operation .
                             'status-'     . $this->status .
                             'execution-'  . $this->execution .
@@ -225,6 +228,10 @@ class restore_controller extends backup implements loggable {
 
     public function get_target() {
         return $this->target;
+    }
+
+    public function is_samesite() {
+        return $this->samesite;
     }
 
     public function get_status() {
@@ -354,6 +361,9 @@ class restore_controller extends backup implements loggable {
 
         // Set the controller type to the one found in the information
         $this->type = $this->info->type;
+
+        // Set the controller samesite flag as needed
+        $this->samesite = backup_general_helper::backup_is_samesite($this->info);
 
         // Now we load the plan that will be configured following the
         // information provided by the $info

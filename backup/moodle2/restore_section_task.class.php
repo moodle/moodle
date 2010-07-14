@@ -45,7 +45,7 @@ class restore_section_task extends restore_task {
      */
     public function get_taskbasepath() {
 
-        return $this->get_basepath() . '/sections/section_' . $info->sectionid;
+        return $this->get_basepath() . '/sections/section_' . $this->info->sectionid;
     }
 
     /**
@@ -57,6 +57,46 @@ class restore_section_task extends restore_task {
 
         // At the end, mark it as built
         $this->built = true;
+    }
+
+    /**
+     * Exceptionally override the execute method, so, based in the section_included setting, we are able
+     * to skip the execution of one task completely
+     */
+    public function execute() {
+
+        // Find activity_included_setting
+        if (!$this->get_setting_value('included')) {
+            $this->log('activity skipped by _included setting', backup::LOG_DEBUG, $this->name);
+
+        } else { // Setting tells us it's ok to execute
+            parent::execute();
+        }
+    }
+
+    /**
+     * Specialisation that, first of all, looks for the setting within
+     * the task with the the prefix added and later, delegates to parent
+     * without adding anything
+     */
+    public function get_setting($name) {
+        $namewithprefix = 'section_' . $this->info->sectionid . '_' . $name;
+        $result = null;
+        foreach ($this->settings as $key => $setting) {
+            if ($setting->get_name() == $namewithprefix) {
+                if ($result != null) {
+                    throw new base_task_exception('multiple_settings_by_name_found', $namewithprefix);
+                } else {
+                    $result = $setting;
+                }
+            }
+        }
+        if ($result) {
+            return $result;
+        } else {
+            // Fallback to parent
+            return parent::get_setting($name);
+        }
     }
 
 // Protected API starts here

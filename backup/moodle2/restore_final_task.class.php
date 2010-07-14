@@ -35,7 +35,9 @@ class restore_final_task extends restore_task {
      */
     public function build() {
 
-        // TODO: Link all the final steps here
+        // Clean the temp dir (conditionally) and drop temp table
+        $this->add_step(new restore_drop_and_clean_temp_stuff('drop_and_clean_temp_stuff'));
+
         $this->built = true;
     }
 

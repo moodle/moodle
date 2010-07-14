@@ -116,7 +116,7 @@ abstract class backup_general_helper extends backup_helper {
 
         $moodlefile = $CFG->dataroot . '/temp/backup/' . $tempdir . '/moodle_backup.xml';
         if (!file_exists($moodlefile)) { // Shouldn't happen ever, but...
-            throw new backup_helper_exception('missing_moodle_backup_xml_file');
+            throw new backup_helper_exception('missing_moodle_backup_xml_file', $moodlefile);
         }
         // Load the entire file to in-memory array
         $xmlparser = new progressive_parser();
@@ -137,7 +137,7 @@ abstract class backup_general_helper extends backup_helper {
         $info->backup_release = $infoarr['backup_release'];
         $info->backup_date    = $infoarr['backup_date'];
         $info->original_wwwroot         = $infoarr['original_wwwroot'];
-        $info->original_site_identifier = $infoarr['original_site_identifier'];
+        $info->original_site_identifier_hash = $infoarr['original_site_identifier_hash'];
         $info->original_course_id       = $infoarr['original_course_id'];
         $info->type   =  $infoarr['details']['detail'][0]['type'];
         $info->format =  $infoarr['details']['detail'][0]['format'];
@@ -194,6 +194,25 @@ abstract class backup_general_helper extends backup_helper {
         }
 
         return $info;
+    }
+
+    /**
+     * Given the information fetched from moodle_backup.xml file
+     * decide if we are restoring in the same site the backup was
+     * generated or no. Behavior of various parts of restore are
+     * dependent of this.
+     *
+     * Use site_identifier (hashed) and fallback to wwwroot, thought
+     * any 2.0 backup should have the former. See MDL-16614
+     */
+    public static function backup_is_samesite($info) {
+        global $CFG;
+        $hashedsiteid = md5(get_site_identifier());
+        if (isset($info->original_site_identifier_hash) && !empty($info->original_site_identifier_hash)) {
+            return $info->original_site_identifier_hash == $hashedsiteid;
+        } else {
+            return $info->original_wwwroot == $CFG->wwwroot;
+        }
     }
 
     /**

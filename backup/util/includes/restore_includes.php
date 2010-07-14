@@ -31,7 +31,11 @@ if (!defined('MOODLE_INTERNAL')) {
 require_once($CFG->dirroot . '/backup/util/interfaces/checksumable.class.php');
 require_once($CFG->dirroot . '/backup/util/interfaces/loggable.class.php');
 require_once($CFG->dirroot . '/backup/util/interfaces/executable.class.php');
+require_once($CFG->dirroot . '/backup/util/structure/restore_path_element.class.php');
 require_once($CFG->dirroot . '/backup/util/helper/restore_moodlexml_parser_processor.class.php');
+require_once($CFG->dirroot . '/backup/util/helper/restore_inforef_parser_processor.class.php');
+require_once($CFG->dirroot . '/backup/util/helper/restore_users_parser_processor.class.php');
+require_once($CFG->dirroot . '/backup/util/helper/restore_structure_parser_processor.class.php');
 require_once($CFG->dirroot . '/backup/util/xml/parser/progressive_parser.class.php');
 require_once($CFG->dirroot . '/backup/backup.class.php');
 require_once($CFG->dirroot . '/backup/util/output/output_controller.class.php');
@@ -62,6 +66,7 @@ require_once($CFG->dirroot . '/backup/util/plan/base_task.class.php');
 require_once($CFG->dirroot . '/backup/util/plan/restore_task.class.php');
 require_once($CFG->dirroot . '/backup/util/plan/base_step.class.php');
 require_once($CFG->dirroot . '/backup/util/plan/restore_step.class.php');
+require_once($CFG->dirroot . '/backup/util/plan/restore_structure_step.class.php');
 require_once($CFG->dirroot . '/backup/util/plan/restore_execution_step.class.php');
 require_once($CFG->dirroot . '/backup/moodle2/restore_plan_builder.class.php');
 require_once($CFG->dirroot . '/backup/controller/restore_controller.class.php');
@@ -70,3 +75,4 @@ require_once($CFG->dirroot . '/backup/controller/restore_controller.class.php');
 require_once($CFG->dirroot . '/backup/util/ui/backup_ui_setting.class.php');
 
 // And some moodle stuff too
+require_once ($CFG->dirroot . '/tag/lib.php');

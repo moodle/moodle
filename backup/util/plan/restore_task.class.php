@@ -50,6 +50,22 @@ abstract class restore_task extends base_task {
     public function get_target() {
         return $this->plan->get_target();
     }
+
+    public function get_userid() {
+        return $this->plan->get_userid();
+    }
+
+    public function is_samesite() {
+        return $this->plan->is_samesite();
+    }
+
+    public function set_preloaded_information() {
+        $this->plan->set_preloaded_information();
+    }
+
+    public function get_preloaded_information() {
+        return $this->plan->get_preloaded_information();
+    }
 }
 
 /*

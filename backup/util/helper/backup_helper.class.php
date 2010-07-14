@@ -281,6 +281,14 @@ abstract class backup_helper {
     public static function is_sqlparam($value) {
         return array('sqlparam' => $value);
     }
+
+    /**
+     * This function returns one array of itemnames that are being handled by
+     * inforef.xml files. Used both by backup and restore
+     */
+    public static function get_inforef_itemnames() {
+        return array('user', 'grouping', 'group', 'role', 'file', 'scale', 'outcome', 'grade_item');
+    }
 }
 
 /*
