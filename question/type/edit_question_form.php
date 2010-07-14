@@ -106,10 +106,13 @@ class question_edit_form extends moodleform {
         $mform->setType('name', PARAM_TEXT);
         $mform->addRule('name', null, 'required', null, 'client');
 
+        //TODO: MDL-16094 convert to new editor element
         $mform->addElement('htmleditor', 'questiontext', get_string('questiontext', 'quiz'),
                 array('rows' => 15, 'course' => $this->coursefilesid));
         $mform->setType('questiontext', PARAM_RAW);
-        $mform->addElement('format', 'questiontextformat', get_string('format'));
+        //$mform->addElement('format', 'questiontextformat', get_string('format'));
+        $mform->addElement('hidden', 'questiontextformat');
+        $mform->setType('questiontextformat', PARAM_INT);
 
         make_upload_directory($this->coursefilesid);    // Just in case
         $coursefiles = get_directory_list("$CFG->dataroot/$this->coursefilesid", $CFG->moddata);
