@@ -75,6 +75,8 @@ abstract class feedback_item_form extends moodleform {
             $buttonarray[] = &$mform->createElement('submit', 'update_item', get_string('update_item', 'feedback'));
             $buttonarray[] = &$mform->createElement('submit', 'clone_item', get_string('save_as_new_item', 'feedback'));
         }else{
+            $mform->addElement('hidden', 'clone_item', 0);
+            $mform->setType('clone_item', PARAM_INT);
             $buttonarray[] = &$mform->createElement('submit', 'save_item', get_string('save_item', 'feedback'));
         }
         $buttonarray[] = &$mform->createElement('cancel');

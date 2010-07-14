@@ -1,6 +1,7 @@
 <?php
 defined('MOODLE_INTERNAL') OR die('not allowed');
 require_once($CFG->dirroot.'/mod/feedback/item/feedback_item_class.php');
+require_once($CFG->libdir.'/formslib.php');
 
 class feedback_item_label extends feedback_item_base {
     var $type = "label";
