@@ -58,10 +58,10 @@ $strentries  = get_string("entries", "glossary");
 $table = new html_table();
 
 if ($usesections) {
-    $table->head  = array ($strsectionname, $strname, $strintro);
+    $table->head  = array ($strsectionname, $strname, $strentries);
     $table->align = array ("CENTER", "LEFT", "CENTER");
 } else {
-    $table->head  = array ($strname, $strintro);
+    $table->head  = array ($strname, $strentries);
     $table->align = array ("LEFT", "CENTER");
 }
 
