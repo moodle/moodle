@@ -686,13 +686,12 @@ class backup_gradebook_structure_step extends backup_structure_step {
 
         // Define sources
 
-        //if itemtype == manual then item is a calculated item so isn't attached to an activity and we need to back it up here
-        $grade_items_array = grade_item::fetch_all(array('itemtype' => 'manual', 'courseid' => $this->get_courseid()));
-
-        //$grade_items_array==false and not an empty array if no items. set_source_array() fails if you pass a bool
-        if ($grade_items_array) {
-            $grade_item->set_source_array($grade_items_array);
-        }
+        //Include manual, category and the course grade item
+        $grade_items_sql ="SELECT * FROM {grade_items} 
+                           WHERE courseid = :courseid
+                           AND (itemtype='manual' OR itemtype='course' OR itemtype='category')";
+        $grade_items_params = array('courseid'=>$this->get_courseid());
+        $grade_item->set_source_sql($grade_items_sql, $grade_items_params);
 
         if ($userinfo) {
             $grade_grade->set_source_table('grade_grades', array('itemid' => backup::VAR_PARENTID));
