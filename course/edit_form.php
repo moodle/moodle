@@ -200,9 +200,13 @@ class course_edit_form extends moodleform {
         $mform->addElement('select', 'visible', get_string('availability'), $choices);
         $mform->addHelpButton('visible', 'availability');
         $mform->setDefault('visible', $courseconfig->visible);
-        if (!empty($course->id) and !has_capability('moodle/course:visibility', $coursecontext)) {
+        if (!has_capability('moodle/course:visibility', $context)) {
             $mform->hardFreeze('visible');
-            $mform->setConstant('visible', $course->visible);
+            if (!empty($course->id)) {
+                $mform->setConstant('visible', $course->visible);
+            } else {
+                $mform->setConstant('visible', $category->visible);
+            }
         }
 
 //--------------------------------------------------------------------------------

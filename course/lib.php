@@ -3471,12 +3471,11 @@ function create_course($data, $editoroptions = NULL) {
         $data->summary_format = FORMAT_HTML;
     }
 
-    // init visible flags
-    if (isset($data->visible)) {
-        $data->visibleold = $data->visible;
-    } else {
-        $data->visibleold = $data->visible = 1;
+    if (!isset($data->visible)) {
+        // data not from form, add missing visibility info
+        $data->visible = $category->category;
     }
+    $data->visibleold = $data->visible;
 
     $newcourseid = $DB->insert_record('course', $data);
     $context = get_context_instance(CONTEXT_COURSE, $newcourseid, MUST_EXIST);
@@ -3557,8 +3556,8 @@ function update_course($data, $editoroptions = NULL) {
     }
     $movecat = (isset($data->category) and $oldcourse->category != $data->category);
 
-    // init visible flags
-    if (isset($data->visible)) {
+    if (!isset($data->visible)) {
+        // data not from form, add missing visibility info
         $data->visible = $oldcourse->visible;
     }
 
