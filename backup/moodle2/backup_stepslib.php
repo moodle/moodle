@@ -690,7 +690,7 @@ class backup_gradebook_structure_step extends backup_structure_step {
         $grade_items_sql ="SELECT * FROM {grade_items} 
                            WHERE courseid = :courseid
                            AND (itemtype='manual' OR itemtype='course' OR itemtype='category')";
-        $grade_items_params = array('courseid'=>$this->get_courseid());
+        $grade_items_params = array('courseid'=>backup::VAR_COURSEID);
         $grade_item->set_source_sql($grade_items_sql, $grade_items_params);
 
         if ($userinfo) {
