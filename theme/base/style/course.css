@@ -110,3 +110,5 @@
 .dir-rtl .course_category_tree .category.with_children> .category_label {background-position: center right; padding-right: 18px;}
 .dir-rtl .course_category_tree .category_label, .dir-rtl .course_category_tree .category .course {padding-right:18px;}
 .dir-rtl.jsenabled .course_category_tree .category.with_children.collapsed .category_label {background-image:url([[pix:moodle|t/collapsed_rtl]]);}
+.dir-rtl .course_category_tree .category .courses .course_link {background-position:center right; padding-right:18px;}
+.dir-rtl .clearfloat {float:none; clear:both;height:0px;}
