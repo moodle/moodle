@@ -47,8 +47,6 @@ class blog_edit_form extends moodleform {
         $mform->setType('summary_editor', PARAM_RAW);
         $mform->addRule('summary_editor', get_string('emptybody', 'blog'), 'required', null, 'client');
 
-        $mform->addElement('format', 'summaryformat', get_string('format'));
-
         $mform->addElement('filemanager', 'attachment_filemanager', get_string('attachment', 'forum'), null, $attachmentoptions);
 
         //disable publishstate options that are not allowed
