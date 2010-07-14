@@ -80,11 +80,21 @@ switch ($action) {
         $return = new stdclass;
         if ($stored_file = $fs->get_file($user_context->id, 'user', 'draft', $draftid, $filepath, $filename)) {
             $parent_path = $stored_file->get_parent_directory()->get_filepath();
-            if($result = $stored_file->delete()) {
+            if ($stored_file->is_directory()) {
+                $files = $fs->get_directory_files($user_context->id, 'user', 'draft', $draftid, $filepath, true);
+                foreach ($files as $file) {
+                    $file->delete();
+                }
+                $stored_file->delete();
                 $return->filepath = $parent_path;
                 echo json_encode($return);
             } else {
-                echo json_encode(false);
+                if($result = $stored_file->delete()) {
+                    $return->filepath = $parent_path;
+                    echo json_encode($return);
+                } else {
+                    echo json_encode(false);
+                }
             }
         } else {
             echo json_encode(false);
