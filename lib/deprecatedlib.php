@@ -88,6 +88,40 @@ function get_file_url($path, $options=null, $type='coursefile') {
 }
 
 /**
+ * If there has been an error uploading a file, print the appropriate error message
+ * Numerical constants used as constant definitions not added until PHP version 4.2.0
+ * @deprecated removed - use new file api
+ */
+function print_file_upload_error($filearray = '', $returnerror = false) {
+    throw new coding_error('print_file_upload_error() can not be used any more, please use new file API');
+}
+
+/**
+ * Handy function for resolving file conflicts
+ * @deprecated removed - use new file api
+ */
+
+function resolve_filename_collisions($destination,$files,$format='%s_%d.%s') {
+    throw new coding_error('resolve_filename_collisions() can not be used any more, please use new file API');
+}
+
+/**
+ * Checks a file name for any conflicts
+ * @deprecated removed - use new file api
+ */
+function check_potential_filename($destination,$filename,$files) {
+    throw new coding_error('check_potential_filename() can not be used any more, please use new file API');
+}
+
+/**
+ * This function prints out a number of upload form elements.
+ * @deprecated removed - use new file api
+ */
+function upload_print_form_fragment($numfiles=1, $names=null, $descriptions=null, $uselabels=false, $labelnames=null, $coursebytes=0, $modbytes=0, $return=false) {
+    throw new coding_error('upload_print_form_fragment() can not be used any more, please use new file API');
+}
+
+/**
  * Return the authentication plugin title
  *
  * @param string $authtype plugin type
@@ -97,6 +131,7 @@ function auth_get_plugin_title($authtype) {
     debugging('Function auth_get_plugin_title() is deprecated, please use standard get_string("pluginname", "auth_'.$authtype.'")!');
     return get_string('pluginname', "auth_{$authtype}");
 }
+
 
 
 /**

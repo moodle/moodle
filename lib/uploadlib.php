@@ -23,10 +23,6 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-/** {@see eventslib.php} */
-require_once($CFG->libdir.'/eventslib.php');
-
-//error_reporting(E_ALL ^ E_NOTICE);
 /**
  * This class handles all aspects of fileuploading
  *
@@ -505,46 +501,6 @@ THESE FUNCTIONS ARE OUTSIDE THE CLASS BECAUSE THEY NEED TO BE CALLED FROM OTHER 
 FOR EXAMPLE CLAM_HANDLE_INFECTED_FILE AND CLAM_REPLACE_INFECTED_FILE USED FROM CRON
 UPLOAD_PRINT_FORM_FRAGMENT DOESN'T REALLY BELONG IN THE CLASS BUT CERTAINLY IN THIS FILE
 ***************************************************************************************/
-
-
-/**
- * This function prints out a number of upload form elements.
- *
- * @global object
- * @param int $numfiles The number of elements required (optional, defaults to 1)
- * @param array $names Array of element names to use (optional, defaults to FILE_n)
- * @param array $descriptions Array of strings to be printed out before each file bit.
- * @param boolean $uselabels -Whether to output text fields for file descriptions or not (optional, defaults to false)
- * @param array $labelnames Array of element names to use for labels (optional, defaults to LABEL_n)
- * @param int $coursebytes $coursebytes and $maxbytes are used to calculate upload max size ( using {@link get_max_upload_file_size})
- * @param int $modbytes $coursebytes and $maxbytes are used to calculate upload max size ( using {@link get_max_upload_file_size})
- * @param boolean $return -Whether to return the string (defaults to false - string is echoed)
- * @return string Form returned as string if $return is true
- */
-function upload_print_form_fragment($numfiles=1, $names=null, $descriptions=null, $uselabels=false, $labelnames=null, $coursebytes=0, $modbytes=0, $return=false) {
-    global $CFG;
-    $maxbytes = get_max_upload_file_size($CFG->maxbytes, $coursebytes, $modbytes);
-    $str = '<input type="hidden" name="MAX_FILE_SIZE" value="'. $maxbytes .'" />'."\n";
-    for ($i = 0; $i < $numfiles; $i++) {
-        if (is_array($descriptions) && !empty($descriptions[$i])) {
-            $str .= '<strong>'. $descriptions[$i] .'</strong><br />';
-        }
-        $name = ((is_array($names) && !empty($names[$i])) ? $names[$i] : 'FILE_'.$i);
-        $str .= '<input type="file" size="50" name="'. $name .'" alt="'. $name .'" /><br />'."\n";
-        if ($uselabels) {
-            $lname = ((is_array($labelnames) && !empty($labelnames[$i])) ? $labelnames[$i] : 'LABEL_'.$i);
-            $str .= get_string('uploadlabel').' <input type="text" size="50" name="'. $lname .'" alt="'. $lname
-                .'" /><br /><br />'."\n";
-        }
-    }
-    if ($return) {
-        return $str;
-    }
-    else {
-        echo $str;
-    }
-}
-
 
 /**
  * Deals with an infected file - either moves it to a quarantinedir

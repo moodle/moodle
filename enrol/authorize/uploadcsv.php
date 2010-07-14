@@ -17,7 +17,6 @@
 
 /// Load libraries
 require_once('../../config.php');
-require_once($CFG->libdir.'/uploadlib.php');
 require_once($CFG->dirroot.'/enrol/authorize/const.php');
 require_once($CFG->dirroot.'/enrol/authorize/localfuncs.php');
 require_once($CFG->libdir.'/eventslib.php');

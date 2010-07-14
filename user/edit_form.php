@@ -142,10 +142,6 @@ class user_edit_form extends moodleform {
 
         return $errors;
     }
-
-    function get_um() {
-        return $this->_upload_manager;
-    }
 }
 
 

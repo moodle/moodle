@@ -30,7 +30,6 @@
 
 require_once('../../config.php');
 require_once('lib.php');
-require_once($CFG->libdir.'/uploadlib.php');
 require_once($CFG->libdir.'/xmlize.php');
 
 $id       = optional_param('id', 0, PARAM_INT);    // course module id

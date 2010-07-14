@@ -9,7 +9,6 @@
     define('RESTORETO_EXISTING_DELETING', 3);
     define('RESTORETO_EXISTING_ADDING',   4);
 
-    require_once($CFG->libdir.'/uploadlib.php');
     require_once($CFG->libdir . '/completionlib.php');
 
     //Sets a name/value pair in config_plugin table
@@ -266,7 +265,7 @@
             if (copy($from_file,$to_file)) {
                 chmod($to_file,$CFG->directorypermissions);
                 if (!empty($log_clam)) {
-                    clam_log_upload($to_file,null,true);
+                    //clam_log_upload($to_file,null,true);
                 }
                 return true;
             }

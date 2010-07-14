@@ -11,7 +11,6 @@
 
 require_once("../config.php");
 require_once("editlib.php"); // Includes lib/questionlib.php
-require_once($CFG->libdir . '/uploadlib.php');
 require_once("import_form.php");
 
 list($thispageurl, $contexts, $cmid, $cm, $module, $pagevars) =

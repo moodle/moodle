@@ -6,6 +6,8 @@
  * php -d error_log=/path/to/log thisfile.php will override the default error log for php cli, which is stderr, so if you want this script to just print stuff out, use php thisfile.php instead.
  */
 
+die('TODO: MDL-19380');
+
 $fd = fopen('php://stdin','r');
 if (!$fd) {
     exit();

@@ -82,10 +82,6 @@ class group_form extends moodleform {
         return $errors;
     }
 
-    function get_um() {
-        return $this->_upload_manager;
-    }
-
     function get_editor_options() {
         return $this->_customdata['editoroptions'];
     }

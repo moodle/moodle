@@ -42,7 +42,6 @@ require_once 'HTML/QuickForm/DHTMLRulesTableless.php';
 require_once 'HTML/QuickForm/Renderer/Tableless.php';
 
 require_once $CFG->libdir.'/filelib.php';
-require_once $CFG->libdir.'/uploadlib.php'; // TODO: remove
 
 define('EDITOR_UNLIMITED_FILES', -1);
 
@@ -230,7 +229,8 @@ abstract class moodleform {
     }
 
     /**
-     * Internal method. Validates all old-style uploaded files.
+     * Internal method. Validates all old-style deprecated uploaded files.
+     * The new way is to upload files via repository api.
      *
      * @global object
      * @global object
@@ -283,7 +283,7 @@ abstract class moodleform {
             }
 
 /*
-  // TODO: rethink the file scanning
+  // TODO: rethink the file scanning MDL-19380
             if ($CFG->runclamonupload) {
                 if (!clam_scan_moodle_file($_FILES[$elname], $COURSE)) {
                     $errors[$elname] = $_FILES[$elname]['uploadlog'];
@@ -329,7 +329,6 @@ abstract class moodleform {
      * note: $slashed param removed
      *
      * @param mixed $default_values object or array of default values
-     * @param bool $slased true if magic quotes applied to data values
      */
     function set_data($default_values) {
         if (is_object($default_values)) {
@@ -339,10 +338,10 @@ abstract class moodleform {
     }
 
     /**
-     * @param bool $um
+     * @deprecated
      */
     function set_upload_manager($um=false) {
-        debugging('Not used anymore, please fix code!');
+        debugging('Old file uploads can not be used any more, please use new filepicker element');
     }
 
     /**
@@ -809,8 +808,6 @@ abstract class moodleform {
 
     /**
      * Abstract method - always override!
-     *
-     * If you need special handling of uploaded files, create instance of $this->_upload_manager here.
      */
     protected abstract function definition();
 

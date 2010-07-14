@@ -21,7 +21,6 @@
 ///////////////////////////////////////////////////////////////////////////
 
 require_once('../config.php');
-require_once($CFG->libdir.'/uploadlib.php');
 require_once($CFG->libdir.'/adminlib.php');
 require_once($CFG->libdir.'/gdlib.php');
 require_once('uploadpicture_form.php');

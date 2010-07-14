@@ -15,6 +15,7 @@ class MoodleQuickForm_file extends HTML_QuickForm_file{
      */
     var $_helpbutton='';
     function MoodleQuickForm_file($elementName=null, $elementLabel=null, $attributes=null) {
+        debugging('file forms element is deprecated, please use new filepicker instead');
         parent::HTML_QuickForm_file($elementName, $elementLabel, $attributes);
     }
     /**

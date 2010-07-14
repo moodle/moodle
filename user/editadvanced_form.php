@@ -43,7 +43,7 @@ class user_editadvanced_form extends moodleform {
             $auth_options[$auth] = get_string('pluginname', "auth_{$auth}");
         }
         $mform->addElement('select', 'auth', get_string('chooseauthmethod','auth'), $auth_options);
-        $mform->addHelpButton('auth', 'chooseauthmethod', 'auth');        
+        $mform->addHelpButton('auth', 'chooseauthmethod', 'auth');
 
         if (!empty($CFG->passwordpolicy)){
             $mform->addElement('static', 'passwordpolicyinfo', '', print_password_policy());
@@ -117,9 +117,9 @@ class user_editadvanced_form extends moodleform {
         global $CFG, $DB;
 
         $usernew = (object)$usernew;
-        $usernew->username = trim($usernew->username);        
-        
-        $user = $DB->get_record('user', array('id'=>$usernew->id));        
+        $usernew->username = trim($usernew->username);
+
+        $user = $DB->get_record('user', array('id'=>$usernew->id));
         $err = array();
 
         if (!empty($usernew->newpassword)) {
@@ -137,7 +137,7 @@ class user_editadvanced_form extends moodleform {
             if ($DB->record_exists('user', array('username'=>$usernew->username, 'mnethostid'=>$CFG->mnet_localhost_id))) {
                 $err['username'] = get_string('usernameexists');
             }
-            //check allowed characters                         
+            //check allowed characters
             if ($usernew->username !== moodle_strtolower($usernew->username)) {
                 $err['username'] = get_string('usernamelowercase');
             } else {
@@ -163,10 +163,6 @@ class user_editadvanced_form extends moodleform {
         } else {
             return $err;
         }
-    }
-
-    function get_um() {
-        return $this->_upload_manager;
     }
 }
 

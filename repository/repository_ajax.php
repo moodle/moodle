@@ -263,6 +263,7 @@ switch ($action) {
         }
         break;
     case 'upload':
+        // TODO: add file scanning MDL-19380 into each plugin
         $result = $repo->upload();
         echo json_encode($result);
         break;
