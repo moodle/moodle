@@ -34,6 +34,8 @@ class mod_assignment_uploadsingle_form extends moodleform {
         // hidden params
         $mform->addElement('hidden', 'contextid', $instance['contextid']);
         $mform->setType('contextid', PARAM_INT);
+        $mform->addElement('hidden', 'userid', $instance['userid']);
+        $mform->setType('userid', PARAM_INT);
         $mform->addElement('hidden', 'action', 'uploadfile');
         $mform->setType('action', PARAM_ALPHA);
 

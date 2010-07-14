@@ -28,8 +28,16 @@ require_once(dirname(__FILE__).'/assignment.class.php');
 require_once("$CFG->dirroot/repository/lib.php");
 
 $contextid = required_param('contextid', PARAM_INT);
+$id = optional_param('id', null, PARAM_INT);
 
-$url = new moodle_url('/mod/assignment/type/uploadsingle/upload.php', array('contextid'=>$contextid));
+$formdata = new object();
+$formdata->userid = required_param('userid', PARAM_INT);
+$formdata->offset = optional_param('offset', null, PARAM_INT);
+$formdata->forcerefresh = optional_param('forcerefresh', null, PARAM_INT);
+$formdata->mode = optional_param('mode', null, PARAM_ALPHA);
+
+$url = new moodle_url('/mod/assignment/type/uploadsingle/upload.php',  array('contextid'=>$contextid,
+                            'id'=>$id,'offset'=>$formdata->offset,'forcerefresh'=>$formdata->forcerefresh,'userid'=>$formdata->userid,'mode'=>$formdata->mode));
 
 list($context, $course, $cm) = get_context_info_array($contextid);
 
@@ -51,13 +59,26 @@ $PAGE->set_heading($title);
 
 $options = array('subdirs'=>0, 'maxbytes'=>$CFG->userquota, 'maxfiles'=>1, 'accepted_types'=>'*', 'return_types'=>FILE_INTERNAL);
 
-$mform = new mod_assignment_uploadsingle_form(null, array('contextid'=>$contextid, 'options'=>$options));
+if ($id==null) {
+    $mform = new mod_assignment_uploadsingle_form(null, array('contextid'=>$contextid, 'userid'=>$formdata->userid, 'options'=>$options));
+} else {
+    $formdata->cm->id = $id;
+    $formdata->contextid = $contextid;
+    $formdata->options = $options;
+    $mform = new mod_assignment_uploadsingle_response_form(null, $formdata);
+}
 
 if ($mform->is_cancelled()) {
-    redirect(new moodle_url('/mod/assignment/view.php', array('id'=>$cm->id)));
-} else if ($formdata = $mform->get_data()) {
-    $instance->upload($mform, $options);
-    redirect(new moodle_url('/mod/assignment/view.php', array('id'=>$cm->id)));
+    if ($id==null) {
+        redirect(new moodle_url('/mod/assignment/view.php', array('id'=>$cm->id)));
+    } else {
+        $instance->display_submission($formdata->offset, $formdata->userid);
+        die();
+    }
+} else if ($mform->get_data()) {
+    $instance->upload($mform);
+    die();
+//    redirect(new moodle_url('/mod/assignment/view.php', array('id'=>$cm->id)));
 }
 
 echo $OUTPUT->header();

@@ -966,7 +966,7 @@ class assignment_base {
         $mformdata->nextid = $nextid;
         $mformdata->submissioncomment= $submission->submissioncomment;
         $mformdata->submissioncommentformat= FORMAT_HTML;
-        $mformdata->submission_content= $this->print_user_files($user->id, true);
+        $mformdata->submission_content= $this->print_student_answer($user->id);
 
         $submitform = new mod_assignment_online_grading_form( null, $mformdata );
 
