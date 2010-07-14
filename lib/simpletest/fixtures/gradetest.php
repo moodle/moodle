@@ -620,6 +620,10 @@ class grade_test extends UnitTestCaseUsingDatabase {
      */
     function load_grade_grades() {
         global $DB;
+
+        //this method is called once for each test method. Avoid adding things to $this->grade_grades multiple times
+        $this->grade_grades = array();
+        
         // Grades for grade_item 1
         $grade = new stdClass();
         $grade->itemid = $this->grade_items[0]->id;
@@ -628,7 +632,7 @@ class grade_test extends UnitTestCaseUsingDatabase {
         $grade->finalgrade = 30;
         $grade->timecreated = mktime();
         $grade->timemodified = mktime();
-        $grade->information = 'Thumbs down';
+        $grade->information = '1 of 17 grade_grades';
         $grade->informationformat = FORMAT_PLAIN;
         $grade->feedback = 'Good, but not good enough..';
         $grade->feedbackformat = FORMAT_PLAIN;
@@ -644,6 +648,7 @@ class grade_test extends UnitTestCaseUsingDatabase {
         $grade->finalgrade = 40;
         $grade->timecreated = mktime();
         $grade->timemodified = mktime();
+        $grade->information = '2 of 17 grade_grades';
 
         if ($grade->id = $DB->insert_record('grade_grades', $grade)) {
             $this->grade_grades[1] = $grade;
@@ -656,6 +661,7 @@ class grade_test extends UnitTestCaseUsingDatabase {
         $grade->finalgrade = 110;
         $grade->timecreated = mktime();
         $grade->timemodified = mktime();
+        $grade->information = '3 of 17 grade_grades';
 
         if ($grade->id = $DB->insert_record('grade_grades', $grade)) {
             $this->grade_grades[2] = $grade;
@@ -670,6 +676,7 @@ class grade_test extends UnitTestCaseUsingDatabase {
         $grade->finalgrade = 60;
         $grade->timecreated = mktime();
         $grade->timemodified = mktime();
+        $grade->information = '4 of 17 grade_grades';
 
         if ($grade->id = $DB->insert_record('grade_grades', $grade)) {
             $this->grade_grades[3] = $grade;
@@ -681,6 +688,7 @@ class grade_test extends UnitTestCaseUsingDatabase {
         $grade->finalgrade = 70;
         $grade->timecreated = mktime();
         $grade->timemodified = mktime();
+        $grade->information = '5 of 17 grade_grades';
 
         if ($grade->id = $DB->insert_record('grade_grades', $grade)) {
             $this->grade_grades[4] = $grade;
@@ -692,6 +700,7 @@ class grade_test extends UnitTestCaseUsingDatabase {
         $grade->finalgrade = 100;
         $grade->timecreated = mktime();
         $grade->timemodified = mktime();
+        $grade->information = '6 of 17 grade_grades';
 
         if ($grade->id = $DB->insert_record('grade_grades', $grade)) {
             $this->grade_grades[5] = $grade;
@@ -708,6 +717,7 @@ class grade_test extends UnitTestCaseUsingDatabase {
         $grade->scaleid = $this->scale[3]->id;
         $grade->timecreated = mktime();
         $grade->timemodified = mktime();
+        $grade->information = '7 of 17 grade_grades';
 
         if ($grade->id = $DB->insert_record('grade_grades', $grade)) {
             $this->grade_grades[6] = $grade;
@@ -721,6 +731,7 @@ class grade_test extends UnitTestCaseUsingDatabase {
         $grade->scaleid = $this->scale[3]->id;
         $grade->timecreated = mktime();
         $grade->timemodified = mktime();
+        $grade->information = '8 of 17 grade_grades';
 
         if ($grade->id = $DB->insert_record('grade_grades', $grade)) {
             $this->grade_grades[] = $grade;
@@ -734,6 +745,7 @@ class grade_test extends UnitTestCaseUsingDatabase {
         $grade->scaleid = $this->scale[3]->id;
         $grade->timecreated = mktime();
         $grade->timemodified = mktime();
+        $grade->information = '9 of 17 grade_grades';
 
         if ($grade->id = $DB->insert_record('grade_grades', $grade)) {
             $this->grade_grades[] = $grade;
@@ -748,6 +760,7 @@ class grade_test extends UnitTestCaseUsingDatabase {
         $grade->finalgrade = 69;
         $grade->timecreated = mktime();
         $grade->timemodified = mktime();
+        $grade->information = '10 of 17 grade_grades';
 
         if ($grade->id = $DB->insert_record('grade_grades', $grade)) {
             $this->grade_grades[] = $grade;
@@ -760,6 +773,7 @@ class grade_test extends UnitTestCaseUsingDatabase {
         $grade->finalgrade = 87;
         $grade->timecreated = mktime();
         $grade->timemodified = mktime();
+        $grade->information = '11 of 17 grade_grades';
 
         if ($grade->id = $DB->insert_record('grade_grades', $grade)) {
             $this->grade_grades[] = $grade;
@@ -772,6 +786,7 @@ class grade_test extends UnitTestCaseUsingDatabase {
         $grade->finalgrade = 94;
         $grade->timecreated = mktime();
         $grade->timemodified = mktime();
+        $grade->information = '12 of 17 grade_grades';
 
         if ($grade->id = $DB->insert_record('grade_grades', $grade)) {
             $this->grade_grades[] = $grade;
@@ -786,6 +801,7 @@ class grade_test extends UnitTestCaseUsingDatabase {
         $grade->finalgrade = 3;
         $grade->timecreated = mktime();
         $grade->timemodified = mktime();
+        $grade->information = '13 of 17 grade_grades';
 
         if ($grade->id = $DB->insert_record('grade_grades', $grade)) {
             $this->grade_grades[] = $grade;
@@ -798,6 +814,7 @@ class grade_test extends UnitTestCaseUsingDatabase {
         $grade->finalgrade = 6;
         $grade->timecreated = mktime();
         $grade->timemodified = mktime();
+        $grade->information = '14 of 17 grade_grades';
 
         if ($grade->id = $DB->insert_record('grade_grades', $grade)) {
             $this->grade_grades[] = $grade;
@@ -812,6 +829,7 @@ class grade_test extends UnitTestCaseUsingDatabase {
         $grade->finalgrade = 20;
         $grade->timecreated = mktime();
         $grade->timemodified = mktime();
+        $grade->information = '15 of 17 grade_grades';
 
         if ($grade->id = $DB->insert_record('grade_grades', $grade)) {
             $this->grade_grades[] = $grade;
@@ -824,6 +842,7 @@ class grade_test extends UnitTestCaseUsingDatabase {
         $grade->finalgrade = 50;
         $grade->timecreated = mktime();
         $grade->timemodified = mktime();
+        $grade->information = '16 of 17 grade_grades';
 
         if ($grade->id = $DB->insert_record('grade_grades', $grade)) {
             $this->grade_grades[] = $grade;
@@ -836,6 +855,7 @@ class grade_test extends UnitTestCaseUsingDatabase {
         $grade->finalgrade = 100;
         $grade->timecreated = mktime();
         $grade->timemodified = mktime();
+        $grade->information = '17 of 17 grade_grades';
 
         if ($grade->id = $DB->insert_record('grade_grades', $grade)) {
             $this->grade_grades[] = $grade;
@@ -847,6 +867,10 @@ class grade_test extends UnitTestCaseUsingDatabase {
      */
     function load_grade_outcomes() {
         global $DB;
+
+        //this method is called once for each test method. Avoid adding things to $this->grade_outcomes multiple times
+        $this->grade_outcomes = array();
+
         // Calculation for grade_item 1
         $grade_outcome = new stdClass();
         $grade_outcome->fullname = 'Team work';
