@@ -35,7 +35,13 @@ class mod_assignment_renderer extends plugin_renderer_base {
         $module = array('name'=>'mod_assignment_files', 'fullpath'=>'/mod/assignment/assignment.js', 'requires'=>array('yui2-treeview'));
         $this->htmlid = 'assignment_files_tree_'.uniqid();
         $this->page->requires->js_init_call('M.mod_assignment.init_tree', array(true, $this->htmlid));
-        $html = $this->htmllize_tree($tree, $tree->dir);
+        $html = '<div id="'.$this->htmlid.'">';
+        $html .= $this->htmllize_tree($tree, $tree->dir);
+        $html .= '</div>';
+
+        if ($tree->portfolioform) {
+            $html .= $tree->portfolioform;
+        }
         return $html;
     }
 
@@ -50,8 +56,8 @@ class mod_assignment_renderer extends plugin_renderer_base {
         if (empty($dir['subdirs']) and empty($dir['files'])) {
             return '';
         }
-        $result = '<div id="'.$this->htmlid.'">';
-        $result .= '<ul>';
+
+        $result = '<ul>';
         foreach ($dir['subdirs'] as $subdir) {
             $image = $this->output->pix_icon("/f/folder", $subdir['dirname'], 'moodle', array('class'=>'icon'));
             $result .= '<li yuiConfig=\''.json_encode($yuiconfig).'\'><div>'.$image.' '.s($subdir['dirname']).'</div> '.$this->htmllize_tree($tree, $subdir).'</li>';
@@ -65,11 +71,6 @@ class mod_assignment_renderer extends plugin_renderer_base {
         }
 
         $result .= '</ul>';
-        $result .= '</div>';
-
-        if ($tree->portfolioform) {
-            $result .= $tree->portfolioform;
-        }
 
         return $result;
     }
