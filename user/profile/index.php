@@ -52,7 +52,7 @@ switch ($action) {
         $fieldcount = $DB->count_records('user_info_field', array('categoryid'=>$id));
         $optionsyes = array ('id'=>$id, 'confirm'=>1, 'action'=>'deletecategory', 'sesskey'=>sesskey());
         echo $OUTPUT->header();
-        echo $OUTPUT->heading('profiledeletecategory', 'admin');
+        echo $OUTPUT->heading(get_string('profiledeletecategory', 'admin'));
 
         $formcontinue = new single_button(new moodle_url($redirect, $optionsyes), get_string('yes'), 'post');
         $formcancel = new single_button($redirect, get_string('no'), 'get');
