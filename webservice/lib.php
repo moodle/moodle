@@ -645,7 +645,7 @@ class '.$classname.' {
                      //accept empty array as default
                      if (isset($keydesc->default) and is_array($keydesc->default)
                              and empty($keydesc->default)) {
-                         $param .= '=array()';
+                         $paramanddefault .= '=array()';
                      } else {
                         throw new moodle_exception('errornotemptydefaultparamarray', 'webservice', '', $name);
                      }
@@ -677,7 +677,7 @@ class '.$classname.' {
         $params                = implode(', ', $params);
         $paramanddefaults      = implode(', ', $paramanddefaults);
         $params_desc           = implode("\n", $params_desc);
-        
+
         $serviceclassmethodbody = $this->service_class_method_body($function, $params);
 
         if (is_null($function->returns_desc)) {
