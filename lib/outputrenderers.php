@@ -2454,7 +2454,8 @@ EOD;
      * @return string
      */
     protected function render_image_gallery(image_gallery $imagegallery) {
-        $this->page->requires->js_gallery_module(array('gallery-lightbox','gallery-lightbox-skin'), '2010.04.08-12-35', 'Y.Lightbox.init');
+        $this->page->requires->yui_module(array('gallery-lightbox','gallery-lightbox-skin'), 
+                 'Y.Lightbox.init', null, '2010.04.08-12-35');
         if (count($imagegallery->images) == 0) {
             return '';
         }
