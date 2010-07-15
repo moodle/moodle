@@ -55,7 +55,7 @@ switch ($action) {
         echo $OUTPUT->heading(get_string('profiledeletecategory', 'admin'));
 
         $formcontinue = new single_button(new moodle_url($redirect, $optionsyes), get_string('yes'), 'post');
-        $formcancel = new single_button($redirect, get_string('no'), 'get');
+        $formcancel   = new single_button(new moodle_url($redirect), get_string('no'), 'get');
         echo $OUTPUT->confirm(get_string('profileconfirmcategorydeletion', 'admin', $fieldcount), $formcontinue, $formcancel);
         echo $OUTPUT->footer();
         die;
