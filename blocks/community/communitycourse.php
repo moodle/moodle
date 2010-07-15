@@ -167,5 +167,5 @@ $hubselectorform->display();
 if (!empty($errormessage)) {
     echo $errormessage;
 }
-echo $renderer->course_list($courses, $huburl);
+echo highlight($search, $renderer->course_list($courses, $huburl));
 echo $OUTPUT->footer();
