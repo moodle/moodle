@@ -26,4 +26,3 @@ Page module is a successor to original 'html' and 'text' type plugins of Resourc
 TODO:
  * implement portfolio support (MDL-20076)
  * new backup/restore and old restore migration (MDL-20077)
- * implement format switching in formslib editor element (MDL-20078)

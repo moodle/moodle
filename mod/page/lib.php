@@ -16,10 +16,13 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package   mod-page
- * @copyright 2009 Petr Skoda (http://skodak.org)
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    mod
+ * @subpackage page
+ * @copyright  2009 Petr Skoda (http://skodak.org)
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+defined('MOODLE_INTERNAL') || die;
 
 /**
  * List of features supported in Page module
@@ -285,7 +288,7 @@ function page_get_file_areas($course, $cm, $context) {
 }
 
 /**
- * File browsing support for page module ontent area.
+ * File browsing support for page module content area.
  * @param object $browser
  * @param object $areas
  * @param object $course
@@ -337,7 +340,7 @@ function page_get_file_info($browser, $areas, $course, $cm, $context, $filearea,
  * @param string $filearea
  * @param array $args
  * @param bool $forcedownload
- * @return bool false if file not found, does not return if found - justsend the file
+ * @return bool false if file not found, does not return if found - just send the file
  */
 function page_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload) {
     global $CFG, $DB;
@@ -378,7 +381,7 @@ function page_pluginfile($course, $cm, $context, $filearea, $args, $forcedownloa
 
 
 /**
- * This function extends the global navigaiton for the site.
+ * This function extends the global navigation for the site.
  * It is important to note that you should not rely on PAGE objects within this
  * body of code as there is no guarantee that during an AJAX request they are
  * available
@@ -386,7 +389,7 @@ function page_pluginfile($course, $cm, $context, $filearea, $args, $forcedownloa
  * @param navigation_node $navigation The page node within the global navigation
  * @param stdClass $course The course object returned from the DB
  * @param stdClass $module The module object returned from the DB
- * @param stdClass $cm The course module isntance returned from the DB
+ * @param stdClass $cm The course module instance returned from the DB
  */
 function page_extend_navigation($navigation, $course, $module, $cm) {
     /**
