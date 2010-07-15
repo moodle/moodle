@@ -3503,7 +3503,7 @@ function create_course($data, $editoroptions = NULL) {
     // update module restrictions
     if ($course->restrictmodules) {
         if (isset($data->allowedmods)) {
-            update_restricted_mods($course, $allowedmods);
+            update_restricted_mods($data->allowedmods);
         } else {
             if (!empty($CFG->defaultallowedmodules)) {
                 update_restricted_mods($course, explode(',', $CFG->defaultallowedmodules));
@@ -3591,7 +3591,7 @@ function update_course($data, $editoroptions = NULL) {
 
     // update module restrictions
     if (isset($data->allowedmods)) {
-        update_restricted_mods($course, $allowedmods);
+        update_restricted_mods($course, $data->allowedmods);
     }
 
     // Save any custom role names.
