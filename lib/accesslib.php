@@ -3970,84 +3970,32 @@ function get_capability_info($capabilityname) {
  */
 function get_capability_string($capabilityname) {
 
-    // Typical capabilityname is mod/choice:readresponses
+    // Typical capability name is 'plugintype/pluginname:capabilityname'
+    list($type, $name, $capname) = preg_split('|[/:]|', $capabilityname);
 
-    $names = split('/', $capabilityname);
-    $stringname = $names[1];                 // choice:readresponses
-    $components = split(':', $stringname);
-    $componentname = $components[0];               // choice
-
-    switch ($names[0]) {
-        case 'report':
-            $string = get_string($stringname, 'report_'.$componentname);
-        break;
-
-        case 'mod':
-            $string = get_string($stringname, $componentname);
-        break;
-
-        case 'block':
-            $string = get_string($stringname, 'block_'.$componentname);
-        break;
-
-        case 'moodle':
-            if ($componentname == 'local') {
-                $string = get_string($stringname, 'local');
-            } else {
-                $string = get_string($stringname, 'role');
-            }
-        break;
-
-        case 'enrol':
-            $string = get_string($stringname, 'enrol_'.$componentname);
-        break;
-
-        case 'format':
-            $string = get_string($stringname, 'format_'.$componentname);
-        break;
-
-        case 'format':
-            $string = get_string($stringname, 'editor_'.$componentname);
-        break;
-
-        case 'gradeexport':
-            $string = get_string($stringname, 'gradeexport_'.$componentname);
-        break;
-
-        case 'gradeimport':
-            $string = get_string($stringname, 'gradeimport_'.$componentname);
-        break;
-
-        case 'gradereport':
-            $string = get_string($stringname, 'gradereport_'.$componentname);
-        break;
-
-        case 'coursereport':
-            $string = get_string($stringname, 'coursereport_'.$componentname);
-        break;
-
-        case 'quizreport':
-            $string = get_string($stringname, 'quiz_'.$componentname);
-        break;
-
-        case 'repository':
-            $string = get_string($stringname, 'repository_'.$componentname);
-        break;
-
-        case 'local':
-            $string = get_string($stringname, 'local_'.$componentname);
-        break;
-
-        case 'webservice':
-            $string = get_string($stringname, 'webservice_'.$componentname);
-        break;
-
-        default:
-            $string = get_string($stringname);
-        break;
-
+    if ($type === 'moodle') {
+        $component = 'core_role';
+    } else if ($type === 'quizreport') {
+        //ugly hack!!
+        $component = 'quiz_'.$name;
+    } else {
+        $component = $type.'_'.$name;
     }
-    return $string;
+
+    $stringname = $name.':'.$capname;
+
+    if ($component === 'core_role' or get_string_manager()->string_exists($stringname, $component)) {
+        return get_string($stringname, $component);
+    }
+
+    $dir = get_component_directory($component);
+    if (!file_exists($dir)) {
+        // plugin broken or does not exist, do not bother with printing of debug message
+        return $capabilityname;
+    }
+
+    // something is wrong in plugin, better print debug
+    return get_string($stringname, $component);
 }
 
 
