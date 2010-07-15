@@ -53,7 +53,7 @@ $blogs = $DB->get_records('blog_external', array('userid' => $USER->id));
 
 $PAGE->set_heading("$SITE->shortname: $strblogs: $strexternalblogs", $SITE->fullname);
 $PAGE->set_title("$SITE->shortname: $strblogs: $strexternalblogs");
-$PAGE->set_pagelayout('general');
+$PAGE->set_pagelayout('standard');
 
 echo $OUTPUT->header();
 echo $OUTPUT->heading($strexternalblogs, 2);

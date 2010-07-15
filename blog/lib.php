@@ -281,7 +281,7 @@ function blog_is_enabled_for_user() {
 /**
  * This function gets all of the options available for the current user in respect
  * to blogs.
- * 
+ *
  * It loads the following if applicable:
  * -  Module options {@see blog_get_options_for_module}
  * -  Course options {@see blog_get_options_for_course}
@@ -417,7 +417,7 @@ function blog_get_options_for_course(stdClass $course, stdClass $user=null) {
     global $CFG, $USER;
     // Cache
     static $courseoptions = array();
-    
+
     $options = array();
 
     // User must be logged in and blogs must be enabled
@@ -441,7 +441,7 @@ function blog_get_options_for_course(stdClass $course, stdClass $user=null) {
     if (array_key_exists($key, $courseoptions)) {
         return $courseoptions[$key];
     }
-    
+
     if (has_capability('moodle/blog:view', get_context_instance(CONTEXT_COURSE, $course->id))) {
         // We can view!
         if ($CFG->bloglevel >= BLOG_SITE_LEVEL) {
@@ -648,7 +648,7 @@ function blog_get_headers() {
         $course = $DB->get_record('course', array('id' => $group->courseid));
     }
 
-    $PAGE->set_pagelayout('general');
+    $PAGE->set_pagelayout('standard');
 
     if (!empty($modid) && $CFG->useblogassociations && has_capability('moodle/blog:associatemodule', $sitecontext)) { // modid always overrides courseid, so the $course object may be reset here
         $headers['filters']['module'] = $modid;
