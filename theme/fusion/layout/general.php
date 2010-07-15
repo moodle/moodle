@@ -65,6 +65,8 @@ echo $OUTPUT->doctype() ?>
 					        	</div>
 		    				    <?php if ($hascustommenu) { ?>
 									<div id="custommenu"><?php echo $custommenu; ?></div>
+								<?php } else { ?>
+									<div id="custommenu" style="line-height:1em;">&nbsp;</div> <!-- temporary until I find a better fix -->
 								<?php } ?>
 				            </div>
 		    		    <?php } ?>
