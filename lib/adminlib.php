@@ -56,13 +56,13 @@
  *
  *  Next, in foo.php, your file structure would resemble the following:
  * <code>
- *         require_once('.../config.php');
+ *         require(dirname(dirname(dirname(__FILE__))).'/config.php');
  *         require_once($CFG->libdir.'/adminlib.php');
  *         admin_externalpage_setup('foo');
  *         // functionality like processing form submissions goes here
- *         $OUTPUT->header();
+ *         echo $OUTPUT->header();
  *         // your HTML goes here
- *         $OUTPUT->footer();
+ *         echo $OUTPUT->footer();
  * </code>
  *
  *  The admin_externalpage_setup() function call ensures the user is logged in,
