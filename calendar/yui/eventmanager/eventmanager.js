@@ -130,4 +130,4 @@ YUI.add('moodle-calendar-eventmanager', function(Y) {
     M.core_calendar = M.core_calendar || {}
     Y.mix(M.core_calendar, EVENTMANAGER);
 
-}, '@VERSION@', {requires:['base', 'node', 'event-mouseenter', 'overlay', 'moodle-calendar-eventmanager-skin']});
+}, '@VERSION@', {requires:['base', 'node', 'event-mouseenter', 'overlay', 'moodle-calendar-eventmanager-skin', 'test']});
