@@ -101,11 +101,15 @@ function xmldb_main_upgrade($oldversion) {
     if ($oldversion < 2008030602) {
         @unlink($CFG->dataroot.'/cache/languages');
 
-        // rename old lang directory so that the new and old langs do not mix
-        if (rename("$CFG->dataroot/lang", "$CFG->dataroot/oldlang")) {
-            $oldlang = "$CFG->dataroot/oldlang";
+        if (file_exists("$CFG->dataroot/lang")) {
+            // rename old lang directory so that the new and old langs do not mix
+            if (rename("$CFG->dataroot/lang", "$CFG->dataroot/oldlang")) {
+                $oldlang = "$CFG->dataroot/oldlang";
+            } else {
+                $oldlang = "$CFG->dataroot/lang";
+            }
         } else {
-            $oldlang = "$CFG->dataroot/lang";
+            $oldlang = '';
         }
         // TODO: fetch previously installed languages ("*_utf8") found in $oldlang from moodle.org
         upgrade_set_timeout(60*20); // this may take a while
