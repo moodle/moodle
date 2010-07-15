@@ -624,8 +624,8 @@ function groups_get_course_group($course, $update=false) {
             $SESSION->activegroup[$course->id][$groupmode][0] = 0; // all groups by default if user has accessallgroups
 
         } else if ($usergroups = groups_get_all_groups($course->id, $USER->id, $course->defaultgroupingid)) {
-            $fistgroup = reset($usergroups);
-            $SESSION->activegroup[$course->id][$groupmode][0] = $fistgroup->id;
+            $firstgroup = reset($usergroups);
+            $SESSION->activegroup[$course->id][$groupmode][0] = $firstgroup->id;
 
         } else {
             // this happen when user not assigned into group in SEPARATEGROUPS mode or groups do not exist yet
@@ -698,8 +698,8 @@ function groups_get_activity_group($cm, $update=false) {
             $SESSION->activegroup[$cm->course][$groupmode][$cm->groupingid] = 0; // all groups by default if user has accessallgroups
 
         } else if ($usergroups = groups_get_all_groups($cm->course, $USER->id, $cm->groupingid)) {
-            $fistgroup = reset($usergroups);
-            $SESSION->activegroup[$cm->course][$groupmode][$cm->groupingid] = $fistgroup->id;
+            $firstgroup = reset($usergroups);
+            $SESSION->activegroup[$cm->course][$groupmode][$cm->groupingid] = $firstgroup->id;
 
         } else {
             // this happen when user not assigned into group in SEPARATEGROUPS mode or groups do not exist yet
