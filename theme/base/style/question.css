@@ -76,3 +76,8 @@ body.jsenabled #qtypechoicecontainer {display: block;}
 /**** GRRRRR ***/
 /* MSIE Hack */
 * html .que .submit {float: none;}
+
+/** Overide for RTL layout **/
+.dir-rtl #qtypechoicecontainer #chooseqtype .instruction,
+.dir-rtl #qtypechoicecontainer #chooseqtype .qtypesummary {right: 60%;left: 0%; border-left:0;border-right: 1px solid grey;}
+#qtypechoicecontainer #chooseqtype .qtypeoption {padding-right: 0.3em;}
