@@ -149,6 +149,11 @@ $options = profile_list_datatypes();
 $popupurl = new moodle_url('/user/profile/index.php?id=0&action=editfield');
 echo $OUTPUT->single_select($popupurl, 'datatype', $options, '', array(''=>$strcreatefield), 'newfieldform');
 
+//add a div with a class so themers can hide, style or reposition the text
+html_writer::start_tag('div',array('class'=>'adminuseractionhint'));
+echo get_string('or', 'lesson');
+html_writer::end_tag('div');
+
 /// Create a new category link
 $options = array('action'=>'editcategory');
 echo $OUTPUT->single_button(new moodle_url('index.php', $options), get_string('profilecreatecategory', 'admin'));
