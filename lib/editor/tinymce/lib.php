@@ -81,17 +81,17 @@ class tinymce_texteditor extends texteditor {
         $lang           = current_language();
         $contentcss     = $PAGE->theme->editor_css_url()->out(false);
 
-        $xmedia = '';
         $context = empty($options['context']) ? get_context_instance(CONTEXT_SYSTEM) : $options['context'];
+
+        $xmedia = 'moodlemedia,'; // HQ thinks it should be always on, so it is no matter if it will actually work or not
+        /*
         if (!empty($options['legacy'])) {
             $xmedia = 'moodlemedia,';
         } else {
             if (!empty($options['noclean']) or !empty($options['trusted'])) {
             }
-        }
+        }*/
 
-        // TODO: enabled moodlemedia
-        $xmedia = 'moodlemedia,';
         $filters = filter_get_active_in_context($context);
         if (array_key_exists('filter/tex', $filters)) {
             $xdragmath = 'dragmath,';
