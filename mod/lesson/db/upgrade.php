@@ -66,6 +66,7 @@ function xmldb_lesson_upgrade($oldversion) {
     }
 
     if ($oldversion < 2008112601) {
+        //NOTE: this is a hack, we can not call module lib.php in the middle of upgrade, the necessary db structures/data may not exist yet!
         require_once($CFG->dirroot.'/mod/lesson/lib.php');
 
         lesson_upgrade_grades();
