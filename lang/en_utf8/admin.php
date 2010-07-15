@@ -711,6 +711,7 @@ $string['smtppass'] = 'SMTP password';
 $string['smtpuser'] = 'SMTP username';
 $string['soaprecommended'] = 'Installing the optional soap extension is useful for web services and some contrib modules.';
 $string['spamcleaner'] = 'Spam cleaner';
+$string['splrequired'] = 'The SPL PHP extension is now required by Moodle.';
 $string['stats'] = 'Statistics';
 $string['statscatdepth'] = 'Maximum parent categories';
 $string['statsfirstrun'] = 'Maximum processing interval';

@@ -282,6 +282,11 @@
           <ON_CHECK message="simplexmlrequired" />
         </FEEDBACK>
       </PHP_EXTENSION>
+      <PHP_EXTENSION name="spl" level="required">
+        <FEEDBACK>
+          <ON_CHECK message="splrequired" />
+        </FEEDBACK>
+      </PHP_EXTENSION>
     </PHP_EXTENSIONS>
     <PHP_SETTINGS>
       <PHP_SETTING name="memory_limit" value="40M" level="required">
