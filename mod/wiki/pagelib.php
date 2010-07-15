@@ -1249,11 +1249,12 @@ class page_wiki_history extends page_wiki {
                 }
 
                 $table = new html_table();
-                $icon = $OUTPUT->help_icon('diff', 'wiki', get_string('diff', 'wiki'));
 
-                $table->head = array($icon, get_string('version'), get_string('user'), get_string('modified'), '');
+                $icon = $OUTPUT->help_icon('diff', 'wiki');
+
+                $table->head = array(get_string('diff', 'wiki') . $icon, get_string('version'), get_string('user'), get_string('modified'), '');
                 $table->data = $contents;
-                $table->attributes['class'] = 'mdl-align';
+
                 $table->rowclasses = $rowclass;
 
                 /*$table = new StdClass();
