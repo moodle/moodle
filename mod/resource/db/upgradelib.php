@@ -234,20 +234,11 @@ function resource_20_prepare_migration() {
         return false;
     }
 
-    // find out if resource contains new 2.0dev fields already
-    $table = new xmldb_table('resource');
-    $field = new xmldb_field('introformat', XMLDB_TYPE_INTEGER, '4', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'intro');
-    if ($dbman->field_exists($table, $field)) {
-        $sql = "INSERT INTO {resource_old} (oldid, course, name, type, reference, intro, introformat, alltext, popup, options, timemodified, cmid)
-                SELECT r.id, r.course, r.name, r.type, r.reference, r.intro, r.introformat, r.alltext, r.popup, r.options, r.timemodified, cm.id
-                  FROM {resource} r
-             LEFT JOIN {course_modules} cm ON (r.id = cm.instance AND cm.module = :module)";
-    } else {
-        $sql = "INSERT INTO {resource_old} (oldid, course, name, type, reference, intro, introformat, alltext, popup, options, timemodified, cmid)
-                SELECT r.id, r.course, r.name, r.type, r.reference, r.summary, 0, r.alltext, r.popup, r.options, r.timemodified, cm.id
-                  FROM {resource} r
-             LEFT JOIN {course_modules} cm ON (r.id = cm.instance AND cm.module = :module)";
-    }
+    // copy old data, the intro text format was FORMAT_MOODLE==0
+    $sql = "INSERT INTO {resource_old} (oldid, course, name, type, reference, intro, introformat, alltext, popup, options, timemodified, cmid)
+            SELECT r.id, r.course, r.name, r.type, r.reference, r.summary, 0, r.alltext, r.popup, r.options, r.timemodified, cm.id
+              FROM {resource} r
+         LEFT JOIN {course_modules} cm ON (r.id = cm.instance AND cm.module = :module)";
 
     $DB->execute($sql, array('module'=>$module));
 
