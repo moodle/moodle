@@ -1,0 +1,210 @@
+#custommenu {
+	font-size: 1.2em;
+	line-height: 1.2;
+	float: left;
+	width:60%;
+}
+
+.yui3-skin-sam .yui3-menu-content, 
+.yui3-skin-sam .yui3-menu .yui3-menu .yui3-menu-content {
+	border: none;
+	padding: 0 !important;
+}
+
+.yui3-skin-sam .yui3-menu .yui3-menu .yui3-menu-content {
+	background: #fff;
+	filter:alpha(opacity=90);
+	-moz-opacity:0.9;
+	-khtml-opacity: 0.9;
+	opacity: 0.9;
+    padding: 5px 0;
+}
+
+
+/* Horizontal menus */
+
+.yui3-skin-sam .yui3-menu-horizontal .yui3-menu-content {
+
+
+}
+
+
+.yui3-skin-sam .yui3-menu ul,
+.yui3-skin-sam .yui3-menu ul ul {
+
+}
+
+.yui3-skin-sam .yui3-menu ul.first-of-type {
+}
+
+.yui3-skin-sam .yui3-menu-horizontal ul {
+}
+
+
+.yui3-skin-sam .yui3-menu li,
+.yui3-skin-sam .yui3-menu .yui3-menu li {
+
+}
+
+.yui3-skin-sam .yui3-menu-horizontal li {
+
+}
+
+.yui3-skin-sam .yui3-menubuttonnav li {
+
+}
+
+.yui3-skin-sam .yui3-splitbuttonnav li {
+
+}
+
+.yui3-skin-sam .yui3-menubuttonnav li li,
+.yui3-skin-sam .yui3-splitbuttonnav li li {
+
+}
+
+
+/* Menuitems and menu labels */
+.yui3-skin-sam .yui3-menu .yui3-menu {
+	padding-top: 5px;
+	background: url([[pix:theme|menu-top]]) no-repeat 20px 0;
+	filter:alpha(opacity=90);
+	-moz-opacity:0.9;
+	-khtml-opacity: 0.9;
+	opacity: 0.9;	
+}
+
+.yui3-skin-sam .yui3-menu .yui3-menu .yui3-menu {
+	padding-top: 0;
+	background: none;
+}
+
+.yui3-skin-sam .yui3-menu-label {
+	color: #a2a3a6;
+}
+
+.yui3-skin-sam .yui3-menuitem-content,
+.yui3-skin-sam .yui3-menu .yui3-menu .yui3-menuitem-content {
+	padding-top: 3px;
+	padding-bottom: 4px;
+}
+
+.yui3-skin-sam .yui3-menu-horizontal .yui3-menu-label,
+.yui3-skin-sam .yui3-menu-horizontal .yui3-menuitem-content {
+	border: none;
+	padding: 0 20px 0 0;
+}
+
+.yui3-skin-sam .yui3-menu-label,
+.yui3-skin-sam .yui3-menu .yui3-menu .yui3-menu-label {
+	padding-top: 3px;
+	padding-bottom: 4px;
+
+}
+
+.yui3-skin-sam .yui3-menu-horizontal .yui3-menu-label {
+
+
+}
+
+.yui3-skin-sam .yui3-menubuttonnav .yui3-menu-label,
+.yui3-skin-sam .yui3-splitbuttonnav .yui3-menu-label {
+
+
+}
+
+.yui3-skin-sam .yui3-menubuttonnav .yui3-menu-label {
+
+
+}
+
+.yui3-skin-sam .yui3-menubuttonnav .yui3-menu-label em {
+
+
+}
+
+
+.yui3-skin-sam .yui3-splitbuttonnav .yui3-menu-label {
+
+
+}
+
+.yui3-skin-sam .yui3-splitbuttonnav .yui3-menu-label a {
+
+
+}
+
+.yui3-skin-sam .yui3-splitbuttonnav .yui3-menu-label .yui3-menu-toggle {
+	
+	
+}
+
+
+/* Selected menuitem */
+
+.yui3-skin-sam .yui3-menu-label-active,
+.yui3-skin-sam .yui3-menu-label-menuvisible,
+.yui3-skin-sam .yui3-menu .yui3-menu .yui3-menu-label-active,
+.yui3-skin-sam .yui3-menu .yui3-menu .yui3-menu-label-menuvisible {
+ color: #fff;
+	background-color: #2d83d5;
+}
+
+.yui3-skin-sam .yui3-menuitem-active .yui3-menuitem-content,
+.yui3-skin-sam .yui3-menu .yui3-menu .yui3-menuitem-active .yui3-menuitem-content {
+	color: #fff;
+	background-color: #2d83d5;
+
+}
+
+.yui3-skin-sam .yui3-menu-horizontal .yui3-menu-label-active,
+.yui3-skin-sam .yui3-menu-horizontal .yui3-menuitem-active .yui3-menuitem-content,
+.yui3-skin-sam .yui3-menu-horizontal .yui3-menu-label-menuvisible {
+}
+
+.yui3-skin-sam .yui3-menubuttonnav .yui3-menu-label-active,
+.yui3-skin-sam .yui3-menubuttonnav .yui3-menuitem-active .yui3-menuitem-content,
+.yui3-skin-sam .yui3-menubuttonnav .yui3-menu-label-menuvisible,
+.yui3-skin-sam .yui3-splitbuttonnav .yui3-menu-label-active,
+.yui3-skin-sam .yui3-splitbuttonnav .yui3-menuitem-active .yui3-menuitem-content,
+.yui3-skin-sam .yui3-splitbuttonnav .yui3-menu-label-menuvisible {
+
+
+}
+
+.yui3-skin-sam .yui3-splitbuttonnav .yui3-menu-label-menuvisible {
+
+
+}
+
+.yui3-skin-sam .yui3-splitbuttonnav .yui3-menu-label-menuvisible .yui3-menu-toggle {
+
+
+}
+
+/**
+ * Custom menu
+
+.pagelayout-frontpage #custommenu {padding:0 2px;}
+#custommenu {padding:0 10px;}
+#custommenu .yui3-menu {background-image:url([[pix:theme|hgradient]]);background-repeat: repeat-x;background-color:#e1e1df;}
+#custommenu .yui3-menu .yui3-menu {background-image:none;background-color:#FFF;}
+#custommenu .yui3-menu .yui3-menu-label,
+#custommenu .yui3-menu .yui3-menuitem-content,
+#custommenu .yui3-menu .yui3-menu-content,
+#custommenu .yui3-menu .yui3-menu .yui3-menu-content,
+#custommenu .yui3-menu-horizontal.javascript-disabled .yui3-menu-content,
+#custommenu .yui3-menu-horizontal.javascript-disabled .yui3-menu-content ul {border-color:#CCC;}
+#custommenu .yui3-menu .yui3-menuitem-content,
+#custommenu .yui3-menu .yui3-menu .yui3-menuitem-content {cursor:pointer;}
+#custommenu .yui3-menu .yui3-menu-label-menuvisible,
+#custommenu .yui3-menu .yui3-menuitem-active {background-color:#e1e1df;}
+#custommenu .yui3-menu-horizontal.javascript-disabled a {color:inherit;}
+#custommenu .yui3-menu-horizontal.javascript-disabled a:hover {color:blue;text-decoration:none;}
+
+.smartselect .smartselect_menuitem:hover,
+.smartselect .smartselect_submenuitem:hover {background-color:#C2EAFF;}
+.smartselect .smartselect_submenu {border-color:#999;}
+.smartselect .smartselect_menu,
+.smartselect .smartselect_submenu {-moz-border-radius:4px;-webkit-border-radius: 5px;}
+*/
