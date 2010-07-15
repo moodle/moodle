@@ -23,10 +23,10 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['pluginname'] = 'Spam cleaner';
 $string['spamauto'] = 'Autodetect common spam patterns';
 $string['spamcannotdelete'] = 'Cannot delete this user';
 $string['spamcannotfinduser'] = 'No users matching your search';
-$string['spamcleaner'] = 'Spam cleaner';
 $string['spamcleanerintro'] = 'This script allows you to search all user profiles for certain strings and then delete those accounts which are obviously created by spammers.  You can search for multiple keywords using commas (eg casino, porn)<br /><br />Moodle docs has more information about <a href="http://docs.moodle.org/en/Reducing_spam_in_Moodle">Reducing spam in Moodle</a>.';
 $string['spamdeleteall'] = 'Delete all these user accounts';
 $string['spamdeleteallconfirm'] = 'Are you sure you want to delete all these user accounts?  You can not undo this.';
