@@ -24,6 +24,8 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+require_once($CFG->libdir.'/formslib.php');
+
 class mod_wiki_create_form extends moodleform {
 
     protected function definition() {
