@@ -131,14 +131,14 @@
     // get list of courses containing blocks if required
     if (!empty($blocklist) and confirm_sesskey()) {
         $blockname = $DB->get_field('block', 'name', array('id' => $blocklist));
-        $courses = $DB->get_recordset_sql("
+        $courses = array();
+        $courses = $DB->get_records_sql("
                 SELECT * FROM {course} WHERE id IN (
                     SELECT DISTINCT ctx.instanceid
                     FROM {context} ctx
-                    JOIN {block_instances} bi ON bi.contextid = ctx.id
+                    JOIN {block_instances} bi ON bi.parentcontextid = ctx.id
                     WHERE ctx.contextlevel = " . CONTEXT_COURSE . " AND bi.blockname = ?)",
                 array($blockname));
-        $courses = array();
         foreach ($courses as $course) {
             $courses[$course->id] = $course;
         }
