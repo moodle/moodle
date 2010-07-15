@@ -2,7 +2,39 @@
 /***
  *** Core
  ***/
-html, body {background-color: #FBF9FA;}
+html, body {
+    background-color: #FBF9FA;
+}
+
+.block .header {
+}
+
+.block .header .title {
+	background-image: url([[pix:theme|gradient_h]]);
+	background-repeat: repeat-x;
+	clear: both;
+	line-height: 2em;
+}
+
+.block .header .title .block_action {
+    margin-top: 4px;
+}
+
+.block .header .title h2 {
+}
+
+.block .header .title .commands {
+    margin-left: 4px;
+}
+
+.block .header .title .commands a {
+    margin: 0 2px;
+}
+
+.block .content {
+    display:block;
+    padding:4px;
+}
 
 body {
 	font-family: Helvetica, Arial, Verdana, sans-serif;
