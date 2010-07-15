@@ -1628,6 +1628,8 @@ class page_wiki_map extends page_wiki {
      *
      */
     private function print_orphaned_content() {
+        global $OUTPUT;
+
         $page = $this->page;
 
         if ($page->timerendered + WIKI_REFRESH_CACHE_TIME < time()) {
