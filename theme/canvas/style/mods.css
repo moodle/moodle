@@ -4,6 +4,19 @@
 	padding: 10px;
 }
 
+/* 
+** Needs to be taken out of mod sheets and added
+** to Base so we can change the following to
+** just .mod_introbox.
+*/
+
+#urlintro,
+#pageintro,
+#resourceintro { 
+	border-color:#ddd;
+	margin: 0 10% 3%
+}
+
 /* Forums 
 -------------------------*/
 
@@ -67,9 +80,17 @@
 /* Assignment
 ------------------------*/
 
+.path-mod-assignment .reportlink {
+	font-size: 0.9em;
+}
+
 .path-mod-assignment #dates {
 	margin: 1em auto;
 	border: none;
+}
+
+.path-mod-assignment #dates .c0 {
+	background: #f6f6f6;
 }
 
 .path-mod-assignment #dates table {
@@ -80,10 +101,29 @@
 	border: 1px solid #ddd;
 }
 
+.path-mod-assignment .generalbox {
+	border: none;
+}
+
+.path-mod-assignment #intro {
+	border: 1px solid #ddd;
+}
+
+.path-mod-assignment .generalbox .files {
+	width:35%;
+	margin: 2em auto;
+	border-bottom: 1px solid #eee;
+	padding: 10px;
+}
+
 .path-mod-assignment #userfiles {
 	width: 50%;
 	margin: 0 auto;
 	padding: 10px;
+}
+
+.path-mod-assignment #userfiles .files {
+	width:100%;
 }
 
 .path-mod-assignment .nofiles {
@@ -125,6 +165,12 @@
 #page-mod-assignment-view #online {
 	padding: 10px;
 	width: 90%;
+}
+
+#online,
+#onlineenter {
+	border: none;
+	margin-top: 1em;
 }
 
 #page-mod-assignment-view #onlineenter .mform {
@@ -383,4 +429,24 @@
 
 .branchbuttoncontainer input {
 	margin: 10px;
+}
+
+/* Resources
+-------------------------------*/
+
+.path-mod-page .generalbox {
+	border: none;
+}
+
+.resourceworkaround,
+.urlworkaround,
+.modified {
+	text-align: center;
+	font-size: 0.85em;
+	color: #777;
+	margin-top: 1em;
+}
+
+#page-mod-folder-edit .foldertree {
+	width: 65%;
 }

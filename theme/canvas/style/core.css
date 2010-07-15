@@ -18,6 +18,15 @@ body {
 	color: #333;
 }
 
+#notice {
+	text-align: center;
+}
+
+#notice p {
+	color: #f00;
+}
+
+.noticebox,
 .expired,
 .notopenyet,
 .notifysuccess,
@@ -39,6 +48,11 @@ body {
 	border-color: #ddd;
 }
 
+.noticebox .generalbox {
+	border: none;
+	margin:2em 0;
+}
+
 .expired,
 .notopenyet {
 	border: none;
@@ -46,7 +60,7 @@ body {
 }
 
 .buttons .singlebutton input {
-	margin: 0;
+	margin: 0 1em;
 }
 
 .initialbar {
@@ -59,6 +73,11 @@ body {
 
 .side-post-only #page-content #region-main-box #region-post-box #region-main-wrap #region-main {
 	padding-left: 0;
+}
+
+input[type="checkbox"],
+input[type="radio"] {
+	margin-right: 7px;
 }
 
 /* Login
@@ -132,7 +151,7 @@ body {
 	width: 48%;
 }
 
-.page-course-loginas #notice {
+#page-course-loginas #notice {
 	border: none;
 }
 
@@ -310,7 +329,25 @@ body {
 -----------------------*/
 
 .userinfobox {
-	border: none;
+border-color: #ddd;
+padding: 0
+}
+
+.userinfobox .content {
+	text-align: left;
+	padding-left:10px
+}
+
+.userinfobox .links {
+	vertical-align: top;
+	background: #f4f4f4;
+	padding-left: 10px;
+}
+
+.userinfobox .links a {
+	display: block;
+	text-align: left;
+	
 }
 
 .profilepicture {
@@ -373,6 +410,7 @@ body {
 #longtimenosee {
 	font-style: italic;
 	font-size: 0.95em;
+	text-align: center;
 }
 
 #participants {
@@ -383,6 +421,13 @@ body {
 #participants th,
 #participants td {
 	vertical-align: middle;
+}
+
+/* Notes
+------------------------*/
+
+.path-notes .generalbox {
+	border: none;
 }
 
 /* Roles
@@ -438,20 +483,32 @@ body {
 }
 
 #page-tag-index #tag-blogs {
-	border: none;
+	border-width: 0 0 1px;
+	width: 65%;
+	margin: 1em auto;
 }
 
 #tagblogentries {
-	width: 75%;
-	margin: 0 auto 1em;
+	margin: 0 0 1em;
+}
+
+#tagblogentries li {
+	list-style: none;
+	padding: 0.25em 0;
+	margin: 0
+}
+
+#big-tag-cloud-box {
+	border: none;
 }
 
 #tag-user-table {
 	width: 95%;
 	margin: 0 auto;
+	border-width: 0 0 1px;
 }
 
-#page-tag-index .managelink {
+.managelink {
 	text-align: right;
 }
 
@@ -465,7 +522,6 @@ body {
 	padding: 4px 0;
 }
 
-#page-tag-index .moreblogs,
 #page-tag-index .relatedpages {
 	text-align: center;
 }
@@ -478,6 +534,8 @@ body {
 	text-align: center;
 	padding: 0 0 1em;
 }
+
+
 
 /* Embedded Pages
 ------------------------*/
@@ -501,13 +559,59 @@ body {
 }
 
 .form-label .form-shortname {
-	font-size: 0.9em;
+	font-size: 0.8em;
 	color: #777;
 }
 
 .form-description {
 	font-size: 0.95em;
 	color: #444;
+}
+
+.mform .hidden .fitem .fgroup {
+	width: 100%;
+	text-align: center;
+	margin: 1em 0;
+}
+
+/* Comments
+-----------------------*/
+
+.comment-list li {
+	background: #eee !important;
+	list-style: none;
+}
+
+/* Gradebook
+----------------------*/
+
+.path-grade h1.headermain {
+	text-align: left; /* Strangely necessary TODO: find bug */
+}
+
+.gradestable .lastrow th.header {
+	background: #ddd;
+}
+
+.gradestable .lastrow td.cell {
+	background: #eee !important;
+}
+
+.user-grade td.b1t,
+.user-grade td.baggt {
+	background: #ddd !important;
+}
+
+#page-grade-edit-scale-index .generaltable {
+	margin: 1em auto;
+}
+
+#page-grade-report-grader-preferences .generalbox {
+	border: none;
+}
+
+.path-grade-report-grader form {
+	text-align: left;
 }
 
 /* Footer
