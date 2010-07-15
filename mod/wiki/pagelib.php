@@ -627,8 +627,7 @@ class page_wiki_comments extends page_wiki {
         }
 
         foreach ($comments as $num) {
-
-            $user = wiki_get_user_info($num->userid);
+            $user = get_complete_user_data('username', $num->username);
 
             $fullname = fullname($user, has_capability('moodle/site:viewfullnames', get_context_instance(CONTEXT_COURSE, $course->id)));
             $by = new stdclass();
@@ -663,7 +662,7 @@ class page_wiki_comments extends page_wiki {
 
             $row2->cells[] = $cell4;
 
-            if ((has_capability('mod/wiki:managecomment', $context)) and ($USER->id == $num->userid)) {
+            if ((has_capability('mod/wiki:managecomment', $context)) and ($USER->id == $user->id)) {
 
                 $urledit = new moodle_url('/mod/wiki/editcomments.php', array('commentid' => $num->id, 'pageid' => $page->id, 'action' => 'edit'));
                 $urldelet = new moodle_url('/mod/wiki/instancecomments.php', array('commentid' => $num->id, 'pageid' => $page->id, 'action' => 'delete'));
