@@ -1453,7 +1453,7 @@ class page_wiki_map extends page_wiki {
         $swid = $this->subwiki->id;
 
         $table = new html_table();
-        $table->head = array(get_string('contributions', 'wiki'));
+        $table->head = array(get_string('contributions', 'wiki') . $OUTPUT->help_icon('contributions', 'wiki'));
         $table->attributes['class'] = 'wiki_editor generalbox';
         $table->data = array();
         $table->rowclasses = array();
@@ -1638,7 +1638,7 @@ class page_wiki_map extends page_wiki {
         $swid = $this->subwiki->id;
 
         $table = new html_table();
-        $table->head = array(get_string('orphaned', 'wiki'));
+        $table->head = array(get_string('orphaned', 'wiki') . $OUTPUT->help_icon('orphaned', 'wiki'));
         $table->attributes['class'] = 'wiki_editor generalbox';
         $table->data = array();
         $table->rowclasses = array();
