@@ -58,8 +58,8 @@ class block_html extends block_base {
         $this->content->footer = '';
         if (isset($this->config->text)) {
             // rewrite url
-            $this->config->text['text'] = file_rewrite_pluginfile_urls($this->config->text['text'], 'pluginfile.php', $this->context->id, 'block_html', 'content', NULL);
-            $this->content->text = format_text($this->config->text['text'], $this->config->text['format'], $filteropt);
+            $this->config->text = file_rewrite_pluginfile_urls($this->config->text, 'pluginfile.php', $this->context->id, 'block_html', 'content', NULL);
+            $this->content->text = format_text($this->config->text, $this->config->format, $filteropt);
         } else {
             $this->content->text = '';
         }
@@ -76,10 +76,12 @@ class block_html extends block_base {
     function instance_config_save($data, $nolongerused = false) {
         global $DB;
 
+        $config = clone($data);
         // Move embedded files into a proper filearea and adjust HTML links to match
-        $data->text['text'] = file_save_draft_area_files($data->text['itemid'], $this->context->id, 'block_html', 'content', 0, array('subdirs'=>true), $data->text['text']);
+        $config->text = file_save_draft_area_files($data->text['itemid'], $this->context->id, 'block_html', 'content', 0, array('subdirs'=>true), $data->text['text']);
+        $config->format = $data->text['format'];
 
-        parent::instance_config_save($data, $nolongerused);
+        parent::instance_config_save($config, $nolongerused);
     }
 
     function instance_delete() {
