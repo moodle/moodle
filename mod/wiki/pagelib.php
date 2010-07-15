@@ -1254,7 +1254,7 @@ class page_wiki_history extends page_wiki {
 
                 $table->head = array(get_string('diff', 'wiki') . $icon, get_string('version'), get_string('user'), get_string('modified'), '');
                 $table->data = $contents;
-
+                $table->attributes['class'] = 'mdl-align';
                 $table->rowclasses = $rowclass;
 
                 /*$table = new StdClass();
