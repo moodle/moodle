@@ -419,6 +419,8 @@ if ($component === 'blog') {
         if (isguestuser()) {
             send_file_not_found();
         }
+        $userid = $context->instanceid;
+
         if ($USER->id != $userid) {
             send_file_not_found();
         }
