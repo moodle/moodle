@@ -4009,7 +4009,7 @@ function remove_course_contents($courseid, $showfeedback=true) {
 /// Clean up course formats (iterate through all formats in the even the course format was ever changed)
     $formats = get_plugin_list('format');
     foreach ($formats as $format=>$formatdir) {
-        $formatdelete = $format.'_course_format_delete_course';
+        $formatdelete = 'format_'.$format.'_delete_course';
         $formatlib    = "$formatdir/lib.php";
         if (file_exists($formatlib)) {
             include_once($formatlib);
