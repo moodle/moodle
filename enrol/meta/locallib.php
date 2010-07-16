@@ -173,7 +173,7 @@ class enrol_meta_handler {
         //note: do not test if plugin enabled, we want to keep removing previously linked courses
 
         // does anything want to sync with this parent?
-        if (!$enrols = $DB->get_records('enrol', array('customint1'=>$parentcontext->instanceid, 'enrol'=>'meta'), 'id ASC')) {
+        if (!$enrols = $DB->get_records('enrol', array('customint1'=>$course->id, 'enrol'=>'meta'), 'id ASC')) {
             return true;
         }
 
