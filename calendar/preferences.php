@@ -7,7 +7,7 @@ require_once($CFG->dirroot.'/calendar/lib.php');
 require_once($CFG->dirroot.'/calendar/preferences_form.php');
 
 $course = $site = get_site();
-if (isset($SESSION->cal_course_referer)) {
+if (!empty($SESSION->cal_course_referer)) {
     $course = $DB->get_record('course', array('id'=>$SESSION->cal_course_referer), '*', MUST_EXIST);
 }
 
