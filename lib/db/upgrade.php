@@ -2368,43 +2368,67 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
     }
 
     if ($oldversion < 2009110400) {
+        // list of tables where we need to add new format field and convert texts
+        $extendtables = array('course' => 'summary',
+                              'course_categories' => 'description',
+                              'course_categories' => 'description',
+                              'course_request' => 'summary',
+                              'grade_outcomes' => 'description',
+                              'groups' => 'description',
+                              'groupings' => 'description',
+                              'scale' => 'description',
+                              'user_info_field' => 'description',
+                              'user_info_field' => 'defaultdata',
+                              'user_info_data' => 'data');
 
-        // An array used to store the table name and keys of summary and trust fields
-        // to be added
-        $extendtables = array();
-        $extendtables['course'] = array('summaryformat');
-        $extendtables['course_categories'] = array('descriptionformat');
-        $extendtables['course_request'] = array('summaryformat');
-        $extendtables['grade_outcomes'] = array('descriptionformat');
-        $extendtables['groups'] = array('descriptionformat');
-        $extendtables['groupings'] = array('descriptionformat');
-        $extendtables['scale'] = array('descriptionformat');
-        $extendtables['user'] = array('descriptionformat');
-        $extendtables['user_info_field'] = array('descriptionformat', 'defaultdataformat');
-        $extendtables['user_info_data'] = array('dataformat');
+        foreach ($extendtables as $tablestr=>$fieldstr) {
+            $formatfieldstr = $fieldstr.'format';
 
-        foreach ($extendtables as $tablestr=>$newfields) {
             $table = new xmldb_table($tablestr);
-            foreach ($newfields as $fieldstr) {
-                $field = new xmldb_field($fieldstr, XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
-                // Check that the field doesn't already exists
-                if (!$dbman->field_exists($table, $field)) {
-                    // Add the new field
-                    $dbman->add_field($table, $field);
-                    // Update the field if the text contains the default FORMAT_MOODLE to FORMAT_HTML
-                    if (($pos = strpos($fieldstr, 'format'))>0) {
-                        upgrade_set_timeout(60*20); // this may take a little while
-                        $params = array(FORMAT_HTML, '<p%', '%<br />%', FORMAT_MOODLE);
-                        $textfield = substr($fieldstr, 0, $pos);
-                        $DB->execute('UPDATE {'.$tablestr.'} SET '.$fieldstr.'=? WHERE ('.$textfield.' LIKE ? OR '.$textfield.' LIKE ?) AND '.$fieldstr.'=?', $params);
-                    }
+            $field = new xmldb_field($formatfieldstr, XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', $fieldstr);
+            // Check that the field doesn't already exists
+            if (!$dbman->field_exists($table, $field)) {
+                // Add the new field
+                $dbman->add_field($table, $field);
+            }
+            if ($CFG->texteditors !== 'textarea') {
+                $rs = $DB->get_recordset($tablestr, array($formatfieldstr=>FORMAT_MOODLE), '', "id,$fieldstr,$formatfieldstr");
+                foreach ($rs as $rec) {
+                    $rec->$fieldstr       = text_to_html($rec->$fieldstr, false, false, true);
+                    $rec->$formatfieldstr = FORMAT_HTML;
+                    $DB->update_record($tablestr, $rec);
+                    upgrade_set_timeout();
                 }
+                $rs->close();
             }
         }
 
+        unset($rec);
         unset($extendtables);
 
         upgrade_main_savepoint(true, 2009110400);
+    }
+
+    if ($oldversion < 2009110401) {
+        $table = new xmldb_table('user');
+        $field = new xmldb_field('descriptionformat', XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'description');
+        // Check that the field doesn't already exists
+        if (!$dbman->field_exists($table, $field)) {
+            // Add the new field
+            $dbman->add_field($table, $field);
+        }
+        if ($CFG->texteditors !== 'textarea') {
+            $rs = $DB->get_recordset('user', array('descriptionformat'=>FORMAT_MOODLE, 'deleted'=>0, 'htmleditor'=>1), '', "id,description,descriptionformat");
+            foreach ($rs as $rec) {
+                $rec->description       = text_to_html($rec->description, false, false, true);
+                $rec->descriptionformat = FORMAT_HTML;
+                $DB->update_record('user', $rec);
+                upgrade_set_timeout();
+            }
+            $rs->close();
+        }
+
+        upgrade_main_savepoint(true, 2009110401);
     }
 
     if ($oldversion < 2009112400) {
