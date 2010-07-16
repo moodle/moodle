@@ -276,11 +276,21 @@ function xmldb_quiz_upgrade($oldversion) {
         $table = new xmldb_table('quiz');
         $field = new xmldb_field('introformat', XMLDB_TYPE_INTEGER, '4', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'intro');
 
-    /// Launch add field introformat
-        $dbman->add_field($table, $field);
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
 
-    /// set format to current
-        $DB->set_field('quiz', 'introformat', FORMAT_MOODLE, array());
+        // conditionally migrate to html format in intro
+        if ($CFG->texteditors !== 'textarea') {
+            $rs = $DB->get_recordset('quiz', array('introformat'=>FORMAT_MOODLE), '', 'id,intro,introformat');
+            foreach ($rs as $q) {
+                $q->intro       = text_to_html($q->intro, false, false, true);
+                $q->introformat = FORMAT_HTML;
+                $DB->update_record('quiz', $q);
+                upgrade_set_timeout();
+            }
+            $rs->close();
+        }
 
     /// quiz savepoint reached
         upgrade_mod_savepoint(true, 2009042000, 'quiz');
