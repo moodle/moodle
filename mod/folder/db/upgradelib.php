@@ -57,11 +57,19 @@ function folder_20_migrate() {
         $directory = '/'.trim($candidate->reference, '/').'/';
         $directory = str_replace('//', '/', $directory);
 
+        if ($CFG->texteditors !== 'textarea') {
+            $intro       = text_to_html($candidate->intro, false, false, true);
+            $introformat = FORMAT_HTML;
+        } else {
+            $intro       = $candidate->intro;
+            $introformat = FORMAT_MOODLE;
+        }
+
         $folder = new object();
         $folder->course       = $candidate->course;
         $folder->name         = $candidate->name;
-        $folder->intro        = $candidate->intro;
-        $folder->introformat  = $candidate->introformat;
+        $folder->intro        = $intro;
+        $folder->introformat  = $introformat;
         $folder->revision     = 1;
         $folder->timemodified = time();
 
