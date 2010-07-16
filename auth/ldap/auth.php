@@ -404,7 +404,7 @@ class auth_plugin_ldap extends auth_plugin_base {
      * @param boolean $notify print notice with link and terminate
      */
     function user_signup($user, $notify=true) {
-        global $CFG, $DB;
+        global $CFG, $DB, $OUTPUT, $PAGE;
 
         require_once($CFG->dirroot.'/user/profile/lib.php');
 
@@ -833,7 +833,7 @@ class auth_plugin_ldap extends auth_plugin_base {
      * @param string $username username
      */
     function update_user_record($username, $updatekeys = false) {
-        global $CFG;
+        global $CFG, $DB;
 
         //just in case check text case
         $username = trim(moodle_strtolower($username));
