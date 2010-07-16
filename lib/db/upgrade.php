@@ -3781,6 +3781,8 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
             $dbman->add_field($table, $field);
         }
 
+        $DB->set_field('course_sections', 'summaryformat', 1, array()); // originally treated as HTML
+
     /// Main savepoint reached
         upgrade_main_savepoint(true, 2010052700);
     }
