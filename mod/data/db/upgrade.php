@@ -173,7 +173,21 @@ function xmldb_data_upgrade($oldversion) {
         $field = new xmldb_field('introformat', XMLDB_TYPE_INTEGER, '4', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'intro');
 
     /// Launch add field introformat
-        $dbman->add_field($table, $field);
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // conditionally migrate to html format in intro
+        if ($CFG->texteditors !== 'textarea') {
+            $rs = $DB->get_recordset('data', array('introformat'=>FORMAT_MOODLE), '', 'id,intro,introformat');
+            foreach ($rs as $d) {
+                $d->intro       = text_to_html($d->intro, false, false, true);
+                $d->introformat = FORMAT_HTML;
+                $DB->update_record('data', $d);
+                upgrade_set_timeout();
+            }
+            $rs->close();
+        }
 
     /// data savepoint reached
         upgrade_mod_savepoint(true, 2009042000, 'data');
