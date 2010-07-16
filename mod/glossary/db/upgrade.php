@@ -200,6 +200,18 @@ function xmldb_glossary_upgrade($oldversion) {
             $dbman->add_field($table, $field);
         }
 
+        // conditionally migrate to html format in intro
+        if ($CFG->texteditors !== 'textarea') {
+            $rs = $DB->get_recordset('glossary', array('introformat'=>FORMAT_MOODLE), '', 'id,intro,introformat');
+            foreach ($rs as $g) {
+                $g->intro       = text_to_html($g->intro, false, false, true);
+                $g->introformat = FORMAT_HTML;
+                $DB->update_record('glossary', $g);
+                upgrade_set_timeout();
+            }
+            $rs->close();
+        }
+
     /// glossary savepoint reached
         upgrade_mod_savepoint(true, 2009042006, 'glossary');
     }
