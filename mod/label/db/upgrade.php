@@ -55,24 +55,11 @@ function xmldb_label_upgrade($oldversion) {
     /// Launch add field introformat
         $dbman->add_field($table, $field);
 
+        // all existing lables in 1.9 are in HTML format
+        $DB->set_field('label', 'introformat', FORMAT_HTML, array());
+
     /// label savepoint reached
         upgrade_mod_savepoint(true, 2009042201, 'label');
-    }
-
-    if ($oldversion < 2009080400) {
-
-    /// Define field introformat to be added to label
-        $table = new xmldb_table('label');
-        $field = new xmldb_field('introformat', XMLDB_TYPE_INTEGER, '4', XMLDB_UNSIGNED, null, null, '0', 'intro');
-
-    /// Launch add field introformat
-        $dbman->change_field_default($table, $field);
-
-    /// Convert existing markdown formats to 0 (due to an existing bug in early versions of label upgrade, defaulting to 4)
-        $DB->set_field('label', 'introformat', 0, array('introformat' => 4));
-
-    /// label savepoint reached
-        upgrade_mod_savepoint(true, 2009080400, 'label');
     }
 
     return true;
