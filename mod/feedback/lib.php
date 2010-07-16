@@ -457,6 +457,17 @@ function feedback_scale_used ($feedbackid,$scaleid) {
 }
 
 /**
+ * Checks if scale is being used by any instance of feedback
+ *
+ * This is used to find out if scale used anywhere
+ * @param $scaleid int
+ * @return boolean True if the scale is used by any assignment
+ */
+function feedback_scale_used_anywhere($scaleid) {
+    return false;
+}
+
+/**
  * This function is used by the reset_course_userdata function in moodlelib.
  * This function will remove all responses from the specified feedback
  * and clean up any related data.
