@@ -51,6 +51,18 @@ function xmldb_chat_upgrade($oldversion) {
             $dbman->add_field($table, $field);
         }
 
+        // conditionally migrate to html format in intro
+        if ($CFG->texteditors !== 'textarea') {
+            $rs = $DB->get_recordset('chat', array('introformat'=>FORMAT_MOODLE), '', 'id,intro,introformat');
+            foreach ($rs as $ch) {
+                $ch->intro       = text_to_html($ch->intro, false, false, true);
+                $ch->introformat = FORMAT_HTML;
+                $DB->update_record('chat', $ch);
+                upgrade_set_timeout();
+            }
+            $rs->close();
+        }
+
     /// chat savepoint reached
         upgrade_mod_savepoint(true, 2010050101, 'chat');
     }
