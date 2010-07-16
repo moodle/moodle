@@ -55,11 +55,19 @@ function imscp_20_migrate() {
     foreach ($candidates as $candidate) {
         upgrade_set_timeout(60);
 
+        if ($CFG->texteditors !== 'textarea') {
+            $intro       = text_to_html($candidate->intro, false, false, true);
+            $introformat = FORMAT_HTML;
+        } else {
+            $intro       = $candidate->intro;
+            $introformat = FORMAT_MOODLE;
+        }
+
         $imscp = new object();
         $imscp->course       = $candidate->course;
         $imscp->name         = $candidate->name;
-        $imscp->intro        = $candidate->intro;
-        $imscp->introformat  = $candidate->introformat;
+        $imscp->intro        = $intro;
+        $imscp->introformat  = $introformat;
         $imscp->revision     = 1;
         $imscp->keepold      = 1;
         $imscp->timemodified = time();
