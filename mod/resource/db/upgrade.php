@@ -52,6 +52,12 @@ function xmldb_resource_upgrade($oldversion) {
 
 //===== 1.9.0 upgrade line ======//
 
+    if ($oldversion < 2009041900) {
+        resource_20_prepare_migration();
+        // resource savepoint reached
+        upgrade_mod_savepoint(true, 2009041900, 'resource');
+    }
+
     if ($oldversion < 2009042000) {
        // Rename field summary on table resource to intro
         $table = new xmldb_table('resource');
@@ -70,10 +76,21 @@ function xmldb_resource_upgrade($oldversion) {
         $field = new xmldb_field('introformat', XMLDB_TYPE_INTEGER, '4', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'intro');
 
         // Launch add field introformat
-        $dbman->add_field($table, $field);
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
 
-        // set format to current
-        $DB->set_field('resource', 'introformat', FORMAT_MOODLE, array());
+        // conditionally migrate to html format in intro
+        if ($CFG->texteditors !== 'textarea') {
+            $rs = $DB->get_recordset('resource', array('introformat'=>FORMAT_MOODLE), '', 'id,intro,introformat');
+            foreach ($rs as $r) {
+                $r->intro       = text_to_html($r->intro, false, false, true);
+                $r->introformat = FORMAT_HTML;
+                $DB->update_record('resource', $r);
+                upgrade_set_timeout();
+            }
+            $rs->close();
+        }
 
         // resource savepoint reached
         upgrade_mod_savepoint(true, 2009042001, 'resource');
@@ -84,12 +101,6 @@ function xmldb_resource_upgrade($oldversion) {
         update_log_display_entry('resource', 'view all', 'resource', 'name');
         // resource savepoint reached
         upgrade_mod_savepoint(true, 2009062500, 'resource');
-    }
-
-    if ($oldversion < 2009062501) {
-        resource_20_prepare_migration();
-        // resource savepoint reached
-        upgrade_mod_savepoint(true, 2009062501, 'resource');
     }
 
     if ($oldversion < 2009062600) {
