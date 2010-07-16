@@ -528,8 +528,7 @@ function choice_show_results($choice, $course, $cm, $allresponses, $forcepublish
                     echo $columncount[$optionid];
                     echo "<br/>";
                     echo get_string("limit", "choice").":";
-                    $choice_option = $DB->get_record("choice_options", array("id" => $optionid));
-                    echo $choice_option->maxanswers;
+                    echo $choice->maxanswers[$optionid];
                 } else {
                     if (isset($columncount[$optionid])) {
                         echo $columncount[$optionid];
@@ -634,8 +633,7 @@ function choice_show_results($choice, $course, $cm, $allresponses, $forcepublish
                     echo get_string("taken", "choice").":";
                     echo $column[$optionid].'<br />';
                     echo get_string("limit", "choice").":";
-                    $choice_option = $DB->get_record("choice_options", array("id" => $optionid));
-                    echo $choice_option->maxanswers;
+                    echo $choice->maxanswers[$optionid];
                 } else {
                     echo $column[$optionid];
                     echo '<br />('.format_float(((float)$column[$optionid]/(float)$totalresponsecount)*100.0,1).'%)';
