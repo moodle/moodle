@@ -71,11 +71,19 @@ function url_20_migrate() {
 
         upgrade_set_timeout();
 
+        if ($CFG->texteditors !== 'textarea') {
+            $intro       = text_to_html($candidate->intro, false, false, true);
+            $introformat = FORMAT_HTML;
+        } else {
+            $intro       = $candidate->intro;
+            $introformat = FORMAT_MOODLE;
+        }
+
         $url = new object();
         $url->course       = $candidate->course;
         $url->name         = $candidate->name;
-        $url->intro        = $candidate->intro;
-        $url->introformat  = $candidate->introformat;
+        $url->intro        = $intro;
+        $url->introformat  = $introformat;
         $url->externalurl  = $path;
         $url->timemodified = time();
 
