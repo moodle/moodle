@@ -36,7 +36,7 @@ function xmldb_scorm_upgrade($oldversion) {
         /// Launch add field whatgrade
         if (!$dbman->field_exists($table,$field)) {
             $dbman->add_field($table, $field);
-            $whatgradefixed = get_config('scorm', 'whatgradefixed'); 
+            $whatgradefixed = get_config('scorm', 'whatgradefixed');
             if (empty($whatgradefixed)) {
                 /// fix bad usage of whatgrade/grading method.
                 $scorms = $DB->get_records('scorm');
@@ -435,7 +435,21 @@ function xmldb_scorm_upgrade($oldversion) {
         $field = new xmldb_field('introformat', XMLDB_TYPE_INTEGER, '4', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'intro');
 
     /// Launch add field introformat
-        $dbman->add_field($table, $field);
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // conditionally migrate to html format in intro
+        if ($CFG->texteditors !== 'textarea') {
+            $rs = $DB->get_recordset('intro', array('introformat'=>FORMAT_MOODLE), '', 'id,intro,introformat');
+            foreach ($rs as $s) {
+                $s->intro       = text_to_html($s->intro, false, false, true);
+                $s->introformat = FORMAT_HTML;
+                $DB->update_record('intro', $s);
+                upgrade_set_timeout();
+            }
+            $rs->close();
+        }
 
     /// scorm savepoint reached
         upgrade_mod_savepoint(true, 2009042001, 'scorm');
@@ -467,7 +481,7 @@ function xmldb_scorm_upgrade($oldversion) {
             //dump this config var as it isn't needed anymore.
             unset_config('grademethodfixed', 'scorm');
         }
-        
+
     /// scorm savepoint reached
         upgrade_mod_savepoint(true, 2010070800, 'scorm');
     }
