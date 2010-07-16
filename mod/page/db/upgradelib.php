@@ -74,11 +74,19 @@ function page_20_migrate_candidate($candidate, $fs, $format) {
     global $CFG, $DB;
     upgrade_set_timeout();
 
+    if ($CFG->texteditors !== 'textarea') {
+        $intro       = text_to_html($candidate->intro, false, false, true);
+        $introformat = FORMAT_HTML;
+    } else {
+        $intro       = $candidate->intro;
+        $introformat = FORMAT_MOODLE;
+    }
+
     $page = new object();
     $page->course        = $candidate->course;
     $page->name          = $candidate->name;
-    $page->intro         = $candidate->intro;
-    $page->introformat   = $candidate->introformat;
+    $page->intro         = $intro;
+    $page->introformat   = $introformat;
     $page->content       = $candidate->alltext;
     $page->contentformat = $format;
     $page->revision      = 1;
