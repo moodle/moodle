@@ -34,10 +34,13 @@ YUI.add('moodle-enrol-quickcohortenrolment', function(Y) {
         CONTROLLER.superclass.constructor.apply(this, arguments);
     }
     Y.extend(CONTROLLER, Y.Base, {
+        _preformingAction : false,
         initializer : function(config) {
             COUNT ++;
             this.publish('assignablerolesloaded');
             this.publish('cohortsloaded');
+            this.publish('performingaction');
+            this.publish('actioncomplete');
             
             var close = Y.Node.create('<div class="close"></div>');
             var panel = new Y.Overlay({
@@ -56,6 +59,12 @@ YUI.add('moodle-enrol-quickcohortenrolment', function(Y) {
             }, panel);
             this.on('hide', function() {
                 this.hide();
+            }, panel);
+            this.on('performingaction', function(){
+                this.get('boundingBox').append(Y.Node.create('<div class="performing-action"></div>').append(Y.Node.create('<img alt="loading" />').setAttribute('src', M.cfg.loadingicon)).setStyle('opacity', 0.5));
+            }, panel);
+            this.on('actioncomplete', function(){
+                this.get('boundingBox').one('.performing-action').remove();
             }, panel);
             this.on('assignablerolesloaded', this.updateContent, this, panel);
             this.on('cohortsloaded', this.updateContent, this, panel);
@@ -121,9 +130,13 @@ YUI.add('moodle-enrol-quickcohortenrolment', function(Y) {
                     complete: function(tid, outcome, args) {
                         try {
                             var cohorts = Y.JSON.parse(outcome.responseText);
-                            this.setCohorts(cohorts.response);
+                            if (cohorts.error) {
+                                new M.core.ajaxException(cohorts);
+                            } else {
+                                this.setCohorts(cohorts.response);
+                            }
                         } catch (e) {
-                            Y.fail(CONTROLLERNAME+': Failed to load cohorts');
+                            return new M.core.exception(e);
                         }
                         this.getCohorts = function() {
                             this.fire('cohortsloaded');
@@ -151,7 +164,7 @@ YUI.add('moodle-enrol-quickcohortenrolment', function(Y) {
                             var roles = Y.JSON.parse(outcome.responseText);
                             this.set(ASSIGNABLEROLES, roles.response);
                         } catch (e) {
-                            Y.fail(CONTROLLERNAME+': Failed to load assignable roles');
+                            return new M.core.exception(e);
                         }
                         this.getAssignableRoles = function() {
                             this.fire('assignablerolesloaded');
@@ -163,6 +176,11 @@ YUI.add('moodle-enrol-quickcohortenrolment', function(Y) {
             });
         },
         enrolCohort : function(e, cohort, node, usersonly) {
+            if (this._preformingAction) {
+                return true;
+            }
+            this._preformingAction = true;
+            this.fire('performingaction');
             var params = {
                 id : this.get(COURSEID),
                 roleid : node.one('.'+CSS.PANELROLES+' select').get('value'),
@@ -177,23 +195,30 @@ YUI.add('moodle-enrol-quickcohortenrolment', function(Y) {
                     complete: function(tid, outcome, args) {
                         try {
                             var result = Y.JSON.parse(outcome.responseText);
-                            if (result.success) {
-                                if (result.response && result.response.message) {
-                                    alert(result.response.message);
-                                }
-                                if (result.response.users) {
-                                    window.location.href = this.get(URL);
-                                }
+                            if (result.error) {
+                                new M.core.ajaxException(result);
                             } else {
-                                alert('Failed to enrol cohort');
+                                var redirect = function() {
+                                    if (result.response.users) {
+                                        window.location.href = this.get(URL);
+                                    }
+                                }
+                                if (result.response && result.response.message) {
+                                    new M.core.alert(result.response).on('complete', redirect, this);
+                                } else {
+                                    redirect();
+                                }
                             }
+                            this._preformingAction = false;
+                            this.fire('actioncomplete');
                         } catch (e) {
-                            Y.fail(CONTROLLERNAME+': Failed to enrol cohort');
+                            new M.core.exception(e);
                         }
                     }
                 },
                 context:this
             });
+            return true;
         }
     }, {
         NAME : CONTROLLERNAME,
@@ -276,4 +301,4 @@ YUI.add('moodle-enrol-quickcohortenrolment', function(Y) {
         }
     }
 
-}, '@VERSION@', {requires:['base','node', 'overlay', 'io', 'test', 'json-parse', 'event-delegate', 'dd-plugin', 'event-key']});
+}, '@VERSION@', {requires:['base','node', 'overlay', 'io', 'test', 'json-parse', 'event-delegate', 'dd-plugin', 'event-key', 'moodle-enrol-notification']});

@@ -14,7 +14,11 @@ YUI.add('moodle-calendar-eventmanager', function(Y) {
     }
     Y.extend(EVENT, Y.Base, {
         initializer : function(config){
-            var id = this.get(EVENTID), node = this.get(EVENTNODE), td = node.ancestor('td'), constraint = td.ancestor('div'), panel;
+            var id = this.get(EVENTID), node = this.get(EVENTNODE);
+            if (!node) {
+                return false;
+            }
+            var td = node.ancestor('td'), constraint = td.ancestor('div'), panel;
             this.publish('showevent');
             this.publish('hideevent');
             panel = new Y.Overlay({

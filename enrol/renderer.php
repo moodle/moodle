@@ -37,7 +37,7 @@ class core_enrol_renderer extends plugin_renderer_base {
      * @param course_enrolment_table $table
      * @return string
      */
-    protected function render_course_enrolment_table(course_enrolment_table $table) {
+    protected function render_course_enrolment_users_table(course_enrolment_users_table $table) {
         $content = '';
         $enrolmentselector = $table->get_enrolment_selector($this->page);
         if ($enrolmentselector) {
@@ -58,6 +58,29 @@ class core_enrol_renderer extends plugin_renderer_base {
         $cohortenroller = $table->get_cohort_enrolment_control($this->page);
         if ($cohortenroller) {
             $content .= $this->output->render($cohortenroller);
+        }
+        return $content;
+    }
+
+    /**
+     * Renders a course enrolment table
+     *
+     * @param course_enrolment_table $table
+     * @return string
+     */
+    protected function render_course_enrolment_other_users_table(course_enrolment_other_users_table $table) {
+        $content = '';
+        $searchbutton = $table->get_user_search_button($this->page);
+        if ($searchbutton) {
+            $content .= $this->output->render($searchbutton);
+        }
+        $content .= html_writer::tag('div', get_string('otheruserdesc', 'enrol'), array('class'=>'otherusersdesc'));
+        $content .= $this->output->render($table->get_paging_bar());
+        $content .= html_writer::table($table);
+        $content .= $this->output->render($table->get_paging_bar());
+        $searchbutton = $table->get_user_search_button($this->page);
+        if ($searchbutton) {
+            $content .= $this->output->render($searchbutton);
         }
         return $content;
     }
@@ -303,7 +326,12 @@ class course_enrolment_table extends html_table implements renderable {
      */
     protected $fields = array();
 
-    protected static $sortablefields = array('firstname', 'lastname', 'email', 'lastaccess');
+    /**
+     * An array of sortable fields
+     * @static
+     * @var array
+     */
+    protected static $sortablefields = array('firstname', 'lastname', 'email');
 
     /**
      * Constructs the table
@@ -332,7 +360,6 @@ class course_enrolment_table extends html_table implements renderable {
         }
 
         $this->id = html_writer::random_id();
-        $this->set_total_users($manager->get_total_users());
     }
 
     /**
@@ -455,8 +482,20 @@ class course_enrolment_table extends html_table implements renderable {
             $this->data[] = $row;
         }
         if (has_capability('moodle/role:assign', $this->manager->get_context())) {
-            $arguments = array(array('containerId'=>$this->id, 'userIds'=>array_keys($users), 'courseId'=>$this->manager->get_course()->id));
-            $page->requires->yui_module(array('moodle-enrol-rolemanager', 'moodle-enrol-rolemanager-skin'), 'M.enrol.rolemanager.init', $arguments);
+            $page->requires->strings_for_js(array(
+                'assignroles',
+                'confirmunassign',
+                'confirmunassigntitle',
+                'confirmunassignyes',
+                'confirmunassignno'
+            ), 'role');
+            $modules = array('moodle-enrol-rolemanager', 'moodle-enrol-rolemanager-skin');
+            $function = 'M.enrol.rolemanager.init';
+            $arguments = array(
+                'containerId'=>$this->id,
+                'userIds'=>array_keys($users),
+                'courseId'=>$this->manager->get_course()->id);
+            $page->requires->yui_module($modules, $function, array($arguments));
         }
     }
     
@@ -504,18 +543,22 @@ class course_enrolment_table extends html_table implements renderable {
             self::SORTDIRECTIONVAR => $this->sortdirection
         );
     }
+}
+
+/**
+ * Table control used for enrolled users
+ *
+ * @copyright 2010 Sam Hemelryk
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class course_enrolment_users_table extends course_enrolment_table {
 
     /**
-     * Gets the enrolment type filter control for this table
-     *
-     * @return single_select
+     * An array of sortable fields
+     * @static
+     * @var array
      */
-    public function get_enrolment_type_filter() {
-        $url = new moodle_url($this->pageurl, $this->manager->get_url_params()+$this->get_url_params());
-        $selector = new single_select($url, 'ifilter', array(0=>get_string('all')) + (array)$this->manager->get_enrolment_instance_names(), $this->manager->get_enrolment_filter(), array());
-        $selector->set_label( get_string('enrolmentinstances', 'enrol'));
-        return $selector;
-    }
+    protected static $sortablefields = array('firstname', 'lastname', 'email', 'lastaccess');
 
     /**
      * Returns a button to enrol cohorts or thier users
@@ -557,13 +600,15 @@ class course_enrolment_table extends html_table implements renderable {
                     }
                 }
             }
-            
-            $arguments = array(array(
+
+            $modules = array('moodle-enrol-quickcohortenrolment', 'moodle-enrol-quickcohortenrolment-skin');
+            $function = 'M.enrol.quickcohortenrolment.init';
+            $arguments = array(
                 'courseid'=>$course->id,
                 'ajaxurl'=>'/enrol/ajax.php',
                 'url'=>$url->out(false),
-                'manualEnrolment'=>$hasmanualinstance));
-            $page->requires->yui_module(array('moodle-enrol-quickcohortenrolment', 'moodle-enrol-quickcohortenrolment-skin'), 'M.enrol.quickcohortenrolment.init', $arguments);
+                'manualEnrolment'=>$hasmanualinstance);
+            $page->requires->yui_module($modules, $function, array($arguments));
         }
         return $control;
     }
@@ -636,18 +681,99 @@ class course_enrolment_table extends html_table implements renderable {
                 $page->requires->string_for_js('assignroles', 'role');
                 $page->requires->string_for_js('startingfrom', 'moodle');
 
-
-                $arguments = array(array(
+                $modules = array('moodle-enrol-enrolmentmanager', 'moodle-enrol-enrolmentmanager-skin');
+                $function = 'M.enrol.enrolmentmanager.init';
+                $arguments = array(
                     'instances'=>$arguments,
                     'courseid'=>$course->id,
                     'ajaxurl'=>'/enrol/ajax.php',
                     'url'=>$url->out(false),
                     'optionsStartDate'=>$startdateoptions,
-                    'defaultRole'=>get_config('enrol_manual', 'roleid')));
-                $page->requires->yui_module(array('moodle-enrol-enrolmentmanager', 'moodle-enrol-enrolmentmanager-skin'), 'M.enrol.enrolmentmanager.init', $arguments);
+                    'defaultRole'=>get_config('enrol_manual', 'roleid'));
+                $page->requires->yui_module($modules, $function, array($arguments));
             }
             return $control;
         }
         return null;
+    }
+    /**
+     * Gets the enrolment type filter control for this table
+     *
+     * @return single_select
+     */
+    public function get_enrolment_type_filter() {
+        $url = new moodle_url($this->pageurl, $this->manager->get_url_params()+$this->get_url_params());
+        $selector = new single_select($url, 'ifilter', array(0=>get_string('all')) + (array)$this->manager->get_enrolment_instance_names(), $this->manager->get_enrolment_filter(), array());
+        $selector->set_label( get_string('enrolmentinstances', 'enrol'));
+        return $selector;
+    }
+}
+
+/**
+ * Table used for other users
+ *
+ * Other users are users who have roles but are not enrolled.
+ *
+ * @copyright 2010 Sam Hemelryk
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class course_enrolment_other_users_table extends course_enrolment_table {
+
+    /**
+     * Constructs the table
+     *
+     * @param course_enrolment_manager $manager
+     * @param moodle_url $pageurl
+     */
+    public function __construct(course_enrolment_manager $manager, moodle_url $pageurl) {
+        parent::__construct($manager, $pageurl);
+        $this->attributes = array('class'=>'userenrolment otheruserenrolment');
+    }
+
+    /**
+     * Gets a button to search users and assign them roles in the course.
+     *
+     * @staticvar int $count
+     * @param int $page
+     * @return single_button
+     */
+    public function get_user_search_button($page) {
+        global $CFG;
+        static $count = 0;
+        if (!has_capability('moodle/role:assign', $this->manager->get_context())) {
+            return false;
+        }
+        $count++;
+        $url = new moodle_url('/'.$CFG->admin.'/roles/assign.php', array('contextid'=>$this->manager->get_context()->id, 'sesskey'=>sesskey()));
+        $control = new single_button($url, get_string('assignroles', 'role'), 'get');
+        $control->class = 'singlebutton assignuserrole instance'.$count;
+        if ($count == 1) {
+            $page->requires->strings_for_js(array(
+                    'ajaxoneuserfound',
+                    'ajaxxusersfound',
+                    'ajaxnext25',
+                    'enrol',
+                    'enrolmentoptions',
+                    'enrolusers',
+                    'errajaxfailedenrol',
+                    'errajaxsearch',
+                    'none',
+                    'usersearch',
+                    'unlimitedduration',
+                    'startdatetoday',
+                    'durationdays',
+                    'enrolperiod'), 'enrol');
+            $page->requires->string_for_js('assignrole', 'role');
+
+            $modules = array('moodle-enrol-otherusersmanager', 'moodle-enrol-otherusersmanager-skin');
+            $function = 'M.enrol.otherusersmanager.init';
+            $url = new moodle_url($this->pageurl, $this->manager->get_url_params()+$this->get_url_params());
+            $arguments = array(
+                'courseId'=> $this->manager->get_course()->id,
+                'ajaxUrl' => '/enrol/ajax.php',
+                'url' => $url->out(false));
+            $page->requires->yui_module($modules, $function, array($arguments));
+        }
+        return $control;
     }
 }

@@ -2573,11 +2573,14 @@ class core_renderer_ajax extends core_renderer {
      * @return string A template fragment for a fatal error
      */
     public function fatal_error($message, $moreinfourl, $link, $backtrace, $debuginfo = null) {
+        global $FULLME, $USER;
         $e = new stdClass();
         $e->error      = $message;
         $e->stacktrace = NULL;
         $e->debuginfo  = NULL;
+        $e->reproductionlink = NULL;
         if (!empty($CFG->debug) and $CFG->debug >= DEBUG_DEVELOPER) {
+            $e->reproductionlink = $link;
             if (!empty($debuginfo)) {
                 $e->debuginfo = $debuginfo;
             }
@@ -2585,6 +2588,7 @@ class core_renderer_ajax extends core_renderer {
                 $e->stacktrace = format_backtrace($backtrace, true);
             }
         }
+        @header('Content-type: application/json');
         return json_encode($e);
     }
 

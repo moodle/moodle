@@ -24,16 +24,13 @@
  */
 
 require('../config.php');
+require_once("$CFG->dirroot/enrol/locallib.php");
+require_once("$CFG->dirroot/enrol/renderer.php");
+require_once("$CFG->dirroot/group/lib.php");
 
 $id      = required_param('id', PARAM_INT); // course id
 $action  = optional_param('action', '', PARAM_ACTION);
-$confirm = optional_param('confirm', 0, PARAM_BOOL);
-
-$ifilter = optional_param('ifilter', 0, PARAM_INT); // only one instance
-$page    = optional_param('page', 0, PARAM_INT);
-$perpage = optional_param('perpage', 20, PARAM_INT);
-$sort    = optional_param('sort', 'lastname', PARAM_ALPHA);
-$dir     = optional_param('dir', 'ASC', PARAM_ALPHA);
+$filter  = optional_param('ifilter', 0, PARAM_INT);
 
 $course = $DB->get_record('course', array('id'=>$id), '*', MUST_EXIST);
 $context = get_context_instance(CONTEXT_COURSE, $course->id, MUST_EXIST);
@@ -45,47 +42,59 @@ if ($course->id == SITEID) {
     redirect("$CFG->wwwroot/");
 }
 
-$instances = enrol_get_instances($course->id, true);
-$plugins   = enrol_get_plugins(true);
-$inames    = array();
-foreach ($instances as $k=>$i) {
-    if (!isset($plugins[$i->enrol])) {
-        // weird, some broken stuff in plugin
-        unset($instances[$k]);
-        continue;
-    }
-    $inames[$k] = $plugins[$i->enrol]->get_instance_name($i);
-}
-
-// validate paging params
-if ($ifilter != 0 and !isset($instances[$ifilter])) {
-    $ifilter = 0;
-}
-if ($perpage < 3) {
-    $perpage = 3;
-}
-if ($page < 0) {
-    $page = 0;
-}
-if (!in_array($dir, array('ASC', 'DESC'))) {
-    $dir = 'ASC';
-}
-if (!in_array($sort, array('firstname', 'lastname', 'email', 'lastseen'))) {
-    $dir = 'lastname';
-}
-
-$PAGE->set_url('/enrol/notenrolled.php', array('id'=>$course->id, 'page'=>$page, 'sort'=>$sort, 'dir'=>$dir, 'perpage'=>$perpage, 'ifilter'=>$ifilter));
+$PAGE->set_url('/enrol/otherusers.php', array('id'=>$course->id));
 $PAGE->set_pagelayout('admin');
 
-//lalala- nav hack
-navigation_node::override_active_url(new moodle_url('/enrol/otherusers.php', array('id'=>$course->id)));
+$manager = new course_enrolment_manager($course, $filter);
+$table = new course_enrolment_other_users_table($manager, $PAGE->url);
+$pageurl = new moodle_url($PAGE->url, $manager->get_url_params()+$table->get_url_params());
+
+/***
+ * Actions will go here
+ */
+
+/*$fields = array(
+    'userdetails' => array (
+        'picture' => false,
+        'firstname' => get_string('firstname'),
+        'lastname' => get_string('lastname'),
+        'email' => get_string('email')
+    ),
+    'lastseen' => get_string('lastaccess'),
+    'role' => array(
+        'roles' => get_string('roles', 'role'),
+        'context' => get_string('context')
+    )
+);*/
+$fields = array(
+    'userdetails' => array (
+        'picture' => false,
+        'firstname' => get_string('firstname'),
+        'lastname' => get_string('lastname'),
+        'email' => get_string('email')
+    ),
+    'lastseen' => get_string('lastaccess'),
+    'role' => get_string('roles', 'role')
+);
+$table->set_fields($fields);
+
+//$users = $manager->get_other_users($table->sort, $table->sortdirection, $table->page, $table->perpage);
+
+$renderer = $PAGE->get_renderer('core_enrol');
+$canassign = has_capability('moodle/role:assign', $manager->get_context());
+$users = $manager->get_other_users_for_display($renderer, $pageurl, $table->sort, $table->sortdirection, $table->page, $table->perpage);
+$assignableroles = $manager->get_assignable_roles();
+foreach ($users as $userid=>&$user) {
+    $user['picture'] = $OUTPUT->render($user['picture']);
+    $user['role'] = $renderer->user_roles_and_actions($userid, $user['roles'], $assignableroles, $canassign, $pageurl);
+}
+
+$table->set_total_users($manager->get_total_other_users());
+$table->set_users($users);
+
+$PAGE->set_title($course->fullname.': '.get_string('totalotherusers', 'enrol', $manager->get_total_other_users()));
+$PAGE->set_heading($PAGE->title);
 
 echo $OUTPUT->header();
-
-//TODO: MDL-22854 add some new role related UI for users that are not enrolled but still got a role somehow in this course context
-
-notify('This page is not implemented yet, sorry. See MDL-21782 in our tracker for more information.');
-
-echo $OUTPUT->single_button(new moodle_url('/admin/roles/assign.php', array('contextid'=>$context->id)), 'Continue to old Assign roles UI');
-
+echo $renderer->render($table);
 echo $OUTPUT->footer();

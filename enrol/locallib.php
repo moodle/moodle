@@ -64,6 +64,20 @@ class course_enrolment_manager {
      */
     protected $users = array();
 
+    /**
+     * An array of users who have roles within this course but who have not
+     * been enrolled in the course
+     * @var array
+     */
+    protected $otherusers = array();
+
+    /**
+     * The total number of users who hold a role within the course but who
+     * arn't enrolled.
+     * @var int
+     */
+    protected $totalotherusers = null;
+
     /**#@+
      * These variables are used to cache the information this class uses
      * please never use these directly instead use thier get_ counterparts.
@@ -114,6 +128,38 @@ class course_enrolment_manager {
     }
 
     /**
+     * Returns the total number of enrolled users in the course.
+     *
+     * If a filter was specificed this will be the total number of users enrolled
+     * in this course by means of that instance.
+     *
+     * @global moodle_database $DB
+     * @return int
+     */
+    public function get_total_other_users() {
+        global $DB;
+        if ($this->totalotherusers === null) {
+            list($ctxcondition, $params) = $DB->get_in_or_equal(get_parent_contexts($this->context, true), SQL_PARAMS_NAMED, 'ctx00');
+            $params['courseid'] = $this->course->id;
+            $sql = "SELECT COUNT(DISTINCT u.id)
+                    FROM {role_assignments} ra
+                    JOIN {user} u ON u.id = ra.userid
+                    JOIN {context} ctx ON ra.contextid = ctx.id
+                    LEFT JOIN (
+                        SELECT ue.id, ue.userid
+                        FROM {user_enrolments} ue
+                        LEFT JOIN {enrol} e ON e.id=ue.enrolid
+                        WHERE e.courseid = :courseid
+                    ) ue ON ue.userid=u.id
+                    WHERE
+                        ctx.id $ctxcondition AND
+                        ue.id IS NULL";
+            $this->totalotherusers = (int)$DB->count_records_sql($sql, $params);
+        }
+        return $this->totalotherusers;
+    }
+
+    /**
      * Gets all of the users enrolled in this course.
      *
      * If a filter was specificed this will be the users who were enrolled
@@ -151,6 +197,49 @@ class course_enrolment_manager {
             $this->users[$key] = $DB->get_records_sql($sql, $params, $page*$perpage, $perpage);
         }
         return $this->users[$key];
+    }
+
+    /**
+     * Gets and array of other users.
+     *
+     * Other users are users who have been assigned roles or inherited roles
+     * within this course but who have not been enrolled in the course
+     *
+     * @global moodle_database $DB
+     * @param string $sort
+     * @param string $direction
+     * @param int $page
+     * @param int $perpage
+     * @return array
+     */
+    public function get_other_users($sort, $direction='ASC', $page=0, $perpage=25) {
+        global $DB;
+        if ($direction !== 'ASC') {
+            $direction = 'DESC';
+        }
+        $key = md5("$sort-$direction-$page-$perpage");
+        if (!array_key_exists($key, $this->otherusers)) {
+            list($ctxcondition, $params) = $DB->get_in_or_equal(get_parent_contexts($this->context, true), SQL_PARAMS_NAMED, 'ctx00');
+            $params['courseid'] = $this->course->id;
+            $params['cid'] = $this->course->id;
+            $sql = "SELECT ra.id as raid, ra.contextid, ra.component, ctx.contextlevel, ra.roleid, u.*, ue.lastseen
+                    FROM {role_assignments} ra
+                    JOIN {user} u ON u.id = ra.userid
+                    JOIN {context} ctx ON ra.contextid = ctx.id
+                    LEFT JOIN (
+                        SELECT ue.id, ue.userid, ul.timeaccess AS lastseen
+                        FROM {user_enrolments} ue
+                        LEFT JOIN {enrol} e ON e.id=ue.enrolid
+                        LEFT JOIN {user_lastaccess} ul ON (ul.courseid = e.courseid AND ul.userid = ue.userid)
+                        WHERE e.courseid = :courseid
+                    ) ue ON ue.userid=u.id
+                    WHERE
+                        ctx.id $ctxcondition AND
+                        ue.id IS NULL
+                    ORDER BY u.$sort $direction, ctx.depth DESC";
+            $this->otherusers[$key] = $DB->get_records_sql($sql, $params, $page*$perpage, $perpage);
+        }
+        return $this->otherusers[$key];
     }
 
     /**
@@ -199,6 +288,58 @@ class course_enrolment_manager {
                                          JOIN {enrol} e ON (e.id = ue.enrolid AND e.id = :enrolid))";
         $order = ' ORDER BY u.lastname ASC, u.firstname ASC';
         $params['enrolid'] = $enrolid;
+        $totalusers = $DB->count_records_sql($countfields . $sql, $params);
+        $availableusers = $DB->get_records_sql($fields . $sql . $order, $params, $page*$perpage, $perpage);
+        return array('totalusers'=>$totalusers, 'users'=>$availableusers);
+    }
+
+    /**
+     * Searches other users and returns paginated results
+     *
+     * @global moodle_database $DB
+     * @param string $search
+     * @param bool $searchanywhere
+     * @param int $page Starting at 0
+     * @param int $perpage
+     * @return array
+     */
+    public function search_other_users($search='', $searchanywhere=false, $page=0, $perpage=25) {
+        global $DB;
+
+        // Add some additional sensible conditions
+        $tests = array("u.username <> 'guest'", 'u.deleted = 0', 'u.confirmed = 1');
+        $params = array();
+        if (!empty($search)) {
+            $conditions = array('u.firstname','u.lastname');
+            $ilike = ' ' . $DB->sql_ilike();
+            if ($searchanywhere) {
+                $searchparam = '%' . $search . '%';
+            } else {
+                $searchparam = $search . '%';
+            }
+            $i = 0;
+            foreach ($conditions as &$condition) {
+                $condition .= "$ilike :con{$i}00";
+                $params["con{$i}00"] = $searchparam;
+                $i++;
+            }
+            $tests[] = '(' . implode(' OR ', $conditions) . ')';
+        }
+        $wherecondition = implode(' AND ', $tests);
+        
+
+        $fields      = 'SELECT u.id, u.firstname, u.lastname, u.username, u.email, u.lastaccess, u.picture, u.imagealt, '.user_picture::fields('u');;
+        $countfields = 'SELECT COUNT(u.id)';
+        $sql   = " FROM {user} u
+                  WHERE $wherecondition
+                        AND u.id NOT IN (
+                           SELECT u.id
+                             FROM {role_assignments} r, {user} u
+                            WHERE r.contextid = :contextid
+                                  AND u.id = r.userid)";
+        $order = ' ORDER BY lastname ASC, firstname ASC';
+
+        $params['contextid'] = $this->context->id;
         $totalusers = $DB->count_records_sql($countfields . $sql, $params);
         $availableusers = $DB->get_records_sql($fields . $sql . $order, $params, $page*$perpage, $perpage);
         return array('totalusers'=>$totalusers, 'users'=>$availableusers);
@@ -373,6 +514,9 @@ class course_enrolment_manager {
         try {
             role_unassign($roleid, $user->id, $this->context->id, '', NULL);
         } catch (Exception $e) {
+            if (is_defined('AJAX_SCRIPT')) {
+                throw $e;
+            }
             return false;
         }
         return true;
@@ -388,6 +532,9 @@ class course_enrolment_manager {
     public function assign_role_to_user($roleid, $userid) {
         require_capability('moodle/role:assign', $this->context);
         if (!array_key_exists($roleid, $this->get_assignable_roles())) {
+            if (is_defined('AJAX_SCRIPT')) {
+                throw new moodle_;
+            }
             return false;
         }
         return role_assign($roleid, $userid, $this->context->id, '', NULL);
@@ -561,6 +708,69 @@ class course_enrolment_manager {
     }
 
     /**
+     * Gets an array of other users in this course ready for display.
+     *
+     * Other users are users who have been assigned or inherited roles within this
+     * course but have not been enrolled.
+     *
+     * @param core_enrol_renderer $renderer
+     * @param moodle_url $pageurl
+     * @param string $sort
+     * @param string $direction ASC | DESC
+     * @param int $page Starting from 0
+     * @param int $perpage
+     * @return array
+     */
+    public function get_other_users_for_display(core_enrol_renderer $renderer, moodle_url $pageurl, $sort, $direction, $page, $perpage) {
+        
+        $userroles = $this->get_other_users($sort, $direction, $page, $perpage);
+        $roles = $this->get_all_roles();
+
+        $courseid   = $this->get_course()->id;
+        $context    = $this->get_context();
+
+        $users = array();
+        foreach ($userroles as $userrole) {
+            if (!array_key_exists($userrole->id, $users)) {
+                $users[$userrole->id] = array(
+                    'userid'     => $userrole->id,
+                    'courseid'   => $courseid,
+                    'picture'    => new user_picture($userrole),
+                    'firstname'  => fullname($userrole, true),
+                    'email'      => $userrole->email,
+                    'roles'      => array()
+                );
+            }
+            $a = new stdClass;
+            $a->role = $roles[$userrole->roleid]->localname;
+            $changeable = ($userrole->component == '');
+            if ($userrole->contextid == $this->context->id) {
+                $roletext = get_string('rolefromthiscourse', 'enrol', $a);
+            } else {
+                $changeable = false;
+                switch ($userrole->contextlevel) {
+                    case CONTEXT_COURSE :
+                        // Meta course
+                        $roletext = get_string('rolefrommetacourse', 'enrol', $a);
+                        break;
+                    case CONTEXT_COURSECAT :
+                        $roletext = get_string('rolefromcategory', 'enrol', $a);
+                        break;
+                    case CONTEXT_SYSTEM:
+                    default:
+                        $roletext = get_string('rolefromsystem', 'enrol', $a);
+                        break;
+                }
+            }
+            $users[$userrole->id]['roles'][$userrole->roleid] = array(
+                'text' => $roletext,
+                'unchangeable' => !$changeable
+            );
+        }
+        return $users;
+    }
+
+    /**
      * Gets all the cohorts the user is able to view.
      *
      * @global moodle_database $DB
@@ -715,8 +925,8 @@ class course_enrolment_manager {
                 'enrolments' => array()
             );
 
-            if ($user->lastseen) {
-                $details['lastseen'] = format_time($user->lastaccess);
+            if ($user->lastaccess) {
+                $details['lastseen'] = format_time($now - $user->lastaccess);
             }
 
             // Roles
@@ -756,5 +966,19 @@ class course_enrolment_manager {
             $userdetails[$user->id] = $details;
         }
         return $userdetails;
+    }
+}
+
+class enrol_ajax_exception extends moodle_exception {
+    /**
+     * Constructor
+     * @param string $errorcode The name of the string from error.php to print
+     * @param string $module name of module
+     * @param string $link The url where the user will be prompted to continue. If no url is provided the user will be directed to the site index page.
+     * @param object $a Extra words and phrases that might be required in the error string
+     * @param string $debuginfo optional debugging information
+     */
+    public function __construct($errorcode, $link = '', $a = NULL, $debuginfo = null) {
+        parent::__construct($errorcode, 'enrol', $link, $a, $debuginfo);
     }
 }

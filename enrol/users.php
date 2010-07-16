@@ -46,7 +46,7 @@ require_capability('moodle/course:enrolreview', $context);
 $PAGE->set_pagelayout('admin');
 
 $manager = new course_enrolment_manager($course, $filter);
-$table = new course_enrolment_table($manager, $PAGE->url);
+$table = new course_enrolment_users_table($manager, $PAGE->url);
 $pageurl = new moodle_url($PAGE->url, $manager->get_url_params()+$table->get_url_params());
 
 // Check if there is an action to take
@@ -226,6 +226,7 @@ foreach ($users as $userid=>&$user) {
     $user['group'] = $renderer->user_groups_and_actions($userid, $user['groups'], $manager->get_all_groups(), has_capability('moodle/course:managegroups', $manager->get_context()), $pageurl);
     $user['enrol'] = $renderer->user_enrolments_and_actions($userid, $user['enrolments'], $pageurl);
 }
+$table->set_total_users($manager->get_total_users());
 $table->set_users($users);
 
 $PAGE->set_title($PAGE->course->fullname.': '.get_string('totalenrolledusers', 'enrol', $manager->get_total_users()));

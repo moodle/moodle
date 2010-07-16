@@ -86,11 +86,13 @@ YUI.add('moodle-enrol-rolemanager', function(Y) {
                     complete: function(tid, outcome, args) {
                         try {
                             var o = Y.JSON.parse(outcome.responseText);
-                            if (o.success) {
+                            if (o.error) {
+                                new M.core.ajaxException(o);
+                            } else {
                                 panel.user.addRoleToDisplay(args.roleid, this.get(ASSIGNABLEROLES)[args.roleid]);
                             }
                         } catch (e) {
-                            Y.fail(MOD_PANEL+': Failed to parse role assignment response  ['+e.linenum+':'+e.message+']');
+                            new M.core.exception(e);
                         }
                         panel.hide();
                     }
@@ -103,9 +105,18 @@ YUI.add('moodle-enrol-rolemanager', function(Y) {
         },
         removeRole : function(e, user, roleid) {
             e.halt();
-            if (confirm('Are you sure you wish to remove this role from this user?')) {
-                this.removeRoleCallback(e, user.get(USERID), roleid);
-            }
+            var event = this.on('assignablerolesloaded', function(){
+                event.detach();
+                var s = M.str.role, confirmation = {
+                    lightbox :  true,
+                    title    :  s.confirmunassigntitle,
+                    question :  s.confirmunassign,
+                    yesLabel :  s.confirmunassignyes,
+                    noLabel  :  s.confirmunassignno
+                }
+                new M.core.confirm(confirmation).on('complete-yes', this.removeRoleCallback, this, user.get(USERID), roleid);
+            }, this);
+            this._loadAssignableRoles();
         },
         removeRoleCallback : function(e, userid, roleid) {
             Y.io(M.cfg.wwwroot+'/enrol/ajax.php', {
@@ -113,13 +124,16 @@ YUI.add('moodle-enrol-rolemanager', function(Y) {
                 data:'id='+this.get(COURSEID)+'&action=unassign&sesskey='+M.cfg.sesskey+'&role='+roleid+'&user='+userid,
                 on: {
                     complete: function(tid, outcome, args) {
+                        var o;
                         try {
-                            var o = Y.JSON.parse(outcome.responseText);
-                            if (o.success) {
+                            o = Y.JSON.parse(outcome.responseText);
+                            if (o.error) {
+                                new M.core.ajaxException(o);
+                            } else {
                                 this.users[userid].removeRoleFromDisplay(args.roleid);
                             }
                         } catch (e) {
-                            Y.fail(MOD_PANEL+': Failed to parse role assignment response ['+e.linenum+':'+e.message+']');
+                            new M.core.exception(e);
                         }
                     }
                 },
@@ -140,7 +154,7 @@ YUI.add('moodle-enrol-rolemanager', function(Y) {
                             var roles = Y.JSON.parse(outcome.responseText);
                             this.set(ASSIGNABLEROLES, roles.response);
                         } catch (e) {
-                            Y.fail(MOD_NAME+': Failed to load assignable roles');
+                            new M.core.exception(e);
                         }
                         this._loadAssignableRoles = function() {
                             this.fire('assignablerolesloaded');
@@ -260,7 +274,9 @@ YUI.add('moodle-enrol-rolemanager', function(Y) {
             } else {
                 if (!link) {
                     var m = this.get(MANIPULATOR);
-                    link = Y.Node.create('<div class="addrole">&nbsp;</div>');
+                    link = Y.Node.create('<div class="addrole"></div>').append(
+                        Y.Node.create('<img alt="" />').setAttribute('src', M.util.image_url('t/enroladd', 'moodle'))
+                    );
                     link.on('click', m.addRole, m, this);
                     this.get(CONTAINER).one('.col_role').insert(link, 0);
                     this.set(ASSIGNROLELINK, link);
@@ -351,8 +367,8 @@ YUI.add('moodle-enrol-rolemanager', function(Y) {
             this.user = user;
             var roles = this.user.get(CONTAINER).one('.col_role .roles');
             var x = roles.getX() + 10;
-            var y = roles.getY() + this.user.get(CONTAINER).get('offsetHeight') - 10 + Y.one(window).get('scrollTop');
-            this.get('elementNode').setXY([x, y]);
+            var y = roles.getY() + this.user.get(CONTAINER).get('offsetHeight') - 10;
+            this.get('elementNode').setStyle('left', x).setStyle('top', y);
             this.get('elementNode').addClass('visible');
             this.escCloseEvent = Y.on('key', this.hide, document.body, 'down:27', this);
             this.displayed = true;
@@ -386,4 +402,4 @@ YUI.add('moodle-enrol-rolemanager', function(Y) {
         }
     }
     
-}, '@VERSION@', {requires:['base','node','io','json-parse','test']});
+}, '@VERSION@', {requires:['base','node','io','json-parse','test','moodle-enrol-notification']});

@@ -17,6 +17,9 @@
 /**
  * This file processes AJAX enrolment actions and returns JSON
  *
+ * The general idea behind this file is that any errors should throw exceptions
+ * which will be returned and acted upon by the calling AJAX script.
+ *
  * @package moodlecore
  * @copyright  2010 Sam Hemelryk
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -40,91 +43,76 @@ $course = $DB->get_record('course', array('id'=>$id), '*', MUST_EXIST);
 $context = get_context_instance(CONTEXT_COURSE, $course->id, MUST_EXIST);
 
 if ($course->id == SITEID) {
-    redirect(new moodle_url('/'));
+    throw new moodle_exception('invalidcourse');
 }
 
 require_login($course);
 require_capability('moodle/course:enrolreview', $context);
+require_sesskey();
 
 $manager = new course_enrolment_manager($course);
 
 $outcome = new stdClass;
-$outcome->success = false;
+$outcome->success = true;
 $outcome->response = new stdClass;
 $outcome->error = '';
-
-if (!confirm_sesskey()) {
-    $outcome->error = 'invalidsesskey';
-    echo json_encode($outcome);
-    die();
-}
 
 switch ($action) {
     case 'unenrol':
         $ue = $DB->get_record('user_enrolments', array('id'=>required_param('ue', PARAM_INT)), '*', MUST_EXIST);
         list ($instance, $plugin) = $manager->get_user_enrolment_components($ue);
-        if ($instance && $plugin && $plugin->allow_unenrol($instance) && has_capability("enrol/$instance->enrol:unenrol", $manager->get_context()) && $manager->unenrol_user($ue)) {
-            $outcome->success = true;
-        } else {
-            $outcome->error = 'unabletounenrol';
+        if (!$instance || !$plugin || !$plugin->allow_unenrol($instance) || !has_capability("enrol/$instance->enrol:unenrol", $manager->get_context()) || !$manager->unenrol_user($ue)) {
+            throw new enrol_ajax_exception('unenrolnotpermitted');
         }
         break;
     case 'unassign':
         $role = required_param('role', PARAM_INT);
         $user = required_param('user', PARAM_INT);
-        if (has_capability('moodle/role:assign', $manager->get_context()) && $manager->unassign_role_from_user($user, $role)) {
-            $outcome->success = true;
-        } else {
-            $outcome->error = 'unabletounassign';
+        if (!has_capability('moodle/role:assign', $manager->get_context()) || !$manager->unassign_role_from_user($user, $role)) {
+            throw new enrol_ajax_exception('unassignnotpermitted');
         }
         break;
 
     case 'assign':
         $user = $DB->get_record('user', array('id'=>required_param('user', PARAM_INT)), '*', MUST_EXIST);
         $roleid = required_param('roleid', PARAM_INT);
-
-        if (!is_enrolled($context, $user)) {
-            $outcome->error = 'mustbeenrolled';
-            break; // no roles without enrolments here in this script
-        }
         if (!array_key_exists($roleid, $manager->get_assignable_roles())) {
-            $outcome->error = 'invalidrole';
-            break;
+            throw new enrol_ajax_exception('invalidrole');
         }
-
-        if (has_capability('moodle/role:assign', $manager->get_context()) && $manager->assign_role_to_user($roleid, $user->id)) {
-            $outcome->success = true;
-            $outcome->response->roleid = $roleid;
-        } else {
-            $outcome->error = 'unabletoassign';
+        if (!has_capability('moodle/role:assign', $manager->get_context()) || !$manager->assign_role_to_user($roleid, $user->id)) {
+            throw new enrol_ajax_exception('assignnotpermitted');
         }
+        $outcome->response->roleid = $roleid;
         break;
 
     case 'getassignable':
-        $outcome->success = true;
         $outcome->response = $manager->get_assignable_roles();
         break;
     case 'getcohorts':
         require_capability('moodle/course:enrolconfig', $context);
-        $outcome->success = true;
         $outcome->response = $manager->get_cohorts();
         break;
     case 'enrolcohort':
         require_capability('moodle/course:enrolconfig', $context);
         $roleid = required_param('roleid', PARAM_INT);
         $cohortid = required_param('cohortid', PARAM_INT);
-        $outcome->success = $manager->enrol_cohort($cohortid, $roleid);
+        if (!$manager->enrol_cohort($cohortid, $roleid)) {
+            throw new enrol_ajax_exception('errorenrolcohort');
+        }
         break;
     case 'enrolcohortusers':
         require_capability('moodle/course:enrolconfig', $context);
         $roleid = required_param('roleid', PARAM_INT);
         $cohortid = required_param('cohortid', PARAM_INT);
         $result = $manager->enrol_cohort_users($cohortid, $roleid);
-        if ($result !== false) {
-            $outcome->success = true;
-            $outcome->response->users = $result;
-            $outcome->response->message = get_string('enrollednewusers', 'enrol', $result);
+        if ($result === false) {
+            throw new enrol_ajax_exception('errorenrolcohortusers');
         }
+        $outcome->success = true;
+        $outcome->response->users = $result;
+        $outcome->response->title = get_string('success');
+        $outcome->response->message = get_string('enrollednewusers', 'enrol', $result);
+        $outcome->response->yesLabel = get_string('ok');
         break;
     case 'searchusers':
         $enrolid = required_param('enrolid', PARAM_INT);
@@ -134,6 +122,19 @@ switch ($action) {
         foreach ($outcome->response['users'] as &$user) {
             $user->picture = $OUTPUT->user_picture($user);
             $user->fullname = fullname($user);
+        }
+        $outcome->success = true;
+        break;
+
+    case 'searchotherusers':
+        $search  = optional_param('search', '', PARAM_CLEAN);
+        $page = optional_param('page', 0, PARAM_INT);
+        $outcome->response = $manager->search_other_users($search, false, $page);
+        foreach ($outcome->response['users'] as &$user) {
+            $user->userId = $user->id;
+            $user->picture = $OUTPUT->user_picture($user);
+            $user->fullname = fullname($user);
+            unset($user->id);
         }
         $outcome->success = true;
         break;
@@ -170,29 +171,22 @@ switch ($action) {
         $instances = $manager->get_enrolment_instances();
         $plugins = $manager->get_enrolment_plugins();
         if (!array_key_exists($enrolid, $instances)) {
-            $outcome->error = 'invalidinstance';
-            break;
+            throw new enrol_ajax_exception('invalidenrolinstance');
         }
         $instance = $instances[$enrolid];
         $plugin = $plugins[$instance->enrol];
         if ($plugin->allow_enrol($instance) && has_capability('enrol/'.$plugin->get_name().':enrol', $context)) {
-            try {
-                $plugin->enrol_user($instance, $user->id, $roleid, $timestart, $timeend);
-            } catch (Exception $e) {
-                $outcome->error = 'unabletoenrol';
-                break;
-            }
+            $plugin->enrol_user($instance, $user->id, $roleid, $timestart, $timeend);
         } else {
-            $outcome->error = 'unablenotallowed';
-            break;
+            throw new enrol_ajax_exception('enrolnotpermitted');
         }
         $outcome->success = true;
         break;
 
     default:
-        $outcome->error = 'unknownaction';
-        break;
+        throw new enrol_ajax_exception('unknowajaxaction');
 }
 
+header('Content-type: application/json');
 echo json_encode($outcome);
 die();

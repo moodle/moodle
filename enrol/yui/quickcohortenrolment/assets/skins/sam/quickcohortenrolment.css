@@ -20,3 +20,5 @@
 .qce-panel .qce-assignable-roles {margin:3px 5px 2px;}
 .qce-panel .qce-cohort.headings {font-weight:bold;border-width:0;}
 .qce-panel .qce-cohort.headings .qce-cohort-button {display:none;}
+.qce-panel .performing-action {position:absolute;top:0;left:0;width:100%;height:100%;background-color:#fff;text-align:center;}
+.qce-panel .performing-action img {margin-top:150px;}

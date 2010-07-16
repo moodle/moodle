@@ -193,7 +193,7 @@ YUI.add('moodle-enrol-enrolmentmanager', function(Y) {
                             var roles = Y.JSON.parse(outcome.responseText);
                             this.set(UEP.ASSIGNABLEROLES, roles.response);
                         } catch (e) {
-                            Y.fail(UEP.NAME+': Failed to load assignable roles');
+                            new M.core.exception(e);
                         }
                         this.getAssignableRoles = function() {
                             this.fire('assignablerolesloaded');
@@ -298,8 +298,11 @@ YUI.add('moodle-enrol-enrolmentmanager', function(Y) {
         processSearchResults : function(tid, outcome, args) {
             try {
                 var result = Y.JSON.parse(outcome.responseText);
+                if (result.error) {
+                    return new M.core.ajaxException(result);
+                }
             } catch (e) {
-                Y.fail(UEP.NAME+': Failed to parse user search response  ['+e.linenum+':'+e.message+']');
+                new M.core.exception(e);
             }
             if (!result.success) {
                 this.setContent = M.str.enrol.errajaxsearch;
@@ -364,15 +367,15 @@ YUI.add('moodle-enrol-enrolmentmanager', function(Y) {
                     complete : function(tid, outcome, args) {
                         try {
                             var result = Y.JSON.parse(outcome.responseText);
+                            if (result.error) {
+                                return new M.core.ajaxException(result);
+                            } else {
+                                args.userNode.addClass(CSS.ENROLLED);
+                                args.userNode.one('.'+CSS.ENROL).remove();
+                                this.set(UEP.REQUIREREFRESH, true);
+                            }
                         } catch (e) {
-                            Y.fail(UEP.NAME+': Failed to parse user search response  ['+e.linenum+':'+e.message+']');
-                        }
-                        if (result.success) {
-                            args.userNode.addClass(CSS.ENROLLED);
-                            args.userNode.one('.'+CSS.ENROL).remove();
-                            this.set(UEP.REQUIREREFRESH, true);
-                        } else {
-                            alert(M.str.enrol.errajaxfailedenrol);
+                            new M.core.exception(e);
                         }
                     },
                     end : this.removeLoading
@@ -489,4 +492,4 @@ YUI.add('moodle-enrol-enrolmentmanager', function(Y) {
         }
     }
 
-}, '@VERSION@', {requires:['base','node', 'overlay', 'io', 'test', 'json-parse', 'event-delegate', 'dd-plugin', 'event-key']});
+}, '@VERSION@', {requires:['base','node', 'overlay', 'io', 'test', 'json-parse', 'event-delegate', 'dd-plugin', 'event-key', 'moodle-enrol-notification']});
