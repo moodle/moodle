@@ -100,10 +100,8 @@ abstract class moodleform_mod extends moodleform {
         }
 
         if (empty($default_values['assessed'])){
-            //$default_values['userating'] = 0;//this was used by glossary to check/uncheck a 'use ratings' checkbox
             $default_values['ratingtime'] = 0;
         } else {
-            //$default_values['userating'] = 1;
             $default_values['ratingtime']=
                 ($default_values['assesstimestart'] && $default_values['assesstimefinish']) ? 1 : 0;
         }

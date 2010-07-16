@@ -1306,7 +1306,7 @@ class core_renderer extends renderer_base {
         //check the item we're rating was created in the assessable time window
         $inassessablewindow = true;
         if ( $rating->settings->assesstimestart && $rating->settings->assesstimefinish ) {
-            if ($rating->itemtimecreated < $rating->settings->assesstimestart || $item->itemtimecreated > $rating->settings->assesstimefinish) {
+            if ($rating->itemtimecreated < $rating->settings->assesstimestart || $rating->itemtimecreated > $rating->settings->assesstimefinish) {
                 $inassessablewindow = false;
             }
         }

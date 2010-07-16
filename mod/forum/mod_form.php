@@ -170,6 +170,8 @@ class mod_forum_mod_form extends moodleform_mod {
     }
 
     function data_preprocessing(&$default_values) {
+        parent::data_preprocessing($default_values);
+
         // Set up the completion checkboxes which aren't part of standard data.
         // We also make the default value (if you turn on the checkbox) for those
         // numbers to be 1, this will not apply unless checkbox is ticked.

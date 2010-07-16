@@ -176,6 +176,7 @@ class mod_glossary_mod_form extends moodleform_mod {
     }
 
     function data_preprocessing(&$default_values){
+        parent::data_preprocessing($default_values);
     }
 
 }

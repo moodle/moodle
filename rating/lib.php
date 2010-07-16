@@ -375,15 +375,8 @@ class rating_manager {
                     $rating->aggregate  = $rec->aggrrating; //unset($rec->aggrrating);
                     $rating->count      = $rec->numratings; //unset($rec->numratings);
                     $rating->rating     = $rec->usersrating; //unset($rec->usersrating);
-                    if( !empty($item->created) ) {
-                        $rating->itemtimecreated = $item->created;//the forum_posts table has created instead of timecreated
-                    }
-                    else if(!empty($item->timecreated)) {
-                        $rating->itemtimecreated = $item->timecreated;
-                    }
-                    else {
-                        $rating->itemtimecreated = null;
-                    }
+                    $rating->itemtimecreated = $this->get_item_time_created($item);
+                    
                     break;
                 }
             }
@@ -402,7 +395,7 @@ class rating_manager {
                 $rating->itemid     = $item->id;
                 $rating->userid     = null;
                 $rating->scaleid     = null;
-                $rating->itemtimecreated = null;
+                $rating->itemtimecreated = $this->get_item_time_created($item);
             }
 
             if( !empty($item->userid) ) {
@@ -426,6 +419,18 @@ class rating_manager {
         }
 
         return $options->items;
+    }
+
+    private function get_item_time_created($item) {
+        if( !empty($item->created) ) {
+            return $item->created;//the forum_posts table has created instead of timecreated
+        }
+        else if(!empty($item->timecreated)) {
+            return $item->timecreated;
+        }
+        else {
+            return null;
+        }
     }
 
     /**
