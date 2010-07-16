@@ -441,11 +441,11 @@ function xmldb_scorm_upgrade($oldversion) {
 
         // conditionally migrate to html format in intro
         if ($CFG->texteditors !== 'textarea') {
-            $rs = $DB->get_recordset('intro', array('introformat'=>FORMAT_MOODLE), '', 'id,intro,introformat');
+            $rs = $DB->get_recordset('scorm', array('introformat'=>FORMAT_MOODLE), '', 'id,intro,introformat');
             foreach ($rs as $s) {
                 $s->intro       = text_to_html($s->intro, false, false, true);
                 $s->introformat = FORMAT_HTML;
-                $DB->update_record('intro', $s);
+                $DB->update_record('scorm', $s);
                 upgrade_set_timeout();
             }
             $rs->close();
