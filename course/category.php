@@ -321,7 +321,8 @@
             if ($editingon) {
                 echo '<td>';
                 if (has_capability('moodle/course:update', $coursecontext)) {
-                    echo '<a title="'.$strsettings.'" href="'.$CFG->wwwroot.'/course/edit.php?id='.$acourse->id.'">'.
+                    $url = new moodle_url($CFG->wwwroot.'/course/edit.php' , array('id'=>$acourse->id, 'category'=>$id,'returnto'=>'category'));
+                    echo '<a title="'.$strsettings.'" href="'.$url->out(true). '">'.
                             '<img src="'.$OUTPUT->pix_url('t/edit') . '" class="iconsmall" alt="'.$stredit.'" /></a> ';
                 } else {
                     echo $spacer;
@@ -441,6 +442,7 @@
     /// Print button to create a new course
         unset($options);
         $options['category'] = $category->id;
+        $options['returnto'] = 'category';
         echo $OUTPUT->single_button(new moodle_url('edit.php', $options), get_string('addnewcourse'), 'get');
     }
 

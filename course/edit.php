@@ -29,6 +29,7 @@ require_once('edit_form.php');
 
 $id         = optional_param('id', 0, PARAM_INT);       // course id
 $categoryid = optional_param('category', 0, PARAM_INT); // course category - can be changed in edit form
+$returnto = optional_param('returnto', 0, PARAM_ALPHANUM); // generic navigation return page switch
 
 $PAGE->set_pagelayout('admin');
 $PAGE->set_url('/course/edit.php');
@@ -81,15 +82,25 @@ if (!empty($course)) {
 }
 
 // first create the form
-$editform = new course_edit_form(NULL, array('course'=>$course, 'category'=>$category, 'editoroptions'=>$editoroptions));
-
+$editform = new course_edit_form(NULL, array('course'=>$course, 'category'=>$category, 'editoroptions'=>$editoroptions, 'returnto'=>$returnto));
 if ($editform->is_cancelled()) {
-    if (empty($course->id)) {
-        redirect($CFG->wwwroot.'/course');
-    } else {
-        redirect($CFG->wwwroot.'/course/view.php?id='.$course->id);
-    }
-
+        switch ($returnto) {
+            case 'category':
+                $url = new moodle_url($CFG->wwwroot.'/course/category.php', array('id'=>$categoryid));
+                break;
+            case 'topcat':
+                $url = new moodle_url($CFG->wwwroot.'/course/');
+                break;
+            default:
+                if (!empty($course->id)) {
+                    $url = new moodle_url($CFG->wwwroot.'/course/view.php', array('id'=>$course->id));
+                } else {
+                    $url = new moodle_url($CFG->wwwroot.'/course/');
+                }
+                break;
+        }
+        redirect($url);
+        
 } else if ($data = $editform->get_data()) {
     // process data if submitted
 
@@ -110,18 +121,25 @@ if ($editform->is_cancelled()) {
         foreach($instances as $instance) {
             if ($plugin = enrol_get_plugin($instance->enrol)) {
                 if ($link = $plugin->get_manual_enrol_link($instance)) {
-                    redirect($link);
+                    redirect($link, get_string('changessaved'));
                 }
             }
         }
-
-        redirect($CFG->wwwroot."/course/view.php?id=$course->id");
-
     } else {
         // Save any changes to the files used in the editor
         update_course($data, $editoroptions);
-        redirect($CFG->wwwroot."/course/view.php?id=$course->id");
     }
+    
+    switch ($returnto) {
+        case 'category':
+        case 'topcat': //redirecting to where the new course was created by default.
+            $url = new moodle_url($CFG->wwwroot.'/course/category.php', array('id'=>$categoryid));
+            break;
+        default:
+            $url = new moodle_url($CFG->wwwroot.'/course/view.php', array('id'=>$course->id));
+            break;
+    }
+    redirect($url, get_string('changessaved'));
 }
 
 

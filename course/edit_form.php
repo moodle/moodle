@@ -16,6 +16,7 @@ class course_edit_form extends moodleform {
         $course        = $this->_customdata['course']; // this contains the data of this form
         $category      = $this->_customdata['category'];
         $editoroptions = $this->_customdata['editoroptions'];
+        $returnto = $this->_customdata['returnto'];
 
         $systemcontext   = get_context_instance(CONTEXT_SYSTEM);
         $categorycontext = get_context_instance(CONTEXT_COURSECAT, $category->id);
@@ -36,6 +37,10 @@ class course_edit_form extends moodleform {
 /// form definition with new course defaults
 //--------------------------------------------------------------------------------
         $mform->addElement('header','general', get_string('general', 'form'));
+
+        $mform->addElement('hidden', 'returnto', null);
+        $mform->setType('returnto', PARAM_ALPHANUM);
+        $mform->setConstant('returnto', $returnto);
 
         // verify permissions to change course category or keep current
         if (empty($course->id)) {

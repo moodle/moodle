@@ -267,6 +267,7 @@ echo '<div class="buttons">';
 if (has_capability('moodle/course:create', $systemcontext)) {
     // print create course link to first category
     $options = array('category' => $CFG->defaultrequestcategory);
+    $options['returnto'] = 'topcat';
     echo $OUTPUT->single_button(new moodle_url('edit.php', $options), get_string('addnewcourse'), 'get');
 }
 
