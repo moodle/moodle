@@ -4723,7 +4723,6 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         unset_config('editorkillword');
         unset_config('editorhidebuttons');
         unset_config('editorfontlist');
-        unset_config('htmleditor');
 
         upgrade_main_savepoint(true, 2010071000);
     }
