@@ -129,12 +129,9 @@
         require_once($CFG->libdir.'/rsslib.php');
         require_once('rsslib.php');
 
-        // Delete the RSS files for the 2 forums because we want to force
-        // the regeneration of the feeds since the discussions have been
-        // moved.
-        if (!forum_rss_delete_file($forum) || !forum_rss_delete_file($forumto)) {
-            print_error('cannotpurgecachedrss', 'forum', $return);
-        }
+        // Delete the RSS files for the 2 forums to force regeneration of the feeds
+        forum_rss_delete_file($forum);
+        forum_rss_delete_file($forumto);
 
         redirect($return.'&moved=-1&sesskey='.sesskey());
     }

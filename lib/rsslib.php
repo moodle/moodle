@@ -81,11 +81,14 @@ function rss_print_link($contextid, $userid, $modulename, $id, $tooltiptext='') 
 function rss_delete_file($modname, $instance) {
     global $CFG;
 
-    $dh  = opendir("$CFG->dataroot/rss/$modname");
-    while (false !== ($filename = readdir($dh))) {
-        if ($filename!='.' && $filename!='..') {
-            if (preg_match("/{$instance->id}_/", $filename)) {
-                unlink("$CFG->dataroot/rss/$modname/$filename");
+    $dirpath = "$CFG->dataroot/rss/$modname";
+    if (is_dir($dirpath)) {
+        $dh  = opendir($dirpath);
+        while (false !== ($filename = readdir($dh))) {
+            if ($filename!='.' && $filename!='..') {
+                if (preg_match("/{$instance->id}_/", $filename)) {
+                    unlink("$CFG->dataroot/rss/$modname/$filename");
+                }
             }
         }
     }
