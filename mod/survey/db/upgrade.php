@@ -34,7 +34,21 @@ function xmldb_survey_upgrade($oldversion) {
         $field = new xmldb_field('introformat', XMLDB_TYPE_INTEGER, '4', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'intro');
 
     /// Conditionally launch add field introformat
-        $dbman->add_field($table, $field);
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // conditionally migrate to html format in intro
+        if ($CFG->texteditors !== 'textarea') {
+            $rs = $DB->get_recordset('survey', array('introformat'=>FORMAT_MOODLE), '', 'id,intro,introformat');
+            foreach ($rs as $s) {
+                $s->intro       = text_to_html($s->intro, false, false, true);
+                $s->introformat = FORMAT_HTML;
+                $DB->update_record('survey', $s);
+                upgrade_set_timeout();
+            }
+            $rs->close();
+        }
 
     /// survey savepoint reached
         upgrade_mod_savepoint(true, 2009042002, 'survey');
