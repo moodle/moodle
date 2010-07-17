@@ -16,7 +16,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * MNet enrolment plugin version specification.
+ * Keeps track of upgrades to the enrol_mnet plugin
  *
  * @package    enrol
  * @subpackage mnet
@@ -24,4 +24,15 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$plugin->version = 2010071701;
+function xmldb_enrol_mnet_upgrade($oldversion) {
+    global $CFG, $DB, $OUTPUT;
+
+    // when core upgraded all legacy enrol mnet plugins, it created instances of the plugin
+    // here we set customint1 to 0 which means 'open for all hosts' (legacy behaviour)
+    if ($oldversion < 2010071701) {
+        $DB->set_field('enrol', 'customint1', 0, array('enrol' => 'mnet', 'customint1' => null));
+        upgrade_plugin_savepoint(true, 2010071701, 'enrol', 'mnet');
+    }
+
+    return true;
+}
