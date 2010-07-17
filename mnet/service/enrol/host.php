@@ -35,7 +35,8 @@ require_once($CFG->dirroot.'/mnet/service/enrol/locallib.php');
 $hostid   = required_param('id', PARAM_INT); // remote host id
 $usecache = optional_param('usecache', true, PARAM_BOOL); // use cached list of courses
 
-admin_externalpage_setup('mnetenrol');
+admin_externalpage_setup('mnetenrol', '', array('id'=>$hostid, 'usecache'=>1),
+        new moodle_url('/mnet/service/enrol/host.php'));
 $service = mnetservice_enrol::get_instance();
 
 if (!$service->is_available()) {
@@ -66,9 +67,10 @@ echo $OUTPUT->heading(get_string('availablecourseson', 'mnetservice_enrol', s($h
 if (empty($courses)) {
     $a = (object)array('hostname' => s($host->hostname), 'hosturl' => s($host->hosturl));
     echo $OUTPUT->box(get_string('availablecoursesonnone','mnetservice_enrol', $a), 'noticebox');
-    echo $OUTPUT->single_button(new moodle_url(new moodle_url('/mnet/service/enrol/host.php'),
-        array('id'=>$host->id, 'usecache'=>0, 'sesskey'=>sesskey())),
-        get_string('refetch', 'mnetservice_enrol'), 'get');
+    if ($usecache) {
+        echo $OUTPUT->single_button(new moodle_url($PAGE->url, array('usecache'=>0, 'sesskey'=>sesskey())),
+                                    get_string('refetch', 'mnetservice_enrol'), 'get');
+    }
     echo $OUTPUT->footer();
     die();
 }
@@ -110,9 +112,8 @@ foreach ($courses as $course) {
 echo html_writer::table($table);
 
 if ($usecache) {
-    echo $OUTPUT->single_button(new moodle_url(new moodle_url('/mnet/service/enrol/host.php'),
-        array('id'=>$host->id, 'usecache'=>0, 'sesskey'=>sesskey())),
-        get_string('refetch', 'mnetservice_enrol'), 'get');
+    echo $OUTPUT->single_button(new moodle_url($PAGE->url, array('usecache'=>0, 'sesskey'=>sesskey())),
+                                get_string('refetch', 'mnetservice_enrol'), 'get');
 }
 
 echo $OUTPUT->footer();
