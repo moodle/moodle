@@ -1429,6 +1429,8 @@ function upgrade_plugin_mnet_functions($component) {
                 $dataobject->id = $DB->insert_record('mnet_rpc', $dataobject, true);
             }
 
+            // TODO this API versioning must be reworked, here the recently processed method
+            // sets the service API which may not be correct
             foreach ($publishmethodservices[$dataobject->functionname] as $service) {
                 if ($serviceobj = $DB->get_record('mnet_service', array('name'=>$service['servicename']))) {
                     $serviceobj->apiversion = $service['apiversion'];
