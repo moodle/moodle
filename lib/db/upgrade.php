@@ -4821,6 +4821,19 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         upgrade_main_savepoint(true, 2010071700);
     }
 
+    if ($oldversion < 2010071701) {
+        // Drop legacy core tables that now belongs to mnetservice_enrol plugin
+        // Upgrade procedure not needed as the tables are used for caching purposes only
+        $tables = array('mnet_enrol_course', 'mnet_enrol_assignments');
+        foreach ($tables as $tname) {
+            $table = new xmldb_table($tname);
+            if ($dbman->table_exists($table)) {
+                $dbman->drop_table($table);
+            }
+        }
+
+        upgrade_main_savepoint(true, 2010071701);
+    }
 
     return true;
 }

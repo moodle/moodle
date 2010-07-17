@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/db" VERSION="20100713" COMMENT="XMLDB file for core Moodle tables"
+<XMLDB PATH="lib/db" VERSION="20100716" COMMENT="XMLDB file for core Moodle tables"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
 >
@@ -1329,7 +1329,7 @@
         <KEY NAME="question" TYPE="foreign" FIELDS="question" REFTABLE="question" REFFIELDS="id" PREVIOUS="attempt"/>
       </KEYS>
     </TABLE>
-    <TABLE NAME="question_sessions" COMMENT="Gives ids of the newest open and newest graded states" PREVIOUS="question_states" NEXT="mnet_enrol_course">
+    <TABLE NAME="question_sessions" COMMENT="Gives ids of the newest open and newest graded states" PREVIOUS="question_states" NEXT="mnet_application">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="attemptid"/>
         <FIELD NAME="attemptid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="questionid"/>
@@ -1351,51 +1351,7 @@
         <INDEX NAME="attemptid-questionid" UNIQUE="true" FIELDS="attemptid, questionid"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="mnet_enrol_course" COMMENT="Information about courses on remote hosts" PREVIOUS="question_sessions" NEXT="mnet_enrol_assignments">
-      <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" COMMENT="Unique remote-course ID" NEXT="hostid"/>
-        <FIELD NAME="hostid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="remoteid"/>
-        <FIELD NAME="remoteid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Unique ID of course on its home server" PREVIOUS="hostid" NEXT="cat_id"/>
-        <FIELD NAME="cat_id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="remoteid" NEXT="cat_name"/>
-        <FIELD NAME="cat_name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="cat_id" NEXT="cat_description"/>
-        <FIELD NAME="cat_description" TYPE="text" LENGTH="medium" NOTNULL="true" SEQUENCE="false" PREVIOUS="cat_name" NEXT="sortorder"/>
-        <FIELD NAME="sortorder" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="cat_description" NEXT="fullname"/>
-        <FIELD NAME="fullname" TYPE="char" LENGTH="254" NOTNULL="true" SEQUENCE="false" PREVIOUS="sortorder" NEXT="shortname"/>
-        <FIELD NAME="shortname" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false" PREVIOUS="fullname" NEXT="idnumber"/>
-        <FIELD NAME="idnumber" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false" PREVIOUS="shortname" NEXT="summary"/>
-        <FIELD NAME="summary" TYPE="text" LENGTH="medium" NOTNULL="true" SEQUENCE="false" PREVIOUS="idnumber" NEXT="startdate"/>
-        <FIELD NAME="startdate" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="summary" NEXT="cost"/>
-        <FIELD NAME="cost" TYPE="char" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="startdate" NEXT="currency"/>
-        <FIELD NAME="currency" TYPE="char" LENGTH="3" NOTNULL="true" SEQUENCE="false" PREVIOUS="cost" NEXT="defaultroleid"/>
-        <FIELD NAME="defaultroleid" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="currency" NEXT="defaultrolename"/>
-        <FIELD NAME="defaultrolename" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="defaultroleid"/>
-      </FIELDS>
-      <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="primary key of the mnet_course table"/>
-      </KEYS>
-      <INDEXES>
-        <INDEX NAME="hostid_remoteid" UNIQUE="true" FIELDS="hostid, remoteid"/>
-      </INDEXES>
-    </TABLE>
-    <TABLE NAME="mnet_enrol_assignments" COMMENT="Information about enrolments on courses on remote hosts" PREVIOUS="mnet_enrol_course" NEXT="mnet_application">
-      <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" COMMENT="Unique enrollment ID" NEXT="userid"/>
-        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Unique ID of user on *this* server" PREVIOUS="id" NEXT="hostid"/>
-        <FIELD NAME="hostid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="userid" NEXT="courseid"/>
-        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Unique ID of course on its home server" PREVIOUS="hostid" NEXT="rolename"/>
-        <FIELD NAME="rolename" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="courseid" NEXT="enroltime"/>
-        <FIELD NAME="enroltime" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="rolename" NEXT="enroltype"/>
-        <FIELD NAME="enroltype" TYPE="char" LENGTH="20" NOTNULL="true" SEQUENCE="false" PREVIOUS="enroltime"/>
-      </FIELDS>
-      <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="primary key of the mnet_enrol_assignments table"/>
-      </KEYS>
-      <INDEXES>
-        <INDEX NAME="hostid_courseid" UNIQUE="false" FIELDS="hostid, courseid" NEXT="userid"/>
-        <INDEX NAME="userid" UNIQUE="false" FIELDS="userid" PREVIOUS="hostid_courseid"/>
-      </INDEXES>
-    </TABLE>
-    <TABLE NAME="mnet_application" COMMENT="Information about applications on remote hosts" PREVIOUS="mnet_enrol_assignments" NEXT="mnet_host">
+    <TABLE NAME="mnet_application" COMMENT="Information about applications on remote hosts" PREVIOUS="question_sessions" NEXT="mnet_host">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="name"/>
         <FIELD NAME="name" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false" PREVIOUS="id" NEXT="display_name"/>
