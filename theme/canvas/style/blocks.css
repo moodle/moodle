@@ -24,6 +24,27 @@
 	font-size: 1.1em;
 }
 
+/* Login
+------------------------------*/
+
+.block_login .content {
+	padding: 5px 10% 5px 0;
+}
+
+.block_login #login_username,
+.block_login #login_password {
+	width:90%;
+	margin-bottom: 0.5em;
+	padding: 2px 5px;
+}
+
+.block_login .btn {
+	margin-top:1em;
+}
+
+.block_login .footer {
+	text-align: left;
+}
 /* News
 -------------------------------*/
 

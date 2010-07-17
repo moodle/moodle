@@ -22,10 +22,6 @@ body {
 	text-align: center;
 }
 
-#notice p {
-	color: #f00;
-}
-
 .noticebox,
 .expired,
 .notopenyet,
