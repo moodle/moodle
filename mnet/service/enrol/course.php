@@ -72,12 +72,17 @@ if (!empty($course->summary)) {
     print_collapsible_region_end();
 }
 
+$error = '';
+
 $lastfetchenrolments = get_config('mnetservice_enrol', 'lastfetchenrolments');
 if (!$usecache or empty($lastfetchenrolments) or (time()-$lastfetchenrolments > 600)) {
     // fetch fresh data from remote if we just came from the course selection screen
     // or every 10 minutes
-    $service->req_course_enrolments($host->id, $course->remoteid, $usecache);
     $usecache = false;
+    $result = $service->req_course_enrolments($host->id, $course->remoteid, $usecache);
+    if ($result !== true) {
+        $error .= $service->format_error_message($result);
+    }
 }
 
 // user selectors
@@ -89,8 +94,11 @@ if (optional_param('add', false, PARAM_BOOL) && confirm_sesskey()) {
     $userstoassign = $potentialuserselector->get_selected_users();
     if (!empty($userstoassign)) {
         foreach($userstoassign as $adduser) {
-            //$enrol_manual->enrol_user($instance, $adduser->id, $roleid, $timestart, $timeend);
-            add_to_log($course->id, 'course', 'enrol', '../enrol/users.php?id='.$course->id, $course->id); //there should be userid somewhere!
+            $user = $DB->get_record('user', array('id'=>$adduser->id));
+            $result = $service->req_enrol_user($user, $course);
+            if ($result !== true) {
+                $error .= $service->format_error_message($result);
+            }
         }
 
         $potentialuserselector->invalidate_selected_users();
@@ -103,13 +111,20 @@ if (optional_param('remove', false, PARAM_BOOL) && confirm_sesskey()) {
     $userstounassign = $currentuserselector->get_selected_users();
     if (!empty($userstounassign)) {
         foreach($userstounassign as $removeuser) {
-            //$enrol_manual->unenrol_user($instance, $removeuser->id);
-            add_to_log($course->id, 'course', 'unenrol', '../enrol/users.php?id='.$course->id, $course->id); //there should be userid somewhere!
+            $user = $DB->get_record('user', array('id'=>$removeuser->id));
+            $result = $service->req_unenrol_user($user, $course);
+            if ($result !== true) {
+                $error .= $service->format_error_message($result);
+            }
         }
 
         $potentialuserselector->invalidate_selected_users();
         $currentuserselector->invalidate_selected_users();
     }
+}
+
+if (!empty($error)) {
+    echo $OUTPUT->box($error, 'generalbox error');
 }
 
 // print form to enrol our students
