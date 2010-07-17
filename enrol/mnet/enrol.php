@@ -156,8 +156,14 @@ class enrol_mnet_mnetservice_enrol {
         }
 
         $courses = $this->available_courses();
-
-        if (empty($courses[$course->id])) {
+        $isavailable = false;
+        foreach ($courses as $available) {
+            if ($available->remoteid == $course->id) {
+                $isavailable = true;
+                break;
+            }
+        }
+        if (!$isavailable) {
             throw new mnet_server_exception(5013, 'courseunavailable', 'enrol_mnet');
         }
 
@@ -219,8 +225,14 @@ class enrol_mnet_mnetservice_enrol {
         }
 
         $courses = $this->available_courses();
-
-        if (empty($courses[$course->id])) {
+        $isavailable = false;
+        foreach ($courses as $available) {
+            if ($available->remoteid == $course->id) {
+                $isavailable = true;
+                break;
+            }
+        }
+        if (!$isavailable) {
             // if they can not enrol, they can not unenrol
             throw new mnet_server_exception(5013, 'courseunavailable', 'enrol_mnet');
         }
