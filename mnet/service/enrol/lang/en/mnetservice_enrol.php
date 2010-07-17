@@ -34,3 +34,4 @@ $string['hostname'] = 'Host name';
 $string['hosturl'] = 'Remote host URL';
 $string['nopublishers'] = 'No remote peers available.';
 $string['pluginname'] = 'Remote enrolment service';
+$string['refetch'] = 'Re-fetch up to date state from remote hosts';

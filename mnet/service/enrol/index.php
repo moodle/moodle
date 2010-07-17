@@ -59,9 +59,9 @@ $table->head = array(
 );
 foreach ($hosts as $host) {
     $hostlink = html_writer::link(new moodle_url($host->hosturl), s($host->hosturl));
-    $editlink = html_writer::link(new moodle_url('/mnet/service/enrol/host.php', array('id'=>$host->id)),
-            get_string('editenrolments', 'mnetservice_enrol'));
-    $table->data[] = array(s($host->appname), s($host->hostname), $hostlink, $editlink);
+    $editbtn  = $OUTPUT->single_button(new moodle_url('/mnet/service/enrol/host.php', array('id'=>$host->id)),
+                                       get_string('editenrolments', 'mnetservice_enrol'), 'get');
+    $table->data[] = array(s($host->appname), s($host->hostname), $hostlink, $editbtn);
 }
 echo html_writer::table($table);
 

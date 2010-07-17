@@ -164,7 +164,9 @@ class mnetservice_enrol {
 
         // do not use cache - fetch fresh list from remote MNet host
         $peer = new mnet_peer();
-        $peer->set_id($mnethostid);
+        if (!$peer->set_id($mnethostid)) {
+            return serialize(array('unknown mnet peer'));
+        }
 
         $request = new mnet_xmlrpc_client();
         $request->set_method('enrol/mnet/enrol.php/available_courses');
@@ -187,10 +189,10 @@ class mnetservice_enrol {
                 $course->shortname      = substr($remote['shortname'], 0, 100);
                 $course->idnumber       = substr($remote['idnumber'], 0, 100);
                 $course->summary        = $remote['summary'];
-                $course->summaryformat  = (int)$remote['summaryformat'];
+                $course->summaryformat  = empty($remote['summaryformat']) ? FORMAT_MOODLE : (int)$remote['summaryformat'];
                 $course->startdate      = (int)$remote['startdate'];
                 $course->roleid         = (int)$remote['defaultroleid'];
-                $course->rolename       = substr($remote['name'], 0, 255);
+                $course->rolename       = substr($remote['defaultrolename'], 0, 255);
                 // We do not cache the following fields returned from peer in 2.0 any more
                 // not cached: cat_description
                 // not cached: cat_descriptionformat
@@ -226,6 +228,49 @@ class mnetservice_enrol {
             // and return the fresh data
             set_config('lastfetchcourses', time(), 'mnetservice_enrol');
             return $list;
+
+        } else {
+            return serialize($request->error);
+        }
+    }
+
+    /**
+     * Returns the information about enrolments of our users in remote courses
+     *
+     * The remote course must allow enrolments via our Remote enrolment service client.
+     * Because of legacy design of data structure returned by XML-RPC code, only one
+     * user enrolment per course is returned by 1.9 MNet servers. This may be an issue
+     * if the user is enrolled multiple times by various enrolment plugins. MNet 2.0
+     * servers do not use user name as array keys - they do not need to due to side
+     * effect of MDL-19219.
+     *
+     * @param id $mnethostid MNet remote host id
+     * @param int $remotecourseid ID of the course at the remote host
+     * @param bool $usecache use cached data or invoke new XML-RPC?
+     * @uses mnet_xmlrpc_client Invokes XML-RPC request if the cache is not used
+     * @return array|string returned list or serialized array of mnet error messages
+     */
+    public function get_remote_course_enrolments($mnethostid, $remotecourseid) {
+        global $CFG, $DB;
+        require_once $CFG->dirroot.'/mnet/xmlrpc/client.php';
+
+        $peer = new mnet_peer();
+        if (!$peer->set_id($mnethostid)) {
+            return serialize(array('unknown mnet peer'));
+        }
+
+        if (!$DB->record_exists('mnetservice_enrol_courses', array('hostid'=>$mnethostid, 'remoteid'=>$remotecourseid))) {
+            return serialize(array('course not available for remote enrolments'));
+        }
+
+        $request = new mnet_xmlrpc_client();
+        $request->set_method('enrol/mnet/enrol.php/course_enrolments');
+        $request->add_param($remotecourseid, 'int');
+
+        if ($request->send($peer)) {
+            $list = array();
+            $response = $request->response;
+            return $response;
 
         } else {
             return serialize($request->error);

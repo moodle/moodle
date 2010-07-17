@@ -1,8 +1,10 @@
+.singlebutton {
+    text-align: center;
+}
 table.remotehosts,
 table.remotecourses {
-    margin: 0px auto;
+    margin: 0px auto 1em auto;
 }
-
 table.remotecourses th.categoryname {
     text-align: left;
     background-color: #f6f6f6;
@@ -12,4 +14,16 @@ table.remotecourses td.c1 {
 }
 table.remotecourses th.categoryname img {
     margin-right: 1em;
+}
+.collapsibleregioncaption {
+    font-size: 110%;
+    font-weight: bold;
+    text-align: center;
+}
+.collapsibleregioninner {
+    border: 1px solid #ddd;
+    padding: 1em;
+}
+.collapsibleregion.remotecourse.summary {
+    margin: 0px 10em;
 }

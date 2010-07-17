@@ -18,6 +18,10 @@
 /**
  * Displays a list of remote courses offered by a given host for our students
  *
+ * By default the courses information is cached in our local DB table. Parameter
+ * $usecache can be used to force re-fetching up to date state from remote
+ * hosts (session key required in such case).
+ *
  * @package    mnetservice
  * @subpackage enrol
  * @copyright  2010 David Mudrak <david@moodle.com>
@@ -28,7 +32,7 @@ require(dirname(dirname(dirname(dirname(__FILE__)))).'/config.php');
 require_once($CFG->libdir.'/adminlib.php');
 require_once($CFG->dirroot.'/mnet/service/enrol/locallib.php');
 
-$hostid = required_param('id', PARAM_INT); // remote host id
+$hostid   = required_param('id', PARAM_INT); // remote host id
 $usecache = optional_param('usecache', true, PARAM_BOOL); // use cached list of courses
 
 admin_externalpage_setup('mnetenrol');
@@ -48,6 +52,10 @@ if (empty($hosts[$hostid])) {
 }
 $host = $hosts[$hostid];
 
+if (!$usecache) {
+    // our local database will be changed
+    require_sesskey();
+}
 $courses = $service->get_remote_courses($host->id, $usecache);
 if (is_string($courses)) {
     print_error('fetchingcourses', 'mnetservice_enrol', '', null, $service->format_error_message($courses));
@@ -58,6 +66,9 @@ echo $OUTPUT->heading(get_string('availablecourseson', 'mnetservice_enrol', s($h
 if (empty($courses)) {
     $a = (object)array('hostname' => s($host->hostname), 'hosturl' => s($host->hosturl));
     echo $OUTPUT->box(get_string('availablecoursesonnone','mnetservice_enrol', $a), 'noticebox');
+    echo $OUTPUT->single_button(new moodle_url(new moodle_url('/mnet/service/enrol/host.php'),
+        array('id'=>$host->id, 'usecache'=>0, 'sesskey'=>sesskey())),
+        get_string('refetch', 'mnetservice_enrol'), 'get');
     echo $OUTPUT->footer();
     die();
 }
@@ -84,7 +95,8 @@ foreach ($courses as $course) {
         $table->data[] = $row;
         $prevcat = $course->categoryid;
     }
-    $editbtn = $OUTPUT->single_button(new moodle_url('/mnet/service/enrol/course.php', array('host'=>$host->id, 'course'=>$course->remoteid)),
+    $editbtn = $OUTPUT->single_button(new moodle_url('/mnet/service/enrol/course.php',
+                                      array('host'=>$host->id, 'course'=>$course->id, 'sesskey'=>sesskey())),
                                       get_string('editenrolments', 'mnetservice_enrol'), 'get');
     $row = new html_table_row();
     $row->cells = array(
@@ -96,5 +108,11 @@ foreach ($courses as $course) {
     $table->data[] = $row;
 }
 echo html_writer::table($table);
+
+if ($usecache) {
+    echo $OUTPUT->single_button(new moodle_url(new moodle_url('/mnet/service/enrol/host.php'),
+        array('id'=>$host->id, 'usecache'=>0, 'sesskey'=>sesskey())),
+        get_string('refetch', 'mnetservice_enrol'), 'get');
+}
 
 echo $OUTPUT->footer();
