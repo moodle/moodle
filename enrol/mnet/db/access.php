@@ -16,7 +16,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * MNet enrolment plugin version specification.
+ * Capabilities for MNet enrolment plugin
  *
  * @package    enrol
  * @subpackage mnet
@@ -24,4 +24,14 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$plugin->version = 2010071400;
+$capabilities = array(
+    // configure the mnet plugin settings in the course
+    // users with this capability open the course for the remote users
+    'enrol/mnet:config' => array(
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_COURSE,
+        'legacy' => array(
+            'manager' => CAP_ALLOW,
+        )
+    ),
+);

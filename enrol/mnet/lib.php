@@ -16,7 +16,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * MNet enrolment plugin version specification.
+ * MNet enrolment plugin
  *
  * @package    enrol
  * @subpackage mnet
@@ -24,4 +24,11 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$plugin->version = 2010071400;
+defined('MOODLE_INTERNAL') || die;
+
+/**
+ * MNet enrolment plugin implementation for Moodle 2.x enrolment framework
+ */
+class enrol_mnet_plugin extends enrol_plugin {
+
+}
