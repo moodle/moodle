@@ -237,7 +237,7 @@ class mnetservice_enrol {
     }
 
     /**
-     * Returns the information about enrolments of our users in remote courses
+     * Updates local cache about enrolments of our users in remote courses
      *
      * The remote course must allow enrolments via our Remote enrolment service client.
      * Because of legacy design of data structure returned by XML-RPC code, only one
@@ -249,114 +249,105 @@ class mnetservice_enrol {
      * @param id $mnethostid MNet remote host id
      * @param int $remotecourseid ID of the course at the remote host
      * @param bool $usecache use cached data or invoke new XML-RPC?
-     * @uses mnet_xmlrpc_client Invokes XML-RPC request if the cache is not used
-     * @return array|string returned list or serialized array of mnet error messages
+     * @uses mnet_xmlrpc_client Invokes XML-RPC request
+     * @return bool|string true if success or serialized array of mnet error messages
      */
-    public function get_remote_course_enrolments($mnethostid, $remotecourseid, $usecache=true) {
+    public function req_course_enrolments($mnethostid, $remotecourseid) {
         global $CFG, $DB; // $CFG needed!
+        require_once $CFG->dirroot.'/mnet/xmlrpc/client.php';
 
         if (!$DB->record_exists('mnetservice_enrol_courses', array('hostid'=>$mnethostid, 'remoteid'=>$remotecourseid))) {
             return serialize(array('course not available for remote enrolments'));
         }
 
-        $lastfetchenrolments = get_config('mnetservice_enrol', 'lastfetchenrolments');
-        if (empty($lastfetchenrolments) or (time()-$lastfetchenrolments > 600)) {
-            // force XML-RPC every 10 minutes
-            $usecache = false;
+        $peer = new mnet_peer();
+        if (!$peer->set_id($mnethostid)) {
+            return serialize(array('unknown mnet peer'));
         }
 
-        if (!$usecache) {
-            require_once $CFG->dirroot.'/mnet/xmlrpc/client.php';
+        $request = new mnet_xmlrpc_client();
+        $request->set_method('enrol/mnet/enrol.php/course_enrolments');
+        $request->add_param($remotecourseid, 'int');
 
-            $peer = new mnet_peer();
-            if (!$peer->set_id($mnethostid)) {
-                return serialize(array('unknown mnet peer'));
+        if ($request->send($peer)) {
+            $list = array();
+            $response = $request->response;
+
+            // prepare a table mapping usernames of our users to their ids
+            $usernames = array();
+            foreach ($response as $unused => $remote) {
+                if (!isset($remote['username'])) {
+                    // see MDL-19219
+                    return serialize(array('remote host running old version of mnet server - does not return username attribute'));
+                }
+                if ($remote['username'] == 'guest') {
+                    // do not try nasty things you bastard!
+                    continue;
+                }
+                $usernames[$remote['username']] = $remote['username'];
             }
 
-            $request = new mnet_xmlrpc_client();
-            $request->set_method('enrol/mnet/enrol.php/course_enrolments');
-            $request->add_param($remotecourseid, 'int');
-
-            if ($request->send($peer)) {
-                $list = array();
-                $response = $request->response;
-
-                // prepare a table mapping usernames of our users to their ids
-                $usernames = array();
-                foreach ($response as $unused => $remote) {
-                    if (!isset($remote['username'])) {
-                        // see MDL-19219
-                        return serialize(array('remote host running old version of mnet server - does not return username attribute'));
-                    }
-                    if ($remote['username'] == 'guest') {
-                        // do not try nasty things you bastard!
-                        continue;
-                    }
-                    $usernames[$remote['username']] = $remote['username'];
-                }
+            if (!empty($usernames)) {
                 list($usql, $params) = $DB->get_in_or_equal($usernames, SQL_PARAMS_NAMED);
-                $params['mnethostid'] = $CFG->mnet_localhost_id;
+                $params['mnetlocalhostid'] = $CFG->mnet_localhost_id;
                 $sql = "SELECT username,id
                           FROM {user}
-                         WHERE mnethostid = :mnethostid
+                         WHERE mnethostid = :mnetlocalhostid
                                AND username $usql
                                AND deleted = 0
                                AND confirmed = 1
                       ORDER BY lastname,firstname,email";
                 $usersbyusername = $DB->get_records_sql($sql, $params);
+            } else {
+                $usersbyusername = array();
+            }
 
-                // populate the returned list and update local cache of enrolment records
-                foreach ($response as $remote) {
-                    if (empty($usersbyusername[$remote['username']])) {
-                        // we do not know this user or she is deleted or not confirmed or is 'guest'
-                        continue;
+            // populate the returned list and update local cache of enrolment records
+            foreach ($response as $remote) {
+                if (empty($usersbyusername[$remote['username']])) {
+                    // we do not know this user or she is deleted or not confirmed or is 'guest'
+                    continue;
+                }
+                $enrolment                  = new stdclass();
+                $enrolment->hostid          = $mnethostid;
+                $enrolment->userid          = $usersbyusername[$remote['username']]->id;
+                $enrolment->remotecourseid  = $remotecourseid;
+                $enrolment->rolename        = $remote['name']; // $remote['shortname'] not used
+                $enrolment->enroltime       = $remote['timemodified'];
+                $enrolment->enroltype       = $remote['enrol'];
+
+                $current = $DB->get_record('mnetservice_enrol_enrolments', array('hostid'=>$enrolment->hostid, 'userid'=>$enrolment->userid,
+                                       'remotecourseid'=>$enrolment->remotecourseid, 'enroltype'=>$enrolment->enroltype), 'id, enroltime');
+                if (empty($current)) {
+                    $enrolment->id = $DB->insert_record('mnetservice_enrol_enrolments', $enrolment);
+                } else {
+                    $enrolment->id = $current->id;
+                    if ($current->enroltime != $enrolment->enroltime) {
+                        $DB->update_record('mnetservice_enrol_enrolments', $enrolment);
                     }
-                    $enrolment                  = new stdclass();
-                    $enrolment->hostid          = $mnethostid;
-                    $enrolment->userid          = $usersbyusername[$remote['username']]->id;
-                    $enrolment->remotecourseid  = $remotecourseid;
-                    $enrolment->rolename        = $remote['name']; // $remote['shortname'] not used
-                    $enrolment->enroltime       = $remote['timemodified'];
-                    $enrolment->enroltype       = $remote['enrol'];
-
-                    $current = $DB->get_record('mnetservice_enrol_enrolments', array('hostid'=>$enrolment->hostid, 'userid'=>$enrolment->userid,
-                                           'remotecourseid'=>$enrolment->remotecourseid, 'enroltype'=>$enrolment->enroltype), 'id, enroltime');
-                    if (empty($current)) {
-                        $enrolment->id = $DB->insert_record('mnetservice_enrol_enrolments', $enrolment);
-                    } else {
-                        $enrolment->id = $current->id;
-                        if ($current->enroltime != $enrolment->enroltime) {
-                            $DB->update_record('mnetservice_enrol_enrolments', $enrolment);
-                        }
-                    }
-
-                    $list[$enrolment->id] = $enrolment;
                 }
 
-                // prune stale enrolment records
+                $list[$enrolment->id] = $enrolment;
+            }
+
+            // prune stale enrolment records
+            if (empty($list)) {
+                $DB->delete_records('mnetservice_enrol_enrolments', array('hostid'=>$mnethostid));
+            } else {
                 list($isql, $params) = $DB->get_in_or_equal(array_keys($list), SQL_PARAMS_NAMED, 'param0000', false);
                 $params['hostid'] = $mnethostid;
                 $select = "hostid = :hostid AND id $isql";
                 $DB->delete_records_select('mnetservice_enrol_enrolments', $select, $params);
-
-                // store the timestamp of the recent fetch
-                set_config('lastfetchenrolments', time(), 'mnetservice_enrol');
-
-            } else {
-                return serialize($request->error);
             }
+
+            // store the timestamp of the recent fetch, can be used for cache invalidate purposes
+            set_config('lastfetchenrolments', time(), 'mnetservice_enrol');
+            // local cache successfully updated
+            return true;
+
+        } else {
+            return serialize($request->error);
         }
-
-        // get the information from cache
-        $sql = "SELECT e.id,e.enroltype AS plugin, u.firstname, u.lastname, u.email, u.id AS userid,
-                       e.enroltime AS timemodified, e.rolename
-                  FROM {mnetservice_enrol_enrolments} e
-             LEFT JOIN {user} u ON u.id = e.userid
-                 WHERE e.hostid = ? AND e.remotecourseid = ?
-              ORDER BY e.enroltype, u.lastname, u.firstname";
-        $params = array($mnethostid, $remotecourseid);
-
-        return $DB->get_records_sql($sql, $params);
     }
 
     /**
@@ -429,9 +420,9 @@ class mnetservice_enrol_existing_users_selector extends user_selector_base {
         }
 
         if ($search) {
-            $groupname = get_string('enrolcandidatesmatching', 'enrol', $search);
+            $groupname = get_string('enrolledusersmatching', 'enrol', $search);
         } else {
-            $groupname = get_string('enrolcandidates', 'enrol');
+            $groupname = get_string('enrolledusers', 'enrol');
         }
 
         return array($groupname => $availableusers);

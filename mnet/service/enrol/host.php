@@ -98,7 +98,7 @@ foreach ($courses as $course) {
         $prevcat = $course->categoryid;
     }
     $editbtn = $OUTPUT->single_button(new moodle_url('/mnet/service/enrol/course.php',
-                                      array('host'=>$host->id, 'course'=>$course->id, 'sesskey'=>sesskey())),
+                                      array('host'=>$host->id, 'course'=>$course->id, 'usecache'=>0, 'sesskey'=>sesskey())),
                                       get_string('editenrolments', 'mnetservice_enrol'), 'get');
     $row = new html_table_row();
     $row->cells = array(

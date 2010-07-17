@@ -179,7 +179,6 @@ $string['notpermittedtoland'] = 'You do not have permission to begin a remote se
 $string['off'] = 'Off';
 $string['on'] = 'On';
 $string['options'] = 'Options';
-$string['otherenrolledusers'] = 'Other enrolled users';
 $string['peerprofilefielddesc'] = 'Here you can override the global settings for which profile fields to send and import when new users are created';
 $string['permittedtransports'] = 'Permitted transports';
 $string['phperror'] = 'An internal PHP error prevented your request being fulfilled.';

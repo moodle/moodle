@@ -2,6 +2,7 @@
     text-align: center;
 }
 table.remotehosts,
+table.otherenrolledusers,
 table.remotecourses {
     margin: 0px auto 1em auto;
 }

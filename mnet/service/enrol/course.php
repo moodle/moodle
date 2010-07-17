@@ -34,7 +34,7 @@ $hostid   = required_param('host', PARAM_INT); // remote host id in our mnet_hos
 $courseid = required_param('course', PARAM_INT); // id of the course in our cache table
 $usecache = optional_param('usecache', true, PARAM_BOOL); // use cached list of enrolments
 
-admin_externalpage_setup('mnetenrol', '', array('host'=>$hostid, 'course'=>$courseid, 'usecache'=>1),
+admin_externalpage_setup('mnetenrol', '', array('host'=>$hostid, 'course'=>$courseid, 'usecache'=>1, 'sesskey'=>sesskey()),
                          new moodle_url('/mnet/service/enrol/course.php'));
 
 $service = mnetservice_enrol::get_instance();
@@ -72,13 +72,45 @@ if (!empty($course->summary)) {
     print_collapsible_region_end();
 }
 
-//$enrolments = $service->get_remote_oourse_enrolments($host->id, $course->remoteid, $usecache);
+$lastfetchenrolments = get_config('mnetservice_enrol', 'lastfetchenrolments');
+if (!$usecache or empty($lastfetchenrolments) or (time()-$lastfetchenrolments > 600)) {
+    // fetch fresh data from remote if we just came from the course selection screen
+    // or every 10 minutes
+    $service->req_course_enrolments($host->id, $course->remoteid, $usecache);
+    $usecache = false;
+}
 
 // user selectors
 $currentuserselector = new mnetservice_enrol_existing_users_selector('removeselect', array('hostid'=>$host->id, 'remotecourseid'=>$course->remoteid));
 $potentialuserselector = new mnetservice_enrol_potential_users_selector('addselect', array('hostid'=>$host->id, 'remotecourseid'=>$course->remoteid));
 
-// process incoming data
+// process incoming enrol request
+if (optional_param('add', false, PARAM_BOOL) && confirm_sesskey()) {
+    $userstoassign = $potentialuserselector->get_selected_users();
+    if (!empty($userstoassign)) {
+        foreach($userstoassign as $adduser) {
+            //$enrol_manual->enrol_user($instance, $adduser->id, $roleid, $timestart, $timeend);
+            add_to_log($course->id, 'course', 'enrol', '../enrol/users.php?id='.$course->id, $course->id); //there should be userid somewhere!
+        }
+
+        $potentialuserselector->invalidate_selected_users();
+        $currentuserselector->invalidate_selected_users();
+    }
+}
+
+// process incoming unenrol request
+if (optional_param('remove', false, PARAM_BOOL) && confirm_sesskey()) {
+    $userstounassign = $currentuserselector->get_selected_users();
+    if (!empty($userstounassign)) {
+        foreach($userstounassign as $removeuser) {
+            //$enrol_manual->unenrol_user($instance, $removeuser->id);
+            add_to_log($course->id, 'course', 'unenrol', '../enrol/users.php?id='.$course->id, $course->id); //there should be userid somewhere!
+        }
+
+        $potentialuserselector->invalidate_selected_users();
+        $currentuserselector->invalidate_selected_users();
+    }
+}
 
 // print form to enrol our students
 ?>
@@ -117,5 +149,31 @@ $potentialuserselector = new mnetservice_enrol_potential_users_selector('addsele
 </div>
 </form>
 <?php
+
+// eventually display other enrolments of our users (manual, self etc.) in the remote course
+$sql = "SELECT e.id,e.enroltype AS plugin, u.firstname, u.lastname, u.email, u.id AS userid,
+               e.enroltime AS timemodified, e.rolename
+          FROM {mnetservice_enrol_enrolments} e
+          JOIN {user} u ON u.id = e.userid
+         WHERE e.hostid = ? AND e.remotecourseid = ? AND e.enroltype != 'mnet'
+      ORDER BY u.lastname, u.firstname";
+$params = array($host->id, $course->remoteid);
+
+if ($enrolments = $DB->get_records_sql($sql, $params)) {
+    echo $OUTPUT->heading(get_string('otherenrolledusers', 'mnetservice_enrol'), 3);
+
+    $table = new html_table();
+    $table->attributes['class'] = 'generaltable otherenrolledusers';
+    $table->head = array(get_string('fullnameuser'), get_string('role'), get_string('plugin'));
+    foreach ($enrolments as $enrolleduser) {
+        $table->data[] = array(fullname($enrolleduser), s($enrolleduser->rolename), s($enrolleduser->plugin));
+    }
+    echo html_writer::table($table);
+}
+
+if ($usecache) {
+    echo $OUTPUT->single_button(new moodle_url($PAGE->url, array('usecache'=>0, 'sesskey'=>sesskey())),
+                                get_string('refetch', 'mnetservice_enrol'), 'get');
+}
 
 echo $OUTPUT->footer();
