@@ -51,7 +51,9 @@ class enrol_mnet_mnetservice_enrol {
      * Returns list of courses that we offer to the caller for remote enrolment of their users
      *
      * Since Moodle 2.0, courses are made available for MNet peers by creating an instance
-     * of enrol_mnet plugin for the course. Hidden courses are not returned.
+     * of enrol_mnet plugin for the course. Hidden courses are not returned. If there are two
+     * instances - one specific for the host and one for 'All hosts', the setting of the specific
+     * one is used. The id of the peer is kept in customint1, no other custom fields are used.
      *
      * @uses mnet_remote_client Callable via XML-RPC only
      * @return array
@@ -64,10 +66,13 @@ class enrol_mnet_mnetservice_enrol {
             die('Callable via XML-RPC only');
         }
 
+        // we call our id as 'remoteid' because it will be sent to the peer
+        // the column aliases are required by MNet protocol API for clients 1.x and 2.0
         $sql = "SELECT c.id AS remoteid, c.fullname, c.shortname, c.idnumber, c.summary, c.summaryformat,
                        c.sortorder, c.startdate, cat.id AS cat_id, cat.name AS cat_name,
                        cat.description AS cat_description, cat.descriptionformat AS cat_descriptionformat,
-                       e.cost, e.currency, e.roleid AS defaultroleid, r.name AS defaultrolename
+                       e.cost, e.currency, e.roleid AS defaultroleid, r.name AS defaultrolename,
+                       e.customint1
                   FROM {enrol} e
             INNER JOIN {course} c ON c.id = e.courseid
             INNER JOIN {course_categories} cat ON cat.id = c.category
@@ -77,12 +82,20 @@ class enrol_mnet_mnetservice_enrol {
                        AND c.visible = 1
               ORDER BY cat.sortorder, c.sortorder, c.shortname";
 
-        $courses = $DB->get_records_sql($sql, array($client->id));
-        foreach ($courses as $course) {
-            $context = get_context_instance(CONTEXT_COURSE, $course->remoteid);
-            // Rewrite file URLs so that they are correct
-            $course->summary = file_rewrite_pluginfile_urls($course->summary, 'pluginfile.php', $context->id, 'course', 'summary');
+        $rs = $DB->get_recordset_sql($sql, array($client->id));
+
+        $courses = array();
+        foreach ($rs as $course) {
+            // use the record if it does not exist yet or is host-specific
+            if (empty($courses[$course->remoteid]) or ($course->customint1 > 0)) {
+                unset($course->customint1); // the client does not need to know this
+                $context = get_context_instance(CONTEXT_COURSE, $course->remoteid);
+                // Rewrite file URLs so that they are correct
+                $course->summary = file_rewrite_pluginfile_urls($course->summary, 'pluginfile.php', $context->id, 'course', 'summary');
+                $courses[$course->remoteid] = $course;
+            }
         }
+        $rs->close();
 
         return array_values($courses); // can not use keys for backward compatibility
     }
