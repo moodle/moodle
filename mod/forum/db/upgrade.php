@@ -219,18 +219,24 @@ function xmldb_forum_upgrade($oldversion) {
         $field = new xmldb_field('introformat', XMLDB_TYPE_INTEGER, '4', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'intro');
 
     /// Launch add field introformat
-        $dbman->add_field($table, $field);
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // conditionally migrate to html format in intro
+        if ($CFG->texteditors !== 'textarea') {
+            $rs = $DB->get_recordset('forum', array('introformat'=>FORMAT_MOODLE), '', 'id,intro,introformat');
+            foreach ($rs as $f) {
+                $f->intro       = text_to_html($f->intro, false, false, true);
+                $f->introformat = FORMAT_HTML;
+                $DB->update_record('forum', $f);
+                upgrade_set_timeout();
+            }
+            $rs->close();
+        }
 
     /// forum savepoint reached
         upgrade_mod_savepoint(true, 2009042003, 'forum');
-    }
-
-    if ($oldversion < 2009042004) {
-    /// set format to current
-        $DB->set_field('forum', 'introformat', FORMAT_MOODLE, array());
-
-    /// quiz savepoint reached
-        upgrade_mod_savepoint(true, 2009042004, 'forum');
     }
 
     /// Dropping all enums/check contraints from core. MDL-18577
