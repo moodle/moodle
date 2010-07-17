@@ -56,15 +56,7 @@ $string['deletewrongkeyvalue'] = 'An error has occurred. If you were not trying 
 $string['deny'] = 'Deny';
 $string['description'] = 'Description';
 $string['duplicate_usernames'] = 'We failed to create an index on the columns "mnethostid" and "username" in your user table.<br />This can occur when you have <a href="{$a}" target="_blank">duplicate usernames in your user table</a>.<br />Your upgrade should still complete successfully. Click on the link above, and instructions on fixing this problem will appear in a new window. You can attend to that at the end of the upgrade.<br />';
-$string['editenrolments'] = 'enrol';
 $string['enabled_for_all'] = '(This service has been enabled for all hosts).';
-$string['enrolcourseenrol_desc'] = 'Enrol/unenrol users from this course using Moodle Network enrolments.
-                                    Note that users may have been enrolled in this course via other enrolment
-                                    methods if the remote hosts allows them. Such enrolments are listed under
-                                    <em>Other enrolled users</em>';
-$string['enrolcourses_desc'] = 'Courses offered for remote enrolment by this host.';
-$string['enrollingincourse'] = 'Enrolling in course {$a->course} on host {$a->host}<br />';
-$string['enrolments'] = 'enrolments';
 $string['enterausername'] = 'Please enter a username, or a list of usernames separated by commas.';
 $string['error7020'] = 'This error normally occurs if the remote site has created a record for you with the wrong wwwroot, for example, http://yoursite.com instead of http://www.yoursite.com. You should contact the administrator of the remote site with your wwwroot (as specified in config.php) asking her to update her record for your host.';
 $string['error7022'] = 'The message you sent to the remote site was encrypted properly, but not signed. This is very unexpected; you should probably file a bug if this occurs (giving as much information as possible about the Moodle versions in question, etc.';
@@ -135,7 +127,6 @@ $string['methodsignature'] = 'Method signature for {$a}';
 $string['mnet'] = 'Moodle Networking';
 $string['mnet_concatenate_strings'] = 'Concatenate (up to) 3 strings and return the result';
 $string['mnetdisabled'] = 'Moodle Network is <strong>disabled</strong>.';
-$string['mnetenrol'] = 'Enrolments';
 $string['mnetidprovider'] = 'MNET ID Provider';
 $string['mnetidproviderdesc'] = 'You can use this facility to retrieve a link that you can log in at, if you can provide the correct email address to match the username you previously tried to log in with.';
 $string['mnetidprovidermsg'] = 'You should be able to login at your {$a} provider.';
