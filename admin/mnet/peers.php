@@ -167,15 +167,10 @@ if ($formdata = $reviewform->get_data()) {
         $mnet_peer->theme = $formdata->theme;
     }
 
-    $mnet_peer->updateparams->deleted = $formdata->deleted;
-    $oldkey = $mnet_peer->public_key;
-    $mnet_peer->public_key = $formdata->public_key;
-    $mnet_peer->updateparams->public_key = addslashes($formdata->public_key);
-    $mnet_peer->public_key_expires = $mnet_peer->check_common_name($formdata->public_key);
-    $mnet_peer->updateparams->public_key_expires = $mnet_peer->check_common_name($formdata->public_key);
-
-    $credentials = $mnet_peer->check_credentials($mnet_peer->public_key);
-    $mnet_peer->public_key_expires = $credentials['validTo_time_t'];
+    $mnet_peer->deleted             = $formdata->deleted;
+    $mnet_peer->public_key          = $formdata->public_key;
+    $credentials                    = $mnet_peer->check_credentials($mnet_peer->public_key);
+    $mnet_peer->public_key_expires  = $credentials['validTo_time_t'];
 
     if ($mnet_peer->commit()) {
         redirect(new moodle_url('/admin/mnet/peers.php', array('hostid' => $mnet_peer->id)), get_string('changessaved'));
