@@ -128,11 +128,72 @@ class enrol_mnet_mnetservice_enrol {
     }
 
     /**
-     * TODO: short description.
+     * Returns a list of users from the client server who are enrolled in our course
      *
-     * @return TODO
+     * Suitable instance of enrol_mnet must be created in the course. This method will not
+     * return any information about the enrolments in courses that are not available for
+     * remote enrolment, even if their users are enrolled into them via other plugin
+     * (note the difference from {@link self::user_enrolments()}).
+     *
+     * This method will return enrolment information for users from hosts regardless
+     * the enrolment plugin. It does not matter if the user was enrolled remotely by
+     * their admin or locally. Once the course is available for remote enrolments, we
+     * will tell them everything about their users.
+     *
+     * In Moodle 1.x the returned array used to be indexed by username. The side effect
+     * of MDL-19219 fix is that we do not need to use such index and therefore we can
+     * return all enrolment records. MNet clients 1.x will only use the last record for
+     * the student, if she is enrolled via multiple plugins.
+     *
+     * @uses mnet_remote_client Callable via XML-RPC only
+     * @param int $courseid ID of our course
+     * @return array
      */
-    public function course_enrolments() {
-        return array();
+    public function course_enrolments($courseid) {
+        global $DB;
+
+        if (!$client = get_mnet_remote_client()) {
+            die('Callable via XML-RPC only');
+        }
+
+        // todo 'guest' nevracet
+
+        return array(
+            0 => array(
+                'username' => 'admina',
+                'shortname' => 'student',
+                'name' => 'Student',
+                'enrol' => 'mnet',
+                'timemodified' => time(),
+                ),
+            1 => array(
+                'username' => 'admina',
+                'shortname' => 'teacher',
+                'name' => 'Teacher',
+                'enrol' => 'manual',
+                'timemodified' => time(),
+                ),
+            2 => array(
+                'username' => 'guest',
+                'shortname' => 'admin',
+                'name' => 'Admin',
+                'enrol' => 'crack',
+                'timemodified' => time(),
+                ),
+            3 => array(
+                'username' => 'usera',
+                'shortname' => 'student',
+                'name' => 'Student',
+                'enrol' => 'mnet',
+                'timemodified' => time(),
+                ),
+            4 => array(
+                'username' => 'doesnotexist',
+                'shortname' => 'student',
+                'name' => 'Student',
+                'enrol' => 'mnet',
+                'timemodified' => time(),
+                ),
+        );
     }
 }

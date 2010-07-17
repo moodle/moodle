@@ -2450,7 +2450,7 @@ function print_remote_course($course, $width="100%") {
     $options = NULL;
     $options->noclean = true;
     $options->para = false;
-    echo format_text($course->summary, FORMAT_MOODLE, $options);
+    echo format_text($course->summary, $course->summaryformat, $options);
     echo '</div>';
     echo '</div>';
 }

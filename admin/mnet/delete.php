@@ -51,7 +51,7 @@ $mnet_peer->set_id($hostid);
 if ('verify' == $step) {
     echo $OUTPUT->header();
     echo $OUTPUT->heading(get_string('deleteaserver', 'mnet'));
-    if ($mnet_peer->count_live_sessions() > 0) {
+    if ($live_users = $mnet_peer->count_live_sessions() > 0) {
         echo $OUTPUT->notification(get_string('usersareonline', 'mnet', $live_users));
     }
     $yesurl = new moodle_url('/admin/mnet/delete.php', array('hostid' => $mnet_peer->id, 'step' => 'delete'));

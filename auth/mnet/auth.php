@@ -91,25 +91,14 @@ class auth_plugin_mnet extends auth_plugin_base {
             $userdata['myhosts'][] = array('name'=> $SITE->shortname, 'url' => $CFG->wwwroot, 'count' => count($courses));
         }
 
-        $sql = "
-                SELECT
-                    h.name as hostname,
-                    h.wwwroot,
-                    h.id as hostid,
-                    count(c.id) as count
-                FROM
-                    {mnet_enrol_course} c,
-                    {mnet_enrol_assignments} a,
-                    {mnet_host} h
-                WHERE
-                    c.id      =  a.courseid   AND
-                    c.hostid  =  h.id         AND
-                    a.userid  = ? AND
-                    c.hostid != ?
-                GROUP BY
-                    h.name,
-                    h.id,
-                    h.wwwroot";
+        $sql = "SELECT h.name AS hostname, h.wwwroot, h.id AS hostid,
+                       COUNT(c.id) AS count
+                  FROM {mnetservice_enrol_courses} c
+                  JOIN {mnetservice_enrol_enrolments} e ON (e.hostid = c.hostid AND e.remotecourseid = c.remoteid)
+                  JOIN {mnet_host} h ON h.id = c.hostid
+                 WHERE e.userid = ? AND c.hostid = ?
+              GROUP BY h.name, h.wwwroot, h.id";
+
         if ($courses = $DB->get_records_sql($sql, array($user->id, $remoteclient->id))) {
             foreach($courses as $course) {
                 $userdata['myhosts'][] = array('name'=> $course->hostname, 'url' => $CFG->wwwroot.'/auth/mnet/jump.php?hostid='.$course->hostid, 'count' => $course->count);
@@ -139,7 +128,7 @@ class auth_plugin_mnet extends auth_plugin_base {
         require_once $CFG->dirroot . '/mnet/xmlrpc/client.php';
 
         // check remote login permissions
-        if (! has_capability('moodle/site:mnetlogintoremote', get_context_instance(CONTEXT_SYSTEM))
+        if (! has_capability('moodle/site:mnetlogintoremote', get_system_context())
                 or is_mnet_remote_user($USER)
                 or isguestuser()
                 or !isloggedin()) {
@@ -359,7 +348,7 @@ class auth_plugin_mnet extends auth_plugin_base {
             $mnetrequest->set_method('auth/mnet/auth.php/update_enrolments');
 
             // pass username and an assoc array of "my courses"
-            // with info so that the IDP can maintain mnet_enrol_assignments
+            // with info so that the IDP can maintain mnetservice_enrol_enrolments
             $mnetrequest->add_param($remoteuser->username);
             $fields = 'id, category, sortorder, fullname, shortname, idnumber, summary, startdate, visible';
             $courses = enrol_get_users_courses($localuser->id, false, $fields, 'visible DESC,sortorder ASC');
@@ -374,7 +363,8 @@ class auth_plugin_mnet extends auth_plugin_base {
                 $extra = $DB->get_records_sql($sql);
 
                 $keys = array_keys($courses);
-                $defaultrole = get_default_course_role($ccache[$shortname]); //TODO: rewrite this completely, there is no default course role any more!!!
+                $defaultrole = reset(get_archetype_roles('student'));
+                //$defaultrole = get_default_course_role($ccache[$shortname]); //TODO: rewrite this completely, there is no default course role any more!!!
                 foreach ($keys AS $id) {
                     if ($courses[$id]->visible == 0) {
                         unset($courses[$id]);
@@ -452,7 +442,7 @@ class auth_plugin_mnet extends auth_plugin_base {
      * Normally called by the SP after calling user_authorise()
      *
      * @param string $username The username
-     * @param string $courses  Assoc array of courses following the structure of mnet_enrol_course
+     * @param string $courses  Assoc array of courses following the structure of mnetservice_enrol_courses
      * @return bool
      */
     function update_enrolments($username, $courses) {
@@ -470,52 +460,32 @@ class auth_plugin_mnet extends auth_plugin_base {
         }
 
         if (empty($courses)) { // no courses? clear out quickly
-            $DB->delete_records('mnet_enrol_assignments', array('hostid'=>$remoteclient->id, 'userid'=>$userid));
+            $DB->delete_records('mnetservice_enrol_enrolments', array('hostid'=>$remoteclient->id, 'userid'=>$userid));
             return true;
         }
 
         // IMPORTANT: Ask for remoteid as the first element in the query, so
         // that the array that comes back is indexed on the same field as the
         // array that we have received from the remote client
-        $sql = '
-                SELECT
-                    c.remoteid,
-                    c.id,
-                    c.cat_id,
-                    c.cat_name,
-                    c.cat_description,
-                    c.sortorder,
-                    c.fullname,
-                    c.shortname,
-                    c.idnumber,
-                    c.summary,
-                    c.startdate,
-                    a.id as assignmentid
-                FROM
-                    {mnet_enrol_course} c
-                LEFT JOIN {mnet_enrol_assignments} a
-                ON
-                   (a.courseid = c.id AND
-                    a.hostid   = c.hostid AND
-                    a.userid = ?)
-                WHERE
-                    c.hostid = ?';
+        $sql = "SELECT c.remoteid, c.id, c.categoryid AS cat_id, c.categoryname AS cat_name, c.sortorder,
+                       c.fullname, c.shortname, c.idnumber, c.summary, c.summaryformat, c.startdate,
+                       e.id AS enrolmentid
+                  FROM {mnetservice_enrol_courses} c
+             LEFT JOIN {mnetservice_enrol_enrolments} e ON (e.hostid = c.hostid AND e.remotecourseid = c.remoteid)
+                 WHERE e.userid = ? AND c.hostid = ?";
 
         $currentcourses = $DB->get_records_sql($sql, array($userid, $remoteclient->id));
 
         $local_courseid_array = array();
-        foreach($courses as $course) {
+        foreach($courses as $ix => $course) {
 
             $course['remoteid'] = $course['id'];
             $course['hostid']   =  (int)$remoteclient->id;
             $userisregd         = false;
 
-            // First up - do we have a record for this course?
-            if (!array_key_exists($course['remoteid'], $currentcourses)) {
-                // No record - we must create it
-                $course['id']  =  $DB->insert_record('mnet_enrol_course', (object)$course);
-                $currentcourse = (object)$course;
-            } else {
+            // if we do not have the the information about the remote course, it is not available
+            // to us for remote enrolment - skip
+            if (array_key_exists($course['remoteid'], $currentcourses)) {
                 // Pointer to current course:
                 $currentcourse =& $currentcourses[$course['remoteid']];
                 // We have a record - is it up-to-date?
@@ -531,12 +501,15 @@ class auth_plugin_mnet extends auth_plugin_base {
                 }
 
                 if ($saveflag) {
-                    $DB->update_record('mnet_enrol_course', $currentcourse);
+                    $DB->update_record('mnetervice_enrol_courses', $currentcourse);
                 }
 
-                if (isset($currentcourse->assignmentid) && is_numeric($currentcourse->assignmentid)) {
+                if (isset($currentcourse->enrolmentid) && is_numeric($currentcourse->enrolmentid)) {
                     $userisregd = true;
                 }
+            } else {
+                unset ($courses[$ix]);
+                continue;
             }
 
             // By this point, we should always have a $dataObj->id
@@ -552,7 +525,7 @@ class auth_plugin_mnet extends auth_plugin_base {
                 $assignObj = new stdClass();
                 $assignObj->userid    = $userid;
                 $assignObj->hostid    = (int)$remoteclient->id;
-                $assignObj->courseid  = $course['id'];
+                $assignObj->remotecourseid = $course['remoteid'];
                 $assignObj->rolename  = $course['defaultrolename'];
                 $assignObj->id = $DB->insert_record('mnet_enrol_assignments', $assignObj);
             }
