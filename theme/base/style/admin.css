@@ -134,7 +134,7 @@
 #adminsettings fieldset.error legend {display: block;}
 #adminsettings .form-item {clear: both;margin: 1em 0 2em 0;}
 #adminsettings .form-item .form-label {display: block;float: left;width: 12.5em;text-align: right;}
-#adminsettings .form-item .form-label .form-shortname {display:block;}
+#adminsettings .form-item .form-label .form-shortname {display:block;line-break: break;}
 #adminsettings .form-item .form-setting {display: block;margin-left: 13.5em;text-align: left;}
 #adminsettings .form-item .form-setting .form-htmlarea {width:  640px;display:inline;}
 #adminsettings .form-item .form-setting .form-htmlarea .htmlarea {width:  640px;display:block;}
