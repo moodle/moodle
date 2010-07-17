@@ -27,3 +27,6 @@ table.remotecourses th.categoryname img {
 .collapsibleregion.remotecourse.summary {
     margin: 0px 10em;
 }
+.roleassigntable {
+    margin: 1em auto;
+}

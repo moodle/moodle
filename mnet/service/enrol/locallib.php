@@ -29,6 +29,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+require_once($CFG->dirroot . '/user/selector/lib.php');
+
 /**
  * Singleton providing various functionality usable by plugin(s) implementing this MNet service
  */
@@ -318,8 +320,7 @@ class mnetservice_enrol {
                     $enrolment->enroltype       = $remote['enrol'];
 
                     $current = $DB->get_record('mnetservice_enrol_enrolments', array('hostid'=>$enrolment->hostid, 'userid'=>$enrolment->userid,
-                                           'remotecourseid'=>$enrolment->remotecourseid, 'rolename'=>$enrolment->rolename,
-                                           'enroltype'=>$enrolment->enroltype), 'id, enroltime');
+                                           'remotecourseid'=>$enrolment->remotecourseid, 'enroltype'=>$enrolment->enroltype), 'id, enroltime');
                     if (empty($current)) {
                         $enrolment->id = $DB->insert_record('mnetservice_enrol_enrolments', $enrolment);
                     } else {
@@ -374,5 +375,156 @@ class mnetservice_enrol {
         }
         return $output;
     }
+}
 
+/**
+ * Selector of our users enrolled into remote course via enrol_mnet plugin
+ */
+class mnetservice_enrol_existing_users_selector extends user_selector_base {
+    /** @var id of the MNet peer */
+    protected $hostid;
+    /** @var id of the course at the remote server */
+    protected $remotecourseid;
+
+    public function __construct($name, $options) {
+        $this->hostid = $options['hostid'];
+        $this->remotecourseid = $options['remotecourseid'];
+        parent::__construct($name, $options);
+    }
+
+    /**
+     * Find our users currently enrolled into the remote course
+     *
+     * @param string $search
+     * @return array
+     */
+    public function find_users($search) {
+        global $DB;
+
+        list($wherecondition, $params)  = $this->search_sql($search, 'u');
+        $params['hostid']               = $this->hostid;
+        $params['remotecourseid']       = $this->remotecourseid;
+
+        $fields      = "SELECT ".$this->required_fields_sql("u");
+        $countfields = "SELECT COUNT(1)";
+
+        $sql = "          FROM {user} u
+                          JOIN {mnetservice_enrol_enrolments} e ON e.userid = u.id
+                         WHERE e.hostid = :hostid AND e.remotecourseid = :remotecourseid
+                               AND e.enroltype = 'mnet'
+                               AND $wherecondition";
+        $order = "    ORDER BY u.lastname ASC, u.firstname ASC";
+
+        if (!$this->is_validating()) {
+            $potentialmemberscount = $DB->count_records_sql($countfields . $sql, $params);
+            if ($potentialmemberscount > 100) {
+                return $this->too_many_results($search, $potentialmemberscount);
+            }
+        }
+
+        $availableusers = $DB->get_records_sql($fields . $sql . $order, $params);
+
+        if (empty($availableusers)) {
+            return array();
+        }
+
+        if ($search) {
+            $groupname = get_string('enrolcandidatesmatching', 'enrol', $search);
+        } else {
+            $groupname = get_string('enrolcandidates', 'enrol');
+        }
+
+        return array($groupname => $availableusers);
+    }
+
+    protected function get_options() {
+        $options = parent::get_options();
+        $options['hostid'] = $this->hostid;
+        $options['remotecourseid'] = $this->remotecourseid;
+        $options['file'] = 'mnet/service/enrol/locallib.php';
+        return $options;
+    }
+}
+
+/**
+ * Selector of our users who could be enrolled into a remote course via their enrol_mnet
+ */
+class mnetservice_enrol_potential_users_selector extends user_selector_base {
+    /** @var id of the MNet peer */
+    protected $hostid;
+    /** @var id of the course at the remote server */
+    protected $remotecourseid;
+
+    public function __construct($name, $options) {
+        $this->hostid = $options['hostid'];
+        $this->remotecourseid = $options['remotecourseid'];
+        parent::__construct($name, $options);
+    }
+
+    /**
+     * Find our users who could be enrolled into the remote course
+     *
+     * Our users must have 'moodle/site:mnetlogintoremote' capability assigned.
+     * Remote users, guests, deleted and not confirmed users are not returned.
+     *
+     * @param string $search
+     * @return array
+     */
+    public function find_users($search) {
+        global $CFG, $DB;
+
+        $systemcontext = get_system_context();
+        $userids = get_users_by_capability($systemcontext, 'moodle/site:mnetlogintoremote', 'u.id');
+
+        list($usql, $uparams) = $DB->get_in_or_equal(array_keys($userids), SQL_PARAMS_NAMED, 'uid0000');
+
+        list($wherecondition, $params) = $this->search_sql($search, 'u');
+
+        $params = array_merge($params, $uparams);
+        $params['hostid'] = $this->hostid;
+        $params['remotecourseid'] = $this->remotecourseid;
+        $params['mnetlocalhostid'] = $CFG->mnet_localhost_id;
+
+        $fields      = "SELECT ".$this->required_fields_sql("u");
+        $countfields = "SELECT COUNT(1)";
+
+        $sql = "          FROM {user} u
+                         WHERE $wherecondition
+                               AND u.mnethostid = :mnetlocalhostid
+                               AND u.id $usql
+                               AND u.id NOT IN (SELECT e.userid
+                                                  FROM {mnetservice_enrol_enrolments} e
+                                                 WHERE (e.hostid = :hostid AND e.remotecourseid = :remotecourseid))";
+
+        $order = "    ORDER BY u.lastname ASC, u.firstname ASC";
+
+        if (!$this->is_validating()) {
+            $potentialmemberscount = $DB->count_records_sql($countfields . $sql, $params);
+            if ($potentialmemberscount > 100) {
+                return $this->too_many_results($search, $potentialmemberscount);
+            }
+        }
+
+        $availableusers = $DB->get_records_sql($fields . $sql . $order, $params);
+
+        if (empty($availableusers)) {
+            return array();
+        }
+
+        if ($search) {
+            $groupname = get_string('enrolcandidatesmatching', 'enrol', $search);
+        } else {
+            $groupname = get_string('enrolcandidates', 'enrol');
+        }
+
+        return array($groupname => $availableusers);
+    }
+
+    protected function get_options() {
+        $options = parent::get_options();
+        $options['hostid'] = $this->hostid;
+        $options['remotecourseid'] = $this->remotecourseid;
+        $options['file'] = 'mnet/service/enrol/locallib.php';
+        return $options;
+    }
 }

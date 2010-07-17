@@ -34,7 +34,9 @@ $hostid   = required_param('host', PARAM_INT); // remote host id in our mnet_hos
 $courseid = required_param('course', PARAM_INT); // id of the course in our cache table
 $usecache = optional_param('usecache', true, PARAM_BOOL); // use cached list of enrolments
 
-admin_externalpage_setup('mnetenrol');
+admin_externalpage_setup('mnetenrol', '', array('host'=>$hostid, 'course'=>$courseid, 'usecache'=>1),
+                         new moodle_url('/mnet/service/enrol/course.php'));
+
 $service = mnetservice_enrol::get_instance();
 
 if (!$service->is_available()) {
@@ -70,8 +72,50 @@ if (!empty($course->summary)) {
     print_collapsible_region_end();
 }
 
-// form to enrol our students
-$enrolments = $service->get_remote_course_enrolments($host->id, $course->remoteid, $usecache);
+//$enrolments = $service->get_remote_oourse_enrolments($host->id, $course->remoteid, $usecache);
 
-print_object($enrolments); // DONOTCOMMIT
+// user selectors
+$currentuserselector = new mnetservice_enrol_existing_users_selector('removeselect', array('hostid'=>$host->id, 'remotecourseid'=>$course->remoteid));
+$potentialuserselector = new mnetservice_enrol_potential_users_selector('addselect', array('hostid'=>$host->id, 'remotecourseid'=>$course->remoteid));
+
+// process incoming data
+
+// print form to enrol our students
+?>
+<form id="assignform" method="post" action="<?php echo $PAGE->url ?>">
+<div>
+  <input type="hidden" name="sesskey" value="<?php echo sesskey() ?>" />
+  <input type="hidden" name="hostid" value="<?php echo $host->id ?>" />
+  <input type="hidden" name="courseid" value="<?php echo $course->id ?>" />
+
+  <table summary="" class="roleassigntable generaltable generalbox boxaligncenter" cellspacing="0">
+    <tr>
+      <td id="existingcell">
+          <p><label for="removeselect"><?php print_string('enrolledusers', 'enrol'); ?></label></p>
+          <?php $currentuserselector->display() ?>
+      </td>
+      <td id="buttonscell">
+          <div id="addcontrols">
+              <input name="add" id="add" type="submit" value="<?php echo $OUTPUT->larrow().'&nbsp;'.get_string('add'); ?>" title="<?php print_string('add'); ?>" /><br />
+
+              <div class="enroloptions">
+                  <p><?php echo get_string('assignrole', 'role') .': '. s($course->rolename); ?></p>
+              </div>
+
+          </div>
+
+          <div id="removecontrols">
+              <input name="remove" id="remove" type="submit" value="<?php echo get_string('remove').'&nbsp;'.$OUTPUT->rarrow(); ?>" title="<?php print_string('remove'); ?>" />
+          </div>
+      </td>
+      <td id="potentialcell">
+          <p><label for="addselect"><?php print_string('enrolcandidates', 'enrol'); ?></label></p>
+          <?php $potentialuserselector->display() ?>
+      </td>
+    </tr>
+  </table>
+</div>
+</form>
+<?php
+
 echo $OUTPUT->footer();
