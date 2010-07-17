@@ -238,22 +238,22 @@ class XMLDBAction {
         switch ($plugintype ) {
             case 'lib': /// has own savepoint function
                 $result = XMLDB_LINEFEED .
-                          '    /// Main savepoint reached' . XMLDB_LINEFEED .
+                          '        // Main savepoint reached' . XMLDB_LINEFEED .
                           '        upgrade_main_savepoint(true, XXXXXXXXXX);' . XMLDB_LINEFEED;
                 break;
             case 'mod': /// has own savepoint function
                 $result = XMLDB_LINEFEED .
-                          '    /// ' . $pluginname . ' savepoint reached' . XMLDB_LINEFEED .
+                          '        // ' . $pluginname . ' savepoint reached' . XMLDB_LINEFEED .
                           '        upgrade_mod_savepoint(true, XXXXXXXXXX, ' . "'$pluginname'" . ');' . XMLDB_LINEFEED;
                 break;
             case 'block': /// has own savepoint function
                 $result = XMLDB_LINEFEED .
-                          '    /// ' . $pluginname . ' savepoint reached' . XMLDB_LINEFEED .
+                          '        // ' . $pluginname . ' savepoint reached' . XMLDB_LINEFEED .
                           '        upgrade_block_savepoint(true, XXXXXXXXXX, ' . "'$pluginname'" . ');' . XMLDB_LINEFEED;
                 break;
             default: /// rest of plugins
                 $result = XMLDB_LINEFEED .
-                          '    /// ' . $pluginname . ' savepoint reached' . XMLDB_LINEFEED .
+                          '        // ' . $pluginname . ' savepoint reached' . XMLDB_LINEFEED .
                           '        upgrade_plugin_savepoint(true, XXXXXXXXXX, ' . "'$plugintype'" . ', ' . "'$pluginname'" . ');' . XMLDB_LINEFEED;
         }
         return $result;
