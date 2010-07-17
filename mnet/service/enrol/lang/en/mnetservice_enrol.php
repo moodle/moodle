@@ -24,6 +24,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['availablecourseson'] = 'Available courses on {$a}';
+$string['availablecoursesonnone'] = 'Remote host <a href="{$a->hosturl}">{$a->hostname}</a> does not offer any courses for our users.';
 $string['clientname'] = 'Remote enrolments client';
 $string['clientname_help'] = 'This tool allows you to enrol and unenrol your local users on remote hosts that allow you to do so via the \'MNet remote enrolments\' plugin.';
 $string['editenrolments'] = 'Edit enrolments';

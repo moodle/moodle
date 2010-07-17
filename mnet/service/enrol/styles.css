@@ -1,3 +1,15 @@
-table.remotehosts {
+table.remotehosts,
+table.remotecourses {
     margin: 0px auto;
+}
+
+table.remotecourses th.categoryname {
+    text-align: left;
+    background-color: #f6f6f6;
+}
+table.remotecourses td.c1 {
+    font-weight: bold;
+}
+table.remotecourses th.categoryname img {
+    margin-right: 1em;
 }
