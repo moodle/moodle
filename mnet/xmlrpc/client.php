@@ -282,7 +282,11 @@ class mnet_xmlrpc_client {
                 return $this->send($rekeyed_mnet_peer);
             }
             if (!empty($CFG->mnet_rpcdebug)) {
-                $guidance = get_string('error'.$this->response['faultCode'], 'mnet');
+                if (get_string_manager()->string_exists('error'.$this->response['faultCode'], 'mnet')) {
+                    $guidance = get_string('error'.$this->response['faultCode'], 'mnet');
+                } else {
+                    $guidance = '';
+                }
             } else {
                 $guidance = '';
             }
