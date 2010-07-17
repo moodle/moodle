@@ -57,7 +57,8 @@ class enrol_mnet_mnetservice_enrol {
      * @return array
      */
     public function available_courses() {
-        global $DB;
+        global $CFG, $DB;
+        require_once($CFG->libdir.'/filelib.php');
 
         if (!$client = get_mnet_remote_client()) {
             die('Callable via XML-RPC only');
@@ -66,7 +67,7 @@ class enrol_mnet_mnetservice_enrol {
         $sql = "SELECT c.id AS remoteid, c.fullname, c.shortname, c.idnumber, c.summary, c.summaryformat,
                        c.sortorder, c.startdate, cat.id AS cat_id, cat.name AS cat_name,
                        cat.description AS cat_description, cat.descriptionformat AS cat_descriptionformat,
-                       e.cost, e.currency, e.roleid AS defaultroleid, r.name
+                       e.cost, e.currency, e.roleid AS defaultroleid, r.name AS defaultrolename
                   FROM {enrol} e
             INNER JOIN {course} c ON c.id = e.courseid
             INNER JOIN {course_categories} cat ON cat.id = c.category
@@ -76,7 +77,14 @@ class enrol_mnet_mnetservice_enrol {
                        AND c.visible = 1
               ORDER BY cat.sortorder, c.sortorder, c.shortname";
 
-        return $DB->get_records_sql($sql, array($client->id));
+        $courses = $DB->get_records_sql($sql, array($client->id));
+        foreach ($courses as $course) {
+            $context = get_context_instance(CONTEXT_COURSE, $course->remoteid);
+            // Rewrite file URLs so that they are correct
+            $course->summary = file_rewrite_pluginfile_urls($course->summary, 'pluginfile.php', $context->id, 'course', 'summary');
+        }
+
+        return array_values($courses); // can not use keys for backward compatibility
     }
 
     /**
