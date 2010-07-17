@@ -4790,6 +4790,37 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         upgrade_main_savepoint(true, 2010071300);
     }
 
+    if ($oldversion < 2010071700) { // Make itemname bigger (160cc) to store component+filearea
+
+        $table = new xmldb_table('backup_ids_template');
+        // Define key backupid_itemname_itemid_uk (unique) to be dropped form backup_ids_template
+        $key = new xmldb_key('backupid_itemname_itemid_uk', XMLDB_KEY_UNIQUE, array('backupid', 'itemname', 'itemid'));
+        // Define index backupid_parentitemid_ix (not unique) to be dropped form backup_ids_template
+        $index = new xmldb_index('backupid_parentitemid_ix', XMLDB_INDEX_NOTUNIQUE, array('backupid', 'itemname', 'parentitemid'));
+        // Define field itemname to be 160cc
+        $field = new xmldb_field('itemname', XMLDB_TYPE_CHAR, '160', null, XMLDB_NOTNULL, null, null, 'backupid');
+
+        // Launch drop key backupid_itemname_itemid_uk
+        $dbman->drop_key($table, $key);
+        // Conditionally launch drop index backupid_parentitemid_ix
+        if ($dbman->index_exists($table, $index)) {
+            $dbman->drop_index($table, $index);
+        }
+
+        // Changing precision of field itemname on table backup_ids_template to (160)
+        $dbman->change_field_precision($table, $field);
+
+        // Launch add key backupid_itemname_itemid_uk
+        $dbman->add_key($table, $key);
+        // Conditionally launch add index backupid_parentitemid_ix
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Main savepoint reached
+        upgrade_main_savepoint(true, 2010071700);
+    }
+
 
     return true;
 }

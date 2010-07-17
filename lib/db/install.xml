@@ -2687,7 +2687,7 @@
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="backupid"/>
         <FIELD NAME="backupid" TYPE="char" LENGTH="32" NOTNULL="true" SEQUENCE="false" COMMENT="unique id of the backup" PREVIOUS="id" NEXT="itemname"/>
-        <FIELD NAME="itemname" TYPE="char" LENGTH="30" NOTNULL="true" SEQUENCE="false" COMMENT="name of the component this id belongs to (usually table names)" PREVIOUS="backupid" NEXT="itemid"/>
+        <FIELD NAME="itemname" TYPE="char" LENGTH="160" NOTNULL="true" SEQUENCE="false" COMMENT="name of the component this id belongs to (usually table names)" PREVIOUS="backupid" NEXT="itemid"/>
         <FIELD NAME="itemid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="id of the component (usually table-&amp;gt;id values)" PREVIOUS="itemname" NEXT="newitemid"/>
         <FIELD NAME="newitemid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="new id of the component after restore" PREVIOUS="itemid" NEXT="parentitemid"/>
         <FIELD NAME="parentitemid" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" COMMENT="other id that can be useful to represent parent-child relations" PREVIOUS="newitemid" NEXT="info"/>
