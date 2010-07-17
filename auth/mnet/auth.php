@@ -527,14 +527,14 @@ class auth_plugin_mnet extends auth_plugin_base {
                 $assignObj->hostid    = (int)$remoteclient->id;
                 $assignObj->remotecourseid = $course['remoteid'];
                 $assignObj->rolename  = $course['defaultrolename'];
-                $assignObj->id = $DB->insert_record('mnet_enrol_assignments', $assignObj);
+                $assignObj->id = $DB->insert_record('mnetservice_enrol_enrolments', $assignObj);
             }
         }
 
         // Clean up courses that the user is no longer enrolled in.
         $local_courseid_string = implode(', ', $local_courseid_array);
         $whereclause = " userid = ? AND hostid = ? AND courseid NOT IN ($local_courseid_string)";
-        $DB->delete_records_select('mnet_enrol_assignments', $whereclause, array($userid, $remoteclient->id));
+        $DB->delete_records_select('mnetservice_enrol_enrolments', $whereclause, array($userid, $remoteclient->id));
     }
 
     function prevent_local_passwords() {

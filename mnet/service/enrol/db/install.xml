@@ -39,7 +39,7 @@
         <FIELD NAME="enroltype" TYPE="char" LENGTH="20" NOTNULL="true" SEQUENCE="false" COMMENT="The name of the enrol plugin at the remote server that was used to enrol our student into their course" PREVIOUS="enroltime"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="primary key of the mnet_enrol_assignments table" NEXT="fk_user"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="primary key" NEXT="fk_user"/>
         <KEY NAME="fk_user" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id" PREVIOUS="primary" NEXT="fk_mnet_host"/>
         <KEY NAME="fk_mnet_host" TYPE="foreign" FIELDS="hostid" REFTABLE="mnet_host" REFFIELDS="id" PREVIOUS="fk_user"/>
       </KEYS>
