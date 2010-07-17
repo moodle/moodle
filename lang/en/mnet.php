@@ -203,9 +203,6 @@ $string['registerallhostsexplain'] = 'You can choose to register all hosts that 
 $string['registerhostsoff'] = 'Register all hosts is currently <b>off</b>';
 $string['registerhostson'] = 'Register all hosts is currently <b>on</b>';
 $string['remotecourses'] = 'Remote Courses';
-$string['remoteenrolhosts_desc'] = 'Enrol and unenrol users from your Moodle installation
-                                    on Moodle Hosts that allow you to do so via the Moodle
-                                    Network enrolment plugin.';
 $string['remotehost'] = 'Remote Hub';
 $string['remotehosts'] = 'Remote hosts';
 $string['remotemoodles'] = 'Remote Moodles';

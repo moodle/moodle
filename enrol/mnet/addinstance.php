@@ -25,7 +25,8 @@
  */
 
 require(dirname(dirname(dirname(__FILE__))).'/config.php');
-require_once("$CFG->dirroot/enrol/mnet/addinstance_form.php");
+require_once($CFG->dirroot.'/enrol/mnet/addinstance_form.php');
+require_once($CFG->dirroot.'/mnet/service/enrol/locallib.php');
 
 $id = required_param('id', PARAM_INT); // course id
 
@@ -33,7 +34,7 @@ $course = $DB->get_record('course', array('id'=>$id), '*', MUST_EXIST);
 $context = get_context_instance(CONTEXT_COURSE, $course->id, MUST_EXIST);
 
 require_login($course);
-require_capability('moodle/course:enrolconfig', $context); // todo shall the own capability be used?
+require_capability('moodle/course:enrolconfig', $context);
 
 $PAGE->set_url('/enrol/mnet/addinstance.php', array('id'=>$course->id));
 $PAGE->set_pagelayout('standard');
@@ -49,8 +50,8 @@ $enrol = enrol_get_plugin('mnet');
 if (!$enrol->get_candidate_link($course->id)) {
     redirect(new moodle_url('/enrol/instances.php', array('id'=>$course->id)));
 }
-
-$mform = new enrol_mnet_addinstance_form(null, array('course'=>$course, 'enrol'=>$enrol));
+$service = mnetservice_enrol::get_instance();
+$mform = new enrol_mnet_addinstance_form(null, array('course'=>$course, 'enrol'=>$enrol, 'service'=>$service));
 
 if ($mform->is_cancelled()) {
     redirect(new moodle_url('/enrol/instances.php', array('id'=>$course->id)));

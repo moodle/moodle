@@ -31,13 +31,6 @@ defined('MOODLE_INTERNAL') || die;
  */
 class enrol_mnet_plugin extends enrol_plugin {
 
-    /** @var caches the result of {@link get_remote_subscribers()} */
-    protected $cachesubscribers = null;
-
-    ////////////////////////////////////////////////////////////////////////////
-    // Enrolment plugin API - methods required by Moodle core
-    ////////////////////////////////////////////////////////////////////////////
-
     /**
      * Returns localised name of enrol instance
      *
@@ -79,65 +72,22 @@ class enrol_mnet_plugin extends enrol_plugin {
      * @return moodle_url|null page url or null if instance can not be created
      */
     public function get_candidate_link($courseid) {
-        global $DB;
+        global $CFG, $DB;
+        require_once($CFG->dirroot.'/mnet/service/enrol/locallib.php');
 
-        if (!$this->mnet_available()) {
+        $service = mnetservice_enrol::get_instance();
+        if (!$service->is_available()) {
             return null;
         }
         $coursecontext = get_context_instance(CONTEXT_COURSE, $courseid);
         if (!has_capability('moodle/course:enrolconfig', $coursecontext)) {
             return null;
         }
-        $subscribers = $this->get_remote_subscribers();
+        $subscribers = $service->get_remote_subscribers();
         if (empty($subscribers)) {
             return null;
         }
 
         return new moodle_url('/enrol/mnet/addinstance.php', array('id'=>$courseid));
     }
-
-    ////////////////////////////////////////////////////////////////////////////
-    // Internal methods used by the plugin itself only
-    ////////////////////////////////////////////////////////////////////////////
-
-    /**
-     * Returns a list of remote servers that can enrol their users into our courses
-     *
-     * We must publish MNet service 'mnet_enrol' for the peers to allow them to enrol
-     * their users into our courses.
-     *
-     * @return array
-     */
-    public function get_remote_subscribers() {
-        global $DB;
-
-        if (is_null($this->cachesubscribers)) {
-            $sql = "SELECT DISTINCT h.id, h.name AS hostname, h.wwwroot AS hosturl,
-                           a.display_name AS appname
-                      FROM {mnet_host} h
-                      JOIN {mnet_host2service} hs ON h.id = hs.hostid
-                      JOIN {mnet_service} s ON hs.serviceid = s.id
-                      JOIN {mnet_application} a ON h.applicationid = a.id
-                     WHERE s.name = 'mnet_enrol'
-                           AND hs.publish = 1";
-            $this->cachesubscribers = $DB->get_records_sql($sql);
-        }
-
-        return $this->cachesubscribers;
-    }
-
-    /**
-     * Is MNet networking enabled at this server?
-     *
-     * @return bool
-     */
-    protected function mnet_available() {
-        global $CFG;
-
-        if (empty($CFG->mnet_dispatcher_mode) || $CFG->mnet_dispatcher_mode !== 'strict') {
-            return false;
-        }
-        return true;
-    }
-
 }
