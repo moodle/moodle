@@ -80,7 +80,7 @@ $mform = new mod_glossary_entry_form(null, array('current'=>$entry, 'cm'=>$cm, '
 
 if ($mform->is_cancelled()){
     if ($id){
-        redirect("view.php?id=$cm->id&amp;mode=entry&amp;hook=$id");
+        redirect("view.php?id=$cm->id&mode=entry&hook=$id");
     } else {
         redirect("view.php?id=$cm->id");
     }
@@ -167,7 +167,7 @@ if ($mform->is_cancelled()){
         }
     }
 
-    redirect("view.php?id=$cm->id&amp;mode=entry&amp;hook=$entry->id");
+    redirect("view.php?id=$cm->id&mode=entry&hook=$entry->id");
 }
 
 if (!empty($id)) {
