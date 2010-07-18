@@ -24,14 +24,6 @@
  */
 
 $capabilities = array(
-    'enrol/meta:config' => array(
-        'captype' => 'write',
-        'contextlevel' => CONTEXT_COURSE,
-        'legacy' => array(
-            'manager' => CAP_ALLOW,
-        )
-    ),
-
     // select some course as source
     'enrol/meta:selectaslinked' => array(
         'captype' => 'read',
