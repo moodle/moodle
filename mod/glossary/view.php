@@ -300,23 +300,6 @@ if ($showcommonelements) {
     echo '<div class="glossarycontrol" style="text-align: right">';
     echo $availableoptions;
 
-/// If rss are activated at site and glossary level and this glossary has rss defined, show link
-    /*if (!empty($CFG->enablerssfeeds) && !empty($CFG->glossary_enablerssfeeds)
-        && $glossary->rsstype && $glossary->rssarticles) {
-
-        $tooltiptext = get_string("rsssubscriberss",'glossary',format_string($glossary->name,true));
-        if (!isloggedin()) {
-            $userid = 0;
-        } else {
-            $userid = $USER->id;
-        }
-//            print_box_start('rsslink');
-        echo '<span class="wrap rsslink">';
-        rss_print_link($context->id, $userid, "glossary", $glossary->id, $tooltiptext);
-        echo '</span>';
-//            print_box_end();
-    }*/
-
 /// The print icon
     if ( $showcommonelements and $mode != 'search') {
         if (has_capability('mod/glossary:manageentries', $context) or $glossary->allowprintview) {

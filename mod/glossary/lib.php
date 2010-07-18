@@ -1648,18 +1648,13 @@ function glossary_print_alphabet_links($cm, $glossary, $mode, $hook, $sortkey, $
 global $CFG;
      if ( $glossary->showalphabet) {
           $alphabet = explode(",", get_string('alphabet', 'langconfig'));
-          $letters_by_line = 14;
           for ($i = 0; $i < count($alphabet); $i++) {
               if ( $hook == $alphabet[$i] and $hook) {
                    echo "<b>$alphabet[$i]</b>";
               } else {
                    echo "<a href=\"$CFG->wwwroot/mod/glossary/view.php?id=$cm->id&amp;mode=$mode&amp;hook=".urlencode($alphabet[$i])."&amp;sortkey=$sortkey&amp;sortorder=$sortorder\">$alphabet[$i]</a>";
               }
-              if ((int) ($i % $letters_by_line) != 0 or $i == 0) {
-                   echo ' | ';
-              } else {
-                   echo '<br />';
-              }
+              echo ' | ';
           }
      }
 }
