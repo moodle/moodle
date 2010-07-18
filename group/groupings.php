@@ -50,7 +50,7 @@ $struses         = get_string('activities');
 $strparticipants = get_string('participants');
 $strmanagegrping = get_String('showgroupsingrouping', 'group');
 
-$PAGE->settingsnav->get('courseadmin')->get('groups')->make_active();
+$PAGE->settingsnav->get('courseadmin')->get('users')->get('groups')->make_active();
 $PAGE->navbar->add($strgroupings);
 
 /// Print header
