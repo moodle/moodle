@@ -871,7 +871,7 @@ class backup_users_structure_step extends backup_structure_step {
             'yahoo', 'aim', 'msn', 'phone1',
             'phone2', 'institution', 'department', 'address',
             'city', 'country', 'lastip', 'picture',
-            'url', 'description', 'description_format', 'imagealt', 'auth');
+            'url', 'description', 'descriptionformat', 'imagealt', 'auth');
 
         // Add anonymized fields to $userfields with custom final element
         foreach ($anonfields as $field) {

@@ -146,6 +146,10 @@ class backup_anonymizer_helper {
         return ''; // No user description
     }
 
+    public static function process_user_descriptionformat($value) {
+        return 0; // Format moodle
+    }
+
     public static function process_user_imagealt($value) {
         return ''; // No user imagealt
     }
