@@ -24,15 +24,26 @@
  */
 
 require_once('../config.php');
+require_once($CFG->libdir.'/adminlib.php');
 
 $confirm = optional_param('confirm', 0, PARAM_BOOL);
 
-$PAGE->set_url('/admin/purgecaches.php');
+admin_externalpage_setup('purgecaches');
 
 require_login();
 require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM));
-require_sesskey();
 
-purge_all_caches();
+if ($confirm) {
+    require_sesskey();
+    purge_all_caches();
+    redirect($_SERVER['HTTP_REFERER'], get_string('purgecachesfinished', 'admin'));
+} else {
+    echo $OUTPUT->header();
+    echo $OUTPUT->heading(get_string('purgecaches', 'admin'));
 
-redirect(new moodle_url('/admin/index.php'), get_string('purgecachesfinished', 'admin'));
+    $url = new moodle_url('/admin/purgecaches.php', array('sesskey'=>sesskey(), 'confirm'=>1));
+    $return = $_SERVER['HTTP_REFERER'];
+    echo $OUTPUT->confirm(get_string('purgecachesconfirm', 'admin'), $url, $return);
+
+    echo $OUTPUT->footer();
+}

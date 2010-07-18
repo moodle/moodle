@@ -44,4 +44,6 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
     if ($CFG->mnet_dispatcher_mode !== 'off') {
         $ADMIN->add('development', new admin_externalpage('mnettestclient', get_string('testclient', 'mnet'), "$CFG->wwwroot/$CFG->admin/mnet/testclient.php"));
     }
+
+    $ADMIN->add('development', new admin_externalpage('purgecaches', get_string('purgecaches','admin'), "$CFG->wwwroot/$CFG->admin/purgecaches.php"));
 } // end of speedup

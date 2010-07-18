@@ -354,6 +354,9 @@ class core_renderer extends renderer_base {
         if (!empty($CFG->debugpageinfo)) {
             $output .= '<div class="performanceinfo">This page is: ' . $this->page->debug_summary() . '</div>';
         }
+        if (debugging(null, DEBUG_DEVELOPER)) {  // Only in developer mode
+            $output .= '<div class="purgecaches"><a href="'.$CFG->wwwroot.'/admin/purgecaches.php?confirm=1&amp;sesskey='.sesskey().'">'.get_string('purgecaches', 'admin').'</a></div>';
+        }
         if (!empty($CFG->debugvalidators)) {
             $output .= '<div class="validators"><ul>
               <li><a href="http://validator.w3.org/check?verbose=1&amp;ss=1&amp;uri=' . urlencode(qualified_me()) . '">Validate HTML</a></li>

@@ -830,6 +830,7 @@ $string['requiredtemplate'] = 'Required. You may use template syntax here (%l = 
 $string['requiremodintro'] = 'Require activity description';
 $string['requires'] = 'Requires';
 $string['purgecaches']= 'Purge all caches';
+$string['purgecachesconfirm']= 'Moodle can cache themes, javascript, language strings, filtered text, rss feeds and many other pieces of calculated data.  Purging these caches will delete that data from the server and force browsers to refetch data, so that you can be sure you are seeing the most up-to-date values produced by the current code.  There is no danger in purging caches, but your site may appear slower for a while until the server and clients calculate new information and cache it.';
 $string['purgecachesfinished']= 'All caches were purged.';
 $string['restrictbydefault'] = 'Restrict modules by default';
 $string['restrictmodulesfor'] = 'Restrict modules for';
