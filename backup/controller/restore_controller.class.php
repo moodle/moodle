@@ -47,6 +47,7 @@ class restore_controller extends backup implements loggable {
     protected $samesite;  // Are we restoring to the same site where the backup was generated
 
     protected $status; // Current status of the controller (created, planned, configured...)
+    protected $precheck;    // Results of the execution of restore prechecks
 
     protected $info;   // Information retrieved from backup contents
     protected $plan;   // Restore execution plan
@@ -74,6 +75,7 @@ class restore_controller extends backup implements loggable {
         $this->executiontime = 0;
         $this->samesite = false;
         $this->checksum = '';
+        $this->precheck = null;
 
         // Apply current backup version and release if necessary
         backup_controller_dbops::apply_version_and_release();
@@ -178,6 +180,7 @@ class restore_controller extends backup implements loggable {
                             'samesite-'   . $this->samesite .
                             'operation-'  . $this->operation .
                             'status-'     . $this->status .
+                            'precheck-'   . backup_general_helper::array_checksum_recursive(array($this->precheck)) .
                             'execution-'  . $this->execution .
                             'plan-'       . backup_general_helper::array_checksum_recursive(array($this->plan)) .
                             'info-'       . backup_general_helper::array_checksum_recursive(array($this->info)) .
@@ -263,10 +266,20 @@ class restore_controller extends backup implements loggable {
     }
 
     public function execute_precheck() {
-        debugging ('TODO: Not applying prechecks yet, need to link them to proper restore_precheck class!', DEBUG_DEVELOPER);
-        $this->set_status(backup::STATUS_AWAITING); // TODO: Delete this once prechecks and steps are in place
-        //return $this->precheck->execute();
-        return true;
+        if (is_array($this->precheck)) {
+            throw new restore_controller_exception('precheck_alredy_executed', $this->status);
+        }
+        if ($this->status != backup::STATUS_NEED_PRECHECK) {
+            throw new restore_controller_exception('cannot_precheck_wrong_status', $this->status);
+        }
+        $this->precheck = restore_prechecks_helper::execute_prechecks($this);
+        if (!array_key_exists('errors', $this->precheck)) { // No errors, can be executed
+            $this->set_status(backup::STATUS_AWAITING);
+        }
+        if (empty($this->precheck)) { // No errors nor warnings, return true
+            return true;
+        }
+        return false;
     }
 
     public function get_results() {
@@ -274,9 +287,10 @@ class restore_controller extends backup implements loggable {
     }
 
     public function get_precheck_results() {
-        debugging ('TODO: Not applying prechecks yet, need to link them to proper restore_precheck class!', DEBUG_DEVELOPER);
-        return array();
-        //return $this->precheck->get_results();
+        if (!is_array($this->precheck)) {
+            throw new restore_controller_exception('precheck_not_executed');
+        }
+        return $this->precheck;
     }
 
     public function log($message, $level, $a = null, $depth = null, $display = false) {
