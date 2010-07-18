@@ -33,7 +33,6 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
-defined('MNET_SERVER') || die();
 
 /**
  * MNet server-side methods that are part of mnetservice_enrol
