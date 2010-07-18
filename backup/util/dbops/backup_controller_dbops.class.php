@@ -85,16 +85,24 @@ abstract class backup_controller_dbops extends backup_dbops {
     }
 
     public static function create_backup_ids_temp_table($backupid) {
+        self::create_temptable_from_real_table($backupid, 'backup_ids_template', 'backup_ids_temp');
+    }
+
+    /**
+     * Given one "real" tablename, create one temp table suitable for be used in backup/restore operations
+     */
+    public static function create_temptable_from_real_table($backupid, $realtablename, $temptablename) {
         global $CFG, $DB;
         $dbman = $DB->get_manager(); // We are going to use database_manager services
 
-        // Note: For now we are going to load the backup_ids_template from core lib/db/install.xml
+        // Note: For now we are going to load the realtablename from core lib/db/install.xml
         // that way, any change in the "template" will be applied here automatically. If this causes
         // too much slow, we can always forget about the template and keep maintained the xmldb_table
         // structure inline - manually - here.
-        $templatetablename = 'backup_ids_template';
-        $targettablename = 'backup_ids_temp';
-        $xmldb_file = new xmldb_file($CFG->dirroot . '/lib/db/install.xml');
+        $templatetablename = $realtablename;
+        $targettablename   = $temptablename;
+        $xmlfile = $CFG->dirroot . '/lib/db/install.xml';
+        $xmldb_file = new xmldb_file($xmlfile);
         if (!$xmldb_file->fileExists()) {
             throw new ddl_exception('ddlxmlfileerror', null, 'File does not exist');
         }
@@ -105,7 +113,7 @@ abstract class backup_controller_dbops extends backup_dbops {
         $xmldb_structure = $xmldb_file->getStructure();
         $xmldb_table = $xmldb_structure->getTable($templatetablename);
         if (is_null($xmldb_table)) {
-            throw new ddl_exception('ddlunknowntable', null, 'The table ' . $templatetablename . ' is not defined in file ' . $file);
+            throw new ddl_exception('ddlunknowntable', null, 'The table ' . $templatetablename . ' is not defined in file ' . $xmlfile);
         }
         // Set default backupid (not needed but this enforce any missing backupid). That's hackery in action!
         $xmldb_table->getField('backupid')->setDefault($backupid);

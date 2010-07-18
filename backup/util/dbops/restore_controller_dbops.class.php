@@ -84,7 +84,7 @@ abstract class restore_controller_dbops extends restore_dbops {
         return $controller;
     }
 
-    public static function create_backup_ids_temp_table($restoreid) {
+    public static function create_restore_temp_tables($restoreid) {
         global $CFG, $DB;
         $dbman = $DB->get_manager(); // We are going to use database_manager services
 
@@ -93,7 +93,19 @@ abstract class restore_controller_dbops extends restore_dbops {
             // TODO: If not match, exception, table corresponds to another backup/restore operation
             return true;
         }
-        backup_controller_dbops::create_backup_ids_temp_table($restoreid); // Create ids temp table
+        backup_controller_dbops::create_temptable_from_real_table($restoreid, 'backup_ids_template', 'backup_ids_temp');
+        backup_controller_dbops::create_temptable_from_real_table($restoreid, 'backup_files_template', 'backup_files_temp');
         return false;
+    }
+
+    public static function drop_restore_temp_tables($backupid) {
+        global $DB;
+        $dbman = $DB->get_manager(); // We are going to use database_manager services
+
+        $targettablenames = array('backup_ids_temp', 'backup_files_temp');
+        foreach ($targettablenames as $targettablename) {
+            $table = new xmldb_table($targettablename);
+            $dbman->drop_temp_table($table); // And drop it
+        }
     }
 }

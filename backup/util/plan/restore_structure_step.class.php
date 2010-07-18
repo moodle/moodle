@@ -244,8 +244,8 @@ abstract class restore_structure_step extends restore_step {
     /**
      * Add all the existing file, given their component and filearea and one backup_ids itemname to match with
      */
-    protected function add_related_files($componentname, $filearea, $mappingitemname) {
-        restore_dbops::send_files_to_pool($this->get_basepath(), $this->get_restoreid(), $componentname,
+    protected function add_related_files($component, $filearea, $mappingitemname) {
+        restore_dbops::send_files_to_pool($this->get_basepath(), $this->get_restoreid(), $component,
                                           $filearea, $this->task->get_old_contextid(), $mappingitemname);
     }
 

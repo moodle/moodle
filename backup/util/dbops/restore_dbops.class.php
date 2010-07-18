@@ -124,41 +124,39 @@ abstract class restore_dbops {
         }
 
         // Important: remember how files have been loaded to backup_ids_temp
-        //   - itemname: contains "file*component*fileara"
-        //   - itemid: contains the original id of the file
-        //   - newitemid: contains the itemid of the file
-        //   - parentitemid: contains the context of the file
         //   - info: contains the whole original object (times, names...)
         //   (all them being original ids as loaded from xml)
 
         // itemname = null, we are going to match only by context, no need to use itemid (all them are 0)
         if ($itemname == null) {
-            $sql = 'SELECT id, itemname, itemid, 0 AS newitemid
-                      FROM {backup_ids_temp}
+            $sql = 'SELECT contextid, component, filearea, itemid, 0 AS newitemid, info
+                      FROM {backup_files_temp}
                      WHERE backupid = ?
-                       AND itemname = ?
-                       AND parentitemid = ?';
-            $params = array($restoreid, 'file*' . $component . '*' . $filearea, $oldcontextid);
+                       AND contextid = ?
+                       AND component = ?
+                       AND filearea  = ?';
+            $params = array($restoreid, $oldcontextid, $component, $filearea);
 
-        // itemname not null, going to join by context and itemid, we'll need itemid (non zero)
+        // itemname not null, going to join with backup_ids to perform the old-new mapping of itemids
         } else {
-            $sql = 'SELECT f.id, f.itemname, f.itemid, i.newitemid
-                      FROM {backup_ids_temp} f
+            $sql = 'SELECT f.contextid, f.component, f.filearea, f.itemid, i.newitemid, f.info
+                      FROM {backup_files_temp} f
                       JOIN {backup_ids_temp} i ON i.backupid = f.backupid
-                                              AND i.parentitemid = f.parentitemid
-                                              AND i.itemid = f.newitemid
+                                              AND i.parentitemid = f.contextid
+                                              AND i.itemid = f.itemid
                      WHERE f.backupid = ?
-                       AND f.itemname = ?
-                       AND f.parentitemid = ?
+                       AND f.contextid = ?
+                       AND f.component = ?
+                       AND f.filearea = ?
                        AND i.itemname = ?';
-            $params = array($restoreid, 'file*' . $component . '*' . $filearea, $oldcontextid, $itemname);
+            $params = array($restoreid, $oldcontextid, $component, $filearea, $itemname);
         }
 
         $rs = $DB->get_recordset_sql($sql, $params);
         $fs = get_file_storage();         // Get moodle file storage
         $basepath = $basepath . '/files/';// Get backup file pool base
         foreach ($rs as $rec) {
-            $file = (object)self::get_backup_ids_record($restoreid, $rec->itemname, $rec->itemid)->info;
+            $file = (object)unserialize(base64_decode($rec->info));
             // ignore root dirs (they are created automatically)
             if ($file->filepath == '/' && $file->filename == '.') {
                 continue;
@@ -647,6 +645,14 @@ abstract class restore_dbops {
         if (!empty($problems)) {
             throw new restore_dbops_exception('restore_problems_processing_users', null, implode(', ', $problems));
         }
+    }
+
+    public static function set_backup_files_record($restoreid, $filerec) {
+        global $DB;
+
+        $filerec->info     = base64_encode(serialize($filerec)); // Serialize the whole rec in info
+        $filerec->backupid = $restoreid;
+        $DB->insert_record('backup_files_temp', $filerec);
     }
 
 

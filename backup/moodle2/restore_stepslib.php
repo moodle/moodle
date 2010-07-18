@@ -32,7 +32,7 @@
 class restore_create_and_clean_temp_stuff extends restore_execution_step {
 
     protected function define_execution() {
-        $exists = restore_controller_dbops::create_backup_ids_temp_table($this->get_restoreid()); // Create temp table conditionally
+        $exists = restore_controller_dbops::create_restore_temp_tables($this->get_restoreid()); // temp tables conditionally
         // If the table already exists, it's because restore_prechecks have been executed in the same
         // request (without problems) and it already contains a bunch of preloaded information (users...)
         // that we aren't going to execute again
@@ -54,7 +54,7 @@ class restore_drop_and_clean_temp_stuff extends restore_execution_step {
 
     protected function define_execution() {
         global $CFG;
-        backup_controller_dbops::drop_backup_ids_temp_table($this->get_restoreid()); // Drop ids temp table
+        restore_controller_dbops::drop_restore_temp_tables($this->get_restoreid()); // Drop ids temp table
         backup_helper::delete_old_backup_dirs(time() - (4 * 60 * 60));               // Delete > 4 hours temp dirs
         if (empty($CFG->keeptempdirectoriesonbackup)) { // Conditionally
             backup_helper::delete_backup_dir($this->get_restoreid()); // Empty backup dir
@@ -84,11 +84,7 @@ class restore_load_included_inforef_records extends restore_execution_step {
 }
 
 /*
- * Execution step that will load all the needed files into backup_temp_ids.
- *   - itemname: contains "file*component*fileara"
- *   - itemid: contains the original id of the file
- *   - newitemid: contains the itemid of the file
- *   - parentitemid: contains the context of the file
+ * Execution step that will load all the needed files into backup_files_temp
  *   - info: contains the whole original object (times, names...)
  * (all them being original ids as loaded from xml)
  */
@@ -106,19 +102,13 @@ class restore_load_included_files extends restore_structure_step {
 
         $data = (object)$data; // handy
 
-        $itemname = 'file*' . $data->component . '*' . $data->filearea;
-        $itemid   = $data->id;
-        $newitemid = $data->itemid;
-        $parentitemid = $data->contextid;
-        $info = $data;
-
         // load it if needed:
         //   - it it is one of the annotated inforef files (course/section/activity/block)
         //   - it is one "user", "group" or "grade" component file
-        $isfileref   = restore_dbops::get_backup_ids_record($this->get_restoreid(), 'fileref', $itemid);
+        $isfileref   = restore_dbops::get_backup_ids_record($this->get_restoreid(), 'fileref', $data->id);
         $iscomponent = ($data->component == 'user' || $data->component == 'group' || $data->component == 'grade');
         if ($isfileref || $iscomponent) {
-            restore_dbops::set_backup_ids_record($this->get_restoreid(), $itemname, $itemid, $newitemid, $parentitemid, $info);
+            restore_dbops::set_backup_files_record($this->get_restoreid(), $data);
         }
     }
 }
@@ -257,10 +247,9 @@ class restore_groups_structure_step extends restore_structure_step {
      }
 
      protected function after_execute() {
-         return;
+         // Add group related files, matching with "group" mappings
          $this->add_related_files('group', 'icon', 'group');
          $this->add_related_files('group', 'description', 'group');
-         restore_dbops::send_files_to_pool($basepath, $restoreid, 'user', 'private', $recuser->parentitemid);
      }
 
 }
