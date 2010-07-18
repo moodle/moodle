@@ -100,7 +100,7 @@ abstract class restore_dbops {
     public static function load_users_to_tempids($restoreid, $usersfile) {
 
         if (!file_exists($usersfile)) { // Shouldn't happen ever, but...
-            throw new backup_helper_exception('missing_users_xml_file', $inforeffile);
+            throw new backup_helper_exception('missing_users_xml_file', $usersfile);
         }
         // Let's parse, custom processor will do its work, sending info to DB
         $xmlparser = new progressive_parser();
@@ -111,13 +111,95 @@ abstract class restore_dbops {
     }
 
     /**
+     * Given one component/filearea/context and
+     * optionally one source itemname to match itemids
+     * put the corresponding files in the pool
+     */
+    public static function send_files_to_pool($basepath, $restoreid, $component, $filearea, $oldcontextid, $itemname = null) {
+        global $DB;
+
+        // Get new context, must exist or this will fail
+        if (!$newcontextid = self::get_backup_ids_record($restoreid, 'context', $oldcontextid)->newitemid) {
+            throw new restore_dbops_exception('unknown_context_mapping', $oldcontextid);
+        }
+
+        // Important: remember how files have been loaded to backup_ids_temp
+        //   - itemname: contains "file*component*fileara"
+        //   - itemid: contains the original id of the file
+        //   - newitemid: contains the itemid of the file
+        //   - parentitemid: contains the context of the file
+        //   - info: contains the whole original object (times, names...)
+        //   (all them being original ids as loaded from xml)
+
+        // itemname = null, we are going to match only by context, no need to use itemid (all them are 0)
+        if ($itemname == null) {
+            $sql = 'SELECT id, itemname, itemid, 0 AS newitemid
+                      FROM {backup_ids_temp}
+                     WHERE backupid = ?
+                       AND itemname = ?
+                       AND parentitemid = ?';
+            $params = array($restoreid, 'file*' . $component . '*' . $filearea, $oldcontextid);
+
+        // itemname not null, going to join by context and itemid, we'll need itemid (non zero)
+        } else {
+            $sql = 'SELECT f.id, f.itemname, f.itemid, i.newitemid
+                      FROM {backup_ids_temp} f
+                      JOIN {backup_ids_temp} i ON i.backupid = f.backupid
+                                              AND i.parentitemid = f.parentitemid
+                                              AND i.itemid = f.newitemid
+                     WHERE f.backupid = ?
+                       AND f.itemname = ?
+                       AND f.parentitemid = ?
+                       AND i.itemname = ?';
+            $params = array($restoreid, 'file*' . $component . '*' . $filearea, $oldcontextid, $itemname);
+        }
+
+        $rs = $DB->get_recordset_sql($sql, $params);
+        $fs = get_file_storage();         // Get moodle file storage
+        $basepath = $basepath . '/files/';// Get backup file pool base
+        foreach ($rs as $rec) {
+            $file = (object)self::get_backup_ids_record($restoreid, $rec->itemname, $rec->itemid)->info;
+            // ignore root dirs (they are created automatically)
+            if ($file->filepath == '/' && $file->filename == '.') {
+                continue;
+            }
+            // dir found (and not root one), let's create if
+            if ($file->filename == '.') {
+                $fs->create_directory($newcontextid, $component, $filearea, $rec->newitemid, $file->filepath);
+                continue;
+            }
+            // arrived here, file found
+            // Find file in backup pool
+            $backuppath = $basepath . backup_file_manager::get_content_file_location($file->contenthash);
+            if (!file_exists($backuppath)) {
+                throw new restore_dbops_exception('file_not_found_in_pool', $file);
+            }
+            if (!$fs->file_exists($newcontextid, $component, $filearea, $rec->newitemid, $file->filepath, $file->filename)) {
+                $file_record = array(
+                    'contextid'   => $newcontextid,
+                    'component'   => $component,
+                    'filearea'    => $filearea,
+                    'itemid'      => $rec->newitemid,
+                    'filepath'    => $file->filepath,
+                    'filename'    => $file->filename,
+                    'timecreated' => $file->timecreated,
+                    'timemodified'=> $file->timemodified,
+                    'author'      => $file->author,
+                    'license'     => $file->license);
+                $fs->create_file_from_pathname($file_record, $backuppath);
+            }
+        }
+        $rs->close();
+    }
+
+    /**
      * Given one restoreid, create in DB all the users present
      * in backup_ids having newitemid = 0, as far as
      * precheck_included_users() have left them there
      * ready to be created. Also, annotate their newids
      * once created for later reference
      */
-    protected static function create_included_users($restoreid) {
+    public static function create_included_users($basepath, $restoreid, $userfiles) {
         global $CFG, $DB;
 
         $authcache = array(); // Cache to get some bits from authentication plugins
@@ -244,12 +326,19 @@ abstract class restore_dbops {
 
             // Process preferences
             if (isset($user->preferences)) { // if present in backup
-                foreach($user->preferences as $preference) {
+                foreach($user->preferences['preference'] as $preference) {
                     $preference = (object)$preference;
                     // Prepare the record and insert it
                     $preference->userid = $newuserid;
                     $status = $DB->insert_record('user_preferences', $preference);
                 }
+            }
+
+            // Create user files in pool (profile, icon, private) by context
+            restore_dbops::send_files_to_pool($basepath, $restoreid, 'user', 'icon', $recuser->parentitemid);
+            restore_dbops::send_files_to_pool($basepath, $restoreid, 'user', 'profile', $recuser->parentitemid);
+            if ($userfiles) { // private files only if enabled in settings
+                restore_dbops::send_files_to_pool($basepath, $restoreid, 'user', 'private', $recuser->parentitemid);
             }
 
         }
@@ -558,9 +647,6 @@ abstract class restore_dbops {
         if (!empty($problems)) {
             throw new restore_dbops_exception('restore_problems_processing_users', null, implode(', ', $problems));
         }
-
-        // Now, create all the users that we haven't been able to map
-        self::create_included_users($restoreid);
     }
 
 

@@ -66,6 +66,10 @@ abstract class restore_task extends base_task {
     public function get_preloaded_information() {
         return $this->plan->get_preloaded_information();
     }
+
+    public function get_old_contextid() {
+        return $this->plan->get_info()->original_course_contextid;
+    }
 }
 
 /*

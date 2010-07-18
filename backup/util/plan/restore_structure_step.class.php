@@ -31,6 +31,8 @@ abstract class restore_structure_step extends restore_step {
 
     protected $filename; // Name of the file to be parsed
     protected $pathelements; // Array of pathelements to process
+    protected $elementsoldid; // Array to store last oldid used on each element
+    protected $elementsnewid; // Array to store last newid used on each element
 
     /**
      * Constructor - instantiates one object of this class
@@ -41,6 +43,8 @@ abstract class restore_structure_step extends restore_step {
         }
         $this->filename = $filename;
         $this->pathelements = array();
+        $this->elementsoldid = array();
+        $this->elementsnewid = array();
         parent::__construct($name, $task);
     }
 
@@ -68,6 +72,12 @@ abstract class restore_structure_step extends restore_step {
         // Get restore_path elements array adapting and preparing it for processing
         $this->pathelements = $this->prepare_pathelements($this->define_structure());
 
+        // Populate $elementsoldid and $elementsoldid based on available pathelements
+        foreach ($this->pathelements as $pathelement) {
+            $this->elementsoldid[$pathelement->get_name()] = null;
+            $this->elementsnewid[$pathelement->get_name()] = null;
+        }
+
         // Create parser and processor
         $xmlparser = new progressive_parser();
         $xmlparser->set_file($fullpath);
@@ -81,9 +91,10 @@ abstract class restore_structure_step extends restore_step {
 
         // And process it, dispatch to target methods in step will start automatically
         $xmlparser->process();
-    }
 
-// Protected API starts here
+        // Have finished, call to the after_execute method
+        $this->after_execute();
+    }
 
     /**
      * Receive one chunk of information form the xml parser processor and
@@ -105,6 +116,19 @@ abstract class restore_structure_step extends restore_step {
         } else {               // Else, put the original parsed data
             $element->set_data($data);
         }
+    }
+
+// Protected API starts here
+
+    /**
+     * This method will be executed after the whole structure step have been processed
+     *
+     * After execution method for code needed to be executed after the whole structure
+     * has been processed. Useful for cleaning tasks, files process and others. Simply
+     * overwrite in in your steps if needed
+     */
+    protected function after_execute() {
+        // do nothing by default
     }
 
     /**
@@ -165,6 +189,64 @@ abstract class restore_structure_step extends restore_step {
      */
     protected function execute_condition() {
         return true;
+    }
+
+    /**
+     * To send ids pairs to backup_ids_table and to store them into paths
+     *
+     * This method will send the given itemname and old/new ids to the
+     * backup_ids_temp table, and, at the same time, will save the new id
+     * into the corresponding restore_path_element for easier access
+     * by children. Also will inject the known old context id for the task
+     * in case it's going to be used for restoring files later
+     */
+    protected function set_mapping($itemname, $oldid, $newid, $restorefiles = false) {
+        $parentitemid = $restorefiles ? $this->task->get_old_contextid() : null;
+        // Let's call the low level one
+        restore_dbops::set_backup_ids_record($this->get_restoreid(), $itemname, $oldid, $newid, $parentitemid);
+        // Now, if the itemname matches any pathelement->name, store the latest $newid
+        if (array_key_exists($itemname, $this->elementsoldid)) { // If present in  $this->elementsoldid, is valid, put both ids
+            $this->elementsoldid[$itemname] = $oldid;
+            $this->elementsnewid[$itemname] = $newid;
+        }
+    }
+
+    /**
+     * Returns the latest (parent) old id mapped by one pathelement
+     */
+    protected function get_old_parentid($itemname) {
+        return array_key_exists($itemname, $this->elementsoldid) ? $this->elementsoldid[$itemname] : null;
+    }
+
+    /**
+     * Returns the latest (parent) new id mapped by one pathelement
+     */
+    protected function get_new_parentid($itemname) {
+        return array_key_exists($itemname, $this->elementsnewid) ? $this->elementsnewid[$itemname] : null;
+    }
+
+    /**
+     * Return the new id of a mapping for the given itemname
+     *
+     */
+    protected function get_mappingid($itemname, $oldid) {
+        $mapping = $this->get_mapping($itemname, $oldid);
+        return $mapping ? $mapping->newitemid : false;
+    }
+
+    /**
+     * Return the complete mapping from the given itemname, itemid
+     */
+    protected function get_mapping($itemname, $oldid) {
+        return restore_dbops::get_backup_ids_record($this->get_restoreid(), $itemname, $oldid);
+    }
+
+    /**
+     * Add all the existing file, given their component and filearea and one backup_ids itemname to match with
+     */
+    protected function add_related_files($componentname, $filearea, $mappingitemname) {
+        restore_dbops::send_files_to_pool($this->get_basepath(), $this->get_restoreid(), $componentname,
+                                          $filearea, $this->task->get_old_contextid(), $mappingitemname);
     }
 
     /**

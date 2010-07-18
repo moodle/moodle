@@ -114,23 +114,4 @@ class backup_file_manager {
             }
         }
     }
-
-    /**
-     * Copy one file from backup storage to moodle storage
-     */
-    public static function copy_file_backup2moodle($backupid, $filerecorid) {
-        global $DB;
-
-        // Normalise param
-        if (!is_object($filerecorid)) {
-            $filerecorid = $DB->get_record('files', array('id' => $filerecorid));
-        }
-
-        // Directory, nothing to do
-        if ($filerecorid->filename === '.') {
-            return;
-        }
-
-        // TODO: Finish this on restore
-    }
 }
