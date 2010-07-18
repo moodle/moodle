@@ -48,7 +48,7 @@ class backup_final_task extends backup_task {
         // including membership based on setting
         $this->add_step(new backup_groups_structure_step('groups', 'groups.xml'));
 
-        // Annotate all the user files (conditionally) (private profile and icon files)
+        // Annotate all the user files (conditionally) (private, profile and icon files)
         // Because each user has its own context, we need a separate/specialised step here
         // This step also ensures that the contexts for all the users exist, so next
         // step can be safely executed (join between users and contexts)
@@ -69,19 +69,19 @@ class backup_final_task extends backup_task {
         // the list of role definitions (no assignments nor permissions)
         $this->add_step(new backup_final_roles_structure_step('roleslist', 'roles.xml'));
 
-        // Generate the scales file with all the annotated scales
+        // Generate the gradebook file with categories and course grade items. Do it conditionally, using
+        // execute_condition() so only will be excuted if ALL module grade_items in course have been exported
+        $this->add_step(new backup_gradebook_structure_step('course_gradebook','gradebook.xml'));
+
+        // Generate the scales file with all the (final) annotated scales
         $this->add_step(new backup_final_scales_structure_step('scaleslist', 'scales.xml'));
 
-        // Generate the outcomes file with all the annotated outcomes
+        // Generate the outcomes file with all the (final) annotated outcomes
         $this->add_step(new backup_final_outcomes_structure_step('outcomeslist', 'outcomes.xml'));
 
         // Migrate the pending annotations to final (prev steps may have added some files)
         // This must be executed before backup files
         $this->add_step(new move_inforef_annotations_to_final('migrate_inforef'));
-
-        // Generate the gradebook file with categories and course grade items. Do it conditionally, using
-        // execute_condition() so only will be excuted if ALL module grade_items in course have been exported
-        $this->add_step(new backup_gradebook_structure_step('course_gradebook','gradebook.xml'));
 
         // Generate the files.xml file with all the (final) annotated files. At the same
         // time copy all the files from moodle storage to backup storage (uses custom

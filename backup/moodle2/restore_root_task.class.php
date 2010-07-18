@@ -48,6 +48,15 @@ class restore_root_task extends restore_task {
         // performed the same process so, it's not possible to have errors here
         $this->add_step(new restore_process_included_users('process_user_records'));
 
+        // Load all the needed files to temp_ids table
+        $this->add_step(new restore_load_included_files('load_file_records', 'files.xml'));
+
+        // Unconditionally, create all the needed users calculated in the previous step
+        $this->add_step(new restore_create_included_users('create_users'));
+
+        // Unconditionally, load create all the needed groups and groupings
+        $this->add_step(new restore_groups_structure_step('create_groups_and_groupings', 'groups.xml'));
+
         // At the end, mark it as built
         $this->built = true;
     }

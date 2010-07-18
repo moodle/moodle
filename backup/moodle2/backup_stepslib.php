@@ -708,9 +708,9 @@ class backup_gradebook_structure_step extends backup_structure_step {
 
         $letter->set_source_table('grade_letters', array('contextid' => backup::VAR_CONTEXTID));
 
-        // Annotations
+        // Annotations (both as final as far as they are going to be exported in next steps)
         $grade_item->annotate_ids('scalefinal', 'scaleid'); // Straight as scalefinal because it's > 0
-        $grade_item->annotate_ids('outcome', 'outcomeid');
+        $grade_item->annotate_ids('outcomefinal', 'outcomeid');
 
         // Return the root element
         return $gradebook;
@@ -1194,6 +1194,7 @@ class backup_main_structure_step extends backup_structure_step {
         $info['original_wwwroot']=$CFG->wwwroot;
         $info['original_site_identifier_hash'] = md5(get_site_identifier());
         $info['original_course_id'] = $this->get_courseid();
+        $info['original_course_contextid'] = get_context_instance(CONTEXT_COURSE, $this->get_courseid())->id;
 
         // Get more information from controller
         list($dinfo, $cinfo, $sinfo) = backup_controller_dbops::get_moodle_backup_information($this->get_backupid());
@@ -1205,7 +1206,7 @@ class backup_main_structure_step extends backup_structure_step {
         $information = new backup_nested_element('information', null, array(
             'name', 'moodle_version', 'moodle_release', 'backup_version',
             'backup_release', 'backup_date', 'original_wwwroot',
-            'original_site_identifier_hash', 'original_course_id'));
+            'original_site_identifier_hash', 'original_course_id', 'original_course_contextid'));
 
         $details = new backup_nested_element('details');
 
@@ -1397,7 +1398,7 @@ class backup_annotate_scales_from_outcomes extends backup_execution_step {
 }
 
 /**
- * This step will generate all the user annotations for the already
+ * This step will generate all the file  annotations for the already
  * annotated (final) users. Need to do this here because each user
  * has its own context and structure tasks only are able to handle
  * one context. Also, this step will guarantee that every user has
@@ -1409,7 +1410,11 @@ class backup_annotate_all_user_files extends backup_execution_step {
         global $DB;
 
         // List of fileareas we are going to annotate
-        $fileareas = array('private', 'profile', 'icon');
+        $fileareas = array('profile', 'icon');
+
+        if ($this->get_setting_value('user_files')) { // private files only if enabled in settings
+            $fileareas[] = 'private';
+        }
 
         // Fetch all annotated (final) users
         $rs = $DB->get_recordset('backup_ids_temp', array(
