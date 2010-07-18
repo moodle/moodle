@@ -270,7 +270,7 @@ class assignment_online extends assignment_base {
     }
 
     function portfolio_exportable() {
-        return true;
+        return false; // not until MDL-22001 is fixed :(
     }
 
     function portfolio_load_data($caller) {
