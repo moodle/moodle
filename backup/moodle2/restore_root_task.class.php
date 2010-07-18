@@ -57,6 +57,9 @@ class restore_root_task extends restore_task {
         // Unconditionally, load create all the needed groups and groupings
         $this->add_step(new restore_groups_structure_step('create_groups_and_groupings', 'groups.xml'));
 
+        // Unconditionally, load create all the needed scales
+        $this->add_step(new restore_scales_structure_step('create_scales', 'scales.xml'));
+
         // At the end, mark it as built
         $this->built = true;
     }

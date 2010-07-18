@@ -200,8 +200,13 @@ abstract class restore_structure_step extends restore_step {
      * by children. Also will inject the known old context id for the task
      * in case it's going to be used for restoring files later
      */
-    protected function set_mapping($itemname, $oldid, $newid, $restorefiles = false) {
-        $parentitemid = $restorefiles ? $this->task->get_old_contextid() : null;
+    protected function set_mapping($itemname, $oldid, $newid, $restorefiles = false, $filesctxid = null) {
+        // If we haven't specified one context for the files, use the task one
+        if ($filesctxid == null) {
+            $parentitemid = $restorefiles ? $this->task->get_old_contextid() : null;
+        } else { // Use the specified one
+            $parentitemid = $restorefiles ? $filesctxid : null;
+        }
         // Let's call the low level one
         restore_dbops::set_backup_ids_record($this->get_restoreid(), $itemname, $oldid, $newid, $parentitemid);
         // Now, if the itemname matches any pathelement->name, store the latest $newid
@@ -244,9 +249,10 @@ abstract class restore_structure_step extends restore_step {
     /**
      * Add all the existing file, given their component and filearea and one backup_ids itemname to match with
      */
-    protected function add_related_files($component, $filearea, $mappingitemname) {
+    protected function add_related_files($component, $filearea, $mappingitemname, $filesctxid = null) {
+        $filesctxid = is_null($filesctxid) ? $this->task->get_old_contextid() : $filesctxid;
         restore_dbops::send_files_to_pool($this->get_basepath(), $this->get_restoreid(), $component,
-                                          $filearea, $this->task->get_old_contextid(), $mappingitemname);
+                                          $filearea, $filesctxid, $mappingitemname);
     }
 
     /**

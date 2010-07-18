@@ -70,6 +70,10 @@ abstract class restore_task extends base_task {
     public function get_old_contextid() {
         return $this->plan->get_info()->original_course_contextid;
     }
+
+    public function get_old_system_contextid() {
+        return $this->plan->get_info()->original_system_contextid;
+    }
 }
 
 /*

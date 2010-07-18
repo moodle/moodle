@@ -43,6 +43,10 @@ class restore_create_and_clean_temp_stuff extends restore_execution_step {
         $itemid = $this->task->get_old_contextid();
         $newitemid = get_context_instance(CONTEXT_COURSE, $this->get_courseid())->id;
         restore_dbops::set_backup_ids_record($this->get_restoreid(), 'context', $itemid, $newitemid);
+        // Create the old-system-ctxid to new-system-ctxid mapping, we need that available since the beginning
+        $itemid = $this->task->get_old_system_contextid();
+        $newitemid = get_context_instance(CONTEXT_SYSTEM)->id;
+        restore_dbops::set_backup_ids_record($this->get_restoreid(), 'context', $itemid, $newitemid);
     }
 }
 
@@ -174,85 +178,148 @@ class restore_create_included_users extends restore_execution_step {
  */
 class restore_groups_structure_step extends restore_structure_step {
 
-     protected function define_structure() {
+    protected function define_structure() {
 
-         $paths = array(); // Add paths here
+        $paths = array(); // Add paths here
 
-         $paths[] = new restore_path_element('group', '/groups/group');
-         if ($this->get_setting_value('users')) {
-             $paths[] = new restore_path_element('member', '/groups/group/group_members/group_member');
-         }
-         $paths[] = new restore_path_element('grouping', '/groups/groupings/grouping');
-         $paths[] = new restore_path_element('grouping_group', '/groups/groupings/grouping/grouping_groups/grouping_group');
+        $paths[] = new restore_path_element('group', '/groups/group');
+        if ($this->get_setting_value('users')) {
+            $paths[] = new restore_path_element('member', '/groups/group/group_members/group_member');
+        }
+        $paths[] = new restore_path_element('grouping', '/groups/groupings/grouping');
+        $paths[] = new restore_path_element('grouping_group', '/groups/groupings/grouping/grouping_groups/grouping_group');
 
-         return $paths;
-     }
+        return $paths;
+    }
 
-     // Processing functions go here
-     public function process_group($data) {
-         global $DB;
+    // Processing functions go here
+    public function process_group($data) {
+        global $DB;
 
-         $data = (object)$data; // handy
-         $data->courseid = $this->get_courseid();
+        $data = (object)$data; // handy
+        $data->courseid = $this->get_courseid();
 
-         $oldid = $data->id;    // need this saved for later
+        $oldid = $data->id;    // need this saved for later
 
-         $restorefiles = false; // Only if we end creating the group
+        $restorefiles = false; // Only if we end creating the group
 
-         // Search if the group already exists (by name & description) in the target course
-         $description_clause = '';
-         $params = array('courseid' => $this->get_courseid(), 'grname' => $data->name);
-         if (!empty($data->description)) {
-             $description_clause = ' AND ' .
-                                   $DB->sql_compare_text('description') . ' = ' . $DB->sql_compare_text(':desc');
-             $params['desc'] = $data->description;
-         }
-         if (!$groupdb = $DB->get_record_sql("SELECT *
-                                                FROM {groups}
-                                               WHERE courseid = :courseid
-                                                 AND name = :grname $description_clause", $params)) {
-             // group doesn't exist, create
-             $newitemid = $DB->insert_record('groups', $data);
-             $restorefiles = true; // We'll restore the files
-         } else {
-             // group exists, use it
-             $newitemid = $groupdb->id;
-         }
-         // Save the id mapping
-         $this->set_mapping('group', $oldid, $newitemid, $restorefiles);
-     }
+        // Search if the group already exists (by name & description) in the target course
+        $description_clause = '';
+        $params = array('courseid' => $this->get_courseid(), 'grname' => $data->name);
+        if (!empty($data->description)) {
+            $description_clause = ' AND ' .
+                                  $DB->sql_compare_text('description') . ' = ' . $DB->sql_compare_text(':desc');
+           $params['desc'] = $data->description;
+        }
+        if (!$groupdb = $DB->get_record_sql("SELECT *
+                                               FROM {groups}
+                                              WHERE courseid = :courseid
+                                                AND name = :grname $description_clause", $params)) {
+            // group doesn't exist, create
+            $newitemid = $DB->insert_record('groups', $data);
+            $restorefiles = true; // We'll restore the files
+        } else {
+            // group exists, use it
+            $newitemid = $groupdb->id;
+        }
+        // Save the id mapping
+        $this->set_mapping('group', $oldid, $newitemid, $restorefiles);
+    }
 
-     public function process_member($data) {
-         global $DB;
+    public function process_member($data) {
+        global $DB;
 
-         $data = (object)$data; // handy
+        $data = (object)$data; // handy
 
-         // get parent group->id
-         $data->groupid = $this->get_new_parentid('group');
+        // get parent group->id
+        $data->groupid = $this->get_new_parentid('group');
 
-         // map user newitemid and insert if not member already
-         if ($data->userid = $this->get_mappingid('user', $data->userid)) {
-             if (!$DB->record_exists('groups_members', array('groupid' => $data->groupid, 'userid' => $data->userid))) {
-                 $DB->insert_record('groups_members', $data);
-             }
-         }
-     }
+        // map user newitemid and insert if not member already
+        if ($data->userid = $this->get_mappingid('user', $data->userid)) {
+            if (!$DB->record_exists('groups_members', array('groupid' => $data->groupid, 'userid' => $data->userid))) {
+                $DB->insert_record('groups_members', $data);
+            }
+        }
+    }
 
-     public function process_grouping($data) {
-         debugging('TODO: Grouping restore not implemented. Detected grouping', DEBUG_DEVELOPER);
-     }
+    public function process_grouping($data) {
+        debugging('TODO: Grouping restore not implemented. Detected grouping', DEBUG_DEVELOPER);
+    }
 
-     public function process_grouping_group($data) {
-         debugging('TODO: Grouping restore not implemented. Detected grouping group', DEBUG_DEVELOPER);
-     }
+    public function process_grouping_group($data) {
+        debugging('TODO: Grouping restore not implemented. Detected grouping group', DEBUG_DEVELOPER);
+    }
 
-     protected function after_execute() {
-         // Add group related files, matching with "group" mappings
-         $this->add_related_files('group', 'icon', 'group');
-         $this->add_related_files('group', 'description', 'group');
-     }
+    protected function after_execute() {
+        // Add group related files, matching with "group" mappings
+        $this->add_related_files('group', 'icon', 'group');
+        $this->add_related_files('group', 'description', 'group');
+    }
 
 }
+
+/**
+ * Structure step that will create all the needed scales
+ * by loading them from the scales.xml
+ * Note group members only will be added if restoring user info
+ */
+class restore_scales_structure_step extends restore_structure_step {
+
+    protected function define_structure() {
+
+        $paths = array(); // Add paths here
+        $paths[] = new restore_path_element('scale', '/scales_definition/scale');
+        return $paths;
+    }
+
+    protected function process_scale($data) {
+        global $DB;
+
+        $data = (object)$data;
+
+        $restorefiles = false; // Only if we end creating the group
+
+        $oldid = $data->id;    // need this saved for later
+
+        // Look for scale (by 'scale' both in standard (course=0) and current course
+        // with priority to standard scales (ORDER clause)
+        // scale is not course unique, use get_record_sql to suppress warning
+        // Going to compare LOB columns so, use the cross-db sql_compare_text() in both sides
+        $compare_scale_clause = $DB->sql_compare_text('scale')  . ' = ' . $DB->sql_compare_text(':scaledesc');
+        $params = array('courseid' => $this->get_courseid(), 'scaledesc' => $data->scale);
+        if (!$scadb = $DB->get_record_sql("SELECT *
+                                            FROM {scale}
+                                           WHERE courseid IN (0, :courseid)
+                                             AND $compare_scale_clause
+                                        ORDER BY courseid", $params, IGNORE_MULTIPLE)) {
+            // Remap the user if possible, defaut to user performing the restore if not
+            $userid = $this->get_mappingid('user', $data->userid);
+            $data->userid = $userid ? $userid : $this->get_userid();
+            // Remap the course if course scale
+            $data->courseid = $data->courseid ? $this->get_courseid() : 0;
+            // If global scale (course=0), check the user has perms to create it
+            // falling to course scale if not
+            $systemctx = get_context_instance(CONTEXT_SYSTEM);
+            if ($data->courseid == 0 && !has_capability('moodle/course:managescales', $systemctx , $data->userid)) {
+                $data->courseid = $this->get_courseid();
+            }
+            // scale doesn't exist, create
+            $newitemid = $DB->insert_record('scale', $data);
+            $restorefiles = true; // We'll restore the files
+        } else {
+            // scale exists, use it
+            $newitemid = $scadb->id;
+        }
+        // Save the id mapping (with files support at system context)
+        $this->set_mapping('scale', $oldid, $newitemid, $restorefiles, $this->task->get_old_system_contextid());
+    }
+
+    protected function after_execute() {
+        // Add scales related files, matching with "scale" mappings
+        $this->add_related_files('grade', 'scale', 'scale', $this->task->get_old_system_contextid());
+    }
+}
+
 
 /*
  * Structure step that will read the course.xml file, loading it and performing
