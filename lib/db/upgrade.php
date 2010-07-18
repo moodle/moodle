@@ -4834,6 +4834,35 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         upgrade_main_savepoint(true, 2010071701);
     }
 
+    if ($oldversion < 2010071800) {
+
+        // Define table backup_files_template to be created
+        $table = new xmldb_table('backup_files_template');
+
+        // Adding fields to table backup_files_template
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('backupid', XMLDB_TYPE_CHAR, '32', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('contextid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+        $table->add_field('component', XMLDB_TYPE_CHAR, '100', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('filearea', XMLDB_TYPE_CHAR, '50', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('itemid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+        $table->add_field('info', XMLDB_TYPE_TEXT, 'medium', null, null, null, null);
+
+        // Adding keys to table backup_files_template
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+
+        // Adding indexes to table backup_files_template
+        $table->add_index('backupid_contextid_component_filearea_itemid_ix', XMLDB_INDEX_NOTUNIQUE, array('backupid', 'contextid', 'component', 'filearea', 'itemid'));
+
+        // Conditionally launch create table for backup_files_template
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Main savepoint reached
+        upgrade_main_savepoint(true, 2010071800);
+    }
+
     return true;
 }
 

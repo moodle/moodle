@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/db" VERSION="20100716" COMMENT="XMLDB file for core Moodle tables"
+<XMLDB PATH="lib/db" VERSION="20100718" COMMENT="XMLDB file for core Moodle tables"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
 >
@@ -2639,7 +2639,7 @@
         <INDEX NAME="typeitem_ix" UNIQUE="false" FIELDS="type, itemid"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="backup_ids_template" COMMENT="To store all sort of ids along the backup process. Note this table isn't really used but its temporary counterpart." PREVIOUS="backup_controllers" NEXT="backup_logs">
+    <TABLE NAME="backup_ids_template" COMMENT="To store all sort of ids along the backup process. Note this table isn't really used but its temporary counterpart." PREVIOUS="backup_controllers" NEXT="backup_files_template">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="backupid"/>
         <FIELD NAME="backupid" TYPE="char" LENGTH="32" NOTNULL="true" SEQUENCE="false" COMMENT="unique id of the backup" PREVIOUS="id" NEXT="itemname"/>
@@ -2657,7 +2657,24 @@
         <INDEX NAME="backupid_parentitemid_ix" UNIQUE="false" FIELDS="backupid, itemname, parentitemid"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="backup_logs" COMMENT="To store all the logs from backup and restore operations (by db logger)" PREVIOUS="backup_ids_template" NEXT="course_published">
+    <TABLE NAME="backup_files_template" COMMENT="To store files along the backup process. Note this table isn't really used but its temporary counterpart." PREVIOUS="backup_ids_template" NEXT="backup_logs">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="backupid"/>
+        <FIELD NAME="backupid" TYPE="char" LENGTH="32" NOTNULL="true" SEQUENCE="false" COMMENT="unique backup id this record corresponds to" PREVIOUS="id" NEXT="contextid"/>
+        <FIELD NAME="contextid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="source contextid of the file" PREVIOUS="backupid" NEXT="component"/>
+        <FIELD NAME="component" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false" PREVIOUS="contextid" NEXT="filearea"/>
+        <FIELD NAME="filearea" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false" PREVIOUS="component" NEXT="itemid"/>
+        <FIELD NAME="itemid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="filearea" NEXT="info"/>
+        <FIELD NAME="info" TYPE="text" LENGTH="medium" NOTNULL="false" SEQUENCE="false" COMMENT="to store the complete file record (serialized)" PREVIOUS="itemid"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="backupid_contextid_component_filearea_itemid_ix" UNIQUE="false" FIELDS="backupid, contextid, component, filearea, itemid"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="backup_logs" COMMENT="To store all the logs from backup and restore operations (by db logger)" PREVIOUS="backup_files_template" NEXT="course_published">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="backupid"/>
         <FIELD NAME="backupid" TYPE="char" LENGTH="32" NOTNULL="true" SEQUENCE="false" COMMENT="backupid the log record belongs to" PREVIOUS="id" NEXT="loglevel"/>
