@@ -34,22 +34,21 @@ function xmldb_block_html_upgrade($oldversion) {
 
     $dbman = $DB->get_manager();
 
-    if ($oldversion < 2010071501 && false) { // TODO: MDL-23196 !!!
+    if ($oldversion < 2010071501) {
         $params = array();
         $sql = "SELECT * FROM {block_instances} b WHERE b.blockname = :blockname";
         $params['blockname'] = 'html';
         $rs = $DB->get_recordset_sql($sql, $params);
         foreach ($rs as $record) {
             $config = unserialize(base64_decode($record->configdata));
-            $config = new stdclass;
             if (!empty($config) && is_object($config)) {
                 if (!empty($config->text) && is_array($config->text)) {
                     $data = clone($config);
                     $config->text = $data->text['text'];
                     $config->format = $data->text['format'];
+                    $record->configdata = base64_encode(serialize($config));
+                    $DB->update_record('block_instances', $record);
                 }
-                $record->configdata = base64_encode(serialize($config));
-                $DB->update_record('block_instances', $record);
             }
         }
         $rs->close();
