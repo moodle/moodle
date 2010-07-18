@@ -39,7 +39,6 @@ require_capability('enrol/manual:enrol', $context);
 require_capability('enrol/manual:manage', $context);
 require_capability('enrol/manual:unenrol', $context);
 
-$instance = $DB->get_record('enrol', array('id'=>$enrolid, 'enrol'=>'manual'), '*', MUST_EXIST);
 if ($roleid < 0) {
     $roleid = $instance->roleid;
 }
