@@ -502,6 +502,9 @@ class backup_final_scales_structure_step extends backup_structure_step {
                                  WHERE bi.backupid = ?
                                    AND bi.itemname = 'scalefinal'", array(backup::VAR_BACKUPID));
 
+        // Annotate scale files (they store files in system context, so pass it instead of default one)
+        $scale->annotate_files('grade', 'scale', 'id', get_context_instance(CONTEXT_SYSTEM)->id);
+
         // Return main element (scalesdef)
         return $scalesdef;
     }
@@ -1195,6 +1198,7 @@ class backup_main_structure_step extends backup_structure_step {
         $info['original_site_identifier_hash'] = md5(get_site_identifier());
         $info['original_course_id'] = $this->get_courseid();
         $info['original_course_contextid'] = get_context_instance(CONTEXT_COURSE, $this->get_courseid())->id;
+        $info['original_system_contextid'] = get_context_instance(CONTEXT_SYSTEM)->id;
 
         // Get more information from controller
         list($dinfo, $cinfo, $sinfo) = backup_controller_dbops::get_moodle_backup_information($this->get_backupid());
@@ -1206,7 +1210,7 @@ class backup_main_structure_step extends backup_structure_step {
         $information = new backup_nested_element('information', null, array(
             'name', 'moodle_version', 'moodle_release', 'backup_version',
             'backup_release', 'backup_date', 'original_wwwroot',
-            'original_site_identifier_hash', 'original_course_id', 'original_course_contextid'));
+            'original_site_identifier_hash', 'original_course_id', 'original_course_contextid', 'original_system_contextid'));
 
         $details = new backup_nested_element('details');
 

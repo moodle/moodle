@@ -146,8 +146,7 @@ class backup_nested_element extends base_nested_element implements processable {
         }
     }
 
-    public function annotate_files($component, $filearea, $elementname) {
-        // note: it is possible to annotate areas ONLY in current context, ie modules may backup only from module context
+    public function annotate_files($component, $filearea, $elementname, $filesctxid = null) {
         if (!array_key_exists($component, $this->fileannotations)) {
             $this->fileannotations[$component] = array();
         }
@@ -160,7 +159,10 @@ class backup_nested_element extends base_nested_element implements processable {
             throw new base_element_struct_exception('annotate_files_duplicate_annotation', "$component/$filearea/$elementname");
         }
 
-        $this->fileannotations[$component][$filearea] = $elementname;
+        $info = new stdclass();
+        $info->element   = $elementname;
+        $info->contextid = $filesctxid;
+        $this->fileannotations[$component][$filearea] = $info;
     }
 
     public function annotate_ids($itemname, $elementname) {
