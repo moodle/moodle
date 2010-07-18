@@ -93,7 +93,7 @@ $THEME->layouts = array(
         'file' => 'general.php',
         'regions' => array(),
     ),
-    'general' => array(
+    'standard' => array(
         'file' => 'general.php',
         'regions' => array('side-post'),
         'defaultregion' => 'side-post',
