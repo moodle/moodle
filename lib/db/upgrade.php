@@ -3040,19 +3040,18 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         }
 
         // add roles without archetypes, it may contain weird things, but we can not fix them
+        list($narsql, $params) = $DB->get_in_or_equal(array_keys($defaults), SQL_PARAMS_NAMED, 'ar000', false);
         $sql = "SELECT DISTINCT ra.roleid, con.contextlevel
                   FROM {role_assignments} ra
-                  JOIN {context} con ON ra.contextid = con.id";
-        $existingrolecontextlevels = $DB->get_recordset_sql($sql);
+                  JOIN {context} con ON ra.contextid = con.id
+                  JOIN {role} r ON r.id = ra.roleid
+                 WHERE r.archetype $narsql";
+        $existingrolecontextlevels = $DB->get_recordset_sql($sql, $params);
         foreach ($existingrolecontextlevels as $rcl) {
-            if (isset($roleids[$rcl->roleid])) {
-                continue;
-            }
             if (!isset($rolecontextlevels[$rcl->roleid])) {
-                $rolecontextlevels[$rcl->roleid] = array($rcl->contextlevel);
-            } else if (!in_array($rcl->contextlevel, $rolecontextlevels[$rcl->roleid])) {
-                $rolecontextlevels[$rcl->roleid][] = $rcl->contextlevel;
+                $rolecontextlevels[$rcl->roleid] = array();
             }
+            $rolecontextlevels[$rcl->roleid][] = $rcl->contextlevel;
         }
         $existingrolecontextlevels->close();
 
