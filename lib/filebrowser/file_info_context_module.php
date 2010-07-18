@@ -111,10 +111,6 @@ class file_info_context_module extends file_info {
             return null;
         }
 
-        if (!isset($itemid)) {
-            return $this;
-        }
-
         $fs = get_file_storage();
 
         $filepath = is_null($filepath) ? '/' : $filepath;
@@ -137,10 +133,6 @@ class file_info_context_module extends file_info {
 
         if (!has_capability('moodle/backup:backupactivity', $this->context)) {
             return null;
-        }
-
-        if (empty($itemid)) {
-            return $this;
         }
 
         $fs = get_file_storage();
@@ -206,6 +198,7 @@ class file_info_context_module extends file_info {
                 $children[] = $child;
             }
         }
+
         return $children;
     }
 
