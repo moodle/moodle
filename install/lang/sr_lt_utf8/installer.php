@@ -39,7 +39,7 @@ $string['continue'] = 'Nastavak';
 $string['ctyperecommended'] = 'Instaliranje opcione PHP ekstenzije ctype se strogo preporučuje da bi se unapredilo funkcionisanje sajta, pogotovo ako Vaš sajt podržava ne-latinične jezike.';
 $string['ctyperequired'] = 'PHP ekstenzije ctype je sada obavezna za Moodle, da bi se unapredilo funkcionisanje sajta i da bi se nudila višejezična kompatibilnost.';
 $string['curlrecommended'] = 'Instaliranje opcione Curl biblioteke je vrlo preporučljivo, jer je ona neophodna za uspešno korišćenje funkcija za umrežavanje.';
-$string['curlrequired'] = 'PHP ekstenziju cURL sada je obavezna za Moodle da bi se komuniciralo sa Moodle repozitorijumima';
+$string['curlrequired'] = 'PHP ekstenziju cURL sada je obavezna za Moodle da bi se komuniciralo sa Moodle repozitorijumima'; // ORPHANED
 $string['customcheck'] = 'Druge provere';
 $string['database'] = 'Baza podataka';
 $string['databasecreationsettingshead'] = 'Sada je potrebno konfigurisati podešavanja baze podataka u kojoj će se čuvati najveći deo Moodle podataka. Ta baza podataka će biti kreirana automatski prilikom instalacije, sa podešavanjima specificiranim ispod.';
@@ -272,6 +272,6 @@ $string['wrongsourcebase'] = 'Pogrešan izvorni URL baze.';
 $string['wrongzipfilename'] = 'Pogrešan naziv arhive.';
 $string['wwwroot'] = 'Web adresa';
 $string['wwwrooterror'] = 'Navedena \'Web adresa\' se čini nevalidnom - ova Moodle instalacija izgleda nije na njoj. Vrednost navedena ispod je resetovana.';
-$string['xmlrpcrecommended'] = 'Instaliranje opcionog xmlrpc proširenja je korisno za funkcionalnost Moodle umrežavanje.';
+$string['xmlrpcrecommended'] = 'Instaliranje opcionog xmlrpc proširenja je korisno za funkcionalnost Moodle umrežavanje.'; // ORPHANED
 $string['ziprequired'] = 'PHP ekstenzija Zip sada je obavezna za Moodle, binarne info-ZIP datoteke i biblioteka PclZip više se ne koriste.';
 ?>
