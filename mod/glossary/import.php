@@ -92,6 +92,7 @@ if ($xml = glossary_read_imported_file($result)) {
             $glossary->course = $course->id;
             $glossary->globalglossary = ($xmlglossary['GLOBALGLOSSARY'][0]['#']);
             $glossary->intro = ($xmlglossary['INTRO'][0]['#']);
+            $glossary->introformat = isset($xmlglossary['INTROFORMAT'][0]['#']) ? $xmlglossary['INTROFORMAT'][0]['#'] : FORMAT_MOODLE;
             $glossary->showspecial = ($xmlglossary['SHOWSPECIAL'][0]['#']);
             $glossary->showalphabet = ($xmlglossary['SHOWALPHABET'][0]['#']);
             $glossary->showall = ($xmlglossary['SHOWALL'][0]['#']);
@@ -213,14 +214,14 @@ if ($xml = glossary_read_imported_file($result)) {
             }
         } else {
             $permissiongranted = 0;
-}
+        }
         if ($permissiongranted) {
             $newentry->glossaryid       = $glossary->id;
             $newentry->sourceglossaryid = 0;
             $newentry->approved         = 1;
             $newentry->userid           = $USER->id;
             $newentry->teacherentry     = 1;
-            $newentry->format           = $xmlentry['#']['FORMAT'][0]['#'];
+            $newentry->definitionformat = $xmlentry['#']['FORMAT'][0]['#'];
             $newentry->timecreated      = time();
             $newentry->timemodified     = time();
 
