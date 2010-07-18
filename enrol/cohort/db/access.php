@@ -23,15 +23,5 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$capabilities = array(
-    // configure the cohort plugin settings in each course
-    'enrol/cohort:config' => array(
-        'captype' => 'write',
-        'contextlevel' => CONTEXT_COURSE,
-        'legacy' => array(
-            'manager' => CAP_ALLOW,
-        )
-    ),
-);
 
 
