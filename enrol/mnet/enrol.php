@@ -257,7 +257,7 @@ class enrol_mnet_mnetservice_enrol {
 
         if ($DB->record_exists('user_enrolments', array('enrolid'=>$instance->id, 'userid'=>$user->id))) {
             try {
-                $enrol->enrol_user($instance, $user->id, $instance->roleid, time());
+                $enrol->unenrol_user($instance, $user->id);
 
             } catch (Exception $e) {
                 throw new mnet_server_exception(5020, 'couldnotunenrol', 'enrol_mnet', $e->getMessage());
@@ -275,7 +275,7 @@ class enrol_mnet_mnetservice_enrol {
 
                 if ($DB->record_exists('user_enrolments', array('enrolid'=>$instance->id, 'userid'=>$user->id))) {
                     try {
-                        $enrol->enrol_user($instance, $user->id, $instance->roleid, time());
+                        $enrol->unenrol_user($instance, $user->id);
 
                     } catch (Exception $e) {
                         throw new mnet_server_exception(5020, 'couldnotunenrol', 'enrol_mnet', $e->getMessage());
