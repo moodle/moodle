@@ -1120,6 +1120,9 @@ class block_manager {
         if (is_readable($formfile)) {
             require_once($formfile);
             $classname = 'block_' . $block->name() . '_edit_form';
+            if (!class_exists($classname)) {
+                $classname = 'block_edit_form';
+            }
         } else {
             $classname = 'block_edit_form';
         }
