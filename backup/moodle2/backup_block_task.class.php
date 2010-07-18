@@ -45,7 +45,7 @@ abstract class backup_block_task extends backup_task {
 
         // Check blockid exists
         if (!$block = $DB->get_record('block_instances', array('id' => $blockid))) {
-            throw backup_task_exception('block_task_block_instance_not_found', $blockid);
+            throw new backup_task_exception('block_task_block_instance_not_found', $blockid);
         }
 
         $this->blockid    = $blockid;

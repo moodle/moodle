@@ -280,7 +280,7 @@ class workshop_numerrors_strategy implements workshop_strategy {
         global $DB;
 
         if (!isset($data->nodims)) {
-            throw coding_expection('You did not send me the number of assessment dimensions to process');
+            throw new coding_expection('You did not send me the number of assessment dimensions to process');
         }
         for ($i = 0; $i < $data->nodims; $i++) {
             $grade = new stdclass();

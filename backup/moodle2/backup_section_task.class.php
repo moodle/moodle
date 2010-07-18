@@ -40,7 +40,7 @@ class backup_section_task extends backup_task {
 
         // Check section exists
         if (!$section = $DB->get_record('course_sections', array('id' => $sectionid))) {
-            throw backup_task_exception('section_task_section_not_found', $sectionid);
+            throw new backup_task_exception('section_task_section_not_found', $sectionid);
         }
 
         $this->sectionid  = $sectionid;

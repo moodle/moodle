@@ -52,7 +52,7 @@ if (!isset($roles[$roleid])) {
 }
 
 if (!$enrol_manual = enrol_get_plugin('manual')) {
-    throw coding_error('Can not instantiate enrol_manual');
+    throw new coding_exception('Can not instantiate enrol_manual');
 }
 
 $instancename = $enrol_manual->get_instance_name($instance);

@@ -43,11 +43,11 @@ abstract class backup_activity_task extends backup_task {
 
         // Check moduleid exists
         if (!$coursemodule = get_coursemodule_from_id(false, $moduleid)) {
-            throw backup_task_exception('activity_task_coursemodule_not_found', $moduleid);
+            throw new backup_task_exception('activity_task_coursemodule_not_found', $moduleid);
         }
         // Check activity supports this moodle2 backup format
         if (!plugin_supports('mod', $coursemodule->modname, FEATURE_BACKUP_MOODLE2)) {
-            throw backup_task_exception('activity_task_activity_lacks_moodle2_backup_support', $coursemodule->modname);
+            throw new backup_task_exception('activity_task_activity_lacks_moodle2_backup_support', $coursemodule->modname);
         }
 
         $this->moduleid   = $moduleid;

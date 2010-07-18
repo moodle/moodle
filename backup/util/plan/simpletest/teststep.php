@@ -200,7 +200,7 @@ class backup_step_test extends UnitTestCase {
         @remove_dir(dirname($file));
         // Recreate test dir
         if (!check_dir_exists(dirname($file), true, true)) {
-            throw moodle_exception('error_creating_temp_dir', 'error', dirname($file));
+            throw new moodle_exception('error_creating_temp_dir', 'error', dirname($file));
         }
 
         // We need one (non interactive) controller for instatiating plan
