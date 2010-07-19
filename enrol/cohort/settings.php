@@ -36,9 +36,8 @@ if ($ADMIN->fulltree) {
         $options = get_default_enrol_roles(get_context_instance(CONTEXT_SYSTEM));
         $student = get_archetype_roles('student');
         $student = reset($student);
-        $settings->add(new admin_setting_configselect_with_advanced('enrol_cohort/roleid',
-            get_string('defaultrole', 'role'), '',
-            array('value'=>$student->id, 'adv'=>true), $options));
+        $settings->add(new admin_setting_configselect('enrol_cohort/roleid',
+            get_string('defaultrole', 'role'), '', $student->id, $options));
     }
 }
 
