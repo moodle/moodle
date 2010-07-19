@@ -34,7 +34,7 @@ function xmldb_block_html_upgrade($oldversion) {
 
     $dbman = $DB->get_manager();
 
-    if ($oldversion < 2010071501) {
+    if ($oldversion < 2010071900) {
         $params = array();
         $sql = "SELECT * FROM {block_instances} b WHERE b.blockname = :blockname";
         $params['blockname'] = 'html';
@@ -54,7 +54,7 @@ function xmldb_block_html_upgrade($oldversion) {
         $rs->close();
 
         /// html block savepoint reached
-        upgrade_block_savepoint(true, 2010071501, 'html');
+        upgrade_block_savepoint(true, 2010071900, 'html');
     }
 
     return true;
