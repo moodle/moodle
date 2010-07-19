@@ -1532,8 +1532,8 @@ class global_navigation extends navigation_node {
 
         // TODO: Private file capability check
         if ($iscurrentuser) {
-            $url = new moodle_url('/blocks/private_files/edit.php');
-            $usernode->add(get_string('privatefiles', 'block_private_files'), $url, self::TYPE_SETTING);
+            $url = new moodle_url('/user/files.php');
+            $usernode->add(get_string('myfiles'), $url, self::TYPE_SETTING);
         }
 
         // Add a node to view the users notes if permitted

@@ -27,11 +27,12 @@
 class block_private_files extends block_base {
 
     function init() {
-        $this->title = get_string('areauserpersonal', 'repository');
+        $this->title = get_string('myfiles');
     }
 
     function specialization() {
     }
+
     function applicable_formats() {
         return array('all' => true);
     }
@@ -59,7 +60,7 @@ class block_private_files extends block_base {
 
             $renderer = $this->page->get_renderer('block_private_files');
             $this->content->text = $renderer->private_files_tree();
-            $this->content->text .= $OUTPUT->single_button(new moodle_url('/blocks/private_files/edit.php'), get_string('managemyfiles', 'block_private_files'), 'get');
+            $this->content->text .= $OUTPUT->single_button(new moodle_url('/user/filesedit.php'), get_string('myfilesmanage'), 'get');
             $this->content->footer = '';
 
         }
