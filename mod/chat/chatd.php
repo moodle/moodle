@@ -283,7 +283,7 @@ EOD;
 
             $link = '/user/view.php?id='.$userinfo['user']->id.'&course='.$userinfo['courseid'];
             $anchortagcontents = $OUTPUT->user_picture($userinfo['user'], array('courseid'=>$userinfo['courseid']));
-            
+
             $action = new popup_action('click', $link, 'user'.$userinfo['chatuser']->id);
             $anchortag = $OUTPUT->action_link($link, $anchortagcontents, $action);
 
@@ -335,7 +335,7 @@ EOD;
         switch($type) {
             case CHAT_SIDEKICK_BEEP:
                 // Incoming beep
-                $msg = &New stdClass;
+                $msg = New stdClass;
                 $msg->chatid    = $this->sets_info[$sessionid]['chatid'];
                 $msg->userid    = $this->sets_info[$sessionid]['userid'];
                 $msg->groupid   = $this->sets_info[$sessionid]['groupid'];
@@ -421,7 +421,7 @@ EOD;
                     $this->sets_info[$sessionid]['lastmessageindex'] = $messageindex;
                 }
 
-                $msg = &New stdClass;
+                $msg = New stdClass;
                 $msg->chatid    = $this->sets_info[$sessionid]['chatid'];
                 $msg->userid    = $this->sets_info[$sessionid]['userid'];
                 $msg->groupid   = $this->sets_info[$sessionid]['groupid'];
@@ -680,7 +680,7 @@ EOD;
             return false;
         }
 
-        $newconn = &New ChatConnection($handle);
+        $newconn = New ChatConnection($handle);
         $id = $this->new_ufo_id();
         $this->conn_ufo[$id] = $newconn;
 
@@ -753,7 +753,7 @@ EOD;
         $info = $this->sets_info[$sessionid];
 
         $DB->delete_records('chat_users', array('sid'=>$sessionid));
-        $msg = &New stdClass;
+        $msg = New stdClass;
         $msg->chatid = $info['chatid'];
         $msg->userid = $info['userid'];
         $msg->groupid = $info['groupid'];
