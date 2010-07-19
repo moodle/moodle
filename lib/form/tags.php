@@ -209,7 +209,7 @@ class MoodleQuickForm_tags extends MoodleQuickForm_group {
 
     function toHtml() {
         require_once('HTML/QuickForm/Renderer/Default.php');
-        $renderer =& new HTML_QuickForm_Renderer_Default();
+        $renderer = new HTML_QuickForm_Renderer_Default();
         $renderer->setElementTemplate('{element}');
         parent::accept($renderer);
         return $renderer->toHtml();
