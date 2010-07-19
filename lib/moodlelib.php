@@ -6869,6 +6869,7 @@ function get_core_subsystems() {
             'table'       => NULL,
             'tag'         => 'tag',
             'timezones'   => NULL,
+            'user'        => 'user',
             'userkey'     => NULL,
             'webservice'  => 'webservice',
             'xmldb'       => NULL,
