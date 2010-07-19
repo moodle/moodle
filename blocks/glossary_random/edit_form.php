@@ -58,7 +58,6 @@ class block_glossary_random_edit_form extends block_edit_form {
             2 => get_string('nextone','block_glossary_random')
         );
         $mform->addElement('select', 'config_type', get_string('type', 'block_glossary_random'), $types);
-        $mform->setHelpButton('newentry', get_string('type', 'block_glossary_random'), 'glossary');
 
         $mform->addElement('selectyesno', 'config_showconcept', get_string('showconcept', 'block_glossary_random'));
         $mform->setDefault('config_showconcept', 1);
