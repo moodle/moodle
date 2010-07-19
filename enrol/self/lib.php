@@ -165,6 +165,7 @@ class enrol_self_plugin extends enrol_plugin {
         $options = array(ENROL_INSTANCE_ENABLED  => get_string('yes'),
                          ENROL_INSTANCE_DISABLED => get_string('no'));
         $mform->addElement('select', 'enrol_self_status_'.$i, get_string('status', 'enrol_self'), $options);
+        $mform->addHelpButton('enrol_self_status_'.$i, 'status', 'enrol_self');
         $mform->setDefault('enrol_self_status_'.$i, $this->get_config('status'));
         $mform->setAdvanced('enrol_self_status_'.$i, $this->get_config('status_adv'));
         if (!$config) {
@@ -173,6 +174,7 @@ class enrol_self_plugin extends enrol_plugin {
 
 
         $mform->addElement('passwordunmask', 'enrol_self_password_'.$i, get_string('password', 'enrol_self'));
+        $mform->addHelpButton('enrol_self_password_'.$i, 'password', 'enrol_self');
         if (!$config) {
             $mform->hardFreeze('enrol_self_password_'.$i);
         } else {
@@ -183,6 +185,7 @@ class enrol_self_plugin extends enrol_plugin {
         $options = array(1 => get_string('yes'),
                          0 => get_string('no'));
         $mform->addElement('select', 'enrol_self_customint1_'.$i, get_string('groupkey', 'enrol_self'), $options);
+        $mform->addHelpButton('enrol_self_customint1_'.$i, 'groupkey', 'enrol_self');
         $mform->setDefault('enrol_self_customint1_'.$i, $this->get_config('groupkey'));
         $mform->setAdvanced('enrol_self_customint1_'.$i, $this->get_config('groupkey_adv'));
         if (!$config) {

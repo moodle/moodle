@@ -148,6 +148,7 @@ class enrol_guest_plugin extends enrol_plugin {
         $options = array(ENROL_INSTANCE_ENABLED  => get_string('yes'),
                          ENROL_INSTANCE_DISABLED => get_string('no'));
         $mform->addElement('select', 'enrol_guest_status_'.$i, get_string('status', 'enrol_guest'), $options);
+        $mform->addHelpButton('enrol_guest_status_'.$i, 'status', 'enrol_guest');
         $mform->setDefault('enrol_guest_status_'.$i, $this->get_config('status'));
         $mform->setAdvanced('enrol_guest_status_'.$i, $this->get_config('status_adv'));
         if (!$config) {
@@ -155,6 +156,7 @@ class enrol_guest_plugin extends enrol_plugin {
         }
 
         $mform->addElement('passwordunmask', 'enrol_guest_password_'.$i, get_string('password', 'enrol_guest'));
+        $mform->addHelpButton('enrol_guest_password_'.$i, 'password', 'enrol_guest');
         if (!$config) {
             $mform->hardFreeze('enrol_guest_password_'.$i);
         } else {

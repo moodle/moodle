@@ -118,6 +118,7 @@ class enrol_manual_plugin extends enrol_plugin {
         $options = array(ENROL_INSTANCE_ENABLED  => get_string('yes'),
                          ENROL_INSTANCE_DISABLED => get_string('no'));
         $mform->addElement('select', 'enrol_manual_status_'.$i, get_string('status', 'enrol_manual'), $options);
+        $mform->addHelpButton('enrol_manual_status_'.$i, 'status', 'enrol_manual');
         $mform->setDefault('enrol_manual_status_'.$i, $this->get_config('status'));
         $mform->setAdvanced('enrol_manual_status_'.$i, $this->get_config('status_adv'));
         if (!$config) {
