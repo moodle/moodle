@@ -213,7 +213,7 @@
         $controlstable->data[0]->cells[] = $OUTPUT->render($select);
     }
 
-    $controlstable->data[0]->cells[] = groups_print_course_menu($course, $baseurl->out());
+    $controlstable->data[0]->cells[] = groups_print_course_menu($course, $baseurl->out(), true);
 
     if (!isset($hiddenfields['lastaccess'])) {
         // get minimum lastaccess for this course and display a dropbox to filter by lastaccess going back this far.
@@ -290,11 +290,10 @@
                 $groupinfotable->attributes['class'] = 'groupinfobox';
                 $picturecell = new html_table_cell();
                 $picturecell->attributes['class'] = 'left side picture';
-                $picturecell->text = print_group_picture($group, $course->id, true, false, false);
+                $picturecell->text = print_group_picture($group, $course->id, true, true, false);
 
                 $contentcell = new html_table_cell();
                 $contentcell->attributes['class'] = 'content';
-                $contentcell->text = print_group_picture($group, $course->id, true, false, false);
 
                 $contentheading = $group->name;
                 if (has_capability('moodle/course:managegroups', $context)) {
