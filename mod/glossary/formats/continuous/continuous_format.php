@@ -11,7 +11,7 @@ function glossary_show_entry_continuous($course, $cm, $glossary, $entry, $mode='
     glossary_print_entry_attachment($entry, $cm, 'html', 'right');
     echo '<div class="concept">';
     glossary_print_entry_concept($entry);
-    echo ':</div> ';
+    echo '</div> ';
     glossary_print_entry_definition($entry, $glossary, $cm);
     $entry->alias = '';
     echo '</td></tr>';
