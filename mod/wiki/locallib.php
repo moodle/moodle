@@ -548,9 +548,7 @@ function wiki_increment_pageviews($page) {
  * Text format supported by wiki module
  */
 function wiki_get_formats() {
-    // TODO: disable creole and nwiki format until moodle core text format lib added
-    return array('html');
-    //return array('html', 'creole', 'nwiki');
+    return array('html', 'creole', 'nwiki');
 }
 
 /**

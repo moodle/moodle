@@ -888,7 +888,7 @@ class page_wiki_create extends page_wiki {
         require_once(dirname(__FILE__) . '/create_form.php');
         $url = new moodle_url('/mod/wiki/create.php', array('action' => 'create', 'wid' => $PAGE->activityrecord->id, 'gid' => $this->gid, 'uid' => $this->uid));
         $formats = wiki_get_formats();
-        $options = array('formats' => $formats);
+        $options = array('formats' => $formats, 'defaultformat' => $PAGE->activityrecord->defaultformat,'forceformat' => $PAGE->activityrecord->forceformat);
         if ($this->title != get_string('newpage', 'wiki')) {
             $options['disable_pagetitle'] = true;
         }

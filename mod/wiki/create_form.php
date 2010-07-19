@@ -33,6 +33,8 @@ class mod_wiki_create_form extends moodleform {
         $mform =& $this->_form;
 
         $formats = $this->_customdata['formats'];
+        $defaultformat = $this->_customdata['defaultformat'];
+        $forceformat = $this->_customdata['forceformat'];
 
         $mform->addElement('header', 'general', get_string('createpage', 'wiki'));
 
@@ -42,13 +44,13 @@ class mod_wiki_create_form extends moodleform {
         }
         $mform->addElement('text', 'pagetitle', get_string('newpagetitle', 'wiki'), $textoptions);
 
-        // TODO: disable creole and nwiki format until moodle core text format lib added
-        $disabled_formats = array('creole', 'nwiki');
         foreach ($formats as $format) {
-            if (in_array($format, $disabled_formats)) {
-                $attr = array('disabled'=>'disabled');
-            } else {
+            if ($format == $defaultformat) {
                 $attr = array('checked'=>'checked');
+            }else if (!empty($forceformat)){
+                    $attr = array('disabled'=>'disabled');
+            } else {
+                $attr = array();
             }
             $mform->addElement('radio', 'pageformat', '', get_string('format'.$format, 'wiki'), $format, $attr);
         }
