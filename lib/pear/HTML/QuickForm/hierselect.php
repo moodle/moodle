@@ -36,7 +36,7 @@ require_once('HTML/QuickForm/select.php');
  * @access       public
  */
 class HTML_QuickForm_hierselect extends HTML_QuickForm_group
-{   
+{
     // {{{ properties
 
     /**
@@ -59,7 +59,7 @@ class HTML_QuickForm_hierselect extends HTML_QuickForm_group
      * $select2[2][0] = 'Pantheist';
      * $select2[2][1] = 'Skepticism';
      *
-     * // If only need two selects 
+     * // If only need two selects
      * //     - and using the depracated functions
      * $sel =& $form->addElement('hierselect', 'cds', 'Choose CD:');
      * $sel->setMainOptions($select1);
@@ -77,12 +77,12 @@ class HTML_QuickForm_hierselect extends HTML_QuickForm_group
      * // You can now use
      * $sel =& $form->addElement('hierselect', 'cds', 'Choose CD:');
      * $sel->setOptions(array($select1, $select2, $select3));
-     * 
+     *
      * @var       array
      * @access    private
      */
     var $_options = array();
-    
+
     /**
      * Number of select elements on this group
      *
@@ -104,10 +104,10 @@ class HTML_QuickForm_hierselect extends HTML_QuickForm_group
 
     /**
      * Class constructor
-     * 
+     *
      * @param     string    $elementName    (optional)Input field name attribute
      * @param     string    $elementLabel   (optional)Input field label in form
-     * @param     mixed     $attributes     (optional)Either a typical HTML attribute string 
+     * @param     mixed     $attributes     (optional)Either a typical HTML attribute string
      *                                      or an associative array. Date format is passed along the attributes.
      * @param     mixed     $separator      (optional)Use a string for one separator,
      *                                      use an array to alternate the separators.
@@ -149,17 +149,17 @@ class HTML_QuickForm_hierselect extends HTML_QuickForm_group
             // check if all elements have been created
             $totalNbElements = count($this->_options);
             for ($i = $this->_nbElements; $i < $totalNbElements; $i ++) {
-                $this->_elements[] =& new HTML_QuickForm_select($i, null, array(), $this->getAttributes());
+                $this->_elements[] = new HTML_QuickForm_select($i, null, array(), $this->getAttributes());
                 $this->_nbElements++;
             }
         }
-        
+
         $this->_setOptions();
     } // end func setMainOptions
 
     // }}}
     // {{{ setMainOptions()
-    
+
     /**
      * Sets the options for the first select element. Deprecated. setOptions() should be used.
      *
@@ -178,10 +178,10 @@ class HTML_QuickForm_hierselect extends HTML_QuickForm_group
             $this->_createElements();
         }
     } // end func setMainOptions
-    
+
     // }}}
     // {{{ setSecOptions()
-    
+
     /**
      * Sets the options for the second select element. Deprecated. setOptions() should be used.
      * The main _options array is initialized and the _setOptions function is called.
@@ -204,17 +204,17 @@ class HTML_QuickForm_hierselect extends HTML_QuickForm_group
             // check if all elements have been created
             $totalNbElements = 2;
             for ($i = $this->_nbElements; $i < $totalNbElements; $i ++) {
-                $this->_elements[] =& new HTML_QuickForm_select($i, null, array(), $this->getAttributes());
+                $this->_elements[] = new HTML_QuickForm_select($i, null, array(), $this->getAttributes());
                 $this->_nbElements++;
             }
         }
-        
+
         $this->_setOptions();
     } // end func setSecOptions
-    
+
     // }}}
     // {{{ _setOptions()
-    
+
     /**
      * Sets the options for each select element
      *
@@ -236,13 +236,13 @@ class HTML_QuickForm_hierselect extends HTML_QuickForm_group
             }
         }
     } // end func _setOptions
-    
+
     // }}}
     // {{{ setValue()
 
     /**
      * Sets values for group's elements
-     * 
+     *
      * @param     array     $value    An array of 2 or more values, for the first,
      *                                the second, the third etc. select
      *
@@ -251,27 +251,27 @@ class HTML_QuickForm_hierselect extends HTML_QuickForm_group
      */
     function setValue($value)
     {
-        // fix for bug #6766. Hope this doesn't break anything more 
+        // fix for bug #6766. Hope this doesn't break anything more
         // after bug #7961. Forgot that _nbElements was used in
-        // _createElements() called in several places... 
+        // _createElements() called in several places...
         $this->_nbElements = max($this->_nbElements, count($value));
         parent::setValue($value);
         $this->_setOptions();
     } // end func setValue
-    
+
     // }}}
     // {{{ _createElements()
 
     /**
      * Creates all the elements for the group
-     * 
+     *
      * @access    private
      * @return    void
      */
     function _createElements()
     {
         for ($i = 0; $i < $this->_nbElements; $i++) {
-            $this->_elements[] =& new HTML_QuickForm_select($i, null, array(), $this->getAttributes());
+            $this->_elements[] = new HTML_QuickForm_select($i, null, array(), $this->getAttributes());
         }
     } // end func _createElements
 
@@ -292,7 +292,7 @@ class HTML_QuickForm_hierselect extends HTML_QuickForm_group
                     array('onchange' => '_hs_swapOptions(this.form, \'' . $this->_escapeString($this->getName()) . '\', ' . $keys[$i] . ');' . $onChange[$i])
                 );
             }
-            
+
             // create the js function to call
             if (!defined('HTML_QUICKFORM_HIERSELECT_EXISTS')) {
                 $this->_js .= <<<JAVASCRIPT
@@ -311,9 +311,9 @@ function _hs_findOptions(ary, keys)
 function _hs_findSelect(form, groupName, selectIndex)
 {
     if (groupName+'['+ selectIndex +']' in form) {
-        return form[groupName+'['+ selectIndex +']']; 
+        return form[groupName+'['+ selectIndex +']'];
     } else {
-        return form[groupName+'['+ selectIndex +'][]']; 
+        return form[groupName+'['+ selectIndex +'][]'];
     }
 }
 
@@ -358,7 +358,7 @@ function _hs_swapOptions(form, groupName, selectIndex)
         hsValue[i] = _hs_findSelect(form, groupName, i).value;
     }
 
-    _hs_replaceOptions(_hs_findSelect(form, groupName, selectIndex + 1), 
+    _hs_replaceOptions(_hs_findSelect(form, groupName, selectIndex + 1),
                        _hs_findOptions(_hs_options[groupName][selectIndex], hsValue));
     if (selectIndex + 1 < _hs_options[groupName].length) {
         _hs_swapOptions(form, groupName, selectIndex + 1);
@@ -372,7 +372,7 @@ function _hs_onReset(form, groupNames)
             for (var j = 0; j <= _hs_options[groupNames[i]].length; j++) {
                 _hs_setValue(_hs_findSelect(form, groupNames[i], j), _hs_defaults[groupNames[i]][j]);
                 if (j < _hs_options[groupNames[i]].length) {
-                    _hs_replaceOptions(_hs_findSelect(form, groupNames[i], j + 1), 
+                    _hs_replaceOptions(_hs_findSelect(form, groupNames[i], j + 1),
                                        _hs_findOptions(_hs_options[groupNames[i]][j], _hs_defaults[groupNames[i]].slice(0, j + 1)));
                 }
             }
@@ -444,7 +444,7 @@ JAVASCRIPT;
                           $this->_convertArrayToJavascript($values, false) . ";\n";
         }
         include_once('HTML/QuickForm/Renderer/Default.php');
-        $renderer =& new HTML_QuickForm_Renderer_Default();
+        $renderer = new HTML_QuickForm_Renderer_Default();
         $renderer->setElementTemplate('{element}');
         parent::accept($renderer);
 
@@ -524,7 +524,7 @@ JAVASCRIPT;
         $js = implode(', ', $items);
         return $assoc? '{ ' . $js . ' }': '[' . $js . ']';
     }
-    
+
     // }}}
     // {{{ _convertScalarToJavascript()
 
@@ -555,7 +555,7 @@ JAVASCRIPT;
     // {{{ _escapeString()
 
    /**
-    * Quotes the string so that it can be used in Javascript string constants   
+    * Quotes the string so that it can be used in Javascript string constants
     *
     * @access private
     * @param  string

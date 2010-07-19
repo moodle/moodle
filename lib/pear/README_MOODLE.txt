@@ -18,7 +18,7 @@ and documented for Moodle at:
 * http://cvs.moodle.org/moodle/lib/excel/Parser.php.diff?r1=1.1&r2=1.2
 * http://cvs.moodle.org/moodle/lib/excel/Worksheet.php.diff?r1=1.1&r2=1.2
 
-Such modifications should be carefuly each time the Excel PEAR package is updated
+Such modifications should be carefully each time the Excel PEAR package is updated
 to a new release within Moodle.
 
 XML/Parser
@@ -37,3 +37,7 @@ To run the codesniffer, you can call the runsniffer script using your command-li
 Example:  /usr/bin/php lib/pear/PHP/runsniffer mod/forum
 
 
+Quickforms
+==========
+Full of our custom hacks, no way to upgrade to latest upstream.
+Most probably we will stop using this library in the future.

@@ -25,10 +25,10 @@ require_once 'HTML/QuickForm/select.php';
 
 /**
  * Class for a group of elements used to input dates (and times).
- * 
+ *
  * Inspired by original 'date' element but reimplemented as a subclass
  * of HTML_QuickForm_group
- * 
+ *
  * @author Alexey Borzov <avb@php.net>
  * @access public
  */
@@ -38,7 +38,7 @@ class HTML_QuickForm_date extends HTML_QuickForm_group
 
    /**
     * Various options to control the element's display.
-    * 
+    *
     * Currently known options are
     * 'language': date language
     * 'format': Format of the date, based on PHP's date() function.
@@ -64,7 +64,7 @@ class HTML_QuickForm_date extends HTML_QuickForm_group
     * 'emptyOptionValue': The value passed by the empty option.
     * 'emptyOptionText': The text displayed for the empty option.
     * 'optionIncrement': Step to increase the option values by (works for 'i' and 's')
-    * 
+    *
     * @access   private
     * @var      array
     */
@@ -88,10 +88,10 @@ class HTML_QuickForm_date extends HTML_QuickForm_group
 
    /**
     * Options in different languages
-    * 
+    *
     * Note to potential translators: to avoid encoding problems please send
     * your translations with "weird" letters encoded as HTML Unicode entities
-    * 
+    *
     * @access   private
     * @var      array
     */
@@ -259,7 +259,7 @@ class HTML_QuickForm_date extends HTML_QuickForm_group
 
    /**
     * Class constructor
-    * 
+    *
     * @access   public
     * @param    string  Element's name
     * @param    mixed   Label(s) for an element
@@ -331,7 +331,7 @@ class HTML_QuickForm_date extends HTML_QuickForm_group
                     case 'Y':
                         $options = $this->_createOptionList(
                             $this->_options['minYear'],
-                            $this->_options['maxYear'], 
+                            $this->_options['maxYear'],
                             $this->_options['minYear'] > $this->_options['maxYear']? -1: 1
                         );
                         break;
@@ -341,7 +341,7 @@ class HTML_QuickForm_date extends HTML_QuickForm_group
                             $this->_options['maxYear'],
                             $this->_options['minYear'] > $this->_options['maxYear']? -1: 1
                         );
-                        array_walk($options, create_function('&$v,$k','$v = substr($v,-2);')); 
+                        array_walk($options, create_function('&$v,$k','$v = substr($v,-2);'));
                         break;
                     case 'h':
                         $options = $this->_createOptionList(1, 12);
@@ -376,7 +376,7 @@ class HTML_QuickForm_date extends HTML_QuickForm_group
                         $separator .= (' ' == $sign? '&nbsp;': $sign);
                         $loadSelect = false;
                 }
-    
+
                 if ($loadSelect) {
                     if (0 < count($this->_elements)) {
                         $this->_separator[] = $separator;
@@ -385,7 +385,7 @@ class HTML_QuickForm_date extends HTML_QuickForm_group
                     }
                     $separator = '';
                     // Should we add an empty option to the top of the select?
-                    if (!is_array($this->_options['addEmptyOption']) && $this->_options['addEmptyOption'] || 
+                    if (!is_array($this->_options['addEmptyOption']) && $this->_options['addEmptyOption'] ||
                         is_array($this->_options['addEmptyOption']) && !empty($this->_options['addEmptyOption'][$sign])) {
 
                         // Using '+' array operator to preserve the keys
@@ -395,7 +395,7 @@ class HTML_QuickForm_date extends HTML_QuickForm_group
                             $options = array($this->_options['emptyOptionValue'] => $this->_options['emptyOptionText']) + $options;
                         }
                     }
-                    $this->_elements[] =& new HTML_QuickForm_select($sign, null, $options, $this->getAttributes());
+                    $this->_elements[] = new HTML_QuickForm_select($sign, null, $options, $this->getAttributes());
                 }
             }
         }
@@ -463,7 +463,7 @@ class HTML_QuickForm_date extends HTML_QuickForm_group
     function toHtml()
     {
         include_once('HTML/QuickForm/Renderer/Default.php');
-        $renderer =& new HTML_QuickForm_Renderer_Default();
+        $renderer = new HTML_QuickForm_Renderer_Default();
         $renderer->setElementTemplate('{element}');
         parent::accept($renderer);
         return $this->_wrap[0] . $renderer->toHtml() . $this->_wrap[1];
