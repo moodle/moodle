@@ -58,60 +58,77 @@ if (!$userid) {
 $user = get_complete_user_data('id', $userid);
 session_set_user($user);
 
+//Set context
 $context = get_context_instance_by_id($contextid);
 if (!$context) {
     rss_not_found();
 }
 $PAGE->set_context($context);
 
+//Get course from context
+//TODO: note that in the case of the hub rss feed, the feed is not related to a course context,
+//it is more a "site" context. The Hub RSS bypass the following line using context id = 2
 $coursecontext = get_course_context($context);
 $course = $DB->get_record('course', array('id' => $coursecontext->instanceid), '*', MUST_EXIST);
 
-$isblog = ($modulename == 'blog');
-if ($isblog) {
-   $blogid   = (int)$args[4];  // could be groupid / courseid  / userid  depending on $instance
-   if ($args[5] != 'rss.xml') {
-       $tagid = (int)$args[5];
-   } else {
-       $tagid = 0;
-   }
-} else {
-    $instance = (int)$instance;  // we know it's an id number
-}
-
-//Check name of module
-if (!$isblog) {
-    $mods = get_plugin_list('mod');
-    $mods = array_keys($mods);
-    if (!in_array(strtolower($modulename), $mods)) {
-        rss_not_found();
-    }
-    try {
-        $cm = get_coursemodule_from_instance($modulename, $instance, 0, false, MUST_EXIST);
-        require_login($course, false, $cm, false, true);
-    } catch (Exception $e) {
-        rss_not_found();
-    }
-
-} else {
-    try {
-        require_login($course, false, NULL, false, true);
-    } catch (Exception $e) {
-        rss_not_found();
-    }
-}
-
 $pathname = null;
-//Work out the filename of the cached RSS file
-if ($isblog) {
-    require_once($CFG->dirroot.'/blog/rsslib.php');
-    $pathname = blog_generate_rss_feed($instance, $blogid, $tagid);
-} else {
-    $functionname = $cm->modname.'_rss_get_feed';
-    require_once($CFG->dirroot."/mod/{$cm->modname}/rsslib.php");
-    if(function_exists($functionname)) {
-        $pathname = $functionname($context, $cm, $instance, $args);
-    }
+
+switch ($modulename) {
+    case 'blog':
+        $blogid = (int) $args[4];  // could be groupid / courseid  / userid  depending on $instance
+        if ($args[5] != 'rss.xml') {
+            $tagid = (int) $args[5];
+        } else {
+            $tagid = 0;
+        }
+
+        try {
+            require_login($course, false, NULL, false, true);
+        } catch (Exception $e) {
+            rss_not_found();
+        }
+
+        //Work out the filename of the cached RSS file
+        require_once($CFG->dirroot . '/blog/rsslib.php');
+        $pathname = blog_generate_rss_feed($instance, $blogid, $tagid);
+        break;
+
+    case 'local_hub': //Note: I made this case generic for a probable futur refactor.
+        // rss/file.php should not handle individual cases.
+        //Here $modulename contain the folder path with '_' instead of '/'
+        
+        //Work out the filename of the cached RSS file
+        $functionname = $modulename . '_rss_get_feed';
+        $modulepath = str_replace('_', '/', $modulename);
+        require_once($CFG->dirroot . '/' . $modulepath . '/rsslib.php');
+        if (function_exists($functionname)) {
+            $pathname = $functionname($args); //All the xxx_rss_get_feed() could manage
+            // eveything with only $args parameter.
+        }
+        break;
+
+    default:
+        $instance = (int) $instance;
+
+        $mods = get_plugin_list('mod');
+        $mods = array_keys($mods);
+        if (!in_array(strtolower($modulename), $mods)) {
+            rss_not_found();
+        }
+        try {
+            $cm = get_coursemodule_from_instance($modulename, $instance, 0, false, MUST_EXIST);
+            require_login($course, false, $cm, false, true);
+        } catch (Exception $e) {
+            rss_not_found();
+        }
+
+        //Work out the filename of the cached RSS file
+        $functionname = $cm->modname . '_rss_get_feed';
+        require_once($CFG->dirroot . "/mod/{$cm->modname}/rsslib.php");
+        if (function_exists($functionname)) {
+            $pathname = $functionname($context, $cm, $instance, $args);
+        }
+        break;
 }
 
 //Check that file exists
