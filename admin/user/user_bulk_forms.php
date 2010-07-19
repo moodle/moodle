@@ -93,8 +93,8 @@ class user_bulk_form extends moodleform {
         $objs[1]->setMultiple(true);
 
 
-        $grp =& $mform->addElement('group', 'usersgrp', get_string('users'), $objs, ' ', false);
-        $mform->setHelpButton('usersgrp', array('lists', get_string('users'), 'bulkusers'));
+        $grp =& $mform->addElement('group', 'usersgrp', get_string('users', 'bulkusers'), $objs, ' ', false);
+        $mform->addHelpButton('usersgrp', 'users', 'bulkusers');
 
         $mform->addElement('static', 'comment');
 
@@ -104,7 +104,7 @@ class user_bulk_form extends moodleform {
         $objs[] =& $mform->createElement('submit', 'addall', get_string('addall', 'bulkusers'));
         $objs[] =& $mform->createElement('submit', 'removeall', get_string('removeall', 'bulkusers'));
         $grp =& $mform->addElement('group', 'buttonsgrp', get_string('selectedlist', 'bulkusers'), $objs, array(' ', '<br />'), false);
-        $mform->setHelpButton('buttonsgrp', array('selectedlist', get_string('selectedlist', 'bulkusers'), 'bulkusers'));
+        $mform->addHelpButton('buttonsgrp', 'selectedlist', 'bulkusers');
 
         $renderer =& $mform->defaultRenderer();
         $template = '<label class="qflabel" style="vertical-align:top">{label}</label> {element}';
