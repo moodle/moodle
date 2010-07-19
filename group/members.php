@@ -80,11 +80,30 @@ $PAGE->navbar->add($stradduserstogroup);
 $PAGE->set_title("$course->shortname: $strgroups");
 $PAGE->set_heading($course->fullname);
 echo $OUTPUT->header();
+echo $OUTPUT->heading(get_string('adduserstogroup', 'group').": $groupname", 3);
+
+/// Print group info -  TODO: remove tables for layout here
+$groupinfotable = new html_table();
+$groupinfotable->attributes['class'] = 'groupinfobox';
+$picturecell = new html_table_cell();
+$picturecell->attributes['class'] = 'left side picture';
+$picturecell->text = print_group_picture($group, $course->id, true, true, false);
+
+$contentcell = new html_table_cell();
+$contentcell->attributes['class'] = 'content';
+
+$group->description = file_rewrite_pluginfile_urls($group->description, 'pluginfile.php', $context->id, 'group', 'description', $group->id);
+if (!isset($group->descriptionformat)) {
+    $group->descriptionformat = FORMAT_MOODLE;
+}
+$contentcell->text = format_text($group->description, $group->descriptionformat);
+$groupinfotable->data[] = new html_table_row(array($picturecell, $contentcell));
+echo html_writer::table($groupinfotable);
+
+/// Print the editing form
 ?>
 
 <div id="addmembersform">
-    <h3 class="main"><?php print_string('adduserstogroup', 'group'); echo ": $groupname"; ?></h3>
-
     <form id="assignform" method="post" action="<?php echo $CFG->wwwroot; ?>/group/members.php?group=<?php echo $groupid; ?>">
     <div>
     <input type="hidden" name="sesskey" value="<?php p(sesskey()); ?>" />
