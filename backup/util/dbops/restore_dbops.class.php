@@ -95,6 +95,50 @@ abstract class restore_dbops {
     }
 
     /**
+     * Load the needed role.xml file to backup_ids table for future reference
+     */
+    public static function load_roles_to_tempids($restoreid, $rolesfile) {
+
+        if (!file_exists($rolesfile)) { // Shouldn't happen ever, but...
+            throw new backup_helper_exception('missing_roles_xml_file', $rolesfile);
+        }
+        // Let's parse, custom processor will do its work, sending info to DB
+        $xmlparser = new progressive_parser();
+        $xmlparser->set_file($rolesfile);
+        $xmlprocessor = new restore_roles_parser_processor($restoreid);
+        $xmlparser->set_processor($xmlprocessor);
+        $xmlparser->process();
+    }
+
+    /**
+     * Precheck the loaded roles, return empty array if everything is ok, and
+     * array with 'errors', 'warnings' elements (suitable to be used by restore_prechecks)
+     * with any problem found
+     */
+    public static function precheck_included_roles($restoreid, $courseid, $userid, $samesite) {
+        debugging('implement the roles mapping/skip here. returns errors/warnings array', DEBUG_DEVELOPER);
+        return array();
+    }
+
+    /**
+     * Process the loaded roles, looking for their best mapping or skipping
+     * Any error will cause exception. Note this is one wrapper over
+     * precheck_included_roles, that contains all the logic, but returns
+     * errors/warnings instead and is executed as part of the restore prechecks
+     */
+     public static function process_included_roles($restoreid, $courseid, $userid, $samesite) {
+        global $DB;
+
+        // Just let precheck_included_roles() to do all the hard work
+        $problems = self::precheck_included_roles($restoreid, $courseid, $userid, $samesite);
+
+        // With problems of type error, throw exception, shouldn't happen if prechecks executed
+        if (array_key_exists('errors', $problems)) {
+            throw new restore_dbops_exception('restore_problems_processing_roles', null, implode(', ', $problems['errors']));
+        }
+    }
+
+    /**
      * Load the needed users.xml file to backup_ids table for future reference
      */
     public static function load_users_to_tempids($restoreid, $usersfile) {
@@ -152,9 +196,9 @@ abstract class restore_dbops {
             $params = array($restoreid, $oldcontextid, $component, $filearea, $itemname);
         }
 
-        $rs = $DB->get_recordset_sql($sql, $params);
         $fs = get_file_storage();         // Get moodle file storage
         $basepath = $basepath . '/files/';// Get backup file pool base
+        $rs = $DB->get_recordset_sql($sql, $params);
         foreach ($rs as $rec) {
             $file = (object)unserialize(base64_decode($rec->info));
             // ignore root dirs (they are created automatically)

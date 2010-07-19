@@ -49,6 +49,15 @@ abstract class restore_prechecks_helper {
         $errors = array();
         $warnings = array();
 
+        // Some handy vars to be used along the prechecks
+        $samesite = $controller->is_samesite();
+        $restoreusers = $controller->get_plan()->get_setting('users')->get_value();
+        $hasmnetusers = (int)$controller->get_info()->mnet_remoteusers;
+        $restoreid = $controller->get_restoreid();
+        $courseid = $controller->get_courseid();
+        $userid = $controller->get_userid();
+        $inforeffiles = restore_dbops::get_needed_inforef_files($restoreid); // Get all inforef files
+
         // Create temp tables
         restore_controller_dbops::create_restore_temp_tables($controller->get_restoreid());
 
@@ -78,9 +87,6 @@ abstract class restore_prechecks_helper {
         }
 
         // If restoring to different site and restoring users and backup has mnet users warn/error
-        $samesite = $controller->is_samesite();
-        $restoreusers = $controller->get_plan()->get_setting('users')->get_value();
-        $hasmnetusers = (int)$controller->get_info()->mnet_remoteusers;
         if (!$samesite && $restoreusers && $hasmnetusers) {
             // User is admin (can create users at sysctx), warn
             if (has_capability('moodle/user:create', get_context_instance(CONTEXT_SYSTEM), $controller->get_userid())) {
@@ -91,16 +97,14 @@ abstract class restore_prechecks_helper {
             }
         }
 
+        // Load all the inforef files, we are going to need them
+        foreach ($inforeffiles as $inforeffile) {
+            restore_dbops::load_inforef_to_tempids($restoreid, $inforeffile); // Load each inforef file to temp_ids
+        }
+
         // If restoring users, check we are able to create all them
         if ($restoreusers) {
             $file = $controller->get_plan()->get_basepath() . '/users.xml';
-            $restoreid = $controller->get_restoreid();
-            $courseid = $controller->get_courseid();
-            $userid = $controller->get_userid();
-            $inforeffiles = restore_dbops::get_needed_inforef_files($restoreid); // Get all inforef files
-            foreach ($inforeffiles as $inforeffile) {
-                restore_dbops::load_inforef_to_tempids($restoreid, $inforeffile); // Load each inforef file to temp_ids
-            }
             restore_dbops::load_users_to_tempids($restoreid, $file); // Load needed users to temp_ids
             if ($problems = restore_dbops::precheck_included_users($restoreid, $courseid, $userid, $samesite)) {
                 $errors = array_merge($errors, $problems);
@@ -108,7 +112,13 @@ abstract class restore_prechecks_helper {
         }
 
         // TODO: Perform role_mappings, warning about non-mappable ones being ignored (see 1.9)
-        // (restore won't create roles in any case)
+        // Note: restore won't create roles at all. Only mapping/skip!
+        $file = $controller->get_plan()->get_basepath() . '/roles.xml';
+        restore_dbops::load_roles_to_tempids($restoreid, $file); // Load needed users to temp_ids
+        if ($problems = restore_dbops::precheck_included_roles($restoreid, $courseid, $userid, $samesite)) {
+            $errors = array_key_exists('errors', $problems) ? array_merge($errors, $problems['errors']) : $errors;
+            $warnings = array_key_exists('warnings', $problems) ? array_merge($warnings, $problems['warnings']) : $warnings;
+        }
 
         // Prepare results and return
         $results = array();

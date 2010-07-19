@@ -40,6 +40,9 @@ class restore_root_task extends restore_task {
         // If we haven't preloaded information, load all the included inforef records to temp_ids table
         $this->add_step(new restore_load_included_inforef_records('load_inforef_records'));
 
+        // If we haven't preloaded information, load all the needed roles to temp_ids_table
+        $this->add_step(new restore_load_and_map_roles('load_and_map_roles'));
+
         // If we haven't preloaded information and are restoring user info, load all the needed users to temp_ids table
         $this->add_step(new restore_load_included_users('load_user_records'));
 

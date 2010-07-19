@@ -108,12 +108,38 @@ class restore_load_included_files extends restore_structure_step {
 
         // load it if needed:
         //   - it it is one of the annotated inforef files (course/section/activity/block)
-        //   - it is one "user", "group" or "grade" component file
+        //   - it is one "user", "group", "grouping" or "grade" component file (that aren't sent to inforef ever)
         $isfileref   = restore_dbops::get_backup_ids_record($this->get_restoreid(), 'fileref', $data->id);
-        $iscomponent = ($data->component == 'user' || $data->component == 'group' || $data->component == 'grade');
+        $iscomponent = ($data->component == 'user' || $data->component == 'group' ||
+                        $data->component == 'grouping' || $data->component == 'grade');
         if ($isfileref || $iscomponent) {
             restore_dbops::set_backup_files_record($this->get_restoreid(), $data);
         }
+    }
+}
+
+/**
+ * Execution step that, *conditionally* (if there isn't preloaded information),
+ * will load all the needed roles to backup_temp_ids. They will be stored with
+ * "role" itemname. Also it will perform one automatic mapping to roles existing
+ * in the target site, based in permissions of the user performing the restore,
+ * archetypes and other bits. At the end, each original role will have its associated
+ * target role or 0 if it's going to be skipped. Note we wrap everything over one
+ * restore_dbops method, as far as the same stuff is going to be also executed
+ * by restore prechecks
+ */
+class restore_load_and_map_roles extends restore_execution_step {
+
+    protected function define_execution() {
+        if ($this->task->get_preloaded_information()) { // if info is already preloaded, nothing to do
+            return;
+        }
+
+        $file = $this->get_basepath() . '/roles.xml';
+        // Load needed toles to temp_ids
+        restore_dbops::load_roles_to_tempids($this->get_restoreid(), $file);
+        // Process roles, mapping/skipping. Any error throws exception
+        restore_dbops::process_included_roles($this->get_restoreid(), $this->task->get_courseid(), $this->task->get_userid(), $this->task->is_samesite());
     }
 }
 
@@ -243,17 +269,53 @@ class restore_groups_structure_step extends restore_structure_step {
     }
 
     public function process_grouping($data) {
-        debugging('TODO: Grouping restore not implemented. Detected grouping', DEBUG_DEVELOPER);
+        global $DB;
+
+        $data = (object)$data; // handy
+        $data->courseid = $this->get_courseid();
+
+        $oldid = $data->id;    // need this saved for later
+        $restorefiles = false; // Only if we end creating the grouping
+
+        // Search if the grouping already exists (by name & description) in the target course
+        $description_clause = '';
+        $params = array('courseid' => $this->get_courseid(), 'grname' => $data->name);
+        if (!empty($data->description)) {
+            $description_clause = ' AND ' .
+                                  $DB->sql_compare_text('description') . ' = ' . $DB->sql_compare_text(':desc');
+           $params['desc'] = $data->description;
+        }
+        if (!$groupingdb = $DB->get_record_sql("SELECT *
+                                                  FROM {groupings}
+                                                 WHERE courseid = :courseid
+                                                   AND name = :grname $description_clause", $params)) {
+            // grouping doesn't exist, create
+            $newitemid = $DB->insert_record('groupings', $data);
+            $restorefiles = true; // We'll restore the files
+        } else {
+            // grouping exists, use it
+            $newitemid = $groupingdb->id;
+        }
+        // Save the id mapping
+        $this->set_mapping('grouping', $oldid, $newitemid, $restorefiles);
     }
 
     public function process_grouping_group($data) {
-        debugging('TODO: Grouping restore not implemented. Detected grouping group', DEBUG_DEVELOPER);
+        global $DB;
+
+        $data = (object)$data;
+
+        $data->groupingid = $this->get_new_parentid('grouping'); // Use new parentid
+        $data->groupid    = $this->get_mappingid('group', $data->groupid); // Get from mappings
+        $DB->insert_record('groupings_groups', $data);  // No need to set this mapping (no child info nor files)
     }
 
     protected function after_execute() {
         // Add group related files, matching with "group" mappings
         $this->add_related_files('group', 'icon', 'group');
         $this->add_related_files('group', 'description', 'group');
+        // Add grouping related files, matching with "grouping" mappings
+        $this->add_related_files('grouping', 'description', 'grouping');
     }
 
 }
@@ -339,6 +401,7 @@ class restore_course_structure_step extends restore_structure_step {
 
     // Processing functions go here
     public function process_course($data) {
+        // TODO: don't forget to remap defaultgroupingid
         print_object('stopped before processing course. Continue here');
     }
 
