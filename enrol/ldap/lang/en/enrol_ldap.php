@@ -20,75 +20,96 @@
  *
  * @package   enrol_ldap
  * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @copyright 2010 Iñaki Arenaza <iarenaza@eps.mondragon.edu>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['description'] = '<p>You can use an LDAP server to control your enrolments.  
-                          It is assumed your LDAP tree contains groups that map to 
-                          the courses, and that each of thouse groups/courses will 
-                          have membership entries to map to students.</p>
-                          <p>It is assumed that courses are defined as groups in 
-                          LDAP, with each group having multiple membership fields 
-                          (<em>member</em> or <em>memberUid</em>) that contain a unique
-                          identification of the user.</p>
-                          <p>To use LDAP enrolment, your users <strong>must</strong> 
-                          to have a valid  idnumber field. The LDAP groups must have 
-                          that idnumber in the member fields for a user to be enrolled 
-                          in the course.
-                          This will usually work well if you are already using LDAP 
-                          Authentication.</p>
-                          <p>Enrolments will be updated when the user logs in. You
-                           can also run a script to keep enrolments in synch. Look in 
-                          <em>enrol/ldap/enrol_ldap_sync.php</em>.</p>
-                          <p>This plugin can also be set to automatically create new 
-                          courses when new groups appear in LDAP.</p>';
-$string['enrol_ldap_autocreate'] = 'Courses can be created automatically if there are
-                                    enrolments to a course  that doesn\'t yet exist 
-                                    in Moodle.';
-$string['enrol_ldap_autocreation_settings'] = 'Automatic course creation settings';
-$string['enrol_ldap_bind_dn'] = 'If you want to use bind-user to search users, 
-                                 specify it here. Someting like 
-                                 \'cn=ldapuser,ou=public,o=org\'';
-$string['enrol_ldap_bind_pw'] = 'Password for bind-user.';
-$string['enrol_ldap_category'] = 'The category for auto-created courses.';
-$string['enrol_ldap_contexts'] = 'LDAP contexts';
-$string['enrol_ldap_course_fullname'] = 'Optional: LDAP field to get the full name from.';
-$string['enrol_ldap_course_idnumber'] = 'Map to the unique identifier in LDAP, usually
-                                         <em>cn</em> or <em>uid</em>. It is 
-                                         recommended to lock the value if you are using 
-                                         automatic course creation.';
-$string['enrol_ldap_course_settings'] = 'Course enrolment settings';
-$string['enrol_ldap_course_shortname'] = 'Optional: LDAP field to get the shortname from.';
-$string['enrol_ldap_course_summary'] = 'Optional: LDAP field to get the summary from.';
-$string['enrol_ldap_editlock'] = 'Lock value';
-$string['enrol_ldap_general_options'] = 'General Options';
-$string['enrol_ldap_host_url'] = 'Specify LDAP host in URL-form like 
-                                  \'ldap://ldap.myorg.com/\' 
-                                  or \'ldaps://ldap.myorg.com/\'';
-$string['enrol_ldap_memberattribute'] = 'LDAP member attribute';
-$string['enrol_ldap_objectclass'] = 'objectClass used to search courses. Usually
-                                     \'posixGroup\'.';
-$string['enrol_ldap_roles'] = 'Role mapping';
-$string['enrol_ldap_search_sub'] = 'Search group memberships from subcontexts.';
-$string['enrol_ldap_server_settings'] = 'LDAP Server Settings';
-$string['enrol_ldap_student_contexts'] = 'List of contexts where groups with student
-                                          enrolments are located. Separate different 
-                                          contexts with \';\'. For example: 
-                                          \'ou=courses,o=org; ou=others,o=org\'';
-$string['enrol_ldap_student_memberattribute'] = 'Member attribute, when users belongs
-                                          (is enrolled) to a group. Usually \'member\'
-                                          or \'memberUid\'.';
-$string['enrol_ldap_student_settings'] = 'Student enrolment settings';
-$string['enrol_ldap_teacher_contexts'] = 'List of contexts where groups with teacher
-                                          enrolments are located. Separate different 
-                                          contexts with \';\'. For example: 
-                                          \'ou=courses,o=org; ou=others,o=org\'';
-$string['enrol_ldap_teacher_memberattribute'] = 'Member attribute, when users belongs
-                                          (is enrolled) to a group. Usually \'member\'
-                                          or \'memberUid\'.';
-$string['enrol_ldap_teacher_settings'] = 'Teacher enrolment settings';
-$string['enrol_ldap_template'] = 'Optional: auto-created courses can copy 
-                                  their settings from a template course.';
-$string['enrol_ldap_updatelocal'] = 'Update local data';
-$string['enrol_ldap_version'] = 'The version of the LDAP protocol your server is using.';
+$string['assignrole']  = "Assigning role '{\$a->role_shortname}' to user '{\$a->user_username}' into course '{\$a->course_shortname}' (id {\$a->course_id})";
+$string['assignrolefailed'] = "Failed to assign role '{\$a->role_shortname}' to user '{\$a->user_username}' into course '{\$a->course_shortname}' (id {\$a->course_id})\n";
+$string['autocreate'] = '<p>Courses can be created automatically if there are enrolments to a course that doesn\'t yet exist in Moodle</p><p>If you are using automatic course creation, it is recommended that you remove the following capabilities: moodle/course:changeidnumber, moodle/course:changeshortname, moodle/course:changefullname and moodle/course:changesummary, from the relevant roles to prevent modifications of the four course fields specified above (ID number, shortname, fullname and summary).</p>';
+$string['autocreate_key'] = 'Auto create';
+$string['autocreation_settings'] = 'Automatic course creation settings';
+$string['bind_dn'] = 'If you want to use a bind user to search users, specify it here. Someting like \'cn=ldapuser,ou=public,o=org\'';
+$string['bind_dn_key'] = 'Bind user distinguished name';
+$string['bind_pw'] = 'Password for the bind user';
+$string['bind_pw_key'] = 'Password';
+$string['bind_settings'] = 'Bind settings';
+$string['cannotcreatecourse'] = 'Cannot create course: missing required data from the LDAP record!';
+$string['category'] = 'The category for auto-created courses';
+$string['category_key'] = 'Category';
+$string['contexts'] = 'LDAP contexts';
+$string['couldnotfinduser'] = "Could not find user '{\$a}', skipping\n";
+$string['coursenotexistskip'] = "Course '{\$a}' does not exist and autocreation disabled, skipping\n";
+$string['course_fullname'] = 'Optional: LDAP attribute to get the full name from';
+$string['course_fullname_key'] = 'Full name';
+$string['course_idnumber'] = 'LDAP attribute to get the course ID number from. Usually \'cn\' or \'uid\'.';
+$string['course_idnumber_key'] = 'ID number';
+$string['course_search_sub'] = 'Search group memberships from subcontexts';
+$string['course_search_sub_key'] = 'Search subcontexts';
+$string['course_settings'] = 'Course enrolment settings';
+$string['course_shortname'] = 'Optional: LDAP attribute to get the shortname from';
+$string['course_shortname_key'] = 'Short name';
+$string['course_summary'] = 'Optional: LDAP attribute to get the summary from';
+$string['course_summary_key'] = 'Summary';
+$string['createcourseextid'] = 'CREATE User enrolled to a nonexistant course \'{$a->courseextid}\'';
+$string['createnotcourseextid'] = 'User enrolled to a nonexistant course \'{$a->courseextid}\'';
+$string['creatingcourse'] =  'Creating course \'{$a}\'...';
+$string['editlock'] = 'Lock value';
+$string['emptyenrolment'] = "Empty enrolment for role '{\$a->role_shortname}' in course '{\$a->course_shortname}'\n";
 $string['enrolname'] = 'LDAP';
+$string['enroluser'] =  "Enrol user '{\$a->user_username}' into course '{\$a->course_shortname}' (id {\$a->course_id})";
+$string['enroluserenable'] =  "Enabled enrolment for user '{\$a->user_username}' in course '{\$a->course_shortname}' (id {\$a->course_id})";
+$string['explodegroupusertypenotsupported'] = "ldap_explode_group() does not support selected user type: {\$a}\n";
+$string['extcourseidinvalid'] = 'The course external id is invalid!';
+$string['extremovedsuspend'] =  "Disabled enrolment for user '{\$a->user_username}' in course '{\$a->course_shortname}' (id {\$a->course_id})";
+$string['extremovedsuspendnoroles'] =  "Disabled enrolment and removed roles for user '{\$a->user_username}' in course '{\$a->course_shortname}' (id {\$a->course_id})";
+$string['extremovedunenrol'] =  "Unenrol user '{\$a->user_username}' from course '{\$a->course_shortname}' (id {\$a->course_id})";
+$string['failed'] = "Failed!\n";
+$string['general_options'] = 'General Options';
+$string['group_memberofattribute'] = 'Name of the attribute that specifies which groups a given user or group belongs to (e.g., memberOf, groupMembership, etc.)';
+$string['group_memberofattribute_key'] = '\'Member of\' attribute';
+$string['host_url'] = 'Specify LDAP host in URL-form like \'ldap://ldap.myorg.com/\' or \'ldaps://ldap.myorg.com/\'';
+$string['host_url_key'] = 'Host URL';
+$string['idnumber_attribute'] = 'If the group membership contains distinguised names, specify the same attribute you have used for the user \'ID Number\' mapping in the LDAP authentication settings';
+$string['idnumber_attribute_key'] = 'ID Number attribute';
+$string['ldap_encoding'] = 'Specify encoding used by LDAP server. Most probably utf-8, MS AD v2 uses default platform encoding such as cp1252, cp1250, etc.';
+$string['ldap_encoding_key'] = 'LDAP encoding';
+$string['ldap:manage'] = 'Manage LDAP enrol instances';
+$string['memberattribute'] = 'LDAP member attribute';
+$string['memberattribute_isdn'] = 'If the group membership contains distinguised names, you need to specify it here. If it does, you also need to configure the remaining settings of this section';
+$string['memberattribute_isdn_key'] = 'Member attribute uses dn';
+$string['nested_groups'] = 'Do you want to use nested groups (groups of groups) for enrolment?';
+$string['nested_groups_key'] = 'Nested groups';
+$string['nested_groups_settings'] = 'Nested groups settings';
+$string['nosuchrole'] = "No such role: '{\$a}'\n";
+$string['objectclass'] = 'objectClass used to search courses. Usually \'group\' or \'posixGroup\'';
+$string['objectclass_key'] = 'Object class';
+$string['ok'] = "OK!\n";
+$string['opt_deref'] = 'If the group membership contains distinguised names, specify how aliases are handled during search. Select one of the following values: \'No\' (LDAP_DEREF_NEVER) or \'Yes\' (LDAP_DEREF_ALWAYS)';
+$string['opt_deref_key'] = 'Dereference aliases';
+$string['pluginname'] = 'LDAP enrolments';
+$string['pluginname_desc'] = '<p>You can use an LDAP server to control your enrolments. It is assumed your LDAP tree contains groups that map to the courses, and that each of those groups/courses will have membership entries to map to students.</p><p>It is assumed that courses are defined as groups in LDAP, with each group having multiple membership fields (<em>member</em> or <em>memberUid</em>) that contain a uniqueidentification of the user.</p><p>To use LDAP enrolment, your users <strong>must</strong> to have a valid  idnumber field. The LDAP groups must have that idnumber in the member fields for a user to be enrolled in the course. This will usually work well if you are already using LDAP Authentication.</p><p>Enrolments will be updated when the user logs in. You can also run a script to keep enrolments in synch. Look in <em>enrol/ldap/cli/sync.php</em>.</p><p>This plugin can also be set to automatically create new courses when new groups appear in LDAP.</p>';
+$string['pluginnotenabled'] = 'Plugin not enabled!';
+$string['role_mapping'] = '<p>For each rol that you want to assign from LDAP, you need to specify the list of contexts where the role courses\'s groups are located. Separate different contexts with \';\'.</p><p>You also need to specify the attribute your LDAP server uses to hold the members of a group. Usually \'member\' or \'memberUid\'</p>';
+$string['role_mapping_key'] = 'Map roles from LDAP ';
+$string['roles'] = 'Role mapping';
+$string['server_settings'] = 'LDAP Server Settings';
+$string['synccourserole'] = "== Synching course '{\$a->idnumber}' for role '{\$a->role_shortname}'\n";
+$string['template'] = 'Optional: auto-created courses can copy their settings from a template course';
+$string['template_key'] = 'Template';
+$string['unassignrole']  = "Unassigning role '{\$a->role_shortname}' to user '{\$a->user_username}' from course '{\$a->course_shortname}' (id {\$a->course_id})\n";
+$string['unassignroleid']  = "Unassigning role id '{\$a->role_id}' to user id '{\$a->user_id}'\n";
+$string['unassignrolefailed'] = "Failed to unassign role '{\$a->role_shortname}' to user '{\$a->user_username}' from course '{\$a->course_shortname}' (id {\$a->course_id})\n";
+$string['updatelocal'] = 'Update local data';
+$string['user_attribute'] =  'If the group membership contains distinguised names, specify the attribute used to name/search users. If you are using LDAP authentication, this value should match the attribute specified in the \'ID Number\' mapping in the LDAP authentication plugin';
+$string['user_attribute_key'] = 'ID Number attribute';
+$string['user_contexts'] = 'If the group membership contains distinguised names, specify the list of contexts where users are located. Separate different contexts with \';\'. For example: \'ou=users,o=org; ou=others,o=org\'';
+$string['user_contexts_key'] = 'Contexts';
+$string['user_search_sub'] = 'If the group membership contains distinguised names, specify if the search for users is done in subcontexts too';
+$string['user_search_sub_key'] = 'Search subcontexts';
+$string['user_settings'] = 'User lookup settings';
+$string['user_type'] = 'If the group membership contains distinguished names, specify how users are stored in LDAP';
+$string['user_type_key'] = 'User type';
+$string['version'] = 'The version of the LDAP protocol your server is using';
+$string['version_key'] = 'Version';
+
