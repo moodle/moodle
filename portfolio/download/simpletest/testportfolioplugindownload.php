@@ -10,7 +10,7 @@ class testPortfolioPluginDownload extends portfoliolib_test {
     public static $includecoverage = array('lib/portfoliolib.php', 'portfolio/download/lib.php');
     public function setUp() {
         parent::setUp();
-        $this->plugin = &new mock_boxnetplugin($this);
+        $this->plugin = new mock_boxnetplugin($this);
         $this->plugin->boxclient = new mock_boxclient();
     }
 

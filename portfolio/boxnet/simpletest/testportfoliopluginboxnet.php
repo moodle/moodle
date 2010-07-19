@@ -12,7 +12,7 @@ class testPortfolioPluginBoxnet extends portfoliolib_test {
         global $DB;
 
         parent::setUp();
-        $this->plugin = &new mock_boxnetplugin($this);
+        $this->plugin = new mock_boxnetplugin($this);
         $this->plugin->boxclient = new mock_boxclient();
 
         $settings = array('tiny' => 1, 'quiet' => 1, 'database_prefix' => 'tst_', 'pre_cleanup' => 1,
