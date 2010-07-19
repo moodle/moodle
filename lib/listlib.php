@@ -233,7 +233,7 @@ class moodle_list {
                     $newattributes = '';
 
                 }
-                $this->items[$itemiter] =& new $this->listitemclassname($record, $this, $newattributes, $inpage);
+                $this->items[$itemiter] = new $this->listitemclassname($record, $this, $newattributes, $inpage);
                 if ($inpage) {
                     $this->items[$itemiter]->create_children($records, $this->childparent, $record->id);
                 } else {
@@ -522,7 +522,7 @@ class list_item {
         $this->set_parent($parent);
         $this->attributes = $attributes;
         $parentlistclass = get_class($parent);
-        $this->children =& new $parentlistclass($parent->type, $parent->attributes, $parent->editable, $parent->pageurl, 0);
+        $this->children = new $parentlistclass($parent->type, $parent->attributes, $parent->editable, $parent->pageurl, 0);
         $this->children->set_parent($this);
         $this->display = $display;
     }
@@ -630,7 +630,7 @@ class list_item {
         if (count($thischildren)) {
             foreach ($thischildren as $child) {
                 $thisclass = get_class($this);
-                $newlistitem =& new $thisclass($records[$child], $this->children, $this->attributes);
+                $newlistitem = new $thisclass($records[$child], $this->children, $this->attributes);
                 $this->children->add_item($newlistitem);
                 $newlistitem->create_children($records, $children, $records[$child]->id);
             }

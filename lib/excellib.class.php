@@ -73,7 +73,7 @@ class MoodleExcelWorkbook {
      */
     function &add_worksheet($name = '') {
     /// Create the Moodle Worksheet. Returns one pointer to it
-        $ws =& new MoodleExcelWorksheet ($name, $this->pear_excel_workbook, $this->latin_output);
+        $ws = new MoodleExcelWorksheet ($name, $this->pear_excel_workbook, $this->latin_output);
         return $ws;
     }
 
@@ -88,7 +88,7 @@ class MoodleExcelWorkbook {
      */
     function &add_format($properties = array()) {
     /// Create the Moodle Format. Returns one pointer to it
-        $ft =& new MoodleExcelFormat ($this->pear_excel_workbook, $properties);
+        $ft = new MoodleExcelFormat ($this->pear_excel_workbook, $properties);
         return $ft;
     }
 

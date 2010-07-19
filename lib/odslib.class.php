@@ -49,7 +49,7 @@ class MoodleODSWorkbook {
      */
     function &add_worksheet($name = '') {
     /// Create the Moodle Worksheet. Returns one pointer to it
-        $ws =& new MoodleODSWorksheet($name);
+        $ws = new MoodleODSWorksheet($name);
         $this->worksheets[] =& $ws;
         return $ws;
     }
