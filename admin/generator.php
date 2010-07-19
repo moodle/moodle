@@ -1304,7 +1304,6 @@ class generator_form extends moodleform {
             }
 
             $mform->addElement($type, $setting->long, $label, $options, $htmloptions);
-            //$mform->setHelpButton($setting->long, array(false, $label, $setting->help));
 
             if (isset($setting->default)) {
                 $mform->setDefault($setting->long, $setting->default);
