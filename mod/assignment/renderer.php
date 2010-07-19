@@ -67,7 +67,7 @@ class mod_assignment_renderer extends plugin_renderer_base {
             $filename = $file->get_filename();
             $icon = substr(mimeinfo("icon", $filename), 0, -4);
             $image = $this->output->pix_icon("/f/$icon", $filename, 'moodle', array('class'=>'icon'));
-            $result .= '<li yuiConfig=\''.json_encode($yuiconfig).'\'><div>'.$image.' '.html_writer::link($file->fileurl, $filename).' '.$file->portfoliobutton.'</div></li>';
+            $result .= '<li yuiConfig=\''.json_encode($yuiconfig).'\'><div>'.$image.' '.$file->fileurl.' '.$file->portfoliobutton.'</div></li>';
         }
 
         $result .= '</ul>';
@@ -89,19 +89,19 @@ class assignment_files implements renderable {
         $this->course = $course;
         $fs = get_file_storage();
         $this->dir = $fs->get_area_tree($this->context->id, 'mod_assignment', $filearea, $itemid);
-        $files = $fs->get_area_files($this->context->id, 'mod_assignment', 'submission', $itemid, "timemodified", false);
+        $files = $fs->get_area_files($this->context->id, 'mod_assignment', $filearea, $itemid, "timemodified", false);
         if (count($files) >= 1 && has_capability('mod/assignment:exportownsubmission', $this->context)) {
             $button = new portfolio_add_button();
             $button->set_callback_options('assignment_portfolio_caller', array('id' => $this->cm->id), '/mod/assignment/locallib.php');
             $button->reset_formats();
             $this->portfolioform = $button->to_html();
         }
-        $this->preprocess($this->dir);
+        $this->preprocess($this->dir, $filearea);
     }
-    public function preprocess($dir) {
+    public function preprocess($dir, $filearea) {
         global $CFG;
         foreach ($dir['subdirs'] as $subdir) {
-            $this->preprocess($subdir);
+            $this->preprocess($subdir, $filearea);
         }
         foreach ($dir['files'] as $file) {
             $button = new portfolio_add_button();
@@ -112,7 +112,7 @@ class assignment_files implements renderable {
             } else {
                 $file->portfoliobutton = '';
             }
-            $url = file_encode_url("$CFG->wwwroot/pluginfile.php", '/'.$this->context->id.'/mod_assignment/submission/'.$file->get_itemid().'/'.$file->get_filepath().$file->get_filename(), true);
+            $url = file_encode_url("$CFG->wwwroot/pluginfile.php", '/'.$this->context->id.'/mod_assignment/'.$filearea.'/'.$file->get_itemid(). '/' . $file->get_filepath().$file->get_filename(), true);
             $filename = $file->get_filename();
             $file->fileurl = html_writer::link($url, $filename);
         }
