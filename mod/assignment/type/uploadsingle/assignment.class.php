@@ -293,7 +293,7 @@ class assignment_uploadsingle extends assignment_base {
 
         require_login($this->course, false, $this->cm);
 
-        if ($filearea !== 'submission') {
+        if ($filearea !== 'submission' && $filearea !== 'response') {
             return false;
         }
 
@@ -306,9 +306,9 @@ class assignment_uploadsingle extends assignment_base {
         if ($USER->id != $submission->userid and !has_capability('mod/assignment:grade', $this->context)) {
             return false;
         }
-
+        
         $relativepath = implode('/', $args);
-        $fullpath = '/'.$this->context->id.'/mod_assignment/submission/'.$submissionid.'/'.$relativepath;
+        $fullpath = '/'.$this->context->id.'/mod_assignment/'.$filearea.'/'.$submissionid.'/'.$relativepath;
 
         $fs = get_file_storage();
 
