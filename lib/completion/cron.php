@@ -53,72 +53,129 @@ function completion_cron() {
 function completion_cron_mark_started() {
     global $CFG, $DB;
 
-//TODO: MDL-22797 completion needs to be updated to use new enrolment framework
-
     if (debugging()) {
         mtrace('Marking users as started');
     }
 
-    $roles = '';
-    if (!empty($CFG->progresstrackedroles)) {
-        $roles = 'AND ra.roleid IN ('.$CFG->progresstrackedroles.')';
-    }
-
+    /**
+     * A quick explaination of this horrible looking query
+     *
+     * It's purpose is to locate all the active participants
+     * of a course with course completion enabled.
+     *
+     * We also only want the users with no course_completions
+     * record as this functions job is to create the missing
+     * ones :)
+     *
+     * We want to record the user's enrolment start time for the
+     * course. This gets tricky because there can be multiple
+     * enrolment plugins active in a course, hence the possibility
+     * of multiple records for each couse/user in the results
+     */
     $sql = "
-        SELECT DISTINCT
+        SELECT
             c.id AS course,
-            ra.userid AS userid,
+            u.id AS userid,
             crc.id AS completionid,
-            MIN(ra.timestart) AS timestarted
+            ue.timestart,
+            ue.timeenrolled
         FROM
+            {user} u
+        INNER JOIN
+            {user_enrolments} ue
+         ON ue.userid = u.id
+        INNER JOIN
+            {enrol} e
+         ON e.id = ue.enrolid
+        INNER JOIN
             {course} c
-        INNER JOIN
-            {context} con
-         ON con.instanceid = c.id
-        INNER JOIN
-            {role_assignments} ra
-         ON ra.contextid = con.id
+         ON c.id = e.courseid
         LEFT JOIN
             {course_completions} crc
          ON crc.course = c.id
-        AND crc.userid = ra.userid
+        AND crc.userid = u.id
         WHERE
-            con.contextlevel = ".CONTEXT_COURSE."
-        AND c.enablecompletion = 1
-        AND c.completionstartonenrol = 1
+            c.enablecompletion = 1
         AND crc.timeenrolled IS NULL
-        AND (ra.timeend IS NULL OR ra.timeend > ".time().")
-        {$roles}
-        GROUP BY
-            c.id,
-            ra.userid,
-            crc.id
+        AND ue.status = 0
+        AND e.status = 0
+        AND u.deleted = 0
+        AND ue.timestart < ?
+        AND (ue.timeend > ? OR ue.timeend = 0)
+        AND ue.timeenrolled < ?
+        AND (ue.timeenrolled > ? OR ue.timeenrolled = 0)
         ORDER BY
             course,
             userid
     ";
 
     // Check if result is empty
-    if (!$rs = $DB->get_recordset_sql($sql)) {
+    $now = time();
+    if (!$rs = $DB->get_recordset_sql($sql, array($now, $now, $now, $now))) {
         return;
     }
 
-    // Grab records for current user/course
-    foreach ($rs as $record) {
-        $completion = new completion_completion();
-        $completion->userid = $record->userid;
-        $completion->course = $record->course;
-        $completion->timeenrolled = $record->timestarted;
+    /**
+     * An explaination of the following loop
+     *
+     * We are essentially doing a group by in the code here (as I can't find
+     * a decent way of doing it in the sql).
+     *
+     * Since there can be multiple enrolment plugins for each course, we can have
+     * multiple rows for each particpant in the query result. This isn't really
+     * a problem until you combine it with the fact that the enrolment plugins
+     * can save the enrol start time in either timestart or timeenrolled.
+     *
+     * The purpose of this loop is to find the earliest enrolment start time for
+     * each participant in each course.
+     */
+    $prev = null;
+    while ($rs->valid() || $prev) {
 
-        if ($record->completionid) {
-            $completion->id = $record->completionid;
+        $current = $rs->current();
+
+        if (!isset($current->course)) {
+            $current = false;
+        }
+        else {
+            // Not all enrol plugins fill out timestart correctly, so use whichever
+            // is non-zero
+            $current->timeenrolled = max($current->timestart, $current->timeenrolled);
         }
 
-        $completion->mark_enrolled();
+        // If we are at the last record,
+        // or we aren't at the first and the record is for a diff user/course
+        if ($prev &&
+            (!$rs->valid() ||
+            ($current->course != $prev->course || $current->userid != $prev->userid))) {
 
-        if (debugging()) {
-            mtrace('Marked started user '.$record->userid.' in course '.$record->course);
+            $completion = new completion_completion();
+            $completion->userid = $prev->userid;
+            $completion->course = $prev->course;
+            $completion->timeenrolled = (string) $prev->timeenrolled;
+            $completion->timestarted = 0;
+
+            if ($prev->completionid) {
+                $completion->id = $prev->completionid;
+            }
+
+            $completion->mark_enrolled();
+
+            if (debugging()) {
+                mtrace('Marked started user '.$prev->userid.' in course '.$prev->course);
+            }
         }
+        // Else, if this record is for the same user/course
+        elseif ($prev && $current) {
+            // Use oldest timeenrolled
+            $current->timeenrolled = min($current->timeenrolled, $prev->timeenrolled);
+        }
+
+        // Move current record to previous
+        $prev = $current;
+
+        // Move to next record
+        $rs->next();
     }
 
     $rs->close();
@@ -175,7 +232,7 @@ function completion_cron_completions() {
         SELECT DISTINCT
             c.id AS course,
             cr.id AS criteriaid,
-            ra.userid AS userid,
+            cc.userid AS userid,
             cr.criteriatype AS criteriatype,
             cc.timecompleted AS timecompleted
         FROM
@@ -184,22 +241,14 @@ function completion_cron_completions() {
             {course} c
          ON cr.course = c.id
         INNER JOIN
-            {context} con
-         ON con.instanceid = c.id
-        INNER JOIN
-            {role_assignments} ra
-         ON ra.contextid = con.id
+            {course_completions} crc
+         ON crc.course = c.id
         LEFT JOIN
             {course_completion_crit_compl} cc
          ON cc.criteriaid = cr.id
-        AND cc.userid = ra.userid
-        LEFT JOIN
-            {course_completions} crc
-         ON crc.course = c.id
-        AND crc.userid = ra.userid
+        AND crc.userid = cc.userid
         WHERE
-            con.contextlevel = '.CONTEXT_COURSE.'
-        AND c.enablecompletion = 1
+            c.enablecompletion = 1
         AND crc.timecompleted IS NULL
         AND crc.reaggregate > 0
         ORDER BY

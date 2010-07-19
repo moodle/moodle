@@ -90,8 +90,7 @@ class completion_criteria_duration extends completion_criteria {
     private function get_timeenrolled($completion) {
         global $DB;
 
-        $context = get_context_instance(CONTEXT_COURSE, $this->course);
-        return $DB->get_field('role_assignments', 'timestart', array('contextid' => $context->id, 'userid' => $completion->userid));
+        return $DB->get_field('user_enrolments', 'timestart', array('courseid' => $this->course, 'userid' => $completion->userid));
     }
 
     /**
@@ -171,45 +170,67 @@ class completion_criteria_duration extends completion_criteria {
     public function cron() {
         global $DB;
 
-//TODO: MDL-22797 completion needs to be updated to use new enrolment framework
-
-        // Get all users who match meet this criteria
+        /*
+         * Get all users who match meet this criteria
+         *
+         * We can safely ignore duplicate enrolments for
+         * a user in a course here as we only care if
+         * one of the enrolments has passed the set
+         * duration.
+         */
         $sql = '
-            SELECT DISTINCT
+            SELECT
                 c.id AS course,
                 cr.timeend AS date,
                 cr.id AS criteriaid,
-                ra.userid AS userid,
-                (ra.timestart + cr.enrolperiod) AS timecompleted
+                u.id AS userid,
+                ue.timestart AS otimestart,
+                (ue.timestart + cr.enrolperiod) AS ctimestart,
+                ue.timeenrolled AS otimeenrolled,
+                (ue.timeenrolled + cr.enrolperiod) AS ctimeenrolled
             FROM
-                {course_completion_criteria} cr
+                {user} u
+            INNER JOIN
+                {user_enrolments} ue
+             ON ue.userid = u.id
+            INNER JOIN
+                {enrol} e
+             ON e.id = ue.enrolid
             INNER JOIN
                 {course} c
-             ON cr.course = c.id
+             ON c.id = e.courseid
             INNER JOIN
-                {context} con
-             ON con.instanceid = c.id
-            INNER JOIN
-                {role_assignments} ra
-             ON ra.contextid = con.id
+                {course_completion_criteria} cr
+             ON c.id = cr.course
             LEFT JOIN
                 {course_completion_crit_compl} cc
              ON cc.criteriaid = cr.id
-            AND cc.userid = ra.userid
+            AND cc.userid = u.id
             WHERE
                 cr.criteriatype = '.COMPLETION_CRITERIA_TYPE_DURATION.'
-            AND con.contextlevel = '.CONTEXT_COURSE.'
             AND c.enablecompletion = 1
             AND cc.id IS NULL
-            AND ra.timestart + cr.enrolperiod < ?
+            AND
+            (
+                ue.timestart > 0 AND ue.timestart + cr.enrolperiod < ?
+             OR ue.timeenrolled > 0 AND ue.timeenrolled + cr.enrolperiod < ?
+            )
         ';
 
         // Loop through completions, and mark as complete
-        if ($rs = $DB->get_recordset_sql($sql, array(time()))) {
+        $now = time();
+        if ($rs = $DB->get_recordset_sql($sql, array($now, $now))) {
             foreach ($rs as $record) {
 
                 $completion = new completion_criteria_completion((array)$record);
-                $completion->mark_complete($record->timecompleted);
+
+                // Use time start if not 0, otherwise use timeenrolled
+                if ($record->otimestart) {
+                    $completion->mark_complete($record->ctimestart);
+                }
+                else {
+                    $completion->mark_complete($record->ctimeenrolled);
+                }
             }
 
             $rs->close();

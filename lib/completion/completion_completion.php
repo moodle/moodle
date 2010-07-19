@@ -138,9 +138,9 @@ class completion_completion extends data_object {
      */
     public function mark_enrolled($timeenrolled = null) {
 
-        if (!$this->timeenrolled) {
+        if ($this->timeenrolled === null) {
 
-            if (!$timeenrolled) {
+            if ($timeenrolled === null) {
                 $timeenrolled = time();
             }
 
@@ -219,15 +219,8 @@ class completion_completion extends data_object {
 
         global $DB;
 
-        if (!$this->timeenrolled) {
-            // Get users timenrolled
-            // Can't find a more efficient way of doing this without alter get_users_by_capability()
-            $context = get_context_instance(CONTEXT_COURSE, $this->course);
-            if ($roleassignment = $DB->get_record('role_assignments', array('contextid' => $context->id, 'userid' => $this->userid))) {
-                $this->timeenrolled = $roleassignment->timestart;
-            } else {
-                $this->timeenrolled = 0;
-            }
+        if ($this->timeenrolled === null) {
+            $this->timeenrolled = 0;
         }
 
         // Save record
