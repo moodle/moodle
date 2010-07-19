@@ -65,7 +65,13 @@ class repository_local extends repository {
             $filearea = null;
             $filepath = null;
             $component = null;
-            $context  = get_system_context();
+            if (!empty($this->context)) {
+                list($context, $course, $cm) = get_context_info_array($this->context->id);
+                $courseid = is_object($course) ? $course->id : SITEID;
+                $context = get_context_instance(CONTEXT_COURSE, $courseid);
+            } else {
+                $context = get_system_context();
+            }
         }
 
         $browser = get_file_browser();

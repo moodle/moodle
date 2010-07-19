@@ -49,7 +49,6 @@ class file_picker implements renderable {
         require_once($CFG->dirroot. '/repository/lib.php');
         $defaults = array(
             'accepted_types'=>'*',
-            'context'=>$PAGE->context, //TODO: no PAGE in components allowed!! (skodak)
             'return_types'=>FILE_INTERNAL,
             'env' => 'filepicker',
             'client_id' => uniqid(),

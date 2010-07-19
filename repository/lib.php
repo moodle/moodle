@@ -449,6 +449,7 @@ abstract class repository {
     // example: self::$disabled = true
     public $disabled = false;
     public $id;
+    /** @var object current context */
     public $context;
     public $options;
     public $readonly;
@@ -463,7 +464,7 @@ abstract class repository {
      */
     public function __construct($repositoryid, $context = SYSCONTEXTID, $options = array(), $readonly = 0) {
         $this->id = $repositoryid;
-        if (!empty($context->id)) {
+        if (is_object($context)) {
             $this->context = $context;
         } else {
             $this->context = get_context_instance_by_id($context);
@@ -549,30 +550,12 @@ abstract class repository {
      * @param int $contextid
      * @return boolean
      */
-    public static function check_context($contextid) {
-        global $USER;
-
+    public static function check_capability($contextid, $instance) {
         $context = get_context_instance_by_id($contextid);
-        $level = $context->contextlevel;
-
-        if ($level == CONTEXT_COURSE) {
-            if (!is_enrolled($context)) { //TODO: this looks a bit too simple, verify!
-                return false;
-            } else {
-                return true;
-            }
-        } else if ($level == CONTEXT_USER) {
-            $c = get_context_instance(CONTEXT_USER, $USER->id);
-            if ($c->id == $contextid) {
-                return true;
-            } else {
-                return false;
-            }
-        } else if ($level == CONTEXT_SYSTEM) {
-            // it is always ok in system level
-            return true;
+        $capability = has_capability('repository/'.$instance->type.':view', $context);
+        if (!$capability) {
+            throw new repository_exception('nopermissiontoaccess', 'repository');
         }
-        return false;
     }
 
     /**

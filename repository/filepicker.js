@@ -101,6 +101,9 @@ M.core_filepicker.init = function(Y, options) {
             params['client_id'] = args.client_id;
             params['itemid'] = this.options.itemid?this.options.itemid:0;
             params['maxbytes'] = this.options.maxbytes?this.options.maxbytes:-1;
+            if (this.options.context && this.options.context.id) {
+                params['ctx_id'] = this.options.context.id;
+            }
             if (args['params']) {
                 for (i in args['params']) {
                     params[i] = args['params'][i];

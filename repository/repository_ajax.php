@@ -68,11 +68,23 @@ if (!confirm_sesskey()) {
     die(json_encode($err));
 }
 
-/// Check permissions
-if (! (isloggedin() && repository::check_context($contextid)) ) {
-    $err->error = get_string('nopermissiontoaccess', 'repository');
+if (!isloggedin()) {
+    $err->error = get_string('loggedinnot', 'moodle');
     die(json_encode($err));
 }
+
+/// Get repository instance information
+$sql = 'SELECT i.name, i.typeid, r.type FROM {repository} r, {repository_instances} i WHERE i.id=? AND i.typeid=r.id';
+
+if (!$repository = $DB->get_record_sql($sql, array($repo_id))) {
+    $err->error = get_string('invalidrepositoryid', 'repository');
+    die(json_encode($err));
+} else {
+    $type = $repository->type;
+}
+
+/// Check permissions
+repository::check_capability($contextid, $repository);
 
 $moodle_maxbytes = get_max_upload_file_size();
 // to prevent maxbytes greater than moodle maxbytes setting
@@ -111,17 +123,6 @@ switch ($action) {
         $cache->refresh();
         $action = 'list';
         break;
-}
-
-/// Get repository instance information
-$sql = 'SELECT i.name, i.typeid, r.type FROM {repository} r, {repository_instances} i '.
-       'WHERE i.id=? AND i.typeid=r.id';
-
-if (!$repository = $DB->get_record_sql($sql, array($repo_id))) {
-    $err->error = get_string('invalidrepositoryid', 'repository');
-    die(json_encode($err));
-} else {
-    $type = $repository->type;
 }
 
 if (file_exists($CFG->dirroot.'/repository/'.$type.'/lib.php')) {

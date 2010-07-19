@@ -80,6 +80,7 @@ class MoodleQuickForm_filepicker extends HTML_QuickForm_input {
         $html = $this->_getTabs();
         $fp = new file_picker($args);
         $options = $fp->options;
+        $options->context = $PAGE->context;
         $html .= $OUTPUT->render($fp);
         $html .= '<input type="hidden" name="'.$elname.'" id="'.$id.'" value="'.$draftitemid.'" />';
 
