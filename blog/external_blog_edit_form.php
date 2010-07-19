@@ -37,21 +37,21 @@ class blog_edit_external_form extends moodleform {
 
         $mform =& $this->_form;
 
-        $mform->addElement('text', 'url', get_string('url'), array('size' => 50));
+        $mform->addElement('text', 'url', get_string('url', 'blog'), array('size' => 50));
         $mform->addRule('url', get_string('emptyurl', 'blog'), 'required', null, 'client');
-        $mform->setHelpButton('url', array('url', get_string('url', 'blog'), 'blog'));
+        $mform->addHelpButton('url', 'url', 'blog');
 
-        $mform->addElement('text', 'name', get_string('name'));
-        $mform->setHelpButton('name', array('name', get_string('name', 'blog'), 'blog'));
+        $mform->addElement('text', 'name', get_string('name', 'blog'));
+        $mform->addHelpButton('name', 'name', 'blog');
 
-        $mform->addElement('textarea', 'description', get_string('description'), array('cols' => 50, 'rows' => 7));
-        $mform->setHelpButton('description', array('description', get_string('description', 'blog'), 'blog'));
+        $mform->addElement('textarea', 'description', get_string('description', 'blog'), array('cols' => 50, 'rows' => 7));
+        $mform->addHelpButton('description', 'description', 'blog');
 
         if (!empty($CFG->usetags)) {
             $mform->addElement('text', 'filtertags', get_string('filtertags', 'blog'), array('size' => 50));
-            $mform->setHelpButton('filtertags', array('filtertags', get_string('filtertags', 'blog'), 'blog'));
+            $mform->addHelpButton('filtertags', 'filtertags', 'blog');
             $mform->addElement('text', 'autotags', get_string('autotags', 'blog'), array('size' => 50));
-            $mform->setHelpButton('autotags', array('autotags', get_string('autotags', 'blog'), 'blog'));
+            $mform->addHelpButton('autotags', 'autotags', 'blog');
         }
 
         $this->add_action_buttons();

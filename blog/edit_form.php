@@ -59,7 +59,7 @@ class blog_edit_form extends moodleform {
         }
 
         $mform->addElement('select', 'publishstate', get_string('publishto', 'blog'), $publishstates);
-        $mform->setHelpButton('publishstate', array('publish_state', get_string('publishto', 'blog'), 'blog'));
+        $mform->addHelpButton('publishstate', 'publishto', 'blog');
         $mform->setDefault('publishstate', 0);
 
         if (!empty($CFG->usetags)) {
