@@ -111,20 +111,20 @@ class DefaultReporter extends SimpleReporterDecorator {
             global $argv;
             $parser = new SimpleCommandLineParser($argv);
             $interfaces = $parser->isXml() ? array('XmlReporter') : array('TextReporter');
-            $reporter = &new SelectiveReporter(
+            $reporter = new SelectiveReporter(
                     SimpleTest::preferred($interfaces),
                     $parser->getTestCase(),
                     $parser->getTest());
             if ($parser->noSkips()) {
-                $reporter = &new NoSkipsReporter($reporter);
+                $reporter = new NoSkipsReporter($reporter);
             }
         } else {
-            $reporter = &new SelectiveReporter(
+            $reporter = new SelectiveReporter(
                     SimpleTest::preferred('HtmlReporter'),
                     @$_GET['c'],
                     @$_GET['t']);
             if (@$_GET['skips'] == 'no' || @$_GET['show-skips'] == 'no') {
-                $reporter = &new NoSkipsReporter($reporter);
+                $reporter = new NoSkipsReporter($reporter);
             }
         }
         $this->SimpleReporterDecorator($reporter);

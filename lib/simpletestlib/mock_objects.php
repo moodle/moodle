@@ -151,7 +151,7 @@ class ParametersExpectation extends SimpleExpectation {
         $descriptions = array();
         if (is_array($args)) {
             foreach ($args as $arg) {
-                $dumper = &new SimpleDumper();
+                $dumper = new SimpleDumper();
                 $descriptions[] = $dumper->describeValue($arg);
             }
         }
@@ -652,8 +652,8 @@ class SimpleMock {
      *    @access public
      */
     function SimpleMock() {
-        $this->_actions = &new SimpleCallSchedule();
-        $this->_expectations = &new SimpleCallSchedule();
+        $this->_actions = new SimpleCallSchedule();
+        $this->_expectations = new SimpleCallSchedule();
         $this->_call_counts = array();
         $this->_expected_counts = array();
         $this->_max_counts = array();
@@ -1320,7 +1320,7 @@ class MockGenerator {
         $code .= $this->_addMethodList(array_merge($methods, $this->_reflection->getMethods()));
         $code .= "\n";
         $code .= "    function " . $this->_mock_class . "() {\n";
-        $code .= "        \$this->_mock = &new " . $this->_mock_base . "();\n";
+        $code .= "        \$this->_mock = new " . $this->_mock_base . "();\n";
         $code .= "        \$this->_mock->disableExpectationNameChecks();\n";
         $code .= "    }\n";
         $code .= $this->_chainMockReturns();
@@ -1346,7 +1346,7 @@ class MockGenerator {
         $code .= $this->_addMethodList($methods);
         $code .= "\n";
         $code .= "    function " . $this->_mock_class . "() {\n";
-        $code .= "        \$this->_mock = &new " . $this->_mock_base . "();\n";
+        $code .= "        \$this->_mock = new " . $this->_mock_base . "();\n";
         $code .= "        \$this->_mock->disableExpectationNameChecks();\n";
         $code .= "    }\n";
         $code .= $this->_chainMockReturns();

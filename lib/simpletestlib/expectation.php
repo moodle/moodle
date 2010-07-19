@@ -75,7 +75,7 @@ class SimpleExpectation {
      */
     function &_getDumper() {
         if (! $this->_dumper) {
-            $dumper = &new SimpleDumper();
+            $dumper = new SimpleDumper();
             return $dumper;
         }
         return $this->_dumper;

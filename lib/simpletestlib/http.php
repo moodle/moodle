@@ -98,9 +98,9 @@ class SimpleRoute {
      */
     function &_createSocket($scheme, $host, $port, $timeout) {
         if (in_array($scheme, array('https'))) {
-            $socket = &new SimpleSecureSocket($host, $port, $timeout);
+            $socket = new SimpleSecureSocket($host, $port, $timeout);
         } else {
-            $socket = &new SimpleSocket($host, $port, $timeout);
+            $socket = new SimpleSocket($host, $port, $timeout);
         }
         return $socket;
     }
@@ -279,7 +279,7 @@ class SimpleHttpRequest {
      *    @access protected
      */
     function &_createResponse(&$socket) {
-        $response = &new SimpleHttpResponse(
+        $response = new SimpleHttpResponse(
                 $socket,
                 $this->_route->getUrl(),
                 $this->_encoding);
@@ -516,13 +516,13 @@ class SimpleHttpResponse extends SimpleStickyError {
     function _parse($raw) {
         if (! $raw) {
             $this->_setError('Nothing fetched');
-            $this->_headers = &new SimpleHttpHeaders('');
+            $this->_headers = new SimpleHttpHeaders('');
         } elseif (! strstr($raw, "\r\n\r\n")) {
             $this->_setError('Could not split headers from content');
-            $this->_headers = &new SimpleHttpHeaders($raw);
+            $this->_headers = new SimpleHttpHeaders($raw);
         } else {
             list($headers, $this->_content) = split("\r\n\r\n", $raw, 2);
-            $this->_headers = &new SimpleHttpHeaders($headers);
+            $this->_headers = new SimpleHttpHeaders($headers);
         }
     }
     

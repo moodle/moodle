@@ -163,7 +163,7 @@ class SimplePageBuilder extends SimpleSaxListener {
      *    @access protected
      */
     function &_createPage($response) {
-        $page = &new SimplePage($response);
+        $page = new SimplePage($response);
         return $page;
     }
 
@@ -175,7 +175,7 @@ class SimplePageBuilder extends SimpleSaxListener {
      *    @access protected
      */
     function &_createParser(&$listener) {
-        $parser = &new SimpleHtmlSaxParser($listener);
+        $parser = new SimpleHtmlSaxParser($listener);
         return $parser;
     }
     
@@ -188,7 +188,7 @@ class SimplePageBuilder extends SimpleSaxListener {
      *    @access public
      */
     function startElement($name, $attributes) {
-        $factory = &new SimpleTagBuilder();
+        $factory = new SimpleTagBuilder();
         $tag = $factory->createTag($name, $attributes);
         if (! $tag) {
             return true;
@@ -641,7 +641,7 @@ class SimplePage {
      *    @access public
      */
     function acceptFormStart(&$tag) {
-        $this->_open_forms[] = &new SimpleForm($tag, $this);
+        $this->_open_forms[] = new SimpleForm($tag, $this);
     }
 
     /**

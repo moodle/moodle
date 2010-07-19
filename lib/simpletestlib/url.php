@@ -379,7 +379,7 @@ class SimpleUrl {
      */
     function clearRequest() {
         $this->_raw = false;
-        $this->_request = &new SimpleGetEncoding();
+        $this->_request = new SimpleGetEncoding();
     }
     
     /**

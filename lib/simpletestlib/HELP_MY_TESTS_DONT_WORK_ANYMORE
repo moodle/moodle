@@ -289,13 +289,13 @@ test case expansion against the ease of writing user interfaces.
 
 Code such as...
 
-$test = &new MyTestCase();
+$test = new MyTestCase();
 $test->attachObserver(new TestHtmlDisplay());
 $test->run();
 
 ...should be rewritten as...
 
-$test = &new MyTestCase();
+$test = new MyTestCase();
 $test->run(new HtmlReporter());
 
 If you previously attached multiple observers then the workaround
