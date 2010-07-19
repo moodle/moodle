@@ -39,7 +39,9 @@ class core_user_renderer extends plugin_renderer_base {
 
     public function render_user_files_tree(user_files_tree $tree) {
         $htmlid = 'user_files_tree_'.uniqid();
-        $this->page->requires->js_init_call('M.user_core.init_tree', array(false, $htmlid));
+        $module = array('name'=>'core_user', 'fullpath'=>'/user/module.js');
+        $this->page->requires->js_init_call('M.core_user.init_tree', array(false, $htmlid), false, $module);
+
         $html = '<div id="'.$htmlid.'">';
         $html .= $this->htmllize_tree($tree, $tree->dir);
         $html .= '</div>';

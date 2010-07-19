@@ -42,9 +42,6 @@ $PAGE->set_heading($title);
 $PAGE->set_pagelayout('mydashboard');
 $PAGE->set_pagetype('user-files');
 
-$module = array('name'=>'core_user', 'fullpath'=>'/user/module.js');
-$PAGE->requires->js_init_call('M.core_user.init_tree', null, false, $module);
-
 echo $OUTPUT->header();
 echo $OUTPUT->box_start('generalbox');
 
