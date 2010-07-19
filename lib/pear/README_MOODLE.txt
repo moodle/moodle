@@ -18,6 +18,8 @@ and documented for Moodle at:
 * http://cvs.moodle.org/moodle/lib/excel/Parser.php.diff?r1=1.1&r2=1.2
 * http://cvs.moodle.org/moodle/lib/excel/Worksheet.php.diff?r1=1.1&r2=1.2
 
+3/ removed deprecated "=& new"
+
 Such modifications should be carefully each time the Excel PEAR package is updated
 to a new release within Moodle.
 
