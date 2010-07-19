@@ -23,9 +23,9 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['description'] = 'This method will repeatedly check for and process a specially-formatted text file in the location that you specify.
+$string['pluginname_desc'] = 'This method will repeatedly check for and process a specially-formatted text file in the location that you specify.
 The file is a comma separated file assumed to have four or six fields per line:
-<pre>
+<pre class="informationbox">
 *  operation, role, idnumber(user), idnumber(course) [, starttime, endtime]
 where:
 *  operation        = add | del
@@ -36,7 +36,7 @@ where:
 *  endtime          = end time (in seconds since epoch) - optional
 </pre>
 It could look something like this:
-<pre>
+<pre class="informationbox">
    add, student, 5, CF101
    add, teacher, 6, CF101
    add, teacheredit, 7, CF101
@@ -44,9 +44,11 @@ It could look something like this:
    del, student, 17, CF101
    add, student, 21, CF101, 1091115000, 1091215000
 </pre>';
-$string['enrolname'] = 'Flat file';
+$string['pluginname'] = 'Flat file (CSV)';
 $string['filelockedmail'] = 'The text file you are using for file-based enrolments ({$a}) can not be deleted by the cron process.  This usually means the permissions are wrong on it.  Please fix the permissions so that Moodle can delete the file, otherwise it might be processed repeatedly.';
 $string['filelockedmailsubject'] = 'Important error: Enrolment file';
 $string['location'] = 'File location';
+$string['mailstudents'] = 'Notify students by email';
+$string['mailteachers'] = 'Notify teachers by email';
 $string['mailadmin'] = 'Notify admin by email';
-$string['mailusers'] = 'Notify users by email';
+$string['mapping'] = 'Flat file mapping';
