@@ -192,7 +192,7 @@ class mod_workshop_mod_form extends moodleform_mod {
             // editing an existing workshop - let us prepare the added editor elements (intro done automatically)
             $draftitemid = file_get_submitted_draft_itemid('instructauthors');
             $data['instructauthorseditor']['text'] = file_prepare_draft_area($draftitemid, $this->context->id,
-                                'mod_workshop', 'instructauthors', false,
+                                'mod_workshop', 'instructauthors', 0,
                                 workshop::instruction_editors_options($this->context),
                                 $data['instructauthors']);
             $data['instructauthorseditor']['format'] = $data['instructauthorsformat'];
@@ -200,7 +200,7 @@ class mod_workshop_mod_form extends moodleform_mod {
 
             $draftitemid = file_get_submitted_draft_itemid('instructreviewers');
             $data['instructreviewerseditor']['text'] = file_prepare_draft_area($draftitemid, $this->context->id,
-                                'mod_workshop', 'instructreviewers', false,
+                                'mod_workshop', 'instructreviewers', 0,
                                 workshop::instruction_editors_options($this->context),
                                 $data['instructreviewers']);
             $data['instructreviewerseditor']['format'] = $data['instructreviewersformat'];
@@ -208,11 +208,11 @@ class mod_workshop_mod_form extends moodleform_mod {
         } else {
             // adding a new workshop instance
             $draftitemid = file_get_submitted_draft_itemid('instructauthors');
-            file_prepare_draft_area($draftitemid, null, null, null);    // no context, no filearea yet
+            file_prepare_draft_area($draftitemid, null, 'mod_workshop', 'instructauthors', 0);    // no context yet, itemid not used
             $data['instructauthorseditor'] = array('text' => '', 'format' => FORMAT_HTML, 'itemid' => $draftitemid);
 
             $draftitemid = file_get_submitted_draft_itemid('instructreviewers');
-            file_prepare_draft_area($draftitemid, null, null, null);    // no context, no filearea yet
+            file_prepare_draft_area($draftitemid, null, 'mod_workshop', 'instructreviewers', 0);    // no context yet, itemid not used
             $data['instructreviewerseditor'] = array('text' => '', 'format' => FORMAT_HTML, 'itemid' => $draftitemid);
         }
     }
