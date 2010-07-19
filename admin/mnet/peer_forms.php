@@ -143,14 +143,6 @@ class mnet_review_host_form extends moodleform {
             $mform->addElement('static', 'certdetails', get_string('certdetails', 'mnet'), $OUTPUT->box('<pre>' . $credstr . '</pre>'));
         }
 
-        /*
-        // help icons
-        $mform->setHelpButton('ipaddress', array('ipaddress', get_string('ipaddress', 'mnet'), 'mnet'));
-        $mform->setHelpButton('public_key', array('public_key', get_string('public_key', 'mnet'), 'mnet'));
-        // TODO MDL-17087 I've been through vcs logs and I can't find any evidence the help files ever existed.
-        // Probably someone forgot to add them ;( So commenting out the icons for now
-        */
-
         // finished with static stuff, print save button
         $this->add_action_buttons(false);
     }
