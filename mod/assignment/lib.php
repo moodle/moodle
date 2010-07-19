@@ -384,6 +384,28 @@ class assignment_base {
     }
 
     /**
+     * Any preprocessing needed for the settings form for
+     * this assignment type
+     *
+     * @param array $default_values - array to fill in with the default values
+     *      in the form 'formelement' => 'value'
+     * @param object $form - the form that is to be displayed
+     * @return none
+     */
+    function form_data_preprocessing(&$default_values, $form) {
+    }
+
+    /**
+     * Any extra validation checks needed for the settings
+     * form for this assignment type
+     *
+     * See lib/formslib.php, 'validation' function for details
+     */
+    function form_validation($data, $files) {
+        return array();
+    }
+
+    /**
      * Create a new assignment activity
      *
      * Given an object containing all the necessary data,
