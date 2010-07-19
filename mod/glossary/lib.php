@@ -2603,7 +2603,7 @@ function glossary_extend_settings_navigation(settings_navigation $settings, navi
 
         $string = get_string('rsstype','forum');
 
-        $url = new moodle_url(rss_get_url($PAGE->cm->context->id, $USER->id, 'glossary', $glossary->id));
+        $url = new moodle_url(rss_get_url($PAGE->cm->context->id, $USER->id, 'mod_glossary', $glossary->id));
         $glossarynode->add($string, $url, settings_navigation::TYPE_SETTING, null, null, new pix_icon('i/rss', ''));
     }
 }

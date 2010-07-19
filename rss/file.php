@@ -48,7 +48,7 @@ if (count($args) < 5) {
 
 $contextid   = (int)$args[0];
 $token  = $args[1];
-$modulename = clean_param($args[2], PARAM_FILE);
+$componentname = clean_param($args[2], PARAM_FILE);
 $instance   = $args[3];
 
 $userid = rss_get_userid_from_token($token);
@@ -71,64 +71,50 @@ $PAGE->set_context($context);
 $coursecontext = get_course_context($context);
 $course = $DB->get_record('course', array('id' => $coursecontext->instanceid), '*', MUST_EXIST);
 
+//this will store the path to the cached rss feed contents
 $pathname = null;
 
-switch ($modulename) {
-    case 'blog':
-        $blogid = (int) $args[4];  // could be groupid / courseid  / userid  depending on $instance
-        if ($args[5] != 'rss.xml') {
-            $tagid = (int) $args[5];
+$componentdir = get_component_directory($componentname);
+list($type, $plugin) = normalize_component($componentname);
+
+if (file_exists($componentdir)) {
+    require_once("$componentdir/rsslib.php");
+    $functionname = $plugin.'_rss_get_feed';
+
+    if (function_exists($functionname)) {
+
+        if ($componentname=='blog') {
+
+            $blogid = (int) $args[4];  // could be groupid / courseid  / userid  depending on $instance
+            if ($args[5] != 'rss.xml') {
+                $tagid = (int) $args[5];
+            } else {
+                $tagid = 0;
+            }
+
+            try {
+                require_login($course, false, NULL, false, true);
+            } catch (Exception $e) {
+                rss_not_found();
+            }
+            $pathname = $functionname($instance, $blogid, $tagid);
+        } else if ($componentname=='local_hub') {
+            
+            $pathname = $functionname($args);
         } else {
-            $tagid = 0;
-        }
 
-        try {
-            require_login($course, false, NULL, false, true);
-        } catch (Exception $e) {
-            rss_not_found();
-        }
+            $instance = (int)$instance;
 
-        //Work out the filename of the cached RSS file
-        require_once($CFG->dirroot . '/blog/rsslib.php');
-        $pathname = blog_generate_rss_feed($instance, $blogid, $tagid);
-        break;
+            try {
+                $cm = get_coursemodule_from_instance($plugin, $instance, 0, false, MUST_EXIST);
+                require_login($course, false, $cm, false, true);
+            } catch (Exception $e) {
+                rss_not_found();
+            }
 
-    case 'local_hub': //Note: I made this case generic for a probable futur refactor.
-        // rss/file.php should not handle individual cases.
-        //Here $modulename contain the folder path with '_' instead of '/'
-        
-        //Work out the filename of the cached RSS file
-        $functionname = $modulename . '_rss_get_feed';
-        $modulepath = str_replace('_', '/', $modulename);
-        require_once($CFG->dirroot . '/' . $modulepath . '/rsslib.php');
-        if (function_exists($functionname)) {
-            $pathname = $functionname($args); //All the xxx_rss_get_feed() could manage
-            // eveything with only $args parameter.
-        }
-        break;
-
-    default:
-        $instance = (int) $instance;
-
-        $mods = get_plugin_list('mod');
-        $mods = array_keys($mods);
-        if (!in_array(strtolower($modulename), $mods)) {
-            rss_not_found();
-        }
-        try {
-            $cm = get_coursemodule_from_instance($modulename, $instance, 0, false, MUST_EXIST);
-            require_login($course, false, $cm, false, true);
-        } catch (Exception $e) {
-            rss_not_found();
-        }
-
-        //Work out the filename of the cached RSS file
-        $functionname = $cm->modname . '_rss_get_feed';
-        require_once($CFG->dirroot . "/mod/{$cm->modname}/rsslib.php");
-        if (function_exists($functionname)) {
             $pathname = $functionname($context, $cm, $instance, $args);
         }
-        break;
+    }
 }
 
 //Check that file exists

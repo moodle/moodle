@@ -317,7 +317,7 @@
     //this links has been Settings (database activity administration) block
     /*if (!empty($CFG->enablerssfeeds) && !empty($CFG->data_enablerssfeeds) && $data->rssarticles > 0) {
         echo '<div style="float:right;">';
-        rss_print_link($context->id, $USER->id, 'data', $data->id, get_string('rsstype'));
+        rss_print_link($context->id, $USER->id, 'mod_data', $data->id, get_string('rsstype'));
         echo '</div>';
         echo '<div style="clear:both;"></div>';
     }*/
