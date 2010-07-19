@@ -830,6 +830,7 @@ class backup_groups_structure_step extends backup_structure_step {
 
         $group->annotate_files('group', 'description', 'id');
         $group->annotate_files('group', 'icon', 'id');
+        $grouping->annotate_files('grouping', 'description', 'id');
 
         // Return the root element (groups)
         return $groups;
