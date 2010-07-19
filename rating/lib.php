@@ -250,6 +250,7 @@ class rating_manager {
             return $options->items;
         }
 
+        $userid = null;
         if (empty($options->userid)) {
             $userid = $USER->id;
         } else {
@@ -436,7 +437,7 @@ class rating_manager {
     /**
     * Returns an array of grades calculated by aggregating item ratings.
     * @param object $options {
-    *            userid => int the id of the user whose items have been rated. NOT the user who submitted the ratings [required]
+    *            userid => int the id of the user whose items have been rated. NOT the user who submitted the ratings. 0 to update all. [required]
     *            aggregationmethod => int the aggregation method to apply when calculating grades ie RATING_AGGREGATE_AVERAGE [required]
     *            scaleid => int the scale from which the user can select a rating. Used for bounds checking. [required]
     *            itemtable => int the table containing the items [required]
@@ -465,7 +466,7 @@ class rating_manager {
         }
         else if ( !empty($options->modulename) && !empty($options->moduleid) ) {
             $modulename = $options->modulename;
-            $moduleid   = $options->moduleid;
+            $moduleid   = intval($options->moduleid);
 
             //going direct to the db for the context id seems wrong
             list($ctxselect, $ctxjoin) = context_instance_preload_sql('cm.id', CONTEXT_MODULE, 'ctx');
@@ -485,22 +486,21 @@ class rating_manager {
         $scaleid            = $options->scaleid;        
         $aggregationstring = $this->get_aggregation_method($options->aggregationmethod);
 
-        //if userid is 0 we want all user grades within this context
+        //if userid is not 0 we only want the grade for a single user
+        $singleuserwhere = '';
         if ($options->userid!=0) {
-            $params['userid1'] = $params['userid2'] = $params['userid3']  = $options->userid;
-            $sql = "SELECT :userid1 AS id, :userid2 AS userid, $aggregationstring(r.rating) AS rawgrade
-                    FROM {rating} r
-                    JOIN {{$itemtable}} i ON r.itemid=i.id
-                    WHERE r.contextid=:contextid
-                    AND i.{$itemtableusercolumn} = :userid3";
-        } else {
-            $sql = "SELECT u.id as id, u.id AS userid, $aggregationstring(r.rating) AS rawgrade
-                    FROM {user} u
-                    LEFT JOIN {{$itemtable}} i ON u.id=i.{$itemtableusercolumn}
-                    LEFT JOIN {rating} r ON r.itemid=i.id
-                    WHERE (r.contextid is null or r.contextid=:contextid)
-                    GROUP BY u.id";
+            $params['userid1'] = intval($options->userid);
+            $singleuserwhere = "AND i.{$itemtableusercolumn} = :userid1";
         }
+
+        //note: r.contextid will be null for users who haven't been rated yet
+        $sql = "SELECT u.id as id, u.id AS userid, $aggregationstring(r.rating) AS rawgrade
+                FROM {user} u
+                LEFT JOIN {{$itemtable}} i ON u.id=i.{$itemtableusercolumn}
+                LEFT JOIN {rating} r ON r.itemid=i.id
+                WHERE (r.contextid is null or r.contextid=:contextid)
+                $singleuserwhere
+                GROUP BY u.id";
 
         $results = $DB->get_records_sql($sql, $params);
 
