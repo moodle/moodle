@@ -3473,7 +3473,7 @@ function create_course($data, $editoroptions = NULL) {
 
     if (!isset($data->visible)) {
         // data not from form, add missing visibility info
-        $data->visible = $category->category;
+        $data->visible = $category->visible;
     }
     $data->visibleold = $data->visible;
 
