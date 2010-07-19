@@ -41,7 +41,7 @@ class EasyWorkbook extends Spreadsheet_Excel_Writer {
             }
         }
 
-        $worksheet =& new EasyWorksheet($this->_BIFF_version,
+        $worksheet = new EasyWorksheet($this->_BIFF_version,
                                           $name, $index,
                                           $this->_activesheet, $this->_firstsheet,
                                           $this->_str_total, $this->_str_unique,
