@@ -17,5 +17,6 @@ Our changes: /// Look for "moodle" in code
  * src/parser/PHPParser.php - added support for the T_ABSTRACT token
  * src/reporter/HtmlCoverageReporter.php, src/reporter/html/indexheader.html,
    src/reporter/html/header.html, src/reporter/html/footer.html - various xhtml fixes
+ * removed deprecated "=& new"
 
 20090621 - Eloy Lafuente (stronk7): Original import of 0.8.2 release
