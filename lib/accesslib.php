@@ -4304,14 +4304,22 @@ function allow_switch($fromroleid, $targetroleid) {
  * @param int $rolenamedisplay the type of role name to display. One of the
  *      ROLENAME_X constants. Default ROLENAME_ALIAS.
  * @param bool $withusercounts if true, count the number of users with each role.
+ * @param integer|object $user A user id or object. By default (NULL) checks the permissions of the current user.
  * @return array if $withusercounts is false, then an array $roleid => $rolename.
  *      if $withusercounts is true, returns a list of three arrays,
  *      $rolenames, $rolecounts, and $nameswithcounts.
  */
-function get_assignable_roles($context, $rolenamedisplay = ROLENAME_ALIAS, $withusercounts = false) {
+function get_assignable_roles($context, $rolenamedisplay = ROLENAME_ALIAS, $withusercounts = false, $user = null) {
     global $USER, $DB;
 
-    if (!has_capability('moodle/role:assign', $context)) {
+    // make sure there is a real user specified
+    if ($user === null) {
+        $userid = !empty($USER->id) ? $USER->id : 0;
+    } else {
+        $userid = !empty($user->id) ? $user->id : $user;
+    }
+
+    if (!has_capability('moodle/role:assign', $context, $userid)) {
         if ($withusercounts) {
             return array(array(), array(), array());
         } else {
@@ -4336,7 +4344,7 @@ function get_assignable_roles($context, $rolenamedisplay = ROLENAME_ALIAS, $with
         $params['conid'] = $context->id;
     }
 
-    if (is_siteadmin()) {
+    if (is_siteadmin($userid)) {
         // show all roles allowed in this context to admins
         $assignrestriction = "";
     } else {
@@ -4345,7 +4353,7 @@ function get_assignable_roles($context, $rolenamedisplay = ROLENAME_ALIAS, $with
                                       JOIN {role_assignments} ra ON ra.roleid = raa.roleid
                                      WHERE ra.userid = :userid AND ra.contextid IN ($contexts)
                                    ) ar ON ar.id = r.id";
-        $params['userid'] = $USER->id;
+        $params['userid'] = $userid;
     }
     $params['contextlevel'] = $context->contextlevel;
     $sql = "SELECT r.id, r.name $extrafields
