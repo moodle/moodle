@@ -112,7 +112,7 @@ class assignment_files implements renderable {
             } else {
                 $file->portfoliobutton = '';
             }
-            $url = file_encode_url("$CFG->wwwroot/pluginfile.php", '/'.$this->context->id.'/mod_assignment/'.$filearea.'/'.$file->get_itemid(). '/' . $file->get_filepath().$file->get_filename(), true);
+            $url = file_encode_url("$CFG->wwwroot/pluginfile.php", '/'.$this->context->id.'/mod_assignment/'.$filearea.'/'.$file->get_itemid(). $file->get_filepath().$file->get_filename(), true);
             $filename = $file->get_filename();
             $file->fileurl = html_writer::link($url, $filename);
         }

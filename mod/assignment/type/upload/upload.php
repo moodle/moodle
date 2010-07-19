@@ -85,7 +85,7 @@ if ($mform->is_cancelled()) {
 echo $OUTPUT->header();
 
 echo $OUTPUT->box_start('generalbox');
-if ($instance->can_upload_file($submission)) {
+if ($instance->can_upload_file($submission) && ($id==null)) {
     $data = new stdclass;
     // move submission files to user draft area
     $data = file_prepare_standard_filemanager($data, 'files', $filemanager_options, $context, 'mod_assignment', 'submission', $submission->id);
