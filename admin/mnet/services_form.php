@@ -57,13 +57,13 @@ class mnet_services_form extends moodleform {
 
             $pubstr = get_string('publish','mnet');
             if (!empty($version['hostsubscribes'])) {
-                $pubstr .= ' <a class="notifysuccess" title="'.get_string('issubscribed','mnet', $mnet_peer->name).'">&radic;</a> ';
+                $pubstr .= ' <a class="notifysuccess" title="'.s(get_string('issubscribed','mnet', $mnet_peer->name)).'">&radic;</a> ';
             }
             $mform->addElement('checkbox', 'publish[' . $version['serviceid'] . ']', $pubstr);
 
             $substr = get_string('subscribe','mnet');
             if (!empty($version['hostpublishes'])) {
-                $substr .= ' <a class="notifysuccess" title="'.get_string('ispublished','mnet', $mnet_peer->name).'">&radic;</a> ';
+                $substr .= ' <a class="notifysuccess" title="'.s(get_string('ispublished','mnet', $mnet_peer->name)).'">&radic;</a> ';
             }
             $mform->addElement('checkbox', 'subscribe[' . $version['serviceid']. ']', $substr);
             $count++;

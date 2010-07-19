@@ -131,7 +131,7 @@ class block_course_list extends block_list {
         }
 
         if ($hosts = get_my_remotehosts()) {
-            $this->content->items[] = get_string('remotemoodles','mnet');
+            $this->content->items[] = get_string('remotehosts', 'mnet');
             $this->content->icons[] = '';
             foreach($USER->mnet_foreign_host_array as $somehost) {
                 $this->content->items[] = $somehost['count'].get_string('courseson','mnet').'<a title="'.$somehost['name'].'" href="'.$somehost['url'].'">'.$somehost['name'].'</a>';
