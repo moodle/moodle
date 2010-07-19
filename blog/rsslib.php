@@ -136,9 +136,9 @@ function blog_rss_file_name($type, $id, $tagid=0) {
     global $CFG;
 
     if ($tagid) {
-        return "$CFG->dataroot/rss/blog/$type/$id/$tagid.xml";
+        return "$CFG->dataroot/cache/rss/blog/$type/$id/$tagid.xml";
     } else {
-        return "$CFG->dataroot/rss/blog/$type/$id.xml";
+        return "$CFG->dataroot/cache/rss/blog/$type/$id.xml";
     }
 }
 

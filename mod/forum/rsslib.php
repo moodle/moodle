@@ -29,7 +29,6 @@
  * @global object $DB
  * @param object $context the context
  * @param int $forumid the ID of the forum
- * @param string $cachepath the path to the cache directory. For example '/home/user/moodledata/rss/forum/'
  * @param array $args the arguments received in the url
  * @return string the full path to the cached RSS feed directory. Null if there is a problem.
  */

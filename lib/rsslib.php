@@ -81,13 +81,13 @@ function rss_print_link($contextid, $userid, $modulename, $id, $tooltiptext='') 
 function rss_delete_file($modname, $instance) {
     global $CFG;
 
-    $dirpath = "$CFG->dataroot/rss/$modname";
+    $dirpath = "$CFG->dataroot/cache/rss/$modname";
     if (is_dir($dirpath)) {
         $dh  = opendir($dirpath);
         while (false !== ($filename = readdir($dh))) {
             if ($filename!='.' && $filename!='..') {
                 if (preg_match("/{$instance->id}_/", $filename)) {
-                    unlink("$CFG->dataroot/rss/$modname/$filename");
+                    unlink("$CFG->dataroot/cache/rss/$modname/$filename");
                 }
             }
         }
@@ -134,7 +134,7 @@ function rss_save_file($modname, $filename, $result) {
 
     $status = true;
 
-    if (! $basedir = make_upload_directory ('rss/'. $modname)) {
+    if (! $basedir = make_upload_directory ('cache/rss/'. $modname)) {
         //Cannot be created, so error
         $status = false;
     }
@@ -155,7 +155,7 @@ function rss_save_file($modname, $filename, $result) {
 
 function rss_get_file_full_name($modname, $filename) {
     global $CFG;
-    return "$CFG->dataroot/rss/$modname/$filename.xml";
+    return "$CFG->dataroot/cache/rss/$modname/$filename.xml";
 }
 
 function rss_get_file_name($instance, $sql) {
