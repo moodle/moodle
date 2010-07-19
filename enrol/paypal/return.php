@@ -1,7 +1,7 @@
 <?php
 
     require("../../config.php");
-    require_once("$CFG->dirroot/enrol/paypal/enrol.php");
+    require_once("$CFG->dirroot/enrol/paypal/lib.php");
 
     $id = required_param('id', PARAM_INT);
 
@@ -31,7 +31,10 @@
     } else {   /// Somehow they aren't enrolled yet!  :-(
         $PAGE->set_url($destination);
         echo $OUTPUT->header();
-        notice(get_string('paymentsorry', '', get_string('defaultcourseteacher')), $destination);
+        $a = new stdClass();
+        $a->teacher = get_string('defaultcourseteacher');
+        $a->fullname = format_string($course->fullname);
+        notice(get_string('paymentsorry', '', $a), $destination);
     }
 
 

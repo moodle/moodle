@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="enrol/paypal/db" VERSION="20060807" COMMENT="XMLDB file for Moodle enrol/paypal">
+<XMLDB PATH="enrol/paypal/db" VERSION="20100716" COMMENT="XMLDB file for Moodle enrol/paypal"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+>
   <TABLES>
     <TABLE NAME="enrol_paypal" COMMENT="Holds all known information about PayPal transactions">
       <FIELDS>
@@ -9,8 +12,9 @@
         <FIELD NAME="receiver_id" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="receiver_email" NEXT="item_name"/>
         <FIELD NAME="item_name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="receiver_id" NEXT="courseid"/>
         <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="item_name" NEXT="userid"/>
-        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="courseid" NEXT="memo"/>
-        <FIELD NAME="memo" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="userid" NEXT="tax"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="courseid" NEXT="instanceid"/>
+        <FIELD NAME="instanceid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="userid" NEXT="memo"/>
+        <FIELD NAME="memo" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="instanceid" NEXT="tax"/>
         <FIELD NAME="tax" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="memo" NEXT="option_name1"/>
         <FIELD NAME="option_name1" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="tax" NEXT="option_selection1_x"/>
         <FIELD NAME="option_selection1_x" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="option_name1" NEXT="option_name2"/>
@@ -25,7 +29,7 @@
         <FIELD NAME="timeupdated" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="payment_type"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" />
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
       </KEYS>
     </TABLE>
   </TABLES>

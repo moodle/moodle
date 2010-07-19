@@ -1,7 +1,7 @@
 <div align="center">
 
 <p><?php print_string("paymentrequired") ?></p>
-<p><b><?php echo get_string("cost").": $CFG->enrol_currency $cost"; ?></b></p>
+<p><b><?php echo get_string("cost").": {$instance->currency} {$cost}"; ?></b></p>
 <p><img alt="<?php print_string('paypalaccepted', 'enrol_paypal') ?>" src="https://www.paypal.com/en_US/i/logo/PayPal_mark_60x38.gif" /></p>
 <p><?php print_string("paymentinstant") ?></p>
 <?php
@@ -11,15 +11,15 @@
 
 <input type="hidden" name="cmd" value="_xclick" />
 <input type="hidden" name="charset" value="utf-8" />
-<input type="hidden" name="business" value="<?php p($CFG->enrol_paypalbusiness)?>" />
+<input type="hidden" name="business" value="<?php p($this->get_config('paypalbusiness'))?>" />
 <input type="hidden" name="item_name" value="<?php p($coursefullname) ?>" />
 <input type="hidden" name="item_number" value="<?php p($courseshortname) ?>" />
 <input type="hidden" name="quantity" value="1" />
 <input type="hidden" name="on0" value="<?php print_string("user") ?>" />
 <input type="hidden" name="os0" value="<?php p($userfullname) ?>" />
-<input type="hidden" name="custom" value="<?php echo "$USER->id-$course->id" ?>" />
+<input type="hidden" name="custom" value="<?php echo "{$USER->id}-{$course->id}-{$instance->id}" ?>" />
 
-<input type="hidden" name="currency_code" value="<?php p($CFG->enrol_currency) ?>" />
+<input type="hidden" name="currency_code" value="<?php p($instance->currency) ?>" />
 <input type="hidden" name="amount" value="<?php p($cost) ?>" />
 
 <input type="hidden" name="for_auction" value="false" />
