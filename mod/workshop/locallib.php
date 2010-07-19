@@ -1919,14 +1919,14 @@ class workshop_user_plan implements renderable {
             $task = new stdclass();
             $task->title = get_string('taskintro', 'workshop');
             $task->link = $workshop->updatemod_url();
-            $task->completed = !(trim(strip_tags($workshop->intro)) == '');
+            $task->completed = !(trim($workshop->intro) == '');
             $phase->tasks['intro'] = $task;
         }
         if (has_capability('moodle/course:manageactivities', $workshop->context, $userid)) {
             $task = new stdclass();
             $task->title = get_string('taskinstructauthors', 'workshop');
             $task->link = $workshop->updatemod_url();
-            $task->completed = !(trim(strip_tags($workshop->instructauthors)) == '');
+            $task->completed = !(trim($workshop->instructauthors) == '');
             $phase->tasks['instructauthors'] = $task;
         }
         if (has_capability('mod/workshop:editdimensions', $workshop->context, $userid)) {
@@ -1971,7 +1971,7 @@ class workshop_user_plan implements renderable {
             $task = new stdclass();
             $task->title = get_string('taskinstructreviewers', 'workshop');
             $task->link = $workshop->updatemod_url();
-            if (trim(strip_tags($workshop->instructreviewers))) {
+            if (trim($workshop->instructreviewers)) {
                 $task->completed = true;
             } elseif ($workshop->phase >= workshop::PHASE_ASSESSMENT) {
                 $task->completed = false;
