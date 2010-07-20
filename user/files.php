@@ -16,9 +16,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Manage files in folder in private area - to be replaced by something better hopefully....
+ * View private user files
  *
- * @package   block_private_files
+ * @package   moodlecore
  * @copyright 2010 Petr Skoda (http://skodak.org)
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
