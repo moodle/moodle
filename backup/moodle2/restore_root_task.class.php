@@ -63,6 +63,9 @@ class restore_root_task extends restore_task {
         // Unconditionally, load create all the needed scales
         $this->add_step(new restore_scales_structure_step('create_scales', 'scales.xml'));
 
+        // Unconditionally, load create all the needed outcomes
+        $this->add_step(new restore_outcomes_structure_step('create_scales', 'outcomes.xml'));
+
         // Unconditionally, load create all the needed outcomes.
         // TODO: restore outcomes
         // $this->add_step(new restore_outcomes_structure_step('create_outcomes', 'outcomes.xml'));

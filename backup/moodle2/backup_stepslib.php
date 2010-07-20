@@ -539,6 +539,9 @@ class backup_final_outcomes_structure_step extends backup_structure_step {
                                    WHERE bi.backupid = ?
                                      AND bi.itemname = 'outcomefinal'", array(backup::VAR_BACKUPID));
 
+        // Annotate outcome files (they store files in system context, so pass it instead of default one)
+        $outcome->annotate_files('grade', 'outcome', 'id', get_context_instance(CONTEXT_SYSTEM)->id);
+
         // Return main element (outcomesdef)
         return $outcomesdef;
     }
