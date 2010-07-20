@@ -6442,7 +6442,7 @@ function get_string($identifier, $component = '', $a = NULL) {
     if (strpos($component, '/') !== false) {
         debugging('The module name you passed to get_string is the deprecated format ' .
                 'like mod/mymod or block/myblock. The correct form looks like mymod, or block_myblock.' , DEBUG_DEVELOPER);
-        $componentpath = split('/', $component);
+        $componentpath = explode('/', $component);
 
         switch ($componentpath[0]) {
             case 'mod':

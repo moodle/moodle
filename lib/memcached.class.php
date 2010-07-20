@@ -51,7 +51,7 @@ class memcached {
         }
         $this->_cache = new Memcache;
 
-        $hosts = split(',', $CFG->memcachedhosts);
+        $hosts = explode(',', $CFG->memcachedhosts);
         if (count($hosts) === 1 && !empty($CFG->memcachedpconn)) {
             // the faster pconnect is only available
             // for single-server setups

@@ -486,7 +486,7 @@ class component_installer {
                 $lines=preg_split('/\r?\n/',$contents);
             /// Each line will be one component
                 foreach($lines as $line) {
-                    $availablecomponents[] = split(',', $line);
+                    $availablecomponents[] = explode(',', $line);
                 }
             /// If no components have been found, return error
                 if (empty($availablecomponents)) {

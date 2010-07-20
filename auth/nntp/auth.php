@@ -48,7 +48,7 @@ class auth_plugin_nntp extends auth_plugin_base {
         global $CFG;
 
         // try each multiple host
-        $hosts = split(';', $this->config->host);
+        $hosts = explode(';', $this->config->host);
         foreach ($hosts as $host) {
             $host = '{' . trim($host) . ':' . $this->config->port . '/nntp}';
 

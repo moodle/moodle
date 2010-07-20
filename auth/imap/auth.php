@@ -46,7 +46,7 @@ class auth_plugin_imap extends auth_plugin_base {
         }
 
         global $CFG;
-        $hosts = split(';', $this->config->host);   // Could be multiple hosts
+        $hosts = explode(';', $this->config->host);   // Could be multiple hosts
 
         foreach ($hosts as $host) {                 // Try each host in turn
             $host = trim($host);

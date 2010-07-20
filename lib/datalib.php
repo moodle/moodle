@@ -598,7 +598,7 @@ function get_courses_wmanagers($categoryid=0, $sort="c.sortorder ASC", $fields=a
         return $courses;
     }
 
-    $managerroles = split(',', $CFG->coursecontact);
+    $managerroles = explode(',', $CFG->coursecontact);
     $catctxids = '';
     if (count($managerroles)) {
         if ($allcats === true) {

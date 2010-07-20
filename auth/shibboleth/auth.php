@@ -319,7 +319,7 @@ class auth_plugin_shibboleth extends auth_plugin_base {
      * @param string $string Possibly multi-valued attribute from Shibboleth
      */
     function get_first_string($string) {
-        $list = split( ';', $string);
+        $list = explode( ';', $string);
         $clean_string = rtrim($list[0]);
 
         return $clean_string;
@@ -384,10 +384,10 @@ class auth_plugin_shibboleth extends auth_plugin_base {
     function get_idp_list($organization_selection) {
         $idp_list = array();
 
-        $idp_raw_list = split("\n",  $organization_selection);
+        $idp_raw_list = explode("\n",  $organization_selection);
 
         foreach ($idp_raw_list as $idp_line){
-            $idp_data = split(',', $idp_line);
+            $idp_data = explode(',', $idp_line);
             if (isset($idp_data[2]))
             {
                 $idp_list[trim($idp_data[0])] = array(trim($idp_data[1]),trim($idp_data[2]));
@@ -410,7 +410,7 @@ class auth_plugin_shibboleth extends auth_plugin_base {
     function generate_cookie_array($value) {
 
         // Decodes and splits cookie value
-        $CookieArray = split(' ', $value);
+        $CookieArray = explode(' ', $value);
         $CookieArray = array_map('base64_decode', $CookieArray);
 
         return $CookieArray;

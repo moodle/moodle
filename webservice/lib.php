@@ -730,7 +730,7 @@ class '.$classname.' {
         //cast the param from object to array (validate_parameters except array only)
         $castingcode = '';
         if ($params){
-            $paramstocast = split(',', $params);
+            $paramstocast = explode(',', $params);
             foreach ($paramstocast as $paramtocast) {
                 //clean the parameter from any white space
                 $paramtocast = trim($paramtocast);                

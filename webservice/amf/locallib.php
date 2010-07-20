@@ -64,7 +64,7 @@ class webservice_amf_server extends webservice_zend_server {
         //cast the param from object to array (validate_parameters except array only)
         $castingcode = '';
         if ($params){
-            $paramstocast = split(',', $params);
+            $paramstocast = explode(',', $params);
             foreach ($paramstocast as $paramtocast) {
                 $paramtocast = trim($paramtocast);
                 $castingcode .= $paramtocast .

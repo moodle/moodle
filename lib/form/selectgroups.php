@@ -101,7 +101,7 @@ class MoodleQuickForm_selectgroups extends HTML_QuickForm_element {
     function setSelected($values)
     {
         if (is_string($values) && $this->getMultiple()) {
-            $values = split("[ ]?,[ ]?", $values);
+            $values = preg_split("/[ ]?,[ ]?/", $values);
         }
         if (is_array($values)) {
             $this->_values = array_values($values);
