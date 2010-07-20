@@ -1172,13 +1172,16 @@ function get_my_remotecourses($userid=0) {
         $userid = $USER->id;
     }
 
-    $sql = "SELECT DISTINCT c.id, c.remoteid, c.shortname, c.fullname,
+    // we can not use SELECT DISTINCT + text field (summary) because of MS SQL and Oracle, subselect used therefore
+    $sql = "SELECT c.id, c.remoteid, c.shortname, c.fullname,
                    c.hostid, c.summary, c.summaryformat, c.categoryname AS cat_name,
                    h.name AS hostname
               FROM {mnetservice_enrol_courses} c
-              JOIN {mnetservice_enrol_enrolments} e ON (e.hostid = c.hostid AND e.remotecourseid = c.remoteid)
-              JOIN {mnet_host} h ON h.id = c.hostid
-             WHERE e.userid = ?";
+              JOIN (SELECT DISTINCT hostid, remotecourseid
+                      FROM {mnetservice_enrol_enrolments}
+                     WHERE userid = ?
+                   ) e ON (e.hostid = c.hostid AND e.remotecourseid = c.remoteid)
+              JOIN {mnet_host} h ON h.id = c.hostid";
 
     return $DB->get_records_sql($sql, array($userid));
 }
