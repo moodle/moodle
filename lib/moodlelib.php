@@ -1073,14 +1073,12 @@ function get_users_from_config($value, $capability, $includeadmins = true) {
 function purge_all_caches() {
     global $CFG;
 
-    remove_dir("$CFG->dataroot/rss", true);
-
     reset_text_filters_cache();
     js_reset_all_caches();
     theme_reset_all_caches();
     get_string_manager()->reset_caches();
 
-    // purge all other caches: simplepie, etc.
+    // purge all other caches: rss, simplepie, etc.
     remove_dir($CFG->dataroot.'/cache', true);
 
     // some more diagnostics in case site is misconfigured
