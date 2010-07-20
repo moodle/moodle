@@ -167,9 +167,8 @@ h6{
 
 .headermenu {
 	color: #fff;
-	margin-right: 25px;
 	float: none;
-	margin-bottom: 0;
+	margin:5px 25px 0 0;
 }
 
 .headermenu a {

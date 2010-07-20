@@ -182,29 +182,6 @@
 
 }
 
-/**
- * Custom menu
-
-.pagelayout-frontpage #custommenu {padding:0 2px;}
-#custommenu {padding:0 10px;}
-#custommenu .yui3-menu {background-image:url([[pix:theme|hgradient]]);background-repeat: repeat-x;background-color:#e1e1df;}
-#custommenu .yui3-menu .yui3-menu {background-image:none;background-color:#FFF;}
-#custommenu .yui3-menu .yui3-menu-label,
-#custommenu .yui3-menu .yui3-menuitem-content,
-#custommenu .yui3-menu .yui3-menu-content,
-#custommenu .yui3-menu .yui3-menu .yui3-menu-content,
 #custommenu .yui3-menu-horizontal.javascript-disabled .yui3-menu-content,
-#custommenu .yui3-menu-horizontal.javascript-disabled .yui3-menu-content ul {border-color:#CCC;}
-#custommenu .yui3-menu .yui3-menuitem-content,
-#custommenu .yui3-menu .yui3-menu .yui3-menuitem-content {cursor:pointer;}
-#custommenu .yui3-menu .yui3-menu-label-menuvisible,
-#custommenu .yui3-menu .yui3-menuitem-active {background-color:#e1e1df;}
-#custommenu .yui3-menu-horizontal.javascript-disabled a {color:inherit;}
-#custommenu .yui3-menu-horizontal.javascript-disabled a:hover {color:blue;text-decoration:none;}
-
-.smartselect .smartselect_menuitem:hover,
-.smartselect .smartselect_submenuitem:hover {background-color:#C2EAFF;}
-.smartselect .smartselect_submenu {border-color:#999;}
-.smartselect .smartselect_menu,
-.smartselect .smartselect_submenu {-moz-border-radius:4px;-webkit-border-radius: 5px;}
-*/
+#custommenu .yui3-menu-horizontal.javascript-disabled .yui3-menu-content .ul {border:none !important;}
+#custommenu .yui3-menu-horizontal.javascript-disabled li a {padding:0 20px 0 0;}

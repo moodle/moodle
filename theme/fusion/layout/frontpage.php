@@ -25,14 +25,6 @@ echo $OUTPUT->doctype() ?>
     <title><?php echo $PAGE->title ?></title>
     <link rel="shortcut icon" href="<?php echo $OUTPUT->pix_url('favicon', 'theme')?>" />
     <meta name="description" content="<?php echo strip_tags(format_text($SITE->summary, FORMAT_HTML)) ?>" />
-	<style>
-		.yui3-skin-sam .yui3-menu-content, 
-		.yui3-skin-sam .yui3-menu .yui3-menu .yui3-menu-content,
-		.yui3-skin-sam .yui3-menu-horizontal .yui3-menu-label,
-		.yui3-skin-sam .yui3-menu-horizontal .yui3-menuitem-content {
-			border: none !important;
-		}
-	</style>
     <?php echo $OUTPUT->standard_head_html() ?>
 </head>
 
