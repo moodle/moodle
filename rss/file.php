@@ -32,9 +32,6 @@ if (empty($CFG->enablerssfeeds)) {
 $lifetime = 3600;  // Seconds for files to remain in browser caches - 1 hour
 $filename   = 'rss.xml';
 
-// this is a big one big hack - NO_MOODLE_COOKIES is not compatible with capabilities MDL-7243
-// it should be replaced once we get to codes in urls
-
 $relativepath = get_file_argument();
 if (!$relativepath) {
     rss_not_found();
