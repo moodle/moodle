@@ -100,7 +100,7 @@ if ($rs = $DB->get_recordset_sql($sql, $params)) {
     $rs->close();
 }
 
-//$PAGE->settingsnav->get('courseadmin')->get('groups')->make_active(); // TODO: this breaks stuff
+$PAGE->settingsnav->get('courseadmin')->get('users')->get('groups')->make_active();
 $PAGE->navbar->add(get_string('overview', 'group'));
 
 /// Print header
