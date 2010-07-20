@@ -538,10 +538,10 @@ class Parser
 
     // Split the range into 2 cell refs
     if(preg_match("/^([A-I]?[A-Z])(\d+)\:([A-I]?[A-Z])(\d+)$/",$range)) {
-        list($cell1, $cell2) = split(':', $range);
+        list($cell1, $cell2) = explode(':', $range);
         }
     elseif(preg_match("/^([A-I]?[A-Z])(\d+)\.\.([A-I]?[A-Z])(\d+)$/",$range)) {
-        list($cell1, $cell2) = split('\.\.', $range);
+        list($cell1, $cell2) = explode('..', $range);
         }
     else {
         die("Unknown range separator");

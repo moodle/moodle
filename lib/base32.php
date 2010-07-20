@@ -89,7 +89,7 @@ function base32_encode ($inString)
     }
     
     /* Create an array by chunking it every 5 chars */
-    $fiveBitsArray = split("\n",rtrim(chunk_split($compBits, 5, "\n"))); 
+    $fiveBitsArray = explode("\n",rtrim(chunk_split($compBits, 5, "\n"))); 
     
     /* Look-up each chunk and add it to $outstring */
     foreach($fiveBitsArray as $fiveBitsString) { 

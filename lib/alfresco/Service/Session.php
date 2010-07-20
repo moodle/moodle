@@ -104,7 +104,7 @@ class Session extends BaseObject
 	 */
 	public function getStoreFromString($value)
 	{
-		list($scheme, $address) = split("://", $value);
+		list($scheme, $address) = explode("://", $value);
     	return new Store($this, $address, $scheme);		
 	}	
 	
