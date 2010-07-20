@@ -125,30 +125,7 @@ class mod_glossary_mod_form extends moodleform_mod {
         }
 
 //-------------------------------------------------------------------------------
-        /*$mform->addElement('header', '', get_string('grade'));
-        $mform->addElement('checkbox', 'userating', get_string('allowratings', 'glossary') , get_string('ratingsuse', 'glossary'));
-
-        $options=array();
-        $options[2] = get_string('ratingonlywithpermissions', 'glossary');
-        $options[1] = get_string('ratingeveryone', 'glossary');
-        $mform->addElement('select', 'assessed', get_string('users'), $options);
-        $mform->disabledIf('assessed', 'userating');
-
-        $mform->addElement('modgrade', 'scale', get_string('grade'), false);
-        $mform->disabledIf('scale', 'userating');
-
-        $mform->addElement('checkbox', 'ratingtime', get_string('ratingtime', 'glossary'));
-        $mform->disabledIf('ratingtime', 'userating');
-
-        $mform->addElement('date_time_selector', 'assesstimestart', get_string('from'));
-        $mform->disabledIf('assesstimestart', 'userating');
-        $mform->disabledIf('assesstimestart', 'ratingtime');
-
-        $mform->addElement('date_time_selector', 'assesstimefinish', get_string('to'));
-        $mform->disabledIf('assesstimefinish', 'userating');
-        $mform->disabledIf('assesstimefinish', 'ratingtime');*/
-
-//-------------------------------------------------------------------------------
+        
         $this->standard_coursemodule_elements();
 
 //-------------------------------------------------------------------------------
