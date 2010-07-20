@@ -61,8 +61,10 @@ function xmldb_enrol_ldap_install() {
     // Now migrate the real plugin settings. 'enrol_ldap_version' is the only
     // setting that cannot be migrated like the rest, as it clashes with the
     // plugin version number once we strip the 'enrol_ldap_' prefix.
-    set_config('ldap_version', $CFG->enrol_ldap_version, 'enrol_ldap');
-    unset_config('enrol_ldap_version');
+    if (isset($CFG->enrol_ldap_version)) {
+        set_config('ldap_version', $CFG->enrol_ldap_version, 'enrol_ldap');
+        unset_config('enrol_ldap_version');
+    }
 
     $settings = array ('host_url', 'bind_dn', 'bind_pw', 'objectclass', 'course_idnumber',
                        'course_shortname', 'course_fullname', 'course_summary',
