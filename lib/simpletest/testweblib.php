@@ -117,12 +117,11 @@ class web_test extends UnitTestCase {
 
     function old_convert_urls_into_links(&$text) {
         /// Make lone URLs into links.   eg http://moodle.com/
-        $text = eregi_replace("([[:space:]]|^|\(|\[)([[:alnum:]]+)://([^[:space:]]*)([[:alnum:]#?/&=])",
-                          "\\1<a href=\"\\2://\\3\\4\" target=\"_blank\">\\2://\\3\\4</a>", $text);
-
+        $text = preg_replace("%([[:space:]]|^|\(|\[)([[:alnum:]]+)://([^[:space:]]*)([[:alnum:]#?/&=])%i",
+                          '$1<a href="$2://$3$4" target="_blank">$2://$3$4</a>', $text);
         /// eg www.moodle.com
-        $text = eregi_replace("([[:space:]]|^|\(|\[)www\.([^[:space:]]*)([[:alnum:]#?/&=])",
-                          "\\1<a href=\"http://www.\\2\\3\" target=\"_blank\">www.\\2\\3</a>", $text);
+        $text = preg_replace("%([[:space:]]|^|\(|\[)www\.([^[:space:]]*)([[:alnum:]#?/&=])%i",
+                          '$1<a href="http://www.$2$3" target="_blank">www.$2$3</a>', $text);
     }
 
     function get_test_text(){
