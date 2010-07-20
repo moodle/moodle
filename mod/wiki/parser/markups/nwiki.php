@@ -117,10 +117,10 @@ class nwiki_parser extends wiki_markup_parser {
     }
     
     protected function table_block_rule($match) {
-        $rows = split("\n\|-", $match[1]);
+        $rows = explode("\n|-", $match[1]);
         $table = array();
         foreach($rows as $r) {
-            $colsendline = split("\n", $r);
+            $colsendline = explode("\n", $r);
             $cols = array();
             foreach($colsendline as $ce) {
                 $cols = array_merge($cols, $this->get_table_cells($ce));
@@ -141,11 +141,11 @@ class nwiki_parser extends wiki_markup_parser {
             $normalcells = array();
         }
         else {
-            $normalcells = split("\|\|", $string);
+            $normalcells = explode("||", $string);
         }
         $cells = array();
         foreach($normalcells as $nc) {
-            $headercells = split("!!", $nc);
+            $headercells = explode("!!", $nc);
             for($i = 0; $i < count($headercells); $i++) {
                 $cells[] = array($type, $headercells[$i]);
                 $type = 'header';
@@ -245,7 +245,7 @@ class nwiki_parser extends wiki_markup_parser {
     }
     
     protected function attach_tag_rule($match) {        
-        $parts = split("\|", $match[1]);
+        $parts = explode("|", $match[1]);
         
         $url = array_shift($parts);
         

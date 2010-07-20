@@ -107,13 +107,13 @@ class creole_parser extends wiki_markup_parser {
 
     protected function table_block_rule($match) {
 
-        $rows = split("\n", $match[0]);
+        $rows = explode("\n", $match[0]);
         $table = array();
         foreach($rows as $r) {
             if(empty($r)) {
                 continue;
             }
-            $rawcells = split("\|", $r);
+            $rawcells = explode("|", $r);
             $cells = array();
 
             array_shift($rawcells);

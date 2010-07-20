@@ -91,7 +91,7 @@ abstract class wiki_markup_parser extends generic_parser {
         foreach ($options as $name => $o) {
             switch ($name) {
             case 'link_callback':
-                $callback = split(':', $o);
+                $callback = explode(':', $o);
 
                 global $CFG;
                 require_once($CFG->dirroot . $callback[0]);
@@ -106,7 +106,7 @@ abstract class wiki_markup_parser extends generic_parser {
                 }
                 break;
             case 'real_path_callback':
-                $callback = split(':', $o);
+                $callback = explode(':', $o);
 
                 global $CFG;
                 require_once($CFG->dirroot . $callback[0]);
@@ -121,7 +121,7 @@ abstract class wiki_markup_parser extends generic_parser {
                 }
                 break;
             case 'table_callback':
-                $callback = split(':', $o);
+                $callback = explode(':', $o);
 
                 global $CFG;
                 require_once($CFG->dirroot . $callback[0]);
