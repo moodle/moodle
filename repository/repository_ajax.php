@@ -264,9 +264,17 @@ switch ($action) {
         }
         break;
     case 'upload':
-        // TODO: add file scanning MDL-19380 into each plugin
-        $result = $repo->upload();
-        echo json_encode($result);
+        // handle exception here instead moodle default exception handler
+        // see MDL-23407
+        try {
+            // TODO: add file scanning MDL-19380 into each plugin
+            $result = $repo->upload();
+            echo json_encode($result);
+        } catch (Exception $e) {
+            $err->error = $e->getMessage();
+            echo json_encode($err);
+            die;
+        }
         break;
 }
 
