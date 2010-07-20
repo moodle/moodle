@@ -584,7 +584,7 @@ function lesson_get_media_html($lesson, $context) {
     require_once("$CFG->libdir/resourcelib.php");
 
     // get the media file link
-    $path = '/'.$context->id.'/media_file/'.$lesson->id->revision.'/'.$lesson->mediafile;
+    $path = '/'.$context->id.'/mod_lesson/media_file/'.$lesson->id->revision.'/'.$lesson->mediafile;
     $url = file_encode_url($CFG->wwwroot.'/pluginfile.php', $path, false);
     $title = $lesson->mediafile;
 
