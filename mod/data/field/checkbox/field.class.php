@@ -66,7 +66,7 @@ class data_field_checkbox extends data_field_base {
 
     function display_search_field($value='') {
         global $CFG, $DB, $OUTPUT;
-        if (!is_array($value)) {
+        if (is_array($value)) {
             $content = $value['checked'];
             $allrequired = $value['allrequired'] ? 'checked = "checked"' : '';
         } else {
@@ -81,8 +81,9 @@ class data_field_checkbox extends data_field_base {
 
             if (in_array(addslashes($checkbox), $content)) {
                 $str .= html_writer::checkbox('f_'.$this->field->id.'[]', s($checkbox), true, $checkbox);
+            } else {
+                $str .= html_writer::checkbox('f_'.$this->field->id.'[]', s($checkbox), false, $checkbox);
             }
-            $str .= html_writer::checkbox('f_'.$this->field->id.'[]', s($checkbox), false, $checkbox);
             $found = true;
         }
         if (!$found) {
