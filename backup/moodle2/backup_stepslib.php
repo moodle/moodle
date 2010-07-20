@@ -281,7 +281,7 @@ class backup_course_structure_step extends backup_structure_step {
 
         $allowedmodules = new backup_nested_element('allowed_modules');
 
-        $module = new backup_nested_element('module', array('modulename'));
+        $module = new backup_nested_element('module', array(), array('modulename'));
 
         // Build the tree
 
