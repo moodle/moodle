@@ -446,10 +446,16 @@ EOF;
 
 EOF;
         /// Some general information
-        $documentationhtml = html_writer::start_tag('table', array('style' => "margin-left:auto; margin-right:auto;"));
+        $docinfo = new stdClass();
+        $docinfo->username = $authparams['wsusername'];
+        $docurl = new moodle_url('http://docs.moodle.org/en/Development:Creating_a_web_service_client');
+        $docinfo->doclink = html_writer::tag('a',
+                get_string('wsclientdoc', 'webservice'), array('href' => $docurl));
+        $documentationhtml = html_writer::start_tag('table',
+                array('style' => "margin-left:auto; margin-right:auto;"));
         $documentationhtml .= html_writer::start_tag('tr', array());
         $documentationhtml .= html_writer::start_tag('td', array());
-        $documentationhtml .= get_string('wsdocumentationintro', 'webservice', $authparams['wsusername']);
+        $documentationhtml .= get_string('wsdocumentationintro', 'webservice', $docinfo);
         $documentationhtml .= $br . $br;
 
 
