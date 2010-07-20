@@ -29,7 +29,7 @@ if (empty($CFG->enablerssfeeds)) {
     rss_not_found();
 }
 
-$lifetime = 3600;  // Seconds for files to remain in caches - 1 hour
+$lifetime = 3600;  // Seconds for files to remain in browser caches - 1 hour
 $filename   = 'rss.xml';
 
 // this is a big one big hack - NO_MOODLE_COOKIES is not compatible with capabilities MDL-7243
@@ -56,64 +56,50 @@ if (!$userid) {
     rss_not_authenticated();
 }
 $user = get_complete_user_data('id', $userid);
-session_set_user($user);
+session_set_user($user); //for login and capability checks
 
-//Set context
 $context = get_context_instance_by_id($contextid);
 if (!$context) {
     rss_not_found();
 }
 $PAGE->set_context($context);
 
-//Get course from context
-//TODO: note that in the case of the hub rss feed, the feed is not related to a course context,
-//it is more a "site" context. The Hub RSS bypass the following line using context id = 2
-$coursecontext = get_course_context($context);
-$course = $DB->get_record('course', array('id' => $coursecontext->instanceid), '*', MUST_EXIST);
+$componentdir = get_component_directory($componentname);
+list($type, $plugin) = normalize_component($componentname);
 
 //this will store the path to the cached rss feed contents
 $pathname = null;
 
-$componentdir = get_component_directory($componentname);
-list($type, $plugin) = normalize_component($componentname);
+//check user's psuedo login created by session_set_user()
+//NOTE the component providing the feed should do its own capability checks
+try {
+    $cm = null;
+    if (!empty($plugin) && !empty($instance)) {
+        $cm = get_coursemodule_from_instance($plugin, $instance, 0, false, MUST_EXIST);
+    }
+
+    //Get course from context
+    //TODO: note that in the case of the hub rss feed, the feed is not related to a course context,
+    //it is more a "site" context. The Hub RSS bypass the following line using context id = 2
+    $coursecontext = get_course_context($context);
+
+    $course = null;
+    if ($coursecontext) {
+        $course = $DB->get_record('course', array('id' => $coursecontext->instanceid), '*', MUST_EXIST);
+    }
+
+    require_login($course, false, $cm, false, true);
+} catch (Exception $e) {
+    rss_not_found();
+}
 
 if (file_exists($componentdir)) {
     require_once("$componentdir/rsslib.php");
     $functionname = $plugin.'_rss_get_feed';
 
     if (function_exists($functionname)) {
-
-        if ($componentname=='blog') {
-
-            $blogid = (int) $args[4];  // could be groupid / courseid  / userid  depending on $instance
-            if ($args[5] != 'rss.xml') {
-                $tagid = (int) $args[5];
-            } else {
-                $tagid = 0;
-            }
-
-            try {
-                require_login($course, false, NULL, false, true);
-            } catch (Exception $e) {
-                rss_not_found();
-            }
-            $pathname = $functionname($instance, $blogid, $tagid);
-        } else if ($componentname=='local_hub') {
-            
-            $pathname = $functionname($args);
-        } else {
-
-            $instance = (int)$instance;
-
-            try {
-                $cm = get_coursemodule_from_instance($plugin, $instance, 0, false, MUST_EXIST);
-                require_login($course, false, $cm, false, true);
-            } catch (Exception $e) {
-                rss_not_found();
-            }
-
-            $pathname = $functionname($context, $cm, $instance, $args);
-        }
+        //$pathname will be null if there was a problem or the user doesn't have the necessary capabilities
+        $pathname = $functionname($context, $cm, $instance, $args);
     }
 }
 
@@ -122,8 +108,6 @@ if (empty($pathname) || !file_exists($pathname)) {
     rss_not_found();
 }
 
-//rss_update_token_last_access($USER->id);
-
 //Send it to user!
 send_file($pathname, $filename, $lifetime);
 
@@ -131,10 +115,12 @@ function rss_not_found() {
     /// error, send some XML with error message
     global $lifetime, $filename;
     send_file(rss_geterrorxmlfile(), $filename, $lifetime, false, true);
+    die();
 }
 
 function rss_not_authenticated() {
     global $lifetime, $filename;
     send_file(rss_geterrorxmlfile('rsserrorauth'), $filename, $lifetime, false, true);
+    die();
 }
 

@@ -45,8 +45,19 @@ function blog_rss_print_link($filtertype, $filterselect, $tagid=0, $tooltiptext=
 
 
 // Generate any blog RSS feed via one function (called by ../rss/file.php)
-function blog_rss_get_feed($type, $id, $tagid=0) {
+function blog_rss_get_feed($context, $cm, $instance, $args) {
     global $CFG, $SITE, $DB;
+
+    $type = $instance;
+
+    $id = (int) $args[4];  // could be groupid / courseid  / userid  depending on $instance
+
+    $tagid=0;
+    if ($args[5] != 'rss.xml') {
+        $tagid = (int) $args[5];
+    } else {
+        $tagid = 0;
+    }
 
     if (empty($CFG->enablerssfeeds)) {
         debugging('Sorry, RSS feeds are disabled on this site');

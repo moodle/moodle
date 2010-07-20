@@ -12,6 +12,11 @@
             return null;
         }
 
+        //check capabilities
+        if (!has_capability('mod/data:managetemplates', $context)) {
+            return null;
+        }
+
         $data = $DB->get_record('data', array('id' => $instance), '*', MUST_EXIST);
 
         if (!rss_enabled('data', $data, false, true)) {

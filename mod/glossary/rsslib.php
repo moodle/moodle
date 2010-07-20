@@ -11,6 +11,9 @@
             return null;
         }
 
+        //check capabilities
+        //glossary module doesn't require any capabilities to view glossary entries (aside from being logged in)
+
         $glossary = $DB->get_record('glossary', array('id' => $instance), '*', MUST_EXIST);
 
         if (!rss_enabled('glossary', $glossary)) {
