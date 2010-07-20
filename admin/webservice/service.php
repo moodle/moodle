@@ -89,6 +89,10 @@ if ($mform->is_cancelled()) {
         $data->timecreated = mktime();
         $data->id = $DB->insert_record('external_services', $data);
         add_to_log(1, 'webservice', 'add', $CFG->wwwroot."/$CFG->admin/settings.php?section=externalservices", get_string('addservice', 'webservice', $data));
+        $addfunctionpage = new moodle_url($CFG->wwwroot . '/admin/webservice/service_functions.php',
+                array('id' => $data->id));
+        $returnurl = $addfunctionpage->out(false);
+
     } else {
         $data->timemodified = mktime();
         $DB->update_record('external_services', $data);
