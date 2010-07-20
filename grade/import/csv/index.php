@@ -50,19 +50,16 @@ $currentgroup = groups_get_course_group($course);
 
 // sort out delimiter
 if (isset($CFG->CSV_DELIMITER)) {
-    $csv_delimiter = '\\' . $CFG->CSV_DELIMITER;
-    $csv_delimiter2 = $CFG->CSV_DELIMITER;
+    $csv_delimiter = $CFG->CSV_DELIMITER;
 
     if (isset($CFG->CSV_ENCODE)) {
         $csv_encode = '/\&\#' . $CFG->CSV_ENCODE . '/';
     }
 } else if ($separator == 'tab') {
     $csv_delimiter = "\t";
-    $csv_delimiter2 = "";
     $csv_encode = "";
 } else {
-    $csv_delimiter = "\,";
-    $csv_delimiter2 = ",";
+    $csv_delimiter = ",";
     $csv_encode = '/\&\#44/';
 }
 
@@ -91,7 +88,7 @@ if ($id) {
 if ($importcode = optional_param('importcode', '', PARAM_FILE)) {
     $filename = $CFG->dataroot.'/temp/gradeimport/cvs/'.$USER->id.'/'.$importcode;
     $fp = fopen($filename, "r");
-    $header = split($csv_delimiter, fgets($fp,GRADE_CSV_LINE_LENGTH), PARAM_RAW);
+    $header = explode($csv_delimiter, fgets($fp,GRADE_CSV_LINE_LENGTH), PARAM_RAW);
 }
 
 $mform2 = new grade_import_mapping_form(null, array('gradeitems'=>$gradeitems, 'header'=>$header));
@@ -144,7 +141,7 @@ if ($formdata = $mform->get_data()) {
     }
     echo '</tr>';
     while (!feof ($fp) && $numlines <= $formdata->previewrows) {
-        $lines = split($csv_delimiter, fgets($fp,GRADE_CSV_LINE_LENGTH));
+        $lines = explode($csv_delimiter, fgets($fp,GRADE_CSV_LINE_LENGTH));
         echo '<tr>';
         foreach ($lines as $line) {
             echo '<td>'.$line.'</td>';;
@@ -173,7 +170,7 @@ if ($formdata = $mform->get_data()) {
 
     if ($fp = fopen($filename, "r")) {
         // --- get header (field names) ---
-        $header = split($csv_delimiter, clean_param(fgets($fp,GRADE_CSV_LINE_LENGTH), PARAM_RAW));
+        $header = explode($csv_delimiter, clean_param(fgets($fp,GRADE_CSV_LINE_LENGTH), PARAM_RAW));
 
         foreach ($header as $i => $h) {
             $h = trim($h); $header[$i] = $h; // remove whitespace
@@ -222,14 +219,14 @@ if ($formdata = $mform->get_data()) {
     if ($fp = fopen($filename, "r")) {
 
         // read the first line makes sure this doesn't get read again
-        $header = split($csv_delimiter, fgets($fp,GRADE_CSV_LINE_LENGTH));
+        $header = explode($csv_delimiter, fgets($fp,GRADE_CSV_LINE_LENGTH));
 
         $newgradeitems = array(); // temporary array to keep track of what new headers are processed
         $status = true;
 
         while (!feof ($fp)) {
             // add something
-            $line = split($csv_delimiter, fgets($fp,GRADE_CSV_LINE_LENGTH));
+            $line = explode($csv_delimiter, fgets($fp,GRADE_CSV_LINE_LENGTH));
 
             if(count($line) <= 1){
                 // there is no data on this line, move on
@@ -245,8 +242,8 @@ if ($formdata = $mform->get_data()) {
                 //decode encoded commas
                 $value = clean_param($value, PARAM_RAW);
                 $value = trim($value);
-                if ($csv_encode != $csv_delimiter2) {
-                    $value = preg_replace($csv_encode, $csv_delimiter2, $value);
+                if (!empty($csv_encode)) {
+                    $value = preg_replace($csv_encode, $csv_delimiter, $value);
                 }
 
                 /*
