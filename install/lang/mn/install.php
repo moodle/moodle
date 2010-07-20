@@ -29,6 +29,7 @@
  */
 
 $string['admindirname'] = 'Админ директор';
+$string['availablelangs'] = 'Боломжит хэлний багцууд';
 $string['chooselanguagehead'] = 'Хэлээ сонго';
 $string['chooselanguagesub'] = 'Зөвхөн суулгах үед ашиглагдах хэлээ сонго. Та дараа нь сайтны болон хэрэглэгчийн хэлийг сонгож болно.';
 $string['dataroot'] = 'Өгөгдлийн директор';

@@ -31,7 +31,8 @@
 $string['admindirname'] = 'Cartella Admin';
 $string['availablelangs'] = 'Elenco delle lingue disponibili:';
 $string['chooselanguagehead'] = 'Scegli la lingua';
-$string['chooselanguagesub'] = 'Scegliete la lingua da usare durante l\'installazione. La lingua usata nel sito e dagli utenti potrà essere modificata in seguito.';
+$string['chooselanguagesub'] = 'Scegli la lingua da usare durante l\'installazione. La lingua usata nel sito e dagli utenti potrà essere modificata in seguito.';
+$string['clialreadyinstalled'] = 'Il file config.php è presente, se desiderate aggiornare il sito per favore utilizzate admin/cli/upgrade.php.';
 $string['cliinstallheader'] = 'Programma di installazione Moodle {$a} via linea di comando';
 $string['databasehost'] = 'Database host:';
 $string['databasename'] = 'Nome del Database';
@@ -42,7 +43,7 @@ $string['dirroot'] = 'Cartella di Moodle';
 $string['environmentsub2'] = 'Ciascuna release di Moodle prevede come requisito minimo una certa versione del PHP assieme ad una serie di estensioni. Prima di una installazione o di un aggiornamento viene eseguita la verifica di questi requisiti minimi. Se non sapete come installare nuove versioni del PHP o le sue estensioni, contattate l\'amministratore del vostro server.';
 $string['errorsinenvironment'] = 'Ci sono problemi nel vostro ambiente';
 $string['installation'] = 'Installazione';
-$string['langdownloaderror'] = 'Purtroppo la lingua "{$a}" non è stata installata. L\'installazione proseguirà in lingua Inglese.';
+$string['langdownloaderror'] = 'Purtroppo non è stato possibile scaricare la lingua "{$a}". L\'installazione proseguirà in lingua Inglese.';
 $string['memorylimithelp'] = '<p>Il limite della memoria assegnata al PHP attualmente è {$a}.</p>
 <p>Questo limite potrà causare problemi nel funzionamento di Moodle, specialmente se usate molti moduli di attività con molti utenti.</p>
 <p>Vi raccomandiamo di impostare il PHP con un limite più alto se possibile, ad esempio 40M.
@@ -62,12 +63,12 @@ $string['pathsroparentdataroot'] = 'La cartella superiore ({$a->parent}) non è 
 $string['pathssubadmindir'] = 'Alcuni web host utilizzano la cartella /admin come URL di accesso a pannelli di controllo od altre funzioni particolari. Tuttavia questo nome coincide con il nome della cartella che Moodle utilizza per i propri file di amministrazione. Per evitare conflitti, è possibile specificare un nome alternativo per la cartella Admin di Moodle. Ad esempio:<p><b>moodleadmin</b></p>
 Tutti i link che puntano ai file di amministrazione di Moodle terranno conto di questa variazione.';
 $string['pathssubdataroot'] = 'E\' necessario specificare una cartella dove Moodle inserirà i file caricati dagli utenti. Il web server (in genere \'nobody\' o \'apache\') DEVE avere i permessi di lettura e di scrittura su questa cartella. In aggiunta, la cartella dei dati NON DEVE essere direttamente accessibile via web. Se la Cartella dei dati non esiste, lo script di installazione tenterà di crearla.';
-$string['pathssubdirroot'] = 'Percorso assoluto della installazione Moodle. Modificatelo solamente se avete bisogno di usare link simbolici.';
-$string['pathssubwwwroot'] = 'Indirizzo web per accedere a questa installazione di Moodle. Non è possibile accedere a Moodle usando indirizzi multipli. Se il vpstro sito ha indirizzi web pubblici multipli, dovete configurare dei re-indirizzamenti permanenti su tutti gli altri indirizzi.
-Se il vostro sito è accessibile sia dalla Internet che dalla Intranet, allora usate l\'indirizzo Internet pubblico ed impostate il DNS in modo che anche gli utenti intranet possano accedere all\'indirizzo pubblico.';
+$string['pathssubdirroot'] = 'Percorso assoluto della installazione Moodle.';
+$string['pathssubwwwroot'] = 'Indirizzo web per raggiungere l\'installazione. Non è possibile accedere a Moodle usando indirizzi multipli. Se il tuo sito ha indirizzi pubblici multipli, devi configurare dei re-indirizzamenti permanenti su tutti gli altri indirizzi.
+Se il tuo sito è raggiungibile sia dalla Internet che dalla Intranet, allora usa l\'indirizzo Internet pubblico ed imposta il DNS in modo che anche gli utenti intranet possano accedere usando l\'indirizzo pubblico.
+Se l\'indirizzo è errato per favore correggilo nella barra degli indirizzi del browser per avviare nuovamente l\'installazione.';
 $string['pathsunsecuredataroot'] = 'La posizione della Cartella dei dati non è sicura';
 $string['pathswrongadmindir'] = 'La cartella Admin non esiste';
-$string['pathswrongdirroot'] = 'La posizione della cartella Dirroot è errata';
 $string['phpextension'] = '{$a} estensioni PHP';
 $string['phpversion'] = 'Versione PHP';
 $string['phpversionhelp'] = '<p>Moodle necessita come minimo della versione 4.3.0 o 5.1.0 del PHP. (La versione 5.0.x soffre di problemi ben conosciuti)</p>

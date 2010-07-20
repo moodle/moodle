@@ -29,6 +29,7 @@
  */
 
 $string['admindirname'] = 'Administratora direktorijs';
+$string['availablelangs'] = 'Pieejamās valodu pakotnes';
 $string['chooselanguagehead'] = 'Valodas izvēle';
 $string['chooselanguagesub'] = 'Lūdzu, izvēlieties valodu, kas tiks lietota TIKAI instalēšanas laikā. Vietni un lietotājiem pieejamās valodas vēlāk varēsit izvēlēties citā ekrānā.';
 $string['dataroot'] = 'Datu direktorijs';

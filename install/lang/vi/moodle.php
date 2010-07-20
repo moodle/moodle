@@ -28,6 +28,6 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['language'] = 'Bahasa';
-$string['next'] = 'Teruskan';
-$string['previous'] = 'Sebelum';
+$string['language'] = 'Ngôn ngữ';
+$string['next'] = 'Tiếp theo';
+$string['previous'] = 'Trước';

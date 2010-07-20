@@ -31,7 +31,9 @@
 $string['admindirname'] = 'Admin-map';
 $string['availablelangs'] = 'Lijst met beschikbare talen';
 $string['chooselanguagehead'] = 'Kies een taal';
-$string['chooselanguagesub'] = 'De taalinstelling die je hier kiest is enkel voor het installatieproces. In één van de volgende schermen zul je de standaardtaal voor de site kunnen kiezen. Bebruikers kunnen als je dat wil, zelf bepalen met welke taal ze werken.';
+$string['chooselanguagesub'] = 'Kies een taal voor de installatie. Deze taal zal ook als standaardtaal voor de site gebruikt worden, maar die instelling kun je later nog wijzigen.';
+$string['clialreadyinstalled'] = 'Bestand config.php bestaat al. Gebruik admin/cil/upgrade.php om je site te upgraden.';
+$string['cliinstallheader'] = 'Moodle {$a} command line installatieprogramma';
 $string['databasehost'] = 'Databank host:';
 $string['databasename'] = 'Datanbanknaam:';
 $string['databasetypehead'] = 'Kies databankdriver';
@@ -42,7 +44,7 @@ $string['environmentsub2'] = 'Elke Moodleversie vraagt een minimum PHP-versie en
 De volledige installatie-omgeving wordt gecontroleerd voor elke installatie en upgrade. Contacteer je server beheerder als je niet weet hoe je de juiste PHP-versie moet installeren of PHP-extenties moet inschakelen.';
 $string['errorsinenvironment'] = 'Fouten in je omgeving!';
 $string['installation'] = 'Installatie';
-$string['langdownloaderror'] = 'De taal "{$a}" is jammer genoeg niet geïnstalleerd. Het installatieproces gaat verder in het Engels.';
+$string['langdownloaderror'] = 'De taal "{$a}" kon niet worden gedownload. Het installatieproces gaat verder in het Engels.';
 $string['memorylimithelp'] = '<p>De PHP-geheugenlimiet van je server is ingesteld op {$a}.</p>
 <p>Hierdoor kan Moodle geheugenproblemen krijgen, vooral als je veel modules installeert en/of veel gebruikers hebt.</p>
 
@@ -61,11 +63,11 @@ $string['pathsrodataroot'] = 'De dataroot map is niet beschrijfbaar.';
 $string['pathsroparentdataroot'] = 'De bovenliggende map ({$a->parent}) is niet beschrijfbaar. De datamap ({$a->dataroot}) kan niet aangemaakt worden door het installatiescript';
 $string['pathssubadmindir'] = 'Sommige webhosts gebruiken /admin als een speciale url om toegang tot bijvoorbeeld een controlepaneel te krijgen. Dit kan conflicten veroorzaken met de standaardlocatie van de Moodle admin scripts. Je kunt dit oplossen door de admin map van Moodle te hernoemen en de nieuwe naam hier te zetten. Bijvoorbeeld <em>moodleadmin</em>. Dat zal de admin links in Moodle herstellen.';
 $string['pathssubdataroot'] = 'Je hebt een plaats nodig waar Moodle geüploade bestanden kan bewaren. Deze map moet leesbaar en BESCHRIJFBAAR zijn door de webserver gebruiker (gewoonlijk \'nobody\', \'apache\' of www-data\') en mag niet rechtstreeks toegankelijk zijn vanaf het internet.';
-$string['pathssubdirroot'] = 'Volledig pad naar de Moodle-installatie. Wijzig dit alleen als je symbolische links moet gebruiken.';
-$string['pathssubwwwroot'] = 'Volledig webadres waarlangs de toegang naar Moodle zal gebeuren. Het is niet mogelijk toegang tot Moodle te krijgen via meerdere adressen. Als je site meerdere publieke adressen heeft, dan zul je permanente verwijzingen moeten opzetten voor al die adressen, behalve voor wat je hier invult. Als je site zowel van het internet als van een intranet toegankelijk is, zet dat het internetadres hier en wijzig je DNS-instellingen zodanig dat intranetgebruikers dit publieke adres ook gebruiken.';
+$string['pathssubdirroot'] = 'Volledig pad naar de Moodle-installatie.';
+$string['pathssubwwwroot'] = 'Volledig webadres waarlangs de toegang naar Moodle zal gebeuren. Het is niet mogelijk toegang tot Moodle te krijgen via meerdere adressen. Als je site meerdere publieke adressen heeft, dan zul je permanente verwijzingen moeten opzetten voor al die adressen, behalve voor wat je hier invult. Als je site zowel van het internet als van een intranet toegankelijk is, zet dat het internetadres hier en wijzig je DNS-instellingen zodanig dat intranetgebruikers dit publieke adres ook gebruiken.
+Als het adres niet juist is, wijzig dan de URL in je browser om de installatie met een andere waarde te starten.';
 $string['pathsunsecuredataroot'] = 'De plaats van de datamap is niet veilig.';
 $string['pathswrongadmindir'] = 'De adminmap bestaat niet';
-$string['pathswrongdirroot'] = 'Foute Moodle root locatie';
 $string['phpextension'] = '{$a} PHP-extentie';
 $string['phpversion'] = 'PHP-versie';
 $string['phpversionhelp'] = '<p>Moodle heeft minstens PHP-versie 4.3.0 of 5.1.0 nodig (5.0.x heeft veel bekende problemen).</p> <p>De huidige versie op je server is {$a}</p>

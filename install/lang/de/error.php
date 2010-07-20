@@ -29,10 +29,18 @@
  */
 
 $string['cannotcreatelangdir'] = 'Verzeichnis "lang" kann nicht angelegt werden';
+$string['cannotcreatetempdir'] = 'Das Verzeichnis "temp" kann nicht angelegt werden.';
 $string['cannotdownloadcomponents'] = 'Einige Komponenten können nicht heruntergeladen werden.';
 $string['cannotdownloadzipfile'] = 'ZIP-Datei kann nicht heruntergeladen werden.';
 $string['cannotfindcomponent'] = 'Eine Komponente kann nicht gefunden werden';
-$string['cannotsavemd5file'] = 'Die md5-Datei kann nicht gespeichert werden.';
-$string['cannotsavezipfile'] = 'Die ZIP-Datei kann nicht gespeichert werden.';
-$string['cannotunzipfile'] = 'Die Datei kann nicht entpackt werden.';
+$string['cannotsavemd5file'] = 'Die md5-Datei kann nicht gespeichert werden';
+$string['cannotsavezipfile'] = 'Die ZIP-Datei kann nicht gespeichert werden';
+$string['cannotunzipfile'] = 'Die Datei kann nicht entpackt werden';
+$string['componentisuptodate'] = 'Die Komponente ist aktuell.';
+$string['downloadedfilecheckfailed'] = 'Die Überprüfung der heruntergeladenen Datei ist gescheitert';
+$string['invalidmd5'] = 'md5 ungültig';
+$string['missingrequiredfield'] = 'Einige erforderliche Felder sind nicht ausgefüllt.';
 $string['remotedownloaderror'] = 'Der Download auf Ihren Server konnte nicht ausgeführt werden. Prüfen Sie bitte die Proxy-Einstellungen, die PHP CURL Erweiterung wird dringend empfohlen.<br /><br />Die Datei <a href="{$a->url}">{$a->url}</a> muss nun manuell herunter geladen, entpackt und auf den Server nach "{$a->dest}" kopiert werden. there.';
+$string['wrongdestpath'] = 'Falscher Pfad';
+$string['wrongsourcebase'] = 'Falsche URL-Quelle';
+$string['wrongzipfilename'] = 'Falscher ZIP-Dateiname';

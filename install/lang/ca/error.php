@@ -29,10 +29,18 @@
  */
 
 $string['cannotcreatelangdir'] = 'No s\'ha pogut crear el directori d\'idiomes.';
+$string['cannotcreatetempdir'] = 'No s\'ha pogut crear el directori temporal';
 $string['cannotdownloadcomponents'] = 'No s\'han pogut baixar components';
 $string['cannotdownloadzipfile'] = 'No s\'ha pogut baixar el fitxer zip';
 $string['cannotfindcomponent'] = 'No s\'ha pogut trobar un component';
 $string['cannotsavemd5file'] = 'No s\'ha pogut desar el fitxer md5';
 $string['cannotsavezipfile'] = 'No s\'ha pogut desar el fitxer zip';
 $string['cannotunzipfile'] = 'No s\'ha pogut descomprimir el fitxer';
+$string['componentisuptodate'] = 'El component està al dia';
+$string['downloadedfilecheckfailed'] = 'Ha fallat la comprovació del fitxer baixat.';
+$string['invalidmd5'] = 'El md5 no és vàlid';
+$string['missingrequiredfield'] = 'Falta algun camp necessari';
 $string['remotedownloaderror'] = 'No s\'ha pogut baixar el component al vostre servidor. Verifiqueu els paràmetres de servidor intermediari. Es recomana l\'extensió cURL.<br /><br />Haureu de baixar manualment el fitxer <a href="{$a->url}">{$a->url}</a>, copiar-lo a la ubicació "{$a->dest}" del vostre servidor i descomprimir-lo allí.';
+$string['wrongdestpath'] = 'El camí de destinació és erroni';
+$string['wrongsourcebase'] = 'L\'adreça (URL) base de la font és errònia';
+$string['wrongzipfilename'] = 'El nom del fitxer ZIP és erroni';

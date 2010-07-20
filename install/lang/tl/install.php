@@ -29,6 +29,7 @@
  */
 
 $string['admindirname'] = 'Pang-Admin na Bugsok';
+$string['availablelangs'] = 'Magagamit na mga pakete ng wika';
 $string['chooselanguagehead'] = 'Pumilì ng wika';
 $string['chooselanguagesub'] = 'Pumili po ng wika para sa pagluluklok LAMANG.  Sa mga susunod na iskrin ay makakapili ka ng wika para sa site o tagagamit.';
 $string['dataroot'] = 'Bugsok ng Datos';
@@ -67,3 +68,4 @@ $string['welcomep40'] = 'Nilalaman din ng paketeng ito ang  <strong>Moodle {$a->
 $string['welcomep50'] = 'Ang paggamit ng lahat ng aplikasyon sa paketeng ito ay alinsunod sa kani-kaniyang lisensiya.  Ang kumpletong pakete na <strong>{$a->installername}</strong> ay  <a href="http://www.opensource.org/docs/definition_plain.html">open source</a> at ipinamamahagi alinsunod sa lisensiyang <a href="http://www.gnu.org/copyleft/gpl.html">GPL</a>';
 $string['welcomep60'] = 'Dadalhin kayo ng mga sumusunod na pahina sa mga madaling hakbang upang maisaayos at mapatakbo ang <strong>Moodle</strong> sa kompyuter ninyo.  Kung gusto ninyo ay panatilihin ang umiiral o kaya ay baguhin ito ayon sa inyong pangangailangan.';
 $string['welcomep70'] = 'Iklik ang "Susunod" na buton sa ibaba upang maituloy ang pasasaayos ng <strong>Moodle</strong>.';
+$string['wwwroot'] = 'Web address';

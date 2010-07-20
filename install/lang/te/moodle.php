@@ -28,6 +28,6 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['language'] = 'ಭಾಷೆ';
-$string['next'] = 'ಮುಂದೆ';
-$string['previous'] = 'ಹಿಂದಿನದು';
+$string['language'] = 'భాష';
+$string['next'] = 'తరువాతి';
+$string['previous'] = 'గత';

@@ -29,10 +29,18 @@
  */
 
 $string['cannotcreatelangdir'] = 'មិនអាច​បង្កើត​ថត lang បាន​ឡើយ ។';
+$string['cannotcreatetempdir'] = 'មិនអាច​បង្កើត​ថត temp បាន​ឡើយ ។';
 $string['cannotdownloadcomponents'] = 'មិនអាច​ទាញយក​សមាសភាគ​បាន​ឡើយ ។';
 $string['cannotdownloadzipfile'] = 'មិនអាច​ទាញយក​ឯកសារ ZIP បាន​ឡើយ ។';
 $string['cannotfindcomponent'] = 'មិនអាច​រក​សមាភាគ​បាន​ឡើយ ។';
 $string['cannotsavemd5file'] = 'មិនអាច​រក្សាទុក​ឯកសារ md5 បាន​ឡើយ ។';
 $string['cannotsavezipfile'] = 'មិនអាច​រក្សាទុក​ឯកសារ ZIP បាន​ឡើយ ។';
 $string['cannotunzipfile'] = 'មិនអាច​ពន្លា​ឯកសារ​បាន​ឡើយ ។';
+$string['componentisuptodate'] = 'សមាសភាគ​គឺ​ទាន់សម័យ ។';
+$string['downloadedfilecheckfailed'] = 'បាន​បរាជ័យ​ក្នុង​ការ​ពិនិត្យ​ឯកសារ​ដែល​បាន​ទាញយក ។';
+$string['invalidmd5'] = 'md5 មិនត្រឹមត្រូវ';
+$string['missingrequiredfield'] = 'បាត់​វាល​ដែលត្រូវការ​មួយ​ចំនួន';
 $string['remotedownloaderror'] = 'បរាជ័យ​ក្នុង​ការ​ទាញ​យក​សមាសភាគ​ទៅ​ម៉ាស៊ីន​បម្រើ​របស់​អ្នក សូម​ផ្ទៀងផ្ទាត់​ប្រូកស៊ី ផ្នែក​បន្ថែម PHP cURL ត្រូវ​បាន​ផ្ដល់​អនុសាសន៍ ។<br /><br />អ្នក​ត្រូវ​តែ​ទាញយក​ឯកសារ <a href="{$a->url}">{$a->url}</a> ដោយ​ដៃ ចម្លង​វា​ទៅ "{$a->dest}" ក្នុង​ម៉ាស៊ីន​បម្រើ​របស់​អ្នក និង​ពន្លា​វា​នៅ​ទីនោះ ។';
+$string['wrongdestpath'] = 'ផ្លូវ​ទិសដៅ​មិនត្រឹមត្រូវ ។';
+$string['wrongsourcebase'] = 'មូលដ្ឋាន URL ប្រភព​មិនត្រឹមត្រូវ ។';
+$string['wrongzipfilename'] = 'ឈ្មោះ​ឯកសារ ZIP មិនត្រឹមត្រូវ ។';

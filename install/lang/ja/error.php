@@ -29,10 +29,18 @@
  */
 
 $string['cannotcreatelangdir'] = 'langディレクトリを作成できません。';
+$string['cannotcreatetempdir'] = 'tempディレクトリを作成できません。';
 $string['cannotdownloadcomponents'] = 'コンポーネットをダウンロードできません。';
 $string['cannotdownloadzipfile'] = 'ZIPファイルをダウンロードできません。';
 $string['cannotfindcomponent'] = 'コンポーネントを見つけることができません。';
 $string['cannotsavemd5file'] = 'mp5ファイルを保存できません。';
 $string['cannotsavezipfile'] = 'ZIPファイルを保存できません。';
 $string['cannotunzipfile'] = 'ZIPファイルを解凍できません。';
+$string['componentisuptodate'] = 'コンポーネントは最新です。';
+$string['downloadedfilecheckfailed'] = 'ダウンロードファイルのチェックに失敗しました。';
+$string['invalidmd5'] = '無効なmp5ファイルです。';
+$string['missingrequiredfield'] = 'いくつかの必須入力フィールドが入力されていません。';
 $string['remotedownloaderror'] = 'あなたのサーバへのコンポーネントのダウンロードに失敗しました。プロクシ設定を確認してください。PHP cURL拡張モジュールの使用を強くお勧めします。<br /><br /><a href="{$a->url}">{$a->url}</a>ファイルを手動でダウンロードした後、あなたのサーバの「{$a->dest}」にコピーおよび解凍してください。';
+$string['wrongdestpath'] = '宛先パスが正しくありません。';
+$string['wrongsourcebase'] = 'ソースURIベースが正しくありません。';
+$string['wrongzipfilename'] = 'ZIPファイル名が正しくありません。';

@@ -28,8 +28,17 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['availablelangs'] = 'Popis dostupnih jezika';
+$string['chooselanguagehead'] = 'Odaberite jezik';
+$string['databasehost'] = 'Poslužitelj baze podataka (HOST)';
+$string['databasename'] = 'Naziv baze podataka';
+$string['databasetypehead'] = 'Odaberite tip baze podataka';
 $string['dataroot'] = 'Mapa s podacima';
 $string['dbprefix'] = 'Prefiks tablice';
 $string['dirroot'] = 'Moodle mapa';
 $string['installation'] = 'Instalacija';
+$string['paths'] = 'Putanje (PATH)';
+$string['pathshead'] = 'Potvrdi putanje (PATH)';
+$string['phpextension'] = 'PHP ekstenzija {$a}';
 $string['phpversion'] = 'PHP inačica';
+$string['wwwroot'] = 'Web adresa';

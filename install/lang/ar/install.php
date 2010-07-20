@@ -29,6 +29,7 @@
  */
 
 $string['admindirname'] = 'مجلد الإدارة';
+$string['availablelangs'] = 'حزم اللغة المتوفره';
 $string['chooselanguagehead'] = 'اختر اللغة';
 $string['dataroot'] = 'دليل البيانات';
 $string['dbprefix'] = 'مقدمة الجداول';

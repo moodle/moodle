@@ -28,6 +28,4 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['language'] = 'Език';
-$string['next'] = 'Напред';
-$string['previous'] = 'Предишен';
+$string['availablelangs'] = 'Available language packs';

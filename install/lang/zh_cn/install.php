@@ -29,6 +29,7 @@
  */
 
 $string['admindirname'] = '管理目录';
+$string['availablelangs'] = '可用的语言包';
 $string['chooselanguagehead'] = '选择一种语言';
 $string['chooselanguagesub'] = '请选择在安装过程中使用的语言。稍后您可以根据需要重新选择用于站点和用户的语言。';
 $string['dataroot'] = '数据目录';

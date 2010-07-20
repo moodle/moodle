@@ -29,6 +29,7 @@
  */
 
 $string['admindirname'] = 'Skrbniški imenik';
+$string['availablelangs'] = 'Jezikovni paketi na voljo';
 $string['chooselanguagehead'] = 'Izberite jezik';
 $string['chooselanguagesub'] = 'Izberite jezika SAMO za namestitev. Pozneje boste lahko izbrali tudi jezike strani in uporabniške jezike.';
 $string['dataroot'] = 'Imenik za podatke';

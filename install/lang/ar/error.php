@@ -29,9 +29,11 @@
  */
 
 $string['cannotcreatelangdir'] = 'لم يتم أنشاء دليل اللغة';
+$string['cannotcreatetempdir'] = 'لم يتم أنشاء الدليل المؤقت';
 $string['cannotdownloadcomponents'] = 'لم يتم تنزيل بعض العناصر';
 $string['cannotdownloadzipfile'] = 'لم يتم تنزيل بعض الملف المضغوط';
 $string['cannotfindcomponent'] = 'لم يتم العثور على العنصر';
 $string['cannotsavemd5file'] = 'لم يتم حفظ ملف  md5';
 $string['cannotsavezipfile'] = 'لم يتم حفظ الملف المضغوط';
 $string['cannotunzipfile'] = 'لم يتم فك الملف المضغوط';
+$string['missingrequiredfield'] = 'بعض الحقول المطلوبة مفقودة';

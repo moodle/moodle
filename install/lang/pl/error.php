@@ -29,10 +29,18 @@
  */
 
 $string['cannotcreatelangdir'] = 'Nie można utworzyć katalogu językowego';
+$string['cannotcreatetempdir'] = 'Nie można utworzyć katalogu tymczasowego';
 $string['cannotdownloadcomponents'] = 'Nie można pobrać składowych (komponentów)';
 $string['cannotdownloadzipfile'] = 'Nie można pobrać pliku ZIP';
 $string['cannotfindcomponent'] = 'Nie można znaleźć komponentu';
 $string['cannotsavemd5file'] = 'Nie można zapisać pliku md5';
 $string['cannotsavezipfile'] = 'Nie można zapisać pliku ZIP';
 $string['cannotunzipfile'] = 'Nie można rozpakować (unzip) pliku';
+$string['componentisuptodate'] = 'Komponent jest aktualny';
+$string['downloadedfilecheckfailed'] = 'Sprawdzenie pobranego pliku zakończyło się niepowodzeniem';
+$string['invalidmd5'] = 'Niewłaściwy md5';
+$string['missingrequiredfield'] = 'Brak wymaganego pola';
 $string['remotedownloaderror'] = 'Pobieranie składnika na serwer nie powiodło się. Sprawdź ustawienia proxy. Rozszerzenie PHP cURL jest bardzo zalecane. <br /><br />Musisz pobrać następująćy plik <a href="{$a->url}">{$a->url}</a> ręcznie, skopiować go do lokalizacji "{$a->dest}" i rozpakować poleceniem unzip.';
+$string['wrongdestpath'] = 'Błędna ścieżka docelowa';
+$string['wrongsourcebase'] = 'Błędne źródło bazy URL';
+$string['wrongzipfilename'] = 'Błędna nazwa pliku ZIP';

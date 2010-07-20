@@ -29,6 +29,7 @@
  */
 
 $string['admindirname'] = 'ספריית מנהל המערכת';
+$string['availablelangs'] = 'חבילות שפה זמינות';
 $string['chooselanguagehead'] = 'בחר שפה';
 $string['chooselanguagesub'] = 'אנא בחר שפה עבור ההתקנה בלבד. תוכל לבחור בשפה שונה לאתר ולמשתמש באחד מהמסכים הבאים.';
 $string['dataroot'] = 'ספריית הנתנים';

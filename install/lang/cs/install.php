@@ -29,6 +29,7 @@
  */
 
 $string['admindirname'] = 'Adresář pro správu (admin)';
+$string['availablelangs'] = 'Dostupné jazykové balíčky';
 $string['chooselanguagehead'] = 'Vyberte jazyk';
 $string['chooselanguagesub'] = 'Zvolte si jazyk PRO INSTALOVÁNÍ. Jazyk pro stránky Moodlu a pro uživatele budete moci vybrat později.';
 $string['dataroot'] = 'Datový adresář';

@@ -32,9 +32,10 @@ $string['admindirname'] = '관리 디렉토리';
 $string['availablelangs'] = '가능한 언어 목록';
 $string['chooselanguagehead'] = '언어를 선택하시오';
 $string['chooselanguagesub'] = '설치 과정에서 사용할 언어를 선택하십시오. 선택한 언어는 사이트의 기본 언어로 사용할 수 있으며, 추후 다른 언어로 바꿀 수도 있습니다.';
+$string['clialreadyinstalled'] = '이미 config.php 파일이 존재함. 사이트를 갱신하려면 admin/cli/upgrade.php를 사용하십시오';
 $string['cliinstallheader'] = '무들 {$a} 명령 입력 설치 프로그램';
-$string['databasehost'] = '데이터베이스 호스트 :';
-$string['databasename'] = '데이터베이스 명칭 :';
+$string['databasehost'] = '데이터베이스 호스트';
+$string['databasename'] = '데이터베이스 명칭';
 $string['databasetypehead'] = '데이터베이스 드라이버 선택';
 $string['dataroot'] = '데이타 경로';
 $string['dbprefix'] = '테이블 접두어';
@@ -42,7 +43,7 @@ $string['dirroot'] = '무들 디렉토리';
 $string['environmentsub2'] = '개개의 무들 배포본은 필요로하는 최소한의 PHP 버전과 확장기능이 다릅니다. 각 판을 설치하거나 판올림하기 전에 완벽한 구동환경을 점검해야 합니다. 혹 여러분이 어떻게 새 판을 설치해야 할지 또 어떻게 PHP 확장 기능을 설치해야 할지 모르겠다면, 서버 관리자에게 문의하기 바랍니다.';
 $string['errorsinenvironment'] = '환경설정에 오류가 있습니다!';
 $string['installation'] = '설치';
-$string['langdownloaderror'] = '안타깝게도 "{$a}" 언어팩이 설치되지 않았습니다. 대신 영어를 이용하여 설치될 것입니다.';
+$string['langdownloaderror'] = '안타깝게도 "{$a}" 언어팩을 내려받을 수 없습니다. 영어를 이용하여 설치가 진행될 것입니다.';
 $string['memorylimithelp'] = '<p>현재 서버의 PHP 메모리 사용량은 {$a} 로 설정되어 있습니다.</p>
 
 <p>이는 추후에 무들이 원활히 구동되는 데 문제가 될 것입니다. 특히 여러분이 상당히 많은 모듈을 이용하고 또 사용자가 많아지게 되면 문제가 될 소지가 더 커집니다.</p>
@@ -64,13 +65,12 @@ $string['pathsrodataroot'] = 'Dataroot 디렉토리의 쓰기허가권이 없습
 $string['pathsroparentdataroot'] = '상위 경로 ({$a->parent}) 에 쓰기허가권이 없습니다. 설치 스크립트가 자료 디렉토리 ({$a->dataroot}) 를 생성할 수 없습니다.';
 $string['pathssubadmindir'] = '간혹 어떤 웹호스트 업체는 제어판 등을 제공하는 특별한 URL으로서 /admin을 사용합니다. 불행하게도 이것은 무들 관리페이지를 위한 표준 위치와 충돌을 일으킵니다. 설치과정에서 관리 디렉토리의 이름을 바꿈으로서 이 문제를 고칠수 있는 데, 다음의 예와 같이 새이름을 여기에 넣으면 됩니다. 예: <em>moodleadmin</em> 이렇게 하면 무들에서 관리자 링크문제가 해결됩니다.';
 $string['pathssubdataroot'] = '무들로 업로드된 파일을 저장할 수 있는 장소가 필요합니다. 이 디렉토리는 웹 서버의 사용자(보통 "none" 또는 "apache" )에 의해서 \'읽고쓰기 가능\' 권한을 보유하여야 합니다. 그러나 직접적으로 웹을 경유해서 접근할 수 있어서는 안됩니다.';
-$string['pathssubdirroot'] = '무들 설치를 위한 완전한 디렉토리 경로. 심볼릭 링크를 사용하기 위해 꼭 필요한 경우 변경';
+$string['pathssubdirroot'] = '무들 설치를 위한 완전한 디렉토리 경로.';
 $string['pathssubwwwroot'] = '무들을 접속할 수 있는 전체 웹 주소. 다중 주소를 이용해서는 무들에 접속할 수 없음.
 만일 사이트가 복수의 공개 주소를 갖고 있는 경우, 여기에 입력한 주소 이외의 곳에서는 영구적인 redirect를 설정해 놓아야만 함.
 만약 여러분의 사이트를 인터넷과 인트라넷 모두에서 접속할 수 있게 하려면 여기에 공식적인 주소를 입력하고 DNS를 설정해서 인트라넷 사용자들도 공개 주소를 사용할 수 있게 해야할 것입니다.';
 $string['pathsunsecuredataroot'] = 'Dataroot 경로가 안전하지 않음';
 $string['pathswrongadmindir'] = '관리자 경로가 존재하지 않음';
-$string['pathswrongdirroot'] = '잘못된 dirroot 위치';
 $string['phpextension'] = '{$a} PHP 확장';
 $string['phpversion'] = 'php버젼';
 $string['phpversionhelp'] = '<p>무들은 적어도 PHP4.3.0 혹은 5.1.0. 이상 이어야합니다.(5.0.x는 버그가 있다고 알려져 있습니다)</p>

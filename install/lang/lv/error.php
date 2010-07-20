@@ -28,10 +28,18 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['cannotcreatelangdir'] = 'Nevar izveidot valodas direktoriju.';
-$string['cannotdownloadcomponents'] = 'Nevar lejupielādēt komponentus.';
-$string['cannotdownloadzipfile'] = 'Nevar lejupielādēt ZIP failu.';
-$string['cannotfindcomponent'] = 'Nevar atrast komponentu.';
-$string['cannotsavemd5file'] = 'Nevar saglabāt md5 failu.';
-$string['cannotsavezipfile'] = 'Nevar saglabāt ZIP failu.';
-$string['cannotunzipfile'] = 'Nevar tilpatspiest failu.';
+$string['cannotcreatelangdir'] = 'Nevar izveidot valodas direktoriju';
+$string['cannotcreatetempdir'] = 'Nevar izveidot pagaidu direktoriju';
+$string['cannotdownloadcomponents'] = 'Nevar lejupielādēt komponentus';
+$string['cannotdownloadzipfile'] = 'Nevar lejupielādēt ZIP failu';
+$string['cannotfindcomponent'] = 'Nevar atrast komponentu';
+$string['cannotsavemd5file'] = 'Nevar saglabāt md5 failu';
+$string['cannotsavezipfile'] = 'Nevar saglabāt ZIP failu';
+$string['cannotunzipfile'] = 'Nevar atzipot failu';
+$string['componentisuptodate'] = 'Komponents atbilst visjaunākajai versijai.';
+$string['downloadedfilecheckfailed'] = 'Lejupielādētā faila pārbaudes rezultāts nesekmīgs.';
+$string['invalidmd5'] = 'Nederīgs md5';
+$string['missingrequiredfield'] = 'Trūkst kāda nepieciešamā lauka';
+$string['wrongdestpath'] = 'Nepareizs mērķa ceļš.';
+$string['wrongsourcebase'] = 'Nepareiza avota URL bāze.';
+$string['wrongzipfilename'] = 'Nepareizs ZIP faila nosaukums.';

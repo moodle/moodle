@@ -29,6 +29,7 @@
  */
 
 $string['admindirname'] = 'व्यवस्थापकाची डिरेक्टरी';
+$string['availablelangs'] = 'उपलब्ध भाषा संच';
 $string['chooselanguagehead'] = 'भाषा निवडा';
 $string['chooselanguagesub'] = 'क्रुपया फक्त इंस्टॉलेशनसाठी भाषा निवडा. तुम्ही नंतरच्या पानावरती साइट आणि युजरसाठी भाषा निवडू शकाल';
 $string['dataroot'] = 'माहीतीची डिरेक्टरी';

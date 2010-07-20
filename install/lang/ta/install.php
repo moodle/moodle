@@ -29,6 +29,7 @@
  */
 
 $string['admindirname'] = 'Admin Directory';
+$string['availablelangs'] = 'தயராக உள்ள மொழி அடுக்கு';
 $string['chooselanguagehead'] = 'மொழியைத் தேர்ந்தெடு';
 $string['chooselanguagesub'] = 'Please choose a language for the installation ONLY. You will be able to choose site and user languages on a later screen.';
 $string['dataroot'] = 'Data Directory';

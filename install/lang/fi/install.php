@@ -29,6 +29,7 @@
  */
 
 $string['admindirname'] = 'Ylläpitohakemisto';
+$string['availablelangs'] = 'Saatavilla olevat kielipaketit';
 $string['chooselanguagehead'] = 'Valitse kieli';
 $string['chooselanguagesub'] = 'Valitse kieli asennusohjelmaa varten. Voit valita muita kieliä käyttöösi myöhemmin.';
 $string['dataroot'] = 'Datahakemisto';

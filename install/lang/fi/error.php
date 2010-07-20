@@ -29,9 +29,16 @@
  */
 
 $string['cannotcreatelangdir'] = 'Kielihakemistoa ei voitu luoda';
+$string['cannotcreatetempdir'] = 'Temp-hakemistoa ei voitu luoda';
 $string['cannotdownloadcomponents'] = 'Komponentteja ei voitu ladata';
 $string['cannotdownloadzipfile'] = 'ZIP-tiedostoa ei voitu ladata';
 $string['cannotfindcomponent'] = 'Komponenttia ei löytynyt';
 $string['cannotsavemd5file'] = 'MD5-tiedostoa ei voitu tallentaa';
 $string['cannotsavezipfile'] = 'Zip-tiedosta ei voitu tallentaa';
 $string['cannotunzipfile'] = 'Zip-tiedostoa ei voitu purkaa';
+$string['componentisuptodate'] = 'Komponentti on ajan tasalla';
+$string['downloadedfilecheckfailed'] = 'Ladatun tiedoston tarkistus epäonnistui';
+$string['invalidmd5'] = 'Virheellinen MD5';
+$string['missingrequiredfield'] = 'JOitakin vaadituista kentistä puuttuu';
+$string['wrongdestpath'] = 'Virheellinen kohdekansio';
+$string['wrongzipfilename'] = 'Virheellinen zip-tiedoston nimi';

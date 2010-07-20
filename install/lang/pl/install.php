@@ -29,6 +29,7 @@
  */
 
 $string['admindirname'] = 'Katalog admin';
+$string['availablelangs'] = 'Dostępne paczki językowe';
 $string['chooselanguagehead'] = 'Wybierz język';
 $string['chooselanguagesub'] = 'Proszę wybrać język TYLKO do instalacji. Stronę i języki dla użytkowników będzie można wybrać na następnym ekranie.';
 $string['dataroot'] = 'Katalog z danymi';

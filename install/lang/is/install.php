@@ -28,6 +28,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['availablelangs'] = 'Tiltækir tungumálapakkar';
 $string['chooselanguagehead'] = 'Tungumál valið';
 $string['chooselanguagesub'] = 'Veldu tungumál sem þú vilt nota við uppsetninguna. Síðar er hægt að velja tungumál á sjálfan vefinn.';
 $string['dataroot'] = 'Gagnamappa';

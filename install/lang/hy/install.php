@@ -29,6 +29,7 @@
  */
 
 $string['admindirname'] = 'Admin դիրեկտորիա';
+$string['availablelangs'] = 'Մատչելի լեզվային փաթեթներ';
 $string['chooselanguagehead'] = 'Ընտրեք լեզուն';
 $string['chooselanguagesub'] = 'Ընտրեք լեզուն ՄԻԱՅՆ տեղակայման համար: Հետագա էկրաններից դուք հնարավորություն կունենաք ընտրել կայքի և օգտագործողի լեզուն:';
 $string['dataroot'] = 'Տվյալների դիրեկտորիա';

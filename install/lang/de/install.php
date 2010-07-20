@@ -29,9 +29,10 @@
  */
 
 $string['admindirname'] = 'Name des Admin-Verzeichnisses';
-$string['availablelangs'] = 'Liste der verfügbaren Sprachen';
+$string['availablelangs'] = 'Verfügbare Sprachpakete';
 $string['chooselanguagehead'] = 'Sprache wählen';
 $string['chooselanguagesub'] = 'Wählen Sie eine Sprache, die Sie während der Installation verwenden wollen. Nach der Installation können Sie die Sprache für die Oberfläche und die Nutzer/innen festlegen.';
+$string['clialreadyinstalled'] = 'Die Datei config.php existiert bereits. Bitte benutzen Sie admin/cli/upgrade.php falls Sie Ihre Website aktualisieren möchten.';
 $string['cliinstallheader'] = 'Installation von Moodle {$a} über die Kommandozeile';
 $string['databasehost'] = 'Datenbank-Server';
 $string['databasename'] = 'Datenbank-Name';
@@ -63,7 +64,6 @@ $string['pathssubdirroot'] = 'Vollständiger Pfad der Moodle-Installation. Bitte
 $string['pathssubwwwroot'] = 'Vollständige Internetadresse für den Zugriff auf Moodle. Es ist nicht möglich, über mehrere unterschiedliche Adressen auf Moodle zuzugreifen. Sollten Sie für Ihre Website mehrere öffentliche Adressen verwenden, so müssen Sie eine Adresse auswählen und für die übrigen Adressen dauerhafte Weiterleitungen einrichten. Falls Ihre Website gleichzeitig aus einem Intranet und aus dem Internet erreichbar ist, so tragen Sie hier die öffentliche Adresse ein. Sorgen Sie in diesem Fall dafür, dass über einen DNS-Eintrag für alle Intranet-Nutzer ebenfalls die öffentliche Adresse erreichbar ist.';
 $string['pathsunsecuredataroot'] = 'Der Speicherort des Verzeichnisses \'dataroot\' ist unsicher';
 $string['pathswrongadmindir'] = 'Das Verzeichnis \'admin\' existiert nicht';
-$string['pathswrongdirroot'] = 'Falscher Pfad zum Verzeichnis \'dirroot\'';
 $string['phpextension'] = 'PHP-Extension {$a}';
 $string['phpversion'] = 'PHP-Version';
 $string['phpversionhelp'] = '<p>Moodle erwartet als PHP-Version mindestens 4.3.0/4.4.0 oder 5.1.0 (5.0.x weist eine Reihe bekannter Fehler auf).</p>

@@ -29,6 +29,7 @@
  */
 
 $string['admindirname'] = 'Katalog för administration';
+$string['availablelangs'] = 'Tillgängliga språkpaket';
 $string['chooselanguagehead'] = 'Välj ett språk';
 $string['chooselanguagesub'] = 'Var snäll och välj ett språk ENDAST för installationen. Du kommer att ha möjlighet att välja språk för webbplatsen och användarna på en senare skärm.';
 $string['dataroot'] = 'katalog för data';

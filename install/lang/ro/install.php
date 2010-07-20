@@ -29,6 +29,7 @@
  */
 
 $string['admindirname'] = 'Admin Directory';
+$string['availablelangs'] = 'Pachete de limbă disponibile';
 $string['chooselanguagehead'] = 'Selectare limbă';
 $string['chooselanguagesub'] = 'Vă rugăm selectaţi limba pentru interfaţa de instalare, limba selectată va fi folosită EXCLUSIV în cadrul procedurii de instalare. Ulterior veţi putea selecta limba în care doriţi să fie afişată interfaţa.';
 $string['dataroot'] = 'Data Directory';

@@ -29,6 +29,7 @@
  */
 
 $string['admindirname'] = 'Thư mục quản trị';
+$string['availablelangs'] = 'Các gói ngôn ngữ đã có';
 $string['dataroot'] = 'Thư mục dữ liệu';
 $string['dbprefix'] = 'Các bảng cố định trước';
 $string['dirroot'] = 'Thư mục Moodle';

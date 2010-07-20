@@ -28,11 +28,4 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['dataroot'] = 'K&#333;paki H&#333;tuku';
-$string['dirroot'] = 'K&#333;paki Moodle';
-$string['installation'] = 'Whakauta';
-$string['phpversion'] = 'Whakaaturanga PHP';
-$string['phpversionhelp'] = '<p>Ka whai atu te Moodle ki ng&#257; Whakaaturanga PHP piki ake ki te 4.1.0.</p>
-<p>Kei te mahi koe i te whakaaturanga {$a}</p>
-<p>Whakapai ake i te PHP, neke atu r&#257;nei ki t&#275;tehi rorohiko tuku me te PHP hou!</p>';
-$string['wwwroot'] = 'Nohoanga Tukutuku';
+$string['downloadedfilecheckfailed'] = 'Die Prüfung der heruntergeladenen Datei ist gescheitert';

@@ -29,6 +29,7 @@
  */
 
 $string['admindirname'] = 'Direutoriu d\'alministración';
+$string['availablelangs'] = 'Paquetes d\'idioma disponibles';
 $string['chooselanguagehead'] = 'Escueya idioma';
 $string['chooselanguagesub'] = 'Escueya un idioma NAMÁS pa la instalación. va poder escoyer l\'idioma del sitiu y l\'idioma d\'usuariu nes pantayes vinientes.';
 $string['dataroot'] = 'Direutoriu de datos';

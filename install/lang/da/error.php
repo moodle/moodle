@@ -29,9 +29,17 @@
  */
 
 $string['cannotcreatelangdir'] = 'Kan ikke oprette sprogmappe';
+$string['cannotcreatetempdir'] = 'Kan ikke oprette temp-mappe';
 $string['cannotdownloadcomponents'] = 'Kan ikke downloade komponenter';
 $string['cannotdownloadzipfile'] = 'Kan ikke downloade zip-fil';
 $string['cannotfindcomponent'] = 'Kan ikke finde komponent';
 $string['cannotsavemd5file'] = 'Kan ikke gemme md5-fil';
 $string['cannotsavezipfile'] = 'Kan ikke gemme zip-fil';
 $string['cannotunzipfile'] = 'Kan ikke unzippe filen';
+$string['componentisuptodate'] = 'Komponenten er ajour';
+$string['downloadedfilecheckfailed'] = 'Downloadet fil-tjek fejlede';
+$string['invalidmd5'] = 'Ugyldig md5';
+$string['missingrequiredfield'] = 'Der mangler nogle obligatoriske felter';
+$string['wrongdestpath'] = 'Forkert destinationssti';
+$string['wrongsourcebase'] = 'Forkert kilde-URL';
+$string['wrongzipfilename'] = 'Forkert zip-filnavn.';

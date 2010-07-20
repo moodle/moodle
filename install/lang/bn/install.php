@@ -28,6 +28,4 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['language'] = 'Jezik';
-$string['next'] = 'Sljedeći';
-$string['previous'] = 'Prijethodni';
+$string['availablelangs'] = 'যে সমস্ত ভাষা ব্যাবহার করতে পারেন';

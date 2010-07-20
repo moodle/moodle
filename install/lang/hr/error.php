@@ -28,5 +28,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['language'] = 'Taal';
-$string['next'] = 'Volgende';
+$string['cannotcreatelangdir'] = 'Nije moguće stvoriti lang mapu';
+$string['cannotdownloadzipfile'] = 'Ne mogu preuzeti ZIP datoteku';
+$string['cannotunzipfile'] = 'Nije moguće otpakirati datoteku';
+$string['wrongzipfilename'] = 'Pogrešno ime ZIP datoteke';

@@ -29,9 +29,17 @@
  */
 
 $string['cannotcreatelangdir'] = 'Невозможно создать языковую папку';
+$string['cannotcreatetempdir'] = 'Невозможно создать временную папку';
 $string['cannotdownloadcomponents'] = 'Невозможно загрузить компоненты.';
 $string['cannotdownloadzipfile'] = 'Не могу загрузить ZIP файл';
 $string['cannotfindcomponent'] = 'Не могу найти компонент';
 $string['cannotsavemd5file'] = 'Не могу сохранить MD5 файл';
 $string['cannotsavezipfile'] = 'Не могу сохранить ZIP файл';
 $string['cannotunzipfile'] = 'Не могу распаковать файл';
+$string['componentisuptodate'] = 'Компонент не нуждается в обновлении';
+$string['downloadedfilecheckfailed'] = 'Ошибка проверки загруженного файла';
+$string['invalidmd5'] = 'Некорректная md5';
+$string['missingrequiredfield'] = 'Необходимое поле отсутствует';
+$string['wrongdestpath'] = 'Ошибочный путь назначения';
+$string['wrongsourcebase'] = 'Ошибочный источник базового URL';
+$string['wrongzipfilename'] = 'Ошибочное имя ZIP файла';

@@ -29,11 +29,18 @@
  */
 
 $string['admindirname'] = 'Adresár pre správu (admin)';
+$string['availablelangs'] = 'Dostupné jazykové balíčky';
 $string['chooselanguagehead'] = 'Vyberte jazyk';
-$string['chooselanguagesub'] = 'Zvoľte si jazyk PRE INŠTALOVANIE. Jazyk pre stránky Moodle a pre užívateľov budete môcť vybrať neskôr.';
+$string['chooselanguagesub'] = 'Zvoľte si jazyk pre inštaláciu. Tento jazyk bude tiež použitý ako východzí jazyk portálu, ale môže byť neskôr zmenený.';
+$string['clialreadyinstalled'] = 'Súbor config.php už existuje. Použite admin/cli/upgrade.php ak chcete aktualizovať váš portál.';
+$string['cliinstallheader'] = 'Mooodle ($a) inštalačný program z príkazového riadku';
+$string['databasehost'] = 'Databázový server';
+$string['databasename'] = 'Názov databázy';
+$string['databasetypehead'] = 'Vyberte driver pre databázu';
 $string['dataroot'] = 'Adresár pre údaje';
 $string['dbprefix'] = 'Predpona tabuliek';
 $string['dirroot'] = 'Adresár Moodle';
+$string['errorsinenvironment'] = 'Kontrola programového prostredia zlyhala!';
 $string['installation'] = 'Inštalácia';
 $string['langdownloaderror'] = 'Bohužiaľ, jazyk "{$a}" sa nepodarilo nainštalovať. Inštalácia bude pokračovať v angličtine.';
 $string['memorylimithelp'] = '<p>PHP limit pamäte pre Váš server je momentálne nastavený na {$a}.</p>
@@ -47,10 +54,13 @@ $string['memorylimithelp'] = '<p>PHP limit pamäte pre Váš server je momentál
 Na niektorých PHP serveroch, si môžete vytvoriť súbor .htaccess v Adresári Moodle, ktorý bude obsahovať tento riadok: <p><blockquote>php_value memory_limit 40M</blockquote></p>
 <p>Avšak, na niektorých serveroch bude toto brániť <b>všetkým</b> PHP stránkam v práci (budete vidieť chyby, keď sa pozriete na stránky), takže budete musieť odstrániť súbor .htaccess.</p></li>
 </ol>';
+$string['pathsunsecuredataroot'] = 'Umiestnenie dátového adresára nie je bezpečné';
+$string['pathswrongadmindir'] = 'Administrátorský adresár neexistuje';
+$string['phpextension'] = 'Rozšírenie PHP {$a}';
 $string['phpversion'] = 'Verzia PHP';
-$string['phpversionhelp'] = '<p>Moodle si vyžaduje verziu PHP aspoň  4.1.0.</p>
-<p>Vy máte momentálne nainštalovanú túto verziu {$a}</p>
-<p>Musíte obnoviť PHP alebo presunúť na hostiteľský počítač s novou verziou PHP!</p>';
+$string['phpversionhelp'] = '<p>Moodle si vyžaduje verziu PHP aspoň  4.3.0 alebo 5.1.0 (5.0.x obsahuje veľa známych chýb).</p>
+<p>Vy máte momentálne nainštalovanú túto verziu {$a}.</p>
+<p>Musíte aktualizovať PHP alebo sa presunúť na hostiteľský počítač s novšou verziou PHP!<br />(V prípade 5.0.X môžete tiež prejsť na verziu 4.4.x)</p>';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
 $string['welcomep20'] = 'Podarilo so vám úspešne nainštalovať a spustiť balíček <strong>{$a->packname} {$a->packversion}</strong>. Gratulujeme!';
 $string['welcomep30'] = '<strong>{$a->installername}</strong> obsahuje aplikáciu k vytvoreniu prostredia, v ktorom bude prevádzkovaný váš <strong>Moodle</strong>. Menovite sa jedná o:';

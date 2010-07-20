@@ -29,10 +29,18 @@
  */
 
 $string['cannotcreatelangdir'] = '无法创建 lang 目录。';
+$string['cannotcreatetempdir'] = '无法创建 temp 目录。';
 $string['cannotdownloadcomponents'] = '无法下载组件';
 $string['cannotdownloadzipfile'] = '无法下载 ZIP 文件。';
 $string['cannotfindcomponent'] = '找不到组件。';
 $string['cannotsavemd5file'] = '无法保存 md5 文件';
 $string['cannotsavezipfile'] = '无法保存 ZIP 文件';
 $string['cannotunzipfile'] = '无法解压文件';
+$string['componentisuptodate'] = '组件已经是最新的了';
+$string['downloadedfilecheckfailed'] = '下载文件检查失败';
+$string['invalidmd5'] = '无效的 md5';
+$string['missingrequiredfield'] = '缺少了必需的字段';
 $string['remotedownloaderror'] = '下载组件至服务器失败，请校验代理设置，推荐安装 PHP cURL 扩展。<br /><br />您必须手动下载下载<a href="{$a->url}">{$a->url}</a> ，拷贝至服务器上的“{$a->dest}”并解压至此。';
+$string['wrongdestpath'] = '错误的目标路径。';
+$string['wrongsourcebase'] = '错误的源 URL 基地址。';
+$string['wrongzipfilename'] = '错误的 ZIP 文件名。';

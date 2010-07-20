@@ -29,6 +29,7 @@
  */
 
 $string['admindirname'] = 'Admin-mappe';
+$string['availablelangs'] = 'Tilgængelige sprogpakker';
 $string['chooselanguagehead'] = 'Vælg et sprog';
 $string['chooselanguagesub'] = 'Vælg et sprog til brug under installationen. Senere vil du kunne vælge hvilke sprog Moodle skal kunne bruge.';
 $string['dataroot'] = 'Datamappe';

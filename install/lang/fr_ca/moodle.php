@@ -28,5 +28,6 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['language'] = 'Idioma';
-$string['next'] = 'Siguiente';
+$string['language'] = 'Langue';
+$string['next'] = 'Suivant';
+$string['previous'] = 'Précédent';

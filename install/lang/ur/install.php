@@ -28,6 +28,4 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['language'] = 'ენა';
-$string['next'] = 'შემდეგი';
-$string['previous'] = 'წინა';
+$string['availablelangs'] = 'دستیاب زبانوں کے بنڈل';

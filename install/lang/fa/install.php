@@ -29,6 +29,7 @@
  */
 
 $string['admindirname'] = 'دایرکتوری مدیر';
+$string['availablelangs'] = 'بسته‌های زبانی موجود';
 $string['chooselanguagehead'] = 'انتخاب زبان';
 $string['chooselanguagesub'] = 'لطفاً زبانی را به جهت استفاده در حین نصب انتخاب نمائید. زبان سایت و کاربر را در صفحه‌ای دیگر می‌توانید انتخاب کنید.';
 $string['dataroot'] = 'دایرکتوری داده';

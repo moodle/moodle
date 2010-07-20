@@ -34,7 +34,7 @@ $string['cliincorrectvalueerror'] = 'Errore, il valore "{$a->value}" non è corr
 $string['cliincorrectvalueretry'] = 'Valore non corretto, per favore riprova';
 $string['clitypevalue'] = 'inserisci valore';
 $string['clitypevaluedefault'] = 'inserisci valore oppure premi Invio per usare il valore di default ({$a})';
-$string['cliunknowoption'] = 'Opzione non riconosciuta:
+$string['cliunknowoption'] = 'Opzioni non riconosciute:
 {$a}
-. Per favore utilizzate l\'opzione --help.';
+. Per favore utilizza l\'opzione --help.';
 $string['cliyesnoprompt'] = 'inserisci s (per Si) o n (per No)';

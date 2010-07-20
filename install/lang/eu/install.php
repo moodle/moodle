@@ -56,12 +56,13 @@ Horrek Moodle-k berak memoria-muga ezartzea ahalbidetzen du.</li>
 <p>Hala ere, zerbitzari batzuetan horrek PHP orri <b>GUZTIEK</b> ez funtzionatzea ekar dezake
 (orriak ikustean erroreak ere ikusiko dituzu). Kasu horretan, .htaccess fitxategia ezabatu beharko duzu.</p></li>
 </ol>';
+$string['paths'] = 'Bideak';
 $string['pathserrcreatedataroot'] = 'Instalatzaileak ezin du datu-direktorioa ({$a->dataroot}) sortu.';
-$string['pathsrodataroot'] = 'Dataroot direktorioa ez idazteko modukoa';
+$string['pathshead'] = 'Egiaztatu bideak';
+$string['pathsrodataroot'] = 'Dataroot direktorioa ez da idazteko modukoa.';
 $string['pathsroparentdataroot'] = 'Goragoko direktorioa ({$a->parent}) ez da idazteko modukoa. Instalatzaileak ezin du datu-direktorioa ({$a->dataroot}) sortu.';
 $string['pathsunsecuredataroot'] = 'Dataroot-en kokapena ez da segurua';
 $string['pathswrongadmindir'] = 'Kudeaketa direktorioa ez da existitzen';
-$string['pathswrongdirroot'] = 'Dataroot-en kokapena ez da zuzena';
 $string['phpextension'] = '{$a} PHP luzapena';
 $string['phpversion'] = 'PHP bertsioa';
 $string['phpversionhelp'] = '<p>Moodle-k PHP 4.1.0 edo geroagoko bertsioa behar du.</p>

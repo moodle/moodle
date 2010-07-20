@@ -28,10 +28,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['admindirname'] = 'ನಿರ್ವಾಹಕ ಕಡತ ಕೋಶ';
-$string['dataroot'] = 'ದತ್ತ ಡೈರೆಕ್ಟರಿ';
-$string['dbprefix'] = 'ಪಟ್ಟಿಯ ಶೀರ್ಷಿಕೆ';
-$string['dirroot'] = 'ಮೂಡಲ್ ಡೈರೆಕ್ಟರಿ';
-$string['installation'] = 'ಅನುಸ್ಥಾಪನೆ';
-$string['phpversion'] = 'ಪಿಎಚ್‌ಪಿ ಆವೃತ್ತಿ';
-$string['wwwroot'] = 'ಅಂತರ್ಜಾಲ ವಿಳಾಸ';
+$string['clianswerno'] = 'n';
+$string['cliansweryes'] = 'd';
+$string['cliincorrectvalueretry'] = 'Netočna vrijednost, pokušajte ponovno';
+$string['clitypevalue'] = 'unesite vrijednost';
+$string['clitypevaluedefault'] = 'unesite vrijednost ili pritisnite Enter za korištenje zadane vrijednosti ({$a})';

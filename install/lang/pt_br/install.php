@@ -29,6 +29,7 @@
  */
 
 $string['admindirname'] = 'Diretório Admin';
+$string['availablelangs'] = 'Pacotes de idioma disponíveis';
 $string['chooselanguagehead'] = 'Escolha um idioma';
 $string['chooselanguagesub'] = 'Escolha um idioma a ser usado durante a instalação. Após a instalação você pode definir o idioma principal do site e outros idiomas a serem utilizados pelos usuários.';
 $string['dataroot'] = 'Diretório Data';

@@ -29,6 +29,7 @@
  */
 
 $string['admindirname'] = 'Директориум аdmin';
+$string['availablelangs'] = 'Достапни јазични пакети';
 $string['chooselanguagehead'] = 'Изберете јазик';
 $string['chooselanguagesub'] = 'Изберете јазик САМО за инсталацијата. Подоцна ќе можете да изберете јазик за страницата и за корисниците.';
 $string['dataroot'] = 'Директориум';

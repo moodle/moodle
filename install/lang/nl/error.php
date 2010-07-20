@@ -29,10 +29,18 @@
  */
 
 $string['cannotcreatelangdir'] = 'Kan lang map niet maken';
+$string['cannotcreatetempdir'] = 'Kan tijdelijke map niet maken.';
 $string['cannotdownloadcomponents'] = 'Kan componenten niet downloaden.';
 $string['cannotdownloadzipfile'] = 'Kan ZIP-bestand niet downloaden.';
 $string['cannotfindcomponent'] = 'Kan component niet vinden.';
 $string['cannotsavemd5file'] = 'Kan md5-bestand niet bewaren.';
 $string['cannotsavezipfile'] = 'Kan ZIP-bestand niet bewaren.';
 $string['cannotunzipfile'] = 'Kon bestand niet unzippen';
+$string['componentisuptodate'] = 'Component is up-to-date';
+$string['downloadedfilecheckfailed'] = 'Controle van het gedownloade bestand mislukt';
+$string['invalidmd5'] = 'De controlevariable was fout - probeer nog eens';
+$string['missingrequiredfield'] = 'Vereist veld ontbreekt';
 $string['remotedownloaderror'] = 'De download van de component naar jouw server is mislukt, controleer je proxy-instellingen, de PHP cURL-extentie wordt ten zeerste aanbevolen te installeren.<br /><br />Je moet je <a href="{$a->url}">{$a->url}</a> bestand manueel downloaden , kopiëren naar de map "{$a->dest}" op je server en het daar unzippen.';
+$string['wrongdestpath'] = 'Fout pad voor bestemming';
+$string['wrongsourcebase'] = 'Foute URL voor de bron';
+$string['wrongzipfilename'] = 'Foute ZIP-bestandsnaam';
