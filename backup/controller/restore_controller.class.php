@@ -265,14 +265,27 @@ class restore_controller extends backup implements loggable {
         return $this->plan->execute();
     }
 
-    public function execute_precheck() {
+    /**
+     * Execute the restore prechecks to detect any problem before proceed with restore
+     *
+     * This function checks various parts of the restore (versions, users, roles...)
+     * returning true if everything was ok or false if any warning/error was detected.
+     * Any warning/error is returned by the get_precheck_results() method.
+     * Note: if any problem is found it will, automatically, drop all the restore temp
+     * tables as far as the next step is to inform about the warning/errors. If no problem
+     * is found, then default behaviour is to keep the temp tables so, in the same request
+     * restore will be executed, saving a lot of checks to be executed again.
+     * Note: If for any reason (UI to show after prechecks...) you want to force temp tables
+     * to be dropped always, you can pass true to the $droptemptablesafter parameter
+     */
+    public function execute_precheck($droptemptablesafter = false) {
         if (is_array($this->precheck)) {
             throw new restore_controller_exception('precheck_alredy_executed', $this->status);
         }
         if ($this->status != backup::STATUS_NEED_PRECHECK) {
             throw new restore_controller_exception('cannot_precheck_wrong_status', $this->status);
         }
-        $this->precheck = restore_prechecks_helper::execute_prechecks($this);
+        $this->precheck = restore_prechecks_helper::execute_prechecks($this, $droptemptablesafter);
         if (!array_key_exists('errors', $this->precheck)) { // No errors, can be executed
             $this->set_status(backup::STATUS_AWAITING);
         }

@@ -145,6 +145,12 @@ abstract class backup_general_helper extends backup_helper {
         $info->type   =  $infoarr['details']['detail'][0]['type'];
         $info->format =  $infoarr['details']['detail'][0]['format'];
         $info->mode   =  $infoarr['details']['detail'][0]['mode'];
+        // Build the role mappings custom object
+        $rolemappings = new stdclass();
+        $rolemappings->modified = false;
+        $rolemappings->mappings = array();
+        $info->role_mappings = $rolemappings;
+
 
         // Now the contents
         $contentsarr = $infoarr['contents'];

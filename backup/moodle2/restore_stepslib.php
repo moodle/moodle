@@ -131,15 +131,18 @@ class restore_load_included_files extends restore_structure_step {
 class restore_load_and_map_roles extends restore_execution_step {
 
     protected function define_execution() {
-        if ($this->task->get_preloaded_information()) { // if info is already preloaded, nothing to do
+        if ($this->task->get_preloaded_information()) { // if info is already preloaded
             return;
         }
 
         $file = $this->get_basepath() . '/roles.xml';
         // Load needed toles to temp_ids
         restore_dbops::load_roles_to_tempids($this->get_restoreid(), $file);
+
         // Process roles, mapping/skipping. Any error throws exception
-        restore_dbops::process_included_roles($this->get_restoreid(), $this->task->get_courseid(), $this->task->get_userid(), $this->task->is_samesite());
+        // Note we pass controller's info because it can contain role mapping information
+        // about manual mappings performed by UI
+        restore_dbops::process_included_roles($this->get_restoreid(), $this->task->get_courseid(), $this->task->get_userid(), $this->task->is_samesite(), $this->task->get_info()->role_mappings);
     }
 }
 
@@ -416,6 +419,8 @@ class restore_outcomes_structure_step extends restore_structure_step {
             // Remap the user
             $userid = $this->get_mappingid('user', $data->usermodified);
             $data->usermodified = $userid ? $userid : $this->get_userid();
+            // Remap the scale
+            $data->scaleid = $this->get_mappingid('scale', $data->scaleid);
             // Remap the course if course outcome
             $data->courseid = $data->courseid ? $this->get_courseid() : null;
             // If global outcome (course=null), check the user has perms to create it

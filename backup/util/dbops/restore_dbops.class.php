@@ -113,12 +113,91 @@ abstract class restore_dbops {
     /**
      * Precheck the loaded roles, return empty array if everything is ok, and
      * array with 'errors', 'warnings' elements (suitable to be used by restore_prechecks)
-     * with any problem found
+     * with any problem found. At the same time, store all the mapping into backup_ids_temp
+     * and also put the information into $rolemappings (controller->info), so it can be reworked later by
+     * post-precheck stages while at the same time accept modified info in the same object coming from UI
      */
-    public static function precheck_included_roles($restoreid, $courseid, $userid, $samesite) {
-        debugging('implement the roles mapping/skip here. returns errors/warnings array', DEBUG_DEVELOPER);
-        return array();
+    public static function precheck_included_roles($restoreid, $courseid, $userid, $samesite, $rolemappings) {
+        global $DB;
+
+        $problems = array(); // To store warnings/errors
+
+        // Get loaded roles from backup_ids
+        $rs = $DB->get_recordset('backup_ids_temp', array('backupid' => $restoreid, 'itemname' => 'role'), '', 'itemid');
+        foreach ($rs as $recrole) {
+            // If the rolemappings->modified flag is set, that means that we are coming from
+            // manually modified mappings (by UI), so accept those mappings an put them to backup_ids
+            if ($rolemappings->modified) {
+                $target = $rolemappings->mappings[$recrole->itemid]->targetroleid;
+                self::set_backup_ids_record($restoreid, 'role', $recrole->itemid, $target);
+
+            // Else, we haven't any info coming from UI, let's calculate the mappings, matching
+            // in multiple ways and checking permissions. Note mapping to 0 means "skip"
+            } else {
+                $role = (object)self::get_backup_ids_record($restoreid, 'role', $recrole->itemid)->info;
+                $match = self::get_best_assignable_role($role, $courseid, $userid, $samesite);
+                // Send match to backup_ids
+                self::set_backup_ids_record($restoreid, 'role', $recrole->itemid, $match);
+                // Build the rolemappings element for controller
+                unset($role->id);
+                unset($role->nameincourse);
+                unset($role->nameincourse);
+                $role->targetroleid = $match;
+                $rolemappings->mappings[$recrole->itemid] = $role;
+                // Prepare warning if no match found
+                if (!$match) {
+                    $problems['warnings'][] = get_string('cannotfindassignablerole', 'backup', $role->name);
+                }
+            }
+        }
+        $rs->close();
+        return $problems;
     }
+
+    /**
+     * Given one role, as loaded from XML, perform the best possible matching against the assignable
+     * roles, using different fallback alternatives (shortname, archetype, editingteacher => teacher, defaultcourseroleid)
+     * returning the id of the best matching role or 0 if no match is found
+     */
+    protected static function get_best_assignable_role($role, $courseid, $userid, $samesite) {
+        global $CFG, $DB;
+
+        // Gather various information about roles
+        $coursectx = get_context_instance(CONTEXT_COURSE, $courseid);
+        $allroles = $DB->get_records('role');
+        $assignablerolesshortname = get_assignable_roles($coursectx, ROLENAME_SHORT, false, $userid);
+
+        // Note: under 1.9 we had one function restore_samerole() that performed one complete
+        // matching of roles (all caps) and if match was found the mapping was availabe bypassing
+        // any assignable_roles() security. IMO that was wrong and we must not allow such
+        // mappings anymore. So we have left that matching strategy out in 2.0
+
+        // Empty assignable roles, mean no match possible
+        if (empty($assignablerolesshortname)) {
+            return 0;
+        }
+
+        // Match by shortname
+        if ($match = array_search($role->shortname, $assignablerolesshortname)) {
+            return $match;
+        }
+
+        // Match by archetype
+        list($in_sql, $in_params) = $DB->get_in_or_equal(array_keys($assignablerolesshortname));
+        $params = array_merge(array($role->archetype), $in_params);
+        if ($rec = $DB->get_record_select('role', "archetype = ? AND id $in_sql", $params, 'id', IGNORE_MULTIPLE)) {
+            return $rec->id;
+        }
+
+        // Match editingteacher to teacher (happens a lot, from 1.9)
+        if ($role->shortname == 'editingteacher' && in_array('teacher', $assignablerolesshortname)) {
+            return array_search('teacher', $assignablerolesshortname);
+        }
+
+        // No match, return 0
+        return 0;
+    }
+
 
     /**
      * Process the loaded roles, looking for their best mapping or skipping
@@ -126,11 +205,11 @@ abstract class restore_dbops {
      * precheck_included_roles, that contains all the logic, but returns
      * errors/warnings instead and is executed as part of the restore prechecks
      */
-     public static function process_included_roles($restoreid, $courseid, $userid, $samesite) {
+     public static function process_included_roles($restoreid, $courseid, $userid, $samesite, $rolemappings) {
         global $DB;
 
         // Just let precheck_included_roles() to do all the hard work
-        $problems = self::precheck_included_roles($restoreid, $courseid, $userid, $samesite);
+        $problems = self::precheck_included_roles($restoreid, $courseid, $userid, $samesite, $rolemappings);
 
         // With problems of type error, throw exception, shouldn't happen if prechecks executed
         if (array_key_exists('errors', $problems)) {

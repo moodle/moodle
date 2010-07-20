@@ -43,7 +43,7 @@ abstract class restore_prechecks_helper {
      *
      * Returns empty array or warnings/errors array
      */
-    public static function execute_prechecks($controller) {
+    public static function execute_prechecks($controller, $droptemptablesafter = false) {
         global $CFG;
 
         $errors = array();
@@ -57,6 +57,7 @@ abstract class restore_prechecks_helper {
         $courseid = $controller->get_courseid();
         $userid = $controller->get_userid();
         $inforeffiles = restore_dbops::get_needed_inforef_files($restoreid); // Get all inforef files
+        $rolemappings = $controller->get_info()->role_mappings;
 
         // Create temp tables
         restore_controller_dbops::create_restore_temp_tables($controller->get_restoreid());
@@ -111,11 +112,10 @@ abstract class restore_prechecks_helper {
             }
         }
 
-        // TODO: Perform role_mappings, warning about non-mappable ones being ignored (see 1.9)
         // Note: restore won't create roles at all. Only mapping/skip!
         $file = $controller->get_plan()->get_basepath() . '/roles.xml';
-        restore_dbops::load_roles_to_tempids($restoreid, $file); // Load needed users to temp_ids
-        if ($problems = restore_dbops::precheck_included_roles($restoreid, $courseid, $userid, $samesite)) {
+        restore_dbops::load_roles_to_tempids($restoreid, $file); // Load needed roles to temp_ids
+        if ($problems = restore_dbops::precheck_included_roles($restoreid, $courseid, $userid, $samesite, $rolemappings)) {
             $errors = array_key_exists('errors', $problems) ? array_merge($errors, $problems['errors']) : $errors;
             $warnings = array_key_exists('warnings', $problems) ? array_merge($warnings, $problems['warnings']) : $warnings;
         }
@@ -128,8 +128,8 @@ abstract class restore_prechecks_helper {
         if (!empty($warnings)) {
             $results['warnings'] = $warnings;
         }
-        // Warnings/errors detected, drop temp tables
-        if (!empty($results)) {
+        // Warnings/errors detected or want to do so explicitly, drop temp tables
+        if (!empty($results) || $droptemptablesafter) {
             restore_controller_dbops::drop_restore_temp_tables($controller->get_restoreid());
         }
         return $results;
