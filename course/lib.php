@@ -946,7 +946,7 @@ function print_recent_activity($course) {
             if (!in_array($log->action, $actions)) {
                 continue;
             }
-            $info = split(' ', $log->info);
+            $info = explode(' ', $log->info);
 
             if ($info[0] == 'label') {     // Labels are ignored in recent activity
                 continue;
@@ -2239,7 +2239,7 @@ function print_course($course, $highlightterms = '') {
     /// first find all roles that are supposed to be displayed
 
     if (!empty($CFG->coursecontact)) {
-        $managerroles = split(',', $CFG->coursecontact);
+        $managerroles = explode(',', $CFG->coursecontact);
         $namesarray = array();
         if (isset($course->managers)) {
             if (count($course->managers)) {

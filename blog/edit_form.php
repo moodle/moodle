@@ -149,7 +149,7 @@ class blog_edit_form extends moodleform {
 
             if ($modcontext) {
                 // get context of the mod's course
-                $path = split('/', $modcontext->path);
+                $path = explode('/', $modcontext->path);
                 $coursecontext = $DB->get_record('context', array('id' => $path[(count($path) - 2)]));
 
                 // ensure only one course is associated

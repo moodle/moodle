@@ -163,7 +163,7 @@ global $DB;
 </fieldset>
 
 <?php
-$types = split(',', $CFG->block_search_filetypes);
+$types = explode(',', $CFG->block_search_filetypes);
 if (!empty($types)){
     foreach($types as $type) {
         $utype = strtoupper($type);

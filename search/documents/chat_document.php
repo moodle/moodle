@@ -211,7 +211,7 @@ function chat_get_content_for_index(&$chat) {
 function chat_single_document($id, $itemtype) {
     global $DB;
     
-    list($chat_id, $sessionstart, $sessionend) = split('-', $id);
+    list($chat_id, $sessionstart, $sessionend) = explode('-', $id);
     $chat = $DB->get_record('chat', array('id' => $chat_id));
     $course = $DB->get_record('course', array('id' => $chat->course));
     $coursemodule = $DB->get_field('modules', 'id', array('name' => 'chat'));
@@ -271,7 +271,7 @@ function chat_check_text_access($path, $itemtype, $this_id, $user, $group_id, $c
     
     include_once("{$CFG->dirroot}/{$path}/lib.php");
 
-    list($chat_id, $sessionstart, $sessionend) = split('-', $this_id);
+    list($chat_id, $sessionstart, $sessionend) = explode('-', $this_id);
     // get the chat session and all related stuff
     $chat = $DB->get_record('chat', array('id' => $chat_id));
     $context = $DB->get_record('context', array('id' => $context_id));

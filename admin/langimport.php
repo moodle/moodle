@@ -372,10 +372,10 @@ function get_remote_list_of_languages() {
     $availablelangs = array();
 
     if ($content = download_file_content($source)) {
-        $alllines = split("\n", $content);
+        $alllines = explode("\n", $content);
         foreach($alllines as $line) {
             if (!empty($line)){
-                $availablelangs[] = split(',', $line);
+                $availablelangs[] = explode(',', $line);
             }
         }
         return $availablelangs;
