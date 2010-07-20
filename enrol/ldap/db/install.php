@@ -96,5 +96,7 @@ function xmldb_enrol_ldap_install() {
     }
 
     // Remove a setting that's never been used at all
-    unset_config('enrol_ldap_user_memberfield');
+    if (isset($CFG->enrol_ldap_user_memberfield)) {
+        unset_config('enrol_ldap_user_memberfield');
+    }
 }
