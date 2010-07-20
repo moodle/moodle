@@ -24,6 +24,5 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['enablehoverexpansion'] = 'Enable mouseover expansion of this block';
 $string['enabledock'] = 'Allow the user to dock this block';
 $string['pluginname'] = 'Settings';

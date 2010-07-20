@@ -37,13 +37,6 @@ class block_settings_edit_form extends block_edit_form {
 
         $yesnooptions = array('yes'=>get_string('yes'), 'no'=>get_string('no'));
 
-        $mform->addElement('select', 'config_enablehoverexpansion', get_string('enablehoverexpansion', $this->block->blockname), $yesnooptions);
-        if (empty($this->block->config->enablehoverexpansion) || $this->block->config->enablehoverexpansion=='no') {
-            $mform->getElement('config_enablehoverexpansion')->setSelected('no');
-        } else {
-            $mform->getElement('config_enablehoverexpansion')->setSelected('yes');
-        }
-
         $mform->addElement('select', 'config_enabledock', get_string('enabledock', $this->block->blockname), $yesnooptions);
         if (empty($this->block->config->enabledock) || $this->block->config->enabledock=='yes') {
             $mform->getElement('config_enabledock')->setSelected('yes');

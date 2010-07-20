@@ -139,12 +139,4 @@ class block_settings extends block_base {
         $this->contentgenerated = true;
         return true;
     }
-
-    function html_attributes() {
-        $attributes = parent::html_attributes();
-        if (!empty($this->config->enablehoverexpansion) && $this->config->enablehoverexpansion == 'yes') {
-            $attributes['class'] .= ' block_js_expansion';
-        }
-        return $attributes;
-    }
 }
