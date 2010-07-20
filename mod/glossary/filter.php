@@ -15,6 +15,7 @@ function glossary_filter($courseid, $text) {
     static $nothingtodo;
     static $conceptlist;
     static $cachedcourseid;
+    static $jsinitialised;
 
     if (empty($courseid)) {
         $courseid = SITEID;
@@ -146,7 +147,13 @@ function glossary_filter($courseid, $text) {
         }
 
         $conceptlist = filter_remove_duplicates($conceptlist);
-        $PAGE->requires->yui_module('moodle-mod_glossary-autolinker', 'M.mod_glossary.init_filter_autolinking', array(array('courseid'=>$courseid)));
+
+        if (empty($jsinitialised)) {
+            // Add a JavaScript event to open popup's here. This only ever need to be
+            // added once!
+            $PAGE->requires->yui_module('moodle-mod_glossary-autolinker', 'M.mod_glossary.init_filter_autolinking', array(array('courseid'=>$courseid)));
+            $jsinitialised = true;
+        }
     }
 
     if(!empty($GLOSSARY_EXCLUDECONCEPTS)) {
