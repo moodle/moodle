@@ -567,7 +567,7 @@ if ($component === 'blog') {
 
         $filename = array_pop($args);
         $filepath = $args ? '/'.implode('/', $args).'/' : '/';
-        if (!$file = $fs->get_file($context->id, 'grouping', 'description', $groupingid->id, $filepath, $filename) or $file->is_directory()) {
+        if (!$file = $fs->get_file($context->id, 'grouping', 'description', $groupingid, $filepath, $filename) or $file->is_directory()) {
             send_file_not_found();
         }
 
