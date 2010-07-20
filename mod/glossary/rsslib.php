@@ -3,7 +3,7 @@
 
     //This function is the main entry point to glossary
     //rss feeds generation.
-    function glossary_rss_get_feed($context, $cm, $instance, $args) {
+    function glossary_rss_get_feed($context, $args) {
         global $CFG, $DB;
 
         if (empty($CFG->glossary_enablerssfeeds)) {
@@ -15,14 +15,18 @@
 
         //check capabilities
         //glossary module doesn't require any capabilities to view glossary entries (aside from being logged in)
+        if (!is_enrolled($context)) {
+            return null;
+        }
 
-        $glossary = $DB->get_record('glossary', array('id' => $instance), '*', MUST_EXIST);
+        $glossaryid = $args[3];
+        $glossary = $DB->get_record('glossary', array('id' => $glossaryid), '*', MUST_EXIST);
 
         if (!rss_enabled('glossary', $glossary)) {
             return null;
         }
 
-        $sql = glossary_rss_get_sql($glossary, $cm);
+        $sql = glossary_rss_get_sql($glossary);
 
         //get the cache file info
         $filename = rss_get_file_name($glossary, $sql);
@@ -34,7 +38,7 @@
             $cachedfilelastmodified = filemtime($cachedfilepath);
         }
 
-        if (glossary_rss_newstuff($glossary, $cm, $cachedfilelastmodified)) {
+        if (glossary_rss_newstuff($glossary, $cachedfilelastmodified)) {
             if (!$recs = $DB->get_records_sql($sql, array(), 0, $glossary->rssarticles)) {
                 return null;
             }
@@ -90,7 +94,7 @@
         return $cachedfilepath;
     }
 
-    function glossary_rss_get_sql($glossary, $cm, $time=0) {
+    function glossary_rss_get_sql($glossary, $time=0) {
         //do we only want new items?
         if ($time) {
             $time = "AND e.timecreated > $time";
@@ -138,14 +142,13 @@
      * Otherwise it returns false.
      *
      * @param object $glossary the glossary activity object
-     * @param object $cm
      * @param int $time timestamp
      * @return bool
      */
-    function glossary_rss_newstuff($glossary, $cm, $time) {
+    function glossary_rss_newstuff($glossary, $time) {
         global $DB;
 
-        $sql = glossary_rss_get_sql($glossary, $cm, $time);
+        $sql = glossary_rss_get_sql($glossary, $time);
 
         $recs = $DB->get_records_sql($sql, null, 0, 1);//limit of 1. If we get even 1 back we have new stuff
         return ($recs && !empty($recs));

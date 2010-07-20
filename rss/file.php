@@ -49,7 +49,7 @@ if (count($args) < 5) {
 $contextid   = (int)$args[0];
 $token  = $args[1];
 $componentname = clean_param($args[2], PARAM_FILE);
-$instance   = $args[3];
+//$instance   = $args[3];
 
 $userid = rss_get_userid_from_token($token);
 if (!$userid) {
@@ -70,36 +70,14 @@ list($type, $plugin) = normalize_component($componentname);
 //this will store the path to the cached rss feed contents
 $pathname = null;
 
-//check user's psuedo login created by session_set_user()
-//NOTE the component providing the feed should do its own capability checks
-try {
-    $cm = null;
-    if (!empty($plugin) && !empty($instance)) {
-        $cm = get_coursemodule_from_instance($plugin, $instance, 0, false, MUST_EXIST);
-    }
-
-    //Get course from context
-    //TODO: note that in the case of the hub rss feed, the feed is not related to a course context,
-    //it is more a "site" context. The Hub RSS bypass the following line using context id = 2
-    $coursecontext = get_course_context($context);
-
-    $course = null;
-    if ($coursecontext) {
-        $course = $DB->get_record('course', array('id' => $coursecontext->instanceid), '*', MUST_EXIST);
-    }
-
-    require_login($course, false, $cm, false, true);
-} catch (Exception $e) {
-    rss_not_found();
-}
-
 if (file_exists($componentdir)) {
     require_once("$componentdir/rsslib.php");
     $functionname = $plugin.'_rss_get_feed';
 
     if (function_exists($functionname)) {
         //$pathname will be null if there was a problem or the user doesn't have the necessary capabilities
-        $pathname = $functionname($context, $cm, $instance, $args);
+        //NOTE the component providing the feed should do its own capability checks
+        $pathname = $functionname($context, $args);
     }
 }
 

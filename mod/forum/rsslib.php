@@ -32,7 +32,7 @@
  * @param array $args the arguments received in the url
  * @return string the full path to the cached RSS feed directory. Null if there is a problem.
  */
-function forum_rss_get_feed($context, $cm, $forumid, $args) {
+function forum_rss_get_feed($context, $args) {
     global $CFG, $DB;
 
     $status = true;
@@ -43,16 +43,18 @@ function forum_rss_get_feed($context, $cm, $forumid, $args) {
         return null;
     }
 
-    //check capabilities
-    if (!has_capability('mod/forum:viewdiscussion', $context)) {
+    if (!is_enrolled($context, null, 'mod/forum:viewdiscussion')) {
         return null;
     }
 
+    $forumid = $args[3];
     $forum = $DB->get_record('forum', array('id' => $forumid), '*', MUST_EXIST);
 
     if (!rss_enabled('forum', $forum)) {
         return null;
     }
+
+    $cm = get_coursemodule_from_instance('forum', $forumid, 0, false, MUST_EXIST);
 
     //the sql that will retreive the data for the feed and be hashed to get the cache filename
     $sql = forum_rss_get_sql($forum, $cm);

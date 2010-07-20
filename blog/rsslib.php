@@ -45,11 +45,20 @@ function blog_rss_print_link($filtertype, $filterselect, $tagid=0, $tooltiptext=
 
 
 // Generate any blog RSS feed via one function (called by ../rss/file.php)
-function blog_rss_get_feed($context, $cm, $instance, $args) {
+function blog_rss_get_feed($context, $args) {
     global $CFG, $SITE, $DB;
 
-    $type = $instance;
+    if (empty($CFG->enablerssfeeds)) {
+        debugging('Sorry, RSS feeds are disabled on this site');
+        return '';
+    }
 
+    $sitecontext = get_context_instance(CONTEXT_SYSTEM);
+    if (!has_capability('moodle/blog:view', $sitecontext)) {
+        return null;
+    }
+
+    $type = $args[3];
     $id = (int) $args[4];  // could be groupid / courseid  / userid  depending on $instance
 
     $tagid=0;
@@ -57,11 +66,6 @@ function blog_rss_get_feed($context, $cm, $instance, $args) {
         $tagid = (int) $args[5];
     } else {
         $tagid = 0;
-    }
-
-    if (empty($CFG->enablerssfeeds)) {
-        debugging('Sorry, RSS feeds are disabled on this site');
-        return '';
     }
 
     $filename = blog_rss_file_name($type, $id, $tagid);
