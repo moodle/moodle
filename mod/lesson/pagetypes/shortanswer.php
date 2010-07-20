@@ -190,12 +190,12 @@ class lesson_page_type_shortanswer extends lesson_page {
             } else {
                 $cells[] = '<span class="labelcorrect">'.get_string("answer", "lesson")." $i</span>: \n";
             }
-            $cells[] = format_text($answer->answer, FORMAT_MOODLE, $options);
+            $cells[] = format_text($answer->answer, $answer->answerformat, $options);
             $table->data[] = new html_table_row($cells);
 
             $cells = array();
             $cells[] = "<span class=\"label\">".get_string("response", "lesson")." $i</span>";
-            $cells[] = format_text($answer->response, FORMAT_MOODLE, $options);
+            $cells[] = format_text($answer->response, $answer->responseformat, $options);
             $table->data[] = new html_table_row($cells);
 
             $cells = array();

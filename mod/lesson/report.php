@@ -428,7 +428,7 @@ if ($action == 'reportoverview') {
 
         $options = new stdClass;
         $options->noclean = true;
-        $answerpage->contents = format_text($page->contents, FORMAT_MOODLE, $options);
+        $answerpage->contents = format_text($page->contents, $page->contentsformat, $options);
 
         $answerpage->qtype = $qtypes[$page->qtype].$page->option_description_string();
         $answerpage->grayout = $page->grayout;
@@ -552,7 +552,7 @@ if ($action == 'reportoverview') {
                 $table->data[] = $modified;
             }
             if ($page->answerdata->response != NULL) {
-                $table->data[] = array($fontstart.get_string("response", "lesson").": <br />".$fontend.$fontstart2.format_text($page->answerdata->response,FORMAT_MOODLE,$formattextdefoptions).$fontend2, " ");
+                $table->data[] = array($fontstart.get_string("response", "lesson").": <br />".$fontend.$fontstart2.format_text($page->answerdata->response,$page->answerdata->responseformat,$formattextdefoptions).$fontend2, " ");
             }
             $table->data[] = array($page->answerdata->score, " ");
         } else {

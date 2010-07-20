@@ -174,7 +174,7 @@ class lesson_page_type_branchtable extends lesson_page {
         foreach ($answers as $answer) {
             $cells = array();
             $cells[] = "<span class=\"label\">".get_string("branch", "lesson")." $i<span>: ";
-            $cells[] = format_text($answer->answer, FORMAT_MOODLE, $options);
+            $cells[] = format_text($answer->answer, $answer->answerformat, $options);
             $table->data[] = new html_table_row($cells);
 
             $cells = array();

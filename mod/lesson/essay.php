@@ -191,7 +191,7 @@ switch ($mode) {
 
                 // Set rest of the message values
                 $currentpage = $lesson->load_page($attempt->pageid);
-                $a->question = format_text($currentpage->contents, FORMAT_MOODLE, $options);
+                $a->question = format_text($currentpage->contents, $currentpage->contentsformat, $options);
                 $a->response = s($essayinfo->answer);
                 $a->comment  = s($essayinfo->response);
 

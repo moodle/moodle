@@ -209,6 +209,9 @@ class lesson_page_type_multichoice extends lesson_page {
             }
         } else {
             // only one answer allowed
+            $formattextdefoptions = new object();
+            $formattextdefoptions->noclean = true;
+            $formattextdefoptions->para = false;
 
             if (empty($data->answerid) && !is_int($data->answerid)) {
                 $result->noanswer = true;
@@ -229,8 +232,8 @@ class lesson_page_type_multichoice extends lesson_page {
                 }
             }
             $result->newpageid = $answer->jumpto;
-            $result->response  = trim($answer->response);
-            $result->userresponse = $answer->answer;
+            $result->response  = format_text($answer->response, $answer->responseformat, $formattextdefoptions);
+            $result->userresponse = foramt_text($answer->answer, $answer->answerformat, $formattextdefoptions);
         }
         return $result;
     }
@@ -261,12 +264,12 @@ class lesson_page_type_multichoice extends lesson_page {
             } else {
                 $cells[] = '<span class="labelcorrect">'.get_string("answer", "lesson")." $i</span>: \n";
             }
-            $cells[] = format_text($answer->answer, FORMAT_MOODLE, $options);
+            $cells[] = format_text($answer->answer, $answer->answerformat, $options);
             $table->data[] = new html_table_row($cells);
 
             $cells = array();
             $cells[] = "<span class=\"label\">".get_string("response", "lesson")." $i</span>";
-            $cells[] = format_text($answer->response, FORMAT_MOODLE, $options);
+            $cells[] = format_text($answer->response, $answer->responseformat, $options);
             $table->data[] = new html_table_row($cells);
 
             $cells = array();
@@ -355,9 +358,9 @@ class lesson_page_type_multichoice extends lesson_page {
                     $data = "<input type=\"checkbox\" readonly=\"readonly\" name=\"answer[$i]\" value=\"0\" disabled=\"disabled\" />";
                 }
                 if (($answer->score > 0 && $this->lesson->custom) || ($this->lesson->jumpto_is_correct($this->properties->id, $answer->jumpto) && !$this->lesson->custom)) {
-                    $data = "<div class=highlight>".$data.' '.format_text($answer->answer,FORMAT_MOODLE,$formattextdefoptions)."</div>";
+                    $data = "<div class=highlight>".$data.' '.format_text($answer->answer,$answer->answerformat,$formattextdefoptions)."</div>";
                 } else {
-                    $data .= format_text($answer->answer,FORMAT_MOODLE,$formattextdefoptions);
+                    $data .= format_text($answer->answer,$answer->answerformat,$formattextdefoptions);
                 }
             } else {
                 if ($useranswer != NULL and $answer->id == $useranswer->answerid) {
@@ -386,7 +389,7 @@ class lesson_page_type_multichoice extends lesson_page {
                 if (($answer->score > 0 && $this->lesson->custom) || ($this->lesson->jumpto_is_correct($this->properties->id, $answer->jumpto) && !$this->lesson->custom)) {
                     $data = "<div class=\"highlight\">".$data.' '.format_text($answer->answer,FORMAT_MOODLE,$formattextdefoptions)."</div>";
                 } else {
-                    $data .= format_text($answer->answer,FORMAT_MOODLE,$formattextdefoptions);
+                    $data .= format_text($answer->answer,$answer->answerformat,$formattextdefoptions);
                 }
             }
             if (isset($pagestats[$this->properties->id][$answer->id])) {
@@ -450,7 +453,7 @@ class lesson_display_answer_form_multichoice_singleanswer extends moodleform {
         $i = 0;
         foreach ($answers as $answer) {
             $mform->addElement('html', '<div class="answeroption">');
-            $mform->addElement('radio','answerid',null,format_text(trim($answer->answer), FORMAT_MOODLE, $options),$answer->id);
+            $mform->addElement('radio','answerid',null,format_text($answer->answer, $answer->answerformat, $options),$answer->id);
             $mform->setType('answer'.$i, PARAM_INT);
             if (isset($USER->modattempts[$lessonid]) && $answer->id == $attempt->answerid) {
                 $mform->setDefault('answerid', true);
@@ -488,7 +491,7 @@ class lesson_display_answer_form_multichoice_multianswer extends moodleform {
         $i = 0;
         foreach ($answers as $answer) {
             $mform->addElement('html', '<div class="answeroption">');
-            $mform->addElement('checkbox','answer['.$i.']',null,format_text(trim($answer->answer), FORMAT_MOODLE, $options),$answer->id);
+            $mform->addElement('checkbox','answer['.$i.']',null,format_text($answer->answer, $answer->answerformat, $options),$answer->id);
             $mform->setType('answer'.$i, PARAM_INT);
             if (isset($USER->modattempts[$lessonid]) && $answer->id == $attempt->answerid) {
                 $mform->setDefault('answer['.$i.']', true);

@@ -60,6 +60,10 @@ class lesson_page_type_truefalse extends lesson_page {
     }
     public function check_answer() {
         global $DB, $CFG;
+        $formattextdefoptions = new object();
+        $formattextdefoptions->noclean = true;
+        $formattextdefoptions->para = false;
+
         $answers = $this->get_answers();
         shuffle($answers);
         $params = array('answers'=>$answers, 'lessonid'=>$this->lesson->id, 'contents'=>$this->get_contents());
@@ -75,9 +79,7 @@ class lesson_page_type_truefalse extends lesson_page {
             return $result;
         }
         $result->answerid = $answerid;
-        if (!$answer = $DB->get_record("lesson_answers", array("id" => $result->answerid))) {
-            print_error("Continue: answer record not found");
-        }
+        $answer = $DB->get_record("lesson_answers", array("id" => $result->answerid), '*', MUST_EXIST);
         if ($this->lesson->jumpto_is_correct($this->properties->id, $answer->jumpto)) {
             $result->correctanswer = true;
         }
@@ -89,14 +91,14 @@ class lesson_page_type_truefalse extends lesson_page {
             }
         }
         $result->newpageid = $answer->jumpto;
-        $result->response  = trim($answer->response);
-        $result->studentanswer = $result->userresponse = $answer->answer;
+        $result->response  = format_text($answer->response, $answer->responseformat, $formattextdefoptions);
+        $result->studentanswer = $result->userresponse = $result->response;
         return $result;
     }
 
     public function display_answers(html_table $table) {
         $answers = $this->get_answers();
-        $options = new stdClass;
+        $options = new object();
         $options->noclean = true;
         $options->para = false;
         $i = 1;
@@ -113,12 +115,12 @@ class lesson_page_type_truefalse extends lesson_page {
             } else {
                 $cells[] = '<span class="labelcorrect">'.get_string("answer", "lesson")." $i</span>: \n";
             }
-            $cells[] = format_text($answer->answer, FORMAT_MOODLE, $options);
+            $cells[] = format_text($answer->answer, $answer->answerformat, $options);
             $table->data[] = new html_table_row($cells);
 
             $cells = array();
             $cells[] = "<span class=\"label\">".get_string("response", "lesson")." $i</span>";
-            $cells[] = format_text($answer->response, FORMAT_MOODLE, $options);
+            $cells[] = format_text($answer->response, $answer->responseformat, $options);
             $table->data[] = new html_table_row($cells);
 
             $cells = array();
@@ -172,8 +174,9 @@ class lesson_page_type_truefalse extends lesson_page {
 
     public function report_answers($answerpage, $answerdata, $useranswer, $pagestats, &$i, &$n) {
         $answers = $this->get_answers();
-        $formattextdefoptions = new stdClass;
-        $formattextdefoptions->para = false;  //I'll use it widely in this page
+        $formattextdefoptions = new obejct(); //I'll use it widely in this page
+        $formattextdefoptions->para = false;
+        $formattextdefoptions->noclean = true;
         foreach ($answers as $answer) {
             if ($this->properties->qoption) {
                 if ($useranswer == NULL) {
@@ -192,7 +195,7 @@ class lesson_page_type_truefalse extends lesson_page {
                                 $answerdata->response = get_string("thatsthewronganswer", "lesson");
                             }
                         } else {
-                            $answerdata->response = $answer->response;
+                            $answerdata->response = format_text($answer->response, $answer->responseformat, $formattextdefoptions);
                         }
                     }
                     if (!isset($answerdata->score)) {
@@ -209,9 +212,9 @@ class lesson_page_type_truefalse extends lesson_page {
                     $data = "<input type=\"checkbox\" readonly=\"readonly\" name=\"answer[$i]\" value=\"0\" disabled=\"disabled\" />";
                 }
                 if (($answer->score > 0 && $this->lesson->custom) || ($this->lesson->jumpto_is_correct($this->properties->id, $answer->jumpto) && !$this->lesson->custom)) {
-                    $data .= "<div class=highlight>".format_text($answer->answer,FORMAT_MOODLE,$formattextdefoptions)."</div>";
+                    $data .= "<div class=highlight>".format_text($answer->answer, $answer->answerformat, $formattextdefoptions)."</div>";
                 } else {
-                    $data .= format_text($answer->answer,FORMAT_MOODLE,$formattextdefoptions);
+                    $data .= format_text($answer->answer, $answer->answerformat, $formattextdefoptions);
                 }
             } else {
                 if ($useranswer != NULL and $answer->id == $useranswer->answerid) {
@@ -224,7 +227,7 @@ class lesson_page_type_truefalse extends lesson_page {
                             $answerdata->response = get_string("thatsthewronganswer", "lesson");
                         }
                     } else {
-                        $answerdata->response = $answer->response;
+                        $answerdata->response = format_text($answer->response, $answer->responseformat, $formattextdefoptions);
                     }
                     if ($this->lesson->custom) {
                         $answerdata->score = get_string("pointsearned", "lesson").": ".$answer->score;
@@ -238,9 +241,9 @@ class lesson_page_type_truefalse extends lesson_page {
                     $data = "<input type=\"checkbox\" readonly=\"readonly\" name=\"answer[$i]\" value=\"0\" disabled=\"disabled\" />";
                 }
                 if (($answer->score > 0 && $this->lesson->custom) || ($this->lesson->jumpto_is_correct($this->properties->id, $answer->jumpto) && !$this->lesson->custom)) {
-                    $data .= "<div class=\"highlight\">".format_text($answer->answer,FORMAT_MOODLE,$formattextdefoptions)."</div>";
+                    $data .= "<div class=\"highlight\">".format_text($answer->answer, $answer->answerformat, $formattextdefoptions)."</div>";
                 } else {
-                    $data .= format_text($answer->answer,FORMAT_MOODLE,$formattextdefoptions);
+                    $data .= format_text($answer->answer, $answer->answerformat, $formattextdefoptions);
                 }
             }
             if (isset($pagestats[$this->properties->id][$answer->id])) {
@@ -289,7 +292,7 @@ class lesson_display_answer_form_truefalse extends moodleform {
 
         $mform->addElement('header', 'pageheader', $OUTPUT->box($contents, 'contents'));
 
-        $options = new stdClass;
+        $options = new object();
         $options->para = false;
         $options->noclean = true;
 
@@ -302,7 +305,7 @@ class lesson_display_answer_form_truefalse extends moodleform {
         $i = 0;
         foreach ($answers as $answer) {
             $mform->addElement('html', '<div class="answeroption">');
-            $mform->addElement('radio','answerid',null,format_text(trim($answer->answer), FORMAT_MOODLE, $options),$answer->id);
+            $mform->addElement('radio', 'answerid', null, format_text($answer->answer, $answer->answerformat, $options), $answer->id);
             $mform->setType('answerid', PARAM_INT);
             if (isset($USER->modattempts[$lessonid]) && $answer->id == $attempt->answerid) {
                 $mform->setDefault('answerid', true);

@@ -2150,9 +2150,9 @@ abstract class lesson_page extends lesson_base {
                     $options = new stdClass;
                     $options->noclean = true;
                     $options->para = true;
-                    $result->feedback = $OUTPUT->box(format_text($this->properties->contents, FORMAT_MOODLE, $options), 'generalbox boxaligncenter');
-                    $result->feedback .= '<div class="correctanswer generalbox"><em>'.get_string("youranswer", "lesson").'</em> : '.format_text($result->studentanswer, FORMAT_MOODLE, $options);
-                    $result->feedback .= $OUTPUT->box(format_text($result->response, FORMAT_MOODLE, $options), $class);
+                    $result->feedback = $OUTPUT->box(format_text($this->properties->contents, $this->properties->contentsformat, $options), 'generalbox boxaligncenter');
+                    $result->feedback .= '<div class="correctanswer generalbox"><em>'.get_string("youranswer", "lesson").'</em> : '.$result->studentanswer; // already in clean html
+                    $result->feedback .= $OUTPUT->box($result->response, $class); // already conerted to HTML
                     echo "</div>";
                 }
             }
@@ -2262,10 +2262,12 @@ abstract class lesson_page extends lesson_base {
                 $this->answers[$i]->pageid = $this->id;
                 $this->answers[$i]->timecreated = $this->timecreated;
             }
-            if (!empty($properties->answer[$i])) {
-                $this->answers[$i]->answer = format_text($properties->answer[$i], FORMAT_PLAIN);
-                if (isset($properties->response[$i])) {
-                    $this->answers[$i]->response = format_text($properties->response[$i], FORMAT_PLAIN);
+            if (!empty($properties->answer_editor[$i])) {
+                $this->answers[$i]->answer = $properties->answer_editor[$i]['text'];
+                $this->answers[$i]->answerformat = $properties->answer_editor[$i]['format'];
+                if (isset($properties->response_editor[$i])) {
+                    $this->answers[$i]->response = $properties->response_editor[$i]['text'];
+                    $this->answers[$i]->responseformat = $properties->response_editor[$i]['format'];
                 }
                 if (isset($properties->jumpto[$i])) {
                     $this->answers[$i]->jumpto = $properties->jumpto[$i];
@@ -2348,10 +2350,12 @@ abstract class lesson_page extends lesson_base {
 
         for ($i = 0; $i < $this->lesson->maxanswers; $i++) {
             $answer = clone($newanswer);
-            if (!empty($properties->answer[$i])) {
-                $answer->answer = format_text($properties->answer[$i], FORMAT_PLAIN);
-                if (isset($properties->response[$i])) {
-                    $answer->response = format_text($properties->response[$i], FORMAT_PLAIN);
+            if (!empty($properties->answer_editor[$i])) {
+                $answer->answer = $properties->answer_editor[$i]['text'];
+                $answer->answerformat = $properties->answer_editor[$i]['format'];
+                if (isset($properties->response_editor[$i])) {
+                    $answer->response = $properties->response_editor[$i]['text'];
+                    $answer->responseformat = $properties->response_editor[$i]['format'];
                 }
                 if (isset($properties->jumpto[$i])) {
                     $answer->jumpto = $properties->jumpto[$i];
@@ -2432,8 +2436,8 @@ abstract class lesson_page extends lesson_base {
         if (count($this->answers)>0) {
             $count = 0;
             foreach ($this->answers as $answer) {
-                $properties->{'answer['.$count.']'} = $answer->answer;
-                $properties->{'response['.$count.']'} = $answer->response;
+                $properties->{'answer_editor['.$count.']'} = array('text'=>$answer->answer, 'format'=>$answer->answerformat);
+                $properties->{'response_editor['.$count.']'} = array('text'=>$answer->response, 'format'=>$answer->responseformat);
                 $properties->{'jumpto['.$count.']'} = $answer->jumpto;
                 $properties->{'score['.$count.']'} = $answer->score;
                 $count++;
@@ -2913,18 +2917,6 @@ abstract class lesson_add_page_form_base extends moodleform {
     public function custom_definition() {}
 
     /**
-     * Sets the data for the form... but modifies if first for the editor then
-     * calls the parent method
-     *
-     * @param stdClass $data An object containing properties to set
-     * @param int $pageid
-     */
-    public final function set_data($data, $context=null, $pageid=null) {
-        $data = file_prepare_standard_editor($data, 'contents', $this->editoroptions, $context, 'mod_lesson', 'page_contents', $pageid);
-        parent::set_data($data);
-    }
-
-    /**
      * Used to determine if this is a standard page or a special page
      * @return bool
      */
@@ -3012,30 +3004,22 @@ abstract class lesson_add_page_form_base extends moodleform {
     }
 
     /**
-     * Convenience function: Adds a textarea element
-     *
-     * @param string $name
-     * @param int $count The count of the element to add
-     * @param string|null $label
-     */
-    protected final function add_textarea($name, $count, $label) {
-        $this->_form->addElement('textarea', $name.'['.$count.']', $label, array('rows'=>5, 'cols'=>70, 'width'=>630, 'height'=>300));
-    }
-    /**
-     * Convenience function: Adds an answer textarea
+     * Convenience function: Adds an answer editor
      *
      * @param int $count The count of the element to add
      */
     protected final function add_answer($count) {
-        $this->add_textarea('answer', $count, get_string('answer', 'lesson'));
+        $this->_form->addElement('editor', 'answer_editor['.$count.']', get_string('answer', 'lesson'), null, array('noclean'=>true));
+        $this->_form->setDefault('answer_editor['.$count.']', array('text'=>'', 'format'=>FORMAT_MOODLE));
     }
     /**
-     * Convenience function: Adds an response textarea
+     * Convenience function: Adds an response editor
      *
      * @param int $count The count of the element to add
      */
     protected final function add_response($count) {
-        $this->add_textarea('response', $count, get_string('response', 'lesson'));
+        $this->_form->addElement('editor', 'response_editor['.$count.']', get_string('response', 'lesson'), null, array('noclean'=>true));
+        $this->_form->setDefault('response_editor['.$count.']', array('text'=>'', 'format'=>FORMAT_MOODLE));
     }
 
     /**

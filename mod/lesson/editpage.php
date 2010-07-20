@@ -57,13 +57,15 @@ if ($edit) {
 
 $jumpto = lesson_page::get_jumptooptions($pageid, $lesson);
 $manager = lesson_page_type_manager::get($lesson);
-$mform = $manager->get_page_form($qtype, array('editoroptions'=>null, 'jumpto'=>$jumpto, 'lesson'=>$lesson, 'edit'=>$edit, 'maxbytes'=>$PAGE->course->maxbytes));
+$editoroptions = array('noclean'=>true, 'maxfiles'=>EDITOR_UNLIMITED_FILES, 'maxbytes'=>$CFG->maxbytes);
+$mform = $manager->get_page_form($qtype, array('editoroptions'=>$editoroptions, 'jumpto'=>$jumpto, 'lesson'=>$lesson, 'edit'=>$edit, 'maxbytes'=>$PAGE->course->maxbytes));
 
 if ($edit) {
-    $properties = $editpage->properties();
-    $properties->pageid = $editpage->id;
-    $properties->id = $cm->id;
-    $mform->set_data($properties, $context, $editpage->id);
+    $data = $editpage->properties();
+    $data->pageid = $editpage->id;
+    $data->id = $cm->id;
+    $data = file_prepare_standard_editor($data, 'contents', $editoroptions, $context, 'mod_lesson', 'page_contents',  $editpage->id);
+    $mform->set_data($data);
     $PAGE->navbar->add(get_string('edit'), new moodle_url('/mod/lesson/edit.php', array('id'=>$id)));
     $PAGE->navbar->add(get_string('editingquestionpage', 'lesson', get_string($mform->qtypestring, 'lesson')));
 } else {
@@ -72,12 +74,12 @@ if ($edit) {
     // IT SHOULD ALWAYS CALL require_sesskey();
     $mform->construction_override($pageid, $lesson);
 
-    $defaultpage = new stdClass;
-    $defaultpage->id = $cm->id;
-    $defaultpage->pageid = $pageid;
-    $defaultpage->qtype = $qtype;
-    $defaultpage->contentsformat = FORMAT_HTML;
-    $mform->set_data($defaultpage);
+    $data = new stdClass;
+    $data->id = $cm->id;
+    $data->pageid = $pageid;
+    $data->qtype = $qtype;
+    $data = file_prepare_standard_editor($data, 'contents', $editoroptions, null);
+    $mform->set_data($data);
     $PAGE->navbar->add(get_string('addanewpage', 'lesson'), $PAGE->url);
     if ($qtype !== 'unknown') {
         $PAGE->navbar->add(get_string($mform->qtypestring, 'lesson'));
