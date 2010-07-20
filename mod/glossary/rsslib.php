@@ -11,6 +11,8 @@
             return null;
         }
 
+        $status = true;
+
         //check capabilities
         //glossary module doesn't require any capabilities to view glossary entries (aside from being logged in)
 
@@ -79,6 +81,10 @@
                 //Save the XML contents to file.
                 $status = rss_save_file('glossary', $filename, $rss);
             }
+        }
+
+        if (!$status) {
+            $cachedfilepath = null;
         }
 
         return $cachedfilepath;
