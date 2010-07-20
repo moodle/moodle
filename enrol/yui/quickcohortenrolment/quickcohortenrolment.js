@@ -57,9 +57,7 @@ YUI.add('moodle-enrol-quickcohortenrolment', function(Y) {
                 this.set('centered', true);
                 this.show();
             }, panel);
-            this.on('hide', function() {
-                this.hide();
-            }, panel);
+            this.on('hide', panel.hide, panel);
             this.on('performingaction', function(){
                 this.get('boundingBox').append(Y.Node.create('<div class="performing-action"></div>').append(Y.Node.create('<img alt="loading" />').setAttribute('src', M.cfg.loadingicon)).setStyle('opacity', 0.5));
             }, panel);
@@ -198,9 +196,14 @@ YUI.add('moodle-enrol-quickcohortenrolment', function(Y) {
                             if (result.error) {
                                 new M.core.ajaxException(result);
                             } else {
-                                var redirect = function() {
-                                    if (result.response.users) {
-                                        window.location.href = this.get(URL);
+                                var redirecturl = this.get(URL), redirect = function() {
+                                    if (!usersonly || result.response.users) {
+                                        Y.one(document.body).append(
+                                            Y.Node.create('<div class="corelightbox"></div>')
+                                                .setStyle('height', Y.one(document.body).get('docHeight')+'px')
+                                                .setStyle('opacity', '0.4')
+                                                .append(Y.Node.create('<img alt="loading" />').setAttribute('src', M.cfg.loadingicon)));
+                                        window.location.href = redirecturl;
                                     }
                                 }
                                 if (result.response && result.response.message) {
