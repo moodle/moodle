@@ -72,15 +72,13 @@ die;
 } else {
     $csv_encode = '/\&\#44/';
     if (isset($CFG->CSV_DELIMITER)) {
-        $csv_delimiter = '\\' . $CFG->CSV_DELIMITER;
-        $csv_delimiter2 = $CFG->CSV_DELIMITER;
+        $csv_delimiter = $CFG->CSV_DELIMITER;
 
         if (isset($CFG->CSV_ENCODE)) {
             $csv_encode = '/\&\#' . $CFG->CSV_ENCODE . '/';
         }
     } else {
-        $csv_delimiter = "\,";
-        $csv_delimiter2 = ",";
+        $csv_delimiter = ",";
     }
 
     // prepare temp file
@@ -107,7 +105,7 @@ die;
             "hidepicture" => 1);
 
     // --- get header (field names) ---
-    $header = split($csv_delimiter, fgets($fp,1024));
+    $header = explode($csv_delimiter, fgets($fp,1024));
     // check for valid field names
     foreach ($header as $i => $h) {
         $h = trim($h); $header[$i] = $h; // remove whitespace
@@ -136,10 +134,10 @@ die;
         }
         //Note: commas within a field should be encoded as &#44 (for comma separated csv files)
         //Note: semicolon within a field should be encoded as &#59 (for semicolon separated csv files)
-        $line = split($csv_delimiter, fgets($fp,1024));
+        $line = explode($csv_delimiter, fgets($fp,1024));
         foreach ($line as $key => $value) {
             //decode encoded commas
-            $record[$header[$key]] = preg_replace($csv_encode,$csv_delimiter2,trim($value));
+            $record[$header[$key]] = preg_replace($csv_encode,$csv_delimiter,trim($value));
         }
         if ($record[$header[0]]) {
             // add a new group to the database
