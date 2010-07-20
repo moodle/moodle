@@ -63,6 +63,9 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configselect('enrol_ldap/user_search_sub', get_string('user_search_sub_key', 'enrol_ldap'), get_string('user_search_sub', 'enrol_ldap'), 0, $options));
     $options = ldap_supported_usertypes();
     $settings->add(new admin_setting_configselect('enrol_ldap/user_type', get_string('user_type_key', 'enrol_ldap'), get_string('user_type', 'enrol_ldap'), 'default', $options));
+
+    if (!defined('LDAP_DEFER_NEVER')) define ('LDAP_DEREF_NEVER', 0);
+    if (!defined('LDAP_DEREF_ALWAYS')) define ('LDAP_DEREF_ALWAYS', 3);
     $options = array();
     $options[LDAP_DEREF_NEVER] = get_string('no');
     $options[LDAP_DEREF_ALWAYS] = get_string('yes');
