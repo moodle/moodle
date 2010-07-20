@@ -92,7 +92,11 @@ class block_html extends block_base {
     }
 
     function content_is_trusted() {
-        return in_array($this->page->context->contextlevel, array(CONTEXT_COURSE, CONTEXT_COURSECAT, CONTEXT_SYSTEM));
+        if (!$context = get_context_instance_by_id($this->instance->parentcontextid)) {
+            return false;
+        }
+        //find out if this block is on the profile page - we must not allow any XSS there in case admin uses login-as feature
+        return ($context->contextlevel != CONTEXT_USER);
     }
 
     /**

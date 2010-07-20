@@ -37,7 +37,11 @@ class block_html_edit_form extends block_edit_form {
         $mform->addElement('text', 'config_title', get_string('configtitle', 'block_html'));
         $mform->setType('config_title', PARAM_MULTILANG);
 
-        $editoroptions = array('maxfiles' => EDITOR_UNLIMITED_FILES, 'trusttext'=>true, 'context'=>$this->block->context);
+        // prevent potential XSS on user profile pages
+        $parentcontext = get_context_instance_by_id($this->block->instance->parentcontextid);
+        $noclean = ($parentcontext->contextlevel != CONTEXT_USER);
+
+        $editoroptions = array('maxfiles' => EDITOR_UNLIMITED_FILES, 'noclean'=>$noclean, 'context'=>$this->block->context);
         $mform->addElement('editor', 'config_text', get_string('configcontent', 'block_html'), null, $editoroptions);
         $mform->setType('config_text', PARAM_RAW); // no XSS prevention here, users must be trusted
     }
