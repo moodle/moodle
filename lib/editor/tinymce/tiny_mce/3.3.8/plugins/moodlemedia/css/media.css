@@ -1,5 +1,12 @@
 #id, #name, #hspace, #vspace, #class_name, #align {	width: 100px }
-.moodlebutton {font-size: 1.5em;font-weight:bold;padding: 3px;border:1px solid #ccc;text-decoration:none}
+.moodlebutton {
+    font-size: 1.5em;
+    font-weight:bold;
+    padding: 3px 3px 3px 1.5em;
+    border:1px solid #ccc;
+    text-decoration:none;
+    background: url(../../../../../../../../../pix/a/search.png) .2em .3em no-repeat;
+}
 .moodlebutton:hover {background: #ccc}
 #hspace, #vspace { width: 50px }
 #flash_quality, #flash_align, #flash_scale, #flash_salign, #flash_wmode { width: 100px }

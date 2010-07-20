@@ -8,7 +8,14 @@ diff -u -r1.1 advimage.css
 @@ -1,13 +1,15 @@
  #src_list, #over_list, #out_list {width:280px;}
  .mceActionPanel {margin-top:7px;}
-+.moodlebutton {font-size: 1.5em;font-weight:bold;padding: 3px;border:1px solid #ccc;text-decoration:none}
++.moodlebutton {
++    font-size: 1.5em;
++    font-weight:bold;
++    padding: 3px 3px 3px 1.5em;
++    border:1px solid #ccc;
++    text-decoration:none;
++    background: url(../../../../../../../../../pix/a/search.png) .2em .3em no-repeat;
++}
 +.moodlebutton:hover {background: #ccc}
  .alignPreview {border:1px solid #000; width:140px; height:140px; overflow:hidden; padding:5px;}
  .checkbox {border:0;}
