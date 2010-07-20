@@ -131,6 +131,23 @@ class repository_local extends repository {
                     $list[] = $node;
                 }
             }
+        } else {
+            // if file doesn't exist, build path nodes root of current context
+            $pathnodes = array();
+            $fileinfo = $browser->get_file_info($context, null, null, null, null, null);
+            $encodedpath = base64_encode(serialize($fileinfo->get_params()));
+            $pathnodes[] = array('name'=>$fileinfo->get_visible_name(), 'path'=>$encodedpath);
+            $level = $fileinfo->get_parent();
+            while ($level) {
+                $encodedpath = base64_encode(serialize($level->get_params()));
+                $pathnodes[] = array('name'=>$level->get_visible_name(), 'path'=>$encodedpath);
+                $level = $level->get_parent();
+            }
+            if (!empty($pathnodes) && is_array($pathnodes)) {
+                $pathnodes = array_reverse($pathnodes);
+                $ret['path'] = $pathnodes;
+            }
+            $list = array();
         }
         $ret['list'] = array_filter($list, array($this, 'filter'));
         return $ret;
