@@ -43,18 +43,29 @@ function forum_rss_get_feed($context, $args) {
         return null;
     }
 
-    if (!is_enrolled($context, null, 'mod/forum:viewdiscussion')) {
+    $forumid = $args[3];
+
+    $uservalidated = false;
+
+    $cm = get_coursemodule_from_instance('forum', $forumid, 0, false, MUST_EXIST);
+    if ($cm) {
+        $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
+
+        //context id from db should match the submitted one
+        if ($context->id==$modcontext->id && has_capability('mod/forum:viewdiscussion', $modcontext)) {
+            $uservalidated = true;
+        }
+    }
+
+    if (!$uservalidated) {
         return null;
     }
 
-    $forumid = $args[3];
     $forum = $DB->get_record('forum', array('id' => $forumid), '*', MUST_EXIST);
 
     if (!rss_enabled('forum', $forum)) {
         return null;
     }
-
-    $cm = get_coursemodule_from_instance('forum', $forumid, 0, false, MUST_EXIST);
 
     //the sql that will retreive the data for the feed and be hashed to get the cache filename
     $sql = forum_rss_get_sql($forum, $cm);
