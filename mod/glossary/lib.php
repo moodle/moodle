@@ -51,10 +51,6 @@ function glossary_add_instance($glossary) {
 /// will create a new instance and return the id number
 /// of the new instance.
 
-    if (empty($glossary->userating)) {
-        $glossary->assessed = 0;
-    }
-
     if (empty($glossary->ratingtime) or empty($glossary->assessed)) {
         $glossary->assesstimestart  = 0;
         $glossary->assesstimefinish = 0;
@@ -108,10 +104,6 @@ function glossary_update_instance($glossary) {
 
     $glossary->timemodified = time();
     $glossary->id           = $glossary->instance;
-
-    //if (empty($glossary->userating)) {
-//        $glossary->assessed = 0;
-  //  }
 
     if (empty($glossary->ratingtime) or empty($glossary->assessed)) {
         $glossary->assesstimestart  = 0;
