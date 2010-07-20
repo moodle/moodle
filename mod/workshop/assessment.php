@@ -65,7 +65,12 @@ $isauthor               = ($USER->id == $submission->authorid);
 if ($isreviewer or $isauthor or ($canviewallassessments and $canviewallsubmissions)) {
     // such a user can continue
 } else {
-    print_error('nopermissions', '', $workshop->view_url());
+    print_error('nopermissions', 'error', $workshop->view_url(), 'view this assessment');
+}
+
+if ($isauthor and !$isreviewer and !$canviewallassessments and $workshop->phase != workshop::PHASE_CLOSED) {
+    // authors can see assessments of their work at the end of workshop only
+    print_error('nopermissions', 'error', $workshop->view_url(), 'view assessment of own work before workshop is closed');
 }
 
 // only the reviewer is allowed to modify the assessment

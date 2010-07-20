@@ -51,7 +51,7 @@ $isreviewer = ($USER->id == $assessment->reviewerid);
 if ($isreviewer or $canmanage) {
     // such a user can continue
 } else {
-    print_error('nopermissions', '', $workshop->view_url());
+    print_error('nopermissions', 'error', $workshop->view_url(), 'assess example submission');
 }
 
 // only the reviewer is allowed to modify the assessment

@@ -53,6 +53,7 @@ if ($id) { // submission is specified
         $submission->authorid = $USER->id;
         $submission->grade = null;
         $submission->gradeover = null;
+        $submission->published = null;
         $submission->feedbackauthor = null;
         $submission->feedbackauthorformat = FORMAT_HTML;
     }
@@ -85,7 +86,7 @@ if ($submission->id and ($ownsubmission or $canviewall or $isreviewer)) {
 } elseif (is_null($submission->id) and $cansubmit) {
     // ok you can go
 } else {
-    print_error('nopermissions');
+    print_error('nopermissions', 'error', $workshop->view_url(), 'view or create submission');
 }
 
 if ($assess and $submission->id and !$isreviewer and $canallocate and $workshop->assessing_allowed()) {

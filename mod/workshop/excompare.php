@@ -63,7 +63,7 @@ if ($canmanage) {
 } elseif ($isreviewer and $workshop->assessing_examples_allowed()) {
     // ok you can go
 } else {
-    print_error('nopermissions');
+    print_error('nopermissions', 'error', $workshop->view_url(), 'compare example assessment');
 }
 
 $PAGE->set_title($workshop->name);
