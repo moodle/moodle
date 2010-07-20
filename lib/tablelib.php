@@ -1025,6 +1025,7 @@ class flexible_table {
             $this->print_nothing_to_display();
         } else {
             echo '</table>';
+            echo html_writer::end_tag('div');
             $this->wrap_html_finish();
             // Paging bar
             if(in_array(TABLE_P_BOTTOM, $this->showdownloadbuttonsat)) {
@@ -1180,6 +1181,7 @@ class flexible_table {
         $this->wrap_html_start();
         // Start of main data table
 
+        echo html_writer::start_tag('div', array('class'=>'flexible-wrap'));
         echo '<table'.$this->make_attributes_string($this->attributes).'>';
 
     }
