@@ -26,6 +26,7 @@
 $string['backupcourse'] = 'Backup course: {$a}';
 $string['backupsection'] = 'Backup course section: {$a}';
 $string['backupactivity'] = 'Backup activity: {$a}';
+$string['cannotfindassignablerole'] = 'The {$a} role in the backup file cannot be mapped to any of the roles that you are allowed to assign.';
 $string['configgeneralactivities'] = 'Sets the default for including activities in a backup.';
 $string['configgeneralanonymize'] = 'If enabled all information pertaining to users will be anonymised by default.';
 $string['configgeneralblocks'] = 'Sets the default for including blocks in a backup.';
