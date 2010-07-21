@@ -233,7 +233,7 @@ class lesson_page_type_multichoice extends lesson_page {
             }
             $result->newpageid = $answer->jumpto;
             $result->response  = format_text($answer->response, $answer->responseformat, $formattextdefoptions);
-            $result->userresponse = foramt_text($answer->answer, $answer->answerformat, $formattextdefoptions);
+            $result->userresponse = format_text($answer->answer, $answer->answerformat, $formattextdefoptions);
         }
         return $result;
     }
