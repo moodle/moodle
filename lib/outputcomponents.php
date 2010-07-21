@@ -83,7 +83,9 @@ class file_picker implements renderable {
 
         // copying other options
         foreach ($options as $name=>$value) {
-            $this->options->$name = $value;
+            if (!isset($this->options->$name)) {
+                $this->options->$name = $value;
+            }
         }
     }
 }
