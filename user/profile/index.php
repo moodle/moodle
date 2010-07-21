@@ -42,14 +42,14 @@ switch ($action) {
     case 'deletecategory':
         $id      = required_param('id', PARAM_INT);
         $confirm = optional_param('confirm', 0, PARAM_BOOL);
+        $fieldcount = $DB->count_records('user_info_field', array('categoryid'=>$id));
+        if (data_submitted() and ($confirm and confirm_sesskey()) or $fieldcount===0 ) {
 
-        if (data_submitted() and $confirm and confirm_sesskey()) {
             profile_delete_category($id);
-            redirect($redirect);
+            redirect($redirect,get_string('deleted'));
         }
 
         //ask for confirmation
-        $fieldcount = $DB->count_records('user_info_field', array('categoryid'=>$id));
         $optionsyes = array ('id'=>$id, 'confirm'=>1, 'action'=>'deletecategory', 'sesskey'=>sesskey());
         echo $OUTPUT->header();
         echo $OUTPUT->heading(get_string('profiledeletecategory', 'admin'));
@@ -64,13 +64,13 @@ switch ($action) {
         $id      = required_param('id', PARAM_INT);
         $confirm = optional_param('confirm', 0, PARAM_BOOL);
 
-        if (data_submitted() and $confirm and confirm_sesskey()) {
+        $datacount = $DB->count_records('user_info_data', array('fieldid'=>$id));
+        if (data_submitted() and ($confirm and confirm_sesskey())  or $datacount===0 ) {
             profile_delete_field($id);
-            redirect($redirect);
+            redirect($redirect,get_string('deleted'));
         }
 
         //ask for confirmation
-        $datacount = $DB->count_records('user_info_data', array('fieldid'=>$id));
         $optionsyes = array ('id'=>$id, 'confirm'=>1, 'action'=>'deletefield', 'sesskey'=>sesskey());
         $strheading = get_string('profiledeletefield', 'admin');
         $PAGE->navbar->add($strheading);
