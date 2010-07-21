@@ -258,7 +258,7 @@
         echo $OUTPUT->box_end();
 
     } else {
-        echo $OUTPUT->paging_bar($totalcount, $page, $perpage, "/mod/course/category.php?id=$category->id&perpage=$perpage");
+        echo $OUTPUT->paging_bar($totalcount, $page, $perpage, "/course/category.php?id=$category->id&perpage=$perpage");
 
         $strcourses = get_string('courses');
         $strselect = get_string('select');
