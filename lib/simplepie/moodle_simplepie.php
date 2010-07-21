@@ -62,7 +62,7 @@ class moodle_simplepie extends SimplePie
         $cachedir = moodle_simplepie::get_cache_directory();
         check_dir_exists($cachedir, true, true);
 
-        parent::__construct(null, $cachedir);
+        parent::__construct();
         // Match moodle encoding
         $this->set_output_encoding('UTF-8');
 
@@ -70,12 +70,13 @@ class moodle_simplepie extends SimplePie
         $this->set_timeout(2);
 
         // 1 hour default cache
+        $this->set_cache_location($cachedir);
         $this->set_cache_duration(3600);
 
         // init the feed url if passed in constructor
         if ($feedurl !== null) {
-                $this->set_feed_url($feedurl);
-                $this->init();
+            $this->set_feed_url($feedurl);
+            $this->init();
         }
     }
 
