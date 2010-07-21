@@ -100,7 +100,8 @@ if ($rs = $DB->get_recordset_sql($sql, $params)) {
     $rs->close();
 }
 
-$PAGE->settingsnav->get('courseadmin')->get('users')->get('groups')->make_active();
+$basemenu = ($course->id == SITEID) ? 'frontpage' : 'courseadmin';
+$PAGE->settingsnav->get($basemenu)->get('users')->get('groups')->make_active();
 $PAGE->navbar->add(get_string('overview', 'group'));
 
 /// Print header

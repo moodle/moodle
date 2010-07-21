@@ -48,9 +48,10 @@ $strgroups       = get_string('groups');
 $strgroupings    = get_string('groupings', 'group');
 $struses         = get_string('activities');
 $strparticipants = get_string('participants');
-$strmanagegrping = get_String('showgroupsingrouping', 'group');
+$strmanagegrping = get_string('showgroupsingrouping', 'group');
 
-$PAGE->settingsnav->get('courseadmin')->get('users')->get('groups')->make_active();
+$basemenu = ($course->id == SITEID) ? 'frontpage' : 'courseadmin';
+$PAGE->settingsnav->get($basemenu)->get('users')->get('groups')->make_active();
 $PAGE->navbar->add($strgroupings);
 
 /// Print header
