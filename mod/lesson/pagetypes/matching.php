@@ -152,7 +152,6 @@ class lesson_page_type_matching extends lesson_page {
             return $result;
         }
         $answers = $this->get_answers();
-
         $ncorrect = 0;
         $i = 0;
         foreach ($answers as $answer) {
@@ -322,8 +321,8 @@ class lesson_page_type_matching extends lesson_page {
                 $this->answers[$i]->answer = $properties->answer_editor[$i]['text'];
                 $this->answers[$i]->answerformat = $properties->answer_editor[$i]['format'];
                 if (isset($properties->response_editor[$i])) {
-                    $this->answers[$i]->response = $properties->response[$i]['text'];
-                    $this->answers[$i]->responseformat = $properties->response[$i]['format'];
+                    $this->answers[$i]->response = $properties->response_editor[$i]['text'];
+                    $this->answers[$i]->responseformat = $properties->response_editor[$i]['format'];
                 }
                 if (isset($properties->jumpto[$i])) {
                     $this->answers[$i]->jumpto = $properties->jumpto[$i];
