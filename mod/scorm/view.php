@@ -77,14 +77,13 @@
 
     $scormopen = true;
     $timenow = time();
-    if ($scorm->timeclose !=0) {
-        if ($scorm->timeopen > $timenow) {
-            echo $OUTPUT->box(get_string("notopenyet", "scorm", userdate($scorm->timeopen)), "generalbox boxaligncenter");
-            $scormopen = false;
-        } else if ($timenow > $scorm->timeclose) {
-            echo $OUTPUT->box(get_string("expired", "scorm", userdate($scorm->timeclose)), "generalbox boxaligncenter");
-            $scormopen = false;
-        }
+    if (!empty($scorm->timeopen) && $scorm->timeopen > $timenow) {
+        echo $OUTPUT->box(get_string("notopenyet", "scorm", userdate($scorm->timeopen)), "generalbox boxaligncenter");
+        $scormopen = false;
+    }
+    if (!empty($scorm->timeclose) && $timenow > $scorm->timeclose) {
+        echo $OUTPUT->box(get_string("expired", "scorm", userdate($scorm->timeclose)), "generalbox boxaligncenter");
+        $scormopen = false;
     }
     if ($scormopen) {
         scorm_view_display($USER, $scorm, 'view.php?id='.$cm->id, $cm);
