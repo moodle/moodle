@@ -459,12 +459,14 @@ class lesson_add_page_form_matching extends lesson_add_page_form_base {
     public function custom_definition() {
 
         $this->_form->addElement('header', 'correctresponse', get_string('correctresponse', 'lesson'));
-        $this->add_textarea('answer', 0, get_string('correctresponse', 'lesson'));
+        $this->_form->addElement('editor', 'answer_editor[0]', get_string('correctresponse', 'lesson'), null, array('noclean'=>true));
+        $this->_form->setDefault('answer_editor[0]', array('text'=>'', 'format'=>FORMAT_MOODLE));
         $this->add_jumpto(2, get_string('correctanswerjump','lesson'));
         $this->add_score(2, get_string("correctanswerscore", "lesson"));
 
         $this->_form->addElement('header', 'wrongresponse', get_string('wrongresponse', 'lesson'));
-        $this->add_textarea('answer', 1, get_string('wrongresponse', 'lesson'));
+        $this->_form->addElement('editor', 'answer_editor[1]', get_string('wrongresponse', 'lesson'), null, array('noclean'=>true));
+        $this->_form->setDefault('answer_editor[1]', array('text'=>'', 'format'=>FORMAT_MOODLE));
         $this->add_jumpto(3, get_string('wronganswerjump','lesson'));
         $this->add_score(3, get_string("wronganswerscore", "lesson"));
 
