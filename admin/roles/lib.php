@@ -1444,7 +1444,7 @@ class role_allow_switch_page extends role_allow_role_page {
     protected function load_required_roles() {
         global $DB;
         parent::load_required_roles();
-        $this->allowedtargetroles = $DB->get_records_menu('roles', NULL, 'id', 'roleid, 1');
+        $this->allowedtargetroles = $DB->get_records_menu('role', NULL, 'id');
     }
 
     protected function set_allow($fromroleid, $targetroleid) {
