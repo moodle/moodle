@@ -144,6 +144,7 @@
             unset($thissection);
             $thissection->course = $course->id;   // Create a new week structure
             $thissection->section = $section;
+            $thissection->name    = null;
             $thissection->summary = '';
             $thissection->summaryformat = FORMAT_HTML;
             $thissection->visible = 1;

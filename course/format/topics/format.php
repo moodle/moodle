@@ -143,6 +143,7 @@ while ($section <= $course->numsections) {
         $thissection = new stdClass;
         $thissection->course  = $course->id;   // Create a new section structure
         $thissection->section = $section;
+        $thissection->name    = null;
         $thissection->summary  = '';
         $thissection->summaryformat = FORMAT_HTML;
         $thissection->visible  = 1;
