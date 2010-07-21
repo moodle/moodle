@@ -61,6 +61,7 @@ $string['mustchooseone'] = 'You must choose an answer before saving.  Nothing wa
 $string['noguestchoose'] = 'Sorry, guests are not allowed to make choices.';
 $string['noresultsviewable'] = 'The results are not currently viewable.';
 $string['notanswered'] = 'Not answered yet';
+$string['notenrolledchoose'] = 'Sorry, only enrolled users are allowed to make choices.';
 $string['notopenyet'] = 'Sorry, this activity is not available until {$a}';
 $string['option'] = 'Option';
 $string['pluginname'] = 'Choice';
