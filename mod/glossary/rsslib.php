@@ -22,7 +22,7 @@
         $glossaryid = $args[3];
         $glossary = $DB->get_record('glossary', array('id' => $glossaryid), '*', MUST_EXIST);
 
-        if (!rss_enabled('glossary', $glossary)) {
+        if (!rss_enabled_for_mod('glossary', $glossary)) {
             return null;
         }
 
@@ -30,7 +30,7 @@
 
         //get the cache file info
         $filename = rss_get_file_name($glossary, $sql);
-        $cachedfilepath = rss_get_file_full_name('glossary', $filename);
+        $cachedfilepath = rss_get_file_full_name('mod_glossary', $filename);
 
         //Is the cache out of date?
         $cachedfilelastmodified = 0;
@@ -83,7 +83,7 @@
                 $rss = $header.$articles.$footer;
 
                 //Save the XML contents to file.
-                $status = rss_save_file('glossary', $filename, $rss);
+                $status = rss_save_file('mod_glossary', $filename, $rss);
             }
         }
 

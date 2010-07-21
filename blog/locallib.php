@@ -816,11 +816,14 @@ class blog_listing {
 
         echo $OUTPUT->render($pagingbar);
 
-        /* TODO RSS link
         if ($CFG->enablerssfeeds) {
-            $this->blog_rss_print_link($filtertype, $filterselect, $tag);
+            //todo reimplement blog rss feeds
+
+            //blog_rss_print_link($filtertype, $filterselect, $tag);
+
+            //require_once("$CFG->libdir/rsslib.php");
+            //rss_add_http_header($sitecontext, 'blog', $forum, $rsstitle);
         }
-        */
 
         if (has_capability('moodle/blog:create', $sitecontext)) {
             //the user's blog is enabled and they are viewing their own blog

@@ -267,7 +267,7 @@
     $meta = '';
     if (!empty($CFG->enablerssfeeds) && !empty($CFG->data_enablerssfeeds) && $data->rssarticles > 0) {
         $rsstitle = format_string($course->shortname) . ': %fullname%';
-        rss_add_http_header($context, 'data', $data, $rsstitle);
+        rss_add_http_header($context, 'mod_data', $data, $rsstitle);
     }
     if ($data->csstemplate) {
         $PAGE->requires->css('/mod/data/css.php?d='.$data->id);

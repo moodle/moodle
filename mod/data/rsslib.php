@@ -19,7 +19,7 @@
         $dataid = $args[3];
         $data = $DB->get_record('data', array('id' => $dataid), '*', MUST_EXIST);
 
-        if (!rss_enabled('data', $data, false, true)) {
+        if (!rss_enabled_for_mod('data', $data, false, true)) {
             return null;
         }
 
@@ -27,7 +27,7 @@
 
         //get the cache file info
         $filename = rss_get_file_name($data, $sql);
-        $cachedfilepath = rss_get_file_full_name('data', $filename);
+        $cachedfilepath = rss_get_file_full_name('mod_data', $filename);
 
         //Is the cache out of date?
         $cachedfilelastmodified = 0;
@@ -91,7 +91,7 @@
                 $rss = $header.$articles.$footer;
 
                 //Save the XML contents to file.
-                $status = rss_save_file('data', $filename, $rss);
+                $status = rss_save_file('mod_data', $filename, $rss);
             }
         }
 

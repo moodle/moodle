@@ -63,7 +63,7 @@ function forum_rss_get_feed($context, $args) {
 
     $forum = $DB->get_record('forum', array('id' => $forumid), '*', MUST_EXIST);
 
-    if (!rss_enabled('forum', $forum)) {
+    if (!rss_enabled_for_mod('forum', $forum)) {
         return null;
     }
 
@@ -72,7 +72,7 @@ function forum_rss_get_feed($context, $args) {
 
     //hash the sql to get the cache file name
     $filename = rss_get_file_name($forum, $sql);
-    $cachedfilepath = rss_get_file_full_name('forum', $filename);
+    $cachedfilepath = rss_get_file_full_name('mod_forum', $filename);
 
     //Is the cache out of date?
     $cachedfilelastmodified = 0;
@@ -83,7 +83,7 @@ function forum_rss_get_feed($context, $args) {
         //need to regenerate the cached version
         $result = forum_rss_feed_contents($forum, $sql);
         if (!empty($result)) {
-            $status = rss_save_file('forum',$filename,$result);
+            $status = rss_save_file('mod_forum',$filename,$result);
         }
     }
 
@@ -98,7 +98,7 @@ function forum_rss_get_feed($context, $args) {
  * @return void
  */
 function forum_rss_delete_file($forum) {
-    rss_delete_file('forum', $forum);
+    rss_delete_file('mod_forum', $forum);
 }
 
 ///////////////////////////////////////////////////////

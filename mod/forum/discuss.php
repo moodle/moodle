@@ -83,7 +83,7 @@
         require_once("$CFG->libdir/rsslib.php");
 
         $rsstitle = format_string($course->shortname) . ': %fullname%';
-        rss_add_http_header($modcontext, 'forum', $forum, $rsstitle);
+        rss_add_http_header($modcontext, 'mod_forum', $forum, $rsstitle);
     }
 
     if ($forum->type == 'news') {

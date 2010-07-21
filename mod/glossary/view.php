@@ -241,7 +241,7 @@ if (!empty($CFG->enablerssfeeds) && !empty($CFG->glossary_enablerssfeeds)
     && $glossary->rsstype && $glossary->rssarticles) {
 
     $rsstitle = format_string($course->shortname) . ': %fullname%';
-    rss_add_http_header($context, 'glossary', $glossary, $rsstitle);
+    rss_add_http_header($context, 'mod_glossary', $glossary, $rsstitle);
 }
 
 if ($tab == GLOSSARY_APPROVAL_VIEW) {
