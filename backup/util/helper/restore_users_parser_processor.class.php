@@ -65,4 +65,14 @@ class restore_users_parser_processor extends grouped_parser_processor {
             restore_dbops::set_backup_ids_record($this->restoreid, $itemname, $itemid, 0, $parentitemid, $info);
         }
     }
+
+    /**
+     * Provide NULL decoding
+     */
+    public function process_cdata($cdata) {
+        if ($cdata === '$@NULL@$') {
+            return null;
+        }
+        return $cdata;
+    }
 }

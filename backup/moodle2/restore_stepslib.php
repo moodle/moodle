@@ -558,3 +558,139 @@ class restore_course_structure_step extends restore_structure_step {
         $this->add_related_files('course', 'legacy', null);
     }
 }
+
+
+/*
+ * Structure step that will read the roles.xml file (at course/activity/block levels)
+ * containig all the role_assignments and overrides for that context. If corresponding to
+ * one mapped role, they will be applied to target context. Will observe the role_assignments
+ * setting to decide if ras are restored.
+ * Note: only ras with component == null are restored as far as the any ra with component
+ * is handled by one enrolment plugin, hence it will createt the ras later
+ */
+class restore_ras_and_caps_structure_step extends restore_structure_step {
+
+    protected function define_structure() {
+
+        $paths = array();
+
+        // Observe the role_assignments setting
+        if ($this->get_setting_value('role_assignments')) {
+            $paths[] = new restore_path_element('assignment', '/roles/role_assignments/assignment');
+        }
+        $paths[] = new restore_path_element('override', '/roles/role_overrides/override');
+
+        return $paths;
+    }
+
+    public function process_assignment($data) {
+        $data = (object)$data;
+
+        // Check roleid, userid are one of the mapped ones
+        $newroleid = $this->get_mappingid('role', $data->roleid);
+        $newuserid = $this->get_mappingid('user', $data->userid);
+        // If newroleid and newuserid and component is empty assign via API (handles dupes and friends)
+        if ($newroleid && $newuserid && empty($data->component)) {
+            // TODO: role_assign() needs one userid param to be able to specify our restore userid
+            role_assign($newroleid, $newuserid, $this->task->get_contextid());
+        }
+    }
+
+    public function process_override($data) {
+        $data = (object)$data;
+
+        // Check roleid is one of the mapped ones
+        $newroleid = $this->get_mappingid('role', $data->roleid);
+        // If newroleid is valid assign it via API (it handles dupes and so on)
+        if ($newroleid) {
+            // TODO: assign_capability() needs one userid param to be able to specify our restore userid
+            assign_capability($data->capability, $data->permission, $newroleid, $this->task->get_contextid());
+        }
+    }
+}
+
+/**
+ * This structure steps restores the enrol plugins and their underlying
+ * enrolments, performing all the mappings and/or movements required
+ */
+class restore_enrolments_structure_step extends restore_structure_step {
+
+    protected function define_structure() {
+
+        $paths = array();
+
+        $paths[] = new restore_path_element('enrol', '/enrolments/enrols/enrol');
+        $paths[] = new restore_path_element('enrolment', '/enrolments/enrols/enrol/user_enrolments/enrolment');
+
+        return $paths;
+    }
+
+    public function process_enrol($data) {
+        global $DB;
+
+        $data = (object)$data;
+        $oldid = $data->id; // We'll need this later
+
+        // TODO: Just one quick process of manual enrol_plugin. Add the rest (complex ones) and fix this
+        if ($data->enrol !== 'manual') {
+            debugging("Skipping '{$data->enrol}' enrolment plugin. Must be implemented", DEBUG_DEVELOPER);
+            return;
+        }
+
+        // Perform various checks to decide what to do with the enrol plugin
+        $installed = array_key_exists($data->enrol, enrol_get_plugins(false));
+        $enabled   = enrol_is_enabled($data->enrol);
+        $exists    = 0;
+        $roleid    = $this->get_mappingid('role', $data->roleid);
+        if ($rec = $DB->get_record('enrol', array('courseid' => $this->get_courseid(), 'enrol' => $data->enrol))) {
+            $exists = $rec->id;
+        }
+        // If installed and enabled, continue processing
+        if ($installed && $enabled) {
+            // If not exists in course and we have a target role mapping
+            if (!$exists && $roleid) {
+                $data->roleid = $roleid;
+                $enrol = enrol_get_plugin($data->enrol);
+                $courserec = $DB->get_record('course', array('id' => $this->get_courseid())); // Requires object, uses only id!!
+                $newitemid = $enrol->add_instance($courserec, array($data));
+
+            // Already exists, user it for enrolments
+            } else {
+                $newitemid = $exists;
+            }
+
+        // Not installed and enabled, map to 0
+        } else {
+            $newitemid = 0;
+        }
+        // Perform the simple mapping and done
+        $this->set_mapping('enrol', $oldid, $newitemid);
+    }
+
+    public function process_enrolment($data) {
+        global $DB;
+
+        $data = (object)$data;
+
+        // Process only if parent instance have been mapped
+        if ($enrolid = $this->get_new_parentid('enrol')) {
+            // And only if user is a mapped one
+            if ($userid = $this->get_mappingid('user', $data->userid)) {
+                // TODO: Surely need to use API (enrol_user) here, instead of the current low-level impl
+                // TODO: Note enrol_user() sticks to $USER->id (need to add userid param)
+                $enrolment = new stdclass();
+                $enrolment->enrolid = $enrolid;
+                $enrolment->userid  = $userid;
+                if (!$DB->record_exists('user_enrolments', (array)$enrolment)) {
+                    $enrolment->status = $data->status;
+                    $enrolment->timestart = $data->timestart;
+                    $enrolment->timeend = $data->timeend;
+                    $enrolment->modifierid = $this->task->get_userid();
+                    $enrolment->timecreated = time();
+                    $enrolment->timemodified = 0;
+                    $DB->insert_record('user_enrolments', $enrolment);
+                }
+            }
+        }
+    }
+}

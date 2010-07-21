@@ -31,6 +31,7 @@
 class restore_course_task extends restore_task {
 
     protected $info; // info related to course gathered from backup file
+    protected $contextid; // course context id
 
     /**
      * Constructor - instantiates one object of this class
@@ -48,16 +49,28 @@ class restore_course_task extends restore_task {
         return $this->get_basepath() . '/course';
     }
 
+    public function get_contextid() {
+        return $this->contextid;
+    }
+
     /**
      * Create all the steps that will be part of this task
      */
     public function build() {
 
-        // TODO: Link all the course steps here
+        // Define the task contextid (the course one)
+        $this->contextid = get_context_instance(CONTEXT_COURSE, $this->get_courseid())->id;
+
         // Executed conditionally if restoring to new course or deleting or if overwrite_conf setting is enabled
         if ($this->get_target() == backup::TARGET_NEW_COURSE || $this->get_setting_value('overwrite_conf') == true) {
             $this->add_step(new restore_course_structure_step('course_info', 'course.xml'));
         }
+
+        // Restore course role assignments and overrides (internally will observe the role_assignments setting)
+        $this->add_step(new restore_ras_and_caps_structure_step('course_ras_and_caps', 'roles.xml'));
+
+        // Restore course enrolments (plugins and membership)
+        $this->add_step(new restore_enrolments_structure_step('course_enrolments', 'enrolments.xml'));
 
         // At the end, mark it as built
         $this->built = true;

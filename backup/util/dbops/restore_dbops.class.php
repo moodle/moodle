@@ -873,8 +873,8 @@ abstract class restore_dbops {
         foreach ($rs as $recrole) {
             // Get the complete temp_ids record
             $role = (object)self::get_backup_ids_record($restoreid, 'role', $recrole->itemid);
-            // If it's one mapped role
-            if (!empty($role->newitemid)) {
+            // If it's one mapped role and we have one name for it
+            if (!empty($role->newitemid) && !empty($role->info['nameincourse'])) {
                 // If role name doesn't exist, add it
                 $rolename = new stdclass();
                 $rolename->roleid = $role->newitemid;
