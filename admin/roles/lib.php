@@ -1531,6 +1531,13 @@ class admins_potential_selector extends user_selector_base {
 
         return array($groupname => $availableusers);
     }
+
+    protected function get_options() {
+        global $CFG;
+        $options = parent::get_options();
+        $options['file'] = $CFG->admin . '/roles/lib.php';
+        return $options;
+    }
 }
 
 class admins_existing_selector extends user_selector_base {
@@ -1572,5 +1579,12 @@ class admins_existing_selector extends user_selector_base {
         }
 
         return array($groupname => $availableusers);
+    }
+
+    protected function get_options() {
+        global $CFG;
+        $options = parent::get_options();
+        $options['file'] = $CFG->admin . '/roles/lib.php';
+        return $options;
     }
 }
