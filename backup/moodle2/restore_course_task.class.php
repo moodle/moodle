@@ -72,6 +72,21 @@ class restore_course_task extends restore_task {
         // Restore course enrolments (plugins and membership)
         $this->add_step(new restore_enrolments_structure_step('course_enrolments', 'enrolments.xml'));
 
+        // Restore course filters (conditionally)
+        if ($this->get_setting_value('filters')) {
+            $this->add_step(new restore_filters_structure_step('course_filters', 'filters.xml'));
+        }
+
+        // Restore course comments (conditionally)
+        if ($this->get_setting_value('comments')) {
+            $this->add_step(new restore_comments_structure_step('course_comments', 'comments.xml'));
+        }
+
+        // Restore course logs (conditionally)
+        if ($this->get_setting_value('logs')) {
+            //$this->add_step(new restore_course_logs_structure_step('course_logs', 'logs.xml'));
+        }
+
         // At the end, mark it as built
         $this->built = true;
     }

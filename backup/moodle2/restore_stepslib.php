@@ -694,3 +694,79 @@ class restore_enrolments_structure_step extends restore_structure_step {
         }
     }
 }
+
+
+/**
+ * This structure steps restores the filters and their configs
+ */
+class restore_filters_structure_step extends restore_structure_step {
+
+    protected function define_structure() {
+
+        $paths = array();
+
+        $paths[] = new restore_path_element('active', '/filters/filter_actives/filter_active');
+        $paths[] = new restore_path_element('config', '/filters/filter_configs/filter_config');
+
+        return $paths;
+    }
+
+    public function process_active($data) {
+
+        $data = (object)$data;
+
+        if (!filter_is_enabled($data->filter)) { // Not installed or not enabled, nothing to do
+            return;
+        }
+        filter_set_local_state($data->filter, $this->task->get_contextid(), $data->active);
+    }
+
+    public function process_config($data) {
+
+        $data = (object)$data;
+
+        if (!filter_is_enabled($data->filter)) { // Not installed or not enabled, nothing to do
+            return;
+        }
+        filter_set_local_config($data->filter, $this->task->get_contextid(), $data->name, $data->value);
+    }
+}
+
+
+/**
+ * This structure steps restores the comments
+ * Note: Cannot use the comments API because defaults to USER->id.
+ * That should change allowing to pass $userid
+ */
+class restore_comments_structure_step extends restore_structure_step {
+
+    protected function define_structure() {
+
+        $paths = array();
+
+        $paths[] = new restore_path_element('comment', '/comments/comment');
+
+        return $paths;
+    }
+
+    public function process_comment($data) {
+        global $DB;
+
+        $data = (object)$data;
+
+        // First of all, if the comment has some itemid, ask to the task what to map
+        $mapping = false;
+        $newitemid = 0;
+        if ($data->itemid) {
+            $mapping = $this->task->get_comment_mapping_itemname();
+            $newitemid = $this->get_mappingid($mapping, $data->itemid);
+        }
+        // Only restore the comment if has no mapping OR we have found the matching mapping
+        if (!$mapping || $newitemid) {
+            if ($data->userid = $this->get_mappingid('user', $data->userid)) {
+                $data->contextid = $this->task->get_contextid();
+                $DB->insert_record('comments', $data);
+            }
+        }
+    }
+}
