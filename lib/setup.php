@@ -381,6 +381,11 @@ if (isset($CFG->debug)) {
     $originaldatabasedebug = -1;
 }
 
+// enable circular reference collector in PHP 5.3,
+// it helps a lot when using large complex OOP structures such as in amos or gradebook
+if (function_exists('gc_enable')) {
+    gc_enable();
+}
 
 // For now, only needed under apache (and probably unstable in other contexts)
 if (function_exists('register_shutdown_function')) {
