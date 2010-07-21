@@ -30,6 +30,7 @@ if (empty($CFG->enableportfolios)) {
 }
 
 require_once($CFG->libdir . '/portfoliolib.php');
+require_once($CFG->libdir . '/portfolio/exporter.php');
 
 $courseid = optional_param('courseid', SITEID, PARAM_INT);
 $page     = optional_param('page', 0, PARAM_INT);
