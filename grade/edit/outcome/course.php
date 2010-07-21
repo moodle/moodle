@@ -23,10 +23,9 @@ $courseid = required_param('id', PARAM_INT);
 
 $PAGE->set_url('/grade/edit/outcome/course.php', array('id'=>$courseid));
 
+$course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
+
 /// Make sure they can even access this course
-if (!$course = $DB->get_record('course', array('id' => $courseid))) {
-    print_error('nocourseid');
-}
 require_login($course);
 $context = get_context_instance(CONTEXT_COURSE, $course->id);
 require_capability('moodle/course:update', $context);

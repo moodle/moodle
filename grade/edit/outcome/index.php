@@ -31,12 +31,11 @@ $courseid = optional_param('id', 0, PARAM_INT);
 $action   = optional_param('action', '', PARAM_ALPHA);
 
 $PAGE->set_url('/grade/edit/outcome/index.php', array('id' => $courseid));
+$PAGE->set_pagelayout('admin');
 
 /// Make sure they can even access this course
 if ($courseid) {
-    if (!$course = $DB->get_record('course', array('id' => $courseid))) {
-        print_error('nocourseid');
-    }
+    $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
     require_login($course);
     $context = get_context_instance(CONTEXT_COURSE, $course->id);
     require_capability('moodle/grade:manageoutcomes', $context);
@@ -44,7 +43,8 @@ if ($courseid) {
     if (empty($CFG->enableoutcomes)) {
         redirect('../../index.php?id='.$courseid);
     }
-
+    // This page doesn't exist on the navigation so map it to another
+    navigation_node::override_active_url(new moodle_url('/grade/edit/outcome/course.php', array('id'=>$courseid)));
 } else {
     if (empty($CFG->enableoutcomes)) {
         redirect('../../../');
@@ -55,12 +55,6 @@ if ($courseid) {
 
 /// return tracking object
 $gpr = new grade_plugin_return(array('type'=>'edit', 'plugin'=>'outcome', 'courseid'=>$courseid));
-
-
-$strgrades = get_string('grades');
-$pagename  = get_string('outcomes', 'grades');
-
-$navigation = grade_build_nav(__FILE__, $pagename, $courseid);
 
 $strshortname        = get_string('shortname');
 $strfullname         = get_string('fullname');

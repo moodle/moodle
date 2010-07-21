@@ -32,8 +32,12 @@ $courseid = optional_param('courseid', 0, PARAM_INT);
 $id       = optional_param('id', 0, PARAM_INT);
 
 $url = new moodle_url('/grade/edit/outcome/edit.php');
-if ($courseid !== 0) $url->param('courseid', $courseid);
-if ($id !== 0) $url->param('id', $id);
+if ($courseid !== 0) {
+    $url->param('courseid', $courseid);
+}
+if ($id !== 0) {
+    $url->param('id', $id);
+}
 $PAGE->set_url($url);
 
 $systemcontext = get_context_instance(CONTEXT_SYSTEM);
@@ -71,23 +75,23 @@ if ($id) {
 } else if ($courseid){
     $heading = get_string('addoutcome', 'grades');
     /// adding new outcome from course
-    if (!$course = $DB->get_record('course', array('id' => $courseid))) {
-        print_error('nocourseid');
-    }
-    $outcome_rec = new object();
-    $outcome_rec->standard = 0;
-    $outcome_rec->courseid = $courseid;
+    $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
     require_login($course);
     $context = get_context_instance(CONTEXT_COURSE, $course->id);
     require_capability('moodle/grade:manage', $context);
+    navigation_node::override_active_url(new moodle_url('/grade/edit/outcome/course.php', array('id'=>$courseid)));
 
+    $outcome_rec = new object();
+    $outcome_rec->standard = 0;
+    $outcome_rec->courseid = $courseid;
 } else {
+    require_login();
+    require_capability('moodle/grade:manage', $systemcontext);
+
     /// adding new outcome from admin section
     $outcome_rec = new object();
     $outcome_rec->standard = 1;
     $outcome_rec->courseid = 0;
-    require_login();
-    require_capability('moodle/grade:manage', $systemcontext);
 }
 
 // default return url
