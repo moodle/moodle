@@ -43,7 +43,7 @@ switch ($action) {
         $id      = required_param('id', PARAM_INT);
         $confirm = optional_param('confirm', 0, PARAM_BOOL);
         $fieldcount = $DB->count_records('user_info_field', array('categoryid'=>$id));
-        if (data_submitted() and ($confirm and confirm_sesskey()) or $fieldcount===0 ) {
+        if (data_submitted() and ($confirm and confirm_sesskey()) or $fieldcount===0) {
 
             profile_delete_category($id);
             redirect($redirect,get_string('deleted'));
@@ -65,7 +65,7 @@ switch ($action) {
         $confirm = optional_param('confirm', 0, PARAM_BOOL);
 
         $datacount = $DB->count_records('user_info_data', array('fieldid'=>$id));
-        if (data_submitted() and ($confirm and confirm_sesskey())  or $datacount===0 ) {
+        if (data_submitted() and ($confirm and confirm_sesskey()) or $datacount===0) {
             profile_delete_field($id);
             redirect($redirect,get_string('deleted'));
         }
