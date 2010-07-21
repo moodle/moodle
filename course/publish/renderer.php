@@ -75,7 +75,7 @@ class core_publish_renderer extends plugin_renderer_base {
                     'huburl' => $publication->huburl, 'hubname' => $publication->hubname,
                     'cancel' => true, 'publicationid' => $publication->id, 'timepublished' => $publication->timepublished);
             $cancelurl = new moodle_url("/course/publish/index.php", $params);
-            $cancelbutton = new single_button($cancelurl, get_string('cancel', 'hub'));
+            $cancelbutton = new single_button($cancelurl, get_string('removefromhub', 'hub'));
             $cancelbutton->class = 'centeredbutton';
             $cancelbuttonhtml = $OUTPUT->render($cancelbutton);
 
