@@ -140,6 +140,9 @@ abstract class backup_general_helper extends backup_helper {
         $info->original_wwwroot         = $infoarr['original_wwwroot'];
         $info->original_site_identifier_hash = $infoarr['original_site_identifier_hash'];
         $info->original_course_id       = $infoarr['original_course_id'];
+        $info->original_course_fullname = $infoarr['original_course_fullname'];
+        $info->original_course_shortname= $infoarr['original_course_shortname'];
+        $info->original_course_startdate= $infoarr['original_course_startdate'];
         $info->original_course_contextid= $infoarr['original_course_contextid'];
         $info->original_system_contextid= $infoarr['original_system_contextid'];
         $info->type   =  $infoarr['details']['detail'][0]['type'];

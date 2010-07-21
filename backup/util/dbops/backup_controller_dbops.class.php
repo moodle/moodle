@@ -371,8 +371,18 @@ abstract class backup_controller_dbops extends backup_dbops {
     }
 
     /**
+     * Given the courseid, return some course related information we want to transport
+     *
+     * @param int $course the id of the course this backup belongs to
+     */
+    public static function backup_get_original_course_info($courseid) {
+        global $DB;
+        return $DB->get_record('course', array('id' => $courseid), 'fullname, shortname, startdate');
+    }
+
+    /**
      * Sets the controller settings default values from the backup config.
-     * 
+     *
      * @param backup_controller $controller
      */
     public static function apply_general_config_defaults(backup_controller $controller) {
