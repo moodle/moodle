@@ -136,7 +136,9 @@ function glossary_filter($courseid, $text) {
                     $encodedconcept = urlencode($concept->concept);
                     $title = str_replace('"', "'", strip_tags($glossaryname.': '.$concept->concept));
                 }
-                $link = new moodle_url('/mod/glossary/showentry.php', array('courseid'=>$courseid, 'concept'=>$encodedconcept));
+                //hardcoding dictionary format in the URL rather than defaulting to the current glossary format which may not work in a popup.
+                //for example "entry list" means the popup would only contain a link that opens another popup.
+                $link = new moodle_url('/mod/glossary/showentry.php', array('courseid'=>$courseid, 'concept'=>$encodedconcept, 'displayformat'=>'dictionary'));
                 $href_tag_begin = html_writer::start_tag('a', array(
                     'href'=>$link,
                     'title'=>$title,

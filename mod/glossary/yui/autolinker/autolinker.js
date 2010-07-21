@@ -62,8 +62,8 @@ YUI.add('moodle-mod_glossary-autolinker', function(Y) {
                 },
                 readOnly : true
             },
-            width : {value : 450},
-            height : {value : 600},
+            width : {value : 600},
+            height : {value : 450},
             menubar : {value : false},
             location : {value : false},
             scrollbars : {value : true},

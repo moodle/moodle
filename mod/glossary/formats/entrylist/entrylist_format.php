@@ -24,7 +24,7 @@ function glossary_show_entry_entrylist($course, $cm, $glossary, $entry, $mode=''
         if ($printicons) {
             glossary_print_entry_icons($course, $cm, $glossary, $entry, $mode, $hook,'print');
         }
-        if ($entry->rating) {
+        if (!empty($entry->rating)) {
             echo '<br />';
             echo '<span class="ratings">';
             $return = glossary_print_entry_ratings($course, $entry);
