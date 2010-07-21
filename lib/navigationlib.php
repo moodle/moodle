@@ -2862,6 +2862,11 @@ class settings_navigation extends navigation_node {
             $this->page->set_cm($cm, $this->page->course);
         }
 
+        $file = $CFG->dirroot.'/mod/'.$this->page->activityname.'/lib.php';
+        if (file_exists($file)) {
+            require_once($file);
+        }
+
         $modulenode = $this->add(get_string($this->page->activityname.'administration', $this->page->activityname));
         $modulenode->force_open();
 
@@ -2903,12 +2908,7 @@ class settings_navigation extends navigation_node {
             $modulenode->add(get_string('backup'), $url, self::TYPE_SETTING);
         }
 
-        $file = $CFG->dirroot.'/mod/'.$this->page->activityname.'/lib.php';
         $function = $this->page->activityname.'_extend_settings_navigation';
-
-        if (file_exists($file)) {
-            require_once($file);
-        }
         if (!function_exists($function)) {
             return $modulenode;
         }
