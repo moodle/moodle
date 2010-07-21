@@ -456,7 +456,9 @@ class restore_outcomes_structure_step extends restore_structure_step {
 
 /*
  * Structure step that will read the course.xml file, loading it and performing
- * various actions depending of the site/restore settings
+ * various actions depending of the site/restore settings. Note that target
+ * course always exist before arriving here so this step will be updating
+ * the course record (never inserting)
  */
 class restore_course_structure_step extends restore_structure_step {
 
@@ -472,8 +474,87 @@ class restore_course_structure_step extends restore_structure_step {
 
     // Processing functions go here
     public function process_course($data) {
-        // TODO: don't forget to remap defaultgroupingid
-        print_object('stopped before processing course. Continue here');
+        global $CFG, $DB;
+
+        $data = (object)$data;
+        $coursetags = isset($data->tags['tag']) ? $data->tags['tag'] : array();
+        $coursemodules = isset($data->allowed_modules['module']) ? $data->allowed_modules['module'] : array();
+        $oldid = $data->id; // We'll need this later
+        debugging ('review the these lines of process_course() to change to settings once available', DEBUG_DEVELOPER);
+        // TODO: Get fullname, shortname, startdate and category from settings
+        // $fullname  = $this->get_setting_value('course_fullname');
+        // $shortname = $this->get_setting_value('course_shortname');
+        // $category  = $this->get_setting_value('course_category');
+        // $startdate = $this->get_setting_value('course_startdate');
+        // TODO: Delete this lines once we are getting the vars above from settings
+        $fullname = $this->task->get_info()->original_course_fullname;
+        $shortname= $this->task->get_info()->original_course_shortname;
+        $startdate= $this->task->get_info()->original_course_startdate;
+        $category = get_course_category()->id;
+
+        // Calculate final course names, to avoid dupes
+        list($fullname, $shortname) = restore_dbops::calculate_course_names($this->get_courseid(), $fullname, $shortname);
+
+        // Need to change some fields before updating the course record
+        $data->id = $this->get_courseid();
+        $data->fullname = $fullname;
+        $data->shortname= $shortname;
+        $data->idnumber = '';
+        $data->category = $category;
+        $data->startdate= $this->apply_date_offset($data->startdate);
+        if ($data->defaultgroupingid) {
+            $data->defaultgroupingid = $this->get_mappingid('grouping', $data->defaultgroupingid);
+        }
+        if (empty($CFG->enablecompletion) || !$this->get_setting_value('userscompletion')) {
+            $data->enablecompletion = 0;
+            $data->completionstartonenrol = 0;
+            $data->completionnotify = 0;
+        }
+        $languages = get_string_manager()->get_list_of_translations(); // Get languages for quick search
+        if (!array_key_exists($data->lang, $languages)) {
+            $data->lang = '';
+        }
+        $themes = get_list_of_themes(); // Get themes for quick search later
+        if (!in_array($data->theme, $themes) || empty($CFG->allowcoursethemes)) {
+            $data->theme = '';
+        }
+
+        // Course record ready, update it
+        $DB->update_record('course', $data);
+
+        // Course tags
+        if (!empty($CFG->usetags) && isset($coursetags)) { // if enabled in server and present in backup
+            $tags = array();
+            foreach ($coursetags as $coursetag) {
+                $coursetag = (object)$coursetag;
+                $tags[] = $coursetag->rawname;
+            }
+            tag_set('course', $this->get_courseid(), $tags);
+        }
+        // Course allowed modules
+        if (!empty($data->restrictmodules) && !empty($coursemodules)) {
+            $available = get_plugin_list('mod');
+            foreach ($coursemodules as $coursemodule) {
+                $mname = $coursemodule['modulename'];
+                if (array_key_exists($mname, $available)) {
+                    if ($module = $DB->get_record('modules', array('name' => $mname, 'visible' => 1))) {
+                        $rec = new stdclass();
+                        $rec->course = $this->get_courseid();
+                        $rec->module = $module->id;
+                        if (!$DB->record_exists('course_allowed_modules', (array)$rec)) {
+                            $DB->insert_record('course_allowed_modules', $rec);
+                        }
+                    }
+                }
+            }
+        }
+        // Role name aliases
+        restore_dbops::set_course_role_names($this->get_restoreid(), $this->get_courseid());
     }
 
+    protected function after_execute() {
+        // Add course related files, without itemid to match
+        $this->add_related_files('course', 'summary', null);
+        $this->add_related_files('course', 'legacy', null);
+    }
 }

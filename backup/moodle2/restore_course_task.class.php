@@ -54,7 +54,7 @@ class restore_course_task extends restore_task {
     public function build() {
 
         // TODO: Link all the course steps here
-        // Executed conditionally if restoring to new course or if overwrite_conf setting is enabled
+        // Executed conditionally if restoring to new course or deleting or if overwrite_conf setting is enabled
         if ($this->get_target() == backup::TARGET_NEW_COURSE || $this->get_setting_value('overwrite_conf') == true) {
             $this->add_step(new restore_course_structure_step('course_info', 'course.xml'));
         }

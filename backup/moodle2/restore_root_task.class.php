@@ -66,10 +66,6 @@ class restore_root_task extends restore_task {
         // Unconditionally, load create all the needed outcomes
         $this->add_step(new restore_outcomes_structure_step('create_scales', 'outcomes.xml'));
 
-        // Unconditionally, load create all the needed outcomes.
-        // TODO: restore outcomes
-        // $this->add_step(new restore_outcomes_structure_step('create_outcomes', 'outcomes.xml'));
-
         // At the end, mark it as built
         $this->built = true;
     }
