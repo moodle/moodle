@@ -20,6 +20,8 @@ and documented for Moodle at:
 
 3/ removed deprecated "=& new"
 
+4/ MDL-20876 - replaced deprecated split() with explode() or str_split() where appropriate
+
 Such modifications should be carefully each time the Excel PEAR package is updated
 to a new release within Moodle.
 
@@ -32,6 +34,8 @@ XML/Parser
 PHP/CodeSniffer
 ===============
 
+MDL-20876 - replaced deprecated split() with explode()
+
 A whole Moodle coding standards definition sits in lib/pear/PHP/CodeSniffer/Standards/Moodle
 
 To run the codesniffer, you can call the runsniffer script using your command-line php binary:
@@ -43,3 +47,6 @@ Quickforms
 ==========
 Full of our custom hacks, no way to upgrade to latest upstream.
 Most probably we will stop using this library in the future.
+
+MDL-20876 - replaced split() with explode() or preg_split() where appropriate
+

@@ -1,9 +1,9 @@
-@VERSION $Id$
 
 == CHANGELOG ==
 1. Rename class name , see Service/Repository.php & Service/WebService/AlfrescoWebService.php
 2. Change library path name
 3. In Alfresco_Repository class construct function, set _port to 80 if it is not specified
+4. MDL-20876 - replaced deprecated split() with explode()
 
 == Alfresco PHP Libarary ==
 

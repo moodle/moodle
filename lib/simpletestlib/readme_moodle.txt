@@ -11,5 +11,6 @@ Changes:
    list. Hopefully will be included in a future release.
  * modified run() in test_case.php - skipping tests that need fake db if prefix not set
  * search replace deprecated "=& new"
+ * MDL-20876 - replaced deprecated split() with explode()
 
 skodak, Tim
