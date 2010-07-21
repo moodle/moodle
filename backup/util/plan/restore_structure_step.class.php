@@ -256,6 +256,49 @@ abstract class restore_structure_step extends restore_step {
     }
 
     /**
+     * Apply course startdate offset based in original course startdate and course_offset_startdate setting
+     * Note we are using one static cache here, but *by restoreid*, so it's ok for concurrence/multiple
+     * executions in the same request
+     */
+    protected function apply_date_offset($value) {
+
+        static $cache = array();
+        // Lookup cache
+        if (isset($cache[$this->get_restoreid()])) {
+            return $value + $cache[$this->get_restoreid()];
+        }
+        // No cache, let's calculate the offset
+        $original = $this->task->get_info()->original_course_startdate;
+        // TODO: Get startdate from settings
+        debugging ('review these lines of apply_date_offset() to start using the "course_startdate" setting', DEBUG_DEVELOPER);
+        // $setting  = $this->get_setting_value('course_startdate');
+        // TODO: Delete this line once we are getting the var above from settings
+        $setting = $original;
+
+        // Original course has not startdate, offset = 0
+        if (empty($original)) {
+            $cache[$this->get_restoreid()] = 0;
+
+        // Less than 24h of difference, offset = 0 (this avoids some problems with timezones)
+        } else if (abs($setting - $original) < 24 * 60 * 60) {
+            $cache[$this->get_restoreid()] = 0;
+
+        // Re-enforce 'moodle/restore:rolldates' capability for the user in the course, just in case
+        } else if (!has_capability('moodle/restore:rolldates',
+                                   get_context_instance(CONTEXT_COURSE, $this->get_courseid()),
+                                   $this->get_userid())) {
+            $cache[$this->get_restoreid()] = 0;
+
+        // Arrived here, let's calculate the real offset
+        } else {
+            $cache[$this->get_restoreid()] = $setting - $original;
+        }
+
+        // Return the passed value with cached offset applied
+        return $value + $cache[$this->get_restoreid()];
+    }
+
+    /**
      * Function that will return the structure to be processed by this restore_step.
      * Must return one array of @restore_path_element elements
      */

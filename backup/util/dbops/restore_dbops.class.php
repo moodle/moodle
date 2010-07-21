@@ -830,6 +830,63 @@ abstract class restore_dbops {
         }
         return $dbrec;
     }
+
+    /**
+     * Given on courseid, fullname and shortname, calculate the correct fullname/shortname to avoid dupes
+     */
+    public static function calculate_course_names($courseid, $fullname, $shortname) {
+        global $CFG, $DB;
+
+        $currentfullname = '';
+        $currentshortname = '';
+        $counter = 0;
+        // Iteratere while the name exists
+        do {
+            if ($counter) {
+                $suffixfull  = ' ' . get_string('copyasnoun') . ' ' . $counter;
+                $suffixshort = '_' . $counter;
+            } else {
+                $suffixfull  = '';
+                $suffixshort = '';
+            }
+            $currentfullname = $fullname.$suffixfull;
+            $currentshortname = substr($shortname, 0, 100 - strlen($suffixshort)).$suffixshort; // < 100cc
+            $coursefull  = $DB->get_record_select('course', 'fullname = ? AND id != ?', array($currentfullname, $courseid));
+            $courseshort = $DB->get_record_select('course', 'shortname = ? AND id != ?', array($currentshortname, $courseid));
+            $counter++;
+        } while ($coursefull || $courseshort);
+
+        // Return results
+        return array($currentfullname, $currentshortname);
+    }
+
+    /**
+     * For the target course context, put as many custom role names as possible
+     */
+    public static function set_course_role_names($restoreid, $courseid) {
+        global $DB;
+
+        // Get the course context
+        $coursectx = get_context_instance(CONTEXT_COURSE, $courseid);
+        // Get all the mapped roles we have
+        $rs = $DB->get_recordset('backup_ids_temp', array('backupid' => $restoreid, 'itemname' => 'role'), '', 'itemid');
+        foreach ($rs as $recrole) {
+            // Get the complete temp_ids record
+            $role = (object)self::get_backup_ids_record($restoreid, 'role', $recrole->itemid);
+            // If it's one mapped role
+            if (!empty($role->newitemid)) {
+                // If role name doesn't exist, add it
+                $rolename = new stdclass();
+                $rolename->roleid = $role->newitemid;
+                $rolename->contextid = $coursectx->id;
+                if (!$DB->record_exists('role_names', (array)$rolename)) {
+                    $rolename->name = $role->info['nameincourse'];
+                    $DB->insert_record('role_names', $rolename);
+                }
+            }
+        }
+        $rs->close();
+    }
 }
 
 /*
