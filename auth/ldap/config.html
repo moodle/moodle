@@ -21,8 +21,8 @@
         {$config->bind_dn = ''; }
     if (!isset($config->bind_pw))
         {$config->bind_pw = ''; }
-    if (!isset($config->version))
-        {$config->version = '2'; }
+    if (!isset($config->ldap_version))
+        {$config->ldap_version = '2'; }
     if (!isset($config->objectclass))
         {$config->objectclass = ''; }
     if (!isset($config->memberattribute))
@@ -95,8 +95,8 @@ if (!function_exists('ldap_connect')) { // Is php4-ldap really there?
        $versions = array();
        $versions[2] = '2';
        $versions[3] = '3';
-       echo html_writer::select($versions, 'version', $config->version, false);
-       if (isset($err['version'])) echo $OUTPUT->error_text($err['version']);
+       echo html_writer::select($versions, 'ldap_version', $config->ldap_version, false);
+       if (isset($err['ldap_version'])) echo $OUTPUT->error_text($err['ldap_version']);
     ?>
     </td>
     <td>

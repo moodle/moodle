@@ -1543,8 +1543,8 @@ class auth_plugin_ldap extends auth_plugin_base {
             $connresult = ldap_connect($server);
             //ldap_connect returns ALWAYS true
 
-            if (!empty($this->config->version)) {
-                ldap_set_option($connresult, LDAP_OPT_PROTOCOL_VERSION, $this->config->version);
+            if (!empty($this->config->ldap_version)) {
+                ldap_set_option($connresult, LDAP_OPT_PROTOCOL_VERSION, $this->config->ldap_version);
             }
 
             // Fix MDL-10921
@@ -1995,8 +1995,8 @@ class auth_plugin_ldap extends auth_plugin_base {
             {$config->bind_dn = ''; }
         if (!isset($config->bind_pw))
             {$config->bind_pw = ''; }
-        if (!isset($config->version))
-            {$config->version = '2'; }
+        if (!isset($config->ldap_version))
+            {$config->ldap_version = '2'; }
         if (!isset($config->objectclass))
             {$config->objectclass = ''; }
         if (!isset($config->memberattribute))
@@ -2048,7 +2048,7 @@ class auth_plugin_ldap extends auth_plugin_base {
         set_config('preventpassindb', $config->preventpassindb, 'auth/ldap');
         set_config('bind_dn', $config->bind_dn, 'auth/ldap');
         set_config('bind_pw', $config->bind_pw, 'auth/ldap');
-        set_config('version', $config->version, 'auth/ldap');
+        set_config('ldap_version', $config->ldap_version, 'auth/ldap');
         set_config('objectclass', trim($config->objectclass), 'auth/ldap');
         set_config('memberattribute', $config->memberattribute, 'auth/ldap');
         set_config('memberattribute_isdn', $config->memberattribute_isdn, 'auth/ldap');
