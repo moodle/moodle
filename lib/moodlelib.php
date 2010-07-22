@@ -3749,11 +3749,9 @@ function hash_internal_user_password($password) {
 /**
  * Update password hash in user object.
  *
- * @global object
- * @global object
  * @param object $user
  * @param string $password plain text password
- * @return bool true if hash changed
+ * @return bool always returns true
  */
 function update_internal_user_password(&$user, $password) {
     global $CFG, $DB;
@@ -3765,7 +3763,11 @@ function update_internal_user_password(&$user, $password) {
         $hashedpassword = hash_internal_user_password($password);
     }
 
-    $DB->set_field('user', 'password',  $hashedpassword, array('id'=>$user->id));
+    if ($user->password !== $hashedpassword) {
+        $DB->set_field('user', 'password',  $hashedpassword, array('id'=>$user->id));
+        $user->password = $hashedpassword;
+    }
+
     return true;
 }
 
