@@ -2754,7 +2754,7 @@ class settings_navigation extends navigation_node {
     }
 
     /**
-     * Adds branches and links to the settings navigaiton to add course activities
+     * Adds branches and links to the settings navigation to add course activities
      * and resources.
      *
      * @param stdClass $course

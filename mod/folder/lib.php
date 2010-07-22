@@ -226,7 +226,7 @@ function folder_get_file_areas($course, $cm, $context) {
 }
 
 /**
- * File browsing support for folder module ontent area.
+ * File browsing support for folder module content area.
  * @param object $browser
  * @param object $areas
  * @param object $course
@@ -278,7 +278,7 @@ function folder_get_file_info($browser, $areas, $course, $cm, $context, $fileare
  * @param string $filearea
  * @param array $args
  * @param bool $forcedownload
- * @return bool false if file not found, does not return if found - justsend the file
+ * @return bool false if file not found, does not return if found - just send the file
  */
 function folder_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload) {
     global $CFG, $DB;
@@ -309,7 +309,7 @@ function folder_pluginfile($course, $cm, $context, $filearea, $args, $forcedownl
 }
 
 /**
- * This function extends the global navigaiton for the site.
+ * This function extends the global navigation for the site.
  * It is important to note that you should not rely on PAGE objects within this
  * body of code as there is no guarantee that during an AJAX request they are
  * available
@@ -317,7 +317,7 @@ function folder_pluginfile($course, $cm, $context, $filearea, $args, $forcedownl
  * @param navigation_node $navigation The folder node within the global navigation
  * @param stdClass $course The course object returned from the DB
  * @param stdClass $module The module object returned from the DB
- * @param stdClass $cm The course module isntance returned from the DB
+ * @param stdClass $cm The course module instance returned from the DB
  */
 function folder_extend_navigation($navigation, $course, $module, $cm) {
     /**

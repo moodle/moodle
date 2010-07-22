@@ -2647,7 +2647,7 @@ function require_user_key_login($script, $instance=null) {
         define('USER_KEY_LOGIN', true);
     }
 
-/// return isntance id - it might be empty
+/// return instance id - it might be empty
     return $key->instance;
 }
 

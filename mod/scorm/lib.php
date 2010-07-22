@@ -924,7 +924,7 @@ function scorm_supports($feature) {
 }
 
 /**
- * This function extends the global navigaiton for the site.
+ * This function extends the global navigation for the site.
  * It is important to note that you should not rely on PAGE objects within this
  * body of code as there is no guarantee that during an AJAX request they are
  * available
@@ -932,7 +932,7 @@ function scorm_supports($feature) {
  * @param navigation_node $navigation The scorm node within the global navigation
  * @param stdClass $course The course object returned from the DB
  * @param stdClass $module The module object returned from the DB
- * @param stdClass $cm The course module isntance returned from the DB
+ * @param stdClass $cm The course module instance returned from the DB
  */
 function scorm_extend_navigation($navigation, $course, $module, $cm) {
     /**

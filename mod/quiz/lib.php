@@ -1590,7 +1590,7 @@ function quiz_get_extra_capabilities() {
 }
 
 /**
- * This fucntion extends the global navigaiton for the site.
+ * This fucntion extends the global navigation for the site.
  * It is important to note that you should not rely on PAGE objects within this
  * body of code as there is no guarantee that during an AJAX request they are
  * available
@@ -1598,7 +1598,7 @@ function quiz_get_extra_capabilities() {
  * @param navigation_node $quiznode The quiz node within the global navigation
  * @param stdClass $course The course object returned from the DB
  * @param stdClass $module The module object returned from the DB
- * @param stdClass $cm The course module isntance returned from the DB
+ * @param stdClass $cm The course module instance returned from the DB
  */
 function quiz_extend_navigation($quiznode, $course, $module, $cm) {
     global $CFG;

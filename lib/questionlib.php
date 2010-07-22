@@ -2990,7 +2990,7 @@ function question_get_toggleflag_checksum($attemptid, $questionid, $sessionid, $
 }
 
 /**
- * Adds question bank setting links to the given navigaiton node if caps are met.
+ * Adds question bank setting links to the given navigation node if caps are met.
  *
  * @param navigation_node $navigationnode The navigation node to add the question branch to
  * @param stdClass $context
