@@ -2595,7 +2595,9 @@ function forum_get_discussions_unread($cm) {
     global $CFG, $DB, $USER;
 
     $now = round(time(), -2);
-    $params = array($cutoffdate);
+    $cutoffdate = $now - ($CFG->forum_oldpostdays*24*60*60);
+    
+    $params = array();
     $groupmode    = groups_get_activity_groupmode($cm);
     $currentgroup = groups_get_activity_group($cm);
 
@@ -2604,17 +2606,17 @@ function forum_get_discussions_unread($cm) {
 
         if ($groupmode == VISIBLEGROUPS or has_capability('moodle/site:accessallgroups', $modcontext)) {
             if ($currentgroup) {
-                $groupselect = "AND (d.groupid = ? OR d.groupid = -1)";
-                $params[] = $currentgroup;
+                $groupselect = "AND (d.groupid = :currentgroup OR d.groupid = -1)";
+                $params['currentgroup'] = $currentgroup;
             } else {
                 $groupselect = "";
             }
 
         } else {
-            //seprate groups without access all
+            //separate groups without access all
             if ($currentgroup) {
-                $groupselect = "AND (d.groupid = ? OR d.groupid = -1)";
-                $params[] = $currentgroup;
+                $groupselect = "AND (d.groupid = :currentgroup OR d.groupid = -1)";
+                $params['currentgroup'] = $currentgroup;
             } else {
                 $groupselect = "AND d.groupid = -1";
             }
@@ -2623,12 +2625,10 @@ function forum_get_discussions_unread($cm) {
         $groupselect = "";
     }
 
-    $cutoffdate = $now - ($CFG->forum_oldpostdays*24*60*60);
-
     if (!empty($CFG->forum_enabletimedposts)) {
-        $timedsql = "AND d.timestart < ? AND (d.timeend = 0 OR d.timeend > ?)";
-        $params[] = $now;
-        $params[] = $now;
+        $timedsql = "AND d.timestart < :now1 AND (d.timeend = 0 OR d.timeend > :now2)";
+        $params['now1'] = $now;
+        $params['now2'] = $now;
     } else {
         $timedsql = "";
     }
@@ -2638,10 +2638,12 @@ function forum_get_discussions_unread($cm) {
                    JOIN {forum_posts} p     ON p.discussion = d.id
                    LEFT JOIN {forum_read} r ON (r.postid = p.id AND r.userid = $USER->id)
              WHERE d.forum = {$cm->instance}
-                   AND p.modified >= ? AND r.id is NULL
+                   AND p.modified >= :cutoffdate AND r.id is NULL
                    $groupselect
                    $timedsql
           GROUP BY d.id";
+    $params['cutoffdate'] = $cutoffdate;
+
     if ($unreads = $DB->get_records_sql($sql, $params)) {
         foreach ($unreads as $unread) {
             $unreads[$unread->id] = $unread->unread;
