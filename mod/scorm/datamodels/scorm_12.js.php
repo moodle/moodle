@@ -247,8 +247,6 @@ function SCORMapi1_2() {
                 result = StoreData(cmi,true);
                 // trigger TOC update
                 //alert('trigger TOC update');
-                var sURL = "<?php echo $CFG->wwwroot; ?>" + "/mod/scorm/prereqs.php?a=<?php echo $scorm->id ?>&scoid=<?php echo $scoid ?>&attempt=<?php echo $attempt ?>&mode=<?php echo $mode ?>&currentorg=<?php echo $currentorg ?>&sesskey=<?php echo sesskey(); ?>";
-                YAHOO.util.Connect.asyncRequest('GET', sURL, this.connectPrereqCallback, null);
                 if (nav.event != '') {
                     if (nav.event == 'continue') {
                         setTimeout('top.document.location=top.next;',500);
@@ -274,6 +272,8 @@ function SCORMapi1_2() {
                         echo 'LogAPICall("LMSFinish", param, "", 0);';
                     }
                 ?>
+                var sURL = "<?php echo $CFG->wwwroot; ?>" + "/mod/scorm/prereqs.php?a=<?php echo $scorm->id ?>&scoid=<?php echo $scoid ?>&attempt=<?php echo $attempt ?>&mode=<?php echo $mode ?>&currentorg=<?php echo $currentorg ?>&sesskey=<?php echo sesskey(); ?>";
+                YAHOO.util.Connect.asyncRequest('GET', sURL, this.connectPrereqCallback, null);
                 return result;
             } else {
                 errorCode = "301";
