@@ -260,7 +260,7 @@ function folder_get_file_info($browser, $areas, $course, $cm, $context, $fileare
         $urlbase = $CFG->wwwroot.'/pluginfile.php';
 
         // students may read files here
-        $canwrite = has_capability('moodle/course:managefiles', $context);
+        $canwrite = has_capability('mod/folder:managefiles', $context);
         return new folder_content_file_info($browser, $context, $storedfile, $urlbase, $areas[$filearea], true, true, $canwrite, false);
     }
 
