@@ -269,11 +269,7 @@ abstract class restore_structure_step extends restore_step {
         }
         // No cache, let's calculate the offset
         $original = $this->task->get_info()->original_course_startdate;
-        // TODO: Get startdate from settings
-        debugging ('review these lines of apply_date_offset() to start using the "course_startdate" setting', DEBUG_DEVELOPER);
-        // $setting  = $this->get_setting_value('course_startdate');
-        // TODO: Delete this line once we are getting the var above from settings
-        $setting = $original;
+        $setting  = $this->get_setting_value('course_startdate');
 
         // Original course has not startdate, offset = 0
         if (empty($original)) {
