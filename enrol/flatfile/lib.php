@@ -1,83 +1,39 @@
 <?php
-// The following flags are set in the configuration
-// $CFG->enrol_flatfilelocation:       where is the file we are looking for?
-// $CFG->enrol_emailstudents:          send email to students when they are enrolled in a course
-// $CFG->enrol_emailteachers:          send email to teachers when they are enrolled in a course
-// $CFG->enrol_emailadmins:            email the log from the cron job to the admin
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Flatfile enrolment plugin.
+ *
+ * This plugin lets the user specify a "flatfile" (CSV) containing enrolment information.
+ * On a regular cron cycle, the specified file is parsed and then deleted.
+ * @package   enrol_flatfile
+ * @copyright 2010 Eugene Venter
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+/**
+ * Flatfile enrolment plugin implementation.
+ * @author  Eugene Venter - based on code by Petr Skoda, Martin Dougiamas, Martin Langhoff and others
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
 require_once($CFG->libdir.'/eventslib.php');
 
 
-class enrolment_plugin_flatfile {
-
-    var $log;
-
-/// Override the base config_form() function
-function config_form($frm) {
-    global $CFG, $DB;
-
-    $vars = array('enrol_flatfilelocation', 'enrol_mailstudents', 'enrol_mailteachers', 'enrol_mailadmins');
-    foreach ($vars as $var) {
-        if (!isset($frm->$var)) {
-            $frm->$var = '';
-        }
-    }
-
-    $roles = $DB->get_records('role', null, '', 'id, name, shortname');
-    $ffconfig = get_config('enrol_flatfile');
-
-    $frm->enrol_flatfilemapping = array();
-    foreach($roles as $id => $record) {
-
-        $frm->enrol_flatfilemapping[$id] = array(
-            $record->name,
-            isset($ffconfig->{"map_{$record->shortname}"}) ? $ffconfig->{"map_{$record->shortname}"} : $record->shortname
-        );
-    }
-
-    include ("$CFG->dirroot/enrol/flatfile/config.html");
-}
-
-
-/// Override the base process_config() function
-function process_config($config) {
-    global $DB;
-
-    if (!isset($config->enrol_flatfilelocation)) {
-        $config->enrol_flatfilelocation = '';
-    }
-    set_config('enrol_flatfilelocation', $config->enrol_flatfilelocation);
-
-    if (!isset($config->enrol_mailstudents)) {
-        $config->enrol_mailstudents = '';
-    }
-    set_config('enrol_mailstudents', $config->enrol_mailstudents);
-
-    if (!isset($config->enrol_mailteachers)) {
-        $config->enrol_mailteachers = '';
-    }
-    set_config('enrol_mailteachers', $config->enrol_mailteachers);
-
-    if (!isset($config->enrol_mailadmins)) {
-        $config->enrol_mailadmins = '';
-    }
-    set_config('enrol_mailadmins', $config->enrol_mailadmins);
-
-    foreach($DB->get_records('role', null, '', 'id, shortname') as $id => $role) {
-        if (isset($config->{"enrol_flatfilemapping_{$id}"})) {
-            set_config('map_'.$role->shortname, $config->{"enrol_flatfilemapping_{$id}"}, 'enrol_flatfile');
-        } else {
-            set_config('map_'.$role->shortname, $role->shortname, 'enrol_flatfile');
-        }
-    }
-
-    return true;
-
-}
-
-/// Override the get_access_icons() function
-function get_access_icons($course) {
-}
+class enrol_flatfile_plugin extends enrol_plugin {
 
 /**
 * Override the base cron() function to read in a file
@@ -92,13 +48,18 @@ function get_access_icons($course) {
 *   starttime        = start time (in seconds since epoch) - optional
 *   endtime          = end time (in seconds since epoch) - optional
 */
-    function cron() {
+    public function cron() {
         global $CFG, $DB;
 
-        if (empty($CFG->enrol_flatfilelocation)) {
+        $filelocation = $this->get_config('location');
+        $mailstudents = $this->get_config('mailstudents');
+        $mailteachers = $this->get_config('mailteachers');
+        $mailadmins   = $this->get_config('mailadmins');
+
+        if (empty($filelocation)) {
             $filename = "$CFG->dataroot/1/enrolments.txt";  // Default location
         } else {
-            $filename = $CFG->enrol_flatfilelocation;
+            $filename = $filelocation;
         }
 
         if ( file_exists($filename) ) {
@@ -186,11 +147,25 @@ function get_access_icons($course) {
                     // Create/resurrect a context object
                     $context = get_context_instance(CONTEXT_COURSE, $course->id);
 
+
                     if ($fields[0] == 'add') {
-                        // TODO: real enrol, and maybe manual
-                        role_assign($roleid, $user->id, $context->id, 'enrol_flatfile');
+                        $instance = $DB->get_record('enrol',
+                                        array('courseid' => $course->id, 'enrol' => 'flatfile'));
+                        if (empty($instance)) {
+                            // Only add an enrol instance to the course if non-existent
+                            $enrolid = $this->add_instance($course);
+                            $instance = $DB->get_record('enrol', array('id' => $enrolid));
+                        }
+
+                        // Enrol the user with this plugin instance
+                        $this->enrol_user($instance, $user->id, $roleid, $fields[4], $fields[5]);
                     } else {
-                        role_unassign($roleid, $user->id, $context->id);
+                        $instances = $DB->get_records('enrol', 
+                                        array('enrol' => 'flatfile', 'courseid' => $course->id));
+                        foreach ($instances as $instance) {
+                            // Unenrol the user from all flatfile enrolment instances
+                            $this->unenrol_user($instance, $user->id);
+                        }
                     }
 
 
@@ -199,7 +174,7 @@ function get_access_icons($course) {
                         if ($fields[1] == "student") {
 
                             // TODO: replace this with check for $CFG->couremanager, 'moodle/course:update' is definitely wrong
-                            if ($teachers = get_users_by_capability($context, 'moodle/course:update', 'u.*', 'ra.sortorder ASC')) {
+                            if ($teachers = get_users_by_capability($context, 'moodle/course:update', 'u.*')) {
                                 foreach ($teachers as $u) {
                                     $teacher = $u;
                                 }
@@ -213,15 +188,18 @@ function get_access_icons($course) {
                         }
 
 
-                        if (!empty($CFG->enrol_mailstudents)) {
+                        if (!empty($mailstudents)) {
+                            // Send mail to students
                             $a->coursename = "$course->fullname";
                             $a->profileurl = "$CFG->wwwroot/user/view.php?id=$user->id&amp;course=$course->id";
 
                             $eventdata = new object();
                             $eventdata->modulename        = 'moodle';
+                            $eventdata->component         = 'course';
+                            $eventdata->name              = 'flatfile_enrolment';
                             $eventdata->userfrom          = $teacher;
                             $eventdata->userto            = $user;
-                            $eventdata->subject           = get_string("enrolmentnew", '', $course->shortname);
+                            $eventdata->subject           = get_string("enrolmentnew", 'enrol', $course->shortname);
                             $eventdata->fullmessage       = get_string('welcometocoursetext', '', $a);
                             $eventdata->fullmessageformat = FORMAT_PLAIN;
                             $eventdata->fullmessagehtml   = '';
@@ -229,18 +207,21 @@ function get_access_icons($course) {
                             message_send($eventdata);
                         }
 
-                        if (!empty($CFG->enrol_mailteachers) && $teachers) {
+                        if (!empty($mailteachers) && $teachers) {
 
+                            // Send mail to teachers
                             foreach($teachers as $teacher) {
                                 $a->course = "$course->fullname";
                                 $a->user = fullname($user);
 
                                 $eventdata = new object();
                                 $eventdata->modulename        = 'moodle';
+                                $eventdata->component         = 'course';
+                                $eventdata->name              = 'flatfile_enrolment';
                                 $eventdata->userfrom          = $user;
                                 $eventdata->userto            = $teacher;
-                                $eventdata->subject           = get_string("enrolmentnew", '', $course->shortname);
-                                $eventdata->fullmessage       = get_string('enrolmentnewuser', '', $a);
+                                $eventdata->subject           = get_string("enrolmentnew", 'enrol', $course->shortname);
+                                $eventdata->fullmessage       = get_string('enrolmentnewuser', 'enrol', $a);
                                 $eventdata->fullmessageformat = FORMAT_PLAIN;
                                 $eventdata->fullmessagehtml   = '';
                                 $eventdata->smallmessage      = '';
@@ -263,6 +244,8 @@ function get_access_icons($course) {
             if(! @unlink($filename)) {
                 $eventdata = new object();
                 $eventdata->modulename        = 'moodle';
+                $eventdata->component         = 'course';
+                $eventdata->name              = 'flatfile_enrolment';
                 $eventdata->userfrom          = get_admin();
                 $eventdata->userto            = get_admin();
                 $eventdata->subject           = get_string("filelockedmailsubject", "enrol_flatfile");
@@ -274,9 +257,13 @@ function get_access_icons($course) {
                 $this->log .= "Error unlinking file $filename\n";
             }
 
-            if (!empty($CFG->enrol_mailadmins)) {
+            if (!empty($mailadmins)) {
+
+                // Send mail to admin
                 $eventdata = new object();
                 $eventdata->modulename        = 'moodle';
+                $eventdata->component         = 'course';
+                $eventdata->name              = 'flatfile_enrolment';
                 $eventdata->userfrom          = get_admin();
                 $eventdata->userto            = get_admin();
                 $eventdata->subject           = "Flatfile Enrolment Log";
@@ -301,14 +288,28 @@ function get_access_icons($course) {
     function get_roles() {
         global $DB;
 
+        // Get all roles
+        $roles = $DB->get_records('role', null, '', 'id, name, shortname');
+
+        $config = get_config('enrol_flatfile');
+
+        // Set some usable mapping configs for later
+        foreach($roles as $id => $role) {
+            if (isset($config->{"map_{$id}"})) {
+                set_config('map_'.$role->shortname, $config->{"map_{$id}"}, 'enrol_flatfile');
+            } else {
+                set_config('map_'.$role->shortname, $role->shortname, 'enrol_flatfile');
+            }
+        }
+        // Get the updated config
+        $config = get_config('enrol_flatfile');
         // Get a list of all the roles in the database, indexed by their short names.
         $roles = $DB->get_records('role', null, '', 'shortname, id');
-        array_walk($roles, create_function('&$value', '$value = $value->id;'));
 
         // Get any name mappings. These will be of the form 'map_shortname' => 'flatfilename'.
-        $ffconfig = get_config('enrol_flatfile');
+        array_walk($roles, create_function('&$value', '$value = $value->id;'));
         $rolemap = array();
-        foreach($ffconfig as $name => $value) {
+        foreach($config as $name => $value) {
             if (strpos($name, 'map_') === 0 && isset($roles[$key = substr($name, 4)])) {
                 $rolemap[$value] = $key;
             }
@@ -318,5 +319,3 @@ function get_access_icons($course) {
     }
 
 } // end of class
-
-
