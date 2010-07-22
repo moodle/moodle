@@ -453,8 +453,71 @@ class restore_outcomes_structure_step extends restore_structure_step {
     }
 }
 
+/**
+ * Structure step that will read the section.xml creating/updating sections
+ * as needed, rebuilding course cache and other friends
+ */
+class restore_section_structure_step extends restore_structure_step {
 
-/*
+    protected function define_structure() {
+        return array(new restore_path_element('section', '/section'));
+    }
+
+    public function process_section($data) {
+        global $DB;
+        $data = (object)$data;
+        $oldid = $data->id; // We'll need this later
+
+        $restorefiles = false;
+
+        // Look for the section
+        $section = new stdclass();
+        $section->course  = $this->get_courseid();
+        $section->section = $data->number;
+        // Section doesn't exist, create it with all the info from backup
+        if (!$secrec = $DB->get_record('course_sections', (array)$section)) {
+            $section->name = $data->name;
+            $section->summary = $data->summary;
+            $section->summaryformat = $data->summaryformat;
+            $section->sequence = '';
+            $section->visible = $data->visible;
+            $newitemid = $DB->insert_record('course_sections', $section);
+            $restorefiles = true;
+
+        // Section exists, update non-empty information
+        } else {
+            $section->id = $secrec->id;
+            if (empty($secrec->name)) {
+                $section->name = $data->name;
+            }
+            if (empty($secrec->summary)) {
+                $section->summary = $data->summary;
+                $section->summaryformat = $data->summaryformat;
+                $restorefiles = true;
+            }
+            $DB->update_record('course_sections', $section);
+            $newitemid = $secrec->id;
+        }
+
+        // Annotate the section mapping, with restorefiles option if needed
+        $this->set_mapping('course_section', $oldid, $newitemid, $restorefiles);
+
+        // If needed, adjust course->numsections
+        if ($numsections = $DB->get_field('course', 'numsections', array('id' => $this->get_courseid()))) {
+            if ($numsections < $section->section) {
+                $DB->set_field('course', 'numsections', $section->section, array('id' => $this->get_courseid()));
+            }
+        }
+    }
+
+    protected function after_execute() {
+        // Add section related files, with 'course_section' itemid to match
+        $this->add_related_files('course', 'section', 'course_section');
+    }
+}
+
+
+/**
  * Structure step that will read the course.xml file, loading it and performing
  * various actions depending of the site/restore settings. Note that target
  * course always exist before arriving here so this step will be updating

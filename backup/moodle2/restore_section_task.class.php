@@ -31,6 +31,7 @@
 class restore_section_task extends restore_task {
 
     protected $info; // info related to section gathered from backup file
+    protected $contextid; // course context id
 
     /**
      * Constructor - instantiates one object of this class
@@ -48,12 +49,22 @@ class restore_section_task extends restore_task {
         return $this->get_basepath() . '/sections/section_' . $this->info->sectionid;
     }
 
+    public function get_contextid() {
+        return $this->contextid;
+    }
+
     /**
      * Create all the steps that will be part of this task
      */
     public function build() {
 
-        // TODO: Link all the section steps here
+        // Define the task contextid (the course one)
+        $this->contextid = get_context_instance(CONTEXT_COURSE, $this->get_courseid())->id;
+
+        // Executed conditionally if restoring to new course or deleting or if overwrite_conf setting is enabled
+        if ($this->get_target() == backup::TARGET_NEW_COURSE || $this->get_setting_value('overwrite_conf') == true) {
+            $this->add_step(new restore_section_structure_step('course_info', 'section.xml'));
+        }
 
         // At the end, mark it as built
         $this->built = true;
