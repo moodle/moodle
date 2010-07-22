@@ -37,7 +37,7 @@ $capabilities = array(
 
     // can manage files in the folder
     'mod/folder:managefiles' => array(
-        'riskbitmask' => RISK_PERSONAL,
+        'riskbitmask' => RISK_SPAM,
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
         'archetypes' => array(
