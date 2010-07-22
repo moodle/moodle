@@ -389,7 +389,6 @@ class repository_flickr_public extends repository {
     public function get_link($photo_id) {
         global $CFG;
         $result = $this->flickr->photos_getSizes($photo_id);
-        throw new file_exception('abc');
         $url = '';
         if(!empty($result[4])) {
             $url = $result[4]['source'];
