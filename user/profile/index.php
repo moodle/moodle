@@ -41,24 +41,8 @@ switch ($action) {
         break;
     case 'deletecategory':
         $id      = required_param('id', PARAM_INT);
-        $confirm = optional_param('confirm', 0, PARAM_BOOL);
-        $fieldcount = $DB->count_records('user_info_field', array('categoryid'=>$id));
-        if (data_submitted() and ($confirm and confirm_sesskey()) or $fieldcount===0) {
-
-            profile_delete_category($id);
-            redirect($redirect,get_string('deleted'));
-        }
-
-        //ask for confirmation
-        $optionsyes = array ('id'=>$id, 'confirm'=>1, 'action'=>'deletecategory', 'sesskey'=>sesskey());
-        echo $OUTPUT->header();
-        echo $OUTPUT->heading(get_string('profiledeletecategory', 'admin'));
-
-        $formcontinue = new single_button(new moodle_url($redirect, $optionsyes), get_string('yes'), 'post');
-        $formcancel   = new single_button(new moodle_url($redirect), get_string('no'), 'get');
-        echo $OUTPUT->confirm(get_string('profileconfirmcategorydeletion', 'admin', $fieldcount), $formcontinue, $formcancel);
-        echo $OUTPUT->footer();
-        die;
+        profile_delete_category($id);
+        redirect($redirect,get_string('deleted'));
         break;
     case 'deletefield':
         $id      = required_param('id', PARAM_INT);
