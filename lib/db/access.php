@@ -522,7 +522,19 @@ $capabilities = array(
         'captype' => 'write',
         'contextlevel' => CONTEXT_SYSTEM,
         'archetypes' => array(
-            'user' => CAP_ALLOW,
+            'user' => CAP_ALLOW
+        )
+    ),
+
+    // can the user manage their own files?
+    'moodle/user:manageownfiles' => array(
+
+        'riskbitmap' => RISK_SPAM | RISK_PERSONAL,
+
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetypes' => array(
+            'user' => CAP_ALLOW
         )
     ),
 

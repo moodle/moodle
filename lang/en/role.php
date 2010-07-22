@@ -353,6 +353,7 @@ $string['user:editprofile'] = 'Edit user profile';
 $string['user:loginas'] = 'Login as other users';
 $string['user:manageblocks'] = 'Manage blocks on user profile of other users';
 $string['user:manageownblocks'] = 'Manage blocks on own public user profile';
+$string['user:manageownfiles'] = 'Manage files on own private file areas';
 $string['user:managesyspages'] = 'Configure default page layout for public user profiles';
 $string['user:readuserblogs'] = 'See all user blogs';
 $string['user:readuserposts'] = 'See all user posts';

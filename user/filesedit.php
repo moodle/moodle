@@ -31,9 +31,9 @@ require_login();
 if (isguestuser()) {
     die();
 }
-//TODO: add capability check here!
-
 $context = get_context_instance(CONTEXT_USER, $USER->id);
+require_capability('moodle/user:manageownfiles', $context);
+
 $title = get_string('myfiles');
 $struser = get_string('user');
 

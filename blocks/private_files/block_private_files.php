@@ -60,7 +60,9 @@ class block_private_files extends block_base {
 
             $renderer = $this->page->get_renderer('block_private_files');
             $this->content->text = $renderer->private_files_tree();
-            $this->content->text .= $OUTPUT->single_button(new moodle_url('/user/filesedit.php'), get_string('myfilesmanage'), 'get');
+            if (has_capability('moodle/user:manageownfiles', $this->context)) {
+                $this->content->text .= $OUTPUT->single_button(new moodle_url('/user/filesedit.php'), get_string('myfilesmanage'), 'get');
+            }
             $this->content->footer = '';
 
         }
