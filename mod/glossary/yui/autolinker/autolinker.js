@@ -29,7 +29,7 @@ YUI.add('moodle-mod_glossary-autolinker', function(Y) {
                 openpopup(e, {
                     url : this.getAttribute('href')+'&popup=1',
                     name : popupname,
-                    options : build_querystring(popupoptions)
+                    options : build_windowoptionsstring(popupoptions)
                 })
             }, Y.one(document.body), 'a.glossary.autolink');
         }
