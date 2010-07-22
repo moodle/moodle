@@ -315,15 +315,19 @@ abstract class backup_controller_dbops extends backup_dbops {
 
             if ($task instanceof backup_activity_task) { // Activity task
 
-                list($contentinfo, $settings) = self::get_activity_backup_information($task);
-                $contentsinfo['activities'][] = $contentinfo;
-                $settingsinfo = array_merge($settingsinfo, $settings);
+                if ($task->get_setting_value('included')) { // Only return info about included activities
+                    list($contentinfo, $settings) = self::get_activity_backup_information($task);
+                    $contentsinfo['activities'][] = $contentinfo;
+                    $settingsinfo = array_merge($settingsinfo, $settings);
+                }
 
             } else if ($task instanceof backup_section_task) { // Section task
 
-                list($contentinfo, $settings) = self::get_section_backup_information($task);
-                $contentsinfo['sections'][] = $contentinfo;
-                $settingsinfo = array_merge($settingsinfo, $settings);
+                if ($task->get_setting_value('included')) { // Only return info about included sections
+                    list($contentinfo, $settings) = self::get_section_backup_information($task);
+                    $contentsinfo['sections'][] = $contentinfo;
+                    $settingsinfo = array_merge($settingsinfo, $settings);
+                }
 
             } else if ($task instanceof backup_course_task) { // Course task
 

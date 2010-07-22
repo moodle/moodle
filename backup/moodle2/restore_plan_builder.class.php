@@ -163,11 +163,6 @@ abstract class restore_plan_builder {
         $task = restore_factory::get_restore_course_task($info->course, $courseid);
         $plan->add_task($task);
 
-        // For the given course, add as many section tasks as necessary
-        foreach ($info->sections as $sectionid => $section) {
-            self::build_section_plan($controller, $sectionid);
-        }
-
         // For the given course path, add as many block tasks as necessary
         // TODO: Add blocks, we need to introspect xml here
         $blocks = backup_general_helper::get_blocks_from_path($task->get_taskbasepath());
@@ -177,6 +172,11 @@ abstract class restore_plan_builder {
             } else {
                 // TODO: Debug information about block not supported
             }
+        }
+
+        // For the given course, add as many section tasks as necessary
+        foreach ($info->sections as $sectionid => $section) {
+            self::build_section_plan($controller, $sectionid);
         }
     }
 }
