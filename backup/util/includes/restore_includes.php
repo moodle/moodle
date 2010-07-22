@@ -73,9 +73,13 @@ require_once($CFG->dirroot . '/backup/util/plan/restore_structure_step.class.php
 require_once($CFG->dirroot . '/backup/util/plan/restore_execution_step.class.php');
 require_once($CFG->dirroot . '/backup/moodle2/restore_plan_builder.class.php');
 require_once($CFG->dirroot . '/backup/controller/restore_controller.class.php');
-//require_once($CFG->dirroot . '/backup/util/ui/backup_ui.class.php');
-//require_once($CFG->dirroot . '/backup/util/ui/backup_ui_stage.class.php');
+require_once($CFG->dirroot . '/backup/util/ui/base_moodleform.class.php');
+require_once($CFG->dirroot . '/backup/util/ui/base_ui.class.php');
+require_once($CFG->dirroot . '/backup/util/ui/base_ui_stage.class.php');
 require_once($CFG->dirroot . '/backup/util/ui/backup_ui_setting.class.php');
+require_once($CFG->dirroot . '/backup/util/ui/restore_ui_stage.class.php');
+require_once($CFG->dirroot . '/backup/util/ui/restore_ui.class.php');
+require_once($CFG->dirroot . '/backup/util/ui/restore_moodleform.class.php');
 
 // And some moodle stuff too
 require_once ($CFG->dirroot . '/tag/lib.php');

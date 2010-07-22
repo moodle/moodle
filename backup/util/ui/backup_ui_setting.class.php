@@ -199,7 +199,7 @@ abstract class backup_setting_ui extends base_setting_ui {
      * Get element properties that can be used to make a quickform element
      * @return array
      */
-    abstract public function get_element_properties(backup_task $task=null);
+    abstract public function get_element_properties(base_task $task=null);
     /**
      * Applies config options to a given properties array and then returns it
      * @param array $properties
@@ -217,7 +217,7 @@ abstract class backup_setting_ui extends base_setting_ui {
      *          $task is used to set the setting label
      * @return string
      */
-    public function get_label(backup_task $task=null) {
+    public function get_label(base_task $task=null) {
         // If a task has been provided and the label is not already set meaniningfully
         // we will attempt to improve it.
         if (!is_null($task) && $this->label == $this->setting->get_name() && strpos($this->setting->get_name(), '_include')!==false) {
@@ -282,7 +282,7 @@ class backup_setting_ui_text extends backup_setting_ui {
      * @param backup_task|null $task
      * @return array (element, name, label, attributes)
      */
-    public function get_element_properties(backup_task $task=null) {
+    public function get_element_properties(base_task $task=null) {
         // name, label, attributes
         return $this->apply_options(array('element'=>'text','name'=>self::NAME_PREFIX.$this->name, 'label'=>$this->get_label($task), 'attributes'=>$this->attributes));
     }
@@ -322,7 +322,7 @@ class backup_setting_ui_checkbox extends backup_setting_ui {
      * @param backup_task|null $task
      * @return array (element, name, label, text, attributes);
      */
-    public function get_element_properties(backup_task $task=null) {
+    public function get_element_properties(base_task $task=null) {
         // name, label, text, attributes
         return $this->apply_options(array('element'=>'checkbox','name'=>self::NAME_PREFIX.$this->name, 'label'=>$this->get_label($task), 'text'=>$this->text, 'attributes'=>$this->attributes));
     }
@@ -387,7 +387,7 @@ class backup_setting_ui_radio extends backup_setting_ui {
      * @param backup_task|null $task
      * @return array (element, name, label, text, value, attributes)
      */
-    public function get_element_properties(backup_task $task=null) {
+    public function get_element_properties(base_task $task=null) {
         // name, label, text, value, attributes
         return $this->apply_options(array('element'=>'radio','name'=>self::NAME_PREFIX.$this->name, 'label'=>$this->get_label($task), 'text'=>$this->text, 'value'=>$this->value, 'attributes'=>$this->attributes));
     }
@@ -446,7 +446,7 @@ class backup_setting_ui_select extends backup_setting_ui {
      * @param backup_task|null $task
      * @return array (element, name, label, options, attributes)
      */
-    public function get_element_properties(backup_task $task = null) {
+    public function get_element_properties(base_task $task = null) {
         // name, label, options, attributes
         return $this->apply_options(array('element'=>'select','name'=>self::NAME_PREFIX.$this->name, 'label'=>$this->get_label($task), 'options'=>$this->values, 'attributes'=>$this->attributes));
     }
@@ -463,5 +463,31 @@ class backup_setting_ui_select extends backup_setting_ui {
      */
     public function get_static_value() {
         return $this->values[$this->get_value()];
+    }
+
+    public function is_changeable() {
+        if (count($this->values) == 1) {
+            return false;
+        } else {
+            return parent::is_changeable();
+        }
+    }
+}
+
+class backup_setting_ui_dateselector extends backup_setting_ui_text {
+    public function get_element_properties(base_task $task = null) {
+        if (!array_key_exists('optional', $this->attributes)) {
+            $this->attributes['optional'] = false;
+        }
+        $properties = parent::get_element_properties($task);
+        $properties['element'] = 'date_selector';
+        return $properties;
+    }
+    public function get_static_value() {
+        $value = $this->get_value();
+        if (!empty($value)) {
+            return userdate($value);
+        }
+        return parent::get_static_value();
     }
 }

@@ -59,6 +59,15 @@ class restore_controller extends backup implements loggable {
 
     protected $checksum; // Cache @checksumable results for lighter @is_checksum_correct() uses
 
+    /**
+     *
+     * @param string $tempdir Directory under dataroot/temp/backup awaiting restore
+     * @param int $courseid Course id where restore is going to happen
+     * @param bool $interactive backup::INTERACTIVE_YES[true] or backup::INTERACTIVE_NO[false]
+     * @param int $mode backup::MODE_[ GENERAL | HUB | IMPORT | SAMESITE ]
+     * @param int $userid
+     * @param int $target backup::TARGET_[ NEW_COURSE | CURRENT_ADDING | CURRENT_DELETING | EXISTING_ADDING | EXISTING_DELETING ]
+     */
     public function __construct($tempdir, $courseid, $interactive, $mode, $userid, $target){
         $this->tempdir = $tempdir;
         $this->courseid = $courseid;
@@ -128,7 +137,7 @@ class restore_controller extends backup implements loggable {
 
     public function finish_ui() {
         if ($this->status != backup::STATUS_SETTING_UI) {
-            throw new backup_controller_exception('cannot_finish_ui_if_not_setting_ui');
+            throw new restore_controller_exception('cannot_finish_ui_if_not_setting_ui');
         }
         $this->set_status(backup::STATUS_NEED_PRECHECK);
     }
@@ -249,6 +258,10 @@ class restore_controller extends backup implements loggable {
         return $this->executiontime;
     }
 
+    /**
+     * Returns the restore plan
+     * @return restore_plan
+     */
     public function get_plan() {
         return $this->plan;
     }

@@ -29,6 +29,10 @@
  */
 class restore_plan extends base_plan implements loggable {
 
+    /**
+     *
+     * @var restore_controller
+     */
     protected $controller; // The restore controller building/executing this plan
     protected $basepath;   // Fullpath to dir where backup is available
     protected $preloaded;  // When executing the plan, do we have preloaded (from checks) info

@@ -634,5 +634,21 @@ body.tag .managelink {padding: 5px;}
 .dir-rtl .loginbox .loginform .form-label {float:right;text-align:left;}
 .dir-rtl .loginbox .loginform .form-input {text-align: right;}
 
+.backup-restore .backup-section {clear:both;border:1px solid #ddd;background-color:#f6f6f6;margin-bottom:1em;}
+.backup-restore .backup-section > h2.header {padding:5px 6px;margin:0;border-bottom:1px solid #ddd;}
+.backup-restore .backup-section .backup-sub-section {margin:0 25px;background-color:#f9f9f9;border:1px solid #f3f3f3;margin-bottom:1em;}
+.backup-restore .backup-section .backup-sub-section h3 {text-align:right;border-bottom:1px solid #DDD;padding:5px 86% 5px 6px;margin:0;background-color:#e9e9e9;}
+.backup-restore .backup-section.settings-section .detail-pair {margin:0;padding:0;width:50%;display:inline-block;}
+.backup-restore .backup-section.settings-section .detail-pair .detail-pair-label {width:65%;}
+.backup-restore .backup-section.settings-section .detail-pair .detail-pair-value {width:25%;}
+.backup-restore .activitytable {width:60%;min-width:500px;}
+.backup-restore .activitytable .modulename {width:100px;}
+.backup-restore .activitytable .moduleincluded {width:50px;}
+.backup-restore .activitytable .userinfoincluded {width:50px;}
+.backup-restore .detail-pair {}
+.backup-restore .detail-pair-label {display:inline-block;width:25%;padding:8px;margin:0;text-align:right;font-weight:bold;color:#444;vertical-align:top;}
+.backup-restore .detail-pair-value {display:inline-block;width:65%;padding:8px;margin:0;}
+.backup-restore .detail-pair-value > .sub-detail {display:block;color:#1580B6;margin-left:2em;font-size:90%;font-style: italic;}
+
 .corelightbox {background-color:#CCC;position:absolute;top:0;left:0;width:100%;height:100%;text-align:center;}
 .corelightbox img {position:fixed;top:50%;}

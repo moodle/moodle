@@ -1,190 +1,59 @@
 <?php
     //This script is used to configure and execute the restore proccess.
 
-    //Define some globals for all the script
+require_once('../config.php');
+require_once($CFG->dirroot . '/backup/util/includes/restore_includes.php');
+require_once($CFG->dirroot . '/backup/moodle2/restore_plan_builder.class.php');
 
-    //Units used
-    require_once("../config.php");
-    require_once("../lib/xmlize.php");
-    require_once("../course/lib.php");
-    require_once("lib.php");
-    require_once("restorelib.php");
-    require_once("bb/restore_bb.php");
-    require_once("$CFG->libdir/wiki_to_markdown.php" );
-    require_once("$CFG->libdir/adminlib.php");
+$contextid   = required_param('contextid', PARAM_INT);
+$stage      = optional_param('stage', restore_ui::STAGE_CONFIRM, PARAM_INT);
 
-    //Optional
-    $id = optional_param('id', 0, PARAM_INT);
-    $file = optional_param( 'file', 0, PARAM_PATH);
-    $cancel = optional_param('cancel', '', PARAM_RAW);
-    $launch = optional_param( 'launch', '', PARAM_ACTION);
-    $to = optional_param('to', '', PARAM_INT);
-    $method = optional_param('method', '', PARAM_ACTION);
-    $backup_unique_code = optional_param('backup_unique_code',0,PARAM_INT);
+list($context, $course, $cm) = get_context_info_array($contextid);
 
-    $url = new moodle_url('/backup/restore.php');
-    if ($id !== 0) {
-        $url->param('id', $id);
-    }
-    if ($file !== 0) {
-        $url->param('file', $file);
-    }
-    if ($cancel !== '') {
-        $url->param('cancel', $cancel);
-    }
-    if ($launch !== '') {
-        $url->param('launch', $launch);
-    }
-    if ($to !== '') {
-        $url->param('to', $to);
-    }
-    if ($method !== '') {
-        $url->param('method', $method);
-    }
-    if ($backup_unique_code !== 0) {
-        $url->param('backup_unique_code', $backup_unique_code);
-    }
-    $PAGE->set_url($url);
+$PAGE->set_url(new moodle_url('/backup/restore.php', array('contextid'=>$contextid)));
+$PAGE->set_context($context);
+$PAGE->set_pagelayout('standard');
 
-    $site = get_site();
+require_login($course, null, $cm);
 
-/// With method=manual, we come from the FileManager so we delete all the backup/restore/import session structures
-    if ($method == 'manual') {
-        if (isset($SESSION->course_header)) {
-            unset ($SESSION->course_header);
-        }
-        if (isset($SESSION->info)) {
-            unset ($SESSION->info);
-        }
-        if (isset($SESSION->backupprefs)) {
-            unset ($SESSION->backupprefs);
-        }
-        if (isset($SESSION->restore)) {
-            unset ($SESSION->restore);
-        }
-        if (isset($SESSION->import_preferences)) {
-            unset ($SESSION->import_preferences);
+$isfrontpage = ($course->id == SITEID);
+
+if ($stage & restore_ui::STAGE_CONFIRM + restore_ui::STAGE_DESTINATION) {
+    $restore = restore_ui::engage_independent_stage($stage, $contextid);
+} else {
+    $restoreid = optional_param('restore', false, PARAM_ALPHANUM);
+    $rc = restore_ui::load_controller($restoreid);
+    if (!$rc) {
+        $restore = restore_ui::engage_independent_stage($stage/2, $contextid);
+        if ($restore->process()) {
+            $rc = new restore_controller($restore->get_filepath(), $restore->get_course_id(), backup::INTERACTIVE_YES,
+                                backup::MODE_GENERAL, $USER->id, backup::TARGET_NEW_COURSE);
         }
     }
-
-    if (!$to && isset($SESSION->restore->restoreto) && isset($SESSION->restore->importing) && isset($SESSION->restore->course_id)) {
-        $to = $SESSION->restore->course_id;
+    if ($rc) {
+        $restore = new restore_ui($rc, array('contextid'=>$context->id));
     }
-
-    $loginurl = get_login_url();
-
-    if (!empty($id)) {
-        require_login($id);
-        if (!has_capability('moodle/restore:restorecourse', get_context_instance(CONTEXT_COURSE, $id))) {
-            if (empty($to)) {
-                print_error("cannotuseadminadminorteacher", '', $loginurl);
-            } else {
-                if (!has_capability('moodle/restore:restorecourse', get_context_instance(CONTEXT_COURSE, $to))
-                    && !has_capability('moodle/restore:restoretargetimport',  get_context_instance(CONTEXT_COURSE, $to))) {
-                    print_error("cannotuseadminadminorteacher", '', $loginurl);
-                }
-            }
-        }
+}
+$outcome = $restore->process();
+if (!$restore->is_independent()) {
+    if ($restore->get_stage() == restore_ui::STAGE_PROCESS && !$restore->requires_substage()) {
+        $restore->execute();
     } else {
-        if (!has_capability('moodle/restore:restorecourse', get_context_instance(CONTEXT_SYSTEM))) {
-            print_error("cannotuseadmin", '', $loginurl);
-        }
+        $restore->save_controller();
     }
+}
+$heading = $course->fullname;
 
-    //Check site
-    $site = get_site();
+$PAGE->set_title($heading.': '.$restore->get_stage_name());
+$PAGE->set_heading($heading);
+$PAGE->settingsnav->get('courseadmin')->find('restore', navigation_node::TYPE_SETTING)->make_active();
+$PAGE->navbar->add($restore->get_stage_name());
 
-    //Check necessary functions exists. Thanks to gregb@crowncollege.edu
-    backup_required_functions();
-
-    //Get strings
-    if (empty($to)) {
-        $strcourserestore = get_string("courserestore");
-    } else {
-        $strcourserestore = get_string("importdata");
-    }
-    $stradministration = get_string("administration");
-
-    //If no file has been selected from the FileManager, inform and end
-    $PAGE->set_title("$site->shortname: $strcourserestore");
-    $PAGE->set_heading($site->fullname);
-    if (!$file) {
-        $PAGE->navbar->add($stradministration, new moodle_url('/admin/index.php'));
-        $PAGE->navbar->add($strcourserestore);
-        echo $OUTPUT->header();
-        echo $OUTPUT->heading(get_string("nofilesselected"));
-        echo $OUTPUT->continue_button("$CFG->wwwroot/$CFG->admin/index.php");
-        echo $OUTPUT->footer();
-        exit;
-    }
-
-    //If cancel has been selected, inform and end
-    if ($cancel) {
-        $PAGE->navbar->add($stradministration, new moodle_url('/admin/index.php'));
-        $PAGE->navbar->add($strcourserestore);
-        echo $OUTPUT->header();
-        echo $OUTPUT->heading(get_string("restorecancelled"));
-        echo $OUTPUT->continue_button("$CFG->wwwroot/course/view.php?id=".$id);
-        echo $OUTPUT->footer();
-        exit;
-    }
-
-    //We are here, so we have a file.
-
-    //Get and check course
-    if (! $course = $DB->get_record('course', array('id'=>$id))) {
-        error("Course ID was incorrect (can't find it)");
-    }
-
-    //Print header
-    if (has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM))) {
-        $PAGE->navbar->add(basename($file));
-        echo $OUTPUT->header();
-    } else {
-        $PAGE->navbar->add($course->shortname, new moodle_url('/course/view.php', array('id'=>$course->id)));
-        $PAGE->navbar->add($strcourserestore);
-        echo $OUTPUT->header();
-    }
-    //Print form
-    echo $OUTPUT->heading("$strcourserestore".((empty($to) ? ': '.basename($file) : '')));
-    echo $OUTPUT->box_start();
-
-    //Adjust some php variables to the execution of this script
-    @ini_set("max_execution_time","3000");
-    if (empty($CFG->extramemorylimit)) {
-        raise_memory_limit('128M');
-    } else {
-        raise_memory_limit($CFG->extramemorylimit);
-    }
-
-    //Call the form, depending the step we are
-
-    if (!$launch) {
-        include_once("restore_precheck.html");
-    } else if ($launch == "form") {
-        if (!empty($SESSION->restore->importing)) {
-            // set up all the config stuff and skip asking the user about it.
-            restore_setup_for_check($SESSION->restore,$backup_unique_code);
-            require_sesskey();
-            include_once("restore_execute.html");
-        } else {
-            include_once("restore_form.html");
-        }
-    } else if ($launch == "check") {
-        include_once("restore_check.html");
-        //To avoid multiple restore executions...
-        $SESSION->cancontinue = true;
-    } else if ($launch == "execute") {
-        //Prevent multiple restore executions...
-        if (empty($SESSION->cancontinue)) {
-            print_error('multiplerestorenotallow');
-        }
-        //Unset this for the future
-        unset($SESSION->cancontinue);
-        require_sesskey();
-        include_once("restore_execute.html");
-    }
-    echo $OUTPUT->box_end();
-
-    //Print footer
-    echo $OUTPUT->footer();
+$renderer = $PAGE->get_renderer('core','backup');
+echo $OUTPUT->header();
+if (!$restore->is_independent() && $restore->enforce_changed_dependencies()) {
+    echo $renderer->dependency_notification(get_string('dependenciesenforced','backup'));
+}
+echo $renderer->progress_bar($restore->get_progress_bar());
+echo $restore->display($renderer);
+echo $OUTPUT->footer();

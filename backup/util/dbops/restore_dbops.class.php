@@ -887,6 +887,26 @@ abstract class restore_dbops {
         }
         $rs->close();
     }
+
+    public static function create_new_course($fullname, $shortname, $categoryid) {
+        global $DB;
+        $category = $DB->get_record('course_categories', array('id'=>$categoryid), '*', MUST_EXIST);
+
+        $course = new stdClass;
+        $course->fullname = $fullname;
+        $course->shortname = $shortname;
+        $course->category = $category->id;
+        $course->sortorder = 0;
+        $course->timecreated  = time();
+        $course->timemodified = $course->timecreated;
+        $course->visible = $category->visible;
+
+        return $DB->insert_record('course', $course);   
+    }
+
+    public static function delete_course_content($courseid) {
+        return remove_course_contents($courseid);
+    }
 }
 
 /*

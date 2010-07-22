@@ -109,9 +109,23 @@ class restore_course_task extends restore_task {
      */
     protected function define_settings() {
 
+        //$name, $vtype, $value = null, $visibility = self::VISIBLE, $status = self::NOT_LOCKED
+        $fullname = new restore_course_generic_text_setting('course_fullname', base_setting::IS_TEXT, $this->get_info()->original_course_fullname);
+        $fullname->get_ui()->set_label(get_string('setting_course_fullname', 'backup'));
+        $this->add_setting($fullname);
+
+        $shortname = new restore_course_generic_text_setting('course_shortname', base_setting::IS_TEXT, $this->get_info()->original_course_shortname);
+        $shortname->get_ui()->set_label(get_string('setting_course_shortname', 'backup'));
+        $this->add_setting($shortname);
+
+        $startdate = new restore_course_generic_text_setting('course_startdate', base_setting::IS_INTEGER, $this->get_info()->original_course_startdate);
+        $startdate->set_ui(new backup_setting_ui_dateselector($startdate, get_string('setting_course_startdate', 'backup')));
+        $this->add_setting($startdate);
+
         // Define overwrite_conf to decide if course configuration will be restored over existing one
         $overwrite = new restore_course_overwrite_conf_setting('overwrite_conf', base_setting::IS_BOOLEAN, false);
         $overwrite->set_ui(new backup_setting_ui_select($overwrite, $overwrite->get_name(), array(1=>get_string('yes'), 0=>get_string('no'))));
+        $overwrite->get_ui()->set_label(get_string('setting_overwriteconf', 'backup'));
         $this->add_setting($overwrite);
 
     }

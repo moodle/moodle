@@ -46,6 +46,7 @@ abstract class base_setting {
     const IS_INTEGER = 'int';
     const IS_FILENAME= 'file';
     const IS_PATH    = 'path';
+    const IS_TEXT    = 'text';
 
     // Visible/hidden
     const VISIBLE = 1;
@@ -88,7 +89,8 @@ abstract class base_setting {
     public function __construct($name, $vtype, $value = null, $visibility = self::VISIBLE, $status = self::NOT_LOCKED) {
         // Check vtype
         if ($vtype !== self::IS_BOOLEAN && $vtype !== self::IS_INTEGER &&
-            $vtype !== self::IS_FILENAME && $vtype !== self::IS_PATH) {
+            $vtype !== self::IS_FILENAME && $vtype !== self::IS_PATH &&
+            $vtype !== self::IS_TEXT) {
             throw new base_setting_exception('setting_invalid_type');
         }
 
@@ -400,6 +402,12 @@ abstract class base_setting {
                 $value = clean_param($oldvalue, PARAM_PATH);
                 if ($value != $oldvalue) {
                     throw new base_setting_exception('setting_invalid_path', $oldvalue);
+                }
+                break;
+            case self::IS_TEXT:
+                $value = clean_param($oldvalue, PARAM_TEXT);
+                if ($value != $oldvalue) {
+                    throw new base_setting_exception('setting_invalid_text', $oldvalue);
                 }
                 break;
         }

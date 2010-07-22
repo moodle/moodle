@@ -1,5 +1,6 @@
 <?php
 
+
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -16,11 +17,11 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Backup user interface stages
+ * restore user interface stages
  *
  * This file contains the classes required to manage the stages that make up the
- * backup user interface.
- * These will be primarily operated a {@see backup_ui} instance.
+ * restore user interface.
+ * These will be primarily operated a {@see restore_ui} instance.
  *
  * @package   moodlecore
  * @copyright 2010 Sam Hemelryk
@@ -30,58 +31,199 @@
 /**
  * Abstract stage class
  *
- * This class should be extended by all backup stages (a requirement of many backup ui functions).
+ * This class should be extended by all restore stages (a requirement of many restore ui functions).
  * Each stage must then define two abstract methods
  *  - process : To process the stage
- *  - initialise_stage_form : To get a backup_moodleform instance for the stage
+ *  - initialise_stage_form : To get a restore_moodleform instance for the stage
  *
  * @copyright 2010 Sam Hemelryk
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-abstract class backup_ui_stage extends base_ui_stage {
-
-    public function __construct(backup_ui $ui, array $params = null) {
-       parent::__construct($ui, $params);
+abstract class restore_ui_stage extends base_ui_stage {
+    /**
+     *
+     * @param restore_ui $ui
+     */
+    public function __construct(restore_ui $ui, array $params=null) {
+        $this->ui = $ui;
+        $this->params = $params;
     }
     /**
-     * The backup id from the backup controller
+     * The restore id from the restore controller
      * @return string
      */
-    final public function get_backupid() {
+    final public function get_restoreid() {
         return $this->get_uniqueid();
+    }
+
+    final public function is_independent() {
+        return false;
+    }
+
+    public function has_sub_stages() {
+        return false;
+    }
+
+    /**
+     * The name of this stage
+     * @return string
+     */
+    final public function get_name() {
+        return get_string('restorestage'.$this->stage,'backup');
     }
 }
 
-/**
- * Class representing the initial stage of a backup.
- *
- * In this stage the user is required to set the root level settings.
- *
- * @copyright 2010 Sam Hemelryk
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class backup_ui_stage_initial extends backup_ui_stage {
-
+abstract class restore_ui_independent_stage {
+    abstract public function __construct($contextid);
+    abstract public function process();
+    abstract public function display($renderer);
+    abstract public function get_stage();
     /**
-     * Initial backup stage constructor
-     * @param backup_ui $ui
+     * Gets an array of progress bar items that can be displayed through the restore renderer.
+     * @return array Array of items for the progress bar
      */
-    public function __construct(backup_ui $ui, array $params=null) {
-        $this->stage = backup_ui::STAGE_INITIAL;
+    public function get_progress_bar() {
+        global $PAGE;
+        $stage = restore_ui::STAGE_COMPLETE;
+        $currentstage = $this->get_stage();
+        $items = array();
+        while ($stage > 0) {
+            $classes = array('backup_stage');
+            if (floor($stage/2) == $currentstage) {
+                $classes[] = 'backup_stage_next';
+            } else if ($stage == $currentstage) {
+                $classes[] = 'backup_stage_current';
+            } else if ($stage < $currentstage) {
+                $classes[] = 'backup_stage_complete';
+            }
+            $item = array('text' => strlen(decbin($stage)).'. '.get_string('restorestage'.$stage, 'backup'),'class' => join(' ', $classes));
+            if ($stage < $currentstage && $currentstage < restore_ui::STAGE_COMPLETE) {
+                //$item['link'] = new moodle_url($PAGE->url, array('restore'=>$this->get_restoreid(), 'stage'=>$stage));
+            }
+            array_unshift($items, $item);
+            $stage = floor($stage/2);
+        }
+        return $items;
+    }
+    abstract public function get_stage_name();
+    final public function is_independent() {
+        return true;
+    }
+}
+
+class restore_ui_stage_confirm extends restore_ui_independent_stage {
+    protected $contextid;
+    protected $filename = null;
+    protected $filepath = null;
+    protected $details;
+    public function __construct($contextid) {
+        $this->contextid = $contextid;
+        $this->filename = required_param('filename', PARAM_FILE);
+    }
+    public function process() {
+        global $CFG;
+        if (!file_exists("$CFG->dataroot/temp/backup/".$this->filename)) {
+            throw new restore_ui_exception('invalidrestorefile');
+        }
+        return $this->extract_file_to_dir();
+    }
+    protected function extract_file_to_dir() {
+        global $CFG, $USER;
+
+        $this->filepath = restore_controller::get_tempdir_name($this->contextid, $USER->id);
+
+        $fb = get_file_packer();
+        return ($fb->extract_to_pathname("$CFG->dataroot/temp/backup/".$this->filename, "$CFG->dataroot/temp/backup/$this->filepath/"));
+    }
+    public function display($renderer) {
+        $this->details = backup_general_helper::get_backup_information($this->filepath);
+        return $renderer->backup_details($this->details, new moodle_url('/backup/restore.php', array('contextid'=>$this->contextid, 'filepath'=>$this->filepath, 'stage'=>restore_ui::STAGE_DESTINATION)));
+    }
+    public function get_stage_name() {
+        return get_string('restorestage'.restore_ui::STAGE_CONFIRM, 'backup');
+    }
+    public function get_stage() {
+        return restore_ui::STAGE_CONFIRM;
+    }
+}
+
+class restore_ui_stage_destination extends restore_ui_independent_stage {
+    protected $contextid;
+    protected $filepath = null;
+    protected $details;
+    protected $courseid = null;
+    public function __construct($contextid) {
+        $this->contextid = $contextid;
+        $this->filepath = required_param('filepath', PARAM_ALPHANUM);
+    }
+    public function process() {
+        global $CFG, $DB;
+        if (!file_exists("$CFG->dataroot/temp/backup/".$this->filepath) || !is_dir("$CFG->dataroot/temp/backup/".$this->filepath)) {
+            throw new restore_ui_exception('invalidrestorepath');
+        }
+        $target = optional_param('target', null, PARAM_INT);
+        if (!is_null($target) && confirm_sesskey()) {
+            $targetid = required_param('targetid', PARAM_INT);
+            if ($target == backup::TARGET_NEW_COURSE) {
+                list($fullname, $shortname) = restore_dbops::calculate_course_names(0, get_string('restoringcourse', 'backup'), get_string('restoringcourseshortname', 'backup'));
+                $this->courseid = restore_dbops::create_new_course($fullname, $shortname, $targetid);
+            } else {
+                $this->courseid = $targetid;
+            }
+            return ($DB->record_exists('course', array('id'=>$this->courseid)));
+        }
+        return false;
+    }
+    /**
+     *
+     * @global moodle_database $DB
+     * @param core_backup_renderer $renderer
+     * @return string
+     */
+    public function display($renderer) {
+        global $DB;
+        $this->details = backup_general_helper::get_backup_information($this->filepath);
+        $url = new moodle_url('/backup/restore.php', array('contextid'=>$this->contextid, 'filepath'=>$this->filepath, 'stage'=>restore_ui::STAGE_SETTINGS));
+        $context = get_context_instance_by_id($this->contextid);
+        $currentcourse = ($context->contextlevel == CONTEXT_COURSE)?$context->instanceid:false;
+        $courselist = array();
+        $courses = $DB->get_recordset('course', array(), 'id,fullname,shortname');
+        foreach ($courses as $course) {
+            $courselist[$course->id] = $course->fullname.' ['.$course->shortname.']';
+        }
+        $courses->close();
+        $html = $renderer->course_selector($url, $this->details, make_categories_options(), $courselist, $currentcourse);
+        return $html;
+    }
+    public function get_stage_name() {
+        return get_string('restorestage'.restore_ui::STAGE_DESTINATION, 'backup');
+    }
+    public function get_filepath() {
+        return $this->filepath;
+    }
+    public function get_course_id() {
+        return $this->courseid;
+    }
+    public function get_stage() {
+        return restore_ui::STAGE_DESTINATION;
+    }
+}
+
+class restore_ui_stage_settings extends restore_ui_stage {
+    /**
+     * Initial restore stage constructor
+     * @param restore_ui $ui
+     */
+    public function __construct(restore_ui $ui, array $params=null) {
+        $this->stage = restore_ui::STAGE_SETTINGS;
         parent::__construct($ui, $params);
     }
 
-    /**
-     * Processes the initial backup stage
-     * @param backup_moodleform $form
-     * @return int The number of changes
-     */
-    public function process(base_moodleform $m = null) {
-
+    public function process(base_moodleform $form=null) {
         $form = $this->initialise_stage_form();
 
         if ($form->is_cancelled()) {
-            $this->ui->cancel_backup();
+            $this->ui->cancel_restore();
         }
 
         $data = $form->get_data();
@@ -90,7 +232,7 @@ class backup_ui_stage_initial extends backup_ui_stage {
             $changes = 0;
             foreach ($tasks as &$task) {
                 // We are only interesting in the backup root task for this stage
-                if ($task instanceof backup_root_task) {
+                if ($task instanceof restore_root_task || $task instanceof restore_course_task) {
                     // Get all settings into a var so we can iterate by reference
                     $settings = $task->get_settings();
                     foreach ($settings as &$setting) {
@@ -112,22 +254,21 @@ class backup_ui_stage_initial extends backup_ui_stage {
         }
     }
 
-    /**
-     * Initialises the backup_moodleform instance for this stage
-     *
-     * @return backup_initial_form
-     */
     protected function initialise_stage_form() {
         global $PAGE;
         if ($this->stageform === null) {
-            $form = new backup_initial_form($this, $PAGE->url);
+            $form = new restore_settings_form($this, $PAGE->url);
             // Store as a variable so we can iterate by reference
             $tasks = $this->ui->get_tasks();
+            $headingprinted = false;
             // Iterate all tasks by reference
             foreach ($tasks as &$task) {
                 // For the initial stage we are only interested in the root settings
-                if ($task instanceof backup_root_task) {
-                    $form->add_heading('rootsettings', get_string('rootsettings', 'backup'));
+                if ($task instanceof restore_root_task) {
+                    if (!$headingprinted) {
+                        $form->add_heading('rootsettings', get_string('restorerootsettings', 'backup'));
+                        $headingprinted = true;
+                    }
                     $settings = $task->get_settings();
                     // First add all settings except the filename setting
                     foreach ($settings as &$setting) {
@@ -161,13 +302,13 @@ class backup_ui_stage_initial extends backup_ui_stage {
  * @copyright 2010 Sam Hemelryk
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class backup_ui_stage_schema extends backup_ui_stage {
+class restore_ui_stage_schema extends restore_ui_stage {
     /**
      * Schema stage constructor
      * @param backup_moodleform $ui
      */
-    public function __construct(backup_ui $ui, array $params=null) {
-        $this->stage = backup_ui::STAGE_SCHEMA;
+    public function __construct(restore_ui $ui, array $params=null) {
+        $this->stage = restore_ui::STAGE_SCHEMA;
         parent::__construct($ui, $params);
     }
     /**
@@ -192,7 +333,7 @@ class backup_ui_stage_schema extends backup_ui_stage {
             // Iterate all tasks by reference
             foreach ($tasks as &$task) {
                 // We are only interested in schema settings
-                if (!($task instanceof backup_root_task)) {
+                if (!($task instanceof restore_root_task)) {
                     // Store as a variable so we can iterate by reference
                     $settings = $task->get_settings();
                     // Iterate by reference
@@ -222,12 +363,12 @@ class backup_ui_stage_schema extends backup_ui_stage {
     protected function initialise_stage_form() {
         global $PAGE;
         if ($this->stageform === null) {
-            $form = new backup_schema_form($this, $PAGE->url);
+            $form = new restore_schema_form($this, $PAGE->url);
             $tasks = $this->ui->get_tasks();
             $content = '';
             $courseheading = false;
             foreach ($tasks as $task) {
-                if (!($task instanceof backup_root_task)) {
+                if (!($task instanceof restore_root_task)) {
                     if (!$courseheading) {
                         // If we havn't already display a course heading to group nicely
                         $form->add_heading('coursesettings', get_string('coursesettings', 'backup'));
@@ -269,13 +410,13 @@ class backup_ui_stage_schema extends backup_ui_stage {
  * @copyright 2010 Sam Hemelryk
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class backup_ui_stage_confirmation extends backup_ui_stage {
+class restore_ui_stage_review extends restore_ui_stage {
     /**
      * Constructs the stage
      * @param backup_ui $ui
      */
     public function __construct($ui, array $params=null) {
-        $this->stage = backup_ui::STAGE_CONFIRMATION;
+        $this->stage = restore_ui::STAGE_REVIEW;
         parent::__construct($ui, $params);
     }
     /**
@@ -293,23 +434,7 @@ class backup_ui_stage_confirmation extends backup_ui_stage {
 
         $data = $form->get_data();
         if ($data && confirm_sesskey()) {
-            // Collect into a variable so we can iterate by reference
-            $tasks = $this->ui->get_tasks();
-            $changes = 0;
-            // Iterate each task by reference
-            foreach ($tasks as &$task) {
-                if ($task instanceof backup_root_task) {
-                    // At this stage all we are interested in is the filename setting
-                    $setting = $task->get_setting('filename');
-                    $name = $setting->get_ui_name();
-                    if (isset($data->$name) &&  $data->$name != $setting->get_value()) {
-                        $setting->set_value($data->$name);
-                        $changes++;
-                    }
-                }
-            }
-            // Return the number of changes the user made
-            return $changes;
+            return 0;
         } else {
             return false;
         }
@@ -323,25 +448,12 @@ class backup_ui_stage_confirmation extends backup_ui_stage {
         global $PAGE;
         if ($this->stageform === null) {
             // Get the form
-            $form = new backup_confirmation_form($this, $PAGE->url);
+            $form = new restore_review_form($this, $PAGE->url);
             $content = '';
             $courseheading = false;
 
-            if ($setting = $this->ui->get_setting('filename')) {
-                $form->add_heading('filenamesetting', get_string('filename', 'backup'));
-                if ($setting->get_value() == 'backup.zip') {
-                    $format = $this->ui->get_format();
-                    $type = $this->ui->get_type();
-                    $id = $this->ui->get_controller_id();
-                    $users = $this->ui->get_setting_value('users');
-                    $anonymised = $this->ui->get_setting_value('anonymize');
-                    $setting->set_value(backup_plan_dbops::get_default_backup_filename($format, $type, $id, $users, $anonymised));
-                }
-                $form->add_setting($setting);
-            }
-
             foreach ($this->ui->get_tasks() as $task) {
-                if ($task instanceof backup_root_task) {
+                if ($task instanceof restore_root_task) {
                     // If its a backup root add a root settings heading to group nicely
                     $form->add_heading('rootsettings', get_string('rootsettings', 'backup'));
                 } else if (!$courseheading) {
@@ -351,10 +463,7 @@ class backup_ui_stage_confirmation extends backup_ui_stage {
                 }
                 // Iterate all settings, doesnt need to happen by reference
                 foreach ($task->get_settings() as $setting) {
-                    // For this stage only the filename setting should be editable
-                    if ($setting->get_name() != 'filename') {
-                        $form->add_fixed_setting($setting);
-                    }
+                    $form->add_fixed_setting($setting);
                 }
             }
             $this->stageform = $form;
@@ -381,22 +490,43 @@ class backup_ui_stage_confirmation extends backup_ui_stage {
  * @copyright 2010 Sam Hemelryk
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class backup_ui_stage_final extends backup_ui_stage {
+class restore_ui_stage_process extends restore_ui_stage {
+
+    const SUBSTAGE_NONE = 0;
+    const SUBSTAGE_CONVERT = 1;
+    const SUBSTAGE_PRECHECKS = 2;
+
+    protected $substage = 0;
+
     /**
      * Constructs the final stage
      * @param backup_ui $ui
      */
-    public function __construct(backup_ui $ui, array $params=null) {
-        $this->stage = backup_ui::STAGE_FINAL;
+    public function __construct(base_ui $ui, array $params=null) {
+        $this->stage = restore_ui::STAGE_PROCESS;
         parent::__construct($ui, $params);
     }
     /**
      * Processes the final stage.
      *
-     * In this case it ALWAYS passes processing to the previous stage (confirmation)
+     * In this case it checks to see if there is a sub stage that we need to display
+     * before execution, if there is we gear up to display the subpage, otherwise
+     * we return true which will lead to execution of the restore and the loading
+     * of the completed stage.
      */
     public function process(base_moodleform $form=null) {
-        return true;
+        $rc = $this->ui->get_controller();
+        if ($rc->get_status() == backup::STATUS_REQUIRE_CONV) {
+            $this->substage = self::SUBSTAGE_CONVERT;
+        } else {
+            if ($rc->get_status() == backup::STATUS_SETTING_UI) {
+                $rc->finish_ui();
+            }
+            if ($rc->get_status() == backup::STATUS_NEED_PRECHECK && !$rc->execute_precheck(true)) {
+                $this->substage = self::SUBSTAGE_PRECHECKS;
+            }
+        }
+        return empty($this->substage);
     }
     /**
      * should NEVER be called... throws an exception
@@ -407,21 +537,28 @@ class backup_ui_stage_final extends backup_ui_stage {
     /**
      * should NEVER be called... throws an exception
      */
-    public function display() {
-        throw new backup_ui_exception('backup_ui_must_execute_first');
+    public function display($renderer) {
+        global $PAGE;
+        switch ($this->substage) {
+            case self::SUBSTAGE_CONVERT :
+                echo '<h2>Need to show the conversion screens here</h2>';
+                break;
+            case self::SUBSTAGE_PRECHECKS :
+                $results = $this->ui->get_controller()->get_precheck_results();
+                echo $renderer->precheck_notices($results);
+                break;
+            default:
+                throw new restore_ui_exception('backup_ui_must_execute_first');
+        }
+        echo $renderer->continue_button(new moodle_url($PAGE->url, array('restore'=>$this->get_uniqueid(), 'stage'=>restore_ui::STAGE_PROCESS, 'substage'=>$this->substage)));
+    }
+
+    public function has_sub_stages() {
+        return true;
     }
 }
 
-/**
- * The completed backup stage
- *
- * At this stage everything is done and the user will be redirected to view the
- * backup file in the file browser.
- *
- * @copyright 2010 Sam Hemelryk
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class backup_ui_stage_complete extends backup_ui_stage_final {
+class restore_ui_stage_complete extends restore_ui_stage_process {
     /**
      * The results of the backup execution
      * @var array
@@ -433,10 +570,10 @@ class backup_ui_stage_complete extends backup_ui_stage_final {
      * @param array|null $params
      * @param array $results
      */
-    public function __construct(backup_ui $ui, array $params=null, array $results=null) {
+    public function __construct(restore_ui $ui, array $params=null, array $results=null) {
         $this->results = $results;
         parent::__construct($ui, $params);
-        $this->stage = backup_ui::STAGE_COMPLETE;
+        $this->stage = restore_ui::STAGE_COMPLETE;
     }
     /**
      * Displays the completed backup stage.
@@ -446,23 +583,11 @@ class backup_ui_stage_complete extends backup_ui_stage_final {
      *
      * @global core_renderer $OUTPUT
      */
-    public function display() {
+    public function display($renderer) {
         global $OUTPUT;
-
-        // Get the resulting stored_file record
-        $file = $this->results['backup_destination'];
-        // Turn it into a url for the file browser
-        $fileurl = new moodle_url('/files/index.php', array(
-            'contextid' => $file->get_contextid(),
-            'component' => $file->get_component(),
-            'filearea' => $file->get_filearea(),
-            'itemid' => $file->get_itemid(),
-            'filepath' => $file->get_filepath()
-        ));
-
         echo $OUTPUT->box_start();
-        echo get_string('executionsuccess', 'backup');
-        echo $OUTPUT->continue_button($fileurl);
+        echo $OUTPUT->notification(get_string('restoreexecutionsuccess', 'backup'), 'notifysuccess');
+        echo $renderer->continue_button(new moodle_url('/course/view.php', array('id'=>$this->get_ui()->get_controller()->get_courseid())));
         echo $OUTPUT->box_end();
     }
 }

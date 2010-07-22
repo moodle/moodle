@@ -543,17 +543,10 @@ class restore_course_structure_step extends restore_structure_step {
         $coursetags = isset($data->tags['tag']) ? $data->tags['tag'] : array();
         $coursemodules = isset($data->allowed_modules['module']) ? $data->allowed_modules['module'] : array();
         $oldid = $data->id; // We'll need this later
-        debugging ('review the these lines of process_course() to change to settings once available', DEBUG_DEVELOPER);
-        // TODO: Get fullname, shortname, startdate and category from settings
-        // $fullname  = $this->get_setting_value('course_fullname');
-        // $shortname = $this->get_setting_value('course_shortname');
-        // $category  = $this->get_setting_value('course_category');
-        // $startdate = $this->get_setting_value('course_startdate');
-        // TODO: Delete this lines once we are getting the vars above from settings
-        $fullname = $this->task->get_info()->original_course_fullname;
-        $shortname= $this->task->get_info()->original_course_shortname;
-        $startdate= $this->task->get_info()->original_course_startdate;
-        $category = get_course_category()->id;
+
+        $fullname  = $this->get_setting_value('course_fullname');
+        $shortname = $this->get_setting_value('course_shortname');
+        $startdate  = $this->get_setting_value('course_startdate');
 
         // Calculate final course names, to avoid dupes
         list($fullname, $shortname) = restore_dbops::calculate_course_names($this->get_courseid(), $fullname, $shortname);
@@ -563,7 +556,8 @@ class restore_course_structure_step extends restore_structure_step {
         $data->fullname = $fullname;
         $data->shortname= $shortname;
         $data->idnumber = '';
-        $data->category = $category;
+        // TODO: Set category from the UI, its not a setting just a param
+        $data->category = get_course_category()->id;
         $data->startdate= $this->apply_date_offset($data->startdate);
         if ($data->defaultgroupingid) {
             $data->defaultgroupingid = $this->get_mappingid('grouping', $data->defaultgroupingid);
