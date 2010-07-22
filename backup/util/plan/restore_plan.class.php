@@ -97,6 +97,10 @@ class restore_plan extends base_plan implements loggable {
         return $this->preloaded;
     }
 
+    public function get_tempdir() {
+        return $this->controller->get_tempdir();
+    }
+
     public function log($message, $level, $a = null, $depth = null, $display = false) {
         backup_helper::log($message, $level, $a, $depth, $display, $this->get_logger());
     }

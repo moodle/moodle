@@ -59,9 +59,9 @@ class restore_drop_and_clean_temp_stuff extends restore_execution_step {
     protected function define_execution() {
         global $CFG;
         restore_controller_dbops::drop_restore_temp_tables($this->get_restoreid()); // Drop ids temp table
-        backup_helper::delete_old_backup_dirs(time() - (4 * 60 * 60));               // Delete > 4 hours temp dirs
+        backup_helper::delete_old_backup_dirs(time() - (4 * 60 * 60));              // Delete > 4 hours temp dirs
         if (empty($CFG->keeptempdirectoriesonbackup)) { // Conditionally
-            backup_helper::delete_backup_dir($this->get_restoreid()); // Empty backup dir
+            backup_helper::delete_backup_dir($this->task->get_tempdir()); // Empty restore dir
         }
     }
 }
@@ -546,7 +546,7 @@ class restore_course_structure_step extends restore_structure_step {
 
         $fullname  = $this->get_setting_value('course_fullname');
         $shortname = $this->get_setting_value('course_shortname');
-        $startdate  = $this->get_setting_value('course_startdate');
+        $startdate = $this->get_setting_value('course_startdate');
 
         // Calculate final course names, to avoid dupes
         list($fullname, $shortname) = restore_dbops::calculate_course_names($this->get_courseid(), $fullname, $shortname);
