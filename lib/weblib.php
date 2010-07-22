@@ -1359,7 +1359,7 @@ function filter_text($text, $courseid=NULL) {
 function format_module_intro($module, $activity, $cmid, $filter=true) {
     global $CFG;
     require_once("$CFG->libdir/filelib.php");
-    $options = (object)array('noclean'=>true, 'para'=>false, 'filter'=>false);
+    $options = (object)array('noclean'=>true, 'para'=>false, 'filter'=>true);
     $context = get_context_instance(CONTEXT_MODULE, $cmid);
     $intro = file_rewrite_pluginfile_urls($activity->intro, 'pluginfile.php', $context->id, 'mod_'.$module, 'intro', null);
     return trim(format_text($intro, $activity->introformat, $options));
