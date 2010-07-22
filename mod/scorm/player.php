@@ -179,8 +179,9 @@
 <?php
     if ($result->prerequisites) {
         if ($scorm->popup != 0) {
+            //Added incase javascript popups are blocked we don't provide a direct link to the pop-up as JS communication can fail - the user must disable their pop-up blocker.
             $linkcourse = '<a href="'.$CFG->wwwroot.'/course/view.php?id='.$scorm->course.'">' . get_string('finishscormlinkname','scorm') . '</a>';
-            echo $OUTPUT->box(get_string('finishscorm','scorm',$linkcourse), 'generalbox', 'altfinishlink');
+            echo $OUTPUT->box(get_string('popupblockmessage','scorm'). ' '. get_string('finishscorm','scorm',$linkcourse), 'generalbox', 'altfinishlink');
         }
     }
 ?>
@@ -245,11 +246,6 @@
             <![endif]-->
             </noscript>
 <?php
-            //Added incase javascript popups are blocked
-            $link = '<a href="'.$CFG->wwwroot.'/mod/scorm/loadSCO.php?id='.$cm->id.$scoidstr.$modestr.'" target="_blank">'.get_string('popupblockedlinkname','scorm').'</a>';
-            echo $OUTPUT->box(get_string('popupblocked','scorm',$link), 'generalbox', 'altpopuplink');
-            //$linkcourse = '<a href="'.$CFG->wwwroot.'/course/view.php?id='.$scorm->course.'">' . get_string('finishscormlinkname','scorm') . '</a>';
-            //echo $OUTPUT->box(get_string('finishscorm','scorm',$linkcourse), 'generalbox', 'altfinishlink');
         }
     } else {
         echo $OUTPUT->box(get_string('noprerequisites','scorm'));
