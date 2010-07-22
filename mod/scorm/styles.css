@@ -11,7 +11,7 @@
 #page-mod-scorm-player #scormbox {width: 74%;position: absolute;right: 0px;top: 0px;}
 #page-mod-scorm-player #scormpage {position: relative;width: 100%;}
 #page-mod-scorm-player #scormpage #toctree {position:relative;width:100%;overflow-x: auto;overflow-y: auto;}
-#page-mod-scorm-player #tocbox {position: relative;left: 0px;width: 24%;font-size: 0.8em;}
+#page-mod-scorm-player #tocbox {position: relative;left: 0px;width: 80%;font-size: 0.8em;}
 #page-mod-scorm-player #tochead {position: relative;text-align: center;top: 3px;height: 30px;}
 
 #page-mod-scorm-player .toc,
@@ -22,3 +22,7 @@
 
 #page-mod-scorm-view .structurelist  {list-style-type: none;white-space: nowrap;}
 #page-mod-scorm-view .structurelist  {list-style-type: none;white-space: nowrap;}
+
+#page-mod-scorm-player #altfinishlink {float: right; border: 0px; padding: 0px; }
+#page-mod-scorm-player #altpopuplink  {position: left; padding: 5px; border: 0px; }
+#page-mod-scorm-player #scormmode  {float: left; border: 0px; }

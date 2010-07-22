@@ -10,7 +10,9 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
     }
 
     $result = new stdClass();
-    $result->toc = "<ul id='s0' class='$liststyle'>\n";
+    $result->toc = '<div id="scorm_layout">';
+    $result->toc .= '<div id="scorm_toc">';
+    $result->toc .= '<div id="scorm_tree"><ul>';
     $tocmenus = array();
     $result->prerequisites = true;
     $incomplete = false;
@@ -20,7 +22,12 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
     //
     if (!empty($currentorg)) {
         if (($organizationtitle = $DB->get_field('scorm_scoes', 'title', array('scorm'=>$scorm->id,'identifier'=>$currentorg))) != '') {
-            $result->toc .= "\t<li>$organizationtitle</li>\n";
+            if ($play) {
+            $result->toctitle = "$organizationtitle";
+            }
+            else {
+                $result->toc .= "\t<li>$organizationtitle</li>\n";
+            }
             $tocmenus[] = $organizationtitle;
         }
     }
@@ -78,7 +85,8 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
                         if (isset($_COOKIE['hide:SCORMitem'.$sco->id])) {
                             $style = ' style="display: none;"';
                         }
-                        $result->toc .= "\t\t<li><ul id='s$sublist' class='$liststyle'$style>\n";
+                        //$result->toc .= "\t\t<li><ul id='s$sublist' class='$liststyle'$style>\n";
+                        $result->toc .= "\t\t><ul>\n";
                         $level++;
                     } else {
                         $result->toc .= $closelist;
@@ -103,10 +111,10 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
                 if (isset($_COOKIE['hide:SCORMitem'.$nextsco->id])) {
                     $icon = 'plus';
                 }
-                $result->toc .= "\t\t".'<li><a href="javascript:expandCollide(\'img'.$sublist.'\',\'s'.$sublist.'\','.$nextsco->id.');">'.
-                                '<img id="img'.$sublist.'" src="'.$OUTPUT->pix_url($icon, 'scorm').'" alt="'.$strexpand.'" title="'.$strexpand.'"/></a>';
+//                $result->toc .= "\t\t".'<li><a href="javascript:expandCollide(\'img'.$sublist.'\',\'s'.$sublist.'\','.$nextsco->id.');">'.
+//                                '<img id="img'.$sublist.'" src="'.$OUTPUT->pix_url($icon, 'scorm').'" alt="'.$strexpand.'" title="'.$strexpand.'"/></a>';
             } else if ($isvisible) {
-                $result->toc .= "\t\t".'<li><img src="'.$OUTPUT->pix_url('spacer', 'scorm').'" alt="" />';
+//                $result->toc .= "\t\t".'<li><img src="'.$OUTPUT->pix_url('spacer', 'scorm').'" alt="" />';
             }
             if (empty($sco->title)) {
                 $sco->title = $sco->identifier;
@@ -174,13 +182,16 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
                             $result->prerequisites = true;
                         }
                             $url = $CFG->wwwroot.'/mod/scorm/player.php?a='.$scorm->id.'&amp;currentorg='.$currentorg.$modestr.'&amp;scoid='.$sco->id;
-                            $result->toc .= $statusicon.'&nbsp;'.$startbold.'<a href="'.$url.'">'.format_string($sco->title).'</a>'.$score.$endbold."</li>\n";
+                            $thisscoidstr = '&scoid='.$sco->id;
+                            $link = $CFG->wwwroot.'/mod/scorm/loadSCO.php?a='.$scorm->id.$thisscoidstr.$modestr;
+                            //$result->toc .= $statusicon.'&nbsp;'.$startbold.'<a href="'.$url.'">'.format_string($sco->title).'</a>'.$score.$endbold."</li>\n";
+                            $result->toc .= '<li><a title="'.$link.'">'.$statusicon.'&nbsp;'.format_string($sco->title).'&nbsp;'.$score.'</a>'."</li>\n";
                             $tocmenus[$sco->id] = scorm_repeater('&minus;',$level) . '&gt;' . format_string($sco->title);
                     } else {
                         if ($sco->id == $scoid) {
                             $result->prerequisites = false;
                         }
-                        $result->toc .= '&nbsp;'.format_string($sco->title)."</li>\n";
+                        $result->toc .= $statusicon.'&nbsp;'.format_string($sco->title)."\n";
                     }
                 }
             } else {
@@ -206,7 +217,16 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
             $result->incomplete = $incomplete;
         }
     }
-    $result->toc .= "\t</ul>\n";
+//    $result->toc .= "\t</ul>\n";
+
+
+    // NEW IMS TOC
+    $result->toc .= '</ul></div></div>';
+    $result->toc .= '</div>';
+    $result->toc .= '<div id="scorm_navpanel"></div>';
+
+
+
     if ($scorm->hidetoc == 0) {
         $PAGE->requires->data_for_js('scormdata', array(
                 'plusicon' => $OUTPUT->pix_url('plus', 'scorm'),
