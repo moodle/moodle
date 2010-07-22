@@ -358,7 +358,7 @@ class restore_scales_structure_step extends restore_structure_step {
                                         ORDER BY courseid", $params, IGNORE_MULTIPLE)) {
             // Remap the user if possible, defaut to user performing the restore if not
             $userid = $this->get_mappingid('user', $data->userid);
-            $data->userid = $userid ? $userid : $this->get_userid();
+            $data->userid = $userid ? $userid : $this->task->get_userid();
             // Remap the course if course scale
             $data->courseid = $data->courseid ? $this->get_courseid() : 0;
             // If global scale (course=0), check the user has perms to create it
@@ -418,7 +418,7 @@ class restore_outcomes_structure_step extends restore_structure_step {
                                          ORDER BY COALESCE(courseid, 0)', $params, IGNORE_MULTIPLE)) {
             // Remap the user
             $userid = $this->get_mappingid('user', $data->usermodified);
-            $data->usermodified = $userid ? $userid : $this->get_userid();
+            $data->usermodified = $userid ? $userid : $this->task->get_userid();
             // Remap the scale
             $data->scaleid = $this->get_mappingid('scale', $data->scaleid);
             // Remap the course if course outcome
