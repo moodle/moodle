@@ -151,24 +151,24 @@ class mod_scorm_mod_form extends moodleform_mod {
         $mform->disabledIf('dateendgrp', 'enddisabled', 'checked');
 */
 
-// Stage Size
-        $mform->addElement('static', '', '' ,'<hr />');
-        $mform->addElement('static', 'stagesize', get_string('stagesize','scorm'));
-        $mform->addHelpButton('stagesize', 'stagesize', 'scorm');
+// Framed / Popup Window
+        $mform->addElement('select', 'popup', get_string('display', 'scorm'), scorm_get_popup_display_array());
+        $mform->setDefault('popup', $cfg_scorm->popup);
+        $mform->setAdvanced('popup');
+
 // Width
         $mform->addElement('text', 'width', get_string('width','scorm'), 'maxlength="5" size="5"');
         $mform->setDefault('width', $cfg_scorm->framewidth);
         $mform->setType('width', PARAM_INT);
+        $mform->setAdvanced('width');
+        $mform->disabledIf('width', 'popup', 'eq', 0);
 
 // Height
         $mform->addElement('text', 'height', get_string('height','scorm'), 'maxlength="5" size="5"');
         $mform->setDefault('height', $cfg_scorm->frameheight);
         $mform->setType('height', PARAM_INT);
-
-// Framed / Popup Window
-        $mform->addElement('select', 'popup', get_string('display', 'scorm'), scorm_get_popup_display_array());
-        $mform->setDefault('popup', $cfg_scorm->popup);
-        $mform->setAdvanced('popup');
+        $mform->setAdvanced('height');
+        $mform->disabledIf('height', 'popup', 'eq', 0);
 
 // Window Options
         $winoptgrp = array();
