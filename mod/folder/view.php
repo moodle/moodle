@@ -74,7 +74,7 @@ echo $output->box_start('generalbox foldertree');
 echo $output->folder_tree($folder, $cm, $course);
 echo $output->box_end();
 
-if (has_capability('moodle/course:managefiles', $context)) {
+if (has_capability('mod/folder:managefiles', $context)) {
     echo $output->container_start('mdl-align');
     echo $output->single_button(new moodle_url('/mod/folder/edit.php', array('id'=>$id)), get_string('edit'));
     echo $output->container_end();

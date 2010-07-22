@@ -36,7 +36,7 @@ $folder = $DB->get_record('folder', array('id'=>$cm->instance), '*', MUST_EXIST)
 $course = $DB->get_record('course', array('id'=>$cm->course), '*', MUST_EXIST);
 
 require_login($course, false, $cm);
-require_capability('moodle/course:managefiles', $context);
+require_capability('mod/folder:managefiles', $context);
 
 add_to_log($course->id, 'folder', 'edit', 'edit.php?id='.$cm->id, $folder->id, $cm->id);
 
