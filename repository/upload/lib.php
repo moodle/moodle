@@ -66,6 +66,7 @@ class repository_upload extends repository {
 
         $fs = get_file_storage();
         $browser = get_file_browser();
+        $sm = get_string_manager();
 
         if ($record->filepath !== '/') {
             $record->filepath = file_correct_filepath($record->filepath);
@@ -85,8 +86,12 @@ class repository_upload extends repository {
 
         if ($this->mimetypes != '*') {
             // check filetype
-            if (!in_array(mimeinfo('type', $_FILES[$elname]['name']), $this->mimetypes)) {
-                throw new moodle_exception('invalidfiletype', 'repository', '', get_string(mimeinfo('type', $_FILES[$elname]['name']), 'mimetypes'));
+            $filemimetype = mimeinfo('type', $_FILES[$elname]['name']);
+            if (!in_array($filemimetype, $this->mimetypes)) {
+                if ($sm->string_exists($filemimetype, 'mimetypes')) {
+                    $filemimetype = get_string($filemimetype, 'mimetypes');
+                }
+                throw new moodle_exception('invalidfiletype', 'repository', '', $filemimetype);
             }
         }
 
