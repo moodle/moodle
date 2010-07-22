@@ -126,7 +126,7 @@ foreach ($possiblefields as $field) {
     }
 }
 
-/// Print the page header
+/// Define page variables
 $strdata = get_string('modulenameplural','data');
 
 if ($rid) {
@@ -135,14 +135,10 @@ if ($rid) {
 
 $PAGE->set_title($data->name);
 $PAGE->set_heading($course->fullname);
-echo $OUTPUT->header();
 
 /// Check to see if groups are being used here
-groups_print_activity_menu($cm, $CFG->wwwroot . '/mod/data/edit.php?d='.$data->id);
 $currentgroup = groups_get_activity_group($cm);
 $groupmode = groups_get_activity_groupmode($cm);
-
-echo $OUTPUT->heading(format_string($data->name));
 
 if ($currentgroup) {
     $groupselect = " AND groupid = '$currentgroup'";
@@ -153,13 +149,6 @@ if ($currentgroup) {
     $currentgroup = 0;
 }
 
-/// Print the tabs
-
-$currenttab = 'add';
-if ($rid) {
-    $editentry = true;  //used in tabs
-}
-include('tabs.php');
 
 /// Process incoming data for adding/updating records
 
@@ -197,7 +186,7 @@ if ($datarecord = data_submitted() and confirm_sesskey()) {
 
         add_to_log($course->id, 'data', 'update', "view.php?d=$data->id&amp;rid=$rid", $data->id, $cm->id);
 
-        redirect($CFG->wwwroot.'/mod/data/view.php?d='.$data->id.'&amp;rid='.$rid);
+        redirect($CFG->wwwroot.'/mod/data/view.php?d='.$data->id.'&rid='.$rid);
 
     } else { /// Add some new records
 
@@ -245,7 +234,7 @@ if ($datarecord = data_submitted() and confirm_sesskey()) {
                 $DB->insert_record('data_content',$content);
             }
 
-            //for each field in the add form, add it to the data_content.
+            /// For each field in the add form, add it to the data_content.
             foreach ($datarecord as $name => $value){
                 if (!in_array($name, $ignorenames)) {
                     $namearr = explode('_', $name);  // Second one is the field id
@@ -260,15 +249,27 @@ if ($datarecord = data_submitted() and confirm_sesskey()) {
 
             add_to_log($course->id, 'data', 'add', "view.php?d=$data->id&amp;rid=$recordid", $data->id, $cm->id);
 
-            echo $OUTPUT->notification(get_string('entrysaved','data'));
-
             if (!empty($datarecord->saveandview)) {
-                redirect($CFG->wwwroot.'/mod/data/view.php?d='.$data->id.'&amp;rid='.$recordid);
+                redirect($CFG->wwwroot.'/mod/data/view.php?d='.$data->id.'&rid='.$recordid);
             }
         }
     }
 }  // End of form processing
 
+
+/// Print the page header
+
+echo $OUTPUT->header();
+groups_print_activity_menu($cm, $CFG->wwwroot.'/mod/data/edit.php?d='.$data->id);
+echo $OUTPUT->heading(format_string($data->name));
+
+/// Print the tabs
+
+$currenttab = 'add';
+if ($rid) {
+    $editentry = true;  //used in tabs
+}
+include('tabs.php');
 
 
 /// Print the browsing interface

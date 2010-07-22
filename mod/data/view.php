@@ -304,7 +304,7 @@
     $currentgroup = groups_get_activity_group($cm);
     $groupmode = groups_get_activity_groupmode($cm);
 
-    // deletect entries not approved yet and show hint instead of not found error
+    // detect entries not approved yet and show hint instead of not found error
     if ($record and $data->approval and !$record->approved and $record->userid != $USER->id and !has_capability('mod/data:manageentries', $context)) {
         if (!$currentgroup or $record->groupid == $currentgroup or $record->groupid == 0) {
             print_error('notapproved', 'data');
@@ -353,9 +353,9 @@
         } else {   // Print a confirmation page
             if ($deleterecord = $DB->get_record('data_records', array('id'=>$delete))) {   // Need to check this is valid
                 if ($deleterecord->dataid == $data->id) {                       // Must be from this database
+                    $deletebutton = new single_button(new moodle_url('/mod/data/view.php?d='.$data->id.'&delete='.$delete.'&confirm=1'), get_string('delete'), 'post');
                     echo $OUTPUT->confirm(get_string('confirmdeleterecord','data'),
-                            'view.php?d='.$data->id.'&delete='.$delete.'&confirm=1',
-                            'view.php?d='.$data->id);
+                            $deletebutton, 'view.php?d='.$data->id);
 
                     $records[] = $deleterecord;
                     echo data_print_template('singletemplate', $records, $data, '', 0, true);
