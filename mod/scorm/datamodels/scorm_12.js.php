@@ -231,8 +231,9 @@ function SCORMapi1_2() {
         failure: function(o) {
             // do some sort of error handling
             var sURL = "<?php echo $CFG->wwwroot; ?>" + "/mod/scorm/prereqs.php?a=<?php echo $scorm->id ?>&scoid=<?php echo $scoid ?>&attempt=<?php echo $attempt ?>&mode=<?php echo $mode ?>&currentorg=<?php echo $currentorg ?>&sesskey=<?php echo sesskey(); ?>";
-            alert('Prerequisites update failed - must restart SCORM player');
-            window.location.href = sURL;
+            //TODO: Enable this error handing correctly - avoiding issues when closing player MDL-23470 
+            //alert('Prerequisites update failed - must restart SCORM player');
+            //window.location.href = sURL;
         }
 
     };
