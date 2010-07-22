@@ -177,18 +177,6 @@
                                                 }
                                             }, 1000);
             }
-            removelink();
-        }
-        function removelink() {
-            try {
-                if (window.opener.document.getElementById('altpopuplink')) {
-                    window.opener.document.getElementById('altpopuplink').style.display='none';
-                } else {
-                    window.opener.document.all['altpopuplink'].style.display='none';
-                }
-            } catch(error) {
-                // nothing to be done
-            }
         }
         //]]>
         </script>
