@@ -36,7 +36,7 @@ function cohort_add_cohort($cohort) {
     global $DB;
 
     if (!isset($cohort->name)) {
-        throw new coding_excetion('Missing cohort name in cohort_add_cohort().');
+        throw new coding_exception('Missing cohort name in cohort_add_cohort().');
     }
     if (!isset($cohort->idnumber)) {
         $cohort->idnumber = NULL;
