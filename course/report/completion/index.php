@@ -27,35 +27,32 @@
 require_once('../../../config.php');
 require_once($CFG->libdir.'/completionlib.php');
 
-
 /**
  * Configuration
  */
 define('COMPLETION_REPORT_PAGE',        25);
 define('COMPLETION_REPORT_COL_TITLES',  true);
 
-
 /**
  * Setup page, check permissions
  */
 
 // Get course
-$course = $DB->get_record('course', array('id' => required_param('course', PARAM_INT)));
-if(!$course) {
-    print_error('invalidcourseid');
-}
-
-// Non-js edit
+$courseid = required_param('course', PARAM_INT);
+$format = optional_param('format','',PARAM_ALPHA);
+$sort = optional_param('sort','',PARAM_ALPHA);
 $edituser = optional_param('edituser', 0, PARAM_INT);
 
-// Sort (default lastname, optionally firstname)
-$sort = optional_param('sort','',PARAM_ALPHA);
-$firstnamesort = $sort == 'firstname';
 
-// CSV format
-$format = optional_param('format','',PARAM_ALPHA);
-$excel = $format == 'excelcsv';
-$csv = $format == 'csv' || $excel;
+$course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
+
+$url = new moodle_url('/course/report/completion/index.php', array('course'=>$course->id));
+$PAGE->set_url($url);
+$PAGE->set_pagelayout('standard');
+
+$firstnamesort = ($sort == 'firstname');
+$excel = ($format == 'excelcsv');
+$csv = ($format == 'csv' || $excel);
 
 // Whether to start at a particular position
 $start = optional_param('start',0,PARAM_INT);
@@ -86,10 +83,6 @@ $group = groups_get_course_group($course, true); // Supposed to verify group
 if($group === 0 && $course->groupmode == SEPARATEGROUPS) {
     require_capability('moodle/site:accessallgroups',$context);
 }
-
-
-$url = new moodle_url('/course/report/completion/index.php', array('course'=>$course->id));
-$PAGE->set_url($url);
 
 /**
  * Load data
