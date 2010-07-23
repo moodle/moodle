@@ -19,7 +19,7 @@
 .path-mod-choice .horizontal .choices .button {margin-top: 10px;}
 .path-mod-choice ul.choices li {list-style:none;}
 .path-mod-choice .results { text-align: center;}
-.path-mod-choice .results.anonymous .graph.horizontal {vertical-align: middle;text-align: left;}
+.path-mod-choice .results.anonymous .graph.horizontal {vertical-align: middle;text-align: left;width:70%;}
 
 .path-mod-choice .results.anonymous .graph.vertical,
 .path-mod-choice .cell {vertical-align: bottom; text-align: center; }
@@ -31,7 +31,7 @@
 .path-mod-choice .results.names .user .image,
 .path-mod-choice .results.names .user .fullname{float:left;}
 .path-mod-choice .results.names .user .fullname{padding-left: 5px;}
-.path-mod-choice .results .data.header {width: 20%;}
+.path-mod-choice .results .data.header {width: 10%;}
 .path-mod-choice .responseaction {text-align: center;}
 
 #page-mod-choice-report .downloadreport ul li {list-style:none;padding: 0 20px; display: inline;float: left; }
