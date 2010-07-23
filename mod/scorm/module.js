@@ -49,6 +49,7 @@ M.mod_scorm.init = function(Y, hide_nav, hide_toc, toc_title, window_name, windo
 
     Y.use('yui2-resize', 'yui2-dragdrop', 'yui2-container', 'yui2-button', 'yui2-layout', 'yui2-treeview', 'yui2-json', 'yui2-event', function(Y) {
 
+
         var scorm_activate_item = function(node) {
             if (!node) {
                 return;

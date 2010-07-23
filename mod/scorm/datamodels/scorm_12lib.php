@@ -322,7 +322,7 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
                         }
                     }
                     if (($nextsco === false) || $nextsco->parent == $sco->parent) {
-                    $result->toc .= '</li>';
+                        $result->toc .= '</li>';
                     }
                 }
             } else {
