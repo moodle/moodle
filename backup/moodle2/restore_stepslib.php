@@ -159,7 +159,7 @@ class restore_load_included_users extends restore_execution_step {
         if ($this->task->get_preloaded_information()) { // if info is already preloaded, nothing to do
             return;
         }
-        if (!$this->task->get_setting('users')) { // No userinfo being restored, nothing to do
+        if (!$this->task->get_setting_value('users')) { // No userinfo being restored, nothing to do
             return;
         }
         $file = $this->get_basepath() . '/users.xml';
@@ -181,7 +181,7 @@ class restore_process_included_users extends restore_execution_step {
         if ($this->task->get_preloaded_information()) { // if info is already preloaded, nothing to do
             return;
         }
-        if (!$this->task->get_setting('users')) { // No userinfo being restored, nothing to do
+        if (!$this->task->get_setting_value('users')) { // No userinfo being restored, nothing to do
             return;
         }
         restore_dbops::process_included_users($this->get_restoreid(), $this->task->get_courseid(), $this->task->get_userid(), $this->task->is_samesite());
