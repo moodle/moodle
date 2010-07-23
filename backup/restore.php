@@ -11,6 +11,7 @@ $stage      = optional_param('stage', restore_ui::STAGE_CONFIRM, PARAM_INT);
 list($context, $course, $cm) = get_context_info_array($contextid);
 
 $PAGE->set_url(new moodle_url('/backup/restore.php', array('contextid'=>$contextid)));
+navigation_node::override_active_url(new moodle_url('/backup/restore.php', array('contextid'=>$contextid)));
 $PAGE->set_context($context);
 $PAGE->set_pagelayout('standard');
 
@@ -46,7 +47,6 @@ $heading = $course->fullname;
 
 $PAGE->set_title($heading.': '.$restore->get_stage_name());
 $PAGE->set_heading($heading);
-$PAGE->settingsnav->get('courseadmin')->find('restore', navigation_node::TYPE_SETTING)->make_active();
 $PAGE->navbar->add($restore->get_stage_name());
 
 $renderer = $PAGE->get_renderer('core','backup');
