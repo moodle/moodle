@@ -65,8 +65,12 @@ $browser = get_file_browser();
 $file_info = $browser->get_file_info($context, $component, $filearea, $itemid, $filepath, $filename);
 
 $strfiles = get_string("files");
+if ($node = $PAGE->settingsnav->find('coursefiles', navigation_node::TYPE_SETTING)) {
+    $node->make_active();
+} else {
+    $PAGE->navbar->add($strfiles);
+}
 
-$PAGE->navbar->add($strfiles);
 $PAGE->set_title("$SITE->shortname: $strfiles");
 $PAGE->set_heading($SITE->fullname);
 
