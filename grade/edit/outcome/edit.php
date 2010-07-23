@@ -39,6 +39,7 @@ if ($id !== 0) {
     $url->param('id', $id);
 }
 $PAGE->set_url($url);
+$PAGE->set_pagelayout('admin');
 
 $systemcontext = get_context_instance(CONTEXT_SYSTEM);
 $heading = null;

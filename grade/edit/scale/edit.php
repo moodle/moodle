@@ -24,6 +24,7 @@ $courseid = optional_param('courseid', 0, PARAM_INT);
 $id       = optional_param('id', 0, PARAM_INT);
 
 $PAGE->set_url('/grade/edit/scale/edit.php', array('id' => $id, 'courseid' => $courseid));
+$PAGE->set_pagelayout('admin');
 
 $systemcontext = get_context_instance(CONTEXT_SYSTEM);
 $heading = '';
