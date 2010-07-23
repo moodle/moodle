@@ -1502,6 +1502,11 @@ class HTML_QuickForm extends HTML_Common {
                         $values[] = $this->getSubmitValue($elName);
                     }
                     $result = $registry->validate($rule['type'], $values, $rule['format'], true);
+                } else if ($rule['type'] === 'required' and $this->getElement($target)->_type === 'editor') {
+                    //horrible horrible hack
+                    if (!isset($submitValue['text']) or $submitValue['text'] === '') {
+                        $result = false;
+                    }
                 } elseif (is_array($submitValue) && !isset($rule['howmany'])) {
                     $result = $registry->validate($rule['type'], $submitValue, $rule['format'], true);
                 } else {

@@ -22,6 +22,8 @@ and documented for Moodle at:
 
 4/ MDL-20876 - replaced deprecated split() with explode() or str_split() where appropriate
 
+5/ hardcoded editor element required rule validation
+
 Such modifications should be carefully each time the Excel PEAR package is updated
 to a new release within Moodle.
 
