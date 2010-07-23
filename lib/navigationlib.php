@@ -710,7 +710,7 @@ class navigation_node_collection implements IteratorAggregate {
             $nodes = $this->getIterator();
             // Search immediate children first
             foreach ($nodes as &$node) {
-                if ($node->key == $key && ($type == null || $type === $node->type)) {
+                if ($node->key === $key && ($type === null || $type === $node->type)) {
                     return $node;
                 }
             }
