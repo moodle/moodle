@@ -21,7 +21,7 @@ if (!$course = $DB->get_record('course', array('id'=>$courseid))) {
     print_error('invalidcourse');
 }
 
-$url = new moodle_url('/group/overview.php', array('course'=>$courseid));
+$url = new moodle_url('/group/overview.php', array('id'=>$courseid));
 if ($groupid !== 0) {
     $url->param('group', $groupid);
 }
@@ -100,8 +100,7 @@ if ($rs = $DB->get_recordset_sql($sql, $params)) {
     $rs->close();
 }
 
-$basemenu = ($course->id == SITEID) ? 'frontpage' : 'courseadmin';
-$PAGE->settingsnav->get($basemenu)->get('users')->get('groups')->make_active();
+navigation_node::override_active_url(new moodle_url('/group/index.php', array('id'=>$courseid)));
 $PAGE->navbar->add(get_string('overview', 'group'));
 
 /// Print header
