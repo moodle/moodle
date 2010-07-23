@@ -593,7 +593,6 @@ function scorm_grade_user($scorm, $userid) {
         break;
         case AVERAGEATTEMPT:
             $attemptcount = scorm_get_attempt_count($userid, $scorm, true);
-            print_object($attemptcount);
             if (empty($attemptcount)) {
                 return 0;
             } else {
