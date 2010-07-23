@@ -51,6 +51,7 @@ $callerformats = optional_param('callerformats', null, PARAM_TAGLIST);        //
 
 require_login();  // this is selectively called again with $course later when we know for sure which one we're in.
 $PAGE->set_url('/portfolio/add.php', array('id' => $dataid, 'sesskey' => sesskey()));
+$PAGE->set_pagelayout('standard');
 $exporter = null;
 
 if ($postcontrol && $type && !$dataid) {
