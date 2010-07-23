@@ -13,11 +13,11 @@
 
 .block_settings .block_tree .tree_item {padding-left: 18px;margin:3px 0px;text-align:left;}
 
-.block_settings .block_tree .tree_item.branch {background-image: url([[pix:t/expanded]]);background-position: center left;background-repeat: no-repeat;}
+.block_settings .block_tree .tree_item.branch {background-image: url([[pix:t/expanded]]);background-position: 0 10%;background-repeat: no-repeat;}
 .block_settings .block_tree .root_node.leaf {padding-left:0px;}
 .block_settings .block_tree .current_branch {font-weight:bold;}
 .jsenabled .block_settings .block_tree .tree_item.branch {cursor:pointer;}
-.jsenabled .block_settings .block_tree .tree_item.emptybranch {background-image: url([[pix:t/collapsed_empty]]);background-position: center left;background-repeat: no-repeat;}
+.jsenabled .block_settings .block_tree .tree_item.emptybranch {background-image: url([[pix:t/collapsed_empty]]);background-position: 0 10%;background-repeat: no-repeat;}
 .jsenabled .block_settings .block_tree .collapsed ul {display: none;}
 .jsenabled .block_settings .block_tree .collapsed .tree_item.branch {background-image: url([[pix:t/collapsed]]);}
 
