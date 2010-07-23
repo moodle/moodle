@@ -517,7 +517,8 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
                         }
                         $url = $CFG->wwwroot.'/mod/scorm/player.php?a='.$scorm->id.'&amp;currentorg='.$currentorg.$modestr.'&amp;scoid='.$sco->id;
                         $thisscoidstr = '&scoid='.$sco->id;
-                        $link = $CFG->wwwroot.'/mod/scorm/loadSCO.php?a='.$scorm->id.$thisscoidstr.$modestr;
+                        //$link = $CFG->wwwroot.'/mod/scorm/loadSCO.php?a='.$scorm->id.$thisscoidstr.$modestr;
+                        $link = 'a='.$scorm->id.$thisscoidstr.'&currentorg='.$currentorg.$modestr.'&attempt='.$attempt;
                         //$result->toc .= $statusicon.'&nbsp;'.$startbold.'<a href="'.$url.'">'.format_string($sco->title).'</a>'.$score.$endbold."</li>\n";
                         //$result->toc .= '<a title="'.$link.'">'.$statusicon.'&nbsp;'.format_string($sco->title).'&nbsp;'.$score.'</a>';
                         if ($sco->launch) {
