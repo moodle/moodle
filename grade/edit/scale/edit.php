@@ -107,6 +107,7 @@ if ($mform->is_cancelled()) {
 
     if (empty($scale->id)) {
         $data->description = $data->description_editor['text'];
+        $data->descriptionformat = $data->description_editor['format'];
         grade_scale::set_properties($scale, $data);
         if (!has_capability('moodle/grade:manage', $systemcontext)) {
             $data->standard = 0;
