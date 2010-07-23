@@ -1019,7 +1019,7 @@ abstract class enrol_plugin {
 
             $DB->delete_records('user_lastaccess', array('userid'=>$userid, 'courseid'=>$courseid));
 
-            $ue->lastenrol = false;
+            $ue->lastenrol = true; // means user not enrolled any more
             events_trigger('user_unenrolled', $ue);
         }
         // reset primitive require_login() caching
