@@ -63,6 +63,7 @@ if ($timetorestrict) {
     $dateto = optional_param('dateto', 0, PARAM_INT);      // Ending date
 }
 
+$PAGE->set_pagelayout('standard');
 $PAGE->set_url($FULLME);
 
 if (empty($search)) {   // Check the other parameters instead
