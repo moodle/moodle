@@ -1047,25 +1047,61 @@ class workshop {
     }
 
     /**
-     * Are users allowed to create/edit their submissions?
+     * Are users allowed to create their submissions?
      *
      * @return bool
      */
-    public function submitting_allowed() {
+    public function creating_submission_allowed() {
+        $now = time();
+
+        if ($this->latesubmissions) {
+            if ($this->phase != self::PHASE_SUBMISSION and $this->phase != self::PHASE_ASSESSMENT) {
+                // late submissions are allowed in the submission and assessment phase only
+                return false;
+            }
+            if (!empty($this->submissionstart) and $this->submissionstart > $now) {
+                // late submissions are not allowed before the submission start
+                return false;
+            }
+            return true;
+
+        } else {
+            if ($this->phase != self::PHASE_SUBMISSION) {
+                // submissions are allowed during the submission phase only
+                return false;
+            }
+            if (!empty($this->submissionstart) and $this->submissionstart > $now) {
+                // if enabled, submitting is not allowed before the date/time defined in the mod_form
+                return false;
+            }
+            if (!empty($this->submissionend) and $now > $this->submissionend ) {
+                // if enabled, submitting is not allowed after the date/time defined in the mod_form unless late submission is allowed
+                return false;
+            }
+            return true;
+        }
+    }
+
+    /**
+     * Are users allowed to modify their existing submission?
+     *
+     * @return bool
+     */
+    public function modifying_submission_allowed() {
+        $now = time();
+
         if ($this->phase != self::PHASE_SUBMISSION) {
-            // submitting is not allowed but in the submission phase
+            // submissions can be edited during the submission phase only
             return false;
         }
-        $now = time();
         if (!empty($this->submissionstart) and $this->submissionstart > $now) {
             // if enabled, submitting is not allowed before the date/time defined in the mod_form
             return false;
         }
-        if (!empty($this->submissionend) and empty($this->latesubmissions) and $now > $this->submissionend ) {
+        if (!empty($this->submissionend) and $now > $this->submissionend) {
             // if enabled, submitting is not allowed after the date/time defined in the mod_form unless late submission is allowed
             return false;
         }
-        // here we go, submission is allowed
         return true;
     }
 
@@ -2061,6 +2097,12 @@ class workshop_user_plan implements renderable {
             $task->title = get_string('submissionenddatetime', 'workshop', workshop::timestamp_formats($workshop->submissionend));
             $task->completed = 'info';
             $phase->tasks['submissionenddatetime'] = $task;
+        }
+        if (($workshop->submissionstart < time()) and $workshop->latesubmissions) {
+            $task = new stdclass();
+            $task->title = get_string('latesubmissionsallowed', 'workshop');
+            $task->completed = 'info';
+            $phase->tasks['latesubmissionsallowed'] = $task;
         }
         $this->phases[workshop::PHASE_SUBMISSION] = $phase;
 

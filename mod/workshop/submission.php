@@ -67,7 +67,15 @@ $canpublish     = has_capability('mod/workshop:publishsubmissions', $workshop->c
 $canoverride    = (($workshop->phase == workshop::PHASE_EVALUATION) and has_capability('mod/workshop:overridegrades', $workshop->context));
 $userassessment = $workshop->get_assessment_of_submission_by_user($submission->id, $USER->id);
 $isreviewer     = !empty($userassessment);
-$editable       = ($cansubmit and $ownsubmission and $workshop->submitting_allowed());
+$editable       = ($cansubmit and $ownsubmission);
+
+if (empty($submission->id) and !$workshop->creating_submission_allowed()) {
+    $editable = false;
+}
+if ($submission->id and !$workshop->modifying_submission_allowed()) {
+    $editable = false;
+}
+
 if ($editable and $workshop->useexamples and $workshop->examplesmode == workshop::EXAMPLES_BEFORE_SUBMISSION
         and !has_capability('mod/workshop:manageexamples', $workshop->context)) {
     // check that all required examples have been assessed by the user
@@ -127,6 +135,13 @@ if ($edit) {
         $formdata->content            = '';          // updated later
         $formdata->contentformat      = FORMAT_HTML; // updated later
         $formdata->contenttrust       = 0;           // updated later
+        $formdata->late               = 0x0;         // bit mask
+        if (!empty($workshop->submissionend) and ($workshop->submissionend < time())) {
+            $formdata->late = $formdata->late | 0x1;
+        }
+        if ($workshop->phase == workshop::PHASE_ASSESSMENT) {
+            $formdata->late = $formdata->late | 0x2;
+        }
         if (empty($formdata->id)) {
             $formdata->id = $DB->insert_record('workshop_submissions', $formdata);
             // todo add to log
@@ -214,8 +229,14 @@ if ($submission->id) {
 }
 
 if ($editable) {
-    $url = new moodle_url($PAGE->url, array('edit' => 'on', 'id' => $submission->id));
-    echo $OUTPUT->single_button($url, get_string('editsubmission', 'workshop'), 'get');
+    if ($submission->id) {
+        $btnurl = new moodle_url($PAGE->url, array('edit' => 'on', 'id' => $submission->id));
+        $btntxt = get_string('editsubmission', 'workshop');
+    } else {
+        $btnurl = new moodle_url($PAGE->url, array('edit' => 'on'));
+        $btntxt = get_string('createsubmission', 'workshop');
+    }
+    echo $OUTPUT->single_button($btnurl, $btntxt, 'get');
 }
 
 if ($submission->id and !$edit and !$isreviewer and $canallocate and $workshop->assessing_allowed()) {
