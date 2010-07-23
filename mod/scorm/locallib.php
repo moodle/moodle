@@ -512,7 +512,7 @@ function scorm_get_user_data($userid) {
     return $DB->get_record('user', array('id'=>$userid),'firstname, lastname, picture');
 }
 
-function scorm_grade_user_attempt($scorm, $userid, $attempt=1, $time=false) {
+function scorm_grade_user_attempt($scorm, $userid, $attempt=1) {
     global $DB;
     $attemptscore = NULL;
     $attemptscore->scoes = 0;
@@ -563,15 +563,7 @@ function scorm_grade_user_attempt($scorm, $userid, $attempt=1, $time=false) {
             $score = $attemptscore->max;   // Remote Learner GRADEHIGHEST is default
     }
 
-    if ($time) {
-        $result = new stdClass();
-        $result->score = $score;
-        $result->time = $attemptscore->lastmodify;
-    } else {
-        $result = $score;
-    }
-
-    return $result;
+    return $score;
 }
 
 function scorm_grade_user($scorm, $userid) {
