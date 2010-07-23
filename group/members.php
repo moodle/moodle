@@ -146,6 +146,6 @@ echo html_writer::table($groupinfotable);
     $potentialmembersselector->print_user_summaries($course->id);
 
     //this must be after calling display() on the selectors so their setup JS executes first
-    $PAGE->requires->js_function_call('init_add_remove_members_page');
+    $PAGE->requires->js_init_call('init_add_remove_members_page', null, false, $potentialmembersselector->get_js_module());
 
     echo $OUTPUT->footer();

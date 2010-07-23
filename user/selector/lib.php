@@ -730,6 +730,14 @@ class group_non_members_selector extends groups_user_selector_base {
     }
 
     /**
+     * Returns the user selector JavaScript module
+     * @return array
+     */
+    public function get_js_module() {
+        return self::$jsmodule;
+    }
+
+    /**
      * Outputs a Javascript array containing the other groups non-members are in.
      * Used on the add group members page.
      */
