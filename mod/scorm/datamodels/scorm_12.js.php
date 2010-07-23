@@ -222,7 +222,11 @@ function SCORMapi1_2() {
                         hnode = scorm_tree_node.getNodeByIndex(hidx);
                         if (hnode) {
                             hnode.highlight();
-                            hnode.focus();
+                            scorm_layout_widget = YAHOO.widget.Layout.getLayoutById('scorm_layout');
+                            var left = scorm_layout_widget.getUnitByPosition('left');
+                            if (left.expanded) {
+                                hnode.focus();
+                            }
                         }
                     }
                 }

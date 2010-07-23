@@ -115,7 +115,10 @@ M.mod_scorm.init = function(Y, hide_nav, hide_toc, toc_title, window_name, windo
           
             scorm_resize_frame();
 
-            scorm_current_node.focus();
+            var left = scorm_layout_widget.getUnitByPosition('left');
+            if (left.expanded) {
+                scorm_current_node.focus();
+            }
             if (scorm_hide_nav == false) {
                 scorm_fixnav();
             }
