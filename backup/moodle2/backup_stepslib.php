@@ -1049,6 +1049,11 @@ class backup_block_instance_structure_step extends backup_structure_step {
 
         $positions->set_source_table('block_positions', array('blockinstanceid' => backup::VAR_PARENTID));
 
+        // File anotations (for fileareas specified on each block)
+        foreach ($this->task->get_fileareas() as $filearea) {
+            $block->annotate_files('block_' . $this->task->get_blockname(), $filearea, null);
+        }
+
         // Return the root element (block)
         return $block;
     }

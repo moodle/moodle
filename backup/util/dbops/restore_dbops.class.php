@@ -43,7 +43,7 @@ abstract class restore_dbops {
             $included = false;
             // blocks, based in blocks setting and parent activity/course
             if ($task instanceof restore_block_task) {
-                if (!$task->get_setting('blocks')) { // Blocks not included, continue
+                if (!$task->get_setting_value('blocks')) { // Blocks not included, continue
                     continue;
                 }
                 $parent = basename(dirname(dirname($task->get_taskbasepath())));

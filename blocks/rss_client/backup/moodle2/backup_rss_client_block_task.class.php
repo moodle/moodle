@@ -42,6 +42,10 @@ class backup_rss_client_block_task extends backup_block_task {
         $this->add_step(new backup_rss_client_block_structure_step('rss_client_structure', 'rss_client.xml'));
     }
 
+    public function get_fileareas() {
+        return array(); // No associated fileareas
+    }
+
     public function get_configdata_encoded_attributes() {
         return array(); // No special handling of configdata
     }

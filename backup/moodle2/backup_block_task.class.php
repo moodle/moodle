@@ -196,6 +196,11 @@ abstract class backup_block_task extends backup_task {
     abstract protected function define_my_steps();
 
     /**
+     * Define one array() of fileareas that each block controls
+     */
+    abstract public function get_fileareas();
+
+    /**
      * Define one array() of configdata attributes
      * that need to be processed by the contenttransformer
      */
