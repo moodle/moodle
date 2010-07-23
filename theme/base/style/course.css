@@ -73,11 +73,18 @@
 .coursebox .teachers li {list-style-type:none;padding:0;margin:0;}
 
 .categorylist {width: 100%;}
-.categorylist .category.image {width: 20px;}
-.categorylist .category.number {text-align: right;}
-.categorylist .category.indentation {width: 1px;}
 .categorylist .category .numberofcourse {font-style: italic; font-size: 0.85em; font-style: normal;}
 .categorylist .category {padding-top: 5px; padding-bottom: 5px; }
+.categorylist .category .info,
+.categorylist .category .indentation,
+.categorylist .category .name,
+.categorylist .category .image,
+.categorylist .course .name,
+.categorylist .course .info {float:left;text-align: left;}
+.categorylist .course {padding-left:18px;}
+
+#page-course-index .indentation {padding-left: 30px;}
+#page-course-index .category .image {padding-right: 5px;}
 
 .path-course-report-outline td.numviews {text-align:right;}
 .path-course-report-outline tr.section {text-align: center;}
@@ -118,3 +125,14 @@
 .dir-rtl.jsenabled .course_category_tree .category.with_children.collapsed .category_label {background-image:url([[pix:moodle|t/collapsed_rtl]]);}
 .dir-rtl .course_category_tree .category .courses .course_link {background-position:center right; padding-right:18px;}
 .dir-rtl .clearfloat {float:none; clear:both;height:0px;}
+.dir-rtl .categorylist .category .info,
+.dir-rtl .categorylist .category .indentation,
+.dir-rtl .categorylist .category .name,
+.dir-rtl .categorylist .category .image,
+.dir-rtl .categorylist .course .name,
+.dir-rtl .categorylist .course .indentation,
+.dir-rtl .categorylist .course .info {float:right;text-align: right;}
+.dir-rtl .categorylist .course {padding-right:18px;}
+
+#page-course-index.dir-rtl .category .image {padding-left: 5px; padding-right: 0px;}
+#page-course-index.dir-rtl .indentation {padding-left: 0px;padding-right: 30px;}

@@ -1421,7 +1421,7 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                 }
 
                 // We may be displaying this just in order to show information
-                // about visibility, without the actual link                
+                // about visibility, without the actual link
                 if ($mod->uservisible) {
                     // Display normal module link
                     if (!$accessiblebutdim) {
@@ -2023,65 +2023,72 @@ function print_category_info($category, $depth, $showcourses = false) {
     } else {
         $catimage = "&nbsp;";
     }
-        
+
     $courses = get_courses($category->id, 'c.sortorder ASC', 'c.id,c.sortorder,c.visible,c.fullname,c.shortname,c.summary');
     if ($showcourses and $coursecount) {
-        echo "\n\n".'<table class="categorylist">';
-        echo '<tr>';
+        echo '<div class="categorylist clearfix">';
+        echo '<div class="category">';
+        $cat = '';
+        $cat .= html_writer::tag('div', $catimage, array('class'=>'image'));
+        $catlink = '<a '.$catlinkcss.' href="'.$CFG->wwwroot.'/course/category.php?id='.$category->id.'">'. format_string($category->name).'</a>';
+        $cat .= html_writer::tag('div', $catlink, array('class'=>'name'));
 
-        if ($depth) {
-            $indent = $depth*30;
-            $rows = count($courses) + 1;
-            echo '<td class="category indentation" rowspan="'.$rows.'" valign="top">';
-
-            echo $OUTPUT->spacer(array('height'=>10, 'width'=>$indent, 'br'=>true)); // should be done with CSS instead
-            echo '</td>';
+        $indent = '';
+        if ($depth > 0) {
+            for ($i=0; $i< $depth; $i++) {
+                $indent = html_writer::tag('div', $indent .$cat, array('class'=>'indentation'));
+                $cat = '';
             }
+        } else {
+            $indent = $cat;
+        }
+        echo $indent;
+        echo '</div>';
 
-        echo '<td valign="top" class="category image">'.$catimage.'</td>';
-        echo '<td valign="top" class="category name">';
-        echo '<a '.$catlinkcss.' href="'.$CFG->wwwroot.'/course/category.php?id='.$category->id.'">'. format_string($category->name).'</a>';
-        echo '</td>';
-        echo '<td class="category info">&nbsp;</td>';
-        echo '</tr>';
+        echo html_writer::tag('div', '', array('class'=>'clearfloat'));
 
         // does the depth exceed maxcategorydepth
-        // maxcategorydepth == 0 or unset meant no limit        
-
+        // maxcategorydepth == 0 or unset meant no limit
         $limit = !(isset($CFG->maxcategorydepth) && ($depth >= $CFG->maxcategorydepth-1));
-
         if ($courses && ($limit || $CFG->maxcategorydepth == 0)) {
             foreach ($courses as $course) {
-                $linkcss = $course->visible ? '' : ' class="dimmed" ';                
-                echo '<tr><td valign="top">&nbsp;';
-                echo '</td><td valign="top" class="course name">';
-                echo '<a '.$linkcss.' href="'.$CFG->wwwroot.'/course/view.php?id='.$course->id.'">'. format_string($course->fullname).'</a>';
-                echo '</td><td align="right" valign="top" class="course info">';
+                $linkcss = $course->visible ? '' : ' class="dimmed" ';
+
+                $coursecontent = '';
+                $courselink = '<a '.$linkcss.' href="'.$CFG->wwwroot.'/course/view.php?id='.$course->id.'">'. format_string($course->fullname).'</a>';
+                $coursecontent .= html_writer::tag('div', $courselink, array('class'=>'name'));
+
                 //TODO: add some guest, pay icons
                 if ($course->summary) {
                     $link = new moodle_url('/course/info.php?id='.$course->id);
-                    echo $OUTPUT->action_link($link, '<img alt="'.$strsummary.'" src="'.$OUTPUT->pix_url('i/info') . '" />',
+                    $actionlink = $OUTPUT->action_link($link, '<img alt="'.$strsummary.'" src="'.$OUTPUT->pix_url('i/info') . '" />',
                         new popup_action('click', $link, 'courseinfo', array('height' => 400, 'width' => 500)),
                         array('title'=>$strsummary));
-                } else {
-                    echo '<img alt="" style="width:18px;height:16px;" src="'.$OUTPUT->pix_url('spacer') . '" />';
+
+                    $coursecontent .= html_writer::tag('div', $actionlink, array('class'=>'info'));
                 }
-                echo '</td></tr>';
-            }                
+
+                $indent = '';
+                for ($i=1; $i <= $depth; $i++) {
+                    $indent = html_writer::tag('div', $indent . $coursecontent , array('class'=>'indentation'));
+                    $coursecontent = '';
+                }
+                echo html_writer::tag('div', $indent, array('class'=>'course clearfloat'));
+            }
         }
-        echo '</table>';
-    } else {         
+        echo '</div>';
+    } else {
         echo '<div class="categorylist">';
         echo '<div class="category">';
         if ($depth) {
             $indent = $depth*20;
-            echo $OUTPUT->spacer(array('height'=>10, 'width'=>$indent, 'br'=>true)); // should be done with CSS instead            
+            echo $OUTPUT->spacer(array('height'=>10, 'width'=>$indent, 'br'=>true)); // should be done with CSS instead
         }
-        echo '<a '.$catlinkcss.' href="'.$CFG->wwwroot.'/course/category.php?id='.$category->id.'">'. format_string($category->name).'</a>';        
+        echo '<a '.$catlinkcss.' href="'.$CFG->wwwroot.'/course/category.php?id='.$category->id.'">'. format_string($category->name).'</a>';
         echo '<span class="numberofcourse" title="' .get_string('numberofcourses') . '"> ('.count($courses).')</span>';
         echo '</div>';
         echo '</div>';
-    }       
+    }
 }
 
 /**
