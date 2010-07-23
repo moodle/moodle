@@ -52,6 +52,7 @@ class mod_page_mod_form extends moodleform_mod {
         //-------------------------------------------------------
         $mform->addElement('header', 'contentsection', get_string('contentheader', 'page'));
         $mform->addElement('editor', 'page', get_string('content', 'page'), null, page_get_editor_options($this->context));
+        $mform->addRule('page', get_string('required'), 'required', null, 'client');
 
         //-------------------------------------------------------
         $mform->addElement('header', 'optionssection', get_string('optionsheader', 'page'));
