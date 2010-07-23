@@ -92,7 +92,7 @@ class backup_workshop_activity_structure_step extends backup_activity_structure_
             'authorid', 'timecreated', 'timemodified', 'title', 'content',
             'contentformat', 'contenttrust', 'attachment', 'grade',
             'gradeover', 'gradeoverby', 'feedbackauthor',
-            'feedbackauthorformat', 'timegraded', 'published'));
+            'feedbackauthorformat', 'timegraded', 'published', 'late'));
 
         // allocated assessments
         $assessments = new backup_nested_element('assessments');

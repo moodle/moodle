@@ -235,5 +235,17 @@ function xmldb_workshop_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2010070701, 'workshop');
     }
 
+    /**
+     * Add 'late' field into workshop_submissions
+     */
+    if ($oldversion < 2010072300) {
+        $table = new xmldb_table('workshop_submissions');
+        $field = new xmldb_field('late', XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'published');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        upgrade_mod_savepoint(true, 2010072300, 'workshop');
+    }
+
     return true;
 }

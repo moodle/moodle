@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="mod/workshop/db" VERSION="20100707" COMMENT="XMLDB file for Moodle mod/workshop"
+<XMLDB PATH="mod/workshop/db" VERSION="20100723" COMMENT="XMLDB file for Moodle mod/workshop"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -58,7 +58,8 @@
         <FIELD NAME="feedbackauthor" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" COMMENT="Teacher comment/feedback for the author of the submission, for example describing the reasons for the grade overriding" PREVIOUS="gradeoverby" NEXT="feedbackauthorformat"/>
         <FIELD NAME="feedbackauthorformat" TYPE="int" LENGTH="3" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="feedbackauthor" NEXT="timegraded"/>
         <FIELD NAME="timegraded" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" COMMENT="The timestamp when grade or gradeover was recently modified" PREVIOUS="feedbackauthorformat" NEXT="published"/>
-        <FIELD NAME="published" TYPE="int" LENGTH="2" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Shall the submission be available to other when the workshop is closed" PREVIOUS="timegraded"/>
+        <FIELD NAME="published" TYPE="int" LENGTH="2" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Shall the submission be available to other when the workshop is closed" PREVIOUS="timegraded" NEXT="late"/>
+        <FIELD NAME="late" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Has this submission been submitted after the deadline or during the assessment phase?" PREVIOUS="published"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="workshop_fk"/>
