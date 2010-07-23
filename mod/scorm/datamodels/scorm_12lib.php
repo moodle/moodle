@@ -146,7 +146,7 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
     // If not specified retrieve the last attempt number
     //
     if (empty($attempt)) {
-        $attempt = scorm_get_attempt_count($user, $scorm);
+        $attempt = scorm_get_attempt_count($user->id, $scorm);
     }
     $result->attemptleft = $scorm->maxattempt == 0 ? 1 : $scorm->maxattempt - $attempt;
     $conditions['scorm'] = $scorm->id;

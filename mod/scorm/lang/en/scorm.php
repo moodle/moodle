@@ -107,7 +107,7 @@ $string['gradeaverage'] = 'Average grade';
 $string['gradeforattempt'] = 'Grade for attempt';
 $string['gradehighest'] = 'Highest grade';
 $string['grademethod'] = 'Grading method';
-$string['grademethod_help'] = 'The grading method defines how a final grade for the activity is determined.
+$string['grademethod_help'] = 'The grading method defines how the grade for a single attempt of the activity is determined.
 
 There are 4 grading methods:
 
