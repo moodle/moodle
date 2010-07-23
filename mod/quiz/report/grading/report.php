@@ -321,13 +321,11 @@ class quiz_report extends quiz_default_report {
             }
             $table->add_separator();
             $table->add_data_keyed(array('grade'=> $links));
-            // print everything here
-            echo '<div id="tablecontainer">';
-            $table->print_html();
-            echo '</div>';
-        } else {
-            notify(get_string('noattemptstoshow', 'quiz'));
         }
+        // print everything here
+        echo '<div id="tablecontainer">';
+        $table->print_html();
+        echo '</div>';
     }
 
 
