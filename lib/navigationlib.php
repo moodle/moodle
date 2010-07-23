@@ -948,13 +948,17 @@ class global_navigation extends navigation_node {
             $this->load_all_courses();
         }
 
+        // We always load the frontpage course to ensure it is available without
+        // JavaScript enabled.
+        $frontpagecourse = $this->load_course($SITE);
+        $this->add_front_page_course_essentials($frontpagecourse, $SITE);
+
         // Next load context specific content into the navigation
         switch ($this->page->context->contextlevel) {
             case CONTEXT_SYSTEM :
             case CONTEXT_COURSECAT :
-                // Load the front page course navigation
-                $coursenode = $this->load_course($SITE);
-                $this->add_front_page_course_essentials($coursenode, $SITE);
+                // This has already been loaded we just need to map the variable
+                $coursenode = $frontpagecourse;
                 break;
             case CONTEXT_BLOCK :
             case CONTEXT_COURSE :
