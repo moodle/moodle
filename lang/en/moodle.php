@@ -1185,6 +1185,7 @@ $string['nousersyet'] = 'There are no users yet';
 $string['novalidcourses'] = 'No valid courses to be shown';
 $string['now'] = 'now';
 $string['numattempts'] = '{$a} failed login attempt(s)';
+$string['numberofcourses'] = 'Number of courses';
 $string['numberweeks'] = 'Number of weeks/topics';
 $string['numdays'] = '{$a} days';
 $string['numhours'] = '{$a} hours';

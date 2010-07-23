@@ -76,6 +76,8 @@
 .categorylist .category.image {width: 20px;}
 .categorylist .category.number {text-align: right;}
 .categorylist .category.indentation {width: 1px;}
+.categorylist .category .numberofcourse {font-style: italic; font-size: 0.85em; font-style: normal;}
+.categorylist .category {padding-top: 5px; padding-bottom: 5px; }
 
 .path-course-report-outline td.numviews {text-align:right;}
 .path-course-report-outline tr.section {text-align: center;}
@@ -104,7 +106,11 @@
 .jsenabled .course_category_tree .category.with_children.collapsed .subcategories,
 .jsenabled .course_category_tree .category.with_children.collapsed .courses {display:none;}
 
-/** Overide for RTL layout **/
+.path-course .clearfloat {float:none; clear:both;height:0px;}
+
+/** 
+* Overide for RTL layout
+*/
 .dir-rtl .coursebox .info {float: right; text-align: right;}
 .dir-rtl .coursebox .summary {text-align:right;}
 .dir-rtl .course_category_tree .category.with_children> .category_label {background-position: center right; padding-right: 18px;}

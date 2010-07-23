@@ -1421,7 +1421,7 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                 }
 
                 // We may be displaying this just in order to show information
-                // about visibility, without the actual link
+                // about visibility, without the actual link                
                 if ($mod->uservisible) {
                     // Display normal module link
                     if (!$accessiblebutdim) {
@@ -2023,12 +2023,10 @@ function print_category_info($category, $depth, $showcourses = false) {
     } else {
         $catimage = "&nbsp;";
     }
-
-    echo "\n\n".'<table class="categorylist">';
-
+        
     $courses = get_courses($category->id, 'c.sortorder ASC', 'c.id,c.sortorder,c.visible,c.fullname,c.shortname,c.summary');
     if ($showcourses and $coursecount) {
-
+        echo "\n\n".'<table class="categorylist">';
         echo '<tr>';
 
         if ($depth) {
@@ -2038,7 +2036,7 @@ function print_category_info($category, $depth, $showcourses = false) {
 
             echo $OUTPUT->spacer(array('height'=>10, 'width'=>$indent, 'br'=>true)); // should be done with CSS instead
             echo '</td>';
-        }
+            }
 
         echo '<td valign="top" class="category image">'.$catimage.'</td>';
         echo '<td valign="top" class="category name">';
@@ -2048,13 +2046,13 @@ function print_category_info($category, $depth, $showcourses = false) {
         echo '</tr>';
 
         // does the depth exceed maxcategorydepth
-        // maxcategorydepth == 0 or unset meant no limit
+        // maxcategorydepth == 0 or unset meant no limit        
 
         $limit = !(isset($CFG->maxcategorydepth) && ($depth >= $CFG->maxcategorydepth-1));
 
         if ($courses && ($limit || $CFG->maxcategorydepth == 0)) {
             foreach ($courses as $course) {
-                $linkcss = $course->visible ? '' : ' class="dimmed" ';
+                $linkcss = $course->visible ? '' : ' class="dimmed" ';                
                 echo '<tr><td valign="top">&nbsp;';
                 echo '</td><td valign="top" class="course name">';
                 echo '<a '.$linkcss.' href="'.$CFG->wwwroot.'/course/view.php?id='.$course->id.'">'. format_string($course->fullname).'</a>';
@@ -2069,29 +2067,21 @@ function print_category_info($category, $depth, $showcourses = false) {
                     echo '<img alt="" style="width:18px;height:16px;" src="'.$OUTPUT->pix_url('spacer') . '" />';
                 }
                 echo '</td></tr>';
-            }
+            }                
         }
-    } else {
-
-        echo '<tr>';
-
+        echo '</table>';
+    } else {         
+        echo '<div class="categorylist">';
+        echo '<div class="category">';
         if ($depth) {
             $indent = $depth*20;
-            echo '<td class="category indentation" valign="top">';
-            echo $OUTPUT->spacer(array('height'=>10, 'width'=>$indent, 'br'=>true)); // should be done with CSS instead
-            echo '</td>';
+            echo $OUTPUT->spacer(array('height'=>10, 'width'=>$indent, 'br'=>true)); // should be done with CSS instead            
         }
-
-        echo '<td valign="top" class="category name">';
-        echo '<a '.$catlinkcss.' href="'.$CFG->wwwroot.'/course/category.php?id='.$category->id.'">'. format_string($category->name).'</a>';
-        echo '</td>';
-        echo '<td valign="top" class="category number">';
-        if (count($courses)) {
-           echo count($courses);
-        }
-        echo '</td></tr>';
-    }
-    echo '</table>';
+        echo '<a '.$catlinkcss.' href="'.$CFG->wwwroot.'/course/category.php?id='.$category->id.'">'. format_string($category->name).'</a>';        
+        echo '<span class="numberofcourse" title="' .get_string('numberofcourses') . '"> ('.count($courses).')</span>';
+        echo '</div>';
+        echo '</div>';
+    }       
 }
 
 /**
