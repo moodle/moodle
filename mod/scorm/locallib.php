@@ -784,7 +784,7 @@ function scorm_view_display ($user, $scorm, $action, $cm, $boxwidth='') {
                       if ($incomplete === false) {
                           echo '<input type="hidden" name="newattempt" value="on" />'."\n";
                       }
-                  } elseif ($attemptcount != 0 && ($incomplete === false) && (($result->attemptleft > 0)||($scorm->maxattempt == 0))) {
+                  } elseif (!empty($attemptcount) && ($incomplete === false) && (($result->attemptleft > 0)||($scorm->maxattempt == 0))) {
 ?>
                       <br />
                       <input type="checkbox" id="a" name="newattempt" />
