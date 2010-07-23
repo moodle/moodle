@@ -86,7 +86,8 @@ switch ($action) {
         break;
 
     case 'getassignable':
-        $outcome->response = $manager->get_assignable_roles();
+        $otheruserroles = optional_param('otherusers', false, PARAM_BOOL);
+        $outcome->response = $manager->get_assignable_roles($otheruserroles);
         break;
     case 'getcohorts':
         require_capability('moodle/course:enrolconfig', $context);

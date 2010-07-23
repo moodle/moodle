@@ -494,7 +494,8 @@ class course_enrolment_table extends html_table implements renderable {
             $arguments = array(
                 'containerId'=>$this->id,
                 'userIds'=>array_keys($users),
-                'courseId'=>$this->manager->get_course()->id);
+                'courseId'=>$this->manager->get_course()->id,
+                'otherusers'=>isset($this->otherusers));
             $page->requires->yui_module($modules, $function, array($arguments));
         }
     }
@@ -718,6 +719,8 @@ class course_enrolment_users_table extends course_enrolment_table {
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class course_enrolment_other_users_table extends course_enrolment_table {
+
+    public $otherusers = true;
 
     /**
      * Constructs the table

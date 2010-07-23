@@ -208,7 +208,7 @@ YUI.add('moodle-enrol-otherusersmanager', function(Y) {
         getAssignableRoles : function() {
             Y.io(M.cfg.wwwroot+'/enrol/ajax.php', {
                 method:'POST',
-                data:'id='+this.get(COURSEID)+'&action=getassignable&sesskey='+M.cfg.sesskey,
+                data:'id='+this.get(COURSEID)+'&action=getassignable&otherusers=true&sesskey='+M.cfg.sesskey,
                 on: {
                     complete: function(tid, outcome, args) {
                         try {
@@ -340,8 +340,10 @@ YUI.add('moodle-enrol-otherusersmanager', function(Y) {
                                 var options = args.node.ancestor('.'+CSS.OPTIONS);
                                 if (options.all('.'+CSS.ROLEOPTION).size() == 1) {
                                     // This is the last node so remove the options div
+                                    if (options.ancestor('.'+CSS.USER)) {
+                                        options.ancestor('.'+CSS.USER).addClass(CSS.ALLROLESASSIGNED);
+                                    }
                                     options.remove();
-                                    options.ancestor(CSS.USER).addClass(CSS.ALLROLESASSIGNED);
                                 } else {
                                     // There are still more assignable roles
                                     args.node.remove();

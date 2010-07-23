@@ -14,7 +14,8 @@ YUI.add('moodle-enrol-rolemanager', function(Y) {
         UNASSIGNROLELINKS           = 'unassignRoleLinks',
         UNASSIGNROLELINKSSELECTOR   = 'unassignRoleLinksSelector',
         MANIPULATOR                 = 'manipulator',
-        CURRENTROLES                = 'currentroles';
+        CURRENTROLES                = 'currentroles',
+        OTHERUSERS                  = 'otherusers';
 
     var ROLE = function(config) {
         ROLE.superclass.constructor.apply(this, arguments);
@@ -47,6 +48,9 @@ YUI.add('moodle-enrol-rolemanager', function(Y) {
         },
         assignableRoles : {
             value : []
+        },
+        otherusers : {
+            value : false
         }
     }
     Y.extend(ROLE, Y.Base, {
@@ -144,10 +148,15 @@ YUI.add('moodle-enrol-rolemanager', function(Y) {
             });
         },
         _loadAssignableRoles : function() {
-            var c = this.get(COURSEID);
+            var c = this.get(COURSEID), params = {
+                id : this.get(COURSEID),
+                otherusers : (this.get(OTHERUSERS))?'true':'false',
+                action : 'getassignable',
+                sesskey : M.cfg.sesskey
+            };
             Y.io(M.cfg.wwwroot+'/enrol/ajax.php', {
                 method:'POST',
-                data:'id='+this.get(COURSEID)+'&action=getassignable&sesskey='+M.cfg.sesskey,
+                data:build_querystring(params),
                 on: {
                     complete: function(tid, outcome, args) {
                         try {
@@ -357,10 +366,12 @@ YUI.add('moodle-enrol-rolemanager', function(Y) {
             element.one('.header .close').on('click', this.hide, this);
         },
         display : function(user) {
-            var currentroles = user.get(CURRENTROLES);
+            var currentroles = user.get(CURRENTROLES), node = null;
             for (var i in currentroles) {
                 if (currentroles[i] === true) {
-                    this.get('contentNode').one('#add_assignable_role_'+i).setAttribute('disabled', 'disabled');
+                    if (node = this.get('contentNode').one('#add_assignable_role_'+i)) {
+                        node.setAttribute('disabled', 'disabled');
+                    }
                     this.roles.push(i);
                 }
             }
@@ -378,8 +389,11 @@ YUI.add('moodle-enrol-rolemanager', function(Y) {
                 this._escCloseEvent.detach();
                 this._escCloseEvent = null;
             }
+            var node = null;
             for (var i in this.roles) {
-                this.get('contentNode').one('#add_assignable_role_'+this.roles[i]).removeAttribute('disabled');
+                if (node = this.get('contentNode').one('#add_assignable_role_'+i)) {
+                    node.removeAttribute('disabled');
+                }
             }
             this.roles = [];
             this.user = null;

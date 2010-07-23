@@ -83,7 +83,7 @@ $table->set_fields($fields);
 $renderer = $PAGE->get_renderer('core_enrol');
 $canassign = has_capability('moodle/role:assign', $manager->get_context());
 $users = $manager->get_other_users_for_display($renderer, $pageurl, $table->sort, $table->sortdirection, $table->page, $table->perpage);
-$assignableroles = $manager->get_assignable_roles();
+$assignableroles = $manager->get_assignable_roles(true);
 foreach ($users as $userid=>&$user) {
     $user['picture'] = $OUTPUT->render($user['picture']);
     $user['role'] = $renderer->user_roles_and_actions($userid, $user['roles'], $assignableroles, $canassign, $pageurl);

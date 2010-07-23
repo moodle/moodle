@@ -90,6 +90,7 @@ class course_enrolment_manager {
     private $_plugins = null;
     private $_roles = null;
     private $_assignableroles = null;
+    private $_assignablerolesothers = null;
     private $_groups = null;
     /**#@-*/
 
@@ -438,11 +439,25 @@ class course_enrolment_manager {
      *
      * @return array
      */
-    public function get_assignable_roles() {
+    public function get_assignable_roles($otherusers = false) {
         if ($this->_assignableroles === null) {
             $this->_assignableroles = get_assignable_roles($this->context, ROLENAME_ALIAS, false); // verifies unassign access control too
         }
-        return $this->_assignableroles;
+
+        if ($otherusers) {
+            if (!is_array($this->_assignablerolesothers)) {
+                $this->_assignablerolesothers = array();
+                list($courseviewroles, $ignored) = get_roles_with_cap_in_context($this->context, 'moodle/course:view');
+                foreach ($this->_assignableroles as $roleid=>$role) {
+                    if (isset($courseviewroles[$roleid])) {
+                        $this->_assignablerolesothers[$roleid] = $role;
+                    }
+                }
+            }
+            return $this->_assignablerolesothers;
+        } else {
+            return $this->_assignableroles;
+        }
     }
 
     /**

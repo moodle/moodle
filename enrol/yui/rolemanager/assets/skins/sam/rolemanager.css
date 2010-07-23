@@ -1,4 +1,4 @@
-.enrolpanel {display:none;position:absolute;background-color:#666;padding:0 5px;}
+.enrolpanel {display:none;position:absolute;background-color:#666;padding:0 5px;min-width:200px;}
 .enrolpanel.visible {display:block;}
 .enrolpanel .container {position:relative;background-color:#fff;border:1px solid #999;top:-5px;}
 .enrolpanel .container .header {border-bottom:1px solid #999;}
