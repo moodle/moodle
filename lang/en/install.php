@@ -24,7 +24,7 @@
  */
 
 $string['admindirerror'] = 'The admin directory specified is incorrect';
-$string['admindirname'] = 'Admin Directory';
+$string['admindirname'] = 'Admin directory';
 $string['admindirsetting'] = 'A very few webhosts use /admin as a special URL for you to access a 
     control panel or something.  Unfortunately this conflicts with the 
     standard location for the Moodle admin pages.  You can fix this by 

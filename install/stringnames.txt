@@ -29,9 +29,9 @@ dataroot,install
 dbprefix,install
 dirroot,install
 downloadedfilecheckfailed,error
-environment,install
-environmentrequireinstall,install
-environmentrequireversion,install
+environmenthead,install
+environmentrequireinstall,admin
+environmentrequireversion,admin
 environmentsub2,install
 errorsinenvironment,install
 installation,install
@@ -57,7 +57,7 @@ phpextension,install
 phpversionhelp,install
 phpversion,install
 previous,moodle
-reload,admin
+reload,moodle
 remotedownloaderror,error
 thisdirection,langconfig
 thislanguage,langconfig

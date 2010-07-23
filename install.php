@@ -494,7 +494,7 @@ if ($config->stage == INSTALL_ENVIRONMENT or $config->stage == INSTALL_PATHS) {
     if ($version_fail or $curl_fail or $zip_fail) {
         $config->stage = INSTALL_ENVIRONMENT;
 
-        install_print_header($config, get_string('environment', 'install'),
+        install_print_header($config, get_string('environmenthead', 'install'),
                                       get_string('errorsinenvironment', 'install'),
                                       get_string('environmentsub2', 'install'));
 

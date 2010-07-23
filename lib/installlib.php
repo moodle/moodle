@@ -300,7 +300,7 @@ function install_print_footer($config, $reload=false) {
     if ($config->stage > INSTALL_WELCOME) {
         $first = '<input type="submit" id="previousbutton" name="previous" value="&laquo; '.s(get_string('previous')).'" />';
     } else {
-        $first = '<input type="submit" id="previousbutton" name="next" value="'.s(get_string('reload', 'admin')).'" />';
+        $first = '<input type="submit" id="previousbutton" name="next" value="'.s(get_string('reload')).'" />';
         $first .= '<script type="text/javascript">
 //<![CDATA[
     var first = document.getElementById("previousbutton");
@@ -311,7 +311,7 @@ function install_print_footer($config, $reload=false) {
     }
 
     if ($reload) {
-        $next = '<input type="submit" id="nextbutton" name="next" value="'.s(get_string('reload', 'admin')).'" />';
+        $next = '<input type="submit" id="nextbutton" name="next" value="'.s(get_string('reload')).'" />';
     } else {
         $next = '<input type="submit" id="nextbutton" name="next" value="'.s(get_string('next')).' &raquo;" />';
     }
