@@ -50,8 +50,7 @@ $struses         = get_string('activities');
 $strparticipants = get_string('participants');
 $strmanagegrping = get_string('showgroupsingrouping', 'group');
 
-$basemenu = ($course->id == SITEID) ? 'frontpage' : 'courseadmin';
-$PAGE->settingsnav->get($basemenu)->get('users')->get('groups')->make_active();
+navigation_node::override_active_url(new moodle_url('/group/index.php', array('id'=>$courseid)));
 $PAGE->navbar->add($strgroupings);
 
 /// Print header
