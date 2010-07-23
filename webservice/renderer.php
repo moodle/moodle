@@ -143,49 +143,54 @@ class core_webservice_renderer extends plugin_renderer_base {
      * @return string the table html + add operation html
      */
     public function admin_service_function_list($functions, $service) {
-        $table = new html_table();
-        $table->head = array(get_string('function', 'webservice'),
-            get_string('description'), get_string('requiredcaps', 'webservice'));
-        $table->align = array('left', 'left', 'left');
-        $table->size = array('15%', '40%', '40%');
-        $table->width = '100%';
-        $table->align[] = 'left';
+        if (!empty($functions)) {
+            $table = new html_table();
+            $table->head = array(get_string('function', 'webservice'),
+                get_string('description'), get_string('requiredcaps', 'webservice'));
+            $table->align = array('left', 'left', 'left');
+            $table->size = array('15%', '40%', '40%');
+            $table->width = '100%';
+            $table->align[] = 'left';
 
-        //display remove function operation (except for build-in service)
-        if (empty($service->component)) {
-            $table->head[] = get_string('edit');
-            $table->align[] = 'center';
-        }
-
-        foreach ($functions as $function) {
-            $function = external_function_info($function);
-            $requiredcaps = html_writer::tag('div',
-                            empty($function->capabilities)?'':$function->capabilities,
-                            array('class' => 'functiondesc'));;
-            $description = html_writer::tag('div', $function->description,
-                            array('class' => 'functiondesc'));
             //display remove function operation (except for build-in service)
             if (empty($service->component)) {
-                $removeurl = new moodle_url('/admin/webservice/service_functions.php',
-                                array('sesskey' => sesskey(), 'fid' => $function->id,
-                                    'id' => $service->id,
-                                    'action' => 'delete'));
-                $removelink = html_writer::tag('a',
-                                get_string('removefunction', 'webservice'),
-                                array('href' => $removeurl));
-                $table->data[] = array($function->name, $description, $requiredcaps, $removelink);
-            } else {
-                $table->data[] = array($function->name, $description, $requiredcaps);
+                $table->head[] = get_string('edit');
+                $table->align[] = 'center';
             }
-        }
 
-        $html = html_writer::table($table);
+            foreach ($functions as $function) {
+                $function = external_function_info($function);
+                $requiredcaps = html_writer::tag('div',
+                                empty($function->capabilities) ? '' : $function->capabilities,
+                                array('class' => 'functiondesc'));
+                ;
+                $description = html_writer::tag('div', $function->description,
+                                array('class' => 'functiondesc'));
+                //display remove function operation (except for build-in service)
+                if (empty($service->component)) {
+                    $removeurl = new moodle_url('/admin/webservice/service_functions.php',
+                                    array('sesskey' => sesskey(), 'fid' => $function->id,
+                                        'id' => $service->id,
+                                        'action' => 'delete'));
+                    $removelink = html_writer::tag('a',
+                                    get_string('removefunction', 'webservice'),
+                                    array('href' => $removeurl));
+                    $table->data[] = array($function->name, $description, $requiredcaps, $removelink);
+                } else {
+                    $table->data[] = array($function->name, $description, $requiredcaps);
+                }
+            }
+
+            $html = html_writer::table($table);
+        } else {
+            $html = get_string('nofunctions', 'webservice') . html_writer::empty_tag('br');
+        }
 
         //display add function operation (except for build-in service)
         if (empty($service->component)) {
             $addurl = new moodle_url('/admin/webservice/service_functions.php',
                             array('sesskey' => sesskey(), 'id' => $service->id, 'action' => 'add'));
-            $html .= html_writer::tag('a', get_string('add'), array('href' => $addurl));
+            $html .= html_writer::tag('a', get_string('addfunctions', 'webservice'), array('href' => $addurl));
         }
 
         return $html;

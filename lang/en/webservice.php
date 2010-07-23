@@ -35,6 +35,7 @@ $string['addfunctions'] = 'Add functions';
 $string['addfunctionsdescription'] = 'On the <strong>Manage service</strong> page, click the <strong>Functions</strong> link for the newly created service. Add some functions to the service.';
 $string['addrequiredcapability'] = 'Assign/Unassign the required capability';
 $string['addservice'] = 'Add a new service: {$a->name} (id: {$a->id})';
+$string['addservicefunction'] = 'Add functions to the service "{$a}"';
 $string['allusers'] = 'All users';
 $string['amftestclient'] = 'AMF test client';
 $string['apiexplorer'] = 'API explorer';
@@ -110,6 +111,7 @@ $string['missingcaps_help'] = 'List of capabilities that the service functions r
 <br/><br/>Note: in rare case some of these "required" capabilities could depend of a function use case. For example \'moodle_role_get_enrolled_users\' function requires \'moodle/site:viewparticipants\' capability only for a site-wide request.';
 $string['missingpassword'] = 'Missing password';
 $string['missingusername'] = 'Missing username';
+$string['nofunctions'] = 'This service has no functions.';
 $string['norequiredcapability'] = 'No required capability';
 $string['notoken'] = 'The token list is empty.';
 $string['onesystemcontrolling'] = 'One system controlling Moodle with token';
