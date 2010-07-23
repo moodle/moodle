@@ -1435,7 +1435,7 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
 
                     echo '<a '.$linkcss.' '.$extra.
                          ' href="'.$CFG->wwwroot.'/mod/'.$mod->modname.'/view.php?id='.$mod->id.'">'.
-                         '<img src="'.$icon.'" class="activityicon" alt="" /> '.
+                         '<img src="'.$icon.'" class="activityicon" alt="'.get_string('modulename',$mod->modname).'" /> '.
                          $accesstext.'<span>'.$instancename.$altname.'</span></a>';
 
                     if (!empty($mod->groupingid) && has_capability('moodle/course:managegroups', get_context_instance(CONTEXT_COURSE, $course->id))) {
@@ -1448,7 +1448,7 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                     // Display greyed-out text of link
                     echo '<span class="dimmed_text" '.$extra.' ><span class="accesshide">'.
                         get_string('notavailableyet','condition').': </span>'.
-                        '<img src="'.$icon.'" class="activityicon" alt="" /> <span>'.
+                        '<img src="'.$icon.'" class="activityicon" alt="'.get_string('modulename', $mod->modname).'" /> <span>'.
                         $instancename.$altname.'</span></span>';
                 }
             }

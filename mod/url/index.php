@@ -91,7 +91,7 @@ foreach ($urls as $url) {
     $icon = '';
     if (!empty($cm->icon)) {
         // each url has an icon in 2.0
-        $icon = '<img src="'.$OUTPUT->pix_url($cm->icon).'" class="activityicon" alt="" /> ';
+        $icon = '<img src="'.$OUTPUT->pix_url($cm->icon).'" class="activityicon" alt="'.get_string('modulename', $cm->modname).'" /> ';
     }
 
     $class = $url->visible ? '' : 'class="dimmed"'; // hidden modules are dimmed

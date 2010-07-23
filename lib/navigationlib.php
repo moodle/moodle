@@ -1367,9 +1367,9 @@ class global_navigation extends navigation_node {
                 continue;
             }
             if ($cm->icon) {
-                $icon = new pix_icon($cm->icon, '', $cm->iconcomponent);
+                $icon = new pix_icon($cm->icon, get_string('modulename', $cm->modname), $cm->iconcomponent);
             } else {
-                $icon = new pix_icon('icon', '', $cm->modname);
+                $icon = new pix_icon('icon', get_string('modulename', $cm->modname), $cm->modname);
             }
             $url = new moodle_url('/mod/'.$cm->modname.'/view.php', array('id'=>$cm->id));
             $activitynode = $sectionnode->add($cm->name, $url, navigation_node::TYPE_ACTIVITY, $cm->name, $cm->id, $icon);
