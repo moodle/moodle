@@ -39,6 +39,7 @@ YUI.add('moodle-calendar-eventmanager', function(Y) {
             this.on('hideevent', panel.hide, panel);
             td.on('mouseenter', this.startShow, this);
             td.on('mouseleave', this.startHide, this);
+            return true;
         },
         startShow : function() {
             if (this.get(SHOWTIMEOUT) !== null) {
