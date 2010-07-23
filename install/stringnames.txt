@@ -1,4 +1,3 @@
-admindir,install
 admindirname,install
 availablelangs,install
 cannotcreatelangdir,error
