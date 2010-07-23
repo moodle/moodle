@@ -44,6 +44,7 @@ $baseurl = new moodle_url('/admin/roles/usersroles.php', array('userid'=>$userid
 
 $PAGE->set_url($baseurl);
 $PAGE->set_context($coursecontext);
+$PAGE->set_pagelayout('admin');
 
 /// Check login and permissions.
 require_login($course);

@@ -55,6 +55,7 @@ if (!has_capability('moodle/role:override', $context)) {
 }
 $PAGE->set_url($url);
 $PAGE->set_context($context);
+$PAGE->set_pagelayout('admin');
 
 $courseid = $course->id;
 
@@ -79,7 +80,6 @@ $title = get_string('overridepermissionsforrole', 'role', $a);
 
 $currenttab = 'permissions';
 
-$PAGE->set_pagelayout('admin');
 $PAGE->set_title($title);
 $PAGE->navbar->add($straction);
 switch ($context->contextlevel) {
