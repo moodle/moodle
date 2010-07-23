@@ -40,6 +40,7 @@ $string['databasetypehead'] = 'Scegli un database driver';
 $string['dataroot'] = 'Cartella dei dati';
 $string['dbprefix'] = 'Prefisso tabelle';
 $string['dirroot'] = 'Cartella di Moodle';
+$string['environmenthead'] = 'Verifica del vostro ambiente...';
 $string['environmentsub2'] = 'Ciascuna release di Moodle prevede come requisito minimo una certa versione del PHP assieme ad una serie di estensioni. Prima di una installazione o di un aggiornamento viene eseguita la verifica di questi requisiti minimi. Se non sapete come installare nuove versioni del PHP o le sue estensioni, contattate l\'amministratore del vostro server.';
 $string['errorsinenvironment'] = 'Ci sono problemi nel vostro ambiente';
 $string['installation'] = 'Installazione';

@@ -35,6 +35,7 @@ $string['chooselanguagesub'] = 'Сейчас необходимо выбрать
 $string['dataroot'] = 'Каталог данных';
 $string['dbprefix'] = 'Префикс имён таблиц';
 $string['dirroot'] = 'Каталог Moodle';
+$string['environmenthead'] = 'Проверка окружения...';
 $string['installation'] = 'Установка';
 $string['langdownloaderror'] = 'К несчастью, не удалось установить язык "{$a}". Процесс установки продолжится на английском.';
 $string['memorylimithelp'] = '<p>Сейчас ограничение памяти в PHP на Вашем сервере установлено в {$a}.</p>

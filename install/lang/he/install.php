@@ -35,6 +35,7 @@ $string['chooselanguagesub'] = 'אנא בחר שפה עבור ההתקנה בל�
 $string['dataroot'] = 'ספריית הנתנים';
 $string['dbprefix'] = 'Tables prefix';
 $string['dirroot'] = 'ספריית ה-Moodle';
+$string['environmenthead'] = 'בודק את הסביבה שלך...';
 $string['installation'] = 'התקנה';
 $string['langdownloaderror'] = 'לצערינו השפה "{$a}" לא הותקנה. תהליך ההתקנה ימשיך באנגלית.';
 $string['memorylimithelp'] = '<p>

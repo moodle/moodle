@@ -31,3 +31,4 @@
 $string['language'] = 'زبان';
 $string['next'] = 'بعدی';
 $string['previous'] = 'قبلی';
+$string['reload'] = 'بررسی مجدد';

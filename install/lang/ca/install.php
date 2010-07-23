@@ -37,6 +37,7 @@ $string['databasename'] = 'Nom de la base de dades:';
 $string['dataroot'] = 'Directori de dades';
 $string['dbprefix'] = 'Prefix de taules';
 $string['dirroot'] = 'Directori de Moodle';
+$string['environmenthead'] = 'S\'està comprovant el vostre entorn';
 $string['errorsinenvironment'] = 'Hi ha errors en l\'entorn.';
 $string['installation'] = 'Instal·lació';
 $string['langdownloaderror'] = 'Dissortadament l\'idioma "{$a}" no està instal·lat. La instal·lació prosseguirà en anglès.';

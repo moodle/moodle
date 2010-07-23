@@ -35,6 +35,7 @@ $string['chooselanguagesub'] = 'Vælg et sprog til brug under installationen. Se
 $string['dataroot'] = 'Datamappe';
 $string['dbprefix'] = 'Præfix for tabeller';
 $string['dirroot'] = 'Moodle-mappe';
+$string['environmenthead'] = 'Kontrollerer din serveropsætning...';
 $string['installation'] = 'Installation';
 $string['langdownloaderror'] = 'Sproget "{$a}" blev desværre ikke installeret. Installationen vil fortsætte på engelsk.';
 $string['memorylimithelp'] = '<p>Den mængde hukommelse PHP kan bruge, er sat til {$a}.</p> 

@@ -31,3 +31,4 @@
 $string['language'] = 'Língua';
 $string['next'] = 'Próximo';
 $string['previous'] = 'Prévio';
+$string['reload'] = 'Recarregar';

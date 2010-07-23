@@ -37,6 +37,7 @@ $string['databasename'] = 'Datu-basearen izena';
 $string['dataroot'] = 'Datu-direktorioa';
 $string['dbprefix'] = 'Taulen aurrizkia';
 $string['dirroot'] = 'Moodle-ren direktorioa';
+$string['environmenthead'] = 'Zure ingurunea egiaztatzen...';
 $string['errorsinenvironment'] = 'Kale egin du ingurunearen egiaztatzeak!';
 $string['installation'] = 'Instalazioa';
 $string['langdownloaderror'] = '"{$a}" hizkuntza ezin izan da instalatu. Instalazio-prozesuak ingelesez jarraituko du.';

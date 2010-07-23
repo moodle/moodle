@@ -31,3 +31,4 @@
 $string['language'] = 'Taal';
 $string['next'] = 'Volgende';
 $string['previous'] = 'Vorige';
+$string['reload'] = 'Opnieuw laden';

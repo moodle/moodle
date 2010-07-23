@@ -38,6 +38,7 @@ $string['databasetypehead'] = 'Vali andmebaasi draiver';
 $string['dataroot'] = 'Andmete kataloog';
 $string['dbprefix'] = 'Tabeli eesliide';
 $string['dirroot'] = 'Moodle kataloog';
+$string['environmenthead'] = 'Keskkonna kontrollimine...';
 $string['errorsinenvironment'] = 'Keskkonna sobivuse kontroll ebaõnnestus!';
 $string['installation'] = 'Installeerimine';
 $string['langdownloaderror'] = 'Kahjuks keelt "{$a}" ei paigaldatud. Paigaldamine jätkub inglise keeles.';

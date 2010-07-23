@@ -40,6 +40,7 @@ $string['databasetypehead'] = '데이터베이스 드라이버 선택';
 $string['dataroot'] = '데이타 경로';
 $string['dbprefix'] = '테이블 접두어';
 $string['dirroot'] = '무들 디렉토리';
+$string['environmenthead'] = '구동환경을 점검합니다...';
 $string['environmentsub2'] = '개개의 무들 배포본은 필요로하는 최소한의 PHP 버전과 확장기능이 다릅니다. 각 판을 설치하거나 판올림하기 전에 완벽한 구동환경을 점검해야 합니다. 혹 여러분이 어떻게 새 판을 설치해야 할지 또 어떻게 PHP 확장 기능을 설치해야 할지 모르겠다면, 서버 관리자에게 문의하기 바랍니다.';
 $string['errorsinenvironment'] = '환경설정에 오류가 있습니다!';
 $string['installation'] = '설치';

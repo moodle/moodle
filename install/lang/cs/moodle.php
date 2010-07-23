@@ -31,3 +31,4 @@
 $string['language'] = 'Jazyk';
 $string['next'] = 'Další';
 $string['previous'] = 'Předchozí';
+$string['reload'] = 'Obnovit';

@@ -35,6 +35,7 @@ $string['chooselanguagesub'] = 'Please choose a language for the installation ON
 $string['dataroot'] = 'Data Directory';
 $string['dbprefix'] = 'Tables prefix';
 $string['dirroot'] = 'Moodle Directory';
+$string['environmenthead'] = 'Checking your environment ...';
 $string['installation'] = 'Installation';
 $string['langdownloaderror'] = 'Unfortunately the language "{$a}" was not installed. The installation process will continue in English.';
 $string['memorylimithelp'] = '<p>The PHP memory limit for your server is currently set to {$a}.</p>

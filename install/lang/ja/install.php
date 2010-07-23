@@ -40,6 +40,7 @@ $string['databasetypehead'] = 'データベースドライバを選択する';
 $string['dataroot'] = 'データディレクトリ';
 $string['dbprefix'] = 'テーブル接頭辞';
 $string['dirroot'] = 'Moodleディレクトリ';
+$string['environmenthead'] = 'あなたの環境を確認しています ...';
 $string['environmentsub2'] = 'それぞれのMoodleリリースには、PHPバージョンの最小必要条件および多くの必須PHP拡張モジュールがあります。完全な環境チェックは、インストールおよびアップグレードごとに実行されます。新しいPHPバージョンのインストールまたはPHP拡張モジュールの有効化に関して分からない場合、あなたのサーバ管理者に連絡してください。';
 $string['errorsinenvironment'] = '環境チェックが失敗しました!';
 $string['installation'] = 'インストレーション';

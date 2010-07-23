@@ -35,6 +35,7 @@ $string['chooselanguagesub'] = 'Dewiswch iaith ar gyfer y broses osod YN UNIG. G
 $string['dataroot'] = 'Cyfeiriadur Data';
 $string['dbprefix'] = 'Llythrennau Blaen Tablau';
 $string['dirroot'] = 'Cyfeiriadur Moodle';
+$string['environmenthead'] = 'Wrthi\'n profi eich amgylchedd ...';
 $string['installation'] = 'Gosod';
 $string['langdownloaderror'] = 'Yn anffodus, ni osodwyd yr iaith ganlynol: "{$a}". Bydd y broses osod yn cario ymlaen yn Saesneg.';
 $string['memorylimithelp'] = '<p>Mae maint y cof PHP yn eich gweinydd ar hyn o bryd yn {$a}.</p>

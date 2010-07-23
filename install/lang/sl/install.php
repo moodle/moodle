@@ -35,6 +35,7 @@ $string['chooselanguagesub'] = 'Izberite jezika SAMO za namestitev. Pozneje bost
 $string['dataroot'] = 'Imenik za podatke';
 $string['dbprefix'] = 'Predpona tabel';
 $string['dirroot'] = 'Imenik Moodle';
+$string['environmenthead'] = 'Preverjanje vašega okolja ...';
 $string['installation'] = 'Namestitev';
 $string['langdownloaderror'] = 'Žal jezik "{$a}" ni bil nameščen. Postopek namestitve se bo nadaljeval v angleščini.';
 $string['memorylimithelp'] = '<p>Omejitev pomnilnika PHP je trenutno na vašem strežniku nastavljena na {$a}.</p>

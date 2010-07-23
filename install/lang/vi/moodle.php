@@ -31,3 +31,4 @@
 $string['language'] = 'Ngôn ngữ';
 $string['next'] = 'Tiếp theo';
 $string['previous'] = 'Trước';
+$string['reload'] = 'Nạp lại';

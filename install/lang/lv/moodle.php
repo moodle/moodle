@@ -31,3 +31,4 @@
 $string['language'] = 'Valoda';
 $string['next'] = 'Nākamais';
 $string['previous'] = 'Iepriekšējais';
+$string['reload'] = 'Atkārtoti ielādēt';

@@ -31,3 +31,4 @@
 $string['language'] = 'Dil';
 $string['next'] = 'Sonraki';
 $string['previous'] = 'Önceki';
+$string['reload'] = 'Tekrar yükle';

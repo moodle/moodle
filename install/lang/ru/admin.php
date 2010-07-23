@@ -36,3 +36,5 @@ $string['cliunknowoption'] = 'Неопределённые опции
 {$a}
 .Пожалуйста, используйте опцию --help';
 $string['cliyesnoprompt'] = 'Введите y (обозначает да) или n (обозначает нет)';
+$string['environmentrequireinstall'] = 'необходимо установить и включить';
+$string['environmentrequireversion'] = 'требуется версия {$a->needed}, у Вас используется версия {$a->current}';

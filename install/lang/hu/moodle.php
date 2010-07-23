@@ -31,3 +31,4 @@
 $string['language'] = 'Nyelv';
 $string['next'] = 'Következő';
 $string['previous'] = 'Előző';
+$string['reload'] = 'Újbóli betöltés';

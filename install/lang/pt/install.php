@@ -37,6 +37,7 @@ $string['databasename'] = 'Nome da base de dados:';
 $string['dataroot'] = 'Directório de dados';
 $string['dbprefix'] = 'Prefixo das tabelas';
 $string['dirroot'] = 'Directório do Moodle';
+$string['environmenthead'] = 'A verificar o seu ambiente ...';
 $string['errorsinenvironment'] = 'Erros no ambiente!';
 $string['installation'] = 'Instalação';
 $string['langdownloaderror'] = 'A língua "{$a}" não foi instalada. O processo de instalação continuará em inglês.';

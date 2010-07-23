@@ -37,6 +37,7 @@ $string['databasename'] = 'Ingoa patengi raraunga';
 $string['dataroot'] = 'Whaiaronga Raraunga';
 $string['dbprefix'] = 'Kuhimua o Ngā Ripanga';
 $string['dirroot'] = 'Whaiaronga Moodle';
+$string['environmenthead'] = 'E taki ana i tō taiao …';
 $string['errorsinenvironment'] = 'He hapa i te taiao!n';
 $string['installation'] = 'Tāutatanga';
 $string['langdownloaderror'] = 'Kāore te reo "{$a}" i utaina. Ka tāuta tonu i te reo Ingarihi.';

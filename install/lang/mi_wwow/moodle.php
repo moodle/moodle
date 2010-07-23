@@ -31,3 +31,4 @@
 $string['language'] = 'Reo';
 $string['next'] = 'Panuku';
 $string['previous'] = 'Tōmua';
+$string['reload'] = 'whakakīkī';

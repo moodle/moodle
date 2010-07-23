@@ -40,6 +40,7 @@ $string['databasetypehead'] = 'Adatbázismotor kiválasztása';
 $string['dataroot'] = 'Adatkönyvtár';
 $string['dbprefix'] = 'Táblázat előtagja';
 $string['dirroot'] = 'Moodle-könyvtár';
+$string['environmenthead'] = 'Környezetének ellenőrzése ...';
 $string['environmentsub2'] = 'Minden Moodle-változat valamilyen minimális verziójú PHP és szükséges számú PHP-kibővítés használatát írja elő. A telepítések és frissítések előtt teljes környezet-ellenőrzésre kerül sor. Ha nem tudja, hogyan kell egy új verziót telepíteni és a PHP-bővítéseket bekapcsolni, forduljon a rendszergazdához.';
 $string['errorsinenvironment'] = 'Hibák vannak a környezetben!';
 $string['installation'] = 'Telepítés';

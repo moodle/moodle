@@ -34,6 +34,7 @@ $string['chooselanguagehead'] = 'اختر اللغة';
 $string['dataroot'] = 'دليل البيانات';
 $string['dbprefix'] = 'مقدمة الجداول';
 $string['dirroot'] = 'دليل مودل';
+$string['environmenthead'] = 'يتم فحص البيئة';
 $string['installation'] = 'تثبيت';
 $string['phpversion'] = 'أصدار PHP';
 $string['phpversionhelp'] = '<p> يتطلب مودل على الاقل الأصدار 4.1.0 لـ PHP </p>

@@ -31,3 +31,4 @@
 $string['language'] = 'ភាសា';
 $string['next'] = 'បន្ទាប់';
 $string['previous'] = 'មុន​';
+$string['reload'] = 'ផ្ទុក​ឡើង​វិញ';

@@ -35,6 +35,7 @@ $string['chooselanguagesub'] = 'Vă rugăm selectaţi limba pentru interfaţa de
 $string['dataroot'] = 'Data Directory';
 $string['dbprefix'] = 'Prefix tabele';
 $string['dirroot'] = 'Director Moodle';
+$string['environmenthead'] = 'Se verifică mediul...';
 $string['installation'] = 'Instalare';
 $string['phpversion'] = 'Versiune PHP';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';

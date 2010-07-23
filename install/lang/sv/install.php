@@ -35,6 +35,7 @@ $string['chooselanguagesub'] = 'Var snäll och välj ett språk ENDAST för inst
 $string['dataroot'] = 'katalog för data';
 $string['dbprefix'] = 'Prefix för tabeller';
 $string['dirroot'] = 'Katalogen för Moodle';
+$string['environmenthead'] = 'Undersöker Din miljö...';
 $string['installation'] = 'Installation';
 $string['langdownloaderror'] = 'Språket "{$a}" installerades tyvärr inte. Installationen kommer att fullföljas på engelska.';
 $string['memorylimithelp'] = '<p>Minnesbegränsningen för PHP på Din server är f n inställt till {$a}.</p>

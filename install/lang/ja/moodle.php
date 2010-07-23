@@ -31,3 +31,4 @@
 $string['language'] = '言語設定';
 $string['next'] = '次へ';
 $string['previous'] = '前へ';
+$string['reload'] = 'リロード';

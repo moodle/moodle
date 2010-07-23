@@ -35,6 +35,7 @@ $string['chooselanguagesub'] = 'Escueya un idioma NAMÁS pa la instalación. va 
 $string['dataroot'] = 'Direutoriu de datos';
 $string['dbprefix'] = 'Prefixu de les tables';
 $string['dirroot'] = 'Direutoriu Moodle';
+$string['environmenthead'] = 'Verificando\'l so ámbitu ...';
 $string['installation'] = 'Instalación';
 $string['langdownloaderror'] = 'Desgraciadamente l\'idioma "{$a}" nun ta instaláu. El procesu d\'instalación va siguir n\'inglés.';
 $string['memorylimithelp'] = '<p>La llende de memoria del PHP del so servidor ta actualmente establecida en {$a}.</p>

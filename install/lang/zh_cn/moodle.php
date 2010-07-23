@@ -31,3 +31,4 @@
 $string['language'] = '语言';
 $string['next'] = '向后';
 $string['previous'] = '向前';
+$string['reload'] = '重新载入';

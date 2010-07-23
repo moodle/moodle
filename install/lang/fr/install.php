@@ -40,6 +40,7 @@ $string['databasetypehead'] = 'Sélectionner un pilote de base de données';
 $string['dataroot'] = 'Dossier de données';
 $string['dbprefix'] = 'Préfixe des tables';
 $string['dirroot'] = 'Dossier Moodle';
+$string['environmenthead'] = 'Vérification de l\'environnement...';
 $string['environmentsub2'] = 'Chaque version de Moodle nécessite une version minimale de certains composants PHP et des extensions de PHP obligatoires. Une vérification complète de l\'environnement est effectuée avec chaque installation et chaque mise à jour. Veuillez contacter l\'administrateur du serveur si vous ne savez pas comment installer une nouvelle version ou activer des extensions de PHP.';
 $string['errorsinenvironment'] = 'Échec de la vérification de l\'environnement !';
 $string['installation'] = 'Installation';

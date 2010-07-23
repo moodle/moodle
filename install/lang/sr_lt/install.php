@@ -40,6 +40,7 @@ $string['databasetypehead'] = 'Izaberi drajver baze podataka';
 $string['dataroot'] = 'Direktorijum podataka';
 $string['dbprefix'] = 'Prefiks tabele';
 $string['dirroot'] = 'Moodle direktorijum';
+$string['environmenthead'] = 'Proveravanje Vašeg okruženja...';
 $string['environmentsub2'] = 'Svaka verzija Moodlea ima minimum zahteva po pitanju odgovarajuće PHP verѕije i nekoliko obaveznih PHP ekstenzija.
 Puna provera okruženja se vrši pre svake instalacije ili ažuriranja postojeće verzije. Ukoliko ne znate kako da instalirate novu verziju ili omogućite PHP ektenzije kontaktirajte Vašeg server administratora.';
 $string['errorsinenvironment'] = 'Greške u okruženju';

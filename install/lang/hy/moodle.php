@@ -31,3 +31,4 @@
 $string['language'] = 'Լեզու';
 $string['next'] = 'Հաջորդը';
 $string['previous'] = 'Նախորդը';
+$string['reload'] = 'Վերաբեռնել';

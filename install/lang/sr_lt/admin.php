@@ -37,3 +37,5 @@ $string['clitypevaluedefault'] = 'otkucaj vrednost, pritisni Enter da biste upot
 $string['cliunknowoption'] = 'Neprepoznata opcija:
 {$a}';
 $string['cliyesnoprompt'] = 'otkucaj y (znači da) ili n (znači ne)';
+$string['environmentrequireinstall'] = 'je neophodno instalirati/omogućiti';
+$string['environmentrequireversion'] = 'neophodna verzija je {$a->needed} a Vi trenutno koristite verziju {$a->current}';

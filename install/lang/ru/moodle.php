@@ -31,3 +31,4 @@
 $string['language'] = 'Перевод';
 $string['next'] = 'Далее';
 $string['previous'] = 'Назад';
+$string['reload'] = 'Обновить';

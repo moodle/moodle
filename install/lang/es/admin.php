@@ -38,3 +38,5 @@ $string['cliunknowoption'] = 'Opciones no reconocidas:
 {$a}
 . Por favor, utilice la opción Ayuda.';
 $string['cliyesnoprompt'] = 'escriba s (sí) o n (no)';
+$string['environmentrequireinstall'] = 'es obligatorio que esté instalado/activado';
+$string['environmentrequireversion'] = 'versión {$a->needed} es obligatoria y está ejecutando {$a->current}';

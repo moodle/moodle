@@ -38,3 +38,5 @@ $string['cliunknowoption'] = 'Unrecognised options:
   {$a}
 Please use --help option.';
 $string['cliyesnoprompt'] = 'type y (means yes) or n (means no)';
+$string['environmentrequireinstall'] = 'must be installed and enabled';
+$string['environmentrequireversion'] = 'version {$a->needed} is required and you are running {$a->current}';

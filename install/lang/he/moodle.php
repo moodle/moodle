@@ -31,3 +31,4 @@
 $string['language'] = 'חבילת שפה';
 $string['next'] = 'הלאה';
 $string['previous'] = 'קודם';
+$string['reload'] = 'טען מחדש';

@@ -34,6 +34,9 @@ $string['cliincorrectvalueerror'] = 'Fehler: Falscher Wert "{$a->value}" für "{
 $string['cliincorrectvalueretry'] = 'Falscher Wert - versuchen Sie es nochmal';
 $string['clitypevalue'] = 'Wert eingeben';
 $string['clitypevaluedefault'] = 'Wert eingeben. Drücken Sie Enter, um den Standardwert zu benutzen ({$a})';
-$string['cliunknowoption'] = 'Nicht erkannte Optionen: {$a}.
+$string['cliunknowoption'] = 'Nicht erkannte Optionen: 
+  {$a}
 Für Hilfe nutzen Sie bitte die Hilfefunktion.';
 $string['cliyesnoprompt'] = 'tippen Sie y (für yes=ja) oder n (für no=nein)';
+$string['environmentrequireinstall'] = 'muss installiert und aktiviert sein';
+$string['environmentrequireversion'] = 'Version {$a->needed} ist erforderlich - aktuell ist {$a->current} installiert.';

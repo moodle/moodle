@@ -38,3 +38,5 @@ $string['cliunknowoption'] = 'Onherkenbare opties:
 {$a}
 gebruik --help optie.';
 $string['cliyesnoprompt'] = 'typ j (ja) of n (nee)';
+$string['environmentrequireinstall'] = 'moet geïnstalleerd/ingeschakeld zijn';
+$string['environmentrequireversion'] = 'versie {$a->needed} is vereist en je gebruikt nu versie {$a->current}';

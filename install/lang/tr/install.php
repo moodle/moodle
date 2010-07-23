@@ -40,6 +40,7 @@ $string['databasetypehead'] = 'Veritabanı sürücünü seçin';
 $string['dataroot'] = 'Veri Dizini';
 $string['dbprefix'] = 'Tablo öneki';
 $string['dirroot'] = 'Moodle Dizini';
+$string['environmenthead'] = 'Ortam kontrol ediliyor...';
 $string['errorsinenvironment'] = 'Ortamda hatalar var!';
 $string['installation'] = 'Kurulum';
 $string['langdownloaderror'] = 'Maalesef "{$a}" dil paketi kurulamadı. Kuruluma İngilizce olarak devam edilecek.';

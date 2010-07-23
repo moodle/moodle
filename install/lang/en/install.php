@@ -40,6 +40,7 @@ $string['databasetypehead'] = 'Choose database driver';
 $string['dataroot'] = 'Data Directory';
 $string['dbprefix'] = 'Tables prefix';
 $string['dirroot'] = 'Moodle Directory';
+$string['environmenthead'] = 'Checking your environment ...';
 $string['environmentsub2'] = 'Each Moodle release has some minimum PHP version requirement and a number of mandatory PHP extensions.
 Full environment check is done before each install and upgrade. Please contact server administrator if you do not know how to install new version or enable PHP extensions.';
 $string['errorsinenvironment'] = 'Environment check failed!';

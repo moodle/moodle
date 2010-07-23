@@ -31,3 +31,4 @@
 $string['language'] = 'Hizkuntza';
 $string['next'] = 'Hurrengoa';
 $string['previous'] = 'Aurrekoa';
+$string['reload'] = 'Berriz kargatu';

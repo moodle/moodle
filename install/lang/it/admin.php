@@ -33,8 +33,10 @@ $string['cliansweryes'] = 's';
 $string['cliincorrectvalueerror'] = 'Errore, il valore "{$a->value}" non è corretto per "{$a->option}"';
 $string['cliincorrectvalueretry'] = 'Valore non corretto, per favore riprova';
 $string['clitypevalue'] = 'inserisci valore';
-$string['clitypevaluedefault'] = 'inserisci valore oppure premi Invio per usare il valore di default ({$a})';
+$string['clitypevaluedefault'] = 'inserisci un valore oppure premi Invio per usare il valore di default ({$a})';
 $string['cliunknowoption'] = 'Opzioni non riconosciute:
 {$a}
 . Per favore utilizza l\'opzione --help.';
 $string['cliyesnoprompt'] = 'inserisci s (per Si) o n (per No)';
+$string['environmentrequireinstall'] = 'deve essere installato e abilitato';
+$string['environmentrequireversion'] = 'è necessaria la versione {$a->needed} e la vostra versione attuale è {$a->current}';

@@ -31,3 +31,4 @@
 $string['language'] = 'Sprog';
 $string['next'] = 'Næste';
 $string['previous'] = 'Forrige';
+$string['reload'] = 'Genindlæs';

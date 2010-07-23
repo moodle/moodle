@@ -40,6 +40,7 @@ $string['databasetypehead'] = 'Kies databankdriver';
 $string['dataroot'] = 'Gegevens';
 $string['dbprefix'] = 'Tabelvoorvoegsel';
 $string['dirroot'] = 'Moodle-map';
+$string['environmenthead'] = 'Omgeving controleren ...';
 $string['environmentsub2'] = 'Elke Moodleversie vraagt een minimum PHP-versie en een aantal vereiste PHP-extenties.
 De volledige installatie-omgeving wordt gecontroleerd voor elke installatie en upgrade. Contacteer je server beheerder als je niet weet hoe je de juiste PHP-versie moet installeren of PHP-extenties moet inschakelen.';
 $string['errorsinenvironment'] = 'Fouten in je omgeving!';

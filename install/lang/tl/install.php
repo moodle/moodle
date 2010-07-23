@@ -35,6 +35,7 @@ $string['chooselanguagesub'] = 'Pumili po ng wika para sa pagluluklok LAMANG.  S
 $string['dataroot'] = 'Bugsok ng Datos';
 $string['dbprefix'] = 'Unlapi ng mga teybol';
 $string['dirroot'] = 'Bugsok ng Moodle';
+$string['environmenthead'] = 'Sinusuri ang kapaligiran mo...';
 $string['installation'] = 'Pagluklok';
 $string['langdownloaderror'] = 'Ikinalulungkot namin na ang wikang "{$a}" ay hindi nailuklok. Ang kabuuan ng pagluluklok ay itutuloy sa Ingles.';
 $string['memorylimithelp'] = '<p>Ang memory limit ng PHP para sa server mo ay kasalukuyang nakatakda sa {$a}.</p>

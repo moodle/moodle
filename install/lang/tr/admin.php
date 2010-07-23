@@ -38,3 +38,5 @@ $string['cliunknowoption'] = 'Tanınmayan seçenekler:
 {$a}
 . Lütfen --help seçeneğini kullanın.';
 $string['cliyesnoprompt'] = 'e (evet) veya h (hayır) yazın';
+$string['environmentrequireinstall'] = 'yüklenmesi/etkinleştirilmesi gerekli';
+$string['environmentrequireversion'] = 'sürüm {$a->needed} gerekli ve şu anda {$a->current} çalışıyor';

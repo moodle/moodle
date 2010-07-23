@@ -35,6 +35,7 @@ $string['chooselanguagesub'] = 'Proszę wybrać język TYLKO do instalacji. Stro
 $string['dataroot'] = 'Katalog z danymi';
 $string['dbprefix'] = 'prefiksy tabel';
 $string['dirroot'] = 'Katalog Moodle';
+$string['environmenthead'] = 'Sprawdzam środowisko (ustawienia) ...';
 $string['installation'] = 'Instalacja';
 $string['langdownloaderror'] = 'Niestety język "{$a}" nie jest zainstalowany. Instalacja będzie przebiegać dalej po angielsku.';
 $string['memorylimithelp'] = 'Limit pamięci PHP dla Twojego serwera jest ustawiony obecnie na {$a}.</p>

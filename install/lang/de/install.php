@@ -40,6 +40,7 @@ $string['databasetypehead'] = 'Datenbank-Treiber wählen';
 $string['dataroot'] = 'Daten-Verzeichnis';
 $string['dbprefix'] = 'Tabellen-Prefix';
 $string['dirroot'] = 'Moodle-Verzeichnis';
+$string['environmenthead'] = 'Installationsvoraussetzungen werden geprüft ...';
 $string['environmentsub2'] = 'Jede Moodle-Version hat Mindestvoraussetzungen für der PHP-Version und für einige verbindliche PHP-Extensions. Vor einer Installation oder einer Aktualisierung wird immer eine vollständige Prüfung der Serverausstattung durchgeführt. Bitte fragen Sie den Administrator Ihres Servers, wenn Sie mit der Installation einer neuen Version oder mit der Aktivierung von PHP-Extensions nicht weiterkommen.';
 $string['errorsinenvironment'] = 'Fehler bei der Prüfung der Systemvoraussetzungen!';
 $string['installation'] = 'Installation';

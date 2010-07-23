@@ -31,3 +31,4 @@
 $string['language'] = 'Språk';
 $string['next'] = 'Nästa';
 $string['previous'] = 'Tidigare';
+$string['reload'] = 'Uppdatera';

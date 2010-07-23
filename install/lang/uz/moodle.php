@@ -31,3 +31,4 @@
 $string['language'] = 'Til';
 $string['next'] = 'Keyingisi';
 $string['previous'] = 'Oldingi';
+$string['reload'] = 'Qayta yuklash';

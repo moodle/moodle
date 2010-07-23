@@ -35,6 +35,7 @@ $string['chooselanguagesub'] = 'Velg språk (bare for INSTALLASJONEN). Du vil ku
 $string['dataroot'] = 'Datamappe';
 $string['dbprefix'] = 'Tabellprefix';
 $string['dirroot'] = 'Moodlemappe';
+$string['environmenthead'] = 'Sjekker "omgivelsene" dine...';
 $string['installation'] = 'Installasjon';
 $string['langdownloaderror'] = 'Beklageligvis ble ikke språkpakken "{$a}" installert. Installasjonsprosessen vil fortsette på Engelsk.';
 $string['memorylimithelp'] = '<p>PHP minnegrensen for serveren din er nå satt til {$a}.</p>

@@ -31,3 +31,4 @@
 $string['language'] = 'Keel';
 $string['next'] = 'Järgmine';
 $string['previous'] = 'Eelmine';
+$string['reload'] = 'Laadi uuesti';

@@ -35,6 +35,7 @@ $string['chooselanguagesub'] = 'Valitse kieli asennusohjelmaa varten. Voit valit
 $string['dataroot'] = 'Datahakemisto';
 $string['dbprefix'] = 'Taulukon etumerkki';
 $string['dirroot'] = 'Moodle hakemisto';
+$string['environmenthead'] = 'Ympäristön tarkistus';
 $string['installation'] = 'Asennus';
 $string['memorylimithelp'] = '<p>PHP muistiraja palvelimellesi on tällä hetkellä asetettu {$a}:han.</p>
 

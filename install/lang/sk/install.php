@@ -40,6 +40,7 @@ $string['databasetypehead'] = 'Vyberte driver pre databázu';
 $string['dataroot'] = 'Adresár pre údaje';
 $string['dbprefix'] = 'Predpona tabuliek';
 $string['dirroot'] = 'Adresár Moodle';
+$string['environmenthead'] = 'Kontrola programového prostredia...';
 $string['errorsinenvironment'] = 'Kontrola programového prostredia zlyhala!';
 $string['installation'] = 'Inštalácia';
 $string['langdownloaderror'] = 'Bohužiaľ, jazyk "{$a}" sa nepodarilo nainštalovať. Inštalácia bude pokračovať v angličtine.';
