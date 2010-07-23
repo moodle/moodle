@@ -37,9 +37,10 @@ if (!$cmid && !$courseid) {
 
 // Process self completion
 if ($courseid) {
-
+    $PAGE->set_url(new moodle_url('/course/togglecompletion.php', array('course'=>$courseid)));
+    
     // Check user is logged in
-    $course = $DB->get_record('course', array('id' => $courseid));
+    $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
     require_login($course);
 
     $completion = new completion_info($course);
@@ -89,10 +90,14 @@ if ($courseid) {
         }
 
         $strconfirm = get_string('confirmselfcompletion', 'completion');
-        print_header_simple($strconfirm, '', build_navigation(array(array('name' => $strconfirm, 'link' => '', 'type' => 'misc'))));
-        notice_yesno($strconfirm, $CFG->wwwroot.'/course/togglecompletion.php?course='.$courseid.'&confirm=1', $CFG->wwwroot.'/course/view.php?id='.$courseid); 
-        print_simple_box_end();
-        print_footer($course);
+        $PAGE->set_title($strconfirm);
+        $PAGE->set_heading($course->fullname);
+        $PAGE->navbar->add($strconfirm);
+        echo $OUTPUT->header();
+        $buttoncontinue = new single_button(new moodle_url('/course/togglecompletion.php', array('course'=>$courseid, 'confirm'=>1)), get_string('yes'), 'post');
+        $buttoncancel   = new single_button(new moodle_url('/course/view.php', array('id'=>$courseid)), get_string('no'), 'get');
+        echo $OUTPUT->confirm($strconfirm, $buttoncontinue, $buttoncancel);
+        echo $OUTPUT->footer();
         exit;
     }
 }
