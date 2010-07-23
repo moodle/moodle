@@ -91,9 +91,19 @@ $selectoroptions->alloweduserselector = $alloweduserselector;
 $selectoroptions->potentialuserselector = $potentialuserselector;
 echo $renderer->admin_authorised_user_selector($selectoroptions);
 
-//display the list of allowed users with their options (ip/timecreated / validuntil...)
-//check that the user has the service required capability (if needed)
+/// get the missing capabilities for all users (will be displayed into the renderer)
 $allowedusers = $webservicemanager->get_ws_authorised_users($id);
+$usersmissingcaps = $webservicemanager->get_missing_capabilities_by_users($allowedusers, $id);
+
+//add the missing capabilities to the allowed users object to be displayed by renderer
+foreach ($allowedusers as &$alloweduser) {
+    if (!is_siteadmin($alloweduser->id)) {
+        $alloweduser->missingcapabilities = implode(',', $usersmissingcaps[$alloweduser->id]);
+    }
+}
+
+/// display the list of allowed users with their options (ip/timecreated / validuntil...)
+//check that the user has the service required capability (if needed)
 if (!empty($allowedusers)) {
     $renderer = $PAGE->get_renderer('core', 'webservice');
     echo $OUTPUT->heading(get_string('serviceuserssettings', 'webservice'), 3, 'main');

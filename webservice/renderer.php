@@ -35,10 +35,8 @@ class core_webservice_renderer extends plugin_renderer_base {
      * @return string html
      */
     public function admin_authorised_user_selector(&$options) {
-        global $OUTPUT;
-
         $formcontent = html_writer::empty_tag('input',
-                array('name' => 'sesskey', 'value' => sesskey(), 'type' => 'hidden'));
+                        array('name' => 'sesskey', 'value' => sesskey(), 'type' => 'hidden'));
 
         $table = new html_table();
         $table->size = array('45%', '10%', '45%');
@@ -62,16 +60,18 @@ class core_webservice_renderer extends plugin_renderer_base {
 
         //create the three cells
         $label = html_writer::tag('label', get_string('serviceusers', 'webservice'),
-                array('for' => 'removeselect'));
+                        array('for' => 'removeselect'));
         $label = html_writer::tag('p', $label);
-        $authoriseduserscell = new html_table_cell($label . $options->alloweduserselector->display(true));
+        $authoriseduserscell = new html_table_cell($label .
+                        $options->alloweduserselector->display(true));
         $authoriseduserscell->id = 'existingcell';
         $buttonscell = new html_table_cell($addbutton . html_writer::empty_tag('br') . $removebutton);
         $buttonscell->id = 'buttonscell';
         $label = html_writer::tag('label', get_string('potusers', 'webservice'),
-                array('for' => 'addselect'));
+                        array('for' => 'addselect'));
         $label = html_writer::tag('p', $label);
-        $otheruserscell = new html_table_cell($label . $options->potentialuserselector->display(true));
+        $otheruserscell = new html_table_cell($label .
+                        $options->potentialuserselector->display(true));
         $otheruserscell->id = 'potentialcell';
 
         $cells = array($authoriseduserscell, $buttonscell, $otheruserscell);
@@ -84,7 +84,7 @@ class core_webservice_renderer extends plugin_renderer_base {
         $actionurl = new moodle_url('/admin/webservice/service_users.php',
                         array('id' => $options->serviceid));
         $html = html_writer::tag('form', $formcontent,
-                array('id' => 'assignform', 'action' => $actionurl, 'method' => 'post'));
+                        array('id' => 'assignform', 'action' => $actionurl, 'method' => 'post'));
         return $html;
     }
 
@@ -94,33 +94,121 @@ class core_webservice_renderer extends plugin_renderer_base {
      * @return string $html
      */
     public function admin_authorised_user_list($users, $serviceid) {
-        global $OUTPUT;
-        $html = $OUTPUT->box_start('generalbox', 'alloweduserlist');
+        $html = $this->output->box_start('generalbox', 'alloweduserlist');
         foreach ($users as $user) {
             $modifiedauthoriseduserurl = new moodle_url('/admin/webservice/service_user_settings.php',
                             array('userid' => $user->id, 'serviceid' => $serviceid));
-            $html .= html_writer::tag('a', $user->firstname . " " . $user->lastname . ", " . $user->email,
+            $html .= html_writer::tag('a', $user->firstname . " "
+                            . $user->lastname . ", " . $user->email,
                             array('href' => $modifiedauthoriseduserurl));
-            $html .= html_writer::empty_tag('br');
+            //add missing capabilities
+            if (!empty($user->missingcapabilities)) {
+                $html .= html_writer::tag('div',
+                                get_string('usermissingcaps', 'webservice', $user->missingcapabilities)
+                                . '&nbsp;' . $this->output->help_icon('missingcaps', 'webservice'),
+                                array('class' => 'missingcaps', 'id' => 'usermissingcaps'));
+                $html .= html_writer::empty_tag('br');
+            } else {
+                $html .= html_writer::empty_tag('br') . html_writer::empty_tag('br');
+            }
         }
-        $html .= $OUTPUT->box_end();
+        $html .= $this->output->box_end();
         return $html;
     }
 
     /**
-     *  Display Reset token confirmation box
+     * Display a confirmation page to remove a function from a service
+     * @param object $function
+     * @param object $service
+     * @return string html
+     */
+    public function admin_remove_service_function_confirmation($function, $service) {
+        $optionsyes = array('id' => $service->id, 'action' => 'delete',
+            'confirm' => 1, 'sesskey' => sesskey(), 'fid' => $function->id);
+        $optionsno = array('id' => $service->id);
+        $formcontinue = new single_button(new moodle_url('service_functions.php',
+                                $optionsyes), get_string('remove'));
+        $formcancel = new single_button(new moodle_url('service_functions.php',
+                                $optionsno), get_string('cancel'), 'get');
+        return $this->output->confirm(get_string('removefunctionconfirm', 'webservice',
+                        (object) array('service' => $service->name, 'function' => $function->name)),
+                $formcontinue, $formcancel);
+    }
+
+    /**
+     * Display list of function for a given service
+     * If the service is build-in do not display remove/add operation (read-only)
+     * @param array $functions
+     * @param object $service
+     * @return string the table html + add operation html
+     */
+    public function admin_service_function_list($functions, $service) {
+        $table = new html_table();
+        $table->head = array(get_string('function', 'webservice'),
+            get_string('description'), get_string('requiredcaps', 'webservice'));
+        $table->align = array('left', 'left', 'left');
+        $table->size = array('15%', '40%', '40%');
+        $table->width = '100%';
+        $table->align[] = 'left';
+
+        //display remove function operation (except for build-in service)
+        if (empty($service->component)) {
+            $table->head[] = get_string('edit');
+            $table->align[] = 'center';
+        }
+
+        foreach ($functions as $function) {
+            $function = external_function_info($function);
+            $requiredcaps = html_writer::tag('div',
+                            empty($function->capabilities)?'':$function->capabilities,
+                            array('class' => 'functiondesc'));;
+            $description = html_writer::tag('div', $function->description,
+                            array('class' => 'functiondesc'));
+            //display remove function operation (except for build-in service)
+            if (empty($service->component)) {
+                $removeurl = new moodle_url('/admin/webservice/service_functions.php',
+                                array('sesskey' => sesskey(), 'fid' => $function->id,
+                                    'id' => $service->id,
+                                    'action' => 'delete'));
+                $removelink = html_writer::tag('a',
+                                get_string('removefunction', 'webservice'),
+                                array('href' => $removeurl));
+                $table->data[] = array($function->name, $description, $requiredcaps, $removelink);
+            } else {
+                $table->data[] = array($function->name, $description, $requiredcaps);
+            }
+        }
+
+        $html = html_writer::table($table);
+
+        //display add function operation (except for build-in service)
+        if (empty($service->component)) {
+            $addurl = new moodle_url('/admin/webservice/service_functions.php',
+                            array('sesskey' => sesskey(), 'id' => $service->id, 'action' => 'add'));
+            $html .= html_writer::tag('a', get_string('add'), array('href' => $addurl));
+        }
+
+        return $html;
+    }
+
+    /**
+     * Display Reset token confirmation box
      * @param object $token to reset
      * @return string html
      */
     public function user_reset_token_confirmation($token) {
-        global $OUTPUT, $CFG;
+        global $CFG;
         $managetokenurl = $CFG->wwwroot . "/user/managetoken.php?sesskey=" . sesskey();
-        $optionsyes = array('tokenid' => $token->id, 'action' => 'resetwstoken', 'confirm' => 1, 'sesskey' => sesskey());
+        $optionsyes = array('tokenid' => $token->id, 'action' => 'resetwstoken', 'confirm' => 1,
+            'sesskey' => sesskey());
         $optionsno = array('section' => 'webservicetokens', 'sesskey' => sesskey());
-        $formcontinue = new single_button(new moodle_url($managetokenurl, $optionsyes), get_string('reset'));
-        $formcancel = new single_button(new moodle_url($managetokenurl, $optionsno), get_string('cancel'), 'get');
-        $html = $OUTPUT->confirm(get_string('resettokenconfirm', 'webservice',
-                                (object) array('user' => $token->firstname . " " . $token->lastname, 'service' => $token->name)),
+        $formcontinue = new single_button(new moodle_url($managetokenurl, $optionsyes),
+                        get_string('reset'));
+        $formcancel = new single_button(new moodle_url($managetokenurl, $optionsno),
+                        get_string('cancel'), 'get');
+        $html = $this->output->confirm(get_string('resettokenconfirm', 'webservice',
+                                (object) array('user' => $token->firstname . " " .
+                            $token->lastname, 'service' => $token->name)),
                         $formcontinue, $formcancel);
         return $html;
     }
@@ -132,7 +220,7 @@ class core_webservice_renderer extends plugin_renderer_base {
      * @return string html code
      */
     public function user_webservice_tokens_box($tokens, $userid) {
-        global $OUTPUT, $CFG;
+        global $CFG;
 
         // display strings
         $stroperation = get_string('operation', 'webservice');
@@ -142,8 +230,8 @@ class core_webservice_renderer extends plugin_renderer_base {
         $strcontext = get_string('context', 'webservice');
         $strvaliduntil = get_string('validuntil', 'webservice');
 
-        $return = $OUTPUT->heading(get_string('securitykeys', 'webservice'), 3, 'main', true);
-        $return .= $OUTPUT->box_start('generalbox webservicestokenui');
+        $return = $this->output->heading(get_string('securitykeys', 'webservice'), 3, 'main', true);
+        $return .= $this->output->box_start('generalbox webservicestokenui');
 
         $return .= get_string('keyshelp', 'webservice');
 
@@ -158,8 +246,8 @@ class core_webservice_renderer extends plugin_renderer_base {
                 //TODO: retrieve context
 
                 if ($token->creatorid == $userid) {
-                    $reset = "<a href=\"" . $CFG->wwwroot . "/user/managetoken.php?sesskey=" . sesskey() .
-                            "&amp;action=resetwstoken&amp;tokenid=" . $token->id . "\">";
+                    $reset = "<a href=\"" . $CFG->wwwroot . "/user/managetoken.php?sesskey="
+                            . sesskey() . "&amp;action=resetwstoken&amp;tokenid=" . $token->id . "\">";
                     $reset .= get_string('reset') . "</a>";
                     $creator = $token->firstname . " " . $token->lastname;
                 } else {
@@ -188,13 +276,14 @@ class core_webservice_renderer extends plugin_renderer_base {
             $return .= get_string('notoken', 'webservice');
         }
 
-        $return .= $OUTPUT->box_end();
+        $return .= $this->output->box_end();
         return $return;
     }
 
     /**
      * Return documentation for a ws description object
-     * ws description object can be 'external_multiple_structure', 'external_single_structure' or 'external_value'
+     * ws description object can be 'external_multiple_structure', 'external_single_structure'
+     * or 'external_value'
      * Example of documentation for moodle_group_create_groups function:
       list of (
       object {
@@ -219,10 +308,13 @@ class core_webservice_renderer extends plugin_renderer_base {
                 if ($params->default === null) {
                     $params->default = "null";
                 }
-                $required = html_writer::start_tag('b', array()) . get_string('default', 'webservice', $params->default) . html_writer::end_tag('b');
+                $required = html_writer::start_tag('b', array()) .
+                        get_string('default', 'webservice', $params->default)
+                        . html_writer::end_tag('b');
             }
             if ($params->required == VALUE_OPTIONAL) {
-                $required = html_writer::start_tag('b', array()) . get_string('optional', 'webservice') . html_writer::end_tag('b');
+                $required = html_writer::start_tag('b', array()) .
+                        get_string('optional', 'webservice') . html_writer::end_tag('b');
             }
             $paramdesc .= " " . $required . " ";
             $paramdesc .= html_writer::start_tag('i', array());
@@ -238,7 +330,8 @@ class core_webservice_renderer extends plugin_renderer_base {
 
         /// description object is a list
         if ($params instanceof external_multiple_structure) {
-            return $paramdesc . "list of ( " . html_writer::empty_tag('br', array()) . $this->detailed_description_html($params->content) . ")";
+            return $paramdesc . "list of ( " . html_writer::empty_tag('br', array())
+            . $this->detailed_description_html($params->content) . ")";
         } else if ($params instanceof external_single_structure) {
             /// description object is an object
             $singlestructuredesc = $paramdesc . "object {" . html_writer::empty_tag('br', array());
@@ -246,7 +339,8 @@ class core_webservice_renderer extends plugin_renderer_base {
                 $singlestructuredesc .= html_writer::start_tag('b', array());
                 $singlestructuredesc .= $attributname;
                 $singlestructuredesc .= html_writer::end_tag('b');
-                $singlestructuredesc .= " " . $this->detailed_description_html($params->keys[$attributname]);
+                $singlestructuredesc .= " " .
+                        $this->detailed_description_html($params->keys[$attributname]);
             }
             $singlestructuredesc .= "} ";
             $singlestructuredesc .= html_writer::empty_tag('br', array());
@@ -284,7 +378,8 @@ EOF;
         /// description object is a list
         if ($returndescription instanceof external_multiple_structure) {
             $return = $indentation . "<MULTIPLE>" . $brakeline;
-            $return .= $this->description_in_indented_xml_format($returndescription->content, $indentation);
+            $return .= $this->description_in_indented_xml_format($returndescription->content,
+                            $indentation);
             $return .= $indentation . "</MULTIPLE>" . $brakeline;
             return $return;
         } else if ($returndescription instanceof external_single_structure) {
@@ -292,8 +387,10 @@ EOF;
             $singlestructuredesc = $indentation . "<SINGLE>" . $brakeline;
             $keyindentation = $indentation . "    ";
             foreach ($returndescription->keys as $attributname => $attribut) {
-                $singlestructuredesc .= $keyindentation . "<KEY name=\"" . $attributname . "\">" . $brakeline .
-                        $this->description_in_indented_xml_format($returndescription->keys[$attributname], $keyindentation) .
+                $singlestructuredesc .= $keyindentation . "<KEY name=\"" . $attributname . "\">"
+                        . $brakeline .
+                        $this->description_in_indented_xml_format(
+                                $returndescription->keys[$attributname], $keyindentation) .
                         $keyindentation . "</KEY>" . $brakeline;
             }
             $singlestructuredesc .= $indentation . "</SINGLE>" . $brakeline;
@@ -343,7 +440,8 @@ EOF;
             $singlestructuredesc .= $brakeline . $keyindentation . "(";
             foreach ($paramdescription->keys as $attributname => $attribut) {
                 $singlestructuredesc .= $brakeline . $keyindentation . "[" . $attributname . "] =>" .
-                        $this->xmlrpc_param_description_html($paramdescription->keys[$attributname], $keyindentation) .
+                        $this->xmlrpc_param_description_html(
+                                $paramdescription->keys[$attributname], $keyindentation) .
                         $keyindentation;
             }
             $singlestructuredesc .= $brakeline . $keyindentation . ")";
@@ -373,8 +471,11 @@ EOF;
      * @return <type>
      */
     public function colored_box_with_pre_tag($title, $content, $rgb = 'FEEBE5') {
-        $coloredbox = html_writer::start_tag('ins', array()); //TODO: this tag removes xhtml strict error but cause warning
-        $coloredbox .= html_writer::start_tag('div', array('style' => "border:solid 1px #DEDEDE;background:#" . $rgb . ";color:#222222;padding:4px;"));
+        //TODO: this tag removes xhtml strict error but cause warning
+        $coloredbox = html_writer::start_tag('ins', array()); 
+        $coloredbox .= html_writer::start_tag('div',
+                        array('style' => "border:solid 1px #DEDEDE;background:#" . $rgb
+                            . ";color:#222222;padding:4px;"));
         $coloredbox .= html_writer::start_tag('pre', array());
         $coloredbox .= html_writer::start_tag('b', array());
         $coloredbox .= $title;
@@ -409,7 +510,8 @@ EOF;
             $initialparamstring = $paramstring;
             foreach ($paramdescription->keys as $attributname => $attribut) {
                 $paramstring = $initialparamstring . '[' . $attributname . ']';
-                $singlestructuredesc .= $this->rest_param_description_html($paramdescription->keys[$attributname], $paramstring);
+                $singlestructuredesc .= $this->rest_param_description_html(
+                                $paramdescription->keys[$attributname], $paramstring);
             }
             return $singlestructuredesc;
         } else {
@@ -439,7 +541,6 @@ EOF;
      * @return string the html to diplay
      */
     public function documentation_html($functions, $printableformat, $activatedprotocol, $authparams) {
-        global $OUTPUT, $CFG;
         $br = html_writer::empty_tag('br', array());
         $brakeline = <<<EOF
 
@@ -450,9 +551,9 @@ EOF;
         $docinfo->username = $authparams['wsusername'];
         $docurl = new moodle_url('http://docs.moodle.org/en/Development:Creating_a_web_service_client');
         $docinfo->doclink = html_writer::tag('a',
-                get_string('wsclientdoc', 'webservice'), array('href' => $docurl));
+                        get_string('wsclientdoc', 'webservice'), array('href' => $docurl));
         $documentationhtml = html_writer::start_tag('table',
-                array('style' => "margin-left:auto; margin-right:auto;"));
+                        array('style' => "margin-left:auto; margin-right:auto;"));
         $documentationhtml .= html_writer::start_tag('tr', array());
         $documentationhtml .= html_writer::start_tag('td', array());
         $documentationhtml .= get_string('wsdocumentationintro', 'webservice', $docinfo);
@@ -463,17 +564,19 @@ EOF;
         $authparams['print'] = true;
         //$parameters = array ('token' => $token, 'wsusername' => $username, 'wspassword' => $password, 'print' => true);
         $url = new moodle_url('/webservice/wsdoc.php', $authparams); // Required
-        $documentationhtml .= $OUTPUT->single_button($url, get_string('print', 'webservice'));
+        $documentationhtml .= $this->output->single_button($url, get_string('print', 'webservice'));
         $documentationhtml .= $br;
 
 
-        /// each functions will be displayed into a collapsible region (opened if printableformat = true)
+        /// each functions will be displayed into a collapsible region
+        //(opened if printableformat = true)
         foreach ($functions as $functionname => $description) {
 
             if (empty($printableformat)) {
                 $documentationhtml .= print_collapsible_region_start('',
                                 'aera_' . $functionname,
-                                html_writer::start_tag('strong', array()) . $functionname . html_writer::end_tag('strong'),
+                                html_writer::start_tag('strong', array())
+                                . $functionname . html_writer::end_tag('strong'),
                                 false,
                                 !$printableformat,
                                 true);
@@ -484,7 +587,9 @@ EOF;
 
             /// function global description
             $documentationhtml .= $br;
-            $documentationhtml .= html_writer::start_tag('div', array('style' => 'border:solid 1px #DEDEDE;background:#E2E0E0;color:#222222;padding:4px;'));
+            $documentationhtml .= html_writer::start_tag('div',
+                            array('style' => 'border:solid 1px #DEDEDE;background:#E2E0E0;
+                        color:#222222;padding:4px;'));
             $documentationhtml .= $description->description;
             $documentationhtml .= html_writer::end_tag('div');
             $documentationhtml .= $br . $br;
@@ -518,22 +623,28 @@ EOF;
                 $documentationhtml .= html_writer::end_tag('b');
                 $documentationhtml .= " (" . $required . ")"; // argument is required or optional ?
                 $documentationhtml .= $br;
-                $documentationhtml .= "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" . $paramdesc->desc; // argument description
+                $documentationhtml .= "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
+                        . $paramdesc->desc; // argument description
                 $documentationhtml .= $br . $br;
                 ///general structure of the argument
-                $documentationhtml .= $this->colored_box_with_pre_tag(get_string('generalstructure', 'webservice'),
+                $documentationhtml .= $this->colored_box_with_pre_tag(
+                                get_string('generalstructure', 'webservice'),
                                 $this->detailed_description_html($paramdesc),
                                 'FFF1BC');
                 ///xml-rpc structure of the argument in PHP format
                 if (!empty($activatedprotocol['xmlrpc'])) {
-                    $documentationhtml .= $this->colored_box_with_pre_tag(get_string('phpparam', 'webservice'),
-                                    htmlentities('[' . $paramname . '] =>' . $this->xmlrpc_param_description_html($paramdesc)),
+                    $documentationhtml .= $this->colored_box_with_pre_tag(
+                                    get_string('phpparam', 'webservice'),
+                                    htmlentities('[' . $paramname . '] =>'
+                                            . $this->xmlrpc_param_description_html($paramdesc)),
                                     'DFEEE7');
                 }
                 ///POST format for the REST protocol for the argument
                 if (!empty($activatedprotocol['rest'])) {
-                    $documentationhtml .= $this->colored_box_with_pre_tag(get_string('restparam', 'webservice'),
-                                    htmlentities($this->rest_param_description_html($paramdesc, $paramname)),
+                    $documentationhtml .= $this->colored_box_with_pre_tag(
+                                    get_string('restparam', 'webservice'),
+                                    htmlentities($this->rest_param_description_html(
+                                                    $paramdesc, $paramname)),
                                     'FEEBE5');
                 }
                 $documentationhtml .= html_writer::end_tag('span');
@@ -554,21 +665,27 @@ EOF;
             }
             if (!empty($description->returns_desc)) {
                 ///general structure of the response
-                $documentationhtml .= $this->colored_box_with_pre_tag(get_string('generalstructure', 'webservice'),
+                $documentationhtml .= $this->colored_box_with_pre_tag(
+                                get_string('generalstructure', 'webservice'),
                                 $this->detailed_description_html($description->returns_desc),
                                 'FFF1BC');
                 ///xml-rpc structure of the response in PHP format
                 if (!empty($activatedprotocol['xmlrpc'])) {
-                    $documentationhtml .= $this->colored_box_with_pre_tag(get_string('phpresponse', 'webservice'),
-                                    htmlentities($this->xmlrpc_param_description_html($description->returns_desc)),
+                    $documentationhtml .= $this->colored_box_with_pre_tag(
+                                    get_string('phpresponse', 'webservice'),
+                                    htmlentities($this->xmlrpc_param_description_html(
+                                                    $description->returns_desc)),
                                     'DFEEE7');
                 }
                 ///XML response for the REST protocol
                 if (!empty($activatedprotocol['rest'])) {
-                    $restresponse = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>" . $brakeline . "<RESPONSE>" . $brakeline;
-                    $restresponse .= $this->description_in_indented_xml_format($description->returns_desc);
+                    $restresponse = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>"
+                            . $brakeline . "<RESPONSE>" . $brakeline;
+                    $restresponse .= $this->description_in_indented_xml_format(
+                                    $description->returns_desc);
                     $restresponse .="</RESPONSE>" . $brakeline;
-                    $documentationhtml .= $this->colored_box_with_pre_tag(get_string('restcode', 'webservice'),
+                    $documentationhtml .= $this->colored_box_with_pre_tag(
+                                    get_string('restcode', 'webservice'),
                                     htmlentities($restresponse),
                                     'FEEBE5');
                 }
@@ -591,7 +708,8 @@ EOF;
     <DEBUGINFO></DEBUGINFO>
 </EXCEPTION>
 EOF;
-                $documentationhtml .= $this->colored_box_with_pre_tag(get_string('restexception', 'webservice'),
+                $documentationhtml .= $this->colored_box_with_pre_tag(
+                                get_string('restexception', 'webservice'),
                                 htmlentities($restexceptiontext),
                                 'FEEBE5');
 
@@ -617,35 +735,38 @@ EOF;
      * @return string the html to diplay
      */
     public function login_page_html($errormessage) {
-        global $CFG, $OUTPUT;
-
         $br = html_writer::empty_tag('br', array());
 
-        $htmlloginpage = html_writer::start_tag('table', array('style' => "margin-left:auto; margin-right:auto;"));
+        $htmlloginpage = html_writer::start_tag('table',
+                        array('style' => "margin-left:auto; margin-right:auto;"));
         $htmlloginpage .= html_writer::start_tag('tr', array());
         $htmlloginpage .= html_writer::start_tag('td', array());
 
-//        /// Display detailed error message when can't login
-//        $htmlloginpage .= get_string('error','webservice',$errormessage);
-//        $htmlloginpage .= html_writer::empty_tag('br', array());
-//        $htmlloginpage .= html_writer::empty_tag('br', array());
         //login form - we cannot use moodle form as we don't have sessionkey
         $target = new moodle_url('/webservice/wsdoc.php', array()); // Required
 
         $contents = get_string('entertoken', 'webservice');
         $contents .= $br . $br;
-        $contents .= html_writer::empty_tag('input', array('type' => 'text', 'name' => 'token', 'style' => 'width: 30em;'));
+        $contents .= html_writer::empty_tag('input',
+                        array('type' => 'text', 'name' => 'token', 'style' => 'width: 30em;'));
 
         $contents .= $br . $br;
         $contents .= get_string('wsdocumentationlogin', 'webservice');
         $contents .= $br . $br;
-        $contents .= html_writer::empty_tag('input', array('type' => 'text', 'name' => 'wsusername', 'style' => 'width: 30em;', 'value' => get_string('wsusername', 'webservice')));
+        $contents .= html_writer::empty_tag('input',
+                        array('type' => 'text', 'name' => 'wsusername', 'style' => 'width: 30em;',
+                            'value' => get_string('wsusername', 'webservice')));
         $contents .= $br . $br;
-        $contents .= html_writer::empty_tag('input', array('type' => 'text', 'name' => 'wspassword', 'style' => 'width: 30em;', 'value' => get_string('wspassword', 'webservice')));
+        $contents .= html_writer::empty_tag('input',
+                        array('type' => 'text', 'name' => 'wspassword', 'style' => 'width: 30em;',
+                            'value' => get_string('wspassword', 'webservice')));
         $contents .= $br . $br;
-        $contents .= html_writer::empty_tag('input', array('type' => 'submit', 'name' => 'submit', 'value' => get_string('wsdocumentation', 'webservice')));
+        $contents .= html_writer::empty_tag('input',
+                        array('type' => 'submit', 'name' => 'submit',
+                            'value' => get_string('wsdocumentation', 'webservice')));
 
-        $htmlloginpage .= html_writer::tag('form', "<div>$contents</div>", array('method' => 'post', 'target' => $target));
+        $htmlloginpage .= html_writer::tag('form', "<div>$contents</div>",
+                        array('method' => 'post', 'target' => $target));
 
         $htmlloginpage .= html_writer::end_tag('td');
         $htmlloginpage .= html_writer::end_tag('tr');

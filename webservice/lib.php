@@ -224,8 +224,169 @@ class webservice {
         global $DB;
         return $DB->get_record('external_tokens', array('token'=>$token), '*', MUST_EXIST);
     }
-}
 
+    /**
+     * Get the list of all functions for given service ids
+     * @param array $serviceids
+     * @return array functions
+     */
+    public function get_external_functions($serviceids) {
+        global $DB;
+        if (!empty($serviceids)) {
+            list($serviceids, $params) = $DB->get_in_or_equal($serviceids);
+            $sql = "SELECT f.*
+                      FROM {external_functions} f
+                     WHERE f.name IN (SELECT sf.functionname
+                                        FROM {external_services_functions} sf
+                                       WHERE sf.externalserviceid $serviceids)";
+            $functions = $DB->get_records_sql($sql, $params);
+        } else {
+            $functions = array();
+        }
+        return $functions;
+    }
+
+    /**
+     * Get list of required capabilities of a service, sorted by functions
+     * @param integer $serviceid
+     * @return array
+     * example of return value:
+     *  Array
+     *  (
+     *    [moodle_group_create_groups] => Array
+     *    (
+     *       [0] => moodle/course:managegroups
+     *    )
+     *
+     *    [moodle_enrol_get_enrolled_users] => Array
+     *    (
+     *       [0] => moodle/site:viewparticipants
+     *       [1] => moodle/course:viewparticipants
+     *       [2] => moodle/role:review
+     *       [3] => moodle/site:accessallgroups
+     *       [4] => moodle/course:enrolreview
+     *    )
+     *  )
+     */
+    public function get_service_required_capabilities($serviceid) {
+        $functions = $this->get_external_functions(array($serviceid));
+        $requiredusercaps = array();
+        foreach ($functions as $function) {
+            $functioncaps = split(',', $function->capabilities);
+            if (!empty($functioncaps) and !empty($functioncaps[0])) {
+                foreach ($functioncaps as $functioncap) {
+                    $requiredusercaps[$function->name][] = trim($functioncap);
+                }
+            }
+        }
+        return $requiredusercaps;
+    }
+
+    /**
+     * Get user capabilities (with context)
+     * Only usefull for documentation purpose
+     * @param integer $userid
+     * @return array
+     */
+    public function get_user_capabilities($userid) {
+        global $DB;
+        //retrieve the user capabilities
+        $sql = "SELECT rc.id, rc.capability FROM {role_capabilities} rc, {role_assignments} ra
+            WHERE rc.roleid=ra.roleid AND ra.id= ?";
+        $dbusercaps = $DB->get_records_sql($sql, array($userid));
+        $usercaps = array();
+        foreach ($dbusercaps as $usercap) {
+            $usercaps[$usercap->capability] = true;
+        }
+        return $usercaps;
+    }
+
+    /**
+     * Get users missing capabilities for a given service
+     * @param array $users
+     * @param integer $serviceid
+     * @return array of missing capabilities, the key being the user id
+     */
+    public function get_missing_capabilities_by_users($users, $serviceid) {
+        global $DB;
+        $usersmissingcaps = array();
+
+        //retrieve capabilities required by the service
+        $servicecaps = $this->get_service_required_capabilities($serviceid);
+
+        //retrieve users missing capabilities
+        foreach ($users as $user) {
+            //cast user array into object to be a bit more flexible
+            if (is_array($user)) {
+                $user = (object) $user;
+            }
+            $usercaps = $this->get_user_capabilities($user->id);
+
+            //detect the missing capabilities
+            foreach ($servicecaps as $functioname => $functioncaps) {
+                foreach ($functioncaps as $functioncap) {
+                    if (!key_exists($functioncap, $usercaps)) {
+                        if (!isset($usersmissingcaps[$user->id])
+                                or array_search($functioncap, $usersmissingcaps[$user->id]) === false) {
+                            $usersmissingcaps[$user->id][] = $functioncap;
+                        }
+                    }
+                }
+            }
+        }
+
+        return $usersmissingcaps;
+    }
+
+    /**
+     * Get a external function for a given id
+     * @param function id $functionid
+     * @param integer $strictness IGNORE_MISSING, MUST_EXIST...
+     * @return object external function
+     */
+    public function get_external_function_by_id($functionid, $strictness=IGNORE_MISSING) {
+        global $DB;
+        $function = $DB->get_record('external_functions',
+                            array('id' => $functionid), '*', $strictness);
+        return $function;
+    }
+
+    /**
+     * Add a function to a service
+     * @param string $functionname
+     * @param integer $serviceid
+     */
+    public function add_external_function_to_service($functionname, $serviceid) {
+        global $DB;
+        $addedfunction = new object();
+        $addedfunction->externalserviceid = $serviceid;
+        $addedfunction->functionname = $functionname;
+        $DB->insert_record('external_services_functions', $addedfunction);
+    }
+
+    /**
+     * Test whether a external function is already linked to a service
+     * @param string $functionname
+     * @param integer $serviceid
+     * @return bool true if a matching function exists for the service, else false.
+     * @throws dml_exception if error
+     */
+    public function service_function_exists($functionname, $serviceid) {
+        global $DB;
+        return $DB->record_exists('external_services_functions',
+                            array('externalserviceid' => $serviceid,
+                                'functionname' => $functionname));
+    }
+
+    public function remove_external_function_from_service($functionname, $serviceid) {
+        global $DB;
+        $DB->delete_records('external_services_functions',
+                    array('externalserviceid' => $serviceid, 'functionname' => $functionname));
+
+    }
+
+
+}
 
 /**
  * Exception indicating access control problem in web service call
@@ -562,17 +723,8 @@ abstract class webservice_zend_server extends webservice_server {
         $rs->close();
 
         // now get the list of all functions
-        if ($serviceids) {
-            list($serviceids, $params) = $DB->get_in_or_equal($serviceids);
-            $sql = "SELECT f.*
-                      FROM {external_functions} f
-                     WHERE f.name IN (SELECT sf.functionname
-                                        FROM {external_services_functions} sf
-                                       WHERE sf.externalserviceid $serviceids)";
-            $functions = $DB->get_records_sql($sql, $params);
-        } else {
-            $functions = array();
-        }
+        $wsmanager = new webservice();
+        $functions = $wsmanager->get_external_functions($serviceids);
 
         // now make the virtual WS class with all the fuctions for this particular user
         $methods = '';

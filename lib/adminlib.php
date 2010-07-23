@@ -6936,8 +6936,8 @@ class admin_setting_managewebservicetokens extends admin_setting {
         $return = $OUTPUT->box_start('generalbox webservicestokenui');
 
         $table = new html_table();
-        $table->head  = array($strtoken, $struser, $strservice, $strcontext, $striprestriction, $strvaliduntil, $stroperation);
-        $table->align = array('left', 'left', 'left', 'center', 'center', 'center', 'center');
+        $table->head  = array($strtoken, $struser, $strservice, $striprestriction, $strvaliduntil, $stroperation);
+        $table->align = array('left', 'left', 'left', 'center', 'center', 'center');
         $table->width = '100%';
         $table->data  = array();
 
@@ -6946,7 +6946,7 @@ class admin_setting_managewebservicetokens extends admin_setting {
         //TODO: in order to let the administrator delete obsolete token, split this request in multiple request or use LEFT JOIN
 
         //here retrieve token list (including linked users firstname/lastname and linked services name)
-        $sql = "SELECT t.id, t.token, u.id AS userid, u.firstname, u.lastname, s.name, t.validuntil
+        $sql = "SELECT t.id, t.token, u.id AS userid, u.firstname, u.lastname, s.name, t.validuntil, s.id AS serviceid
                   FROM {external_tokens} t, {user} u, {external_services} s
                  WHERE t.creatorid=? AND t.tokentype = ? AND s.id = t.externalserviceid AND t.userid = u.id";
         $tokens = $DB->get_records_sql($sql, array($USER->id, EXTERNAL_TOKEN_PERMANENT));
@@ -6971,7 +6971,26 @@ class admin_setting_managewebservicetokens extends admin_setting {
                 $useratag = html_writer::start_tag('a', array('href' => $userprofilurl));
                 $useratag .= $token->firstname." ".$token->lastname;
                 $useratag .= html_writer::end_tag('a');
-                $table->data[] = array($token->token, $useratag, $token->name, '', $iprestriction, $validuntil, $delete);
+
+                //check user missing capabilities
+                require_once($CFG->dirroot . '/webservice/lib.php');
+                $webservicemanager = new webservice();
+                $usermissingcaps = $webservicemanager->get_missing_capabilities_by_users(
+                        array(array('id' => $token->userid)), $token->serviceid);
+
+                if (!is_siteadmin($token->userid)) {
+                    $missingcapabilities = implode(',',
+                            $usermissingcaps[$token->userid]);
+                    if (!empty($missingcapabilities)) {
+                        $useratag .= html_writer::tag('div',
+                                        get_string('usermissingcaps', 'webservice',
+                                                $missingcapabilities)
+                                        . '&nbsp;' . $OUTPUT->help_icon('missingcaps', 'webservice'),
+                                        array('class' => 'missingcaps', 'id' => 'usermissingcaps'));
+                    }
+                }
+
+                $table->data[] = array($token->token, $useratag, $token->name, $iprestriction, $validuntil, $delete);
             }
 
             $return .= html_writer::table($table);

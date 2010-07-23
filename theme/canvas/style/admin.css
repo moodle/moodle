@@ -115,3 +115,10 @@
 .plugincompattable td.ok {color: #008000;}
 .plugincompattable td.warning {color: #DF7800;}
 .plugincompattable td.error {color: #DF0000;}
+
+/**
+* Web services
+*/
+#page-admin-webservice-service_users .missingcaps {color: #ff6600;font-size: 90%;}
+#page-admin-setting-webservicetokens .missingcaps {color: #ff6600;font-size: 90%;}
+#page-admin-websevice-service_functions .functiondesc {font-size: 90%;}

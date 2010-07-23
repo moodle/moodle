@@ -143,3 +143,11 @@ table.flexible .r1 {background-color: #FAFAFA;}
 
 #explaincaps .rolecap.yes {background-color: #DDFFDD;}
 #explaincaps .rolecap.no {background-color: #FFDDDD;}
+
+
+/**
+* Web services
+*/
+#page-admin-webservice-service_users .missingcaps {color: #ff6600;font-size: 90%;}
+#page-admin-setting-webservicetokens .missingcaps {color: #ff6600;font-size: 90%;}
+#page-admin-websevice-service_functions .functiondesc {font-size: 90%;}

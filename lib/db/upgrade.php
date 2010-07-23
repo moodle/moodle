@@ -4863,6 +4863,22 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         upgrade_main_savepoint(true, 2010071800);
     }
 
+    if ($oldversion < 2010072300) {
+
+        // Define field capabilities to be added to external_functions
+        $table = new xmldb_table('external_functions');
+        $field = new xmldb_field('capabilities', XMLDB_TYPE_CHAR, '255', null, null, null, null, 'component');
+
+        // Conditionally launch add field capabilities
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Main savepoint reached
+        upgrade_main_savepoint(true, 2010072300);
+    }
+
+
     return true;
 }
 

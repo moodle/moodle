@@ -34,6 +34,7 @@ $functions = array(
         'classpath'   => 'group/externallib.php',
         'description' => 'Creates new groups.',
         'type'        => 'write',
+        'capabilities'=> 'moodle/course:managegroups',
     ),
 
     'moodle_group_get_groups' => array(
@@ -42,6 +43,7 @@ $functions = array(
         'classpath'   => 'group/externallib.php',
         'description' => 'Returns group details.',
         'type'        => 'read',
+        'capabilities'=> 'moodle/course:managegroups',
     ),
 
     'moodle_group_get_course_groups' => array(
@@ -50,6 +52,7 @@ $functions = array(
         'classpath'   => 'group/externallib.php',
         'description' => 'Returns all groups in specified course.',
         'type'        => 'read',
+        'capabilities'=> 'moodle/course:managegroups',
     ),
 
     'moodle_group_delete_groups' => array(
@@ -58,6 +61,7 @@ $functions = array(
         'classpath'   => 'group/externallib.php',
         'description' => 'Deletes all specified groups.',
         'type'        => 'delete',
+        'capabilities'=> 'moodle/course:managegroups',
     ),
 
     'moodle_group_get_groupmembers' => array(
@@ -66,6 +70,7 @@ $functions = array(
         'classpath'   => 'group/externallib.php',
         'description' => 'Returns group members.',
         'type'        => 'read',
+        'capabilities'=> 'moodle/course:managegroups',
     ),
 
     'moodle_group_add_groupmembers' => array(
@@ -74,6 +79,7 @@ $functions = array(
         'classpath'   => 'group/externallib.php',
         'description' => 'Adds group members.',
         'type'        => 'write',
+        'capabilities'=> 'moodle/course:managegroups',
     ),
 
     'moodle_group_delete_groupmembers' => array(
@@ -82,7 +88,12 @@ $functions = array(
         'classpath'   => 'group/externallib.php',
         'description' => 'Deletes group members.',
         'type'        => 'delete',
+        'capabilities'=> 'moodle/course:managegroups',
     ),
+
+
+    // === file related functions ===
+
     'moodle_file_get_files' => array(
         'classname'   => 'moodle_file_external',
         'methodname'  => 'get_files',
@@ -99,12 +110,14 @@ $functions = array(
     ),
 
     // === user related functions ===
+
     'moodle_user_create_users' => array(
         'classname'   => 'moodle_user_external',
         'methodname'  => 'create_users',
         'classpath'   => 'user/externallib.php',
         'description' => 'Create users.',
         'type'        => 'write',
+        'capabilities'=> 'moodle/user:create',
     ),
 
     'moodle_user_get_users_by_id' => array(
@@ -113,6 +126,7 @@ $functions = array(
         'classpath'   => 'user/externallib.php',
         'description' => 'Get users by id.',
         'type'        => 'read',
+        'capabilities'=> 'moodle/user:viewdetails',
     ),
 
     'moodle_user_delete_users' => array(
@@ -121,6 +135,7 @@ $functions = array(
         'classpath'   => 'user/externallib.php',
         'description' => 'Delete users.',
         'type'        => 'write',
+        'capabilities'=> 'moodle/user:delete',
     ),
 
     'moodle_user_update_users' => array(
@@ -129,7 +144,10 @@ $functions = array(
         'classpath'   => 'user/externallib.php',
         'description' => 'Update users.',
         'type'        => 'write',
+        'capabilities'=> 'moodle/user:update',
     ),
+
+    // === enrol related functions ===
 
     'moodle_enrol_get_enrolled_users' => array(
         'classname'   => 'moodle_enrol_external',
@@ -137,6 +155,8 @@ $functions = array(
         'classpath'   => 'enrol/externallib.php',
         'description' => 'Get list of course participants',
         'type'        => 'read',
+        'capabilities'=> 'moodle/site:viewparticipants, moodle/course:viewparticipants,
+            moodle/role:review, moodle/site:accessallgroups, moodle/course:enrolreview',
     ),
 
     'moodle_role_assign' => array(
@@ -145,6 +165,7 @@ $functions = array(
         'classpath'   => 'enrol/externallib.php',
         'description' => 'Manual role assignments.',
         'type'        => 'write',
+        'capabilities'=> 'moodle/role:assign',
     ),
 
     'moodle_role_unassign' => array(
@@ -153,6 +174,7 @@ $functions = array(
         'classpath'   => 'enrol/externallib.php',
         'description' => 'Manual role unassignments.',
         'type'        => 'write',
+        'capabilities'=> 'moodle/role:assign',
     ),
-
+   
 );
