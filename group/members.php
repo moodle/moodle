@@ -20,6 +20,7 @@ $group = $DB->get_record('groups', array('id'=>$groupid), '*', MUST_EXIST);
 $course = $DB->get_record('course', array('id'=>$group->courseid), '*', MUST_EXIST);
 
 $PAGE->set_url('/groups/members.php', array('id'=>$groupid));
+$PAGE->set_pagelayout('standard');
 
 require_login($course);
 $context = get_context_instance(CONTEXT_COURSE, $course->id);
