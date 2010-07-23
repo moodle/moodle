@@ -276,8 +276,8 @@ class quiz_grading_report extends quiz_default_report {
         $table->pagesize(QUIZ_REPORT_DEFAULT_PAGE_SIZE, $totalattempts);
 
         // get the attempts and process them
+        echo '<div id="tablecontainer">';
         if ($attempts = $DB->get_records_sql($select.$from.$where.$sort, $params, $table->get_page_start(), $table->get_page_size())) {
-            echo '<div id="tablecontainer">';
             // grade all link
             $links = "<strong><a href=\"report.php?mode=grading&amp;gradeall=1&amp;q=$quiz->id&amp;questionid=$question->id\">".get_string('gradeall', 'quiz_grading', $totalattempts).'</a></strong>';
             if ($ungraded>0){
@@ -314,12 +314,10 @@ class quiz_grading_report extends quiz_default_report {
             }
             $table->add_separator();
             $table->add_data_keyed(array('grade'=> $links));
-            // print everything here
-            $table->print_html();
-            echo '</div>';
-        } else {
-            echo $OUTPUT->notification(get_string('noattemptstoshow', 'quiz'));
         }
+        // print everything here
+        $table->print_html();
+        echo '</div>';
     }
 
 
