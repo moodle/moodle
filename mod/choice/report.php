@@ -215,25 +215,31 @@
         }
         exit;
     }
-    choice_show_results($choice, $course, $cm, $users, $format); //show table with students responses.
 
+    $results = prepare_choice_show_results($choice, $course, $cm, $users);
+    $renderer = $PAGE->get_renderer('mod_choice');
+    echo $renderer->display_result($results, has_capability('mod/choice:readresponses', $context));
+    
    //now give links for downloading spreadsheets.
     if (!empty($users) && has_capability('mod/choice:downloadresponses',$context)) {
-        echo "<br />\n";
-        echo "<table class=\"downloadreport\"><tr>\n";
-        echo "<td>";
+        $downloadoptions = array();
         $options = array();
         $options["id"] = "$cm->id";
         $options["download"] = "ods";
-        echo $OUTPUT->single_button(new moodle_url("report.php", $options), get_string("downloadods"));
-        echo "</td><td>";
-        $options["download"] = "xls";
-        echo $OUTPUT->single_button(new moodle_url("report.php", $options), get_string("downloadexcel"));
-        echo "</td><td>";
-        $options["download"] = "txt";
-        echo $OUTPUT->single_button(new moodle_url("report.php", $options), get_string("downloadtext"));
+        $button =  $OUTPUT->single_button(new moodle_url("report.php", $options), get_string("downloadods"));
+        $downloadoptions[] = html_writer::tag('li', $button, array('class'=>'reportoption'));
 
-        echo "</td></tr></table>";
+        $options["download"] = "xls";
+        $buttons = $OUTPUT->single_button(new moodle_url("report.php", $options), get_string("downloadexcel"));
+        $downloadoptions[] = html_writer::tag('li', $button, array('class'=>'reportoption'));
+
+        $options["download"] = "txt";
+        $button = $OUTPUT->single_button(new moodle_url("report.php", $options), get_string("downloadtext"));
+        $downloadoptions[] = html_writer::tag('li', $button, array('class'=>'reportoption'));
+
+        $downloadlist = html_writer::tag('ul', implode('', $downloadoptions));
+        $downloadlist .= html_writer::tag('div', '', array('class'=>'clearfloat'));
+        echo html_writer::tag('div',$downloadlist, array('class'=>'downloadreport'));
     }
     echo $OUTPUT->footer();
 

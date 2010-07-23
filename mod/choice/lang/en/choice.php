@@ -86,3 +86,6 @@ $string['timerestrict'] = 'Restrict answering to this time period';
 $string['viewallresponses'] = 'View {$a} responses';
 $string['withselected'] = 'With selected';
 $string['yourselection'] = 'Your selection';
+$string['skipresultgraph'] = 'Skip result graph';
+$string['moveselectedusersto'] = 'Move selected users to...';
+$string['numberofuser'] = 'The number of user';

@@ -25,6 +25,10 @@
 global $CHOICE_COLUMN_HEIGHT;
 $CHOICE_COLUMN_HEIGHT = 300;
 
+/** @global int $CHOICE_COLUMN_WIDTH */
+global $CHOICE_COLUMN_WIDTH;
+$CHOICE_COLUMN_WIDTH = 300;
+
 define('CHOICE_PUBLISH_ANONYMOUS', '0');
 define('CHOICE_PUBLISH_NAMES',     '1');
 
@@ -184,126 +188,50 @@ function choice_update_instance($choice) {
  * @global object
  * @param object $choice
  * @param object $user
- * @param object $cm
+ * @param object $coursemodule
  * @param array $allresponses
- * @return void output is echo'd
+ * @return array
  */
-function choice_show_form($choice, $user, $cm, $allresponses) {
+function choice_prepare_options($choice, $user, $coursemodule, $allresponses) {
     global $DB;
-//$cdisplay is an array of the display info for a choice $cdisplay[$optionid]->text  - text name of option.
-//                                                                            ->maxanswers -maxanswers for this option
-//                                                                            ->full - whether this option is full or not. 0=not full, 1=full
-    $cdisplay = array();
 
-    $aid = 0;
-    $choicefull = false;
-    $cdisplay = array();
+    $cdisplay = array('options'=>array());
 
-    if ($choice->limitanswers) { //set choicefull to true by default if limitanswers.
-        $choicefull = true;
-    }
-
-    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    $cdisplay['limitanswers'] = true;
+    $context = get_context_instance(CONTEXT_MODULE, $coursemodule->id);
 
     foreach ($choice->option as $optionid => $text) {
         if (isset($text)) { //make sure there are no dud entries in the db with blank text values.
-            $cdisplay[$aid]->optionid = $optionid;
-            $cdisplay[$aid]->text = $text;
-            $cdisplay[$aid]->maxanswers = $choice->maxanswers[$optionid];
+            $option = new stdClass;
+            $option->attributes = new stdClass;
+            $option->attributes->value = $optionid;
+            $option->text = $text;
+            $option->maxanswers = $choice->maxanswers[$optionid];
+            $option->displaylayout = $choice->display;
+
             if (isset($allresponses[$optionid])) {
-                $cdisplay[$aid]->countanswers = count($allresponses[$optionid]);
+                $option->countanswers = count($allresponses[$optionid]);
             } else {
-                $cdisplay[$aid]->countanswers = 0;
+                $option->countanswers = 0;
             }
-            if ($current = $DB->get_record('choice_answers', array('choiceid' => $choice->id, 'userid' => $user->id, 'optionid' => $optionid))) {
-                $cdisplay[$aid]->checked = ' checked="checked" ';
-            } else {
-                $cdisplay[$aid]->checked = '';
+            if ($DB->record_exists('choice_answers', array('choiceid' => $choice->id, 'userid' => $user->id, 'optionid' => $optionid))) {
+                $option->attributes->checked = true;
             }
-            if ( $choice->limitanswers &&
-                ($cdisplay[$aid]->countanswers >= $cdisplay[$aid]->maxanswers) &&
-                (empty($cdisplay[$aid]->checked)) ) {
-                $cdisplay[$aid]->disabled = ' disabled="disabled" ';
-            } else {
-                $cdisplay[$aid]->disabled = '';
-                if ($choice->limitanswers && ($cdisplay[$aid]->countanswers < $cdisplay[$aid]->maxanswers)) {
-                    $choicefull = false; //set $choicefull to false - as the above condition hasn't been set.
+            if ( $choice->limitanswers && ($option->countanswers >= $option->maxanswers) && empty($option->attributes->checked)) {
+                $option->attributes->disabled = true;
                 }
+            $cdisplay['options'][] = $option;
             }
-            $aid++;
         }
-    }
 
-    switch ($choice->display) {
-        case CHOICE_DISPLAY_HORIZONTAL:
-            echo "<table cellpadding=\"20\" cellspacing=\"20\" class=\"boxaligncenter\"><tr>";
+    $cdisplay['hascapability'] = is_enrolled($context, NULL, 'mod/choice:choose'); //only enrolled users are allowed to make a choice
 
-            foreach ($cdisplay as $cd) {
-                echo "<td align=\"center\" valign=\"top\">";
-                echo "<input type=\"radio\" name=\"answer\" value=\"".$cd->optionid."\" alt=\"".strip_tags(format_text($cd->text))."\"". $cd->checked.$cd->disabled." />";
-                if (!empty($cd->disabled)) {
-                    echo format_text($cd->text."<br /><strong>".get_string('full', 'choice')."</strong>");
-                } else {
-                    echo format_text($cd->text);
+    if ($choice->allowupdate && $DB->record_exists('choice_answers', array('choiceid'=> $choice->id, 'userid'=> $user->id))) {
+        $cdisplay['allowupdate'] = true;
                 }
-                echo "</td>";
-            }
-            echo "</tr>";
-            echo "</table>";
-            break;
 
-        case CHOICE_DISPLAY_VERTICAL:
-            $displayoptions->para = false;
-            echo "<table cellpadding=\"10\" cellspacing=\"10\" class=\"boxaligncenter\">";
-            foreach ($cdisplay as $cd) {
-                echo "<tr><td align=\"left\">";
-                echo "<input type=\"radio\" name=\"answer\" value=\"".$cd->optionid."\" alt=\"".strip_tags(format_text($cd->text))."\"". $cd->checked.$cd->disabled." />";
-
-                echo format_text($cd->text. ' ', FORMAT_MOODLE, $displayoptions); //display text for option.
-
-                if ($choice->limitanswers && ($choice->showresults==CHOICE_SHOWRESULTS_ALWAYS) ){ //if limit is enabled, and show results always has been selected, display info beside each choice.
-                    echo "</td><td>";
-
-                    if (!empty($cd->disabled)) {
-                        echo get_string('full', 'choice');
-                    } elseif(!empty($cd->checked)) {
-                                //currently do nothing - maybe some text could be added here to signfy that the choice has been 'selected'
-                    } elseif ($cd->maxanswers-$cd->countanswers==1) {
-                        echo ($cd->maxanswers - $cd->countanswers);
-                        echo " ".get_string('spaceleft', 'choice');
-                    } else {
-                        echo ($cd->maxanswers - $cd->countanswers);
-                        echo " ".get_string('spacesleft', 'choice');
+    return $cdisplay;
                     }
-                    echo "</td>";
-                } else if ($choice->limitanswers && ($cd->countanswers >= $cd->maxanswers)) {  //if limitanswers and answers exceeded, display "full" beside the choice.
-                    echo " <strong>".get_string('full', 'choice')."</strong>";
-                }
-                echo "</td>";
-                echo "</tr>";
-            }
-        echo "</table>";
-        break;
-    }
-    //show save choice button
-    echo '<div class="button">';
-    echo "<input type=\"hidden\" name=\"id\" value=\"$cm->id\" />";
-    echo "<input type=\"hidden\" name=\"sesskey\" value=\"".sesskey()."\" />";
-    if (is_enrolled($context, NULL, 'mod/choice:choose')) { //only enrolled users are allowed to make a choice
-        if ($choicefull) {
-            print_string('choicefull', 'choice');
-            echo "</br>";
-        } else {
-            echo "<input type=\"submit\" value=\"".get_string("savemychoice","choice")."\" />";
-        }
-        if ($choice->allowupdate && $aaa = $DB->get_record('choice_answers', array('choiceid'=> $choice->id, 'userid'=> $user->id))) {
-            echo "<br /><a href='view.php?id=".$cm->id."&amp;action=delchoice&amp;sesskey=".sesskey()."'>".get_string("removemychoice","choice")."</a>";
-        }
-    } else {
-        print_string('havetologin', 'choice');
-    }
-    echo "</div>";
-}
 
 /**
  * @global object
@@ -398,31 +326,48 @@ function choice_show_reportlink($user, $cm) {
 
 /**
  * @global object
- * @global int
- * @global string
- * @global object
- * @uses CONTEXT_MODULE
- * @uses CHOICE_PUBLISH_NAMES
- * @uses CHOICE_PUBLISH_ANONYMOUS
  * @param object $choice
  * @param object $course
- * @param object $cm
+ * @param object $coursemodule
  * @param array $allresponses
- * @param int $forcepublish
- * @return void Output is echo'd
+
+ *  * @param bool $allresponses
+ * @return object
  */
-function choice_show_results($choice, $course, $cm, $allresponses, $forcepublish='') {
+function prepare_choice_show_results($choice, $course, $cm, $allresponses, $forcepublish=false) {
     global $CFG, $CHOICE_COLUMN_HEIGHT, $FULLSCRIPT, $PAGE, $OUTPUT, $DB;
 
-    echo $OUTPUT->heading(get_string("responses", "choice"));
-    if (empty($forcepublish)) { //alow the publish setting to be overridden
-        $forcepublish = $choice->publish;
+    $display = clone($choice);
+    $display->coursemoduleid = $cm->id;
+    $display->courseid = $course->id;
+
+    //overwrite options value;
+    $display->options = array();
+    $totaluser = 0;
+    foreach ($choice->option as $optionid => $optiontext) {
+        $display->options[$optionid] = new stdClass;
+        $display->options[$optionid]->text = $optiontext;
+        $display->options[$optionid]->maxanswer = $choice->maxanswers[$optionid];
+
+        if (array_key_exists($optionid, $allresponses)) {
+            $display->options[$optionid]->user = $allresponses[$optionid]; //->user;
+            $totaluser += count($allresponses[$optionid]);
     }
+    }
+    unset($display->option);
+    unset($display->maxanswers);
+
+    $display->numberofuser = $totaluser;
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    $display->viewresponsecapability = has_capability('mod/choice:readresponses', $context);
+    $display->deleterepsonsecapability = has_capability('mod/choice:deleteresponses',$context);
+    $display->fullnamecapability = has_capability('moodle/site:viewfullnames', $context);
 
     if (empty($allresponses)) {
         echo $OUTPUT->heading(get_string("nousersyet"));
         return false;
     }
+
 
     $totalresponsecount = 0;
     foreach ($allresponses as $optionid => $userlist) {
@@ -559,93 +504,9 @@ function choice_show_results($choice, $course, $cm, $allresponses, $forcepublish
                 echo "</form></div>";
             }
             break;
-
-
-        case CHOICE_PUBLISH_ANONYMOUS:
-
-            echo "<table cellpadding=\"5\" cellspacing=\"0\" class=\"results anonymous\">";
-            echo "<tr>";
-            $maxcolumn = 0;
-            if ($choice->showunanswered) {
-                echo "<th  class=\"col0 header\" scope=\"col\">";
-                print_string('notanswered', 'choice');
-                echo "</th>";
-                $column[0] = 0;
-                foreach ($allresponses[0] as $user) {
-                    $column[0]++;
                 }
-                $maxcolumn = $column[0];
+    return $display;
             }
-            $count = 1;
-
-            foreach ($choice->option as $optionid => $optiontext) {
-                echo "<th class=\"col$count header\" scope=\"col\">";
-                echo format_string($optiontext);
-                echo "</th>";
-
-                $column[$optionid] = 0;
-                if (isset($allresponses[$optionid])) {
-                    $column[$optionid] = count($allresponses[$optionid]);
-                    if ($column[$optionid] > $maxcolumn) {
-                        $maxcolumn = $column[$optionid];
-                    }
-                } else {
-                    $column[$optionid] = 0;
-                }
-            }
-            echo "</tr><tr>";
-
-            $height = 0;
-
-            if ($choice->showunanswered) {
-                if ($maxcolumn) {
-                    $height = $CHOICE_COLUMN_HEIGHT * ((float)$column[0] / (float)$maxcolumn);
-                }
-                echo "<td style=\"vertical-align:bottom\" align=\"center\" class=\"col0 data\">";
-                echo "<img src=\"column.png\" height=\"$height\" width=\"49\" alt=\"\" />";
-                echo "</td>";
-            }
-            $count = 1;
-            foreach ($choice->option as $optionid => $optiontext) {
-                if ($maxcolumn) {
-                    $height = $CHOICE_COLUMN_HEIGHT * ((float)$column[$optionid] / (float)$maxcolumn);
-                }
-                echo "<td style=\"vertical-align:bottom\" align=\"center\" class=\"col$count data\">";
-                echo "<img src=\"column.png\" height=\"$height\" width=\"49\" alt=\"\" />";
-                echo "</td>";
-                $count++;
-            }
-            echo "</tr><tr>";
-
-
-            if ($choice->showunanswered) {
-                echo '<td align="center" class="col0 count">';
-                if (!$choice->limitanswers) {
-                    echo $column[0];
-                    echo '<br />('.format_float(((float)$column[0]/(float)$totalresponsecount)*100.0,1).'%)';
-                }
-                echo '</td>';
-            }
-            $count = 1;
-            foreach ($choice->option as $optionid => $optiontext) {
-                echo "<td align=\"center\" class=\"col$count count\">";
-                if ($choice->limitanswers) {
-                    echo get_string("taken", "choice").":";
-                    echo $column[$optionid].'<br />';
-                    echo get_string("limit", "choice").":";
-                    echo $choice->maxanswers[$optionid];
-                } else {
-                    echo $column[$optionid];
-                    echo '<br />('.format_float(((float)$column[$optionid]/(float)$totalresponsecount)*100.0,1).'%)';
-                }
-                echo "</td>";
-                $count++;
-            }
-            echo "</tr></table>";
-
-            break;
-    }
-}
 
 /**
  * @global object

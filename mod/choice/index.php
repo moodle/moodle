@@ -20,6 +20,7 @@
     $strchoices = get_string("modulenameplural", "choice");
     $strsectionname  = get_string('sectionname', 'format_'.$course->format);
     $PAGE->set_title($strchoices);
+    $PAGE->set_heading($course->fullname);
     $PAGE->navbar->add($strchoices);
     echo $OUTPUT->header();
 

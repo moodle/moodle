@@ -93,6 +93,7 @@ img.emoticon {vertical-align: middle;width: 15px;height: 15px;}
 form.popupform,
 form.popupform div {display: inline;}
 .arrow_button input {overflow:hidden;}
+
 /** IE6 float + background bug solution **/
 .ie6 li.section {line-height:1.2em;width:100%;}
 
@@ -624,7 +625,9 @@ body.tag .managelink {padding: 5px;}
 .userenrolment .col_enrol .enrolment {float:left;padding:3px;margin:3px;}
 .userenrolment .col_enrol .enrolment a {float:right;margin-left:3px;}
 
-/** Overide for RTL layout **/
+/** 
+* Overide for RTL layout
+**/
 .dir-rtl .headermain {float:right;}
 .dir-rtl .headermenu {float:left;}
 .dir-rtl .breadcrumb {float:right;}
@@ -634,6 +637,9 @@ body.tag .managelink {padding: 5px;}
 .dir-rtl .loginbox .loginform .form-label {float:right;text-align:left;}
 .dir-rtl .loginbox .loginform .form-input {text-align: right;}
 
+/**
+ * Backup
+ */
 .backup-restore .backup-section {clear:both;border:1px solid #ddd;background-color:#f6f6f6;margin-bottom:1em;}
 .backup-restore .backup-section > h2.header {padding:5px 6px;margin:0;border-bottom:1px solid #ddd;}
 .backup-restore .backup-section .backup-sub-section {margin:0 25px;background-color:#f9f9f9;border:1px solid #f3f3f3;margin-bottom:1em;}
@@ -652,3 +658,16 @@ body.tag .managelink {padding: 5px;}
 
 .corelightbox {background-color:#CCC;position:absolute;top:0;left:0;width:100%;height:100%;text-align:center;}
 .corelightbox img {position:fixed;top:50%;}
+
+/** 
+ * IE - Overide for RTL layout
+ */
+.ie.dir-rtl .mform .fitem .felement {margin-right:0;text-align:right;float:right;}
+
+/**
+ * Choice
+ */
+.path-mod-choice .results .option,
+.path-mod-choice .results .numberofuser,
+.path-mod-choice .results .percentage {font-weight: bold; font-size: 108%;}
+

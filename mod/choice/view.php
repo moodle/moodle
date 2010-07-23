@@ -37,7 +37,6 @@
 
     if ($action == 'delchoice' and confirm_sesskey() and is_enrolled($context, NULL, 'mod/choice:choose') and $choice->allowupdate) {
         if ($answer = $DB->get_record('choice_answers', array('choiceid' => $choice->id, 'userid' => $USER->id))) {
-            //print_object($answer);
             $DB->delete_records('choice_answers', array('id' => $answer->id));
         }
     }
@@ -95,7 +94,7 @@
     //if user has already made a selection, and they are not allowed to update it, show their selected answer.
     if (isloggedin() && ($current = $DB->get_record('choice_answers', array('choiceid' => $choice->id, 'userid' => $USER->id))) &&
         empty($choice->allowupdate) ) {
-        echo $OUTPUT->box(get_string("yourselection", "choice", userdate($choice->timeopen)).": ".format_string(choice_get_option_text($choice, $current->optionid)));
+        echo $OUTPUT->box(get_string("yourselection", "choice", userdate($choice->timeopen)).": ".format_string(choice_get_option_text($choice, $current->optionid)), 'generalbox', 'yourselection');
     }
 
 /// Print the form
@@ -115,21 +114,15 @@
     if ( (!$current or $choice->allowupdate) and $choiceopen and is_enrolled($context, NULL, 'mod/choice:choose')) {
     // They haven't made their choice yet or updates allowed and choice is open
 
-        echo '<form id="form" method="post" action="view.php">';
-
-        choice_show_form($choice, $USER, $cm, $allresponses);
-
-        echo '</form>';
-
+        $options = choice_prepare_options($choice, $USER, $cm, $allresponses);
+        $renderer = $PAGE->get_renderer('mod_choice');        
+        echo $renderer->display_options($options, $cm->id, $choice->display);
         $choiceformshown = true;
     } else {
         $choiceformshown = false;
     }
 
-
-
     if (!$choiceformshown) {
-
         $sitecontext = get_context_instance(CONTEXT_SYSTEM);
 
         if (isguestuser()) {
@@ -153,14 +146,20 @@
     }
 
     // print the results at the bottom of the screen
-
     if ( $choice->showresults == CHOICE_SHOWRESULTS_ALWAYS or
         ($choice->showresults == CHOICE_SHOWRESULTS_AFTER_ANSWER and $current ) or
-        ($choice->showresults == CHOICE_SHOWRESULTS_AFTER_CLOSE and !$choiceopen ) )  {
+        ($choice->showresults == CHOICE_SHOWRESULTS_AFTER_CLOSE and !$choiceopen ))  {
 
-        choice_show_results($choice, $course, $cm, $allresponses); //show table with students responses.
+        if (!empty($choice->showunanswered)) {
+            $choice->option[0] = get_string('notanswered', 'choice');
+            $choice->maxanswers[0] = 0;
+        }
 
-    } else if (!$choiceformshown) {
+        $results = prepare_choice_show_results($choice, $course, $cm, $allresponses);
+        $renderer = $PAGE->get_renderer('mod_choice');
+        
+        echo $renderer->display_result($results);
+    } else  if (!$choiceformshown) {
         echo $OUTPUT->box(get_string('noresultsviewable', 'choice'));
     }
 

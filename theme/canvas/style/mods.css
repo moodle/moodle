@@ -335,19 +335,26 @@
 	padding: 5px;
 }
 
-.path-mod-choice .header {
+.path-mod-choice .header, .path-mod-choice td {
 	border-top: 1px solid;
 	border-color: #ddd;
 }
 
 .path-mod-choice .count,
 .path-mod-choice .header,
-.path-mod-choice .data {
+.path-mod-choice .data,
+.path-mod-choice .lastcol {
 	border-right: 1px solid #ddd;
 }
 
-.path-mod-choice .col1 {
+.path-mod-choice .col1, .path-mod-choice .c0,
+.path-mod-choice .lastcol {
 	border-left: 1px solid #ddd;
+}
+
+.path-mod-choice .lastrow td {
+	border-bottom: 1px solid #ddd;
+        border-top: 1px solid #ddd;
 }
 
 .path-mod-choice .count {
