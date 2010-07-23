@@ -310,7 +310,9 @@ if ($data->addtemplate){
     $newtext = '';
 }
 
-echo $newtext;
+$formatoptions = (object)array('noclean'=>true, 'para'=>false, 'filter'=>true);
+echo format_text($newtext, FORMAT_HTML, $formatoptions);
+
 echo '<div class="mdl-align"><input type="submit" name="saveandview" value="'.get_string('saveandview','data').'" />';
 if ($rid) {
     echo '&nbsp;<input type="submit" name="cancel" value="'.get_string('cancel').'" onclick="javascript:history.go(-1)" />';
