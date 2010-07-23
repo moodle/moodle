@@ -7544,7 +7544,7 @@ function upgrade_set_timeout($max_execution_time=300) {
 
     if (!$upgraderunning) {
         // upgrade not running or aborted
-        print_error('upgradetimedout', 'admin', "$CFG->wwroot/$CFG->admin/");
+        print_error('upgradetimedout', 'admin', "$CFG->wwwroot/$CFG->admin/");
         die;
     }
 
