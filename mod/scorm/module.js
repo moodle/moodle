@@ -44,7 +44,7 @@ M.mod_scorm.init = function(Y, hide_nav, hide_toc, toc_title, window_name, windo
     var scorm_current_node;
     var scorm_buttons = [];
     var scorm_bloody_labelclick = false;
-    var scorm_panel;
+    var scorm_nav_panel;
 
 
     Y.use('yui2-resize', 'yui2-dragdrop', 'yui2-container', 'yui2-button', 'yui2-layout', 'yui2-treeview', 'yui2-json', 'yui2-event', function(Y) {
@@ -179,7 +179,9 @@ M.mod_scorm.init = function(Y, hide_nav, hide_toc, toc_title, window_name, windo
             scorm_layout_widget.render();
             scorm_resize_frame();
 
-            scorm_panel.align('bl', 'bl');
+            if (scorm_nav_panel) {
+                scorm_nav_panel.align('bl', 'bl');
+            }
         };
 
         var scorm_get_htmlelement_size = function(el, prop) {
@@ -358,15 +360,15 @@ M.mod_scorm.init = function(Y, hide_nav, hide_toc, toc_title, window_name, windo
 
         // navigation
         if (scorm_hide_nav == false) {
-            //scorm_panel = new YAHOO.widget.Panel('scorm_navpanel', { visible:true, draggable:true, close:false,
+            //scorm_nav_panel = new YAHOO.widget.Panel('scorm_navpanel', { visible:true, draggable:true, close:false,
             //                                                       context: ['page', 'bl', 'bl', ["windowScroll", "textResize", "windowResize"]], constraintoviewport:true} );
-            scorm_panel = new YAHOO.widget.Panel('scorm_navpanel', { visible:true, draggable:true, close:false, xy: [250, 450],
+            scorm_nav_panel = new YAHOO.widget.Panel('scorm_navpanel', { visible:true, draggable:true, close:false, xy: [250, 450],
                                                                     autofillheight: "body"} );
-            scorm_panel.setHeader(M.str.scorm.navigation);
+            scorm_nav_panel.setHeader(M.str.scorm.navigation);
     
             //TODO: make some better&accessible buttons
-            scorm_panel.setBody('<span id="scorm_nav"><button id="nav_skipprev">&lt;&lt;</button><button id="nav_prev">&lt;</button><button id="nav_up">^</button><button id="nav_next">&gt;</button><button id="nav_skipnext">&gt;&gt;</button></span>');
-            scorm_panel.render();
+            scorm_nav_panel.setBody('<span id="scorm_nav"><button id="nav_skipprev">&lt;&lt;</button><button id="nav_prev">&lt;</button><button id="nav_up">^</button><button id="nav_next">&gt;</button><button id="nav_skipnext">&gt;&gt;</button></span>');
+            scorm_nav_panel.render();
             scorm_buttons[0] = new YAHOO.widget.Button('nav_skipprev');
             scorm_buttons[1] = new YAHOO.widget.Button('nav_prev');
             scorm_buttons[2] = new YAHOO.widget.Button('nav_up');
@@ -387,7 +389,7 @@ M.mod_scorm.init = function(Y, hide_nav, hide_toc, toc_title, window_name, windo
             scorm_buttons[4].on('click', function(ev) {
                 scorm_activate_item(scorm_skipnext(scorm_tree_node.getHighlightedNode()));
             });
-            scorm_panel.render();
+            scorm_nav_panel.render();
         }
 
         // finally activate the chosen item

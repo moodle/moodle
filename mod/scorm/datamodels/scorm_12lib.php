@@ -106,7 +106,7 @@ function scorm_eval_prerequisites($prerequisites, $usertracks) {
     return eval('return '.implode($stack).';');
 }
 
-function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='normal',$attempt='',$play=false, $tocheader=true) {
+function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='normal',$attempt='',$play=false, $tocheader=false) {
     global $CFG, $DB, $PAGE, $OUTPUT;
 
     $strexpand = get_string('expcoll','scorm');
