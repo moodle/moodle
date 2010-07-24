@@ -43,6 +43,7 @@ abstract class backup_structure_step extends backup_step {
             throw new backup_step_exception('wrong_backup_task_specified');
         }
         $this->filename = $filename;
+        $this->contenttransformer = null;
         parent::__construct($name, $task);
     }
 

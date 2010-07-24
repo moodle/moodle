@@ -1020,13 +1020,16 @@ class backup_block_instance_structure_step extends backup_structure_step {
             'blockname', 'parentcontextid', 'showinsubcontexts', 'pagetypepattern',
             'subpagepattern', 'defaultregion', 'defaultweight', 'configdata'));
 
-        $positions = new backup_nested_element('block_positions', null, array(
+        $positions = new backup_nested_element('block_positions');
+
+        $position = new backup_nested_element('block_position', array('id'), array(
             'contextid', 'pagetype', 'subpage', 'visible',
             'region', 'weight'));
 
         // Build the tree
 
         $block->add_child($positions);
+        $positions->add_child($position);
 
         // Transform configdata information if needed (process links and friends)
         $blockrec = $DB->get_record('block_instances', array('id' => $this->task->get_blockid()));
@@ -1047,7 +1050,7 @@ class backup_block_instance_structure_step extends backup_structure_step {
 
         $block->set_source_array(array($blockrec));
 
-        $positions->set_source_table('block_positions', array('blockinstanceid' => backup::VAR_PARENTID));
+        $position->set_source_table('block_positions', array('blockinstanceid' => backup::VAR_PARENTID));
 
         // File anotations (for fileareas specified on each block)
         foreach ($this->task->get_fileareas() as $filearea) {

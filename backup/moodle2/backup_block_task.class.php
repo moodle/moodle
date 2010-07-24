@@ -151,7 +151,7 @@ abstract class backup_block_task extends backup_task {
         $this->add_step(new backup_block_instance_structure_step('block_commons', 'block.xml'));
 
         // Here we add all the common steps for any block and, in the point of interest
-        // we call to define_my_steps() is order to get the particular ones inserted in place.
+        // we call to define_my_steps() in order to get the particular ones inserted in place.
         $this->define_my_steps();
 
         // Generate the roles file (optionally role assignments and always role overrides)

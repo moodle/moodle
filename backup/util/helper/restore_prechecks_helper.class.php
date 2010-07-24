@@ -63,7 +63,7 @@ abstract class restore_prechecks_helper {
         restore_controller_dbops::create_restore_temp_tables($controller->get_restoreid());
 
         // Check we are restoring one backup >= $min20version (very first ok ever)
-        $min20version = 2010072000;
+        $min20version = 2010072300;
         if ($controller->get_info()->backup_version < $min20version) {
             $message = new stdclass();
             $message->backup = $controller->get_info()->backup_version;
