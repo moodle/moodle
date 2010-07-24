@@ -75,7 +75,11 @@ abstract class restore_structure_step extends restore_step {
         }
 
         // Get restore_path elements array adapting and preparing it for processing
-        $this->pathelements = $this->prepare_pathelements($this->define_structure());
+        $structure = $this->define_structure();
+        if (!is_array($structure)) {
+            throw new restore_step_exception('restore_step_structure_not_array', $this->get_name());
+        }
+        $this->pathelements = $this->prepare_pathelements($structure);
 
         // Populate $elementsoldid and $elementsoldid based on available pathelements
         foreach ($this->pathelements as $pathelement) {
@@ -150,6 +154,9 @@ abstract class restore_structure_step extends restore_step {
         $names = array();
         $paths = array();
         foreach($elementsarr as $element) {
+            if (!$element instanceof restore_path_element) {
+                throw new restore_step_exception('restore_path_element_wrong_class', get_class($element));
+            }
             if (array_key_exists($element->get_name(), $names)) {
                 throw new restore_step_exception('restore_path_element_name_alreadyexists', $element->get_name());
             }
