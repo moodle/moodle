@@ -5899,7 +5899,6 @@ function print_plugin_tables() {
         'folder',
         'forum',
         'glossary',
-        'hotpot',
         'imscp',
         'label',
         'lesson',
