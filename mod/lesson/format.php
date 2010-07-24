@@ -26,6 +26,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  **/
 
+defined('MOODLE_INTERNAL') || die();
+
 /**
  * Given some question info and some data about the the answers
  * this function parses, organises and saves the question

@@ -24,9 +24,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or late
  **/
 
-if (!defined('MOODLE_INTERNAL')) {
-    die('Direct access to this script is forbidden.');    ///  It must be included from a Moodle page
-}
+defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot.'/course/moodleform_mod.php');
 require_once($CFG->dirroot.'/mod/lesson/locallib.php');

@@ -23,7 +23,9 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  **/
 
- /** True/False question type */
+defined('MOODLE_INTERNAL') || die();
+
+/** True/False question type */
 define("LESSON_PAGE_TRUEFALSE",     "2");
 
 class lesson_page_type_truefalse extends lesson_page {

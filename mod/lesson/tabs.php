@@ -25,6 +25,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or late
 */
 
+defined('MOODLE_INTERNAL') || die();
+
 /// This file to be included so we can assume config.php has already been included.
 global $DB;
 if (empty($lesson)) {

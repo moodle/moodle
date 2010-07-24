@@ -23,7 +23,9 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  **/
 
- /** Essay question type */
+defined('MOODLE_INTERNAL') || die();
+
+/** Essay question type */
 define("LESSON_PAGE_ESSAY", "10");
 
 class lesson_page_type_essay extends lesson_page {
