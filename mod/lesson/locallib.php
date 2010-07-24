@@ -773,19 +773,37 @@ abstract class lesson_add_page_form_base extends moodleform {
      * Convenience function: Adds an answer editor
      *
      * @param int $count The count of the element to add
+     * @param string $label, NULL means default
+     * @param bool $required
+     * @return void
      */
-    protected final function add_answer($count) {
-        $this->_form->addElement('editor', 'answer_editor['.$count.']', get_string('answer', 'lesson'), null, array('noclean'=>true));
+    protected final function add_answer($count, $label = NULL, $required = false) {
+        if ($label === NULL) {
+            $label = get_string('answer', 'lesson');
+        }
+        $this->_form->addElement('editor', 'answer_editor['.$count.']', $label, null, array('noclean'=>true));
         $this->_form->setDefault('answer_editor['.$count.']', array('text'=>'', 'format'=>FORMAT_MOODLE));
+        if ($required) {
+            $this->_form->addRule('answer_editor['.$count.']', get_string('required'), 'required', null, 'client');
+        }
     }
     /**
      * Convenience function: Adds an response editor
      *
      * @param int $count The count of the element to add
+     * @param string $label, NULL means default
+     * @param bool $required
+     * @return void
      */
-    protected final function add_response($count) {
-        $this->_form->addElement('editor', 'response_editor['.$count.']', get_string('response', 'lesson'), null, array('noclean'=>true));
+    protected final function add_response($count, $label = NULL, $required = false) {
+        if ($label === NULL) {
+            $label = get_string('response', 'lesson');
+        }
+        $this->_form->addElement('editor', 'response_editor['.$count.']', $label, null, array('noclean'=>true));
         $this->_form->setDefault('response_editor['.$count.']', array('text'=>'', 'format'=>FORMAT_MOODLE));
+        if ($required) {
+            $this->_form->addRule('response_editor['.$count.']', get_string('required'), 'required', null, 'client');
+        }
     }
 
     /**
