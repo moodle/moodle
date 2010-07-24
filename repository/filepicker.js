@@ -1011,6 +1011,9 @@ M.core_filepicker.init = function(Y, options) {
                 e.preventDefault(); 
                 var license = Y.one('#select-license-'+client_id).get('value');
                 YAHOO.util.Cookie.set('recentlicense', license);
+                if (!Y.one('#'+id+'_file').get('value')) {
+                    return false;
+                }
                 Y.use('io-upload-iframe', function() {
                     scope.request({
                             scope: scope,
