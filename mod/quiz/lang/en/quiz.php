@@ -396,7 +396,6 @@ $string['guestsno'] = 'Sorry, guests cannot see or attempt quizzes';
 $string['hidebreaks'] = 'Hide page breaks';
 $string['hidereordertool'] = 'Hide the reordering tool';
 $string['history'] = 'History of Responses:';
-$string['hotpot'] = 'Hot Potatoes format';
 $string['changessaved'] = 'Grading changes saved';
 $string['changessavedwitherrors'] = 'Some errors occurred while saving the grading changes';
 $string['checkanswer'] = 'Check';
