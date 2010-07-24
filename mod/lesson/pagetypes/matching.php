@@ -59,7 +59,7 @@ class lesson_page_type_matching extends lesson_page {
 
     protected function make_answer_form($attempt=null) {
         global $USER, $CFG;
-        // don't suffle answers (could be an option??)
+        // don't shuffle answers (could be an option??)
         $answers = array_slice($this->get_answers(), 2);
         $responses = array();
         foreach ($answers as $answer) {
