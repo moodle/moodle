@@ -183,7 +183,7 @@ function lesson_unseen_branch_jump($lesson, $userid) {
     // get the lesson pages
     $lessonpages = $lesson->load_all_pages();
 
-    // this loads all the viewed branch tables into $seen untill it finds the branch table with the flag
+    // this loads all the viewed branch tables into $seen until it finds the branch table with the flag
     // which is the branch table that starts the unseenbranch function
     $seen = array();
     foreach ($seenbranches as $seenbranch) {
@@ -258,7 +258,7 @@ function lesson_random_question_jump($lesson, $pageid) {
  *
  * @param object $lesson The lesson that the user is taking.
  * @param int $retries The attempt number.
- * @param int $userid Id of the user (optinal, default current user).
+ * @param int $userid Id of the user (optional, default current user).
  * @return object { nquestions => number of questions answered
                     attempts => number of question attempts
                     total => max points possible
@@ -826,7 +826,7 @@ abstract class lesson_add_page_form_base extends moodleform {
  * @property int $modattempts Toggle to allow the user to go back and review answers
  * @property int $usepassword Toggle the use of a password for entry
  * @property string $password The password to require users to enter
- * @property int $dependency ID of another lesson this lesson is dependant on
+ * @property int $dependency ID of another lesson this lesson is dependent on
  * @property string $conditions Conditions of the lesson dependency
  * @property int $grade The maximum grade a user can achieve (%)
  * @property int $custom Toggle custom scoring on or off
@@ -849,7 +849,7 @@ abstract class lesson_add_page_form_base extends moodleform {
  * @property int $width Width of slideshow
  * @property int $height Height of slideshow
  * @property string $bgcolor Background colour of slideshow
- * @property int $displayleft Display a left meun
+ * @property int $displayleft Display a left menu
  * @property int $displayleftif Sets the condition on which the left menu is displayed
  * @property int $progressbar Flag to toggle display of a lesson progress bar
  * @property int $highscores Flag to toggle collection of high scores
@@ -1286,7 +1286,7 @@ class lesson extends lesson_base {
     }
 
     /**
-     * Determins if a jumpto value is correct or not.
+     * Determines if a jumpto value is correct or not.
      *
      * returns true if jumpto page is (logically) after the pageid page or
      * if the jumpto value is a special value.  Returns false in all other cases.
@@ -1355,7 +1355,7 @@ class lesson extends lesson_base {
      * Interprets LESSON_CLUSTERJUMP jumpto value.
      *
      * This will select a page randomly
-     * and the page selected will be inbetween a cluster page and end of cluter or end of lesson
+     * and the page selected will be inbetween a cluster page and end of clutter or end of lesson
      * and the page selected will be a page that has not been viewed already
      * and if any pages are within a branch table or end of branch then only 1 page within
      * the branch table or end of branch will be randomly selected (sub clustering).
@@ -1483,7 +1483,7 @@ class lesson extends lesson_base {
     /**
      * Checks to see if the specified page[id] is a subpage of a type specified in
      * the $types array, until either there are no more pages of we find a type
-     * corrosponding to that of a type specified in $ends
+     * corresponding to that of a type specified in $ends
      *
      * @param int $pageid The id of the page to check
      * @param array $types An array of types that would signify this page was a subpage
@@ -1515,7 +1515,7 @@ class lesson extends lesson_base {
  * that all classes within this module can be interacted with in the same way.
  *
  * This class provides the user with a basic properties array that can be fetched
- * or set via magic methods, or alternativily by defining methods get_blah() or
+ * or set via magic methods, or alternatively by defining methods get_blah() or
  * set_blah() within the extending object.
  *
  * @copyright 2009 Sam Hemelryk
@@ -1585,11 +1585,11 @@ abstract class lesson_base {
     }
 
     /**
-     * If overriden should create a new instance, save it in the DB and return it
+     * If overridden should create a new instance, save it in the DB and return it
      */
     public static function create() {}
     /**
-     * If overriden should load an instance from the DB and return it
+     * If overridden should load an instance from the DB and return it
      */
     public static function load() {}
     /**
@@ -1665,7 +1665,7 @@ abstract class lesson_page extends lesson_base {
 
     /**
      * This method should return the integer used to identify the page type within
-     * the database and thoughout code. This maps back to the defines used in 1.x
+     * the database and throughout code. This maps back to the defines used in 1.x
      * @abstract
      * @return int
      */
@@ -1890,7 +1890,7 @@ abstract class lesson_page extends lesson_base {
         global $DB, $USER, $OUTPUT;
 
         /**
-         * This should be overriden by each page type to actually check the response
+         * This should be overridden by each page type to actually check the response
          * against what ever custom criteria they have defined
          */
         $result = $this->check_answer();
@@ -2041,7 +2041,7 @@ abstract class lesson_page extends lesson_base {
     }
 
     /**
-     * Construstor method
+     * Constructor method
      * @param object $properties
      * @param lesson $lesson
      */
@@ -2052,7 +2052,7 @@ abstract class lesson_page extends lesson_base {
 
     /**
      * Returns the score for the attempt
-     * This may be overriden by page types that require manual grading
+     * This may be overridden by page types that require manual grading
      * @param array $answers
      * @param object $attempt
      * @return int
@@ -2215,7 +2215,7 @@ abstract class lesson_page extends lesson_base {
     }
 
     /**
-     * This method MUST be overriden by all question page types, or page types that
+     * This method MUST be overridden by all question page types, or page types that
      * wish to score a page.
      *
      * The structure of result should always be the same so it is a good idea when
@@ -2223,7 +2223,7 @@ abstract class lesson_page extends lesson_base {
      * <code>
      * $result = parent::check_answer();
      * </code>
-     * before modifiying it as required.
+     * before modifying it as required.
      *
      * @return stdClass
      */
@@ -2287,7 +2287,7 @@ abstract class lesson_page extends lesson_base {
     }
 
     /**
-     * Returns an array of options to display whn choosing the jumpto for a page/answer
+     * Returns an array of options to display when choosing the jumpto for a page/answer
      * @static
      * @param int $pageid
      * @param lesson $lesson
@@ -2675,7 +2675,7 @@ class lesson_page_type_manager {
     }
 
     /**
-     * Fetchs an mform that can be used to create/edit an page
+     * Fetches an mform that can be used to create/edit an page
      *
      * @param int $type The id for the page type
      * @param array $arguments Any arguments to pass to the mform
