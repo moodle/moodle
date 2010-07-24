@@ -48,9 +48,19 @@ class lesson_page_type_multichoice extends lesson_page {
         return $this->typeidstring;
     }
 
+    public function get_used_answers() {
+        $answers = $this->get_answers();
+        foreach ($answers as $key=>$answer) {
+            if ($answer->answer === '' or $answer->response === '') {
+                unset($answers[$key]);
+            }
+        }
+        return $answers;
+    }
+
     public function display($renderer, $attempt) {
         global $CFG, $PAGE;
-        $answers = $this->get_answers();
+        $answers = $this->get_used_answers();
         shuffle($answers);
         $action = $CFG->wwwroot.'/mod/lesson/continue.php';
         $params = array('answers'=>$answers, 'lessonid'=>$this->lesson->id, 'contents'=>$this->get_contents());
@@ -70,7 +80,7 @@ class lesson_page_type_multichoice extends lesson_page {
         global $DB, $CFG;
         $result = parent::check_answer();
 
-        $answers = $this->get_answers();
+        $answers = $this->get_used_answers();
         shuffle($answers);
         $action = $CFG->wwwroot.'/mod/lesson/continue.php';
         $params = array('answers'=>$answers, 'lessonid'=>$this->lesson->id, 'contents'=>$this->get_contents());
@@ -95,6 +105,7 @@ class lesson_page_type_multichoice extends lesson_page {
             }
 
             $studentanswers = $data->answer;
+
             foreach ($studentanswers as $key => $useranswer) {
                 $studentanswers[$key] = clean_param($useranswer, PARAM_INT);
             }
@@ -103,7 +114,7 @@ class lesson_page_type_multichoice extends lesson_page {
             $result->userresponse = implode(",", $studentanswers);
 
             // get the answers in a set order, the id order
-            $answers = $this->get_answers();
+            $answers = $this->get_used_answers();
             $ncorrect = 0;
             $nhits = 0;
             $correctresponse = '';
@@ -249,7 +260,7 @@ class lesson_page_type_multichoice extends lesson_page {
     }
 
     public function display_answers(html_table $table) {
-        $answers = $this->get_answers();
+        $answers = $this->get_used_answers();
         $options = new stdClass;
         $options->noclean = true;
         $options->para = false;
@@ -323,7 +334,7 @@ class lesson_page_type_multichoice extends lesson_page {
     }
 
     public function report_answers($answerpage, $answerdata, $useranswer, $pagestats, &$i, &$n) {
-        $answers = $this->get_answers();
+        $answers = $this->get_used_answers();
         $formattextdefoptions = new stdClass;
         $formattextdefoptions->para = false;  //I'll use it widely in this page
         foreach ($answers as $answer) {
