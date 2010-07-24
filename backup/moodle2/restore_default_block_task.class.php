@@ -37,6 +37,10 @@ class restore_default_block_task extends restore_block_task {
     protected function define_my_steps() {
     }
 
+    public function get_fileareas() {
+        return array();
+    }
+
     public function get_configdata_encoded_attributes() {
         return array();
     }

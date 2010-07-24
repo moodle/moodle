@@ -117,7 +117,7 @@ abstract class restore_plan_builder {
             $blocks = backup_general_helper::get_blocks_from_path($task->get_taskbasepath());
             foreach ($blocks as $basepath => $name) {
                 if ($task = restore_factory::get_restore_block_task($name, $basepath)) {
-                    $plan->add_task($task);
+                    //$plan->add_task($task);
                 } else {
                     // TODO: Debug information about block not supported
                 }

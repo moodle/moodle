@@ -31,12 +31,22 @@
 abstract class restore_block_task extends restore_task {
 
     protected $taskbasepath; // To store the basepath of this block
+    protected $blockname;    // Name of the block
+    protected $contextid;   // new (target) context of the block
+    protected $oldcontextid;// old (original) context of the block
+    protected $blockid;     // new (target) id of the block
+    protected $oldblockid;  // old (original) id of the block
 
     /**
      * Constructor - instantiates one object of this class
      */
     public function __construct($name, $taskbasepath, $plan = null) {
         $this->taskbasepath = $taskbasepath;
+        $this->blockname = '';
+        $this->contextid = 0;
+        $this->oldcontextid = 0;
+        $this->blockid = 0;
+        $this->oldblockid = 0;
         parent::__construct($name, $plan);
     }
 
@@ -58,13 +68,73 @@ abstract class restore_block_task extends restore_task {
             return;
         }
 
-        // TODO: See backup. If "child" of activity task and it has been excluded, nothing to do
+        // If "child" of activity task and it has been excluded, nothing to do
+        $parent = basename(dirname(dirname($this->taskbasepath)));
+        if ($parent != 'course') {
+            $includedsetting = $parent . '_included';
+            if (!$this->get_setting_value($includedsetting)) {
+                $this->built = true;
+                return;
+            }
+        }
 
+        // Process the block.xml common file (instance + positions)
+        $this->add_step(new restore_block_instance_structure_step('block_commons', 'block.xml'));
 
-        // TODO: Link all the activity steps here
+        // Here we add all the common steps for any block and, in the point of interest
+        // we call to define_my_steps() in order to get the particular ones inserted in place.
+        $this->define_my_steps();
+
+        // Restore block role assignments and overrides (internally will observe the role_assignments setting)
+        $this->add_step(new restore_ras_and_caps_structure_step('block_ras_and_caps', 'roles.xml'));
+
+        // Restore block comments (conditionally)
+        if ($this->get_setting_value('comments')) {
+            $this->add_step(new restore_comments_structure_step('block_comments', 'comments.xml'));
+        }
 
         // At the end, mark it as built
         $this->built = true;
+    }
+
+    public function set_blockname($blockname) {
+        $this->blockname = $blockname;
+    }
+
+    public function get_blockname() {
+        return $this->blockname;
+    }
+
+    public function set_blockid($blockid) {
+        $this->blockid = $blockid;
+    }
+
+    public function get_blockid() {
+        return $this->blockid;
+    }
+
+    public function set_old_blockid($blockid) {
+        $this->oldblockid = $blockid;
+    }
+
+    public function get_old_blockid() {
+        return $this->oldblockid;
+    }
+
+    public function set_contextid($contextid) {
+        $this->contextid = $contextid;
+    }
+
+    public function get_contextid() {
+        return $this->contextid;
+    }
+
+    public function set_old_contextid($contextid) {
+        $this->oldcontextid = $contextid;
+    }
+
+    public function get_old_contextid() {
+        return $this->oldcontextid;
     }
 
 // Protected API starts here
@@ -89,6 +159,11 @@ abstract class restore_block_task extends restore_task {
      * Define (add) particular steps that each block can have
      */
     abstract protected function define_my_steps();
+
+    /**
+     * Define one array() of fileareas that each block controls
+     */
+    abstract public function get_fileareas();
 
     /**
      * Define one array() of configdata attributes

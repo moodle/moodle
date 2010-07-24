@@ -66,6 +66,37 @@ class restore_drop_and_clean_temp_stuff extends restore_execution_step {
     }
 }
 
+
+/**
+ * Review all the (pending) block positions in backup_ids, matching by
+ * contextid, creating positions as needed. This is executed by the
+ * final task, once all the contexts have been created
+ */
+class restore_review_pending_block_positions extends restore_execution_step {
+
+    protected function define_execution() {
+        global $DB;
+
+        // Get all the block_position objects pending to match
+        $params = array('backupid' => $this->get_restoreid(), 'itemname' => 'block_position');
+        $rs = $DB->get_recordset('backup_ids_temp', $params, '', 'itemid');
+        // Process block positions, creating them or accumulating for final step
+        foreach($rs as $posrec) {
+            // Get the complete position object (stored as info)
+            $position = restore_dbops::get_backup_ids_record($this->get_restoreid(), 'block_position', $posrec->itemid)->info;
+            // If position is for one already mapped (known) contextid
+            // process it now, creating the position, else nothing to
+            // do, position finally discarded
+            if ($newctx = restore_dbops::get_backup_ids_record($this->get_restoreid(), 'context', $position->contextid)) {
+                $position->contextid = $newctx->newitemid;
+                // Create the block position
+                $DB->insert_record('block_positions', $position);
+            }
+        }
+        $rs->close();
+    }
+}
+
 /*
  * Execution step that, *conditionally* (if there isn't preloaded information)
  * will load the inforef files for all the included course/section/activity tasks
@@ -646,8 +677,8 @@ class restore_ras_and_caps_structure_step extends restore_structure_step {
         // Check roleid, userid are one of the mapped ones
         $newroleid = $this->get_mappingid('role', $data->roleid);
         $newuserid = $this->get_mappingid('user', $data->userid);
-        // If newroleid and newuserid and component is empty assign via API (handles dupes and friends)
-        if ($newroleid && $newuserid && empty($data->component)) {
+        // If newroleid and newuserid and component is empty and context valid assign via API (handles dupes and friends)
+        if ($newroleid && $newuserid && empty($data->component) && $this->task->get_contextid()) {
             // TODO: role_assign() needs one userid param to be able to specify our restore userid
             role_assign($newroleid, $newuserid, $this->task->get_contextid());
         }
@@ -658,9 +689,10 @@ class restore_ras_and_caps_structure_step extends restore_structure_step {
 
         // Check roleid is one of the mapped ones
         $newroleid = $this->get_mappingid('role', $data->roleid);
-        // If newroleid is valid assign it via API (it handles dupes and so on)
-        if ($newroleid) {
+        // If newroleid and context are valid assign it via API (it handles dupes and so on)
+        if ($newroleid && $this->task->get_contextid()) {
             // TODO: assign_capability() needs one userid param to be able to specify our restore userid
+            // TODO: it seems that assign_capability() doesn't check for valid capabilities at all ???
             assign_capability($data->capability, $data->permission, $newroleid, $this->task->get_contextid());
         }
     }
@@ -820,9 +852,128 @@ class restore_comments_structure_step extends restore_structure_step {
         }
         // Only restore the comment if has no mapping OR we have found the matching mapping
         if (!$mapping || $newitemid) {
-            if ($data->userid = $this->get_mappingid('user', $data->userid)) {
+            // Only if user mapping and context
+            $data->userid = $this->get_mappingid('user', $data->userid);
+            if ($data->userid && $this->task->get_contextid()) {
                 $data->contextid = $this->task->get_contextid();
-                $DB->insert_record('comments', $data);
+                // Only if there is another comment with same context/user/timecreated
+                $params = array('contextid' => $data->contextid, 'userid' => $data->userid, 'timecreated' => $data->timecreated);
+                if (!$DB->record_exists('comments', $params)) {
+                    $DB->insert_record('comments', $data);
+                }
+            }
+        }
+    }
+}
+
+
+/**
+ * This structure steps restores one instance + positions of one block
+ * Note: Positions corresponding to one existing context are restored
+ * here, but all the ones having unknown contexts are sent to backup_ids
+ * for a later chance to be restored at the end (final task)
+ */
+class restore_block_instance_structure_step extends restore_structure_step {
+
+    protected function define_structure() {
+
+        $paths = array();
+
+        $paths[] = new restore_path_element('block', '/block', true); // Get the whole XML together
+        $paths[] = new restore_path_element('block_position', '/block/block_positions/block_position');
+
+        return $paths;
+    }
+
+    public function process_block($data) {
+        global $DB;
+
+        $data = (object)$data; // Handy
+        $oldcontextid = $data->contextid;
+        $oldid        = $data->id;
+        $positions = isset($data->block_positions['block_position']) ? $data->block_positions['block_position'] : array();
+
+        // Look for the parent contextid
+        if (!$data->parentcontextid = $this->get_mappingid('context', $data->parentcontextid)) {
+            throw new restore_step_exception('restore_block_missing_parent_ctx', $data->parentcontextid);
+        }
+
+        // If there is already one block of that type in the parent context
+        // and the block is not multiple, stop processing
+        if ($DB->record_exists_sql("SELECT bi.id
+                                      FROM {block_instances} bi
+                                      JOIN {block} b ON b.name = bi.blockname
+                                     WHERE bi.parentcontextid = ?
+                                       AND bi.blockname = ?
+                                       AND b.multiple = 0", array($data->parentcontextid, $data->blockname))) {
+            return false;
+        }
+
+        // If there is already one block of that type in the parent context
+        // with the same showincontexts, pagetypepattern, subpagepattern, defaultregion and configdata
+        // stop processing
+        $params = array(
+            'blockname' => $data->blockname, 'parentcontextid' => $data->parentcontextid,
+            'showinsubcontexts' => $data->showinsubcontexts, 'pagetypepattern' => $data->pagetypepattern,
+            'subpagepattern' => $data->subpagepattern, 'defaultregion' => $data->defaultregion);
+        if ($birecs = $DB->get_records('block_instances', $params)) {
+            foreach($birecs as $birec) {
+                if ($birec->configdata == $data->configdata) {
+                    return false;
+                }
+            }
+        }
+
+        // Set task old contextid, blockid and blockname once we know them
+        $this->task->set_old_contextid($oldcontextid);
+        $this->task->set_old_blockid($oldid);
+        $this->task->set_blockname($data->blockname);
+
+        // Let's look for anything within configdata neededing processing
+        // (nulls and uses of legacy file.php)
+        if ($attrstotransform = $this->task->get_configdata_encoded_attributes()) {
+            $configdata = (array)unserialize(base64_decode($data->configdata));
+            foreach ($configdata as $attribute => $value) {
+                if (in_array($attribute, $attrstotransform)) {
+                    $configdata[$attribute] = $this->contentprocessor->process_cdata($value);
+                }
+            }
+            $data->configdata = base64_encode(serialize((object)$configdata));
+        }
+
+        // Create the block instance
+        $newitemid = $DB->insert_record('block_instances', $data);
+        // Save the mapping (with restorefiles support)
+        $this->set_mapping('block_instance', $oldid, $newitemid, true);
+        // Create the block context
+        $newcontextid = get_context_instance(CONTEXT_BLOCK, $newitemid)->id;
+        // Save the block contexts mapping and sent it to task
+        $this->set_mapping('context', $oldcontextid, $newcontextid);
+        $this->task->set_contextid($newcontextid);
+        $this->task->set_blockid($newitemid);
+
+        // Restore block fileareas if declared
+        $component = 'block_' . $this->task->get_blockname();
+        foreach ($this->task->get_fileareas() as $filearea) { // Simple match by contextid. No itemname needed
+            $this->add_related_files($component, $filearea, null);
+        }
+
+        // Process block positions, creating them or accumulating for final step
+        foreach($positions as $position) {
+            $position = (object)$position;
+            $position->blockinstanceid = $newitemid; // The instance is always the restored one
+            // If position is for one already mapped (known) contextid
+            // process it now, creating the position
+            if ($newpositionctxid = $this->get_mappingid('context', $position->contextid)) {
+                $position->contextid = $newpositionctxid;
+                // Create the block position
+                $DB->insert_record('block_positions', $position);
+
+            // The position belongs to an unknown context, send it to backup_ids
+            // to process them as part of the final steps of restore. We send the
+            // whole $position object there, hence use the low level method.
+            } else {
+                restore_dbops::set_backup_ids_record($this->get_restoreid(), 'block_position', $position->id, 0, null, $position);
             }
         }
     }
