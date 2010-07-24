@@ -3,7 +3,6 @@
 
 require_once('../config.php');
 require_once($CFG->dirroot . '/backup/util/includes/restore_includes.php');
-require_once($CFG->dirroot . '/backup/moodle2/restore_plan_builder.class.php');
 
 $contextid   = required_param('contextid', PARAM_INT);
 $stage      = optional_param('stage', restore_ui::STAGE_CONFIRM, PARAM_INT);
