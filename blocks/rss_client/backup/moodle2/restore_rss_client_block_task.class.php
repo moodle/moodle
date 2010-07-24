@@ -22,22 +22,22 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once($CFG->dirroot . '/blocks/rss_client/backup/moodle2/backup_rss_client_stepslib.php'); // We have structure steps
+require_once($CFG->dirroot . '/blocks/rss_client/backup/moodle2/restore_rss_client_stepslib.php'); // We have structure steps
 
 /**
- * Specialised backup task for the rss_client block
+ * Specialised restore task for the rss_client block
  * (has own DB structures to backup)
  *
  * TODO: Finish phpdocs
  */
-class backup_rss_client_block_task extends backup_block_task {
+class restore_rss_client_block_task extends restore_block_task {
 
     protected function define_my_settings() {
     }
 
     protected function define_my_steps() {
         // rss_client has one structure step
-        $this->add_step(new backup_rss_client_block_structure_step('rss_client_structure', 'rss_client.xml'));
+        $this->add_step(new restore_rss_client_block_structure_step('rss_client_structure', 'rss_client.xml'));
     }
 
     public function get_fileareas() {
@@ -48,7 +48,7 @@ class backup_rss_client_block_task extends backup_block_task {
         return array(); // No special handling of configdata
     }
 
-    static public function encode_content_links($content) {
+    static public function decode_content_links($content) {
         return $content; // No special encoding of links
     }
 }
