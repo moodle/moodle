@@ -18,7 +18,7 @@
 /**
  * Native sqlsrv class representing moodle database interface.
  *
- * @package    code
+ * @package    core
  * @subpackage dml
  * @copyright  2009 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v2 or later

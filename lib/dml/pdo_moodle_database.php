@@ -19,7 +19,7 @@
 /**
  * Experimental pdo database class
  *
- * @package    code
+ * @package    core
  * @subpackage dml
  * @copyright  2008 Andrei Bautu
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
