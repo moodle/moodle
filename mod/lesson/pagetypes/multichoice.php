@@ -49,6 +49,27 @@ class lesson_page_type_multichoice extends lesson_page {
         return $this->typeidstring;
     }
 
+    /**
+     * Gets an array of the jumps used by the answers of this page
+     *
+     * @return array
+     */
+    public function get_jumps() {
+        global $DB;
+        $jumps = array();
+        $params = array ("lessonid" => $this->lesson->id, "pageid" => $this->properties->id);
+        if ($answers = $this->get_answers()) {
+            foreach ($answers as $answer) {
+                if ($answer->answer === '') {
+                    // show only jumps for real branches (==have description)
+                    continue;
+                }
+                $jumps[] = $this->get_jump_name($answer->jumpto);
+            }
+        }
+        return $jumps;
+    }
+
     public function get_used_answers() {
         $answers = $this->get_answers();
         foreach ($answers as $key=>$answer) {
