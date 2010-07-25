@@ -19,9 +19,10 @@
  * Code fragment to define the version of lesson
  * This fragment is called by moodle_needs_upgrading() and /admin/index.php
  *
- * @package   lesson
- * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or late
+ * @package    mod
+ * @subpackage lesson
+ * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or late
  **/
 
 defined('MOODLE_INTERNAL') || die();

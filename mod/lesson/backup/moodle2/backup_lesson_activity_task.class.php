@@ -18,9 +18,10 @@
 /**
  * This file contains the backup task for the lesson module
  *
- * @package   moodlecore
- * @copyright 2010 Sam Hemelryk
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    mod
+ * @subpackage lesson
+ * @copyright  2010 Sam Hemelryk
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 /**
@@ -30,8 +31,8 @@ require_once($CFG->dirroot . '/mod/lesson/backup/moodle2/backup_lesson_stepslib.
 
 /**
  * The backup task class for the lesson module
- * @copyright 2010 Sam Hemelryk
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2010 Sam Hemelryk
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class backup_lesson_activity_task extends backup_activity_task {
 
