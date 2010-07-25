@@ -152,6 +152,7 @@ function wiki_delete_instance($id) {
  * @todo Finish documenting this function
  **/
 function wiki_user_outline($course, $user, $mod, $wiki) {
+    $return = NULL;
     return $return;
 }
 
