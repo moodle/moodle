@@ -224,7 +224,7 @@ function page_user_complete($course, $user, $mod, $page) {
         echo "$strnumviews - $strmostrecently ".userdate($lastlog->time);
 
     } else {
-        print_string('neverseen', 'resource');
+        print_string('neverseen', 'page');
     }
 }
 
