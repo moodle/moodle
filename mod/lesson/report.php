@@ -81,56 +81,6 @@ if ($action == 'reportoverview') {
 
 $lessonoutput = $PAGE->get_renderer('mod_lesson');
 
-/// Process any form data before fetching attempts, grades and times
-if (has_capability('mod/lesson:edit', $context) && $form = data_submitted() && confirm_sesskey()) {
-/// Cycle through array of userids with nested arrays of tries
-    if (!empty($form->attempts)) {
-        foreach ($form->attempts as $userid => $tries) {
-            // Modifier IS VERY IMPORTANT!  What does it do?
-            //      Well, it is for when you delete multiple attempts for the same user.
-            //      If you delete try 1 and 3 for a user, then after deleting try 1, try 3 then
-            //      becomes try 2 (because try 1 is gone and all tries after try 1 get decremented).
-            //      So, the modifier makes sure that the submitted try refers to the current try in the
-            //      database - hope this all makes sense :)
-            $modifier = 0;
-
-            foreach ($tries as $try => $junk) {
-                $try -= $modifier;
-
-            /// Clean up the timer table
-            $params = array ("userid" => $userid, "lessonid" => $lesson->id);
-                $timeid = $DB->get_field_sql("SELECT id FROM {lesson_timer}
-                                         WHERE userid = :userid AND lessonid = :lessonid
-                                         ORDER BY starttime", $params, $try, 1);
-
-                $DB->delete_records('lesson_timer', array('id' => $timeid));
-
-            /// Remove the grade from the grades and high_scores tables
-                $gradeid = $DB->get_field_sql("SELECT id FROM {lesson_grades}
-                                          WHERE userid = :userid AND lessonid = :lessonid
-                                          ORDER BY completed", $params, $try, 1);
-
-                $DB->delete_records('lesson_grades', array('id' => $gradeid));
-                $DB->delete_records('lesson_high_scores', array('gradeid' => $gradeid, 'lessonid' => $lesson->id, 'userid' => $userid));
-
-            /// Remove attempts and update the retry number
-                $DB->delete_records('lesson_attempts', array('userid' => $userid, 'lessonid' => $lesson->id, 'retry' => $try));
-                $DB->execute("UPDATE {lesson_attempts} SET retry = retry - 1 WHERE userid = ? AND lessonid = ? AND retry > ?", array($userid, $lesson->id, $try));
-
-            /// Remove seen branches and update the retry number
-                $DB->delete_records('lesson_branch', array('userid' => $userid, 'lessonid' => $lesson->id, 'retry' => $try));
-                $DB->execute("UPDATE {lesson_branch} SET retry = retry - 1 WHERE userid = ? AND lessonid = ? AND retry > ?", array($userid, $lesson->id, $try));
-
-            /// update central gradebook
-                lesson_update_grades($lesson, $userid);
-
-                $modifier++;
-            }
-        }
-        $lesson->add_message(get_string('attemptsdeleted', 'lesson'), 'notifysuccess');
-    }
-}
-
 if (! $attempts = $DB->get_records('lesson_attempts', array('lessonid' => $lesson->id), 'timeseen')) {
     $nothingtodisplay = true;
 }
@@ -143,25 +93,82 @@ if (! $times = $DB->get_records('lesson_timer', array('lessonid' => $lesson->id)
     $times = array();
 }
 
-echo $lessonoutput->header($lesson, $cm, $action);
-
-$course_context = get_context_instance(CONTEXT_COURSE, $course->id);
-if (has_capability('gradereport/grader:view', $course_context) && has_capability('moodle/grade:viewall', $course_context)) {
-    $seeallgradeslink = new moodle_url('/grade/report/grader/index.php', array('id'=>$course->id));
-    $seeallgradeslink = html_writer::link($seeallgradeslink, get_string('seeallcoursegrades', 'grades'));
-    echo $OUTPUT->box($seeallgradeslink, 'allcoursegrades');
-}
-
 if ($nothingtodisplay) {
+    echo $lessonoutput->header($lesson, $cm, $action);
     echo $OUTPUT->notification(get_string('nolessonattempts', 'lesson'));
     echo $OUTPUT->footer();
     exit();
 }
 
-/**************************************************************************
-this action is for default view and overview view
-**************************************************************************/
-if ($action == 'reportoverview') {
+if ($action === 'delete') {
+    /// Process any form data before fetching attempts, grades and times
+    if (has_capability('mod/lesson:edit', $context) and $form = data_submitted() and confirm_sesskey()) {
+    /// Cycle through array of userids with nested arrays of tries
+        if (!empty($form->attempts)) {
+            foreach ($form->attempts as $userid => $tries) {
+                // Modifier IS VERY IMPORTANT!  What does it do?
+                //      Well, it is for when you delete multiple attempts for the same user.
+                //      If you delete try 1 and 3 for a user, then after deleting try 1, try 3 then
+                //      becomes try 2 (because try 1 is gone and all tries after try 1 get decremented).
+                //      So, the modifier makes sure that the submitted try refers to the current try in the
+                //      database - hope this all makes sense :)
+                $modifier = 0;
+
+                foreach ($tries as $try => $junk) {
+                    $try -= $modifier;
+
+                /// Clean up the timer table by removing using the order - this is silly, it should be linked to specific attempt (skodak)
+                    $params = array ("userid" => $userid, "lessonid" => $lesson->id);
+                    $timers = $DB->get_records_sql("SELECT id FROM {lesson_timer}
+                                                     WHERE userid = :userid AND lessonid = :lessonid
+                                                  ORDER BY starttime", $params, $try, 1);
+                    if ($timers) {
+                        $timer = reset($timers);
+                        $DB->delete_records('lesson_timer', array('id' => $timer->id));
+                    }
+
+                /// Remove the grade from the grades and high_scores tables - this is silly, it should be linked to specific attempt (skodak)
+                    $grades = $DB->get_records_sql("SELECT id FROM {lesson_grades}
+                                                     WHERE userid = :userid AND lessonid = :lessonid
+                                                  ORDER BY completed", $params, $try, 1);
+
+                    if ($grades) {
+                        $grade = reset($grades);
+                        $DB->delete_records('lesson_grades', array('id' => $grade->id));
+                        $DB->delete_records('lesson_high_scores', array('gradeid' => $grade->id, 'lessonid' => $lesson->id, 'userid' => $userid));
+                    }
+
+                /// Remove attempts and update the retry number
+                    $DB->delete_records('lesson_attempts', array('userid' => $userid, 'lessonid' => $lesson->id, 'retry' => $try));
+                    $DB->execute("UPDATE {lesson_attempts} SET retry = retry - 1 WHERE userid = ? AND lessonid = ? AND retry > ?", array($userid, $lesson->id, $try));
+
+                /// Remove seen branches and update the retry number
+                    $DB->delete_records('lesson_branch', array('userid' => $userid, 'lessonid' => $lesson->id, 'retry' => $try));
+                    $DB->execute("UPDATE {lesson_branch} SET retry = retry - 1 WHERE userid = ? AND lessonid = ? AND retry > ?", array($userid, $lesson->id, $try));
+
+                /// update central gradebook
+                    lesson_update_grades($lesson, $userid);
+
+                    $modifier++;
+                }
+            }
+        }
+    }
+    redirect(new moodle_url($PAGE->url, array('action'=>'reportoverview')));
+
+} else if ($action === 'reportoverview') {
+    /**************************************************************************
+    this action is for default view and overview view
+    **************************************************************************/
+    echo $lessonoutput->header($lesson, $cm, $action);
+
+    $course_context = get_context_instance(CONTEXT_COURSE, $course->id);
+    if (has_capability('gradereport/grader:view', $course_context) && has_capability('moodle/grade:viewall', $course_context)) {
+        $seeallgradeslink = new moodle_url('/grade/report/grader/index.php', array('id'=>$course->id));
+        $seeallgradeslink = html_writer::link($seeallgradeslink, get_string('seeallcoursegrades', 'grades'));
+        echo $OUTPUT->box($seeallgradeslink, 'allcoursegrades');
+    }
+
     $studentdata = array();
 
     // build an array for output
@@ -307,7 +314,7 @@ if ($action == 'reportoverview') {
     if (has_capability('mod/lesson:edit', $context)) {
         $checklinks  = '<a href="javascript: checkall();">'.get_string('selectall').'</a> / ';
         $checklinks .= '<a href="javascript: checknone();">'.get_string('deselectall').'</a>';
-        $checklinks .= html_writer::select(array('delete' => get_string('deleteselected')), 'attemptaction', 0, array(''=>'choosedots'), array('id'=>'actionid'));
+        $checklinks .= html_writer::select(array('delete' => get_string('deleteselected')), 'action', 0, array(''=>'choosedots'), array('id'=>'actionid'));
         $PAGE->requires->js_init_call('M.util.init_select_autosubmit', array('theform', 'actionid', ''));
         echo $OUTPUT->box($checklinks, 'center');
         echo '</form>';
@@ -354,7 +361,7 @@ if ($action == 'reportoverview') {
     $stattable->data[] = array($avescore.'%', $avetime, $highscore.'%', $lowscore.'%', $hightime, $lowtime);
 
     echo html_writer::table($stattable);
-} else if ($action == 'reportdetail') {
+} else if ($action === 'reportdetail') {
     /**************************************************************************
     this action is for a student detailed view and for the general detailed view
 
@@ -368,6 +375,15 @@ if ($action == 'reportoverview') {
     4.  Print out the object which contains all the try info
 
 **************************************************************************/
+    echo $lessonoutput->header($lesson, $cm, $action);
+
+    $course_context = get_context_instance(CONTEXT_COURSE, $course->id);
+    if (has_capability('gradereport/grader:view', $course_context) && has_capability('moodle/grade:viewall', $course_context)) {
+        $seeallgradeslink = new moodle_url('/grade/report/grader/index.php', array('id'=>$course->id));
+        $seeallgradeslink = html_writer::link($seeallgradeslink, get_string('seeallcoursegrades', 'grades'));
+        echo $OUTPUT->box($seeallgradeslink, 'allcoursegrades');
+    }
+
     $formattextdefoptions = new stdClass;
     $formattextdefoptions->para = false;  //I'll use it widely in this page
 
