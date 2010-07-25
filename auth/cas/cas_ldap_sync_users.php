@@ -1,13 +1,13 @@
 <?php
-/** auth_ldap_sync_users.php
+/** cas_ldap_sync_users.php
  *  Modified for cas Module
  *
- * This script is meant to be called from a cronjob to sync moodle with the LDAP
- * backend in those setups where the LDAP backend acts as 'master'.
+ * This script is meant to be called from a cronjob to sync moodle with the CAS
+ * backend in those setups where the CAS backend acts as 'master'.
  *
  * Recommended cron entry:
  * # 5 minutes past 4am
- * 5 4 * * * /usr/bin/php -c /etc/php4/cli/php.ini /var/www/moodle/auth/ldap/auth_ldap_sync_users.php
+ * 5 4 * * * /usr/bin/php -c /etc/php4/cli/php.ini /var/www/moodle/auth/cas/cas_ldap_sync_users.php
  *
  * Notes:
  *   - If you have a large number of users, you may want to raise the memory limits
@@ -21,20 +21,21 @@
  *
  */
 
-
 if (isset($_SERVER['REMOTE_ADDR'])) {
-    error_log("should not be called from web server!");
+    error_log('auth/cas/cas_ldap_sync_users.php can not be called from web server!');
+    echo 'auth/cas/cas_ldap_sync_users.php can not be called from web server!';
     exit;
 }
-
-define('NO_MOODLE_COOKIES', true);
 
 require_once(dirname(dirname(dirname(__FILE__))).'/config.php'); // global moodle config file.
 
 require_once($CFG->dirroot.'/course/lib.php');
 
+// Ensure errors are well explained
+$CFG->debug = DEBUG_NORMAL;
+
 if (!is_enabled_auth('cas')) {
-    echo "Plugin not enabled!";
+    error_log('[AUTH CAS] '.get_string('pluginnotenabled', 'auth_ldap'));
     die;
 }
 

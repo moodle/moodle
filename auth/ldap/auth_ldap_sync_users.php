@@ -6,7 +6,7 @@
  *
  * Recommended cron entry:
  * # 5 minutes past 4am
- * 5 4 * * * /usr/bin/php -c /etc/php4/cli/php.ini /var/www/moodle/auth/ldap/auth_ldap_sync_users.php
+ * 5 4 * * * /usr/bin/php5 -c /etc/php5/cli/php.ini /var/www/moodle/auth/ldap/auth_ldap_sync_users.php
  *
  * Notes:
  *   - If you have a large number of users, you may want to raise the memory limits
@@ -20,24 +20,24 @@
  *
  */
 
-
 if (isset($_SERVER['REMOTE_ADDR'])) {
-    error_log("should not be called from web server!");
+    error_log('auth/ldap/auth_ldap_sync_users.php can not be called from web server!');
+    echo 'auth/ldap/auth_ldap_sync_users.php can not be called from web server!';
     exit;
 }
-
-define('NO_MOODLE_COOKIES', true);
 
 require_once(dirname(dirname(dirname(__FILE__))).'/config.php'); // global moodle config file.
 
 require_once($CFG->dirroot.'/course/lib.php');
 
+// Ensure errors are well explained
+$CFG->debug = DEBUG_NORMAL;
+
 if (!is_enabled_auth('ldap')) {
-    echo "Plugin not enabled!";
+    error_log('[AUTH LDAP] '.get_string('pluginnotenabled', 'auth_ldap'));
     die;
 }
 
 $ldapauth = get_auth_plugin('ldap');
 $ldapauth->sync_users(true);
-
 

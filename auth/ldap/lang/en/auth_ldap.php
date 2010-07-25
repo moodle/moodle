@@ -40,13 +40,9 @@ $string['auth_ldap_create_error'] = 'Error creating user in LDAP.';
 $string['auth_ldap_creators'] = 'List of groups or contexts whose members are allowed to create new courses. Separate multiple groups with \';\'. Usually something like \'cn=teachers,ou=staff,o=myorg\'';
 $string['auth_ldap_creators_key'] = 'Creators';
 $string['auth_ldapdescription'] = 'This method provides authentication against an external LDAP server.
-
                                   If the given username and password are valid, Moodle creates a new user
-
                                   entry in its database. This module can read user attributes from LDAP and prefill
-
                                   wanted fields in Moodle.  For following logins only the username and
-
                                   password are checked.';
 $string['auth_ldap_expiration_desc'] = 'Select No to disable expired password checking or LDAP to read passwordexpiration time directly from LDAP';
 $string['auth_ldap_expiration_key'] = 'Expiration';
@@ -73,7 +69,7 @@ $string['auth_ldap_memberattribute_isdn_key'] = 'Member attribute uses dn';
 $string['auth_ldap_memberattribute_key'] = 'Member attribute';
 $string['auth_ldap_noconnect'] = 'LDAP-module cannot connect to server: {$a}';
 $string['auth_ldap_noconnect_all'] = 'LDAP-module cannot connect to any servers: {$a}';
-$string['auth_ldap_noextension'] = 'Warning: The PHP LDAP module does not seem to be present. Please ensure it is installed and enabled.';
+$string['auth_ldap_noextension'] = '<em>The PHP LDAP module does not seem to be present. Please ensure it is installed and enabled if you want to use this authentication plugin.</em>';
 $string['auth_ldap_no_mbstring'] = 'You need the mbstring extension to create users in Active Directory.';
 $string['auth_ldapnotinstalled'] = 'Cannot use LDAP authentication. The PHP LDAP module is not installed.';
 $string['auth_ldap_objectclass'] = 'Optional: Overrides objectClass used to name/search users on ldap_user_type. Usually you dont need to chage this.';
@@ -88,7 +84,7 @@ $string['auth_ldap_preventpassindb_key'] = 'Hide passwords';
 $string['auth_ldap_search_sub'] = 'Search users from subcontexts.';
 $string['auth_ldap_search_sub_key'] = 'Search subcontexts';
 $string['auth_ldap_server_settings'] = 'LDAP server settings';
-$string['auth_ldap_unsupportedusertype'] = 'auth: ldap user_create() does not support selected usertype: {$a} (..yet)';
+$string['auth_ldap_unsupportedusertype'] = 'auth: ldap user_create() does not support selected usertype: {$a}';
 $string['auth_ldap_update_userinfo'] = 'Update user information (firstname, lastname, address..) from LDAP to Moodle.  Specify "Data mapping" settings as you need.';
 $string['auth_ldap_user_attribute'] = 'Optional: Overrides the attribute used to name/search users. Usually \'cn\'.';
 $string['auth_ldap_user_attribute_key'] = 'User attribute';
@@ -107,7 +103,41 @@ $string['auth_ntlmsso_ie_fastpath'] = 'Set to yes to enable the NTLM SSO fast pa
 $string['auth_ntlmsso_ie_fastpath_key'] = 'MS IE fast path?';
 $string['auth_ntlmsso_subnet'] = 'If set, it will only attempt SSO with clients in this subnet. Format: xxx.xxx.xxx.xxx/bitmask';
 $string['auth_ntlmsso_subnet_key'] = 'Subnet';
+$string['auth_ntlmsso_type_key'] = 'Authentication Type';
+$string['auth_ntlmsso_type'] = 'The authentication method configured in the web server to authenticate the users (if in doubt, choose NTLM)';
+$string['connectingldap'] = "Conecting to ldap server...\n";
+$string['creatingtemptable'] = "Creating temporary table {\$a}\n";
+$string['didntfindexpiretime'] = 'password_expire() didn\'t find expiration time.';
+$string['didntgetusersfromldap'] = "Did not get any users from LDAP -- error? -- exiting\n";
+$string['gotcountrecordsfromldap'] = "Got {\$a} records from LDAP\n";
+$string['morethanoneuser'] = 'Strange! More than one user record found in ldap. Only using the first one.';
+$string['needbcmath'] = 'You need the BCMath extension to use grace logins with Active Directory';
+$string['needmbstring'] = 'You need the mbstring extension to change passwords in Active Directory';
+$string['nodnforusername'] = 'Error in user_update_password(). No DN for: {$a->username}';
+$string['notcalledfromserver'] = 'Should not be called from the web server!';
+$string['noupdatestobedone'] = "No updates to be done\n";
+$string['nouserentriestoremove'] = "No user entries to be removed\n";
+$string['nouserentriestorevive'] = "No user entries to be revived\n";
+$string['nouserstobeadded'] = "No users to be added\n";
 $string['ntlmsso_attempting'] = 'Attempting Single Sign On via NTLM...';
 $string['ntlmsso_failed'] = 'Auto-login failed, try the normal login page...';
 $string['ntlmsso_isdisabled'] = 'NTLM SSO is disabled.';
+$string['ntlmsso_unknowntype'] = 'Unknown ntlmsso type!';
 $string['pluginname'] = 'LDAP server';
+$string['pluginnotenabled'] = 'Plugin not enabled!';
+$string['renamingnotallowed'] = 'User renaming not allowed in LDAP';
+$string['rootdseerror'] = 'Error querying rootDSE for Active Directory';
+$string['updateremfail'] = 'Error updating LDAP record. Error code: {$a->errno}; Error string: {$a->errstring}<br/>Key ({$a->key}) - old moodle value: \'{$a->ouvalue}\' new value: \'{$a->nuvalue}\'';
+$string['updateremfailamb'] = 'Failed to update LDAP with ambiguous field {$a->key}; old moodle value: \'{$a->ouvalue}\', new value: \'{$a->nuvalue}\'';
+$string['updatepasserror'] = 'Error in user_update_password(). Error code: {$a->errno}; Error string: {$a->errstring}';
+$string['updatepasserrorexpire'] = 'Error in user_update_password() when reading password expiration time. Error code: {$a->errno}; Error string: {$a->errstring}';
+$string['updatepasserrorexpiregrace'] = 'Error in user_update_password() when modifying expirationtime and/or gracelogins. Error code: {$a->errno}; Error string: {$a->errstring}';
+$string['updateusernotfound'] = 'Could not find user while updating externally. Details follow: search base: \'{$a->userdn}\'; search filter: \'(objectClass=*)\'; search attributes: {$a->attribs}';
+$string['user_activatenotsupportusertype'] = 'auth: ldap user_activate() does not support selected usertype: {$a}';
+$string['user_disablenotsupportusertype'] = 'auth: ldap user_disable() does not support selected usertype: {$a}';
+$string['userentriestoadd'] = "User entries to be added: {\$a}\n";
+$string['userentriestoremove'] = "User entries to be removed: {\$a}\n";
+$string['userentriestorevive'] = "User entries to be revived: {\$a}\n";
+$string['userentriestoupdate'] = "User entries to be updated: {\$a}\n";
+$string['usernotfound'] = 'User not found in LDAP';
+$string['useracctctrlerror'] = 'Error getting userAccountControl for {$a}';

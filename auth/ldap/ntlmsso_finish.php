@@ -1,23 +1,23 @@
 <?php
 
-require_once(dirname(dirname(dirname(__FILE__)))."/config.php");
+require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 
-//HTTPS is potentially required in this page
+// HTTPS is potentially required in this page
 httpsrequired();
 
 $PAGE->set_url('/auth/ldap/ntlmsso_finish.php');
 
-/// Define variables used in page
+// Define variables used in page
 $site = get_site();
 
 $authsequence = get_enabled_auth_plugins(true); // auths, in sequence
-if (!in_array('ldap',$authsequence,true)) {
-    print_error('ldap_isdisabled','auth');
+if (!in_array('ldap', $authsequence, true)) {
+    print_error('ldap_isdisabled', 'auth');
 }
 
 $authplugin = get_auth_plugin('ldap');
 if (empty($authplugin->config->ntlmsso_enabled)) {
-    print_error('ntlmsso_isdisabled','auth_ldap');
+    print_error('ntlmsso_isdisabled', 'auth_ldap');
 }
 
 // If ntlmsso_finish() succeeds, then the code never returns,
