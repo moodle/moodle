@@ -18,9 +18,10 @@
 /**
  * List of file folders in course
  *
- * @package   mod-folder
- * @copyright 2009 onwards Martin Dougiamas (http://dougiamas.com)
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    mod
+ * @subpackage folder
+ * @copyright  2009 onwards Martin Dougiamas (http://dougiamas.com)
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 require('../../config.php');

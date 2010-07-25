@@ -26,7 +26,5 @@ This module is intended for distribution of large number of documents.
 
 TODO:
  * reimplement portfolio support (MDL-20070)
- * implement subdirectory support in File picker (MDL-20071)
  * new backup/restore and old restore transformation (MDL-20072)
- * improve folder view UI (MDL-20073)
 
