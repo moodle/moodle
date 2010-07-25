@@ -45,6 +45,28 @@ class lesson_page_type_branchtable extends lesson_page {
         }
         return $this->string;
     }
+
+    /**
+     * Gets an array of the jumps used by the answers of this page
+     *
+     * @return array
+     */
+    public function get_jumps() {
+        global $DB;
+        $jumps = array();
+        $params = array ("lessonid" => $this->lesson->id, "pageid" => $this->properties->id);
+        if ($answers = $this->get_answers()) {
+            foreach ($answers as $answer) {
+                if ($answer->answer === '') {
+                    // show only jumps for real branches (==have description)
+                    continue;
+                }
+                $jumps[] = $this->get_jump_name($answer->jumpto);
+            }
+        }
+        return $jumps;
+    }
+
     public static function get_jumptooptions($firstpage, $lesson) {
         global $DB, $PAGE;
         $jump = array();
@@ -89,6 +111,10 @@ class lesson_page_type_branchtable extends lesson_page {
         $buttons = array();
         $i = 0;
         foreach ($this->get_answers() as $answer) {
+            if ($answer->answer === '') {
+                // not a branch!
+                continue;
+            }
             $params = array();
             $params['id'] = $PAGE->cm->id;
             $params['pageid'] = $this->properties->id;
@@ -174,6 +200,10 @@ class lesson_page_type_branchtable extends lesson_page {
         $options->para = false;
         $i = 1;
         foreach ($answers as $answer) {
+            if ($answer->answer === '') {
+                // not a branch!
+                continue;
+            }
             $cells = array();
             $cells[] = "<span class=\"label\">".get_string("branch", "lesson")." $i<span>: ";
             $cells[] = format_text($answer->answer, $answer->answerformat, $options);
