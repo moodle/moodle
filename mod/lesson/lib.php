@@ -119,7 +119,9 @@ function lesson_update_instance($data, $mform) {
  * @return bool
  */
 function lesson_delete_instance($id) {
-    global $DB;
+    global $DB, $CFG;
+    require_once($CFG->dirroot . '/mod/lesson/locallib.php');
+
     $lesson = $DB->get_record("lesson", array("id"=>$id), '*', MUST_EXIST);
     $lesson = new lesson($lesson);
     return $lesson->delete();
