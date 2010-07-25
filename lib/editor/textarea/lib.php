@@ -18,10 +18,13 @@
 /**
  * Failsafe textarea editor support.
  *
- * @package    editor_textarea
+ * @package    editor
+ * @subpackage textarea
  * @copyright  2009 Petr Skoda (http://skodak.org)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+defined('MOODLE_INTERNAL') || die();
 
 class textarea_texteditor extends texteditor {
     public function supported_by_browser() {

@@ -17,11 +17,14 @@
 /**
  * Definitions of constants for gradebook
  *
- * @package    moodlecore
+ * @package    core
  * @subpackage grade
  * @copyright  2006 Nicolas Connault
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+defined('MOODLE_INTERNAL') || die();
+
 require_once('grade_object.php');
 
 /**
@@ -1513,7 +1516,7 @@ class grade_category extends grade_object {
             //Flip from the default of 0 to 1 (or vice versa) if ALL items in the category are still set to the old default.
             if ($params->aggregation==GRADE_AGGREGATE_WEIGHTED_MEAN || $params->aggregation==GRADE_AGGREGATE_EXTRACREDIT_MEAN) {
                 $sql = $defaultaggregationcoef = null;
-                
+
                 if ($params->aggregation==GRADE_AGGREGATE_WEIGHTED_MEAN) {
                     //if all items in this category have aggregation coefficient of 0 we can change it to 1 ie evenly weighted
                     $sql = "select count(id) from {grade_items} where categoryid=:categoryid and aggregationcoef!=0";

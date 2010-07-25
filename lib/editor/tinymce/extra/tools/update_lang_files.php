@@ -18,8 +18,8 @@
 /**
  * This script imports TinyMCE lang strings into Moodle lang packs.
  *
- * @package    moodlecore
- * @subpackage editor
+ * @package    editor
+ * @subpackage tinymce
  * @copyright  2009 Petr Skoda (http://skodak.org)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

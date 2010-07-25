@@ -18,7 +18,8 @@
 /**
  * TinyMCE admin settings
  *
- * @package    editor_tinymce
+ * @package    editor
+ * @subpackage tinymce
  * @copyright  2009 Petr Skoda (http://skodak.org)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

@@ -17,12 +17,14 @@
 /**
  * Definitions of constants for gradebook
  *
- * @package    moodlecore
+ * @package    core
  * @subpackage grade
  * @copyright  2007 Nicolas Connault
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
- 
+
+defined('MOODLE_INTERNAL') || die();
+
 // category aggregation types
 define('GRADE_AGGREGATE_MEAN', 0);
 define('GRADE_AGGREGATE_MEDIAN', 2);
