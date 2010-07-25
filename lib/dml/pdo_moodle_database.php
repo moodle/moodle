@@ -19,11 +19,13 @@
 /**
  * Experimental pdo database class
  *
- * @package    moodlecore
- * @subpackage DML
+ * @package    code
+ * @subpackage dml
  * @copyright  2008 Andrei Bautu
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir.'/dml/moodle_database.php');
 require_once($CFG->libdir.'/dml/pdo_moodle_recordset.php');

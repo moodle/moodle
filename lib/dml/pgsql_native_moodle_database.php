@@ -19,11 +19,13 @@
 /**
  * Native pgsql class representing moodle database interface.
  *
- * @package    moodlecore
- * @subpackage DML
+ * @package    code
+ * @subpackage dml
  * @copyright  2008 Petr Skoda (http://skodak.org)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir.'/dml/moodle_database.php');
 require_once($CFG->libdir.'/dml/pgsql_native_moodle_recordset.php');

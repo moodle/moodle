@@ -22,11 +22,13 @@
  * Also used to be able to retrieve temp table names included in the get_tables()
  * method of the DB.
  *
- * @package    moodlecore
- * @subpackage DML
+ * @package    code
+ * @subpackage dml
  * @copyright  2009 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir.'/dml/moodle_temptables.php');
 

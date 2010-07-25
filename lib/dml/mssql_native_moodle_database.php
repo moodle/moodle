@@ -19,11 +19,13 @@
 /**
  * Native mssql class representing moodle database interface.
  *
- * @package    moodlecore
- * @subpackage DML
+ * @package    code
+ * @subpackage dml
  * @copyright  2009 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir.'/dml/moodle_database.php');
 require_once($CFG->libdir.'/dml/mssql_native_moodle_recordset.php');

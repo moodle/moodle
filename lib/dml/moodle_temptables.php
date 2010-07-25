@@ -33,14 +33,15 @@
  * of doing temporary tables support 100% cross-db and transparent within the DB API.
  *
  * Only drivers needing it will use this store. Neither moodle_database (abstract) or
- * databases like postgres need this, because they don't lack any temp functionality.º:w
-
+ * databases like postgres need this, because they don't lack any temp functionality.
  *
- * @package    moodlecore
- * @subpackage DML
+ * @package    code
+ * @subpackage dml
  * @copyright  2009 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+defined('MOODLE_INTERNAL') || die();
 
 class moodle_temptables {
 

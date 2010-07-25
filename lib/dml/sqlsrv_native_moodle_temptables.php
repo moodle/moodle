@@ -16,15 +16,17 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
-* sqlsrv specific temptables store. Needed because temporary tables
-* are named diferently than normal tables. Also used to be able to retrieve
-* temp table names included in the get_tables() method od the DB.
-*
-* @package    moodlecore
-* @subpackage DML
-* @copyright  2009 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
-* @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v2 or later
-*/
+ * sqlsrv specific temptables store. Needed because temporary tables
+ * are named differently than normal tables. Also used to be able to retrieve
+ * temp table names included in the get_tables() method of the DB.
+ *
+ * @package    code
+ * @subpackage dml
+ * @copyright  2009 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v2 or later
+ */
+
+defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir.'/dml/mssql_native_moodle_temptables.php');
 

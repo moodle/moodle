@@ -16,13 +16,15 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
-* Native sqlsrv class representing moodle database interface.
-*
-* @package    moodlecore
-* @subpackage DML
-* @copyright  2009 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
-* @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v2 or later
-*/
+ * Native sqlsrv class representing moodle database interface.
+ *
+ * @package    code
+ * @subpackage dml
+ * @copyright  2009 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v2 or later
+ */
+
+defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir.'/dml/moodle_database.php');
 require_once($CFG->libdir.'/dml/sqlsrv_native_moodle_recordset.php');
@@ -47,7 +49,7 @@ class sqlsrv_native_moodle_database extends moodle_database {
     }
 
     /**
-    * Setup the driver configuration. As a TODO, might want to put some levele of debugging to
+    * Setup the driver configuration. As a TODO, might want to put some level of debugging to
     * see / log more info, warnings, errors.
     }
 
@@ -58,8 +60,8 @@ class sqlsrv_native_moodle_database extends moodle_database {
     */
     public function driver_installed() {
         // use 'function_exists()' rather than 'extension_loaded()' because
-        // the name used by 'extension_loaded()' is case specific! The extention
-        // therefor *could be* mixed case and hence not found.
+        // the name used by 'extension_loaded()' is case specific! The extension
+        // therefore *could be* mixed case and hence not found.
         if (!function_exists('sqlsrv_num_rows')) {
             return get_string('sqlsrvextensionisnotpresentinphp', 'install');
         }
@@ -342,14 +344,14 @@ class sqlsrv_native_moodle_database extends moodle_database {
 
     /***
     * Bound variables *are* supported. Until I can get it to work, emulate the bindings
-    * The challenge/problem/bug is that allthough they work, doing a SELECT SCOPE_IDENTITY()
-    * doesnt return a value (no result set)
+    * The challenge/problem/bug is that although they work, doing a SELECT SCOPE_IDENTITY()
+    * doesn't return a value (no result set)
     */
 
     /**
     * Prepare the query binding and do the actual query.
     *
-    * @param string $sql The sql statment
+    * @param string $sql The sql statement
     * @param mixed $params array of params for binding. If NULL, they are ignored.
     * @param mixed $sql_query_type - Type of operation
     * @param mixed $free_result - Default true, transaction query will be freed.
@@ -469,7 +471,7 @@ class sqlsrv_native_moodle_database extends moodle_database {
     }
 
     /**
-    * Returns datailed information about columns in table. This information is cached internally.
+    * Returns detailed information about columns in table. This information is cached internally.
     * @param string $table name
     * @param bool $usecache
     * @return array array of database_column_info objects indexed with column names
@@ -786,7 +788,7 @@ class sqlsrv_native_moodle_database extends moodle_database {
     }
 
     /**
-    * Preform a emulation for LIMIT(offset, limit)
+    * Perform a emulation for LIMIT(offset, limit)
     *
     * @param mixed $sql
     * @param mixed $offset
@@ -804,7 +806,7 @@ class sqlsrv_native_moodle_database extends moodle_database {
             $sql1 = preg_replace('/^([\s(])*SELECT( DISTINCT | ALL)?(?!\s*TOP\s*\()/i',
                 "\\1SELECT\\2 TOP $limit", $sql);
         } else {
-            // Only apply TOP clause if we have any limitnum (limitfrom offset is hadled later)
+            // Only apply TOP clause if we have any limitnum (limitfrom offset is handled later)
             if ($limit < 1) {
                $limit = "9223372036854775806"; // MAX BIGINT -1
             }
@@ -1248,8 +1250,8 @@ class sqlsrv_native_moodle_database extends moodle_database {
     * NOTE: this was originally returning only function name
     *
     * @param string $expr some string field, no aggregates
-    * @param mixed $start integer or expresion evaluating to int
-    * @param mixed $length optional integer or expresion evaluating to int
+    * @param mixed $start integer or expression evaluating to int
+    * @param mixed $length optional integer or expression evaluating to int
     * @return string sql fragment
     */
     public function sql_substr($expr, $start, $length = false) {
@@ -1303,7 +1305,7 @@ class sqlsrv_native_moodle_database extends moodle_database {
     /// transactions
 
     // NOTE:
-    // TODO -- should these be wrapped in query start/end? They arnt a query
+    // TODO -- should these be wrapped in query start/end? They arn't a query
     // but information and error capture is nice. msk
 
 
