@@ -140,18 +140,13 @@ M.mod_scorm.init = function(Y, hide_nav, hide_toc, toc_title, window_name, windo
 
         var scorm_resize_layout = function(alsowidth) {
             if (window_name) {
-                //scorm_layout_widget.setStyle('width', '260px');
-                //scorm_layout_widget.render();
                 return;
             }
 
             if (alsowidth) {
-                //var layout = YAHOO.util.Dom.get('scorm_layout');
-                //layout.style.width = '600px';
                 scorm_layout_widget.setStyle('width', '');
                 var newwidth = scorm_get_htmlelement_size('content', 'width');
                 if (newwidth > 600) {
-                    //layout.style.width = newwidth+'px';
                     scorm_layout_widget.setStyle('width', newwidth+'px');
                 }
             }
@@ -241,14 +236,6 @@ M.mod_scorm.init = function(Y, hide_nav, hide_toc, toc_title, window_name, windo
         };
 
         var scorm_skipprev = function(node) {
-            /*
-            if (node == scorm_tree_node.getRoot().children[0]) {
-                return null;
-            }
-            else {
-                return scorm_tree_node.getRoot().children[0];
-            }
-            */
             if (node.previousSibling) {
                 return node.previousSibling;
             } else if (node.depth > 0) {
@@ -268,15 +255,6 @@ M.mod_scorm.init = function(Y, hide_nav, hide_toc, toc_title, window_name, windo
         };
 
         var scorm_skipnext = function(node) {
-            /*
-            var toc_children = scorm_tree_node.getRoot().children;
-            if (node == toc_children[toc_children.length - 1]) {
-                return null;
-            }
-            else {
-                return toc_children[toc_children.length - 1];
-            }
-            */
             if (node.nextSibling) {
                 return node.nextSibling;
             } else if (node.depth > 0) {
@@ -290,16 +268,6 @@ M.mod_scorm.init = function(Y, hide_nav, hide_toc, toc_title, window_name, windo
         YAHOO.widget.LayoutUnit.prototype.STR_COLLAPSE = M.str.moodle.hide;
         YAHOO.widget.LayoutUnit.prototype.STR_EXPAND = M.str.moodle.show;
 
-/*
-        scorm_layout_widget = new YAHOO.widget.Layout('scorm_layout', {
-            minWidth: 600,
-            minHeight: 400,
-            units: [
-                { position: 'left', body: 'scorm_toc', header: M.str.scorm.toc, width: 250, resize: true, gutter: '2px 5px 5px 2px', collapse: true, minWidth:150},
-                { position: 'center', body: '<div id="scorm_content"></div>', gutter: '2px 5px 5px 2px', scroll: true}
-            ]
-        });
-        */
         scorm_layout_widget = new YAHOO.widget.Layout('scorm_layout', {
             minWidth: 255,
             minHeight: 400,
@@ -360,8 +328,6 @@ M.mod_scorm.init = function(Y, hide_nav, hide_toc, toc_title, window_name, windo
 
         // navigation
         if (scorm_hide_nav == false) {
-            //scorm_nav_panel = new YAHOO.widget.Panel('scorm_navpanel', { visible:true, draggable:true, close:false,
-            //                                                       context: ['page', 'bl', 'bl', ["windowScroll", "textResize", "windowResize"]], constraintoviewport:true} );
             scorm_nav_panel = new YAHOO.widget.Panel('scorm_navpanel', { visible:true, draggable:true, close:false, xy: [250, 450],
                                                                     autofillheight: "body"} );
             scorm_nav_panel.setHeader(M.str.scorm.navigation);

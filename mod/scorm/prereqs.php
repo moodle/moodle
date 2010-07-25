@@ -1,4 +1,7 @@
 <?php
+
+    // this page is called via AJAX to repopulte the TOC when LMSFinish() is called
+
     require_once('../../config.php');
     require_once($CFG->dirroot.'/mod/scorm/locallib.php');
 
@@ -52,9 +55,5 @@
             $result = scorm_get_toc($USER,$scorm,'structurelist',$currentorg,$scoid,$mode,$attempt,true, false);
             echo $result->toc;
         }
-        //echo "<ul><li>The Heading<ul>";
-        //echo "<li><a title='/moodledev/blah1'>Blah 1</a></li>";
-        //echo "<li><a title='/moodledev/blah2'>Blah 2</a></li>";
-        //echo "</ul></li></ul>";
     }
 
