@@ -58,7 +58,7 @@ if ($ADMIN->fulltree) {
             $settings->add(new admin_setting_ldap_rolemapping('enrol_ldap/role_mapping', get_string ('role_mapping_key', 'enrol_ldap', $role->name), get_string ('role_mapping', 'enrol_ldap'), ''));
         }
         $options = $yesno;
-        $settings->add(new admin_setting_configselect('enrol_ldap/course_search_sub', get_string('course_search_sub_key', 'enrol_ldap'), get_string('course_search_sub', 'enrol_ldap'), 3, $options));
+        $settings->add(new admin_setting_configselect('enrol_ldap/course_search_sub', get_string('course_search_sub_key', 'enrol_ldap'), get_string('course_search_sub', 'enrol_ldap'), 0, $options));
         $options = $yesno;
         $settings->add(new admin_setting_configselect('enrol_ldap/memberattribute_isdn', get_string('memberattribute_isdn_key', 'enrol_ldap'), get_string('memberattribute_isdn', 'enrol_ldap'), 0, $options));
         $settings->add(new admin_setting_configtext_trim_lower('enrol_ldap/user_contexts', get_string('user_contexts_key', 'enrol_ldap'), get_string('user_contexts', 'enrol_ldap'), ''));
@@ -94,7 +94,7 @@ if ($ADMIN->fulltree) {
             $parentlist = array();
             $options = array();
             make_categories_list($options, $parentlist);
-            $settings->add(new admin_setting_configselect('enrol_ldap/category', get_string('category_key', 'enrol_ldap'), get_string('category', 'enrol_ldap'), 0, $options));
+            $settings->add(new admin_setting_configselect('enrol_ldap/category', get_string('category_key', 'enrol_ldap'), get_string('category', 'enrol_ldap'), key($options), $options));
         }
         $settings->add(new admin_setting_configtext_trim_lower('enrol_ldap/template', get_string('template_key', 'enrol_ldap'), get_string('template', 'enrol_ldap'), ''));
 
