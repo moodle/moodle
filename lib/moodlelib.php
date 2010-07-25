@@ -30,11 +30,6 @@
 
 /// CONSTANTS (Encased in phpdoc proper comments)/////////////////////////
 
-/**
- * Used by some scripts to check they are being called by Moodle
- */
-define('MOODLE_INTERNAL', true);
-
 /// Date and time constants ///
 /**
  * Time constant - the number of seconds in a year

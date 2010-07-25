@@ -150,6 +150,11 @@ if (defined('ABORT_AFTER_CONFIG')) {
 }
 
 /**
+ * Used by some scripts to check they are being called by Moodle
+ */
+define('MOODLE_INTERNAL', true);
+
+/**
  * Database connection. Used for all access to the database.
  * @global moodle_database $DB
  * @name $DB
