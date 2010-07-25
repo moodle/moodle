@@ -172,7 +172,7 @@ class lesson_add_page_form_endofbranch extends lesson_add_page_form_base {
 
         $this->editoroptions = array('noclean'=>true, 'maxfiles'=>EDITOR_UNLIMITED_FILES, 'maxbytes'=>$PAGE->course->maxbytes);
         $mform->addElement('editor', 'contents_editor', get_string("pagecontents", "lesson"), null, $this->editoroptions);
-        $mform->setType('contents_editor', PARAM_CLEANHTML);
+        $mform->setType('contents_editor', PARAM_RAW);
 
         $this->add_jumpto(0);
     }

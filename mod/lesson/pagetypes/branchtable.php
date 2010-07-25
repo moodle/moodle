@@ -276,7 +276,7 @@ class lesson_add_page_form_branchtable extends lesson_add_page_form_base {
 
         $this->editoroptions = array('noclean'=>true, 'maxfiles'=>EDITOR_UNLIMITED_FILES, 'maxbytes'=>$PAGE->course->maxbytes);
         $mform->addElement('editor', 'contents_editor', get_string("pagecontents", "lesson"), null, $this->editoroptions);
-        $mform->setType('contents_editor', PARAM_CLEANHTML);
+        $mform->setType('contents_editor', PARAM_RAW);
 
         $mform->addElement('checkbox', 'layout', null, get_string("arrangebuttonshorizontally", "lesson"));
         $mform->setDefault('layout', true);
@@ -287,7 +287,7 @@ class lesson_add_page_form_branchtable extends lesson_add_page_form_base {
         for ($i = 0; $i < $lesson->maxanswers; $i++) {
             $mform->addElement('header', 'headeranswer'.$i, get_string('branch', 'lesson').' '.($i+1));
             $mform->addElement('textarea', 'answer['.$i.']', get_string("description", "lesson"), array('rows'=>10, 'cols'=>70, 'width'=>630, 'height'=>300));
-            $mform->setType('answer['.$i.']', PARAM_CLEANHTML);
+            $mform->setType('answer['.$i.']', PARAM_RAW);
             if ($i == 0) {
                 // we should have one required branch
                 $mform->addRule('answer['.$i.']', null, 'required', null, 'server');

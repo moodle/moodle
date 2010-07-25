@@ -264,7 +264,7 @@ class lesson_display_answer_form_essay extends moodleform {
         $mform->setType('pageid', PARAM_INT);
 
         $mform->addElement('editor', 'answer', get_string('youranswer', 'lesson'), null, null);
-        $mform->setType('answer', PARAM_CLEANHTML);
+        $mform->setType('answer', PARAM_RAW);
 
         $this->add_action_buttons(null, get_string("pleaseenteryouranswerinthebox", "lesson"));
     }
