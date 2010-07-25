@@ -43,7 +43,7 @@ defined('MOODLE_INTERNAL') || die();
  * @return bool
  * @todo Finish documenting this function
  */
-function ImageCopyBicubic ($dst_img, $src_img, $dst_x, $dst_y, $src_x, $src_y, $dst_w, $dst_h, $src_w, $src_h) {
+function ImageCopyBicubic($dst_img, $src_img, $dst_x, $dst_y, $src_x, $src_y, $dst_w, $dst_h, $src_w, $src_h) {
 
     global $CFG;
 
@@ -145,10 +145,34 @@ function process_new_icon($context, $component, $filearea, $itemid, $originalfil
             return false;
     }
 
+    if (function_exists('ImagePng')) {
+        $imagefnc = 'ImagePng';
+        $imageext = '.png';
+        $filters = PNG_NO_FILTER;
+        $quality = 1;
+    } else if (function_exists('ImageJpeg')) {
+        $imagefnc = 'ImageJpeg';
+        $imageext = '.jpg';
+        $filters = null; // not used
+        $quality = 90;
+    } else {
+        debugging('Jpeg and png not supported on this server, please fix server configuration');
+        return false;
+    }
 
     if (function_exists('ImageCreateTrueColor') and $CFG->gdversion >= 2) {
         $im1 = ImageCreateTrueColor(100,100);
         $im2 = ImageCreateTrueColor(35,35);
+        if ($image->type == IMAGETYPE_PNG and $imagefnc === 'ImagePng') {
+            imagealphablending($im1, false);
+            $color = imagecolorallocatealpha($im1, 0, 0,  0, 127);
+            imagefill($im1, 0, 0,  $color);
+            imagesavealpha($im1, true);
+            imagealphablending($im2, false);
+            $color = imagecolorallocatealpha($im2, 0, 0,  0, 127);
+            imagefill($im2, 0, 0,  $color);
+            imagesavealpha($im2, true);
+        }
     } else {
         $im1 = ImageCreate(100,100);
         $im2 = ImageCreate(35,35);
@@ -166,36 +190,31 @@ function process_new_icon($context, $component, $filearea, $itemid, $originalfil
     ImageCopyBicubic($im1, $im, 0, 0, $cx-$half, $cy-$half, 100, 100, $half*2, $half*2);
     ImageCopyBicubic($im2, $im, 0, 0, $cx-$half, $cy-$half, 35, 35, $half*2, $half*2);
 
-    if (!function_exists('ImageJpeg')) {
-        debugging('Jpeg not supported on this server, please fix server configuration');
-        return false;
-    }
-
     $fs = get_file_storage();
 
     $icon = array('contextid'=>$context->id, 'component'=>$component, 'filearea'=>$filearea, 'itemid'=>$itemid, 'filepath'=>'/');
 
     ob_start();
-    if (!ImageJpeg($im1, NULL, 90)) {
+    if (!$imagefnc($im1, NULL, $quality, $filters)) {
         // keep old icons
         ob_end_clean();
         return false;
     }
     $data = ob_get_clean();
     ImageDestroy($im1);
-    $icon['filename'] = 'f1.jpg';
+    $icon['filename'] = 'f1'.$imageext;
     $fs->delete_area_files($context->id, $component, $filearea, $itemid);
     $fs->create_file_from_string($icon, $data);
 
     ob_start();
-    if (!ImageJpeg($im2, NULL, 95)) {
+    if (!$imagefnc($im2, NULL, $quality, $filters)) {
         ob_end_clean();
         $fs->delete_area_files($context->id, $component, $filearea, $itemid);
         return false;
     }
     $data = ob_get_clean();
     ImageDestroy($im2);
-    $icon['filename'] = 'f2.jpg';
+    $icon['filename'] = 'f2'.$imageext;
     $fs->create_file_from_string($icon, $data);
 
     return true;

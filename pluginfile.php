@@ -303,9 +303,12 @@ if ($component === 'blog') {
         if ($filename !== 'f1' and $filename !== 'f2') {
             redirect($OUTPUT->pix_url('u/f1'));
         }
-        if (!$file = $fs->get_file($context->id, 'user', 'icon', 0, '/', $filename.'/.jpg')) {
-            redirect($OUTPUT->pix_url('u/f1'));
+        if (!$file = $fs->get_file($context->id, 'user', 'icon', 0, '/', $filename.'/.png')) {
+            if (!$file = $fs->get_file($context->id, 'user', 'icon', 0, '/', $filename.'/.jpg')) {
+                redirect($OUTPUT->pix_url('u/f1'));
+            }
         }
+
         send_stored_file($file, 60*60*24); // enable long caching, there are many images on each page
 
     } else if ($filearea === 'private' and $context->contextlevel == CONTEXT_USER) {
@@ -542,8 +545,10 @@ if ($component === 'blog') {
         if ($filename !== 'f1' and $filename !== 'f2') {
             send_file_not_found();
         }
-        if (!$file = $fs->get_file($context->id, 'group', 'icon', $group->id, '/', $filename.'.jpg')) {
-            send_file_not_found();
+        if (!$file = $fs->get_file($context->id, 'group', 'icon', $group->id, '/', $filename.'.png')) {
+            if (!$file = $fs->get_file($context->id, 'group', 'icon', $group->id, '/', $filename.'.jpg')) {
+                send_file_not_found();
+            }
         }
 
         session_get_instance()->write_close(); // unlock session during fileserving
