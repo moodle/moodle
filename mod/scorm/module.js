@@ -98,6 +98,10 @@ M.mod_scorm.init = function(Y, hide_nav, hide_toc, toc_title, window_name, windo
                 }
                 else {
                     var obj = document.createElement('<iframe id="scorm_object" src="'+url_prefix + node.title+'">');
+                } 
+                // fudge IE7 to redraw the screen
+                if (YAHOO.env.ua.ie > 5 && YAHOO.env.ua.ie < 8) {
+                    obj.attachEvent("onload", scorm_resize_parent);
                 }
             } catch (e) {
                 var obj = document.createElement('object');
@@ -113,7 +117,7 @@ M.mod_scorm.init = function(Y, hide_nav, hide_toc, toc_title, window_name, windo
             } else {
                 content.appendChild(obj);
             }
-          
+
             scorm_resize_frame();
 
             var left = scorm_layout_widget.getUnitByPosition('left');
@@ -137,6 +141,15 @@ M.mod_scorm.init = function(Y, hide_nav, hide_toc, toc_title, window_name, windo
             scorm_buttons[4].set('disabled', (scorm_skipnext(scorm_current_node) == null));
         };
 
+        var scorm_resize_parent = function() {
+            // fudge  IE7 to redraw the screen
+            parent.resizeBy(-10, -10);
+            parent.resizeBy(10, 10);
+            var ifr = YAHOO.util.Dom.get('scorm_object');
+            if (ifr) {
+                ifr.detachEvent("onload", scorm_resize_parent);
+            }
+        }
 
         var scorm_resize_layout = function(alsowidth) {
             if (window_name) {
@@ -151,6 +164,7 @@ M.mod_scorm.init = function(Y, hide_nav, hide_toc, toc_title, window_name, windo
                 }
             }
             // make sure that the max width of the TOC doesn't go to far
+
             var left = scorm_layout_widget.getUnitByPosition('left');
             var maxwidth = parseInt(YAHOO.util.Dom.getStyle('scorm_layout', 'width'));
             left.set('maxWidth', (maxwidth - 10));
