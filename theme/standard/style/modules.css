@@ -114,6 +114,7 @@ table.mod_index {width:90%;margin:1em auto;}
 .path-mod-glossary .glossarypost .entry {padding: 3px;}
 .path-mod-glossary .glossarypost .concept h3 {font-size: 1em;margin: 0;font-weight: normal;text-align: left;}
 .path-mod-glossary .glossarypost .entryheader {font-weight: normal;text-align: left;}
+.path-mod-glossary .glossarypost .entryheader h3 {display:inline;}
 .path-mod-glossary .glossarypost .entryheader,
 .path-mod-glossary .glossarypost .entryapproval,
 .path-mod-glossary .glossarypost .picture,
