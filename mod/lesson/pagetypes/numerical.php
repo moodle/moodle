@@ -248,7 +248,7 @@ class lesson_add_page_form_numerical extends lesson_add_page_form_base {
     public function custom_definition() {
         for ($i = 0; $i < $this->_customdata['lesson']->maxanswers; $i++) {
             $this->_form->addElement('header', 'answertitle'.$i, get_string('answer').' '.($i+1));
-            $this->add_answer($i);
+            $this->add_answer($i, NULL, ($i < 1));
             $this->add_response($i);
             $this->add_jumpto($i);
             $this->add_score($i, null, ($i===0)?1:0);
