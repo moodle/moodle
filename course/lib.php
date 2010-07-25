@@ -1465,8 +1465,7 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
             }
 
             if ($isediting) {
-                // TODO: we must define this as mod property!
-                if ($groupbuttons and $mod->modname != 'label' and $mod->modname != 'resource' and $mod->modname != 'glossary') {
+                if ($groupbuttons and plugin_supports('mod', $mod->modname, FEATURE_GROUPS, 0)) {
                     if (! $mod->groupmodelink = $groupbuttonslink) {
                         $mod->groupmode = $course->groupmode;
                     }
