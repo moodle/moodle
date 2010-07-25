@@ -74,7 +74,10 @@ if ($edit) {
     $data = new stdClass;
     $data->id = $cm->id;
     $data->pageid = $pageid;
-    $data->qtype = $qtype;
+    if ($qtype) {
+        //TODO: the handling of form for the selection of question type is a bloody hack! (skodak)
+        $data->qtype = $qtype;
+    }
     $data = file_prepare_standard_editor($data, 'contents', $editoroptions, null);
     $mform->set_data($data);
     $PAGE->navbar->add(get_string('addanewpage', 'lesson'), $PAGE->url);
