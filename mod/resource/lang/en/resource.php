@@ -18,9 +18,10 @@
 /**
  * Strings for component 'resource', language 'en', branch 'MOODLE_20_STABLE'
  *
- * @package   resource
- * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    mod
+ * @subpackage resource
+ * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 $string['clicktodownload'] = 'Click {$a} link to download the file.';

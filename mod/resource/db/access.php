@@ -18,10 +18,13 @@
 /**
  * Resource module capability definition
  *
- * @package   mod-resource
- * @copyright 2009 Petr Skoda (http://skodak.org)
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    mod
+ * @subpackage resource
+ * @copyright  2009 Petr Skoda  {@link http://skodak.org}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+defined('MOODLE_INTERNAL') || die;
 
 $capabilities = array(
 /* TODO: review public portfolio API first!

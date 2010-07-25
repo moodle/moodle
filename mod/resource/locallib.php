@@ -18,10 +18,13 @@
 /**
  * Private resource module utility functions
  *
- * @package   mod-resource
- * @copyright 2009 Petr Skoda (http://skodak.org)
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    mod
+ * @subpackage resource
+ * @copyright  2009 Petr Skoda  {@link http://skodak.org}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+defined('MOODLE_INTERNAL') || die;
 
 require_once("$CFG->libdir/filelib.php");
 require_once("$CFG->libdir/resourcelib.php");
