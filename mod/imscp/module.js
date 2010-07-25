@@ -16,9 +16,10 @@
 /**
  * Javascript helper function for IMS Content Package module.
  *
- * @package   mod-imscp
- * @copyright 2009 Petr Skoda (http://skodak.org)
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    mod
+ * @subpackage imscp
+ * @copyright  2009 Petr Skoda  {@link http://skodak.org}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 M.mod_imscp = {};
