@@ -31,13 +31,10 @@ $pageid = optional_param('pageid', NULL, PARAM_INT);    // Lesson Page ID
 $action = optional_param('action', 'reportoverview', PARAM_ALPHA);  // action to take
 $nothingtodisplay = false;
 
-try {
-    $cm = get_coursemodule_from_id('lesson', $id, 0, false, MUST_EXIST);;
-    $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
-    $lesson = new lesson($DB->get_record('lesson', array('id' => $cm->instance), '*', MUST_EXIST));
-} catch (Exception $e) {
-    print_error('invalidcoursemodule');
-}
+$cm = get_coursemodule_from_id('lesson', $id, 0, false, MUST_EXIST);;
+$course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
+$lesson = new lesson($DB->get_record('lesson', array('id' => $cm->instance), '*', MUST_EXIST));
+
 require_login($course, false, $cm);
 
 $context = get_context_instance(CONTEXT_MODULE, $cm->id);

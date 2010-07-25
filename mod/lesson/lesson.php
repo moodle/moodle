@@ -35,13 +35,10 @@ $id     = required_param('id', PARAM_INT);         // Course Module ID
 $action = required_param('action', PARAM_ALPHA);   // Action
 $pageid = required_param('pageid', PARAM_INT);
 
-try {
-    $cm = get_coursemodule_from_id('lesson', $id, 0, false, MUST_EXIST);;
-    $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
-    $lesson = new lesson($DB->get_record('lesson', array('id' => $cm->instance), '*', MUST_EXIST));
-} catch (Exception $e) {
-    print_error('invalidcoursemodule');
-}
+$cm = get_coursemodule_from_id('lesson', $id, 0, false, MUST_EXIST);;
+$course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
+$lesson = new lesson($DB->get_record('lesson', array('id' => $cm->instance), '*', MUST_EXIST));
+
 require_login($course, false, $cm);
 
 $url = new moodle_url('/mod/lesson/lesson.php', array('id'=>$id,'action'=>$action));

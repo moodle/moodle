@@ -38,13 +38,10 @@ if ($printclose !== '') {
 }
 $PAGE->set_url($url);
 
-try {
-    $cm = get_coursemodule_from_id('lesson', $id, 0, false, MUST_EXIST);;
-    $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
-    $lesson = new lesson($DB->get_record('lesson', array('id' => $cm->instance), '*', MUST_EXIST));
-} catch (Exception $e) {
-    print_error('invalidcoursemodule');
-}
+$cm = get_coursemodule_from_id('lesson', $id, 0, false, MUST_EXIST);;
+$course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
+$lesson = new lesson($DB->get_record('lesson', array('id' => $cm->instance), '*', MUST_EXIST));
+
 require_login($course, false, $cm);
 
 $context = get_context_instance(CONTEXT_MODULE, $cm->id);

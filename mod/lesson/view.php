@@ -33,13 +33,10 @@ $pageid  = optional_param('pageid', NULL, PARAM_INT);   // Lesson Page ID
 $edit    = optional_param('edit', -1, PARAM_BOOL);
 $userpassword = optional_param('userpassword','',PARAM_CLEAN);
 
-try {
-    $cm = get_coursemodule_from_id('lesson', $id, 0, false, MUST_EXIST);;
-    $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
-    $lesson = new lesson($DB->get_record('lesson', array('id' => $cm->instance), '*', MUST_EXIST));
-} catch (Exception $e) {
-    print_error('invalidcoursemodule');
-}
+$cm = get_coursemodule_from_id('lesson', $id, 0, false, MUST_EXIST);;
+$course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
+$lesson = new lesson($DB->get_record('lesson', array('id' => $cm->instance), '*', MUST_EXIST));
+
 require_login($course, false, $cm);
 
 $url = new moodle_url('/mod/lesson/view.php', array('id'=>$id));
