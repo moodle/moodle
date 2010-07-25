@@ -53,7 +53,7 @@ if ($ADMIN->fulltree) {
                                 'AUD' => 'Australian Dollars'
                             );
 
-    $settings->add(new admin_setting_configselect('enrol_paypal/currency', get_string('currency', 'enrol_paypal'), '', 'idnumber', $paypalcurrencies));
+    $settings->add(new admin_setting_configselect('enrol_paypal/currency', get_string('currency', 'enrol_paypal'), '', 'USD', $paypalcurrencies));
 
     $settings->add(new admin_setting_configcheckbox('enrol_paypal/defaultenrol',
         get_string('defaultenrol', 'enrol'), get_string('defaultenrol_desc', 'enrol'), 0));
