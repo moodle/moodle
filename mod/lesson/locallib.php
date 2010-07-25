@@ -567,7 +567,7 @@ function lesson_add_header_buttons($cm, $context, $extraeditbuttons=false, $less
             print_error('invalidpageid', 'lesson');
         }
         if (!empty($lessonpageid) && $lessonpageid != LESSON_EOL) {
-            $url = new moodle_url('/mod/lesson/lesson.php', array('id'=>$cm->id, 'redirect'=>'navigation', 'pageid'=>$lessonpageid));
+            $url = new moodle_url('/mod/lesson/editpage.php', array('id'=>$cm->id, 'pageid'=>$lessonpageid, 'edit'=>1));
             $PAGE->set_button($OUTPUT->single_button($url, get_string('editpagecontent', 'lesson')));
         }
     }
