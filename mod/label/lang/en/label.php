@@ -18,9 +18,10 @@
 /**
  * Strings for component 'label', language 'en', branch 'MOODLE_20_STABLE'
  *
- * @package   label
- * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    mod
+ * @subpackage label
+ * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 $string['labeltext'] = 'Label text';
