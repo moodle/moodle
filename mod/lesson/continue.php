@@ -171,7 +171,7 @@ if (isset($USER->modattempts[$lesson->id])) {
     $content = $OUTPUT->box(get_string("savechangesandeol", "lesson"), 'center');
     $content .= $OUTPUT->box(get_string("or", "lesson"), 'center');
     $content .= $OUTPUT->box(get_string("continuetoanswer", "lesson"), 'center');
-    $content .= html_writer::empty_tag('input', array('type'=>'hidden', 'nam'=>'id', 'value'=>$cm->id));
+    $content .= html_writer::empty_tag('input', array('type'=>'hidden', 'name'=>'id', 'value'=>$cm->id));
     $content .= html_writer::empty_tag('input', array('type'=>'hidden', 'name'=>'pageid', 'value'=>LESSON_EOL));
     $content .= html_writer::empty_tag('input', array('type'=>'submit', 'name'=>'submit', 'value'=>get_string('savechanges', 'lesson')));
     echo html_writer::tag('form', "<div>$content</div>", array('method'=>'get', 'target'=>$url));
@@ -180,7 +180,7 @@ if (isset($USER->modattempts[$lesson->id])) {
 // Review button back
 if ($lesson->review && !$result->correctanswer && !$result->noanswer && !$result->isessayquestion) {
     $url = $CFG->wwwroot.'/mod/lesson/view.php';
-    $content = html_writer::empty_tag('input', array('type'=>'hidden', 'nam'=>'id', 'value'=>$cm->id));
+    $content = html_writer::empty_tag('input', array('type'=>'hidden', 'name'=>'id', 'value'=>$cm->id));
     $content .= html_writer::empty_tag('input', array('type'=>'hidden', 'name'=>'pageid', 'value'=>$page->id));
     $content .= html_writer::empty_tag('input', array('type'=>'submit', 'name'=>'submit', 'value'=>get_string('reviewquestionback', 'lesson')));
     echo html_writer::tag('form', "<div class=\"singlebutton\">$content</div>", array('method'=>'get', 'target'=>$url));
