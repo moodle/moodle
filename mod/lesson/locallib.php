@@ -710,22 +710,25 @@ abstract class lesson_add_page_form_base extends moodleform {
 
         if ($this->standard === true) {
             $mform->addElement('hidden', 'qtype');
-            $mform->setType('qtype', PARAM_TEXT);
+            $mform->setType('qtype', PARAM_SAFEDIR);
 
-            $mform->addElement('text', 'title', get_string("pagetitle", "lesson"), array('size'=>70));
+            $mform->addElement('text', 'title', get_string('pagetitle', 'lesson'), array('size'=>70));
             $mform->setType('title', PARAM_TEXT);
+            $mform->addRule('title', get_string('required'), 'required', null, 'client');
+
             $this->editoroptions = array('noclean'=>true, 'maxfiles'=>EDITOR_UNLIMITED_FILES, 'maxbytes'=>$this->_customdata['maxbytes']);
-            $mform->addElement('editor', 'contents_editor', get_string("pagecontents", "lesson"), null, $this->editoroptions);
-            $mform->setType('contents_editor', PARAM_CLEANHTML);
+            $mform->addElement('editor', 'contents_editor', get_string('pagecontents', 'lesson'), null, $this->editoroptions);
+            $mform->setType('contents_editor', PARAM_RAW);
+            $mform->addRule('contents_editor', get_string('required'), 'required', null, 'client');
         }
 
         $this->custom_definition();
 
         if ($this->_customdata['edit'] === true) {
             $mform->addElement('hidden', 'edit', 1);
-            $this->add_action_buttons(get_string('cancel'), get_string("savepage", "lesson"));
+            $this->add_action_buttons(get_string('cancel'), get_string('savepage', 'lesson'));
         } else {
-            $this->add_action_buttons(get_string('cancel'), get_string("addaquestionpage", "lesson"));
+            $this->add_action_buttons(get_string('cancel'), get_string('addaquestionpage', 'lesson'));
         }
     }
 
