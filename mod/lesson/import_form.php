@@ -23,6 +23,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  **/
 
+defined('MOODLE_INTERNAL') || die();
+
 /**
  * Form used to select a file and file format for the import
  * @copyright 2009 Sam Hemelryk

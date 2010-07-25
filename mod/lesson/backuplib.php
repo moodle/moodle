@@ -54,6 +54,8 @@
 //
 //-----------------------------------------------------------
 
+defined('MOODLE_INTERNAL') || die();
+
 /**
  * This function executes all the backup procedure about this mod
  */

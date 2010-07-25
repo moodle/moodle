@@ -23,6 +23,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or late
  **/
 
+defined('MOODLE_INTERNAL') || die();
+
 function removedoublecr($filename) {
 // This function will adjust a file in roughly Aiken style by replacing extra newlines with <br/> tags
 // so that instructors can have newlines wherever they like as long as the overall format is in Aiken
