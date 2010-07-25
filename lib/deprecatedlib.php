@@ -21,12 +21,14 @@
  * Old functions retained only for backward compatibility.  New code should not
  * use any of these functions.
  *
- * @package moodlecore
+ * @package    core
  * @subpackage deprecated
- * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @deprecated
  */
+
+defined('MOODLE_INTERNAL') || die();
 
 /**
  * Given a physical path to a file, returns the URL through which it can be reached in Moodle.

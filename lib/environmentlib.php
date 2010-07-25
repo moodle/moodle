@@ -23,18 +23,21 @@
  * All the info is stored in the admin/environment.xml file,
  * supporting to have an updated version in dataroot/environment
  *
- * @copyright (C) 2001-3001 Eloy Lafuente (stronk7) {@link http://contiento.com}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @package   moodlecore
+ * @copyright  (C) 2001-3001 Eloy Lafuente (stronk7) {@link http://contiento.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    core
+ * @subpackage admin
  */
+
+defined('MOODLE_INTERNAL') || die();
 
 /// Add required files
 /**
- * Inlucde the nessecary
+ * Include the necessary
  */
     require_once($CFG->libdir.'/xmlize.php');
 
-/// Define a buch of XML processing errors
+/// Define a bunch of XML processing errors
     /** XML Processing Error */
     define('NO_ERROR',                           0);
     /** XML Processing Error */

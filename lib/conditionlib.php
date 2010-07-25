@@ -18,10 +18,13 @@
  * Used for tracking conditions that apply before activities are displayed
  * to students ('conditional availability').
  *
- * @package   moodlecore
- * @copyright 1999 onwards Martin Dougiamas  http://dougiamas.com
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    core
+ * @subpackage completion
+ * @copyright  1999 onwards Martin Dougiamas  http://dougiamas.com
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+defined('MOODLE_INTERNAL') || die();
 
 /** The activity is not displayed to students at all when conditions aren't met. */
 define('CONDITION_STUDENTVIEW_HIDE',0);

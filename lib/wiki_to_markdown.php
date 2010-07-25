@@ -18,10 +18,13 @@
 /**
  * Utility function to convert wiki-like to Markdown format
  *
- * @package   moodlecore
- * @copyright Howard Miller, 2005
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    core
+ * @subpackage lib
+ * @copyright  Howard Miller, 2005
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+defined('MOODLE_INTERNAL') || die();
 
 /**#@+
  *  state defines

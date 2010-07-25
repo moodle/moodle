@@ -19,12 +19,14 @@
  * This file contains classes used to manage the navigation structures in Moodle
  * and was introduced as part of the changes occuring in Moodle 2.0
  *
- * @since 2.0
- * @package moodlecore
+ * @since      2.0
+ * @package    core
  * @subpackage navigation
- * @copyright 2009 Sam Hemelryk
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2009 Sam Hemelryk
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+defined('MOODLE_INTERNAL') || die();
 
 /**
  * The name that will be used to separate the navigation cache within SESSION

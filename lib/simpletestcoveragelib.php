@@ -22,11 +22,13 @@
  * ones, provide code coverage analysis to already existing tests. Also there are some
  * utility functions designed to make the coverage control easier.
  *
- * @package   moodlecore
+ * @package    core
  * @subpackage simpletestcoverage
- * @copyright 2003 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2003 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+defined('MOODLE_INTERNAL') || die();
 
 /**
  * Includes

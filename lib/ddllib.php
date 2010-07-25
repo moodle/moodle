@@ -34,12 +34,14 @@
  *
  * For further documentation, visit {@link http://docs.moodle.org/en/DDL_functions}
  *
- * @package    moodlecore
- * @subpackage DDL
+ * @package    core
+ * @subpackage ddl
  * @copyright  2001-3001 Eloy Lafuente (stronk7) http://contiento.com
  *             2008 Petr Skoda                   http://skodak.org
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+defined('MOODLE_INTERNAL') || die();
 
 // Add required library
 require_once($CFG->libdir.'/xmlize.php');

@@ -25,11 +25,13 @@
  * Major Contirbutors
  *     - T.J.Hunt@open.ac.uk
  *
- * @package moodlecore
+ * @package    core
  * @subpackage simpletestex
- * @copyright &copy; 2006 The Open University
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  &copy; 2006 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+defined('MOODLE_INTERNAL') || die();
 
 /**
  * Includes

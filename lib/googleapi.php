@@ -17,13 +17,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @package    moodlecore
+ * @package    core
  * @subpackage lib
  * @copyright Dan Poltawski <talktodan@gmail.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  *
  * Simple implementation of some Google API functions for Moodle.
  */
+
+defined('MOODLE_INTERNAL') || die();
 
  /** Include essential file */
 require_once($CFG->libdir.'/filelib.php');

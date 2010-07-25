@@ -22,8 +22,8 @@
  * before including main config.php. You can resume normal script operation
  * if you define ABORT_AFTER_CONFIG_CANCEL and require the setup.php
  *
- * @package   moodlecore
- * @copyright 2009 petr Skoda (skodak)
+ * @package   core
+ * @copyright 2009 Petr Skoda (skodak)
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -82,7 +82,7 @@ function min_clean_param($value, $type) {
  * @return boolean, true if compression enabled
  */
 function min_enable_zlib_compression() {
-    
+
     if (headers_sent()) {
         return false;
     }
@@ -102,7 +102,7 @@ function min_enable_zlib_compression() {
             }
         }
     }
-    
+
     @ini_set('output_handler', '');
 
     /*
@@ -112,6 +112,6 @@ function min_enable_zlib_compression() {
      * so let's try some bigger sizes.
      */
     @ini_set('zlib.output_compression', 65536);
-    
+
     return true;
 }

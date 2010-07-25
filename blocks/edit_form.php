@@ -21,9 +21,10 @@
  * It works with the {@link block_edit_form} class, or rather the particular
  * subclass defined by this block, to do the editing.
  *
- * @package   moodlecore
- * @copyright 2009 Tim Hunt
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    core
+ * @subpackage block
+ * @copyright  2009 Tim Hunt
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 if (!defined('MOODLE_INTERNAL')) {

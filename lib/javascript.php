@@ -18,9 +18,10 @@
 /**
  * This file is serving optimised JS
  *
- * @package   moodlecore
- * @copyright 2010 Petr Skoda (skodak)
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    core
+ * @subpackage lib
+ * @copyright  2010 Petr Skoda (skodak)
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 // we need just the values from config.php and minlib.php

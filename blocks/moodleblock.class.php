@@ -18,8 +18,9 @@
 /**
  * This file contains the parent class for moodle blocks, block_base.
  *
- * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
- * @package blocks
+ * @package    core
+ * @subpackage block
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU Public License
  */
 
 /// Constants

@@ -118,10 +118,13 @@
  * DB need to ensure that the default role caps
  * are dealt with appropriately.
  *
- * @package   moodlecore
- * @copyright 1999 onwards Martin Dougiamas  http://dougiamas.com
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    core
+ * @subpackage role
+ * @copyright  1999 onwards Martin Dougiamas  http://dougiamas.com
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+defined('MOODLE_INTERNAL') || die();
 
 /** permission definitions */
 define('CAP_INHERIT', 0);

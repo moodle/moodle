@@ -16,10 +16,13 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package moodlecore
- * @copyright Petr Skoda (skodak)
-  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    core
+ * @subpackage lib
+ * @copyright  Petr Skoda (skodak)
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+defined('MOODLE_INTERNAL') || die();
 
 /** @see evalmath/evalmath.class.php */
 require_once $CFG->dirroot.'/lib/evalmath/evalmath.class.php';

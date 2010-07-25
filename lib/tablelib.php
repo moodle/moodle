@@ -16,10 +16,13 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package   moodlecore
- * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    core
+ * @subpackage lib
+ * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+defined('MOODLE_INTERNAL') || die();
 
 /** TABLE_VAR_SORT = 1 */
 define('TABLE_VAR_SORT',   1);
@@ -1097,7 +1100,7 @@ class flexible_table {
                         $fsortorder = get_string('asc');
                         $lsortorder = get_string('asc');
                     }
-                     
+
                     $override = new object();
                     $override->firstname = 'firstname';
                     $override->lastname = 'lastname';
@@ -1111,7 +1114,7 @@ class flexible_table {
                     } else {
                         $this->headers[$index] = '<a href="'.$this->baseurl.$this->request[TABLE_VAR_SORT].'=lastname">'.get_string('lastname').get_accesshide(get_string('sortby').' '.get_string('lastname').' '.$lsortorder).'</a> '.$icon_sort_last.' / '.
                                                  '<a href="'.$this->baseurl.$this->request[TABLE_VAR_SORT].'=firstname">'.get_string('firstname').get_accesshide(get_string('sortby').' '.get_string('firstname').' '.$fsortorder).'</a> '.$icon_sort_first;
-                    } 
+                    }
                 }
                 break;
 

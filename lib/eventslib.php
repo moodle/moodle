@@ -20,10 +20,13 @@
  *
  * The public API is all at the end of this file.
  *
- * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @package   moodlecore
+ * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    core
+ * @subpackage event
  */
+
+defined('MOODLE_INTERNAL') || die();
 
 /**
  * Loads the events definitions for the component (from file). If no

@@ -7,12 +7,15 @@
  * data structures, useful for both ldap authentication (or ldap based
  * authentication like CAS) and enrolment plugins.
  *
- * @author Iñaki Arenaza
- * @package   moodlecore
- * @copyright 1999 onwards Martin Dougiamas  http://dougiamas.com
- * @copyright 2010 onwards Iñaki Arenaza
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @author     Iï¿½aki Arenaza
+ * @package    core
+ * @subpackage lib
+ * @copyright  1999 onwards Martin Dougiamas  http://dougiamas.com
+ * @copyright  2010 onwards Iï¿½aki Arenaza
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+defined('MOODLE_INTERNAL') || die();
 
 // rootDSE is defined as the root of the directory data tree on a directory server.
 if (!defined('ROOTDSE')) {

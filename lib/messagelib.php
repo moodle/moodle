@@ -18,10 +18,13 @@
 /**
  * messagelib.php - Contains generic messaging functions for the message system
  *
- * @package   moodlecore
- * @copyright Luis Rodrigues and Martin Dougiamas
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    core
+ * @subpackage message
+ * @copyright  Luis Rodrigues and Martin Dougiamas
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+defined('MOODLE_INTERNAL') || die();
 
 /**
  * Called when a message provider wants to send a message.

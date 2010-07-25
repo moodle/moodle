@@ -60,6 +60,8 @@ foreach ($parts as $part) {
     //debug($bits);
     $version = array_shift($bits);
     if ($version == 'moodle') {
+        //TODO: this is a ugly hack because we should not load any libs here!
+        define('MOODLE_INTERNAL', true);
         require_once($CFG->libdir.'/moodlelib.php');
         $frankenstyle = array_shift($bits);
         $filename = array_pop($bits);

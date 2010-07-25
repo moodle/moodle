@@ -20,10 +20,13 @@
  *
  * This file defines the {@link block_manager} class,
  *
- * @package   moodlecore
- * @copyright 1999 onwards Martin Dougiamas  http://dougiamas.com
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    core
+ * @subpackage block
+ * @copyright  1999 onwards Martin Dougiamas  http://dougiamas.com
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+defined('MOODLE_INTERNAL') || die();
 
 /**#@+
  * @deprecated since Moodle 2.0. No longer used.
@@ -1353,7 +1356,7 @@ class block_manager {
 
     /**
      * Turns the display of normal blocks either on or off.
-     * 
+     *
      * @param bool $setting
      */
     public function show_only_fake_blocks($setting = true) {

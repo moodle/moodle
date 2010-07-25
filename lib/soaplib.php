@@ -21,12 +21,15 @@
  * Since Moodle 2.0 we rely only on native PHP Soap extension,
  * the original name of this file was lib/soap/phpsoap.php
  *
- * @package   moodlecore
- * @author    Alex Smith and others members of the Serving Mathematics project
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- *            {@link http://maths.york.ac.uk/serving_maths}
- *            and others
+ * @package    core
+ * @subpackage lib
+ * @author     Alex Smith and others members of the Serving Mathematics project
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ *             {@link http://maths.york.ac.uk/serving_maths}
+ *             and others
  */
+
+defined('MOODLE_INTERNAL') || die();
 
 /**
 * Create a new SoapClient object

@@ -22,11 +22,13 @@
  * This library includes all the required functions used to handle
  * transfer of data from one database to another.
  *
- * @package    moodlecore
- * @subpackage DTL
+ * @package    core
+ * @subpackage dtl
  * @copyright  2008 Andrei Bautu
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+defined('MOODLE_INTERNAL') || die();
 
 // Require {@link ddllib.php}
 require_once($CFG->libdir.'/ddllib.php');

@@ -15,22 +15,25 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-require_once $CFG->libdir.'/completion/completion_aggregation.php';
-require_once $CFG->libdir.'/completion/completion_criteria.php';
-require_once $CFG->libdir.'/completion/completion_completion.php';
-require_once $CFG->libdir.'/completion/completion_criteria_completion.php';
-
-
 /**
  * Contains a class used for tracking whether activities have been completed
  * by students ('completion')
  *
  * Completion top-level options (admin setting enablecompletion)
  *
- * @package   moodlecore
- * @copyright 1999 onwards Martin Dougiamas   {@link http://moodle.com}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    core
+ * @subpackage completion
+ * @copyright  1999 onwards Martin Dougiamas   {@link http://moodle.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+defined('MOODLE_INTERNAL') || die();
+
+require_once $CFG->libdir.'/completion/completion_aggregation.php';
+require_once $CFG->libdir.'/completion/completion_criteria.php';
+require_once $CFG->libdir.'/completion/completion_completion.php';
+require_once $CFG->libdir.'/completion/completion_criteria_completion.php';
+
 
 /** The completion system is enabled in this site/course */
 define('COMPLETION_ENABLED', 1);
@@ -110,7 +113,7 @@ define('COMPLETION_AGGREGATION_ANY',        2);
  * @package moodlecore
  */
 class completion_info {
-    /** 
+    /**
      * Course object passed during construction
      * @access  private
      * @var     object

@@ -25,10 +25,13 @@
  *    Reordering of items works across pages.
  *    Processing of editing actions on list.
  *
- * @package moodlecore
- * @copyright Jamie Pratt
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    core
+ * @subpackage lib
+ * @copyright  Jamie Pratt
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+defined('MOODLE_INTERNAL') || die();
 
 /**
  * Clues to reading this code:

@@ -25,18 +25,21 @@
  * See examples of use of this library in course/edit.php and course/edit_form.php
  *
  * A few notes :
- *      form defintion is used for both printing of form and processing and should be the same
+ *      form definition is used for both printing of form and processing and should be the same
  *              for both or you may lose some submitted data which won't be let through.
  *      you should be using setType for every form element except select, radio or checkbox
  *              elements, these elements clean themselves.
  *
  *
- * @copyright Jamie Pratt <me@jamiep.org>
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @package   moodlecore
+ * @copyright  Jamie Pratt <me@jamiep.org>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    core
+ * @subpackage form
  */
 
-/** setup.php icludes our hacked pear libs first */
+defined('MOODLE_INTERNAL') || die();
+
+/** setup.php includes our hacked pear libs first */
 require_once 'HTML/QuickForm.php';
 require_once 'HTML/QuickForm/DHTMLRulesTableless.php';
 require_once 'HTML/QuickForm/Renderer/Tableless.php';

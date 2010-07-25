@@ -21,9 +21,12 @@
  *
  * Copy of GNU Lesser General Public License at: http://www.gnu.org/copyleft/lesser.txt
  * Contact author at: hermanV@mindless.com
- * 
- * @package moodlecore
+ *
+ * @package    core
+ * @subpackage lib
  */
+
+defined('MOODLE_INTERNAL') || die();
 
 /* This file contains modifications by Martin Dougiamas
  * as part of Moodle (http://moodle.com).  Modified lines
@@ -983,7 +986,7 @@ class graph {
       $axis_colour     = $this->parameter['axis_colour'];
       $axis_angle      = $this->parameter['y_axis_angle'];
       $y_tick_labels   = $this->y_tick_labels;
-      
+
       $this->calculated['y_axis_left']['has_data'] = FALSE;
       $this->calculated['y_axis_right']['has_data'] = FALSE;
 

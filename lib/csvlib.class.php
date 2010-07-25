@@ -20,10 +20,13 @@
  * You can have a rather longer description of the file as well,
  * if you like, and it can span multiple lines.
  *
- * @copyright Petr Skoda
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @package   moodlecore
+ * @package    core
+ * @subpackage lib
+ * @copyright  Petr Skoda
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+defined('MOODLE_INTERNAL') || die();
 
 /**
  * Utitily class for importing of CSV files.

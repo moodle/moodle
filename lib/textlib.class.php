@@ -16,10 +16,13 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package   moodlecore
- * @copyright (C) 2001-3001 Eloy Lafuente (stronk7) {@link http://contiento.com}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    core
+ * @subpackage lib
+ * @copyright  (C) 2001-3001 Eloy Lafuente (stronk7) {@link http://contiento.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+defined('MOODLE_INTERNAL') || die();
 
 /**
  * As we implement the singleton pattern to use this class (only one instance

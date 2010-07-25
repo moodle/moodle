@@ -29,11 +29,13 @@
  * Major Contributors
  *     - Alex Smith, Julian Sedding and Gustav Delius {@link http://maths.york.ac.uk/serving_maths}
  *
- * @package moodlecore
+ * @package    core
  * @subpackage question
- * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+defined('MOODLE_INTERNAL') || die();
 
 /// CONSTANTS ///////////////////////////////////
 
@@ -2500,8 +2502,8 @@ function question_category_options($contexts, $top = false, $currentcat = 0, $po
         foreach ($categoriesarray as $contextstring => $optgroup){
             $group = array();
             foreach ($optgroup as $key=>$value) {
-                $key = str_replace($CFG->wwwroot, '', $key); 
-                $group[$key] = $value;                
+                $key = str_replace($CFG->wwwroot, '', $key);
+                $group[$key] = $value;
             }
             $popupcats[] = array($contextstring=>$group);
         }

@@ -29,10 +29,13 @@
  * memcached, a false value is indistinguisable from a
  * "not found in cache" response.
  *
- * @copyright Martin Langhoff <martin@catalyst.net.nz>
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @package moodlecore
+ * @package    core
+ * @subpackage lib
+ * @copyright  Martin Langhoff <martin@catalyst.net.nz>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+defined('MOODLE_INTERNAL') || die();
 
 /**
  *

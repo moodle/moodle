@@ -17,14 +17,16 @@
 
 /**
  * This file contains the moodle_page class. There is normally a single instance
- * of this class in the $PAGE global variable. This class is a central reporitory
+ * of this class in the $PAGE global variable. This class is a central repository
  * of information about the page we are building up to send back to the user.
  *
- * @package   moodlecore
- * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    core
+ * @subpackage lib
+ * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
 
 /**
  * $PAGE is a central store of information about the current page we are
@@ -218,7 +220,7 @@ class moodle_page {
      * @var bool
      */
     protected $_legacythemeinuse = false;
-    
+
 /// Magic getter methods =============================================================
 /// Due to the __get magic below, you normally do not call these as $PAGE->magic_get_x
 /// methods, but instead use the $PAGE->x syntax.
@@ -1205,7 +1207,7 @@ class moodle_page {
      * default to the admin-selected legacy theme
      *
      * @return  true if legacy theme should be used, otherwise false
-     * 
+     *
      */
     protected function browser_is_outdated() {
     	foreach($this->_legacybrowsers as $browser => $version) {
@@ -1217,7 +1219,7 @@ class moodle_page {
     	}
     	return false;
     }
-    
+
     /**
      * Sets ->pagetype from the script name. For example, if the script that was
      * run is mod/quiz/view.php, ->pagetype will be set to 'mod-quiz-view'.

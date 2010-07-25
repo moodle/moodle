@@ -19,12 +19,14 @@
 /**
  * A namespace contains license specific functions
  *
- * @since 2.0
- * @package moodlecore
- * @subpackage moodlecore
- * @copyright 2010 Dongsheng Cai <dongsheng@moodle.com>
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since      2.0
+ * @package    core
+ * @subpackage lib
+ * @copyright  2010 Dongsheng Cai <dongsheng@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+defined('MOODLE_INTERNAL') || die();
 
 class license_manager {
     /**

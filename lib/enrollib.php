@@ -19,11 +19,13 @@
  * This library includes the basic parts of enrol api.
  * It is available on each page.
  *
- * @package   moodlecore
- * @copyright 2010 Petr Skoda {@link http://skodak.org}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    core
+ * @subpackage enrol
+ * @copyright  2010 Petr Skoda {@link http://skodak.org}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
 
 /** Course enrol instance enabled. (used in enrol->status) */
 define('ENROL_INSTANCE_ENABLED', 0);

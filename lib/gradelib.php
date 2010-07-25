@@ -18,12 +18,15 @@
 /**
  * Library of functions for gradebook - both public and internal
  *
- * @package   moodlecore
- * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    core
+ * @subpackage grade
+ * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
- /** Include essential files */
+defined('MOODLE_INTERNAL') || die();
+
+/** Include essential files */
 require_once($CFG->libdir . '/grade/constants.php');
 
 require_once($CFG->libdir . '/grade/grade_category.php');

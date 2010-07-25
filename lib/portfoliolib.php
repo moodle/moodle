@@ -23,11 +23,13 @@
  * Major Contributors
  *     - Penny Leach <penny@catalyst.net.nz>
  *
- * @package    moodlecore
+ * @package    core
  * @subpackage portfolio
  * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+defined('MOODLE_INTERNAL') || die();
 
 // require some of the sublibraries first.
 // this is not an exhaustive list, the others are pulled in as they're needed

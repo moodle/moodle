@@ -18,12 +18,13 @@
 /**
  * Support for external API
  *
- * @package    moodlecore
+ * @package    core
  * @subpackage webservice
  * @copyright  2009 Moodle Pty Ltd (http://moodle.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
 
 /**
  * Returns detailed function information
@@ -354,7 +355,7 @@ class external_value extends external_description {
     public function __construct($type, $desc='', $required=VALUE_REQUIRED,
             $default=null, $allownull=NULL_ALLOWED) {
         parent::__construct($desc, $required, $default);
-        $this->type      = $type;        
+        $this->type      = $type;
         $this->allownull = $allownull;
     }
 }

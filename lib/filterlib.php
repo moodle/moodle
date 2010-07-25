@@ -18,10 +18,13 @@
 /**
  * Library functions for managing text filter plugins.
  *
- * @package moodlecore
- * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    core
+ * @subpackage filter
+ * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+defined('MOODLE_INTERNAL') || die();
 
 /** The states a filter can be in, stored in the filter_active table. */
 define('TEXTFILTER_ON', 1);

@@ -21,10 +21,13 @@
  * Please see http://docs.moodle.org/en/Developement:How_Moodle_outputs_HTML
  * for an overview.
  *
- * @package   moodlecore
- * @copyright 2009 Nicolas Connault
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    core
+ * @subpackage lib
+ * @copyright  2009 Nicolas Connault
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+defined('MOODLE_INTERNAL') || die();
 
 /**
  * Helper class used by other components that involve an action on the page (URL or JS).
@@ -146,7 +149,7 @@ class popup_action extends component_action {
                 $this->params[$var] = $params[$var];
             }
         }
-        
+
         $attributes = array('url' => $url->out(false), 'name' => $name, 'options' => $this->get_js_options($params));
         parent::__construct($event, $this->jsfunction, $attributes);
     }

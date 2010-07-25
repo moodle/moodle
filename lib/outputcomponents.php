@@ -21,11 +21,13 @@
  * Please see http://docs.moodle.org/en/Developement:How_Moodle_outputs_HTML
  * for an overview.
  *
- * @package   moodlecore
- * @copyright 2009 Tim Hunt
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    core
+ * @subpackage lib
+ * @copyright  2009 Tim Hunt
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
 
 /**
  * Interface marking other classes as suitable for renderer_base::render()

@@ -19,10 +19,13 @@
 /**
  * Library functions to facilitate the use of JavaScript in Moodle.
  *
- * @package   moodlecore
- * @copyright 2009 Tim Hunt, 2010 Petr Skoda
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    core
+ * @subpackage lib
+ * @copyright  2009 Tim Hunt, 2010 Petr Skoda
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+defined('MOODLE_INTERNAL') || die();
 
 // note: you can find history of this file in lib/ajax/ajaxlib.php
 

@@ -27,10 +27,13 @@
  *     - true: if passed
  *     - false: if failed
  *
- * @package   moodlecore
- * @copyright (C) 2001-3001 Eloy Lafuente (stronk7) {@link http://contiento.com}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    core
+ * @subpackage admin
+ * @copyright  (C) 2001-3001 Eloy Lafuente (stronk7) {@link http://contiento.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+defined('MOODLE_INTERNAL') || die();
 
 /**
  * This function will look for the risky PHP setting register_globals
