@@ -188,6 +188,20 @@ class auth_plugin_cas extends auth_plugin_ldap {
     function config_form($config, $err, $user_fields) {
         global $CFG, $OUTPUT;
 
+        if (!function_exists('ldap_connect')) { // Is php-ldap really there?
+            echo $OUTPUT->notification(get_string('auth_ldap_noextension', 'auth_ldap'));
+
+            // Don't return here, like we do in auth/ldap. We cas use CAS without LDAP.
+            // So just warn the user (done above) and define the LDAP constants we use
+            // in config.html, to silence the warnings.
+            if (!defined('LDAP_DEREF_NEVER')) {
+                define ('LDAP_DEREF_NEVER', 0);
+            }
+            if (!defined('LDAP_DEREF_ALWAYS')) {
+            define ('LDAP_DEREF_ALWAYS', 3);
+            }
+        }
+
         include($CFG->dirroot.'/auth/cas/config.html');
     }
 

@@ -80,10 +80,6 @@ if (!isset($config->removeuser)) {
 
 $yesno = array( get_string('no'), get_string('yes') );
 
-if (!function_exists('ldap_connect')) { // Is php-ldap really there?
-    echo $OUTPUT->notification(get_string('auth_ldap_noextension', 'auth_ldap'));
-}
-
 ?>
 <table cellspacing="0" cellpadding="5" border="0">
 <tr>
