@@ -182,7 +182,7 @@ class backup_lesson_activity_structure_step extends backup_activity_structure_st
         $timer->annotate_ids('user', 'userid');
 
         // Annotate the file areas in user by the lesson module.
-        $lesson->annotate_files('mod_lesson', 'media_file', 'id');
+        $lesson->annotate_files('mod_lesson', 'mediafile', 'id');
         $page->annotate_files('mod_lesson', 'page_contents', 'id');
 
         // Prepare and return the structure we have just created for the lesson module.

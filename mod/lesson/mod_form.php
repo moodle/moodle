@@ -269,9 +269,8 @@ class mod_lesson_mod_form extends moodleform_mod {
         $filepickeroptions = array();
         $filepickeroptions['filetypes'] = '*';
         $filepickeroptions['maxbytes'] = $this->course->maxbytes;
-        $mform->addElement('filepicker', 'mediafile', get_string('mediafile', 'lesson'), null, $filepickeroptions);
-        $mform->addHelpButton('mediafile', 'mediafile', 'lesson');
-        $mform->setDefault('mediafile', '');
+        $mform->addElement('filepicker', 'mediafilepicker', get_string('mediafile', 'lesson'), null, $filepickeroptions);
+        $mform->addHelpButton('mediafilepicker', 'mediafile', 'lesson');
 
 //-------------------------------------------------------------------------------
         $mform->addElement('header', 'dependencyon', get_string('dependencyon', 'lesson'));
@@ -326,11 +325,12 @@ class mod_lesson_mod_form extends moodleform_mod {
         if (isset($default_values['password']) and ($module->version<2008112600)) {
             unset($default_values['password']);
         }
-        if (!empty($this->_cm) && !empty($default_values['mediafile'])) {
-            $context = get_context_instance(CONTEXT_MODULE, $this->_cm->id);
-            $draftitemid = file_get_submitted_draft_itemid('mediafile');
-            file_prepare_draft_area($draftitemid, $context->id, 'mod_lesson', 'media_file', $this->_cm->instance, array('subdirs' => 0, 'maxbytes' => $this->course->maxbytes, 'maxfiles' => 1));
-            $default_values['mediafile'] = $draftitemid;
+
+        if ($this->current->instance) {
+            // editing existing instance - copy existing files into draft area
+            $draftitemid = file_get_submitted_draft_itemid('mediafilepicker');
+            file_prepare_draft_area($draftitemid, $this->context->id, 'mod_lesson', 'mediafile', 0, array('subdirs'=>0, 'maxbytes' => $this->course->maxbytes, 'maxfiles' => 1));
+            $default_values['mediafilepicker'] = $draftitemid;
         }
     }
 

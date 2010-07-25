@@ -53,8 +53,8 @@ function lesson_add_instance($data, $mform) {
     $context = get_context_instance(CONTEXT_MODULE, $cmid);
     $lesson = $DB->get_record('lesson', array('id'=>$lessonid), '*', MUST_EXIST);
 
-    if ($filename = $mform->get_new_filename('mediafile')) {
-        if ($file = $mform->save_stored_file('mediafile', $context->id, 'mod_lesson', 'media_file', $lesson->id, '/', $filename)) {
+    if ($filename = $mform->get_new_filename('mediafilepicker')) {
+        if ($file = $mform->save_stored_file('mediafilepicker', $context->id, 'mod_lesson', 'mediafile', 0, '/', $filename)) {
             $DB->set_field('lesson', 'mediafile', $file->get_filename(), array('id'=>$lesson->id));
         }
     }
@@ -87,10 +87,14 @@ function lesson_update_instance($data, $mform) {
     $DB->update_record("lesson", $data);
 
     $context = get_context_instance(CONTEXT_MODULE, $cmid);
-    if ($filename = $mform->get_new_filename('mediafile')) {
-        if ($file = $mform->save_stored_file('mediafile', $context->id, 'mod_lesson', 'media_file', $data->id, '/', $filename, true)) {
+    if ($filename = $mform->get_new_filename('mediafilepicker')) {
+        if ($file = $mform->save_stored_file('mediafilepicker', $context->id, 'mod_lesson', 'mediafile', 0, '/', $filename, true)) {
             $DB->set_field('lesson', 'mediafile', $file->get_filename(), array('id'=>$data->id));
+        } else {
+            $DB->set_field('lesson', 'mediafile', '', array('id'=>$data->id));
         }
+    } else {
+        $DB->set_field('lesson', 'mediafile', '', array('id'=>$data->id));
     }
 
     lesson_process_post_save($data);
@@ -905,10 +909,13 @@ function lesson_pluginfile($course, $cm, $context, $filearea, $args, $forcedownl
             return false;
         }
         $fullpath = "/$context->id/mod_lesson/$filearea/$pageid/".implode('/', $args);
-        $forcedownload = true; //TODO: this is strange (skodak)
-    } else {
 
-        $fullpath = "/$context->id/mod_lesson/$filearea/".implode('/', $args);
+    } else if ($filearea === 'mediafile') {
+        array_shift($args); // ignore itemid - caching only
+        $fullpath = "/$context->id/mod_lesson/$filearea/0/".implode('/', $args);
+
+    } else {
+        return false;
     }
 
     $fs = get_file_storage();
@@ -926,8 +933,10 @@ function lesson_pluginfile($course, $cm, $context, $filearea, $args, $forcedownl
  */
 function lesson_get_file_areas() {
     $areas = array();
-    $areas['page_contents'] = 'page_contents'; //TODO: localize!!!!
-    $areas['media_files'] = 'media_files'; //TODO: localize!!!!
+    $areas['page_contents'] = 'Page contents'; //TODO: localize!!!!
+    $areas['mediafile'] = 'Media file'; //TODO: localize!!!!
+
+    return $areas;
 }
 
 /**
