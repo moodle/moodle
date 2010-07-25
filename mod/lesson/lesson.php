@@ -125,7 +125,7 @@ switch ($action) {
         $pages = $lesson->load_all_pages();
 
         if (!array_key_exists($pageid, $pages) || ($after!=0 && !array_key_exists($after, $pages))) {
-            print_error('Unable to find the page to move');
+            print_error('cannotfindpages', 'lesson', "$CFG->wwwroot/mod/lesson/edit.php?id=$cm->id");
         }
         $pagetomove = clone($pages[$pageid]);
         unset($pages[$pageid]);
