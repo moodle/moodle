@@ -46,7 +46,6 @@ require_login($course, false, $cm);
 
 $url = new moodle_url('/mod/lesson/lesson.php', array('id'=>$id,'action'=>$action));
 $PAGE->set_url($url);
-$PAGE->navbar->add(get_string($action, 'lesson'));
 
 $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 require_capability('mod/lesson:edit', $context);
@@ -57,6 +56,8 @@ $lessonoutput = $PAGE->get_renderer('mod_lesson');
 /// Process the action
 switch ($action) {
     case 'confirmdelete':
+        $PAGE->navbar->add(get_string($action, 'lesson'));
+
         $thispage = $lesson->load_page($pageid);
 
         echo $lessonoutput->header($lesson, $cm);
@@ -77,6 +78,7 @@ switch ($action) {
 
         break;
     case 'move':
+        $PAGE->navbar->add(get_string($action, 'lesson'));
 
         $title = $DB->get_field("lesson_pages", "title", array("id" => $pageid));
 
@@ -115,7 +117,6 @@ switch ($action) {
     case 'delete':
         $thispage = $lesson->load_page($pageid);
         $thispage->delete();
-        $lesson->add_message(get_string('deletedpage', 'lesson').': '.format_string($thispage->title, true), 'notifysuccess');
         redirect("$CFG->wwwroot/mod/lesson/edit.php?id=$cm->id");
         break;
     case 'moveit':
@@ -160,7 +161,6 @@ switch ($action) {
             }
         }
 
-        $lesson->add_message(get_string('movedpage', 'lesson'), 'notifysuccess');
         redirect("$CFG->wwwroot/mod/lesson/edit.php?id=$cm->id");
         break;
     default:
