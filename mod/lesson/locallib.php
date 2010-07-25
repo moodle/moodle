@@ -2100,7 +2100,7 @@ abstract class lesson_page extends lesson_base {
      * @return bool
      */
     public function update($properties, $context = null, $maxbytes = null) {
-        global $DB;
+        global $DB, $PAGE;
         $answers  = $this->get_answers();
         $properties->id = $this->properties->id;
         $properties->lessonid = $this->lesson->id;

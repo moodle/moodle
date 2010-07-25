@@ -286,12 +286,7 @@ class lesson_add_page_form_branchtable extends lesson_add_page_form_base {
 
         for ($i = 0; $i < $lesson->maxanswers; $i++) {
             $mform->addElement('header', 'headeranswer'.$i, get_string('branch', 'lesson').' '.($i+1));
-            $mform->addElement('textarea', 'answer['.$i.']', get_string("description", "lesson"), array('rows'=>10, 'cols'=>70, 'width'=>630, 'height'=>300));
-            $mform->setType('answer['.$i.']', PARAM_RAW);
-            if ($i == 0) {
-                // we should have one required branch
-                $mform->addRule('answer['.$i.']', null, 'required', null, 'server');
-            }
+            $this->add_answer($i, get_string("description", "lesson"), $i == 0);
 
             $mform->addElement('select', 'jumpto['.$i.']', get_string("jump", "lesson"), $jumptooptions);
             if ($i === 0) {
