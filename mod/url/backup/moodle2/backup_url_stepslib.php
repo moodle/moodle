@@ -16,15 +16,15 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package moodlecore
- * @subpackage backup-moodle2
- * @copyright 2010 onwards Andrew Davis
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * Define all the backup steps that will be used by the backup_url_activity_task
+ *
+ * @package    mod
+ * @subpackage url
+ * @copyright  2010 onwards Andrew Davis
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-/**
- * Define all the backup steps that will be used by the backup_url_activity_task
- */
+defined('MOODLE_INTERNAL') || die;
 
  /**
  * Define the complete url structure for backup, with file and id annotations

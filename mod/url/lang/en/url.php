@@ -18,9 +18,10 @@
 /**
  * Strings for component 'url', language 'en', branch 'MOODLE_20_STABLE'
  *
- * @package   url
- * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    mod
+ * @subpackage url
+ * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 $string['clicktoopen'] = 'Click {$a} link to open URL.';
