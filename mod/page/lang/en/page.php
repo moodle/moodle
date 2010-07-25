@@ -35,6 +35,7 @@ $string['legacyfilesdone'] = 'Finished';
 $string['modulename'] = 'Page';
 $string['modulename_help'] = 'A page enables a web page to be displayed and edited within the course.';
 $string['modulenameplural'] = 'Pages';
+$string['neverseen'] = 'Never seen';
 $string['optionsheader'] = 'Options';
 $string['pageadministration'] = 'Page administration';
 $string['pluginname'] = 'Page';
