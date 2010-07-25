@@ -33,16 +33,22 @@ admin_externalpage_setup('purgecaches');
 require_login();
 require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM));
 
+$return = new moodle_url('/');
+if (isset($_SERVER['HTTP_REFERER']) and !empty($_SERVER['HTTP_REFERER'])) {
+    if ($_SERVER['HTTP_REFERER'] !== "$CFG->wwwroot/$CFG->admin/purgecaches.php") {
+        $return = $_SERVER['HTTP_REFERER'];
+    }
+}
+
 if ($confirm) {
     require_sesskey();
     purge_all_caches();
-    redirect($_SERVER['HTTP_REFERER'], get_string('purgecachesfinished', 'admin'));
+    redirect($return, get_string('purgecachesfinished', 'admin'));
 } else {
     echo $OUTPUT->header();
     echo $OUTPUT->heading(get_string('purgecaches', 'admin'));
 
     $url = new moodle_url('/admin/purgecaches.php', array('sesskey'=>sesskey(), 'confirm'=>1));
-    $return = $_SERVER['HTTP_REFERER'];
     echo $OUTPUT->confirm(get_string('purgecachesconfirm', 'admin'), $url, $return);
 
     echo $OUTPUT->footer();
