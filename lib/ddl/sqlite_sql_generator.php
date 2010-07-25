@@ -19,11 +19,13 @@
 /**
  * Experimental SQLite specific SQL code generator.
  *
- * @package    moodlecore
- * @subpackage DDL
+ * @package    core
+ * @subpackage ddl
  * @copyright  2008 Andrei Bautu
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir.'/ddl/sql_generator.php');
 

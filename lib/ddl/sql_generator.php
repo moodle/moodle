@@ -23,12 +23,14 @@
  * The rest of classes will inherit, by default, the same logic.
  * Functions will be overridden as needed to generate correct SQL.
  *
- * @package    moodlecore
- * @subpackage DDL
+ * @package    core
+ * @subpackage ddl
  * @copyright  1999 onwards Martin Dougiamas     http://dougiamas.com
  *             2001-3001 Eloy Lafuente (stronk7) http://contiento.com
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+defined('MOODLE_INTERNAL') || die();
 
 /**
  * Abstract sql generator class, base for all db specific implementations.
