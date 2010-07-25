@@ -3849,12 +3849,7 @@ function get_complete_user_data($field, $value, $mnethostid=null) {
 
 /// Add the custom profile fields to the user record
     require_once($CFG->dirroot.'/user/profile/lib.php');
-    $customfields = (array)profile_user_record($user->id);
-    foreach ($customfields as $cname=>$cvalue) {
-        if (!isset($user->$cname)) { // Don't overwrite any standard fields
-            $user->$cname = $cvalue;
-        }
-    }
+    profile_load_custom_fields($user);
 
 /// Rewrite some variables if necessary
     if (!empty($user->description)) {

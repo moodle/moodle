@@ -216,6 +216,9 @@ if ($usernew = $userform->get_data()) {
         foreach ((array)$usernew as $variable => $value) {
             $USER->$variable = $value;
         }
+        // preload custom fields
+        profile_load_custom_fields($USER);
+
         if (!empty($USER->newadminuser)) {
             unset($USER->newadminuser);
             // apply defaults again - some of them might depend on admin user info, backup, roles, etc.

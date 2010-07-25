@@ -155,7 +155,7 @@ die;
  * @param   object   the category object
  * @return  string   the icon string
  */
-function profile_category_icons ($category) {
+function profile_category_icons($category) {
     global $CFG, $USER, $DB, $OUTPUT;
 
     $strdelete   = get_string('delete');

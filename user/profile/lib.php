@@ -9,7 +9,7 @@ define ('PROFILE_VISIBLE_NONE',    '0'); // only visible for moodle/user:update 
 
 
 /**
- * Base class for the cusomisable profile fields.
+ * Base class for the customisable profile fields.
  */
 class profile_field_base {
 
@@ -478,12 +478,27 @@ function profile_user_record($userid) {
             require_once($CFG->dirroot.'/user/profile/field/'.$field->datatype.'/field.class.php');
             $newfield = 'profile_field_'.$field->datatype;
             $formfield = new $newfield($field->id, $userid);
-            if ($formfield->is_user_object_data()) $usercustomfields->{$field->shortname} = $formfield->data;
+            if ($formfield->is_user_object_data()) {
+                $usercustomfields->{$field->shortname} = $formfield->data;
+            }
         }
     }
 
     return $usercustomfields;
 }
 
+/**
+ * Load custom profile fields into user object
+ *
+ * Please note originally in 1.9 we were using the custom field names directly,
+ * but it was causing unexpected collisions when adding new fields to user table,
+ * so instead we now use 'profile_' prefix.
+ *
+ * @param object $user user object
+ * @return void $user object is modified
+ */
+function profile_load_custom_fields(&$user) {
+    $user->profile = (array)profile_user_record($user->id);
+}
 
 

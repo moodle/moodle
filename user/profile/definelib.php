@@ -102,11 +102,9 @@ class profile_define_base {
         /// Check the shortname is unique
             if ($field and $field->id <> $data->id) {
                 $err['shortname'] = get_string('profileshortnamenotunique', 'admin');
-
-        /// Shortname must also be unique compared to the standard user fields
-            } else if (!$field and isset($USER->{$data->shortname})) {
-                $err['shortname'] = get_string('profileshortnamenotunique', 'admin');
             }
+
+            //NOTE: since 2.0 the shortname may collide with existing fields in $USER because we load these fields into $USER->profile array instead
         }
 
         /// No further checks necessary as the form class will take care of it
