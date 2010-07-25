@@ -19,15 +19,17 @@
 /**
  * XML format importer class
  *
- * @package    moodlecore
- * @subpackage DTL
+ * @package    core
+ * @subpackage dtl
  * @copyright  2008 Andrei Bautu
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 /**
  * XML format importer class (uses SAX for speed and low memory footprint).
- * Provides logic for parsing XML data and calling appropiate callbacks.
+ * Provides logic for parsing XML data and calling appropriate callbacks.
  * Subclasses should define XML data sources.
  */
 abstract class xml_database_importer extends database_importer {

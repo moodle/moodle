@@ -19,11 +19,13 @@
 /**
  * XML format exporter class
  *
- * @package    moodlecore
- * @subpackage DTL
+ * @package    core
+ * @subpackage dtl
  * @copyright  2008 Andrei Bautu
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+defined('MOODLE_INTERNAL') || die();
 
 /**
  * XML format exporter class.

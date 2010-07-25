@@ -19,11 +19,13 @@
 /**
  * General database mover class
  *
- * @package    moodlecore
- * @subpackage DTL
+ * @package    core
+ * @subpackage dtl
  * @copyright  2008 Andrei Bautu
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+defined('MOODLE_INTERNAL') || die();
 
 class database_mover extends database_exporter {
     /** Importer object used to transfer data. */
