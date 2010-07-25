@@ -182,7 +182,7 @@
         if ($scorm->popup != 0) {
             //Added incase javascript popups are blocked we don't provide a direct link to the pop-up as JS communication can fail - the user must disable their pop-up blocker.
             $linkcourse = '<a href="'.$CFG->wwwroot.'/course/view.php?id='.$scorm->course.'">' . get_string('finishscormlinkname','scorm') . '</a>';
-            echo $OUTPUT->box(get_string('popupblockmessage','scorm'). ' '. get_string('finishscorm','scorm',$linkcourse), 'generalbox', 'altfinishlink');
+            echo $OUTPUT->box(get_string('finishscorm','scorm',$linkcourse), 'generalbox', 'altfinishlink');
         }
     }
 ?>

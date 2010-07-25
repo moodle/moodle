@@ -196,7 +196,6 @@ $string['passed'] = 'Passed';
 $string['php5'] = 'PHP 5 (DOMXML native library)';
 $string['pluginname'] = 'SCORM package';
 $string['popup'] = 'New window';
-$string['popupblockmessage'] = 'If a pop-up window doesn\'t appear, please enable pop-ups in your browser.';
 $string['popupmenu'] = 'In a drop down menu';
 $string['popupopen'] = 'Open package in a new window';
 $string['popupsblocked'] = 'It appears that popup windows are blocked, stopping this scorm module from playing. Please check your browser settings, before starting again.';
