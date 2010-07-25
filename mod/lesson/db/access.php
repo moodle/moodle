@@ -29,7 +29,7 @@ $capabilities = array(
 
     'mod/lesson:edit' => array(
 
-        'riskbitmask' => RISK_XSS,
+        'riskbitmask' => RISK_XSS, // we want flash and JS in question pages
 
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
