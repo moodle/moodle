@@ -199,6 +199,7 @@ $string['popup'] = 'New window';
 $string['popupblockmessage'] = 'If a pop-up window doesn\'t appear, please enable pop-ups in your browser.';
 $string['popupmenu'] = 'In a drop down menu';
 $string['popupopen'] = 'Open package in a new window';
+$string['popupsblocked'] = 'It appears that popup windows are blocked, stopping this scorm module from playing. Please check your browser settings, before starting again.';
 $string['position_error'] = 'The {$a->tag} tag can\'t be child of {$a->parent} tag';
 $string['preferencesuser'] = 'Preferences for this report';
 $string['preferencespage'] = 'Preferences just for this page';

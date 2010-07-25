@@ -165,6 +165,7 @@
     $PAGE->requires->string_for_js('toc', 'scorm');
     $PAGE->requires->string_for_js('hide', 'moodle');
     $PAGE->requires->string_for_js('show', 'moodle');
+    $PAGE->requires->string_for_js('popupsblocked', 'scorm');
 
     $name = false;
 
@@ -258,7 +259,7 @@ if (!isset($result->toctitle)) {
     $result->toctitle = get_string('toc', 'scorm');
 }
 
-$PAGE->requires->js_init_call('M.mod_scorm.init', array($scorm->hidenav, $scorm->hidetoc, $result->toctitle, $name, $scorm->options, $scorm->width, $scorm->height, $sco->id));
+$PAGE->requires->js_init_call('M.mod_scorm.init', array($scorm->hidenav, $scorm->hidetoc, $result->toctitle, $name, $sco->id));
 
 
 $completion=new completion_info($course);

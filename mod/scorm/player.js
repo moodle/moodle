@@ -1,6 +1,9 @@
 function scorm_openpopup(url,name,options,width,height) {
     fullurl = M.cfg.wwwroot + '/mod/scorm/' + url;
     windowobj = window.open(fullurl,name,options);
+    if (!windowobj) {
+        return;
+    }
     if ((width==100) && (height==100)) {
         // Fullscreen
         windowobj.moveTo(0,0);

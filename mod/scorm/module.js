@@ -23,9 +23,7 @@
 
 M.mod_scorm = {};
 
-M.mod_scorm.init = function(Y, hide_nav, hide_toc, toc_title, window_name, window_options, window_width, window_height, launch_sco) {
-
-    var popup_winHandle = false;
+M.mod_scorm.init = function(Y, hide_nav, hide_toc, toc_title, window_name, launch_sco) {
 
     if (hide_nav == 0) {
         scorm_hide_nav = false;
@@ -81,13 +79,6 @@ M.mod_scorm.init = function(Y, hide_nav, hide_toc, toc_title, window_name, windo
                 var api_url = M.cfg.wwwroot + '/mod/scorm/api.php?' + node.title;
                 document.getElementById('external-scormapi').src = api_url;
             }
-
-            // make the popup work
-            if (window_name) {
-                popup_winHandle = window.open('', window_name, window_options, window_width, window_height);
-                popup_winHandle.location.href =  url_prefix + node.title;
-                popup_winHandle.resizeTo(window_width, window_height);
-            }
          
             var content = new YAHOO.util.Element('scorm_content');
             try {
@@ -95,6 +86,13 @@ M.mod_scorm.init = function(Y, hide_nav, hide_toc, toc_title, window_name, windo
                 // and also it has some restrictions on DOM access from object tag
                 if (window_name || node.title == null) {
                     var obj = document.createElement('<iframe id="scorm_object" src="">');
+                    if (window_name) {
+                        var mine = window.open('','','width=1,height=1,left=0,top=0,scrollbars=no');
+                        if(! mine) {
+                             alert(M.str.scorm.popupsblocked);
+                        }
+                        mine.close()
+                    }
                 }
                 else {
                     var obj = document.createElement('<iframe id="scorm_object" src="'+url_prefix + node.title+'">');
@@ -110,6 +108,13 @@ M.mod_scorm.init = function(Y, hide_nav, hide_toc, toc_title, window_name, windo
                 if (!window_name && node.title != null) {
                     obj.setAttribute('data', url_prefix + node.title);
                 }
+                    if (window_name) {
+                        var mine = window.open('','','width=1,height=1,left=0,top=0,scrollbars=no');
+                        if(! mine) {
+                             alert(M.str.scorm.popupsblocked);
+                        }
+                        mine.close()
+                    }
             }
             var old = YAHOO.util.Dom.get('scorm_object');
             if (old) {
