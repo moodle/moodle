@@ -17,7 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @package    moodle
+ * @package    core
  * @subpackage portfolio
  * @author     Penny Leach <penny@catalyst.net.nz>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL
@@ -27,6 +27,8 @@
  * add export functionality to subclass from.
  * See http://docs.moodle.org/en/Development:Adding_a_Portfolio_Button_to_a_page
  */
+
+defined('MOODLE_INTERNAL') || die();
 
 /**
 * base class for callers

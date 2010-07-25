@@ -17,7 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @package    moodle
+ * @package    core
  * @subpackage portfolio
  * @author     Penny Leach <penny@liip.ch>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL
@@ -25,6 +25,8 @@
  *
  * This file contains the LEAP2a writer used by portfolio_format_leap2a
  */
+
+defined('MOODLE_INTERNAL') || die();
 
 /**
  * object to encapsulate the writing of leap2a.

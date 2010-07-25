@@ -17,7 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @package    moodle
+ * @package    core
  * @subpackage portfolio
  * @author     Penny Leach <penny@catalyst.net.nz>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL
@@ -27,6 +27,8 @@
  * They are implemented in php classes rather than just a simpler hash
  * Because it provides an easy way to do subtyping using php inheritance.
  */
+
+defined('MOODLE_INTERNAL') || die();
 
 /**
  * base class to inherit from

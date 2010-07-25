@@ -17,7 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @package    moodle
+ * @package    core
  * @subpackage portfolio
  * @author     Penny Leach <penny@catalyst.net.nz>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL
@@ -25,6 +25,8 @@
  *
  * This file contains the class definition for the exporter object.
  */
+
+defined('MOODLE_INTERNAL') || die();
 
 /**
 * The class that handles the various stages of the actual export
