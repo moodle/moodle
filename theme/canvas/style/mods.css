@@ -335,13 +335,13 @@
 	padding: 5px;
 }
 
-.path-mod-choice .header, .path-mod-choice td {
+.path-mod-choice .results .header, .path-mod-choice td {
 	border-top: 1px solid;
 	border-color: #ddd;
 }
 
 .path-mod-choice .count,
-.path-mod-choice .header,
+.path-mod-choice .results .header,
 .path-mod-choice .data,
 .path-mod-choice .lastcol {
 	border-right: 1px solid #ddd;

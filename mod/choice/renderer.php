@@ -202,8 +202,7 @@ class mod_choice_renderer extends plugin_renderer_base {
         foreach ($columns as $d) {
             $table->colclasses[] = 'data';
         }
-        
-        $html .= html_writer::table($table);
+        $html .= html_writer::tag('div', html_writer::table($table), array('class'=>'response'));
         
         $actiondata = '';
         if ($choices->viewresponsecapability && $choices->deleterepsonsecapability) {            
@@ -229,8 +228,8 @@ class mod_choice_renderer extends plugin_renderer_base {
         if ($choices->viewresponsecapability) {
             $html .= html_writer::end_tag('form');
         }
-        
-        return $html;        
+       
+        return $html;
     }
 
 
@@ -315,9 +314,9 @@ class mod_choice_renderer extends plugin_renderer_base {
         
         $header = html_writer::tag('h2',format_string(get_string("responses", "choice")));
         $html .= html_writer::tag('div', $header, array('class'=>'responseheader'));
-        $html .= html_writer::tag('a', get_string('skipresultgraph', 'choice'), array('href'=>'#skipresultgraph', 'class'=>'skip-block'));
-        $html .= html_writer::table($table);
-        
+        $html .= html_writer::tag('a', get_string('skipresultgraph', 'choice'), array('href'=>'#skipresultgraph', 'class'=>'skip-block'));      
+        $html .= html_writer::tag('div', html_writer::table($table), array('class'=>'response'));      
+
         return $html;
     }
 
