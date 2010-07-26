@@ -789,7 +789,7 @@ function workshop_print_recent_mod_activity($activity, $courseid, $detail, $modn
         }
 
         echo html_writer::start_tag('div', array('class'=>'title'));
-        $url = new moodle_url('/mod/workshop/submission.php', array('id'=>$activity->content->id));
+        $url = new moodle_url('/mod/workshop/submission.php', array('cmid'=>$activity->cmid, 'id'=>$activity->content->id));
         $name = s($activity->content->title);
         echo html_writer::tag('strong', html_writer::link($url, $name));
         echo html_writer::end_tag('div');
@@ -826,7 +826,7 @@ function workshop_print_recent_mod_activity($activity, $courseid, $detail, $modn
         }
 
         echo html_writer::start_tag('div', array('class'=>'title'));
-        $url = new moodle_url('/mod/workshop/assessment.php', array('cmid'=>$activity->cmid, 'asid'=>$activity->content->id));
+        $url = new moodle_url('/mod/workshop/assessment.php', array('asid'=>$activity->content->id));
         $name = s($activity->content->submissiontitle);
         echo html_writer::tag('em', html_writer::link($url, $name));
         echo html_writer::end_tag('div');
