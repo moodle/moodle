@@ -120,6 +120,10 @@ class recent_form extends moodleform {
                 }
                 $mform->addElement('select', 'group', get_string('groups'), $options);
                 $mform->setAdvanced('group');
+            } else {
+                $mform->addElement('hidden','group');
+                $mform->setType('group', PARAM_INT);
+                $mform->setConstants(array('group'=>0));
             }
         } else {
             $mform->addElement('hidden','group');
