@@ -49,6 +49,7 @@ $strcustomscales = get_string("scalescustom");
 $strstandardscales = get_string("scalesstandard");
 
 $PAGE->set_title($strscales);
+$PAGE->set_heading($course->fullname);
 echo $OUTPUT->header();
 
 if ($scaleid) {
