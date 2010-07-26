@@ -43,7 +43,7 @@ require_login();
 
 /// Parameters
 $action    = optional_param('action', '', PARAM_ALPHA);
-$repo_id   = optional_param('repo_id', 0, PARAM_INT);           // Pepository ID
+$repo_id   = optional_param('repo_id', 0, PARAM_INT);           // Repository ID
 $contextid = optional_param('ctx_id', SYSCONTEXTID, PARAM_INT); // Context ID
 $env       = optional_param('env', 'filepicker', PARAM_ALPHA);  // Opened in editor or moodleform
 $license   = optional_param('license', $CFG->sitedefaultlicense, PARAM_TEXT);
@@ -95,7 +95,7 @@ if ($maxbytes == 0 || $maxbytes>=$moodle_maxbytes) {
 /// Wait as long as it takes for this script to finish
 set_time_limit(0);
 
-// Early actions which need to be done before repository instaces initialised
+// Early actions which need to be done before repository instances initialised
 switch ($action) {
     // global search
     case 'gsearch':
@@ -181,7 +181,7 @@ switch ($action) {
             }
         }
 
-        // We have two special repoisitory type need to deal with
+        // We have two special repository type need to deal with
         // local and recent plugins don't added new files to moodle, just add new records to database
         // so we don't check user quota and maxbytes here
         if (in_array($repo->options['type'], array('local', 'recent', 'user'))) {
