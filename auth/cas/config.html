@@ -56,8 +56,8 @@ if (!isset($config->bind_dn)) {
 if (!isset($config->bind_pw)) {
     $config->bind_pw = '';
 }
-if (!isset($config->ldapversion)) {
-    $config->ldapversion = '3';
+if (!isset($config->ldap_version)) {
+    $config->ldap_version = '3';
 }
 if (!isset($config->objectclass)) {
     $config->objectclass = '';
@@ -200,8 +200,8 @@ $yesno = array( get_string('no'), get_string('yes') );
              $versions = array();
              $versions[2] = '2';
              $versions[3] = '3';
-             echo html_writer::select($versions, 'ldapversion', $config->ldapversion, false);
-             if (isset($err['ldapversion'])) { echo $OUTPUT->error_text($err['ldapversion']); }
+             echo html_writer::select($versions, 'ldap_version', $config->ldap_version, false);
+             if (isset($err['ldap_version'])) { echo $OUTPUT->error_text($err['ldap_version']); }
         ?>
     </td>
     <td>

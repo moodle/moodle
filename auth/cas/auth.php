@@ -274,8 +274,8 @@ class auth_plugin_cas extends auth_plugin_ldap {
         if (!isset($config->bind_pw)) {
             $config->bind_pw = '';
         }
-        if (!isset($config->ldapversion)) {
-            $config->ldapversion = '3';
+        if (!isset($config->ldap_version)) {
+            $config->ldap_version = '3';
         }
         if (!isset($config->objectclass)) {
             $config->objectclass = '';
@@ -317,7 +317,7 @@ class auth_plugin_cas extends auth_plugin_ldap {
         set_config('opt_deref', $config->opt_deref, $this->pluginconfig);
         set_config('bind_dn', trim($config->bind_dn), $this->pluginconfig);
         set_config('bind_pw', $config->bind_pw, $this->pluginconfig);
-        set_config('ldapversion', $config->ldapversion, $this->pluginconfig);
+        set_config('ldap_version', $config->ldap_version, $this->pluginconfig);
         set_config('objectclass', trim($config->objectclass), $this->pluginconfig);
         set_config('memberattribute', moodle_strtolower(trim($config->memberattribute)), $this->pluginconfig);
         set_config('memberattribute_isdn', $config->memberattribute_isdn, $this->pluginconfig);
