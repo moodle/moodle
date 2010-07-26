@@ -990,7 +990,7 @@ class assignment_base {
         $mformdata->submissioncommentformat= FORMAT_HTML;
         $mformdata->submission_content= $this->print_user_files($user->id,true);
 
-        $submitform = new mod_assignment_online_grading_form( null, $mformdata );
+        $submitform = new mod_assignment_grading_form( null, $mformdata );
 
         if ($submitform->is_cancelled()) {
             redirect('submissions.php?id='.$this->cm->id);
@@ -2058,7 +2058,7 @@ class assignment_base {
 } ////// End of the assignment_base class
 
 
-class mod_assignment_online_grading_form extends moodleform { // TODO: why "online" in the name of this class? (skodak)
+class mod_assignment_grading_form extends moodleform { 
 
     function definition() {
         global $OUTPUT;
