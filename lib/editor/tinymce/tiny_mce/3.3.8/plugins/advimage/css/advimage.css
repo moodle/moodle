@@ -6,7 +6,7 @@
     padding: 3px 3px 3px 1.5em;
     border:1px solid #ccc;
     text-decoration:none;
-    background: url(../../../../../../../../../pix/a/search.png) .2em .3em no-repeat;
+    background: url(../../../../../../../../pix/a/search.png) .2em .3em no-repeat;
 }
 .moodlebutton:hover {background: #ccc}
 .alignPreview {border:1px solid #000; width:140px; height:140px; overflow:hidden; padding:5px;}
