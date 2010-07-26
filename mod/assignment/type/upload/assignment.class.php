@@ -191,7 +191,7 @@ class assignment_upload extends assignment_base {
         if ($this->can_upload_file($submission)) {
             $fs = get_file_storage();
             // edit files in another page
-            if ($submission = $this->get_submission($USER->id)) {
+            if ($submission) {
                 if ($files = $fs->get_area_files($this->context->id, 'mod_assignment', 'submission', $submission->id, "timemodified", false)) {
                     $str = get_string('editthesefiles', 'assignment');
                 } else {
@@ -200,7 +200,7 @@ class assignment_upload extends assignment_base {
             } else {
                 $str = get_string('uploadfiles', 'assignment');
             }
-            echo $OUTPUT->single_button(new moodle_url('/mod/assignment/type/upload/upload.php', array('contextid'=>$this->context->id, 'userid'=>$submission->userid)), $str, 'get');
+            echo $OUTPUT->single_button(new moodle_url('/mod/assignment/type/upload/upload.php', array('contextid'=>$this->context->id, 'userid'=>$USER->id)), $str, 'get');
         }
 
     }
