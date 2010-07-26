@@ -83,8 +83,8 @@
 .categorylist .course .info {float:left;text-align: left;}
 .categorylist .course {padding-left:18px;}
 
-#page-course-index .indentation {padding-left: 30px;}
-#page-course-index .category .image {padding-right: 5px;}
+.categorylist .indentation {padding-left: 20px;}
+#page-course-index .category .image {padding-right: 2px;}
 
 .path-course-report-outline td.numviews {text-align:right;}
 .path-course-report-outline tr.section {text-align: center;}

@@ -2009,8 +2009,10 @@ function print_category_info($category, $depth, $showcourses = false) {
 
     $strsummary = get_string('summary');
 
-    $catlinkcss = $category->visible ? '' : ' class="dimmed" ';
-
+    $catlinkcss = null;
+    if (!$category->visible) {
+        $catlinkcss = array('class'=>'dimmed');
+    }
     static $coursecount = null;
     if (null === $coursecount) {
         // only need to check this once
@@ -2025,25 +2027,22 @@ function print_category_info($category, $depth, $showcourses = false) {
 
     $courses = get_courses($category->id, 'c.sortorder ASC', 'c.id,c.sortorder,c.visible,c.fullname,c.shortname,c.summary');
     if ($showcourses and $coursecount) {
-        echo '<div class="categorylist clearfix">';
-        echo '<div class="category">';
+        echo '<div class="categorylist clearfix">';        
         $cat = '';
-        $cat .= html_writer::tag('div', $catimage, array('class'=>'image'));
-        $catlink = '<a '.$catlinkcss.' href="'.$CFG->wwwroot.'/course/category.php?id='.$category->id.'">'. format_string($category->name).'</a>';
+        $cat .= html_writer::tag('div', $catimage, array('class'=>'image'));        
+        $catlink = html_writer::link(new moodle_url('/course/category.php', array('id'=>$category->id)), format_string($category->name), $catlinkcss);
         $cat .= html_writer::tag('div', $catlink, array('class'=>'name'));
 
-        $indent = '';
+        $html = '';
         if ($depth > 0) {
             for ($i=0; $i< $depth; $i++) {
-                $indent = html_writer::tag('div', $indent .$cat, array('class'=>'indentation'));
+                $html = html_writer::tag('div', $html . $cat, array('class'=>'indentation'));
                 $cat = '';
             }
         } else {
-            $indent = $cat;
+            $html = $cat;
         }
-        echo $indent;
-        echo '</div>';
-
+        echo html_writer::tag('div', $html, array('class'=>'category'));        
         echo html_writer::tag('div', '', array('class'=>'clearfloat'));
 
         // does the depth exceed maxcategorydepth
@@ -2051,10 +2050,13 @@ function print_category_info($category, $depth, $showcourses = false) {
         $limit = !(isset($CFG->maxcategorydepth) && ($depth >= $CFG->maxcategorydepth-1));
         if ($courses && ($limit || $CFG->maxcategorydepth == 0)) {
             foreach ($courses as $course) {
-                $linkcss = $course->visible ? '' : ' class="dimmed" ';
-
+                $linkcss = null;
+                if (!$course->visible) {
+                    $linkcss = array('class'=>'dimmed');
+                }
+                
                 $coursecontent = '';
-                $courselink = '<a '.$linkcss.' href="'.$CFG->wwwroot.'/course/view.php?id='.$course->id.'">'. format_string($course->fullname).'</a>';
+                $courselink = html_writer::link(new moodle_url('/course/view.php', array('id'=>$course->id)), format_string($course->fullname), $linkcss);
                 $coursecontent .= html_writer::tag('div', $courselink, array('class'=>'name'));
 
                 //TODO: add some guest, pay icons
@@ -2067,25 +2069,32 @@ function print_category_info($category, $depth, $showcourses = false) {
                     $coursecontent .= html_writer::tag('div', $actionlink, array('class'=>'info'));
                 }
 
-                $indent = '';
+                $html = '';
                 for ($i=1; $i <= $depth; $i++) {
-                    $indent = html_writer::tag('div', $indent . $coursecontent , array('class'=>'indentation'));
+                    $html = html_writer::tag('div', $html . $coursecontent , array('class'=>'indentation'));
                     $coursecontent = '';
                 }
-                echo html_writer::tag('div', $indent, array('class'=>'course clearfloat'));
+                echo html_writer::tag('div', $html, array('class'=>'course clearfloat'));
             }
         }
         echo '</div>';
     } else {
-        echo '<div class="categorylist">';
-        echo '<div class="category">';
-        if ($depth) {
-            $indent = $depth*20;
-            echo $OUTPUT->spacer(array('height'=>10, 'width'=>$indent, 'br'=>true)); // should be done with CSS instead
+        echo '<div class="categorylist">';        
+        $html = '';
+        $cat = html_writer::link(new moodle_url('/course/category.php', array('id'=>$category->id)), format_string($category->name), $catlinkcss);
+        $cat .= html_writer::tag('span', '('.count($courses).')', array('title'=>get_string('numberofcourses'), 'class'=>'numberofcourse'));
+        
+        if ($depth > 0) {
+            for ($i=0; $i< $depth; $i++) {
+                $html = html_writer::tag('div', $html .$cat, array('class'=>'indentation'));
+                $cat = '';
+            }
+        } else {
+            $html = $cat;
         }
-        echo '<a '.$catlinkcss.' href="'.$CFG->wwwroot.'/course/category.php?id='.$category->id.'">'. format_string($category->name).'</a>';
-        echo '<span class="numberofcourse" title="' .get_string('numberofcourses') . '"> ('.count($courses).')</span>';
-        echo '</div>';
+        
+        echo html_writer::tag('div', $html, array('class'=>'category'));        
+        echo html_writer::tag('div', '', array('class'=>'clearfloat'));
         echo '</div>';
     }
 }
