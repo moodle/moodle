@@ -368,9 +368,11 @@ class assignment_upload extends assignment_base {
         if ($this->drafts_tracked() and $this->isopen() and has_capability('mod/assignment:grade', $this->context) and $mode != '') { // we do not want it on view.php page
             if ($this->can_unfinalize($submission)) {
                 $options = array ('id'=>$this->cm->id, 'userid'=>$userid, 'action'=>'unfinalize', 'mode'=>$mode, 'offset'=>$offset);
+                $output .= '<form></form>'; //@TODO: see bug MDL-22893 this is a temporary workaround for a broken - form nesting isn't valid!
                 $output .= $OUTPUT->single_button(new moodle_url('upload.php', $options), get_string('unfinalize', 'assignment'));
             } else if ($this->can_finalize($submission)) {
                 $options = array ('id'=>$this->cm->id, 'userid'=>$userid, 'action'=>'finalizeclose', 'mode'=>$mode, 'offset'=>$offset);
+                $output .= '<form></form>'; //@TODO: see bug MDL-22893 this is a temporary workaround for a broken - form nesting isn't valid!
                 $output .= $OUTPUT->single_button(new moodle_url('upload.php', $options), get_string('finalize', 'assignment'));
             }
         }
@@ -728,7 +730,6 @@ class assignment_upload extends assignment_base {
         $offset = required_param('offset', PARAM_INT);
 
         $returnurl = "submissions.php?id={$this->cm->id}&amp;userid=$userid&amp;mode=$mode&amp;offset=$offset&amp;forcerefresh=1";
-
         if (data_submitted()
           and $submission = $this->get_submission($userid)
           and $this->can_unfinalize($submission)
