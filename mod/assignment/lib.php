@@ -2844,10 +2844,10 @@ function assignment_print_recent_activity($course, $viewfullnames, $timestart) {
             if (empty($modinfo->groups[$cm->id])) {
                 continue;
             }
-            $usersgroups =  groups_get_all_groups($course->id, $cm->userid, $cm->groupingid);
+            $usersgroups =  groups_get_all_groups($course->id, $submission->userid, $cm->groupingid);
             if (is_array($usersgroups)) {
                 $usersgroups = array_keys($usersgroups);
-                $interset = array_intersect($usersgroups, $modinfo->groups[$cm->id]);
+                $intersect = array_intersect($usersgroups, $modinfo->groups[$cm->id]);
                 if (empty($intersect)) {
                     continue;
                 }
@@ -2860,7 +2860,7 @@ function assignment_print_recent_activity($course, $viewfullnames, $timestart) {
         return false;
     }
 
-    echo $OUTPUT->heading(get_string('newsubmissions', 'assignment').':');
+    echo $OUTPUT->heading(get_string('newsubmissions', 'assignment').':', 3);
 
     foreach ($show as $submission) {
         $cm = $modinfo->cms[$submission->cmid];
