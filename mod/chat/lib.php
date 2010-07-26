@@ -1230,7 +1230,7 @@ function chat_extend_navigation($navigation, $course, $module, $cm) {
 
     $currentgroup = groups_get_activity_group($cm, true);
 
-    if (has_capability('mod/chat:chat', get_context_instance(CONTEXT_MODULE, $cm->instance))) {
+    if (has_capability('mod/chat:chat', get_context_instance(CONTEXT_MODULE, $cm->id))) {
         $strenterchat    = get_string('enterchat', 'chat');
 
         $target = $CFG->wwwroot.'/mod/chat/';
