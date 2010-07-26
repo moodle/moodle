@@ -821,10 +821,9 @@ function quiz_get_recent_mod_activity(&$activities, &$index, $timestart,
         $groupjoin   = '';
     }
 
-    $params = array(
-        'timestart' => $timestart,
-        'quizid' => $quiz->id
-    );
+    $params['timestart'] = $timestart;
+    $params['quizid'] = $quiz->id;
+
     if (!$attempts = $DB->get_records_sql("
               SELECT qa.*,
                      u.firstname, u.lastname, u.email, u.picture, u.imagealt
