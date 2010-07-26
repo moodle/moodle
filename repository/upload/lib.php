@@ -56,7 +56,7 @@ class repository_upload extends repository {
         $record = new stdclass;
         $record->filearea = 'draft';
         $record->component = 'user';
-        $record->filepath = urldecode(optional_param('savepath', '/', PARAM_PATH));
+        $record->filepath = optional_param('savepath', '/', PARAM_PATH);
         $record->itemid   = optional_param('itemid', 0, PARAM_INT);
         $record->license  = optional_param('license', $CFG->sitedefaultlicense, PARAM_TEXT);
         $record->author   = optional_param('author', '', PARAM_TEXT);
@@ -65,7 +65,6 @@ class repository_upload extends repository {
         $elname = 'repo_upload_file';
 
         $fs = get_file_storage();
-        $browser = get_file_browser();
         $sm = get_string_manager();
 
         if ($record->filepath !== '/') {
@@ -81,7 +80,7 @@ class repository_upload extends repository {
         }
 
         if (empty($record->filename)) {
-            $record->filename = $_FILES[$elname]['name'];
+            $record->filename = clean_param($_FILES[$elname]['name'], PARAM_FILE);
         }
 
         if ($this->mimetypes != '*') {
@@ -104,9 +103,8 @@ class repository_upload extends repository {
             $record->itemid = 0;
         }
 
-        if ($file = $browser->get_file_info($context, $record->filearea, $record->itemid, $record->filepath, $record->filename)) {
-            $file->delete();
-            //throw new moodle_exception('fileexist');
+        if ($file = $fs->get_file($context->id, $record->component, $record->filearea, $record->itemid, $record->filepath, $record->filename)) {
+            throw new moodle_exception('fileexist');
         }
 
         $record->contextid = $context->id;

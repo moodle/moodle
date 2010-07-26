@@ -109,6 +109,22 @@ M.core_filepicker.init = function(Y, options) {
                     params[i] = args['params'][i];
                 }
             }
+            if (args.action == 'upload') {
+                var list = [];
+                for(var k in params) {
+                    var value = params[k];
+                    if(value instanceof Array) {
+                        for(var i in value) {
+                            list.push(k+'[]='+value[i]);
+                        }
+                    } else {
+                        list.push(k+'='+value);
+                    }
+                }
+                params = list.join('&');
+            } else {
+                params = build_querystring(params);
+            }
             var cfg = {
                 method: 'POST',
                 on: {
@@ -145,7 +161,7 @@ M.core_filepicker.init = function(Y, options) {
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
                 },
-                data: build_querystring(params),
+                data: params,
                 context: this
             };
             if (args.form) {
