@@ -538,8 +538,8 @@ class assignment_upload extends assignment_base {
         global $CFG, $USER, $DB, $OUTPUT;
 
         $returnurl  = new moodle_url('/mod/assignment/view.php', array('id'=>$this->cm->id));
-        $filecount = $this->count_user_files($USER->id);
         $submission = $this->get_submission($USER->id);
+        $filecount = $this->count_user_files($submission->id);
 
         if (!$this->can_upload_file($submission)) {
             $this->view_header(get_string('upload'));
@@ -873,7 +873,7 @@ class assignment_upload extends assignment_base {
         if (is_enrolled($this->context, $USER, 'mod/assignment:submit')
           and $this->isopen()                                                 // assignment not closed yet
           and (empty($submission) or $submission->userid == $USER->id)        // his/her own submission
-          and $this->count_user_files($USER->id) < $this->assignment->var1    // file limit not reached
+          and $this->count_user_files($submission->id) < $this->assignment->var1    // file limit not reached
           and !$this->is_finalized($submission)) {                            // no uploading after final submission
             return true;
         } else {
@@ -961,7 +961,7 @@ class assignment_upload extends assignment_base {
           and $this->isopen()                                                 // assignment not closed yet
           and !empty($submission)                                             // submission must exist
           and $submission->userid == $USER->id                                // his/her own submission
-          and ($this->count_user_files($USER->id)
+          and ($this->count_user_files($submission->id)
             or ($this->notes_allowed() and !empty($submission->data1)))) {    // something must be submitted
 
             return true;
@@ -1071,7 +1071,7 @@ class assignment_upload extends assignment_base {
         }
 
         // Check if the user has uploaded any files, if so we can add some more stuff to the settings nav
-        if ($submission && is_enrolled($this->context, $USER, 'mod/assignment:submit') && $this->count_user_files($USER->id)) {
+        if ($submission && is_enrolled($this->context, $USER, 'mod/assignment:submit') && $this->count_user_files($submission->id)) {
             $fs = get_file_storage();
             if ($files = $fs->get_area_files($this->context->id, 'mod_assignment', 'submission', $submission->id, "timemodified", false)) {
                 if (!$this->drafts_tracked() or !$this->isopen() or $this->is_finalized($submission)) {

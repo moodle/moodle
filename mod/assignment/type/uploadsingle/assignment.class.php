@@ -192,8 +192,8 @@ class assignment_uploadsingle extends assignment_base {
             redirect($viewurl);
         }
 
-        $filecount = $this->count_user_files($USER->id);
         $submission = $this->get_submission($USER->id);
+        $filecount = $this->count_user_files($submission->id);
         if ($this->isopen() && (!$filecount || $this->assignment->resubmit || !$submission->timemarked)) {
             if ($submission = $this->get_submission($USER->id)) {
                 //TODO: change later to ">= 0", to prevent resubmission when graded 0
@@ -348,7 +348,7 @@ class assignment_uploadsingle extends assignment_base {
         }
 
         // Check if the user has uploaded any files, if so we can add some more stuff to the settings nav
-        if ($submission && is_enrolled($this->context, $USER, 'mod/assignment:submit') && $this->count_user_files($USER->id)) {
+        if ($submission && is_enrolled($this->context, $USER, 'mod/assignment:submit') && $this->count_user_files($submission->id)) {
             $fs = get_file_storage();
             if ($files = $fs->get_area_files($this->context->id, 'mod_assignment', 'submission', $submission->id, "timemodified", false)) {
                 $filenode = $node->add(get_string('submission', 'assignment'));

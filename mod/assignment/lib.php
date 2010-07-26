@@ -1857,7 +1857,7 @@ class assignment_base {
 
             $fs = get_file_storage();
 
-            if ($files = $fs->get_area_files($this->context->id, 'mod_assignment', 'submission', $user->id, "timemodified", false)) {
+            if ($files = $fs->get_area_files($this->context->id, 'mod_assignment', 'submission', $submission->id, "timemodified", false)) {
                 $countfiles = count($files)." ".get_string("uploadedfiles", "assignment");
                 foreach ($files as $file) {
                     $countfiles .= "; ".$file->get_filename();
