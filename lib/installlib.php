@@ -24,6 +24,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 /** INSTALL_WELCOME = 0 */
 define('INSTALL_WELCOME',       0);
 /** INSTALL_ENVIRONMENT = 1 */

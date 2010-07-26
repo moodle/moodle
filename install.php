@@ -73,6 +73,9 @@ if (PHP_INT_SIZE > 4) {
 // sudden increases of memory needs ;-)
 @ini_set('memory_limit', $minrequiredmemory);
 
+/** Used by library scripts to check they are being called by Moodle */
+define('MOODLE_INTERNAL', true);
+
 require dirname(__FILE__).'/lib/installlib.php';
 
 // TODO: add lang detection here if empty $_REQUEST['lang']

@@ -98,6 +98,9 @@ chdir(dirname($_SERVER['argv'][0]));
 // we need a lot of memory
 @ini_set('memory_limit', '128M');
 
+/** Used by library scripts to check they are being called by Moodle */
+define('MOODLE_INTERNAL', true);
+
 // Check that PHP is of a sufficient version
 if (version_compare(phpversion(), "5.2.8") < 0) {
     $phpversion = phpversion();

@@ -150,9 +150,7 @@ if (defined('ABORT_AFTER_CONFIG')) {
     }
 }
 
-/**
- * Used by some scripts to check they are being called by Moodle
- */
+/** Used by library scripts to check they are being called by Moodle */
 define('MOODLE_INTERNAL', true);
 
 /**
