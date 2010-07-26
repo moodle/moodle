@@ -189,7 +189,7 @@ class user_picture implements renderable {
         $fields = array();
         foreach (self::$fields as $field) {
             if ($field === 'id' and $idalias and $idalias !== 'id') {
-                $fields[$field] = "$tableprefix.$field AS $idalias";
+                $fields[$field] = "$tableprefix$field AS $idalias";
             } else {
                 $fields[$field] = $tableprefix.$field;
             }
