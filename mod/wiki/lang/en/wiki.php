@@ -32,7 +32,11 @@ $string['createpage'] = 'Create Page';
 $string['createddate'] = 'Created: {$a->date} by {$a->username}';
 $string['creole'] = 'Creole';
 $string['defaultformat'] = 'Default format';
-$string['defaultformat_help'] = 'Currently only HTML format can be used for editing wiki pages. Additional formats will be available in future.';
+$string['defaultformat_help'] = 'This setting determines the default format used when editing wiki pages.
+
+* HTML - The HTML editor is available
+* Creole - A common wiki markup language for which a small edit toolbar is available
+* Nwiki - The markup language used in the contributed Nwiki module';
 $string['deletecomment'] = 'Deleting comment';
 $string['deleteupload'] = 'Delete';
 $string['deletedbegins'] = 'Deleted begins';
@@ -59,7 +63,7 @@ $string['insertcomment'] = 'Insert comment';
 $string['invalidlock'] = 'This page is already locked by another user.';
 $string['invalidparameters'] = 'Invalid parameters have been given.';
 $string['invalidsesskey'] = 'The given Sesskey is not valid. Please resend data again';
-$string['individualpagedoesnotexist'] = 'Individual wiki page doen\'t exist';
+$string['individualpagedoesnotexist'] = 'Individual wiki page doesn\'t exist';
 $string['javascriptdisabledlocks'] = 'Javascript is disabled on your browser and locks are not working. The changes you make may not be saved correctly.';
 $string['lockingajaxtimeout'] = 'Edit page locking refresh time';
 $string['lockingtimeout'] = 'Locking timeout';
