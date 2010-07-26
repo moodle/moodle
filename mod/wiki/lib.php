@@ -34,7 +34,8 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once ($CFG->dirroot . '/mod/wiki/locallib.php');
+
+
 
 /**
  * Given an object containing all the necessary data,
@@ -435,7 +436,10 @@ function wiki_search_form($cm, $search='') {
     return $output;
 }
 function wiki_extend_navigation(navigation_node $navref, $course, $module, $cm) {
-    global $PAGE, $USER;
+    global $CFG, $PAGE, $USER;
+
+    require_once ($CFG->dirroot . '/mod/wiki/locallib.php');
+
     $url = $PAGE->url;
     $userid = 0;
     if ($module->wikimode == 'individual') {
@@ -482,13 +486,4 @@ function wiki_extend_navigation(navigation_node $navref, $course, $module, $cm) 
         $link = new moodle_url('/mod/wiki/map.php', array('pageid'=>$pageid));
         $node = $navref->add(get_string('map', 'wiki'), $link, navigation_node::TYPE_SETTING);
     }
-
-    //if ($page = wiki_get_first_page($swid, $module)) {
-        //$node = $navref->add(get_string('pageindex', 'wiki'));
-        //$link = new moodle_url('/mod/wiki/view.php', array('pageid'=>$page->id));
-        //$icon = new pix_icon('f/odt', '');
-        //$parent = $node->add($page->title, $link, null, null, "index_$page->id", $icon);
-        //$keys = array();
-        //wiki_build_tree($page, $parent, $keys);
-    //}
 }
