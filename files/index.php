@@ -56,6 +56,7 @@ if ($filename === '') {
 }
 
 list($context, $course, $cm) = get_context_info_array($contextid);
+$PAGE->set_context($context);
 
 require_login($course, false, $cm);
 require_capability('moodle/course:managefiles', $context);
