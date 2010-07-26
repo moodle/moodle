@@ -34,7 +34,10 @@ require_once($CFG->dirroot . '/admin/registration/lib.php');
 
 require_login();
 
-$PAGE->set_context(get_context_instance(CONTEXT_SYSTEM));
+$courseid = optional_param('courseid', 0, PARAM_INT);
+$context = get_context_instance(CONTEXT_COURSE, $courseid);
+
+$PAGE->set_context($context);
 $PAGE->set_url('/blocks/community/communitycourse.php');
 $PAGE->set_heading($SITE->fullname);
 $PAGE->set_pagelayout('course');
@@ -45,15 +48,15 @@ $PAGE->navbar->add(get_string('searchcourse', 'block_community'));
 $search = optional_param('search', null, PARAM_TEXT);
 
 //if no capability to search course, display an error message
-$usercansearch = has_capability('moodle/community:add', get_context_instance(CONTEXT_USER, $USER->id));
-$usercandownload = has_capability('moodle/community:download', get_context_instance(CONTEXT_USER, $USER->id));
+$usercansearch = has_capability('moodle/community:add', $context);
+$usercandownload = has_capability('moodle/community:download', $context);
 if (empty($usercansearch)) {
-    $notificationerror =  get_string('cannotsearchcommunity', 'hub');
+    $notificationerror = get_string('cannotsearchcommunity', 'hub');
 } else if (!extension_loaded('xmlrpc')) {
     $notificationerror = $OUTPUT->doc_link('admin/environment/php_extension/xmlrpc', '');
     $notificationerror .= get_string('xmlrpcdisabledcommunity', 'hub');
 }
-if (!empty($notificationerror) ) {
+if (!empty($notificationerror)) {
     echo $OUTPUT->header();
     echo $OUTPUT->heading(get_string('searchcommunitycourse', 'block_community'), 3, 'main');
     echo $OUTPUT->notification($notificationerror);
@@ -62,6 +65,7 @@ if (!empty($notificationerror) ) {
 }
 
 $communitymanager = new block_community_manager();
+$renderer = $PAGE->get_renderer('block_community');
 
 /// Check if the page has been called with trust argument
 $add = optional_param('add', -1, PARAM_INTEGER);
@@ -77,20 +81,35 @@ if ($add != -1 and $confirm and confirm_sesskey()) {
                     'notifysuccess');
 }
 
+/// Delete temp file when cancel restore
+$cancelrestore = optional_param('cancelrestore', false, PARAM_INT);
+if ($usercandownload and $cancelrestore and confirm_sesskey()) {
+    $filename = optional_param('filename', '', PARAM_ALPHANUMEXT);
+    //delete temp file
+    unlink($CFG->dataroot . '/temp/backup/' . $filename . ".zip");
+}
+
 /// Download
 $huburl = optional_param('huburl', false, PARAM_URL);
 $download = optional_param('download', -1, PARAM_INTEGER);
-$courseid = optional_param('courseid', '', PARAM_INTEGER);
+$downloadcourseid = optional_param('downloadcourseid', '', PARAM_INTEGER);
 $coursefullname = optional_param('coursefullname', '', PARAM_ALPHANUMEXT);
-if ($usercandownload and $download != -1 and !empty($courseid) and confirm_sesskey()) {
+if ($usercandownload and $download != -1 and !empty($downloadcourseid) and confirm_sesskey()) {
     $course = new stdClass();
     $course->fullname = $coursefullname;
-    $course->id = $courseid;
+    $course->id = $downloadcourseid;
     $course->huburl = $huburl;
-    $communitymanager->block_community_download_course_backup($course);
-    $filename = 'backup_' . $course->fullname . "_" . $course->id . ".zip";
-    $notificationmessage = $OUTPUT->notification(get_string('downloadconfirmed', 'hub', $filename),
-                    'notifysuccess');
+    $filenames = $communitymanager->block_community_download_course_backup($course);
+
+    //OUTPUT: display restore choice page
+    echo $OUTPUT->header();
+    echo $OUTPUT->heading(get_string('restorecourse', 'block_community'), 3, 'main');
+    echo $OUTPUT->notification(get_string('downloadconfirmed', 'block_community',
+                    '/' . get_string('backupfoldername', 'block_community')
+                    . '/' . $filenames['privatefile']), 'notifysuccess');
+    echo $renderer->restore_confirmation_box($filenames['tmpfile'], $context);
+    echo $OUTPUT->footer();
+    die();
 }
 
 /// Remove community
@@ -102,11 +121,9 @@ if ($remove != -1 and !empty($communityid) and confirm_sesskey()) {
                     'notifysuccess');
 }
 
-
-$renderer = $PAGE->get_renderer('block_community');
-
 //forms
-$hubselectorform = new community_hub_search_form('', array('search' => $search));
+$hubselectorform = new community_hub_search_form('',
+                array('search' => $search, 'courseid' => $courseid));
 $fromform = $hubselectorform->get_data();
 $courses = null;
 //Retrieve courses by web service
@@ -152,8 +169,8 @@ if (!empty($fromform)) {
     try {
         $courses = $xmlrpcclient->call($function, $params);
     } catch (Exception $e) {
-        $hubs = array();
-        $errormessage = $OUTPUT->notification(get_string('errorcourselisting', 'block_community', $e->getMessage()));
+        $errormessage = $OUTPUT->notification(
+                        get_string('errorcourselisting', 'block_community', $e->getMessage()));
     }
 }
 
@@ -167,5 +184,5 @@ $hubselectorform->display();
 if (!empty($errormessage)) {
     echo $errormessage;
 }
-echo highlight($search, $renderer->course_list($courses, $huburl));
+echo highlight($search, $renderer->course_list($courses, $huburl, $courseid));
 echo $OUTPUT->footer();

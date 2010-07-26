@@ -43,6 +43,9 @@ class community_hub_search_form extends moodleform {
         $search = $this->_customdata['search'];
         $mform->addElement('header', 'site', get_string('search', 'block_community'));
 
+        //add the course id (of the context)
+        $mform->addElement('hidden', 'courseid', $this->_customdata['courseid']);
+
         //retrieve the hub list on the hub directory by web service
         $function = 'hubdirectory_get_hubs';
         $params = array();

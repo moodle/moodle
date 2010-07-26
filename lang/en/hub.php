@@ -77,7 +77,6 @@ $string['description'] = 'Description';
 $string['description_help'] = 'This description text will be showing in the course listing on the hub.';
 $string['detectednotexistingpublication'] = '{$a->hubname} is listing a course that does not exist anymore. Alert this hub administrator that the publication number {$a->id} should be removed.';
 $string['downloadable'] = 'Downloadable';
-$string['downloadconfirmed'] = 'The backup has been saved into your backup area under the name {$a}';
 $string['educationallevel'] = 'Educational level';
 $string['educationallevel_help'] = '';
 $string['edulevelassociation'] = 'Association';

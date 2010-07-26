@@ -62,9 +62,11 @@ class block_community extends block_list {
         if (!isloggedin()) {
             return $this->content;
         }
-
+        
+        $addcourseurl = new moodle_url('/blocks/community/communitycourse.php',
+                array('add' => true, 'courseid' => $this->page->course->id));
         $searchlink = html_writer::tag('a', get_string('addcourse', 'block_community'),
-                array('href' => $CFG->wwwroot.'/blocks/community/communitycourse.php?add=true'));
+                array('href' => $addcourseurl->out(false)));
         $this->content->items[] = $searchlink;
         $icon = html_writer::empty_tag('img', array('src' => $OUTPUT->pix_url('i/group'),
             'class' => 'icon', 'alt' => get_string('addcourse', 'block_community')));
@@ -83,7 +85,7 @@ class block_community extends block_list {
                 $deleteicon = html_writer::empty_tag('img',
                         array('src' => $OUTPUT->pix_url('i/cross_red_small'),
                             'alt' => get_string('removecommunitycourse', 'block_community')));
-                $deleteurl = new moodle_url($CFG->wwwroot.'/blocks/community/communitycourse.php',
+                $deleteurl = new moodle_url('/blocks/community/communitycourse.php',
                         array('remove'=>true, 'communityid'=> $course->id, 'sesskey' => sesskey()));
                 $deleteatag = html_writer::tag('a', $deleteicon, array('href' => $deleteurl));
 
