@@ -71,6 +71,9 @@ abstract class restore_ui_stage extends base_ui_stage {
     final public function get_name() {
         return get_string('restorestage'.$this->stage,'backup');
     }
+    final public function is_first_stage() {
+        return $this->stage == restore_ui::STAGE_SETTINGS;
+    }
 }
 
 abstract class restore_ui_independent_stage {
@@ -125,7 +128,11 @@ class restore_ui_stage_confirm extends restore_ui_independent_stage {
         if (!file_exists("$CFG->dataroot/temp/backup/".$this->filename)) {
             throw new restore_ui_exception('invalidrestorefile');
         }
-        return $this->extract_file_to_dir();
+        $outcome = $this->extract_file_to_dir();
+        if ($outcome) {
+            fulldelete($this->filename);
+        }
+        return $outcome;
     }
     protected function extract_file_to_dir() {
         global $CFG, $USER;
@@ -152,6 +159,7 @@ class restore_ui_stage_destination extends restore_ui_independent_stage {
     protected $filepath = null;
     protected $details;
     protected $courseid = null;
+    protected $target = backup::TARGET_NEW_COURSE;
     public function __construct($contextid) {
         $this->contextid = $contextid;
         $this->filepath = required_param('filepath', PARAM_ALPHANUM);
@@ -161,10 +169,10 @@ class restore_ui_stage_destination extends restore_ui_independent_stage {
         if (!file_exists("$CFG->dataroot/temp/backup/".$this->filepath) || !is_dir("$CFG->dataroot/temp/backup/".$this->filepath)) {
             throw new restore_ui_exception('invalidrestorepath');
         }
-        $target = optional_param('target', null, PARAM_INT);
-        if (!is_null($target) && confirm_sesskey()) {
-            $targetid = required_param('targetid', PARAM_INT);
-            if ($target == backup::TARGET_NEW_COURSE) {
+        $this->target = optional_param('target', backup::TARGET_NEW_COURSE, PARAM_INT);
+        $targetid = optional_param('targetid', null, PARAM_INT);
+        if (!is_null($this->target) && !is_null($targetid) && confirm_sesskey()) {
+            if ($this->target == backup::TARGET_NEW_COURSE) {
                 list($fullname, $shortname) = restore_dbops::calculate_course_names(0, get_string('restoringcourse', 'backup'), get_string('restoringcourseshortname', 'backup'));
                 $this->courseid = restore_dbops::create_new_course($fullname, $shortname, $targetid);
             } else {
@@ -181,18 +189,27 @@ class restore_ui_stage_destination extends restore_ui_independent_stage {
      * @return string
      */
     public function display($renderer) {
-        global $DB;
+        global $DB, $USER;
         $this->details = backup_general_helper::get_backup_information($this->filepath);
         $url = new moodle_url('/backup/restore.php', array('contextid'=>$this->contextid, 'filepath'=>$this->filepath, 'stage'=>restore_ui::STAGE_SETTINGS));
+        
         $context = get_context_instance_by_id($this->contextid);
-        $currentcourse = ($context->contextlevel == CONTEXT_COURSE)?$context->instanceid:false;
+        $currentcourse = ($context->contextlevel == CONTEXT_COURSE && has_capability('moodle/restore:restorecourse', $context))?$context->instanceid:false;
+        
         $courselist = array();
-        $courses = $DB->get_recordset('course', array(), 'id,fullname,shortname');
+        $courses = get_user_capability_course('moodle/restore:restorecourse', $USER->id, true, 'fullname,shortname,visible,sortorder');
         foreach ($courses as $course) {
             $courselist[$course->id] = $course->fullname.' ['.$course->shortname.']';
         }
-        $courses->close();
-        $html = $renderer->course_selector($url, $this->details, make_categories_options(), $courselist, $currentcourse);
+
+        $categories = make_categories_options();
+        foreach ($categories as $categoryid=>$category) {
+            if (!has_capability('moodle/course:create', get_context_instance(CONTEXT_COURSECAT, $categoryid))) {
+                unset($categories[$categoryid]);
+            }
+        }
+
+        $html = $renderer->course_selector($url, $this->details, $categories, $courselist, $currentcourse);
         return $html;
     }
     public function get_stage_name() {
@@ -206,6 +223,9 @@ class restore_ui_stage_destination extends restore_ui_independent_stage {
     }
     public function get_stage() {
         return restore_ui::STAGE_DESTINATION;
+    }
+    public function get_target() {
+        return $this->target;
     }
 }
 
@@ -582,12 +602,13 @@ class restore_ui_stage_complete extends restore_ui_stage_process {
      * appropriate message.
      *
      * @global core_renderer $OUTPUT
+     * @param core_backup_renderer $renderer
      */
-    public function display($renderer) {
+    public function display(core_backup_renderer $renderer) {
         global $OUTPUT;
         echo $OUTPUT->box_start();
         echo $OUTPUT->notification(get_string('restoreexecutionsuccess', 'backup'), 'notifysuccess');
-        echo $renderer->continue_button(new moodle_url('/course/view.php', array('id'=>$this->get_ui()->get_controller()->get_courseid())));
+        echo $renderer->continue_button(new moodle_url('/course/view.php', array('id'=>$this->get_ui()->get_controller()->get_courseid())), 'get');
         echo $OUTPUT->box_end();
     }
 }

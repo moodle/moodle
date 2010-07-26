@@ -57,7 +57,8 @@ class base_setting_ui {
      */
     protected $type;
     /**
-     * @var base_setting
+     * The setting this UI belongs to (parent reference)
+     * @var base_setting|backup_setting
      */
     protected $setting;
     /**

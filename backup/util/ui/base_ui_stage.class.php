@@ -141,7 +141,7 @@ abstract class base_ui_stage {
         return $this->ui;
     }
 
-    final public function is_first_stage() {
+    public function is_first_stage() {
         return $this->stage == 1;
     }
 }

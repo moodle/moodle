@@ -15,6 +15,7 @@ $PAGE->set_context($context);
 $PAGE->set_pagelayout('standard');
 
 require_login($course, null, $cm);
+require_capability('moodle/restore:restorecourse', $context);
 
 $isfrontpage = ($course->id == SITEID);
 
@@ -27,7 +28,7 @@ if ($stage & restore_ui::STAGE_CONFIRM + restore_ui::STAGE_DESTINATION) {
         $restore = restore_ui::engage_independent_stage($stage/2, $contextid);
         if ($restore->process()) {
             $rc = new restore_controller($restore->get_filepath(), $restore->get_course_id(), backup::INTERACTIVE_YES,
-                                backup::MODE_GENERAL, $USER->id, backup::TARGET_NEW_COURSE);
+                                backup::MODE_GENERAL, $USER->id, $restore->get_target());
         }
     }
     if ($rc) {

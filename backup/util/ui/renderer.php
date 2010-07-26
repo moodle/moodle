@@ -172,26 +172,30 @@ class core_backup_renderer extends plugin_renderer_base {
             $html .= html_writer::end_tag('form');
         }
 
-        // New course
-        $html .= $form;
-        $html .= html_writer::start_tag('div', array('class'=>'bcs-new-course backup-section'));
-        $html .= $this->output->heading(get_string('restoretonewcourse', 'backup'), 2, array('class'=>'header'));
-        $html .= $this->backup_detail_input(get_string('restoretonewcourse', 'backup'), 'radio', 'target', backup::TARGET_NEW_COURSE, array('checked'=>'checked'));
-        $html .= $this->backup_detail_select(get_string('coursecategory', 'backup'), 'targetid', $categories);
-        $html .= $this->backup_detail_pair('', html_writer::empty_tag('input', array('type'=>'submit', 'value'=>get_string('continue'))));
-        $html .= html_writer::end_tag('div');
-        $html .= html_writer::end_tag('form');
+        if (count($categories) > 0) {
+            // New course
+            $html .= $form;
+            $html .= html_writer::start_tag('div', array('class'=>'bcs-new-course backup-section'));
+            $html .= $this->output->heading(get_string('restoretonewcourse', 'backup'), 2, array('class'=>'header'));
+            $html .= $this->backup_detail_input(get_string('restoretonewcourse', 'backup'), 'radio', 'target', backup::TARGET_NEW_COURSE, array('checked'=>'checked'));
+            $html .= $this->backup_detail_select(get_string('coursecategory', 'backup'), 'targetid', $categories);
+            $html .= $this->backup_detail_pair('', html_writer::empty_tag('input', array('type'=>'submit', 'value'=>get_string('continue'))));
+            $html .= html_writer::end_tag('div');
+            $html .= html_writer::end_tag('form');
+        }
 
-        // Existing course
-        $html .= $form;
-        $html .= html_writer::start_tag('div', array('class'=>'bcs-existing-course backup-section'));
-        $html .= $this->output->heading(get_string('restoretoexistingcourse', 'backup'), 2, array('class'=>'header'));
-        $html .= $this->backup_detail_input(get_string('restoretoexistingcourseadding', 'backup'), 'radio', 'target', backup::TARGET_EXISTING_ADDING);
-        $html .= $this->backup_detail_input(get_string('restoretoexistingcoursedeleting', 'backup'), 'radio', 'target', backup::TARGET_EXISTING_DELETING);
-        $html .= $this->backup_detail_select(get_string('restoretocourse', 'backup'), 'targetid', $courses);
-        $html .= $this->backup_detail_pair('', html_writer::empty_tag('input', array('type'=>'submit', 'value'=>get_string('continue'))));
-        $html .= html_writer::end_tag('div');
-        $html .= html_writer::end_tag('form');
+        if (count($courses) > 0) {
+            // Existing course
+            $html .= $form;
+            $html .= html_writer::start_tag('div', array('class'=>'bcs-existing-course backup-section'));
+            $html .= $this->output->heading(get_string('restoretoexistingcourse', 'backup'), 2, array('class'=>'header'));
+            $html .= $this->backup_detail_input(get_string('restoretoexistingcourseadding', 'backup'), 'radio', 'target', backup::TARGET_EXISTING_ADDING);
+            $html .= $this->backup_detail_input(get_string('restoretoexistingcoursedeleting', 'backup'), 'radio', 'target', backup::TARGET_EXISTING_DELETING);
+            $html .= $this->backup_detail_select(get_string('restoretocourse', 'backup'), 'targetid', $courses);
+            $html .= $this->backup_detail_pair('', html_writer::empty_tag('input', array('type'=>'submit', 'value'=>get_string('continue'))));
+            $html .= html_writer::end_tag('div');
+            $html .= html_writer::end_tag('form');
+        }
 
         $html .= html_writer::end_tag('div');
         return $html;
@@ -230,12 +234,15 @@ class core_backup_renderer extends plugin_renderer_base {
         return $output.html_writer::end_tag('div');
     }
 
-    public function continue_button($url) {
+    public function continue_button($url, $method='post') {
         if (!($url instanceof moodle_url)) {
             $url = new moodle_url($url);
         }
+        if ($method != 'post') {
+            $method = 'get';
+        }
         $url->param('sesskey', sesskey());
-        $button = new single_button($url, get_string('continue'), 'post');
+        $button = new single_button($url, get_string('continue'), $method);
         $button->class = 'continuebutton';
         return $this->render($button);
     }

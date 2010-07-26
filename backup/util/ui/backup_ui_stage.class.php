@@ -461,7 +461,7 @@ class backup_ui_stage_complete extends backup_ui_stage_final {
         ));
 
         echo $OUTPUT->box_start();
-        echo get_string('executionsuccess', 'backup');
+        echo $OUTPUT->notification(get_string('executionsuccess', 'backup'), 'notifysuccess');
         echo $OUTPUT->continue_button($fileurl);
         echo $OUTPUT->box_end();
     }

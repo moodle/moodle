@@ -128,8 +128,8 @@ abstract class base_moodleform extends moodleform {
      */
     function add_setting(backup_setting $setting, base_task $task=null) {
 
-        // If the setting cant be changed then add it as a fixed setting.
-        if (!$setting->get_ui()->is_changeable()) {
+        // If the setting cant be changed or isn't visible then add it as a fixed setting.
+        if (!$setting->get_ui()->is_changeable() || $setting->get_visibility() != backup_setting::VISIBLE) {
             return $this->add_fixed_setting($setting);
         }
 
