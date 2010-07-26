@@ -176,13 +176,13 @@ class repository_local extends repository {
      *
      * @global object $USER
      * @global object $DB
-     * @param string $encoded The metainfo of file, it is base64 encoded php seriablized data
+     * @param string $encoded The metainfo of file, it is base64 encoded php serialized data
+     * @param string $draftitemid itemid
      * @param string $new_filename The intended name of file
-     * @param string $new_itemid itemid
      * @param string $new_filepath the new path in draft area
      * @return array The information of file
      */
-    public function copy_to_area($encoded, $new_filearea='draft', $new_itemid = '', $new_filepath = '/', $new_filename = '') {
+    public function copy_to_area($encoded, $draftitemid, $new_filepath, $new_filename) {
         global $USER, $DB;
         $info = array();
 
@@ -201,9 +201,9 @@ class repository_local extends repository {
         $context = get_context_instance_by_id($contextid);
 
         $file_info = $browser->get_file_info($context, $component, $filearea, $fileitemid, $filepath, $filename);
-        $file_info->copy_to_storage($user_context->id, 'user', 'draft', $new_itemid, $new_filepath, $new_filename);
+        $file_info->copy_to_storage($user_context->id, 'user', 'draft', $draftitemid, $new_filepath, $new_filename);
 
-        $info['itemid'] = $new_itemid;
+        $info['itemid'] = $draftitemid;
         $info['title']  = $new_filename;
         $info['contextid'] = $user_context->id;
         $info['filesize'] = $file_info->get_filesize();

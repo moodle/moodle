@@ -152,13 +152,13 @@ class repository_recent extends repository {
      *
      * @global object $USER
      * @global object $DB
-     * @param string $encoded The information of file, it is base64 encoded php seriablized data
+     * @param string $encoded The information of file, it is base64 encoded php serialized data
+     * @param string $draftitemid itemid
      * @param string $new_filename The intended name of file
-     * @param string $new_itemid itemid
      * @param string $new_filepath the new path in draft area
      * @return array The information of file
      */
-    public function copy_to_area($encoded, $new_filearea='draft', $new_itemid = '', $new_filepath = '/', $new_filename = '') {
+    public function copy_to_area($encoded, $draftitemid, $new_filepath, $new_filename) {
         global $USER, $DB;
 
         $user_context = get_context_instance(CONTEXT_USER, $USER->id);
@@ -186,8 +186,8 @@ class repository_recent extends repository {
                 throw new moodle_exception('errornotyourfile', 'repository');
             }
             $file_record = array('contextid'=>$user_context->id, 'component'=>'user', 'filearea'=>'draft',
-                'itemid'=>$new_itemid, 'filepath'=>$new_filepath, 'filename'=>$new_filename);
-            if ($file = $fs->get_file($user_context->id, 'user', 'draft', $new_itemid, $new_filepath, $new_filename)) {
+                'itemid'=>$draftitemid, 'filepath'=>$new_filepath, 'filename'=>$new_filename);
+            if ($file = $fs->get_file($user_context->id, 'user', 'draft', $draftitemid, $new_filepath, $new_filename)) {
                 $file->delete();
             }
             $fs->create_file_from_storedfile($file_record, $stored_file);
@@ -195,7 +195,7 @@ class repository_recent extends repository {
 
         $info = array();
         $info['title']  = $new_filename;
-        $info['itemid'] = $new_itemid;
+        $info['itemid'] = $draftitemid;
         $info['filesize']  = $stored_file->get_filesize();
         $info['contextid'] = $user_context->id;
 

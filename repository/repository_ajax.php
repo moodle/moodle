@@ -185,7 +185,7 @@ switch ($action) {
         // local and recent plugins don't added new files to moodle, just add new records to database
         // so we don't check user quota and maxbytes here
         if (in_array($repo->options['type'], array('local', 'recent', 'user'))) {
-            $fileinfo = $repo->copy_to_area($source, 'draft', $itemid, $saveas_path, $saveas_filename);
+            $fileinfo = $repo->copy_to_area($source, $itemid, $saveas_path, $saveas_filename);
             $info = array();
             $info['file'] = $fileinfo['title'];
             $info['id'] = $itemid;
