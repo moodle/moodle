@@ -223,7 +223,7 @@ if ($edit) {
 
 if ($submission->id) {
     $wsoutput = $PAGE->get_renderer('mod_workshop');
-    echo $wsoutput->submission_full($submission, true);
+    echo $wsoutput->submission_full($submission, has_capability('mod/workshop:viewauthornames', $workshop->context));
 } else {
     echo $OUTPUT->box(get_string('noyoursubmission', 'workshop'));
 }
@@ -254,7 +254,8 @@ if ($isreviewer) {
     if (is_null($userassessment->grade)) {
         echo $OUTPUT->heading(get_string('notassessed', 'workshop'), 3);
         if ($workshop->assessing_allowed()) {
-            echo $OUTPUT->single_button($workshop->assess_url($userassessment->id), get_string('assess', 'workshop'), 'get');
+            echo $OUTPUT->container($OUTPUT->single_button($workshop->assess_url($userassessment->id), get_string('assess', 'workshop'), 'get'),
+                    array('class' => 'buttonsbar'));
         }
     } else {
         $a = new stdclass();
@@ -265,7 +266,8 @@ if ($isreviewer) {
             echo $OUTPUT->heading(get_string('weightinfo', 'workshop', $userassessment->weight), 3);
         }
         if ($workshop->assessing_allowed()) {
-            echo $OUTPUT->single_button($workshop->assess_url($userassessment->id), get_string('reassess', 'workshop'), 'get');
+            echo $OUTPUT->container($OUTPUT->single_button($workshop->assess_url($userassessment->id), get_string('reassess', 'workshop'), 'get'),
+                    array('class' => 'buttonsbar'));
         }
         $mform->display();
     }
@@ -298,6 +300,10 @@ if (has_capability('mod/workshop:viewallassessments', $workshop->context) or ($o
         echo $OUTPUT->heading(get_string('gradeinfo', 'workshop', $a), 3);
         if ($assessment->weight != 1) {
             echo $OUTPUT->heading(get_string('weightinfo', 'workshop', $assessment->weight), 3);
+        }
+        if (has_capability('mod/workshop:overridegrades', $workshop->context)) {
+            echo $OUTPUT->container($OUTPUT->single_button($workshop->assess_url($assessment->id), get_string('assessmentsettings', 'workshop'), 'get'),
+                    array('class' => 'buttonsbar'));
         }
         $mform = $strategy->get_assessment_form($PAGE->url, 'assessment', $assessment, false);
         $mform->display();

@@ -199,6 +199,8 @@ class workshop_best_evaluation implements workshop_evaluation {
                 $record = new stdclass();
                 $record->id = $assessmentid;
                 $record->gradinggrade = grade_floatval($grade);
+                // do not set timemodified here, it contains the timestamp of when the form was
+                // saved by the peer reviewer, not when it was aggregated
                 $DB->update_record('workshop_assessments', $record, true);  // bulk operations expected
             }
         }

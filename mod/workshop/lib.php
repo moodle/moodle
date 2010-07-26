@@ -16,14 +16,15 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Library of functions needed by Moodle core and other subsystems
+ * Library of workshop module functions needed by Moodle core and other subsystems
  *
  * All the functions neeeded by Moodle core, gradebook, file subsystem etc
  * are placed here.
  *
- * @package   mod-workshop
- * @copyright 2009 David Mudrak <david.mudrak@gmail.com>
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    mod
+ * @subpackage workshop
+ * @copyright  2009 David Mudrak <david.mudrak@gmail.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
@@ -198,25 +199,87 @@ function workshop_delete_instance($id) {
  * $return->time = the time they did it
  * $return->info = a short text description
  *
- * @return null
- * @todo Finish documenting this function
+ * @return stdclass|null
  */
 function workshop_user_outline($course, $user, $mod, $workshop) {
-    $return = new stdclass();
-    $return->time = 0;
-    $return->info = '';
-    return $return;
+    global $CFG, $DB;
+    require_once($CFG->libdir.'/gradelib.php');
+
+    $grades = grade_get_grades($course->id, 'mod', 'workshop', $workshop->id, $user->id);
+
+    $submissiongrade = null;
+    $assessmentgrade = null;
+
+    $info = '';
+    $time = 0;
+
+    if (!empty($grades->items[0]->grades)) {
+        $submissiongrade = reset($grades->items[0]->grades);
+        $info .= get_string('submissiongrade', 'workshop') . ': ' . $submissiongrade->str_long_grade . html_writer::empty_tag('br');
+        $time = max($time, $submissiongrade->dategraded);
+    }
+    if (!empty($grades->items[1]->grades)) {
+        $assessmentgrade = reset($grades->items[1]->grades);
+        $info .= get_string('gradinggrade', 'workshop') . ': ' . $assessmentgrade->str_long_grade;
+        $time = max($time, $assessmentgrade->dategraded);
+    }
+
+    if (!empty($info) and !empty($time)) {
+        $return = new stdclass();
+        $return->time = $time;
+        $return->info = $info;
+        return $return;
+    }
+
+    return null;
 }
 
 /**
  * Print a detailed representation of what a user has done with
  * a given particular instance of this module, for user activity reports.
  *
- * @return boolean
- * @todo Finish documenting this function
+ * @return string HTML
  */
 function workshop_user_complete($course, $user, $mod, $workshop) {
-    return true;
+    global $CFG, $DB, $OUTPUT;
+    require_once(dirname(__FILE__).'/locallib.php');
+    require_once($CFG->libdir.'/gradelib.php');
+
+    $workshop   = new workshop($workshop, $mod, $course);
+    $grades     = grade_get_grades($course->id, 'mod', 'workshop', $workshop->id, $user->id);
+
+    if (!empty($grades->items[0]->grades)) {
+        $submissiongrade = reset($grades->items[0]->grades);
+        $info = get_string('submissiongrade', 'workshop') . ': ' . $submissiongrade->str_long_grade;
+        echo html_writer::tag('li', $info, array('class'=>'submissiongrade'));
+    }
+    if (!empty($grades->items[1]->grades)) {
+        $assessmentgrade = reset($grades->items[1]->grades);
+        $info = get_string('gradinggrade', 'workshop') . ': ' . $assessmentgrade->str_long_grade;
+        echo html_writer::tag('li', $info, array('class'=>'gradinggrade'));
+    }
+
+    if (has_capability('mod/workshop:viewallsubmissions', $workshop->context)) {
+        if ($submission = $workshop->get_submission_by_author($user->id)) {
+            $title      = format_string($submission->title);
+            $url        = $workshop->submission_url($submission->id);
+            $link       = html_writer::link($url, $title);
+            $info       = get_string('submission', 'workshop').': '.$link;
+            echo html_writer::tag('li', $info, array('class'=>'submission'));
+        }
+    }
+
+    if (has_capability('mod/workshop:viewallassessments', $workshop->context)) {
+        if ($assessments = $workshop->get_assessments_by_reviewer($user->id)) {
+            foreach ($assessments as $assessment) {
+                $a = new stdclass();
+                $a->submissionurl = $workshop->submission_url($assessment->submissionid)->out();
+                $a->assessmenturl = $workshop->assess_url($assessment->id)->out();
+                $a->submissiontitle = s($assessment->submissiontitle);
+                echo html_writer::tag('li', get_string('assessmentofsubmission', 'workshop', $a));
+            }
+        }
+    }
 }
 
 /**
@@ -224,11 +287,569 @@ function workshop_user_complete($course, $user, $mod, $workshop) {
  * that has occurred in workshop activities and print it out.
  * Return true if there was output, or false is there was none.
  *
+ * @param stdclass $course
+ * @param bool $viewfullnames
+ * @param int $timestart
  * @return boolean
- * @todo Finish documenting this function
  */
-function workshop_print_recent_activity($course, $isteacher, $timestart) {
-    return false;  //  True if anything was printed, otherwise false
+function workshop_print_recent_activity($course, $viewfullnames, $timestart) {
+    global $CFG, $USER, $DB, $OUTPUT;
+
+    $sql = "SELECT s.id AS submissionid, s.title AS submissiontitle, s.timemodified AS submissionmodified,
+                   author.id AS authorid, author.lastname AS authorlastname, author.firstname AS authorfirstname,
+                   a.id AS assessmentid, a.timemodified AS assessmentmodified,
+                   reviewer.id AS reviewerid, reviewer.lastname AS reviewerlastname, reviewer.firstname AS reviewerfirstname,
+                   cm.id AS cmid
+              FROM {workshop} w
+        INNER JOIN {course_modules} cm ON cm.instance = w.id
+        INNER JOIN {modules} md ON md.id = cm.module
+        INNER JOIN {workshop_submissions} s ON s.workshopid = w.id
+        INNER JOIN {user} author ON s.authorid = author.id
+         LEFT JOIN {workshop_assessments} a ON a.submissionid = s.id
+         LEFT JOIN {user} reviewer ON a.reviewerid = reviewer.id
+             WHERE cm.course = ?
+                   AND md.name = 'workshop'
+                   AND s.example = 0
+                   AND (s.timemodified > ? OR a.timemodified > ?)";
+
+    $rs = $DB->get_recordset_sql($sql, array($course->id, $timestart, $timestart));
+
+    $modinfo =& get_fast_modinfo($course); // reference needed because we might load the groups
+
+    $submissions = array(); // recent submissions indexed by submission id
+    $assessments = array(); // recent assessments indexed by assessment id
+    $users       = array();
+
+    foreach ($rs as $activity) {
+        if (!array_key_exists($activity->cmid, $modinfo->cms)) {
+            // this should not happen but just in case
+            continue;
+        }
+
+        $cm = $modinfo->cms[$activity->cmid];
+        if (!$cm->uservisible) {
+            continue;
+        }
+
+        if ($viewfullnames) {
+            // remember all user names we can use later
+            if (empty($users[$activity->authorid])) {
+                $u = new stdclass();
+                $u->lastname = $activity->authorlastname;
+                $u->firstname = $activity->authorfirstname;
+                $users[$activity->authorid] = $u;
+            }
+            if ($activity->reviewerid and empty($users[$activity->reviewerid])) {
+                $u = new stdclass();
+                $u->lastname = $activity->reviewerlastname;
+                $u->firstname = $activity->reviewerfirstname;
+                $users[$activity->reviewerid] = $u;
+            }
+        }
+
+        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+        $groupmode = groups_get_activity_groupmode($cm, $course);
+
+        if ($activity->submissionmodified > $timestart and empty($submissions[$activity->submissionid])) {
+            $s = new stdclass();
+            $s->title = $activity->submissiontitle;
+            $s->authorid = $activity->authorid;
+            $s->timemodified = $activity->submissionmodified;
+            $s->cmid = $activity->cmid;
+            if (has_capability('mod/workshop:viewauthornames', $context)) {
+                $s->authornamevisible = true;
+            } else {
+                $s->authornamevisible = false;
+            }
+
+            // the following do-while wrapper allows to break from deeply nested if-statements
+            do {
+                if ($s->authorid === $USER->id) {
+                    // own submissions always visible
+                    $submissions[$activity->submissionid] = $s;
+                    break;
+                }
+
+                if (has_capability('mod/workshop:viewallsubmissions', $context)) {
+                    if ($groupmode == SEPARATEGROUPS and !has_capability('moodle/site:accessallgroups', $context)) {
+                        if (isguestuser()) {
+                            // shortcut - guest user does not belong into any group
+                            break;
+                        }
+
+                        if (is_null($modinfo->groups)) {
+                            $modinfo->groups = groups_get_user_groups($course->id); // load all my groups and cache it in modinfo
+                        }
+
+                        // this might be slow - show only submissions by users who share group with me in this cm
+                        if (empty($modinfo->groups[$cm->id])) {
+                            break;
+                        }
+                        $authorsgroups = groups_get_all_groups($course->id, $s->authorid, $cm->groupingid);
+                        if (is_array($authorsgroups)) {
+                            $authorsgroups = array_keys($authorsgroups);
+                            $intersect = array_intersect($authorsgroups, $modinfo->groups[$cm->id]);
+                            if (empty($intersect)) {
+                                break;
+                            } else {
+                                // can see all submissions and shares a group with the author
+                                $submissions[$activity->submissionid] = $s;
+                                break;
+                            }
+                        }
+
+                    } else {
+                        // can see all submissions from all groups
+                        $submissions[$activity->submissionid] = $s;
+                    }
+                }
+            } while (0);
+        }
+
+        if ($activity->assessmentmodified > $timestart and empty($assessments[$activity->assessmentid])) {
+            $a = new stdclass();
+            $a->submissionid = $activity->submissionid;
+            $a->submissiontitle = $activity->submissiontitle;
+            $a->reviewerid = $activity->reviewerid;
+            $a->timemodified = $activity->assessmentmodified;
+            $a->cmid = $activity->cmid;
+            if (has_capability('mod/workshop:viewreviewernames', $context)) {
+                $a->reviewernamevisible = true;
+            } else {
+                $a->reviewernamevisible = false;
+            }
+
+            // the following do-while wrapper allows to break from deeply nested if-statements
+            do {
+                if ($a->reviewerid === $USER->id) {
+                    // own assessments always visible
+                    $assessments[$activity->assessmentid] = $a;
+                    break;
+                }
+
+                if (has_capability('mod/workshop:viewallassessments', $context)) {
+                    if ($groupmode == SEPARATEGROUPS and !has_capability('moodle/site:accessallgroups', $context)) {
+                        if (isguestuser()) {
+                            // shortcut - guest user does not belong into any group
+                            break;
+                        }
+
+                        if (is_null($modinfo->groups)) {
+                            $modinfo->groups = groups_get_user_groups($course->id); // load all my groups and cache it in modinfo
+                        }
+
+                        // this might be slow - show only submissions by users who share group with me in this cm
+                        if (empty($modinfo->groups[$cm->id])) {
+                            break;
+                        }
+                        $reviewersgroups = groups_get_all_groups($course->id, $a->reviewerid, $cm->groupingid);
+                        if (is_array($reviewersgroups)) {
+                            $reviewersgroups = array_keys($reviewersgroups);
+                            $intersect = array_intersect($reviewersgroups, $modinfo->groups[$cm->id]);
+                            if (empty($intersect)) {
+                                break;
+                            } else {
+                                // can see all assessments and shares a group with the reviewer
+                                $assessments[$activity->assessmentid] = $a;
+                                break;
+                            }
+                        }
+
+                    } else {
+                        // can see all assessments from all groups
+                        $assessments[$activity->assessmentid] = $a;
+                    }
+                }
+            } while (0);
+        }
+    }
+    $rs->close();
+
+    $shown = false;
+
+    if (!empty($submissions)) {
+        $shown = true;
+        echo $OUTPUT->heading(get_string('recentsubmissions', 'workshop'), 3);
+        foreach ($submissions as $id => $submission) {
+            $link = new moodle_url('/mod/workshop/submission.php', array('id'=>$id, 'cmid'=>$submission->cmid));
+            if ($viewfullnames and $submission->authornamevisible) {
+                $author = $users[$submission->authorid];
+            } else {
+                $author = null;
+            }
+            print_recent_activity_note($submission->timemodified, $author, $submission->title, $link->out(), false, $viewfullnames);
+        }
+    }
+
+    if (!empty($assessments)) {
+        $shown = true;
+        echo $OUTPUT->heading(get_string('recentassessments', 'workshop'), 3);
+        foreach ($assessments as $id => $assessment) {
+            $link = new moodle_url('/mod/workshop/assessment.php', array('asid' => $id));
+            if ($viewfullnames and $assessment->reviewernamevisible) {
+                $reviewer = $users[$assessment->reviewerid];
+            } else {
+                $reviewer = null;
+            }
+            print_recent_activity_note($assessment->timemodified, $reviewer, $assessment->submissiontitle, $link->out(), false, $viewfullnames);
+        }
+    }
+
+    if ($shown) {
+        return true;
+    }
+
+    return false;
+}
+
+/**
+ * Returns all activity in course workshops since a given time
+ *
+ * @param array $activities sequentially indexed array of objects
+ * @param int $index
+ * @param int $timestart
+ * @param int $courseid
+ * @param int $cmid
+ * @param int $userid defaults to 0
+ * @param int $groupid defaults to 0
+ * @return void adds items into $activities and increases $index
+ */
+function workshop_get_recent_mod_activity(&$activities, &$index, $timestart, $courseid, $cmid, $userid=0, $groupid=0) {
+    global $CFG, $COURSE, $USER, $DB;
+
+    if ($COURSE->id == $courseid) {
+        $course = $COURSE;
+    } else {
+        $course = $DB->get_record('course', array('id'=>$courseid));
+    }
+
+    $modinfo =& get_fast_modinfo($course);
+
+    $cm = $modinfo->cms[$cmid];
+
+    $params = array();
+    if ($userid) {
+        $userselect = "AND (author.id = :authorid OR reviewer.id = :reviewerid)";
+        $params['authorid'] = $userid;
+        $params['reviewerid'] = $userid;
+    } else {
+        $userselect = "";
+    }
+
+    if ($groupid) {
+        $groupselect = "AND (authorgroupmembership.groupid = :authorgroupid OR reviewergroupmembership.groupid = :reviewergroupid)";
+        $groupjoin   = "LEFT JOIN {groups_members} authorgroupmembership ON authorgroumembership.userid = author.id
+                        LEFT JOIN {groups_members} reviewergroupmembership ON reviewergroumembership.userid = reviewer.id";
+        $params['authorgroupid'] = $groupid;
+        $params['reviewergroupid'] = $groupid;
+    } else {
+        $groupselect = "";
+        $groupjoin   = "";
+    }
+
+    $params['cminstance'] = $cm->instance;
+    $params['submissionmodified'] = $timestart;
+    $params['assessmentmodified'] = $timestart;
+
+    $sql = "SELECT s.id AS submissionid, s.title AS submissiontitle, s.timemodified AS submissionmodified,
+                   author.id AS authorid, author.lastname AS authorlastname, author.firstname AS authorfirstname,
+                   author.picture AS authorpicture, author.imagealt AS authorimagealt, author.email AS authoremail,
+                   a.id AS assessmentid, a.timemodified AS assessmentmodified,
+                   reviewer.id AS reviewerid, reviewer.lastname AS reviewerlastname, reviewer.firstname AS reviewerfirstname,
+                   reviewer.picture AS reviewerpicture, reviewer.imagealt AS reviewerimagealt, reviewer.email AS revieweremail
+              FROM {workshop_submissions} s
+        INNER JOIN {workshop} w ON s.workshopid = w.id
+        INNER JOIN {user} author ON s.authorid = author.id
+         LEFT JOIN {workshop_assessments} a ON a.submissionid = s.id
+         LEFT JOIN {user} reviewer ON a.reviewerid = reviewer.id
+        $groupjoin
+             WHERE w.id = :cminstance
+                   AND s.example = 0
+                   $userselect $groupselect
+                   AND (s.timemodified > :submissionmodified OR a.timemodified > :assessmentmodified)
+          ORDER BY s.timemodified ASC, a.timemodified ASC";
+
+    $rs = $DB->get_recordset_sql($sql, $params);
+
+    $groupmode       = groups_get_activity_groupmode($cm, $course);
+    $context         = get_context_instance(CONTEXT_MODULE, $cm->id);
+    $grader          = has_capability('moodle/grade:viewall', $context);
+    $accessallgroups = has_capability('moodle/site:accessallgroups', $context);
+    $viewfullnames   = has_capability('moodle/site:viewfullnames', $context);
+    $viewauthors     = has_capability('mod/workshop:viewauthornames', $context);
+    $viewreviewers   = has_capability('mod/workshop:viewreviewernames', $context);
+
+    if (is_null($modinfo->groups)) {
+        $modinfo->groups = groups_get_user_groups($course->id); // load all my groups and cache it in modinfo
+    }
+
+    $submissions = array(); // recent submissions indexed by submission id
+    $assessments = array(); // recent assessments indexed by assessment id
+    $users       = array();
+
+    foreach ($rs as $activity) {
+
+        if ($viewfullnames) {
+            // remember all user names we can use later
+            if (empty($users[$activity->authorid])) {
+                $u = new stdclass();
+                $u->id = $activity->authorid;
+                $u->lastname = $activity->authorlastname;
+                $u->firstname = $activity->authorfirstname;
+                $u->picture = $activity->authorpicture;
+                $u->imagealt = $activity->authorimagealt;
+                $u->email = $activity->authoremail;
+                $users[$activity->authorid] = $u;
+            }
+            if ($activity->reviewerid and empty($users[$activity->reviewerid])) {
+                $u = new stdclass();
+                $u->id = $activity->reviewerid;
+                $u->lastname = $activity->reviewerlastname;
+                $u->firstname = $activity->reviewerfirstname;
+                $u->picture = $activity->reviewerpicture;
+                $u->imagealt = $activity->reviewerimagealt;
+                $u->email = $activity->revieweremail;
+                $users[$activity->reviewerid] = $u;
+            }
+        }
+
+        if ($activity->submissionmodified > $timestart and empty($submissions[$activity->submissionid])) {
+            $s = new stdclass();
+            $s->id = $activity->submissionid;
+            $s->title = $activity->submissiontitle;
+            $s->authorid = $activity->authorid;
+            $s->timemodified = $activity->submissionmodified;
+            if (has_capability('mod/workshop:viewauthornames', $context)) {
+                $s->authornamevisible = true;
+            } else {
+                $s->authornamevisible = false;
+            }
+
+            // the following do-while wrapper allows to break from deeply nested if-statements
+            do {
+                if ($s->authorid === $USER->id) {
+                    // own submissions always visible
+                    $submissions[$activity->submissionid] = $s;
+                    break;
+                }
+
+                if (has_capability('mod/workshop:viewallsubmissions', $context)) {
+                    if ($groupmode == SEPARATEGROUPS and !has_capability('moodle/site:accessallgroups', $context)) {
+                        if (isguestuser()) {
+                            // shortcut - guest user does not belong into any group
+                            break;
+                        }
+
+                        // this might be slow - show only submissions by users who share group with me in this cm
+                        if (empty($modinfo->groups[$cm->id])) {
+                            break;
+                        }
+                        $authorsgroups = groups_get_all_groups($course->id, $s->authorid, $cm->groupingid);
+                        if (is_array($authorsgroups)) {
+                            $authorsgroups = array_keys($authorsgroups);
+                            $intersect = array_intersect($authorsgroups, $modinfo->groups[$cm->id]);
+                            if (empty($intersect)) {
+                                break;
+                            } else {
+                                // can see all submissions and shares a group with the author
+                                $submissions[$activity->submissionid] = $s;
+                                break;
+                            }
+                        }
+
+                    } else {
+                        // can see all submissions from all groups
+                        $submissions[$activity->submissionid] = $s;
+                    }
+                }
+            } while (0);
+        }
+
+        if ($activity->assessmentmodified > $timestart and empty($assessments[$activity->assessmentid])) {
+            $a = new stdclass();
+            $a->id = $activity->assessmentid;
+            $a->submissionid = $activity->submissionid;
+            $a->submissiontitle = $activity->submissiontitle;
+            $a->reviewerid = $activity->reviewerid;
+            $a->timemodified = $activity->assessmentmodified;
+            if (has_capability('mod/workshop:viewreviewernames', $context)) {
+                $a->reviewernamevisible = true;
+            } else {
+                $a->reviewernamevisible = false;
+            }
+
+            // the following do-while wrapper allows to break from deeply nested if-statements
+            do {
+                if ($a->reviewerid === $USER->id) {
+                    // own assessments always visible
+                    $assessments[$activity->assessmentid] = $a;
+                    break;
+                }
+
+                if (has_capability('mod/workshop:viewallassessments', $context)) {
+                    if ($groupmode == SEPARATEGROUPS and !has_capability('moodle/site:accessallgroups', $context)) {
+                        if (isguestuser()) {
+                            // shortcut - guest user does not belong into any group
+                            break;
+                        }
+
+                        // this might be slow - show only submissions by users who share group with me in this cm
+                        if (empty($modinfo->groups[$cm->id])) {
+                            break;
+                        }
+                        $reviewersgroups = groups_get_all_groups($course->id, $a->reviewerid, $cm->groupingid);
+                        if (is_array($reviewersgroups)) {
+                            $reviewersgroups = array_keys($reviewersgroups);
+                            $intersect = array_intersect($reviewersgroups, $modinfo->groups[$cm->id]);
+                            if (empty($intersect)) {
+                                break;
+                            } else {
+                                // can see all assessments and shares a group with the reviewer
+                                $assessments[$activity->assessmentid] = $a;
+                                break;
+                            }
+                        }
+
+                    } else {
+                        // can see all assessments from all groups
+                        $assessments[$activity->assessmentid] = $a;
+                    }
+                }
+            } while (0);
+        }
+    }
+    $rs->close();
+
+    $workshopname = format_string($cm->name, true);
+
+    if ($grader) {
+        require_once($CFG->libdir.'/gradelib.php');
+        $grades = grade_get_grades($courseid, 'mod', 'workshop', $cm->instance, array_keys($users));
+    }
+
+    foreach ($submissions as $submission) {
+        $tmpactivity                = new stdclass();
+        $tmpactivity->type          = 'workshop';
+        $tmpactivity->cmid          = $cm->id;
+        $tmpactivity->name          = $workshopname;
+        $tmpactivity->sectionnum    = $cm->sectionnum;
+        $tmpactivity->timestamp     = $submission->timemodified;
+        $tmpactivity->subtype       = 'submission';
+        $tmpactivity->content       = $submission;
+        if ($grader) {
+            $tmpactivity->grade     = $grades->items[0]->grades[$submission->authorid]->str_long_grade;
+        }
+        if ($submission->authornamevisible and !empty($users[$submission->authorid])) {
+            $tmpactivity->user      = $users[$submission->authorid];
+        }
+        $activities[$index++]       = $tmpactivity;
+    }
+
+    foreach ($assessments as $assessment) {
+        $tmpactivity                = new stdclass();
+        $tmpactivity->type          = 'workshop';
+        $tmpactivity->cmid          = $cm->id;
+        $tmpactivity->name          = $workshopname;
+        $tmpactivity->sectionnum    = $cm->sectionnum;
+        $tmpactivity->timestamp     = $assessment->timemodified;
+        $tmpactivity->subtype       = 'assessment';
+        $tmpactivity->content       = $assessment;
+        if ($grader) {
+            $tmpactivity->grade     = $grades->items[1]->grades[$assessment->reviewerid]->str_long_grade;
+        }
+        if ($assessment->reviewernamevisible and !empty($users[$assessment->reviewerid])) {
+            $tmpactivity->user      = $users[$assessment->reviewerid];
+        }
+        $activities[$index++]       = $tmpactivity;
+    }
+}
+
+/**
+ * Print single activity item prepared by {@see workshop_get_recent_mod_activity()}
+ */
+function workshop_print_recent_mod_activity($activity, $courseid, $detail, $modnames, $viewfullnames) {
+    global $CFG, $OUTPUT;
+
+    if (!empty($activity->user)) {
+        echo html_writer::tag('div', $OUTPUT->user_picture($activity->user, array('courseid'=>$courseid)),
+                array('style' => 'float: left; padding: 7px;'));
+    }
+
+    if ($activity->subtype == 'submission') {
+        echo html_writer::start_tag('div', array('class'=>'submission', 'style'=>'padding: 7px; float:left;'));
+
+        if ($detail) {
+            echo html_writer::start_tag('h4', array('class'=>'workshop'));
+            $url = new moodle_url('/mod/workshop/view.php', array('id'=>$activity->cmid));
+            $name = s($activity->name);
+            echo html_writer::empty_tag('img', array('src'=>$OUTPUT->pix_url('icon', $activity->type), 'class'=>'icon', 'alt'=>$name));
+            echo ' ' . $modnames[$activity->type];
+            echo html_writer::link($url, $name, array('class'=>'name', 'style'=>'margin-left: 5px'));
+            echo html_writer::end_tag('h4');
+        }
+
+        echo html_writer::start_tag('div', array('class'=>'title'));
+        $url = new moodle_url('/mod/workshop/submission.php', array('id'=>$activity->content->id));
+        $name = s($activity->content->title);
+        echo html_writer::tag('strong', html_writer::link($url, $name));
+        echo html_writer::end_tag('div');
+
+        if (!empty($activity->user)) {
+            echo html_writer::start_tag('div', array('class'=>'user'));
+            $url = new moodle_url('/user/view.php', array('id'=>$activity->user->id, 'course'=>$courseid));
+            $name = fullname($activity->user);
+            $link = html_writer::link($url, $name);
+            echo get_string('submissionby', 'workshop', $link);
+            echo ' - '.userdate($activity->timestamp);
+            echo html_writer::end_tag('div');
+        } else {
+            echo html_writer::start_tag('div', array('class'=>'anonymous'));
+            echo get_string('submission', 'workshop');
+            echo ' - '.userdate($activity->timestamp);
+            echo html_writer::end_tag('div');
+        }
+
+        echo html_writer::end_tag('div');
+    }
+
+    if ($activity->subtype == 'assessment') {
+        echo html_writer::start_tag('div', array('class'=>'assessment', 'style'=>'padding: 7px; float:left;'));
+
+        if ($detail) {
+            echo html_writer::start_tag('h4', array('class'=>'workshop'));
+            $url = new moodle_url('/mod/workshop/view.php', array('id'=>$activity->cmid));
+            $name = s($activity->name);
+            echo html_writer::empty_tag('img', array('src'=>$OUTPUT->pix_url('icon', $activity->type), 'class'=>'icon', 'alt'=>$name));
+            echo ' ' . $modnames[$activity->type];
+            echo html_writer::link($url, $name, array('class'=>'name', 'style'=>'margin-left: 5px'));
+            echo html_writer::end_tag('h4');
+        }
+
+        echo html_writer::start_tag('div', array('class'=>'title'));
+        $url = new moodle_url('/mod/workshop/assessment.php', array('cmid'=>$activity->cmid, 'asid'=>$activity->content->id));
+        $name = s($activity->content->submissiontitle);
+        echo html_writer::tag('em', html_writer::link($url, $name));
+        echo html_writer::end_tag('div');
+
+        if (!empty($activity->user)) {
+            echo html_writer::start_tag('div', array('class'=>'user'));
+            $url = new moodle_url('/user/view.php', array('id'=>$activity->user->id, 'course'=>$courseid));
+            $name = fullname($activity->user);
+            $link = html_writer::link($url, $name);
+            echo get_string('assessmentbyknown', 'workshop', $link);
+            echo ' - '.userdate($activity->timestamp);
+            echo html_writer::end_tag('div');
+        } else {
+            echo html_writer::start_tag('div', array('class'=>'anonymous'));
+            echo get_string('assessmentbyunknown', 'workshop');
+            echo ' - '.userdate($activity->timestamp);
+            echo html_writer::end_tag('div');
+        }
+
+        echo html_writer::end_tag('div');
+    }
+
+    echo html_writer::empty_tag('br', array('style'=>'clear:both'));
 }
 
 /**
@@ -533,7 +1154,7 @@ function workshop_pluginfile($course, $cm, $context, $filearea, array $args, $fo
 
         array_shift($args); // we do not use itemids here
         $relativepath = implode('/', $args);
-        $fullpath = "/$context->id/mod_workshop/$filearea/0/$relativepath"; // beware, slashes are not used here!
+        $fullpath = "/$context->id/mod_workshop/$filearea/0/$relativepath";
 
         $fs = get_file_storage();
         if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
@@ -615,10 +1236,10 @@ function workshop_get_file_info($browser, $areas, $course, $cm, $context, $filea
         // let us display the author's name instead of itemid (submission id)
         // todo some sort of caching should happen here
 
-        $sql = 'SELECT s.id, u.lastname, u.firstname
+        $sql = "SELECT s.id, u.lastname, u.firstname
                   FROM {workshop_submissions} s
             INNER JOIN {user} u ON (s.authorid = u.id)
-                 WHERE s.workshopid = ?';
+                 WHERE s.workshopid = ?";
         $params         = array($cm->instance);
         $authors        = $DB->get_records_sql($sql, $params);
         $urlbase        = $CFG->wwwroot . '/pluginfile.php';

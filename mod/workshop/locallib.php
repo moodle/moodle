@@ -817,8 +817,7 @@ class workshop {
         $assessment = new stdclass();
         $assessment->submissionid           = $submission->id;
         $assessment->reviewerid             = $reviewerid;
-        $assessment->timecreated            = $now;
-        $assessment->timemodified           = $now;
+        $assessment->timecreated            = $now;         // do not set timemodified here
         $assessment->weight                 = $weight;
         $assessment->generalcommentformat   = FORMAT_HTML;  // todo better default handling
         $assessment->feedbackreviewerformat = FORMAT_HTML;  // todo better default handling
@@ -1210,6 +1209,7 @@ class workshop {
         $data = new stdclass();
         $data->id = $assessmentid;
         $data->grade = $grade;
+        $data->timemodified = time();
         $DB->update_record('workshop_assessments', $data);
         return $grade;
     }
