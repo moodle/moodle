@@ -312,6 +312,14 @@ class restore_controller extends backup implements loggable {
         return $this->plan->get_results();
     }
 
+    /**
+     * Returns true if the prechecks have been executed
+     * @return bool
+     */
+    public function precheck_executed() {
+        return (is_array($this->precheck));
+    }
+
     public function get_precheck_results() {
         if (!is_array($this->precheck)) {
             throw new restore_controller_exception('precheck_not_executed');

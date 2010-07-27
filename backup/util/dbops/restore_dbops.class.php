@@ -888,6 +888,16 @@ abstract class restore_dbops {
         $rs->close();
     }
 
+    /**
+     * Creates a skeleton record within the database using the passed parameters
+     * and returns the new course id.
+     *
+     * @global moodle_database $DB
+     * @param string $fullname
+     * @param string $shortname
+     * @param int $categoryid
+     * @return int The new course id
+     */
     public static function create_new_course($fullname, $shortname, $categoryid) {
         global $DB;
         $category = $DB->get_record('course_categories', array('id'=>$categoryid), '*', MUST_EXIST);
@@ -904,8 +914,13 @@ abstract class restore_dbops {
         return $DB->insert_record('course', $course);   
     }
 
+    /**
+     * Deletes all of the content associated with the given course (courseid)
+     * @param int $courseid
+     * @return bool True for success
+     */
     public static function delete_course_content($courseid) {
-        return remove_course_contents($courseid);
+        return remove_course_contents($courseid, false);
     }
 }
 

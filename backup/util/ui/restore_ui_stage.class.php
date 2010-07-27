@@ -41,7 +41,7 @@
  */
 abstract class restore_ui_stage extends base_ui_stage {
     /**
-     *
+     * Constructor
      * @param restore_ui $ui
      */
     public function __construct(restore_ui $ui, array $params=null) {
@@ -55,11 +55,18 @@ abstract class restore_ui_stage extends base_ui_stage {
     final public function get_restoreid() {
         return $this->get_uniqueid();
     }
-
+    /**
+     * This is an independent stage
+     * @return int
+     */
     final public function is_independent() {
         return false;
     }
 
+    /**
+     * No sub stages for this stage
+     * @return false
+     */
     public function has_sub_stages() {
         return false;
     }
@@ -71,11 +78,21 @@ abstract class restore_ui_stage extends base_ui_stage {
     final public function get_name() {
         return get_string('restorestage'.$this->stage,'backup');
     }
+    /**
+     * Returns true if this is the settings stage
+     * @return bool
+     */
     final public function is_first_stage() {
         return $this->stage == restore_ui::STAGE_SETTINGS;
     }
 }
 
+/**
+ * Abstract class used to represent a restore stage that is indenependent.
+ *
+ * An independent stage is a judged to be so because it doesn't require, and has
+ * no use for the restore controller.
+ */
 abstract class restore_ui_independent_stage {
     abstract public function __construct($contextid);
     abstract public function process();
@@ -109,11 +126,20 @@ abstract class restore_ui_independent_stage {
         return $items;
     }
     abstract public function get_stage_name();
+    /**
+     * Obviously true
+     * @return true
+     */
     final public function is_independent() {
         return true;
     }
 }
 
+/**
+ * The confirmation stage.
+ *
+ * This is the first stage, it is independent.
+ */
 class restore_ui_stage_confirm extends restore_ui_independent_stage {
     protected $contextid;
     protected $filename = null;
@@ -154,20 +180,37 @@ class restore_ui_stage_confirm extends restore_ui_independent_stage {
     }
 }
 
+/**
+ * This is the destination stage.
+ *
+ * This stage is the second stage and is also independent
+ */
 class restore_ui_stage_destination extends restore_ui_independent_stage {
     protected $contextid;
     protected $filepath = null;
     protected $details;
     protected $courseid = null;
     protected $target = backup::TARGET_NEW_COURSE;
+    protected $coursesearch = null;
+    protected $categorysearch = null;
     public function __construct($contextid) {
+        global $PAGE;
         $this->contextid = $contextid;
         $this->filepath = required_param('filepath', PARAM_ALPHANUM);
+        $url = new moodle_url($PAGE->url, array(
+            'filepath'=>$this->filepath,
+            'contextid'=>$this->contextid,
+            'stage'=>restore_ui::STAGE_DESTINATION));
+        $this->coursesearch = new restore_course_search(array('url'=>$url));
+        $this->categorysearch = new restore_category_search(array('url'=>$url));
     }
     public function process() {
         global $CFG, $DB;
         if (!file_exists("$CFG->dataroot/temp/backup/".$this->filepath) || !is_dir("$CFG->dataroot/temp/backup/".$this->filepath)) {
             throw new restore_ui_exception('invalidrestorepath');
+        }
+        if (optional_param('searchcourses', false, PARAM_BOOL)) {
+            return false;
         }
         $this->target = optional_param('target', backup::TARGET_NEW_COURSE, PARAM_INT);
         $targetid = optional_param('targetid', null, PARAM_INT);
@@ -189,27 +232,14 @@ class restore_ui_stage_destination extends restore_ui_independent_stage {
      * @return string
      */
     public function display($renderer) {
-        global $DB, $USER;
+        global $DB, $USER, $PAGE;
         $this->details = backup_general_helper::get_backup_information($this->filepath);
         $url = new moodle_url('/backup/restore.php', array('contextid'=>$this->contextid, 'filepath'=>$this->filepath, 'stage'=>restore_ui::STAGE_SETTINGS));
         
         $context = get_context_instance_by_id($this->contextid);
         $currentcourse = ($context->contextlevel == CONTEXT_COURSE && has_capability('moodle/restore:restorecourse', $context))?$context->instanceid:false;
-        
-        $courselist = array();
-        $courses = get_user_capability_course('moodle/restore:restorecourse', $USER->id, true, 'fullname,shortname,visible,sortorder');
-        foreach ($courses as $course) {
-            $courselist[$course->id] = $course->fullname.' ['.$course->shortname.']';
-        }
 
-        $categories = make_categories_options();
-        foreach ($categories as $categoryid=>$category) {
-            if (!has_capability('moodle/course:create', get_context_instance(CONTEXT_COURSECAT, $categoryid))) {
-                unset($categories[$categoryid]);
-            }
-        }
-
-        $html = $renderer->course_selector($url, $this->details, $categories, $courselist, $currentcourse);
+        $html = $renderer->course_selector($url, $this->details, $this->categorysearch, $this->coursesearch, $currentcourse);
         return $html;
     }
     public function get_stage_name() {
@@ -228,7 +258,12 @@ class restore_ui_stage_destination extends restore_ui_independent_stage {
         return $this->target;
     }
 }
-
+/**
+ * This stage is the settings stage.
+ *
+ * This stage is the third stage, it is dependent on a restore controller and
+ * is the first stage as such.
+ */
 class restore_ui_stage_settings extends restore_ui_stage {
     /**
      * Initial restore stage constructor
@@ -535,6 +570,11 @@ class restore_ui_stage_process extends restore_ui_stage {
      * of the completed stage.
      */
     public function process(base_moodleform $form=null) {
+        if (optional_param('cancel', false, PARAM_BOOL)) {
+            redirect(new moodle_url('/course/view.php', array('id'=>$this->get_ui()->get_controller()->get_courseid())));
+        }
+
+        // First decide whether a substage is needed
         $rc = $this->ui->get_controller();
         if ($rc->get_status() == backup::STATUS_REQUIRE_CONV) {
             $this->substage = self::SUBSTAGE_CONVERT;
@@ -542,10 +582,35 @@ class restore_ui_stage_process extends restore_ui_stage {
             if ($rc->get_status() == backup::STATUS_SETTING_UI) {
                 $rc->finish_ui();
             }
-            if ($rc->get_status() == backup::STATUS_NEED_PRECHECK && !$rc->execute_precheck(true)) {
-                $this->substage = self::SUBSTAGE_PRECHECKS;
+            if ($rc->get_status() == backup::STATUS_NEED_PRECHECK) {
+                if (!$rc->precheck_executed()) {
+                    $rc->execute_precheck(true);
+                }
+                $results = $rc->get_precheck_results();
+                if (!empty($results)) {
+                    $this->substage = self::SUBSTAGE_PRECHECKS;
+                }
             }
         }
+
+        $substage = optional_param('substage', null, PARAM_INT);
+        if (empty($this->substage) && !empty($substage)) {
+            $this->substage = $substage;
+            // Now check whether that substage has already been submit
+            if ($this->substage == self::SUBSTAGE_PRECHECKS && optional_param('sesskey', null, PARAM_RAW) == sesskey()) {
+                $info = $rc->get_info();
+                if (!empty($info->role_mappings->mappings)) {
+                    foreach ($info->role_mappings->mappings as $key=>&$mapping) {
+                        $mapping->targetroleid = optional_param('mapping'.$key, $mapping->targetroleid, PARAM_INT);
+                    }
+                    $info->role_mappings->modified = true;
+                }
+                // We've processed the substage now setting it back to none so we
+                // can move to the next stage.
+                $this->substage = self::SUBSTAGE_NONE;
+            }
+        }
+
         return empty($this->substage);
     }
     /**
@@ -559,18 +624,32 @@ class restore_ui_stage_process extends restore_ui_stage {
      */
     public function display($renderer) {
         global $PAGE;
+        $haserrors = false;
+        $url = new moodle_url($PAGE->url, array('restore'=>$this->get_uniqueid(), 'stage'=>restore_ui::STAGE_PROCESS, 'substage'=>$this->substage, 'sesskey'=>sesskey()));
+        echo html_writer::start_tag('form', array('action'=>$url->out_omit_querystring(), 'class'=>'backup-restore', 'method'=>'post'));
+        foreach ($url->params() as $name=>$value) {
+            echo html_writer::empty_tag('input', array('type'=>'hidden', 'name'=>$name, 'value'=>$value));
+        }
         switch ($this->substage) {
             case self::SUBSTAGE_CONVERT :
                 echo '<h2>Need to show the conversion screens here</h2>';
                 break;
             case self::SUBSTAGE_PRECHECKS :
                 $results = $this->ui->get_controller()->get_precheck_results();
+                $info = $this->ui->get_controller()->get_info();
+                $haserrors = (!empty($results['errors']));
                 echo $renderer->precheck_notices($results);
+                if (!empty($info->role_mappings->mappings)) {
+                    $context = get_context_instance(CONTEXT_COURSE, $this->ui->get_controller()->get_courseid());
+                    $assignableroles = get_assignable_roles($context, ROLENAME_ALIAS, false);
+                    echo $renderer->role_mappings($info->role_mappings->mappings, $assignableroles);
+                }
                 break;
             default:
                 throw new restore_ui_exception('backup_ui_must_execute_first');
         }
-        echo $renderer->continue_button(new moodle_url($PAGE->url, array('restore'=>$this->get_uniqueid(), 'stage'=>restore_ui::STAGE_PROCESS, 'substage'=>$this->substage)));
+        echo $renderer->substage_buttons($haserrors);
+        echo html_writer::end_tag('form');
     }
 
     public function has_sub_stages() {
@@ -578,6 +657,11 @@ class restore_ui_stage_process extends restore_ui_stage {
     }
 }
 
+/**
+ * This is the completed stage.
+ *
+ * Once this is displayed there is nothing more to do.
+ */
 class restore_ui_stage_complete extends restore_ui_stage_process {
     /**
      * The results of the backup execution

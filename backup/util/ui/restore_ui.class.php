@@ -50,6 +50,10 @@ class restore_ui extends base_ui {
      */
     protected $stage = null;
 
+    /**
+     * String mappings to the above stages
+     * @var array
+     */
     public static $stages = array(
         restore_ui::STAGE_CONFIRM       => 'confirm',
         restore_ui::STAGE_DESTINATION   => 'destination',
@@ -102,11 +106,15 @@ class restore_ui extends base_ui {
         $this->controller->process_ui_event();
         return $processoutcome;
     }
-
+    /**
+     * Returns true if the stage is independent (not requiring a restore controller)
+     * @return bool
+     */
     public function is_independent() {
         return false;
     }
     /**
+     * Gets the unique ID associated with this UI
      * @return string
      */
     public function get_uniqueid() {
@@ -163,6 +171,13 @@ class restore_ui extends base_ui {
         }
         return $restoreid;
     }
+    /**
+     * Initialised the requested independent stage
+     *
+     * @param int $stage One of self::STAGE_*
+     * @param int $contextid
+     * @return restore_ui_stage_confirm|restore_ui_stage_destination
+     */
     final public static function engage_independent_stage($stage, $contextid) {
         if (!($stage & self::STAGE_CONFIRM + self::STAGE_DESTINATION)) {
             throw new restore_ui_exception('dependentstagerequested');
@@ -214,19 +229,31 @@ class restore_ui extends base_ui {
         }
         return $items;
     }
-
+    /**
+     * Gets the name of this UI
+     * @return string
+     */
     public function get_name() {
         return 'restore';
     }
-
+    /**
+     * Gets the first stage for this UI
+     * @return int STAGE_CONFIRM
+     */
     public function get_first_stage_id() {
         return self::STAGE_CONFIRM;
     }
-
+    /**
+     * Returns true if this stage has substages of which at least one needs to be displayed
+     * @return bool
+     */
     public function requires_substage() {
         return ($this->stage->has_sub_stages() && !$this->stage->process());
     }
-
+    /**
+     * Displays this stage
+     * @param core_backup_renderer $renderer
+     */
     public function display($renderer) {
         if ($this->progress < self::PROGRESS_SAVED) {
             throw new base_ui_exception('backupsavebeforedisplay');

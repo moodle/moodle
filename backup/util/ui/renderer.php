@@ -146,7 +146,7 @@ class core_backup_renderer extends plugin_renderer_base {
         return $html;
     }
 
-    public function course_selector(moodle_url $nextstageurl, $details, $categories, $courses, $currentcourse = null) {
+    public function course_selector(moodle_url $nextstageurl, $details, $categories, restore_course_search $courses=null, $currentcourse = null) {
         global $CFG;
         require_once($CFG->dirroot.'/course/lib.php');
 
@@ -162,36 +162,37 @@ class core_backup_renderer extends plugin_renderer_base {
         // Current course
         if (!empty($currentcourse)) {
             $html .= $form;
-            $form .= html_writer::empty_tag('input', array('type'=>'hidden', 'name'=>'targetid', 'value'=>$currentcourse));
+            $html .= html_writer::empty_tag('input', array('type'=>'hidden', 'name'=>'targetid', 'value'=>$currentcourse));
             $html .= html_writer::start_tag('div', array('class'=>'bcs-current-course backup-section'));
             $html .= $this->output->heading(get_string('restoretocurrentcourse', 'backup'), 2, array('class'=>'header'));
-            $html .= $this->backup_detail_input(get_string('restoretocurrentcourseadding', 'backup'), 'radio', 'target', backup::TARGET_CURRENT_ADDING);
+            $html .= $this->backup_detail_input(get_string('restoretocurrentcourseadding', 'backup'), 'radio', 'target', backup::TARGET_CURRENT_ADDING, array('checked'=>'checked'));
             $html .= $this->backup_detail_input(get_string('restoretocurrentcoursedeleting', 'backup'), 'radio', 'target', backup::TARGET_CURRENT_DELETING);
             $html .= $this->backup_detail_pair('', html_writer::empty_tag('input', array('type'=>'submit', 'value'=>get_string('continue'))));
             $html .= html_writer::end_tag('div');
             $html .= html_writer::end_tag('form');
         }
 
-        if (count($categories) > 0) {
+        if ($categories->get_resultscount() > 0 || $categories->get_search() == '') {
             // New course
             $html .= $form;
             $html .= html_writer::start_tag('div', array('class'=>'bcs-new-course backup-section'));
             $html .= $this->output->heading(get_string('restoretonewcourse', 'backup'), 2, array('class'=>'header'));
             $html .= $this->backup_detail_input(get_string('restoretonewcourse', 'backup'), 'radio', 'target', backup::TARGET_NEW_COURSE, array('checked'=>'checked'));
-            $html .= $this->backup_detail_select(get_string('coursecategory', 'backup'), 'targetid', $categories);
+            //$html .= $this->backup_detail_select(get_string('coursecategory', 'backup'), 'targetid', $categories);
+            $html .= $this->backup_detail_pair(get_string('selectacategory', 'backup'), $this->render($categories));
             $html .= $this->backup_detail_pair('', html_writer::empty_tag('input', array('type'=>'submit', 'value'=>get_string('continue'))));
             $html .= html_writer::end_tag('div');
             $html .= html_writer::end_tag('form');
         }
 
-        if (count($courses) > 0) {
+        if ($courses->get_resultscount() > 0 || $courses->get_search() == '') {
             // Existing course
             $html .= $form;
             $html .= html_writer::start_tag('div', array('class'=>'bcs-existing-course backup-section'));
             $html .= $this->output->heading(get_string('restoretoexistingcourse', 'backup'), 2, array('class'=>'header'));
-            $html .= $this->backup_detail_input(get_string('restoretoexistingcourseadding', 'backup'), 'radio', 'target', backup::TARGET_EXISTING_ADDING);
+            $html .= $this->backup_detail_input(get_string('restoretoexistingcourseadding', 'backup'), 'radio', 'target', backup::TARGET_EXISTING_ADDING, array('checked'=>'checked'));
             $html .= $this->backup_detail_input(get_string('restoretoexistingcoursedeleting', 'backup'), 'radio', 'target', backup::TARGET_EXISTING_DELETING);
-            $html .= $this->backup_detail_select(get_string('restoretocourse', 'backup'), 'targetid', $courses);
+            $html .= $this->backup_detail_pair(get_string('selectacourse', 'backup'), $this->render($courses));
             $html .= $this->backup_detail_pair('', html_writer::empty_tag('input', array('type'=>'submit', 'value'=>get_string('continue'))));
             $html .= html_writer::end_tag('div');
             $html .= html_writer::end_tag('form');
@@ -211,12 +212,22 @@ class core_backup_renderer extends plugin_renderer_base {
         return $html;
     }
 
-    protected function backup_detail_input($label, $type, $name, $value, array $attributes=array()) {
-        return $this->backup_detail_pair($label, html_writer::empty_tag('input', $attributes+array('name'=>$name, 'type'=>$type, 'value'=>$value)));
+    protected function backup_detail_input($label, $type, $name, $value, array $attributes=array(), $description=null) {
+        if (!empty ($description)) {
+            $description = html_writer::tag('span', $description, array('class'=>'description'));
+        } else {
+            $description = '';
+        }
+        return $this->backup_detail_pair($label, html_writer::empty_tag('input', $attributes+array('name'=>$name, 'type'=>$type, 'value'=>$value)).$description);
     }
 
-    protected function backup_detail_select($label, $name, $options, $selected='', $nothing=false, array $attributes=array()) {
-        return $this->backup_detail_pair($label, html_writer::select($options, 'targetid', '', false, $attributes));
+    protected function backup_detail_select($label, $name, $options, $selected='', $nothing=false, array $attributes=array(), $description=null) {
+        if (!empty ($description)) {
+            $description = html_writer::tag('span', $description, array('class'=>'description'));
+        } else {
+            $description = '';
+        }
+        return $this->backup_detail_pair($label, html_writer::select($options, $name, $selected, false, $attributes).$description);
     }
 
     public function precheck_notices($results) {
@@ -232,6 +243,30 @@ class core_backup_renderer extends plugin_renderer_base {
             }
         }
         return $output.html_writer::end_tag('div');
+    }
+
+    public function substage_buttons($haserrors) {
+        $output  = html_writer::start_tag('div', array('continuebutton'));
+        if (!$haserrors) {
+            $output .= html_writer::empty_tag('input', array('type'=>'submit', 'value'=>get_string('continue')));
+        }
+        $output .= html_writer::empty_tag('input', array('type'=>'submit', 'name'=>'cancel', 'value'=>get_string('cancel')));
+        $output .= html_writer::end_tag('div');
+        return $output;
+    }
+
+    public function role_mappings($rolemappings, $roles) {
+        $roles[0] = get_string('none');
+        $output  = html_writer::start_tag('div', array('class'=>'restore-rolemappings'));
+        $output .= $this->output->heading(get_string('restorerolemappings', 'backup'), 2);
+        foreach ($rolemappings as $id=>$mapping) {
+            $label = $mapping->name;
+            $name = 'mapping'.$id;
+            $selected = $mapping->targetroleid;
+            $output .= $this->backup_detail_select($label, $name, $roles, $mapping->targetroleid, false, array(), $mapping->description);
+        }
+        $output .= html_writer::end_tag('div');
+        return $output;
     }
 
     public function continue_button($url, $method='post') {
@@ -296,7 +331,104 @@ class core_backup_renderer extends plugin_renderer_base {
         $html .= '</div>';
         return $html;
     }
-    
+
+    public function render_restore_course_search(restore_course_search $component) {
+        $url = $component->get_url();
+
+        $output = html_writer::start_tag('div', array('class' => 'restore-course-search'));
+        if ($component->get_totalcount() === 0) {
+            $output .= $this->output->notification(get_string('nomatchingcourses', 'backup'));
+            $output .= html_writer::end_tag('div');
+            return $output;
+        }
+
+        $output .= html_writer::tag('div', get_string('totalcoursesearchresults', 'backup', $component->get_totalcount()), array('class'=>'rcs-totalresults'));
+
+        $output .= html_writer::start_tag('div', array('class' => 'rcs-results'));
+        if ($component->get_totalpages()>1) {
+            $pagingbar = new paging_bar($component->get_totalcount(), $component->get_page(), $component->get_pagelimit(), new moodle_url($url, array('searchcourses'=>1)), restore_course_search::$VAR_PAGE);
+            $output .= $this->output->render($pagingbar);
+        }
+
+        $table = new html_table();
+        $table->head = array('', get_string('shortname'), get_string('fullname'));
+        $table->data = array();
+        foreach ($component->get_results() as $course) {
+            $row = new html_table_row();
+            $row->attributes['class'] = 'rcs-course';
+            if (!$course->visible) {
+                $row->attributes['class'] .= ' dimmed';
+            }
+            $row->cells = array(
+                html_writer::empty_tag('input', array('type'=>'radio', 'name'=>'targetid', 'value'=>$course->id)),
+                $course->shortname,
+                $course->fullname
+            );
+            $table->data[] = $row;
+        }
+        $output .= html_writer::table($table);
+        if (isset($pagingbar)) {
+            $output .= $this->output->render($pagingbar);
+        }
+        $output .= html_writer::end_tag('div');
+
+        $output .= html_writer::start_tag('div', array('class'=>'rcs-search'));
+        $output .= html_writer::empty_tag('input', array('type'=>'text', 'name'=>restore_course_search::$VAR_SEARCH, 'value'=>$component->get_search()));
+        $output .= html_writer::empty_tag('input', array('type'=>'submit', 'name'=>'searchcourses', 'value'=>get_string('search')));
+        $output .= html_writer::end_tag('div');
+        
+        $output .= html_writer::end_tag('div');
+        return $output;
+    }
+
+    public function render_restore_category_search(restore_category_search $component) {
+        $url = $component->get_url();
+
+        $output = html_writer::start_tag('div', array('class' => 'restore-course-search'));
+        if ($component->get_totalcount() === 0) {
+            $output .= $this->output->notification(get_string('nomatchingcourses', 'backup'));
+            $output .= html_writer::end_tag('div');
+            return $output;
+        }
+
+        $output .= html_writer::tag('div', get_string('totalcategorysearchresults', 'backup', $component->get_totalcount()), array('class'=>'rcs-totalresults'));
+
+        $output .= html_writer::start_tag('div', array('class' => 'rcs-results'));
+        if ($component->get_totalpages()>1) {
+            $pagingbar = new paging_bar($component->get_totalcount(), $component->get_page(), $component->get_pagelimit(), new moodle_url($url, array('searchcourses'=>1)), restore_category_search::$VAR_PAGE);
+            $output .= $this->output->render($pagingbar);
+        }
+
+        $table = new html_table();
+        $table->head = array('', get_string('name'), get_string('description'));
+        $table->data = array();
+        foreach ($component->get_results() as $category) {
+            $row = new html_table_row();
+            $row->attributes['class'] = 'rcs-course';
+            if (!$category->visible) {
+                $row->attributes['class'] .= ' dimmed';
+            }
+            $row->cells = array(
+                html_writer::empty_tag('input', array('type'=>'radio', 'name'=>'targetid', 'value'=>$category->id)),
+                $category->name,
+                format_text($category->description, $category->descriptionformat)
+            );
+            $table->data[] = $row;
+        }
+        $output .= html_writer::table($table);
+        if (isset($pagingbar)) {
+            $output .= $this->output->render($pagingbar);
+        }
+        $output .= html_writer::end_tag('div');
+
+        $output .= html_writer::start_tag('div', array('class'=>'rcs-search'));
+        $output .= html_writer::empty_tag('input', array('type'=>'text', 'name'=>restore_category_search::$VAR_SEARCH, 'value'=>$component->get_search()));
+        $output .= html_writer::empty_tag('input', array('type'=>'submit', 'name'=>'searchcourses', 'value'=>get_string('search')));
+        $output .= html_writer::end_tag('div');
+
+        $output .= html_writer::end_tag('div');
+        return $output;
+    }
 }
 /**
  * Data structure representing backup files viewer

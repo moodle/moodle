@@ -656,6 +656,14 @@ body.tag .managelink {padding: 5px;}
 .backup-restore .detail-pair-value {display:inline-block;width:65%;padding:8px;margin:0;}
 .backup-restore .detail-pair-value > .sub-detail {display:block;color:#1580B6;margin-left:2em;font-size:90%;font-style: italic;}
 
+.restore-course-search .rcs-results {width:70%;min-width:400px;border:1px solid #ddd;margin:5px 0;}
+.restore-course-search .rcs-results table {width:100%;margin:0;border-width:0;}
+.restore-course-search .rcs-results .paging {text-align:left;margin:0;background-color:#eee;padding:3px;}
+
+.restore-course-category .rcs-results {width:70%;min-width:400px;border:1px solid #ddd;margin:5px 0;}
+.restore-course-category .rcs-results table {width:100%;margin:0;border-width:0;}
+.restore-course-category .rcs-results .paging {text-align:left;margin:0;background-color:#eee;padding:3px;}
+
 .corelightbox {background-color:#CCC;position:absolute;top:0;left:0;width:100%;height:100%;text-align:center;}
 .corelightbox img {position:fixed;top:50%;}
 
