@@ -27,3 +27,5 @@
 #page-mod-glossary-view table.glossarycategoryheader th {padding:0px;}
 
 #page-mod-glossary-showentry #page-content {min-width:600px;}
+
+#glossaryoverlayprogress {position:fixed;top:50%;width:100%;text-align:center;}

@@ -22,16 +22,65 @@ YUI.add('moodle-mod_glossary-autolinker', function(Y) {
         AUTOLINKER.superclass.constructor.apply(this, arguments);
     }
     Y.extend(AUTOLINKER, Y.Base, {
+        overlay : null,
         initializer : function(config) {
             var popupname = this.get(POPUPNAME),
-                popupoptions = this.get(POPUPOPTIONS);
+                popupoptions = this.get(POPUPOPTIONS),
+                self = this;
             Y.delegate('click', function(e){
-                openpopup(e, {
-                    url : this.getAttribute('href')+'&popup=1',
-                    name : popupname,
-                    options : build_windowoptionsstring(popupoptions)
-                })
+
+                e.preventDefault();
+
+                //display a progress indicator
+                var title = '';
+                var content = Y.Node.create('<div id="glossaryoverlayprogress"><img src="'+M.cfg.loadingicon+'" class="spinner" /></div>');
+                var o = new Y.Overlay({
+                    headerContent :  title,
+                    bodyContent : content
+                });
+                self.overlay = o;
+                o.render(Y.one(document.body));
+
+                //fetch the glossary item
+                var fullurl = this.getAttribute('href')+'&ajax=1';
+                var cfg = {
+                    method: 'get',
+                    context : self,
+                    on: {
+                        success: function(id, o, node) {
+                            this.display_callback(o.responseText);
+                        },
+                        failure: function(id, o, node) {
+                            var debuginfo = o.statusText;
+                            if (M.cfg.developerdebug) {
+                                o.statusText += ' (' + fullurl + ')';
+                            }
+                            this.display_callback('bodyContent',debuginfo);
+                        }
+                    }
+                };
+                Y.io(fullurl, cfg);
+
             }, Y.one(document.body), 'a.glossary.autolink');
+        },
+        display_callback : function(content) {
+            try {
+                var data = Y.JSON.parse(content);
+                if (data.success){
+                    this.overlay.hide(); //hide progress indicator
+                    
+                    for (key in data.entries) {
+                        new M.core.alert({title:data.entries[key].concept, message:data.entries[key].definition, lightbox:false});
+                    }
+
+                    return true;
+                } else if (data.error) {
+                    alert(data.error);
+                }
+            }catch(ex) {
+                alert(ex.message+" "+content);
+            }
+            return false;
         }
     }, {
         NAME : AUTOLINKERNAME,
@@ -82,4 +131,4 @@ YUI.add('moodle-mod_glossary-autolinker', function(Y) {
         return new AUTOLINKER(config);
     }
 
-}, '@VERSION@', {requires:['base','node','event-delegate']});
+}, '@VERSION@', {requires:['base','node','event-delegate','overlay','moodle-enrol-notification']});

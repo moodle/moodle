@@ -8,6 +8,11 @@ $courseid = optional_param('courseid', 0, PARAM_INT);
 $eid      = optional_param('eid', 0, PARAM_INT); // glossary entry id
 $displayformat = optional_param('displayformat',-1, PARAM_SAFEDIR);
 $popup = optional_param('popup',0, PARAM_INT);
+$ajax = optional_param('ajax',0, PARAM_INT);
+
+if ($ajax && !defined('AJAX_SCRIPT')) {
+    define('AJAX_SCRIPT', true);
+}
 
 $url = new moodle_url('/mod/glossary/showentry.php');
 $url->param('concept', $concept);
@@ -42,6 +47,8 @@ if ($eid) {
 
 if ($popup) {
     $PAGE->set_pagelayout('popup');
+} else if (!$ajax) {
+    $PAGE->set_pagelayout('course');
 }
 
 if ($entries) {
@@ -68,6 +75,14 @@ if ($entries) {
         }
         add_to_log($entry->courseid, 'glossary', 'view entry', "showentry.php?eid=$entry->id", $entry->id, $entry->cmid);
     }
+}
+
+if ($ajax) {
+    $result = new stdClass;
+    $result->success = true;
+    $result->entries = $entries;
+    echo json_encode($result);
+    die();
 }
 
 if (!empty($courseid)) {
