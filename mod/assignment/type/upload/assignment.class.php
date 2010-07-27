@@ -367,24 +367,37 @@ class assignment_upload extends assignment_base {
 
         if ($this->drafts_tracked() and $this->isopen() and has_capability('mod/assignment:grade', $this->context) and $mode != '') { // we do not want it on view.php page
             if ($this->can_unfinalize($submission)) {
-                $options = array ('id'=>$this->cm->id, 'userid'=>$userid, 'action'=>'unfinalize', 'mode'=>$mode, 'offset'=>$offset);
-                $output .= '<form></form>'; //@TODO: see bug MDL-22893 this is a temporary workaround for a broken - form nesting isn't valid!
-                $output .= $OUTPUT->single_button(new moodle_url('upload.php', $options), get_string('unfinalize', 'assignment'));
+                //$options = array ('id'=>$this->cm->id, 'userid'=>$userid, 'action'=>'unfinalize', 'mode'=>$mode, 'offset'=>$offset);
+                $output .= '<br /><input type="submit" name="unfinalize" value="'.get_string('unfinalize', 'assignment').'" />';
+
             } else if ($this->can_finalize($submission)) {
-                $options = array ('id'=>$this->cm->id, 'userid'=>$userid, 'action'=>'finalizeclose', 'mode'=>$mode, 'offset'=>$offset);
-                $output .= '<form></form>'; //@TODO: see bug MDL-22893 this is a temporary workaround for a broken - form nesting isn't valid!
-                $output .= $OUTPUT->single_button(new moodle_url('upload.php', $options), get_string('finalize', 'assignment'));
+                //$options = array ('id'=>$this->cm->id, 'userid'=>$userid, 'action'=>'finalizeclose', 'mode'=>$mode, 'offset'=>$offset);
+                $output .= '<br /><input type="submit" name="finalize" value="'.get_string('finalize', 'assignment').'" />';
             }
         }
 
-        $renderer = $PAGE->get_renderer('mod_assignment');
-        $output .= $renderer->assignment_files($this->context, $submission->id);
+        if ($submission) {
+            $renderer = $PAGE->get_renderer('mod_assignment');
+            $output .= $renderer->assignment_files($this->context, $submission->id);
+        }
         $output .= $OUTPUT->box_end();
 
         if ($return) {
             return $output;
         }
         echo $output;
+    }
+
+    function submissions($mode) {
+        // redirects out of form to process (un)finalizing.
+        $unfinalize = optional_param('unfinalize', FALSE, PARAM_TEXT);
+        $finalize = optional_param('finalize', FALSE, PARAM_TEXT);
+        if ($unfinalize) {
+            $this->unfinalize('single');
+        } else if ($finalize) {
+            $this->finalize('single');
+        }
+        parent::submissions($mode);
     }
 
     function print_responsefiles($userid, $return=false) {
@@ -404,8 +417,8 @@ class assignment_upload extends assignment_base {
         if ($submission = $this->get_submission($userid)) {
             $renderer = $PAGE->get_renderer('mod_assignment');
             $output .= $renderer->assignment_files($this->context, $submission->id, 'response');
-            $output .= $OUTPUT->box_end();
         }
+        $output .= $OUTPUT->box_end();
 
         if ($return) {
             return $output;
@@ -642,26 +655,37 @@ class assignment_upload extends assignment_base {
         return false;
     }
 
-    function finalize() {
+    function finalize($forcemode=null) {
         global $USER, $DB, $OUTPUT;
-
+        $userid = optional_param('userid', $USER->id, PARAM_INT);
+        $offset = optional_param('offset', 0, PARAM_INT);
         $confirm    = optional_param('confirm', 0, PARAM_BOOL);
         $returnurl  = new moodle_url('/mod/assignment/view.php', array('id'=>$this->cm->id));
-        $submission = $this->get_submission($USER->id);
+        $submission = $this->get_submission($userid);
 
-        if (!$this->can_finalize($submission)) {
-            redirect($returnurl); // probably already graded, redirect to assignment page, the reason should be obvious
+        if ($forcemode!=null) {
+            $returnurl  = new moodle_url('/mod/assignment/submissions.php',
+                array('id'=>$this->cm->id,
+                    'userid'=>$userid,
+                    'mode'=>$forcemode,
+                    'offset'=>$offset
+                ));
         }
 
-        if (!data_submitted() or !$confirm or !confirm_sesskey()) {
-            $optionsno = array('id'=>$this->cm->id);
-            $optionsyes = array ('id'=>$this->cm->id, 'confirm'=>1, 'action'=>'finalize', 'sesskey'=>sesskey());
-            $this->view_header(get_string('submitformarking', 'assignment'));
-            echo $OUTPUT->heading(get_string('submitformarking', 'assignment'));
-            echo $OUTPUT->confirm(get_string('onceassignmentsent', 'assignment'), new moodle_url('upload.php', $optionsyes),new moodle_url( 'view.php', $optionsno));
-            $this->view_footer();
-            die;
+        if (!$this->can_finalize($submission)) {
+            redirect($returnurl->out(false)); // probably already graded, redirect to assignment page, the reason should be obvious
+        }
 
+        if ($forcemode==null) {
+            if (!data_submitted() or !$confirm or !confirm_sesskey()) {
+                $optionsno = array('id'=>$this->cm->id);
+                $optionsyes = array ('id'=>$this->cm->id, 'confirm'=>1, 'action'=>'finalize', 'sesskey'=>sesskey());
+                $this->view_header(get_string('submitformarking', 'assignment'));
+                echo $OUTPUT->heading(get_string('submitformarking', 'assignment'));
+                echo $OUTPUT->confirm(get_string('onceassignmentsent', 'assignment'), new moodle_url('upload.php', $optionsyes),new moodle_url( 'view.php', $optionsno));
+                $this->view_footer();
+                die;
+            }
         }
         $updated = new object();
         $updated->id           = $submission->id;
@@ -671,7 +695,7 @@ class assignment_upload extends assignment_base {
         if ($DB->update_record('assignment_submissions', $updated)) {
             add_to_log($this->course->id, 'assignment', 'upload', //TODO: add finalize action to log
                     'view.php?a='.$this->assignment->id, $this->assignment->id, $this->cm->id);
-            $submission = $this->get_submission($USER->id);
+            $submission = $this->get_submission($userid);
             $this->update_grade($submission);
             $this->email_teachers($submission);
         } else {
@@ -688,10 +712,10 @@ class assignment_upload extends assignment_base {
         $eventdata->cmid         = $this->cm->id;
         $eventdata->itemid       = $submission->id;
         $eventdata->courseid     = $this->course->id;
-        $eventdata->userid       = $USER->id;
+        $eventdata->userid       = $userid;
         events_trigger('assessable_files_done', $eventdata);
 
-        redirect($returnurl);
+        redirect($returnurl->out(false));
     }
 
     function finalizeclose() {
@@ -722,14 +746,17 @@ class assignment_upload extends assignment_base {
         redirect($returnurl);
     }
 
-    function unfinalize() {
+    function unfinalize($forcemode=null) {
         global $DB;
 
         $userid = required_param('userid', PARAM_INT);
         $mode   = required_param('mode', PARAM_ALPHA);
         $offset = required_param('offset', PARAM_INT);
 
-        $returnurl = "submissions.php?id={$this->cm->id}&amp;userid=$userid&amp;mode=$mode&amp;offset=$offset&amp;forcerefresh=1";
+        if ($forcemode!=null) {
+            $mode=$forcemode;
+        }
+        $returnurl = "submissions.php?id={$this->cm->id}&userid=$userid&mode=$mode&offset=$offset&forcerefresh=1";
         if (data_submitted()
           and $submission = $this->get_submission($userid)
           and $this->can_unfinalize($submission)
