@@ -2361,7 +2361,8 @@ abstract class lesson_page extends lesson_base {
                 $this->properties->contentsformat = FORMAT_HTML;
             }
             $context = get_context_instance(CONTEXT_MODULE, $PAGE->cm->id);
-            return file_rewrite_pluginfile_urls($this->properties->contents, 'pluginfile.php', $context->id, 'mod_lesson', 'page_contents', $this->properties->id);
+            $contents = format_text($this->properties->contents); //format text so glossary autolinking happens
+            return file_rewrite_pluginfile_urls($contents, 'pluginfile.php', $context->id, 'mod_lesson', 'page_contents', $this->properties->id);
         } else {
             return '';
         }
