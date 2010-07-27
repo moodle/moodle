@@ -612,11 +612,11 @@ function enrol_get_users_courses($userid, $onlyactive = false, $fields = NULL, $
         if ($onlyactive) {
             if (!$course->visible) {
                 if (!$context = get_context_instance(CONTEXT_COURSE, $id)) {
-                    unset($course[$id]);
+                    unset($courses[$id]);
                     continue;
                 }
                 if (!has_capability('moodle/course:viewhiddencourses', $context, $userid)) {
-                    unset($course[$id]);
+                    unset($courses[$id]);
                     continue;
                 }
             }
