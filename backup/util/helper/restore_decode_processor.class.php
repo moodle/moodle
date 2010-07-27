@@ -162,8 +162,8 @@ class restore_decode_processor {
      * Perform some general checks in content. Returning false rules processing is skipped
      */
     protected function precheck_content($content) {
-        // TODO: look for $@ in content
-        return $content;
+        // Look for $@ in content (all interlinks contain that)
+        return (strpos($content, '$@') === false) ? false : $content;
     }
 }
 
