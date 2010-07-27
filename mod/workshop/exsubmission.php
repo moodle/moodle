@@ -119,7 +119,7 @@ if ($edit and $canmanage) {
             $formdata->example        = 1;
             $formdata->authorid       = $USER->id;
             $formdata->timecreated    = $timenow;
-            $formdata->feedbackauthorformat = FORMAT_HTML; // todo better default
+            $formdata->feedbackauthorformat = editors_get_preferred_format();
         }
         $formdata->timemodified       = $timenow;
         $formdata->title              = trim($formdata->title);

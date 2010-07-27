@@ -209,11 +209,11 @@ class mod_workshop_mod_form extends moodleform_mod {
             // adding a new workshop instance
             $draftitemid = file_get_submitted_draft_itemid('instructauthors');
             file_prepare_draft_area($draftitemid, null, 'mod_workshop', 'instructauthors', 0);    // no context yet, itemid not used
-            $data['instructauthorseditor'] = array('text' => '', 'format' => FORMAT_HTML, 'itemid' => $draftitemid);
+            $data['instructauthorseditor'] = array('text' => '', 'format' => editors_get_preferred_format(), 'itemid' => $draftitemid);
 
             $draftitemid = file_get_submitted_draft_itemid('instructreviewers');
             file_prepare_draft_area($draftitemid, null, 'mod_workshop', 'instructreviewers', 0);    // no context yet, itemid not used
-            $data['instructreviewerseditor'] = array('text' => '', 'format' => FORMAT_HTML, 'itemid' => $draftitemid);
+            $data['instructreviewerseditor'] = array('text' => '', 'format' => editors_get_preferred_format(), 'itemid' => $draftitemid);
         }
     }
 }

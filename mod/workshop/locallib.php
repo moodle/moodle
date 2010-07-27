@@ -819,8 +819,8 @@ class workshop {
         $assessment->reviewerid             = $reviewerid;
         $assessment->timecreated            = $now;         // do not set timemodified here
         $assessment->weight                 = $weight;
-        $assessment->generalcommentformat   = FORMAT_HTML;  // todo better default handling
-        $assessment->feedbackreviewerformat = FORMAT_HTML;  // todo better default handling
+        $assessment->generalcommentformat   = editors_get_preferred_format();
+        $assessment->feedbackreviewerformat = editors_get_preferred_format();
 
         return $DB->insert_record('workshop_assessments', $assessment, true, $bulk);
     }

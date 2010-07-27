@@ -55,7 +55,7 @@ if ($id) { // submission is specified
         $submission->gradeover = null;
         $submission->published = null;
         $submission->feedbackauthor = null;
-        $submission->feedbackauthorformat = FORMAT_HTML;
+        $submission->feedbackauthorformat = editors_get_preferred_format();
     }
 }
 
@@ -128,7 +128,7 @@ if ($edit) {
             $formdata->example        = 0;
             $formdata->authorid       = $USER->id;
             $formdata->timecreated    = $timenow;
-            $formdata->feedbackauthorformat = FORMAT_HTML; // todo better default
+            $formdata->feedbackauthorformat = editors_get_preferred_format();
         }
         $formdata->timemodified       = $timenow;
         $formdata->title              = trim($formdata->title);
