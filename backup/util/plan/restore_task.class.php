@@ -55,6 +55,10 @@ abstract class restore_task extends base_task {
         return $this->plan->get_userid();
     }
 
+    public function get_decoder() {
+        return $this->plan->get_decoder();
+    }
+
     public function is_samesite() {
         return $this->plan->is_samesite();
     }

@@ -36,6 +36,7 @@ class restore_plan extends base_plan implements loggable {
     protected $controller; // The restore controller building/executing this plan
     protected $basepath;   // Fullpath to dir where backup is available
     protected $preloaded;  // When executing the plan, do we have preloaded (from checks) info
+    protected $decoder;    // restore_decode_processor in charge of decoding all the interlinks
 
     /**
      * Constructor - instantiates one object of this class
@@ -49,11 +50,13 @@ class restore_plan extends base_plan implements loggable {
         $this->controller = $controller;
         $this->basepath   = $CFG->dataroot . '/temp/backup/' . $controller->get_tempdir();
         $this->preloaded  = false;
+        $this->decoder    = new restore_decode_processor($this->get_restoreid(), $this->get_info()->original_wwwroot, $CFG->wwwroot);
         parent::__construct('restore_plan');
     }
 
     public function build() {
         restore_plan_builder::build_plan($this->controller); // We are moodle2 always, go straight to builder
+        restore_decode_processor::register_link_decoders($this->decoder); // Add decoder contents and rules
         $this->built = true;
     }
 
@@ -83,6 +86,10 @@ class restore_plan extends base_plan implements loggable {
 
     public function get_userid() {
         return $this->controller->get_userid();
+    }
+
+    public function get_decoder() {
+        return $this->decoder;
     }
 
     public function is_samesite() {
