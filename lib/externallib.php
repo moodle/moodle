@@ -239,18 +239,18 @@ class external_api {
                         throw new webservice_parameter_exception('errorresponsemissingkey', $key);
                     }
                     if ($subdesc instanceof external_value) {
-                            if ($subdesc->required == VALUE_DEFAULT) {
-                                try {
+                        if ($subdesc->required == VALUE_DEFAULT) {
+                            try {
                                     $result[$key] = self::clean_returnvalue($subdesc, $subdesc->default);
-                                } catch (invalid_response_exception $e) {
-                                    throw new webservice_parameter_exception('invalidextresponse',$key);
-                                }
+                            } catch (Exception $e) {
+                                    throw new webservice_parameter_exception('invalidextresponse',$key." (".$e->debuginfo.")");
                             }
                         }
+                    }
                 } else {
                     try {
                         $result[$key] = self::clean_returnvalue($subdesc, $response[$key]);
-                    } catch (invalid_response_exception $e) {
+                    } catch (Exception $e) {
                         //it's ok to display debug info as here the information is useful for ws client/dev
                         throw new webservice_parameter_exception('invalidextresponse',$key." (".$e->debuginfo.")");
                     }
