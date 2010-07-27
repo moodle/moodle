@@ -193,7 +193,10 @@ class assignment_uploadsingle extends assignment_base {
         }
 
         $submission = $this->get_submission($USER->id);
-        $filecount = $this->count_user_files($submission->id);
+        $filecount = 0;
+        if ($submission) {
+            $filecount = $this->count_user_files($submission->id);
+        }
         if ($this->isopen() && (!$filecount || $this->assignment->resubmit || !$submission->timemarked)) {
             if ($submission = $this->get_submission($USER->id)) {
                 //TODO: change later to ">= 0", to prevent resubmission when graded 0
