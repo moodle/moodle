@@ -137,6 +137,29 @@ abstract class restore_block_task extends restore_task {
         return $this->oldcontextid;
     }
 
+    /**
+     * Define one array() of fileareas that each block controls
+     */
+    abstract public function get_fileareas();
+
+    /**
+     * Define one array() of configdata attributes
+     * that need to be decoded
+     */
+    abstract public function get_configdata_encoded_attributes();
+
+    /**
+     * Define the contents in the activity that must be
+     * processed by the link decoder
+     */
+    abstract static public function define_decode_contents();
+
+    /**
+     * Define the decoding rules for links belonging
+     * to the activity to be executed by the link decoder
+     */
+    abstract static public function define_decode_rules();
+
 // Protected API starts here
 
     /**
@@ -159,21 +182,4 @@ abstract class restore_block_task extends restore_task {
      * Define (add) particular steps that each block can have
      */
     abstract protected function define_my_steps();
-
-    /**
-     * Define one array() of fileareas that each block controls
-     */
-    abstract public function get_fileareas();
-
-    /**
-     * Define one array() of configdata attributes
-     * that need to be decoded
-     */
-    abstract public function get_configdata_encoded_attributes();
-
-    /**
-     * Code the transformations to perform by the block in
-     * order to get encoded transformed back to working links
-     */
-    abstract static public function decode_content_links($content);
 }

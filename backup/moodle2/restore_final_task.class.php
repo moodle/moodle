@@ -43,7 +43,12 @@ class restore_final_task extends restore_task {
         }
 
         // TODO: Gradebook
-        // TODO: interlinks
+
+        // Decode all the interlinks
+        $this->add_step(new restore_decode_interlinks('decode_interlinks'));
+
+        // Rebuild course cache to see results, whoah!
+        $this->add_step(new restore_rebuild_course_cache('rebuild_course_cache'));
 
         // Clean the temp dir (conditionally) and drop temp table
         $this->add_step(new restore_drop_and_clean_temp_stuff('drop_and_clean_temp_stuff'));

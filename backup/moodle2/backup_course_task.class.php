@@ -113,7 +113,7 @@ class backup_course_task extends backup_task {
     static public function encode_content_links($content) {
         global $CFG;
 
-        $base = preg_quote($CFG->wwwroot,"/");
+        $base = preg_quote($CFG->wwwroot, '/');
 
         // Link to the course main page (it also covers "&topic=xx" and "&week=xx"
         // because they don't become transformed (section number) in backup/restore

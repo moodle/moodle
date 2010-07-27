@@ -92,14 +92,28 @@ class restore_course_task extends restore_task {
     }
 
     /**
-     * Code the transformations to perform in the course in
-     * order to get encoded transformed back to working links
+     * Define the contents in the course that must be
+     * processed by the link decoder
      */
-    static public function decode_content_links($content) {
+    static public function define_decode_contents() {
+        $contents = array();
 
-        // TODO: Decode COURSEVIEWBYID
+        $contents[] = new restore_decode_content('course', 'summary');
 
-        return $content;
+        return $contents;
+    }
+
+    /**
+     * Define the decoding rules for links belonging
+     * to the course to be executed by the link decoder
+     */
+    static public function define_decode_rules() {
+        $rules = array();
+
+        $rules[] = new restore_decode_rule('COURSEVIEWBYID', '/course/view.php?id=$1', 'course');
+
+        return $rules;
+
     }
 
 // Protected API starts here

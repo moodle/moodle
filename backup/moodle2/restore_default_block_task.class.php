@@ -45,8 +45,12 @@ class restore_default_block_task extends restore_block_task {
         return array();
     }
 
-    static public function decode_content_links($content) {
-        return $content;
+    static public function define_decode_contents() {
+        return array();
+    }
+
+    static public function define_decode_rules() {
+        return array();
     }
 }
 

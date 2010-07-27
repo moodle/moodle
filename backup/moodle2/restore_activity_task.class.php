@@ -31,6 +31,13 @@
 abstract class restore_activity_task extends restore_task {
 
     protected $info; // info related to activity gathered from backup file
+    protected $modulename;  // name of the module
+    protected $moduleid;    // new (target) id of the course module
+    protected $oldmoduleid; // old (original) id of the course module
+    protected $contextid;   // new (target) context of the activity
+    protected $oldcontextid;// old (original) context of the activity
+    protected $activityid;  // new (target) id of the activity
+    protected $oldactivityid;// old (original) id of the activity
 
     /**
      * Constructor - instantiates one object of this class
@@ -38,6 +45,13 @@ abstract class restore_activity_task extends restore_task {
     public function __construct($name, $info, $plan = null) {
 
         $this->info = $info;
+        $this->modulename = $this->info->modulename;
+        $this->moduleid = 0;
+        $this->oldmoduleid = $this->info->moduleid;
+        $this->contextid = 0;
+        $this->oldcontextid = 0;
+        $this->activityid = 0;
+        $this->oldactivityid = 0;
         parent::__construct($name, $plan);
     }
 
@@ -45,7 +59,51 @@ abstract class restore_activity_task extends restore_task {
      * Activity tasks have their own directory to read files
      */
     public function get_taskbasepath() {
-        return $this->get_basepath() . '/activities/' . $this->info->modulename . '_' . $this->info->moduleid;
+        return $this->get_basepath() . '/' . $this->info->directory;
+    }
+
+    public function set_moduleid($moduleid) {
+        $this->moduleid = $moduleid;
+    }
+
+    public function set_activityid($activityid) {
+        $this->activityid = $activityid;
+    }
+
+    public function set_old_activityid($activityid) {
+        $this->oldactivityid = $activityid;
+    }
+
+    public function set_contextid($contextid) {
+        $this->contextid = $contextid;
+    }
+
+    public function set_old_contextid($contextid) {
+        $this->oldcontextid = $contextid;
+    }
+
+    public function get_modulename() {
+        return $this->modulename;
+    }
+
+    public function get_moduleid() {
+        return $this->moduleid;
+    }
+
+    public function get_activityid() {
+        return $this->activityid;
+    }
+
+    public function get_old_activityid() {
+        return $this->oldactivityid;
+    }
+
+    public function get_contextid() {
+        return $this->contextid;
+    }
+
+    public function get_old_contextid() {
+        return $this->oldcontextid;
     }
 
     /**
@@ -59,7 +117,39 @@ abstract class restore_activity_task extends restore_task {
             return;
         }
 
-        // TODO: Link all the activity steps here
+        // Load he course_module estructure, generating it (with instance = 0)
+        // but allowing the creation of the target context needed in following steps
+        $this->add_step(new restore_module_structure_step('module_info', 'module.xml'));
+
+        // Here we add all the common steps for any activity and, in the point of interest
+        // we call to define_my_steps() is order to get the particular ones inserted in place.
+        $this->define_my_steps();
+
+        // Roles (optionally role assignments and always role overrides)
+        $this->add_step(new restore_ras_and_caps_structure_step('course_ras_and_caps', 'roles.xml'));
+
+        // Filters (conditionally)
+        if ($this->get_setting_value('filters')) {
+            $this->add_step(new restore_filters_structure_step('activity_filters', 'filters.xml'));
+        }
+
+        // Comments (conditionally)
+        if ($this->get_setting_value('comments')) {
+            $this->add_step(new restore_comments_structure_step('activity_comments', 'comments.xml'));
+        }
+
+        // TODO: Grades (module-related, rest of gradebook is restored later if possible: cats, calculations...)
+        //$this->add_step(new restore_activity_grades_structure_step('activity_grades', 'grades.xml'));
+
+        // TODO: Userscompletion (conditionally)
+        if ($this->get_setting_value('userscompletion')) {
+            //$this->add_step(new restore_userscompletion_structure_step('activity_userscompletion', 'completion.xml'));
+        }
+
+        // TODO: Logs (conditionally)
+        if ($this->get_setting_value('logs')) {
+            //$this->add_step(new restore_activity_logs_structure_step('activity_logs', 'logs.xml'));
+        }
 
         // At the end, mark it as built
         $this->built = true;
@@ -106,6 +196,23 @@ abstract class restore_activity_task extends restore_task {
         }
     }
 
+    /**
+     * Define (add) particular steps that each activity can have
+     */
+    abstract protected function define_my_steps();
+
+    /**
+     * Define the contents in the activity that must be
+     * processed by the link decoder
+     */
+    abstract static public function define_decode_contents();
+
+    /**
+     * Define the decoding rules for links belonging
+     * to the activity to be executed by the link decoder
+     */
+    abstract static public function define_decode_rules();
+
 // Protected API starts here
 
     /**
@@ -142,7 +249,7 @@ abstract class restore_activity_task extends restore_task {
         $settingname = $settingprefix . 'userinfo';
         $selectvalues = array(0=>get_string('no')); // Safer options
         $defaultvalue = false;                      // Safer default
-        if (isset($info->settings[$settingname]) && $info->settings[$settingname]) { // Only enabled when available
+        if (isset($this->info->settings[$settingname]) && $this->info->settings[$settingname]) { // Only enabled when available
             $selectvalues = array(1=>get_string('yes'), 0=>get_string('no'));
             $defaultvalue = true;
         }
@@ -169,16 +276,4 @@ abstract class restore_activity_task extends restore_task {
      * Define (add) particular settings that each activity can have
      */
     abstract protected function define_my_settings();
-
-    /**
-     * Define (add) particular steps that each activity can have
-     */
-    abstract protected function define_my_steps();
-
-     /**
-     * Code the transformations to perform by the activity in
-     * order to get encoded transformed back to working links
-     */
-    abstract static public function decode_content_links($content);
-
 }

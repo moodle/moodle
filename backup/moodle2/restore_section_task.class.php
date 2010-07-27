@@ -110,6 +110,26 @@ class restore_section_task extends restore_task {
         }
     }
 
+    /**
+     * Define the contents in the course that must be
+     * processed by the link decoder
+     */
+    static public function define_decode_contents() {
+        $contents = array();
+
+        $contents[] = new restore_decode_content('course_sections', 'summary', 'course_section');
+
+        return $contents;
+    }
+
+    /**
+     * Define the decoding rules for links belonging
+     * to the sections to be executed by the link decoder
+     */
+    static public function define_decode_rules() {
+        return array();
+    }
+
 // Protected API starts here
 
     /**
@@ -133,7 +153,7 @@ class restore_section_task extends restore_task {
         $settingname = $settingprefix . 'userinfo';
         $selectvalues = array(0=>get_string('no')); // Safer options
         $defaultvalue = false;                      // Safer default
-        if (isset($info->settings[$settingname]) && $info->settings[$settingname]) { // Only enabled when available
+        if (isset($this->info->settings[$settingname]) && $this->info->settings[$settingname]) { // Only enabled when available
             $selectvalues = array(1=>get_string('yes'), 0=>get_string('no'));
             $defaultvalue = true;
         }
