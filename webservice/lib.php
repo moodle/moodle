@@ -317,7 +317,7 @@ class webservice {
         global $DB;
         //retrieve the user capabilities
         $sql = "SELECT rc.id, rc.capability FROM {role_capabilities} rc, {role_assignments} ra
-            WHERE rc.roleid=ra.roleid AND ra.id= ?";
+            WHERE rc.roleid=ra.roleid AND ra.userid= ?";
         $dbusercaps = $DB->get_records_sql($sql, array($userid));
         $usercaps = array();
         foreach ($dbusercaps as $usercap) {
