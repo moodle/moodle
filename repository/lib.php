@@ -829,7 +829,7 @@ abstract class repository {
         }
         $fs = get_file_storage();
         if ($existingfile = $fs->get_file($context->id, $record->component, $record->filearea, $record->itemid, $record->filepath, $record->filename)) {
-            $existingfile->delete();
+            throw new moodle_exception('fileexists');
         }
         if ($file = $fs->create_file_from_pathname($record, $thefile)) {
             if (empty($CFG->repository_no_delete)) {

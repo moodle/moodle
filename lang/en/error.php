@@ -219,6 +219,7 @@ $string['errorunzippingfiles'] = 'Error unzipping files';
 $string['expiredkey'] = 'Expired key';
 $string['failtoloadblocks'] = 'One or more blocks are registered in the database, but they all failed to load!';
 $string['fieldrequired'] = '"{$a}" is a required field';
+$string['fileexists'] = 'File exists';
 $string['filemismatch'] = 'Non-core file name mismatch. The file "{$a->current}" should be {$a->file}';
 $string['filenotfound'] = 'Sorry, the requested file could not be found';
 $string['filenotreadable'] = 'File is not readable';

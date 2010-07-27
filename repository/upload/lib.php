@@ -104,7 +104,7 @@ class repository_upload extends repository {
         }
 
         if ($file = $fs->get_file($context->id, $record->component, $record->filearea, $record->itemid, $record->filepath, $record->filename)) {
-            throw new moodle_exception('fileexist');
+            throw new moodle_exception('fileexists');
         }
 
         $record->contextid = $context->id;

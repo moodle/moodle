@@ -197,8 +197,11 @@ class repository_local extends repository {
         $filepath = clean_param($params['filepath'], PARAM_PATH);;
         $filearea = clean_param($params['filearea'], PARAM_ALPHAEXT);
         $component = clean_param($params['component'], PARAM_ALPHAEXT);
-
         $context = get_context_instance_by_id($contextid);
+
+        if ($existingfile = $fs->get_file($user_context->id, 'user', 'draft', $draftitemid, $new_filepath, $new_filename)) {
+            throw new moodle_exception('fileexists');
+        }
 
         $file_info = $browser->get_file_info($context, $component, $filearea, $fileitemid, $filepath, $filename);
         $file_info->copy_to_storage($user_context->id, 'user', 'draft', $draftitemid, $new_filepath, $new_filename);
