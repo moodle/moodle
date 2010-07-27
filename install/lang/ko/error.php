@@ -29,7 +29,7 @@
  */
 
 $string['cannotcreatelangdir'] = '언어팩 경로를 생성할 수 없음';
-$string['cannotcreatetempdir'] = 'temp 디렉토리를 만들 수 없습니다.';
+$string['cannotcreatetempdir'] = 'temp 디렉토리를 만들 수 없음';
 $string['cannotdownloadcomponents'] = '구성요소를 내려받을 수 없음';
 $string['cannotdownloadzipfile'] = 'ZIP파일을 내려받을 수 없음';
 $string['cannotfindcomponent'] = '구성요소를 찾을 수 없음';

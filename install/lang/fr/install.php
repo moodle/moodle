@@ -28,7 +28,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['admindirname'] = 'Dossier d\'administration';
+$string['admindirname'] = 'Dossier administration';
 $string['availablelangs'] = 'Liste des langues disponibles';
 $string['chooselanguagehead'] = 'Choisissez une langue';
 $string['chooselanguagesub'] = 'Veuillez choisir la langue d\'installation. Cette langue sera utilisée comme langue par défaut du site, que vous pourrez modifier ultérieurement.';

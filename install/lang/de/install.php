@@ -28,10 +28,10 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['admindirname'] = 'Name des Admin-Verzeichnisses';
+$string['admindirname'] = 'Admin-Verzeichnis';
 $string['availablelangs'] = 'Verfügbare Sprachpakete';
 $string['chooselanguagehead'] = 'Sprache wählen';
-$string['chooselanguagesub'] = 'Wählen Sie eine Sprache, die Sie während der Installation verwenden wollen. Nach der Installation können Sie die Sprache für die Oberfläche und die Nutzer/innen festlegen.';
+$string['chooselanguagesub'] = 'Wählen Sie eine Sprache, die Sie während der Installation verwenden wollen. Die ausgewählte Sprache wird nach der Installation als Standardsprache der Instanz benutzt, aber können Sie die Sprache jederzeit ändern.';
 $string['clialreadyinstalled'] = 'Die Datei config.php existiert bereits. Bitte benutzen Sie admin/cli/upgrade.php falls Sie Ihre Website aktualisieren möchten.';
 $string['cliinstallheader'] = 'Installation von Moodle {$a} über die Kommandozeile';
 $string['databasehost'] = 'Datenbank-Server';
@@ -61,15 +61,17 @@ $string['pathsrodataroot'] = 'Das Verzeichnis dataroot ist schreibgeschützt.';
 $string['pathsroparentdataroot'] = 'Das Verzeichnis ({$a->parent}) ist schreibgeschützt. Deswegen kann das Datenverzeichnis ({$a->dataroot})  vom Installer nicht angelegt werden.';
 $string['pathssubadmindir'] = 'Einige Webserver benutzen /admin als speziellen Link, um auf Einstellungsseiten oder Ähnliches zu verweisen. Unglücklicherweise kollidiert dies mit dem standardmäßigen Verzeichnis für die Moodle-Administration. Sie können dieses Problem beheben, indem Sie das Verzeichnis admin in Ihrer Moodle-Installation umbenennen und den neuen Namen hier eingeben (z.B. <em>moodleadmin</em>). Mit dieser Änderung werden alle Admin-Links korrigiert.';
 $string['pathssubdataroot'] = 'Sie benötigen einen Platz, wo Moodle hochgeladene Dateien abspeichern kann. Dieses Verzeichnis muss Lese- und Schreibrechte für das Nutzerkonto besitzen, mit dem Ihr Webservers läuft (üblicherweise \'nobody\', \'apache\' oder \'www\'). Außerdem sollte das Verzeichnis nicht direkt aus dem Internet erreichbar sein. Das Intallationsskript wird versuchen, ein solches Verzeichnis zu erstellen, falls es nicht existiert.</p>';
-$string['pathssubdirroot'] = 'Vollständiger Pfad der Moodle-Installation. Bitte ändern Sie diese Einstellung nur bei der Bunutzung symbolischer Links.';
-$string['pathssubwwwroot'] = 'Vollständige Internetadresse für den Zugriff auf Moodle. Es ist nicht möglich, über mehrere unterschiedliche Adressen auf Moodle zuzugreifen. Sollten Sie für Ihre Website mehrere öffentliche Adressen verwenden, so müssen Sie eine Adresse auswählen und für die übrigen Adressen dauerhafte Weiterleitungen einrichten. Falls Ihre Website gleichzeitig aus einem Intranet und aus dem Internet erreichbar ist, so tragen Sie hier die öffentliche Adresse ein. Sorgen Sie in diesem Fall dafür, dass über einen DNS-Eintrag für alle Intranet-Nutzer ebenfalls die öffentliche Adresse erreichbar ist.';
+$string['pathssubdirroot'] = 'Vollständiger Pfad der Moodle-Installation';
+$string['pathssubwwwroot'] = 'Vollständige Webadresse für den Zugriff auf Moodle. Es ist nicht möglich, auf Moodle über unterschiedliche Adressen zuzugreifen. Sollten Sie für Ihre Website mehrere öffentliche Adressen verwenden, so müssen Sie eine Adresse auswählen und für die übrigen Adressen dauerhafte Weiterleitungen einrichten. 
+<p>Falls Ihre Website gleichzeitig im Intranet und im Internet erreichbar ist, so tragen Sie hier die öffentliche Adresse ein. Konfigurieren Sie den DNS-Eintrag des Servers so, dass für alle Intranet-Nutzer ebenfalls die öffentliche Adresse erreichbar ist.
+<p>Führen Sie Ihre Moodle-Installation unbedingt mit der richtigen Adresse durch, weil es andernfalls zu Problemen kommen könnte.';
 $string['pathsunsecuredataroot'] = 'Der Speicherort des Verzeichnisses \'dataroot\' ist unsicher';
-$string['pathswrongadmindir'] = 'Das Verzeichnis \'admin\' existiert nicht';
+$string['pathswrongadmindir'] = 'Das Admin-Verzeichnis existiert nicht';
 $string['phpextension'] = 'PHP-Extension {$a}';
 $string['phpversion'] = 'PHP-Version';
 $string['phpversionhelp'] = '<p>Moodle erwartet als PHP-Version mindestens 4.3.0/4.4.0 oder 5.1.0 (5.0.x weist eine Reihe bekannter Fehler auf).</p>
 <p>Sie nutzen momentan die Version {$a}.</p>
-<p>Sie müssen Ihre PHP-Verson aktualisieren oder auf einen Rechner wechseln, der eine neuere Version von PHP nutzt.<br />
+<p>Sie müssen Ihre PHP-Version aktualisieren oder auf einen Rechner wechseln, der eine neuere Version von PHP nutzt.<br />
 (Im Falle von 5.0.x könnten Sie auch zu einer Version 4.3.x/4.4.x downgraden)</p>';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
 $string['welcomep20'] = 'Sie haben das Paket <strong>{$a->packname} {$a->packversion}</strong> erfolgreich auf Ihrem Computer installiert.';
@@ -78,5 +80,5 @@ $string['welcomep40'] = 'Das Paket enthält: <strong>Moodle {$a->moodlerelease} 
 $string['welcomep50'] = 'Die Nutzung dieser Anwendungen ist lizenzrechtlich geprüft. Alle Anwendungen von <strong>{$a->installername}</strong> sind
 <a href="http://www.opensource.org/docs/definition_plain.html"> Open Source </a> und unterliegen der <a href="http://www.gnu.org/copyleft/gpl.html"> GPL</a> Lizenz.';
 $string['welcomep60'] = 'Die folgenden Seiten führen Sie in einfachen Schritten durch die Konfiguration und Installation von <strong>Moodle</strong> auf Ihrem Computer. Sie können die vorgeschlagenen Einstellungen übernehmen oder an Ihre Bedürfnisse anpassen.';
-$string['welcomep70'] = 'Klicken Sie auf den "Weiter"-Button, um mit dem Setup von <string>Moodle</string> fortzufahren.';
-$string['wwwroot'] = 'Web-Adresse';
+$string['welcomep70'] = 'Klicken Sie auf die Taste \'Weiter\', um mit der Installation von Moodle fortzufahren.';
+$string['wwwroot'] = 'Webadresse';

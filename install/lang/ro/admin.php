@@ -34,7 +34,9 @@ $string['cliincorrectvalueerror'] = 'Eroare, valoare incorectă "{$a->value}" pe
 $string['cliincorrectvalueretry'] = 'Valoare incorectă, încercaţi din nou';
 $string['clitypevalue'] = 'introduceţi valoarea';
 $string['clitypevaluedefault'] = 'introduceţi valoarea, apăsaţi Enter pentru a folosi valoarea implicită ({$a})';
-$string['cliunknowoption'] = 'Opţiuni necunoscute: {$a} Vă rugăm folosiţi --opţiunea Ajutor.';
+$string['cliunknowoption'] = 'Opţiuni necunoscute:
+ {$a}
+Vă rugăm folosiţi --opţiunea Ajutor.';
 $string['cliyesnoprompt'] = 'introduceţi d (pentru \'da\') sau \'n\' (pentru \'nu\')';
 $string['environmentrequireinstall'] = 'trebuie instalat şi activat';
 $string['environmentrequireversion'] = 'versiuna necesară este {$a->needed} în timp ce dumneavoastră rulaţi versiunea {$a->current}';
