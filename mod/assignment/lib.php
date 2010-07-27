@@ -1750,7 +1750,9 @@ class assignment_base {
 
         $found = false;
 
-        if ($files = $fs->get_area_files($this->context->id, 'mod_assignment', 'submission', $userid, "timemodified", false)) {
+        $submission = $this->get_submission($userid);
+
+        if ($files = $fs->get_area_files($this->context->id, 'mod_assignment', 'submission', $submission->id, "timemodified", false)) {
             require_once($CFG->libdir.'/portfoliolib.php');
             require_once($CFG->dirroot . '/mod/assignment/locallib.php');
             $button = new portfolio_add_button();
