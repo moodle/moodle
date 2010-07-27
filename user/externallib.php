@@ -88,7 +88,7 @@ class moodle_user_external extends external_api {
         require_once($CFG->dirroot."/user/profile/lib.php"); //required for customfields related function
                                                              //TODO: move the functions somewhere else as
                                                              //they are "user" related
-                                                          
+
         // Ensure the current user is allowed to run this function
         $context = get_context_instance(CONTEXT_SYSTEM);
         self::validate_context($context);
@@ -97,7 +97,7 @@ class moodle_user_external extends external_api {
         // Do basic automatic PARAM checks on incoming data, using params description
         // If any problems are found then exceptions are thrown with helpful error messages
         $params = self::validate_parameters(self::create_users_parameters(), array('users'=>$users));
-  
+
         $availableauths  = get_plugin_list('auth');
         unset($availableauths['mnet']);       // these would need mnethostid too
         unset($availableauths['webservice']); // we do not want new webservice users for now
@@ -337,12 +337,11 @@ class moodle_user_external extends external_api {
      */
     public static function get_users_by_id_parameters() {
         return new external_function_parameters(
-            array(
-                'userids' => new external_multiple_structure(new external_value(PARAM_INT, 'user ID')),
-                 )
+                array(
+                    'userids' => new external_multiple_structure(new external_value(PARAM_INT, 'user ID')),
+                )
         );
     }
-
 
     /**
      * Get user information
@@ -352,27 +351,48 @@ class moodle_user_external extends external_api {
      */
     public static function get_users_by_id($userids) {
         global $CFG;
-        require_once($CFG->dirroot."/user/lib.php");
-        require_once($CFG->dirroot."/user/profile/lib.php"); //required for customfields related function
-                                                             //TODO: move the functions somewhere else as
-                                                             //they are "user" related
+        require_once($CFG->dirroot . "/user/lib.php");
+        //required for customfields related function
+        //TODO: move the functions somewhere else as
+        //they are "user" related
+        require_once($CFG->dirroot . "/user/profile/lib.php");
 
         $context = get_context_instance(CONTEXT_SYSTEM);
         require_capability('moodle/user:viewdetails', $context);
         self::validate_context($context);
 
-        $params = self::validate_parameters(self::get_users_by_id_parameters(), array('userids'=>$userids));
+        $params = self::validate_parameters(self::get_users_by_id_parameters(),
+                array('userids'=>$userids));
 
-        //TODO: check if there is any performance issue: we do one DB request to retrieve  all user,
-        // then for each user the profile_load_data does at least two DB requests
+        //TODO: check if there is any performance issue: we do one DB request to retrieve
+        //  all user, then for each user the profile_load_data does at least two DB requests
 
         $users = user_get_users_by_id($params['userids']);
-        $result =array();
+        $result = array();
         foreach ($users as $user) {
+
             if (empty($user->deleted)) {
 
-                $userarray = (array) $user; //we want to return an array not an object
-                /// now we transfert all profile_field_xxx into the customfields external_multiple_structure required by description
+                $userarray = array();
+               //we want to return an array not an object
+                /// now we transfert all profile_field_xxx into the customfields
+                // external_multiple_structure required by description
+                $userarray['id'] = $user->id;
+                $userarray['username'] = $user->username;
+                $userarray['firstname'] = $user->firstname;
+                $userarray['lastname'] = $user->lastname;
+                $userarray['email'] = $user->email;
+                $userarray['auth'] = $user->auth;
+                $userarray['confirmed'] = $user->confirmed;
+                $userarray['idnumber'] = $user->idnumber;
+                $userarray['emailstop'] = $user->emailstop;
+                $userarray['lang'] = $user->lang;
+                $userarray['theme'] = $user->theme;
+                $userarray['timezone'] = $user->timezone;
+                $userarray['mailformat'] = $user->mailformat;
+                $userarray['description'] = $user->description;
+                $userarray['city'] = $user->city;
+                $userarray['country'] = $user->country;
                 $userarray['customfields'] = array();
                 $customfields = profile_user_record($user->id);
                 $customfields = (array) $customfields;
@@ -382,25 +402,24 @@ class moodle_user_external extends external_api {
 
                 $result[] = $userarray;
             }
-
         }
 
         return $result;
     }
 
-   /**
+    /**
      * Returns description of method result value
      * @return external_description
      */
     public static function get_users_by_id_returns() {
         return new external_multiple_structure(
-            new external_single_structure(
-                array(
+                new external_single_structure(
+                        array(
                     'id'    => new external_value(PARAM_NUMBER, 'ID of the user'),
                     'username'    => new external_value(PARAM_RAW, 'Username policy is defined in Moodle security config'),
                     'firstname'   => new external_value(PARAM_NOTAGS, 'The first name(s) of the user'),
                     'lastname'    => new external_value(PARAM_NOTAGS, 'The family name of the user'),
-                    'email'       => new external_value(PARAM_EMAIL, 'A valid and unique email address'),
+                    'email'       => new external_value(PARAM_TEXT, 'An email address - allow email as root@localhost'),
                     'auth'        => new external_value(PARAM_SAFEDIR, 'Auth plugins include manual, ldap, imap, etc'),
                     'confirmed'   => new external_value(PARAM_NUMBER, 'Active user: 1 if confirmed, 0 otherwise'),
                     'idnumber'    => new external_value(PARAM_RAW, 'An arbitrary ID code number perhaps from the institution'),
@@ -413,14 +432,14 @@ class moodle_user_external extends external_api {
                     'city'        => new external_value(PARAM_NOTAGS, 'Home city of the user'),
                     'country'     => new external_value(PARAM_ALPHA, 'Home country code of the user, such as AU or CZ'),
                     'customfields' => new external_multiple_structure(
-                        new external_single_structure(
-                            array(
-                                'type'  => new external_value(PARAM_ALPHANUMEXT, 'The name of the custom field'),
-                                'value' => new external_value(PARAM_RAW, 'The value of the custom field')
-                            )
-                        ), 'User custom fields')
+                                    new external_single_structure(
+                                            array(
+                                                'type'  => new external_value(PARAM_ALPHANUMEXT, 'The name of the custom field'),
+                                                'value' => new external_value(PARAM_RAW, 'The value of the custom field')
+                                            )
+                                    ), 'User custom fields', VALUE_OPTIONAL)
+                        )
                 )
-            )
         );
     }
 }
