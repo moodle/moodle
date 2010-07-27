@@ -22,6 +22,10 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
+require_once($CFG->dirroot . '/mod/choice/backup/moodle2/restore_choice_stepslib.php'); // Because it exists (must)
+
 /**
  * choice restore task that provides all the settings and steps to perform one
  * complete restore of the activity
@@ -39,17 +43,33 @@ class restore_choice_activity_task extends restore_activity_task {
      * Define (add) particular steps this activity can have
      */
     protected function define_my_steps() {
-        // TODO: Add choice structure step here
+        // Choice only has one structure step
+        $this->add_step(new restore_choice_activity_structure_step('choice_structure', 'choice.xml'));
     }
 
     /**
-     * Code the transformations to perform in the actvity in
-     * order to get encoded transformed back to working links
+     * Define the contents in the activity that must be
+     * processed by the link decoder
      */
-    static public function decode_content_links($content) {
+    static public function define_decode_contents() {
+        $contents = array();
 
-        // TODO: Decode CHOICEINDEX & CHOICEVIEWBYID
+        $contents[] = new restore_decode_content('choice', array('intro'), 'choice');
 
-        return $content;
+        return $contents;
+    }
+
+    /**
+     * Define the decoding rules for links belonging
+     * to the activity to be executed by the link decoder
+     */
+    static public function define_decode_rules() {
+        $rules = array();
+
+        $rules[] = new restore_decode_rule('CHOICEVIEWBYID', '/mod/choice/view.php?id=$1', 'course_module');
+        $rules[] = new restore_decode_rule('CHOICEINDEX', '/mod/choice/index.php?id=$1', 'course');
+
+        return $rules;
+
     }
 }
