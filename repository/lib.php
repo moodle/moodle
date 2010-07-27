@@ -1764,6 +1764,7 @@ function initialise_filepicker($args) {
 
     // provided by form element
     $return->accepted_types = $ft->get_extensions($args->accepted_types);
+    $return->return_types = $args->return_types;
     foreach ($repositories as $repository) {
         $meta = $repository->get_meta();
         $return->repositories[$repository->id] = $meta;

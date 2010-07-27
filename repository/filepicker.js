@@ -462,7 +462,7 @@ M.core_filepicker.init = function(Y, options) {
                 // support internal files only
                 le_style = ' style="display:none;"';
             }
-            if ((this.options.externallink && this.options.env == 'editor')) {
+            if ((this.options.externallink && this.options.env == 'editor' && this.options.return_types != 1)) {
                 html += '<tr'+le_style+'><td></td><td class="mdl-left"><input type="checkbox" id="linkexternal-'+client_id+'" value="" '+le_checked+' />'+M.str.repository.linkexternal+'</td></tr>';
             }
 
@@ -523,11 +523,19 @@ M.core_filepicker.init = function(Y, options) {
                 if (this.options.env == 'editor') {
                     // in editor, images are stored in '/' only
                     params.savepath = '/';
-                    var linkexternal = Y.one('#linkexternal-'+client_id).get('checked');
-                    if (linkexternal) {
+                    // when image or media button is clicked
+                    if ( this.options.return_types != 1 ) {
+                        var linkexternal = Y.one('#linkexternal-'+client_id).get('checked');
+                        if (linkexternal) {
+                            params['linkexternal'] = 'yes';
+                        }
+                    } else {
+                        // when link button in editor clicked
                         params['linkexternal'] = 'yes';
                     }
-                } if (this.options.env == 'url') {
+                }
+
+                if (this.options.env == 'url') {
                     params['linkexternal'] = 'yes';
                 }
 

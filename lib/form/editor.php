@@ -167,26 +167,33 @@ class MoodleQuickForm_editor extends HTML_QuickForm_element {
             $args->return_types = (FILE_INTERNAL | FILE_EXTERNAL);
             $args->context = $ctx;
             $args->env = 'filepicker';
-
             $image_options = initialise_filepicker($args);
+            $image_options->context = $ctx;
+            $image_options->client_id = uniqid();
+            $image_options->maxbytes = $this->_options['maxbytes'];
+            $image_options->env = 'editor';
+            $image_options->itemid = $draftitemid;
 
             $args->accepted_types = array('video', 'audio');
             $media_options = initialise_filepicker($args);
-
-            $image_options->context = $ctx;
             $media_options->context = $ctx;
-            $image_options->client_id = uniqid();
             $media_options->client_id = uniqid();
-            $image_options->maxbytes = $this->_options['maxbytes'];
             $media_options->maxbytes  = $this->_options['maxbytes'];
-            $image_options->maxfiles = 1;
-            $media_options->maxfiles = 1;
-            $image_options->env = 'editor';
             $media_options->env = 'editor';
-            $image_options->itemid = $draftitemid;
             $media_options->itemid = $draftitemid;
+
+            $args->return_types = FILE_EXTERNAL;
+            $args->accepted_types = '*';
+            $link_options = initialise_filepicker($args);
+            $link_options->context = $ctx;
+            $link_options->client_id = uniqid();
+            $link_options->maxbytes  = $this->_options['maxbytes'];
+            $link_options->env = 'editor';
+            $link_options->itemid = $draftitemid;
+
             $fpoptions['image'] = $image_options;
             $fpoptions['media'] = $media_options;
+            $fpoptions['link'] = $link_options;
         }
 
     /// print text area - TODO: add on-the-fly switching, size configuration, etc.
