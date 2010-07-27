@@ -4878,6 +4878,21 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         upgrade_main_savepoint(true, 2010072300);
     }
 
+    if ($oldversion < 2010072700) {
+
+        // Define index backupid_itemname_newitemid_ix (not unique) to be added to backup_ids_template
+        $table = new xmldb_table('backup_ids_template');
+        $index = new xmldb_index('backupid_itemname_newitemid_ix', XMLDB_INDEX_NOTUNIQUE, array('backupid', 'itemname', 'newitemid'));
+
+        // Conditionally launch add index backupid_itemname_newitemid_ix
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Main savepoint reached
+        upgrade_main_savepoint(true, 2010072700);
+    }
+
 
     return true;
 }

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/db" VERSION="20100721" COMMENT="XMLDB file for core Moodle tables"
+<XMLDB PATH="lib/db" VERSION="20100727" COMMENT="XMLDB file for core Moodle tables"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
 >
@@ -2655,7 +2655,8 @@
         <KEY NAME="backupid_itemname_itemid_uk" TYPE="unique" FIELDS="backupid, itemname, itemid" PREVIOUS="primary"/>
       </KEYS>
       <INDEXES>
-        <INDEX NAME="backupid_parentitemid_ix" UNIQUE="false" FIELDS="backupid, itemname, parentitemid"/>
+        <INDEX NAME="backupid_parentitemid_ix" UNIQUE="false" FIELDS="backupid, itemname, parentitemid" NEXT="backupid_itemname_newitemid_ix"/>
+        <INDEX NAME="backupid_itemname_newitemid_ix" UNIQUE="false" FIELDS="backupid, itemname, newitemid" PREVIOUS="backupid_parentitemid_ix"/>
       </INDEXES>
     </TABLE>
     <TABLE NAME="backup_files_template" COMMENT="To store files along the backup process. Note this table isn't really used but its temporary counterpart." PREVIOUS="backup_ids_template" NEXT="backup_logs">
