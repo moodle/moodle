@@ -44,7 +44,7 @@ class moodle_enrol_external extends external_api {
                 'courseid'       => new external_value(PARAM_INT, 'Course id'),
                 'withcapability' => new external_value(PARAM_CAPABILITY, 'User should have this capability'),
                 'groupid'        => new external_value(PARAM_INT, 'Group id, null means all groups'),
-                'activeonly'     => new external_value(PARAM_INT, 'True means only active, false means all participants'),
+                'onlyactive'     => new external_value(PARAM_INT, 'True means only active, false means all participants'),
             )
         );
     }
@@ -88,7 +88,7 @@ class moodle_enrol_external extends external_api {
                 require_capability('moodle/site:accessallgroups', $coursecontext);
             }
         }
-        if ($activeonly) {
+        if ($onlyactive) {
             require_capability('moodle/course:enrolreview', $coursecontext);
         }
 
