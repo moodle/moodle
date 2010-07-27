@@ -22,6 +22,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 require_once($CFG->dirroot . '/backup/moodle2/backup_root_task.class.php');
 require_once($CFG->dirroot . '/backup/moodle2/backup_activity_task.class.php');
 require_once($CFG->dirroot . '/backup/moodle2/backup_section_task.class.php');
@@ -38,8 +40,11 @@ require_once($CFG->dirroot . '/backup/moodle2/backup_custom_fields.php');
 // Load all the activity tasks for moodle2 format
 $mods = get_plugin_list('mod');
 foreach ($mods as $mod => $moddir) {
+    $taskpath = $moddir . '/backup/moodle2/backup_' . $mod . '_activity_task.class.php';
     if (plugin_supports('mod', $mod, FEATURE_BACKUP_MOODLE2)) {
-        require_once($moddir . '/backup/moodle2/backup_' . $mod . '_activity_task.class.php');
+        if (file_exists($taskpath)) {
+            require_once($taskpath);
+        }
     }
 }
 

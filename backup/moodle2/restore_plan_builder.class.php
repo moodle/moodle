@@ -22,6 +22,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 require_once($CFG->dirroot . '/backup/moodle2/restore_root_task.class.php');
 require_once($CFG->dirroot . '/backup/moodle2/restore_course_task.class.php');
 require_once($CFG->dirroot . '/backup/moodle2/restore_section_task.class.php');
@@ -117,7 +119,7 @@ abstract class restore_plan_builder {
             $blocks = backup_general_helper::get_blocks_from_path($task->get_taskbasepath());
             foreach ($blocks as $basepath => $name) {
                 if ($task = restore_factory::get_restore_block_task($name, $basepath)) {
-                    //$plan->add_task($task);
+                    $plan->add_task($task);
                 } else {
                     // TODO: Debug information about block not supported
                 }
