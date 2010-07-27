@@ -502,11 +502,11 @@ function enrol_get_my_courses($fields = NULL, $sort = 'visible DESC,sortorder AS
         context_instance_preload($course);
         if (!$course->visible) {
             if (!$context = get_context_instance(CONTEXT_COURSE, $id)) {
-                unset($course[$id]);
+                unset($courses[$id]);
                 continue;
             }
             if (!has_capability('moodle/course:viewhiddencourses', $context)) {
-                unset($course[$id]);
+                unset($courses[$id]);
                 continue;
             }
         }
