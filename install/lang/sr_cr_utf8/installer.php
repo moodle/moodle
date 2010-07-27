@@ -226,12 +226,14 @@ $string['password'] = 'Лозинка';
 $string['pgsqlextensionisnotpresentinphp'] = 'PHP није био прописно конфигурисан са  PGSQL екстензијом тако да може комуницирати са PostgreSQLом. Молимо Вас да проверите своју php.ini датотеку или опет компајлирате PHP.';
 $string['php50restricted'] = 'PHP 5.0.x има више познатих проблема, молимо унапредите PHP на верзије 5.1.x или инсталирајте верзију 4.3.x односно 4.4.x';
 $string['phpversion'] = 'PHP верзија';
-$string['phpversionerror'] = 'PHP верзија мора бити бар 4.3.0 или 5.1.0 (5.0.x функционише уз бројне уочене проблеме)'; // ORPHANED
+$string['phpversionerror'] = 'PHP верзија мора бити бар 4.3.0 или 5.1.0 (5.0.x функционише уз бројне уочене проблеме)';
 $string['phpversionhelp'] = '<p>Moodle захтева најмање PHP верзију 4.3.0 или 5.1.0 (5.0.x функционише уз бројне уочене проблеме).</p>
 <p>Тренутно имате верзију $a</p>
 <p>Морате надоградити PHP или преместити Moodle инсталацију на web сервер са новијом верзијом PHP-a!</br>
 (У случају верзије 5.0.x било би добро да је снизите на 4.4.x верзију)</p>';
 $string['postgres7'] = 'PostgreSQL (postgres7)';
+$string['postgresqlwarning'] = '<strong>Напомена:</strong>Ако наиђете на неке проблеме са конекцијом, можете покушати да поставите поље Host Server као host=\'postgresql_host\' port=\'5432\' dbname=\'postgresql_database_name\' user=\'postgresql_user\' password=\'postgresql_user_password\'
+и да оставите празна поља База података, Корисник и Лозинка. Више информација на <a href=\"http://docs.moodle.org/en/Installing_Postgres_for_PHP\">Moodle Docs</a>';
 $string['previous'] = 'Претходни';
 $string['qtyperqpwillberemoved'] = 'Током надоградње, RQP типови питања биће уклоњени. Нећете користити овај тип питања, тако да не очекујте проблеме у вези с тим.';
 $string['qtyperqpwillberemovedanyway'] = 'Током надоградње биће уклоњен RQP тип питања. Како имате нека RQP питања у својој бази, препоручује се да поново инсталирате додатак са http://moodle.org/mod/data/view.php?d=13&amp;rid=797 пре наставка надоградње да би она могла и даље несметано да се користе.';
