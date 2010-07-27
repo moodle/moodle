@@ -139,11 +139,6 @@ class repository_filesystem extends repository {
         return array('fs_path');
     }
 
-    public static function get_type_option_names() {
-        return array();
-    }
-    public function type_config_form($mform) {
-    }
     public function set_option($options = array()) {
         $options['fs_path'] = clean_param($options['fs_path'], PARAM_PATH);
         $ret = parent::set_option($options);

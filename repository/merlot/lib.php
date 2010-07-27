@@ -124,7 +124,7 @@ class repository_merlot extends repository {
      * @return array
      */
     public static function get_type_option_names() {
-        return array('licensekey');
+        return array('licensekey', 'pluginname');
     }
 
     /**
@@ -133,6 +133,7 @@ class repository_merlot extends repository {
      * @param object $mform
      */
     public function type_config_form($mform) {
+        parent::type_config_form($mform);
         $licensekey = get_config('merlot', 'licensekey');
         if (empty($licensekey)) {
             $licensekey = '';

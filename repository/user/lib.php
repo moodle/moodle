@@ -120,15 +120,6 @@ class repository_user extends repository {
     }
 
     /**
-     * Set repository name
-     *
-     * @return string repository name
-     */
-    public function get_name(){
-        return get_string('areauserpersonal', 'repository');;
-    }
-
-    /**
      * User file don't support to link to external links
      *
      * @return int

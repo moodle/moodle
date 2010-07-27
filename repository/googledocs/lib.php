@@ -108,10 +108,6 @@ class repository_googledocs extends repository {
         return parent::logout();
     }
 
-    public function get_name() {
-        return get_string('pluginname', 'repository_googledocs');
-    }
-
     public function get_file($url, $file) {
         global $CFG;
         $path = $this->prepare_file($file);

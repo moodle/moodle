@@ -244,7 +244,7 @@ class repository_boxnet extends repository {
      * @return array
      */
     public static function get_type_option_names() {
-        return array('api_key');
+        return array('api_key', 'pluginname');
     }
 
     /**
@@ -252,6 +252,7 @@ class repository_boxnet extends repository {
      * @param object $mform
      */
     public function type_config_form($mform) {
+        parent::type_config_form($mform);
         $public_account = get_config('boxnet', 'public_account');
         $api_key = get_config('boxnet', 'api_key');
         if (empty($api_key)) {

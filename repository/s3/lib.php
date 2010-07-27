@@ -133,10 +133,11 @@ class repository_s3 extends repository {
     }
 
     public static function get_type_option_names() {
-        return array('access_key', 'secret_key');
+        return array('access_key', 'secret_key', 'pluginname');
     }
 
     public function type_config_form($mform) {
+        parent::type_config_form($mform);
         $strrequired = get_string('required');
         $mform->addElement('text', 'access_key', get_string('access_key', 'repository_s3'));
         $mform->addElement('text', 'secret_key', get_string('secret_key', 'repository_s3'));

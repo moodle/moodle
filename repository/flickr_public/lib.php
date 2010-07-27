@@ -472,7 +472,7 @@ class repository_flickr_public extends repository {
      * @return array
      */
     public static function get_type_option_names() {
-        return array('api_key');
+        return array('api_key', 'pluginname');
     }
 
     /**
@@ -481,7 +481,7 @@ class repository_flickr_public extends repository {
     public static function plugin_init() {
         //here we create a default instance for this type
 
-        $id = repository::static_function('flickr_public','create', 'flickr_public', 0, get_system_context(), array('name' => get_string('pluginname', 'repository_flickr_public'),'email_address' => null), 1);
+        $id = repository::static_function('flickr_public','create', 'flickr_public', 0, get_system_context(), array('name'=>'', 'email_address' => null), 0);
         if (empty($id)) {
             return false;
         } else {

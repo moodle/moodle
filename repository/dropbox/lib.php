@@ -247,6 +247,7 @@ class repository_dropbox extends repository {
      */
     public function type_config_form($mform) {
         global $CFG;
+        parent::type_config_form($mform);
         $key    = get_config('dropbox', 'dropbox_key');
         $secret = get_config('dropbox', 'dropbox_secret');
 
@@ -273,7 +274,7 @@ class repository_dropbox extends repository {
      * @return array
      */
     public static function get_type_option_names() {
-        return array('dropbox_key', 'dropbox_secret');
+        return array('dropbox_key', 'dropbox_secret', 'pluginname');
     }
 
     /**

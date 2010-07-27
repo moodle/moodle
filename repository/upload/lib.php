@@ -136,14 +136,6 @@ class repository_upload extends repository {
     }
 
     /**
-     * Define the readable name of this repository
-     * @return string
-     */
-    public function get_name(){
-        return get_string('pluginname', 'repository_upload');
-    }
-
-    /**
      * supported return types
      * @return int
      */

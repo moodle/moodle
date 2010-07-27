@@ -154,15 +154,6 @@ class repository_local extends repository {
     }
 
     /**
-     * Set repository name
-     *
-     * @return string repository name
-     */
-    public function get_name(){
-        return get_string('pluginname', 'repository_local');;
-    }
-
-    /**
      * Local file don't support to link to external links
      *
      * @return int

@@ -133,12 +133,12 @@ class repository_type {
 
         //set options attribut
         $this->_options = array();
-        $options = repository::static_function($typename,'get_type_option_names');
+        $options = repository::static_function($typename, 'get_type_option_names');
         //check that the type can be setup
         if (!empty($options)) {
             //set the type options
             foreach ($options as $config) {
-                if (array_key_exists($config,$typeoptions)) {
+                if (array_key_exists($config, $typeoptions)) {
                     $this->_options[$config] = $typeoptions[$config];
                 }
             }
@@ -234,13 +234,22 @@ class repository_type {
             //save the options in DB
             $this->update_options();
 
+            $instanceoptionnames = repository::static_function($this->_typename, 'get_instance_option_names');
+
             //if the plugin type has no multiple instance (e.g. has no instance option name) so it wont
             //be possible for the administrator to create a instance
             //in this case we need to create an instance
-            $instanceoptionnames = repository::static_function($this->_typename, 'get_instance_option_names');
             if (empty($instanceoptionnames)) {
                 $instanceoptions = array();
-                $instanceoptions['name'] = $this->_typename;
+                if (empty($this->_options['pluginname'])) {
+                    // when moodle trying to install some repo plugin automatically
+                    // this option will be empty, get it from language string when display
+                    $instanceoptions['name'] = '';
+                } else {
+                    // when admin trying to add a plugin manually, he will type a name
+                    // for it
+                    $instanceoptions['name'] = $this->_options['pluginname'];
+                }
                 repository::static_function($this->_typename, 'create', $this->_typename, 0, get_system_context(), $instanceoptions);
             }
             //run plugin_init function
@@ -273,12 +282,27 @@ class repository_type {
      * @return boolean
      */
     public function update_options($options = null) {
+        global $DB;
+        $classname = 'repository_' . $this->_typename;
+        $instanceoptions = repository::static_function($this->_typename, 'get_instance_option_names');
+        if (empty($instanceoptions)) {
+            // update repository instance name if this plugin type doesn't have muliti instances
+            $params = array();
+            $params['type'] = $this->_typename;
+            $instances = repository::get_instances($params);
+            $instance = array_pop($instances);
+            if ($instance) {
+                $DB->set_field('repository_instances', 'name', $options['pluginname'], array('id'=>$instance->id));
+            }
+            unset($options['pluginname']);
+        }
+
         if (!empty($options)) {
             $this->_options = $options;
         }
 
         foreach ($this->_options as $name => $value) {
-            set_config($name,$value,$this->_typename);
+            set_config($name, $value, $this->_typename);
         }
 
         return true;
@@ -454,6 +478,8 @@ abstract class repository {
     public $options;
     public $readonly;
     public $returntypes;
+    /** @var object repository instance database record */
+    public $instance;
     /**
      * 1. Initialize context and options
      * 2. Accept necessary parameters
@@ -463,12 +489,14 @@ abstract class repository {
      * @param array $options repository options
      */
     public function __construct($repositoryid, $context = SYSCONTEXTID, $options = array(), $readonly = 0) {
+        global $DB;
         $this->id = $repositoryid;
         if (is_object($context)) {
             $this->context = $context;
         } else {
             $this->context = get_context_instance_by_id($context);
         }
+        $this->instance = $DB->get_record('repository_instances', array('id'=>$this->id));
         $this->readonly = $readonly;
         $this->options = array();
 
@@ -676,7 +704,6 @@ abstract class repository {
             }
             require_once($CFG->dirroot . '/repository/'. $record->repositorytype.'/lib.php');
             $options['visible'] = $record->visible;
-            $options['name']    = $record->name;
             $options['type']    = $record->repositorytype;
             $options['typeid']  = $record->typeid;
             // tell instance what file types will be accepted by file picker
@@ -1139,18 +1166,10 @@ abstract class repository {
      */
     public function get_name() {
         global $DB;
-        // We always verify instance id from database,
-        // so we always know repository name before init
-        // a repository, so we don't enquery repository
-        // name from database again here.
-        if (isset($this->options['name'])) {
-            return $this->options['name'];
+        if ( $name = $this->instance->name ) {
+            return $name;
         } else {
-            if ( $repo = $DB->get_record('repository_instances', array('id'=>$this->id)) ) {
-                return $repo->name;
-            } else {
-                return '';
-            }
+            return get_string('pluginname', 'repository_' . $this->options['type']);
         }
     }
 
@@ -1478,11 +1497,19 @@ abstract class repository {
      * @param object $ Moodle form (passed by reference)
      */
     public function type_config_form($mform) {
+        $instnaceoptions = self::get_instance_option_names();
+        if (empty($instnaceoptions)) {
+            // this plugin has only one instance
+            // so we need to give it a name
+            // it can be empty, then moodle will look for instance name from language string
+            $mform->addElement('text', 'pluginname', get_string('pluginname', 'repository'), array('size' => '40'));
+            $mform->addElement('static', 'pluginnamehelp', '', get_string('pluginnamehelp', 'repository'));
+        }
     }
 
     /**
      * Edit/Create Instance Settings Moodle form
-     * @param object $ Moodle form (passed by reference)
+     * @param object $mform Moodle form (passed by reference)
      */
     public function instance_config_form($mform) {
     }
@@ -1493,7 +1520,7 @@ abstract class repository {
      * @return array
      */
     public static function get_type_option_names() {
-        return array();
+        return array('pluginname');
     }
 
     /**
@@ -1645,29 +1672,23 @@ final class repository_type_form extends moodleform {
             ? $this->_customdata['instance'] : null;
 
         $this->action = $this->_customdata['action'];
+        $this->pluginname = $this->_customdata['pluginname'];
         $mform =& $this->_form;
         $strrequired = get_string('required');
 
-        $mform->addElement('hidden', 'repos', ($this->instance) ? $this->instance->get_typename() : 0);
-        $mform->setType('repos', PARAM_INT);
-        $mform->addElement('hidden', 'repos', $this->plugin);
-        $mform->setType('repos', PARAM_FORMAT);
         $mform->addElement('hidden', 'action', $this->action);
         $mform->setType('action', PARAM_TEXT);
         $mform->addElement('hidden', 'repos', $this->plugin);
         $mform->setType('repos', PARAM_SAFEDIR);
 
         // let the plugin add its specific fields
-        if (!$this->instance) {
-            $result = repository::static_function($this->plugin, 'type_config_form', $mform);
-        } else {
-            $classname = 'repository_' . $this->instance->get_typename();
-            $result = call_user_func(array($classname, 'type_config_form'), $mform);
-        }
+        $classname = 'repository_' . $this->plugin;
+        require_once($CFG->dirroot . '/repository/' . $this->plugin . '/lib.php');
+        $result = call_user_func(array($classname, 'type_config_form'), $mform);
 
         //add "enable course/user instances" checkboxes if multiple instances are allowed
         $instanceoptionnames = repository::static_function($this->plugin, 'get_instance_option_names');
-        if (!empty($instanceoptionnames)){
+        if (!empty($instanceoptionnames)) {
             $mform->addElement('checkbox', 'enablecourseinstances', get_string('enablecourseinstances', 'repository'));
             $mform->addElement('checkbox', 'enableuserinstances', get_string('enableuserinstances', 'repository'));
         }
@@ -1688,6 +1709,10 @@ final class repository_type_form extends moodleform {
                 } else {
                     $data[$config] = '';
                 }
+            }
+            // XXX: set plugin name for plugins which doesn't have muliti instances
+            if (empty($instanceoptionnames)){
+                $data['pluginname'] = $this->pluginname;
             }
             $this->set_data($data);
         }

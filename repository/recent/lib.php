@@ -116,21 +116,12 @@ class repository_recent extends repository {
         return $ret;
     }
 
-
-    /**
-     * Set repository name
-     *
-     * @return string repository name
-     */
-    public function get_name(){
-        return get_string('pluginname', 'repository_recent');;
-    }
-
     public static function get_type_option_names() {
-        return array('recentfilesnumber');
+        return array('recentfilesnumber', 'pluginname');
     }
 
     public function type_config_form($mform) {
+        parent::type_config_form($mform);
         $number = get_config('repository_recent', 'recentfilesnumber');
         if (empty($number)) {
             $number = DEFAULT_RECENT_FILES_NUM;

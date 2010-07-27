@@ -78,9 +78,6 @@ class repository_wikimedia extends repository {
     public function logout() {
         return $this->print_login();
     }
-    public static function get_type_option_names() {
-        return null;
-    }
     public function supported_returntypes() {
         return (FILE_INTERNAL | FILE_EXTERNAL);
     }

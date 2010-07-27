@@ -43,11 +43,24 @@ $configstr  = get_string('manage', 'repository');
 $return = true;
 
 if (($action == 'edit') || ($action == 'new')) {
+    $pluginname = '';
     if ($action == 'edit') {
         $repositorytype = repository::get_type_by_typename($repository);
         $classname = 'repository_' . $repositorytype->get_typename();
-        $configs = call_user_func(array($classname,'get_type_option_names'));
+        $configs = call_user_func(array($classname, 'get_type_option_names'));
         $plugin = $repositorytype->get_typename();
+        // looking for instance to edit plugin name
+        $instanceoptions = $classname::get_instance_option_names();
+        if (empty($instanceoptions)) {
+            $params = array();
+            $params['type'] = $plugin;
+            $instances = repository::get_instances($params);
+            if ($instance = array_pop($instances)) {
+                // use the one form db record
+                $pluginname = $instance->instance->name;
+            }
+        }
+
     } else {
         $repositorytype = null;
         $plugin = $repository;
@@ -55,7 +68,7 @@ if (($action == 'edit') || ($action == 'new')) {
     }
     $PAGE->set_pagetype('admin-repository-' . $plugin);
     // display the edit form for this instance
-    $mform = new repository_type_form('', array('plugin' => $plugin, 'instance' => $repositorytype, 'action' => $formaction));
+    $mform = new repository_type_form('', array('pluginname'=>$pluginname, 'plugin' => $plugin, 'instance' => $repositorytype, 'action' => $formaction));
     $fromform = $mform->get_data();
 
     //detect if we create a new type without config (in this case if don't want to display a setting page during creation)
@@ -129,7 +142,7 @@ if (($action == 'edit') || ($action == 'new')) {
         $return = false;
 
         // Display instances list and creation form
-        if ($action == 'edit'){
+        if ($action == 'edit') {
            $instanceoptionnames = repository::static_function($repository, 'get_instance_option_names');
            if (!empty($instanceoptionnames)) {
                repository::display_instances_list(get_context_instance(CONTEXT_SYSTEM), $repository);
