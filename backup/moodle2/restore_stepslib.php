@@ -66,6 +66,30 @@ class restore_drop_and_clean_temp_stuff extends restore_execution_step {
     }
 }
 
+/**
+ * decode all the interlinks present in restored content
+ * relying 100% in the restore_decode_processor that handles
+ * both the contents to modify and the rules to be applied
+ */
+class restore_decode_interlinks extends restore_execution_step {
+
+    protected function define_execution() {
+        // Just that
+        $this->task->get_decoder()->execute();
+    }
+}
+
+/**
+ * rebuid the course cache
+ */
+class restore_rebuild_course_cache extends restore_execution_step {
+
+    protected function define_execution() {
+        // Just that
+        rebuild_course_cache($this->get_courseid());
+    }
+}
+
 
 /**
  * Review all the (pending) block positions in backup_ids, matching by
@@ -395,7 +419,7 @@ class restore_scales_structure_step extends restore_structure_step {
             // If global scale (course=0), check the user has perms to create it
             // falling to course scale if not
             $systemctx = get_context_instance(CONTEXT_SYSTEM);
-            if ($data->courseid == 0 && !has_capability('moodle/course:managescales', $systemctx , $data->userid)) {
+            if ($data->courseid == 0 && !has_capability('moodle/course:managescales', $systemctx , $this->task->get_userid())) {
                 $data->courseid = $this->get_courseid();
             }
             // scale doesn't exist, create
@@ -457,7 +481,7 @@ class restore_outcomes_structure_step extends restore_structure_step {
             // If global outcome (course=null), check the user has perms to create it
             // falling to course outcome if not
             $systemctx = get_context_instance(CONTEXT_SYSTEM);
-            if (is_null($data->courseid) && !has_capability('moodle/grade:manageoutcomes', $systemctx , $data->userid)) {
+            if (is_null($data->courseid) && !has_capability('moodle/grade:manageoutcomes', $systemctx , $this->task->get_userid())) {
                 $data->courseid = $this->get_courseid();
             }
             // outcome doesn't exist, create
@@ -609,6 +633,9 @@ class restore_course_structure_step extends restore_structure_step {
 
         // Course record ready, update it
         $DB->update_record('course', $data);
+
+        // Set course mapping
+        $this->set_mapping('course', $oldid, $data->id);
 
         // Course tags
         if (!empty($CFG->usetags) && isset($coursetags)) { // if enabled in server and present in backup
@@ -976,5 +1003,138 @@ class restore_block_instance_structure_step extends restore_structure_step {
                 restore_dbops::set_backup_ids_record($this->get_restoreid(), 'block_position', $position->id, 0, null, $position);
             }
         }
+    }
+}
+
+/**
+ * Structure step to restore common course_module information
+ *
+ * This step will process the module.xml file for one activity, in order to restore
+ * the corresponding information to the course_modules table, skipping various bits
+ * of information based on CFG settings (groupings, completion...) in order to fullfill
+ * all the reqs to be able to create the context to be used by all the rest of steps
+ * in the activity restore task
+ */
+class restore_module_structure_step extends restore_structure_step {
+
+    protected function define_structure() {
+        global $CFG;
+
+        $paths = array();
+
+        $paths[] = new restore_path_element('module', '/module');
+        if ($CFG->enableavailability) {
+            $paths[] = new restore_path_element('availability', '/module/availability_info/availability');
+        }
+
+        return $paths;
+    }
+
+    protected function process_module($data) {
+        global $CFG, $DB;
+
+        $data = (object)$data;
+        $oldid = $data->id;
+
+        $data->course = $this->task->get_courseid();
+        $data->module = $DB->get_field('modules', 'id', array('name' => $data->modulename));
+        $data->section = $this->get_mappingid('course_section', $data->sectionid); // map section
+        $data->groupingid= $this->get_mappingid('grouping', $data->groupingid);      // grouping
+        if (!$CFG->enablegroupmembersonly) {                                         // observe groupsmemberonly
+            $data->groupmembersonly = 0;
+        }
+        if (!grade_verify_idnumber($data->idnumber, $this->get_courseid())) {        // idnumber uniqueness
+            $data->idnumber = '';
+        }
+        if (empty($CFG->enablecompletion) || !$this->get_setting_value('userscompletion')) { // completion
+            $data->completion = 0;
+            $data->completiongradeitemnumber = null;
+            $data->completionview = 0;
+            $data->completionexpected = 0;
+        } else {
+            $data->completionexpected = $this->apply_date_offset($data->completionexpected);
+        }
+        if (empty($CFG->enableavailability)) {
+            $data->availablefrom = 0;
+            $data->availableuntil = 0;
+            $data->showavailability = 0;
+        } else {
+            $data->availablefrom = $this->apply_date_offset($data->availablefrom);
+            $data->availableuntil= $this->apply_date_offset($data->availableuntil);
+        }
+        $data->instance = 0; // Set to 0 for now, going to create it soon (next step)
+
+        // course_module record ready, insert it
+        $newitemid = $DB->insert_record('course_modules', $data);
+        // save mapping
+        $this->set_mapping('course_module', $oldid, $newitemid);
+        // set the new course_module id in the task
+        $this->task->set_moduleid($newitemid);
+        // we can now create the context safely
+        $ctxid = get_context_instance(CONTEXT_MODULE, $newitemid)->id;
+        // set the new context id in the task
+        $this->task->set_contextid($ctxid);
+        // update sequence field in course_section
+        if ($sequence = $DB->get_field('course_sections', 'sequence', array('id' => $data->section))) {
+            $sequence .= ',' . $newitemid;
+        } else {
+            $sequence = $newitemid;
+        }
+        $DB->set_field('course_sections', 'sequence', $sequence, array('id' => $data->section));
+    }
+
+
+    protected function process_availability($data) {
+        // TODO: Process module availavility records
+        $data = (object)$data;
+    }
+}
+
+/**
+ * Abstract structure step, parent of all the activity structure steps. Used to suuport
+ * the main <activity ...> tag and process it. Also provides subplugin support for
+ * activities.
+ */
+abstract class restore_activity_structure_step extends restore_structure_step {
+
+    protected function add_subplugin_structure() {
+        // TODO: Implement activities subplugin support (similar if possible to backup)
+    }
+
+    /**
+     * Adds support for the 'activity' path that is common to all the activities
+     * and will be processed globally here
+     */
+    protected function prepare_activity_structure($paths) {
+
+        $paths[] = new restore_path_element('activity', '/activity');
+
+        return $paths;
+    }
+
+    /**
+     * Process the activity path, informing the task about various ids, needed later
+     */
+    protected function process_activity($data) {
+        $data = (object)$data;
+        $this->task->set_old_contextid($data->contextid); // Save old contextid in task
+        $this->set_mapping('context', $data->contextid, $this->task->get_contextid()); // Set the mapping
+        $this->task->set_old_activityid($data->id); // Save old activityid in task
+    }
+
+    /**
+     * This must be invoked inmediately after creating the "module" activity record (forum, choice...)
+     * and will adjust the new activity id (the instance) in various places
+     */
+    protected function apply_activity_instance($newitemid) {
+        global $DB;
+
+        $this->task->set_activityid($newitemid); // Save activity id in task
+        // Apply the id to course_sections->instanceid
+        $DB->set_field('course_modules', 'instance', $newitemid, array('id' => $this->task->get_moduleid()));
+        // Do the mapping for modulename, preparing it for files by oldcontext
+        $modulename = $this->task->get_modulename();
+        $oldid = $this->task->get_old_activityid();
+        $this->set_mapping($modulename, $oldid, $newitemid, true);
     }
 }
