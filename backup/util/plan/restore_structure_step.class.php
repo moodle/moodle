@@ -277,6 +277,11 @@ abstract class restore_structure_step extends restore_step {
      */
     protected function apply_date_offset($value) {
 
+        // 0 doesn't offset
+        if ($value == 0) {
+            return $value;
+        }
+
         static $cache = array();
         // Lookup cache
         if (isset($cache[$this->get_restoreid()])) {
