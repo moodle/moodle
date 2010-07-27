@@ -48,8 +48,12 @@ class restore_rss_client_block_task extends restore_block_task {
         return array(); // No special handling of configdata
     }
 
-    static public function decode_content_links($content) {
-        return $content; // No special encoding of links
+    static public function define_decode_contents() {
+        return array();
+    }
+
+    static public function define_decode_rules() {
+        return array();
     }
 }
 
