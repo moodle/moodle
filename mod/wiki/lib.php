@@ -487,3 +487,11 @@ function wiki_extend_navigation(navigation_node $navref, $course, $module, $cm) 
         $node = $navref->add(get_string('map', 'wiki'), $link, navigation_node::TYPE_SETTING);
     }
 }
+/**
+ * Returns all other caps used in wiki module
+ *
+ * @return array
+ */
+function wiki_get_extra_capabilities() {
+    return array('moodle/comment:view', 'moodle/comment:post', 'moodle/comment:delete');
+}
