@@ -136,6 +136,27 @@ class core_webservice_renderer extends plugin_renderer_base {
     }
 
     /**
+     * Display a confirmation page to delete a token
+     * @param object $token
+     * @return string html
+     */
+    public function admin_delete_token_confirmation($token) {
+        $optionsyes = array('tokenid' => $token->id, 'action' => 'delete',
+            'confirm' => 1, 'sesskey' => sesskey());
+        $optionsno = array('section' => 'webservicetokens', 'sesskey' => sesskey());
+        $formcontinue = new single_button(
+                        new moodle_url('/admin/webservice/tokens.php', $optionsyes),
+                        get_string('delete'));
+        $formcancel = new single_button(
+                        new moodle_url('/admin/settings.php', $optionsno),
+                        get_string('cancel'), 'get');
+        return $this->output->confirm(get_string('deletetokenconfirm', 'webservice',
+                        (object) array('user' => $token->firstname . " "
+                    . $token->lastname, 'service' => $token->name)),
+                $formcontinue, $formcancel);
+    }
+
+    /**
      * Display list of function for a given service
      * If the service is build-in do not display remove/add operation (read-only)
      * @param array $functions

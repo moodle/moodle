@@ -22,82 +22,86 @@
  * @copyright 2009 Moodle Pty Ltd (http://moodle.com)
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-require_once $CFG->libdir.'/formslib.php';
+require_once $CFG->libdir . '/formslib.php';
 
 /**
  * Display the authorised user settings form
  * Including IP Restriction, Valid until and (TODO) capability
  */
 class external_service_authorised_user_settings_form extends moodleform {
-    function definition() {
-        global $CFG, $USER, $DB;
 
+    function definition() {
         $mform = $this->_form;
         $data = $this->_customdata;
 
-        $mform->addElement('header', 'serviceusersettings', get_string('serviceusersettings', 'webservice'));
+        $mform->addElement('header', 'serviceusersettings',
+                get_string('serviceusersettings', 'webservice'));
 
-        $mform->addElement('text', 'iprestriction', get_string('iprestriction', 'webservice'));
+        $mform->addElement('text', 'iprestriction',
+                get_string('iprestriction', 'webservice'));
         $mform->addHelpButton('iprestriction', 'iprestriction', 'webservice');
 
-        $mform->addElement('date_selector', 'validuntil', get_string('validuntil', 'webservice'), array('optional'=>true));
+        $mform->addElement('date_selector', 'validuntil',
+                get_string('validuntil', 'webservice'), array('optional' => true));
         $mform->addHelpButton('validuntil', 'validuntil', 'webservice');
 
         $this->add_action_buttons(true, get_string('updateusersettings', 'webservice'));
 
         $this->set_data($data);
     }
+
 }
 
-
 class external_service_form extends moodleform {
-    function definition() {
-        global $CFG, $USER;
 
+    function definition() {
         $mform = $this->_form;
         $service = $this->_customdata;
 
-        $mform->addElement('header', 'extservice', get_string('externalservice', 'webservice'));
+        $mform->addElement('header', 'extservice',
+                get_string('externalservice', 'webservice'));
 
         $mform->addElement('text', 'name', get_string('name'));
         $mform->addRule('name', get_string('required'), 'required', null, 'client');
         $mform->addElement('advcheckbox', 'enabled', get_string('enabled', 'webservice'));
-        $mform->addElement('advcheckbox', 'restrictedusers', get_string('restrictedusers', 'webservice'));
-
+        $mform->addElement('advcheckbox', 'restrictedusers',
+                get_string('restrictedusers', 'webservice'));
 
         /// needed to select automatically the 'No required capability" option
         $currentcapabilityexist = false;
-        if (empty($service->requiredcapability))
-        {
-          $service->requiredcapability = "norequiredcapability";
-          $currentcapabilityexist = true;
+        if (empty($service->requiredcapability)) {
+            $service->requiredcapability = "norequiredcapability";
+            $currentcapabilityexist = true;
         }
-
-
 
         // Prepare the list of capabilites to choose from
         $systemcontext = get_context_instance(CONTEXT_SYSTEM);
         $allcapabilities = fetch_context_capabilities($systemcontext);
         $capabilitychoices = array();
-        $capabilitychoices['norequiredcapability'] = get_string('norequiredcapability', 'webservice');
+        $capabilitychoices['norequiredcapability'] = get_string('norequiredcapability',
+                        'webservice');
         foreach ($allcapabilities as $cap) {
-            $capabilitychoices[$cap->name] = $cap->name . ': ' . get_capability_string($cap->name);
-            if (!empty($service->requiredcapability) && $service->requiredcapability == $cap->name) {
+            $capabilitychoices[$cap->name] = $cap->name . ': '
+                    . get_capability_string($cap->name);
+            if (!empty($service->requiredcapability)
+                    && $service->requiredcapability == $cap->name) {
                 $currentcapabilityexist = true;
             }
         }
 
-        $mform->addElement('searchableselector', 'requiredcapability', get_string('requiredcapability', 'webservice'), $capabilitychoices);
+        $mform->addElement('searchableselector', 'requiredcapability',
+                get_string('requiredcapability', 'webservice'), $capabilitychoices);
         $mform->addHelpButton('requiredcapability', 'requiredcapability', 'webservice');
         $mform->setAdvanced('requiredcapability');
 /// display notification error if the current requiredcapability doesn't exist anymore
-        if(empty($currentcapabilityexist)) {
+        if (empty($currentcapabilityexist)) {
             global $OUTPUT;
-            $mform->addElement('static', 'capabilityerror', '', $OUTPUT->notification(get_string('selectedcapabilitydoesntexit','webservice', $service->requiredcapability)));
+            $mform->addElement('static', 'capabilityerror', '',
+                    $OUTPUT->notification(get_string('selectedcapabilitydoesntexit',
+                                    'webservice', $service->requiredcapability)));
             $service->requiredcapability = "norequiredcapability";
         }
-       
+
         $mform->addElement('hidden', 'id');
         $mform->setType('id', PARAM_INT);
 
@@ -120,32 +124,32 @@ class external_service_form extends moodleform {
         $errors = parent::validation($data, $files);
         return $errors;
     }
+
 }
 
-
 class external_service_functions_form extends moodleform {
+
     function definition() {
-        global $CFG, $USER, $DB;
+        global $CFG;
 
         $mform = $this->_form;
         $data = $this->_customdata;
 
         $mform->addElement('header', 'addfunction', get_string('addfunctions', 'webservice'));
 
-        $select = "name NOT IN (SELECT s.functionname
-                                  FROM {external_services_functions} s
-                                 WHERE s.externalserviceid = :sid
-                               )";
-
-        $functions = $DB->get_records_select_menu('external_functions', $select, array('sid'=>$data['id']), 'name', 'id, name');
+        require_once($CFG->dirroot . "/webservice/lib.php");
+        $webservicemanager = new webservice();
+        $functions = $webservicemanager->get_not_associated_external_functions($data['id']);
 
         //we add the descriptions to the functions
         foreach ($functions as $functionid => $functionname) {
-            $function = external_function_info($functionname); //retrieve full function information (including the description)
-            $functions[$functionid] = $function->name.':'.$function->description;
+            //retrieve full function information (including the description)
+            $function = external_function_info($functionname);
+            $functions[$functionid] = $function->name . ':' . $function->description;
         }
 
-        $mform->addElement('searchableselector', 'fid', get_string('name'), $functions, array('multiple' => true));
+        $mform->addElement('searchableselector', 'fid', get_string('name'),
+                $functions, array('multiple' => true));
 
         $mform->addElement('hidden', 'id');
         $mform->setType('id', PARAM_INT);
@@ -157,12 +161,13 @@ class external_service_functions_form extends moodleform {
 
         $this->set_data($data);
     }
+
 }
 
-
 class web_service_token_form extends moodleform {
+
     function definition() {
-        global $CFG, $USER, $DB;
+        global $USER, $DB;
 
         $mform = $this->_form;
         $data = $this->_customdata;
@@ -170,19 +175,16 @@ class web_service_token_form extends moodleform {
         $mform->addElement('header', 'token', get_string('token', 'webservice'));
 
         if (empty($data->nouserselection)) {
-            //user searchable selector
+            //user searchable selector - get all users (admin and guest included)
             $sql = "SELECT u.id, u.firstname, u.lastname
             FROM {user} u
-            WHERE NOT EXISTS ( SELECT 1
-                                    FROM {user} au, {role_assignments} r
-                                    WHERE au.id=u.id AND r.roleid = 1 AND r.userid = au.id)
             ORDER BY u.lastname";
-            $users = $DB->get_records_sql($sql,array());
+            $users = $DB->get_records_sql($sql, array());
             $options = array();
             foreach ($users as $userid => $user) {
-                    $options[$userid] = $user->firstname. " " . $user->lastname;
+                $options[$userid] = $user->firstname . " " . $user->lastname;
             }
-            $mform->addElement('searchableselector', 'user', get_string('user'),$options);
+            $mform->addElement('searchableselector', 'user', get_string('user'), $options);
             $mform->addRule('user', get_string('required'), 'required', null, 'client');
         }
 
@@ -191,20 +193,22 @@ class web_service_token_form extends moodleform {
         $options = array();
         $systemcontext = get_context_instance(CONTEXT_SYSTEM);
         foreach ($services as $serviceid => $service) {
-            //check that the user has the required capability (only for generation by the profil page)
-            if (empty($data->nouserselection) 
-                || empty($service->requiredcapability)
-                || has_capability($service->requiredcapability, $systemcontext, $USER->id)) {
+            //check that the user has the required capability
+            //(only for generation by the profil page)
+            if (empty($data->nouserselection)
+                    || empty($service->requiredcapability)
+                    || has_capability($service->requiredcapability, $systemcontext, $USER->id)) {
                 $options[$serviceid] = $service->name;
             }
         }
-        $mform->addElement('select', 'service', get_string('service', 'webservice'),$options);
+        $mform->addElement('select', 'service', get_string('service', 'webservice'), $options);
         $mform->addRule('service', get_string('required'), 'required', null, 'client');
-       
-        
+
+
         $mform->addElement('text', 'iprestriction', get_string('iprestriction', 'webservice'));
 
-        $mform->addElement('date_selector', 'validuntil', get_string('validuntil', 'webservice'), array('optional'=>true));
+        $mform->addElement('date_selector', 'validuntil',
+                get_string('validuntil', 'webservice'), array('optional' => true));
 
         $mform->addElement('hidden', 'action');
         $mform->setType('action', PARAM_ACTION);
@@ -218,4 +222,5 @@ class web_service_token_form extends moodleform {
         $errors = parent::validation($data, $files);
         return $errors;
     }
+
 }

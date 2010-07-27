@@ -191,7 +191,12 @@ class webservice {
      * If doesn't exist a exception is thrown
      * @param integer $userid
      * @param integer $tokenid
-     * @return object
+     * @return object token
+     * ->id token id
+     * ->token
+     * ->firstname user firstname
+     * ->lastname
+     * ->name service name
      */
     public function get_created_by_user_ws_token($userid, $tokenid) {
         global $DB;
@@ -200,10 +205,12 @@ class webservice {
                     FROM
                         {external_tokens} t, {user} u, {external_services} s
                     WHERE
-                        t.creatorid=? AND t.id=? AND t.tokentype = ".EXTERNAL_TOKEN_PERMANENT." AND s.id = t.externalserviceid AND t.userid = u.id";
-        $token = $DB->get_record_sql($sql, array($userid, $tokenid), MUST_EXIST); //must be the token creator
+                        t.creatorid=? AND t.id=? AND t.tokentype = "
+                . EXTERNAL_TOKEN_PERMANENT
+                . " AND s.id = t.externalserviceid AND t.userid = u.id";
+        //must be the token creator
+        $token = $DB->get_record_sql($sql, array($userid, $tokenid), MUST_EXIST);
         return $token;
-
     }
 
     /**
@@ -243,6 +250,24 @@ class webservice {
         } else {
             $functions = array();
         }
+        return $functions;
+    }
+
+    /**
+     * Get the list of all functions not in the given service id
+     * @param int $serviceid
+     * @return array functions
+     */
+    public function get_not_associated_external_functions($serviceid) {
+        global $DB;
+        $select = "name NOT IN (SELECT s.functionname
+                                  FROM {external_services_functions} s
+                                 WHERE s.externalserviceid = :sid
+                               )";
+
+        $functions = $DB->get_records_select('external_functions',
+                        $select, array('sid' => $serviceid), 'name');
+
         return $functions;
     }
 
