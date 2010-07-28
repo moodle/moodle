@@ -1959,7 +1959,7 @@ class global_navigation_for_ajax extends global_navigation {
      * @return array The expandable nodes
      */
     public function initialise($branchtype, $id) {
-        global $CFG, $DB, $PAGE, $SITE;
+        global $CFG, $DB, $PAGE, $SITE, $USER;
 
         if ($this->initialised || during_initial_install()) {
             return $this->expandable;
@@ -2033,6 +2033,11 @@ class global_navigation_for_ajax extends global_navigation {
                 throw new Exception('Unknown type');
                 return $this->expandable;
         }
+
+        if ($this->page->context->contextlevel == CONTEXT_COURSE && $this->page->context->instanceid != SITEID) {
+            $this->load_for_user(null, true);
+        }
+
         $this->find_expandable($this->expandable);
         return $this->expandable;
     }
