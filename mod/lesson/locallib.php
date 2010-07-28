@@ -784,7 +784,7 @@ abstract class lesson_add_page_form_base extends moodleform {
         if ($label === NULL) {
             $label = get_string('answer', 'lesson');
         }
-        $this->_form->addElement('editor', 'answer_editor['.$count.']', $label, null, array('noclean'=>true));
+        $this->_form->addElement('editor', 'answer_editor['.$count.']', $label, array('rows'=>'4', 'columns'=>'80'), array('noclean'=>true));
         $this->_form->setDefault('answer_editor['.$count.']', array('text'=>'', 'format'=>FORMAT_MOODLE));
         if ($required) {
             $this->_form->addRule('answer_editor['.$count.']', get_string('required'), 'required', null, 'client');
@@ -802,7 +802,7 @@ abstract class lesson_add_page_form_base extends moodleform {
         if ($label === NULL) {
             $label = get_string('response', 'lesson');
         }
-        $this->_form->addElement('editor', 'response_editor['.$count.']', $label, null, array('noclean'=>true));
+        $this->_form->addElement('editor', 'response_editor['.$count.']', $label, array('rows'=>'4', 'columns'=>'80'), array('noclean'=>true));
         $this->_form->setDefault('response_editor['.$count.']', array('text'=>'', 'format'=>FORMAT_MOODLE));
         if ($required) {
             $this->_form->addRule('response_editor['.$count.']', get_string('required'), 'required', null, 'client');
