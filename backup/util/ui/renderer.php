@@ -76,7 +76,7 @@ class core_backup_renderer extends plugin_renderer_base {
         $html .= $this->backup_detail_pair(get_string('backupformat', 'backup'), get_string('backupformat'.$details->format, 'backup'));
         $html .= $this->backup_detail_pair(get_string('backupmode', 'backup'), get_string('backupmode'.$details->mode, 'backup'));
         $html .= $this->backup_detail_pair(get_string('backupdate', 'backup'), userdate($details->backup_date));
-        $html .= $this->backup_detail_pair(get_string('moodleversion', 'backup'), 
+        $html .= $this->backup_detail_pair(get_string('moodleversion', 'backup'),
                 html_writer::tag('span', $details->moodle_release, array('class'=>'moodle_release')).
                 html_writer::tag('span', '['.$details->moodle_version.']', array('class'=>'moodle_version sub-detail')));
         $html .= $this->backup_detail_pair(get_string('backupversion', 'backup'),
@@ -135,7 +135,7 @@ class core_backup_renderer extends plugin_renderer_base {
             if (!empty($table)) {
                 $html .= $this->backup_detail_pair(get_string('sectionactivities','backup'), html_writer::table($table));
             }
-            
+
         }
         $html .= html_writer::end_tag('div');
         $html .= html_writer::end_tag('div');
@@ -283,19 +283,24 @@ class core_backup_renderer extends plugin_renderer_base {
     }
     /**
      * Print a backup files tree
-     * @param file_info $fileinfo
      * @param array $options
      * @return string
      */
-    public function backup_files_viewer(file_info $fileinfo, array $options = null) {
-        $tree = new backup_files_viewer($fileinfo, $options);
+    public function backup_files_viewer(array $options = null) {
+        $tree = new backup_files_viewer($options);
         return $this->render($tree);
     }
 
     public function render_backup_files_viewer(backup_files_viewer $tree) {
+        global $USER;
+        $user_context = get_context_instance(CONTEXT_USER, $USER->id);
+        $options = new stdclass;
         $module = array('name'=>'backup_files_tree', 'fullpath'=>'/backup/util/ui/module.js', 'requires'=>array('yui2-treeview', 'yui2-json'), 'strings'=>array(array('restore', 'moodle')));
         $htmlid = 'backup-treeview-'.uniqid();
-        $this->page->requires->js_init_call('M.core_backup_files_tree.init', array($htmlid), false, $module);
+        $options->htmlid = $htmlid;
+        $options->usercontextid = $user_context->id;
+        $options->currentcontextid = $tree->options['context']->id;
+        $this->page->requires->js_init_call('M.core_backup_files_tree.init', array($options), false, $module);
 
         $html = '<div>';
         foreach($tree->path as $path) {
@@ -376,7 +381,7 @@ class core_backup_renderer extends plugin_renderer_base {
         $output .= html_writer::empty_tag('input', array('type'=>'text', 'name'=>restore_course_search::$VAR_SEARCH, 'value'=>$component->get_search()));
         $output .= html_writer::empty_tag('input', array('type'=>'submit', 'name'=>'searchcourses', 'value'=>get_string('search')));
         $output .= html_writer::end_tag('div');
-        
+
         $output .= html_writer::end_tag('div');
         return $output;
     }
@@ -443,14 +448,20 @@ class backup_files_viewer implements renderable {
 
     /**
      * Constructor of backup_files_viewer class
-     * @param file_info $file_info
      * @param array $options
      */
-    public function __construct(file_info $file_info, array $options = null) {
-        global $CFG;
+    public function __construct(array $options = null) {
+        global $CFG, $USER;
+        $browser = get_file_browser();
+        $file_info = $browser->get_file_info($options['filecontext'], $options['component'], $options['filearea'], $options['itemid'], $options['filepath'], $options['filename']);
         $this->options = (array)$options;
 
         $this->tree = array();
+        if (!$file_info) {
+            $this->path = array();
+            $this->tree = array();
+            return;
+        }
         $children = $file_info->get_children();
         $parent_info = $file_info->get_parent();
 
@@ -470,6 +481,18 @@ class backup_files_viewer implements renderable {
         $this->path = array_reverse($this->path);
         $this->path[] = $file_info->get_visible_name();
 
+        $this->add_to_tree($children);
+
+        if (!empty($options['show_user_backup'])) {
+            $browser = get_file_browser();
+            $user_context = get_context_instance(CONTEXT_USER, $USER->id);
+            $fileinfo = $browser->get_file_info($user_context, null, null, null, null, null);
+            $children = $fileinfo->get_children();
+            $this->add_to_tree($children);
+        }
+    }
+
+    function add_to_tree($children) {
         foreach ($children as $child) {
             $filedate = $child->get_timemodified();
             $filesize = $child->get_filesize();
@@ -481,9 +504,15 @@ class backup_files_viewer implements renderable {
                     'filedate' => $filedate ? userdate($filedate) : '',
                     'filesize' => $filesize ? display_size($filesize) : ''
                     );
+            $is_coursebackup = ($params['component'] == 'backup' && in_array($params['filearea'], array('course', 'section', 'activity', 'backup')));
+            $is_userbackup = ($params['component'] == 'user' && $params['filearea'] == 'backup');
+            if ($is_userbackup) {
+                // XXX: hacky, current context
+                $params['contextid'] = $this->options['context']->id;
+            }
             if ($child->is_directory()) {
                 // ignore all other fileares except backup_course backup_section and backup_activity
-                if ($params['component'] != 'backup' or !in_array($params['filearea'], array('course', 'section', 'activity'))) {
+                if (!$is_coursebackup and !$is_userbackup) {
                     continue;
                 }
                 $fileitem['isdir'] = true;

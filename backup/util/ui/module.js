@@ -12,6 +12,11 @@ M.core_backup_files_tree = {
         params['itemid']    = this.get_param(url, 'itemid', -1);
         params['filepath']  = this.get_param(url, 'filepath', null);
         params['filename']  = this.get_param(url, 'filename', null);
+        if (params['filearea'] == 'backup' && params['component'] == 'user') {
+            // XXX: the id in params['contextid'] is current context
+            // request file list, so should be user context
+            params['contextid'] = this.usercontextid;
+        } 
         var scope = this;
         params['sesskey']=M.cfg.sesskey;
         var cfg = {
@@ -37,6 +42,10 @@ M.core_backup_files_tree = {
                                 n.isLeaf = false;
                             } else {
                                 var params = data[i].params;
+                                if (params['filearea'] == 'backup' && params['component'] == 'user') {
+                                    // XXX: display the restore link, so should be context id
+                                    params['contextid'] = scope.currentcontextid;
+                                } 
                                 params.action = 'choosebackupfile';
                                 var restoreurl = M.cfg.wwwroot+'/backup/restorefile.php?'+build_querystring(params);
                                 var info = {label: data[i].filename, 'href': data[i].url, 'restoreurl': restoreurl};
@@ -60,7 +69,10 @@ M.core_backup_files_tree = {
         };
         this.y3.io(api, cfg);
     },
-    init : function(Y, htmlid){
+    init : function(Y, options){
+        var htmlid = options.htmlid;
+        this.usercontextid = options.usercontextid;
+        this.currentcontextid = options.currentcontextid;
         var tree = new YAHOO.widget.TreeView(htmlid);
         tree.setDynamicLoad(this.dynload);
         var root = tree.getRoot();
