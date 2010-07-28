@@ -51,7 +51,8 @@ class mod_choice_mod_form extends moodleform_mod {
         $repeateloptions['limit']['disabledif'] = array('limitanswers', 'eq', 0);
         $mform->setType('limit', PARAM_INT);
 
-        $repeateloptions['option']['helpbutton'] = array('choiceoptions', get_string('modulenameplural', 'choice'), 'choice');
+        //TODO: MDL-23561 temp workaround for fatal errors caused by following line
+        //$repeateloptions['option']['helpbutton'] = array('choiceoptions', get_string('modulenameplural', 'choice'), 'choice');
         $mform->setType('option', PARAM_CLEAN);
 
         $mform->setType('optionid', PARAM_INT);
