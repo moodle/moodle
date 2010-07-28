@@ -33,7 +33,6 @@ class quiz_statistics_report extends quiz_default_report {
         $qid = optional_param('qid', 0, PARAM_INT);
         $pageoptions = array();
         $pageoptions['id'] = $cm->id;
-        $pageoptions['q'] = $quiz->id;
         $pageoptions['mode'] = 'statistics';
 
         $questions = quiz_report_load_questions($quiz);
@@ -41,7 +40,6 @@ class quiz_statistics_report extends quiz_default_report {
         if (!get_question_options($questions)) {
             print_error('cannotloadquestion', 'question');
         }
-
 
         $reporturl = new moodle_url('/mod/quiz/report.php', $pageoptions);
 

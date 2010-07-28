@@ -1118,11 +1118,11 @@ function quiz_send_notification_emails($course, $quiz, $attempt, $context, $cm) 
         $a->courseshortname = $course->shortname;
         // quiz info
         $a->quizname = $quiz->name;
-        $a->quizreporturl = $CFG->wwwroot . '/mod/quiz/report.php?q=' . $quiz->id;
+        $a->quizreporturl = $CFG->wwwroot . '/mod/quiz/report.php?id=' . $cm->id;
         $a->quizreportlink = '<a href="' . $a->quizreporturl . '">' . format_string($quiz->name) . ' report</a>';
         $a->quizreviewurl = $CFG->wwwroot . '/mod/quiz/review.php?attempt=' . $attempt->id;
         $a->quizreviewlink = '<a href="' . $a->quizreviewurl . '">' . format_string($quiz->name) . ' review</a>';
-        $a->quizurl = $CFG->wwwroot . '/mod/quiz/view.php?q=' . $quiz->id;
+        $a->quizurl = $CFG->wwwroot . '/mod/quiz/view.php?id=' . $cm->id;
         $a->quizlink = '<a href="' . $a->quizurl . '">' . format_string($quiz->name) . '</a>';
         // attempt info
         $a->submissiontime = userdate($attempt->timefinish);

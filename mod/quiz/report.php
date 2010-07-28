@@ -36,12 +36,7 @@
         }
     }
 
-    $url = new moodle_url('/mod/quiz/report.php');
-    if ($id !== 0) {
-        $url->param('id', $id);
-    } else {
-        $url->param('q', $q);
-    }
+    $url = new moodle_url('/mod/quiz/report.php', array('id' => $cm->id));
     if ($mode !== '') {
         $url->param('mode', $mode);
     }
@@ -54,15 +49,17 @@
     if (count($reportlist)==0){
         print_error('erroraccessingreport', 'quiz');
     }
-    if ($mode == ''){
-        $mode = reset($reportlist);//first element in array
-    } elseif (!in_array($mode, $reportlist)){
+    if ($mode == '') {
+        // Default to first accessible report and redirect.
+        $url->param('mode', reset($reportlist));
+        redirect($url);
+    } else if (!in_array($mode, $reportlist)){
         print_error('erroraccessingreport', 'quiz');
     }
 
     // if no questions have been set up yet redirect to edit.php
     if (!$quiz->questions and has_capability('mod/quiz:manage', $context)) {
-        redirect('edit.php?cmid='.$cm->id);
+        redirect('edit.php?cmid=' . $cm->id);
     }
 
     // Upgrade any attempts that have not yet been upgraded to the
@@ -79,17 +76,17 @@
 
 /// Open the selected quiz report and display it
 
-    if (! is_readable("report/$mode/report.php")) {
+    if (!is_readable("report/$mode/report.php")) {
         print_error('reportnotfound', 'quiz', '', $mode);
     }
 
-    include("report/default.php");  // Parent class
+    include("report/default.php"); // Parent class
     include("report/$mode/report.php");
 
     $reportclassname = "quiz_{$mode}_report";
     $report = new $reportclassname();
 
-    if (! $report->display($quiz, $cm, $course)) {             // Run the report!
+    if (!$report->display($quiz, $cm, $course)) { // Run the report!
         print_error("preprocesserror", 'quiz');
     }
 

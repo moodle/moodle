@@ -56,7 +56,6 @@ class quiz_overview_report extends quiz_default_report {
 
         $pageoptions = array();
         $pageoptions['id'] = $cm->id;
-        $pageoptions['q'] = $quiz->id;
         $pageoptions['mode'] = 'overview';
 
         $reporturl = new moodle_url('/mod/quiz/report.php', $pageoptions);

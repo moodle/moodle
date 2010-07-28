@@ -347,14 +347,14 @@ function quiz_report_scale_sumgrades_as_percentage($rawgrade, $quiz, $round = tr
  * Returns an array of reports to which the current user has access to.
  * Reports are ordered as they should be for display in tabs.
  */
-function quiz_report_list($context){
+function quiz_report_list($context) {
     global $DB;
     static $reportlist = null;
     if (!is_null($reportlist)){
         return $reportlist;
     }
     $reports = $DB->get_records('quiz_report', null, 'displayorder DESC', 'name, capability');
-    $reportdirs = get_plugin_list("quiz");
+    $reportdirs = get_plugin_list('quiz');
 
     // Order the reports tab in descending order of displayorder
     $reportcaps = array();
@@ -382,4 +382,10 @@ function quiz_report_list($context){
     return $reportlist;
 }
 
-
+/**
+ * Get the default report for the current user.
+ * @param object $context the quiz context.
+ */
+function quiz_report_default_report($context) {
+    return reset(quiz_report_list($context));
+}

@@ -1510,9 +1510,6 @@ function quiz_print_overview($courses, &$htmlarray) {
  * Return a textual summary of the number of attemtps that have been made at a particular quiz,
  * returns '' if no attemtps have been made yet, unless $returnzero is passed as true.
  *
- * @global stdClass
- * @global object
- * @global object
  * @param object $quiz the quiz object. Only $quiz->id is used at the moment.
  * @param object $cm the cm object. Only $cm->course, $cm->groupmode and $cm->groupingid fields are used at the moment.
  * @param boolean $returnzero if false (default), when no attempts have been made '' is returned instead of 'Attempts: 0'.
@@ -1522,7 +1519,7 @@ function quiz_print_overview($courses, &$htmlarray) {
  *          "Attemtps 123 (45 from this group)".
  */
 function quiz_num_attempt_summary($quiz, $cm, $returnzero = false, $currentgroup = 0) {
-    global $CFG, $USER, $DB;
+    global $DB, $USER;
     $numattempts = $DB->count_records('quiz_attempts', array('quiz'=> $quiz->id, 'preview'=>0));
     if ($numattempts || $returnzero) {
         if (groups_get_activity_groupmode($cm)) {
@@ -1549,13 +1546,31 @@ function quiz_num_attempt_summary($quiz, $cm, $returnzero = false, $currentgroup
 }
 
 /**
- * @uses FEATURE_GROUPS
- * @uses FEATURE_GROUPINGS
- * @uses FEATURE_GROUPMEMBERSONLY
- * @uses FEATURE_MOD_INTRO
- * @uses FEATURE_COMPLETION_TRACKS_VIEWS
- * @uses FEATURE_GRADE_HAS_GRADE
- * @uses FEATURE_GRADE_OUTCOMES
+ * Returns the same as {@link quiz_num_attempt_summary()} but wrapped in a link
+ * to the quiz reports.
+ *
+ * @param object $quiz the quiz object. Only $quiz->id is used at the moment.
+ * @param object $cm the cm object. Only $cm->course, $cm->groupmode and $cm->groupingid fields are used at the moment.
+ * @param object $context the quiz context.
+ * @param boolean $returnzero if false (default), when no attempts have been made '' is returned instead of 'Attempts: 0'.
+ * @param int $currentgroup if there is a concept of current group where this method is being called
+ *         (e.g. a report) pass it in here. Default 0 which means no current group.
+ * @return string HTML fragment for the link.
+ */
+function quiz_attempt_summary_link_to_reports($quiz, $cm, $context, $returnzero = false, $currentgroup = 0) {
+    global $CFG;
+    $summary = quiz_num_attempt_summary($quiz, $cm, $returnzero, $currentgroup);
+    if (!$summary) {
+        return '';
+    }
+
+    require_once($CFG->dirroot . '/mod/quiz/report/reportlib.php');
+    $url = new moodle_url('/mod/quiz/report.php', array(
+            'id' => $cm->id, 'mode' => quiz_report_default_report($context)));
+    return html_writer::link($url, $summary);
+}
+
+/**
  * @param string $feature FEATURE_xx constant for requested feature
  * @return bool True if quiz supports feature
  */
@@ -1606,22 +1621,22 @@ function quiz_extend_navigation($quiznode, $course, $module, $cm) {
 
     if (has_capability('mod/quiz:view', $context)) {
         $url = new moodle_url('/mod/quiz/view.php', array('id'=>$cm->id));
-        $quiznode->add(get_string('info', 'quiz'), $url, navigation_node::TYPE_SETTING, null, null, new pix_icon('i/info', ''));
+        $quiznode->add(get_string('info', 'quiz'), $url, navigation_node::TYPE_SETTING,
+                null, null, new pix_icon('i/info', ''));
     }
 
     if (has_capability('mod/quiz:viewreports', $context)) {
-        $url = new moodle_url('/mod/quiz/report.php', array('q'=>$cm->instance));
-        $reportnode = $quiznode->add(get_string('results', 'quiz'), $url, navigation_node::TYPE_SETTING, null, null, new pix_icon('i/report', ''));
-
         require_once($CFG->dirroot.'/mod/quiz/report/reportlib.php');
         $reportlist = quiz_report_list($context);
+
+        $url = new moodle_url('/mod/quiz/report.php', array('id' => $cm->id, 'mode' => reset($reportlist)));
+        $reportnode = $quiznode->add(get_string('results', 'quiz'), $url, navigation_node::TYPE_SETTING,
+                null, null, new pix_icon('i/report', ''));
+
         foreach ($reportlist as $report) {
-            if ($report != 'overview') {
-                $url = new moodle_url('/mod/quiz/report.php', array('q'=>$cm->instance, 'mode'=>$report));
-            } else {
-                $url = new moodle_url('/mod/quiz/report.php', array('q'=>$cm->instance));
-            }
-            $reportnode->add(get_string($report, 'quiz_'.$report), $url, navigation_node::TYPE_SETTING, null, null, new pix_icon('i/item', ''));
+            $url = new moodle_url('/mod/quiz/report.php', array('id' => $cm->id, 'mode' => $report));
+            $reportnode->add(get_string($report, 'quiz_'.$report), $url, navigation_node::TYPE_SETTING,
+                    null, null, new pix_icon('i/item', ''));
         }
     }
 }

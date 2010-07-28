@@ -102,9 +102,8 @@
 
 /// Show number of attempts summary to those who can view reports.
     if (has_capability('mod/quiz:viewreports', $context)) {
-        if ($strattemptnum = quiz_num_attempt_summary($quiz, $cm)) {
-            echo '<div class="quizattemptcounts"><a href="report.php?mode=overview&amp;id=' .
-                    $cm->id . '">' . $strattemptnum . "</a></div>\n";
+        if ($strattemptnum = quiz_attempt_summary_link_to_reports($quiz, $cm, $context)) {
+            echo '<div class="quizattemptcounts">' . $strattemptnum . "</div>\n";
         }
     }
 

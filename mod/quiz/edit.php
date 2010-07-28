@@ -522,8 +522,7 @@ if (!$quiz_reordertool) {
 
 $notifystrings = array();
 if ($quizhasattempts) {
-    $reviewlink = '<a href="' . $CFG->wwwroot . '/mod/quiz/report.php?mode=overview&amp;id=' . $cm->id . '">' .
-            quiz_num_attempt_summary($quiz, $cm) . '</a>';
+    $reviewlink = quiz_attempt_summary_link_to_reports($quiz, $cm, $contexts->lowest());
     $notifystrings[] = get_string('cannoteditafterattempts', 'quiz', $reviewlink);
 }
 if ($quiz->shufflequestions) {
