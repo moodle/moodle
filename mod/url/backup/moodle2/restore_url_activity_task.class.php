@@ -27,7 +27,7 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->dirroot . '/mod/url/backup/moodle2/restore_url_stepslib.php'); // Because it exists (must)
 
 /**
- * choice restore task that provides all the settings and steps to perform one
+ * url restore task that provides all the settings and steps to perform one
  * complete restore of the activity
  */
 class restore_url_activity_task extends restore_activity_task {
