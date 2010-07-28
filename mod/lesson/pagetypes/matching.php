@@ -70,7 +70,7 @@ class lesson_page_type_matching extends lesson_page {
             }
         }
 
-        $responseoptions = array();
+        $responseoptions = array(''=>get_string('choosedots'));
         if (!empty($responses)) {
             shuffle($responses);
             $responses = array_unique($responses);
@@ -416,8 +416,7 @@ class lesson_page_type_matching extends lesson_page {
         // The jumps for matching question type is stored
         // in the 3rd and 4rth answer record.
         $jumps = array();
-        $params = array ("lessonid" => $this->lesson->id, "pageid" => $this->properties->id);
-        if ($answers = $DB->get_records_select("lesson_answers", "lessonid = :lessonid and pageid = :pageid", $params, 'id', '*', '2', '2')) {
+        if ($answers = $DB->get_records("lesson_answers", array("lessonid" => $this->lesson->id, "pageid" => $this->properties->id), 'id', '*', 0, 2)) {
             foreach ($answers as $answer) {
                 $jumps[] = $this->get_jump_name($answer->jumpto);
             }
