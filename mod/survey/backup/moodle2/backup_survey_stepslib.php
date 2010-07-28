@@ -43,7 +43,7 @@ class backup_survey_activity_structure_step extends backup_activity_structure_st
 
         $answers = new backup_nested_element('answers');
 
-        $answer = new backup_nested_element('anwser', array('id'), array(
+        $answer = new backup_nested_element('answer', array('id'), array(
             'userid', 'question', 'time', 'answer1',
             'answer2'));
 
