@@ -35,14 +35,12 @@ class mod_choice_renderer extends plugin_renderer_base {
      * @return string
      */
     public function display_options($options, $coursemoduleid, $vertical = false) {
-        global $CFG;
-        
         $layoutclass = 'horizontal';
         if ($vertical) {
             $layoutclass = 'vertical';
         }
-
-        $attributes = array('method'=>'POST', 'target'=>$CFG->wwwroot.'/mod/choice/view.php', 'class'=> $layoutclass);
+        $target = new moodle_url('/mod/choice/view.php');
+        $attributes = array('method'=>'POST', 'target'=>$target, 'class'=> $layoutclass);
         
         $html = html_writer::start_tag('form', $attributes);
         $html .= html_writer::start_tag('ul', array('class'=>'choices' ));
@@ -97,8 +95,6 @@ class mod_choice_renderer extends plugin_renderer_base {
      * @return string
      */
     public function display_result($choices, $forcepublish = false) {
-        global $CFG, $OUTPUT;
-        
         if (empty($forcepublish)) { //alow the publish setting to be overridden
             $forcepublish = $choices->publish;
         }
@@ -122,13 +118,11 @@ class mod_choice_renderer extends plugin_renderer_base {
      * @return string
      */
     public function display_publish_name_vertical($choices) {
-        global $CFG, $OUTPUT, $PAGE;
-
         $html ='';
         $html .= html_writer::tag('h2',format_string(get_string("responses", "choice")), array('class'=>'main'));
         
         $attributes = array('method'=>'POST');
-        $attributes['action'] = $CFG->wwwroot.'/mod/choice/view.php';
+        $attributes['action'] = new moodle_url('/mod/choice/view.php');
         $attributes['id'] = 'attemptsform';
                 
         if ($choices->viewresponsecapability) {
@@ -183,10 +177,11 @@ class mod_choice_renderer extends plugin_renderer_base {
                             $attemptaction = html_writer::checkbox('attemptid[]', $user->id,'');
                             $data .= html_writer::tag('div', $attemptaction, array('class'=>'attemptaction'));
                         }
-                        $userimage = $OUTPUT->user_picture($user, array('courseid'=>$choices->courseid));
+                        $userimage = $this->output->user_picture($user, array('courseid'=>$choices->courseid));
                         $data .= html_writer::tag('div', $userimage, array('class'=>'image'));
 
-                        $name = html_writer::tag('a', fullname($user, $choices->fullnamecapability), array('href'=>$CFG->wwwroot . '/user/view.php?id='.$user->id.'&course='.$choices->courseid, 'class'=>'username'));
+                        $userlink = new moodle_url('/user/view.php', array('id'=>$user->id,'course'=>$choices->courseid));
+                        $name = html_writer::tag('a', fullname($user, $choices->fullnamecapability), array('href'=>$userlink, 'class'=>'username'));
                         $data .= html_writer::tag('div', $name, array('class'=>'fullname'));
                         $data .= html_writer::tag('div','', array('class'=>'clearfloat'));
                         $coldata .= html_writer::tag('div', $data, array('class'=>'user'));                        
@@ -210,18 +205,18 @@ class mod_choice_renderer extends plugin_renderer_base {
 
             $selectallactions = new component_action('click',"select_all_in", array('div',null,'tablecontainer'));
             $selectall = new action_link($selecturl, get_string('selectall', 'quiz'), $selectallactions);
-            $actiondata .= $OUTPUT->render($selectall) . ' / ';
+            $actiondata .= $this->output->render($selectall) . ' / ';
 
             $deselectallactions = new component_action('click',"deselect_all_in", array('div',null,'tablecontainer'));
             $deselectall = new action_link($selecturl, get_string('selectnone', 'quiz'), $deselectallactions);
-            $actiondata .= $OUTPUT->render($deselectall);
+            $actiondata .= $this->output->render($deselectall);
 
             $actiondata .= html_writer::tag('label', ' ' . get_string('withselected', 'quiz') . ' ', array('for'=>'menuaction'));
             
-            $actionurl = new moodle_url($CFG->wwwroot.'/mod/choice/view.php', array('sesskey'=>sesskey(), 'action'=>'delete_confirmation()'));
+            $actionurl = new moodle_url('/mod/choice/view.php', array('sesskey'=>sesskey(), 'action'=>'delete_confirmation()'));
             $select = new single_select($actionurl, 'action', array('delete'=>get_string('delete')), null, array(''=>get_string('moveselectedusersto', 'choice')), 'attemptsform');
             
-            $actiondata .= $OUTPUT->render($select);
+            $actiondata .= $this->output->render($select);
         }
         $html .= html_writer::tag('div', $actiondata, array('class'=>'responseaction'));
         
@@ -239,7 +234,7 @@ class mod_choice_renderer extends plugin_renderer_base {
      * @return string
      */
     public function display_publish_anonymous_vertical($choices) {
-        global $CHOICE_COLUMN_HEIGHT, $OUTPUT;
+        global $CHOICE_COLUMN_HEIGHT;
 
         $html = '';        
         $table = new html_table();
@@ -264,7 +259,7 @@ class mod_choice_renderer extends plugin_renderer_base {
                $percentageamount = ((float)$numberofuser/(float)$choices->numberofuser)*100.0;
             }
 
-            $displaydiagram = html_writer::tag('img','', array('style'=>'height:'.$height.'px;width:49px;', 'alt'=>'', 'src'=>$OUTPUT->pix_url('column', 'choice')));
+            $displaydiagram = html_writer::tag('img','', array('style'=>'height:'.$height.'px;width:49px;', 'alt'=>'', 'src'=>$this->output->pix_url('column', 'choice')));
 
             $cell = new html_table_cell();
             $cell->text = $displaydiagram;
@@ -326,7 +321,7 @@ class mod_choice_renderer extends plugin_renderer_base {
      * @return string
      */
     public function display_publish_anonymous_horizontal($choices) {
-        global $CHOICE_COLUMN_WIDTH, $OUTPUT;
+        global $CHOICE_COLUMN_WIDTH;
         
         $table = new html_table();
         $table->cellpadding = 5;
@@ -352,7 +347,7 @@ class mod_choice_renderer extends plugin_renderer_base {
                $width = ($CHOICE_COLUMN_WIDTH * ((float)$numberofuser / (float)$choices->numberofuser));
                $percentageamount = ((float)$numberofuser/(float)$choices->numberofuser)*100.0;
             }
-            $displaydiagram = html_writer::tag('img','', array('style'=>'height:50px; width:'.$width.'px', 'alt'=>'', 'src'=>$OUTPUT->pix_url('row', 'choice')));
+            $displaydiagram = html_writer::tag('img','', array('style'=>'height:50px; width:'.$width.'px', 'alt'=>'', 'src'=>$this->output->pix_url('row', 'choice')));
 
             $skiplink = html_writer::tag('a', get_string('skipresultgraph', 'choice'), array('href'=>'#skipresultgraph'. $optionid, 'class'=>'skip-block'));
             $skiphandler = html_writer::tag('span', '', array('class'=>'skip-block-to', 'id'=>'skipresultgraph'.$optionid));
