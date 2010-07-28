@@ -43,6 +43,7 @@ Structure of the user enroller panel
 .user-enroller-panel .uep-header .close {width:25px;height:15px;position:absolute;top:2px;right:1em;cursor:pointer;background:url("sprite.png") no-repeat scroll 0 0 transparent;}
 
 .user-enroller-panel .uep-content {text-align:center;position:relative;width:100%;border-top:1px solid #999;border-bottom:1px solid #999;}
+.user-enroller-panel .uep-content .uep-controls {margin:0;padding:3px;background-color:#ddd;text-align:left;border-bottom:1px solid #BBB;}
 .user-enroller-panel .uep-ajax-content {height:375px;overflow:auto;}
 .user-enroller-panel .uep-search-results .totalusers {background-color:#eee;padding:5px;border-bottom:1px solid #BBB;font-size:7pt;font-weight: bold;}
 .user-enroller-panel .uep-search-results .user {width:100%;text-align:left;font-size:9pt;border-bottom:1px solid #ddd;border-top:1px solid #eee;}
@@ -51,7 +52,7 @@ Structure of the user enroller panel
 .user-enroller-panel .uep-search-results .user .picture {width:45px;float:left;margin:3px;}
 .user-enroller-panel .uep-search-results .user .details {width:250px;float:left;margin:3px;}
 .user-enroller-panel .uep-search-results .user .options {padding-right:7px;font-size:8pt;margin:3px;}
-.user-enroller-panel .uep-search-results .user .options .enrol {margin:3px;float:right;border:1px outset #ddd;background-color:#EEE;padding:3px;-moz-border-radius:3px;cursor:pointer;}
+.user-enroller-panel .uep-search-results .user .options .enrol {margin:3px;float:right;cursor:pointer;}
 .user-enroller-panel .uep-search-results .user.enrolled .count {width:40px;color:#eee;}
 .user-enroller-panel .uep-search-results .uep-more-results {background-color:#eee;padding:5px;border-top:1px solid #BBB;}
 

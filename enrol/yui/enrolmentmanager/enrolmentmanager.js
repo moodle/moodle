@@ -52,6 +52,7 @@ YUI.add('moodle-enrol-enrolmentmanager', function(Y) {
         COLLAPSIBLEHEADING : 'collapsibleheading',
         COLLAPSIBLEAREA : 'collapsiblearea',
         SEARCHOPTION : 'uep-enrolment-option',
+        SEARCHCONTROLS : 'uep-controls',
         ROLE : 'role',
         STARTDATE : 'startdate',
         DURATION : 'duration',
@@ -74,6 +75,20 @@ YUI.add('moodle-enrol-enrolmentmanager', function(Y) {
                         .append(Y.Node.create('<div class="'+CSS.CLOSE+'"></div>'))
                         .append(Y.Node.create('<h2>'+M.str.enrol.enrolusers+'</h2>')))
                     .append(Y.Node.create('<div class="'+CSS.CONTENT+'"></div>')
+                        .append(Y.Node.create('<div class="'+CSS.SEARCHCONTROLS+'"></div>')
+                            .append(Y.Node.create('<div class="'+CSS.SEARCHOPTION+' '+CSS.ROLE+'">'+M.str.role.assignroles+'</div>')
+                                    .append(Y.Node.create('<select><option value="">'+M.str.enrol.none+'</option></select>'))
+                            )
+                            .append(Y.Node.create('<div class="'+CSS.SEARCHOPTIONS+'"></div>')
+                                .append(Y.Node.create('<div class="'+CSS.COLLAPSIBLEHEADING+'"><img alt="" />'+M.str.enrol.enrolmentoptions+'</div>'))
+                                .append(Y.Node.create('<div class="'+CSS.COLLAPSIBLEAREA+' '+CSS.HIDDEN+'"></div>')
+                                    .append(Y.Node.create('<div class="'+CSS.SEARCHOPTION+' '+CSS.STARTDATE+'">'+M.str.moodle.startingfrom+'</div>')
+                                        .append(Y.Node.create('<select></select>')))
+                                    .append(Y.Node.create('<div class="'+CSS.SEARCHOPTION+' '+CSS.DURATION+'">'+M.str.enrol.enrolperiod+'</div>')
+                                        .append(Y.Node.create('<select><option value="0" selected="selected">'+M.str.enrol.unlimitedduration+'</option></select>')))
+                                )
+                            )
+                        )
                         .append(Y.Node.create('<div class="'+CSS.AJAXCONTENT+'"></div>'))
                         .append(Y.Node.create('<div class="'+CSS.LIGHTBOX+' '+CSS.HIDDEN+'"></div>')
                             .append(Y.Node.create('<img alt="loading" class="'+CSS.LOADINGICON+'" />')
@@ -81,19 +96,7 @@ YUI.add('moodle-enrol-enrolmentmanager', function(Y) {
                             .setStyle('opacity', 0.5)))
                     .append(Y.Node.create('<div class="'+CSS.FOOTER+'"></div>')
                         .append(Y.Node.create('<div class="'+CSS.SEARCH+'"><label>'+M.str.enrol.usersearch+'</label></div>')
-                            .append(Y.Node.create('<input type="text" id="enrolusersearch" value="" />'))
-                            .append(Y.Node.create('<div class="'+CSS.SEARCHOPTION+' '+CSS.ROLE+'">'+M.str.role.assignroles+'</div>')
-                                    .append(Y.Node.create('<select><option value="">'+M.str.enrol.none+'</option></select>'))
-                            )
-                        )
-                        .append(Y.Node.create('<div class="'+CSS.SEARCHOPTIONS+'"></div>')
-                            .append(Y.Node.create('<div class="'+CSS.COLLAPSIBLEHEADING+'"><img alt="" />'+M.str.enrol.enrolmentoptions+'</div>'))
-                            .append(Y.Node.create('<div class="'+CSS.COLLAPSIBLEAREA+' '+CSS.HIDDEN+'"></div>')
-                                .append(Y.Node.create('<div class="'+CSS.SEARCHOPTION+' '+CSS.STARTDATE+'">'+M.str.moodle.startingfrom+'</div>')
-                                    .append(Y.Node.create('<select></select>')))
-                                .append(Y.Node.create('<div class="'+CSS.SEARCHOPTION+' '+CSS.DURATION+'">'+M.str.enrol.enrolperiod+'</div>')
-                                    .append(Y.Node.create('<select><option value="0" selected="selected">'+M.str.enrol.unlimitedduration+'</option></select>')))
-                            )
+                            .append(Y.Node.create('<input type="text" id="enrolusersearch" value="" />'))   
                         )
                     )
                 )
@@ -326,7 +329,7 @@ YUI.add('moodle-enrol-enrolmentmanager', function(Y) {
                         .append(Y.Node.create('<div class="'+CSS.FULLNAME+'">'+user.fullname+'</div>'))
                         .append(Y.Node.create('<div class="'+CSS.EMAIL+'">'+user.email+'</div>')))
                     .append(Y.Node.create('<div class="'+CSS.OPTIONS+'"></div>')
-                        .append(Y.Node.create('<div class="'+CSS.ENROL+'">'+M.str.enrol.enrol+'</div>')))
+                        .append(Y.Node.create('<input type="button" class="'+CSS.ENROL+'" value="'+M.str.enrol.enrol+'" />')))
                 );
             }
             this.set(UEP.USERCOUNT, count);
