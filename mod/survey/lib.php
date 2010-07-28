@@ -381,16 +381,19 @@ function survey_update_analysis($survey, $user, $notes) {
 function survey_get_user_answers($surveyid, $questionid, $groupid, $sort="sa.answer1,sa.answer2 ASC") {
     global $DB;
 
-    $params = array('surveyid'=>$surveyid, 'questionid'=>$questionid, 'groupid'=>$groupid);
+    $params = array('surveyid'=>$surveyid, 'questionid'=>$questionid);
 
     if ($groupid) {
-        $groupsql = "AND gm.groupid = :groupid AND u.id = gm.userid";
+        $groupfrom = ', {groups_members} gm';
+        $groupsql  = 'AND gm.groupid = :groupid AND u.id = gm.userid';
+        $params['groupid'] = $groupid;
     } else {
-        $groupsql = "";
+        $groupfrom = '';
+        $groupsql  = '';
     }
 
     return $DB->get_records_sql("SELECT sa.*,u.firstname,u.lastname,u.picture
-                                   FROM {survey_answers} sa,  {user} u, {groups_members} gm
+                                   FROM {survey_answers} sa,  {user} u $groupfrom
                                   WHERE sa.survey = :surveyid
                                         AND sa.question = :questionid
                                         AND u.id = sa.userid $groupsql
