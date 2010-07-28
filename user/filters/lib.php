@@ -138,7 +138,6 @@ class user_filtering {
                     } else {
                         $choices[$host->id] = $host->name.' ('.$host->wwwroot.')';
                     }
-                    $choices[$host->id] = $host->name.' ('.$host->wwwroot.')';
                 }
                 if ($usedhosts = $DB->get_fieldset_sql("SELECT DISTINCT mnethostid FROM {user} WHERE deleted=0")) {
                     foreach ($usedhosts as $hostid) {
@@ -150,7 +149,7 @@ class user_filtering {
                 if (count($choices) < 2) {
                     return null; // filter not needed
                 }
-                return new user_filter_simpleselect('mnethostid', 'mnethostid', $advanced, 'mnethostid', $choices);
+                return new user_filter_simpleselect('mnethostid', get_string('mnetidprovider', 'mnet'), $advanced, 'mnethostid', $choices);
 
             default:            return null;
         }
