@@ -38,6 +38,9 @@ class core_enrol_renderer extends plugin_renderer_base {
      * @return string
      */
     protected function render_course_enrolment_users_table(course_enrolment_users_table $table) {
+
+        $table->initialise_javascript($this->page);
+
         $content = '';
         $enrolmentselector = $table->get_enrolment_selector($this->page);
         if ($enrolmentselector) {
@@ -69,6 +72,9 @@ class core_enrol_renderer extends plugin_renderer_base {
      * @return string
      */
     protected function render_course_enrolment_other_users_table(course_enrolment_other_users_table $table) {
+
+        $table->initialise_javascript($this->page);
+
         $content = '';
         $searchbutton = $table->get_user_search_button($this->page);
         if ($searchbutton) {
@@ -384,11 +390,7 @@ class course_enrolment_table extends html_table implements renderable {
      * @param array $fields An array of fields to set
      * @param string $output
      */
-    public function set_fields($fields, $output=null) {
-        global $OUTPUT;
-        if ($output === null) {
-            $output = $OUTPUT;
-        }
+    public function set_fields($fields, $output) {
         $this->fields = $fields;
         $this->head = array();
         $this->colclasses = array();
@@ -449,11 +451,8 @@ class course_enrolment_table extends html_table implements renderable {
      * @param array $users
      * @param moodle_page $page
      */
-    public function set_users(array $users, moodle_page $page=null) {
-        global $PAGE;
-        if ($page === null) {
-            $page = $PAGE;
-        }
+    public function set_users(array $users) {
+        $this->users = $users;
         foreach ($users as $userid=>$user) {
             $user = (array)$user;
             $row = new html_table_row();
@@ -481,6 +480,9 @@ class course_enrolment_table extends html_table implements renderable {
             }
             $this->data[] = $row;
         }
+    }
+
+    public function initialise_javascript(moodle_page $page) {
         if (has_capability('moodle/role:assign', $this->manager->get_context())) {
             $page->requires->strings_for_js(array(
                 'assignroles',
@@ -493,7 +495,7 @@ class course_enrolment_table extends html_table implements renderable {
             $function = 'M.enrol.rolemanager.init';
             $arguments = array(
                 'containerId'=>$this->id,
-                'userIds'=>array_keys($users),
+                'userIds'=>array_keys($this->users),
                 'courseId'=>$this->manager->get_course()->id,
                 'otherusers'=>isset($this->otherusers));
             $page->requires->yui_module($modules, $function, array($arguments));

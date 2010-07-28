@@ -203,6 +203,7 @@ if ($action) {
 }
 
 
+$renderer = $PAGE->get_renderer('core_enrol');
 $fields = array(
     'userdetails' => array (
         'picture' => false,
@@ -215,9 +216,8 @@ $fields = array(
     'group' => get_string('groups', 'group'),
     'enrol' => get_string('enrolmentinstances', 'enrol')
 );
-$table->set_fields($fields);
+$table->set_fields($fields, $renderer);
 
-$renderer = $PAGE->get_renderer('core_enrol');
 $canassign = has_capability('moodle/role:assign', $manager->get_context());
 $users = $manager->get_users_for_display($renderer, $pageurl, $table->sort, $table->sortdirection, $table->page, $table->perpage);
 foreach ($users as $userid=>&$user) {
