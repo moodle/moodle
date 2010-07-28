@@ -29,12 +29,15 @@ if (!$quiz = $DB->get_record('quiz', array('id' => $cm->instance))) {
 }
 
 $quizobj = quiz::create($quiz->id, $USER->id);
+// This script should only ever be posted to, so set page URL to the view page.
+$PAGE->set_url($quizobj->view_url());
 
 /// Check login and sesskey.
 require_login($quizobj->get_courseid(), false, $quizobj->get_cm());
 if (!confirm_sesskey()) {
     throw new moodle_exception('confirmsesskeybad', 'error', $quizobj->view_url());
 }
+$PAGE->set_pagelayout('base');
 
 /// if no questions have been set up yet redirect to edit.php
 if (!$quizobj->get_question_ids() && $quizobj->has_capability('mod/quiz:manage')) {

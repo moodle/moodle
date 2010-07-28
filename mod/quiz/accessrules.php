@@ -607,11 +607,8 @@ class password_access_rule extends quiz_access_rule_base {
      *
      * @param boolean $canpreview used to enfore securewindow stuff.
      * @param object $accessmanager the accessmanager calling us.
-     * @param boolean $return if true, return the HTML for the form (if required), instead of
-     * outputting it at stopping
-     * @return mixed return null, unless $return is true, and a form needs to be displayed.
      */
-    public function do_password_check($canpreview, $accessmanager, $return = false) {
+    public function do_password_check($canpreview, $accessmanager) {
         global $CFG, $SESSION, $OUTPUT, $PAGE;
 
     /// We have already checked the password for this quiz this session, so don't ask again.
@@ -647,9 +644,7 @@ class password_access_rule extends quiz_access_rule_base {
         $output = '';
 
     /// Start the page and print the quiz intro, if any.
-        if (!$return) {            
-            echo $OUTPUT->header();
-        }
+        echo $OUTPUT->header();
         if (trim(strip_tags($this->_quiz->intro))) {
             $cm = get_coursemodule_from_id('quiz', $this->_quiz->id);
             $output .= $OUTPUT->box(format_module_intro('quiz', $this->_quiz, $cm->id), 'generalbox', 'intro');
@@ -681,13 +676,9 @@ class password_access_rule extends quiz_access_rule_base {
         $output .= $OUTPUT->box_end();
 
     /// return or display form.
-        if ($return) {
-            return $output;
-        } else {
-            echo $output;
-            echo $OUTPUT->footer();
-            exit;
-        }
+        echo $output;
+        echo $OUTPUT->footer();
+        exit;
     }
 }
 

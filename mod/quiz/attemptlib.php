@@ -95,7 +95,7 @@ class quiz {
      *
      * @param integer $quizid the the quiz id.
      * @param integer $userid the the userid.
-     * @return object the new quiz object
+     * @return quiz the new quiz object
      */
     static public function create($quizid, $userid) {
         global $DB;
