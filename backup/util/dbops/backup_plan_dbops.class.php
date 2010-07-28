@@ -74,9 +74,12 @@ abstract class backup_plan_dbops extends backup_dbops {
     public static function get_modules_from_sectionid($sectionid) {
         global $DB;
 
-        // Get the course of the section
-        $courseid = $DB->get_field('course_sections', 'course', array('id' => $sectionid));
+        // Get the course and sequence of the section
+        $secrec = $DB->get_record('course_sections', array('id' => $sectionid), 'course, sequence');
+        $courseid = $secrec->course;
+        $sequence = $secrec->sequence;
 
+        // Get the section->sequence contents (it roots the activities order)
         // Get all course modules belonging to requested section
         $modulesarr = array();
         $modules = $DB->get_records_sql("
@@ -85,9 +88,18 @@ abstract class backup_plan_dbops extends backup_dbops {
               JOIN {modules} m ON m.id = cm.module
              WHERE cm.course = ?
                AND cm.section = ?", array($courseid, $sectionid));
-        foreach ($modules as $module) {
-            $module = array('id' => $module->id, 'modname' => $module->modname);
-            $modulesarr[] = (object)$module;
+        foreach (explode(',', $sequence) as $moduleid) {
+            if (isset($modules[$moduleid])) {
+                $module = array('id' => $modules[$moduleid]->id, 'modname' => $modules[$moduleid]->modname);
+                $modulesarr[] = (object)$module;
+                unset($modules[$moduleid]);
+            }
+        }
+        if (!empty($modules)) { // This shouldn't happen, but one borked sequence can lead to it. Add the rest
+            foreach ($modules as $module) {
+                $module = array('id' => $module->id, 'modname' => $module->modname);
+                $modulesarr[] = (object)$module;
+            }
         }
         return $modulesarr;
     }
