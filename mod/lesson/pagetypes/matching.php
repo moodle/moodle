@@ -434,12 +434,12 @@ class lesson_add_page_form_matching extends lesson_add_page_form_base {
 
         $this->_form->addElement('header', 'correctresponse', get_string('correctresponse', 'lesson'));
         $this->_form->addElement('editor', 'answer_editor[0]', get_string('correctresponse', 'lesson'), array('rows'=>'4', 'columns'=>'80'), array('noclean'=>true));
-        $this->add_jumpto(0, get_string('correctanswerjump','lesson'));
+        $this->add_jumpto(0, get_string('correctanswerjump','lesson'), LESSON_NEXTPAGE);
         $this->add_score(0, get_string("correctanswerscore", "lesson"));
 
         $this->_form->addElement('header', 'wrongresponse', get_string('wrongresponse', 'lesson'));
         $this->_form->addElement('editor', 'answer_editor[1]', get_string('wrongresponse', 'lesson'), array('rows'=>'4', 'columns'=>'80'), array('noclean'=>true));
-        $this->add_jumpto(1, get_string('wronganswerjump','lesson'));
+        $this->add_jumpto(1, get_string('wronganswerjump','lesson'), LESSON_THISPAGE);
         $this->add_score(1, get_string("wronganswerscore", "lesson"));
 
         for ($i = 2; $i < $this->_customdata['lesson']->maxanswers+2; $i++) {
