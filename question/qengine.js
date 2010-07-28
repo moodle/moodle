@@ -49,9 +49,9 @@ question_flag_changer = {
         } else {
             postdata += '&newstate=0'
         }
-        YAHOO.util.Connect.asyncRequest('POST', qengine_config.actionurl, null, postdata);
-        question_flag_changer.fire_state_changed(input);
         YAHOO.util.Event.preventDefault(e);
+        question_flag_changer.fire_state_changed(input);
+        YAHOO.util.Connect.asyncRequest('POST', qengine_config.actionurl, null, postdata);
     },
 
     update_image: function(image) {

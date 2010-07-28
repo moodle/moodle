@@ -128,7 +128,9 @@ $button = new single_button(new moodle_url($attemptobj->processattempt_url(), $o
 $button->id = 'responseform';
 $button->add_confirm_action(get_string('confirmclose', 'quiz'));
 
+echo $OUTPUT->container_start('controls');
 echo $OUTPUT->render($button);
+echo $OUTPUT->container_end();
 echo $OUTPUT->container_end();
 
 /// Finish the page
