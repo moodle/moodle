@@ -34,7 +34,6 @@ class user_filter_simpleselect extends user_filter_type {
     function setupForm(&$mform) {
         $choices = array(''=>get_string('anyvalue', 'filters')) + $this->_options;
         $mform->addElement('select', $this->_name, $this->_label, $choices);
-        $mform->setHelpButton($this->_name, array('simpleselect', $this->_label, 'filters'));
         if ($this->_advanced) {
             $mform->setAdvanced($this->_name);
         }
