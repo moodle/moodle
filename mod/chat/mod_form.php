@@ -49,6 +49,7 @@ class mod_chat_mod_form extends moodleform_mod {
         $mform->addElement('select', 'keepdays', get_string('savemessages', 'chat'), $options);
 
         $mform->addElement('selectyesno', 'studentlogs', get_string('studentseereports', 'chat'));
+        $mform->addHelpButton('studentlogs', 'studentseereports', 'chat');
 
         $this->standard_coursemodule_elements();
 

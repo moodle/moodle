@@ -39,8 +39,11 @@
 
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
     require_login($course->id, false, $cm);
-
     require_capability('mod/chat:readlog', $context);
+
+    if (empty($chat->studentlogs) && !has_capability('mod/chat:readlog', $context)) {
+        notice(get_string('nopermissiontoseethechatlog', 'chat'));
+    }
 
     add_to_log($course->id, 'chat', 'report', "report.php?id=$cm->id", $chat->id, $cm->id);
 
