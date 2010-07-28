@@ -61,7 +61,7 @@ class repository_youtube extends repository {
             $thumbnail = $attrs['url'];
             $arr = explode('/', $entry->id);
             $id = $arr[count($arr)-1];
-            $source = 'http://www.youtube.com/v/'.$id;
+            $source = 'http://www.youtube.com/v/' . $id . '#' . $title;
             $list[] = array(
                 'title'=>(string)$title,
                 'thumbnail'=>(string)$attrs['url'],
