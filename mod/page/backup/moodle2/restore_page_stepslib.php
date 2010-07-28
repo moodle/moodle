@@ -23,32 +23,32 @@
  */
 
 /**
- * Define all the restore steps that will be used by the restore_url_activity_task
+ * Define all the restore steps that will be used by the restore_page_activity_task
  */
 
 /**
- * Structure step to restore one label activity
+ * Structure step to restore one page activity
  */
-class restore_label_activity_structure_step extends restore_activity_structure_step {
+class restore_page_activity_structure_step extends restore_activity_structure_step {
 
     protected function define_structure() {
 
         $paths = array();
-        $paths[] = new restore_path_element('label', '/activity/label');
+        $paths[] = new restore_path_element('page', '/activity/page');
 
         // Return the paths wrapped into standard activity structure
         return $this->prepare_activity_structure($paths);
     }
 
-    protected function process_label($data) {
+    protected function process_page($data) {
         global $DB;
 
         $data = (object)$data;
         $oldid = $data->id;
         $data->course = $this->get_courseid();
 
-        // insert the label record
-        $newitemid = $DB->insert_record('label', $data);
+        // insert the page record
+        $newitemid = $DB->insert_record('page', $data);
         // inmediately after inserting "activity" record, call this
         $this->apply_activity_instance($newitemid);
     }
