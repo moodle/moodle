@@ -79,7 +79,7 @@ class restore_choice_activity_structure_step extends restore_activity_structure_
         $data = (object)$data;
         $oldid = $data->id;
         $data->choiceid = $this->get_new_parentid('choice');
-        $data->optionid = $this->get_new_parentid('choice_option');
+        $data->optionid = $this->get_mappingid('choice_option', $oldid);
         $data->userid = $this->get_mappingid('user', $data->userid);
 
         $newitemid = $DB->insert_record('choice_answers', $data);
