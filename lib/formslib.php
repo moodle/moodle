@@ -914,7 +914,7 @@ abstract class moodleform {
                             $mform->setDefault($realelementname, $params);
                             break;
                         case 'helpbutton' :
-                            $mform->setHelpButton($realelementname, $params);
+                            $mform->addHelpButton($realelementname, $params);
                             break;
                         case 'disabledif' :
                             foreach ($namecloned as $num => $name){
@@ -1410,15 +1410,17 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
      * Add an array of buttons to the form
      * @param    array       $buttons          An associative array representing help button to attach to
      *                                          to the form. keys of array correspond to names of elements in form.
+     * @deprecated since Moodle 2.0 - use addHelpButton() call on each element manually
      * @param bool $suppresscheck
      * @param string $function
      * @access   public
     */
     function setHelpButtons($buttons, $suppresscheck=false, $function='helpbutton'){
 
-        foreach ($buttons as $elementname => $button){
-            $this->setHelpButton($elementname, $button, $suppresscheck, $function);
-        }
+        debugging('function moodle_form::setHelpButtons() is deprecated');
+        //foreach ($buttons as $elementname => $button){
+        //    $this->setHelpButton($elementname, $button, $suppresscheck, $function);
+        //}
     }
     /**
      * Add a single button.
