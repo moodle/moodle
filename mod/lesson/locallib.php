@@ -32,6 +32,8 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->dirroot.'/course/moodleform_mod.php');
 require_once($CFG->dirroot . '/mod/lesson/lib.php');
 
+/** This page */
+define('LESSON_THISPAGE', 0);
 /** Next page -> any page not seen before */
 define("LESSON_UNSEENPAGE", 1);
 /** Next page -> any page not answered correctly */
@@ -2034,7 +2036,7 @@ abstract class lesson_page extends lesson_base {
         static $jumpnames = array();
 
         if (!array_key_exists($jumpto, $jumpnames)) {
-            if ($jumpto == 0) {
+            if ($jumpto == LESSON_THISPAGE) {
                 $jumptitle = get_string('thispage', 'lesson');
             } elseif ($jumpto == LESSON_NEXTPAGE) {
                 $jumptitle = get_string('nextpage', 'lesson');
