@@ -79,10 +79,10 @@ abstract class restore_plan_builder {
 
         switch ($controller->get_type()) {
             case backup::TYPE_1ACTIVITY:
-                self::build_activity_plan($controller, $controller->get_courseid());
+                self::build_activity_plan($controller, key($controller->get_info()->activities));
                 break;
             case backup::TYPE_1SECTION:
-                self::build_section_plan($controller, $controller->get_courseid());
+                self::build_section_plan($controller, key($controller->get_info()->sections));
                 break;
             case backup::TYPE_1COURSE:
                 self::build_course_plan($controller, $controller->get_courseid());
