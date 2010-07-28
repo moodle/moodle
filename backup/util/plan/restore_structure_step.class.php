@@ -267,7 +267,7 @@ abstract class restore_structure_step extends restore_step {
     protected function add_related_files($component, $filearea, $mappingitemname, $filesctxid = null) {
         $filesctxid = is_null($filesctxid) ? $this->task->get_old_contextid() : $filesctxid;
         restore_dbops::send_files_to_pool($this->get_basepath(), $this->get_restoreid(), $component,
-                                          $filearea, $filesctxid, $mappingitemname);
+                                          $filearea, $filesctxid, $this->task->get_userid(), $mappingitemname);
     }
 
     /**

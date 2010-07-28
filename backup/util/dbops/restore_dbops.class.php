@@ -238,7 +238,7 @@ abstract class restore_dbops {
      * optionally one source itemname to match itemids
      * put the corresponding files in the pool
      */
-    public static function send_files_to_pool($basepath, $restoreid, $component, $filearea, $oldcontextid, $itemname = null) {
+    public static function send_files_to_pool($basepath, $restoreid, $component, $filearea, $oldcontextid, $dfltuserid, $itemname = null) {
         global $DB;
 
         // Get new context, must exist or this will fail
@@ -284,9 +284,12 @@ abstract class restore_dbops {
             if ($file->filepath == '/' && $file->filename == '.') {
                 continue;
             }
+            // set the best possible user
+            $mappeduser = self::get_backup_ids_record($restoreid, 'user', $file->userid);
+            $file->userid = !empty($mappeduser) ? $mappeduser->newitemid : $dfltuserid;
             // dir found (and not root one), let's create if
             if ($file->filename == '.') {
-                $fs->create_directory($newcontextid, $component, $filearea, $rec->newitemid, $file->filepath);
+                $fs->create_directory($newcontextid, $component, $filearea, $rec->newitemid, $file->filepath, $file->userid);
                 continue;
             }
             // arrived here, file found
@@ -305,8 +308,10 @@ abstract class restore_dbops {
                     'filename'    => $file->filename,
                     'timecreated' => $file->timecreated,
                     'timemodified'=> $file->timemodified,
+                    'userid'      => $file->userid,
                     'author'      => $file->author,
-                    'license'     => $file->license);
+                    'license'     => $file->license,
+                    'sortorder'   => $file->sortorder);
                 $fs->create_file_from_pathname($file_record, $backuppath);
             }
         }
