@@ -53,4 +53,9 @@ class restore_label_activity_structure_step extends restore_activity_structure_s
         $this->apply_activity_instance($newitemid);
     }
 
+    protected function after_execute() {
+        // Add label related files, no need to match by itemname (just internally handled context)
+        $this->add_related_files('mod_label', 'intro', null);
+    }
+
 }

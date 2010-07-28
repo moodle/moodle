@@ -53,4 +53,8 @@ class restore_page_activity_structure_step extends restore_activity_structure_st
         $this->apply_activity_instance($newitemid);
     }
 
+    protected function after_execute() {
+        // Add page related files, no need to match by itemname (just internally handled context)
+        $this->add_related_files('mod_page', 'intro', null);
+    }
 }
