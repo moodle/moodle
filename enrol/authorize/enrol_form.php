@@ -86,7 +86,6 @@ class enrol_authorize_form extends moodleform
             $mform->setDefault('cctype', '');
 
             $mform->addElement('text', 'cvv', get_string('ccvv', 'enrol_authorize'), 'size="4"');
-            $mform->setHelpButton('cvv', array('authorize/cvv',get_string('ccvv', 'enrol_authorize'),'enrol'), true);
             $mform->setType('cvv', PARAM_ALPHANUM);
             $mform->setDefault('cvv', '');
             $mform->addRule('cvv', get_string('missingcvv', 'enrol_authorize'), 'required', null, 'client');
@@ -98,7 +97,6 @@ class enrol_authorize_form extends moodleform
                 $ccauthgrp[] = &$mform->createElement('static', 'nextline', null, '<br />');
                 $ccauthgrp[] = &$mform->createElement('text', 'ccauthcode', '', 'size="8"');
                 $mform->addGroup($ccauthgrp, 'ccauthgrp', get_string('authcode', 'enrol_authorize'), '&nbsp;', false);
-                $mform->setHelpButton('ccauthgrp', array('authorize/authcode',get_string('authcode', 'enrol_authorize'),'enrol'), true);
 
                 $ccauthgrprules = array();
                 $ccauthgrprules['ccauthcode'][] = array(get_string('missingccauthcode', 'enrol_authorize'), 'numeric', null, 'client');
@@ -148,7 +146,6 @@ class enrol_authorize_form extends moodleform
         elseif (AN_METHOD_ECHECK == $paymentmethod)
         {
             $mform->addElement('text', 'abacode', get_string('echeckabacode', 'enrol_authorize'), 'size="9" maxlength="9"');
-            $mform->setHelpButton('abacode', array('authorize/aba',get_string('echeckabacode', 'enrol_authorize'),'enrol'), true);
             $mform->setType('abacode', PARAM_ALPHANUM);
             $mform->setDefault('abacode', '');
             $mform->addRule('abacode', get_string('missingaba', 'enrol_authorize'), 'required', null, 'client');
