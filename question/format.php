@@ -783,7 +783,7 @@ class qformat_default {
      * @param array $names
      * @return string
      */
-    protected function assemble_category_path($names) {
+    function assemble_category_path($names) {
         $escapednames = array();
         foreach ($names as $name) {
             $escapedname = str_replace('/', '//', $name);
@@ -809,7 +809,7 @@ class qformat_default {
      * @param string $path
      * @return array of category names.
      */
-    protected function split_category_path($path) {
+    function split_category_path($path) {
         $rawnames = preg_split('~(?<!/)/(?!/)~', $path);
         $names = array();
         foreach ($rawnames as $rawname) {
