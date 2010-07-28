@@ -167,6 +167,7 @@ class MoodleQuickForm_editor extends HTML_QuickForm_element {
             $args->return_types = (FILE_INTERNAL | FILE_EXTERNAL);
             $args->context = $ctx;
             $args->env = 'filepicker';
+            // advimage plugin
             $image_options = initialise_filepicker($args);
             $image_options->context = $ctx;
             $image_options->client_id = uniqid();
@@ -174,6 +175,7 @@ class MoodleQuickForm_editor extends HTML_QuickForm_element {
             $image_options->env = 'editor';
             $image_options->itemid = $draftitemid;
 
+            // moodlemedia plugin
             $args->accepted_types = array('video', 'audio');
             $media_options = initialise_filepicker($args);
             $media_options->context = $ctx;
@@ -182,7 +184,7 @@ class MoodleQuickForm_editor extends HTML_QuickForm_element {
             $media_options->env = 'editor';
             $media_options->itemid = $draftitemid;
 
-            $args->return_types = FILE_EXTERNAL;
+            // advlink plugin
             $args->accepted_types = '*';
             $link_options = initialise_filepicker($args);
             $link_options->context = $ctx;
