@@ -318,7 +318,7 @@ class lesson_add_page_form_shortanswer extends lesson_add_page_form_base {
             $this->_form->addElement('header', 'answertitle'.$i, get_string('answer').' '.($i+1));
             $this->add_answer($i);
             $this->add_response($i);
-            $this->add_jumpto($i);
+            $this->add_jumpto($i, NULL, ($i == 0 ? LESSON_NEXTPAGE : LESSON_THISPAGE));
             $this->add_score($i, null, ($i===0)?1:0);
         }
     }
