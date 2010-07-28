@@ -28,10 +28,10 @@
  */
 
 class repository_alfresco extends repository {
-    private $instance = null;
     private $ticket = null;
     private $user_session = null;
     private $store = null;
+    private $alfresco;
 
     public function __construct($repositoryid, $context = SYSCONTEXTID, $options = array()) {
         global $SESSION, $CFG;
@@ -42,27 +42,27 @@ class repository_alfresco extends repository {
             require_once($CFG->libdir . '/alfresco/Service/Session.php');
             require_once($CFG->libdir . '/alfresco/Service/SpacesStore.php');
             require_once($CFG->libdir . '/alfresco/Service/Node.php');
-            // setup alfresco instance
+            // setup alfresco
             $server_url = '';
             if (!empty($this->options['alfresco_url'])) {
                 $server_url = $this->options['alfresco_url'];
             } else {
                 return;
             }
-            $this->instance = new Alfresco_Repository($this->options['alfresco_url']);
+            $this->alfresco = new Alfresco_Repository($this->options['alfresco_url']);
             $this->username   = optional_param('al_username', '', PARAM_RAW);
             $this->password   = optional_param('al_password', '', PARAM_RAW);
             try{
                 // deal with user logging in
                 if (empty($SESSION->{$this->sessname}) && !empty($this->username) && !empty($this->password)) {
-                    $this->ticket = $this->instance->authenticate($this->username, $this->password);
+                    $this->ticket = $this->alfresco->authenticate($this->username, $this->password);
                     $SESSION->{$this->sessname} = $this->ticket;
                 } else {
                     if (!empty($SESSION->{$this->sessname})) {
                         $this->ticket = $SESSION->{$this->sessname};
                     }
                 }
-                $this->user_session = $this->instance->createSession($this->ticket);
+                $this->user_session = $this->alfresco->createSession($this->ticket);
                 $this->store = new SpacesStore($this->user_session);
             } catch (Exception $e) {
                 $this->logout();
