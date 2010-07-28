@@ -273,13 +273,13 @@ class lesson_add_page_form_truefalse extends lesson_add_page_form_base {
         $this->_form->addElement('header', 'answertitle0', get_string('correctresponse', 'lesson'));
         $this->add_answer(0, NULL, true);
         $this->add_response(0);
-        $this->add_jumpto(0, get_string('correctanswerjump', 'lesson'));
+        $this->add_jumpto(0, get_string('correctanswerjump', 'lesson'), LESSON_NEXTPAGE);
         $this->add_score(0, get_string('correctanswerscore', 'lesson'), 1);
 
         $this->_form->addElement('header', 'answertitle1', get_string('wrongresponse', 'lesson'));
         $this->add_answer(1, NULL, true);
         $this->add_response(1);
-        $this->add_jumpto(1, get_string('wronganswerjump', 'lesson'));
+        $this->add_jumpto(1, get_string('wronganswerjump', 'lesson'), LESSON_THISPAGE);
         $this->add_score(1, get_string('wronganswerscore', 'lesson'), 0);
     }
 }
