@@ -3,10 +3,35 @@
 require_once($CFG->dirroot.'/lib/rsslib.php');
 require_once($CFG->dirroot .'/blog/lib.php');
 
+function blog_rss_get_url($contextid, $userid, $filtertype, $filterselect=0, $tagid=0) {
+    $componentname = 'blog';
+
+    $additionalargs = null;
+    switch ($filtertype) {
+        case 'site':
+            $additionalargs = 'site/'.SITEID;
+        break;
+        case 'course':
+            $additionalargs = 'course/'.$filterselect;
+        break;
+        case 'group':
+            $additionalargs = 'group/'.$filterselect;
+        break;
+        case 'user':
+            $additionalargs = 'user/'.$filterselect;
+        break;
+    }
+
+    if ($tagid) {
+        $additionalargs .= '/'.$tagid;
+    }
+
+    return rss_get_url($contextid, $userid, $componentname, $additionalargs);
+}
+
 // This function returns the icon (from theme) with the link to rss/file.php
 // needs some hacking to rss/file.php
-function blog_rss_print_link($filtertype, $filterselect, $tagid=0, $tooltiptext='') {
-
+function blog_rss_print_link($context, $filtertype, $filterselect=0, $tagid=0, $tooltiptext='') {
     global $CFG, $USER, $OUTPUT;
 
     if (!isloggedin()) {
@@ -15,32 +40,61 @@ function blog_rss_print_link($filtertype, $filterselect, $tagid=0, $tooltiptext=
         $userid = $USER->id;
     }
 
-    switch ($filtertype) {
-        case 'site':
-            $path = SITEID.'/'.$userid.'/blog/site/'.SITEID;
-        break;
-        case 'course':
-            $path = $filterselect.'/'.$userid.'/blog/course/'.$filterselect;
-        break;
-        case 'group':
-            $path = SITEID.'/'.$userid.'/blog/group/'.$filterselect;
-        break;
-        case 'user':
-            $path = SITEID.'/'.$userid.'/blog/user/'.$filterselect;
-        break;
-    }
-
-    if ($tagid) {
-        $path .= '/'.$tagid;
-    }
-
-    $path .= '/rss.xml';
+    $url = blog_rss_get_url($context->id, $userid, $filtertype, $filterselect, $tagid);
     $rsspix = $OUTPUT->pix_url('i/rss');
+    print '<div class="mdl-right"><a href="'. $url .'"><img src="'. $rsspix .'" title="'. strip_tags($tooltiptext) .'" alt="'.get_string('rss').'" /></a></div>';
+}
 
-    require_once($CFG->libdir.'/filelib.php');
-    $path = get_file_url($path, null, 'rssfile');
-    print '<div class="mdl-right"><a href="'. $path .'"><img src="'. $rsspix .'" title="'. strip_tags($tooltiptext) .'" alt="'.get_string('rss').'" /></a></div>';
+function blog_rss_add_http_header($context, $title, $filtertype, $filterselect=0, $tagid=0) {
+    global $PAGE, $USER, $CFG;
 
+    //$componentname = 'blog';
+    //rss_add_http_header($context, $componentname, $filterselect, $title);
+    
+    if (!isloggedin()) {
+        $userid = $CFG->siteguest;
+    } else {
+        $userid = $USER->id;
+    }
+
+    $rsspath = blog_rss_get_url($context->id, $userid, $filtertype, $filterselect, $tagid);
+    $PAGE->add_alternate_version($title, $rsspath, 'application/rss+xml');
+}
+
+/**
+ * Utility function to extract parameters needed to generate RSS URLs from the blog filters
+ * @param <type> $filters
+ * @return array array containing the id of the user/course/group, the relevant context and the filter type (site/user/course/group)
+ */
+function blog_rss_get_params($filters) {
+    $thingid = $rsscontext = $filtertype = null;
+
+    if (!$filters) {
+        $thingid = SITEID;
+        $rsscontext = $sitecontext;
+        $filtertype = 'site';
+    } else if (array_key_exists('course', $filters)) {
+        $thingid = $filters['course'];
+
+        $coursecontext = get_context_instance(CONTEXT_COURSE, $thingid);
+        $rsscontext = $coursecontext;
+
+        $filtertype = 'course';
+    } else if (array_key_exists('user', $filters)) {
+        $thingid = $filters['user'];
+
+        $usercontext = get_context_instance(CONTEXT_USER, $thingid);
+        $rsscontext = $usercontext;
+
+        $filtertype = 'user';
+    } else if (array_key_exists('group', $filters)) {
+        $thingid = $filters['group'];
+
+        $rsscontext = $sitecontext; //is this the context we should be using for group blogs?
+        $filtertype = 'group';
+    }
+
+    return array($thingid, $rsscontext, $filtertype);
 }
 
 
@@ -72,15 +126,18 @@ function blog_rss_get_feed($context, $args) {
 
     if (file_exists($filename)) {
         if (filemtime($filename) + 3600 > time()) {
-            return $filename;   /// It's already done so we return cached version
+            return $filename;   // It's already done so we return cached version
         }
     }
 
-/// Get all the entries from the database
+    // Get all the entries from the database
+    //$blogentries = blog_fetch_entries('', 20, '', $type, $id, $tagid);
+    require_once($CFG->dirroot .'/blog/locallib.php');
+    $blogheaders = blog_get_headers();
+    $bloglisting = new blog_listing($blogheaders['filters']);
+    $blogentries = $bloglisting->get_entries();
 
-    $blogentries = blog_fetch_entries('', 20, '', $type, $id, $tagid);
-
-/// Now generate an array of RSS items
+    // Now generate an array of RSS items
     if ($blogentries) {
         $items = array();
         foreach ($blogentries as $blog_entry) {
@@ -134,11 +191,8 @@ function blog_rss_get_feed($context, $args) {
 
     $footer = rss_standard_footer();
 
-
-/// Save the XML contents to file.
-
+    // Save the XML contents to file.
     $rssdata = $header.$articles.$footer;
-
     if (blog_rss_save_file($type,$id,$tagid,$rssdata)) {
         return $filename;
     } else {
@@ -160,18 +214,23 @@ function blog_rss_file_name($type, $id, $tagid=0) {
 //This function saves to file the rss feed specified in the parameters
 function blog_rss_save_file($type, $id, $tagid=0, $contents='') {
     global $CFG;
+    
+    $status = true;
 
-    if (! $basedir = make_upload_directory("rss/blog/$type/$id")) {
-        return false;
+    //blog creates some additional dirs within the rss cache so make sure they all exist
+    if (! $basedir = make_upload_directory ('cache/rss/blog')) {
+        //Cannot be created, so error
+        $status = false;
+    }
+    if (! $basedir = make_upload_directory ('cache/rss/blog/'.$type)) {
+        //Cannot be created, so error
+        $status = false;
     }
 
-    $file = blog_rss_file_name($type, $id, $tagid);
-    $rss_file = fopen($file, 'w');
-    if ($rss_file) {
-        $status = fwrite ($rss_file, $contents);
-        fclose($rss_file);
-    } else {
-        $status = false;
+    if ($status) {
+        $filename = blog_rss_file_name($type, $id, $tagid);
+        $expandfilename = false; //we're supplying a full file path
+        $status = rss_save_file('blog', $filename, $contents, $expandfilename);
     }
 
     return $status;

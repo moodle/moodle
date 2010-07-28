@@ -1029,10 +1029,6 @@ function message_history_link($userid1, $userid2, $returnstr=false, $keywords=''
         $strmessagehistory = get_string('messagehistory', 'message');
     }
 
-//todo andrew user1 is generally the current user
-    //if (!$userid2) {
-//        $userid2 = $USER->id;
-    //}
     if ($position) {
         $position = "#$position";
     }

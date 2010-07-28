@@ -28,7 +28,15 @@ defined('MOODLE_INTERNAL') || die();
 
  function rss_add_http_header($context, $componentname, $componentinstance, $title) {
     global $PAGE, $USER;
-    $rsspath = rss_get_url($context->id, $USER->id, $componentname, $componentinstance->id);
+
+    $componentid = null;
+    if (is_object($componentinstance)) {
+        $componentid = $componentinstance->id;
+    } else {
+        $componentid = $componentinstance;
+    }
+
+    $rsspath = rss_get_url($context->id, $USER->id, $componentname, $componentid);
     $PAGE->add_alternate_version($title, $rsspath, 'application/rss+xml');
  }
 
@@ -56,13 +64,13 @@ function rss_get_link($contextid, $userid, $componentname, $id, $tooltiptext='')
  * @param int contextid the course id
  * @param int userid the current user id
  * @param string modulename the name of the current module. For example "forum"
- * @param int id For modules, module instance id
+ * @param string $additionalargs For modules, module instance id
  */
-function rss_get_url($contextid, $userid, $componentname, $id) {
+function rss_get_url($contextid, $userid, $componentname, $additionalargs) {
     global $CFG;
     require_once($CFG->libdir.'/filelib.php');
     $usertoken = rss_get_token($userid);
-    return get_file_url($contextid.'/'.$usertoken.'/'.$componentname.'/'.$id.'/rss.xml', null, 'rssfile');
+    return get_file_url($contextid.'/'.$usertoken.'/'.$componentname.'/'.$additionalargs.'/rss.xml', null, 'rssfile');
 }
 
 /**
@@ -130,9 +138,9 @@ function rss_enabled_for_mod($modname, $instance=null, $hasrsstype=true, $hasrss
  * @global object
  * @param string $componentname the module name ie forum. Used to create a cache directory.
  * @param string $filename the name of the file to be created ie "1234"
- * @param string $result the data to be written to the file
+ * @param string $contents the data to be written to the file
  */
-function rss_save_file($componentname, $filename, $result) {
+function rss_save_file($componentname, $filename, $contents, $expandfilename=true) {
     global $CFG;
 
     $status = true;
@@ -143,10 +151,14 @@ function rss_save_file($componentname, $filename, $result) {
     }
 
     if ($status) {
-        $fullfilename = rss_get_file_full_name($componentname, $filename);
+        $fullfilename = $filename;
+        if ($expandfilename) {
+            $fullfilename = rss_get_file_full_name($componentname, $filename);
+        }
+
         $rss_file = fopen($fullfilename, "w");
         if ($rss_file) {
-            $status = fwrite ($rss_file, $result);
+            $status = fwrite ($rss_file, $contents);
             fclose($rss_file);
         } else {
             $status = false;
