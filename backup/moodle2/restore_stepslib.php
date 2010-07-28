@@ -1038,7 +1038,29 @@ class restore_module_structure_step extends restore_structure_step {
 
         $data->course = $this->task->get_courseid();
         $data->module = $DB->get_field('modules', 'id', array('name' => $data->modulename));
-        $data->section = $this->get_mappingid('course_section', $data->sectionid); // map section
+        // Map section (first try by course_section mapping match. Useful in course and section restores)
+        $data->section = $this->get_mappingid('course_section', $data->sectionid);
+        if (!$data->section) { // mapping failed, try to get section by sectionnumber matching
+            $params = array(
+                'course' => $this->get_courseid(),
+                'section' => $data->sectionnumber);
+            $data->section = $DB->get_field('course_sections', 'id', $params);
+        }
+        if (!$data->section) { // sectionnumber failed, try to get first section in course
+            $params = array(
+                'course' => $this->get_courseid());
+            $data->section = $DB->get_field('course_sections', 'MIN(id)', $params);
+        }
+        if (!$data->section) { // no sections in course, create section 0 and 1 and assign module to 1
+            $sectionrec = array(
+                'course' => $this->get_courseid(),
+                'section' => 0);
+            $DB->insert_record('course_sections', $sectionrec); // section 0
+            $sectionrec = array(
+                'course' => $this->get_courseid(),
+                'section' => 1);
+            $data->section = $DB->insert_record('course_sections', $sectionrec); // section 1
+        }
         $data->groupingid= $this->get_mappingid('grouping', $data->groupingid);      // grouping
         if (!$CFG->enablegroupmembersonly) {                                         // observe groupsmemberonly
             $data->groupmembersonly = 0;
