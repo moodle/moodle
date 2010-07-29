@@ -48,6 +48,7 @@ class restore_structure_parser_processor extends grouped_parser_processor {
      * Provide NULL and legacy file.php uses decoding
      */
     public function process_cdata($cdata) {
+        global $CFG;
         if ($cdata === '$@NULL@$') {  // Some cases we know we can skip complete processing
             return null;
         } else if ($cdata === '') {
