@@ -38,16 +38,16 @@ class restore_scorm_activity_structure_step extends restore_activity_structure_s
 
         $paths[] = new restore_path_element('scorm', '/activity/scorm');
         $paths[] = new restore_path_element('scorm_sco', '/activity/scorm/scoes/sco');
-        $paths[] = new restore_path_element('scorm_sco_data', '/activity/scorm/sco_datas/sco_data');
-        $paths[] = new restore_path_element('scorm_seq_objective', '/activity/scorm/seq_objectives/seq_objective');
-        $paths[] = new restore_path_element('scorm_seq_rolluprule', '/activity/scorm/seq_rolluprules/seq_rolluprule');
-        $paths[] = new restore_path_element('scorm_seq_rolluprulecond', '/activity/scorm/seq_rollupruleconds/seq_rolluprulecond');
-        $paths[] = new restore_path_element('scorm_seq_rulecond', '/activity/scorm/seq_ruleconds/seq_rulecond');
-        $paths[] = new restore_path_element('scorm_seq_rulecond_data', '/activity/scorm/seq_rulecond_datas/seq_rulecond_data');
-        
-        $paths[] = new restore_path_element('scorm_seq_mapinfo', '/activity/scorm/seq_mapinfos/seq_mapinfo');
+        $paths[] = new restore_path_element('scorm_sco_data', '/activity/scorm/scoes/sco/sco_datas/sco_data');
+        $paths[] = new restore_path_element('scorm_seq_objective', '/activity/scorm/scoes/sco/seq_objectives/seq_objective');
+        $paths[] = new restore_path_element('scorm_seq_rolluprule', '/activity/scorm/scoes/sco/seq_rolluprules/seq_rolluprule');
+        $paths[] = new restore_path_element('scorm_seq_rolluprulecond', '/activity/scorm/scoes/sco/seq_rollupruleconds/seq_rolluprulecond');
+        $paths[] = new restore_path_element('scorm_seq_rulecond', '/activity/scorm/scoes/sco/seq_ruleconds/seq_rulecond');
+        $paths[] = new restore_path_element('scorm_seq_rulecond_data', '/activity/scorm/scoes/sco/seq_rulecond_datas/seq_rulecond_data');
+
+        $paths[] = new restore_path_element('scorm_seq_mapinfo', '/activity/scorm/scoes/sco/seq_objectives/seq_objective/seq_mapinfos/seq_mapinfo');
         if ($userinfo) {
-            $paths[] = new restore_path_element('scorm_sco_track', '/activity/scorm/sco_tracks/sco_track');
+            $paths[] = new restore_path_element('scorm_sco_track', '/activity/scorm/scoes/sco/sco_tracks/sco_track');
         }
 
         // Return the paths wrapped into standard activity structure
@@ -56,10 +56,10 @@ class restore_scorm_activity_structure_step extends restore_activity_structure_s
 
     protected function process_scorm($data) {
         global $DB;
-        
+
         $data = (object)$data;
         $oldid = $data->id;
-        
+
         $data->course = $this->get_courseid();
 
         $data->timeopen = $this->apply_date_offset($data->timeopen);
@@ -75,14 +75,12 @@ class restore_scorm_activity_structure_step extends restore_activity_structure_s
         global $DB;
 
         $data = (object)$data;
-        //TODO: Remove this hack - seems to be a bug in restore that passes invalid data here.
-        if (!empty($data->id)) {
-            $oldid = $data->id;
-            $data->scorm = $this->get_new_parentid('scorm');
 
-            $newitemid = $DB->insert_record('scorm_scoes', $data);
-            $this->set_mapping('scorm_scoes', $oldid, $newitemid);
-        }
+        $oldid = $data->id;
+        $data->scorm = $this->get_new_parentid('scorm');
+
+        $newitemid = $DB->insert_record('scorm_scoes', $data);
+        $this->set_mapping('scorm_sco', $oldid, $newitemid);
     }
 
     protected function process_scorm_sco_data($data) {
@@ -90,7 +88,7 @@ class restore_scorm_activity_structure_step extends restore_activity_structure_s
 
         $data = (object)$data;
         $oldid = $data->id;
-        $data->scoid = $this->get_new_parentid('scorm_scoes');
+        $data->scoid = $this->get_new_parentid('scorm_sco');
 
         $newitemid = $DB->insert_record('scorm_scoes_data', $data);
         // No need to save this mapping as far as nothing depend on it
@@ -102,7 +100,7 @@ class restore_scorm_activity_structure_step extends restore_activity_structure_s
 
         $data = (object)$data;
         $oldid = $data->id;
-        $data->scoid = $this->get_new_parentid('scorm_scoes');
+        $data->scoid = $this->get_new_parentid('scorm_sco');
 
         $newitemid = $DB->insert_record('scorm_seq_objective', $data);
         $this->set_mapping('scorm_seq_objective', $oldid, $newitemid);
@@ -113,7 +111,7 @@ class restore_scorm_activity_structure_step extends restore_activity_structure_s
 
         $data = (object)$data;
         $oldid = $data->id;
-        $data->scoid = $this->get_new_parentid('scorm_scoes');
+        $data->scoid = $this->get_new_parentid('scorm_sco');
 
         $newitemid = $DB->insert_record('scorm_seq_rolluprule', $data);
         $this->set_mapping('scorm_seq_rolluprule', $oldid, $newitemid);
@@ -124,7 +122,7 @@ class restore_scorm_activity_structure_step extends restore_activity_structure_s
 
         $data = (object)$data;
         $oldid = $data->id;
-        $data->scoid = $this->get_new_parentid('scorm_scoes');
+        $data->scoid = $this->get_new_parentid('scorm_sco');
         $data->ruleconditions = $this->get_new_parentid('scorm_seq_rolluprule');
 
         $newitemid = $DB->insert_record('scorm_seq_rolluprulecond', $data);
@@ -137,7 +135,7 @@ class restore_scorm_activity_structure_step extends restore_activity_structure_s
 
         $data = (object)$data;
         $oldid = $data->id;
-        $data->scoid = $this->get_new_parentid('scorm_scoes');
+        $data->scoid = $this->get_new_parentid('scorm_sco');
 
         $newitemid = $DB->insert_record('scorm_seq_ruleconds', $data);
         $this->set_mapping('scorm_seq_ruleconds', $oldid, $newitemid);
@@ -148,7 +146,7 @@ class restore_scorm_activity_structure_step extends restore_activity_structure_s
 
         $data = (object)$data;
         $oldid = $data->id;
-        $data->scoid = $this->get_new_parentid('scorm_scoes');
+        $data->scoid = $this->get_new_parentid('scorm_sco');
         $data->ruleconditions = $this->get_new_parentid('scorm_seq_ruleconds');
 
         $newitemid = $DB->insert_record('scorm_seq_rulecond', $data);
@@ -163,7 +161,7 @@ class restore_scorm_activity_structure_step extends restore_activity_structure_s
 
         $data = (object)$data;
         $oldid = $data->id;
-        $data->scoid = $this->get_new_parentid('scorm_scoes');
+        $data->scoid = $this->get_new_parentid('scorm_sco');
         $data->objectiveid = $this->get_new_parentid('scorm_seq_objective');
         $newitemid = $DB->insert_record('scorm_scoes_data', $data);
         // No need to save this mapping as far as nothing depend on it
@@ -176,7 +174,7 @@ class restore_scorm_activity_structure_step extends restore_activity_structure_s
         $data = (object)$data;
         $oldid = $data->id;
         $data->scormid = $this->get_new_parentid('scorm');
-        $data->scoid = $this->get_new_parentid('scorm_scoes');
+        $data->scoid = $this->get_new_parentid('scorm_sco');
         $data->userid = $this->get_mappingid('user', $data->userid);
 
         $newitemid = $DB->insert_record('scorm_scoes_track', $data);
