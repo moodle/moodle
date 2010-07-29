@@ -901,7 +901,7 @@ class assignment_upload extends assignment_base {
         if (is_enrolled($this->context, $USER, 'mod/assignment:submit')
           and $this->isopen()                                                 // assignment not closed yet
           and (empty($submission) or ($submission->userid == $USER->id        // his/her own submission
-            and $this->count_user_files($submission->id) < $this->assignment->var1))    // file limit not reached
+            and $this->count_user_files($submission->id) <= $this->assignment->var1))    // file limit not exceeded
           and !$this->is_finalized($submission)) {                            // no uploading after final submission
             return true;
         } else {
