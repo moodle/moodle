@@ -3101,23 +3101,9 @@ class settings_navigation extends navigation_node {
             $userauth = get_auth_plugin($user->auth);
             if ($currentuser && !session_is_loggedinas() && $userauth->can_change_password() && !isguestuser() && has_capability('moodle/user:changeownpassword', $systemcontext)) {
                 $passwordchangeurl = $userauth->change_password_url();
-                if (!$passwordchangeurl) {
-                    if (empty($CFG->loginhttps)) {
-                        $wwwroot = $CFG->wwwroot;
-                    } else {
-                        $wwwroot = str_replace('http:', 'https:', $CFG->wwwroot);
-                    }
-                    $passwordchangeurl = new moodle_url('/login/change_password.php');
-                } else {
-                    $urlbits = explode($passwordchangeurl. '?', 1);
-                    $passwordchangeurl = new moodle_url($urlbits[0]);
-                    if (count($urlbits)==2 && preg_match_all('#\&([^\=]*?)\=([^\&]*)#si', '&'.$urlbits[1], $matches)) {
-                        foreach ($matches as $pair) {
-                            $fullmeurl->param($pair[1],$pair[2]);
-                        }
-                    }
+                if (empty($passwordchangeurl)) {
+                    $passwordchangeurl = new moodle_url('/login/change_password.php', array('id', $course->id));
                 }
-                $passwordchangeurl->param('id', $course->id);
                 $usersetting->add(get_string("changepassword"), $passwordchangeurl, self::TYPE_SETTING);
             }
         }
