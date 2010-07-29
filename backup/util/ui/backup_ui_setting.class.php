@@ -225,7 +225,7 @@ abstract class backup_setting_ui extends base_setting_ui {
             if ($this->setting->get_level() == backup_setting::SECTION_LEVEL) {
                 $this->label = get_string('includesection', 'backup', $task->get_name());
             } else if ($this->setting->get_level() == backup_setting::ACTIVITY_LEVEL) {
-                $this->label = get_string('includeother', 'backup', $task->get_name());
+                $this->label = $task->get_name();
             }
         }
         return $this->label;
@@ -302,6 +302,10 @@ class backup_setting_ui_checkbox extends backup_setting_ui {
      */
     protected $type = backup_setting::UI_HTML_CHECKBOX;
     /**
+     * @var bool
+     */
+    protected $changeable = true;
+    /**
      * The text to show next to the checkbox
      * @var string
      */
@@ -345,6 +349,27 @@ class backup_setting_ui_checkbox extends backup_setting_ui {
         } else {
             return get_string('no');
         }
+    }
+
+    /**
+     * Returns true if the setting is changeable
+     * @return bool
+     */
+    public function is_changeable() {
+        if ($this->changeable===false) {
+            return false;
+        } else {
+            return parent::is_changeable();
+        }
+    }
+
+    /**
+     * Sets whether the setting is changeable,
+     * Note dependencies can still mark this setting changeable or not
+     * @param bool $newvalue
+     */
+    public function set_changeable($newvalue) {
+        $this->changeable = ($newvalue);
     }
 }
 
@@ -465,7 +490,11 @@ class backup_setting_ui_select extends backup_setting_ui {
     public function get_static_value() {
         return $this->values[$this->get_value()];
     }
-
+    /**
+     * Returns true if the setting is changeable, false otherwise
+     *
+     * @return bool
+     */
     public function is_changeable() {
         if (count($this->values) == 1) {
             return false;

@@ -54,64 +54,64 @@ class backup_root_task extends backup_task {
 
         // Define users setting (keeping it on hand to define dependencies)
         $users = new backup_users_setting('users', base_setting::IS_BOOLEAN, true);
-        $users->set_ui(new backup_setting_ui_select($users, $users->get_name(), array(1=>get_string('yes'), 0=>get_string('no'))));
+        $users->set_ui(new backup_setting_ui_checkbox($users, get_string('rootsettingusers', 'backup')));
         $this->add_setting($users);
 
         // Define anonymize (dependent of users)
         $anonymize = new backup_anonymize_setting('anonymize', base_setting::IS_BOOLEAN, false);
-        $anonymize->set_ui(new backup_setting_ui_select($anonymize, $anonymize->get_name(), array(1=>get_string('yes'), 0=>get_string('no'))));
+        $anonymize->set_ui(new backup_setting_ui_checkbox($anonymize, get_string('rootsettinganonymize', 'backup')));
         $this->add_setting($anonymize);
         $users->add_dependency($anonymize);
 
         // Define role_assignments (dependent of users)
         $roleassignments = new backup_role_assignments_setting('role_assignments', base_setting::IS_BOOLEAN, true);
-        $roleassignments->set_ui(new backup_setting_ui_select($roleassignments, $roleassignments->get_name(), array(1=>get_string('yes'), 0=>get_string('no'))));
+        $roleassignments->set_ui(new backup_setting_ui_checkbox($roleassignments, get_string('rootsettingroleassignments', 'backup')));
         $this->add_setting($roleassignments);
         $users->add_dependency($roleassignments);
 
         // Define user_files (dependent of users and anonymize)
         $userfiles = new backup_user_files_setting('user_files', base_setting::IS_BOOLEAN, true);
-        $userfiles->set_ui(new backup_setting_ui_select($userfiles, $userfiles->get_name(), array(1=>get_string('yes'), 0=>get_string('no'))));
+        $userfiles->set_ui(new backup_setting_ui_checkbox($userfiles, get_string('rootsettinguserfiles', 'backup')));
         $this->add_setting($userfiles);
         $users->add_dependency($userfiles);
         $anonymize->add_dependency($userfiles, setting_dependency::DISABLED_TRUE);
 
         // Define activities
         $activities = new backup_activities_setting('activities', base_setting::IS_BOOLEAN, true);
-        $activities->set_ui(new backup_setting_ui_select($activities, $activities->get_name(), array(1=>get_string('yes'), 0=>get_string('no'))));
+        $activities->set_ui(new backup_setting_ui_checkbox($activities, get_string('rootsettingactivities', 'backup')));
         $this->add_setting($activities);
 
         // Define blocks
         $blocks = new backup_generic_setting('blocks', base_setting::IS_BOOLEAN, true);
-        $blocks->set_ui(new backup_setting_ui_select($blocks, $blocks->get_name(), array(1=>get_string('yes'), 0=>get_string('no'))));
+        $blocks->set_ui(new backup_setting_ui_checkbox($blocks, get_string('rootsettingblocks', 'backup')));
         $this->add_setting($blocks);
 
         // Define filters
         $filters = new backup_generic_setting('filters', base_setting::IS_BOOLEAN, true);
-        $filters->set_ui(new backup_setting_ui_select($filters, $filters->get_name(), array(1=>get_string('yes'), 0=>get_string('no'))));
+        $filters->set_ui(new backup_setting_ui_checkbox($filters, get_string('rootsettingfilters', 'backup')));
         $this->add_setting($filters);
 
         // Define comments (dependent of users)
         $comments = new backup_comments_setting('comments', base_setting::IS_BOOLEAN, true);
-        $comments->set_ui(new backup_setting_ui_select($comments, $comments->get_name(), array(1=>get_string('yes'), 0=>get_string('no'))));
+        $comments->set_ui(new backup_setting_ui_checkbox($comments, get_string('rootsettingcomments', 'backup')));
         $this->add_setting($comments);
         $users->add_dependency($comments);
 
         // Define completion (dependent of users)
         $completion = new backup_userscompletion_setting('userscompletion', base_setting::IS_BOOLEAN, true);
-        $completion->set_ui(new backup_setting_ui_select($completion, $completion->get_name(), array(1=>get_string('yes'), 0=>get_string('no'))));
+        $completion->set_ui(new backup_setting_ui_checkbox($completion, get_string('rootsettinguserscompletion', 'backup')));
         $this->add_setting($completion);
         $users->add_dependency($completion);
 
         // Define logs (dependent of users)
         $logs = new backup_logs_setting('logs', base_setting::IS_BOOLEAN, true);
-        $logs->set_ui(new backup_setting_ui_select($logs, $logs->get_name(), array(1=>get_string('yes'), 0=>get_string('no'))));
+        $logs->set_ui(new backup_setting_ui_checkbox($logs, get_string('rootsettinglogs', 'backup')));
         $this->add_setting($logs);
         $users->add_dependency($logs);
 
         // Define grade_histories (dependent of users)
         $gradehistories = new backup_generic_setting('grade_histories', base_setting::IS_BOOLEAN, true);
-        $gradehistories->set_ui(new backup_setting_ui_select($gradehistories, $gradehistories->get_name(), array(1=>get_string('yes'), 0=>get_string('no'))));
+        $gradehistories->set_ui(new backup_setting_ui_checkbox($gradehistories, get_string('rootsettinggradehistories', 'backup')));
         $this->add_setting($gradehistories);
         $users->add_dependency($gradehistories);
     }

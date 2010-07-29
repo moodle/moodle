@@ -91,7 +91,7 @@ class core_backup_renderer extends plugin_renderer_base {
         $html .= $this->output->heading(get_string('backupsettings', 'backup'), 2, array('class'=>'header'));
         foreach ($details->root_settings as $label=>$value) {
             if ($label == 'filename') continue;
-            $html .= $this->backup_detail_pair(get_string('general'.str_replace('_','',$label), 'backup'), $value?$yestick:$notick);
+            $html .= $this->backup_detail_pair(get_string('rootsetting'.str_replace('_','',$label), 'backup'), $value?$yestick:$notick);
         }
         $html .= html_writer::end_tag('div');
 

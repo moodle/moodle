@@ -230,7 +230,7 @@ class backup_ui_stage_schema extends backup_ui_stage {
                 if (!($task instanceof backup_root_task)) {
                     if (!$courseheading) {
                         // If we havn't already display a course heading to group nicely
-                        $form->add_heading('coursesettings', get_string('coursesettings', 'backup'));
+                        $form->add_heading('coursesettings', get_string('includeactivities', 'backup'));
                         $courseheading = true;
                     }
                     // First add each setting
@@ -346,7 +346,7 @@ class backup_ui_stage_confirmation extends backup_ui_stage {
                     $form->add_heading('rootsettings', get_string('rootsettings', 'backup'));
                 } else if (!$courseheading) {
                     // we havn't already add a course heading
-                    $form->add_heading('coursesettings', get_string('coursesettings', 'backup'));
+                    $form->add_heading('coursesettings', get_string('includeactivities', 'backup'));
                     $courseheading = true;
                 }
                 // Iterate all settings, doesnt need to happen by reference
@@ -450,19 +450,12 @@ class backup_ui_stage_complete extends backup_ui_stage_final {
         global $OUTPUT;
 
         // Get the resulting stored_file record
-        $file = $this->results['backup_destination'];
-        // Turn it into a url for the file browser
-        $fileurl = new moodle_url('/files/index.php', array(
-            'contextid' => $file->get_contextid(),
-            'component' => $file->get_component(),
-            'filearea' => $file->get_filearea(),
-            'itemid' => $file->get_itemid(),
-            'filepath' => $file->get_filepath()
-        ));
+        $coursecontext = get_context_instance(CONTEXT_COURSE, $this->get_ui()->get_controller()->get_courseid());
+        $restorerul = new moodle_url('/backup/restorefile.php', array('contextid'=>$coursecontext->id));
 
         echo $OUTPUT->box_start();
         echo $OUTPUT->notification(get_string('executionsuccess', 'backup'), 'notifysuccess');
-        echo $OUTPUT->continue_button($fileurl);
+        echo $OUTPUT->continue_button($restorerul);
         echo $OUTPUT->box_end();
     }
 }
