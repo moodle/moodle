@@ -99,11 +99,14 @@ table.formtable tbody th {background-color: transparent;background-image: none;}
  * Login
  */
 #page-login-index #content {font-size: 0.85em;}
-.loginbox {margin:15px 25%;width:50%;}
-.loginbox.twocolumns {width:90%;margin-left:5%;}
+.loginbox {margin:15px 25%;width:50%;border:1px solid;}
+.loginbox.twocolumns {width:90%;margin:15px 5%;}
 .loginbox,
 .loginbox.twocolumns .loginpanel,
 .loginbox .subcontent {border-color:#DDDDDD;}
+.loginbox .guestsub,
+.loginbox .forgotsub,
+.loginbox .potentialidps {border-top:1px solid;}
 
 /**
  * Logs
@@ -234,14 +237,6 @@ form.popupform label {margin-right: 0.5em;}
 .groupmanagementtable #backcell {padding-top: 2em;text-align: center;}
 #page-group-groupings .buttons {margin: 20px;text-align:center;}
 #page-group-groupings .buttons .singlebutton {display: inline;padding: 5px;}
-
-/**
- * Login
- */
-.loginbox {border:1px solid;}
-.loginbox .guestsub,
-.loginbox .forgotsub,
-.loginbox .potentialidps {border-top:1px solid;}
 
 /**
  * Notes
