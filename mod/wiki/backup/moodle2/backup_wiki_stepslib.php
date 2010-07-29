@@ -45,7 +45,7 @@ class backup_wiki_activity_structure_step extends backup_activity_structure_step
 
         $pages = new backup_nested_element('pages');
 
-        $page = new backup_nested_element('page', array('id'), array('title', 'cachedcontent', 'timecreated', 'timemodified', 'timerendered', 'userid', 'pageviews', 'redonly'));
+        $page = new backup_nested_element('page', array('id'), array('title', 'cachedcontent', 'timecreated', 'timemodified', 'timerendered', 'userid', 'pageviews', 'readonly'));
 
         $synonyms = new backup_nested_element('synonyms');
 
