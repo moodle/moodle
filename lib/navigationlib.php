@@ -3102,7 +3102,7 @@ class settings_navigation extends navigation_node {
             if ($currentuser && !session_is_loggedinas() && $userauth->can_change_password() && !isguestuser() && has_capability('moodle/user:changeownpassword', $systemcontext)) {
                 $passwordchangeurl = $userauth->change_password_url();
                 if (empty($passwordchangeurl)) {
-                    $passwordchangeurl = new moodle_url('/login/change_password.php', array('id', $course->id));
+                    $passwordchangeurl = new moodle_url('/login/change_password.php', array('id'=>$course->id));
                 }
                 $usersetting->add(get_string("changepassword"), $passwordchangeurl, self::TYPE_SETTING);
             }
