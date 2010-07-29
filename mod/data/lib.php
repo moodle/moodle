@@ -1946,6 +1946,12 @@ function data_user_can_add_entry($data, $currentgroup, $groupmode) {
         return false;
     }
 
+    //if in the view only time window
+    $now = time();
+    if ($now>$data->timeviewfrom && $now<$data->timeviewto) {
+        return false;
+    }
+
     if (!$groupmode or has_capability('moodle/site:accessallgroups', $context)) {
         return true;
     }

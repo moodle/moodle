@@ -368,6 +368,15 @@
     }
 
 
+//if data activity closed dont let students in
+if (!has_capability('mod/data:manageentries', $context)) {
+    $timenow = time();
+    if (!empty($data->timeavailablefrom) && $data->timeavailablefrom > $timenow) {
+        print_error('notopenyet', 'data', null, userdate($data->timeavailablefrom));
+    } else if (!empty($data->timeavailableto) && $timenow > $data->timeavailableto) {
+        print_error('expired', 'data', null, userdate($data->timeavailableto));
+    }
+}
 
 /// Print the tabs
 
