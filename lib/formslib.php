@@ -914,7 +914,8 @@ abstract class moodleform {
                             $mform->setDefault($realelementname, $params);
                             break;
                         case 'helpbutton' :
-                            $mform->addHelpButton($realelementname, $params);
+                            $params = array_merge(array($realelementname), $params);
+                            call_user_func_array(array(&$mform, 'addHelpButton'), $params);
                             break;
                         case 'disabledif' :
                             foreach ($namecloned as $num => $name){
