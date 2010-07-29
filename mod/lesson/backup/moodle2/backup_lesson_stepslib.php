@@ -160,7 +160,12 @@ class backup_lesson_activity_structure_step extends backup_activity_structure_st
         // Set the source table for the elements that aren't reliant on the user
         // at this point (lesson, lesson_pages, lesson_answers)
         $lesson->set_source_table('lesson', array('id' => backup::VAR_ACTIVITYID));
-        $page->set_source_table('lesson_pages', array('lessonid' => backup::VAR_PARENTID));
+        //we use SQL here as it must be ordered by prevpageid so that restore gets the pages in the right order.
+        $page->set_source_sql("
+                SELECT *
+                  FROM {lesson_pages}
+                 WHERE lessonid = ? ORDER BY prevpageid",
+                array(backup::VAR_PARENTID));
         $answer->set_source_table('lesson_answers', array('pageid' => backup::VAR_PARENTID));
 
         // Check if we are also backing up user information
