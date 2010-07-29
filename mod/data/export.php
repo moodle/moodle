@@ -98,10 +98,12 @@ if($mform->is_cancelled()) {
 
 $selectedfields = array();
 foreach ($formdata as $key => $value) {
-    if (strpos($key, 'field_') === 0) {
+    //field form elements are field_1 field_2 etc. 0 if not selected. 1 if selected.
+    if (strpos($key, 'field_')===0 && !empty($value)) {
         $selectedfields[] = substr($key, 6);
     }
 }
+
 $exportdata = data_get_exportdata($data->id, $fields, $selectedfields);
 $count = count($exportdata);
 switch ($formdata['exporttype']) {
