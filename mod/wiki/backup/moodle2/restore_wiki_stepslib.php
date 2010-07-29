@@ -1,0 +1,149 @@
+<?php
+
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * @package moodlecore
+ * @subpackage backup-moodle2
+ * @copyright 2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+/**
+ * Define all the restore steps that will be used by the restore_wiki_activity_task
+ */
+
+/**
+ * Structure step to restore one wiki activity
+ */
+class restore_wiki_activity_structure_step extends restore_activity_structure_step {
+
+    protected function define_structure() {
+
+        $paths = array();
+        $userinfo = $this->get_setting_value('userinfo');
+
+        $paths[] = new restore_path_element('wiki', '/activity/wiki');
+        if ($userinfo) {
+            $paths[] = new restore_path_element('wiki_subwiki', '/activity/wiki/subwikis/subwiki');
+            $paths[] = new restore_path_element('wiki_page', '/activity/wiki/subwikis/subwiki/pages/page');
+            $paths[] = new restore_path_element('wiki_version', '/activity/wiki/subwikis/subwiki/pages/page/versions/version');
+            $paths[] = new restore_path_element('wiki_synonym', '/activity/wiki/subwikis/subwiki/synonyms/synonym');
+            $paths[] = new restore_path_element('wiki_link', '/activity/wiki/subwikis/subwiki/links/link');
+            $paths[] = new restore_path_element('wiki_comment', '/activity/wiki/subwikis/subwiki/pages/page/comments/comment');
+        }
+
+        // Return the paths wrapped into standard activity structure
+        return $this->prepare_activity_structure($paths);
+    }
+
+    protected function process_wiki($data) {
+        global $DB;
+
+        $data = (object)$data;
+        $oldid = $data->id;
+        $data->course = $this->get_courseid();
+
+        $data->editbegin = $this->apply_date_offset($data->editbegin);
+        $data->editend = $this->apply_date_offset($data->editend);
+
+        // insert the wiki record
+        $newitemid = $DB->insert_record('wiki', $data);
+        // inmediately after inserting "activity" record, call this
+        $this->apply_activity_instance($newitemid);
+    }
+
+    protected function process_wiki_subwiki($data) {
+        global $DB;
+
+
+        $data = (object)$data;
+        $oldid = $data->id;
+        $data->wikiid = $this->get_new_parentid('wiki');
+        $data->groupid = $this->get_mappingid('group', $data->groupid);
+        $data->userid = $this->get_mappingid('user', $data->userid);
+
+        $newitemid = $DB->insert_record('wiki_subwikis', $data);
+        $this->set_mapping('wiki_subwiki', $oldid, $newitemid);
+    }
+    protected function process_wiki_page($data) {
+        global $DB;
+
+        $data = (object)$data;
+        $oldid = $data->id;
+        $data->subwikiid = $this->get_new_parentid('wiki_subwiki');
+        $data->userid = $this->get_mappingid('user', $data->userid);
+
+        $newitemid = $DB->insert_record('wiki_pages', $data);
+        $this->set_mapping('wiki_page', $oldid, $newitemid);
+    }
+    protected function process_wiki_version($data) {
+        global $DB;
+
+        $data = (object)$data;
+        $oldid = $data->id;
+        $data->pageid = $this->get_new_parentid('wiki_page');
+        $data->userid = $this->get_mappingid('user', $data->userid);
+
+        $newitemid = $DB->insert_record('wiki_versions', $data);
+        // No need to save this mapping as far as nothing depend on it
+        // (child paths, file areas nor links decoder)
+    }
+    protected function process_wiki_synonym($data) {
+        global $DB;
+
+        $data = (object)$data;
+        $oldid = $data->id;
+        $data->subwikiid = $this->get_new_parentid('wiki_subwiki');
+        $data->pageid = $this->get_mappingid('wiki_page', $data->pageid);
+
+        $newitemid = $DB->insert_record('wiki_synonyms', $data);
+        // No need to save this mapping as far as nothing depend on it
+        // (child paths, file areas nor links decoder)
+    }
+    protected function process_wiki_link($data) {
+        global $DB;
+
+        $data = (object)$data;
+        $oldid = $data->id;
+        $data->subwikiid = $this->get_new_parentid('wiki_subwiki');
+        $data->frompageid = $this->get_mappingid('wiki_page', $data->frompageid);
+        $data->topageid = $this->get_mappingid('wiki_page', $data->topageid);
+        
+        $newitemid = $DB->insert_record('wiki_links', $data);
+        // No need to save this mapping as far as nothing depend on it
+        // (child paths, file areas nor links decoder)
+    }
+
+    protected function process_wiki_comment($data) {
+        global $DB;
+
+        $data = (object)$data;
+        $oldid = $data->id;
+        $data->contextid = $this->get_mappingid('context', $data->contextid);
+        $data->userid = $this->get_mappingid('user', $data->userid);
+
+        $newitemid = $DB->insert_record('comments', $data);
+        // No need to save this mapping as far as nothing depend on it
+        // (child paths, file areas nor links decoder)
+    }
+
+
+    protected function after_execute() {
+        // Add wiki related files, no need to match by itemname (just internally handled context)
+        $this->add_related_files('mod_wiki', 'intro', null);
+    }
+}
