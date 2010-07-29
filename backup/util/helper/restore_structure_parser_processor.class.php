@@ -63,7 +63,7 @@ class restore_structure_parser_processor extends grouped_parser_processor {
         // Decode file.php calls
         $search = array ("$@FILEPHP@$");
         $replace = array(get_file_url($this->courseid));
-        $result = str_replace($search, $replace, $content);
+        $result = str_replace($search, $replace, $cdata);
         // Now $@SLASH@$ and $@FORCEDOWNLOAD@$ MDL-18799
         $search = array('$@SLASH@$', '$@FORCEDOWNLOAD@$');
         if ($CFG->slasharguments) {
