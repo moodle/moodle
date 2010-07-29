@@ -62,7 +62,7 @@ class repository_recent extends repository {
                 WHERE userid = ? AND filename != ? AND filearea != ?
                 GROUP BY contenthash, filename) files2 ON files1.id = files2.id
                 ORDER BY files1.timemodified DESC';
-        $params = array('userid'=>$USER->id, 'filename'=>'.', 'filearea'=>'user_draft');
+        $params = array('userid'=>$USER->id, 'filename'=>'.', 'filearea'=>'draft');
         $rs = $DB->get_recordset_sql($sql, $params, $limitfrom, $limit);
         $result = array();
         foreach ($rs as $file_record) {
