@@ -1234,7 +1234,9 @@ function upgrade_core($version, $verbose) {
 
         // Upgrade current language pack if we can
         if (empty($CFG->skiplangupgrade)) {
-            upgrade_language_pack(false);
+            if (get_string_manager()->translation_exists(current_language())) {
+                upgrade_language_pack(false);
+            }
         }
 
         print_upgrade_part_start('moodle', false, $verbose);
