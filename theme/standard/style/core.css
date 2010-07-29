@@ -99,7 +99,7 @@ table.formtable tbody th {background-color: transparent;background-image: none;}
  * Login
  */
 #page-login-index #content {font-size: 0.85em;}
-.loginbox {margin:15px 25%;}
+.loginbox {margin:15px 25%;width:50%;}
 .loginbox.twocolumns {width:90%;margin-left:5%;}
 .loginbox,
 .loginbox.twocolumns .loginpanel,
