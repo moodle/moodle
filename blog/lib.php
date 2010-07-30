@@ -577,17 +577,17 @@ function blog_get_options_for_module(stdClass $module, stdClass $user=null) {
  *
  * @return array
  */
-function blog_get_headers() {
+function blog_get_headers($courseid=null, $groupid=null, $userid=null, $tagid=null) {
     global $CFG, $PAGE, $DB, $USER;
 
     $id       = optional_param('id', null, PARAM_INT);
     $tag      = optional_param('tag', null, PARAM_NOTAGS);
-    $tagid    = optional_param('tagid', null, PARAM_INT);
-    $userid   = optional_param('userid', null, PARAM_INT);
+    $tagid    = optional_param('tagid', $tagid, PARAM_INT);
+    $userid   = optional_param('userid', $userid, PARAM_INT);
     $modid    = optional_param('modid', null, PARAM_INT);
     $entryid  = optional_param('entryid', null, PARAM_INT);
-    $groupid  = optional_param('groupid', null, PARAM_INT);
-    $courseid = optional_param('courseid', null, PARAM_INT);
+    $groupid  = optional_param('groupid', $groupid, PARAM_INT);
+    $courseid = optional_param('courseid', $courseid, PARAM_INT);
     $search   = optional_param('search', null, PARAM_RAW);
     $action   = optional_param('action', null, PARAM_ALPHA);
     $confirm  = optional_param('confirm', false, PARAM_BOOL);

@@ -113,7 +113,7 @@ function blog_rss_get_feed($context, $args) {
     }
 
     $type = $args[3];
-    $id = (int) $args[4];  // could be groupid / courseid  / userid  depending on $instance
+    $id = (int) $args[4];  // could be groupid / courseid  / userid  depending on $type
 
     $tagid=0;
     if ($args[5] != 'rss.xml') {
@@ -130,10 +130,26 @@ function blog_rss_get_feed($context, $args) {
         }
     }
 
+    $courseid = $groupid = $userid = null;
+    switch ($type) {
+        case 'site':
+            //$siteid = $id;
+            break;
+        case 'course':
+            $courseid = $id;
+            break;
+        case 'group':
+            $groupid = $id;
+            break;
+        case 'user':
+            $userid = $id;
+            break;
+    }
+
     // Get all the entries from the database
-    //$blogentries = blog_fetch_entries('', 20, '', $type, $id, $tagid);
     require_once($CFG->dirroot .'/blog/locallib.php');
-    $blogheaders = blog_get_headers();
+    $blogheaders = blog_get_headers($courseid, $groupid, $userid, $tagid);
+
     $bloglisting = new blog_listing($blogheaders['filters']);
     $blogentries = $bloglisting->get_entries();
 
