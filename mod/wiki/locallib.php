@@ -499,9 +499,8 @@ function wiki_get_orphaned_pages($swid) {
  */
 function wiki_search_title($swid, $search) {
     global $DB;
-    // @TODO: Fix this query
-    return $DB->get_records_select('wiki_pages', "subwikiid=$swid AND title LIKE '%$search%'");
-    //return $DB->get_records_select('wiki_pages', "subwikiid = ? AND title LIKE '%?%'", array($swid, $search));
+
+    return $DB->get_records_select('wiki_pages', "subwikiid = ? AND title LIKE ?", array($swid, '%'.$search.'%'));
 }
 
 /**
@@ -511,9 +510,8 @@ function wiki_search_title($swid, $search) {
  */
 function wiki_search_content($swid, $search) {
     global $DB;
-    // @TODO: Fix this query
-    return $DB->get_records_select('wiki_pages', "subwikiid=$swid AND cachedcontent LIKE '%$search%'");
-    //return $DB->get_records_select('wiki_pages', "subwikiid = ? AND cachedcontent LIKE '%?%'", array($swid, $search));
+
+    return $DB->get_records_select('wiki_pages', "subwikiid = ? AND cachedcontent LIKE ?", array($swid, '%'.$search.'%'));
 }
 
 /**
@@ -523,9 +521,8 @@ function wiki_search_content($swid, $search) {
  */
 function wiki_search_all($swid, $search) {
     global $DB;
-    // @TODO: Fix this query
-    return $DB->get_records_select('wiki_pages', "subwikiid=$swid AND (cachedcontent LIKE '%$search%' OR title LIKE '%$search%')");
-    //return $DB->get_records_select('wiki_pages', "subwikiid = ? AND (cachedcontent LIKE '%?%' OR title LIKE '%?%')", array($swid, $search, $search));
+
+    return $DB->get_records_select('wiki_pages', "subwikiid = ? AND (cachedcontent LIKE ? OR title LIKE ?)", array($swid, '%'.$search.'%', '%'.$search.'%'));
 }
 
 /**
