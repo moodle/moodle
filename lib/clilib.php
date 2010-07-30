@@ -160,7 +160,7 @@ function cli_heading($string, $return=false) {
  * @return void
  */
 function cli_problem($text) {
-    fwrite(STDERR, $text, "\n");
+    fwrite(STDERR, $text."\n");
 }
 
 /**
