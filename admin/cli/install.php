@@ -24,7 +24,7 @@
  * - su to apache account or sudo before execution
  * - not compatible with Windows platform
  *
- * @package    moodlecore
+ * @package    core
  * @subpackage cli
  * @copyright  2009 Petr Skoda (http://skodak.org)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -141,11 +141,7 @@ require_once($CFG->libdir.'/dmllib.php');
 require_once($CFG->libdir.'/moodlelib.php');
 require_once($CFG->libdir.'/deprecatedlib.php');
 require_once($CFG->libdir.'/adminlib.php');
-require_once($CFG->libdir.'/environmentlib.php');
-require_once($CFG->libdir.'/xmlize.php');
 require_once($CFG->libdir.'/componentlib.class.php');
-require_once($CFG->libdir.'/upgradelib.php');
-require_once($CFG->libdir.'/environmentlib.php');
 
 //Database types
 $databases = array('mysqli' => moodle_database::get_driver_instance('mysqli', 'native'),
@@ -169,7 +165,7 @@ if (empty($databases)) {
 // now get cli options
 list($options, $unrecognized) = cli_get_params(
     array(
-        'chmod'             => '02777',
+        'chmod'             => '2777',
         'lang'              => $CFG->lang,
         'wwwroot'           => '',
         'dataroot'          => $CFG->dataroot,
@@ -258,14 +254,14 @@ if ($interactive) {
     $error = '';
     do {
         echo $error;
-        $input = cli_input($prompt, $chmod);
+        $input = cli_input($prompt, decoct($chmod));
         $input = octdec(clean_param($input, PARAM_INT));
         if (empty($input)) {
             $error = get_string('cliincorrectvalueretry', 'admin')."\n";
         } else {
             $error = '';
         }
-     } while ($error !== '');
+    } while ($error !== '');
     $chmod = $input;
 
 } else {
@@ -567,81 +563,12 @@ if (!file_exists($configfile)) {
     cli_error('Can not create config file.');
 }
 
-// return back to original dir before executing setup.php chich changes the dir again
+// return back to original dir before executing setup.php which changes the dir again
 chdir($olddir);
 // We have config.php, it is a real php script from now on :-)
 require($configfile);
 
-// show as much debug as possible
-@error_reporting(1023);
-@ini_set('display_errors', '1');
-$CFG->debug = 38911;
-$CFG->debugdisplay = true;
-
-$CFG->version = "";
-$CFG->release = "";
-
-// read $version adn $release
-require($CFG->dirroot.'/version.php');
-
-if ($DB->get_tables() ) {
-    cli_error(get_string('clitablesexist', 'install'));
-}
-
-// test environment first
-if (!check_moodle_environment($version, $environment_results, false, ENV_SELECT_RELEASE)) {
-    $errors = environment_get_errors($environment_results);
-    cli_heading(get_string('environment', 'admin'));
-    foreach ($errors as $error) {
-        list($info, $report) = $error;
-        echo "!! $info !!\n$report\n\n";
-    }
-    //remove config.php, we do not want half finished upgrades!
-    unlink($configfile);
-    exit(1);
-}
-
-if (!$DB->setup_is_unicodedb()) {
-    if (!$DB->change_db_encoding()) {
-        // If could not convert successfully, throw error, and prevent installation
-        cli_error(get_string('unicoderequired', 'admin'));
-    }
-}
-
-if ($interactive) {
-    cli_separator();
-    cli_heading(get_string('databasesetup'));
-}
-
-// install core
-install_core($version, true);
-set_config('release', $release);
-
-// install all plugins types, local, etc.
-upgrade_noncore(true);
-
-// set up admin user password
-$DB->set_field('user', 'password', hash_internal_user_password($options['adminpass']), array('username' => 'admin'));
-
-// rename admin username if needed
-if ($options['adminuser'] !== 'admin') {
-    $DB->set_field('user', 'username', $options['adminuser'], array('username' => 'admin'));
-}
-
-// indicate that this site is fully configured
-set_config('rolesactive', 1);
-upgrade_finished();
-
-// log in as admin - we need do anything when applying defaults
-$admins = get_admins();
-$admin = reset($admins);
-session_set_user($admin);
-message_set_default_message_preferences($admin);
-
-// apply all default settings, do it twice to fill all defaults - some settings depend on other setting
-admin_apply_default_settings(NULL, true);
-admin_apply_default_settings(NULL, true);
-set_config('registerauth', '');
+install_cli_database($options, $interactive);
 
 echo get_string('cliinstallfinished', 'install')."\n";
 exit(0); // 0 means success

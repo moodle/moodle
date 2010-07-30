@@ -18,7 +18,7 @@
 /**
  * Functions to support installation process
  *
- * @package    moodlecore
+ * @package    core
  * @subpackage install
  * @copyright  2009 Petr Skoda (http://skodak.org)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -439,4 +439,94 @@ fieldset {
 ';
 
     die;
+}
+
+/**
+ * Install Moodle DB,
+ * config.php must exist, there must not be any tables in db yet.
+ *
+ * @param array $options adminpass is mandatory
+ * @param bool $interactive
+ * @return void
+ */
+function install_cli_database(array $options, $interactive) {
+    global $CFG, $DB;
+    require_once($CFG->libdir.'/environmentlib.php');
+    require_once($CFG->libdir.'/upgradelib.php');
+
+    // show as much debug as possible
+    @error_reporting(1023);
+    @ini_set('display_errors', '1');
+    $CFG->debug = 38911;
+    $CFG->debugdisplay = true;
+
+    $CFG->version = '';
+    $CFG->release = '';
+
+    // read $version and $release
+    require($CFG->dirroot.'/version.php');
+
+    if ($DB->get_tables() ) {
+        cli_error(get_string('clitablesexist', 'install'));
+    }
+
+    if (empty($options['adminpass'])) {
+        cli_error('Missing required admin password');
+    }
+
+    // test environment first
+    if (!check_moodle_environment($version, $environment_results, false, ENV_SELECT_RELEASE)) {
+        $errors = environment_get_errors($environment_results);
+        cli_heading(get_string('environment', 'admin'));
+        foreach ($errors as $error) {
+            list($info, $report) = $error;
+            echo "!! $info !!\n$report\n\n";
+        }
+        //remove config.php, we do not want half finished upgrades!
+        unlink($configfile);
+        exit(1);
+    }
+
+    if (!$DB->setup_is_unicodedb()) {
+        if (!$DB->change_db_encoding()) {
+            // If could not convert successfully, throw error, and prevent installation
+            cli_error(get_string('unicoderequired', 'admin'));
+        }
+    }
+
+    if ($interactive) {
+        cli_separator();
+        cli_heading(get_string('databasesetup'));
+    }
+
+    // install core
+    install_core($version, true);
+    set_config('release', $release);
+
+    // install all plugins types, local, etc.
+    upgrade_noncore(true);
+
+    // set up admin user password
+    $DB->set_field('user', 'password', hash_internal_user_password($options['adminpass']), array('username' => 'admin'));
+
+    // rename admin username if needed
+    if (isset($options['adminuser']) and $options['adminuser'] !== 'admin' and $options['adminuser'] !== 'guest') {
+        $DB->set_field('user', 'username', $options['adminuser'], array('username' => 'admin'));
+    }
+
+    // indicate that this site is fully configured
+    set_config('rolesactive', 1);
+    upgrade_finished();
+
+    // log in as admin - we need do anything when applying defaults
+    $admins = get_admins();
+    $admin = reset($admins);
+    session_set_user($admin);
+    message_set_default_message_preferences($admin);
+
+    // apply all default settings, do it twice to fill all defaults - some settings depend on other setting
+    admin_apply_default_settings(NULL, true);
+    admin_apply_default_settings(NULL, true);
+    set_config('registerauth', '');
+
 }
