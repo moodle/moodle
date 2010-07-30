@@ -31,20 +31,20 @@ $courseid = optional_param('courseid', 0, PARAM_INT);
 $searchcontent = optional_param('searchwikicontent', 0, PARAM_INT);
 $cmid = optional_param('cmid', 0, PARAM_INT);
 
-if (!$course = $DB->get_record('course', array('id'=>$courseid))) {
+if (!$course = $DB->get_record('course', array('id' => $courseid))) {
     print_error('invalidcourseid');
 }
-if (! $cm = get_coursemodule_from_id('wiki', $cmid)) {
+if (!$cm = get_coursemodule_from_id('wiki', $cmid)) {
     print_error('invalidcoursemodule');
 }
 
 require_course_login($course, true, $cm);
 
 // @TODO: Fix call to wiki_get_subwiki_by_group
-if (!$gid = groups_get_activity_group($cm)){
+if (!$gid = groups_get_activity_group($cm)) {
     $gid = 0;
 }
-if (!$subwiki = wiki_get_subwiki_by_group($cm->instance, $gid)){
+if (!$subwiki = wiki_get_subwiki_by_group($cm->instance, $gid)) {
     return false;
 }
 if (!$wiki = wiki_get_wiki($subwiki->wikiid)) {

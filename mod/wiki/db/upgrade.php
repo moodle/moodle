@@ -109,20 +109,20 @@ function xmldb_wiki_upgrade($oldversion) {
         upgrade_set_timeout();
 
         // Setting up wiki configuration
-        $sql = 'UPDATE {wiki} ' .
-            'SET intro = summary, ' .
-            'firstpagetitle = pagename, ' .
-            'defaultformat = ?';
+        $sql = "UPDATE {wiki}
+                    SET intro = summary,
+                    firstpagetitle = pagename,
+                    defaultformat = ?";
         $DB->execute($sql, array('html'));
 
-        $sql = 'UPDATE {wiki} ' .
-            'SET wikimode = ? ' .
-            'WHERE wtype = ?';
+        $sql = "UPDATE {wiki}
+                    SET wikimode = ?
+                    WHERE wtype = ?";
         $DB->execute($sql, array('collaborative', 'group'));
 
-        $sql = 'UPDATE {wiki} ' .
-            'SET wikimode = ? ' .
-            'WHERE wtype != ?';
+        $sql = "UPDATE {wiki}
+                    SET wikimode = ?
+                    WHERE wtype != ?";
         $DB->execute($sql, array('individual', 'group'));
 
         // Removing edit & create capability to students in old teacher wikis
@@ -149,9 +149,9 @@ function xmldb_wiki_upgrade($oldversion) {
         /**
          * Migrating wiki entries to new subwikis
          */
-        $sql = 'INSERT into {wiki_subwikis} (wikiid, groupid, userid) ' .
-            'SELECT e.wikiid, e.groupid, e.userid ' .
-            'FROM {wiki_entries_old} e ';
+        $sql = "INSERT into {wiki_subwikis} (wikiid, groupid, userid)
+                    SELECT e.wikiid, e.groupid, e.userid
+                    FROM {wiki_entries_old} e";
         echo $OUTPUT->notification('Migrating old entries to new subwikis', 'notifysuccess');
 
         $DB->execute($sql, array());
@@ -170,18 +170,18 @@ function xmldb_wiki_upgrade($oldversion) {
          *          the order by and it would be much faster.
          */
 
-        $sql = 'INSERT into {wiki_pages} (subwikiid, title, cachedcontent, timecreated, timemodified, userid, pageviews) ' .
-            'SELECT s.id, p.pagename, ?, p.created, p.lastmodified, p.userid, p.hits ' .
-            'FROM {wiki_pages_old} p '.
-            'LEFT OUTER JOIN {wiki_entries_old} e ON e.id = p.wiki ' .
-            'LEFT OUTER JOIN {wiki_subwikis} s ' .
-            'ON s.wikiid = e.wikiid AND s.groupid = e.groupid AND s.userid = e.userid ' .
-            'WHERE p.version = (' .
-            '   SELECT max(po.version) ' .
-            '   FROM {wiki_pages_old} po ' .
-            '   WHERE p.pagename = po.pagename and ' .
-            '   p.wiki = po.wiki ' .
-            '   )';
+        $sql = "INSERT into {wiki_pages} (subwikiid, title, cachedcontent, timecreated, timemodified, userid, pageviews)
+                    SELECT s.id, p.pagename, ?, p.created, p.lastmodified, p.userid, p.hits
+                    FROM {wiki_pages_old} p
+                    LEFT OUTER JOIN {wiki_entries_old} e ON e.id = p.wiki
+                    LEFT OUTER JOIN {wiki_subwikis} s
+                    ON s.wikiid = e.wikiid AND s.groupid = e.groupid AND s.userid = e.userid
+                    WHERE p.version = (
+                        SELECT max(po.version)
+                        FROM {wiki_pages_old} po
+                        WHERE p.pagename = po.pagename and
+                        p.wiki = po.wiki
+                    )";
         echo $OUTPUT->notification('Migrating old pages to new pages', 'notifysuccess');
 
         $DB->execute($sql, array('**reparse needed**'));
@@ -219,18 +219,17 @@ function xmldb_wiki_upgrade($oldversion) {
     if ($oldversion < 2010040108) {
         $fs = get_file_storage();
         $sql = "SELECT DISTINCT po.pagename, w.id AS wikiid, po.userid,
-            po.meta AS filemeta, eo.id AS entryid, eo.groupid, s.id AS subwiki,
-            w.course AS courseid, cm.id AS cmid
-            FROM {wiki_pages_old} po
-            LEFT OUTER JOIN {wiki_entries_old} eo
-            ON eo.id=po.wiki
-            LEFT OUTER JOIN {wiki} w
-            ON w.id = eo.wikiid
-            LEFT OUTER JOIN {wiki_subwikis} s
-            ON s.groupid = eo.groupid AND s.wikiid = eo.wikiid AND eo.userid = s.userid
-            JOIN {modules} m ON m.name = 'wiki'
-            JOIN {course_modules} cm ON (cm.module = m.id AND cm.instance = w.id)
-            ";
+                    po.meta AS filemeta, eo.id AS entryid, eo.groupid, s.id AS subwiki,
+                    w.course AS courseid, cm.id AS cmid
+                    FROM {wiki_pages_old} po
+                    LEFT OUTER JOIN {wiki_entries_old} eo
+                    ON eo.id=po.wiki
+                    LEFT OUTER JOIN {wiki} w
+                    ON w.id = eo.wikiid
+                    LEFT OUTER JOIN {wiki_subwikis} s
+                    ON s.groupid = eo.groupid AND s.wikiid = eo.wikiid AND eo.userid = s.userid
+                    JOIN {modules} m ON m.name = 'wiki'
+                    JOIN {course_modules} cm ON (cm.module = m.id AND cm.instance = w.id)";
 
         $rs = $DB->get_recordset_sql($sql);
         foreach ($rs as $r) {

@@ -35,7 +35,7 @@ require_once('../../config.php');
 require_once('lib.php');
 
 $id = required_param('id', PARAM_INT); // course
-$PAGE->set_url('/mod/wiki/index.php', array('id'=>$id));
+$PAGE->set_url('/mod/wiki/index.php', array('id' => $id));
 
 if (!$course = $DB->get_record('course', array('id' => $id))) {
     print_error('invalidcourseid');
@@ -71,22 +71,22 @@ if ($usesections) {
 /// Print the list of instances (your module will probably extend this)
 
 $timenow = time();
-$strsectionname  = get_string('sectionname', 'format_'.$course->format);
+$strsectionname = get_string('sectionname', 'format_' . $course->format);
 $strname = get_string("name");
 $table = new html_table();
 
 if ($usesections) {
-    $table->head  = array ($strsectionname, $strname);    
+    $table->head = array($strsectionname, $strname);
 } else {
-    $table->head  = array ($strname);        
+    $table->head = array($strname);
 }
 
 foreach ($wikis as $wiki) {
     $linkcss = null;
     if (!$wiki->visible) {
-        $linkcss = array('class'=>'dimmed');
-    }        
-    $link = html_writer::link(new moodle_url('/mod/wiki/view.php', array('id'=>$wiki->coursemodule)), $wiki->name, $linkcss);
+        $linkcss = array('class' => 'dimmed');
+    }
+    $link = html_writer::link(new moodle_url('/mod/wiki/view.php', array('id' => $wiki->coursemodule)), $wiki->name, $linkcss);
 
     if ($usesections) {
         $table->data[] = array(get_section_name($course, $sections[$wiki->section]), $link);

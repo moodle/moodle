@@ -66,7 +66,7 @@ if ($id) {
     }
 
     // Checking course instance
-    $course = $DB->get_record('course', array('id'=>$cm->course), '*', MUST_EXIST);
+    $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
 
     // Checking wiki instance
     if (!$wiki = wiki_get_wiki($cm->instance)) {
@@ -134,7 +134,7 @@ if ($id) {
     }
 
     // Checking course instance
-    $course = $DB->get_record('course', array('id'=>$cm->course), '*', MUST_EXIST);
+    $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
 
     /*
      * Case 2:

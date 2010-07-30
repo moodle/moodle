@@ -55,11 +55,11 @@ if (!$cm = get_coursemodule_from_instance('wiki', $wiki->id)) {
     print_error('invalidcoursemodule');
 }
 
-$course = $DB->get_record('course', array('id'=>$cm->course), '*', MUST_EXIST);
+$course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
 
 require_course_login($course->id, true, $cm);
 
-add_to_log($course->id, 'wiki', 'comments', 'comments.php?id='.$cm->id, $wiki->id);
+add_to_log($course->id, 'wiki', 'comments', 'comments.php?id=' . $cm->id, $wiki->id);
 
 /// Print the page header
 $wikipage = new page_wiki_comments($wiki, $subwiki, $cm);
