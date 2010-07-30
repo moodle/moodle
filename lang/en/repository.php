@@ -92,6 +92,7 @@ $string['federatedsearch'] = 'Federated search';
 $string['filename'] = 'Filename';
 $string['filenotnull'] = 'You must select a file to upload.';
 $string['filesaved'] = 'The file has been saved';
+$string['filepicker'] = 'File picker';
 $string['getfile'] = 'Select this file';
 $string['hidden'] = 'Hidden';
 $string['choosealink'] = 'Choose a link...';

@@ -397,7 +397,7 @@ class page_requirements_manager {
                                                         array('uploading', 'repository'), array('xhtmlerror', 'repository'),
                                                         array('xhtml', 'quiz'), array('cancel'), array('chooselicense', 'repository'), array('author', 'repository'),
                                                         array('ok', 'moodle'), array('error', 'moodle'), array('info', 'moodle'), array('norepositoriesavailable', 'repository'), array('norepositoriesexternalavailable', 'repository'),
-                                                        array('nofilesattached', 'repository')
+                                                        array('nofilesattached', 'repository'), array('filepicker', 'repository')
                                                     ));
                     break;
                 case 'core_comment':

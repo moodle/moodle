@@ -631,7 +631,7 @@ M.core_filepicker.init = function(Y, options) {
                 });
             });
 
-            this.mainui.setHeader('File Picker');
+            this.mainui.setHeader(M.str.repository.filepicker);
             this.mainui.setBody('<div id="layout-'+client_id+'"></div>');
             this.mainui.render();
             this.rendered = true;
