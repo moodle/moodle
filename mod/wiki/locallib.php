@@ -112,11 +112,11 @@ function wiki_add_subwiki($wikiid, $groupid, $userid = 0) {
 function wiki_get_wiki_from_pageid($pageid) {
     global $DB;
 
-    $sql = 'SELECT w.* ' .
-        'FROM {wiki} w, {wiki_subwikis} s, {wiki_pages} p ' .
-        'WHERE p.id = ? AND ' .
-        'p.subwikiid = s.id AND ' .
-        's.wikiid = w.id';
+    $sql = "SELECT w.*
+            FROM {wiki} w, {wiki_subwikis} s, {wiki_pages} p
+            WHERE p.id = ? AND
+            p.subwikiid = s.id AND
+            s.wikiid = w.id";
 
     return $DB->get_record_sql($sql, array($pageid));
 }
@@ -139,11 +139,12 @@ function wiki_get_page($pageid) {
 function wiki_get_current_version($pageid) {
     global $DB;
 
-    $sql = 'SELECT * ' .
-        'FROM {wiki_versions} ' .
-        'WHERE pageid = ? ' .
-        'ORDER BY version DESC ' .
-        'LIMIT 1';
+    // @TODO: Fix this query
+    $sql = "SELECT *
+            FROM {wiki_versions}
+            WHERE pageid = ?
+            ORDER BY version DESC
+            LIMIT 1";
     return $DB->get_record_sql($sql, array($pageid));
 
 }
@@ -198,13 +199,12 @@ function wiki_get_version($versionid) {
 function wiki_get_first_page($subwikid, $module = null) {
     global $DB, $USER;
 
-    $sql = 'SELECT p.* ' .
-        'FROM {wiki} w, {wiki_subwikis} s, {wiki_pages} p ' .
-        'WHERE s.id = ? AND ' .
-        's.wikiid = w.id AND ' .
-        'w.firstpagetitle = p.title AND ' .
-        'p.subwikiid = s.id';
-
+    $sql = "SELECT p.*
+            FROM {wiki} w, {wiki_subwikis} s, {wiki_pages} p
+            WHERE s.id = ? AND
+            s.wikiid = w.id AND
+            w.firstpagetitle = p.title AND
+            p.subwikiid = s.id";
     return $DB->get_record_sql($sql, array($subwikid));
 }
 
@@ -364,12 +364,12 @@ function wiki_create_page($swid, $title, $format, $userid) {
 function wiki_make_cache_expire($pagename) {
     global $DB;
 
-    $sql = 'UPDATE {wiki_pages} ' .
-        'SET timerendered = 0 ' .
-        'WHERE id IN ( SELECT l.frompageid ' .
-        '   FROM {wiki_links} l ' .
-        '   WHERE l.tomissingpage = ?' .
-        ')';
+    $sql = "UPDATE {wiki_pages}
+            SET timerendered = 0
+            WHERE id IN ( SELECT l.frompageid
+                FROM {wiki_links} l
+                WHERE l.tomissingpage = ?
+            )";
     $DB->execute ($sql, array($pagename));
 }
 
@@ -429,11 +429,11 @@ function wiki_get_linked_from_pages($pageid) {
 function wiki_get_contributions($swid, $userid) {
     global $DB;
 
-    $sql = 'SELECT v.* ' .
-        'FROM {wiki_versions} v, {wiki_pages} p ' .
-        'WHERE p.subwikiid = ? AND ' .
-        'v.pageid = p.id AND ' .
-        'v.userid = ?';
+    $sql = "SELECT v.*
+            FROM {wiki_versions} v, {wiki_pages} p
+            WHERE p.subwikiid = ? AND
+            v.pageid = p.id AND
+            v.userid = ?";
 
     return $DB->get_records_sql($sql, array($swid, $userid));
 }
@@ -445,20 +445,20 @@ function wiki_get_contributions($swid, $userid) {
 function wiki_get_missing_or_empty_pages($swid) {
     global $DB;
 
-    $sql = 'SELECT DISTINCT p.title, p.id, p.subwikiid ' .
-        'FROM {wiki} w, {wiki_subwikis} s, {wiki_pages} p ' .
-        'WHERE s.wikiid = w.id and ' .
-        's.id = ? and ' .
-        'w.firstpagetitle != p.title and ' .
-        'p.subwikiid = ? and ' .
-        '1 =  (SELECT count(*) ' .
-        '   FROM {wiki_versions} v ' .
-        '   WHERE v.pageid = p.id) ' .
-        'UNION ' .
-        'SELECT DISTINCT l.tomissingpage as title, 0 as id, l.subwikiid ' .
-        'FROM {wiki_links} l ' .
-        'WHERE l.subwikiid = ? and ' .
-        'l.topageid = 0';
+    $sql = "SELECT DISTINCT p.title, p.id, p.subwikiid
+            FROM {wiki} w, {wiki_subwikis} s, {wiki_pages} p
+            WHERE s.wikiid = w.id and
+            s.id = ? and
+            w.firstpagetitle != p.title and
+            p.subwikiid = ? and
+            1 =  (SELECT count(*)
+                FROM {wiki_versions} v
+                WHERE v.pageid = p.id)
+            UNION
+            SELECT DISTINCT l.tomissingpage as title, 0 as id, l.subwikiid
+            FROM {wiki_links} l
+            WHERE l.subwikiid = ? and
+            l.topageid = 0";
 
     return $DB->get_records_sql($sql, array($swid, $swid, $swid));
 }
@@ -481,16 +481,15 @@ function wiki_get_page_list($swid) {
 function wiki_get_orphaned_pages($swid) {
     global $DB;
 
-    // @TODO: FIX this query
-    $sql = 'SELECT p.id, p.title ' .
-        'FROM {wiki_pages} p, {wiki} w , {wiki_subwikis} s ' .
-        'WHERE p.subwikiid = ? ' .
-        'AND s.id = ' . $swid . ' ' .
-        'AND w.id = s.wikiid ' .
-        'AND p.title != w.firstpagetitle ' .
-        'AND p.id NOT IN (SELECT topageid FROM {wiki_links} WHERE subwikiid = ?);';
+    $sql = "SELECT p.id, p.title
+            FROM {wiki_pages} p, {wiki} w , {wiki_subwikis} s
+            WHERE p.subwikiid = ?
+            AND s.id = ?
+            AND w.id = s.wikiid
+            AND p.title != w.firstpagetitle
+            AND p.id NOT IN (SELECT topageid FROM {wiki_links} WHERE subwikiid = ?);";
 
-    return $DB->get_records_sql($sql, array($swid, $swid));
+    return $DB->get_records_sql($sql, array($swid, $swid, $swid));
 }
 
 /**
@@ -500,7 +499,9 @@ function wiki_get_orphaned_pages($swid) {
  */
 function wiki_search_title($swid, $search) {
     global $DB;
+    // @TODO: Fix this query
     return $DB->get_records_select('wiki_pages', "subwikiid=$swid AND title LIKE '%$search%'");
+    //return $DB->get_records_select('wiki_pages', "subwikiid = ? AND title LIKE '%?%'", array($swid, $search));
 }
 
 /**
@@ -510,7 +511,9 @@ function wiki_search_title($swid, $search) {
  */
 function wiki_search_content($swid, $search) {
     global $DB;
+    // @TODO: Fix this query
     return $DB->get_records_select('wiki_pages', "subwikiid=$swid AND cachedcontent LIKE '%$search%'");
+    //return $DB->get_records_select('wiki_pages', "subwikiid = ? AND cachedcontent LIKE '%?%'", array($swid, $search));
 }
 
 /**
@@ -520,7 +523,9 @@ function wiki_search_content($swid, $search) {
  */
 function wiki_search_all($swid, $search) {
     global $DB;
+    // @TODO: Fix this query
     return $DB->get_records_select('wiki_pages', "subwikiid=$swid AND (cachedcontent LIKE '%$search%' OR title LIKE '%$search%')");
+    //return $DB->get_records_select('wiki_pages', "subwikiid = ? AND (cachedcontent LIKE '%?%' OR title LIKE '%?%')", array($swid, $search, $search));
 }
 
 /**
@@ -1025,7 +1030,7 @@ function wiki_process_attachments($draftitemid, $deleteuploads, $contextid, $fil
     $draftfiles = $fs->get_area_files($usercontext->id, 'user', 'draft', $draftitemid, 'id');
     $oldfiles = $fs->get_area_files($contextid, 'mod_wiki', 'attachments', $itemid, 'id');
 
-    $file_record = array('contextid' => $contextid, 'component'=>'mod_wiki', 'filearea' => 'attachments', 'itemid' => $itemid);
+    $file_record = array('contextid' => $contextid, 'component' => 'mod_wiki', 'filearea' => 'attachments', 'itemid' => $itemid);
     //more or less a merge...
     $newhashes = array();
     foreach ($draftfiles as $file) {
@@ -1100,9 +1105,9 @@ function wiki_get_comments_by_user($userid) {
     global $DB;
 
     $area = 'wiki_comment_section';
-    $sql = 'SELECT c.* ' .
-        'FROM {comments} c  ' .
-        'WHERE c.userid = ? and c.commentarea= ?';
+    $sql = "SELECT c.*
+            FROM {comments} c
+            WHERE c.userid = ? and c.commentarea = ?";
 
     return $DB->get_records_sql($sql, array($userid, $area));
 
@@ -1364,11 +1369,11 @@ function wiki_build_tree($page, $node, &$keys) {
 function wiki_get_linked_pages($pageid) {
     global $DB;
 
-    $sql = 'SELECT p.id, p.title ' .
-        'FROM mdl_wiki_pages p ' .
-        'JOIN mdl_wiki_links l ON l.topageid = p.id ' .
-        'WHERE l.frompageid = ? ' .
-        'ORDER BY p.title ASC';
+    $sql = "SELECT p.id, p.title
+            FROM mdl_wiki_pages p
+            JOIN mdl_wiki_links l ON l.topageid = p.id
+            WHERE l.frompageid = ?
+            ORDER BY p.title ASC";
     return $DB->get_records_sql($sql, array($pageid));
 }
 
@@ -1379,9 +1384,9 @@ function wiki_get_linked_pages($pageid) {
 function wiki_get_updated_pages_by_subwiki($swid) {
     global $DB, $USER;
 
-    $sql = 'SELECT * ' .
-        'FROM {wiki_pages} ' .
-        'WHERE subwikiid = ? AND timemodified > ? ' .
-        'ORDER BY timemodified DESC';
+    $sql = "SELECT *
+            FROM {wiki_pages}
+            WHERE subwikiid = ? AND timemodified > ?
+            ORDER BY timemodified DESC";
     return $DB->get_records_sql($sql, array($swid, $USER->lastlogin));
 }
