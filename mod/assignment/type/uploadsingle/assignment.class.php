@@ -79,7 +79,7 @@ class assignment_uploadsingle extends assignment_base {
                 $this->view_feedback();
             }
             if ($filecount) {
-                echo $OUTPUT->box($this->print_user_files($submission->id, true), 'generalbox boxaligncenter');
+                echo $OUTPUT->box($this->print_user_files($USER->id, true), 'generalbox boxaligncenter');
             }
         }
 
