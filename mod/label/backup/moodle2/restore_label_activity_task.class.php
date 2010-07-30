@@ -52,11 +52,7 @@ class restore_label_activity_task extends restore_activity_task {
      * processed by the link decoder
      */
     static public function define_decode_contents() {
-        $contents = array();
-
-        $contents[] = new restore_decode_content('label', array('intro'), 'label');
-
-        return $contents;
+        return array();
     }
 
     /**
@@ -64,12 +60,6 @@ class restore_label_activity_task extends restore_activity_task {
      * to the activity to be executed by the link decoder
      */
     static public function define_decode_rules() {
-        $rules = array();
-
-        $rules[] = new restore_decode_rule('LABELVIEWBYID', '/mod/label/view.php?id=$1', 'course_module');
-        $rules[] = new restore_decode_rule('LABELINDEX', '/mod/label/index.php?id=$1', 'course');
-
-        return $rules;
-
+        return array();
     }
 }
