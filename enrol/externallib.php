@@ -72,7 +72,15 @@ class moodle_enrol_external extends external_api {
             $context = $coursecontext;
         }
 
-        self::validate_context($context);
+        try {
+            self::validate_context($context);
+        } catch (Exception $e) {
+                $exceptionparam = new stdClass();
+                $exceptionparam->message = $e->getMessage();
+                $exceptionparam->courseid = $params['courseid'];
+                throw new moodle_exception(
+                        get_string('errorcoursecontextnotvalid' , 'webservice', $exceptionparam));
+        }
 
         if ($courseid == SITEID) {
             require_capability('moodle/site:viewparticipants', $context);

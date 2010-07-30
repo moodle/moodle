@@ -76,7 +76,15 @@ class moodle_group_external extends external_api {
 
             // now security checks
             $context = get_context_instance(CONTEXT_COURSE, $group->courseid);
-            self::validate_context($context);
+            try {
+                self::validate_context($context);
+            } catch (Exception $e) {
+                $exceptionparam = new stdClass();
+                $exceptionparam->message = $e->getMessage();
+                $exceptionparam->courseid = $group->courseid;
+                throw new moodle_exception(
+                        get_string('errorcoursecontextnotvalid' , 'webservice', $exceptionparam));
+            }
             require_capability('moodle/course:managegroups', $context);
 
             // finally create the group
@@ -135,7 +143,15 @@ class moodle_group_external extends external_api {
 
             // now security checks
             $context = get_context_instance(CONTEXT_COURSE, $group->courseid);
-            self::validate_context($context);
+            try {
+                self::validate_context($context);
+            } catch (Exception $e) {
+                $exceptionparam = new stdClass();
+                $exceptionparam->message = $e->getMessage();
+                $exceptionparam->courseid = $group->courseid;
+                throw new moodle_exception(
+                        get_string('errorcoursecontextnotvalid' , 'webservice', $exceptionparam));
+            }
             require_capability('moodle/course:managegroups', $context);
 
             $groups[] = (array)$group;
@@ -184,7 +200,15 @@ class moodle_group_external extends external_api {
 
         // now security checks
         $context = get_context_instance(CONTEXT_COURSE, $params['courseid']);
-        self::validate_context($context);
+        try {
+            self::validate_context($context);
+        } catch (Exception $e) {
+                $exceptionparam = new stdClass();
+                $exceptionparam->message = $e->getMessage();
+                $exceptionparam->courseid = $params['courseid'];
+                throw new moodle_exception(
+                        get_string('errorcoursecontextnotvalid' , 'webservice', $exceptionparam));
+        }
         require_capability('moodle/course:managegroups', $context);
 
         $gs = groups_get_all_groups($params['courseid'], 0, 0, 'g.id, g.courseid, g.name, g.description, g.enrolmentkey');
@@ -251,7 +275,15 @@ class moodle_group_external extends external_api {
 
             // now security checks
             $context = get_context_instance(CONTEXT_COURSE, $group->courseid);
-            self::validate_context($context);
+            try {
+                self::validate_context($context);
+            } catch (Exception $e) {
+                $exceptionparam = new stdClass();
+                $exceptionparam->message = $e->getMessage();
+                $exceptionparam->courseid = $group->courseid;
+                throw new moodle_exception(
+                        get_string('errorcoursecontextnotvalid' , 'webservice', $exceptionparam));
+            }
             require_capability('moodle/course:managegroups', $context);
 
             groups_delete_group($group);
@@ -296,7 +328,15 @@ class moodle_group_external extends external_api {
             $group = groups_get_group($groupid, 'id, courseid, name, enrolmentkey', MUST_EXIST);
             // now security checks
             $context = get_context_instance(CONTEXT_COURSE, $group->courseid);
-            self::validate_context($context);
+            try {
+                self::validate_context($context);
+            } catch (Exception $e) {
+                $exceptionparam = new stdClass();
+                $exceptionparam->message = $e->getMessage();
+                $exceptionparam->courseid = $group->courseid;
+                throw new moodle_exception(
+                        get_string('errorcoursecontextnotvalid' , 'webservice', $exceptionparam));
+            }
             require_capability('moodle/course:managegroups', $context);
 
             $groupmembers = groups_get_members($group->id, 'u.id', 'lastname ASC, firstname ASC');
@@ -364,7 +404,15 @@ class moodle_group_external extends external_api {
 
             // now security checks
             $context = get_context_instance(CONTEXT_COURSE, $group->courseid);
-            self::validate_context($context);
+            try {
+                self::validate_context($context);
+            } catch (Exception $e) {
+                $exceptionparam = new stdClass();
+                $exceptionparam->message = $e->getMessage();
+                $exceptionparam->courseid = $group->courseid;
+                throw new moodle_exception(
+                        get_string('errorcoursecontextnotvalid' , 'webservice', $exceptionparam));
+            }
             require_capability('moodle/course:managegroups', $context);
 
             // now make sure user is enrolled in course - this is mandatory requirement,
@@ -430,7 +478,15 @@ class moodle_group_external extends external_api {
 
             // now security checks
             $context = get_context_instance(CONTEXT_COURSE, $group->courseid);
-            self::validate_context($context);
+            try {
+                self::validate_context($context);
+            } catch (Exception $e) {
+                $exceptionparam = new stdClass();
+                $exceptionparam->message = $e->getMessage();
+                $exceptionparam->courseid = $group->courseid;
+                throw new moodle_exception(
+                        get_string('errorcoursecontextnotvalid' , 'webservice', $exceptionparam));
+            }
             require_capability('moodle/course:managegroups', $context);
 
             groups_remove_member($group, $user);
