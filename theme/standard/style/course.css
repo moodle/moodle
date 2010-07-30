@@ -71,10 +71,10 @@
 
 #page-course-report #content {padding-top:15px;padding-bottom:15px;}
 
-#page-course-report p,
-#page-course-report-log-index .info,
-#page-course-report-log-indexlive .info,
-#page-course-report-stats-index .graph {text-align: center;}
+#page-course-report #region-main p,
+#page-course-report-log-index #region-main .info,
+#page-course-report-log-indexlive #region-main .info,
+#page-course-report-stats-index #region-main .graph {text-align: center;}
 
 #page-course-report .logselectform,
 #page-course-report .participationselectform,
