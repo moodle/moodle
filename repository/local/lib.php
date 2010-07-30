@@ -178,6 +178,7 @@ class repository_local extends repository {
         $info = array();
 
         $browser = get_file_browser();
+        $fs = get_file_storage();
         $user_context = get_context_instance(CONTEXT_USER, $USER->id);
 
         // the final file
