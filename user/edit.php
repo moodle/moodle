@@ -238,6 +238,11 @@ if ($usernew = $userform->get_data()) {
         profile_load_custom_fields($USER);
     }
 
+    if (is_siteadmin() and empty($SITE->shortname)) {
+        // fresh cli install - we need to finish site settings
+        redirect(new moodle_url('/admin/index.php'));
+    }
+
     if (!$email_changed || !$CFG->emailchangeconfirmation) {
         redirect("$CFG->wwwroot/user/view.php?id=$user->id&course=$course->id");
     }
