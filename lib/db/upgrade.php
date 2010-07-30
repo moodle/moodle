@@ -1283,13 +1283,6 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         upgrade_main_savepoint(true, 2009032001);
     }
 
-    if ($oldversion < 2009033100) {
-        require_once("$CFG->dirroot/filter/tex/lib.php");
-        filter_tex_updatedcallback(null);
-    /// Main savepoint reached
-        upgrade_main_savepoint(true, 2009033100);
-    }
-
     if ($oldversion < 2009040300) {
 
     /// Define table filter_active to be created

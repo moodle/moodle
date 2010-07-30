@@ -2596,7 +2596,7 @@ function forum_get_discussions_unread($cm) {
 
     $now = round(time(), -2);
     $cutoffdate = $now - ($CFG->forum_oldpostdays*24*60*60);
-    
+
     $params = array();
     $groupmode    = groups_get_activity_groupmode($cm);
     $currentgroup = groups_get_activity_group($cm);
@@ -3810,7 +3810,7 @@ function forum_print_attachments($post, $cm, $type) {
                     }
                 } else {
                     $output .= "<a href=\"$path\">$iconimage</a> ";
-                    $output .= filter_text("<a href=\"$path\">".s($filename)."</a>");
+                    $output .= format_text("<a href=\"$path\">".s($filename)."</a>", FORMAT_HTML, array('context'=>$context));
                     if ($canexport) {
                         $button->set_callback_options('forum_portfolio_caller', array('postid' => $post->id, 'attachment' => $file->get_id()), '/mod/forum/locallib.php');
                         $button->set_format_by_file($file);

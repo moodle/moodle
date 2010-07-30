@@ -18,9 +18,10 @@
 /**
  * Media filter post install hook
  *
- * @package   filter_mediaplugin
- * @copyright 2010 Petr Skoda {@link http://skodak.org}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    filter
+ * @subpackage mediaplugin
+ * @copyright  2010 Petr Skoda {@link http://skodak.org}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 function xmldb_filter_mediaplugin_install() {

@@ -15,7 +15,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
  * Classes for Blogs.
  *
@@ -25,6 +24,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
 
 /**
  * Blog_entry class. Represents an entry in a user's blog. Contains all methods for managing this entry.
@@ -98,8 +98,9 @@ class blog_entry {
         global $USER, $CFG, $COURSE, $DB, $OUTPUT, $PAGE;
 
         $user = $DB->get_record('user', array('id'=>$this->userid));
-        $options = new stdclass;
-        if ($CFG->blogusecomments) {
+        $cmttext = '';
+        if (!empty($CFG->usecomments) and $CFG->blogusecomments) {
+            require_once($CFG->dirroot . '/comment/lib.php');
             // Comments
             $cmt = new stdClass();
             $cmt->context = get_context_instance(CONTEXT_USER, $user->id);
@@ -108,11 +109,12 @@ class blog_entry {
             $cmt->env = 'blog';
             $cmt->itemid = $this->id;
             $cmt->showcount = $CFG->blogshowcommentscount;
-            $options->comments = $cmt;
+            $comment = new comment($cmt);
+            $cmttext = $comment->output(true);
         }
         $this->summary = file_rewrite_pluginfile_urls($this->summary, 'pluginfile.php', SYSCONTEXTID, 'blog', 'post', $this->id);
 
-        $template['body'] = format_text($this->summary, $this->summaryformat, $options);
+        $template['body'] = format_text($this->summary, $this->summaryformat).$cmttext;
         $template['title'] = format_string($this->subject);
         $template['userid'] = $user->id;
         $template['author'] = fullname($user);
@@ -481,7 +483,9 @@ class blog_entry {
 
         $fs = get_file_storage();
 
-        $files = $fs->get_area_files(SYSCONTEXTID, 'blog', 'attachment', $this->id);
+        $syscontext = get_context_instance(CONTEXT_SYSTEM);
+
+        $files = $fs->get_area_files($syscontext->id, 'blog', 'attachment', $this->id);
 
         $imagereturn = "";
         $output = "";
@@ -514,7 +518,7 @@ class blog_entry {
                     $imagereturn .= "<br />" . $OUTPUT->pix_icon($ffurl, $filename);
                 } else {
                     $imagereturn .= html_writer::link($ffurl, $image);
-                    $imagereturn .= filter_text(html_writer::link($ffurl, $filename));
+                    $imagereturn .= format_text(html_writer::link($ffurl, $filename), FORMAT_HTML, array('context'=>$syscontext));
                 }
             }
         }

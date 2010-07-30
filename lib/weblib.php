@@ -912,7 +912,6 @@ function get_file_argument() {
  * @return array
  */
 function format_text_menu() {
-
     return array (FORMAT_MOODLE => get_string('formattext'),
                   FORMAT_HTML   => get_string('formathtml'),
                   FORMAT_PLAIN  => get_string('formatplain'),
@@ -928,90 +927,84 @@ function format_text_menu() {
  *
  * @todo Finish documenting this function
  *
- * @global object
- * @global object
- * @global object
- * @global object
- * @uses FORMAT_MOODLE
- * @uses FORMAT_HTML
- * @uses FORMAT_PLAIN
- * @uses FORMAT_WIKI
- * @uses FORMAT_MARKDOWN
- * @uses CLI_SCRIPT
  * @staticvar array $croncache
  * @param string $text The text to be formatted. This is raw text originally from user input.
  * @param int $format Identifier of the text format to be used
- *            [FORMAT_MOODLE, FORMAT_HTML, FORMAT_PLAIN, FORMAT_WIKI, FORMAT_MARKDOWN]
- * @param object $options ?
- * @param int $courseid The courseid to use, defaults to $COURSE->courseid
+ *            [FORMAT_MOODLE, FORMAT_HTML, FORMAT_PLAIN, FORMAT_MARKDOWN]
+ * @param object/array $options text formatting options
+ * @param int $courseid_do_not_use deprecated course id, use context option instead
  * @return string
  */
-function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL) {
+function format_text($text, $format = FORMAT_MOODLE, $options = NULL, $courseid_do_not_use = NULL) {
     global $CFG, $COURSE, $DB, $PAGE;
 
     static $croncache = array();
 
-    $hashstr = '';
-
     if ($text === '') {
         return ''; // no need to do any filters and cleaning
     }
-    if (!empty($options->comments) && !empty($CFG->usecomments)) {
-        require_once($CFG->dirroot . '/comment/lib.php');
-        $comment = new comment($options->comments);
-        $cmt = $comment->output(true);
-    } else {
-        $cmt = '';
-    }
+
+    $options = (array)$options; // detach object, we can not modify it
 
 
-    if (!isset($options->trusted)) {
-        $options->trusted = false;
+    if (!isset($options['trusted'])) {
+        $options['trusted'] = false;
     }
-    if (!isset($options->noclean)) {
-        if ($options->trusted and trusttext_active()) {
+    if (!isset($options['noclean'])) {
+        if ($options['trusted'] and trusttext_active()) {
             // no cleaning if text trusted and noclean not specified
-            $options->noclean=true;
+            $options['noclean'] = true;
         } else {
-            $options->noclean=false;
+            $options['noclean'] = false;
         }
     }
-    if (!isset($options->nocache)) {
-        $options->nocache=false;
+    if (!isset($options['nocache'])) {
+        $options['nocache'] = false;
     }
-    if (!isset($options->smiley)) {
-        $options->smiley=true;
+    if (!isset($options['smiley'])) {
+        $options['smiley'] = true;
     }
-    if (!isset($options->filter)) {
-        $options->filter=true;
+    if (!isset($options['filter'])) {
+        $options['filter'] = true;
     }
-    if (!isset($options->para)) {
-        $options->para=true;
+    if (!isset($options['para'])) {
+        $options['para'] = true;
     }
-    if (!isset($options->newlines)) {
-        $options->newlines=true;
-    }
-    if (empty($courseid)) {
-        $courseid = $COURSE->id;
+    if (!isset($options['newlines'])) {
+        $options['newlines'] = true;
     }
 
-    if ($options->filter) {
+    // Calculate best context
+    if (isset($options['context'])) { // first by explicit passed context option
+        if (is_object($options['context'])) {
+            $context = $options['context'];
+        } else {
+            $context = get_context_instance_by_id($context);
+        }
+    } else if ($courseid_do_not_use) {
+        // legacy courseid
+        $context = get_context_instance(CONTEXT_COURSE, $courseid_do_not_use);
+    } else {
+        // fallback to $PAGE->context this may be problematic in CLI and other non-standard pages :-(
+        $context = $PAGE->context;
+    }
+
+    if ($options['filter']) {
         $filtermanager = filter_manager::instance();
     } else {
         $filtermanager = new null_filter_manager();
     }
-    $context = $PAGE->context;
 
-    if (!empty($CFG->cachetext) and empty($options->nocache)) {
-        $hashstr .= $text.'-'.$filtermanager->text_filtering_hash($context, $courseid).'-'.(int)$courseid.'-'.current_language().'-'.
-                (int)$format.(int)$options->trusted.(int)$options->noclean.(int)$options->smiley.
-                (int)$options->filter.(int)$options->para.(int)$options->newlines;
+    if (!empty($CFG->cachetext) and empty($options['nocache'])) {
+        $hashstr = $text.'-'.$filtermanager->text_filtering_hash($context).'-'.$context->id.'-'.current_language().'-'.
+                (int)$format.(int)$options['trusted'].(int)$options['noclean'].(int)$options['smiley'].
+                (int)$options['para'].(int)$options['newlines'];
 
         $time = time() - $CFG->cachetext;
         $md5key = md5($hashstr);
         if (CLI_SCRIPT) {
             if (isset($croncache[$md5key])) {
-                return $croncache[$md5key].$cmt;
+                return $croncache[$md5key];
             }
         }
 
@@ -1025,20 +1018,20 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL
                     }
                     $croncache[$md5key] = $oldcacheitem->formattedtext;
                 }
-                return $oldcacheitem->formattedtext.$cmt;
+                return $oldcacheitem->formattedtext;
             }
         }
     }
 
     switch ($format) {
         case FORMAT_HTML:
-            if ($options->smiley) {
+            if ($options['smiley']) {
                 replace_smilies($text);
             }
-            if (!$options->noclean) {
+            if (!$options['noclean']) {
                 $text = clean_text($text, FORMAT_HTML);
             }
-            $text = $filtermanager->filter_text($text, $context, $courseid);
+            $text = $filtermanager->filter_text($text, $context);
             break;
 
         case FORMAT_PLAIN:
@@ -1058,21 +1051,21 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL
 
         case FORMAT_MARKDOWN:
             $text = markdown_to_html($text);
-            if ($options->smiley) {
+            if ($options['smiley']) {
                 replace_smilies($text);
             }
-            if (!$options->noclean) {
+            if (!$options['noclean']) {
                 $text = clean_text($text, FORMAT_HTML);
             }
-            $text = $filtermanager->filter_text($text, $context, $courseid);
+            $text = $filtermanager->filter_text($text, $context);
             break;
 
         default:  // FORMAT_MOODLE or anything else
-            $text = text_to_html($text, $options->smiley, $options->para, $options->newlines);
-            if (!$options->noclean) {
+            $text = text_to_html($text, $options['smiley'], $options['para'], $options['newlines']);
+            if (!$options['noclean']) {
                 $text = clean_text($text, FORMAT_HTML);
             }
-            $text = $filtermanager->filter_text($text, $context, $courseid);
+            $text = $filtermanager->filter_text($text, $context);
             break;
     }
 
@@ -1085,7 +1078,7 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL
                 'relies on it. Please seek out and destroy that filter code.', DEBUG_DEVELOPER);
     }
 
-    if (empty($options->nocache) and !empty($CFG->cachetext)) {
+    if (empty($options['nocache']) and !empty($CFG->cachetext)) {
         if (CLI_SCRIPT) {
             // special static cron cache - no need to store it in db if its not already there
             if (count($croncache) > 150) {
@@ -1094,7 +1087,7 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL
                 unset($croncache[$key]);
             }
             $croncache[$md5key] = $text;
-            return $text.$cmt;
+            return $text;
         }
 
         $newcacheitem = new object();
@@ -1122,8 +1115,8 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL
             }
         }
     }
-    return $text.$cmt;
 
+    return $text;
 }
 
 /**
@@ -1139,7 +1132,7 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL
  * @param mixed $key int 0-4 or string one of 'moodle','html','plain','markdown'
  * @return mixed as above but the other way around!
  */
-function text_format_name( $key ) {
+function text_format_name($key) {
   $lookup = array();
   $lookup[FORMAT_MOODLE] = 'moodle';
   $lookup[FORMAT_HTML] = 'html';
@@ -1188,26 +1181,40 @@ function reset_text_filters_cache() {
  * @param string $string The string to be filtered.
  * @param boolean $striplinks To strip any link in the result text.
                               Moodle 1.8 default changed from false to true! MDL-8713
- * @param int $courseid Current course as filters can, potentially, use it
+ * @param array $options options array/object or courseid
  * @return string
  */
-function format_string($string, $striplinks=true, $courseid=NULL ) {
+function format_string($string, $striplinks = true, $options = NULL) {
     global $CFG, $COURSE, $PAGE;
 
     //We'll use a in-memory cache here to speed up repeated strings
     static $strcache = false;
 
-    if ($strcache === false or count($strcache) > 2000 ) { // this number might need some tuning to limit memory usage in cron
+    if ($strcache === false or count($strcache) > 2000) { // this number might need some tuning to limit memory usage in cron
         $strcache = array();
     }
 
-    //init course id
-    if (empty($courseid)) {
-        $courseid = $COURSE->id;
+    if (is_numeric($options)) {
+        // legacy courseid usage
+        $options  = array('context'=>get_context_instance(CONTEXT_COURSE, $options));
+    } else {
+        $options = (array)$options; // detach object, we can not modify it
+    }
+
+    if (empty($options['context'])) {
+        // fallback to $PAGE->context this may be problematic in CLI and other non-standard pages :-(
+        $options['context'] = $PAGE->context;
+    } else if (is_numeric($options['context'])) {
+        $options['context'] = get_context_instance_by_id($options['context']);
+    }
+
+    if (!$options['context']) {
+        // we did not find any context? weird
+        return $text;
     }
 
     //Calculate md5
-    $md5 = md5($string.'<+>'.$striplinks.'<+>'.$courseid.'<+>'.current_language());
+    $md5 = md5($string.'<+>'.$striplinks.'<+>'.$options['context']->id.'<+>'.current_language());
 
     //Fetch from cache if possible
     if (isset($strcache[$md5])) {
@@ -1218,9 +1225,8 @@ function format_string($string, $striplinks=true, $courseid=NULL ) {
     // Regular expression moved to its own method for easier unit testing
     $string = replace_ampersands_not_followed_by_entity($string);
 
-    if (!empty($CFG->filterall) && $CFG->version >= 2009040600) { // Avoid errors during the upgrade to the new system.
-        $context = $PAGE->context;
-        $string = filter_manager::instance()->filter_string($string, $context, $courseid);
+    if (!empty($CFG->filterall) and $CFG->version >= 2009040600) { // Avoid errors during the upgrade to the new system.
+        $string = filter_manager::instance()->filter_string($string, $options['context']);
     }
 
     // If the site requires it, strip ALL tags from this string
@@ -1327,28 +1333,6 @@ function format_text_email($text, $format) {
 }
 
 /**
- * Given some text in HTML format, this function will pass it
- * through any filters that have been configured for this context.
- *
- * @global object
- * @global object
- * @global object
- * @param string $text The text to be passed through format filters
- * @param int $courseid The current course.
- * @return string the filtered string.
- */
-function filter_text($text, $courseid=NULL) {
-    global $CFG, $COURSE, $PAGE;
-
-    if (empty($courseid)) {
-        $courseid = $COURSE->id;       // (copied from format_text)
-    }
-
-    $context = $PAGE->context;
-
-    return filter_manager::instance()->filter_text($text, $context, $courseid);
-}
-/**
  * Formats activity intro text
  *
  * @global object
@@ -1362,10 +1346,10 @@ function filter_text($text, $courseid=NULL) {
 function format_module_intro($module, $activity, $cmid, $filter=true) {
     global $CFG;
     require_once("$CFG->libdir/filelib.php");
-    $options = (object)array('noclean'=>true, 'para'=>false, 'filter'=>true);
     $context = get_context_instance(CONTEXT_MODULE, $cmid);
+    $options = (object)array('noclean'=>true, 'para'=>false, 'filter'=>true, 'context'=>$context);
     $intro = file_rewrite_pluginfile_urls($activity->intro, 'pluginfile.php', $context->id, 'mod_'.$module, 'intro', null);
-    return trim(format_text($intro, $activity->introformat, $options));
+    return trim(format_text($intro, $activity->introformat, $options, null));
 }
 
 /**
@@ -1437,8 +1421,6 @@ function trusttext_active() {
  * Given raw text (eg typed in by a user), this function cleans it up
  * and removes any nasty tags that could mess up Moodle pages.
  *
- * @uses FORMAT_MOODLE
- * @uses FORMAT_PLAIN
  * @global string
  * @global object
  * @param string $text The text to be cleaned
@@ -1446,8 +1428,7 @@ function trusttext_active() {
  *            [FORMAT_MOODLE, FORMAT_HTML, FORMAT_PLAIN, FORMAT_WIKI, FORMAT_MARKDOWN]
  * @return string The cleaned up text
  */
-function clean_text($text, $format=FORMAT_MOODLE) {
-
+function clean_text($text, $format = FORMAT_MOODLE) {
     global $ALLOWED_TAGS, $CFG;
 
     if (empty($text) or is_numeric($text)) {

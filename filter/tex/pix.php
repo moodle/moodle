@@ -55,7 +55,7 @@ define('NO_MOODLE_COOKIES', true); // Because it interferes with caching
                 $texexp = str_replace('&gt;', '>', $texexp);
                 $texexp = preg_replace('!\r\n?!', ' ', $texexp);
                 $texexp = '\Large '.$texexp;
-                $cmd = tex_filter_get_cmd($pathname, $texexp);
+                $cmd = filter_tex_get_cmd($pathname, $texexp);
                 system($cmd, $status);
             }
         }

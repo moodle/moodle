@@ -46,7 +46,7 @@
         function construct_latex_document( $formula, $fontsize=12 ) {
             global $CFG;
 
-            $formula = tex_sanitize_formula($formula);
+            $formula = filter_tex_sanitize_formula($formula);
 
             // $fontsize don't affects to formula's size. $density can change size
             $doc =  "\\documentclass[{$fontsize}pt]{article}\n";

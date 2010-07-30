@@ -1,25 +1,29 @@
-<?PHP
-/////////////////////////////////////////////////////////////////////////////
-//                                                                         //
-// NOTICE OF COPYRIGHT                                                     //
-//                                                                         //
-// Moodle - Filter for converting TeX expressions to cached gif images     //
-//                                                                         //
-// Copyright (C) 2004 Zbigniew Fiedorowicz fiedorow@math.ohio-state.edu    //
-// Originally based on code provided by Bruno Vernier bruno@vsbeducation.ca//
-// This program is free software; you can redistribute it and/or modify    //
-// it under the terms of the GNU General Public License as published by    //
-// the Free Software Foundation; either version 2 of the License, or       //
-// (at your option) any later version.                                     //
-//                                                                         //
-// This program is distributed in the hope that it will be useful,         //
-// but WITHOUT ANY WARRANTY; without even the implied warranty of          //
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           //
-// GNU General Public License for more details:                            //
-//                                                                         //
-//          http://www.gnu.org/copyleft/gpl.html                           //
-//                                                                         //
-/////////////////////////////////////////////////////////////////////////////
+<?php
+
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Moodle - Filter for converting TeX expressions to cached gif images
+ * @package    filter
+ * @subpackage tex
+ * @copyright  2004 Zbigniew Fiedorowicz fiedorow@math.ohio-state.edu
+ *             Originally based on code provided by Bruno Vernier bruno@vsbeducation.ca
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 //-------------------------------------------------------------------------
 // NOTE: This Moodle text filter converts TeX expressions delimited
 // by either $$...$$ or by <tex...>...</tex> tags to gif images using
@@ -36,7 +40,7 @@
 //       filter/tex/filter.php                                             //
 /////////////////////////////////////////////////////////////////////////////
 
-function string_file_picture_tex($imagefile, $tex= "", $height="", $width="", $align="middle", $alt='') {
+function filter_text_image($imagefile, $tex= "", $height="", $width="", $align="middle", $alt='') {
     global $CFG, $OUTPUT;
 
     if ($alt==='') {
@@ -100,7 +104,7 @@ function string_file_picture_tex($imagefile, $tex= "", $height="", $width="", $a
     return $output;
 }
 
-class tex_filter extends moodle_text_filter {
+class filter_tex extends moodle_text_filter {
     function filter ($text) {
 
         global $CFG, $DB;
@@ -165,7 +169,7 @@ class tex_filter extends moodle_text_filter {
                 $DB->insert_record("cache_filters", $texcache, false);
             }
             $filename = $md5 . ".{$CFG->filter_tex_convertformat}";
-            $text = str_replace( $matches[0][$i], string_file_picture_tex($filename, $texexp, '', '', $align, $alt), $text);
+            $text = str_replace( $matches[0][$i], filter_text_image($filename, $texexp, '', '', $align, $alt), $text);
         }
         return $text;
     }

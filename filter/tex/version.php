@@ -16,14 +16,14 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Media filter
+ * Tex filter
  *
  * @package    filter
- * @subpackage mediaplugin
+ * @subpackage tex
  * @copyright  2010 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version = 2010070900;
+$plugin->version = 2010073000;

@@ -1329,7 +1329,7 @@ function glossary_print_attachments($entry, $cm, $type=NULL, $align="left") {
                     $imagereturn .= "<br /><img src=\"$path\" alt=\"\" />";
                 } else {
                     $output .= "<a href=\"$path\">$iconimage</a> ";
-                    $output .= filter_text("<a href=\"$path\">".s($filename)."</a>");
+                    $output .= format_text("<a href=\"$path\">".s($filename)."</a>", FORMAT_HTML, array('context'=>$context));
                     $output .= '<br />';
                 }
             }

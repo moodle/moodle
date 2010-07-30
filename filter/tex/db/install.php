@@ -16,14 +16,20 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Media filter
+ * Tex filter post install hook
  *
  * @package    filter
- * @subpackage mediaplugin
+ * @subpackage tex
  * @copyright  2010 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+function xmldb_filter_tex_install() {
+    global $CFG;
 
-$plugin->version = 2010070900;
+    // purge all caches during 1.9 upgrade
+
+    require_once("$CFG->dirroot/filter/tex/lib.php");
+    filter_tex_updatedcallback(null);
+}
+

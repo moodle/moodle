@@ -1,5 +1,31 @@
 <?php
 
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * HTML  tidy text filter.
+ *
+ * @package    filter
+ * @subpackage tiny
+ * @copyright  2004 Hannes Gassert <hannes at mediagonal dot ch>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+defined('MOODLE_INTERNAL') || die();
+
 // This class looks for text including markup and
 // applies tidy's repair function to it.
 // Tidy is a HTML clean and
@@ -11,11 +37,7 @@
 // If you want to know what you can set in $tidyoptions and what their default
 // values are, see http://php.net/manual/en/function.tidy-get-config.php.
 
-class tidy_filter extends moodle_text_filter {
-    /**
-    * @author Hannes Gassert <hannes at mediagonal dot ch>
-    * @param        string         text to be filtered
-    */
+class filter_tidy extends moodle_text_filter {
     function filter($text) {
 
     /// Configuration for tidy. Feel free to tune for your needs, e.g. to allow

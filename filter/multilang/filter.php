@@ -1,26 +1,29 @@
 <?php
 
-///////////////////////////////////////////////////////////////////////////
-//                                                                       //
-// This program is part of Moodle - Modular Object-Oriented Dynamic      //
-// Learning Environment - http://moodle.org                              //
-//                                                                       //
-// Copyright (C) 2004  Gaetan Frenoy <gaetan@frenoy.net>                 //
-//                     Eloy Lafuente <stronk7@moodle.org>                //
-//                                                                       //
-// This program is free software; you can redistribute it and/or modify  //
-// it under the terms of the GNU General Public License as published by  //
-// the Free Software Foundation; either version 2 of the License, or     //
-// (at your option) any later version.                                   //
-//                                                                       //
-// This program is distributed in the hope that it will be useful,       //
-// but WITHOUT ANY WARRANTY; without even the implied warranty of        //
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         //
-// GNU General Public License for more details:                          //
-//                                                                       //
-//          http://www.gnu.org/copyleft/gpl.html                         //
-//                                                                       //
-///////////////////////////////////////////////////////////////////////////
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * @package    filter
+ * @subpackage multilang
+ * @copyright  Gaetan Frenoy <gaetan@frenoy.net>
+ * @copyright  2004 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+defined('MOODLE_INTERNAL') || die();
 
 // Given XML multilinguage text, return relevant text according to
 // current language:
@@ -36,7 +39,7 @@
 // Following new syntax is not compatible with old one:
 //   <span lang="XX" class="multilang">one lang</span><span lang="YY" class="multilang">another language</span>
 
-class multilang_filter extends moodle_text_filter {
+class filter_multilang extends moodle_text_filter {
     function filter($text) {
         global $CFG;
 
@@ -57,7 +60,7 @@ class multilang_filter extends moodle_text_filter {
             $search = '/(<(?:lang|span) lang="[a-zA-Z0-9_-]*".*?>.*?<\/(?:lang|span)>)(\s*<(?:lang|span) lang="[a-zA-Z0-9_-]*".*?>.*?<\/(?:lang|span)>)+/is';
         }
 
-        $result = preg_replace_callback($search, 'multilang_filter_impl', $text);
+        $result = preg_replace_callback($search, 'filter_multilang_impl', $text);
 
         if (is_null($result)) {
             return $text; //error during regex processing (too many nested spans?)
@@ -67,7 +70,7 @@ class multilang_filter extends moodle_text_filter {
     }
 }
 
-function multilang_filter_impl($langblock) {
+function filter_multilang_impl($langblock) {
     global $CFG;
 
     $mylang = current_language();

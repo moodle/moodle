@@ -1,9 +1,36 @@
 <?php
-    //This function provides automatic linking to
-    //activities when its name (title) is found inside every Moodle text
-    //It's based in the glosssary filter by Williams Castillo
-    //Modifications by stronk7.
-class activitynames_filter extends moodle_text_filter {
+
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * This filter provides automatic linking to
+ * activities when its name (title) is found inside every Moodle text
+ *
+ * @package    filter
+ * @subpackage activitynames
+ * @copyright  2004 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+defined('MOODLE_INTERNAL') || die();
+
+/**
+ * Activity name filtering
+ */
+class filter_activitynames extends moodle_text_filter {
     // Trivial-cache - keyed on $cachedcourseid
     static $activitylist = null;
     static $cachedcourseid;
@@ -11,25 +38,25 @@ class activitynames_filter extends moodle_text_filter {
     function filter($text) {
         global $CFG, $COURSE, $DB;
 
-        if (empty($this->courseid)) {
-            $this->courseid = SITEID;
+        if (!$courseid = get_courseid_from_context($this->context)) {
+            return $text;
         }
 
         // Initialise/invalidate our trivial cache if dealing with a different course
-        if (!isset($this->cachedcourseid) || $this->cachedcourseid !== (int)$this->courseid) {
+        if (!isset($this->cachedcourseid) || $this->cachedcourseid !== (int)$courseid) {
             $this->activitylist = null;
         }
-        $this->cachedcourseid = (int)$this->courseid;
+        $this->cachedcourseid = (int)$courseid;
 
         /// It may be cached
 
         if (is_null($this->activitylist)) {
             $this->activitylist = array();
 
-            if ($COURSE->id == $this->courseid) {
+            if ($COURSE->id == $courseid) {
                 $course = $COURSE;
             } else {
-                $course = $DB->get_record("course", array("id"=>$this->courseid));
+                $course = $DB->get_record("course", array("id"=>$courseid));
             }
 
             if (!isset($course->modinfo)) {
@@ -44,7 +71,7 @@ class activitynames_filter extends moodle_text_filter {
                 $this->activitylist = array();      /// We will store all the activities here
 
                 //Sort modinfo by name length
-                usort($modinfo, 'comparemodulenamesbylength');
+                usort($modinfo, 'filter_activitynames_comparemodulenamesbylength');
 
                 foreach ($modinfo as $activity) {
                     //Exclude labels, hidden activities and activities for group members only
@@ -76,7 +103,7 @@ class activitynames_filter extends moodle_text_filter {
 
 
 //This function is used to order module names from longer to shorter
-function comparemodulenamesbylength($a, $b)  {
+function filter_activitynames_comparemodulenamesbylength($a, $b)  {
     if (strlen($a->name) == strlen($b->name)) {
         return 0;
     }

@@ -30,6 +30,32 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+
+/**
+ * Given some text in HTML format, this function will pass it
+ * through any filters that have been configured for this context.
+ *
+ * @deprecated use the text formatting in a standard way instead,
+ *             this was abused mostly for embedding of attachments
+ *
+ * @param string $text The text to be passed through format filters
+ * @param int $courseid The current course.
+ * @return string the filtered string.
+ */
+function filter_text($text, $courseid = NULL) {
+    global $CFG, $COURSE;
+
+    if (!$courseid) {
+        $courseid = $COURSE->id;
+    }
+
+    if (!$context = get_context_instance(CONTEXT_COURSE, $courseid)) {
+        return $text;
+    }
+
+    return filter_manager::instance()->filter_text($text, $context);
+}
+
 /**
  * Given a physical path to a file, returns the URL through which it can be reached in Moodle.
  *

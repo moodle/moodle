@@ -1,26 +1,33 @@
-<?PHP
-/////////////////////////////////////////////////////////////////////////////
-//                                                                         //
-// NOTICE OF COPYRIGHT                                                     //
-//                                                                         //
-// Moodle - Filter for converting simple calculator-type algebraic        //
-// expressions to cached gif images                                        //
-//                                                                         //
-// Copyright (C) 2004 Zbigniew Fiedorowicz fiedorow@math.ohio-state.edu    //
-// Originally based on code provided by Bruno Vernier bruno@vsbeducation.ca//
-// This program is free software; you can redistribute it and/or modify    //
-// it under the terms of the GNU General Public License as published by    //
-// the Free Software Foundation; either version 2 of the License, or       //
-// (at your option) any later version.                                     //
-//                                                                         //
-// This program is distributed in the hope that it will be useful,         //
-// but WITHOUT ANY WARRANTY; without even the implied warranty of          //
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           //
-// GNU General Public License for more details:                            //
-//                                                                         //
-//          http://www.gnu.org/copyleft/gpl.html                           //
-//                                                                         //
-/////////////////////////////////////////////////////////////////////////////
+<?php
+
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Moodle - Filter for converting simple calculator-type algebraic
+ * expressions to cached gif images
+ *
+ * @package    filter
+ * @subpackage algebra
+ * @copyright  2004 Zbigniew Fiedorowicz fiedorow@math.ohio-state.edu
+ *             Originally based on code provided by Bruno Vernier bruno@vsbeducation.ca
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+defined('MOODLE_INTERNAL') || die();
+
 //-------------------------------------------------------------------------
 // NOTE: This Moodle text filter converts algebraic expressions delimited
 // by either @@...@@ or by <algebra...>...</algebra> tags
@@ -37,7 +44,7 @@
 // You will then need to edit your moodle/config.php to invoke mathml_filter.php
 //-------------------------------------------------------------------------
 
-function string_file_picture_algebra($imagefile, $tex= "", $height="", $width="", $align="middle") {
+function filter_algebra_image($imagefile, $tex= "", $height="", $width="", $align="middle") {
   // Given the path to a picture file in a course, or a URL,
   // this function includes the picture in the page.
   global $CFG, $OUTPUT;
@@ -77,14 +84,14 @@ function string_file_picture_algebra($imagefile, $tex= "", $height="", $width=""
         $action = new popup_action('click', $link, 'popup', array('height'=>300,'width'=>240));
     }
     $output .= $OUTPUT->action_link($link, $anchorcontents, $action, array('title'=>'TeX'));
-    
+
   } else {
     $output .= "Error: must pass URL or course";
   }
   return $output;
 }
 
-class algebra_filter extends moodle_text_filter {
+class filter_algebra extends moodle_text_filter {
     function filter($text){
         global $CFG, $DB;
 
@@ -221,12 +228,12 @@ class algebra_filter extends moodle_text_filter {
                   $texcache->rawtext = $texexp;
                   $texcache->timemodified = time();
                   $DB->insert_record("cache_filters", $texcache, false);
-                  $text = str_replace( $matches[0][$i], string_file_picture_algebra($filename, $texexp, '', '', $align), $text);
+                  $text = str_replace( $matches[0][$i], filter_algebra_image($filename, $texexp, '', '', $align), $text);
                } else {
                   $text = str_replace( $matches[0][$i],"<b>Undetermined error:</b> ",$text);
                }
             } else {
-               $text = str_replace( $matches[0][$i], string_file_picture_algebra($filename, $texcache->rawtext), $text);
+               $text = str_replace( $matches[0][$i], filter_algebra_image($filename, $texcache->rawtext), $text);
             }
         }
         return $text;

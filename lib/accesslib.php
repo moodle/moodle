@@ -2269,6 +2269,36 @@ function get_context_info_array($contextid) {
     return array($context, $course, $cm);
 }
 
+/**
+ * Returns current course id or null if outside of course based on context parameter.
+ * @param object $context
+ * @return int|bool related course id or false
+ */
+function get_courseid_from_context($context) {
+    if ($context->contextlevel == CONTEXT_COURSE) {
+        return $context->instanceid;
+    }
+
+    if ($context->contextlevel < CONTEXT_COURSE) {
+        return false;
+    }
+
+    if ($context->contextlevel == CONTEXT_MODULE) {
+        $parentcontexts = get_parent_contexts($context, false);
+        $parent = reset($parentcontexts);
+        $parent = get_context_instance_by_id($parent);
+        return $parent->instanceid;
+    }
+
+    if ($context->contextlevel == CONTEXT_BLOCK) {
+        $parentcontexts = get_parent_contexts($context, false);
+        $parent = reset($parentcontexts);
+        return get_courseid_from_context($parent);
+    }
+
+    return false;
+}
+
 
 //////////////////////////////////////
 //    DB TABLE RELATED FUNCTIONS    //

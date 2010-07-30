@@ -1,23 +1,37 @@
 <?php
-//////////////////////////////////////////////////////////////
-//  Media plugin filtering
-//
-//  This filter will replace any links to a media file with
-//  a media plugin that plays that media inline
-//
-//  To activate this filter, add a line like this to your
-//  list of filters in your Filter configuration:
-//
-//  filter/mediaplugin/filter.php
-//
-//////////////////////////////////////////////////////////////
 
-/// This is the filtering function itself.  It accepts the
-/// courseid and the text to be filtered (in HTML form).
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ *  Media plugin filtering
+ *
+ *  This filter will replace any links to a media file with
+ *  a media plugin that plays that media inline
+ *
+ * @package    filter
+ * @subpackage mediaplugin
+ * @copyright  2004 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir.'/filelib.php');
 
-class mediaplugin_filter extends moodle_text_filter {
+class filter_mediaplugin extends moodle_text_filter {
     private $eolas_fix_applied = false;
     function filter($text) {
         global $CFG, $PAGE;
@@ -36,78 +50,78 @@ class mediaplugin_filter extends moodle_text_filter {
 
         if ($CFG->filter_mediaplugin_enable_mp3) {
             $search = '/<a.*?href="([^<]+\.mp3)"[^>]*>.*?<\/a>/is';
-            $newtext = preg_replace_callback($search, 'mediaplugin_filter_mp3_callback', $newtext);
+            $newtext = preg_replace_callback($search, 'filter_mediaplugin_mp3_callback', $newtext);
         }
 
         if ($CFG->filter_mediaplugin_enable_swf) {
             $search = '/<a.*?href="([^<]+\.swf)(\?d=([\d]{1,3}%?)x([\d]{1,3}%?))?"[^>]*>.*?<\/a>/is';
-            $newtext = preg_replace_callback($search, 'mediaplugin_filter_swf_callback', $newtext);
+            $newtext = preg_replace_callback($search, 'filter_mediaplugin_swf_callback', $newtext);
         }
 
         if ($CFG->filter_mediaplugin_enable_flv) {
             $search = '/<a.*?href="([^<]+\.flv)(\?d=([\d]{1,3}%?)x([\d]{1,3}%?))?"[^>]*>.*?<\/a>/is';
-            $newtext = preg_replace_callback($search, 'mediaplugin_filter_flv_callback', $newtext);
+            $newtext = preg_replace_callback($search, 'filter_mediaplugin_flv_callback', $newtext);
         }
 
         if ($CFG->filter_mediaplugin_enable_mov) {
             $search = '/<a.*?href="([^<]+\.mov)(\?d=([\d]{1,3}%?)x([\d]{1,3}%?))?"[^>]*>.*?<\/a>/is';
-            $newtext = preg_replace_callback($search, 'mediaplugin_filter_qt_callback', $newtext);
+            $newtext = preg_replace_callback($search, 'filter_mediaplugin_qt_callback', $newtext);
 
             $search = '/<a.*?href="([^<]+\.mp4)(\?d=([\d]{1,4}%?)x([\d]{1,4}%?))?"[^>]*>.*?<\/a>/is';
-            $newtext = preg_replace_callback($search, 'mediaplugin_filter_qt_callback', $newtext);
+            $newtext = preg_replace_callback($search, 'filter_mediaplugin_qt_callback', $newtext);
 
             $search = '/<a.*?href="([^<]+\.m4v)(\?d=([\d]{1,4}%?)x([\d]{1,4}%?))?"[^>]*>.*?<\/a>/is';
-            $newtext = preg_replace_callback($search, 'mediaplugin_filter_qt_callback', $newtext);
+            $newtext = preg_replace_callback($search, 'filter_mediaplugin_qt_callback', $newtext);
 
             $search = '/<a.*?href="([^<]+\.m4a)(\?d=([\d]{1,4}%?)x([\d]{1,4}%?))?"[^>]*>.*?<\/a>/is';
-            $newtext = preg_replace_callback($search, 'mediaplugin_filter_qt_callback', $newtext);
+            $newtext = preg_replace_callback($search, 'filter_mediaplugin_qt_callback', $newtext);
         }
 
         if ($CFG->filter_mediaplugin_enable_wmv) {
             $search = '/<a.*?href="([^<]+\.wmv)(\?d=([\d]{1,3}%?)x([\d]{1,3}%?))?"[^>]*>.*?<\/a>/is';
-            $newtext = preg_replace_callback($search, 'mediaplugin_filter_wmp_callback', $newtext);
+            $newtext = preg_replace_callback($search, 'filter_mediaplugin_wmp_callback', $newtext);
         }
 
         if ($CFG->filter_mediaplugin_enable_mpg) {
             $search = '/<a.*?href="([^<]+\.mpe?g)(\?d=([\d]{1,3}%?)x([\d]{1,3}%?))?"[^>]*>.*?<\/a>/is';
-            $newtext = preg_replace_callback($search, 'mediaplugin_filter_qt_callback', $newtext);
+            $newtext = preg_replace_callback($search, 'filter_mediaplugin_qt_callback', $newtext);
         }
 
         if ($CFG->filter_mediaplugin_enable_avi) {
             $search = '/<a.*?href="([^<]+\.avi)(\?d=([\d]{1,3}%?)x([\d]{1,3}%?))?"[^>]*>.*?<\/a>/is';
-            $newtext = preg_replace_callback($search, 'mediaplugin_filter_wmp_callback', $newtext);
+            $newtext = preg_replace_callback($search, 'filter_mediaplugin_wmp_callback', $newtext);
         }
 
         if ($CFG->filter_mediaplugin_enable_ram) {
             $search = '/<a.*?href="([^<]+\.ram)"[^>]*>.*?<\/a>/is';
-            $newtext = preg_replace_callback($search, 'mediaplugin_filter_real_callback', $newtext);
+            $newtext = preg_replace_callback($search, 'filter_mediaplugin_real_callback', $newtext);
         }
 
         if ($CFG->filter_mediaplugin_enable_rpm) {
             $search = '/<a.*?href="([^<]+\.rpm)"[^>]*>.*?<\/a>/is';
-            $newtext = preg_replace_callback($search, 'mediaplugin_filter_real_callback', $newtext);
+            $newtext = preg_replace_callback($search, 'filter_mediaplugin_real_callback', $newtext);
         }
 
         if ($CFG->filter_mediaplugin_enable_rm) {
             $search = '/<a.*?href="([^<]+\.rm)"[^>]*>.*?<\/a>/is';
-            $newtext = preg_replace_callback($search, 'mediaplugin_filter_real_callback', $newtext);
+            $newtext = preg_replace_callback($search, 'filter_mediaplugin_real_callback', $newtext);
         }
 
         if (!empty($CFG->filter_mediaplugin_enable_youtube)) {
             $search = '/<a.*?href="([^<]*)youtube.com\/watch\?v=([^"]*)"[^>]*>(.*?)<\/a>/is';
-            $newtext = preg_replace_callback($search, 'mediaplugin_filter_youtube_callback', $newtext);
+            $newtext = preg_replace_callback($search, 'filter_mediaplugin_youtube_callback', $newtext);
 
             $search = '/<a.*?href="([^<]*)youtube.com\/v\/([^"]*)"[^>]*>(.*?)<\/a>/is';
-            $newtext = preg_replace_callback($search, 'mediaplugin_filter_youtube_callback', $newtext);
+            $newtext = preg_replace_callback($search, 'filter_mediaplugin_youtube_callback', $newtext);
         }
 
         if (!empty($CFG->filter_mediaplugin_enable_img)) {
             $search = '/<a.*?href="([^<]+\.jpg)"[^>]*>(.*?)<\/a>/is';
-            $newtext = preg_replace_callback($search, 'mediaplugin_filter_img_callback', $newtext);
+            $newtext = preg_replace_callback($search, 'filter_mediaplugin_img_callback', $newtext);
             $search = '/<a.*?href="([^<]+\.png)"[^>]*>(.*?)<\/a>/is';
-            $newtext = preg_replace_callback($search, 'mediaplugin_filter_img_callback', $newtext);
+            $newtext = preg_replace_callback($search, 'filter_mediaplugin_img_callback', $newtext);
             $search = '/<a.*?href="([^<]+\.gif)"[^>]*>(.*?)<\/a>/is';
-            $newtext = preg_replace_callback($search, 'mediaplugin_filter_img_callback', $newtext);
+            $newtext = preg_replace_callback($search, 'filter_mediaplugin_img_callback', $newtext);
         }
 
         if (empty($newtext) or $newtext === $text) {
@@ -128,7 +142,7 @@ class mediaplugin_filter extends moodle_text_filter {
 ///===========================
 /// callback filter functions
 
-function mediaplugin_filter_mp3_callback($link) {
+function filter_mediaplugin_mp3_callback($link) {
     global $CFG, $OUTPUT, $PAGE;
 
     $c = $OUTPUT->filter_mediaplugin_colors();   // You can set this up in your theme/xxx/config.php
@@ -155,7 +169,7 @@ function mediaplugin_filter_mp3_callback($link) {
     return $output;
 }
 
-function mediaplugin_filter_swf_callback($link) {
+function filter_mediaplugin_swf_callback($link) {
     global $PAGE;
     static $count = 0;
     $count++;
@@ -175,13 +189,13 @@ function mediaplugin_filter_swf_callback($link) {
     $args['quality'] = 'high';
 
     $jsoutput = create_ufo_inline($id, $args);
-    
+
     $output = $link[0].'<span class="mediaplugin mediaplugin_swf" id="'.$id.'">('.get_string('flashanimation', 'filter_mediaplugin').')</span>'.$jsoutput;
 
     return $output;
 }
 
-function mediaplugin_filter_flv_callback($link) {
+function filter_mediaplugin_flv_callback($link) {
     global $CFG, $PAGE;
 
     static $count = 0;
@@ -208,7 +222,7 @@ function mediaplugin_filter_flv_callback($link) {
     return $output;
 }
 
-function mediaplugin_filter_real_callback($link, $autostart=false) {
+function filter_mediaplugin_real_callback($link, $autostart=false) {
     $url = addslashes_js($link[1]);
     $mimetype = mimeinfo('type', $url);
     $autostart = $autostart ? 'true' : 'false';
@@ -240,7 +254,7 @@ document.write(\'<object classid="clsid:CFCDAA03-8BE4-11cf-B84B-0020AFBBCCFA" wi
 /**
  * Change links to Youtube into embedded Youtube videos
  */
-function mediaplugin_filter_youtube_callback($link, $autostart=false) {
+function filter_mediaplugin_youtube_callback($link, $autostart=false) {
 
     $site = addslashes_js($link[1]);
     $url = addslashes_js($link[2]);
@@ -259,7 +273,7 @@ function mediaplugin_filter_youtube_callback($link, $autostart=false) {
 /**
  * Change links to images into embedded images
  */
-function mediaplugin_filter_img_callback($link, $autostart=false) {
+function filter_mediaplugin_img_callback($link, $autostart=false) {
     $url = addslashes_js($link[1]);
     $info = addslashes_js($link[2]);
 
@@ -269,7 +283,7 @@ function mediaplugin_filter_img_callback($link, $autostart=false) {
 /**
  * Embed video using window media player if available
  */
-function mediaplugin_filter_wmp_callback($link, $autostart=false) {
+function filter_mediaplugin_wmp_callback($link, $autostart=false) {
     $url = $link[1];
     if (empty($link[3]) or empty($link[4])) {
         $mpsize = '';
@@ -312,7 +326,7 @@ function mediaplugin_filter_wmp_callback($link, $autostart=false) {
 </object></span>';
 }
 
-function mediaplugin_filter_qt_callback($link, $autostart=false) {
+function filter_mediaplugin_qt_callback($link, $autostart=false) {
     $url = $link[1];
     if (empty($link[3]) or empty($link[4])) {
         $size = 'width="440" height="315"';

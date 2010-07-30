@@ -1,6 +1,8 @@
 <?php
 
-function tex_filter_get_executable($debug=false) {
+defined('MOODLE_INTERNAL') || die();
+
+function filter_tex_get_executable($debug=false) {
     global $CFG;
 
     $error_message1 = "Your system is not configured to run mimeTeX. You need to download the appropriate<br />"
@@ -34,7 +36,7 @@ function tex_filter_get_executable($debug=false) {
     print_error('mimetexisnotexist', 'error');
 }
 
-function tex_sanitize_formula($texexp) {
+function filter_tex_sanitize_formula($texexp) {
     /// Check $texexp against blacklist (whitelisting could be more complete but also harder to maintain)
     $tex_blacklist = array(
         'include','command','loop','repeat','open','toks','output',
@@ -51,10 +53,10 @@ function tex_sanitize_formula($texexp) {
     return  str_ireplace($tex_blacklist, 'forbiddenkeyword', $texexp);
 }
 
-function tex_filter_get_cmd($pathname, $texexp) {
-    $texexp = tex_sanitize_formula($texexp);
+function filter_tex_get_cmd($pathname, $texexp) {
+    $texexp = filter_tex_sanitize_formula($texexp);
     $texexp = escapeshellarg($texexp);
-    $executable = tex_filter_get_executable(false);
+    $executable = filter_tex_get_executable(false);
 
     if ((PHP_OS == "WINNT") || (PHP_OS == "WIN32") || (PHP_OS == "Windows")) {
         $executable = str_replace(' ', '^ ', $executable);
@@ -84,7 +86,12 @@ function filter_tex_updatedcallback($name) {
 
     $DB->delete_records('cache_filters', array('filter'=>'tex'));
     $DB->delete_records('cache_filters', array('filter'=>'algebra'));
- 
+
+    if (!isset($CFG->filter_tex_pathlatex)) {
+        // detailed settings not present yet
+        return;
+    }
+
     if (!(is_file($CFG->filter_tex_pathlatex) && is_executable($CFG->filter_tex_pathlatex) &&
           is_file($CFG->filter_tex_pathdvips) && is_executable($CFG->filter_tex_pathdvips) &&
           is_file($CFG->filter_tex_pathconvert) && is_executable($CFG->filter_tex_pathconvert))) {

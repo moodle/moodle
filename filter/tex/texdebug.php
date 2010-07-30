@@ -129,8 +129,8 @@
         }
 
         $texexp = '\Large '.$texexp;
-        $commandpath = tex_filter_get_executable(true);
-        $cmd = tex_filter_get_cmd($pathname, $texexp);
+        $commandpath = filter_tex_get_executable(true);
+        $cmd = filter_tex_get_cmd($pathname, $texexp);
         system($cmd, $status);
 
         if ($return) {

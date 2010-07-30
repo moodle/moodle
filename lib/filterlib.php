@@ -36,15 +36,24 @@ define('TEXTFILTER_OFF', -1);
 define('TEXTFILTER_DISABLED', -9999);
 
 /**
+ * Define one exclusive separator that we'll use in the temp saved tags
+ *  keys. It must be something rare enough to avoid having matches with
+ *  filterobjects. MDL-18165
+ */
+define('TEXTFILTER_EXCL_SEPARATOR', '-%-');
+
+
+/**
  * Class to manage the filtering of strings. It is intended that this class is
  * only used by weblib.php. Client code should probably be using the
  * format_text and format_string functions.
  *
  * This class is a singleton.
  *
- * @package moodlecore
- * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    core
+ * @subpackage filter
+ * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class filter_manager {
     /**
@@ -70,12 +79,11 @@ class filter_manager {
     }
 
     /**
-     * @global object
      * @return filter_manager the singleton instance.
      */
     public static function instance() {
+        global $CFG;
         if (is_null(self::$singletoninstance)) {
-            global $CFG;
             if (!empty($CFG->perfdebug)) {
                 self::$singletoninstance = new performance_measuring_filter_manager();
             } else {
@@ -89,14 +97,13 @@ class filter_manager {
      * Load all the filters required by this context.
      *
      * @param object $context
-     * @param int $courseid
      */
-    protected function load_filters($context, $courseid) {
+    protected function load_filters($context) {
         $filters = filter_get_active_in_context($context);
         $this->textfilters[$context->id] = array();
         $this->stringfilters[$context->id] = array();
         foreach ($filters as $filtername => $localconfig) {
-            $filter = $this->make_filter_object($filtername, $context, $courseid, $localconfig);
+            $filter = $this->make_filter_object($filtername, $context, $localconfig);
             if (is_null($filter)) {
                 continue;
             }
@@ -110,15 +117,13 @@ class filter_manager {
     /**
      * Factory method for creating a filter
      *
-     * @global object
      * @param string $filter The filter name, for example 'filter/tex' or 'mod/glossary'.
      * @param object $context context object.
-     * @param int $courseid course id.
      * @param array $localconfig array of local configuration variables for this filter.
      * @return object moodle_text_filter The filter, or null, if this type of filter is
      *      not recognised or could not be created.
      */
-    protected function make_filter_object($filtername, $context, $courseid, $localconfig) {
+    protected function make_filter_object($filtername, $context, $localconfig) {
         global $CFG;
         $path = $CFG->dirroot .'/'. $filtername .'/filter.php';
         if (!is_readable($path)) {
@@ -126,14 +131,14 @@ class filter_manager {
         }
         include_once($path);
 
-        $filterclassname = basename($filtername) . '_filter';
+        $filterclassname = 'filter_' . basename($filtername);
         if (class_exists($filterclassname)) {
-            return new $filterclassname($courseid, $context, $localconfig);
+            return new $filterclassname($context, $localconfig);
         }
 
         $legacyfunctionname = basename($filtername) . '_filter';
         if (function_exists($legacyfunctionname)) {
-            return new legacy_filter($legacyfunctionname, $courseid, $context, $localconfig);
+            return new legacy_filter($legacyfunctionname, $context, $localconfig);
         }
 
         return null;
@@ -155,12 +160,11 @@ class filter_manager {
     /**
      * @todo Document this function
      * @param object $context
-     * @param int $courseid
      * @return object A text filter
      */
-    protected function get_text_filters($context, $courseid) {
+    protected function get_text_filters($context) {
         if (!isset($this->textfilters[$context->id])) {
-            $this->load_filters($context, $courseid);
+            $this->load_filters($context);
         }
         return $this->textfilters[$context->id];
     }
@@ -168,12 +172,11 @@ class filter_manager {
     /**
      * @todo Document this function
      * @param object $context
-     * @param int $courseid
      * @return object A string filter
      */
-    protected function get_string_filters($context, $courseid) {
+    protected function get_string_filters($context) {
         if (!isset($this->stringfilters[$context->id])) {
-            $this->load_filters($context, $courseid);
+            $this->load_filters($context);
         }
         return $this->stringfilters[$context->id];
     }
@@ -183,36 +186,33 @@ class filter_manager {
      *
      * @param string $text The text to filter
      * @param object $context
-     * @param int $courseid
      * @return string resulting text
      */
-    public function filter_text($text, $context, $courseid) {
-        $text = $this->apply_filter_chain($text, $this->get_text_filters($context, $courseid));
+    public function filter_text($text, $context) {
+        $text = $this->apply_filter_chain($text, $this->get_text_filters($context));
         /// <nolink> tags removed for XHTML compatibility
         $text = str_replace(array('<nolink>', '</nolink>'), '', $text);
         return $text;
     }
 
     /**
-     * Filter a peice of string
+     * Filter a piece of string
      *
      * @param string $string The text to filter
      * @param object $context
-     * @param int $courseid
      * @return string resulting string
      */
-    public function filter_string($string, $context, $courseid) {
-        return $this->apply_filter_chain($string, $this->get_string_filters($context, $courseid));
+    public function filter_string($string, $context) {
+        return $this->apply_filter_chain($string, $this->get_string_filters($context));
     }
 
     /**
      * @todo Document this function
      * @param object $context
-     * @param int $courseid
      * @return object A string filter
      */
-    public function text_filtering_hash($context, $courseid) {
-        $filters = $this->get_text_filters($context, $courseid);
+    public function text_filtering_hash($context) {
+        $filters = $this->get_text_filters($context);
         $hashes = array();
         foreach ($filters as $filter) {
             $hashes[] = $filter->hash();
@@ -227,22 +227,23 @@ class filter_manager {
  *
  * @todo Document this class
  *
- * @package   moodlecore
- * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    core
+ * @subpackage filter
+ * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class null_filter_manager {
     /**
      * @return string
      */
-    public function filter_text($text, $context, $courseid) {
+    public function filter_text($text, $context) {
         return $text;
     }
 
     /**
      * @return string
      */
-    public function filter_string($string, $context, $courseid) {
+    public function filter_string($string, $context) {
         return $string;
     }
 
@@ -259,9 +260,10 @@ class null_filter_manager {
  *
  * @todo Document this class
  *
- * @package   moodlecore
- * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    core
+ * @subpackage filter
+ * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class performance_measuring_filter_manager extends filter_manager {
     /** @var int */
@@ -272,35 +274,32 @@ class performance_measuring_filter_manager extends filter_manager {
     /**
      * @param string $filtername
      * @param object $context
-     * @param int $courseid
      * @param mixed $localconfig
      * @return mixed
      */
-    protected function make_filter_object($filtername, $context, $courseid, $localconfig) {
+    protected function make_filter_object($filtername, $context, $localconfig) {
         $this->filterscreated++;
-        return parent::make_filter_object($filtername, $context, $courseid, $localconfig);
+        return parent::make_filter_object($filtername, $context, $localconfig);
     }
 
     /**
      * @param string $text
      * @param object $context
-     * @param int $courseid
      * @return mixed
      */
-    public function filter_text($text, $context, $courseid) {
+    public function filter_text($text, $context) {
         $this->textsfiltered++;
-        return parent::filter_text($text, $context, $courseid);
+        return parent::filter_text($text, $context);
     }
 
     /**
      * @param string $string
      * @param object $context
-     * @param int $courseid
      * @return mixed
      */
-    public function filter_string($string, $context, $courseid) {
+    public function filter_string($string, $context) {
         $this->stringsfiltered++;
-        return parent::filter_string($string, $context, $courseid);
+        return parent::filter_string($string, $context);
     }
 
     /**
@@ -325,13 +324,12 @@ class performance_measuring_filter_manager extends filter_manager {
  * Base class for text filters. You just need to override this class and
  * implement the filter method.
  *
- * @package   moodlecore
- * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    core
+ * @subpackage filter
+ * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class moodle_text_filter {
-    /** @var int The course we are in. */
-    protected $courseid;
     /** @var object The context we are in. */
     protected $context;
     /** @var object Any local configuration for this filter in this context. */
@@ -343,8 +341,7 @@ abstract class moodle_text_filter {
      * @param object $context The current context.
      * @param array $config Any context-specific configuration for this filter.
      */
-    public function __construct($courseid, $context, array $localconfig) {
-        $this->courseid = $courseid;
+    public function __construct($context, array $localconfig) {
         $this->context = $context;
         $this->localconfig = $localconfig;
     }
@@ -369,25 +366,27 @@ abstract class moodle_text_filter {
  * moodle_text_filter implementation that encapsulates an old-style filter that
  * only defines a function, not a class.
  *
- * @package   moodlecore
- * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    core
+ * @subpackage filter
+ * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class legacy_filter extends moodle_text_filter {
     /** @var string */
     protected $filterfunction;
+    protected $courseid;
 
     /**
      * Set any context-specific configuration for this filter.
      *
      * @param string $filterfunction
-     * @param object $context The current course id.
      * @param object $context The current context.
      * @param array $config Any context-specific configuration for this filter.
      */
-    public function __construct($filterfunction, $courseid, $context, array $localconfig) {
-        parent::__construct($courseid, $context, $localconfig);
+    public function __construct($filterfunction, $context, array $localconfig) {
+        parent::__construct($context, $localconfig);
         $this->filterfunction = $filterfunction;
+        $this->courseid = get_courseid_from_context($this->context);
     }
 
     /**
@@ -395,25 +394,22 @@ class legacy_filter extends moodle_text_filter {
      * @return mixed
      */
     public function filter($text) {
-        return call_user_func($this->filterfunction, $this->courseid, $text);
+        if ($this->courseid) {
+            // old filters are called only when inside courses
+            return call_user_func($this->filterfunction, $this->courseid, $text);
+        }
     }
 }
-
-/**
- * Define one exclusive separator that we'll use in the temp saved tags
- *  keys. It must be something rare enough to avoid having matches with
- *  filterobjects. MDL-18165
- */
-define('EXCL_SEPARATOR', '-%-');
 
 /**
  * This is just a little object to define a phrase and some instructions
  * for how to process it.  Filters can create an array of these to pass
  * to the filter_phrases function below.
  *
- * @package   moodlecore
- * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    core
+ * @subpackage filter
+ * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  **/
 class filterobject {
     /** @var string */
@@ -444,11 +440,11 @@ class filterobject {
      * @param bool $fullmatch
      * @param mixed $replacementphrase
      */
-    function filterobject($phrase, $hreftagbegin='<span class="highlight">',
-                                   $hreftagend='</span>',
-                                   $casesensitive=false,
-                                   $fullmatch=false,
-                                   $replacementphrase=NULL) {
+    function filterobject($phrase, $hreftagbegin = '<span class="highlight">',
+                                   $hreftagend = '</span>',
+                                   $casesensitive = false,
+                                   $fullmatch = false,
+                                   $replacementphrase = NULL) {
 
         $this->phrase           = $phrase;
         $this->hreftagbegin     = $hreftagbegin;
@@ -921,7 +917,6 @@ function filter_delete_all_for_filter($filter) {
 /**
  * Delete all the data in the database relating to a context, used when contexts are deleted.
  *
- * @global object
  * @param integer $contextid The id of the context being deleted.
  */
 function filter_delete_all_for_context($contextid) {
@@ -935,7 +930,6 @@ function filter_delete_all_for_context($contextid) {
  * (The settings page for a filter must be called, for example,
  * filtersettingfiltertex or filtersettingmodglossay.)
  *
- * @global object
  * @param string $filter The filter name, for example 'filter/tex' or 'mod/glossary'.
  * @return boolean Whether there should be a 'Settings' link on the config page.
  */
@@ -948,7 +942,6 @@ function filter_has_global_settings($filter) {
 /**
  * Does this filter have local (per-context) settings?
  *
- * @global object
  * @param string $filter The filter name, for example 'filter/tex' or 'mod/glossary'.
  * @return boolean Whether there should be a 'Settings' link on the manage filters in context page.
  */
@@ -972,7 +965,6 @@ function filter_context_may_have_filter_settings($context) {
 /**
  * Process phrases intelligently found within a HTML text (such as adding links)
  *
- * @global object
  * @staticvar array $usedpharses
  * @param string $text             the text that we are filtering
  * @param array $link_array       an array of filterobjects
@@ -1206,7 +1198,7 @@ function filter_remove_duplicates($linkarray) {
 /**
  * Extract open/lose tags and their contents to avoid being processed by filters.
  * Useful to extract pieces of code like <a>...</a> tags. It returns the text
- * converted with some <#xEXCL_SEPARATORx#> codes replacing the extracted text. Such extracted
+ * converted with some <#xTEXTFILTER_EXCL_SEPARATORx#> codes replacing the extracted text. Such extracted
  * texts are returned in the ignoretags array (as values), with codes as keys.
  *
  * @param string $text                  the text that we are filtering (in/out)
@@ -1214,7 +1206,7 @@ function filter_remove_duplicates($linkarray) {
  * @param array $filterignoretagsclose an array of close tags to end searching
  * @param array $ignoretags            an array of saved strings useful to rebuild the original text (in/out)
  **/
-function filter_save_ignore_tags(&$text,$filterignoretagsopen,$filterignoretagsclose,&$ignoretags) {
+function filter_save_ignore_tags(&$text, $filterignoretagsopen, $filterignoretagsclose, &$ignoretags) {
 
 /// Remove everything enclosed by the ignore tags from $text
     foreach ($filterignoretagsopen as $ikey=>$opentag) {
@@ -1227,7 +1219,7 @@ function filter_save_ignore_tags(&$text,$filterignoretagsopen,$filterignoretagsc
         preg_match_all($pregexp, $text, $list_of_ignores);
         foreach (array_unique($list_of_ignores[0]) as $key=>$value) {
             $prefix = (string)(count($ignoretags) + 1);
-            $ignoretags['<#'.$prefix.EXCL_SEPARATOR.$key.'#>'] = $value;
+            $ignoretags['<#'.$prefix.TEXTFILTER_EXCL_SEPARATOR.$key.'#>'] = $value;
         }
         if (!empty($ignoretags)) {
             $text = str_replace($ignoretags,array_keys($ignoretags),$text);
@@ -1237,18 +1229,18 @@ function filter_save_ignore_tags(&$text,$filterignoretagsopen,$filterignoretagsc
 
 /**
  * Extract tags (any text enclosed by < and > to avoid being processed by filters.
- * It returns the text converted with some <%xEXCL_SEPARATORx%> codes replacing the extracted text. Such extracted
+ * It returns the text converted with some <%xTEXTFILTER_EXCL_SEPARATORx%> codes replacing the extracted text. Such extracted
  * texts are returned in the tags array (as values), with codes as keys.
  *
  * @param string $text   the text that we are filtering (in/out)
  * @param array $tags   an array of saved strings useful to rebuild the original text (in/out)
  **/
-function filter_save_tags(&$text,&$tags) {
+function filter_save_tags(&$text, &$tags) {
 
     preg_match_all('/<([^#%*].*?)>/is',$text,$list_of_newtags);
     foreach (array_unique($list_of_newtags[0]) as $ntkey=>$value) {
         $prefix = (string)(count($tags) + 1);
-        $tags['<%'.$prefix.EXCL_SEPARATOR.$ntkey.'%>'] = $value;
+        $tags['<%'.$prefix.TEXTFILTER_EXCL_SEPARATOR.$ntkey.'%>'] = $value;
     }
     if (!empty($tags)) {
         $text = str_replace($tags,array_keys($tags),$text);
@@ -1258,7 +1250,6 @@ function filter_save_tags(&$text,&$tags) {
 /**
  * Add missing openpopup javascript to HTML files.
  *
- * @global object
  * @param string $text
  * @return string
  */
