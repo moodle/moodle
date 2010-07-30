@@ -240,9 +240,8 @@
             $link = $item->get_id();
         }
 
-
         $r = "<li>\n";
-        $r.= '<div class="link"><a href="'.$link.'" onclick="this.target=\'_blank\'" >'."\n";
+        $r.= '<div class="link"><a href="'.urldecode($link).'" onclick="this.target=\'_blank\'" >'."\n";
         $r.= s($title);
         $r.= "</a></div>\n";
 
