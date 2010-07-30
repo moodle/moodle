@@ -105,7 +105,11 @@ class backup_forum_activity_structure_step extends backup_activity_structure_ste
                  WHERE forum = ?',
                 array(backup::VAR_PARENTID));
 
-            $post->set_source_table('forum_posts', array('discussion' => backup::VAR_PARENTID));
+            // Need posts ordered by id so parents are always before childs on restore
+            $post->set_source_sql("SELECT *
+                                     FROM {forum_posts}
+                                    WHERE discussion = :discussion
+                                 ORDER BY id", array('discussion' => backup::VAR_PARENTID));
 
             $subscription->set_source_table('forum_subscriptions', array('forum' => backup::VAR_PARENTID));
 
