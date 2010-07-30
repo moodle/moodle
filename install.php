@@ -179,7 +179,6 @@ require_once($CFG->libdir .'/pagelib.php');
 require_once($CFG->libdir.'/deprecatedlib.php');
 require_once($CFG->libdir.'/adminlib.php');
 require_once($CFG->libdir.'/environmentlib.php');
-require_once($CFG->libdir.'/xmlize.php');
 require_once($CFG->libdir.'/componentlib.class.php');
 
     //point pear include path to moodles lib/pear so that includes and requires will search there for files before anywhere else
