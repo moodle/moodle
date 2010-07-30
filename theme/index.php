@@ -47,13 +47,26 @@ if ($reset and confirm_sesskey()) {
     $theme = theme_config::load($chosentheme);
     set_config($config, $theme->name);
 
-    echo $OUTPUT->header();
-    echo $OUTPUT->heading($heading);
-    echo $OUTPUT->box_start();
+    // Create a new page for the display of the themes readme.
+    // This ensures that the readme page is shown using the new theme.
+    $confirmpage = new moodle_page();
+    $confirmpage->set_context($PAGE->context);
+    $confirmpage->set_url($PAGE->url);
+    $confirmpage->set_pagelayout($PAGE->pagelayout);
+    $confirmpage->set_pagetype($PAGE->pagetype);
+    $confirmpage->set_title($PAGE->title);
+    $confirmpage->set_heading($PAGE->heading);
+
+    // Get the core renderer for the new theme.
+    $output = $confirmpage->get_renderer('core');
+
+    echo $output->header();
+    echo $output->heading($heading);
+    echo $output->box_start();
     echo format_text(get_string('choosereadme', 'theme_'.$CFG->theme), FORMAT_MOODLE);
-    echo $OUTPUT->box_end();
-    echo $OUTPUT->continue_button($CFG->wwwroot . '/' . $CFG->admin . '/index.php');
-    echo $OUTPUT->footer();
+    echo $output->box_end();
+    echo $output->continue_button($CFG->wwwroot . '/' . $CFG->admin . '/index.php');
+    echo $output->footer();
     exit;
 }
 
