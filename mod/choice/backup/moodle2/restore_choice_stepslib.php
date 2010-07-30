@@ -55,6 +55,7 @@ class restore_choice_activity_structure_step extends restore_activity_structure_
 
         $data->timeopen = $this->apply_date_offset($data->timeopen);
         $data->timeclose = $this->apply_date_offset($data->timeclose);
+        $data->timemodified = $this->apply_date_offset($data->timemodified);
 
         // insert the choice record
         $newitemid = $DB->insert_record('choice', $data);
@@ -67,7 +68,9 @@ class restore_choice_activity_structure_step extends restore_activity_structure_
 
         $data = (object)$data;
         $oldid = $data->id;
+
         $data->choiceid = $this->get_new_parentid('choice');
+        $data->timemodified = $this->apply_date_offset($data->timemodified);
 
         $newitemid = $DB->insert_record('choice_options', $data);
         $this->set_mapping('choice_option', $oldid, $newitemid);
@@ -78,9 +81,11 @@ class restore_choice_activity_structure_step extends restore_activity_structure_
 
         $data = (object)$data;
         $oldid = $data->id;
+
         $data->choiceid = $this->get_new_parentid('choice');
         $data->optionid = $this->get_mappingid('choice_option', $oldid);
         $data->userid = $this->get_mappingid('user', $data->userid);
+        $data->timemodified = $this->apply_date_offset($data->timemodified);
 
         $newitemid = $DB->insert_record('choice_answers', $data);
         // No need to save this mapping as far as nothing depend on it
