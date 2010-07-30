@@ -326,7 +326,7 @@ function grade_update_outcomes($source, $courseid, $itemtype, $itemmodule, $item
         }
         return $result;
     }
-    return false;
+    return false; //grade items not found
 }
 
 /**
