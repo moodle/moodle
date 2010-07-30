@@ -19,7 +19,7 @@
  * This installs Moodle into empty database, config.php must already exist.
  *
  * This script is intended for advanced usage such as in Debian packages.
- * - sudo to www-data (apache acount) before
+ * - sudo to www-data (apache account) before
  * - not compatible with Windows platform
  *
  * @package    core
