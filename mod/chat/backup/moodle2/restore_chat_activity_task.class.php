@@ -55,6 +55,7 @@ class restore_chat_activity_task extends restore_activity_task {
         $contents = array();
 
         $contents[] = new restore_decode_content('chat', array('intro'), 'chat');
+        $contents[] = new restore_decode_content('chat_messages', array('message'), 'chat_message');
 
         return $contents;
     }

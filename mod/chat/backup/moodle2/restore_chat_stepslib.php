@@ -53,6 +53,7 @@ class restore_chat_activity_structure_step extends restore_activity_structure_st
         $data->course = $this->get_courseid();
 
         $data->chattime = $this->apply_date_offset($data->chattime);
+        $data->timemodified = $this->apply_date_offset($data->timemodified);
 
         // insert the chat record
         $newitemid = $DB->insert_record('chat', $data);
@@ -69,10 +70,10 @@ class restore_chat_activity_structure_step extends restore_activity_structure_st
         $data->userid = $this->get_mappingid('user', $data->userid);
         $data->groupid = $this->get_mappingid('group', $data->groupid);
         $data->message = $data->message_text;
+        $data->timestamp = $this->apply_date_offset($data->timestamp);
 
         $newitemid = $DB->insert_record('chat_messages', $data);
-        // No need to save this mapping as far as nothing depend on it
-        // (child paths, file areas nor links decoder)
+        $this->set_mapping('chat_message', $oldid, $newitemid); // because of decode
     }
 
     protected function after_execute() {
