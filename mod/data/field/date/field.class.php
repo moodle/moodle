@@ -55,18 +55,23 @@ class data_field_date extends data_field_base {
 
     //Enable the following three functions once core API issues have been addressed.
     function display_search_field($value=0) {
-        return false;
+        $selectors = html_writer::select_time('days', 'f_'.$this->field->id.'_d', $value)
+           . html_writer::select_time('months', 'f_'.$this->field->id.'_m', $value)
+           . html_writer::select_time('years', 'f_'.$this->field->id.'_y', $value);
+       return $selectors;
+
         //return print_date_selector('f_'.$this->field->id.'_d', 'f_'.$this->field->id.'_m', 'f_'.$this->field->id.'_y', $value, true);
     }
 
     function generate_sql($tablealias, $value) {
-        return array(' 1=1 ', array());
-        //return " ({$tablealias}.fieldid = {$this->field->id} AND {$tablealias}.content = '$value') ";
+        static $i=0;
+        $i++;
+        $name = "df_picture_$i";
+        return array(" ({$tablealias}.fieldid = {$this->field->id} AND {$tablealias}.content = '$value') ", array($name=>"%$value%"));
     }
 
     function parse_search_field() {
-        return '';
-       /*
+
         $day   = optional_param('f_'.$this->field->id.'_d', 0, PARAM_INT);
         $month = optional_param('f_'.$this->field->id.'_m', 0, PARAM_INT);
         $year  = optional_param('f_'.$this->field->id.'_y', 0, PARAM_INT);
@@ -76,7 +81,7 @@ class data_field_date extends data_field_base {
         else {
             return 0;
         }
-        */
+
     }
 
     function update_content($recordid, $value, $name='') {
