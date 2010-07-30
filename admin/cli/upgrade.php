@@ -24,7 +24,7 @@
  * - su to apache account or sudo before execution
  * - not compatible with Windows platform
  *
- * @package    moodlecore
+ * @package    core
  * @subpackage cli
  * @copyright  2009 Petr Skoda (http://skodak.org)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
