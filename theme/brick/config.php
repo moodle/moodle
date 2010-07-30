@@ -16,7 +16,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Configuration for Moodle's arialist theme.
+ * Configuration for Moodle's brick theme.
  *
  * DO NOT MODIFY THIS THEME! 
  * COPY IT FIRST, THEN RENAME THE COPY AND MODIFY IT INSTEAD.
@@ -25,7 +25,7 @@
  *  http://docs.moodle.org/en/Development:Themes_2.0
  *
  * @package   moodlecore
- * @copyright 2010 Patrick Malley (http://newschoollearning.com/)
+ * @copyright 2010 John Stabinger (http://newschoollearning.com/)
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
