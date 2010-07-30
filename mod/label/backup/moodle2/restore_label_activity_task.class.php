@@ -52,7 +52,11 @@ class restore_label_activity_task extends restore_activity_task {
      * processed by the link decoder
      */
     static public function define_decode_contents() {
-        return array();
+        $contents = array();
+
+        $contents[] = new restore_decode_content('label', array('intro'), 'label');
+
+        return $contents;
     }
 
     /**
