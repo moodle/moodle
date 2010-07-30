@@ -1553,7 +1553,8 @@ class global_navigation extends navigation_node {
 
         // Add a reports tab and then add reports the the user has permission to see.
         $anyreport  = has_capability('moodle/user:viewuseractivitiesreport', $usercontext);
-        $viewreports = ($anyreport || ($course->showreports && $iscurrentuser));
+
+        $viewreports = ($anyreport || ($course->showreports && $iscurrentuser && $forceforcontext));
         if ($viewreports) {
             $reporttab = $usernode->add(get_string('activityreports'));
             $reportargs = array('user'=>$user->id);
@@ -1608,14 +1609,77 @@ class global_navigation extends navigation_node {
             }
         }
 
-
         // If the user is the current user add the repositories for the current user
+        $hiddenfields = array_flip(explode(',', $CFG->hiddenuserfields));
         if ($iscurrentuser) {
-
             require_once($CFG->dirroot . '/repository/lib.php');
             $editabletypes = repository::get_editable_types($usercontext);
             if (!empty($editabletypes)) {
                 $usernode->add(get_string('repositories', 'repository'), new moodle_url('/repository/manage_instances.php', array('contextid' => $usercontext->id)));
+            }
+        } else if ($course->id == SITEID && has_capability('moodle/user:viewdetails', $usercontext) && (!in_array('mycourses', $hiddenfields) || has_capability('moodle/user:viewhiddendetails', $coursecontext))) {
+
+            // Add view grade report is permitted
+            $reports = get_plugin_list('gradereport');
+            arsort($reports); // user is last, we want to test it first
+
+            $userscourses = enrol_get_users_courses($user->id);
+            $userscoursesnode = $usernode->add(get_string('courses'));
+            
+            foreach ($userscourses as $usercourse) {
+                $usercoursecontext = get_context_instance(CONTEXT_COURSE, $usercourse->id);
+                $usercoursenode = $userscoursesnode->add($usercourse->shortname, new moodle_url('/user/view.php', array('id'=>$user->id, 'course'=>$usercourse->id)), self::TYPE_CONTAINER);
+
+                $gradeavailable = has_capability('moodle/grade:viewall', $usercoursecontext);
+                if (!$gradeavailable && !empty($usercourse->showgrades) && is_array($reports) && !empty($reports)) {
+                    foreach ($reports as $plugin => $plugindir) {
+                        if (has_capability('gradereport/'.$plugin.':view', $usercoursecontext)) {
+                            //stop when the first visible plugin is found
+                            $gradeavailable = true;
+                            break;
+        }
+                    }
+                }
+
+                if ($gradeavailable) {
+                    $url = new moodle_url('/grade/report/index.php', array('id'=>$usercourse->id));
+                    $usercoursenode->add(get_string('grades'), $url, self::TYPE_SETTING, null, null, new pix_icon('i/grades', ''));
+                }
+
+                // Add a node to view the users notes if permitted
+                if (!empty($CFG->enablenotes) && has_any_capability(array('moodle/notes:manage', 'moodle/notes:view'), $usercoursecontext)) {
+                    $url = new moodle_url('/notes/index.php',array('user'=>$user->id, 'course'=>$usercourse->id));
+                    $usercoursenode->add(get_string('notes', 'notes'), $url, self::TYPE_SETTING);
+                }
+
+                if (has_capability('moodle/course:view', get_context_instance(CONTEXT_COURSE, $usercourse->id))) {
+                    $usercoursenode->add(get_string('entercourse'), new moodle_url('/course/view.php', array('id'=>$usercourse->id)), self::TYPE_SETTING, null, null, new pix_icon('i/course', ''));
+                }
+
+                $outlinetreport = ($anyreport || has_capability('coursereport/outline:view', $usercoursecontext));
+                $logtodayreport = ($anyreport || has_capability('coursereport/log:viewtoday', $usercoursecontext));
+                $logreport =      ($anyreport || has_capability('coursereport/log:view', $usercoursecontext));
+                $statsreport =    ($anyreport || has_capability('coursereport/stats:view', $usercoursecontext));
+                if ($outlinetreport || $logtodayreport || $logreport || $statsreport) {
+                    $reporttab = $usercoursenode->add(get_string('activityreports'));
+                    $reportargs = array('user'=>$user->id, 'id'=>$usercourse->id);
+                    if ($outlinetreport) {
+                        $reporttab->add(get_string('outlinereport'), new moodle_url('/course/user.php', array_merge($reportargs, array('mode'=>'outline'))));
+                        $reporttab->add(get_string('completereport'), new moodle_url('/course/user.php', array_merge($reportargs, array('mode'=>'complete'))));
+                    }
+
+                    if ($logtodayreport) {
+                        $reporttab->add(get_string('todaylogs'), new moodle_url('/course/user.php', array_merge($reportargs, array('mode'=>'todaylogs'))));
+                    }
+
+                    if ($logreport) {
+                        $reporttab->add(get_string('alllogs'), new moodle_url('/course/user.php', array_merge($reportargs, array('mode'=>'alllogs'))));
+                    }
+
+                    if (!empty($CFG->enablestats) && $statsreport) {
+                        $reporttab->add(get_string('stats'), new moodle_url('/course/user.php', array_merge($reportargs, array('mode'=>'stats'))));
+                    }
+                }
             }
         }
         return true;
