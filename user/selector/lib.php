@@ -619,7 +619,7 @@ abstract class user_selector_base {
                 // For the benefit of brain-dead IE, the id must be different from the name of the hidden form field above.
                 // It seems that document.getElementById('frog') in IE will return and element with name="frog".
                 '<input type="checkbox" id="' . $name . 'id" name="' . $name . '" value="1"' . $checked . ' /> ' .
-                '<label for="' . $name . '">' . $label . "</label></p>\n";
+                '<label for="' . $name . 'id">' . $label . "</label></p>\n";
         user_preference_allow_ajax_update($name, PARAM_BOOL);
         return $output;
     }
