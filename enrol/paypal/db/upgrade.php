@@ -25,6 +25,8 @@ function xmldb_enrol_paypal_upgrade($oldversion) {
 
     $dbman = $DB->get_manager();
 
+    //===== 1.9.0 upgrade line ======//
+
     // Add instanceid field to enrol_paypal table
     if ($oldversion < 2010071500) {
         $table = new xmldb_table('enrol_paypal');
@@ -35,8 +37,6 @@ function xmldb_enrol_paypal_upgrade($oldversion) {
         }
         upgrade_plugin_savepoint(true, 2010071500, 'enrol', 'paypal');
     }
-
-    //===== 1.9.0 upgrade line ======//
 
 
     return true;
