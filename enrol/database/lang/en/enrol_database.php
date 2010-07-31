@@ -23,8 +23,6 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['database:config'] = 'Configure external database enrol instances';
-$string['database:manage'] = 'Manage external database enrol instances';
 $string['dbencoding'] = 'Database encoding';
 $string['dbhost'] = 'Database host';
 $string['dbhost_desc'] = 'Type database server IP address or host name';

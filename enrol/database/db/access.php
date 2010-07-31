@@ -18,28 +18,11 @@
 /**
  * Capabilities for database enrolment plugin.
  *
- * @package   enrol_database
- * @copyright 2010 Petr Skoda {@link http://skodak.org}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    enrol
+ * @subpackage database
+ * @copyright  2010 Petr Skoda {@link http://skodak.org}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$capabilities = array(
-    'enrol/database:config' => array(
-        'captype' => 'write',
-        'contextlevel' => CONTEXT_COURSE,
-        'legacy' => array(
-            'manager' => CAP_ALLOW,
-        )
-    ),
-
-    'enrol/database:manage' => array(
-        'captype' => 'write',
-        'contextlevel' => CONTEXT_COURSE,
-        'legacy' => array(
-            'manager' => CAP_ALLOW,
-        )
-    ),
-
-);
-
+defined('MOODLE_INTERNAL') || die;
 
