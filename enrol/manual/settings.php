@@ -18,9 +18,10 @@
 /**
  * Manual enrolment plugin settings and presets.
  *
- * @package   enrol_manual
- * @copyright 2010 Petr Skoda {@link http://skodak.org}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    enrol
+ * @subpackage manual
+ * @copyright  2010 Petr Skoda {@link http://skodak.org}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die;
@@ -40,21 +41,18 @@ if ($ADMIN->fulltree) {
 
     $options = array(ENROL_INSTANCE_ENABLED  => get_string('yes'),
                      ENROL_INSTANCE_DISABLED => get_string('no'));
-    $settings->add(new admin_setting_configselect_with_advanced('enrol_manual/status',
-        get_string('status', 'enrol_manual'), get_string('status_desc', 'enrol_manual'),
-        array('value'=>ENROL_INSTANCE_ENABLED, 'adv'=>false), $options));
+    $settings->add(new admin_setting_configselect('enrol_manual/status',
+        get_string('status', 'enrol_manual'), get_string('status_desc', 'enrol_manual'), ENROL_INSTANCE_ENABLED, $options));
 
-    $settings->add(new admin_setting_configtext_with_advanced('enrol_manual/enrolperiod',
-        get_string('defaultperiod', 'enrol_manual'), get_string('defaultperiod_desc', 'enrol_manual'),
-        array('value'=>0, 'adv'=>true), PARAM_INT));
+    $settings->add(new admin_setting_configtext('enrol_manual/enrolperiod',
+        get_string('defaultperiod', 'enrol_manual'), get_string('defaultperiod_desc', 'enrol_manual'), 0, PARAM_INT));
 
     if (!during_initial_install()) {
         $options = get_default_enrol_roles(get_context_instance(CONTEXT_SYSTEM));
         $student = get_archetype_roles('student');
         $student = reset($student);
-        $settings->add(new admin_setting_configselect_with_advanced('enrol_manual/roleid',
-            get_string('defaultrole', 'role'), '',
-            array('value'=>$student->id, 'adv'=>true), $options));
+        $settings->add(new admin_setting_configselect('enrol_manual/roleid',
+            get_string('defaultrole', 'role'), '', $student->id, $options));
     }
 }
 

@@ -17,7 +17,8 @@
 /**
  * Manual user enrolment UI.
  *
- * @package    enrol_manual
+ * @package    enrol
+ * @subpackage manual
  * @copyright  2010 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -59,6 +60,7 @@ $instancename = $enrol_manual->get_instance_name($instance);
 $PAGE->set_url('/enrol/manual/manage.php', array('enrolid'=>$instance->id));
 $PAGE->set_pagelayout('admin');
 $PAGE->set_title($enrol_manual->get_instance_name($instance));
+navigation_node::override_active_url(new moodle_url('/enrol/users.php', array('id'=>$course->id)));
 
 // Create the user selector objects.
 $options = array('enrolid' => $enrolid);

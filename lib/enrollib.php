@@ -1158,11 +1158,15 @@ abstract class enrol_plugin {
      * @return void
      */
     public function course_updated($inserted, $course, $data) {
-        // override if settings on course edit page or some automatic sync needed
+        if ($inserted) {
+            if ($this->get_config('defaultenrol')) {
+                $this->add_default_instance($course);
+            }
+        }
     }
 
     /**
-     * Add new instance of enrol plugin settings.
+     * Add new instance of enrol plugin.
      * @param object $course
      * @param array instance fields
      * @return int id of new instance
