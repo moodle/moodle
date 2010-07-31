@@ -53,28 +53,23 @@ if ($ADMIN->fulltree) {
 
     $options = array(ENROL_INSTANCE_ENABLED  => get_string('yes'),
                      ENROL_INSTANCE_DISABLED => get_string('no'));
-    $settings->add(new admin_setting_configselect_with_advanced('enrol_self/status',
-        get_string('status', 'enrol_self'), get_string('status_desc', 'enrol_self'),
-        array('value'=>ENROL_INSTANCE_DISABLED, 'adv'=>false), $options));
+    $settings->add(new admin_setting_configselect('enrol_self/status',
+        get_string('status', 'enrol_self'), get_string('status_desc', 'enrol_self'), ENROL_INSTANCE_DISABLED, $options));
 
     $options = array(1  => get_string('yes'),
                      0 => get_string('no'));
-    $settings->add(new admin_setting_configselect_with_advanced('enrol_self/groupkey',
-        get_string('groupkey', 'enrol_self'), get_string('groupkey_desc', 'enrol_self'),
-        array('value'=>0, 'adv'=>true), $options));
+    $settings->add(new admin_setting_configselect('enrol_self/groupkey',
+        get_string('groupkey', 'enrol_self'), get_string('groupkey_desc', 'enrol_self'), 0, $options));
 
     if (!during_initial_install()) {
         $options = get_default_enrol_roles(get_context_instance(CONTEXT_SYSTEM));
         $student = get_archetype_roles('student');
         $student = reset($student);
-        $settings->add(new admin_setting_configselect_with_advanced('enrol_self/roleid',
-            get_string('defaultrole', 'enrol_self'), get_string('defaultrole_desc', 'enrol_self'),
-            array('value'=>$student->id, 'adv'=>false), $options));
+        $settings->add(new admin_setting_configselect('enrol_self/roleid',
+            get_string('defaultrole', 'enrol_self'), get_string('defaultrole_desc', 'enrol_self'), $student->id, $options));
     }
 
-    $settings->add(new admin_setting_configtext_with_advanced('enrol_self/enrolperiod',
-        get_string('enrolperiod', 'enrol_self'), get_string('enrolperiod_desc', 'enrol_self'),
-        array('value'=>0, 'adv'=>true), PARAM_INT));
-
+    $settings->add(new admin_setting_configtext('enrol_self/enrolperiod',
+        get_string('enrolperiod', 'enrol_self'), get_string('enrolperiod_desc', 'enrol_self'), 0, PARAM_INT));
 
 }

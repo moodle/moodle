@@ -31,6 +31,7 @@ $string['ajaxxusersfound'] = '[users] users found';
 $string['ajaxnext25'] = 'Next 25...';
 $string['assignnotpermitted'] = 'You do not have permission or can not assign roles in this course.';
 $string['configenrolplugins'] = 'Please select all required plugins and arrange then in appropriate order.';
+$string['custominstancename'] = 'Custom instance name';
 $string['defaultenrol'] = 'Add instance to new courses';
 $string['defaultenrol_desc'] = 'It is possible to add this plugin to all new courses by default.';
 $string['deleteinstanceconfirm'] = 'Do you really want to delete enrol plugin instance "{$a->name}" with {$a->users} enrolled users?';
