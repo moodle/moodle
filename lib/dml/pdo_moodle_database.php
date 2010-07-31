@@ -467,10 +467,6 @@ abstract class pdo_moodle_database extends moodle_database {
     public function update_record($table, $dataobject, $bulk=false) {
         $dataobject = (array)$dataobject;
 
-        if (!isset($dataobject->id) ) {
-            return false;
-        }
-
         $columns = $this->get_columns($table);
         $cleaned = array();
 
