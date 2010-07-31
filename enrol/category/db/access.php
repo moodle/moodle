@@ -18,10 +18,13 @@
 /**
  * Capabilities for category access plugin.
  *
- * @package   enrol_category
- * @copyright 2010 Petr Skoda {@link http://skodak.org}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    enrol
+ * @subpackage category
+ * @copyright  2010 Petr Skoda {@link http://skodak.org}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+defined('MOODLE_INTERNAL') || die;
 
 $capabilities = array(
     // marks roles that have category role assignments synchronised to course enrolments

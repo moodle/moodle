@@ -18,9 +18,10 @@
 /**
  * Strings for component 'enrol_category', language 'en', branch 'MOODLE_20_STABLE'
  *
- * @package   enrol_category
- * @copyright 2010 Petr Skoda  {@link http://skodak.org}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    enrol
+ * @subpackage category
+ * @copyright  2010 Petr Skoda  {@link http://skodak.org}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 $string['category:synchronised'] = 'Role assignments synchronised to course enrolment';
