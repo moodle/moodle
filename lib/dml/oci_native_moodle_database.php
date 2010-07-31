@@ -1156,16 +1156,15 @@ class oci_native_moodle_database extends moodle_database {
      * @throws dml_exception if error
      */
     public function insert_record($table, $dataobject, $returnid=true, $bulk=false) {
-        if (!is_object($dataobject)) {
-            $dataobject = (object)$dataobject;
-        }
-
-        unset($dataobject->id);
+        $dataobject = (array)$dataobject;
 
         $columns = $this->get_columns($table);
         $cleaned = array();
 
         foreach ($dataobject as $field=>$value) {
+            if ($field === 'id') {
+                continue;
+            }
             if (!isset($columns[$field])) { // Non-existing table field, skip it
                 continue;
             }
@@ -1186,9 +1185,7 @@ class oci_native_moodle_database extends moodle_database {
      * @throws dml_exception if error
      */
     public function import_record($table, $dataobject) {
-        if (!is_object($dataobject)) {
-            $dataobject = (object)$dataobject;
-        }
+        $dataobject = (array)$dataobject;
 
         $columns = $this->get_columns($table);
         $cleaned = array();
@@ -1213,9 +1210,8 @@ class oci_native_moodle_database extends moodle_database {
      * @throws dml_exception if error
      */
     public function update_record_raw($table, $params, $bulk=false) {
-        if (!is_array($params)) {
-            $params = (array)$params;
-        }
+        $params = (array)$params;
+
         if (!isset($params['id'])) {
             throw new coding_exception('moodle_database::update_record_raw() id field must be specified.');
         }
@@ -1261,9 +1257,7 @@ class oci_native_moodle_database extends moodle_database {
      * @throws dml_exception if error
      */
     public function update_record($table, $dataobject, $bulk=false) {
-        if (!is_object($dataobject)) {
-            $dataobject = (object)$dataobject;
-        }
+        $dataobject = (array)$dataobject;
 
         $columns = $this->get_columns($table);
         $cleaned = array();

@@ -383,16 +383,15 @@ abstract class pdo_moodle_database extends moodle_database {
      * @return true or new id
      */
     public function insert_record($table, $dataobject, $returnid=true, $bulk=false) {
-        if (!is_object($dataobject)) {
-            $dataobject = (object)$dataobject;
-        }
+        $dataobject = (array)$dataobject;
 
         $columns = $this->get_columns($table);
-
-        unset($dataobject->id);
         $cleaned = array();
 
         foreach ($dataobject as $field=>$value) {
+            if ($field === 'id') {
+                continue;
+            }
             if (!isset($columns[$field])) {
                 continue;
             }
@@ -429,9 +428,8 @@ abstract class pdo_moodle_database extends moodle_database {
      * @return bool success
      */
     public function update_record_raw($table, $params, $bulk=false) {
-        if (!is_array($params)) {
-            $params = (array)$params;
-        }
+        $params = (array)$params;
+
         if (!isset($params['id'])) {
             throw new coding_exception('moodle_database::update_record_raw() id field must be specified.');
         }
@@ -467,9 +465,7 @@ abstract class pdo_moodle_database extends moodle_database {
      * @return bool success
      */
     public function update_record($table, $dataobject, $bulk=false) {
-        if (!is_object($dataobject)) {
-            $dataobject = (object)$dataobject;
-        }
+        $dataobject = (array)$dataobject;
 
         if (!isset($dataobject->id) ) {
             return false;
