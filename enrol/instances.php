@@ -165,54 +165,56 @@ foreach ($instances as $instance) {
 
     $users = $DB->count_records('user_enrolments', array('enrolid'=>$instance->id));
 
-    $updown = '';
-    $edit = '';
+    $updown = array();
+    $edit = array();
 
     if ($canconfig) {
         // up/down link
         $updown = '';
         if ($updowncount > 1) {
             $aurl = new moodle_url($url, array('action'=>'up', 'instance'=>$instance->id));
-            $updown .= html_writer::link($aurl, html_writer::empty_tag('img', array('src'=>$OUTPUT->pix_url('t/up'), 'alt'=>$strup, 'class'=>'smallicon'))).'&nbsp;';
+            $updown[] = html_writer::link($aurl, html_writer::empty_tag('img', array('src'=>$OUTPUT->pix_url('t/up'), 'alt'=>$strup, 'class'=>'smallicon')));
         } else {
-            $updown .= html_writer::empty_tag('img', array('src'=>$OUTPUT->pix_url('spacer'), 'alt'=>'', 'class'=>'smallicon')).'&nbsp;';
+            $updown[] = html_writer::empty_tag('img', array('src'=>$OUTPUT->pix_url('spacer'), 'alt'=>'', 'class'=>'smallicon'));
         }
         if ($updowncount < $icount) {
             $aurl = new moodle_url($url, array('action'=>'down', 'instance'=>$instance->id));
-            $updown .= html_writer::link($aurl, html_writer::empty_tag('img', array('src'=>$OUTPUT->pix_url('t/down'), 'alt'=>$strdown, 'class'=>'smallicon'))).'&nbsp;';
+            $updown[] = html_writer::link($aurl, html_writer::empty_tag('img', array('src'=>$OUTPUT->pix_url('t/down'), 'alt'=>$strdown, 'class'=>'smallicon')));
         } else {
-            $updown .= html_writer::empty_tag('img', array('src'=>$OUTPUT->pix_url('spacer'), 'alt'=>'', 'class'=>'smallicon')).'&nbsp;';
+            $updown[] = html_writer::empty_tag('img', array('src'=>$OUTPUT->pix_url('spacer'), 'alt'=>'', 'class'=>'smallicon'));
         }
         ++$updowncount;
 
         // edit links
         if ($plugin->instance_deleteable($instance)) {
             $aurl = new moodle_url($url, array('action'=>'delete', 'instance'=>$instance->id));
-            $edit .= html_writer::link($aurl, html_writer::empty_tag('img', array('src'=>$OUTPUT->pix_url('t/delete'), 'alt'=>$strdelete, 'class'=>'smallicon'))).'&nbsp;';
+            $edit[] = html_writer::link($aurl, html_writer::empty_tag('img', array('src'=>$OUTPUT->pix_url('t/delete'), 'alt'=>$strdelete, 'class'=>'smallicon')));
         }
 
         if (enrol_is_enabled($instance->enrol)) {
             if ($instance->status == ENROL_INSTANCE_ENABLED) {
                 $aurl = new moodle_url($url, array('action'=>'disable', 'instance'=>$instance->id));
-                $edit .= html_writer::link($aurl, html_writer::empty_tag('img', array('src'=>$OUTPUT->pix_url('t/hide'), 'alt'=>$strdisable, 'class'=>'smallicon'))).'&nbsp;';
+                $edit[] = html_writer::link($aurl, html_writer::empty_tag('img', array('src'=>$OUTPUT->pix_url('t/hide'), 'alt'=>$strdisable, 'class'=>'smallicon')));
             } else if ($instance->status == ENROL_INSTANCE_DISABLED) {
                 $aurl = new moodle_url($url, array('action'=>'enable', 'instance'=>$instance->id));
-                $edit .= html_writer::link($aurl, html_writer::empty_tag('img', array('src'=>$OUTPUT->pix_url('t/show'), 'alt'=>$strenable, 'class'=>'smallicon'))).'&nbsp;';
+                $edit[] = html_writer::link($aurl, html_writer::empty_tag('img', array('src'=>$OUTPUT->pix_url('t/show'), 'alt'=>$strenable, 'class'=>'smallicon')));
             } else {
                 // plugin specific state - do not mess with it!
-                $edit .= html_writer::empty_tag('img', array('src'=>$OUTPUT->pix_url('t/show'), 'alt'=>'', 'class'=>'smallicon')).'&nbsp;';
+                $edit[] = html_writer::empty_tag('img', array('src'=>$OUTPUT->pix_url('t/show'), 'alt'=>'', 'class'=>'smallicon'));
             }
 
         }
     }
 
     // link to instance management
-    if ($managelink = $plugin->get_manage_link($instance)) {
-        $displayname = html_writer::link($managelink, $displayname);
+    if (enrol_is_enabled($instance->enrol)) {
+        if ($icons = $plugin->get_action_icons($instance)) {
+            $edit = array_merge($edit, $icons);
+        }
     }
 
     // add a row to the table
-    $table->data[] = array($displayname, $users, $updown, $edit);
+    $table->data[] = array($displayname, $users, implode('&nbsp;', $updown), implode('&nbsp;', $edit));
 
 }
 echo html_writer::table($table);

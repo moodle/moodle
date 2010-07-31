@@ -60,10 +60,6 @@ class enrol_manual_plugin extends enrol_plugin {
             throw new coding_exception('invalid enrol instance!');
         }
 
-        if ($instance->courseid == SITEID) {
-            return NULL;
-        }
-
         if (!enrol_is_enabled($name)) {
             return NULL;
         }
@@ -75,6 +71,53 @@ class enrol_manual_plugin extends enrol_plugin {
         }
 
         return new moodle_url('/enrol/manual/manage.php', array('enrolid'=>$instance->id, 'id'=>$instance->courseid));
+    }
+
+    /**
+     * Returns enrolment instance manage link.
+     *
+     * By defaults looks for manage.php file and tests for manage capability.
+     *
+     * @param object $instance
+     * @return moodle_url;
+     */
+    public function add_course_navigation($instancesnode, stdClass $instance) {
+        $name = $this->get_name();
+
+        if ($instance->enrol !== $name) {
+             throw new coding_exception('Invalid enrol instance type!');
+        }
+
+        $context = get_context_instance(CONTEXT_COURSE, $instance->courseid);
+        if (!has_capability('enrol/manual:manage', $context)) {
+            return;
+        }
+
+        $managelink = new moodle_url("/enrol/$name/manage.php", array('enrolid'=>$instance->id));
+        $instancesnode->add($this->get_instance_name($instance), $managelink, navigation_node::TYPE_SETTING);
+    }
+
+    /**
+     * Returns edit icons for the page with list of instances
+     * @param stdClass $instance
+     * @return array
+     */
+    public function get_action_icons(stdClass $instance) {
+        global $OUTPUT;
+
+        $name = $this->get_name();
+        if ($instance->enrol !== $name) {
+            throw new coding_exception('invalid enrol instance!');
+        }
+
+        $context = get_context_instance(CONTEXT_COURSE, $instance->courseid);
+        if (!has_capability('enrol/manual:manage', $context)) {
+            return;
+        }
+
+        $managelink = new moodle_url("/enrol/$name/manage.php", array('enrolid'=>$instance->id));
+        $icon = $OUTPUT->action_icon($managelink, new pix_icon('i/users', get_string('enrolusers', 'enrol_manual'), 'core', array('class'=>'iconsmall')));
+        return array($icon);
     }
 
     /**
