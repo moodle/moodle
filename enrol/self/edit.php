@@ -72,7 +72,7 @@ if ($mform->is_cancelled()) {
         $instance->enrolperiod    = $data->enrolperiod;
         $instance->enrolstartdate = $data->enrolstartdate;
         $instance->enrolenddate   = $data->enrolenddate;
-        $instance->timemodified = time();
+        $instance->timemodified   = time();
         $DB->update_record('enrol', $instance);
 
     } else {
