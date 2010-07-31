@@ -1169,7 +1169,7 @@ abstract class enrol_plugin {
      * Add new instance of enrol plugin.
      * @param object $course
      * @param array instance fields
-     * @return int id of new instance
+     * @return int id of new instance, null if can not be created
      */
     public function add_instance($course, array $fields = NULL) {
         global $DB;

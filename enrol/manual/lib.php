@@ -145,11 +145,28 @@ class enrol_manual_plugin extends enrol_plugin {
     /**
      * Add new instance of enrol plugin with default settings.
      * @param object $course
-     * @return int id of new instance
+     * @return int id of new instance, null if can not be created
      */
     public function add_default_instance($course) {
         $fields = array('status'=>$this->get_config('status'), 'enrolperiod'=>$this->get_config('enrolperiod', 0), 'roleid'=>$this->get_config('roleid', 0));
         return $this->add_instance($course, $fields);
+    }
+
+    /**
+     * Add new instance of enrol plugin.
+     * @param object $course
+     * @param array instance fields
+     * @return int id of new instance, null if can not be created
+     */
+    public function add_instance($course, array $fields = NULL) {
+        global $DB;
+
+        if ($DB->record_exists('enrol', array('courseid'=>$course->id, 'enrol'=>'manual'))) {
+            // only one instance allowed, sorry
+            return NULL;
+        }
+
+        return parent::add_instance($course, $fields);
     }
 
     public function cron() {
