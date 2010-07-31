@@ -945,7 +945,7 @@ class pgsql_native_moodle_database extends moodle_database {
             return true;
         }
 
-        $id = (int)$dataobject->id;
+        $id = (int)$dataobject['id'];
 
         foreach ($blobs as $key=>$value) {
             $value = pg_escape_bytea($this->pgsql, $value);
