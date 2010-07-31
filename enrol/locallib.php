@@ -19,9 +19,10 @@
  * This file contains the course_enrolment_manager class which is used to interface
  * with the functions that exist in enrollib.php in relation to a single course.
  *
- * @package   moodlecore
- * @copyright 2010 Sam Hemelryk
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    core
+ * @subpackage enrol
+ * @copyright  2010 Sam Hemelryk
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 /**
@@ -327,7 +328,7 @@ class course_enrolment_manager {
             $tests[] = '(' . implode(' OR ', $conditions) . ')';
         }
         $wherecondition = implode(' AND ', $tests);
-        
+
 
         $fields      = 'SELECT u.id, u.firstname, u.lastname, u.username, u.email, u.lastaccess, u.picture, u.imagealt, '.user_picture::fields('u');;
         $countfields = 'SELECT COUNT(u.id)';
@@ -737,7 +738,7 @@ class course_enrolment_manager {
      * @return array
      */
     public function get_other_users_for_display(core_enrol_renderer $renderer, moodle_url $pageurl, $sort, $direction, $page, $perpage) {
-        
+
         $userroles = $this->get_other_users($sort, $direction, $page, $perpage);
         $roles = $this->get_all_roles();
 

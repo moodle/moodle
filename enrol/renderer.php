@@ -18,9 +18,10 @@
 /**
  * This is the main renderer for the enrol section.
  *
- * @package   moodlecore
- * @copyright 2010 Sam Hemelryk
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    core
+ * @subpackage enrol
+ * @copyright  2010 Sam Hemelryk
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 /**
@@ -348,7 +349,7 @@ class course_enrolment_table extends html_table implements renderable {
 
         $this->manager = $manager;
         $this->pageurl = $pageurl;
-        
+
         $this->page =           optional_param(self::PAGEVAR, 0, PARAM_INT);
         $this->perpage =        optional_param(self::PERPAGEVAR, self::DEFAULTPERPAGE, PARAM_INT);
         $this->sort =           optional_param(self::SORTVAR, self::DEFAULTSORT, PARAM_ALPHA);
@@ -443,7 +444,7 @@ class course_enrolment_table extends html_table implements renderable {
         }
     }
     /**
-     
+
      */
     /**
      * Sets the users for this table
@@ -501,7 +502,7 @@ class course_enrolment_table extends html_table implements renderable {
             $page->requires->yui_module($modules, $function, array($arguments));
         }
     }
-    
+
     /**
      * Gets the paging bar instance for this table
      *
