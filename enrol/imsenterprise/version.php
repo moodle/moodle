@@ -18,10 +18,13 @@
 /**
  * IMS Enterprise file enrolment plugin version specification.
  *
- * @package   enrol_imsenterprise
- * @copyright 2010 Eugene Venter
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    enrol
+ * @subpackage imsenterprise
+ * @copyright  2010 Eugene Venter
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+defined('MOODLE_INTERNAL') || die();
 
 $plugin->version = 2010071200;
 $plugin->cron = 60;
