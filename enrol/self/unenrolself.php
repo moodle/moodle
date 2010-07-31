@@ -33,6 +33,10 @@ $instance = $DB->get_record('enrol', array('id'=>$enrolid, 'enrol'=>'self'), '*'
 $course = $DB->get_record('course', array('id'=>$instance->courseid), '*', MUST_EXIST);
 $context = get_context_instance(CONTEXT_COURSE, $course->id, MUST_EXIST);
 
+require_login();
+if (!is_enrolled($context)) {
+    redirect(new moodle_url('/'));
+}
 require_login($course);
 
 $plugin = enrol_get_plugin('self');
