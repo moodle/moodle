@@ -64,7 +64,6 @@ class restore_forum_activity_structure_step extends restore_activity_structure_s
 
         $newitemid = $DB->insert_record('forum', $data);
         $this->apply_activity_instance($newitemid);
-        $this->set_mapping('forum', $oldid, $newitemid);
     }
 
     protected function process_forum_discussion($data) {
