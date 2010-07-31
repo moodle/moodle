@@ -195,9 +195,10 @@ class enrol_self_plugin extends enrol_plugin {
     public function add_default_instance($course) {
         global $DB;
 
-        $fields = array('customint1'=>$this->get_config('groupkey'), 'enrolperiod'=>$this->get_config('enrolperiod', 0), 'roleid'=>$this->get_config('roleid', 0));
-
-        $fields['status'] = $this->get_config('status');
+        $fields = array('customint1'  => $this->get_config('groupkey'),
+                        'enrolperiod' => $this->get_config('enrolperiod', 0),
+                        'status'      => $this->get_config('status'),
+                        'roleid'      => $this->get_config('roleid', 0));
 
         if ($this->get_config('requirepassword')) {
             $fields['password'] = generate_password(20);
