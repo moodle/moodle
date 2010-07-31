@@ -18,12 +18,14 @@
 /**
  * Strings for component 'enrol_meta', language 'en', branch 'MOODLE_20_STABLE'
  *
- * @package   enrol_meta
- * @copyright 2010 onwards Petr Skoda  {@link http://skodak.org}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    enrol
+ * @subpackage meta
+ * @copyright  2010 onwards Petr Skoda  {@link http://skodak.org}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 $string['linkedcourse'] = 'Link course';
+$string['meta:config'] = 'Configure meta enrol instances';
 $string['meta:selectaslinked'] = 'Select course as meta linked';
 $string['nosyncroleids'] = 'Roles that are not synchronised';
 $string['nosyncroleids_desc'] = 'By default all course level role assignments are synchronised from parent to child courses. Roles that are selected here will not be included in the synchronisation process. The current roles will be updated in the next cron execution.';
