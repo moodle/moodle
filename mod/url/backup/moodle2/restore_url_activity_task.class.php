@@ -66,8 +66,9 @@ class restore_url_activity_task extends restore_activity_task {
     static public function define_decode_rules() {
         $rules = array();
 
-        $rules[] = new restore_decode_rule('URLVIEWBYID', '/mod/url/view.php?id=$1', 'course_module');
         $rules[] = new restore_decode_rule('URLINDEX', '/mod/url/index.php?id=$1', 'course');
+        $rules[] = new restore_decode_rule('URLVIEWBYID', '/mod/url/view.php?id=$1', 'course_module');
+        $rules[] = new restore_decode_rule('URLVIEWBYU', '/mod/url/view.php?u=$1', 'url');
 
         return $rules;
 

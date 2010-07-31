@@ -60,18 +60,18 @@ class backup_url_activity_task extends backup_activity_task {
         $base = preg_quote($CFG->wwwroot.'/mod/url','#');
 
         //Access a list of all links in a course
-        $pattern = '#'.$base.'/index\.php\?id=([0-9]+)#';
-        $replacement = '$@URLVIEWLIST*$2@$';
+        $pattern = '#('.$base.'/index\.php\?id=)([0-9]+)#';
+        $replacement = '$@URLINDEX*$2@$';
         $content = preg_replace($pattern, $replacement, $content);
 
         //Access the link supplying a course module id
-        $pattern = '#'.$base.'/view\.php\?id=([0-9]+)#';
-        $replacement = '$@URLVIEWBYCOURSEMODULE*$2@$';
+        $pattern = '#('.$base.'/view\.php\?id=)([0-9]+)#';
+        $replacement = '$@URLVIEWBYID*$2@$';
         $content = preg_replace($pattern, $replacement, $content);
 
         //Access the link supplying an instance id
-        $pattern = '#'.$base.'/view\.php\?u=([0-9]+)#';
-        $replacement = '$@URLVIEWBYINSTANCEID*$2@$';
+        $pattern = '#('.$base.'/view\.php\?u=)([0-9]+)#';
+        $replacement = '$@URLVIEWBYU*$2@$';
         $content = preg_replace($pattern, $replacement, $content);
 
         return $content;
