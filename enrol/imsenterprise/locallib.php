@@ -24,7 +24,7 @@
  * @author Eugene Venter
  */
 
-defined('MOODLE_INTERNAL') || die;
+defined('MOODLE_INTERNAL') || die();
 
 
 class imsenterprise_roles {
