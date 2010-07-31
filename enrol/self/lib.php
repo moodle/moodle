@@ -73,12 +73,10 @@ class enrol_self_plugin extends enrol_plugin {
     }
 
     /**
-     * Returns enrolment instance manage link.
-     *
-     * By defaults looks for manage.php file and tests for manage capability.
+     * Sets up navigation entries.
      *
      * @param object $instance
-     * @return moodle_url;
+     * @return void
      */
     public function add_course_navigation($instancesnode, stdClass $instance) {
         if ($instance->enrol !== 'self') {
