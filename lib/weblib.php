@@ -1190,6 +1190,11 @@ function format_string($string, $striplinks = true, $options = NULL) {
     //We'll use a in-memory cache here to speed up repeated strings
     static $strcache = false;
 
+    if (empty($CFG->version) or $CFG->version < 2010072800) {
+        // do not filter anything during installation or before upgrade completes
+        return $string = strip_tags($string);
+    }
+
     if ($strcache === false or count($strcache) > 2000) { // this number might need some tuning to limit memory usage in cron
         $strcache = array();
     }
@@ -1210,7 +1215,7 @@ function format_string($string, $striplinks = true, $options = NULL) {
 
     if (!$options['context']) {
         // we did not find any context? weird
-        return $text;
+        return $string = strip_tags($string);
     }
 
     //Calculate md5
@@ -1225,7 +1230,7 @@ function format_string($string, $striplinks = true, $options = NULL) {
     // Regular expression moved to its own method for easier unit testing
     $string = replace_ampersands_not_followed_by_entity($string);
 
-    if (!empty($CFG->filterall) and $CFG->version >= 2009040600) { // Avoid errors during the upgrade to the new system.
+    if (!empty($CFG->filterall)) {
         $string = filter_manager::instance()->filter_string($string, $options['context']);
     }
 
