@@ -872,13 +872,12 @@ class restore_comments_structure_step extends restore_structure_step {
 
         // First of all, if the comment has some itemid, ask to the task what to map
         $mapping = false;
-        $newitemid = 0;
         if ($data->itemid) {
-            $mapping = $this->task->get_comment_mapping_itemname();
-            $newitemid = $this->get_mappingid($mapping, $data->itemid);
+            $mapping = $this->task->get_comment_mapping_itemname($data->commentarea);
+            $data->itemid = $this->get_mappingid($mapping, $data->itemid);
         }
         // Only restore the comment if has no mapping OR we have found the matching mapping
-        if (!$mapping || $newitemid) {
+        if (!$mapping || $data->itemid) {
             // Only if user mapping and context
             $data->userid = $this->get_mappingid('user', $data->userid);
             if ($data->userid && $this->task->get_contextid()) {
