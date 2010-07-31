@@ -222,7 +222,7 @@ echo html_writer::table($table);
 // access security is in each plugin
 $candidates = array();
 foreach (enrol_get_plugins(true) as $name=>$plugin) {
-    if (!$link = $plugin->get_candidate_link($course->id)) {
+    if (!$link = $plugin->get_newinstance_link($course->id)) {
         continue;
     }
     $candidates[$link->out(false)] = get_string('pluginname', 'enrol_'.$name);

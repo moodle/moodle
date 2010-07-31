@@ -53,7 +53,7 @@ class enrol_category_plugin extends enrol_plugin {
      * @param int $courseid
      * @return moodle_url page url
      */
-    public function get_candidate_link($courseid) {
+    public function get_newinstance_link($courseid) {
         // instances are added automatically as necessary
         return NULL;
     }

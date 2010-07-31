@@ -36,7 +36,7 @@ require_sesskey();
 
 $enrol = enrol_get_plugin('guest');
 
-if ($enrol->get_candidate_link($course->id)) {
+if ($enrol->get_newinstance_link($course->id)) {
     $enrol->add_default_instance($course);
 }
 

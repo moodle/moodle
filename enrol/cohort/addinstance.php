@@ -46,7 +46,7 @@ if ($courseadmin && $courseadmin->get('users') && $courseadmin->get('users')->ge
 
 
 $enrol = enrol_get_plugin('cohort');
-if (!$enrol->get_candidate_link($course->id)) {
+if (!$enrol->get_newinstance_link($course->id)) {
     redirect(new moodle_url('/enrol/instances.php', array('id'=>$course->id)));
 }
 

@@ -1055,7 +1055,7 @@ abstract class enrol_plugin {
      * @param int $courseid
      * @return moodle_url page url
      */
-    public function get_candidate_link($courseid) {
+    public function get_newinstance_link($courseid) {
         // override for most plugins, check if instance already exists in cases only one instance is supported
         return NULL;
     }

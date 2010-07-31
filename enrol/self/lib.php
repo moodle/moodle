@@ -118,7 +118,7 @@ class enrol_self_plugin extends enrol_plugin {
      * @param int $courseid
      * @return moodle_url page url
      */
-    public function get_candidate_link($courseid) {
+    public function get_newinstance_link($courseid) {
         $context = get_context_instance(CONTEXT_COURSE, $courseid, MUST_EXIST);
 
         if (!has_capability('moodle/course:enrolconfig', $context) or !has_capability('enrol/manual:config', $context)) {

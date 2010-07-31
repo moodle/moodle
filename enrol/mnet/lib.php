@@ -71,7 +71,7 @@ class enrol_mnet_plugin extends enrol_plugin {
      * @param int $courseid id of the course to add the instance to
      * @return moodle_url|null page url or null if instance can not be created
      */
-    public function get_candidate_link($courseid) {
+    public function get_newinstance_link($courseid) {
         global $CFG, $DB;
         require_once($CFG->dirroot.'/mnet/service/enrol/locallib.php');
 
