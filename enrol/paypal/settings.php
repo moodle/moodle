@@ -18,10 +18,11 @@
 /**
  * Paypal enrolments plugin settings and presets.
  *
- * @package   enrol_paypal
- * @copyright 2010 Eugene Venter
- * @author    Eugene Venter - based on code by Petr Skoda and others
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    enrol
+ * @subpackage paypal
+ * @copyright  2010 Eugene Venter
+ * @author     Eugene Venter - based on code by Petr Skoda and others
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die;
@@ -54,9 +55,6 @@ if ($ADMIN->fulltree) {
                             );
 
     $settings->add(new admin_setting_configselect('enrol_paypal/currency', get_string('currency', 'enrol_paypal'), '', 'USD', $paypalcurrencies));
-
-    $settings->add(new admin_setting_configcheckbox('enrol_paypal/defaultenrol',
-        get_string('defaultenrol', 'enrol'), get_string('defaultenrol_desc', 'enrol'), 0));
 
     $options = array(ENROL_INSTANCE_ENABLED  => get_string('yes'),
                      ENROL_INSTANCE_DISABLED => get_string('no'));

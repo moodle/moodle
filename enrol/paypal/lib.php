@@ -19,17 +19,19 @@
  *
  * This plugin allows you to set up paid courses.
  *
- * @package   enrol_paypal
+ * @package    enrol
+ * @subpackage paypal
  * @copyright 2010 Eugene Venter
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+defined('MOODLE_INTERNAL') || die;
 
 /**
  * Paypal enrolment plugin implementation.
  * @author  Eugene Venter - based on code by Martin Dougiamas and others
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 class enrol_paypal_plugin extends enrol_plugin {
 
     /**

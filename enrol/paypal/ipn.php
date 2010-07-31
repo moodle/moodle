@@ -15,25 +15,23 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package   enrol_paypal
+ * Listens for Instant Payment Notification from PayPal
+ *
+ * This script waits for Payment notification from PayPal,
+ * then double checks that data by sending it back to PayPal.
+ * If PayPal verifies this then it sets up the enrolment for that
+ * user.
+ *
+ * @package    enrol
+ * @subpackage paypal
  * @copyright 2010 Eugene Venter
- * @author    Eugene Venter - based on code by others
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @author     Eugene Venter - based on code by others
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-/**
-* Listens for Instant Payment Notification from PayPal
-*
-* This script waits for Payment notification from PayPal,
-* then double checks that data by sending it back to PayPal.
-* If PayPal verifies this then it sets up the enrolment for that
-* user.
-*
-*/
 
 
 require("../../config.php");
-require("lib.php");
+require_once("lib.php");
 require_once($CFG->libdir.'/eventslib.php');
 require_once($CFG->libdir.'/enrollib.php');
 

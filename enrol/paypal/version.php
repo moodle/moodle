@@ -17,11 +17,14 @@
 /**
  * Paypal enrolment plugin version specification.
  *
- * @package   enrol_paypal
- * @copyright 2010 Eugene Venter
- * @author Eugene Venter
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    enrol
+ * @subpackage paypal
+ * @copyright  2010 Eugene Venter
+ * @author     Eugene Venter
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+defined('MOODLE_INTERNAL') || die;
 
 $plugin->version  = 2010071500;
 $plugin->requires = 2007101000;   // Requires this Moodle version
