@@ -18,9 +18,10 @@
 /**
  * Strings for component 'enrol_flatfile', language 'en', branch 'MOODLE_20_STABLE'
  *
- * @package   enrol_flatfile
- * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    enrol
+ * @subpackage flatfile
+ * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 $string['pluginname_desc'] = 'This method will repeatedly check for and process a specially-formatted text file in the location that you specify.

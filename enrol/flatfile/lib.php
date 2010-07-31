@@ -19,35 +19,35 @@
  *
  * This plugin lets the user specify a "flatfile" (CSV) containing enrolment information.
  * On a regular cron cycle, the specified file is parsed and then deleted.
- * @package   enrol_flatfile
- * @copyright 2010 Eugene Venter
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ *
+ * @package    enrol
+ * @subpackage flatfile
+ * @copyright  2010 Eugene Venter
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+defined('MOODLE_INTERNAL') || die;
 
 /**
  * Flatfile enrolment plugin implementation.
  * @author  Eugene Venter - based on code by Petr Skoda, Martin Dougiamas, Martin Langhoff and others
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-require_once($CFG->libdir.'/eventslib.php');
-
-
 class enrol_flatfile_plugin extends enrol_plugin {
 
-/**
-* Override the base cron() function to read in a file
-*
-* Comma separated file assumed to have four or six fields per line:
-*   operation, role, idnumber(user), idnumber(course) [, starttime, endtime]
-* where:
-*   operation        = add | del
-*   role             = student | teacher | teacheredit
-*   idnumber(user)   = idnumber in the user table NB not id
-*   idnumber(course) = idnumber in the course table NB not id
-*   starttime        = start time (in seconds since epoch) - optional
-*   endtime          = end time (in seconds since epoch) - optional
-*/
+    /**
+     * Override the base cron() function to read in a file
+     *
+     * Comma separated file assumed to have four or six fields per line:
+     *   operation, role, idnumber(user), idnumber(course) [, starttime, endtime]
+     * where:
+     *   operation        = add | del
+     *   role             = student | teacher | teacheredit
+     *   idnumber(user)   = idnumber in the user table NB not id
+     *   idnumber(course) = idnumber in the course table NB not id
+     *   starttime        = start time (in seconds since epoch) - optional
+     *   endtime          = end time (in seconds since epoch) - optional
+     */
     public function cron() {
         global $CFG, $DB;
 
@@ -160,7 +160,7 @@ class enrol_flatfile_plugin extends enrol_plugin {
                         // Enrol the user with this plugin instance
                         $this->enrol_user($instance, $user->id, $roleid, $fields[4], $fields[5]);
                     } else {
-                        $instances = $DB->get_records('enrol', 
+                        $instances = $DB->get_records('enrol',
                                         array('enrol' => 'flatfile', 'courseid' => $course->id));
                         foreach ($instances as $instance) {
                             // Unenrol the user from all flatfile enrolment instances
