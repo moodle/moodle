@@ -116,7 +116,7 @@ if ($editform->is_cancelled()) {
             enrol_try_internal_enrol($course->id, $USER->id, $CFG->creatornewroleid);
 
         }
-        if (!is_enrolled(get_context_instance(CONTEXT_COURSE, $course->id))) {
+        if (!is_enrolled($context)) {
             // Redirect to manual enrolment page if possible
             $instances = enrol_get_instances($course->id, true);
             foreach($instances as $instance) {
