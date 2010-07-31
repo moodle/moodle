@@ -18,10 +18,13 @@
 /**
  * Cohort enrolment plugin version specification.
  *
- * @package   enrol_cohort
- * @copyright 2010 Petr Skoda {@link http://skodak.org}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    enrol
+ * @subpackage cohort
+ * @copyright  2010 Petr Skoda {@link http://skodak.org}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$plugin->version = 2010071800;
+defined('MOODLE_INTERNAL') || die;
+
+$plugin->version = 2010073100;
 $plugin->cron    = 60;

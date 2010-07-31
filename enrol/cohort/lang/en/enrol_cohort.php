@@ -18,10 +18,12 @@
 /**
  * Strings for component 'enrol_cohort', language 'en', branch 'MOODLE_20_STABLE'
  *
- * @package   enrol_cohort
- * @copyright 2010 Petr Skoda  {@link http://skodak.org}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    enrol
+ * @subpackage cohort
+ * @copyright  2010 Petr Skoda  {@link http://skodak.org}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['cohort:config'] = 'Configure cohort instances';
 $string['pluginname'] = 'Cohort sync';
 $string['pluginname_desc'] = 'Cohort enrolment plugin synchronises cohort members with course participants.';

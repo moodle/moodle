@@ -18,9 +18,10 @@
 /**
  * Cohort enrolment plugin.
  *
- * @package   enrol_cohort
- * @copyright 2010 Petr Skoda {@link http://skodak.org}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    enrol
+ * @subpackage cohort
+ * @copyright  2010 Petr Skoda {@link http://skodak.org}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die;
@@ -66,7 +67,7 @@ class enrol_cohort_plugin extends enrol_plugin {
         global $DB;
 
         $coursecontext = get_context_instance(CONTEXT_COURSE, $courseid);
-        if (!has_capability('moodle/course:enrolconfig', $coursecontext)) {
+        if (!has_capability('moodle/course:enrolconfig', $coursecontext) or !has_capability('enrol/cohort:config', $coursecontext)) {
             return NULL;
         }
 
