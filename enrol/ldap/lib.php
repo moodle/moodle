@@ -20,12 +20,15 @@
  *
  * This plugin synchronises enrolment and roles with a LDAP server.
  *
- * @package   enrol_ldap
- * @author    Iñaki Arenaza - based on code by Martin Dougiamas, Martin Langhoff and others
- * @copyright 1999 onwards Martin Dougiamas {@link http://moodle.com}
- * @copyright 2010 Iñaki Arenaza <iarenaza@eps.mondragon.edu>
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    enrol
+ * @subpackage ldap
+ * @author     Iñaki Arenaza - based on code by Martin Dougiamas, Martin Langhoff and others
+ * @copyright  1999 onwards Martin Dougiamas {@link http://moodle.com}
+ * @copyright  2010 Iñaki Arenaza <iarenaza@eps.mondragon.edu>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+defined('MOODLE_INTERNAL') || die();
 
 class enrol_ldap_plugin extends enrol_plugin {
     protected $enrol_localcoursefield = 'idnumber';
@@ -62,7 +65,7 @@ class enrol_ldap_plugin extends enrol_plugin {
         // users, and we are dealing with groups here.
         unset($default['objectclass']);
 
-        // Use defaults if values not given. Dont use this->get_config() 
+        // Use defaults if values not given. Dont use this->get_config()
         // here to be able to check for 0 and false values too.
         foreach ($default as $key => $value) {
             // Watch out - 0, false are correct values too, so we can't use $this->get_config()
@@ -512,7 +515,7 @@ class enrol_ldap_plugin extends enrol_plugin {
                             continue;
                         }
 
-                        $transaction = $DB->start_delegated_transaction();                        
+                        $transaction = $DB->start_delegated_transaction();
                         foreach ($ldapmembers as $ldapmember) {
                             $sql = 'SELECT id,username,1 FROM {user} WHERE idnumber = ? AND deleted = 0';
                             $member = $DB->get_record_sql($sql, array($ldapmember));

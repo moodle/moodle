@@ -18,11 +18,12 @@
 /**
  * CLI sync for full LDAP synchronisation.
  *
- * @package   enrol_ldap
- * @author    Iñaki Arenaza - based on code by Martin Dougiamas, Martin Langhoff and others
- * @copyright 1999 onwards Martin Dougiamas {@link http://moodle.com}
- * @copyright 2010 Iñaki Arenaza <iarenaza@eps.mondragon.edu>
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    enrol
+ * @subpackage ldap
+ * @author     Iñaki Arenaza - based on code by Martin Dougiamas, Martin Langhoff and others
+ * @copyright  1999 onwards Martin Dougiamas {@link http://moodle.com}
+ * @copyright  2010 Iñaki Arenaza <iarenaza@eps.mondragon.edu>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 /**
@@ -42,7 +43,7 @@
  *
  */
 
-if(isset($_SERVER['REMOTE_ADDR'])) {
+if (isset($_SERVER['REMOTE_ADDR'])) {
     error_log("enrol/ldap/cli/sync.php can not be called from web server!");
     echo "enrol/ldap/cli/sync.php can not be called from web server!";
     exit;

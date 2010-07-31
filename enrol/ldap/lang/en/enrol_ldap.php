@@ -18,10 +18,11 @@
 /**
  * Strings for component 'enrol_ldap', language 'en', branch 'MOODLE_20_STABLE'
  *
- * @package   enrol_ldap
- * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
- * @copyright 2010 Iñaki Arenaza <iarenaza@eps.mondragon.edu>
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    enrol
+ * @subpackage ldap
+ * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @copyright  2010 Iñaki Arenaza <iarenaza@eps.mondragon.edu>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 $string['assignrole']  = "Assigning role '{\$a->role_shortname}' to user '{\$a->user_username}' into course '{\$a->course_shortname}' (id {\$a->course_id})";
