@@ -100,7 +100,7 @@ if ($editform->is_cancelled()) {
                 break;
         }
         redirect($url);
-        
+
 } else if ($data = $editform->get_data()) {
     // process data if submitted
 
@@ -111,17 +111,20 @@ if ($editform->is_cancelled()) {
         // Get the context of the newly created course
         $context = get_context_instance(CONTEXT_COURSE, $course->id, MUST_EXIST);
 
-        // try to deal with course creators - enrol them internally with default role
         if (!empty($CFG->creatornewroleid) and !is_viewing($context, NULL, 'moodle/role:assign') and !is_enrolled($context, NULL, 'moodle/role:assign')) {
+            // deal with course creators - enrol them internally with default role
             enrol_try_internal_enrol($course->id, $USER->id, $CFG->creatornewroleid);
-        }
 
-        // Redirect to manual enrolment page if possible
-        $instances = enrol_get_instances($course->id, true);
-        foreach($instances as $instance) {
-            if ($plugin = enrol_get_plugin($instance->enrol)) {
-                if ($link = $plugin->get_manual_enrol_link($instance)) {
-                    redirect($link, get_string('changessaved'));
+        }
+        if (!is_enrolled(get_context_instance(CONTEXT_COURSE, $course->id))) {
+            // Redirect to manual enrolment page if possible
+            $instances = enrol_get_instances($course->id, true);
+            foreach($instances as $instance) {
+                if ($plugin = enrol_get_plugin($instance->enrol)) {
+                    if ($plugin->get_manual_enrol_link($instance)) {
+                        // we know that the ajax enrol UI will have an option to enrol
+                        redirect(new moodle_url('/enrol/users.php', array('id'=>$course->id)));
+                    }
                 }
             }
         }
@@ -129,7 +132,7 @@ if ($editform->is_cancelled()) {
         // Save any changes to the files used in the editor
         update_course($data, $editoroptions);
     }
-    
+
     switch ($returnto) {
         case 'category':
         case 'topcat': //redirecting to where the new course was created by default.
@@ -139,7 +142,7 @@ if ($editform->is_cancelled()) {
             $url = new moodle_url($CFG->wwwroot.'/course/view.php', array('id'=>$course->id));
             break;
     }
-    redirect($url, get_string('changessaved'));
+    redirect($url);
 }
 
 
