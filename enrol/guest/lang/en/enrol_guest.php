@@ -18,9 +18,10 @@
 /**
  * Strings for component 'enrol_guest', language 'en', branch 'MOODLE_20_STABLE'
  *
- * @package   enrol_guest
- * @copyright 2010 onwards Petr Skoda  {@link http://skodak.org}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    enrol
+ * @subpackage guest
+ * @copyright  2010 onwards Petr Skoda  {@link http://skodak.org}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 $string['guest:config'] = 'Configure guest access instances';
