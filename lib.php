@@ -1,4 +1,4 @@
-<?PHP
+<?php
 
 define('NUM_NONE',     '0');
 define('NUM_NUMBERS',  '1');
@@ -165,6 +165,15 @@ function book_scale_used ($bookid,$scaleid) {
 function book_scale_used_anywhere($scaleid) {
     return false;
 }
+
+function book_get_view_actions() {
+    return array('view', 'view all', 'print');
+}
+
+function book_get_post_actions() {
+    return array('update');
+}
+
 //////////////////////////////////////////////////////////////////////////////////////
 /// Any other book functions go here.  Each of them must have a name that
 /// starts with book_
@@ -446,3 +455,12 @@ function book_relink($id, $bookid, $courseid) {
         }
     }
 }
+
+/**
+ * Tells if files in moddata are trusted and can be served without XSS protection.
+ * @return bool true if file can be submitted by teacher only (trusted), false otherwise
+ */
+function book_is_moddata_trusted() {
+    return true;
+}
+

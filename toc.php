@@ -1,4 +1,4 @@
-<?PHP
+<?php
 
 defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');
 

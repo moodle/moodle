@@ -1,4 +1,4 @@
-<?PHP
+<?php
     //This php script contains all the stuff to backup/restore
     //book mods
 
@@ -377,3 +377,4 @@
 
         return $status;
     }
+

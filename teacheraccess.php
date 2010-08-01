@@ -1,4 +1,4 @@
-<?PHP
+<?php
 
 ///standard routine to allow only teachers in
 ///check of $id and $chapterid parameters

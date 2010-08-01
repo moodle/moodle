@@ -1,4 +1,4 @@
-<?PHP
+<?php
 
 $string['modulename'] = 'Buch';
 $string['modulenameplural'] = 'Bücher';
@@ -45,4 +45,3 @@ $string['relinking'] = 'Verlinken';
 $string['importinfo'] = 'Importiert die gewählten HTML Dateien oder Ordner.<br />Kapitel sind alphabetisch nach den Dateinamen sortiert.';
 $string['maindirectory'] = 'Hauptordner';
 $string['fileordir'] = 'Datei oder Ordner';
-

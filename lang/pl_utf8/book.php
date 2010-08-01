@@ -1,4 +1,4 @@
-<?PHP
+<?php
       // book.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005031000)
 
 
@@ -38,4 +38,3 @@ $string['subchapter'] = 'Podrozdział';
 $string['toc'] = 'Spis treści';
 $string['tocwidth'] = 'Ustaw szrokość spisu treści dla wszystkich książek';
 $string['top'] = 'Góra';
-

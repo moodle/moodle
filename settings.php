@@ -6,3 +6,4 @@ $choices = array('140'=>'140', '160'=>'160', '180'=>'180', '200'=>'200',
 
 $settings->add(new admin_setting_configselect('book_tocwidth', get_string('book_tocwidth', 'book'),
                    get_string('tocwidth', 'book'), '180', $choices));
+
