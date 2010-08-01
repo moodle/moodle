@@ -66,7 +66,7 @@ class enrol_meta_addinstance_form extends moodleform {
         $mform->addElement('hidden', 'id', null);
         $mform->setType('id', PARAM_INT);
 
-        $this->add_action_buttons();
+        $this->add_action_buttons(true, get_string('addinstance', 'enrol'));
 
         $this->set_data(array('id'=>$course->id));
     }

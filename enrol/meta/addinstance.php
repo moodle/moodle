@@ -33,6 +33,11 @@ $id = required_param('id', PARAM_INT); // course id
 $course = $DB->get_record('course', array('id'=>$id), '*', MUST_EXIST);
 $context = get_context_instance(CONTEXT_COURSE, $course->id, MUST_EXIST);
 
+$PAGE->set_url('/enrol/meta/addinstance.php', array('id'=>$course->id));
+$PAGE->set_pagelayout('admin');
+
+navigation_node::override_active_url(new moodle_url('/enrol/instances.php', array('id'=>$course->id)));
+
 require_login($course);
 require_capability('moodle/course:enrolconfig', $context);
 
@@ -52,7 +57,8 @@ if ($mform->is_cancelled()) {
     redirect(new moodle_url('/enrol/instances.php', array('id'=>$course->id)));
 }
 
-$PAGE->set_url('/enrol/meta/addinstance.php', array('id'=>$course->id));
+$PAGE->set_heading($course->fullname);
+$PAGE->set_title(get_string('pluginname', 'enrol_meta'));
 
 echo $OUTPUT->header();
 

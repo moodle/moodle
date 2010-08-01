@@ -37,7 +37,9 @@ require_login($course);
 require_capability('moodle/course:enrolconfig', $context);
 
 $PAGE->set_url('/enrol/cohort/addinstance.php', array('id'=>$course->id));
-$PAGE->set_pagelayout('standard');
+$PAGE->set_pagelayout('admin');
+
+navigation_node::override_active_url(new moodle_url('/enrol/instances.php', array('id'=>$course->id)));
 
 // Try and make the manage instances node on the navigation active
 $courseadmin = $PAGE->settingsnav->get('courseadmin');

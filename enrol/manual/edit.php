@@ -57,6 +57,7 @@ if ($instances = $DB->get_records('enrol', array('courseid'=>$course->id, 'enrol
 } else {
     require_capability('moodle/course:enrolconfig', $context);
     // no instance yet, we have to add new instance
+    navigation_node::override_active_url(new moodle_url('/enrol/instances.php', array('id'=>$course->id)));
     $instance = new object();
     $instance->id       = null;
     $instance->courseid = $course->id;
@@ -82,6 +83,9 @@ if ($mform->is_cancelled()) {
 
     redirect($return);
 }
+
+$PAGE->set_title(get_string('pluginname', 'enrol_manual'));
+$PAGE->set_heading($course->fullname);
 
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('pluginname', 'enrol_manual'));

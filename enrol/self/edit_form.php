@@ -78,7 +78,7 @@ class enrol_self_edit_form extends moodleform {
         $mform->addElement('hidden', 'id');
         $mform->addElement('hidden', 'courseid');
 
-        $this->add_action_buttons();
+        $this->add_action_buttons(true, ($instance->id ? null : get_string('addinstance', 'enrol')));
 
         $this->set_data($instance);
     }
