@@ -1787,7 +1787,7 @@ function format_text_email($text, $format) {
             break;
 
         case FORMAT_WIKI:
-            $text = wiki_to_html($text);
+            // there should not be any of these any more!
         /// This expression turns links into something nice in a text format. (Russell Jungwirth)
         /// From: http://php.net/manual/en/function.eregi-replace.php and simplified
             $text = eregi_replace('(<a [^<]*href=["|\']?([^ "\']*)["|\']?[^>]*>([^<]*)</a>)','\\3 [ \\2 ]', $text);
