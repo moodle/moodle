@@ -1,4 +1,4 @@
-<?PHP
+<?php
       // book.php - created with Moodle 1.3 (2004052500)
       // book.php - Translated to Spanish by Juan Luis Martinez from Dominican Republic (fernluichi@hotmail.com)
 

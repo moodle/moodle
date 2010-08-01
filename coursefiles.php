@@ -912,3 +912,4 @@ function displaydir ($wdir) {
     //echo "<hr width=\"640\" align=\"center\" noshade=\"noshade\" size=\"1\" />";
 
 }
+

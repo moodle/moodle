@@ -1,4 +1,4 @@
-<?PHP
+<?php
 
 require_once('../../config.php');
 require_once('lib.php');
@@ -121,3 +121,4 @@ print_heading_with_help($pageheading, 'edit', 'book', $icon);
 $mform->display();
 
 print_footer($course);
+

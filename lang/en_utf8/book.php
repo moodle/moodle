@@ -1,4 +1,4 @@
-<?PHP
+<?php
 
 $string['modulename'] = 'Book';
 $string['modulenameplural'] = 'Books';
@@ -55,4 +55,3 @@ $string['book:viewhiddenchapters'] = 'View hidden book chapters';
 $string['book:import'] = 'Import chapters';
 $string['book:print'] = 'Print book';
 $string['book:exportimscp'] = 'Export book as IMS content package';
-

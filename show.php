@@ -1,4 +1,4 @@
-<?PHP
+<?php
 
 require('teacheraccess.php'); //page only for teachers
 

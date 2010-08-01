@@ -1,4 +1,4 @@
-<?PHP
+<?php
 
 require('../../config.php');
 require_once('lib.php');
@@ -244,3 +244,4 @@ $generateimscp = ($allowexport) ? '<a title="'.get_string('generateimscp', 'book
 
 <?php
 print_footer($course);
+

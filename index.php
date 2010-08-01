@@ -1,4 +1,4 @@
-<?PHP
+<?php
 
 /// This page lists all the instances of book in a particular course
 
@@ -99,3 +99,4 @@ echo '<br />';
 print_table($table);
 
 print_footer($course);
+

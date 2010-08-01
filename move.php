@@ -1,4 +1,4 @@
-<?PHP
+<?php
 
 require('teacheraccess.php'); //page only for teachers
 $up  = optional_param('up', 0, PARAM_BOOL);
@@ -144,4 +144,3 @@ add_to_log($course->id, 'book', 'update', 'view.php?id='.$cm->id, $book->id, $cm
 book_check_structure($book->id);
 redirect('view.php?id='.$cm->id.'&chapterid='.$chapter->id);
 die;
-

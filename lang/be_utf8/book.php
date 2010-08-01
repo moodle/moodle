@@ -1,4 +1,4 @@
-<?PHP
+<?php
       // book.php - created with Moodle 1.4.4 (2004083140)
 
 
@@ -38,4 +38,3 @@ $string['subchapter'] = 'Параграф';
 $string['toc'] = 'Змест';
 $string['tocwidth'] = 'Вызначыць шырыню зместу для ўсіх падручнікаў';
 $string['top'] = 'наверх';
-

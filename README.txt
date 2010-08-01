@@ -1,5 +1,3 @@
-$Id: README.txt,v 1.6 2008/08/13 23:21:14 skodak Exp $
-
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
 // NOTICE OF COPYRIGHT                                                   //
@@ -12,7 +10,7 @@ $Id: README.txt,v 1.6 2008/08/13 23:21:14 skodak Exp $
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
 // Book module original code                                             //
-// Copyright (C) 2004  Petr Skoda (petr.skoda@vslib.cz)                  //
+// Copyright (C) 2004  Petr Skoda (info@skodak.org)                      //
 //                                                                       //
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
@@ -30,7 +28,7 @@ $Id: README.txt,v 1.6 2008/08/13 23:21:14 skodak Exp $
 //                                                                       //
 ///////////////////////////////////////////////////////////////////////////
 
-Book module for Moodle - version 1.2 (stable release)
+Book module for Moodle - version 1.5 (stable release)
 ===============================================================================
 Created by:
       Petr Skoda (skodak) - most of the coding & design
@@ -42,7 +40,7 @@ Many ideas and code were taken from other Moodle modules and Moodle itself;-)
 Installation:
     * see http://docs.moodle.org/en/Installing_contributed_modules_or_plugins
 
-List of features - version 1.4:
+List of features - version 1.5:
 
     * easy to use - new teachers can quickly create multipage study materials
     * two levels - only chapters and subchapters
@@ -116,5 +114,9 @@ CHANGELOG:
     * formslib conversion
     * capabilities implemented
     * no new features
+== 1.5 2009/11/11 ============================================================
+    * minor cleanup
+    * new Slovenian language pack - thanks Mitja Podreka
+    * updated German Language pack - thanks Ralf Hilgenstock 
 
 skodak

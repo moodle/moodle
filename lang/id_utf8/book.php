@@ -1,4 +1,4 @@
-<?PHP
+<?php
 
 $string['modulename'] = 'Buku';
 $string['modulenameplural'] = 'Buku-buku';
