@@ -2027,9 +2027,9 @@ function print_category_info($category, $depth, $showcourses = false) {
 
     $courses = get_courses($category->id, 'c.sortorder ASC', 'c.id,c.sortorder,c.visible,c.fullname,c.shortname,c.summary');
     if ($showcourses and $coursecount) {
-        echo '<div class="categorylist clearfix">';        
+        echo '<div class="categorylist clearfix">';
         $cat = '';
-        $cat .= html_writer::tag('div', $catimage, array('class'=>'image'));        
+        $cat .= html_writer::tag('div', $catimage, array('class'=>'image'));
         $catlink = html_writer::link(new moodle_url('/course/category.php', array('id'=>$category->id)), format_string($category->name), $catlinkcss);
         $cat .= html_writer::tag('div', $catlink, array('class'=>'name'));
 
@@ -2042,7 +2042,7 @@ function print_category_info($category, $depth, $showcourses = false) {
         } else {
             $html = $cat;
         }
-        echo html_writer::tag('div', $html, array('class'=>'category'));        
+        echo html_writer::tag('div', $html, array('class'=>'category'));
         echo html_writer::tag('div', '', array('class'=>'clearfloat'));
 
         // does the depth exceed maxcategorydepth
@@ -2054,7 +2054,7 @@ function print_category_info($category, $depth, $showcourses = false) {
                 if (!$course->visible) {
                     $linkcss = array('class'=>'dimmed');
                 }
-                
+
                 $coursecontent = '';
                 $courselink = html_writer::link(new moodle_url('/course/view.php', array('id'=>$course->id)), format_string($course->fullname), $linkcss);
                 $coursecontent .= html_writer::tag('div', $courselink, array('class'=>'name'));
@@ -2079,11 +2079,11 @@ function print_category_info($category, $depth, $showcourses = false) {
         }
         echo '</div>';
     } else {
-        echo '<div class="categorylist">';        
+        echo '<div class="categorylist">';
         $html = '';
         $cat = html_writer::link(new moodle_url('/course/category.php', array('id'=>$category->id)), format_string($category->name), $catlinkcss);
         $cat .= html_writer::tag('span', '('.count($courses).')', array('title'=>get_string('numberofcourses'), 'class'=>'numberofcourse'));
-        
+
         if ($depth > 0) {
             for ($i=0; $i< $depth; $i++) {
                 $html = html_writer::tag('div', $html .$cat, array('class'=>'indentation'));
@@ -2092,8 +2092,8 @@ function print_category_info($category, $depth, $showcourses = false) {
         } else {
             $html = $cat;
         }
-        
-        echo html_writer::tag('div', $html, array('class'=>'category'));        
+
+        echo html_writer::tag('div', $html, array('class'=>'category'));
         echo html_writer::tag('div', '', array('class'=>'clearfloat'));
         echo '</div>';
     }
@@ -3719,7 +3719,7 @@ class course_request {
             $subject = get_string('courserequest');
             $message = get_string('courserequestnotifyemail', 'admin', $a);
             foreach ($users as $user) {
-                $this->notify($user, $USER, 'courserequested', $subject, $message);
+                $request->notify($user, $USER, 'courserequested', $subject, $message);
             }
         }
 
