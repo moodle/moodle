@@ -1324,7 +1324,7 @@ function format_text_email($text, $format) {
             break;
 
         case FORMAT_WIKI:
-            $text = wiki_to_html($text);
+            // there should not be any of these any more!
             $text = wikify_links($text);
             return strtr(strip_tags($text), array_flip(get_html_translation_table(HTML_ENTITIES)));
             break;
