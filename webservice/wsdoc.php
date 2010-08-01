@@ -237,7 +237,7 @@ class webservice_documentation_generator {
             $DB->set_field('external_tokens', 'lastaccess', time(), array('id'=>$token->id));
         }
 
-        
+
 
     }
 
@@ -251,6 +251,7 @@ class webservice_documentation_generator {
     protected function display_documentation_html() {
         global $PAGE, $OUTPUT, $SITE, $CFG;
 
+        $PAGE->set_context(get_context_instance(CONTEXT_SYSTEM));
         $PAGE->set_url('/webservice/wsdoc');
         $PAGE->set_docs_path('');
         $PAGE->set_title($SITE->fullname." ".get_string('wsdocumentation', 'webservice'));
@@ -278,9 +279,9 @@ class webservice_documentation_generator {
             $authparams['wsusername'] = $this->webserviceuser->username;
             $authparams['token'] = $this->token;
         }
-        
+
         echo $renderer->documentation_html($this->functions, $printableformat, $activatedprotocol, $authparams);
-      
+
         /// trigger browser print operation
         if (!empty($printableformat)) {
             $PAGE->requires->js_function_call('window.print', array());
@@ -301,6 +302,7 @@ class webservice_documentation_generator {
      protected function display_login_page_html($errormessage) {
         global $PAGE, $OUTPUT, $SITE, $CFG;
 
+        $PAGE->set_context(get_context_instance(CONTEXT_SYSTEM));
         $PAGE->set_url('/webservice/wsdoc');
         $PAGE->set_docs_path('');
         $PAGE->set_title($SITE->fullname." ".get_string('wsdocumentation', 'webservice'));
@@ -312,7 +314,7 @@ class webservice_documentation_generator {
 
         $renderer = $PAGE->get_renderer('core', 'webservice');
         echo $renderer->login_page_html($errormessage);
-        
+
         echo $OUTPUT->footer();
 
     }
