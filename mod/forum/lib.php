@@ -56,7 +56,7 @@ define('FORUM_TRACKING_ON', 2);
  * @param object $forum add forum instance (with magic quotes)
  * @return int intance id
  */
-function forum_add_instance($forum) {
+function forum_add_instance($forum, $mform) {
     global $CFG, $DB;
 
     $forum->timemodified = time();
@@ -71,6 +71,7 @@ function forum_add_instance($forum) {
     }
 
     $forum->id = $DB->insert_record('forum', $forum);
+    $modcontext = get_context_instance(CONTEXT_MODULE, $forum->coursemodule);
 
     if ($forum->type == 'single') {  // Create related discussion.
         $discussion = new object();
@@ -86,8 +87,15 @@ function forum_add_instance($forum) {
 
         $message = '';
 
-        if (! forum_add_discussion($discussion, null, $message)) {
-            print_error('cannotadd', 'forum');
+        $discussion->id = forum_add_discussion($discussion, null, $message);
+
+        if ($mform and $draftid = file_get_submitted_draft_itemid('introeditor')) {
+            // ugly hack - we need to copy the files somehow
+            $discussion = $DB->get_record('forum_discussions', array('id'=>$discussion->id), '*', MUST_EXIST);
+            $post = $DB->get_record('forum_posts', array('id'=>$discussion->firstpost), '*', MUST_EXIST);
+
+            $post->message = file_save_draft_area_files($draftid, $modcontext->id, 'mod_forum', 'post', $post->id, array('subdirs'=>true), $post->message);
+            $DB->set_field('forum_posts', 'message', $post->message, array('id'=>$post->id));
         }
     }
 
@@ -98,7 +106,7 @@ function forum_add_instance($forum) {
     /// stage. However, because the forum is brand new, we know that there are
     /// no role assignments or overrides in the forum context, so using the
     /// course context gives the same list of users.
-        $users = forum_get_potential_subscribers(get_context_instance(CONTEXT_COURSE, $forum->course), 0, 'u.id, u.email', '');
+        $users = forum_get_potential_subscribers($modcontext, 0, 'u.id, u.email', '');
         foreach ($users as $user) {
             forum_subscribe($user->id, $forum->id);
         }
@@ -119,7 +127,7 @@ function forum_add_instance($forum) {
  * @param object $forum forum instance (with magic quotes)
  * @return bool success
  */
-function forum_update_instance($forum) {
+function forum_update_instance($forum, $mform) {
     global $DB, $OUTPUT, $USER;
 
     $forum->timemodified = time();
@@ -173,7 +181,15 @@ function forum_update_instance($forum) {
         }
 
         $cm         = get_coursemodule_from_instance('forum', $forum->id);
-        $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
+        $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id, MUST_EXIST);
+
+        if ($mform and $draftid = file_get_submitted_draft_itemid('introeditor')) {
+            // ugly hack - we need to copy the files somehow
+            $discussion = $DB->get_record('forum_discussions', array('id'=>$discussion->id), '*', MUST_EXIST);
+            $post = $DB->get_record('forum_posts', array('id'=>$discussion->firstpost), '*', MUST_EXIST);
+
+            $post->message = file_save_draft_area_files($draftid, $modcontext->id, 'mod_forum', 'post', $post->id, array('subdirs'=>true), $post->message);
+        }
 
         $post->subject       = $forum->name;
         $post->message       = $forum->intro;

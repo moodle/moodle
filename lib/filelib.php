@@ -694,7 +694,8 @@ function file_save_draft_area_files($draftitemid, $contextid, $component, $filea
     }
 
     // note: do not purge the draft area - we clean up areas later in cron,
-    //       the reason is that user might press submit twice and they would loose the files
+    //       the reason is that user might press submit twice and they would loose the files,
+    //       also sometimes we might want to use hacks that save files into two different areas
 
     if (is_null($text)) {
         return null;
