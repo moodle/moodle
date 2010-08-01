@@ -1,4 +1,4 @@
-<?PHP // $Id: book.php,v 1.1 2006/03/12 18:40:05 skodak Exp $
+<?PHP
 
 $string['modulename'] = 'Buku';
 $string['modulenameplural'] = 'Buku-buku';
@@ -43,7 +43,3 @@ $string['maindirectory'] = 'Direktori utama';
 $string['chooseafileordir'] = 'Pilih sebuah file atau direktori';
 
 $string['relinking'] = 'Relinking';
-
-
-
-?>

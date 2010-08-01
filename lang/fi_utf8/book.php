@@ -1,4 +1,4 @@
-<?PHP // $Id: book.php,v 1.1 2006/03/12 18:40:03 skodak Exp $ 
+<?PHP
       // book.php - created with Moodle 1.5 unstable development (2004092000)
 
 
@@ -39,5 +39,3 @@ $string['thislanguage'] = 'Suomi';
 $string['toc'] = 'Sisällysluettelo';
 $string['tocwidth'] = 'Valitse kaikkien kirjojen sisällysluetteloiden leveys.';
 $string['top'] = 'Alkuun';
-
-?>

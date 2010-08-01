@@ -1,4 +1,4 @@
-<?PHP // $Id: teacheraccess.php,v 1.3 2008/08/13 23:21:14 skodak Exp $
+<?PHP
 
 ///standard routine to allow only teachers in
 ///check of $id and $chapterid parameters
@@ -40,5 +40,3 @@ if ($chapter->bookid != $book->id) {//chapter id not in this book!!!!
 //check all variables
 unset($id);
 unset($chapterid);
-
-?>

@@ -1,4 +1,4 @@
-<?php // $Id: coursefiles.php,v 1.3 2008/08/13 23:21:13 skodak Exp $
+<?php
 
 //  Manage all uploaded files in a course file area
 
@@ -912,5 +912,3 @@ function displaydir ($wdir) {
     //echo "<hr width=\"640\" align=\"center\" noshade=\"noshade\" size=\"1\" />";
 
 }
-
-?>

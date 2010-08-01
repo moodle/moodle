@@ -1,4 +1,4 @@
-<?PHP // $Id: backuplib.php,v 1.1 2006/03/12 18:39:59 skodak Exp $
+<?PHP
     //This php script contains all the stuff to backup/restore
     //book mods
 
@@ -154,4 +154,3 @@
          return $info;
     }
 
-?>

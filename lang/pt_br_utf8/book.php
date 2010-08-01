@@ -1,4 +1,4 @@
-<?PHP // $Id: book.php,v 1.1 2006/03/12 18:40:02 skodak Exp $
+<?PHP
 
 $string['modulename'] = 'Livro';
 $string['modulenameplural'] = 'Livros';
@@ -44,5 +44,3 @@ $string['relinking'] = 'Re-linkando';
 $string['importinfo'] = 'Importar o arquivo HTML ou diretório selecionados.<br />Os capítulos são ordenados alfabeticamente usando os nomes dos arquivos.';
 $string['maindirectory'] = 'Diretório principal';
 $string['fileordir'] = 'Arquivo ou diretório';
-
-?>

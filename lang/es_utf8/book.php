@@ -1,4 +1,4 @@
-<?PHP // $Id: book.php,v 1.1 2006/03/12 18:40:03 skodak Exp $
+<?PHP
       // book.php - created with Moodle 1.3 (2004052500)
       // book.php - Translated to Spanish by Juan Luis Martinez from Dominican Republic (fernluichi@hotmail.com)
 
@@ -28,5 +28,3 @@ $string['subchapter'] = 'Subcápitulo';
 $string['toc'] = 'Tabla de Contenido';
 $string['tocwidth'] = 'Seleciona el Ancho de la Tabla de Contenidos de Todos los Libros.';
 $string['top'] = 'arriba';
-
-?>

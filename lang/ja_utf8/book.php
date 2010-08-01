@@ -1,4 +1,4 @@
-<?PHP // $Id: book.php,v 1.1 2006/03/12 18:40:04 skodak Exp $
+<?PHP
 
 $string['modulename'] = 'ブック';
 $string['modulenameplural'] = 'ブック';
@@ -44,5 +44,3 @@ $string['relinking'] = 'リンクの再作成中';
 $string['importinfo'] = '選択したHTMLもしくはディレクトリのインポート<br />各章はファイル名順にソートされます。';
 $string['maindirectory'] = 'メインディレクトリ';
 $string['fileordir'] = 'ファイルもしくはディレクトリ';
-
-?>

@@ -1,4 +1,4 @@
-<?PHP // $Id: print.php,v 1.3 2008/08/13 23:21:14 skodak Exp $
+<?PHP
 
 require_once('../../config.php');
 require_once('lib.php');
@@ -163,4 +163,3 @@ if ($chapter) {
     echo '</body> </html>';
 }
 
-?>

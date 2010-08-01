@@ -1,4 +1,4 @@
-<?PHP // $Id: generateimscp.php,v 1.3 2008/08/13 23:21:14 skodak Exp $
+<?PHP
 
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
@@ -252,5 +252,3 @@ function chapter2html($chapter, $courseid, $bookid) {
 
     return $object;
 }
-
-?>

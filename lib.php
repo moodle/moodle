@@ -1,4 +1,4 @@
-<?PHP // $Id: lib.php,v 1.6 2008/08/13 23:21:14 skodak Exp $
+<?PHP
 
 define('NUM_NONE',     '0');
 define('NUM_NUMBERS',  '1');
@@ -446,5 +446,3 @@ function book_relink($id, $bookid, $courseid) {
         }
     }
 }
-
-?>

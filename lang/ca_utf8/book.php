@@ -1,4 +1,4 @@
-<?PHP // $Id: book.php,v 1.1 2006/03/12 18:40:03 skodak Exp $
+<?PHP
 
 $string['modulename'] = 'Llibre';
 $string['modulenameplural'] = 'Llibres';
@@ -45,5 +45,3 @@ $string['relinking'] = 'S\'està reenllaçant';
 $string['importinfo'] = 'Importa el directori o el fitxer HTML seleccionat.<br />Els capítols estan ordenats alfabèticament pel nom del fitxer.';
 $string['maindirectory'] = 'Directori principal';
 $string['fileordir'] = 'Fitxer o directori';
-
-?>

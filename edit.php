@@ -1,4 +1,4 @@
-<?PHP // $Id: edit.php,v 1.4 2008/08/13 23:21:14 skodak Exp $
+<?PHP
 
 require_once('../../config.php');
 require_once('lib.php');
@@ -87,7 +87,7 @@ if ($mform->is_cancelled()) {
         $sql = "UPDATE {$CFG->prefix}book_chapters
                    SET pagenum = pagenum + 1
                  WHERE bookid = $book->id AND pagenum >= $data->pagenum";
-        execute_sql($sql, false);  
+        execute_sql($sql, false);
 
         if (!$data->id = insert_record('book_chapters', addslashes_recursive($data))) {
             error('Could not insert a new chapter');
@@ -121,5 +121,3 @@ print_heading_with_help($pageheading, 'edit', 'book', $icon);
 $mform->display();
 
 print_footer($course);
-
-?>

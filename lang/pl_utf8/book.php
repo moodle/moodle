@@ -1,4 +1,4 @@
-<?PHP // $Id: book.php,v 1.1 2006/03/12 18:40:04 skodak Exp $ 
+<?PHP
       // book.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005031000)
 
 
@@ -39,4 +39,3 @@ $string['toc'] = 'Spis treści';
 $string['tocwidth'] = 'Ustaw szrokość spisu treści dla wszystkich książek';
 $string['top'] = 'Góra';
 
-?>

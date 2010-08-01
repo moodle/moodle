@@ -1,4 +1,4 @@
-<?PHP // $Id: view.php,v 1.6 2008/08/13 23:21:14 skodak Exp $
+<?PHP
 
 require('../../config.php');
 require_once('lib.php');
@@ -244,5 +244,3 @@ $generateimscp = ($allowexport) ? '<a title="'.get_string('generateimscp', 'book
 
 <?php
 print_footer($course);
-
-?>

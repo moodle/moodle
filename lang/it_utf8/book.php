@@ -1,4 +1,4 @@
-<?PHP // $Id: book.php,v 1.3 2007/07/03 11:42:29 andreabix Exp $ 
+<?PHP
       // book.php - created with Moodle 1.7.1+ (2006101010)
 
 
@@ -38,5 +38,3 @@ $string['subchapter'] = 'Paragrafo';
 $string['toc'] = 'Sommario';
 $string['tocwidth'] = 'Larghezza in pixel del Sommario per tutti i Libri.';
 $string['top'] = 'Ritorna su';
-
-?>

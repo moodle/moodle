@@ -1,4 +1,4 @@
-<?PHP // $Id: book.php,v 1.2 2008/07/22 15:16:26 skodak Exp $
+<?PHP
 
 $string['modulename'] = 'Buch';
 $string['modulenameplural'] = 'Bücher';
@@ -46,4 +46,3 @@ $string['importinfo'] = 'Importiert die gewählten HTML Dateien oder Ordner.<br 
 $string['maindirectory'] = 'Hauptordner';
 $string['fileordir'] = 'Datei oder Ordner';
 
-?>

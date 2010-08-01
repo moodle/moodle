@@ -1,4 +1,4 @@
-<?PHP // $Id: toc.php,v 1.4 2008/08/13 23:21:14 skodak Exp $
+<?PHP
 
 defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');
 
@@ -186,4 +186,3 @@ $toc .= '</div>';
 
 $toc = str_replace('<ul></ul>', '', $toc); //cleanup of invalid structures
 
-?>

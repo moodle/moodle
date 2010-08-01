@@ -1,4 +1,4 @@
-<?PHP // $Id: index.php,v 1.3 2008/03/25 20:19:49 poltawski Exp $
+<?PHP
 
 /// This page lists all the instances of book in a particular course
 
@@ -99,5 +99,3 @@ echo '<br />';
 print_table($table);
 
 print_footer($course);
-
-?>

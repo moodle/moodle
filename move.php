@@ -1,4 +1,4 @@
-<?PHP // $Id: move.php,v 1.2 2006/11/21 19:26:36 skodak Exp $
+<?PHP
 
 require('teacheraccess.php'); //page only for teachers
 $up  = optional_param('up', 0, PARAM_BOOL);
@@ -145,4 +145,3 @@ book_check_structure($book->id);
 redirect('view.php?id='.$cm->id.'&chapterid='.$chapter->id);
 die;
 
-?>

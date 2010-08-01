@@ -66,5 +66,3 @@ $mod_book_capabilities = array(
     ),
 
 );
-
-?>

@@ -1,4 +1,4 @@
-<?PHP // $Id: import.php,v 1.5 2008/08/13 23:21:13 skodak Exp $
+<?PHP
 
 require('../../config.php');
 require_once('lib.php');
@@ -139,4 +139,3 @@ $mform->display();
 
 print_footer($course);
 
-?>

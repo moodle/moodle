@@ -1,4 +1,4 @@
-<?PHP // $Id: book.php,v 1.1 2006/03/12 18:40:04 skodak Exp $ 
+<?PHP
       // book.php - created with Moodle 1.4 (2004083100)
 
 
@@ -39,4 +39,3 @@ $string['toc'] = 'Innehållsförteckning';
 $string['tocwidth'] = 'Välj en bredd på innehållsförteckningen som gäller alla böcker.';
 $string['top'] = 'Upp';
 
-?>

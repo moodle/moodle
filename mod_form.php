@@ -41,4 +41,3 @@ class mod_book_mod_form extends moodleform_mod {
 
 
 }
-?>

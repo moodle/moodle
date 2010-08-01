@@ -1,4 +1,4 @@
-<?PHP // $Id: book.php,v 1.5 2008/08/13 23:21:14 skodak Exp $
+<?PHP
 
 $string['modulename'] = 'Book';
 $string['modulenameplural'] = 'Books';
@@ -56,4 +56,3 @@ $string['book:import'] = 'Import chapters';
 $string['book:print'] = 'Print book';
 $string['book:exportimscp'] = 'Export book as IMS content package';
 
-?>

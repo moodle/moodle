@@ -1,6 +1,6 @@
-<?php  //$Id: upgrade.php,v 1.4 2007/09/24 19:15:39 stronk7 Exp $
+<?php
 
-// This file keeps track of upgrades to 
+// This file keeps track of upgrades to
 // the assignment module
 //
 // Sometimes, changes between versions involve
@@ -23,8 +23,8 @@ function xmldb_book_upgrade($oldversion=0) {
 
     $result = true;
 
-/// And upgrade begins here. For each one, you'll need one 
-/// block of code similar to the next one. Please, delete 
+/// And upgrade begins here. For each one, you'll need one
+/// block of code similar to the next one. Please, delete
 /// this comment lines once this file start handling proper
 /// upgrade code.
 
@@ -41,5 +41,3 @@ function xmldb_book_upgrade($oldversion=0) {
 
     return $result;
 }
-
-?>

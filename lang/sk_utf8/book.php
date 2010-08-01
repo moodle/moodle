@@ -1,4 +1,4 @@
-<?PHP // $Id: book.php,v 1.1 2006/03/12 18:40:00 skodak Exp $ 
+<?PHP
       // book.php - created with Moodle 1.3.3 + (2004052503)
 
 
@@ -38,5 +38,3 @@ $string['subchapter'] = 'Podkapitola';
 $string['toc'] = 'Obsah';
 $string['tocwidth'] = 'Vyberte šírku obsahu pre všetky knihy.';
 $string['top'] = 'začiatok';
-
-?>

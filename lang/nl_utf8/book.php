@@ -1,4 +1,4 @@
-<?PHP // $Id: book.php,v 1.1 2006/03/12 18:40:04 skodak Exp $ 
+<?PHP
       // book.php - created with Moodle 1.5 development (2004082300)
 
 
@@ -38,4 +38,3 @@ $string['toc'] = 'Inhoudstafel';
 $string['tocwidth'] = 'Kies de breedte van de inhoudstafel voor alle boeken.';
 $string['top'] = 'boven';
 
-?>

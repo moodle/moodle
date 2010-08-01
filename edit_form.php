@@ -1,4 +1,4 @@
-<?php  //$Id: edit_form.php,v 1.1 2008/08/13 23:21:14 skodak Exp $
+<?php
 
 require_once($CFG->libdir.'/formslib.php');
 
@@ -49,5 +49,3 @@ class book_chapter_edit_form extends moodleform {
         }
     }
 }
-
-?>

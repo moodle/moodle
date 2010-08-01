@@ -1,4 +1,4 @@
-<?PHP // $Id: delete.php,v 1.3 2008/03/25 20:19:49 poltawski Exp $
+<?PHP
 
 require('teacheraccess.php'); //page only for teachers
 $confirm = optional_param('confirm', 0, PARAM_BOOL);
@@ -53,4 +53,3 @@ if ($confirm) {  // the operation was confirmed.
 
 print_footer($course);
 
-?>
