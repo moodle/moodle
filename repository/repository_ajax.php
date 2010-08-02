@@ -39,8 +39,6 @@ if (!isloggedin()) {
     die(json_encode($err));
 }
 
-require_login();
-
 /// Parameters
 $action    = optional_param('action', '', PARAM_ALPHA);
 $repo_id   = optional_param('repo_id', 0, PARAM_INT);           // Repository ID
@@ -58,6 +56,10 @@ $saveas_filename = optional_param('title', '', PARAM_FILE);     // save as file 
 $saveas_path   = optional_param('savepath', '/', PARAM_PATH);   // save as file path
 $search_text   = optional_param('s', '', PARAM_CLEANHTML);
 $linkexternal  = optional_param('linkexternal', '', PARAM_ALPHA);
+
+list($context, $course, $cm) = get_context_info_array($contextid);
+require_login($course, false, $cm);
+$PAGE->set_context($context);
 
 /// Headers to make it not cacheable
 header('Cache-Control: no-cache, must-revalidate');
