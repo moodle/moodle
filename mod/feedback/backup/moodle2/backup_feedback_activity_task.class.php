@@ -68,7 +68,7 @@ class backup_feedback_activity_task extends backup_activity_task {
         $content= preg_replace($search, '$@FEEDBACKANALYSISBYID*$2@$', $content);
 
         // Link to feedback entries by moduleid
-        $search="/(".$base."\/mod\/feedback\/analysis.php\?id\=)([0-9]+)/";
+        $search="/(".$base."\/mod\/feedback\/show_entries.php\?id\=)([0-9]+)/";
         $content= preg_replace($search, '$@FEEDBACKSHOWENTRIESBYID*$2@$', $content);
 
         return $content;

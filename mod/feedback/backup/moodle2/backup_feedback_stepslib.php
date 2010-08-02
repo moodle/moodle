@@ -91,20 +91,22 @@ class backup_feedback_activity_structure_step extends backup_activity_structure_
 
 
         // Build the tree
+        $feedback->add_child($items);
+        $items->add_child($item);
+
         $feedback->add_child($completeds);
         $completeds->add_child($completed);
 
         $completed->add_child($values);
         $values->add_child($value);
 
-        $feedback->add_child($items);
-        $items->add_child($item);
-
         $feedback->add_child($trackings);
         $trackings->add_child($tracking);
 
         // Define sources
         $feedback->set_source_table('feedback', array('id' => backup::VAR_ACTIVITYID));
+
+        $item->set_source_table('feedback_item', array('feedback' => backup::VAR_PARENTID));
 
         // All these source definitions only happen if we are including user info
         if ($userinfo) {
@@ -113,8 +115,6 @@ class backup_feedback_activity_structure_step extends backup_activity_structure_
                   FROM {feedback_completed}
                  WHERE feedback = ?',
                 array(backup::VAR_PARENTID));
-
-            $item->set_source_table('feedback_item', array('feedback' => backup::VAR_PARENTID));
 
             $value->set_source_table('feedback_value', array('completed' => backup::VAR_PARENTID));
 
