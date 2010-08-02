@@ -12,6 +12,7 @@
 .path-mod-assignment .files a {white-space:nowrap;}
 .path-mod-assignment .flexible-wrap {width:100%;overflow:auto;}
 .path-mod-assignment .flexible-wrap > .flexible {margin:0;}
+.path-mod-assignment .late {color: red;}
 
 /** Styles for submissions.php **/
 #page-mod-assignment-submissions form#options div {text-align:right;margin-left:auto;margin-right:20px;}
