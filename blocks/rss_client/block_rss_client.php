@@ -240,24 +240,23 @@
             $link = $item->get_id();
         }
 
-        $r = "<li>\n";
-        $r.= '<div class="link"><a href="'.urldecode($link).'" onclick="this.target=\'_blank\'" >'."\n";
-        $r.= s($title);
-        $r.= "</a></div>\n";
+        $r = html_writer::start_tag('li');
+            $r.= html_writer::start_tag('div',array('class'=>'link'));
+                $r.= html_writer::link(urldecode($link), s($title), array('onclick'=>'this.target="_blank"'));
+            $r.= html_writer::end_tag('div');
 
-        if($this->config->display_description && !empty($description)){
+            if($this->config->display_description && !empty($description)){
 
-            $description = break_up_long_words($description, 30);
+                $description = break_up_long_words($description, 30);
 
-            $formatoptions = new object;
-            $formatoptions->para = false;
+                $formatoptions = new object;
+                $formatoptions->para = false;
 
-            $r.= '<div class="description">';
-            $r.= format_text($description, FORMAT_HTML, $formatoptions, $this->page->course->id);
-            $r.= '</div>';
-        }
-
-        $r.= '</li>';
+                $r.= html_writer::start_tag('div',array('class'=>'description'));
+                    $r.= format_text($description, FORMAT_HTML, $formatoptions, $this->page->course->id);
+                $r.= html_writer::end_tag('div');
+            }
+        $r.= html_writer::end_tag('li');
 
         return $r;
     }
