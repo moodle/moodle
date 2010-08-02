@@ -83,6 +83,7 @@ class restore_feedback_activity_structure_step extends restore_activity_structur
         $oldid = $data->id;
         $data->feedback = $this->get_new_parentid('feedback');
         $data->userid = $this->get_mappingid('user', $data->userid);
+        $data->timemodified = $this->apply_date_offset($data->timemodified);
 
         $newitemid = $DB->insert_record('feedback_completed', $data);
         $this->set_mapping('feedback_completed', $oldid, $newitemid);
