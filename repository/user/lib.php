@@ -52,21 +52,17 @@ class repository_user extends repository {
         if (!empty($encodedpath)) {
             $params = unserialize(base64_decode($encodedpath));
             if (is_array($params)) {
-                $itemid   = clean_param($params['itemid'], PARAM_INT);
-                $filename = clean_param($params['filename'], PARAM_FILE);
-                $filearea = clean_param($params['filearea'], PARAM_ALPHAEXT);
                 $filepath = clean_param($params['filepath'], PARAM_PATH);;
-                $component = clean_param($params['component'], PARAM_ALPHAEXT);
-                $context  = get_context_instance_by_id(clean_param($params['contextid'], PARAM_INT));
+                $filename = clean_param($params['filename'], PARAM_FILE);
             }
         } else {
             $itemid   = 0;
-            $filename = null;
-            $filearea = 'private';
             $filepath = '/';
-            $component = 'user';
-            $context = get_context_instance(CONTEXT_USER, $USER->id);
+            $filename = null;
         }
+        $filearea = 'private';
+        $component = 'user';
+        $context = get_context_instance(CONTEXT_USER, $USER->id);
 
         try {
             $browser = get_file_browser();

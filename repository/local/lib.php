@@ -52,12 +52,12 @@ class repository_local extends repository {
         if (!empty($encodedpath)) {
             $params = unserialize(base64_decode($encodedpath));
             if (is_array($params)) {
-                $itemid   = clean_param($params['itemid'], PARAM_INT);
-                $filename = clean_param($params['filename'], PARAM_FILE);
-                $filearea = clean_param($params['filearea'], PARAM_ALPHAEXT);
-                $filepath = clean_param($params['filepath'], PARAM_PATH);;
-                $component = clean_param($params['component'], PARAM_ALPHAEXT);
-                $context  = get_context_instance_by_id(clean_param($params['contextid'], PARAM_INT));
+                $component = is_null($params['component']) ? NULL : clean_param($params['component'], PARAM_ALPHAEXT);
+                $filearea  = is_null($params['filearea']) ? NULL : clean_param($params['filearea'], PARAM_ALPHAEXT);
+                $itemid    = is_null($params['itemid']) ? NULL : clean_param($params['itemid'], PARAM_INT);
+                $filepath  = is_null($params['filepath']) ? NULL : clean_param($params['filepath'], PARAM_PATH);;
+                $filename  = is_null($params['filename']) ? NULL : clean_param($params['filename'], PARAM_FILE);
+                $context = get_context_instance_by_id(clean_param($params['contextid'], PARAM_INT));
             }
         } else {
             $itemid   = null;
