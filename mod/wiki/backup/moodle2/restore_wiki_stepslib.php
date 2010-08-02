@@ -59,6 +59,7 @@ class restore_wiki_activity_structure_step extends restore_activity_structure_st
 
         $data->editbegin = $this->apply_date_offset($data->editbegin);
         $data->editend = $this->apply_date_offset($data->editend);
+        $data->timemodified = $this->apply_date_offset($data->timemodified);
 
         // insert the wiki record
         $newitemid = $DB->insert_record('wiki', $data);
@@ -86,6 +87,9 @@ class restore_wiki_activity_structure_step extends restore_activity_structure_st
         $oldid = $data->id;
         $data->subwikiid = $this->get_new_parentid('wiki_subwiki');
         $data->userid = $this->get_mappingid('user', $data->userid);
+        $data->timemodified = $this->apply_date_offset($data->timemodified);
+        $data->timecreated = $this->apply_date_offset($data->timecreated);
+        $data->timerendered = $this->apply_date_offset($data->timerendered);
 
         $newitemid = $DB->insert_record('wiki_pages', $data);
         $this->set_mapping('wiki_page', $oldid, $newitemid);
@@ -97,10 +101,10 @@ class restore_wiki_activity_structure_step extends restore_activity_structure_st
         $oldid = $data->id;
         $data->pageid = $this->get_new_parentid('wiki_page');
         $data->userid = $this->get_mappingid('user', $data->userid);
+        $data->timecreated = $this->apply_date_offset($data->timecreated);
 
         $newitemid = $DB->insert_record('wiki_versions', $data);
-        // No need to save this mapping as far as nothing depend on it
-        // (child paths, file areas nor links decoder)
+        $this->set_mapping('wiki_version', $oldid, $newitemid);
     }
     protected function process_wiki_synonym($data) {
         global $DB;

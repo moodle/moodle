@@ -55,7 +55,8 @@ class restore_wiki_activity_task extends restore_activity_task {
         $contents = array();
 
         $contents[] = new restore_decode_content('wiki', array('intro'), 'wiki');
-
+        $contents[] = new restore_decode_content('wiki_versions', array('content'), 'wiki_version');
+        $contents[] = new restore_decode_content('wiki_pages', array('intro'), 'wiki_page');
         return $contents;
     }
 
