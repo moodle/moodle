@@ -60,6 +60,7 @@ class restore_lesson_activity_structure_step extends restore_activity_structure_
 
         $data->available = $this->apply_date_offset($data->available);
         $data->deadline = $this->apply_date_offset($data->deadline);
+        $data->timemodified = $this->apply_date_offset($data->timemodified);
 
         // insert the lesson record
         $newitemid = $DB->insert_record('lesson', $data);
@@ -75,6 +76,8 @@ class restore_lesson_activity_structure_step extends restore_activity_structure_
         $data->lessonid = $this->get_new_parentid('lesson');
         $data->prevpageid = (empty($data->prevpageid)) ? 0 : $this->get_mappingid('lesson_page', $data->prevpageid);
         $data->nextpageid = 0; //we don't know the id of the next page as it hasn't been created yet.
+        $data->timemodified = $this->apply_date_offset($data->timemodified);
+        $data->timecreated = $this->apply_date_offset($data->timecreated);
 
         $newitemid = $DB->insert_record('lesson_pages', $data);
         $this->set_mapping('lesson_page', $oldid, $newitemid);
@@ -97,6 +100,8 @@ class restore_lesson_activity_structure_step extends restore_activity_structure_
         $data->lessonid = $this->get_new_parentid('lesson');
         $data->pageid = $this->get_new_parentid('lesson_page');
         $data->answer = $data->answer_text;
+        $data->timemodified = $this->apply_date_offset($data->timemodified);
+        $data->timecreated = $this->apply_date_offset($data->timecreated);
 
         $newitemid = $DB->insert_record('lesson_answers', $data);
         $this->set_mapping('lesson_answer', $oldid, $newitemid);
