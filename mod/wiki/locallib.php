@@ -1085,7 +1085,7 @@ function wiki_get_comments($context, $pageid) {
     $cmt->context = $context;
     $cmt->itemid = $pageid;
     $cmt->pluginname = 'wiki';
-    $cmt->area = 'wiki_comment_section';
+    $cmt->area = 'wiki_page';
     $cmt->course = $course;
     $manager = new comment($cmt);
 
@@ -1101,7 +1101,7 @@ function wiki_get_comments($context, $pageid) {
 function wiki_get_comments_by_user($userid) {
     global $DB;
 
-    $area = 'wiki_comment_section';
+    $area = 'wiki_page';
     $sql = "SELECT c.*
             FROM {comments} c
             WHERE c.userid = ? and c.commentarea = ?";
@@ -1126,7 +1126,7 @@ function wiki_add_comment($context, $pageid, $content, $editor) {
     $cmt = new stdclass();
     $cmt->context = $context;
     $cmt->itemid = $pageid;
-    $cmt->area = 'wiki_comment_section';
+    $cmt->area = 'wiki_page';
     $cmt->course = $course;
     $cmt->pluginname = 'wiki';
 
@@ -1157,7 +1157,7 @@ function wiki_delete_comment($idcomment, $context, $pageid) {
     $cmt = new stdclass;
     $cmt->context = $context;
     $cmt->itemid = $pageid;
-    $cmt->area = 'wiki_comment_section';
+    $cmt->area = 'wiki_page';
     $cmt->pluginname = 'wiki';
     $cmt->course = $course;
 
@@ -1220,7 +1220,7 @@ function wiki_print_page_content($page, $context, $subwikiid) {
     echo $OUTPUT->box($html);
 
     if (!empty($CFG->usetags)) {
-        $tags = tag_get_tags_array('wiki', $page->id);
+        $tags = tag_get_tags_array('wiki_page', $page->id);
         echo '<p class="wiki-tags"><span>Tags: </span>' . join($tags, ", ") . '</p>';
     }
 

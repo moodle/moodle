@@ -313,5 +313,22 @@ function xmldb_wiki_upgrade($oldversion) {
         //upgrade_mod_savepoint(true, 2010040120, 'wiki');
     }
 
+    if ($oldversion < 2010080201) {
+
+        $sql = "UPDATE {comments}
+                SET commentarea = 'wiki_page'
+                WHERE commentarea = 'wiki_comment_section'";
+        $DB->execute($sql);
+
+        $sql = "UPDATE {tag_instance}
+                SET itemtype = 'wiki_page'
+                WHERE itemtype = 'wiki'";
+        $DB->execute($sql);
+
+        echo $OUTPUT->notification('Updating comments and tags', 'notifysuccess');
+    }
+
+
+
     return true;
 }

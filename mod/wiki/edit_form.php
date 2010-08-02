@@ -43,6 +43,8 @@ class mod_wiki_edit_form extends moodleform {
 
         $version = $this->_customdata['version'];
         $format = $this->_customdata['format'];
+        $tags = !isset($this->_customdata['tags'])?"":$this->_customdata['tags'];
+
 
         if ($format != 'html') {
             $contextid = $this->_customdata['contextid'];
@@ -86,6 +88,7 @@ class mod_wiki_edit_form extends moodleform {
         if (!empty($CFG->usetags)) {
             $mform->addElement('header', 'tagshdr', get_string('tags', 'tag'));
             $mform->addElement('tags', 'tags', get_string('tags'));
+            $mform->setDefault('tags', $tags);
         }
 
         $buttongroup = array();
