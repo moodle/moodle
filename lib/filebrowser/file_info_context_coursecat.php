@@ -113,7 +113,7 @@ class file_info_context_coursecat extends file_info {
      * @return string
      */
     public function get_visible_name() {
-        return format_string($this->category->name);
+        return format_string($this->category->name, true, array('context'=>$this->context));
     }
 
     /**
