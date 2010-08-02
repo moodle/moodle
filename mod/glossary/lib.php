@@ -135,7 +135,7 @@ function glossary_update_instance($glossary) {
  * @return bool success
  */
 function glossary_delete_instance($id) {
-    global $DB;
+    global $DB, $CFG;
 
     if (!$glossary = $DB->get_record('glossary', array('id'=>$id))) {
         return false;
@@ -194,6 +194,10 @@ function glossary_delete_instance($id) {
     $category_select = "SELECT id FROM {glossary_categories} WHERE glossaryid = ?";
     $DB->delete_records_select('glossary_entries_categories', "categoryid IN ($category_select)", array($id));
     $DB->delete_records('glossary_categories', array('glossaryid'=>$id));
+
+    // Delete comments
+    require_once($CFG->dirroot.'/comment/lib.php');
+    comment::delete_comments(array('contextid'=>$context->id));
 
     // delete all files
     $fs->delete_area_files($context->id);

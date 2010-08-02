@@ -889,7 +889,7 @@ function data_update_instance($data) {
  * @return bool
  */
 function data_delete_instance($id) {    // takes the dataid
-    global $DB;
+    global $DB, $CFG;
 
     if (!$data = $DB->get_record('data', array('id'=>$id))) {
         return false;
@@ -903,6 +903,10 @@ function data_delete_instance($id) {    // takes the dataid
     // files
     $fs = get_file_storage();
     $fs->delete_area_files($context->id, 'mod_data');
+
+    // Delete comments
+    require_once($CFG->dirroot.'/comment/lib.php');
+    comment::delete_comments(array('contextid'=>$context->id));
 
     // get all the records in this data
     $sql = "SELECT r.id

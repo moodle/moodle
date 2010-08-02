@@ -4096,6 +4096,10 @@ function remove_course_contents($courseid, $showfeedback=true) {
     require_once($CFG->dirroot.'/tag/coursetagslib.php');
     coursetag_delete_course_tags($course->id, $showfeedback);
 
+/// Delete comments
+    require_once($CFG->dirroot.'/comment/lib.php');
+    comment::delete_comments(array('contextid'=>$context->id));
+
     // Delete legacy files
     fulldelete($CFG->dataroot.'/'.$courseid);
 
