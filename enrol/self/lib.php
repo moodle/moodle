@@ -158,6 +158,8 @@ class enrol_self_plugin extends enrol_plugin {
         }
 
         require_once("$CFG->dirroot/enrol/self/locallib.php");
+        require_once("$CFG->dirroot/group/lib.php");
+
         $form = new enrol_self_enrol_form(NULL, $instance);
         $instanceid = optional_param('instance', 0, PARAM_INT);
 
@@ -173,6 +175,20 @@ class enrol_self_plugin extends enrol_plugin {
 
                 $this->enrol_user($instance, $USER->id, $instance->roleid, $timestart, $tineend);
                 add_to_log($instance->courseid, 'course', 'enrol', '../enrol/users.php?id='.$instance->courseid, $instance->courseid); //there should be userid somewhere!
+
+                if ($instance->password and $instance->customint1 and $data->enrolpassword !== $instance->password) {
+                    // it must be a group enrolment, let's assign group too
+                    $groups = $DB->get_records('groups', array('courseid'=>$instance->courseid), 'id', 'id, enrolmentkey');
+                    foreach ($groups as $group) {
+                        if (empty($group->enrolmentkey)) {
+                            continue;
+                        }
+                        if ($group->enrolmentkey === $data->enrolpassword) {
+                            groups_add_member($group->id, $USER->id);
+                            break;
+                        }
+                    }
+                }
                 // send welcome
                 if ($this->get_config('sendcoursewelcomemessage')) {
                     $this->email_welcome_message($instance, $USER);
