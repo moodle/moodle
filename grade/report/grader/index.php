@@ -286,7 +286,7 @@ YAHOO.graderreport.mouseoverHandler = function (e) {
             tempNode.className = "tooltipDiv";
             tempNode.innerHTML = elTarget.title;
             elTarget.appendChild(tempNode);
-            elTarget.title = null;
+            elTarget.title = "";
         }
 
         // Get the tooltip div
