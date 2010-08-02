@@ -1480,6 +1480,7 @@ $string['showallusers'] = 'Show all users';
 $string['showallweeks'] = 'Show all weeks';
 $string['showblockcourse'] = 'Show list of courses containing block';
 $string['showcomments'] = 'Show/hide comments';
+$string['showcommentsnonjs'] = 'Show comments';
 $string['showgrades'] = 'Show gradebook to students';
 $string['showgrades_help'] = 'Many activities in the course allow grades to be set. This setting determines whether a student can view a list of all their grades for the course via a grades link in the course administration block.';
 $string['showlistofcourses'] = 'Show list of courses';

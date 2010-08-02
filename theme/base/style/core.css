@@ -332,6 +332,8 @@ table.mod_index {width:100%;}
 .comment-delete-confirm {background: #eee; padding: 2px; width: 5em;text-align:center;}
 .comment-container {float:left;margin: 4px;}
 .comment-report-selectall{display:none}
+.comment-link {display:none}
+.jsenabled .comment-link {display:block}
 .jsenabled .comment-report-selectall{display:inline}
 
 /**

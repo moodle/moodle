@@ -315,6 +315,7 @@ EOD;
 
         $strsubmit = get_string('savecomment');
         $strcancel = get_string('cancel');
+        $strshowcomments = get_string('showcommentsnonjs');
         $sesskey = sesskey();
         $html = '';
         // print html template
@@ -329,7 +330,10 @@ EOD;
             $icon = $OUTPUT->pix_url('t/collapsed');
             $html .= <<<EOD
 <div class="mdl-left">
-<a id="comment-link-{$this->cid}" href="{$this->link}">
+<noscript>
+<a href="{$this->link}">{$strshowcomments}</a>
+</noscript>
+<a id="comment-link-{$this->cid}" class="comment-link" href="#">
     <img id="comment-img-{$this->cid}" src="$icon" alt="{$this->linktext}" title="{$this->linktext}" />
     <span id="comment-link-text-{$this->cid}">{$this->linktext} {$this->count}</span>
 </a>
