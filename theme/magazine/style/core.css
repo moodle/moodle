@@ -1,0 +1,1154 @@
+/** body font family and background image **/
+
+html,body {
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+	margin: 0;
+	padding: 0;
+}
+
+html a:hover,body a:hover {
+	text-decoration: underline;
+}
+
+/** remove text decoration from some links **/
+
+div.yui3-widget-bd a, .tabtree li a, .block div.content a, .unlist a, .categorybox a, .course_category_tree a, .section a {
+	text-decoration: none;
+}
+
+a:active {
+	outline: 0;
+
+/* for browsers that understand */
+}
+
+a:focus {
+	outline: 0;
+
+/* for browsers that understand */
+}
+
+/**header divs **/
+
+#header-wrap {
+	top: 0;
+	left: 0;
+	width: 100%;
+}
+
+#header {
+	width: 91%;
+	min-width: 910px;
+	height: 30px;
+	margin: 0 auto;
+	overflow: hidden;
+}
+
+#headright {
+	float: right;
+	font-size: 10px;
+	font-weight: 200;
+	margin-top: 0;
+	padding-top: 0;
+	min-width: 180px;
+	text-align: right;
+	color: #eeeeee;
+	line-height: 30px;
+	min-width: 400px;
+}
+
+#headright a {
+	color: #fff;
+}
+
+#headright div.langmenu {
+	float: right !important;
+	display: inline !important;
+	padding: 0px 0px 0px 0px !important;
+	line-height: 28px !important;
+	margin: 0px 0px 0px 5px !important;
+	font-size: 9px;
+}
+
+#headleft {
+	float: left;
+	height: 30px;
+	line-height: 30px;
+	color: #fff;
+	font-size: 12px;
+}
+
+/** Logo and menu bar divs and wrap **/
+
+#textcontainer-wrap {
+	top: 0;
+	left: 0;
+	width: 100%;
+	border-top: 1px solid #fff;
+}
+
+#textcontainer {
+	clear: both;
+	border: none;
+	width: 92%;
+	min-width: 910px;
+	height: 130px;
+	margin: 0 auto;
+	overflow: hidden;
+}
+
+div.thetitle {
+	width: 340px;
+	height: 130px;
+	float: left;
+}
+
+#nologo {
+	width: 337px;
+	height: 130px;
+	float: left;
+	overflow: hidden;
+	padding-left: 3px;
+}
+#nologo a, #nologo {
+	font-size: 40px;
+	font-style: italic;
+	font-family: Palatino,"Palatino Linotype",Georgia,"Times New Roman",serif;
+	font-weight: 800;
+	letter-spacing: -1px;
+	line-height: 130px;
+}
+#nologo a:hover {
+	text-decoration: none;
+}
+div.rightinfo {
+	float: right;
+	min-width: 470px;
+	height: 130px;
+	overflow: hidden;
+}
+
+#menucontainer {
+	height: 45px;
+	margin-top: 40px;
+}
+
+
+/** main content wraps **/
+
+#outercontainer {
+	width: 91%;
+	min-width: 910px;
+	margin:0 auto;
+	background-position: 78% 100%;
+	padding: 1%;
+	background: url([[pix:theme|contback]]);
+	border: 1px solid #dadada;
+}
+
+#container {
+	width: 100%;
+	margin:0 auto;
+	background: #fff url([[pix:theme|post_grid]]) repeat-y 21% 100%;
+	border: 1px solid #dadada;
+}
+
+#innercontainer {
+	background: url([[pix:theme|post_grid]]) repeat-y  79% 100%;
+}
+
+/** remove background image line for post or pre or content only **/
+
+.side-pre-only #innercontainer, .content-only #innercontainer, .content-only #container, .side-post-only #container {
+	background-image: none !important;
+}
+
+/** breadcrumb and button holders at top of page content **/
+
+div#jcontrols_button {
+	width: 100%;
+	min-height: 35px;
+	border-top: 1px solid #fff;
+	background: #f9f9f9 url([[pix:theme|hr_grid]]) repeat-x 100% 100%;
+}
+
+div#jcontrols_bottom {
+	width: 100%;
+	height: 35px;
+	background: url([[pix:theme|hr_grid]]) repeat-x 0% 0%;
+	clear: both;
+}
+
+div.jcontrolsleft {
+	min-height: 35px;
+	line-height: 35px;
+	margin-left: 15px;
+	font-weight: 600;
+	font-size: 13px;
+	float: left;
+	min-width: 100px;
+}
+
+div.jcontrolsright {
+	float: right;
+	min-width: 100px;
+	min-height: 35px;
+	margin-right: 15px;
+}
+
+div.jcontrolsright div.singlebutton, div.jcontrolsright div.forumsearch {
+	margin: 5px 0px 0px;
+}
+
+/** foot wraps and inner divs **/
+
+#footer {
+	width: 91%;
+	height: 35px;
+	position: relative;
+	margin: 0 auto;
+}
+
+#footer-wrap {
+	position: relative;
+	bottom: 0;
+	left: 0;
+	width: 100%;
+	background: none;
+	margin-top: 10px;
+	height: 35px;
+}
+
+.johndocs {
+	float: right;
+	height: 15px;
+	font-size: 8px;
+	margin: 10px 3px 0px 0px;
+	color: #333333;
+}
+
+.johndocs a, div.johndocsleft a {
+	font-weight: 200;
+	text-decoration: none;
+}
+
+div.johndocsleft {
+	float: left;
+	height: 15px;
+	margin-top: 10px;
+	width: 300px;
+	color: #333333;
+	font-size: 11px;
+}
+
+/** Some breadcrumb style **/
+
+.breadcrumb ul {
+	line-height: 35px;
+}
+
+.breadcrumb li a,.breadcrumb li, .breadcrumb li a:visited {
+	font-weight: 200;
+	text-decoration: none;
+	color: #666666;
+	font-size: 12px;
+}
+
+.breadcrumb li a:hover {
+	text-decoration: underline;
+	color: #333333;
+}
+
+.breadcrumb li img {
+	vertical-align: middle;
+}
+
+/** breadcrumb image replacement **/
+
+div#jcontrols_button span.arrow.sep {
+	font-size: 1px;
+	color: #fafafa;
+	background: url([[pix:theme|breadcrumb_separator_arrow_2_dots]]) no-repeat;
+	background-position: 50% 9px;
+	display: inline-block;
+	width: 16px;
+	line-height: 40px;
+}
+
+/** Block styles **/
+
+.block {
+	margin: 0 0 5px 0 !important;
+	padding: 0 0 0 0 !important;
+	border: none !important;
+}
+
+.block div.header {
+	margin: 0 0 0 !important;
+	padding-top: 0 !important;
+	min-height: 33px;
+	height: auto !important;
+	height: 33px;
+	border-right: 1px solid #dadada;
+	border-top: 1px solid #dfdfdf;
+	border-left: 1px solid #dfdfdf;
+	border-bottom: 1px solid #cccccc;
+	background: #eeeeee url([[pix:theme|bart5]]) repeat-x;
+}
+
+.block.hidden div.header {
+	border: 1px solid #dadada;
+}
+
+.block.block_with_controls div.header div.commands {
+	text-align: center;
+	border-top: 1px solid #ccc;
+	padding: 2px;
+}
+
+.block.block_with_controls div.header div.commands a img {
+	margin-right: 3px;
+}
+
+.title h2 {
+	padding: 0px 0px 0px 10px;
+	font-size: 16px;
+	text-transform: none;
+	margin: 0 !important;
+	line-height: 32px;
+	font-weight: 800;
+}
+
+.block div.block_action input {
+	margin-top: 3px;
+	position: relative;
+	top: 6px;
+}
+
+.block div.content {
+	font-size: 12px;
+	font-weight: 200;
+	padding: 10px 15px 15px;
+}
+
+/** extra left padding on right side blocks **/
+
+#region-post .block div.content {
+	padding-left: 20px;
+}
+
+/** some specific block styles for calendar block, login block, my profile block, etc. **/
+
+.block_calendar_month table.minicalendar.calendartable td,.block_calendar_month table.minicalendar.calendartable th {
+	border: none !important;
+}
+
+.block_calendar_month table.minicalendar {
+	margin-bottom: 0px !important;
+}
+
+.block_calendar_month table.minicalendar.calendartable th abbr {
+	border: none !important;
+	text-decoration: none;
+}
+
+.block_comments div.content li {
+	list-style-type: none;
+}
+
+.block_messages.block div.content .list a {
+	font-size: 10px;
+}
+
+.block_login.block div.content div {
+	margin-bottom: 9px;
+	clear: both;
+}
+
+.block_login.block div.content label {
+	font-size: 11px;
+	display: inline-block;
+	min-width: 50px;
+	margin-right: 3px;
+}
+
+.block_myprofile div.content div {
+	font-size: 11px;
+}
+
+.block_myprofile div.content div.myprofileitem.picture {
+	width: 105px;
+	float: left;
+}
+
+.block_myprofile div.myprofileitem.fullname {
+	font-size: 12px;
+	font-weight: 800;
+}
+
+.block_myprofile div.myprofileitem.edit {
+	clear: both;
+	font-weight: 800;
+	font-size: 12px;
+}
+
+.block_news_items div.content li.post {
+	margin-bottom: 4px;
+	margin-top: 2px;
+}
+
+.block_news_items div.content div.head.clearfix {
+	font-size: 11px;
+}
+
+.block_news_items div.content div.info {
+	font-weight: 600;
+}
+
+/** inner block style for decent display of recent news, etc **/
+
+.block_recent_activity.block_docked div.content h2.main, .block_recent_activity.block_docked div.content h3.main, .side-pre .block div.content h2.main,.side-post .block div.content h2.main,.block div.content h3.main,.block div.content h2 {
+	font-size: 13px;
+	color: #333;
+	font-weight: 800;
+	background: none;
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+/** a few styles for the tabs **/
+
+div.tabtree li a span {
+	font-size: 11px;
+}
+
+/** yui overlays **/
+
+div.yui3-widget.yui3-overlay.yui3-widget-positioned {
+	border: 1px solid #cccccc;
+}
+
+div.yui3-overlay-content.yui3-widget-stdmod {
+	border: 1px solid #fff;
+	background: #ffff66 url([[pix:theme|alert-overlay]]) repeat-x;
+}
+
+div.yui3-widget-bd {
+	border: none;
+	background: none;
+}
+
+div.yui3-widget-bd h1.helpheading {
+	font-size: 16px !important;
+	font-weight: 800;
+	margin: 5px 0px 2px 18px;
+	background: url([[pix:theme|information]]) no-repeat 0% 50%;
+}
+
+.yui-module.yui-overlay.yui-panel div.hd {
+	background: #eeeeee url([[pix:theme|bart5]]) repeat-x 0% 90%;
+	}
+
+/**moodle dropdown css for yui menu **/
+
+#custommenu {
+	font-size: 13px;
+	font-weight: 600;
+	border: none !important;
+	height: 45px;
+}
+
+div.yui3-menu.yui3-menu-horizontal {
+	background: #fafafa url([[pix:theme|menubarback]]) repeat-x !important;
+	border-bottom: 1px solid #cccccc !important;
+	border-top: 1px solid #dadada !important;
+	border-left: none;
+	border-right: 1px solid #cccccc;
+	float: right;
+}
+
+div.yui3-menu-content {
+	border: none !important;
+}
+
+.yui3-menu-content li a {
+	font-size: 12px;
+	font-weight: 600;
+	text-transform: lowercase;
+	line-height: 45px;
+	cursor: pointer;
+	border-right: none !important;
+	border-top: none !important;
+	border-bottom: none !important;
+}
+
+.yui3-menu-horizontal .yui3-menu-label {
+	padding-left: 16px !important;
+	background: url([[pix:theme|yuiarrows]]) no-repeat 7px 17px !important;
+	}
+
+.yui3-menu-horizontal .yui3-menu-label-menuvisible {
+	background-position: 5px -23px !important;
+}
+
+.yui3-menu-content li {
+	border-left: 1px solid #dadada;
+	border-top: none !important;
+}
+
+.yui3-menu-content li:hover {
+	background: #eee;
+}
+
+div.yui3-menu.custom_menu_submenu {
+	background: url([[pix:theme|yuiarrow]]) no-repeat 40px 0;
+	border: none;
+	min-width: 100px;
+	z-index: 99998;
+}
+
+div.yui3-menu.custom_menu_submenu div.yui3-menu.custom_menu_submenu {
+	background: none !important;
+	min-width: 100px;
+}
+
+div.yui3-menu.custom_menu_submenu div.yui3-menu-content {
+	background: #fff;
+	z-index: 99999;
+	width: 200px;
+	padding-top: 0 !important;
+	padding-bottom: 0 !important;
+	margin: 20px 0px 0px -40px;
+}
+
+/** below style to move sub subs to the left to keep from going off the page **/
+
+div.yui3-menu.custom_menu_submenu div.yui3-menu-content div.yui3-menu.custom_menu_submenu div.yui3-menu-content {
+	margin-left: -400px !important;
+	/** double the width of the menu item **/
+	width: 200px;
+	position: relative;
+	top: -15px;
+}
+
+div.yui3-menu.custom_menu_submenu .yui3-menu-content li {
+	border-left: none;
+}
+
+div.yui3-menu.custom_menu_submenu .yui3-menu-content li a {
+	font-size: 11px;
+	border-bottom: 1px solid #cccccc !important;
+	border-top: 0px solid #fff !important;
+	text-transform: none;
+	background: #eee !important;
+	text-decoration: none !important;
+	text-transform: lowercase;
+}
+
+div.yui3-menu.custom_menu_submenu .yui3-menu-content li a:hover {
+	background: #cccccc !important;
+	cursor: pointer;
+	color: black !important;
+	text-decoration: none !important;
+}
+
+div.yui3-menu.custom_menu_submenu li a.yui3-menu-label {
+	background: #eee url([[pix:theme|yuiarrows]]) no-repeat 7px -72px !important;
+}
+
+div.yui3-menu.custom_menu_submenu li a.yui3-menu-label:hover {
+	background: #ccc url([[pix:theme|yuiarrows]]) no-repeat !important 7px -72px;
+}
+
+/** yui moodle dock bar **/
+
+#dock {
+	padding-top: 0px;
+	width: 30px;
+}
+
+div.dockeditem_container div.dockeditem {
+	background: url([[pix:theme|mbar]]) repeat-y;
+	border: none;
+	color: #fff;
+	font: 100% Constantia, Lucidabright, Lucida, Georgia, serif;
+}
+
+div.dockeditem_container.firstdockitem {
+	border-top: none;
+}
+
+div.dockedtitle {
+	border: none;
+	padding-top: 3px;
+	padding-bottom: 3px;
+}
+
+.dockedtitle h2 {
+	font-weight: 200 !important;
+}
+
+div.dockeditempanel_content {
+	border: 1px solid #dadada !important;
+	border-left: none !important;
+	font-size: 90%;
+}
+
+div.dockeditempanel_content a {
+	text-decoration: none;
+}
+
+div.dockeditempanel_hd {
+	text-align: left;
+	font-size: 12px;
+}
+
+div.dockeditempanel_hd {
+	padding-top: 3px;
+	padding-bottom: 3px;
+	background: #eee;
+	border-bottom: 1px solid #dadada !important;
+}
+
+div.dockeditempanel_hd h2 {
+	font-weight: 600;
+	font-size: 12px;
+}
+
+div.dockeditempanel_bd ul, div.dockeditempanel_bd li {
+	list-style-type: none;
+	padding: 0;
+}
+
+div.dockeditempanel_bd {
+	font-weight: 200;
+}
+
+#dockeditempanel {
+	margin-left: 1px;
+}
+
+html>
+
+/**/body #dockeditempanel {
+	margin-top: -20px;
+}
+
+#dock div.controls {
+	margin-top: 20px;
+	padding-top: 0px;
+	position: relative;
+}
+
+/** main headings **/
+
+.generalbox h2,h3.sectionname, h2.headingblock,h2.main,h3.main, h2.main a, h3.main a, div.loginpanel h2, div.signuppanel h2 {
+	font-size: 30px;
+	padding-bottom: 2px;
+	margin: 3px 0 2px;
+	border-bottom: none;
+	display: block;
+	font-family: Georgia, serif;
+	font-weight: normal;
+	letter-spacing: -1px;
+	line-height: 1em;
+	background: url([[pix:theme|hr_grid]]) repeat-x 0% 89%
+	}
+
+.generalbox h2, #page-course-info h2.main, h3.sectionname, h2.main a, h3.main a, div.loginpanel h2, div.signuppanel h2, div.hd h3.main {
+	font-size: 22px;
+	background: none;
+}
+
+/** forum post style **/
+
+.forumpost td.content {
+	border: 1px solid #dadada;
+	border-top: none;
+	background: #fff;
+	padding: 1em 1em 1em 1em;
+}
+
+.forumpost td.content div.posting {
+	font-size: 90%;
+}
+
+.forumpost td.topic {
+	border: 1px solid #dadada;
+	padding-top: 0px;
+	padding-bottom: 0px;
+}
+
+.forumpost .subject, .blog_entry div.subject a {
+	font-size: 19px;
+}
+
+td.picture {
+	border-right: none !important;
+}
+
+td.author {
+	border-left: none !important;
+}
+
+table.forumpost {
+	border: none;
+}
+
+.forumpost .commands a {
+	text-decoration: none;
+	font-weight: 200;
+}
+
+.forumpost td.left {
+	padding: 4px 5px 4px 0;
+}
+
+.forumpost td.left.picture {
+	background: url([[pix:theme|postline]]) no-repeat 120% 104%;
+}
+
+.forumpost td.left.picture img {
+	border: 1px solid #eee;
+	border-bottom: 1px solid #ccc;
+	border-right: 1px solid #dadada;
+	background: #fff;
+	padding: 4px 4px 9px;
+	margin-top: 0px;
+}
+
+.forumpost .starter {
+	background-color: #FFF;
+}
+
+.forumpost .author {
+	font-size: 11px !important;
+	color: #666;
+	font-style: italic;
+	font-weight: 200;
+}
+
+.forumpost .author a {
+	font-style: normal;
+	font-weight: 800;
+}
+
+.info .name a {
+	font-weight: bold;
+}
+
+.indent {
+	margin-left: 30px;
+}
+
+div.subscribelink {
+	text-align: right;
+}
+
+.subscribelink a {
+	text-decoration: none;
+	font-size: 11px;
+}
+
+/**tables and fields and foms oh my! **/
+
+.mform fieldset,fieldset.clearfix {
+	border: 1px solid #dadada !important;
+	background: #f9f9f9;
+}
+
+.ftoggler {
+	font-size: 18px;
+	color: #333333;
+}
+
+div.notifysuccess {
+	width: 80%;
+	margin: 0 auto;
+	font-size: 15px;
+	color: #008500;
+	border: 3px solid #dadada;
+	text-align: center;
+	background: #fff url([[pix:theme|check]]) no-repeat 2% 50%;
+	padding: 5px;
+}
+
+table a {
+	text-decoration: none;
+}
+
+td.maincalendar table.calendartable th, table.rolecap .header,.generaltable .header,.forumheaderlist .header,.files .header,.editcourse .header,.logtable .header,#attempts .header,table#categoryquestions th {
+	font-size: 11px;
+	font-weight: 200;
+	text-decoration: none;
+	color: #fff !important;
+	border-top: 1px #ccc solid !important;
+	padding: 5px;
+}
+
+table#categoryquestions th a {
+	color: #fff;
+}
+
+.generaltable .header a,.forumheaderlist .header a, th.header.questionnametext a {
+	border: none;
+	color: #fff !important;
+	font-size: 12px;
+	text-decoration: none;
+	padding: 5px;
+}
+
+tr.r1 td {
+	background-color: #f9f9f9;
+}
+
+table.rolecap td, table.rolecap th {
+	border-bottom: 1px solid #dadada;
+}
+
+table.rolecap td.risk {
+	border-left: 1px solid #dadada;
+}
+
+/** Coursebox and category box stuff for front page **/
+
+ul.unlist, ul.unlist li, ul.unlist li div, ul.unlist li div ul, ul.unlist li div ul li {
+	list-style-type: none;
+	padding: 0;
+	margin: 0;
+}
+
+div.coursebox {
+	padding-bottom: 7px !important;
+	margin-bottom: 7px !important;
+	border-bottom: 1px solid #eee;
+}
+
+div.coursebox h3.name {
+	margin-top: 0px;
+	margin-bottom: 0px;
+}
+
+div.coursebox h3.name a {
+	font-size: 16px;
+	font-weight: 400;
+}
+
+.unlist div.summary {
+	font-size: 14px;
+	color: #666666;
+	font-style: italic;
+}
+
+.unlist ul.teachers {
+	display: block;
+	padding-left: 5px !important;
+}
+
+.unlist ul.teachers li {
+	font-size: 10px;
+}
+
+.unlist ul.teachers li a {
+	font-size: 11px;
+}
+
+div.categorybox {
+	border: none !important;
+	margin-top: 0;
+}
+
+td.category.name a {
+	padding-left: 20px;
+	background-image: url([[pix:theme|jcourse]]) no-repeat 0 50%;
+	font-weight: 400;
+	font-size: 16px;
+}
+
+#course-index td.category.name a {
+	padding-left: 0px;
+	background-image: none;
+}
+
+table.categorylist td {
+	padding: 0;
+}
+
+div.course_category_tree a {
+	font-size: 16px;
+	font-weight: 400;
+	text-decoration: none;
+}
+
+div.course_category_tree div.category,div.course_category_tree div.category_label,div.course_category_tree div.courses {
+	margin-bottom: 8px;
+}
+
+div.course_category_tree div.category.with_children div.category_label {
+	background-position: 0 55% !important;
+}
+
+div.course_category_tree div.course.odd {
+	background: #eee;
+}
+
+div.course_category_tree div.course a {
+	font-size: 14px;
+}
+
+div.category.subcategory.with_children {
+	margin-left: 20px;
+}
+
+div.course_category_tree div.controls {
+	font-size: 10px;
+	color: #666;
+	text-transform: uppercase;
+}
+
+div.course_category_tree div.controls div {
+	margin-top: 3px;
+	margin-right: 10px;
+	border-bottom: 1px solid #dadada;
+}
+
+/** inside  of course **/
+
+li.section {
+	border-bottom: 1px solid #dadada;
+	clear: both;
+	min-height: 30px;
+}
+
+li#section-0 div.content {
+	margin-top: 0px;
+	padding-top: 0px;
+}
+
+li.current {
+	background: #ffffe3;
+}
+
+li.current div.content {
+	background: #fff;
+}
+
+h3.weekdates {
+	border: 1px solid #ccc;
+	background: #eeeeee url([[pix:theme|bart5]]) repeat-x;
+	width: 170px;
+	font-size: 11px !important;
+	font-weight: 200;
+	text-transform: uppercase;
+	text-align: center;
+	margin: 0px 0px 3px;
+	color: #333333 !important;
+	padding: 3px;
+}
+
+.current h3.weekdates {
+	color: black !important;
+	font-weight: 600;
+}
+
+div.course-content div.left.side {
+	font-weight: 200;
+	font-size: 20px;
+	font-family: Georgia, serif;
+	color: #666;
+}
+
+span.completionprogress {
+	font-size: 11px;
+	font-weight: 200;
+}
+
+/**my moodle page style **/
+
+div.assignment.overview {
+	margin-bottom: 5px;
+	padding-bottom: 3px;
+	border-bottom: 1px dashed #dadada;
+}
+
+div.assignment.overview div.name {
+	font-weight: 600;
+}
+
+div.assignment.overview div {
+	display: block !important;
+	float: none !important;
+	width: 100% !important;
+}
+
+#page-my-index div.coursebox {
+	border-bottom: none;
+}
+
+
+/** glossary activity **/
+
+table.glossarycategoryheader h2.main {
+	text-align: center;
+	margin-bottom: 0;
+	margin-top: 0;
+}
+
+table.glossarypost {
+	margin-top: 0;
+	width: 100%;
+	border-bottom: 1px dashed #dadada;
+}
+
+table.glossarypost td.entry h3 {
+	font-size: 20px;
+}
+
+/** a few quick wiki styles **/
+
+#page-mod-wiki-view div.generalbox {
+	padding: 10px;
+}
+
+#page-mod-wiki-view h2.wiki_headingtitle {
+	font-size: 22px;
+	font-family: Georgia, serif;
+	color: #333333;
+	font-weight: 600;
+	text-align: left;
+	margin-bottom: 3px;
+	margin-top: 2px;
+}
+
+/**HR in content blocks **/
+
+.content hr {
+	height: 1px;
+	color: #dadada;
+	background-color: #dadada !important;
+	border: none;
+	border-style: none;
+}
+
+/** some MISC styles to clean things up and keep the theme consistant **/
+
+div#intro {
+	border: none;
+	text-align: center;
+	font-size: 14px;
+	color: #333333;
+}
+
+div.que {
+	border: 1px solid #dadada;
+}
+
+div.questionbankwindow.block div.header {
+	background: #eee !important;
+}
+
+div.questionbankwindow.block div.header a {
+	color: #333333 !important;
+	font-size: 11px;
+}
+
+div.generalbox, div.section {
+	border: 1px solid #dadada;
+}
+
+/** take borders away from some generalboxes here **/
+
+div.generalbox.sitetopic, div.generalbox.authsui,#page-course-info div.generalbox, #page-admin-roles-assign div.generalbox, table.roleassigntable, table.roleassigntable td, #page-blocks-private-edit div.generalbox {
+	border: none;
+}
+
+div.generalbox.firstpageoptions h3.main {
+	font-size: 16px;
+}
+
+div.redirectmessage {
+	width: 60%;
+	margin: 10px auto 0 auto;
+	border: none;
+	font-size: 13px;
+	background: #fff url([[pix:theme|ajax-loader]]) no-repeat 50% 100%;
+	padding: 20px;
+}
+
+div.box.errorbox {
+	border: 1px solid #dadada;
+	color: #ff0000;
+	background: #fff url([[pix:theme|error]]) no-repeat 1% 3%;
+	padding: 10px;
+}
+
+div#newmessageoverlay {
+	padding: 10px;
+}
+
+div#newmessageoverlay a {
+	text-decoration: none;
+	font-size: 11px;
+}
+
+#page-mod-page-view div.generalbox {
+	border-left: none;
+	border-right: none;
+	border-top: none;
+}
+
+/** fix overflow on quiz results display **/
+
+div#tablecontainer {
+	overflow: auto;
+	margin-bottom: 10px;
+}
+
+div.course-content div.availabilityinfo {
+	font-size: 11px;
+	font-style: italic;
+	padding: 2px;
+	border-bottom: 1px dashed #dadada;
+	margin-bottom: 10px;
+}
+
+/** login form **/
+
+.twocolumns div.loginpanel {
+	border-right: 1px dashed #dadada !important;
+}
+
+div.forgetpass {
+	clear: both;
+}
+
+div.loginform {
+	width: 50% !important;
+}
+
+div.loginform div.form-input input {
+	width: 90px !important;
+}
+
+div.loginform label {
+	line-height: 20px;
+}
+
+div.signuppanel {
+	float: right !important;
+	width: 40% !important;
+	margin-left: 0px;
+	padding-left: 0px;
+}
+
+div.singlebutton.forumaddnew {
+	text-align: center;
+}
+
+#page-course-info h2.main {
+	line-height: 5px;
+	margin-bottom: 5px;
+}
+
+#page-course-info div.generalbox ul, #page-course-info div.generalbox li {
+	list-style-type: none;
+}

@@ -1,0 +1,22 @@
+#outercontainer {
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+	border-radius: 3px;
+}
+
+#container, #innercontainer {
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+	border-radius: 3px;
+}
+
+div.yui3-menu.yui3-menu-horizontal {
+	-moz-border-radius: 2px;
+	-webkit-border-radius: 2px;
+	border-radius: 2px;
+}
+
+div.yui3-widget.yui3-overlay, div.yui3-menu.custom_menu_submenu div.yui3-menu-content, div.dockeditempanel_content {
+	-moz-box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+	-webkit-box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
