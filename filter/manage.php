@@ -29,7 +29,11 @@ require_once($CFG->libdir . '/adminlib.php');
 $contextid = required_param('contextid',PARAM_INT);
 $forfilter = optional_param('filter', '', PARAM_SAFEPATH);
 
-$context = get_context_instance_by_id($contextid, MUST_EXIST);
+list($context, $course, $cm) = get_context_info_array($contextid);
+
+/// Check login and permissions.
+require_login($course, false, $cm);
+require_capability('moodle/filter:manage', $context);
 
 $args = array('contextid'=>$contextid);
 $baseurl = new moodle_url('/filter/manage.php', $args);
@@ -44,29 +48,23 @@ if (!in_array($context->contextlevel, array(CONTEXT_COURSECAT, CONTEXT_COURSE, C
 }
 
 $isfrontpage = ($context->contextlevel == CONTEXT_COURSE && $context->instanceid == SITEID);
+
 $contextname = print_context_name($context);
 
-$cm = null;
 if ($context->contextlevel == CONTEXT_COURSECAT) {
-    $course = clone($SITE);
     $heading = "$SITE->fullname: ".get_string("categories");
-    $PAGE->set_heading();
 } else if ($context->contextlevel == CONTEXT_COURSE) {
-    $course = $DB->get_record('course', array('id' => $context->instanceid), '*', MUST_EXIST);
     $heading = $course->fullname;
-} else {
+} else if ($context->contextlevel == CONTEXT_MODULE) {
     // Must be module context.
-    $cm = get_coursemodule_from_id(null, $context->instanceid, false, 0, MUST_EXIST);
-    $course = $DB->get_record('course', array('id'=>$cm->course), '*', MUST_EXIST);
+    $heading = $PAGE->activityrecord->name;
+} else {
+    $heading = '';
 }
 
 /// Check login and permissions.
 require_login($course, false, $cm);
 require_capability('moodle/filter:manage', $context);
-
-if ($cm) {
-    $heading = $PAGE->activityrecord->name;
-}
 
 $PAGE->set_context($context);
 $PAGE->set_heading($heading);
