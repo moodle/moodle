@@ -34,11 +34,6 @@ require_once(dirname(__FILE__).'/lib.php');
 
 $err = new stdclass;
 
-if (!isloggedin()) {
-    $err->error = get_string('loggedinnot');
-    die(json_encode($err));
-}
-
 /// Parameters
 $action    = optional_param('action', '', PARAM_ALPHA);
 $repo_id   = optional_param('repo_id', 0, PARAM_INT);           // Repository ID
@@ -67,11 +62,6 @@ header('Expires: Sat, 26 Jul 1997 05:00:00 GMT');
 
 if (!confirm_sesskey()) {
     $err->error = get_string('invalidsesskey');
-    die(json_encode($err));
-}
-
-if (!isloggedin()) {
-    $err->error = get_string('loggedinnot', 'moodle');
     die(json_encode($err));
 }
 
