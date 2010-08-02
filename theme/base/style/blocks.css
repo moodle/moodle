@@ -13,7 +13,7 @@
 
 .block-region .hidden .header {border-bottom: 1px solid;}
 .block-region .hidden .content {display: none;}
-.block-region .invisible {opacity: 0.5;filter: alpha(opacity=0.5);}
+.block-region .invisible {opacity: 0.5;filter: alpha(opacity=50);}
 
 .blockmovetarget {display: block;height: 1em;margin-bottom: 1em;border-width: 2px;border-style: dashed;}
 
