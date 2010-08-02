@@ -252,7 +252,7 @@ abstract class restore_dbops {
 
         // itemname = null, we are going to match only by context, no need to use itemid (all them are 0)
         if ($itemname == null) {
-            $sql = 'SELECT contextid, component, filearea, itemid, 0 AS newitemid, info
+            $sql = 'SELECT contextid, component, filearea, itemid, itemid AS newitemid, info
                       FROM {backup_files_temp}
                      WHERE backupid = ?
                        AND contextid = ?
