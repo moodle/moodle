@@ -78,14 +78,13 @@ class mod_imscp_mod_form extends moodleform_mod {
                 $errors['package'] = get_string('required');
                 return $errors;
             }
-        }
-
-        $file = reset($files);
-
-        if ($file->get_mimetype() != 'application/zip') {
-            $errors['package'] = get_string('invalidfiletype', 'error', '', $file);
-            // better delete current file, it is not usable anyway
-            $fs->delete_area_files($usercontext->id, 'user', 'draft', $data['package']);
+        } else {
+            $file = reset($files);
+            if ($file->get_mimetype() != 'application/zip') {
+                $errors['package'] = get_string('invalidfiletype', 'error', '', $file);
+                // better delete current file, it is not usable anyway
+                $fs->delete_area_files($usercontext->id, 'user', 'draft', $data['package']);
+            }
         }
 
         return $errors;
