@@ -60,6 +60,11 @@ $string['kurtosis'] = 'Score distribution kurtosis (for {$a})';
 $string['lastcalculated'] = 'Last calculated {$a->lastcalculated} ago there have been {$a->count} attempts since then.';
 $string['median'] = 'Median grade (for {$a})';
 $string['negcovar'] = 'Negative covariance of grade with total attempt grade';
+$string['negcovar_help'] = 'This question\'s grade for this set of attempts on the quiz varies in an opposite way to the overall attempt grade. This means overall attempt grade tends to be below average when the grade for this question is above average and vice-versa.
+
+Our equation for effective question weight cannot be calculated in this case. The calculations for effective question weight for other questions in this quiz are the effective question weight for these questions if the highlighted questions with a negative covariance are given a maximum grade of zero.
+
+If you edit a quiz and give these question(s) with negative covariance a max grade of zero then the effective question weight of these questions will be zero and the real effective question weight of other questions will be as calculated now.';
 $string['nostudentsingroup'] = 'There are no students in this group yet';
 $string['optiongrade'] = 'Partial credit';
 $string['position'] = 'Position';

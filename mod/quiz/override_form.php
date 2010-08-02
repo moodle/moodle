@@ -142,21 +142,19 @@ class quiz_override_form extends moodleform {
         // otherwise browsers will clear it when those fields are changed
         $mform->addElement('passwordunmask', 'password', get_string('requirepassword', 'quiz'));
         $mform->setType('password', PARAM_TEXT);
-        $mform->setHelpButton('password', array('requirepassword', get_string('requirepassword', 'quiz'), 'quiz'));
+        $mform->addHelpButton('password', 'requirepassword', 'quiz');
         $mform->setDefault('password', $this->quiz->password);
 
         // Open and close dates.
         $mform->addElement('date_time_selector', 'timeopen', get_string('quizopen', 'quiz'), array('optional' => true));
-        $mform->setHelpButton('timeopen', array('timeopen', get_string('quizopen', 'quiz'), 'quiz'));
         $mform->setDefault('timeopen', $this->quiz->timeopen);
 
         $mform->addElement('date_time_selector', 'timeclose', get_string('quizclose', 'quiz'), array('optional' => true));
-        $mform->setHelpButton('timeclose', array('timeopen', get_string('quizclose', 'quiz'), 'quiz'));
         $mform->setDefault('timeclose', $this->quiz->timeclose);
 
         // Time limit.
-        $mform->addElement('duration', 'timelimit', get_string('quiztimer', 'quiz'), array('optional' => true));
-        $mform->setHelpButton('timelimit', array('timelimit', get_string('quiztimer','quiz'), 'quiz'));
+        $mform->addElement('duration', 'timelimit', get_string('timelimit', 'quiz'), array('optional' => true));
+        $mform->addHelpButton('timelimit', 'timelimit', 'quiz');
         $mform->setDefault('timelimit', $this->quiz->timelimit);
 
         // Number of attempts.
@@ -165,7 +163,6 @@ class quiz_override_form extends moodleform {
             $attemptoptions[$i] = $i;
         }
         $mform->addElement('select', 'attempts', get_string('attemptsallowed', 'quiz'), $attemptoptions);
-        $mform->setHelpButton('attempts', array('attempts', get_string('attemptsallowed','quiz'), 'quiz'));
         $mform->setDefault('attempts', $this->quiz->attempts);
 
         // Submit buttons

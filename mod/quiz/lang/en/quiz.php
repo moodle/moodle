@@ -271,6 +271,7 @@ $string['editingquiz_help'] = 'When creating a quiz, the main concepts are:
 * The quiz, containing questions over one or more pages
 * The question bank, which stores copies of all questions organised into categories
 * Random questions -  A student gets different questions each time they attempt the quiz and different students can get different questions';
+$string['editingquiz_link'] = 'mod/quiz/edit';
 $string['editingrandom'] = 'Editing a Random Question';
 $string['editingrandomsamatch'] = 'Editing a Random Short-Answer Matching question';
 $string['editingrqp'] = '{$a}: editing a question';
@@ -564,10 +565,6 @@ $string['parsingquestions'] = 'Parsing questions from import file.';
 $string['partiallycorrect'] = 'Partially correct';
 $string['passworderror'] = 'The password entered was incorrect';
 $string['penalty'] = 'Penalty';
-$string['penaltyfactor'] = 'Penalty factor';
-$string['penaltyfactor_help'] = 'This setting determines what fraction of the achieved score is subtracted for each wrong response. It is only applicable if the quiz is run in adaptive mode.
-
-The penalty factor should be a number between 0 and 1. A penalty factor of 1 means that the student has to get the answer right in his first response to get any credit for it at all. A penalty factor of 0 means the student can try as often as he likes and still get the full marks.';
 $string['penaltyscheme'] = 'Apply penalties';
 $string['penaltyscheme_help'] = 'If enabled, a penalty is subtracted from the final mark for a question for a wrong response. The amount of penalty is specified in the question settings. This setting only applies if adaptive mode is enabled.';
 $string['percentcorrect'] = 'Percent Correct';
@@ -644,11 +641,10 @@ $string['quiz:regrade'] = 'Regrade quiz attempts';
 $string['quiz:reviewmyattempts'] = 'Review your own attempts';
 $string['quizsettings'] = 'Quiz settings';
 $string['quiztimelimit'] = 'Time limit: {$a}';
-$string['quiztimer'] = 'Quiz Timer';
 $string['quiz:view'] = 'View quiz information';
 $string['quiz:viewreports'] = 'View quiz reports';
 $string['quizwillopen'] = 'This quiz will open {$a}';
-$string['random'] = 'Random Question';
+$string['random'] = 'Random question';
 $string['randomcreate'] = 'Create Random Questions';
 $string['randomfromcategory'] = 'Random question from category:';
 $string['randomnosubcat'] = 'Questions from this category only, not its subcategories.';
