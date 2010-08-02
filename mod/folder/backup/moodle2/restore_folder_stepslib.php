@@ -46,6 +46,7 @@ class restore_folder_activity_structure_step extends restore_activity_structure_
         $data = (object)$data;
         $oldid = $data->id;
         $data->course = $this->get_courseid();
+        $data->timemodified = $this->apply_date_offset($data->timemodified);
 
         // insert the folder record
         $newitemid = $DB->insert_record('folder', $data);
