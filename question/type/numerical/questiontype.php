@@ -920,10 +920,10 @@ class question_numerical_qtype extends question_shortanswer_qtype {
     }
 
     /**
-    * function used in function definition_inner()
-    * of edit_..._form.php for
-    * numerical, calculated, calculatedsimple
-    */    
+     * function used in function definition_inner()
+     * of edit_..._form.php for
+     * numerical, calculated, calculatedsimple
+     */
     function add_units_options(&$mform, &$that){
         $mform->addElement('header', 'unithandling', get_string('unitshandling', 'qtype_numerical'));
         // Units are graded
@@ -955,26 +955,25 @@ class question_numerical_qtype extends question_shortanswer_qtype {
         $mform->setType('unitpenalty', PARAM_NUMBER);
         $mform->setDefault('unitpenalty', 0.1);
         $mform->setDefault('unitgradingtype', 1);
-        $mform->setHelpButton('penaltygrp', array('penaltygrp', get_string('unitpenalty', 'qtype_numerical'), 'qtype_numerical'));
+        // $mform->addHelpButton('penaltygrp', 'unitpenalty', 'qtype_numerical'); // TODO help did not exist before MDL-21695
         $mform->setDefault('showunits0', 0);
         $mform->setDefault('showunits1', 3);
         $mform->setDefault('unitsleft', 0);
         $mform->setType('instructions', PARAM_RAW);
-        $mform->setHelpButton('instructions', array('numericalinstructions', get_string('numericalinstructions', 'qtype_numerical'), 'qtype_numerical'));
+        $mform->addHelpButton('instructions', 'numericalinstructions', 'qtype_numerical');
         $mform->disabledIf('penaltygrp', 'unitrole','eq','1');
         $mform->disabledIf('unitgradingtype', 'unitrole','eq','1');
         $mform->disabledIf('instructions', 'unitrole','eq','1');
         $mform->disabledIf('unitsleft', 'showunits1','eq','3');
         $mform->disabledIf('showunits1','unitrole','eq','0');
         $mform->disabledIf('showunits0','unitrole','eq','1');
-       
-
     }
-/**
-  * function used in in function definition_inner()
-  * of edit_..._form.php for
-  * numerical, calculated, calculatedsimple
-  */    
+
+    /**
+     * function used in in function definition_inner()
+     * of edit_..._form.php for
+     * numerical, calculated, calculatedsimple
+     */
     function add_units_elements(& $mform,& $that) { 
         $repeated = array();
         $repeated[] =& $mform->createElement('header', 'unithdr', get_string('unithdr', 'qtype_numerical', '{no}'));
@@ -1002,16 +1001,15 @@ class question_numerical_qtype extends question_shortanswer_qtype {
             $firstunit->freeze();
             $firstunit->setValue('1.0');
             $firstunit->setPersistantFreeze(true);
-            $mform->setHelpButton('multiplier[0]', array('numericalmultiplier', get_string('numericalmultiplier', 'qtype_numerical'), 'qtype_numerical'));            
+            $mform->addHelpButton('multiplier[0]', 'numericalmultiplier', 'qtype_numerical');
         }
     }
-    
-/**
-  * function used in in function setdata ()
-  * of edit_..._form.php for
-  * numerical, calculated, calculatedsimple
-  */    
-    
+
+    /**
+     * function used in in function setdata ()
+     * of edit_..._form.php for
+     * numerical, calculated, calculatedsimple
+     */
     function set_numerical_unit_data(&$question,&$default_values){
 
         if (isset($question->options)){

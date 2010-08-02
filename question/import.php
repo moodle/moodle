@@ -19,7 +19,7 @@ list($thispageurl, $contexts, $cmid, $cm, $module, $pagevars) =
 // get display strings
 $txt = new stdClass();
 $txt->importerror = get_string('importerror','quiz');
-$txt->importquestions = get_string("importquestions", "quiz");
+$txt->importquestions = get_string('importquestions', 'question');
 
 list($catid, $catcontext) = explode(',', $pagevars['cat']);
 if (!$category = $DB->get_record("question_categories", array("id" => $catid))) {
@@ -136,7 +136,7 @@ if ($form = $import_form->get_data()) {
     }
 }
 
-echo $OUTPUT->heading_with_help($txt->importquestions, 'import', 'quiz');
+echo $OUTPUT->heading_with_help($txt->importquestions, 'importquestions', 'question');
 
 /// Print upload form
 $import_form->display();

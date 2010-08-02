@@ -24,8 +24,6 @@
  */
 
 $string['addingmultichoice'] = 'Adding a Multiple choice question';
-$string['addingmultichoice_help'] = 'In response to a question (that may include a image) the respondent chooses from multiple answers. There are two types of multiple choice questions - one answer and multiple answer.';
-$string['addingmultichoice_link'] = 'question/type/multichoice';
 $string['addmorechoiceblanks'] = 'Blanks for {no} more choices';
 $string['answerhowmany'] = 'One or multiple answers?';
 $string['answernumbering'] = 'Number the choices?';
@@ -48,6 +46,8 @@ $string['choiceno'] = 'Choice {$a}';
 $string['choices'] = 'Available choices';
 $string['incorrectfeedback'] = 'For any incorrect response';
 $string['multichoice'] = 'Multiple choice';
+$string['multichoice_help'] = 'In response to a question (that may include a image) the respondent chooses from multiple answers. There are two types of multiple choice questions - one answer and multiple answer.';
+$string['multichoice_link'] = 'question/type/multichoice';
 $string['multichoicesummary'] = 'Allows the selection of a single or multiple responses from a pre-defined list.';
 $string['notenoughanswers'] = 'This type of question requires at least {$a} choices';
 $string['overallcorrectfeedback'] = 'Feedback for any correct response';

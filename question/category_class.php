@@ -252,7 +252,7 @@ class question_category_object {
     public function output_edit_lists() {
         global $OUTPUT;
 
-        echo $OUTPUT->heading_with_help(get_string('editcategories', 'quiz'), 'categories', 'question'); 
+        echo $OUTPUT->heading_with_help(get_string('editcategories', 'question'), 'editcategories', 'question');
 
         foreach ($this->editlists as $context => $list){
             $listhtml = $list->to_html(0, array('str'=>$this->str));

@@ -19,7 +19,7 @@
             question_edit_setup('export', '/question/export.php');
 
     // get display strings
-    $strexportquestions = get_string('exportquestions', 'quiz');
+    $strexportquestions = get_string('exportquestions', 'question');
 
     // make sure we are using the user's most recent category choice
     if (empty($categoryid)) {
@@ -35,7 +35,7 @@
 
     /// Header
     $PAGE->set_url($thispageurl->out());
-    $PAGE->set_title($strexportquestions);   
+    $PAGE->set_title($strexportquestions);
     $PAGE->set_heading($COURSE->fullname);
     echo $OUTPUT->header();
 
@@ -108,7 +108,7 @@
     }
 
     /// Display export form
-    echo $OUTPUT->heading_with_help($strexportquestions, 'export', 'quiz');
+    echo $OUTPUT->heading_with_help($strexportquestions, 'exportquestions', 'question');
 
     $export_form->display();
 

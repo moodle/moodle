@@ -31,8 +31,8 @@ class question_edit_match_form extends question_edit_form {
      * @param object $mform the form being built.
      */
     function definition_inner(&$mform) {
-        $mform->addElement('advcheckbox', 'shuffleanswers', get_string('shuffle', 'quiz'), null, null, array(0,1));
-        $mform->setHelpButton('shuffleanswers', array('matchshuffle', get_string('shuffle','quiz'), 'quiz'));
+        $mform->addElement('advcheckbox', 'shuffleanswers', get_string('shuffle', 'qtype_match'), null, null, array(0,1));
+        $mform->addHelpButton('shuffleanswers', 'shuffle', 'qtype_match');
         $mform->setDefault('shuffleanswers', 1);
 
         $mform->addElement('static', 'answersinstruct', get_string('choices', 'quiz'), get_string('filloutthreeqsandtwoas', 'qtype_match'));

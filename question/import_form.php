@@ -23,16 +23,16 @@ class question_import_form extends moodleform {
             $currentgrp1 = array();
             $currentgrp1[] = &$mform->createElement('radio','format','',$fileformatname,$shortname);
             $mform->addGroup($currentgrp1,"formathelp[$i]",'',array('<br />'),false);
-            $mform->setHelpButton("formathelp[$i]", array("$shortname",$fileformatname,"qformat_$shortname"));
+            $mform->addHelpButton("formathelp[$i]", $shortname, 'qformat_'.$shortname);
             $i++ ;
         }
         $mform->addRule("formathelp[0]", null, 'required', null, 'client' );
 //--------------------------------------------------------------------------------
         $mform->addElement('header','general', get_string('general', 'form'));
 
-        $mform->addElement('questioncategory', 'category', get_string('category','quiz'), compact('contexts'));
+        $mform->addElement('questioncategory', 'category', get_string('importcategory', 'question'), compact('contexts'));
         $mform->setDefault('category', $defaultcategory);
-        $mform->setHelpButton('category', array('importcategory', get_string('importcategory','quiz'), 'quiz'));
+        $mform->addHelpButton('category', 'importcategory', 'question');
 
         $categorygroup = array();
         $categorygroup[] =& $mform->createElement('checkbox', 'catfromfile', '', get_string('getcategoryfromfile', 'question'));
@@ -46,13 +46,13 @@ class question_import_form extends moodleform {
         $matchgrades = array();
         $matchgrades['error'] = get_string('matchgradeserror','quiz');
         $matchgrades['nearest'] = get_string('matchgradesnearest','quiz');
-        $mform->addElement('select', 'matchgrades', get_string('matchgrades','quiz'), $matchgrades);
-        $mform->setHelpButton('matchgrades', array('matchgrades', get_string('matchgrades','quiz'), 'quiz'));
+        $mform->addElement('select', 'matchgrades', get_string('matchgrades', 'question'), $matchgrades);
+        $mform->addHelpButton('matchgrades', 'matchgrades', 'question');
         $mform->setDefault('matchgrades', 'error');
 
-        $mform->addElement('selectyesno', 'stoponerror', get_string('stoponerror', 'quiz'));
+        $mform->addElement('selectyesno', 'stoponerror', get_string('stoponerror', 'question'));
         $mform->setDefault('stoponerror', 1);
-        $mform->setHelpButton('stoponerror', array('stoponerror', get_string('stoponerror', 'quiz'), 'quiz'));
+        $mform->addHelpButton('stoponerror', 'stoponerror', 'question');
 
 //--------------------------------------------------------------------------------
         $mform->addElement('header', 'importfileupload', get_string('importfromthisfile','quiz'));

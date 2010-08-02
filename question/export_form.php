@@ -21,18 +21,18 @@ class question_export_form extends moodleform {
         $i = 0 ;
         foreach ($fileformatnames as $shortname => $fileformatname) {
             $currentgrp1 = array();
-            $currentgrp1[] = &$mform->createElement('radio','format','',$fileformatname,$shortname); 
+            $currentgrp1[] = &$mform->createElement('radio','format','',$fileformatname,$shortname);
             $mform->addGroup($currentgrp1,"formathelp[$i]",'',array('<br />'),false);
-            $mform->setHelpButton("formathelp[$i]", array("$shortname",$fileformatname,"qformat_$shortname"));          
+            $mform->addHelpButton("formathelp[$i]", $shortname, 'qformat_'.$shortname);
             $i++ ;
         }
         $mform->addRule("formathelp[0]",null,'required',null,'client');
 //--------------------------------------------------------------------------------
         $mform->addElement('header','general', get_string('general', 'form'));
 
-        $mform->addElement('questioncategory', 'category', get_string('category','quiz'), compact('contexts'));
+        $mform->addElement('questioncategory', 'category', get_string('exportcategory', 'question'), compact('contexts'));
         $mform->setDefault('category', $defaultcategory);
-        $mform->setHelpButton('category', array('exportcategory', get_string('exportcategory','question'), 'quiz'));
+        $mform->addHelpButton('category', 'exportcategory', 'question');
 
         $categorygroup = array();
         $categorygroup[] =& $mform->createElement('checkbox', 'cattofile', '', get_string('tofilecategory', 'question'));
@@ -42,11 +42,9 @@ class question_export_form extends moodleform {
         $mform->setDefault('cattofile', 1);
         $mform->setDefault('contexttofile', 1);
 
-
 //        $fileformatnames = get_import_export_formats('export');
 //        $mform->addElement('select', 'format', get_string('fileformat','quiz'), $fileformatnames);
 //        $mform->setDefault('format', 'gift');
-//        $mform->setHelpButton('format', array('export', get_string('exportquestions', 'quiz'), 'quiz'));
 
         $mform->addElement('text', 'exportfilename', get_string('exportname', 'quiz'), array('size'=>40));
         $mform->setDefault('exportfilename', $defaultfilename);

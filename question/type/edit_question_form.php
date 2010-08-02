@@ -143,7 +143,7 @@ class question_edit_form extends moodleform {
         $mform->addElement('htmleditor', 'generalfeedback', get_string('generalfeedback', 'quiz'),
                 array('rows' => 10, 'course' => $this->coursefilesid));
         $mform->setType('generalfeedback', PARAM_RAW);
-        $mform->setHelpButton('generalfeedback', array('generalfeedback', get_string('generalfeedback', 'quiz'), 'quiz'));
+        $mform->addHelpButton('generalfeedback', 'generalfeedback', 'quiz');
 
         // Any questiontype specific fields.
         $this->definition_inner($mform);
