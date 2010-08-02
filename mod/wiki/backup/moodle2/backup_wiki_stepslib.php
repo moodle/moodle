@@ -59,9 +59,9 @@ class backup_wiki_activity_structure_step extends backup_activity_structure_step
 
         $version = new backup_nested_element('version', array('id'), array('content', 'contentformat', 'version', 'timecreated', 'userid'));
 
-        $comments = new backup_nested_element('comments');
+        $tags = new backup_nested_element('tags');
 
-        $comment = new backup_nested_element('comment', array('id'), array('contextid', 'commentarea', 'content', 'format', 'userid', 'timecreated'));
+        $tag = new backup_nested_element('tag', array('id'), array('name', 'rawname'));
 
         // Build the tree
         $wiki->add_child($subwikis);
@@ -79,8 +79,8 @@ class backup_wiki_activity_structure_step extends backup_activity_structure_step
         $page->add_child($versions);
         $versions->add_child($version);
 
-        $page->add_child($comments);
-        $comments->add_child($comment);
+        $page->add_child($tags);
+        $tags->add_child($tag);
 
         // Define sources
         $wiki->set_source_table('wiki', array('id' => backup::VAR_ACTIVITYID));
@@ -100,7 +100,13 @@ class backup_wiki_activity_structure_step extends backup_activity_structure_step
 
             $version->set_source_table('wiki_versions', array('pageid' => backup::VAR_PARENTID));
 
-            $comment->set_source_table('comments', array('itemid' => backup::VAR_PARENTID));
+            $tag->set_source_sql('SELECT t.id, t.name, t.rawname
+                                    FROM {tag} t
+                                    JOIN {tag_instance} ti ON ti.tagid = t.id
+                                   WHERE ti.itemtype = ?
+                                     AND ti.itemid = ?', array(
+                                         backup_helper::is_sqlparam('wiki_page'),
+                                         backup::VAR_PARENTID));
         }
 
         // Define id annotations
@@ -112,11 +118,9 @@ class backup_wiki_activity_structure_step extends backup_activity_structure_step
 
         $version->annotate_ids('user', 'userid');
 
-        $comment->annotate_ids('user', 'userid');
-
         // Define file annotations
         $wiki->annotate_files('mod_wiki', 'intro', null); // This file area hasn't itemid
-        //TODO: where are the attachments? (skodak)
+        $page->annotate_files('mod_wiki', 'attachments', 'id'); // This file area hasn't itemid
 
         // Return the root element (wiki), wrapped into standard activity structure
         return $this->prepare_activity_structure($wiki);

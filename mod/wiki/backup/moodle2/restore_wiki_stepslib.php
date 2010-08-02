@@ -41,9 +41,9 @@ class restore_wiki_activity_structure_step extends restore_activity_structure_st
             $paths[] = new restore_path_element('wiki_subwiki', '/activity/wiki/subwikis/subwiki');
             $paths[] = new restore_path_element('wiki_page', '/activity/wiki/subwikis/subwiki/pages/page');
             $paths[] = new restore_path_element('wiki_version', '/activity/wiki/subwikis/subwiki/pages/page/versions/version');
+            $paths[] = new restore_path_element('wiki_tag', '/activity/wiki/subwikis/subwiki/pages/page/tags/tag');
             $paths[] = new restore_path_element('wiki_synonym', '/activity/wiki/subwikis/subwiki/synonyms/synonym');
             $paths[] = new restore_path_element('wiki_link', '/activity/wiki/subwikis/subwiki/links/link');
-            $paths[] = new restore_path_element('wiki_comment', '/activity/wiki/subwikis/subwiki/pages/page/comments/comment');
         }
 
         // Return the paths wrapped into standard activity structure
@@ -92,7 +92,7 @@ class restore_wiki_activity_structure_step extends restore_activity_structure_st
         $data->timerendered = $this->apply_date_offset($data->timerendered);
 
         $newitemid = $DB->insert_record('wiki_pages', $data);
-        $this->set_mapping('wiki_page', $oldid, $newitemid);
+        $this->set_mapping('wiki_page', $oldid, $newitemid, true); // There are files related to this
     }
     protected function process_wiki_version($data) {
         global $DB;
@@ -126,28 +126,30 @@ class restore_wiki_activity_structure_step extends restore_activity_structure_st
         $data->subwikiid = $this->get_new_parentid('wiki_subwiki');
         $data->frompageid = $this->get_mappingid('wiki_page', $data->frompageid);
         $data->topageid = $this->get_mappingid('wiki_page', $data->topageid);
-        
+
         $newitemid = $DB->insert_record('wiki_links', $data);
         // No need to save this mapping as far as nothing depend on it
         // (child paths, file areas nor links decoder)
     }
 
-    protected function process_wiki_comment($data) {
-        global $DB;
+    protected function process_wiki_tag($data) {
+        global $CFG, $DB;
 
         $data = (object)$data;
         $oldid = $data->id;
-        $data->contextid = $this->get_mappingid('context', $data->contextid);
-        $data->userid = $this->get_mappingid('user', $data->userid);
 
-        $newitemid = $DB->insert_record('comments', $data);
-        // No need to save this mapping as far as nothing depend on it
-        // (child paths, file areas nor links decoder)
+        if (empty($CFG->usetags)) { // tags disabled in server, nothing to process
+            return;
+        }
+
+        $tag = $data->rawname;
+        $itemid = $this->get_new_parentid('wiki_page');
+        tag_set_add('wiki_page', $itemid, $tag);
     }
-
 
     protected function after_execute() {
         // Add wiki related files, no need to match by itemname (just internally handled context)
         $this->add_related_files('mod_wiki', 'intro', null);
+        $this->add_related_files('mod_wiki', 'attachments', 'wiki_page');
     }
 }

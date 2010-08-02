@@ -67,8 +67,9 @@ class restore_wiki_activity_task extends restore_activity_task {
     static public function define_decode_rules() {
         $rules = array();
 
-        $rules[] = new restore_decode_rule('WIKIVIEWBYID', '/mod/wiki/view.php?id=$1', 'course_module');
         $rules[] = new restore_decode_rule('WIKIINDEX', '/mod/wiki/index.php?id=$1', 'course');
+        $rules[] = new restore_decode_rule('WIKIVIEWBYID', '/mod/wiki/view.php?id=$1', 'course_module');
+        $rules[] = new restore_decode_rule('WIKIPAGEBYID', '/mod/wiki/view.php?pageid=$1', 'wiki_page');
 
         return $rules;
 
