@@ -326,6 +326,8 @@ function xmldb_wiki_upgrade($oldversion) {
         $DB->execute($sql);
 
         echo $OUTPUT->notification('Updating comments and tags', 'notifysuccess');
+
+        upgrade_mod_savepoint(true, 2010080201, 'wiki');
     }
 
 
