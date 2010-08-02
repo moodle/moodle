@@ -52,8 +52,10 @@ class restore_survey_activity_structure_step extends restore_activity_structure_
         $data = (object)$data;
         $oldid = $data->id;
         $data->course = $this->get_courseid();
+        $data->timemodified = $this->apply_date_offset($data->timemodified);
+        $data->timecreated = $this->apply_date_offset($data->timecreated);
 
-        // insert the choice record
+        // insert the survey record
         $newitemid = $DB->insert_record('survey', $data);
         // inmediately after inserting "activity" record, call this
         $this->apply_activity_instance($newitemid);
