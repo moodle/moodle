@@ -177,6 +177,7 @@ class restore_scorm_activity_structure_step extends restore_activity_structure_s
         $data->scormid = $this->get_new_parentid('scorm');
         $data->scoid = $this->get_new_parentid('scorm_sco');
         $data->userid = $this->get_mappingid('user', $data->userid);
+        $data->timemodified = $this->apply_date_offset($data->timemodified);
 
         $newitemid = $DB->insert_record('scorm_scoes_track', $data);
         // No need to save this mapping as far as nothing depend on it
