@@ -1625,7 +1625,7 @@ class global_navigation extends navigation_node {
 
             $userscourses = enrol_get_users_courses($user->id);
             $userscoursesnode = $usernode->add(get_string('courses'));
-            
+
             foreach ($userscourses as $usercourse) {
                 $usercoursecontext = get_context_instance(CONTEXT_COURSE, $usercourse->id);
                 $usercoursenode = $userscoursesnode->add($usercourse->shortname, new moodle_url('/user/view.php', array('id'=>$user->id, 'course'=>$usercourse->id)), self::TYPE_CONTAINER);
@@ -2790,8 +2790,9 @@ class settings_navigation extends navigation_node {
 
         // Manage files
         if ($course->legacyfiles == 2 and has_capability('moodle/course:managefiles', $coursecontext)) {
+            // hidden in new courses and courses where legacy files were turned off
             $url = new moodle_url('/files/index.php', array('contextid'=>$coursecontext->id, 'itemid'=>0, 'component' => 'course', 'filearea'=>'legacy'));
-            $coursenode->add(get_string('files'), $url, self::TYPE_SETTING, null, 'coursefiles', new pix_icon('i/files', ''));
+            $coursenode->add(get_string('courselegacyfiles'), $url, self::TYPE_SETTING, null, 'coursefiles', new pix_icon('i/files', ''));
         }
 
         // Switch roles
@@ -3445,10 +3446,10 @@ class settings_navigation extends navigation_node {
         }
 
         // Manage files
-        if (has_capability('moodle/course:managefiles', $this->context)) {
-            //TODO: hide in new installs
+        if ($course->legacyfiles == 2 and has_capability('moodle/course:managefiles', $this->context)) {
+            //hiden in new installs
             $url = new moodle_url('/files/index.php', array('contextid'=>$coursecontext->id, 'itemid'=>0, 'component' => 'course', 'filearea'=>'legacy'));
-            $frontpage->add(get_string('files'), $url, self::TYPE_SETTING, null, null, new pix_icon('i/files', ''));
+            $frontpage->add(get_string('sitelegacyfiles'), $url, self::TYPE_SETTING, null, null, new pix_icon('i/files', ''));
         }
         return $frontpage;
     }

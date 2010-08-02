@@ -1508,6 +1508,7 @@ $string['siteerrors'] = 'Site errors';
 $string['sitefiles'] = 'Site files';
 $string['sitefilesused'] = 'Site files used in this course';
 $string['sitehome'] = 'Site home';
+$string['sitelegacyfiles'] = 'Legacy site files';
 $string['sitelogs'] = 'Site logs';
 $string['sitenews'] = 'Site news';
 $string['sitepages'] = 'Site pages';

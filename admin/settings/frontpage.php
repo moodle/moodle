@@ -80,6 +80,8 @@ if (!during_initial_install()) { //do not use during installation
                 'moodle/question:moveall');
         $ADMIN->add('frontpage', new admin_externalpage('frontpagequestions', get_string('frontpagequestions', 'admin'), $CFG->wwwroot.'/question/edit.php?courseid='.SITEID, $questioncapabilites, false, $frontpagecontext));
 
-        $ADMIN->add('frontpage', new admin_externalpage('sitefiles', get_string('sitefiles'), $CFG->wwwroot . '/files/index.php?id=' . SITEID, 'moodle/course:managefiles', false, $frontpagecontext));
+        if (!empty($SITE->legacyfiles) and $SITE->legacyfiles === 2) {
+            $ADMIN->add('frontpage', new admin_externalpage('sitefiles', get_string('sitelegacyfiles'), $CFG->wwwroot . '/files/index.php?id=' . SITEID, 'moodle/course:managefiles', false, $frontpagecontext));
+        }
     }
 }
