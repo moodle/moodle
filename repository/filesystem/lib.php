@@ -144,9 +144,10 @@ class repository_filesystem extends repository {
         $ret = parent::set_option($options);
         return $ret;
     }
+
     public function instance_config_form($mform) {
         global $CFG, $PAGE;
-        if (has_capability('moodle/site:config', $PAGE->context)) {
+        if (has_capability('moodle/site:config', get_system_context())) {
             $path = $CFG->dataroot . '/repository/';
             if (!is_dir($path)) {
                 mkdir($path);
@@ -173,15 +174,17 @@ class repository_filesystem extends repository {
             return false;
         }
     }
+
     public function supported_returntypes() {
         return FILE_INTERNAL;
     }
+
     public static function create($type, $userid, $context, $params, $readonly=0) {
         global $PAGE;
-        if (has_capability('moodle/site:config', $PAGE->context)) {
+        if (has_capability('moodle/site:config', get_system_context())) {
             return parent::create($type, $userid, $context, $params, $readonly);
         } else {
-            require_capability('moodle/site:config', $PAGE->context);
+            require_capability('moodle/site:config', get_system_context());
             return false;
         }
     }

@@ -1494,10 +1494,11 @@ abstract class repository {
 
     /**
      * Edit/Create Admin Settings Moodle form
-     * @param object $ Moodle form (passed by reference)
+     * @param object $mform Moodle form (passed by reference)
+     * @param string $classname repository class name
      */
-    public function type_config_form($mform) {
-        $instnaceoptions = self::get_instance_option_names();
+    public function type_config_form($mform, $classname = 'repository') {
+        $instnaceoptions = call_user_func(array($classname, 'get_instance_option_names'), $mform, $classname);
         if (empty($instnaceoptions)) {
             // this plugin has only one instance
             // so we need to give it a name
@@ -1684,13 +1685,24 @@ final class repository_type_form extends moodleform {
         // let the plugin add its specific fields
         $classname = 'repository_' . $this->plugin;
         require_once($CFG->dirroot . '/repository/' . $this->plugin . '/lib.php');
-        $result = call_user_func(array($classname, 'type_config_form'), $mform);
-
         //add "enable course/user instances" checkboxes if multiple instances are allowed
         $instanceoptionnames = repository::static_function($this->plugin, 'get_instance_option_names');
+
+        $result = call_user_func(array($classname, 'type_config_form'), $mform, $classname);
+
         if (!empty($instanceoptionnames)) {
-            $mform->addElement('checkbox', 'enablecourseinstances', get_string('enablecourseinstances', 'repository'));
-            $mform->addElement('checkbox', 'enableuserinstances', get_string('enableuserinstances', 'repository'));
+            $sm = get_string_manager();
+            $component = 'repository';
+            if ($sm->string_exists('enablecourseinstances', 'repository_' . $this->plugin)) {
+                $component .= ('_' . $this->plugin);
+            }
+            $mform->addElement('checkbox', 'enablecourseinstances', get_string('enablecourseinstances', $component));
+
+            $component = 'repository';
+            if ($sm->string_exists('enableuserinstances', 'repository_' . $this->plugin)) {
+                $component .= ('_' . $this->plugin);
+            }
+            $mform->addElement('checkbox', 'enableuserinstances', get_string('enableuserinstances', $component));
         }
 
         // set the data if we have some.

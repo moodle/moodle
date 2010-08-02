@@ -33,3 +33,5 @@ $string['path'] = 'Select a subdirectory';
 $string['nosubdir'] = 'You need to create at least one folder inside the <b>{$a}</b> directory so you can select it here.';
 $string['pluginname_help'] = 'Create repository from local directory';
 $string['pluginname'] = 'File system';
+$string['enablecourseinstances'] = 'Allow users to add a repository instance into the course (can be configured only by admins)';
+$string['enableuserinstances'] = 'Allow users to add a repository instance into the user context (can be configured only by admins)';
