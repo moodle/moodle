@@ -10,6 +10,7 @@ require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 
 // HTTPS is potentially required in this page
 httpsrequired();
+$PAGE->set_context(get_context_instance(CONTEXT_SYSTEM));
 
 $authsequence = get_enabled_auth_plugins(true); // auths, in sequence
 if (!in_array('ldap', $authsequence, true)) {
