@@ -49,10 +49,9 @@ $event = calendar_event::load($eventid);
  * a course
  */
 if ($event->eventtype !== 'user' && $event->eventtype !== 'site') {
-    if ($courseid !== $event->courseid) {
-        print_error('invalidcourse');
-    }
-    require_login($event->courseid);
+    $courseid = $event->courseid;
+    $course = $DB->get_record('course', array('id'=>$courseid), '*', MUST_EXIST);
+    require_login($course);
 } else {
     require_login();
 }

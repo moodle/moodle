@@ -536,7 +536,7 @@ function calendar_add_event_metadata($event) {
  * @deprecated 2.0
  */
 function calendar_print_event($event, $showactions=true) {
-    global $CFG, $USER, $OUTPUT;
+    global $CFG, $USER, $OUTPUT, $PAGE;
     debugging('calendar_print_event is deprecated please update your code', DEBUG_DEVELOPER);
     $renderer = $PAGE->get_renderer('core_calendar');
     if (!($event instanceof calendar_event)) {
@@ -681,7 +681,7 @@ function calendar_top_controls($type, $data) {
             list($nextmonth, $nextyear) = calendar_add_month($data['m'], $data['y']);
             $nextlink = calendar_get_link_next(get_string('monthnext', 'access'), 'index.php?', 0, $nextmonth, $nextyear, $accesshide=true);
             $prevlink = calendar_get_link_previous(get_string('monthprev', 'access'), 'index.php?', 0, $prevmonth, $prevyear, true);
-            
+
             if (right_to_left()) {
                 $content .= "\n".'<div class="calendar-controls">'. $nextlink;
                 $content .= '<span class="hide"> | </span><span class="current"><a href="'.calendar_get_link_href(CALENDAR_URL.'view.php?view=month'.$courseid.'&amp;', 1, $data['m'], $data['y']).'">'.userdate($time, get_string('strftimemonthyear')).'</a></span>';
@@ -693,7 +693,7 @@ function calendar_top_controls($type, $data) {
                 $content .= '<span class="hide"> | </span>'. $nextlink ."\n";
                 $content .= "<span class=\"clearer\"><!-- --></span></div>\n";
             }
-            
+
         break;
         case 'course':
             list($prevmonth, $prevyear) = calendar_sub_month($data['m'], $data['y']);
@@ -934,7 +934,7 @@ function calendar_get_link_previous($text, $linkbase, $d, $m, $y, $accesshide=fa
 function calendar_get_link_next($text, $linkbase, $d, $m, $y, $accesshide=false) {
     $href = calendar_get_link_href($linkbase, $d, $m, $y);
     if(empty($href)) return $text;
-    
+
     return link_arrow_right($text, $href, $accesshide, 'next');
 }
 
