@@ -46,6 +46,7 @@ class restore_resource_activity_structure_step extends restore_activity_structur
         $data = (object)$data;
         $oldid = $data->id;
         $data->course = $this->get_courseid();
+        $data->timemodified = $this->apply_date_offset($data->timemodified);
 
         // insert the resource record
         $newitemid = $DB->insert_record('resource', $data);
