@@ -280,7 +280,7 @@ if ($mode != 'csstemplate' and $mode != 'jstemplate') {
 }
 echo '</td>';
 
-echo '<td>';
+echo '<td valign="top">';
 if ($mode == 'listtemplate'){
     echo '<div style="text-align:center"><label for="edit-template">'.get_string('multientry','data').'</label></div>';
 } else {
