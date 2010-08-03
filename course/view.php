@@ -106,12 +106,14 @@
     if ($PAGE->user_allowed_editing()) {
         if (($edit == 1) and confirm_sesskey()) {
             $USER->editing = 1;
+            redirect($PAGE->url);
         } else if (($edit == 0) and confirm_sesskey()) {
             $USER->editing = 0;
             if(!empty($USER->activitycopy) && $USER->activitycopycourse == $course->id) {
                 $USER->activitycopy       = false;
                 $USER->activitycopycourse = NULL;
             }
+            redirect($PAGE->url);
         }
 
         if ($hide && confirm_sesskey()) {
@@ -187,8 +189,8 @@
         $PAGE->requires->js_init_call('M.core_completion.init');
     }
 
-    // We are currently keeping the button here from 1.x to help new teachers figure out 
-    // what to do, even though the link also appears in the course admin block.  It also 
+    // We are currently keeping the button here from 1.x to help new teachers figure out
+    // what to do, even though the link also appears in the course admin block.  It also
     // means you can back out of a situation where you removed the admin block. :)
     if ($PAGE->user_allowed_editing()) {
         $buttons = $OUTPUT->edit_button(new moodle_url('/course/view.php', array('id' => $course->id)));
