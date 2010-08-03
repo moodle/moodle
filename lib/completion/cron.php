@@ -78,7 +78,7 @@ function completion_cron_mark_started() {
             u.id AS userid,
             crc.id AS completionid,
             ue.timestart,
-            ue.timeenrolled
+            ue.timecreated
         FROM
             {user} u
         INNER JOIN
@@ -102,8 +102,8 @@ function completion_cron_mark_started() {
         AND u.deleted = 0
         AND ue.timestart < ?
         AND (ue.timeend > ? OR ue.timeend = 0)
-        AND ue.timeenrolled < ?
-        AND (ue.timeenrolled > ? OR ue.timeenrolled = 0)
+        AND ue.timecreated < ?
+        AND (ue.timecreated > ? OR ue.timecreated = 0)
         ORDER BY
             course,
             userid

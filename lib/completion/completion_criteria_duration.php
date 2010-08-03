@@ -186,8 +186,8 @@ class completion_criteria_duration extends completion_criteria {
                 u.id AS userid,
                 ue.timestart AS otimestart,
                 (ue.timestart + cr.enrolperiod) AS ctimestart,
-                ue.timeenrolled AS otimeenrolled,
-                (ue.timeenrolled + cr.enrolperiod) AS ctimeenrolled
+                ue.timecreated AS otimeenrolled,
+                (ue.timecreated + cr.enrolperiod) AS ctimeenrolled
             FROM
                 {user} u
             INNER JOIN
@@ -213,7 +213,7 @@ class completion_criteria_duration extends completion_criteria {
             AND
             (
                 ue.timestart > 0 AND ue.timestart + cr.enrolperiod < ?
-             OR ue.timeenrolled > 0 AND ue.timeenrolled + cr.enrolperiod < ?
+             OR ue.timecreated > 0 AND ue.timecreated + cr.enrolperiod < ?
             )
         ';
 
