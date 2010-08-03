@@ -80,15 +80,11 @@ class restore_lesson_activity_structure_step extends restore_activity_structure_
         $data->timecreated = $this->apply_date_offset($data->timecreated);
 
         $newitemid = $DB->insert_record('lesson_pages', $data);
-        $this->set_mapping('lesson_page', $oldid, $newitemid);
+        $this->set_mapping('lesson_page', $oldid, $newitemid, true); // Has related fileareas
 
-        //now update previous page with newid as the nextpageid
+        //now update previous page with newitemid as the nextpageid
         if (!empty($data->prevpageid)) {
-            $prevpage = $DB->get_record('lesson_pages', array('lessonid'=>$data->lessonid, 'id'=>$data->prevpageid));
-            if (!empty($prevpage)) {
-                $prevpage->nextpageid = $newitemid;
-                $DB->update_record('lesson_pages', $prevpage);
-            }
+            $DB->set_field('lesson_pages', 'nextpageid', $newitemid, array('id' => $data->prevpageid));
         }
     }
 
@@ -116,6 +112,7 @@ class restore_lesson_activity_structure_step extends restore_activity_structure_
         $data->pageid = $this->get_new_parentid('lesson_page');
         $data->answerid = $this->get_new_parentid('lesson_answer');
         $data->userid = $this->get_mappingid('user', $data->userid);
+        $data->timeseen = $this->apply_date_offset($data->timeseen);
 
         $newitemid = $DB->insert_record('lesson_attempts', $data);
     }
@@ -127,6 +124,7 @@ class restore_lesson_activity_structure_step extends restore_activity_structure_
         $oldid = $data->id;
         $data->lessonid = $this->get_new_parentid('lesson');
         $data->userid = $this->get_mappingid('user', $data->userid);
+        $data->completed = $this->apply_date_offset($data->completed);
 
         $newitemid = $DB->insert_record('lesson_grades', $data);
         $this->set_mapping('lesson_grade', $oldid, $newitemid);
@@ -140,9 +138,9 @@ class restore_lesson_activity_structure_step extends restore_activity_structure_
         $data->lessonid = $this->get_new_parentid('lesson');
         $data->pageid = $this->get_new_parentid('lesson_page');
         $data->userid = $this->get_mappingid('user', $data->userid);
+        $data->timeseen = $this->apply_date_offset($data->timeseen);
 
         $newitemid = $DB->insert_record('lesson_branch', $data);
-        $this->set_mapping('lesson_branch', $oldid, $newitemid);
     }
 
     protected function process_lesson_highscore($data) {
@@ -164,13 +162,20 @@ class restore_lesson_activity_structure_step extends restore_activity_structure_
         $oldid = $data->id;
         $data->lessonid = $this->get_new_parentid('lesson');
         $data->userid = $this->get_mappingid('user', $data->userid);
+        $data->starttime = $this->apply_date_offset($data->starttime);
+        $data->lessontime = $this->apply_date_offset($data->lessontime);
 
         $newitemid = $DB->insert_record('lesson_timer', $data);
     }
 
     protected function after_execute() {
-        // Add lesson related files, no need to match by itemname (just internally handled context)
-        $this->add_related_files('mod_lesson', 'mediafile', 'id');
-        $this->add_related_files('mod_lesson', 'page_contents', 'id');
+        // Add lesson mediafile, no need to match by itemname (just internally handled context)
+        $this->add_related_files('mod_lesson', 'mediafile', null);
+        // Add lesson page files, by lesson_page itemname
+        $this->add_related_files('mod_lesson', 'page_contents', 'lesson_page');
+
+        // TODO: somewhere at the end of the restore... when all the activities have been restored
+        // TODO: we need to decode the lesson->activitylink that points to another activity in the course
+        // TODO: great functionality that breaks self-contained principles, grrr
     }
 }

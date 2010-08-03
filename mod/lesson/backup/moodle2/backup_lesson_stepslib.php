@@ -86,7 +86,8 @@ class backup_lesson_activity_structure_step extends backup_activity_structure_st
         $pages = new backup_nested_element('pages');
         $page = new backup_nested_element('page', array('id'), array(
             'prevpageid','nextpageid','qtype','qoption','layout',
-            'display','timecreated','timemodified','title','contents'
+            'display','timecreated','timemodified','title','contents',
+            'contentsformat'
         ));
 
         // The lesson_answers table
@@ -96,7 +97,7 @@ class backup_lesson_activity_structure_step extends backup_activity_structure_st
         $answers = new backup_nested_element('answers');
         $answer = new backup_nested_element('answer', array('id'), array(
             'jumpto','grade','score','flags','timecreated','timemodified','answer_text',
-            'response'
+            'response', 'answerformat', 'responseformat'
         ));
         // Tell the answer element about the answer_text elements mapping to the answer
         // database field.
@@ -187,7 +188,7 @@ class backup_lesson_activity_structure_step extends backup_activity_structure_st
         $timer->annotate_ids('user', 'userid');
 
         // Annotate the file areas in user by the lesson module.
-        $lesson->annotate_files('mod_lesson', 'mediafile', 'id');
+        $lesson->annotate_files('mod_lesson', 'mediafile', null);
         $page->annotate_files('mod_lesson', 'page_contents', 'id');
 
         // Prepare and return the structure we have just created for the lesson module.

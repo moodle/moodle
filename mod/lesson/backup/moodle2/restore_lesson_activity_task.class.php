@@ -54,7 +54,7 @@ class restore_lesson_activity_task extends restore_activity_task {
     static public function define_decode_contents() {
         $contents = array();
 
-        $contents[] = new restore_decode_content('lesson_pages', array('contents'), 'lesson');
+        $contents[] = new restore_decode_content('lesson_pages', array('contents'), 'lesson_page');
 
         return $contents;
     }
@@ -66,8 +66,15 @@ class restore_lesson_activity_task extends restore_activity_task {
     static public function define_decode_rules() {
         $rules = array();
 
+        $rules[] = new restore_decode_rule('LESSONEDIT', '/mod/lesson/edit.php?id=$1', 'course_module');
+        $rules[] = new restore_decode_rule('LESSONESAY', '/mod/lesson/essay.php?id=$1', 'course_module');
+        $rules[] = new restore_decode_rule('LESSONHIGHSCORES', '/mod/lesson/highscores.php?id=$1', 'course_module');
+        $rules[] = new restore_decode_rule('LESSONREPORT', '/mod/lesson/report.php?id=$1', 'course_module');
+        $rules[] = new restore_decode_rule('LESSONMEDIAFILE', '/mod/lesson/mediafile.php?id=$1', 'course_module');
         $rules[] = new restore_decode_rule('LESSONVIEWBYID', '/mod/lesson/view.php?id=$1', 'course_module');
         $rules[] = new restore_decode_rule('LESSONINDEX', '/mod/lesson/index.php?id=$1', 'course');
+        $rules[] = new restore_decode_rule('LESSONVIEWPAGE', '/mod/lesson/view.php?id=$1&pageid=$2', array('course_module', 'lesson_page'));
+        $rules[] = new restore_decode_rule('LESSONEDITPAGE', '/mod/lesson/edit.php?id=$1&pageid=$2', array('course_module', 'lesson_page'));
 
         return $rules;
 

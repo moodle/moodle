@@ -76,9 +76,9 @@ class backup_lesson_activity_task extends backup_activity_task {
         $replacement = '$@LESSONHIGHSCORES*$1@$';
         $content = preg_replace($pattern, $replacement, $content);
 
-        // This page lists all the instances of lesson in a particular course
-        $pattern = '#'.$base.'/index\.php\?id=([0-9]+)#';
-        $replacement = '$@LESSONINDEX*$1@$';
+        // Provides the interface for viewing the report
+        $pattern = '#'.$base.'/report\.php\?id=([0-9]+)#';
+        $replacement = '$@LESSONREPORT*$1@$';
         $content = preg_replace($pattern, $replacement, $content);
 
         // This file plays the mediafile set in lesson settings.
@@ -86,14 +86,19 @@ class backup_lesson_activity_task extends backup_activity_task {
         $replacement = '$@LESSONMEDIAFILE*$1@$';
         $content = preg_replace($pattern, $replacement, $content);
 
-        // Displays the lesson statistics.
-        $pattern = '#'.$base.'/report\.php\?id=([0-9]+)(&(amp;)?pageid=([0-9]+))?#';
-        $replacement = '$@LESSONREPORT*$1*$4@$';
+        // This page lists all the instances of lesson in a particular course
+        $pattern = '#'.$base.'/index\.php\?id=([0-9]+)#';
+        $replacement = '$@LESSONINDEX*$1@$';
         $content = preg_replace($pattern, $replacement, $content);
 
-        // This page prints a particular instance of lesson
-        $pattern = '#'.$base.'/view\.php\?id=([0-9]+)(&(amp;)?pageid=([0-9]+))?#';
-        $replacement = '$@LESSONVIEW*$1*$4@$';
+        // This page prints a particular page of lesson
+        $pattern = '#'.$base.'/view\.php\?id=([0-9]+)&(amp;)?pageid=([0-9]+)#';
+        $replacement = '$@LESSONVIEWPAGE*$1*$3@$';
+        $content = preg_replace($pattern, $replacement, $content);
+
+        // Link to one lesson by cmid
+        $pattern = '#'.$base.'/view\.php\?id=([0-9]+)#';
+        $replacement = '$@LESSONVIEWBYID*$1@$';
         $content = preg_replace($pattern, $replacement, $content);
 
         // Return the now encoded content
