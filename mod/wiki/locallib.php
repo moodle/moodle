@@ -1072,7 +1072,7 @@ function wiki_process_attachments($draftitemid, $deleteuploads, $contextid, $fil
 
 function wiki_get_comment($commentid){
     global $DB;
-    return $DB->get_record('comment', 'id', $commentid);
+    return $DB->get_record('comments', array('id' => $commentid));
 }
 
 /**
