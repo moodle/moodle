@@ -8,6 +8,7 @@
     $delete = optional_param('delete', '', PARAM_ALPHANUM); // delete confirmation hash
 
     $PAGE->set_url('/course/delete.php', array('id' => $id));
+    $PAGE->set_context(get_context_instance(CONTEXT_SYSTEM));
     require_login();
 
     if (!can_delete_course($id)) {
