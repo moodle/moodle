@@ -151,6 +151,9 @@ class popup_action extends component_action {
         }
 
         $attributes = array('url' => $url->out(false), 'name' => $name, 'options' => $this->get_js_options($params));
+        if ($params['fullscreen']) {
+            $attributes['fullscreen'] = 1;
+        }
         parent::__construct($event, $this->jsfunction, $attributes);
     }
 
