@@ -19,6 +19,19 @@ if ($hascustommenu) {
     $bodyclasses[] = 'has_custom_menu';
 }
 
+
+if (!empty($PAGE->theme->settings->tagline)) {
+    $tagline = $PAGE->theme->settings->tagline;
+} else {
+    $tagline = "Another Moodle Theme";
+}
+
+if (!empty($PAGE->theme->settings->footertext)) {
+    $footnote = $PAGE->theme->settings->footertext;
+} else {
+    $footnote = '<!-- There was no custom footnote set -->';
+}
+
 echo $OUTPUT->doctype() ?>
 <html <?php echo $OUTPUT->htmlattributes() ?>>
 <head>
@@ -77,7 +90,7 @@ echo $OUTPUT->doctype() ?>
 									
 									<div id="region-header">
 							    	    <h1 class="headermain"><?php echo $PAGE->heading ?></h1>
-							    	    <p class="tagline">Another Moodle Theme</p>
+							    	    <p class="tagline"><?php echo $tagline ?></p>
 							    	</div>
 						    	    
                         		    <?php echo core_renderer::MAIN_CONTENT_TOKEN ?>
@@ -112,6 +125,7 @@ echo $OUTPUT->doctype() ?>
 
 <!-- START OF FOOTER -->
     <div id="page-footer" class="wrapper clearfix">
+    <?php echo $footnote ?>
    	    <p class="helplink"><?php echo page_doc_link(get_string('moodledocslink')) ?></p>
         <?php
    		    echo $OUTPUT->login_info();

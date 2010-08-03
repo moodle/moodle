@@ -57,6 +57,7 @@ $THEME->sheets = array(
 	'core',
 	'pagelayout',
 	'menus',
+	'settings',
 );
 
 ////////////////////////////////////////////////////
@@ -253,3 +254,4 @@ $THEME->rarrow	= '&rang;';
 ////////////////////////////////////////////////////
 // Controls the colours for the MP3 player 	
 ////////////////////////////////////////////////////
+$THEME->csspostprocess = 'fusion_process_css';

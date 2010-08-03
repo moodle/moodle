@@ -20,6 +20,13 @@ if ($hascustommenu) {
     $bodyclasses[] = 'has_custom_menu';
 }
 
+if (!empty($PAGE->theme->settings->footertext)) {
+    $footnote = $PAGE->theme->settings->footertext;
+} else {
+    $footnote = '<!-- There was no custom footnote set -->';
+}
+
+
 echo $OUTPUT->doctype() ?>
 <html <?php echo $OUTPUT->htmlattributes() ?>>
 <head>
@@ -136,6 +143,7 @@ echo $OUTPUT->doctype() ?>
 
     	<?php if ($hasfooter) { ?>
 		    <div id="page-footer" class="wrapper">
+		    	 <?php echo $footnote ?>
         		<p class="helplink"><?php echo page_doc_link(get_string('moodledocslink')) ?></p>
 		        <?php
         			echo $OUTPUT->login_info();
