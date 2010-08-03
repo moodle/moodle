@@ -1038,6 +1038,10 @@ class grade_category extends grade_object {
             $category_array['object']->set_sortorder($sortorder);
         }
 
+        if (isset($category_array['object']->gradetype) && $category_array['object']->gradetype==GRADE_TYPE_NONE) {
+            return null;
+        }
+
         // store the grade_item or grade_category instance with extra info
         $result = array('object'=>$category_array['object'], 'type'=>$category_array['type'], 'depth'=>$category_array['depth']);
 
@@ -1050,19 +1054,25 @@ class grade_category extends grade_object {
         if (!empty($category_array['children'])) {
             $result['children'] = array();
             //process the category item first
-            $cat_item_id = null;
+            $child = null;
 
             foreach ($category_array['children'] as $oldorder=>$child_array) {
 
                 if ($child_array['type'] == 'courseitem' or $child_array['type'] == 'categoryitem') {
-                    $result['children'][$sortorder] = grade_category::_fetch_course_tree_recursion($child_array, $sortorder);
+                    $child = grade_category::_fetch_course_tree_recursion($child_array, $sortorder);
+                    if (!empty($child)) {
+                        $result['children'][$sortorder] = $child;
+                    }
                 }
             }
 
             foreach ($category_array['children'] as $oldorder=>$child_array) {
 
                 if ($child_array['type'] != 'courseitem' and $child_array['type'] != 'categoryitem') {
-                    $result['children'][++$sortorder] = grade_category::_fetch_course_tree_recursion($child_array, $sortorder);
+                    $child = grade_category::_fetch_course_tree_recursion($child_array, $sortorder);
+                    if (!empty($child)) {
+                        $result['children'][++$sortorder] = $child;
+                    }
                 }
             }
         }

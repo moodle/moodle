@@ -468,7 +468,6 @@ function lesson_grade_item_update($lesson, $grades=NULL) {
         $params['gradetype']  = GRADE_TYPE_VALUE;
         $params['grademax']   = $lesson->grade;
         $params['grademin']   = 0;
-
     } else {
         $params['gradetype']  = GRADE_TYPE_NONE;
     }

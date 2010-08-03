@@ -688,8 +688,6 @@ class grade_report_grader extends grade_report {
                 $object = $element['object'];
                 $type   = $element['type'];
                 $categorystate = @$element['categorystate'];
-                $itemmodule = null;
-                $iteminstance = null;
 
                 if (!empty($element['colspan'])) {
                     $colspan = $element['colspan'];
@@ -732,8 +730,8 @@ class grade_report_grader extends grade_report {
                 }
 // Element is a grade_item
                 else {
-                    $itemmodule = $element['object']->itemmodule;
-                    $iteminstance = $element['object']->iteminstance;
+                    //$itemmodule = $element['object']->itemmodule;
+                    //$iteminstance = $element['object']->iteminstance;
 
                     if ($element['object']->id == $this->sortitemid) {
                         if ($this->sortorder == 'ASC') {
