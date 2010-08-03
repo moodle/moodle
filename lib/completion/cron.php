@@ -78,7 +78,7 @@ function completion_cron_mark_started() {
             u.id AS userid,
             crc.id AS completionid,
             ue.timestart,
-            ue.timecreated
+            ue.timecreated AS timeenrolled
         FROM
             {user} u
         INNER JOIN
