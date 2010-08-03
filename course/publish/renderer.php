@@ -59,6 +59,7 @@ class core_publish_renderer extends plugin_renderer_base {
      * Display the listing of hub where a course is registered on
      */
     public function registeredonhublisting($courseid, $publications) {
+        global $CFG;
         $table = new html_table();
         $table->head = array(get_string('type', 'hub'), get_string('hub', 'hub'),
             get_string('date'), get_string('status', 'hub'), get_string('operation', 'hub'));
