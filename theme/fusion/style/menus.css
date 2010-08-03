@@ -79,6 +79,7 @@
 	background: none;
 }
 
+.yui3-skin-sam .yui3-menuitem-content,
 .yui3-skin-sam .yui3-menu-label {
 	color: #a2a3a6;
 }
