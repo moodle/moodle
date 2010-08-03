@@ -22,7 +22,7 @@ class quiz_statistics_report extends quiz_default_report {
      * Display the report.
      */
     function display($quiz, $cm, $course) {
-        global $CFG, $DB, $QTYPES, $OUTPUT;
+        global $CFG, $DB, $QTYPES, $OUTPUT, $PAGE;
 
         $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
@@ -34,6 +34,9 @@ class quiz_statistics_report extends quiz_default_report {
         $pageoptions = array();
         $pageoptions['id'] = $cm->id;
         $pageoptions['mode'] = 'statistics';
+        if ($qid) {
+            $pageoptions['qid'] = $qid;
+        }
 
         $questions = quiz_report_load_questions($quiz);
         // Load the question type specific information
@@ -57,7 +60,6 @@ class quiz_statistics_report extends quiz_default_report {
 
         /// find out current groups mode
         $currentgroup = groups_get_activity_group($cm, true);
-
 
         $nostudentsingroup = false;//true if a group is selected and their is noeone in it.
         if (!empty($currentgroup)) {
@@ -86,45 +88,41 @@ class quiz_statistics_report extends quiz_default_report {
             redirect($reporturl);
         }
 
-
         $this->table = new quiz_report_statistics_table();
         $filename = "$course->shortname-".format_string($quiz->name,true);
         $this->table->is_downloading($download, $filename, get_string('quizstructureanalysis', 'quiz_statistics'));
-        if (!$this->table->is_downloading()) {
-            // Only print headers if not asked to download data
-            $this->print_header_and_tabs($cm, $course, $quiz, "statistics");
-        }
-
-        if ($groupmode = groups_get_activity_groupmode($cm)) {   // Groups are being used
-            if (!$this->table->is_downloading()) {
-                groups_print_activity_menu($cm, $reporturl->out());
-                echo '<br />';
-                if ($currentgroup && !$groupstudents){
-                    echo $OUTPUT->notification(get_string('nostudentsingroup', 'quiz_statistics'));
-                }
-            }
-        }
-
-        if (!$this->table->is_downloading()) {
-            // Print display options
-            $mform->set_data(array('useallattempts' => $useallattempts));
-            $mform->display();
-        }
 
         list($quizstats, $questions, $subquestions, $s, $usingattemptsstring)
             = $this->quiz_questions_stats($quiz, $currentgroup, $nostudentsingroup,
                                         $useallattempts, $groupstudents, $questions);
 
-        if (!$this->table->is_downloading()){
-            if ($s==0){
-                echo $OUTPUT->heading(get_string('noattempts','quiz'));
-            }
-        }
-        if ($s){
+        if ($s) {
             $this->table->setup($quiz, $cm->id, $reporturl, $s);
         }
 
-        if (!$qid){//main page
+        if (!$qid) {//main page
+            if (!$this->table->is_downloading()) {
+                // Only print headers if not asked to download data
+                $this->print_header_and_tabs($cm, $course, $quiz, 'statistics');
+            }
+            if (!$this->table->is_downloading()) {
+                // Print display options
+                $mform->set_data(array('useallattempts' => $useallattempts));
+                $mform->display();
+            }
+            if (!$this->table->is_downloading() && $s == 0){
+                echo $OUTPUT->heading(get_string('noattempts','quiz'));
+            }
+            if ($groupmode = groups_get_activity_groupmode($cm)) {   // Groups are being used
+                if (!$this->table->is_downloading()) {
+                    groups_print_activity_menu($cm, $reporturl->out());
+                    echo '<br />';
+                    if ($currentgroup && !$groupstudents){
+                        echo $OUTPUT->notification(get_string('nostudentsingroup', 'quiz_statistics'));
+                    }
+                }
+            }
+
             $this->output_quiz_info_table($course, $cm, $quiz, $quizstats, $usingattemptsstring, $currentgroup, $groupstudents, $useallattempts, $download, $reporturl, $everything);
             $this->output_quiz_structure_analysis_table($s, $questions, $subquestions);
             if (!$this->table->is_downloading() || ($everything && $this->table->is_downloading() == 'xhtml')){
@@ -162,6 +160,14 @@ class quiz_statistics_report extends quiz_default_report {
                 $thisquestion = $subquestions[$qid];
             } else {
                 print_error('questiondoesnotexist', 'question');
+            }
+            if (!$this->table->is_downloading()) {
+                // Only print headers if not asked to download data
+                $node = $PAGE->navigation->find('quiz_report_statistics', null);
+                print_object($node);
+                $node->make_active();
+                $PAGE->navbar->add($thisquestion->name);
+                $this->print_header_and_tabs($cm, $course, $quiz, 'statistics');
             }
             $this->output_individual_question_data($quiz, $thisquestion, $reporturl, $quizstats);
         }
