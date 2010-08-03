@@ -38,6 +38,7 @@ a:hover{
 
 #wrapper {
 	padding:0 100px;
+	min-width: 910px;
 }
 
 
