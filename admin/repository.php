@@ -50,7 +50,7 @@ if (($action == 'edit') || ($action == 'new')) {
         $configs = call_user_func(array($classname, 'get_type_option_names'));
         $plugin = $repositorytype->get_typename();
         // looking for instance to edit plugin name
-        $instanceoptions = $classname::get_instance_option_names();
+        $instanceoptions = call_user_func(array($classname, 'get_instance_option_names'));
         if (empty($instanceoptions)) {
             $params = array();
             $params['type'] = $plugin;
