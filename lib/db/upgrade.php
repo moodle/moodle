@@ -4902,6 +4902,20 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         upgrade_main_savepoint(true, 2010080300);
     }
 
+    if ($oldversion < 2010080303) {
+        $rs = $DB->get_recordset_sql('SELECT i.id, i.name, r.type FROM {repository_instances} i, {repository} r WHERE i.typeid = r.id');
+        foreach ($rs as $record) {
+            if ($record->name == $record->type) {
+                // repository_instances was saving type name as in name field
+                // which should be empty, the repository api will try to find
+                // instance name from language files
+                $DB->set_field('repository_instances', 'name', '');
+            }
+        }
+        $rs->close();
+        upgrade_main_savepoint(true, 2010080303);
+    }
+
     return true;
 }
 

@@ -26,3 +26,4 @@
 $string['pluginname'] = 'Youtube videos';
 $string['search'] = 'Search videos';
 $string['youtube:view'] = 'Use youtube in file picker';
+$string['configplugin'] = 'YouTube repository type configuration';

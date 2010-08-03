@@ -26,3 +26,4 @@
 $string['keyword'] = 'Full text';
 $string['pluginname'] = 'Wikimedia';
 $string['wikimedia:view'] = 'View wikimedia repository';
+$string['configplugin'] = 'Wikimedia repository type configuration';

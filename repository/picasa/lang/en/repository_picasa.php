@@ -25,3 +25,4 @@
 
 $string['picasa:view'] = 'View picasa repository';
 $string['pluginname'] = 'Picasa web album';
+$string['configplugin'] = 'Picasa repository configuration';
