@@ -119,8 +119,8 @@ function xmldb_main_install() {
     set_config('mnet_all_hosts_id', $mnetallhosts->id);
 
     /// insert log entries - replaces statements section in install.xml
-    update_log_display_entry('user', 'view', 'user', 'CONCAT(firstname,\' \',lastname)');
-    update_log_display_entry('course', 'user report', 'user', 'CONCAT(firstname,\' \',lastname)');
+    update_log_display_entry('user', 'view', 'user', $DB->sql_concat('firstname', "' '" , 'lastname'));
+    update_log_display_entry('course', 'user report', 'user', $DB->sql_concat('firstname', "' '" , 'lastname'));
     update_log_display_entry('course', 'view', 'course', 'fullname');
     update_log_display_entry('course', 'update', 'course', 'fullname');
     update_log_display_entry('course', 'enrol', 'user', 'course', 'fullname'); // there should be some way to store user id of the enrolled user!
@@ -130,12 +130,12 @@ function xmldb_main_install() {
     update_log_display_entry('course', 'report outline', 'course', 'fullname');
     update_log_display_entry('course', 'report participation', 'course', 'fullname');
     update_log_display_entry('course', 'report stats', 'course', 'fullname');
-    update_log_display_entry('message', 'write', 'user', 'CONCAT(firstname,\' \',lastname)');
-    update_log_display_entry('message', 'read', 'user', 'CONCAT(firstname,\' \',lastname)');
-    update_log_display_entry('message', 'add contact', 'user', 'CONCAT(firstname,\' \',lastname)');
-    update_log_display_entry('message', 'remove contact', 'user', 'CONCAT(firstname,\' \',lastname)');
-    update_log_display_entry('message', 'block contact', 'user', 'CONCAT(firstname,\' \',lastname)');
-    update_log_display_entry('message', 'unblock contact', 'user', 'CONCAT(firstname,\' \',lastname)');
+    update_log_display_entry('message', 'write', 'user', $DB->sql_concat('firstname', "' '" , 'lastname'));
+    update_log_display_entry('message', 'read', 'user', $DB->sql_concat('firstname', "' '" , 'lastname'));
+    update_log_display_entry('message', 'add contact', 'user', $DB->sql_concat('firstname', "' '" , 'lastname'));
+    update_log_display_entry('message', 'remove contact', 'user', $DB->sql_concat('firstname', "' '" , 'lastname'));
+    update_log_display_entry('message', 'block contact', 'user', $DB->sql_concat('firstname', "' '" , 'lastname'));
+    update_log_display_entry('message', 'unblock contact', 'user', $DB->sql_concat('firstname', "' '" , 'lastname'));
     update_log_display_entry('group', 'view', 'groups', 'name');
     update_log_display_entry('tag', 'update', 'tag', 'name');
 

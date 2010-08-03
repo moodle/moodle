@@ -4886,6 +4886,21 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         upgrade_main_savepoint(true, 2010072700);
     }
 
+    if ($oldversion < 2010080300) {
+
+        // We need to fix the use of hard coded CONCAT statements that won't work
+        // in some databases.
+        update_log_display_entry('user', 'view', 'user', $DB->sql_concat('firstname', "' '" , 'lastname'));
+        update_log_display_entry('course', 'user report', 'user', $DB->sql_concat('firstname', "' '" , 'lastname'));
+        update_log_display_entry('message', 'write', 'user', $DB->sql_concat('firstname', "' '" , 'lastname'));
+        update_log_display_entry('message', 'read', 'user', $DB->sql_concat('firstname', "' '" , 'lastname'));
+        update_log_display_entry('message', 'add contact', 'user', $DB->sql_concat('firstname', "' '" , 'lastname'));
+        update_log_display_entry('message', 'remove contact', 'user', $DB->sql_concat('firstname', "' '" , 'lastname'));
+        update_log_display_entry('message', 'block contact', 'user', $DB->sql_concat('firstname', "' '" , 'lastname'));
+        update_log_display_entry('message', 'unblock contact', 'user', $DB->sql_concat('firstname', "' '" , 'lastname'));
+
+        upgrade_main_savepoint(true, 2010080300);
+    }
 
     return true;
 }
