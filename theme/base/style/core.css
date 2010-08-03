@@ -34,6 +34,8 @@ a.dimmed_text,
 .course-content .section li.activity,
 .tabtree li {list-style: none;margin:0;padding:0;}
 
+.course-content .current {background:#E3E3E3;}
+
 .inline-list li {display: inline;}
 .notifytiny {font-size:0.7em;}
 .notifytiny li,
