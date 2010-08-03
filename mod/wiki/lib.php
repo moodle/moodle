@@ -48,7 +48,9 @@ function wiki_add_instance($wiki) {
 
     $wiki->timemodified = time();
     # May have to add extra stuff in here #
-
+    if (empty($wiki->forceformat)) {
+        $wiki->forceformat = 0;
+    }
     return $DB->insert_record('wiki', $wiki);
 }
 
