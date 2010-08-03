@@ -666,18 +666,25 @@ class page_wiki_comments extends page_wiki {
 
             $row2->cells[] = $cell4;
 
-            if ((has_capability('mod/wiki:managecomment', $context)) and ($USER->id == $user->id)) {
+            $t->data = array($row1, $row2);
 
+            $actionicons = false;
+            if ((has_capability('mod/wiki:managecomment', $context))) {
                 $urledit = new moodle_url('/mod/wiki/editcomments.php', array('commentid' => $num->id, 'pageid' => $page->id, 'action' => 'edit'));
                 $urldelet = new moodle_url('/mod/wiki/instancecomments.php', array('commentid' => $num->id, 'pageid' => $page->id, 'action' => 'delete'));
+                $actionicons = true;
+            } else if ((has_capability('mod/wiki:editcomment', $context)) and ($USER->id == $user->id)) {
+                $urledit = new moodle_url('/mod/wiki/editcomments.php', array('commentid' => $num->id, 'pageid' => $page->id, 'action' => 'edit'));
+                $urldelet = new moodle_url('/mod/wiki/instancecomments.php', array('commentid' => $num->id, 'pageid' => $page->id, 'action' => 'delete'));
+                $actionicons = true;
+            }
+
+            if ($actionicons){
                 $cell6 = new html_table_cell($OUTPUT->action_icon($urledit, new pix_icon('t/edit', get_string('edit'))) . $OUTPUT->action_icon($urldelet, new pix_icon('t/delete', get_string('delete'))));
                 $row3 = new html_table_row();
                 $row3->cells[] = $cell5;
                 $row3->cells[] = $cell6;
-                $t->data = array($row1, $row2, $row3);
-
-            } else {
-                $t->data = array($row1, $row2);
+                $t->data[] = $row3;
             }
 
             echo html_writer::table($t);
@@ -2134,15 +2141,28 @@ class page_wiki_handlecomments extends page_wiki {
     }
 
     public function print_content() {
-        global $PAGE;
+        global $PAGE, $USER;
 
         $context = get_context_instance(CONTEXT_MODULE, $PAGE->cm->id);
-        require_capability('mod/wiki:managecomment', $context, NULL, true, 'nomanagecommentpermission', 'wiki');
 
-        if ($this->action == 'add' or $this->action == 'edit') {
-            $this->add_comment($this->content, $this->commentid);
+        if ($this->action == 'add'){
+            if (has_capability('mod/wiki:editcomment', $context)){
+                $this->add_comment($this->content, $this->commentid);
+            }
+        } else if ($this->action == 'edit') {
+            $comment = wiki_get_comment($this->commentid);
+            $edit = has_capability('mod/wiki:editcomment', $context);
+            $owner = $comment->userid == $USER->id;
+            if ($owner && $edit){
+                $this->add_comment($this->content, $this->commentid);
+            }
         } else if ($this->action == 'delete') {
-            $this->delete_comment($this->commentid);
+            $comment = wiki_get_comment($this->commentid);
+            $manage = has_capability('mod/wiki:managecomment', $context);
+            $owner = $comment->userid == $USER->id;
+            if ($owner || $manage){
+                $this->delete_comment($this->commentid);
+            }
         }
 
     }
