@@ -53,7 +53,7 @@ $type = $repository->type;
 if (file_exists($CFG->dirroot.'/repository/'.$type.'/lib.php')) {
     require_once($CFG->dirroot.'/repository/'.$type.'/lib.php');
     $classname = 'repository_' . $type;
-    $repo = new $classname($repo_id, $repository->contextid);
+    $repo = new $classname($repo_id, $repository->contextid, array('type'=>$type));
 } else {
     print_error('invalidplugin', 'repository', $type);
 }
