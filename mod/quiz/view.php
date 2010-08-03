@@ -181,7 +181,7 @@
         $table->align = array();
         $table->size = array();
         if ($attemptcolumn) {
-            $table->head[] = get_string('attempt', 'quiz');
+            $table->head[] = get_string('attemptnumber', 'quiz');
             $table->align[] = 'center';
             $table->size[] = '';
         }

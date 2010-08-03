@@ -97,6 +97,7 @@ $string['attempterror'] = 'You are not allowed to attempt this quiz at this time
 $string['attemptfirst'] = 'First attempt';
 $string['attemptincomplete'] = 'That attempt (by {$a}) is not yet completed.';
 $string['attemptlast'] = 'Last attempt';
+$string['attemptnumber'] = 'Attempt';
 $string['attemptquiznow'] = 'Attempt quiz now';
 $string['attempts'] = 'Attempts';
 $string['attemptsallowed'] = 'Attempts allowed';
