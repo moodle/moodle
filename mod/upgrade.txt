@@ -11,7 +11,7 @@ required changes in code:
 * use new DDL syntax in db/upgrade.php
   (http://docs.moodle.org/en/Development:DDL_functions)
 * replace defaults.php by settings.php and db/install.php
-* replace STATEMENTS section in db/install.xml with PHP code db/install.php
+* replace STATEMENTS section in db/install.xml with PHP code db/install.php or db/log.php
 * move post installation code from lib.php into db/install.php
 * move uninstallation code from lib.php to db/uninstall.php
 * new mandatory naming of intro and introformat table fields in module tables,
