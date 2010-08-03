@@ -70,6 +70,7 @@ $string['enablewsdescription'] = 'Web services must be enabled in Advanced featu
 $string['entertoken'] = 'Enter a security key/token:';
 $string['error'] = 'Error: {$a}';
 $string['errorcodes'] = 'Error message';
+$string['errorcoursecontextnotvalid'] = 'You cannot execute functions in the course context (course id:{$a->courseid}). The context error message was: {$a->message}';
 $string['errorinvalidparamsapi'] = 'Invalid external api parameter';
 $string['errorinvalidparamsdesc'] = 'Invalid external api description';
 $string['errorinvalidresponseapi'] = 'Invalid external api response';
