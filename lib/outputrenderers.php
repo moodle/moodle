@@ -1882,18 +1882,17 @@ EOD;
      * @return string HTML the button
      */
     public function edit_button(moodle_url $url) {
-        global $USER;
-        if (!empty($USER->editing)) {
-            $string = get_string('turneditingoff');
-            $edit = '0';
+
+        $url->param('sesskey', sesskey());
+        if ($this->page->user_is_editing()) {
+            $url->param('edit', 'off');
+            $editstring = get_string('turneditingoff');
         } else {
-            $string = get_string('turneditingon');
-            $edit = '1';
+            $url->param('edit', 'on');
+            $editstring = get_string('turneditingon');
         }
 
-        $url = new moodle_url($url, array('edit'=>$edit));
-
-        return $this->single_button($url, $string);
+        return $this->single_button($url, $editstring);
     }
 
     /**
