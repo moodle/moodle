@@ -105,8 +105,7 @@ if ($usercandownload and $download != -1 and !empty($downloadcourseid) and confi
     echo $OUTPUT->header();
     echo $OUTPUT->heading(get_string('restorecourse', 'block_community'), 3, 'main');
     echo $OUTPUT->notification(get_string('downloadconfirmed', 'block_community',
-                    '/' . get_string('backupfoldername', 'block_community')
-                    . '/' . $filenames['privatefile']), 'notifysuccess');
+                    '/downloaded_backup/' . $filenames['privatefile']), 'notifysuccess');
     echo $renderer->restore_confirmation_box($filenames['tmpfile'], $context);
     echo $OUTPUT->footer();
     die();

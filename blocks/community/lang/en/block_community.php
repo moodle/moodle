@@ -33,7 +33,6 @@ $string['additionalcoursedesc'] = '{$a->lang} Creator: {$a->creatorname} - Publi
 $string['addcourse'] = 'Search';
 $string['audience'] = 'Designed for';
 $string['audience_help'] = 'What kind of course are you looking for?  As well as traditional courses intended for students, you might search for communities of Educators or Moodle Administrators';
-$string['backupfoldername'] = 'Downloaded backup';
 $string['blocks'] = 'Blocks';
 $string['cannotselecttopsubject'] = 'Cannot select a top subject level';
 $string['contributors'] = ' - Contributors: {$a}';

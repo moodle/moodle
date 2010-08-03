@@ -108,7 +108,7 @@ class block_community_manager {
         $record->filearea = 'private';
         $record->itemid = 0;
         $record->filename = urlencode($course->fullname)."_".time().".zip";
-        $record->filepath = '/'.get_string('backupfoldername', 'block_community').'/';
+        $record->filepath = '/downloaded_backup/';
         if (!$fs->file_exists($record->contextid, $record->component,
                 $record->filearea, 0, $record->filepath, $record->filename)) {
             $fs->create_file_from_pathname($record,
