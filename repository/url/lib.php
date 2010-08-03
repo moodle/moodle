@@ -39,10 +39,6 @@ class repository_url extends repository {
     public function __construct($repositoryid, $context = SYSCONTEXTID, $options = array()){
         global $CFG;
         parent::__construct($repositoryid, $context, $options);
-        if (!empty($options['client_id'])) {
-            // will be used to construct download form
-            $this->client_id = $options['client_id'];
-        }
         $this->file_url = optional_param('file', '', PARAM_RAW);
     }
 
@@ -73,7 +69,7 @@ class repository_url extends repository {
         if ($this->options['ajax']) {
             $url = new stdclass;
             $url->label = $strurl.': ';
-            $url->id   = 'fileurl-'.$this->client_id;
+            $url->id   = 'fileurl';
             $url->type = 'text';
             $url->name = 'file';
 
