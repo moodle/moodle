@@ -18,7 +18,7 @@
 /**
  * Core external functions and service definitions.
  *
- * @package    moodlecore
+ * @package    core
  * @subpackage webservice
  * @copyright  2009 Petr Skoda (http://skodak.org)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -176,5 +176,5 @@ $functions = array(
         'type'        => 'write',
         'capabilities'=> 'moodle/role:assign',
     ),
-   
+
 );
