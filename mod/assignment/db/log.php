@@ -16,28 +16,20 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Resource module post install function
- *
- * This file replaces:
- *  - STATEMENTS section in db/install.xml
- *  - lib.php/modulename_install() post installation hook
- *  - partially defaults.php
+ * Definition of log events
  *
  * @package    mod
- * @subpackage resource
- * @copyright  2009 Petr Skoda  {@link http://skodak.org}
+ * @subpackage assignment
+ * @copyright  2010 Petr Skoda (http://skodak.org)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die;
+defined('MOODLE_INTERNAL') || die();
 
-function xmldb_resource_install() {
-    global $DB;
-
-    // Install logging support
-    update_log_display_entry('resource', 'view', 'resource', 'name');
-    update_log_display_entry('resource', 'view all', 'resource', 'name');
-    update_log_display_entry('resource', 'update', 'resource', 'name');
-    update_log_display_entry('resource', 'add', 'resource', 'name');
-
-}
+$logs = array(
+    array('module'=>'assignment', 'action'=>'view', 'mtable'=>'assignment', 'field'=>'name'),
+    array('module'=>'assignment', 'action'=>'add', 'mtable'=>'assignment', 'field'=>'name'),
+    array('module'=>'assignment', 'action'=>'update', 'mtable'=>'assignment', 'field'=>'name'),
+    array('module'=>'assignment', 'action'=>'view submission', 'mtable'=>'assignment', 'field'=>'name'),
+    array('module'=>'assignment', 'action'=>'upload', 'mtable'=>'assignment', 'field'=>'name'),
+);

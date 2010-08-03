@@ -34,12 +34,6 @@ defined('MOODLE_INTERNAL') || die();
 function xmldb_folder_install() {
     global $CFG;
 
-    // Install logging support
-    update_log_display_entry('folder', 'view', 'folder', 'name');
-    update_log_display_entry('folder', 'view all', 'folder', 'name');
-    update_log_display_entry('folder', 'update', 'folder', 'name');
-    update_log_display_entry('folder', 'add', 'folder', 'name');
-
     // Upgrade from old resource module type if needed
     require_once("$CFG->dirroot/mod/folder/db/upgradelib.php");
     folder_20_migrate();

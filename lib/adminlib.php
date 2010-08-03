@@ -256,7 +256,7 @@ function uninstall_plugin($type, $name) {
     $DB->delete_records('log', array('module' => $pluginname));
 
     // delete log_display information
-    $DB->delete_records('log_display', array('module' => $pluginname));
+    $DB->delete_records('log_display', array('component' => $component));
 
     // delete the module configuration records
     unset_all_config_for_plugin($pluginname);

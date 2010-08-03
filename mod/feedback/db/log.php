@@ -16,17 +16,20 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Resource module version information
+ * Definition of log events
  *
  * @package    mod
- * @subpackage resource
- * @copyright  2009 Petr Skoda  {@link http://skodak.org}
+ * @subpackage feedback
+ * @copyright  2010 Petr Skoda (http://skodak.org)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die;
+defined('MOODLE_INTERNAL') || die();
 
-$module->version  = 2010080300;
-$module->requires = 2010080300;  // Requires this Moodle version
-$module->cron     = 0;
-
+$logs = array(
+    array('module'=>'feedback', 'action'=>'startcomplete', 'mtable'=>'feedback', 'field'=>'name'),
+    array('module'=>'feedback', 'action'=>'submit', 'mtable'=>'feedback', 'field'=>'name'),
+    array('module'=>'feedback', 'action'=>'delete', 'mtable'=>'feedback', 'field'=>'name'),
+    array('module'=>'feedback', 'action'=>'view', 'mtable'=>'feedback', 'field'=>'name'),
+    array('module'=>'feedback', 'action'=>'view all', 'mtable'=>'course', 'field'=>'shortname'),
+);

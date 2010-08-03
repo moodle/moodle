@@ -34,12 +34,6 @@ defined('MOODLE_INTERNAL') || die;
 function xmldb_page_install() {
     global $CFG;
 
-    // Install logging support
-    update_log_display_entry('page', 'view', 'page', 'name');
-    update_log_display_entry('page', 'view all', 'page', 'name');
-    update_log_display_entry('page', 'update', 'page', 'name');
-    update_log_display_entry('page', 'add', 'page', 'name');
-
     // Upgrade from old resource module type if needed
     require_once("$CFG->dirroot/mod/page/db/upgradelib.php");
     page_20_migrate();

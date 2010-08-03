@@ -16,17 +16,19 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Resource module version information
+ * Definition of log events
  *
  * @package    mod
- * @subpackage resource
- * @copyright  2009 Petr Skoda  {@link http://skodak.org}
+ * @subpackage scorm
+ * @copyright  2010 Petr Skoda (http://skodak.org)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die;
+defined('MOODLE_INTERNAL') || die();
 
-$module->version  = 2010080300;
-$module->requires = 2010080300;  // Requires this Moodle version
-$module->cron     = 0;
-
+$logs = array(
+    array('module'=>'scorm', 'action'=>'view', 'mtable'=>'scorm', 'field'=>'name'),
+    array('module'=>'scorm', 'action'=>'review', 'mtable'=>'scorm', 'field'=>'name'),
+    array('module'=>'scorm', 'action'=>'update', 'mtable'=>'scorm', 'field'=>'name'),
+    array('module'=>'scorm', 'action'=>'add', 'mtable'=>'scorm', 'field'=>'name'),
+);

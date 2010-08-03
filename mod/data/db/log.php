@@ -16,17 +16,23 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * IMS CP module version information
+ * Definition of log events
  *
  * @package    mod
- * @subpackage imscp
- * @copyright  2009 Petr Skoda  {@link http://skodak.org}
+ * @subpackage data
+ * @copyright  2010 Petr Skoda (http://skodak.org)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$module->version  = 2010080300;
-$module->requires = 2010080300;  // Requires this Moodle version
-$module->cron     = 0;
-
+$logs = array(
+    array('module'=>'data', 'action'=>'view', 'mtable'=>'data', 'field'=>'name'),
+    array('module'=>'data', 'action'=>'add', 'mtable'=>'data', 'field'=>'name'),
+    array('module'=>'data', 'action'=>'update', 'mtable'=>'data', 'field'=>'name'),
+    array('module'=>'data', 'action'=>'record delete', 'mtable'=>'data', 'field'=>'name'),
+    array('module'=>'data', 'action'=>'fields add', 'mtable'=>'data_fields', 'field'=>'name'),
+    array('module'=>'data', 'action'=>'fields update', 'mtable'=>'data_fields', 'field'=>'name'),
+    array('module'=>'data', 'action'=>'templates saved', 'mtable'=>'data', 'field'=>'name'),
+    array('module'=>'data', 'action'=>'templates def', 'mtable'=>'data', 'field'=>'name'),
+);

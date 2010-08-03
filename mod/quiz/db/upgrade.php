@@ -297,10 +297,6 @@ function xmldb_quiz_upgrade($oldversion) {
     }
 
     if ($oldversion < 2010030501) {
-    /// fix log actions
-        update_log_display_entry('quiz', 'edit override', 'quiz', 'name');
-        update_log_display_entry('quiz', 'delete override', 'quiz', 'name');
-
     /// Define table quiz_overrides to be created
         $table = new xmldb_table('quiz_overrides');
 

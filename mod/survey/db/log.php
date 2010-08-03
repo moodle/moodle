@@ -16,26 +16,22 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Label module post install
+ * Definition of log events
  *
  * @package    mod
- * @subpackage label
- * @copyright  2009 Petr Skoda  {@link http://skodak.org}
+ * @subpackage survey
+ * @copyright  2010 Petr Skoda (http://skodak.org)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die;
+defined('MOODLE_INTERNAL') || die();
 
-// This file replaces:
-//   * STATEMENTS section in db/install.xml
-//   * lib.php/modulename_install() post installation hook
-//   * partially defaults.php
-
-function xmldb_label_install() {
-    global $DB;
-
-/// Install logging support
-    update_log_display_entry('label', 'add', 'label', 'name');
-    update_log_display_entry('label', 'update', 'label', 'name');
-
-}
+$logs = array(
+    array('module'=>'survey', 'action'=>'add', 'mtable'=>'survey', 'field'=>'name'),
+    array('module'=>'survey', 'action'=>'update', 'mtable'=>'survey', 'field'=>'name'),
+    array('module'=>'survey', 'action'=>'download', 'mtable'=>'survey', 'field'=>'name'),
+    array('module'=>'survey', 'action'=>'view form', 'mtable'=>'survey', 'field'=>'name'),
+    array('module'=>'survey', 'action'=>'view graph', 'mtable'=>'survey', 'field'=>'name'),
+    array('module'=>'survey', 'action'=>'view report', 'mtable'=>'survey', 'field'=>'name'),
+    array('module'=>'survey', 'action'=>'submit', 'mtable'=>'survey', 'field'=>'name'),
+);

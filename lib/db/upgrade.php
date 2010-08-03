@@ -4910,22 +4910,6 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         upgrade_main_savepoint(true, 2010072700);
     }
 
-    if ($oldversion < 2010080300) {
-
-        // We need to fix the use of hard coded CONCAT statements that won't work
-        // in some databases.
-        update_log_display_entry('user', 'view', 'user', $DB->sql_concat('firstname', "' '" , 'lastname'));
-        update_log_display_entry('course', 'user report', 'user', $DB->sql_concat('firstname', "' '" , 'lastname'));
-        update_log_display_entry('message', 'write', 'user', $DB->sql_concat('firstname', "' '" , 'lastname'));
-        update_log_display_entry('message', 'read', 'user', $DB->sql_concat('firstname', "' '" , 'lastname'));
-        update_log_display_entry('message', 'add contact', 'user', $DB->sql_concat('firstname', "' '" , 'lastname'));
-        update_log_display_entry('message', 'remove contact', 'user', $DB->sql_concat('firstname', "' '" , 'lastname'));
-        update_log_display_entry('message', 'block contact', 'user', $DB->sql_concat('firstname', "' '" , 'lastname'));
-        update_log_display_entry('message', 'unblock contact', 'user', $DB->sql_concat('firstname', "' '" , 'lastname'));
-
-        upgrade_main_savepoint(true, 2010080300);
-    }
-
     if ($oldversion < 2010080303) {
         $rs = $DB->get_recordset_sql('SELECT i.id, i.name, r.type FROM {repository_instances} i, {repository} r WHERE i.typeid = r.id');
         foreach ($rs as $record) {
@@ -4939,6 +4923,24 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         $rs->close();
         upgrade_main_savepoint(true, 2010080303);
     }
+
+    if ($oldversion < 2010080305) {
+        // first drop all log disaply actions, we will rectreate them automatically later
+        $DB->delete_records('log_display', array());
+
+        // Define field component to be added to log_display
+        $table = new xmldb_table('log_display');
+        $field = new xmldb_field('component', XMLDB_TYPE_CHAR, '100', null, XMLDB_NOTNULL, null, null, 'field');
+
+        // Launch add field component
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Main savepoint reached
+        upgrade_main_savepoint(true, 2010080305);
+    }
+
 
     return true;
 }

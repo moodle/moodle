@@ -16,25 +16,19 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * This file replaces:
- *   * STATEMENTS section in db/install.xml
- *   * lib.php/modulename_install() post installation hook
- *   * partially defaults.php
+ * Definition of log events
  *
  * @package    mod
- * @subpackage lesson
- * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 o
+ * @subpackage folder
+ * @copyright  2010 Petr Skoda (http://skodak.org)
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-function xmldb_lesson_install() {
-    global $DB;
-
-/// Install logging support
-    update_log_display_entry('lesson', 'start', 'lesson', 'name');
-    update_log_display_entry('lesson', 'end', 'lesson', 'name');
-    update_log_display_entry('lesson', 'view', 'lesson_pages', 'title');
-
-}
+$logs = array(
+    array('module'=>'folder', 'action'=>'view', 'mtable'=>'folder', 'field'=>'name'),
+    array('module'=>'folder', 'action'=>'view all', 'mtable'=>'folder', 'field'=>'name'),
+    array('module'=>'folder', 'action'=>'update', 'mtable'=>'folder', 'field'=>'name'),
+    array('module'=>'folder', 'action'=>'add', 'mtable'=>'folder', 'field'=>'name'),
+);

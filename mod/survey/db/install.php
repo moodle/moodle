@@ -8,16 +8,6 @@
 function xmldb_survey_install() {
     global $DB;
 
-/// Install logging support
-    update_log_display_entry('survey', 'add', 'survey', 'name');
-    update_log_display_entry('survey', 'update', 'survey', 'name');
-    update_log_display_entry('survey', 'download', 'survey', 'name');
-    update_log_display_entry('survey', 'view form', 'survey', 'name');
-    update_log_display_entry('survey', 'view graph', 'survey', 'name');
-    update_log_display_entry('survey', 'view report', 'survey', 'name');
-    update_log_display_entry('survey', 'submit', 'survey', 'name');
-
-
 /// insert survey data
     $records = array(
         array_combine(array('course', 'template', 'days', 'timecreated', 'timemodified', 'name', 'intro', 'questions'), array(0, 0, 0, 985017600, 985017600, 'collesaname', 'collesaintro', '25,26,27,28,29,30,43,44')),

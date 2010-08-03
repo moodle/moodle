@@ -98,13 +98,6 @@ function xmldb_resource_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2009042001, 'resource');
     }
 
-    if ($oldversion < 2009062500) {
-        // fix log actions
-        update_log_display_entry('resource', 'view all', 'resource', 'name');
-        // resource savepoint reached
-        upgrade_mod_savepoint(true, 2009062500, 'resource');
-    }
-
     if ($oldversion < 2009062600) {
         $res_count = $DB->count_records('resource');
         $old_count = $DB->count_records('resource_old', array('migrated'=>0));

@@ -32,6 +32,24 @@ defined('MOODLE_INTERNAL') || die();
 
 
 /**
+ * Insert or update log display entry. Entry may already exist.
+ * $module, $action must be unique
+ * @deprecated
+ *
+ * @param string $module
+ * @param string $action
+ * @param string $mtable
+ * @param string $field
+ * @return void
+ *
+ */
+function update_log_display_entry($module, $action, $mtable, $field) {
+    global $DB;
+
+    debugging('The update_log_display_entry() is deprecated, please use db/log.php description file instead.');
+}
+
+/**
  * Given some text in HTML format, this function will pass it
  * through any filters that have been configured for this context.
  *

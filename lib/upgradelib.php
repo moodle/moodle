@@ -98,37 +98,6 @@ class plugin_defective_exception extends moodle_exception {
 }
 
 /**
- * Insert or update log display entry. Entry may already exist.
- * $module, $action must be unique
- *
- * @global object
- * @param string $module
- * @param string $action
- * @param string $mtable
- * @param string $field
- * @return void
- *
- */
-function update_log_display_entry($module, $action, $mtable, $field) {
-    global $DB;
-
-    if ($type = $DB->get_record('log_display', array('module'=>$module, 'action'=>$action))) {
-        $type->mtable = $mtable;
-        $type->field  = $field;
-        $DB->update_record('log_display', $type);
-
-    } else {
-        $type = new object();
-        $type->module = $module;
-        $type->action = $action;
-        $type->mtable = $mtable;
-        $type->field  = $field;
-
-        $DB->insert_record('log_display', $type, false);
-    }
-}
-
-/**
  * Upgrade savepoint, marks end of each upgrade block.
  * It stores new main version, resets upgrade timeout
  * and abort upgrade if user cancels page loading.
@@ -334,6 +303,7 @@ function upgrade_plugins($type, $startcallback, $endcallback, $verbose) {
                     $recover_install_function();
                     unset_config('installrunning', 'block_'.$plugin->fullname);
                     update_capabilities($component);
+                    log_update_descriptions($component);
                     external_update_descriptions($component);
                     events_update_definition($component);
                     message_update_providers($component);
@@ -366,6 +336,7 @@ function upgrade_plugins($type, $startcallback, $endcallback, $verbose) {
 
         /// Install various components
             update_capabilities($component);
+            log_update_descriptions($component);
             external_update_descriptions($component);
             events_update_definition($component);
             message_update_providers($component);
@@ -395,6 +366,7 @@ function upgrade_plugins($type, $startcallback, $endcallback, $verbose) {
 
         /// Upgrade various components
             update_capabilities($component);
+            log_update_descriptions($component);
             external_update_descriptions($component);
             events_update_definition($component);
             message_update_providers($component);
@@ -464,6 +436,7 @@ function upgrade_plugins_modules($startcallback, $endcallback, $verbose) {
                     unset_config('installrunning', $module->name);
                     // Install various components too
                     update_capabilities($component);
+                    log_update_descriptions($component);
                     external_update_descriptions($component);
                     events_update_definition($component);
                     message_update_providers($component);
@@ -494,6 +467,7 @@ function upgrade_plugins_modules($startcallback, $endcallback, $verbose) {
 
         /// Install various components
             update_capabilities($component);
+            log_update_descriptions($component);
             external_update_descriptions($component);
             events_update_definition($component);
             message_update_providers($component);
@@ -522,6 +496,7 @@ function upgrade_plugins_modules($startcallback, $endcallback, $verbose) {
 
         /// Upgrade various components
             update_capabilities($component);
+            log_update_descriptions($component);
             external_update_descriptions($component);
             events_update_definition($component);
             message_update_providers($component);
@@ -616,6 +591,7 @@ function upgrade_plugins_blocks($startcallback, $endcallback, $verbose) {
                     unset_config('installrunning', 'block_'.$blockname);
                     // Install various components
                     update_capabilities($component);
+                    log_update_descriptions($component);
                     external_update_descriptions($component);
                     events_update_definition($component);
                     message_update_providers($component);
@@ -654,6 +630,7 @@ function upgrade_plugins_blocks($startcallback, $endcallback, $verbose) {
 
             // Install various components
             update_capabilities($component);
+            log_update_descriptions($component);
             external_update_descriptions($component);
             events_update_definition($component);
             message_update_providers($component);
@@ -687,6 +664,7 @@ function upgrade_plugins_blocks($startcallback, $endcallback, $verbose) {
 
             // Upgrade various components
             update_capabilities($component);
+            log_update_descriptions($component);
             external_update_descriptions($component);
             events_update_definition($component);
             message_update_providers($component);
@@ -711,6 +689,65 @@ function upgrade_plugins_blocks($startcallback, $endcallback, $verbose) {
         }
 
         blocks_add_default_system_blocks();
+    }
+}
+
+
+/**
+ * Log_display description function used during install and upgrade.
+ *
+ * @param string $component name of component (moodle, mod_assignment, etc.)
+ * @return void
+ */
+function log_update_descriptions($component) {
+    global $DB;
+
+    $defpath = get_component_directory($component).'/db/log.php';
+
+    if (!file_exists($defpath)) {
+        $DB->delete_records('log_display', array('component'=>$component));
+        return;
+    }
+
+    // load new info
+    $logs = array();
+    include($defpath);
+    $newlogs = array();
+    foreach ($logs as $log) {
+        $newlogs[$log['module'].'-'.$log['action']] = $log; // kind of unique name
+    }
+    unset($logs);
+    $logs = $newlogs;
+
+    $fields = array('module', 'action', 'mtable', 'field');
+    // update all log fist
+    $dblogs = $DB->get_records('log_display', array('component'=>$component));
+    foreach ($dblogs as $dblog) {
+        $name = $dblog->module.'-'.$dblog->action;
+
+        if (empty($logs[$name])) {
+            $DB->delete_records('log_display', array('id'=>$dblog->id));
+            continue;
+        }
+
+        $log = $logs[$name];
+        unset($logs[$name]);
+
+        $update = false;
+        foreach ($fields as $field) {
+            if ($dblog->$field != $log[$field]) {
+                $dblog->$field = $log[$field];
+                $update = true;
+            }
+        }
+        if ($update) {
+            $DB->update_record('log_display', $dblog);
+        }
+    }
+    foreach ($logs as $log) {
+        $dblog = (object)$log;
+        $dblog->component = $component;
+        $DB->insert_record('log_display', $dblog);
     }
 }
 
@@ -741,6 +778,8 @@ function external_update_descriptions($component) {
             $DB->delete_records('external_functions', array('id'=>$dbfunction->id));
             // do not delete functions from external_services_functions, beacuse
             // we want to notify admins when functions used in custom services disappear
+
+            //TODO: this looks wrong, we have to delete it eventually (skodak)
             continue;
         }
 
@@ -1199,12 +1238,14 @@ function install_core($version, $verbose) {
 
         // set all core default records and default settings
         require_once("$CFG->libdir/db/install.php");
-        xmldb_main_install();
+        xmldb_main_install(); // installs the capabilities too
 
         // store version
         upgrade_main_savepoint(true, $version, false);
 
         // Continue with the installation
+        log_update_descriptions('moodle');
+        external_update_descriptions('moodle');
         events_update_definition('moodle');
         message_update_providers('moodle');
 
@@ -1260,6 +1301,7 @@ function upgrade_core($version, $verbose) {
 
         // perform all other component upgrade routines
         update_capabilities('moodle');
+        log_update_descriptions('moodle');
         external_update_descriptions('moodle');
         events_update_definition('moodle');
         message_update_providers('moodle');

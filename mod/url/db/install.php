@@ -34,12 +34,6 @@ defined('MOODLE_INTERNAL') || die;
 function xmldb_url_install() {
     global $CFG;
 
-    // Install logging support
-    update_log_display_entry('url', 'view', 'url', 'name');
-    update_log_display_entry('url', 'view all', 'url', 'name');
-    update_log_display_entry('url', 'update', 'url', 'name');
-    update_log_display_entry('url', 'add', 'url', 'name');
-
     // migrate settings if present
     if (!empty($CFG->resource_secretphrase)) {
         set_config('secretphrase', $CFG->resource_secretphrase, 'url');
