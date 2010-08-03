@@ -1636,7 +1636,7 @@ function quiz_extend_navigation($quiznode, $course, $module, $cm) {
         foreach ($reportlist as $report) {
             $url = new moodle_url('/mod/quiz/report.php', array('id' => $cm->id, 'mode' => $report));
             $reportnode->add(get_string($report, 'quiz_'.$report), $url, navigation_node::TYPE_SETTING,
-                    null, null, new pix_icon('i/item', ''));
+                    null, 'quiz_report_' . $report, new pix_icon('i/item', ''));
         }
     }
 }
@@ -1683,5 +1683,5 @@ function quiz_extend_settings_navigation($settings, $quiznode) {
         $quiznode->add(get_string('preview', 'quiz'), $url, navigation_node::TYPE_SETTING, null, 'preview', new pix_icon('t/preview', ''));
     }
 
-    question_extend_settings_navigation($quiznode, $PAGE->context)->trim_if_empty();
+    question_extend_settings_navigation($quiznode, $PAGE->cm->context)->trim_if_empty();
 }
