@@ -352,7 +352,7 @@ class page_requirements_manager {
             if (debugging()) {
                 // check file existence only when in debug mode
                 if (!file_exists($CFG->dirroot . strtok($url, '?'))) {
-                    throw new coding_exception('Attept to require a JavaScript file that does not exist.', $url);
+                    throw new coding_exception('Attempt to require a JavaScript file that does not exist.', $url);
                 }
             }
             if (!empty($CFG->cachejs) and !empty($CFG->jsrev) and strpos($url, '/lib/editor/') !== 0) {
