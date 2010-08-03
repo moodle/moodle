@@ -513,7 +513,7 @@ function data_generate_default_template(&$data, $template, $recordid=0, $form=fa
             //}
             $str .= '</td>';
 
-            $str .='<td>';
+            $str .='<td  align="left">';
             if ($form) {   // Print forms instead of data
                 $fieldobj = data_get_field($field, $data);
                 $str .= $fieldobj->display_add_field($recordid);
