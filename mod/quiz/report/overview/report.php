@@ -117,18 +117,22 @@ class quiz_overview_report extends quiz_default_report {
         // We only want to show the checkbox to delete attempts
         // if the user has permissions and if the report mode is showing attempts.
         $candelete = has_capability('mod/quiz:deleteattempts', $this->context)
-                && ($attemptsmode!= QUIZ_REPORT_ATTEMPTS_STUDENTS_WITH_NO);
+                && ($attemptsmode != QUIZ_REPORT_ATTEMPTS_STUDENTS_WITH_NO);
 
         $displayoptions = array();
         $displayoptions['attemptsmode'] = $attemptsmode;
         $displayoptions['qmfilter'] = $qmfilter;
         $displayoptions['regradefilter'] = $regradefilter;
 
+        if ($attemptsmode == QUIZ_REPORT_ATTEMPTS_ALL) {
+            $allowed = array();
+        }
+
         if (empty($currentgroup) || $groupstudents) {
             if (optional_param('delete', 0, PARAM_BOOL) && confirm_sesskey()) {
                 if ($attemptids = optional_param('attemptid', array(), PARAM_INT)) {
                     require_capability('mod/quiz:deleteattempts', $this->context);
-                    $this->delete_selected_attempts($quiz, $cm, $attemptids, $groupstudents);
+                    $this->delete_selected_attempts($quiz, $cm, $attemptids, $allowed, $groupstudents);
                     redirect($reporturl->out(false, $displayoptions));
                 }
             } else if (optional_param('regrade', 0, PARAM_BOOL) && confirm_sesskey()) {
@@ -609,11 +613,21 @@ class quiz_overview_report extends quiz_default_report {
             }
         }
     }
-    function delete_selected_attempts($quiz, $cm, $attemptids, $groupstudents) {
+
+    function delete_selected_attempts($quiz, $cm, $attemptids, $allowed, $groupstudents) {
         global $DB, $COURSE;
         foreach($attemptids as $attemptid) {
             $attempt = $DB->get_record('quiz_attempts', array('id' => $attemptid));
+            if (!$attempt || $attempt->quiz != $quiz->id || $attempt->preview != 0) {
+                // Ensure the attempt exists, and belongs to this quiz. If not skip.
+                continue;
+            }
+            if ($allowed && !array_key_exists($attempt->userid, $allowed)) {
+                // Ensure the attempt belongs to a student included in the report. If not skip.
+                continue;
+            }
             if ($groupstudents && !array_key_exists($attempt->userid, $groupstudents)) {
+                // Additional check in groups mode.
                 continue;
             }
             add_to_log($COURSE->id, 'quiz', 'delete attempt', 'report.php?id=' . $cm->id,
@@ -621,6 +635,7 @@ class quiz_overview_report extends quiz_default_report {
             quiz_delete_attempt($attempt, $quiz);
         }
     }
+
     function regrade_selected_attempts($quiz, $attemptids, $groupstudents) {
         global $DB;
         require_capability('mod/quiz:regrade', $this->context);
