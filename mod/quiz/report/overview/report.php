@@ -126,12 +126,21 @@ class quiz_report extends quiz_default_report {
             $allowedlist = $groupstudentslist;
         }
 
-        if ($students && ($attemptids = optional_param('attemptid', array(), PARAM_INT)) && confirm_sesskey()) {
+        if (($attemptids = optional_param('attemptid', array(), PARAM_INT)) && confirm_sesskey()) {
             //attempts need to be deleted
             require_capability('mod/quiz:deleteattempts', $context);
             foreach ($attemptids as $attemptid) {
                 $attempt = get_record('quiz_attempts', 'id', $attemptid);
+                if (!$attempt || $attempt->quiz != $quiz->id || $attempt->preview != 0) {
+                    // Ensure the attempt exists, and belongs to this quiz. If not skip.
+                    continue;
+                }
+                if ($attemptsmode != QUIZ_REPORT_ATTEMPTS_ALL && !array_key_exists($attempt->userid, $students)) {
+                    // Ensure the attempt belongs to a student included in the report. If not skip.
+                    continue;
+                }
                 if ($groupstudents && !array_key_exists($attempt->userid, $groupstudents)) {
+                    // Additional check in groups mode.
                     continue;
                 }
                 add_to_log($course->id, 'quiz', 'delete attempt', 'report.php?id=' . $cm->id,
