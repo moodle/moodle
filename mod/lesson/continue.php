@@ -142,11 +142,11 @@ if ($canmanage) {
     }
 }
 // Report attempts remaining
-if ($result->attemptsremaining != 0) {
+if ($result->attemptsremaining != 0 && !$lesson->review) {
     $lesson->add_message(get_string('attemptsremaining', 'lesson', $result->attemptsremaining));
 }
 // Report if max attempts reached
-if ($result->maxattemptsreached != 0) {
+if ($result->maxattemptsreached != 0 && !$lesson->review) {
     $lesson->add_message('('.get_string("maximumnumberofattemptsreached", "lesson").')');
 }
 
