@@ -164,7 +164,6 @@ class quiz_statistics_report extends quiz_default_report {
             if (!$this->table->is_downloading()) {
                 // Only print headers if not asked to download data
                 $node = $PAGE->navigation->find('quiz_report_statistics', null);
-                print_object($node);
                 $node->make_active();
                 $PAGE->navbar->add($thisquestion->name);
                 $this->print_header_and_tabs($cm, $course, $quiz, 'statistics');
