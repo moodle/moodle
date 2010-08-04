@@ -85,7 +85,7 @@ class lesson_page_type_multichoice extends lesson_page {
         $answers = $this->get_used_answers();
         shuffle($answers);
         $action = $CFG->wwwroot.'/mod/lesson/continue.php';
-        $params = array('answers'=>$answers, 'lessonid'=>$this->lesson->id, 'contents'=>$this->get_contents());
+        $params = array('answers'=>$answers, 'lessonid'=>$this->lesson->id, 'contents'=>$this->get_contents(), 'attempt'=>$attempt);
         if ($this->properties->qoption) {
             $mform = new lesson_display_answer_form_multichoice_multianswer($action, $params);
         } else {
@@ -473,7 +473,9 @@ class lesson_display_answer_form_multichoice_singleanswer extends moodleform {
         $answers = $this->_customdata['answers'];
         $lessonid = $this->_customdata['lessonid'];
         $contents = $this->_customdata['contents'];
-
+        if (array_key_exists('attempt', $this->_customdata)) {
+            $attempt = $this->_customdata['attempt'];
+        }
         $mform->addElement('header', 'pageheader', $OUTPUT->box($contents, 'contents'));
 
         $options = new stdClass;
@@ -491,7 +493,7 @@ class lesson_display_answer_form_multichoice_singleanswer extends moodleform {
             $mform->addElement('html', '<div class="answeroption">');
             $mform->addElement('radio','answerid',null,format_text($answer->answer, $answer->answerformat, $options),$answer->id);
             $mform->setType('answer'.$i, PARAM_INT);
-            if (isset($USER->modattempts[$lessonid]) && $answer->id == $attempt->answerid) {
+            if (isset($USER->modattempts[$lessonid]) && array_key_exists('attempt', $this->_customdata) && $answer->id == $attempt->answerid) {
                 $mform->setDefault('answerid', true);
             }
             $mform->addElement('html', '</div>');
