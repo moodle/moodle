@@ -219,7 +219,7 @@ class html2text
         '-',
         '*',
         '£',
-        'EUR',                                  // Euro sign. � ?
+        'EUR',                                  // Euro sign. € ?
         ' '                                     // Runs of spaces, post-handling
     );
 
@@ -237,6 +237,7 @@ class html2text
         '/<(a) [^>]*href=("|\')([^"\']+)\2[^>]*>(.*?)<\/a>/i',
                                                    // <a href="">
         '/<(th)[^>]*>(.*?)<\/th>/i',               // <th> and </th>
+        '/<(img)[^>]*alt=\"([^>"]+)\"[^>]*>/i',    // <img> with alt
     );
 
    /**
@@ -574,6 +575,8 @@ class html2text
             return $this->_strtoupper("\n\n". $matches[2] ."\n\n");
         case 'a':
             return $this->_build_link_list($matches[3], $matches[4]);
+        case 'img':
+            return '[' . $matches[2] . ']';
         }
     }
     

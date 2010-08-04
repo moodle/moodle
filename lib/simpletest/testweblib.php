@@ -238,5 +238,18 @@ END;
 
         $this->assertEqual($fast_enough, true, 'Timing test: ' . $new_time . 'secs (new) < ' . $old_time . 'secs (old)');
     }
+
+    public function test_html_to_text_simple() {
+        $this->assertEqual("\n\n_Hello_ WORLD!", html_to_text('<p><i>Hello</i> <b>world</b>!</p>'));
+    }
+
+    public function test_html_to_text_image() {
+        $this->assertEqual('[edit]', html_to_text('<img src="edit.png" alt="edit" />'));
+    }
+
+    public function test_html_to_text_nowrap() {
+        $long = "Here is a long string, more than 75 characters long, since by default html_to_text wraps text at 75 chars.";
+        $this->assertEqual($long, html_to_text($long, 0));
+    }
 }
 ?>

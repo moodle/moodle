@@ -2288,17 +2288,18 @@ function markdown_to_html($text) {
 /**
  * Given HTML text, make it into plain text using external function
  *
- * @uses $CFG
  * @param string $html The text to be converted.
- * @return string
+ * @param integer $width Width to wrap the text at. (optional, default 75 which
+ *      is a good value for email. 0 means do not limit line length.)
+ * @return string plain text equivalent of the HTML.
  */
-function html_to_text($html) {
+function html_to_text($html, $width = 75) {
 
     global $CFG;
 
     require_once($CFG->libdir .'/html2text.php');
 
-    $h2t = new html2text($html);
+    $h2t = new html2text($html, false, true, $width);
     $result = $h2t->get_text();
 
     return $result;
