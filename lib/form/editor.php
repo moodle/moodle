@@ -222,20 +222,22 @@ class MoodleQuickForm_editor extends HTML_QuickForm_element {
         if (!during_initial_install() && empty($CFG->adminsetuppending)) {
             // 0 means no files, -1 unlimited
             if ($maxfiles != 0 ) {
-                $str .= '<div><input type="hidden" name="'.$elname.'[itemid]" value="'.$draftitemid.'" /></div>';
-                $str .= '<div id="'.$id.'_filemanager">';
-                $editorurl = new moodle_url("$CFG->wwwroot/repository/filepicker.php", array(
+                $str .= '<input type="hidden" name="'.$elname.'[itemid]" value="'.$draftitemid.'" />';
+
+                // used by non js editor only
+                $editorurl = new moodle_url("$CFG->wwwroot/repository/draftfiles_manager.php", array(
                     'action'=>'browse',
                     'env'=>'editor',
                     'itemid'=>$draftitemid,
                     'subdirs'=>$subdirs,
                     'maxbytes'=>$maxbytes,
+                    'maxfiles'=>$maxfiles,
                     'ctx_id'=>$ctx->id,
                     'course'=>$PAGE->course->id
                     ));
-                $str .= html_writer::link($editorurl->out(false), get_string('manageeditorfiles'), array('target'=>'_blank'));
-                //$str .= '<object type="text/html" data="'.$editorurl.'" height="160" width="600" style="border:1px solid #000">Error</object>';
-                $str .= '</div>';
+                $str .= '<noscript>';
+                $str .= "<object type='text/html' data='$editorurl' height='160' width='600' style='border:1px solid #000'></object>";
+                $str .= '</noscript>';
             }
         }
 

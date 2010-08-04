@@ -87,6 +87,22 @@ class MoodleQuickForm_filepicker extends HTML_QuickForm_input {
         $module = array('name'=>'form_filepicker', 'fullpath'=>'/lib/form/filepicker.js', 'requires'=>array('core_filepicker'));
         $PAGE->requires->js_init_call('M.form_filepicker.init', array($fp->options), true, $module);
 
+        $nonjsfilepicker = new moodle_url('/repository/draftfiles_manager.php', array(
+            'env'=>'filepicker',
+            'action'=>'browse',
+            'itemid'=>$draftitemid,
+            'subdirs'=>0,
+            'maxbytes'=>$options->maxbytes,
+            'maxfiles'=>1,
+            'ctx_id'=>$PAGE->context->id,
+            'course'=>$PAGE->course->id,
+            ));
+
+        // non js file picker
+        $html .= '<noscript>';
+        $html .= "<object type='text/html' data='$nonjsfilepicker' height='160' width='600' style='border:1px solid #000'></object>";
+        $html .= '</noscript>';
+
         return $html;
     }
 

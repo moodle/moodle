@@ -497,9 +497,8 @@ body.tag .managelink {padding: 5px;}
  * File Manager
  */
 .filemanager-toolbar {margin: 5px 0;}
-.filemanager-toolbar a:link,
-.filemanager-toolbar a:visited {border: 1px solid gray;background: #ccc;color: black;padding: 3px;}
-.filemanager-toolbar a:hover {background: white;text-decoration: none;}
+.filemanager-toolbar a {border: 1px solid #AACCEE;background: #F4FAFF;color: black;padding: 3px;}
+.filemanager-toolbar a:hover {background: #FFFFFF;}
 .fm-breadcrumb {margin:0;}
 .filemanager-container {padding: 5px;margin: 6px 0;background: #E9F4FF;border: #AACCEE 1px solid}
 .filemanager-container ul{margin:0;padding:0;}

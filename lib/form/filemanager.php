@@ -245,9 +245,7 @@ function form_filemanager_render($options) {
     static $filemanagertemplateloaded;
 
     $html = '';
-    $nonjsfilemanager = optional_param('usenonjsfilemanager', 0, PARAM_INT);
     $options = $fm->options;
-    $options->usenonjs = $nonjsfilemanager;
     $straddfile  = get_string('add', 'repository') . '...';
     $strmakedir  = get_string('makeafolder', 'moodle');
     $strdownload = get_string('downloadfolder', 'repository');
@@ -293,16 +291,6 @@ FMHTML;
 FMHTML;
     }
 
-    $filemanagerurl = new moodle_url('/repository/filepicker.php', array(
-        'env'=>'filemanager',
-        'action'=>'embedded',
-        'itemid'=>$itemid,
-        'subdirs'=>'/',
-        'maxbytes'=>$options->maxbytes,
-        'ctx_id'=>$PAGE->context->id,
-        'course'=>$PAGE->course->id,
-        ));
-
     $module = array(
         'name'=>'form_filemanager',
         'fullpath'=>'/lib/form/filemanager.js',
@@ -321,18 +309,20 @@ FMHTML;
     $PAGE->requires->js_init_call('M.form_filemanager.init', array($options), true, $module);
 
     // non javascript file manager
-    if (!empty($nonjsfilemanager)) {
-        $html = '<div id="nonjs-filemanager-'.$client_id.'">';
-        $html .= <<<NONJS
-<object type="text/html" data="$filemanagerurl" height="160" width="600" style="border:1px solid #000">Error</object>
-NONJS;
-        $html .= '</div>';
-    } else {
-        $url = new moodle_url($PAGE->url, array('usenonjsfilemanager'=>1));
-        $html .= '<div id="nonjs-filemanager-'.$client_id.'" class="mdl-align">';
-        $html .= html_writer::link($url, get_string('usenonjsfilemanager', 'repository'));
-        $html .= '</div>';
-    }
+    $filemanagerurl = new moodle_url('/repository/draftfiles_manager.php', array(
+        'env'=>'filemanager',
+        'action'=>'browse',
+        'itemid'=>$itemid,
+        'subdirs'=>$options->subdirs,
+        'maxbytes'=>$options->maxbytes,
+        'maxfiles'=>$options->maxfiles,
+        'ctx_id'=>$PAGE->context->id,
+        'course'=>$PAGE->course->id,
+        ));
+
+    $html .= '<noscript>';
+    $html .= "<object type='text/html' data='$filemanagerurl' height='160' width='600' style='border:1px solid #000'></object>";
+    $html .= '</noscript>';
 
 
     return $html;
