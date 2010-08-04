@@ -1013,7 +1013,7 @@ class lesson extends lesson_base {
         if ($userid === null) {
             $params['userid'] = $USER->id;
         }
-        return $DB->get_records('lesson_attempts', $params, 'timeseen DESC');
+        return $DB->get_records('lesson_attempts', $params, 'timeseen ASC');
     }
 
     /**
