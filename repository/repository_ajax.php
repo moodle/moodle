@@ -221,12 +221,6 @@ switch ($action) {
                     throw new file_exception('maxbytes');
                 }
 
-                // check if exceed user quota
-                $userquota = file_get_user_used_space();
-                if (filesize($file['path'])+$userquota>=(int)$CFG->userquota) {
-                    throw new file_exception('userquotalimit');
-                }
-
                 $record = new stdclass;
                 $record->filepath = $saveas_path;
                 $record->filename = $saveas_filename;
