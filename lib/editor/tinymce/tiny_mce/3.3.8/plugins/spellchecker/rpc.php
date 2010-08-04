@@ -7,7 +7,7 @@
  */
 
 // require moodle configuration data
-require_once(dirname(dirname(dirname(dirname(dirname(dirname(__FILE__)))))).'/config.php');
+require_once(dirname(dirname(dirname(dirname(dirname(dirname(dirname(dirname(__FILE__)))))))).'/config.php');
 require_once("./includes/general.php");
 
 // Set RPC response headers
