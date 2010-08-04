@@ -1660,27 +1660,24 @@ function quiz_extend_settings_navigation($settings, $quiznode) {
     require_once($CFG->libdir . '/questionlib.php');
 
     if (has_capability('mod/quiz:manageoverrides', $PAGE->cm->context)) {
-        $overrides = $quiznode->add(get_string('settingsoverrides', 'quiz'), null, navigation_node::TYPE_CONTAINER, null, 'overrides');
-
         $url = new moodle_url('/mod/quiz/overrides.php', array('cmid'=>$PAGE->cm->id));
-        $overrides->add(get_string('groupoverrides', 'quiz'), $url, navigation_node::TYPE_SETTING, null, 'groupoverrides');
-        $overrides->add(get_string('useroverrides', 'quiz'), new moodle_url($url, array('mode'=>'user')), navigation_node::TYPE_SETTING, null, 'useroverrides');
+        $quiznode->add(get_string('groupoverrides', 'quiz'), new moodle_url($url, array('mode'=>'group')),
+                navigation_node::TYPE_SETTING, null, 'groupoverrides');
+        $quiznode->add(get_string('useroverrides', 'quiz'), new moodle_url($url, array('mode'=>'user')),
+                navigation_node::TYPE_SETTING, null, 'useroverrides');
     }
 
     if (has_capability('mod/quiz:manage', $PAGE->cm->context)) {
-        $editnode = $quiznode->add(get_string('edit'), null, navigation_node::TYPE_CONTAINER, null, 'quizedit');
-
         $url = new moodle_url('/mod/quiz/edit.php', array('cmid'=>$PAGE->cm->id));
         $text = get_string("editinga", "moodle", get_string('modulename', 'quiz'));
-        $editnode->add($text, $url, navigation_node::TYPE_SETTING, null, 'edit', new pix_icon('t/edit', ''));
-
-        $url = new moodle_url('/mod/quiz/edit.php', array('cmid'=>$PAGE->cm->id, 'reordertool'=>'1'));
-        $editnode->add(get_string('orderandpaging','quiz'), $url, navigation_node::TYPE_SETTING, null, 'reorder', new pix_icon('t/edit', ''));
+        $quiznode->add($text, $url, navigation_node::TYPE_SETTING, null,
+                'mod_quiz_edit', new pix_icon('t/edit', ''));
     }
 
     if (has_capability('mod/quiz:preview', $PAGE->cm->context)) {
         $url = new moodle_url('/mod/quiz/startattempt.php', array('cmid'=>$PAGE->cm->id, 'sesskey'=>sesskey()));
-        $quiznode->add(get_string('preview', 'quiz'), $url, navigation_node::TYPE_SETTING, null, 'preview', new pix_icon('t/preview', ''));
+        $quiznode->add(get_string('preview', 'quiz'), $url, navigation_node::TYPE_SETTING,
+                null, 'mod_quiz_preview', new pix_icon('t/preview', ''));
     }
 
     question_extend_settings_navigation($quiznode, $PAGE->cm->context)->trim_if_empty();

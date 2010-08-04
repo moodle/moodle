@@ -77,6 +77,12 @@
     if ($attemptobj->is_preview_user() && $attemptobj->is_own_attempt()) {
         // Normal blocks
         $strreviewtitle = get_string('reviewofpreview', 'quiz');
+
+        $node = $PAGE->settingsnav->find('mod_quiz_preview', navigation_node::TYPE_SETTING);
+        if ($node) {
+            $node->make_active();
+        }
+
     } else {
         $strreviewtitle = get_string('reviewofattempt', 'quiz', $attemptobj->get_attempt_number());
         if (empty($attemptobj->get_quiz()->showblocks) && !$attemptobj->is_preview_user()) {

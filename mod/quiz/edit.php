@@ -112,16 +112,11 @@ function module_specific_controls($totalnumber, $recurse, $category, $cmid, $cmo
 
 //these params are only passed from page request to request while we stay on
 //this page otherwise they would go in question_edit_setup
-$quiz_reordertool = optional_param('reordertool', 0, PARAM_BOOL);
+$quiz_reordertool = optional_param('reordertool', -1, PARAM_BOOL);
 $quiz_qbanktool = optional_param('qbanktool', -1, PARAM_BOOL);
 
 list($thispageurl, $contexts, $cmid, $cm, $quiz, $pagevars) =
         question_edit_setup('editq', '/mod/quiz/edit.php', true);
-$url = new moodle_url($thispageurl);
-if ($quiz_reordertool) {
-    $url->param('reordertool', $quiz_reordertool);
-}
-$PAGE->set_url($url);
 
 $defaultcategoryobj = question_make_default_categories($contexts->all());
 $defaultcategoryid = $defaultcategoryobj->id;
@@ -135,19 +130,23 @@ if ($quiz_qbanktool > -1) {
     $quiz_qbanktool = get_user_preferences('quiz_qbanktool_open', 0);
 }
 
+if ($quiz_reordertool > -1) {
+    $thispageurl->param('reordertool', $quiz_reordertool);
+    set_user_preference('quiz_reordertab', $quiz_reordertool);
+} else {
+    $quiz_reordertool = get_user_preferences('quiz_reordertab', 0);
+}
+
 //will be set further down in the code
 $quizhasattempts = quiz_has_attempts($quiz->id);
 
-if ($quiz_reordertool != 0) {
-    $thispageurl->param('reordertool', $quiz_reordertool);
-}
+$PAGE->set_url($thispageurl);
+$PAGE->set_pagelayout('admin');
 
 $strquizzes = get_string('modulenameplural', 'quiz');
 $strquiz = get_string('modulename', 'quiz');
 $streditingquestions = get_string('editquestions', 'quiz');
 
-//this just does not work for at least finnish, where words are conjugated:
-//$streditingquiz = get_string('editinga', 'moodle', $strquiz);
 $streditingquiz = get_string('editingquiz', 'quiz');
 $strorderingquiz = get_string('orderingquiz', 'quiz');
 $pagetitle = $streditingquiz;
@@ -166,8 +165,6 @@ $questionbank->set_quiz_has_attempts($quizhasattempts);
 // Log this visit.
 add_to_log($cm->course, 'quiz', 'editquestions',
             "view.php?id=$cm->id", "$quiz->id", $cm->id);
-
-$PAGE->set_pagelayout('admin');
 
 // You need mod/quiz:manage in addition to question capabilities to access this page.
 require_capability('mod/quiz:manage', $contexts->lowest());
@@ -445,6 +442,10 @@ $PAGE->requires->skip_link_to('questionbank',  get_string('skipto', 'access', ge
 $PAGE->requires->skip_link_to('quizcontentsblock',  get_string('skipto', 'access', get_string('questionsinthisquiz', 'quiz')));
 $PAGE->set_title($pagetitle);
 $PAGE->set_heading($course->fullname);
+$node = $PAGE->settingsnav->find('mod_quiz_edit', navigation_node::TYPE_SETTING);
+if ($node) {
+    $node->make_active();
+}
 echo $OUTPUT->header();
 
 // Initialise the JavaScript.
@@ -458,9 +459,17 @@ for ($pageiter = 1; $pageiter <= $numberoflisteners; $pageiter++) {
 $PAGE->requires->data_for_js('quiz_edit_config', $quizeditconfig);
 $PAGE->requires->js('/mod/quiz/edit.js');
 
-if ($contexts->have_one_edit_tab_cap('editq') && $node = $PAGE->settingsnav->find('quizedit', navigation_node::TYPE_CONTAINER)) {
-    call_user_func_array('print_tabs', $node->get_tabs_array());
+// Print the tabs to switch mode.
+if ($quiz_reordertool) {
+    $currenttab = 'reorder';
+} else {
+    $currenttab = 'edit';
 }
+$tabs = array(array(
+    new tabobject('edit', new moodle_url($thispageurl, array('reordertool' => 0)), $streditingquiz),
+    new tabobject('reorder', new moodle_url($thispageurl, array('reordertool' => 1)), $strorderingquiz),
+));
+print_tabs($tabs, $currenttab);
 
 if ($quiz_qbanktool) {
     $bankclass = '';

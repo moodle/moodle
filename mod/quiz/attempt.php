@@ -53,6 +53,11 @@
         if (empty($attemptobj->get_quiz()->showblocks)) {
             $PAGE->blocks->show_only_fake_blocks();
         }
+    } else {
+        $node = $PAGE->settingsnav->find('mod_quiz_preview', navigation_node::TYPE_SETTING);
+        if ($node) {
+            $node->make_active();
+        }
     }
 
 /// If the attempt is already closed, send them to the review page.
