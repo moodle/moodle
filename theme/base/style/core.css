@@ -177,7 +177,7 @@ a.skip:active {position: static;display: block;}
 .mform .fitem {width:100%;overflow:hidden;margin-top:5px;margin-bottom:1px;clear:right;}
 .mform .fitem .fitemtitle {width:15%;text-align:right;float:left;}
 .mform .fitem .fitemtitle div {display: inline;}
-.mform .fitem .felement {border-width: 0;width:60%;margin-left:16%;}
+.mform .fitem .felement {border-width: 0;width:80%;margin-left:16%;}
 .mform .fitem fieldset.felement {margin-left:0;padding-left:1%;}
 .mform .error,
 .mform .required {color:#A00;}
@@ -195,7 +195,6 @@ a.skip:active {position: static;display: block;}
 .mform fieldset.fdate_selector label {display:inline;float: none;width: auto;}
 .mform .ftags label.accesshide {display: block;position: static;}
 .mform .ftags select {margin-bottom: 0.7em;min-width: 22em;}
-.mform .fitem .felement {margin-right:16%;}
 
 /** Browser corrections for mforms **/
 .ie .mform .fitem .felement {margin-left:0;text-align:left;float:left;}
