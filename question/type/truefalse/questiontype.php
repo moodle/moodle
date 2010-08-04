@@ -110,6 +110,17 @@ class question_truefalse_qtype extends default_questiontype {
         return true;
     }
 
+    function compare_responses($question, $state, $teststate) {
+        if (isset($state->responses['']) && isset($teststate->responses[''])) {
+            return $state->responses[''] === $teststate->responses[''];
+        } else if (isset($teststate->responses['']) && $teststate->responses[''] === '' &&
+                !isset($state->responses[''])) {
+            // Nothing selected in the past, and nothing selected now.
+            return true;
+        }
+        return false;
+    }
+
     function get_correct_responses(&$question, &$state) {
         // The correct answer is the one which gives full marks
         foreach ($question->options->answers as $answer) {
