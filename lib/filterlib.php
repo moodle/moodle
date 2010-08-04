@@ -397,6 +397,8 @@ class legacy_filter extends moodle_text_filter {
         if ($this->courseid) {
             // old filters are called only when inside courses
             return call_user_func($this->filterfunction, $this->courseid, $text);
+        } else {
+            return $text;
         }
     }
 }
