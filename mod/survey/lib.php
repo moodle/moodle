@@ -333,7 +333,8 @@ function survey_get_responses($surveyid, $groupid, $groupingid) {
         $groupsjoin = "";
     }
 
-    return $DB->get_records_sql("SELECT u.id, u.firstname, u.lastname, u.picture, MAX(a.time) as time
+    $userfields = user_picture::fields('u');
+    return $DB->get_records_sql("SELECT $userfields, MAX(a.time) as time
                                    FROM {survey_answers} a
                                    JOIN {user} u ON a.userid = u.id
                             $groupsjoin
