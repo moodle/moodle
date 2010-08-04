@@ -1,5 +1,5 @@
 /** Course formats **/
-.course-content ul.weeks li.section {border:1px solid #DDD;background-color:#FFF;}
+.course-content ul.weeks li.section {border:1px solid #DDD;}
 .course-content ul.weeks li.section .content {background-color:#FAFAFA;padding:5px 10px;}
 .course-content ul.weeks li.section .content h3 {margin:0;color:#777;font-weight: normal;}
 .course-content ul.weeks li.section .left {padding:5px 0;}
