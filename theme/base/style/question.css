@@ -26,6 +26,11 @@ body.jsenabled #qtypechoicecontainer {display: block;}
 #qtypechoicecontainer #chooseqtype .instruction,
 #qtypechoicecontainer #chooseqtype .selected .qtypesummary {display: block;}
 
+#categoryquestions { margin: 0; }
+#categoryquestions td,
+#categoryquestions th { padding: 0 0.2em; }
+.questionbank .singleselect { margin: 0; }
+
 .que {text-align: left;margin: 0 auto 1.8em auto;border: 1px solid;}
 .que .info {float: left;margin: 0.5em 0;width: 11.9%;}
 .que .info h2 {margin: 0 0 0 0.64em;}

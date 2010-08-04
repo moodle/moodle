@@ -290,11 +290,11 @@ body.jsenabled #quizcontentsblock #repaginatedialog .hd{display:block;}
 body.jsenabled #quizcontentsblock #repaginatedialog .bd{padding:1em;}
 body.jsenabled #quizcontentsblock  .repaginatecommand #repaginatecommand{display:block;}
 
-body #quizcontentsblock #randomquestiondialog{display: none;}
-body.jsenabled #quizcontentsblock #randomquestiondialog{display: block;}
+#page-mod-quiz-edit #randomquestiondialog {display: none;}
+#page-mod-quiz-edit.jsenabled #randomquestiondialog {display: block;}
 
-body #quizcontentsblock #qtypechoicecontainer{display: none;}
-body.jsenabled #quizcontentsblock #qtypechoicecontainer{display: block;}
+#page-mod-quiz-edit #qtypechoicecontainer{display: none;}
+#page-mod-quiz-edit.jsenabled #qtypechoicecontainer{display: block;}
 
 #page-mod-quiz-edit .questionbankwindow select#catmenu_jump{
 /* In Opera9, IE6 the width of the
