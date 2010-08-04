@@ -295,12 +295,13 @@ function feedback_excelprint_detailed_items(&$worksheet, $xlsFormats, $completed
 
         $itemobj = feedback_get_item_class($item->typ);
         $printval = $itemobj->get_printval($item, $value);
+        $printval = trim($printval);
 
         // $worksheet->setFormat('<l><vo>');
         if(is_numeric($printval)) {
-            $worksheet->write_number($rowOffset, $colOffset, trim($printval), $xlsFormats->default);
+            $worksheet->write_number($rowOffset, $colOffset, $printval, $xlsFormats->default);
         } else {
-            $worksheet->write_string($rowOffset, $colOffset, trim($printval), $xlsFormats->default);
+            $worksheet->write_string($rowOffset, $colOffset, $printval, $xlsFormats->default);
         }
         $printval = '';
         $colOffset++;
