@@ -1943,6 +1943,7 @@ function question_process_comment($question, &$state, &$attempt, $comment, $grad
     // Update the comment and save it in the database
     $comment = trim($comment);
     $state->manualcomment = $comment;
+    $state->newflaggedstate = $state->flagged;
     if (!$DB->set_field('question_sessions', 'manualcomment', $comment, array('attemptid'=>$attempt->uniqueid, 'questionid'=>$question->id))) {
         return get_string('errorsavingcomment', 'question', $question);
     }

@@ -462,7 +462,7 @@ class quiz_attempt extends quiz {
      * Static function to create a new quiz_attempt object given an attemptid.
      *
      * @param integer $attemptid the attempt id.
-     * @return object the new quiz_attempt object
+     * @return quiz_attempt the new quiz_attempt object
      */
     static public function create($attemptid) {
         global $DB;
