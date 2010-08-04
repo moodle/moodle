@@ -1862,21 +1862,19 @@ function data_get_available_presets($context) {
     }
 
     if ($userids = get_list_of_plugins('data/preset', '', $CFG->dataroot)) {
+        $canviewall = has_capability('mod/data:viewalluserpresets', $context);
         foreach ($userids as $userid) {
             $fulldir = $CFG->dataroot.'/data/preset/'.$userid;
-
-            if ($userid == 0 || $USER->id == $userid || has_capability('mod/data:viewalluserpresets', $context)) {
-
+            if ($userid == 0 || $USER->id == $userid || $canviewall) {
                 if ($dirs = get_list_of_plugins('data/preset/'.$userid, '', $CFG->dataroot)) {
                     foreach ($dirs as $dir) {
                         $fulldir = $CFG->dataroot.'/data/preset/'.$userid.'/'.$dir;
-
                         if (is_directory_a_preset($fulldir)) {
                             $preset = new object;
                             $preset->path = $fulldir;
                             $preset->userid = $userid;
                             $preset->shortname = $dir;
-                            $preset->name = data_preset_name($dir, $fulldir);
+                            $preset->name = $preset->shortname;
                             if (file_exists($fulldir.'/screenshot.jpg')) {
                                 $preset->screenshot = $CFG->wwwroot.'/mod/data/preset/'.$dir.'/screenshot.jpg';
                             } else if (file_exists($fulldir.'/screenshot.png')) {
@@ -1993,86 +1991,86 @@ function is_directory_a_preset($directory) {
 }
 
 /**
- * @return bool
+ * Abstract class used for data preset importers
  */
-function clean_preset($folder) {
-    $status = @unlink($folder.'/singletemplate.html') &&
-              @unlink($folder.'/listtemplate.html') &&
-              @unlink($folder.'/listtemplateheader.html') &&
-              @unlink($folder.'/listtemplatefooter.html') &&
-              @unlink($folder.'/addtemplate.html') &&
-              @unlink($folder.'/rsstemplate.html') &&
-              @unlink($folder.'/rsstitletemplate.html') &&
-              @unlink($folder.'/csstemplate.css') &&
-              @unlink($folder.'/jstemplate.js') &&
-              @unlink($folder.'/preset.xml');
+abstract class data_preset_importer {
 
-    // optional
-    @unlink($folder.'/asearchtemplate.html');
+    protected $course;
+    protected $cm;
+    protected $module;
+    protected $directory;
 
-    return $status;
-}
-
-/**
- * @package   mod-data
- * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class PresetImporter {
     /**
-     * @global object
-     * @param object $course
-     * @param object $cm
-     * @param object $data
-     * @param int $userid
-     * @param string $shortname
+     * Constructor
+     *
+     * @param stdClass $course
+     * @param stdClass $cm
+     * @param stdClass $module
+     * @param string $directory
      */
-    function PresetImporter($course, $cm, $data, $userid, $shortname) {
-        global $CFG;
+    public function __construct($course, $cm, $module, $directory) {
         $this->course = $course;
         $this->cm = $cm;
-        $this->data = $data;
-        $this->userid = $userid;
-        $this->shortname = $shortname;
-        $this->folder = data_preset_path($course, $userid, $shortname);
+        $this->module = $module;
+        $this->directory = $directory;
+    }
+
+    /**
+     * Returns the name of the directory the preset is located in
+     * @return string
+     */
+    public function get_directory() {
+        return basename($this->directory);
     }
     /**
-     * @global object
-     * @global object
-     * @return array
+     * Gets the preset settings
+     * @global moodle_database $DB
+     * @return stdClass
      */
-    function get_settings() {
-        global $CFG, $DB;
+    public function get_preset_settings() {
+        global $DB;
 
-        if (!is_directory_a_preset($this->folder)) {
-            print_error('invalidpreset', 'data', '', $this->userid.'/'.$this->shortname);
+        if (!is_directory_a_preset($this->directory)) {
+            print_error('invalidpreset', 'data', '', $this->directory);
         }
 
-        /* Grab XML */
-        $presetxml = file_get_contents($this->folder.'/preset.xml');
-        $parsedxml = xmlize($presetxml, 0);
+        $allowed_settings = array(
+            'intro',
+            'comments',
+            'requiredentries',
+            'requiredentriestoview',
+            'maxentries',
+            'rssarticles',
+            'approval',
+            'defaultsortdir',
+            'defaultsort');
 
-        $allowed_settings = array('intro', 'comments', 'requiredentries', 'requiredentriestoview',
-                                  'maxentries', 'rssarticles', 'approval', 'defaultsortdir', 'defaultsort');
+        $result = new stdClass;
+        $result->settings = new stdClass;
+        $result->importfields = array();
+        $result->currentfields = $DB->get_records('data_fields', array('dataid'=>$this->module->id));
+        if (!$result->currentfields) {
+            $result->currentfields = array();
+        }
+
+
+        /* Grab XML */
+        $presetxml = file_get_contents($this->directory.'/preset.xml');
+        $parsedxml = xmlize($presetxml, 0);
 
         /* First, do settings. Put in user friendly array. */
         $settingsarray = $parsedxml['preset']['#']['settings'][0]['#'];
-        $settings = new StdClass();
-
+        $result->settings = new StdClass();
         foreach ($settingsarray as $setting => $value) {
-            if (!is_array($value)) {
-                continue;
-            }
-            if (!in_array($setting, $allowed_settings)) {
+            if (!is_array($value) || !in_array($setting, $allowed_settings)) {
                 // unsupported setting
                 continue;
             }
-            $settings->$setting = $value[0]['#'];
+            $result->settings->$setting = $value[0]['#'];
         }
 
         /* Now work out fields to user friendly array */
         $fieldsarray = $parsedxml['preset']['#']['field'];
-        $fields = array();
         foreach ($fieldsarray as $field) {
             if (!is_array($field)) {
                 continue;
@@ -2084,127 +2082,53 @@ class PresetImporter {
                 }
                 $f->$param = $value[0]['#'];
             }
-            $f->dataid = $this->data->id;
+            $f->dataid = $this->module->id;
             $f->type = clean_param($f->type, PARAM_ALPHA);
-            $fields[] = $f;
+            $result->importfields[] = $f;
         }
         /* Now add the HTML templates to the settings array so we can update d */
-        $settings->singletemplate     = file_get_contents($this->folder."/singletemplate.html");
-        $settings->listtemplate       = file_get_contents($this->folder."/listtemplate.html");
-        $settings->listtemplateheader = file_get_contents($this->folder."/listtemplateheader.html");
-        $settings->listtemplatefooter = file_get_contents($this->folder."/listtemplatefooter.html");
-        $settings->addtemplate        = file_get_contents($this->folder."/addtemplate.html");
-        $settings->rsstemplate        = file_get_contents($this->folder."/rsstemplate.html");
-        $settings->rsstitletemplate   = file_get_contents($this->folder."/rsstitletemplate.html");
-        $settings->csstemplate        = file_get_contents($this->folder."/csstemplate.css");
-        $settings->jstemplate         = file_get_contents($this->folder."/jstemplate.js");
+        $result->settings->singletemplate     = file_get_contents($this->directory."/singletemplate.html");
+        $result->settings->listtemplate       = file_get_contents($this->directory."/listtemplate.html");
+        $result->settings->listtemplateheader = file_get_contents($this->directory."/listtemplateheader.html");
+        $result->settings->listtemplatefooter = file_get_contents($this->directory."/listtemplatefooter.html");
+        $result->settings->addtemplate        = file_get_contents($this->directory."/addtemplate.html");
+        $result->settings->rsstemplate        = file_get_contents($this->directory."/rsstemplate.html");
+        $result->settings->rsstitletemplate   = file_get_contents($this->directory."/rsstitletemplate.html");
+        $result->settings->csstemplate        = file_get_contents($this->directory."/csstemplate.css");
+        $result->settings->jstemplate         = file_get_contents($this->directory."/jstemplate.js");
 
         //optional
-        if (file_exists($this->folder."/asearchtemplate.html")) {
-            $settings->asearchtemplate = file_get_contents($this->folder."/asearchtemplate.html");
+        if (file_exists($this->directory."/asearchtemplate.html")) {
+            $result->settings->asearchtemplate = file_get_contents($this->directory."/asearchtemplate.html");
         } else {
-            $settings->asearchtemplate = NULL;
+            $result->settings->asearchtemplate = NULL;
         }
+        $result->settings->instance = $this->module->id;
 
-        $settings->instance = $this->data->id;
-
-        /* Now we look at the current structure (if any) to work out whether we need to clear db
-           or save the data */
-        if (!$currentfields = $DB->get_records('data_fields', array('dataid'=>$this->data->id))) {
-            $currentfields = array();
-        }
-
-        return array($settings, $fields, $currentfields);
+        return $result;
     }
 
     /**
-     *
-     */
-    function import_options() {
-        global $OUTPUT;
-        if (!confirm_sesskey()) {
-            print_error('invalidsesskey');
-        }
-
-        $strblank = get_string('blank', 'data');
-        $strcontinue = get_string('continue');
-        $strwarning = get_string('mappingwarning', 'data');
-        $strfieldmappings = get_string('fieldmappings', 'data');
-        $strnew = get_string('new');
-
-        $sesskey = sesskey();
-
-        list($settings, $newfields,  $currentfields) = $this->get_settings();
-
-        echo '<div class="presetmapping"><form action="preset.php" method="post">';
-        echo '<div>';
-        echo '<input type="hidden" name="action" value="finishimport" />';
-        echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
-        echo '<input type="hidden" name="d" value="'.$this->data->id.'" />';
-        echo '<input type="hidden" name="fullname" value="'.$this->userid.'/'.$this->shortname.'" />';
-
-        if (!empty($currentfields) && !empty($newfields)) {
-            echo "<h3>$strfieldmappings ";
-            echo $OUTPUT->help_icon('fieldmappings', 'data');
-            echo '</h3><table>';
-
-            foreach ($newfields as $nid => $newfield) {
-                echo "<tr><td><label for=\"id_$newfield->name\">$newfield->name</label></td>";
-                echo '<td><select name="field_'.$nid.'" id="id_'.$newfield->name.'">';
-
-                $selected = false;
-                foreach ($currentfields as $cid => $currentfield) {
-                    if ($currentfield->type == $newfield->type) {
-                        if ($currentfield->name == $newfield->name) {
-                            echo '<option value="'.$cid.'" selected="selected">'.$currentfield->name.'</option>';
-                            $selected=true;
-                        }
-                        else {
-                            echo '<option value="'.$cid.'">'.$currentfield->name.'</option>';
-                        }
-                    }
-                }
-
-                if ($selected)
-                    echo '<option value="-1">-</option>';
-                else
-                    echo '<option value="-1" selected="selected">-</option>';
-                echo '</select></td></tr>';
-            }
-            echo '</table>';
-            echo "<p>$strwarning</p>";
-
-        } else if (empty($newfields)) {
-            print_error('nodefinedfields', 'data');
-        }
-
-        echo '<div class="overwritesettings"><label for="overwritesettings">'.get_string('overwritesettings', 'data');
-        echo '<input id="overwritesettings" name="overwritesettings" type="checkbox" /></label></div>';
-
-        echo '<input class="button" type="submit" value="'.$strcontinue.'" /></div></form></div>';
-
-    }
-
-    /**
-     * @global object
-     * @global object
+     * Import the preset into the given database module
      * @return bool
      */
-    function import() {
-        global $CFG, $DB;
+    function import($overwritesettings) {
+        global $DB;
 
-        list($settings, $newfields, $currentfields) = $this->get_settings();
+        $params = $this->get_preset_settings();
+        $settings = $params->settings;
+        $newfields = $params->importfields;
+        $currentfields = $params->currentfields;
         $preservedfields = array();
-
-        $overwritesettings = optional_param('overwritesettings', 0, PARAM_BOOL);
 
         /* Maps fields and makes new ones */
         if (!empty($newfields)) {
             /* We require an injective mapping, and need to know what to protect */
             foreach ($newfields as $nid => $newfield) {
                 $cid = optional_param("field_$nid", -1, PARAM_INT);
-                if ($cid == -1) continue;
-
+                if ($cid == -1) {
+                    continue;
+                }
                 if (array_key_exists($cid, $preservedfields)){
                     print_error('notinjectivemap', 'data');
                 }
@@ -2216,7 +2140,7 @@ class PresetImporter {
 
                 /* A mapping. Just need to change field params. Data kept. */
                 if ($cid != -1 and isset($currentfields[$cid])) {
-                    $fieldobject = data_get_field_from_id($currentfields[$cid]->id, $this->data);
+                    $fieldobject = data_get_field_from_id($currentfields[$cid]->id, $this->module);
                     foreach ($newfield as $param => $value) {
                         if ($param != "id") {
                             $fieldobject->field->$param = $value;
@@ -2225,16 +2149,15 @@ class PresetImporter {
                     unset($fieldobject->field->similarfield);
                     $fieldobject->update_field();
                     unset($fieldobject);
-                }
-                /* Make a new field */
-                else {
+                } else {
+                    /* Make a new field */
                     include_once("field/$newfield->type/field.class.php");
 
                     if (!isset($newfield->description)) {
                         $newfield->description = '';
                     }
                     $classname = 'data_field_'.$newfield->type;
-                    $fieldclass = new $classname($newfield, $this->data);
+                    $fieldclass = new $classname($newfield, $this->module);
                     $fieldclass->insert_field();
                     unset($fieldclass);
                 }
@@ -2250,27 +2173,19 @@ class PresetImporter {
 
                     $id = $currentfield->id;
                     //Why delete existing data records and related comments/ratings??
-/*
-                    if ($content = $DB->get_records('data_content', array('fieldid'=>$id))) {
-                        foreach ($content as $item) {
-                            $DB->delete_records('data_ratings', array('recordid'=>$item->recordid));
-                            $DB->delete_records('data_comments', array('recordid'=>$item->recordid));
-                            $DB->delete_records('data_records', array('id'=>$item->recordid));
-                        }
-                    }*/
                     $DB->delete_records('data_content', array('fieldid'=>$id));
                     $DB->delete_records('data_fields', array('id'=>$id));
                 }
             }
         }
 
-    // handle special settings here
+        // handle special settings here
         if (!empty($settings->defaultsort)) {
             if (is_numeric($settings->defaultsort)) {
                 // old broken value
                 $settings->defaultsort = 0;
             } else {
-                $settings->defaultsort = (int)$DB->get_field('data_fields', 'id', array('dataid'=>$this->data->id, 'name'=>$settings->defaultsort));
+                $settings->defaultsort = (int)$DB->get_field('data_fields', 'id', array('dataid'=>$this->module->id, 'name'=>$settings->defaultsort));
             }
         } else {
             $settings->defaultsort = 0;
@@ -2288,20 +2203,65 @@ class PresetImporter {
         }
 
         // now overwrite current data settings
-        foreach ($this->data as $prop=>$unused) {
+        foreach ($this->module as $prop=>$unused) {
             if (in_array($prop, $overwrite)) {
-                $this->data->$prop = $settings->$prop;
+                $this->module->$prop = $settings->$prop;
             }
         }
 
-        data_update_instance($this->data);
+        data_update_instance($this->module);
 
-        if (strstr($this->folder, '/temp/')) {
-        // Removes the temporary files
-            clean_preset($this->folder);
+        return $this->cleanup();
+    }
+
+    /**
+     * Any clean up routines should go here
+     * @return bool
+     */
+    public function cleanup() {
+        return true;
+    }
+}
+
+/**
+ * Data preset importer for uploaded presets
+ */
+class data_preset_upload_importer extends data_preset_importer {
+    public function __construct($course, $cm, $module, $filepath) {
+        global $USER;
+        if (is_file($filepath)) {
+            $fp = get_file_packer();
+            if ($fp->extract_to_pathname($filepath, $filepath.'_extracted')) {
+                fulldelete($filepath);
+            }
+            $filepath .= '_extracted';
+        }
+        parent::__construct($course, $cm, $module, $filepath);
+    }
+    public function cleanup() {
+        return fulldelete($this->directory);
+    }
+}
+
+/**
+ * Data preset importer for existing presets
+ */
+class data_preset_existing_importer extends data_preset_importer {
+    protected $userid;
+    public function __construct($course, $cm, $module, $fullname) {
+        global $USER;
+        list($userid, $shortname) = explode('/', $fullname, 2);
+        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+        if ($userid && ($userid != $USER->id) && !has_capability('mod/data:manageuserpresets', $context) && !has_capability('mod/data:viewalluserpresets', $context)) {
+           throw new coding_exception('Invalid preset provided');
         }
 
-        return true;
+        $this->userid = $userid;
+        $filepath = data_preset_path($course, $userid, $shortname);
+        parent::__construct($course, $cm, $module, $filepath);
+    }
+    public function get_userid() {
+        return $this->userid;
     }
 }
 
@@ -2887,4 +2847,138 @@ function data_extend_settings_navigation(settings_navigation $settings, navigati
         $url = new moodle_url(rss_get_url($PAGE->cm->context->id, $USER->id, 'mod_data', $data->id));
         $datanode->add($string, $url, settings_navigation::TYPE_SETTING, null, null, new pix_icon('i/rss', ''));
     }
+}
+
+function data_presets_export($course, $cm, $data) {
+    global $CFG, $DB;
+    $presetname = clean_filename($data->name) . '-preset-' . gmdate("Ymd_Hi");
+    $exportsubdir = "$course->id/moddata/data/$data->id/$presetname";
+    make_upload_directory($exportsubdir);
+    $exportdir = "$CFG->dataroot/$exportsubdir";
+
+    // Assemble "preset.xml":
+    $presetxmldata = "<preset>\n\n";
+
+    // Raw settings are not preprocessed during saving of presets
+    $raw_settings = array(
+        'intro',
+        'comments',
+        'requiredentries',
+        'requiredentriestoview',
+        'maxentries',
+        'rssarticles',
+        'approval',
+        'defaultsortdir'
+    );
+
+    $presetxmldata .= "<settings>\n";
+    // First, settings that do not require any conversion
+    foreach ($raw_settings as $setting) {
+        $presetxmldata .= "<$setting>" . htmlspecialchars($data->$setting) . "</$setting>\n";
+    }
+
+    // Now specific settings
+    if ($data->defaultsort > 0 && $sortfield = data_get_field_from_id($data->defaultsort, $data)) {
+        $presetxmldata .= '<defaultsort>' . htmlspecialchars($sortfield->field->name) . "</defaultsort>\n";
+    } else {
+        $presetxmldata .= "<defaultsort>0</defaultsort>\n";
+    }
+    $presetxmldata .= "</settings>\n\n";
+
+    // Now for the fields. Grab all that are non-empty
+    $fields = $DB->get_records('data_fields', array('dataid'=>$data->id));
+    ksort($fields);
+    if (!empty($fields)) {
+        foreach ($fields as $field) {
+            $presetxmldata .= "<field>\n";
+            foreach ($field as $key => $value) {
+                if ($value != '' && $key != 'id' && $key != 'dataid') {
+                    $presetxmldata .= "<$key>" . htmlspecialchars($value) . "</$key>\n";
+                }
+            }
+            $presetxmldata .= "</field>\n\n";
+        }
+    }
+    $presetxmldata .= '</preset>';
+
+    // After opening a file in write mode, close it asap
+    $presetxmlfile = fopen($exportdir . '/preset.xml', 'w');
+    fwrite($presetxmlfile, $presetxmldata);
+    fclose($presetxmlfile);
+
+    // Now write the template files
+    $singletemplate = fopen($exportdir . '/singletemplate.html', 'w');
+    fwrite($singletemplate, $data->singletemplate);
+    fclose($singletemplate);
+
+    $listtemplateheader = fopen($exportdir . '/listtemplateheader.html', 'w');
+    fwrite($listtemplateheader, $data->listtemplateheader);
+    fclose($listtemplateheader);
+
+    $listtemplate = fopen($exportdir . '/listtemplate.html', 'w');
+    fwrite($listtemplate, $data->listtemplate);
+    fclose($listtemplate);
+
+    $listtemplatefooter = fopen($exportdir . '/listtemplatefooter.html', 'w');
+    fwrite($listtemplatefooter, $data->listtemplatefooter);
+    fclose($listtemplatefooter);
+
+    $addtemplate = fopen($exportdir . '/addtemplate.html', 'w');
+    fwrite($addtemplate, $data->addtemplate);
+    fclose($addtemplate);
+
+    $rsstemplate = fopen($exportdir . '/rsstemplate.html', 'w');
+    fwrite($rsstemplate, $data->rsstemplate);
+    fclose($rsstemplate);
+
+    $rsstitletemplate = fopen($exportdir . '/rsstitletemplate.html', 'w');
+    fwrite($rsstitletemplate, $data->rsstitletemplate);
+    fclose($rsstitletemplate);
+
+    $csstemplate = fopen($exportdir . '/csstemplate.css', 'w');
+    fwrite($csstemplate, $data->csstemplate);
+    fclose($csstemplate);
+
+    $jstemplate = fopen($exportdir . '/jstemplate.js', 'w');
+    fwrite($jstemplate, $data->jstemplate);
+    fclose($jstemplate);
+
+    $asearchtemplate = fopen($exportdir . '/asearchtemplate.html', 'w');
+    fwrite($asearchtemplate, $data->asearchtemplate);
+    fclose($asearchtemplate);
+
+    // Check if all files have been generated
+    if (! is_directory_a_preset($exportdir)) {
+        print_error('generateerror', 'data');
+    }
+
+    $filelist = array(
+        'preset.xml',
+        'singletemplate.html',
+        'listtemplateheader.html',
+        'listtemplate.html',
+        'listtemplatefooter.html',
+        'addtemplate.html',
+        'rsstemplate.html',
+        'rsstitletemplate.html',
+        'csstemplate.css',
+        'jstemplate.js',
+        'asearchtemplate.html'
+    );
+
+    foreach ($filelist as $key => $file) {
+        $filelist[$key] = $exportdir . '/' . $filelist[$key];
+    }
+
+    $exportfile = "$CFG->dataroot/$course->id/moddata/data/$data->id/$presetname.zip";
+    file_exists($exportfile) && unlink($exportfile);
+    $status = zip_files($filelist, $exportfile);
+    // ToDo: status check
+    foreach ($filelist as $file) {
+        unlink($file);
+    }
+    rmdir($exportdir);
+
+    // Return the full path to the exported preset file:
+    return $exportfile;
 }
