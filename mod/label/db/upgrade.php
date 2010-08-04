@@ -53,12 +53,6 @@ function xmldb_label_upgrade($oldversion) {
 
 //===== 1.9.0 upgrade line ======//
 
-    if ($oldversion < 2007101510) {
-        $sql = "UPDATE {log_display} SET mtable = 'label' WHERE module = 'label'";
-        $DB->execute($sql);
-        upgrade_mod_savepoint(true, 2007101510, 'label');
-    }
-
     if ($oldversion < 2009042200) {
 
     /// Rename field content on table label to intro

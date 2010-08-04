@@ -173,35 +173,6 @@ function xmldb_feedback_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2008042401, 'feedback');
     }
 
-    if ($oldversion < 2008042801) {
-        $new_log_display = new object();
-        $new_log_display->module = 'feedback';
-        $new_log_display->action = 'startcomplete';
-        $new_log_display->mtable = 'feedback';
-        $new_log_display->field = 'name';
-        $DB->insert_record('log_display', $new_log_display);
-
-        $new_log_display = clone($new_log_display);
-        $new_log_display->action = 'submit';
-        $DB->insert_record('log_display', $new_log_display);
-
-        $new_log_display = clone($new_log_display);
-        $new_log_display->action = 'delete';
-        $DB->insert_record('log_display', $new_log_display);
-
-        $new_log_display = clone($new_log_display);
-        $new_log_display->action = 'view';
-        $DB->insert_record('log_display', $new_log_display);
-
-        $new_log_display = clone($new_log_display);
-        $new_log_display->action = 'view all';
-        $new_log_display->mtable = 'course';
-        $new_log_display->field = 'shortname';
-        $DB->insert_record('log_display', $new_log_display);
-
-        upgrade_mod_savepoint(true, 2008042801, 'feedback');
-    }
-
     if ($oldversion < 2008042900) {
         /// Define field autonumbering to be added to feedback
         $table = new xmldb_table('feedback');
