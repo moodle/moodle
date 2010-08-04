@@ -132,6 +132,10 @@ if ($form->is_cancelled()){
     $aggregation->insert();
 
     // Role aggregation
+    if (empty($data->role_aggregation)) {
+        $data->role_aggregation = 0;
+    }
+
     $aggregation = new completion_aggregation();
     $aggregation->course = $data->id;
     $aggregation->criteriatype = COMPLETION_CRITERIA_TYPE_ROLE;
