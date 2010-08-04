@@ -224,18 +224,6 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2008051201);
     }
 
-    if ($oldversion < 2008051202) {
-        $log_action = new object();
-        $log_action->module = 'course';
-        $log_action->action = 'unenrol';
-        $log_action->mtable = 'course';
-        $log_action->field  = 'fullname';
-        if (!$DB->record_exists('log_display', array('action'=>'unenrol', 'module'=>'course'))) {
-            $DB->insert_record('log_display', $log_action);
-        }
-        upgrade_main_savepoint(true, 2008051202);
-    }
-
     if ($oldversion < 2008051203) {
         $table = new xmldb_table('mnet_enrol_course');
         $field = new xmldb_field('sortorder', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 0);
@@ -2173,21 +2161,6 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
 
         upgrade_main_savepoint(true, 2009082800);
         // The end of the navigation upgrade
-    }
-
-    if ($oldversion < 2009090800){
-        //insert new record for log_display table
-        //used to record tag update.
-        if (!$DB->record_exists('log_display', array('action'=>'update', 'module'=>'tag'))) {
-            $log_action = new object();
-            $log_action->module = 'tag';
-            $log_action->action = 'update';
-            $log_action->mtable = 'tag';
-            $log_action->field  = 'name';
-
-            $DB->insert_record('log_display', $log_action);
-        }
-        upgrade_main_savepoint(true, 2009090800);
     }
 
     if ($oldversion < 2009100602) {
@@ -4674,7 +4647,6 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
                     }
                     $DB->delete_records('event', array('modulename' => 'exercise'));
                     $DB->delete_records('log', array('module' => 'exercise'));
-                    $DB->delete_records('log_display', array('module' => 'exercise'));
                     $DB->delete_records('modules', array('name'=>'exercise'));
                 }
             }
@@ -4699,7 +4671,6 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
                     }
                     $DB->delete_records('event', array('modulename' => 'journal'));
                     $DB->delete_records('log', array('module' => 'journal'));
-                    $DB->delete_records('log_display', array('module' => 'journal'));
                     $DB->delete_records('modules', array('name'=>'journal'));
                     unset_config('journal_initialdisable');
                 }
@@ -4725,7 +4696,6 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
                     }
                     $DB->delete_records('event', array('modulename' => 'lams'));
                     $DB->delete_records('log', array('module' => 'lams'));
-                    $DB->delete_records('log_display', array('module' => 'lams'));
                     $DB->delete_records('modules', array('name'=>'lams'));
                     unset_config('lams_initialdisable');
                 }
