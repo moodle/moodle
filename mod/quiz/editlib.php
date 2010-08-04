@@ -427,7 +427,7 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete = true,
                 echo '<div class="pagestatus">';
                 print_string('noquestionsonpage', 'quiz');
                 echo '</div>';
-                if ($allowdelete && !$quiz->questionsperpage) {
+                if ($allowdelete) {
                     echo '<div class="quizpagedelete">';
                     echo '<a title="' . get_string('removeemptypage', 'quiz') . '" href="' .
                             $pageurl->out(true, array('deleteemptypage' => $i - 1, 'sesskey'=>sesskey())) .
@@ -437,7 +437,7 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete = true,
                 }
             }
 
-            if ($qnum!=0) {
+            if ($qnum != 0) {
                 $question = $questions[$qnum];
                 $questionparams = array('returnurl' => $returnurl,
                         'cmid' => $quiz->cmid, 'id' => $question->id);
