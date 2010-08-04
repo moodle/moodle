@@ -328,7 +328,12 @@ class moodle_page {
      */
     protected function magic_get_context() {
         if (is_null($this->_context)) {
-            throw new coding_exception('$PAGE->context accessed before it was known.');
+            if (CLI_SCRIPT) {
+                // cli scripts work in system context, do not annoy devs with fatal errors here
+                $this->_context = get_context_instance(CONTEXT_SYSTEM);
+            } else {
+                throw new coding_exception('$PAGE->context accessed before it was known.');
+            }
         }
         return $this->_context;
     }
