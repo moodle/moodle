@@ -533,6 +533,11 @@ padding: 0
 	padding: 0 0 1em;
 }
 
+/* YUI overlays
+------------------------*/
+#helppopupbox {
+	z-index: 99999 !important;
+}
 
 
 /* Embedded Pages
