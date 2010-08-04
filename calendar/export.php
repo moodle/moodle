@@ -79,7 +79,10 @@ if ($course !== NULL) {
 }
 $PAGE->set_url($url);
 
-require_login();
+require_login($course);
+if (!$course) {
+    $PAGE->set_context(get_context_instance(CONTEXT_SYSTEM)); //TODO: wrong
+}
 
 if (empty($CFG->enablecalendarexport)) {
     die('no export');

@@ -17,6 +17,7 @@ if ($course->id != SITEID) {
     require_login($course);
 } else {
     require_login();
+    $PAGE->set_context(get_context_instance(CONTEXT_SYSTEM)); //TODO: wrong
 }
 // Initialize the session variables
 calendar_session_vars();

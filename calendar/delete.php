@@ -50,10 +50,11 @@ $event = calendar_event::load($eventid);
  */
 if ($event->eventtype !== 'user' && $event->eventtype !== 'site') {
     $courseid = $event->courseid;
-    $course = $DB->get_record('course', array('id'=>$courseid), '*', MUST_EXIST);
-    require_login($course);
-} else {
-    require_login();
+}
+$course = $DB->get_record('course', array('id'=>$courseid));
+require_login($course);
+if (!$course) {
+    $PAGE->set_context(get_context_instance(CONTEXT_SYSTEM)); //TODO: wrong
 }
 
 // Check the user has the required capabilities to edit an event

@@ -70,6 +70,7 @@ if ($type !== 0) {
     $url->param('type', $type);
 }
 $PAGE->set_url($url);
+$PAGE->set_context(get_context_instance(CONTEXT_SYSTEM)); //TODO: wrong
 
 // Initialize the session variables
 calendar_session_vars();
