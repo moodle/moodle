@@ -32,7 +32,6 @@ class quiz_responses_report extends quiz_default_report {
 
         $download = optional_param('download', '', PARAM_ALPHA);
 
-
         $pageoptions = array();
         $pageoptions['id'] = $cm->id;
         $pageoptions['mode'] = 'responses';
@@ -40,15 +39,13 @@ class quiz_responses_report extends quiz_default_report {
         $reporturl = new moodle_url('/mod/quiz/report.php', $pageoptions);
         $qmsubselect = quiz_report_qm_filter_select($quiz);
 
-
-
         /// find out current groups mode
         $currentgroup = groups_get_activity_group($cm, true);
 
         $mform = new mod_quiz_report_responses_settings($reporturl, array('qmsubselect'=> $qmsubselect, 'quiz'=>$quiz, 'currentgroup'=>$currentgroup));
-        if ($fromform = $mform->get_data()){
+        if ($fromform = $mform->get_data()) {
             $attemptsmode = $fromform->attemptsmode;
-            if ($qmsubselect){
+            if ($qmsubselect) {
                 //control is not on the form if
                 //the grading method is not set
                 //to grade one attempt per user eg. for average attempt grade.
@@ -61,12 +58,12 @@ class quiz_responses_report extends quiz_default_report {
         } else {
             $qmfilter = optional_param('qmfilter', 0, PARAM_INT);
             $attemptsmode = optional_param('attemptsmode', null, PARAM_INT);
-            if ($attemptsmode === null){
+            if ($attemptsmode === null) {
                 //default
                 $attemptsmode = QUIZ_REPORT_ATTEMPTS_ALL;
-            } else if ($currentgroup){
+            } else if ($currentgroup) {
                 //default for when a group is selected
-                if ($attemptsmode === null  || $attemptsmode == QUIZ_REPORT_ATTEMPTS_ALL){
+                if ($attemptsmode === null || $attemptsmode == QUIZ_REPORT_ATTEMPTS_ALL) {
                     $attemptsmode = QUIZ_REPORT_ATTEMPTS_STUDENTS_WITH;
                 }
             } else if (!$currentgroup && $course->id == SITEID) {
@@ -83,13 +80,12 @@ class quiz_responses_report extends quiz_default_report {
         $candelete = has_capability('mod/quiz:deleteattempts', $context)
                 && ($attemptsmode!= QUIZ_REPORT_ATTEMPTS_STUDENTS_WITH_NO);
 
-
         $displayoptions = array();
         $displayoptions['attemptsmode'] = $attemptsmode;
         $displayoptions['qmfilter'] = $qmfilter;
 
         //work out the sql for this table.
-        if (!$students = get_users_by_capability($context, array('mod/quiz:reviewmyattempts', 'mod/quiz:attempt'),'u.id,1','','','','','',false)){
+        if (!$students = get_users_by_capability($context, array('mod/quiz:reviewmyattempts', 'mod/quiz:attempt'),'u.id,1','','','','','',false)) {
             $students = array();
         } else {
             $students = array_keys($students);
@@ -101,7 +97,7 @@ class quiz_responses_report extends quiz_default_report {
             $groupstudents = array();
         } else {
             // all users who can attempt quizzes and who are in the currently selected group
-            if (!$groupstudents = get_users_by_capability($context, array('mod/quiz:reviewmyattempts', 'mod/quiz:attempt'),'u.id,1','','','',$currentgroup,'',false)){
+            if (!$groupstudents = get_users_by_capability($context, array('mod/quiz:reviewmyattempts', 'mod/quiz:attempt'),'u.id,1','','','',$currentgroup,'',false)) {
                 $groupstudents = array();
             } else {
                 $groupstudents = array_keys($groupstudents);
@@ -114,7 +110,16 @@ class quiz_responses_report extends quiz_default_report {
             require_capability('mod/quiz:deleteattempts', $context);
             foreach ($attemptids as $attemptid) {
                 $attempt = $DB->get_record('quiz_attempts', array('id' => $attemptid));
+                if (!$attempt || $attempt->quiz != $quiz->id || $attempt->preview != 0) {
+                    // Ensure the attempt exists, and belongs to this quiz. If not skip.
+                    continue;
+                }
+                if ($attemptsmode != QUIZ_REPORT_ATTEMPTS_ALL && !array_key_exists($attempt->userid, $students)) {
+                    // Ensure the attempt belongs to a student included in the report. If not skip.
+                    continue;
+                }
                 if ($groupstudents && !array_key_exists($attempt->userid, $groupstudents)) {
+                    // Additional check in groups mode.
                     continue;
                 }
                 add_to_log($course->id, 'quiz', 'delete attempt', 'report.php?id=' . $cm->id,
@@ -148,10 +153,10 @@ class quiz_responses_report extends quiz_default_report {
             }
         }
         $nostudents = false;
-        if (!$students){
+        if (!$students) {
             echo $OUTPUT->notification(get_string('nostudentsyet'));
             $nostudents = true;
-        }else if ($currentgroup && !$groupstudents){
+        }else if ($currentgroup && !$groupstudents) {
             echo $OUTPUT->notification(get_string('nostudentsingroup'));
             $nostudents = true;
         }
@@ -161,7 +166,7 @@ class quiz_responses_report extends quiz_default_report {
             $mform->display();
         }
 
-        if (!$nostudents || ($attemptsmode == QUIZ_REPORT_ATTEMPTS_ALL)){
+        if (!$nostudents || ($attemptsmode == QUIZ_REPORT_ATTEMPTS_ALL)) {
             // Print information on the grading method and whether we are displaying
             //
             if (!$table->is_downloading()) { //do not print notices when downloading
@@ -170,10 +175,8 @@ class quiz_responses_report extends quiz_default_report {
                 }
             }
 
-
             $showgrades = quiz_has_grades($quiz) && $reviewoptions->scores;
             $hasfeedback = quiz_has_feedback($quiz);
-
 
             // Construct the SQL
             $fields = $DB->sql_concat('u.id', '\'#\'', 'COALESCE(qa.attempt, \'0\')').' AS concattedid, ';
@@ -195,10 +198,10 @@ class quiz_responses_report extends quiz_default_report {
             $from .= 'LEFT JOIN {quiz_attempts} qa ON qa.userid = u.id AND qa.quiz = :quizid';
             $params = array('quizid' => $quiz->id);
 
-            if ($qmsubselect && $qmfilter){
+            if ($qmsubselect && $qmfilter) {
                 $from .= ' AND '.$qmsubselect;
             }
-            switch ($attemptsmode){
+            switch ($attemptsmode) {
                 case QUIZ_REPORT_ATTEMPTS_ALL:
                     // Show all attempts, including students who are no longer in the course
                     $where = 'qa.id IS NOT NULL AND qa.preview = 0';
@@ -225,14 +228,11 @@ class quiz_responses_report extends quiz_default_report {
 
             $table->set_count_sql("SELECT COUNT(1) FROM $from WHERE $where", $params);
 
-
-
             $table->set_sql($fields, $from, $where, $params);
 
             // Define table columns
             $columns = array();
             $headers = array();
-
 
             if (!$table->is_downloading() && $candelete) {
                 $columns[]= 'checkbox';
@@ -243,7 +243,7 @@ class quiz_responses_report extends quiz_default_report {
                 $columns[]= 'picture';
                 $headers[]= '';
             }
-            if (!$table->is_downloading()){
+            if (!$table->is_downloading()) {
                 $columns[]= 'fullname';
                 $headers[]= get_string('name');
             } else {
@@ -257,7 +257,7 @@ class quiz_responses_report extends quiz_default_report {
                 $columns[]= 'idnumber';
                 $headers[]= get_string('idnumber');
             }
-            if ($table->is_downloading()){
+            if ($table->is_downloading()) {
                 $columns[]= 'institution';
                 $headers[]= get_string('institution');
 
@@ -295,7 +295,6 @@ class quiz_responses_report extends quiz_default_report {
                 $question->formattedname = strip_tags(format_string($question->name));
             }
 
-
             // Load the question type specific information
             if (!get_question_options($questions)) {
                 print_error('cannotloadoptions', 'quiz_responses');
@@ -328,8 +327,4 @@ class quiz_responses_report extends quiz_default_report {
         }
         return true;
     }
-
 }
-
-
-
