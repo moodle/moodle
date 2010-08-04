@@ -245,8 +245,8 @@
             }
             $row[] = $datecompleted;
 
-            if ($markcolumn && $attempt->timefinish > 0) {
-                if ($attemptoptions->scores) {
+            if ($markcolumn) {
+                if ($attemptoptions->scores && $attempt->timefinish > 0) {
                     $row[] = quiz_format_grade($quiz, $attempt->sumgrades);
                 } else {
                     $row[] = '';
