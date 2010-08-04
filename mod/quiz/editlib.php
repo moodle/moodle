@@ -644,10 +644,11 @@ function quiz_print_pagecontrols($quiz, $pageurl, $page, $hasattempts) {
     $defaultcategory = question_make_default_categories($contexts->all());
 
     // Create the url the question page will return to
-    $returnurl_addtoquiz = new moodle_url($pageurl->out_omit_querystring(), array('addonpage' => $page));
+    $returnurladdtoquiz = new moodle_url($pageurl, array('addonpage' => $page));
 
     // Print a button linking to the choose question type page.
-    $newquestionparams = array('returnurl' => $returnurl_addtoquiz->out(),
+    $returnurladdtoquiz = str_replace($CFG->wwwroot . '/', '', $returnurladdtoquiz->out(false));
+    $newquestionparams = array('returnurl' => $returnurladdtoquiz,
             'cmid' => $quiz->cmid, 'appendqnumstring' => 'addquestion');
     create_new_question_button($defaultcategory->id, $newquestionparams, get_string('addaquestion', 'quiz'),
             get_string('createquestionandadd', 'quiz'), $hasattempts);
@@ -664,7 +665,7 @@ function quiz_print_pagecontrols($quiz, $pageurl, $page, $hasattempts) {
                 <input type="hidden" class="addonpage_formelement" name="addonpage_form" value="<?php echo $page; ?>" />
                 <input type="hidden" name="cmid" value="<?php echo $quiz->cmid; ?>" />
                 <input type="hidden" name="courseid" value="<?php echo $quiz->course; ?>" />
-                <input type="hidden" name="returnurl" value="<?php echo urlencode($pageurl->out_omit_querystring()); ?>" />
+                <input type="hidden" name="returnurl" value="<?php echo s($pageurl->out(false)); ?>" />
                 <input type="submit" id="addrandomdialoglaunch_<?php echo $randombuttoncount; ?>" value="<?php echo get_string('addarandomquestion', 'quiz'); ?>" <?php echo " $disabled"; ?> />
             </div>
         </form>

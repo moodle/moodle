@@ -22,7 +22,7 @@ $courseid = optional_param('courseid', 0, PARAM_INT);
 $wizardnow = optional_param('wizardnow', '', PARAM_ALPHA);
 $movecontext = optional_param('movecontext', 0, PARAM_BOOL); // Switch to make
         // question uneditable - form is displayed to edit category only
-$returnurl = optional_param('returnurl', 0, PARAM_LOCALURL);
+$originalreturnurl = optional_param('returnurl', 0, PARAM_LOCALURL);
 $appendqnumstring = optional_param('appendqnumstring', '', PARAM_ALPHA);
 $inpopup = optional_param('inpopup', 0, PARAM_BOOL);
 
@@ -48,8 +48,8 @@ if ($wizardnow !== '') {
 if ($movecontext !== 0) {
     $url->param('movecontext', $movecontext);
 }
-if ($returnurl !== 0) {
-    $url->param('returnurl', $returnurl);
+if ($originalreturnurl !== 0) {
+    $url->param('returnurl', $originalreturnurl);
 }
 if ($appendqnumstring !== '') {
     $url->param('appendqnumstring', $appendqnumstring);
@@ -58,6 +58,12 @@ if ($inpopup !== 0) {
     $url->param('inpopup', $inpopup);
 }
 $PAGE->set_url($url);
+
+if ($originalreturnurl) {
+    $returnurl = $CFG->wwwroot . '/' . $originalreturnurl;
+} else {
+    $returnurl = "{$CFG->wwwroot}/question/edit.php?courseid={$COURSE->id}";
+}
 
 if ($movecontext && !$id){
     print_error('questiondoesnotexist', 'question', $returnurl);
@@ -76,10 +82,6 @@ if ($cmid){
     print_error('missingcourseorcmid', 'question');
 }
 $contexts = new question_edit_contexts($thiscontext);
-
-if (!$returnurl) {
-    $returnurl = "{$CFG->wwwroot}/question/edit.php?courseid={$COURSE->id}";
-}
 
 if (optional_param('addcancel', false, PARAM_BOOL)) {
     redirect($returnurl);
@@ -179,7 +181,7 @@ if ($formeditable && $id){
 }
 
 $toform->appendqnumstring = $appendqnumstring;
-$toform->returnurl = $returnurl;
+$toform->returnurl = $originalreturnurl;
 $toform->movecontext = $movecontext;
 if ($cm !== null){
     $toform->cmid = $cm->id;

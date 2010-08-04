@@ -801,9 +801,10 @@ class question_bank_view {
         }
 
         // Create the url of the new question page to forward to.
-        // TODO: it is sloppy to pass around full URLs through page parameters and some servers do not like that
-        $this->editquestionurl = new moodle_url("$CFG->wwwroot/question/question.php",
-                array('returnurl' => urlencode($pageurl->out(false))));
+        $returnurl = $pageurl->out(false);
+        $returnurl = str_replace($CFG->wwwroot . '/', '', $returnurl);
+        $this->editquestionurl = new moodle_url('/question/question.php',
+                array('returnurl' => $returnurl));
         if ($cm !== null){
             $this->editquestionurl->param('cmid', $cm->id);
         } else {
@@ -1416,17 +1417,17 @@ class question_bank_view {
                         $checkforfiles = true;
                     }
                 }
-                $returnurl = $this->baseurl->out(true, array('category'=>"$tocategoryid,$contextid"));
+                $returnurl = $this->baseurl->out(false, array('category' => "$tocategoryid,$contextid"));
                 if (!$checkforfiles){
                     if (!question_move_questions_to_category(implode(',', $questionids), $tocategory->id)) {
                         print_error('errormovingquestions', 'question', $returnurl, $questionids);
                     }
                     redirect($returnurl);
                 } else {
+                    $returnurl = str_replace($CFG->wwwroot . '/', '', $returnurl);
                     $movecontexturl  = new moodle_url('/question/contextmoveq.php',
-                                                    array('returnurl' => $returnurl,
-                                                            'ids'=>$questionids,
-                                                            'tocatid'=> $tocategoryid));
+                            array('returnurl' => $returnurl, 'ids' => $questionids,
+                            'tocatid' => $tocategoryid));
                     if (!empty($cm->id)){
                         $movecontexturl->param('cmid', $cm->id);
                     } else {
