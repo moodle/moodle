@@ -4895,7 +4895,7 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
     }
 
     if ($oldversion < 2010080305) {
-        // first drop all log disaply actions, we will rectreate them automatically later
+        // first drop all log display actions, we will recreate them automatically later
         $DB->delete_records('log_display', array());
 
         // Define field component to be added to log_display
