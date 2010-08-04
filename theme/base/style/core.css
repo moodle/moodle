@@ -201,12 +201,6 @@ a.skip:active {position: static;display: block;}
 .ie .mform .fitem .felement {margin-left:0;text-align:left;float:left;}
 /** Fix IE double margin + float bugs **/
 .ie .mform .fitem .fitemtitle {padding-right:1em;}
-#date_selector_calendar_panel .bd {padding: 0;}
-#date_selector_calendar_panel .yui-calcontainer {border: none;float: none;}
-/* Prevent border-collapse:collapse from bleeding through in IE6, IE7 */
-#date_selector_calendar_panel.yui-overlay-hidden table {*display:none;}
-#date_selector_calendar_panel th.calhead {padding-right: 2em;}
-#date_selector_calendar_panel a.container-close {top: 10px;}
 #portfolio-add-button {display:inline;}
 
 /**

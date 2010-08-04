@@ -66,15 +66,16 @@ if (!empty($CFG->debug) and $CFG->debug >= DEBUG_ALL){
 /**
  *
  * @staticvar bool $done
+ * @global moodle_page $PAGE
  */
 function form_init_date_js() {
     global $PAGE;
     static $done = false;
     if (!$done) {
-        $PAGE->requires->yui2_lib('calendar');
-        $PAGE->requires->yui2_lib('container');
-        $PAGE->requires->js_function_call('init_date_selectors',
-                array(get_string('firstdayofweek', 'langconfig')));
+        $module   = 'moodle-form-dateselector';
+        $function = 'M.form.dateselector.init_date_selectors';
+        $config = array(array('firstdayofweek'=>get_string('firstdayofweek', 'langconfig')));
+        $PAGE->requires->yui_module($module, $function, $config);
         $done = true;
     }
 }
