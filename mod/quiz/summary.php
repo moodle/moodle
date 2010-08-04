@@ -51,7 +51,6 @@ if (empty($attemptobj->get_quiz()->showblocks)) {
 }
 
 /// Print the page header
-$PAGE->requires->js('/mod/quiz/quiz.js');
 $title = get_string('summaryofattempt', 'quiz');
 if ($accessmanager->securewindow_required($attemptobj->is_preview_user())) {
     $accessmanager->setup_secure_page($attemptobj->get_course()->shortname . ': ' .

@@ -207,7 +207,7 @@
 
     $strpreview = get_string('preview', 'quiz').' '.format_string($questions[$id]->name);
     $questionlist = array($id);
-    get_html_head_contributions($questionlist, $questions, $states[$historylength]);
+    question_get_html_head_contributions($questionlist, $questions, $states[$historylength]);
     $PAGE->set_title($strpreview);
     $PAGE->set_heading($COURSE->fullname);
     echo $OUTPUT->header();

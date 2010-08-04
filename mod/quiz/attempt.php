@@ -88,6 +88,10 @@
 
 /// Print the quiz page ////////////////////////////////////////////////////////
 
+    // Initialise the JavaScript.
+    $headtags = $attemptobj->get_html_head_contributions($page);
+    $PAGE->requires->js_init_call('M.mod_quiz.init_attempt_form', null, false, quiz_get_js_module());
+
     // Arrange for the navigation to be displayed.
     $navbc = $attemptobj->get_navigation_panel('quiz_attempt_nav_panel', $page);
     $firstregion = reset($PAGE->blocks->get_regions());
@@ -95,7 +99,6 @@
 
     // Print the page header
     $title = get_string('attempt', 'quiz', $attemptobj->get_attempt_number());
-    $headtags = $attemptobj->get_html_head_contributions($page);
     $PAGE->set_heading($attemptobj->get_course()->fullname);
     if ($accessmanager->securewindow_required($attemptobj->is_preview_user())) {
         $accessmanager->setup_secure_page($attemptobj->get_course()->shortname . ': ' .
@@ -129,11 +132,6 @@
     // Start the form
     echo '<form id="responseform" method="post" action="', s($attemptobj->processattempt_url()),
             '" enctype="multipart/form-data" accept-charset="utf-8">', "\n";
-
-    // A quiz page with a lot of questions can take a long time to load, and we
-    // want the protection afforded by init_quiz_form immediately, so include the
-    // JS now.
-    echo html_writer::script(js_writer::function_call('init_quiz_form'));
     echo '<div>';
 
 /// Print all the questions
@@ -154,7 +152,7 @@
     // Some hidden fields to trach what is going on.
     echo '<input type="hidden" name="attempt" value="' . $attemptobj->get_attemptid() . '" />';
     echo '<input type="hidden" name="nextpage" id="nextpagehiddeninput" value="' . $nextpage . '" />';
-    echo '<input type="hidden" name="timeup" id="timeup" value="0" />';
+    echo '<input type="hidden" name="timeup" value="0" />';
     echo '<input type="hidden" name="sesskey" value="' . sesskey() . '" />';
 
     // Add a hidden field with questionids. Do this at the end of the form, so

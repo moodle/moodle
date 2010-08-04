@@ -967,12 +967,15 @@ class default_questiontype {
                 $aid = $state->attempt;
                 $qid = $state->question;
                 $checksum = question_get_toggleflag_checksum($aid, $qid, $qsid);
-                $postdata = "qsid=$qsid&aid=$aid&qid=$qid&checksum=$checksum&sesskey=" . sesskey();
+                $postdata = "qsid=$qsid&aid=$aid&qid=$qid&checksum=$checksum&sesskey=" .
+                        sesskey() . '&newstate=';
                 $flagcontent = '<input type="checkbox" id="' . $id . '" name="' . $id .
-                        '" value="1" ' . $checked . ' />' .
-                        '<label id="' . $id . 'label" for="' . $id . '">' . $this->get_question_flag_tag(
+                        '" class="questionflagcheckbox" value="1" ' . $checked . ' />' .
+                        '<input type="hidden" value="' . s($postdata) . '" class="questionflagpostdata" />' .
+                        '<label id="' . $id . 'label" for="' . $id .
+                        '" class="questionflaglabel">' . $this->get_question_flag_tag(
                         $state->flagged, $id . 'img') . '</label>' . "\n";
-                $PAGE->requires->js_function_call('question_flag_changer.init_flag', array($id, $postdata));
+                question_init_qengine_js();
                 break;
             default:
                 $flagcontent = '';

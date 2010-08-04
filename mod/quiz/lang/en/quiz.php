@@ -357,6 +357,7 @@ $string['formulaerror'] = 'Formula errors!';
 $string['fractionsaddwrong'] = 'The positive grades you have chosen do not add up to 100%<br />Instead, they add up to {$a}%<br />Do you want to go back and fix this question?';
 $string['fractionsnomax'] = 'One of the answers should be 100%, so that it is<br />possible to get a full grade for this question.<br />Do you want to go back and fix this question?';
 $string['fromfile'] = 'from file:';
+$string['functiondisabledbysecuremode'] = 'That functionality is currently disabled';
 $string['functiontakesatleasttwo'] = 'The function {$a} must have at least two arguments';
 $string['functiontakesnoargs'] = 'The function {$a} does not take any arguments';
 $string['functiontakesonearg'] = 'The function {$a} must have exactly one argument';

@@ -2083,16 +2083,31 @@ function question_format_grade($cmoptions, $grade) {
  */
 function question_init_qengine_js() {
     global $CFG, $PAGE, $OUTPUT;
-    $config = array(
-        'actionurl' => $CFG->wwwroot . '/question/toggleflag.php',
-        'flagicon' => '' . $OUTPUT->pix_url('i/flagged'),
-        'unflagicon' => '' . $OUTPUT->pix_url('i/unflagged'),
-        'flagtooltip' => get_string('clicktoflag', 'question'),
-        'unflagtooltip' => get_string('clicktounflag', 'question'),
-        'flaggedalt' => get_string('flagged', 'question'),
-        'unflaggedalt' => get_string('notflagged', 'question'),
+    static $done = false;
+    if ($done) {
+        return;
+    }
+    $module = array(
+        'name' => 'core_question_flags',
+        'fullpath' => '/question/flags.js',
+        'requires' => array('base', 'dom', 'event-delegate', 'io-base'), 
     );
-    $PAGE->requires->data_for_js('qengine_config', $config);
+    $actionurl = $CFG->wwwroot . '/question/toggleflag.php';
+    $flagattributes = array(
+        0 => array(
+            'src' => $OUTPUT->pix_url('i/unflagged') . '',
+            'title' => get_string('clicktoflag', 'question'),
+            'alt' => get_string('notflagged', 'question'),
+        ),
+        1 => array(
+            'src' => $OUTPUT->pix_url('i/flagged') . '',
+            'title' => get_string('clicktounflag', 'question'),
+            'alt' => get_string('flagged', 'question'),
+        ),
+    );
+    $PAGE->requires->js_init_call('M.core_question_flags.init',
+            array($actionurl, $flagattributes), false, $module);
+    $done = true;
 }
 
 /// FUNCTIONS THAT SIMPLY WRAP QUESTIONTYPE METHODS //////////////////////////////////
@@ -2109,12 +2124,10 @@ function question_init_qengine_js() {
  * @param array $states an array of question state objects, whose keys are question ids.
  *      Must contain the state of all the questions in $questionlist
  */
-function get_html_head_contributions($questionlist, &$questions, &$states) {
+function question_get_html_head_contributions($questionlist, &$questions, &$states) {
     global $CFG, $PAGE, $QTYPES;
 
     // The question engine's own JavaScript.
-    $PAGE->requires->yui2_lib('connection');
-    $PAGE->requires->js('/question/qengine.js');
     question_init_qengine_js();
 
     // Anything that questions on this page need.
@@ -2131,7 +2144,7 @@ function get_html_head_contributions($questionlist, &$questions, &$states) {
  * @param $question A question object. Only $question->qtype is used.
  * @return string Deprecated. Some HTML code that can go inside the head tag.
  */
-function get_editing_head_contributions($question) {
+function question_get_editing_head_contributions($question) {
     global $QTYPES;
     $QTYPES[$question->qtype]->get_editing_head_contributions();
 }

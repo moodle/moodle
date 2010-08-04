@@ -10,6 +10,8 @@
 #page-mod-quiz-summary #page .controls,
 #page-mod-quiz-review #page .controls {text-align: center;margin: 8px auto;}
 
+body.jsenabled .questionflagcheckbox {display: none;}
+
 #page-mod-quiz-edit div.question div.content .questiontext,
 #categoryquestions .questiontext {-o-text-overflow:ellipsis;text-overflow:ellipsis;position:relative;zoom:1;padding-left:0.3em;max-width:40%;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;}
 
@@ -53,11 +55,37 @@ table#categoryquestions td,
 #page-mod-quiz-view .generalbox#feedback h2 {margin: 0;}
 #page-mod-quiz-view .generalbox#feedback h3 {text-align: left;}
 #page-mod-quiz-view .generalbox#feedback .overriddennotice {text-align: center;font-size: 0.7em;}
+.quizstartbuttondiv.quizsecuremoderequired input { display: none; }
+.jsenabled .quizstartbuttondiv.quizsecuremoderequired input { display: inline; }
 
 /** Mod quiz summary **/
+
 #page-mod-quiz-summary #content {text-align: center;}
 #page-mod-quiz-summary .questionflag {width: 16px;height: 16px;vertical-align: middle;}
-#page-mod-quiz-summary #quiz-timer {margin-top: 1em;display: none; /* Revealed by JavaScript if applicable */}
+#page-mod-quiz-summary #quiz-timer {text-align: center;}
+@media print {
+    .quiz-secure-window * { display: none !important; }
+}
+
+/** Countdown timer. */
+#quiz-timer {display: none; margin-top: 1em;}
+#quiz-time-left {font-weight: bold;}
+#quiz-timer.timeleft15 {background: #ffffff;}
+#quiz-timer.timeleft14 {background: #ffeeee;}
+#quiz-timer.timeleft13 {background: #ffdddd;}
+#quiz-timer.timeleft12 {background: #ffcccc;}
+#quiz-timer.timeleft11 {background: #ffbbbb;}
+#quiz-timer.timeleft10 {background: #ffaaaa;}
+#quiz-timer.timeleft9 {background: #ff9999;}
+#quiz-timer.timeleft8 {background: #ff8888;}
+#quiz-timer.timeleft7 {background: #ff7777;}
+#quiz-timer.timeleft6 {background: #ff6666;}
+#quiz-timer.timeleft5 {background: #ff5555;}
+#quiz-timer.timeleft4 {background: #ff4444;}
+#quiz-timer.timeleft3 {background: #ff3333;}
+#quiz-timer.timeleft2 {background: #ff2222;}
+#quiz-timer.timeleft1 {background: #ff1111;}
+#quiz-timer.timeleft0 {background: #ff0000;}
 
 /** Mod quiz review **/
 #page-mod-quiz-review .pagingbar {margin: 1.5em auto;}
@@ -99,10 +127,6 @@ table#categoryquestions td,
 #page-mod-quiz-grading table#grading td {border-left-width: 1px;border-right-width: 1px;border-left-style: solid;border-right-style: solid;vertical-align: bottom;}
 
 /** Mod quiz attempt **/
-#page-mod-quiz-attempt #quiz-timer {display: none; /* Revealed by JavaScript if applicable */}
-#page-mod-quiz-attempt #quiz-time-left {font-weight: bold;}
-#page-mod-quiz-attempt #quiz-timer-outer {border-color: #dddddd;background: white;}
-
 #categoryquestions .r1 {background: #e4e4e4;}
 #categoryquestions .header {text-align: center;padding: 0 2px;border: 0 none;}
 #categoryquestions th.modifiername .sorters,

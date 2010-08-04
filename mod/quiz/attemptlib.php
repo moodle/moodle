@@ -273,7 +273,7 @@ class quiz {
 
     /**
      * @param integer $timenow the current time as a unix timestamp.
-     * @return object and instance of the quiz_access_manager class for this quiz at this time.
+     * @return quiz_access_manager and instance of the quiz_access_manager class for this quiz at this time.
      */
     public function get_access_manager($timenow) {
         if (is_null($this->accessmanager)) {
@@ -763,12 +763,7 @@ class quiz_attempt extends quiz {
      */
     public function get_html_head_contributions($page = 'all') {
         global $PAGE;
-        // The JS does important things like navigation and so must be initialised
-        // as seen as possible, particularly if the page is loading slowly.
-        $PAGE->requires->yui2_lib('dom');
-        $PAGE->requires->yui2_lib('event');
-        $PAGE->requires->js('/mod/quiz/quiz.js', true);
-        get_html_head_contributions($this->get_question_ids($page), $this->questions, $this->states);
+        question_get_html_head_contributions($this->get_question_ids($page), $this->questions, $this->states);
     }
 
     /**
@@ -776,7 +771,7 @@ class quiz_attempt extends quiz {
      * @param integer $questionid the question id.
      */
     public function get_question_html_head_contributions($questionid) {
-        get_html_head_contributions(array($questionid), $this->questions, $this->states);
+        question_get_html_head_contributions(array($questionid), $this->questions, $this->states);
     }
 
     /**
@@ -1129,7 +1124,7 @@ abstract class quiz_nav_panel_base {
 
     public function get_contents() {
         global $PAGE;
-        $PAGE->requires->js_function_call('quiz_init_nav_flags');
+        $PAGE->requires->js_init_call('M.mod_quiz.nav.init', null, false, quiz_get_js_module());
 
         $content = '';
         if ($this->attemptobj->get_quiz()->showuserpicture) {
@@ -1168,7 +1163,6 @@ class quiz_attempt_nav_panel extends quiz_nav_panel_base {
         $output = '';
         $output .= '<a href="' . s($this->attemptobj->summary_url()) . '" class="endtestlink">' . get_string('endtest', 'quiz') . '</a>';
         $output .= $this->attemptobj->get_timer_html();
-        $output .= html_writer::script(js_writer::function_call('quiz_init_attempt_nav'));
         return $output;
     }
 }

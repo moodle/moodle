@@ -1251,3 +1251,15 @@ function quiz_error($quiz, $errorcode, $a = null) {
 function quiz_check_safe_browser() {
     return strpos($_SERVER['HTTP_USER_AGENT'], "SEB") !== false;
 }
+
+function quiz_get_js_module() {
+    return array(
+        'name' => 'mod_quiz',
+        'fullpath' => '/mod/quiz/module.js',
+        'requires' => array('base', 'dom', 'event-delegate', 'event-key'),
+        'strings' => array(
+            array('timesup', 'quiz'),
+            array('functiondisabledbysecuremode', 'quiz'),
+        ),
+    );
+}
