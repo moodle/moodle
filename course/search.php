@@ -290,9 +290,9 @@
                 }
 
                 // checks whether user can do role assignment
-                if (has_capability('moodle/role:assign', $coursecontext)) {
-                    echo'<a title="'.get_string('assignroles', 'role').'" href="'.$CFG->wwwroot.'/'.$CFG->admin.'/roles/assign.php?contextid='.$coursecontext->id.'">';
-                    echo '<img src="'.$OUTPUT->pix_url('i/roles') . '" class="iconsmall" alt="'.get_string('assignroles', 'role').'" /></a> ' . "\n";
+                if (has_capability('moodle/course:enrolreview', $coursecontext)) {
+                    echo'<a title="'.get_string('enrolledusers', 'enrol').'" href="'.$CFG->wwwroot.'/enrol/users.php?id='.$course->id.'">';
+                    echo '<img src="'.$OUTPUT->pix_url('i/users') . '" class="iconsmall" alt="'.get_string('enrolledusers', 'enrol').'" /></a> ' . "\n";
                 }
 
                 // checks whether user can delete course
