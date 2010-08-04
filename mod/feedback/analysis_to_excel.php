@@ -300,7 +300,7 @@ function feedback_excelprint_detailed_items(&$worksheet, $xlsFormats, $completed
         // $worksheet->setFormat('<l><vo>');
         if(is_numeric($printval)) {
             $worksheet->write_number($rowOffset, $colOffset, $printval, $xlsFormats->default);
-        } else {
+        } elseif($printval != '') {
             $worksheet->write_string($rowOffset, $colOffset, $printval, $xlsFormats->default);
         }
         $printval = '';
