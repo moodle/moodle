@@ -100,7 +100,7 @@ table#categoryquestions td,
 #page-mod-quiz-report #manualgradingform .que {margin-bottom: 0.7em;}
 #page-mod-quiz-report table.titlesleft td.c0{font-weight: bold;}
 #page-mod-quiz-report table .numcol {text-align: center;vertical-align : middle !important;}
-#page-mod-quiz-report table#attempts {clear: both;width: 80%;margin: 20px auto;}
+#page-mod-quiz-report table#attempts {clear: both;width: 80%; margin: 0.2em auto;}
 #page-mod-quiz-report table#attempts .header,
 #page-mod-quiz-report table#attempts .cell{padding: 4px;}
 #page-mod-quiz-report table#attempts .header .commands {display: inline;}
@@ -117,6 +117,9 @@ table#categoryquestions td,
 #page-mod-quiz-report table#itemanalysis .partialcorrect {color: green !important;}
 #page-mod-quiz-report table#itemanalysis .cell{padding: 4px;}
 #page-mod-quiz-report table#itemanalysis .qname {color: green !important;}
+#page-mod-quiz-report fieldset.felement.fgroup {margin: 0;}
+#page-mod-quiz-report #cachingnotice {margin-bottom: 1em; padding: 0.2em; }
+#page-mod-quiz-report #cachingnotice .singlebutton {margin: 0.5em 0 0;}
 
 /** Mod quiz grading **/
 #page-mod-quiz-grading table#grading {width: 80%;margin: 20px auto;}
@@ -166,7 +169,7 @@ table.quizreviewsummary td.cell {padding: 1px 1em 1px 0.5em;text-align: left;bac
 body#question-preview .quemodname,
 body#question-preview .controls{text-align: center;}
 
-.quizattemptcounts {clear : left;text-align: center;margin: 6px 0;}
+.quizattemptcounts {clear: left; text-align: center;}
 .generalbox#passwordbox { /* Should probably match .generalbox#intro above */width:70%;margin-left:auto;margin-right:auto;}
 #passwordform {margin: 1em 0;}
 

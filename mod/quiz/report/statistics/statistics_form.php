@@ -14,7 +14,7 @@ class mod_quiz_report_statistics extends moodleform {
         $mform->addElement('select', 'useallattempts', get_string('calculatefrom', 'quiz_statistics'), $options);
         $mform->setDefault('useallattempts', 0);
 //-------------------------------------------------------------------------------
-        $this->add_action_buttons(false, get_string('preferencessave', 'quiz_overview'));
+        $mform->addElement('submit', 'submitbutton', get_string('preferencessave', 'quiz_overview'));
     }
 }
 

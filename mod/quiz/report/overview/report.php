@@ -176,12 +176,6 @@ class quiz_overview_report extends quiz_default_report {
             }
         }
 
-        // Print information on the number of existing attempts
-        if (!$table->is_downloading()) { //do not print notices when downloading
-            if ($strattemptnum = quiz_num_attempt_summary($quiz, $cm, true, $currentgroup)) {
-                echo '<div class="quizattemptcounts">' . $strattemptnum . '</div>';
-            }
-        }
         $nostudents = false;
         if (!$students) {
             echo $OUTPUT->notification(get_string('nostudentsyet'));
@@ -194,8 +188,13 @@ class quiz_overview_report extends quiz_default_report {
             // Print display options
             $mform->set_data($displayoptions +compact('detailedmarks', 'pagesize'));
             $mform->display();
-        }
 
+            // Print information on the number of existing attempts
+            if ($strattemptnum = quiz_num_attempt_summary($quiz, $cm, true, $currentgroup)) {
+                echo '<div class="quizattemptcounts">' . $strattemptnum . '</div>';
+            }
+        }
+        
         if (!$nostudents || ($attemptsmode == QUIZ_REPORT_ATTEMPTS_ALL)) {
 
             // Construct the SQL

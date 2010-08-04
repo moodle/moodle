@@ -51,7 +51,7 @@ class mod_quiz_report_overview_settings extends moodleform {
 
         $mform->addElement('selectyesno', 'detailedmarks', get_string('showdetailedmarks', 'quiz_overview'));
 
-        $this->add_action_buttons(false, get_string('preferencessave', 'quiz_overview'));
+        $mform->addElement('submit', 'submitbutton', get_string('preferencessave', 'quiz_overview'));
     }
 }
 

@@ -410,7 +410,7 @@ class quiz_statistics_report extends quiz_default_report {
                 if (!$a->count = $DB->count_records_sql($sql, array('time'=>$quizstats->timemodified)+$qaparams)){
                     $a->count = 0;
                 }
-                $quizinformationtablehtml .= $OUTPUT->box_start('boxaligncenter generalbox boxwidthnormal mdl-align');
+                $quizinformationtablehtml .= $OUTPUT->box_start('boxaligncenter generalbox boxwidthnormal mdl-align', 'cachingnotice');
                 $quizinformationtablehtml .= get_string('lastcalculated', 'quiz_statistics', $a);
                 $aurl = new moodle_url($reporturl->out_omit_querystring(), $reporturl->params() + array('recalculate' => 1, 'sesskey' => sesskey()));
                 $quizinformationtablehtml .= $OUTPUT->single_button($aurl, get_string('recalculatenow', 'quiz_statistics'));
