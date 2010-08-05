@@ -1669,7 +1669,7 @@ function quiz_extend_settings_navigation($settings, $quiznode) {
 
     if (has_capability('mod/quiz:manage', $PAGE->cm->context)) {
         $url = new moodle_url('/mod/quiz/edit.php', array('cmid'=>$PAGE->cm->id));
-        $text = get_string("editinga", "moodle", get_string('modulename', 'quiz'));
+        $text = get_string('editquiz', 'quiz');
         $quiznode->add($text, $url, navigation_node::TYPE_SETTING, null,
                 'mod_quiz_edit', new pix_icon('t/edit', ''));
     }
