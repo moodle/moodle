@@ -955,6 +955,8 @@ class global_navigation extends navigation_node {
         $frontpagecourse = $this->load_course($SITE);
         $this->add_front_page_course_essentials($frontpagecourse, $SITE);
 
+        $canviewcourseprofile = true;
+
         // Next load context specific content into the navigation
         switch ($this->page->context->contextlevel) {
             case CONTEXT_SYSTEM :
@@ -967,6 +969,14 @@ class global_navigation extends navigation_node {
                 // Load the course associated with the page into the navigation
                 $course = $this->page->course;
                 $coursenode = $this->load_course($course);
+                // If the user is not enrolled then we only want to show the
+                // course node and not populate it.
+                $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
+                if (!is_enrolled($coursecontext) && !has_capability('moodle/course:view', $coursecontext)) {
+                    $coursenode->make_active();
+                    $canviewcourseprofile = false;
+                    break;
+                }
                 // Add the essentials such as reports etc...
                 $this->add_course_essentials($coursenode, $course);
                 if ($this->format_display_course_content($course->format)) {
@@ -982,6 +992,16 @@ class global_navigation extends navigation_node {
                 $cm = $this->page->cm;
                 // Load the course associated with the page into the navigation
                 $coursenode = $this->load_course($course);
+
+                // If the user is not enrolled then we only want to show the
+                // course node and not populate it.
+                $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
+                if (!is_enrolled($coursecontext) && !has_capability('moodle/course:view', $coursecontext)) {
+                    $coursenode->make_active();
+                    $canviewcourseprofile = false;
+                    break;
+                }
+
                 $this->add_course_essentials($coursenode, $course);
                 // Load the course sections into the page
                 $sections = $this->load_course_sections($course, $coursenode);
@@ -1014,6 +1034,14 @@ class global_navigation extends navigation_node {
                 if ($course->id != SITEID) {
                     // Load the course associated with the user into the navigation
                     $coursenode = $this->load_course($course);
+                    // If the user is not enrolled then we only want to show the
+                    // course node and not populate it.
+                    $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
+                    if (!is_enrolled($coursecontext) && !has_capability('moodle/course:view', $coursecontext)) {
+                        $coursenode->make_active();
+                        $canviewcourseprofile = false;
+                        break;
+                    }
                     $this->add_course_essentials($coursenode, $course);
                     $sections = $this->load_course_sections($course, $coursenode);
                 }
@@ -1038,7 +1066,7 @@ class global_navigation extends navigation_node {
 
         // Load for the current user
         $this->load_for_user();
-        if ($this->page->context->contextlevel >= CONTEXT_COURSE && $this->page->context->instanceid != SITEID) {
+        if ($this->page->context->contextlevel >= CONTEXT_COURSE && $this->page->context->instanceid != SITEID && $canviewcourseprofile) {
             $this->load_for_user(null, true);
         }
         // Load each extending user into the navigation.
