@@ -84,8 +84,11 @@ class quiz_report extends quiz_default_report {
 
         $currentgroup = groups_get_activity_group($this->cm, true);
         $this->users = get_users_by_capability($this->context, array('mod/quiz:reviewmyattempts', 'mod/quiz:attempt'),'','','','',$currentgroup,'',false);
-        $this->userids = implode(',', array_keys($this->users));
-
+        if ($this->users) {
+            $this->userids = implode(',', array_keys($this->users));
+        } else {
+            $this->userids = 0;
+        }
 
         if (!empty($questionid)) {
             if (!isset($gradeableqs[$questionid])){
@@ -124,8 +127,7 @@ class quiz_report extends quiz_default_report {
                 $uniqueid = clean_param($uniqueid, PARAM_INT);
                 if (!$attempt = get_record_sql("SELECT * FROM {$CFG->prefix}quiz_attempts " .
                                 "WHERE uniqueid = $uniqueid AND " .
-                                "userid IN ($this->userids) AND " .
-                                "quiz=".$quiz->id)){
+                                "quiz = " . $quiz->id)){
                     error('No such attempt ID exists');
                 }
 
@@ -162,13 +164,13 @@ class quiz_report extends quiz_default_report {
 
         echo '<div class="quizattemptcounts">' . quiz_num_attempt_summary($quiz, $cm, true, $currentgroup) . '</div>';
 
-        if(empty($this->users)) {
+        if (empty($this->users)) {
             if ($currentgroup){
                 notify(get_string('nostudentsingroup'));
+                return true;
             } else {
                 notify(get_string('nostudentsyet'));
             }
-            return true;
         }
         $gradeablequestionids = implode(',',array_keys($gradeableqs));
         $qattempts = quiz_get_total_qas_graded_and_ungraded($quiz, $gradeablequestionids, $this->userids);
@@ -196,7 +198,7 @@ class quiz_report extends quiz_default_report {
         if (!$questionid){
             return true;
         }
-        $a= new object();
+        $a = new object();
         $a->number = $question->number;
         $a->name = $question->name;
         $a->gradedattempts =$qattempts[$question->id]->gradedattempts;
@@ -448,13 +450,22 @@ class quiz_report extends quiz_default_report {
                     "ON (qs.id = qns.newgraded AND qs.question = $questionid) ";
         }
         if ($gradenextungraded || $gradeungraded) { // get ungraded attempts
-            $where = 'WHERE u.id IN ('.$this->userids.') AND qs.event NOT IN ('.QUESTION_EVENTS_GRADED.') ';
+            if ($this->userids) {
+                $where = 'WHERE u.id IN ('.$this->userids.')';
+            } else {
+                $where = 'WHERE u.id = u.id';
+            }
+            $where .= ' AND qs.event NOT IN ('.QUESTION_EVENTS_GRADED.') ';
         } else if ($userid) { // get all the attempts for a specific user
             $where = 'WHERE u.id='.$userid.' ';
         } else if ($attemptid) { // get a specific attempt
             $where = 'WHERE qa.id='.$attemptid.' ';
         } else { // get all user attempts
-            $where  = 'WHERE u.id IN ('.$this->userids.') ';
+            if ($this->userids) {
+                $where = 'WHERE u.id IN ('.$this->userids.')';
+            } else {
+                $where = 'WHERE u.id = u.id';
+            }
         }
 
         $where .= ' AND u.id = qa.userid AND qa.quiz = '.$quizid;

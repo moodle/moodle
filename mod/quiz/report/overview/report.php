@@ -105,7 +105,7 @@ class quiz_report extends quiz_default_report {
         if (!$students = get_users_by_capability($context, array('mod/quiz:reviewmyattempts', 'mod/quiz:attempt'),'u.id,1','','','','','',false)) {
             notify(get_string('nostudentsyet'));
             $nostudents = true;
-            $studentslist = '';
+            $studentslist = 0;
         } else {
             $studentslist = join(',',array_keys($students));
         }

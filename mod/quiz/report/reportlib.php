@@ -56,6 +56,11 @@ function quiz_get_average_grade_for_questions($quiz, $userids){
 
 function quiz_get_total_qas_graded_and_ungraded($quiz, $questionids, $userids){
     global $CFG;
+    if ($userids) {
+        $userwhere = "qa.userid IN ({$userids}) AND ";
+    } else {
+        $userwhere = '';
+    }
     $sql = "SELECT qs.question, COUNT(1) AS totalattempts, " .
             "SUM(CASE WHEN (qs.event IN (".QUESTION_EVENTS_GRADED.")) THEN 1 ELSE 0 END) AS gradedattempts " .
             "FROM " .
@@ -64,7 +69,7 @@ function quiz_get_total_qas_graded_and_ungraded($quiz, $questionids, $userids){
             "{$CFG->prefix}question_states qs " .
             "WHERE " .
             "qa.quiz = {$quiz->id} AND " .
-            "qa.userid IN ({$userids}) AND " .
+            $userwhere .
             "qns.attemptid = qa.uniqueid AND " .
             "qns.newgraded = qs.id AND " .
             "qs.question IN ({$questionids}) " .
