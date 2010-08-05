@@ -225,7 +225,7 @@
       case "questions":
 
         if ($qid) {     // just get one multi-question
-            $questions = $DB->get_record("survey_questions", "id", $qid);
+            $questions = $DB->get_records_select("survey_questions", "id in ($qid)");
             $questionorder = explode(",", $qid);
 
             if ($scale = $DB->get_records("survey_questions", array("multi"=>$qid))) {
@@ -441,7 +441,7 @@
                      $table->align = array ("left");
                      $table->data[] = array(s($answer->answer1)); // no html here, just plain text
                      echo html_writer::table($table);
-                     echo $OUTPUT->spacer(30);
+                     echo $OUTPUT->spacer(array('height'=>30));
                  }
              }
          }
