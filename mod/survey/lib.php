@@ -393,7 +393,8 @@ function survey_get_user_answers($surveyid, $questionid, $groupid, $sort="sa.ans
         $groupsql  = '';
     }
 
-    return $DB->get_records_sql("SELECT sa.*,u.firstname,u.lastname,u.picture
+    $userfields = user_picture::fields('u');
+    return $DB->get_records_sql("SELECT sa.*, $userfields
                                    FROM {survey_answers} sa,  {user} u $groupfrom
                                   WHERE sa.survey = :surveyid
                                         AND sa.question = :questionid
