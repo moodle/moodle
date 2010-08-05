@@ -491,7 +491,7 @@ class quiz_report extends quiz_default_report {
                         }
                         if ($attempt->timefinish) {
                             $timefinish = userdate($attempt->timefinish, $strtimeformat);
-                            $duration = format_time($attempt->duration);
+                            $duration = format_time($attempt->timefinish - $attempt->timestart);
                             if (!$download) {
                                 $row[] = '<a href="review.php?q='.$quiz->id.'&amp;attempt='.$attempt->attempt.'">'.$timefinish.'</a>';
                             } else {
