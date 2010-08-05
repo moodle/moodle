@@ -19,25 +19,32 @@ class qformat_multianswer extends qformat_default {
     }
 
     function readquestions($lines) {
-        // Parses an array of lines into an array of questions.
         // For this class the method has been simplified as
         // there can never be more than one question for a
         // multianswer import
+        $questions = array();
 
-        $questions= array();
-        $thequestion= qtype_multianswer_extract_question(
-                addslashes(implode('',$lines)));
-        $thequestion->qtype = MULTIANSWER;
-        $thequestion->course = $this->course;
+        $question = qtype_multianswer_extract_question(
+                addslashes(implode('', $lines)));
+        $question->qtype = MULTIANSWER;
+        $question->course = $this->course;
 
-        if (!empty($thequestion)) {
-            $thequestion->name = addslashes($lines[0]);
-            
-            $questions[] = $thequestion;
+        if (!empty($question)) {
+            $name = html_to_text(implode(' ', $lines));
+            $name = preg_replace('/{[^}]*}/', '', $name);
+            $name = trim($name);
+
+            if ($name) {
+                $question->name = addslashes(shorten_text($name, 45));
+            } else {
+                // We need some name, so use the current time, since that will be
+                // reasonably unique.
+                $question->name = userdate(time());
+            }
+
+            $questions[] = $question;
         }
 
         return $questions;
     }
 }
-
-?>
