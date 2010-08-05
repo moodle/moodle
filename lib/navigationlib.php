@@ -223,7 +223,11 @@ class navigation_node implements renderable {
     }
 
     /**
-     * Overrides the fullmeurl variable providing
+     * This sets the URL that the URL of new nodes get compared to when locating
+     * the active node.
+     *
+     * The active node is the node that matches the URL set here. By default this
+     * is either $PAGE->url or if that hasn't been set $FULLME.
      *
      * @param moodle_url $url The url to use for the fullmeurl.
      */
@@ -336,6 +340,11 @@ class navigation_node implements renderable {
 
     /**
      * Marks this node as active and forces it open.
+     *
+     * Important: If you are here because you need to mark a node active to get
+     * the navigation to do what you want have you looked at {@see navigation_node::override_active_url()}?
+     * You can use it to specify a different URL to match the active navigation node on
+     * rather than having to locate and manually mark a node active.
      */
     public function make_active() {
         $this->isactive = true;
