@@ -51,7 +51,7 @@ if ($ADMIN->fulltree) {
 
     // Default number of attachments allowed per post in all forums
     $settings->add(new admin_setting_configtext('forum_maxattachments', get_string('maxattachments', 'forum'),
-                       get_string('configmaxattachments', 'forum'), 100, PARAM_INT));
+                       get_string('configmaxattachments', 'forum'), 9, PARAM_INT));
 
     // Default whether user needs to mark a post as read
     $settings->add(new admin_setting_configcheckbox('forum_trackreadposts', get_string('trackforum', 'forum'),

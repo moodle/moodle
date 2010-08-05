@@ -77,7 +77,7 @@ class mod_forum_mod_form extends moodleform_mod {
         $mform->addHelpButton('maxbytes', 'maxattachmentsize', 'forum');
         $mform->setDefault('maxbytes', $CFG->forum_maxbytes);
 
-        $choices = array(0,1,2,3,4,5,6,7,8,9);
+        $choices = array(0,1,2,3,4,5,6,7,8,9,10,20,50,100);
         $mform->addElement('select', 'maxattachments', get_string('maxattachments', 'forum'), $choices);
         $mform->addHelpButton('maxattachments', 'maxattachments', 'forum');
         $mform->setDefault('maxattachments', $CFG->forum_maxattachments);
