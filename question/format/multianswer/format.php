@@ -16,7 +16,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * This defines the core classes of the Moodle question engine.
+ * Embedded answer (Cloze) question importer.
  *
  * @package qformat
  * @subpackage qformat_multianswer
