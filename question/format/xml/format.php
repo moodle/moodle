@@ -1,15 +1,39 @@
 <?php
+
+// This file is part of Moodle - http://moodle.org/
 //
-///////////////////////////////////////////////////////////////
-// XML import/export
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
 //
-//////////////////////////////////////////////////////////////////////////
-// Based on default.php, included by ../import.php
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
- * @package questionbank
- * @subpackage importexport
+ * Moodle XML question importer.
+ *
+ * @package qformat
+ * @subpackage qformat_xml
+ * @copyright  1999 onwards Martin Dougiamas {@link http://moodle.com}
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-require_once( "$CFG->libdir/xmlize.php" );
+
+
+/**
+ * Importer for Moodle XML question format.
+ *
+ * See http://docs.moodle.org/en/Moodle_XML_format for a description of the format.
+ *
+ * @copyright  1999 onwards Martin Dougiamas {@link http://moodle.com}
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+require_once($CFG->libdir . '/xmlize.php');
 
 class qformat_xml extends qformat_default {
 
@@ -131,10 +155,8 @@ class qformat_xml extends qformat_default {
         // question name
         $qo->name = $this->getpath( $question, array('#','name',0,'#','text',0,'#'), '', true, $error_noname );
         $qo->questiontext = $this->getpath( $question, array('#','questiontext',0,'#','text',0,'#'), '', true );
-        $qo->questiontextformat = $this->getpath( $question, array('#','questiontext',0,'@','format'), '' );
-        if (!is_numeric($qo->questiontextformat)) {
-            $qo->questiontextformat = text_format_name($qo->questiontextformat);
-        }    
+        $qo->questiontextformat = $this->trans_format($this->getpath(
+                $question, array('#','questiontext',0,'@','format'), ''));
         $qo->image = $this->getpath( $question, array('#','image',0,'#'), $qo->image );
         $image_base64 = $this->getpath( $question, array('#','image_base64','0','#'),'' );
         if (!empty($image_base64)) {
