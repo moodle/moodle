@@ -115,7 +115,7 @@ class moodle_enrol_external extends external_api {
      * @return external_description
      */
     public static function get_enrolled_users_returns() {
-        new external_single_structure(
+        return new external_single_structure(
             array(
                 'courseid' => new external_value(PARAM_INT, 'id of course'),
                 'userid' => new external_value(PARAM_INT, 'id of user'),
