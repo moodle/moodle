@@ -43,6 +43,8 @@ if ($course->id == SITEID) {
     redirect("$CFG->wwwroot/");
 }
 
+$PAGE->set_course($course);
+$PAGE->set_pagelayout('course');
 $PAGE->set_url('/enrol/index.php', array('id'=>$course->id));
 
 // do not allow enrols when in login-as session
@@ -77,8 +79,7 @@ if (is_enrolled($context, $USER, '', true)) {
 
 $PAGE->set_title($course->shortname);
 $PAGE->set_heading($course->fullname);
-$PAGE->navbar->add($course->fullname);
-
+$PAGE->navbar->add(get_string('enrolmentoptions','enrol'));
 
 echo $OUTPUT->header();
 
