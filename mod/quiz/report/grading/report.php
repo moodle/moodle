@@ -290,8 +290,8 @@ class quiz_grading_report extends quiz_default_report {
             $table->add_separator();
             foreach($attempts as $attempt) {
 
-                //TODO: this is a performance problem, fetch user info elsewhere!!
-                $user = (object)array('id'=>$attempt->userid);
+                $user = clone($attempt);
+                $user->id = $user->userid;
                 $picture = $OUTPUT->user_picture($user, array('courseid'=>$quiz->course));
 
                 // link to student profile
@@ -421,7 +421,7 @@ class quiz_grading_report extends quiz_default_report {
         global $CFG, $DB;
         // this sql joins the attempts table and the user table
         $select = 'SELECT qa.id AS attemptid, qa.uniqueid, qa.attempt, qa.timefinish, qa.preview,
-                    u.id AS userid, u.firstname, u.lastname, u.picture ';
+                    u.id AS userid, u.firstname, u.lastname, u.picture, u.imagealt, u.email ';
         if ($wantstateevent && $questionid){
             $select .= ', qs.event ';
         }
