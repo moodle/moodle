@@ -46,6 +46,7 @@ if (substr($parts, -3) === '.js') {
 }
 
 $parts = explode('&', $parts);
+$cache = true;
 
 foreach ($parts as $part) {
     if (empty($part)) {
@@ -63,6 +64,11 @@ foreach ($parts as $part) {
         //TODO: this is a ugly hack because we should not load any libs here!
         define('MOODLE_INTERNAL', true);
         require_once($CFG->libdir.'/moodlelib.php');
+        $revision = (int)array_shift($bits);
+        if ($revision === -1) {
+            // Revision -1 says please don't cache the JS
+            $cache = false;
+        }
         $frankenstyle = array_shift($bits);
         $filename = array_pop($bits);
         $dir = get_component_directory($frankenstyle);
@@ -100,11 +106,18 @@ foreach ($parts as $part) {
     $content .= $filecontent;
 }
 
+if ($cache) {
+    combo_send_cached($content, $mimetype);
+} else {
+    combo_send_uncached($content, $mimetype);
+}
 
-combo_send_cached($content, $mimetype);
 
-
-
+/**
+ * Send the JavaScript cached
+ * @param string $content
+ * @param string $mimetype
+ */
 function combo_send_cached($content, $mimetype) {
     $lifetime = 60*60*24*300; // 300 days === forever
 
@@ -113,6 +126,26 @@ function combo_send_cached($content, $mimetype) {
     header('Expires: '. gmdate('D, d M Y H:i:s', time() + $lifetime) .' GMT');
     header('Pragma: ');
     header('Cache-Control: max-age=315360000');
+    header('Accept-Ranges: none');
+    header('Content-Type: '.$mimetype);
+    if (!min_enable_zlib_compression()) {
+        header('Content-Length: '.strlen($content));
+    }
+
+    echo $content;
+    die;
+}
+
+/**
+ * Send the JavaScript uncached
+ * @param string $content
+ * @param string $mimetype
+ */
+function combo_send_uncached($content, $mimetype) {
+    header('Content-Disposition: inline; filename="combo"');
+    header('Last-Modified: '. gmdate('D, d M Y H:i:s', time()) .' GMT');
+    header('Expires: '. gmdate('D, d M Y H:i:s', time() + 2) .' GMT');
+    header('Pragma: ');
     header('Accept-Ranges: none');
     header('Content-Type: '.$mimetype);
     if (!min_enable_zlib_compression()) {

@@ -145,6 +145,14 @@ class page_requirements_manager {
         $this->yui3loader->combine = !empty($CFG->yuicomboloading);
         $this->yui2loader->combine = !empty($CFG->yuicomboloading);
 
+        if (empty($CFG->cachejs)) {
+            $jsrev = -1;
+        } else if (empty($CFG->jsrev)) {
+            $jsrev = 1;
+        } else {
+            $jsrev = $CFG->jsrev;
+        }
+        
         // set up JS YUI loader helper object
         $this->M_yui_loader = new stdClass();
         $this->M_yui_loader->base         = $this->yui3loader->base;
@@ -156,12 +164,12 @@ class page_requirements_manager {
         $this->M_yui_loader->groups       = array(
             'moodle' => array(
                 'name' => 'moodle',
-                'base' => $CFG->httpswwwroot . '/theme/yui_combo.php?moodle/',
+                'base' => $CFG->httpswwwroot . '/theme/yui_combo.php?moodle/'.$jsrev.'/',
                 'comboBase' => $CFG->httpswwwroot . '/theme/yui_combo.php?',
                 'combine' => $this->yui3loader->combine,
                 'filter' => '',
                 'ext' => false,
-                'root' => 'moodle/',
+                'root' => 'moodle/'.$jsrev.'/', // Add the rev to the root path so that we can control caching
                 'patterns' => array(
                     'moodle-' => array(
                         'group' => 'moodle',
