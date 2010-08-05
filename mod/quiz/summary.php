@@ -30,10 +30,7 @@ if ($attemptobj->is_finished()) {
 }
 
 if ($attemptobj->is_preview_user()) {
-    $node = $PAGE->settingsnav->find('mod_quiz_preview', navigation_node::TYPE_SETTING);
-    if ($node) {
-        $node->make_active();
-    }
+    $PAGE->settingsnav->override_active_url($attemptobj->start_attempt_url());
 }
 
 /// Check access.

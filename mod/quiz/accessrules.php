@@ -209,9 +209,7 @@ class quiz_access_manager {
     public function print_start_attempt_button($canpreview, $buttontext, $unfinished) { 
         global $OUTPUT;
 
-        $url = new moodle_url($this->_quizobj->start_attempt_url(),
-                array('cmid' => $this->_quizobj->get_cmid()));
-        $button = new single_button($url, $buttontext);
+        $button = new single_button($this->_quizobj->start_attempt_url(), $buttontext);
         $button->class .= ' quizstartbuttondiv';
 
         if (!$unfinished) {

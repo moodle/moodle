@@ -163,8 +163,8 @@ class quiz_statistics_report extends quiz_default_report {
             }
             if (!$this->table->is_downloading()) {
                 // Only print headers if not asked to download data
-                $node = $PAGE->navigation->find('quiz_report_statistics', null);
-                $node->make_active();
+                $PAGE->navigation->override_active_url(
+                        new moodle_url('/mod/quiz/report.php', array('id' => $cm->id, 'mode' => 'statistics')));
                 $PAGE->navbar->add($thisquestion->name);
                 $this->print_header_and_tabs($cm, $course, $quiz, 'statistics');
             }

@@ -327,8 +327,8 @@ class quiz {
      * @return string the URL of this quiz's edit page. Needs to be POSTed to with a cmid parameter.
      */
     public function start_attempt_url() {
-        global $CFG;
-        return $CFG->wwwroot . '/mod/quiz/startattempt.php';
+        return new moodle_url('/mod/quiz/startattempt.php',
+                array('cmid' => $this->cm->id, 'sesskey' => sesskey()));
     }
 
     /**
@@ -780,7 +780,7 @@ class quiz_attempt extends quiz {
     public function print_restart_preview_button() {
         global $CFG, $OUTPUT;
         echo $OUTPUT->container_start('controls');
-        $url = new moodle_url($this->start_attempt_url(), array('cmid' => $this->cm->id, 'forcenew' => true));
+        $url = new moodle_url($this->start_attempt_url(), array('forcenew' => true));
         echo $OUTPUT->single_button($url, get_string('startagain', 'quiz'));
         echo $OUTPUT->container_end();
     }
