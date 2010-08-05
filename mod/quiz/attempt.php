@@ -116,9 +116,7 @@
             // User entered the wrong password, or has not entered one yet.
             $url = $CFG->wwwroot . '/mod/quiz/attempt.php?q=' . $quiz->id;
 
-            if (empty($popup)) {
-                print_header('', '', '', 'quizpassword');
-            }
+            print_header('', '', '', 'quizpassword');
 
             if (trim(strip_tags($quiz->intro))) {
                 $formatoptions->noclean = true;
@@ -140,9 +138,7 @@
 </form>
 <?php
             print_box_end();
-            if (empty($popup)) {
-                print_footer();
-            }
+            print_footer('empty');
             exit;
         }
     }
