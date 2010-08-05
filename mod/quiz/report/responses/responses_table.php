@@ -116,13 +116,14 @@ class quiz_report_responses_table extends table_sql {
 
     function col_duration($attempt){
         if ($attempt->timefinish) {
-            return format_time($attempt->duration);
+            return format_time($attempt->timefinish - $attempt->timestart);
         } elseif ($attempt->timestart) {
             return get_string('unfinished', 'quiz');
         } else {
             return '-';
         }
     }
+
     function col_sumgrades($attempt){
         if ($attempt->timefinish) {
             $grade = quiz_rescale_grade($attempt->sumgrades, $this->quiz);

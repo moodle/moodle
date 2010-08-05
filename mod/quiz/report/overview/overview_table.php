@@ -161,7 +161,7 @@ class quiz_report_overview_table extends table_sql {
 
     function col_duration($attempt){
         if ($attempt->timefinish) {
-            return format_time($attempt->duration);
+            return format_time($attempt->timefinish - $attempt->timestart);
         } elseif ($attempt->timestart) {
             return get_string('unfinished', 'quiz');
         } else {
