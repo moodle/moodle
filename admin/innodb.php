@@ -36,8 +36,8 @@
 
     } else {
         $optionsyes = array('confirm'=>'1', 'sesskey'=>sesskey());
-        $formcontinue = new single_button(new moodle_url('innodb.php', $optionsyes), get_string('yes'));
-        $formcancel = new single_button('index.php', get_string('no'), 'get');
+        $formcontinue = new single_button(new moodle_url('/admin/innodb.php', $optionsyes), get_string('yes'));
+        $formcancel = new single_button(new moodle_url('/admin/index.php'), get_string('no'), 'get');
         echo $OUTPUT->confirm('Are you sure you want convert all your tables to the InnoDB format?', $formcontinue, $formcancel);
         echo $OUTPUT->footer();
     }
