@@ -32,7 +32,7 @@ defined('MOODLE_INTERNAL') || die();
  * its capabilities so, don't forget to make the conversion
  * from every wrapper function!
  *
- * @global object
+ * @global textlib
  */
 function textlib_get_instance() {
     global $CFG;
