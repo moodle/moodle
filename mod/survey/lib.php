@@ -339,7 +339,7 @@ function survey_get_responses($surveyid, $groupid, $groupingid) {
                                    JOIN {user} u ON a.userid = u.id
                             $groupsjoin
                                   WHERE a.survey = :surveyid
-                               GROUP BY u.id, u.firstname, u.lastname, u.picture
+                               GROUP BY $userfields
                                ORDER BY time ASC", $params);
 }
 
