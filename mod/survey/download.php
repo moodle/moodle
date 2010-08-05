@@ -81,32 +81,50 @@ foreach ($order as $qid) {
         $virtualscales = true;
     }
 }
-$nestedorder = array();
+$nestedorder = array();//will contain the subquestions attached to the main questions
 $preparray = array();
+
 foreach ($orderedquestions as $qid=>$question) {
-    $orderedquestions[$qid]->text = get_string($question->text, "survey");
+    //$orderedquestions[$qid]->text = get_string($question->text, "survey");
     if (!empty($question->multi)) {
-        $actualqid = explode(",", $questions[$qid]->multi);
-        foreach ($actualqid as $subqid) {
+        $actualqids = explode(",", $questions[$qid]->multi);
+        foreach ($actualqids as $subqid) {
             if (!empty($orderedquestions[$subqid]->type)) {
                 $orderedquestions[$subqid]->type = $questions[$qid]->type;
             }
         }
     } else {
-        $actualqid = array($qid);
+        $actualqids = array($qid);
     }
     if ($virtualscales && $questions[$qid]->type < 0) {
-        $nestedorder[$qid] = $actualqid;
+        $nestedorder[$qid] = $actualqids;
     } else if (!$virtualscales && $question->type >= 0) {
-        $nestedorder[$qid] = $actualqid;
+        $nestedorder[$qid] = $actualqids;
+    } else {
+        //todo andrew this was added by me. Is it correct?
+        $nestedorder[$qid] = array();
     }
 }
+
 $reversednestedorder = array();
 foreach ($nestedorder as $qid=>$subqidarray) {
     foreach ($subqidarray as $subqui) {
         $reversednestedorder[$subqui] = $qid;
     }
 }
+
+//need to get info on the sub-questions from the db and merge the arrays of questions
+$allquestions = array_merge($questions, $DB->get_records_list("survey_questions", "id", array_keys($reversednestedorder)));
+
+//array_merge() messes up the keys so reinstate them
+$questions = array();
+foreach($allquestions as $question) {
+    $questions[$question->id] = $question;
+
+    //while were iterating over the questions get the question text
+    $questions[$question->id]->text = get_string($questions[$question->id]->text, "survey");
+}
+unset($allquestions);
 
 // Get and collate all the results in one big array
 if (! $surveyanswers = $DB->get_records("survey_answers", array("survey"=>$survey->id), "time ASC")) {
@@ -117,7 +135,8 @@ $results = array();
 
 foreach ($surveyanswers as $surveyanswer) {
     if (!$group || isset($users[$surveyanswer->userid])) {
-        $questionid = $reversednestedorder[$surveyanswer->question];
+        //$questionid = $reversednestedorder[$surveyanswer->question];
+        $questionid = $surveyanswer->question;
         if (!array_key_exists($surveyanswer->userid, $results)) {
             $results[$surveyanswer->userid] = array('time'=>$surveyanswer->time);
         }
@@ -145,13 +164,16 @@ if ($type == "ods") {
     foreach ($header as $item) {
         $myxls->write_string(0,$col++,$item);
     }
-    foreach ($order as $key => $qid) {
-        $question = $orderedquestions[$qid];
-        if ($question->type == "0" || $question->type == "1" || $question->type == "3" || $question->type == "-1")  {
-            $myxls->write_string(0,$col++,"$question->text");
-        }
-        if ($question->type == "2" || $question->type == "3")  {
-            $myxls->write_string(0,$col++,"$question->text (preferred)");
+
+    foreach ($nestedorder as $key => $nestedquestions) {
+        foreach ($nestedquestions as $key2 => $qid) {
+            $question = $questions[$qid];
+            if ($question->type == "0" || $question->type == "1" || $question->type == "3" || $question->type == "-1")  {
+                $myxls->write_string(0,$col++,"$question->text");
+            }
+            if ($question->type == "2" || $question->type == "3")  {
+                $myxls->write_string(0,$col++,"$question->text (preferred)");
+            }
         }
     }
 
@@ -181,13 +203,15 @@ if ($type == "ods") {
 //          $myxls->write_number($row,$col++,$results[$user]["time"],$date);
         $myxls->write_string($row,$col++,$notes);
 
-        foreach ($order as $key => $qid) {
-            $question = $orderedquestions[$qid];
-            if ($question->type == "0" || $question->type == "1" || $question->type == "3" || $question->type == "-1")  {
-                $myxls->write_string($row,$col++, $results[$user][$qid]["answer1"] );
-            }
-            if ($question->type == "2" || $question->type == "3")  {
-                $myxls->write_string($row, $col++, $results[$user][$qid]["answer2"] );
+        foreach ($nestedorder as $key => $nestedquestions) {
+            foreach ($nestedquestions as $key2 => $qid) {
+                $question = $questions[$qid];
+                if ($question->type == "0" || $question->type == "1" || $question->type == "3" || $question->type == "-1")  {
+                    $myxls->write_string($row,$col++, $results[$user][$qid]["answer1"] );
+                }
+                if ($question->type == "2" || $question->type == "3")  {
+                    $myxls->write_string($row, $col++, $results[$user][$qid]["answer2"] );
+                }
             }
         }
     }
@@ -215,13 +239,17 @@ if ($type == "xls") {
     foreach ($header as $item) {
         $myxls->write_string(0,$col++,$item);
     }
-    foreach ($order as $key => $qid) {
-        $question = $orderedquestions[$qid];
-        if ($question->type == "0" || $question->type == "1" || $question->type == "3" || $question->type == "-1")  {
-            $myxls->write_string(0,$col++,"$question->text");
-        }
-        if ($question->type == "2" || $question->type == "3")  {
-            $myxls->write_string(0,$col++,"$question->text (preferred)");
+
+    foreach ($nestedorder as $key => $nestedquestions) {
+        foreach ($nestedquestions as $key2 => $qid) {
+            $question = $questions[$qid];
+
+            if ($question->type == "0" || $question->type == "1" || $question->type == "3" || $question->type == "-1")  {
+                $myxls->write_string(0,$col++,"$question->text");
+            }
+            if ($question->type == "2" || $question->type == "3")  {
+                $myxls->write_string(0,$col++,"$question->text (preferred)");
+            }
         }
     }
 
@@ -251,15 +279,19 @@ if ($type == "xls") {
 //          $myxls->write_number($row,$col++,$results[$user]["time"],$date);
         $myxls->write_string($row,$col++,$notes);
 
-        foreach ($order as $key => $qid) {
-            $question = $orderedquestions[$qid];
-            if ($question->type == "0" || $question->type == "1" || $question->type == "3" || $question->type == "-1")  {
+        foreach ($nestedorder as $key => $nestedquestions) {
+            foreach ($nestedquestions as $key2 => $qid) {
+                $question = $questions[$qid];
+                if (($question->type == "0" || $question->type == "1" || $question->type == "3" || $question->type == "-1")
+                    && array_key_exists($qid, $results[$user]) ){
                 $myxls->write_string($row,$col++, $results[$user][$qid]["answer1"] );
             }
-            if ($question->type == "2" || $question->type == "3")  {
+                if (($question->type == "2" || $question->type == "3")
+                    && array_key_exists($qid, $results[$user]) ){
                 $myxls->write_string($row, $col++, $results[$user][$qid]["answer2"] );
             }
         }
+    }
     }
     $workbook->close();
 
@@ -278,13 +310,17 @@ header("Content-Disposition: attachment; filename=\"$downloadfilename.txt\"");
 // Print names of all the fields
 
 echo "surveyid    surveyname    userid    firstname    lastname    email    idnumber    time    ";
-foreach ($orderedquestions as $key => $question) {
+
+foreach ($nestedorder as $key => $nestedquestions) {
+    foreach ($nestedquestions as $key2 => $qid) {
+        $question = $questions[$qid];
     if ($question->type == "0" || $question->type == "1" || $question->type == "3" || $question->type == "-1")  {
         echo "$question->text    ";
     }
     if ($question->type == "2" || $question->type == "3")  {
          echo "$question->text (preferred)    ";
     }
+}
 }
 echo "\n";
 
@@ -302,13 +338,16 @@ foreach ($results as $user => $rest) {
     echo $u->idnumber."\t";
     echo userdate($results[$user]["time"], "%d-%b-%Y %I:%M:%S %p")."\t";
 
-    foreach ($order as $key => $qid) {
-        $question = $orderedquestions[$qid];
-        if ($question->type == "0" || $question->type == "1" || $question->type == "3" || $question->type == "-1")  {
-            echo $results[$user][$qid]["answer1"]."    ";
-        }
-        if ($question->type == "2" || $question->type == "3")  {
-            echo $results[$user][$qid]["answer2"]."    ";
+    foreach ($nestedorder as $key => $nestedquestions) {
+        foreach ($nestedquestions as $key2 => $qid) {
+            $question = $questions[$qid];
+        
+            if ($question->type == "0" || $question->type == "1" || $question->type == "3" || $question->type == "-1")  {
+                echo $results[$user][$qid]["answer1"]."    ";
+            }
+            if ($question->type == "2" || $question->type == "3")  {
+                echo $results[$user][$qid]["answer2"]."    ";
+            }
         }
     }
     echo "\n";
