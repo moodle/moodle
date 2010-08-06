@@ -1558,6 +1558,9 @@ function question_edit_setup($edittab, $baseurl, $requirecmid = false, $requirec
             $thiscontext = null;
         }
     }
+    if (strpos($baseurl, '/question/') === 0) {
+        navigation_node::override_active_url($thispageurl);
+    }
 
     if ($thiscontext){
         $contexts = new question_edit_contexts($thiscontext);
