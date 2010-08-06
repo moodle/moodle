@@ -26,6 +26,7 @@
  * Class implementing the subplugins support for moodle2 restore
  *
  * TODO: Finish phpdocs
+ * TODO: Add support for declaring decode_contents (not decode_rules)
  */
 abstract class restore_subplugin {
 
@@ -119,8 +120,8 @@ abstract class restore_subplugin {
     /**
      * Add all the existing file, given their component and filearea and one backup_ids itemname to match with
      */
-    protected function add_related_files($component, $filearea, $mappingitemname, $filesctxid = null) {
-        $this->step->add_related_files($component, $filearea, $mappingitemname, $filesctxid);
+    protected function add_related_files($component, $filearea, $mappingitemname, $filesctxid = null, $olditemid = null) {
+        $this->step->add_related_files($component, $filearea, $mappingitemname, $filesctxid, $olditemid);
     }
 
     /**

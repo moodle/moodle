@@ -238,7 +238,7 @@ abstract class restore_dbops {
      * optionally one source itemname to match itemids
      * put the corresponding files in the pool
      */
-    public static function send_files_to_pool($basepath, $restoreid, $component, $filearea, $oldcontextid, $dfltuserid, $itemname = null) {
+    public static function send_files_to_pool($basepath, $restoreid, $component, $filearea, $oldcontextid, $dfltuserid, $itemname = null, $olditemid = null) {
         global $DB;
 
         // Get new context, must exist or this will fail
@@ -273,6 +273,10 @@ abstract class restore_dbops {
                        AND f.filearea = ?
                        AND i.itemname = ?';
             $params = array($restoreid, $oldcontextid, $component, $filearea, $itemname);
+            if ($olditemid !== null) { // Just process ONE olditemid intead of the whole itemname
+                $sql .= ' AND i.itemid = ?';
+                $params[] = $olditemid;
+            }
         }
 
         $fs = get_file_storage();         // Get moodle file storage
