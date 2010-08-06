@@ -46,6 +46,9 @@ class backup_workshopform_accumulative_subplugin extends backup_subplugin {
         // set source to populate the data
         $subplugindimension->set_source_table('workshopform_accumulative', array('workshopid' => backup::VAR_ACTIVITYID));
 
+        // id annotations
+        $subplugindimension->annotate_ids('scale', 'grade');
+
         // file annotations
         $subplugindimension->annotate_files('workshopform_accumulative', 'description', 'id');
 
