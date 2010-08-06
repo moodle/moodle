@@ -59,11 +59,11 @@ class backup_workshop_activity_task extends backup_activity_task {
 
         // Link to the list of workshops
         $search = "/(" . $base . "\/mod\/workshop\/index.php\?id\=)([0-9]+)/";
-        $result = preg_replace($search, '$@WORKSHOPINDEX*$2@$', $content);
+        $content = preg_replace($search, '$@WORKSHOPINDEX*$2@$', $content);
 
         //Link to workshop view by moduleid
         $search = "/(" . $base . "\/mod\/workshop\/view.php\?id\=)([0-9]+)/";
-        $result= preg_replace($search, '$@WORKSHOPVIEWBYID*$2@$', $result);
+        $content= preg_replace($search, '$@WORKSHOPVIEWBYID*$2@$', $content);
 
         return $content;
     }
