@@ -991,11 +991,11 @@
         $pages = array();
         $pages[] = page_create_object(PAGE_COURSE_VIEW, $preferences->backup_course);
 
-        if (!empty($CFG->showblocksonmodpages)) {
             // get course structure
             $course  = $DB->get_record('course', array('id'=>$preferences->backup_course));
             $modinfo =& get_fast_modinfo($course);
 
+        // backup blocks on mod pages.
             foreach($preferences->mods as $module) {
                 if (!$module->backup) {
                     continue;
@@ -1018,7 +1018,6 @@
                     }
                 }
             }
-        }
 
         //Blocks open tag
         fwrite ($bf,start_tag('BLOCKS',2,true));

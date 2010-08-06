@@ -1238,7 +1238,8 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                 // This one's easy...
                 $instance->pageid  = $restore->course_id;
 
-            } else if (!empty($CFG->showblocksonmodpages)) {
+            } else {
+                // restore activity blocks
                 $parts = explode('-', $instance->pagetype);
                 if($parts[0] == 'mod') {
                     if(!$restore->mods[$parts[1]]->restore) {
@@ -1257,9 +1258,6 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                     continue;
                 }
 
-            } else {
-                // do not restore activity blocks if disabled
-                continue;
             }
 
             if(!isset($pageinstances[$instance->pagetype])) {

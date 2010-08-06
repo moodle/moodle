@@ -281,7 +281,7 @@
     // The code will be much nicer than this eventually.
     $title = $course->shortname.': ' . format_string($data->name);
 
-    if ($PAGE->user_allowed_editing() && !empty($CFG->showblocksonmodpages)) {
+    if ($PAGE->user_allowed_editing()) {
         $buttons = '<table><tr><td><form method="get" action="view.php"><div>'.
             '<input type="hidden" name="id" value="'.$cm->id.'" />'.
             '<input type="hidden" name="edit" value="'.($PAGE->user_is_editing()?'off':'on').'" />'.

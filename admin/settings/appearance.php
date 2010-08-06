@@ -17,7 +17,6 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
     $temp->add(new admin_setting_configcheckbox('allowthemechangeonurl',  get_string('allowthemechangeonurl', 'admin'), get_string('configallowthemechangeonurl', 'admin'), 0));
     $temp->add(new admin_setting_configcheckbox('allowuserblockhiding', get_string('allowuserblockhiding', 'admin'), get_string('configallowuserblockhiding', 'admin'), 1));
     $temp->add(new admin_setting_configcheckbox('allowblockstodock', get_string('allowblockstodock', 'admin'), get_string('configallowblockstodock', 'admin'), 1));
-    $temp->add(new admin_setting_configcheckbox('showblocksonmodpages', get_string('showblocksonmodpages', 'admin'), get_string('configshowblocksonmodpages', 'admin'), 0));
     $temp->add(new admin_setting_configtextarea('custommenuitems', get_string('custommenuitems', 'admin'), get_string('configcustommenuitems', 'admin'), '', PARAM_TEXT, '50', '10'));
     $ADMIN->add('themes', $temp);
     $ADMIN->add('themes', new admin_externalpage('themeselector', get_string('themeselector','admin'), $CFG->wwwroot . '/theme/index.php'));
