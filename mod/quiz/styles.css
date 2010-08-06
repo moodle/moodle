@@ -284,17 +284,13 @@ body#question-preview .controls{text-align: center;}
 #page-mod-quiz-edit .editq div.question div.description div.content .questiontext {max-width: 75%;}
 #page-mod-quiz-edit .editq div.question div.qnum{font-size:1.5em;}
 
-body #quizcontentsblock #repaginatedialog{display: none;}
-body.jsenabled #quizcontentsblock #repaginatedialog{display: block;}
-body.jsenabled #quizcontentsblock #repaginatedialog .hd{display:block;}
-body.jsenabled #quizcontentsblock #repaginatedialog .bd{padding:1em;}
-body.jsenabled #quizcontentsblock  .repaginatecommand #repaginatecommand{display:block;}
+body #quizcontentsblock #repaginatedialog {display: none;}
+body.jsenabled #quizcontentsblock #repaginatedialog .hd {display:block;}
+body.jsenabled #quizcontentsblock #repaginatedialog .bd {padding:1em;}
+body.jsenabled #quizcontentsblock .repaginatecommand #repaginatecommand {display:block;}
 
 #page-mod-quiz-edit #randomquestiondialog {display: none;}
-#page-mod-quiz-edit.jsenabled #randomquestiondialog {display: block;}
-
-#page-mod-quiz-edit #qtypechoicecontainer{display: none;}
-#page-mod-quiz-edit.jsenabled #qtypechoicecontainer{display: block;}
+#page-mod-quiz-edit #qtypechoicecontainer {display: none;}
 
 #page-mod-quiz-edit .questionbankwindow select#catmenu_jump{
 /* In Opera9, IE6 the width of the

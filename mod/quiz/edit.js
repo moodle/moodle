@@ -18,6 +18,10 @@ function quiz_edit_init() {
             postmethod: 'form'
     });
     quiz_edit.randomquestiondialog.render();
+    var div = document.getElementById('randomquestiondialog');
+    if (div) {
+        div.style.display = 'block';
+    }
 
     // Show the form on button click.
     YAHOO.util.Event.addListener(quiz_edit_config.dialoglisteners, 'click', function(e) {
@@ -55,6 +59,11 @@ function quiz_edit_init() {
             postmethod: 'form'
     });
     quiz_edit.repaginatedialog.render();
+    quiz_edit.randomquestiondialog.render();
+    var div = document.getElementById('repaginatedialog');
+    if (div) {
+        div.style.display = 'block';
+    }
 
     // Show the form on button click.
     YAHOO.util.Event.addListener('repaginatecommand', 'click', function() {

@@ -86,6 +86,7 @@ qtype_chooser = {
             return;
         }
         var qtypechoicecontainer = document.getElementById('qtypechoicecontainer');
+        qtypechoicecontainer.style.display = 'block';
         qtypechoicecontainer.parentNode.removeChild(qtypechoicecontainer);
         document.body.appendChild(qtypechoicecontainer);
         qtype_chooser.container = new YAHOO.widget.Dialog(qtypechoicecontainer, {
