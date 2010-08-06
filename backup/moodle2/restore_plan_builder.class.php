@@ -31,7 +31,7 @@ require_once($CFG->dirroot . '/backup/moodle2/restore_activity_task.class.php');
 require_once($CFG->dirroot . '/backup/moodle2/restore_final_task.class.php');
 require_once($CFG->dirroot . '/backup/moodle2/restore_block_task.class.php');
 require_once($CFG->dirroot . '/backup/moodle2/restore_default_block_task.class.php');
-//require_once($CFG->dirroot . '/backup/moodle2/restore_subplugin.class.php');
+require_once($CFG->dirroot . '/backup/moodle2/restore_subplugin.class.php');
 require_once($CFG->dirroot . '/backup/moodle2/restore_settingslib.php');
 require_once($CFG->dirroot . '/backup/moodle2/restore_stepslib.php');
 

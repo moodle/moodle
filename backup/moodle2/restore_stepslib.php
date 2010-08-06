@@ -1118,8 +1118,39 @@ class restore_module_structure_step extends restore_structure_step {
  */
 abstract class restore_activity_structure_step extends restore_structure_step {
 
-    protected function add_subplugin_structure() {
-        // TODO: Implement activities subplugin support (similar if possible to backup)
+    protected function add_subplugin_structure($subplugintype, $element) {
+
+        global $CFG;
+
+        // Check the requested subplugintype is a valid one
+        $subpluginsfile = $CFG->dirroot . '/mod/' . $this->task->get_modulename() . '/db/subplugins.php';
+        if (!file_exists($subpluginsfile)) {
+             throw new restore_step_exception('activity_missing_subplugins_php_file', $this->task->get_modulename());
+        }
+        include($subpluginsfile);
+        if (!array_key_exists($subplugintype, $subplugins)) {
+             throw new restore_step_exception('incorrect_subplugin_type', $subplugintype);
+        }
+        // Get all the restore path elements, looking across all the subplugin dirs
+        $subpluginsdirs = get_plugin_list($subplugintype);
+        foreach ($subpluginsdirs as $name => $subpluginsdir) {
+            $classname = 'restore_' . $subplugintype . '_' . $name . '_subplugin';
+            $restorefile = $subpluginsdir . '/backup/moodle2/' . $classname . '.class.php';
+            if (file_exists($restorefile)) {
+                require_once($restorefile);
+                $restoresubplugin = new $classname($subplugintype, $name, $this);
+                // Add subplugin paths to the step
+                $this->prepare_pathelements($restoresubplugin->define_subplugin_structure($element));
+            }
+        }
+    }
+
+    /**
+     * As far as activity restore steps are implementing restore_subplugin stuff, they need to
+     * have the parent task available for wrapping purposes (get course/context....)
+     */
+    public function get_task() {
+        return $this->task;
     }
 
     /**

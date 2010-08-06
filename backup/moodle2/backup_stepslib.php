@@ -109,7 +109,6 @@ abstract class backup_activity_structure_step extends backup_structure_step {
         $element->add_child($optigroup); // Add optigroup to stay connected since beginning
 
         // Get all the optigroup_elements, looking across all the subplugin dirs
-        $elements = array();
         $subpluginsdirs = get_plugin_list($subplugintype);
         foreach ($subpluginsdirs as $name => $subpluginsdir) {
             $classname = 'backup_' . $subplugintype . '_' . $name . '_subplugin';

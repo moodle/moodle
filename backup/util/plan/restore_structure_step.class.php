@@ -79,13 +79,7 @@ abstract class restore_structure_step extends restore_step {
         if (!is_array($structure)) {
             throw new restore_step_exception('restore_step_structure_not_array', $this->get_name());
         }
-        $this->pathelements = $this->prepare_pathelements($structure);
-
-        // Populate $elementsoldid and $elementsoldid based on available pathelements
-        foreach ($this->pathelements as $pathelement) {
-            $this->elementsoldid[$pathelement->get_name()] = null;
-            $this->elementsnewid[$pathelement->get_name()] = null;
-        }
+        $this->prepare_pathelements($structure);
 
         // Create parser and processor
         $xmlparser = new progressive_parser();
@@ -130,82 +124,6 @@ abstract class restore_structure_step extends restore_step {
         }
     }
 
-// Protected API starts here
-
-    /**
-     * This method will be executed after the whole structure step have been processed
-     *
-     * After execution method for code needed to be executed after the whole structure
-     * has been processed. Useful for cleaning tasks, files process and others. Simply
-     * overwrite in in your steps if needed
-     */
-    protected function after_execute() {
-        // do nothing by default
-    }
-
-    /**
-     * Prepare the pathelements for processing, looking for duplicates, applying
-     * processing objects and other adjustments
-     */
-    protected function prepare_pathelements($elementsarr) {
-
-        // First iteration, push them to new array, indexed by name
-        // detecting duplicates in names or paths
-        $names = array();
-        $paths = array();
-        foreach($elementsarr as $element) {
-            if (!$element instanceof restore_path_element) {
-                throw new restore_step_exception('restore_path_element_wrong_class', get_class($element));
-            }
-            if (array_key_exists($element->get_name(), $names)) {
-                throw new restore_step_exception('restore_path_element_name_alreadyexists', $element->get_name());
-            }
-            if (array_key_exists($element->get_path(), $paths)) {
-                throw new restore_step_exception('restore_path_element_path_alreadyexists', $element->get_path());
-            }
-            $names[$element->get_name()] = true;
-            $elements[$element->get_path()] = $element;
-        }
-        // Now, for each element not having one processing object, if
-        // not child of grouped element, assign $this (the step itself) as processing element
-        // Note method must exist or we'll get one @restore_path_element_exception
-        foreach($elements as $key => $pelement) {
-            if ($pelement->get_processing_object() === null && !$this->grouped_parent_exists($pelement, $elements)) {
-                $elements[$key]->set_processing_object($this);
-            }
-        }
-        // Done, return them
-        return $elements;
-    }
-
-    /**
-     * Given one pathelement, return true if grouped parent was found
-     */
-    protected function grouped_parent_exists($pelement, $elements) {
-        foreach ($elements as $element) {
-            if ($pelement->get_path() == $element->get_path()) {
-                continue; // Don't compare against itself
-            }
-            // If element is grouped and parent of pelement, return true
-            if ($element->is_grouped() and strpos($pelement->get_path() .  '/', $element->get_path()) === 0) {
-                return true;
-            }
-        }
-        return false; // no grouped parent found
-    }
-
-    /**
-     * To conditionally decide if one step will be executed or no
-     *
-     * For steps needing to be executed conditionally, based in dynamic
-     * conditions (at execution time vs at declaration time) you must
-     * override this function. It will return true if the step must be
-     * executed and false if not
-     */
-    protected function execute_condition() {
-        return true;
-    }
-
     /**
      * To send ids pairs to backup_ids_table and to store them into paths
      *
@@ -215,7 +133,7 @@ abstract class restore_structure_step extends restore_step {
      * by children. Also will inject the known old context id for the task
      * in case it's going to be used for restoring files later
      */
-    protected function set_mapping($itemname, $oldid, $newid, $restorefiles = false, $filesctxid = null) {
+    public function set_mapping($itemname, $oldid, $newid, $restorefiles = false, $filesctxid = null) {
         // If we haven't specified one context for the files, use the task one
         if ($filesctxid == null) {
             $parentitemid = $restorefiles ? $this->task->get_old_contextid() : null;
@@ -234,14 +152,14 @@ abstract class restore_structure_step extends restore_step {
     /**
      * Returns the latest (parent) old id mapped by one pathelement
      */
-    protected function get_old_parentid($itemname) {
+    public function get_old_parentid($itemname) {
         return array_key_exists($itemname, $this->elementsoldid) ? $this->elementsoldid[$itemname] : null;
     }
 
     /**
      * Returns the latest (parent) new id mapped by one pathelement
      */
-    protected function get_new_parentid($itemname) {
+    public function get_new_parentid($itemname) {
         return array_key_exists($itemname, $this->elementsnewid) ? $this->elementsnewid[$itemname] : null;
     }
 
@@ -249,7 +167,7 @@ abstract class restore_structure_step extends restore_step {
      * Return the new id of a mapping for the given itemname
      *
      */
-    protected function get_mappingid($itemname, $oldid) {
+    public function get_mappingid($itemname, $oldid) {
         $mapping = $this->get_mapping($itemname, $oldid);
         return $mapping ? $mapping->newitemid : false;
     }
@@ -257,14 +175,14 @@ abstract class restore_structure_step extends restore_step {
     /**
      * Return the complete mapping from the given itemname, itemid
      */
-    protected function get_mapping($itemname, $oldid) {
+    public function get_mapping($itemname, $oldid) {
         return restore_dbops::get_backup_ids_record($this->get_restoreid(), $itemname, $oldid);
     }
 
     /**
      * Add all the existing file, given their component and filearea and one backup_ids itemname to match with
      */
-    protected function add_related_files($component, $filearea, $mappingitemname, $filesctxid = null) {
+    public function add_related_files($component, $filearea, $mappingitemname, $filesctxid = null) {
         $filesctxid = is_null($filesctxid) ? $this->task->get_old_contextid() : $filesctxid;
         restore_dbops::send_files_to_pool($this->get_basepath(), $this->get_restoreid(), $component,
                                           $filearea, $filesctxid, $this->task->get_userid(), $mappingitemname);
@@ -275,7 +193,7 @@ abstract class restore_structure_step extends restore_step {
      * Note we are using one static cache here, but *by restoreid*, so it's ok for concurrence/multiple
      * executions in the same request
      */
-    protected function apply_date_offset($value) {
+    public function apply_date_offset($value) {
 
         // 0 doesn't offset
         if ($value == 0) {
@@ -312,6 +230,85 @@ abstract class restore_structure_step extends restore_step {
 
         // Return the passed value with cached offset applied
         return $value + $cache[$this->get_restoreid()];
+    }
+
+// Protected API starts here
+
+    /**
+     * This method will be executed after the whole structure step have been processed
+     *
+     * After execution method for code needed to be executed after the whole structure
+     * has been processed. Useful for cleaning tasks, files process and others. Simply
+     * overwrite in in your steps if needed
+     */
+    protected function after_execute() {
+        // do nothing by default
+    }
+
+    /**
+     * Prepare the pathelements for processing, looking for duplicates, applying
+     * processing objects and other adjustments
+     */
+    protected function prepare_pathelements($elementsarr) {
+
+        // First iteration, push them to new array, indexed by name
+        // detecting duplicates in names or paths
+        $names = array();
+        $paths = array();
+        foreach($elementsarr as $element) {
+            if (!$element instanceof restore_path_element) {
+                throw new restore_step_exception('restore_path_element_wrong_class', get_class($element));
+            }
+            if (array_key_exists($element->get_name(), $names)) {
+                throw new restore_step_exception('restore_path_element_name_alreadyexists', $element->get_name());
+            }
+            if (array_key_exists($element->get_path(), $paths)) {
+                throw new restore_step_exception('restore_path_element_path_alreadyexists', $element->get_path());
+            }
+            $names[$element->get_name()] = true;
+            $paths[$element->get_path()] = $element;
+        }
+        // Now, for each element not having one processing object, if
+        // not child of grouped element, assign $this (the step itself) as processing element
+        // Note method must exist or we'll get one @restore_path_element_exception
+        foreach($paths as $key => $pelement) {
+            if ($pelement->get_processing_object() === null && !$this->grouped_parent_exists($pelement, $paths)) {
+                $paths[$key]->set_processing_object($this);
+            }
+            // Populate $elementsoldid and $elementsoldid based on available pathelements
+            $this->elementsoldid[$pelement->get_name()] = null;
+            $this->elementsnewid[$pelement->get_name()] = null;
+        }
+        // Done, add them to pathelements (dupes by key - path - are discarded)
+        $this->pathelements = array_merge($this->pathelements, $paths);
+    }
+
+    /**
+     * Given one pathelement, return true if grouped parent was found
+     */
+    protected function grouped_parent_exists($pelement, $elements) {
+        foreach ($elements as $element) {
+            if ($pelement->get_path() == $element->get_path()) {
+                continue; // Don't compare against itself
+            }
+            // If element is grouped and parent of pelement, return true
+            if ($element->is_grouped() and strpos($pelement->get_path() .  '/', $element->get_path()) === 0) {
+                return true;
+            }
+        }
+        return false; // no grouped parent found
+    }
+
+    /**
+     * To conditionally decide if one step will be executed or no
+     *
+     * For steps needing to be executed conditionally, based in dynamic
+     * conditions (at execution time vs at declaration time) you must
+     * override this function. It will return true if the step must be
+     * executed and false if not
+     */
+    protected function execute_condition() {
+        return true;
     }
 
     /**
