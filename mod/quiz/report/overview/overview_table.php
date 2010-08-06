@@ -249,6 +249,15 @@ class quiz_report_overview_table extends table_sql {
                 } else {
                     return $grade;
                 }
+            } else if ($stateforqinattempt && question_state_is_closed($stateforqinattempt)) {
+                $text = get_string('requiresgrading', 'quiz_overview');
+                if (!$this->is_downloading()) {
+                    $link = new moodle_url("/mod/quiz/reviewquestion.php?attempt=$attempt->attempt&question=$question->id");
+                    $action = new popup_action('click', $link, 'reviewquestion', array('height' => 450, 'width' => 650));
+                    return $OUTPUT->action_link($link, $text, $action, array('title'=>get_string('reviewresponsetoq', 'quiz', $question->formattedname)));
+                } else {
+                    return $text;
+                }
             } else {
                 return '--';
             }

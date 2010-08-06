@@ -64,6 +64,7 @@ $string['regradealldrygroup'] = 'Dry run a full regrade for group \'{$a->groupna
 $string['regradeallgroup'] = 'Full regrade for group \'{$a->groupname}\'';
 $string['regradeheader'] = 'Regrading';
 $string['regradeselected'] = 'Regrade selected attempts';
+$string['requiresgrading'] = 'Requires grading';
 $string['show'] = 'Include';
 $string['showattempts'] = 'Include attempts';
 $string['showdetailedmarks'] = 'Marks for each question';
