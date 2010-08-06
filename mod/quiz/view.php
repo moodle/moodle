@@ -368,6 +368,9 @@
                 $tempunavailable = '';
                 $lastattempt = end($attempts);
                 $lastattempttime = $lastattempt->timefinish;
+                if ($quiz->timelimit > 0) {
+                    $lastattempttime = min($lastattempttime, $lastattempt->timestart + $quiz->timelimit*60);
+                }
                 if ($numattempts == 1 && $quiz->delay1 && $timenow <= $lastattempttime + $quiz->delay1) {
                     $tempunavailable = get_string('temporaryblocked', 'quiz') .
                             ' <strong>'. userdate($lastattempttime + $quiz->delay1). '</strong>';

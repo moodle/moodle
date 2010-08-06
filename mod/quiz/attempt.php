@@ -151,9 +151,14 @@
             $numattempts = 0;
         }
         $timenow = time();
-        $lastattempt_obj = get_record_select('quiz_attempts', "quiz = $quiz->id AND attempt = $numattempts AND userid = $USER->id", 'timefinish');
+        $lastattempt_obj = get_record_select('quiz_attempts',
+                "quiz = $quiz->id AND attempt = $numattempts AND userid = $USER->id",
+                'timefinish, timestart');
         if ($lastattempt_obj) {
             $lastattempt = $lastattempt_obj->timefinish;
+            if ($quiz->timelimit > 0) {
+                $lastattempt = min($lastattempt, $lastattempt_obj->timestart + $quiz->timelimit*60);
+            }
         }
         if ($numattempts == 1 && !empty($quiz->delay1)) {
             if ($timenow - $quiz->delay1 < $lastattempt) {
