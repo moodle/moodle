@@ -53,7 +53,7 @@ class lesson_page_type_truefalse extends lesson_page {
         $answers = $this->get_answers();
         shuffle($answers);
 
-        $params = array('answers'=>$answers, 'lessonid'=>$this->lesson->id, 'contents'=>$this->get_contents());
+        $params = array('answers'=>$answers, 'lessonid'=>$this->lesson->id, 'contents'=>$this->get_contents(), 'attempt'=>$attempt);
         $mform = new lesson_display_answer_form_truefalse($CFG->wwwroot.'/mod/lesson/continue.php', $params);
         $data = new stdClass;
         $data->id = $PAGE->cm->id;
@@ -177,7 +177,7 @@ class lesson_page_type_truefalse extends lesson_page {
 
     public function report_answers($answerpage, $answerdata, $useranswer, $pagestats, &$i, &$n) {
         $answers = $this->get_answers();
-        $formattextdefoptions = new obejct(); //I'll use it widely in this page
+        $formattextdefoptions = new object(); //I'll use it widely in this page
         $formattextdefoptions->para = false;
         $formattextdefoptions->noclean = true;
         foreach ($answers as $answer) {
@@ -292,6 +292,12 @@ class lesson_display_answer_form_truefalse extends moodleform {
         $answers = $this->_customdata['answers'];
         $lessonid = $this->_customdata['lessonid'];
         $contents = $this->_customdata['contents'];
+        if (array_key_exists('attempt', $this->_customdata)) {
+            $attempt = $this->_customdata['attempt'];
+        } else {
+            $attempt = new stdClass();
+            $attempt->answerid = null;
+        }
 
         $mform->addElement('header', 'pageheader', $OUTPUT->box($contents, 'contents'));
 
