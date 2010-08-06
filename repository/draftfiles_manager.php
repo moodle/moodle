@@ -275,7 +275,7 @@ default:
     if ($env == 'filepicker') {
         $maxfiles = 1;
     }
-    if ($filecount < $maxfiles && $maxfiles != -1) {
+    if ($filecount < $maxfiles || $maxfiles == -1) {
         echo ' <a href="'.$filepicker_url->out().'">'.get_string('addfile', 'repository').'</a>';
     }
     if ($env == 'filemanager') {

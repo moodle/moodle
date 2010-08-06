@@ -98,6 +98,7 @@ $params['draftpath'] = $draftpath;
 $home_url = new moodle_url('/repository/draftfiles_manager.php', $params);
 
 $params['savepath'] = $savepath;
+$params['repo_id'] = $repo_id;
 $url = new moodle_url($CFG->httpswwwroot."/repository/filepicker.php", $params);
 $PAGE->set_url('/repository/filepicker.php', $params);
 
@@ -168,14 +169,22 @@ case 'sign':
         } else {
             if (!empty($list['path'])) {
                 foreach ($list['path'] as $p) {
-                    echo '<form method="post" style="display:inline">';
-                    echo '<input type="hidden" name="p" value="'.$p['path'].'"';
-                    echo '<input type="hidden" name="action" value="list"';
-                    echo '<input type="hidden" name="draftpath" value="'.$draftpath.'" /><br />';
-                    echo '<input type="hidden" name="savepath" value="'.$savepath.'" /><br />';
-                    echo '<input type="submit" value="'.$p['name'].'" />';
-                    echo '</form>';
-                    echo '<strong> / </strong>';
+                    //echo '<form method="post" style="display:inline">';
+                    //echo '<input type="hidden" name="p" value="'.$p['path'].'"';
+                    //echo '<input type="hidden" name="action" value="list"';
+                    //echo '<input type="hidden" name="draftpath" value="'.$draftpath.'" /><br />';
+                    //echo '<input type="hidden" name="savepath" value="'.$savepath.'" /><br />';
+                    //echo '<input style="display:inline" type="submit" value="'.$p['name'].'" />';
+                    //echo '</form>';
+
+                    $pathurl = new moodle_url($url, array(
+                        'p'=>$p['path'],
+                        'action'=>'list',
+                        'draftpath'=>$draftpath,
+                        'savepath'=>$savepath
+                        ));
+                    echo '<strong>' . html_writer::link($pathurl, $p['name']) . '</strong>';
+                    echo '<span> / </span>';
                 }
             }
             if (!empty($list['page'])) {
