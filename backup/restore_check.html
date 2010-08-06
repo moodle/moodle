@@ -20,31 +20,6 @@
     //Detect if we are coming from the restore form
     $fromform = optional_param ('fromform', 0, PARAM_INT);
 
-    if ($form1 = data_submitted()) {
-        $currentcourseshortname = $course_header->course_shortname; //"store_ShortName";
-        $course_header->course_shortname = !empty($form1->shortname) ? $form1->shortname : '';  //"update_ShortName";
-        $course_header->course_fullname  = !empty($form1->fullname) ? $form1->fullname : '';   //"update_FullName";
-    /// Roll dates only if the backup course has a start date
-    /// (some formats like main page, social..., haven't it and rolling dates
-    /// from 0 produces crazy dates. MDL-10125 and we have passed some custom startyear/month/day. MDL-12922
-        if ($course_header->course_startdate && !empty($form1->startyear)) {
-            $form1->startdate = make_timestamp($form1->startyear, $form1->startmonth, $form1->startday);
-            $currentcoursestartdate = $course_header->course_startdate;
-            $coursestartdatedateoffset = $form1->startdate - $currentcoursestartdate;
-            $restore->course_startdateoffset = $coursestartdatedateoffset; //change to restore
-            // Only apply rolling of dates if differences are bigger than one day
-            // that should solve current problems with daylight changes between
-            // backup and restore
-            if (abs($restore->course_startdateoffset) < 24 * 60 * 60) {
-                $coursestartdatedateoffset = 0;
-                $restore->course_startdateoffset = 0;
-            }
-        } else { // don't roll if the course hasn't start date
-            $coursestartdatedateoffset = 0;
-            $restore->course_startdateoffset = 0;
-        }
-    }
-
     ///Enforce SESSION->course_header rewrite (PHP 4.x needed because assigns are by value) MDL-8298
     $SESSION->course_header = $course_header;
 
@@ -274,26 +249,6 @@
                 $messages[] = get_string ('restoretositedeleting');
             } else if ($restore->restoreto == RESTORETO_CURRENT_ADDING) {
                 $messages[] = get_string ('restoretositeadding');
-            }
-        }
-
-        // If we have selected to roll dates on restore and the user is missing
-        // such capability (moodle/restore:rolldates) in the target course/category,
-        // disable roll of dates and warn
-        if ($restore->course_startdateoffset != 0) {
-            $canrolldates = false; // init to false
-
-            // if we know the target course, check the capability on it
-            if (!empty($restore->course_id)) {
-                $canrolldates = has_capability('moodle/restore:rolldates', get_context_instance(CONTEXT_COURSE, $restore->course_id));
-            // if we know the target category, check capability on it
-            } else if (!empty($restore->restore_restorecatto)) {
-                $canrolldates = has_capability('moodle/restore:rolldates', get_context_instance(CONTEXT_COURSECAT, $restore->restore_restorecatto));
-            }
-
-            if (!$canrolldates) {
-                $messages[] = get_string ("noteusercannotrolldatesoncontext");
-                $restore->course_startdateoffset = 0;
             }
         }
 
