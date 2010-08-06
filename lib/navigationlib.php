@@ -232,7 +232,8 @@ class navigation_node implements renderable {
      * @param moodle_url $url The url to use for the fullmeurl.
      */
     public static function override_active_url(moodle_url $url) {
-        self::$fullmeurl = $url;
+        // Clone the URL, in case the calling script changes their URL later.
+        self::$fullmeurl = new moodle_url($url);
     }
 
     /**
