@@ -16,10 +16,10 @@ require_once($CFG->libdir.'/portfolio/exporter.php');
 $PAGE->requires->yui2_lib('dom');
 $id = required_param('id', PARAM_INT);
 
-require_login();
 $PAGE->set_url('/portfolio/download/file.php', array('id' => $id));
 
 $exporter = portfolio_exporter::rewaken_object($id);
+portfolio_export_pagesetup($PAGE, $exporter->get('caller'));
 $exporter->verify_rewaken();
 
 $exporter->print_header(get_string('downloading', 'portfolio_download'), false);
