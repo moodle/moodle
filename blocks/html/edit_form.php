@@ -47,21 +47,25 @@ class block_html_edit_form extends block_edit_form {
     }
 
     function set_data($defaults) {
-        $block = $this->block;
-        $draftid_editor = file_get_submitted_draft_itemid('config_text');
-        if (!empty($block->config) && is_object($block->config)) {
-            $data = clone($block->config);
-            $block->config->text = array();
-            if (empty($data->text)) {
+        if (!empty($this->block->config) && is_object($this->block->config)) {
+            $text = $this->block->config->text;
+            $draftid_editor = file_get_submitted_draft_itemid('config_text');
+            if (empty($text)) {
                 $currenttext = '';
             } else {
-                $currenttext = $data->text;
+                $currenttext = $text;
             }
-            $block->config->text['text'] = file_prepare_draft_area($draftid_editor, $block->context->id, 'block_html', 'content', 0, array('subdirs'=>true), $currenttext);
-            $block->config->text['itemid'] = $draftid_editor;
-            $block->config->text['format'] = $data->format;
-            unset($data);
+            $defaults->config_text['text'] = file_prepare_draft_area($draftid_editor, $this->block->context->id, 'block_html', 'content', 0, array('subdirs'=>true), $currenttext);
+            $defaults->config_text['itemid'] = $draftid_editor;
+            $defaults->config_text['format'] = $this->block->config->format;
+        } else {
+            $text = '';
         }
+        // have to delete text here, otherwise parent::set_data will empty content
+        // of editor
+        unset($this->block->config->text);
         parent::set_data($defaults);
+        // restore $text
+        $this->block->config->text = $text;
     }
 }
