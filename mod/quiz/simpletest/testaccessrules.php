@@ -230,6 +230,7 @@ class inter_attempt_delay_access_rule_test extends UnitTestCase {
     function test_just_first_delay() {
         $quiz = new stdClass;
         $quiz->attempts = 3;
+        $quiz->timelimit = 0;
         $quiz->delay1 = 1000;
         $quiz->delay2 = 0;
         $quiz->timeclose = 0;
@@ -261,6 +262,7 @@ class inter_attempt_delay_access_rule_test extends UnitTestCase {
     function test_just_second_delay() {
         $quiz = new stdClass;
         $quiz->attempts = 5;
+        $quiz->timelimit = 0;
         $quiz->delay1 = 0;
         $quiz->delay2 = 1000;
         $quiz->timeclose = 0;
@@ -295,6 +297,7 @@ class inter_attempt_delay_access_rule_test extends UnitTestCase {
     function test_just_both_delays() {
         $quiz = new stdClass;
         $quiz->attempts = 5;
+        $quiz->timelimit = 0;
         $quiz->delay1 = 2000;
         $quiz->delay2 = 1000;
         $quiz->timeclose = 0;
@@ -337,6 +340,7 @@ class inter_attempt_delay_access_rule_test extends UnitTestCase {
     function test_with_close_date() {
         $quiz = new stdClass;
         $quiz->attempts = 5;
+        $quiz->timelimit = 0;
         $quiz->delay1 = 2000;
         $quiz->delay2 = 1000;
         $quiz->timeclose = 15000;
@@ -381,6 +385,64 @@ class inter_attempt_delay_access_rule_test extends UnitTestCase {
         $this->assertFalse($rule->prevent_new_attempt(2, $attempt));
         $attempt->timefinish = 14001;
         $this->assertFalse($rule->prevent_new_attempt(2, $attempt));
+    }
+
+    function test_time_limit_and_overdue() {
+        $quiz = new stdClass;
+        $quiz->attempts = 5;
+        $quiz->timelimit = 100;
+        $quiz->delay1 = 2000;
+        $quiz->delay2 = 1000;
+        $quiz->timeclose = 0;
+        $quiz->questions = '';
+        $cm = new stdClass;
+        $cm->id = 0;
+        $quizobj = new quiz($quiz, $cm, null);
+        $attempt = new stdClass;
+        $attempt->timestart = 9900;
+        $attempt->timefinish = 10100;
+
+        $rule = new inter_attempt_delay_access_rule($quizobj, 10000);
+        $this->assertFalse($rule->description());
+        $this->assertFalse($rule->prevent_access());
+        $this->assertFalse($rule->is_finished(0, $attempt));
+        $this->assertFalse($rule->time_left($attempt, 0));
+
+        $this->assertFalse($rule->prevent_new_attempt(0, $attempt));
+        $this->assertFalse($rule->prevent_new_attempt(5, $attempt));
+        $this->assertEqual($rule->prevent_new_attempt(1, $attempt), get_string('youmustwait', 'quiz', userdate(12000)));
+        $this->assertEqual($rule->prevent_new_attempt(2, $attempt), get_string('youmustwait', 'quiz', userdate(11000)));
+        $this->assertEqual($rule->prevent_new_attempt(3, $attempt), get_string('youmustwait', 'quiz', userdate(11000)));
+        $attempt->timestart = 7950;
+        $attempt->timefinish = 8000;
+        $this->assertFalse($rule->prevent_new_attempt(1, $attempt));
+        $this->assertFalse($rule->prevent_new_attempt(2, $attempt));
+        $this->assertFalse($rule->prevent_new_attempt(3, $attempt));
+        $attempt->timestart = 7950;
+        $attempt->timefinish = 8001;
+        $this->assertEqual($rule->prevent_new_attempt(1, $attempt), get_string('youmustwait', 'quiz', userdate(10001)));
+        $this->assertFalse($rule->prevent_new_attempt(2, $attempt));
+        $this->assertFalse($rule->prevent_new_attempt(4, $attempt));
+        $attempt->timestart = 8950;
+        $attempt->timefinish = 9000;
+        $this->assertEqual($rule->prevent_new_attempt(1, $attempt), get_string('youmustwait', 'quiz', userdate(11000)));
+        $this->assertFalse($rule->prevent_new_attempt(2, $attempt));
+        $this->assertFalse($rule->prevent_new_attempt(3, $attempt));
+        $attempt->timestart = 8950;
+        $attempt->timefinish = 9001;
+        $this->assertEqual($rule->prevent_new_attempt(1, $attempt), get_string('youmustwait', 'quiz', userdate(11001)));
+        $this->assertEqual($rule->prevent_new_attempt(2, $attempt), get_string('youmustwait', 'quiz', userdate(10001)));
+        $this->assertEqual($rule->prevent_new_attempt(4, $attempt), get_string('youmustwait', 'quiz', userdate(10001)));
+        $attempt->timestart = 8900;
+        $attempt->timefinish = 9100;
+        $this->assertEqual($rule->prevent_new_attempt(1, $attempt), get_string('youmustwait', 'quiz', userdate(11000)));
+        $this->assertFalse($rule->prevent_new_attempt(2, $attempt));
+        $this->assertFalse($rule->prevent_new_attempt(3, $attempt));
+        $attempt->timestart = 8901;
+        $attempt->timefinish = 9100;
+        $this->assertEqual($rule->prevent_new_attempt(1, $attempt), get_string('youmustwait', 'quiz', userdate(11001)));
+        $this->assertEqual($rule->prevent_new_attempt(2, $attempt), get_string('youmustwait', 'quiz', userdate(10001)));
+        $this->assertEqual($rule->prevent_new_attempt(4, $attempt), get_string('youmustwait', 'quiz', userdate(10001)));
     }
 }
 

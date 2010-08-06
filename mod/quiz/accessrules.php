@@ -106,7 +106,8 @@ class quiz_access_manager {
      * should be blocked. If access is OK, return false.
      *
      * @param integer $numattempts the number of previous attempts this user has made.
-     * @param object $lastattempt information about the user's last completed attempt.
+     * @param object|false $lastattempt information about the user's last completed attempt.
+     *      if there is not a previous attempt, the false is passed.
      * @return mixed An array of reason why access is not allowed, or an empty array
      *         (== false) if access should be allowed.
      */
@@ -561,12 +562,7 @@ class inter_attempt_delay_access_rule extends quiz_access_rule_base {
         /// No more attempts allowed anyway.
             return false;
         }
-        $nextstarttime = 0;
-        if ($numprevattempts == 1 && $this->_quiz->delay1) {
-            $nextstarttime = $lastattempt->timefinish + $this->_quiz->delay1;
-        } else if ($numprevattempts > 1 && $this->_quiz->delay2) {
-            $nextstarttime = $lastattempt->timefinish + $this->_quiz->delay2;
-        }
+        $nextstarttime = $this->compute_next_start_time($numprevattempts, $lastattempt);
         if ($this->_timenow < $nextstarttime) {
             if ($this->_quiz->timeclose == 0 || $nextstarttime <= $this->_quiz->timeclose) {
                 return get_string('youmustwait', 'quiz', userdate($nextstarttime));
@@ -576,13 +572,35 @@ class inter_attempt_delay_access_rule extends quiz_access_rule_base {
         }
         return false;
     }
-    public function is_finished($numprevattempts, $lastattempt) {
-        $nextstarttime = 0;
-        if ($numprevattempts == 1 && $this->_quiz->delay1) {
-            $nextstarttime = $lastattempt->timefinish + $this->_quiz->delay1;
-        } else if ($numprevattempts > 1 && $this->_quiz->delay2) {
-            $nextstarttime = $lastattempt->timefinish + $this->_quiz->delay2;
+
+    /**
+     * Compute the next time a student would be allowed to start an attempt,
+     * according to this rule.
+     * @param integer $numprevattempts number of previous attempts.
+     * @param object $lastattempt information about the previous attempt.
+     * @return number the time.
+     */
+    protected function compute_next_start_time($numprevattempts, $lastattempt) {
+        if ($numprevattempts == 0) {
+            return 0;
         }
+
+        $lastattemptfinish = $lastattempt->timefinish;
+        if ($this->_quiz->timelimit > 0){
+            $lastattemptfinish = min($lastattemptfinish,
+                    $lastattempt->timestart + $this->_quiz->timelimit);
+        }
+
+        if ($numprevattempts == 1 && $this->_quiz->delay1) {
+            return $lastattemptfinish + $this->_quiz->delay1;
+        } else if ($numprevattempts > 1 && $this->_quiz->delay2) {
+            return $lastattemptfinish + $this->_quiz->delay2;
+        }
+        return 0;
+    }
+
+    public function is_finished($numprevattempts, $lastattempt) {
+        $nextstarttime = $this->compute_next_start_time($numprevattempts, $lastattempt);
         return $this->_timenow <= $nextstarttime &&
                 $this->_quiz->timeclose != 0 && $nextstarttime >= $this->_quiz->timeclose;
     }
