@@ -77,8 +77,7 @@
     if ($attemptobj->is_preview_user() && $attemptobj->is_own_attempt()) {
         // Normal blocks
         $strreviewtitle = get_string('reviewofpreview', 'quiz');
-
-        $PAGE->settingsnav->override_active_url($attemptobj->start_attempt_url());
+        navigation_node::override_active_url($attemptobj->start_attempt_url());
 
     } else {
         $strreviewtitle = get_string('reviewofattempt', 'quiz', $attemptobj->get_attempt_number());

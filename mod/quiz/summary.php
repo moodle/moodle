@@ -30,7 +30,7 @@ if ($attemptobj->is_finished()) {
 }
 
 if ($attemptobj->is_preview_user()) {
-    $PAGE->settingsnav->override_active_url($attemptobj->start_attempt_url());
+    navigation_node::override_active_url($attemptobj->start_attempt_url());
 }
 
 /// Check access.

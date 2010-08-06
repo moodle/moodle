@@ -55,7 +55,7 @@
         }
 
     } else {
-        $PAGE->settingsnav->override_active_url($attemptobj->start_attempt_url());
+        navigation_node::override_active_url($attemptobj->start_attempt_url());
     }
 
 /// If the attempt is already closed, send them to the review page.
