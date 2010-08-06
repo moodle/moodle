@@ -892,6 +892,95 @@ class restore_comments_structure_step extends restore_structure_step {
     }
 }
 
+/**
+ * This structure step restores the grade items associated with one activity
+ * All the grade items are made child of the "course" grade item but the original
+ * categoryid is saved as parentitemid in the backup_ids table, so, when restoring
+ * the complete gradebook (categories and calculations), that information is
+ * available there
+ */
+class restore_activity_grades_structure_step extends restore_structure_step {
+
+    protected function define_structure() {
+
+        $paths = array();
+        $userinfo = $this->get_setting_value('userinfo');
+
+        $paths[] = new restore_path_element('grade_item', '/activity_gradebook/grade_items/grade_item');
+        $paths[] = new restore_path_element('grade_letter', '/activity_gradebook/grade_letters/grade_letter');
+        if ($userinfo) {
+            $paths[] = new restore_path_element('grade_grade',
+                           '/activity_gradebook/grade_items/grade_item/grade_grades/grade_grade');
+        }
+        return $paths;
+    }
+
+    protected function process_grade_item($data) {
+
+        $data = (object)($data);
+        $oldid       = $data->id;        // We'll need these later
+        $oldparentid = $data->categoryid;
+
+        // make sure top course category exists, all grade items will be associated
+        // to it. Later, if restoring the whole gradebook, categories will be introduced
+        $coursecat = grade_category::fetch_course_category($this->get_courseid());
+        $coursecatid = $coursecat->id; // Get the categoryid to be used
+
+        unset($data->id);
+        $data->categoryid   = $coursecatid;
+        $data->courseid     = $this->get_courseid();
+        $data->iteminstance = $this->task->get_activityid();
+        // Don't get any idnumber from course module. Keep them as they are in grade_item->idnumber
+        // Reason: it's not clear what happens with outcomes->idnumber or activities with multiple items (workshop)
+        // so the best is to keep the ones already in the gradebook
+        // Potential problem: duplicates if same items are restored more than once. :-(
+        // This needs to be fixed in some way (outcomes & activities with multiple items)
+        // $data->idnumber     = get_coursemodule_from_instance($data->itemmodule, $data->iteminstance)->idnumber;
+        // In any case, verify always for uniqueness
+        $data->idnumber = grade_verify_idnumber($idnumber, $this->get_courseid()) ? $data->idnumber : null;
+        $data->scaleid      = $this->get_mappingid('scale', $data->scaleid);
+        $data->outcomeid    = $this->get_mappingid('outcome', $data->outcomeid);
+        $data->timecreated  = $this->apply_date_offset($data->timecreated);
+        $data->timemodified = $this->apply_date_offset($data->timemodified);
+
+        $gradeitem = new grade_item($data);
+        $gradeitem->insert('restore');
+        $this->set_mapping('grade_item', $oldid, $gradeitem->id, $oldparentid);
+    }
+
+    protected function process_grade_grade($data) {
+        $data = (object)($data);
+
+        unset($data->id);
+        $data->itemid = $this->get_new_parentid('grade_item');
+        $data->userid = $this->get_mappingid('user', $data->userid);
+        $data->usermodified = $this->get_mappingid('user', $data->usermodified);
+        $data->rawscaleid = $this->get_mappingid('scale', $data->rawscaleid);
+        // TODO: Ask, all the rest of locktime/exported... work with time... to be rolled?
+        $data->overridden = $this->apply_date_offset($data->overridden);
+
+        $grade = new grade_grade($data);
+        $grade->insert('restore');
+        // no need to save any grade_grade mapping
+    }
+
+    /**
+     * process activity grade_letters. Note that, while these are possible,
+     * because grade_letters are contextid based, in proctice, only course
+     * context letters can be defined. So we keep here this method knowing
+     * it won't be executed ever. gradebook restore will restore course letters.
+     */
+    protected function process_grade_letter($data) {
+        global $DB;
+
+        $data = (object)$data;
+
+        $data->contextid = $this->task->get_contextid();
+        $newitemid = $DB->insert_record('grade_letters', $data);
+        // no need to save any grade_letter mapping
+    }
+}
+
 
 /**
  * This structure steps restores one instance + positions of one block
