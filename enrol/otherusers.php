@@ -76,7 +76,7 @@ $fields = array(
     'lastseen' => get_string('lastaccess'),
     'role' => get_string('roles', 'role')
 );
-$table->set_fields($fields);
+$table->set_fields($fields, $OUTPUT);
 
 //$users = $manager->get_other_users($table->sort, $table->sortdirection, $table->page, $table->perpage);
 
