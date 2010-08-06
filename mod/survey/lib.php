@@ -539,11 +539,6 @@ function survey_print_multi($question) {
     $numoptions = count($options);
 
     $oneanswer = ($question->type == 1 || $question->type == 2) ? true : false;
-    if ($question->type == 2) {
-        $P = "P";
-    } else {
-        $P = "";
-    }
 
     echo "<tr class=\"smalltext\"><th scope=\"row\">$strresponses</th>";
     echo "<th scope=\"col\" class=\"hresponse\">". get_string('notyetanswered', 'survey'). "</th>";
@@ -565,6 +560,13 @@ function survey_print_multi($question) {
         $rowclass = survey_question_rowclass($qnum);
         if ($q->text) {
             $q->text = get_string($q->text, "survey");
+        }
+
+        $oneanswer = ($q->type == 1 || $q->type == 2) ? true : false;
+        if ($q->type == 2) {
+            $P = "P";
+        } else {
+            $P = "";
         }
 
         echo "<tr class=\"$rowclass rblock\">";
