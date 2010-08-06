@@ -697,6 +697,7 @@ M.core_filepicker.init = function(Y, options) {
             this.active_repo.nosearch = data.nosearch?true:false;
             this.active_repo.norefresh = data.norefresh?true:false;
             this.active_repo.nologin = data.nologin?true:false;
+            this.active_repo.logouttext = data.logouttext?data.logouttext:null;
             this.active_repo.help = data.help?data.help:null;
             this.active_repo.manage = data.manage?data.manage:null;
         },
@@ -1174,7 +1175,8 @@ M.core_filepicker.init = function(Y, options) {
                 toolbar.appendChild(refresh);
             }
             if(!r.nologin) {
-                var html = '<a href="###"><img src="'+M.util.image_url('a/logout')+'" /> '+M.str.repository.logout+'</a>';
+                var label = r.logouttext?r.logouttext:M.str.repository.logout;
+                var html = '<a href="###"><img src="'+M.util.image_url('a/logout')+'" /> '+label+'</a>';
                 var logout = Y.Node.create(html);
                 logout.on('click', function() {
                     this.request({

@@ -332,6 +332,9 @@ class repository_flickr_public extends repository {
             $ret['manage'] = $photos_url;
         }
         $ret['list']  = array();
+        $ret['nosearch'] = true;
+        $ret['norefresh'] = true;
+        $ret['logouttext'] = get_string('backtosearch', 'repository_flickr_public');
         $ret['pages'] = $photos['pages'];
         if (is_int($page) && $page <= $ret['pages']) {
             $ret['page'] = $page;

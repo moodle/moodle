@@ -25,6 +25,7 @@
 
 $string['all'] = 'All';
 $string['apikey'] = 'API key';
+$string['backtosearch'] = 'Back to search screen';
 $string['by'] = 'Attribution License';
 $string['by-nc'] = 'Attribution-NonCommercial License';
 $string['by-nc-nd'] = 'Attribution-NonCommercial-NoDerivs License';
