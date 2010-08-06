@@ -263,7 +263,7 @@ class php4DOMNode
 				return false;
 		}
 	}
-	function add_child($newnode) {return append_child($newnode);}
+	function add_child($newnode) {return $this->append_child($newnode);}
 	function add_namespace($uri,$prefix) {return false;}
 	function append_child($newnode) {return self::_newDOMElement($this->myDOMNode->appendChild($this->_importNode($newnode)),$this->myOwnerDocument);}
 	function append_sibling($newnode) {return self::_newDOMElement($this->myDOMNode->parentNode->appendChild($this->_importNode($newnode)),$this->myOwnerDocument);}
@@ -350,7 +350,7 @@ class php4DOMNode
 			foreach ($this->myDOMNode->childNodes as $n) $NewNode->appendChild($n->cloneNode(true));
 			$xpath=new DOMXPath($this->myDOMNode->ownerDocument);
 			$myDOMNodeList=$xpath->query('namespace::*[name()!="xml"]',$this->myDOMNode); //Add old namespaces
-			foreach ($myDOMNodeList as $n) $NewNode->setAttributeNS('http://www.w3.org/2000/xmlns/',$n->nodeName,$n->nodeValue); 
+			foreach ($myDOMNodeList as $n) $NewNode->setAttributeNS('http://www.w3.org/2000/xmlns/',$n->nodeName,$n->nodeValue);
 			$this->myDOMNode->parentNode->replaceChild($NewNode,$this->myDOMNode);
 			$this->myDOMNode=$NewNode;
 		}
@@ -417,7 +417,7 @@ class php4DOMNodelist
 	public $value;
 	function php4DOMNodelist($aDOMNodelist,$aOwnerDocument)
 	{
-		if (!isset($aDOMNodelist)) return; 
+		if (!isset($aDOMNodelist)) return;
 		elseif (is_object($aDOMNodelist)||is_array($aDOMNodelist))
 		{
 			if ($aDOMNodelist->length>0)
