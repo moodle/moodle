@@ -321,6 +321,17 @@ class assignment_base {
         echo '</div>';
         echo '</tr>';
 
+         if ($this->type == 'uploadsingle') { //@TODO: move to overload view_feedback method in the class or is uploadsingle merging into upload?
+            $responsefiles = $this->print_responsefiles($submission->userid, true);
+            if (!empty($responsefiles)) {
+                echo '<tr>';
+                echo '<td class="left side">&nbsp;</td>';
+                echo '<td class="content">';
+                echo $responsefiles;
+                echo '</tr>';
+            }
+         }
+
         echo '</table>';
     }
 
