@@ -937,7 +937,7 @@ class restore_activity_grades_structure_step extends restore_structure_step {
         // This needs to be fixed in some way (outcomes & activities with multiple items)
         // $data->idnumber     = get_coursemodule_from_instance($data->itemmodule, $data->iteminstance)->idnumber;
         // In any case, verify always for uniqueness
-        $data->idnumber = grade_verify_idnumber($idnumber, $this->get_courseid()) ? $data->idnumber : null;
+        $data->idnumber = grade_verify_idnumber($data->idnumber, $this->get_courseid()) ? $data->idnumber : null;
         $data->scaleid      = $this->get_mappingid('scale', $data->scaleid);
         $data->outcomeid    = $this->get_mappingid('outcome', $data->outcomeid);
         $data->timecreated  = $this->apply_date_offset($data->timecreated);
