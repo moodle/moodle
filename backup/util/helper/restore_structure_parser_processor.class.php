@@ -74,6 +74,31 @@ class restore_structure_parser_processor extends grouped_parser_processor {
         return str_replace($search, $replace, $result);
     }
 
+    /**
+     * Override this method so we'll be able to skip
+     * dispatching some well-known chunks, like the
+     * ones being 100% part of subplugins stuff. Useful
+     * for allowing development without having all the
+     * possible restore subplugins defined
+     */
+    protected function postprocess_chunk($data) {
+
+        // Iterate over all the data tags, if any of them is
+        // not 'subplugin_XXXX' or has value, then it's a valid chunk,
+        // pass it to standard (parent) processing of chunks.
+        foreach ($data['tags'] as $key => $value) {
+            if (trim($value) !== '' || strpos($key, 'subplugin_') !== 0) {
+                parent::postprocess_chunk($data);
+                return;
+            }
+        }
+        // Arrived here, all the tags correspond to sublplugins and are empty,
+        // skip the chunk, and debug_developer notice
+        $this->chunks--; // not counted
+        debugging('Missing support on restore for ' . clean_param($data['path'], PARAM_PATH) .
+                  ' subplugin (' . implode(', ', array_keys($data['tags'])) .')', DEBUG_DEVELOPER);
+    }
+
     protected function dispatch_chunk($data) {
         $this->step->process($data);
     }
