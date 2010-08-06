@@ -68,7 +68,7 @@ class moodle_user_external extends external_api {
                                         'type'  => new external_value(PARAM_ALPHANUMEXT, 'The name of the custom field'),
                                         'value' => new external_value(PARAM_RAW, 'The value of the custom field')
                                     )
-                                ), 'User custom fields', VALUE_OPTIONAL)
+                                ), 'User custom fields (also known as user profil fields)', VALUE_OPTIONAL)
                         )
                     )
                 )
@@ -263,7 +263,7 @@ class moodle_user_external extends external_api {
                                         'type'  => new external_value(PARAM_ALPHANUMEXT, 'The name of the custom field'),
                                         'value' => new external_value(PARAM_RAW, 'The value of the custom field')
                                     )
-                                ), 'User custom fields', VALUE_OPTIONAL),
+                                ), 'User custom fields (also known as user profil fields)', VALUE_OPTIONAL),
                             'preferences' => new external_multiple_structure(
                                 new external_single_structure(
                                     array(
@@ -437,7 +437,7 @@ class moodle_user_external extends external_api {
                                                 'type'  => new external_value(PARAM_ALPHANUMEXT, 'The name of the custom field'),
                                                 'value' => new external_value(PARAM_RAW, 'The value of the custom field')
                                             )
-                                    ), 'User custom fields', VALUE_OPTIONAL)
+                                    ), 'User custom fields (also known as user profil fields)', VALUE_OPTIONAL)
                         )
                 )
         );

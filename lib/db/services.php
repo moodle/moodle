@@ -177,4 +177,24 @@ $functions = array(
         'capabilities'=> 'moodle/role:assign',
     ),
 
+    // === course related functions ===
+
+    'moodle_course_get_courses' => array(
+        'classname'   => 'moodle_course_external',
+        'methodname'  => 'get_courses',
+        'classpath'   => 'course/externallib.php',
+        'description' => 'Return course details',
+        'type'        => 'read',
+        'capabilities'=> 'moodle/course:view,moodle/course:update,moodle/course:viewhiddencourses',
+    ),
+
+    'moodle_course_create_courses' => array(
+        'classname'   => 'moodle_course_external',
+        'methodname'  => 'create_courses',
+        'classpath'   => 'course/externallib.php',
+        'description' => 'Create new courses',
+        'type'        => 'write',
+        'capabilities'=> 'moodle/course:create,moodle/course:visibility',
+    ),
+
 );

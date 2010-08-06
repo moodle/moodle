@@ -23,14 +23,15 @@
  * @package web service
  */
 if (!defined('MOODLE_INTERNAL')) {
-    die('Direct access to this script is forbidden.');    ///  It must be included from a Moodle page
+    ///  It must be included from a Moodle page
+    die('Direct access to this script is forbidden.');
 }
 
 /**
  * How to configure this unit tests:
  * 0- Enable the web service you wish to test in the Moodle administration
  * 1- Create a service with all functions in the Moodle administration
- * 2- Create a token associate this service and to an admin (so you get all capabilities)
+ * 2- Create a token associate this service and to an admin (or a user with all required capabilities)
  * 3- Configure setUp() function:
  *      a- write the token
  *      b- activate the protocols you wish to test
@@ -58,21 +59,24 @@ class webservice_test extends UnitTestCase {
 
     function setUp() {
         //token to test
-        $this->testtoken = '793e26aeddea7f0a696795d14dfccb0f';
+        $this->testtoken = '72d338d58ff881cc293f8cd1d96d7a57';
 
         //protocols to test
         $this->testrest = false; //Does not work till XML => PHP is implemented (MDL-22965)
         $this->testxmlrpc = false;
         $this->testsoap = false;
 
-        ////// DB READ-ONLY tests ////
+        ////// READ-ONLY DB tests ////
         $this->readonlytests = array(
-            'moodle_group_get_groups' => false
+            'moodle_group_get_groups' => false,
+            'moodle_course_get_courses' => false,
+            'moodle_user_get_users_by_id' => false,
         );
 
-        ////// DB WRITE tests ////
+        ////// WRITE DB tests ////
         $this->writetests = array(
-            'moodle_user_create_users' => false
+            'moodle_user_create_users' => false,
+            'moodle_course_create_courses' => false,
         );
 
         //performance testing: number of time the web service are run
@@ -194,87 +198,341 @@ class webservice_test extends UnitTestCase {
         $this->assertEqual(count($groups), count($groupids));
     }
 
-    function moodle_user_create_users($client) {
+    function moodle_user_get_users_by_id($client) {
         global $DB;
-        //do not run the test if users already exists
-        $users = $DB->get_records_list('user', 'username',
-                        array('testusername1', 'testusername2'));
-        if (!empty($users)) {
-            throw new moodle_exception('testuseralreadyexist');
-        } else {
-            //a full user
-            $user1 = new stdClass();
-            $user1->username = 'testusername1';
-            $user1->password = 'testpassword1';
-            $user1->firstname = 'testfirstname1';
-            $user1->lastname = 'testlastname1';
-            $user1->email = 'testemail1@moodle.com';
-            $user1->auth = 'manual';
-            $user1->idnumber = 'testidnumber1';
-            $user1->emailstop = 1;
-            $user1->lang = 'en';
-            $user1->theme = 'standard';
-            $user1->timezone = 99;
-            $user1->mailformat = 0;
-            $user1->description = 'Hello World!';
-            $user1->city = 'testcity1';
-            $user1->country = 'au';
-            $user1->preferences = array(
-                array('type' => 'preference1', 'value' => 'value1'),
-                array('type' => 'preference2', 'value' => 'value2'));
-            $user1->customfields = array(
-                array('type' => 'type', 'value' => 'value'),
-                array('type' => 'type2', 'value' => 'value2'));
-
-            //a minimum user
-            $user2 = new stdClass();
-            $user2->username = 'testusername2';
-            $user2->password = 'testpassword2';
-            $user2->firstname = 'testfirstname2';
-            $user2->lastname = 'testlastname2';
-            $user2->email = 'testemail1@moodle.com';
-
-            $users = array($user1, $user2);
-
-            $function = 'moodle_user_create_users';
-            $params = array('users' => $users);
-            $resultusers = $client->call($function, $params);
-            $this->assertEqual(count($users), count($resultusers));
-
-            //retrieve users from the DB and check values
-            $dbuser1 = $DB->get_record('user', array('username' => 'testusername1'));
-            $this->assertEqual($dbuser1->firstname, $user1->firstname);
-            $this->assertEqual($dbuser1->password,
-                    hash_internal_user_password($user1->password));
-            $this->assertEqual($dbuser1->lastname, $user1->lastname);
-            $this->assertEqual($dbuser1->email, $user1->email);
-            $this->assertEqual($dbuser1->auth, $user1->auth);
-            $this->assertEqual($dbuser1->idnumber, $user1->idnumber);
-            $this->assertEqual($dbuser1->emailstop, $user1->emailstop);
-            $this->assertEqual($dbuser1->lang, $user1->lang);
-            $this->assertEqual($dbuser1->theme, $user1->theme);
-            $this->assertEqual($dbuser1->timezone, $user1->timezone);
-            $this->assertEqual($dbuser1->mailformat, $user1->mailformat);
-            $this->assertEqual($dbuser1->description, $user1->description);
-            $this->assertEqual($dbuser1->city, $user1->city);
-            $this->assertEqual($dbuser1->country, $user1->country);
-            $user1preference1 = get_user_preferences('preference1', null, $dbuser1->id);
-            $this->assertEqual('value1', $user1preference1);
-            $user1preference2 = get_user_preferences('preference2', null, $dbuser1->id);
-            $this->assertEqual('value2', $user1preference2);
-
-            //retrieve users from the DB and check values
-            $dbuser2 = $DB->get_record('user', array('username' => 'testusername2'));
-            $this->assertEqual($dbuser2->firstname, $user2->firstname);
-            $this->assertEqual($dbuser2->password,
-                    hash_internal_user_password($user2->password));
-            $this->assertEqual($dbuser2->lastname, $user2->lastname);
-            $this->assertEqual($dbuser2->email, $user2->email);
-
-            //delete users from DB
-            $DB->delete_records_list('user', 'id',
-                    array($dbuser1->id, $dbuser2->id));
+        $dbusers = $DB->get_records('user');
+        $userids = array();
+        foreach ($dbusers as $dbuser) {
+            $userids[] = $dbuser->id;
         }
+        $function = 'moodle_user_get_users_by_id';
+
+        $params = array('userids' => $userids);
+        $users = $client->call($function, $params);
+
+        $this->assertEqual(count($users), count($userids));
+    }
+
+    function moodle_course_get_courses($client) {
+        global $DB;
+
+        $function = 'moodle_course_get_courses';
+
+        //retrieve all courses from db
+        $dbcourses = $DB->get_records('course');
+        $courseids = array();
+        foreach ($dbcourses as $dbcourse) {
+            $courseids[] = $dbcourse->id;
+        }
+
+        //retrieve all courses by id
+        $params = array('options' => array('ids' => $courseids));
+        $courses = $client->call($function, $params);
+
+        //check it is the same course count
+        $this->assertEqual(count($courses), count($courseids));
+
+        //check all course values are identic
+        foreach ($courses as $course) {
+            $this->assertEqual($course['fullname'],
+                    $dbcourses[$course['id']]->fullname);
+            $this->assertEqual($course['shortname'],
+                    $dbcourses[$course['id']]->shortname);
+            $this->assertEqual($course['categoryid'],
+                    $dbcourses[$course['id']]->category);
+            $this->assertEqual($course['categorysortorder'],
+                    $dbcourses[$course['id']]->sortorder);
+            $this->assertEqual($course['idnumber'],
+                    $dbcourses[$course['id']]->idnumber);
+            $this->assertEqual($course['summary'],
+                    $dbcourses[$course['id']]->summary);
+            $this->assertEqual($course['summaryformat'],
+                    $dbcourses[$course['id']]->summaryformat);
+            $this->assertEqual($course['format'],
+                    $dbcourses[$course['id']]->format);
+            $this->assertEqual($course['showgrades'],
+                    $dbcourses[$course['id']]->showgrades);
+            $this->assertEqual($course['newsitems'],
+                    $dbcourses[$course['id']]->newsitems);
+            $this->assertEqual($course['startdate'],
+                    $dbcourses[$course['id']]->startdate);
+            $this->assertEqual($course['numsections'],
+                    $dbcourses[$course['id']]->numsections);
+            $this->assertEqual($course['maxbytes'],
+                    $dbcourses[$course['id']]->maxbytes);
+            $this->assertEqual($course['visible'],
+                    $dbcourses[$course['id']]->visible);
+            $this->assertEqual($course['hiddensections'],
+                    $dbcourses[$course['id']]->hiddensections);
+            $this->assertEqual($course['groupmode'],
+                    $dbcourses[$course['id']]->groupmode);
+            $this->assertEqual($course['groupmodeforce'],
+                    $dbcourses[$course['id']]->groupmodeforce);
+            $this->assertEqual($course['defaultgroupingid'],
+                    $dbcourses[$course['id']]->defaultgroupingid);
+            $this->assertEqual($course['lang'],
+                    $dbcourses[$course['id']]->lang);
+            $this->assertEqual($course['timecreated'],
+                    $dbcourses[$course['id']]->timecreated);
+            $this->assertEqual($course['timemodified'],
+                    $dbcourses[$course['id']]->timemodified);
+            if (key_exists('enablecompletion', $course)) {
+                $this->assertEqual($course['enablecompletion'],
+                        $dbcourses[$course['id']]->enablecompletion);
+            }
+            if (key_exists('completionstartonenrol', $course)) {
+                $this->assertEqual($course['completionstartonenrol'],
+                        $dbcourses[$course['id']]->completionstartonenrol);
+            }
+            if (key_exists('completionnotify', $course)) {
+                $this->assertEqual($course['completionnotify'],
+                        $dbcourses[$course['id']]->completionnotify);
+            }
+            $this->assertEqual($course['forcetheme'],
+                    $dbcourses[$course['id']]->theme);
+        }
+    }
+
+    function moodle_course_create_courses($client) {
+        global $DB, $CFG;
+
+        ///Test data
+        $courseconfig = get_config('moodlecourse');
+
+        $themeobjects = get_list_of_themes();
+        $theme = key($themeobjects);
+        $categoryid = $DB->get_record('course_categories', array(), '*', IGNORE_MULTIPLE)->id;
+        $categoryid = empty($categoryid)?0:$categoryid;
+
+        $course1 = new stdClass();
+        $course1->fullname = 'Test Data create course 1';
+        $course1->shortname = 'testdatacourse1';
+        $course1->categoryid = $categoryid;
+        $course1->idnumber = '328327982372342343234';
+        $course1->summary = 'This is a summary';
+        $course1->summaryformat = FORMAT_HTML;
+        $course1->format = $courseconfig->format;
+        $course1->showgrades = $courseconfig->showgrades;
+        $course1->showreports = $courseconfig->showreports;
+        $course1->newsitems = $courseconfig->newsitems;
+        $course1->startdate = time();
+        $course1->numsections = $courseconfig->numsections;
+        $course1->maxbytes = $courseconfig->maxbytes;
+        $course1->visible = $courseconfig->visible;
+        $course1->hiddensections = $courseconfig->hiddensections;
+        $course1->groupmode = $courseconfig->groupmode;
+        $course1->groupmodeforce = $courseconfig->groupmodeforce;
+        $course1->defaultgroupingid = 0;
+        if (!empty($courseconfig->lang)) {
+            $course1->lang = $courseconfig->lang;
+        }
+        $course1->enablecompletion = $courseconfig->enablecompletion;
+        $course1->completionstartonenrol = $courseconfig->completionstartonenrol;
+        $course1->completionnotify = 0;
+        $course1->forcetheme = $theme;
+
+        $course2 = new stdClass();
+        $course2->fullname = 'Test Data create course 2';
+        $course2->shortname = 'testdatacourse2';
+        $course2->categoryid = $categoryid;
+
+        $courses = array($course1, $course2);
+
+        //do not run the test if course1 or course2 already exists
+        $existingcourses = $DB->get_records_list('course', 'fullname',
+                        array($course1->fullname, $course2->fullname));
+        if (!empty($existingcourses)) {
+            throw new moodle_exception('testdatacoursesalreadyexist');
+        }
+
+        $function = 'moodle_course_create_courses';
+        $params = array('courses' => $courses);
+        $resultcourses = $client->call($function, $params);
+        $this->assertEqual(count($courses), count($resultcourses));
+
+        //retrieve user1 from the DB and check values
+        $dbcourse1 = $DB->get_record('course', array('fullname' => $course1->fullname));
+        $this->assertEqual($dbcourse1->fullname, $course1->fullname);
+        $this->assertEqual($dbcourse1->shortname, $course1->shortname);
+        $this->assertEqual($dbcourse1->category, $course1->categoryid);
+        $this->assertEqual($dbcourse1->idnumber, $course1->idnumber);
+        $this->assertEqual($dbcourse1->summary, $course1->summary);
+        $this->assertEqual($dbcourse1->summaryformat, $course1->summaryformat);
+        $this->assertEqual($dbcourse1->format, $course1->format);
+        $this->assertEqual($dbcourse1->showgrades, $course1->showgrades);
+        $this->assertEqual($dbcourse1->showreports, $course1->showreports);
+        $this->assertEqual($dbcourse1->newsitems, $course1->newsitems);
+        $this->assertEqual($dbcourse1->startdate, $course1->startdate);
+        $this->assertEqual($dbcourse1->numsections, $course1->numsections);
+        $this->assertEqual($dbcourse1->maxbytes, $course1->maxbytes);
+        $this->assertEqual($dbcourse1->visible, $course1->visible);
+        $this->assertEqual($dbcourse1->hiddensections, $course1->hiddensections);
+        $this->assertEqual($dbcourse1->groupmode, $course1->groupmode);
+        $this->assertEqual($dbcourse1->groupmodeforce, $course1->groupmodeforce);
+        $this->assertEqual($dbcourse1->defaultgroupingid, $course1->defaultgroupingid);
+        if (!empty($courseconfig->lang)) {
+            $this->assertEqual($dbcourse1->lang, $course1->lang);
+        }
+        if (completion_info::is_enabled_for_site()) {
+            $this->assertEqual($dbcourse1->enablecompletion, $course1->enablecompletion);
+            $this->assertEqual($dbcourse1->completionstartonenrol, $course1->completionstartonenrol);
+        }
+        $this->assertEqual($dbcourse1->completionnotify, $course1->completionnotify);
+        if (!empty($CFG->allowcoursethemes)) {
+            $this->assertEqual($dbcourse1->theme, $course1->forcetheme);
+        }
+
+        //retrieve user2 from the DB and check values
+        $dbcourse2 = $DB->get_record('course', array('fullname' => $course2->fullname));
+        $this->assertEqual($dbcourse2->fullname, $course2->fullname);
+        $this->assertEqual($dbcourse2->shortname, $course2->shortname);
+        $this->assertEqual($dbcourse2->category, $course2->categoryid );
+        $this->assertEqual($dbcourse2->summaryformat, FORMAT_MOODLE);
+        $this->assertEqual($dbcourse2->format, $courseconfig->format);
+        $this->assertEqual($dbcourse2->showgrades, $courseconfig->showgrades);
+        $this->assertEqual($dbcourse2->showreports, $courseconfig->showreports);
+        $this->assertEqual($dbcourse2->newsitems, $courseconfig->newsitems);
+        $this->assertEqual($dbcourse2->numsections, $courseconfig->numsections);
+        $this->assertEqual($dbcourse2->maxbytes, $courseconfig->maxbytes);
+        $this->assertEqual($dbcourse2->visible, $courseconfig->visible);
+        $this->assertEqual($dbcourse2->hiddensections, $courseconfig->hiddensections);
+        $this->assertEqual($dbcourse2->groupmode, $courseconfig->groupmode);
+        $this->assertEqual($dbcourse2->groupmodeforce, $courseconfig->groupmodeforce);
+        $this->assertEqual($dbcourse2->defaultgroupingid, 0);
+
+        //delete users from DB
+        $DB->delete_records_list('course', 'id',
+                array($dbcourse1->id, $dbcourse2->id));
+    }
+
+    function moodle_user_create_users($client) {
+        global $DB, $CFG;
+
+        //Test data
+        //a full user: user1
+        $user1 = new stdClass();
+        $user1->username = 'testusername1';
+        $user1->password = 'testpassword1';
+        $user1->firstname = 'testfirstname1';
+        $user1->lastname = 'testlastname1';
+        $user1->email = 'testemail1@moodle.com';
+        $user1->auth = 'manual';
+        $user1->idnumber = 'testidnumber1';
+        $user1->emailstop = 1;
+        $user1->lang = 'en';
+        $user1->theme = 'standard';
+        $user1->timezone = 99;
+        $user1->mailformat = 0;
+        $user1->description = 'Hello World!';
+        $user1->city = 'testcity1';
+        $user1->country = 'au';
+        $preferencename1 = 'preference1';
+        $preferencename2 = 'preference2';
+        $user1->preferences = array(
+            array('type' => $preferencename1, 'value' => 'preferencevalue1'),
+            array('type' => $preferencename2, 'value' => 'preferencevalue2'));
+        $customfieldname1 = 'testdatacustom1';
+        $customfieldname2 = 'testdatacustom2';
+        $user1->customfields = array(
+            array('type' => $customfieldname1, 'value' => 'customvalue'),
+            array('type' => $customfieldname2, 'value' => 'customvalue2'));
+        //a small user: user2
+        $user2 = new stdClass();
+        $user2->username = 'testusername2';
+        $user2->password = 'testpassword2';
+        $user2->firstname = 'testfirstname2';
+        $user2->lastname = 'testlastname2';
+        $user2->email = 'testemail1@moodle.com';
+
+        $users = array($user1, $user2);
+
+        //do not run the test if user1 or user2 already exists
+        $existingusers = $DB->get_records_list('user', 'username',
+                        array($user1->username, $user2->username));
+        if (!empty($existingusers)) {
+            throw new moodle_exception('testdatausersalreadyexist');
+        }
+
+        //do not run the test if data test custom fields already exists
+        $existingcustomfields = $DB->get_records_list('user_info_field', 'shortname',
+                        array($customfieldname1, $customfieldname2));
+        if (!empty($existingcustomfields)) {
+            throw new moodle_exception('testdatacustomfieldsalreadyexist');
+        }
+
+        //create the custom fields
+        $customfield = new stdClass();
+        $customfield->shortname = $customfieldname1;
+        $customfield->name = $customfieldname1;
+        $customfield->datatype = 'text';
+        $DB->insert_record('user_info_field', $customfield);
+        $customfield = new stdClass();
+        $customfield->shortname = $customfieldname2;
+        $customfield->name = $customfieldname2;
+        $customfield->datatype = 'text';
+        $DB->insert_record('user_info_field', $customfield);
+
+        $function = 'moodle_user_create_users';
+        $params = array('users' => $users);
+        $resultusers = $client->call($function, $params);
+        $this->assertEqual(count($users), count($resultusers));
+
+        //retrieve user1 from the DB and check values
+        $dbuser1 = $DB->get_record('user', array('username' => $user1->username));
+        $this->assertEqual($dbuser1->firstname, $user1->firstname);
+        $this->assertEqual($dbuser1->password,
+                hash_internal_user_password($user1->password));
+        $this->assertEqual($dbuser1->lastname, $user1->lastname);
+        $this->assertEqual($dbuser1->email, $user1->email);
+        $this->assertEqual($dbuser1->auth, $user1->auth);
+        $this->assertEqual($dbuser1->idnumber, $user1->idnumber);
+        $this->assertEqual($dbuser1->emailstop, $user1->emailstop);
+        $this->assertEqual($dbuser1->lang, $user1->lang);
+        $this->assertEqual($dbuser1->theme, $user1->theme);
+        $this->assertEqual($dbuser1->timezone, $user1->timezone);
+        $this->assertEqual($dbuser1->mailformat, $user1->mailformat);
+        $this->assertEqual($dbuser1->description, $user1->description);
+        $this->assertEqual($dbuser1->city, $user1->city);
+        $this->assertEqual($dbuser1->country, $user1->country);
+        $user1preference1 = get_user_preferences($user1->preferences[0]['type'],
+                        null, $dbuser1->id);
+        $this->assertEqual($user1->preferences[0]['value'], $user1preference1);
+        $user1preference2 = get_user_preferences($user1->preferences[1]['type'],
+                        null, $dbuser1->id);
+        $this->assertEqual($user1->preferences[1]['value'], $user1preference2);
+        require_once($CFG->dirroot . "/user/profile/lib.php");
+        $customfields = profile_user_record($dbuser1->id);
+
+        $customfields = (array) $customfields;
+        $customfieldname1 = $user1->customfields[0]['type'];
+        $customfieldname2 = $user1->customfields[1]['type'];
+        $this->assertEqual($customfields[$customfieldname1],
+                $user1->customfields[0]['value']);
+        $this->assertEqual($customfields[$customfieldname2],
+                $user1->customfields[1]['value']);
+
+
+        //retrieve user2 from the DB and check values
+        $dbuser2 = $DB->get_record('user', array('username' => $user2->username));
+        $this->assertEqual($dbuser2->firstname, $user2->firstname);
+        $this->assertEqual($dbuser2->password,
+                hash_internal_user_password($user2->password));
+        $this->assertEqual($dbuser2->lastname, $user2->lastname);
+        $this->assertEqual($dbuser2->email, $user2->email);
+
+        //unset preferences
+        $DB->delete_records('user_preferences', array('userid' => $dbuser1->id));
+
+        //clear custom fields data
+        $DB->delete_records('user_info_data', array('userid' => $dbuser1->id));
+
+        //delete custom fields
+        $DB->delete_records_list('user_info_field', 'shortname',
+                array($customfieldname1, $customfieldname2));
+
+        //delete users from DB
+        $DB->delete_records_list('user', 'id',
+                array($dbuser1->id, $dbuser2->id));
     }
 
 }
