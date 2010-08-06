@@ -79,6 +79,8 @@ class backup_assignment_activity_structure_step extends backup_activity_structur
         // Define file annotations
         $assignment->annotate_files('mod_assignment', 'intro', null); // This file area hasn't itemid
         $submission->annotate_files('mod_assignment', 'submission', 'id');
+        $submission->annotate_files('mod_assignment', 'online_submission', 'id'); // Until MDL-23683 gets decided/implemented
+        $submission->annotate_files('mod_assignment', 'response', 'id');
 
         // Return the root element (assignment), wrapped into standard activity structure
         return $this->prepare_activity_structure($assignment);
