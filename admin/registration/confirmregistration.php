@@ -44,6 +44,12 @@ $hubname = optional_param('hubname', '', PARAM_TEXT);
 $token = optional_param('token', '', PARAM_ALPHANUM);
 $error = optional_param('error', '', PARAM_ALPHANUM);
 
+$PAGE->navbar->ignore_active(true);
+$PAGE->navbar->add(get_string('administrationsite'));
+$PAGE->navbar->add(get_string('registration'),
+        new moodle_url('/admin/registration/index.php'));
+$PAGE->navbar->add(get_string('registrationconfirmed', 'hub'));
+
 admin_externalpage_setup('siteregistrationconfirmed');
 
 //check that we are waiting a confirmation from this hub, and check that the token is correct

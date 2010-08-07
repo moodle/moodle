@@ -1,4 +1,5 @@
 <?php
+
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -34,9 +35,6 @@ define('HUB_SITENAMEPUBLISHED', 'named');
  */
 define('HUB_SITELINKPUBLISHED', 'linked');
 
-
-
-
 /**
  *
  * Site registration library
@@ -48,7 +46,44 @@ define('HUB_SITELINKPUBLISHED', 'linked');
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class registration_manager {
-    
+
+    /**
+     * Automatically update the registration on all hubs
+     */
+    public function cron() {
+        global $CFG;
+        if (extension_loaded('xmlrpc')) {
+            //check if the last registration cron update was less than a week ago
+            $lastcron = get_config('registration', 'crontime');
+            if ($lastcron === false or $lastcron < strtotime("-7 day")) { //set to a week, see MDL-23704
+                $function = 'hub_update_site_info';
+                require_once($CFG->dirroot . "/webservice/xmlrpc/lib.php");
+
+                //update all hub where the site is registered on
+                $hubs = $this->get_registered_on_hubs();
+                foreach ($hubs as $hub) {
+                    //update the registration
+                    $siteinfo = $this->get_site_info($hub->huburl);
+                    $params = array($siteinfo);
+                    $serverurl = $hub->huburl . "/local/hub/webservice/webservices.php";
+                    $xmlrpcclient = new webservice_xmlrpc_client($serverurl, $hub->token);
+                    try {
+                        $result = $xmlrpcclient->call($function, $params);
+                        mtrace(get_string('siteupdatedcron', 'hub', $hub->hubname));
+                    } catch (Exception $e) {
+                        $errorparam = new stdClass();
+                        $errorparam->errormessage = $e->getMessage();
+                        $errorparam->hubname = $hub->hubname;
+                        mtrace(get_string('errorcron', 'hub', $errorparam));
+                    }
+                }
+                set_config('crontime', time(), 'registration');
+            }
+        } else {
+            mtrace(get_string('errorcronnoxmlrpc', 'hub'));
+        }
+    }
+
     /**
      * When the site register on a hub, he must call this function
      * @param object $hub where the site is registered on
@@ -64,7 +99,7 @@ class registration_manager {
      * When a site unregister from a hub, he must call this function
      * @param string $huburl the huburl to delete
      */
-     public function delete_registeredhub($huburl) {
+    public function delete_registeredhub($huburl) {
         global $DB;
         $DB->delete_records('registration_hubs', array('huburl' => $huburl));
     }
@@ -87,12 +122,13 @@ class registration_manager {
             $params['token'] = $token;
         }
         $params['confirmed'] = 1;
-        $token = $DB->get_record('registration_hubs',$params);
+        $token = $DB->get_record('registration_hubs', $params);
         return $token;
     }
 
     /**
-     * Get the hub which has not confirmed that the site is registered on, but for which a request has been sent
+     * Get the hub which has not confirmed that the site is registered on,
+     * but for which a request has been sent
      * @param string $huburl
      * @return object the  hub
      */
@@ -102,7 +138,7 @@ class registration_manager {
         $params = array();
         $params['huburl'] = $huburl;
         $params['confirmed'] = 0;
-        $token = $DB->get_record('registration_hubs',$params);
+        $token = $DB->get_record('registration_hubs', $params);
         return $token;
     }
 
@@ -134,65 +170,65 @@ class registration_manager {
 
         $siteinfo = array();
         $cleanhuburl = clean_param($huburl, PARAM_ALPHANUMEXT);
-        $siteinfo['name'] = get_config('hub', 'site_name_'.$cleanhuburl);
-        $siteinfo['description'] = get_config('hub', 'site_description_'.$cleanhuburl);
-        $siteinfo['contactname'] = get_config('hub', 'site_contactname_'.$cleanhuburl);
-        $siteinfo['contactemail'] = get_config('hub', 'site_contactemail_'.$cleanhuburl);
-        $siteinfo['contactphone'] = get_config('hub', 'site_contactphone_'.$cleanhuburl);
-        $siteinfo['imageurl'] = get_config('hub', 'site_imageurl_'.$cleanhuburl);
-        $siteinfo['privacy'] = get_config('hub', 'site_privacy_'.$cleanhuburl);
-        $siteinfo['street'] = get_config('hub', 'site_address_'.$cleanhuburl);
-        $siteinfo['regioncode'] = get_config('hub', 'site_region_'.$cleanhuburl);
-        $siteinfo['countrycode'] = get_config('hub', 'site_country_'.$cleanhuburl);
-        $siteinfo['geolocation'] = get_config('hub', 'site_geolocation_'.$cleanhuburl);
-        $siteinfo['contactable'] = get_config('hub', 'site_contactable_'.$cleanhuburl);
-        $siteinfo['emailalert'] = get_config('hub', 'site_emailalert_'.$cleanhuburl);
-        if (get_config('hub', 'site_coursesnumber_'.$cleanhuburl) == -1) {
+        $siteinfo['name'] = get_config('hub', 'site_name_' . $cleanhuburl);
+        $siteinfo['description'] = get_config('hub', 'site_description_' . $cleanhuburl);
+        $siteinfo['contactname'] = get_config('hub', 'site_contactname_' . $cleanhuburl);
+        $siteinfo['contactemail'] = get_config('hub', 'site_contactemail_' . $cleanhuburl);
+        $siteinfo['contactphone'] = get_config('hub', 'site_contactphone_' . $cleanhuburl);
+        $siteinfo['imageurl'] = get_config('hub', 'site_imageurl_' . $cleanhuburl);
+        $siteinfo['privacy'] = get_config('hub', 'site_privacy_' . $cleanhuburl);
+        $siteinfo['street'] = get_config('hub', 'site_address_' . $cleanhuburl);
+        $siteinfo['regioncode'] = get_config('hub', 'site_region_' . $cleanhuburl);
+        $siteinfo['countrycode'] = get_config('hub', 'site_country_' . $cleanhuburl);
+        $siteinfo['geolocation'] = get_config('hub', 'site_geolocation_' . $cleanhuburl);
+        $siteinfo['contactable'] = get_config('hub', 'site_contactable_' . $cleanhuburl);
+        $siteinfo['emailalert'] = get_config('hub', 'site_emailalert_' . $cleanhuburl);
+        if (get_config('hub', 'site_coursesnumber_' . $cleanhuburl) == -1) {
             $coursecount = -1;
         } else {
-            $coursecount = $DB->count_records('course')-1;
+            $coursecount = $DB->count_records('course') - 1;
         }
         $siteinfo['courses'] = $coursecount;
-        if (get_config('hub', 'site_usersnumber_'.$cleanhuburl) == -1) {
+        if (get_config('hub', 'site_usersnumber_' . $cleanhuburl) == -1) {
             $usercount = -1;
         } else {
-            $usercount = $DB->count_records('user', array('deleted'=>0));
+            $usercount = $DB->count_records('user', array('deleted' => 0));
         }
         $siteinfo['users'] = $usercount;
 
-        if (get_config('hub', 'site_roleassignmentsnumber_'.$cleanhuburl) == -1) {
+        if (get_config('hub', 'site_roleassignmentsnumber_' . $cleanhuburl) == -1) {
             $roleassigncount = -1;
         } else {
             $roleassigncount = $DB->count_records('role_assignments');
         }
         $siteinfo['enrolments'] = $roleassigncount;
-        if (get_config('hub', 'site_postsnumber_'.$cleanhuburl) == -1) {
+        if (get_config('hub', 'site_postsnumber_' . $cleanhuburl) == -1) {
             $postcount = -1;
         } else {
             $postcount = $DB->count_records('forum_posts');
         }
         $siteinfo['posts'] = $postcount;
-        if (get_config('hub', 'site_questionsnumber_'.$cleanhuburl) == -1) {
+        if (get_config('hub', 'site_questionsnumber_' . $cleanhuburl) == -1) {
             $questioncount = -1;
         } else {
             $questioncount = $DB->count_records('question');
         }
         $siteinfo['questions'] = $questioncount;
-        if (get_config('hub', 'site_resourcesnumber_'.$cleanhuburl) == -1) {
+        if (get_config('hub', 'site_resourcesnumber_' . $cleanhuburl) == -1) {
             $resourcecount = -1;
         } else {
             $resourcecount = $DB->count_records('resource');
         }
         $siteinfo['resources'] = $resourcecount;
         //TODO
-        require_once($CFG->dirroot."/course/lib.php");
-        if (get_config('hub', 'site_participantnumberaverage_'.$cleanhuburl) == -1) {
+        require_once($CFG->dirroot . "/course/lib.php");
+        if (get_config('hub', 'site_participantnumberaverage_' . $cleanhuburl) == -1) {
             $participantnumberaverage = -1;
         } else {
             $participantnumberaverage = average_number_of_participants();
         }
         $siteinfo['participantnumberaverage'] = $participantnumberaverage;
-        if (get_config('hub', 'site_modulenumberaverage_'.$cleanhuburl) == -1) {
+        if (get_config('hub', 'site_modulenumberaverage_' . $cleanhuburl) == -1) {
             $modulenumberaverage = -1;
         } else {
             $modulenumberaverage = average_number_of_courses_modules();
@@ -205,7 +241,6 @@ class registration_manager {
 
         return $siteinfo;
     }
-
 
     /**
      * Retrieve the site privacy string matching the define value
@@ -229,6 +264,6 @@ class registration_manager {
         }
         return $privacystring;
     }
-}
 
+}
 ?>

@@ -491,17 +491,24 @@
         $DB->delete_records_select('blog_association', 'contextid NOT IN (SELECT id FROM {context})');
     }
 
+    //Run registration updated cron
+    mtrace(get_string('siteupdatesstart', 'hub'));
+    require_once($CFG->dirroot . '/admin/registration/lib.php');
+    $registrationmanager = new registration_manager();
+    $registrationmanager->cron();
+    mtrace(get_string('siteupdatesend', 'hub'));
+
     // cleanup file trash
     $fs = get_file_storage();
     $fs->cron();
-
+    
     //cleanup old session linked tokens
     //deletes the session linked tokens that are over a day old.
     mtrace("Deleting session linked tokens more than one day old...", '');
-    $DB->delete_records_select('external_tokens', 'lastaccess < :onedayago AND tokentype = :tokentype', 
+    $DB->delete_records_select('external_tokens', 'lastaccess < :onedayago AND tokentype = :tokentype',
                     array('onedayago' => time() - DAYSECS, 'tokentype' => EXTERNAL_TOKEN_EMBEDDED));
     mtrace('done.');
-    
+
     // run any customized cronjobs, if any
     if ($locals = get_plugin_list('local')) {
         mtrace('Processing customized cron scripts ...', '');
