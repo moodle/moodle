@@ -125,7 +125,7 @@ function ldap_isgroupmember($ldapconnection, $userid, $group_dns, $member_attrib
         // Check cheaply if the user's DN sits in a subtree of the
         // "group" DN provided. Granted, this isn't a proper LDAP
         // group, but it's a popular usage.
-        if (stripos(strrev($userid), strrev($group)) === 0) {
+        if (stripos(strrev(strtolower($userid)), strrev(strtolower($group))) === 0) {
             $result = true;
             break;
         }

@@ -866,14 +866,15 @@ class auth_plugin_ldap extends auth_plugin_base {
                     if (!empty($this->config->forcechangepassword)) {
                         set_user_preference('auth_forcepasswordchange', 1, $id);
                     }
+
+                    // Add course creators if needed
+                    if ($creatorrole !== false and $this->iscreator($user->username)) {
+                        role_assign($creatorrole->id, $id, $sitecontext->id, $this->roleauth);
+                    }
                 } else {
                     echo "\t"; print_string('auth_dbinsertusererror', 'auth_db', $user->username); echo "\n";
                 }
 
-                // Add course creators if needed
-                if ($creatorrole !== false and $this->iscreator($user->username)) {
-                    role_assign($creatorrole->id, $user->id, $sitecontext->id, $this->roleauth);
-                }
             }
             $transaction->allow_commit();
             unset($add_users); // free mem
