@@ -853,14 +853,15 @@ class auth_plugin_ldap extends auth_plugin_base {
                     if (!empty($this->config->forcechangepassword)) {
                         set_user_preference('auth_forcepasswordchange', 1, $userobj->id);
                     }
+
+                    // add course creators if needed
+                    if ($creatorrole !== false and $this->iscreator(stripslashes($user->username))) {
+                        role_assign($creatorrole->id, $id, 0, $sitecontext->id, 0, 0, 0, 'ldap');
+                    }
                 } else {
                     echo "\t"; print_string('auth_dbinsertusererror', 'auth', $user->username); echo "\n";
                 }
 
-                // add course creators if needed
-                if ($creatorrole !== false and $this->iscreator(stripslashes($user->username))) {
-                    role_assign($creatorrole->id, $user->id, 0, $sitecontext->id, 0, 0, 0, 'ldap');
-                }
             }
             commit_sql();
             unset($add_users); // free mem
@@ -1534,7 +1535,7 @@ class auth_plugin_ldap extends auth_plugin_base {
             // check cheaply if the user's DN sits in a subtree
             // of the "group" DN provided. Granted, this isn't
             // a proper LDAP group, but it's a popular usage.
-            if (strpos(strrev($memberuser), strrev($group))===0) {
+            if (strpos(strrev(strtolower($memberuser)), strrev(strtolower($group)))===0) {
                 $result = true;
                 break;
             }
