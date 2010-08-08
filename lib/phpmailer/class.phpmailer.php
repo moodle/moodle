@@ -1690,9 +1690,10 @@ class PHPMailer {
   * @author Marcus Bointon
   */
   public function EncodeQP($string, $line_max = 76, $space_conv = false) {
-    if (function_exists('quoted_printable_encode')) { //Use native function if it's available (>= PHP5.3)
-      return quoted_printable_encode($string);
-    }
+    //MDL-23240 php's implementation causes problems for some users
+    //if (function_exists('quoted_printable_encode')) { //Use native function if it's available (>= PHP5.3)
+    //  return quoted_printable_encode($string);
+    //}
     $filters = stream_get_filters();
     if (!in_array('convert.*', $filters)) { //Got convert stream filter?
       return $this->EncodeQPphp($string, $line_max, $space_conv); //Fall back to old implementation
