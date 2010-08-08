@@ -633,8 +633,8 @@ function mnet_profile_field_options() {
         'picture',
     );
 
-    // get a random user field from the database to pull the fields off
-    $randomuser = $DB->get_record('user', array('id' => 1));
+    // get a random user record from the database to pull the fields off
+    $randomuser = $DB->get_record('user', array(), '*', IGNORE_MULTIPLE);
     foreach ($randomuser as $key => $discard) {
         if (in_array($key, $excludes) || in_array($key, $forced)) {
             continue;
