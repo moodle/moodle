@@ -5794,6 +5794,10 @@ class core_string_manager implements string_manager {
             include("$location/lang/en/$file.php");
             $originalkeys = array_keys($string);
             $originalkeys = array_flip($originalkeys);
+            // and then corresponding local english if present
+            if (file_exists("$this->localroot/en_local/$file.php")) {
+                include("$this->localroot/en_local/$file.php");
+            }
 
             // now loop through all langs in correct order
             $deps = $this->get_language_dependencies($lang);
