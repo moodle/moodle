@@ -72,4 +72,20 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configtext('enrol_self/enrolperiod',
         get_string('enrolperiod', 'enrol_self'), get_string('enrolperiod_desc', 'enrol_self'), 0, PARAM_INT));
 
+    $options = array(0 => get_string('never'),
+                     1800 * 3600 * 24 => get_string('numdays', '', 1800),
+                     1000 * 3600 * 24 => get_string('numdays', '', 1000),
+                     365 * 3600 * 24 => get_string('numdays', '', 365),
+                     180 * 3600 * 24 => get_string('numdays', '', 180),
+                     150 * 3600 * 24 => get_string('numdays', '', 150),
+                     120 * 3600 * 24 => get_string('numdays', '', 120),
+                     90 * 3600 * 24 => get_string('numdays', '', 90),
+                     60 * 3600 * 24 => get_string('numdays', '', 60),
+                     30 * 3600 * 24 => get_string('numdays', '', 30),
+                     21 * 3600 * 24 => get_string('numdays', '', 21),
+                     14 * 3600 * 24 => get_string('numdays', '', 14),
+                     7 * 3600 * 24 => get_string('numdays', '', 7));
+    $settings->add(new admin_setting_configselect('enrol_self/longtimenosee',
+        get_string('longtimenosee', 'enrol_self'), get_string('longtimenosee_help', 'enrol_self'), 0, $options));
+
 }

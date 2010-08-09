@@ -26,10 +26,19 @@
 defined('MOODLE_INTERNAL') || die();
 
 function xmldb_enrol_self_install() {
-    global $CFG;
+    global $CFG, $DB;
 
+    // migrate welcome message
     if (isset($CFG->sendcoursewelcomemessage)) {
         set_config('sendcoursewelcomemessage', $CFG->sendcoursewelcomemessage, 'enrol_self');
         unset_config('sendcoursewelcomemessage');
+    }
+
+    // migrate long-time-no-see feature settings
+    if (isset($CFG->longtimenosee)) {
+        $nosee = $CFG->longtimenosee * 3600 * 24;
+        set_config('longtimenosee', $nosee, 'enrol_self');
+        $DB->set_field('enrol', 'customint2', $nosee, array('enrol'=>'self'));
+        unset_config('longtimenosee');
     }
 }

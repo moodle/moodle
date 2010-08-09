@@ -512,10 +512,6 @@
         echo '<input type="hidden" name="returnto" value="'.s(me()).'" />';
     }
 
-    if ($CFG->longtimenosee > 0 && $CFG->longtimenosee < 1000 && $totalcount > 0) {
-        echo '<p id="longtimenosee">('.get_string('unusedaccounts', '', $CFG->longtimenosee).')</p>';
-    }
-
     if ($mode === MODE_USERDETAILS) {    // Print simple listing
         if ($totalcount < 1) {
             echo $OUTPUT->heading(get_string('nothingtodisplay'));

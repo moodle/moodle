@@ -75,6 +75,23 @@ class enrol_self_edit_form extends moodleform {
         $mform->addElement('date_selector', 'enrolenddate', get_string('enrolenddate', 'enrol_self'), array('optional' => true));
         $mform->setDefault('enrolenddate', 0);
 
+        $options = array(0 => get_string('never'),
+                 1800 * 3600 * 24 => get_string('numdays', '', 1800),
+                 1000 * 3600 * 24 => get_string('numdays', '', 1000),
+                 365 * 3600 * 24 => get_string('numdays', '', 365),
+                 180 * 3600 * 24 => get_string('numdays', '', 180),
+                 150 * 3600 * 24 => get_string('numdays', '', 150),
+                 120 * 3600 * 24 => get_string('numdays', '', 120),
+                 90 * 3600 * 24 => get_string('numdays', '', 90),
+                 60 * 3600 * 24 => get_string('numdays', '', 60),
+                 30 * 3600 * 24 => get_string('numdays', '', 30),
+                 21 * 3600 * 24 => get_string('numdays', '', 21),
+                 14 * 3600 * 24 => get_string('numdays', '', 14),
+                 7 * 3600 * 24 => get_string('numdays', '', 7));
+        $mform->addElement('select', 'customint2', get_string('longtimenosee', 'enrol_self'), $options);
+        $mform->setDefault('customint2', $plugin->get_config('longtimenosee'));
+        $mform->addHelpButton('customint2', 'longtimenosee', 'enrol_self');
+
         $mform->addElement('hidden', 'id');
         $mform->addElement('hidden', 'courseid');
 

@@ -37,6 +37,8 @@ $string['groupkey_desc'] = 'Use group enrolment keys by default.';
 $string['groupkey_help'] = 'In addition to restricting access to the course to only those who know the key, use of a group enrolment key means users are automatically added to the group when they enrol in the course.
 
 To use a group enrolment key, an enrolment key must be specified in the course settings as well as the group enrolment key in the group settings.';
+$string['longtimenosee'] = 'Unenrol inactive after';
+$string['longtimenosee_help'] = 'If users haven\'t accessed a course for a long time, then they are automatically unenrolled. This parameter specifies that time limit.';
 $string['password'] = 'Enrolment key';
 $string['password_help'] = 'An enrolment key enables access to the course to be restricted to only those who know the key.
 

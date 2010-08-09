@@ -168,9 +168,5 @@ class enrol_manual_plugin extends enrol_plugin {
 
         return parent::add_instance($course, $fields);
     }
-
-    public function cron() {
-        // TODO: deal with $CFG->longtimenosee
-    }
 }
 

@@ -195,13 +195,11 @@ form.popupform label {margin-right: 0.5em;}
 #userselector_options {font-size: 0.75em;}
 .userinfobox {border-color: #DDDDDD;}
 .userinfobox .links {font-size: 0.7em;}
-#page-user-index #longtimenosee {font-size: 0.8em;}
 .iplookup #header h1.headermain {font-size:1em;}
 .iplookup #note {font-size:0.8em;font-style: italic;}
 .groupinfobox {border-color: #DDDDDD;width: 60%;margin-left: 20%;margin-right: 20%;}
 .userinfobox {width:80%;margin:10px auto;}
 #page-user-index h2 {text-align: center;}
-#page-user-index #longtimenosee,
 #page-user-index #showall {text-align: center;}
 #page-user-profile .remoteuserinfo, #page-user-view .remoteuserinfo{background-color:#D2EBFF;text-align:center;padding:3px;}
 #page-user-profile .messagebox {text-align:center;margin-left:auto;margin-right:auto;padding:5px;}

@@ -212,6 +212,7 @@ class enrol_self_plugin extends enrol_plugin {
         global $DB;
 
         $fields = array('customint1'  => $this->get_config('groupkey'),
+                        'customint2'  => $this->get_config('longtimenosee'),
                         'enrolperiod' => $this->get_config('enrolperiod', 0),
                         'status'      => $this->get_config('status'),
                         'roleid'      => $this->get_config('roleid', 0));
@@ -260,6 +261,54 @@ class enrol_self_plugin extends enrol_plugin {
         }
 
         email_to_user($user, $contact, $subject, $message);
+    }
+
+    /**
+     * Enrol self cron support
+     * @return void
+     */
+    public function cron() {
+        global $DB;
+
+        if (!enrol_is_enabled('self')) {
+            return;
+        }
+
+        $plugin = enrol_get_plugin('self');
+
+        $now = time();
+
+        // first deal with users that did not log in for a really long time
+        $sql = "SELECT e.*, ue.userid
+                  FROM {user_enrolments} ue
+                  JOIN {enrol} e ON (e.id = ue.enrolid AND e.enrol = 'self' AND e.customint2 > 0)
+                  JOIN {user} u ON u.id = ue.userid
+                 WHERE :now - u.lastaccess > e.customint2";
+        $rs = $DB->get_recordset_sql($sql, array('now'=>$now));
+        foreach ($rs as $instance) {
+            $userid = $instance->userid;
+            unset($instance->userid);
+            $plugin->unenrol_user($instance, $userid);
+            mtrace("unenrolling user $userid from course $instance->courseid as they have did not log in for $instance->customint2 days");
+        }
+        $rs->close();
+
+        // now unenrol from course user did not visit for a long time
+        $sql = "SELECT e.*, ue.userid
+                  FROM {user_enrolments} ue
+                  JOIN {enrol} e ON (e.id = ue.enrolid AND e.enrol = 'self' AND e.customint2 > 0)
+                  JOIN {user_lastaccess} ul ON (ul.userid = ue.userid AND ul.courseid = e.courseid)
+                 WHERE :now - ul.timeaccess > e.customint2";
+        $rs = $DB->get_recordset_sql($sql, array('now'=>$now));
+        foreach ($rs as $instance) {
+            $userid = $instance->userid;
+            unset($instance->userid);
+            $plugin->unenrol_user($instance, $userid);
+            mtrace("unenrolling user $userid from course $instance->courseid as they have did not access course for $instance->customint2 days");
+        }
+        $rs->close();
+
+        flush();
     }
 }
 

@@ -69,6 +69,7 @@ if ($mform->is_cancelled()) {
         $instance->name           = $data->name;
         $instance->password       = $data->password;
         $instance->customint1     = $data->customint1;
+        $instance->customint2     = $data->customint2;
         $instance->roleid         = $data->roleid;
         $instance->enrolperiod    = $data->enrolperiod;
         $instance->enrolstartdate = $data->enrolstartdate;
@@ -77,8 +78,8 @@ if ($mform->is_cancelled()) {
         $DB->update_record('enrol', $instance);
 
     } else {
-        $fields = array('status'=>$data->status, 'name'=>$data->name, 'password'=>$data->password, 'customint1'=>$data->customint1, 'roleid'=>$data->roleid,
-                        'enrolperiod'=>$data->enrolperiod, 'enrolstartdate'=>$data->enrolstartdate, 'enrolenddate'=>$data->enrolenddate);
+        $fields = array('status'=>$data->status, 'name'=>$data->name, 'password'=>$data->password, 'customint1'=>$data->customint1, 'customint2'=>$data->customint2,
+                        'roleid'=>$data->roleid, 'enrolperiod'=>$data->enrolperiod, 'enrolstartdate'=>$data->enrolstartdate, 'enrolenddate'=>$data->enrolenddate);
         $plugin->add_instance($course, $fields);
     }
 

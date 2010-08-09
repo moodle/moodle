@@ -154,18 +154,6 @@ $temp->add(new admin_setting_confightmleditor('maintenance_message', get_string(
 $ADMIN->add('server', $temp);
 
 $temp = new admin_settingpage('cleanup', get_string('cleanup', 'admin'));
-$temp->add(new admin_setting_configselect('longtimenosee', get_string('longtimenosee', 'admin'), get_string('configlongtimenosee', 'admin'), 120, array(0 => get_string('never'),
-                                                                                                                                                        1000 => get_string('numdays', '', 1000),
-                                                                                                                                                        365 => get_string('numdays', '', 365),
-                                                                                                                                                        180 => get_string('numdays', '', 180),
-                                                                                                                                                        150 => get_string('numdays', '', 150),
-                                                                                                                                                        120 => get_string('numdays', '', 120),
-                                                                                                                                                        90 => get_string('numdays', '', 90),
-                                                                                                                                                        60 => get_string('numdays', '', 60),
-                                                                                                                                                        30 => get_string('numdays', '', 30),
-                                                                                                                                                        21 => get_string('numdays', '', 21),
-                                                                                                                                                        14 => get_string('numdays', '', 14),
-                                                                                                                                                        7 => get_string('numdays', '', 7) )));
 $temp->add(new admin_setting_configselect('deleteunconfirmed', get_string('deleteunconfirmed', 'admin'), get_string('configdeleteunconfirmed', 'admin'), 168, array(0 => get_string('never'),
                                                                                                                                                                     168 => get_string('numdays', '', 7),
                                                                                                                                                                     144 => get_string('numdays', '', 6),
