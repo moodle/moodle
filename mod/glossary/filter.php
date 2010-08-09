@@ -130,15 +130,15 @@ function glossary_filter($courseid, $text) {
                                   '&amp;mode=cat&amp;hook='.$concept->id.'">';
             } else {
                 if (!empty($concept->originalconcept)) {  // We are dealing with an alias (so show original)
-                    $encodedconcept = urlencode($concept->originalconcept);
+                    //$encodedconcept = urlencode($concept->originalconcept);
                     $title = str_replace('"', "'", strip_tags($glossaryname.': '.$concept->originalconcept));
                 } else {
-                    $encodedconcept = urlencode($concept->concept);
+                    //$encodedconcept = urlencode($concept->concept);
                     $title = str_replace('"', "'", strip_tags($glossaryname.': '.$concept->concept));
                 }
                 //hardcoding dictionary format in the URL rather than defaulting to the current glossary format which may not work in a popup.
                 //for example "entry list" means the popup would only contain a link that opens another popup.
-                $link = new moodle_url('/mod/glossary/showentry.php', array('courseid'=>$courseid, 'concept'=>$encodedconcept, 'displayformat'=>'dictionary'));
+                $link = new moodle_url('/mod/glossary/showentry.php', array('courseid'=>$courseid, 'eid'=>$concept->id, 'displayformat'=>'dictionary'));
                 $href_tag_begin = html_writer::start_tag('a', array(
                     'href'=>$link,
                     'title'=>$title,
