@@ -157,7 +157,7 @@ function setup_enrolments(&$user) {
                     if ($role_assignment->enrol == 'database') {
                         //error_log('[ENROL_DB] Removing user from context '.$role_assignment->contextid);
                         role_unassign($role_assignment->roleid, $user->id, '', $role_assignment->contextid);
-                    } 
+                    }
                 }
             }
         } else {
@@ -231,7 +231,7 @@ function sync_enrolments($role = null) {
         $course = false;
         $course = get_record( 'course',
                               $CFG->enrol_localcoursefield,
-                              $extcourse );
+                              $enroldb->quote($extcourse) );
 
         if (!is_object($course)) {
             if (empty($CFG->enrol_db_autocreate)) { // autocreation not allowed
