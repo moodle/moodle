@@ -908,6 +908,14 @@ function data_delete_instance($id) {    // takes the dataid
     require_once($CFG->dirroot.'/comment/lib.php');
     comment::delete_comments(array('contextid'=>$context->id));
 
+    // Delete ratings
+    //delete ratings
+    require_once($CFG->dirroot.'/rating/lib.php');
+    $delopt = new stdclass();
+    $delopt->contextid = $context->id;
+    $rm = new rating_manager();
+    $rm->delete_ratings($delopt);
+
     // get all the records in this data
     $sql = "SELECT r.id
               FROM {data_records} r
