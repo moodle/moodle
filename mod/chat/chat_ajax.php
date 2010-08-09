@@ -132,6 +132,9 @@ case 'update':
             if ($html = chat_format_message_theme($message, $chatuser->course, $USER, $theme)) {
                 $message->mymessage = ($USER->id == $message->userid);
                 $message->message  = $html->html;
+                if (!empty($html->type)) {
+                    $message->type = $html->type;
+                }
             } else {
                 unset($messages[$n]);
             }
