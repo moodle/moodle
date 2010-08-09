@@ -74,6 +74,7 @@ if (isset($USER->modattempts[$lesson->id])) {
     if ($USER->modattempts[$lesson->id] == $page->id) {  // remember, this session variable holds the pageid of the last page that the user saw
         $result->newpageid = LESSON_EOL;
     } else {
+        $nretakes = $DB->count_records("lesson_grades", array("lessonid"=>$lesson->id, "userid"=>$USER->id));
         $nretakes--; // make sure we are looking at the right try.
         $attempts = $DB->get_records("lesson_attempts", array("lessonid"=>$lesson->id, "userid"=>$USER->id, "retry"=>$nretakes), "timeseen", "id, pageid");
         $found = false;
