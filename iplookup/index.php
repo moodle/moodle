@@ -18,7 +18,7 @@
 /**
  * Displays IP address on map
  *
- * @package    moodlecore
+ * @package    core
  * @subpackage iplookup
  * @copyright  2008 Petr Skoda (http://skodak.org)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -63,6 +63,8 @@ if ($user) {
     }
 }
 
+$textlib = textlib_get_instance();
+
 if (!empty($CFG->geoipfile) and file_exists($CFG->geoipfile)) {
     $geoip = Net_GeoIP::getInstance($CFG->geoipfile, Net_GeoIP::STANDARD);
     $location = $geoip->lookupLocation($ip);
@@ -72,7 +74,7 @@ if (!empty($CFG->geoipfile) and file_exists($CFG->geoipfile)) {
         print_error('iplookupfailed', 'error', '', $ip);
     }
     if (!empty($location->city)) {
-        $info[] = $location->city;
+        $info[] = $textlib->convert($location->city, 'iso-8859-1', 'utf-8');
     }
 
     if (!empty($location->country_code)) {
