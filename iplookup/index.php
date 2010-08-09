@@ -16,7 +16,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Displays IP address on map
+ * Displays IP address on map.
+ *
+ * This script is not compatible with IPv6.
  *
  * @package    core
  * @subpackage iplookup
@@ -25,13 +27,12 @@
  */
 
 require('../config.php');
-require_once($CFG->libdir.'/filelib.php');
-require_once('Net/GeoIP.php');
+require_once('lib.php');
 
 require_login();
 
 $ip   = optional_param('ip', getremoteaddr(), PARAM_HOST);
-$user = optional_param('user', $USER->id, PARAM_INT);
+$user = optional_param('user', 0, PARAM_INT);
 
 if (isset($CFG->iplookup)) {
     //clean up of old settings
@@ -57,116 +58,50 @@ if ($match[1] == '127' or $match[1] == '10' or ($match[1] == '172' and $match[2]
     print_error('iplookupprivate', 'error');
 }
 
+$info = iplookup_find_location($ip);
+
+if ($info['error']) {
+    // can not display
+    notice($info['error']);
+}
+
 if ($user) {
     if ($user = $DB->get_record('user', array('id'=>$user, 'deleted'=>0))) {
-        $info[] = fullname($user);
+        // note: better not show full names to everybody
+        if (has_capability('moodle/user:viewdetails', get_context_instance(CONTEXT_USER, $user->id))) {
+            array_unshift($info['title'], fullname($user));
+        }
     }
 }
+array_unshift($info['title'], $ip);
 
-$textlib = textlib_get_instance();
-
-if (!empty($CFG->geoipfile) and file_exists($CFG->geoipfile)) {
-    $geoip = Net_GeoIP::getInstance($CFG->geoipfile, Net_GeoIP::STANDARD);
-    $location = $geoip->lookupLocation($ip);
-    $geoip->close();
-
-    if (empty($location)) {
-        print_error('iplookupfailed', 'error', '', $ip);
-    }
-    if (!empty($location->city)) {
-        $info[] = $textlib->convert($location->city, 'iso-8859-1', 'utf-8');
-    }
-
-    if (!empty($location->country_code)) {
-        $countries = get_string_manager()->get_list_of_countries(true);
-        if (isset($countries[$location->country_code])) {
-            // prefer our localized country names
-            $info[] = $countries[$location->country_code];
-        } else {
-            $info[] = $location->country_name;
-        }
-    }
-    $longitude = $location->longitude;
-    $latitude  = $location->latitude;
-    $note[] = get_string('iplookupmaxmindnote', 'admin');
-
-} else {
-    $ipdata = download_file_content('http://netgeo.caida.org/perl/netgeo.cgi?target='.$ip);
-    if ($ipdata === false) {
-        print_error('cannotnetgeo');
-    }
-    $matches = null;
-    if (!preg_match('/LAT:\s*(-?\d+\.\d+)/s', $ipdata, $matches)) {
-        print_error('iplookupfailed', 'error', '', $ip);
-    }
-    $latitude  = (float)$matches[1];
-    if (!preg_match('/LONG:\s*(-?\d+\.\d+)/s', $ipdata, $matches)) {
-        print_error('iplookupfailed', 'error', '', $ip);
-    }
-    $longitude = (float)$matches[1];
-
-    if (preg_match('/CITY:\s*([^<]*)/', $ipdata, $matches)) {
-        if (!empty($matches[1])) {
-            $info[] = s($matches[1]);
-        }
-    }
-
-    if (preg_match('/COUNTRY:\s*([^<]*)/', $ipdata, $matches)) {
-        if (!empty($matches[1])) {
-            $countrycode = $matches[1];
-            $countries = get_string_manager()->get_list_of_countries(true);
-            if (isset($countries[$countrycode])) {
-                // prefer our localized country names
-                $info[] = $countries[$countrycode];
-            } else {
-                $info[] = $countrycode;
-            }
-        }
-    }
-    $note[] = get_string('iplookupnetgeonote', 'admin');
-}
-
-
+$title = implode(' - ', $info['title']);
+$PAGE->set_title(get_string('iplookup', 'admin').': '.$title);
+$PAGE->set_heading($title);
+echo $OUTPUT->header();
 
 if (empty($CFG->googlemapkey)) {
-    $info = implode(' - ', $info);
-    $note = implode('<br />', $note);
-
     $imgwidth  = 620;
     $imgheight = 310;
     $dotwidth  = 18;
     $dotheight = 30;
 
-    $dx = round((($longitude + 180) * ($imgwidth / 360)) - $imgwidth - $dotwidth/2);
-    $dy = round((($latitude + 90) * ($imgheight / 180)));
-
-    $PAGE->set_title(get_string('iplookup', 'admin').': '.$info);
-    $PAGE->set_heading($info);
-    echo $OUTPUT->header();
+    $dx = round((($info['longitude'] + 180) * ($imgwidth / 360)) - $imgwidth - $dotwidth/2);
+    $dy = round((($info['latitude'] + 90) * ($imgheight / 180)));
 
     echo '<div id="map" style="width:'.($imgwidth+$dotwidth).'px; height:'.$imgheight.'px;">';
     echo '<img src="earth.jpeg" style="width:'.$imgwidth.'px; height:'.$imgheight.'px" alt="" />';
     echo '<img src="marker.gif" style="width:'.$dotwidth.'px; height:'.$dotheight.'px; margin-left:'.$dx.'px; margin-bottom:'.$dy.'px;" alt="" />';
     echo '</div>';
-    echo '<div id="note">'.$note.'</div>';
-
-    echo $OUTPUT->footer();
+    echo '<div id="note">'.$info['note'].'</div>';
 
 } else {
-    $info = implode(' - ', $info);
-    $note = implode('<br />', $note);
-
     $PAGE->requires->js(new moodle_url("http://maps.google.com/maps?file=api&v=2&key=$CFG->googlemapkey"));
     $module = array('name'=>'core_iplookup', 'fullpath'=>'/iplookup/module.js');
-    $PAGE->requires->js_init_call('M.core_iplookup.init', array($latitude, $longitude), true, $module);
-
-    $PAGE->set_title(get_string('iplookup', 'admin').': '.$info);
-    $PAGE->set_heading($info);
-    echo $OUTPUT->header();
+    $PAGE->requires->js_init_call('M.core_iplookup.init', array($info['latitude'], $info['longitude']), true, $module);
 
     echo '<div id="map" style="width: 650px; height: 360px"></div>';
-    echo '<div id="note">'.$note.'</div>';
-
-    echo $OUTPUT->footer();
+    echo '<div id="note">'.$info['note'].'</div>';
 }
 
+echo $OUTPUT->footer();
