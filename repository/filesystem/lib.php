@@ -163,7 +163,7 @@ class repository_filesystem extends repository {
                 }
                 if (empty($choices)) {
                     $mform->addElement('static', '', '', get_string('nosubdir', 'repository_filesystem', $path));
-                    $mform->addElement('hidden', 'fs_path', $fieldname, '');
+                    $mform->addElement('hidden', 'fs_path', '');
                 } else {
                     $mform->addElement('select', 'fs_path', $fieldname, $choices);
                     $mform->addElement('static', null, '',  get_string('information','repository_filesystem', $path));
@@ -188,5 +188,11 @@ class repository_filesystem extends repository {
             require_capability('moodle/site:config', get_system_context());
             return false;
         }
+    }
+    public static function instance_form_validation($mform, $data, $errors) {
+        if (empty($data['fs_path'])) {
+            $errors['fs_path'] = get_string('invalidadminsettingname', 'error', 'fs_path');
+        }
+        return $errors;
     }
 }

@@ -1533,6 +1533,10 @@ abstract class repository {
         return array();
     }
 
+    public static function instance_form_validation($mform, $data, $errors) {
+        return $errors;
+    }
+
     public function get_short_filename($str, $maxlength) {
         if (strlen($str) >= $maxlength) {
             return trim(substr($str, 0, $maxlength)).'...';
@@ -1633,13 +1637,22 @@ final class repository_instance_form extends moodleform {
 
     public function validation($data) {
         global $DB;
-
         $errors = array();
+        $plugin = $this->_customdata['plugin'];
+        $instance = (isset($this->_customdata['instance'])
+                && is_subclass_of($this->_customdata['instance'], 'repository'))
+            ? $this->_customdata['instance'] : null;
+        if (!$instance) {
+            $errors = repository::static_function($plugin, 'instance_form_validation', $this, $data, $errors);
+        } else {
+            $errors = $instance->instance_form_validation($this, $data, $errors);
+        }
+
         $sql = "SELECT count('x')
                   FROM {repository_instances} i, {repository} r
                  WHERE r.type=:plugin AND r.id=i.typeid AND i.name=:name";
         if ($DB->count_records_sql($sql, array('name' => $data['name'], 'plugin' => $data['plugin'])) > 1) {
-            $errors = array('name' => get_string('err_uniquename', 'repository'));
+            $errors['name'] = get_string('erroruniquename', 'repository');
         }
 
         return $errors;
