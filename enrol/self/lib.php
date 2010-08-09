@@ -278,6 +278,9 @@ class enrol_self_plugin extends enrol_plugin {
 
         $now = time();
 
+        //note: the logic of self enrolment guarantees that user logged in at least once (=== u.lastaccess set)
+        //      and that user accessed course at least once too (=== user_lastaccess record exists)
+
         // first deal with users that did not log in for a really long time
         $sql = "SELECT e.*, ue.userid
                   FROM {user_enrolments} ue
