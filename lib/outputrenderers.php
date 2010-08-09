@@ -1434,8 +1434,8 @@ class core_renderer extends renderer_base {
             $scalearray = $rating->settings->scale->scaleitems;
             if (!is_array($scalearray)) { //almost certainly a numerical scale
                 $intscalearray = intval($scalearray);//just in case they've passed "5" instead of 5
-                if( is_int($intscalearray) && $intscalearray>0 ){
-                    $scalearray = array();
+                $scalearray = array();
+                if( is_int($intscalearray) && $intscalearray>0 ) {
                     for($i=0; $i<=$rating->settings->scale->scaleitems; $i++) {
                         $scalearray[$i] = $i;
                     }
