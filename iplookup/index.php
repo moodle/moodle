@@ -40,6 +40,7 @@ if (isset($CFG->iplookup)) {
 
 $PAGE->set_url('/iplookup/index.php', array('id'=>$ip, 'user'=>$user));
 $PAGE->set_pagelayout('popup');
+$PAGE->set_context(get_context_instance(CONTEXT_SYSTEM));
 
 $info = array($ip);
 $note = array();
