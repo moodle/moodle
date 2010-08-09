@@ -118,6 +118,9 @@ M.mod_quiz.nav.update_flag_state = function(attemptid, questionid, newstate) {
     navlink.removeClass('flagged');
     if (newstate == 1) {
         navlink.addClass('flagged');
+        navlink.one('.accesshide .flagstate').setContent(M.str.question.flagged);
+    } else {
+        navlink.one('.accesshide .flagstate').setContent('');
     }
 };
 

@@ -1260,6 +1260,7 @@ function quiz_get_js_module() {
         'strings' => array(
             array('timesup', 'quiz'),
             array('functiondisabledbysecuremode', 'quiz'),
+            array('flagged', 'question'),
         ),
     );
 }

@@ -1081,10 +1081,15 @@ abstract class quiz_nav_panel_base {
 
     protected function get_question_button($number, $question) {
         $strstate = get_string($this->attemptobj->get_question_status($question->id), 'quiz');
+        $flagstate = '';
+        if ($this->attemptobj->is_question_flagged($question->id)) {
+            $flagstate = get_string('flagged', 'question');
+        }
         return '<a href="' . s($this->get_question_url($question)) .
                 '" class="qnbutton ' . $this->get_question_state_classes($question) .
                 '" id="quiznavbutton' . $question->id . '" title="' . $strstate . '">' .
-                $number . ' <span class="accesshide"> (' . $strstate . ')</span></a>';
+                $number . ' <span class="accesshide"> (' . $strstate . '
+                    <span class="flagstate">' . $flagstate . '</span>)</span></a>';
     }
 
     protected function get_before_button_bits() {
