@@ -57,10 +57,10 @@
       <licenseversion></licenseversion>
   </library>
   <library>
-    <location>geoip</location>
+    <location>PEAR_GeoIP</location>
     <name>GeoIP</name>
     <license>LGPL</license>
-    <version>1.8</version>
+    <version>1.0.0RC3</version>
     <licenseversion>2.1+</licenseversion>
   </library>
   <library>

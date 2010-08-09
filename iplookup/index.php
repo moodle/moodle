@@ -26,7 +26,7 @@
 
 require('../config.php');
 require_once($CFG->libdir.'/filelib.php');
-require_once($CFG->libdir.'/geoip/geoipcity.inc');
+require_once('Net/GeoIP.php');
 
 require_login();
 
@@ -64,9 +64,9 @@ if ($user) {
 }
 
 if (!empty($CFG->geoipfile) and file_exists($CFG->geoipfile)) {
-    $gi = geoip_open($CFG->geoipfile, GEOIP_STANDARD);
-    $location = geoip_record_by_addr($gi, $ip);
-    geoip_close($gi);
+    $geoip = Net_GeoIP::getInstance($CFG->geoipfile, Net_GeoIP::STANDARD);
+    $location = $geoip->lookupLocation($ip);
+    $geoip->close();
 
     if (empty($location)) {
         print_error('iplookupfailed', 'error', '', $ip);
