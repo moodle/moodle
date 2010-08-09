@@ -418,7 +418,7 @@ class assignment_base {
      * This is common to all assignment types.
      *
      * @param $assignment object The data from the form on mod.html
-     * @return int The assignment id
+     * @return bool success
      */
     function update_instance($assignment) {
         global $COURSE;
