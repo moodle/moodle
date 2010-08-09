@@ -518,7 +518,7 @@ class assignment_base {
      * @global object
      * @global object
      * @param object $assignment The data from the form on mod_form.php
-     * @return int The assignment id
+     * @return bool success
      */
     function update_instance($assignment) {
         global $COURSE, $DB;
@@ -2071,7 +2071,7 @@ class assignment_base {
 } ////// End of the assignment_base class
 
 
-class mod_assignment_grading_form extends moodleform { 
+class mod_assignment_grading_form extends moodleform {
 
     function definition() {
         global $OUTPUT;
