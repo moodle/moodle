@@ -1,0 +1,176 @@
+/** Path: theme pagelayout **/
+
+/*********************************************************************************************
+
+	left column: 230px
+	right column: 330px
+	padding left/right column: 10px
+	padding center column: 30px
+
+**********************************************************************************************/
+
+body {
+	margin:auto 0px;
+	width:auto;
+}
+	
+#page {
+	width:100%;
+	max-width: 1600px;
+	overflow:hidden;
+}
+
+#page-content {
+	clear: both;
+	overflow: hidden;
+	position: relative;
+	width: 100%;
+}
+
+/* @group Pre and Post */
+
+#page-content #region-main-box {
+	float: left;
+	margin-left: -[[setting:regionwidth]];
+	position: relative;
+	width: 200%;
+	right: 100%;
+}
+
+#page-content #region-main-box #region-post-box {
+	float: left;
+	margin-left: -[[setting:regionwidth]];
+	width: 100%;
+	border-right: 2px solid #98bcd6;
+	background: url([[pix:theme|top_bg]]) repeat-x top #fff;
+}
+
+#page-content #region-main-box #region-post-box #region-main-wrap {
+	float: left;
+	width: 50%;
+	margin-left: 20px;
+}
+
+#page-content #region-main-box #region-post-box #region-main-wrap #region-main {
+	overflow: hidden;
+	position: relative;
+	margin-left: [[setting:regionwidthdouble]];
+	left: 100%;
+}
+
+#page-content #region-main-box #region-post-box #region-pre {
+	float: right;
+	position: relative;
+	left: [[setting:leftregionwidthmargin]];
+	width: [[setting:regionwidth]];
+	background: transparent;
+}
+
+#page-content #region-main-box #region-post-box #region-post {
+	float: right;
+	position: relative;
+	left: [[setting:rightregionwidthmargin]];
+	width: [[setting:regionwidth]];
+	background: transparent;
+}
+
+#page-content #region-main-box #region-post-box #region-main-wrap #region-main .region-content {
+	overflow: hidden;
+	padding: 20px 40px 20px 0px;
+}
+
+#page-content #region-main-box #region-post-box #region-pre .region-content,
+#page-content #region-main-box #region-post-box #region-post .region-content {
+	overflow: hidden;
+	padding: 20px 10px;
+}
+
+#page-footer {
+	clear: both;
+	float: left;
+	width: 100%;
+}
+
+
+
+/* @end */
+
+/* @group Pre Side Only */
+
+.side-pre-only #page-content #region-main-box {
+	margin-left: 0px;
+}
+
+.side-pre-only #page-content #region-main-box #region-post-box {
+	margin-left: -[[setting:regionwidth]];
+}
+
+.side-pre-only #page-content #region-main-box #region-post-box #region-main-wrap #region-main {
+	margin-left: [[setting:regionwidth]];
+}
+
+.side-pre-only #page-content #region-main-box #region-post-box #region-pre {
+	left: [[setting:regionwidth]];
+	width: [[setting:regionwidth]];
+}
+
+.side-pre-only #page-content #region-main-box #region-post-box #region-post {
+	width: 0%;
+}
+
+
+
+/* @end */
+
+/* @group Post Side Only */
+
+.side-post-only #page-content #region-main-box {
+	margin-left: 0px;
+}
+
+.side-post-only #page-content #region-main-box #region-post-box {
+	margin-left: -[[setting:regionwidth]];
+}
+
+.side-post-only #page-content #region-main-box #region-post-box #region-main-wrap #region-main {
+	margin-left: [[setting:regionwidth]];
+}
+
+.side-post-only #page-content #region-main-box #region-post-box #region-post {
+	left: [[setting:regionwidthdouble]];
+	width: [[setting:regionwidth]];
+}
+
+.has_dock.side-post-only .page-middle #region-main-box #region-post-box #region-main-wrap #region-main {
+	margin-left: 200px;
+}
+
+
+
+/* @end */
+
+/* @group No Blocks */
+
+.content-only #page-content #region-main-box {
+	margin-left: 0px;
+}
+
+.content-only #page-content #region-main-box #region-post-box {
+	margin-left: 0px;
+}
+
+.content-only #page-content #region-main-box #region-post-box #region-main-wrap #region-main {
+	margin-left: 0px;
+}
+
+.content-only #page-content #region-main-box #region-post-box #region-pre {
+	width: 0px;
+}
+
+.content-only #page-content #region-main-box #region-post-box #region-post {
+	width: 0px;
+}
+
+
+
+/* @end */
