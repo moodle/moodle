@@ -11,5 +11,6 @@ examples/
 test/
 
 Our changes:
- * Modified EncodeQP() to not use php's implementation of quoted printable encoding as it was causing problems for some users MDL-23240
+ * Modified EncodeQP() in class.phpmailer.php to not use php's implementation of quoted
+   printable encoding as it was causing problems for some users MDL-23240
 
