@@ -954,11 +954,11 @@ function session_unloginas() {
  * @param $course full course record, null means $SITE
  * @return void
  */
-function cron_setup_user($user=null, $course=null) {
+function cron_setup_user($user = NULL, $course = NULL) {
     global $CFG, $SITE, $PAGE;
 
-    static $cronuser    = null;
-    static $cronsession = null;
+    static $cronuser    = NULL;
+    static $cronsession = NULL;
 
     if (empty($cronuser)) {
         /// ignore admins timezone, language and locale - use site default instead!
@@ -968,7 +968,7 @@ function cron_setup_user($user=null, $course=null) {
         $cronuser->theme    = '';
         unset($cronuser->description);
 
-        $cronsession = array();
+        $cronsession = new object();
     }
 
     if (!$user) {
@@ -980,7 +980,7 @@ function cron_setup_user($user=null, $course=null) {
         // emulate real user session - needed for caps in cron
         if ($_SESSION['USER']->id != $user->id) {
             session_set_user($user);
-            $_SESSION['SESSION'] = array();
+            $_SESSION['SESSION'] = new object();
         }
     }
 
