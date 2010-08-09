@@ -579,8 +579,12 @@ class course_enrolment_users_table extends course_enrolment_table {
         if (!array_key_exists('cohort', $plugins)) {
             return false;
         }
-        $count ++;
         $course = $this->manager->get_course();
+        if (!$plugins['cohort']->get_newinstance_link($course->id)) {
+            // user can not see any cohort === can not use this
+            return false;
+        }
+        $count ++;
         $cohorturl = new moodle_url('/enrol/cohort/addinstance.php', array('id'=>$course->id));
         $control = new single_button($cohorturl, get_string('enrolcohort', 'enrol'), 'get');
         $control->class = 'singlebutton enrolcohortbutton instance'.$count;
