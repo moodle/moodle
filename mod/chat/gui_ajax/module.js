@@ -85,9 +85,9 @@ M.mod_chat_ajax.init = function(Y, cfg) {
                 }),
                 on : {
                     success : function(tid, outcome) {
-                        this.messageinput.focus();
                         this.messageinput.removeAttribute('disabled');
                         this.messageinput.set('value', '');
+                        this.messageinput.focus();
                         try {
                             var data = Y.JSON.parse(outcome.responseText);
                         } catch (ex) {
@@ -99,8 +99,9 @@ M.mod_chat_ajax.init = function(Y, cfg) {
                 context : this
             });
 
-            this.interval = setInterval(function(me){
-                me.update_messages();
+            var scope = this;
+            this.interval = setInterval(function() {
+                scope.update_messages();
             }, this.cfg.timer, this);
 
             // Create and initalise theme changing menu
