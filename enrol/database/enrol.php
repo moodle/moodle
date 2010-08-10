@@ -231,7 +231,7 @@ function sync_enrolments($role = null) {
         $course = false;
         $course = get_record( 'course',
                               $CFG->enrol_localcoursefield,
-                              $enroldb->quote($extcourse) );
+                              addslashes($extcourse) );
 
         if (!is_object($course)) {
             if (empty($CFG->enrol_db_autocreate)) { // autocreation not allowed
