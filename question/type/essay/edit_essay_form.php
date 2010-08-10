@@ -1,4 +1,20 @@
 <?php
+
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
  * Defines the editing form for the essay question type.
  *
@@ -19,8 +35,7 @@ class question_edit_essay_form extends question_edit_form {
      * @param MoodleQuickForm $mform the form being built.
      */
     function definition_inner(&$mform) {
-        $mform->addElement('htmleditor', 'feedback', get_string("feedback", "quiz"),
-                                array('course' => $this->coursefilesid));
+        $mform->addElement('editor', 'feedback', get_string('feedback', 'quiz'), null, $this->editoroptions);
         $mform->setType('feedback', PARAM_RAW);
 
         $mform->addElement('hidden', 'fraction', 0);
@@ -32,17 +47,29 @@ class question_edit_essay_form extends question_edit_form {
         $mform->setType('penalty', PARAM_RAW);
     }
 
-    function set_data($question) {
+    function data_preprocessing($question) {
         if (!empty($question->options) && !empty($question->options->answers)) {
             $answer = reset($question->options->answers);
-            $question->feedback = $answer->feedback;
+            $question->feedback = array();
+            $draftid = file_get_submitted_draft_itemid('feedback');
+            $question->feedback['text'] = file_prepare_draft_area(
+                $draftid,       // draftid
+                $this->context->id,    // context
+                'question',   // component
+                'answerfeedback',             // filarea
+                !empty($answer->id)?(int)$answer->id:null, // itemid
+                $this->fileoptions,    // options
+                $answer->feedback      // text
+            );
+            $question->feedback['text'] = $answer->feedback;
+            $question->feedback['format'] = $answer->feedbackformat;
+            $question->feedback['itemid'] = $draftid;
         }
         $question->penalty = 0;
-        parent::set_data($question);
+        return $question;
     }
 
     function qtype() {
         return 'essay';
     }
 }
-

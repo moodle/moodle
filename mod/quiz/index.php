@@ -155,7 +155,7 @@
                     $grade = get_string('outofshort', 'quiz', $a);
                 }
                 if ($alloptions->overallfeedback) {
-                    $feedback = quiz_feedback_for_grade($scores[$quiz->id], $quiz->id);
+                    $feedback = quiz_feedback_for_grade($scores[$quiz->id], $quiz, $context, $cm);
                 }
             }
             $data[] = $grade;

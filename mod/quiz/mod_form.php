@@ -296,7 +296,7 @@ class mod_quiz_mod_form extends moodleform_mod {
         $mform->addElement('static', 'gradeboundarystatic1', get_string('gradeboundary', 'quiz'), '100%');
 
         $repeatarray = array();
-        $repeatarray[] = &MoodleQuickForm::createElement('text', 'feedbacktext', get_string('feedback', 'quiz'), array('size' => 50));
+        $repeatarray[] = &MoodleQuickForm::createElement('editor', 'feedbacktext', get_string('feedback', 'quiz'), null, array('maxfiles'=>EDITOR_UNLIMITED_FILES, 'noclean'=>true, 'context'=>$this->context));
         $mform->setType('feedbacktext', PARAM_RAW);
         $repeatarray[] = &MoodleQuickForm::createElement('text', 'feedbackboundaries', get_string('gradeboundary', 'quiz'), array('size' => 10));
         $mform->setType('feedbackboundaries', PARAM_NOTAGS);
@@ -313,7 +313,7 @@ class mod_quiz_mod_form extends moodleform_mod {
                 get_string('addmoreoverallfeedbacks', 'quiz'), true);
 
         // Put some extra elements in before the button
-        $insertEl = &MoodleQuickForm::createElement('text', "feedbacktext[$nextel]", get_string('feedback', 'quiz'), array('size' => 50));
+        $insertEl = &MoodleQuickForm::createElement('editor', "feedbacktext[$nextel]", get_string('feedback', 'quiz'), null, array('maxfiles'=>EDITOR_UNLIMITED_FILES, 'noclean'=>true, 'context'=>$this->context));
         $mform->insertElementBefore($insertEl, 'boundary_add_fields');
 
         $insertEl = &MoodleQuickForm::createElement('static', 'gradeboundarystatic2', get_string('gradeboundary', 'quiz'), '0%');
@@ -342,7 +342,19 @@ class mod_quiz_mod_form extends moodleform_mod {
         if (count($this->_feedbacks)) {
             $key = 0;
             foreach ($this->_feedbacks as $feedback){
-                $default_values['feedbacktext['.$key.']'] = $feedback->feedbacktext;
+                $draftid = file_get_submitted_draft_itemid('feedbacktext['.$key.']');
+                $default_values['feedbacktext['.$key.']']['text'] = file_prepare_draft_area(
+                    $draftid,       // draftid
+                    $this->context->id,    // context
+                    'mod_quiz',   // component
+                    'feedback',             // filarea
+                    !empty($feedback->id)?(int)$feedback->id:null, // itemid
+                    null,
+                    $feedback->feedbacktext      // text
+                );
+                $default_values['feedbacktext['.$key.']']['format'] = $feedback->feedbacktextformat;
+                $default_values['feedbacktext['.$key.']']['itemid'] = $draftid;
+
                 if ($feedback->mingrade > 0) {
                     $default_values['feedbackboundaries['.$key.']'] = (100.0 * $feedback->mingrade / $default_values['grade']) . '%';
                 }
@@ -433,7 +445,7 @@ class mod_quiz_mod_form extends moodleform_mod {
             }
         }
         for ($i = $numboundaries + 1; $i < count($data['feedbacktext']); $i += 1) {
-            if (!empty($data['feedbacktext'][$i] ) && trim($data['feedbacktext'][$i] ) != '') {
+            if (!empty($data['feedbacktext'][$i]['text']) && trim($data['feedbacktext'][$i]['text'] ) != '') {
                 $errors["feedbacktext[$i]"] = get_string('feedbackerrorjunkinfeedback', 'quiz', $i + 1);
             }
         }

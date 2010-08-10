@@ -456,21 +456,22 @@ function quiz_rescale_grade($rawgrade, $quiz, $round = true) {
  * @param integer $quizid the id of the quiz object.
  * @return string the comment that corresponds to this grade (empty string if there is not one.
  */
-function quiz_feedback_for_grade($grade, $quizid) {
+function quiz_feedback_for_grade($grade, $quiz, $context, $cm=null) {
     global $DB;
-    $feedback = $DB->get_field_select('quiz_feedback', 'feedbacktext',
-            "quizid = ? AND mingrade <= ? AND $grade < maxgrade", array($quizid, $grade));
 
-    if (empty($feedback)) {
-        $feedback = '';
+    $feedback = $DB->get_record_select('quiz_feedback', "quizid = ? AND mingrade <= ? AND $grade < maxgrade", array($quiz->id, $grade));
+
+    if (empty($feedback->feedbacktext)) {
+        $feedback->feedbacktext = '';
     }
 
     // Clean the text, ready for display.
     $formatoptions = new stdClass;
     $formatoptions->noclean = true;
-    $feedback = format_text($feedback, FORMAT_MOODLE, $formatoptions);
+    $feedbacktext = file_rewrite_pluginfile_urls($feedback->feedbacktext, 'pluginfile.php', $context->id, 'mod_quiz', 'feedback', $feedback->id);
+    $feedbacktext = format_text($feedbacktext, $feedback->feedbacktextformat, $formatoptions);
 
-    return $feedback;
+    return $feedbacktext;
 }
 
 /**

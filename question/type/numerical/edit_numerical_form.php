@@ -1,4 +1,20 @@
 <?php
+
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
  * Defines the editing form for the numerical question type.
  *
@@ -39,30 +55,36 @@ class question_edit_numerical_form extends question_edit_form {
                 $creategrades->gradeoptions);
 //------------------------------------------------------------------------------------------
         $QTYPES['numerical']->add_units_options($mform,$this);
-        $QTYPES['numerical']->add_units_elements($mform,$this);        
+        $QTYPES['numerical']->add_units_elements($mform,$this);
     }
 
-    function set_data($question) {
-                global $QTYPES ;
+    function data_preprocessing($question) {
+        global $QTYPES ;
         if (isset($question->options)){
-     /*       $default_values['unitgradingtype'] = $question->options->unitgradingtype ;
-            $default_values['unitpenalty'] = $question->options->unitpenalty ;
-            $default_values['showunits'] = $question->options->showunits ;
-            $default_values['unitsleft'] = $question->options->unitsleft ;
-            $default_values['instructions'] = $question->options->instructions  ;
-*/
             $answers = $question->options->answers;
             if (count($answers)) {
                 $key = 0;
                 foreach ($answers as $answer){
+                    $draftid = file_get_submitted_draft_itemid('feedback['.$key.']');
                     $default_values['answer['.$key.']'] = $answer->answer;
                     $default_values['fraction['.$key.']'] = $answer->fraction;
                     $default_values['tolerance['.$key.']'] = $answer->tolerance;
-                    $default_values['feedback['.$key.']'] = $answer->feedback;
+                    $default_values['feedback['.$key.']'] = array();
+                    $default_values['feedback['.$key.']']['format'] = $answer->feedbackformat;
+                    $default_values['feedback['.$key.']']['text'] = file_prepare_draft_area(
+                        $draftid,       // draftid
+                        $this->context->id,    // context
+                        'question',   // component
+                        'answerfeedback',             // filarea
+                        !empty($answer->id)?(int)$answer->id:null, // itemid
+                        $this->fileoptions,    // options
+                        $answer->feedback      // text
+                    );
+                    $default_values['feedback['.$key.']']['itemid'] = $draftid;
                     $key++;
                 }
             }
-            $QTYPES['numerical']->set_numerical_unit_data($question,$default_values);
+            $QTYPES['numerical']->set_numerical_unit_data($this, $question, $default_values);
 
           /*  if (isset($question->options->units)){
                 $units  = array_values($question->options->units);
@@ -75,8 +97,9 @@ class question_edit_numerical_form extends question_edit_form {
             }*/
             $question = (object)((array)$question + $default_values);
         }
-        parent::set_data($question);
+        return $question;
     }
+
     function validation($data, $files) {
         global $QTYPES;
         $errors = parent::validation($data, $files);
@@ -95,7 +118,7 @@ class question_edit_numerical_form extends question_edit_form {
                 if ($data['fraction'][$key] == 1) {
                     $maxgrade = true;
                 }
-            } else if ($data['fraction'][$key] != 0 || !html_is_blank($data['feedback'][$key])) {
+            } else if ($data['fraction'][$key] != 0 || !html_is_blank($data['feedback'][$key]['text'])) {
                 $errors["answer[$key]"] = get_string('answermustbenumberorstar', 'qtype_numerical');
                 $answercount++;
             }
@@ -110,6 +133,7 @@ class question_edit_numerical_form extends question_edit_form {
 
         return $errors;
     }
+
     function qtype() {
         return 'numerical';
     }

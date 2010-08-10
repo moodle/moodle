@@ -1,17 +1,31 @@
 <?php
 
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+
 /////////////////
 // CALCULATED ///
 /////////////////
 
 /// QUESTION TYPE CLASS //////////////////
 
-
-
 class question_calculated_qtype extends default_questiontype {
 
     // Used by the function custom_generator_tools:
-    var $calcgenerateidhasbeenadded = false;
+    public $calcgenerateidhasbeenadded = false;
     public $virtualqtype = false;
 
     function name() {
@@ -29,10 +43,10 @@ class question_calculated_qtype extends default_questiontype {
     function get_question_options(&$question) {
         // First get the datasets and default options
         // the code is used for calculated, calculatedsimple and calculatedmulti qtypes
-         global $CFG, $DB, $OUTPUT, $QTYPES;
+        global $CFG, $DB, $OUTPUT, $QTYPES;
         if (!$question->options = $DB->get_record('question_calculated_options', array('question' => $question->id))) {
-          //  echo $OUTPUT->notification('Error: Missing question options for calculated question'.$question->id.'!');
-          //  return false;
+            //  echo $OUTPUT->notification('Error: Missing question options for calculated question'.$question->id.'!');
+            //  return false;
             $question->options->synchronize = 0;
             $question->options->single = 0; //$question->single;
             $question->options->answernumbering = 'abc';
@@ -40,19 +54,18 @@ class question_calculated_qtype extends default_questiontype {
             $question->options->correctfeedback = '';
             $question->options->partiallycorrectfeedback = '';
             $question->options->incorrectfeedback = '';
-
         }
 
         if (!$question->options->answers = $DB->get_records_sql(
-                                "SELECT a.*, c.tolerance, c.tolerancetype, c.correctanswerlength, c.correctanswerformat " .
-                                "FROM {question_answers} a, " .
-                                "     {question_calculated} c " .
-                                "WHERE a.question = ? " .
-                                "AND   a.id = c.answer ".
-                                "ORDER BY a.id ASC", array($question->id))) {
-            echo $OUTPUT->notification('Error: Missing question answer for calculated question ' . $question->id . '!');
-            return false;
-        }
+            "SELECT a.*, c.tolerance, c.tolerancetype, c.correctanswerlength, c.correctanswerformat " .
+            "FROM {question_answers} a, " .
+            "     {question_calculated} c " .
+            "WHERE a.question = ? " .
+            "AND   a.id = c.answer ".
+            "ORDER BY a.id ASC", array($question->id))) {
+                echo $OUTPUT->notification('Error: Missing question answer for calculated question ' . $question->id . '!');
+                return false;
+            }
 
         if ( $this->get_virtual_qtype() ==  $QTYPES['numerical']){
             $QTYPES['numerical']->get_numerical_units($question);
@@ -66,16 +79,12 @@ class question_calculated_qtype extends default_questiontype {
     }
 
     function get_datasets_for_export(&$question){
-        global $DB;
+        global $DB, $CFG;
         $datasetdefs = array();
         if (!empty($question->id)) {
-            global $CFG;
             $sql = "SELECT i.*
-                    FROM {question_datasets} d,
-                         {question_dataset_definitions} i
-                    WHERE d.question = ?
-                    AND   d.datasetdefinition = i.id
-                   ";
+                      FROM {question_datasets} d, {question_dataset_definitions} i
+                     WHERE d.question = ? AND d.datasetdefinition = i.id";
             if ($records = $DB->get_records_sql($sql, array($question->id))) {
                 foreach ($records as $r) {
                     $def = $r ;
@@ -90,7 +99,7 @@ class question_calculated_qtype extends default_questiontype {
                     $def->minimum=$min;
                     $def->maximum=$max;
                     $def->decimals=$dec ;
-                     if ($def->itemcount > 0 ) {
+                    if ($def->itemcount > 0 ) {
                         // get the datasetitems
                         $def->items = array();
                         if ($items = $this->get_database_dataset_items($def->id)){
@@ -100,8 +109,8 @@ class question_calculated_qtype extends default_questiontype {
                                 $def->items[$n] = new stdClass;
                                 $def->items[$n]->itemnumber=$ii->itemnumber;
                                 $def->items[$n]->value=$ii->value;
-                           }
-                           $def->number_of_items=$n ;
+                            }
+                            $def->number_of_items=$n ;
                         }
                     }
                     $datasetdefs["1-$r->category-$r->name"] = $def;
@@ -112,10 +121,9 @@ class question_calculated_qtype extends default_questiontype {
     }
 
     function save_question_options($question) {
-        //$options = $question->subtypeoptions;
-        // Get old answers:
-        // the code is used for calculated, calculatedsimple and calculatedmulti qtypes
         global $CFG, $DB, $QTYPES ;
+        // the code is used for calculated, calculatedsimple and calculatedmulti qtypes
+        $context = $question->context;
         if (isset($question->answer) && !isset($question->answers)) {
             $question->answers = $question->answer;
         }
@@ -129,26 +137,26 @@ class question_calculated_qtype extends default_questiontype {
         }
         // as used only by calculated
         if(isset($question->synchronize)){
-        $options->synchronize = $question->synchronize;
+            $options->synchronize = $question->synchronize;
         }else {
             $options->synchronize = 0 ;
         }
         $options->single = 0; //$question->single;
         $options->answernumbering =  $question->answernumbering;
         $options->shuffleanswers = $question->shuffleanswers;
-        $options->correctfeedback = trim($question->correctfeedback);
-        $options->partiallycorrectfeedback = trim($question->partiallycorrectfeedback);
-        $options->incorrectfeedback = trim($question->incorrectfeedback);
+
+        foreach (array('correctfeedback', 'partiallycorrectfeedback', 'incorrectfeedback') as $feedbackname) {
+            $feedback = $question->$feedbackname;
+            $options->$feedbackname = trim($feedback['text']);
+            $feedbackformat = $feedbackname . 'format';
+            $options->$feedbackformat = trim($feedback['format']);
+            $options->$feedbackname = file_save_draft_area_files($feedback['itemid'], $context->id, 'qtype_calculated', $feedbackname, $question->id, self::$fileoptions, trim($feedback['text']));
+        }
+
         if ($update) {
-            if (!$DB->update_record("question_calculated_options", $options)) {
-                $result->error = "Could not update calculated question options! (id=$options->id)";
-                return $result;
-            }
+            $DB->update_record("question_calculated_options", $options);
         } else {
-            if (!$DB->insert_record("question_calculated_options", $options)) {
-                $result->error = "Could not insert calculated question options!";
-                return $result;
-            }
+            $DB->insert_record("question_calculated_options", $options);
         }
 
         // Get old versions of the objects
@@ -173,18 +181,22 @@ class question_calculated_qtype extends default_questiontype {
             $question->answers=$question->answer;
         }
         foreach ($question->answers as $key => $dataanswer) {
-            if (  trim($dataanswer) != '' ) {
+            if ( trim($dataanswer) != '' ) {
                 $answer = new stdClass;
                 $answer->question = $question->id;
                 $answer->answer = trim($dataanswer);
                 $answer->fraction = $question->fraction[$key];
-                $answer->feedback = trim($question->feedback[$key]);
+                $answer->feedbackformat = $question->feedback[$key]['format'];
 
                 if ($oldanswer = array_shift($oldanswers)) {  // Existing answer, so reuse it
                     $answer->id = $oldanswer->id;
+                    $answer->feedback = file_save_draft_area_files($question->feedback[$key]['itemid'], $context->id, 'question', 'answerfeedback', $oldanswer->id, self::$fileoptions, trim($question->feedback[$key]['text']));
                     $DB->update_record("question_answers", $answer);
                 } else { // This is a completely new answer
+                    $answer->feedback = '';
                     $answer->id = $DB->insert_record("question_answers", $answer);
+                    $answer->feedback = file_save_draft_area_files($question->feedback[$key]['itemid'], $context->id, 'question', 'answerfeedback', $answer->id, self::$fileoptions, trim($question->feedback[$key]['text']));
+                    $DB->set_field('question_answers', 'feedback', $answer->feedback, array('id'=>$answer->id));
                 }
 
                 // Set up the options object
@@ -219,15 +231,15 @@ class question_calculated_qtype extends default_questiontype {
                 $DB->delete_records('question_calculated', array('id' => $oo->id));
             }
         }
+
         $result = $QTYPES['numerical']->save_numerical_options($question);
         if (isset($result->error)) {
             return $result;
         }
 
-
         if( isset($question->import_process)&&$question->import_process){
             $this->import_datasets($question);
-         }
+        }
         // Report any problems.
         if (!empty($result->notice)) {
             return $result;
@@ -250,12 +262,12 @@ class question_calculated_qtype extends default_questiontype {
                 $todo='create' ;
             }else if ($dataset->status =='shared' ){
                 if ($sharedatasetdefs = $DB->get_records_select(
-                        'question_dataset_definitions',
-                        "type = '1'
-                        AND name = ?
-                        AND category = ?
-                        ORDER BY id DESC ", array($dataset->name, $question->category)
-                       )) { // so there is at least one
+                    'question_dataset_definitions',
+                    "type = '1'
+                    AND name = ?
+                    AND category = ?
+                    ORDER BY id DESC ", array($dataset->name, $question->category)
+                )) { // so there is at least one
                     $sharedatasetdef = array_shift($sharedatasetdefs);
                     if ( $sharedatasetdef->options ==  $datasetdef->options ){// identical so use it
                         $todo='useit' ;
@@ -267,15 +279,15 @@ class question_calculated_qtype extends default_questiontype {
                 }else { // no so create one
                     $datasetdef->category =$question->category ;
                     $todo='create' ;
-               }
+                }
             }
             if (  $todo=='create'){
                 $datasetdef->id = $DB->insert_record( 'question_dataset_definitions', $datasetdef);
-           }
-           // Create relation to the dataset:
-           $questiondataset = new stdClass;
-           $questiondataset->question = $question->id;
-           $questiondataset->datasetdefinition = $datasetdef->id;
+            }
+            // Create relation to the dataset:
+            $questiondataset = new stdClass;
+            $questiondataset->question = $question->id;
+            $questiondataset->datasetdefinition = $datasetdef->id;
             $DB->insert_record('question_datasets', $questiondataset);
             if ($todo=='create'){ // add the items
                 foreach ($dataset->datasetitem as $dataitem ){
@@ -292,20 +304,20 @@ class question_calculated_qtype extends default_questiontype {
     function restore_session_and_responses(&$question, &$state) {
         global $OUTPUT;
         if (!preg_match('~^dataset([0-9]+)[^-]*-(.*)$~',
-                $state->responses[''], $regs)) {
-            echo $OUTPUT->notification("Wrongly formatted raw response answer " .
-                   "{$state->responses['']}! Could not restore session for " .
-                   " question #{$question->id}.");
-            $state->options->datasetitem = 1;
-            $state->options->dataset = array();
-            $state->responses = array('' => '');
-            return false;
-        }
+            $state->responses[''], $regs)) {
+                echo $OUTPUT->notification("Wrongly formatted raw response answer " .
+                    "{$state->responses['']}! Could not restore session for " .
+                    " question #{$question->id}.");
+                $state->options->datasetitem = 1;
+                $state->options->dataset = array();
+                $state->responses = array('' => '');
+                return false;
+            }
 
         // Restore the chosen dataset
         $state->options->datasetitem = $regs[1];
         $state->options->dataset =
-         $this->pick_question_dataset($question,$state->options->datasetitem);
+            $this->pick_question_dataset($question,$state->options->datasetitem);
         $state->responses = array('' => $regs[2]);
         $virtualqtype = $this->get_virtual_qtype();
         return $virtualqtype->restore_session_and_responses($question, $state);
@@ -315,29 +327,25 @@ class question_calculated_qtype extends default_questiontype {
         // Find out how many datasets are available
         global $CFG, $DB, $QTYPES, $OUTPUT;
         if(!$maxnumber = (int)$DB->get_field_sql(
-                            "SELECT MIN(a.itemcount)
-                            FROM {question_dataset_definitions} a,
-                                 {question_datasets} b
-                            WHERE b.question = ?
-                            AND   a.id = b.datasetdefinition", array($question->id))) {
+            "SELECT MIN(a.itemcount)
+               FROM {question_dataset_definitions} a, {question_datasets} b
+              WHERE b.question = ? AND a.id = b.datasetdefinition", array($question->id))) {
             print_error('cannotgetdsforquestion', 'question', '', $question->id);
         }
-                    $sql = "SELECT i.*
-                    FROM {question_datasets} d,
-                         {question_dataset_definitions} i
-                    WHERE d.question = ?
-                    AND   d.datasetdefinition = i.id
-                    AND   i.category != 0
-                   ";
+
+        $sql = "SELECT i.*
+                  FROM {question_datasets} d, {question_dataset_definitions} i
+                 WHERE d.question = ? AND d.datasetdefinition = i.id AND i.category != 0";
+
         if (!$question->options->synchronize || !$records = $DB->get_records_sql($sql, array($question->id))) {
             $synchronize_calculated  =  false ;
         }else {
-           // i.e records is true so test coherence
-           $coherence = true ;
-                $a = new stdClass ;
-                $a->qid = $question->id ;
-                $a->qcat = $question->category ;
-           foreach($records as $def ){
+            // i.e records is true so test coherence
+            $coherence = true ;
+            $a = new stdClass ;
+            $a->qid = $question->id ;
+            $a->qcat = $question->category ;
+            foreach($records as $def ){
                 if ($def->category != $question->category){
                     $a->name = $def->name;
                     $a->sharedcat = $def->category ;
@@ -346,8 +354,8 @@ class question_calculated_qtype extends default_questiontype {
                 }
             }
             if(!$coherence){
-                         echo $OUTPUT->notification(get_string('nocoherencequestionsdatyasetcategory','qtype_calculated',$a));
-          }
+                echo $OUTPUT->notification(get_string('nocoherencequestionsdatyasetcategory','qtype_calculated',$a));
+            }
             $synchronize_calculated  = true ;
         }
 
@@ -368,18 +376,16 @@ class question_calculated_qtype extends default_questiontype {
 
         };
         $state->options->dataset =
-         $this->pick_question_dataset($question,$state->options->datasetitem);
-                    $virtualqtype = $this->get_virtual_qtype( );
-            return $virtualqtype->create_session_and_responses($question, $state, $cmoptions, $attempt);
-        }
-
-
+            $this->pick_question_dataset($question,$state->options->datasetitem);
+        $virtualqtype = $this->get_virtual_qtype( );
+        return $virtualqtype->create_session_and_responses($question, $state, $cmoptions, $attempt);
+    }
 
     function save_session_and_responses(&$question, &$state) {
         global $DB;
         $responses = 'dataset'.$state->options->datasetitem.'-' ;
         // regular numeric type
-         if(isset($state->responses['unit']) && isset($question->options->units[$state->responses['unit']])){
+        if(isset($state->responses['unit']) && isset($question->options->units[$state->responses['unit']])){
             $responses .= $state->responses['answer'].'|||||'.$question->options->units[$state->responses['unit']]->unit;
         }else if(isset($state->responses['unit'])){
             $responses .= $state->responses['answer'].'|||||'.$state->responses['unit'] ;
@@ -400,7 +406,7 @@ class question_calculated_qtype extends default_questiontype {
         foreach ($form->answers as $key => $answer) {
             $a->answer              = trim($form->answer[$key]);
             $a->fraction              = $form->fraction[$key];//new
-           $a->tolerance           = $form->tolerance[$key];
+            $a->tolerance           = $form->tolerance[$key];
             $a->tolerancetype       = $form->tolerancetype[$key];
             $a->correctanswerlength = $form->correctanswerlength[$key];
             $a->correctanswerformat = $form->correctanswerformat[$key];
@@ -412,45 +418,45 @@ class question_calculated_qtype extends default_questiontype {
 
     function validate_form($form) {
         switch($form->wizardpage) {
-            case 'question':
-                $calculatedmessages = array();
-                if (empty($form->name)) {
-                    $calculatedmessages[] = get_string('missingname', 'quiz');
+        case 'question':
+            $calculatedmessages = array();
+            if (empty($form->name)) {
+                $calculatedmessages[] = get_string('missingname', 'quiz');
+            }
+            if (empty($form->questiontext)) {
+                $calculatedmessages[] = get_string('missingquestiontext', 'quiz');
+            }
+            // Verify formulas
+            foreach ($form->answers as $key => $answer) {
+                if ('' === trim($answer)) {
+                    $calculatedmessages[] =
+                        get_string('missingformula', 'quiz');
                 }
-                if (empty($form->questiontext)) {
-                    $calculatedmessages[] = get_string('missingquestiontext', 'quiz');
-                }
-                // Verify formulas
-                foreach ($form->answers as $key => $answer) {
-                    if ('' === trim($answer)) {
-                        $calculatedmessages[] =
-                            get_string('missingformula', 'quiz');
-                    }
-                    if ($formulaerrors =
-                     qtype_calculated_find_formula_errors($answer)) {
+                if ($formulaerrors =
+                    qtype_calculated_find_formula_errors($answer)) {
                         $calculatedmessages[] = $formulaerrors;
                     }
-                    if (! isset($form->tolerance[$key])) {
-                        $form->tolerance[$key] = 0.0;
-                    }
-                    if (! is_numeric($form->tolerance[$key])) {
-                        $calculatedmessages[] =
-                            get_string('tolerancemustbenumeric', 'quiz');
-                    }
+                if (! isset($form->tolerance[$key])) {
+                    $form->tolerance[$key] = 0.0;
                 }
-
-                if (!empty($calculatedmessages)) {
-                    $errorstring = "The following errors were found:<br />";
-                    foreach ($calculatedmessages as $msg) {
-                        $errorstring .= $msg . '<br />';
-                    }
-                    print_error($errorstring);
+                if (! is_numeric($form->tolerance[$key])) {
+                    $calculatedmessages[] =
+                        get_string('tolerancemustbenumeric', 'quiz');
                 }
+            }
 
-                break;
-            default:
-                return parent::validate_form($form);
-                break;
+            if (!empty($calculatedmessages)) {
+                $errorstring = "The following errors were found:<br />";
+                foreach ($calculatedmessages as $msg) {
+                    $errorstring .= $msg . '<br />';
+                }
+                print_error($errorstring);
+            }
+
+            break;
+        default:
+            return parent::validate_form($form);
+            break;
         }
         return true;
     }
@@ -468,16 +474,16 @@ class question_calculated_qtype extends default_questiontype {
 
         // See where we're coming from
         switch($form->wizardpage) {
-            case 'question':
-                require("$CFG->dirroot/question/type/calculated/datasetdefinitions.php");
-                break;
-            case 'datasetdefinitions':
-            case 'datasetitems':
-                require("$CFG->dirroot/question/type/calculated/datasetitems.php");
-                break;
-            default:
-                print_error('invalidwizardpage', 'question');
-                break;
+        case 'question':
+            require("$CFG->dirroot/question/type/calculated/datasetdefinitions.php");
+            break;
+        case 'datasetdefinitions':
+        case 'datasetitems':
+            require("$CFG->dirroot/question/type/calculated/datasetitems.php");
+            break;
+        default:
+            print_error('invalidwizardpage', 'question');
+            break;
         }
     }
 
@@ -495,18 +501,18 @@ class question_calculated_qtype extends default_questiontype {
 
         // See where we're coming from
         switch($wizardnow) {
-            case 'datasetdefinitions':
-                require("$CFG->dirroot/question/type/calculated/datasetdefinitions_form.php");
-                $mform = new question_dataset_dependent_definitions_form("$submiturl?wizardnow=datasetdefinitions", $question);
-                break;
-            case 'datasetitems':
-                require("$CFG->dirroot/question/type/calculated/datasetitems_form.php");
-                $regenerate = optional_param('forceregeneration', 0, PARAM_BOOL);
-                $mform = new question_dataset_dependent_items_form("$submiturl?wizardnow=datasetitems", $question, $regenerate);
-                break;
-            default:
-                print_error('invalidwizardpage', 'question');
-                break;
+        case 'datasetdefinitions':
+            require("$CFG->dirroot/question/type/calculated/datasetdefinitions_form.php");
+            $mform = new question_dataset_dependent_definitions_form("$submiturl?wizardnow=datasetdefinitions", $question);
+            break;
+        case 'datasetitems':
+            require("$CFG->dirroot/question/type/calculated/datasetitems_form.php");
+            $regenerate = optional_param('forceregeneration', 0, PARAM_BOOL);
+            $mform = new question_dataset_dependent_items_form("$submiturl?wizardnow=datasetitems", $question, $regenerate);
+            break;
+        default:
+            print_error('invalidwizardpage', 'question');
+            break;
         }
 
         return $mform;
@@ -523,25 +529,23 @@ class question_calculated_qtype extends default_questiontype {
     function display_question_editing_page(&$mform, $question, $wizardnow){
         global $OUTPUT ;
         switch ($wizardnow){
-            case '':
-                //on first page default display is fine
-                parent::display_question_editing_page($mform, $question, $wizardnow);
-                return;
-                break;
-            case 'datasetdefinitions':
-                 echo $OUTPUT->heading_with_help(get_string("choosedatasetproperties", "qtype_calculated"), 'questiondatasets', 'qtype_calculated');
-                break;
-            case 'datasetitems':
-               echo $OUTPUT->heading_with_help(get_string("editdatasets", "qtype_calculated"), 'questiondatasets', 'qtype_calculated');
-                break;
+        case '':
+            //on first page default display is fine
+            parent::display_question_editing_page($mform, $question, $wizardnow);
+            return;
+            break;
+        case 'datasetdefinitions':
+            echo $OUTPUT->heading_with_help(get_string("choosedatasetproperties", "qtype_calculated"), 'questiondatasets', 'qtype_calculated');
+            break;
+        case 'datasetitems':
+            echo $OUTPUT->heading_with_help(get_string("editdatasets", "qtype_calculated"), 'questiondatasets', 'qtype_calculated');
+            break;
         }
 
-
         $mform->display();
-
     }
 
-     /**
+    /**
      * This method prepare the $datasets in a format similar to dadatesetdefinitions_form.php
      * so that they can be saved
      * using the function save_dataset_definitions($form)
@@ -557,9 +561,9 @@ class question_calculated_qtype extends default_questiontype {
         // the dataset names present in the edit_question_form and edit_calculated_form are retrieved
         $possibledatasets = $this->find_dataset_names($form->questiontext);
         $mandatorydatasets = array();
-            foreach ($form->answers as $answer) {
-                $mandatorydatasets += $this->find_dataset_names($answer);
-            }
+        foreach ($form->answers as $answer) {
+            //$mandatorydatasets += $this->find_dataset_names($answer);
+        }
         // if there are identical datasetdefs already saved in the original question.
         // either when editing a question or saving as new
         // they are retrieved using $questionfromid
@@ -573,9 +577,9 @@ class question_calculated_qtype extends default_questiontype {
         foreach ($mandatorydatasets as $datasetname) {
             if (!isset($datasets[$datasetname])) {
                 list($options, $selected) =
-                        $this->dataset_options($form, $datasetname);
+                    $this->dataset_options($form, $datasetname);
                 $datasets[$datasetname]='';
-                 $form->dataset[$key]=$selected ;
+                $form->dataset[$key]=$selected ;
                 $key++;
             }
         }
@@ -584,32 +588,29 @@ class question_calculated_qtype extends default_questiontype {
         // the $options are not used here
         if ($questionfromid!='0'){
 
-        foreach ($possibledatasets as $datasetname) {
-            if (!isset($datasets[$datasetname])) {
-                list($options, $selected) =
+            foreach ($possibledatasets as $datasetname) {
+                if (!isset($datasets[$datasetname])) {
+                    list($options, $selected) =
                         $this->dataset_options($form, $datasetname,false);
-                $datasets[$datasetname]='';
-                 $form->dataset[$key]=$selected ;
-                $key++;
+                    $datasets[$datasetname]='';
+                    $form->dataset[$key]=$selected ;
+                    $key++;
+                }
             }
         }
-        }
-     return $datasets ;
-     }
+        return $datasets ;
+    }
     function addnamecategory(&$question){
         global $DB;
-                            $categorydatasetdefs = $DB->get_records_sql(
-                "SELECT  a.*
-                   FROM {question_datasets} b,
-                        {question_dataset_definitions} a
-                  WHERE a.id = b.datasetdefinition
-                    AND a.type = '1'
-                    AND a.category != 0
-                    AND b.question = ? ORDER BY a.name ",array($question->id));
+        $categorydatasetdefs = $DB->get_records_sql(
+            "SELECT  a.*
+               FROM {question_datasets} b, {question_dataset_definitions} a
+              WHERE a.id = b.datasetdefinition AND a.type = '1' AND a.category != 0 AND b.question = ?
+           ORDER BY a.name ", array($question->id));
         $questionname = $question->name ;
         $regs= array();
         if(preg_match('~#\{([^[:space:]]*)#~',$questionname , $regs)){
-               $questionname = str_replace($regs[0], '', $questionname);
+            $questionname = str_replace($regs[0], '', $questionname);
         };
 
         if (!empty($categorydatasetdefs)){ // there is at least one with the same name
@@ -617,35 +618,35 @@ class question_calculated_qtype extends default_questiontype {
             foreach($categorydatasetdefs as $def) {
                 if(strlen("{$def->name}")+strlen($questionname) < 250 ){
                     $questionname = '{'.$def->name.'}'
-                    .$questionname;
+                        .$questionname;
                 }
             }
             $questionname ="#".$questionname;
         }
-         if (!$DB->set_field('question', 'name', $questionname, array("id" => $question->id))) {
+        if (!$DB->set_field('question', 'name', $questionname, array("id" => $question->id))) {
             return false ;
         }
     }
 
     /**
-    * this version save the available data at the different steps of the question editing process
-    * without using global $SESSION as storage between steps
-    * at the first step $wizardnow = 'question'
-    *  when creating a new question
-    *  when modifying a question
-    *  when copying as a new question
-    *  the general parameters and answers are saved using parent::save_question
-    *  then the datasets are prepared and saved
-    * at the second step $wizardnow = 'datasetdefinitions'
-    *  the datadefs final type are defined as private, category or not a datadef
-    * at the third step $wizardnow = 'datasetitems'
-    *  the datadefs parameters and the data items are created or defined
-    *
-    * @param object question
-    * @param object $form
-    * @param int $course
-    * @param PARAM_ALPHA $wizardnow should be added as we are coming from question2.php
-    */
+     * this version save the available data at the different steps of the question editing process
+     * without using global $SESSION as storage between steps
+     * at the first step $wizardnow = 'question'
+     *  when creating a new question
+     *  when modifying a question
+     *  when copying as a new question
+     *  the general parameters and answers are saved using parent::save_question
+     *  then the datasets are prepared and saved
+     * at the second step $wizardnow = 'datasetdefinitions'
+     *  the datadefs final type are defined as private, category or not a datadef
+     * at the third step $wizardnow = 'datasetitems'
+     *  the datadefs parameters and the data items are created or defined
+     *
+     * @param object question
+     * @param object $form
+     * @param int $course
+     * @param PARAM_ALPHA $wizardnow should be added as we are coming from question2.php
+     */
     function save_question($question, $form, $course) {
         global $DB;
         $wizardnow =  optional_param('wizardnow', '', PARAM_ALPHA);
@@ -660,73 +661,73 @@ class question_calculated_qtype extends default_questiontype {
 
         // See where we're coming from
         switch($wizardnow) {
-            case '' :
-            case 'question': // coming from the first page, creating the second
-                if (empty($form->id)) { // for a new question $form->id is empty
-                    $question = parent::save_question($question, $form, $course);
-                   //prepare the datasets using default $questionfromid
-                    $this->preparedatasets($form);
-                   $form->id = $question->id;
-                   $this->save_dataset_definitions($form);
-                    if(isset($form->synchronize) && $form->synchronize == 2 ){
-                        $this->addnamecategory($question);
-                    }
-                } else if (!empty($form->makecopy)){
-                   $questionfromid =  $form->id ;
-                   $question = parent::save_question($question, $form, $course);
-                    //prepare the datasets
-                    $this->preparedatasets($form,$questionfromid);
-                    $form->id = $question->id;
-                    $this->save_as_new_dataset_definitions($form,$questionfromid );
-                    if(isset($form->synchronize) && $form->synchronize == 2 ){
-                        $this->addnamecategory($question);
-                    }
-                }  else {// editing a question
-                    $question = parent::save_question($question, $form, $course);
-                    //prepare the datasets
-                    $this->preparedatasets($form,$question->id);
-                    $form->id = $question->id;
-                    $this->save_dataset_definitions($form);
-                    if(isset($form->synchronize) && $form->synchronize == 2 ){
-                        $this->addnamecategory($question);
-                    }
-                }
-                break;
-            case 'datasetdefinitions':
-                // calculated options
-                // it cannot go here without having done the first page
-                // so the question_calculated_options should exist
-                // only need to update the synchronize field
-                if(isset($form->synchronize) ){
-                    $options_synchronize = $form->synchronize ;
-                }else {
-                    $options_synchronize = 0 ;
-                }
-                if (!$DB->set_field('question_calculated_options', 'synchronize', $options_synchronize, array("question" => $question->id))) {
-                    return false;
-                }
-                    if(isset($form->synchronize) && $form->synchronize == 2 ){
-                        $this->addnamecategory($question);
-                    }
-
+        case '' :
+        case 'question': // coming from the first page, creating the second
+            if (empty($form->id)) { // for a new question $form->id is empty
+                $question = parent::save_question($question, $form, $course);
+                //prepare the datasets using default $questionfromid
+                $this->preparedatasets($form);
+                $form->id = $question->id;
                 $this->save_dataset_definitions($form);
-                break;
-            case 'datasetitems':
-                $this->save_dataset_items($question, $form);
-                $this->save_question_calculated($question, $form);
-                break;
-            default:
-                print_error('invalidwizardpage', 'question');
-                break;
+                if(isset($form->synchronize) && $form->synchronize == 2 ){
+                    $this->addnamecategory($question);
+                }
+            } else if (!empty($form->makecopy)){
+                $questionfromid =  $form->id ;
+                $question = parent::save_question($question, $form, $course);
+                //prepare the datasets
+                $this->preparedatasets($form,$questionfromid);
+                $form->id = $question->id;
+                $this->save_as_new_dataset_definitions($form,$questionfromid );
+                if(isset($form->synchronize) && $form->synchronize == 2 ){
+                    $this->addnamecategory($question);
+                }
+            }  else {// editing a question
+                $question = parent::save_question($question, $form, $course);
+                //prepare the datasets
+                $this->preparedatasets($form,$question->id);
+                $form->id = $question->id;
+                $this->save_dataset_definitions($form);
+                if(isset($form->synchronize) && $form->synchronize == 2 ){
+                    $this->addnamecategory($question);
+                }
+            }
+            break;
+        case 'datasetdefinitions':
+            // calculated options
+            // it cannot go here without having done the first page
+            // so the question_calculated_options should exist
+            // only need to update the synchronize field
+            if(isset($form->synchronize) ){
+                $options_synchronize = $form->synchronize ;
+            }else {
+                $options_synchronize = 0 ;
+            }
+            if (!$DB->set_field('question_calculated_options', 'synchronize', $options_synchronize, array("question" => $question->id))) {
+                return false;
+            }
+            if(isset($form->synchronize) && $form->synchronize == 2 ){
+                $this->addnamecategory($question);
+            }
+
+            $this->save_dataset_definitions($form);
+            break;
+        case 'datasetitems':
+            $this->save_dataset_items($question, $form);
+            $this->save_question_calculated($question, $form);
+            break;
+        default:
+            print_error('invalidwizardpage', 'question');
+            break;
         }
         return $question;
     }
     /**
-    * Deletes question from the question-type specific tables
-    *
-    * @return boolean Success/Failure
-    * @param object $question  The question being deleted
-    */
+     * Deletes question from the question-type specific tables
+     *
+     * @return boolean Success/Failure
+     * @param object $question  The question being deleted
+     */
     function delete_question($questionid) {
         global $DB;
 
@@ -736,43 +737,43 @@ class question_calculated_qtype extends default_questiontype {
         if ($datasets = $DB->get_records('question_datasets', array('question' => $questionid))) {
             foreach ($datasets as $dataset) {
                 if (!$DB->get_records_select(
-                        'question_datasets',
-                        "question != ?
-                        AND datasetdefinition = ? ", array($questionid, $dataset->datasetdefinition))){
-                    $DB->delete_records('question_dataset_definitions', array('id' => $dataset->datasetdefinition));
-                    $DB->delete_records('question_dataset_items', array('definition' => $dataset->datasetdefinition));
-                }
+                    'question_datasets',
+                    "question != ?
+                    AND datasetdefinition = ? ", array($questionid, $dataset->datasetdefinition))){
+                        $DB->delete_records('question_dataset_definitions', array('id' => $dataset->datasetdefinition));
+                        $DB->delete_records('question_dataset_items', array('definition' => $dataset->datasetdefinition));
+                    }
             }
         }
         $DB->delete_records("question_datasets", array("question" => $questionid));
         return true;
     }
     function test_response(&$question, &$state, $answer) {
-          $virtualqtype = $this->get_virtual_qtype();
+        $virtualqtype = $this->get_virtual_qtype();
         return $virtualqtype->test_response($question, $state, $answer);
 
     }
     function compare_responses(&$question, $state, $teststate) {
 
-                 $virtualqtype = $this->get_virtual_qtype();
+        $virtualqtype = $this->get_virtual_qtype();
         return $virtualqtype->compare_responses($question, $state, $teststate);
     }
 
     function convert_answers (&$question, &$state){
-            foreach ($question->options->answers as $key => $answer) {
-                $answer = fullclone($question->options->answers[$key]);
-                $question->options->answers[$key]->answer = $this->substitute_variables_and_eval($answer->answer,
+        foreach ($question->options->answers as $key => $answer) {
+            $answer = fullclone($question->options->answers[$key]);
+            $question->options->answers[$key]->answer = $this->substitute_variables_and_eval($answer->answer,
                 $state->options->dataset);
-            }
         }
+    }
     function convert_questiontext (&$question, &$state){
         $tolerancemax =0.01;
-         $tolerancetypemax = 1 ;
-         $correctanswerlengthmax = 2 ;
-         $correctanswerformatmax = 1 ;
-         $tolerancemaxset = false ;
+        $tolerancetypemax = 1 ;
+        $correctanswerlengthmax = 2 ;
+        $correctanswerformatmax = 1 ;
+        $tolerancemaxset = false ;
         foreach ($question->options->answers as $key => $answer) {
-             if($answer->fraction == 1.0 && !$tolerancemaxset){
+            if($answer->fraction == 1.0 && !$tolerancemaxset){
                 $tolerancemax = $answer->tolerance;
                 $tolerancetypemax = $answer->tolerancetype ;
                 $correctanswerlengthmax = $answer->correctanswerlength;
@@ -780,44 +781,43 @@ class question_calculated_qtype extends default_questiontype {
                 $tolerancemaxset = true ;
             }
         }
-        $question->questiontext = $this->substitute_variables(
-        $question->questiontext, $state->options->dataset);
+        $question->questiontext = $this->substitute_variables($question->questiontext, $state->options->dataset);
         //evaluate the equations i.e {=5+4)
         $qtext = "";
         $qtextremaining = $question->questiontext ;
         while  (preg_match('~\{=([^[:space:]}]*)}~', $qtextremaining, $regs1)) {
-      //  while  (preg_match('~\{=|%=([^[:space:]}]*)}~', $qtextremaining, $regs1)) {
+            //  while  (preg_match('~\{=|%=([^[:space:]}]*)}~', $qtextremaining, $regs1)) {
             $qtextsplits = explode($regs1[0], $qtextremaining, 2);
             $qtext =$qtext.$qtextsplits[0];
             $qtextremaining = $qtextsplits[1];
             if (empty($regs1[1])) {
-                    $str = '';
-                } else {
-                    if( $formulaerrors = qtype_calculated_find_formula_errors($regs1[1])){
-                        $str=$formulaerrors ;
-                    }else {
-                       eval('$str = '.$regs1[1].';');
-                       $texteval= qtype_calculated_calculate_answer(
-                     $str, $state->options->dataset, $tolerancemax,
-                     $tolerancetypemax, $correctanswerlengthmax,
+                $str = '';
+            } else {
+                if( $formulaerrors = qtype_calculated_find_formula_errors($regs1[1])){
+                    $str=$formulaerrors ;
+                }else {
+                    eval('$str = '.$regs1[1].';');
+                    $texteval= qtype_calculated_calculate_answer(
+                        $str, $state->options->dataset, $tolerancemax,
+                        $tolerancetypemax, $correctanswerlengthmax,
                         $correctanswerformatmax, '');
-                        $str = $texteval->answer;
+                    $str = $texteval->answer;
 
-                        ;
-                    }
+                    ;
                 }
-                $qtext = $qtext.$str ;
+            }
+            $qtext = $qtext.$str ;
         }
         $question->questiontext = $qtext.$qtextremaining ; // end replace equations
-     }
+    }
 
     function get_default_numerical_unit($question,$virtualqtype){
-            if($unit = $virtualqtype->get_default_numerical_unit($question)){
-                 $unit = $unit->unit;
-            } else {
-                $unit = '';
-            }
-            return $unit ;
+        if($unit = $virtualqtype->get_default_numerical_unit($question)){
+            $unit = $unit->unit;
+        } else {
+            $unit = '';
+        }
+        return $unit ;
 
     }
     function print_question_formulation_and_controls(&$question, &$state, $cmoptions, $options) {
@@ -828,8 +828,8 @@ class question_calculated_qtype extends default_questiontype {
         $unit = $this-> get_default_numerical_unit($question,$virtualqtype);
         // We modify the question to look like a numerical question
         $numericalquestion = fullclone($question);
-            $this->convert_answers($numericalquestion, $state);
-            $this->convert_questiontext($numericalquestion, $state);
+        $this->convert_answers($numericalquestion, $state);
+        $this->convert_questiontext($numericalquestion, $state);
  /*        $tolerancemax =0.01;
          $tolerancetypemax = 1 ;
          $correctanswerlengthmax = 2 ;
@@ -874,7 +874,7 @@ class question_calculated_qtype extends default_questiontype {
                 $qtext = $qtext.$str ;
         }
         $numericalquestion->questiontext = $qtext.$qtextremaining ; // end replace equations
-        */
+  */
 
         $virtualqtype->print_question_formulation_and_controls($numericalquestion, $state, $cmoptions, $options);
     }
@@ -882,12 +882,12 @@ class question_calculated_qtype extends default_questiontype {
         // Forward the grading to the virtual qtype
         // We modify the question to look like a numerical question
         $numericalquestion = fullclone($question);
-       foreach ($numericalquestion->options->answers as $key => $answer) {
+        foreach ($numericalquestion->options->answers as $key => $answer) {
             $answer = $numericalquestion->options->answers[$key]->answer; // for PHP 4.x
-          $numericalquestion->options->answers[$key]->answer = $this->substitute_variables_and_eval($answer,
-             $state->options->dataset);
-       }
-         $virtualqtype = $this->get_virtual_qtype();
+            $numericalquestion->options->answers[$key]->answer = $this->substitute_variables_and_eval($answer,
+                $state->options->dataset);
+        }
+        $virtualqtype = $this->get_virtual_qtype();
         return $virtualqtype->grade_responses($numericalquestion, $state, $cmoptions) ;
     }
 
@@ -904,7 +904,7 @@ class question_calculated_qtype extends default_questiontype {
         foreach ($numericalquestion->options->answers as $key => $answer) {
             $answer = &$numericalquestion->options->answers[$key]; // for PHP 4.x
             $answer->answer = $this->substitute_variables_and_eval($answer->answer,
-             $state->options->dataset);
+                $state->options->dataset);
         }
         $virtualqtype = $this->get_virtual_qtype();
         return $virtualqtype->check_response($numericalquestion, $state) ;
@@ -926,11 +926,11 @@ class question_calculated_qtype extends default_questiontype {
         foreach ($numericalquestion->options->answers as $key => $answer) {
             $answer = &$numericalquestion->options->answers[$key]; // for PHP 4.x
             $answer->answer = $this->substitute_variables_and_eval($answer->answer,
-             $state->options->dataset);
+                $state->options->dataset);
             // apply_unit
         }
         $numericalquestion->questiontext = $this->substitute_variables_and_eval(
-                                  $numericalquestion->questiontext, $state->options->dataset);
+            $numericalquestion->questiontext, $state->options->dataset);
         $responses = $virtualqtype->get_all_responses($numericalquestion, $state);
         $response = reset($responses->responses);
         $correct = $response->answer.' : ';
@@ -946,12 +946,12 @@ class question_calculated_qtype extends default_questiontype {
 
     function create_virtual_qtype() {
         global $CFG;
-            require_once("$CFG->dirroot/question/type/numerical/questiontype.php");
-            return new question_numerical_qtype();
+        require_once("$CFG->dirroot/question/type/numerical/questiontype.php");
+        return new question_numerical_qtype();
     }
 
     function supports_dataset_item_generation() {
-    // Calcualted support generation of randomly distributed number data
+        // Calcualted support generation of randomly distributed number data
         return true;
     }
     function custom_generator_tools_part(&$mform, $idx, $j){
@@ -968,8 +968,6 @@ class question_calculated_qtype extends default_questiontype {
 
         $distriboptions = array('uniform' => get_string('uniform', 'qtype_calculated'), 'loguniform' => get_string('loguniform', 'qtype_calculated'));
         $mform->addElement('select', "calcdistribution[$idx]", get_string('calcdistribution', 'qtype_calculated'), $distriboptions);
-
-
     }
 
     function custom_generator_set_data($datasetdefs, $formdata){
@@ -990,18 +988,18 @@ class question_calculated_qtype extends default_questiontype {
     function custom_generator_tools($datasetdef) {
         global $OUTPUT;
         if (preg_match('~^(uniform|loguniform):([^:]*):([^:]*):([0-9]*)$~',
-                $datasetdef->options, $regs)) {
-            $defid = "$datasetdef->type-$datasetdef->category-$datasetdef->name";
-            for ($i = 0 ; $i<10 ; ++$i) {
-                $lengthoptions[$i] = get_string(($regs[1] == 'uniform'
-                                                ? 'decimals'
-                                                : 'significantfigures'), 'quiz', $i);
-            }
-            $menu1 = html_writer::select($lengthoptions, 'calclength[]', $regs[4], null);
+            $datasetdef->options, $regs)) {
+                $defid = "$datasetdef->type-$datasetdef->category-$datasetdef->name";
+                for ($i = 0 ; $i<10 ; ++$i) {
+                    $lengthoptions[$i] = get_string(($regs[1] == 'uniform'
+                        ? 'decimals'
+                        : 'significantfigures'), 'quiz', $i);
+                }
+                $menu1 = html_writer::select($lengthoptions, 'calclength[]', $regs[4], null);
 
-            $options = array('uniform' => get_string('uniform', 'quiz'), 'loguniform' => get_string('loguniform', 'quiz'));
-            $menu2 = html_writer::select($options, 'calcdistribution[]', $regs[1], null);
-            return '<input type="submit" onclick="'
+                $options = array('uniform' => get_string('uniform', 'quiz'), 'loguniform' => get_string('loguniform', 'quiz'));
+                $menu2 = html_writer::select($options, 'calcdistribution[]', $regs[1], null);
+                return '<input type="submit" onclick="'
                     . "getElementById('addform').regenerateddefid.value='$defid'; return true;"
                     .'" value="'. get_string('generatevalue', 'quiz') . '"/><br/>'
                     . '<input type="text" size="3" name="calcmin[]" '
@@ -1009,41 +1007,41 @@ class question_calculated_qtype extends default_questiontype {
                     . ' type="text" size="3" value="' . $regs[3] .'"/> '
                     . $menu1 . '<br/>'
                     . $menu2;
-        } else {
-            return '';
-        }
+            } else {
+                return '';
+            }
     }
 
 
     function update_dataset_options($datasetdefs, $form) {
         // Do we have informatin about new options???
         if (empty($form->definition) || empty($form->calcmin)
-                || empty($form->calcmax) || empty($form->calclength)
-                || empty($form->calcdistribution)) {
-            // I guess not
+            || empty($form->calcmax) || empty($form->calclength)
+            || empty($form->calcdistribution)) {
+                // I guess not
 
-        } else {
-            // Looks like we just could have some new information here
-            $uniquedefs = array_values(array_unique($form->definition));
-            foreach ($uniquedefs as $key => $defid) {
-                if (isset($datasetdefs[$defid])
+            } else {
+                // Looks like we just could have some new information here
+                $uniquedefs = array_values(array_unique($form->definition));
+                foreach ($uniquedefs as $key => $defid) {
+                    if (isset($datasetdefs[$defid])
                         && is_numeric($form->calcmin[$key+1])
                         && is_numeric($form->calcmax[$key+1])
                         && is_numeric($form->calclength[$key+1])) {
-                    switch     ($form->calcdistribution[$key+1]) {
-                        case 'uniform': case 'loguniform':
-                            $datasetdefs[$defid]->options =
+                            switch     ($form->calcdistribution[$key+1]) {
+                            case 'uniform': case 'loguniform':
+                                $datasetdefs[$defid]->options =
                                     $form->calcdistribution[$key+1] . ':'
                                     . $form->calcmin[$key+1] . ':'
                                     . $form->calcmax[$key+1] . ':'
                                     . $form->calclength[$key+1];
-                            break;
-                        default:
-                            echo $OUTPUT->notification("Unexpected distribution ".$form->calcdistribution[$key+1]);
-                    }
+                                break;
+                            default:
+                                echo $OUTPUT->notification("Unexpected distribution ".$form->calcdistribution[$key+1]);
+                            }
+                        }
                 }
             }
-        }
 
         // Look for empty options, on which we set default values
         foreach ($datasetdefs as $defid => $def) {
@@ -1068,29 +1066,29 @@ class question_calculated_qtype extends default_questiontype {
         }
     }
 
-		/**
-		* This function get the dataset items using id as unique parameter and return an
-		* array with itemnumber as index sorted ascendant
-		* If the multiple records with the same itemnumber exist, only the newest one
-		* i.e with the greatest id is used, the others are ignored but not deleted.
-		* MDL-19210
-		*/
+    /**
+     * This function get the dataset items using id as unique parameter and return an
+     * array with itemnumber as index sorted ascendant
+     * If the multiple records with the same itemnumber exist, only the newest one
+     * i.e with the greatest id is used, the others are ignored but not deleted.
+     * MDL-19210
+     */
     function get_database_dataset_items($definition){
-    	global $CFG, $DB;
-    		$databasedataitems = $DB->get_records_sql( // Use number as key!!
-                        " SELECT id , itemnumber, definition,  value
-                          FROM {question_dataset_items}
-                          WHERE definition = $definition order by id DESC ", array($definition));
-      	$dataitems = Array();
-       	foreach($databasedataitems as $id => $dataitem  ){
-       	if (!isset($dataitems[$dataitem->itemnumber])){
-       		    $dataitems[$dataitem->itemnumber] = $dataitem ;
-       		  }else {
-       		  	// deleting the unused records could be added here
-       		  }
-       	}
-       	ksort($dataitems);
-       	return $dataitems ;
+        global $CFG, $DB;
+        $databasedataitems = $DB->get_records_sql( // Use number as key!!
+            " SELECT id , itemnumber, definition,  value
+            FROM {question_dataset_items}
+            WHERE definition = $definition order by id DESC ", array($definition));
+        $dataitems = Array();
+        foreach($databasedataitems as $id => $dataitem  ){
+            if (!isset($dataitems[$dataitem->itemnumber])){
+                $dataitems[$dataitem->itemnumber] = $dataitem ;
+            }else {
+                // deleting the unused records could be added here
+            }
+        }
+        ksort($dataitems);
+        return $dataitems ;
     }
 
     function save_dataset_items($question, $fromform){
@@ -1119,11 +1117,11 @@ class question_calculated_qtype extends default_questiontype {
         $maxnumber = -1;
         foreach ($datasetdefs as $defid => $datasetdef) {
             if (isset($datasetdef->id)
-             && $datasetdef->options != $olddatasetdefs[$defid]->options) {
-                // Save the new value for options
-                $DB->update_record('question_dataset_definitions', $datasetdef);
+                && $datasetdef->options != $olddatasetdefs[$defid]->options) {
+                    // Save the new value for options
+                    $DB->update_record('question_dataset_definitions', $datasetdef);
 
-            }
+                }
             // Get maxnumber
             if ($maxnumber == -1 || $datasetdef->itemcount < $maxnumber) {
                 $maxnumber = $datasetdef->itemcount;
@@ -1158,16 +1156,16 @@ class question_calculated_qtype extends default_questiontype {
             $i++;
         }
         if (isset($addeditem->itemnumber) && $maxnumber < $addeditem->itemnumber
-                && $addeditem->itemnumber < CALCULATEDQUESTIONMAXITEMNUMBER ){
-            $maxnumber = $addeditem->itemnumber;
-            foreach ($datasetdefs as $key => $newdef) {
-                if (isset($newdef->id) && $newdef->itemcount <= $maxnumber) {
-                    $newdef->itemcount = $maxnumber;
-                    // Save the new value for options
-                    $DB->update_record('question_dataset_definitions', $newdef);
+            && $addeditem->itemnumber < CALCULATEDQUESTIONMAXITEMNUMBER ){
+                $maxnumber = $addeditem->itemnumber;
+                foreach ($datasetdefs as $key => $newdef) {
+                    if (isset($newdef->id) && $newdef->itemcount <= $maxnumber) {
+                        $newdef->itemcount = $maxnumber;
+                        // Save the new value for options
+                        $DB->update_record('question_dataset_definitions', $newdef);
+                    }
                 }
             }
-        }
         // adding supplementary items
         $numbertoadd =0;
         if (isset($fromform->addbutton) && $fromform->selectadd > 1 && $maxnumber < CALCULATEDQUESTIONMAXITEMNUMBER ) {
@@ -1178,30 +1176,30 @@ class question_calculated_qtype extends default_questiontype {
             //add the other items.
             // Generate a new dataset item (or reuse an old one)
             foreach ($datasetdefs as $defid => $datasetdef) {
-            	// in case that for category datasets some new items has been added
-            	// get actual values
-            	// fix regenerate for this datadefs
-            	$defregenerate = 0 ;
-            	if($synchronize && !empty ($fromform->nextpageparam["datasetregenerate[$datasetdef->name"])) {
-            	    $defregenerate = 1 ;
-            	}else if(!$synchronize && (($regenerate == 1 && $datasetdef->category == 0) ||$regenerate == 2 )){
-            	    $defregenerate = 1 ;
-            	}
+                // in case that for category datasets some new items has been added
+                // get actual values
+                // fix regenerate for this datadefs
+                $defregenerate = 0 ;
+                if($synchronize && !empty ($fromform->nextpageparam["datasetregenerate[$datasetdef->name"])) {
+                    $defregenerate = 1 ;
+                }else if(!$synchronize && (($regenerate == 1 && $datasetdef->category == 0) ||$regenerate == 2 )){
+                    $defregenerate = 1 ;
+                }
                 if (isset($datasetdef->id)) {
-                	$datasetdefs[$defid]->items = $this->get_database_dataset_items($datasetdef->id);
+                    $datasetdefs[$defid]->items = $this->get_database_dataset_items($datasetdef->id);
                 }
                 for ($numberadded =$maxnumber+1 ; $numberadded <= $maxnumber+$numbertoadd ; $numberadded++){
                     if (isset($datasetdefs[$defid]->items[$numberadded])  ){
-	                    	// in case of regenerate it modifies the already existing record
-	                    	if ( $defregenerate  ) {
-		                        $datasetitem = new stdClass;
-		                        $datasetitem->id = $datasetdefs[$defid]->items[$numberadded]->id;
-		                        $datasetitem->definition = $datasetdef->id ;
-		                        $datasetitem->itemnumber = $numberadded;
-		                    		$datasetitem->value = $this->generate_dataset_item($datasetdef->options);
-						                $DB->update_record('question_dataset_items', $datasetitem);
-					              }
-				              //if not regenerate do nothing as there is already a record
+                        // in case of regenerate it modifies the already existing record
+                        if ( $defregenerate  ) {
+                            $datasetitem = new stdClass;
+                            $datasetitem->id = $datasetdefs[$defid]->items[$numberadded]->id;
+                            $datasetitem->definition = $datasetdef->id ;
+                            $datasetitem->itemnumber = $numberadded;
+                            $datasetitem->value = $this->generate_dataset_item($datasetdef->options);
+                            $DB->update_record('question_dataset_items', $datasetitem);
+                        }
+                        //if not regenerate do nothing as there is already a record
                     } else {
                         $datasetitem = new stdClass;
                         $datasetitem->definition = $datasetdef->id ;
@@ -1235,14 +1233,14 @@ class question_calculated_qtype extends default_questiontype {
                     $DB->update_record('question_dataset_definitions', $datasetdef);
                 }
             }
-       }
+        }
     }
     function generate_dataset_item($options) {
         if (!preg_match('~^(uniform|loguniform):([^:]*):([^:]*):([0-9]*)$~',
-                $options, $regs)) {
-            // Unknown options...
-            return false;
-        }
+            $options, $regs)) {
+                // Unknown options...
+                return false;
+            }
         if ($regs[1] == 'uniform') {
             $nbr = $regs[2] + ($regs[3]-$regs[2])*mt_rand()/mt_getrandmax();
             return sprintf("%.".$regs[4]."f",$nbr);
@@ -1271,12 +1269,12 @@ class question_calculated_qtype extends default_questiontype {
             } else {
                 $strheader .= $delimiter.$answer->answer;
             }
-                $delimiter = '<br/><br/><br/>';
+            $delimiter = '<br/><br/><br/>';
         }
         return $strheader;
     }
 
-    function comment_on_datasetitems($qtypeobj,$questionid,$questiontext, $answers,$data, $number) {
+    function comment_on_datasetitems($qtypeobj, $questionid, $questiontext, $answers, $data, $number) {
         global $DB, $QTYPES;
         $comment = new stdClass;
         $comment->stranswers = array();
@@ -1298,16 +1296,16 @@ class question_calculated_qtype extends default_questiontype {
         foreach ($answers as $key => $answer) {
             $formula = $this->substitute_variables($answer->answer,$data);
             $formattedanswer = qtype_calculated_calculate_answer(
-                    $answer->answer, $data, $answer->tolerance,
-                    $answer->tolerancetype, $answer->correctanswerlength,
-                    $answer->correctanswerformat, $unit);
-                    if ( $formula === '*'){
-                        $answer->min = ' ';
-                        $formattedanswer->answer = $answer->answer ;
-                    }else {
-                        eval('$answer->answer = '.$formula.';') ;
-                        $virtualqtype->get_tolerance_interval($answer);
-                    }
+                $answer->answer, $data, $answer->tolerance,
+                $answer->tolerancetype, $answer->correctanswerlength,
+                $answer->correctanswerformat, $unit);
+            if ( $formula === '*'){
+                $answer->min = ' ';
+                $formattedanswer->answer = $answer->answer ;
+            }else {
+                eval('$answer->answer = '.$formula.';') ;
+                $virtualqtype->get_tolerance_interval($answer);
+            }
             if ($answer->min === '') {
                 // This should mean that something is wrong
                 $comment->stranswers[$key] = " $formattedanswer->answer".'<br/><br/>';
@@ -1332,7 +1330,7 @@ class question_calculated_qtype extends default_questiontype {
         }
         return fullclone($comment);
     }
-    function multichoice_comment_on_datasetitems($questionid,$questiontext, $answers,$data, $number) {
+    function multichoice_comment_on_datasetitems($questionid, $questiontext, $answers,$data, $number) {
         global $DB;
         $comment = new stdClass;
         $comment->stranswers = array();
@@ -1351,34 +1349,34 @@ class question_calculated_qtype extends default_questiontype {
         $errors = '';
         $delimiter = ': ';
         foreach ($answers as $key => $answer) {
-                $answer->answer = $this->substitute_variables($answer->answer, $data);
-                //evaluate the equations i.e {=5+4)
-                $qtext = "";
-                $qtextremaining = $answer->answer ;
-                while  (preg_match('~\{=([^[:space:]}]*)}~', $qtextremaining, $regs1)) {
-                    $qtextsplits = explode($regs1[0], $qtextremaining, 2);
-                    $qtext =$qtext.$qtextsplits[0];
-                    $qtextremaining = $qtextsplits[1];
-                    if (empty($regs1[1])) {
-                            $str = '';
-                        } else {
-                            if( $formulaerrors = qtype_calculated_find_formula_errors($regs1[1])){
-                                $str=$formulaerrors ;
-                            }else {
-                                eval('$str = '.$regs1[1].';');
+            $answer->answer = $this->substitute_variables($answer->answer, $data);
+            //evaluate the equations i.e {=5+4)
+            $qtext = "";
+            $qtextremaining = $answer->answer ;
+            while  (preg_match('~\{=([^[:space:]}]*)}~', $qtextremaining, $regs1)) {
+                $qtextsplits = explode($regs1[0], $qtextremaining, 2);
+                $qtext =$qtext.$qtextsplits[0];
+                $qtextremaining = $qtextsplits[1];
+                if (empty($regs1[1])) {
+                    $str = '';
+                } else {
+                    if( $formulaerrors = qtype_calculated_find_formula_errors($regs1[1])){
+                        $str=$formulaerrors ;
+                    }else {
+                        eval('$str = '.$regs1[1].';');
 
-                       $texteval= qtype_calculated_calculate_answer(
-                     $str, $data, $answer->tolerance,
-                     $answer->tolerancetype, $answer->correctanswerlength,
-                        $answer->correctanswerformat, '');
+                        $texteval= qtype_calculated_calculate_answer(
+                            $str, $data, $answer->tolerance,
+                            $answer->tolerancetype, $answer->correctanswerlength,
+                            $answer->correctanswerformat, '');
                         $str = $texteval->answer;
 
-                            }
-                        }
-                        $qtext = $qtext.$str ;
+                    }
                 }
-                $answer->answer = $qtext.$qtextremaining ; ;
-                $comment->stranswers[$key]= $answer->answer ;
+                $qtext = $qtext.$str ;
+            }
+            $answer->answer = $qtext.$qtextremaining ; ;
+            $comment->stranswers[$key]= $answer->answer ;
 
 
           /*  $formula = $this->substitute_variables($answer->answer,$data);
@@ -1413,24 +1411,24 @@ class question_calculated_qtype extends default_questiontype {
                     $comment->stranswers[$key] .=get_string('trueanswerinsidelimits','qtype_calculated',$correcttrue);//' True answer :'.$calculated->trueanswer.' inside limits';
                 }
                 $comment->stranswers[$key] .='';
-            }*/
+          }*/
         }
         return fullclone($comment);
     }
 
     function tolerance_types() {
         return array('1'  => get_string('relative', 'quiz'),
-                     '2'  => get_string('nominal', 'quiz'),
-                     '3'  => get_string('geometric', 'quiz'));
+            '2'  => get_string('nominal', 'quiz'),
+            '3'  => get_string('geometric', 'quiz'));
     }
 
     function dataset_options($form, $name, $mandatory=true,$renameabledatasets=false) {
-    // Takes datasets from the parent implementation but
-    // filters options that are currently not accepted by calculated
-    // It also determines a default selection...
-    //$renameabledatasets not implemented anmywhere
+        // Takes datasets from the parent implementation but
+        // filters options that are currently not accepted by calculated
+        // It also determines a default selection...
+        //$renameabledatasets not implemented anmywhere
         list($options, $selected) = $this->dataset_options_from_database($form, $name,'','qtype_calculated');
-  //  list($options, $selected) = $this->dataset_optionsa($form, $name);
+        //  list($options, $selected) = $this->dataset_optionsa($form, $name);
 
         foreach ($options as $key => $whatever) {
             if (!preg_match('~^1-~', $key) && $key != '0') {
@@ -1439,7 +1437,7 @@ class question_calculated_qtype extends default_questiontype {
         }
         if (!$selected) {
             if ($mandatory){
-            $selected =  "1-0-$name"; // Default
+                $selected =  "1-0-$name"; // Default
             }else {
                 $selected = "0"; // Default
             }
@@ -1448,26 +1446,26 @@ class question_calculated_qtype extends default_questiontype {
     }
 
     function construct_dataset_menus($form, $mandatorydatasets,
-                                     $optionaldatasets) {
-        global $OUTPUT;
-        $datasetmenus = array();
-        foreach ($mandatorydatasets as $datasetname) {
-            if (!isset($datasetmenus[$datasetname])) {
-                list($options, $selected) =
+        $optionaldatasets) {
+            global $OUTPUT;
+            $datasetmenus = array();
+            foreach ($mandatorydatasets as $datasetname) {
+                if (!isset($datasetmenus[$datasetname])) {
+                    list($options, $selected) =
                         $this->dataset_options($form, $datasetname);
-                unset($options['0']); // Mandatory...
-                $datasetmenus[$datasetname] = html_writer::select($options, 'dataset[]', $selected, null);
+                    unset($options['0']); // Mandatory...
+                    $datasetmenus[$datasetname] = html_writer::select($options, 'dataset[]', $selected, null);
+                }
             }
-        }
-        foreach ($optionaldatasets as $datasetname) {
-            if (!isset($datasetmenus[$datasetname])) {
-                list($options, $selected) =
+            foreach ($optionaldatasets as $datasetname) {
+                if (!isset($datasetmenus[$datasetname])) {
+                    list($options, $selected) =
                         $this->dataset_options($form, $datasetname);
-                $datasetmenus[$datasetname] = html_writer::select($options, 'dataset[]', $selected, null);
+                    $datasetmenus[$datasetname] = html_writer::select($options, 'dataset[]', $selected, null);
+                }
             }
+            return $datasetmenus;
         }
-        return $datasetmenus;
-    }
 
     function print_question_grading_details(&$question, &$state, &$cmoptions, &$options) {
         $virtualqtype = $this->get_virtual_qtype();
@@ -1479,14 +1477,14 @@ class question_calculated_qtype extends default_questiontype {
         $virtualqtype = $this->get_virtual_qtype();
         $unit = $this->get_default_numerical_unit($question,$virtualqtype);
         // We modify the question to look like a numerical question
-            $this->convert_answers($question, $state);
-            return $virtualqtype->get_correct_responses($question, $state) ;
+        $this->convert_answers($question, $state);
+        return $virtualqtype->get_correct_responses($question, $state) ;
     }
 
     function substitute_variables($str, $dataset) {
         global $OUTPUT ;
-          //  testing for wrong numerical values
-          // all calculations used this function so testing here should be OK
+        //  testing for wrong numerical values
+        // all calculations used this function so testing here should be OK
 
         foreach ($dataset as $name => $value) {
             $val = $value ;
@@ -1494,8 +1492,8 @@ class question_calculated_qtype extends default_questiontype {
                 $a = new stdClass;
                 $a->name = '{'.$name.'}' ;
                 $a->value = $value ;
-                    echo $OUTPUT->notification(get_string('notvalidnumber','qtype_calculated',$a));
-                    $val = 1.0 ;
+                echo $OUTPUT->notification(get_string('notvalidnumber','qtype_calculated',$a));
+                $val = 1.0 ;
             }
             if($val < 0 ){
                 $str = str_replace('{'.$name.'}', '('.$val.')', $str);
@@ -1507,7 +1505,7 @@ class question_calculated_qtype extends default_questiontype {
     }
     function evaluate_equations($str, $dataset){
         $formula = $this->substitute_variables($str, $dataset) ;
-       if ($error = qtype_calculated_find_formula_errors($formula)) {
+        if ($error = qtype_calculated_find_formula_errors($formula)) {
             return $error;
         }
         return $str;
@@ -1516,7 +1514,7 @@ class question_calculated_qtype extends default_questiontype {
 
     function substitute_variables_and_eval($str, $dataset) {
         $formula = $this->substitute_variables($str, $dataset) ;
-       if ($error = qtype_calculated_find_formula_errors($formula)) {
+        if ($error = qtype_calculated_find_formula_errors($formula)) {
             return $error;
         }
         /// Calculate the correct answer
@@ -1537,11 +1535,8 @@ class question_calculated_qtype extends default_questiontype {
         if (!empty($questionid)) {
             global $CFG;
             $sql = "SELECT i.*
-                    FROM {question_datasets} d,
-                         {question_dataset_definitions} i
-                    WHERE d.question = ?
-                    AND   d.datasetdefinition = i.id
-                   ";
+                      FROM {question_datasets} d, {question_dataset_definitions} i
+                     WHERE d.question = ? AND d.datasetdefinition = i.id";
             if ($records = $DB->get_records_sql($sql, array($questionid))) {
                 foreach ($records as $r) {
                     $datasetdefs["$r->type-$r->category-$r->name"] = $r;
@@ -1573,6 +1568,9 @@ class question_calculated_qtype extends default_questiontype {
         global $DB;
         // save synchronize
 
+        if (empty($form->dataset)) {
+            $form->dataset = array();
+        }
         // Save datasets
         $datasetdefinitions = $this->get_dataset_definitions($form->id, $form->dataset);
         $tmpdatasets = array_flip($form->dataset);
@@ -1581,7 +1579,7 @@ class question_calculated_qtype extends default_questiontype {
             $datasetdef = &$datasetdefinitions[$defid];
             if (isset($datasetdef->id)) {
                 if (!isset($tmpdatasets[$defid])) {
-                // This dataset is not used any more, delete it
+                    // This dataset is not used any more, delete it
                     $DB->delete_records('question_datasets', array('question' => $form->id, 'datasetdefinition' => $datasetdef->id));
                     if ($datasetdef->category == 0) { // Question local dataset
                         $DB->delete_records('question_dataset_definitions', array('id' => $datasetdef->id));
@@ -1601,12 +1599,12 @@ class question_calculated_qtype extends default_questiontype {
                 // By first creating the datasetdefinition above we
                 // can manage to automatically take care of
                 // some possible realtime concurrence
-                if ($olderdatasetdefs = $DB->get_records_select( 'question_dataset_definitions',
-                        "type = ?
-                        AND name = ?
-                        AND category = ?
-                        AND id < ?
-                        ORDER BY id DESC", array($datasetdef->type, $datasetdef->name, $datasetdef->category, $datasetdef->id))) {
+                if ($olderdatasetdefs = $DB->get_records_select('question_dataset_definitions',
+                         "type = ?
+                      AND name = ?
+                      AND category = ?
+                      AND id < ?
+                    ORDER BY id DESC", array($datasetdef->type, $datasetdef->name, $datasetdef->category, $datasetdef->id))) {
 
                     while ($olderdatasetdef = array_shift($olderdatasetdefs)) {
                         $DB->delete_records('question_dataset_definitions', array('id' => $datasetdef->id));
@@ -1637,12 +1635,12 @@ class question_calculated_qtype extends default_questiontype {
         }
     }
     /** This function create a copy of the datasets ( definition and dataitems)
-    * from the preceding question if they remain in the new question
-    * otherwise its create the datasets that have been added as in the
-    * save_dataset_definitions()
-    */
+     * from the preceding question if they remain in the new question
+     * otherwise its create the datasets that have been added as in the
+     * save_dataset_definitions()
+     */
     function save_as_new_dataset_definitions($form, $initialid) {
-    global $CFG, $DB;
+        global $CFG, $DB;
         // Get the datasets from the intial question
         $datasetdefinitions = $this->get_dataset_definitions($initialid, $form->dataset);
         // $tmpdatasets contains those of the new question
@@ -1659,13 +1657,13 @@ class question_calculated_qtype extends default_questiontype {
                 }
                 // create a copy but not for category one
                 if (0 == $datasetdef->category) {
-                   $olddatasetid = $datasetdef->id ;
-                   $olditemcount = $datasetdef->itemcount ;
-                   $datasetdef->itemcount =0;
-                   $datasetdef->id = $DB->insert_record('question_dataset_definitions', $datasetdef);
-                   //copy the dataitems
-                   $olditems = $this->get_database_dataset_items($olddatasetid);
-                   if (count($olditems) > 0 ) {
+                    $olddatasetid = $datasetdef->id ;
+                    $olditemcount = $datasetdef->itemcount ;
+                    $datasetdef->itemcount =0;
+                    $datasetdef->id = $DB->insert_record('question_dataset_definitions', $datasetdef);
+                    //copy the dataitems
+                    $olditems = $this->get_database_dataset_items($olddatasetid);
+                    if (count($olditems) > 0 ) {
                         $itemcount = 0;
                         foreach($olditems as $item ){
                             $item->definition = $datasetdef->id;
@@ -1701,18 +1699,18 @@ class question_calculated_qtype extends default_questiontype {
                 // can manage to automatically take care of
                 // some possible realtime concurrence
                 if ($olderdatasetdefs = $DB->get_records_select(
-                        'question_dataset_definitions',
-                        "type = ?
-                        AND name = ?
-                        AND category = ?
-                        AND id < ?
-                        ORDER BY id DESC", array($datasetdef->type, $datasetdef->name, $datasetdef->category, $datasetdef->id))) {
+                    'question_dataset_definitions',
+                    "type = ?
+                    AND name = ?
+                    AND category = ?
+                    AND id < ?
+                    ORDER BY id DESC", array($datasetdef->type, $datasetdef->name, $datasetdef->category, $datasetdef->id))) {
 
-                    while ($olderdatasetdef = array_shift($olderdatasetdefs)) {
-                        $DB->delete_records('question_dataset_definitions', array('id' => $datasetdef->id));
-                        $datasetdef = $olderdatasetdef;
+                        while ($olderdatasetdef = array_shift($olderdatasetdefs)) {
+                            $DB->delete_records('question_dataset_definitions', array('id' => $datasetdef->id));
+                            $datasetdef = $olderdatasetdef;
+                        }
                     }
-                }
             }
 
             // Create relation to this dataset:
@@ -1737,31 +1735,27 @@ class question_calculated_qtype extends default_questiontype {
         }
     }
 
-/// Dataset functionality
+    /// Dataset functionality
     function pick_question_dataset($question, $datasetitem) {
         // Select a dataset in the following format:
         // An array indexed by the variable names (d.name) pointing to the value
         // to be substituted
         global $CFG, $DB;
         if (!$dataitems = $DB->get_records_sql(
-                        "SELECT i.id, d.name, i.value
-                        FROM {question_dataset_definitions} d,
-                             {question_dataset_items} i,
-                             {question_datasets} q
-                        WHERE q.question = ?
-                        AND q.datasetdefinition = d.id
-                        AND d.id = i.definition
-                        AND i.itemnumber = ? ORDER by i.id DESC ", array($question->id, $datasetitem))) {
+            "SELECT i.id, d.name, i.value
+               FROM {question_dataset_definitions} d, {question_dataset_items} i, {question_datasets} q
+              WHERE q.question = ? AND q.datasetdefinition = d.id AND d.id = i.definition AND i.itemnumber = ?
+           ORDER by i.id DESC ", array($question->id, $datasetitem))) {
             print_error('cannotgetdsfordependent', 'question', '', array($question->id, $datasetitem));
         }
         $dataset = Array();
-       	foreach($dataitems as $id => $dataitem  ){
-	       	if (!isset($dataset[$dataitem->name])){
-	       		    $dataset[$dataitem->name] = $dataitem->value ;
-	       		  }else {
-	       		  	// deleting the unused records could be added here
-	       		  }
-       	}
+        foreach($dataitems as $id => $dataitem  ){
+            if (!isset($dataset[$dataitem->name])){
+                $dataset[$dataitem->name] = $dataitem->value ;
+            }else {
+                // deleting the unused records could be added here
+            }
+        }
         return $dataset;
     }
 
@@ -1779,54 +1773,51 @@ class question_calculated_qtype extends default_questiontype {
             $currentdatasetdef->type = '0';
         }else {
 
-        // Construct question local options
-        if ( ! $currentdatasetdef = $DB->get_record_sql(
-                "SELECT a.*
-                   FROM {question_dataset_definitions} a,
-                        {question_datasets} b
-                  WHERE a.id = b.datasetdefinition
-                    AND a.type = '1'
-                    AND b.question = ?
-                    AND a.name = ?", array($form->id, $name))){
-            $currentdatasetdef->type = '0';
-         };
-        $key = "$type-0-$name";
-        if ($currentdatasetdef->type == $type
+            // Construct question local options
+            $sql = "SELECT a.*
+                FROM {question_dataset_definitions} a, {question_datasets} b
+               WHERE a.id = b.datasetdefinition AND a.type = '1' AND b.question = ? AND a.name = ?";
+            $currentdatasetdef = $DB->get_record_sql($sql, array($form->id, $name));
+            if (!$currentdatasetdef) {
+                $currentdatasetdef->type = '0';
+            }
+            $key = "$type-0-$name";
+            if ($currentdatasetdef->type == $type
                 and $currentdatasetdef->category == 0) {
-            $options[$key] = get_string($prefix."keptlocal$type", $langfile);
-        } else {
-            $options[$key] = get_string($prefix."newlocal$type", $langfile);
-        }
+                    $options[$key] = get_string($prefix."keptlocal$type", $langfile);
+                } else {
+                    $options[$key] = get_string($prefix."newlocal$type", $langfile);
+                }
         }
         // Construct question category options
         $categorydatasetdefs = $DB->get_records_sql(
-                "SELECT b.question, a.*
-                   FROM {question_datasets} b,
-                        {question_dataset_definitions} a
-                  WHERE a.id = b.datasetdefinition
-                    AND a.type = '1'
-                    AND a.category = ?
-                    AND a.name = ?", array($form->category, $name));
+            "SELECT b.question, a.*
+            FROM {question_datasets} b,
+            {question_dataset_definitions} a
+            WHERE a.id = b.datasetdefinition
+            AND a.type = '1'
+            AND a.category = ?
+            AND a.name = ?", array($form->category, $name));
         $type = 1 ;
         $key = "$type-$form->category-$name";
         if (!empty($categorydatasetdefs)){ // there is at least one with the same name
             if (isset($form->id) && isset($categorydatasetdefs[$form->id])) {// it is already used by this question
-                    $options[$key] = get_string($prefix."keptcategory$type", $langfile);
-                } else {
-                    $options[$key] = get_string($prefix."existingcategory$type", $langfile);
-                }
+                $options[$key] = get_string($prefix."keptcategory$type", $langfile);
+            } else {
+                $options[$key] = get_string($prefix."existingcategory$type", $langfile);
+            }
         } else {
             $options[$key] = get_string($prefix."newcategory$type", $langfile);
         }
         // All done!
         return array($options, $currentdatasetdef->type
-                ? "$currentdatasetdef->type-$currentdatasetdef->category-$name"
-                : '');
+            ? "$currentdatasetdef->type-$currentdatasetdef->category-$name"
+            : '');
     }
 
     function find_dataset_names($text) {
-    /// Returns the possible dataset names found in the text as an array
-    /// The array has the dataset name for both key and value
+        /// Returns the possible dataset names found in the text as an array
+        /// The array has the dataset name for both key and value
         $datasetnames = array();
         while (preg_match('~\\{([[:alpha:]][^>} <{"\']*)\\}~', $text, $regs)) {
             $datasetnames[$regs[1]] = $regs[1];
@@ -1836,37 +1827,34 @@ class question_calculated_qtype extends default_questiontype {
     }
 
     /**
-    * This function retrieve the item count of the available category shareable
-    * wild cards that is added as a comment displayed when a wild card with
-    * the same name is displayed in datasetdefinitions_form.php
-    */
+     * This function retrieve the item count of the available category shareable
+     * wild cards that is added as a comment displayed when a wild card with
+     * the same name is displayed in datasetdefinitions_form.php
+     */
     function get_dataset_definitions_category($form) {
         global $CFG, $DB;
         $datasetdefs = array();
         $lnamemax = 30;
         if (!empty($form->category)) {
             $sql = "SELECT i.*,d.*
-                    FROM {question_datasets} d,
-                         {question_dataset_definitions} i
-                  WHERE i.id = d.datasetdefinition
-                    AND i.category = ?";
-             if ($records = $DB->get_records_sql($sql, array($form->category))) {
-                   foreach ($records as $r) {
-                       if ( !isset ($datasetdefs["$r->name"])) $datasetdefs["$r->name"] = $r->itemcount;
-                    }
+                      FROM {question_datasets} d, {question_dataset_definitions} i
+                     WHERE i.id = d.datasetdefinition AND i.category = ?";
+            if ($records = $DB->get_records_sql($sql, array($form->category))) {
+                foreach ($records as $r) {
+                    if ( !isset ($datasetdefs["$r->name"])) $datasetdefs["$r->name"] = $r->itemcount;
                 }
+            }
         }
         return  $datasetdefs ;
     }
 
     /**
-    * This function build a table showing the available category shareable
-    * wild cards, their name, their definition (Min, Max, Decimal) , the item count
-    * and the name of the question where they are used.
-    * This table is intended to be add before the question text to help the user use
-    * these wild cards
-    */
-
+     * This function build a table showing the available category shareable
+     * wild cards, their name, their definition (Min, Max, Decimal) , the item count
+     * and the name of the question where they are used.
+     * This table is intended to be add before the question text to help the user use
+     * these wild cards
+     */
     function print_dataset_definitions_category($form) {
         global $CFG, $DB;
         $datasetdefs = array();
@@ -1877,19 +1865,19 @@ class question_calculated_qtype extends default_questiontype {
         $rangeofvaluestr=get_string('minmax','qtype_calculated');
         $questionusingstr = get_string('usedinquestion','qtype_calculated');
         $itemscountstr = get_string('itemscount','qtype_calculated');
-       $text ='';
+        $text ='';
         if (!empty($form->category)) {
             list($category) = explode(',', $form->category);
             $sql = "SELECT i.*,d.*
-                    FROM {question_datasets} d,
-                         {question_dataset_definitions} i
-                    WHERE i.id = d.datasetdefinition
-                    AND i.category = ?";
+                FROM {question_datasets} d,
+        {question_dataset_definitions} i
+        WHERE i.id = d.datasetdefinition
+        AND i.category = ?";
             if ($records = $DB->get_records_sql($sql, array($category))) {
                 foreach ($records as $r) {
                     $sql1 = "SELECT q.*
-                        FROM  {question} q
-                             WHERE q.id = ?";
+                               FROM {question} q
+                              WHERE q.id = ?";
                     if ( !isset ($datasetdefs["$r->type-$r->category-$r->name"])){
                         $datasetdefs["$r->type-$r->category-$r->name"]= $r;
                     }
@@ -1909,7 +1897,7 @@ class question_calculated_qtype extends default_questiontype {
                     //limit the name length displayed
                     if (!empty($qu->name)) {
                         $qu->name = (strlen($qu->name) > $lnamemax) ?
-                        substr($qu->name, 0, $lnamemax).'...' : $qu->name;
+                            substr($qu->name, 0, $lnamemax).'...' : $qu->name;
                     } else {
                         $qu->name = '';
                     }
@@ -1919,18 +1907,18 @@ class question_calculated_qtype extends default_questiontype {
             }
             $text .="</table>";
         }else{
-             $text .=get_string('nosharedwildcard', 'qtype_calculated');
+            $text .=get_string('nosharedwildcard', 'qtype_calculated');
         }
         return  $text ;
     }
 
     /**
-    * This function build a table showing the available category shareable
-    * wild cards, their name, their definition (Min, Max, Decimal) , the item count
-    * and the name of the question where they are used.
-    * This table is intended to be add before the question text to help the user use
-    * these wild cards
-    */
+     * This function build a table showing the available category shareable
+     * wild cards, their name, their definition (Min, Max, Decimal) , the item count
+     * and the name of the question where they are used.
+     * This table is intended to be add before the question text to help the user use
+     * these wild cards
+     */
 
     function print_dataset_definitions_category_shared($question,$datasetdefsq) {
         global $CFG, $DB;
@@ -1942,19 +1930,17 @@ class question_calculated_qtype extends default_questiontype {
         $rangeofvaluestr=get_string('minmax','qtype_calculated');
         $questionusingstr = get_string('usedinquestion','qtype_calculated');
         $itemscountstr = get_string('itemscount','qtype_calculated');
-       $text ='';
+        $text ='';
         if (!empty($question->category)) {
             list($category) = explode(',', $question->category);
             $sql = "SELECT i.*,d.*
-                    FROM {question_datasets} d,
-                         {question_dataset_definitions} i
-                    WHERE i.id = d.datasetdefinition
-                    AND i.category = ?";
+                      FROM {question_datasets} d, {question_dataset_definitions} i
+                     WHERE i.id = d.datasetdefinition AND i.category = ?";
             if ($records = $DB->get_records_sql($sql, array($category))) {
                 foreach ($records as $r) {
                     $sql1 = "SELECT q.*
-                        FROM  {question} q
-                             WHERE q.id = ?";
+                               FROM {question} q
+                              WHERE q.id = ?";
                     if ( !isset ($datasetdefs["$r->type-$r->category-$r->name"])){
                         $datasetdefs["$r->type-$r->category-$r->name"]= $r;
                     }
@@ -1982,7 +1968,7 @@ class question_calculated_qtype extends default_questiontype {
                     //limit the name length displayed
                     if (!empty($qu->name)) {
                         $qu->name = (strlen($qu->name) > $lnamemax) ?
-                        substr($qu->name, 0, $lnamemax).'...' : $qu->name;
+                            substr($qu->name, 0, $lnamemax).'...' : $qu->name;
                     } else {
                         $qu->name = '';
                     }
@@ -1991,42 +1977,42 @@ class question_calculated_qtype extends default_questiontype {
                     }
                     $line++;
                     $text .="<td align=\"left\" style=\"white-space:nowrap;\" >$qu->name</td>";
-                 $nb_of_quiz = 0;
-                 $nb_of_attempts=0;
-                 $used_in_quiz = false ;
-                 if ($list = $DB->get_records('quiz_question_instances', array( 'question'=> $qu->id))){
-                            $used_in_quiz = true;
-                    foreach($list as $key => $li){
-                        $nb_of_quiz ++;
-                        if($att = $DB->get_records('quiz_attempts',array( 'quiz'=> $li->quiz, 'preview'=> '0'))){
-                            $nb_of_attempts+= count($att);
+                    $nb_of_quiz = 0;
+                    $nb_of_attempts=0;
+                    $used_in_quiz = false ;
+                    if ($list = $DB->get_records('quiz_question_instances', array( 'question'=> $qu->id))){
+                        $used_in_quiz = true;
+                        foreach($list as $key => $li){
+                            $nb_of_quiz ++;
+                            if($att = $DB->get_records('quiz_attempts',array( 'quiz'=> $li->quiz, 'preview'=> '0'))){
+                                $nb_of_attempts+= count($att);
+                            }
                         }
                     }
-                  }
-                  if($used_in_quiz){
-                    $text .="<td align=\"center\">$nb_of_quiz</td>";
-                }else {
-                    $text .="<td align=\"center\">0</td>";
-                }
-                  if($used_in_quiz){
-                    $text .="<td align=\"center\">$nb_of_attempts";
-                }else {
-                     $text .="<td align=\"left\"><br/>";
-                }
+                    if($used_in_quiz){
+                        $text .="<td align=\"center\">$nb_of_quiz</td>";
+                    }else {
+                        $text .="<td align=\"center\">0</td>";
+                    }
+                    if($used_in_quiz){
+                        $text .="<td align=\"center\">$nb_of_attempts";
+                    }else {
+                        $text .="<td align=\"left\"><br/>";
+                    }
 
-                $text .="</td></tr>";
+                    $text .="</td></tr>";
                 }
             }
             $text .="</table>";
         }else{
-             $text .=get_string('nosharedwildcard', 'qtype_calculated');
+            $text .=get_string('nosharedwildcard', 'qtype_calculated');
         }
         return  $text ;
     }
 
     function find_math_equations($text) {
-    /// Returns the possible dataset names found in the text as an array
-    /// The array has the dataset name for both key and value
+        /// Returns the possible dataset names found in the text as an array
+        /// The array has the dataset name for both key and value
         $equations = array();
  /*               $qtext = "";
         $qtextremaining = $numericalquestion->questiontext ;
@@ -2038,7 +2024,7 @@ class question_calculated_qtype extends default_questiontype {
             if (empty($regs1[1])) {
                     $str = '';
                 } else {
-*/
+  */
         while (preg_match('~\{=([^[:space:]}]*)}~', $text, $regs)) {
             $equations[] = $regs[1];
             $text = str_replace($regs[0], '', $text);
@@ -2048,12 +2034,12 @@ class question_calculated_qtype extends default_questiontype {
 
     function get_virtual_qtype() {
         global $QTYPES;
-            $this->virtualqtype =& $QTYPES['numerical'];
+        $this->virtualqtype =& $QTYPES['numerical'];
         return $this->virtualqtype;
     }
 
 
-/// BACKUP FUNCTIONS ////////////////////////////
+    /// BACKUP FUNCTIONS ////////////////////////////
 
     /*
      * Backup the data in the question
@@ -2105,7 +2091,7 @@ class question_calculated_qtype extends default_questiontype {
         return $status;
     }
 
-/// RESTORE FUNCTIONS /////////////////
+    /// RESTORE FUNCTIONS /////////////////
 
     /*
      * Restores the data in the question
@@ -2154,42 +2140,42 @@ class question_calculated_qtype extends default_questiontype {
                 }
                 backup_flush(300);
             }
-        //Get the calculated_options array
-        // need to check as old questions don't have calculated_options record
-        if(isset($info['#']['CALCULATED_OPTIONS'])){
-            $calculatedoptions = $info['#']['CALCULATED_OPTIONS'];
+            //Get the calculated_options array
+            // need to check as old questions don't have calculated_options record
+            if(isset($info['#']['CALCULATED_OPTIONS'])){
+                $calculatedoptions = $info['#']['CALCULATED_OPTIONS'];
 
-            //Iterate over calculated_options
-            for($i = 0; $i < sizeof($calculatedoptions); $i++){
-                $cal_info = $calculatedoptions[$i];
-                //traverse_xmlize($cal_info);                                                                 //Debug
-                //print_object ($GLOBALS['traverse_array']);                                                  //Debug
-                //$GLOBALS['traverse_array']="";                                                              //Debug
+                //Iterate over calculated_options
+                for($i = 0; $i < sizeof($calculatedoptions); $i++){
+                    $cal_info = $calculatedoptions[$i];
+                    //traverse_xmlize($cal_info);                                                                 //Debug
+                    //print_object ($GLOBALS['traverse_array']);                                                  //Debug
+                    //$GLOBALS['traverse_array']="";                                                              //Debug
 
-                //Now, build the question_calculated_options record structure
-                $calculated_options->questionid = $new_question_id;
-                $calculated_options->synchronize = backup_todb($cal_info['#']['SYNCHRONIZE']['0']['#']);
-                $calculated_options->single = backup_todb($cal_info['#']['SINGLE']['0']['#']);
-                $calculated_options->shuffleanswers = isset($cal_info['#']['SHUFFLEANSWERS']['0']['#'])?backup_todb($mul_info['#']['SHUFFLEANSWERS']['0']['#']):'';
-                $calculated_options->correctfeedback = backup_todb($cal_info['#']['CORRECTFEEDBACK']['0']['#']);
-                $calculated_options->partiallycorrectfeedback = backup_todb($cal_info['#']['PARTIALLYCORRECTFEEDBACK']['0']['#']);
-                $calculated_options->incorrectfeedback = backup_todb($cal_info['#']['INCORRECTFEEDBACK']['0']['#']);
-                $calculated_options->answernumbering = backup_todb($cal_info['#']['ANSWERNUMBERING']['0']['#']);
+                    //Now, build the question_calculated_options record structure
+                    $calculated_options->questionid = $new_question_id;
+                    $calculated_options->synchronize = backup_todb($cal_info['#']['SYNCHRONIZE']['0']['#']);
+                    $calculated_options->single = backup_todb($cal_info['#']['SINGLE']['0']['#']);
+                    $calculated_options->shuffleanswers = isset($cal_info['#']['SHUFFLEANSWERS']['0']['#'])?backup_todb($mul_info['#']['SHUFFLEANSWERS']['0']['#']):'';
+                    $calculated_options->correctfeedback = backup_todb($cal_info['#']['CORRECTFEEDBACK']['0']['#']);
+                    $calculated_options->partiallycorrectfeedback = backup_todb($cal_info['#']['PARTIALLYCORRECTFEEDBACK']['0']['#']);
+                    $calculated_options->incorrectfeedback = backup_todb($cal_info['#']['INCORRECTFEEDBACK']['0']['#']);
+                    $calculated_options->answernumbering = backup_todb($cal_info['#']['ANSWERNUMBERING']['0']['#']);
 
-                //The structure is equal to the db, so insert the question_calculated_options
-                $newid = $DB->insert_record ("question_calculated_options",$calculated_options);
+                    //The structure is equal to the db, so insert the question_calculated_options
+                    $newid = $DB->insert_record ("question_calculated_options",$calculated_options);
 
-                //Do some output
-                if (($i+1) % 50 == 0) {
-                    if (!defined('RESTORE_SILENTLY')) {
-                        echo ".";
-                        if (($i+1) % 1000 == 0) {
-                            echo "<br />";
+                    //Do some output
+                    if (($i+1) % 50 == 0) {
+                        if (!defined('RESTORE_SILENTLY')) {
+                            echo ".";
+                            if (($i+1) % 1000 == 0) {
+                                echo "<br />";
+                            }
                         }
+                        backup_flush(300);
                     }
-                    backup_flush(300);
                 }
-            }
             }
             //Now restore numerical_units
             $status = question_restore_numerical_units ($old_question_id,$new_question_id,$cal_info,$restore);
@@ -2207,53 +2193,125 @@ class question_calculated_qtype extends default_questiontype {
         return $status;
     }
 
-	/**
-   * Runs all the code required to set up and save an essay question for testing purposes.
-   * Alternate DB table prefix may be used to facilitate data deletion.
-   */
-  function generate_test($name, $courseid = null) {
-      global $DB;
-      list($form, $question) = parent::generate_test($name, $courseid);
-      $form->feedback = 1;
-      $form->multiplier = array(1, 1);
-      $form->shuffleanswers = 1;
-      $form->noanswers = 1;
-      $form->qtype ='calculated';
-      $question->qtype ='calculated';
-      $form->answers = array('{a} + {b}');
-      $form->fraction = array(1);
-      $form->tolerance = array(0.01);
-      $form->tolerancetype = array(1);
-      $form->correctanswerlength = array(2);
-      $form->correctanswerformat = array(1);
-      $form->questiontext = "What is {a} + {b}?";
+    /**
+     * Runs all the code required to set up and save an essay question for testing purposes.
+     * Alternate DB table prefix may be used to facilitate data deletion.
+     */
+    function generate_test($name, $courseid = null) {
+        global $DB;
+        list($form, $question) = parent::generate_test($name, $courseid);
+        $form->feedback = 1;
+        $form->multiplier = array(1, 1);
+        $form->shuffleanswers = 1;
+        $form->noanswers = 1;
+        $form->qtype ='calculated';
+        $question->qtype ='calculated';
+        $form->answers = array('{a} + {b}');
+        $form->fraction = array(1);
+        $form->tolerance = array(0.01);
+        $form->tolerancetype = array(1);
+        $form->correctanswerlength = array(2);
+        $form->correctanswerformat = array(1);
+        $form->questiontext = "What is {a} + {b}?";
 
-      if ($courseid) {
-          $course = $DB->get_record('course', array('id'=> $courseid));
-      }
+        if ($courseid) {
+            $course = $DB->get_record('course', array('id'=> $courseid));
+        }
 
-      $new_question = $this->save_question($question, $form, $course);
+        $new_question = $this->save_question($question, $form, $course);
 
-      $dataset_form = new stdClass();
-      $dataset_form->nextpageparam["forceregeneration"]= 1;
-      $dataset_form->calcmin = array(1 => 1.0, 2 => 1.0);
-      $dataset_form->calcmax = array(1 => 10.0, 2 => 10.0);
-      $dataset_form->calclength = array(1 => 1, 2 => 1);
-      $dataset_form->number = array(1 => 5.4 , 2 => 4.9);
-      $dataset_form->itemid = array(1 => '' , 2 => '');
-      $dataset_form->calcdistribution = array(1 => 'uniform', 2 => 'uniform');
-      $dataset_form->definition = array(1 => "1-0-a",
-                                        2 => "1-0-b");
-      $dataset_form->nextpageparam = array('forceregeneration' => false);
-      $dataset_form->addbutton = 1;
-      $dataset_form->selectadd = 1;
-      $dataset_form->courseid = $courseid;
-      $dataset_form->cmid = 0;
-      $dataset_form->id = $new_question->id;
-      $this->save_dataset_items($new_question, $dataset_form);
+        $dataset_form = new stdClass();
+        $dataset_form->nextpageparam["forceregeneration"]= 1;
+        $dataset_form->calcmin = array(1 => 1.0, 2 => 1.0);
+        $dataset_form->calcmax = array(1 => 10.0, 2 => 10.0);
+        $dataset_form->calclength = array(1 => 1, 2 => 1);
+        $dataset_form->number = array(1 => 5.4 , 2 => 4.9);
+        $dataset_form->itemid = array(1 => '' , 2 => '');
+        $dataset_form->calcdistribution = array(1 => 'uniform', 2 => 'uniform');
+        $dataset_form->definition = array(1 => "1-0-a",
+            2 => "1-0-b");
+        $dataset_form->nextpageparam = array('forceregeneration' => false);
+        $dataset_form->addbutton = 1;
+        $dataset_form->selectadd = 1;
+        $dataset_form->courseid = $courseid;
+        $dataset_form->cmid = 0;
+        $dataset_form->id = $new_question->id;
+        $this->save_dataset_items($new_question, $dataset_form);
 
-      return $new_question;
-  }
+        return $new_question;
+    }
+
+    /**
+     * When move the category of questions, the belonging files should be moved as well
+     * @param object $question, question information
+     * @param object $newcategory, target category information
+     */
+    function move_files($question, $newcategory) {
+        global $DB;
+        parent::move_files($question, $newcategory);
+
+        $fs = get_file_storage();
+        // process files in answer
+        if (!$oldanswers = $DB->get_records('question_answers', array('question' =>  $question->id), 'id ASC')) {
+            $oldanswers = array();
+        }
+        $component = 'question';
+        $filearea = 'answerfeedback';
+        foreach ($oldanswers as $answer) {
+            $files = $fs->get_area_files($question->contextid, $component, $filearea, $answer->id);
+            foreach ($files as $storedfile) {
+                if (!$storedfile->is_directory()) {
+                    $newfile = new object();
+                    $newfile->contextid = (int)$newcategory->contextid;
+                    $fs->create_file_from_storedfile($newfile, $storedfile);
+                    $storedfile->delete();
+                }
+            }
+        }
+        $component = 'qtype_numerical';
+        $filearea = 'instruction';
+        $files = $fs->get_area_files($question->contextid, $component, $filearea, $question->id);
+        foreach ($files as $storedfile) {
+            if (!$storedfile->is_directory()) {
+                $newfile = new object();
+                $newfile->contextid = (int)$newcategory->contextid;
+                $fs->create_file_from_storedfile($newfile, $storedfile);
+                $storedfile->delete();
+            }
+        }
+    }
+
+    function check_file_access($question, $state, $options, $contextid, $component,
+            $filearea, $args) {
+        $itemid = reset($args);
+        if ($component == 'question' && $filearea == 'answerfeedback') {
+
+            // check if answer id exists
+            $result = $options->feedback && array_key_exists($itemid, $question->options->answers);
+            if (!$result) {
+                return false;
+            }
+            // check response
+            if (!$this->check_response($question, $state)) {
+                return false;
+            }
+            return true;
+        } else if ($filearea == 'instruction') {
+            // TODO: should it be display all the time like questiontext?
+            // check if question id exists
+            if ($itemid != $question->id) {
+                return false;
+            } else {
+                return true;
+            }
+        } else if (in_array($filearea, array('correctfeedback', 'partiallycorrectfeedback', 'incorrectfeedback'))) {
+            // TODO: calculated type doesn't display question feedback yet
+            return false;
+        } else {
+            return parent::check_file_access($question, $state, $options, $contextid, $component,
+                    $filearea, $args);
+        }
+    }
 }
 //// END OF CLASS ////
 
@@ -2267,11 +2325,11 @@ if ( ! defined ("CALCULATEDQUESTIONMAXITEMNUMBER")) {
 }
 
 function qtype_calculated_calculate_answer($formula, $individualdata,
-        $tolerance, $tolerancetype, $answerlength, $answerformat='1', $unit='') {
-/// The return value has these properties:
-/// ->answer    the correct answer
-/// ->min       the lower bound for an acceptable response
-/// ->max       the upper bound for an accetpable response
+    $tolerance, $tolerancetype, $answerlength, $answerformat='1', $unit='') {
+    /// The return value has these properties:
+    /// ->answer    the correct answer
+    /// ->min       the lower bound for an acceptable response
+    /// ->max       the upper bound for an accetpable response
 
     /// Exchange formula variables with the correct values...
     global $QTYPES;
@@ -2290,12 +2348,12 @@ function qtype_calculated_calculate_answer($formula, $individualdata,
 
             if (preg_match('~^(.*\\.)(.*)$~', $calculated->answer, $regs)) {
                 $calculated->answer = $regs[1] . substr(
-                        $regs[2] . '00000000000000000000000000000000000000000x',
-                        0, $answerlength)
-                        . $unit;
+                    $regs[2] . '00000000000000000000000000000000000000000x',
+                    0, $answerlength)
+                    . $unit;
             } else {
                 $calculated->answer .=
-                        substr('.00000000000000000000000000000000000000000x',
+                    substr('.00000000000000000000000000000000000000000x',
                         0, $answerlength + 1) . $unit;
             }
         } else {
@@ -2337,9 +2395,9 @@ function qtype_calculated_calculate_answer($formula, $individualdata,
             } else {
                 // Attach additional zeros at the end of $answer,
                 $answer .= (1==strlen($answer) ? '.' : '')
-                        . '00000000000000000000000000000000000000000x';
+                    . '00000000000000000000000000000000000000000x';
                 $calculated->answer = $sign
-                        .substr($answer, 0, $answerlength +1).$eX.$unit;
+                    .substr($answer, 0, $answerlength +1).$eX.$unit;
             }
         } else {
             // Stick to plain numeric format
@@ -2349,7 +2407,7 @@ function qtype_calculated_calculate_answer($formula, $individualdata,
             } else {
                 // Could be an idea to add some zeros here
                 $answer .= (preg_match('~^[0-9]*$~', $answer) ? '.' : '')
-                        . '00000000000000000000000000000000000000000x';
+                    . '00000000000000000000000000000000000000000x';
                 $oklen = $answerlength + ($p10 < 1 ? 2-$p10 : 1);
                 $calculated->answer = $sign.substr($answer, 0, $oklen).$unit;
             }
@@ -2365,9 +2423,9 @@ function qtype_calculated_calculate_answer($formula, $individualdata,
 
 
 function qtype_calculated_find_formula_errors($formula) {
-/// Validates the formula submitted from the question edit page.
-/// Returns false if everything is alright.
-/// Otherwise it constructs an error message
+    /// Validates the formula submitted from the question edit page.
+    /// Returns false if everything is alright.
+    /// Otherwise it constructs an error message
     // Strip away dataset names
     while (preg_match('~\\{[[:alpha:]][^>} <{"\']*\\}~', $formula, $regs)) {
         $formula = str_replace($regs[0], '1', $formula);
@@ -2380,59 +2438,58 @@ function qtype_calculated_find_formula_errors($formula) {
     $operatorornumber = "[$safeoperatorchar.0-9eE]";
 
     while ( preg_match("~(^|[$safeoperatorchar,(])([a-z0-9_]*)\\(($operatorornumber+(,$operatorornumber+((,$operatorornumber+)+)?)?)?\\)~",
-            $formula, $regs)) {
-
+        $formula, $regs)) {
         switch ($regs[2]) {
             // Simple parenthesis
-            case '':
-                if ($regs[4] || strlen($regs[3])==0) {
-                    return get_string('illegalformulasyntax', 'quiz', $regs[0]);
-                }
-                break;
+        case '':
+            if ($regs[4] || strlen($regs[3])==0) {
+                return get_string('illegalformulasyntax', 'quiz', $regs[0]);
+            }
+            break;
 
             // Zero argument functions
-            case 'pi':
-                if ($regs[3]) {
-                    return get_string('functiontakesnoargs', 'quiz', $regs[2]);
-                }
-                break;
+        case 'pi':
+            if ($regs[3]) {
+                return get_string('functiontakesnoargs', 'quiz', $regs[2]);
+            }
+            break;
 
             // Single argument functions (the most common case)
-            case 'abs': case 'acos': case 'acosh': case 'asin': case 'asinh':
-            case 'atan': case 'atanh': case 'bindec': case 'ceil': case 'cos':
-            case 'cosh': case 'decbin': case 'decoct': case 'deg2rad':
-            case 'exp': case 'expm1': case 'floor': case 'is_finite':
-            case 'is_infinite': case 'is_nan': case 'log10': case 'log1p':
-            case 'octdec': case 'rad2deg': case 'sin': case 'sinh': case 'sqrt':
-            case 'tan': case 'tanh':
-                if (!empty($regs[4]) || empty($regs[3])) {
-                    return get_string('functiontakesonearg','quiz',$regs[2]);
-                }
-                break;
+        case 'abs': case 'acos': case 'acosh': case 'asin': case 'asinh':
+        case 'atan': case 'atanh': case 'bindec': case 'ceil': case 'cos':
+        case 'cosh': case 'decbin': case 'decoct': case 'deg2rad':
+        case 'exp': case 'expm1': case 'floor': case 'is_finite':
+        case 'is_infinite': case 'is_nan': case 'log10': case 'log1p':
+        case 'octdec': case 'rad2deg': case 'sin': case 'sinh': case 'sqrt':
+        case 'tan': case 'tanh':
+            if (!empty($regs[4]) || empty($regs[3])) {
+                return get_string('functiontakesonearg','quiz',$regs[2]);
+            }
+            break;
 
             // Functions that take one or two arguments
-            case 'log': case 'round':
-                if (!empty($regs[5]) || empty($regs[3])) {
-                    return get_string('functiontakesoneortwoargs','quiz',$regs[2]);
-                }
-                break;
+        case 'log': case 'round':
+            if (!empty($regs[5]) || empty($regs[3])) {
+                return get_string('functiontakesoneortwoargs','quiz',$regs[2]);
+            }
+            break;
 
             // Functions that must have two arguments
-            case 'atan2': case 'fmod': case 'pow':
-                if (!empty($regs[5]) || empty($regs[4])) {
-                    return get_string('functiontakestwoargs', 'quiz', $regs[2]);
-                }
-                break;
+        case 'atan2': case 'fmod': case 'pow':
+            if (!empty($regs[5]) || empty($regs[4])) {
+                return get_string('functiontakestwoargs', 'quiz', $regs[2]);
+            }
+            break;
 
             // Functions that take two or more arguments
-            case 'min': case 'max':
-                if (empty($regs[4])) {
-                    return get_string('functiontakesatleasttwo','quiz',$regs[2]);
-                }
-                break;
+        case 'min': case 'max':
+            if (empty($regs[4])) {
+                return get_string('functiontakesatleasttwo','quiz',$regs[2]);
+            }
+            break;
 
-            default:
-                return get_string('unsupportedformulafunction','quiz',$regs[2]);
+        default:
+            return get_string('unsupportedformulafunction','quiz',$regs[2]);
         }
 
         // Exchange the function call with '1' and then chack for
@@ -2452,13 +2509,4 @@ function qtype_calculated_find_formula_errors($formula) {
         // Formula just might be valid
         return false;
     }
-
 }
-
-function dump($obj) {
-    echo "<pre>\n";
-    var_dump($obj);
-    echo "</pre><br />\n";
-}
-
-

@@ -24,11 +24,11 @@
 ///////////////////////////////////////////////////////////////////////////
 
 /**
-* Page to edit the question bank
-*
-* @license http://www.gnu.org/copyleft/gpl.html GNU Public License
-* @package questionbank
-*//** */
+ * Page to edit the question bank
+ *
+ * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+ * @package questionbank
+ */
 
     require_once("../config.php");
     require_once("editlib.php");
@@ -67,7 +67,7 @@
 
     $context = $contexts->lowest();
     $streditingquestions = get_string('editquestions', "quiz");
-    $PAGE->set_title($streditingquestions);    
+    $PAGE->set_title($streditingquestions);
     $PAGE->set_heading($COURSE->fullname);
     echo $OUTPUT->header();
 

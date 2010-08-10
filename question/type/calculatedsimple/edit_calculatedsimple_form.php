@@ -1,4 +1,20 @@
 <?php
+
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
  * Defines the editing form for the calculated simplequestion type.
  *
@@ -8,21 +24,17 @@
  * @package questionbank
  * @subpackage questiontypes
  */
-
-/**
- * calculatedsimple editing form definition.
- */
 class question_edit_calculatedsimple_form extends question_edit_form {
     /**
      * Handle to the question type for this question.
      *
      * @var question_calculatedsimple_qtype
      */
-    var $qtypeobj;
+    public $qtypeobj;
 
-    var $wildcarddisplay ;
+    public $wildcarddisplay ;
 
-    var $questiondisplay ;
+    public $questiondisplay ;
 
     public $datasetdefs;
 
@@ -46,8 +58,6 @@ class question_edit_calculatedsimple_form extends question_edit_form {
 
     public $formdata = array();
 
-
-
     function question_edit_calculatedsimple_form(&$submiturl, &$question, &$category, &$contexts, $formeditable = true){
         global $QTYPES, $SESSION, $CFG, $DB;
         $this->regenerate = true;
@@ -60,17 +70,17 @@ class question_edit_calculatedsimple_form extends question_edit_form {
         //so this should be removed from here
         // get priority to paramdatasets
 
-        if  (  "1" == optional_param('reload','', PARAM_INT )) {
-            $this->reload = true ;
+        if ("1" == optional_param('reload','', PARAM_INT )) {
+            $this->reload = true;
         }else {
-            $this->reload = false ;
+            $this->reload = false;
         }
-        if(!$this->reload ){ // use database data as this is first pass
+        if (!$this->reload) { // use database data as this is first pass
             // question->id == 0 so no stored datasets
             // else get datasets
             //   echo "<p>question  <pre>";print_r($question);echo "</pre></p>";
-            if ( !empty($question->id)) {
-                
+            if (!empty($question->id)) {
+
               /*  if (empty($question->options)) {
                     $this->get_question_options($question);
                 }*/
@@ -127,7 +137,7 @@ class question_edit_calculatedsimple_form extends question_edit_form {
             $mandatorydatasets = array();
             // should not test on adding a new answer
             // should test if there are already olddatasets or if the 'analyzequestion' submit button has been clicked
-            if (''  != optional_param('datasetdef', '', PARAM_RAW) || ''  != optional_param('analyzequestion', '', PARAM_RAW)){
+            if ('' != optional_param('datasetdef', '', PARAM_RAW) || '' != optional_param('analyzequestion', '', PARAM_RAW)){
 
                 if  (  $dummyform->answer = optional_param('answer', '', PARAM_NOTAGS)) { // there is always at least one answer...
                     $fraction = optional_param('fraction', '', PARAM_NUMBER);
@@ -297,12 +307,12 @@ class question_edit_calculatedsimple_form extends question_edit_form {
         $addfieldsname='updatequestion value';
         $addstring=get_string("updatecategory", "qtype_calculated");
         $mform->registerNoSubmitButton($addfieldsname);
-//put a submit button to stop supplementary answers on update answers parameters
-//        $mform->insertElementBefore(    $mform->createElement('submit', $addfieldsname, $addstring),'listcategory');
+        // put a submit button to stop supplementary answers on update answers parameters
+        // $mform->insertElementBefore($mform->createElement('submit', $addfieldsname, $addstring), 'listcategory');
 
         $creategrades = get_grade_options();
         $this->add_per_answer_fields($mform, get_string('answerhdr', 'qtype_calculated', '{no}'),
-                $creategrades->gradeoptions, 1, 1);
+            $creategrades->gradeoptions, 1, 1);
 
         $QTYPES['numerical']->add_units_options($mform,$this);
 
@@ -327,7 +337,7 @@ class question_edit_calculatedsimple_form extends question_edit_form {
             $this->noofitems = 0;
         }
         if(!empty($this->datasetdefs)){//So there are some datadefs
-        // we put them on the page
+            // we put them on the page
             $key = 0;
             $mform->addElement('header', 'additemhdr', get_string('wildcardparam', 'qtype_calculatedsimple'));
             $idx = 1;
@@ -347,180 +357,183 @@ class question_edit_calculatedsimple_form extends question_edit_form {
             }
             //this should be done before the elements are created and stored as $this->formdata ;
             //fill out all data sets and also the fields for the next item to add.
-        /*Here we do already the values error analysis so that
-        * we could force all wild cards values display if there is an error in values.
-        * as using a , in a number */
-        $this->numbererrors = array();
+            /*Here we do already the values error analysis so that
+             * we could force all wild cards values display if there is an error in values.
+             * as using a , in a number */
+            $this->numbererrors = array();
             if(!empty($this->datasetdefs)){
-                    $j = $this->noofitems * count($this->datasetdefs);
-                    for ($itemnumber = $this->noofitems; $itemnumber >= 1; $itemnumber--){
-                        $data = array();
-                        $numbererrors = array() ;
-                        $comment = new stdClass;
-                            $comment->stranswers = array();
-                            $comment->outsidelimit = false ;
-                            $comment->answers = array();
+                $j = $this->noofitems * count($this->datasetdefs);
+                for ($itemnumber = $this->noofitems; $itemnumber >= 1; $itemnumber--){
+                    $data = array();
+                    $numbererrors = array() ;
+                    $comment = new stdClass;
+                    $comment->stranswers = array();
+                    $comment->outsidelimit = false ;
+                    $comment->answers = array();
 
-                        foreach ($this->datasetdefs as $defid => $datasetdef){
-                            if (isset($datasetdef->items[$itemnumber])){
-                                $this->formdata["definition[$j]"] = $defid;
-                                $this->formdata["itemid[$j]"] = $datasetdef->items[$itemnumber]->id;
-                                $data[$datasetdef->name] = $datasetdef->items[$itemnumber]->value;
-                                $this->formdata["number[$j]"] = $number = $datasetdef->items[$itemnumber]->value;
-                                        if(! is_numeric($number)){
-                                        $a = new stdClass;
-                                        $a->name = '{'.$datasetdef->name.'}' ;
-                                        $a->value = $datasetdef->items[$itemnumber]->value ;
-                if (stristr($number,',')){
+                    foreach ($this->datasetdefs as $defid => $datasetdef){
+                        if (isset($datasetdef->items[$itemnumber])){
+                            $this->formdata["definition[$j]"] = $defid;
+                            $this->formdata["itemid[$j]"] = $datasetdef->items[$itemnumber]->id;
+                            $data[$datasetdef->name] = $datasetdef->items[$itemnumber]->value;
+                            $this->formdata["number[$j]"] = $number = $datasetdef->items[$itemnumber]->value;
+                            if(! is_numeric($number)){
+                                $a = new stdClass;
+                                $a->name = '{'.$datasetdef->name.'}' ;
+                                $a->value = $datasetdef->items[$itemnumber]->value ;
+                                if (stristr($number,',')){
                                     $this->numbererrors["number[$j]"]=get_string('nocommaallowed', 'qtype_calculated');
-                                $numbererrors .= $this->numbererrors['number['.$j.']']."<br />";
+                                    $numbererrors .= $this->numbererrors['number['.$j.']']."<br />";
 
-                }else {
+                                }else {
                                     $this->numbererrors["number[$j]"]= get_string('notvalidnumber','qtype_calculated',$a);
                                     $numbererrors .= $this->numbererrors['number['.$j.']']."<br />";
                                     //$comment->outsidelimit = false ;
-                                  }
-            }else if( stristr($number,'x')){ // hexa will pass the test
-                $a = new stdClass;
-                $a->name = '{'.$datasetdef->name.'}' ;
-                $a->value = $datasetdef->items[$itemnumber]->value ;
-                    $this->numbererrors['number['.$j.']']= get_string('hexanotallowed','qtype_calculated',$a);
-                                    $numbererrors .= $this->numbererrors['number['.$j.']']."<br />";
-                    } else if( is_nan($number)){
-                        $a = new stdClass;
-                        $a->name = '{'.$datasetdef->name.'}' ;
-                        $a->value = $datasetdef->items[$itemnumber]->value ;
-                                            $this->numbererrors["number[$j]"]= get_string('notvalidnumber','qtype_calculated',$a);
-                                            $numbererrors .= $this->numbererrors['number['.$j.']']."<br />";
-                         //   $val = 1.0 ;
-                    }
-                            }
-                            $j--;
-                        }
-                        if($this->noofitems != 0 ) {
-                                if (empty($numbererrors )){
-                                    if(!isset($this->question->id)) $this->question->id = 0 ;
-                                        $comment = $this->qtypeobj->comment_on_datasetitems($this->qtypeobj,$this->question->id,$this->question->questiontext,$this->nonemptyanswer, $data, $itemnumber);//$this->
-                                        if ($comment->outsidelimit) {
-                                            $this->outsidelimit=$comment->outsidelimit ;
-                                        }
-                                        $totalcomment='';
-
-                                        foreach ($this->nonemptyanswer as $key => $answer) {
-                                            $totalcomment .= $comment->stranswers[$key].'<br/>';
-                                        }
-
-                                        $this->formdata['answercomment['.$itemnumber.']'] = $totalcomment ;
                                 }
+                            }else if( stristr($number,'x')){ // hexa will pass the test
+                                $a = new stdClass;
+                                $a->name = '{'.$datasetdef->name.'}' ;
+                                $a->value = $datasetdef->items[$itemnumber]->value ;
+                                $this->numbererrors['number['.$j.']']= get_string('hexanotallowed','qtype_calculated',$a);
+                                $numbererrors .= $this->numbererrors['number['.$j.']']."<br />";
+                            } else if( is_nan($number)){
+                                $a = new stdClass;
+                                $a->name = '{'.$datasetdef->name.'}' ;
+                                $a->value = $datasetdef->items[$itemnumber]->value ;
+                                $this->numbererrors["number[$j]"]= get_string('notvalidnumber','qtype_calculated',$a);
+                                $numbererrors .= $this->numbererrors['number['.$j.']']."<br />";
+                                //   $val = 1.0 ;
                             }
+                        }
+                        $j--;
                     }
-                    $this->formdata['selectdelete'] = '1';
-                    $this->formdata['selectadd'] = '1';
-                    $j = $this->noofitems * count($this->datasetdefs)+1;
-                    $data = array(); // data for comment_on_datasetitems later
+                    if($this->noofitems != 0 ) {
+                        if (empty($numbererrors)) {
+                            if (!isset($this->question->id)) {
+                                $this->question->id = 0 ;
+                            }
+                            $this->question->questiontext = !empty($this->question->questiontext)?$this->question->questiontext:'';
+                            $comment = $this->qtypeobj->comment_on_datasetitems($this->qtypeobj, $this->question->id, $this->question->questiontext, $this->nonemptyanswer, $data, $itemnumber);
+                            if ($comment->outsidelimit) {
+                                $this->outsidelimit=$comment->outsidelimit ;
+                            }
+                            $totalcomment='';
+
+                            foreach ($this->nonemptyanswer as $key => $answer) {
+                                $totalcomment .= $comment->stranswers[$key].'<br/>';
+                            }
+
+                            $this->formdata['answercomment['.$itemnumber.']'] = $totalcomment ;
+                        }
+                    }
+                }
+                $this->formdata['selectdelete'] = '1';
+                $this->formdata['selectadd'] = '1';
+                $j = $this->noofitems * count($this->datasetdefs)+1;
+                $data = array(); // data for comment_on_datasetitems later
                 $idx =1 ;
                 foreach ($this->datasetdefs as $defid => $datasetdef){
                     $this->formdata["datasetdef[$idx]"] = $defid;
                     $idx++;
                 }
-                    $this->formdata = $this->qtypeobj->custom_generator_set_data($this->datasetdefs, $this->formdata);
+                $this->formdata = $this->qtypeobj->custom_generator_set_data($this->datasetdefs, $this->formdata);
+            }
+
+
+            $addoptions = Array();
+            $addoptions['1']='1';
+            for ($i=10; $i<=100 ; $i+=10){
+                $addoptions["$i"]="$i";
+            }
+            $showoptions = Array();
+            $showoptions['1']='1';
+            $showoptions['2']='2';
+            $showoptions['5']='5';
+            for ($i=10; $i<=100 ; $i+=10){
+                $showoptions["$i"]="$i";
+            }
+            $mform->closeHeaderBefore('additemhdr');
+            $addgrp = array();
+            $addgrp[] =& $mform->createElement('submit', 'addbutton', get_string('generatenewitemsset', 'qtype_calculatedsimple'));
+            $addgrp[] =& $mform->createElement('select', "selectadd", '', $addoptions);
+            $addgrp[] = & $mform->createElement('static',"stat",'',get_string('newsetwildcardvalues', 'qtype_calculatedsimple'));
+            $mform->addGroup($addgrp, 'addgrp', '', '   ', false);
+            $mform->registerNoSubmitButton('addbutton');
+            $mform->closeHeaderBefore('addgrp');
+            $addgrp1 = array();
+            $addgrp1[] =& $mform->createElement('submit', 'showbutton', get_string('showitems', 'qtype_calculatedsimple'));
+            $addgrp1[] =& $mform->createElement('select', "selectshow",'' , $showoptions);
+            $addgrp1[] = & $mform->createElement('static',"stat",'',get_string('setwildcardvalues', 'qtype_calculatedsimple'));
+            $mform->addGroup($addgrp1, 'addgrp1', '', '   ', false);
+            $mform->registerNoSubmitButton('showbutton');
+            $mform->closeHeaderBefore('addgrp1');
+            $mform->addElement('static', "divideradd", '', '');
+            if ($this->noofitems == 0) {
+                $mform->addElement('static','warningnoitems','','<span class="error">'.get_string('youmustaddatleastonevalue', 'qtype_calculatedsimple').'</span>');
+                $mform->closeHeaderBefore('warningnoitems');
+            }else {
+                $mform->addElement('header', 'additemhdr1', get_string('wildcardvalues', 'qtype_calculatedsimple'));
+                $mform->closeHeaderBefore('additemhdr1');
+                //   $mform->addElement('header', '', get_string('itemno', 'qtype_calculated', ""));
+                if( !empty($this->numbererrors) || $this->outsidelimit) {
+                    $mform->addElement('static', "alert", '', '<span class="error">'.get_string('useadvance', 'qtype_calculatedsimple').'</span>');
                 }
 
+                $mform->addElement('submit', 'updatedatasets', get_string('updatewildcardvalues', 'qtype_calculatedsimple'));
+                $mform->registerNoSubmitButton('updatedatasets');
+                $mform->setAdvanced("updatedatasets",true);
 
-        $addoptions = Array();
-        $addoptions['1']='1';
-        for ($i=10; $i<=100 ; $i+=10){
-             $addoptions["$i"]="$i";
-        }
-        $showoptions = Array();
-        $showoptions['1']='1';
-        $showoptions['2']='2';
-        $showoptions['5']='5';
-        for ($i=10; $i<=100 ; $i+=10){
-             $showoptions["$i"]="$i";
-        }
-        $mform->closeHeaderBefore('additemhdr');
-        $addgrp = array();
-        $addgrp[] =& $mform->createElement('submit', 'addbutton', get_string('generatenewitemsset', 'qtype_calculatedsimple'));
-        $addgrp[] =& $mform->createElement('select', "selectadd", '', $addoptions);
-        $addgrp[] = & $mform->createElement('static',"stat",'',get_string('newsetwildcardvalues', 'qtype_calculatedsimple'));
-        $mform->addGroup($addgrp, 'addgrp', '', '   ', false);
-        $mform->registerNoSubmitButton('addbutton');
-        $mform->closeHeaderBefore('addgrp');
-        $addgrp1 = array();
-        $addgrp1[] =& $mform->createElement('submit', 'showbutton', get_string('showitems', 'qtype_calculatedsimple'));
-        $addgrp1[] =& $mform->createElement('select', "selectshow",'' , $showoptions);
-        $addgrp1[] = & $mform->createElement('static',"stat",'',get_string('setwildcardvalues', 'qtype_calculatedsimple'));
-        $mform->addGroup($addgrp1, 'addgrp1', '', '   ', false);
-        $mform->registerNoSubmitButton('showbutton');
-        $mform->closeHeaderBefore('addgrp1');
-        $mform->addElement('static', "divideradd", '', '');
-        if ($this->noofitems == 0) {
-           $mform->addElement('static','warningnoitems','','<span class="error">'.get_string('youmustaddatleastonevalue', 'qtype_calculatedsimple').'</span>');
-             $mform->closeHeaderBefore('warningnoitems');
+                //------------------------------------------------------------------------------------------------------------------------------
+                $j = $this->noofitems * count($this->datasetdefs);
+                $k = 1 ;
+                if ("" != optional_param('selectshow')){
+                    $k = optional_param('selectshow', '', PARAM_INT);
+                }
+
+                for ($i = $this->noofitems; $i >= 1 ; $i--){
+                    foreach ($this->datasetdefs as $defkey => $datasetdef){
+                        if($k > 0 ||  $this->outsidelimit || !empty($this->numbererrors ) ){
+                            $mform->addElement('text',"number[$j]" , get_string('wildcard', 'qtype_calculatedsimple', $datasetdef->name));
+                            $mform->setAdvanced("number[$j]",true);
+                            if(!empty($this->numbererrors['number['.$j.']']) ){
+                                $mform->addElement('static', "numbercomment[$j]",'','<span class="error">'.$this->numbererrors['number['.$j.']'].'</span>');
+                                $mform->setAdvanced("numbercomment[$j]",true);
+                            }
+                        }else {
+                            $mform->addElement('hidden',"number[$j]" , get_string('wildcard', 'qtype_calculatedsimple', $datasetdef->name));
+                        }
+                        $mform->setType("number[$j]", PARAM_NUMBER);
+
+                        $mform->addElement('hidden', "itemid[$j]");
+                        $mform->setType("itemid[$j]", PARAM_INT);
+
+                        $mform->addElement('hidden', "definition[$j]");
+                        $mform->setType("definition[$j]", PARAM_NOTAGS);
+
+                        $j--;
+                    }
+                    if (!empty( $strquestionlabel) && ($k > 0 ||  $this->outsidelimit || !empty($this->numbererrors ) ) ){
+                        //   $repeated[] =& $mform->addElement('static', "answercomment[$i]", $strquestionlabel);
+                        $mform->addElement('static', "answercomment[$i]", "<b>".get_string('setno', 'qtype_calculatedsimple', $i)."</b>&nbsp;&nbsp;".$strquestionlabel);
+
+                    }
+                    if($k > 0 ||  $this->outsidelimit || !empty($this->numbererrors )){
+                        $mform->addElement('static', "divider1[$j]", '', '<hr />');
+
+                    }
+                    $k-- ;
+                }
+            }
+            //  if ($this->outsidelimit){
+            //   $mform->addElement('static','outsidelimit','','');
+            //  }
         }else {
-            $mform->addElement('header', 'additemhdr1', get_string('wildcardvalues', 'qtype_calculatedsimple'));
-            $mform->closeHeaderBefore('additemhdr1');
-         //   $mform->addElement('header', '', get_string('itemno', 'qtype_calculated', ""));
-         if( !empty($this->numbererrors) || $this->outsidelimit) {
-        $mform->addElement('static', "alert", '', '<span class="error">'.get_string('useadvance', 'qtype_calculatedsimple').'</span>');
+            $mform->addElement('static','warningnowildcards','','<span class="error">'.get_string('atleastonewildcard', 'qtype_calculatedsimple').'</span>');
+            $mform->closeHeaderBefore('warningnowildcards');
         }
 
-          $mform->addElement('submit', 'updatedatasets', get_string('updatewildcardvalues', 'qtype_calculatedsimple'));
-          $mform->registerNoSubmitButton('updatedatasets');
-          $mform->setAdvanced("updatedatasets",true);
 
-//------------------------------------------------------------------------------------------------------------------------------
-        $j = $this->noofitems * count($this->datasetdefs);
-        $k = 1 ;
-        if ("" != optional_param('selectshow')){
-            $k = optional_param('selectshow', '', PARAM_INT);
-        }
-
-        for ($i = $this->noofitems; $i >= 1 ; $i--){
-            foreach ($this->datasetdefs as $defkey => $datasetdef){
-                if($k > 0 ||  $this->outsidelimit || !empty($this->numbererrors ) ){
-                $mform->addElement('text',"number[$j]" , get_string('wildcard', 'qtype_calculatedsimple', $datasetdef->name));
-                $mform->setAdvanced("number[$j]",true);
-                if(!empty($this->numbererrors['number['.$j.']']) ){
-                    $mform->addElement('static', "numbercomment[$j]",'','<span class="error">'.$this->numbererrors['number['.$j.']'].'</span>');
-                $mform->setAdvanced("numbercomment[$j]",true);
-              }
-              }else {
-                $mform->addElement('hidden',"number[$j]" , get_string('wildcard', 'qtype_calculatedsimple', $datasetdef->name));
-              }
-                $mform->setType("number[$j]", PARAM_NUMBER);
-
-                $mform->addElement('hidden', "itemid[$j]");
-                $mform->setType("itemid[$j]", PARAM_INT);
-
-                $mform->addElement('hidden', "definition[$j]");
-                $mform->setType("definition[$j]", PARAM_NOTAGS);
-
-                $j--;
-            }
-            if (!empty( $strquestionlabel) && ($k > 0 ||  $this->outsidelimit || !empty($this->numbererrors ) ) ){
-             //   $repeated[] =& $mform->addElement('static', "answercomment[$i]", $strquestionlabel);
-                    $mform->addElement('static', "answercomment[$i]", "<b>".get_string('setno', 'qtype_calculatedsimple', $i)."</b>&nbsp;&nbsp;".$strquestionlabel);
-
-            }
-               if($k > 0 ||  $this->outsidelimit || !empty($this->numbererrors )){
-                $mform->addElement('static', "divider1[$j]", '', '<hr />');
-
-               }
-                        $k-- ;
-        }
-    }
-      //  if ($this->outsidelimit){
-         //   $mform->addElement('static','outsidelimit','','');
-      //  }
-    }else {
-        $mform->addElement('static','warningnowildcards','','<span class="error">'.get_string('atleastonewildcard', 'qtype_calculatedsimple').'</span>');
-        $mform->closeHeaderBefore('warningnowildcards');
-    }
-
-
-//------------------------------------------------------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------------------------------
         //non standard name for button element needed so not using add_action_buttons
         //hidden elements
 
@@ -536,50 +549,64 @@ class question_edit_calculatedsimple_form extends question_edit_form {
         $mform->setDefault('cmid', 0);
         if (!empty($this->question->id)){
             if ($this->question->formoptions->cansaveasnew){
-        $mform->addElement('header', 'additemhdr', get_string('converttocalculated', 'qtype_calculatedsimple'));
-        $mform->closeHeaderBefore('additemhdr');
+                $mform->addElement('header', 'additemhdr', get_string('converttocalculated', 'qtype_calculatedsimple'));
+                $mform->closeHeaderBefore('additemhdr');
 
                 $mform->addElement('checkbox', 'convert','' ,get_string('willconverttocalculated', 'qtype_calculatedsimple'));
-                                $mform->setDefault('convert', 0);
+                $mform->setDefault('convert', 0);
 
-              }
             }
+        }
     }
 
-    function set_data($question) {
+    function data_preprocessing($question) {
         global $QTYPES;
+        $answer = $this->answer;
+        $default_values = array();
+        if (count($answer)) {
+            $key = 0;
+            foreach ($answer as $answer){
+                $default_values['answer['.$key.']'] = $answer->answer; //  is necessary ? to-do test it
+                $default_values['fraction['.$key.']'] = $answer->fraction;
+                $default_values['tolerance['.$key.']'] = $answer->tolerance;
+                $default_values['tolerancetype['.$key.']'] = $answer->tolerancetype;
+                $default_values['correctanswerlength['.$key.']'] = $answer->correctanswerlength;
+                $default_values['correctanswerformat['.$key.']'] = $answer->correctanswerformat;
 
-            $answer = $this->answer;
-            $default_values = array();
-            if (count($answer)) {
-                $key = 0;
-                foreach ($answer as $answer){
-                    $default_values['answer['.$key.']'] = $answer->answer; //  is necessary ? to-do test it
-                    $default_values['fraction['.$key.']'] = $answer->fraction;
-                    $default_values['tolerance['.$key.']'] = $answer->tolerance;
-                    $default_values['tolerancetype['.$key.']'] = $answer->tolerancetype;
-                    $default_values['correctanswerlength['.$key.']'] = $answer->correctanswerlength;
-                    $default_values['correctanswerformat['.$key.']'] = $answer->correctanswerformat;
-                    $key++;
-                }
+                // prepare draft files
+                $draftid = file_get_submitted_draft_itemid('feedback['.$key.']');
+                $default_values['feedback['.$key.']']['text'] = file_prepare_draft_area(
+                    $draftid,       // draftid
+                    $this->context->id,    // context
+                    'question', // component
+                    'answerfeedback',             // filarea
+                    !empty($answer->id)?(int)$answer->id:null, // itemid
+                    $this->fileoptions,    // options
+                    !empty($answer->feedback)?$answer->feedback:''      // text
+                );
+                $default_values['feedback['.$key.']']['format'] = !empty($answer->feedbackformat)?$answer->feedbackformat:editors_get_preferred_format();
+                $default_values['feedback['.$key.']']['itemid'] = $draftid;
+
+                $key++;
             }
-            $default_values['synchronize'] = 0 ;
-            $QTYPES['numerical']->set_numerical_unit_data($question,$default_values);
-          /*  if (isset($question->options)){
+        }
+        $default_values['synchronize'] = 0 ;
+        $QTYPES['numerical']->set_numerical_unit_data($this, $question, $default_values);
+        /*  if (isset($question->options)){
                 $default_values['unitgradingtype'] = $question->options->unitgradingtype ;
                 $default_values['unitpenalty'] = $question->options->unitpenalty ;
                 switch ($question->options->showunits){
                     case 'O' :
-                    case '1' : 
+                    case '1' :
                         $default_values['showunits0'] = $question->options->showunits ;
                         $default_values['unitrole'] = 0 ;
                         break;
                     case '2' :
-                    case '3' : 
+                    case '3' :
                         $default_values['showunits1'] = $question->options->showunits ;
                         $default_values['unitrole'] = 1 ;
                         break;
-                } 
+                }
                 $default_values['unitsleft'] = $question->options->unitsleft ;
                 $default_values['instructions'] = $question->options->instructions  ;
 
@@ -593,16 +620,16 @@ class question_edit_calculatedsimple_form extends question_edit_form {
                     }
                 }
             }
-            */
-                      $key = 0 ;
+           */
+        $key = 0 ;
 
         $formdata = array();
         $fromform = new stdClass();
         //this should be done before the elements are created and stored as $this->formdata ;
         //fill out all data sets and also the fields for the next item to add.
-  /*      if(!empty($this->datasetdefs)){
+        /* if(!empty($this->datasetdefs)){
         $j = $this->noofitems * count($this->datasetdefs);
-         for ($itemnumber = $this->noofitems; $itemnumber >= 1; $itemnumber--){
+        for ($itemnumber = $this->noofitems; $itemnumber >= 1; $itemnumber--){
             $data = array();
             foreach ($this->datasetdefs as $defid => $datasetdef){
                 if (isset($datasetdef->items[$itemnumber])){
@@ -613,27 +640,27 @@ class question_edit_calculatedsimple_form extends question_edit_form {
                 }
                 $j--;
             }
-    //                 echo "<p>answers avant  comment <pre>";print_r($answer);echo"</pre></p>";
-    //                 echo "<p>data avant  comment <pre>";print_r($data);echo"</pre></p>";
+            // echo "<p>answers avant  comment <pre>";print_r($answer);echo"</pre></p>";
+            // echo "<p>data avant  comment <pre>";print_r($data);echo"</pre></p>";
 
             if($this->noofitems != 0 ) {
                 if(!isset($question->id)) $question->id = 0 ;
-            $comment = $this->qtypeobj->comment_on_datasetitems($question->id,$this->nonemptyanswer, $data, $itemnumber);//$this->
-             if ($comment->outsidelimit) {
-                 $this->outsidelimit=$comment->outsidelimit ;
-            }
-            $totalcomment='';
-       //              echo "<p> comment <pre>";print_r($comment);echo"</pre></p>";
+                $comment = $this->qtypeobj->comment_on_datasetitems($question->id,$this->nonemptyanswer, $data, $itemnumber);//$this->
+                 if ($comment->outsidelimit) {
+                     $this->outsidelimit=$comment->outsidelimit ;
+                }
+                $totalcomment='';
+                // echo "<p> comment <pre>";print_r($comment);echo"</pre></p>";
 
-            foreach ($this->nonemptyanswer as $key => $answer) {
-                $totalcomment .= $comment->stranswers[$key].'<br/>';
-            }
+                foreach ($this->nonemptyanswer as $key => $answer) {
+                    $totalcomment .= $comment->stranswers[$key].'<br/>';
+                }
 
-            $formdata['answercomment['.$itemnumber.']'] = $totalcomment ;
+                $formdata['answercomment['.$itemnumber.']'] = $totalcomment ;
+            }
         }
-        }
-    //    $formdata['reload'] = '1';
-      //  $formdata['nextpageparam[forceregeneration]'] = $this->regenerate;
+        // $formdata['reload'] = '1';
+        // $formdata['nextpageparam[forceregeneration]'] = $this->regenerate;
         $formdata['selectdelete'] = '1';
         $formdata['selectadd'] = '1';
         $j = $this->noofitems * count($this->datasetdefs)+1;
@@ -644,10 +671,10 @@ class question_edit_calculatedsimple_form extends question_edit_form {
                 $idx++;
             }
         $formdata = $this->qtypeobj->custom_generator_set_data($this->datasetdefs, $formdata);
-    }*/
+        }*/
         $question = (object)((array)$question + $default_values+$this->formdata );
 
-        parent::set_data($question);
+        return $question;
     }
 
     function qtype() {
@@ -659,8 +686,8 @@ class question_edit_calculatedsimple_form extends question_edit_form {
         $errors = parent::validation($data, $files);
         //verifying for errors in {=...} in question text;
         $qtext = "";
-        $qtextremaining = $data['questiontext'] ;
-        $possibledatasets = $this->qtypeobj->find_dataset_names($data['questiontext']);
+        $qtextremaining = $data['questiontext']['text'];
+        $possibledatasets = $this->qtypeobj->find_dataset_names($data['questiontext']['text']);
         foreach ($possibledatasets as $name => $value) {
             $qtextremaining = str_replace('{'.$name.'}', '1', $qtextremaining);
         }
@@ -679,7 +706,7 @@ class question_edit_calculatedsimple_form extends question_edit_form {
         $answers = $data['answer'];
         $answercount = 0;
         $maxgrade = false;
-        $possibledatasets = $this->qtypeobj->find_dataset_names($data['questiontext']);
+        $possibledatasets = $this->qtypeobj->find_dataset_names($data['questiontext']['text']);
         $mandatorydatasets = array();
         foreach ($answers as $key => $answer){
             $mandatorydatasets += $this->qtypeobj->find_dataset_names($answer);
@@ -797,4 +824,3 @@ class question_edit_calculatedsimple_form extends question_edit_form {
         return $errors;
     }
 }
-

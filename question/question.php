@@ -75,6 +75,7 @@ if ($cmid){
     $thiscontext = get_context_instance(CONTEXT_MODULE, $cmid);
 } elseif ($courseid) {
     require_login($courseid, false);
+    $PAGE->set_pagelayout('course');
     $thiscontext = get_context_instance(CONTEXT_COURSE, $courseid);
     $module = null;
     $cm = null;
@@ -106,7 +107,7 @@ if ($id) {
 
 } else if ($categoryid) {
     // Category, but no qtype. They probably came from the addquestion.php
-    // script without choosing a question type. Send them back. 
+    // script without choosing a question type. Send them back.
     $addurl = new moodle_url('/question/addquestion.php', $url->params());
     $addurl->param('validationerror', 1);
     redirect($addurl);
@@ -151,6 +152,8 @@ if ($id) {
 } else  { // creating a new question
     require_capability('moodle/question:add', $categorycontext);
     $formeditable = true;
+    $question->formoptions->canedit = question_has_capability_on($question, 'edit');
+    $question->formoptions->canmove = (question_has_capability_on($question, 'move') && $addpermission);
     $question->formoptions->repeatelements = true;
     $question->formoptions->movecontext = false;
 }
@@ -189,7 +192,9 @@ if ($cm !== null){
 } else {
     $toform->courseid = $COURSE->id;
 }
+
 $toform->inpopup = $inpopup;
+
 $mform->set_data($toform);
 
 if ($mform->is_cancelled()){

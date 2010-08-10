@@ -277,7 +277,7 @@
 
             if ($feedbackcolumn && $attempt->timefinish > 0) {
                 if ($attemptoptions->overallfeedback) {
-                    $row[] = quiz_feedback_for_grade($attemptgrade, $quiz->id);
+                    $row[] = quiz_feedback_for_grade($attemptgrade, $quiz, $context, $cm);
                 } else {
                     $row[] = '';
                 }
@@ -330,7 +330,7 @@
         }
         if ($feedbackcolumn) {
             $resultinfo .= $OUTPUT->heading(get_string('overallfeedback', 'quiz'), 3, 'main');
-            $resultinfo .= '<p class="quizgradefeedback">'.quiz_feedback_for_grade($mygrade, $quiz->id)."</p>\n";
+            $resultinfo .= '<p class="quizgradefeedback">'.quiz_feedback_for_grade($mygrade, $quiz, $context, $cm)."</p>\n";
         }
 
         if ($resultinfo) {

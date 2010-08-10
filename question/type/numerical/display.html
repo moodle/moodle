@@ -2,10 +2,6 @@
   <?php echo $questiontext; ?>
 </div>
 
-<?php if ($image) { ?>
-  <img class="qimage" src="<?php echo $image; ?>" alt="" />
-<?php } ?>
-
 <div class="ablock clearfix">
   <div class="prompt">
     <?php echo get_string("answer", "quiz").': '; ?>
@@ -237,7 +233,7 @@
        </div>
      <?php if (!empty($question->options->instructions)){?>
         <div>
-     <?php   echo  format_text($question->options->instructions, true, $formatoptions, $cmoptions->course);?>
+     <?php   echo  format_text($question->options->instructions, $question->options->instructionsformat, $formatoptions, $cmoptions->course);?>
         </div>
      <?php }?>
      </fieldset>
@@ -250,5 +246,3 @@
   <?php } ?>
   <?php $this->print_question_submit_buttons($question, $state, $cmoptions, $options); ?>
 </div>
-
-

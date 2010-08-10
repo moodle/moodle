@@ -79,11 +79,13 @@ class question_edit_random_form extends question_edit_form {
         $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
         $mform->closeHeaderBefore('buttonar');
     }
+
     function validation($fromform, $files) {
         //validation of category
         //is not relevant for this question type
         return array();
     }
+
     function qtype() {
         return 'random';
     }

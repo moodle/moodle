@@ -1,4 +1,22 @@
 <?php
+
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+defined('MOODLE_INTERNAL') || die();
+
 /**
  * Defines the editing form for the multichoice question type.
  *
@@ -47,14 +65,14 @@ class question_edit_multichoice_form extends question_edit_form {
         $mform->addElement('header', 'overallfeedbackhdr', get_string('overallfeedback', 'qtype_multichoice'));
 
         foreach (array('correctfeedback', 'partiallycorrectfeedback', 'incorrectfeedback') as $feedbackname) {
-            $mform->addElement('htmleditor', $feedbackname, get_string($feedbackname, 'qtype_multichoice'),
-                                array('course' => $this->coursefilesid));
+            $mform->addElement('editor', $feedbackname, get_string($feedbackname, 'qtype_multichoice'),
+                                array('course' => $this->coursefilesid), $this->editoroptions);
             $mform->setType($feedbackname, PARAM_RAW);
         }
 
     }
 
-    function set_data($question) {
+    function data_preprocessing($question) {
         if (isset($question->options)){
             $answers = $question->options->answers;
             if (count($answers)) {
@@ -62,19 +80,44 @@ class question_edit_multichoice_form extends question_edit_form {
                 foreach ($answers as $answer){
                     $default_values['answer['.$key.']'] = $answer->answer;
                     $default_values['fraction['.$key.']'] = $answer->fraction;
-                    $default_values['feedback['.$key.']'] = $answer->feedback;
+
+                    // prepare question text
+                    $draftid = file_get_submitted_draft_itemid('feedback['.$key.']');
+                    $default_values['feedback['.$key.']'] = array();
+                    $default_values['feedback['.$key.']']['text'] = file_prepare_draft_area($draftid, $this->context->id, 'question', 'answerfeedback', empty($answer->id)?null:(int)$answer->id, null, $answer->feedback);
+                    $default_values['feedback['.$key.']']['format'] = $answer->feedbackformat;
+                    $default_values['feedback['.$key.']']['itemid'] = $draftid;
                     $key++;
                 }
             }
             $default_values['single'] =  $question->options->single;
             $default_values['answernumbering'] =  $question->options->answernumbering;
             $default_values['shuffleanswers'] =  $question->options->shuffleanswers;
-            $default_values['correctfeedback'] =  $question->options->correctfeedback;
-            $default_values['partiallycorrectfeedback'] =  $question->options->partiallycorrectfeedback;
-            $default_values['incorrectfeedback'] =  $question->options->incorrectfeedback;
+
+            // prepare feedback editor to display files in draft area
+            foreach (array('correctfeedback', 'partiallycorrectfeedback', 'incorrectfeedback') as $feedbackname) {
+                $draftid = file_get_submitted_draft_itemid($feedbackname);
+                $text = $question->options->$feedbackname;
+                $feedbackformat = $feedbackname . 'format';
+                $format = $question->options->$feedbackformat;
+                $default_values[$feedbackname] = array();
+                $default_values[$feedbackname]['text'] = file_prepare_draft_area(
+                    $draftid,       // draftid
+                    $this->context->id,    // context
+                    'qtype_multichoice',   // component
+                    $feedbackname,         // filarea
+                    !empty($question->id)?(int)$question->id:null, // itemid
+                    $this->fileoptions,    // options
+                    $text      // text
+                );
+                $default_values[$feedbackname]['format'] = $format;
+                $default_values[$feedbackname]['itemid'] = $draftid;
+            }
+            // prepare files code block ends
+
             $question = (object)((array)$question + $default_values);
         }
-        parent::set_data($question);
+        return $question;
     }
 
     function qtype() {

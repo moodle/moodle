@@ -631,6 +631,12 @@ if ($component === 'blog') {
     }
 
 // ========================================================================================================================
+} else if ($component === 'question') {
+    require_once($CFG->libdir . '/questionlib.php');
+    question_pluginfile($course, $context, 'question', $filearea, $args, $forcedownload);
+    send_file_not_found();
+
+// ========================================================================================================================
 } else if (strpos($component, 'mod_') === 0) {
     $modname = substr($component, 4);
     if (!file_exists("$CFG->dirroot/mod/$modname/lib.php")) {

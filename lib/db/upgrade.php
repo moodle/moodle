@@ -4911,7 +4911,170 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         upgrade_main_savepoint(true, 2010080305);
     }
 
+    if ($oldversion < 2010080900) {
 
+    /// Define field generalfeedbackformat to be added to question
+        $table = new xmldb_table('question');
+        $field = new xmldb_field('generalfeedbackformat', XMLDB_TYPE_INTEGER, '2', null, XMLDB_NOTNULL, null, '0', 'generalfeedback');
+
+    /// Conditionally launch add field generalfeedbackformat
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+    /// Define field infoformat to be added to question_categories
+        $table = new xmldb_table('question_categories');
+        $field = new xmldb_field('infoformat', XMLDB_TYPE_INTEGER, '2', null, XMLDB_NOTNULL, null, '0', 'info');
+
+    /// Conditionally launch add field infoformat
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+    /// Define field answerformat to be added to question_answers
+        $table = new xmldb_table('question_answers');
+        $field = new xmldb_field('answerformat', XMLDB_TYPE_INTEGER, '2', null, XMLDB_NOTNULL, null, '0', 'answer');
+
+    /// Conditionally launch add field answerformat
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+    /// Define field feedbackformat to be added to question_answers
+        $field = new xmldb_field('feedbackformat', XMLDB_TYPE_INTEGER, '2', null, XMLDB_NOTNULL, null, '0', 'feedback');
+
+    /// Conditionally launch add field feedbackformat
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+    /// Define field manualcommentformat to be added to question_sessions
+        $table = new xmldb_table('question_sessions');
+        $field = new xmldb_field('manualcommentformat', XMLDB_TYPE_INTEGER, '2', null, XMLDB_NOTNULL, null, '0', 'manualcomment');
+
+    /// Conditionally launch add field manualcommentformat
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+    /// Main savepoint reached
+        upgrade_main_savepoint(true, 2010080900);
+    }
+
+    /// updating question image
+    if ($oldversion < 2010080901) {
+        $fs = get_file_storage();
+        $rs = $DB->get_recordset('question');
+        $textlib = textlib_get_instance();
+        foreach ($rs as $question) {
+            if (empty($question->image)) {
+                continue;
+            }
+            if (!$category = $DB->get_record('question_categories', array('id'=>$question->category))) {
+                continue;
+            }
+            $categorycontext = get_context_instance_by_id($category->contextid);
+            // question files are stored in course level
+            // so we have to find course context
+            switch ($categorycontext->contextlevel){
+                case CONTEXT_COURSE :
+                    $context = $categorycontext;
+                    break;
+                case CONTEXT_MODULE :
+                    $courseid = $DB->get_field('course_modules', 'course', array('id'=>$categorycontext->instanceid));
+                    $context = get_context_instance(CONTEXT_COURSE, $courseid);
+                    break;
+                case CONTEXT_COURSECAT :
+                case CONTEXT_SYSTEM :
+                    $context = get_system_context();
+                    break;
+                default :
+                    continue;
+            }
+            if ($textlib->substr($textlib->strtolower($question->image), 0, 7) == 'http://') {
+                // it is a link, appending to existing question text
+                $question->questiontext .= ' <img src="' . $question->image . '" />';
+                // update question record
+                $DB->update_record('question', $question);
+            } else {
+                $filename = basename($question->image);
+                $filepath = dirname($question->image);
+                if (empty($filepath) or $filepath == '.' or $filepath == '/') {
+                    $filepath = '/';
+                } else {
+                    // append /
+                    $filepath = '/'.trim($filepath, './@#$ ').'/';
+                }
+
+                // course files already moved to file pool by previous upgrade block
+                // so we just create copy from course_legacy area
+                if ($image = $fs->get_file($context->id, 'course', 'legacy', 0, $filepath, $filename)) {
+                    // move files to file pool
+                    $file_record = array(
+                        'contextid'=>$category->contextid,
+                        'component'=>'question',
+                        'filearea'=>'questiontext',
+                        'itemid'=>$question->id
+                    );
+                    $fs->create_file_from_storedfile($file_record, $image);
+                    $question->questiontext .= ' <img src="@@PLUGINFILE@@' . $filepath . $filename . '" />';
+                    // update question record
+                    $DB->update_record('question', $question);
+                }
+            }
+        }
+        $rs->close();
+
+        // Define field image to be dropped from question
+        $table = new xmldb_table('question');
+        $field = new xmldb_field('image');
+
+        // Conditionally launch drop field image
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // fix fieldformat
+        $sql = 'SELECT a.*, q.qtype FROM {question_answers} a, {question} q WHERE a.question = q.id';
+        $rs = $DB->get_recordset_sql($sql);
+        foreach ($rs as $record) {
+            // generalfeedback should use questiontext format
+            if ($CFG->texteditors !== 'textarea') {
+                if (!empty($record->feedback)) {
+                    $record->feedback = text_to_html($record->feedback);
+                }
+                $record->feedbackformat = FORMAT_HTML;
+            } else {
+                $record->feedbackformat = FORMAT_MOODLE;
+                $record->answerformat = FORMAT_MOODLE;
+            }
+            unset($record->qtype);
+            $DB->update_record('question_answers', $record);
+        }
+        $rs->close();
+
+        $rs = $DB->get_recordset('question');
+        foreach ($rs as $record) {
+            if ($CFG->texteditors !== 'textarea') {
+                if (!empty($record->questiontext)) {
+                    $record->questiontext = text_to_html($record->questiontext);
+                }
+                $record->questiontextformat = FORMAT_HTML;
+                // conver generalfeedback text to html
+                if (!empty($record->generalfeedback)) {
+                    $record->generalfeedback = text_to_html($record->generalfeedback);
+                }
+            } else {
+                $record->questiontextformat = FORMAT_MOODLE;
+            }
+            // generalfeedbackformat should be the save as questiontext format
+            $record->generalfeedbackformat = $record->questiontextformat;
+            $DB->update_record('question', $record);
+        }
+        $rs->close();
+        // Main savepoint reached
+        upgrade_main_savepoint(true, 2010080901);
+    }
     return true;
 }
 

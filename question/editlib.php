@@ -1402,7 +1402,7 @@ class question_bank_view {
                     $questionids[] = $key;
                 }
             }
-            if ($questionids){
+            if ($questionids) {
                 list($usql, $params) = $DB->get_in_or_equal($questionids);
                 $sql = "SELECT q.*, c.contextid FROM {question} q, {question_categories} c WHERE q.id $usql AND c.id = q.category";
                 if (!$questions = $DB->get_records_sql($sql, $params)){
@@ -1426,8 +1426,9 @@ class question_bank_view {
                 } else {
                     $returnurl = str_replace($CFG->wwwroot . '/', '', $returnurl);
                     $movecontexturl  = new moodle_url('/question/contextmoveq.php',
-                            array('returnurl' => $returnurl, 'ids' => $questionids,
-                            'tocatid' => $tocategoryid));
+                                                    array('returnurl' => $returnurl,
+                                                            'ids' => implode(',', $questionids),
+                                                            'tocatid' => $tocategoryid));
                     if (!empty($cm->id)){
                         $movecontexturl->param('cmid', $cm->id);
                     } else {

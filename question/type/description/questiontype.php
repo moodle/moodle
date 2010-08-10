@@ -68,7 +68,6 @@ class description_qtype extends default_questiontype {
         $editlink = $this->get_question_edit_link($question, $cmoptions, $options);
 
         $questiontext = $this->format_text($question->questiontext, $question->questiontextformat, $cmoptions);
-        $image = get_question_image($question);
 
         $generalfeedback = '';
         if ($isfinished && $options->generalfeedback) {
@@ -91,4 +90,3 @@ class description_qtype extends default_questiontype {
 }
 // Register this question type with questionlib.php.
 question_register_questiontype(new description_qtype());
-

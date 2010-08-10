@@ -283,6 +283,10 @@ class quiz {
         return $this->accessmanager;
     }
 
+    public function get_overall_feedback($grade) {
+        return quiz_feedback_for_grade($grade, $this->quiz, $this->context, $this->cm);
+    }
+
     /**
      * Wrapper round the has_capability funciton that automatically passes in the quiz context.
      */
@@ -571,7 +575,7 @@ class quiz_attempt extends quiz {
         return $this->attempt->timefinish != 0;
     }
 
-    /** @return boolean whether this attemp is a preview attempt. */
+    /** @return boolean whether this attempt is a preview attempt. */
     public function is_preview() {
         return $this->attempt->preview;
     }
@@ -629,10 +633,12 @@ class quiz_attempt extends quiz {
     /**
      * Wrapper that calls get_render_options with the appropriate arguments.
      *
+     * @param integer questionid the quetsion to get the render options for.
      * @return object the render options for this user on this attempt.
      */
-    public function get_render_options($state) {
-        return quiz_get_renderoptions($this->quiz, $this->attempt, $this->context, $state);
+    public function get_render_options($questionid) {
+        return quiz_get_renderoptions($this->quiz, $this->attempt, $this->context,
+                $this->get_question_state($questionid));
     }
 
     /**
@@ -669,7 +675,7 @@ class quiz_attempt extends quiz {
             case QUESTION_EVENTCLOSEANDGRADE:
             case QUESTION_EVENTCLOSE:
             case QUESTION_EVENTMANUALGRADE:
-                $options = $this->get_render_options($this->states[$questionid]);
+                $options = $this->get_render_options($questionid);
                 if ($options->scores && $this->questions[$questionid]->maxgrade > 0) {
                     return question_get_feedback_class($state->last_graded->raw_grade /
                             $this->questions[$questionid]->maxgrade);
@@ -703,7 +709,7 @@ class quiz_attempt extends quiz {
      * @return string the formatted grade, to the number of decimal places specified by the quiz.
      */
     public function get_question_score($questionid) {
-        $options = $this->get_render_options($this->states[$questionid]);
+        $options = $this->get_render_options($questionid);
         if ($options->scores) {
             return quiz_format_question_grade($this->quiz, $this->states[$questionid]->last_graded->grade);
         } else {
@@ -805,7 +811,7 @@ class quiz_attempt extends quiz {
         if ($reviewing) {
             $options = $this->get_review_options();
         } else {
-            $options = $this->get_render_options($this->states[$id]);
+            $options = $this->get_render_options($id);
         }
         if ($thispageurl) {
             $this->quiz->thispageurl = $thispageurl;
@@ -814,6 +820,20 @@ class quiz_attempt extends quiz {
         }
         print_question($this->questions[$id], $this->states[$id], $this->questions[$id]->_number,
                 $this->quiz, $options);
+    }
+
+    public function check_file_access($questionid, $isreviewing, $contextid, $component,
+            $filearea, $args, $forcedownload) {
+        if ($isreviewing) {
+            $options = $this->get_review_options();
+        } else {
+            $options = $this->get_render_options($questionid);
+        }
+        // XXX: mulitichoice type needs quiz id to get maxgrade
+        $options->quizid = $this->attempt->quiz;
+        return question_check_file_access($this->questions[$questionid],
+                $this->get_question_state($questionid), $options, $contextid,
+                $component, $filearea, $args, $forcedownload);
     }
 
     /**

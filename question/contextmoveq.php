@@ -12,7 +12,7 @@ require_once(dirname(__FILE__) . '/../config.php');
 require_once(dirname(__FILE__) . '/editlib.php');
 require_once($CFG->dirroot.'/question/contextmoveq_form.php');
 
-$ids = required_param('ids',PARAM_SEQUENCE); // question ids
+$ids = required_param('ids', PARAM_SEQUENCE); // question ids
 
 if (!$cmid = optional_param('cmid', 0, PARAM_INT)){
     $courseid = required_param('courseid', PARAM_INT);
@@ -164,6 +164,9 @@ if ($contextmoveform->is_cancelled()){
 /// Now move questions.
     if (!question_move_questions_to_category($ids, $tocat->id)) {
         print_error('errormovingquestions', 'question', $returnurl, $ids);
+    }
+    if ($returnurl) {
+        $returnurl = new moodle_url('/' . $returnurl);
     }
     redirect($returnurl);
 }

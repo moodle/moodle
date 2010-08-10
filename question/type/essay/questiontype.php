@@ -1,5 +1,20 @@
 <?php
 
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 //////////////////
 ///   ESSAY   ///
 /////////////////
@@ -21,6 +36,7 @@ class question_essay_qtype extends default_questiontype {
 
     function save_question_options($question) {
         global $DB;
+        $context = $question->context;
         $result = true;
         $update = true;
         $answer = $DB->get_record("question_answers", array("question" => $question->id));
@@ -29,13 +45,20 @@ class question_essay_qtype extends default_questiontype {
             $answer->question = $question->id;
             $update = false;
         }
-        $answer->answer   = $question->feedback;
-        $answer->feedback = $question->feedback;
+        $answer->feedbackformat = $question->feedback['format'];
+        $answer->answerformat = $question->feedback['format'];
         $answer->fraction = $question->fraction;
         if ($update) {
+            $answer->feedback = file_save_draft_area_files($question->feedback['itemid'], $context->id, 'question', 'answerfeedback', $answer->id, self::$fileoptions, trim($question->feedback['text']));
+            $answer->answer = $answer->feedback;
             $DB->update_record("question_answers", $answer);
         } else {
-            $answer->id = $DB->insert_record("question_answers", $answer);
+            $answer->feedback = $question->feedback['text'];
+            $answer->answer = $answer->feedback;
+            $answer->id = $DB->insert_record('question_answers', $answer);
+            $answer->feedback = file_save_draft_area_files($question->feedback['itemid'], $context->id, 'question', 'answerfeedback', $answer->id, self::$fileoptions, trim($question->feedback['text']));
+            $answer->answer = $answer->feedback;
+            $DB->update_record('question_answers', $answer);
         }
         return $result;
     }
@@ -43,12 +66,14 @@ class question_essay_qtype extends default_questiontype {
     function print_question_formulation_and_controls(&$question, &$state, $cmoptions, $options) {
         global $CFG;
 
-        $answers       = &$question->options->answers;
-        $readonly      = empty($options->readonly) ? '' : 'disabled="disabled"';
+        $context = $this->get_context_by_category_id($question->category);
+
+        $answers  = &$question->options->answers;
+        $readonly = empty($options->readonly) ? '' : 'disabled="disabled"';
 
         // Only use the rich text editor for the first essay question on a page.
 
-        $formatoptions          = new stdClass;
+        $formatoptions = new stdClass;
         $formatoptions->noclean = true;
         $formatoptions->para    = false;
 
@@ -60,13 +85,12 @@ class question_essay_qtype extends default_questiontype {
                                    $question->questiontextformat,
                                    $formatoptions, $cmoptions->course);
 
-        $image = get_question_image($question);
-
         // feedback handling
         $feedback = '';
         if ($options->feedback && !empty($answers)) {
             foreach ($answers as $answer) {
-                $feedback = format_text($answer->feedback, '', $formatoptions, $cmoptions->course);
+                $feedback = quiz_rewrite_question_urls($answer->feedback, 'pluginfile.php', $context->id, 'qtype_essay', 'feedback', array($state->attempt, $state->question), $answer->id);
+                $feedback = format_text($feedback, $answer->feedbackformat, $formatoptions, $cmoptions->course);
             }
         }
 
@@ -139,6 +163,54 @@ class question_essay_qtype extends default_questiontype {
         return $this->save_question($question, $form, $course);
     }
 
+    /**
+     * When move the category of questions, the belonging files should be moved as well
+     * @param object $question, question information
+     * @param object $newcategory, target category information
+     */
+    function move_files($question, $newcategory) {
+        global $DB;
+        parent::move_files($question, $newcategory);
+
+        $fs = get_file_storage();
+        // process files in answer
+        if (!$oldanswers = $DB->get_records('question_answers', array('question' =>  $question->id), 'id ASC')) {
+            $oldanswers = array();
+        }
+        $component = 'question';
+        $filearea = 'answerfeedback';
+        foreach ($oldanswers as $answer) {
+            $files = $fs->get_area_files($question->contextid, $component, $filearea, $answer->id);
+            foreach ($files as $storedfile) {
+                if (!$storedfile->is_directory()) {
+                    $newfile = new object();
+                    $newfile->contextid = (int)$newcategory->contextid;
+                    $fs->create_file_from_storedfile($newfile, $storedfile);
+                    $storedfile->delete();
+                }
+            }
+        }
+    }
+
+    function check_file_access($question, $state, $options, $contextid, $component,
+            $filearea, $args) {
+        if ($component == 'question' && $filearea == 'answerfeedback') {
+
+            $answerid = reset($args); // itemid is answer id.
+            $answers = &$question->options->answers;
+            if (isset($state->responses[''])) {
+                $response = $state->responses[''];
+            } else {
+                $response = '';
+            }
+
+            return $options->feedback && !empty($response);
+
+        } else {
+            return parent::check_file_access($question, $state, $options, $contextid, $component,
+                    $filearea, $args);
+        }
+    }
     // Restore method not needed.
 }
 //// END OF CLASS ////
@@ -147,4 +219,3 @@ class question_essay_qtype extends default_questiontype {
 //// INITIATION - Without this line the question type is not in use... ///
 //////////////////////////////////////////////////////////////////////////
 question_register_questiontype(new question_essay_qtype());
-

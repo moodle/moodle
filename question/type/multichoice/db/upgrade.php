@@ -52,6 +52,61 @@ function xmldb_qtype_multichoice_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2008021800, 'qtype', 'multichoice');
     }
 
+    if ($oldversion < 2009021801) {
+
+    /// Define field correctfeedbackformat to be added to question_multichoice
+        $table = new xmldb_table('question_multichoice');
+        $field = new xmldb_field('correctfeedbackformat', XMLDB_TYPE_INTEGER, '2', null, XMLDB_NOTNULL, null, '0', 'correctfeedback');
+
+    /// Conditionally launch add field correctfeedbackformat
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+    /// Define field partiallycorrectfeedbackformat to be added to question_multichoice
+        $field = new xmldb_field('partiallycorrectfeedbackformat', XMLDB_TYPE_INTEGER, '2', null, XMLDB_NOTNULL, null, '0', 'partiallycorrectfeedback');
+
+    /// Conditionally launch add field partiallycorrectfeedbackformat
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+    /// Define field incorrectfeedbackformat to be added to question_multichoice
+        $field = new xmldb_field('incorrectfeedbackformat', XMLDB_TYPE_INTEGER, '2', null, XMLDB_NOTNULL, null, '0', 'incorrectfeedback');
+
+    /// Conditionally launch add field incorrectfeedbackformat
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        $rs = $DB->get_recordset('question_multichoice');
+        foreach ($rs as $record) {
+            if ($CFG->texteditors !== 'textarea') {
+                if (!empty($record->correctfeedback)) {
+                    $record->correctfeedback = text_to_html($record->correctfeedback);
+                }
+                $record->correctfeedbackformat = FORMAT_HTML;
+                if (!empty($record->partiallycorrectfeedback)) {
+                    $record->partiallycorrectfeedback = text_to_html($record->partiallycorrectfeedback);
+                }
+                $record->partiallycorrectfeedbackformat = FORMAT_HTML;
+                if (!empty($record->incorrectfeedback)) {
+                    $record->incorrectfeedback = text_to_html($record->incorrectfeedback);
+                }
+                $record->incorrectfeedbackformat = FORMAT_HTML;
+            } else {
+                $record->correctfeedbackformat = FORMAT_MOODLE;
+                $record->partiallycorrectfeedbackformat = FORMAT_MOODLE;
+                $record->incorrectfeedbackformat = FORMAT_MOODLE;
+            }
+            $DB->update_record('question_multichoice', $record);
+        }
+        $rs->close();
+
+    /// multichoice savepoint reached
+        upgrade_plugin_savepoint(true, 2009021801, 'qtype', 'multichoice');
+    }
+
     return true;
 }
 

@@ -851,18 +851,31 @@ function question_delete_activity($cm, $feedback=true) {
  *
  * @global object
  * @param string $questionids a comma-separated list of question ids.
- * @param integer $newcategory the id of the category to move to.
+ * @param integer $newcategoryid the id of the category to move to.
  */
-function question_move_questions_to_category($questionids, $newcategory) {
-    global $DB;
-
+function question_move_questions_to_category($questionids, $newcategoryid) {
+    global $DB, $QTYPES;
     $result = true;
+    $ids = explode(',', $questionids);
+    foreach ($ids as $questionid) {
+        $questionid = (int)$questionid;
+        $params = array();
+        $params[] = $questionid;
+        $sql = 'SELECT q.*, c.id AS contextid, c.contextlevel, c.instanceid, c.path, c.depth
+                  FROM {question} q, {question_categories} qc, {context} c
+                 WHERE q.category=qc.id AND q.id=? AND qc.contextid=c.id';
+        $question = $DB->get_record_sql($sql, $params);
+        $category = $DB->get_record('question_categories', array('id'=>$newcategoryid));
+        // process files
+        $QTYPES[$question->qtype]->move_files($question, $category);
+    }
+
 
     // Move the questions themselves.
-    $result = $result && $DB->set_field_select('question', 'category', $newcategory, "id IN ($questionids)");
+    $result = $result && $DB->set_field_select('question', 'category', $newcategoryid, "id IN ($questionids)");
 
     // Move any subquestions belonging to them.
-    $result = $result && $DB->set_field_select('question', 'category', $newcategory, "parent IN ($questionids)");
+    $result = $result && $DB->set_field_select('question', 'category', $newcategoryid, "parent IN ($questionids)");
 
     // TODO Deal with datasets.
 
@@ -1080,6 +1093,7 @@ function question_load_states(&$questions, &$states, $cmoptions, $attempt, $last
                 $states[$qid]->last_graded = clone($states[$qid]);
             }
         } else {
+
             if ($lastattemptid) {
                 // If the new attempt is to be based on this previous attempt.
                 // Find the responses from the previous attempt and save them to the new session
@@ -2091,7 +2105,7 @@ function question_init_qengine_js() {
     $module = array(
         'name' => 'core_question_flags',
         'fullpath' => '/question/flags.js',
-        'requires' => array('base', 'dom', 'event-delegate', 'io-base'), 
+        'requires' => array('base', 'dom', 'event-delegate', 'io-base'),
     );
     $actionurl = $CFG->wwwroot . '/question/toggleflag.php';
     $flagattributes = array(
@@ -2162,9 +2176,9 @@ function question_get_editing_head_contributions($question) {
  * @param object $cmoptions  The options specified by the course module
  * @param object $options  An object specifying the rendering options.
  */
-function print_question(&$question, &$state, $number, $cmoptions, $options=null) {
+function print_question(&$question, &$state, $number, $cmoptions, $options=null, $context=null) {
     global $QTYPES;
-    $QTYPES[$question->qtype]->print_question($question, $state, $number, $cmoptions, $options);
+    $QTYPES[$question->qtype]->print_question($question, $state, $number, $cmoptions, $options, $context);
 }
 /**
  * Saves question options
@@ -3191,4 +3205,124 @@ class question_edit_contexts {
             print_error('nopermissions', '', '', 'access question edit tab '.$tabname);
         }
     }
+}
+
+/**
+ * Rewrite question url, file_rewrite_pluginfile_urls always build url by
+ * $file/$contextid/$component/$filearea/$itemid/$pathname_in_text, so we cannot add
+ * extra questionid and attempted in url by it, so we create quiz_rewrite_question_urls
+ * to build url here
+ *
+ * @param string $text text being processed
+ * @param string $file the php script used to serve files
+ * @param int $contextid
+ * @param string $component component
+ * @param string $filearea filearea
+ * @param array $ids other IDs will be used to check file permission
+ * @param int $itemid
+ * @param array $options
+ * @return string
+ */
+function quiz_rewrite_question_urls($text, $file, $contextid, $component, $filearea, array $ids, $itemid, array $options=null) {
+    global $CFG;
+
+    $options = (array)$options;
+    if (!isset($options['forcehttps'])) {
+        $options['forcehttps'] = false;
+    }
+
+    if (!$CFG->slasharguments) {
+        $file = $file . '?file=';
+    }
+
+    $baseurl = "$CFG->wwwroot/$file/$contextid/$component/$filearea/";
+
+    if (!empty($ids)) {
+        $baseurl .= (implode('/', $ids) . '/');
+    }
+
+    if ($itemid !== null) {
+        $baseurl .= "$itemid/";
+    }
+
+    if ($options['forcehttps']) {
+        $baseurl = str_replace('http://', 'https://', $baseurl);
+    }
+
+    return str_replace('@@PLUGINFILE@@/', $baseurl, $text);
+}
+
+/**
+ * Called by pluginfile.php to serve files related to the 'question' core
+ * component and for files belonging to qtypes.
+ *
+ * For files that relate to questions in a question_attempt, then we delegate to
+ * a function in the component that owns the attempt (for example in the quiz,
+ * or in core question preview) to get necessary inforation.
+ *
+ * (Note that, at the moment, all question file areas relate to questions in
+ * attempts, so the If at the start of the last paragraph is always true.)
+ *
+ * Does not return, either calls send_file_not_found(); or serves the file.
+ *
+ * @param object $course course settings object
+ * @param object $context context object
+ * @param string $component the name of the component we are serving files for.
+ * @param string $filearea the name of the file area.
+ * @param array $args the remaining bits of the file path.
+ * @param bool $forcedownload whether the user must be forced to download the file.
+ */
+function question_pluginfile($course, $context, $component, $filearea, $args, $forcedownload) {
+    global $DB, $CFG;
+
+    $attemptid = (int)array_shift($args);
+    $questionid = (int)array_shift($args);
+
+    require_login($course, false);
+
+    if ($attemptid === 0) {
+        // preview
+        require_once($CFG->dirroot . '/question/previewlib.php');
+        return question_preview_question_pluginfile($course, $context,
+                $component, $filearea, $attemptid, $questionid, $args, $forcedownload);
+
+    } else {
+        $module = $DB->get_field('question_attempts', 'modulename',
+                array('id' => $attemptid));
+
+        $dir = get_component_directory($module);
+        if (!file_exists("$dir/lib.php")) {
+            send_file_not_found();
+        }
+        include_once("$dir/lib.php");
+
+        $filefunction = $module . '_question_pluginfile';
+        if (!function_exists($filefunction)) {
+            send_file_not_found();
+        }
+
+        $filefunction($course, $context, $component, $filearea, $attemptid, $questionid,
+                $args, $forcedownload);
+
+        send_file_not_found();
+    }
+}
+
+/**
+ * Final test for whether a studnet should be allowed to see a particular file.
+ * This delegates the decision to the question type plugin.
+ *
+ * @param object $question The question to be rendered.
+ * @param object $state    The state to render the question in.
+ * @param object $options  An object specifying the rendering options.
+ * @param string $component the name of the component we are serving files for.
+ * @param string $filearea the name of the file area.
+ * @param array $args the remaining bits of the file path.
+ * @param bool $forcedownload whether the user must be forced to download the file.
+ */
+function question_check_file_access($question, $state, $options, $contextid, $component,
+        $filearea, $args, $forcedownload) {
+    global $QTYPES;
+    return $QTYPES[$question->qtype]->check_file_access($question, $state, $options, $contextid, $component,
+            $filearea, $args, $forcedownload);
 }

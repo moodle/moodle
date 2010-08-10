@@ -862,6 +862,7 @@ class qformat_default {
      * performs the conversion.
      */
     function format_question_text($question) {
+        global $DB;
         $formatoptions = new stdClass;
         $formatoptions->noclean = true;
         $formatoptions->para = false;
@@ -870,10 +871,7 @@ class qformat_default {
         } else {
             $format = $question->questiontextformat;
         }
-        return format_text($question->questiontext, $format, $formatoptions);
+        $text = $question->questiontext;
+        return format_text(html_to_text($text), $format, $formatoptions);
     }
-
-
 }
-
-

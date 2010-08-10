@@ -341,6 +341,22 @@ function xmldb_quiz_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2010051800, 'quiz');
     }
 
+    if ($oldversion < 2010080600) {
+
+        // Define field feedbacktextformat to be added to quiz_feedback
+        $table = new xmldb_table('quiz_feedback');
+        $field = new xmldb_field('feedbacktextformat', XMLDB_TYPE_INTEGER, '2', null, XMLDB_NOTNULL, null, '0', 'feedbacktext');
+
+        // Conditionally launch add field feedbacktextformat
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // quiz savepoint reached
+        upgrade_mod_savepoint(true, 2010080600, 'quiz');
+    }
+
+
     return true;
 }
 

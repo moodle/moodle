@@ -1,4 +1,20 @@
 <?php
+
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
  * A base class for question editing forms.
  *
@@ -7,7 +23,7 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package questionbank
  * @subpackage questiontypes
- *//** */
+ */
 
 /**
  * Form definition base class. This defines the common fields that
@@ -27,23 +43,43 @@ class question_edit_form extends moodleform {
      * @var object
      */
     public $question;
-
     public $contexts;
     public $category;
     public $categorycontext;
     public $coursefilesid;
 
+    /** @var object current context */
+    public $context;
+    /** @var array html editor options */
+    public $editoroptions;
+    /** @var array options to preapre draft area */
+    public $fileoptions;
+    /** @var object instance of question type */
+    public $instance;
+
     function question_edit_form($submiturl, $question, $category, $contexts, $formeditable = true){
+        global $DB;
 
         $this->question = $question;
 
         $this->contexts = $contexts;
 
+        $record = $DB->get_record('question_categories', array('id'=>$question->category), 'contextid');
+        $this->context = get_context_instance_by_id($record->contextid);
+
+        $this->editoroptions = array('maxfiles' => EDITOR_UNLIMITED_FILES, 'context'=>$this->context);
+        $this->fileoptions = array('subdir'=>true, 'maxfiles'=>-1, 'maxbytes'=>-1);
+
         $this->category = $category;
         $this->categorycontext = get_context_instance_by_id($category->contextid);
-
+                                              //** *
         //course id or site id depending on question cat context
         $this->coursefilesid =  get_filesdir_from_context(get_context_instance_by_id($category->contextid));
+
+        if (!empty($question->id)) {
+            $question->id = (int)$question->id;
+            //$this->instance = new
+        }
 
         parent::moodleform($submiturl, null, 'post', '', null, $formeditable);
 
@@ -106,26 +142,9 @@ class question_edit_form extends moodleform {
         $mform->setType('name', PARAM_TEXT);
         $mform->addRule('name', null, 'required', null, 'client');
 
-        //TODO: MDL-16094 convert to new editor element
-        $mform->addElement('htmleditor', 'questiontext', get_string('questiontext', 'quiz'),
-                array('rows' => 15, 'course' => $this->coursefilesid));
+        $mform->addElement('editor', 'questiontext', get_string('questiontext', 'quiz'),
+                array('rows' => 15, 'course' => $this->coursefilesid), $this->editoroptions);
         $mform->setType('questiontext', PARAM_RAW);
-        //$mform->addElement('format', 'questiontextformat', get_string('format'));
-        $mform->addElement('hidden', 'questiontextformat');
-        $mform->setType('questiontextformat', PARAM_INT);
-
-        make_upload_directory($this->coursefilesid);    // Just in case
-        $coursefiles = get_directory_list("$CFG->dataroot/$this->coursefilesid", $CFG->moddata);
-        foreach ($coursefiles as $filename) {
-            if (mimeinfo("icon", $filename) == "image.gif") {
-                $images["$filename"] = $filename;
-            }
-        }
-        if (empty($images)) {
-            $mform->addElement('static', 'image', get_string('imagedisplay', 'quiz'), get_string('noimagesyet'));
-        } else {
-            $mform->addElement('select', 'image', get_string('imagedisplay', 'quiz'), array_merge(array(''=>get_string('none')), $images));
-        }
 
         $mform->addElement('text', 'defaultgrade', get_string('defaultgrade', 'quiz'),
                 array('size' => 3));
@@ -140,8 +159,8 @@ class question_edit_form extends moodleform {
         $mform->addHelpButton('penalty', 'penaltyfactor', 'question');
         $mform->setDefault('penalty', 0.1);
 
-        $mform->addElement('htmleditor', 'generalfeedback', get_string('generalfeedback', 'quiz'),
-                array('rows' => 10, 'course' => $this->coursefilesid));
+        $mform->addElement('editor', 'generalfeedback', get_string('generalfeedback', 'quiz'),
+                array('rows' => 10, 'course' => $this->coursefilesid), $this->editoroptions);
         $mform->setType('generalfeedback', PARAM_RAW);
         $mform->addHelpButton('generalfeedback', 'generalfeedback', 'quiz');
 
@@ -235,7 +254,7 @@ class question_edit_form extends moodleform {
         $errors= parent::validation($fromform, $files);
         if (empty($fromform->makecopy) && isset($this->question->id)
                 && ($this->question->formoptions->canedit || $this->question->formoptions->cansaveasnew)
-                && empty($fromform->usecurrentcat) && !$this->question->formoptions->canmove){
+                && empty($fromform->usecurrentcat) && !$this->question->formoptions->canmove) {
             $errors['currentgrp'] = get_string('nopermissionmove', 'question');
         }
         return $errors;
@@ -264,8 +283,8 @@ class question_edit_form extends moodleform {
         $repeated[] =& $mform->createElement('header', 'answerhdr', $label);
         $repeated[] =& $mform->createElement('text', 'answer', get_string('answer', 'quiz'), array('size' => 50));
         $repeated[] =& $mform->createElement('select', 'fraction', get_string('grade'), $gradeoptions);
-        $repeated[] =& $mform->createElement('htmleditor', 'feedback', get_string('feedback', 'quiz'),
-                                array('course' => $this->coursefilesid));
+        $repeated[] =& $mform->createElement('editor', 'feedback', get_string('feedback', 'quiz'),
+                                array('course' => $this->coursefilesid), $this->editoroptions);
         $repeatedoptions['answer']['type'] = PARAM_RAW;
         $repeatedoptions['fraction']['default'] = 0;
         $answersoption = 'answers';
@@ -302,9 +321,33 @@ class question_edit_form extends moodleform {
 
     function set_data($question) {
         global $QTYPES;
-        if (empty($question->image)){
-            unset($question->image);
+        // prepare question text
+        $draftid = file_get_submitted_draft_itemid('questiontext');
+
+        if (!empty($question->questiontext)) {
+            $questiontext = $question->questiontext;
+        } else {
+            $questiontext = '';
         }
+        $questiontext = file_prepare_draft_area($draftid, $this->context->id, 'question', 'questiontext', empty($question->id)?null:(int)$question->id, null, $questiontext);
+
+        $question->questiontext = array();
+        $question->questiontext['text'] = $questiontext;
+        $question->questiontext['format'] = empty($question->questiontextformat) ? editors_get_preferred_format() : $question->questiontextformat;
+        $question->questiontext['itemid'] = $draftid;
+
+        // prepare general feedback
+        $draftid = file_get_submitted_draft_itemid('generalfeedback');
+
+        if (empty($question->generalfeedback)) {
+            $question->generalfeedback = '';
+        }
+
+        $feedback = file_prepare_draft_area($draftid, $this->context->id, 'question', 'generalfeedback', empty($question->id)?null:(int)$question->id, null, $question->generalfeedback);
+        $question->generalfeedback = array();
+        $question->generalfeedback['text'] = $feedback;
+        $question->generalfeedback['format'] = empty($question->generalfeedbackformat) ? editors_get_preferred_format() : $question->generalfeedbackformat;
+        $question->generalfeedback['itemid'] = $draftid;
 
         // Remove unnecessary trailing 0s form grade fields.
         if (isset($question->defaultgrade)) {
@@ -324,8 +367,18 @@ class question_edit_form extends moodleform {
                 }
             }
         }
-
+        // subclass adds data_preprocessing code here
+        $question = $this->data_preprocessing($question);
         parent::set_data($question);
+    }
+
+    /**
+     * Any preprocessing needed for the settings form for the question type
+     *
+     * @param array $question - array to fill in with the default values
+     */
+    function data_preprocessing($question) {
+        return $question;
     }
 
     /**
@@ -336,5 +389,3 @@ class question_edit_form extends moodleform {
         return '';
     }
 }
-
-

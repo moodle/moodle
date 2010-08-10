@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/db" VERSION="20100803" COMMENT="XMLDB file for core Moodle tables"
+<XMLDB PATH="lib/db" VERSION="20100806" COMMENT="XMLDB file for core Moodle tables"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
 >
@@ -1246,8 +1246,9 @@
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="name"/>
         <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="id" NEXT="contextid"/>
         <FIELD NAME="contextid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="context that this category is shared in" PREVIOUS="name" NEXT="info"/>
-        <FIELD NAME="info" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" PREVIOUS="contextid" NEXT="stamp"/>
-        <FIELD NAME="stamp" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="info" NEXT="parent"/>
+        <FIELD NAME="info" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" PREVIOUS="contextid" NEXT="infoformat"/>
+        <FIELD NAME="infoformat" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="info" NEXT="stamp"/>
+        <FIELD NAME="stamp" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="infoformat" NEXT="parent"/>
         <FIELD NAME="parent" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="stamp" NEXT="sortorder"/>
         <FIELD NAME="sortorder" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="999" SEQUENCE="false" PREVIOUS="parent"/>
       </FIELDS>
@@ -1266,10 +1267,10 @@
         <FIELD NAME="parent" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="category" NEXT="name"/>
         <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="parent" NEXT="questiontext"/>
         <FIELD NAME="questiontext" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" PREVIOUS="name" NEXT="questiontextformat"/>
-        <FIELD NAME="questiontextformat" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="questiontext" NEXT="image"/>
-        <FIELD NAME="image" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="questiontextformat" NEXT="generalfeedback"/>
-        <FIELD NAME="generalfeedback" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" COMMENT="to store the question feedback" PREVIOUS="image" NEXT="defaultgrade"/>
-        <FIELD NAME="defaultgrade" TYPE="number" LENGTH="12" NOTNULL="true" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" DECIMALS="7" PREVIOUS="generalfeedback" NEXT="penalty"/>
+        <FIELD NAME="questiontextformat" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="questiontext" NEXT="generalfeedback"/>
+        <FIELD NAME="generalfeedback" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" COMMENT="to store the question feedback" PREVIOUS="questiontextformat" NEXT="generalfeedbackformat"/>
+        <FIELD NAME="generalfeedbackformat" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="generalfeedback" NEXT="defaultgrade"/>
+        <FIELD NAME="defaultgrade" TYPE="number" LENGTH="12" NOTNULL="true" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" DECIMALS="7" PREVIOUS="generalfeedbackformat" NEXT="penalty"/>
         <FIELD NAME="penalty" TYPE="number" LENGTH="12" NOTNULL="true" UNSIGNED="false" DEFAULT="0.1" SEQUENCE="false" DECIMALS="7" PREVIOUS="defaultgrade" NEXT="qtype"/>
         <FIELD NAME="qtype" TYPE="char" LENGTH="20" NOTNULL="true" SEQUENCE="false" PREVIOUS="penalty" NEXT="length"/>
         <FIELD NAME="length" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" PREVIOUS="qtype" NEXT="stamp"/>
@@ -1293,9 +1294,11 @@
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="question"/>
         <FIELD NAME="question" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="answer"/>
-        <FIELD NAME="answer" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" PREVIOUS="question" NEXT="fraction"/>
-        <FIELD NAME="fraction" TYPE="number" LENGTH="12" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" DECIMALS="7" PREVIOUS="answer" NEXT="feedback"/>
-        <FIELD NAME="feedback" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" PREVIOUS="fraction"/>
+        <FIELD NAME="answer" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" PREVIOUS="question" NEXT="answerformat"/>
+        <FIELD NAME="answerformat" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="answer" NEXT="fraction"/>
+        <FIELD NAME="fraction" TYPE="number" LENGTH="12" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" DECIMALS="7" PREVIOUS="answerformat" NEXT="feedback"/>
+        <FIELD NAME="feedback" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" PREVIOUS="fraction" NEXT="feedbackformat"/>
+        <FIELD NAME="feedbackformat" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="feedback"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="question"/>
@@ -1338,8 +1341,9 @@
         <FIELD NAME="newest" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="questionid" NEXT="newgraded"/>
         <FIELD NAME="newgraded" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="newest" NEXT="sumpenalty"/>
         <FIELD NAME="sumpenalty" TYPE="number" LENGTH="12" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" DECIMALS="7" PREVIOUS="newgraded" NEXT="manualcomment"/>
-        <FIELD NAME="manualcomment" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" PREVIOUS="sumpenalty" NEXT="flagged"/>
-        <FIELD NAME="flagged" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" COMMENT="The person attempting the question may mark certain questions within their question_attempt if the module that owns the attempt allow it. This field stores the status of that flag." PREVIOUS="manualcomment"/>
+        <FIELD NAME="manualcomment" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" PREVIOUS="sumpenalty" NEXT="manualcommentformat"/>
+        <FIELD NAME="manualcommentformat" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="manualcomment" NEXT="flagged"/>
+        <FIELD NAME="flagged" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" COMMENT="The person attempting the question may mark certain questions within their question_attempt if the module that owns the attempt allow it. This field stores the status of that flag." PREVIOUS="manualcommentformat"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="attemptid"/>
@@ -1575,7 +1579,7 @@
         <KEY NAME="handlerid" TYPE="foreign" FIELDS="handlerid" REFTABLE="events_handlers" REFFIELDS="id" PREVIOUS="queuedeventid"/>
       </KEYS>
     </TABLE>
-    <TABLE NAME="grade_outcomes" COMMENT="This table describes the outcomes used in the system. An outcome is a statement tied to a rubric scale from low to high, such as “Not met, Borderline, Met” (stored as 0,1 or 2)" PREVIOUS="events_queue_handlers" NEXT="grade_outcomes_courses">
+    <TABLE NAME="grade_outcomes" COMMENT="This table describes the outcomes used in the system. An outcome is a statement tied to a rubric scale from low to high, such as âNot met, Borderline, Metâ (stored as 0,1 or 2)" PREVIOUS="events_queue_handlers" NEXT="grade_outcomes_courses">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" COMMENT="id of the table" NEXT="courseid"/>
         <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" COMMENT="Mostly these are defined site wide ie NULL" PREVIOUS="id" NEXT="shortname"/>

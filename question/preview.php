@@ -211,7 +211,7 @@
     $PAGE->set_title($strpreview);
     $PAGE->set_heading($COURSE->fullname);
     echo $OUTPUT->header();
-    
+
     if (!empty($quizid)) {
         echo '<p class="quemodname">'.get_string('modulename', 'quiz') . ': ';
         p(format_string($quiz->name));
@@ -219,7 +219,7 @@
     }
     $number = 1;
     echo '<form method="post" action="'.$url->out_omit_querystring().'" enctype="multipart/form-data" id="responseform">', "\n";
-    print_question($questions[$id], $curstate, $number, $quiz, $options);
+    print_question($questions[$id], $curstate, $number, $quiz, $options, $context);
 
     echo '<div class="controls">';
     echo html_writer::input_hidden_params($url);

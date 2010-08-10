@@ -1,5 +1,22 @@
 <?php
 
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+defined('MOODLE_INTERNAL') || die();
+
 /////////////////
 /// TRUEFALSE ///
 /////////////////
@@ -24,34 +41,52 @@ class question_truefalse_qtype extends default_questiontype {
             $oldanswers = array();
         }
 
+        $feedbacktext = $question->feedbacktrue['text'];
+        $feedbackitemid = $question->feedbacktrue['itemid'];
+        $feedbackformat = $question->feedbacktrue['format'];
         // Save answer 'True'
         if ($true = array_shift($oldanswers)) {  // Existing answer, so reuse it
             $true->answer   = get_string("true", "quiz");
             $true->fraction = $question->correctanswer;
             $true->feedback = $question->feedbacktrue;
+            $true->feedback = file_save_draft_area_files($feedbackitemid, $question->context->id, 'question', 'answerfeedback', $true->id, self::$fileoptions, $feedbacktext);
+            $true->feedbackformat = $feedbackformat;
             $DB->update_record("question_answers", $true);
         } else {
             unset($true);
+            $true = new stdclass;
             $true->answer   = get_string("true", "quiz");
             $true->question = $question->id;
             $true->fraction = $question->correctanswer;
-            $true->feedback = $question->feedbacktrue;
+            $true->feedback = '';
+            $true->feedbackformat = $feedbackformat;
             $true->id = $DB->insert_record("question_answers", $true);
+            $feedbacktext = file_save_draft_area_files($feedbackitemid, $question->context->id, 'question', 'answerfeedback', $true->id, self::$fileoptions, $feedbacktext);
+            $DB->set_field('question_answers', 'feedback', $feedbacktext, array('id'=>$true->id));
         }
+
+        $feedbacktext = $question->feedbackfalse['text'];
+        $feedbackitemid = $question->feedbackfalse['itemid'];
+        $feedbackformat = $question->feedbackfalse['format'];
 
         // Save answer 'False'
         if ($false = array_shift($oldanswers)) {  // Existing answer, so reuse it
             $false->answer   = get_string("false", "quiz");
             $false->fraction = 1 - (int)$question->correctanswer;
-            $false->feedback = $question->feedbackfalse;
+            $false->feedback = file_save_draft_area_files($feedbackitemid, $question->context->id, 'question', 'answerfeedback', $false->id, self::$fileoptions, $feedbacktext);
+            $false->feedbackformat = $feedbackformat;
             $DB->update_record("question_answers", $false);
         } else {
             unset($false);
+            $false = new stdclass;
             $false->answer   = get_string("false", "quiz");
             $false->question = $question->id;
             $false->fraction = 1 - (int)$question->correctanswer;
-            $false->feedback = $question->feedbackfalse;
+            $false->feedback = '';
+            $false->feedbackformat = $feedbackformat;
             $false->id = $DB->insert_record("question_answers", $false);
+            $feedbacktext = file_save_draft_area_files($feedbackitemid, $question->context->id, 'question', 'answerfeedback', $false->id, self::$fileoptions, $feedbacktext);
+            $DB->set_field('question_answers', 'feedback', $feedbacktext, array('id'=>$false->id));
         }
 
         // delete any leftover old answer records (there couldn't really be any, but who knows)
@@ -134,9 +169,9 @@ class question_truefalse_qtype extends default_questiontype {
     /**
     * Prints the main content of the question including any interactions
     */
-    function print_question_formulation_and_controls(&$question, &$state,
-            $cmoptions, $options) {
+    function print_question_formulation_and_controls(&$question, &$state, $cmoptions, $options) {
         global $CFG;
+        $context = $this->get_context_by_category_id($question->category);
 
         $readonly = $options->readonly ? ' disabled="disabled"' : '';
 
@@ -148,7 +183,6 @@ class question_truefalse_qtype extends default_questiontype {
         $questiontext = format_text($question->questiontext,
                          $question->questiontextformat,
                          $formatoptions, $cmoptions->course);
-        $image = get_question_image($question);
 
         $answers = &$question->options->answers;
         $trueanswer = &$answers[$question->options->trueanswer];
@@ -198,10 +232,31 @@ class question_truefalse_qtype extends default_questiontype {
         $feedback = '';
         if ($options->feedback and isset($answers[$response])) {
             $chosenanswer = $answers[$response];
+            $chosenanswer->feedback = quiz_rewrite_question_urls($chosenanswer->feedback, 'pluginfile.php', $context->id, 'question', 'answerfeedback', array($state->attempt, $state->question), $chosenanswer->id);
             $feedback = format_text($chosenanswer->feedback, true, $formatoptions, $cmoptions->course);
         }
 
         include("$CFG->dirroot/question/type/truefalse/display.html");
+    }
+
+    function check_file_access($question, $state, $options, $contextid, $component,
+            $filearea, $args) {
+        if ($component == 'question' && $filearea == 'answerfeedback') {
+
+            $answerid = reset($args); // itemid is answer id.
+            $answers = &$question->options->answers;
+            if (isset($state->responses[''])) {
+                $response = $state->responses[''];
+            } else {
+                $response = '';
+            }
+
+            return $options->feedback && isset($answers[$response]) && $answerid == $response;
+
+        } else {
+            return parent::check_file_access($question, $state, $options, $contextid, $component,
+                    $filearea, $args);
+        }
     }
 
     function grade_responses(&$question, &$state, $cmoptions) {
@@ -363,6 +418,34 @@ class question_truefalse_qtype extends default_questiontype {
 
         return $this->save_question($question, $form, $course);
     }
+    /**
+     * When move the category of questions, the belonging files should be moved as well
+     * @param object $question, question information
+     * @param object $newcategory, target category information
+     */
+    function move_files($question, $newcategory) {
+        global $DB;
+        parent::move_files($question, $newcategory);
+
+        $fs = get_file_storage();
+        // process files in answer
+        if (!$oldanswers = $DB->get_records('question_answers', array('question' =>  $question->id), 'id ASC')) {
+            $oldanswers = array();
+        }
+        $component = 'question';
+        $filearea = 'answerfeedback';
+        foreach ($oldanswers as $answer) {
+            $files = $fs->get_area_files($question->contextid, $component, $filearea, $answer->id);
+            foreach ($files as $storedfile) {
+                if (!$storedfile->is_directory()) {
+                    $newfile = new object();
+                    $newfile->contextid = (int)$newcategory->contextid;
+                    $fs->create_file_from_storedfile($newfile, $storedfile);
+                    $storedfile->delete();
+                }
+            }
+        }
+    }
 }
 //// END OF CLASS ////
 
@@ -370,4 +453,3 @@ class question_truefalse_qtype extends default_questiontype {
 //// INITIATION - Without this line the question type is not in use... ///
 //////////////////////////////////////////////////////////////////////////
 question_register_questiontype(new question_truefalse_qtype());
-

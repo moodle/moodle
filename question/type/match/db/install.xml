@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="question/type/match/db" VERSION="20060812" COMMENT="XMLDB file for Moodle question/type/match">
+<XMLDB PATH="question/type/match/db" VERSION="20100721" COMMENT="XMLDB file for Moodle question/type/match"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../../lib/xmldb/xmldb.xsd"
+>
   <TABLES>
     <TABLE NAME="question_match" COMMENT="Defines fixed matching questions" NEXT="question_match_sub">
       <FIELDS>
@@ -18,8 +21,9 @@
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="code"/>
         <FIELD NAME="code" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Should this point to parent question_match-&amp;gt;id ?" PREVIOUS="id" NEXT="question"/>
         <FIELD NAME="question" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="code" NEXT="questiontext"/>
-        <FIELD NAME="questiontext" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" PREVIOUS="question" NEXT="answertext"/>
-        <FIELD NAME="answertext" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="questiontext"/>
+        <FIELD NAME="questiontext" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" PREVIOUS="question" NEXT="questiontextformat"/>
+        <FIELD NAME="questiontextformat" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="questiontext" NEXT="answertext"/>
+        <FIELD NAME="answertext" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="questiontextformat"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="question"/>

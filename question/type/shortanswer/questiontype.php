@@ -1,5 +1,20 @@
 <?php
 
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 ///////////////////
 /// SHORTANSWER ///
 ///////////////////
@@ -27,16 +42,47 @@ class question_shortanswer_qtype extends default_questiontype {
     }
 
     function extra_question_fields() {
-        return array('question_shortanswer','answers','usecase');
+        return array('question_shortanswer', 'answers', 'usecase');
     }
 
     function questionid_column_name() {
         return 'question';
     }
 
+    /**
+     * When move the category of questions, the belonging files should be moved as well
+     * @param object $question, question information
+     * @param object $newcategory, target category information
+     */
+    function move_files($question, $newcategory) {
+        global $DB;
+        parent::move_files($question, $newcategory);
+
+        $fs = get_file_storage();
+        // process files in answer
+        if (!$oldanswers = $DB->get_records('question_answers', array('question' =>  $question->id), 'id ASC')) {
+            $oldanswers = array();
+        }
+        $component = 'question';
+        $filearea = 'answerfeedback';
+        foreach ($oldanswers as $answer) {
+            $files = $fs->get_area_files($question->contextid, $component, $filearea, $answer->id);
+            foreach ($files as $storedfile) {
+                if (!$storedfile->is_directory()) {
+                    $newfile = new object();
+                    $newfile->contextid = (int)$newcategory->contextid;
+                    $fs->create_file_from_storedfile($newfile, $storedfile);
+                    $storedfile->delete();
+                }
+            }
+        }
+    }
+
     function save_question_options($question) {
         global $DB;
         $result = new stdClass;
+
+        $context = $question->context;
 
         if (!$oldanswers = $DB->get_records('question_answers', array('question' =>  $question->id), 'id ASC')) {
             $oldanswers = array();
@@ -49,23 +95,36 @@ class question_shortanswer_qtype extends default_questiontype {
         foreach ($question->answer as $key => $dataanswer) {
             // Check for, and ingore, completely blank answer from the form.
             if (trim($dataanswer) == '' && $question->fraction[$key] == 0 &&
-                    html_is_blank($question->feedback[$key])) {
+                    html_is_blank($question->feedback[$key]['text'])) {
                 continue;
             }
+
+            $feedbackformat = $question->feedback[$key]['format'];
 
             if ($oldanswer = array_shift($oldanswers)) {  // Existing answer, so reuse it
                 $answer = $oldanswer;
                 $answer->answer   = trim($dataanswer);
                 $answer->fraction = $question->fraction[$key];
-                $answer->feedback = $question->feedback[$key];
+
+                // save draft file and rewrite text in feedback
+                $answer->feedback = file_save_draft_area_files($question->feedback[$key]['itemid'], $context->id, 'question', 'answerfeedback', $oldanswer->id, self::$fileoptions, $question->feedback[$key]['text']);
+                $answer->feedbackformat = $feedbackformat;
+
                 $DB->update_record("question_answers", $answer);
             } else {    // This is a completely new answer
                 $answer = new stdClass;
                 $answer->answer   = trim($dataanswer);
                 $answer->question = $question->id;
                 $answer->fraction = $question->fraction[$key];
-                $answer->feedback = $question->feedback[$key];
+                // feedback content needs to be rewriten
+                $answer->feedback = '';
+                $answer->feedbackformat = $feedbackformat;
                 $answer->id = $DB->insert_record("question_answers", $answer);
+
+                // save draft file and rewrite text in feedback
+                $answer->feedback = file_save_draft_area_files($question->feedback[$key]['itemid'], $context->id, 'question', 'answerfeedback', $answer->id, self::$fileoptions, $question->feedback[$key]['text']);
+                // update feedback content
+                $DB->set_field('question_answers', 'feedback', $answer->feedback, array('id'=>$answer->id));
             }
             $answers[] = $answer->id;
             if ($question->fraction[$key] > $maxfraction) {
@@ -97,6 +156,8 @@ class question_shortanswer_qtype extends default_questiontype {
     }
 
     function print_question_formulation_and_controls(&$question, &$state, $cmoptions, $options) {
+        global $CFG;
+        $context = $this->get_context_by_category_id($question->category);
     /// This implementation is also used by question type 'numerical'
         $readonly = empty($options->readonly) ? '' : 'readonly="readonly"';
         $formatoptions = new stdClass;
@@ -109,7 +170,6 @@ class question_shortanswer_qtype extends default_questiontype {
         $questiontext = format_text($question->questiontext,
                 $question->questiontextformat,
                 $formatoptions, $cmoptions->course);
-        $image = get_question_image($question);
 
         /// Print input controls
 
@@ -135,6 +195,7 @@ class question_shortanswer_qtype extends default_questiontype {
                     $class = question_get_feedback_class($answer->fraction);
                     $feedbackimg = question_get_feedback_image($answer->fraction);
                     if ($answer->feedback) {
+                        $answer->feedback = quiz_rewrite_question_urls($answer->feedback, 'pluginfile.php', $context->id, 'question', 'answerfeedback', array($state->attempt, $state->question), $answer->id);
                         $feedback = format_text($answer->feedback, true, $formatoptions, $cmoptions->course);
                     }
                     break;
@@ -145,7 +206,7 @@ class question_shortanswer_qtype extends default_questiontype {
         /// Removed correct answer, to be displayed later MDL-7496
         include($this->get_display_html_path());
     }
-    
+
     function get_display_html_path() {
         global $CFG;
         return $CFG->dirroot.'/question/type/shortanswer/display.html';
@@ -330,12 +391,12 @@ class question_shortanswer_qtype extends default_questiontype {
                 // print grade for this submission
                 print_string('gradingdetails', 'quiz', $grade) ;
                 // A unit penalty for numerical was applied so display it
-                // a temporary solution for unit rendering in numerical 
+                // a temporary solution for unit rendering in numerical
                 // waiting for the new question engine code for a permanent one
                 if(isset($state->options->raw_unitpenalty) && $state->options->raw_unitpenalty > 0.0 ){
                     echo ' ';
                     print_string('unitappliedpenalty','qtype_numerical',question_format_grade($cmoptions, $state->options->raw_unitpenalty ));
-                } 
+                }
                 if ($cmoptions->penaltyscheme) {
                     // print details of grade adjustment due to penalties
                     if ($state->last_graded->raw_grade > $state->last_graded->grade){
@@ -390,6 +451,33 @@ class question_shortanswer_qtype extends default_questiontype {
 
         return $this->save_question($question, $form, $course);
     }
+
+    function check_file_access($question, $state, $options, $contextid, $component,
+            $filearea, $args) {
+        if ($component == 'question' && $filearea == 'answerfeedback') {
+            $answers = &$question->options->answers;
+            if (isset($state->responses[''])) {
+                $response = $state->responses[''];
+            } else {
+                $response = '';
+            }
+            $answerid = reset($args); // itemid is answer id.
+            if (empty($options->feedback)) {
+                return false;
+            }
+            foreach($answers as $answer) {
+                if ($this->test_response($question, $state, $answer)) {
+                    return true;
+                }
+            }
+            return false;
+
+        } else {
+            return parent::check_file_access($question, $state, $options, $contextid, $component,
+                    $filearea, $args);
+        }
+    }
+
 }
 //// END OF CLASS ////
 

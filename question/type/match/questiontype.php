@@ -1,5 +1,20 @@
 <?php
 
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /////////////
 /// MATCH ///
 /////////////
@@ -24,6 +39,7 @@ class question_match_qtype extends default_questiontype {
 
     function save_question_options($question) {
         global $DB;
+        $context = $question->context;
         $result = new stdClass;
 
         if (!$oldsubquestions = $DB->get_records("question_match_sub", array("question" => $question->id), "id ASC")) {
@@ -35,24 +51,30 @@ class question_match_qtype extends default_questiontype {
 
         // Insert all the new question+answer pairs
         foreach ($question->subquestions as $key => $questiontext) {
-            $questiontext = trim($questiontext);
+            $itemid = $questiontext['itemid'];
+            $format = $questiontext['format'];
+            $questiontext = trim($questiontext['text']);
             $answertext = trim($question->subanswers[$key]);
             if ($questiontext != '' || $answertext != '') {
                 if ($subquestion = array_shift($oldsubquestions)) {  // Existing answer, so reuse it
-                    $subquestion->questiontext = $questiontext;
                     $subquestion->answertext   = $answertext;
+                    $subquestion->questiontext = file_save_draft_area_files($itemid, $context->id, 'qtype_match', 'subquestion', $subquestion->id, self::$fileoptions, $questiontext);
+                    $subquestion->questiontextformat = $format;
                     $DB->update_record("question_match_sub", $subquestion);
                 } else {
                     $subquestion = new stdClass;
                     // Determine a unique random code
-                    $subquestion->code = rand(1,999999999);
+                    $subquestion->code = rand(1, 999999999);
                     while ($DB->record_exists('question_match_sub', array('code' => $subquestion->code, 'question' => $question->id))) {
                         $subquestion->code = rand();
                     }
                     $subquestion->question = $question->id;
                     $subquestion->questiontext = $questiontext;
-                    $subquestion->answertext   = $answertext;
+                    $subquestion->questiontextformat = $format;
+                    $subquestion->answertext = $answertext;
                     $subquestion->id = $DB->insert_record("question_match_sub", $subquestion);
+                    $questiontext = file_save_draft_area_files($itemid, $context->id, 'qtype_match', 'subquestion', $subquestion->id, self::$fileoptions, $questiontext);
+                    $DB->set_field('question_match_sub', 'questiontext', $questiontext, array('id'=>$subquestion->id));
                 }
                 $subquestions[] = $subquestion->id;
             }
@@ -228,6 +250,7 @@ class question_match_qtype extends default_questiontype {
 
     function print_question_formulation_and_controls(&$question, &$state, $cmoptions, $options) {
         global $CFG, $OUTPUT;
+        $context        = $this->get_context_by_category_id($question->category);
         $subquestions   = $state->options->subquestions;
         $correctanswers = $this->get_correct_responses($question, $state);
         $nameprefix     = $question->name_prefix;
@@ -263,15 +286,14 @@ class question_match_qtype extends default_questiontype {
         // Print formulation
         $questiontext = $this->format_text($question->questiontext,
                 $question->questiontextformat, $cmoptions);
-        $image = get_question_image($question);
 
         // Print the input controls
         foreach ($subquestions as $key => $subquestion) {
             if ($subquestion->questiontext !== '' && !is_null($subquestion->questiontext)) {
                 // Subquestion text:
                 $a = new stdClass;
-                $a->text = $this->format_text($subquestion->questiontext,
-                        $question->questiontextformat, $cmoptions);
+                $text = quiz_rewrite_question_urls($subquestion->questiontext, 'pluginfile.php', $context->id, 'qtype_match', 'subquestion', array($state->attempt, $state->question), $subquestion->id);
+                $a->text = $this->format_text($text, $subquestion->questiontextformat, $cmoptions);
 
                 // Drop-down list:
                 $menuname = $nameprefix.$subquestion->id;
@@ -757,6 +779,53 @@ class question_match_qtype extends default_questiontype {
 
         return $this->save_question($question, $form, $course);
     }
+
+    function move_files($question, $newcategory) {
+        global $DB;
+        // move files belonging to question component
+        parent::move_files($question, $newcategory);
+
+        // move files belonging to qtype_multichoice
+        $fs = get_file_storage();
+        // process files in answer
+        if (!$oldanswers = $DB->get_records('question_answers', array('question' => $question->id), 'id ASC')) {
+            $oldanswers = array();
+        }
+
+        // process files in sub questions
+        if (!$subquestions = $DB->get_records('question_match_sub', array('question' => $question->id), 'id ASC')) {
+            $subquestions = array();
+        }
+        $component = 'qtype_match';
+        $filearea = 'subquestion';
+        foreach ($subquestions as $sub) {
+            $files = $fs->get_area_files($question->contextid, $component, $filearea, $sub->id);
+            foreach ($files as $storedfile) {
+                if (!$storedfile->is_directory()) {
+                    $newfile = new object();
+                    $newfile->contextid = (int)$newcategory->contextid;
+                    $fs->create_file_from_storedfile($newfile, $storedfile);
+                    $storedfile->delete();
+                }
+            }
+        }
+    }
+    function check_file_access($question, $state, $options, $contextid, $component,
+            $filearea, $args) {
+
+        $itemid = reset($args);
+        if ($filearea == 'subquestion') {
+            // always display quetion images
+            // itemid is sub question id
+            if ($itemid != $question->id) {
+                return false;
+            }
+            return true;
+        } else {
+            return parent::check_file_access($question, $state, $options, $contextid, $component,
+                    $filearea, $args);
+        }
+    }
 }
 //// END OF CLASS ////
 
@@ -764,4 +833,3 @@ class question_match_qtype extends default_questiontype {
 //// INITIATION - Without this line the question type is not in use... ///
 //////////////////////////////////////////////////////////////////////////
 question_register_questiontype(new question_match_qtype());
-

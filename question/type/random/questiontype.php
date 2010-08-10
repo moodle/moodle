@@ -88,6 +88,7 @@ class random_qtype extends default_questiontype {
     }
 
     function display_question_editing_page(&$mform, $question, $wizardnow){
+        global $OUTPUT;
         $heading = $this->get_heading(empty($question->id));
         echo $OUTPUT->heading_with_help($heading, $this->name(), $this->plugin_name());
         $mform->display();
@@ -424,5 +425,3 @@ class random_qtype extends default_questiontype {
 //// INITIATION - Without this line the question type is not in use... ///
 //////////////////////////////////////////////////////////////////////////
 question_register_questiontype(new random_qtype());
-
-

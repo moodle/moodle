@@ -104,6 +104,7 @@ define("QUIZ_MAX_EVENT_LENGTH", 5*24*60*60);   // 5 days maximum
  */
 function quiz_add_instance($quiz) {
     global $DB;
+    $cmid = $quiz->coursemodule;
 
     // Process the options from the form.
     $quiz->created = time();
@@ -982,10 +983,10 @@ function quiz_process_options(&$quiz) {
     if (isset($quiz->feedbacktext)) {
         // Clean up the boundary text.
         for ($i = 0; $i < count($quiz->feedbacktext); $i += 1) {
-            if (empty($quiz->feedbacktext[$i])) {
-                $quiz->feedbacktext[$i] = '';
+            if (empty($quiz->feedbacktext[$i]['text'])) {
+                $quiz->feedbacktext[$i]['text'] = '';
             } else {
-                $quiz->feedbacktext[$i] = trim($quiz->feedbacktext[$i]);
+                $quiz->feedbacktext[$i]['text'] = trim($quiz->feedbacktext[$i]['text']);
             }
         }
 
@@ -1023,7 +1024,7 @@ function quiz_process_options(&$quiz) {
             }
         }
         for ($i = $numboundaries + 1; $i < count($quiz->feedbacktext); $i += 1) {
-            if (!empty($quiz->feedbacktext[$i]) && trim($quiz->feedbacktext[$i]) != '') {
+            if (!empty($quiz->feedbacktext[$i]['text']) && trim($quiz->feedbacktext[$i]['text']) != '') {
                 return get_string('feedbackerrorjunkinfeedback', 'quiz', $i + 1);
             }
         }
@@ -1145,17 +1146,25 @@ function quiz_process_options(&$quiz) {
  */
 function quiz_after_add_or_update($quiz) {
     global $DB;
+    $cmid = $quiz->coursemodule;
+
+    // we need to use context now, so we need to make sure all needed info is already in db
+    $DB->set_field('course_modules', 'instance', $quiz->id, array('id'=>$cmid));
+    $context = get_context_instance(CONTEXT_MODULE, $cmid);
 
     // Save the feedback
     $DB->delete_records('quiz_feedback', array('quizid' => $quiz->id));
 
-    for ($i = 0; $i <= $quiz->feedbackboundarycount; $i += 1) {
+    for ($i = 0; $i <= $quiz->feedbackboundarycount; $i++) {
         $feedback = new stdClass;
         $feedback->quizid = $quiz->id;
-        $feedback->feedbacktext = $quiz->feedbacktext[$i];
+        $feedback->feedbacktext = $quiz->feedbacktext[$i]['text'];
+        $feedback->feedbacktextformat = $quiz->feedbacktext[$i]['format'];
         $feedback->mingrade = $quiz->feedbackboundaries[$i];
         $feedback->maxgrade = $quiz->feedbackboundaries[$i - 1];
-        $DB->insert_record('quiz_feedback', $feedback, false);
+        $feedback->id = $DB->insert_record('quiz_feedback', $feedback);
+        $feedbacktext = file_save_draft_area_files((int)$quiz->feedbacktext[$i]['itemid'], $context->id, 'mod_quiz', 'feedback', $feedback->id, array('subdirs'=>false, 'maxfiles'=>-1, 'maxbytes'=>0), $quiz->feedbacktext[$i]['text']);
+        $DB->set_field('quiz_feedback', 'feedbacktext', $feedbacktext, array('id'=>$feedback->id));
     }
 
     // Update the events relating to this quiz.
@@ -1421,23 +1430,44 @@ function quiz_reset_userdata($data) {
  * @param int $questionid int question id
  * @return boolean to indicate access granted or denied
  */
-function quiz_check_file_access($attemptuniqueid, $questionid) {
-    global $USER, $DB;
+function quiz_check_file_access($attemptuniqueid, $questionid, $context = null) {
+    global $USER, $DB, $CFG;
+    require_once(dirname(__FILE__).'/attemptlib.php');
+    require_once(dirname(__FILE__).'/locallib.php');
 
     $attempt = $DB->get_record('quiz_attempts', array('uniqueid' => $attemptuniqueid));
-    $quiz = $DB->get_record('quiz', array('id' => $attempt->quiz));
-    $context = get_context_instance(CONTEXT_COURSE, $quiz->course);
+    $attemptobj = quiz_attempt::create($attempt->id);
 
-    // access granted if the current user submitted this file
-    if ($attempt->userid == $USER->id) {
-        return true;
-    // access granted if the current user has permission to grade quizzes in this course
-    } else if (has_capability('mod/quiz:viewreports', $context) || has_capability('mod/quiz:grade', $context)) {
-        return true;
+    // does question exist?
+    if (!$question = $DB->get_record('question', array('id' => $questionid))) {
+        return false;
     }
 
-    // otherwise, this user does not have permission
-    return false;
+    if ($context === null) {
+        $quiz = $DB->get_record('quiz', array('id' => $attempt->quiz));
+        $cm = get_coursemodule_from_id('quiz', $quiz->id);
+        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    }
+
+    // Load those questions and the associated states.
+    $attemptobj->load_questions(array($questionid));
+    $attemptobj->load_question_states(array($questionid));
+
+    // obtain state
+    $state = $attemptobj->get_question_state($questionid);
+    // obtain questoin
+    $question = $attemptobj->get_question($questionid);
+
+    // access granted if the current user submitted this file
+    if ($attempt->userid != $USER->id) {
+        return false;
+    // access granted if the current user has permission to grade quizzes in this course
+    }
+    if (!(has_capability('mod/quiz:viewreports', $context) || has_capability('mod/quiz:grade', $context))) {
+        return false;
+    }
+
+    return array($question, $state, array());
 }
 
 /**
@@ -1681,4 +1711,99 @@ function quiz_extend_settings_navigation($settings, $quiznode) {
     }
 
     question_extend_settings_navigation($quiznode, $PAGE->cm->context)->trim_if_empty();
+}
+
+/**
+ * Serves the quiz files.
+ *
+ * @param object $course
+ * @param object $cm
+ * @param object $context
+ * @param string $filearea
+ * @param array $args
+ * @param bool $forcedownload
+ * @return bool false if file not found, does not return if found - justsend the file
+ */
+function quiz_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload) {
+    global $CFG, $DB;
+
+    if ($context->contextlevel != CONTEXT_MODULE) {
+        return false;
+    }
+
+    require_login($course, false, $cm);
+
+    if (!$quiz = $DB->get_record('quiz', array('id'=>$cm->instance))) {
+        return false;
+    }
+
+    // 'intro' area is served by pluginfile.php
+    $fileareas = array('feedback');
+    if (!in_array($filearea, $fileareas)) {
+        return false;
+    }
+
+    $feedbackid = (int)array_shift($args);
+    if (!$feedback = $DB->get_record('quiz_feedback', array('id'=>$feedbackid))) {
+        return false;
+    }
+
+    $fs = get_file_storage();
+    $relativepath = implode('/', $args);
+    $fullpath = "/$context->id/mod_quiz/$filearea/$feedbackid/$relativepath";
+    if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
+        return false;
+    }
+    send_stored_file($file, 0, 0, true);
+}
+
+/**
+ * Called via pluginfile.php -> question_pluginfile to serve files belonging to
+ * a question in a question_attempt when that attempt is a quiz attempt.
+ *
+ * @param object $course course settings object
+ * @param object $context context object
+ * @param string $component the name of the component we are serving files for.
+ * @param string $filearea the name of the file area.
+ * @param array $args the remaining bits of the file path.
+ * @param bool $forcedownload whether the user must be forced to download the file.
+ * @return bool false if file not found, does not return if found - justsend the file
+ */
+function quiz_question_pluginfile($course, $context, $component,
+        $filearea, $attemptid, $questionid, $args, $forcedownload) {
+    global $USER, $CFG;
+    require_once($CFG->dirroot . '/mod/quiz/locallib.php');
+
+    $attemptobj = quiz_attempt::create($attemptid);
+    require_login($attemptobj->get_courseid(), false, $attemptobj->get_cm());
+    $questionids = array($questionid);
+    $attemptobj->load_questions($questionids);
+    $attemptobj->load_question_states($questionids);
+
+    if ($attemptobj->is_own_attempt() && !$attemptobj->is_finished()) {
+        // In the middle of an attempt.
+        if (!$attemptobj->is_preview_user()) {
+            $attemptobj->require_capability('mod/quiz:attempt');
+        }
+        $isreviewing = false;
+
+    } else {
+        // Reviewing an attempt.
+        $attemptobj->check_review_capability();
+        $isreviewing = true;
+    }
+
+    if (!$attemptobj->check_file_access($questionid, $isreviewing, $context->id,
+            $component, $filearea, $args, $forcedownload)) {
+        send_file_not_found();
+    }
+
+    $fs = get_file_storage();
+    $relativepath = implode('/', $args);
+    $fullpath = "/$context->id/$component/$filearea/$relativepath";
+    if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
+        send_file_not_found();
+    }
+
+    send_stored_file($file, 0, 0, $forcedownload);
 }
