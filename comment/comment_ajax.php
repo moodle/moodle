@@ -40,6 +40,8 @@ $content   = optional_param('content',   '', PARAM_RAW);
 $itemid    = optional_param('itemid',    '', PARAM_INT);
 $page      = optional_param('page',      0,  PARAM_INT);
 
+echo $OUTPUT->header(); // send headers
+
 // initilising comment object
 if (!empty($client_id)) {
     $args = new stdclass;

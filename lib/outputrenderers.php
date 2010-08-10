@@ -2593,18 +2593,36 @@ class core_renderer_ajax extends core_renderer {
                 $e->stacktrace = format_backtrace($backtrace, true);
             }
         }
-        @header('Content-type: application/json');
+        $this->header();
         return json_encode($e);
     }
 
     public function notification($message, $classes = 'notifyproblem') {
     }
+
     public function redirect_message($encodedurl, $message, $delay, $debugdisableredirect) {
     }
+
     public function header() {
+        // unfortunately YUI iframe upload does not support application/json
+        if (!empty($_FILES)) {
+            @header('Content-type: text/plain');
+        } else {
+            @header('Content-type: application/json');
+        }
+
+        /// Headers to make it not cacheable and json
+        @header('Cache-Control: no-store, no-cache, must-revalidate');
+        @header('Cache-Control: post-check=0, pre-check=0', false);
+        @header('Pragma: no-cache');
+        @header('Expires: Mon, 20 Aug 1969 09:23:00 GMT');
+        @header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
+        @header('Accept-Ranges: none');
     }
+
     public function footer() {
     }
+
     public function heading($text, $level = 2, $classes = 'main', $id = null) {
     }
 }

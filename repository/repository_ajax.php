@@ -56,9 +56,7 @@ list($context, $course, $cm) = get_context_info_array($contextid);
 require_login($course, false, $cm);
 $PAGE->set_context($context);
 
-/// Headers to make it not cacheable
-header('Cache-Control: no-cache, must-revalidate');
-header('Expires: Sat, 26 Jul 1997 05:00:00 GMT');
+echo $OUTPUT->header(); // send headers
 
 if (!confirm_sesskey()) {
     $err->error = get_string('invalidsesskey');

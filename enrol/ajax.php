@@ -51,6 +51,8 @@ require_login($course);
 require_capability('moodle/course:enrolreview', $context);
 require_sesskey();
 
+echo $OUTPUT->header(); // send headers
+
 $manager = new course_enrolment_manager($course);
 
 $outcome = new stdClass;

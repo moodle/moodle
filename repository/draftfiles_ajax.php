@@ -42,6 +42,8 @@ $filepath = optional_param('filepath', '/', PARAM_PATH);
 
 $user_context = get_context_instance(CONTEXT_USER, $USER->id);
 
+echo $OUTPUT->header(); // send headers
+
 //
 //NOTE TO ALL DEVELOPERS: this script must deal only with draft area of current user, it has to use only file_storage and no file_browser!!
 //

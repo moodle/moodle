@@ -10,6 +10,8 @@ $displayformat = optional_param('displayformat',-1, PARAM_SAFEDIR);
 $popup = optional_param('popup',0, PARAM_INT);
 $ajax = optional_param('ajax',0, PARAM_INT);
 
+//TODO: do not make combined ajax+normal scripts (skodak)
+
 if ($ajax && !defined('AJAX_SCRIPT')) {
     define('AJAX_SCRIPT', true);
 }
@@ -78,6 +80,7 @@ if ($entries) {
 }
 
 if ($ajax) {
+    echo $OUTPUT->header(); // send headers
     $result = new stdClass;
     $result->success = true;
     $result->entries = $entries;

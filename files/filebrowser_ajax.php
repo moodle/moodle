@@ -33,6 +33,8 @@ $action = optional_param('action', 'list', PARAM_ALPHA);
 
 require_login();
 
+echo $OUTPUT->header(); // send headers
+
 $err = new stdclass;
 if (isguestuser()) {
     $err->error = get_string('noguest');
