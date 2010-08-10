@@ -1078,16 +1078,20 @@ class quiz_attempt_question_iterator implements Iterator {
  * @since Moodle 2.0
  */
 abstract class quiz_nav_panel_base {
+    /** @var quiz_attempt */
     protected $attemptobj;
+    /** @var question_display_options */
     protected $options;
+    /** @var integer */
     protected $page;
+    /** @var boolean */
     protected $showall;
 
     public function __construct(quiz_attempt $attemptobj, $options, $page, $showall) {
-          $this->attemptobj = $attemptobj;
-          $this->options = $options;
-          $this->page = $page;
-          $this->showall = $showall;
+        $this->attemptobj = $attemptobj;
+        $this->options = $options;
+        $this->page = $page;
+        $this->showall = $showall;
     }
 
     protected function get_question_buttons() {
@@ -1208,9 +1212,9 @@ class quiz_review_nav_panel extends quiz_nav_panel_base {
         $html = '';
         if ($this->attemptobj->get_num_pages() > 1) {
             if ($this->showall) {
-                $html = '<a href="' . s($this->attemptobj->review_url(0, 0, false)) . '">' . get_string('showeachpage', 'quiz') . '</a>';
+                $html .= '<a href="' . s($this->attemptobj->review_url(0, 0, false)) . '">' . get_string('showeachpage', 'quiz') . '</a>';
             } else {
-                $html = '<a href="' . s($this->attemptobj->review_url(0, 0, true)) . '">' . get_string('showall', 'quiz') . '</a>';
+                $html .= '<a href="' . s($this->attemptobj->review_url(0, 0, true)) . '">' . get_string('showall', 'quiz') . '</a>';
             }
         }
         $accessmanager = $this->attemptobj->get_access_manager(time());
@@ -1218,4 +1222,3 @@ class quiz_review_nav_panel extends quiz_nav_panel_base {
         return $html;
     }
 }
-
