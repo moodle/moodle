@@ -27,17 +27,6 @@ function xmldb_enrol_authorize_upgrade($oldversion) {
 
     //===== 1.9.0 upgrade line ======//
 
-    if ($oldversion < 2008020500 && enrol_is_enabled('authorize')) {
-        require_once($CFG->dirroot.'/enrol/authorize/localfuncs.php');
-        if (!check_curl_available()) {
-            echo $OUTPUT->notification("You are using the authorize.net enrolment plugin for payment handling but cUrl is not available.
-                    PHP must be compiled with cURL+SSL support (--with-curl --with-openssl)");
-        }
-
-        /// authorize savepoint reached
-        upgrade_plugin_savepoint(true, 2008020500, 'enrol', 'authorize');
-    }
-
     if ($oldversion < 2008092700) {
         /// enrol_authorize.transid
         /// Define index transid (not unique) to be dropped form enrol_authorize
