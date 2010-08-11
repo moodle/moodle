@@ -15,7 +15,7 @@ M.mod_quiz.init_attempt_form = function(Y) {
         }
     }, '#responseform', 'press:13');
     Y.on('submit', M.mod_quiz.timer.stop, '#responseform');
-}
+};
 
 M.mod_quiz.init_review_form = function(Y) {
     Y.all('.questionflagsavebutton').remove();
@@ -28,7 +28,7 @@ M.mod_quiz.init_review_form = function(Y) {
     }, '.questionflagsaveform', 'press:13');
 
     Y.on('submit', function(e) { e.halt(); }, '.questionflagsaveform');
-}
+};
 
 // Code for updating the countdown timer that is used on timed quizzes.
 M.mod_quiz.timer = {
