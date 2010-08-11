@@ -709,7 +709,8 @@ abstract class enrol_plugin {
             $enrol = $this->get_name();
             return get_string('pluginname', 'enrol_'.$enrol);
         } else {
-            return format_string($instance->name);
+            $context = get_context_instance(CONTEXT_COURSE, $instance->courseid);
+            return format_string($instance->name, true, array('context'=>$context));
         }
     }
 
