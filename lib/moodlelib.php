@@ -709,7 +709,7 @@ function clean_param($param, $type) {
             //problem, so remove *all* backslash.
             //$param = str_replace('\\', '', $param);
             //remove some nasties
-            $param = preg_replace('~[[:cntrl:]]|[<>`]~', '', $param);
+            $param = preg_replace('~[[:cntrl:]]|[<>`]~u', '', $param);
             //convert many whitespace chars into one
             $param = preg_replace('/\s+/', ' ', $param);
             $textlib = textlib_get_instance();
