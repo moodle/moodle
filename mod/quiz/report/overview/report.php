@@ -178,10 +178,14 @@ class quiz_overview_report extends quiz_default_report {
 
         $nostudents = false;
         if (!$students) {
-            echo $OUTPUT->notification(get_string('nostudentsyet'));
+            if (!$table->is_downloading()) {
+                echo $OUTPUT->notification(get_string('nostudentsyet'));
+            }
             $nostudents = true;
-        }else if ($currentgroup && !$groupstudents) {
-            echo $OUTPUT->notification(get_string('nostudentsingroup'));
+        } else if ($currentgroup && !$groupstudents) {
+            if (!$table->is_downloading()) {
+                echo $OUTPUT->notification(get_string('nostudentsingroup'));
+            }
             $nostudents = true;
         }
         if (!$table->is_downloading()) {
