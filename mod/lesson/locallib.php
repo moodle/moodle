@@ -135,7 +135,7 @@ function lesson_unseen_question_jump($lesson, $user, $pageid) {
         $pageid = $lessonpages[$pageid]->prevpageid;
     }
 
-    $pagesinbranch = $this->get_sub_pages_of($pageid, array(LESSON_PAGE_BRANCHTABLE, LESSON_PAGE_ENDOFBRANCH));
+    $pagesinbranch = $lesson->get_sub_pages_of($pageid, array(LESSON_PAGE_BRANCHTABLE, LESSON_PAGE_ENDOFBRANCH));
 
     // this foreach loop stores all the pages that are within the branch table but are not in the $seenpages array
     $unseen = array();
@@ -246,7 +246,7 @@ function lesson_random_question_jump($lesson, $pageid) {
     }
 
     // get the pages within the branch
-    $pagesinbranch = $this->get_sub_pages_of($pageid, array(LESSON_PAGE_BRANCHTABLE, LESSON_PAGE_ENDOFBRANCH));
+    $pagesinbranch = $lesson->get_sub_pages_of($pageid, array(LESSON_PAGE_BRANCHTABLE, LESSON_PAGE_ENDOFBRANCH));
 
     if(count($pagesinbranch) == 0) {
         // there are no pages inside the branch, so return the next page
