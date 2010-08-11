@@ -614,7 +614,6 @@ class quiz_attempt extends quiz {
      * @return object the state.
      */
     public function get_question_state($questionid) {
-        $this->ensure_state_loaded($questionid);
         return $this->states[$questionid];
     }
 
