@@ -203,6 +203,7 @@ function scorm_update_instance($scorm, $mform=null) {
     scorm_parse($scorm, (bool)$scorm->updatefreq);
 
     scorm_grade_item_update($scorm);
+    scorm_update_grades($scorm);
 
     return true;
 }
@@ -606,7 +607,7 @@ function scorm_grade_item_update($scorm, $grades=NULL) {
         $params['idnumber'] = $scorm->cmidnumber;
     }
 
-    if (($scorm->grademethod % 10) == 0) { // GRADESCOES
+    if ($scorm->grademethod == GRADESCOES) {
         if ($maxgrade = $DB->count_records_select('scorm_scoes', 'scorm = ? AND launch <> ?', array($scorm->id, $DB->sql_empty()))) {
             $params['gradetype'] = GRADE_TYPE_VALUE;
             $params['grademax']  = $maxgrade;
