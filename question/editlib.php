@@ -1175,8 +1175,7 @@ class question_bank_view {
         echo '<div class="choosecategory">';
         $catmenu = question_category_options($contexts, false, 0, true);
 
-        $editurl = new moodle_url('/question/edit.php', $pageurl->params());
-        $select = new single_select($editurl, 'category', $catmenu, $current, null, 'catmenu');
+        $select = new single_select($this->baseurl, 'category', $catmenu, $current, null, 'catmenu');
         $select->set_label(get_string('selectacategory', 'question'));
         echo $OUTPUT->render($select);
         echo "</div>\n";
