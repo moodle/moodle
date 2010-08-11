@@ -103,7 +103,9 @@ class quiz_report extends quiz_default_report {
         }
         $nostudents = false;
         if (!$students = get_users_by_capability($context, array('mod/quiz:reviewmyattempts', 'mod/quiz:attempt'),'u.id,1','','','','','',false)) {
-            notify(get_string('nostudentsyet'));
+            if (!$download) {
+                notify(get_string('nostudentsyet'));
+            }
             $nostudents = true;
             $studentslist = 0;
         } else {
@@ -118,7 +120,9 @@ class quiz_report extends quiz_default_report {
         } else {
             // all users who can attempt quizzes and who are in the currently selected group
             if (!$groupstudents = get_users_by_capability($context, array('mod/quiz:reviewmyattempts', 'mod/quiz:attempt'),'u.id,1','','','',$currentgroup,'',false)) {
-                notify(get_string('nostudentsingroup'));
+                if (!$download) {
+                    notify(get_string('nostudentsingroup'));
+                }
                 $nostudents = true;
                 $groupstudents = array();
             }
