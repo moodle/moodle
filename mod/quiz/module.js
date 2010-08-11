@@ -205,9 +205,11 @@ M.mod_quiz.secure_window = {
     },
 
     prevent_mouse: function(e) {
-        if (e.button != 1 || !/^(INPUT|TEXTAREA|BUTTON|SELECT)$/i.test(e.target.get('tagName'))) {
-            alert(M.str.quiz.functiondisabledbysecuremode);
+        if (e.button == 1 && /^(INPUT|TEXTAREA|BUTTON|SELECT|LABEL|A)$/i.test(e.target.get('tagName'))) {
+            // Left click on a button or similar. No worries.
+            return;
         }
+        alert(M.str.quiz.functiondisabledbysecuremode);
         e.halt();
     },
 

@@ -160,7 +160,7 @@ class quiz_access_manager {
      * @param string $title HTML title tag content, passed to printheader.
      * @param string $headtags extra stuff to go in the HTML head tag, passed to printheader.
      */
-    public function setup_secure_page($title, $headtags) {
+    public function setup_secure_page($title, $headtags = null) {
         $this->_securewindowrule->setup_secure_page($title, $headtags);
     }
 
@@ -243,9 +243,10 @@ class quiz_access_manager {
      * @param boolean $canpreview This affects whether we have to worry about secure window stuff.
      */
     public function back_to_view_page($canpreview, $message = '') {
-        global $CFG, $OUTPUT;
+        global $CFG, $OUTPUT, $PAGE;
         $url = $this->_quizobj->view_url();
         if ($this->securewindow_required($canpreview)) {
+            $PAGE->set_pagelayout('popup');
             echo $OUTPUT->header();
             echo $OUTPUT->box_start();
             if ($message) {
@@ -255,8 +256,8 @@ class quiz_access_manager {
                 echo '<p>' . get_string('pleaseclose', 'quiz') . '</p>';
                 $delay = 0;
             }
-            echo $OUTPUT->box_end();
             $PAGE->requires->js_function_call('M.mod_quiz.secure_window.close', array($url, $delay));
+            echo $OUTPUT->box_end();
             echo $OUTPUT->footer();
             die();
         } else {
@@ -668,7 +669,18 @@ class password_access_rule extends quiz_access_rule_base {
         $output = '';
 
     /// Start the page and print the quiz intro, if any.
-        echo $OUTPUT->header();
+        if ($accessmanager->securewindow_required($canpreview)) {
+            $accessmanager->setup_secure_page($this->_quizobj->get_course()->shortname . ': ' .
+                    format_string($this->_quizobj->get_quiz_name()));
+        } else if ($accessmanager->safebrowser_required($canpreview)) {
+            $PAGE->set_title($this->_quizobj->get_course()->shortname . ': '.format_string($this->_quizobj->get_quiz_name()));
+            $PAGE->set_cacheable(false);
+            echo $OUTPUT->header();
+        } else {
+            $PAGE->set_title(format_string($this->_quizobj->get_quiz_name()));
+            echo $OUTPUT->header();
+        }
+
         if (trim(strip_tags($this->_quiz->intro))) {
             $output .= $OUTPUT->box(format_module_intro('quiz', $this->_quiz, $this->_quizobj->get_cmid()), 'generalbox', 'intro');
         }
@@ -767,6 +779,7 @@ class securewindow_access_rule extends quiz_access_rule_base {
         define('MESSAGE_WINDOW', true);
         $PAGE->set_title($title);
         $PAGE->set_cacheable(false);
+        $PAGE->set_pagelayout('popup');
         $PAGE->add_body_class('quiz-secure-window');
         $PAGE->requires->js_init_call('M.mod_quiz.secure_window.init', null, false,
                 quiz_get_js_module());
