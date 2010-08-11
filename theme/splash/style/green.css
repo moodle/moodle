@@ -10,123 +10,111 @@
 /* Global 
 ------------------------*/
 
-body {				/* Define margins and background colour/image */ 
-	background: url(../pix/bggreen.jpg) top left repeat-x #f4f4f4;
+body.splash-green {                /* Define margins and background colour/image */
+    background: url([[pix:theme|bggreen]]) top left repeat-x #f4f4f4;
     margin: 0 auto;
-	padding: 0;
-	width: 100%;
+    padding: 0;
+    width: 100%;
 }
 
 
-a:link {		/* Defining all link styles*/ 
-	color: #446e4c;
+.splash-green a:link {        /* Defining all link styles*/
+    color: #446e4c;
 }
 
-a:visited {		/* Setting all visited link styles */ 
-	color: #446e4c;
+.splash-green a:visited {        /* Setting all visited link styles */
+    color: #446e4c;
 }
 
-a:hover {		/* Setting all rollover link styles */ 
-	color: #335a3a;
+.splash-green a:hover {        /* Setting all rollover link styles */
+    color: #335a3a;
 }
 
-a:active {		/* Setting all active link styles */ 
-	color: #446e4c;
+.splash-green a:active {        /* Setting all active link styles */
+    color: #446e4c;
 }
 
 /* Header 
 -----------------------*/
 
-#page-header {			/* Set height for header */ 
-	float: none;
-	padding: 0;
-	margin:0;
-	color: #fff;
-	height: 308px;
-	background: url(../pix/pageheaderbggreen.jpg) top center no-repeat;
-
+.splash-green #page-header {            /* Set height for header */
+    float: none;
+    padding: 0;
+    margin:0;
+    color: #fff;
+    height: 308px;
+    background: url([[pix:theme|pageheaderbggreen]]) top center no-repeat;
 }
 
 
-#logobox{  /* holder background for logo*/ 
-	height: 185px;
-	width: 252px;
-	margin: auto;
-	text-align: center;
-	background: url(../pix/lbgv2green.jpg) no-repeat;
-	float: left;
+.splash-green #logobox{  /* holder background for logo*/
+    height: 185px;
+    width: 252px;
+    margin: auto;
+    text-align: center;
+    background: url([[pix:theme|lbgv2green]]) no-repeat;
+    float: left;
 }
 
 
 
-#colourswitcher p{
-	color:#446e4c;
+.splash-green #colourswitcher p{
+    color:#446e4c;
 }
 
 
 /* Custom Menu
 -----------------------*/
- #custommenu .yui3-menu-content ul.first-of-type li{
-	border-right: 1px solid #d5e1d7;	
+.splash-green #custommenu .yui3-menu-content ul.first-of-type li{
+    border-right: 1px solid #d5e1d7;
 }
 
-#custommenu div.yui3-menu.custom_menu_submenu .yui3-menu-content{
-	background:#446e4c;
-	border:1px solid #fff;
-	color: #fff;
+.splash-green #custommenu div.yui3-menu.custom_menu_submenu .yui3-menu-content{
+    background:#446e4c;
+    border:1px solid #fff;
+    color: #fff;
 }
-
-
 
 /* Content
 -----------------------*/
-ul.topics li#section-0, ul.weeks li#section-0 {
-	background: #386c4c;
-	border: 1px solid #ccc;
+.splash-green ul.topics li#section-0, ul.weeks li#section-0 {
+    background: #386c4c;
+    border: 1px solid #ccc;
 
 }
 
 
-.coursebox{
-	padding-left:5px;
-	border-bottom: 1px dashed #dae0dc; 
-	 
+.splash-green .coursebox{
+    padding-left:5px;
+    border-bottom: 1px dashed #dae0dc;
+
 
 }
 
 /* Sideblocks
 -----------------------*/
-
-#region-pre .block .header {  /*-- right block header   --*/
-	background: url(../pix/sbheaderbg2green.jpg) center no-repeat;
-	padding: 12px 5px 5px;
-	color: #fff;
-}
-
-
-#region-post .block .header {  /*-- right block header   --*/
-	background: url(../pix/sbheaderbg2green.jpg) center no-repeat;
-	padding: 12px 5px 5px;
-	color: #fff;
+.splash-green #region-pre .block .header,  /*-- right block header   --*/
+.splash-green #region-post .block .header {  /*-- right block header   --*/
+    background: url([[pix:theme|sbheaderbg2green]]) center no-repeat;
+    padding: 12px 5px 5px;
+    color: #fff;
 }
 
 
 
 /* Mini Calendar
 ------------------------*/
-
-.block .minicalendar td.weekend {    /* setting weekend date colour */ 
-	color:#446e4c;
+.splash-green .block .minicalendar td.weekend {    /* setting weekend date colour */
+    color:#446e4c;
 }
 
 
 /* Forum
 ------------------------*/
-
-.forumpost .topic .subject {    /* forum subject section inside topic header */
-	font-weight: bold;
-	font-size: 1.1em;
-	padding-left: 5px;
-	background:  #446e4c;
-	color: #fff;
+.splash-green .forumpost .topic .subject {    /* forum subject section inside topic header */
+    font-weight: bold;
+    font-size: 1.1em;
+    padding-left: 5px;
+    background:  #446e4c;
+    color: #fff;
 }

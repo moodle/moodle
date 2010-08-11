@@ -9,673 +9,631 @@
 
 /* Global 
 ------------------------*/
-html{				/* Reset html page to 0 padding/margins */ 
-	padding: 0;
-	margin: 0;
-	background: #fff;
+html {                /* Reset html page to 0 padding/margins */
+    padding: 0;
+    margin: 0;
+    background: #fff;
 }
 
-body {				/* Define margins and background colour/image */ 
-	background: url([[pix:theme|bg]]) top left repeat-x #fff;
-	margin: 0 auto;
-	padding: 0;
-	width: 100%;
-	overflow-x:hidden;
-
+body {                /* Define margins and background colour/image */
+    background: url([[pix:theme|bg]]) top left repeat-x #fff;
+    margin: 0 auto;
+    padding: 0;
+    width: 100%;
+    overflow-x:hidden;
 }
 
 body,h1,h2,h3,h4,h5,h6,p,ul,ol,dl,input,textarea {   /* Set fonttype for site */ 
-	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
-a:link {		/* Defining all link styles*/ 
-	color: #853650;
+a:link {        /* Defining all link styles*/
+    color: #853650;
 }
 
-a:visited {		/* Setting all visited link styles */ 
-	color: #853650;
+a:visited {        /* Setting all visited link styles */
+    color: #853650;
 }
 
-a:hover {		/* Setting all rollover link styles */ 
-	color: #6d1523;
+a:hover {        /* Setting all rollover link styles */
+    color: #6d1523;
 }
 
-a:active {		/* Setting all active link styles */ 
-	color: #853650;
+a:active {        /* Setting all active link styles */
+    color: #853650;
 }
 
-a img {		/* Image borders*/ 
-	border: none;
+a img {        /* Image borders*/
+    border: none;
 }
 
-a:active {	
-	outline: none;
+a:active {
+    outline: none;
 }
 
-.skiplinks{     /* hide skip link access keys*/ 
-	display: none;
+.skiplinks {     /* hide skip link access keys*/
+    display: none;
 }
 
-.skip-block{     /* hide skip link access keys in blocks*/ 
-	
-	display: none;
+.skip-block {     /* hide skip link access keys in blocks*/
+    display: none;
 }
 
-.loginpanel{
-	background: url([[pix:theme|loginpanel]]) top center no-repeat;
-	height: 480px;
+.loginpanel {
+    background: url([[pix:theme|loginpanel]]) top center no-repeat;
+    height: 480px;
 }
 
-.loginbox .loginpanel .subcontent{
- margin: 0 auto;
- clear: right;
-	width: 300px;
+.loginbox .loginpanel .subcontent {
+    margin: 0 auto;
+    clear: right;
+    width: 300px;
 }
-                 /* fix issues conflicting with the floating columns */
-                 
-.clearer {clear:left;}	
+/* fix issues conflicting with the floating columns */                 
+.clearer {
+    clear:left;
+}
 
 /* Header 
 -----------------------*/
 
-#page-header {			/* Set height for header */ 
-	float: none;
-	padding: 0;
-	margin:0;
-	color: #fff;
-	height: 308px;
-	background: url([[pix:theme|pageheaderbgred]]) top center no-repeat;
+#page-header {            /* Set height for header */
+    float: none;
+    padding: 0;
+    margin:0;
+    color: #fff;
+    height: 308px;
+    background: url([[pix:theme|pageheaderbgred]]) top center no-repeat;
 
 }
 
-#page-header h1 {		/* Style h1 tags for header */ 
-	padding-top: 40px;
-	font-size: 1.25em;
-	text-align: left;
-	margin: 0px;
+#page-header h1 {        /* Style h1 tags for header */
+    padding-top: 40px;
+    font-size: 1.25em;
+    text-align: left;
+    margin: 0px;
 }
 
 #page-header h1.inside {
-	font-size: 1.25em;
-	margin: 0px;
+    font-size: 1.25em;
+    margin: 0px;
 }
 
-#page-header h4 {		/* Style h4 tags for header */ 
-	font-size: 1.0em;
-	text-align: left;
-	margin-top: 40px;
-	color: #333;
+#page-header h4 {        /* Style h4 tags for header */
+    font-size: 1.0em;
+    text-align: left;
+    margin-top: 40px;
+    color: #333;
 }
 
-#headermenu {	/* user info positioning and styles */ 
-	float: right;
-	margin: 20px 0 0 0;
-	font-size: 0.9em;
-	text-align: right;
-	width: 210px;
-	height: 80px;
-	padding: 5px;
-	position: relative;
+#headermenu {    /* user info positioning and styles */
+    float: right;
+    margin: 20px 0 0 0;
+    font-size: 0.9em;
+    text-align: right;
+    width: 210px;
+    height: 80px;
+    padding: 5px;
+    position: relative;
 }
 
-
-#headermenu h1{	/* styling h1 for user welcome message*/ 
-	margin:0;
-	padding: 0;
-	color: fff;
+#headermenu h1{    /* styling h1 for user welcome message*/
+    margin:0;
+    padding: 0;
+    color: fff;
 }
 
-.spacing{
-	padding-top: 20px;
+.spacing {
+    padding-top: 20px;
 }
 
-#userdetails{ /* positioning of user login/outdetails */ 
-	float: left;
-	margin-right: 10px;
-	width: auto;
-	height: 60px;
-	
+#userdetails { /* positioning of user login/outdetails */
+    float: left;
+    margin-right: 10px;
+    width: auto;
+    height: 60px;
 }
 
-#userdetails a:link{ /* styling user detail links when logged in*/ 
-	color: #f2f2f2;
+#userdetails a:link { /* styling user detail links when logged in*/
+    color: #f2f2f2;
 }
 
-#userdetails a:visited{ /* styling user detail links when logged in */ 
-	color: #f2f2f2;
+#userdetails a:visited { /* styling user detail links when logged in */
+    color: #f2f2f2;
 }
 
-#userdetails a:hover{ /* styling user detail links when logged in*/ 
-	color: #f2f2f2;
-	
+#userdetails a:hover { /* styling user detail links when logged in*/
+    color: #f2f2f2;
 }
 
-
-#userdetails_loggedout{ /* positioning of user login/outdetails */ 
-	float: left;
-	margin-right: 10px;
-	height: 60px;
-	
+#userdetails_loggedout { /* positioning of user login/outdetails */
+    float: left;
+    margin-right: 10px;
+    height: 60px;
 }
-
 
 #userdetails_loggedout h1{ /* positioning of user h1 tag*/ 
-	padding-top:40px
-	
+    padding-top:40px
 }
 
-#userdetails_loggedout a:link{ /* styling user detail links when logged out*/ 
-	color: #f2f2f2;
+#userdetails_loggedout a:link { /* styling user detail links when logged out*/
+    color: #f2f2f2;
 }
 
-#userdetails_loggedout a:visited{ /* styling user detail links when logged out */ 
-	color: #f2f2f2;
+#userdetails_loggedout a:visited { /* styling user detail links when logged out */
+    color: #f2f2f2;
 }
 
-#userdetails_loggedout a:hover{ /* styling user detail links when logged out*/ 
-	color: #f2f2f2;
-	
-}
-
-.prolog{
-	margin-top: 25px;
-	margin-bottom: 0px;
-}
-
-.prolog a:link{ /* styling user detail links */ 
-	color: #f2f2f2;
-}
-
-.prolog a:visited{ /* styling user detail links */ 
-	color: #f2f2f2;
-}
-
-.prolog a:hover{ /* styling user detail links */ 
-	color: #f2f2f2;
-	
-}
-
-.prolog a:active{ /* styling user detail links */ 
-	color: #f2f2f2;
-	
-}
-
-#userimg{ /* styling user profile picture*/ 
-	float: right;
-	margin-left: 4px;
+#userdetails_loggedout a:hover { /* styling user detail links when logged out*/
+    color: #f2f2f2;
 
 }
 
-#colourswitcher{  /* colour switcher styles */ 
-	float: right;
+.prolog {
+    margin-top: 25px;
+    margin-bottom: 0px;
+}
+
+.prolog a:link { /* styling user detail links */
+    color: #f2f2f2;
+}
+
+.prolog a:visited { /* styling user detail links */
+    color: #f2f2f2;
+}
+
+.prolog a:hover { /* styling user detail links */
+    color: #f2f2f2;
+}
+
+.prolog a:active { /* styling user detail links */
+    color: #f2f2f2;
+}
+
+#userimg { /* styling user profile picture*/
+    float: right;
+    margin-left: 4px;
+}
+
+#headermenu .langmenu {
+    position:relative;
+    top:35px;
+    width:210px;
+}
+
+#colourswitcher {  /* colour switcher styles */
+    float: right;
     height: 30px;
-	width: 210px;
-	color: #000;
-	background: url([[pix:theme|selectbg]]) top left repeat-x;
-	text-align: left;
-	padding: 2px 0px 0px 0px;
-	position: absolute;
-	top: 66px;
-	right: 4px;
-	
+    width: 210px;
+    color: #000;
+    background: url([[pix:theme|selectbg]]) top left repeat-x;
+    text-align: left;
+    padding: 2px 0px 0px 0px;
+    position: absolute;
+    top: 66px;
+    right: 4px;
 }
 
-#colourswitcher ul{
-	padding: 0;
+#colourswitcher ul {
+    padding: 0;
     margin: 0;
-    
 }
 
-
-#colourswitcher ul li{
+#colourswitcher ul li {
     margin:0;
-    padding: 0;	
+    padding: 0;
     display: inline;
     list-style: none;
-    
-    
 }
 
-#colourswitcher p{
-	color: #7c3041;
+#colourswitcher p {
+    color: #7c3041;
 }
 
-#logobox{  /* holder background for logo*/ 
-	height: 185px;
-	width: 252px;
-	margin: auto;
-	text-align: center;
-	background: url([[pix:theme|lbgv2]]) no-repeat;
-	float: left;
+#logobox {  /* holder background for logo*/
+    height: 185px;
+    width: 252px;
+    margin: auto;
+    text-align: center;
+    background: url([[pix:theme|lbgv2]]) no-repeat;
+    float: left;
 }
+
 #logobox a.nologoimage {
-	display: block;
-	font-size: 30px;
-	font-weight: 800;
-	margin-top: 40px;
+    display: block;
+    font-size: 30px;
+    font-weight: 800;
+    margin-top: 40px;
 }
 
-#logobox img{
-	max-width: 230px;
+#logobox img {
+    max-width: 230px;
 }
 
 #logobox h1{
-	padding-top: 40px;
-	font-size: 2.0em;
-	color: #333;
-	text-align: center;
+    padding-top: 40px;
+    font-size: 2.0em;
+    color: #333;
+    text-align: center;
 }
 
 #logobox h4{
-	padding-top:20px;
-	margin:0;
-	text-align: center;
-	font-size: 0.9em;
-	color: #666;
-	
+    padding-top:20px;
+    margin:0;
+    text-align: center;
+    font-size: 0.9em;
+    color: #666;
 }
 
 /* Custom Menu
 -----------------------*/
 
-#dropdownmenu{		/* holder for custom menu */ 
-	height:45px;
-	margin: 0;
-	padding-top: 0px;
+#dropdownmenu {        /* holder for custom menu */
+    height:45px;
+    margin: 0;
+    padding-top: 0px;
 }
 
- 		/* setting font colour and removing borders */ 
-
-#custommenu{
-	padding-left: 6px;
-	height: 33px;
-	font-size: 1.2em;
-	margin-top: 0px !important;
-	padding-top: 0px !important;
+#custommenu {   /* setting font colour and removing borders */
+    padding-left: 6px;
+    height: 33px;
+    font-size: 1.2em;
+    margin-top: 0px !important;
+    padding-top: 0px !important;
 
 }
+
 #custommenu * { 
-	border:none;
-	
+    border:none;
 }
 
 #custommenu a:link, #custommenu a:visited { 
-	text-decoration:none; 
-	color: #666; 
+    text-decoration:none;
+    color: #666;
 }
+
 #custommenu a:active, #custommenu a:hover { 
-	text-decoration:underline; 
-	color: #666; 
-	background: none;
+    text-decoration:underline;
+    color: #666;
+    background: none;
 }
 
-#custommenu .yui3-menu-content ul.first-of-type li{
-	border-right: 1px solid #e6d0d4;	
+#custommenu .yui3-menu-content ul.first-of-type li {
+    border-right: 1px solid #e6d0d4;
 }
 
-#custommenu div.yui3-menu.custom_menu_submenu .yui3-menu-content{
-	background:#6d1523;
-	border:1px solid #fff;
-	color: #fff;
+#custommenu div.yui3-menu.custom_menu_submenu .yui3-menu-content {
+    background:#6d1523;
+    border:1px solid #fff;
+    color: #fff;
 }
 
-#custommenu div.yui3-menu.custom_menu_submenu .yui3-menu-content a{
-	color: #fff;
+#custommenu div.yui3-menu.custom_menu_submenu .yui3-menu-content a {
+    color: #fff;
 }
 
-
-
+#custommenu .yui3-menu-horizontal.javascript-disabled .yui3-menu-content,
+#custommenu .yui3-menu-horizontal.javascript-disabled .yui3-menu-content .ul {
+    border-width:0;
+}
 
 .yui3-skin-sam .yui3-menu-label-active, 
 .yui3-skin-sam .yui3-menu-label-menuvisible, 
 .yui3-skin-sam .yui3-menu .yui3-menu .yui3-menu-label-active, 
-.yui3-skin-sam .yui3-menu .yui3-menu .yui3-menu-label-menuvisible
-
-{
-
-background-color: #605f5f;
-
-
+.yui3-skin-sam .yui3-menu .yui3-menu .yui3-menu-label-menuvisible {
+    background-color: #605f5f;
 }
-
-
 
 /* Breadcrumb Navbar
 -----------------------*/
 
-.navbar {	/* moodles breadcrumb holder*/ 
-	border-width: 0 0 1px 0;
-	margin: 0;
-	padding: 5px 15px;
-	font-size: 0.9em;
-	color: #333;
+.navbar {    /* moodles breadcrumb holder*/
+    border-width: 0 0 1px 0;
+    margin: 0;
+    padding: 5px 15px;
+    font-size: 0.9em;
+    color: #333;
 }
 
-.navbar .navbutton { 	/* Defining settings for navbutton within navbar */ 
-	margin-top: 0;
+.navbar .navbutton {     /* Defining settings for navbutton within navbar */
+    margin-top: 0;
 }
 
-.breadcrumb .sep {	/* change colour and size of breadcrumb arrows */ 
-	font-size: 0.8em;
-	color: #999;
+.breadcrumb .sep {    /* change colour and size of breadcrumb arrows */
+    font-size: 0.8em;
+    color: #999;
 }
-
-
 
 /* Content
 -----------------------*/
-
-#page{		/* Defining fluid or fixed theme.. for fluid theme change width to 100%*/ 
-	width: 960px;
-	margin: auto;
-	
-	
+#page {        /* Defining fluid or fixed theme.. for fluid theme change width to 100%*/
+    width: 960px;
+    margin: auto;
 }
 
-#page-content{	/* setting white background holder for all content under header*/ 
-	background: #fff;
-	margin-top:10px;
+#page-content {    /* setting white background holder for all content under header*/
+    background: #fff;
+    margin-top:10px;
 }
 
 #page-content h1{
-	font-size: 1.3em;
+    font-size: 1.3em;
 }
 
-.box.generalbox{
-	border: none;
-	background: #fafafa;
-	padding: 5px;
+.box.generalbox {
+    border: none;
+    background: #fafafa;
+    padding: 5px;
 }
 
-.coursebox{
-	padding-left:5px;
-	border-bottom: 1px dashed #e1d2d5; 
-	 
-}
+.coursebox {
+    padding-left:5px;
+    border-bottom: 1px dashed #e1d2d5;
 }
 
 td.left.side, td.side {
-	border:none;
-	background: none;
+    border:none;
+    background: none;
 }
 
-.path-course-view.section .left.side{
-	background: none;
+.path-course-view.section .left.side {
+    background: none;
 }
 /* topics and weekly
 -----------------------*/
 
 ul.topics li.section, ul.weeks li.section {
-	border: 1px dotted #cfdae3; 
-	background: #ffffff url([[pix:theme|ui-bg_inset-hard_100_ffffff_1x100]]) 50% 50% repeat-x; 
-	font-weight: normal; 
-	color: #212121;
+    border: 1px dotted #cfdae3;
+    background: #ffffff url([[pix:theme|ui-bg_inset-hard_100_ffffff_1x100]]) 50% 50% repeat-x;
+    font-weight: normal;
+    color: #212121;
 }
 
-ul.topics li.section{
-	border-style:solid;
+ul.topics li.section {
+    border-style:solid;
 }
 
 ul.topics li#section-0, ul.weeks li#section-0 {
-	border: 1px solid #bbc7ce; 
-	background: #d3dbe0; 
-	color: #222222;	
+    border: 1px solid #bbc7ce;
+    background: #d3dbe0;
+    color: #222222;
 }
 ul.weeks li.section.current, ul.topics li.section.current  {
-	border: 1px solid #999999; 
-	font-weight: normal; 
-	color: #212121;
+    border: 1px solid #999999;
+    font-weight: normal;
+    color: #212121;
 }
-div.summary {padding:5px 0px 5px 0px;}
+div.summary {
+    padding:5px 0px 5px 0px;
+}
 
-
-
-
-	
-	
 /* Sideblocks
 -----------------------*/
 
-.block {	/* general settings for sideblocks */ 
-	margin-bottom: 20px;
-	border: none;
+.block {    /* general settings for sideblocks */
+    margin-bottom: 20px;
+    border: none;
 }
 
-.block hr{   /* hiding the hr in sideblocks */ 
-	display: none;
+.block hr {   /* hiding the hr in sideblocks */
+    display: none;
 }
 
-.commands{
-	padding-bottom: 10px;
-	clear: both;
+.commands {
+    padding-bottom: 10px;
+    clear: both;
 }
 
-.searchform{
-	padding-top: 10px;
+.searchform {
+    padding-top: 10px;
 }
 
-#region-pre{
-	background: #fff;
+#region-pre {
+    background: #fff;
 }
 
-#region-post{
+#region-post {
     background: #fff;
 }
 
 #region-pre .block .header {  /*-- right block header   --*/
-	background: url([[pix:theme|sbheaderbg2]]) center no-repeat;
-	height: 25px;
-	color: #fff;
+    background: url([[pix:theme|sbheaderbg2]]) center no-repeat;
+    height: 25px;
+    color: #fff;
+    padding: 12px 5px 5px 5px;
 }
 
 #region-pre .block .header h2{  /*-- right block text --*/
-	color: #333;
-	padding: 0 0 0 10px;
+    color: #333;
+    padding: 0 0 0 10px;
 }
 
 #region-pre .block .content {  /*-- right block content   --*/
-	background:  #f2f2f2;
-	padding: 4px 5px 5px;
+    background:  #f2f2f2;
+    padding: 4px 5px 5px;
 }
 
 #region-post .block .header {  /*-- left block header   --*/
-	background: url([[pix:theme|sbheaderbg2]]) center no-repeat;
-	height: 25px;
-	color: #fff;
+    background: url([[pix:theme|sbheaderbg2]]) center no-repeat;
+    height: 25px;
+    color: #fff;
+    padding: 12px 5px 5px 5px;
 }
 
 #region-post .block .header h2{  /*-- left block text   --*/
-	color: #333;
-	padding: 0 0 0 10px;
+    color: #333;
+    padding: 0 0 0 10px;
 }
 
 #region-post .block .content { /*-- left block content   --*/
-	background:  #f2f2f2;
-	padding: 4px 5px 5px;
+    background:  #f2f2f2;
+    padding: 4px 5px 5px;
 }
 
-.block .title h2 {		/* Settings for h2 tags in sideblock headers */ 
-	color: #35251B;
-	font-weight: normal;
-	font-size: 1.2em;
-	margin: 0;
+.block .title h2 {        /* Settings for h2 tags in sideblock headers */
+    color: #35251B;
+    font-weight: normal;
+    font-size: 1.2em;
+    margin: 0;
 }
 
-.tree_item{  /* tree item seperator for sideblocks */ 
-	border-bottom: #e2e2e2 1px solid;
+.tree_item {  /* tree item seperator for sideblocks */
+    border-bottom: #e2e2e2 1px solid;
 }
-
 
 /* Mini Calendar
 ------------------------*/
 
 .block .minicalendar {   /* setting background colour for mini cal*/ 
-	background: #fff;
+    background: #fff;
 }
 
 .block .minicalendar td.weekend {    /* setting weekend date colour */ 
-	color:#7c3041;
+    color:#7c3041;
 }
-
 
 /* Forum
 ------------------------*/
 
-.forumpost .topic {	   /* forum topic header*/
-	background: #fff;
-	border-bottom-color: #da5013;
+.forumpost .topic {       /* forum topic header*/
+    background: #fff;
+    border-bottom-color: #da5013;
 }
 
 .forumpost .topic .subject {    /* forum subject section inside topic header */
-	font-weight: bold;
-	font-size: 1.1em;
-	padding-left: 5px;
-	color: #333;
-		background: #d3dbe0;
+    font-weight: bold;
+    font-size: 1.1em;
+    padding-left: 5px;
+    color: #333;
+    background: #d3dbe0;
 }
 
 .forumpost .topic .author {  /* author area within topic header */
-	font-size: 0.9em;
+    font-size: 0.9em;
 }
 
 .forumpost .topic.starter {  /* content start point */
-	border-bottom:1px dashed #e2e2e2;
+    border-bottom:1px dashed #e2e2e2;
 }
 
 .forumpost .content {  /* content area within forum  */
-	background: #fff;
-	border-width: 0 0 1px 0;
-	border-style: dashed;
-	border-color: #e2e2e2;
+    background: #fff;
+    border-width: 0 0 1px 0;
+    border-style: dashed;
+    border-color: #e2e2e2;
 }
 
-
 .path-mod-forum .forumheaderlist {
-	width: 100%;
-	border:none;
-	
+    width: 100%;
+    border:none;
 }
 
 .path-mod-forum .forumheaderlist td {
-	border: none;
+    border: none;
 }
 
 tr.header td.starter {
-	border: 1px solid #bbc7ce; 
-	background: #d3dbe0; 
-}
-	
-	
-.forumheaderlist .header.topic{
-	border-top: 1px solid #bbc7ce; 
-	border-left: 1px solid #bbc7ce;
-	border-right: 1px solid #bbc7ce; 
-	border-bottom: 1px solid #bbc7ce; 
-	background: #d3dbe0; 
+    border: 1px solid #bbc7ce;
+    background: #d3dbe0;
 }
 
-.forumheaderlist .header.author{
-	border-top: 1px solid #bbc7ce; 
-	border-right: 1px solid #bbc7ce;
-	border-left: 1px solid #bbc7ce; 
-	border-bottom: 1px solid #bbc7ce; 
-	background: #d3dbe0; 
+.forumheaderlist .header.topic {
+    border-top: 1px solid #bbc7ce;
+    border-left: 1px solid #bbc7ce;
+    border-right: 1px solid #bbc7ce;
+    border-bottom: 1px solid #bbc7ce;
+    background: #d3dbe0;
 }
 
-.forumheaderlist .header.replies{
-	border-top: 1px solid #bbc7ce; 
-	border-right: 1px solid #bbc7ce; 
-	border-bottom: 1px solid #bbc7ce; 
-	background: #d3dbe0; 
+.forumheaderlist .header.author {
+    border-top: 1px solid #bbc7ce;
+    border-right: 1px solid #bbc7ce;
+    border-left: 1px solid #bbc7ce;
+    border-bottom: 1px solid #bbc7ce;
+    background: #d3dbe0;
 }
 
-.forumheaderlist .header.lastpost{
-	border-top: 1px solid #bbc7ce; 
-	border-right: 1px solid #bbc7ce; 
-	border-bottom: 1px solid #bbc7ce; 
-	background: #d3dbe0; 
+.forumheaderlist .header.replies {
+    border-top: 1px solid #bbc7ce;
+    border-right: 1px solid #bbc7ce;
+    border-bottom: 1px solid #bbc7ce;
+    background: #d3dbe0;
+}
+
+.forumheaderlist .header.lastpost {
+    border-top: 1px solid #bbc7ce;
+    border-right: 1px solid #bbc7ce;
+    border-bottom: 1px solid #bbc7ce;
+    background: #d3dbe0;
 }
 
 /* Course
 ---------------------------*/
 
 h2.headingblock {
-	border-width: 0 0 1px 0;
-	padding: 5px 5px 2px;
-	font-weight: normal;
-	font-size: 1.2em;
-	background: none;
-	color: #251c17;
+    border-width: 0 0 1px 0;
+    padding: 5px 5px 2px;
+    font-weight: normal;
+    font-size: 1.2em;
+    background: none;
+    color: #251c17;
 }
 
 .course-content .section.main {
-	background: #fff;
-	border: 1px solid #ddd;
+    background: #fff;
+    border: 1px solid #ddd;
 }
 
 .course-content .section.current {
-	background: #666;
-	color: #fff;
+    background: #666;
+    color: #fff;
 }
 
 ul.topics li#section-0, ul.weeks li#section-0 {
-	background: #8b383e;
-	border: 1px solid #ccc;
-
+    background: #8b383e;
+    border: 1px solid #ccc;
 }
 
 .course-content .section.main .content {
-	background: #fff;
+    background: #fff;
 }
-
-
 
 /* dock left
 ---------------------------*/
-						/* background style for dockpanel */
-#dock.dock.dock_left_vertical{
-	background: #000;
-	border: none;
-	
-}
-						/* styles for docked item background */
-
-.dockedtitle, .dockedtitle .activeitem{
-	background: #fff;
-	color: #333;
-	border-right:  1px dashed #656565;
-	border-left:  1px dashed #656565;
-
+#dock.dock.dock_left_vertical {  /* background style for dockpanel */
+    background: #000;
+    border: none;
 }
 
+.dockedtitle, .dockedtitle .activeitem { /* styles for docked item background */
+    background: #fff;
+    color: #333;
+    border-right:  1px dashed #656565;
+    border-left:  1px dashed #656565;
+}
 
 /* Footer
 ---------------------------*/
-
-
-#page-footer{     /* settings for footer container */ 
-	position:relative; 
-	background: url([[pix:theme|footerbg]]) top left repeat-x #f4f4f4;	
-	width: 100%;
-	margin-top: -2px;
-	
+#page-footer {     /* settings for footer container */
+    position:relative;
+    background: url([[pix:theme|footerbg]]) top left repeat-x #f4f4f4;
+    width: 100%;
+    margin-top: -2px;
 }
 
-
-.helplink{
-	padding-top: 5px;
+.helplink {
+    padding-top: 5px;
 }
 
-
-#footer-wrapper{
-	margin: auto;
- 	width: 960px;	
+#footer-wrapper {
+    margin: auto;
+    width: 960px;
 }
 
-#footnote{
-	margin: 20px 0px;
-	padding: 0px 5px;
-	text-align: right;
+#footnote {
+    margin: 20px 0px;
+    padding: 0px 5px;
+    text-align: right;
 }
 
 /* Splash Theme Specific settings for Administrators to customise css.

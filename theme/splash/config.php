@@ -1,5 +1,28 @@
 <?php
 
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Config for the splash theme
+ *
+ * @package   theme_splash
+ * @copyright 2010 Caroline Kennedy of Synergy Learning
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 $THEME->name = 'splash';
 
 ////////////////////////////////////////////////////
@@ -8,8 +31,8 @@ $THEME->name = 'splash';
 
 
 $THEME->parents = array(
-		'canvas',
-		'base',
+    'canvas',
+    'base',
 );
 
 /////////////////////////////////////////////////////
@@ -18,7 +41,11 @@ $THEME->parents = array(
 
 
 $THEME->sheets = array(
-	'green','blue','orange','sl','ie',
+    'sl',
+    'green',
+    'blue',
+    'orange',
+    'ie',
 );
 
 ////////////////////////////////////////////////////
@@ -127,12 +154,4 @@ $THEME->csspostprocess = 'splash_process_css';
 ///////////////////////////////////////////////////////////////
 // Splash Theme Specific settings for Administrators to customise
 // css.
-///////////////////////////////////////////////////////////////
-
-
-
-$THEME->javascripts = array('styleswitcher');
-
-///////////////////////////////////////////////////////////////
-// Referencing the javascript files required for theme elements.
 ///////////////////////////////////////////////////////////////
