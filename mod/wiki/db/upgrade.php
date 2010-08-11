@@ -266,7 +266,7 @@ function xmldb_wiki_upgrade($oldversion) {
                         $storedfile = $fs->create_file_from_pathname($filerecord, $thefile);
                     }
                     // we have to create another file here to make sure interlinks work
-                    if (!$fs->file_exists($context->id, 'mod_wiki', 'attachment', $r->subwiki, '/', $filename)) {
+                    if (!$fs->file_exists($context->id, 'mod_wiki', 'attachments', $r->subwiki, '/', $filename)) {
                         $filerecord['filename'] = $filename;
                         //echo $OUTPUT->notification('Migrating file '.$filename, 'notifysuccess');
                         $storedfile = $fs->create_file_from_pathname($filerecord, $thefile);
