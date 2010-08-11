@@ -664,7 +664,12 @@ class grade_edit_tree_column_range extends grade_edit_tree_column {
             $grademax = format_float($item->grademax, $item->get_decimals());
         } elseif ($item->gradetype == GRADE_TYPE_SCALE) {
             $scale = get_record('scale', 'id', $item->scaleid);
-            $scale_items = explode(',', $scale->scale);
+            $scale_items = null;
+            if (empty($scale)) { //if the item is using a scale that's been removed
+                $scale_items = array();
+            } else {
+                $scale_items = explode(',', $scale->scale);
+            }
             $grademax = end($scale_items) . ' (' . count($scale_items) . ')';
         } elseif ($item->is_external_item()) {
             $grademax = format_float($item->grademax, $item->get_decimals());
