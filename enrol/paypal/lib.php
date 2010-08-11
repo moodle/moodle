@@ -181,6 +181,7 @@ class enrol_paypal_plugin extends enrol_plugin {
                 $userlastname    = $USER->lastname;
                 $useraddress     = $USER->address;
                 $usercity        = $USER->city;
+                $instancename    = $this->get_instance_name($instance);
 
                 include($CFG->dirroot.'/enrol/paypal/enrol.html');
             }
