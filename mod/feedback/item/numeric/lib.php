@@ -82,7 +82,7 @@ class feedback_item_numeric extends feedback_item_base {
             return false;
         }
         
-        if($item->clone_item) {
+        if(isset($item->clone_item) AND $item->clone_item) {
             $item->id = ''; //to clone this item
             $item->position++;
         }
