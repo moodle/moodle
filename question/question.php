@@ -202,7 +202,9 @@ if ($mform->is_cancelled()){
         close_window();
     } else {
         $nexturl = new moodle_url($returnurl);
-        $nexturl->param('lastchanged', $question->id);
+        if (!empty($question->id)) {
+            $nexturl->param('lastchanged', $question->id);
+        }
         redirect($nexturl->out());
     }
 } elseif ($fromform = $mform->get_data()) {
