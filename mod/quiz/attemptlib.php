@@ -340,8 +340,7 @@ class quiz {
      * @return string the URL of the review of that attempt.
      */
     public function review_url($attemptid) {
-        global $CFG;
-        return $CFG->wwwroot . '/mod/quiz/review.php?attempt=' . $attemptid;
+        return new moodle_url('/quiz/review.php', array('attempt' => $attemptid));
     }
 
     // Bits of content =====================================================================

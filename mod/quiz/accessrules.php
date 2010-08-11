@@ -210,7 +210,8 @@ class quiz_access_manager {
     public function print_start_attempt_button($canpreview, $buttontext, $unfinished) { 
         global $OUTPUT;
 
-        $button = new single_button($this->_quizobj->start_attempt_url(), $buttontext);
+        $url = $this->_quizobj->start_attempt_url();
+        $button = new single_button($url, $buttontext);
         $button->class .= ' quizstartbuttondiv';
 
         if (!$unfinished) {
@@ -225,20 +226,8 @@ class quiz_access_manager {
         if ($this->securewindow_required($canpreview)) {
             $button->class .= ' quizsecuremoderequired';
 
-            $popupoptions = array(
-                'left' => 0,
-                'top' => 0,
-                'fullscreen' => true,
-                'scrollbars' => true,
-                'resizeable' => false,
-                'directories' => false,
-                'toolbar' => false,
-                'titlebar' => false,
-                'location' => false,
-                'status' => false,
-                'menubar' => false,
-            );
-            $button->popup_action(new popup_action('click', $url, 'quizpopup', $popupoptions));
+            $button->add_action(new popup_action('click', $url, 'quizpopup',
+                    securewindow_access_rule::$popupoptions));
 
             $warning = html_writer::tag('noscript',
                     $OUTPUT->heading(get_string('noscript', 'quiz')));
@@ -735,6 +724,23 @@ class time_limit_access_rule extends quiz_access_rule_base {
  */
 class securewindow_access_rule extends quiz_access_rule_base {
     /**
+     * @var array options that should be used for opening the secure popup.
+     */
+    public static $popupoptions = array(
+        'left' => 0,
+        'top' => 0,
+        'fullscreen' => true,
+        'scrollbars' => true,
+        'resizeable' => false,
+        'directories' => false,
+        'toolbar' => false,
+        'titlebar' => false,
+        'location' => false,
+        'status' => false,
+        'menubar' => false,
+    );
+
+    /**
      * Make a link to the review page for an attempt.
      *
      * @param string $linktext the desired link text.
@@ -743,8 +749,9 @@ class securewindow_access_rule extends quiz_access_rule_base {
      */
     public function make_review_link($linktext, $attemptid) {
         global $OUTPUT;
-        $button = new single_button($this->_quizobj->review_url($attemptid), $linktext);
-        $button->add_action(new popup_action('click', $form->url, 'quizpopup', $this->windowoptions));
+        $url = $this->_quizobj->review_url($attemptid);
+        $button = new single_button($url, $linktext);
+        $button->add_action(new popup_action('click', $url, 'quizpopup', self::$popupoptions));
         return $OUTPUT->render($button);
     }
 
