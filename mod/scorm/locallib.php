@@ -642,7 +642,7 @@ function scorm_get_last_completed_attempt($scormid, $userid) {
     global $DB;
 
 /// Find the last attempt number for the given user id and scorm id
-    if ($lastattempt = $DB->get_record('scorm_scoes_track', array('userid'=>$userid, 'scormid'=>$scormid, 'value'=> 'completed'), 'max(attempt) as a')) {
+    if ($lastattempt = $DB->get_record_select('scorm_scoes_track', "userid = ? AND scormid = ? AND (value='completed' OR value='passed')", array($userid, $scormid), 'max(attempt) as a')) {
         if (empty($lastattempt->a)) {
             return '1';
         } else {
