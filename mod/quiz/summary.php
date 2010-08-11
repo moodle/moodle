@@ -84,7 +84,8 @@ $table->attributes['class'] = 'generaltable quizsummaryofattempt boxaligncenter'
 $table->head = array(get_string('question', 'quiz'), get_string('status', 'quiz'));
 $table->align = array('left', 'left');
 $table->size = array('', '');
-$scorescolumn = $attemptobj->get_review_options()->scores;
+$scorescolumn = $attemptobj->get_review_options()->scores &&
+        ($attemptobj->get_quiz()->optionflags & QUESTION_ADAPTIVE);
 if ($scorescolumn) {
     $table->head[] = get_string('marks', 'quiz');
     $table->align[] = 'left';
