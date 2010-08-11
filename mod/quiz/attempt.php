@@ -155,7 +155,7 @@
     // Some hidden fields to trach what is going on.
     echo '<input type="hidden" name="attempt" value="' . $attemptobj->get_attemptid() . '" />';
     echo '<input type="hidden" name="nextpage" id="nextpagehiddeninput" value="' . $nextpage . '" />';
-    echo '<input type="hidden" name="timeup" value="0" />';
+    echo '<input type="hidden" name="timeup" id="timeup" value="0" />';
     echo '<input type="hidden" name="sesskey" value="' . sesskey() . '" />';
 
     // Add a hidden field with questionids. Do this at the end of the form, so

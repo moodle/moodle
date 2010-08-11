@@ -129,35 +129,36 @@ M.mod_quiz.nav.init = function(Y) {
 
     Y.all('#quiznojswarning').remove();
 
-    Y.delegate('click', function(e) {
-        if (this.hasClass('thispage')) {
-            return;
-        }
+    var form = Y.one('#responseform');
+    if (form) {
+        Y.delegate('click', function(e) {
+            if (this.hasClass('thispage')) {
+                return;
+            }
 
-        e.preventDefault(e);
+            e.preventDefault();
 
-        var pageidmatch = this.get('href').match(/page=(\d+)/);
-        var pageno;
-        if (pageidmatch) {
-            pageno = pageidmatch[1];
-        } else {
-            pageno = 0;
-        }
-        Y.one('#nextpagehiddeninput').set('value', pageno);
+            var pageidmatch = this.get('href').match(/page=(\d+)/);
+            var pageno;
+            if (pageidmatch) {
+                pageno = pageidmatch[1];
+            } else {
+                pageno = 0;
+            }
+            Y.one('#nextpagehiddeninput').set('value', pageno);
 
-        var form = Y.one('#responseform');
+            var questionidmatch = this.get('href').match(/#q(\d+)/);
+            if (questionidmatch) {
+                form.set(action, form.get(action) + '#q' + questionidmatch[1]);
+            }
 
-        var questionidmatch = this.get('href').match(/#q(\d+)/);
-        if (questionidmatch) {
-            form.set(action, form.get(action) + '#q' + questionidmatch[1]);
-        }
-
-        form.submit();
-    }, document.body, '.qnbutton');
+            form.submit();
+        }, document.body, '.qnbutton');
+    }
 
     if (Y.one('a.endtestlink')) {
         Y.on('click', function(e) {
-            e.preventDefault();
+            e.preventDefault(e);
             Y.one('#nextpagehiddeninput').set('value', -1);
             Y.one('#responseform').submit();
         }, 'a.endtestlink');
