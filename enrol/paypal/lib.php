@@ -174,7 +174,7 @@ class enrol_paypal_plugin extends enrol_plugin {
                 echo '</div>';
             } else {
                 //Sanitise some fields before building the PayPal form
-                $coursefullname  = $course->fullname;
+                $coursefullname  = format_string($course->fullname, true, array('context'=>$context));
                 $courseshortname = $course->shortname;
                 $userfullname    = fullname($USER);
                 $userfirstname   = $USER->firstname;
