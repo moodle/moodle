@@ -36,7 +36,7 @@ class enrol_paypal_plugin extends enrol_plugin {
 
 
     public function roles_protected() {
-        // users wit htole assign cap may tweak the roles later
+        // users with role assign cap may tweak the roles later
         return false;
     }
 
