@@ -670,8 +670,7 @@ class password_access_rule extends quiz_access_rule_base {
     /// Start the page and print the quiz intro, if any.
         echo $OUTPUT->header();
         if (trim(strip_tags($this->_quiz->intro))) {
-            $cm = get_coursemodule_from_id('quiz', $this->_quiz->id);
-            $output .= $OUTPUT->box(format_module_intro('quiz', $this->_quiz, $cm->id), 'generalbox', 'intro');
+            $output .= $OUTPUT->box(format_module_intro('quiz', $this->_quiz, $this->_quizobj->get_cmid()), 'generalbox', 'intro');
         }
         $output .= $OUTPUT->box_start('generalbox', 'passwordbox');
 
