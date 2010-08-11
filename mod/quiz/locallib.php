@@ -764,7 +764,7 @@ function quiz_question_action_icons($quiz, $cmid, $question, $returnurl) {
  * @param string $contentbeforeicon some HTML content to be added inside the link, before the icon.
  * @return the HTML for an edit icon, view icon, or nothing for a question (depending on permissions).
  */
-function quiz_question_edit_button($cmid, $question, $returnurl, $contentbeforeicon = '') {
+function quiz_question_edit_button($cmid, $question, $returnurl, $contentaftericon = '') {
     global $CFG, $OUTPUT;
 
     // Minor efficiency saving. Only get strings once, even if there are a lot of icons on one page.
@@ -790,10 +790,11 @@ function quiz_question_edit_button($cmid, $question, $returnurl, $contentbeforei
     if ($action) {
         $questionparams = array('returnurl' => $returnurl, 'cmid' => $cmid, 'id' => $question->id);
         $questionurl = new moodle_url("$CFG->wwwroot/question/question.php", $questionparams);
-        return '<a title="' . $action . '" href="' . $questionurl->out() . '">' . $contentbeforeicon .
-                '<img src="' . $OUTPUT->pix_url($icon) . '" alt="' . $action . '" /></a>';
+        return '<a title="' . $action . '" href="' . $questionurl->out() . '"><img src="' .
+                $OUTPUT->pix_url($icon) . '" alt="' . $action . '" />' . $contentaftericon .
+                '</a>';
     } else {
-        return $contentbeforeicon;
+        return $contentaftericon;
     }
 }
 
