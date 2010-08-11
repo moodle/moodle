@@ -2266,7 +2266,7 @@ class custom_menu extends custom_menu_item {
                 $bits[1] = null;
             } else {
                 // Make sure the url is a moodle url
-                $bits[1] = new moodle_url($bits[1]);
+                $bits[1] = new moodle_url(trim($bits[1]));
             }
             if (!array_key_exists(2, $bits)) {
                 // Set the title to null seeing as there isn't one
