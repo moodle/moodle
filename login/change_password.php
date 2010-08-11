@@ -16,14 +16,15 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * This file is part of the login section Moodle
+ * Change password page.
  *
- * @copyright 1999 Martin Dougiamas  http://dougiamas.com
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @package login
+ * @package    core
+ * @subpackage auth
+ * @copyright  1999 onwards Martin Dougiamas  http://dougiamas.com
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once('../config.php');
+require('../config.php');
 require_once('change_password_form.php');
 
 $id = optional_param('id', SITEID, PARAM_INT); // current course
@@ -33,6 +34,7 @@ if ($id !== SITEID) {
     $url->param('id', $id);
 }
 $PAGE->set_url($url);
+$PAGE->set_context(get_context_instance(CONTEXT_SYSTEM));
 
 $strparticipants = get_string('participants');
 

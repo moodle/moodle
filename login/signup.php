@@ -16,39 +16,32 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * This file is part of the login section Moodle
+ * user signup page.
  *
- * @copyright 1999 Martin Dougiamas  http://dougiamas.com
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @package login
+ * @package    core
+ * @subpackage auth
+ * @copyright  1999 onwards Martin Dougiamas  http://dougiamas.com
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once('../config.php');
-
-/**
- * Returns whether or not the captcha element is enabled, and the admin settings fulfil its requirements.
- * @return bool
- */
-function signup_captcha_enabled() {
-    global $CFG;
-    return !empty($CFG->recaptchapublickey) && !empty($CFG->recaptchaprivatekey) && get_config('auth/email', 'recaptcha');
-}
-
+require('../config.php');
 require_once('signup_form.php');
 
 
 if (empty($CFG->registerauth)) {
-    print_error("Sorry, you may not use this page.");
+    print_error('notlocalisederrormessage', 'error', '', 'Sorry, you may not use this page.');
 }
 $authplugin = get_auth_plugin($CFG->registerauth);
 
 if (!$authplugin->can_signup()) {
-    print_error("Sorry, you may not use this page.");
+    print_error('notlocalisederrormessage', 'error', '', 'Sorry, you may not use this page.');
 }
 
 //HTTPS is potentially required in this page
 httpsrequired();
 $PAGE->set_url('/login/signup.php');
+$PAGE->set_context(get_context_instance(CONTEXT_SYSTEM));
+
 $mform_signup = new login_signup_form();
 
 if ($mform_signup->is_cancelled()) {
@@ -62,8 +55,8 @@ if ($mform_signup->is_cancelled()) {
     $user->mnethostid  = $CFG->mnet_localhost_id;
     $user->secret      = random_string(15);
     $user->auth        = $CFG->registerauth;
-    
-    $authplugin->user_signup($user, true); // prints notice and link to login/index.php  
+
+    $authplugin->user_signup($user, true); // prints notice and link to login/index.php
     exit; //never reached
 }
 

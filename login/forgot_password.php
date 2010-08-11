@@ -1,10 +1,32 @@
 <?php
 
-// forgot password routine.
-// find the user and call the appropriate routine for their authentication
-// type.
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-require_once('../config.php');
+/**
+ * Forgot password routine.
+ *
+ * Finds the user and calls the appropriate routine for their authentication type.
+ *
+ * @package    core
+ * @subpackage auth
+ * @copyright  1999 onwards Martin Dougiamas  http://dougiamas.com
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+require('../config.php');
 require_once('forgot_password_form.php');
 
 $p_secret   = optional_param('p', false, PARAM_RAW);
@@ -13,14 +35,17 @@ $p_username = optional_param('s', false, PARAM_RAW);
 httpsrequired();
 
 $systemcontext = get_context_instance(CONTEXT_SYSTEM);
+$PAGE->set_url('/login/forgot_password.php');
+$PAGE->set_context($syscontext);
 
 // setup text strings
 $strforgotten = get_string('passwordforgotten');
 $strlogin     = get_string('login');
 
-$PAGE->set_url('/login/forgot_password.php');
 $PAGE->navbar->add($strlogin, get_login_url());
 $PAGE->navbar->add($strforgotten);
+$PAGE->set_title($strforgotten);
+$PAGE->set_heading($COURSE->fullname);
 
 // if alternatepasswordurl is defined, then we'll just head there
 if (!empty($CFG->forgottenpasswordurl)) {
@@ -38,9 +63,6 @@ if ($p_secret !== false) {
 ///=====================
 
     update_login_count();
-
-    $PAGE->set_title($strforgotten);
-    $PAGE->set_heading($COURSE->fullname);
 
     $user = get_complete_user_data('username', $p_username);
     if (!empty($user) and $user->secret === '') {
@@ -132,8 +154,6 @@ if ($mform->is_cancelled()) {
         }
     }
 
-    $PAGE->set_title($strforgotten);
-    $PAGE->set_heading($COURSE->fullname);
     echo $OUTPUT->header();
 
     if (empty($user->email) or !empty($CFG->protectusernames)) {
@@ -152,8 +172,6 @@ if ($mform->is_cancelled()) {
 
 
 /// DISPLAY FORM
-$PAGE->set_title($strforgotten);
-$PAGE->set_heading($COURSE->fullname);
 
 echo $OUTPUT->header();
 echo $OUTPUT->box(get_string('passwordforgotteninstructions2'), 'generalbox boxwidthnormal boxaligncenter');

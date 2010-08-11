@@ -18,14 +18,18 @@
 /**
  * Logs the user out and sends them to the home page
  *
- * @copyright 1999 Martin Dougiamas  http://dougiamas.com
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @package login
+ * @package    core
+ * @subpackage auth
+ * @copyright  1999 onwards Martin Dougiamas  http://dougiamas.com
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once("../config.php");
+require_once('../config.php');
 
-// can be overriden by auth plugins
+$PAGE->set_url('/login/logout.php');
+$PAGE->set_context(get_context_instance(CONTEXT_SYSTEM));
+
+// can be overridden by auth plugins
 $redirect = $CFG->wwwroot.'/';
 
 $sesskey = optional_param('sesskey', '__notpresent__', PARAM_RAW); // we want not null default to prevent required sesskey warning
@@ -36,13 +40,10 @@ if (!isloggedin()) {
     redirect($redirect);
 
 } else if (!confirm_sesskey($sesskey)) {
-    $url = new moodle_url('/login/logout.php');
-    if ($sesskey !== '__notpresent__') $url->param('sesskey', $sesskey);
-    $PAGE->set_url($url);
     $PAGE->set_title($SITE->fullname);
     $PAGE->set_heading($SITE->fullname);
     echo $OUTPUT->header();
-    echo $OUTPUT->confirm(get_string('logoutconfirm'), 'logout.php', $CFG->wwwroot.'/');
+    echo $OUTPUT->confirm(get_string('logoutconfirm'), new moodle_url($PAGE->url, array('sesskey'=>sesskey())), $CFG->wwwroot.'/');
     echo $OUTPUT->footer();
     die;
 }

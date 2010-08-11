@@ -1,8 +1,30 @@
 <?php
 
-if (!defined('MOODLE_INTERNAL')) {
-    die('Direct access to this script is forbidden.');    ///  It must be included from a Moodle page
-}
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * User sign-up form.
+ *
+ * @package    core
+ * @subpackage auth
+ * @copyright  1999 onwards Martin Dougiamas  http://dougiamas.com
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir.'/formslib.php');
 require_once($CFG->dirroot.'/user/profile/lib.php');
@@ -11,7 +33,7 @@ class login_signup_form extends moodleform {
     function definition() {
         global $USER, $CFG;
 
-        $mform =& $this->_form;
+        $mform = $this->_form;
 
         $mform->addElement('header', '', get_string('createuserandpass'), '');
 
@@ -70,7 +92,7 @@ class login_signup_form extends moodleform {
             $mform->setDefault('country', '');
         }
 
-        if (signup_captcha_enabled()) {
+        if ($this->signup_captcha_enabled()) {
             $mform->addElement('recaptcha', 'recaptcha_element', get_string('recaptcha', 'auth'), array('https' => $CFG->loginhttps));
             $mform->addHelpButton('recaptcha_element', 'recaptcha', 'auth');
         }
@@ -90,7 +112,7 @@ class login_signup_form extends moodleform {
     }
 
     function definition_after_data(){
-        $mform =& $this->_form;
+        $mform = $this->_form;
         $mform->applyFilter('username', 'trim');
     }
 
@@ -145,7 +167,7 @@ class login_signup_form extends moodleform {
             $errors['password'] = $errmsg;
         }
 
-        if (signup_captcha_enabled()) {
+        if ($this->signup_captcha_enabled()) {
             $recaptcha_element = $this->_form->getElement('recaptcha_element');
             if (!empty($this->_form->_submitValues['recaptcha_challenge_field'])) {
                 $challenge_field = $this->_form->_submitValues['recaptcha_challenge_field'];
@@ -160,6 +182,15 @@ class login_signup_form extends moodleform {
 
         return $errors;
 
-
     }
+
+    /**
+     * Returns whether or not the captcha element is enabled, and the admin settings fulfil its requirements.
+     * @return bool
+     */
+    function signup_captcha_enabled() {
+        global $CFG;
+        return !empty($CFG->recaptchapublickey) && !empty($CFG->recaptchaprivatekey) && get_config('auth/email', 'recaptcha');
+    }
+
 }

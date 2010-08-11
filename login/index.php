@@ -16,22 +16,27 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * This file is part of the login section Moodle
+ * Main login page.
  *
- * @copyright 1999 Martin Dougiamas  http://dougiamas.com
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @package login
+ * @package    core
+ * @subpackage auth
+ * @copyright  1999 onwards Martin Dougiamas  http://dougiamas.com
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once("../config.php");
+require('../config.php');
 
 redirect_if_major_upgrade_required();
 
 $loginguest  = optional_param('loginguest', 0, PARAM_BOOL); // determines whether visitors are logged in as guest automatically
 $testcookies = optional_param('testcookies', 0, PARAM_BOOL); // request cookie test
 
+//HTTPS is potentially required in this page
+httpsrequired();
+
 $context = get_context_instance(CONTEXT_SYSTEM);
-$PAGE->set_course($SITE);
+$PAGE->set_url("$CFG->httpswwwroot/login/index.php");
+$PAGE->set_context($context);
 $PAGE->set_pagelayout('login');
 
 /// Initialize variables
@@ -55,11 +60,6 @@ foreach($authsequence as $authname) {
     $authplugin = get_auth_plugin($authname);
     $authplugin->loginpage_hook();
 }
-
-//HTTPS is potentially required in this page
-httpsrequired();
-
-$PAGE->set_url("$CFG->httpswwwroot/login/index.php");
 
 
 /// Define variables used in page
