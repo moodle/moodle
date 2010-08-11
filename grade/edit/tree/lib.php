@@ -1164,7 +1164,8 @@ class grade_edit_tree_column_select extends grade_edit_tree_column {
         if ($params['itemtype'] != 'course' && $params['itemtype'] != 'category') {
             $itemselect = '<input class="itemselect" type="checkbox" name="select_'.$params['eid'].'" onchange="toggleCategorySelector();"/>'; // TODO: convert to YUI handler
         }
-        return '<td class="cell last selection">' . $itemselect . '</td>';
+        //html_writer::table() will wrap the item cell contents in a <TD> so don't do it here
+        return $itemselect;
     }
 
     public function is_hidden($mode='simple') {

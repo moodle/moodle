@@ -1194,6 +1194,7 @@ class html_writer {
 
         if (!empty($table->head)) {
             $countcols = count($table->head);
+
             $output .= html_writer::start_tag('thead', array()) . "\n";
             $output .= html_writer::start_tag('tr', array()) . "\n";
             $keys = array_keys($table->head);
@@ -1289,7 +1290,13 @@ class html_writer {
                     $keys2 = array_keys($row->cells);
                     $lastkey = end($keys2);
 
+                    $gotlastkey = false; //flag for sanity checking
                     foreach ($row->cells as $key => $cell) {
+                        if ($gotlastkey) {
+                            //This should never happen. Why do we have a cell after the last cell?
+                            mtrace("A cell with key ($key) was found after the last key ($lastkey)");
+                        }
+
                         if (!($cell instanceof html_table_cell)) {
                             $mycell = new html_table_cell();
                             $mycell->text = $cell;
@@ -1307,6 +1314,7 @@ class html_writer {
                         $cell->attributes['class'] .= ' cell c' . $key;
                         if ($key == $lastkey) {
                             $cell->attributes['class'] .= ' lastcol';
+                            $gotlastkey = true;
                         }
                         $tdstyle = '';
                         $tdstyle .= isset($table->align[$key]) ? $table->align[$key] : '';
