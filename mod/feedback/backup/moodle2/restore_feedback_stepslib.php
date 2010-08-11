@@ -71,6 +71,9 @@ class restore_feedback_activity_structure_step extends restore_activity_structur
         $data = (object)$data;
         $oldid = $data->id;
         $data->feedback = $this->get_new_parentid('feedback');
+        
+        //dependitem
+        $data->dependitem = $this->get_mappingid('feedback_item', $data->dependitem);
 
         $newitemid = $DB->insert_record('feedback_item', $data);
         $this->set_mapping('feedback_item', $oldid, $newitemid, true); // Can have files
