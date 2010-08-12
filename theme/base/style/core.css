@@ -419,29 +419,29 @@ body.tag .managelink {padding: 5px;}
  * first or middle sibling, no children
  */
 /* first or middle sibling, no children */
-.file-picker .ygtvtn {background: url(../pix/y/tn.gif) 0 0 no-repeat;width:17px;height:22px;}
+.file-picker .ygtvtn {background: url([[pix:moodle|y/tn]]) 0 0 no-repeat;width:17px;height:22px;}
 /* first or middle sibling, collapsable */
-.file-picker .ygtvtm {background: url(../pix/y/tm.gif) 0 0 no-repeat;width:34px;height:22px;cursor:pointer;}
+.file-picker .ygtvtm {background: url([[pix:moodle|y/tm]]) 0 0 no-repeat;width:34px;height:22px;cursor:pointer;}
 /* first or middle sibling, collapsable, hover */
-.file-picker .ygtvtmh {background: url(../pix/y/tmh.gif) 0 0 no-repeat;width:34px;height:22px;cursor:pointer;}
+.file-picker .ygtvtmh {background: url([[pix:moodle|y/tmh]]) 0 0 no-repeat;width:34px;height:22px;cursor:pointer;}
 /* first or middle sibling, expandable */
-.file-picker .ygtvtp {background: url(../pix/y/tp.gif) 0 0 no-repeat;width:34px;height:22px;cursor:pointer;}
+.file-picker .ygtvtp {background: url([[pix:moodle|y/tp]]) 0 0 no-repeat;width:34px;height:22px;cursor:pointer;}
 /* first or middle sibling, expandable, hover */
-.file-picker .ygtvtph {background: url(../pix/y/tph.gif) 0 0 no-repeat;width:34px;height:22px;cursor:pointer;}
+.file-picker .ygtvtph {background: url([[pix:moodle|y/tph]]) 0 0 no-repeat;width:34px;height:22px;cursor:pointer;}
 /* last sibling, no children */
-.file-picker .ygtvln {background: url(../pix/y/ln.gif) 0 0 no-repeat;width:17px;height:22px;}
+.file-picker .ygtvln {background: url([[pix:moodle|y/ln]]) 0 0 no-repeat;width:17px;height:22px;}
 /* Last sibling, collapsable */
-.file-picker .ygtvlm {background: url(../pix/y/lm.gif) 0 0 no-repeat;width:34px;height:22px;cursor:pointer;}
+.file-picker .ygtvlm {background: url([[pix:moodle|y/lm]]) 0 0 no-repeat;width:34px;height:22px;cursor:pointer;}
 /* Last sibling, collapsable, hover */
-.file-picker .ygtvlmh {background: url(../pix/y/lmh.gif) 0 0 no-repeat;width:34px;height:22px;cursor:pointer;}
+.file-picker .ygtvlmh {background: url([[pix:moodle|y/lmh]]) 0 0 no-repeat;width:34px;height:22px;cursor:pointer;}
 /* Last sibling, expandable */
-.file-picker .ygtvlp {background: url(../pix/y/lp.gif) 0 0 no-repeat;width:34px;height:22px;cursor:pointer;}
+.file-picker .ygtvlp {background: url([[pix:moodle|y/lp]]) 0 0 no-repeat;width:34px;height:22px;cursor:pointer;}
 /* Last sibling, expandable, hover */
-.file-picker .ygtvlph {background: url(../pix/y/lph.gif) 0 0 no-repeat;width:34px;height:22px;cursor:pointer;}
+.file-picker .ygtvlph {background: url([[pix:moodle|y/lph]]) 0 0 no-repeat;width:34px;height:22px;cursor:pointer;}
 /* Loading icon */
-.file-picker .ygtvloading {background: url(../pix/y/loading.gif) 0 0 no-repeat;width:16px;height:22px;}
+.file-picker .ygtvloading {background: url([[pix:moodle|y/loading]]) 0 0 no-repeat;width:16px;height:22px;}
 /* the style for the empty cells that are used for rendering the depth* of the node */
-.file-picker .ygtvdepthcell {background: url(../pix/y/vline.gif) 0 0 no-repeat;width:17px;height:22px;}
+.file-picker .ygtvdepthcell {background: url([[pix:moodle|y/vline]]) 0 0 no-repeat;width:17px;height:22px;}
 .file-picker .ygtvblankdepthcell {width:17px;height:22px;}
 /* the style of the div around each node */
 .file-picker .ygtvitem  table{margin-bottom:0;}
