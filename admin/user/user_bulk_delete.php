@@ -23,12 +23,11 @@ echo $OUTPUT->header();
 //TODO: add support for large number of users
 
 if ($confirm and confirm_sesskey()) {
-    $primaryadmin = get_admin();
 
     list($in, $params) = $DB->get_in_or_equal($SESSION->bulk_users);
     if ($rs = $DB->get_recordset_select('user', "id $in", $params)) {
         foreach ($rs as $user) {
-            if ($primaryadmin->id != $user->id and $USER->id != $user->id and delete_user($user)) {
+            if (!is_siteadmin($user) and $USER->id != $user->id and delete_user($user)) {
                 unset($SESSION->bulk_users[$user->id]);
             } else {
                 echo $OUTPUT->notification(get_string('deletednot', '', fullname($user, true)));
