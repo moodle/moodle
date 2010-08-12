@@ -101,9 +101,12 @@ class edit_category_form extends moodleform {
         $mform->disabledIf('droplow', 'keephigh', 'noteq', 0);
 
         // Grade item settings
-        $mform->addElement('header', 'general', get_string('gradeitem', 'grades'));
+        //Displayed as Category total to avoid confusion between grade items requiring marking and category totals
+        $mform->addElement('header', 'general', get_string('categorytotal', 'grades'));
 
-        $mform->addElement('text', 'grade_item_itemname', get_string('itemname', 'grades'));
+        $mform->addElement('text', 'grade_item_itemname', get_string('categorytotalname', 'grades'));
+        $mform->setAdvanced('grade_item_itemname');
+
         $mform->addElement('text', 'grade_item_iteminfo', get_string('iteminfo', 'grades'));
         $mform->setHelpButton('grade_item_iteminfo', array('iteminfo', get_string('iteminfo', 'grades'), 'grade'), true);
 
