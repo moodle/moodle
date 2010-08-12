@@ -10,7 +10,8 @@ M.core_dock = {
     Y : null,               // The YUI instance to use with dock related code
     initialised : false,    // True once thedock has been initialised
     delayedevent : null,    // Will be an object if there is a delayed event in effect
-    preventevent : null     // Will be an eventtype if there is an eventyoe to prevent
+    preventevent : null,    // Will be an eventtype if there is an eventyoe to prevent
+    holdingarea : null
 };
 /**
  * Namespace containing the nodes that relate to the dock
@@ -100,6 +101,13 @@ M.core_dock.init = function(Y) {
     } else {
         dock.addClass(css.dock+'_'+this.cfg.position+'_'+this.cfg.orientation);
     }
+    this.holdingarea = Y.Node.create('<div></div>').setStyles({
+        position:'absolute',
+        top:'-1000px',
+        left:'-1000px',
+        display:'none'
+    });
+    this.nodes.body.append(this.holdingarea);
     if (Y.UA.ie > 0 && Y.UA.ie < 7) {
         // Adjust for IE 6 (can't handle fixed pos)
         dock.setStyle('height', dock.get('winHeight')+'px');
@@ -718,6 +726,7 @@ M.core_dock.genericblock.prototype = {
         this.cachedcontentnode = node;
 
         node.replace(Y.Node.getDOMNode(Y.Node.create('<div id="content_placeholder_'+this.id+'" class="block_dock_placeholder"></div>')));
+        M.core_dock.holdingarea.append(node);
         node = null;
 
         var blocktitle = Y.Node.getDOMNode(this.cachedcontentnode.one('.title h2')).cloneNode(true);
