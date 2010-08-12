@@ -101,12 +101,7 @@ M.core_dock.init = function(Y) {
     } else {
         dock.addClass(css.dock+'_'+this.cfg.position+'_'+this.cfg.orientation);
     }
-    this.holdingarea = Y.Node.create('<div></div>').setStyles({
-        position:'absolute',
-        top:'-1000px',
-        left:'-1000px',
-        display:'none'
-    });
+    this.holdingarea = Y.Node.create('<div></div>').setStyles({display:'none'});
     this.nodes.body.append(this.holdingarea);
     if (Y.UA.ie > 0 && Y.UA.ie < 7) {
         // Adjust for IE 6 (can't handle fixed pos)
