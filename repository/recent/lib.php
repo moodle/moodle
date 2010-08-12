@@ -98,14 +98,13 @@ class repository_recent extends repository {
         try {
             foreach ($files as $file) {
                 $params = base64_encode(serialize($file));
-                $icon = 'f/'.str_replace('.gif', '', mimeinfo('icon', $file['filename'])) . '-32';
                 $node = array(
                     'title' => $file['filename'],
                     'shorttitle' => $this->get_short_filename($file['filename'], 12),
                     'size' => 0,
                     'date' => '',
                     'source'=> $params,
-                    'thumbnail' => $OUTPUT->pix_url($icon) . '',
+                    'thumbnail' => $OUTPUT->pix_url(file_extension_icon($file['filename'], 32))->out(false),
                 );
                 $list[] = $node;
             }

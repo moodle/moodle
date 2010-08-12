@@ -1391,9 +1391,9 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                 if (!empty($customicon)) {
                     if (substr($customicon, 0, 4) === 'mod/') {
                         list($modname, $iconname) = explode('/', substr($customicon, 4), 2);
-                        $icon = $OUTPUT->pix_url(str_replace(array('.gif', '.png'), '', $customicon), $modname);
+                        $icon = $OUTPUT->pix_url($customicon, $modname);
                     } else {
-                        $icon = $OUTPUT->pix_url(str_replace(array('.gif', '.png'), '', $customicon));
+                        $icon = $OUTPUT->pix_url($customicon);
                     }
                 } else {
                     $icon = $OUTPUT->pix_url('icon', $mod->modname);
@@ -1405,9 +1405,7 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                 if (!empty($customicon)) {
                     $archetype = plugin_supports('mod', $mod->modname, FEATURE_MOD_ARCHETYPE, MOD_ARCHETYPE_OTHER);
                     if ($archetype == MOD_ARCHETYPE_RESOURCE) {
-                        $possaltname = str_replace(array('.gif', '.png'), '', $customicon).'.gif';
-
-                        $mimetype = mimeinfo_from_icon('type', $possaltname);
+                        $mimetype = mimeinfo_from_icon('type', $customicon);
                         $altname = get_mimetype_description($mimetype);
                     }
                 }

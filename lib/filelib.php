@@ -530,7 +530,6 @@ function file_get_drafarea_files($draftitemid, $filepath = '/') {
             $item->filesize = $filesize ? display_size($filesize) : '';
 
             $icon = mimeinfo_from_type('icon', $file->get_mimetype());
-            $icon = str_replace('.gif', '', $icon);
             $item->icon = $OUTPUT->pix_url('f/' . $icon)->out();
             $item->sortorder = $file->get_sortorder();
 
@@ -1092,168 +1091,168 @@ function download_file_content_write_handler($received, $ch, $data) {
  */
 function get_mimetypes_array() {
     static $mimearray = array (
-        'xxx'  => array ('type'=>'document/unknown', 'icon'=>'unknown.gif'),
-        '3gp'  => array ('type'=>'video/quicktime', 'icon'=>'video.gif'),
-        'ai'   => array ('type'=>'application/postscript', 'icon'=>'image.gif'),
-        'aif'  => array ('type'=>'audio/x-aiff', 'icon'=>'audio.gif'),
-        'aiff' => array ('type'=>'audio/x-aiff', 'icon'=>'audio.gif'),
-        'aifc' => array ('type'=>'audio/x-aiff', 'icon'=>'audio.gif'),
-        'applescript'  => array ('type'=>'text/plain', 'icon'=>'text.gif'),
-        'asc'  => array ('type'=>'text/plain', 'icon'=>'text.gif'),
-        'asm'  => array ('type'=>'text/plain', 'icon'=>'text.gif'),
-        'au'   => array ('type'=>'audio/au', 'icon'=>'audio.gif'),
-        'avi'  => array ('type'=>'video/x-ms-wm', 'icon'=>'avi.gif'),
-        'bmp'  => array ('type'=>'image/bmp', 'icon'=>'image.gif'),
-        'c'    => array ('type'=>'text/plain', 'icon'=>'text.gif'),
-        'cct'  => array ('type'=>'shockwave/director', 'icon'=>'flash.gif'),
-        'cpp'  => array ('type'=>'text/plain', 'icon'=>'text.gif'),
-        'cs'   => array ('type'=>'application/x-csh', 'icon'=>'text.gif'),
-        'css'  => array ('type'=>'text/css', 'icon'=>'text.gif'),
-        'csv'  => array ('type'=>'text/csv', 'icon'=>'excel.gif'),
-        'dv'   => array ('type'=>'video/x-dv', 'icon'=>'video.gif'),
-        'dmg'  => array ('type'=>'application/octet-stream', 'icon'=>'dmg.gif'),
+        'xxx'  => array ('type'=>'document/unknown', 'icon'=>'unknown'),
+        '3gp'  => array ('type'=>'video/quicktime', 'icon'=>'video'),
+        'ai'   => array ('type'=>'application/postscript', 'icon'=>'image'),
+        'aif'  => array ('type'=>'audio/x-aiff', 'icon'=>'audio'),
+        'aiff' => array ('type'=>'audio/x-aiff', 'icon'=>'audio'),
+        'aifc' => array ('type'=>'audio/x-aiff', 'icon'=>'audio'),
+        'applescript'  => array ('type'=>'text/plain', 'icon'=>'text'),
+        'asc'  => array ('type'=>'text/plain', 'icon'=>'text'),
+        'asm'  => array ('type'=>'text/plain', 'icon'=>'text'),
+        'au'   => array ('type'=>'audio/au', 'icon'=>'audio'),
+        'avi'  => array ('type'=>'video/x-ms-wm', 'icon'=>'avi'),
+        'bmp'  => array ('type'=>'image/bmp', 'icon'=>'image'),
+        'c'    => array ('type'=>'text/plain', 'icon'=>'text'),
+        'cct'  => array ('type'=>'shockwave/director', 'icon'=>'flash'),
+        'cpp'  => array ('type'=>'text/plain', 'icon'=>'text'),
+        'cs'   => array ('type'=>'application/x-csh', 'icon'=>'text'),
+        'css'  => array ('type'=>'text/css', 'icon'=>'text'),
+        'csv'  => array ('type'=>'text/csv', 'icon'=>'excel'),
+        'dv'   => array ('type'=>'video/x-dv', 'icon'=>'video'),
+        'dmg'  => array ('type'=>'application/octet-stream', 'icon'=>'dmg'),
 
-        'doc'  => array ('type'=>'application/msword', 'icon'=>'word.gif'),
-        'docx' => array ('type'=>'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'icon'=>'docx.gif'),
-        'docm' => array ('type'=>'application/vnd.ms-word.document.macroEnabled.12', 'icon'=>'docm.gif'),
-        'dotx' => array ('type'=>'application/vnd.openxmlformats-officedocument.wordprocessingml.template', 'icon'=>'dotx.gif'),
-        'dotm' => array ('type'=>'application/vnd.ms-word.template.macroEnabled.12', 'icon'=>'dotm.gif'),
+        'doc'  => array ('type'=>'application/msword', 'icon'=>'word'),
+        'docx' => array ('type'=>'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'icon'=>'docx'),
+        'docm' => array ('type'=>'application/vnd.ms-word.document.macroEnabled.12', 'icon'=>'docm'),
+        'dotx' => array ('type'=>'application/vnd.openxmlformats-officedocument.wordprocessingml.template', 'icon'=>'dotx'),
+        'dotm' => array ('type'=>'application/vnd.ms-word.template.macroEnabled.12', 'icon'=>'dotm'),
 
-        'dcr'  => array ('type'=>'application/x-director', 'icon'=>'flash.gif'),
-        'dif'  => array ('type'=>'video/x-dv', 'icon'=>'video.gif'),
-        'dir'  => array ('type'=>'application/x-director', 'icon'=>'flash.gif'),
-        'dxr'  => array ('type'=>'application/x-director', 'icon'=>'flash.gif'),
-        'eps'  => array ('type'=>'application/postscript', 'icon'=>'pdf.gif'),
-        'fdf'  => array ('type'=>'application/pdf', 'icon'=>'pdf.gif'),
-        'flv'  => array ('type'=>'video/x-flv', 'icon'=>'video.gif'),
-        'gif'  => array ('type'=>'image/gif', 'icon'=>'image.gif'),
-        'gtar' => array ('type'=>'application/x-gtar', 'icon'=>'zip.gif'),
-        'tgz'  => array ('type'=>'application/g-zip', 'icon'=>'zip.gif'),
-        'gz'   => array ('type'=>'application/g-zip', 'icon'=>'zip.gif'),
-        'gzip' => array ('type'=>'application/g-zip', 'icon'=>'zip.gif'),
-        'h'    => array ('type'=>'text/plain', 'icon'=>'text.gif'),
-        'hpp'  => array ('type'=>'text/plain', 'icon'=>'text.gif'),
-        'hqx'  => array ('type'=>'application/mac-binhex40', 'icon'=>'zip.gif'),
-        'htc'  => array ('type'=>'text/x-component', 'icon'=>'text.gif'),
-        'html' => array ('type'=>'text/html', 'icon'=>'html.gif'),
-        'xhtml'=> array ('type'=>'application/xhtml+xml', 'icon'=>'html.gif'),
-        'htm'  => array ('type'=>'text/html', 'icon'=>'html.gif'),
-        'ico'  => array ('type'=>'image/vnd.microsoft.icon', 'icon'=>'image.gif'),
-        'ics'  => array ('type'=>'text/calendar', 'icon'=>'text.gif'),
-        'isf'  => array ('type'=>'application/inspiration', 'icon'=>'isf.gif'),
-        'ist'  => array ('type'=>'application/inspiration.template', 'icon'=>'isf.gif'),
-        'java' => array ('type'=>'text/plain', 'icon'=>'text.gif'),
-        'jcb'  => array ('type'=>'text/xml', 'icon'=>'jcb.gif'),
-        'jcl'  => array ('type'=>'text/xml', 'icon'=>'jcl.gif'),
-        'jcw'  => array ('type'=>'text/xml', 'icon'=>'jcw.gif'),
-        'jmt'  => array ('type'=>'text/xml', 'icon'=>'jmt.gif'),
-        'jmx'  => array ('type'=>'text/xml', 'icon'=>'jmx.gif'),
-        'jpe'  => array ('type'=>'image/jpeg', 'icon'=>'image.gif'),
-        'jpeg' => array ('type'=>'image/jpeg', 'icon'=>'image.gif'),
-        'jpg'  => array ('type'=>'image/jpeg', 'icon'=>'image.gif'),
-        'jqz'  => array ('type'=>'text/xml', 'icon'=>'jqz.gif'),
-        'js'   => array ('type'=>'application/x-javascript', 'icon'=>'text.gif'),
-        'latex'=> array ('type'=>'application/x-latex', 'icon'=>'text.gif'),
-        'm'    => array ('type'=>'text/plain', 'icon'=>'text.gif'),
-        'mov'  => array ('type'=>'video/quicktime', 'icon'=>'video.gif'),
-        'movie'=> array ('type'=>'video/x-sgi-movie', 'icon'=>'video.gif'),
-        'm3u'  => array ('type'=>'audio/x-mpegurl', 'icon'=>'audio.gif'),
-        'mp3'  => array ('type'=>'audio/mp3', 'icon'=>'audio.gif'),
-        'mp4'  => array ('type'=>'video/mp4', 'icon'=>'video.gif'),
-        'm4v'  => array ('type'=>'video/mp4', 'icon'=>'video.gif'),
-        'm4a'  => array ('type'=>'audio/mp4', 'icon'=>'audio.gif'),
-        'mpeg' => array ('type'=>'video/mpeg', 'icon'=>'video.gif'),
-        'mpe'  => array ('type'=>'video/mpeg', 'icon'=>'video.gif'),
-        'mpg'  => array ('type'=>'video/mpeg', 'icon'=>'video.gif'),
+        'dcr'  => array ('type'=>'application/x-director', 'icon'=>'flash'),
+        'dif'  => array ('type'=>'video/x-dv', 'icon'=>'video'),
+        'dir'  => array ('type'=>'application/x-director', 'icon'=>'flash'),
+        'dxr'  => array ('type'=>'application/x-director', 'icon'=>'flash'),
+        'eps'  => array ('type'=>'application/postscript', 'icon'=>'pdf'),
+        'fdf'  => array ('type'=>'application/pdf', 'icon'=>'pdf'),
+        'flv'  => array ('type'=>'video/x-flv', 'icon'=>'video'),
+        'gif'  => array ('type'=>'image/gif', 'icon'=>'image'),
+        'gtar' => array ('type'=>'application/x-gtar', 'icon'=>'zip'),
+        'tgz'  => array ('type'=>'application/g-zip', 'icon'=>'zip'),
+        'gz'   => array ('type'=>'application/g-zip', 'icon'=>'zip'),
+        'gzip' => array ('type'=>'application/g-zip', 'icon'=>'zip'),
+        'h'    => array ('type'=>'text/plain', 'icon'=>'text'),
+        'hpp'  => array ('type'=>'text/plain', 'icon'=>'text'),
+        'hqx'  => array ('type'=>'application/mac-binhex40', 'icon'=>'zip'),
+        'htc'  => array ('type'=>'text/x-component', 'icon'=>'text'),
+        'html' => array ('type'=>'text/html', 'icon'=>'html'),
+        'xhtml'=> array ('type'=>'application/xhtml+xml', 'icon'=>'html'),
+        'htm'  => array ('type'=>'text/html', 'icon'=>'html'),
+        'ico'  => array ('type'=>'image/vnd.microsoft.icon', 'icon'=>'image'),
+        'ics'  => array ('type'=>'text/calendar', 'icon'=>'text'),
+        'isf'  => array ('type'=>'application/inspiration', 'icon'=>'isf'),
+        'ist'  => array ('type'=>'application/inspiration.template', 'icon'=>'isf'),
+        'java' => array ('type'=>'text/plain', 'icon'=>'text'),
+        'jcb'  => array ('type'=>'text/xml', 'icon'=>'jcb'),
+        'jcl'  => array ('type'=>'text/xml', 'icon'=>'jcl'),
+        'jcw'  => array ('type'=>'text/xml', 'icon'=>'jcw'),
+        'jmt'  => array ('type'=>'text/xml', 'icon'=>'jmt'),
+        'jmx'  => array ('type'=>'text/xml', 'icon'=>'jmx'),
+        'jpe'  => array ('type'=>'image/jpeg', 'icon'=>'image'),
+        'jpeg' => array ('type'=>'image/jpeg', 'icon'=>'image'),
+        'jpg'  => array ('type'=>'image/jpeg', 'icon'=>'image'),
+        'jqz'  => array ('type'=>'text/xml', 'icon'=>'jqz'),
+        'js'   => array ('type'=>'application/x-javascript', 'icon'=>'text'),
+        'latex'=> array ('type'=>'application/x-latex', 'icon'=>'text'),
+        'm'    => array ('type'=>'text/plain', 'icon'=>'text'),
+        'mov'  => array ('type'=>'video/quicktime', 'icon'=>'video'),
+        'movie'=> array ('type'=>'video/x-sgi-movie', 'icon'=>'video'),
+        'm3u'  => array ('type'=>'audio/x-mpegurl', 'icon'=>'audio'),
+        'mp3'  => array ('type'=>'audio/mp3', 'icon'=>'audio'),
+        'mp4'  => array ('type'=>'video/mp4', 'icon'=>'video'),
+        'm4v'  => array ('type'=>'video/mp4', 'icon'=>'video'),
+        'm4a'  => array ('type'=>'audio/mp4', 'icon'=>'audio'),
+        'mpeg' => array ('type'=>'video/mpeg', 'icon'=>'video'),
+        'mpe'  => array ('type'=>'video/mpeg', 'icon'=>'video'),
+        'mpg'  => array ('type'=>'video/mpeg', 'icon'=>'video'),
 
-        'odt'  => array ('type'=>'application/vnd.oasis.opendocument.text', 'icon'=>'odt.gif'),
-        'ott'  => array ('type'=>'application/vnd.oasis.opendocument.text-template', 'icon'=>'odt.gif'),
-        'oth'  => array ('type'=>'application/vnd.oasis.opendocument.text-web', 'icon'=>'odt.gif'),
-        'odm'  => array ('type'=>'application/vnd.oasis.opendocument.text-master', 'icon'=>'odm.gif'),
-        'odg'  => array ('type'=>'application/vnd.oasis.opendocument.graphics', 'icon'=>'odg.gif'),
-        'otg'  => array ('type'=>'application/vnd.oasis.opendocument.graphics-template', 'icon'=>'odg.gif'),
-        'odp'  => array ('type'=>'application/vnd.oasis.opendocument.presentation', 'icon'=>'odp.gif'),
-        'otp'  => array ('type'=>'application/vnd.oasis.opendocument.presentation-template', 'icon'=>'odp.gif'),
-        'ods'  => array ('type'=>'application/vnd.oasis.opendocument.spreadsheet', 'icon'=>'ods.gif'),
-        'ots'  => array ('type'=>'application/vnd.oasis.opendocument.spreadsheet-template', 'icon'=>'ods.gif'),
-        'odc'  => array ('type'=>'application/vnd.oasis.opendocument.chart', 'icon'=>'odc.gif'),
-        'odf'  => array ('type'=>'application/vnd.oasis.opendocument.formula', 'icon'=>'odf.gif'),
-        'odb'  => array ('type'=>'application/vnd.oasis.opendocument.database', 'icon'=>'odb.gif'),
-        'odi'  => array ('type'=>'application/vnd.oasis.opendocument.image', 'icon'=>'odi.gif'),
+        'odt'  => array ('type'=>'application/vnd.oasis.opendocument.text', 'icon'=>'odt'),
+        'ott'  => array ('type'=>'application/vnd.oasis.opendocument.text-template', 'icon'=>'odt'),
+        'oth'  => array ('type'=>'application/vnd.oasis.opendocument.text-web', 'icon'=>'odt'),
+        'odm'  => array ('type'=>'application/vnd.oasis.opendocument.text-master', 'icon'=>'odm'),
+        'odg'  => array ('type'=>'application/vnd.oasis.opendocument.graphics', 'icon'=>'odg'),
+        'otg'  => array ('type'=>'application/vnd.oasis.opendocument.graphics-template', 'icon'=>'odg'),
+        'odp'  => array ('type'=>'application/vnd.oasis.opendocument.presentation', 'icon'=>'odp'),
+        'otp'  => array ('type'=>'application/vnd.oasis.opendocument.presentation-template', 'icon'=>'odp'),
+        'ods'  => array ('type'=>'application/vnd.oasis.opendocument.spreadsheet', 'icon'=>'ods'),
+        'ots'  => array ('type'=>'application/vnd.oasis.opendocument.spreadsheet-template', 'icon'=>'ods'),
+        'odc'  => array ('type'=>'application/vnd.oasis.opendocument.chart', 'icon'=>'odc'),
+        'odf'  => array ('type'=>'application/vnd.oasis.opendocument.formula', 'icon'=>'odf'),
+        'odb'  => array ('type'=>'application/vnd.oasis.opendocument.database', 'icon'=>'odb'),
+        'odi'  => array ('type'=>'application/vnd.oasis.opendocument.image', 'icon'=>'odi'),
 
-        'pct'  => array ('type'=>'image/pict', 'icon'=>'image.gif'),
-        'pdf'  => array ('type'=>'application/pdf', 'icon'=>'pdf.gif'),
-        'php'  => array ('type'=>'text/plain', 'icon'=>'text.gif'),
-        'pic'  => array ('type'=>'image/pict', 'icon'=>'image.gif'),
-        'pict' => array ('type'=>'image/pict', 'icon'=>'image.gif'),
-        'png'  => array ('type'=>'image/png', 'icon'=>'image.gif'),
+        'pct'  => array ('type'=>'image/pict', 'icon'=>'image'),
+        'pdf'  => array ('type'=>'application/pdf', 'icon'=>'pdf'),
+        'php'  => array ('type'=>'text/plain', 'icon'=>'text'),
+        'pic'  => array ('type'=>'image/pict', 'icon'=>'image'),
+        'pict' => array ('type'=>'image/pict', 'icon'=>'image'),
+        'png'  => array ('type'=>'image/png', 'icon'=>'image'),
 
-        'pps'  => array ('type'=>'application/vnd.ms-powerpoint', 'icon'=>'powerpoint.gif'),
-        'ppt'  => array ('type'=>'application/vnd.ms-powerpoint', 'icon'=>'powerpoint.gif'),
-        'pptx' => array ('type'=>'application/vnd.openxmlformats-officedocument.presentationml.presentation', 'icon'=>'pptx.gif'),
-        'pptm' => array ('type'=>'application/vnd.ms-powerpoint.presentation.macroEnabled.12', 'icon'=>'pptm.gif'),
-        'potx' => array ('type'=>'application/vnd.openxmlformats-officedocument.presentationml.template', 'icon'=>'potx.gif'),
-        'potm' => array ('type'=>'application/vnd.ms-powerpoint.template.macroEnabled.12', 'icon'=>'potm.gif'),
-        'ppam' => array ('type'=>'application/vnd.ms-powerpoint.addin.macroEnabled.12', 'icon'=>'ppam.gif'),
-        'ppsx' => array ('type'=>'application/vnd.openxmlformats-officedocument.presentationml.slideshow', 'icon'=>'ppsx.gif'),
-        'ppsm' => array ('type'=>'application/vnd.ms-powerpoint.slideshow.macroEnabled.12', 'icon'=>'ppsm.gif'),
+        'pps'  => array ('type'=>'application/vnd.ms-powerpoint', 'icon'=>'powerpoint'),
+        'ppt'  => array ('type'=>'application/vnd.ms-powerpoint', 'icon'=>'powerpoint'),
+        'pptx' => array ('type'=>'application/vnd.openxmlformats-officedocument.presentationml.presentation', 'icon'=>'pptx'),
+        'pptm' => array ('type'=>'application/vnd.ms-powerpoint.presentation.macroEnabled.12', 'icon'=>'pptm'),
+        'potx' => array ('type'=>'application/vnd.openxmlformats-officedocument.presentationml.template', 'icon'=>'potx'),
+        'potm' => array ('type'=>'application/vnd.ms-powerpoint.template.macroEnabled.12', 'icon'=>'potm'),
+        'ppam' => array ('type'=>'application/vnd.ms-powerpoint.addin.macroEnabled.12', 'icon'=>'ppam'),
+        'ppsx' => array ('type'=>'application/vnd.openxmlformats-officedocument.presentationml.slideshow', 'icon'=>'ppsx'),
+        'ppsm' => array ('type'=>'application/vnd.ms-powerpoint.slideshow.macroEnabled.12', 'icon'=>'ppsm'),
 
-        'ps'   => array ('type'=>'application/postscript', 'icon'=>'pdf.gif'),
-        'qt'   => array ('type'=>'video/quicktime', 'icon'=>'video.gif'),
-        'ra'   => array ('type'=>'audio/x-realaudio-plugin', 'icon'=>'audio.gif'),
-        'ram'  => array ('type'=>'audio/x-pn-realaudio-plugin', 'icon'=>'audio.gif'),
-        'rhb'  => array ('type'=>'text/xml', 'icon'=>'xml.gif'),
-        'rm'   => array ('type'=>'audio/x-pn-realaudio-plugin', 'icon'=>'audio.gif'),
-        'rtf'  => array ('type'=>'text/rtf', 'icon'=>'text.gif'),
-        'rtx'  => array ('type'=>'text/richtext', 'icon'=>'text.gif'),
-        'sh'   => array ('type'=>'application/x-sh', 'icon'=>'text.gif'),
-        'sit'  => array ('type'=>'application/x-stuffit', 'icon'=>'zip.gif'),
-        'smi'  => array ('type'=>'application/smil', 'icon'=>'text.gif'),
-        'smil' => array ('type'=>'application/smil', 'icon'=>'text.gif'),
-        'sqt'  => array ('type'=>'text/xml', 'icon'=>'xml.gif'),
-        'svg'  => array ('type'=>'image/svg+xml', 'icon'=>'image.gif'),
-        'svgz' => array ('type'=>'image/svg+xml', 'icon'=>'image.gif'),
-        'swa'  => array ('type'=>'application/x-director', 'icon'=>'flash.gif'),
-        'swf'  => array ('type'=>'application/x-shockwave-flash', 'icon'=>'flash.gif'),
-        'swfl' => array ('type'=>'application/x-shockwave-flash', 'icon'=>'flash.gif'),
+        'ps'   => array ('type'=>'application/postscript', 'icon'=>'pdf'),
+        'qt'   => array ('type'=>'video/quicktime', 'icon'=>'video'),
+        'ra'   => array ('type'=>'audio/x-realaudio-plugin', 'icon'=>'audio'),
+        'ram'  => array ('type'=>'audio/x-pn-realaudio-plugin', 'icon'=>'audio'),
+        'rhb'  => array ('type'=>'text/xml', 'icon'=>'xml'),
+        'rm'   => array ('type'=>'audio/x-pn-realaudio-plugin', 'icon'=>'audio'),
+        'rtf'  => array ('type'=>'text/rtf', 'icon'=>'text'),
+        'rtx'  => array ('type'=>'text/richtext', 'icon'=>'text'),
+        'sh'   => array ('type'=>'application/x-sh', 'icon'=>'text'),
+        'sit'  => array ('type'=>'application/x-stuffit', 'icon'=>'zip'),
+        'smi'  => array ('type'=>'application/smil', 'icon'=>'text'),
+        'smil' => array ('type'=>'application/smil', 'icon'=>'text'),
+        'sqt'  => array ('type'=>'text/xml', 'icon'=>'xml'),
+        'svg'  => array ('type'=>'image/svg+xml', 'icon'=>'image'),
+        'svgz' => array ('type'=>'image/svg+xml', 'icon'=>'image'),
+        'swa'  => array ('type'=>'application/x-director', 'icon'=>'flash'),
+        'swf'  => array ('type'=>'application/x-shockwave-flash', 'icon'=>'flash'),
+        'swfl' => array ('type'=>'application/x-shockwave-flash', 'icon'=>'flash'),
 
-        'sxw'  => array ('type'=>'application/vnd.sun.xml.writer', 'icon'=>'odt.gif'),
-        'stw'  => array ('type'=>'application/vnd.sun.xml.writer.template', 'icon'=>'odt.gif'),
-        'sxc'  => array ('type'=>'application/vnd.sun.xml.calc', 'icon'=>'odt.gif'),
-        'stc'  => array ('type'=>'application/vnd.sun.xml.calc.template', 'icon'=>'odt.gif'),
-        'sxd'  => array ('type'=>'application/vnd.sun.xml.draw', 'icon'=>'odt.gif'),
-        'std'  => array ('type'=>'application/vnd.sun.xml.draw.template', 'icon'=>'odt.gif'),
-        'sxi'  => array ('type'=>'application/vnd.sun.xml.impress', 'icon'=>'odt.gif'),
-        'sti'  => array ('type'=>'application/vnd.sun.xml.impress.template', 'icon'=>'odt.gif'),
-        'sxg'  => array ('type'=>'application/vnd.sun.xml.writer.global', 'icon'=>'odt.gif'),
-        'sxm'  => array ('type'=>'application/vnd.sun.xml.math', 'icon'=>'odt.gif'),
+        'sxw'  => array ('type'=>'application/vnd.sun.xml.writer', 'icon'=>'odt'),
+        'stw'  => array ('type'=>'application/vnd.sun.xml.writer.template', 'icon'=>'odt'),
+        'sxc'  => array ('type'=>'application/vnd.sun.xml.calc', 'icon'=>'odt'),
+        'stc'  => array ('type'=>'application/vnd.sun.xml.calc.template', 'icon'=>'odt'),
+        'sxd'  => array ('type'=>'application/vnd.sun.xml.draw', 'icon'=>'odt'),
+        'std'  => array ('type'=>'application/vnd.sun.xml.draw.template', 'icon'=>'odt'),
+        'sxi'  => array ('type'=>'application/vnd.sun.xml.impress', 'icon'=>'odt'),
+        'sti'  => array ('type'=>'application/vnd.sun.xml.impress.template', 'icon'=>'odt'),
+        'sxg'  => array ('type'=>'application/vnd.sun.xml.writer.global', 'icon'=>'odt'),
+        'sxm'  => array ('type'=>'application/vnd.sun.xml.math', 'icon'=>'odt'),
 
-        'tar'  => array ('type'=>'application/x-tar', 'icon'=>'zip.gif'),
-        'tif'  => array ('type'=>'image/tiff', 'icon'=>'image.gif'),
-        'tiff' => array ('type'=>'image/tiff', 'icon'=>'image.gif'),
-        'tex'  => array ('type'=>'application/x-tex', 'icon'=>'text.gif'),
-        'texi' => array ('type'=>'application/x-texinfo', 'icon'=>'text.gif'),
-        'texinfo'  => array ('type'=>'application/x-texinfo', 'icon'=>'text.gif'),
-        'tsv'  => array ('type'=>'text/tab-separated-values', 'icon'=>'text.gif'),
-        'txt'  => array ('type'=>'text/plain', 'icon'=>'text.gif'),
-        'wav'  => array ('type'=>'audio/wav', 'icon'=>'audio.gif'),
-        'wmv'  => array ('type'=>'video/x-ms-wmv', 'icon'=>'avi.gif'),
-        'asf'  => array ('type'=>'video/x-ms-asf', 'icon'=>'avi.gif'),
-        'xdp'  => array ('type'=>'application/pdf', 'icon'=>'pdf.gif'),
-        'xfd'  => array ('type'=>'application/pdf', 'icon'=>'pdf.gif'),
-        'xfdf' => array ('type'=>'application/pdf', 'icon'=>'pdf.gif'),
+        'tar'  => array ('type'=>'application/x-tar', 'icon'=>'zip'),
+        'tif'  => array ('type'=>'image/tiff', 'icon'=>'image'),
+        'tiff' => array ('type'=>'image/tiff', 'icon'=>'image'),
+        'tex'  => array ('type'=>'application/x-tex', 'icon'=>'text'),
+        'texi' => array ('type'=>'application/x-texinfo', 'icon'=>'text'),
+        'texinfo'  => array ('type'=>'application/x-texinfo', 'icon'=>'text'),
+        'tsv'  => array ('type'=>'text/tab-separated-values', 'icon'=>'text'),
+        'txt'  => array ('type'=>'text/plain', 'icon'=>'text'),
+        'wav'  => array ('type'=>'audio/wav', 'icon'=>'audio'),
+        'wmv'  => array ('type'=>'video/x-ms-wmv', 'icon'=>'avi'),
+        'asf'  => array ('type'=>'video/x-ms-asf', 'icon'=>'avi'),
+        'xdp'  => array ('type'=>'application/pdf', 'icon'=>'pdf'),
+        'xfd'  => array ('type'=>'application/pdf', 'icon'=>'pdf'),
+        'xfdf' => array ('type'=>'application/pdf', 'icon'=>'pdf'),
 
-        'xls'  => array ('type'=>'application/vnd.ms-excel', 'icon'=>'excel.gif'),
-        'xlsx' => array ('type'=>'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'icon'=>'xlsx.gif'),
-        'xlsm' => array ('type'=>'application/vnd.ms-excel.sheet.macroEnabled.12', 'icon'=>'xlsm.gif'),
-        'xltx' => array ('type'=>'application/vnd.openxmlformats-officedocument.spreadsheetml.template', 'icon'=>'xltx.gif'),
-        'xltm' => array ('type'=>'application/vnd.ms-excel.template.macroEnabled.12', 'icon'=>'xltm.gif'),
-        'xlsb' => array ('type'=>'application/vnd.ms-excel.sheet.binary.macroEnabled.12', 'icon'=>'xlsb.gif'),
-        'xlam' => array ('type'=>'application/vnd.ms-excel.addin.macroEnabled.12', 'icon'=>'xlam.gif'),
+        'xls'  => array ('type'=>'application/vnd.ms-excel', 'icon'=>'excel'),
+        'xlsx' => array ('type'=>'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'icon'=>'xlsx'),
+        'xlsm' => array ('type'=>'application/vnd.ms-excel.sheet.macroEnabled.12', 'icon'=>'xlsm'),
+        'xltx' => array ('type'=>'application/vnd.openxmlformats-officedocument.spreadsheetml.template', 'icon'=>'xltx'),
+        'xltm' => array ('type'=>'application/vnd.ms-excel.template.macroEnabled.12', 'icon'=>'xltm'),
+        'xlsb' => array ('type'=>'application/vnd.ms-excel.sheet.binary.macroEnabled.12', 'icon'=>'xlsb'),
+        'xlam' => array ('type'=>'application/vnd.ms-excel.addin.macroEnabled.12', 'icon'=>'xlam'),
 
-        'xml'  => array ('type'=>'application/xml', 'icon'=>'xml.gif'),
-        'xsl'  => array ('type'=>'text/xml', 'icon'=>'xml.gif'),
-        'zip'  => array ('type'=>'application/zip', 'icon'=>'zip.gif')
+        'xml'  => array ('type'=>'application/xml', 'icon'=>'xml'),
+        'xsl'  => array ('type'=>'text/xml', 'icon'=>'xml'),
+        'zip'  => array ('type'=>'application/zip', 'icon'=>'zip')
     );
     return $mimearray;
 }
@@ -1263,7 +1262,6 @@ function get_mimetypes_array() {
  * use a default if no information is present about that particular
  * extension.
  *
- * @global object
  * @param string $element Desired information (usually 'icon'
  *   for icon filename or 'type' for MIME type)
  * @param string $filename Filename we're looking up
@@ -1279,12 +1277,12 @@ function mimeinfo($element, $filename) {
         } else {
             if ($element == 'icon32') {
                 if (isset($mimeinfo[strtolower($match[1])]['icon'])) {
-                    $filename = substr($mimeinfo[strtolower($match[1])]['icon'], 0, -4);
+                    $filename = $mimeinfo[strtolower($match[1])]['icon'];
                 } else {
                     $filename = 'unknown';
                 }
                 $filename .= '-32';
-                if (file_exists($CFG->dirroot.'/pix/f/'.$filename.'.png')) {
+                if (file_exists($CFG->dirroot.'/pix/f/'.$filename.'.png') or file_exists($CFG->dirroot.'/pix/f/'.$filename.'.gif')) {
                     return $filename;
                 } else {
                     return 'unknown-32';
@@ -1295,7 +1293,7 @@ function mimeinfo($element, $filename) {
         }
     } else {
         if ($element == 'icon32') {
-            return 'unknown-32.png';
+            return 'unknown-32';
         }
         return $mimeinfo['xxx'][$element];   // By default
     }
@@ -1313,8 +1311,8 @@ function mimeinfo_from_type($element, $mimetype) {
     $mimeinfo = get_mimetypes_array();
 
     foreach($mimeinfo as $values) {
-        if($values['type']==$mimetype) {
-            if(isset($values[$element])) {
+        if ($values['type']==$mimetype) {
+            if (isset($values[$element])) {
                 return $values[$element];
             }
             break;
@@ -1327,7 +1325,7 @@ function mimeinfo_from_type($element, $mimetype) {
  * Get information about a filetype based on the icon file.
  *
  * @param string $element Desired information (usually 'icon')
- * @param string $icon Icon file path.
+ * @param string $icon Icon file name without extension
  * @param boolean $all return all matching entries (defaults to false - best (by ext)/last match)
  * @return string Requested piece of information from array
  */
@@ -1344,11 +1342,11 @@ function mimeinfo_from_icon($element, $icon, $all=false) {
     }
     $info = array($mimeinfo['xxx'][$element]); // Default
     foreach($mimeinfo as $key => $values) {
-        if($values['icon']==$icon) {
-            if(isset($values[$element])) {
+        if ($values['icon']==$icon) {
+            if (isset($values[$element])) {
                 $info[$key] = $values[$element];
             }
-            //No break, for example for 'excel.gif' we don't want 'csv'!
+            //No break, for example for 'excel' we don't want 'csv'!
         }
     }
     if ($all) {
@@ -1385,11 +1383,14 @@ function mimeinfo_from_icon($element, $icon, $all=false) {
  * @param int $size The size of the icon. Not yet implemented
  * @return string The relative path to the icon
  */
-function file_mimetype_icon($mimetype, $size=null) {
+function file_mimetype_icon($mimetype, $size = NULL) {
+    global $CFG;
+
     $icon = mimeinfo_from_type('icon', $mimetype);
-    $icon = substr($icon, 0, strrpos($icon, '.'));
-    if ($size!=null && is_int($size)) {
-        $icon .= '-'.$size;
+    if ($size) {
+        if (file_exists("$CFG->dirroot/pix/f/$icon-$size.png") or file_exists("$CFG->dirroot/pix/f/$icon-$size.gif")) {
+            $icon = "$icon-$size";
+        }
     }
     return 'f/'.$icon;
 }
@@ -1414,12 +1415,15 @@ function file_mimetype_icon($mimetype, $size=null) {
  * @param int $size The size of the icon. Defaults to null can also be 32
  * @return string
  */
-function file_extension_icon($filename, $size=null) {
-    $element = 'icon';
-    if ($size!==null) {
-        $element .= (string)$size;
+function file_extension_icon($filename, $size = NULL) {
+    global $CFG;
+
+    $icon = mimeinfo('icon', $filename);
+    if ($size) {
+        if (file_exists("$CFG->dirroot/pix/f/$icon-$size.png") or file_exists("$CFG->dirroot/pix/f/$icon-$size.gif")) {
+            $icon = "$icon-$size";
+        }
     }
-    $icon = mimeinfo($element, $filename);
     return 'f/'.$icon;
 }
 
@@ -1431,13 +1435,13 @@ function file_extension_icon($filename, $size=null) {
  * @param bool $capitalise If true, capitalises first character of result
  * @return string Text description
  */
-function get_mimetype_description($mimetype,$capitalise=false) {
+function get_mimetype_description($mimetype, $capitalise=false) {
     if (get_string_manager()->string_exists($mimetype, 'mimetypes')) {
         $result = get_string($mimetype, 'mimetypes');
     } else {
         $result = get_string('document/unknown','mimetypes');
     }
-    if($capitalise) {
+    if ($capitalise) {
         $result=ucfirst($result);
     }
     return $result;

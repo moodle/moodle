@@ -140,7 +140,7 @@ class portfolio_format_image extends portfolio_format_file {
      * return all mimetypes that use image.gif (eg all images)
      */
     public static function mimetypes() {
-        return mimeinfo_from_icon('type', 'image.gif', true);
+        return mimeinfo_from_icon('type', 'image', true);
     }
 
     public static function conflicts($format) {
@@ -174,8 +174,8 @@ class portfolio_format_plainhtml extends portfolio_format_file {
 class portfolio_format_video extends portfolio_format_file {
     public static function mimetypes() {
         return array_merge(
-            mimeinfo_from_icon('type', 'video.gif', true),
-            mimeinfo_from_icon('type', 'avi.gif', true)
+            mimeinfo_from_icon('type', 'video', true),
+            mimeinfo_from_icon('type', 'avi', true)
         );
     }
 }
@@ -302,9 +302,9 @@ class portfolio_format_document extends portfolio_format_file {
     public static function mimetypes() {
         return array_merge(
             array('text/plain', 'text/rtf'),
-            mimeinfo_from_icon('type', 'word.gif', true),
-            mimeinfo_from_icon('type', 'docx.gif', true),
-            mimeinfo_from_icon('type', 'odt.gif', true)
+            mimeinfo_from_icon('type', 'word', true),
+            mimeinfo_from_icon('type', 'docx', true),
+            mimeinfo_from_icon('type', 'odt', true)
         );
     }
 }
@@ -317,9 +317,9 @@ class portfolio_format_document extends portfolio_format_file {
 class portfolio_format_spreadsheet extends portfolio_format_file {
     public static function mimetypes() {
         return array_merge(
-            mimeinfo_from_icon('type', 'excel.gif', true),
-            mimeinfo_from_icon('type', 'xlsm.gif', true),
-            mimeinfo_from_icon('type', 'ods.gif', true)
+            mimeinfo_from_icon('type', 'excel', true),
+            mimeinfo_from_icon('type', 'xlsm', true),
+            mimeinfo_from_icon('type', 'ods', true)
         );
     }
 }
@@ -331,6 +331,6 @@ class portfolio_format_spreadsheet extends portfolio_format_file {
 */
 class portfolio_format_presentation extends portfolio_format_file {
     public static function mimetypes() {
-        return mimeinfo_from_icon('type', 'powerpoint.gif', true);
+        return mimeinfo_from_icon('type', 'powerpoint', true);
     }
 }

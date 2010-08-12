@@ -173,7 +173,7 @@ class repository_alfresco extends repository {
                         'children'=>array());
                 } elseif ($child->child->type == $file_filter) {
                     $ret['list'][] = array('title'=>$child->child->cm_name,
-                        'thumbnail' => $OUTPUT->pix_url(file_extension_icon($child->child->cm_name, 32)),
+                        'thumbnail' => $OUTPUT->pix_url(file_extension_icon($child->child->cm_name, 32))->out(false),
                         'source'=>$child->child->id);
                 }
             }

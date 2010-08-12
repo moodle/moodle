@@ -117,7 +117,7 @@ EOD;
                 $ret['list'][] = array(
                     'title'=>$filename,
                     'source'=>$this->file_url,
-                    'thumbnail' => $OUTPUT->pix_url(file_extension_icon($filename, 32))
+                    'thumbnail' => $OUTPUT->pix_url(file_extension_icon($filename, 32))->out(false)
                     );
             }
         }

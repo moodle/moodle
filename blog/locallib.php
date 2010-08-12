@@ -501,10 +501,10 @@ class blog_entry {
             $ffurl    = file_encode_url($CFG->wwwroot.'/pluginfile.php', '/'.SYSCONTEXTID.'/blog/attachment/'.$this->id.'/'.$filename);
             $mimetype = $file->get_mimetype();
 
-            $icon     = substr(mimeinfo_from_type("icon", $mimetype), 0, -4);
+            $icon     = mimeinfo_from_type("icon", $mimetype);
             $type     = mimeinfo_from_type("type", $mimetype);
 
-            $image = $OUTPUT->pix_icon("/f/$icon", $filename, 'moodle', array('class'=>'icon'));
+            $image = $OUTPUT->pix_icon("f/$icon", $filename, 'moodle', array('class'=>'icon'));
 
             if ($return == "html") {
                 $output .= html_writer::link($ffurl, $image);

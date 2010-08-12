@@ -90,18 +90,17 @@ class repository_user extends repository {
                             'date' => '',
                             'path' => $encodedpath,
                             'children'=>array(),
-                            'thumbnail' => $OUTPUT->pix_url('f/folder-32') . ''
+                            'thumbnail' => $OUTPUT->pix_url('f/folder-32')->out(false)
                         );
                         $list[] = $node;
                     } else {
                         $encodedpath = base64_encode(serialize($child->get_params()));
-                        $icon = 'f/'.str_replace('.gif', '', mimeinfo('icon', $child->get_visible_name())).'-32';
                         $node = array(
                             'title' => $child->get_visible_name(),
                             'size' => 0,
                             'date' => '',
                             'source'=> $encodedpath,
-                            'thumbnail' => $OUTPUT->pix_url($icon) . '',
+                            'thumbnail' => $OUTPUT->pix_url(file_extension_icon($child->get_visible_name(), 32))->out(false)
                         );
                         $list[] = $node;
                     }

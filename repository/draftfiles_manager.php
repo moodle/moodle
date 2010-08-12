@@ -294,8 +294,8 @@ default:
             if ($file->type != 'folder') {
                 $drafturl = $file->url;
                 // a file
-                $fileicon = $CFG->wwwroot.'/pix/'.(file_extension_icon($file->filename));
-                $type = str_replace('.gif', '', mimeinfo('icon', $file->filename));
+                $fileicon = $OUTPUT->pix_url(file_extension_icon($file->filename))->out(false);
+                $type = mimeinfo('icon', $file->filename);
                 echo '<li>';
                 echo '<img src="'.$fileicon. '" class="iconsmall" />';
                 echo ' <a href="'.$drafturl.'">'.$file->filename.'</a> ';

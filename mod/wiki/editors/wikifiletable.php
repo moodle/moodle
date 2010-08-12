@@ -110,12 +110,12 @@ class MoodleQuickForm_wikifiletable extends HTML_QuickForm_element {
 
                 $action_icons = "";
                 if(!empty($tags['attach'])) {
-                    $action_icons .= "<a href=\"javascript:void(0)\" class=\"wiki-attachment-attach\" ".$this->printInsertTags($tags['attach'], $file->get_filename())." title=\"".get_string('attachmentattach', 'wiki')."\"><img src=\"".$OUTPUT->pix_url('f/pdf')->out()."\" alt=\"Attach\" /></a>";
+                    $action_icons .= "<a href=\"javascript:void(0)\" class=\"wiki-attachment-attach\" ".$this->printInsertTags($tags['attach'], $file->get_filename())." title=\"".get_string('attachmentattach', 'wiki')."\"><img src=\"".$OUTPUT->pix_url('f/pdf')->out()."\" alt=\"Attach\" /></a>"; //TODO: localize
                 }
 
                 $action_icons .= "&nbsp;&nbsp;<a href=\"javascript:void(0)\" class=\"wiki-attachment-link\" ".$this->printInsertTags($tags['link'], $file_url)." title=\"".get_string('attachmentlink', 'wiki')."\"><img src=\"".$OUTPUT->pix_url('f/web')->out()."\" alt=\"Link\" /></a>";
 
-                if ($icon == 'image.gif') {
+                if ($icon == 'image') {
                     $action_icons .= "&nbsp;&nbsp;<a href=\"javascript:void(0)\" class=\"wiki-attachment-image\" ".$this->printInsertTags($tags['image'], $file->get_filename())." title=\"".get_string('attachmentimage', 'wiki')."\"><img src=\"".$OUTPUT->pix_url('f/image')->out()."\" alt=\"Image\" /></a>"; //TODO: localize
                 }
 

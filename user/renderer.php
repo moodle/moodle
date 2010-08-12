@@ -61,14 +61,14 @@ class core_user_renderer extends plugin_renderer_base {
         }
         $result = '<ul>';
         foreach ($dir['subdirs'] as $subdir) {
-            $image = $this->output->pix_icon("/f/folder", $subdir['dirname'], 'moodle', array('class'=>'icon'));
+            $image = $this->output->pix_icon("f/folder", $subdir['dirname'], 'moodle', array('class'=>'icon'));
             $result .= '<li yuiConfig=\''.json_encode($yuiconfig).'\'><div>'.$image.' '.s($subdir['dirname']).'</div> '.$this->htmllize_tree($tree, $subdir).'</li>';
         }
         foreach ($dir['files'] as $file) {
             $url = file_encode_url("$CFG->wwwroot/pluginfile.php", '/'.$tree->context->id.'/user/private'.$file->get_filepath().$file->get_filename(), true);
             $filename = $file->get_filename();
-            $icon = substr(mimeinfo("icon", $filename), 0, -4);
-            $image = $this->output->pix_icon("/f/$icon", $filename, 'moodle', array('class'=>'icon'));
+            $icon = mimeinfo("icon", $filename);
+            $image = $this->output->pix_icon("f/$icon", $filename, 'moodle', array('class'=>'icon'));
             $result .= '<li yuiConfig=\''.json_encode($yuiconfig).'\'><div>'.$image.' '.html_writer::link($url, $filename).'</div></li>';
         }
         $result .= '</ul>';

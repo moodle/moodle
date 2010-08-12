@@ -173,7 +173,7 @@ class repository_boxnet extends repository {
                             'date'=>$filedates[$n],
                             'source'=>'http://box.net/api/1.0/download/'
                                 .$this->auth_token.'/'.$fileids[$n],
-                            'thumbnail' => $OUTPUT->pix_url(file_extension_icon($v, 32))->out());
+                            'thumbnail' => $OUTPUT->pix_url(file_extension_icon($v, 32))->out(false));
                 }
             }
         }
