@@ -1507,15 +1507,16 @@ class admins_potential_selector extends user_selector_base {
     }
 
     public function find_users($search) {
-        global $DB;
+        global $CFG, $DB;
         list($wherecondition, $params) = $this->search_sql($search, '');
 
         $fields      = 'SELECT ' . $this->required_fields_sql('');
         $countfields = 'SELECT COUNT(1)';
 
         $sql = " FROM {user}
-                WHERE $wherecondition";
+                WHERE $wherecondition AND mnethostid = :localmnet";
         $order = ' ORDER BY lastname ASC, firstname ASC';
+        $params['localmnet'] = $CFG->mnet_localhost_id; // it could be dangerous to make remote users admins and also this could lead to other problems
 
         $availableusers = $DB->get_records_sql($fields . $sql . $order, $params);
 
