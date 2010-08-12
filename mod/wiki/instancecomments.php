@@ -57,7 +57,7 @@ $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST)
 if (!$wiki = wiki_get_wiki($subwiki->wikiid)) {
     print_error('incorrectwikiid', 'wiki');
 }
-require_course_login($course->id, true, $cm);
+require_login($course->id, true, $cm);
 
 $comm = new page_wiki_handlecomments($wiki, $subwiki, $cm);
 $comm->set_page($page);
