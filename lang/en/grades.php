@@ -533,7 +533,7 @@ $string['settings'] = 'Settings';
 $string['setweights'] = 'Set weights';
 $string['showactivityicons'] = 'Show activity icons';
 $string['showactivityicons_help'] = 'If enabled, activity icons are shown next to activity names.';
-$string['showallhidden'] = 'Yes, show hidden';
+$string['showallhidden'] = 'Show hidden';
 $string['showallstudents'] = 'Show all Students';
 $string['showaverages'] = 'Show column averages';
 $string['showaverages_help'] = 'If enabled, the grader report will contain an additional row displaying the average (mean) for each category and grade item.';
@@ -544,15 +544,15 @@ $string['showeyecons_help'] = 'If enabled, when editing is turned on, a show/hid
 $string['showfeedback'] = 'Show feedback';
 $string['showgroups'] = 'Show groups';
 $string['showhiddenitems'] = 'Show hidden items';
-$string['showhiddenitems_help'] = 'This setting determines whether hidden items are displayed.
+$string['showhiddenitems_help'] = 'Whether hidden grade items are hidden entirely or if the names of hidden grade items are visible to students.
 
-* Yes, show hidden - Hidden grade item row is shown in grey with the grade hidden completely
-* Only hidden until - Grade items with a "hide until" date set are shown in grey with the grades hidden completely until the set date, after which the whole item is shown
-* No, do not show - Grade items are completely hidden';
+* Show hidden - Hidden grade item names are shown but student grades are hidden
+* Only hidden until - Grade items with a "hide until" date set are hidden completely until the set date, after which the whole item is shown
+* Do not show - Hidden grade items are completely hidden';
 $string['showhiddenuntilonly'] = 'Only hidden until';
 $string['showlocks'] = 'Show locks';
 $string['showlocks_help'] = 'If enabled, when editing is turned on, a lock/unlock icon is shown for each grade for controlling whether the grade can be automatically updated by the related activity.';
-$string['shownohidden'] = 'No, do not show';
+$string['shownohidden'] = 'Do not show';
 $string['shownooutcomes'] = 'Hide outcomes';
 $string['shownumberofgrades'] = 'Show number of grades in averages';
 $string['shownumberofgrades_help'] = 'If enabled, the number of grades used when calculating the average (mean) is displayed in brackets after each average.';
