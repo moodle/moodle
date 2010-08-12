@@ -470,7 +470,7 @@ if(!$csv) {
                 $activity = $criterion->get_mod_instance();
 
                 // Display icon
-                $icon = $OUTPUT->pix_url('icon', $criterion->module).'/icon.gif';
+                $icon = $OUTPUT->pix_url('icon', $criterion->module);
                 $iconlink = $CFG->wwwroot.'/mod/'.$criterion->module.'/view.php?id='.$activity->id;
                 $icontitle = $activity->name;
                 $iconalt = get_string('modulename', $criterion->module);
@@ -500,7 +500,7 @@ if(!$csv) {
 
         // Create icon if not supplied
         if (!$icon) {
-            $icon = $OUTPUT->pix_url('i/'.$COMPLETION_CRITERIA_TYPES[$criterion->criteriatype].'.gif');
+            $icon = $OUTPUT->pix_url('i/'.$COMPLETION_CRITERIA_TYPES[$criterion->criteriatype]);
         }
 
         print ($iconlink ? '<a href="'.$iconlink.'" title="'.$icontitle.'">' : '');
@@ -512,7 +512,7 @@ if(!$csv) {
 
     // Overall course completion status
     print '<th class="criteriaicon">';
-    print '<img src="'.$OUTPUT->pix_url('i/course.gif').'" class="icon" alt="Course" title="Course Complete" />';
+    print '<img src="'.$OUTPUT->pix_url('i/course').'" class="icon" alt="Course" title="Course Complete" />'; //TODO: localize
     print '</th>';
 
     print '</tr>';
@@ -631,7 +631,7 @@ foreach ($progress as $user) {
                 print '<td class="completion-progresscell">'.
                     '<a href="'.$CFG->wwwroot.'/course/togglecompletion.php?user='.$user->id.'&course='.$course->id.'&rolec='.$allow_marking_criteria.'">'.
                     '<img src="'.$OUTPUT->pix_url('i/completion-manual-'.($is_complete ? 'y' : 'n')).
-                    '" alt="'.$describe.'" class="icon" title="Mark as complete" /></a></td>';
+                    '" alt="'.$describe.'" class="icon" title="Mark as complete" /></a></td>'; //TODO: localize
             } else {
                 print '<td class="completion-progresscell">'.
                     '<img src="'.$OUTPUT->pix_url('i/'.$completionicon).

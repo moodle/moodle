@@ -307,7 +307,7 @@
             $atlastpage = true;
         }
 
-        $spacer = '<img src="'.$CFG->wwwroot.'/pix/spacer.gif" class="iconsmall" alt="" /> ';
+        $spacer = $OUTPUT->spacer().' ';
         foreach ($courses as $acourse) {
             $coursecontext = get_context_instance(CONTEXT_COURSE, $acourse->id);
 

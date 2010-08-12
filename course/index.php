@@ -299,7 +299,7 @@ function print_category_edit($category, $displaylist, $parentslist, $depth=-1, $
         $str->hide     = get_string('hide');
         $str->show     = get_string('show');
         $str->cohorts  = get_string('cohorts', 'cohort');
-        $str->spacer = '<img src="'.$CFG->wwwroot.'/pix/spacer.gif" class="iconsmall" alt="" /> ';
+        $str->spacer = $OUTPUT->spacer().' ';
     }
 
     if (!empty($category)) {
