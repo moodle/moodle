@@ -82,6 +82,8 @@ if (!isloggedin() or isguestuser()) {
         $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
     }
 
+    $PAGE->set_cm($cm, $course, $forum);
+    $PAGE->set_context($modcontext);
     $PAGE->set_title($course->shortname);
     $PAGE->set_heading($course->fullname);
 
