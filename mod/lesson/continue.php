@@ -71,7 +71,7 @@ $result = $page->record_attempt($context);
 
 if (isset($USER->modattempts[$lesson->id])) {
     // make sure if the student is reviewing, that he/she sees the same pages/page path that he/she saw the first time
-    if ($USER->modattempts[$lesson->id] == $page->id) {  // remember, this session variable holds the pageid of the last page that the user saw
+    if ($USER->modattempts[$lesson->id] == $page->id && $page->nextpageid == 0) {  // remember, this session variable holds the pageid of the last page that the user saw
         $result->newpageid = LESSON_EOL;
     } else {
         $nretakes = $DB->count_records("lesson_grades", array("lessonid"=>$lesson->id, "userid"=>$USER->id));
