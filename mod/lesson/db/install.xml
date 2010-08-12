@@ -30,7 +30,7 @@
         <FIELD NAME="maxtime" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="timed" NEXT="retake"/>
         <FIELD NAME="retake" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" PREVIOUS="maxtime" NEXT="activitylink"/>
         <FIELD NAME="activitylink" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="retake" NEXT="mediafile"/>
-        <FIELD NAME="mediafile" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="activitylink" NEXT="mediaheight"/>
+        <FIELD NAME="mediafile" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="activitylink" NEXT="mediaheight" COMMENT="Local file path or full external URL"/>
         <FIELD NAME="mediaheight" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="100" SEQUENCE="false" PREVIOUS="mediafile" NEXT="mediawidth"/>
         <FIELD NAME="mediawidth" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="650" SEQUENCE="false" PREVIOUS="mediaheight" NEXT="mediaclose"/>
         <FIELD NAME="mediaclose" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="mediawidth" NEXT="slideshow"/>

@@ -89,62 +89,6 @@ function xmldb_lesson_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2009111600, 'lesson');
     }
 
-    if ($oldversion < 2009120400) {
-
-        $sqlfrom = "FROM {lesson} l
-                    JOIN {modules} m ON m.name = 'lesson'
-                    JOIN {course_modules} cm ON (cm.module = m.id AND cm.instance = l.id)
-                   WHERE l.mediafile <> :empty";
-        $params = array('empty'=>$DB->sql_empty());
-
-        $count = $DB->count_records_sql("SELECT COUNT('x') $sqlfrom", $params);
-
-        if ($count > 0) {
-            $rs = $DB->get_recordset_sql("SELECT l.id, l.mediafile, l.course, cm.id AS cmid $sqlfrom ORDER BY l.course, l.id", $params);
-
-            $pbar = new progress_bar('migratelessonfiles', 500, true);
-            $fs = get_file_storage();
-
-            $i = 0;
-            foreach ($rs as $lesson) {
-                $i++;
-                upgrade_set_timeout(60); // set up timeout, may also abort execution
-                $pbar->update($i, $count, "Migrating lesson mediafiles - $i/$count.");
-
-                $filepath = $CFG->dataroot.'/'.$lesson->course.'/'.$CFG->moddata.'/lesson/'.$lesson->mediafile;
-                if (!is_readable($filepath)) {
-                    //file missing??
-                    echo $OUTPUT->notification("File not readable, skipping: ".$filepath);
-                    $DB->set_field('lesson', 'mediafile', '', array('id'=>$lesson->id));
-                    continue;
-                }
-
-                $filename = clean_param($lesson->mediafile, PARAM_FILE);
-                if ($filename === '') {
-                    echo $OUTPUT->notification("Unsupported lesson filename, skipping: ".$filepath);
-                    $DB->set_field('lesson', 'mediafile', '', array('id'=>$lesson->id));
-                    continue;
-                }
-
-                $context = get_context_instance(CONTEXT_MODULE, $lesson->cmid);
-                if (!$fs->file_exists($context->id, 'mod_lesson', 'mediafile', 0, '/', $filename)) {
-                    $file_record = array('contextid'=>$context->id, 'component'=>'mod_lesson', 'filearea'=>'mediafile', 'itemid'=>0, 'filepath'=>'/', 'filename'=>$filename);
-                    if ($fs->create_file_from_pathname($file_record, $filepath)) {
-                        if ($DB->set_field('lesson', 'mediafile', $filename, array('id'=>$lesson->id))) {
-                            unlink($filepath);
-                        }
-                    }
-                }
-
-                // remove dir if empty
-                @rmdir("$CFG->dataroot/$post->course/$CFG->moddata/lesson");
-            }
-            $rs->close();
-        }
-
-        upgrade_mod_savepoint(true, 2009120400, 'lesson');
-    }
-
     if ($oldversion < 2009120800) {
         /**
          * Drop the lesson_default table, as of Moodle 2.0 it is no longer used
@@ -226,6 +170,71 @@ function xmldb_lesson_upgrade($oldversion) {
         }
         $rs->close();
         upgrade_mod_savepoint(true, 2010072003, 'lesson');
+    }
+
+
+    if ($oldversion < 2010081200) {
+        require_once("$CFG->dirroot/mod/lesson/db/upgradelib.php");
+
+        $sqlfrom = "FROM {lesson} l
+                    JOIN {modules} m ON m.name = 'lesson'
+                    JOIN {course_modules} cm ON (cm.module = m.id AND cm.instance = l.id)";
+
+        $count = $DB->count_records_sql("SELECT COUNT('x') $sqlfrom");
+
+        if ($count > 0) {
+            $rs = $DB->get_recordset_sql("SELECT l.id, l.mediafile, l.course, cm.id AS cmid $sqlfrom ORDER BY l.course, l.id");
+
+            $pbar = new progress_bar('migratelessonfiles', 500, true);
+            $fs = get_file_storage();
+
+            $i = 0;
+            foreach ($rs as $lesson) {
+                $i++;
+                upgrade_set_timeout(120); // set up timeout, may also abort execution
+                $pbar->update($i, $count, "Migrating lesson files - $i/$count.");
+
+                // fix images incorrectly placed in moddata subfolders,
+                // this was a really bad decision done by the ppt import developer
+                if (file_exists("$CFG->dataroot/$lesson->course/moddata/lesson/")) {
+                    lesson_20_migrate_moddata_mixture($lesson->course, '/moddata/lesson/');
+                    @rmdir("$CFG->dataroot/$lesson->course/moddata/lesson/"); // remove dir if empty
+                    @rmdir("$CFG->dataroot/$lesson->course/moddata/"); // remove dir if empty
+                }
+
+                // migrate media file only if local course file selected - this is not nice at all,
+                // it should better be a real block, not a lesson specific hack
+                if (strpos($lesson->mediafile, '://') !== false) {
+                    // some external URL
+
+                } else if ($lesson->mediafile) {
+                    $context = get_context_instance(CONTEXT_MODULE, $lesson->cmid);
+                    $coursecontext = get_context_instance(CONTEXT_COURSE, $lesson->course);
+                    $filepathname = clean_param('/'.$lesson->mediafile, PARAM_PATH);
+                    $fullpath = "/$context->id/mod_lesson/mediafile/0$filepathname";
+
+                    if ($fs->get_file_by_hash(sha1($fullpath)) and !$file->is_directory()) {
+                        // already converted, just update filename
+                        $DB->set_field('lesson', 'mediafile', $filepathname, array('id'=>$lesson->id));
+                    } else {
+                        // let's copy file from current course legacy files if possible
+                        $fullpath = "/$coursecontext->id/course/legacy/0$filepathname";
+                        if ($file = $fs->get_file_by_hash(sha1($fullpath)) and !$file->is_directory()) {
+                            $file_record = array('contextid'=>$context->id, 'component'=>'mod_lesson', 'filearea'=>'mediafile', 'itemid'=>0, 'filepath'=>$file->get_filepath(), 'filename'=>$file->get_filename(), 'sortorder'=>1);
+                            $fs->create_file_from_storedfile($file_record, $file);
+                            $DB->set_field('lesson', 'mediafile', $filepathname, array('id'=>$lesson->id));
+
+                        } else {
+                            // bad luck, no such file exists
+                            $DB->set_field('lesson', 'mediafile', '', array('id'=>$lesson->id));
+                        }
+                    }
+                }
+            }
+            $rs->close();
+        }
+
+        upgrade_mod_savepoint(true, 2010081200, 'lesson');
     }
 
 

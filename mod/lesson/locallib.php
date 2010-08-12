@@ -442,7 +442,7 @@ function lesson_add_pretend_blocks($page, $cm, $lesson, $timer = null) {
  **/
 function lesson_mediafile_block_contents($cmid, $lesson) {
     global $OUTPUT;
-    if (empty($lesson->mediafile) && empty($lesson->mediafileid)) {
+    if (empty($lesson->mediafile)) {
         return null;
     }
 
@@ -590,10 +590,15 @@ function lesson_get_media_html($lesson, $context) {
     require_once("$CFG->libdir/resourcelib.php");
 
     // get the media file link
-    $url = moodle_url::make_pluginfile_url($context->id, 'mod_lesson', 'mediafile', $lesson->timemodified, '/', $lesson->mediafile);
+    if (strpos($lesson->mediafile, '://') !== false) {
+        $url = new moodle_url($lesson->mediafile);
+    } else {
+        // the timemodified is used to prevent caching problems, instead of '/' we should better read from files table and use sortorder
+        $url = moodle_url::make_pluginfile_url($context->id, 'mod_lesson', 'mediafile', $lesson->timemodified, '/', ltrim($lesson->mediafile, '/'));
+    }
     $title = $lesson->mediafile;
 
-    $clicktoopen = html_writer::link(new moodle_url($url), get_string('download'));
+    $clicktoopen = html_writer::link($url, get_string('download'));
 
     $mimetype = resourcelib_guess_url_mimetype($url);
 

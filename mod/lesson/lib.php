@@ -20,7 +20,7 @@
  *
  * @package    mod
  * @subpackage lesson
- * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  **/
 
@@ -55,7 +55,7 @@ function lesson_add_instance($data, $mform) {
 
     if ($filename = $mform->get_new_filename('mediafilepicker')) {
         if ($file = $mform->save_stored_file('mediafilepicker', $context->id, 'mod_lesson', 'mediafile', 0, '/', $filename)) {
-            $DB->set_field('lesson', 'mediafile', $file->get_filename(), array('id'=>$lesson->id));
+            $DB->set_field('lesson', 'mediafile', '/'.$file->get_filename(), array('id'=>$lesson->id));
         }
     }
 
@@ -89,7 +89,7 @@ function lesson_update_instance($data, $mform) {
     $context = get_context_instance(CONTEXT_MODULE, $cmid);
     if ($filename = $mform->get_new_filename('mediafilepicker')) {
         if ($file = $mform->save_stored_file('mediafilepicker', $context->id, 'mod_lesson', 'mediafile', 0, '/', $filename, true)) {
-            $DB->set_field('lesson', 'mediafile', $file->get_filename(), array('id'=>$data->id));
+            $DB->set_field('lesson', 'mediafile', '/'.$file->get_filename(), array('id'=>$data->id));
         } else {
             $DB->set_field('lesson', 'mediafile', '', array('id'=>$data->id));
         }
