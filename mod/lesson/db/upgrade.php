@@ -95,7 +95,7 @@ function xmldb_lesson_upgrade($oldversion) {
          * Move any media files associated with the lesson to use the new file
          * API methods and structures.
          */
-        $lessons = $DB->get_records_select('lesson', 'mediafile != \'\'');
+        $lessons = $DB->get_records_select('lesson', 'mediafile <> :empty', array('empty'=>$DB->sql_empty()));
 
         $empty = $DB->sql_empty(); // silly oracle empty string handling workaround
         $sqlfrom = "FROM {lesson} l
