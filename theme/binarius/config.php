@@ -201,14 +201,14 @@ $THEME->layouts = array(
 // As above but will be included in the page footer.
 ////////////////////////////////////////////////////
 
-$THEME->larrow	= '&lang;';
+//$THEME->larrow	= '&lang;';
 
 ////////////////////////////////////////////////////
 // Overrides the left arrow image used throughout 
 // Moodle
 ////////////////////////////////////////////////////
 
-$THEME->rarrow	= '&rang;';
+//$THEME->rarrow	= '&rang;';
 
 ////////////////////////////////////////////////////
 // Overrides the right arrow image used throughout Moodle

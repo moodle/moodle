@@ -93,6 +93,7 @@ echo $OUTPUT->doctype() ?>
 <!-- END OF CONTENT -->
 
 	<?php if ($hasheading || $hasnavbar) { ?>
+	<div class="myclear"></div>
 		</div>
 	<?php } ?>
 	

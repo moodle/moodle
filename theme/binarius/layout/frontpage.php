@@ -77,7 +77,7 @@ echo $OUTPUT->doctype() ?>
     	</div>
 
 <!-- END OF CONTENT -->
-
+	<div class="myclear"></div>
 	</div> <!-- END #wrapper -->
 
 <!-- START OF FOOTER -->

@@ -95,6 +95,10 @@ fieldset#general {
 	border-radius: 6px;
 }
 
+.block.hidden .header {
+	border-bottom: none;
+}
+
 .block .header h2 {
 	color: #fff;
 	font-size: 1.25em;
@@ -250,4 +254,8 @@ body.has_dock {
 #dockeditempanel .dockeditempanel_hd h2 { 
 	font-size: 0.9em;
 	color: #fff;
+}
+
+.myclear {
+clear: both;
 }
