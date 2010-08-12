@@ -71,7 +71,8 @@ abstract class page_wiki {
     /**
      * @var array The tabs set used in wiki module
      */
-    protected $tabs = array('view', 'edit', 'comments', 'history', 'map');
+    protected $tabs = array('view' => 'view', 'edit' => 'edit', 'comments' => 'comments',
+                            'history' => 'history', 'map' => 'map');
     /**
      * @var array tabs options
      */
@@ -147,6 +148,17 @@ abstract class page_wiki {
      * @param array $options, tabs options
      */
     protected function setup_tabs($options = array()) {
+        global $CFG, $PAGE;
+
+        if (empty($CFG->usecomments) || !has_capability('mod/wiki:viewcomment', $PAGE->context)){
+            unset($this->tabs['comments']);
+        }
+
+        if (!has_capability('mod/wiki:editpage', $PAGE->context)){
+            unset($this->tabs['edit']);
+        }
+
+
         if (empty($options)) {
             $this->tabs_options = array('activetab' => substr(get_class($this), 10));
         } else {
@@ -355,12 +367,7 @@ class page_wiki_edit extends page_wiki {
     function __construct($wiki, $subwiki, $cm) {
         global $CFG, $PAGE;
         parent::__construct($wiki, $subwiki, $cm);
-        self::$attachmentoptions = array(
-            'subdirs' => false,
-            'maxfiles' => -1,
-            'maxbytes' => $CFG->maxbytes,
-            'accepted_types'=>'*'
-        );
+        self::$attachmentoptions = array('subdirs' => false, 'maxfiles' => - 1, 'maxbytes' => $CFG->maxbytes, 'accepted_types' => '*');
         $PAGE->requires->js_init_call('M.mod_wiki.renew_lock', null, true);
         $PAGE->requires->yui2_lib('connection');
     }
@@ -536,12 +543,12 @@ class page_wiki_edit extends page_wiki {
             //$draftitemid = file_get_submitted_draft_itemid('attachments');
             //file_prepare_draft_area($draftitemid, $context->id, 'mod_wiki', 'attachments', $this->subwiki->id);
             //$data->attachments = $draftitemid;
-        }
+            }
 
         if ($version->contentformat != 'html') {
-            $params['contextid']  = $context->id;
-            $params['component']  = 'mod_wiki';
-            $params['filearea']   = 'attachments';
+            $params['contextid'] = $context->id;
+            $params['component'] = 'mod_wiki';
+            $params['filearea'] = 'attachments';
             $params['fileitemid'] = $this->subwiki->id;
         }
 
@@ -550,7 +557,6 @@ class page_wiki_edit extends page_wiki {
         }
 
         $form = new mod_wiki_edit_form($url, $params);
-
 
         if ($formdata = $form->get_data()) {
             if ($format != 'html') {
@@ -583,7 +589,7 @@ class page_wiki_edit extends page_wiki {
             file_save_draft_area_files($this->attachments, $context->id, 'mod_wiki', 'attachments', $this->subwiki->id);
             return null;
             //return wiki_process_attachments($this->attachments, $this->deleteuploads, $context->id, 'mod_wiki', 'attachments', $this->subwiki->id);
-        }
+            }
     }
 }
 
@@ -680,7 +686,7 @@ class page_wiki_comments extends page_wiki {
                 $actionicons = true;
             }
 
-            if ($actionicons){
+            if ($actionicons) {
                 $cell6 = new html_table_cell($OUTPUT->action_icon($urledit, new pix_icon('t/edit', get_string('edit'))) . $OUTPUT->action_icon($urldelet, new pix_icon('t/delete', get_string('delete'))));
                 $row3 = new html_table_row();
                 $row3->cells[] = $cell5;
@@ -900,7 +906,7 @@ class page_wiki_create extends page_wiki {
         require_once(dirname(__FILE__) . '/create_form.php');
         $url = new moodle_url('/mod/wiki/create.php', array('action' => 'create', 'wid' => $PAGE->activityrecord->id, 'gid' => $this->gid, 'uid' => $this->uid));
         $formats = wiki_get_formats();
-        $options = array('formats' => $formats, 'defaultformat' => $PAGE->activityrecord->defaultformat,'forceformat' => $PAGE->activityrecord->forceformat);
+        $options = array('formats' => $formats, 'defaultformat' => $PAGE->activityrecord->defaultformat, 'forceformat' => $PAGE->activityrecord->forceformat);
         if ($this->title != get_string('newpage', 'wiki')) {
             $options['disable_pagetitle'] = true;
         }
@@ -933,7 +939,7 @@ class page_wiki_create extends page_wiki {
     function create_page() {
         global $USER, $CFG, $PAGE;
         $data = $this->mform->get_data();
-        if (empty($this->subwiki)){
+        if (empty($this->subwiki)) {
             $swid = wiki_add_subwiki($PAGE->activityrecord->id, $this->gid, $this->uid);
             $this->subwiki = wiki_get_subwiki($swid);
         }
@@ -1380,7 +1386,7 @@ class page_wiki_map extends page_wiki {
 
         if ($this->view > 0) {
             //echo '<div><a href="' . $CFG->wwwroot . '/mod/wiki/map.php?pageid=' . $this->page->id . '">' . get_string('backtomapmenu', 'wiki') . '</a></div>';
-        }
+            }
 
         switch ($this->view) {
         case 1:
@@ -1922,9 +1928,9 @@ class page_wiki_save extends page_wiki_edit {
         $params = array('attachmentoptions' => page_wiki_edit::$attachmentoptions, 'format' => $this->format, 'version' => $this->versionnumber);
 
         if ($this->format != 'html') {
-            $params['contextid']  = $context->id;
-            $params['component']  = 'mod_wiki';
-            $params['filearea']   = 'attachments';
+            $params['contextid'] = $context->id;
+            $params['component'] = 'mod_wiki';
+            $params['filearea'] = 'attachments';
             $params['fileitemid'] = $this->page->id;
         }
 
@@ -2146,22 +2152,22 @@ class page_wiki_handlecomments extends page_wiki {
 
         $context = get_context_instance(CONTEXT_MODULE, $PAGE->cm->id);
 
-        if ($this->action == 'add'){
-            if (has_capability('mod/wiki:editcomment', $context)){
+        if ($this->action == 'add') {
+            if (has_capability('mod/wiki:editcomment', $context)) {
                 $this->add_comment($this->content, $this->commentid);
             }
         } else if ($this->action == 'edit') {
             $comment = wiki_get_comment($this->commentid);
             $edit = has_capability('mod/wiki:editcomment', $context);
             $owner = $comment->userid == $USER->id;
-            if ($owner && $edit){
+            if ($owner && $edit) {
                 $this->add_comment($this->content, $this->commentid);
             }
         } else if ($this->action == 'delete') {
             $comment = wiki_get_comment($this->commentid);
             $manage = has_capability('mod/wiki:managecomment', $context);
             $owner = $comment->userid == $USER->id;
-            if ($owner || $manage){
+            if ($owner || $manage) {
                 $this->delete_comment($this->commentid);
             }
         }
