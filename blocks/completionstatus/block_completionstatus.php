@@ -62,9 +62,7 @@ class block_completionstatus extends block_base {
         }
 
         // Check this user is enroled
-        $users = $info->internal_get_tracked_users(true);
-        if (!in_array($USER->id, array_keys($users))) {
-
+        if (!$info->is_tracked_user($USER->id)) {
             // If not enrolled, but are can view the report:
             if (has_capability('coursereport/completion:view', get_context_instance(CONTEXT_COURSE, $COURSE->id))) {
                 $this->content->text = '<a href="'.$CFG->wwwroot.'/course/report/completion/index.php?course='.$COURSE->id.

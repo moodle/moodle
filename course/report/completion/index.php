@@ -54,8 +54,10 @@ $firstnamesort = ($sort == 'firstname');
 $excel = ($format == 'excelcsv');
 $csv = ($format == 'csv' || $excel);
 
-// Whether to start at a particular position
-$start = optional_param('start',0,PARAM_INT);
+// Paging
+$start   = optional_param('start', 0, PARAM_INT);
+$sifirst = optional_param('sifirst', 'all', PARAM_ALPHA);
+$silast  = optional_param('silast', 'all', PARAM_ALPHA);
 
 // Whether to show idnumber
 $idnumbers = $CFG->grade_report_showuseridnumber;
@@ -137,13 +139,6 @@ if (!$csv) {
     }
 }
 
-// Get user data
-$progress = $completion->get_progress_all(
-    $firstnamesort, $group,
-    $csv ? 0 : COMPLETION_REPORT_PAGE,
-    $csv ? 0 : $start);
-
-
 /**
  * Setup page header
  */
@@ -168,7 +163,7 @@ if ($csv) {
 
     $PAGE->set_title($strcompletion);
     $PAGE->set_heading($course->fullname);
-    
+
     echo $OUTPUT->header();
 
     $PAGE->requires->yui2_lib(
@@ -183,36 +178,122 @@ if ($csv) {
     $PAGE->requires->js('/course/report/completion/textrotate.js');
 
     // Handle groups (if enabled)
-    groups_print_course_menu($course, $CFG->wwwroot.'/course/report/progress/?course='.$course->id);
+    groups_print_course_menu($course, $CFG->wwwroot.'/course/report/completion/?course='.$course->id);
+}
+
+
+// Generate where clause
+$where = array();
+$ilike = $DB->sql_ilike();
+
+if ($sifirst !== 'all') {
+    $where[] = "u.firstname $ilike '$sifirst%'";
+}
+
+if ($silast !== 'all') {
+    $where[] = "u.lastname $ilike '$silast%'";
+}
+
+// Get user match count
+$total = $completion->get_num_tracked_users(implode(' AND ', $where), $group);
+
+// Total user count
+$grandtotal = $completion->get_num_tracked_users('', $group);
+
+// If no users in this course what-so-ever
+if (!$grandtotal) {
+    echo $OUTPUT->container(get_string('err_nousers', 'completion'), 'errorbox errorboxcontent');
+    echo $OUTPUT->footer();
+    exit;
+}
+
+// Get user data
+$progress = array();
+
+if ($total) {
+    $progress = $completion->get_progress_all(
+        implode(' AND ', $where),
+        $group,
+        $firstnamesort ? 'u.firstname ASC' : 'u.lastname ASC',
+        $csv ? 0 : COMPLETION_REPORT_PAGE,
+        $csv ? 0 : $start
+    );
+}
+
+
+// Build link for paging
+$link = $CFG->wwwroot.'/course/report/completion/?course='.$course->id;
+if (strlen($sort)) {
+    $link .= '&amp;sort='.$sort;
+}
+$link .= '&amp;start=';
+
+// Build the the page by Initial bar
+$initials = array('first', 'last');
+$alphabet = explode(',', get_string('alphabet', 'langconfig'));
+
+$pagingbar = '';
+foreach ($initials as $initial) {
+    $var = 'si'.$initial;
+
+    $pagingbar .= ' <div class="initialbar '.$initial.'initial">';
+    $pagingbar .= get_string($initial.'name').':&nbsp;';
+
+    if ($$var == 'all') {
+        $pagingbar .= '<strong>'.get_string('all').'</strong> ';
+    }
+    else {
+        $pagingbar .= '<a href="'.$link.'">'.get_string('all').'</a> ';
+    }
+
+    foreach ($alphabet as $letter) {
+        if ($$var === $letter) {
+            $pagingbar .= '<strong>'.$letter.'</strong> ';
+        }
+        else {
+            $pagingbar .= '<a href="'.$link.'&amp;'.$var.'='.$letter.'">'.$letter.'</a> ';
+        }
+    }
+
+    $pagingbar .= '</div>';
 }
 
 // Do we need a paging bar?
-if($progress->total > COMPLETION_REPORT_PAGE) {
-    $pagingbar='<div class="completion_pagingbar">';
+if($total > COMPLETION_REPORT_PAGE) {
 
-    if($start>0) {
-        $newstart=$start-COMPLETION_REPORT_PAGE;
-        if($newstart<0) {
-            $newstart=0;
+    // Paging bar
+    $pagingbar .= '<div class="paging">';
+    $pagingbar .= get_string('page').': ';
+
+    // Display previous link
+    if ($start > 0) {
+        $pstart = max($start - COMPLETION_REPORT_PAGE, 0);
+        $pagingbar .= '(<a class="previous" href="'.$link.$pstart.'">'.get_string('previous').'</a>)&nbsp;';
+    }
+
+    // Create page links
+    $curstart = 0;
+    $curpage = 0;
+    while ($curstart < $total) {
+        $curpage++;
+
+        if ($curstart == $start) {
+            $pagingbar .= '&nbsp;'.$curpage.'&nbsp;';
         }
-        $pagingbar.=link_arrow_left(get_string('previous'),'./?course='.$course->id.
-            ($newstart ? '&amp;start='.$newstart : ''),false,'completion_prev');
+        else {
+            $pagingbar .= '&nbsp;<a href="'.$link.$curstart.'">'.$curpage.'</a>&nbsp;';
+        }
+
+        $curstart += COMPLETION_REPORT_PAGE;
     }
 
-    $a=new StdClass;
-    $a->from=$start+1;
-    $a->to=$start+COMPLETION_REPORT_PAGE;
-    $a->total=$progress->total;
-    $pagingbar.='<p>'.get_string('reportpage','completion',$a).'</p>';
-
-    if($start+COMPLETION_REPORT_PAGE < $progress->total) {
-        $pagingbar.=link_arrow_right(get_string('next'),'./?course='.$course->id.
-            '&amp;start='.($start+COMPLETION_REPORT_PAGE),false,'completion_next');
+    // Display next link
+    $nstart = $start + COMPLETION_REPORT_PAGE;
+    if ($nstart < $total) {
+        $pagingbar .= '&nbsp;(<a class="next" href="'.$link.$nstart.'">'.get_string('next').'</a>)';
     }
 
-    $pagingbar.='</div>';
-} else {
-    $pagingbar='';
+    $pagingbar .= '</div>';
 }
 
 
@@ -224,16 +305,17 @@ if($progress->total > COMPLETION_REPORT_PAGE) {
 if(!$csv) {
     print '<br class="clearer"/>'; // ugh
 
-    if(count($progress->users)==0) {
-        echo $OUTPUT->box_start('errorbox errorboxcontent boxaligncenter boxwidthnormal');
-        print '<p class="nousers">'.get_string('err_nousers','completion').'</p>';
-        print '<p><a href="'.$CFG->wwwroot.'/course/report.php?id='.$course->id.'">'.get_string('continue').'</a></p>';
-        echo $OUTPUT->box_end();
-        echo $OUTPUT->footer($course);
+    $total_header = ($total == $grandtotal) ? $total : "{$total}/{$grandtotal}";
+    echo $OUTPUT->heading(get_string('allparticipants').": {$total_header}", 3);
+
+    print $pagingbar;
+
+    if (!$total) {
+        echo $OUTPUT->heading(get_string('nothingtodisplay'), 2);
+        echo $OUTPUT->footer();
         exit;
     }
 
-    print $pagingbar;
     print '<table id="completion-progress" class="generaltable flexible boxaligncenter completionreport" style="text-align: left" cellpadding="5" border="1">';
 
     // Print criteria group names
@@ -447,7 +529,7 @@ if(!$csv) {
 ///
 /// Display a row for each user
 ///
-foreach($progress->users as $user) {
+foreach ($progress as $user) {
 
     // User name
     if($csv) {

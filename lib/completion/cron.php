@@ -57,6 +57,13 @@ function completion_cron_mark_started() {
         mtrace('Marking users as started');
     }
 
+    if (!empty($CFG->progresstrackedroles)) {
+        $roles = ' AND ra.roleid IN ('.$CFG->progresstrackedroles.')';
+    } else {
+        // This causes it to default to everyone (if there is no student role)
+        $roles = '';
+    }
+
     /**
      * A quick explaination of this horrible looking query
      *
@@ -77,8 +84,8 @@ function completion_cron_mark_started() {
             c.id AS course,
             u.id AS userid,
             crc.id AS completionid,
-            ue.timestart,
-            ue.timecreated AS timeenrolled
+            ue.timestart AS timeenrolled,
+            ue.timecreated
         FROM
             {user} u
         INNER JOIN
@@ -90,6 +97,9 @@ function completion_cron_mark_started() {
         INNER JOIN
             {course} c
          ON c.id = e.courseid
+        INNER JOIN
+            {role_assignments} ra
+         ON ra.userid = u.id
         LEFT JOIN
             {course_completions} crc
          ON crc.course = c.id
@@ -102,8 +112,7 @@ function completion_cron_mark_started() {
         AND u.deleted = 0
         AND ue.timestart < ?
         AND (ue.timeend > ? OR ue.timeend = 0)
-        AND ue.timecreated < ?
-        AND (ue.timecreated > ? OR ue.timecreated = 0)
+            $roles
         ORDER BY
             course,
             userid
@@ -140,7 +149,7 @@ function completion_cron_mark_started() {
         else {
             // Not all enrol plugins fill out timestart correctly, so use whichever
             // is non-zero
-            $current->timeenrolled = max($current->timestart, $current->timeenrolled);
+            $current->timeenrolled = max($current->timecreated, $current->timeenrolled);
         }
 
         // If we are at the last record,
@@ -154,6 +163,7 @@ function completion_cron_mark_started() {
             $completion->course = $prev->course;
             $completion->timeenrolled = (string) $prev->timeenrolled;
             $completion->timestarted = 0;
+            $completion->reaggregate = time();
 
             if ($prev->completionid) {
                 $completion->id = $prev->completionid;
@@ -232,7 +242,7 @@ function completion_cron_completions() {
         SELECT DISTINCT
             c.id AS course,
             cr.id AS criteriaid,
-            cc.userid AS userid,
+            crc.userid AS userid,
             cr.criteriatype AS criteriatype,
             cc.timecompleted AS timecompleted
         FROM
@@ -251,13 +261,14 @@ function completion_cron_completions() {
             c.enablecompletion = 1
         AND crc.timecompleted IS NULL
         AND crc.reaggregate > 0
+        AND crc.reaggregate < :timestarted
         ORDER BY
             course,
             userid
     ';
 
     // Check if result is empty
-    if (!$rs = $DB->get_recordset_sql($sql)) {
+    if (!$rs = $DB->get_recordset_sql($sql, array('timestarted' => $timestarted))) {
         return;
     }
 

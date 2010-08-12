@@ -72,8 +72,7 @@ class block_selfcompletion extends block_base {
         }
 
         // Check this user is enroled
-        $users = $info->internal_get_tracked_users(true);
-        if (!in_array($USER->id, array_keys($users))) {
+        if (!$info->is_tracked_user($USER->id)) {
             $this->content->text = get_string('notenroled', 'completion');
             return $this->content;
         }

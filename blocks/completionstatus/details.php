@@ -93,8 +93,7 @@ if (empty($completions)) {
 }
 
 // Check this user is enroled
-$users = $info->internal_get_tracked_users(true);
-if (!in_array($user->id, array_keys($users))) {
+if (!$info->is_tracked_user($user->id)) {
     error(get_string('notenroled', 'completion'));
 }
 
