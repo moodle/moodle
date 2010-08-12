@@ -64,8 +64,8 @@
             print_error('nousers', 'error');
         }
 
-        if (is_primary_admin($user->id)) {
-            print_error('nopermissions', 'error', '', 'delete the primary admin user');
+        if (is_siteadmin($user->id)) {
+            print_error('nopermissions', 'error', '', 'delete the admin users');
         }
 
         if ($confirm != md5($delete)) {
@@ -222,7 +222,7 @@
                 continue; // do not dispaly dummy new user and guest here
             }
 
-            if ($user->id == $USER->id) {
+            if ($user->id == $USER->id or is_siteadmin($user)) {
                 $deletebutton = "";
             } else {
                 if (has_capability('moodle/user:delete', $sitecontext)) {
