@@ -105,7 +105,6 @@ $string['administratordescription'] = 'Administrators can usually do anything on
 $string['administrators'] = 'Administrators';
 $string['administratorsall'] = 'All administrators';
 $string['administratorsandteachers'] = 'Administrators and teachers';
-$string['adminprimarynoedit'] = 'You may not change the primary admin\'s password';
 $string['advanced'] = 'Advanced';
 $string['advancedfilter'] = 'Advanced search';
 $string['advancedsettings'] = 'Advanced settings';

@@ -83,10 +83,9 @@ if ($user->id == $USER->id) {
     if (isguestuser($user->id)) {
         print_error('guestnoeditmessageother', 'message');
     }
-    // no editing of primary admin!
-    $mainadmin = get_admin();
-    if ($user->id == $mainadmin->id) {
-        print_error('adminprimarynoedit');
+    // no editing of admins by non admins!
+    if (is_siteadministrator($user) and !is_siteadministrator($USER)) {
+        print_error('useradmineditadmin');
     }
     $PAGE->navigation->extend_for_user($user);
 }

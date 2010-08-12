@@ -109,8 +109,8 @@ if ($user->id == $USER->id) {
         print_error('guestnoeditprofileother');
     }
     // no editing of primary admin!
-    if (is_primary_admin($user->id)) {
-        print_error('adminprimarynoedit');
+    if (is_siteadmin($user) and !is_siteadmin($USER)) {  // Only admins may edit other admins
+        print_error('useradmineditadmin');
     }
 }
 

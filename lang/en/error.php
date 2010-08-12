@@ -23,7 +23,6 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['adminprimarynoedit'] = 'The primary admin cannot be edited by others';
 $string['authnotexisting'] = 'The autorization plugin doesn\'t exist';
 $string['backupcontainexternal'] = 'This backup file contains external Moodle Network Hosts that are not configured locally';
 $string['backuptablefail'] = 'Backup tables could NOT be set up successfully!';
@@ -471,11 +470,12 @@ $string['unsupportedwebserver'] = 'Web server software ({$a}) is not supported, 
 $string['upgraderequires19'] = 'Error: New Moodle version was installed on server, unfortunately upgrade from the previous version is not supported.<br />Please upgrade first to latest 1.9.x release. You can also return to previous version by reinstalling original files.';
 $string['upgraderunning'] = 'Site is being upgraded, please retry later.';
 $string['urlnotdefinerss'] = 'URL not defined for RSS feed';
+$string['useradmineditadmin'] = 'Only administrators are allowed to modify other administrator accounts';
+$string['useradminodelete'] = 'Administrator accounts can not be deleted';
 $string['userautherror'] = 'Unknown auth plugin';
 $string['userauthunsupported'] = 'Auth plugin not supported here';
 $string['useremailduplicate'] = 'Duplicate address';
 $string['usermustbemnet'] = 'Users in the MNET access control list must be remote MNET users';
-$string['usernotaddedadmin'] = 'Cannot delete admin accounts';
 $string['usernotaddederror'] = 'User not added - error';
 $string['usernotaddedregistered'] = 'User not added - already registered';
 $string['usernotavailable'] = 'The details of this user are not available to you';

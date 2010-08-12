@@ -87,8 +87,8 @@ if ($user->id != -1 and is_mnet_remote_user($user)) {
     redirect($CFG->wwwroot . "/user/view.php?id=$id&course={$course->id}");
 }
 
-if ($user->id != $USER->id and is_primary_admin($user->id)) {  // Can't edit primary admin
-    print_error('adminprimarynoedit');
+if ($user->id != $USER->id and is_siteadmin($user) and !is_siteadmin($USER)) {  // Only admins may edit other admins
+    print_error('useradmineditadmin');
 }
 
 if (isguestuser($user->id)) { // the real guest user can not be edited

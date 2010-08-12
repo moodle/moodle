@@ -56,16 +56,12 @@
 
     } else if ($delete and confirm_sesskey()) {              // Delete a selected user, after confirmation
 
-        if (!has_capability('moodle/user:delete', $sitecontext)) {
-            print_error('nopermissions', 'error', '', 'delete a user');
-        }
+        require_capability('moodle/user:delete', $sitecontext);
 
-        if (!$user = $DB->get_record('user', array('id'=>$delete))) {
-            print_error('nousers', 'error');
-        }
+        $user = $DB->get_record('user', array('id'=>$delete), '*', MUST_EXIST);
 
         if (is_siteadmin($user->id)) {
-            print_error('nopermissions', 'error', '', 'delete the admin users');
+            print_error('useradminodelete', 'error');
         }
 
         if ($confirm != md5($delete)) {
@@ -199,8 +195,6 @@
             $users = $nusers;
         }
 
-        $mainadmin = get_admin();
-
         $override = new object();
         $override->firstname = 'firstname';
         $override->lastname = 'lastname';
@@ -232,7 +226,7 @@
                 }
             }
 
-            if (has_capability('moodle/user:update', $sitecontext) and ($user->id==$USER->id or $user->id != $mainadmin->id) and !is_mnet_remote_user($user)) {
+            if (has_capability('moodle/user:update', $sitecontext) and (is_siteadmin($USER) or !is_siteadmin($user)) and !is_mnet_remote_user($user)) {
                 $editbutton = "<a href=\"$securewwwroot/user/editadvanced.php?id=$user->id&amp;course=$site->id\">$stredit</a>";
                 if ($user->confirmed == 0) {
                     $confirmbutton = "<a href=\"user.php?confirmuser=$user->id&amp;sesskey=".sesskey()."\">" . get_string('confirm') . "</a>";

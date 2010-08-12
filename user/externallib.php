@@ -213,8 +213,11 @@ class moodle_user_external extends external_api {
         foreach ($params['userids'] as $userid) {
             $user = $DB->get_record('user', array('id'=>$userid, 'deleted'=>0), '*', MUST_EXIST);
             // must not allow deleting of admins or self!!!
-            if (is_siteadmin($user) or $USER->id == $user->id) {
-                throw new moodle_exception('nopermissions', 'error');
+            if (is_siteadmin($user)) {
+                throw new moodle_exception('useradminodelete', 'error');
+            }
+            if ($USER->id == $user->id) {
+                throw new moodle_exception('usernotdeletederror', 'error');
             }
             user_delete_user($user);
         }
