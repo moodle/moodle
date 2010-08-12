@@ -46,7 +46,7 @@ if (array_search($issue, $issues, true) === false) {
 admin_externalpage_setup('reportsecurity');
 echo $OUTPUT->header();
 
-echo $OUTPUT->heading(get_string('reportsecurity', 'report_security'));
+echo $OUTPUT->heading(get_string('pluginname', 'report_security'));
 
 echo '<div id="timewarning">'.get_string('timewarning', 'report_security').'</div>';
 while(@ob_end_flush());
