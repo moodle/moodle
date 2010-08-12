@@ -302,7 +302,7 @@ class embedded_cloze_qtype extends default_questiontype {
         // adding an icon with alt to warn user this is a fill in the gap question
         // MDL-7497
         if (!empty($USER->screenreader)) {
-            echo "<img src=\"$CFG->wwwroot/question/type/$question->qtype/icon.gif\" ".
+            echo "<img src=\"".$OUTPUT->pix_url('icon', 'qtype_'.$question->qtype)."\" ".
                 "class=\"icon\" alt=\"".get_string('clozeaid','qtype_multichoice')."\" />  ";
         }
 

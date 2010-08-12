@@ -1834,15 +1834,14 @@ function question_apply_penalty_and_timelimit(&$question, &$state, $attempt, $cm
 * @param boolean $return If true the functions returns the link as a string
 */
 function print_question_icon($question, $return = false) {
-    global $QTYPES, $CFG;
+    global $QTYPES, $CFG, $OUTPUT;
 
     if (array_key_exists($question->qtype, $QTYPES)) {
         $namestr = $QTYPES[$question->qtype]->local_name();
     } else {
         $namestr = 'missingtype';
     }
-    $html = '<img src="' . $CFG->wwwroot . '/question/type/' .
-            $question->qtype . '/icon.gif" alt="' .
+    $html = '<img src="' . $OUTPUT->pix_url('icon', 'qtype_'.$question->qtype) . '" alt="' .
             $namestr . '" title="' . $namestr . '" />';
     if ($return) {
         return $html;
