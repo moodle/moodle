@@ -998,8 +998,6 @@ function message_post_message($userfrom, $userto, $message, $format, $messagetyp
             if (email_to_user($userto, $userfrom, $messagesubject, $messagetext, $messagehtml)) {
                 $CFG->messagewasjustemailed = true;
             }
-
-            sleep(3);
         }
     }
 
