@@ -24,7 +24,7 @@ class user_bulk_action_form extends moodleform {
         if (has_capability('moodle/user:update', $syscontext)) {
             $actions[5] = get_string('download', 'admin');
         }
-        if (has_capability('moodle/role:assign', $syscontext)){
+        if (has_capability('moodle/role:assign', $syscontext)){ //TODO: use some enrol cap
             $actions[6] = get_string('enrolmultipleusers', 'admin');
         }
         if (has_capability('moodle/user:update', $syscontext)) {
