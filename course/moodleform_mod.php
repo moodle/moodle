@@ -610,7 +610,7 @@ abstract class moodleform_mod extends moodleform {
         $mform->setType('return', PARAM_BOOL);
     }
 
-    public function coursemodule_grading_elements() {
+    public function standard_grading_coursemodule_elements() {
         global $COURSE;
         $mform =& $this->_form;
 
