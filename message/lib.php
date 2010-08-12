@@ -1421,8 +1421,8 @@ function message_print_message_history($user1,$user2,$search='',$messagelimit=0,
     echo '<div class="heading">'.fullname($user1).'</div>';
     echo '</td>';
     echo '<td align="center">';
-    echo '<img src="'.$CFG->wwwroot.'/pix/t/left.gif" alt="'.get_string('from').'" />';
-    echo '<img src="'.$CFG->wwwroot.'/pix/t/right.gif" alt="'.get_string('to').'" />';
+    echo '<img src="'.$OUTPUT->pix_url('t/left').'" alt="'.get_string('from').'" />';
+    echo '<img src="'.$OUTPUT->pix_url('t/right').'" alt="'.get_string('to').'" />';
     echo '</td>';
     echo '<td align="center" id="user2">';
     echo $OUTPUT->user_picture($user2, array('size'=>100, 'courseid'=>SITEID));

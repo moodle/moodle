@@ -1054,7 +1054,7 @@ class grade_structure {
         }
 
         if ($spacerifnone) {
-            return '<img src="'.$CFG->wwwroot.'/pix/spacer.gif" class="icon itemicon" alt=""/>';
+            return $OUTPUT->spacer().' ';
         } else {
             return '';
         }

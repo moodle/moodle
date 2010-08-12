@@ -410,7 +410,6 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete = true,
         if ($qnum && !array_key_exists($questions[$qnum]->qtype, $QTYPES)) {
             $questions[$qnum]->qtype = 'missingtype';
         }
-        $deletex = "delete.gif";
         if ($qnum != 0 || ($qnum == 0 && !$pageopen)) {
             //this is either a question or a page break after another
             //        (no page is currently open)

@@ -507,7 +507,7 @@ class grade_report_grader extends grade_report {
         if (array_key_exists($type, $icons)) {
             $imagename = $icons[$type];
         } else {
-            $imagename = "t/$type.gif";
+            $imagename = "t/$type";
         }
 
         $string = ${'str' . $showhide};
