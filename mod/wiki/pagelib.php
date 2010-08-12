@@ -616,7 +616,7 @@ class page_wiki_comments extends page_wiki {
 
         require_capability('mod/wiki:viewcomment', $context, NULL, true, 'noviewcommentpermission', 'wiki');
 
-        $comments = wiki_get_comments($context, $page->id);
+        $comments = wiki_get_comments($context->id, $page->id);
 
         if (has_capability('mod/wiki:editcomment', $context)) {
             echo '<div class="midpad"><a href="' . $CFG->wwwroot . '/mod/wiki/editcomments.php?action=add&amp;pageid=' . $page->id . '">' . get_string('addcomment', 'wiki') . '</a></div>';
@@ -630,13 +630,14 @@ class page_wiki_comments extends page_wiki {
             echo $OUTPUT->heading(get_string('nocomments', 'wiki'));
         }
 
-        foreach ($comments as $num) {
-            $user = get_complete_user_data('username', $num->username);
+        foreach ($comments as $comment) {
+
+            $user = wiki_get_user_info($comment->userid);
 
             $fullname = fullname($user, has_capability('moodle/site:viewfullnames', get_context_instance(CONTEXT_COURSE, $course->id)));
             $by = new stdclass();
             $by->name = '<a href="' . $CFG->wwwroot . '/user/view.php?id=' . $user->id . '&amp;course=' . $course->id . '">' . $fullname . '</a>';
-            $by->date = userdate($num->timecreated);
+            $by->date = userdate($comment->timecreated);
 
             $t = new html_table();
             $cell1 = new html_table_cell($OUTPUT->user_picture($user, array('popup' => true)));
@@ -654,14 +655,14 @@ class page_wiki_comments extends page_wiki {
 
             if ($format != 'html') {
                 if ($format == 'creole') {
-                    $parsedcontent = wiki_parse_content('creole', $num->content, $options);
+                    $parsedcontent = wiki_parse_content('creole', $comment->content, $options);
                 } else if ($format == 'nwiki') {
-                    $parsedcontent = wiki_parse_content('nwiki', $num->content, $options);
+                    $parsedcontent = wiki_parse_content('nwiki', $comment->content, $options);
                 }
 
                 $cell4->text = html_entity_decode($parsedcontent['parsed_text']);
             } else {
-                $cell4->text = $num->content;
+                $cell4->text = $comment->content;
             }
 
             $row2->cells[] = $cell4;
@@ -670,12 +671,12 @@ class page_wiki_comments extends page_wiki {
 
             $actionicons = false;
             if ((has_capability('mod/wiki:managecomment', $context))) {
-                $urledit = new moodle_url('/mod/wiki/editcomments.php', array('commentid' => $num->id, 'pageid' => $page->id, 'action' => 'edit'));
-                $urldelet = new moodle_url('/mod/wiki/instancecomments.php', array('commentid' => $num->id, 'pageid' => $page->id, 'action' => 'delete'));
+                $urledit = new moodle_url('/mod/wiki/editcomments.php', array('commentid' => $comment->id, 'pageid' => $page->id, 'action' => 'edit'));
+                $urldelet = new moodle_url('/mod/wiki/instancecomments.php', array('commentid' => $comment->id, 'pageid' => $page->id, 'action' => 'delete'));
                 $actionicons = true;
             } else if ((has_capability('mod/wiki:editcomment', $context)) and ($USER->id == $user->id)) {
-                $urledit = new moodle_url('/mod/wiki/editcomments.php', array('commentid' => $num->id, 'pageid' => $page->id, 'action' => 'edit'));
-                $urldelet = new moodle_url('/mod/wiki/instancecomments.php', array('commentid' => $num->id, 'pageid' => $page->id, 'action' => 'delete'));
+                $urledit = new moodle_url('/mod/wiki/editcomments.php', array('commentid' => $comment->id, 'pageid' => $page->id, 'action' => 'edit'));
+                $urldelet = new moodle_url('/mod/wiki/instancecomments.php', array('commentid' => $comment->id, 'pageid' => $page->id, 'action' => 'delete'));
                 $actionicons = true;
             }
 

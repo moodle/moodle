@@ -526,10 +526,11 @@ function wiki_search_all($swid, $search) {
 }
 
 /**
- * Get complete set of user data
+ * Get user data
  */
 function wiki_get_user_info($userid) {
-    return get_complete_user_data('id', $userid);
+    global $DB;
+    return $DB->get_record('user', array('id' => $userid));
 }
 
 /**
@@ -1081,38 +1082,10 @@ function wiki_get_comment($commentid){
  * @param $context. Current context
  * @param $pageid. Current pageid
  **/
-function wiki_get_comments($context, $pageid) {
-    global $CFG;
-    require_once($CFG->dirroot . '/comment/lib.php');
-    list($context, $course, $cm) = get_context_info_array($context->id);
-
-    $cmt = new stdclass();
-    $cmt->context = $context;
-    $cmt->itemid = $pageid;
-    $cmt->pluginname = 'wiki';
-    $cmt->area = 'wiki_page';
-    $cmt->course = $course;
-    $manager = new comment($cmt);
-
-    return ($manager->get_comments());
-
-}
-
-/**
- * Returns all comments from wiki comments section by user
- *
- * @param $userid. User whose we want get the comments
- **/
-function wiki_get_comments_by_user($userid) {
+function wiki_get_comments($contextid, $pageid) {
     global $DB;
 
-    $area = 'wiki_page';
-    $sql = "SELECT c.*
-            FROM {comments} c
-            WHERE c.userid = ? and c.commentarea = ?";
-
-    return $DB->get_records_sql($sql, array($userid, $area));
-
+    return $DB->get_records('comments', array('contextid' => $contextid, 'itemid' => $pageid, 'commentarea' => 'wiki_page'));
 }
 
 /**
