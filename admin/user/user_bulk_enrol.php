@@ -10,7 +10,7 @@ $dir  = optional_param('dir', 'asc', PARAM_ALPHA);       //Order to sort (ASC)
 
 require_login();
 admin_externalpage_setup('userbulk');
-require_capability('moodle/user:delete', get_context_instance(CONTEXT_SYSTEM));
+require_capability('moodle/role:assign', get_context_instance(CONTEXT_SYSTEM)); //TODO: use some enrol cap
 $return = $CFG->wwwroot.'/'.$CFG->admin.'/user/user_bulk.php';
 //If no users selected then return to user_bulk.php
 if (empty($SESSION->bulk_users)) {
