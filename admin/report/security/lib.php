@@ -63,14 +63,13 @@ function report_security_get_issue_list() {
 }
 
 function report_security_doc_link($issue, $name) {
-    global $CFG;
+    global $CFG, $OUTPUT;
 
     if (empty($CFG->docroot)) {
         return $name;
     }
 
-    return '<a onclick="this.target=\'docspopup\'" href="' . get_docs_url('report/security/') . $issue . '">'
-            . '<img class="iconhelp" src="' . $CFG->httpswwwroot . '/pix/docs.gif" alt="" />' . $name . '</a>';
+    return $OUTPUT->doc_link('report/security/'.$issue, $name);
 }
 
 ///=============================================
