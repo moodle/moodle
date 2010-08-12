@@ -91,21 +91,16 @@ function xmldb_lesson_upgrade($oldversion) {
 
     if ($oldversion < 2009120400) {
 
-        /**
-         * Move any media files associated with the lesson to use the new file
-         * API methods and structures.
-         */
-        $lessons = $DB->get_records_select('lesson', 'mediafile <> :empty', array('empty'=>$DB->sql_empty()));
-
-        $empty = $DB->sql_empty(); // silly oracle empty string handling workaround
         $sqlfrom = "FROM {lesson} l
                     JOIN {modules} m ON m.name = 'lesson'
                     JOIN {course_modules} cm ON (cm.module = m.id AND cm.instance = l.id)
-                   WHERE l.mediafile <> '$empty'";
+                   WHERE l.mediafile <> :empty";
+        $params = array('empty'=>$DB->sql_empty());
 
-        $count = $DB->count_records_sql("SELECT COUNT('x') $sqlfrom");
+        $count = $DB->count_records_sql("SELECT COUNT('x') $sqlfrom", $params);
 
-        if ($count > 0 && $rs = $DB->get_recordset_sql("SELECT l.id, l.mediafile, l.course, cm.id AS cmid $sqlfrom ORDER BY l.course, l.id")) {
+        if ($count > 0) {
+            $rs = $DB->get_recordset_sql("SELECT l.id, l.mediafile, l.course, cm.id AS cmid $sqlfrom ORDER BY l.course, l.id", $params);
 
             $pbar = new progress_bar('migratelessonfiles', 500, true);
             $fs = get_file_storage();
@@ -144,6 +139,7 @@ function xmldb_lesson_upgrade($oldversion) {
                 // remove dir if empty
                 @rmdir("$CFG->dataroot/$post->course/$CFG->moddata/lesson");
             }
+            $rs->close();
         }
 
         upgrade_mod_savepoint(true, 2009120400, 'lesson');
