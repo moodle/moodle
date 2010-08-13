@@ -41,8 +41,8 @@ YUI.add('moodle-mod_glossary-autolinker', function(Y) {
                 self.overlay = o;
                 o.render(Y.one(document.body));
 
-                //fetch the glossary item
-                var fullurl = this.getAttribute('href')+'&ajax=1';
+                //Switch over to the ajax url and fetch the glossary item
+                var fullurl = this.getAttribute('href').replace('showentry.php','showentry_ajax.php');
                 var cfg = {
                     method: 'get',
                     context : self,
