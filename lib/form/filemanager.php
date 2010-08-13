@@ -318,6 +318,7 @@ FMHTML;
         'maxfiles'=>$options->maxfiles,
         'ctx_id'=>$PAGE->context->id,
         'course'=>$PAGE->course->id,
+        'sesskey'=>sesskey(),
         ));
 
     $html .= '<noscript>';

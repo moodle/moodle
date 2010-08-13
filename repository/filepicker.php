@@ -32,6 +32,7 @@ require_once('lib.php');
 /// Wait as long as it takes for this script to finish
 set_time_limit(0);
 
+require_sesskey();
 require_login();
 
 // disable blocks in this page
@@ -92,7 +93,7 @@ if ($repository = $DB->get_record_sql($sql, array($repo_id))) {
     }
 }
 
-$params = array('ctx_id' => $contextid, 'itemid' => $itemid, 'env' => $env, 'course'=>$courseid, 'maxbytes'=>$maxbytes, 'maxfiles'=>$maxfiles, 'subdirs'=>$subdirs);
+$params = array('ctx_id' => $contextid, 'itemid' => $itemid, 'env' => $env, 'course'=>$courseid, 'maxbytes'=>$maxbytes, 'maxfiles'=>$maxfiles, 'subdirs'=>$subdirs, 'sesskey'=>sesskey());
 $params['action'] = 'browse';
 $params['draftpath'] = $draftpath;
 $home_url = new moodle_url('/repository/draftfiles_manager.php', $params);
@@ -128,18 +129,18 @@ case 'search':
             echo '<td><img src="'.$item['thumbnail'].'" />';
             echo '</td><td>';
             if (!empty($item['url'])) {
-                echo '<a href="'.$item['url'].'" target="_blank">'.$item['title'].'</a>';
+                echo html_writer::link($item['url'], $item['title'], array('target'=>'_blank'));
             } else {
                 echo $item['title'];
             }
             echo '</td>';
             echo '<td>';
             echo '<form method="post">';
-            echo '<input type="hidden" name="fileurl" value="'.$item['source'].'"/>';
+            echo '<input type="hidden" name="fileurl" value="'.s($item['source']).'"/>';
             echo '<input type="hidden" name="action" value="confirm"/>';
-            echo '<input type="hidden" name="filename" value="'.$item['title'].'"/>';
-            echo '<input type="hidden" name="thumbnail" value="'.$item['thumbnail'].'"/>';
-            echo '<input type="submit" value="'.get_string('select','repository').'" />';
+            echo '<input type="hidden" name="filename" value="'.s($item['title']).'"/>';
+            echo '<input type="hidden" name="thumbnail" value="'.s($item['thumbnail']).'"/>';
+            echo '<input type="submit" value="'.s(get_string('select','repository')).'" />';
             echo '</form>';
             echo '</td>';
             echo '</tr>';
@@ -152,7 +153,11 @@ case 'search':
 case 'list':
 case 'sign':
     echo $OUTPUT->header();
-    echo '<div><a href="' . $url->out() . '">'.get_string('back', 'repository')."</a></div>";
+
+    echo $OUTPUT->container_start();
+    echo html_writer::link($url, get_string('back', 'repository'));
+    echo $OUTPUT->container_end();
+
     if ($repo->check_login()) {
         $list = $repo->get_listing($req_path, $curr_page);
         $dynload = !empty($list['dynload'])?true:false;
@@ -161,20 +166,20 @@ case 'sign':
             echo '<label>'.$list['upload']['label'].': </label>';
             echo '<input type="file" name="repo_upload_file" /><br />';
             echo '<input type="hidden" name="action" value="upload" /><br />';
-            echo '<input type="hidden" name="draftpath" value="'.$draftpath.'" /><br />';
-            echo '<input type="hidden" name="savepath" value="'.$savepath.'" /><br />';
-            echo '<input type="hidden" name="repo_id" value="'.$repo_id.'" /><br />';
-            echo '<input type="submit" value="'.get_string('upload', 'repository').'" />';
+            echo '<input type="hidden" name="draftpath" value="'.s($draftpath).'" /><br />';
+            echo '<input type="hidden" name="savepath" value="'.s($savepath).'" /><br />';
+            echo '<input type="hidden" name="repo_id" value="'.s($repo_id).'" /><br />';
+            echo '<input type="submit" value="'.s(get_string('upload', 'repository')).'" />';
             echo '</form>';
         } else {
             if (!empty($list['path'])) {
                 foreach ($list['path'] as $p) {
                     //echo '<form method="post" style="display:inline">';
-                    //echo '<input type="hidden" name="p" value="'.$p['path'].'"';
+                    //echo '<input type="hidden" name="p" value="'.s($p['path']).'"';
                     //echo '<input type="hidden" name="action" value="list"';
-                    //echo '<input type="hidden" name="draftpath" value="'.$draftpath.'" /><br />';
-                    //echo '<input type="hidden" name="savepath" value="'.$savepath.'" /><br />';
-                    //echo '<input style="display:inline" type="submit" value="'.$p['name'].'" />';
+                    //echo '<input type="hidden" name="draftpath" value="'.s($draftpath).'" /><br />';
+                    //echo '<input type="hidden" name="savepath" value="'.s($savepath).'" /><br />';
+                    //echo '<input style="display:inline" type="submit" value="'.s($p['name']).'" />';
                     //echo '</form>';
 
                     $pathurl = new moodle_url($url, array(
@@ -198,7 +203,7 @@ case 'sign':
                 echo '<td><img src="'.$item['thumbnail'].'" />';
                 echo '</td><td>';
                 if (!empty($item['url'])) {
-                    echo '<a href="'.$item['url'].'" target="_blank">'.$item['title'].'</a>';
+                    echo html_writer::link($item['url'], $item['title'], array('target'=>'_blank'));
                 } else {
                     echo $item['title'];
                 }
@@ -206,18 +211,18 @@ case 'sign':
                 echo '<td>';
                 if (!isset($item['children'])) {
                     echo '<form method="post">';
-                    echo '<input type="hidden" name="fileurl" value="'.$item['source'].'"/>';
+                    echo '<input type="hidden" name="fileurl" value="'.s($item['source']).'"/>';
                     echo '<input type="hidden" name="action" value="confirm"/>';
-                    echo '<input type="hidden" name="draftpath" value="'.$draftpath.'" /><br />';
-                    echo '<input type="hidden" name="savepath" value="'.$savepath.'" /><br />';
-                    echo '<input type="hidden" name="filename" value="'.$item['title'].'"/>';
-                    echo '<input type="hidden" name="thumbnail" value="'.$item['thumbnail'].'"/>';
-                    echo '<input type="submit" value="'.get_string('select','repository').'" />';
+                    echo '<input type="hidden" name="draftpath" value="'.s($draftpath).'" /><br />';
+                    echo '<input type="hidden" name="savepath" value="'.s($savepath).'" /><br />';
+                    echo '<input type="hidden" name="filename" value="'.s($item['title']).'"/>';
+                    echo '<input type="hidden" name="thumbnail" value="'.s($item['thumbnail']).'"/>';
+                    echo '<input type="submit" value="'.s(get_string('select','repository')).'" />';
                     echo '</form>';
                 } else {
                     echo '<form method="post">';
-                    echo '<input type="hidden" name="p" value="'.$item['path'].'"/>';
-                    echo '<input type="submit" value="'.get_string('enter', 'repository').'" />';
+                    echo '<input type="hidden" name="p" value="'.s($item['path']).'"/>';
+                    echo '<input type="submit" value="'.s(get_string('enter', 'repository')).'" />';
                     echo '</form>';
                 }
                 echo '</td>';
@@ -228,7 +233,7 @@ case 'sign':
     } else {
         echo '<form method="post">';
         echo '<input type="hidden" name="action" value="sign" />';
-        echo '<input type="hidden" name="repo_id" value="'.$repo_id.'" />';
+        echo '<input type="hidden" name="repo_id" value="'.s($repo_id).'" />';
         $repo->print_login();
         echo '</form>';
     }
@@ -252,7 +257,7 @@ case 'download':
         $record->author   = '';
         $record->source   = $thefile['url'];
         $info = repository::move_to_filepool($thefile['path'], $record);
-        redirect($home_url, get_string('downloadsucc','repository'));
+        redirect($home_url, get_string('downloadsucc', 'repository'));
     } else {
         print_error('cannotdownload', 'repository');
     }
@@ -267,17 +272,17 @@ case 'confirm':
     echo '<table>';
     echo '  <tr>';
     echo '    <td><label>'.get_string('filename', 'repository').'</label></td>';
-    echo '    <td><input type="text" name="filename" value="'.$filename.'" /></td>';
-    echo '    <td><input type="hidden" name="fileurl" value="'.$fileurl.'" /></td>';
+    echo '    <td><input type="text" name="filename" value="'.s($filename).'" /></td>';
+    echo '    <td><input type="hidden" name="fileurl" value="'.s($fileurl).'" /></td>';
     echo '    <td><input type="hidden" name="action" value="download" /></td>';
-    echo '    <td><input type="hidden" name="itemid" value="'.$itemid.'" /></td>';
+    echo '    <td><input type="hidden" name="itemid" value="'.s($itemid).'" /></td>';
     echo '  </tr>';
     echo '</table>';
     echo '<div>';
     // the save path
-    echo ' <input name="draftpath" type="hidden" value="'.$draftpath.'" />';
-    echo ' <input name="savepath" type="hidden" value="'.$savepath.'" />';
-    echo ' <input type="submit" value="'.get_string('download', 'repository').'" />';
+    echo ' <input name="draftpath" type="hidden" value="'.s($draftpath).'" />';
+    echo ' <input name="savepath" type="hidden" value="'.s($savepath).'" />';
+    echo ' <input type="submit" value="'.s(get_string('download', 'repository')).'" />';
     echo '</div>';
     echo '</form>';
     echo $OUTPUT->footer();

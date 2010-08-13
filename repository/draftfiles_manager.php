@@ -36,6 +36,7 @@ require_once('../config.php');
 require_once($CFG->libdir.'/filelib.php');
 require_once('lib.php');
 
+require_sesskey();
 require_login();
 
 // disable blocks in this page
@@ -69,7 +70,7 @@ $PAGE->set_context($user_context);
 
 $fs = get_file_storage();
 
-$params = array('ctx_id' => $contextid, 'itemid' => $itemid, 'env' => $env, 'course'=>$courseid, 'maxbytes'=>$maxbytes, 'maxfiles'=>$maxfiles, 'subdirs'=>$subdirs);
+$params = array('ctx_id' => $contextid, 'itemid' => $itemid, 'env' => $env, 'course'=>$courseid, 'maxbytes'=>$maxbytes, 'maxfiles'=>$maxfiles, 'subdirs'=>$subdirs, 'sesskey'=>sesskey());
 $PAGE->set_url('/repository/draftfiles_manager.php', $params);
 $filepicker_url = new moodle_url($CFG->httpswwwroot."/repository/filepicker.php", $params);
 
@@ -110,10 +111,10 @@ case 'renameform':
     $home_url->param('draftpath', $draftpath);
     $home_url->param('action', 'rename');
     echo ' <form method="post" action="'.$home_url->out().'">';
-    echo '  <input name="newfilename" type="text" value="'.$filename.'" />';
-    echo '  <input name="filename" type="hidden" value="'.$filename.'" />';
-    echo '  <input name="draftpath" type="hidden" value="'.$draftpath.'" />';
-    echo '  <input type="submit" value="'.get_string('rename', 'moodle').'" />';
+    echo '  <input name="newfilename" type="text" value="'.s($filename).'" />';
+    echo '  <input name="filename" type="hidden" value="'.s($filename).'" />';
+    echo '  <input name="draftpath" type="hidden" value="'.s($draftpath).'" />';
+    echo '  <input type="submit" value="'.s(get_string('rename', 'moodle')).'" />';
     echo ' </form>';
     echo $OUTPUT->footer();
     break;
@@ -202,7 +203,11 @@ case 'movefile':
         redirect($home_url);
     }
     echo $OUTPUT->header();
-    echo '<div><a href="' . $home_url->out() . '">'.get_string('back', 'repository')."</a></div>";
+
+    echo $OUTPUT->container_start();
+    echo html_writer::link($home_url, get_string('back', 'repository'));
+    echo $OUTPUT->container_end();
+
     $data = new stdclass;
     $home_url->param('action', 'movefile');
     $home_url->param('draftpath', $draftpath);
@@ -214,13 +219,17 @@ case 'movefile':
 
 case 'mkdirform':
     echo $OUTPUT->header();
-    echo '<div><a href="' . $home_url->out() . '">'.get_string('back', 'repository')."</a></div>";
+
+    echo $OUTPUT->container_start();
+    echo html_writer::link($home_url, get_string('back', 'repository'));
+    echo $OUTPUT->container_end();
+
     $home_url->param('draftpath', $draftpath);
     $home_url->param('action', 'mkdir');
     echo ' <form method="post" action="'.$home_url->out().'">';
     echo '  <input name="newdirname" type="text" />';
-    echo '  <input name="draftpath" type="hidden" value="'.$draftpath.'" />';
-    echo '  <input type="submit" value="'.get_string('makeafolder', 'moodle').'" />';
+    echo '  <input name="draftpath" type="hidden" value="'.s($draftpath).'" />';
+    echo '  <input type="submit" value="'.s(get_string('makeafolder', 'moodle')).'" />';
     echo ' </form>';
     echo $OUTPUT->footer();
     break;
@@ -284,7 +293,7 @@ default:
             echo ' <a href="'.$home_url->out().'">'.get_string('makeafolder', 'moodle').'</a>';
         }
         $home_url->param('action', 'downloaddir');
-        echo ' <a href="'.$home_url->out().'" target="_blank">'.get_string('downloadfolder', 'repository').'</a>';
+        echo html_writer::link($home_url, get_string('downloadfolder', 'repository'), array('target'=>'_blank'));
     }
     echo '</div>';
 
@@ -298,7 +307,7 @@ default:
                 $type = mimeinfo('icon', $file->filename);
                 echo '<li>';
                 echo '<img src="'.$fileicon. '" class="iconsmall" />';
-                echo ' <a href="'.$drafturl.'">'.$file->filename.'</a> ';
+                echo html_writer::link($drafturl, $file->filename);
 
                 $home_url->param('filename', $file->filename);
                 $home_url->param('draftpath', $file->filepath);
@@ -327,7 +336,7 @@ default:
                 $home_url->param('action', 'browse');
                 $home_url->param('draftpath', $file->filepath);
                 $foldername = trim(array_pop(explode('/', trim($file->filepath, '/'))), '/');
-                echo ' <a href="'.$home_url->out().'">'.$foldername.'</a>';
+                echo html_writer::link($home_url, $foldername);
 
                 $home_url->param('draftpath', $file->filepath);
                 $home_url->param('filename',  $file->filename);
