@@ -4,15 +4,17 @@
         success: function(o) {
             scorm_tree_node = YAHOO.widget.TreeView.getTree('scorm_tree');
             if (o.responseText !== undefined) {
-                if (scorm_tree_node && o.responseText) {
-                    var hnode = scorm_tree_node.getHighlightedNode();
-                    var hidx = null;
-                    if (hnode) {
-                        hidx = hnode.index + scorm_tree_node.getNodeCount();
-                    }
-                    // all gone
-                    var root_node = scorm_tree_node.getRoot();
-                        scorm_tree_node.removeNode(root_node.children[0]);
+                    if (scorm_tree_node && o.responseText) {
+                        var hnode = scorm_tree_node.getHighlightedNode();
+                        var hidx = null;
+                        if (hnode) {
+                            hidx = hnode.index + scorm_tree_node.getNodeCount();
+                        }
+                        // all gone
+                        var root_node = scorm_tree_node.getRoot();
+                        while (root_node.children.length > 0) {
+                            scorm_tree_node.removeNode(root_node.children[0]);
+                        }
                     }
                     // make sure the temporary tree element is not there
                     var el_old_tree = document.getElementById('scormtree123');

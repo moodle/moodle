@@ -436,7 +436,7 @@ function SCORMapi1_2() {
                     if (scorm_debugging($scorm)) {
                         //echo 'alert("Finished SCORM 1.2");';
                         echo 'LogAPICall("LMSCommit", "result", result, 0);';
-                        echo 'LogAPICall("LMSCommit", param, "", 0);';
+                        echo 'LogAPICall("LMSCommit", "errorCode", errorCode, 0);';
                     }
                 ?>
                 return result;
