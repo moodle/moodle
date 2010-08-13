@@ -75,10 +75,10 @@ YUI.add('moodle-mod_glossary-autolinker', function(Y) {
 
                     return true;
                 } else if (data.error) {
-                    alert(data.error);
+                    new M.core.ajaxException(data);
                 }
-            }catch(ex) {
-                alert(ex.message+" "+content);
+            }catch(e) {
+                new M.core.exception(e);
             }
             return false;
         }
