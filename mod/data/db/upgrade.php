@@ -123,9 +123,11 @@ function xmldb_data_upgrade($oldversion) {
                         if ($content->type == 'picture') {
                             // migrate thumb
                             $filepath = "$CFG->dataroot/$content->course/$CFG->moddata/data/$content->dataid/$content->fieldid/$content->recordid/thumb/$content->content";
-                            if (!$fs->file_exists($context->id, 'mod_data', $filearea, $content->id, '/', 'thumb_'.$filename)) {
-                                $file_record['filename'] = 'thumb_'.$file_record['filename'];
-                                $fs->create_file_from_pathname($file_record, $filepath);
+                            if (file_exists($filepath)) {
+                                if (!$fs->file_exists($context->id, 'mod_data', $filearea, $content->id, '/', 'thumb_'.$filename)) {
+                                    $file_record['filename'] = 'thumb_'.$file_record['filename'];
+                                    $fs->create_file_from_pathname($file_record, $filepath);
+                                }
                                 unlink($filepath);
                             }
                         }
