@@ -125,6 +125,8 @@ class mod_glossary_mod_form extends moodleform_mod {
         }
 
 //-------------------------------------------------------------------------------
+
+        $this->standard_grading_coursemodule_elements();
         
         $this->standard_coursemodule_elements();
 

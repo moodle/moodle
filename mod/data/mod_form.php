@@ -57,11 +57,7 @@ class mod_data_mod_form extends moodleform_mod {
             $mform->addElement('select', 'rssarticles', get_string('numberrssarticles', 'data') , $countoptions);
         }
 
-        //$mform->addElement('checkbox', 'assessed', get_string('allowratings', 'data') , get_string('ratingsuse', 'data'));
-
-        //$mform->addElement('modgrade', 'scale', get_string('grade'), false);
-        //$mform->disabledIf('scale', 'assessed');
-
+        $this->standard_grading_coursemodule_elements();
 
         $this->standard_coursemodule_elements();
 

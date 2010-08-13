@@ -140,6 +140,9 @@ class mod_forum_mod_form extends moodleform_mod {
         $mform->disabledIf('warnafter', 'blockperiod', 'eq', 0);
 
 //-------------------------------------------------------------------------------
+
+        $this->standard_grading_coursemodule_elements();
+
         $this->standard_coursemodule_elements();
 //-------------------------------------------------------------------------------
 // buttons

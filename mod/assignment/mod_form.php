@@ -58,14 +58,14 @@ class mod_assignment_mod_form extends moodleform_mod {
         $mform->addElement('select', 'preventlate', get_string('preventlate', 'assignment'), $ynoptions);
         $mform->setDefault('preventlate', 0);
 
-        $this->standard_grading_coursemodule_elements();
-
         $typetitle = get_string('type'.$type, 'assignment');
 
         // hack to support pluggable assignment type titles
         if ($typetitle === '[[type'.$type.']]') {
             $typetitle  = get_string('type'.$type, 'assignment_'.$type);
         }
+
+        $this->standard_grading_coursemodule_elements();
 
         $mform->addElement('header', 'typedesc', $typetitle);
 
