@@ -13,6 +13,6 @@ a {
 #page-content #region-main-box #region-post-box #region-post {
 	left: [[setting:regionwidth]];
 	width: [[setting:regionwidth]];
-
+}
 /** Custom CSS **/
 [[setting:customcss]]
