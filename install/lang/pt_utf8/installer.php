@@ -144,12 +144,12 @@ $string['fileuploadshelp'] = '<p>A transferência de ficheiros para o servidor p
 
 <p>Moodle poderá ainda ser instalado, mas sem essa funcionalidade, não poderá enviar ficheiros de uma disciplina nem fotografias de utilizadores.</p>
 
-<p>Para habilitar a transferência de ficheiros terá que editar (ou pedir ao administrador do sistema que o faça) o ficheiro principal php.ini do seu sistema, modificando o valor de <b>file_upload</b> para \'1\', e reiniciando o servidor Web.</p>';
+<p>Para activar a transferência de ficheiros terá que editar (ou pedir ao administrador do sistema que o faça) o ficheiro principal php.ini do seu sistema, modificando o valor de <b>file_upload</b> para \'1\', e reiniciando o servidor Web.</p>';
 $string['gdversion'] = 'Versão do GD';
 $string['gdversionerror'] = 'A biblioteca GD deverá estar instalada para processar e criar imagens.';
 $string['gdversionhelp'] = '<p>O seu servidor não parece ter GD instalado.</p>
 
-<p>GD é uma biblioteca que o PHP precisa para permitir que o Moodle processe imagens (por exemplo, para criar os icones com as fotos dos utilizadores). Moodle poderá ainda funcionar sem GD - simplesmente essas funcionalidades não estarão disponíveis.</p>
+<p>GD é uma biblioteca que o PHP precisa para permitir que o Moodle processe imagens (por exemplo, para criar os ícones com as fotos dos utilizadores). Moodle poderá ainda funcionar sem GD - simplesmente essas funcionalidades não estarão disponíveis.</p>
 
 <p>Para adicionar GD ao PHP, em Unix, compile o PHP usando o parâmetro --with-gd.</p>
 
