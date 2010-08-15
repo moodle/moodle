@@ -226,12 +226,14 @@ $string['password'] = 'Lozinka';
 $string['pgsqlextensionisnotpresentinphp'] = 'PHP nije bio propisno konfigurisan sa  PGSQL ekstenzijom tako da može komunicirati sa PostgreSQLom. Molimo Vas da proverite svoju php.ini datoteku ili opet kompajlirate PHP.';
 $string['php50restricted'] = 'PHP 5.0.x ima više poznatih problema, molimo unapredite PHP na verzije 5.1.x ili instalirajte verziju 4.3.x odnosno 4.4.x';
 $string['phpversion'] = 'PHP verzija';
-$string['phpversionerror'] = 'PHP verzija mora biti bar 4.3.0 ili 5.1.0 (5.0.x funkcioniše uz brojne uočene probleme)'; // ORPHANED
+$string['phpversionerror'] = 'PHP verzija mora biti bar 4.3.0 ili 5.1.0 (5.0.x funkcioniše uz brojne uočene probleme)';
 $string['phpversionhelp'] = '<p>Moodle zahteva najmanje PHP verziju 4.3.0 ili 5.1.0 (5.0.x funkcioniše uz brojne uočene probleme).</p>
 <p>Trenutno imate verziju $a</p>
 <p>Morate nadograditi PHP ili premestiti Moodle instalaciju na web server sa novijom verzijom PHP-a!</br>
 (U slučaju verzije 5.0.x bilo bi dobro da je snizite na 4.4.x verziju)</p>';
 $string['postgres7'] = 'PostgreSQL (postgres7)';
+$string['postgresqlwarning'] = '<strong>Napomena:</strong>Ako naiđete na neke probleme sa konekcijom, možete pokušati da postavite polje Host Server kao host=\'postgresql_host\' port=\'5432\' dbname=\'postgresql_database_name\' user=\'postgresql_user\' password=\'postgresql_user_password\'
+i da ostavite prazna polja Baza podataka, Korisnik i Lozinka. Više informacija na <a href=\"http://docs.moodle.org/en/Installing_Postgres_for_PHP\">Moodle Docs</a>';
 $string['previous'] = 'Prethodni';
 $string['qtyperqpwillberemoved'] = 'Tokom nadogradnje, RQP tipovi pitanja biće uklonjeni. Nećete koristiti ovaj tip pitanja, tako da ne očekujte probleme u vezi s tim.';
 $string['qtyperqpwillberemovedanyway'] = 'Tokom nadogradnje biće uklonjen RQP tip pitanja. Kako imate neka RQP pitanja u svojoj bazi, preporučuje se da ponovo instalirate dodatak sa http://moodle.org/mod/data/view.php?d=13&amp;rid=797 pre nastavka nadogradnje da bi ona mogla i dalje nesmetano da se koriste.';
