@@ -3,15 +3,18 @@
 $hasheading = ($PAGE->heading);
 $hasnavbar = (empty($PAGE->layout_options['nonavbar']) && $PAGE->has_navbar());
 $hasfooter = (empty($PAGE->layout_options['nofooter']));
-$hassidepre = (empty($PAGE->layout_options['noblocks']) && $PAGE->blocks->region_has_content('side-pre', $OUTPUT));
-$hassidepost = (empty($PAGE->layout_options['noblocks']) && $PAGE->blocks->region_has_content('side-post', $OUTPUT));
+$hassidepre = $PAGE->blocks->region_has_content('side-pre', $OUTPUT);
+$hassidepost = $PAGE->blocks->region_has_content('side-post', $OUTPUT);
+$showsidepre = $hassidepre && !$PAGE->blocks->region_completely_docked('side-pre', $OUTPUT);
+$showsidepost = $hassidepost && !$PAGE->blocks->region_completely_docked('side-post', $OUTPUT);
+
 
 $bodyclasses = array();
-if ($hassidepre && !$hassidepost) {
+if ($showsidepre && !$showsidepost) {
     $bodyclasses[] = 'side-pre-only';
-} else if ($hassidepost && !$hassidepre) {
+} else if ($showsidepost && !$showsidepre) {
     $bodyclasses[] = 'side-post-only';
-} else if (!$hassidepost && !$hassidepre) {
+} else if (!$showsidepost && !$showsidepre) {
     $bodyclasses[] = 'content-only';
 }
 
@@ -60,7 +63,7 @@ echo $OUTPUT->doctype() ?>
                 </div>
 
                 <?php if ($hassidepre) { ?>
-                <div id="region-pre">
+                <div id="region-pre" class="block-region">
                     <div class="region-content">
                         <?php echo $OUTPUT->blocks_for_region('side-pre') ?>
                     </div>
@@ -68,7 +71,7 @@ echo $OUTPUT->doctype() ?>
                 <?php } ?>
 
                 <?php if ($hassidepost) { ?>
-                <div id="region-post">
+                <div id="region-post" class="block-region">
                     <div class="region-content">
                         <?php echo $OUTPUT->blocks_for_region('side-post') ?>
                     </div>
