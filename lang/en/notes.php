@@ -49,7 +49,7 @@ $string['nouser'] = 'You must select a user';
 $string['personal'] = 'personal';
 $string['personalnotes'] = 'Personal notes';
 $string['publishstate'] = 'Context';
-$string['publishstate_help'] = 'A note\'s context determines who can see the note. 
+$string['publishstate_help'] = 'A note\'s context determines who can see the note.
 
 * Personal - The note will be visible only to you
 * Course - The note will be visible to teachers in this course
