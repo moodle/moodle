@@ -540,7 +540,9 @@ function initialise_fullme() {
         if (($rurl['host'] != $wwwroot['host']) or
                 (!empty($wwwroot['port']) and $rurl['port'] != $wwwroot['port'])) {
             // Explain the problem and redirect them to the right URL
-            define('NO_MOODLE_COOKIES', true);
+            if (!defined('NO_MOODLE_COOKIES')) {
+                define('NO_MOODLE_COOKIES', true);
+            }
             redirect($CFG->wwwroot, get_string('wwwrootmismatch', 'error', $CFG->wwwroot), 3);
         }
     }

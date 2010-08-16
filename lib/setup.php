@@ -584,6 +584,20 @@ if (isset($_SERVER['PHP_SELF'])) {
 // initialise ME's
 initialise_fullme();
 
+
+// init session prevention flag - this is defined on pages that do not want session
+if (!defined('NO_MOODLE_COOKIES')) {
+    if (empty($CFG->version) or $CFG->version < 2009011900) {
+        // no session before sessions table gets created
+        define('NO_MOODLE_COOKIES', true);
+    } else if (CLI_SCRIPT) {
+        // CLI scripts can not have session
+        define('NO_MOODLE_COOKIES', true);
+    } else {
+        define('NO_MOODLE_COOKIES', false);
+    }
+}
+
 // start session and prepare global $SESSION, $USER
 session_get_instance();
 $SESSION = &$_SESSION['SESSION'];

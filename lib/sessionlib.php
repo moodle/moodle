@@ -99,18 +99,6 @@ abstract class session_stub implements moodle_session {
     public function __construct() {
         global $CFG;
 
-        if (!defined('NO_MOODLE_COOKIES')) {
-            if (empty($CFG->version) or $CFG->version < 2009011900) {
-                // no session before sessions table gets created
-                define('NO_MOODLE_COOKIES', true);
-            } else if (CLI_SCRIPT) {
-                // CLI scripts can not have session
-                define('NO_MOODLE_COOKIES', true);
-            } else {
-                define('NO_MOODLE_COOKIES', false);
-            }
-        }
-
         if (NO_MOODLE_COOKIES) {
             // session not used at all
             $CFG->usesid = 0;
