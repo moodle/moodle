@@ -115,7 +115,7 @@ class question_edit_calculatedmulti_form extends question_edit_form {
         $mform->setDefault('single', 1);
 
         $mform->addElement('advcheckbox', 'shuffleanswers', get_string('shuffleanswers', 'qtype_multichoice'), null, null, array(0,1));
-        $mform->setHelpButton('shuffleanswers', array('multichoiceshuffle', get_string('shuffleanswers','qtype_multichoice'), 'qtype_multichoice'));
+        $mform->addHelpButton('shuffleanswers', 'shuffleanswers', 'qtype_multichoice');
         $mform->setDefault('shuffleanswers', 1);
 
         $numberingoptions = $QTYPES['multichoice']->get_numbering_styles();
