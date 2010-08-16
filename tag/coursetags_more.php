@@ -45,6 +45,12 @@ if ($courseid) {
     if ($courseid == SITEID) $courseid = 0;
 }
 
+if ($courseid) {
+    $PAGE->set_context(get_context_instance(CONTEXT_COURSE, $courseid));
+} else {
+    $PAGE->set_context(get_system_context());
+}
+
 // Language strings
 $tagslang = 'block_tags';
 $title = get_string('moretitle', $tagslang);
