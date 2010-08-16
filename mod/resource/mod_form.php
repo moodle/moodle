@@ -89,6 +89,7 @@ class mod_resource_mod_form extends moodleform_mod {
             $mform->addElement('select', 'display', get_string('displayselect', 'resource'), $options);
             $mform->setDefault('display', $config->display);
             $mform->setAdvanced('display', $config->display_adv);
+            $mform->addHelpButton('display', 'displayselect', 'resource');
         }
 
         if (array_key_exists(RESOURCELIB_DISPLAY_POPUP, $options)) {

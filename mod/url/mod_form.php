@@ -67,6 +67,7 @@ class mod_url_mod_form extends moodleform_mod {
             $mform->addElement('select', 'display', get_string('displayselect', 'url'), $options);
             $mform->setDefault('display', $config->display);
             $mform->setAdvanced('display', $config->display_adv);
+            $mform->addHelpButton('display', 'displayselect', 'url');
         }
 
         if (array_key_exists(RESOURCELIB_DISPLAY_POPUP, $options)) {
