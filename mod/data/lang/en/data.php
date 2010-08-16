@@ -29,7 +29,6 @@ $string['addcomment'] = 'Add comment';
 $string['addentries'] = 'Add entries';
 $string['addtemplate'] = 'Add template';
 $string['advancedsearch'] = 'Advanced search';
-$string['allowcomments'] = 'Allow comments?';
 $string['allowratings'] = 'Allow posts to be rated?';
 $string['alttext'] = 'Alternative text';
 $string['approve'] = 'Approve';

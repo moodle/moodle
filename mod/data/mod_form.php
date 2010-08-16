@@ -48,7 +48,6 @@ class mod_data_mod_form extends moodleform_mod {
 
         $ynoptions = array(0 => get_string('no'), 1 => get_string('yes'));
         $mform->addElement('select', 'comments', get_string('comments', 'data'), $ynoptions);
-        $mform->setHelpButton('comments', array('comments', get_string('allowcomments', 'data'), 'data'));
 
         $mform->addElement('select', 'approval', get_string('requireapproval', 'data'), $ynoptions);
         $mform->addHelpButton('approval', 'requireapproval', 'data');
