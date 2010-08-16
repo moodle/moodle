@@ -53,12 +53,12 @@ class mod_wiki_renderer extends plugin_renderer_base {
     }
 
     public function search_result($records) {
-        global $CFG, $PAGE, $OUTPUT;
+        global $CFG, $PAGE;
         $table = new html_table();
         $context = get_context_instance(CONTEXT_MODULE, $PAGE->cm->id);
         $strsearchresults = get_string('searchresult', 'wiki');
         $totalcount = count($records);
-        $html = $OUTPUT->heading("$strsearchresults $totalcount");
+        $html = $this->output->heading("$strsearchresults $totalcount");
         foreach ($records as $page) {
             $table->head = array('title' => $page->title . ' (' . html_writer::link($CFG->wwwroot . '/mod/wiki/view.php?pageid=' . $page->id, get_string('view', 'wiki')) . ')');
             $table->align = array('title' => 'left');
