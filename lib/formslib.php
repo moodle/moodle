@@ -1437,7 +1437,8 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
      */
     function setHelpButton($elementname, $buttonargs, $suppresscheck=false, $function='helpbutton'){
         global $OUTPUT;
-        //TODO: obsolete this function completely
+
+        debugging('function moodle_form::setHelpButton() is deprecated');
         if ($function !== 'helpbutton') {
             //debugging('parameter $function in moodle_form::setHelpButton() is not supported any more');
         }
