@@ -131,6 +131,12 @@ $THEME->layouts = array(
         'regions' => array(),
         'options' => array('noblocks'=>true, 'nofooter'=>true, 'nonavbar'=>true, 'nocustommenu'=>true),
     ),
+    // Should display the content and basic headers only.
+    'print' => array(
+        'file' => 'general.php',
+        'regions' => array(),
+        'options' => array('noblocks'=>true, 'nofooter'=>true, 'nonavbar'=>false, 'nocustommenu'=>true),
+    ),
 );
 
 /**

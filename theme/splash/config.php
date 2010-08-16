@@ -49,7 +49,7 @@ $THEME->sheets = array(
 );
 
 ////////////////////////////////////////////////////
-// Name of the stylesheet(s) you are including in 
+// Name of the stylesheet(s) you are including in
 // this new theme's /styles/ directory.
 ////////////////////////////////////////////////////
 
@@ -138,12 +138,18 @@ $THEME->layouts = array(
         'file' => 'general.php',
         'regions' => array(),
         'options' => array('nofooter'=>true, 'nonavbar'=>true, 'noblocks'=>true),
-    )
+    ),
+    // Should display the content and basic headers only.
+    'print' => array(
+        'file' => 'general.php',
+        'regions' => array(),
+        'options' => array('nofooter'=>true, 'nonavbar'=>false, 'noblocks'=>true),
+    ),
 );
 
 
 ///////////////////////////////////////////////////////////////
-// These are all of the possible layouts in Moodle. 
+// These are all of the possible layouts in Moodle.
 ///////////////////////////////////////////////////////////////
 
 

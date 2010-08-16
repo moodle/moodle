@@ -22,7 +22,7 @@
  * basic layout. It is intended as a base for other themes to build upon.
  * It is not recommend to actually choose this theme for production sites!
  *
- * DO NOT COPY THIS TO START NEW THEMES! 
+ * DO NOT COPY THIS TO START NEW THEMES!
  * Start with another theme, like "standard".
  *
  * For full information about creating Moodle themes, see:
@@ -139,6 +139,12 @@ $THEME->layouts = array(
         'file' => 'general.php',
         'regions' => array(),
         'options' => array('noblocks'=>true, 'nofooter'=>true, 'nonavbar'=>true, 'nocustommenu'=>true),
+    ),
+    // Should display the content and basic headers only.
+    'print' => array(
+        'file' => 'general.php',
+        'regions' => array(),
+        'options' => array('noblocks'=>true, 'nofooter'=>true, 'nonavbar'=>false, 'nocustommenu'=>true),
     ),
 );
 

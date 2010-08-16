@@ -18,7 +18,7 @@
 /**
  * Configuration for Moodle's arialist theme.
  *
- * DO NOT MODIFY THIS THEME! 
+ * DO NOT MODIFY THIS THEME!
  * COPY IT FIRST, THEN RENAME THE COPY AND MODIFY IT INSTEAD.
  *
  * For full information about creating Moodle themes, see:
@@ -33,7 +33,7 @@ $THEME->name = 'arialist';
 
 ////////////////////////////////////////////////////
 // Name of the theme. Most likely the name of
-// the directory in which this file resides. 
+// the directory in which this file resides.
 ////////////////////////////////////////////////////
 
 
@@ -44,11 +44,11 @@ $THEME->parents = array(
 
 /////////////////////////////////////////////////////
 // Which existing theme(s) in the /theme/ directory
-// do you want this theme to extend. A theme can 
-// extend any number of themes. Rather than 
-// creating an entirely new theme and copying all 
-// of the CSS, you can simply create a new theme, 
-// extend the theme you like and just add the 
+// do you want this theme to extend. A theme can
+// extend any number of themes. Rather than
+// creating an entirely new theme and copying all
+// of the CSS, you can simply create a new theme,
+// extend the theme you like and just add the
 // changes you want to your theme.
 ////////////////////////////////////////////////////
 
@@ -60,13 +60,13 @@ $THEME->sheets = array(
 );
 
 ////////////////////////////////////////////////////
-// Name of the stylesheet(s) you've including in 
+// Name of the stylesheet(s) you've including in
 // this theme's /styles/ directory.
 ////////////////////////////////////////////////////
 
 $THEME->parents_exclude_sheets = array(
 		'base'=>array(
-			'pagelayout', 
+			'pagelayout',
 		),
 		'canvas'=>array(
 			'pagelayout',
@@ -84,7 +84,7 @@ $THEME->enable_dock = true;
 // $THEME->editor_sheets
 
 ////////////////////////////////////////////////////
-// An array of stylesheets to include within the 
+// An array of stylesheets to include within the
 // body of the editor.
 ////////////////////////////////////////////////////
 
@@ -161,7 +161,12 @@ $THEME->layouts = array(
         'regions' => array(),
         'options' => array('nofooter'=>true, 'nonavbar'=>true),
     ),
-    
+    // Should display the content and basic headers only.
+    'print' => array(
+        'file' => 'general.php',
+        'regions' => array(),
+        'options' => array('nofooter'=>true, 'noblocks'=>true, 'nonavbar'=>false),
+    ),
 );
 
 ///////////////////////////////////////////////////////////////
@@ -173,25 +178,25 @@ $THEME->layouts = array(
 // specific page.
 ///////////////////////////////////////////////////////////////
 
-$THEME->csspostprocess = 'arialist_process_css';	
+$THEME->csspostprocess = 'arialist_process_css';
 ////////////////////////////////////////////////////
-// Allows the user to provide the name of a function 
-// that all CSS should be passed to before being 
+// Allows the user to provide the name of a function
+// that all CSS should be passed to before being
 // delivered.
 ////////////////////////////////////////////////////
 
 // $THEME->filter_mediaplugin_colors
 
 ////////////////////////////////////////////////////
-// Used to control the colours used in the small 
+// Used to control the colours used in the small
 // media player for the filters
 ////////////////////////////////////////////////////
 
-// $THEME->javascripts	
+// $THEME->javascripts
 
 ////////////////////////////////////////////////////
 // An array containing the names of JavaScript files
-// located in /javascript/ to include in the theme. 
+// located in /javascript/ to include in the theme.
 // (gets included in the head)
 ////////////////////////////////////////////////////
 
@@ -204,7 +209,7 @@ $THEME->csspostprocess = 'arialist_process_css';
 $THEME->larrow	= '&lang;';
 
 ////////////////////////////////////////////////////
-// Overrides the left arrow image used throughout 
+// Overrides the left arrow image used throughout
 // Moodle
 ////////////////////////////////////////////////////
 
@@ -214,7 +219,7 @@ $THEME->rarrow	= '&rang;';
 // Overrides the right arrow image used throughout Moodle
 ////////////////////////////////////////////////////
 
-// $THEME->layouts	
+// $THEME->layouts
 
 ////////////////////////////////////////////////////
 // An array setting the layouts for the theme
@@ -227,7 +232,7 @@ $THEME->rarrow	= '&rang;';
 // the themes parents
 ////////////////////////////////////////////////////
 
-// $THEME->parents_exclude_sheets	
+// $THEME->parents_exclude_sheets
 
 ////////////////////////////////////////////////////
 // An array of stylesheets not to inherit from the
@@ -237,19 +242,19 @@ $THEME->rarrow	= '&rang;';
 // $THEME->plugins_exclude_sheets
 
 ////////////////////////////////////////////////////
-// An array of plugin sheets to ignore and not 
+// An array of plugin sheets to ignore and not
 // include.
 ////////////////////////////////////////////////////
 
 // $THEME->renderfactory
 
 ////////////////////////////////////////////////////
-// Sets a custom render factory to use with the 
+// Sets a custom render factory to use with the
 // theme, used when working with custom renderers.
 ////////////////////////////////////////////////////
 
 // $THEME->resource_mp3player_colors
 
 ////////////////////////////////////////////////////
-// Controls the colours for the MP3 player 	
+// Controls the colours for the MP3 player
 ////////////////////////////////////////////////////

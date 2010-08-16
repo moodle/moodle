@@ -22,7 +22,7 @@
  * It is intended to be used with Base as a starting point for other themes to build upon.
  * It is not recommend to actually choose this theme for production sites!
  *
- * DO NOT COPY THIS TO START NEW THEMES! 
+ * DO NOT COPY THIS TO START NEW THEMES!
  * Start with another theme, like "standard".
  *
  * For full information about creating Moodle themes, see:
@@ -37,7 +37,7 @@ $THEME->name = 'canvas';
 
 ////////////////////////////////////////////////////
 // Name of the theme. Most likely the name of
-// the directory in which this file resides. 
+// the directory in which this file resides.
 ////////////////////////////////////////////////////
 
 $THEME->parents = array(
@@ -46,34 +46,34 @@ $THEME->parents = array(
 
 /////////////////////////////////////////////////////
 // Which existing theme(s) in the /theme/ directory
-// do you want this theme to extend. A theme can 
-// extend any number of themes. Rather than 
-// creating an entirely new theme and copying all 
-// of the CSS, you can simply create a new theme, 
-// extend the theme you like and just add the 
+// do you want this theme to extend. A theme can
+// extend any number of themes. Rather than
+// creating an entirely new theme and copying all
+// of the CSS, you can simply create a new theme,
+// extend the theme you like and just add the
 // changes you want to your theme.
 ////////////////////////////////////////////////////
 
 $THEME->sheets = array(
-		'pagelayout', 
-		'text', 
-		'core', 
+		'pagelayout',
+		'text',
+		'core',
 		'course',
-		'mods', 
-		'blocks', 
-		'tabs', 
-		'admin', 
+		'mods',
+		'blocks',
+		'tabs',
+		'admin',
 		'tables',
 );
 
 ////////////////////////////////////////////////////
-// Name of the stylesheet(s) you've including in 
+// Name of the stylesheet(s) you've including in
 // this theme's /styles/ directory.
 ////////////////////////////////////////////////////
 
 $THEME->parents_exclude_sheets = array(
 		'base'=>array(
-				'navigation', 
+				'navigation',
 				'browser',
 		),
 );
@@ -155,7 +155,13 @@ $THEME->layouts = array(
         'regions' => array(),
         'options' => array('nofooter'=>true, 'nonavbar'=>true),
     ),
-    
+    // Should display the content and basic headers only.
+    'print' => array(
+        'file' => 'general.php',
+        'regions' => array(),
+        'options' => array('nofooter'=>true, 'nonavbar'=>false, 'noblocks'=>true),
+    ),
+
 );
 
 /////////////////////////////////////////////////////////
@@ -170,9 +176,9 @@ $THEME->layouts = array(
 $THEME->hidefromselector = true;
 
 /////////////////////////////////////////////////////
-// We don't want the base theme to be shown on the 
-// theme selection screen, by setting this to true 
-// it will only be shown if theme designer mode is 
+// We don't want the base theme to be shown on the
+// theme selection screen, by setting this to true
+// it will only be shown if theme designer mode is
 // switched on.
 /////////////////////////////////////////////////////
 
@@ -188,47 +194,47 @@ $THEME->hidefromselector = true;
 // $THEME->editor_sheets
 
 ////////////////////////////////////////////////////
-// An array of stylesheets to include within the 
+// An array of stylesheets to include within the
 // body of the editor.
 ////////////////////////////////////////////////////
 
 // $THEME->csspostprocess
-	
+
 ////////////////////////////////////////////////////
-// Allows the user to provide the name of a function 
-// that all CSS should be passed to before being 
+// Allows the user to provide the name of a function
+// that all CSS should be passed to before being
 // delivered.
 ////////////////////////////////////////////////////
 
 // $THEME->filter_mediaplugin_colors
 
 ////////////////////////////////////////////////////
-// Used to control the colours used in the small 
+// Used to control the colours used in the small
 // media player for the filters
 ////////////////////////////////////////////////////
 
-// $THEME->javascripts	
+// $THEME->javascripts
 
 ////////////////////////////////////////////////////
 // An array containing the names of JavaScript files
-// located in /javascript/ to include in the theme. 
+// located in /javascript/ to include in the theme.
 // (gets included in the head)
 ////////////////////////////////////////////////////
 
-// $THEME->javascripts_footer	
+// $THEME->javascripts_footer
 
 ////////////////////////////////////////////////////
 // As above but will be included in the page footer.
 ////////////////////////////////////////////////////
 
-// $THEME->larrow	
+// $THEME->larrow
 
 ////////////////////////////////////////////////////
-// Overrides the left arrow image used throughout 
+// Overrides the left arrow image used throughout
 // Moodle
 ////////////////////////////////////////////////////
 
-// $THEME->rarrow	
+// $THEME->rarrow
 
 ////////////////////////////////////////////////////
 // Overrides the right arrow image used throughout Moodle
@@ -244,19 +250,19 @@ $THEME->hidefromselector = true;
 // $THEME->plugins_exclude_sheets
 
 ////////////////////////////////////////////////////
-// An array of plugin sheets to ignore and not 
+// An array of plugin sheets to ignore and not
 // include.
 ////////////////////////////////////////////////////
 
 // $THEME->renderfactory
 
 ////////////////////////////////////////////////////
-// Sets a custom render factory to use with the 
+// Sets a custom render factory to use with the
 // theme, used when working with custom renderers.
 ////////////////////////////////////////////////////
 
 // $THEME->resource_mp3player_colors
 
 ////////////////////////////////////////////////////
-// Controls the colours for the MP3 player 	
+// Controls the colours for the MP3 player
 ////////////////////////////////////////////////////
