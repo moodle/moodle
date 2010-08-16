@@ -328,12 +328,13 @@ class moodle_page {
      */
     protected function magic_get_context() {
         if (is_null($this->_context)) {
-            if (CLI_SCRIPT) {
-                // cli scripts work in system context, do not annoy devs with fatal errors here
-                $this->_context = get_context_instance(CONTEXT_SYSTEM);
+            if (CLI_SCRIPT or NO_MOODLE_COOKIES) {
+                // cli scripts work in system context, do not annoy devs with debug info
+                // very few scripts do not use cookies, we can safely use system as default context there
             } else {
-                throw new coding_exception('$PAGE->context accessed before it was known.');
+                debugging('Coding problem: this page does not set $PAGE->context properly.');
             }
+            $this->_context = get_context_instance(CONTEXT_SYSTEM);
         }
         return $this->_context;
     }
@@ -641,7 +642,7 @@ class moodle_page {
         if ($this->_legacypageobject) {
             return $this->_legacypageobject->user_allowed_editing();
         }
-        return has_any_capability($this->all_editing_caps(), $this->context);
+        return has_any_capability($this->all_editing_caps(), $this->_context);
     }
 
     /**
@@ -652,7 +653,7 @@ class moodle_page {
         $summary = '';
         $summary .= 'General type: ' . $this->pagelayout . '. ';
         if (!during_initial_install()) {
-            $summary .= 'Context ' . print_context_name($this->context) . ' (context id ' . $this->context->id . '). ';
+            $summary .= 'Context ' . print_context_name($this->_context) . ' (context id ' . $this->_context->id . '). ';
         }
         $summary .= 'Page type ' . $this->pagetype .  '. ';
         if ($this->subpage) {
@@ -723,6 +724,28 @@ class moodle_page {
      * @param object $context a context object, normally obtained with get_context_instance.
      */
     public function set_context($context) {
+        if ($context === null) {
+            // extremely ugly hack which sets context to some value in order to prevent warnings,
+            // use only for core error handling!!!!
+            if (!$this->_context) {
+                $this->_context = get_context_instance(CONTEXT_SYSTEM);
+            }
+            return;
+        }
+
+        // ideally we should set context only once
+        if (isset($this->_context)) {
+            if ($context->id == $this->_context->id) {
+                // fine - no change needed
+            } else if ($this->_context->contextlevel == CONTEXT_SYSTEM or $this->_context->contextlevel == CONTEXT_COURSE) {
+                // hmm - not ideal, but it might produce too many warnings due to the design of require_login
+            } else {
+                // we do not want devs to do weird switching of context levels on the fly,
+                // because we might have used the context already such as in text filter in page title
+                debugging('Coding problem: unsupported modification of PAGE->context from '.$this->_context->contextlevel.' to '.$context->contextlevel);
+            }
+        }
+
         $this->_context = $context;
     }
 
@@ -732,6 +755,8 @@ class moodle_page {
      * @param objcet $cm a full cm object obtained from get_coursemodule_from_id or get_coursemodule_from_instance.
      */
     public function set_cm($cm, $course = null, $module = null) {
+        global $DB;
+
         if (!isset($cm->name) || !isset($cm->modname) || !isset($cm->id)) {
             throw new coding_exception('The $cm you set on $PAGE must have been obtained with get_coursemodule_from_id or get_coursemodule_from_instance. That is, the ->name and -> modname fields must be present and correct.');
         }
@@ -742,8 +767,7 @@ class moodle_page {
         }
         if (!$this->_course || $this->_course->id != $cm->course) {
             if (!$course) {
-                global $DB;
-                $course = $DB->get_record('course', array('id' => $cm->course));
+                $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
             }
             if ($course->id != $cm->course) {
                 throw new coding_exception('The course you passed to $PAGE->set_cm does not seem to correspond to the $cm.');
@@ -1115,6 +1139,11 @@ class moodle_page {
             return;
         }
 
+        if (!during_initial_install()) {
+            // detect PAGE->context mess
+            $this->magic_get_context();
+        }
+
         if (!$this->_course && !during_initial_install()) {
             $this->set_course($SITE);
         }
@@ -1290,7 +1319,7 @@ class moodle_page {
 
         if (!during_initial_install()) {
             $this->add_body_class('course-' . $this->_course->id);
-            $this->add_body_class('context-' . $this->context->id);
+            $this->add_body_class('context-' . $this->_context->id);
         }
 
         if (!empty($this->_cm)) {
@@ -1669,10 +1698,10 @@ function page_map_class($type, $classname = NULL) {
  * @deprecated since Moodle 2.0
  * Parent class from which all Moodle page classes derive
  *
- * @package   moodlecore
- * @subpackage pages
- * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    core
+ * @subpackage lib
+ * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class page_base extends moodle_page {
     /**
@@ -1707,10 +1736,10 @@ class page_base extends moodle_page {
  * Although this does nothing, this class declaration should be left for now
  * since there may be legacy class doing class page_... extends page_course
  *
- * @package   moodlecore
- * @subpackage pages
- * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    core
+ * @subpackage lib
+ * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class page_course extends page_base {
 }
@@ -1719,10 +1748,10 @@ class page_course extends page_base {
  * @deprecated since Moodle 2.0
  * Class that models the common parts of all activity modules
  *
- * @package   moodlecore
- * @subpackage pages
- * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    core
+ * @subpackage lib
+ * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class page_generic_activity extends page_base {
     // Although this function is deprecated, it should be left here because

@@ -963,18 +963,24 @@ class bootstrap_renderer {
             $recursing = is_early_init($backtrace);
         }
 
+        $earlymethods = array(
+            'fatal_error' => 'early_error',
+            'notification' => 'early_notification',
+        );
+
         // If lib/outputlib.php has been loaded, call it.
         if (!empty($PAGE) && !$recursing) {
+            if (array_key_exists($method, $earlymethods)) {
+                //prevent PAGE->context warnings - exceptions might appear before we set any context
+                $PAGE->set_context(null);
+            }
             $PAGE->initialise_theme_and_output();
             return call_user_func_array(array($OUTPUT, $method), $arguments);
         }
 
         $this->initialising = true;
+
         // Too soon to initialise $OUTPUT, provide a couple of key methods.
-        $earlymethods = array(
-            'fatal_error' => 'early_error',
-            'notification' => 'early_notification',
-        );
         if (array_key_exists($method, $earlymethods)) {
             return call_user_func_array(array('bootstrap_renderer', $earlymethods[$method]), $arguments);
         }

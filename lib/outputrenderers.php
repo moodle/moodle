@@ -1964,6 +1964,7 @@ EOD;
                 // can not be used from command line or when outputting custom XML
                 @header($_SERVER['SERVER_PROTOCOL'] . ' 404 Not Found');
             }
+            $this->page->set_context(null); // ugly hack - make sure page context is set to something, we do not want bogus warnings here
             $this->page->set_url('/'); // no url
             //$this->page->set_pagelayout('base'); //TODO: MDL-20676 blocks on error pages are weird, unfortunately it somehow detect the pagelayout from URL :-(
             $this->page->set_title(get_string('error'));
@@ -2581,6 +2582,9 @@ class core_renderer_ajax extends core_renderer {
      */
     public function fatal_error($message, $moreinfourl, $link, $backtrace, $debuginfo = null) {
         global $FULLME, $USER;
+
+        $this->page->set_context(null); // ugly hack - make sure page context is set to something, we do not want bogus warnings here
+
         $e = new stdClass();
         $e->error      = $message;
         $e->stacktrace = NULL;

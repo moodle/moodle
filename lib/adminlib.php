@@ -5391,7 +5391,7 @@ class admin_setting_manageportfolio extends admin_setting {
 function admin_externalpage_setup($section, $extrabutton = '', array $extraurlparams = null, $actualurl = '') {
     global $CFG, $PAGE, $USER, $SITE, $OUTPUT;
 
-    $PAGE->set_context(get_context_instance(CONTEXT_SYSTEM));
+    $PAGE->set_context(null); // hack - set context to something, by default to system context
 
     $site = get_site();
     require_login();
