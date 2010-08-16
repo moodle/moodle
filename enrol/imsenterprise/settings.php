@@ -43,15 +43,15 @@ if ($ADMIN->fulltree) {
     //--- user data options ---------------------------------------------------------------------------------
     $settings->add(new admin_setting_heading('enrol_imsenterprise_usersettings', get_string('usersettings', 'enrol_imsenterprise'), ''));
 
-    $settings->add(new admin_setting_configcheckbox('enrol_imsenterprise/createnewusers', get_string('createnewusers', 'enrol_imsenterprise'), '', 0));
+    $settings->add(new admin_setting_configcheckbox('enrol_imsenterprise/createnewusers', get_string('createnewusers', 'enrol_imsenterprise'), get_string('createnewusers_desc', 'enrol_imsenterprise'), 0));
 
-    $settings->add(new admin_setting_configcheckbox('enrol_imsenterprise/imsdeleteusers', get_string('deleteusers', 'enrol_imsenterprise'), '', 0));
+    $settings->add(new admin_setting_configcheckbox('enrol_imsenterprise/imsdeleteusers', get_string('deleteusers', 'enrol_imsenterprise'), get_string('deleteusers_desc', 'enrol_imsenterprise'), 0));
 
     $settings->add(new admin_setting_configcheckbox('enrol_imsenterprise/fixcaseusernames', get_string('fixcaseusernames', 'enrol_imsenterprise'), '', 0));
 
     $settings->add(new admin_setting_configcheckbox('enrol_imsenterprise/fixcasepersonalnames', get_string('fixcasepersonalnames', 'enrol_imsenterprise'), '', 0));
 
-    $settings->add(new admin_setting_configcheckbox('enrol_imsenterprise/imssourcedidfallback', get_string('sourcedidfallback', 'enrol_imsenterprise'), '', 0));
+    $settings->add(new admin_setting_configcheckbox('enrol_imsenterprise/imssourcedidfallback', get_string('sourcedidfallback', 'enrol_imsenterprise'), get_string('sourcedidfallback_desc', 'enrol_imsenterprise'), 0));
 
     $settings->add(new admin_setting_heading('enrol_imsenterprise_usersettings_roles', get_string('roles', 'enrol_imsenterprise'), get_string('imsrolesdescription', 'enrol_imsenterprise')));
 
@@ -68,20 +68,20 @@ if ($ADMIN->fulltree) {
     //--- course data options -------------------------------------------------------------------------------
     $settings->add(new admin_setting_heading('enrol_imsenterprise_coursesettings', get_string('coursesettings', 'enrol_imsenterprise'), ''));
 
-    $settings->add(new admin_setting_configtext('enrol_imsenterprise/truncatecoursecodes', get_string('truncatecoursecodes', 'enrol_imsenterprise'), '', 0, PARAM_INT, 2));
+    $settings->add(new admin_setting_configtext('enrol_imsenterprise/truncatecoursecodes', get_string('truncatecoursecodes', 'enrol_imsenterprise'), get_string('truncatecoursecodes_desc', 'enrol_imsenterprise'), 0, PARAM_INT, 2));
 
-    $settings->add(new admin_setting_configcheckbox('enrol_imsenterprise/createnewcourses', get_string('createnewcourses', 'enrol_imsenterprise'), '', 0));
+    $settings->add(new admin_setting_configcheckbox('enrol_imsenterprise/createnewcourses', get_string('createnewcourses', 'enrol_imsenterprise'), get_string('createnewcourses_desc', 'enrol_imsenterprise'), 0));
 
-    $settings->add(new admin_setting_configcheckbox('enrol_imsenterprise/createnewcategories', get_string('createnewcategories', 'enrol_imsenterprise'), '', 0));
+    $settings->add(new admin_setting_configcheckbox('enrol_imsenterprise/createnewcategories', get_string('createnewcategories', 'enrol_imsenterprise'), get_string('createnewcategories_desc', 'enrol_imsenterprise'), 0));
 
-    $settings->add(new admin_setting_configcheckbox('enrol_imsenterprise/imsunenrol', get_string('allowunenrol', 'enrol_imsenterprise'), '', 0));
+    $settings->add(new admin_setting_configcheckbox('enrol_imsenterprise/imsunenrol', get_string('allowunenrol', 'enrol_imsenterprise'), get_string('allowunenrol_desc', 'enrol_imsenterprise'), 0));
 
     //--- miscellaneous -------------------------------------------------------------------------------------
     $settings->add(new admin_setting_heading('enrol_imsenterprise_miscsettings', get_string('miscsettings', 'enrol_imsenterprise'), ''));
 
-    $settings->add(new admin_setting_configtext('enrol_imsenterprise/imsrestricttarget', get_string('restricttarget', 'enrol_imsenterprise'), '', ''));
+    $settings->add(new admin_setting_configtext('enrol_imsenterprise/imsrestricttarget', get_string('restricttarget', 'enrol_imsenterprise'), get_string('restricttarget_desc', 'enrol_imsenterprise'), ''));
 
-    $settings->add(new admin_setting_configcheckbox('enrol_imsenterprise/imscapitafix', get_string('usecapitafix', 'enrol_imsenterprise'), '', 0));
+    $settings->add(new admin_setting_configcheckbox('enrol_imsenterprise/imscapitafix', get_string('usecapitafix', 'enrol_imsenterprise'), get_string('usecapitafix_desc', 'enrol_imsenterprise'), 0));
 
     $importnowstring = get_string('aftersaving...', 'enrol_imsenterprise').' <a href="../enrol/imsenterprise/importnow.php">'.get_string('doitnow', 'enrol_imsenterprise').'</a>';
     $settings->add(new admin_setting_heading('enrol_imsenterprise_doitnowmessage', '', $importnowstring));
