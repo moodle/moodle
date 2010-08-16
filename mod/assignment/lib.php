@@ -995,7 +995,6 @@ class assignment_base {
         $mformdata->enableoutcomes = $CFG->enableoutcomes;
         $mformdata->grade = $this->assignment->grade;
         $mformdata->gradingdisabled = $gradingdisabled;
-        $mformdata->usehtmleditor = $this->usehtmleditor;
         $mformdata->nextid = $nextid;
         $mformdata->submissioncomment= $submission->submissioncomment;
         $mformdata->submissioncommentformat= FORMAT_HTML;
@@ -2181,20 +2180,11 @@ class mod_assignment_grading_form extends moodleform {
             $mform->setDefault('submissioncomment_editor', $this->_customdata->submission->submissioncomment);
             //$mform->addRule('submissioncomment', get_string('required'), 'required', null, 'client');
 
-            if ($this->_customdata->usehtmleditor) {
-                $mform->addElement('hidden', 'format', FORMAT_HTML);
-                $mform->setType('format', PARAM_INT);
-            } else {
-                //format menu
-                $format_menu = format_text_menu();
-                $mform->addElement('select', 'format', get_string('format'), $format_menu, array('selected' => $this->_customdata->submission->format ) );
-                $mform->setType('format', PARAM_INT);
-            }
             $lastmailinfo = get_user_preferences('assignment_mailinfo', 1) ? array('checked'=>'checked') : array();
             $mform->addElement('hidden', 'mailinfo_h', "0");
             $mform->setType('mailinfo_h', PARAM_INT);
             $mform->addElement('checkbox', 'mailinfo',get_string('enableemailnotification','assignment').
-                    $OUTPUT->help_icon('enableemailnotification', 'assignment') .':' );
+            $OUTPUT->help_icon('enableemailnotification', 'assignment') .':' );
             $mform->updateElementAttr('mailinfo', $lastmailinfo);
             $mform->setType('mailinfo', PARAM_INT);
         }
