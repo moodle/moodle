@@ -1490,6 +1490,7 @@ class core_renderer extends renderer_base {
     /**
      * Print a help icon.
      *
+     * @deprecated since Moodle 2.0
      * @param string $page The keyword that defines a help page
      * @param string $title A descriptive text for accessibility only
      * @param string $component component name
@@ -1497,6 +1498,7 @@ class core_renderer extends renderer_base {
      * @return string HTML fragment
      */
     public function old_help_icon($helpidentifier, $title, $component = 'moodle', $linktext = '') {
+        debugging('The method old_help_icon() is deprecated, please fix the code and use help_icon() method instead', DEBUG_DEVELOPER);
         $icon = new old_help_icon($helpidentifier, $title, $component);
         if ($linktext === true) {
             $icon->linktext = $title;

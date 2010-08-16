@@ -869,7 +869,7 @@ class grade_edit_tree_column_aggregatesubcats extends grade_edit_tree_column_cat
         $headercell = clone($this->headercell);
         $headercell->style .= 'width: 40px;';
         $headercell->text = get_string('aggregatesubcats', 'grades')
-              .$OUTPUT->old_help_icon('aggregatesubcats', 'aggregatesubcats', 'grade');
+              .$OUTPUT->help_icon('aggregatesubcats', 'grades');
         return $headercell;
     }
 
@@ -984,7 +984,7 @@ class grade_edit_tree_column_keephigh extends grade_edit_tree_column_category {
     public function get_header_cell() {
         global $OUTPUT;
         $headercell = clone($this->headercell);
-        $headercell->text = get_string('keephigh', 'grades').$OUTPUT->old_help_icon('keephigh', 'keephigh', 'grade');
+        $headercell->text = get_string('keephigh', 'grades').$OUTPUT->help_icon('keephigh', 'grades');
         return $headercell;
     }
 

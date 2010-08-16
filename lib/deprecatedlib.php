@@ -2940,7 +2940,7 @@ function print_textarea($usehtmleditor, $rows, $cols, $width, $height, $name, $v
  * @return string|void Depending on value of $return
  */
 function helpbutton($page, $title, $module='moodle', $image=true, $linktext=false, $text='', $return=false, $imagetext='') {
-    debugging('helpbutton() has been deprecated. Please change your code to use $OUTPUT->old_help_icon().');
+    debugging('helpbutton() has been deprecated. Please change your code to use $OUTPUT->help_icon().');
 
     global $OUTPUT;
 

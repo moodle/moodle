@@ -66,7 +66,7 @@ $string['morewelcome'] = 'Welcome to the \'More tags\' tag cloud.
 Tags are user created links to things. Tags allow you to categorise and link things
 like your favourite courses, your blogs or your profile with your own words.
 Different groups of tags may be displayed with the links on the \'Show:\' line,
-and may be reordered with the links on the \'Order:\' line. More help is here:';
+and may be reordered with the links on the \'Order:\' line.';
 $string['mycoursetags'] = 'My course tags:';
 $string['mycoursetag1'] = 'Show my course tags';
 $string['mycoursetag2'] = 'my course tags';

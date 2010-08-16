@@ -191,9 +191,7 @@ $fclass = '';
 if (strlen($tags) < 10000) { $fclass = 'coursetag_more_large'; }
 $outstr = '
     <div class="coursetag_more_title">
-        <div style="padding-bottom:5px">'.$welcome.
-            $OUTPUT->old_help_icon('usingtags', 'using tags', $tagslang).'
-        </div>
+        <div style="padding-bottom:5px">'.$welcome.'</div>
         <div class="coursetag_more_link">'.$link1.'</div>
         <div class="coursetag_more_link">'.$link2.'</div>
     </div>

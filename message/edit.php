@@ -205,14 +205,7 @@ echo '</tr>';
 foreach ( $providers as $providerid => $provider){
     $providername = get_string('messageprovider:'.$provider->name, $provider->component);
 
-/// TODO XXX: This is only a quick hack ... helpfile locations should be provided as part of the provider definition
-    if ($provider->component == 'moodle') {
-        $helpbtn = $OUTPUT->old_help_icon('moodle_'.$provider->name, $providername, 'message');
-    } else {
-        $helpbtn = $OUTPUT->old_help_icon('message_'.$provider->name, $providername, basename($provider->component));
-    }
-
-    echo '<tr><th align="right">'.$providername.$helpbtn.'</th><td colspan="'.$number_procs.'"></td></tr>'."\n";
+    echo '<tr><th align="right">'.$providername.'</th><td colspan="'.$number_procs.'"></td></tr>'."\n";
     foreach (array('loggedin', 'loggedoff') as $state){
         $state_res = get_string($state, 'message');
         echo '<tr><td align="right">'.$state_res.'</td>'."\n";
