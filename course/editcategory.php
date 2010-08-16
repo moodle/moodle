@@ -19,6 +19,7 @@ if ($id) {
     }
     $PAGE->set_url('/course/editcategory.php', array('id' => $id));
     $categorycontext = get_context_instance(CONTEXT_COURSECAT, $id);
+    $PAGE->set_context($categorycontext);
     require_capability('moodle/category:manage', $categorycontext);
     $strtitle = get_string('editcategorysettings');
     $editorcontext = $categorycontext;
@@ -33,6 +34,7 @@ if ($id) {
     } else {
         $context = get_system_context();
     }
+    $PAGE->set_context($context);
     $category = new stdClass();
     $category->id = 0;
     $category->parent = $parent;

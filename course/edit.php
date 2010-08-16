@@ -42,7 +42,7 @@ if ($id) { // editing course
     }
 
     $course = $DB->get_record('course', array('id'=>$id), '*', MUST_EXIST);
-    require_login($course->id);
+    require_login($course);
     $category = $DB->get_record('course_categories', array('id'=>$course->category), '*', MUST_EXIST);
     $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
     require_capability('moodle/course:update', $coursecontext);
@@ -52,8 +52,10 @@ if ($id) { // editing course
     $course = null;
     require_login();
     $category = $DB->get_record('course_categories', array('id'=>$categoryid), '*', MUST_EXIST);
-    require_capability('moodle/course:create', get_context_instance(CONTEXT_COURSECAT, $category->id));
+    $catcontext = get_context_instance(CONTEXT_COURSECAT, $category->id);
+    require_capability('moodle/course:create', $catcontext);
     $PAGE->url->param('category',$categoryid);
+    $PAGE->set_context($catcontext);
 
 } else {
     require_login();
