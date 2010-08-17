@@ -452,7 +452,6 @@ if ($config->stage == INSTALL_DATABASETYPE) {
                                   get_string('databasetypehead', 'install'),
                                   get_string('databasetypesub', 'install'));
 
-    // TODO: move this PHP5 code to lib/installib.php so that this file parses in PHP4
     $databases = array('mysqli' => moodle_database::get_driver_instance('mysqli', 'native'),
                        'pgsql'  => moodle_database::get_driver_instance('pgsql',  'native'),
                        'oci'    => moodle_database::get_driver_instance('oci',    'native'),
