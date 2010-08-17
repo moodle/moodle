@@ -49,13 +49,14 @@ if (!confirm_sesskey() || $USER->id==$rateduserid) {
     die();
 }
 
+$rm = new rating_manager();
+
 //check the module rating permissions
 $pluginrateallowed = true;
 $pluginpermissionsarray = null;
 if ($context->contextlevel==CONTEXT_MODULE) {
     $plugintype = 'mod';
     $pluginname = $cm->modname;
-    $rm = new rating_manager();
     $pluginpermissionsarray = $rm->get_plugin_permissions_array($context->id, $plugintype, $pluginname);
     $pluginrateallowed = $pluginpermissionsarray['rate'];
 
