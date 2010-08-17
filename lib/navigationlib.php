@@ -3038,7 +3038,7 @@ class settings_navigation extends navigation_node {
             require_once($file);
         }
 
-        $modulenode = $this->add(get_string($this->page->activityname.'administration', $this->page->activityname));
+        $modulenode = $this->add(get_string('pluginadministration', $this->page->activityname));
         $modulenode->force_open();
 
         // Settings for the module

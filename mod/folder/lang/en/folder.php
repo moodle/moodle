@@ -26,9 +26,9 @@
 
 $string['contentheader'] = 'Content';
 $string['folder:managefiles'] = 'Manage files in folder module';
-$string['folderadministration'] = 'Folder administration';
 $string['foldercontent'] = 'Files and subfolders';
 $string['modulename'] = 'Folder';
 $string['modulenameplural'] = 'Folders';
 $string['neverseen'] = 'Never seen';
+$string['pluginadministration'] = 'Folder administration';
 $string['pluginname'] = 'Folder';
