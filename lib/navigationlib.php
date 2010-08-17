@@ -3439,6 +3439,12 @@ class settings_navigation extends navigation_node {
             $url = new moodle_url('/'.$CFG->admin.'/roles/check.php', array('contextid'=>$this->context->id));
             $categorynode->add(get_string('checkpermissions', 'role'), $url, self::TYPE_SETTING);
         }
+
+        // Cohorts
+        if (has_capability('moodle/cohort:manage', $this->context) or has_capability('moodle/cohort:view', $this->context)) {
+            $categorynode->add(get_string('cohorts', 'cohort'), new moodle_url('/cohort/index.php', array('contextid' => $this->context->id)));
+        }
+
         // Manage filters
         if (has_capability('moodle/filter:manage', $this->context) && count(filter_get_available_in_context($this->context))>0) {
             $url = new moodle_url('/filter/manage.php', array('contextid'=>$this->context->id));
