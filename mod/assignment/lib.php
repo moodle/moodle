@@ -1457,7 +1457,6 @@ class assignment_base {
 
             $submission->grade      = $feedback->xgrade;
             $submission->submissioncomment    = $feedback->submissioncomment_editor['text'];
-            $submission->format     = $feedback->format;
             $submission->teacher    = $USER->id;
             $mailinfo = get_user_preferences('assignment_mailinfo', 0);
             if (!$mailinfo) {
