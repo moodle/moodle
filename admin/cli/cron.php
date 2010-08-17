@@ -16,7 +16,11 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Enable or disable maintenance mode
+ * CLI cron
+ *
+ * This script looks through all the module directories for cron.php files
+ * and runs them.  These files can contain cleanup functions, email functions
+ * or anything that needs to be run on a regular basis.
  *
  * @package    core
  * @subpackage cli
@@ -28,10 +32,10 @@ define('CLI_SCRIPT', true);
 
 require(dirname(dirname(dirname(__FILE__))).'/config.php');
 require_once($CFG->libdir.'/clilib.php');      // cli only functions
-
+require_once($CFG->libdir.'/cronlib.php');
 
 // now get cli options
-list($options, $unrecognized) = cli_get_params(array('enable'=>false, 'disable'=>false, 'help'=>false),
+list($options, $unrecognized) = cli_get_params(array('help'=>false),
                                                array('h'=>'help'));
 
 if ($unrecognized) {
@@ -41,36 +45,17 @@ if ($unrecognized) {
 
 if ($options['help']) {
     $help =
-"Maintenance mode settings.
-Current status displayed if not option specified.
+"Execute periodic cron actions.
 
 Options:
---enable              Enable maintenance mode
---disable             Disable maintenance mode
 -h, --help            Print out this help
 
 Example:
-\$sudo -u www-data /usr/bin/php admin/cli/maintenance.php
-"; //TODO: localize - to be translated later when everything is finished
+\$sudo -u www-data /usr/bin/php admin/cli/cron.php
+";
 
     echo $help;
     die;
 }
 
-cli_heading(get_string('sitemaintenancemode', 'admin')." ($CFG->wwwroot)");
-
-if ($options['enable']) {
-    set_config('maintenance_enabled', 1);
-    echo get_string('sitemaintenanceon', 'admin')."\n";
-    exit(0);
-} else if ($options['disable']) {
-    set_config('maintenance_enabled', 0);
-    echo get_string('sitemaintenanceoff', 'admin')."\n";
-    exit(0);
-}
-
-if (!empty($CFG->maintenance_enabled)) {
-    echo get_string('clistatusenabled', 'admin')."\n";
-} else {
-    echo get_string('clistatusdisabled', 'admin')."\n";
-}
+cron_run();

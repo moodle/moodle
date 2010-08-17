@@ -24,12 +24,9 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-if (isset($_SERVER['REMOTE_ADDR'])) {
-    error_log("admin/cli/reset_password.php can not be called from web server!");
-    exit;
-}
+define('CLI_SCRIPT', true);
 
-require_once dirname(dirname(dirname(__FILE__))).'/config.php';
+require(dirname(dirname(dirname(__FILE__))).'/config.php');
 require_once($CFG->libdir.'/clilib.php');      // cli only functions
 
 
@@ -43,8 +40,7 @@ if ($unrecognized) {
 }
 
 if ($options['help']) {
-
-$help =
+    $help =
 "Reset local user passwords, useful especially for admin acounts.
 
 There are no security checks here because anybody who is able to
@@ -53,7 +49,8 @@ execute this file may execute any PHP too.
 Options:
 -h, --help            Print out this help
 
-Example: \$sudo -u wwwrun /usr/bin/php admin/cli/reset_password.php
+Example:
+\$sudo -u www-data /usr/bin/php admin/cli/reset_password.php
 "; //TODO: localize - to be translated later when everything is finished
 
     echo $help;
@@ -79,6 +76,6 @@ $hashedpassword = hash_internal_user_password($password);
 
 $DB->set_field('user', 'password', $hashedpassword, array('id'=>$user->id));
 
-echo "Password cahnged\n";
+echo "Password changed\n";
 
 exit(0); // 0 means success

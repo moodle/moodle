@@ -30,9 +30,11 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+define('CLI_SCRIPT', true);
+
+// extra execution prevention - we can not just require config.php here
 if (isset($_SERVER['REMOTE_ADDR'])) {
-    error_log("admin/cli/install.php can not be called from web server!");
-    exit;
+    exit(1);
 }
 
 $help =
@@ -68,7 +70,8 @@ Options:
                       required in non-interactive mode.
 -h, --help            Print out this help
 
-Example: \$sudo -u wwwrun /usr/bin/php admin/cli/install.php --lang=cs
+Example:
+\$sudo -u www-data /usr/bin/php admin/cli/install.php --lang=cs
 "; //TODO: localize, mark as needed in install - to be translated later when everything is finished
 
 

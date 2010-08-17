@@ -30,12 +30,9 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-if (isset($_SERVER['REMOTE_ADDR'])) {
-    error_log("admin/cli/upgrade.php can not be called from web server!");
-    exit;
-}
+define('CLI_SCRIPT', true);
 
-require_once dirname(dirname(dirname(__FILE__))).'/config.php';
+require(dirname(dirname(dirname(__FILE__))).'/config.php');
 require_once($CFG->libdir.'/adminlib.php');       // various admin-only functions
 require_once($CFG->libdir.'/upgradelib.php');     // general upgrade/install related functions
 require_once($CFG->libdir.'/clilib.php');         // cli only functions
@@ -54,8 +51,7 @@ if ($unrecognized) {
 }
 
 if ($options['help']) {
-
-$help =
+    $help =
 "Command line Moodle upgrade.
 Please note you must execute this script with the same uid as apache!
 
@@ -65,7 +61,8 @@ Options:
 --non-interactive     No interactive questions or confirmations
 -h, --help            Print out this help
 
-Example: \$sudo -u wwwrun /usr/bin/php admin/cli/upgrade.php
+Example:
+\$sudo -u www-data /usr/bin/php admin/cli/upgrade.php
 "; //TODO: localize - to be translated later when everything is finished
 
     echo $help;

@@ -99,14 +99,25 @@ if (function_exists('date_default_timezone_set') and function_exists('date_defau
 }
 
 // Detect CLI scripts - CLI scripts are executed from command line, do not have session and we do not want HTML in output
-// In your new CLI scripts just add: if (isset($_SERVER['REMOTE_ADDR'])) {die;} before requiring config.php.
+// In your new CLI scripts just add "define('CLI_SCRIPT', true);" before requiring config.php.
+// Please note that one script can not be accessed from both CLI and web interface.
 if (!defined('CLI_SCRIPT')) {
-    // CLI_SCRIPT is defined in 'fake' CLI script /admin/cron.php, do not abuse this elsewhere!
-    if (isset($_SERVER['REMOTE_ADDR'])) {
-        define('CLI_SCRIPT', false);
-    } else {
-        /** @ignore */
-        define('CLI_SCRIPT', true);
+    define('CLI_SCRIPT', false);
+}
+if (defined('WEB_CRON_EMULATED_CLI')) {
+    if (!isset($_SERVER['REMOTE_ADDR'])) {
+        echo('Web cron can not be executed as CLI script any more, please use admin/cli/cron.php instead'."\n");
+        exit(1);
+    }
+} else if (isset($_SERVER['REMOTE_ADDR'])) {
+    if (CLI_SCRIPT) {
+        echo('Command line scripts can not be executed from the web interface');
+        exit(1);
+    }
+} else {
+    if (!CLI_SCRIPT) {
+        echo('Command line scripts must define CLI_SCRIPT before requiring config.php'."\n");
+        exit(1);
     }
 }
 
@@ -586,7 +597,11 @@ initialise_fullme();
 
 
 // init session prevention flag - this is defined on pages that do not want session
-if (!defined('NO_MOODLE_COOKIES')) {
+if (CLI_SCRIPT) {
+    // no sessions in CLI scripts possible
+    define('NO_MOODLE_COOKIES', true);
+
+} else if (!defined('NO_MOODLE_COOKIES')) {
     if (empty($CFG->version) or $CFG->version < 2009011900) {
         // no session before sessions table gets created
         define('NO_MOODLE_COOKIES', true);

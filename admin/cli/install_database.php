@@ -28,9 +28,11 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+define('CLI_SCRIPT', true);
+
+// extra execution prevention - we can not just require config.php here
 if (isset($_SERVER['REMOTE_ADDR'])) {
-    error_log("admin/cli/install_database.php can not be called from web server!");
-    exit;
+    exit(1);
 }
 
 $help =
@@ -46,7 +48,8 @@ Options:
 --agree-license       Indicates agreement with software license.
 -h, --help            Print out this help
 
-Example: \$sudo -u wwwrun /usr/bin/php admin/cli/install_database.php --lang=cs --adminpass=soMePass123 --agree-license
+Example:
+\$sudo -u www-data /usr/bin/php admin/cli/install_database.php --lang=cs --adminpass=soMePass123 --agree-license
 ";
 
 // Check that PHP is of a sufficient version
