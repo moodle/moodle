@@ -1402,12 +1402,11 @@ class global_navigation extends navigation_node {
         }
 
         $viewhiddenactivities = has_capability('moodle/course:viewhiddenactivities', $this->page->context);
-
         $activities = array();
 
         foreach ($modinfo->sections[$sectionnumber] as $cmid) {
             $cm = $modinfo->cms[$cmid];
-            if (!$viewhiddenactivities && !$cm->visible) {
+            if ($cm->modname == 'label' || (!$viewhiddenactivities && !$cm->visible)) {
                 continue;
             }
             if ($cm->icon) {
