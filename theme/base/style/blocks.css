@@ -1,6 +1,12 @@
 .block.hidden .header {border-bottom-width:0;}
 .block.hidden .content {display: none;}
 
+.block .block-hider-show,
+.block .block-hider-hide {cursor:pointer;}
+.block .block-hider-show,
+.block.hidden .block-hider-hide {display:none;}
+.block.hidden .block-hider-show {display:inline;}
+
 .block {border-style: solid;border-width:1px;margin-bottom:1em;}
 .block .header h2 {margin:4px;}
 .block .header .block_action {float:right;margin:0 4px;vertical-align:top;}

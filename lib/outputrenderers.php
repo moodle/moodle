@@ -721,6 +721,17 @@ class core_renderer extends renderer_base {
      * The content is described
      * by a {@link block_contents} object.
      *
+     * <div id="inst{$instanceid}" class="block_{$blockname} block">
+     *      <div class="header"></div>
+     *      <div class="content">
+     *          ...CONTENT...
+     *          <div class="footer">
+     *          </div>
+     *      </div>
+     *      <div class="annotation">
+     *      </div>
+     * </div>
+     *
      * @param block_contents $bc HTML for the content
      * @param string $region the region the block is appearing in.
      * @return string the HTML to be output.
@@ -788,14 +799,15 @@ class core_renderer extends renderer_base {
      */
     protected function init_block_hider_js(block_contents $bc) {
         if (!empty($bc->attributes['id']) and $bc->collapsible != block_contents::NOT_HIDEABLE) {
-            $userpref = 'block' . $bc->blockinstanceid . 'hidden';
-            user_preference_allow_ajax_update($userpref, PARAM_BOOL);
-            $this->page->requires->yui2_lib('dom');
-            $this->page->requires->yui2_lib('event');
-            $plaintitle = strip_tags($bc->title);
-            $this->page->requires->js_function_call('new block_hider', array($bc->attributes['id'], $userpref,
-                    get_string('hideblocka', 'access', $plaintitle), get_string('showblocka', 'access', $plaintitle),
-                    $this->pix_url('t/switch_minus')->out(false), $this->pix_url('t/switch_plus')->out(false)));
+            $config = new stdClass;
+            $config->id = $bc->attributes['id'];
+            $config->title = strip_tags($bc->title);
+            $config->preference = 'block' . $bc->blockinstanceid . 'hidden';
+            $config->tooltipVisible = get_string('hideblocka', 'access', $config->title);
+            $config->tooltipHidden = get_string('showblocka', 'access', $config->title);
+
+            $this->page->requires->js_init_call('M.util.init_block_hider', array($config));
+            user_preference_allow_ajax_update($config->preference, PARAM_BOOL);
         }
     }
 
