@@ -40,6 +40,8 @@ if ($sort !== 0) {
     $url->param('sort', $sort);
 }
 $PAGE->set_url($url);
+$PAGE->set_context($context);
+
 if ($popup) {
     $PAGE->set_pagelayout('popup');
 }
