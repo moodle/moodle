@@ -1321,11 +1321,20 @@ class core_renderer extends renderer_base {
         $ratinghtml = ''; //the string we'll return
 
         //permissions check - can they view the aggregate?
-        if ( ($rating->itemuserid==$USER->id
-                && $rating->settings->permissions->view && $rating->settings->pluginpermissions->view)
-            || ($rating->itemuserid!=$USER->id
-                && $rating->settings->permissions->viewany && $rating->settings->pluginpermissions->viewany) ) {
+        $canviewaggregate = false;
 
+        //if its the current user's item and they have permission to view the aggregate on their own items
+        if ( $rating->itemuserid==$USER->id && $rating->settings->permissions->view && $rating->settings->pluginpermissions->view) {
+            $canviewaggregate = true;
+        }
+
+        //if the item doesnt belong to anyone or its another user's items and they can see the aggregate on items they don't own
+        //Note that viewany doesnt mean you can see the aggregate or ratings of your own items
+        if ( (empty($rating->itemuserid) or $rating->itemuserid!=$USER->id) && $rating->settings->permissions->viewany && $rating->settings->pluginpermissions->viewany ) {
+            $canviewaggregate = true;
+        }
+
+        if ($canviewaggregate==true) {
             $aggregatelabel = '';
             switch ($rating->settings->aggregationmethod) {
                 case RATING_AGGREGATE_AVERAGE :
