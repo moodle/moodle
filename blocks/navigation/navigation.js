@@ -331,7 +331,7 @@ M.block_navigation.classes.branch.prototype.inject_into_dom = function(element) 
 
     // Prepare the icon, should be an object representing a pix_icon
     var branchicon = false;
-    if (this.icon != null && !isbranch) {
+    if (this.icon != null && (!isbranch || this.type == 40)) {
         branchicon = Y.Node.create('<img alt="" />');
         branchicon.setAttribute('src', M.util.image_url(this.icon.pix, this.icon.component));
         branchli.addClass('item_with_icon');

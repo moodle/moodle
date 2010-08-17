@@ -10,6 +10,8 @@
 
 .block_navigation .block_tree .tree_item.branch {background-image: url([[pix:t/expanded]]);background-position: 0 10%;background-repeat: no-repeat;}
 .block_navigation .block_tree .navigation_node.tree_item.branch {background-image:none;padding-left:0;}
+.block_navigation .block_tree .type_activity > .tree_item.branch {background-image:none;position:relative;}
+.block_navigation .block_tree .type_activity > .tree_item.branch img {position:absolute;left:0;}
 .block_navigation .block_tree .root_node.leaf {padding-left:0px;}
 .block_navigation .block_tree .current_branch {font-weight:bold;}
 .block_navigation .block_tree .depth_1.current_branch ul {font-weight:normal;}
