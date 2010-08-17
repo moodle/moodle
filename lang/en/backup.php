@@ -58,6 +58,11 @@ $string['configgeneralroleassignments'] = 'If enabled by default roles assignmen
 $string['configgeneraluserscompletion'] = 'If enabled user completion information will be included in backups by default.';
 $string['configgeneraluserfiles'] = 'Sets the default for whether user files will be included in backups.';
 $string['configgeneralusers'] = 'Sets the default for whether to include users in backups.';
+$string['confirmcancel'] = 'Cancel backup';
+$string['confirmcancelquestion'] = 'Are you sure you wish to cancel?
+Any information you have entered will be lost.';
+$string['confirmcancelyes'] = 'Cancel';
+$string['confirmcancelno'] = 'Stay';
 $string['coursecategory'] = 'Category the course will be restored into';
 $string['courseid'] = 'Original ID';
 $string['coursesettings'] = 'Course settings';
