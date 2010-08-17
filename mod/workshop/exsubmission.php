@@ -53,6 +53,7 @@ if ($id) { // example is specified
     $example = new stdclass();
     $example->id = null;
     $example->authorid = $USER->id;
+    $example->example = 1;
 }
 
 $canmanage  = has_capability('mod/workshop:manageexamples', $workshop->context);
@@ -113,8 +114,14 @@ if ($edit and $canmanage) {
         redirect($workshop->view_url());
 
     } elseif ($canmanage and $formdata = $mform->get_data()) {
+        if ($formdata->example == 1) {
+            // this was used just for validation, it must be set to one when dealing with example submissions
+            unset($formdata->example);
+        } else {
+            throw new coding_exception('Invalid submission form data value: example');
+        }
         $timenow = time();
-        if (empty($formdata->id)) {
+        if (is_null($example->id)) {
             $formdata->workshopid     = $workshop->id;
             $formdata->example        = 1;
             $formdata->authorid       = $USER->id;
@@ -126,15 +133,19 @@ if ($edit and $canmanage) {
         $formdata->content            = '';          // updated later
         $formdata->contentformat      = FORMAT_HTML; // updated later
         $formdata->contenttrust       = 0;           // updated later
-        if (empty($formdata->id)) {
-            $formdata->id = $DB->insert_record('workshop_submissions', $formdata);
+        if (is_null($example->id)) {
+            $example->id = $formdata->id = $DB->insert_record('workshop_submissions', $formdata);
             // todo add to log
+        } else {
+            if (empty($formdata->id) or empty($example->id) or ($formdata->id != $example->id)) {
+                throw new moodle_exception('err_examplesubmissionid', 'workshop');
+            }
         }
         // save and relink embedded images and save attachments
         $formdata = file_postupdate_standard_editor($formdata, 'content', $contentopts, $workshop->context,
-                                                      'mod_workshop', 'submission_content', $formdata->id);
+                                                      'mod_workshop', 'submission_content', $example->id);
         $formdata = file_postupdate_standard_filemanager($formdata, 'attachment', $attachmentopts, $workshop->context,
-                                                           'mod_workshop', 'submission_attachment', $formdata->id);
+                                                           'mod_workshop', 'submission_attachment', $example->id);
         if (empty($formdata->attachment)) {
             // explicit cast to zero integer
             $formdata->attachment = 0;

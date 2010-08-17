@@ -87,6 +87,7 @@ $string['editassessmentformstrategy'] = 'Edit assessment form ({$a})';
 $string['editingassessmentform'] = 'Editing assessment form';
 $string['editingsubmission'] = 'Editing submission';
 $string['editsubmission'] = 'Edit submission';
+$string['err_multiplesubmissions'] = 'While editing this form, another version of the submission has been saved. Multiple submissions per user are not allowed.';
 $string['err_removegrademappings'] = 'Unable to remove the unused grade mappings';
 $string['evaluategradeswait'] = 'Please wait until the assessments are evaluated and the grades are calculated';
 $string['evaluation'] = 'Grading evaluation';

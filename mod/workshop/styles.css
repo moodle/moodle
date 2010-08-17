@@ -298,9 +298,12 @@
 /**
  * Assessment
  */
-.path-mod-workshop .assessment-summary.graded,
-.path-mod-workshop .example-summary.graded {
+.path-mod-workshop .assessment-summary.graded {
     background-color: #e7f1c3;
+}
+
+.path-mod-workshop .example-summary.notgraded {
+    background-color: #ffd3d9;
 }
 
 .path-mod-workshop .assessmentform .description {
