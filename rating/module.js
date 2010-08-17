@@ -42,14 +42,19 @@ M.core_rating={
                         var data = this.Y.JSON.parse(outcome.responseText);
                         if (data.success){
                             //if the user has access to the aggregate then update it
-                            if (data.itemid && data.aggregate && data.count) {
+                            if (data.itemid) { //do not test data.aggregate or data.count otherwise it doesn't refresh value=0 or no value
                                 var itemid = data.itemid;
                                 
                                 var node = this.Y.one('#ratingaggregate'+itemid);
                                 node.set('innerHTML',data.aggregate);
 
+                                //empty the count value if no ratings
                                 var node = this.Y.one('#ratingcount'+itemid);
-                                node.set('innerHTML',"("+data.count+")");
+                                if (data.count > 0) {
+                                    node.set('innerHTML',"("+data.count+")");
+                                } else {
+                                    node.set('innerHTML',"");
+                                }
                             }
                             return true;
                         }

@@ -58,6 +58,8 @@ if (!confirm_sesskey() || $USER->id==$rateduserid) {
     die();
 }
 
+$rm = new rating_manager();
+
 //check the module rating permissions
 //doing this check here rather than within rating_manager::get_ratings so we can return a json error response
 $pluginrateallowed = true;
@@ -65,7 +67,6 @@ $pluginpermissionsarray = null;
 if ($context->contextlevel==CONTEXT_MODULE) {
     $plugintype = 'mod';
     $pluginname = $cm->modname;
-    $rm = new rating_manager();
     $pluginpermissionsarray = $rm->get_plugin_permissions_array($context->id, $plugintype, $pluginname);
     $pluginrateallowed = $pluginpermissionsarray['rate'];
 
@@ -81,19 +82,26 @@ if (!$pluginrateallowed || !has_capability('moodle/rating:rate',$context)) {
     die();
 }
 
-$PAGE->set_url('/lib/rate.php', array(
-        'contextid'=>$context->id
-    ));
+$PAGE->set_url('/lib/rate.php', array('contextid'=>$context->id));
 
-
+//rating options used to update the rating then retrieve the aggregate
 $ratingoptions = new stdclass;
 $ratingoptions->context = $context;
 $ratingoptions->itemid  = $itemid;
 $ratingoptions->scaleid = $scaleid;
 $ratingoptions->userid  = $USER->id;
-$rating = new rating($ratingoptions);
 
-$rating->update_rating($userrating);
+if ($userrating != RATING_UNSET_RATING) {
+    $rating = new rating($ratingoptions);
+    $rating->update_rating($userrating);
+} else { //delete the rating if the user set to Rate...
+    $options = new stdClass();
+    $options->contextid = $context->id;
+    $options->userid = $USER->id;
+    $options->itemid = $itemid;
+    
+    $rm->delete_ratings($options);
+}
 
 //Future possible enhancement: add a setting to turn grade updating off for those who don't want them in gradebook
 //note that this would need to be done in both rate.php and rate_ajax.php
@@ -115,17 +123,15 @@ if(true){
 $result = new stdClass;
 $result->success = true;
 
-
 //need to retrieve the updated item to get its new aggregate value
 $item = new stdclass();
-$item->id = $rating->itemid;
+$item->id = $itemid;
 $items = array($item);
 
-//most of $ratingoptions variables are set correctly
+//most of $ratingoptions variables were previously set
 $ratingoptions->items = $items;
 $ratingoptions->aggregate = $aggregationmethod;
 
-$rm = new rating_manager();
 $items = $rm->get_ratings($ratingoptions);
 
 //for custom scales return text not the value
@@ -134,10 +140,10 @@ $scalearray = null;
 $aggregatetoreturn = round($items[0]->rating->aggregate,1);
 
 // Output a dash if aggregation method == COUNT as the count is output next to the aggregate anyway
-if ($items[0]->rating->settings->aggregationmethod==RATING_AGGREGATE_COUNT) {
+if ($items[0]->rating->settings->aggregationmethod==RATING_AGGREGATE_COUNT or $items[0]->rating->count == 0) {
     $aggregatetoreturn = ' - ';
 } else if($rating->scaleid < 0) { //if its non-numeric scale
-    //output the numeric aggregate is aggregation method is sum
+    //dont use the scale item if the aggregation method is sum as adding items from a custom scale makes no sense
     if ($items[0]->rating->settings->aggregationmethod!= RATING_AGGREGATE_SUM) {
         $scalerecord = $DB->get_record('scale', array('id' => -$rating->scaleid));
         if ($scalerecord) {
@@ -154,7 +160,7 @@ if (($USER->id==$items[0]->rating->itemuserid && has_capability('moodle/rating:v
  || ($USER->id!=$items[0]->rating->itemuserid && has_capability('moodle/rating:viewany',$context) && $pluginpermissionsarray['viewany'])) {
     $result->aggregate = $aggregatetoreturn;
     $result->count = $items[0]->rating->count;
-    $result->itemid = $rating->itemid;
+    $result->itemid = $itemid;
 }
 
 echo json_encode($result);

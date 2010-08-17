@@ -168,6 +168,7 @@ class rating_manager {
     * @param object $options {
     *            contextid => int the context in which the ratings exist [required]
     *            ratingid => int the id of an individual rating to delete [optional]
+    *            userid => int delete the ratings submitted by this user. May be used in conjuction with itemid [optional]
     *            itemid => int delete all ratings attached to this item [optional]
     * }
     * @return void
@@ -179,9 +180,17 @@ class rating_manager {
             //delete a single rating
             $DB->delete_records('rating', array('contextid'=>$options->contextid, 'id'=>$options->ratingid) );
         }
+        else if( !empty($options->itemid) && !empty($options->userid) ) {
+            //delete the rating for an item submitted by a particular user
+            $DB->delete_records('rating', array('contextid'=>$options->contextid, 'itemid'=>$options->itemid, 'userid'=>$options->userid) );
+        }
         else if( !empty($options->itemid) ) {
             //delete all ratings for an item
             $DB->delete_records('rating', array('contextid'=>$options->contextid, 'itemid'=>$options->itemid) );
+        }
+        else if( !empty($options->userid) ) {
+            //delete all ratings submitted by a user
+            $DB->delete_records('rating', array('contextid'=>$options->contextid, 'userid'=>$options->userid) );
         }
         else {
             //delete all ratings for this context

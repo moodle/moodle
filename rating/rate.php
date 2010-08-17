@@ -72,18 +72,25 @@ if (!$pluginrateallowed || !has_capability('moodle/rating:rate',$context)) {
     die();
 }
 
-$PAGE->set_url('/lib/rate.php', array(
-        'contextid'=>$context->id
-    ));
+$PAGE->set_url('/lib/rate.php', array('contextid'=>$context->id));
 
-$ratingoptions = new stdclass;
-$ratingoptions->context = $context;
-$ratingoptions->itemid  = $itemid;
-$ratingoptions->scaleid = $scaleid;
-$ratingoptions->userid  = $USER->id;
-$rating = new rating($ratingoptions);
+if ($userrating != RATING_UNSET_RATING) {
+    $ratingoptions = new stdclass;
+    $ratingoptions->context = $context;
+    $ratingoptions->itemid  = $itemid;
+    $ratingoptions->scaleid = $scaleid;
+    $ratingoptions->userid  = $USER->id;
 
-$rating->update_rating($userrating);
+    $rating = new rating($ratingoptions);
+    $rating->update_rating($userrating);
+} else { //delete the rating if the user set to Rate...
+    $options = new stdClass();
+    $options->contextid = $context->id;
+    $options->userid = $USER->id;
+    $options->itemid = $itemid;
+
+    $rm->delete_ratings($options);
+}
 
 //todo add a setting to turn grade updating off for those who don't want them in gradebook
 //note that this needs to be done in both rate.php and rate_ajax.php
