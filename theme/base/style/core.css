@@ -642,6 +642,8 @@ body.tag .managelink {padding: 5px;}
 .backup-restore .detail-pair-label {display:inline-block;width:25%;padding:8px;margin:0;text-align:right;font-weight:bold;color:#444;vertical-align:top;}
 .backup-restore .detail-pair-value {display:inline-block;width:65%;padding:8px;margin:0;}
 .backup-restore .detail-pair-value > .sub-detail {display:block;color:#1580B6;margin-left:2em;font-size:90%;font-style: italic;}
+.backup-restore > .singlebutton {text-align:right;}
+.path-backup .mform .fgroup .proceedbutton {float:right;}
 
 .restore-course-search .rcs-results {width:70%;min-width:400px;border:1px solid #ddd;margin:5px 0;}
 .restore-course-search .rcs-results table {width:100%;margin:0;border-width:0;}
@@ -658,11 +660,3 @@ body.tag .managelink {padding: 5px;}
  * IE - Overide for RTL layout
  */
 .ie.dir-rtl .mform .fitem .felement {margin-right:0;text-align:right;float:right;}
-
-/**
- * Choice
- */
-.path-mod-choice .results .option,
-.path-mod-choice .results .numberofuser,
-.path-mod-choice .results .percentage {font-weight: bold; font-size: 108%;}
-
