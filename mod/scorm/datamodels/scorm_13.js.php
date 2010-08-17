@@ -1278,6 +1278,5 @@ var API_1484_11 = new SCORMapi1_3();
 // pull in the debugging utilities
 if (scorm_debugging($scorm)) {
     include_once($CFG->dirroot.'/mod/scorm/datamodels/debug.js.php');
-    echo 'AppendToLog("Moodle SCORM 1.3 API Loaded, Activity: '.$scorm->name.', SCO: '.$sco->identifier.'", 0);';
 }
  ?>

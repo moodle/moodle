@@ -197,13 +197,13 @@ function SCORMapi1_2() {
                 result = StoreData(cmi,true);
                 if (nav.event != '') {
                     if (nav.event == 'continue') {
-                        setTimeout('top.document.location=top.next;',500);
+                        setTimeout('scorm_get_next();',500);
                     } else {
-                        setTimeout('top.document.location=top.prev;',500);
+                        setTimeout('scorm_get_prev();',500);
                     }
                 } else {
                     if (<?php echo $scorm->auto ?> == 1) {
-                        setTimeout('top.document.location=top.next;',500);
+                        setTimeout('scorm_get_next();',500);
                     }
                 }
                 <?php
@@ -640,8 +640,7 @@ var API = new SCORMapi1_2();
 <?php
 // pull in the debugging utilities
 if (scorm_debugging($scorm)) {
-    include_once($CFG->dirroot.'/mod/scorm/datamodels/debug.js.php');
-    echo 'AppendToLog("Moodle SCORM 1.2 API Loaded, Activity: '.$scorm->name.', SCO: '.$sco->identifier.'", 0);';
+   include_once($CFG->dirroot.'/mod/scorm/datamodels/debug.js.php');
 }
  ?>
 

@@ -21,6 +21,10 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+mod_scorm_next = null;
+mod_scorm_prev = null;
+mod_scorm_activate_item = null;
+
 M.mod_scorm = {};
 
 M.mod_scorm.init = function(Y, hide_nav, hide_toc, toc_title, window_name, launch_sco) {
@@ -133,6 +137,8 @@ M.mod_scorm.init = function(Y, hide_nav, hide_toc, toc_title, window_name, launc
                 scorm_fixnav();
             }
         };
+
+        mod_scorm_activate_item = scorm_activate_item;
 
         /**
          * Enables/disables navigation buttons as needed.
@@ -282,6 +288,9 @@ M.mod_scorm.init = function(Y, hide_nav, hide_toc, toc_title, window_name, launc
             return null;
         };
 
+        mod_scorm_next = scorm_next;
+        mod_scorm_prev = scorm_prev;
+
 
         // layout
         YAHOO.widget.LayoutUnit.prototype.STR_COLLAPSE = M.str.moodle.hide;
@@ -401,3 +410,26 @@ M.mod_scorm.init = function(Y, hide_nav, hide_toc, toc_title, window_name, launc
         };
     });
 };
+
+
+function scorm_get_prev() {
+	scorm_tree_node = YAHOO.widget.TreeView.getTree('scorm_tree');
+    if (scorm_tree_node) {
+        var hnode = scorm_tree_node.getHighlightedNode();
+        var prev = mod_scorm_prev(hnode);
+        if (prev) {
+            mod_scorm_activate_item(prev);
+        }
+    }
+}
+
+function scorm_get_next() {
+	scorm_tree_node = YAHOO.widget.TreeView.getTree('scorm_tree');
+    if (scorm_tree_node) {
+        var hnode = scorm_tree_node.getHighlightedNode();
+        var next = mod_scorm_next(hnode);
+        if (next) {
+            mod_scorm_activate_item(next);
+        }
+    }
+}

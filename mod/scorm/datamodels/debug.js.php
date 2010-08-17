@@ -721,3 +721,19 @@ function LogAPICall(func, nam, val, rc) {
     s += ' => ' + String(rc);
     AppendToLog(s, rc);
 }
+
+
+// Add in a JS controlled link for toggling the Debug logging
+var logButton = document.createElement('a');
+logButton.id = 'mod-scorm-log-toggle';
+logButton.name = 'logToggle';
+logButton.href = 'javascript:toggleLog();';
+if (getLoggingActive() == "A") {
+    logButton.innerHTML = '<?php print_string('scormloggingon','scorm') ?>';
+} else {
+    logButton.innerHTML = '<?php print_string('scormloggingoff','scorm') ?>';
+}
+var content = safeGetElement(document, 'scormpage');
+content.insertBefore(logButton, content.firstChild);
+AppendToLog("Moodle SCORM 1.2 API Loaded, Activity: <?php echo $scorm->name; ?>, SCO: <?php echo $sco->identifier; ?>", 0);
+

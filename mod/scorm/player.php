@@ -208,26 +208,7 @@
                 </noscript>
 <?php
     if ($result->prerequisites) {
-        if ($scorm->popup == 0) {
-            if (scorm_debugging($scorm)) {
-?>
-                <script>
-                // Add in a JS controlled link for toggling the Debug logging
-                var logButton = document.createElement('a');
-                logButton.id = 'mod-scorm-log-toggle';
-                logButton.name = 'logToggle';
-                logButton.href = 'javascript:toggleLog();';
-                if (getLoggingActive() == "A") {
-                    logButton.innerHTML = '<?php print_string('scormloggingon','scorm') ?>';
-                } else {
-                    logButton.innerHTML = '<?php print_string('scormloggingoff','scorm') ?>';
-                }
-                var content = safeGetElement(document, 'scormpage');
-                content.insertBefore(logButton, content.firstChild);
-                </script>
-<?php
-            }
-        } else {
+        if ($scorm->popup != 0) {
             // Clean the name for the window as IE is fussy
             $name = preg_replace("/[^A-Za-z0-9]/", "", $scorm->name);
             if (!$name) {
