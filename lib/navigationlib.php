@@ -1516,13 +1516,15 @@ class global_navigation extends navigation_node {
             if (!$issitecourse) {
                 // Not the current user so add it to the participants node for the current course
                 $usersnode = $coursenode->get('participants', navigation_node::TYPE_CONTAINER);
+                $userviewurl = new moodle_url('/user/view.php', $baseargs);
             } else {
                 // This is the site so add a users node to the root branch
                 $usersnode = $this->rootnodes['users'];
                 $usersnode->action = new moodle_url('/user/index.php', array('id'=>$course->id));
+                $userviewurl = new moodle_url('/user/profile.php', $baseargs);
             }
             // Add a branch for the current user
-            $usernode = $usersnode->add(fullname($user, true), null, self::TYPE_USER, null, $user->id);
+            $usernode = $usersnode->add(fullname($user, true), $userviewurl, self::TYPE_USER, null, $user->id);
 
             if ($this->page->context->contextlevel == CONTEXT_USER && $user->id == $this->page->context->instanceid) {
                 $usernode->make_active();
@@ -2855,8 +2857,7 @@ class settings_navigation extends navigation_node {
 
         // Import data from other courses
         if (has_capability('moodle/restore:restoretargetimport', $coursecontext)) {
-            $url = new moodle_url('/course/import.php', array('id'=>$course->id));
-            $url = null; // Disabled until restore is implemented. MDL-21432
+            $url = new moodle_url('/backup/import.php', array('id'=>$course->id));
             $coursenode->add(get_string('import'), $url, self::TYPE_SETTING, null, 'import', new pix_icon('i/restore', ''));
         }
 

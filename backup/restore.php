@@ -17,8 +17,6 @@ $PAGE->set_pagelayout('standard');
 require_login($course, null, $cm);
 require_capability('moodle/restore:restorecourse', $context);
 
-$isfrontpage = ($course->id == SITEID);
-
 if ($stage & restore_ui::STAGE_CONFIRM + restore_ui::STAGE_DESTINATION) {
     $restore = restore_ui::engage_independent_stage($stage, $contextid);
 } else {

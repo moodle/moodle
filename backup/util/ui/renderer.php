@@ -64,6 +64,13 @@ class core_backup_renderer extends plugin_renderer_base {
         return html_writer::tag('div', $message, array('class'=>'notification dependencies_enforced'));
     }
 
+    /**
+     * Displays the details of a backup file
+     *
+     * @param stdClass $details
+     * @param moodle_url $nextstageurl
+     * @return string
+     */
     public function backup_details($details, $nextstageurl) {
         $yestick = $this->output->pix_icon('i/tick_green_big', get_string('yes'));
         $notick = $this->output->pix_icon('i/cross_red_big', get_string('no'));
@@ -146,7 +153,17 @@ class core_backup_renderer extends plugin_renderer_base {
         return $html;
     }
 
-    public function course_selector(moodle_url $nextstageurl, $details, $categories, restore_course_search $courses=null, $currentcourse = null) {
+    /**
+     * Displays a course selector for restore
+     *
+     * @param moodle_url $nextstageurl
+     * @param stdClass $details
+     * @param restore_category_search $categories
+     * @param restore_course_search $courses
+     * @param int $currentcourse
+     * @return string
+     */
+    public function course_selector(moodle_url $nextstageurl, $details, restore_category_search $categories = null, restore_course_search $courses=null, $currentcourse = null) {
         global $CFG;
         require_once($CFG->dirroot.'/course/lib.php');
 
@@ -172,7 +189,7 @@ class core_backup_renderer extends plugin_renderer_base {
             $html .= html_writer::end_tag('form');
         }
 
-        if ($categories->get_resultscount() > 0 || $categories->get_search() == '') {
+        if (!empty($categories) && ($categories->get_resultscount() > 0 || $categories->get_search() == '')) {
             // New course
             $html .= $form;
             $html .= html_writer::start_tag('div', array('class'=>'bcs-new-course backup-section'));
@@ -185,7 +202,7 @@ class core_backup_renderer extends plugin_renderer_base {
             $html .= html_writer::end_tag('form');
         }
 
-        if ($courses->get_resultscount() > 0 || $courses->get_search() == '') {
+        if (!empty($courses) && ($courses->get_resultscount() > 0 || $courses->get_search() == '')) {
             // Existing course
             $html .= $form;
             $html .= html_writer::start_tag('div', array('class'=>'bcs-existing-course backup-section'));
@@ -202,6 +219,39 @@ class core_backup_renderer extends plugin_renderer_base {
         return $html;
     }
 
+    /**
+     * Displays the import course selector
+     *
+     * @param moodle_url $nextstageurl
+     * @param import_course_search $courses
+     * @return string
+     */
+    public function import_course_selector(moodle_url $nextstageurl, import_course_search $courses=null) {
+        $html  = html_writer::start_tag('div', array('class'=>'import-course-selector backup-restore'));
+        $html .= html_writer::start_tag('form', array('method'=>'post', 'action'=>$nextstageurl->out_omit_querystring()));
+        foreach ($nextstageurl->params() as $key=>$value) {
+            $html .= html_writer::empty_tag('input', array('type'=>'hidden', 'name'=>$key, 'value'=>$value));
+        }
+        $html .= html_writer::start_tag('div', array('class'=>'ics-existing-course backup-section'));
+        $html .= $this->output->heading(get_string('importdatafrom'), 2, array('class'=>'header'));
+        $html .= $this->backup_detail_input(get_string('importadding', 'backup'), 'radio', 'target', backup::TARGET_CURRENT_ADDING, array('checked'=>'checked'), get_string('importaddingdesc', 'backup'));
+        $html .= $this->backup_detail_input(get_string('importdeleting', 'backup'), 'radio', 'target', backup::TARGET_CURRENT_DELETING, array(), get_string('importdeletingdesc', 'backup'));
+        $html .= $this->backup_detail_pair(get_string('selectacourse', 'backup'), $this->render($courses));
+        $html .= $this->backup_detail_pair('', html_writer::empty_tag('input', array('type'=>'submit', 'value'=>get_string('continue'))));
+        $html .= html_writer::end_tag('div');
+        $html .= html_writer::end_tag('form');
+        $html .= html_writer::end_tag('div');
+        return $html;
+    }
+
+    /**
+     * Creates a detailed pairing (key + value)
+     *
+     * @staticvar int $count
+     * @param string $label
+     * @param string $value
+     * @return string
+     */
     protected function backup_detail_pair($label, $value) {
         static $count= 0;
         $count++;
@@ -212,6 +262,17 @@ class core_backup_renderer extends plugin_renderer_base {
         return $html;
     }
 
+    /**
+     * Created a detailed pairing with an input
+     *
+     * @param string $label
+     * @param string $type
+     * @param string $name
+     * @param string $value
+     * @param array $attributes
+     * @param string|null $description
+     * @return string
+     */
     protected function backup_detail_input($label, $type, $name, $value, array $attributes=array(), $description=null) {
         if (!empty ($description)) {
             $description = html_writer::tag('span', $description, array('class'=>'description'));
@@ -221,6 +282,18 @@ class core_backup_renderer extends plugin_renderer_base {
         return $this->backup_detail_pair($label, html_writer::empty_tag('input', $attributes+array('name'=>$name, 'type'=>$type, 'value'=>$value)).$description);
     }
 
+    /**
+     * Creates a detailed pairing with a select
+     *
+     * @param string $label
+     * @param string $name
+     * @param array $options
+     * @param string $selected
+     * @param bool $nothing
+     * @param array $attributes
+     * @param string|null $description
+     * @return string
+     */
     protected function backup_detail_select($label, $name, $options, $selected='', $nothing=false, array $attributes=array(), $description=null) {
         if (!empty ($description)) {
             $description = html_writer::tag('span', $description, array('class'=>'description'));
@@ -230,6 +303,12 @@ class core_backup_renderer extends plugin_renderer_base {
         return $this->backup_detail_pair($label, html_writer::select($options, $name, $selected, false, $attributes).$description);
     }
 
+    /**
+     * Displays precheck notices
+     *
+     * @param array $results
+     * @return string
+     */
     public function precheck_notices($results) {
         $output = html_writer::start_tag('div', array('class'=>'restore-precheck-notices'));
         if (array_key_exists('errors', $results)) {
@@ -245,6 +324,12 @@ class core_backup_renderer extends plugin_renderer_base {
         return $output.html_writer::end_tag('div');
     }
 
+    /**
+     * Displays substage buttons
+     *
+     * @param bool $haserrors
+     * @return string
+     */
     public function substage_buttons($haserrors) {
         $output  = html_writer::start_tag('div', array('continuebutton'));
         if (!$haserrors) {
@@ -255,6 +340,13 @@ class core_backup_renderer extends plugin_renderer_base {
         return $output;
     }
 
+    /**
+     * Displays a role mapping interface
+     *
+     * @param array $rolemappings
+     * @param array $roles
+     * @return string
+     */
     public function role_mappings($rolemappings, $roles) {
         $roles[0] = get_string('none');
         $output  = html_writer::start_tag('div', array('class'=>'restore-rolemappings'));
@@ -269,6 +361,13 @@ class core_backup_renderer extends plugin_renderer_base {
         return $output;
     }
 
+    /**
+     * Displays a continue button
+     *
+     * @param string|moodle_url $url
+     * @param string $method
+     * @return string
+     */
     public function continue_button($url, $method='post') {
         if (!($url instanceof moodle_url)) {
             $url = new moodle_url($url);
@@ -291,6 +390,13 @@ class core_backup_renderer extends plugin_renderer_base {
         return $this->render($tree);
     }
 
+    /**
+     * Displays a backup files viewer
+     *
+     * @global stdClass $USER
+     * @param backup_files_viewer $tree
+     * @return string
+     */
     public function render_backup_files_viewer(backup_files_viewer $tree) {
         global $USER;
         $user_context = get_context_instance(CONTEXT_USER, $USER->id);
@@ -337,6 +443,12 @@ class core_backup_renderer extends plugin_renderer_base {
         return $html;
     }
 
+    /**
+     * Renders a restore course search object
+     *
+     * @param restore_course_search $component
+     * @return string
+     */
     public function render_restore_course_search(restore_course_search $component) {
         $url = $component->get_url();
 
@@ -386,6 +498,67 @@ class core_backup_renderer extends plugin_renderer_base {
         return $output;
     }
 
+    /**
+     * Renders an import course search object
+     *
+     * @param import_course_search $component
+     * @return string
+     */
+    public function render_import_course_search(import_course_search $component) {
+        $url = $component->get_url();
+
+        $output = html_writer::start_tag('div', array('class' => 'import-course-search'));
+        if ($component->get_totalcount() === 0) {
+            $output .= $this->output->notification(get_string('nomatchingcourses', 'backup'));
+            $output .= html_writer::end_tag('div');
+            return $output;
+        }
+
+        $output .= html_writer::tag('div', get_string('totalcoursesearchresults', 'backup', $component->get_totalcount()), array('class'=>'ics-totalresults'));
+
+        $output .= html_writer::start_tag('div', array('class' => 'ics-results'));
+        if ($component->get_totalpages()>1) {
+            $pagingbar = new paging_bar($component->get_totalcount(), $component->get_page(), $component->get_pagelimit(), new moodle_url($url, array('searchcourses'=>1)), restore_course_search::$VAR_PAGE);
+            $output .= $this->output->render($pagingbar);
+        }
+
+        $table = new html_table();
+        $table->head = array('', get_string('shortname'), get_string('fullname'));
+        $table->data = array();
+        foreach ($component->get_results() as $course) {
+            $row = new html_table_row();
+            $row->attributes['class'] = 'ics-course';
+            if (!$course->visible) {
+                $row->attributes['class'] .= ' dimmed';
+            }
+            $row->cells = array(
+                html_writer::empty_tag('input', array('type'=>'radio', 'name'=>'importid', 'value'=>$course->id)),
+                $course->shortname,
+                $course->fullname
+            );
+            $table->data[] = $row;
+        }
+        $output .= html_writer::table($table);
+        if (isset($pagingbar)) {
+            $output .= $this->output->render($pagingbar);
+        }
+        $output .= html_writer::end_tag('div');
+
+        $output .= html_writer::start_tag('div', array('class'=>'ics-search'));
+        $output .= html_writer::empty_tag('input', array('type'=>'text', 'name'=>restore_course_search::$VAR_SEARCH, 'value'=>$component->get_search()));
+        $output .= html_writer::empty_tag('input', array('type'=>'submit', 'name'=>'searchcourses', 'value'=>get_string('search')));
+        $output .= html_writer::end_tag('div');
+
+        $output .= html_writer::end_tag('div');
+        return $output;
+    }
+
+    /**
+     * Renders a restore category search object
+     * 
+     * @param restore_category_search $component
+     * @return string
+     */
     public function render_restore_category_search(restore_category_search $component) {
         $url = $component->get_url();
 

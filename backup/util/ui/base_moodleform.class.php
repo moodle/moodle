@@ -257,4 +257,49 @@ abstract class base_moodleform extends moodleform {
     public function is_cancelled() {
         return (optional_param('cancel', false, PARAM_BOOL) || parent::is_cancelled());
     }
+
+    /**
+     * Removes an element from the form if it exists
+     * @param string $elementName
+     * @return bool
+     */
+    public function remove_element($elementName) {
+        if ($this->_form->elementExists($elementname)) {
+            return $this->_form->removeElement($elementName);
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Gets an element from the form if it exists
+     *
+     * @param string $elementname
+     * @return HTML_QuickForm_input|MoodleQuickForm_group
+     */
+    public function get_element($elementname) {
+        if ($this->_form->elementExists($elementname)) {
+            return $this->_form->getElement($elementname);
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Displays the form
+     */
+    public function display() {
+        $this->require_definition_after_data();
+        parent::display();
+    }
+
+    /**
+     * Ensures the the definition after data is loaded
+     */
+    public function require_definition_after_data() {
+        if (!$this->_definition_finalized) {
+            $this->_definition_finalized = true;
+            $this->definition_after_data();
+        }
+    }
 }

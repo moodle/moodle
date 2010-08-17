@@ -43,6 +43,12 @@ class backup_ui extends base_ui {
     const STAGE_COMPLETE = 16;
 
     /**
+     * If set to true the current stage is skipped.
+     * @var bool
+     */
+    protected static $skipcurrentstage = false;
+
+    /**
      * Intialises what ever stage is requested. If none are requested we check
      * params for 'stage' and default to initial
      *
@@ -52,6 +58,9 @@ class backup_ui extends base_ui {
     protected function initialise_stage($stage = null, array $params=null) {
         if ($stage == null) {
             $stage = optional_param('stage', self::STAGE_INITIAL, PARAM_INT);
+        }
+        if (self::$skipcurrentstage) {
+            $stage *= 2;
         }
         switch ($stage) {
             case backup_ui::STAGE_INITIAL:
@@ -72,6 +81,10 @@ class backup_ui extends base_ui {
         }
         return $stage;
     }
+    /**
+     * Returns the backup id
+     * @return string
+     */
     public function get_uniqueid() {
         return $this->get_backupid();
     }
@@ -150,21 +163,39 @@ class backup_ui extends base_ui {
                 $classes[] = 'backup_stage_complete';
             }
             $item = array('text' => strlen(decbin($stage)).'. '.get_string('currentstage'.$stage, 'backup'),'class' => join(' ', $classes));
-            if ($stage < $currentstage && $currentstage < self::STAGE_COMPLETE) {
-                $item['link'] = new moodle_url($PAGE->url, array('backup'=>$this->get_backupid(), 'stage'=>$stage));
+            if ($stage < $currentstage && $currentstage < self::STAGE_COMPLETE && (!self::$skipcurrentstage || ($stage*2) != $currentstage)) {
+                $params = $this->stage->get_params();
+                if (empty($params)) {
+                    $params = array();
+                }
+                $params = array_merge($params, array('backup'=>$this->get_backupid(), 'stage'=>$stage));
+                $item['link'] = new moodle_url($PAGE->url, $params);
             }
             array_unshift($items, $item);
             $stage = floor($stage/2);
         }
         return $items;
     }
-
+    /**
+     * Gets the name related to the operation of this UI
+     * @return string
+     */
     public function get_name() {
         return 'backup';
     }
-
+    /**
+     * Gets the id of the first stage this UI is reponsible for
+     * @return int
+     */
     public function get_first_stage_id() {
         return self::STAGE_INITIAL;
+    }
+    /**
+     * If called with default arg the current stage gets skipped.
+     * @static
+     */
+    public static function skip_current_stage($setting=true) {
+        self::$skipcurrentstage = $setting;
     }
 }
 
