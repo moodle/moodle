@@ -319,10 +319,10 @@ function SCORMapi1_3() {
                 if (adl.nav.request != '_none_') {
                     switch (adl.nav.request) {
                         case 'continue':
-                            setTimeout('top.nextSCO();',500);
+                            setTimeout('scorm_get_next();',500);
                         break;
                         case 'previous':
-                            setTimeout('top.prevSCO();',500);
+                            setTimeout('scorm_get_prev();',500);
                         break;
                         case 'choice':
                         break;
@@ -337,7 +337,7 @@ function SCORMapi1_3() {
                     }
                 } else {
                     if (<?php echo $scorm->auto ?> == 1) {
-                        setTimeout('top.nextSCO();',500);
+                        setTimeout('scorm_get_next();',500);
                     }
                 }
                 // trigger TOC update

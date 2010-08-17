@@ -216,13 +216,13 @@ function AICCapi() {
                 result = StoreData(cmi,true);
                 if (nav.event != '') {
                     if (nav.event == 'continue') {
-                        setTimeout('top.nextSCO();',500);
+                        setTimeout('scorm_get_next();',500);
                     } else {
-                        setTimeout('top.prevSCO();',500);
+                        setTimeout('scorm_get_prev();',500);
                     }
                 } else {
                     if (<?php echo $scorm->auto ?> == 1) {
-                        setTimeout('top.nextSCO();',500);
+                        setTimeout('scorm_get_next();',500);
                     }
                 }
                 // trigger TOC update
