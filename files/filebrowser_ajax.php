@@ -31,6 +31,7 @@ require_once($CFG->libdir.'/filelib.php');
 
 $action = optional_param('action', 'list', PARAM_ALPHA);
 
+$PAGE->set_context(get_system_context());
 require_login();
 
 echo $OUTPUT->header(); // send headers
