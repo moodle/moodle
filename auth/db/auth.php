@@ -597,15 +597,15 @@ class auth_plugin_db extends auth_plugin_base {
      * Returns the URL for changing the user's pw, or empty if the default can
      * be used.
      *
-     * @return string
+     * @return moodle_url
      */
     function change_password_url() {
         if ($this->config->passtype == 'internal') {
             // standard form
-            return '';
+            return null;
         } else {
             // use custom url
-            return $this->config->changepasswordurl;
+            return new moodle_url($this->config->changepasswordurl);
         }
     }
 

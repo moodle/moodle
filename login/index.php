@@ -194,7 +194,7 @@ if (empty($CFG->usesid) and $testcookies and (get_moodle_cookie() == '')) {    /
         if (!empty($userauth->config->expiration) and $userauth->config->expiration == 1) {
             if ($userauth->can_change_password()) {
                 $passwordchangeurl = $userauth->change_password_url();
-                if(!$passwordchangeurl) {
+                if (!$passwordchangeurl) {
                     $passwordchangeurl = $CFG->httpswwwroot.'/login/change_password.php';
                 }
             } else {

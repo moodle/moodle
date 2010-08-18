@@ -2,7 +2,7 @@
 
 /**
  * @author Martin Dougiamas
- * @author Iñaki Arenaza
+ * @author Iï¿½aki Arenaza
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package moodle multiauth
  *
@@ -1098,7 +1098,7 @@ class auth_plugin_ldap extends auth_plugin_base {
             if (empty($user_entry)) {
                 $attribs = join (', ', $search_attribs);
                 error_log($this->errorlogtag.get_string('updateusernotfound', 'auth_ldap',
-                                                          array('userdn'=>$user_dn, 
+                                                          array('userdn'=>$user_dn,
                                                                 'attribs'=>$attribs)));
                 return false; // old user not found!
             } else if (count($user_entry) > 1) {
@@ -1493,13 +1493,13 @@ class auth_plugin_ldap extends auth_plugin_base {
      * Returns the URL for changing the user's password, or empty if the default can
      * be used.
      *
-     * @return string url
+     * @return moodle_url
      */
     function change_password_url() {
         if (empty($this->config->stdchangepassword)) {
-            return $this->config->changepasswordurl;
+            return new moodle_url($this->config->changepasswordurl);
         } else {
-            return '';
+            return null;
         }
     }
 

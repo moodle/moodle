@@ -86,6 +86,18 @@ if (is_mnet_remote_user($user)) {
     redirect($CFG->wwwroot . "/user/view.php?course={$course->id}");
 }
 
+// load the appropriate auth plugin
+$userauth = get_auth_plugin($user->auth);
+
+if (!$userauth->can_edit_profile()) {
+    print_error('noprofileedit', 'auth');
+}
+
+if ($editurl = $userauth->edit_profile_url()) {
+    // this internal script not used
+    redirect($editurl);
+}
+
 if ($course->id == SITEID) {
     $coursecontext = get_context_instance(CONTEXT_SYSTEM);   // SYSTEM context
 } else {

@@ -3,7 +3,7 @@
 /**
  * @author Martin Dougiamas
  * @author Jerome GUTIERREZ
- * @author Iñaki Arenaza
+ * @author Iï¿½aki Arenaza
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package moodle multiauth
  *
@@ -209,10 +209,10 @@ class auth_plugin_cas extends auth_plugin_ldap {
      * Returns the URL for changing the user's pw, or empty if the default can
      * be used.
      *
-     * @return string
+     * @return moodle_url
      */
     function change_password_url() {
-        return '';
+        return null;
     }
 
     /**

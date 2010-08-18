@@ -108,10 +108,10 @@ class auth_plugin_pop3 extends auth_plugin_base {
      * Returns the URL for changing the user's pw, or false if the default can
      * be used.
      *
-     * @return bool
+     * @return moodle_url
      */
     function change_password_url() {
-        return $this->config->changepasswordurl;
+        return new moodle_url($this->config->changepasswordurl);
     }
 
     /**

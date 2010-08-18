@@ -3260,8 +3260,16 @@ class settings_navigation extends navigation_node {
                 $url = new moodle_url('/user/editadvanced.php', array('id'=>$user->id, 'course'=>$course->id));
                 $usersetting->add(get_string('editmyprofile'), $url, self::TYPE_SETTING);
             } else if ((has_capability('moodle/user:editprofile', $usercontext) && !is_siteadmin($user)) || ($currentuser && has_capability('moodle/user:editownprofile', $systemcontext))) {
-                $url = new moodle_url('/user/edit.php', array('id'=>$user->id, 'course'=>$course->id));
-                $usersetting->add(get_string('editmyprofile'), $url, self::TYPE_SETTING);
+				if (!empty($user->auth)) {
+					$userauth = get_auth_plugin($user->auth);
+					if ($userauth->can_edit_profile()) {
+						$url = $userauth->edit_profile_url();
+						if (empty($url)) {
+							$url = new moodle_url('/user/edit.php', array('id'=>$user->id, 'course'=>$course->id));
+						}
+						$usersetting->add(get_string('editmyprofile'), $url, self::TYPE_SETTING);
+					}
+				}
             }
         }
 

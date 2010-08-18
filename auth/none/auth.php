@@ -89,10 +89,10 @@ class auth_plugin_none extends auth_plugin_base {
      * Returns the URL for changing the user's pw, or empty if the default can
      * be used.
      *
-     * @return string
+     * @return moodle_url
      */
     function change_password_url() {
-        return '';
+        return null;
     }
 
     /**

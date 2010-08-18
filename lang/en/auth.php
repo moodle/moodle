@@ -96,6 +96,7 @@ $string['locked'] = 'Locked';
 $string['md5'] = 'MD5 hash';
 $string['nopasswordchange'] = 'Password can not be changed';
 $string['nopasswordchangeforced'] = 'You cannot proceed without changing your password, however there is no available page for changing it. Please contact your Moodle Administrator.';
+$string['noprofileedit'] = 'Profile can not be edited';
 $string['ntlmsso_attempting'] = 'Attempting Single Sign On via NTLM...';
 $string['ntlmsso_failed'] = 'Auto-login failed, try the normal login page...';
 $string['ntlmsso_isdisabled'] = 'NTLM SSO is disabled.';

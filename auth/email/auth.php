@@ -173,10 +173,10 @@ class auth_plugin_email extends auth_plugin_base {
      * Returns the URL for changing the user's pw, or empty if the default can
      * be used.
      *
-     * @return mixed
+     * @return moodle_url
      */
     function change_password_url() {
-        return ''; // use dafult internal method
+        return null; // use default internal method
     }
 
     /**
