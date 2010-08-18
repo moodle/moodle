@@ -62,6 +62,8 @@ class workshop_assessment_form extends moodleform {
 
         // add the data common for all subplugins
         $mform->addElement('hidden', 'strategy', $this->workshop->strategy);
+        $mform->setType('strategy', PARAM_SAFEDIR);
+
         if (!empty($this->options['editableweight']) and !$mform->isFrozen()) {
             $mform->addElement('header', 'assessmentsettings', get_string('assessmentweight', 'workshop'));
             $mform->addElement('select', 'weight',

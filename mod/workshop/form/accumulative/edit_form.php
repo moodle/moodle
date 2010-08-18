@@ -49,6 +49,7 @@ class workshop_edit_accumulative_strategy_form extends workshop_edit_strategy_fo
         $current            = $this->_customdata['current'];            // current data to be set
 
         $mform->addElement('hidden', 'norepeats', $norepeats);
+        $mform->setType('norepeats', PARAM_INT);
         // value not to be overridden by submitted value
         $mform->setConstants(array('norepeats' => $norepeats));
 

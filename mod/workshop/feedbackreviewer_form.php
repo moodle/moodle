@@ -58,6 +58,7 @@ class workshop_feedbackreviewer_form extends moodleform {
         }
 
         $mform->addElement('hidden', 'asid');
+        $mform->setType('asid', PARAM_INT);
 
         $mform->addElement('submit', 'save', get_string('saveandclose', 'workshop'));
 

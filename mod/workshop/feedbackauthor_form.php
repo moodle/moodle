@@ -57,6 +57,7 @@ class workshop_feedbackauthor_form extends moodleform {
         $mform->setType('feedbackauthor_editor', PARAM_RAW);
 
         $mform->addElement('hidden', 'submissionid');
+        $mform->setType('submissionid', PARAM_INT);
 
         $mform->addElement('submit', 'save', get_string('saveandclose', 'workshop'));
 

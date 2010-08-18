@@ -73,9 +73,11 @@ class workshop_rubric_list_assessment_form extends workshop_rubric_assessment_fo
 
             // dimension id
             $mform->addElement('hidden', 'dimensionid__idx_'.$i, $fields->{'dimensionid__idx_'.$i});
+            $mform->setType('dimensionid__idx_'.$i, PARAM_INT);
 
             // grade id
             $mform->addElement('hidden', 'gradeid__idx_'.$i);   // value set by set_data() later
+            $mform->setType('gradeid__idx_'.$i, PARAM_INT);
 
             // dimension description
             $desc = '<div id="id_dim_'.$fields->{'dimensionid__idx_'.$i}.'_desc" class="fitem description rubric">'."\n";
@@ -137,9 +139,11 @@ class workshop_rubric_grid_assessment_form extends workshop_rubric_assessment_fo
 
             // dimension id
             $mform->addElement('hidden', 'dimensionid__idx_'.$i, $fields->{'dimensionid__idx_'.$i});
+            $mform->setType('dimensionid__idx_'.$i, PARAM_INT);
 
             // given grade id
             $mform->addElement('hidden', 'gradeid__idx_'.$i);   // value set by set_data() later
+            $mform->setType('gradeid__idx_'.$i, PARAM_INT);
 
             // dimension description
             $desc = format_text($fields->{'description__idx_'.$i}, $fields->{'description__idx_'.$i.'format'});
