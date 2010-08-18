@@ -35,6 +35,7 @@ class user_filesedit_form extends moodleform {
         $options = $this->_customdata['options'];
 
         $mform->addElement('filemanager', 'files_filemanager', get_string('files'), null, $options);
+        $mform->addElement('hidden', 'returnurl', $data->returnurl);
 
         $this->add_action_buttons(true, get_string('savechanges'));
 
