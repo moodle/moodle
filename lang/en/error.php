@@ -328,6 +328,7 @@ $string['missingparameter'] = 'Parameter missing';
 $string['missingrequiredfield'] = 'Some required field is missing';
 $string['missinguseranditemid'] = 'Missing userid and itemid';
 $string['missingvarname'] = 'Required variable name is missing!';
+$string['missing_moodle_backup_xml_file'] = 'Backup is missing XML file: {$a}';
 $string['mixedtypesqlparam'] = 'ERROR: Mixed types of sql query parameters!!';
 $string['mnetdisable'] = 'MNET is disabled';
 $string['mnetlocal'] = 'Remote MNET users cannot login locally';
