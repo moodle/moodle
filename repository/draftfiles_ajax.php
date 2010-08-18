@@ -29,7 +29,7 @@ define('AJAX_SCRIPT', true);
 require('../config.php');
 require_once($CFG->libdir.'/filelib.php');
 require_once($CFG->libdir.'/adminlib.php');
-
+$PAGE->set_context(get_system_context());
 require_login();
 if (isguestuser()) {
     print_error('noguest');
