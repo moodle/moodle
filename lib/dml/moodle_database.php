@@ -237,6 +237,16 @@ abstract class moodle_database {
     }
 
     /**
+     * Diagnose database and tables, this function is used
+     * to verify database and driver settings, db engine types, etc.
+     *
+     * @return string null means everything ok, string means problem found.
+     */
+    public function diagnose() {
+        return null;
+    }
+
+    /**
      * Connect to db
      * Must be called before other methods.
      * @param string $dbhost

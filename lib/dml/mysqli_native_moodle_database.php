@@ -117,6 +117,71 @@ class mysqli_native_moodle_database extends moodle_database {
     }
 
     /**
+     * Returns the current MySQL db engine.
+     *
+     * This is an ugly workaround for MySQL default engine problems,
+     * Moodle is designed to work best on ACID compliant databases
+     * with full transaction support. Do not use MyISAM.
+     *
+     * @return string or null MySQL engine name
+     */
+    public function get_dbengine() {
+        if (isset($this->dboptions['dbengine'])) {
+            return $this->dboptions['dbengine'];
+        }
+
+        $engine = null;
+
+        if (!$this->external) {
+            // look for current engine of our config table (the first table that gets created),
+            // so that we create all tables with the same engine
+            $sql = "SELECT engine FROM INFORMATION_SCHEMA.TABLES WHERE table_schema = DATABASE() AND table_name = '{$this->prefix}config'";
+            $this->query_start($sql, NULL, SQL_QUERY_AUX);
+            $result = $this->mysqli->query($sql);
+            $this->query_end($result);
+            if ($rec = $result->fetch_assoc()) {
+                $engine = $rec['engine'];
+            }
+            $result->close();
+        }
+
+        if ($engine) {
+            return $engine;
+        }
+
+        // get the default database engine
+        $sql = "SELECT @@storage_engine";
+        $this->query_start($sql, NULL, SQL_QUERY_AUX);
+        $result = $this->mysqli->query($sql);
+        $this->query_end($result);
+        if ($rec = $result->fetch_assoc()) {
+            $engine = $rec['@@storage_engine'];
+        }
+        $result->close();
+
+        if (!$this->external and $engine === 'MyISAM') {
+            // we really do not want MyISAM for Moodle, InnoDB or XtraDB is a reasonable defaults if supported
+            $sql = "SHOW STORAGE ENGINES";
+            $this->query_start($sql, NULL, SQL_QUERY_AUX);
+            $result = $this->mysqli->query($sql);
+            $this->query_end($result);
+            while ($res = $result->fetch_assoc()) {
+                if ($res['Engine'] === 'InnoDB' and $res['Support'] === 'YES') {
+                    $engine = 'InnoDB';
+                    break;
+                }
+                if ($res['Engine'] === 'XtraDB' and $res['Support'] === 'YES') {
+                    $engine = 'XtraDB';
+                    break;
+                }
+            }
+            $result->close();
+        }
+
+        return $engine;
+    }
+
+    /**
      * Returns localised database type name
      * Note: can be used before connect()
      * @return string
@@ -141,6 +206,36 @@ class mysqli_native_moodle_database extends moodle_database {
      */
     public function get_configuration_hints() {
         return get_string('databasesettingssub_mysqli', 'install');
+    }
+
+    /**
+     * Diagnose database and tables, this function is used
+     * to verify database and driver settings, db engine types, etc.
+     *
+     * @return string null means everything ok, string means problem found.
+     */
+    public function diagnose() {
+        $sloppymyisamfound = false;
+        $prefix = str_replace('_', '\\_', $this->prefix);
+        $sql = "SHOW TABLE STATUS WHERE Name LIKE BINARY '$prefix%'";
+        $this->query_start($sql, null, SQL_QUERY_AUX);
+        $result = $this->mysqli->query($sql);
+        $this->query_end($result);
+        if ($result) {
+            while ($arr = $result->fetch_assoc()) {
+                if ($arr['Engine'] === 'MyISAM') {
+                    $sloppymyisamfound = true;
+                    break;
+                }
+            }
+            $result->close();
+        }
+
+        if ($sloppymyisamfound) {
+            return get_string('myisamproblem', 'error');
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -1021,6 +1116,8 @@ class mysqli_native_moodle_database extends moodle_database {
      *
      * MyISAM does not support support transactions.
      *
+     * You can override this via the dbtransactions option.
+     *
      * @return bool
      */
     protected function transactions_supported() {
@@ -1028,20 +1125,20 @@ class mysqli_native_moodle_database extends moodle_database {
             return $this->transactions_supported;
         }
 
-        // Only will accept transactions if using InnoDB storage engine (more engines can be added easily BDB, Falcon...)
+        // this is all just guessing, might be better to just specify it in config.php
+        if (isset($this->dboptions['dbtransactions'])) {
+            $this->transactions_supported = $this->dboptions['dbtransactions'];
+            return $this->transactions_supported;
+        }
+
         $this->transactions_supported = false;
 
-        $sql = "SELECT @@storage_engine";
-        $this->query_start($sql, NULL, SQL_QUERY_AUX);
-        $result = $this->mysqli->query($sql);
-        $this->query_end($result);
+        $engine = $this->get_dbengine();
 
-        if ($rec = $result->fetch_assoc()) {
-            if (in_array($rec['@@storage_engine'], array('InnoDB'))) {
-                $this->transactions_supported = true;
-            }
+        // Only will accept transactions if using compatible storage engine (more engines can be added easily BDB, Falcon...)
+        if (in_array($engine, array('InnoDB', 'INNOBASE', 'BDB', 'XtraDB', 'Aria', 'Falcon'))) {
+            $this->transactions_supported = true;
         }
-        $result->close();
 
         return $this->transactions_supported;
     }

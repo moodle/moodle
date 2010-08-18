@@ -96,6 +96,33 @@ class mysql_sql_generator extends sql_generator {
         return array("ALTER TABLE $this->prefix$tablename AUTO_INCREMENT = $value");
     }
 
+    /**
+     * Given one correct xmldb_table, returns the SQL statements
+     * to create it (inside one array)
+     */
+    public function getCreateTableSQL($xmldb_table) {
+        // first find out if want some special db engine
+        $engine = null;
+        if (method_exists($this->mdb, 'get_dbengine')) {
+            $engine = $this->mdb->get_dbengine();
+        }
+
+        $sqlarr = parent::getCreateTableSQL($xmldb_table);
+
+        if (!$engine) {
+            // we rely on database defaults
+            return $sqlarr;
+        }
+
+        // let's inject the engine into SQL
+        foreach ($sqlarr as $i=>$sql) {
+            if (strpos($sql, 'CREATE TABLE ') === 0) {
+                $sqlarr[$i] .= " ENGINE = $engine";
+            }
+        }
+
+        return $sqlarr;
+    }
 
     /**
      * Given one correct xmldb_table, returns the SQL statements
@@ -103,7 +130,7 @@ class mysql_sql_generator extends sql_generator {
      */
     public function getCreateTempTableSQL($xmldb_table) {
         $this->temptables->add_temptable($xmldb_table->getName());
-        $sqlarr = $this->getCreateTableSQL($xmldb_table);
+        $sqlarr = parent::getCreateTableSQL($xmldb_table); // we do not want the engine hack included in create table SQL
         $sqlarr = preg_replace('/^CREATE TABLE (.*)/s', 'CREATE TEMPORARY TABLE $1', $sqlarr);
         return $sqlarr;
     }

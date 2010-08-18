@@ -373,6 +373,12 @@ if ($showbloglevelupgrade) {
     echo $OUTPUT->box(get_string('bloglevelupgradenotice', 'admin'), 'generalbox adminwarning');
 }
 
+// diagnose DB, especially the sloppy MyISAM tables
+$diagnose = $DB->diagnose();
+if ($diagnose !== NULL) {
+    echo $OUTPUT->box($diagnose, 'generalbox adminwarning');
+}
+
 // Alert if we are currently in maintenance mode
 if (!empty($CFG->maintenance_enabled)) {
     echo $OUTPUT->box(get_string('sitemaintenancewarning2', 'admin', "$CFG->wwwroot/$CFG->admin/settings.php?section=maintenancemode"), 'generalbox adminwarning');

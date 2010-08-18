@@ -341,6 +341,7 @@ $string['multiplerecordsfound'] = 'Multiple records found, only one record expec
 $string['multiplerestorenotallow'] = 'Multiple restore execution not allowed!';
 $string['mustbeloggedin'] = 'You must be logged in to do this';
 $string['mustbeteacher'] = 'You must be a teacher to look at this page';
+$string['myisamproblem'] = 'Database tables are using MyISAM database engine, it is recommended to use ACID compliant engine with full transaction support such as InnoDB.';
 $string['needcopy'] = 'You need to copy something first!';
 $string['needcoursecategroyid'] = 'Either course id or category must be specified';
 $string['needphpext'] = 'You need to add {$a} support to your PHP installation';
