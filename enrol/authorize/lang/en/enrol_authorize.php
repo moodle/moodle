@@ -182,6 +182,7 @@ You have to accept or deny payments manually because of the admin hasn\'t enable
 
 {$a->url}';
 $string['pendingorderssubject'] = 'WARNING: {$a->course}, {$a->pending} order(s) will expire within {$a->days} day(s).';
+$string['pluginname'] = 'Authorize.net';
 $string['reason11'] = 'A duplicate transaction has been submitted.';
 $string['reason13'] = 'The merchant Login ID is invalid or the account is inactive.';
 $string['reason16'] = 'The transaction was not found.';
