@@ -43,9 +43,11 @@ if ($unrecognized) {
 }
 
 $help =
-"Execute periodic cron actions.
+"MySQL engine conversions script.
 
 It is recommended to stop the web server before the conversion.
+Do not use MyISAM if possible, because it is not ACID compliant
+and does not support transactions.
 
 Options:
 --engine=ENGINE       Convert MySQL tables to different engine
