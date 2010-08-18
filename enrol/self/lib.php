@@ -31,6 +31,11 @@
  */
 class enrol_self_plugin extends enrol_plugin {
 
+    public function get_info_icons(array $instances) {
+        //TODO: we need two different self enrol icons - with and without key
+        return array();
+    }
+
     /**
      * Returns localised name of enrol instance
      *

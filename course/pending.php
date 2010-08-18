@@ -103,10 +103,6 @@ if (empty($pending)) {
     $table->align = array('center', 'center', 'center', 'center', 'center', 'center', 'center');
     $table->head = array('&nbsp;', get_string('shortname'), get_string('fullname'),
             get_string('requestedby'), get_string('summary'), get_string('requestreason'), get_string('action'));
-    $strrequireskey = get_string('requireskey');
-
-    // Loop over requested courses.
-    $keyicon = $OUTPUT->pix_icon('i/key', $strrequireskey, 'moodle', array('class'=>'icon'));
 
     foreach ($pending as $course) {
         $course = new course_request($course);
@@ -115,8 +111,6 @@ if (empty($pending)) {
         $course->check_shortname_collision();
 
         $row = array();
-        // TODO: Show an enrolment key icon in the first column if applicable.
-        // Info in the other columns.
         $row[] = format_string($course->shortname);
         $row[] = format_string($course->fullname);
         $row[] = fullname($course->get_requester());

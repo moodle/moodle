@@ -62,8 +62,6 @@ class core_course_renderer extends plugin_renderer_base {
      * @return string
      */
     public function course_category_tree(array $structure) {
-        $this->strings->allowguests = get_string('allowguests');
-        $this->strings->requireskey = get_string('requireskey');
         $this->strings->summary = get_string('summary');
 
         // Generate an id and the required JS call to make this a nice widget

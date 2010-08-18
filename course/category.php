@@ -273,8 +273,6 @@
         $strshow = get_string('show');
         $strsummary = get_string('summary');
         $strsettings = get_string('settings');
-        $strallowguests = get_string('allowguests');
-        $strrequireskey = get_string('requireskey');
 
 
         echo '<form id="movecourses" action="category.php" method="post"><div>';

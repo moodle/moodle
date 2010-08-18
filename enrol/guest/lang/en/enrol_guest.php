@@ -24,6 +24,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['allowguests'] = 'This course allows guest users to enter';
 $string['guest:config'] = 'Configure guest access instances';
 $string['password'] = 'Password';
 $string['password_help'] = 'A password allows guest access to the course to be restricted to only those who know the password. Guests will be required to supply the password each time they access the course.';

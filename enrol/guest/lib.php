@@ -31,6 +31,11 @@ defined('MOODLE_INTERNAL') || die();
 
 class enrol_guest_plugin extends enrol_plugin {
 
+    public function get_info_icons(array $instances) {
+        //TODO: we need two different guest icons - with and without password
+        return array(new pix_icon('i/guest', get_string('allowguests', 'enrol_guest')));
+    }
+
     public function enrol_user(stdClass $instance, $userid, $roleid = null, $timestart = 0, $timeend = 0) {
         // no real enrolments here!
         return;
