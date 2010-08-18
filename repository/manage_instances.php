@@ -61,7 +61,7 @@ if ($contextid !== 0) {
     $url->param('contextid', $contextid);
     $baseurl->param('contextid', $contextid);
 }
-if ($usercourseid !== SITEID) {
+if ($usercourseid != SITEID) {
     $url->param('usercourseid', $usercourseid);
 }
 

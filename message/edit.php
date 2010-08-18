@@ -32,7 +32,7 @@ $url = new moodle_url('/message/edit.php');
 if ($userid !== $USER->id) {
     $url->param('id', $userid);
 }
-if ($course !== SITEID) {
+if ($course != SITEID) {
     $url->param('course', $course);
 }
 $PAGE->set_url($url);

@@ -30,7 +30,7 @@ require_once('change_password_form.php');
 $id = optional_param('id', SITEID, PARAM_INT); // current course
 
 $url = new moodle_url('/login/change_password.php');
-if ($id !== SITEID) {
+if ($id != SITEID) {
     $url->param('id', $id);
 }
 $PAGE->set_url($url);

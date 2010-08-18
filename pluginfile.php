@@ -146,7 +146,7 @@ if ($component === 'blog') {
         //TODO: nobody implemented this yet in grade edit form!!
         send_file_not_found();
 
-        if ($CFG->forcelogin || $course->id !== SITEID) {
+        if ($CFG->forcelogin || $course->id != SITEID) {
             require_login($course);
         }
 
@@ -244,7 +244,7 @@ if ($component === 'blog') {
 
         // Respect forcelogin and require login unless this is the site.... it probably
         // should NEVER be the site
-        if ($CFG->forcelogin || $course->id !== SITEID) {
+        if ($CFG->forcelogin || $course->id != SITEID) {
             require_login($course);
         }
 
@@ -488,7 +488,7 @@ if ($component === 'blog') {
     } else if ($filearea === 'section') {
         if ($CFG->forcelogin) {
             require_login($course);
-        } else if ($course->id !== SITEID) {
+        } else if ($course->id != SITEID) {
             require_login($course);
         }
 

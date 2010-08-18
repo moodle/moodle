@@ -16,7 +16,7 @@ $filtertype   = optional_param('filtertype', '', PARAM_ALPHA);
 $filterselect = optional_param('filterselect', 0, PARAM_INT);
 
 $url = new moodle_url('/notes/index.php');
-if ($courseid !== SITEID) {
+if ($courseid != SITEID) {
     $url->param('course', $courseid);
 }
 if ($userid !== 0) {
