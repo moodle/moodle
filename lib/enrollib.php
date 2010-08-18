@@ -519,6 +519,61 @@ function enrol_get_my_courses($fields = NULL, $sort = 'visible DESC,sortorder AS
 }
 
 /**
+ * Returns course enrolment information icons.
+ *
+ * @param object $course
+ * @param array $instances enrol instances of this course, improves performance
+ * @return array of pix_icon
+ */
+function enrol_get_course_info_icons($course, array $instances = NULL) {
+    $icons = array();
+    if (is_null($instances)) {
+        $instances = enrol_get_instances($course->id, true);
+    }
+    $plugins = enrol_get_plugins(true);
+    foreach ($plugins as $name => $plugin) {
+        $pis = array();
+        foreach ($instances as $instance) {
+            if ($instance->status != ENROL_INSTANCE_ENABLED or $instance->courseid != $course->id) {
+                debugging('Invalid instances parameter submitted in enrol_get_info_icons()');
+                continue;
+            }
+            if ($instance->enrol == $name) {
+                $pis[$instance->id] = $instance;
+            }
+        }
+        if ($pis) {
+            $icons = array_merge($icons, $plugin->get_info_icons($pis));
+        }
+    }
+    return $icons;
+}
+
+/**
+ * Returns course enrolment detailed information.
+ *
+ * @param object $course
+ * @return array of html fragments - can be used to construct lists
+ */
+function enrol_get_course_description_texts($course) {
+    $lines = array();
+    $instances = enrol_get_instances($course->id, true);
+    $plugins = enrol_get_plugins(true);
+    foreach ($instances as $instance) {
+        if (!isset($plugins[$instance->name])) {
+            //weird
+            continue;
+        }
+        $plugin = $plugins[$enrol->name];
+        $text = $plugin->get_description_text($instance);
+        if ($text !== NULL) {
+            $lines[] = $text;
+        }
+    }
+    return $lines;
+}
+
+/**
  * Returns list of courses user is enrolled into.
  *
  * - $fields is an array of fieldnames to ADD
@@ -693,7 +748,7 @@ abstract class enrol_plugin {
      * @return string
      */
     public function get_name() {
-        // second word in class is always enrol name
+        // second word in class is always enrol name, sorry, no fancy plugin names with _
         $words = explode('_', get_class($this));
         return $words[1];
     }
@@ -712,6 +767,35 @@ abstract class enrol_plugin {
             $context = get_context_instance(CONTEXT_COURSE, $instance->courseid);
             return format_string($instance->name, true, array('context'=>$context));
         }
+    }
+
+    /**
+     * Returns optional enrolment information icons.
+     *
+     * This is used in course list for quick overview of enrolment options.
+     *
+     * We are not using single instance parameter because sometimes
+     * we might want to prevent icon repetition when multiple instances
+     * of one type exist. One instance may also produce several icons.
+     *
+     * @param array $instances all enrol instances of this type in one course
+     * @return array of pix_icon
+     */
+    public function get_info_icons(array $instances) {
+        return array();
+    }
+
+    /**
+     * Returns optional enrolment instance description text.
+     *
+     * This is used in detailed course information.
+     *
+     *
+     * @param object $instance
+     * @return string short html text
+     */
+    public function get_description_text($instance) {
+        return null;
     }
 
     /**
@@ -1086,7 +1170,7 @@ abstract class enrol_plugin {
      * Returns list of unenrol links for all enrol instances in course.
      *
      * @param int $instance
-     * @return moodle_url or NULL if self unernolmnet not supported
+     * @return moodle_url or NULL if self unenrolment not supported
      */
     public function get_unenrolself_link($instance) {
         global $USER, $CFG, $DB;

@@ -400,7 +400,12 @@
                 echo '</td>';
             } else {
                 echo '<td align="right">';
-                //TODO: show some icons for plugins - such as guest, pasword, etc.
+                // print enrol info
+                if ($icons = enrol_get_course_info_icons($acourse)) {
+                    foreach ($icons as $pix_icon) {
+                        echo $OUTPUT->render($pix_icon);
+                    }
+                }
                 if (!empty($acourse->summary)) {
                     $link = new moodle_url("/course/info.php?id=$acourse->id");
                     echo $OUTPUT->action_link($link, '<img alt="'.get_string('info').'" class="icon" src="'.$OUTPUT->pix_url('i/info') . '" />',

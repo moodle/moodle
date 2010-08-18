@@ -44,21 +44,12 @@
     echo $OUTPUT->header();
     echo $OUTPUT->heading('<a href="view.php?id='.$course->id.'">'.format_string($course->fullname) . '</a><br />(' . format_string($course->shortname) . ')');
 
-    //TODO: add enrol info
-    /*
-    if ($course->guest || $course->password) {
+    // print enrol info
+    if ($texts = enrol_get_course_description_texts($course)) {
         echo $OUTPUT->box_start('generalbox icons');
-        if ($course->guest) {
-            $strallowguests = get_string('allowguests');
-            echo "<div><img alt=\"\" class=\"icon guest\" src=\"" . $OUTPUT->pix_url('i/guest') . "\" />&nbsp;$strallowguests</div>";
-        }
-        if ($course->password) {
-            $strrequireskey = get_string('requireskey');
-            echo "<div><img alt=\"\" class=\"icon key\" src=\"" . $OUTPUT->pix_url('i/key') . "\" />&nbsp;$strrequireskey</div>";
-        }
+        echo implode($texts);
         echo $OUTPUT->box_end();
-    }*/
-
+    }
 
     echo $OUTPUT->box_start('generalbox info');
 

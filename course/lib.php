@@ -2057,7 +2057,13 @@ function print_category_info($category, $depth, $showcourses = false) {
                 $courselink = html_writer::link(new moodle_url('/course/view.php', array('id'=>$course->id)), format_string($course->fullname), $linkcss);
                 $coursecontent .= html_writer::tag('div', $courselink, array('class'=>'name'));
 
-                //TODO: add some guest, pay icons
+                // print enrol info
+                if ($icons = enrol_get_course_info_icons($course)) {
+                    foreach ($icons as $pix_icon) {
+                        echo $OUTPUT->render($pix_icon);
+                    }
+                }
+
                 if ($course->summary) {
                     $link = new moodle_url('/course/info.php?id='.$course->id);
                     $actionlink = $OUTPUT->action_link($link, '<img alt="'.$strsummary.'" src="'.$OUTPUT->pix_url('i/info') . '" />',
