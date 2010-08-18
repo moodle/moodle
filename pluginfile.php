@@ -494,7 +494,11 @@ if ($component === 'blog') {
 
         $sectionid = (int)array_shift($args);
 
-        if ($course->numsections < $sectionid) {
+        if (!$section = $DB->get_record('course_sections', array('id'=>$sectionid, 'course'=>$course->id))) {
+            send_file_not_found();
+        }
+
+        if ($course->numsections < $section->section) {
             if (!has_capability('moodle/course:update', $context)) {
                 // disable access to invisible sections if can not edit course
                 // this is going to break some ugly hacks, but is necessary
