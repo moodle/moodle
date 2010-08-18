@@ -105,7 +105,6 @@ if ($userrating != RATING_UNSET_RATING) {
 
 //Future possible enhancement: add a setting to turn grade updating off for those who don't want them in gradebook
 //note that this would need to be done in both rate.php and rate_ajax.php
-if(true){
     if ($context->contextlevel==CONTEXT_MODULE) {
         //tell the module that its grades have changed
         if ( $modinstance = $DB->get_record($cm->modname, array('id' => $cm->instance)) ) {
@@ -117,7 +116,6 @@ if(true){
             }
         }
     }
-}
 
 //object to return to client as json
 $result = new stdClass;
@@ -156,8 +154,13 @@ if ($items[0]->rating->settings->aggregationmethod==RATING_AGGREGATE_COUNT or $i
 //See if the user has permission to see the rating aggregate
 //we could do this check as "if $userid==$rateduserid" but going to the database to determine item owner id seems more secure
 //if we accept the item owner user id from the http request a user could alter the URL and erroneously get access to the rating aggregate
-if (($USER->id==$items[0]->rating->itemuserid && has_capability('moodle/rating:view',$context) && $pluginpermissionsarray['view'])
- || ($USER->id!=$items[0]->rating->itemuserid && has_capability('moodle/rating:viewany',$context) && $pluginpermissionsarray['viewany'])) {
+
+//if its their own item and they have view permission
+if (($USER->id==$items[0]->rating->itemuserid && has_capability('moodle/rating:view',$context) 
+        && (empty($pluginpermissionsarray) or $pluginpermissionsarray['view']))
+    //or if its not their item or if no user created the item (the hub did) and they have viewany permission
+    || (($USER->id!=$items[0]->rating->itemuserid or empty($items[0]->rating->itemuserid)) && has_capability('moodle/rating:viewany',$context)
+        && (empty($pluginpermissionsarray) or $pluginpermissionsarray['viewany']))) {
     $result->aggregate = $aggregatetoreturn;
     $result->count = $items[0]->rating->count;
     $result->itemid = $itemid;
