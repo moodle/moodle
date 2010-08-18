@@ -4,6 +4,6 @@ Removed:
  * demo*
 
 Changes:
- * fixed encodings and line endings in lang files
+ * fixed encodings and line endings in lang files (MDL-23844)
 
 skodak

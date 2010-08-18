@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version="1.0" encoding="UTF-8"?>
 
 <!--
     Document   : fr.xml
@@ -11,35 +11,35 @@
 <Language>
     
     <!--  Error Messages   --> 
-    <ReadingFile>Erreur de lecture du format de fichier: Vérifiez si le fichier est valide</ReadingFile>
+    <ReadingFile>Erreur de lecture du format de fichier: VÃ©rifiez si le fichier est valide</ReadingFile>
     <ReadingFile2>Erreur de lecture du fichier: </ReadingFile2>
     <LoadingExp>Erreur lors du chargement des expressions</LoadingExp>
     <SavingExp>Erreur lors de l'enregistrement des expressions</SavingExp>
-    <Cut>Découpe de la sélection impossible: </Cut>
-    <Copy>Copie de la sélection impossible: </Copy>
+    <Cut>DÃ©coupe de la sÃ©lection impossible: </Cut>
+    <Copy>Copie de la sÃ©lection impossible: </Copy>
     <Tree>Affichage de l'arbre impossible</Tree>
-    <Action>L'action n'a pas pu être terminée: </Action>
-    <AddMatrix>La matrice n'a pas pu être ajoutée à cette position</AddMatrix>
-    <Operator>L'opérateur est manquant à cette position</Operator>
-    <Argument>L'argument de l'opérateur est manquant à cette position</Argument>
-    <Image>Erreur: Impossible d'exporter l'image. Vérifiez votre connection internet et l'accès à http://www.mathtran.org</Image>
+    <Action>L'action n'a pas pu Ãªtre terminÃ©e: </Action>
+    <AddMatrix>La matrice n'a pas pu Ãªtre ajoutÃ©e Ã  cette position</AddMatrix>
+    <Operator>L'opÃ©rateur est manquant Ã  cette position</Operator>
+    <Argument>L'argument de l'opÃ©rateur est manquant Ã  cette position</Argument>
+    <Image>Erreur: Impossible d'exporter l'image. VÃ©rifiez votre connection internet et l'accÃ¨s Ã  http://www.mathtran.org</Image>
     
     <!--  Status Bar Messages   --> 
-    <ParseExp>L'expression n'a pas pu être analysée</ParseExp>
-    <LoadExpression>DragMath - Choisissez un fichier d'expression à lire</LoadExpression>
+    <ParseExp>L'expression n'a pas pu Ãªtre analysÃ©e</ParseExp>
+    <LoadExpression>DragMath - Choisissez un fichier d'expression Ã  lire</LoadExpression>
     <SaveExpression>DragMath - Choisissez un endroit pour sauver l'expression</SaveExpression>
     <EnterRows>Entrez le nombre de lignes de la matrice</EnterRows>
     <EnterColumns>Entrez le nombre de colonnes de la matrice</EnterColumns>
     <MatrixDim>Dimensions de la matrice</MatrixDim>
-    <NoCut>Pas de sélection à couper</NoCut>
-    <NoPaste>Rien à coller</NoPaste>
-    <NoBox>Pas de boîte sélectionné pour collage</NoBox>
-    <NoCopy>Pas de sélection à copier</NoCopy>
-    <Copied>Copié</Copied>
-    <ReadingData>Erreur lors de la lecture des données de sortie</ReadingData>
-    <Clipboard>Expression exportée dans le Presse-papiers</Clipboard>
-    <NoExpression>Aucune expression à convertir</NoExpression>
-    <NoFormat>Aucun format de fichier n'a encore été chargé</NoFormat>
+    <NoCut>Pas de sÃ©lection Ã  couper</NoCut>
+    <NoPaste>Rien Ã  coller</NoPaste>
+    <NoBox>Pas de boÃ®te sÃ©lectionnÃ© pour collage</NoBox>
+    <NoCopy>Pas de sÃ©lection Ã  copier</NoCopy>
+    <Copied>CopiÃ©</Copied>
+    <ReadingData>Erreur lors de la lecture des donnÃ©es de sortie</ReadingData>
+    <Clipboard>Expression exportÃ©e dans le Presse-papiers</Clipboard>
+    <NoExpression>Aucune expression Ã  convertir</NoExpression>
+    <NoFormat>Aucun format de fichier n'a encore Ã©tÃ© chargÃ©</NoFormat>
     <ImageSize>Choisissez la taille de l'image 1-10 (Min-Max)</ImageSize>
     
     <!--  Tooltips for math buttons   -->
@@ -49,25 +49,25 @@
     <Subtract>Soustraction</Subtract>
     <Comma>Virgule</Comma>
     <PlusMinus>Plus ou Moins</PlusMinus>
-    <SquareRoot>Racine Carrée</SquareRoot>
+    <SquareRoot>Racine CarrÃ©e</SquareRoot>
     <NthRoot>Racine N</NthRoot>
     <Power>Puissance</Power>
     <Subscript>Indice</Subscript>
     <Matrix>Matrice</Matrix>
     <Integral>Integrale</Integral>
-    <Differential>Différenciation</Differential>
-    <LessThan>Inférieur à</LessThan>  
-    <GreaterThan>Supérieur à</GreaterThan>  
-    <LTEQ>Inférieur ou égal à</LTEQ>  
-    <GTEQ>Supérieur ou égal à</GTEQ>
+    <Differential>DiffÃ©renciation</Differential>
+    <LessThan>InfÃ©rieur Ã </LessThan>  
+    <GreaterThan>SupÃ©rieur Ã </GreaterThan>  
+    <LTEQ>InfÃ©rieur ou Ã©gal Ã </LTEQ>  
+    <GTEQ>SupÃ©rieur ou Ã©gal Ã </GTEQ>
     <Equals>Egal</Equals>
-    <NotEqual>Différent</NotEqual> 
+    <NotEqual>DiffÃ©rent</NotEqual> 
     <Union>Union</Union>  
     <Intersection>Intersection</Intersection>
-    <Subset>Inclus à</Subset>
-    <SubsetEq>Inclus ou égal à</SubsetEq>
-    <NSubset>N'est pas inclus à</NSubset>
-    <NSubsetEq>N'est pas inclus ou égal à</NSubsetEq>
+    <Subset>Inclus Ã </Subset>
+    <SubsetEq>Inclus ou Ã©gal Ã </SubsetEq>
+    <NSubset>N'est pas inclus Ã </NSubset>
+    <NSubsetEq>N'est pas inclus ou Ã©gal Ã </NSubsetEq>
     <Sine>Sinus</Sine>
     <Cosine>Cosinus</Cosine>
     <Tangent>Tangente</Tangent>
@@ -84,7 +84,7 @@
     <NaturalLogarithm>Logarithme naturel</NaturalLogarithm>  
     <Exp>Exposant</Exp>
     <UMinus>Moins</UMinus>
-    <BracketsRnd>Parenthèses</BracketsRnd>
+    <BracketsRnd>ParenthÃ¨ses</BracketsRnd>
     <BracketsCurl>Accolades</BracketsCurl>
     <BracketsSq>Crochets</BracketsSq>
     <Abs>Valeur absolue</Abs>
@@ -93,58 +93,58 @@
     <Factorial>Factorielle</Factorial> 
     <Max>Maximum d'un ensemble</Max> 
     <Min>Minimum d'un ensemble</Min> 
-    <Assignment>Définition</Assignment>
+    <Assignment>DÃ©finition</Assignment>
     <Function>Fonction inconnue</Function> 
-    <Determinant>Déterminant</Determinant>
+    <Determinant>DÃ©terminant</Determinant>
     <Trace>Trace</Trace>
-    <DefiniteIntegral>Intégrale définie</DefiniteIntegral>
+    <DefiniteIntegral>IntÃ©grale dÃ©finie</DefiniteIntegral>
     <Product>Produit</Product>
     <Sum>Somme</Sum>
     <Limit>Limite</Limit>
-    <Evaluate>Évaluer l'expression en un point</Evaluate>
-    <LeftArrow>Flèche Gauche</LeftArrow>
-    <RightArrow>Flèche Droite</RightArrow>
-    <UpArrow>Flèche Haut</UpArrow>
-    <DownArrow>Flèche Bas</DownArrow>
-    <LeftDblArrow>Flèche Gauche double</LeftDblArrow>
-    <RightDblArrow>Flèche Droite double</RightDblArrow>
-    <LeftRightArrow>Flèche Gauche-Droite</LeftRightArrow>
-    <LeftRightDblArrow>Flèche Gauche-Droite double</LeftRightDblArrow>
-    <NorthEastArrow>Flèche Nord-Est</NorthEastArrow>
-    <SouthEastArrow>Flèche Sud-Est</SouthEastArrow>
-    <NorthWestArrow>Flèche Nord-Ouest</NorthWestArrow>
-    <SouthWestArrow>Flèche Sud-Ouest</SouthWestArrow>
-    <LeftUpArrow>Flèche Gauche-Haut</LeftUpArrow>
-    <LeftDownArrow>Flèche Gauche-Droite</LeftDownArrow>
-    <RightUpArrow>Flèche Droite-Haut</RightUpArrow>
-    <RightDownArrow>Flèche Droite-Bas</RightDownArrow>
+    <Evaluate>Ã‰valuer l'expression en un point</Evaluate>
+    <LeftArrow>FlÃ¨che Gauche</LeftArrow>
+    <RightArrow>FlÃ¨che Droite</RightArrow>
+    <UpArrow>FlÃ¨che Haut</UpArrow>
+    <DownArrow>FlÃ¨che Bas</DownArrow>
+    <LeftDblArrow>FlÃ¨che Gauche double</LeftDblArrow>
+    <RightDblArrow>FlÃ¨che Droite double</RightDblArrow>
+    <LeftRightArrow>FlÃ¨che Gauche-Droite</LeftRightArrow>
+    <LeftRightDblArrow>FlÃ¨che Gauche-Droite double</LeftRightDblArrow>
+    <NorthEastArrow>FlÃ¨che Nord-Est</NorthEastArrow>
+    <SouthEastArrow>FlÃ¨che Sud-Est</SouthEastArrow>
+    <NorthWestArrow>FlÃ¨che Nord-Ouest</NorthWestArrow>
+    <SouthWestArrow>FlÃ¨che Sud-Ouest</SouthWestArrow>
+    <LeftUpArrow>FlÃ¨che Gauche-Haut</LeftUpArrow>
+    <LeftDownArrow>FlÃ¨che Gauche-Droite</LeftDownArrow>
+    <RightUpArrow>FlÃ¨che Droite-Haut</RightUpArrow>
+    <RightDownArrow>FlÃ¨che Droite-Bas</RightDownArrow>
     
     <Multiply2>Multiplication</Multiply2>
     <Divide2>Division</Divide2>
     <Equiv>Equivalence</Equiv>
     <Exists>Il existe</Exists>
     <ForAll>Pour tous</ForAll>
-    <IsIn>Appartient à</IsIn>
+    <IsIn>Appartient Ã </IsIn>
     <NotExists>Il n'existe pas</NotExists>
-    <NotIn>N'appartient pas à</NotIn>
-    <SimEq>Asymptotiquement équivalente à</SimEq>
+    <NotIn>N'appartient pas Ã </NotIn>
+    <SimEq>Asymptotiquement Ã©quivalente Ã </SimEq>
     <Or>Ou</Or>
     <And>Et</And>
     <Not>Non</Not>
-    <PartialDifferential>Dérivée partielle</PartialDifferential>
+    <PartialDifferential>DÃ©rivÃ©e partielle</PartialDifferential>
     
     
     <!--  Tooltips for command buttons   -->
-    <OpenButton>Charger une expression à partir d'un fichier</OpenButton>
+    <OpenButton>Charger une expression Ã  partir d'un fichier</OpenButton>
     <SaveButton>Sauvegarde de l'expression dans un fichier</SaveButton>
     <ExportButton>Exporter l'expression dans le presse-papier</ExportButton>
-    <UndoButton>Défaire</UndoButton>
+    <UndoButton>DÃ©faire</UndoButton>
     <RedoButton>Refaire</RedoButton>
     <CutButton>Couper</CutButton>
     <CopyButton>Copier</CopyButton>
     <PasteButton>Coller</PasteButton>
     <ClearButton>Effacer Tout</ClearButton>
-    <SelectButton>Sélectionner Tout</SelectButton>
+    <SelectButton>SÃ©lectionner Tout</SelectButton>
     <LoadFormatButton>Charger un fichier de format d'expression</LoadFormatButton>
     <LoadLangButton>Charger un fichier de langage</LoadLangButton>
     <ShowTreeButton>Afficher l'arborescence de l'expression</ShowTreeButton>
@@ -160,13 +160,13 @@
     <ImageMenu>Exporter l'image</ImageMenu>
     
     <EditMenu>Editer</EditMenu>
-    <UndoMenu>Défaire</UndoMenu>
+    <UndoMenu>DÃ©faire</UndoMenu>
     <RedoMenu>Refaire</RedoMenu>
     <CutMenu>Couper</CutMenu>
     <CopyMenu>Copier</CopyMenu>
     <PasteMenu>Coller</PasteMenu>
     <ClearMenu>Effacer Tout</ClearMenu>
-    <SelectMenu>Sélectionner Tout</SelectMenu>
+    <SelectMenu>SÃ©lectionner Tout</SelectMenu>
     
     <OptionsMenu>Options</OptionsMenu>
     <SetExportMenu>Changer de format de sortie</SetExportMenu>
