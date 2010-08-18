@@ -50,7 +50,7 @@ if ($show_instructions) {
         </form>
       </div>
 
-<?php if ($CFG->guestloginbutton) {  ?>
+<?php if ($CFG->guestloginbutton and !isguestuser()) {  ?>
       <div class="subcontent guestsub">
         <div class="desc">
           <?php print_string("someallowguest") ?>

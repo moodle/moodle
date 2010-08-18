@@ -28,7 +28,6 @@ require('../config.php');
 
 redirect_if_major_upgrade_required();
 
-$loginguest  = optional_param('loginguest', 0, PARAM_BOOL); // determines whether visitors are logged in as guest automatically
 $testcookies = optional_param('testcookies', 0, PARAM_BOOL); // request cookie test
 
 //HTTPS is potentially required in this page
@@ -70,11 +69,6 @@ $PAGE->navbar->add($loginsite);
 
 if ($user !== false or $frm !== false or $errormsg !== '') {
     // some auth plugin already supplied full user, fake form data or prevented user login with error message
-
-} else if ((!empty($SESSION->wantsurl) and strstr($SESSION->wantsurl,'username=guest')) or $loginguest) {
-    /// Log in as guest automatically (idea from Zbigniew Fiedorowicz)
-    $frm->username = 'guest';
-    $frm->password = 'guest';
 
 } else if (!empty($SESSION->wantsurl) && file_exists($CFG->dirroot.'/login/weblinkauth.php')) {
     // Handles the case of another Moodle site linking into a page on this site

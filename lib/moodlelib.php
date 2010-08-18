@@ -2134,20 +2134,15 @@ function dayofweek($day, $month, $year) {
 /**
  * Returns full login url.
  *
- * @global object
- * @param bool $loginguest add login guest param, return false
  * @return string login url
  */
-function get_login_url($loginguest=false) {
+function get_login_url() {
     global $CFG;
 
-    if (empty($CFG->loginhttps) or $loginguest) { //do not require https for guest logins
-        $loginguest = $loginguest ? '?loginguest=true' : '';
-        $url = "$CFG->wwwroot/login/index.php$loginguest";
+    $url = "$CFG->wwwroot/login/index.php";
 
-    } else {
-        $wwwroot = str_replace('http:','https:', $CFG->wwwroot);
-        $url = "$wwwroot/login/index.php";
+    if (!empty($CFG->loginhttps)) {
+        $url = str_replace('http:', 'https:', $url);
     }
 
     return $url;
@@ -2212,29 +2207,32 @@ function require_login($courseorid = NULL, $autologinguest = true, $cm = NULL, $
 
     // If the user is not even logged in yet then make sure they are
     if (!isloggedin()) {
-        //NOTE: $USER->site check was obsoleted by session test cookie,
-        //      $USER->confirmed test is in login/index.php
-        if ($preventredirect) {
-            throw new require_login_exception('You are not logged in');
-        }
-
-        if ($setwantsurltome) {
-            $SESSION->wantsurl = $FULLME;
-        }
-        if (!empty($_SERVER['HTTP_REFERER'])) {
-            $SESSION->fromurl  = $_SERVER['HTTP_REFERER'];
-        }
         if ($autologinguest and !empty($CFG->guestloginbutton) and !empty($CFG->autologinguests)) {
-            if ($course->id == SITEID) {
-                $loginguest = true;
-            } else {
-                $loginguest = false;
+            if (!$guest = get_complete_user_data('id', $CFG->siteguest)) {
+                // misconfigured site guest, just redirect to login page
+                redirect(get_login_url());
+                exit; // never reached
             }
+            $lang = isset($SESSION->lang) ? $SESSION->lang : $CFG->lang;
+            complete_user_login($guest, false);
+            $SESSION->lang = $lang;
         } else {
-            $loginguest = false;
+            //NOTE: $USER->site check was obsoleted by session test cookie,
+            //      $USER->confirmed test is in login/index.php
+            if ($preventredirect) {
+                throw new require_login_exception('You are not logged in');
+            }
+
+            if ($setwantsurltome) {
+                // TODO: switch to PAGE->url
+                $SESSION->wantsurl = $FULLME;
+            }
+            if (!empty($_SERVER['HTTP_REFERER'])) {
+                $SESSION->fromurl  = $_SERVER['HTTP_REFERER'];
+            }
+            redirect(get_login_url());
+            exit; // never reached
         }
-        redirect(get_login_url($loginguest));
-        exit; // never reached
     }
 
     // loginas as redirection if needed
@@ -2745,7 +2743,10 @@ function update_user_login_times() {
  * @return bool
  */
 function user_not_fully_set_up($user) {
-    return ($user->username != 'guest' and (empty($user->firstname) or empty($user->lastname) or empty($user->email) or over_bounce_threshold($user)));
+    if (isguestuser($user)) {
+        return false;
+    }
+    return (empty($user->firstname) or empty($user->lastname) or empty($user->email) or over_bounce_threshold($user));
 }
 
 /**
@@ -3512,7 +3513,7 @@ function delete_user($user) {
 function guest_user() {
     global $CFG, $DB;
 
-    if ($newuser = $DB->get_record('user', array('username'=>'guest', 'mnethostid'=>$CFG->mnet_localhost_id))) {
+    if ($newuser = $DB->get_record('user', array('id'=>$CFG->siteguest))) {
         $newuser->confirmed = 1;
         $newuser->lang = $CFG->lang;
         $newuser->lastip = getremoteaddr();
@@ -3657,6 +3658,11 @@ function complete_user_login($user, $setcookie=true) {
 
     update_user_login_times();
     set_login_session_preferences();
+
+    if (isguestuser()) {
+        // no need to continue when user is THE guest
+        return $USER;
+    }
 
     if ($setcookie) {
         if (empty($CFG->nolastloggedin)) {
@@ -3855,7 +3861,7 @@ function get_complete_user_data($field, $value, $mnethostid=null) {
     if (!empty($user->description)) {
         $user->description = true;   // No need to cart all of it around
     }
-    if ($user->username == 'guest') {
+    if (isguestuser($user)) {
         $user->lang       = $CFG->lang;               // Guest language always same as site
         $user->firstname  = get_string('guestuser');  // Name always in current language
         $user->lastname   = ' ';
