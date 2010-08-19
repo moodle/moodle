@@ -105,8 +105,7 @@ form.popupform div {display: inline;}
 /*Accessibility: text 'seen' by screen readers but not visual users. */
 .accesshide {position:absolute;top:-100000px;left:10px;font-weight:normal;font-size:1em;}
 span.hide,
-div.hide,
-.jsenabled .advancedbutton .showadvancedbtn {display:none;}
+div.hide {display:none;}
 .invisiblefieldset {display:inline;border-width:0;padding:0;margin:0;}
 /*Accessibility: Skip block link, for keyboard-only users. */
 a.skip-block,
