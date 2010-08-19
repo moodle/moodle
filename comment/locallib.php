@@ -107,7 +107,7 @@ class comment_manager {
         $table = new html_table();
         $table->head = array (html_writer::checkbox('selectall', '', false, get_string('selectall'), array('id'=>'comment_select_all', 'class'=>'comment-report-selectall')), get_string('author', 'search'), get_string('content'), get_string('action'));
         $table->align = array ('left', 'left', 'left', 'left');
-        $table->width = "95%";
+        $table->attributes = array('class'=>'generaltable commentstable');
         $table->data = array();
         $linkbase = $CFG->wwwroot.'/comment/index.php?action=delete&sesskey='.sesskey();
         foreach ($comments as $c) {

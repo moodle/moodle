@@ -78,7 +78,7 @@ if ($issue and ($result = $issue(true))) {
     $table->head  = array($strissue, $strstatus, $strdesc, $strconfig);
     $table->size  = array('30%', '10%', '50%', '10%' );
     $table->align = array('left', 'left', 'left', 'left');
-    $table->width = '90%';
+    $table->attributes = array('class'=>'scurityreporttable generaltable');
     $table->data  = array();
 
     // print detail of one issue only
@@ -105,7 +105,7 @@ if ($issue and ($result = $issue(true))) {
     $table->head  = array($strissue, $strstatus, $strdesc);
     $table->size  = array('30%', '10%', '60%' );
     $table->align = array('left', 'left', 'left');
-    $table->width = '90%';
+    $table->attributes = array('class'=>'scurityreporttable generaltable');
     $table->data  = array();
 
     foreach ($issues as $issue) {
