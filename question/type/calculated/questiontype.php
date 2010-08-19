@@ -562,7 +562,7 @@ class question_calculated_qtype extends default_questiontype {
         $possibledatasets = $this->find_dataset_names($form->questiontext);
         $mandatorydatasets = array();
         foreach ($form->answers as $answer) {
-            //$mandatorydatasets += $this->find_dataset_names($answer);
+            $mandatorydatasets += $this->find_dataset_names($answer);
         }
         // if there are identical datasetdefs already saved in the original question.
         // either when editing a question or saving as new
