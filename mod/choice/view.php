@@ -128,8 +128,7 @@
         if (isguestuser()) {
             // Guest account
             echo $OUTPUT->confirm(get_string('noguestchoose', 'choice').'<br /><br />'.get_string('liketologin'),
-                         get_login_url(), new moodle_url);
-
+                         get_login_url(), new moodle_url('/course/view.php', array('id'=>$course->id)));          
         } else if (!is_enrolled($context)) {
             // Only people enrolled can make a choice
             $SESSION->wantsurl = $FULLME;
@@ -140,7 +139,7 @@
             echo $OUTPUT->container_start('continuebutton');
             echo $OUTPUT->single_button(new moodle_url('/enrol/index.php?', array('id'=>$course->id)), get_string('enrolme', 'core_enrol', format_string($course->shortname)));
             echo $OUTPUT->container_end();
-            echo $OUTPUT->box_end();
+            echo $OUTPUT->box_end();            
 
         }
     }
@@ -155,9 +154,9 @@
             $choice->maxanswers[0] = 0;
         }
 
-        $results = prepare_choice_show_results($choice, $course, $cm, $allresponses);
-        $renderer = $PAGE->get_renderer('mod_choice');
-        
+            $results = prepare_choice_show_results($choice, $course, $cm, $allresponses);            
+            $renderer = $PAGE->get_renderer('mod_choice');
+                   
         echo $renderer->display_result($results);
     } else  if (!$choiceformshown) {
         echo $OUTPUT->box(get_string('noresultsviewable', 'choice'));

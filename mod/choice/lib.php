@@ -339,8 +339,8 @@ function prepare_choice_show_results($choice, $course, $cm, $allresponses, $forc
 
     $display = clone($choice);
     $display->coursemoduleid = $cm->id;
-    $display->courseid = $course->id;
-
+    $display->courseid = $course->id;    
+    
     //overwrite options value;
     $display->options = array();
     $totaluser = 0;
@@ -352,7 +352,7 @@ function prepare_choice_show_results($choice, $course, $cm, $allresponses, $forc
         if (array_key_exists($optionid, $allresponses)) {
             $display->options[$optionid]->user = $allresponses[$optionid]; //->user;
             $totaluser += count($allresponses[$optionid]);
-    }
+        }
     }
     unset($display->option);
     unset($display->maxanswers);
@@ -362,7 +362,7 @@ function prepare_choice_show_results($choice, $course, $cm, $allresponses, $forc
     $display->viewresponsecapability = has_capability('mod/choice:readresponses', $context);
     $display->deleterepsonsecapability = has_capability('mod/choice:deleteresponses',$context);
     $display->fullnamecapability = has_capability('moodle/site:viewfullnames', $context);
-
+    
     if (empty($allresponses)) {
         echo $OUTPUT->heading(get_string("nousersyet"));
         return false;
@@ -504,9 +504,9 @@ function prepare_choice_show_results($choice, $course, $cm, $allresponses, $forc
                 echo "</form></div>";
             }
             break;
-                }
+    }
     return $display;
-            }
+}
 
 /**
  * @global object
@@ -739,10 +739,7 @@ function choice_get_response_data($choice, $cm, $groupmode) {
                 unset($allresponses[0][$response->userid]);   // Remove from unanswered column
             }
         }
-    }
-    if (empty($allresponses[0])) {
-        unset($allresponses[0]);
-    }
+    }    
     return $allresponses;
 }
 
