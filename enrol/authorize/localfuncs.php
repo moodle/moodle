@@ -1,18 +1,43 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Authorize enrolment plugin.
+ *
+ * This plugin allows you to set up paid courses, using authorize.net.
+ *
+ * @package    enrol
+ * @subpackage authorize
+ * @copyright  2010 Eugene Venter
+ * @author     Eugene Venter
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
 require_once($CFG->libdir.'/eventslib.php');
 
-function get_course_cost($course)
-{
-    global $CFG;
+function get_course_cost($plugininstance) {
+    $defaultplugin = enrol_get_plugin('authorize');
 
     $cost = (float)0;
-    $currency = (!empty($course->currency))
-                 ? $course->currency :( empty($CFG->enrol_currency)
-                                        ? 'USD' : $CFG->enrol_currency );
+    $currency = (!empty($plugininstance->currency))
+                 ? $plugininstance->currency :( empty($defaultplugin->currency)
+                                        ? 'USD' : $defaultplugin->enrol_currency );
 
-    if (!empty($course->cost)) {
-        $cost = (float)(((float)$course->cost) < 0) ? $CFG->enrol_cost : $course->cost;
+    if (!empty($plugininstance->cost)) {
+        $cost = (float)(((float)$plugininstance->cost) < 0) ? $defaultplugin->cost : $plugininstance->cost;
     }
 
     $cost = format_float($cost, 2);
@@ -24,26 +49,26 @@ function get_course_cost($course)
     return $ret;
 }
 
-function zero_cost($course) {
-    $curcost = get_course_cost($course);
+function zero_cost($plugininstance) {
+    $curcost = get_course_cost($plugininstance);
     return (abs($curcost['cost']) < 0.01);
 }
 
-function prevent_double_paid($course)
-{
+function prevent_double_paid($plugininstance) {
     global $CFG, $SESSION, $USER, $DB;
+    $plugin = enrol_get_plugin('authorize');
 
-    $sql = "SELECT id FROM {enrol_authorize} WHERE userid = ? AND courseid = ? ";
-    $params = array($USER->id, $course->id);
+    $sql = "SELECT id FROM {enrol_authorize} WHERE userid = ? AND courseid = ? AND instanceid = ?";
+    $params = array($USER->id, $plugininstance->courseid, $plugininstance->id);
 
-    if (empty($CFG->an_test)) { // Real mode
-        $sql .= 'AND status IN(?,?,?)';
+    if (!$plugin->get_config('an_test')) { // Real mode
+        $sql .= ' AND status IN(?,?,?)';
         $params[] = AN_STATUS_AUTH;
         $params[] = AN_STATUS_UNDERREVIEW;
         $params[] = AN_STATUS_APPROVEDREVIEW;
     }
     else { // Test mode
-        $sql .= 'AND status=?';
+        $sql .= ' AND status=?';
         $params[] = AN_STATUS_NONE;
     }
 
@@ -61,9 +86,8 @@ function prevent_double_paid($course)
     }
 }
 
-function get_list_of_creditcards($getall = false)
-{
-    global $CFG;
+function get_list_of_creditcards($getall = false) {
+    $plugin = enrol_get_plugin('authorize');
 
     $alltypes = array(
         'mcd' => 'Master Card',
@@ -77,44 +101,61 @@ function get_list_of_creditcards($getall = false)
         'enr' => 'EnRoute'
     );
 
-    if ($getall or empty($CFG->an_acceptccs)) {
+    if ($getall) {
         return $alltypes;
     }
 
     $ret = array();
-    $ccs = explode(',', $CFG->an_acceptccs);
-    foreach ($ccs as $key) {
-        $ret[$key] = $alltypes[$key];
+    foreach ($alltypes as $code=>$name) {
+        if ($plugin->get_config("an_acceptcc_{$code}")) {
+            $ret[$code] = $name;
+        }
     }
+
     return $ret;
 }
 
-function get_list_of_payment_methods($getall = false)
-{
-    global $CFG;
+function get_list_of_payment_methods($getall = false) {
+    $plugin = enrol_get_plugin('authorize');
+    $method_cc = $plugin->get_config('an_acceptmethod_cc');
+    $method_echeck = $plugin->get_config('an_acceptmethod_echeck');
 
-    if ($getall || empty($CFG->an_acceptmethods)) {
+
+    if ($getall || (empty($method_cc) && empty($method_echeck))) {
         return array(AN_METHOD_CC, AN_METHOD_ECHECK);
-    }
-    else {
-        return explode(',', $CFG->an_acceptmethods);
+    } else {
+        $methods = array();
+        if ($method_cc) {
+            $methods[] = AN_METHOD_CC;
+        }
+
+        if ($method_echeck) {
+            $methods[] = AN_METHOD_ECHECK;
+        }
+
+        return $methods;
     }
 }
 
-function get_list_of_bank_account_types($getall = false)
-{
-    global $CFG;
+function get_list_of_bank_account_types($getall = false) {
+    $plugin = enrol_get_plugin('authorize');
+    $alltypes = array('CHECKING', 'BUSINESSCHECKING', 'SAVINGS');
 
-    if ($getall || empty($CFG->an_acceptechecktypes)) {
-        return array('CHECKING', 'BUSINESSCHECKING', 'SAVINGS');
-    }
-    else {
-        return explode(',', $CFG->an_acceptechecktypes);
+    if ($getall) {
+        return $alltypes;
+    } else {
+        $types = array();
+        foreach ($alltypes as $type) {
+            if ($plugin->get_config("an_acceptecheck_{$type}")) {
+                $types[] = $type;
+            }
+        }
+
+        return $types;
     }
 }
 
-function message_to_admin($subject, $data)
-{
+function message_to_admin($subject, $data) {
     global $SITE;
 
     $admin = get_admin();
@@ -124,6 +165,8 @@ function message_to_admin($subject, $data)
     $emailmessage .= print_r($data, true);
     $eventdata = new object();
     $eventdata->modulename        = 'moodle';
+    $eventdata->component         = 'enrol_authorize';
+    $eventdata->name              = 'authorize_enrolment';
     $eventdata->userfrom          = $admin;
     $eventdata->userto            = $admin;
     $eventdata->subject           = "$SITE->fullname: Authorize.net ERROR";
@@ -134,8 +177,7 @@ function message_to_admin($subject, $data)
     message_send($eventdata);
 }
 
-function send_welcome_messages($orderdata)
-{
+function send_welcome_messages($orderdata) {
     global $CFG, $SITE, $DB;
 
     if (empty($orderdata)) {
@@ -191,6 +233,8 @@ function send_welcome_messages($orderdata)
 
                 $eventdata = new object();
                 $eventdata->modulename        = 'moodle';
+                $eventdata->component         = 'enrol_authorize';
+                $eventdata->name              = 'authorize_enrolment';
                 $eventdata->userfrom          = $sender;
                 $eventdata->userto            = $user;
                 $eventdata->subject           = get_string("enrolmentnew", '', $SITE->shortname);
@@ -207,20 +251,20 @@ function send_welcome_messages($orderdata)
     }
 }
 
-function check_curl_available()
-{
+function check_curl_available() {
     return function_exists('curl_init') &&
            function_exists('stream_get_wrappers') &&
            in_array('https', stream_get_wrappers());
 }
 
-function authorize_verify_account()
-{
-    global $CFG, $USER, $SITE;
+function authorize_verify_account() {
+    global $USER, $SITE;
+    $plugin = enrol_get_plugin('authorize');
+
     require_once('authorizenet.class.php');
 
-    $original_antest = $CFG->an_test;
-    $CFG->an_test = 1; // Test mode
+    $original_antest = $plugin->get_config('an_test');
+    $plugin->set_config('an_test', 1); // Test mode
 
     $order = new stdClass();
     $order->id = -1;
@@ -257,7 +301,9 @@ function authorize_verify_account()
     else {
         $ret = get_string('verifyaccountresult', 'enrol_authorize', $message);
     }
-    $CFG->an_test = $original_antest;
+
+    $plugin->set_config('an_test', $original_antest);
+
     return $ret;
 }
 

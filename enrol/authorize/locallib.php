@@ -1,4 +1,30 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Authorize enrolment plugin.
+ *
+ * This plugin allows you to set up paid courses, using authorize.net.
+ *
+ * @package    enrol
+ * @subpackage authorize
+ * @copyright  2010 Eugene Venter
+ * @author     Eugene Venter
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
 if (!defined('MOODLE_INTERNAL')) {
     die('Direct access to this script is forbidden.');
@@ -17,6 +43,9 @@ function authorize_print_orders($courseid, $userid) {
     global $course;
     global $CFG, $USER, $SITE, $DB, $OUTPUT, $PAGE;
     global $strs, $authstrs;
+
+    $plugin = enrol_get_plugin('authorize');
+
     require_once($CFG->libdir.'/tablelib.php');
 
     $perpage = optional_param('perpage', 10, PARAM_INT);
@@ -132,7 +161,7 @@ function authorize_print_orders($courseid, $userid) {
         switch ($status)
         {
             case AN_STATUS_NONE:
-                if (empty($CFG->an_test)) {
+                if (!$plugin->get_config('an_test')) {
                     $where .= "AND (e.status != :status) ";
                     $params['status'] = AN_STATUS_NONE;
                 }
@@ -223,6 +252,9 @@ function authorize_print_order($orderid)
     global $CFG, $USER, $DB, $OUTPUT, $PAGE;
     global $strs, $authstrs;
 
+    $plugin = enrol_get_plugin('authorize');
+    $an_test = $plugin->get_config('an_test');
+
     $do = optional_param('do', '', PARAM_ALPHA);
     $unenrol = optional_param('unenrol', 0, PARAM_BOOL);
     $confirm = optional_param('confirm', 0, PARAM_BOOL);
@@ -269,6 +301,7 @@ function authorize_print_order($orderid)
     }
     $PAGE->navbar->add($authstrs->paymentmanagement, 'index.php?course='.$course->id);
     $PAGE->navbar->add($authstrs->orderid . ': ' . $orderid, 'index.php');
+    $PAGE->set_course($course);
     $PAGE->set_title("$course->shortname: $authstrs->paymentmanagement");
     $PAGE->set_heading($authstrs->orderdetails);
     $PAGE->set_cacheable(false);
@@ -302,9 +335,9 @@ function authorize_print_order($orderid)
             $message = '';
             $extra = NULL;
             if (AN_APPROVED == AuthorizeNet::process($order, $message, $extra, AN_ACTION_PRIOR_AUTH_CAPTURE)) {
-                if (empty($CFG->an_test)) {
+                if (empty($an_test)) {
                     if (enrol_into_course($course, $user, 'authorize')) {
-                        if (!empty($CFG->enrol_mailstudents)) {
+                        if ($plugin->get_config('enrol_mailstudents')) {
                             send_welcome_messages($orderid);
                         }
                         redirect("$CFG->wwwroot/enrol/authorize/index.php?order=$orderid");
@@ -352,13 +385,15 @@ function authorize_print_order($orderid)
             $message = '';
             $success = AuthorizeNet::process($order, $message, $extra, AN_ACTION_CREDIT);
             if (AN_APPROVED == $success || AN_REVIEW == $success) {
-                if (empty($CFG->an_test)) {
+                if (empty($an_test)) {
                     if (empty($extra->id)) {
                         redirect("$CFG->wwwroot/enrol/authorize/index.php?order=$orderid", "insert record error", 20);
                     }
                     else {
                         if (!empty($unenrol)) {
-                            role_unassign_all(array('userid'=>$order->userid, 'contextid'=>$coursecontext->id, 'component'=>'enrol_authorize'), true, true);
+                            $pinstance = $DB->get_record('enrol', array('id'=>$order->instanceid));
+                            $plugin->unenrol_user($pinstance, $order->userid);
+                            //role_unassign_all(array('userid'=>$order->userid, 'contextid'=>$coursecontext->id, 'component'=>'enrol_authorize'), true, true);
                         }
                         redirect("$CFG->wwwroot/enrol/authorize/index.php?order=$orderid");
                     }
@@ -383,7 +418,9 @@ function authorize_print_order($orderid)
     elseif (ORDER_DELETE == $do && in_array(ORDER_DELETE, $statusandactions->actions)) {
         if ($confirm && confirm_sesskey()) {
             if (!empty($unenrol)) {
-                role_unassign_all(array('userid'=>$order->userid, 'contextid'=>$coursecontext->id, 'component'=>'enrol_authorize'), true, true);
+                $pinstance = $DB->get_record('enrol', array('id'=>$order->instanceid));
+                $plugin->unenrol_user($pinstance, $order->userid);
+                //role_unassign_all(array('userid'=>$order->userid, 'contextid'=>$coursecontext->id, 'component'=>'enrol_authorize'), true, true);
             }
             $DB->delete_records('enrol_authorize', array('id'=>$orderid));
             redirect("$CFG->wwwroot/enrol/authorize/index.php");
@@ -399,7 +436,7 @@ function authorize_print_order($orderid)
                 $extra = NULL;
                 $message = '';
                 if (AN_APPROVED == AuthorizeNet::process($order, $message, $extra, AN_ACTION_VOID)) {
-                    if (empty($CFG->an_test)) {
+                    if (empty($an_test)) {
                         redirect("$CFG->wwwroot/enrol/authorize/index.php?order=$orderid");
                     }
                     else {
@@ -434,9 +471,11 @@ function authorize_print_order($orderid)
                     $message = '';
                     $extra = NULL;
                     if (AN_APPROVED == AuthorizeNet::process($suborder, $message, $extra, AN_ACTION_VOID)) {
-                        if (empty($CFG->an_test)) {
+                        if (empty($an_test)) {
                             if (!empty($unenrol)) {
-                                role_unassign_all(array('userid'=>$order->userid, 'contextid'=>$coursecontext->id, 'component'=>'enrol_authorize'), true, true);
+                                $pinstance = $DB->get_record('enrol', array('id'=>$order->instanceid));
+                                $plugin->unenrol_user($pinstance, $order->userid);
+                                //role_unassign_all(array('userid'=>$order->userid, 'contextid'=>$coursecontext->id, 'component'=>'enrol_authorize'), true, true);
                             }
                             redirect("$CFG->wwwroot/enrol/authorize/index.php?order=$orderid");
                         }

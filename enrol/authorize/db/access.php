@@ -2,6 +2,39 @@
 
 $capabilities = array(
 
+    'enrol/authorize:config' => array(
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_COURSE,
+        'legacy' => array(
+            'manager' => CAP_ALLOW,
+        )
+    ),
+
+    'enrol/authorize:manage' => array(
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_COURSE,
+        'legacy' => array(
+            'manager' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+        )
+    ),
+
+    'enrol/authorize:unenrol' => array(
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_COURSE,
+        'legacy' => array(
+            'manager' => CAP_ALLOW,
+        )
+    ),
+
+    'enrol/authorize:unenrolself' => array(
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_COURSE,
+        'legacy' => array(
+        )
+    ),
+
+
     'enrol/authorize:managepayments' => array(
         'riskbitmask' => RISK_PERSONAL,
         'captype' => 'write',

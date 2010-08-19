@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -14,6 +13,16 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Authorize.Net enrolment plugin - support for user self unenrolment.
+ *
+ * @package    enrol
+ * @subpackage authorize
+ * @copyright  2010 Eugene Venter
+ * @author     Eugene Venter
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
 /// Load libraries
 require_once('../../config.php');
@@ -61,6 +70,8 @@ echo $OUTPUT->footer();
 
 function authorize_process_csv($filename) {
     global $CFG, $SITE, $DB;
+
+    $plugin = enrol_get_plugin('authorize');
 
     /// We need these fields
     $myfields = array(
@@ -214,15 +225,13 @@ function authorize_process_csv($filename) {
                     $timestart = time();
                     $timeend = $timestart + $course->enrolperiod;
                 }
-                //TODO: do some real enrolment here
-                if (role_assign($role->id, $user->id, $coursecontext->id, 'enrol_authorize')) {
-                    $imported++;
-                    if (!empty($CFG->enrol_mailstudents)) {
-                        $sendem[] = $order->id;
-                    }
-                }
-                else {
-                    $ignoredlines .= $transid . ": Error while trying to enrol " . fullname($user) . " in '$course->fullname' \n";
+                // Enrol user
+                $pinstance = $DB->get_record('enrol', array('id'=>$order->instanceid));
+                $plugin->enrol_user($pinstance, $user->id, $pinstance->roleid, $timestart, $timeend);
+
+                $imported++;
+                if ($plugin->get_config('enrol_mailstudents')) {
+                    $sendem[] = $order->id;
                 }
             }
         }
@@ -235,6 +244,8 @@ function authorize_process_csv($filename) {
 
         $eventdata = new object();
         $eventdata->modulename        = 'moodle';
+        $eventdata->component         = 'enrol_authorize';
+        $eventdata->name              = 'authorize_enrolment';
         $eventdata->userfrom          = $admin;
         $eventdata->userto            = $admin;
         $eventdata->subject           = "$SITE->fullname: Authorize.net CSV ERROR LOG";

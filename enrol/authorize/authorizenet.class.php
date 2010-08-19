@@ -1,4 +1,31 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Authorize enrolment plugin.
+ *
+ * This plugin allows you to set up paid courses, using authorize.net.
+ *
+ * @package    enrol
+ * @subpackage authorize
+ * @copyright  2010 Eugene Venter
+ * @author     Eugene Venter
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 
 if (!defined('MOODLE_INTERNAL')) {
     die('Direct access to this script is forbidden.');
@@ -27,14 +54,13 @@ class AuthorizeNet
      */
     public static function getsettletime($time)
     {
-        global $CFG;
+        $mconfig = get_config('enrol_authorize');
 
-        $cutoff = intval($CFG->an_cutoff);
-        $mins = $cutoff % 60;
-        $hrs = ($cutoff - $mins) / 60;
-        $cutofftime = strtotime("$hrs:$mins", $time);
+        $cutoff_hour = intval($mconfig->an_cutoff_min);
+        $cutoff_min = intval($mconfig->an_cutoff_hour);
+        $cutofftime = strtotime("{$cutoff_hour}:{$cutoff_min}", $time);
         if ($cutofftime < $time) {
-            $cutofftime = strtotime("$hrs:$mins", $time + (24 * 3600));
+            $cutofftime = strtotime("{$cutoff_hour}:{$cutoff_min}", $time + (24 * 3600));
         }
         return $cutofftime;
     }
@@ -98,22 +124,24 @@ class AuthorizeNet
         static $constpd = array();
         require_once($CFG->libdir.'/filelib.php');
 
+        $mconfig = get_config('enrol_authorize');
+
         if (empty($constpd)) {
-            $mconfig = get_config('enrol/authorize');
+            $mconfig = get_config('enrol_authorize');
             $constpd = array(
                 'x_version'         => '3.1',
                 'x_delim_data'      => 'True',
                 'x_delim_char'      => self::AN_DELIM,
                 'x_encap_char'      => self::AN_ENCAP,
                 'x_relay_response'  => 'FALSE',
-                'x_login'           => rc4decrypt($mconfig->an_login)
+                'x_login'           => $mconfig->an_login
             );
 
             if (!empty($mconfig->an_tran_key)) {
-                $constpd['x_tran_key'] = rc4decrypt($mconfig->an_tran_key);
+                $constpd['x_tran_key'] = $mconfig->an_tran_key;
             }
             else {
-                $constpd['x_password'] = rc4decrypt($mconfig->an_password);
+                $constpd['x_password'] = $mconfig->an_password;
             }
         }
 
@@ -141,7 +169,7 @@ class AuthorizeNet
 
         $pd = $constpd;
         $pd['x_method'] = $method;
-        $test = !empty($CFG->an_test);
+        $test = !empty($mconfig->an_test);
         $pd['x_test_request'] = ($test ? 'TRUE' : 'FALSE');
 
         switch ($action) {
@@ -242,8 +270,8 @@ class AuthorizeNet
         }
 
         $headers = array('Connection' => 'close');
-        if (! (empty($CFG->an_referer) || $CFG->an_referer == "http://")) {
-            $headers['Referer'] = $CFG->an_referer;
+        if (! (empty($mconfig->an_referer) || $mconfig->an_referer == "http://")) {
+            $headers['Referer'] = $mconfig->an_referer;
         }
 
         @ignore_user_abort(true);
@@ -251,7 +279,7 @@ class AuthorizeNet
             @set_time_limit(300);
         }
 
-        $host = $test ? 'certification.authorize.net' : 'secure.authorize.net';
+        $host = $test ? 'test.authorize.net' : 'secure.authorize.net';
         $data = download_file_content("https://$host:443/gateway/transact.dll", $headers, $pd, false, 300, 60, true);
         if (!$data) {
             $message = "No connection to https://$host:443";
@@ -333,7 +361,7 @@ class AuthorizeNet
             if ($message == '[[' . $reasonstr . ']]') {
                 $message = isset($response[3]) ? $response[3] : 'unknown error';
             }
-            if ($method == AN_METHOD_CC && !empty($CFG->an_avs) && $response[5] != "P") {
+            if ($method == AN_METHOD_CC && !empty($mconfig->an_avs) && $response[5] != "P") {
                 $avs = "avs" . strtolower($response[5]);
                 $stravs = get_string($avs, "enrol_authorize");
                 $message .= "<br />" . get_string("avsresult", "enrol_authorize", $stravs);
@@ -346,8 +374,13 @@ class AuthorizeNet
                         {
                             if (!empty($cctype)) {
                                 $ccaccepts = get_list_of_creditcards();
+
                                 unset($ccaccepts[$cctype]);
-                                set_config('an_acceptccs', implode(',', array_keys($ccaccepts)));
+                                set_config("an_acceptcc_{$cctype}", 0, 'enrol_authorize');
+
+                                foreach ($ccaccepts as $key=>$val) {
+                                    set_config("an_acceptcc_{$key}", 1, 'enrol_authorize');
+                                }
                                 message_to_admin("$message ($cctype) This is new config(an_acceptccs):", $ccaccepts);
                             }
                             break;
@@ -355,14 +388,14 @@ class AuthorizeNet
                     // Echecks only
                     case self::AN_REASON_ACHONLY:
                         {
-                            set_config('an_acceptmethods', AN_METHOD_ECHECK);
+                            set_config("an_acceptmethod_".AN_METHOD_ECHECK, 1, 'enrol_authorize');
                             message_to_admin("$message This is new config(an_acceptmethods):", array(AN_METHOD_ECHECK));
                             break;
                         }
                     // Echecks aren't accepted
                     case self::AN_REASON_NOACH:
                         {
-                            set_config('an_acceptmethods', AN_METHOD_CC);
+                            set_config("an_acceptmethod_".AN_METHOD_CC, 1, 'enrol_authorize');
                             message_to_admin("$message This is new config(an_acceptmethods):", array(AN_METHOD_CC));
                             break;
                         }
@@ -375,14 +408,15 @@ class AuthorizeNet
                                     // CCD=BUSINESSCHECKING
                                     case 'CCD':
                                         {
-                                            set_config('an_acceptechecktypes', 'CHECKING,SAVINGS');
+                                            set_config('an_acceptecheck_CHECKING', 1, 'enrol_authorize');
+                                            set_config('an_acceptecheck_SAVINGS', 1, 'enrol_authorize');
                                             message_to_admin("$message This is new config(an_acceptechecktypes):", array('CHECKING','SAVINGS'));
                                         }
                                         break;
                                     // WEB=CHECKING or SAVINGS
                                     case 'WEB':
                                         {
-                                            set_config('an_acceptechecktypes', 'BUSINESSCHECKING');
+                                            set_config('an_acceptecheck_BUSINESSCHECKING', 1, 'enrol_authorize');
                                             message_to_admin("$message This is new config(an_acceptechecktypes):", array('BUSINESSCHECKING'));
                                         }
                                         break;

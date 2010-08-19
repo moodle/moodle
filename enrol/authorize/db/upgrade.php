@@ -82,7 +82,16 @@ function xmldb_enrol_authorize_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2009042700, 'enrol', 'authorize');
     }
 
+    // Add instanceid field to enrol_authorize table
+    if ($oldversion < 2010081203) {
+        $table = new xmldb_table('enrol_authorize');
+        $field = new xmldb_field('instanceid');
+        if (!$dbman->field_exists($table, $field)) {
+            $field->set_attributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 0, 'userid');
+            $dbman->add_field($table, $field);
+        }
+        upgrade_plugin_savepoint(true, 2010081203, 'enrol', 'authorize');
+    }
+
     return true;
 }
-
-

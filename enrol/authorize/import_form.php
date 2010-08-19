@@ -15,6 +15,18 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * Adds new instance of enrol_authorize to specified course
+ * or edits current instance.
+ *
+ * @package    enrol
+ * @subpackage authorize
+ * @copyright  2010 Eugene Venter
+ * @author     Eugene Venter
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+
 require_once($CFG->libdir.'/formslib.php');
 
 class enrol_authorize_import_form extends moodleform {
