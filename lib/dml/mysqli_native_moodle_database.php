@@ -165,17 +165,19 @@ class mysqli_native_moodle_database extends moodle_database {
             $this->query_start($sql, NULL, SQL_QUERY_AUX);
             $result = $this->mysqli->query($sql);
             $this->query_end($result);
+            $engines = array();
             while ($res = $result->fetch_assoc()) {
-                if ($res['Engine'] === 'InnoDB' and $res['Support'] === 'YES') {
-                    $engine = 'InnoDB';
-                    break;
-                }
-                if ($res['Engine'] === 'XtraDB' and $res['Support'] === 'YES') {
-                    $engine = 'XtraDB';
-                    break;
+                if ($res['Support'] === 'YES' or $res['Support'] === 'DEFAULT') {
+                    $engines[$res['Engine']] = true;
                 }
             }
             $result->close();
+            if (isset($engines['InnoDB'])) {
+                $engine = 'InnoDB';
+            }
+            if (isset($engines['XtraDB'])) {
+                $engine = 'XtraDB';
+            }
         }
 
         return $engine;
