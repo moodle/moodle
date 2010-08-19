@@ -235,6 +235,9 @@ function blocks_have_content(&$pageblocks, $position) {
         if(!$record = blocks_get_record($instance->blockid)) {
             continue;
         }
+        if (empty($record->visible)) {
+            continue;
+        }
         if(!$obj = block_instance($record->name, $instance)) {
             continue;
         }
