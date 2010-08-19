@@ -1,21 +1,22 @@
 <?php
 
-// Create our admin page
-$temp = new admin_settingpage('theme_magazine', get_string('configtitle','theme_magazine'));
+defined('MOODLE_INTERNAL') || die;
+
+if ($ADMIN->fulltree) {
 
 	// Background image setting
 	$name = 'theme_magazine/background';
 	$title = get_string('background','theme_magazine');
 	$description = get_string('backgrounddesc', 'theme_magazine');
 	$setting = new admin_setting_configtext($name, $title, $description, '', PARAM_URL);
-	$temp->add($setting);
+	$settings->add($setting);
 
 	// logo image setting
 	$name = 'theme_magazine/logo';
 	$title = get_string('logo','theme_magazine');
 	$description = get_string('logodesc', 'theme_magazine');
 	$setting = new admin_setting_configtext($name, $title, $description, '', PARAM_URL);
-	$temp->add($setting);
+	$settings->add($setting);
 
 	// link color setting
 	$name = 'theme_magazine/linkcolor';
@@ -24,7 +25,7 @@ $temp = new admin_settingpage('theme_magazine', get_string('configtitle','theme_
 	$default = '#32529a';
 	$previewconfig = NULL;
 	$setting = new admin_setting_configcolourpicker($name, $title, $description, $default, $previewconfig);
-	$temp->add($setting);
+	$settings->add($setting);
 
 	// link hover color setting
 	$name = 'theme_magazine/linkhover';
@@ -33,7 +34,7 @@ $temp = new admin_settingpage('theme_magazine', get_string('configtitle','theme_
 	$default = '#4e2300';
 	$previewconfig = NULL;
 	$setting = new admin_setting_configcolourpicker($name, $title, $description, $default, $previewconfig);
-	$temp->add($setting);
+	$settings->add($setting);
 
 	// main color setting
 	$name = 'theme_magazine/maincolor';
@@ -42,7 +43,7 @@ $temp = new admin_settingpage('theme_magazine', get_string('configtitle','theme_
 	$default = '#002f2f';
 	$previewconfig = NULL;
 	$setting = new admin_setting_configcolourpicker($name, $title, $description, $default, $previewconfig);
-	$temp->add($setting);
+	$settings->add($setting);
 
 	// main color accent setting
 	$name = 'theme_magazine/maincoloraccent';
@@ -51,7 +52,7 @@ $temp = new admin_settingpage('theme_magazine', get_string('configtitle','theme_
 	$default = '#092323';
 	$previewconfig = NULL;
 	$setting = new admin_setting_configcolourpicker($name, $title, $description, $default, $previewconfig);
-	$temp->add($setting);
+	$settings->add($setting);
 
 	// heading color setting
 	$name = 'theme_magazine/headingcolor';
@@ -60,7 +61,7 @@ $temp = new admin_settingpage('theme_magazine', get_string('configtitle','theme_
 	$default = '#4e0000';
 	$previewconfig = NULL;
 	$setting = new admin_setting_configcolourpicker($name, $title, $description, $default, $previewconfig);
-	$temp->add($setting);
+	$settings->add($setting);
 
 	// block heading color setting
 	$name = 'theme_magazine/blockcolor';
@@ -69,7 +70,7 @@ $temp = new admin_settingpage('theme_magazine', get_string('configtitle','theme_
 	$default = '#002f2f';
 	$previewconfig = NULL;
 	$setting = new admin_setting_configcolourpicker($name, $title, $description, $default, $previewconfig);
-	$temp->add($setting);
+	$settings->add($setting);
 
 	// forum subject background color setting
 	$name = 'theme_magazine/forumback';
@@ -78,7 +79,6 @@ $temp = new admin_settingpage('theme_magazine', get_string('configtitle','theme_
 	$default = '#e6e2af';
 	$previewconfig = NULL;
 	$setting = new admin_setting_configcolourpicker($name, $title, $description, $default, $previewconfig);
-	$temp->add($setting);
+	$settings->add($setting);
 
-// Add our page to the structure of the admin tree
-$ADMIN->add('themes', $temp);
+}

@@ -1,7 +1,8 @@
 <?php
 
-// Create our admin page
-$temp = new admin_settingpage('theme_brick', get_string('configtitle','theme_brick'));
+defined('MOODLE_INTERNAL') || die;
+
+if ($ADMIN->fulltree) {
 
 // Background image setting
 // logo image setting
@@ -9,7 +10,7 @@ $name = 'theme_brick/logo';
 $title = get_string('logo','theme_brick');
 $description = get_string('logodesc', 'theme_brick');
 $setting = new admin_setting_configtext($name, $title, $description, '', PARAM_URL);
-$temp->add($setting);
+$settings->add($setting);
 
 // link color setting
 $name = 'theme_brick/linkcolor';
@@ -18,7 +19,7 @@ $description = get_string('linkcolordesc', 'theme_brick');
 $default = '#06365b';
 $previewconfig = NULL;
 $setting = new admin_setting_configcolourpicker($name, $title, $description, $default, $previewconfig);
-$temp->add($setting);
+$settings->add($setting);
 
 // link hover color setting
 $name = 'theme_brick/linkhover';
@@ -27,7 +28,7 @@ $description = get_string('linkhoverdesc', 'theme_brick');
 $default = '#5487ad';
 $previewconfig = NULL;
 $setting = new admin_setting_configcolourpicker($name, $title, $description, $default, $previewconfig);
-$temp->add($setting);
+$settings->add($setting);
 
 // main color setting
 $name = 'theme_brick/maincolor';
@@ -36,7 +37,7 @@ $description = get_string('maincolordesc', 'theme_brick');
 $default = '#8e2800';
 $previewconfig = NULL;
 $setting = new admin_setting_configcolourpicker($name, $title, $description, $default, $previewconfig);
-$temp->add($setting);
+$settings->add($setting);
 
 // main color accent setting
 $name = 'theme_brick/maincolorlink';
@@ -45,7 +46,7 @@ $description = get_string('maincolorlinkdesc', 'theme_brick');
 $default = '#fff0a5';
 $previewconfig = NULL;
 $setting = new admin_setting_configcolourpicker($name, $title, $description, $default, $previewconfig);
-$temp->add($setting);
+$settings->add($setting);
 
 // heading color setting
 $name = 'theme_brick/headingcolor';
@@ -54,8 +55,6 @@ $description = get_string('headingcolordesc', 'theme_brick');
 $default = '#5c3500';
 $previewconfig = NULL;
 $setting = new admin_setting_configcolourpicker($name, $title, $description, $default, $previewconfig);
-$temp->add($setting);
+$settings->add($setting);
 
-
-// Add our page to the structure of the admin tree
-$ADMIN->add('themes', $temp);
+}
