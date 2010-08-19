@@ -12,6 +12,9 @@
             }
         }
     }
+    if (!isset($currentorg)) {
+        $currentorg = '';
+    }
 ?>
 
 // Used need to debug cmi content (if you uncomment this, you must comment the definition inside SCORMapi1_3)
