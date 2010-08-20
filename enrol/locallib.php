@@ -81,7 +81,7 @@ class course_enrolment_manager {
 
     /**#@+
      * These variables are used to cache the information this class uses
-     * please never use these directly instead use thier get_ counterparts.
+     * please never use these directly instead use their get_ counterparts.
      * @access private
      * @var array
      */
@@ -164,7 +164,7 @@ class course_enrolment_manager {
     /**
      * Gets all of the users enrolled in this course.
      *
-     * If a filter was specificed this will be the users who were enrolled
+     * If a filter was specified this will be the users who were enrolled
      * in this course by means of that instance.
      *
      * @global moodle_database $DB
@@ -182,7 +182,8 @@ class course_enrolment_manager {
         $key = md5("$sort-$direction-$page-$perpage");
         if (!array_key_exists($key, $this->users)) {
             list($instancessql, $params, $filter) = $this->get_instance_sql();
-            $sql = "SELECT DISTINCT u.*, ul.timeaccess AS lastseen
+            $ufields = user_picture::fields('u', array('lastaccess', 'email'));
+            $sql = "SELECT DISTINCT $ufields, ul.timeaccess AS lastseen
                       FROM {user} u
                       JOIN {user_enrolments} ue ON (ue.userid = u.id  AND ue.enrolid $instancessql)
                       JOIN {enrol} e ON (e.id = ue.enrolid)
@@ -477,7 +478,7 @@ class course_enrolment_manager {
     }
 
     /**
-     * Unenroles a user from the course given the users ue entry
+     * Unenrols a user from the course given the users ue entry
      *
      * @global moodle_database $DB
      * @param stdClass $ue
