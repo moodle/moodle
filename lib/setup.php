@@ -302,6 +302,7 @@ $OUTPUT = new bootstrap_renderer();
 
 // set handler for uncaught exceptions - equivalent to print_error() call
 set_exception_handler('default_exception_handler');
+set_error_handler('default_error_handler', E_ALL | E_STRICT);
 
 // If there are any errors in the standard libraries we want to know!
 error_reporting(E_ALL);

@@ -257,6 +257,23 @@ function default_exception_handler($ex) {
 }
 
 /**
+ * Default error handler, prevents some white screens.
+ * @param int $errno
+ * @param string $errstr
+ * @param string $errfile
+ * @param int $errline
+ * @param array $errcontext
+ * @return bool false means use default error handler
+ */
+function default_error_handler($errno, $errstr, $errfile, $errline, $errcontext) {
+    if ($errno == 4096) {
+        //fatal catchable error
+        throw new coding_exception('PHP catchable fatal error', $errstr);
+    }
+    return false;
+}
+
+/**
  * Unconditionally abort all database transactions, this function
  * should be called from exception handlers only.
  * @return void
