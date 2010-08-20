@@ -47,10 +47,8 @@ $table = new html_table();
 
 if ($usesections) {
     $table->head  = array ($strsectionname, $strname, $strassignmenttype, $strduedate, $strsubmitted, $strgrade);
-    $table->align = array ("center", "left", "left", "left", "right");
 } else {
     $table->head  = array ($strname, $strassignmenttype, $strduedate, $strsubmitted, $strgrade);
-    $table->align = array ("left", "left", "left", "right");
 }
 
 $currentsection = "";

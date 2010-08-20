@@ -31,3 +31,10 @@
 #page-mod-assignment-view .feedback .grade {text-align: right;}
 #page-mod-assignment-view #online .singlebutton {text-align: center;}
 #page-mod-assignment-view #dates .c0 {text-align:right;font-weight:bold;}
+
+#page-mod-assignment-submissions .mform.optionspref .fitem .fitemtitle {width:50%;}
+#page-mod-assignment-submissions .mform.optionspref .fitem .felement {width: 30%; margin-left: 51%;}
+#page-mod-assignment-submissions.dir-rtl .mform .fitem .felement {margin-right: 51%; margin-left: 0;}
+
+#page-mod-assignment-submissions .optionspref {width: 50%;}
+#page-mod-assignment-submissions .fastgbutton {text-align: center;}
