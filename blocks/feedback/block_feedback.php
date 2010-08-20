@@ -47,8 +47,8 @@ class block_feedback extends block_base {
             foreach ($feedbacks as $feedback) {
                 $url = new moodle_url($baseurl);
                 $url->params(array('id'=>$feedback->cmid, 'courseid'=>$courseid));
-                $this->content->text = '<img src="'.$OUTPUT->pix_url('icon', 'feedback') . '" class="icon" alt="" />';
-                $this->content->text .= ' <a href="'.$url->out().'">'.$feedback->name.'</a>';
+                $icon = '<img src="'.$OUTPUT->pix_url('icon', 'feedback') . '" class="icon" alt="" />&nbsp;';
+                $this->content->text = ' <a href="'.$url->out().'">'.$icon.$feedback->name.'</a>';
             }
         }
 

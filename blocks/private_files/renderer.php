@@ -68,7 +68,7 @@ class block_private_files_renderer extends plugin_renderer_base {
             $filename = $file->get_filename();
             $icon = mimeinfo("icon", $filename);
             $image = $this->output->pix_icon("f/$icon", $filename, 'moodle', array('class'=>'icon'));
-            $result .= '<li yuiConfig=\''.json_encode($yuiconfig).'\'><div>'.$image.' '.html_writer::link($url, $filename).'</div></li>';
+            $result .= '<li yuiConfig=\''.json_encode($yuiconfig).'\'><div>'.html_writer::link($url, $image.'&nbsp;'.$filename).'</div></li>';
         }
         $result .= '</ul>';
 

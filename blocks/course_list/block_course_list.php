@@ -23,8 +23,7 @@ class block_course_list extends block_list {
         $this->content->icons = array();
         $this->content->footer = '';
 
-        $icon  = "<img src=\"" . $OUTPUT->pix_url('i/course') . "\"".
-                 " class=\"icon\" alt=\"".get_string("coursecategory")."\" />";
+        $icon  = '<img src="' . $OUTPUT->pix_url('i/course') . '" class="icon" alt="" />&nbsp;';
 
         $adminseesall = true;
         if (isset($CFG->block_course_list_adminview)) {
@@ -39,8 +38,7 @@ class block_course_list extends block_list {
                 foreach ($courses as $course) {
                     $linkcss = $course->visible ? "" : " class=\"dimmed\" ";
                     $this->content->items[]="<a $linkcss title=\"" . format_string($course->shortname) . "\" ".
-                               "href=\"$CFG->wwwroot/course/view.php?id=$course->id\">" . format_string($course->fullname) . "</a>";
-                    $this->content->icons[]=$icon;
+                               "href=\"$CFG->wwwroot/course/view.php?id=$course->id\">".$icon.format_string($course->fullname). "</a>";
                 }
                 $this->title = get_string('mycourses');
             /// If we can update any course of the view all isn't hidden, show the view all courses link
@@ -59,8 +57,7 @@ class block_course_list extends block_list {
             if (count($categories) > 1 || (count($categories) == 1 && $DB->count_records('course') > 200)) {     // Just print top level category links
                 foreach ($categories as $category) {
                     $linkcss = $category->visible ? "" : " class=\"dimmed\" ";
-                    $this->content->items[]="<a $linkcss href=\"$CFG->wwwroot/course/category.php?id=$category->id\">" . format_string($category->name) . "</a>";
-                    $this->content->icons[]=$icon;
+                    $this->content->items[]="<a $linkcss href=\"$CFG->wwwroot/course/category.php?id=$category->id\">".$icon . format_string($category->name) . "</a>";
                 }
             /// If we can update any course of the view all isn't hidden, show the view all courses link
                 if (has_capability('moodle/course:update', get_context_instance(CONTEXT_SYSTEM)) || empty($CFG->block_course_list_hideallcourseslink)) {
@@ -78,8 +75,7 @@ class block_course_list extends block_list {
                         $this->content->items[]="<a $linkcss title=\""
                                    . format_string($course->shortname)."\" ".
                                    "href=\"$CFG->wwwroot/course/view.php?id=$course->id\">"
-                                   .  format_string($course->fullname) . "</a>";
-                        $this->content->icons[]=$icon;
+                                   .$icon. format_string($course->fullname) . "</a>";
                     }
                 /// If we can update any course of the view all isn't hidden, show the view all courses link
                     if (has_capability('moodle/course:update', get_context_instance(CONTEXT_SYSTEM)) || empty($CFG->block_course_list_hideallcourseslink)) {
@@ -110,7 +106,7 @@ class block_course_list extends block_list {
             return;
         }
 
-        $icon  = '<img src="'.$OUTPUT->pix_url('i/mnethost') . '" class="icon" alt="'.get_string('course').'" />';
+        $icon = '<img src="'.$OUTPUT->pix_url('i/mnethost') . '" class="icon" alt="" />&nbsp;';
 
         // shortcut - the rest is only for logged in users!
         if (!isloggedin() || isguestuser()) {
@@ -123,8 +119,7 @@ class block_course_list extends block_list {
             foreach ($courses as $course) {
                 $this->content->items[]="<a title=\"" . format_string($course->shortname) . "\" ".
                     "href=\"{$CFG->wwwroot}/auth/mnet/jump.php?hostid={$course->hostid}&amp;wantsurl=/course/view.php?id={$course->remoteid}\">"
-                    . format_string($course->fullname) . "</a>";
-                $this->content->icons[]=$icon;
+                    .$icon. format_string($course->fullname) . "</a>";
             }
             // if we listed courses, we are done
             return true;
@@ -134,8 +129,7 @@ class block_course_list extends block_list {
             $this->content->items[] = get_string('remotehosts', 'mnet');
             $this->content->icons[] = '';
             foreach($USER->mnet_foreign_host_array as $somehost) {
-                $this->content->items[] = $somehost['count'].get_string('courseson','mnet').'<a title="'.$somehost['name'].'" href="'.$somehost['url'].'">'.$somehost['name'].'</a>';
-                $this->content->icons[] = $icon;
+                $this->content->items[] = $somehost['count'].get_string('courseson','mnet').'<a title="'.$somehost['name'].'" href="'.$somehost['url'].'">'.$icon.$somehost['name'].'</a>';
             }
             // if we listed hosts, done
             return true;

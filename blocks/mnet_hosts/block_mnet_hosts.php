@@ -88,16 +88,15 @@ class block_mnet_hosts extends block_list {
 
         if ($hosts) {
             foreach ($hosts as $host) {
-            $icon  = '<img src="'.$OUTPUT->pix_url('i/'.$host->application.'_host') . '"'.
-                ' class="icon" alt="'.get_string('server', 'block_mnet_hosts').'" />';
+                $icon  = '<img src="'.$OUTPUT->pix_url('i/'.$host->application.'_host') . '"'.
+                         ' class="icon" alt="'.get_string('server', 'block_mnet_hosts').'" />&nbsp;';
 
-                $this->content->icons[]=$icon;
                 if ($host->id == $USER->mnethostid) {
                     $this->content->items[]="<a title=\"" .s($host->name).
-                        "\" href=\"{$host->wwwroot}\">". s($host->name) ."</a>";
+                        "\" href=\"{$host->wwwroot}\">".$icon. s($host->name) ."</a>";
                 } else {
                     $this->content->items[]="<a title=\"" .s($host->name).
-                        "\" href=\"{$CFG->wwwroot}/auth/mnet/jump.php?hostid={$host->id}\">" . s($host->name) ."</a>";
+                        "\" href=\"{$CFG->wwwroot}/auth/mnet/jump.php?hostid={$host->id}\">" .$icon. s($host->name) ."</a>";
                 }
             }
         }

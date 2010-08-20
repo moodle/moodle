@@ -62,15 +62,14 @@ class block_community extends block_list {
         if (!isloggedin()) {
             return $this->content;
         }
-        
+
+        $icon = html_writer::empty_tag('img', array('src' => $OUTPUT->pix_url('i/group'),
+                'class' => 'icon', 'alt' => get_string('addcourse', 'block_community')));
         $addcourseurl = new moodle_url('/blocks/community/communitycourse.php',
                 array('add' => true, 'courseid' => $this->page->course->id));
-        $searchlink = html_writer::tag('a', get_string('addcourse', 'block_community'),
+        $searchlink = html_writer::tag('a', $icon .'&nbsp;'.get_string('addcourse', 'block_community'),
                 array('href' => $addcourseurl->out(false)));
         $this->content->items[] = $searchlink;
-        $icon = html_writer::empty_tag('img', array('src' => $OUTPUT->pix_url('i/group'),
-            'class' => 'icon', 'alt' => get_string('addcourse', 'block_community')));
-        $this->content->icons[] = $icon;
 
         require_once($CFG->dirroot . '/blocks/community/locallib.php');
         $communitymanager = new block_community_manager();
