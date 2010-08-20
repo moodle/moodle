@@ -339,8 +339,8 @@ function prepare_choice_show_results($choice, $course, $cm, $allresponses, $forc
 
     $display = clone($choice);
     $display->coursemoduleid = $cm->id;
-    $display->courseid = $course->id;    
-    
+    $display->courseid = $course->id;
+
     //overwrite options value;
     $display->options = array();
     $totaluser = 0;
@@ -362,7 +362,7 @@ function prepare_choice_show_results($choice, $course, $cm, $allresponses, $forc
     $display->viewresponsecapability = has_capability('mod/choice:readresponses', $context);
     $display->deleterepsonsecapability = has_capability('mod/choice:deleteresponses',$context);
     $display->fullnamecapability = has_capability('moodle/site:viewfullnames', $context);
-    
+
     if (empty($allresponses)) {
         echo $OUTPUT->heading(get_string("nousersyet"));
         return false;
@@ -681,8 +681,8 @@ function choice_reset_userdata($data) {
 
     if (!empty($data->reset_choice)) {
         $choicessql = "SELECT ch.id
-                         FROM {choice} ch
-                        WHERE ch.course=?";
+                       FROM {choice} ch
+                       WHERE ch.course=?";
 
         $DB->delete_records_select('choice_answers', "choiceid IN ($choicessql)", array($data->courseid));
         $status[] = array('component'=>$componentstr, 'item'=>get_string('removeresponses', 'choice'), 'error'=>false);
@@ -739,7 +739,7 @@ function choice_get_response_data($choice, $cm, $groupmode) {
                 unset($allresponses[0][$response->userid]);   // Remove from unanswered column
             }
         }
-    }    
+    }
     return $allresponses;
 }
 

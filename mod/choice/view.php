@@ -115,7 +115,7 @@
     // They haven't made their choice yet or updates allowed and choice is open
 
         $options = choice_prepare_options($choice, $USER, $cm, $allresponses);
-        $renderer = $PAGE->get_renderer('mod_choice');        
+        $renderer = $PAGE->get_renderer('mod_choice');
         echo $renderer->display_options($options, $cm->id, $choice->display);
         $choiceformshown = true;
     } else {
@@ -128,7 +128,7 @@
         if (isguestuser()) {
             // Guest account
             echo $OUTPUT->confirm(get_string('noguestchoose', 'choice').'<br /><br />'.get_string('liketologin'),
-                         get_login_url(), new moodle_url('/course/view.php', array('id'=>$course->id)));          
+                         get_login_url(), new moodle_url('/course/view.php', array('id'=>$course->id)));
         } else if (!is_enrolled($context)) {
             // Only people enrolled can make a choice
             $SESSION->wantsurl = $FULLME;
@@ -139,26 +139,25 @@
             echo $OUTPUT->container_start('continuebutton');
             echo $OUTPUT->single_button(new moodle_url('/enrol/index.php?', array('id'=>$course->id)), get_string('enrolme', 'core_enrol', format_string($course->shortname)));
             echo $OUTPUT->container_end();
-            echo $OUTPUT->box_end();            
+            echo $OUTPUT->box_end();
 
         }
     }
 
     // print the results at the bottom of the screen
     if ( $choice->showresults == CHOICE_SHOWRESULTS_ALWAYS or
-        ($choice->showresults == CHOICE_SHOWRESULTS_AFTER_ANSWER and $current ) or
-        ($choice->showresults == CHOICE_SHOWRESULTS_AFTER_CLOSE and !$choiceopen ))  {
+        ($choice->showresults == CHOICE_SHOWRESULTS_AFTER_ANSWER and $current) or
+        ($choice->showresults == CHOICE_SHOWRESULTS_AFTER_CLOSE and !$choiceopen)) {
 
         if (!empty($choice->showunanswered)) {
             $choice->option[0] = get_string('notanswered', 'choice');
             $choice->maxanswers[0] = 0;
         }
-
-            $results = prepare_choice_show_results($choice, $course, $cm, $allresponses);            
-            $renderer = $PAGE->get_renderer('mod_choice');
-                   
+        $results = prepare_choice_show_results($choice, $course, $cm, $allresponses);
+        $renderer = $PAGE->get_renderer('mod_choice');
         echo $renderer->display_result($results);
-    } else  if (!$choiceformshown) {
+
+    } else if (!$choiceformshown) {
         echo $OUTPUT->box(get_string('noresultsviewable', 'choice'));
     }
 
