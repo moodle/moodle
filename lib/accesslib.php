@@ -3023,7 +3023,7 @@ function get_enrolled_sql($context, $withcapability = '', $groupid = 0, $onlyact
                 $ctxids = implode(',', $contextids);
                 $roleids = implode(',', array_keys($prohibited));
                 $joins[] = "LEFT JOIN {role_assignments} {$prefix}ra4 ON ({$prefix}ra4.userid = {$prefix}u.id AND {$prefix}ra4.roleid IN ($roleids) AND {$prefix}ra4.contextid IN ($ctxids))";
-                $wheres[] = "{$prefix}ra4 IS NULL";
+                $wheres[] = "{$prefix}ra4.id IS NULL";
             }
 
             if ($groupid) {
