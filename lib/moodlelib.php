@@ -9079,7 +9079,7 @@ function get_performance_info() {
         $info['txt'] .= 'rcache: '.
             "{$rcache->hits}/{$rcache->misses} ";
     }*/
-    $info['html'] = '<div class="performanceinfo">'.$info['html'].'</div>';
+    $info['html'] = '<div class="performanceinfo siteinfo">'.$info['html'].'</div>';
     return $info;
 }
 
