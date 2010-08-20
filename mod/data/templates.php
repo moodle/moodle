@@ -29,6 +29,7 @@ require_once('lib.php');
 $id    = optional_param('id', 0, PARAM_INT);  // course module id
 $d     = optional_param('d', 0, PARAM_INT);   // database id
 $mode  = optional_param('mode', 'singletemplate', PARAM_ALPHA);
+$disableeditor  = optional_param('switcheditor', false, PARAM_ALPHA);
 
 $url = new moodle_url('/mod/data/templates.php');
 if ($mode !== 'singletemplate') {
@@ -157,6 +158,9 @@ if (empty($data->addtemplate) and empty($data->singletemplate) and
 
 editors_head_setup();
 $format = FORMAT_HTML;
+if ($disableeditor) {
+    $format = FORMAT_PLAIN;
+}
 $editor = editors_get_preferred_editor($format);
 $strformats = format_text_menu();
 $formats =  $editor->get_supported_formats();
@@ -185,7 +189,7 @@ echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthwide');
 echo '<table cellpadding="4" cellspacing="0" border="0">';
 
 /// Add the HTML editor(s).
-$usehtmleditor = can_use_html_editor() && ($mode != 'csstemplate') && ($mode != 'jstemplate');
+$usehtmleditor = can_use_html_editor() && ($mode != 'csstemplate') && ($mode != 'jstemplate') && !$disableeditor;
 if ($mode == 'listtemplate'){
     // Print the list template header.
     echo '<tr>';
@@ -270,10 +274,11 @@ if ($mode != 'csstemplate' and $mode != 'jstemplate') {
         echo '<br /><br />';
         if ($usehtmleditor) {
             $switcheditor = get_string('editordisable', 'data');
+            echo '<input type="submit" name="switcheditor" value="'.s($switcheditor).'" />';
         } else {
             $switcheditor = get_string('editorenable', 'data');
+            echo '<input type="submit" name="useeditor" value="'.s($switcheditor).'" />';
         }
-        echo '<input type="submit" name="switcheditor" value="'.s($switcheditor).'" />';
     }
 } else {
     echo '<br /><br /><br /><br /><input type="submit" name="defaultform" value="'.get_string('resettemplate','data').'" />';
