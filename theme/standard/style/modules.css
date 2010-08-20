@@ -26,7 +26,7 @@ table.mod_index {width:90%;margin:1em auto;}
 #page-mod-assignment-submissions .feedback .picture {padding: 10px;border:1px solid #DDD;}
 #page-mod-assignment-submissions .generaltable .r1 {background-color: #FFFFFF;}
 #page-mod-assignment-submissions .s0 {background: #FFD991;}
-#page-mod-assignment-submissions table.submissions td,
+#page-mod-assignment-submissions table.submissions td.cell,
 #page-mod-assignment-submissions table.submissions th{border:1px solid #DDD;vertical-align: middle;padding-left: 5px;padding-right: 5px;}
 #page-mod-assignment-submissions .timemodified,
 #page-mod-assignment-submissions .timemarked {font-size: 0.9em;}
