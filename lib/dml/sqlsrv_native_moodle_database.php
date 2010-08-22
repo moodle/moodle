@@ -167,7 +167,7 @@ class sqlsrv_native_moodle_database extends moodle_database {
           'Database' => $this->dbname,
           'CharacterSet' => 'UTF-8',
           'MultipleActiveResultSets' => true,
-          'ConnectionPooling' => $dboptions['dbpersist'],
+          'ConnectionPooling' => !empty($this->dboptions['dbpersist']),
           'ReturnDatesAsStrings' => true,
          ));
 
