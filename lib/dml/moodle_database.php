@@ -1556,7 +1556,7 @@ abstract class moodle_database {
      *
      * @param string $table the table to delete from.
      * @param string $field The field to search
-     * @param string $values array of values
+     * @param array $values array of values
      * @return bool true.
      * @throws dml_exception if error
      */
@@ -1601,8 +1601,8 @@ abstract class moodle_database {
      * NOTE: The SQL result is a number and can not be used directly in
      *       SQL condition, please compare it to some number to get a bool!!
      *
-     * @param integer int1 first integer in the operation
-     * @param integer int2 second integer in the operation
+     * @param int $int1 first integer in the operation
+     * @param int $int2 second integer in the operation
      * @return string the piece of SQL code to be used in your statement
      */
     public function sql_bitand($int1, $int2) {
@@ -1613,7 +1613,7 @@ abstract class moodle_database {
      * Returns the SQL text to be used in order to perform one bitwise NOT operation
      * with 1 integer.
      *
-     * @param integer int1 integer in the operation
+     * @param int $int1 integer in the operation
      * @return string the piece of SQL code to be used in your statement.
      */
     public function sql_bitnot($int1) {
@@ -1627,8 +1627,8 @@ abstract class moodle_database {
      * NOTE: The SQL result is a number and can not be used directly in
      *       SQL condition, please compare it to some number to get a bool!!
      *
-     * @param integer int1 first integer in the operation
-     * @param integer int2 second integer in the operation
+     * @param int $int1 first integer in the operation
+     * @param int $int2 second integer in the operation
      * @return string the piece of SQL code to be used in your statement.
      */
     public function sql_bitor($int1, $int2) {
@@ -1642,8 +1642,8 @@ abstract class moodle_database {
      * NOTE: The SQL result is a number and can not be used directly in
      *       SQL condition, please compare it to some number to get a bool!!
      *
-     * @param integer int1 first integer in the operation
-     * @param integer int2 second integer in the operation
+     * @param int $int1 first integer in the operation
+     * @param int $int2 second integer in the operation
      * @return string the piece of SQL code to be used in your statement.
      */
     public function sql_bitxor($int1, $int2) {
@@ -1654,8 +1654,8 @@ abstract class moodle_database {
      * Returns the SQL text to be used in order to perform module '%'
      * operation - remainder after division
      *
-     * @param integer int1 first integer in the operation
-     * @param integer int2 second integer in the operation
+     * @param int $int1 first integer in the operation
+     * @param int $int2 second integer in the operation
      * @return string the piece of SQL code to be used in your statement.
      */
     public function sql_modulo($int1, $int2) {
@@ -1665,7 +1665,7 @@ abstract class moodle_database {
     /**
      * Returns the correct CEIL expression applied to fieldname.
      *
-     * @param string fieldname the field (or expression) we are going to ceil
+     * @param string $fieldname the field (or expression) we are going to ceil
      * @return string the piece of SQL code to be used in your ceiling statement
      * Most DB use CEIL(), hence it's the default.
      */
@@ -1679,8 +1679,8 @@ abstract class moodle_database {
      * Be aware that the CHAR column you're trying to cast contains really
      * int values or the RDBMS will throw an error!
      *
-     * @param string fieldname the name of the field to be casted
-     * @param boolean text to specify if the original column is one TEXT (CLOB) column (true). Defaults to false.
+     * @param string $fieldname the name of the field to be casted
+     * @param bool $text to specify if the original column is one TEXT (CLOB) column (true). Defaults to false.
      * @return string the piece of SQL code to be used in your statement.
      */
     public function sql_cast_char2int($fieldname, $text=false) {
@@ -1693,8 +1693,8 @@ abstract class moodle_database {
      * Be aware that the CHAR column you're trying to cast contains really
      * numbers or the RDBMS will throw an error!
      *
-     * @param string fieldname the name of the field to be casted
-     * @param boolean text to specify if the original column is one TEXT (CLOB) column (true). Defaults to false.
+     * @param string $fieldname the name of the field to be casted
+     * @param bool $text to specify if the original column is one TEXT (CLOB) column (true). Defaults to false.
      * @return string the piece of SQL code to be used in your statement.
      */
     public function sql_cast_char2real($fieldname, $text=false) {
@@ -1707,7 +1707,7 @@ abstract class moodle_database {
      * (Only MySQL needs this. MySQL things that 1 * -1 = 18446744073709551615
      * if the 1 comes from an unsigned column).
      *
-     * @param string fieldname the name of the field to be cast
+     * @param string $fieldname the name of the field to be cast
      * @return string the piece of SQL code to be used in your statement.
      */
     public function sql_cast_2signed($fieldname) {
@@ -1719,8 +1719,8 @@ abstract class moodle_database {
      * one varchar column, because some RDBMS doesn't support such direct
      * comparisons.
      *
-     * @param string fieldname the name of the TEXT field we need to order by
-     * @param string number of chars to use for the ordering (defaults to 32)
+     * @param string $fieldname the name of the TEXT field we need to order by
+     * @param int $numchars of chars to use for the ordering (defaults to 32)
      * @return string the piece of SQL code to be used in your statement.
      */
     public function sql_compare_text($fieldname, $numchars=32) {
@@ -1744,7 +1744,8 @@ abstract class moodle_database {
      * Returns the proper SQL to do CONCAT between the elements passed
      * Can take many parameters
      *
-     * @param string $element
+     * This function accepts variable number of string parameters.
+     *
      * @return string
      */
     public abstract function sql_concat();
@@ -1764,8 +1765,8 @@ abstract class moodle_database {
      * TODO: Does this really need to be here? Eloy 20070727.
      * TODO: we definitely do not! (skodak)
      *
-     * @param string $firstname User's first name
-     * @param string $lastname User's last name
+     * @param string $first User's first name
+     * @param string $last User's last name
      * @return string
      */
     function sql_fullname($first='firstname', $last='lastname') {
@@ -1778,8 +1779,9 @@ abstract class moodle_database {
      *
      * Note that the use or queries being ordered by TEXT columns must be minimised,
      * because it's really slooooooow.
-     * @param string fieldname the name of the TEXT field we need to order by
-     * @param string number of chars to use for the ordering (defaults to 32)
+     *
+     * @param string $fieldname the name of the TEXT field we need to order by
+     * @param string $numchars of chars to use for the ordering (defaults to 32)
      * @return string the piece of SQL code to be used in your statement.
      */
     public function sql_order_by_text($fieldname, $numchars=32) {
@@ -1788,7 +1790,7 @@ abstract class moodle_database {
 
     /**
      * Returns the SQL text to be used to calculate the length in characters of one expression.
-     * @param string fieldname or expression to calculate its length in characters.
+     * @param string $fieldname or expression to calculate its length in characters.
      * @return string the piece of SQL code to be used in the statement.
      */
     public function sql_length($fieldname) {
