@@ -462,6 +462,7 @@ abstract class moodle_database {
      * @param string $sql query which caused problems
      * @param array $params optional query parameters
      * @param mixed $obj optional library specific object
+     * @return void
      */
     protected function print_debug($sql, array $params=null, $obj=null) {
         if (!$this->get_debug()) {
@@ -617,6 +618,7 @@ abstract class moodle_database {
      * Normalizes sql query parameters and verifies parameters.
      * @param string $sql query or part of it
      * @param array $params query parameters
+     * @return array (sql, params, type of params)
      */
     public function fix_sql_params($sql, array $params=null) {
         $params = (array)$params; // mke null array if needed
@@ -1586,6 +1588,7 @@ abstract class moodle_database {
      *
      * To be used in queries not having FROM clause to provide cross_db
      * Most DBs don't need it, hence the default is ''
+     * @return string
      */
     public function sql_null_from_clause() {
         return '';
@@ -1759,6 +1762,7 @@ abstract class moodle_database {
     /**
      * Returns the proper SQL (for the dbms in use) to concatenate $firstname and $lastname
      * TODO: Does this really need to be here? Eloy 20070727.
+     * TODO: we definitely do not! (skodak)
      *
      * @param string $firstname User's first name
      * @param string $lastname User's last name
@@ -1829,6 +1833,7 @@ abstract class moodle_database {
      * Returns the empty string char used by every supported DB. To be used when
      * we are searching for that values in our queries. Only Oracle uses this
      * for now (will be out, once we migrate to proper NULLs if that days arrives)
+     * @return string
      */
     function sql_empty() {
         return '';
@@ -1899,6 +1904,7 @@ abstract class moodle_database {
 
     /**
      * Does this driver suppoer regex syntax when searching
+     * @return bool
      */
     public function sql_regex_supported() {
         return false;
@@ -2032,7 +2038,7 @@ abstract class moodle_database {
      *
      * @param moodle_transaction $transaction
      * @param Exception $e exception that caused the problem
-     * @return does not return, exception is rethrown
+     * @return void - does not return, exception is rethrown
      */
     public function rollback_delegated_transaction(moodle_transaction $transaction, Exception $e) {
         if ($transaction->is_disposed()) {
@@ -2104,7 +2110,7 @@ abstract class moodle_database {
     /**
      * Obtain session lock
      * @param int $rowid id of the row with session record
-     * @return success
+     * @return bool success
      */
     public function get_session_lock($rowid) {
         $this->used_for_db_sessions = true;
@@ -2113,7 +2119,7 @@ abstract class moodle_database {
     /**
      * Release session lock
      * @param int $rowid id of the row with session record
-     * @return success
+     * @return bool success
      */
     public function release_session_lock($rowid) {
     }
