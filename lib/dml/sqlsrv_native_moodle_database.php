@@ -48,12 +48,7 @@ class sqlsrv_native_moodle_database extends moodle_database {
         parent::__construct($external);
     }
 
-    /**
-    * Setup the driver configuration. As a TODO, might want to put some level of debugging to
-    * see / log more info, warnings, errors.
-    }
-
-    /**
+   /**
     * Detects if all needed PHP stuff installed.
     * Note: can be used before connect()
     * @return mixed true if ok, string if something
