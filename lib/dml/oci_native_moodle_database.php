@@ -301,7 +301,7 @@ class oci_native_moodle_database extends moodle_database {
 
     /**
      * Returns supported query parameter types
-     * @return bitmask
+     * @return int bitmask
      */
     protected function allowed_param_types() {
         return SQL_PARAMS_NAMED;
@@ -309,6 +309,7 @@ class oci_native_moodle_database extends moodle_database {
 
     /**
      * Returns last error reported by database engine.
+     * @return string error message
      */
     public function get_last_error() {
         $error = false;

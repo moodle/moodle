@@ -296,6 +296,7 @@ abstract class moodle_database {
      * Close database connection and release all resources
      * and memory (especially circular memory references).
      * Do NOT use connect() again, create a new instance if needed.
+     * @return void
      */
     public function dispose() {
         if ($this->transactions) {
@@ -446,12 +447,13 @@ abstract class moodle_database {
 
     /**
      * Returns supported query parameter types
-     * @return bitmask
+     * @return int bitmask
      */
     protected abstract function allowed_param_types();
 
     /**
      * Returns last error reported by database engine.
+     * @return string error message
      */
     public abstract function get_last_error();
 

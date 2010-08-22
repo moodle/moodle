@@ -303,7 +303,7 @@ class mssql_native_moodle_database extends moodle_database {
 
     /**
      * Returns supported query parameter types
-     * @return bitmask
+     * @return int bitmask
      */
     protected function allowed_param_types() {
         return SQL_PARAMS_QM; // Not really, but emulated, see emulate_bound_params()
@@ -311,6 +311,7 @@ class mssql_native_moodle_database extends moodle_database {
 
     /**
      * Returns last error reported by database engine.
+     * @return string error message
      */
     public function get_last_error() {
         return mssql_get_last_message();
