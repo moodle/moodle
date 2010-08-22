@@ -213,7 +213,7 @@ function xmldb_lesson_upgrade($oldversion) {
                     $filepathname = clean_param('/'.$lesson->mediafile, PARAM_PATH);
                     $fullpath = "/$context->id/mod_lesson/mediafile/0$filepathname";
 
-                    if ($fs->get_file_by_hash(sha1($fullpath)) and !$file->is_directory()) {
+                    if ($file = $fs->get_file_by_hash(sha1($fullpath)) and !$file->is_directory()) {
                         // already converted, just update filename
                         $DB->set_field('lesson', 'mediafile', $filepathname, array('id'=>$lesson->id));
                     } else {
