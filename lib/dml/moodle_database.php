@@ -1315,7 +1315,7 @@ abstract class moodle_database {
      * @param string $return the field we are intered in
      * @param string $select A fragment of SQL to be used in a where clause in the SQL call.
      * @param array $params array of sql parameters
-     * @return mixed array of values
+     * @return array of values
      * @throws dml_exception if error
      */
     public function get_fieldset_select($table, $return, $select, array $params=null) {
@@ -1330,7 +1330,7 @@ abstract class moodle_database {
      *
      * @param string $sql The SQL query
      * @param array $params array of sql parameters
-     * @return mixed array of values
+     * @return array of values
      * @throws dml_exception if error
      */
     public abstract function get_fieldset_sql($sql, array $params=null);
@@ -1342,7 +1342,7 @@ abstract class moodle_database {
      * @param bool $returnit return it of inserted record
      * @param bool $bulk true means repeated inserts expected
      * @param bool $customsequence true if 'id' included in $params, disables $returnid
-     * @return mixed true or new id
+     * @return bool|int true or new id
      * @throws dml_exception if error
      */
     public abstract function insert_record_raw($table, $params, $returnid=true, $bulk=false, $customsequence=false);
@@ -1356,7 +1356,7 @@ abstract class moodle_database {
      * @param string $table The database table to be inserted into
      * @param object $data A data object with values for one or more fields in the record
      * @param bool $returnid Should the id of the newly created record entry be returned? If this option is not requested then true/false is returned.
-     * @return mixed true or new id
+     * @return bool|int true or new id
      * @throws dml_exception if error
      */
     public abstract function insert_record($table, $dataobject, $returnid=true, $bulk=false);
