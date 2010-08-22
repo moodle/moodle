@@ -106,7 +106,7 @@ abstract class moodle_database {
     protected $last_type;
     /** @var string last extra info */
     protected $last_extrainfo;
-    /** @var float last time in seconds with milisecond precision */
+    /** @var float last time in seconds with millisecond precision */
     protected $last_time;
     /** @var bool flag indicating logging of query in progress, prevents infinite loops */
     private $loggingquery = false;
