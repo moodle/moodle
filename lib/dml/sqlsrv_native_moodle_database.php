@@ -69,11 +69,6 @@ class sqlsrv_native_moodle_database extends moodle_database {
      * @return string db family name (mysql, postgres, mssql, sqlsrv, oracle, etc.)
      */
     public function get_dbfamily() {
-        /**
-         * NOTE: If this is changed to use the mssql family of
-         * databases, then sqlsrv_sql_generator.php can be deleted
-         * because it will not be used.
-         */
         return 'mssql';
     }
 
