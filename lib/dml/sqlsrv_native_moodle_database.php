@@ -377,10 +377,9 @@ class sqlsrv_native_moodle_database extends moodle_database {
             return $this->tables;
         }
         $this->tables = array ();
-        $sql = "SELECT table_name ".
-               "FROM information_schema.tables ".
-               "WHERE table_name LIKE '$this->prefix%' ".
-               "AND table_type = 'BASE TABLE'";
+        $sql = "SELECT table_name
+                  FROM information_schema.tables
+                 WHERE table_name LIKE '$this->prefix%' AND table_type = 'BASE TABLE'"; //TODO: "_" must be quoted here because it is common prefix char!!
 
         $this->query_start($sql, null, SQL_QUERY_AUX);
         $result = sqlsrv_query($this->sqlsrv, $sql);
@@ -414,13 +413,12 @@ class sqlsrv_native_moodle_database extends moodle_database {
         // Indexes aren't covered by information_schema metatables, so we need to
         // go to sys ones. Skipping primary key indexes on purpose.
         $sql = "SELECT i.name AS index_name, i.is_unique, ic.index_column_id, c.name AS column_name
-        FROM sys.indexes i
-        JOIN sys.index_columns ic ON i.object_id = ic.object_id AND i.index_id = ic.index_id
-        JOIN sys.columns c ON ic.object_id = c.object_id AND ic.column_id = c.column_id
-        JOIN sys.tables t ON i.object_id = t.object_id
-        WHERE t.name = '$tablename'
-        AND i.is_primary_key = 0
-        ORDER BY i.name, i.index_id, ic.index_column_id";
+                  FROM sys.indexes i
+                  JOIN sys.index_columns ic ON i.object_id = ic.object_id AND i.index_id = ic.index_id
+                  JOIN sys.columns c ON ic.object_id = c.object_id AND ic.column_id = c.column_id
+                  JOIN sys.tables t ON i.object_id = t.object_id
+                 WHERE t.name = '$tablename' AND i.is_primary_key = 0
+              ORDER BY i.name, i.index_id, ic.index_column_id";
 
         $this->query_start($sql, null, SQL_QUERY_AUX);
         $result = sqlsrv_query($this->sqlsrv, $sql);
@@ -476,33 +474,31 @@ class sqlsrv_native_moodle_database extends moodle_database {
 
         if (!$this->temptables->is_temptable($table)) { // normal table, get metadata from own schema
             $sql = "SELECT column_name AS name,
-            data_type AS type,
-            numeric_precision AS max_length,
-            character_maximum_length AS char_max_length,
-            numeric_scale AS scale,
-            is_nullable AS is_nullable,
-            columnproperty(object_id(quotename(table_schema) + '.' +
-            quotename(table_name)), column_name, 'IsIdentity') AS auto_increment,
-            column_default AS default_value
-            FROM information_schema.columns
-            WHERE table_name = '{".$table."}'
-            ORDER BY ordinal_position";
+                           data_type AS type,
+                           numeric_precision AS max_length,
+                           character_maximum_length AS char_max_length,
+                           numeric_scale AS scale,
+                           is_nullable AS is_nullable,
+                           columnproperty(object_id(quotename(table_schema) + '.' + quotename(table_name)), column_name, 'IsIdentity') AS auto_increment,
+                           column_default AS default_value
+                      FROM information_schema.columns
+                     WHERE table_name = '{".$table."}'
+                  ORDER BY ordinal_position";
         } else { // temp table, get metadata from tempdb schema
             $sql = "SELECT column_name AS name,
-            data_type AS type,
-            numeric_precision AS max_length,
-            character_maximum_length AS char_max_length,
-            numeric_scale AS scale,
-            is_nullable AS is_nullable,
-            columnproperty(object_id(quotename(table_schema) + '.' +
-            quotename(table_name)), column_name, 'IsIdentity') AS auto_increment,
-            column_default AS default_value
-            FROM tempdb.information_schema.columns ".
+                           data_type AS type,
+                           numeric_precision AS max_length,
+                           character_maximum_length AS char_max_length,
+                           numeric_scale AS scale,
+                           is_nullable AS is_nullable,
+                           columnproperty(object_id(quotename(table_schema) + '.' + quotename(table_name)), column_name, 'IsIdentity') AS auto_increment,
+                           column_default AS default_value
+                      FROM tempdb.information_schema.columns ".
             // check this statement
             // JOIN tempdb..sysobjects ON name = table_name
             // WHERE id = object_id('tempdb..{".$table."}')
-            "WHERE table_name like '{".$table."}__________%'
-            ORDER BY ordinal_position";
+                    "WHERE table_name LIKE '{".$table."}__________%'
+                  ORDER BY ordinal_position";
         }
 
         list($sql, $params, $type) = $this->fix_sql_params($sql, null);
@@ -780,10 +776,10 @@ class sqlsrv_native_moodle_database extends moodle_database {
     /**
      * Perform a emulation for LIMIT(offset, limit)
      *
-     * @param mixed $sql
-     * @param mixed $offset
-     * @param mixed $limit
-     * @return mixed
+     * @param string $sql
+     * @param int $offset
+     * @param int $limit
+     * @return string sql
      */
     private function limit_to_top_n($sql, $offset, $limit) {
         if ($limit < 1 && $offset < 1) {
@@ -809,14 +805,13 @@ class sqlsrv_native_moodle_database extends moodle_database {
                 } else {
                     $cols = '*';
                 }
-                $sql1 = 'SELECT '.$cols.' FROM ( '
-                    .'SELECT sub2.*, ROW_NUMBER() OVER(ORDER BY sub2.line2) AS line3 FROM ( '
-                    .'SELECT 1 AS line2, sub1.* FROM '
-                    .'{'.$from_table.'} AS sub1 '
-                    .') AS sub2 '
-                    .') AS sub3 '
-                    .'WHERE line3 BETWEEN '.($offset+1).' AND '
-                    .($offset + $limit);
+                $sql1 = "SELECT $cols
+                           FROM (SELECT sub2.*, ROW_NUMBER() OVER(ORDER BY sub2.line2) AS line3
+                                   FROM (SELECT 1 AS line2, sub1.*
+                                           FROM {".$from_table."} AS sub1
+                                        ) AS sub2
+                                ) AS sub3
+                          WHERE line3 BETWEEN ".($offset+1)." AND ".($offset + $limit);
             } else {
                 $sql1 = "SELECT 'Invalid table'";
             }
@@ -1156,7 +1151,8 @@ class sqlsrv_native_moodle_database extends moodle_database {
 
         $sql = "DELETE FROM {".$table."} $select";
 
-        $this->do_query($sql, $params, SQL_QUERY_UPDATE);  // msk probably should be SQL_QUERY_DELETE
+        // we use SQL_QUERY_UPDATE because we do not know what is in general SQL, delete constant would not be accurate
+        $this->do_query($sql, $params, SQL_QUERY_UPDATE);
 
         return true;
     }
