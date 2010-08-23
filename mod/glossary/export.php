@@ -16,9 +16,7 @@ if ($cat !== 0) {
 if ($mode !== '') {
     $url->param('mode', $mode);
 }
-if ($hook !== '') {
-    $url->param('hook', $hook);
-}
+
 $PAGE->set_url($url);
 
 if (! $cm = get_coursemodule_from_id('glossary', $id)) {
@@ -56,15 +54,15 @@ $PAGE->set_heading($course->fullname);
 echo $OUTPUT->header();
 echo $OUTPUT->heading($strexportentries);
 echo $OUTPUT->box_start('glossarydisplay generalbox');
+$exporturl = moodle_url::make_pluginfile_url($context->id, 'mod_glossary', 'export', 0, "/$cat/", 'export.xml', true);
+
 ?>
-    <form action="exportfile.php" method="post">
+    <form action="<?php echo $exporturl->out(); ?>" method="post">
     <table border="0" cellpadding="6" cellspacing="6" width="100%">
     <tr><td align="center">
         <input type="submit" value="<?php p($strexportfile)?>" />
     </td></tr></table>
     <div>
-    <input type="hidden" name="id" value="<?php p($id)?>" />
-    <input type="hidden" name="cat" value="<?php p($cat)?>" />
     </div>
     </form>
 <?php

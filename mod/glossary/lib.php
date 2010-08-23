@@ -1423,6 +1423,22 @@ function glossary_pluginfile($course, $cm, $context, $filearea, $args, $forcedow
 
         // finally send the file
         send_stored_file($file, 0, 0, true); // download MUST be forced - security!
+
+    } else if ($filearea === 'export') {
+        require_login($course, false, $cm);
+        require_capability('mod/glossary:export', $context);
+
+        if (!$glossary = $DB->get_record('glossary', array('id'=>$cm->instance))) {
+            return false;
+        }
+
+        $cat = array_shift($args);
+        $cat = clean_param($cat, PARAM_ALPHANUM);
+
+        $filename = clean_filename(strip_tags(format_string($glossary->name)).'.xml');
+        $content = glossary_generate_export_file($glossary, NULL, $cat);
+
+        send_file($content, $filename, 0, 0, true, true);
     }
 
     return false;
@@ -1911,15 +1927,13 @@ function glossary_generate_export_csv($entries, $aliases, $categories) {
 }
 
 /**
- * @todo Check whether the third argument is valid
- * @global object
- * @global object
+ *
  * @param object $glossary
- * @param string $hook
- * @param int $hook
+ * @param string $ignored invalid parameter
+ * @param int|string $hook
  * @return string
  */
-function glossary_generate_export_file($glossary, $hook = "", $hook = 0) {
+function glossary_generate_export_file($glossary, $ignored = "", $hook = 0) {
     global $CFG, $DB;
 
     $co  = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
