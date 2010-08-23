@@ -275,6 +275,83 @@ function uninstall_plugin($type, $name) {
 }
 
 /**
+ * Returns the version of installed component
+ *
+ * @param string $component component name
+ * @param string $source either 'disk' or 'installed' - where to get the version information from
+ * @return string|bool version number or false if the component is not found
+ */
+function get_component_version($component, $source='installed') {
+    global $CFG, $DB;
+
+    list($type, $name) = normalize_component($component);
+
+    // moodle core or a core subsystem
+    if ($type === 'core') {
+        if ($source === 'installed') {
+            if (empty($CFG->version)) {
+                return false;
+            } else {
+                return $CFG->version;
+            }
+        } else {
+            if (!is_readable($CFG->dirroot.'/version.php')) {
+                return false;
+            } else {
+                include($CFG->dirroot.'/version.php');
+                return $version;
+            }
+        }
+    }
+
+    // activity module
+    if ($type === 'mod') {
+        if ($source === 'installed') {
+            return $DB->get_field('modules', 'version', array('name'=>$name));
+        } else {
+            $mods = get_plugin_list('mod');
+            if (empty($mod[$name]) or !is_readable($mod[$name].'/version.php')) {
+                return false;
+            } else {
+                $module = new stdclass();
+                include($mod[$name].'/version.php');
+                return $module->version;
+            }
+        }
+    }
+
+    // block
+    if ($type === 'block') {
+        if ($source === 'installed') {
+            return $DB->get_field('block', 'version', array('name'=>$name));
+        } else {
+            $blocks = get_plugin_list('block');
+            if (empty($blocks[$name]) or !is_readable($blocks[$name].'/version.php')) {
+                return false;
+            } else {
+                $plugin = new stdclass();
+                include($blocks[$name].'/version.php');
+                return $plugin->version;
+            }
+        }
+    }
+
+    // all other plugin types
+    if ($source === 'installed') {
+        return get_config($type.'_'.$name, 'version');
+    } else {
+        $plugins = get_plugin_list($type);
+        if (empty($plugins[$name])) {
+            return false;
+        } else {
+            $plugin = new stdclass();
+            include($plugins[$name].'/version.php');
+            return $plugin->version;
+        }
+    }
+}
+
+/**
  * Delete all plugin tables
  *
  * @param string $name Name of plugin, used as table prefix
