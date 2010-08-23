@@ -5641,9 +5641,10 @@ interface string_manager {
      * @param string $component The module the string is associated with
      * @param string $lang
      * @param bool $disablecache Do not use caches, force fetching the strings from sources
+     * @param bool $disablelocal Do not use customized strings in xx_local language packs
      * @return array of all string for given component and lang
      */
-    public function load_component_strings($component, $lang, $disablecache=false);
+    public function load_component_strings($component, $lang, $disablecache=false, $disablelocal=false);
 
     /**
      * Invalidates all caches, should the implementation use any
@@ -5725,9 +5726,10 @@ class core_string_manager implements string_manager {
      * @param string $component The module the string is associated with
      * @param string $lang
      * @param bool $disablecache Do not use caches, force fetching the strings from sources
+     * @param bool $disablelocal Do not use customized strings in xx_local language packs
      * @return array of all string for given component and lang
      */
-    public function load_component_strings($component, $lang, $disablecache=false) {
+    public function load_component_strings($component, $lang, $disablecache=false, $disablelocal=false) {
         global $CFG;
 
         list($plugintype, $pluginname) = normalize_component($component);
@@ -5767,8 +5769,8 @@ class core_string_manager implements string_manager {
             $originalkeys = array_keys($string);
             $originalkeys = array_flip($originalkeys);
 
-            // and then corresponding local if present
-            if (file_exists("$this->localroot/en_local/$file.php")) {
+            // and then corresponding local if present and allowed
+            if (!$disablelocal and file_exists("$this->localroot/en_local/$file.php")) {
                 include("$this->localroot/en_local/$file.php");
             }
             // now loop through all langs in correct order
@@ -5778,7 +5780,7 @@ class core_string_manager implements string_manager {
                 if (file_exists("$this->otherroot/$dep/$file.php")) {
                     include("$this->otherroot/$dep/$file.php");
                 }
-                if (file_exists("$this->localroot/{$dep}_local/$file.php")) {
+                if (!$disablelocal and file_exists("$this->localroot/{$dep}_local/$file.php")) {
                     include("$this->localroot/{$dep}_local/$file.php");
                 }
             }
@@ -5803,7 +5805,7 @@ class core_string_manager implements string_manager {
             $originalkeys = array_keys($string);
             $originalkeys = array_flip($originalkeys);
             // and then corresponding local english if present
-            if (file_exists("$this->localroot/en_local/$file.php")) {
+            if (!$disablelocal and file_exists("$this->localroot/en_local/$file.php")) {
                 include("$this->localroot/en_local/$file.php");
             }
 
@@ -5819,7 +5821,7 @@ class core_string_manager implements string_manager {
                     include("$this->otherroot/$dep/$file.php");
                 }
                 // local customisations
-                if (file_exists("$this->localroot/{$dep}_local/$file.php")) {
+                if (!$disablelocal and file_exists("$this->localroot/{$dep}_local/$file.php")) {
                     include("$this->localroot/{$dep}_local/$file.php");
                 }
             }
@@ -6196,9 +6198,10 @@ class install_string_manager implements string_manager {
      * @param string $component The module the string is associated with
      * @param string $lang
      * @param bool $disablecache Do not use caches, force fetching the strings from sources
+     * @param bool $disablelocal Do not use customized strings in xx_local language packs
      * @return array of all string for given component and lang
      */
-    public function load_component_strings($component, $lang, $disablecache=false) {
+    public function load_component_strings($component, $lang, $disablecache=false, $disablelocal=false) {
         // not needed in installer
         return array();
     }
