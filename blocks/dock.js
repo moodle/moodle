@@ -284,14 +284,22 @@ M.core_dock.getPanel = function() {
  */
 M.core_dock.handleEvent = function(e, options) {
     var item = this.getActiveItem();
-    var target = (e.target.test(options.cssselector))?e.target:e.target.ancestor(options.cssselector);
     if (options.cssselector == 'body') {
         if (!this.nodes.dock.contains(e.target)) {
             if (item) {
                 item.hide();
             }
         }
-    } else if (target) {
+    } else {
+        var target;
+        if (e.target.test(options.cssselector)) {
+            target = e.target;
+        } else {
+            target = e.target.ancestor(options.cssselector);
+        }
+        if (!target) {
+            return true;
+        }
         if (this.preventevent !== null && e.type === this.preventevent) {
             return true;
         }
