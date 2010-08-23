@@ -1148,9 +1148,19 @@ class file_storage {
      */
     public function cron() {
         global $CFG, $DB;
-        //TODO: find out all stale draft areas (older than 1 day) and purge them
-        //      those are identified by time stamp of the /. root dir
 
+        // find out all stale draft areas (older than 4 days) and purge them
+        // those are identified by time stamp of the /. root dir
+        mtrace('Deleting old draft files... ', '');
+        $old = time() - 60*60*24*4;
+        $sql = "SELECT *
+                  FROM {files}
+                 WHERE component = 'user' AND filearea = 'draft' AND filepath = '/' AND filename = '.'
+                       AND timecreated < :old";
+        $rs = $DB->get_recordset_sql($sql, array('old'=>$old));
+        foreach ($rs as $dir) {
+            $this->delete_area_files($dir->contextid, $dir->component, $dir->filearea, $dir->itemid);
+        }
 
         // remove trash pool files once a day
         // if you want to disable purging of trash put $CFG->fileslastcleanup=time(); into config.php
