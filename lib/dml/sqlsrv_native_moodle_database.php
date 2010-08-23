@@ -380,7 +380,7 @@ class sqlsrv_native_moodle_database extends moodle_database {
         $prefix = str_replace('_', '\\_', $this->prefix);
         $sql = "SELECT table_name
                   FROM information_schema.tables
-                 WHERE table_name LIKE '$prefix%' AND table_type = 'BASE TABLE'";
+                 WHERE table_name LIKE '$prefix%' ESCAPE '\\' AND table_type = 'BASE TABLE'";
 
         $this->query_start($sql, null, SQL_QUERY_AUX);
         $result = sqlsrv_query($this->sqlsrv, $sql);
