@@ -1406,7 +1406,7 @@ class global_navigation extends navigation_node {
 
         foreach ($modinfo->sections[$sectionnumber] as $cmid) {
             $cm = $modinfo->cms[$cmid];
-            if ($cm->modname == 'label' || (!$viewhiddenactivities && !$cm->visible)) {
+            if (!$viewhiddenactivities && !$cm->visible) {
                 continue;
             }
             if ($cm->icon) {
@@ -1418,7 +1418,9 @@ class global_navigation extends navigation_node {
             $activitynode = $sectionnode->add($cm->name, $url, navigation_node::TYPE_ACTIVITY, $cm->name, $cm->id, $icon);
             $activitynode->title(get_string('modulename', $cm->modname));
             $activitynode->hidden = (!$cm->visible);
-            if ($this->module_extends_navigation($cm->modname)) {
+            if ($cm->modname == 'label') {
+                $activitynode->display = false;
+            } else if ($this->module_extends_navigation($cm->modname)) {
                 $activitynode->nodetype = navigation_node::NODETYPE_BRANCH;
             }
             $activities[$cmid] = $activitynode;
