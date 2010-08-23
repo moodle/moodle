@@ -147,7 +147,7 @@ class assignment_base {
      *
      * This in turn calls the methods producing individual parts of the page
      */
-    function view() { 
+    function view() {
 
         $context = get_context_instance(CONTEXT_MODULE,$this->cm->id);
         require_capability('mod/assignment:view', $context);
@@ -595,7 +595,7 @@ class assignment_base {
         //make user global so we can use the id
         global $USER, $OUTPUT, $DB, $PAGE;
 
-        $mailinfo = optional_param('mailinfo', null, PARAM_BOOL);       
+        $mailinfo = optional_param('mailinfo', null, PARAM_BOOL);
 
         if (optional_param('next', null, PARAM_BOOL)) {
             $mode='next';
@@ -612,7 +612,7 @@ class assignment_base {
             }
         } else {
             set_user_preference('assignment_mailinfo', $mailinfo);
-        }               
+        }
 
         switch ($mode) {
             case 'grade':                         // We are in a main window grading
@@ -985,7 +985,7 @@ class assignment_base {
             global $USER;
             $teacher = $USER;
         }
-       
+
         $this->preprocess_submission($submission);
 
         $mformdata = new stdclass;
@@ -1010,7 +1010,7 @@ class assignment_base {
         $mformdata->submissioncommentformat= FORMAT_HTML;
         $mformdata->submission_content= $this->print_user_files($user->id,true);
         $mformdata->filter = $filter;
-        
+
         $submitform = new mod_assignment_grading_form( null, $mformdata );
 
         if ($submitform->is_cancelled()) {
@@ -1065,19 +1065,19 @@ class assignment_base {
         /* first we check to see if the form has just been submitted
          * to request user_preference updates
          */
-        
+
        $filters = array(self::FILTER_ALL             => get_string('all'),
                         self::FILTER_SUBMITTED       => get_string('submitted', 'assignment'),
                         self::FILTER_REQUIRE_GRADING => get_string('requiregrading', 'assignment'));
 
         $updatepref = optional_param('updatepref', 0, PARAM_INT);
-        
+
         if (isset($_POST['updatepref'])){
             $perpage = optional_param('perpage', 10, PARAM_INT);
             $perpage = ($perpage <= 0) ? 10 : $perpage ;
             $filter = optional_param('filter', 0, PARAM_INT);
             set_user_preference('assignment_perpage', $perpage);
-            set_user_preference('assignment_quickgrade', optional_param('quickgrade', 0, PARAM_BOOL));            
+            set_user_preference('assignment_quickgrade', optional_param('quickgrade', 0, PARAM_BOOL));
             set_user_preference('assignment_filter', $filter);
         }
 
@@ -1112,7 +1112,7 @@ class assignment_base {
         echo $OUTPUT->header();
 
         echo '<div class="usersubmissions">';
-        
+
         /// Print quickgrade form around the table
         if ($quickgrade) {
             $formattrs = array();
@@ -1148,7 +1148,7 @@ class assignment_base {
 
         /// Get all ppl that are allowed to submit assignments
         list($esql, $params) = get_enrolled_sql($context, 'mod/assignment:submit', $currentgroup);
-        
+
         if ($filter == self::FILTER_ALL) {
             $sql = "SELECT u.id FROM {user} u ".
                    "LEFT JOIN ($esql) eu ON eu.id=u.id ".
@@ -1249,11 +1249,11 @@ class assignment_base {
         if ($where = $table->get_sql_where()) {
             $where .= ' AND ';
         }
-        
+
         if($filter == self::FILTER_SUBMITTED) {
-           $where .= 's.timemodified > 0 AND ';           
+           $where .= 's.timemodified > 0 AND ';
         } else if($filter == self::FILTER_REQUIRE_GRADING) {
-           $where .= 's.timemarked < s.timemodified AND ';           
+           $where .= 's.timemarked < s.timemodified AND ';
         }
 
         if ($sort = $table->get_sql_sort()) {
@@ -1274,7 +1274,7 @@ class assignment_base {
         $ausers = $DB->get_records_sql($select.$sql.$sort, null, $table->get_page_start(), $table->get_page_size());
 
         $table->pagesize($perpage, count($users));
-       
+
         ///offset used to calculate index of student in that particular query, needed for the pop up to know who's next
         $offset = $page * $perpage;
         $strupdate = get_string('update');
@@ -1282,7 +1282,7 @@ class assignment_base {
         $grademenu = make_grades_menu($this->assignment->grade);
 
         if ($ausers !== false) {
-            $grading_info = grade_get_grades($this->course->id, 'mod', 'assignment', $this->assignment->id, array_keys($ausers));            
+            $grading_info = grade_get_grades($this->course->id, 'mod', 'assignment', $this->assignment->id, array_keys($ausers));
             $endposition = $offset + $perpage;
             $currentposition = 0;
             foreach ($ausers as $auser) {
@@ -1424,7 +1424,7 @@ class assignment_base {
                         $row[] = $outcomes;
                     }
 
-                    $table->add_data($row);                    
+                    $table->add_data($row);
                 }
                 $currentposition++;
             }
@@ -1439,44 +1439,44 @@ class assignment_base {
                 $mailinfopref = true;
             }
             $emailnotification =  html_writer::checkbox('mailinfo', 1, $mailinfopref, get_string('enableemailnotification','assignment'));
-            
+
             $emailnotification .= $OUTPUT->help_icon('enableemailnotification', 'assignment');
             echo html_writer::tag('div', $emailnotification, array('class'=>'emailnotification'));
 
             $savefeedback = html_writer::empty_tag('input', array('type'=>'submit', 'name'=>'fastg', 'value'=>get_string('saveallfeedback', 'assignment')));
             echo html_writer::tag('div', $savefeedback, array('class'=>'fastgbutton'));
-            
-            echo html_writer::end_tag('form');            
+
+            echo html_writer::end_tag('form');
         } else if ($quickgrade) {
-            echo html_writer::end_tag('form');            
+            echo html_writer::end_tag('form');
         }
 
         echo '</div>';
         /// End of fast grading form
 
-        /// Mini form for setting user preference        
-        
+        /// Mini form for setting user preference
+
         $formaction = new moodle_url('/mod/assignment/submissions.php', array('id'=>$this->cm->id));
         $mform = new MoodleQuickForm('optionspref', 'post', $formaction, '', array('class'=>'optionspref'));
-        
+
         $mform->addElement('hidden', 'updatepref');
         $mform->setDefault('updatepref', 1);
         $mform->addElement('header', 'qgprefs', get_string('optionalsettings', 'assignment'));
         $mform->addElement('select', 'filter', get_string('show'),  $filters);
-        
+
         $mform->setDefault('filter', $filter);
 
         $mform->addElement('text', 'perpage', get_string('pagesize', 'assignment'), array('size'=>1));
-        $mform->setDefault('perpage', $perpage);        
+        $mform->setDefault('perpage', $perpage);
 
         $mform->addElement('checkbox', 'quickgrade', get_string('quickgrade','assignment'));
         $mform->setDefault('quickgrade', $quickgrade);
         $mform->addHelpButton('quickgrade', 'quickgrade', 'assignment');
-        
+
         $mform->addElement('submit', 'savepreferences', get_string('savepreferences'));
 
         $mform->display();
-        
+
         echo $OUTPUT->footer();
     }
 
