@@ -92,11 +92,16 @@ abstract class simplified_parser_processor extends progressive_parser_processor 
                 unset($this->parentsinfo[$parentpath][$tag]['attrs']);
             }
             // Now, let's simplify the tags array, ignoring tag attributtes and
-            // reconverting to simpler name => value array
+            // reconverting to simpler name => value array. At the same time,
+            // check for all the tag values being whitespace-string values, if all them
+            // are whitespace strings, we aren't going to postprocess/dispatch the chunk
+            $alltagswhitespace = true;
             foreach ($data['tags'] as $key => $value) {
                 // If the value is already a single value, do nothing
-                // surely was added above from parentsinfo
+                // surely was added above from parentsinfo attributes,
+                // so we'll process the chunk always
                 if (!is_array($value)) {
+                    $alltagswhitespace = false;
                     continue;
                 }
                 // If the path including the tag name matches another selected path
@@ -108,14 +113,20 @@ abstract class simplified_parser_processor extends progressive_parser_processor 
                 }
                 // Convert to simple name => value array
                 $data['tags'][$key] = isset($value['cdata']) ? $value['cdata'] : null;
+
+                // Check $alltagswhitespace continues being true
+                if ($alltagswhitespace && strlen($data['tags'][$key]) !== 0 && trim($data['tags'][$key]) !== '') {
+                    $alltagswhitespace = false; // Found non-whitespace value
+                }
             }
 
-            // Arrived here, if the chunk has tags, send it to postprocess filter that
-            // will decide about dispatching
-            if (!empty($data['tags'])) {
+            // Arrived here, if the chunk has tags and not all tags are whitespace,
+            // send it to postprocess filter that will decide about dispatching. Else
+            // skip the chunk completely
+            if (!empty($data['tags']) && !$alltagswhitespace) {
                 return $this->postprocess_chunk($data);
             } else {
-                 $this->chunks--; // Chunk skipped
+                $this->chunks--; // Chunk skipped
             }
         } else {
             $this->chunks--; // Chunk skipped
