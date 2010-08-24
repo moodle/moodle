@@ -2,9 +2,7 @@
 
 // This file defines settingpages and externalpages under the "appearance" category
 
-if ($hassiteconfig
-    or has_capability('moodle/site:langeditmaster', $systemcontext)
-    or has_capability('moodle/site:langeditlocal', $systemcontext)) { // speedup for non-admins, add all caps used on this page
+if ($hassiteconfig) {
 
     // "languageandlocation" settingpage
     $temp = new admin_settingpage('langsettings', get_string('languagesettings', 'admin'));
@@ -19,7 +17,6 @@ if ($hassiteconfig
 
     $ADMIN->add('language', $temp);
 
-    //$ADMIN->add('language', new admin_externalpage('langedit', get_string('langedit', 'admin'), "$CFG->wwwroot/$CFG->admin/lang.php", array('moodle/site:langeditmaster', 'moodle/site:langeditlocal') ));
     $ADMIN->add('language', new admin_externalpage('langimport', get_string('langpacks', 'admin'), "$CFG->wwwroot/$CFG->admin/langimport.php"));
 
     // Hidden multilang upgrade page.

@@ -413,27 +413,6 @@ $capabilities = array(
         )
     ),
 
-    'moodle/site:langeditmaster' => array(
-
-        'riskbitmask' => RISK_CONFIG | RISK_XSS,
-
-        'captype' => 'write',
-        'contextlevel' => CONTEXT_SYSTEM,
-        'archetypes' => array(
-        )
-    ),
-
-    'moodle/site:langeditlocal' => array(
-
-        'riskbitmask' => RISK_CONFIG | RISK_XSS,
-
-        'captype' => 'write',
-        'contextlevel' => CONTEXT_SYSTEM,
-        'archetypes' => array(
-            'manager' => CAP_ALLOW
-        )
-    ),
-
     // Permission to manage filter setting overrides in subcontexts.
     'moodle/filter:manage' => array(
 
