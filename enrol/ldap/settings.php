@@ -43,6 +43,7 @@ if ($ADMIN->fulltree) {
         //--- connection settings ---
         $settings->add(new admin_setting_heading('enrol_ldap_server_settings', get_string('server_settings', 'enrol_ldap'), ''));
         $settings->add(new admin_setting_configtext_trim_lower('enrol_ldap/host_url', get_string('host_url_key', 'enrol_ldap'), get_string('host_url', 'enrol_ldap'), ''));
+        $settings->add(new admin_setting_configselect('enrol_ldap/start_tls', get_string('start_tls_key', 'auth_ldap'), get_string('start_tls', 'auth_ldap'), 0, $yesno));
         // Set LDAPv3 as the default. Nowadays all the servers support it and it gives us some real benefits.
         $options = array(3=>'3', 2=>'2');
         $settings->add(new admin_setting_configselect('enrol_ldap/ldap_version', get_string('version_key', 'enrol_ldap'), get_string('version', 'enrol_ldap'), 3, $options));

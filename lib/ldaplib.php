@@ -163,9 +163,10 @@ function ldap_isgroupmember($ldapconnection, $userid, $group_dns, $member_attrib
  * @param string $bind_pw the password for the binding user. Ignored for anonymous bindings.
  * @param boolean $opt_deref whether to set LDAP_OPT_DEREF on this connection or not.
  * @param string &$debuginfo the debugging information in case the connection fails.
+ * @param boolean $start_tls whether to use LDAP with TLS (not to be confused with LDAP+SSL)
  * @return mixed connection result or false.
  */
-function ldap_connect_moodle($host_url, $ldap_version, $user_type, $bind_dn, $bind_pw, $opt_deref, &$debuginfo) {
+function ldap_connect_moodle($host_url, $ldap_version, $user_type, $bind_dn, $bind_pw, $opt_deref, &$debuginfo, $start_tls=false) {
     if (empty($host_url) || empty($ldap_version) || empty($user_type)) {
         $debuginfo = 'No LDAP Host URL, Version or User Type specified in your LDAP settings';
         return false;
@@ -192,6 +193,11 @@ function ldap_connect_moodle($host_url, $ldap_version, $user_type, $bind_dn, $bi
 
         if (!empty($opt_deref)) {
             ldap_set_option($connresult, LDAP_OPT_DEREF, $opt_deref);
+        }
+
+        if ($start_tls && (!ldap_start_tls($connresult))) {
+            $debuginfo .= "Server: '$server', Connection: '$connresult', STARTTLS failed.\n";
+            continue;
         }
 
         if (!empty($bind_dn)) {

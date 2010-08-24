@@ -618,7 +618,7 @@ class enrol_ldap_plugin extends enrol_plugin {
         if ($ldapconnection = ldap_connect_moodle($this->get_config('host_url'), $this->get_config('ldap_version'),
                                                   $this->get_config('user_type'), $this->get_config('bind_dn'),
                                                   $this->get_config('bind_pw'), $this->get_config('opt_deref'),
-                                                  $debuginfo)) {
+                                                  $debuginfo, $this->get_config('start_tls'))) {
             $this->ldapconns = 1;
             $this->ldapconnection = $ldapconnection;
             return $ldapconnection;

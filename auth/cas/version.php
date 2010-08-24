@@ -21,7 +21,7 @@
  * @subpackage cas
  * @author     Martin Dougiamas
  * @author     Jerome GUTIERREZ
- * @author     Iñaky Arenaza
+ * @author     Iñaki Arenaza
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
