@@ -90,7 +90,7 @@ abstract class base_ui {
         }
         $this->progress = self::PROGRESS_PROCESSED;
 
-        if (optional_param('previous', false, PARAM_BOOL) && $this->stage->get_stage() > self::STAGE_INITIAL) {
+        if (optional_param('previous', false, PARAM_BOOL) && $this->stage->get_stage() > $this->get_first_stage_id()) {
             $this->stage = $this->initialise_stage($this->stage->get_prev_stage(), $this->stage->get_params());
             return false;
         }
