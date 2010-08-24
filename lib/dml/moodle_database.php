@@ -505,12 +505,26 @@ abstract class moodle_database {
             if (is_null($value)) {
                 $where[] = "$key IS NULL";
             } else {
+                $isstring = (is_string($value) && !is_number($value));
                 if ($allowed_types & SQL_PARAMS_NAMED) {
-                    $normkey = trim(preg_replace('/[^a-zA-Z0-9-_]/', '_', $key), '-_'); // Need to normalize key names
-                    $where[] = "$key = :$normkey";                                      // because they can contain, originally,
-                    $params[$normkey] = $value;                                         // spaces and other forbidden chars when
-                } else {                                                                // using sql_xxx() functions and friends.
-                    $where[] = "$key = ?";
+                    // Need to verify key names because they can contain, originally,
+                    // spaces and other forbidden chars when using sql_xxx() functions and friends.
+                    $normkey = trim(preg_replace('/[^a-zA-Z0-9-_]/', '_', $key), '-_');
+                    if ($normkey !== $key) {
+                        debugging('Invalid key found in the conditions array.');
+                    }
+                    if ($isstring) {
+                        $where[] = $this->sql_binary_equal($key, ':'.$normkey);
+                    } else {
+                        $where[] = "$key = :$normkey";
+                    }
+                    $params[$normkey] = $value;
+                } else {
+                    if ($isstring) {
+                        $where[] = $this->sql_binary_equal($key, '?');
+                    } else {
+                        $where[] = "$key = ?";
+                    }
                     $params[] = $value;
                 }
             }
@@ -1728,15 +1742,57 @@ abstract class moodle_database {
     }
 
     /**
+     * Case and collation sensitive string 'string = string'
+     * @param string $string1
+     * @param string $string2
+     * @return string SQL fragment
+     */
+    public function sql_binary_equal($string1, $string2) {
+        return "$string1 = $string2";
+    }
+
+    /**
+     * Returns 'LIKE' part of a query.
+     *
+     * @param string $fieldname usually name of the table column
+     * @param string $param usually bound query parameter (?, :named)
+     * @param bool $casesensitive use case sensitive search
+     * @param bool $accensensitive use accent sensitive search (not all databases support accent insensitive)
+     * @param string $escapechar escape char for '%' and '_'
+     * @return string SQL code fragment
+     */
+    public function sql_like($fieldname, $param, $casesensitive = true, $accentsensitive = true, $escapechar = '\\') {
+        if (strpos($param, '%') !== false) {
+            debugging('Potential SQL injection detected, sql_ilike() expects bound parameters (? or :named)');
+        }
+        // by default ignore any sensitiveness - each database does it in a different way
+        return "$fieldname LIKE $param ESCAPE '$escapechar'";
+    }
+
+    /**
+     * Escape sql LIKE special characters.
+     * @param string $text
+     * @param string $escapechar
+     * @return string
+     */
+    public function sql_like_escape($text, $escapechar = '\\') {
+        $text = str_replace('_', $escapechar.'_', $text);
+        $text = str_replace('%', $escapechar.'%', $text);
+        return $text;
+    }
+
+    /**
      * Returns the proper SQL to do LIKE in a case-insensitive way.
      *
      * Note the LIKE are case sensitive for Oracle. Oracle 10g is required to use
      * the case insensitive search using regexp_like() or NLS_COMP=LINGUISTIC :-(
      * See http://docs.moodle.org/en/XMLDB_Problems#Case-insensitive_searches
      *
+     * @deprecated
      * @return string
      */
     public function sql_ilike() {
+        //TODO: debugging('sql_ilike() is deprecated, please use sql_like() instead');
         return 'LIKE';
     }
 

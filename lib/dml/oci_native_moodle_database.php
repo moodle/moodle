@@ -1402,12 +1402,28 @@ class oci_native_moodle_database extends moodle_database {
         }
     }
 
-    // TODO: Change this function and uses to support 2 parameters: fieldname and value
-    // that way we can use REGEXP_LIKE(x, y, 'i') to provide case-insensitive like searches
-    // to lower() comparison or whatever
-    public function sql_ilike() {
-        // TODO: add some ilike workaround
-        return 'LIKE';
+    /**
+     * Returns 'LIKE' part of a query.
+     *
+     * @param string $fieldname usually name of the table column
+     * @param string $param usually bound query parameter (?, :named)
+     * @param bool $casesensitive use case sensitive search
+     * @param bool $accensensitive use accent sensitive search (not all databases support accent insensitive)
+     * @param string $escapechar escape char for '%' and '_'
+     * @return string SQL code fragment
+     */
+    public function sql_like($fieldname, $param, $casesensitive = true, $accentsensitive = true, $escapechar = '\\') {
+        if (strpos($param, '%') !== false) {
+            debugging('Potential SQL injection detected, sql_ilike() expects bound parameters (? or :named)');
+        }
+
+        // no accent sensitiveness here for now, sorry
+
+        if ($casesensitive) {
+            return "$fieldname LIKE $param ESCAPE '$escapechar'";
+        } else {
+            return "LOWER($fieldname) LIKE LOWER($param) ESCAPE '$escapechar'";
+        }
     }
 
     // NOTE: Oracle concat implementation isn't ANSI compliant when using NULLs (the result of

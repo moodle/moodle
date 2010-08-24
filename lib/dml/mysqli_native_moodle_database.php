@@ -1025,6 +1025,44 @@ class mysqli_native_moodle_database extends moodle_database {
         return ' CAST(' . $fieldname . ' AS SIGNED) ';
     }
 
+
+    /**
+     * Case and collation sensitive string 'string = string'
+     * @param string $string1
+     * @param string $string2
+     * @return string SQL fragment
+     */
+    public function sql_binary_equal($string1, $string2) {
+        return "BINARY $string1 = $string2";
+    }
+
+    /**
+     * Returns 'LIKE' part of a query.
+     *
+     * @param string $fieldname usually name of the table column
+     * @param string $param usually bound query parameter (?, :named)
+     * @param bool $casesensitive use case sensitive search
+     * @param bool $accensensitive use accent sensitive search (not all databases support accent insensitive)
+     * @param string $escapechar escape char for '%' and '_'
+     * @return string SQL code fragment
+     */
+    public function sql_like($fieldname, $param, $casesensitive = true, $accentsensitive = true, $escapechar = '\\') {
+        if (strpos($param, '%') !== false) {
+            debugging('Potential SQL injection detected, sql_ilike() expects bound parameters (? or :named)');
+        }
+        $escapechar = $this->mysqli->real_escape_string($escapechar); // prevents problems with C-style escapes of enclosing '\'
+
+        if ($casesensitive) {
+            return "$fieldname LIKE $param COLLATE utf8_bin ESCAPE '$escapechar'";
+        } else {
+            if ($accentsensitive) {
+                return "LOWER($fieldname) LIKE LOWER($param) COLLATE utf8_bin ESCAPE '$escapechar'";
+            } else {
+                return "$fieldname LIKE $param ESCAPE '$escapechar'";
+            }
+        }
+    }
+
     public function sql_concat() {
         $arr = func_get_args();
         $s = implode(', ', $arr);

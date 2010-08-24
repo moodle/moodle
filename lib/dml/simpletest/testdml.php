@@ -2061,7 +2061,107 @@ class dml_test extends UnitTestCase {
         $this->assertEqual(count($records), 2);
     }
 
-    function test_ilike() {
+
+    function test_sql_binary_equal() {
+        $DB = $this->tdb;
+        $dbman = $DB->get_manager();
+
+        $table = $this->get_test_table();
+        $tablename = $table->getName();
+
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('name', XMLDB_TYPE_CHAR, '255', null, null, null, null);
+        $table->add_field('descr', XMLDB_TYPE_CHAR, '255', null, null, null, null);
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $dbman->create_table($table);
+        $this->tables[$tablename] = $table;
+
+        $DB->insert_record($tablename, array('name'=>'skodak', 'descr'=>'Skodak'));
+        $DB->insert_record($tablename, array('name'=>'skodák', 'descr'=>'skodák'));
+        $DB->insert_record($tablename, array('name'=>'Skodak', 'descr'=>'Skodák'));
+        $DB->insert_record($tablename, array('name'=>'?ko?ák', 'descr'=>'?ko?ák'));
+        $DB->insert_record($tablename, array('name'=>'skodäk', 'descr'=>'skodak'));
+
+        $sql = "SELECT * FROM {".$tablename."} WHERE ".$DB->sql_binary_equal('name', '?');
+        $records = $DB->get_records_sql($sql, array("skodak"));
+        $this->assertEqual(count($records), 1);
+
+        $sql = "SELECT * FROM {".$tablename."} WHERE ".$DB->sql_binary_equal('name', '?');
+        $records = $DB->get_records_sql($sql, array("?ko?ák"));
+        $this->assertEqual(count($records), 1);
+
+        $sql = "SELECT * FROM {".$tablename."} WHERE ".$DB->sql_binary_equal('name', 'descr');
+        $records = $DB->get_records_sql($sql, array());
+        $this->assertEqual(count($records), 1);
+
+        // get_records() is supposed to use binary comparison too
+        $records = $DB->get_records($tablename, array('name'=>"skodak"));
+        $this->assertEqual(count($records), 1);
+        $records = $DB->get_records($tablename, array('name'=>"?ko?ák"));
+        $this->assertEqual(count($records), 1);
+
+        $bool = $DB->record_exists($tablename, array('name'=>"skodak"));
+        $this->assertTrue($bool);
+        $bool = $DB->record_exists($tablename, array('name'=>"skodAk"));
+        $this->assertFalse($bool);
+    }
+
+    function test_sql_like() {
+        $DB = $this->tdb;
+        $dbman = $DB->get_manager();
+
+        $table = $this->get_test_table();
+        $tablename = $table->getName();
+
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('name', XMLDB_TYPE_CHAR, '255', null, null, null, null);
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $dbman->create_table($table);
+        $this->tables[$tablename] = $table;
+
+        $DB->insert_record($tablename, array('name'=>'SuperDuperRecord'));
+        $DB->insert_record($tablename, array('name'=>'Nodupor'));
+        $DB->insert_record($tablename, array('name'=>'ouch'));
+        $DB->insert_record($tablename, array('name'=>'ouc_'));
+        $DB->insert_record($tablename, array('name'=>'ouc%'));
+        $DB->insert_record($tablename, array('name'=>'aui'));
+        $DB->insert_record($tablename, array('name'=>'aüi'));
+        $DB->insert_record($tablename, array('name'=>'aÜi'));
+
+        $sql = "SELECT * FROM {".$tablename."} WHERE ".$DB->sql_like('name', '?', false);
+        $records = $DB->get_records_sql($sql, array("%dup_r%"));
+        $this->assertEqual(count($records), 2);
+
+        $sql = "SELECT * FROM {".$tablename."} WHERE ".$DB->sql_like('name', '?', true);
+        $records = $DB->get_records_sql($sql, array("%dup%"));
+        $this->assertEqual(count($records), 1);
+
+        $sql = "SELECT * FROM {".$tablename."} WHERE ".$DB->sql_like('name', '?'); // defaults
+        $records = $DB->get_records_sql($sql, array("%dup%"));
+        $this->assertEqual(count($records), 1);
+
+        $sql = "SELECT * FROM {".$tablename."} WHERE ".$DB->sql_like('name', '?', true);
+        $records = $DB->get_records_sql($sql, array("ouc\\_"));
+        $this->assertEqual(count($records), 1);
+
+        $sql = "SELECT * FROM {".$tablename."} WHERE ".$DB->sql_like('name', '?', true, true, '|');
+        $records = $DB->get_records_sql($sql, array($DB->sql_like_escape("ouc%", '|')));
+        $this->assertEqual(count($records), 1);
+
+        $sql = "SELECT * FROM {".$tablename."} WHERE ".$DB->sql_like('name', '?', true, true);
+        $records = $DB->get_records_sql($sql, array('aui'));
+        $this->assertEqual(count($records), 1);
+
+        // we do not require accent insensitivness yet, just make sure it does not throw errors
+        $sql = "SELECT * FROM {".$tablename."} WHERE ".$DB->sql_like('name', '?', true, false);
+        $records = $DB->get_records_sql($sql, array('aui'));
+        $this->assertEqual(count($records), 2, 'Accent insensitive LIKE searches may not be supported in all database backends, ignore this problem for now.');
+        $sql = "SELECT * FROM {".$tablename."} WHERE ".$DB->sql_like('name', '?', false, false);
+        $records = $DB->get_records_sql($sql, array('aui'));
+        $this->assertEqual(count($records), 3, 'Accent insensitive LIKE searches may not be supported in all database backends, ignore this problem for now.');
+    }
+
+    function test_sql_ilike() {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
@@ -2081,7 +2181,7 @@ class dml_test extends UnitTestCase {
         $sql = "SELECT * FROM {".$tablename."} WHERE name ".$DB->sql_ilike()." ?";
         $params = array("%dup_r%");
         $records = $DB->get_records_sql($sql, $params);
-        $this->assertEqual(count($records), 2);
+        $this->assertEqual(count($records), 2, 'DB->sql_ilike() is deprecated, ignore this problem.');
     }
 
     function test_sql_concat() {
