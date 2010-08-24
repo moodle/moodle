@@ -422,6 +422,10 @@ function file_get_draft_area_info($draftitemid) {
     // The number of files
     $draftfiles = $fs->get_area_files($usercontext->id, 'user', 'draft', $draftitemid, 'id', false);
     $results['filecount'] = count($draftfiles);
+    $results['filesize'] = 0;
+    foreach ($draftfiles as $file) {
+        $results['filesize'] += $file->get_filesize();
+    }
 
     return $results;
 }

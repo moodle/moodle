@@ -41,4 +41,16 @@ class user_filesedit_form extends moodleform {
 
         $this->set_data($data);
     }
+    function validation($data, $files) {
+        global $CFG;
+
+        $errors = array();
+        $draftitemid = $data['files_filemanager'];
+        $fileinfo = file_get_draft_area_info($draftitemid);
+        if ($fileinfo['filesize'] > $CFG->userquota) {
+            $errors['files_filemanager'] = get_string('userquotalimit', 'error');
+        }
+
+        return $errors;
+    }
 }
