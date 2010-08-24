@@ -33,3 +33,4 @@ $string['ratepermissiondenied'] = 'You do not have permission to rate this item'
 $string['rating'] = 'Rating';
 $string['ratings'] = 'Ratings';
 $string['ratingsuse'] = 'Use ratings';
+$string['rolewarning'] = 'Ratings automatically enter the Gradebook. Activity permissions determine which users can submit ratings.<br />Can submit ratings: {$a}';
