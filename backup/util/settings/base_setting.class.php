@@ -444,7 +444,7 @@ abstract class base_setting {
     }
 
     protected function validate_ui_label($label) {
-        if (empty($label) || $label !== clean_param($label, PARAM_ALPHAEXT)) {
+        if (empty($label) || $label !== clean_param($label, PARAM_TEXT)) {
             throw new base_setting_exception('setting_invalid_ui_label');
         }
         return $label;
