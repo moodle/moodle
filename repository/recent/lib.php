@@ -54,15 +54,15 @@ class repository_recent extends repository {
     }
 
     private function get_recent_files($limitfrom = 0, $limit = DEFAULT_RECENT_FILES_NUM) {
-        global $USER, $DB;
-        // TODO: should exclude user_draft area files?
+        // XXX: get current itemid
+        global $USER, $DB, $itemid;
         $sql = 'SELECT * FROM {files} files1
                 JOIN (SELECT contenthash, filename, MAX(id) AS id
                 FROM {files}
-                WHERE userid = ? AND filename != ? AND filearea != ?
+                WHERE (userid = ? AND filename != ?) OR (filearea = ? AND itemid = ?)
                 GROUP BY contenthash, filename) files2 ON files1.id = files2.id
                 ORDER BY files1.timemodified DESC';
-        $params = array('userid'=>$USER->id, 'filename'=>'.', 'filearea'=>'draft');
+        $params = array('userid'=>$USER->id, 'filename'=>'.', 'filearea'=>'draft', 'itemid'=>$itemid);
         $rs = $DB->get_recordset_sql($sql, $params, $limitfrom, $limit);
         $result = array();
         foreach ($rs as $file_record) {
@@ -178,7 +178,12 @@ class repository_recent extends repository {
             $file_record = array('contextid'=>$user_context->id, 'component'=>'user', 'filearea'=>'draft',
                 'itemid'=>$draftitemid, 'filepath'=>$new_filepath, 'filename'=>$new_filename);
             if ($file = $fs->get_file($user_context->id, 'user', 'draft', $draftitemid, $new_filepath, $new_filename)) {
-                throw new moodle_exception('fileexists');
+                $info = array();
+                $info['title']  = $file->get_filename();
+                $info['itemid'] = $file->get_itemid();
+                $info['filesize']  = $file->get_filesize();
+                $info['contextid'] = $file->get_contextid();
+                return $info;
             }
             $fs->create_file_from_storedfile($file_record, $stored_file);
         }
