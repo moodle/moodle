@@ -94,11 +94,6 @@ class repository_upload extends repository {
             }
         }
 
-        $userquota = file_get_user_used_space();
-        if (filesize($_FILES[$elname]['tmp_name'])+$userquota>=(int)$CFG->userquota) {
-            throw new file_exception('userquotalimit');
-        }
-
         if (empty($record->itemid)) {
             $record->itemid = 0;
         }
