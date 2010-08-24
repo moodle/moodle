@@ -28,7 +28,6 @@ $string['addmoreanswerblanks'] = 'Blanks for {no} More Answers';
 $string['addmoreunitblanks'] = 'Blanks for {no} More Units';
 $string['answermustbenumberorstar'] = 'The answer must be a number, or \'*\'.';
 $string['answerno'] = 'Answer {$a}';
-$string['decfractionof'] = 'AS';
 $string['decfractionofquestiongrade'] = 'as decimal fraction (0-1) of question grade';
 $string['decfractionofresponsegrade'] = 'as decimal fraction (0-1) of response grade';
 $string['editableunittext'] = 'Text input element';
