@@ -699,6 +699,8 @@ class restore_ras_and_caps_structure_step extends restore_structure_step {
     }
 
     public function process_assignment($data) {
+        global $DB;
+
         $data = (object)$data;
 
         // Check roleid, userid are one of the mapped ones
@@ -706,8 +708,11 @@ class restore_ras_and_caps_structure_step extends restore_structure_step {
         $newuserid = $this->get_mappingid('user', $data->userid);
         // If newroleid and newuserid and component is empty and context valid assign via API (handles dupes and friends)
         if ($newroleid && $newuserid && empty($data->component) && $this->task->get_contextid()) {
-            // TODO: role_assign() needs one userid param to be able to specify our restore userid
-            role_assign($newroleid, $newuserid, $this->task->get_contextid());
+            // Only assign roles to not deleted users
+            if ($DB->record_exists('user', array('id' => $newuserid, 'deleted' => 0))) {
+                // TODO: role_assign() needs one userid param to be able to specify our restore userid
+                role_assign($newroleid, $newuserid, $this->task->get_contextid());
+            }
         }
     }
 
