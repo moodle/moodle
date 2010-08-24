@@ -244,7 +244,7 @@ $string['overridesbycontext'] = 'Overrides (by context)';
 $string['permission'] = 'Permission';
 $string['permission_help'] = 'Permissions are capability settings. There are 4 options:
 
-* Inherit - The permission without any override active i.e. the same permission as in a higher (less specific) context
+* Not set
 * Allow - Permission is granted for the capability
 * Prevent - Permission is removed for the capability, even if allowed in a higher context
 * Prohibit - Permission is completely denied  and cannot be overridden at any lower (more specific) context';
