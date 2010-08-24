@@ -1002,12 +1002,12 @@ class question_numerical_qtype extends question_shortanswer_qtype {
         $mform->setDefault('unitsleft', 0);
         $mform->setType('instructions', PARAM_RAW);
         $mform->addHelpButton('instructions', 'numericalinstructions', 'qtype_numerical');
-        $mform->disabledIf('penaltygrp', 'unitrole','eq','1');
-        $mform->disabledIf('unitgradingtype', 'unitrole','eq','1');
-        $mform->disabledIf('instructions', 'unitrole','eq','1');
-        $mform->disabledIf('unitsleft', 'showunits1','eq','3');
-        $mform->disabledIf('showunits1','unitrole','eq','0');
-        $mform->disabledIf('showunits0','unitrole','eq','1');
+      //  $mform->disabledIf('penaltygrp', 'unitrole','eq','1');
+      //  $mform->disabledIf('unitgradingtype', 'unitrole','eq','1');
+      //  $mform->disabledIf('instructions', 'unitrole','eq','1');
+      //  $mform->disabledIf('unitsleft', 'showunits1','eq','3');
+      //  $mform->disabledIf('showunits1','unitrole','eq','0');
+      //  $mform->disabledIf('showunits0','unitrole','eq','1');
 
 
     }
