@@ -516,7 +516,7 @@ class mod_lesson_renderer extends plugin_renderer_base {
             }
 
             // collect all of the branch tables viewed
-            if ($viewedbranches = $DB->get_records("lesson_branch", array ("lessonid"=>$lesson->id, "userid"=>$USER->id, "retry"=>$ntries), 'timeseen DESC', 'pageid, id')) {
+            if ($viewedbranches = $DB->get_records("lesson_branch", array ("lessonid"=>$lesson->id, "userid"=>$USER->id, "retry"=>$ntries), 'timeseen DESC', 'id, pageid')) {
                 $viewedpageids = array_merge($viewedpageids, array_keys($viewedbranches));
             }
 
