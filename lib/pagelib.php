@@ -165,6 +165,8 @@ class moodle_page {
 
     protected $_blockseditingcap = 'moodle/site:manageblocks';
 
+    protected $_block_actions_done = false;
+
     protected $_othereditingcaps = array();
 
     protected $_cacheable = true;
@@ -582,15 +584,31 @@ class moodle_page {
      * PHP overloading magic to make the $PAGE->course syntax work by redirecting
      * it to the corresponding $PAGE->magic_get_course() method if there is one, and
      * throwing an exception if not.
-     * @var string field name
+     *
+     * @param $name string property name
      * @return mixed
      */
-    public function __get($field) {
-        $getmethod = 'magic_get_' . $field;
+    public function __get($name) {
+        $getmethod = 'magic_get_' . $name;
         if (method_exists($this, $getmethod)) {
             return $this->$getmethod();
         } else {
-            throw new coding_exception('Unknown field ' . $field . ' of $PAGE.');
+            throw new coding_exception('Unknown property ' . $name . ' of $PAGE.');
+        }
+    }
+
+    /**
+     * PHP overloading magic which prevents the $PAGE->context = $context; syntax
+     *
+     * @param $name string property name
+     * @param $name mixed value
+     * @return void, throws exception if field not defined in page class
+     */
+    public function __set($name, $value) {
+        if (method_exists($this, 'set_' . $name)) {
+            throw new coding_exception('Invalid attempt to modify page object', "Use \$PAGE->set_$name() instead.");
+        } else {
+            throw new coding_exception('Invalid attempt to modify page object', "Unknown property $name");
         }
     }
 
