@@ -1,0 +1,58 @@
+.path-admin-report-customlang .langmenubox,
+.path-admin-report-customlang fieldset.buttonsbar,
+.path-admin-report-customlang .menu {
+    margin: 5px auto;
+    text-align: center;
+}
+
+.path-admin-report-customlang .menu .singlebutton,
+.path-admin-report-customlang .menu .singlebutton form,
+.path-admin-report-customlang .menu .singlebutton form div {
+    display: inline;
+}
+
+
+.path-admin-report-customlang .mform.filterform {
+    width: 70%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.path-admin-report-customlang .mform.filterform .fitem .fitemtitle {
+    width: 30%;
+}
+
+.path-admin-report-customlang .mform.filterform .fitem .felement {
+    width: 60%;
+    margin-left: 31%;
+}
+
+.path-admin-report-customlang #translator {
+    width: 100%;
+}
+
+.path-admin-report-customlang #translator .standard,
+.path-admin-report-customlang #translator .local {
+    min-width: 35%;
+}
+
+.path-admin-report-customlang #translator .customized {
+    background-color: #e7f1c3;
+}
+
+.path-admin-report-customlang #translator .customized.outdated {
+    background-color: #f3f2aa;
+}
+
+.path-admin-report-customlang #translator .modified {
+    background-color: #ffd3d9;
+}
+
+.path-admin-report-customlang #translator .customized.modified {
+    background-color: #d2ebff;
+}
+
+.path-admin-report-customlang #translator textarea {
+    width: 100%;
+    min-height: 4em;
+}
