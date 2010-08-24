@@ -49,12 +49,6 @@ class restore_choice_activity_structure_step extends restore_activity_structure_
     protected function process_choice($data) {
         global $DB;
 
-        // Check if there is an id property, if not the bail out!
-        if (empty($data->id)) {
-            // TODO MDL-23796 Remove this hack when there is a proper solution
-            return false;
-        }
-
         $data = (object)$data;
         $oldid = $data->id;
         $data->course = $this->get_courseid();
