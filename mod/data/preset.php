@@ -123,7 +123,7 @@ if (optional_param('sesskey', false, PARAM_BOOL) && confirm_sesskey()) {
         $exportfile = data_presets_export($course, $cm, $data);
         $exportfilename = basename($exportfile);
         header("Content-Type: application/download\n");
-        header("Content-Disposition: attachment; filename=$exportfilename");
+        header("Content-Disposition: attachment; filename=\"$exportfilename\"");
         header('Expires: 0');
         header('Cache-Control: must-revalidate,post-check=0,pre-check=0');
         header('Pragma: public');
