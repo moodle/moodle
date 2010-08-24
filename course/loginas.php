@@ -4,24 +4,25 @@
 require_once('../config.php');
 require_once('lib.php');
 
-/// Reset user back to their real self if needed
-$return = optional_param('return', 0, PARAM_BOOL);   // return to the page we came from
+$id = optional_param('id', SITEID, PARAM_INT);   // course id
 
+/// Reset user back to their real self if needed, for security reasons you need to log out and log in again
 if (session_is_loggedinas()) {
     require_sesskey();
-    session_unloginas();
+    require_logout();
 
-    if ($return and isset($_SERVER["HTTP_REFERER"])) { // That's all we wanted to do, so let's go back
-        redirect($_SERVER["HTTP_REFERER"]);
+    if ($id and $id != SITEID) {
+        $SESSION->wantsurl = "$CFG->wwwroot/course/view.php?id=".$id;
     } else {
-        redirect($CFG->wwwroot);
+        $SESSION->wantsurl = "$CFG->wwwroot/";
     }
+
+    redirect(get_login_url());
 }
 
 ///-------------------------------------
 /// We are trying to log in as this user in the first place
 
-$id     = optional_param('id', SITEID, PARAM_INT);   // course id
 $userid = required_param('user', PARAM_INT);         // login as this user
 
 $url = new moodle_url('/course/loginas.php', array('user'=>$userid, 'sesskey'=>sesskey()));

@@ -919,22 +919,6 @@ function session_loginas($userid, $context) {
 }
 
 /**
- * Terminate login-as session
- * @return void
- */
-function session_unloginas() {
-    if (!session_is_loggedinas()) {
-        return;
-    }
-
-    $_SESSION['SESSION'] = $_SESSION['REALSESSION'];
-    unset($_SESSION['REALSESSION']);
-
-    $_SESSION['USER'] = $_SESSION['REALUSER'];
-    unset($_SESSION['REALUSER']);
-}
-
-/**
  * Sets up current user and course environment (lang, etc.) in cron.
  * Do not use outside of cron script!
  *
