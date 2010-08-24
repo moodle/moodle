@@ -285,15 +285,25 @@ function wiki_upgrade_migrate_versions() {
         if ($version->version == 1) {
             // The oldest version of page in moodle 2.0 is 0 which has empty content
             // so we need to insert an extra record
-            $content = $version->content;
-            $version->version = 0;
-            $version->content == '';
-            $DB->insert_record('wiki_versions', $version);
-            $version->version = 1;
-            $version->content == $content;
-            $DB->insert_record('wiki_versions', $version);
+            try {
+                $content = $version->content;
+                $version->version = 0;
+                $version->content = '';
+                $DB->insert_record('wiki_versions', $version);
+                $version->version = 1;
+                $version->content = $content;
+                $DB->insert_record('wiki_versions', $version);
+            } catch (Exception $e) {
+                echo $OUTPUT->notification('Cannot insert this record');
+                print_object($version);
+            }
         } else {
-            $DB->insert_record('wiki_versions', $version);
+            try {
+                $DB->insert_record('wiki_versions', $version);
+            } catch (Exception $e) {
+                echo $OUTPUT->notification('Cannot insert this record');
+                print_object($version);
+            }
         }
 
         $pagesinfo->next();
