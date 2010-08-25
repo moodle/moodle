@@ -71,17 +71,17 @@ class webservice {
      * @return array $users
      */
     public function get_ws_authorised_users($serviceid) {
-        global $DB;
-        $params = array($serviceid);
+        global $DB, $CFG;
+        $params = array($CFG->siteguest, $serviceid);
         $sql = " SELECT u.id as id, esu.id as serviceuserid, u.email as email, u.firstname as firstname,
-                u.lastname as lastname,
-                  esu.iprestriction as iprestriction, esu.validuntil as validuntil,
-                  esu.timecreated as timecreated
-                  FROM {user} u, {external_services_users} esu
-                  WHERE username <> 'guest' AND deleted = 0 AND confirmed = 1
+                        u.lastname as lastname,
+                        esu.iprestriction as iprestriction, esu.validuntil as validuntil,
+                        esu.timecreated as timecreated
+                   FROM {user} u, {external_services_users} esu
+                  WHERE u.id <> ? AND u.deleted = 0 AND u.confirmed = 1
                         AND esu.userid = u.id
                         AND esu.externalserviceid = ?";
-        if (!empty($userid)) {
+        if (!empty($userid)) { //TODO: what is this?
             $sql .= ' AND u.id = ?';
             $params[] = $userid;
         }
@@ -97,14 +97,14 @@ class webservice {
      * @return object
      */
     public function get_ws_authorised_user($serviceid, $userid) {
-        global $DB;
-        $params = array($serviceid, $userid);
+        global $DB, $CFG;
+        $params = array($CFG->siteguest, $serviceid, $userid);
         $sql = " SELECT u.id as id, esu.id as serviceuserid, u.email as email, u.firstname as firstname,
-                u.lastname as lastname,
-                  esu.iprestriction as iprestriction, esu.validuntil as validuntil,
-                  esu.timecreated as timecreated
-                  FROM {user} u, {external_services_users} esu
-                  WHERE username <> 'guest' AND deleted = 0 AND confirmed = 1
+                        u.lastname as lastname,
+                        esu.iprestriction as iprestriction, esu.validuntil as validuntil,
+                        esu.timecreated as timecreated
+                   FROM {user} u, {external_services_users} esu
+                  WHERE u.id <> ? AND u.deleted = 0 AND u.confirmed = 1
                         AND esu.userid = u.id
                         AND esu.externalserviceid = ?
                         AND u.id = ?";
@@ -118,7 +118,7 @@ class webservice {
      */
     public function generate_user_ws_tokens($userid) {
         global $CFG, $DB;
-        
+
         /// generate a token for non admin if web service are enable and the user has the capability to create a token
         if (!is_siteadmin() && has_capability('moodle/webservice:createtoken', get_context_instance(CONTEXT_SYSTEM), $userid) && !empty($CFG->enablewebservices)) {
         /// for every service than the user is authorised on, create a token (if it doesn't already exist)
@@ -504,13 +504,13 @@ abstract class webservice_server implements webservice_server_interface {
 
     /**
      * Contructor
-     * @param integer $authmethod authentication method one of WEBSERVICE_AUTHMETHOD_* 
+     * @param integer $authmethod authentication method one of WEBSERVICE_AUTHMETHOD_*
      */
     public function __construct($authmethod) {
         $this->authmethod = $authmethod;
-    }    
-    
-    
+    }
+
+
     /**
      * Authenticate user using username+password or token.
      * This function sets up $USER global.
@@ -561,7 +561,7 @@ abstract class webservice_server implements webservice_server_interface {
         } else {
             $user = $this->authenticate_by_token(EXTERNAL_TOKEN_EMBEDDED);
         }
-        
+
         // now fake user login, the session is completely empty too
         session_set_user($user);
         $this->userid = $user->id;
@@ -572,7 +572,7 @@ abstract class webservice_server implements webservice_server_interface {
 
         external_api::set_context_restriction($this->restricted_context);
     }
-    
+
     protected function authenticate_by_token($tokentype){
         global $DB;
         if (!$token = $DB->get_record('external_tokens', array('token'=>$this->token, 'tokentype'=>$tokentype))) {
@@ -580,12 +580,12 @@ abstract class webservice_server implements webservice_server_interface {
             add_to_log(1, 'webservice', get_string('tokenauthlog', 'webservice'), '' , get_string('failedtolog', 'webservice').": ".$this->token. " - ".getremoteaddr() , 0);
             throw new webservice_access_exception(get_string('invalidtoken', 'webservice'));
         }
-    
+
         if ($token->validuntil and $token->validuntil < time()) {
             $DB->delete_records('external_tokens', array('token'=>$this->token, 'tokentype'=>$tokentype));
             throw new webservice_access_exception(get_string('invalidtimedtoken', 'webservice'));
         }
-        
+
         if ($token->sid){//assumes that if sid is set then there must be a valid associated session no matter the token type
             $session = session_get_instance();
             if (!$session->session_exists($token->sid)){
@@ -606,9 +606,9 @@ abstract class webservice_server implements webservice_server_interface {
 
         // log token access
         $DB->set_field('external_tokens', 'lastaccess', time(), array('id'=>$token->id));
-        
+
         return $user;
-        
+
     }
 }
 
@@ -894,7 +894,7 @@ class '.$classname.' {
 ';
         return $code;
     }
-    
+
     /**
      * You can override this function in your child class to add extra code into the dynamically
      * created service class. For example it is used in the amf server to cast types of parameters and to
@@ -910,7 +910,7 @@ class '.$classname.' {
             $paramstocast = explode(',', $params);
             foreach ($paramstocast as $paramtocast) {
                 //clean the parameter from any white space
-                $paramtocast = trim($paramtocast);                
+                $paramtocast = trim($paramtocast);
                 $castingcode .= $paramtocast .
                 '=webservice_zend_server::cast_objects_to_array('.$paramtocast.');';
             }
@@ -1105,7 +1105,7 @@ abstract class webservice_base_server extends webservice_server {
 
         // find all needed function info and make sure user may actually execute the function
         $this->load_function_info();
-        
+
         //log the web service request
         add_to_log(1, 'webservice', $this->functionname, '' , getremoteaddr() , 0, $this->userid);
 
