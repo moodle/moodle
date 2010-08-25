@@ -108,7 +108,9 @@ class filter_mediaplugin extends moodle_text_filter {
         }
 
         if (!empty($CFG->filter_mediaplugin_enable_youtube)) {
-            $search = '/<a.*?href="([^<]*)youtube.com\/watch\?v=([^"]*)"[^>]*>(.*?)<\/a>/is';
+            //see MDL-23903 for description of recent changes to this regex
+            //$search = '/<a.*?href="([^<]*)youtube.com\/watch\?v=([^"]*)"[^>]*>(.*?)<\/a>/is';
+            $search = '/<a[^>]*href="([^<]*?)youtube.com\/watch\?v=([^"]*)"[^>]*>(.*?)<\/a>/is';
             $newtext = preg_replace_callback($search, 'filter_mediaplugin_youtube_callback', $newtext);
 
             $search = '/<a.*?href="([^<]*)youtube.com\/v\/([^"]*)"[^>]*>(.*?)<\/a>/is';
@@ -258,7 +260,7 @@ function filter_mediaplugin_youtube_callback($link, $autostart=false) {
 
     $site = addslashes_js($link[1]);
     $url = addslashes_js($link[2]);
-    $info = addslashes_js($link[3]);
+    $info = addslashes_js(strip_tags($link[3]));//strip out html tags as they won't work in the title attribute
 
     return '<object title="'.$info.'"
                     class="mediaplugin mediaplugin_youtube" type="application/x-shockwave-flash"
