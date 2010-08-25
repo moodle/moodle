@@ -221,6 +221,7 @@ EOD;
     }
 
     public function set_component($component) {
+        $this->component = $component;
         list($this->plugintype, $this->pluginname) = normalize_component($component);
         return null;
     }
@@ -277,6 +278,7 @@ EOD;
         $options->courseid = $this->courseid;
         $options->contextid = $this->contextid;
         $options->env = $this->env;
+        $options->component = $this->component;
         if ($this->env == 'block_comments') {
             $options->notoggle = true;
             $options->autostart = true;

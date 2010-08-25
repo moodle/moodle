@@ -37,6 +37,7 @@ M.core_comment = {
                 this.client_id = args.client_id;
                 this.itemid = args.itemid;
                 this.commentarea = args.commentarea;
+                this.component = args.component;
                 this.courseid = args.courseid;
                 this.contextid = args.contextid;
                 this.env = args.env;
@@ -121,6 +122,7 @@ bodyContent: '<div class="comment-delete-confirm"><a href="#" id="confirmdelete-
                 params['area']      = this.commentarea;
                 params['courseid']  = this.courseid;
                 params['contextid'] = this.contextid;
+                params['component'] = this.component;
                 if (args['params']) {
                     for (i in args['params']) {
                         params[i] = args['params'][i];

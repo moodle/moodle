@@ -45,6 +45,7 @@ $commentid = optional_param('commentid', -1, PARAM_INT);
 $content   = optional_param('content',   '', PARAM_RAW);
 $itemid    = optional_param('itemid',    '', PARAM_INT);
 $page      = optional_param('page',      0,  PARAM_INT);
+$component = optional_param('component', '',  PARAM_ALPHAEXT);
 
 echo $OUTPUT->header(); // send headers
 
@@ -57,6 +58,7 @@ if (!empty($client_id)) {
     $args->area      = $area;
     $args->itemid    = $itemid;
     $args->client_id = $client_id;
+    $args->component = $component;
     $manager = new comment($args);
 } else {
     die;
