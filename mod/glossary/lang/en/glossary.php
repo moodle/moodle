@@ -231,7 +231,6 @@ $string['ratingonlyteachers'] = 'Only {$a} can rate entries';
 $string['ratingonlywithpermissions'] = 'Only people with permission to rate entries';
 $string['ratings'] = 'Ratings';
 $string['ratingssaved'] = 'Ratings saved';
-$string['ratingsuse'] = 'Use ratings';
 $string['ratingtime'] = 'Restrict ratings to entries with dates in this range:';
 $string['rejectedentries'] = 'Rejected entries';
 $string['rejectionrpt'] = 'Rejection Report';

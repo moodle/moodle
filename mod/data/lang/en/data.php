@@ -275,7 +275,6 @@ $string['ratingpublic'] = '{$a} can see everyone\'s ratings';
 $string['ratingpublicnot'] = '{$a} can only see their own ratings';
 $string['ratings'] = 'Ratings';
 $string['ratingssaved'] = 'Ratings saved';
-$string['ratingsuse'] = 'Use ratings';
 $string['recordapproved'] = 'Entry approved';
 $string['recorddeleted'] = 'Entry deleted';
 $string['recordsnotsaved'] = 'No entry was saved. Please check the format of the uploaded file.';
