@@ -29,6 +29,8 @@ list($context, $course, $cm) = get_context_info_array($contextid);
 $PAGE->set_context($context);
 $PAGE->set_url('/comment/comment_ajax.php');
 
+$action    = optional_param('action',    '', PARAM_ALPHA);
+
 // XXX: display comments in frontpage without login
 if ($context->id != get_context_instance(CONTEXT_COURSE, SITEID)->id
     or $action == 'add'
@@ -37,7 +39,6 @@ if ($context->id != get_context_instance(CONTEXT_COURSE, SITEID)->id
 }
 require_sesskey();
 
-$action    = optional_param('action',    '', PARAM_ALPHA);
 $area      = optional_param('area',      '', PARAM_ALPHAEXT);
 $client_id = optional_param('client_id', '', PARAM_RAW);
 $commentid = optional_param('commentid', -1, PARAM_INT);
