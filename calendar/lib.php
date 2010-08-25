@@ -1660,7 +1660,7 @@ class calendar_event {
      *                  an event
      */
     public function __construct($data=null) {
-        global $CFG;
+        global $CFG, $USER;
 
         // First convert to object if it is not already (should either be object or assoc array)
         if (!is_object($data)) {
@@ -1675,6 +1675,16 @@ class calendar_event {
             $data->id = null;
         }
 
+        // Default to a user event
+        if (empty($data->eventtype)) {
+            $data->eventtype = 'user';
+        }
+
+        // Default to the current user
+        if (empty($data->userid)) {
+            $data->userid = $USER->id;
+        }
+
         if (!empty($data->timeduration) && is_array($data->timeduration)) {
             $data->timeduration = make_timestamp($data->timeduration['year'], $data->timeduration['month'], $data->timeduration['day'], $data->timeduration['hour'], $data->timeduration['minute']) - $data->timestart;
         }
@@ -1683,6 +1693,10 @@ class calendar_event {
             $data->description = $data->description['text'];
         } else if (empty($data->description)) {
             $data->description = '';
+            $data->format = editors_get_preferred_format();
+        }
+        // Ensure form is defaulted correctly
+        if (empty($data->format)) {
             $data->format = editors_get_preferred_format();
         }
 
@@ -1717,6 +1731,9 @@ class calendar_event {
     public function __get($key) {
         if (method_exists($this, 'get_'.$key)) {
             return $this->{'get_'.$key}();
+        }
+        if (!isset($this->properties->{$key})) {
+            throw new coding_exception('Undefined property requested');
         }
         return $this->properties->{$key};
     }
