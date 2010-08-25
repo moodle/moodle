@@ -24,6 +24,17 @@
  */
 
 $string['aggregatetype'] = 'Aggregate type';
+$string['aggregatetype_help'] = 'Forum aggregation defines how all the ratings given to posts in a forum are combined to form the final grade (for each post and for the whole forum activity).
+
+There are 5 aggregate types:
+
+* Average - The mean of all the ratings given to posts in the forum (useful with peer grading when there are a lot of ratings being made)
+* Count - The number of rated posts becomes the final grade (useful when the number of posts is important). Note that the total cannot exceed the maximum grade for the forum.
+* Max - The highest rating is returned as the final grade (useful for emphasising the best post)
+* Min - The smallest rating is returned as the final grade (for promoting a culture of high quality for all posts)
+* Sum - All ratings for a particular student are added together. Note that the total cannot exceed the maximum grade for the forum.
+
+If "No ratings" is selected, then the forum activity will not appear in the gradebook.';
 $string['allowratings'] = 'Allow items to be rated?';
 $string['canrate'] = 'Roles with permission to rate: {$a}';
 $string['norate'] = 'Rating of items not allowed!';
