@@ -366,7 +366,7 @@ abstract class moodleform_mod extends moodleform {
                 }
             }
 
-            $mform->addElement('static', 'rolewarning', '', get_string('canrate','rating', implode(', ', $rolesthatcanrate)));
+            $mform->addElement('static', 'rolewarning', get_string('rolewarning','rating'), implode(', ', $rolesthatcanrate));
             $mform->addHelpButton('rolewarning', 'rolewarning', 'rating');
 
             $mform->addElement('select', 'assessed', get_string('aggregatetype', 'rating') , $rm->get_aggregate_types());
