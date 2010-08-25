@@ -1091,18 +1091,6 @@ class mssql_native_moodle_database extends moodle_database {
         return $this->collation;
     }
 
-   /**
-     * Case and collation sensitive string 'string = string'
-     * @param string $string1
-     * @param string $string2
-     * @return string SQL fragment
-     */
-    public function sql_binary_equal($string1, $string2) {
-        //TODO: we need to make sure this does not break unique indexes
-        //return "$string1 COLLATE Latin1_General_CS_AS = $string2";
-        return "$string1 = $string2";
-    }
-
     /**
      * Returns 'LIKE' part of a query.
      *

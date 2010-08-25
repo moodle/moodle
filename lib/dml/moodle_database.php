@@ -505,7 +505,6 @@ abstract class moodle_database {
             if (is_null($value)) {
                 $where[] = "$key IS NULL";
             } else {
-                $isstring = (is_string($value) && !is_number($value));
                 if ($allowed_types & SQL_PARAMS_NAMED) {
                     // Need to verify key names because they can contain, originally,
                     // spaces and other forbidden chars when using sql_xxx() functions and friends.
@@ -513,18 +512,10 @@ abstract class moodle_database {
                     if ($normkey !== $key) {
                         debugging('Invalid key found in the conditions array.');
                     }
-                    if ($isstring) {
-                        $where[] = $this->sql_binary_equal($key, ':'.$normkey);
-                    } else {
-                        $where[] = "$key = :$normkey";
-                    }
+                    $where[] = "$key = :$normkey";
                     $params[$normkey] = $value;
                 } else {
-                    if ($isstring) {
-                        $where[] = $this->sql_binary_equal($key, '?');
-                    } else {
-                        $where[] = "$key = ?";
-                    }
+                    $where[] = "$key = ?";
                     $params[] = $value;
                 }
             }
@@ -1739,16 +1730,6 @@ abstract class moodle_database {
      */
     public function sql_compare_text($fieldname, $numchars=32) {
         return $this->sql_order_by_text($fieldname, $numchars);
-    }
-
-    /**
-     * Case and collation sensitive string 'string = string'
-     * @param string $string1
-     * @param string $string2
-     * @return string SQL fragment
-     */
-    public function sql_binary_equal($string1, $string2) {
-        return "$string1 = $string2";
     }
 
     /**

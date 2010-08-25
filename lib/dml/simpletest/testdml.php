@@ -2081,9 +2081,11 @@ class dml_test extends UnitTestCase {
             $DB->insert_record($tablename, array('name'=>'aaa'));
             $DB->insert_record($tablename, array('name'=>'aäa'));
             $DB->insert_record($tablename, array('name'=>'aáa'));
+            $DB->insert_record($tablename, array('name'=>'AAA'));
+            $DB->insert_record($tablename, array('name'=>'aÄa'));
             $this->assertTrue(true);
         } catch (Exception $e) {
-            $this->fail("Database collation is not supposed to make unique index accent insensitive!");
+            $this->fail("Collation uniqueness problem detected - default collation is expected to be case sensitive and accent sensitive.");
             throw($e);
         }
     }
@@ -2107,28 +2109,16 @@ class dml_test extends UnitTestCase {
         $DB->insert_record($tablename, array('name'=>'aäa', 'descr'=>'aäa'));
         $DB->insert_record($tablename, array('name'=>'AAA', 'descr'=>'AAA'));
 
-        $sql = "SELECT * FROM {".$tablename."} WHERE ".$DB->sql_binary_equal('name', '?');
-        $records = $DB->get_records_sql($sql, array("aaa"));
-        $this->assertEqual(count($records), 1);
-
-        $sql = "SELECT * FROM {".$tablename."} WHERE ".$DB->sql_binary_equal('name', '?');
-        $records = $DB->get_records_sql($sql, array("aáa"));
-        $this->assertEqual(count($records), 1);
-
-        $sql = "SELECT * FROM {".$tablename."} WHERE ".$DB->sql_binary_equal('name', 'descr');
-        $records = $DB->get_records_sql($sql, array());
-        $this->assertEqual(count($records), 2);
-
-        // get_records() is supposed to use binary comparison too
+        // get_records() is supposed to use binary comparison
         $records = $DB->get_records($tablename, array('name'=>"aaa"));
-        $this->assertEqual(count($records), 1);
+        $this->assertEqual(count($records), 1, 'SQL operator = is expected to be case and accent sensitive');
         $records = $DB->get_records($tablename, array('name'=>"aäa"));
-        $this->assertEqual(count($records), 1);
+        $this->assertEqual(count($records), 1, 'SQL operator = is expected to be case and accent sensitive');
 
         $bool = $DB->record_exists($tablename, array('name'=>"aaa"));
-        $this->assertTrue($bool);
+        $this->assertTrue($bool, 'SQL operator = is expected to be case and accent sensitive');
         $bool = $DB->record_exists($tablename, array('name'=>"AaA"));
-        $this->assertFalse($bool);
+        $this->assertFalse($bool, 'SQL operator = is expected to be case and accent sensitive');
     }
 
     function test_sql_like() {
