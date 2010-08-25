@@ -339,7 +339,9 @@ bodyContent: '<div class="comment-delete-confirm"><a href="#" id="confirmdelete-
                     // hide
                     container.setStyle('display', 'none');
                     img.src=M.util.image_url('t/collapsed', 'core');
-                    ta.set('value','');
+                    if (ta) {
+                        ta.set('value','');
+                    }
                 }
                 if (ta) {
                     //toggle_textarea.apply(ta, [false]);
