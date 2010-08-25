@@ -2061,6 +2061,32 @@ class dml_test extends UnitTestCase {
         $this->assertEqual(count($records), 2);
     }
 
+    function test_unique_binary() {
+        // note: this is a work in progress, we should probably move this to ddl test
+
+        $DB = $this->tdb;
+        $dbman = $DB->get_manager();
+
+        $table = $this->get_test_table();
+        $tablename = $table->getName();
+
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('name', XMLDB_TYPE_CHAR, '255', null, null, null, null);
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_index('name', XMLDB_INDEX_UNIQUE, array('name'));
+        $dbman->create_table($table);
+        $this->tables[$tablename] = $table;
+
+        try {
+            $DB->insert_record($tablename, array('name'=>'aaa'));
+            $DB->insert_record($tablename, array('name'=>'aäa'));
+            $DB->insert_record($tablename, array('name'=>'aáa'));
+            $this->assertTrue(true);
+        } catch (Exception $e) {
+            $this->fail("Database collation is not supposed to make unique index accent insensitive!");
+            throw($e);
+        }
+    }
 
     function test_sql_binary_equal() {
         $DB = $this->tdb;
@@ -2076,33 +2102,32 @@ class dml_test extends UnitTestCase {
         $dbman->create_table($table);
         $this->tables[$tablename] = $table;
 
-        $DB->insert_record($tablename, array('name'=>'skodak', 'descr'=>'Skodak'));
-        $DB->insert_record($tablename, array('name'=>'skodák', 'descr'=>'skodák'));
-        $DB->insert_record($tablename, array('name'=>'Skodak', 'descr'=>'Skodák'));
-        $DB->insert_record($tablename, array('name'=>'?ko?ák', 'descr'=>'?ko?ák'));
-        $DB->insert_record($tablename, array('name'=>'skodäk', 'descr'=>'skodak'));
+        $DB->insert_record($tablename, array('name'=>'aaa', 'descr'=>'Aaa'));
+        $DB->insert_record($tablename, array('name'=>'aáa', 'descr'=>'ááá'));
+        $DB->insert_record($tablename, array('name'=>'aäa', 'descr'=>'aäa'));
+        $DB->insert_record($tablename, array('name'=>'AAA', 'descr'=>'AAA'));
 
         $sql = "SELECT * FROM {".$tablename."} WHERE ".$DB->sql_binary_equal('name', '?');
-        $records = $DB->get_records_sql($sql, array("skodak"));
+        $records = $DB->get_records_sql($sql, array("aaa"));
         $this->assertEqual(count($records), 1);
 
         $sql = "SELECT * FROM {".$tablename."} WHERE ".$DB->sql_binary_equal('name', '?');
-        $records = $DB->get_records_sql($sql, array("?ko?ák"));
+        $records = $DB->get_records_sql($sql, array("aáa"));
         $this->assertEqual(count($records), 1);
 
         $sql = "SELECT * FROM {".$tablename."} WHERE ".$DB->sql_binary_equal('name', 'descr');
         $records = $DB->get_records_sql($sql, array());
-        $this->assertEqual(count($records), 1);
+        $this->assertEqual(count($records), 2);
 
         // get_records() is supposed to use binary comparison too
-        $records = $DB->get_records($tablename, array('name'=>"skodak"));
+        $records = $DB->get_records($tablename, array('name'=>"aaa"));
         $this->assertEqual(count($records), 1);
-        $records = $DB->get_records($tablename, array('name'=>"?ko?ák"));
+        $records = $DB->get_records($tablename, array('name'=>"aäa"));
         $this->assertEqual(count($records), 1);
 
-        $bool = $DB->record_exists($tablename, array('name'=>"skodak"));
+        $bool = $DB->record_exists($tablename, array('name'=>"aaa"));
         $this->assertTrue($bool);
-        $bool = $DB->record_exists($tablename, array('name'=>"skodAk"));
+        $bool = $DB->record_exists($tablename, array('name'=>"AaA"));
         $this->assertFalse($bool);
     }
 
@@ -2155,10 +2180,10 @@ class dml_test extends UnitTestCase {
         // we do not require accent insensitivness yet, just make sure it does not throw errors
         $sql = "SELECT * FROM {".$tablename."} WHERE ".$DB->sql_like('name', '?', true, false);
         $records = $DB->get_records_sql($sql, array('aui'));
-        $this->assertEqual(count($records), 2, 'Accent insensitive LIKE searches may not be supported in all database backends, ignore this problem for now.');
+        $this->assertEqual(count($records), 2, 'Accent insensitive LIKE searches may not be supported in all databases, this is not really a problem now.');
         $sql = "SELECT * FROM {".$tablename."} WHERE ".$DB->sql_like('name', '?', false, false);
         $records = $DB->get_records_sql($sql, array('aui'));
-        $this->assertEqual(count($records), 3, 'Accent insensitive LIKE searches may not be supported in all database backends, ignore this problem for now.');
+        $this->assertEqual(count($records), 3, 'Accent insensitive LIKE searches may not be supported in all databases, this is not really a problem now.');
     }
 
     function test_sql_ilike() {
