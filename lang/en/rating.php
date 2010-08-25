@@ -25,6 +25,7 @@
 
 $string['aggregatetype'] = 'Aggregate type';
 $string['allowratings'] = 'Allow items to be rated?';
+$string['canrate'] = 'Can submit ratings: {$a}';
 $string['norate'] = 'Rating of items not allowed!';
 $string['noviewanyrate'] = 'You can only look at results for posts that you made';
 $string['noviewrate'] = 'You do not have the capability to view post ratings';
@@ -33,4 +34,5 @@ $string['ratepermissiondenied'] = 'You do not have permission to rate this item'
 $string['rating'] = 'Rating';
 $string['ratings'] = 'Ratings';
 $string['ratingsuse'] = 'Use ratings';
-$string['rolewarning'] = 'Ratings automatically enter the Gradebook. Activity permissions determine which users can submit ratings.<br />Can submit ratings: {$a}';
+$string['rolewarning'] = '';
+$string['rolewarning_help'] = 'Aggregated ratings appear in the gradebook. Click on Permissions under module administration to change who can submit ratings.';
