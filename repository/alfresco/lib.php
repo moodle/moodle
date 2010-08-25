@@ -260,7 +260,7 @@ class repository_alfresco extends repository {
         $mform->addElement('text', 'alfresco_url', get_string('alfresco_url', 'repository_alfresco'), array('size' => '40'));
         $mform->addElement('static', 'alfreco_url_intro', '', get_string('alfrescourltext', 'repository_alfresco'));
         $mform->addRule('alfresco_url', get_string('required'), 'required', null, 'client');
-        return false;
+        return true;
     }
 
     /**
