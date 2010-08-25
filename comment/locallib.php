@@ -19,7 +19,7 @@
  * comment_manager is helper class to manage moodle comments in admin page (Reports->Comments)
  *
  * @package   comment
- * @copyright  2010 Dongsheng Cai <dongsheng@moodle.com> 
+ * @copyright  2010 Dongsheng Cai <dongsheng@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class comment_manager {
@@ -42,14 +42,14 @@ class comment_manager {
         } else {
             $start = $page*$this->perpage;
         }
-        $sql = "SELECT c.id, c.contextid, c.itemid, c.commentarea, c.userid, c.content, u.username, u.firstname, u.lastname, c.timecreated
+        $sql = "SELECT c.id, c.contextid, c.itemid, c.commentarea, c.userid, c.content, u.firstname, u.lastname, c.timecreated
             FROM {comments} c, {user} u
             WHERE u.id=c.userid ORDER BY c.timecreated ASC";
 
         $comments = array();
         if ($records = $DB->get_records_sql($sql, array(), $start, $this->perpage)) {
             foreach ($records as $item) {
-                $item->username = fullname($item);
+                $item->fullname = fullname($item);
                 $item->time = userdate($item->timecreated);
                 $item->content = format_text($item->content);
                 $comments[] = $item;
@@ -122,7 +122,7 @@ class comment_manager {
                 $action .= html_writer::tag('br', null);
                 $action .= html_writer::link($context_url, get_string('commentincontext'), array('target'=>'_blank'));
             }
-            $table->data[] = array($checkbox, $c->username, $c->content, $action);
+            $table->data[] = array($checkbox, $c->fullname, $c->content, $action);
         }
         echo html_writer::table($table);
         echo $OUTPUT->paging_bar($count, $page, $this->perpage, $CFG->wwwroot.'/comment/index.php');

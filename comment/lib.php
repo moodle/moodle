@@ -398,7 +398,7 @@ EOD;
         $this->page = $page;
         $params = array();
         $start = $page * $CFG->commentsperpage;
-        $ufields = user_picture::fields('u', array('username'));
+        $ufields = user_picture::fields('u');
         $sql = "SELECT $ufields, c.id AS cid, c.content AS ccontent, c.format AS cformat, c.timecreated AS ctimecreated
                   FROM {comments} c
                   JOIN {user} u ON u.id = c.userid
@@ -418,7 +418,6 @@ EOD;
             $c->format      = $u->cformat;
             $c->timecreated = $u->ctimecreated;
             $url = new moodle_url('/user/view.php', array('id'=>$u->id, 'course'=>$this->courseid));
-            $c->username = $u->username;
             $c->profileurl = $url->out();
             $c->fullname = fullname($u);
             $c->time = userdate($c->timecreated, get_string('strftimerecent', 'langconfig'));
@@ -508,7 +507,6 @@ EOD;
         if (!empty($cmt_id)) {
             $newcmt->id = $cmt_id;
             $newcmt->time = userdate($now, get_string('strftimerecent', 'langconfig'));
-            $newcmt->username = $USER->username;
             $newcmt->fullname = fullname($USER);
             $url = new moodle_url('/user/view.php', array('id'=>$USER->id, 'course'=>$this->courseid));
             $newcmt->profileurl = $url->out();
