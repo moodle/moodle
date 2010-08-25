@@ -1192,7 +1192,9 @@ class sqlsrv_native_moodle_database extends moodle_database {
      * @return string SQL fragment
      */
     public function sql_binary_equal($string1, $string2) {
-        return "$string1 COLLATE Latin1_General_CS_AS = $string2";
+        //TODO: we need to make sure this does not break unique indexes
+        //return "$string1 COLLATE Latin1_General_CS_AS = $string2";
+        return "$string1 = $string2";
     }
 
     /**

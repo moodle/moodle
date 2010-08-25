@@ -1033,7 +1033,9 @@ class mysqli_native_moodle_database extends moodle_database {
      * @return string SQL fragment
      */
     public function sql_binary_equal($string1, $string2) {
-        return "BINARY $string1 = $string2";
+        //TODO: we need to make sure this does not break unique indexes
+        //return "BINARY $string1 = $string2";
+        return "$string1 = $string2";
     }
 
     /**
