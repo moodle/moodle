@@ -1051,8 +1051,7 @@ class file_storage {
     protected function path_from_hash($contenthash) {
         $l1 = $contenthash[0].$contenthash[1];
         $l2 = $contenthash[2].$contenthash[3];
-        $l3 = $contenthash[4].$contenthash[5];
-        return "$this->filedir/$l1/$l2/$l3";
+        return "$this->filedir/$l1/$l2";
     }
 
     /**
@@ -1066,8 +1065,7 @@ class file_storage {
     protected function trash_path_from_hash($contenthash) {
         $l1 = $contenthash[0].$contenthash[1];
         $l2 = $contenthash[2].$contenthash[3];
-        $l3 = $contenthash[4].$contenthash[5];
-        return "$this->trashdir/$l1/$l2/$l3";
+        return "$this->trashdir/$l1/$l2";
     }
 
     /**

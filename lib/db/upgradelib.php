@@ -86,6 +86,8 @@ function upgrade_migrate_files_courses() {
     global $DB, $CFG;
     require_once($CFG->libdir.'/filelib.php');
 
+    set_config('upgradenewfilemirgation', 1);
+
     $count = $DB->count_records('course');
     $pbar = new progress_bar('migratecoursefiles', 500, true);
 
@@ -101,6 +103,75 @@ function upgrade_migrate_files_courses() {
     $rs->close();
 
     return true;
+}
+
+/**
+ * Moodle 2.0dev was using xx/xx/xx file pool directory structure, this migrates the existing files to xx/xx.
+ * This will not be executed in production upgrades...
+ * @return void
+ */
+function upgrade_simplify_overkill_pool_structure() {
+    global $CFG, $OUTPUT;
+
+    if (isset($CFG->upgradenewfilemirgation)) {
+        // newer upgrade, directory structure is in the form xx/xx already
+        unset_config('upgradenewfilemirgation');
+        return;
+    }
+
+    $filedir = $CFG->dataroot.'/filedir'; // hardcoded hack, do not use elsewhere!!
+
+    echo $OUTPUT->notification("Changing file pool directory structure, this may take a while...", 'notifysuccess');
+
+    $dir_l1 = new DirectoryIterator($filedir);
+    foreach ($dir_l1 as $d1) {
+        if ($d1->isDot() or $d1->isLink() or !$d1->isDir()) {
+            continue;
+        }
+        $name1 = $d1->getFilename();
+        if (strlen($name1) != 2) {
+            continue; //weird
+        }
+        $dir_l2 = new DirectoryIterator("$filedir/$name1");
+        foreach ($dir_l2 as $d2) {
+            if ($d2->isDot() or $d2->isLink() or !$d2->isDir()) {
+                continue;
+            }
+            $name2 = $d2->getFilename();
+            if (strlen($name2) != 2) {
+                continue; //weird
+            }
+            $dir_l3 = new DirectoryIterator("$filedir/$name1/$name2");
+            foreach ($dir_l3 as $d3) {
+                if ($d3->isDot() or $d3->isLink() or !$d3->isDir()) {
+                    continue;
+                }
+                $name3 = $d3->getFilename();
+                if (strlen($name3) != 2) {
+                    continue; //weird
+                }
+                $dir_l4 = new DirectoryIterator("$filedir/$name1/$name2/$name3");
+                foreach ($dir_l4 as $d4) {
+                    if (!$d4->isFile()) {
+                        continue; //. or ..
+                    }
+                    upgrade_set_timeout(60*5); // set up timeout, may also abort execution
+                    $newfile = "$filedir/$name1/$name2/".$d4->getFilename();
+                    $oldfile = "$filedir/$name1/$name2/$name3/".$d4->getFilename();
+                    if (!file_exists($newfile)) {
+                        rename($oldfile, $newfile);
+                    }
+                }
+                unset($d4);
+                unset($dir_l4);
+                rmdir("$filedir/$name1/$name2/$name3");
+            }
+            unset($d3);
+            unset($dir_l3); // release file handles
+        }
+        unset($d2);
+        unset($dir_l2); // release file handles
+    }
 }
 
 /**

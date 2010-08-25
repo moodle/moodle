@@ -5075,6 +5075,14 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         // Main savepoint reached
         upgrade_main_savepoint(true, 2010080901);
     }
+
+    if ($oldversion < 2010082502) {
+        // migrate file pool xx/xx/xx directory structure to xx/xx in older 2.0dev installs
+        upgrade_simplify_overkill_pool_structure();
+        upgrade_main_savepoint(true, 2010082502);
+    }
+
+
     return true;
 }
 
