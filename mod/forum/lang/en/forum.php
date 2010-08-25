@@ -34,7 +34,6 @@ $string['aggregatemax'] = 'Maximum rating';
 $string['aggregatemin'] = 'Minimum rating';
 $string['aggregatenone'] = 'No ratings';
 $string['aggregatesum'] = 'Sum of ratings';
-$string['aggregatetype'] = 'Aggregate type';
 $string['aggregatetype_help'] = 'Forum aggregation defines how all the ratings given to posts in a forum are combined to form the final grade (for each post and for the whole forum activity).
 
 There are 5 aggregate types:
@@ -337,8 +336,6 @@ $string['ratingpublic'] = '{$a} can see everyone\'s ratings';
 $string['ratingpublicnot'] = '{$a} can only see their own ratings';
 $string['ratings'] = 'Ratings';
 $string['ratingssaved'] = 'Ratings saved';
-$string['ratingsuse'] = 'Use ratings';
-$string['ratingtime'] = 'Restrict ratings to items with dates in this range:';
 $string['re'] = 'Re:';
 $string['readtherest'] = 'Read the rest of this topic';
 $string['replies'] = 'Replies';
