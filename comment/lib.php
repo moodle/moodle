@@ -254,11 +254,11 @@ EOD;
         if (!empty($this->plugintype)) {
             $permissions = plugin_callback($this->plugintype, $this->pluginname, FEATURE_COMMENT, 'permissions', array($this->args), array('post'=>true, 'view'=>true));
             if ($this->ignore_permission) {
-                $this->postcap = $this->postcap && $permissions['post'];
-                $this->viewcap = $this->viewcap && $permissions['view'];
-            } else {
                 $this->postcap = $permissions['post'];
                 $this->viewcap = $permissions['view'];
+            } else {
+                $this->postcap = $this->postcap && $permissions['post'];
+                $this->viewcap = $this->viewcap && $permissions['view'];
             }
         }
     }
