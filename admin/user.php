@@ -212,8 +212,8 @@
         $table->align = array ("left", "left", "left", "left", "left", "center", "center", "center");
         $table->width = "95%";
         foreach ($users as $user) {
-            if ($user->username == 'guest') {
-                continue; // do not dispaly dummy new user and guest here
+            if (isguestuser($user)) {
+                continue; // do not display guest here
             }
 
             if ($user->id == $USER->id or is_siteadmin($user)) {

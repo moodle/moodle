@@ -56,7 +56,7 @@ $currentuser = ($user->id == $USER->id);
 $context = $usercontext = get_context_instance(CONTEXT_USER, $userid, MUST_EXIST);
 
 if (!$currentuser &&
-    !empty($CFG->forceloginforprofiles) && 
+    !empty($CFG->forceloginforprofiles) &&
     !has_capability('moodle/user:viewdetails', $context) &&
     !has_coursecontact_role($userid)) {
     // Course managers can be browsed at site level. If not forceloginforprofiles, allow access (bug #4366)
@@ -378,7 +378,7 @@ echo $OUTPUT->blocks_for_region('content');
 
 // Print messaging link if allowed
 if (isloggedin() && has_capability('moodle/site:sendmessage', $context)
-    && !empty($CFG->messaging) && !isguestuser() && ($user->username != 'guest') && ($USER->id != $user->id)) {
+    && !empty($CFG->messaging) && !isguestuser() && !isguestuser($user) && ($USER->id != $user->id)) {
     echo '<div class="messagebox">';
     echo '<a href="'.$CFG->wwwroot.'/message/index.php?id='.$user->id.'">'.get_string('messageselectadd').'</a>';
     echo '</div>';

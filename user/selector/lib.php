@@ -412,7 +412,7 @@ abstract class user_selector_base {
      *      this uses ? style placeholders.
      */
     protected function search_sql($search, $u) {
-        global $DB;
+        global $DB, $CFG;
         $params = array();
         $tests = array();
 
@@ -445,7 +445,8 @@ abstract class user_selector_base {
         }
 
         // Add some additional sensible conditions
-        $tests[] = $u . "username <> 'guest'";
+        $tests[] = $u . "id <> :guestid";
+        $params['guestid'] = $CFG->siteguest;
         $tests[] = $u . 'deleted = 0';
         $tests[] = $u . 'confirmed = 1';
 
