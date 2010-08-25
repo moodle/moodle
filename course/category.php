@@ -57,15 +57,28 @@
         if ($resort and confirm_sesskey()) {
             if ($courses = get_courses($category->id, "fullname ASC", 'c.id,c.fullname,c.sortorder')) {
                 // move it off the range
-                $count = get_record_sql('SELECT MIN(sortorder) AS min, 1
+                
+                $sortorderresult = get_record_sql('SELECT MIN(sortorder) AS min, 1
                                          FROM ' . $CFG->prefix . 'course WHERE category=' . $category->id);
-                $count = $count->min;
+                $sortordermin = $sortorderresult->min;
+
+                $sortorderresult = get_record_sql('SELECT MAX(sortorder) AS max, 1
+                                         FROM ' . $CFG->prefix . 'course WHERE category=' . $category->id);
+                $sortorder = $sortordermax = $sortorderresult->max + 100;
+
+                //place the courses above the maximum existing sortorder to avoid duplicate index errors
+                //after they've been sorted we'll shift them down again
                 begin_sql();
                 foreach ($courses as $course) {
-                    set_field('course', 'sortorder', $count, 'id', $course->id);
-                    $count++;
+                    set_field('course', 'sortorder', $sortorder, 'id', $course->id);
+                    $sortorder++;
                 }
                 commit_sql();
+
+                //shift course sortorder back down the amount we moved them up
+                execute_sql('UPDATE '. $CFG->prefix .'course SET sortorder = sortorder-'.($sortordermax-$sortordermin).
+                        ' WHERE category='.$category->id);
+
                 fix_course_sortorder($category->id);
             }
         }
