@@ -257,11 +257,11 @@ class course_enrolment_manager {
      * @return array Array(totalusers => int, users => array)
      */
     public function get_potential_users($enrolid, $search='', $searchanywhere=false, $page=0, $perpage=25) {
-        global $DB;
+        global $DB, $CFG;
 
         // Add some additional sensible conditions
-        $tests = array("u.username <> 'guest'", 'u.deleted = 0', 'u.confirmed = 1');
-        $params = array();
+        $tests = array("id <> :guestid", 'u.deleted = 0', 'u.confirmed = 1');
+        $params = array('guestid' => $CFG->siteguest);
         if (!empty($search)) {
             $conditions = array('u.firstname','u.lastname');
             $ilike = ' ' . $DB->sql_ilike();
@@ -307,11 +307,11 @@ class course_enrolment_manager {
      * @return array
      */
     public function search_other_users($search='', $searchanywhere=false, $page=0, $perpage=25) {
-        global $DB;
+        global $DB, $CFG;
 
         // Add some additional sensible conditions
-        $tests = array("u.username <> 'guest'", 'u.deleted = 0', 'u.confirmed = 1');
-        $params = array();
+        $tests = array("u.id <> :guestid", 'u.deleted = 0', 'u.confirmed = 1');
+        $params = array('guestid'=>$CFG->siteguest);
         if (!empty($search)) {
             $conditions = array('u.firstname','u.lastname');
             $ilike = ' ' . $DB->sql_ilike();

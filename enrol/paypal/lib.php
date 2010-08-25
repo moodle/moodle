@@ -160,7 +160,7 @@ class enrol_paypal_plugin extends enrol_plugin {
             echo '<p>'.get_string('nocost', 'enrol_paypal').'</p>';
         } else {
 
-            if ($USER->username == 'guest') { // force login only for guest user, not real users with guest role
+            if (isguestuser()) { // force login only for guest user, not real users with guest role
                 if (empty($CFG->loginhttps)) {
                     $wwwroot = $CFG->wwwroot;
                 } else {

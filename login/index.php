@@ -136,7 +136,7 @@ if (empty($CFG->usesid) and $testcookies and (get_moodle_cookie() == '')) {    /
     if ($user) {
 
         // language setup
-        if ($user->username == 'guest') {
+        if (isguestuser($user)) {
             // no predefined language for guests - use existing session or default site lang
             unset($user->lang);
 

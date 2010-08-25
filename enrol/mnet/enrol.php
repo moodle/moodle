@@ -310,7 +310,7 @@ class enrol_mnet_mnetservice_enrol {
      * @return array
      */
     public function course_enrolments($courseid, $roles=null) {
-        global $DB;
+        global $DB, $CFG;
 
         if (!$client = get_mnet_remote_client()) {
             die('Callable via XML-RPC only');
@@ -323,11 +323,12 @@ class enrol_mnet_mnetservice_enrol {
                   JOIN {role} r ON e.roleid = r.id
                  WHERE u.mnethostid = :mnethostid
                        AND e.courseid = :courseid
-                       AND u.username != 'guest'
+                       AND u.id <> :guestid
                        AND u.confirmed = 1
                        AND u.deleted = 0";
         $params['mnethostid'] = $client->id;
         $params['courseid'] = $courseid;
+        $params['guestid'] = $CFG->siteguest;
 
         if (!is_null($roles)) {
             if (!is_array($roles)) {

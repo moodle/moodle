@@ -471,7 +471,7 @@ class database_session extends session_stub {
             $ignoretimeout = false;
             if (!empty($record->userid)) { // skips not logged in
                 if ($user = $this->database->get_record('user', array('id'=>$record->userid))) {
-                    if ($user->username !== 'guest') {
+                    if (!isguestuser($user)) {
                         $authsequence = get_enabled_auth_plugins(); // auths, in sequence
                         foreach($authsequence as $authname) {
                             $authplugin = get_auth_plugin($authname);
@@ -727,8 +727,8 @@ function session_gc() {
         $sql = "SELECT u.*, s.sid, s.timecreated AS s_timecreated, s.timemodified AS s_timemodified
                   FROM {user} u
                   JOIN {sessions} s ON s.userid = u.id
-                 WHERE s.timemodified + ? < ? AND u.username <> 'guest'";
-        $params = array($maxlifetime, time());
+                 WHERE s.timemodified + ? < ? AND u.id <> ?";
+        $params = array($maxlifetime, time(), $CFG->siteguest);
 
         $authplugins = array();
         foreach($auth_sequence as $authname) {

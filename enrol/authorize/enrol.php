@@ -67,7 +67,7 @@ class enrolment_plugin_authorize
             echo $OUTPUT->heading(get_string('choosemethod', 'enrol_authorize'));
         }
 
-        if ($USER->username == 'guest') { // only real guest user, not for users with guest role
+        if (isguestuser()) { // only real guest user, not for users with guest role
             $curcost = get_course_cost($course);
             echo '<div class="mdl-align">';
             echo '<p>'.get_string('paymentrequired').'</p>';

@@ -280,7 +280,7 @@ class mnetservice_enrol {
                     // see MDL-19219
                     return serialize(array('remote host running old version of mnet server - does not return username attribute'));
                 }
-                if ($remote['username'] == 'guest') {
+                if ($remote['username'] == 'guest') { // we can not use $CFG->siteguest here
                     // do not try nasty things you bastard!
                     continue;
                 }

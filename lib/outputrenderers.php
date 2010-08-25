@@ -418,7 +418,7 @@ class core_renderer extends renderer_base {
             if (is_mnet_remote_user($USER) and $idprovider = $DB->get_record('mnet_host', array('id'=>$USER->mnethostid))) {
                 $username .= " from <a href=\"{$idprovider->wwwroot}\">{$idprovider->name}</a>";
             }
-            if (isset($USER->username) && $USER->username == 'guest') {
+            if (isguestuser()) {
                 $loggedinas = $realuserinfo.get_string('loggedinasguest').
                           " (<a href=\"$loginurl\">".get_string('login').'</a>)';
             } else if (!empty($USER->access['rsw'][$context->path])) {
@@ -442,7 +442,7 @@ class core_renderer extends renderer_base {
         if (isset($SESSION->justloggedin)) {
             unset($SESSION->justloggedin);
             if (!empty($CFG->displayloginfailures)) {
-                if (!empty($USER->username) and $USER->username != 'guest') {
+                if (!isguestuser()) {
                     if ($count = count_login_failures($CFG->displayloginfailures, $USER->username, $USER->lastlogin)) {
                         $loggedinas .= '&nbsp;<div class="loginfailures">';
                         if (empty($count->accounts)) {

@@ -2915,7 +2915,7 @@ function is_enrolled($context, $user = NULL, $withcapability = '', $onlyactive =
  * @return array list($sql, $params)
  */
 function get_enrolled_sql($context, $withcapability = '', $groupid = 0, $onlyactive = false) {
-    global $DB;
+    global $DB, $CFG;
 
     // use unique prefix just in case somebody makes some SQL magic with the result
     static $i = 0;
@@ -3034,7 +3034,8 @@ function get_enrolled_sql($context, $withcapability = '', $groupid = 0, $onlyact
 
     }
 
-    $wheres[] = "{$prefix}u.deleted = 0 AND {$prefix}u.username <> 'guest'";
+    $wheres[] = "{$prefix}u.deleted = 0 AND {$prefix}u.id <> :{$prefix}guestid";
+    $params["{$prefix}guestid"] = $CFG->siteguest;
 
     if ($isfrontpage) {
         // all users are "enrolled" on the frontpage
@@ -4832,8 +4833,9 @@ function get_users_by_capability($context, $capability, $fields='', $sort='', $l
         }
     }
 
-    /// We never return deleted users or guest acount.
-    $wherecond[] = "u.deleted = 0 AND u.username <> 'guest'";
+    /// We never return deleted users or guest account.
+    $wherecond[] = "u.deleted = 0 AND u.id <> :guestid";
+    $params['guestid'] = $CFG->siteguest;
 
     /// Groups
     if ($groups) {

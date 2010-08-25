@@ -184,7 +184,7 @@ function search_users($courseid, $groupid, $searchtext, $sort='', array $excepti
  */
 function get_users($get=true, $search='', $confirmed=false, array $exceptions=null, $sort='firstname ASC',
                    $firstinitial='', $lastinitial='', $page='', $recordsperpage='', $fields='*', $extraselect='', array $extraparams=null) {
-    global $DB;
+    global $DB, $CFG;
 
     if ($get && !$recordsperpage) {
         debugging('Call to get_users with $get = true no $recordsperpage limit. ' .
@@ -196,8 +196,8 @@ function get_users($get=true, $search='', $confirmed=false, array $exceptions=nu
     $LIKE      = $DB->sql_ilike();
     $fullname  = $DB->sql_fullname();
 
-    $select = " username <> :guest AND deleted = 0";
-    $params = array('guest'=>'guest');
+    $select = " id <> :guestid AND deleted = 0";
+    $params = array('guestid'=>$CFG->siteguest);
 
     if (!empty($search)){
         $search = trim($search);
@@ -306,10 +306,10 @@ function get_users_listing($sort='lastaccess', $dir='ASC', $page=0, $recordsperp
  * @return array of unconfirmed users
  */
 function get_users_confirmed() {
-    global $DB;
+    global $DB, $CFG;
     return $DB->get_records_sql("SELECT *
                                    FROM {user}
-                                  WHERE confirmed = 1 AND deleted = 0 AND username <> ?", array('guest'));
+                                  WHERE confirmed = 1 AND deleted = 0 AND id <> ?", array($CFG->siteguest));
 }
 
 
