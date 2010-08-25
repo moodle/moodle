@@ -242,11 +242,14 @@ bodyContent: '<div class="comment-delete-confirm"><a href="#" id="confirmdelete-
             },
             register_actions: function() {
                 // add new comment
-                Y.one('#comment-action-post-'+this.client_id).on('click', function(e) {
-                    e.preventDefault();
-                    this.post();
-                    return false;
-                }, this);
+                var action_btn = Y.one('#comment-action-post-'+this.client_id);
+                if (action_btn) {
+                    action_btn.on('click', function(e) {
+                        e.preventDefault();
+                        this.post();
+                        return false;
+                    }, this);
+                }
                 // cancel comment box
                 var cancel = Y.one('#comment-action-cancel-'+this.client_id);
                 if (cancel) {
@@ -265,6 +268,9 @@ bodyContent: '<div class="comment-delete-confirm"><a href="#" id="confirmdelete-
                         var theid = node.get('id');
                         var parseid = new RegExp("comment-delete-"+scope.client_id+"-(\\d+)", "i");
                         var commentid = theid.match(parseid);
+                        if (!commentid) {
+                            return;
+                        }
                         if (commentid[1]) {
                             Y.Event.purgeElement('#'+theid, false, 'click');
                         }
@@ -335,18 +341,20 @@ bodyContent: '<div class="comment-delete-confirm"><a href="#" id="confirmdelete-
                     img.src=M.util.image_url('t/collapsed', 'core');
                     ta.set('value','');
                 }
-                //toggle_textarea.apply(ta, [false]);
-                //// reset textarea size
-                ta.on('click', function() {
-                    this.toggle_textarea(true);
-                }, this)
-                //ta.onkeypress = function() {
-                    //if (this.scrollHeight > this.clientHeight && !window.opera)
-                        //this.rows += 1;
-                //}
-                ta.on('blur', function() {
-                    this.toggle_textarea(false);
-                }, this);
+                if (ta) {
+                    //toggle_textarea.apply(ta, [false]);
+                    //// reset textarea size
+                    ta.on('click', function() {
+                        this.toggle_textarea(true);
+                    }, this)
+                    //ta.onkeypress = function() {
+                        //if (this.scrollHeight > this.clientHeight && !window.opera)
+                            //this.rows += 1;
+                    //}
+                    ta.on('blur', function() {
+                        this.toggle_textarea(false);
+                    }, this);
+                }
                 this.register_actions();
                 return false;
             },
