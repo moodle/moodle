@@ -279,6 +279,7 @@ EOD;
         $options->env = $this->env;
         if ($this->env == 'block_comments') {
             $options->notoggle = true;
+            $options->autostart = true;
         }
 
         $PAGE->requires->js_init_call('M.core_comment.init', array($options), true);
