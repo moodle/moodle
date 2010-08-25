@@ -141,7 +141,7 @@ if(has_capability('mod/feedback:edititems', $context)) {
     echo $OUTPUT->box_start('feedback_info');
     echo '<span class="feedback_info">'.get_string('questions', 'feedback').': </span><span class="feedback_info_value">' .$itemscount. '</span>';
     echo $OUTPUT->box_end();
-    
+
     if($feedback->timeopen) {
         echo $OUTPUT->box_start('feedback_info');
         echo '<span class="feedback_info">'.get_string('feedbackopen', 'feedback').': </span><span class="feedback_info_value">' .UserDate($feedback->timeopen). '</span>';
@@ -170,8 +170,8 @@ if(has_capability('mod/feedback:edititems', $context)) {
     echo $OUTPUT->box_end();
 }
 
-if( (intval($feedback->publish_stats) == 1) AND 
-                ( has_capability('mod/feedback:viewanalysepage', $context)) AND 
+if( (intval($feedback->publish_stats) == 1) AND
+                ( has_capability('mod/feedback:viewanalysepage', $context)) AND
                 !( has_capability('mod/feedback:viewreports', $context)) ) {
     if($multiple_count = $DB->count_records('feedback_tracking', array('userid'=>$USER->id, 'feedback'=>$feedback->id))) {
         $analysisurl = new moodle_url('/mod/feedback/analysis.php', array('id'=>$id, 'courseid'=>$courseid));
@@ -224,7 +224,7 @@ if($feedback_complete_cap) {
     }
     if($feedback_can_submit) {
         //if the user is not known so we cannot save the values temporarly
-        if(!isset($USER->username) OR $USER->username == 'guest') {
+        if(!isloggedin() or isguestuser()) {
             $completefile = 'complete_guest.php';
             $guestid = sesskey();
         }else {
@@ -232,7 +232,7 @@ if($feedback_complete_cap) {
             $guestid = false;
         }
         $completeurl = new moodle_url('/mod/feedback/'.$completefile, array('id'=>$id, 'courseid'=>$courseid, 'gopage'=>0));
-        
+
         if($feedbackcompletedtmp = feedback_get_current_completed($feedback->id, true, $courseid, $guestid)) {
             if($startpage = feedback_get_page_to_continue($feedback->id, $courseid, $guestid)) {
                 $completeurl->param('gopage', $startpage);

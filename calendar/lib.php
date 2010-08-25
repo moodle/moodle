@@ -1318,7 +1318,7 @@ function calendar_edit_event_allowed($event) {
     }
 
     // can not be using guest account
-    if ($USER->username == "guest") {
+    if (isguestuser()) {
         return false;
     }
 
