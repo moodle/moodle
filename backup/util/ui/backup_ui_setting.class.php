@@ -115,6 +115,9 @@ class base_setting_ui {
      * @param string $label
      */
     public function set_label($label) {
+        if (empty($label) || $label !== clean_param($label, PARAM_TEXT)) {
+            throw new base_setting_ui_exception('setting_invalid_ui_label');
+        }
         $this->label = $label;
     }
     /**
@@ -174,12 +177,15 @@ abstract class backup_setting_ui extends base_setting_ui {
     /**
      * Creates a new backup setting ui based on the setting it is given
      *
+     * Throws an exception if an invalid type is provided.
+     *
      * @param backup_setting $setting
      * @param int $type The backup_setting UI type. One of backup_setting::UI_*;
      * @param string $label The label to display with the setting ui
      * @param array $attributes Array of HTML attributes to apply to the element
      * @param array $options Array of options to apply to the setting ui object
-     * @return backup_setting_ui_text
+     * 
+     * @return backup_setting_ui_text|backup_setting_ui_checkbox|backup_setting_ui_select|backup_setting_ui_radio
      */
     final public static function make(backup_setting $setting, $type, $label, array $attributes = null, array $options=null) {
         // Base the decision we make on the type that was sent
@@ -193,7 +199,7 @@ abstract class backup_setting_ui extends base_setting_ui {
             case backup_setting::UI_HTML_TEXTFIELD :
                 return new backup_setting_ui_text($setting, $label, $attributes, $options);
             default:
-                return false;
+                throw new backup_setting_ui_exception('setting_invalid_ui_type');
         }
     }
     /**
@@ -521,3 +527,6 @@ class backup_setting_ui_dateselector extends backup_setting_ui_text {
         return parent::get_static_value();
     }
 }
+
+class base_setting_ui_exception extends base_setting_exception {}
+class backup_setting_ui_exception extends base_setting_ui_exception {};

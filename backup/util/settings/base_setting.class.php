@@ -435,21 +435,6 @@ abstract class base_setting {
         return $status;
     }
 
-    protected function validate_ui_type($type) {
-        if ($type !== self::UI_HTML_CHECKBOX && $type !== self::UI_HTML_RADIOBUTTON &&
-            $type !== self::UI_HTML_DROPDOWN && $type !== self::UI_HTML_TEXTFIELD) {
-            throw new base_setting_exception('setting_invalid_ui_type');
-        }
-        return $type;
-    }
-
-    protected function validate_ui_label($label) {
-        if (empty($label) || $label !== clean_param($label, PARAM_TEXT)) {
-            throw new base_setting_exception('setting_invalid_ui_label');
-        }
-        return $label;
-    }
-
     protected function inform_dependencies($ctype, $oldv) {
         foreach ($this->dependencies as $dependency) {
             $dependency->process_change($ctype, $oldv);

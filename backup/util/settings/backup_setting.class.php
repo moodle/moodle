@@ -65,8 +65,6 @@ abstract class backup_setting extends base_setting implements checksumable {
      * @param array $options
      */
     public function make_ui($type, $label, array $attributes = null, array $options = null) {
-        $type = $this->validate_ui_type($type);
-        $label = $this->validate_ui_label($label);
         $this->uisetting = backup_setting_ui::make($this, $type, $label, $attributes, $options);
         if (is_array($options) || is_object($options)) {
             $options = (array)$options;
