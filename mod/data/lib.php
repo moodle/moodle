@@ -32,6 +32,11 @@ define ('DATA_TIMEADDED', 0);
 define ('DATA_TIMEMODIFIED', -4);
 
 define ('DATA_CAP_EXPORT', 'mod/data:viewalluserpresets');
+
+define('DATA_PRESET_COMPONENT', 'mod_data');
+define('DATA_PRESET_FILEAREA', 'site_presets');
+define('DATA_PRESET_CONTEXT', SYSCONTEXTID);
+
 // Users having assigned the default role "Non-editing teacher" can export database records
 // Using the mod/data capability "viewalluserpresets" existing in Moodle 1.9.x.
 // In Moodle >= 2, new roles may be introduced and used instead.
@@ -1836,10 +1841,8 @@ function data_preset_name($shortname, $path) {
 }
 
 /**
- * Returns an array of all the available presets
+ * Returns an array of all the available presets.
  *
- * @global object
- * @global object
  * @return array
  */
 function data_get_available_presets($context) {
@@ -1847,10 +1850,10 @@ function data_get_available_presets($context) {
 
     $presets = array();
 
+    // First load the ratings sub plugins that exist within the modules preset dir
     if ($dirs = get_list_of_plugins('mod/data/preset')) {
         foreach ($dirs as $dir) {
             $fulldir = $CFG->dirroot.'/mod/data/preset/'.$dir;
-
             if (is_directory_a_preset($fulldir)) {
                 $preset = new object;
                 $preset->path = $fulldir;
@@ -1868,46 +1871,70 @@ function data_get_available_presets($context) {
             }
         }
     }
-
-    if ($userids = get_list_of_plugins('data/preset', '', $CFG->dataroot)) {
-        $canviewall = has_capability('mod/data:viewalluserpresets', $context);
-        foreach ($userids as $userid) {
-            $fulldir = $CFG->dataroot.'/data/preset/'.$userid;
-            if ($userid == 0 || $USER->id == $userid || $canviewall) {
-                if ($dirs = get_list_of_plugins('data/preset/'.$userid, '', $CFG->dataroot)) {
-                    foreach ($dirs as $dir) {
-                        $fulldir = $CFG->dataroot.'/data/preset/'.$userid.'/'.$dir;
-                        if (is_directory_a_preset($fulldir)) {
-                            $preset = new object;
-                            $preset->path = $fulldir;
-                            $preset->userid = $userid;
-                            $preset->shortname = $dir;
-                            $preset->name = $preset->shortname;
-                            if (file_exists($fulldir.'/screenshot.jpg')) {
-                                $preset->screenshot = $CFG->wwwroot.'/mod/data/preset/'.$dir.'/screenshot.jpg';
-                            } else if (file_exists($fulldir.'/screenshot.png')) {
-                                $preset->screenshot = $CFG->wwwroot.'/mod/data/preset/'.$dir.'/screenshot.png';
-                            } else if (file_exists($fulldir.'/screenshot.gif')) {
-                                $preset->screenshot = $CFG->wwwroot.'/mod/data/preset/'.$dir.'/screenshot.gif';
-                            }
-                            $presets[] = $preset;
-                        }
-                    }
-                }
-            }
-        }
-    }
-
+    // Now add to that the site presets that people have saved
+    $presets = data_get_available_site_presets($context, $presets);
     return $presets;
 }
 
 /**
- * @global object
- * @global string
- * @global string
- * @param object $course
- * @param object $cm
- * @param object $data
+ * Gets an array of all of the presets that users have saved to the site.
+ *
+ * @param stdClass $context The context that we are looking from.
+ * @param array $presets
+ * @return array An array of presets
+ */
+function data_get_available_site_presets($context, array $presets=array()) {
+    $fs = get_file_storage();
+    $files = $fs->get_area_files(DATA_PRESET_CONTEXT, DATA_PRESET_COMPONENT, DATA_PRESET_FILEAREA);
+    $canviewall = has_capability('mod/data:viewalluserpresets', $context);
+    if (empty($files)) {
+        return $presets;
+    }
+    foreach ($files as $file) {
+        if (($file->is_directory() && $file->get_filepath()=='/') || !$file->is_directory() || (!$canviewall && $file->get_userid() != $USER->id)) {
+            continue;
+        }
+        $preset = new stdClass;
+        $preset->path = $file->get_filepath();
+        $preset->name = trim($preset->path, '/');
+        $preset->shortname = $preset->name;
+        $preset->userid = $file->get_userid();
+        $preset->id = $file->get_id();
+        $preset->storedfile = $file;
+        $presets[] = $preset;
+    }
+    return $presets;
+}
+
+/**
+ * Deletes a saved preset.
+ *
+ * @param string $name
+ * @return bool
+ */
+function data_delete_site_preset($name) {
+    $fs = get_file_storage();
+
+    $files = $fs->get_directory_files(DATA_PRESET_CONTEXT, DATA_PRESET_COMPONENT, DATA_PRESET_FILEAREA, 0, '/'.$name.'/');
+    if (!empty($files)) {
+        foreach ($files as $file) {
+            $file->delete();
+        }
+    }
+
+    $dir = $fs->get_file(DATA_PRESET_CONTEXT, DATA_PRESET_COMPONENT, DATA_PRESET_FILEAREA, 0, '/'.$name.'/', '.');
+    if (!empty($dir)) {
+        $dir->delete();
+    }
+    return true;
+}
+
+/**
+ * Prints the heads for a page
+ *
+ * @param stdClass $course
+ * @param stdClass $cm
+ * @param stdClass $data
  * @param string $currenttab
  */
 function data_print_header($course, $cm, $data, $currenttab='') {
@@ -2857,13 +2884,72 @@ function data_extend_settings_navigation(settings_navigation $settings, navigati
     }
 }
 
-function data_presets_export($course, $cm, $data) {
-    global $CFG, $DB;
-    $presetname = clean_filename($data->name) . '-preset-' . gmdate("Ymd_Hi");
-    $exportsubdir = "$course->id/moddata/data/$data->id/$presetname";
-    make_upload_directory($exportsubdir);
-    $exportdir = "$CFG->dataroot/$exportsubdir";
+/**
+ * Save the database configuration as a preset.
+ *
+ * @param stdClass $course The course the database module belongs to.
+ * @param stdClass $cm The course module record
+ * @param stdClass $data The database record
+ * @param string $path
+ * @return bool
+ */
+function data_presets_save($course, $cm, $data, $path) {
+    $fs = get_file_storage();
+    $filerecord = new stdClass;
+    $filerecord->contextid = DATA_PRESET_CONTEXT;
+    $filerecord->component = DATA_PRESET_COMPONENT;
+    $filerecord->filearea = DATA_PRESET_FILEAREA;
+    $filerecord->itemid = 0;
+    $filerecord->filepath = '/'.$path.'/';
 
+    $filerecord->filename = 'preset.xml';
+    $fs->create_file_from_string($filerecord, data_presets_generate_xml($course, $cm, $data));
+
+    $filerecord->filename = 'singletemplate.html';
+    $fs->create_file_from_string($filerecord, $data->singletemplate);
+
+    $filerecord->filename = 'listtemplateheader.html';
+    $fs->create_file_from_string($filerecord, $data->listtemplateheader);
+
+    $filerecord->filename = 'listtemplate.html';
+    $fs->create_file_from_string($filerecord, $data->listtemplate);
+
+    $filerecord->filename = 'listtemplatefooter.html';
+    $fs->create_file_from_string($filerecord, $data->listtemplatefooter);
+
+    $filerecord->filename = 'addtemplate.html';
+    $fs->create_file_from_string($filerecord, $data->addtemplate);
+
+    $filerecord->filename = 'rsstemplate.html';
+    $fs->create_file_from_string($filerecord, $data->rsstemplate);
+
+    $filerecord->filename = 'rsstitletemplate.html';
+    $fs->create_file_from_string($filerecord, $data->rsstitletemplate);
+
+    $filerecord->filename = 'csstemplate.css';
+    $fs->create_file_from_string($filerecord, $data->csstemplate);
+
+    $filerecord->filename = 'jstemplate.js';
+    $fs->create_file_from_string($filerecord, $data->jstemplate);
+
+    $filerecord->filename = 'asearchtemplate.html';
+    $fs->create_file_from_string($filerecord, $data->asearchtemplate);
+
+    return true;
+}
+
+/**
+ * Generates the XML for the database module provided
+ *
+ * @global moodle_database $DB
+ * @param stdClass $course The course the database module belongs to.
+ * @param stdClass $cm The course module record
+ * @param stdClass $data The database record
+ * @return string The XML for the preset
+ */
+function data_presets_generate_xml($course, $cm, $data) {
+    global $DB;
+    
     // Assemble "preset.xml":
     $presetxmldata = "<preset>\n\n";
 
@@ -2892,7 +2978,6 @@ function data_presets_export($course, $cm, $data) {
         $presetxmldata .= "<defaultsort>0</defaultsort>\n";
     }
     $presetxmldata .= "</settings>\n\n";
-
     // Now for the fields. Grab all that are non-empty
     $fields = $DB->get_records('data_fields', array('dataid'=>$data->id));
     ksort($fields);
@@ -2908,6 +2993,19 @@ function data_presets_export($course, $cm, $data) {
         }
     }
     $presetxmldata .= '</preset>';
+    return $presetxmldata;
+}
+
+function data_presets_export($course, $cm, $data, $tostorage=false) {
+    global $CFG, $DB;
+
+    $presetname = clean_filename($data->name) . '-preset-' . gmdate("Ymd_Hi");
+    $exportsubdir = "temp/mod_data/presetexport/$presetname";
+    make_upload_directory($exportsubdir);
+    $exportdir = "$CFG->dataroot/$exportsubdir";
+
+    // Assemble "preset.xml":
+    $presetxmldata = data_presets_generate_xml($course, $cm, $data);
 
     // After opening a file in write mode, close it asap
     $presetxmlfile = fopen($exportdir . '/preset.xml', 'w');
@@ -2978,8 +3076,12 @@ function data_presets_export($course, $cm, $data) {
         $filelist[$key] = $exportdir . '/' . $filelist[$key];
     }
 
-    $exportfile = "$CFG->dataroot/$course->id/moddata/data/$data->id/$presetname.zip";
+    $exportfile = $exportdir.'.zip';
     file_exists($exportfile) && unlink($exportfile);
+
+    $fp = get_file_packer();
+    $fp->archive_to_pathname($files, $archivefile);
+
     $status = zip_files($filelist, $exportfile);
     // ToDo: status check
     foreach ($filelist as $file) {

@@ -135,21 +135,21 @@ if (optional_param('sesskey', false, PARAM_BOOL) && confirm_sesskey()) {
 
     } else if ($formdata = $form_save->get_data()) {
 
-        $presetdirectory = "/data/preset/$USER->id/{$formdata->name}";
+        if (!empty($formdata->overwrite)) {
+            data_delete_site_preset($formdata->name);
+        }
 
-        if (file_exists($CFG->dataroot.$presetdirectory)) {
-            if (!$formdata->overwrite) {
+        // If the preset exists now then we need to throw an error.
+        $sitepresets = data_get_available_site_presets($context);
+        foreach ($sitepresets as $key=>$preset) {
+            if ($formdata->name == $preset->name) {
                 print_error('errorpresetexists', 'preset');
-            } else {
-                fulldelete($CFG->dataroot.$presetdirectory);
             }
         }
-        make_upload_directory($presetdirectory);
 
-        $file = data_presets_export($course, $cm, $data);
-        if (!unzip_file($file, $CFG->dataroot.$presetdirectory, false)) {
-            print_error('cannotunziptopreset', 'data');
-        }
+        // Save the preset now
+        data_presets_save($course, $cm, $data, $formdata->name);
+
         echo $OUTPUT->notification(get_string('savesuccess', 'data'), 'notifysuccess');
         echo $OUTPUT->continue_button($PAGE->url);
         echo $OUTPUT->footer();
