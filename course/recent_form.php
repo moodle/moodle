@@ -51,9 +51,7 @@ class recent_form extends moodleform {
         if ($viewparticipants) {
             $options = array();
             $options[0] = get_string('allparticipants');
-            if ($guest = get_complete_user_data('username', 'guest')) {
-                $options[$guest->id] = fullname($guest);
-            }
+            $options[$CFG->siteguest] = get_string('guestuser');
 
             if (groups_get_course_groupmode($COURSE) == SEPARATEGROUPS) {
                 $groups = groups_get_user_groups($COURSE->id);

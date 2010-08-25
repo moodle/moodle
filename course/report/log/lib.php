@@ -104,9 +104,7 @@ function print_mnet_log_selector_form($hostid, $course, $selecteduser=0, $select
                 $users[$courseuser->id] = fullname($courseuser, has_capability('moodle/site:viewfullnames', $context));
             }
         }
-        if ($guest = get_complete_user_data('username', 'guest')) {
-            $users[$guest->id] = fullname($guest);
-        }
+        $users[$CFG->siteguest] = get_string('guestuser');
     }
 
     // Get all the hosts that have log records
@@ -368,9 +366,7 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate='today'
                 $users[$courseuser->id] = fullname($courseuser, has_capability('moodle/site:viewfullnames', $context));
             }
         }
-        if ($guest = get_complete_user_data('username', 'guest')) {
-            $users[$guest->id] = fullname($guest);
-        }
+        $users[$CFG->siteguest] = get_string('guestuser');
     }
 
     if (has_capability('coursereport/log:view', $sitecontext) && $showcourses) {
