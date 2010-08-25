@@ -24,17 +24,15 @@
  */
 
 $string['aggregatetype'] = 'Aggregate type';
-$string['aggregatetype_help'] = 'Forum aggregation defines how all the ratings given to posts in a forum are combined to form the final grade (for each post and for the whole forum activity).
+$string['aggregatetype_help'] = 'The aggregate type defines how ratings are combined to form the final grade in the gradebook.
 
-There are 5 aggregate types:
+* Average of ratings - The mean of all ratings
+* Count of ratings - The number of rated items becomes the final grade. Note that the total cannot exceed the maximum grade for the activity.
+* Maximum - The highest rating becomes the final grade
+* Minimum - The smallest rating becomes the final grade
+* Sum - All ratings are added together. Note that the total cannot exceed the maximum grade for the activity.
 
-* Average - The mean of all the ratings given to posts in the forum (useful with peer grading when there are a lot of ratings being made)
-* Count - The number of rated posts becomes the final grade (useful when the number of posts is important). Note that the total cannot exceed the maximum grade for the forum.
-* Max - The highest rating is returned as the final grade (useful for emphasising the best post)
-* Min - The smallest rating is returned as the final grade (for promoting a culture of high quality for all posts)
-* Sum - All ratings for a particular student are added together. Note that the total cannot exceed the maximum grade for the forum.
-
-If "No ratings" is selected, then the forum activity will not appear in the gradebook.';
+If "No ratings" is selected, then the activity will not appear in the gradebook.';
 $string['allowratings'] = 'Allow items to be rated?';
 $string['norate'] = 'Rating of items not allowed!';
 $string['noviewanyrate'] = 'You can only look at results for posts that you made';
@@ -45,4 +43,4 @@ $string['rating'] = 'Rating';
 $string['ratingtime'] = 'Restrict ratings to items with dates in this range:';
 $string['ratings'] = 'Ratings';
 $string['rolewarning'] = 'Roles with permission to rate';
-$string['rolewarning_help'] = 'Aggregated ratings appear in the gradebook. Click on Permissions under module administration to change who can submit ratings.';
+$string['rolewarning_help'] = 'Users assigned the following roles may rate items. The list of roles may be amended via the permissions link in the settings block.';
