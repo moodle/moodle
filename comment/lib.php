@@ -86,6 +86,7 @@ class comment {
     private static $comment_context = null;
     private static $comment_area = null;
     private static $comment_page = null;
+    private static $comment_component = null;
     /**
      * Construct function of comment class, initialise
      * class members
@@ -166,6 +167,12 @@ class comment {
             $this->linktext = get_string('comments');
         }
 
+        if (!empty($options->ignore_permission)) {
+            $this->ignore_permission = true;
+        } else {
+            $this->ignore_permission = false;
+        }
+
         if (!empty($options->showcount)) {
             $count = $this->count();
             if (empty($count)) {
@@ -212,7 +219,7 @@ EOD;
         self::$nonjs = optional_param('nonjscomment', '', PARAM_ALPHA);
         self::$comment_itemid  = optional_param('comment_itemid',  '', PARAM_INT);
         self::$comment_context = optional_param('comment_context', '', PARAM_INT);
-		self::$comment_page    = optional_param('comment_page',    '', PARAM_INT);
+        self::$comment_page    = optional_param('comment_page',    '', PARAM_INT);
         self::$comment_area    = optional_param('comment_area',    '', PARAM_ALPHAEXT);
 
         $PAGE->requires->string_for_js('addcomment', 'moodle');
@@ -246,8 +253,13 @@ EOD;
         $this->viewcap = has_capability('moodle/comment:view', $this->context);
         if (!empty($this->plugintype)) {
             $permissions = plugin_callback($this->plugintype, $this->pluginname, FEATURE_COMMENT, 'permissions', array($this->args), array('post'=>true, 'view'=>true));
-            $this->postcap = $this->postcap && $permissions['post'];
-            $this->viewcap = $this->viewcap && $permissions['view'];
+            if ($this->ignore_permission) {
+                $this->postcap = $this->postcap && $permissions['post'];
+                $this->viewcap = $this->viewcap && $permissions['view'];
+            } else {
+                $this->postcap = $permissions['post'];
+                $this->viewcap = $permissions['view'];
+            }
         }
     }
 
@@ -407,7 +419,7 @@ EOD;
             $c->timecreated = $u->ctimecreated;
             $url = new moodle_url('/user/view.php', array('id'=>$u->id, 'course'=>$this->courseid));
             $c->username = $u->username;
-            $c->profileurl = $url;
+            $c->profileurl = $url->out();
             $c->fullname = fullname($u);
             $c->time = userdate($c->timecreated, get_string('strftimerecent', 'langconfig'));
             $c->content = format_text($c->content, $c->format);
@@ -588,6 +600,7 @@ EOD;
 <input type="hidden" name="contextid" value="$this->contextid" />
 <input type="hidden" name="action" value="add" />
 <input type="hidden" name="area" value="$this->commentarea" />
+<input type="hidden" name="component" value="$this->component" />
 <input type="hidden" name="itemid" value="$this->itemid" />
 <input type="hidden" name="courseid" value="{$this->courseid}" />
 <input type="hidden" name="sesskey" value="{$sesskey}" />

@@ -33,12 +33,14 @@ $commentid = optional_param('commentid', -1,     PARAM_INT);
 $content   = optional_param('content',   '',     PARAM_RAW);
 $itemid    = optional_param('itemid',    '',     PARAM_INT);
 $returnurl = optional_param('returnurl', '',     PARAM_URL);
+$component = optional_param('component', '', PARAM_ALPHAEXT);
 
 $cmt = new stdclass;
 $cmt->contextid = $contextid;
 $cmt->courseid  = $course->id;
 $cmt->area      = $area;
 $cmt->itemid    = $itemid;
+$cmt->component = $component;
 $comment = new comment($cmt);
 
 switch ($action) {
