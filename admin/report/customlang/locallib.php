@@ -111,7 +111,11 @@ class report_customlang_utils {
         $stringman  = get_string_manager();
         $components = $DB->get_records('customlang_components');
         foreach ($components as $component) {
-            $current = $DB->get_records('customlang', array('lang'=>$lang, 'componentid'=>$component->id), 'stringid', 'stringid, *');
+            $sql = "SELECT stringid, s.*
+                      FROM {customlang} s
+                     WHERE lang = ? AND componentid = ?
+                  ORDER BY stringid";
+            $current = $DB->get_records_sql($sql, array($lang, $component->id));
             $english = $stringman->load_component_strings($component->name, 'en', true, true);
             if ($lang == 'en') {
                 $master =& $english;
