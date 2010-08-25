@@ -1,5 +1,5 @@
 <?php
-/** 
+/**
 * Global Search Engine for Moodle
 *
 * @package search
@@ -19,7 +19,7 @@ define('DEFAULT_POPUP_SETTINGS', "\"menubar=0,location=0,scrollbars,resizable,wi
 
 /**
 * a class that represents a single result record of the search engine
-*/    
+*/
 class SearchResult {
 public  $url,
         $title,
@@ -28,7 +28,7 @@ public  $url,
         $score,
         $number,
         $courseid;
-} 
+}
 
 
 /**
@@ -49,7 +49,7 @@ private $mode,
         } //else
 
         $this->valid = true;
-    } 
+    }
 
     /**
     * returns the search cache status
@@ -57,7 +57,7 @@ private $mode,
     */
     public function can_cache() {
         return $this->valid;
-    } 
+    }
 
     /**
     *
@@ -70,7 +70,7 @@ private $mode,
         //if this query is different from the last, clear out the last one
         if ($id != false && $last_term != $id) {
             $this->clear($last_term);
-        } 
+        }
 
         //store the new query if id and object are passed in
         if ($object && $id) {
@@ -80,8 +80,8 @@ private $mode,
         //otherwise return the stored results
         } else if ($id && $this->exists($id)) {
             return $this->fetch($id);
-        } 
-    } 
+        }
+    }
 
     /**
     * do key exist in cache ?
@@ -92,8 +92,8 @@ private $mode,
         switch ($this->mode) {
             case 'session' :
             return isset($_SESSION[$id]);
-        } 
-    } 
+        }
+    }
 
     /**
     * clears a cached object in cache
@@ -106,8 +106,8 @@ private $mode,
                 unset($_SESSION[$id]);
                 session_unregister($id);
             return;
-        } 
-    } 
+        }
+    }
 
     /**
     * fetches a cached object
@@ -118,8 +118,8 @@ private $mode,
         switch ($this->mode) {
             case 'session' :
                 return ($this->exists($id)) ? unserialize($_SESSION[$id]) : false;
-        } 
-    } 
+        }
+    }
 
     /**
     * put an object in cache
@@ -133,8 +133,8 @@ private $mode,
                 $_SESSION[$id] = serialize($object);
             return;
         }
-    } 
-} 
+    }
+}
 
 /**
 * Represents a single query with results
@@ -172,17 +172,17 @@ class SearchQuery {
         } catch(Exception $e) {
             $this->validindex = false;
             return;
-        } 
+        }
 
         if (empty($this->term)) {
             $this->validquery = false;
         } else {
             $this->set_query($this->term);
-        } 
-    } 
-    
+        }
+    }
+
     /**
-    * determines state of query object depending on query entry and 
+    * determines state of query object depending on query entry and
     * tries to lauch search if all is OK
     * @return void (this is only a state changing trigger).
     */
@@ -202,7 +202,7 @@ class SearchQuery {
         } else {
             $this->results = array();
         }
-    } 
+    }
 
     /**
     * accessor to the result table.
@@ -224,7 +224,7 @@ class SearchQuery {
         // $term = mb_convert_case($this->term, MB_CASE_LOWER, 'UTF-8');
         $term = $this->term;
         $page = optional_param('page', 1, PARAM_INT);
-        
+
         //experimental - return more results
         // $strip_arr = array('author:', 'title:', '+', '-', 'doctype:');
         // $stripped_term = str_replace($strip_arr, '', $term);
@@ -258,7 +258,7 @@ class SearchQuery {
 
             if ($end > $finalresults) {
                 $end = $finalresults;
-            } 
+            }
         } else {
             $start = 0;
             $end = $finalresults;
@@ -278,7 +278,7 @@ class SearchQuery {
                     $resultdoc->author  = $hit->author;
                     $resultdoc->courseid = $hit->course_id;
                     $resultdoc->userid = $hit->user_id;
-                    
+
                     //and store it
                     $resultdocs[] = clone($resultdoc);
                 }
@@ -311,12 +311,12 @@ class SearchQuery {
             } else {
             //There was something in the cache, so we're using that to save time
             //print "Using cached results.";
-            } 
+            }
         } else {
             //no caching :(
             // print "Caching disabled!";
             $resultdocs = $this->process_results();
-        } 
+        }
         return $resultdocs;
     }
 
@@ -338,7 +338,7 @@ class SearchQuery {
         $ret .= "<a href='query.php?query_string={$query}&page=".($page-1)."'>&lt; {$back}</a>&nbsp;";
       } else {
         $ret .= "&lt; {$back}&nbsp;";
-      } 
+      }
 
       //don't <a href> the current page
       for ($i = 1; $i <= $pages; $i++) {
@@ -346,15 +346,15 @@ class SearchQuery {
           $ret .= "($i)&nbsp;";
         } else {
           $ret .= "<a href='query.php?query_string={$query}&page={$i}'>{$i}</a>&nbsp;";
-        } 
-      } 
+        }
+      }
 
       //Next disabled if we're on the last page
       if ($page < $pages) {
         $ret .= "<a href='query.php?query_string={$query}&page=".($page+1)."'>{$next} &gt;</a>&nbsp;";
       } else {
         $ret .= "{$next} &gt;&nbsp;";
-      } 
+      }
 
       $ret .= "</div>";
 
@@ -376,11 +376,11 @@ class SearchQuery {
     * can the user see this result ?
     * @param user a reference upon the user to be checked for access
     * @param this_id the item identifier
-    * @param doctype the search document type. MAtches the module or block or 
+    * @param doctype the search document type. MAtches the module or block or
     * extra search source definition
     * @param course_id the course reference of the searched result
     * @param group_id the group identity attached to the found resource
-    * @param path the path that routes to the local lib.php of the searched 
+    * @param path the path that routes to the local lib.php of the searched
     * surrounding object fot that document
     * @param item_type a subclassing information for complex module data models
     * @uses CFG
@@ -388,7 +388,7 @@ class SearchQuery {
     */
     private function can_display(&$user, $this_id, $doctype, $course_id, $group_id, $path, $item_type, $context_id, &$searchables) {
         global $CFG, $DB;
-       
+
       /**
       * course related checks
       */
@@ -396,18 +396,18 @@ class SearchQuery {
       if (has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM))){
         return true;
       }
-            
-        // first check course compatibility against user : enrolled users to that course can see. 
+
+        // first check course compatibility against user : enrolled users to that course can see.
         $myCourses = enrol_get_users_courses($user->id, true);
         $unenroled = !in_array($course_id, array_keys($myCourses));
-        
+
         // if guests are allowed, logged guest can see
-        $isallowedguest = (isguestuser()) ? $DB->get_field('course', 'guest', array('id' => $course_id)) : false ;
-        
+        $isallowedguest = false; //TODO: this will be harder to do now because we do not have guest field in course table any more
+
         if ($unenroled && !$isallowedguest){
             return false;
         }
-        
+
         // if user is enrolled or is allowed user and course is hidden, can he see it ?
         $visibility = $DB->get_field('course', 'visible', array('id' => $course_id));
         if ($visibility <= 0){
@@ -415,13 +415,13 @@ class SearchQuery {
                 return false;
             }
         }
-        
+
         /**
         * prerecorded capabilities
         */
         // get context caching information and tries to discard unwanted records here
-        
-        
+
+
         /**
         * final checks
         */
@@ -433,13 +433,13 @@ class SearchQuery {
             include_once "{$CFG->dirroot}/{$searchable_instance->location}/{$doctype}/search_document.php";
         }
         $access_check_function = "{$doctype}_check_text_access";
-        
+
         if (function_exists($access_check_function)){
             $modulecheck = $access_check_function($path, $item_type, $this_id, $user, $group_id, $context_id);
             // echo "module said $modulecheck for item $doctype/$item_type/$this_id";
             return($modulecheck);
         }
-          
+
         return true;
     }
 
