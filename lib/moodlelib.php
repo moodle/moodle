@@ -7087,32 +7087,13 @@ function plugin_callback($type, $name, $feature, $action, $options = null, $defa
 
     $name = clean_param($name, PARAM_SAFEDIR);
     $function = $name.'_'.$feature.'_'.$action;
-
-    switch($type) {
-        case 'mod' :
-            $file = $CFG->dirroot.'/mod/'.$name.'/lib.php';
-            break;
-        case 'block' :
-            // load block_base class
-            require_once($CFG->dirroot . '/blocks/moodleblock.class.php');
-            // block uses class based callback functions
-            // see blocks/moodleblock.class.php
-            $file = $CFG->dirroot.'/blocks/'.$name.'/block_'.$name.'.php';
-            $function = array('block_' . $name, 'comment_'.$action);
-            break;
-        case 'moodle':
-            // for special plugins, such as blog and tag
-            $file = $CFG->dirroot.'/'.$name.'/lib.php';
-            break;
-        default:
-            throw new Exception('Unsupported callback type ('.$type.')');
-    }
+    $file = get_plugin_directory($type, $name) . '/lib.php';
 
     // Load library and look for function
     if (file_exists($file)) {
         require_once($file);
     }
-    if (is_array($function) || function_exists($function)) {
+    if (function_exists($function)) {
         // Function exists, so just return function result
         $ret = call_user_func_array($function, (array)$options);
         if (is_null($ret)) {
@@ -7120,13 +7101,8 @@ function plugin_callback($type, $name, $feature, $action, $options = null, $defa
         } else {
             return $ret;
         }
-    } else {
-        switch($feature) {
-            // If some features can also be checked in other ways
-            // for legacy support, this could be added here
-            default: return $default;
-        }
     }
+    return $default;
 }
 
 /**

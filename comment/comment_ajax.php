@@ -29,7 +29,12 @@ list($context, $course, $cm) = get_context_info_array($contextid);
 $PAGE->set_context($context);
 $PAGE->set_url('/comment/comment_ajax.php');
 
-require_login($course, true, $cm);
+// XXX: display comments in frontpage without login
+if ($context->id != get_context_instance(CONTEXT_COURSE, SITEID)->id
+    or $action == 'add'
+    or $action == 'delete') {
+        require_login($course, true, $cm);
+}
 require_sesskey();
 
 $action    = optional_param('action',    '', PARAM_ALPHA);

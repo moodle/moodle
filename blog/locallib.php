@@ -106,9 +106,9 @@ class blog_entry {
             $cmt->context = get_context_instance(CONTEXT_USER, $user->id);
             $cmt->courseid = $PAGE->course->id;
             $cmt->area = 'format_blog';
-            $cmt->env = 'blog';
             $cmt->itemid = $this->id;
             $cmt->showcount = $CFG->blogshowcommentscount;
+            $cmt->component = 'blog';
             $comment = new comment($cmt);
             $cmttext = $comment->output(true);
         }

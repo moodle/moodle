@@ -1306,13 +1306,13 @@ function data_print_template($template, $records, $data, $search='', $page=0, $r
                 require_once($CFG->dirroot  . '/comment/lib.php');
                 list($context, $course, $cm) = get_context_info_array($context->id);
                 $cmt = new stdclass;
-                $cmt->pluginname = 'data';
                 $cmt->context = $context;
                 $cmt->course  = $course;
                 $cmt->cm      = $cm;
                 $cmt->area    = 'database_entry';
                 $cmt->itemid  = $record->id;
                 $cmt->showcount = true;
+                $cmt->component = 'mod_data';
                 $comment = new comment($cmt);
                 $replacement[] = $comment->output(true);
             }
@@ -1345,13 +1345,13 @@ function data_print_template($template, $records, $data, $search='', $page=0, $r
                     require_once($CFG->dirroot . '/comment/lib.php');
                     list($context, $course, $cm) = get_context_info_array($context->id);
                     $cmt = new stdclass;
-                    $cmt->pluginname = 'data';
                     $cmt->context = $context;
                     $cmt->course  = $course;
                     $cmt->cm      = $cm;
                     $cmt->area    = 'database_entry';
                     $cmt->itemid  = $record->id;
                     $cmt->showcount = true;
+                    $cmt->component = 'mod_data';
                     $comment = new comment($cmt);
                     $comment->output(false);
                 }

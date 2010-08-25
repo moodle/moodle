@@ -37,22 +37,22 @@ class block_comments extends block_base {
         }
         $this->content->footer = '';
         $this->content->text = '';
-        if (isloggedin() && !isguestuser()) {
-            list($context, $course, $cm) = get_context_info_array($PAGE->context->id);
-            $args = new stdclass;
-            $args->context   = $PAGE->context;
-            $args->course    = $course;
-            $args->area      = 'page_comments';
-            $args->itemid    = 0;
-            // set 'env' to tell moodle tweak ui for this block
-            $args->env       = 'block_comments';
-            $args->linktext  = get_string('showcomments');
-            $comment = new comment($args);
+        list($context, $course, $cm) = get_context_info_array($PAGE->context->id);
+        $args = new stdclass;
+        $args->context   = $PAGE->context;
+        $args->course    = $course;
+        $args->area      = 'page_comments';
+        $args->itemid    = 0;
+        // set 'env' to tell moodle tweak ui for this block
+        $args->env       = 'block_comments';
+        $args->component = 'block_comments';
+        $args->linktext  = get_string('showcomments');
+        $comment = new comment($args);
+        $comment->set_view_permission(true);
 
-            $this->content = new stdClass;
-            $this->content->text = $comment->output(true);
-            $this->content->footer = '';
-        }
+        $this->content = new stdClass;
+        $this->content->text = $comment->output(true);
+        $this->content->footer = '';
         return $this->content;
     }
     function instance_delete() {

@@ -85,7 +85,7 @@ class comment {
     private static $comment_itemid = null;
     private static $comment_context = null;
     private static $comment_area = null;
-	private static $comment_page = null;
+    private static $comment_page = null;
     /**
      * Construct function of comment class, initialise
      * class members
@@ -119,6 +119,10 @@ class comment {
             print_error('invalidcontext');
         }
 
+        if (!empty($options->component)) {
+            $this->set_component($options->component);
+        }
+
         // setup course
         // course will be used to generate user profile link
         if (!empty($options->course)) {
@@ -127,10 +131,6 @@ class comment {
             $this->courseid = $options->courseid;
         } else {
             $this->courseid = SITEID;
-        }
-
-        if (!empty($options->pluginname)) {
-            $this->pluginname = $options->pluginname;
         }
 
         // setup coursemodule
@@ -165,8 +165,6 @@ class comment {
         } else {
             $this->linktext = get_string('comments');
         }
-        // setting post and view permissions
-        $this->check_permissions();
 
         if (!empty($options->showcount)) {
             $count = $this->count();
@@ -179,8 +177,6 @@ class comment {
             $this->count = '';
         }
 
-        $this->setup_plugin();
-
         // setup options for callback functions
         $this->args = new stdclass;
         $this->args->context     = $this->context;
@@ -188,6 +184,9 @@ class comment {
         $this->args->cm          = $this->cm;
         $this->args->commentarea = $this->commentarea;
         $this->args->itemid      = $this->itemid;
+
+        // setting post and view permissions
+        $this->check_permissions();
 
         // load template
         $this->template = <<<EOD
@@ -221,40 +220,17 @@ EOD;
         $PAGE->requires->string_for_js('comments', 'moodle');
     }
 
-    /**
-     * Setup plugin type and plugin name
-     */
-    private function setup_plugin() {
-        global $DB;
-        // blog needs to set env as "blog"
-        if ($this->env == 'blog') {
-            $this->plugintype = 'moodle';
-            $this->pluginname = 'blog';
-        }
-        // tag page needs to set env as "tag"
-        if ($this->env == 'tag') {
-            $this->plugintype = 'moodle';
-            $this->pluginname = 'tag';
-        }
-        if ($this->context->contextlevel == CONTEXT_BLOCK) {
-            if ($block = $DB->get_record('block_instances', array('id'=>$this->context->instanceid))) {
-                $this->plugintype = 'block';
-                $this->pluginname = $block->blockname;
-            }
-        }
+    public function set_component($component) {
+        list($this->plugintype, $this->pluginname) = normalize_component($component);
+        return null;
+    }
 
-        if ($this->context->contextlevel == CONTEXT_MODULE && $this->env != 'block_comments') {
-            $this->plugintype = 'mod';
-            // to improve performance, pluginname should be assigned before initilise comment object
-            // if it is empty, we will try to guess, it will rarely be used.
-            if (empty($this->pluginname)) {
-                if (empty($this->course)) {
-                    $this->course = $DB->get_record('course', array('id'=>$this->courseid), '*', MUST_EXIST);
-                }
-                $this->modinfo = get_fast_modinfo($this->course);
-                $this->pluginname = $this->modinfo->cms[$this->cm->id]->modname;
-            }
-        }
+    public function set_view_permission($value) {
+        $this->viewcap = $value;
+    }
+
+    public function set_post_permission($value) {
+        $this->postcap = $value;
     }
 
     /**
@@ -268,7 +244,7 @@ EOD;
         $this->postcap = has_capability('moodle/comment:post', $this->context);
         $this->viewcap = has_capability('moodle/comment:view', $this->context);
         if (!empty($this->plugintype)) {
-            $permissions = plugin_callback($this->plugintype, $this->pluginname, FEATURE_COMMENT, 'permissions', $this->args, array('post'=>true, 'view'=>true));
+            $permissions = plugin_callback($this->plugintype, $this->pluginname, FEATURE_COMMENT, 'permissions', array($this->args), array('post'=>true, 'view'=>true));
             $this->postcap = $this->postcap && $permissions['post'];
             $this->viewcap = $this->viewcap && $permissions['view'];
         }
@@ -302,7 +278,6 @@ EOD;
         $options->contextid = $this->contextid;
         $options->env = $this->env;
         if ($this->env == 'block_comments') {
-            $options->autostart = true;
             $options->notoggle = true;
         }
 

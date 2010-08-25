@@ -1106,7 +1106,7 @@ function wiki_add_comment($context, $pageid, $content, $editor) {
     $cmt->itemid = $pageid;
     $cmt->area = 'wiki_page';
     $cmt->course = $course;
-    $cmt->pluginname = 'wiki';
+    $cmt->component = 'mod_wiki';
 
     $manager = new comment($cmt);
 
@@ -1136,8 +1136,8 @@ function wiki_delete_comment($idcomment, $context, $pageid) {
     $cmt->context = $context;
     $cmt->itemid = $pageid;
     $cmt->area = 'wiki_page';
-    $cmt->pluginname = 'wiki';
     $cmt->course = $course;
+    $cmt->component = 'mod_wiki';
 
     $manager = new comment($cmt);
     $manager->delete($idcomment);

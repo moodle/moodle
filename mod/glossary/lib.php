@@ -1057,7 +1057,7 @@ function glossary_print_entry_icons($course, $cm, $glossary, $entry, $mode='',$h
         if (!empty($CFG->usecomments)) {
             require_once($CFG->dirroot . '/comment/lib.php');
             $cmt = new stdclass;
-            $cmt->pluginname = 'glossary';
+            $cmt->component = 'mod_glossary';
             $cmt->context  = $context;
             $cmt->course   = $course;
             $cmt->cm       = $cm;
