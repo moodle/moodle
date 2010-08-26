@@ -87,7 +87,7 @@ class TimeModifiedExpectation extends SimpleExpectation {
     }
 }
 
-class completionlib_test extends UnitTestCase {
+class completionlib_test extends UnitTestCaseUsingDatabase {
 
     public static $includecoverage = array('lib/completionlib.php');
     var $realdb,$realcfg,$realsession,$realuser;
