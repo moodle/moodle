@@ -69,8 +69,7 @@ class backup_file_manager {
     public static function get_content_file_location($contenthash) {
         $l1 = $contenthash[0].$contenthash[1];
         $l2 = $contenthash[2].$contenthash[3];
-        $l3 = $contenthash[4].$contenthash[5];
-        return "$l1/$l2/$l3/$contenthash";
+        return "$l1/$l2/$contenthash";
     }
 
     /**
