@@ -346,7 +346,7 @@ class backup_ui_stage_confirmation extends backup_ui_stage {
                     $form->add_heading('rootsettings', get_string('rootsettings', 'backup'));
                 } else if (!$courseheading) {
                     // we havn't already add a course heading
-                    $form->add_heading('coursesettings', get_string('includeactivities', 'backup'));
+                    $form->add_heading('coursesettings', get_string('includeditems', 'backup'));
                     $courseheading = true;
                 }
                 // Iterate all settings, doesnt need to happen by reference

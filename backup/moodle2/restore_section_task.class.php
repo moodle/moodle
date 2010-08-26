@@ -145,6 +145,12 @@ class restore_section_task extends restore_task {
         // Define section_included (to decide if the whole task must be really executed)
         $settingname = $settingprefix . 'included';
         $section_included = new restore_section_included_setting($settingname, base_setting::IS_BOOLEAN, true);
+        if (is_number($this->info->title)) {
+            $label = get_string('includesection', 'backup', $this->info->title);
+        } else {
+            $label = $this->info->title;
+        }
+        $section_included->get_ui()->set_label($label);
         $this->add_setting($section_included);
 
         // Define section_userinfo. Dependent of:
