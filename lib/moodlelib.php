@@ -6957,7 +6957,7 @@ function get_plugin_types($fullpaths=true) {
 function get_plugin_list($plugintype) {
     global $CFG;
 
-    $ignored = array('CVS', '_vti_cnf', 'simpletest', 'db', 'yui');
+    $ignored = array('CVS', '_vti_cnf', 'simpletest', 'db', 'yui', 'phpunit');
     if ($plugintype == 'auth') {
         // Historically we have had an auth plugin called 'db', so allow a special case.
         $key = array_search('db', $ignored);
@@ -7054,7 +7054,7 @@ function get_list_of_plugins($directory='mod', $exclude='', $basedir='') {
         $dirhandle = opendir($basedir);
         while (false !== ($dir = readdir($dirhandle))) {
             $firstchar = substr($dir, 0, 1);
-            if ($firstchar == '.' or $dir == 'CVS' or $dir == '_vti_cnf' or $dir == 'simpletest' or $dir == 'yui' or $dir == $exclude) {
+            if ($firstchar == '.' or $dir == 'CVS' or $dir == '_vti_cnf' or $dir == 'simpletest' or $dir == 'yui' or $dir == 'phpunit' or $dir == $exclude) {
                 continue;
             }
             if (filetype($basedir .'/'. $dir) != 'dir') {
