@@ -353,7 +353,7 @@ abstract class moodleform_mod extends moodleform {
 
             $mform->addElement('header', 'modstandardratings', get_string('ratings', 'rating'));
 
-            $permission=null;
+            $permission=CAP_ALLOW;
             $context = get_context_instance(CONTEXT_MODULE, $this->_cm->id);
 
             $roles1 = get_roles_with_capability('moodle/rating:rate', $permission, $context);
