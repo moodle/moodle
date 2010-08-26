@@ -40,7 +40,7 @@
  * @global object $CFG
  * @name $CFG
  */
-global $CFG;
+global $CFG; // this should be done much earlier in config.php before creating new $CFG instance
 
 // We can detect real dirroot path reliably since PHP 4.0.2,
 // it can not be anything else, there is no point in having this in config.php
