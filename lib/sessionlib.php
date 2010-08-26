@@ -758,13 +758,12 @@ function session_gc() {
  * @return string
  */
 function sesskey() {
-    global $USER;
-
-    if (empty($USER->sesskey)) {
-        $USER->sesskey = random_string(10);
+    // note: do not use $USER because it may not be initialised yet
+    if (empty($_SESSION['USER']->sesskey)) {
+        $_SESSION['USER']->sesskey = random_string(10);
     }
 
-    return $USER->sesskey;
+    return $_SESSION['USER']->sesskey;
 }
 
 
