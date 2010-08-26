@@ -1613,6 +1613,10 @@ class moodle_page {
     public function has_set_url() {
         return ($this->_url!==null);
     }
+
+    public function set_block_actions_done($setting = true) {
+        $this->_block_actions_done = $setting;
+    }
 }
 
 /**

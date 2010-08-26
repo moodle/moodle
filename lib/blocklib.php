@@ -1114,7 +1114,7 @@ class block_manager {
         $editurlparams = $this->page->url->params();
         $editurlparams['bui_editid'] = $blockid;
         $editpage->set_url($editurlbase, $editurlparams);
-        $editpage->_block_actions_done = true;
+        $editpage->set_block_actions_done();
         // At this point we are either going to redirect, or display the form, so
         // overwrite global $PAGE ready for this. (Formslib refers to it.)
         $PAGE = $editpage;
