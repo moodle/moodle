@@ -1473,7 +1473,6 @@ class global_navigation extends navigation_node {
     protected function load_for_user($user=null, $forceforcontext=false) {
         global $DB, $CFG, $USER;
 
-        $iscurrentuser = false;
         if ($user === null) {
             // We can't require login here but if the user isn't logged in we don't
             // want to show anything
@@ -1481,11 +1480,13 @@ class global_navigation extends navigation_node {
                 return false;
             }
             $user = $USER;
-            $iscurrentuser = true;
         } else if (!is_object($user)) {
             // If the user is not an object then get them from the database
             $user = $DB->get_record('user', array('id'=>(int)$user), '*', MUST_EXIST);
         }
+
+        $iscurrentuser = ($user->id == $USER->id);
+
         $usercontext = get_context_instance(CONTEXT_USER, $user->id);
 
         // Get the course set against the page, by default this will be the site
