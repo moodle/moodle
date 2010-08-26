@@ -30,14 +30,14 @@
 
 $string['cannotcreatelangdir'] = 'No se puede crear el directorio de idioma.';
 $string['cannotcreatetempdir'] = 'No se puede crear el directorio temp.';
-$string['cannotdownloadcomponents'] = 'No se puede descargar componentes.';
-$string['cannotdownloadzipfile'] = 'No se puede descargar el archivo ZIP.';
+$string['cannotdownloadcomponents'] = 'No se puede descargar componentes';
+$string['cannotdownloadzipfile'] = 'No se puede descargar el archivo ZIP';
 $string['cannotfindcomponent'] = 'No se puede encontrar el componente.';
-$string['cannotsavemd5file'] = 'No se puede guardar el archivo md5.';
-$string['cannotsavezipfile'] = 'No se puede guardar el archivo ZIP.';
-$string['cannotunzipfile'] = 'No se puede descomprimir el archivo.';
-$string['componentisuptodate'] = 'El componente está actualizado.';
-$string['downloadedfilecheckfailed'] = 'Ha fallado la comprobación del archivo descargado.';
+$string['cannotsavemd5file'] = 'No se puede guardar el archivo md5';
+$string['cannotsavezipfile'] = 'No se puede guardar el archivo ZIP';
+$string['cannotunzipfile'] = 'No se puede descomprimir el archivo';
+$string['componentisuptodate'] = 'El componente está actualizado';
+$string['downloadedfilecheckfailed'] = 'Ha fallado la comprobación del archivo descargado';
 $string['invalidmd5'] = 'La variable de verificación MD5 es incorrecta no es valida - trate nuevamente';
 $string['missingrequiredfield'] = 'Falta algún campo necesario';
 $string['remotedownloaderror'] = 'Falló la descarga del componente a su servidor. Se recomienda verificar los ajustes del proxy, extensión PHP cURL.<br /><br />Debe descargar el<a href="{$a->url}">{$a->url}</a> archivo manualmente, copiarlo en "{$a->dest}" en su servidor y descomprimirlo allí.';

@@ -36,7 +36,7 @@ $string['clitypevalue'] = 'valor del tipo';
 $string['clitypevaluedefault'] = 'valor del tipo, pulse Enter para utilizar el valor por defecto ({$a})';
 $string['cliunknowoption'] = 'Opciones no reconocidas:
 {$a}
-. Por favor, utilice la opción Ayuda.';
+Por favor, utilice la opción Ayuda.';
 $string['cliyesnoprompt'] = 'escriba s (sí) o n (no)';
 $string['environmentrequireinstall'] = 'es obligatorio que esté instalado/activado';
 $string['environmentrequireversion'] = 'versión {$a->needed} es obligatoria y está ejecutando {$a->current}';

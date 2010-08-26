@@ -29,6 +29,6 @@
  */
 
 $string['language'] = 'Limba';
-$string['next'] = 'Continuare';
-$string['previous'] = 'Anterior';
+$string['next'] = 'Următorul';
+$string['previous'] = 'Precedent';
 $string['reload'] = 'Reîncarcă';

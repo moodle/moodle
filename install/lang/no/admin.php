@@ -28,5 +28,9 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['clianswerno'] = 'n';
+$string['cliansweryes'] = 'y';
+$string['cliincorrectvalueretry'] = 'Feil verdi, vennligst prøv igjen';
+$string['clitypevalue'] = 'verditype';
 $string['environmentrequireinstall'] = 'er påkrevd at du installerer/tillater';
 $string['environmentrequireversion'] = 'Du må ha versjon {$a->needed}. Du kjører {$a->current}';

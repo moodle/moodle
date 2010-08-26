@@ -31,7 +31,7 @@
 $string['admindirname'] = 'Directorio Admin';
 $string['availablelangs'] = 'Lista de idiomas disponibles';
 $string['chooselanguagehead'] = 'Seleccionar idioma';
-$string['chooselanguagesub'] = 'Por favor, seleccione un idioma para el proceso de instalación.';
+$string['chooselanguagesub'] = 'Por favor, seleccione un idioma para el proceso de instalación. Este idioma se usará también como idioma por defecto del sitio, si bien puede cambiarse más adelante.';
 $string['clialreadyinstalled'] = 'El archivo config.php ya existe, por favor, utilice admin/cli/upgrade.php si desea actualizar su sitio web.';
 $string['cliinstallheader'] = 'Programa de instalación Moodle de línea de comando {$a}';
 $string['databasehost'] = 'Servidor de la base de datos';

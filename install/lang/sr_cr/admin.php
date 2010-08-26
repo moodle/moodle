@@ -34,8 +34,9 @@ $string['cliincorrectvalueerror'] = 'Грешка, неисправна вред
 $string['cliincorrectvalueretry'] = 'Неисправна вреднос, молим покушајте поново';
 $string['clitypevalue'] = 'откуцај вредност';
 $string['clitypevaluedefault'] = 'откуцај вредност, притисни Ентер да бисте употребили подразумевану вредност ({$a})';
-$string['cliunknowoption'] = 'Непрепозната опција:
-{$a}';
+$string['cliunknowoption'] = 'Непрепознате опције:
+{$a}
+Молимо искористите опцију за помоћ.';
 $string['cliyesnoprompt'] = 'откуцај y (значи да) или n (значи не)';
 $string['environmentrequireinstall'] = 'је неопходно инсталирати/омогућити';
 $string['environmentrequireversion'] = 'неопходна верзија је {$a->needed} а Ви тренутно користите верзију {$a->current}';

@@ -30,5 +30,7 @@
 
 $string['cannotcreatelangdir'] = 'Nije moguće stvoriti lang mapu';
 $string['cannotdownloadzipfile'] = 'Ne mogu preuzeti ZIP datoteku';
+$string['cannotsavemd5file'] = 'Nije moguće pohraniti md5 datoteku';
+$string['cannotsavezipfile'] = 'Nije moguće pohraniti ZIP datoteku';
 $string['cannotunzipfile'] = 'Nije moguće otpakirati datoteku';
 $string['wrongzipfilename'] = 'Pogrešno ime ZIP datoteke';
