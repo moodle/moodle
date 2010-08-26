@@ -571,6 +571,17 @@ padding: 0
 	margin: 1em 0;
 }
 
+.path-backup .mform .hidden .fitem .fgroup {
+    text-align: left;
+}
+
+.path-backup .mform .grouped_settings {
+    margin:1em;
+}
+.path-backup .mform .grouped_settings .grouped_settings {
+    margin:0;
+}
+
 /* Comments
 -----------------------*/
 

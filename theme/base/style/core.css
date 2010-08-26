@@ -511,8 +511,10 @@ body.tag .managelink {padding: 5px;}
 .path-backup .mform .grouped_settings {clear:both;overflow:hidden;}
 .path-backup .mform .grouped_settings .fitem .fitemtitle {width:40%;padding-right:10px;}
 .path-backup .mform .grouped_settings .fitem .felement {width:50%;}
-.path-backup .mform .grouped_settings.section_level .include_setting {width:50%;margin:0;float:left;clear:left;}
+.path-backup .mform .grouped_settings.section_level .include_setting {width:50%;margin:0;float:left;clear:left;font-weight:bold;}
 .path-backup .mform .grouped_settings.section_level .normal_setting {width:50%;margin:0;margin-left:50%;}
+.path-backup .mform .grouped_settings.activity_level .include_setting label {font-weight:normal;}
+.path-backup .mform .fitem fieldset.felement {margin-left:0;width:auto;padding-left:0;}
 .path-backup .notification.dependencies_enforced {text-align:center;color:#A00;font-weight:bold;}
 .path-backup .backup_progress {text-align:center;}
 .path-backup .backup_progress span.backup_stage {color:#999;}
@@ -642,7 +644,7 @@ body.tag .managelink {padding: 5px;}
 .backup-restore .detail-pair-value {display:inline-block;width:65%;padding:8px;margin:0;}
 .backup-restore .detail-pair-value > .sub-detail {display:block;color:#1580B6;margin-left:2em;font-size:90%;font-style: italic;}
 .backup-restore > .singlebutton {text-align:right;}
-.path-backup .mform .fgroup .proceedbutton {float:right;}
+.path-backup .mform .fgroup .proceedbutton {float:right;margin-right:1%;}
 
 .restore-course-search .rcs-results {width:70%;min-width:400px;border:1px solid #ddd;margin:5px 0;}
 .restore-course-search .rcs-results table {width:100%;margin:0;border-width:0;}

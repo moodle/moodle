@@ -944,6 +944,11 @@ h2.headingblock {
 	text-align: center;
 }
 
+.path-backup .mform .fitem fieldset.felement {
+	margin-left: 0;
+	padding-left: 0;
+}
+
 /* Tables */
 
 #page-mod-glossary-editcategories .generalbox,
