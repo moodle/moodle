@@ -388,8 +388,8 @@ class core_backup_renderer extends plugin_renderer_base {
      * @return string
      */
     public function backup_files_viewer(array $options = null) {
-        $tree = new backup_files_viewer($options);
-        return $this->render($tree);
+        $files = new backup_files_viewer($options);
+        return $this->render($files);
     }
 
     /**
@@ -399,49 +399,43 @@ class core_backup_renderer extends plugin_renderer_base {
      * @param backup_files_viewer $tree
      * @return string
      */
-    public function render_backup_files_viewer(backup_files_viewer $tree) {
-        global $USER;
-        $user_context = get_context_instance(CONTEXT_USER, $USER->id);
-        $options = new stdclass;
-        $module = array('name'=>'backup_files_tree', 'fullpath'=>'/backup/util/ui/module.js', 'requires'=>array('yui2-treeview', 'yui2-json'), 'strings'=>array(array('restore', 'moodle')));
-        $htmlid = 'backup-treeview-'.uniqid();
-        $options->htmlid = $htmlid;
-        $options->usercontextid = $user_context->id;
-        $options->currentcontextid = $tree->options['context']->id;
-        $this->page->requires->js_init_call('M.core_backup_files_tree.init', array($options), false, $module);
+    public function render_backup_files_viewer(backup_files_viewer $viewer) {
+        global $CFG;
+        $files = $viewer->files;
 
-        $html = '<div>';
-        foreach($tree->path as $path) {
-            $html .= $path;
-            $html .= ' / ';
-        }
-        $html .= '</div>';
+        $table = new html_table();
+        $table->head = array(get_string('filename', 'backup'), get_string('time'), get_string('size'), get_string('download'), get_string('restore'));
+        $table->align = array('left', 'left', 'left', 'center', 'left', 'center');
+        $table->width = '100%';
+        $table->data = array();
 
-        $html .= '<div id="'.$htmlid.'" class="filemanager-container">';
-        if (empty($tree->tree)) {
-            $html .= get_string('nofilesavailable', 'repository');
-        } else {
-            $html .= '<ul>';
-            foreach($tree->tree as $node) {
-                $link_attributes = array();
-                if (!empty($node['isdir'])) {
-                    $class = ' class="file-tree-folder"';
-                    $restore_link = '';
-                } else {
-                    $class = ' class="file-tree-file"';
-                    $link_attributes['target'] = '_blank';
-                    $restore_link = html_writer::link($node['restoreurl'], get_string('restore', 'moodle'), $link_attributes);
-                }
-                $html .= '<li '.$class.'>';
-                $html .= html_writer::link($node['url'], $node['filename'], $link_attributes);
-                // when js is off, use this restore link
-                // otherwise, yui treeview will generate a restore link in js
-                $html .= ' '.$restore_link;
-                $html .= '</li>';
+        foreach ($files as $file) {
+            if ($file->is_directory()) {
+                continue;
             }
-            $html .= '</ul>';
+            $fileurl = moodle_url::make_pluginfile_url($file->get_contextid(), $file->get_component(), $file->get_filearea(), null, $file->get_filepath(), $file->get_filename(), true);
+            $params = array();
+            $params['action'] = 'choosebackupfile';
+            $params['filename'] = $file->get_filename();
+            $params['filepath'] = $file->get_filepath();
+            $params['component'] = $file->get_component();
+            $params['filearea'] = $file->get_filearea();
+            $params['filecontextid'] = $file->get_contextid();
+            $params['contextid'] = $viewer->currentcontext->id;
+            $params['itemid'] = $file->get_itemid();
+            $restoreurl = new moodle_url('/backup/restorefile.php', $params);
+            $table->data[] = array(
+                $file->get_filename(),
+                userdate($file->get_timemodified()),
+                display_size($file->get_filesize()),
+                html_writer::link($fileurl, get_string('download')),
+                html_writer::link($restoreurl, get_string('restore')),
+                );
         }
-        $html .= '</div>';
+
+        $html = html_writer::table($table);
+        $html .= $this->output->single_button(new moodle_url('/backup/backupfilesedit.php', array('contextid'=>$viewer->filecontext->id, 'filearea'=>$viewer->filearea, 'component'=>$viewer->component, 'returnurl'=>$this->page->url->out())), get_string('managefiles', 'backup'), 'post');
+
         return $html;
     }
 
@@ -557,7 +551,7 @@ class core_backup_renderer extends plugin_renderer_base {
 
     /**
      * Renders a restore category search object
-     * 
+     *
      * @param restore_category_search $component
      * @return string
      */
@@ -610,6 +604,7 @@ class core_backup_renderer extends plugin_renderer_base {
         return $output;
     }
 }
+
 /**
  * Data structure representing backup files viewer
  *
@@ -618,8 +613,11 @@ class core_backup_renderer extends plugin_renderer_base {
  * @since     Moodle 2.0
  */
 class backup_files_viewer implements renderable {
-    public $tree;
-    public $path;
+    public $files;
+    public $filecontext;
+    public $component;
+    public $filearea;
+    public $currentcontext;
 
     /**
      * Constructor of backup_files_viewer class
@@ -627,80 +625,12 @@ class backup_files_viewer implements renderable {
      */
     public function __construct(array $options = null) {
         global $CFG, $USER;
-        $browser = get_file_browser();
-        $file_info = $browser->get_file_info($options['filecontext'], $options['component'], $options['filearea'], $options['itemid'], $options['filepath'], $options['filename']);
-        $this->options = (array)$options;
-
-        $this->tree = array();
-        if (!$file_info) {
-            $this->path = array();
-            $this->tree = array();
-            return;
-        }
-        $children = $file_info->get_children();
-        $parent_info = $file_info->get_parent();
-
-        $level = $parent_info;
-        $this->path = array();
-        while ($level) {
-            $params = $level->get_params();
-            $context = get_context_instance_by_id($params['contextid']);
-            // lock user in course level
-            if ($context->contextlevel == CONTEXT_COURSECAT or $context->contextlevel == CONTEXT_SYSTEM) {
-                break;
-            }
-            $url = new moodle_url('/backup/restorefile.php', $params);
-            $this->path[] = html_writer::link($url->out(false), $level->get_visible_name());
-            $level = $level->get_parent();
-        }
-        $this->path = array_reverse($this->path);
-        $this->path[] = $file_info->get_visible_name();
-
-        $this->add_to_tree($children);
-
-        if (!empty($options['show_user_backup'])) {
-            $browser = get_file_browser();
-            $user_context = get_context_instance(CONTEXT_USER, $USER->id);
-            $fileinfo = $browser->get_file_info($user_context, null, null, null, null, null);
-            $children = $fileinfo->get_children();
-            $this->add_to_tree($children);
-        }
-    }
-
-    function add_to_tree($children) {
-        foreach ($children as $child) {
-            $filedate = $child->get_timemodified();
-            $filesize = $child->get_filesize();
-            $mimetype = $child->get_mimetype();
-            $params = $child->get_params();
-            $fileitem = array(
-                    'params'   => $params,
-                    'filename' => $child->get_visible_name(),
-                    'filedate' => $filedate ? userdate($filedate) : '',
-                    'filesize' => $filesize ? display_size($filesize) : ''
-                    );
-            $is_coursebackup = ($params['component'] == 'backup' && in_array($params['filearea'], array('course', 'section', 'activity', 'backup')));
-            $is_userbackup = ($params['component'] == 'user' && $params['filearea'] == 'backup');
-            if ($is_userbackup) {
-                // XXX: hacky, current context
-                $params['contextid'] = $this->options['context']->id;
-            }
-            if ($child->is_directory()) {
-                // ignore all other fileares except backup_course backup_section and backup_activity
-                if (!$is_coursebackup and !$is_userbackup) {
-                    continue;
-                }
-                $fileitem['isdir'] = true;
-                // link to this folder
-                $folderurl = new moodle_url('/backup/restorefile.php', $params);
-                $fileitem['url'] = $folderurl->out(false);
-            } else {
-                $restoreurl = new moodle_url('/backup/restorefile.php', array_merge($params, array('action'=>'choosebackupfile')));
-                // link to this file
-                $fileitem['url'] = $child->get_url();
-                $fileitem['restoreurl'] = $restoreurl->out(false);
-            }
-            $this->tree[] = $fileitem;
-        }
+        $fs = get_file_storage();
+        $this->currentcontext = $options['currentcontext'];
+        $this->filecontext    = $options['filecontext'];
+        $this->component      = $options['component'];
+        $this->filearea       = $options['filearea'];
+        $files = $fs->get_area_files($this->filecontext->id, $this->component, $this->filearea, false, 'timecreated');
+        $this->files = array_reverse($files);
     }
 }
