@@ -42,6 +42,16 @@
  */
 global $CFG; // this should be done much earlier in config.php before creating new $CFG instance
 
+if (!isset($CFG)) {
+    if (defined('PHPUNIT_SCRIPT') and PHPUNIT_SCRIPT) {
+        echo('There is a missing "global $CFG;" at the beginning of the config.php file.'."\n");
+        exit(1);
+    } else {
+        // this should never happen, maybe somebody is accessing this file directly...
+        exit(1);
+    }
+}
+
 // We can detect real dirroot path reliably since PHP 4.0.2,
 // it can not be anything else, there is no point in having this in config.php
 $CFG->dirroot = dirname(dirname(__FILE__));
@@ -51,7 +61,7 @@ if (!isset($CFG->dataroot)) {
     if (isset($_SERVER['REMOTE_ADDR'])) {
         header($_SERVER['SERVER_PROTOCOL'] . ' 503 Service Unavailable');
     }
-    echo('Fatal error: $CFG->dataroot is not specified in config.php! Exiting.');
+    echo('Fatal error: $CFG->dataroot is not specified in config.php! Exiting.'."\n");
     exit(1);
 }
 $CFG->dataroot = realpath($CFG->dataroot);
@@ -59,7 +69,7 @@ if ($CFG->dataroot === false) {
     if (isset($_SERVER['REMOTE_ADDR'])) {
         header($_SERVER['SERVER_PROTOCOL'] . ' 503 Service Unavailable');
     }
-    echo('Fatal error: $CFG->dataroot is not configured properly, directory does not exist or is not accessible! Exiting.');
+    echo('Fatal error: $CFG->dataroot is not configured properly, directory does not exist or is not accessible! Exiting.'."\n");
     exit(1);
 }
 
@@ -68,7 +78,7 @@ if (!isset($CFG->wwwroot) or $CFG->wwwroot === 'http://example.com/moodle') {
     if (isset($_SERVER['REMOTE_ADDR'])) {
         header($_SERVER['SERVER_PROTOCOL'] . ' 503 Service Unavailable');
     }
-    echo('Fatal error: $CFG->wwwroot is not configured! Exiting.');
+    echo('Fatal error: $CFG->wwwroot is not configured! Exiting.'."\n");
     exit(1);
 }
 
