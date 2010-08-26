@@ -103,6 +103,15 @@ if (function_exists('date_default_timezone_set') and function_exists('date_defau
     @date_default_timezone_set(@date_default_timezone_get());
 }
 
+// PHPUnit scripts are a special case, for now we treat them as normal CLI scripts,
+// please note you must install PHPUnit library separately via PEAR
+if (!defined('PHPUNIT_SCRIPT')) {
+    define('PHPUNIT_SCRIPT', false);
+}
+if (PHPUNIT_SCRIPT) {
+    define('CLI_SCRIPT', true);
+}
+
 // Detect CLI scripts - CLI scripts are executed from command line, do not have session and we do not want HTML in output
 // In your new CLI scripts just add "define('CLI_SCRIPT', true);" before requiring config.php.
 // Please note that one script can not be accessed from both CLI and web interface.
