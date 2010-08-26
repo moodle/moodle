@@ -31,13 +31,14 @@ $PAGE->set_url('/comment/comment_ajax.php');
 
 $action    = optional_param('action',    '', PARAM_ALPHA);
 
-$ignore_permission = false;
 // XXX: display comments in frontpage without login
 if ($context->id != get_context_instance(CONTEXT_COURSE, SITEID)->id
     or $action == 'add'
     or $action == 'delete') {
-    $ignore_permission = true;
+    $ignore_permission = false;
     require_login($course, true, $cm);
+} else {
+    $ignore_permission = true;
 }
 require_sesskey();
 
