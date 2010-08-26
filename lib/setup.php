@@ -48,21 +48,26 @@ $CFG->dirroot = dirname(dirname(__FILE__));
 
 // Normalise dataroot - we do not want any symbolic links, trailing / or any other weirdness there
 if (!isset($CFG->dataroot)) {
-    header($_SERVER['SERVER_PROTOCOL'] . ' 503 Service Unavailable');
+    if (isset($_SERVER['REMOTE_ADDR'])) {
+        header($_SERVER['SERVER_PROTOCOL'] . ' 503 Service Unavailable');
+    }
     echo('Fatal error: $CFG->dataroot is not specified in config.php! Exiting.');
     exit(1);
 }
 $CFG->dataroot = realpath($CFG->dataroot);
 if ($CFG->dataroot === false) {
-    header($_SERVER['SERVER_PROTOCOL'] . ' 503 Service Unavailable');
+    if (isset($_SERVER['REMOTE_ADDR'])) {
+        header($_SERVER['SERVER_PROTOCOL'] . ' 503 Service Unavailable');
+    }
     echo('Fatal error: $CFG->dataroot is not configured properly, directory does not exist or is not accessible! Exiting.');
     exit(1);
 }
 
 // wwwroot is mandatory
 if (!isset($CFG->wwwroot) or $CFG->wwwroot === 'http://example.com/moodle') {
-    // trigger_error() is not correct here, no need to log this
-    header($_SERVER['SERVER_PROTOCOL'] . ' 503 Service Unavailable');
+    if (isset($_SERVER['REMOTE_ADDR'])) {
+        header($_SERVER['SERVER_PROTOCOL'] . ' 503 Service Unavailable');
+    }
     echo('Fatal error: $CFG->wwwroot is not configured! Exiting.');
     exit(1);
 }
