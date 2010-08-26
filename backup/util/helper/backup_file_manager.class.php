@@ -33,25 +33,9 @@
  * those functions without needeing to know storage internals at all.
  * That day, we'll move related functions here to proper file api ones.
  *
- * TODO: Unse File API facilities when available instead of har-coded
- * storage access here.
- *
  * TODO: Finish phpdocs
  */
 class backup_file_manager {
-
-    /**
-     * Returns the full path to the storage base dir
-     */
-    public static function get_moodle_storage_base_dir() {
-        global $CFG;
-
-        if (isset($CFG->filedir)) {
-            return $CFG->filedir;
-        } else {
-            return $CFG->dataroot.'/filedir';
-        }
-    }
 
     /**
      * Returns the full path to backup storage base dir
@@ -66,10 +50,9 @@ class backup_file_manager {
      * Given one file content hash, returns the path (relative to filedir)
      * to the file.
      */
-    public static function get_content_file_location($contenthash) {
+    public static function get_backup_content_file_location($contenthash) {
         $l1 = $contenthash[0].$contenthash[1];
-        $l2 = $contenthash[2].$contenthash[3];
-        return "$l1/$l2/$contenthash";
+        return "$l1/$contenthash";
     }
 
     /**
@@ -88,16 +71,12 @@ class backup_file_manager {
             return;
         }
 
-        // Calculate source and target paths (use same subdirs strategy for both)
-        $sourcefilepath = self::get_moodle_storage_base_dir() . '/' .
-                          self::get_content_file_location($filerecorid->contenthash);
-        $targetfilepath = self::get_backup_storage_base_dir($backupid) . '/' .
-                          self::get_content_file_location($filerecorid->contenthash);
+        $fs = get_file_storage();
+        $file = new stored_file($fs, $filerecorid);
 
-        // Check source exists and is readable
-        if (!file_exists($sourcefilepath) || !is_readable($sourcefilepath)) {
-            throw new backup_helper_exception('cannot_read_file_from_filepool', $sourcefilepath);
-        }
+        // Calculate source and target paths (use same subdirs strategy for both)
+        $targetfilepath = self::get_backup_storage_base_dir($backupid) . '/' .
+                          self::get_backup_content_file_location($filerecorid->contenthash);
 
         // Create target dir if necessary
         if (!file_exists(dirname($targetfilepath))) {
@@ -108,9 +87,7 @@ class backup_file_manager {
 
         // And copy the file (if doesn't exist already)
         if (!file_exists($targetfilepath)) {
-            if (!copy($sourcefilepath, $targetfilepath)) {
-                throw new backup_helper_exception('cannot_copy_file', $sourcefilepath, $targetfilepath);
-            }
+            $file->copy_content_to($targetfilepath);
         }
     }
 }

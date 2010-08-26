@@ -298,7 +298,7 @@ abstract class restore_dbops {
             }
             // arrived here, file found
             // Find file in backup pool
-            $backuppath = $basepath . backup_file_manager::get_content_file_location($file->contenthash);
+            $backuppath = $basepath . backup_file_manager::get_backup_content_file_location($file->contenthash);
             if (!file_exists($backuppath)) {
                 throw new restore_dbops_exception('file_not_found_in_pool', $file);
             }
@@ -920,7 +920,7 @@ abstract class restore_dbops {
         $course->timemodified = $course->timecreated;
         $course->visible = $category->visible;
 
-        return $DB->insert_record('course', $course);   
+        return $DB->insert_record('course', $course);
     }
 
     /**
