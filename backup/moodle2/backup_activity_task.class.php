@@ -223,6 +223,7 @@ abstract class backup_activity_task extends backup_task {
         // - section_included setting (if exists)
         $settingname = $settingprefix . 'included';
         $activity_included = new backup_activity_generic_setting($settingname, base_setting::IS_BOOLEAN, true);
+        $activity_included->get_ui()->set_icon(new pix_icon('icon', get_string('pluginname', $this->modulename), $this->modulename));
         $this->add_setting($activity_included);
         // Look for "activities" root setting
         $activities = $this->plan->get_setting('activities');
@@ -240,7 +241,8 @@ abstract class backup_activity_task extends backup_task {
         // - activity_included setting
         $settingname = $settingprefix . 'userinfo';
         $activity_userinfo = new backup_activity_userinfo_setting($settingname, base_setting::IS_BOOLEAN, true);
-        $activity_userinfo->get_ui()->set_label(get_string('includeuserinfo','backup'));
+        //$activity_userinfo->get_ui()->set_label(get_string('includeuserinfo','backup'));
+        $activity_userinfo->get_ui()->set_label('-');
         $this->add_setting($activity_userinfo);
         // Look for "users" root setting
         $users = $this->plan->get_setting('users');

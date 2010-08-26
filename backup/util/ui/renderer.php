@@ -133,8 +133,10 @@ class core_backup_renderer extends plugin_renderer_base {
                     $table->attributes = array('class'=>'activitytable generaltable');
                     $table->data = array();
                 }
+                $name = get_string('pluginname', $activity->modulename);
+                $icon = new pix_icon('icon', $name, $activity->modulename);
                 $table->data[] = array(
-                    get_string('pluginname', $activity->modulename),
+                    $this->output->render($icon).'&nbsp;'.$name,
                     $activity->title,
                     ($activity->settings[$activitykey.'_userinfo'])?$yestick:$notick,
                 );

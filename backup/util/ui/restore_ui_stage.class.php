@@ -445,7 +445,7 @@ class restore_ui_stage_schema extends restore_ui_stage {
                     // setting. We only want schema settings to be editable
                     foreach ($task->get_settings() as $setting) {
                         if ($setting->get_name() != 'filename') {
-                            $form->add_fixed_setting($setting);
+                            $form->add_fixed_setting($setting, $task);
                         }
                     }
                 }
@@ -518,7 +518,7 @@ class restore_ui_stage_review extends restore_ui_stage {
                 }
                 // Iterate all settings, doesnt need to happen by reference
                 foreach ($task->get_settings() as $setting) {
-                    $form->add_fixed_setting($setting);
+                    $form->add_fixed_setting($setting, $task);
                 }
             }
             $this->stageform = $form;

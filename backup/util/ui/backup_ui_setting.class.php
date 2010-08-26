@@ -57,6 +57,11 @@ class base_setting_ui {
      */
     protected $type;
     /**
+     * An icon to display next to this setting in the UI
+     * @var pix_icon
+     */
+    protected $icon = false;
+    /**
      * The setting this UI belongs to (parent reference)
      * @var base_setting|backup_setting
      */
@@ -125,6 +130,27 @@ class base_setting_ui {
      */
     public function disable() {
        $this->attributes['disabled'] = 'disabled';
+    }
+
+    /**
+     * Sets the icon to display next to this item
+     *
+     * @param pix_icon $icon
+     */
+    public function set_icon(pix_icon $icon) {
+        $this->icon = $icon;
+    }
+
+    /**
+     * Returns the icon to display next to this item, or false if there isn't one.
+     *
+     * @return pix_icon|false
+     */
+    public function get_icon() {
+        if (!empty($this->icon)) {
+            return $this->icon;
+        }
+        return false;
     }
 }
 
@@ -206,7 +232,7 @@ abstract class backup_setting_ui extends base_setting_ui {
      * Get element properties that can be used to make a quickform element
      * @return array
      */
-    abstract public function get_element_properties(base_task $task=null);
+    abstract public function get_element_properties(base_task $task=null, renderer_base $output=null);
     /**
      * Applies config options to a given properties array and then returns it
      * @param array $properties
@@ -289,9 +315,15 @@ class backup_setting_ui_text extends backup_setting_ui {
      * @param backup_task|null $task
      * @return array (element, name, label, attributes)
      */
-    public function get_element_properties(base_task $task=null) {
+    public function get_element_properties(base_task $task=null, renderer_base $output=null) {
+        // name, label, text, attributes
+        $icon = $this->get_icon();
+        $label = $this->get_label($task);
+        if (!empty($icon)) {
+            $label .= '&nbsp;'.$output->render($icon);
+        }
         // name, label, attributes
-        return $this->apply_options(array('element'=>'text','name'=>self::NAME_PREFIX.$this->name, 'label'=>$this->get_label($task), 'attributes'=>$this->attributes));
+        return $this->apply_options(array('element'=>'text','name'=>self::NAME_PREFIX.$this->name, 'label'=>$label, 'attributes'=>$this->attributes));
     }
 
 }
@@ -333,9 +365,15 @@ class backup_setting_ui_checkbox extends backup_setting_ui {
      * @param backup_task|null $task
      * @return array (element, name, label, text, attributes);
      */
-    public function get_element_properties(base_task $task=null) {
+    public function get_element_properties(base_task $task=null, renderer_base $output=null) {
         // name, label, text, attributes
-        return $this->apply_options(array('element'=>'checkbox','name'=>self::NAME_PREFIX.$this->name, 'label'=>$this->get_label($task), 'text'=>$this->text, 'attributes'=>$this->attributes));
+        
+        $icon = $this->get_icon();
+        $label = $this->get_label($task);
+        if (!empty($icon)) {
+            $label .= '&nbsp;'.$output->render($icon);
+        }
+        return $this->apply_options(array('element'=>'checkbox','name'=>self::NAME_PREFIX.$this->name, 'label'=>$label, 'text'=>$this->text, 'attributes'=>$this->attributes));
     }
     /**
      * Sets the text for the element
@@ -346,14 +384,16 @@ class backup_setting_ui_checkbox extends backup_setting_ui {
     }
     /**
      * Gets the static value for the element
+     * @global core_renderer $OUTPUT
      * @return string
      */
     public function get_static_value() {
+        global $OUTPUT;
         // Checkboxes are always yes or no
         if ($this->get_value()) {
-            return get_string('yes');
+            return $OUTPUT->pix_icon('i/tick_green_big', get_string('yes'));
         } else {
-            return get_string('no');
+            return $OUTPUT->pix_icon('i/cross_red_big', get_string('no'));
         }
     }
 
@@ -419,9 +459,15 @@ class backup_setting_ui_radio extends backup_setting_ui {
      * @param backup_task|null $task
      * @return array (element, name, label, text, value, attributes)
      */
-    public function get_element_properties(base_task $task=null) {
+    public function get_element_properties(base_task $task=null, renderer_base $output=null) {
+        // name, label, text, attributes
+        $icon = $this->get_icon();
+        $label = $this->get_label($task);
+        if (!empty($icon)) {
+            $label .= '&nbsp;'.$output->render($icon);
+        }
         // name, label, text, value, attributes
-        return $this->apply_options(array('element'=>'radio','name'=>self::NAME_PREFIX.$this->name, 'label'=>$this->get_label($task), 'text'=>$this->text, 'value'=>$this->value, 'attributes'=>$this->attributes));
+        return $this->apply_options(array('element'=>'radio','name'=>self::NAME_PREFIX.$this->name, 'label'=>$label, 'text'=>$this->text, 'value'=>$this->value, 'attributes'=>$this->attributes));
     }
     /**
      * Sets the text next to this input
@@ -478,9 +524,15 @@ class backup_setting_ui_select extends backup_setting_ui {
      * @param backup_task|null $task
      * @return array (element, name, label, options, attributes)
      */
-    public function get_element_properties(base_task $task = null) {
+    public function get_element_properties(base_task $task = null, renderer_base $output=null) {
+        // name, label, text, attributes
+        $icon = $this->get_icon();
+        $label = $this->get_label($task);
+        if (!empty($icon)) {
+            $label .= '&nbsp;'.$output->render($icon);
+        }
         // name, label, options, attributes
-        return $this->apply_options(array('element'=>'select','name'=>self::NAME_PREFIX.$this->name, 'label'=>$this->get_label($task), 'options'=>$this->values, 'attributes'=>$this->attributes));
+        return $this->apply_options(array('element'=>'select','name'=>self::NAME_PREFIX.$this->name, 'label'=>$label, 'options'=>$this->values, 'attributes'=>$this->attributes));
     }
     /**
      * Sets the options for the select box
@@ -511,11 +563,11 @@ class backup_setting_ui_select extends backup_setting_ui {
 }
 
 class backup_setting_ui_dateselector extends backup_setting_ui_text {
-    public function get_element_properties(base_task $task = null) {
+    public function get_element_properties(base_task $task = null, renderer_base $output=null) {
         if (!array_key_exists('optional', $this->attributes)) {
             $this->attributes['optional'] = false;
         }
-        $properties = parent::get_element_properties($task);
+        $properties = parent::get_element_properties($task, $output);
         $properties['element'] = 'date_selector';
         return $properties;
     }

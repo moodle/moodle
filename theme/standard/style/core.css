@@ -354,6 +354,7 @@ table#tag-management-list {margin: 10px auto;width: 80%;}
 .path-backup .mform .grouped_settings.section_level {border:1px solid #aaa;margin:10px;clear:both;background-color:#EEE;}
 .path-backup .mform .grouped_settings.section_level .grouped_settings.activity_level  {background-color:#fff;border:1px solid #fff;border-top-color:#DDD;}
 .path-backup .mform .grouped_settings.section_level .include_setting {font-weight:bold;}
+.path-backup .mform .grouped_settings.activity_level .include_setting label {font-weight:normal;}
 .path-backup .backup_progress {margin:10px;}
 .path-backup .backup_progress .backup_stage {margin:5px 20px;}
 .path-backup .backup_progress .backup_stage.backup_stage_complete {}

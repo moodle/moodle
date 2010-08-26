@@ -136,17 +136,18 @@ abstract class base_moodleform extends moodleform {
      * @return bool
      */
     function add_setting(backup_setting $setting, base_task $task=null) {
+        global $OUTPUT;
 
         // If the setting cant be changed or isn't visible then add it as a fixed setting.
         if (!$setting->get_ui()->is_changeable() || $setting->get_visibility() != backup_setting::VISIBLE) {
-            return $this->add_fixed_setting($setting);
+            return $this->add_fixed_setting($setting, $task);
         }
 
         // First add the formatting for this setting
         $this->add_html_formatting($setting);
 
         // The call the add method with the get_element_properties array
-        call_user_method_array('addElement', $this->_form, $setting->get_ui()->get_element_properties($task));
+        call_user_method_array('addElement', $this->_form, $setting->get_ui()->get_element_properties($task, $OUTPUT));
         $this->_form->setDefault($setting->get_ui_name(), $setting->get_value());
         if ($setting->has_help()) {
             list($identifier, $component) = $setting->get_help();
@@ -223,7 +224,7 @@ abstract class base_moodleform extends moodleform {
      * Adds a fixed or static setting to the form
      * @param backup_setting $setting
      */
-    function add_fixed_setting(backup_setting $setting) {
+    function add_fixed_setting(backup_setting $setting, base_task $task) {
         global $OUTPUT;
         $settingui = $setting->get_ui();
         if ($setting->get_visibility() == backup_setting::VISIBLE) {
@@ -242,7 +243,12 @@ abstract class base_moodleform extends moodleform {
                     $icon = '';
                     break;
             }
-            $this->_form->addElement('static', 'static_'.$settingui->get_name(), $settingui->get_label(), $settingui->get_static_value().$icon);
+            $label = $settingui->get_label($task);
+            $labelicon = $settingui->get_icon();
+            if (!empty($labelicon)) {
+                $label .= '&nbsp;'.$OUTPUT->render($labelicon);
+            }
+            $this->_form->addElement('static', 'static_'.$settingui->get_name(), $label, $settingui->get_static_value().$icon);
             $this->_form->addElement('html', html_writer::end_tag('div'));
         }
         $this->_form->addElement('hidden', $settingui->get_name(), $settingui->get_value());

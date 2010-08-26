@@ -249,7 +249,7 @@ class backup_ui_stage_schema extends backup_ui_stage {
                     // setting. We only want schema settings to be editable
                     foreach ($task->get_settings() as $setting) {
                         if ($setting->get_name() != 'filename') {
-                            $form->add_fixed_setting($setting);
+                            $form->add_fixed_setting($setting, $task);
                         }
                     }
                 }
@@ -353,7 +353,7 @@ class backup_ui_stage_confirmation extends backup_ui_stage {
                 foreach ($task->get_settings() as $setting) {
                     // For this stage only the filename setting should be editable
                     if ($setting->get_name() != 'filename') {
-                        $form->add_fixed_setting($setting);
+                        $form->add_fixed_setting($setting, $task);
                     }
                 }
             }

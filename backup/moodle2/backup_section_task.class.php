@@ -135,15 +135,20 @@ class backup_section_task extends backup_task {
      * Define the common setting that any backup section will have
      */
     protected function define_settings() {
+        global $DB;
 
         // All the settings related to this activity will include this prefix
         $settingprefix = 'section_' . $this->sectionid . '_';
 
         // All these are common settings to be shared by all sections
 
+        $section = $DB->get_record('course_sections', array('id' => $this->sectionid), '*', MUST_EXIST);
+        $course = $DB->get_record('course', array('id' => $section->course), '*', MUST_EXIST);
+
         // Define section_included (to decide if the whole task must be really executed)
         $settingname = $settingprefix . 'included';
         $section_included = new backup_section_included_setting($settingname, base_setting::IS_BOOLEAN, true);
+        $section_included->get_ui()->set_label(get_section_name($course, $section));
         $this->add_setting($section_included);
 
         // Define section_userinfo. Dependent of:
