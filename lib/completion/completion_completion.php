@@ -232,6 +232,11 @@ class completion_completion extends data_object {
                 $this->reaggregate = 0;
             }
 
+			// Make sure timestarted is not null
+			if (!$this->timestarted) {
+				$this->timestarted = 0;
+			}
+			
             $this->insert();
         }
     }
