@@ -6841,7 +6841,7 @@ function forum_check_throttling($forum, $cm=null) {
     }
 
     $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
-    if(!has_capability('mod/forum:throttlingapplies', $modcontext)) {
+    if(has_capability('mod/forum:postwithoutthrottling', $modcontext)) {
         return true;
     }
 
@@ -7171,7 +7171,7 @@ function forum_convert_to_roles($forum, $forummodid, $teacherroles=array(),
                 assign_capability('mod/forum:viewqandawithoutposting', CAP_PREVENT, $studentrole->id, $context->id);
                 assign_capability('mod/forum:viewsubscribers', CAP_PREVENT, $studentrole->id, $context->id);
                 assign_capability('mod/forum:managesubscriptions', CAP_PREVENT, $studentrole->id, $context->id);
-                assign_capability('mod/forum:throttlingapplies', CAP_PREVENT, $studentrole->id, $context->id);
+                assign_capability('mod/forum:postwithoutthrottling', CAP_PREVENT, $studentrole->id, $context->id);
             }
             foreach ($guestroles as $guestrole) {
                 assign_capability('mod/forum:viewdiscussion', CAP_PREVENT, $guestrole->id, $context->id);
@@ -7190,7 +7190,7 @@ function forum_convert_to_roles($forum, $forummodid, $teacherroles=array(),
                 assign_capability('mod/forum:viewqandawithoutposting', CAP_PREVENT, $guestrole->id, $context->id);
                 assign_capability('mod/forum:viewsubscribers', CAP_PREVENT, $guestrole->id, $context->id);
                 assign_capability('mod/forum:managesubscriptions', CAP_PREVENT, $guestrole->id, $context->id);
-                assign_capability('mod/forum:throttlingapplies', CAP_PREVENT, $guestrole->id, $context->id);
+                assign_capability('mod/forum:postwithoutthrottling', CAP_PREVENT, $guestrole->id, $context->id);
             }
         }
     } else {

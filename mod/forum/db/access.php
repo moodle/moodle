@@ -294,13 +294,16 @@ $capabilities = array(
         )
     ),
 
-    'mod/forum:throttlingapplies' => array(
+    'mod/forum:postwithoutthrottling' => array(
 
         'riskbitmask' => RISK_SPAM,
 
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
         'archetypes' => array(
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW
         )
     ),
 
