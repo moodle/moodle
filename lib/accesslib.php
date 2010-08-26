@@ -190,6 +190,7 @@ if (!defined('MAX_CONTEXT_CACHE_SIZE')) {
  * @global stdClass $ACCESSLIB_PRIVATE
  * @name $ACCESSLIB_PRIVATE
  */
+global $ACCESSLIB_PRIVATE;
 $ACCESSLIB_PRIVATE = new stdClass;
 $ACCESSLIB_PRIVATE->contexts = array(); // Cache of context objects by level and instance
 $ACCESSLIB_PRIVATE->contextsbyid = array(); // Cache of context objects by id
