@@ -1412,7 +1412,9 @@ function compact_rdefs(&$rdefs) {
  * @global object
  */
 function load_all_capabilities() {
-    global $USER, $CFG, $ACCESSLIB_PRIVATE;
+    global $CFG, $ACCESSLIB_PRIVATE;
+
+    //NOTE: we can not use $USER here because it may no be linked to $_SESSION['USER'] yet!
 
     // roles not installed yet - we are in the middle of installation
     if (during_initial_install()) {
@@ -1421,18 +1423,18 @@ function load_all_capabilities() {
 
     $base = '/'.SYSCONTEXTID;
 
-    if (isguestuser()) {
+    if (isguestuser($_SESSION['USER'])) {
         $guest = get_guest_role();
 
         // Load the rdefs
-        $USER->access = get_role_access($guest->id);
+        $_SESSION['USER']->access = get_role_access($guest->id);
         // Put the ghost enrolment in place...
-        $USER->access['ra'][$base] = array($guest->id);
+        $_SESSION['USER']->access['ra'][$base] = array($guest->id);
 
 
-    } else if (isloggedin()) {
+    } else if (empty($_SESSION['USER']->id)) { // can not use isloggedin() yet
 
-        $accessdata = get_user_access_sitewide($USER->id);
+        $accessdata = get_user_access_sitewide($_SESSION['USER']->id);
 
         //
         // provide "default role" & set 'dr'
@@ -1461,19 +1463,19 @@ function load_all_capabilities() {
                 array_push($accessdata['ra'][$base], $CFG->defaultfrontpageroleid);
             }
         }
-        $USER->access = $accessdata;
+        $_SESSION['USER']->access = $accessdata;
 
     } else if (!empty($CFG->notloggedinroleid)) {
-        $USER->access = get_role_access($CFG->notloggedinroleid);
-        $USER->access['ra'][$base] = array($CFG->notloggedinroleid);
+        $_SESSION['USER']->access = get_role_access($CFG->notloggedinroleid);
+        $_SESSION['USER']->access['ra'][$base] = array($CFG->notloggedinroleid);
     }
 
     // Timestamp to read dirty context timestamps later
-    $USER->access['time'] = time();
+    $_SESSION['USER']->access['time'] = time();
     $ACCESSLIB_PRIVATE->dirtycontexts = array();
 
     // Clear to force a refresh
-    unset($USER->mycourses);
+    unset($_SESSION['USER']->mycourses);
 }
 
 /**
