@@ -756,7 +756,7 @@ class assignment_upload extends assignment_base {
         if ($forcemode!=null) {
             $mode=$forcemode;
         }
-        $returnurl = "submissions.php?id={$this->cm->id}&userid=$userid&mode=$mode&offset=$offset&forcerefresh=1";
+        $returnurl = new moodle_url('/mod/assignment/submissions.php', array('id'=>$this->cm->id, 'userid'=>$userid, 'mode'=>$mode, 'offset'=>$offset, 'forcerefresh'=>1) );
         if (data_submitted()
           and $submission = $this->get_submission($userid)
           and $this->can_unfinalize($submission)
