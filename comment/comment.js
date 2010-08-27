@@ -211,6 +211,8 @@ bodyContent: '<div class="comment-delete-confirm"><a href="#" id="confirmdelete-
                         }
                         var result = scope.render(ret.list);
                         container.set('innerHTML', result.html);
+                        var img = Y.one('#comment-img-'+scope.client_id);
+                        img.set('src', M.util.image_url('t/expanded', 'core'));
                         args.scope.register_pagination();
                         args.scope.register_delete_buttons();
                     }
@@ -336,11 +338,11 @@ bodyContent: '<div class="comment-delete-confirm"><a href="#" id="confirmdelete-
                         this.register_pagination();
                     }
                     container.setStyle('display', 'block');
-                    img.src=M.util.image_url('t/expanded', 'core');
+                    img.set('src', M.util.image_url('t/expanded', 'core'));
                 } else {
                     // hide
                     container.setStyle('display', 'none');
-                    img.src=M.util.image_url('t/collapsed', 'core');
+                    img.set('src', M.util.image_url('t/collapsed', 'core'));
                     if (ta) {
                         ta.set('value','');
                     }
