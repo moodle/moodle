@@ -158,12 +158,12 @@ class block_completionstatus extends block_base {
         // Is course complete?
         $coursecomplete = $info->is_course_complete($USER->id);
 		
-		// Load course completion
-     	$params = array(
-   			'userid' => $USER->id,
-     		'course' => $COURSE->id
-     	);
-     	$ccompletion = new completion_completion($params);
+        // Load course completion
+        $params = array(
+            'userid' => $USER->id,
+            'course' => $COURSE->id
+        );
+        $ccompletion = new completion_completion($params);
 
         // Has this user completed any criteria?
         $criteriacomplete = $info->count_course_user_data($USER->id);
