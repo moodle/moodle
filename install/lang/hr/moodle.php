@@ -29,5 +29,5 @@
  */
 
 $string['language'] = 'Jezik';
-$string['next'] = 'Sljedeći';
+$string['next'] = 'Nastavi';
 $string['previous'] = 'Prethodni';
