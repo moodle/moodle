@@ -2,7 +2,7 @@
 <mx:Application 
 	xmlns:mx="http://www.adobe.com/2006/mxml" 
 	backgroundColor="white"
-	layout="absolute" 
+	layout="vertical" 
 	creationPolicy="all" 
 	height="100%" width="100%" 
 	applicationComplete="init()"
@@ -11,6 +11,11 @@
 
 	<mx:Script>
 		<![CDATA[
+			import mx.rpc.remoting.Operation;
+			import mx.rpc.events.ResultEvent;
+			import mx.rpc.events.FaultEvent;
+			import mx.messaging.Channel;
+			import mx.rpc.remoting.RemoteObject;
 			import mx.events.ValidationResultEvent;
 			import mx.validators.Validator;
 			/**
@@ -23,6 +28,7 @@
 			 * http://sam.zoy.org/wtfpl/COPYING for more details.
 			 * 
 			 * @author Jordi Boggiano <j.boggiano@seld.be>
+			 * @author Jamie Pratt <me@jamiep.org>
 			 */			
 			
 			import mx.controls.Label;
@@ -33,11 +39,15 @@
  			// Import the debugger
 //			import nl.demonsters.debugger.MonsterDebugger;
 			
-			public var api:AMFConnector;
 			protected var methods:Array;
 			protected var introspector:String;
 			
 			public var rooturl:String;
+			
+			[Bindable]
+			public var serviceurl:String;
+			
+			public var channel:AMFChannel;
 			
 			[Bindable]
 			public var argumentToolTip:String = "You can use JSON syntax for method arguments ie. an array is written like this [item1, item2, etc.] objects are written {\"propname\":value, \"propname2\":value2, etc}";
@@ -76,9 +86,9 @@
 			}
 			public function doConnectToken():void
 			{
-				var url:String = this.rooturl + '/webservice/amf/server.php?'+
+				serviceurl = this.rooturl + '/webservice/amf/server.php?'+
 									'wstoken='+this.token.text;
-				this.doConnect(url);
+				this.doConnect();
 				// saving settings for next time
 				var so:SharedObject = SharedObject.getLocal('AMFTester');
 				if (this.rememberpassword.selected == true ){
@@ -92,10 +102,10 @@
 			}
 			public function doConnectUsername():void
 			{
-				var url:String = this.rooturl + '/webservice/amf/simpleserver.php?'+
+				serviceurl = this.rooturl + '/webservice/amf/simpleserver.php?'+
 							'wsusername=' + this.username.text+
 							'&wspassword=' +  this.password.text;
-				this.doConnect(url);
+				this.doConnect();
 				// saving settings for next time
 				var so:SharedObject = SharedObject.getLocal('AMFTester');
 				if (this.rememberpassword.selected == true ){
@@ -113,15 +123,16 @@
 			/**
 			 * initializes the connection
 			 */
-			private function doConnect(url:String):void
+			private function doConnect():void
 			{
-				api = new AMFConnector(url);
-				api.exec('MethodDescriptor.getMethods');
-				api.addEventListener(Event.COMPLETE, handleConnection);
-				if (!api.hasEventListener(NetStatusEvent.NET_STATUS)) {
-					api.addEventListener(NetStatusEvent.NET_STATUS, netStatusHandler);
-					api.addEventListener(IOErrorEvent.IO_ERROR, ioErrorHandler);
-					api.addEventListener(SecurityErrorEvent.SECURITY_ERROR, securityErrorHandler);
+				push("Connecting to "+serviceurl);
+				//api.source = 'MethodDescriptor';
+				api.setCredentials(this.username.text, this.password.text);
+				api.removeEventListener("result", outputResult);
+				api.addEventListener("result", handleConnection);
+				api.getOperation("MethodDescriptor.getMethods").send();
+				if (!api.hasEventListener("fault")) {
+					api.addEventListener("fault", faultHandler);
 				}
 				this.panelDebug.enabled = false;
 			}
@@ -129,12 +140,12 @@
 			/**
 			 * initializes the debugger dialog with the method list and everything
 			 */
-			protected function handleConnection(event:Event):void
+			protected function handleConnection(event:ResultEvent):void
 			{
 				methods = [];
-				for (var cls:String in api.data) {
-					for (var meth:String in api.data[cls]['methods']) {
-						methods.push({label: cls+'.'+meth, docs: api.data[cls]['methods'][meth]['docs'], args: api.data[cls]['methods'][meth]['params']});
+				for (var cls:String in event.result) {
+					for (var meth:String in event.result[cls]['methods']) {
+						methods.push({label: cls+'.'+meth, docs: event.result[cls]['methods'][meth]['docs'], args: event.result[cls]['methods'][meth]['params']});
 					}
 				}
 				methods.sortOn('label', Array.CASEINSENSITIVE);
@@ -142,8 +153,8 @@
 				this.panelDebug.enabled = true;
 				this.maintabs.selectedIndex = 1;
 				func.dataProvider = methods;
-				api.removeEventListener(Event.COMPLETE, handleConnection);
-				api.addEventListener(Event.COMPLETE, process);
+				api.removeEventListener("result", handleConnection);
+				api.addEventListener("result", outputResult);
 				reloadArgs();
 				
 			}
@@ -152,19 +163,53 @@
 			/**
 			 * outputs a response from the server
 			 */
-			protected function process(event:Event):void
+			protected function outputResult(event:ResultEvent):void
 			{
-				if (api.error) {
-					var keys:String = '';
-					for (var key:String in api.data){
-						keys += key+' ';
-					}
-					push(output, time() + ": Exception (code: "+api.data.code+", description: "+api.data.description+" (line: "+api.data.line+") detail:\n "+api.data.detail+")\n");
-				} else {
-					push(output, time() + ": "+JSON.encode(api.data)+"\n");
+				var keys:Array = new Array();
+				for (var key:String in event.result){
+					keys.push(key);
 				}
-//				MonsterDebugger.trace(this, {"data":api.data, "error":api.error});
-//				MonsterDebugger.trace(this, api.data);
+				push("Result returned \n" + obj2string(event.result));
+			}
+			
+			protected function obj2string(obj:Object, depth:Number=0):String{
+				var string:String = '';
+				if (obj==null){
+					return 'NULL';
+				}
+				switch (typeof(obj)){
+					case 'object':
+						if (obj is Array){
+							string += "Array\n";
+						} else {
+							string += "Object\n";
+						}
+						string += depth2string(depth+1)+"(\n";
+						for (var key:String in obj){
+							string += depth2string(depth+2)+'['+key+'] => '+obj2string(obj[key], depth+3);
+						}
+						string += depth2string(depth+1)+")\n";
+						break;
+					case 'string':
+						var formattedstring:String = obj.toString();
+						formattedstring = formattedstring.replace(/\r/g, "");
+						formattedstring = formattedstring.replace(/\n/g, "\n"+depth2string(depth+3));
+						string += '"'+formattedstring+'"'+"-("+typeof(obj)+")"+"\n";
+						break;
+					default :
+						string += obj.toString()+"-("+typeof(obj)+")"+"\n";
+				}
+				return string;
+			}
+			
+			protected function depth2string(depth:Number):String{
+				var string:String = '';
+				var i:Number = 0;
+				while (i<depth){
+					string += '   ';
+					i++;
+				}
+				return string;
 			}
 			
 			/**
@@ -263,11 +308,38 @@
 							argumentArray.push(input.text as String);
 					}
 				}
+				//no other way to pass arguments as array :
+				switch (argumentArray.length){
+					case 0:
+						api.getOperation(func.selectedLabel).send();
+						break;
+					case 1:
+						api.getOperation(func.selectedLabel).send(argumentArray[0]);
+						break;
+					case 2:
+						api.getOperation(func.selectedLabel).send(argumentArray[0], argumentArray[1]);
+						break;
+					case 3:
+						api.getOperation(func.selectedLabel).send(argumentArray[0], argumentArray[1], argumentArray[2]);
+						break;
+					case 4:
+						api.getOperation(func.selectedLabel).send(argumentArray[0], argumentArray[1], argumentArray[2], argumentArray[3]);
+						break;
+					case 5:
+						api.getOperation(func.selectedLabel).send(argumentArray[0], argumentArray[1], argumentArray[2], argumentArray[3], argumentArray[4]);
+						break;
+					case 6:
+						api.getOperation(func.selectedLabel).send(argumentArray[0], argumentArray[1], argumentArray[2], argumentArray[3], argumentArray[4], argumentArray[5]);
+						break;
+					case 7:
+						api.getOperation(func.selectedLabel).send(argumentArray[0], argumentArray[1], argumentArray[2], argumentArray[3], argumentArray[4], argumentArray[5], argumentArray[6]);
+						break;
+						
+				}
 				
 				
-				api.exec(func.selectedLabel, argumentArray);
 //				MonsterDebugger.trace(this, [func.selectedLabel, argumentArray[0], argumentArray[1], argumentArray[2], argumentArray[3], argumentArray[4], argumentArray[5], argumentArray[6]]);
-				push(output, time() + ": Calling "+func.selectedLabel+" with arguments - "+JSON.encode(argumentArray));
+				push("Calling "+func.selectedLabel+" with arguments \n"+obj2string(argumentArray));
 			}
 			
 			/**
@@ -279,12 +351,20 @@
 			}
 			
 			/**
+			 * clears debug consoles
+			 */
+			protected function goBottom():void
+			{
+				output.verticalScrollPosition = output.maxVerticalScrollPosition;
+			}
+			
+			/**
 			 * refreshes the method list
 			 */
 			protected function refresh():void
 			{
-				api.removeEventListener(Event.COMPLETE, process);
-				api.addEventListener(Event.COMPLETE, handleConnection);
+				api.removeEventListener("result", outputResult);
+				api.addEventListener("result", handleConnection);
 				api.exec(introspector);
 			}
 			
@@ -301,38 +381,26 @@
 			/**
 			 * handler for specific net events
 			 */
-			public function netStatusHandler(event:NetStatusEvent):void 
+			public function faultHandler(event:FaultEvent):void 
 			{
-				push(output, time() + ": Error("+event.type+"): "+event.info.code+", "+event.info.description+", "+event.info.details);
+				push("Error("+event.type+" - "+ event.fault.faultCode + "): "+event.fault.faultString+", "+event.fault.faultDetail);
 			}
 			
-			/**
-			 * handler for security errors
-			 */
-			public function securityErrorHandler(event:SecurityErrorEvent):void
-			{
-				push(output, time() + ": Error("+event.type+"): "+event.text);
-			}
-		
-			/**
-			 * handler for io errors
-			 */
-			public function ioErrorHandler(event:IOErrorEvent):void 
-			{
-				push(output, time() + ": Error("+event.type+"): "+event.text);
-			}
+
 			
 			/**
 			 * pushes text into a console and scrolls it down automatically
 			 */
-			public function push(target:TextArea, text:String):void
+			public function push(text:String):void
 			{
-				target.text += text + "\n";
-				target.verticalScrollPosition = target.maxVerticalScrollPosition;
+				output.text += time() + ": "+ text + "\n";
+				output.verticalScrollPosition = output.maxVerticalScrollPosition;
 			}
 
 		]]>
 	</mx:Script>
+	<mx:RemoteObject id="api" destination="zend" endpoint="{serviceurl}" />
+
 	<mx:Array id="argumentValidators">
 		<cv:JSONValidator id="JSONV1" required="true" enabled="{cbarg1.selected}" source="{arg1}"  property="text" />
 		<cv:JSONValidator id="JSONV2" required="true" enabled="{cbarg2.selected}" source="{arg2}"  property="text" />
@@ -345,96 +413,100 @@
 		
 
 	
-    <mx:TabNavigator id="maintabs" height="100%" width="100%" >
-    	
-	    <mx:TabNavigator label="Connect" id="loginType" borderStyle="solid" height="100%" width="100%">
-			<mx:Panel label="Use Token" id="panelConnectToken">
+	<mx:HBox width="100%" height="550">
+	    <mx:TabNavigator id="maintabs" height="100%" width="100%" >
+	    	
+		    <mx:TabNavigator label="Connect" id="loginType" borderStyle="solid" height="100%" width="100%">
+				<mx:Panel label="Use Token" id="panelConnectToken">
+					<mx:HBox width="100%">
+						<mx:Label text="Token"/>
+						<mx:TextInput id="token" text=""  width="100%"/>
+					</mx:HBox>
+					<mx:HBox width="100%">
+						<mx:Label text="Remember"/>
+						<mx:CheckBox id="remembertoken" width="100%"/>
+					</mx:HBox>
+					<mx:Label id="urllabel1" text="URL :" />
+					<mx:HBox width="100%">
+						<mx:Spacer width="100%" />
+						<mx:Button label="Connect" click="doConnectToken()"/>
+						<mx:Spacer width="100%" />
+					</mx:HBox>
+				</mx:Panel>
+				<mx:Panel label="Use Username and Password" id="panelConnectUsername">
+					<mx:HBox width="100%">
+						<mx:Label text="Username"/>
+						<mx:TextInput id="username" text=""  width="100%"/>
+					</mx:HBox>
+			
+					<mx:HBox width="100%">
+						<mx:Label text="Password"/>
+						<mx:TextInput id="password" text="" displayAsPassword="true"  width="100%"/>
+					</mx:HBox>
+					<mx:HBox width="100%">
+						<mx:Label text="Remember"/>
+						<mx:CheckBox id="rememberpassword" width="100%"/>
+					</mx:HBox>
+					<mx:Label id="urllabel2" text="URL :" />
+			
+					<mx:HBox width="100%">
+						<mx:Spacer width="100%" />
+						<mx:Button label="Connect" click="doConnectUsername()"/>
+						<mx:Spacer width="100%" />
+					</mx:HBox>
+				</mx:Panel>
+			</mx:TabNavigator>
+			<mx:Panel label="Service Browser" width="100%" height="100%" layout="vertical" title="Moodle AMF Service Browser" enabled="false" id="panelDebug">
 				<mx:HBox width="100%">
-					<mx:Label text="Token"/>
-					<mx:TextInput id="token" text=""  width="100%"/>
+					<mx:Label text="Func "/>
+					<mx:ComboBox id="func" change="reloadArgs()">
+					</mx:ComboBox>
+				</mx:HBox>
+				<mx:TextArea id="methodDescription" text="" width="100%" height="150"/>
+				<mx:HBox width="100%">
+					<mx:Label id="larg1" text="Arg 1"/>
+					<mx:CheckBox id="cbarg1" click="toggleCheckBoxes(1)"/>
+					<mx:TextInput id="arg1" toolTip="{argumentToolTip}" width="100%" enabled="{cbarg1.selected}"/>
 				</mx:HBox>
 				<mx:HBox width="100%">
-					<mx:Label text="Remember"/>
-					<mx:CheckBox id="remembertoken" width="100%"/>
+					<mx:Label id="larg2" text="Arg 2"/>
+					<mx:CheckBox id="cbarg2" click="toggleCheckBoxes(2)"/>
+					<mx:TextInput id="arg2" toolTip="{argumentToolTip}" width="100%" enabled="{cbarg2.selected}"/>
 				</mx:HBox>
-				<mx:Label id="urllabel1" text="URL :" />
 				<mx:HBox width="100%">
-					<mx:Spacer width="100%" />
-					<mx:Button label="Connect" click="doConnectToken()"/>
-					<mx:Spacer width="100%" />
+					<mx:Label id="larg3" text="Arg 3"/>
+					<mx:CheckBox id="cbarg3" click="toggleCheckBoxes(3)"/>
+					<mx:TextInput id="arg3" toolTip="{argumentToolTip}" width="100%" enabled="{cbarg3.selected}"/>
+				</mx:HBox>
+				<mx:HBox width="100%">
+					<mx:Label id="larg4" text="Arg 4"/>
+					<mx:CheckBox id="cbarg4" click="toggleCheckBoxes(4)"/>
+					<mx:TextInput id="arg4" toolTip="{argumentToolTip}" width="100%" enabled="{cbarg4.selected}"/>
+				</mx:HBox>
+				<mx:HBox width="100%">
+					<mx:Label id="larg5" text="Arg 5"/>
+					<mx:CheckBox id="cbarg5" click="toggleCheckBoxes(5)"/>
+					<mx:TextInput id="arg5" toolTip="{argumentToolTip}" width="100%" enabled="{cbarg5.selected}"/>
+				</mx:HBox>
+				<mx:HBox width="100%">
+					<mx:Label id="larg6" text="Arg 6"/>
+					<mx:CheckBox id="cbarg6" click="toggleCheckBoxes(6)"/>
+					<mx:TextInput id="arg6" toolTip="{argumentToolTip}" width="100%" enabled="{cbarg6.selected}"/>
+				</mx:HBox>
+				<mx:HBox width="100%">
+					<mx:Label id="larg7" text="Arg 7"/>
+					<mx:CheckBox id="cbarg7" click="toggleCheckBoxes(7)"/>
+					<mx:TextInput id="arg7" toolTip="{argumentToolTip}" width="100%" enabled="{cbarg7.selected}"/>
+				</mx:HBox>
+				<mx:HBox width="100%">
+					<mx:Button id="call" label="Call" click="execute()"/>
+					<mx:Button label="Clear" click="clear()"/>
+					<mx:Button label="Scroll to bottom of debug output" click="goBottom()"/>				
 				</mx:HBox>
 			</mx:Panel>
-			<mx:Panel label="Use Username and Password" id="panelConnectUsername">
-				<mx:HBox width="100%">
-					<mx:Label text="Username"/>
-					<mx:TextInput id="username" text=""  width="100%"/>
-				</mx:HBox>
-		
-				<mx:HBox width="100%">
-					<mx:Label text="Password"/>
-					<mx:TextInput id="password" text="" displayAsPassword="true"  width="100%"/>
-				</mx:HBox>
-				<mx:HBox width="100%">
-					<mx:Label text="Remember"/>
-					<mx:CheckBox id="rememberpassword" width="100%"/>
-				</mx:HBox>
-				<mx:Label id="urllabel2" text="URL :" />
-		
-				<mx:HBox width="100%">
-					<mx:Spacer width="100%" />
-					<mx:Button label="Connect" click="doConnectUsername()"/>
-					<mx:Spacer width="100%" />
-				</mx:HBox>
-			</mx:Panel>
-		</mx:TabNavigator>
-		<mx:Panel label="Service Browser" width="100%" height="100%" layout="vertical" title="Moodle AMF Service Browser" enabled="false" id="panelDebug">
-			<mx:HBox width="100%">
-				<mx:Label text="Func "/>
-				<mx:ComboBox id="func" change="reloadArgs()">
-				</mx:ComboBox>
-			</mx:HBox>
-			<mx:TextArea id="methodDescription" text="" width="100%" height="120"/>
-			<mx:HBox width="100%">
-				<mx:Label id="larg1" text="Arg 1"/>
-				<mx:CheckBox id="cbarg1" click="toggleCheckBoxes(1)"/>
-				<mx:TextInput id="arg1" toolTip="{argumentToolTip}" width="100%" enabled="{cbarg1.selected}"/>
-			</mx:HBox>
-			<mx:HBox width="100%">
-				<mx:Label id="larg2" text="Arg 2"/>
-				<mx:CheckBox id="cbarg2" click="toggleCheckBoxes(2)"/>
-				<mx:TextInput id="arg2" toolTip="{argumentToolTip}" width="100%" enabled="{cbarg2.selected}"/>
-			</mx:HBox>
-			<mx:HBox width="100%">
-				<mx:Label id="larg3" text="Arg 3"/>
-				<mx:CheckBox id="cbarg3" click="toggleCheckBoxes(3)"/>
-				<mx:TextInput id="arg3" toolTip="{argumentToolTip}" width="100%" enabled="{cbarg3.selected}"/>
-			</mx:HBox>
-			<mx:HBox width="100%">
-				<mx:Label id="larg4" text="Arg 4"/>
-				<mx:CheckBox id="cbarg4" click="toggleCheckBoxes(4)"/>
-				<mx:TextInput id="arg4" toolTip="{argumentToolTip}" width="100%" enabled="{cbarg4.selected}"/>
-			</mx:HBox>
-			<mx:HBox width="100%">
-				<mx:Label id="larg5" text="Arg 5"/>
-				<mx:CheckBox id="cbarg5" click="toggleCheckBoxes(5)"/>
-				<mx:TextInput id="arg5" toolTip="{argumentToolTip}" width="100%" enabled="{cbarg5.selected}"/>
-			</mx:HBox>
-			<mx:HBox width="100%">
-				<mx:Label id="larg6" text="Arg 6"/>
-				<mx:CheckBox id="cbarg6" click="toggleCheckBoxes(6)"/>
-				<mx:TextInput id="arg6" toolTip="{argumentToolTip}" width="100%" enabled="{cbarg6.selected}"/>
-			</mx:HBox>
-			<mx:HBox width="100%">
-				<mx:Label id="larg7" text="Arg 7"/>
-				<mx:CheckBox id="cbarg7" click="toggleCheckBoxes(7)"/>
-				<mx:TextInput id="arg7" toolTip="{argumentToolTip}" width="100%" enabled="{cbarg7.selected}"/>
-			</mx:HBox>
-			<mx:HBox width="100%">
-				<mx:Button id="call" label="Call" click="execute()"/>
-				<mx:Button label="Clear" click="clear()"/>
-			</mx:HBox>
-			<mx:TextArea id="output"  width="100%" height="400"/>
-		</mx:Panel>
-    </mx:TabNavigator>
-	
+	    </mx:TabNavigator>
+	</mx:HBox>
+	<mx:HBox width="100%" height="100%">
+		<mx:TextArea id="output"  width="100%" height="100%"/>
+	</mx:HBox>
 </mx:Application>
