@@ -38,8 +38,8 @@ $THEME->name = 'binarius';
 
 
 $THEME->parents = array(
-	'canvas',
-	'base',
+    'canvas',
+    'base',
 );
 
 /////////////////////////////////////////////////////
@@ -54,8 +54,8 @@ $THEME->parents = array(
 
 
 $THEME->sheets = array(
-	'core',
-	'pagelayout',
+    'core',
+    'pagelayout',
 );
 
 ////////////////////////////////////////////////////
@@ -64,12 +64,12 @@ $THEME->sheets = array(
 ////////////////////////////////////////////////////
 
 $THEME->parents_exclude_sheets = array(
-		'base'=>array(
-			'pagelayout',
-		),
-		'canvas'=>array(
-			'pagelayout',
-		),
+        'base'=>array(
+            'pagelayout',
+        ),
+        'canvas'=>array(
+            'pagelayout',
+        ),
 );
 
 
@@ -142,7 +142,7 @@ $THEME->layouts = array(
     'popup' => array(
         'file' => 'general.php',
         'regions' => array(),
-        'options' => array('nofooter'=>true, 'noblocks'=>true, 'nonavbar'=>true),
+        'options' => array('nofooter'=>true, 'noblocks'=>true, 'nonavbar'=>true, 'nocustommenu'=>true),
     ),
     'frametop' => array(
         'file' => 'general.php',
@@ -152,19 +152,19 @@ $THEME->layouts = array(
     'maintenance' => array(
         'file' => 'general.php',
         'regions' => array(),
-        'options' => array('nofooter'=>true, 'nonavbar'=>true),
+        'options' => array('nofooter'=>true, 'nonavbar'=>true, 'nocustommenu'=>true),
     ),
     'embedded' => array(
-    	'theme' => 'canvas',
+        'theme' => 'canvas',
         'file' => 'embedded.php',
         'regions' => array(),
-        'options' => array('nofooter'=>true, 'nonavbar'=>true),
+        'options' => array('nofooter'=>true, 'nonavbar'=>true, 'nocustommenu'=>true),
     ),
     // Should display the content and basic headers only.
     'print' => array(
         'file' => 'general.php',
         'regions' => array(),
-        'options' => array('nofooter'=>true, 'noblocks'=>true, 'nonavbar'=>false),
+        'options' => array('nofooter'=>true, 'noblocks'=>true, 'nonavbar'=>false, 'nocustommenu'=>true),
     ),
 );
 
@@ -206,14 +206,14 @@ $THEME->layouts = array(
 // As above but will be included in the page footer.
 ////////////////////////////////////////////////////
 
-//$THEME->larrow	= '&lang;';
+//$THEME->larrow    = '&lang;';
 
 ////////////////////////////////////////////////////
 // Overrides the left arrow image used throughout
 // Moodle
 ////////////////////////////////////////////////////
 
-//$THEME->rarrow	= '&rang;';
+//$THEME->rarrow    = '&rang;';
 
 ////////////////////////////////////////////////////
 // Overrides the right arrow image used throughout Moodle
