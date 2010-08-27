@@ -664,27 +664,24 @@ class backup_gradebook_structure_step extends backup_structure_step {
 
         //grade_categories
         $grade_categories = new backup_nested_element('grade_categories');
-        $grade_category   = new backup_nested_element('grade_category', null, array('courseid',
-                'parent', 'depth', 'path', 'fullname', 'aggregation', 'keephigh',
+        $grade_category   = new backup_nested_element('grade_category', array('id'), array(
+                'courseid', 'parent', 'depth', 'path', 'fullname', 'aggregation', 'keephigh',
                 'dropload', 'aggregateonlygraded', 'aggregateoutcomes', 'aggregatesubcats',
                 'timecreated', 'timemodified'));
 
         $letters = new backup_nested_element('grade_letters');
         $letter = new backup_nested_element('grade_letter', 'id', array(
-            'lowerboundary', 'letter'));
+            'contextid', 'lowerboundary', 'letter'));
 
 
         // Build the tree
+        $gradebook->add_child($grade_categories);
+        $grade_categories->add_child($grade_category);
 
         $gradebook->add_child($grade_items);
         $grade_items->add_child($grade_item);
         $grade_item->add_child($grade_grades);
         $grade_grades->add_child($grade_grade);
-
-        //$grade_item->add_child($grade_scale);
-
-        $gradebook->add_child($grade_categories);
-        $grade_categories->add_child($grade_category);
 
         $gradebook->add_child($letters);
         $letters->add_child($letter);

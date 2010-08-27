@@ -67,6 +67,153 @@ class restore_drop_and_clean_temp_stuff extends restore_execution_step {
 }
 
 /**
+ * Restore calculated grade items, grade categories etc
+ */
+class restore_gradebook_step extends restore_structure_step {
+
+    protected function define_structure() {
+        $paths = array();
+        $userinfo = $this->task->get_setting_value('users');
+
+        $paths[] = new restore_path_element('gradebook', '/gradebook');
+        $paths[] = new restore_path_element('grade_category', '/gradebook/grade_categories/grade_category');
+        $paths[] = new restore_path_element('grade_item', '/gradebook/grade_items/grade_item');
+        if ($userinfo) {
+            $paths[] = new restore_path_element('grade_grade', '/gradebook/grade_items/grade_item/grade_grades/grade_grade');
+        }
+        $paths[] = new restore_path_element('grade_letter', '/gradebook/grade_letters/grade_letter');
+
+        return $paths;
+    }
+
+    protected function process_gradebook($data) {
+    }
+
+    protected function process_grade_item($data) {
+        global $DB;
+
+        $data = (object)$data;
+
+        $oldid = $data->id;
+        $data->course = $this->get_courseid();
+
+        $data->courseid = $this->get_courseid();
+
+        //manual grade items store category id in categoryid
+        if ($data->itemtype=='manual') {
+            $data->categoryid = $this->get_mappingid('grade_category', $data->categoryid);
+        } //course and category grade items store their category id in iteminstance
+        else if ($data->itemtype=='course' || $data->itemtype=='category') {
+            $data->iteminstance = $this->get_mappingid('grade_category', $data->iteminstance);
+        }
+
+        $data->scaleid   = $this->get_mappingid('scale', $data->scaleid);
+        $data->outcomeid = $this->get_mappingid('outcome', $data->outcomeid);
+
+        $data->locktime     = $this->apply_date_offset($data->locktime);
+        $data->timecreated  = $this->apply_date_offset($data->timecreated);
+        $data->timemodified = $this->apply_date_offset($data->timemodified);
+
+        //course grade item should already exist so updating instead of inserting
+        if($data->itemtype=='course') {
+
+            //get the ID of the already created grade item
+            $gi = new stdclass();
+            $gi->courseid  = $this->get_courseid();
+
+            $gi->itemtype  = $data->itemtype;
+            if ($data->itemtype=='course') {
+                //need to get the id of the grade_category that was automatically created for the course
+                $category = new stdclass();
+                $category->courseid  = $this->get_courseid();
+                $category->parent  = null;
+                $category->fullname  = '?';
+
+                $coursecategory = $DB->get_record('grade_categories', (array)$category);
+                $gi->iteminstance = $coursecategory->id;
+            }
+
+            $existinggradeitem = $DB->get_record('grade_items', (array)$gi);
+            $newitemid = $existinggradeitem->id;
+
+            $data->id = $newitemid;
+            $DB->update_record('grade_items', $data);
+        } else { //insert manual grade items
+            $newitemid = $DB->insert_record('grade_items', $data);
+        }
+        $this->set_mapping('grade_item', $oldid, $newitemid);
+    }
+
+    protected function process_grade_grade($data) {
+        global $DB;
+
+        $data = (object)$data;
+        $oldid = $data->id;
+
+        $data->itemid = $this->get_new_parentid('grade_item');
+
+        $data->userid = $this->get_mappingid('user', $data->userid);
+        $data->usermodified = $this->get_mappingid('user', $data->usermodified);
+        $data->locktime     = $this->apply_date_offset($data->locktime);
+        $data->timecreated  = $this->apply_date_offset($data->timecreated);
+        $data->timemodified = $this->apply_date_offset($data->timemodified);
+
+        $newitemid = $DB->insert_record('grade_grades', $data);
+        $this->set_mapping('grade_grade', $oldid, $newitemid);
+    }
+    protected function process_grade_category($data) {
+        global $DB;
+
+        $data = (object)$data;
+        $oldid = $data->id;
+
+        $data->course = $this->get_courseid();
+        $data->courseid = $data->course;
+
+        $data->timecreated  = $this->apply_date_offset($data->timecreated);
+        $data->timemodified = $this->apply_date_offset($data->timemodified);
+
+        //no parent means a course level grade category. That should have been created when the course was created
+        if(empty($data->parent)) {
+            //get the already created course level grade category
+            $category = new stdclass();
+            $category->courseid  = $this->get_courseid();
+
+            $coursecategory = $DB->get_record('grade_categories', (array)$category);
+            $newitemid = $coursecategory->id;
+            $data->id = $newitemid;
+            
+            //parent was being saved as 0 when it should be null
+            $data->parent = null;
+
+            $DB->update_record('grade_categories', $data);
+        } else {
+            $data->parent = $this->get_mappingid('grade_category', $data->parent);
+            $newitemid = $DB->insert_record('grade_categories', $data);
+        }
+        $this->set_mapping('grade_category', $oldid, $newitemid);
+
+        //need to correct the path as its a string that contains grade category IDs
+        $grade_category = new stdclass();
+        $grade_category->parent = $data->parent;
+        $grade_category->id = $newitemid;
+        $grade_category->path = grade_category::build_path($grade_category);
+        $DB->update_record('grade_categories', $grade_category);
+    }
+    protected function process_grade_letter($data) {
+        global $DB;
+
+        $data = (object)$data;
+        $oldid = $data->id;
+
+        $data->contextid = $this->get_mappingid('context', $data->contextid);
+
+        $newitemid = $DB->insert_record('grade_letters', $data);
+        $this->set_mapping('grade_letter', $oldid, $newitemid);
+    }
+}
+
+/**
  * decode all the interlinks present in restored content
  * relying 100% in the restore_decode_processor that handles
  * both the contents to modify and the rules to be applied
