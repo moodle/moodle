@@ -157,6 +157,13 @@ class block_completionstatus extends block_base {
 
         // Is course complete?
         $coursecomplete = $info->is_course_complete($USER->id);
+		
+		// Load course completion
+     	$params = array(
+   			'userid' => $USER->id,
+     		'course' => $COURSE->id
+     	);
+     	$ccompletion = new completion_completion($params);
 
         // Has this user completed any criteria?
         $criteriacomplete = $info->count_course_user_data($USER->id);
@@ -165,7 +172,7 @@ class block_completionstatus extends block_base {
             $this->content->text .= '<i>'.get_string('pending', 'completion').'</i>';
         } else if ($coursecomplete) {
             $this->content->text .= get_string('complete');
-        } else if (!$criteriacomplete) {
+        } else if (!$criteriacomplete && !$ccompletion->timestarted) {
             $this->content->text .= '<i>'.get_string('notyetstarted', 'completion').'</i>';
         } else {
             $this->content->text .= '<i>'.get_string('inprogress','completion').'</i>';
