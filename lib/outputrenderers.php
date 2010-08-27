@@ -421,7 +421,7 @@ class core_renderer extends renderer_base {
             if (isguestuser()) {
                 $loggedinas = $realuserinfo.get_string('loggedinasguest').
                           " (<a href=\"$loginurl\">".get_string('login').'</a>)';
-            } else if (!empty($USER->access['rsw'][$context->path])) {
+            } else if (is_role_switched($course->id)) { // Has switched roles
                 $rolename = '';
                 if ($role = $DB->get_record('role', array('id'=>$USER->access['rsw'][$context->path]))) {
                     $rolename = ': '.format_string($role->name);

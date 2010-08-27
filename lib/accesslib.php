@@ -5285,13 +5285,28 @@ function role_switch($roleid, $context) {
     return true;
 }
 
+/**
+ * Checks if the user has switched roles within the given course.
+ *
+ * Note: You can only switch roles within the course, hence it takes a courseid
+ * rather than a context. On that note Petr volunteered to implement this across
+ * all other contexts, all requests for this should be forwarded to him ;)
+ *
+ * @param int $courseid The id of the course to check
+ * @return bool True if the user has switched roles within the course.
+ */
+function is_role_switched($courseid) {
+    global $USER;
+    $context = get_context_instance(CONTEXT_COURSE, $courseid, MUST_EXIST);
+    return (!empty($USER->access['rsw'][$context->path]));
+}
 
 /**
  * Get any role that has an override on exact context
  *
- * @global object
- * @param object $context
- * @return array
+ * @global moodle_database
+ * @param stdClass $context The context to check
+ * @return array An array of roles
  */
 function get_roles_with_override_on_context($context) {
     global $DB;

@@ -982,7 +982,8 @@ class global_navigation extends navigation_node {
                 // If the user is not enrolled then we only want to show the
                 // course node and not populate it.
                 $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
-                if (!is_enrolled($coursecontext) && !has_capability('moodle/course:view', $coursecontext)) {
+                // Not enrolled, can't view, and hasn't switched roles
+                if (!is_enrolled($coursecontext) && !has_capability('moodle/course:view', $coursecontext) && !is_role_switched($course->id)) {
                     $coursenode->make_active();
                     $canviewcourseprofile = false;
                     break;
@@ -1524,6 +1525,14 @@ class global_navigation extends navigation_node {
                 $usersnode = $this->rootnodes['users'];
                 $usersnode->action = new moodle_url('/user/index.php', array('id'=>$course->id));
                 $userviewurl = new moodle_url('/user/profile.php', $baseargs);
+            }
+            if (!$usersnode) {
+                // We should NEVER get here, if the course hasn't been populated
+                // with a participants node then the navigaiton either wasn't generated
+                // for it (you are missing a require_login or set_context call) or
+                // you don't have access.... in the interests of no leaking informatin
+                // we simply quit...
+                return false;
             }
             // Add a branch for the current user
             $usernode = $usersnode->add(fullname($user, true), $userviewurl, self::TYPE_USER, null, $user->id);

@@ -59,6 +59,7 @@ if (isguestuser($user)) {
 }
 
 $PAGE->set_context($coursecontext);
+$PAGE->set_course($course);
 $PAGE->set_pagetype('course-view-' . $course->format);  // To get the blocks exactly like the course
 $PAGE->add_body_class('path-user');                     // So we can style it independently
 $PAGE->set_other_editing_capability('moodle/course:manageactivities');
@@ -73,13 +74,11 @@ if (!$currentuser
     //       please note this is just a guess!
     require_login();
     $isparent = true;
-
 } else {
     // normal course
     require_login($course);
     // what to do with users temporary accessing this course? shoudl they see the details?
 }
-
 
 $strpersonalprofile = get_string('personalprofile');
 $strparticipants = get_string("participants");

@@ -2318,7 +2318,7 @@ function require_login($courseorid = NULL, $autologinguest = true, $cm = NULL, $
     if ($course->id == SITEID) {
         // frontpage can not be hidden
     } else {
-        if (!empty($USER->access['rsw'][$coursecontext->path])) {
+        if (is_role_switched($course->id)) {
             // when switching roles ignore the hidden flag - user had to be in course to do the switch
         } else {
             if (!$course->visible and !has_capability('moodle/course:viewhiddencourses', $coursecontext)) {
