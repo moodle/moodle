@@ -42,7 +42,9 @@ class restore_final_task extends restore_task {
             $this->add_step(new restore_review_pending_block_positions('review_block_positions'));
         }
 
-        // TODO: Gradebook
+        // Gradebook
+        //how do I check if I need to restore the gradebook
+        //$this->add_step(new restore_gradebook_step('gradebook_step','gradebook.xml'));
 
         // Decode all the interlinks
         $this->add_step(new restore_decode_interlinks('decode_interlinks'));
