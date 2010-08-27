@@ -131,18 +131,18 @@ $THEME->layouts = array(
         'theme' => 'boxxie',
         'file' => 'general.php',
         'regions' => array(),
-        'options' => array('nofooter'=>true, 'nonavbar'=>true),
+        'options' => array('nofooter'=>true, 'nonavbar'=>true, 'noblocks'=>false, 'nocustommenu'=>true),
     ),
     'embedded' => array(
         'file' => 'embedded.php',
         'regions' => array(),
-        'options' => array('nofooter'=>true, 'nonavbar'=>true),
+        'options' => array('nofooter'=>true, 'nonavbar'=>true, 'noblocks'=>false, 'nocustommenu'=>true),
     ),
     // Should display the content and basic headers only.
     'print' => array(
         'file' => 'general.php',
         'regions' => array(),
-        'options' => array('nofooter'=>true, 'nonavbar'=>true, 'noblocks'=>false),
+        'options' => array('nofooter'=>true, 'nonavbar'=>true, 'noblocks'=>false, 'nocustommenu'=>true),
     ),
 
 );

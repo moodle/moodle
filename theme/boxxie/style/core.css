@@ -1,133 +1,133 @@
 html,
 body {
-	background: #6e8c45;
+    background: #6e8c45;
 }
 
 #page-wrapper {
-	margin: 10px 5%;
-	background: #5b7439;
-	padding: 5px;
+    margin: 10px 5%;
+    background: #5b7439;
+    padding: 5px;
 }
 
 #page {
-	background: #fff;
-	padding: 5px;
-	width: auto;
+    background: #fff;
+    padding: 5px;
+    width: auto;
 }
 
 a:link,
 a:visited {
-	color: #69804e;
-	text-decoration: none;
+    color: #69804e;
+    text-decoration: none;
 }
 
 a:hover,
 a:active {
-	color: #41512f;
+    color: #41512f;
 }
 
 
 .rolelink {
-	text-align: right;
-	margin: 10px 0;
+    text-align: right;
+    margin: 10px 0;
 }
 
 .buttons {
-	text-align: center;
+    text-align: center;
 }
 
 .mform fieldset {
-	border-color: #e5e5e5;
+    border-color: #e5e5e5;
 }
 
 .mform legend {
-	border: 1px solid #e5e5e5;
-	background: #f3f8ed;
-	padding: 0 5px;
+    border: 1px solid #e5e5e5;
+    background: #f3f8ed;
+    padding: 0 5px;
 }
 
 .generalbox {
-	border-color: #e5e5e5;
-	padding: 5px;
+    border-color: #e5e5e5;
+    padding: 5px;
 }
 
 /* Header */
 
 #page-header {
-	background: #3b4c25;
-	color: #fff;
+    background: #3b4c25;
+    color: #fff;
 }
 
 #page-header a:link,
 #page-header a:visited {
-	color: #b3c79d;
+    color: #b3c79d;
 }
 
 #page-header h1.headermain {
-	color: #fff;
-	font-weight: normal;
-	margin: 1em;
-	font-size: 2em;
+    color: #fff;
+    font-weight: normal;
+    margin: 1em;
+    font-size: 2em;
 }
 
 .pagelayout-frontpage #page-header h1.headermain {
-	font-size: 2.75em;
+    font-size: 2.75em;
 }
 
 /* Navbar */
 
 .navbar {
-	padding: 5px;
-	font-size: 0.95em;
-	color: #333;
+    padding: 5px;
+    font-size: 0.95em;
+    color: #333;
 }
 
 .navbar .sep {
-	color: #999;
+    color: #999;
 }
 
 /* Sideblock */
 
 .block {
-	border: none;
+    border: none;
 }
 
 .block .header {
-	background: #69804e;
-	padding: 2px 5px;
+    background: #69804e;
+    padding: 2px 5px;
 }
 
 .block .header h2 {
-	color: #fff;
-	font-size: 1.2em;
-	line-height: 1;
+    color: #fff;
+    font-size: 1.2em;
+    line-height: 1;
 }
 
 .block .content {
-	background: #f3f8ed;
-	border-width: 1px;
-	border-color: #69804e;
-	border-style: solid;
-	padding: 5px 10px;
+    background: #f3f8ed;
+    border-width: 1px;
+    border-color: #69804e;
+    border-style: solid;
+    padding: 5px 10px;
 }
 
 .block_js_expansion .block_tree {
-	overflow: auto;
+    overflow: auto;
 }
 
 .block_recent_activity h2,main,
 .block_recent_activity h3.main {
-	font-size: 1em;
-	margin: 0.5em 0;
+    font-size: 1em;
+    margin: 0.5em 0;
 }
 
 .block_calendar_month .content h3.eventskey {
-	font-size: 1em;
-	margin: 0.25em 0;
+    font-size: 1em;
+    margin: 0.25em 0;
 }
 
 td.eventskey {
-	padding: 0 5px 3px;
+    padding: 0 5px 3px;
 }
 
 .minicalendar td,
@@ -136,26 +136,26 @@ td.eventskey {
 }
 
 .block_comments textarea {
-	width: 95%;
-	margin-bottom: 1em;
+    width: 95%;
+    margin-bottom: 1em;
 }
 
 .block_comments .comment-area a {
-	background: #fff;
-	padding: 5px;
-	border: 1px solid #e5e5e5;
+    background: #fff;
+    padding: 5px;
+    border: 1px solid #e5e5e5;
 }
 
 .comment-delete-confirm {
-	background: #fff;
+    background: #fff;
 }
 
 .block_messages .content {
-	font-size: 0.95em;
+    font-size: 0.95em;
 }
 
 .block_messages .footer {
-	text-align: center;
+    text-align: center;
 }
 
 /* Calendar */
@@ -169,140 +169,140 @@ td.eventskey {
  }
 
 .calendarlayout .minicalendarblock h3 {
-	font-size: 1.2em;
-	margin: 1em 0 0.25em;
-	text-align: center;
+    font-size: 1.2em;
+    margin: 1em 0 0.25em;
+    text-align: center;
 }
 
 .calendarlayout .maincalendar .header {
-	padding: 5px;
-	margin: 1em 0 0;
+    padding: 5px;
+    margin: 1em 0 0;
 }
 
 .calendarlayout .maincalendar .eventlist .event {
-	border: none;
+    border: none;
 }
 
 .calendarlayout .maincalendar .eventlist .event .topic {
-	background: #d6eebd;
-	border: 1px solid #a0c278;
-	padding: 5px 10px;
+    background: #d6eebd;
+    border: 1px solid #a0c278;
+    padding: 5px 10px;
 }
 
 .calendarlayout .maincalendar .eventlist .event .description {
-	border-width: 0 1px 1px;
-	border-color: #a0c278;
-	border-style: solid;
-	padding: 5px 10px;
+    border-width: 0 1px 1px;
+    border-color: #a0c278;
+    border-style: solid;
+    padding: 5px 10px;
 }
 
 .calendarlayout .maincalendar .eventlist .event .picture {
-	text-align: center;
+    text-align: center;
 }
 
 .maincalendar .calendar-controls {
-	padding: 10px 5px 0;
-	background: #f3f8ed;
-	border-bottom: 1px solid #e5e5e5;
+    padding: 10px 5px 0;
+    background: #f3f8ed;
+    border-bottom: 1px solid #e5e5e5;
 }
 
 .maincalendar .calendar-controls .previous,
 .maincalendar .calendar-controls .current,
 .maincalendar .calendar-controls .next {
-	width: 5%;
-	float: left;
+    width: 5%;
+    float: left;
 }
 
 .maincalendar .calendar-controls .previous {
-	float: left;
+    float: left;
 }
 
 .maincalendar .calendar-controls h1.current {
-	margin: 0auto;
-	font-size: 1.5em;
-	text-align: center;
-	line-height: 1;
+    margin: 0auto;
+    font-size: 1.5em;
+    text-align: center;
+    line-height: 1;
 }
 
 .maincalendar .calendar-controls .next {
-	text-align: right;
+    text-align: right;
 }
 
 .maincalendar .filters table td {
-	font-size: 0.9em;
+    font-size: 0.9em;
 }
 
 .maincalendar .bottom {
-	margin-top: 25px;
+    margin-top: 25px;
 }
 
 .minicalendar th abbr {
-	border: none;
+    border: none;
 }
 
 .sidecalendar .filters td,
 .minicalendar td,
 .minicalendar th {
-	padding: 2px;
-	font-size: 0.85em;
+    padding: 2px;
+    font-size: 0.85em;
 }
 
 /* Course */
 
 h2.headingblock {
-	font-weight: normal;
+    font-weight: normal;
 }
 
 .coursebox {
-	border-bottom: 1px solid #eee;
+    border-bottom: 1px solid #eee;
 }
 
 .coursebox .info {
-	width: 35%;
+    width: 35%;
 }
 
 .coursebox .summary {
-	width: 63%;
+    width: 63%;
 }
 
 .coursebox h3.name {
-	margin: 0;
-	font-size: 1.2em;
-	line-height: 1.4;
+    margin: 0;
+    font-size: 1.2em;
+    line-height: 1.4;
 }
 
 .coursebox .info .teachers {
-	margin-left: 0.6em;
-	font-size: 0.95em;
+    margin-left: 0.6em;
+    font-size: 0.95em;
 }
 
 .categorybox {
-	border: none;
+    border: none;
 }
 
 h2.headingblock {
-	border-bottom: 1px solid #eee;
-	font-size: 1.5em;
+    border-bottom: 1px solid #eee;
+    font-size: 1.5em;
 }
 
 #page-course-category .categorypicker {
-	text-align: center;
-	margin: 10px 0 20px;
+    text-align: center;
+    margin: 10px 0 20px;
 }
 
 .path-course-view .course-content li.section {
-	border: 1px solid #e5e5e5;
+    border: 1px solid #e5e5e5;
 }
 
 .path-course-view .course-content .side {
-	padding: 5px 0;
+    padding: 5px 0;
 }
 
 #page-course-view-weeks .weekdates {
-	font-size: 1em;
-	font-weight: normal;
-	color: #777;
-	padding: 2px;
+    font-size: 1em;
+    font-weight: normal;
+    color: #777;
+    padding: 2px;
 }
 
 .course-content .main {
@@ -315,638 +315,638 @@ h2.headingblock {
  }
  
 .course-content .main .content {
-	padding: 10px;
-	background:#fff;
+    padding: 10px;
+    background:#fff;
 }
 
 /* Users */
 
 .userinfobox {
-	border: none;
-	width: 75%;
-	margin: 0 auto;
+    border: none;
+    width: 75%;
+    margin: 0 auto;
 }
 
 .userinfobox .content {
-	border: 1px solid #dadfd5;
-	background: #f3f8ed;
-	padding: 10px;
+    border: 1px solid #dadfd5;
+    background: #f3f8ed;
+    padding: 10px;
 }
 
 #page-user-view .buttons {
-	margin: 0 auto;
-	width: 250px;
+    margin: 0 auto;
+    width: 250px;
 }
 
 #page-user-view .buttons div {
-	float: left;
-	padding: 10px;
+    float: left;
+    padding: 10px;
 }
 
 #page-user-index .rolesform {
-	text-align: center;
-	margin: 15px;
+    text-align: center;
+    margin: 15px;
 }
 
 #page-user-index .rolesform div,
 #page-user-index .rolesform form,
 #page-user-index .rolesform div div {
-	display: inline;
+    display: inline;
 }
 
 #page-user-index h3.main {
-	margin: 1em 0;
+    margin: 1em 0;
 }
 
 #page-user-index #participantsform {
-	text-align: center;
+    text-align: center;
 }
 
 #page-user-index #participants {
-	margin: 25px auto;
-	width: 85%;
+    margin: 25px auto;
+    width: 85%;
 }
 
 #page-user-index #participants th a:link,
 #page-user-index #participants th a:visited {
-	color: #fff;
+    color: #fff;
 }
 
 #page-user-index .userinfobox .links a {
-	display: block;
+    display: block;
 }
 
 #page-user-action_redir .generaltable {
-	margin: 15px auto 20px;
-	width: 80%;
+    margin: 15px auto 20px;
+    width: 80%;
 }
 
 #page-user-messageselect .generalbox,
 #page-user-action_redir .generalbox {
-	border-color: #e5e5e5;
-	padding: 10px;
+    border-color: #e5e5e5;
+    padding: 10px;
 }
 
 #page-user-messageselect #theform table,
 #page-user-action_redir #theform table {
-	margin: auto;
+    margin: auto;
 }
 
 #page-user-messageselect #theform .generalbox table,
 #page-user-action_redir #theform .generalbox table {
-	
+
 }
 
 /* My Index */
 
 #page-my-index .generalbox {
-	border: none;
-	text-align: center;
+    border: none;
+    text-align: center;
 }
 
 /* Tabs */
 
 .tabtree ul {
-	text-align: center;
+    text-align: center;
 }
 
 .tabtree .tabrow0 {
-	width: 100%;
-	margin: 1em 0px;
+    width: 100%;
+    margin: 1em 0px;
 }
 
 .tabtree .tabrow0 li {
-	margin-right: -4px;
+    margin-right: -4px;
 }
 
 .tabtree .tabrow0 li.here {
-	font-weight: bold;
+    font-weight: bold;
 }
 
 .tabtree .tabrow0 li.here a {
-	position: relative;
-	z-index: 102;
+    position: relative;
+    z-index: 102;
 }
 
 .tabtree .tabrow0 li a {
-	background: #f3f8ed;
-	border-width: 1px 1px 0;
-	border-style: solid;
-	font-weight: bold;
-	border-color: #dadfd5;
-	padding: 6px 6px 5px;
-	margin-right: 3px;
-	color: #3b4c25;
+    background: #f3f8ed;
+    border-width: 1px 1px 0;
+    border-style: solid;
+    font-weight: bold;
+    border-color: #dadfd5;
+    padding: 6px 6px 5px;
+    margin-right: 3px;
+    color: #3b4c25;
 }
 
 .tabtree .tabrow0 li.here a {
-	background: #fff;
-	border-color: #5b7439;
-	border-bottom-width: 0;
-	cursor: pointer;
+    background: #fff;
+    border-color: #5b7439;
+    border-bottom-width: 0;
+    cursor: pointer;
 }
 
 .tabtree .tabrow0 li a:hover {
-	background: #fff;
-	border-color: #84a754;
+    background: #fff;
+    border-color: #84a754;
 }
 
 .tabtree .tabrow0 ul,
 .tabtree .tabrow0 div {
-	font-weight: normal;
-	background: #fff;
-	border-top: 1px solid #5b7439;
-	padding: 0;
-	margin: 0;
-	margin-top: 1px;
+    font-weight: normal;
+    background: #fff;
+    border-top: 1px solid #5b7439;
+    padding: 0;
+    margin: 0;
+    margin-top: 1px;
 }
 
 .tabtree tabrow2 ul {
-	border: none;
+    border: none;
 }
 
 .tabtree .tabrow0 li.here .empty {
-	display: block;
-	height: 1px;
-	overflow: hidden;
-	padding: 0px;
-	position: absolute;
-	width: 100%;
-	background: #fff;
+    display: block;
+    height: 1px;
+    overflow: hidden;
+    padding: 0px;
+    position: absolute;
+    width: 100%;
+    background: #fff;
 }
 
 .tabtree .tabrow1 li a,
 .tabtree .tabrow1 li a:hover,
 .tabtree .tabrow1 li a span,
 .tabtree .tabrow1 li a:hover span {
-	background: none !important;
-	border: none;
-	font-size: 0.95em;
+    background: none !important;
+    border: none;
+    font-size: 0.95em;
 }
 
 .tabtree a.nolink,
 .tabtree .here ul a.nolink,
 .tabtree a.nolink:hover,
 .tabtree .here ul a.nolink:hover {
-	color: #888;
-	text-decoration: none;
+    color: #888;
+    text-decoration: none;
 }
 
 .tabtree .here a.nolink,
 .tabtree .here ul .here a.nolink,
 .tabtree .here a.nolink:hover,
 .tabtree .here ul .here a.nolink:hover {
-	color: black;
-	text-decoration: none;
+    color: black;
+    text-decoration: none;
 }
 
 .ie7 .tabtree .tabrow0 li {
-	margin-left: 0;
+    margin-left: 0;
 }
 
 .ie7 .tabtree .tabrow0 li.first {
-	margin-right: -4px;
+    margin-right: -4px;
 }
 
 .ie7 .tabtree .tabrow0 li.onerow {
-	margin-right: 0;
+    margin-right: 0;
 }
 
 .ie7 .tabtree .tabrow0 a {
-	display: inline-block;
-	padding: 8px 0 0.35em 13px;
-	line-height: 1.5em;
+    display: inline-block;
+    padding: 8px 0 0.35em 13px;
+    line-height: 1.5em;
 }
 
 .ie7 .tabtree .tabrow0 a span {
-	padding: 10px 1em 10px 0;
+    padding: 10px 1em 10px 0;
 }
 
 .ie7 .tabtree .tabrow0 div {
-	top: 2.6em;
-	padding: 0.2em 0;
+    top: 2.6em;
+    padding: 0.2em 0;
 }
 
 .ie7 .tabtree .tabrow0 div.empty {
-	margin-right: 0;
+    margin-right: 0;
 }
 
 .ie7.mod-quiz div.tabtree a span img.iconsmall {
-	margin: 0;
-	vertical-align: baseline;
-	position: relative;
-	top: 2px;
+    margin: 0;
+    vertical-align: baseline;
+    position: relative;
+    top: 2px;
 }
 
 .ie6 .tabtree {
-	height: 100%;
+    height: 100%;
 }
 
 .ie6 .tabtree .tabrow0 {
-	padding-top: 10px;
+    padding-top: 10px;
 }
 
 .ie6 .tabtree .tabrow0 li {
-	margin-left: 0;
+    margin-left: 0;
 }
 
 .ie6 .tabtree .tabrow0 li.first {
-	margin-left: -4px;
-	margin-right: -4px;
+    margin-left: -4px;
+    margin-right: -4px;
 }
 
 .ie6 .tabtree .tabrow0 li.last a {
-	margin-right: 0;
+    margin-right: 0;
 }
 
 .ie6 .tabtree .tabrow0 li.onerow {
-	margin-right: 0;
+    margin-right: 0;
 }
 
 .ie6 .tabtree .tabrow0 a {
-	padding: 0 0 0 13px;
+    padding: 0 0 0 13px;
 }
 
 .ie6 .tabtree .tabrow0 a span {
-	padding: 12px 1em 4px 0;
+    padding: 12px 1em 4px 0;
 }
 
 .ie6 .tabtree .tabrow0 div {
-	top: 3.5em;
-	padding: 0.2em 0;
+    top: 3.5em;
+    padding: 0.2em 0;
 }
 
 /* Mods */
 
 #intro {
-	width: 75%;
-	background: #f3f8ed;
-	border: 1px solid #d0d3ca;
-	padding: 10px;
-	margin: 1em auto;
+    width: 75%;
+    background: #f3f8ed;
+    border: 1px solid #d0d3ca;
+    padding: 10px;
+    margin: 1em auto;
 }
 
 #notice,
 .redirectmessage {
-	text-align: center;
-	border-color: #e5e5e5;
-	padding: 5px;
+    text-align: center;
+    border-color: #e5e5e5;
+    padding: 5px;
 }
 
 .pagelayout-embedded #page-wrapper {
-	text-align: center;
-	margin: 3% 15%;
+    text-align: center;
+    margin: 3% 15%;
 }
 
 .pagelayout-embedded #content {
-	padding: 10px;
+    padding: 10px;
 }
 
 .notifysuccess {
-	text-align: center;
-	margin: 25px;
-	font-weight: bold;
+    text-align: center;
+    margin: 25px;
+    font-weight: bold;
 }
 
 /* Forum */
 
 .forumpost {
-	border: none;
+    border: none;
 }
 
 .forumpost .topic {
-	background: #d6eebd;
-	border: 1px solid #a0c278;
-	padding: 5px 10px;
+    background: #d6eebd;
+    border: 1px solid #a0c278;
+    padding: 5px 10px;
 }
 
 .forumpost .starter {
-	background: #c9dfb2;
+    background: #c9dfb2;
 }
 
 .forumpost .subject {
-	font-size: 1.2em;
+    font-size: 1.2em;
 }
 
 .forumpost .author {
-	font-style: italic;
-	color: #555;
-	font-size: 0.95em;
+    font-style: italic;
+    color: #555;
+    font-size: 0.95em;
 }
 
 .forumpost .author a:link,
 .forumpost .author a:visited {
-	color: #566b3f;
-	text-decoration: underline;
+    color: #566b3f;
+    text-decoration: underline;
 }
 
 .forumpost .author a:hover {
-	text-decoration: none;
+    text-decoration: none;
 }
 
 .forumpost .content {
-	border-width: 1px ;
-	border-color: #a0c278;
-	border-style: solid;
-	padding: 5px 10px;
+    border-width: 1px ;
+    border-color: #a0c278;
+    border-style: solid;
+    padding: 5px 10px;
 }
 
 .forumpost .commands {
-	padding: 10px 0;
+    padding: 10px 0;
 }
 
 .forumaddnew,
 .forumnodiscuss {
-	text-align: center;
-	margin-bottom: 15px;
+    text-align: center;
+    margin-bottom: 15px;
 }
 
 .path-mod-forum .forumheaderlist .picture {
-	border-right-width: 0;
-	padding-right: 0;
-	padding-top: 10px;
+    border-right-width: 0;
+    padding-right: 0;
+    padding-top: 10px;
 }
 
 .path-mod-forum .forumheaderlist .replies {
-	text-align: center;
+    text-align: center;
 }
 
 .path-mod-forum .forumheaderlist .replies .read {
-	background: #fcffd8;
-	padding: 2px;
+    background: #fcffd8;
+    padding: 2px;
 }
 
 .path-mod-forum .unread .content {
-	background: #f3f8ed;
+    background: #f3f8ed;
 }
 
 .path-course-view .section .forum .unread {
-	margin-left: 20px;
+    margin-left: 20px;
 }
 
 .path-course-view .section .forum .unread a:link,
 .path-course-view .section .forum .unread a:visited {
-	color: #888;
-	background: #fcffd8;
-	font-size: 0.9em;
+    color: #888;
+    background: #fcffd8;
+    font-size: 0.9em;
 }
 
 #page-mod-forum-search .generalbox {
-	width: 85%;
+    width: 85%;
 }
 
 #page-mod-forum-search .searchbox {
-	margin: 25px auto;
+    margin: 25px auto;
 }
 
 #page-mod-forum-search .searchbox .submit {
-	padding-top: 20px;
-	text-align: center;
+    padding-top: 20px;
+    text-align: center;
 }
 
 /* Resource */
 
 .mod_introbox {
-	border-color: #eee;
-	background: #f3f8ed;
-	margin: 0 auto 15px;
-	width: 75%;
+    border-color: #eee;
+    background: #f3f8ed;
+    margin: 0 auto 15px;
+    width: 75%;
 }
 
 .path-mod-page .generalbox {
-	margin: 10px auto;
-	border: none;
-	padding: 0 25px;
+    margin: 10px auto;
+    border: none;
+    padding: 0 25px;
 }
 
 .path-mod-page .modified {
-	color: #777;
-	font-size: 0.8em;
-	text-align: center;
+    color: #777;
+    font-size: 0.8em;
+    text-align: center;
 }
 
 #page-mod-folder-view .foldertree {
-	width: 50%;
-	margin: 20px auto;
-	border: 1px solid #e5e5e5;
-	padding: 15px;
+    width: 50%;
+    margin: 20px auto;
+    border: 1px solid #e5e5e5;
+    padding: 15px;
 }
 
 #page-mod-folder-view .foldertree ul {
-	margin-bottom: 0;
+    margin-bottom: 0;
 }
 
 /* Assignment */
 
 #page-mod-assignment-view .reportlink a {
-	background: #fcffd8;
+    background: #fcffd8;
 }
 
 #page-mod-assignment-view .generalbox {
-	width: 75%;
-	border-color: #e5e5e5;
-	padding: 10px;
+    width: 75%;
+    border-color: #e5e5e5;
+    padding: 10px;
 }
 
 #page-mod-assignment-view #dates {
-	width: 45%;
-	margin: 20px auto 25px;
+    width: 45%;
+    margin: 20px auto 25px;
 }
 
 #page-mod-assignment-view #dates table {
-	margin: 0 auto;
+    margin: 0 auto;
 }
 
 #page-mod-assignment-view fieldset .fitem {
-	width: 50%;
-	margin: 0 auto;
+    width: 50%;
+    margin: 0 auto;
 }
 
 #page-mod-assignment-view fieldset .fitem .fitemtitle {
-	width: 30%;
+    width: 30%;
 }
 
 #page-mod-assignment-view fieldset .fitem .ffile {
-	margin-left: 32%;
+    margin-left: 32%;
 }
 
 #page-mod-assignment-view .mform fieldset {
-	margin-bottom: 0;
+    margin-bottom: 0;
 }
 
 #page-mod-assignment-view .mform .fitem .fsubmit {
-	text-align: center;
-	margin: 0;
-	width: 100%;
+    text-align: center;
+    margin: 0;
+    width: 100%;
 }
 
 #page-mod-assignment-view .singlebutton {
-	margin: 15px;
+    margin: 15px;
 }
 
 #page-mod-assignment-view #online {
-	margin: 10px auto;
-	width: 90%;
+    margin: 10px auto;
+    width: 90%;
 }
 
 #page-mod-assignment-view #online fieldset .fitem {
-	width: 100%;
+    width: 100%;
 }
 
 #page-mod-assignment-view #online fieldset .fitem .fitemtitle {
-	width: 15%;
+    width: 15%;
 }
 
 /* Choice */
 
 #page-mod-choice-view #notice {
-	width: 55%;
-	padding: 15px;
-	border: none;
-	margin: 0 auto;
+    width: 55%;
+    padding: 15px;
+    border: none;
+    margin: 0 auto;
 }
 
 #page-mod-choice-view h2.main {
-	font-size: 1.5em;
-	margin: 1em 0;
+    font-size: 1.5em;
+    margin: 1em 0;
 }
 
 .path-mod-choice .results td {
-	padding: 5px;
+    padding: 5px;
 }
 
 .path-mod-choice .results .count {
-	border-top: 1px solid #69804e;
+    border-top: 1px solid #69804e;
 }
 
 /* Feedback */
 
 .path-mod-feedback h4.main {
-	margin-top: 1em;
+    margin-top: 1em;
 }
 
 .path-mod-feedback .continuebutton {
-	text-align: center;
-	margin: 1em 0;
+    text-align: center;
+    margin: 1em 0;
 }
 
 #page-mod-feedback-show_entries .generalbox {
-	width: 60%;
+    width: 60%;
 }
 
 #page-mod-feedback-show_entries table {
-	margin: 0 auto;
+    margin: 0 auto;
 }
 
 #page-mod-feedback-analysis table {
-	margin: 0 auto;
+    margin: 0 auto;
 }
 
 #page-mod-feedback-analysis .form-buttons {
-	float: right;
-	padding-right: 5px;
+    float: right;
+    padding-right: 5px;
 }
 
 /* Glossary */
 
 #page-mod-glossary-view .glossarycontrol {
-	float: none;
+    float: none;
 }
 
 #page-mod-glossary-view .singlebutton {
-	text-align: center;
+    text-align: center;
 }
 
 #page-mod-glossary-view form .boxaligncenter td {
-	text-align: center;
+    text-align: center;
 }
 
 #page-mod-glossary-view .entrybox {
-	text-align: center;
+    text-align: center;
 }
 
 .path-mod-glossary .entrybox .glossarycategoryheader {
-	width: 100%;
+    width: 100%;
 }
 
 .path-mod-glossary .entrybox .glossarycategoryheader th {
-	background: #f3f8ed;
-	border-bottom: 1px solid #e5e5e5;
+    background: #f3f8ed;
+    border-bottom: 1px solid #e5e5e5;
 }
 
 .path-mod-glossary .entrybox .glossarycategoryheader th h2.main {
-	font-size: 1.2em;
-	line-height: 1.5;
-	margin: 0;
+    font-size: 1.2em;
+    line-height: 1.5;
+    margin: 0;
 }
 
 .path-mod-glossary .entrybox .entry .concept h3 {
-	display: inline;
-	font-size: 1.2em;
-	line-height: 1.5;
-	margin-bottom: 0;
+    display: inline;
+    font-size: 1.2em;
+    line-height: 1.5;
+    margin-bottom: 0;
 }
 
 .path-mod-glossary .entrybox .fullwithauthor .concept h3,
 .path-mod-glossary .entrybox .encyclopedia .concept h3 {
-	margin-bottom: 0.2em;
+    margin-bottom: 0.2em;
 }
 
 .path-mod-glossary .entrybox .glossarypost {
-	border-bottom: 1px solid #e5e5e5;
+    border-bottom: 1px solid #e5e5e5;
 }
 
 .path-mod-glossary .entrybox .entryheader {
-	font-weight: normal;
+    font-weight: normal;
 }
 
 .path-mod-glossary .entrybox .entrylist {
-	width: 100%;
+    width: 100%;
 }
 
 .path-mod-glossary .entrybox .entrylist .entrylowersection {
-	text-align: right;
+    text-align: right;
 }
 
 #page-mod-glossary-editcategories .generalbox {
-	margin: 10px auto;
-	width: 50%;
+    margin: 10px auto;
+    width: 50%;
 }
 
 #page-mod-glossary-editcategories .generalbox th {
-	border: none;
+    border: none;
 }
 
 #page-mod-glossary-editcategories .generalbox .buttons {
-	padding: 15px;
+    padding: 15px;
 }
 
 #page-mod-glossary-editcategories .generalbox table .action {
-	border-left: 1px solid #eee;
-	text-align: center;
+    border-left: 1px solid #eee;
+    text-align: center;
 }
 
 #page-mod-glossary-editcategories .generalbox .confirmbuttons,
 #page-mod-glossary-editcategories .generalbox .editbuttons {
-	margin: 0 auto;
+    margin: 0 auto;
 }
 
 .deletecatconfirm {
-	text-align: center;
+    text-align: center;
 }
 
 /* Forms */
 
 .mform .fitem fieldset.felement {
-	margin: 0 auto 1em;
-	padding-left: 25px;
-	padding-top: 0;
-	text-align: center;
+    margin: 0 auto 1em;
+    padding-left: 25px;
+    padding-top: 0;
+    text-align: center;
 }
 
 .path-backup .mform .fitem fieldset.felement {
-	margin-left: 0;
-	padding-left: 0;
+    margin-left: 0;
+    padding-left: 0;
 }
 
 /* Tables */
@@ -955,9 +955,9 @@ h2.headingblock {
 #page-user-action_redir .generaltable,
 #page-user-index #participants,
 .path-mod-forum .forumheaderlist {
-	border-width: 1px;
-	border-color: #d0d3ca;
-	border-style: solid;
+    border-width: 1px;
+    border-color: #d0d3ca;
+    border-style: solid;
 }
 
 #page-mod-glossary-editcategories .generalbox th,
@@ -965,81 +965,110 @@ h2.headingblock {
 #page-user-index #participants th,
 .path-mod-choice .results th,
 .path-mod-forum .forumheaderlist th {
-	border-width: 0 0 2px;
-	border-color: #3b4c25;
-	border-style: solid;
-	background: #69804e;
-	padding-left: 5px;
-	color: #fff;
+    border-width: 0 0 2px;
+    border-color: #3b4c25;
+    border-style: solid;
+    background: #69804e;
+    padding-left: 5px;
+    color: #fff;
 }
 
 #page-user-action_redir .generaltable td,
 #page-user-index #participants td,
 .path-mod-forum .forumheaderlist td {
-	border-color: #d0d3ca;
-	border-width: 0 1px 1px 0;
-	border-style: solid;
-	border-collapse: collapse;
-	padding: 2px 8px;
+    border-color: #d0d3ca;
+    border-width: 0 1px 1px 0;
+    border-style: solid;
+    border-collapse: collapse;
+    padding: 2px 8px;
 }
 
 #page-user-action_redir .generaltable .r1 td,
 #page-user-index #participants .r0 td,
 .path-mod-choice .results .count,
 .path-mod-forum .forumheaderlist .r1 td {
-	background: #f3f8ed;
+    background: #f3f8ed;
 }
 
 /* Footer */
 
 #page-footer {
-	background: #4e6632;
-	color: #fff;
+    background: #4e6632;
+    color: #fff;
 }
 
 #page-footer a {
-	color: #b3c79d;
+    color: #b3c79d;
 }
 
 #page-footer a:hover {
-	color: #fff;
+    color: #fff;
 }
 
 #page-footer .logininfo {
-	float: left;
-	padding: 5px;
-	margin: 0;
+    float: left;
+    padding: 5px;
+    margin: 0;
 }
 
 #page-footer .helplink {
-	float: right;
-	padding: 5px;
-	margin: 0;
+    float: right;
+    padding: 5px;
+    margin: 0;
 }
 
 #page-footer-bottom {
-	text-align: center;
-	margin: 10px 20%;
+    text-align: center;
+    margin: 10px 20%;
 }
 
 .performanceinfo span {
-	display: block;
+    display: block;
 }
 
 .validators {
-	margin-top: 40px;
-	padding-top: 5px;
-	border-top: 1px dotted gray;
+    margin-top: 40px;
+    padding-top: 5px;
+    border-top: 1px dotted gray;
 }
 
 .validators ul {
-	margin: 0px;
-	padding: 0px;
-	list-style-type: none;
+    margin: 0px;
+    padding: 0px;
+    list-style-type: none;
 }
 
 .validators ul li {
-	display: inline;
-	margin-right: 10px;
-	margin-left: 10px;
+    display: inline;
+    margin-right: 10px;
+    margin-left: 10px;
+}
+
+#custommenu .yui3-menu-horizontal .yui3-menu-content,
+#custommenu .yui3-menu-horizontal.javascript-disabled .yui3-menu-content,
+#custommenu .yui3-menu-horizontal .yui3-menu-content ul,
+#custommenu .yui3-menu-horizontal.javascript-disabled .yui3-menu-content ul,
+#custommenu .yui3-menu-horizontal.javascript-disabled .yui3-menu-content li li:hover > a,
+#custommenu .yui3-menu-horizontal .yui3-menu-label, .yui3-skin-sam .yui3-menu-horizontal .yui3-menuitem-content {
+    border-width:0;
+}
+
+#custommenu .yui3-menu-horizontal .yui3-menu-content ul ul,
+#custommenu .yui3-menu-horizontal.javascript-disabled .yui3-menu-content ul ul {
+    background-color:#3B4C25;
+}
+
+#custommenu .yui3-menu-horizontal.javascript-disabled .yui3-menu-content li li:hover,
+#custommenu .yui3-menu-horizontal.javascript-disabled .yui3-menu-content li li:hover a,
+.yui3-skin-sam #custommenu .yui3-menu .yui3-menuitem.yui3-menuitem-active .yui3-menuitem-content {
+    background-color:#4E6632;
+}
+
+#custommenu .yui3-menu-horizontal .yui3-menu-content li a {
+    cursor:pointer;
+}
+
+.yui3-skin-sam #custommenu .yui3-menu-content,
+.yui3-skin-sam #custommenu .yui3-menu .yui3-menu .yui3-menu-content {
+    padding:0;
 }
