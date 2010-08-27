@@ -379,7 +379,7 @@ bodyContent: '<div class="comment-delete-confirm"><a href="#" id="confirmdelete-
             },
             wait: function() {
                 var container = Y.one('#comment-list-'+this.client_id);
-                container.set('innerHTML', '<div class="mdl-align"><img src="'+M.util.image_url('i/loading', 'core')+'" /></div>');
+                container.set('innerHTML', '<div class="mdl-align"><img src="'+M.util.image_url('i/loading_small', 'core')+'" /></div>');
             }
         });
 
