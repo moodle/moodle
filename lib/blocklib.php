@@ -63,7 +63,7 @@ define('BLOCKS_PINNED_BOTH',2);
  */
 class block_not_on_page_exception extends moodle_exception {
     /**
-     * Contructor
+     * Constructor
      * @param int $instanceid the block instance id of the block that was looked for.
      * @param object $page the current page.
      */
@@ -93,7 +93,7 @@ class block_manager {
 
 /// Field declarations =========================================================
 
-    /** @var moodle_page the moodle_page we aremanaging blocks for. */
+    /** @var moodle_page the moodle_page we are managing blocks for. */
     protected $page;
 
     /** @var array region name => 1.*/
@@ -126,7 +126,7 @@ class block_manager {
     protected $blockinstances = array();
 
     /**
-     * array region-name => array(block_contents objects) what acutally needs to
+     * array region-name => array(block_contents objects) what actually needs to
      * be displayed in each region.
      * @var array
      */
@@ -140,10 +140,10 @@ class block_manager {
     protected $extracontent = array();
 
     /**
-     * Used by the block move id, to track whether a block is cuurently being moved.
+     * Used by the block move id, to track whether a block is currently being moved.
      *
-     * Whe you click on the move icon of a block, first the page needs to reload with
-     * extra UI for chooseing a new position for a particular block. In that situation
+     * When you click on the move icon of a block, first the page needs to reload with
+     * extra UI for choosing a new position for a particular block. In that situation
      * this field holds the id of the block being moved.
      *
      * @var integer|null
@@ -160,7 +160,7 @@ class block_manager {
     /**
      * Constructor.
      * @param object $page the moodle_page object object we are managing the blocks for,
-     * or a reasonable faxilimily. (See the comment at the top of this classe
+     * or a reasonable faxilimily. (See the comment at the top of this class
      * and {@link http://en.wikipedia.org/wiki/Duck_typing})
      */
     public function __construct($page) {
@@ -254,7 +254,7 @@ class block_manager {
     /**
      * Find out if a block type is known by the system
      *
-     * @param string $blockname the name of ta type of block.
+     * @param string $blockname the name of the type of block.
      * @param boolean $includeinvisible if false (default) only check 'visible' blocks, that is, blocks enabled by the admin.
      * @return boolean true if this block in installed.
      */
@@ -272,7 +272,7 @@ class block_manager {
      * Find out if a region exists on a page
      *
      * @param string $region a region name
-     * @return boolean true if this retion exists on this page.
+     * @return boolean true if this region exists on this page.
      */
     public function is_known_region($region) {
         return array_key_exists($region, $this->regions);
@@ -319,10 +319,10 @@ class block_manager {
      * the add new block UI.)
      *
      * (You may wonder why the $output parameter is required. Unfortunately,
-     * becuase of the way that blocks work, the only reliable way to find out
+     * because of the way that blocks work, the only reliable way to find out
      * if a block will be visible is to get the content for output, and to
      * get the content, you need a renderer. Fortunately, this is not a
-     * performance problem, becuase we cache the output that is generated, and
+     * performance problem, because we cache the output that is generated, and
      * in almost every case where we call region_has_content, we are about to
      * output the blocks anyway, so we are not doing wasted effort.)
      *
@@ -653,7 +653,7 @@ class block_manager {
      * Move a block to a new position on this page.
      *
      * If this block cannot appear on any other pages, then we change defaultposition/weight
-     * in the block_instances table. Otherwise we just set the postition on this page.
+     * in the block_instances table. Otherwise we just set the position on this page.
      *
      * @param $blockinstanceid the block instance id.
      * @param $newregion the new region name.
@@ -758,7 +758,7 @@ class block_manager {
      * Check if a block type is known and usable
      *
      * @param string $blockname The block type name to search for
-     * @param bool $includeinvisible Include disabled block types in the intial pass
+     * @param bool $includeinvisible Include disabled block types in the initial pass
      * @return void Coding Exception thrown if unknown or not enabled
      */
     protected function check_known_block_type($blockname, $includeinvisible = false) {
@@ -814,7 +814,7 @@ class block_manager {
     }
 
     /**
-     * Create all the bock instances for all the blocks that were loaded by
+     * Create all the block instances for all the blocks that were loaded by
      * load_blocks. This is used, for example, to ensure that all blocks get a
      * chance to initialise themselves via the {@link block_base::specialize()}
      * method, before any output is done.
@@ -1019,7 +1019,7 @@ class block_manager {
 
         $this->add_block_at_end_of_default_region($blocktype);
 
-        // If the page URL was a guses, it will contain the bui_... param, so we must make sure it is not there.
+        // If the page URL was a guess, it will contain the bui_... param, so we must make sure it is not there.
         $this->page->ensure_param_not_in_url('bui_addblock');
 
         return true;
@@ -1045,7 +1045,7 @@ class block_manager {
 
         blocks_delete_instance($block->instance);
 
-        // If the page URL was a guses, it will contain the bui_... param, so we must make sure it is not there.
+        // If the page URL was a guess, it will contain the bui_... param, so we must make sure it is not there.
         $this->page->ensure_param_not_in_url('bui_deleteid');
 
         return true;
@@ -1367,7 +1367,7 @@ class block_manager {
 /// Helper functions for working with block classes ============================
 
 /**
- * Call a class method (one that does not requrie a block instance) on a block class.
+ * Call a class method (one that does not require a block instance) on a block class.
  *
  * @param string $blockname the name of the block.
  * @param string $method the method name.
@@ -1528,7 +1528,7 @@ function blocks_get_missing(&$page, &$blockmanager) {
  * Actually delete from the database any blocks that are currently on this page,
  * but which should not be there according to blocks_name_allowed_in_format.
  *
- * @todo Write/Fix this function. Currently returns immediatly
+ * @todo Write/Fix this function. Currently returns immediately
  * @param $course
  */
 function blocks_remove_inappropriate($course) {
@@ -1586,7 +1586,7 @@ function blocks_name_allowed_in_format($name, $pageformat) {
  * Delete a block, and associated data.
  *
  * @param object $instance a row from the block_instances table
- * @param bool $nolongerused legacy parameter. Not used, but kept for bacwards compatibility.
+ * @param bool $nolongerused legacy parameter. Not used, but kept for backwards compatibility.
  * @param bool $skipblockstables for internal use only. Makes @see blocks_delete_all_for_context() more efficient.
  */
 function blocks_delete_instance($instance, $nolongerused = false, $skipblockstables = false) {
@@ -1696,7 +1696,7 @@ function blocks_repopulate_page($page) {
 }
 
 /**
- * Get the block record for a particular blockid - that is, a particul type os block.
+ * Get the block record for a particular blockid - that is, a particular type os block.
  *
  * @param $int blockid block type id. If null, an array of all block types is returned.
  * @param bool $notusedanymore No longer used.
