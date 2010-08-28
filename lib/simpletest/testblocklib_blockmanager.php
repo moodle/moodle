@@ -62,6 +62,7 @@ class moodle_block_manager_test extends UnitTestCase {
 
     public function setUp() {
         $this->testpage = new moodle_page();
+        $this->testpage->set_context(get_context_instance(CONTEXT_SYSTEM));
         $this->blockmanager = new testable_block_manager($this->testpage);
     }
 
