@@ -84,8 +84,8 @@ class web_test extends UnitTestCase {
     }
 
     function test_fix_non_standard_entities() {
-        $this->assertEqual(fix_non_standard_entities('&#x00A3&#0228'), '&#x00A3;&#0228;');
-        $this->assertEqual(fix_non_standard_entities('&#x00A3;&#0228;'), '&#x00A3;&#0228;');
+        $this->assertEqual(fix_non_standard_entities('&#x00A3&#0228'), '&#xA3;&#228;');
+        $this->assertEqual(fix_non_standard_entities('&#x00A3;&#0228;'), '&#xA3;&#228;');
     }
 
     function test_compare_url() {
