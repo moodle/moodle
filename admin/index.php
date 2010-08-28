@@ -122,7 +122,8 @@ if (!core_tables_exist()) {
         $copyrightnotice = str_replace('target="_blank"', 'onclick="this.target=\'_blank\'"', $copyrightnotice); // extremely ugly validation hack
         echo $OUTPUT->box($copyrightnotice, 'copyrightnotice');
         echo '<br />';
-        echo $OUTPUT->confirm(get_string('doyouagree'), "index.php?agreelicense=1&lang=$CFG->lang", "http://docs.moodle.org/en/License");
+        $continue = new single_button(new moodle_url('/admin/index.php', array('lang'=>$CFG->lang, 'agreelicense'=>1)), get_string('continue'), 'get');
+        echo $OUTPUT->confirm(get_string('doyouagree'), $continue, "http://docs.moodle.org/en/License");
         echo $OUTPUT->footer();
         die;
     }
@@ -143,7 +144,7 @@ if (!core_tables_exist()) {
             print_upgrade_reload("index.php?agreelicense=1&amp;lang=$CFG->lang");
         } else {
             echo $OUTPUT->notification(get_string('environmentok', 'admin'), 'notifysuccess');
-            echo $OUTPUT->continue_button("index.php?agreelicense=1&confirmrelease=1&lang=$CFG->lang");
+            echo $OUTPUT->continue_button(new moodle_url('/admin/index.php', array('agreelicense'=>1, 'confirmrelease'=>1, 'lang'=>$CFG->lang)));
         }
 
         echo $OUTPUT->footer();
