@@ -91,7 +91,7 @@ EOD;
      * Test retrieving a url which doesn't exist
      */
     function test_failurl() {
-        $feed = new moodle_simplepie(moodlesimplepie_test::INVALIDURL);
+        $feed = @new moodle_simplepie(moodlesimplepie_test::INVALIDURL); // we do not want this in php error log
 
         $this->assertTrue($feed->error());
     }
