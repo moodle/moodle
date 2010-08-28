@@ -31,7 +31,7 @@ require_once($CFG->libdir.'/filelib.php');
 // PLEASE NOTE: we use the simplepie class _unmodified_
 // through the joys of OO. Distros are free to use their stock
 // version of this file.
-require_once($CFG->libdir.'/simplepie/simplepie.inc');
+require_once($CFG->libdir.'/simplepie/simplepie.class.php');
 
 /**
  * Moodle Customised version of the SimplePie class
