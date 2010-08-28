@@ -109,6 +109,7 @@ class HTMLPurifier_DefinitionCache_Serializer extends
      */
     private function _prepareDir($config) {
         $directory = $this->generateDirectoryPath($config);
+        $directory = $this->generateDirectoryPath($config);
         if (!is_dir($directory)) {
             $base = $this->generateBaseDirectoryPath($config);
             if (!is_dir($base)) {
@@ -119,9 +120,9 @@ class HTMLPurifier_DefinitionCache_Serializer extends
             } elseif (!$this->_testPermissions($base)) {
                 return false;
             }
-            $old = umask(0022); // disable group and world writes
+            //$old = umask(0022); // disable group and world writes //Moodle
             mkdir($directory);
-            umask($old);
+            //umask($old); //Moodle
         } elseif (!$this->_testPermissions($directory)) {
             return false;
         }
@@ -135,6 +136,7 @@ class HTMLPurifier_DefinitionCache_Serializer extends
     private function _testPermissions($dir) {
         // early abort, if it is writable, everything is hunky-dory
         if (is_writable($dir)) return true;
+        return false;//Moodle hack
         if (!is_dir($dir)) {
             // generally, you'll want to handle this beforehand
             // so a more specific error message can be given

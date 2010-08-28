@@ -5,5 +5,6 @@ Changes:
  * HMLTModule/XMLCommonAttributes.php - remove xml:lang - needed for multilang
  * AttrDef/Lang.php - relax lang check - needed for multilang
  * Lexer.php - Subverted line break normalisation (requires setting: Output.Newline to \n) MDL-22654
+ * Serializer.php - removed directory permissions changes, we rely on our own settings
 
 skodak
