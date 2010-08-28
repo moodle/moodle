@@ -214,13 +214,6 @@ class moodle_page_test extends UnitTestCase {
         $this->assertTrue($this->testpage->headerprinted);
     }
 
-    public function test_cant_get_context_before_set() {
-        // Set expectation.
-        $this->expectException();
-        // Exercise SUT
-        $this->testpage->context;
-    }
-
     public function test_set_context() {
         // Setup fixture
         $context = $this->create_a_context();
