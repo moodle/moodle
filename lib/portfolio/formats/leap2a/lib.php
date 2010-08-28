@@ -33,7 +33,7 @@ defined('MOODLE_INTERNAL') || die();
  * should be used like:
  *
  * $writer = portfolio_format_leap2a::leap2a_writer($USER);
- * $entry = new portfolio_format_leap2a_entry('forumpost6', $title, 'leaptype', 'somecontent')
+ * $entry = new portfolio_format_leap2a_entry('forumpost6', $title, 'leap2', 'somecontent')
  * $entry->add_link('something', 'has_part')->add_link('somethingelse', 'has_part');
  * .. etc
  * $writer->add_entry($entry);
@@ -71,15 +71,16 @@ class portfolio_format_leap2a_writer {
         $this->feed = $this->dom->createElement('feed');
         $this->feed->setAttribute('xmlns', 'http://www.w3.org/2005/Atom');
         $this->feed->setAttribute('xmlns:rdf', 'http://www.w3.org/1999/02/22-rdf-syntax-ns#');
-        $this->feed->setAttribute('xmlns:leap', 'http://wiki.cetis.ac.uk/2009-03/LEAP2A_predicates#');
-        $this->feed->setAttribute('xmlns:leaptype', 'http://wiki.cetis.ac.uk/2009-03/LEAP2A_types#');
-        $this->feed->setAttribute('xmlns:categories', 'http://wiki.cetis.ac.uk/2009-03/LEAP2A_categories/');
+        $this->feed->setAttribute('xmlns:leap2', 'http://terms.leapspecs.org/');
+        $this->feed->setAttribute('xmlns:categories', 'http://wiki.leapspecs.org/2A/categories');
         $this->feed->setAttribute('xmlns:portfolio', $this->id); // this is just a ns for ids of elements for convenience
 
         $this->dom->appendChild($this->feed);
 
         $this->feed->appendChild($this->dom->createElement('id', $this->id));
         $this->feed->appendChild($this->dom->createElement('title', get_string('leap2a_feedtitle', 'portfolio', fullname($this->user))));
+        $this->feed->appendChild($this->dom->createElement('leap2:version', 'http://www.leapspecs.org/2010-07/2A/'));
+
 
         $generator = $this->dom->createElement('generator', 'Moodle');
         $generator->setAttribute('uri', $CFG->wwwroot);
@@ -103,7 +104,9 @@ class portfolio_format_leap2a_writer {
      */
     public function add_entry(portfolio_format_leap2a_entry $entry) {
         if (array_key_exists($entry->id, $this->entries)) {
-            throw new portfolio_format_leap2a_exception('leap2a_entryalreadyexists', 'portfolio', '', $entry->id);
+            if (!($entry instanceof portfolio_format_leap2a_file)) {
+                throw new portfolio_format_leap2a_exception('leap2a_entryalreadyexists', 'portfolio', '', $entry->id);
+            }
         }
         $this->entries[$entry->id] =  $entry;
         return $entry;
@@ -137,6 +140,21 @@ class portfolio_format_leap2a_writer {
         if ($this->entries[$selectionid]->type != 'selection') {
             debugging(get_string('leap2a_overwritingselection', 'portfolio', $this->entries[$selectionid]->type));
             $this->entries[$selectionid]->type = 'selection';
+        }
+    }
+
+    /**
+     * helper function to link some stored_files into the feed and link them to a particular entry
+     *
+     * @param portfolio_format_leap2a_entry $entry the entry to link the files into
+     * @param array $files array of stored_files to link
+     */
+    public function link_files($entry, $files) {
+        foreach ($files as $file) {
+            $fileentry = new portfolio_format_leap2a_file($file->get_filename(), $file);
+            $this->add_entry($fileentry);
+            $entry->add_link($fileentry, 'related');
+            $fileentry->add_link($entry, 'related');
         }
     }
 
@@ -196,17 +214,12 @@ class portfolio_format_leap2a_entry {
     public $author;
     /** summary - for split long content **/
     public $summary;
-    /** main content of the entry. can be html,text,xhtml or a stored_file **/
+    /** main content of the entry. can be html,text,or xhtml. for a stored_file, use portfolio_format_leap2a_file **/
     public $content;
     /** updated date - unix timestamp */
     public $updated;
     /** published date (ctime) - unix timestamp */
     public $published;
-
-    /** used internally for file content **/
-    private $contentsrc;
-    /** used internally for file content **/
-    private $referencedfile;
 
     /** the required fields for a leap2a entry */
     private $requiredfields = array( 'id', 'title', 'type');
@@ -232,7 +245,7 @@ class portfolio_format_leap2a_entry {
      *                   This <b>must</b> be unique to the entire feed.
      * @param string $title title of the entry. This is pure atom.
      * @param string $type the leap type of this entry.
-     * @param mixed $content the content of the entry. string (xhtml/html/text) or stored_file
+     * @param mixed $content the content of the entry. string (xhtml/html/text)
      */
     public function __construct($id, $title, $type, $content=null) {
         $this->id    = $id;
@@ -249,7 +262,7 @@ class portfolio_format_leap2a_entry {
     public function __set($field, $value) {
         // detect the case where content is being set to be a file directly
         if ($field == 'content' && $value instanceof stored_file) {
-            return $this->set_content_file($value);
+            throw new portfolio_format_leap2a_exception('leap2a_filecontent', 'portfolio');
         }
         if (in_array($field, $this->requiredfields) || in_array($field, $this->optionalfields)) {
             return $this->{$field} = $value;
@@ -257,23 +270,6 @@ class portfolio_format_leap2a_entry {
         throw new portfolio_format_leap2a_exception('leap2a_invalidentryfield', 'portfolio', '', $field);
     }
 
-    /**
-     * sets the content of this entry to have a source
-     * this will take care of namespacing the filepath
-     * to the final path in the resulting zip file.
-     *
-     * @param stored_file $file the file to link to
-     * @param boolean $overridetype (default true) will set the entry rdf type to resource,
-     *                               overriding what was previously set.
-     *                               will be ignored if type is empty already
-     */
-    public function set_content_file(stored_file $file, $overridetype=true) {
-        $this->contentsrc = portfolio_format_leap2a::get_file_directory() . $file->get_filename();
-        if (empty($overridetype) || empty($this->type)) {
-            $this->type = 'resource';
-        }
-        $this->referencedfile = $file;
-    }
 
     /**
      * validate this entry.
@@ -301,7 +297,7 @@ class portfolio_format_leap2a_entry {
      * http://wiki.cetis.ac.uk/2009-03/LEAP2A_relationships
      *
      * @param mixed $otherentry portfolio_format_leap2a_entry or its id
-     * @param string $reltype (no leap: ns required)
+     * @param string $reltype (no leap2: ns required)
      *
      * @return the current entry object. This is so that these calls can be chained
      * eg $entry->add_link('something6', 'has_part')->add_link('something7', 'has_part');
@@ -314,34 +310,14 @@ class portfolio_format_leap2a_entry {
         if ($otherentry == $this->id) {
             throw new portfolio_format_leap2a_exception('leap2a_selflink', 'portfolio', '', (object)array('rel' => $reltype, 'id' => $this->id));
         }
-        // add on the leap: ns if required
+        // add on the leap2: ns if required
         if (!in_array($reltype, array('related', 'alternate', 'enclosure'))) {
-            $reltype = 'leap:' . $reltype;
+            $reltype = 'leap2:' . $reltype;
         }
 
         $this->links[$otherentry] = (object)array('rel' => $reltype, 'order' => $displayorder);
 
         return $this;
-    }
-
-    /**
-     * add an attachment to the feed.
-     * adding the file to the files area has to be handled outside this class separately.
-     *
-     * @param stored_file $file the file to add
-     */
-    public function add_attachment(stored_file $file) {
-        $this->attachments[$file->get_id()] = $file;
-    }
-
-    /**
-     * helper function to add a bunch of files at the same time
-     * useful for passing $this->multifiles straight through from the portfolio_caller
-     */
-    public function add_attachments(array $files) {
-        foreach ($files as $file) {
-            $this->add_attachment($file);
-        }
     }
 
     /**
@@ -394,13 +370,7 @@ class portfolio_format_leap2a_entry {
                 $entry->appendChild($dom->createElement($field, $date));
             }
         }
-        // deal with referenced files first since it's simple
-        if ($this->contentsrc) {
-            $content = $dom->createElement('content');
-            $content->setAttribute('src', $this->contentsrc);
-            $content->setAttribute('type', $this->referencedfile->get_mimetype());
-            $entry->appendChild($content);
-        } else if (empty($this->content)) {
+        if (empty($this->content)) {
             $entry->appendChild($dom->createElement('content'));
         } else {
             $content = $this->create_xhtmlish_element($dom, 'content', $this->content);
@@ -413,7 +383,7 @@ class portfolio_format_leap2a_entry {
         }
 
         $type = $dom->createElement('rdf:type');
-        $type->setAttribute('rdf:resource', 'leaptype:' . $this->type);
+        $type->setAttribute('rdf:resource', 'leap2:' . $this->type);
         $entry->appendChild($type);
 
         foreach ($this->links as $otherentry => $l) {
@@ -421,17 +391,13 @@ class portfolio_format_leap2a_entry {
             $link->setAttribute('rel',  $l->rel);
             $link->setAttribute('href', 'portfolio:' . $otherentry);
             if ($l->order) {
-                $link->setAttribute('leap:display_order', $l->order);
+                $link->setAttribute('leap2:display_order', $l->order);
             }
             $entry->appendChild($link);
         }
-        foreach ($this->attachments as $id => $file) {
-            $link = $dom->createElement('link');
-            $link->setAttribute('rel',  'enclosure');
-            $link->setAttribute('href', portfolio_format_leap2a::get_file_directory() . $file->get_filename());
-            $link->setAttribute('length', $file->get_filesize());
-            $entry->appendChild($link);
-        }
+
+        $this->add_extra_links($dom, $entry); // hook for subclass
+
         foreach ($this->categories as $category) {
             $cat = $dom->createElement('category');
             $cat->setAttribute('term', $category->term);
@@ -487,4 +453,44 @@ class portfolio_format_leap2a_entry {
         }
         return $topel;
     }
+
+    /**
+     * hook function for subclasses to add extra links (like for files)
+     */
+    protected function add_extra_links() {}
 }
+
+
+/**
+ * subclass of entry, purely for dealing with files
+ */
+class portfolio_format_leap2a_file extends portfolio_format_leap2a_entry {
+
+    protected $referencedfile;
+
+    /**
+     * overridden constructor to set up the file.
+     *
+     */
+    public function __construct($title, stored_file $file) {
+        $id = portfolio_format_leap2a::file_id_prefix() . $file->get_id();
+        parent::__construct($id, $title, 'resource');
+        $this->referencedfile = $file;
+        $this->published = $this->referencedfile->get_timecreated();
+        $this->updated = $this->referencedfile->get_timemodified();
+        $this->add_category('offline', 'resource_type');
+    }
+
+    /**
+     * implement the hook to add extra links to attach the file in an enclosure
+     */
+    protected function add_extra_links($dom, $entry) {
+        $link = $dom->createElement('link');
+        $link->setAttribute('rel',  'enclosure');
+        $link->setAttribute('href', portfolio_format_leap2a::get_file_directory() . $this->referencedfile->get_filename());
+        $link->setAttribute('length', $this->referencedfile->get_filesize());
+        $link->setAttribute('type', $this->referencedfile->get_mimetype());
+        $entry->appendChild($link);
+    }
+}
+

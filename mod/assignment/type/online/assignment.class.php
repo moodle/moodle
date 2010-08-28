@@ -311,9 +311,9 @@ class assignment_online extends assignment_base {
             $entry->author = $user;
             $leapwriter->add_entry($entry);
             if ($files = $exporter->get('caller')->get('multifiles')) {
+                $leapwriter->link_files($entry, $files, 'assignmentonline' . $this->assignment->id . 'file');
                 foreach ($files as $f) {
                     $exporter->copy_existing_file($f);
-                    $entry->add_attachment($f);
                 }
             }
             $exporter->write_new_file($leapwriter->to_xml(), $exporter->get('format')->manifest_name(), true);

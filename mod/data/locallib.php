@@ -203,9 +203,7 @@ class data_portfolio_caller extends portfolio_module_caller_base {
                     $entry->author = $users[$record->userid];
                 }
                 $ids[] = $entry->id;
-                foreach ($files as $file) {
-                    $entry->add_attachment($file);
-                }
+                $leapwriter->link_files($entry, $files, 'dataentry' . $record->id . 'file');
                 $leapwriter->add_entry($entry);
             }
         }

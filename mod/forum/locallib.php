@@ -181,11 +181,7 @@ class forum_portfolio_caller extends portfolio_module_caller_base {
         if ($this->attachment) { // simplest case first - single file attachment
             $this->copy_files(array($this->singlefile), $this->attachment);
             if ($writingleap) { // if we're writing leap, make the manifest to go along with the file
-                $entry = new portfolio_format_leap2a_entry('forumattachment' . $this->singlefile->get_id(),
-                    $this->singlefile->get_filename(), 'resource',  $this->singlefile);
-                $entry->published = $this->singlefile->get_timecreated();
-                $entry->updated = $this->singlefile->get_timemodified();
-                $entry->add_category('offline', 'resource_type');
+                $entry = new portfolio_format_leap2a_file($this->singlefile->get_filename(), $this->singlefile);
                 $leapwriter->add_entry($entry);
                 return $this->exporter->write_new_file($leapwriter->to_xml(), $this->exporter->get('format')->manifest_name(), true);
             }
@@ -251,10 +247,7 @@ class forum_portfolio_caller extends portfolio_module_caller_base {
         $entry->updated = $post->modified;
         $entry->author = $post->author;
         if (is_array($this->keyedfiles) && array_key_exists($post->id, $this->keyedfiles) && is_array($this->keyedfiles[$post->id])) {
-            foreach ($this->keyedfiles[$post->id] as $file) {
-                // copying the file into the package area is handled elsewhere
-                $entry->add_attachment($file);
-            }
+            $leapwriter->link_files($entry, $this->keyedfiles[$post->id], 'forumpost' . $post->id . 'attachment');
         }
         $entry->add_category('web', 'resource_type');
         $leapwriter->add_entry($entry);

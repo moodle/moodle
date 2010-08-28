@@ -121,6 +121,7 @@ $string['invaliduserproperty'] = 'Could not find that user config property ({$a-
 $string['leap2a_emptyselection'] = 'Required value not selected';
 $string['leap2a_entryalreadyexists'] = 'You tried to add a Leap2A entry with an id ({$a}) that already exists in this feed';
 $string['leap2a_feedtitle'] = 'Leap2A export from Moodle for {$a}';
+$string['leap2a_filecontent'] = 'Tried to set the content of a leap2a entry to a file, rather than using the file sublcass';
 $string['leap2a_invalidentryfield'] = 'You tried to set an entry field that didn\'t exist ({$a}) or you can\'t set directly';
 $string['leap2a_invalidentryid'] = 'You tried to access an entry by an id that didn\'t exist ({$a})';
 $string['leap2a_missingfield'] = 'Required Leap2A entry field {$a} missing';

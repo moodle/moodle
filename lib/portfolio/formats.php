@@ -235,20 +235,27 @@ class portfolio_format_leap2a extends portfolio_format_rich {
         return 'files/';
     }
 
+    public static function file_id_prefix() {
+        return 'storedfile';
+    }
+
     /**
      * return the link to a file
      *
      * @param stored_file $file
      * @param array       $options can contain the same as normal, with the addition of:
-     *             entry => whether the file is a LEAP2A entry or just a bundled file (default false)
+     *             entry => whether the file is a LEAP2A entry or just a bundled file (default true)
      */
     public static function file_output($file, $options=null) {
         $id = '';
         if (!is_array($options)) {
             $options = array();
         }
+        if (!array_key_exists('entry', $options)) {
+            $options['entry'] = true;
+        }
         if (!empty($options['entry'])) {
-            $path = 'portfolio:file' . $file->get_id;
+            $path = 'portfolio:' . self::file_id_prefix() . $file->get_id();
         } else {
             $path = self::get_file_directory() . $file->get_filename();
         }
