@@ -35,6 +35,9 @@ if (!defined('MOODLE_INTERNAL')) {
     die('Direct access to this script is forbidden.');    ///  It must be included from a Moodle page
 }
 
+//TODO: messing with CFG->dirroot is a really bad idea! I am not going to fix this, sorry. (skodak)
+//      if anybody wants to fix this then filter manager has to be modified so that it uses different dir, sorry
+
 require_once($CFG->libdir . '/filterlib.php');
 
 class testable_filter_manager extends filter_manager {
