@@ -231,13 +231,13 @@ class moodlelib_test extends UnitTestCase {
     function test_optional_param() {
         $_POST['username'] = 'post_user';
         $_GET['username'] = 'get_user';
-        $this->assertEqual(optional_param('username', 'default_user', PARAM_CLEAN), 'post_user');
+        $this->assertEqual(optional_param('username', 'default_user', PARAM_RAW), 'post_user');
 
         unset($_POST['username']);
-        $this->assertEqual(optional_param('username', 'default_user', PARAM_CLEAN), 'get_user');
+        $this->assertEqual(optional_param('username', 'default_user', PARAM_RAW), 'get_user');
 
         unset($_GET['username']);
-        $this->assertEqual(optional_param('username', 'default_user', PARAM_CLEAN), 'default_user');
+        $this->assertEqual(optional_param('username', 'default_user', PARAM_RAW), 'default_user');
     }
 
     function test_clean_param_raw() {
@@ -246,8 +246,8 @@ class moodlelib_test extends UnitTestCase {
     }
 
     function test_clean_param_clean() {
-        $this->assertEqual(clean_param('#()*#,9789\'".,<42897></?$(*DSFMO#$*)(SDJ)($*)', PARAM_CLEAN),
-            '#()*#,9789\'".,');
+        //TODO: param clean is an ugly hack, do not use in new code (skodak)
+        $this->assertEqual(clean_param('xx<script>', PARAM_CLEAN), 'xx');
     }
 
     function test_clean_param_alpha() {
@@ -319,7 +319,7 @@ class moodlelib_test extends UnitTestCase {
         $this->assertEqual(clean_param('john#$%&() ', PARAM_USERNAME), 'john');
         $this->assertEqual(clean_param('JOHNdóé ', PARAM_USERNAME), 'johnd');
         $this->assertEqual(clean_param('john.,:;-_/|\ñÑ[]A_X-,D {} ~!@#$%^&*()_+ ?><[] ščřžžý ?ýá?ý??doe ', PARAM_USERNAME), 'john.-_a_x-d@_doe');
-        
+
 
         // Test success condition, if extendedusernamechars == ENABLE;
         $CFG->extendedusernamechars = TRUE;
@@ -330,7 +330,7 @@ class moodlelib_test extends UnitTestCase {
         $this->assertEqual(clean_param('joHN´doe', PARAM_USERNAME), 'john´doe');
         $this->assertEqual(clean_param('johnDOE', PARAM_USERNAME), 'johndoe');
         $this->assertEqual(clean_param('johndóé ', PARAM_USERNAME), 'johndóé');
-                
+
         $CFG->extendedusernamechars = $currentstatus;
     }
 
