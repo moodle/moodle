@@ -32,29 +32,25 @@ function xmldb_main_install() {
     /// make sure system context exists
     $syscontext = get_system_context(false);
     if ($syscontext->id != 1) {
-        throw new moodle_exception('generalexceptionmessage', 'error', '', 'Unexpected system context id created!');
+        throw new moodle_exception('generalexceptionmessage', 'error', '', 'Unexpected new system context id!');
     }
 
 
     /// create site course
     $newsite = new object();
-    $newsite->fullname = "";
-    $newsite->shortname = "";
-    $newsite->summary = NULL;
-    $newsite->newsitems = 3;
-    $newsite->numsections = 0;
-    $newsite->category = 0;
-    $newsite->format = 'site';  // Only for this course
-    $newsite->teacher = get_string("defaultcourseteacher");
-    $newsite->teachers = get_string("defaultcourseteachers");
-    $newsite->student = get_string("defaultcoursestudent");
-    $newsite->students = get_string("defaultcoursestudents");
+    $newsite->fullname     = '';
+    $newsite->shortname    = '';
+    $newsite->summary      = NULL;
+    $newsite->newsitems    = 3;
+    $newsite->numsections  = 0;
+    $newsite->category     = 0;
+    $newsite->format       = 'site';  // Only for this course
     $newsite->timemodified = time();
 
-    $DB->insert_record('course', $newsite);
+    $newsite->id = $DB->insert_record('course', $newsite);
     $SITE = get_site();
-    if ($SITE->id != 1) {
-        throw new moodle_exception('generalexceptionmessage', 'error', '', 'Unexpected site course id created!');
+    if ($newsite->id != 1 or $SITE->id != 1) {
+        throw new moodle_exception('generalexceptionmessage', 'error', '', 'Unexpected new site course id!');
     }
 
 
@@ -74,7 +70,6 @@ function xmldb_main_install() {
         'siteidentifier'        => random_string(32).get_host_from_url($CFG->wwwroot),
         'backup_version'        => 2008111700,
         'backup_release'        => '2.0 dev',
-        'blocks_version'        => 2007081300, // might be removed soon
         'mnet_dispatcher_mode'  => 'off',
         'sessiontimeout'        => 7200, // must be present during roles installation
         'stringfilters'         => '', // These two are managed in a strange way by the filters
@@ -155,6 +150,11 @@ function xmldb_main_install() {
     $guest->lang        = $CFG->lang;
     $guest->timemodified= time();
     $guest->id = $DB->insert_record('user', $guest);
+    if ($guest->id != 1) {
+        throw new moodle_exception('generalexceptionmessage', 'error', '', 'Unexpected new guest user id!');
+    }
+    // Store guest id
+    set_config('siteguest', $guest->id);
 
 
     /// Now create admin user
@@ -172,6 +172,9 @@ function xmldb_main_install() {
     $admin->timemodified = time();
     $admin->lastip       = CLI_SCRIPT ? '0.0.0.0' : getremoteaddr(); // installation hijacking prevention
     $admin->id = $DB->insert_record('user', $admin);
+    if ($admin->id != 2) {
+        throw new moodle_exception('generalexceptionmessage', 'error', '', 'Unexpected new admin user id!');
+    }
     /// Store list of admins
     set_config('siteadmins', $admin->id);
 
