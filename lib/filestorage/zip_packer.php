@@ -42,7 +42,8 @@ class zip_packer extends file_packer {
 
     /**
      * Zip files and store the result in file storage
-     * @param array $files array with full zip paths (including directory information) as keys (archivepath=>ospathname or archivepath/subdir=>stored_file)
+     * @param array $files array with full zip paths (including directory information)
+     *              as keys (archivepath=>ospathname or archivepath/subdir=>stored_file or archivepath=>array('content_as_string'))
      * @param int $contextid
      * @param string $component
      * @param string $filearea
@@ -84,7 +85,7 @@ class zip_packer extends file_packer {
 
     /**
      * Zip files and store the result in os file
-     * @param array $files array with zip paths as keys (archivepath=>ospathname or archivepath=>stored_file)
+     * @param array $files array with zip paths as keys (archivepath=>ospathname or archivepath=>stored_file or archivepath=>array('content_as_string'))
      * @param string $archivefile path to target zip file
      * @return bool success
      */
@@ -109,6 +110,10 @@ class zip_packer extends file_packer {
 
             } else if (is_string($file)) {
                 $this->archive_pathname($ziparch, $archivepath, $file);
+
+            } else if (is_array($file)) {
+                $content = reset($file);
+                $ziparch->add_file_from_string($archivepath, $content);
 
             } else {
                 $this->archive_stored($ziparch, $archivepath, $file);
