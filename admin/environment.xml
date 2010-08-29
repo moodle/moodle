@@ -185,6 +185,8 @@
           <ON_CHECK message="ctyperecommended" />
         </FEEDBACK>
       </PHP_EXTENSION>
+      <PHP_EXTENSION name="pcre" level="required">
+      </PHP_EXTENSION>
     </PHP_EXTENSIONS>
     <CUSTOM_CHECKS>
       <CUSTOM_CHECK file="question/upgrade.php" function="question_check_no_rqp_questions" level="optional">
@@ -286,6 +288,8 @@
         <FEEDBACK>
           <ON_CHECK message="splrequired" />
         </FEEDBACK>
+      </PHP_EXTENSION>
+      <PHP_EXTENSION name="pcre" level="required">
       </PHP_EXTENSION>
     </PHP_EXTENSIONS>
     <PHP_SETTINGS>
