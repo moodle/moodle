@@ -86,9 +86,7 @@ class block_community_manager {
         $params['courseid'] = $course->id;
         $params['filetype'] = HUB_BACKUP_FILE_TYPE;
 
-        if (!file_exists($CFG->dataroot.'/temp/backup')) {
-            mkdir($CFG->dataroot.'/temp/backup/', 0777, true);
-        }
+        check_dir_exists($CFG->dataroot.'/temp/backup');
 
         $filename = md5(time() . '-' . $course->id . '-'. $USER->id . '-'. random_string(20));
 
