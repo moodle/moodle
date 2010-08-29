@@ -1433,7 +1433,7 @@ function load_all_capabilities() {
         $_SESSION['USER']->access['ra'][$base] = array($guest->id);
 
 
-    } else if (empty($_SESSION['USER']->id)) { // can not use isloggedin() yet
+    } else if (!empty($_SESSION['USER']->id)) { // can not use isloggedin() yet
 
         $accessdata = get_user_access_sitewide($_SESSION['USER']->id);
 
