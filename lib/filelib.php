@@ -2765,7 +2765,7 @@ class curl_cache {
             $this->dir = $CFG->dataroot.'/cache/misc/';
         }
         if (!file_exists($this->dir)) {
-            mkdir($this->dir, 0700, true);
+            mkdir($this->dir, $CFG->directorypermissions, true);
         }
         if ($module == 'repository') {
             if (empty($CFG->repositorycacheexpire)) {
