@@ -117,18 +117,21 @@ exit;
  *
  * @param string $dir where to create the temp directory.
  * @param string $prefix prefix for the temp directory name (default '')
- * @param string $mode permissions for the temp directory (default 700)
  *
  * @return string The full path to the temp directory.
  */
-function my_mktempdir($dir, $prefix='', $mode=0700) {
+function my_mktempdir($dir, $prefix='') {
+    global $CFG;
+
     if (substr($dir, -1) != '/') {
         $dir .= '/';
     }
 
     do {
         $path = $dir.$prefix.mt_rand(0, 9999999);
-    } while (!mkdir($path, $mode));
+    } while (file_exists($path));
+
+    check_dir_exists($path);
 
     return $path;
 }
