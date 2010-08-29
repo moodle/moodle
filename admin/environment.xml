@@ -291,6 +291,10 @@
       </PHP_EXTENSION>
       <PHP_EXTENSION name="pcre" level="required">
       </PHP_EXTENSION>
+      <PHP_EXTENSION name="dom" level="required">
+      </PHP_EXTENSION>
+      <PHP_EXTENSION name="xml" level="required">
+      </PHP_EXTENSION>
     </PHP_EXTENSIONS>
     <PHP_SETTINGS>
       <PHP_SETTING name="memory_limit" value="40M" level="required">
