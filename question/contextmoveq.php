@@ -12,6 +12,9 @@ require_once(dirname(__FILE__) . '/../config.php');
 require_once(dirname(__FILE__) . '/editlib.php');
 require_once($CFG->dirroot.'/question/contextmoveq_form.php');
 
+//TODO: MDL-16094
+throw new coding_exception('contextmoveq.php was not converted to new file api yet, sorry - see MDL-16094');
+
 $ids = required_param('ids', PARAM_SEQUENCE); // question ids
 
 if (!$cmid = optional_param('cmid', 0, PARAM_INT)){

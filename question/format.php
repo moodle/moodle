@@ -557,6 +557,9 @@ class qformat_default {
     function importimagefile( $path, $base64 ) {
         global $CFG;
 
+        //TODO: MDL-16094
+        throw new coding_exception('importimagefile() was not converted to new file api yet, sorry - see MDL-16094');
+
         // all this to get the destination directory
         // and filename!
         $fullpath = "{$CFG->dataroot}/{$this->course->id}/$path";
