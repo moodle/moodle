@@ -203,13 +203,7 @@
             array('backup_code'=>$backup_unique_code, 'table_name'=>'user'), "", "id, old_id");
 
         foreach ($backup_users as $user) {
-            //Is this user needed in the backup?
-            $userdir = make_user_directory($user->old_id, true);
-            if (check_dir_exists($userdir)) {
-                $count++;
-            }
-            //Do some output
-            backup_flush(30);
+            //TODO: deleted old user pic processing
         }
         $backup_users->close();
         //Gets the user data
@@ -2456,6 +2450,8 @@
             array('backup_code'=>$preferences->backup_unique_code, 'table_name'=>'user'), "", "id, old_id");
         foreach ($backup_users as $user) {
             //If this user's directory exists, copy it
+            //TODO: rewrite to use new file storage
+            /*
             $userdir = make_user_directory($user->old_id, true);
             if (check_dir_exists($userdir)) {
                 //first remove dirroot so we can split out the folders.
@@ -2473,7 +2469,7 @@
                     "$CFG->dataroot/temp/backup/$preferences->backup_unique_code/user_files/$group/$user->old_id");
             }
             //Do some output
-            backup_flush(30);
+            backup_flush(30);*/
         }
         $backup_users->close();
 

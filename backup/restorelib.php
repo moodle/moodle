@@ -2571,25 +2571,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                 //If that user exists in backup_ids
                 if ($user = backup_getid($restore->backup_unique_code,"user",$olduserid)) {
                     //Only if user has been created now or if it existed previously, but he hasn't got an image (see bug 1123)
-                    $newuserdir = make_user_directory($user->new_id, true); // Doesn't create the folder, just returns the location
-
-                    // restore images if new user or image does not exist yet
-                    if (!empty($user->new) or !check_dir_exists($newuserdir)) {
-                        if (make_user_directory($user->new_id)) { // Creates the folder
-                            $status = backup_copy_file($backup_location, $newuserdir, true);
-                            $counter ++;
-                        }
-                        //Do some output
-                        if ($counter % 2 == 0) {
-                            if (!defined('RESTORE_SILENTLY')) {
-                                echo ".";
-                                if ($counter % 40 == 0) {
-                                    echo "<br />";
-                                }
-                            }
-                            backup_flush(300);
-                        }
-                    }
+                    //TODO: user images are now in new file storage, old code deleted
                 }
             }
         }

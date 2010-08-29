@@ -288,7 +288,9 @@ class auth_plugin_mnet extends auth_plugin_base {
         foreach ((array) $remoteuser as $key => $val) {
 
             // TODO: fetch image if it has changed
+            //TODO: rewrite to use new file storage
             if ($key == 'imagehash') {
+                /*
                 $dirname = make_user_directory($localuser->id, true);
                 $filename = "$dirname/f1.jpg";
 
@@ -316,6 +318,7 @@ class auth_plugin_mnet extends auth_plugin_base {
                         }
                     }
                 }
+                */
             }
 
             if($key == 'myhosts') {
@@ -1105,6 +1108,9 @@ class auth_plugin_mnet extends auth_plugin_base {
     function fetch_user_image($username) {
         global $CFG, $DB;
 
+        //TODO: rewrite to use new file storage
+        return false;
+        /*
         if ($user = $DB->get_record('user', array('username'=>$username, 'mnethostid'=>$CFG->mnet_localhost_id))) {
             $filename1 = make_user_directory($user->id, true) . "/f1.jpg";
             $filename2 = make_user_directory($user->id, true) . "/f2.jpg";
@@ -1118,6 +1124,7 @@ class auth_plugin_mnet extends auth_plugin_base {
             return $return;
         }
         return false;
+        */
     }
 
     /**
