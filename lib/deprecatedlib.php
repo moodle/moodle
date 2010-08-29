@@ -1919,9 +1919,7 @@ function require_js($lib) {
  * @return string|false Returns full path to directory if successful, false if not
  */
 function make_mod_upload_directory($courseid) {
-    global $CFG;
-    debugging('make_mod_upload_directory has been deprecated by the file API changes in Moodle 2.0.', DEBUG_DEVELOPER);
-    return make_upload_directory($courseid .'/'. $CFG->moddata);
+    throw new coding_exception('make_mod_upload_directory has been deprecated by the file API changes in Moodle 2.0.');
 }
 
 /**
