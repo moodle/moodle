@@ -73,6 +73,9 @@ function textlib_get_instance() {
     /// tables when using internal functions
         make_upload_directory('temp/typo3temp/cs');
 
+    /// Make sure typo is using our dir permissions
+        $GLOBALS['TYPO3_CONF_VARS']['BE']['folderCreateMask'] = decoct($CFG->directorypermissions);
+
     /// Default mask for Typo
         $GLOBALS['TYPO3_CONF_VARS']['BE']['fileCreateMask'] = $CFG->directorypermissions;
 
