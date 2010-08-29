@@ -34,6 +34,7 @@ function choose_bb_xsl($manifest){
 function blackboard_convert($dir){
     global $CFG, $OUTPUT;
 
+    throw new coding_exception('bb_convert was not converted to new file api yet, sorry');
 
     // Check for a Blackboard manifest file
     if (is_readable($dir.'/imsmanifest.xml') && !is_readable($dir.'/moodle.xml')){
