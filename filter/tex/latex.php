@@ -20,13 +20,7 @@
 
             // construct directory structure
             $this->temp_dir = $CFG->dataroot . "/temp/latex";
-            if (!file_exists("$CFG->dataroot/temp")) {
-                mkdir( "$CFG->dataroot/temp", $CFG->directorypermissions );
-            }
-            if (!file_exists( $this->temp_dir )) {
-                mkdir( $this->temp_dir, $CFG->directorypermissions );
-            }
-
+            check_dir_exists($this->temp_dir);
         }
 
         /**
