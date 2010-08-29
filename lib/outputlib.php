@@ -627,7 +627,7 @@ class theme_config {
             $candidatesheet = "$CFG->dataroot/cache/theme/$this->name/designer.ser";
             if (!file_exists($candidatesheet)) {
                 $css = $this->css_content();
-                check_dir_exists(dirname($candidatesheet), true, true);
+                check_dir_exists(dirname($candidatesheet));
                 file_put_contents($candidatesheet, serialize($css));
 
             } else if (filemtime($candidatesheet) > time() - THEME_DESIGNER_CACHE_LIFETIME) {

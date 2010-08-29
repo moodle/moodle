@@ -73,7 +73,7 @@ require_once('Minify.php');
 $theme = theme_config::load($themename);
 
 if ($rev > -1) {
-    check_dir_exists(dirname($candidate), true, true);
+    check_dir_exists(dirname($candidate));
     $fp = fopen($candidate, 'w');
     fwrite($fp, minify($theme->javascript_files($type)));
     fclose($fp);

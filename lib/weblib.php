@@ -1493,11 +1493,11 @@ function purify_html($text) {
 
     // this can not be done only once because we sometimes need to reset the cache
     $cachedir = $CFG->dataroot.'/cache/htmlpurifier';
-    $status = check_dir_exists($cachedir, true, true);
+    check_dir_exists($cachedir);
 
     static $purifier = false;
-    static $config;
     if ($purifier === false) {
+        check_dir_exists($cachedir);
         require_once $CFG->libdir.'/htmlpurifier/HTMLPurifier.safe-includes.php';
         $config = HTMLPurifier_Config::createDefault();
         $config->set('Output.Newline', "\n");

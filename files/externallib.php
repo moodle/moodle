@@ -207,9 +207,7 @@ class moodle_file_external extends external_api {
             throw new moodle_exception('nofile');
         }
         // saving file
-        if (!check_dir_exists($CFG->dataroot.'/temp/wsupload')) {
-            throw new moodle_exception('cannotcreatetempdir');
-        }
+        make_upload_directory('temp/wsupload');
 
         if (empty($fileinfo['filename'])) {
             $filename = uniqid('wsupload').'_'.time().'.tmp';

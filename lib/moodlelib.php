@@ -1079,12 +1079,8 @@ function purge_all_caches() {
     // purge all other caches: rss, simplepie, etc.
     remove_dir($CFG->dataroot.'/cache', true);
 
-    // some more diagnostics in case site is misconfigured
-    if (!check_dir_exists($CFG->dataroot.'/cache', true, true)) {
-        debugging('Can not create cache directory, please check permissions in dataroot.');
-    } else if (!is_writeable($CFG->dataroot.'/cache')) {
-        debugging('Cache directory is not writeable, please verify permissions in dataroot.');
-    }
+    // make sure cache dir is writable, throws exception if not
+    make_upload_directory('cache');
 
     clearstatcache();
 }
@@ -5759,7 +5755,7 @@ class core_string_manager implements string_manager {
         // caches so we do not need to do all this merging and dependencies resolving again
         $this->cache[$lang][$component] = $string;
         if ($this->usediskcache) {
-            check_dir_exists("$this->cacheroot/$lang", true, true);
+            check_dir_exists("$this->cacheroot/$lang");
             file_put_contents("$this->cacheroot/$lang/$component.php", "<?php \$this->cache['$lang']['$component'] = ".var_export($string, true).";");
         }
         return $string;

@@ -109,7 +109,7 @@ class HTMLPurifier_DefinitionCache_Serializer extends
      */
     private function _prepareDir($config) {
         $directory = $this->generateDirectoryPath($config);
-        return check_dir_exists($directory, true, true); //Moodle hack
+        return check_dir_exists($directory); //Moodle hack
         if (!is_dir($directory)) {
             $base = $this->generateBaseDirectoryPath($config);
             if (!is_dir($base)) {

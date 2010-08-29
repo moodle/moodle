@@ -60,7 +60,7 @@ class moodle_simplepie extends SimplePie
         $this->file_class = 'moodle_simplepie_file';
 
         $cachedir = moodle_simplepie::get_cache_directory();
-        check_dir_exists($cachedir, true, true);
+        check_dir_exists($cachedir);
 
         parent::__construct();
         // Match moodle encoding

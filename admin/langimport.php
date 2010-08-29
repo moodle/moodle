@@ -65,8 +65,8 @@ $notice_error = array();
 
 if (($mode == INSTALLATION_OF_SELECTED_LANG) and confirm_sesskey() and !empty($pack)) {
     set_time_limit(0);
-    check_dir_exists($CFG->dataroot.'/temp/');
-    check_dir_exists($CFG->dataroot.'/lang/');
+    make_upload_directory('temp');
+    make_upload_directory('lang');
 
     if (is_array($pack)) {
         $packs = $pack;
@@ -173,8 +173,8 @@ if ($mode == UPDATE_ALL_LANG) {
         }
     }
 
-    check_dir_exists($CFG->dataroot.'/temp/');
-    check_dir_exists($CFG->dataroot.'/lang/');
+    make_upload_directory('temp');
+    make_upload_directory('lang');
 
     $updated = false;       // any packs updated?
     foreach ($neededlangs as $pack) {

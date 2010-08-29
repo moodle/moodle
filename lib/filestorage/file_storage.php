@@ -625,7 +625,7 @@ class file_storage {
         $file_record->source = clean_param($source, PARAM_URL);
 
         if ($usetempfile) {
-            check_dir_exists($this->tempdir, true, true);
+            check_dir_exists($this->tempdir);
             $tmpfile = tempnam($this->tempdir, 'newfromurl');
             $content = download_file_content($url, $headers, $postdata, $fullresponse, $timeout, $connecttimeout, $skipcertverify, $tmpfile);
             if ($content === false) {

@@ -109,7 +109,7 @@ send_cached_css($candidatesheet, $rev);
 
 function store_css(theme_config $theme, $csspath, $cssfiles) {
     $css = $theme->post_process(minify($cssfiles));
-    check_dir_exists(dirname($csspath), true, true);
+    check_dir_exists(dirname($csspath));
     $fp = fopen($csspath, 'w');
     fwrite($fp, $css);
     fclose($fp);

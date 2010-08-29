@@ -56,7 +56,7 @@ class zip_packer extends file_packer {
 
         $fs = get_file_storage();
 
-        check_dir_exists($CFG->dataroot.'/temp/zip', true, true);
+        check_dir_exists($CFG->dataroot.'/temp/zip');
         $tmpfile = tempnam($CFG->dataroot.'/temp/zip', 'zipstor');
 
         if ($result = $this->archive_to_pathname($files, $tmpfile)) {
@@ -279,7 +279,7 @@ class zip_packer extends file_packer {
             return $archivefile->extract_to_pathname($this, $contextid, $component, $filearea, $itemid, $pathbase, $userid);
         }
 
-        check_dir_exists($CFG->dataroot.'/temp/zip', true, true);
+        check_dir_exists($CFG->dataroot.'/temp/zip');
 
         $pathbase = trim($pathbase, '/');
         $pathbase = ($pathbase === '') ? '/' : '/'.$pathbase.'/';

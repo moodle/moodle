@@ -105,7 +105,7 @@ if ($rev > -1) {
     $pathinfo = pathinfo($imagefile);
     $cacheimage = "$candidatelocation/$image.".$pathinfo['extension'];
     if (!file_exists($cacheimage)) {
-        check_dir_exists(dirname($cacheimage), true, true);
+        check_dir_exists(dirname($cacheimage));
         copy($imagefile, $cacheimage);
     }
     send_cached_image($cacheimage, $rev);
