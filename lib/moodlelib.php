@@ -9100,20 +9100,19 @@ function remove_dir($dir, $content_only=false) {
 }
 
 /**
- * Function to check if a directory exists and optionally create it.
+ * Function to check if a directory exists and by default create it if not exists.
  *
- * @param string absolute directory path (must be under $CFG->dataroot)
+ * Previously this was accepting paths only from dataroot, but we now allow
+ * some data outside of dataroot if you supply custom paths
+ * for some settings in config.php.
+ *
+ * @param string absolute directory path
  * @param boolean create directory if does not exist
  * @param boolean create directory recursively
  * @return boolean true if directory exists or created
  */
-function check_dir_exists($dir, $create=false, $recursive=false) {
+function check_dir_exists($dir, $create = true, $recursive = true) {
     global $CFG;
-
-    if (strpos(str_replace('\\', '/', $dir), str_replace('\\', '/', $CFG->dataroot.'/')) !== 0) {
-        debugging('Warning. Wrong call to check_dir_exists(). $dir must be an absolute path under $CFG->dataroot ("' . $dir . '" is incorrect)', DEBUG_DEVELOPER);
-        return false;
-    }
 
     if (is_dir($dir)) {
         return true;
