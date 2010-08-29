@@ -37,7 +37,7 @@ class repository_filesystem extends repository {
         $this->root_path = $root . $subdir . '/';
         if (!empty($options['ajax'])) {
             if (!is_dir($this->root_path)) {
-                $created = mkdir($this->root_path, $CFG->directorypermissions);
+                $created = mkdir($this->root_path, $CFG->directorypermissions, true);
                 $ret = array();
                 $ret['msg'] = get_string('invalidpath', 'repository_filesystem');
                 $ret['nosearch'] = true;
@@ -150,7 +150,7 @@ class repository_filesystem extends repository {
         if (has_capability('moodle/site:config', get_system_context())) {
             $path = $CFG->dataroot . '/repository/';
             if (!is_dir($path)) {
-                mkdir($path);
+                mkdir($path, $CFG->directorypermissions, true);
             }
             if ($handle = opendir($path)) {
                 $fieldname = get_string('path', 'repository_filesystem');
