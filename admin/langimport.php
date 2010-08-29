@@ -65,8 +65,8 @@ $notice_error = array();
 
 if (($mode == INSTALLATION_OF_SELECTED_LANG) and confirm_sesskey() and !empty($pack)) {
     set_time_limit(0);
-    @mkdir ($CFG->dataroot.'/temp/', $CFG->directorypermissions);    //make it in case it's a fresh install, it might not be there
-    @mkdir ($CFG->dataroot.'/lang/', $CFG->directorypermissions);
+    check_dir_exists($CFG->dataroot.'/temp/');
+    check_dir_exists($CFG->dataroot.'/lang/');
 
     if (is_array($pack)) {
         $packs = $pack;
@@ -173,8 +173,9 @@ if ($mode == UPDATE_ALL_LANG) {
         }
     }
 
-    @mkdir ($CFG->dataroot.'/temp/', $CFG->directorypermissions);
-    @mkdir ($CFG->dataroot.'/lang/', $CFG->directorypermissions);
+    check_dir_exists($CFG->dataroot.'/temp/');
+    check_dir_exists($CFG->dataroot.'/lang/');
+
     $updated = false;       // any packs updated?
     foreach ($neededlangs as $pack) {
         if ($pack == 'en') {

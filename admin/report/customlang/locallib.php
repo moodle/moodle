@@ -262,7 +262,7 @@ class report_customlang_utils {
         }
         $filepath = $filepath.'/'.$filename;
         if (!is_dir(dirname($filepath))) {
-            mkdir(dirname($filepath), 0755, true);
+            check_dir_exists(dirname($filepath));
         }
 
         if (!$f = fopen($filepath, 'w')) {
