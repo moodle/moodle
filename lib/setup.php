@@ -71,6 +71,12 @@ if ($CFG->dataroot === false) {
     }
     echo('Fatal error: $CFG->dataroot is not configured properly, directory does not exist or is not accessible! Exiting.'."\n");
     exit(1);
+} else if (!is_writable($CFG->dataroot)) {
+    if (isset($_SERVER['REMOTE_ADDR'])) {
+        header($_SERVER['SERVER_PROTOCOL'] . ' 503 Service Unavailable');
+    }
+    echo('Fatal error: $CFG->dataroot is not writable, admin has to fix directory permissions! Exiting.'."\n");
+    exit(1);
 }
 
 // wwwroot is mandatory
@@ -550,11 +556,6 @@ if (stristr(PHP_OS, 'win') && !stristr(PHP_OS, 'darwin')) {
     $CFG->ostype = 'UNIX';
 }
 $CFG->os = PHP_OS;
-
-// Setup cache dir for Smarty and others
-if (!file_exists($CFG->dataroot .'/cache')) {
-    make_upload_directory('cache');
-}
 
 // Configure ampersands in URLs
 @ini_set('arg_separator.output', '&amp;');
