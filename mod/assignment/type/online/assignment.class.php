@@ -382,14 +382,17 @@ class assignment_online extends assignment_base {
      */
     public function download_submissions() {
         global $CFG, $DB;
-        require_once($CFG->libdir.'/filelib.php');
+
+        @raise_memory_limit('256M');
 
         $submissions = $this->get_submissions('','');
         if (empty($submissions)) {
             error("there are no submissions to download");
         }
         $filesforzipping = array();
-        $tempdir = assignment_create_temp_dir($CFG->dataroot."/temp/", "assignment".$this->assignment->id); //location for temp files.
+
+        //NOTE: do not create any stuff in temp directories, we now support unicode file names and that would not work, sorry
+
         //online assignment can use html
         $filextn=".html";
 
@@ -407,17 +410,14 @@ class assignment_online extends assignment_base {
             if ((groups_is_member($groupid,$a_userid)or !$groupmode or !$groupid)) {
                 $a_assignid = $submission->assignment; //get name of this assignment for use in the file names.
                 $a_user = $DB->get_record("user", array("id"=>$a_userid),'id,username,firstname,lastname'); //get user firstname/lastname
-                $submissioncontent = "<html><body>". $submission->data1. "</body></html>";      //fetched from database
+                $submissioncontent = "<html><body>". format_text($submission->data1, $submission->data2). "</body></html>";      //fetched from database
                 //get file name.html
                 $fileforzipname =  $a_user->username . "_" . clean_filename($this->assignment->name) . $filextn;
-                $fd = fopen($tempdir . $fileforzipname,'wb');   //create if not exist, write binary
-                fwrite( $fd, $submissioncontent);
-                fclose( $fd );
-                $filesforzipping[$fileforzipname] = $tempdir.$fileforzipname;
+                $filesforzipping[$fileforzipname] = array($submissioncontent);
             }
         }      //end of foreach
+
         if ($zipfile = assignment_pack_files($filesforzipping)) {
-            remove_dir($tempdir); //remove old tempdir with individual files.
             send_temp_file($zipfile, $filename); //send file and delete after sending.
         }
     }

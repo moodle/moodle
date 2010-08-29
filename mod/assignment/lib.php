@@ -3622,29 +3622,7 @@ function assignment_pack_files($filesforzipping) {
         }
         return false;
 }
-//TODO - this is a copy of the function my_mktempdir in admin/uploadpicture.php - it would be good to have as a core function.
-/**
- * Create a unique temporary directory with a given prefix name,
- * inside a given directory, with given permissions. Return the
- * full path to the newly created temp directory.
- *
- * @param string $dir where to create the temp directory.
- * @param string $prefix prefix for the temp directory name (default '')
- * @param string $mode permissions for the temp directory (default 700)
- *
- * @return string The full path to the temp directory.
- */
-function assignment_create_temp_dir($dir, $prefix='', $mode=0700) {
-    if (substr($dir, -1) != '/') {
-        $dir .= '/';
-    }
 
-    do {
-        $path = $dir.$prefix.mt_rand(0, 9999999);
-    } while (!mkdir($path, $mode));
-
-    return $path;
-}
 /**
  * Lists all file areas current user may browse
  *
