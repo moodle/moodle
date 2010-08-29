@@ -211,6 +211,24 @@ class invalid_state_exception extends moodle_exception {
 }
 
 /**
+ * An exception that indicates incorrect permissions in $CFG->dataroot
+ *
+ * @package    core
+ * @subpackage lib
+ * @copyright  2010 Petr Skoda {@link http://skodak.org}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class invalid_dataroot_permissions extends moodle_exception {
+    /**
+     * Constructor
+     * @param string $debuginfo optional more detailed information
+     */
+    function __construct($debuginfo = NULL) {
+        parent::__construct('invaliddatarootpermissions', 'error', '', NULL, $debuginfo);
+    }
+}
+
+/**
  * Default exception handler, uncaught exceptions are equivalent to error() in 1.9 and earlier
  *
  * @param Exception $ex
@@ -839,56 +857,82 @@ function redirect_if_major_upgrade_required() {
 }
 
 /**
- * Create a directory.
+ * Function to check if a directory exists and by default create it if not exists.
  *
- * @uses $CFG
- * @param string $directory  a string of directory names under $CFG->dataroot eg  stuff/assignment/1
- * param bool $shownotices If true then notification messages will be printed out on error.
- * @return string|false Returns full path to directory if successful, false if not
+ * Previously this was accepting paths only from dataroot, but we now allow
+ * files outside of dataroot if you supply custom paths for some settings in config.php.
+ * This function does not verify that the directory is writable.
+ *
+ * @param string $dir absolute directory path
+ * @param boolean $create directory if does not exist
+ * @param boolean $recursive create directory recursively
+ * @return boolean true if directory exists or created, false otherwise
  */
-function make_upload_directory($directory, $shownotices=true) {
-
+function check_dir_exists($dir, $create = true, $recursive = true) {
     global $CFG;
 
-    $currdir = $CFG->dataroot;
+    umask(0000); // just in case some evil code changed it
 
-    umask(0000);
-
-    if (!file_exists($currdir)) {
-        if (!mkdir($currdir, $CFG->directorypermissions, true) or !is_writable($currdir)) {
-            if ($shownotices) {
-                echo '<div class="notifyproblem" align="center">ERROR: You need to create the directory '.
-                     $currdir .' with web server write access</div>'."<br />\n";
-            }
-            return false;
-        }
+    if (is_dir($dir)) {
+        return true;
     }
 
-    // Make sure a .htaccess file is here, JUST IN CASE the files area is in the open
-    if (!file_exists($currdir.'/.htaccess')) {
-        if ($handle = fopen($currdir.'/.htaccess', 'w')) {   // For safety
+    if (!$create) {
+        return false;
+    }
+
+    return mkdir($dir, $CFG->directorypermissions, $recursive);
+}
+
+/**
+ * Create a directory in dataroot and make sure it is writable.
+ *
+ * @param string $directory  a string of directory names under $CFG->dataroot eg  temp/something
+ * @param bool $exceptiononerror throw exception if error encountered
+ * @return string|false Returns full path to directory if successful, false if not; may throw exception
+ */
+function make_upload_directory($directory, $exceptiononerror = true) {
+    global $CFG;
+
+    // Make sure a .htaccess file is here, JUST IN CASE the files area is in the open and .htaccess is supported
+    if (!file_exists("$CFG->dataroot/.htaccess")) {
+        if ($handle = fopen("$CFG->dataroot/.htaccess", 'w')) {   // For safety
             @fwrite($handle, "deny from all\r\nAllowOverride None\r\nNote: this file is broken intentionally, we do not want anybody to undo it in subdirectory!\r\n");
             @fclose($handle);
         }
     }
 
-    $dirarray = explode('/', $directory);
+    $dir = "$CFG->dataroot/$directory";
 
-    foreach ($dirarray as $dir) {
-        $currdir = $currdir .'/'. $dir;
-        if (! file_exists($currdir)) {
-            if (! mkdir($currdir, $CFG->directorypermissions)) {
-                if ($shownotices) {
-                    echo '<div class="notifyproblem" align="center">ERROR: Could not find or create a directory ('.
-                         $currdir .')</div>'."<br />\n";
-                }
-                return false;
-            }
-            //@chmod($currdir, $CFG->directorypermissions);  // Just in case mkdir didn't do it
+    if (file_exists($dir) and !is_dir($dir)) {
+        if ($exceptiononerror) {
+            throw new coding_exception($dir.' directory can not be created, file with the same name already exists.');
+        } else {
+            return false;
         }
     }
 
-    return $currdir;
+    umask(0000); // just in case some evil code changed it
+
+    if (!file_exists($dir)) {
+        if (!mkdir($dir, $CFG->directorypermissions, true)) {
+            if ($exceptiononerror) {
+                throw new invalid_dataroot_permissions($dir.' can not be created, check permissions.');
+            } else {
+                return false;
+            }
+        }
+    }
+
+    if (!is_writable($dir)) {
+        if ($exceptiononerror) {
+            throw new invalid_dataroot_permissions($dir.' is not writable, check permissions.');
+        } else {
+            return false;
+        }
+    }
+
+    return $dir;
 }
 
 function init_memcached() {
