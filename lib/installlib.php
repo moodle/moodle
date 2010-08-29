@@ -79,6 +79,57 @@ function install_ini_get_bool($ini_get_arg) {
 }
 
 /**
+ * Creates dataroot if not exists yet,
+ * makes sure it is writable, add lang directory
+ * and add .htaccess just in case it works.
+ *
+ * @param string $dataroot full path to dataroot
+ * @param int $dirpermissions
+ * @return bool success
+ */
+function install_init_dataroot($dataroot, $dirpermissions) {
+    if (file_exists($dataroot) and !is_dir($dataroot)) {
+        // file with the same name exists
+        return false;
+    }
+
+    umask(0000);
+    if (!file_exists($dataroot)) {
+        if (!mkdir($dataroot, $dirpermissions, true)) {
+            // most probably this does not work, but anyway
+            return false;
+        }
+    }
+    @chmod($dataroot, $dirpermissions);
+
+    if (!is_writable($dataroot)) {
+        return false; // we can not continue
+    }
+
+    // now create the lang folder - we need it and it makes sure we can really write in dataroot
+    if (!is_dir("$dataroot/lang")) {
+        if (!mkdir("$dataroot/lang", $dirpermissions, true)) {
+            return false;
+        }
+    }
+    if (!is_writable("$dataroot/lang")) {
+        return false; // we can not continue
+    }
+
+    // finally just in case some broken .htaccess that prevents access just in case it is allowed
+    if (!file_exists("$dataroot/.htaccess")) {
+        if ($handle = fopen("$dataroot/.htaccess", 'w')) {
+            fwrite($handle, "deny from all\r\nAllowOverride None\r\nNote: this file is broken intentionally, we do not want anybody to undo it in subdirectory!\r\n");
+            fclose($handle);
+        } else {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+/**
  * Print help button
  * @param string $url
  * @param string $titel
