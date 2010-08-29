@@ -123,7 +123,7 @@ $CFG->lang = $options['lang'];
 
 //download lang pack with optional notification
 if ($CFG->lang != 'en') {
-    make_upload_directory('lang', false);
+    make_upload_directory('lang');
     if ($cd = new component_installer('http://download.moodle.org', 'langpack/2.0', $CFG->lang.'.zip', 'languages.md5', 'lang')) {
         if ($cd->install() == COMPONENT_ERROR) {
             if ($cd->get_error() == 'remotedownloaderror') {

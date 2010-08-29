@@ -107,9 +107,7 @@ if ($formdata = $mform->get_data()) {
 
     // use current (non-conflicting) time stamp
     $importcode = get_new_importcode();
-    if (!$filename = make_upload_directory('temp/gradeimport/cvs/'.$USER->id, true)) {
-        die;
-    }
+    $filename = make_upload_directory('temp/gradeimport/cvs/'.$USER->id);
     $filename = $filename.'/'.$importcode;
 
     $text = $mform->get_file_content('userfile');

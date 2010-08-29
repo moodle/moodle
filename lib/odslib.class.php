@@ -75,8 +75,8 @@ class MoodleODSWorkbook {
         require_once($CFG->libdir.'/filelib.php');
 
         $dir = 'temp/ods/'.time();
-        make_upload_directory($dir, false);
-        make_upload_directory($dir.'/META-INF', false);
+        make_upload_directory($dir);
+        make_upload_directory($dir.'/META-INF');
         $dir = "$CFG->dataroot/$dir";
         $files = array();
 

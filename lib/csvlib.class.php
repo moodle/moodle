@@ -308,9 +308,7 @@ class csv_import_reader {
     function get_new_iid($type) {
         global $USER;
 
-        if (!$filename = make_upload_directory('temp/csvimport/'.$type.'/'.$USER->id, false)) {
-            print_error('cannotcreatetempdir');
-        }
+        $filename = make_upload_directory('temp/csvimport/'.$type.'/'.$USER->id);
 
         // use current (non-conflicting) time stamp
         $iiid = time();

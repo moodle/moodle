@@ -563,9 +563,7 @@ function is_dataroot_insecure($fetchtest=false) {
     preg_match('|(https?://[^/]+)|i', $CFG->wwwroot, $matches);
     $httpdocroot = $matches[1];
     $datarooturl = $httpdocroot.'/'. substr($dataroot, strlen($siteroot));
-    if (make_upload_directory('diag', false) === false) {
-        return INSECURE_DATAROOT_WARNING;
-    }
+    make_upload_directory('diag');
     $testfile = $CFG->dataroot.'/diag/public.txt';
     if (!file_exists($testfile)) {
         file_put_contents($testfile, 'test file, do not delete');
