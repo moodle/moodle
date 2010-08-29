@@ -26,8 +26,6 @@
         $categoryid = $pagevars['cat'];
     }
 
-    // ensure the files area exists for this course
-    make_upload_directory("$COURSE->id");
     list($catid, $catcontext) = explode(',', $pagevars['cat']);
     if (!$category = $DB->get_record("question_categories", array("id" => $catid, 'contextid' => $catcontext))) {
         print_error('nocategory','quiz');

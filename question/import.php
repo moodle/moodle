@@ -42,9 +42,6 @@ if ($contexts === null) { // need to get the course from the chosen category
     $contexts->require_one_edit_tab_cap($edittab);
 }
 
-// ensure the files area exists for this course
-make_upload_directory("$COURSE->id");
-
 $PAGE->set_url($thispageurl->out());
 
 $import_form = new question_import_form($thispageurl, array('contexts'=>$contexts->having_one_edit_tab_cap('import'),
