@@ -80,10 +80,13 @@ class auth_plugin_mnet extends auth_plugin_base {
         $userdata['session.gc_maxlifetime']  = ini_get('session.gc_maxlifetime');
 
         if (array_key_exists('picture', $userdata) && !empty($user->picture)) {
+            //TODO: rewrite to use new file storage
+            /*
             $imagefile = make_user_directory($user->id, true) . "/f1.jpg";
             if (file_exists($imagefile)) {
                 $userdata['imagehash'] = sha1(file_get_contents($imagefile));
             }
+            */
         }
 
         $userdata['myhosts'] = array();
