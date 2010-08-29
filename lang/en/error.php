@@ -369,7 +369,6 @@ $string['nopermissiontohide'] = 'No permission to hide!';
 $string['nopermissiontoimportact'] = 'You do not have the required permissions to import activities to this course';
 $string['nopermissiontolock'] = 'No permission to lock!';
 $string['nopermissiontomanagegroup'] = 'You do not have the required permissions to manage groups';
-$string['nopermissiontomkdir'] = 'Cannot create folder. The site administrator needs to fix the file permissions';
 $string['nopermissiontorate'] = 'Rating of items not allowed!';
 $string['nopermissiontoshow'] = 'No permission to see this!';
 $string['nopermissiontounlock'] = 'No permission to unlock!';
