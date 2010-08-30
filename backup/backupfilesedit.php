@@ -29,16 +29,16 @@ require_once($CFG->dirroot . '/repository/lib.php');
 
 // current context
 $contextid = required_param('contextid', PARAM_INT);
+$currentcontext = required_param('currentcontext', PARAM_INT);
 // file parameters
 $component  = optional_param('component', null, PARAM_ALPHAEXT);
 $filearea   = optional_param('filearea', null, PARAM_ALPHAEXT);
 $returnurl  = optional_param('returnurl', null, PARAM_URL);
 
-list($context, $course, $cm) = get_context_info_array($contextid);
+list($context, $course, $cm) = get_context_info_array($currentcontext);
+$filecontext = get_context_instance_by_id($contextid);
 
-$filecontext = $context;
-
-$url = new moodle_url('/backup/backupfilesedit.php', array('contextid'=>$contextid, 'component'=>$component, 'filearea'=>$filearea));
+$url = new moodle_url('/backup/backupfilesedit.php', array('currentcontext'=>$currentcontext, 'contextid'=>$contextid, 'component'=>$component, 'filearea'=>$filearea));
 
 require_login($course);
 require_capability('moodle/restore:uploadfile', $context);
@@ -53,7 +53,7 @@ $browser = get_file_browser();
 $data = new object();
 $options = array('subdirs'=>0, 'maxfiles'=>-1, 'accepted_types'=>'*', 'return_types'=>FILE_INTERNAL);
 file_prepare_standard_filemanager($data, 'files', $options, $filecontext, $component, $filearea, 0);
-$form = new backup_files_edit_form(null, array('data'=>$data, 'contextid'=>$contextid, 'filearea'=>$filearea, 'component'=>$component, 'returnurl'=>$returnurl));
+$form = new backup_files_edit_form(null, array('data'=>$data, 'contextid'=>$contextid, 'currentcontext'=>$currentcontext, 'filearea'=>$filearea, 'component'=>$component, 'returnurl'=>$returnurl));
 
 if ($form->is_cancelled()) {
     redirect($returnurl);

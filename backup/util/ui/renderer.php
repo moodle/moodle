@@ -434,7 +434,7 @@ class core_backup_renderer extends plugin_renderer_base {
         }
 
         $html = html_writer::table($table);
-        $html .= $this->output->single_button(new moodle_url('/backup/backupfilesedit.php', array('contextid'=>$viewer->filecontext->id, 'filearea'=>$viewer->filearea, 'component'=>$viewer->component, 'returnurl'=>$this->page->url->out())), get_string('managefiles', 'backup'), 'post');
+        $html .= $this->output->single_button(new moodle_url('/backup/backupfilesedit.php', array('currentcontext'=>$viewer->currentcontext->id, 'contextid'=>$viewer->filecontext->id, 'filearea'=>$viewer->filearea, 'component'=>$viewer->component, 'returnurl'=>$this->page->url->out())), get_string('managefiles', 'backup'), 'post');
 
         return $html;
     }
