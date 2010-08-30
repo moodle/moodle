@@ -268,6 +268,57 @@ class restore_review_pending_block_positions extends restore_execution_step {
     }
 }
 
+/**
+ * Process all the saved module availability records in backup_ids, matching
+ * course modules and grade item id once all them have been already restored.
+ * only if all matchings are satisfied the availability condition will be created.
+ * At the same time, it is required for the site to have that functionality enabled.
+ */
+class restore_process_course_modules_availability extends restore_execution_step {
+
+    protected function define_execution() {
+        global $CFG, $DB;
+
+        // Site hasn't availability enabled
+        if (empty($CFG->enableavailability)) {
+            return;
+        }
+
+        // Get all the module_availability objects to process
+        $params = array('backupid' => $this->get_restoreid(), 'itemname' => 'module_availability');
+        $rs = $DB->get_recordset('backup_ids_temp', $params, '', 'itemid');
+        // Process availabilities, creating them if everything matches ok
+        foreach($rs as $availrec) {
+            $allmatchesok = true;
+            // Get the complete availabilityobject
+            $availability = restore_dbops::get_backup_ids_record($this->get_restoreid(), 'module_availability', $availrec->itemid)->info;
+            // Map the sourcecmid if needed and possible
+            if (!empty($availability->sourcecmid)) {
+                $newcm = restore_dbops::get_backup_ids_record($this->get_restoreid(), 'course_module', $availability->sourcecmid);
+                if ($newcm) {
+                    $availability->sourcecmid = $newcm->newitemid;
+                } else {
+                    $allmatchesok = false; // Failed matching, we won't create this availability rule
+                }
+            }
+            // Map the gradeitemid if needed and possible
+            if (!empty($availability->gradeitemid)) {
+                $newgi = restore_dbops::get_backup_ids_record($this->get_restoreid(), 'grade_item', $availability->gradeitemid);
+                if ($newgi) {
+                    $availability->gradeitemid = $newgi->newitemid;
+                } else {
+                    $allmatchesok = false; // Failed matching, we won't create this availability rule
+                }
+            }
+            if ($allmatchesok) { // Everything ok, create the availability rule
+                $DB->insert_record('course_modules_availability', $availability);
+            }
+        }
+        $rs->close();
+    }
+}
+
+
 /*
  * Execution step that, *conditionally* (if there isn't preloaded information)
  * will load the inforef files for all the included course/section/activity tasks
@@ -764,7 +815,7 @@ class restore_course_structure_step extends restore_structure_step {
         if ($data->defaultgroupingid) {
             $data->defaultgroupingid = $this->get_mappingid('grouping', $data->defaultgroupingid);
         }
-        if (empty($CFG->enablecompletion) || !$this->get_setting_value('userscompletion')) {
+        if (empty($CFG->enablecompletion)) {
             $data->enablecompletion = 0;
             $data->completionstartonenrol = 0;
             $data->completionnotify = 0;
@@ -1308,7 +1359,7 @@ class restore_module_structure_step extends restore_structure_step {
         if (!grade_verify_idnumber($data->idnumber, $this->get_courseid())) {        // idnumber uniqueness
             $data->idnumber = '';
         }
-        if (empty($CFG->enablecompletion) || !$this->get_setting_value('userscompletion')) { // completion
+        if (empty($CFG->enablecompletion)) { // completion
             $data->completion = 0;
             $data->completiongradeitemnumber = null;
             $data->completionview = 0;
@@ -1347,8 +1398,67 @@ class restore_module_structure_step extends restore_structure_step {
 
 
     protected function process_availability($data) {
-        // TODO: Process module availavility records
         $data = (object)$data;
+        // Simply going to store the whole availability record now, we'll process
+        // all them later in the final task (once all actvivities have been restored)
+        // Let's call the low level one to be able to store the whole object
+        $data->coursemoduleid = $this->task->get_moduleid(); // Let add the availability cmid
+        restore_dbops::set_backup_ids_record($this->get_restoreid(), 'module_availability', $data->id, 0, null, $data);
+    }
+}
+
+/**
+ * Structure step that will process the user activity completion
+ * information if all these conditions are met:
+ *  - Target site has completion enabled ($CFG->enablecompletion)
+ *  - Activity includes completion info (file_exists)
+ */
+class restore_userscompletion_structure_step extends restore_structure_step {
+
+    /**
+     * To conditionally decide if this step must be executed
+     * Note the "settings" conditions are evaluated in the
+     * corresponding task. Here we check for other conditions
+     * not being restore settings (files, site settings...)
+     */
+     protected function execute_condition() {
+         global $CFG;
+
+         // Completion disabled in this site, don't execute
+         if (empty($CFG->enablecompletion)) {
+             return false;
+         }
+
+         // No user completion info found, don't execute
+        $fullpath = $this->task->get_taskbasepath();
+        $fullpath = rtrim($fullpath, '/') . '/' . $this->filename;
+         if (!file_exists($fullpath)) {
+             return false;
+         }
+
+         // Arrived here, execute the step
+         return true;
+     }
+
+     protected function define_structure() {
+
+        $paths = array();
+
+        $paths[] = new restore_path_element('completion', '/completions/completion');
+
+        return $paths;
+    }
+
+    protected function process_completion($data) {
+        global $DB;
+
+        $data = (object)$data;
+
+        $data->coursemoduleid = $this->task->get_moduleid();
+        $data->userid = $this->get_mappingid('user', $data->userid);
+        $data->timemodified = $this->apply_date_offset($data->timemodified);
+
+        $DB->insert_record('course_modules_completion', $data);
     }
 }
 

@@ -141,9 +141,9 @@ abstract class restore_activity_task extends restore_task {
         // Grades (module-related, rest of gradebook is restored later if possible: cats, calculations...)
         $this->add_step(new restore_activity_grades_structure_step('activity_grades', 'grades.xml'));
 
-        // TODO: Userscompletion (conditionally)
+        // Userscompletion (conditionally)
         if ($this->get_setting_value('userscompletion')) {
-            //$this->add_step(new restore_userscompletion_structure_step('activity_userscompletion', 'completion.xml'));
+            $this->add_step(new restore_userscompletion_structure_step('activity_userscompletion', 'completion.xml'));
         }
 
         // TODO: Logs (conditionally)
