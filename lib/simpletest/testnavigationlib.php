@@ -165,14 +165,13 @@ class navigation_node_test extends UnitTestCase {
     public function test_find_expandable() {
         $expandable = array();
         $this->node->find_expandable($expandable);
-        $this->assertEqual(count($expandable), 5);
-        if (count($expandable) === 5) {
+        $this->assertEqual(count($expandable), 4);
+        if (count($expandable) === 4) {
             $name = $expandable[0]['branchid'];
             $name .= $expandable[1]['branchid'];
             $name .= $expandable[2]['branchid'];
             $name .= $expandable[3]['branchid'];
-            $name .= $expandable[4]['branchid'];
-            $this->assertEqual($name, 'demo1demo2demo4hiddendemo2hiddendemo3');
+            $this->assertEqual($name, 'demo1demo2demo4hiddendemo2');
         }
     }
 
@@ -239,12 +238,15 @@ class navigation_node_test extends UnitTestCase {
  */
 class exposed_global_navigation extends global_navigation {
     protected $exposedkey = 'exposed_';
-    function __construct() {
+    public function __construct(moodle_page $page=null) {
         global $PAGE;
-        parent::__construct($PAGE);
+        if ($page === null) {
+            $page = $PAGE;
+        }
+        parent::__construct($page);
         $this->cache = new navigation_cache('simpletest_nav');
     }
-    function __call($method, $arguments) {
+    public function __call($method, $arguments) {
         if (strpos($method,$this->exposedkey) !== false) {
             $method = substr($method, strlen($this->exposedkey));
         }
@@ -252,6 +254,9 @@ class exposed_global_navigation extends global_navigation {
             return call_user_func_array(array($this, $method), $arguments);
         }
         throw new coding_exception('You have attempted to access a method that does not exist for the given object '.$method, DEBUG_DEVELOPER);
+    }
+    public function set_initialised() {
+        $this->initialised = true;
     }
 }
 
@@ -333,7 +338,7 @@ class global_navigation_test extends UnitTestCase {
         $course->numsections = 10;
         $course->modinfo = $this->modinfo5;
         $this->node->load_generic_course_sections($course, $coursenode, 'topic', 'topic');
-        $this->assertEqual($coursenode->children->count(),4);
+        $this->assertEqual($coursenode->children->count(),1);
     }
     public function test_format_display_course_content() {
         $this->assertTrue($this->node->exposed_format_display_course_content('topic'));
@@ -389,9 +394,8 @@ class global_navigation_test extends UnitTestCase {
  */
 class exposed_navbar extends navbar {
     protected $exposedkey = 'exposed_';
-    function __construct() {
-        global $PAGE;
-        parent::__construct($PAGE);
+    public function __construct(moodle_page $page) {
+        parent::__construct($page);
         $this->cache = new navigation_cache('simpletest_nav');
     }
     function __call($method, $arguments) {
@@ -405,6 +409,12 @@ class exposed_navbar extends navbar {
     }
 }
 
+class navigation_exposed_moodle_page extends moodle_page {
+    public function set_navigation(navigation_node $node) {
+        $this->_navigation = $node;
+    }
+}
+
 class navbar_test extends UnitTestCase {
     protected $node;
     protected $oldnav;
@@ -414,20 +424,24 @@ class navbar_test extends UnitTestCase {
 
     public function setUp() {
         global $PAGE;
-        $this->oldnav = $PAGE->navigation;
-        $this->cache = new navigation_cache('simpletest_nav');
-        $this->node = new exposed_navbar();
+
         $temptree = new global_navigation_test();
         $temptree->setUp();
         $temptree->node->find('course2', navigation_node::TYPE_COURSE)->make_active();
-        $PAGE->navigation = $temptree->node;
-    }
-    public function tearDown() {
-        global $PAGE;
-        $PAGE->navigation = $this->oldnav;
+
+        $page = new navigation_exposed_moodle_page();
+        $page->set_url($PAGE->url);
+        $page->set_context($PAGE->context);
+
+        $navigation = new exposed_global_navigation($page);
+        $navigation->children = $temptree->node->children;
+        $navigation->set_initialised();
+        $page->set_navigation($navigation);
+
+        $this->cache = new navigation_cache('simpletest_nav');
+        $this->node = new exposed_navbar($page);
     }
     public function test_add() {
-        global $CFG;
         // Add a node with all args set
         $this->node->add('test_add_1','http://www.moodle.org/',navigation_node::TYPE_COURSE,'testadd1','testadd1',new pix_icon('i/course', ''));
         // Add a node with the minimum args required
@@ -436,7 +450,6 @@ class navbar_test extends UnitTestCase {
         $this->assertIsA($this->node->get('testadd2'), 'navigation_node');
     }
     public function test_has_items() {
-        global $PAGE;
         $this->assertTrue($this->node->has_items());
     }
 }

@@ -1342,8 +1342,16 @@ class global_navigation extends navigation_node {
 
         require_once($CFG->dirroot.'/course/lib.php');
 
-        $modinfo = get_fast_modinfo($course);
-        $sections = array_slice(get_all_sections($course->id), 0, $course->numsections+1, true);
+        if (!$this->cache->cached('modinfo'.$course->id)) {
+            $this->cache->set('modinfo'.$course->id, get_fast_modinfo($course));
+        }
+        $modinfo = $this->cache->{'modinfo'.$course->id};
+
+        if (!$this->cache->cached('coursesections'.$course->id)) {
+            $this->cache->set('coursesections'.$course->id, array_slice(get_all_sections($course->id), 0, $course->numsections+1, true));
+        }
+        $sections = $this->cache->{'coursesections'.$course->id};
+
         $viewhiddensections = has_capability('moodle/course:viewhiddensections', $this->page->context);
 
         if (isloggedin() && !isguestuser()) {
