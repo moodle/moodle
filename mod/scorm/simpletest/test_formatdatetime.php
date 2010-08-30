@@ -23,7 +23,7 @@ class scorm_formatdatetime_test extends UnitTestCase {
                            4=>"1 $strminutes ", 5=>"1 $stryears 15 $strminutes 0.01 $strseconds", 6=>'', 7=>"1 $strmonths 4 $strminutes 0.30 $strseconds",
                            8=>'', 9=>"1 $strdays 2 $strhours 3 $strseconds", 10=>"4 $strmonths ");
         foreach ($SUTs as $key=>$SUT) {
-            $formatted = scorm_format_date_time($SUT);
+            $formatted = scorm_format_duration($SUT);
             $this->assertEqual($formatted, $validates[$key]);
         }
     }
@@ -42,7 +42,7 @@ class scorm_formatdatetime_test extends UnitTestCase {
                            4=>"12 $strminutes 0.03 $strseconds", 5=>"1 $strhours 23 $strseconds", 6=>"12 $strminutes 34 $strseconds",
                            7=>"1 $strminutes 2.03 $strseconds", 8=>"0.1 $strseconds", 9=>"1 $strhours 23 $strminutes ", 10=>"2 $strhours ");
         foreach ($SUTs as $key=>$SUT) {
-            $formatted = scorm_format_date_time($SUT);
+            $formatted = scorm_format_duration($SUT);
             $this->assertEqual($formatted, $validates[$key]);
         }
     }

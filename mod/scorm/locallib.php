@@ -1179,12 +1179,12 @@ function scorm_delete_attempt($userid, $scorm, $attemptid) {
 }
 
 /**
- * Converts SCORM date/time notation to human-readable format
+ * Converts SCORM duration notation to human-readable format
  * The function works with both SCORM 1.2 and SCORM 2004 time formats
- * @param $datetime string SCORM date/time
+ * @param $duration string SCORM duration
  * @return string human-readable date/time
  */
-function scorm_format_date_time($datetime) {
+function scorm_format_duration($duration) {
     // fetch date/time strings
     $stryears = get_string('numyears');
     $strmonths = get_string('nummonths');
@@ -1193,7 +1193,7 @@ function scorm_format_date_time($datetime) {
     $strminutes = get_string('numminutes');
     $strseconds = get_string('numseconds');
 
-    if ($datetime[0] == 'P') {
+    if ($duration[0] == 'P') {
         // if timestamp starts with 'P' - it's a SCORM 2004 format
         // this regexp discards empty sections, takes Month/Minute ambiguity into consideration,
         // and outputs filled sections, discarding leading zeroes and any format literals
@@ -1205,7 +1205,7 @@ function scorm_format_date_time($datetime) {
     } else {
         // else we have SCORM 1.2 format there
         // first convert the timestamp to some SCORM 2004-like format for conveniency
-        $datetime = preg_replace('#^(\d+):(\d+):([\d.]+)$#', 'T$1H$2M$3S', $datetime);
+        $duration = preg_replace('#^(\d+):(\d+):([\d.]+)$#', 'T$1H$2M$3S', $duration);
         // then convert in the same way as SCORM 2004
         $pattern = array( '#T0+H#', '#([A-Z])0+M#', '#([A-Z])[0.]+S#', '#\.0+S#', '#0*(\d+)H#', '#0*(\d+)M#', '#0+\.(\d+)S#', '#0*([\d.]+)S#', '#T#' );
         $replace = array( 'T', '$1', '$1', 'S', '$1'.$strhours.' ', '$1'.$strminutes.' ', '0.$1'.$strseconds, '$1'.$strseconds, '' );
@@ -1213,7 +1213,7 @@ function scorm_format_date_time($datetime) {
         //$replace = '';
     }
 
-    $result = preg_replace($pattern, $replace, $datetime);
+    $result = preg_replace($pattern, $replace, $duration);
 
     return $result;
 }

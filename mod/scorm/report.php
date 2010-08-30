@@ -639,7 +639,7 @@
                                 $row[] = '<img src="'.$OUTPUT->pix_url($trackdata->status, 'scorm').'" alt="'.$strstatus.'" title="'.
                                          $strstatus.'" />&nbsp;'.format_string($sco->title);
                                 $row[] = get_string($trackdata->status,'scorm');
-                                $row[] = scorm_format_date_time($trackdata->total_time);
+                                $row[] = scorm_format_duration($trackdata->total_time);
                                 $row[] = $score;
                                 $row[] = $detailslink;
                             } else {
@@ -679,7 +679,7 @@
             }
             $strstatus = get_string($trackdata->status,'scorm');
             echo '<img src="'.$OUTPUT->pix_url($trackdata->status, 'scorm').'" alt="'.$strstatus.'" title="'.
-            $strstatus.'" />&nbsp;'.scorm_format_date_time($trackdata->total_time).'<br />'.$scoreview.'<br />';
+            $strstatus.'" />&nbsp;'.scorm_format_duration($trackdata->total_time).'<br />'.$scoreview.'<br />';
             echo '</div>'."\n";
             echo '<hr /><h2>'.get_string('details','scorm').'</h2>';
 
@@ -717,7 +717,7 @@
                             $row[] = $strstatus;
                         break;
                         case 'time':
-                            $row[] = s(scorm_format_date_time($trackdata->$element));
+                            $row[] = s(scorm_format_duration($trackdata->$element));
                         break;
                         default:
                             s($trackdata->$element);
@@ -834,7 +834,7 @@
                         if (strpos($element, '_time') === false) {
                             $row[] = s($value);
                         } else {
-                            $row[] = s(scorm_format_date_time($value));
+                            $row[] = s(scorm_format_duration($value));
                         }
                         $table->data[] = $row;
                     }
