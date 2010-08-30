@@ -27,25 +27,14 @@
 require('../config.php');
 
 $contextid  = optional_param('contextid', SYSCONTEXTID, PARAM_INT);
-$component  = optional_param('component', '', PARAM_ALPHAEXT);
-$filearea   = optional_param('filearea', '', PARAM_ALPHAEXT);
-$itemid     = optional_param('itemid', -1, PARAM_INT);
 $filepath   = optional_param('filepath', '', PARAM_PATH);
 $filename   = optional_param('filename', '', PARAM_FILE);
+// hard-coded to course legacy area
+$component = 'course';
+$filearea  = 'legacy';
+$itemid    = 0;
 
-$PAGE->set_url('/files/index.php', array('contextid'=>$contextid, 'component'=>$component, 'filearea'=>$filearea, 'itemid'=>$itemid, 'filepath'=>$filepath, 'filename'=>$filename));
-
-if ($component === '') {
-    $component = null;
-}
-
-if ($filearea === '') {
-    $filearea = null;
-}
-
-if ($itemid < 0) {
-    $itemid = null;
-}
+$PAGE->set_url('/files/index.php', array('contextid'=>$contextid, 'filepath'=>$filepath, 'filename'=>$filename));
 
 if ($filepath === '') {
     $filepath = null;
@@ -72,16 +61,9 @@ if ($node = $PAGE->settingsnav->find('coursefiles', navigation_node::TYPE_SETTIN
     $PAGE->navbar->add($strfiles);
 }
 
-$PAGE->set_title("$SITE->shortname: $strfiles");
-$PAGE->set_heading($SITE->fullname);
-
-if ($context->contextlevel == CONTEXT_MODULE) {
-    $PAGE->set_pagelayout('incourse');
-} else if ($context->contextlevel == CONTEXT_COURSE) {
-    $PAGE->set_pagelayout('course');
-} else {
-    $PAGE->set_pagelayout('admin');
-}
+$PAGE->set_title("$course->shortname: $strfiles");
+$PAGE->set_heading($course->fullname);
+$PAGE->set_pagelayout('course');
 
 $output = $PAGE->get_renderer('core', 'files');
 
@@ -90,6 +72,7 @@ echo $output->box_start();
 
 if ($file_info) {
     $options = array();
+    $options['context'] = $context;
     //$options['visible_areas'] = array('backup'=>array('section', 'course'), 'course'=>array('legacy'), 'user'=>array('backup'));
     echo $output->files_tree_viewer($file_info, $options);
 } else {
@@ -97,6 +80,4 @@ if ($file_info) {
 }
 
 echo $output->box_end();
-
 echo $output->footer();
-

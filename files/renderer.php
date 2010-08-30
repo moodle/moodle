@@ -31,7 +31,7 @@ defined('MOODLE_INTERNAL') || die();
  */
 
 /**
- * File manager render
+ * File browser render
  *
  * @copyright 2010 Dongsheng Cai
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -46,7 +46,8 @@ class core_files_renderer extends plugin_renderer_base {
 
     public function render_files_tree_viewer(files_tree_viewer $tree) {
 
-        $html = '<div>';
+        $html = $this->output->notification(get_string('coursefileswarning'), 'notifyproblem');
+        $html .= '<div class="file-tree-breadcrumb">';
         foreach($tree->path as $path) {
             $html .= $path;
             $html .= ' / ';
@@ -74,6 +75,7 @@ class core_files_renderer extends plugin_renderer_base {
             $html .= '</ul>';
         }
         $html .= '</div>';
+        $html .= $this->output->single_button(new moodle_url('/files/coursefilesedit.php', array('contextid'=>$tree->context->id)), get_string('coursefilesedit'), 'get');
         return $html;
     }
 }
@@ -89,6 +91,7 @@ class core_files_renderer extends plugin_renderer_base {
 class files_tree_viewer implements renderable {
     public $tree;
     public $path;
+    public $context;
 
     /**
      * Constructor of moodle_file_tree_viewer class
@@ -99,8 +102,9 @@ class files_tree_viewer implements renderable {
         global $CFG;
 
         //note: this MUST NOT use get_file_storage() !!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
         $this->options = (array)$options;
+        $this->context = $options['context'];
+
         if (isset($this->options['visible_areas'])) {
             $visible_areas = (array)$this->options['visible_areas'];
         } else {
@@ -110,18 +114,20 @@ class files_tree_viewer implements renderable {
         $this->tree = array();
         $children = $file_info->get_children();
         $parent_info = $file_info->get_parent();
-
         $level = $parent_info;
         $this->path = array();
         while ($level) {
             $params = $level->get_params();
             $context = get_context_instance_by_id($params['contextid']);
-            // lock user in course level
-            if ($context->contextlevel == CONTEXT_COURSECAT or $context->contextlevel == CONTEXT_SYSTEM) {
+            if ($context->id != $this->context->id) {
                 break;
             }
+            // unset unused parameters
+            unset($params['component']);
+            unset($params['filearea']);
+            unset($params['itemid']);
             $url = new moodle_url('/files/index.php', $params);
-            $this->path[] = html_writer::link($url->out(false), $level->get_visible_name());
+            $this->path[] = html_writer::link($url, $level->get_visible_name());
             $level = $level->get_parent();
         }
         $this->path = array_reverse($this->path);
@@ -132,13 +138,13 @@ class files_tree_viewer implements renderable {
             $filesize = $child->get_filesize();
             $mimetype = $child->get_mimetype();
             $params = $child->get_params();
-            $url = new moodle_url('/files/index.php', $params);
             $fileitem = array(
                     'params'   => $params,
                     'filename' => $child->get_visible_name(),
                     'filedate' => $filedate ? userdate($filedate) : '',
                     'filesize' => $filesize ? display_size($filesize) : ''
                     );
+            $url = new moodle_url('/files/index.php', $params);
             if ($child->is_directory()) {
                 $fileitem['isdir'] = true;
                 $fileitem['url'] = $url->out(false);

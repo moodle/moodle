@@ -2905,9 +2905,9 @@ class settings_navigation extends navigation_node {
         }
 
         // Manage files
-        if ($course->legacyfiles == 2 and has_capability('moodle/course:managefiles', $coursecontext)) {
+        if (has_capability('moodle/course:managefiles', $coursecontext)) {
             // hidden in new courses and courses where legacy files were turned off
-            $url = new moodle_url('/files/index.php', array('contextid'=>$coursecontext->id, 'itemid'=>0, 'component' => 'course', 'filearea'=>'legacy'));
+            $url = new moodle_url('/files/index.php', array('contextid'=>$coursecontext->id));
             $coursenode->add(get_string('courselegacyfiles'), $url, self::TYPE_SETTING, null, 'coursefiles', new pix_icon('i/files', ''));
         }
 
@@ -3582,9 +3582,9 @@ class settings_navigation extends navigation_node {
         }
 
         // Manage files
-        if ($course->legacyfiles == 2 and has_capability('moodle/course:managefiles', $this->context)) {
+        if (has_capability('moodle/course:managefiles', $this->context)) {
             //hiden in new installs
-            $url = new moodle_url('/files/index.php', array('contextid'=>$coursecontext->id, 'itemid'=>0, 'component' => 'course', 'filearea'=>'legacy'));
+            $url = new moodle_url('/files/index.php', array('contextid'=>$coursecontext->id));
             $frontpage->add(get_string('sitelegacyfiles'), $url, self::TYPE_SETTING, null, null, new pix_icon('i/files', ''));
         }
         return $frontpage;
