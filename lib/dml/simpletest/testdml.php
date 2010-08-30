@@ -2844,8 +2844,10 @@ class dml_test extends UnitTestCase {
 
         $this->assertTrue($DB->insert_record($tablename, array('name' => '1', 'content'=>'xx')));
         $this->assertTrue($DB->insert_record($tablename, array('name' => 2, 'content'=>'yy')));
+        $this->assertTrue($DB->insert_record($tablename, array('name' => 'somestring', 'content'=>'zz')));
         $this->assertTrue($DB->insert_record($tablename, array('name' => 'aa', 'content'=>'1')));
         $this->assertTrue($DB->insert_record($tablename, array('name' => 'bb', 'content'=>2)));
+        $this->assertTrue($DB->insert_record($tablename, array('name' => 'cc', 'content'=>'sometext')));
 
 
         // Conditions in CHAR colums
