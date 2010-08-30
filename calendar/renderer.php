@@ -224,8 +224,8 @@ class core_calendar_renderer extends plugin_renderer_base {
         if (!isguestuser() && isloggedin() && calendar_user_can_add_event()) {
             $output .= $this->add_event_button($calendar->courseid, $calendar->day, $calendar->month, $calendar->year);
         }
-        $output .= html_writer::tag('label', get_string('dayview', 'calendar'), array('for'=>'cal_course_flt_jump'));
-        $output .= $this->course_filter_selector(array('from'=>'day', 'cal_d'=>$calendar->day, 'cal_m'=>$calendar->month, 'cal_y'=>$calendar->year));
+        //$output .= html_writer::tag('label', get_string('dayview', 'calendar'), array('for'=>'cal_course_flt_jump'));
+        $output .= $this->course_filter_selector(array('from'=>'day', 'cal_d'=>$calendar->day, 'cal_m'=>$calendar->month, 'cal_y'=>$calendar->year), get_string('dayview', 'calendar'));
         $output .= html_writer::end_tag('div');
         // Controls
         $output .= html_writer::tag('div', calendar_top_controls('day', array('id' => $calendar->courseid, 'd' => $calendar->day, 'm' => $calendar->month, 'y' => $calendar->year)), array('class'=>'controls'));
@@ -629,7 +629,7 @@ class core_calendar_renderer extends plugin_renderer_base {
      * @param array $getvars
      * @return string
      */
-    protected function course_filter_selector(array $getvars = array()) {
+    protected function course_filter_selector(array $getvars = array(), $label=null) {
         global $USER, $SESSION;
 
         if (!isloggedin() or isguestuser()) {
@@ -658,6 +658,9 @@ class core_calendar_renderer extends plugin_renderer_base {
         $getvars['var'] = 'setcourse';
         $select = new single_select(new moodle_url(CALENDAR_URL.'set.php', $getvars), 'id', $courseoptions, $selected, null);
         $select->class = 'cal_courses_flt';
-        echo $this->output->render($select);
+        if ($label !== null) {
+            $select->label = $label;
+        }
+        return $this->output->render($select);
     }
 }
