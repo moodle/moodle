@@ -71,6 +71,26 @@ class restore_drop_and_clean_temp_stuff extends restore_execution_step {
  */
 class restore_gradebook_step extends restore_structure_step {
 
+    /**
+     * To conditionally decide if this step must be executed
+     * Note the "settings" conditions are evaluated in the
+     * corresponding task. Here we check for other conditions
+     * not being restore settings (files, site settings...)
+     */
+     protected function execute_condition() {
+        global $CFG;
+
+        // No gradebook info found, don't execute
+        $fullpath = $this->task->get_taskbasepath();
+        $fullpath = rtrim($fullpath, '/') . '/' . $this->filename;
+        if (!file_exists($fullpath)) {
+            return false;
+        }
+
+        // Arrived here, execute the step
+        return true;
+     }
+
     protected function define_structure() {
         $paths = array();
         $userinfo = $this->task->get_setting_value('users');
