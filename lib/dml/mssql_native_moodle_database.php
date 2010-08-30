@@ -1078,11 +1078,11 @@ class mssql_native_moodle_database extends moodle_database {
 
         $sql = "SELECT CAST(DATABASEPROPERTYEX('$this->dbname', 'Collation') AS varchar(255)) AS SQLCollation";
         $this->query_start($sql, null, SQL_QUERY_AUX);
-        $result = mssql_query($this->mssql, $sql);
+        $result = mssql_query($sql, $this->mssql);
         $this->query_end($result);
 
         if ($result) {
-            if ($rawcolumn = mssql_fetch_array($result, SQLSRV_FETCH_ASSOC)) {
+            if ($rawcolumn = mssql_fetch_assoc($result)) {
                 $this->collation = reset($rawcolumn);
             }
             $this->free_result($result);
