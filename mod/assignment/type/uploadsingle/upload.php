@@ -59,22 +59,10 @@ $PAGE->set_heading($title);
 
 $options = array('subdirs'=>0, 'maxbytes'=>$CFG->userquota, 'maxfiles'=>1, 'accepted_types'=>'*', 'return_types'=>FILE_INTERNAL);
 
-if ($id==null) {
     $mform = new mod_assignment_uploadsingle_form(null, array('contextid'=>$contextid, 'userid'=>$formdata->userid, 'options'=>$options));
-} else {
-    $formdata->cm->id = $id;
-    $formdata->contextid = $contextid;
-    $formdata->options = $options;
-    $mform = new mod_assignment_uploadsingle_response_form(null, $formdata);
-}
 
 if ($mform->is_cancelled()) {
-    if ($id==null) {
         redirect(new moodle_url('/mod/assignment/view.php', array('id'=>$cm->id)));
-    } else {
-        $instance->display_submission($formdata->offset, $formdata->userid);
-        die();
-    }
 } else if ($mform->get_data()) {
     $instance->upload($mform);
     die();

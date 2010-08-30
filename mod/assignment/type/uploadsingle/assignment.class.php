@@ -90,36 +90,16 @@ class assignment_uploadsingle extends assignment_base {
         $this->view_footer();
     }
 
-    function custom_feedbackform($submission, $return=false) {
-        global $CFG, $OUTPUT;
 
-        $mode         = optional_param('mode', '', PARAM_ALPHA);
-        $offset       = optional_param('offset', 0, PARAM_INT);
-
-        $fs = get_file_storage();
-        if ($files = $fs->get_area_files($this->context->id, 'mod_assignment', 'response', $submission->id, "timemodified", false)) {
-            $str = get_string('editthisfile', 'assignment');
-        } else {
-            $str = get_string('uploadafile', 'assignment');
+    function process_feedback() {
+        if (!$feedback = data_submitted() or !confirm_sesskey()) {      // No incoming data?
+            return false;
         }
-
-        $output = get_string('responsefiles', 'assignment').': ';
-
-        $output .= $OUTPUT->single_button(new moodle_url('/mod/assignment/type/uploadsingle/upload.php',
-                    array('contextid'=>$this->context->id,'id'=>$this->cm->id, 'offset'=>$offset,
-                          'userid'=>$submission->userid, 'mode'=>$mode)), $str, 'get');
-
-        $responsefiles = $this->print_responsefiles($submission->userid, true);
-        if (!empty($responsefiles)) {
-            $output .= $responsefiles;
+        $userid = required_param('userid', PARAM_INT);
+        $offset = required_param('offset', PARAM_INT);
+        $mform = $this->display_submission($offset, $userid, false);
+        parent::process_feedback($mform);
         }
-
-        if ($return) {
-            return $output;
-        }
-        echo $output;
-        return;
-    }
 
     function print_responsefiles($userid, $return=false) {
         global $CFG, $USER, $OUTPUT, $PAGE;

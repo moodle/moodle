@@ -214,19 +214,19 @@ class assignment_online extends assignment_base {
 
         $link = new moodle_url("/mod/assignment/type/online/file.php?id={$this->cm->id}&userid={$submission->userid}");
         $action = new popup_action('click', $link, 'file'.$userid, array('height' => 450, 'width' => 580));
-        $popup = $OUTPUT->action_link($link, shorten_text(trim(strip_tags(format_text($submission->data1,$submission->data2))), 15), $action, array('title'=>get_string('submission', 'assignment')));
+        $popup = $OUTPUT->action_link($link, get_string('popupinnewwindow','assignment'), $action, array('title'=>get_string('submission', 'assignment')));
 
         $output = '<div class="files">'.
                   '<img align="middle" src="'.$OUTPUT->pix_url('f/html') . '" height="16" width="16" alt="html" />'.
                   $popup .
                   '</div>';
 
-        $wordcount = '<p id="wordcount">';
+        $wordcount = '<p id="wordcount">'. $popup . '&nbsp;';
     /// Decide what to count
         if ($CFG->assignment_itemstocount == ASSIGNMENT_COUNT_WORDS) {
-            $wordcount .= ' ('.get_string('numwords', '', count_words(format_text($submission->data1, $submission->data2))).')';
+            $wordcount .= '('.get_string('numwords', '', count_words(format_text($submission->data1, $submission->data2))).')';
         } else if ($CFG->assignment_itemstocount == ASSIGNMENT_COUNT_LETTERS) {
-            $wordcount .= ' ('.get_string('numletters', '', count_letters(format_text($submission->data1, $submission->data2))).')';
+            $wordcount .= '('.get_string('numletters', '', count_letters(format_text($submission->data1, $submission->data2))).')';
         }
         $wordcount .= '</p>';
 

@@ -154,6 +154,7 @@ $string['operation'] = 'Operation';
 $string['optionalsettings'] = 'Optional settings';
 $string['overwritewarning'] = 'Warning: uploading again will REPLACE your current submission';
 $string['pagesize'] = 'Submissions shown per page';
+$string['popupinnewwindow'] = 'Open in a popup window';
 $string['pluginadministration'] = 'Assignment administration';
 $string['pluginname'] = 'Assignment';
 $string['preventlate'] = 'Prevent late submissions';

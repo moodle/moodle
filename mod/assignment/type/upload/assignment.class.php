@@ -264,42 +264,6 @@ class assignment_upload extends assignment_base {
         return ($this->assignment->var3 && (time() <= $this->assignment->timeavailable));
     }
 
-    function custom_feedbackform($submission, $return=false) {
-        global $CFG, $OUTPUT;
-
-        $mode         = optional_param('mode', '', PARAM_ALPHA);
-        $offset       = optional_param('offset', 0, PARAM_INT);
-        $forcerefresh = optional_param('forcerefresh', 0, PARAM_BOOL);
-
-        if ($this->count_responsefiles($submission->userid) > 0) {
-            $str = get_string('editthesefiles', 'assignment');
-        } else {
-            $str = get_string('uploadfiles', 'assignment');
-        }
-
-        $output = get_string('responsefiles', 'assignment').': ';
-
-        $output .= $OUTPUT->single_button(new moodle_url('/mod/assignment/type/upload/upload.php',
-                    array('contextid'=>$this->context->id,'id'=>$this->cm->id, 'offset'=>$offset,
-                          'forcerefresh'=>$forcerefresh, 'userid'=>$submission->userid, 'mode'=>$mode)), $str, 'get');
-
-        if ($forcerefresh) {
-            $output .= $this->update_main_listing($submission);
-        }
-
-        $responsefiles = $this->print_responsefiles($submission->userid, true);
-        if (!empty($responsefiles)) {
-            $output .= $responsefiles;
-        }
-
-        if ($return) {
-            return $output;
-        }
-        echo $output;
-        return;
-    }
-
-
     function print_student_answer($userid, $return=false){
         global $CFG, $OUTPUT, $PAGE;
 
@@ -398,6 +362,16 @@ class assignment_upload extends assignment_base {
             $this->finalize('single');
         }
         parent::submissions($mode);
+    }
+
+    function process_feedback() {
+        if (!$feedback = data_submitted() or !confirm_sesskey()) {      // No incoming data?
+            return false;
+        }
+        $userid = required_param('userid', PARAM_INT);
+        $offset = required_param('offset', PARAM_INT);
+        $mform = $this->display_submission($offset, $userid, false);
+        parent::process_feedback($mform);
     }
 
     function print_responsefiles($userid, $return=false) {

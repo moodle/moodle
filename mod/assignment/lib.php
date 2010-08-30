@@ -899,10 +899,11 @@ class assignment_base {
      * @global object
      * @param string $extra_javascript
      */
-    function display_submission($offset=-1,$userid =-1) {
+    function display_submission($offset=-1,$userid =-1, $display=true) {
         global $CFG, $DB, $PAGE, $OUTPUT;
         require_once($CFG->libdir.'/gradelib.php');
         require_once($CFG->libdir.'/tablelib.php');
+        require_once("$CFG->dirroot/repository/lib.php");
         if ($userid==-1) {
             $userid = required_param('userid', PARAM_INT);
         }
@@ -1010,8 +1011,20 @@ class assignment_base {
         $mformdata->submissioncommentformat= FORMAT_HTML;
         $mformdata->submission_content= $this->print_user_files($user->id,true);
         $mformdata->filter = $filter;
+         if ($assignment->assignmenttype == 'upload') {
+            $mformdata->fileui_options = array('subdirs'=>1, 'maxbytes'=>$assignment->maxbytes, 'maxfiles'=>$assignment->var1, 'accepted_types'=>'*', 'return_types'=>FILE_INTERNAL);
+        } elseif ($assignment->assignmenttype == 'uploadsingle') {
+            $mformdata->fileui_options = array('subdirs'=>0, 'maxbytes'=>$CFG->userquota, 'maxfiles'=>1, 'accepted_types'=>'*', 'return_types'=>FILE_INTERNAL);
+        }
 
         $submitform = new mod_assignment_grading_form( null, $mformdata );
+
+         if (!$display) {
+            $ret_data = new stdClass();
+            $ret_data->mform = $submitform;
+            $ret_data->fileui_options = $mformdata->fileui_options;
+            return $ret_data;
+        }
 
         if ($submitform->is_cancelled()) {
             redirect('submissions.php?id='.$this->cm->id);
@@ -1021,7 +1034,8 @@ class assignment_base {
 
         $PAGE->set_title($this->course->fullname . ': ' .get_string('feedback', 'assignment').' - '.fullname($user, true));
         $PAGE->set_heading($this->course->fullname);
-        $PAGE->navbar->add( get_string('submissions', 'assignment') );
+        $PAGE->navbar->add(get_string('submissions', 'assignment'), new moodle_url('/mod/assignment/submissions.php', array('id'=>$cm->id)));
+        $PAGE->navbar->add(fullname($user, true));
 
         echo $OUTPUT->header();
         echo $OUTPUT->heading(get_string('feedback', 'assignment').': '.fullname($user, true));
@@ -1491,7 +1505,7 @@ class assignment_base {
      * @global object
      * @return object|bool The updated submission object or false
      */
-    function process_feedback() {
+    function process_feedback($formdata=null) {
         global $CFG, $USER, $DB;
         require_once($CFG->libdir.'/gradelib.php');
 
@@ -1545,6 +1559,12 @@ class assignment_base {
 
             add_to_log($this->course->id, 'assignment', 'update grades',
                        'submissions.php?id='.$this->assignment->id.'&user='.$feedback->userid, $feedback->userid, $this->cm->id);
+             if (!is_null($formdata)) {
+                    if ($this->type == 'upload' || $this->type == 'uploadsingle') {
+                        $mformdata = $formdata->mform->get_data();
+                        $mformdata = file_postupdate_standard_filemanager($mformdata, 'files', $formdata->fileui_options, $this->context, 'mod_assignment', 'response', $submission->id);
+                    }
+             }
         }
 
         return $submission;
@@ -2168,21 +2188,21 @@ class mod_assignment_grading_form extends moodleform {
                                                 userdate($this->_customdata->submission->timemodified) .
                                                 $this->_customdata->lateness );
 
+        $this->add_submission_content();
         $this->add_grades_section();
 
         $this->add_feedback_section();
 
         if ($this->_customdata->submission->timemarked) {
+            $datestring = userdate($this->_customdata->submission->timemarked)."&nbsp; (".format_time(time() - $this->_customdata->submission->timemarked).")";
             $mform->addElement('header', 'Last Grade', get_string('lastgrade', 'assignment'));
             $mform->addElement('static', 'picture', $OUTPUT->user_picture($this->_customdata->teacher) ,
                                                     fullname($this->_customdata->teacher,true).
-                                                    '<br/>'.
-                                                    userdate($this->_customdata->submission->timemarked));
+                                                    '<br/>'.$datestring);
         }
         // buttons
         $this->add_action_buttons();
 
-        $this->add_submission_content();
     }
 
     function add_grades_section() {
@@ -2245,7 +2265,14 @@ class mod_assignment_grading_form extends moodleform {
             $mform->setType('submissioncomment_editor', PARAM_RAW); // to be cleaned before display
             $mform->setDefault('submissioncomment_editor', $this->_customdata->submission->submissioncomment);
             //$mform->addRule('submissioncomment', get_string('required'), 'required', null, 'client');
-
+            switch ($this->_customdata->assignment->assignmenttype) {
+                case 'upload' :
+                case 'uploadsingle' :
+                    $mform->addElement('filemanager', 'files_filemanager', get_string('responsefiles', 'assignment'). ':', null, $this->_customdata->fileui_options);
+                    break;
+                default :
+                    break;
+            }
             $lastmailinfo = get_user_preferences('assignment_mailinfo', 1) ? array('checked'=>'checked') : array();
             $mform->addElement('hidden', 'mailinfo_h', "0");
             $mform->setType('mailinfo_h', PARAM_INT);
@@ -2258,7 +2285,6 @@ class mod_assignment_grading_form extends moodleform {
 
     function add_action_buttons() {
         $mform =& $this->_form;
-        $mform->addElement('header', 'Operation', get_string('operation', 'assignment'));
         //if there are more to be graded.
         if ($this->_customdata->nextid>0) {
             $buttonarray=array();
@@ -2273,6 +2299,7 @@ class mod_assignment_grading_form extends moodleform {
             $buttonarray[] = &$mform->createElement('cancel');
         }
         $mform->addGroup($buttonarray, 'grading_buttonar', '', array(' '), false);
+        $mform->closeHeaderBefore('grading_buttonar');
         $mform->setType('grading_buttonar', PARAM_RAW);
     }
 
@@ -2309,6 +2336,15 @@ class mod_assignment_grading_form extends moodleform {
             $itemid = null;
         }
 
+        switch ($this->_customdata->assignment->assignmenttype) {
+                case 'upload' :
+                case 'uploadsingle' :
+                    $data = file_prepare_standard_filemanager($data, 'files', $editoroptions, $this->_customdata->context, 'mod_assignment', 'response', $itemid);
+                    break;
+                default :
+                    break;
+        }
+
         $data = file_prepare_standard_editor($data, 'submissioncomment', $editoroptions, $this->_customdata->context, $editoroptions['component'], $editoroptions['filearea'], $itemid);
         return parent::set_data($data);
     }
@@ -2324,8 +2360,15 @@ class mod_assignment_grading_form extends moodleform {
 
         if ($data) {
             $editoroptions = $this->get_editor_options();
+            switch ($this->_customdata->assignment->assignmenttype) {
+                case 'upload' :
+                case 'uploadsingle' :
+                    $data = file_postupdate_standard_filemanager($data, 'files', $editoroptions, $this->_customdata->context, 'mod_assignment', 'response', $itemid);
+                    break;
+                default :
+                    break;
+            }
             $data = file_postupdate_standard_editor($data, 'submissioncomment', $editoroptions, $this->_customdata->context, $editoroptions['component'], $editoroptions['filearea'], $itemid);
-            $data->format = $data->textformat;
         }
         return $data;
     }

@@ -15,6 +15,7 @@
 .path-mod-assignment .late {color: red;}
 
 /** Styles for submissions.php **/
+#page-mod-assignment-submissions fieldset.felement {margin-left: 16%;}
 #page-mod-assignment-submissions form#options div {text-align:right;margin-left:auto;margin-right:20px;}
 #page-mod-assignment-submissions .header .commands {display: inline;}
 #page-mod-assignment-submissions .picture {width: 35px;}
