@@ -251,6 +251,11 @@ function xmldb_resource_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2009080501, 'resource');
     }
 
+    // MDL-10906. Removing resource_allowlocalfiles setting.
+    if ($oldversion < 2010083000) {
+        unset_config('resource_allowlocalfiles');
+        upgrade_mod_savepoint(true, 2010083000, 'resource');
+    }
 
     return true;
 }
