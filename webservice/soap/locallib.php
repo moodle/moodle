@@ -76,6 +76,9 @@ class webservice_soap_server extends webservice_zend_server {
             $this->zend_server->setReturnResponse(true);
             //TODO: the error handling in Zend Soap server is useless, XML-RPC is much, much better :-(
             $this->zend_server->registerFaultException('moodle_exception');
+            $this->zend_server->registerFaultException('webservice_parameter_exception');
+            $this->zend_server->registerFaultException('invalid_parameter_exception');
+            $this->zend_server->registerFaultException('invalid_response_exception');
         }
     }
 
