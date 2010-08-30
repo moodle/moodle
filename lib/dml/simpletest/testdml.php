@@ -2857,16 +2857,22 @@ class dml_test extends UnitTestCase {
         $this->assertTrue($records = $DB->get_records($tablename, array('name' => '2')));
         $this->assertEqual(1, count($records));
 
-        /* TODO: we need param type hints to make this work
-        $this->assertTrue($records = $DB->get_records($tablename, array('content' => '1')));
+        // Conditions in TEXT columns always must be performed with the sql_compare_text
+        // helper function on both sides of the condition
+        $sqlqm = "SELECT *
+                    FROM {{$tablename}}
+                   WHERE " . $DB->sql_compare_text('content') . " =  " . $DB->sql_compare_text('?');
+        $this->assertTrue($records = $DB->get_records_sql($sqlqm, array('1')));
         $this->assertEqual(1, count($records));
-        $this->assertTrue($records = $DB->get_records($tablename, array('content' => 1)));
+        $this->assertTrue($records = $DB->get_records_sql($sqlqm, array(1)));
         $this->assertEqual(1, count($records));
-        $this->assertTrue($records = $DB->get_records($tablename, array('content' => 2)));
+        $sqlnamed = "SELECT *
+                       FROM {{$tablename}}
+                      WHERE " . $DB->sql_compare_text('content') . " =  " . $DB->sql_compare_text(':content');
+        $this->assertTrue($records = $DB->get_records_sql($sqlnamed, array('content' => 2)));
         $this->assertEqual(1, count($records));
-        $this->assertTrue($records = $DB->get_records($tablename, array('content' => '2')));
+        $this->assertTrue($records = $DB->get_records_sql($sqlnamed, array('content' => '2')));
         $this->assertEqual(1, count($records));
-        */
     }
 }
 
