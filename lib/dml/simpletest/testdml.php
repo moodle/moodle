@@ -16,15 +16,13 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package    moodlecore
- * @subpackage DML
+ * @package    core
+ * @subpackage dml
  * @copyright  2008 Petr Skoda (http://skodak.org)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-if (!defined('MOODLE_INTERNAL')) {
-    die('Direct access to this script is forbidden.');    ///  It must be included from a Moodle page
-}
+defined('MOODLE_INTERNAL') || die();
 
 class dml_test extends UnitTestCase {
     private $tables = array();
@@ -2828,6 +2826,44 @@ class dml_test extends UnitTestCase {
         $this->assertEqual(2, $DB2->count_records($tablename));
 
         $DB2->dispose();
+    }
+
+    public function test_bound_param_types() {
+        $DB = $this->tdb;
+        $dbman = $DB->get_manager();
+
+        $table = $this->get_test_table();
+        $tablename = $table->getName();
+
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('name', XMLDB_TYPE_CHAR, '255', null, null, null, null);
+        $table->add_field('content', XMLDB_TYPE_TEXT, 'big', XMLDB_UNSIGNED, XMLDB_NOTNULL);
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $dbman->create_table($table);
+        $this->tables[$tablename] = $table;
+
+        $this->assertTrue($DB->insert_record($tablename, array('name' => '1', 'content'=>'xx')));
+        $this->assertTrue($DB->insert_record($tablename, array('name' => 2, 'content'=>'yy')));
+        $this->assertTrue($DB->insert_record($tablename, array('name' => 'aa', 'content'=>'1')));
+        $this->assertTrue($DB->insert_record($tablename, array('name' => 'bb', 'content'=>2)));
+
+
+        $this->assertTrue($records = $DB->get_records($tablename, array('name' => 1)));
+        $this->assertEqual(1, count($records));
+        $this->assertTrue($records = $DB->get_records($tablename, array('name' => '1')));
+        $this->assertEqual(1, count($records));
+        $this->assertTrue($records = $DB->get_records($tablename, array('name' => 2)));
+        $this->assertEqual(1, count($records));
+        $this->assertTrue($records = $DB->get_records($tablename, array('name' => '2')));
+        $this->assertEqual(1, count($records));
+        $this->assertTrue($records = $DB->get_records($tablename, array('content' => '1')));
+        $this->assertEqual(1, count($records));
+        $this->assertTrue($records = $DB->get_records($tablename, array('content' => 1)));
+        $this->assertEqual(1, count($records));
+        $this->assertTrue($records = $DB->get_records($tablename, array('content' => 2)));
+        $this->assertEqual(1, count($records));
+        $this->assertTrue($records = $DB->get_records($tablename, array('content' => '2')));
+        $this->assertEqual(1, count($records));
     }
 }
 
