@@ -71,6 +71,7 @@ class webservice_test extends UnitTestCase {
             'moodle_group_get_groups' => false,
             'moodle_course_get_courses' => false,
             'moodle_user_get_users_by_id' => false,
+            'moodle_enrol_get_enrolled_users' => false
         );
 
         ////// WRITE DB tests ////
@@ -213,6 +214,41 @@ class webservice_test extends UnitTestCase {
         $this->assertEqual(count($users), count($userids));
     }
 
+    function moodle_enrol_get_enrolled_users($client) {
+        global $DB;
+
+        //function settings
+        $withcapability = '';
+        $groupid = null;
+        $onlyactive = false;
+
+        $dbcourses = $DB->get_records('course');
+        $function = 'moodle_enrol_get_enrolled_users';
+
+        foreach ($dbcourses as $dbcourse) {
+
+            $params = array();
+
+            $coursecontext = get_context_instance(CONTEXT_COURSE, $dbcourse->id);
+
+            list($sql, $params) = get_enrolled_sql($coursecontext, $withcapability, $groupid, $onlyactive);
+            $sql = "SELECT DISTINCT ue.userid, e.courseid
+                      FROM {user_enrolments} ue
+                      JOIN {enrol} e ON (e.id = ue.enrolid)
+                     WHERE e.courseid = :courseid AND ue.userid IN ($sql)";
+
+            $params['courseid'] = $dbcourse->id;
+
+            $enrolledusers = $DB->get_records_sql($sql, $params);
+
+            $wsparams = array('courseid' => $dbcourse->id, 'withcapability' => $withcapability,
+                'groupid' => $groupid, 'onlyactive' => $onlyactive);
+            $resultusers = $client->call($function, $wsparams);
+
+            $this->assertEqual(count($resultusers), count($enrolledusers));
+        }
+    }
+
     function moodle_course_get_courses($client) {
         global $DB;
 
@@ -302,7 +338,7 @@ class webservice_test extends UnitTestCase {
         $themeobjects = get_list_of_themes();
         $theme = key($themeobjects);
         $categoryid = $DB->get_record('course_categories', array(), '*', IGNORE_MULTIPLE)->id;
-        $categoryid = empty($categoryid)?0:$categoryid;
+        $categoryid = empty($categoryid) ? 0 : $categoryid;
 
         $course1 = new stdClass();
         $course1->fullname = 'Test Data create course 1';
@@ -386,7 +422,7 @@ class webservice_test extends UnitTestCase {
         $dbcourse2 = $DB->get_record('course', array('fullname' => $course2->fullname));
         $this->assertEqual($dbcourse2->fullname, $course2->fullname);
         $this->assertEqual($dbcourse2->shortname, $course2->shortname);
-        $this->assertEqual($dbcourse2->category, $course2->categoryid );
+        $this->assertEqual($dbcourse2->category, $course2->categoryid);
         $this->assertEqual($dbcourse2->summaryformat, FORMAT_MOODLE);
         $this->assertEqual($dbcourse2->format, $courseconfig->format);
         $this->assertEqual($dbcourse2->showgrades, $courseconfig->showgrades);

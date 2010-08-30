@@ -67,7 +67,7 @@ class moodle_enrol_external extends external_api {
 
         $coursecontext = get_context_instance(CONTEXT_COURSE, $params['courseid']);
         if ($courseid == SITEID) {
-            $systemcontext = get_context_instance(CONTEXT_SYSTEM);
+            $context = get_context_instance(CONTEXT_SYSTEM);
         } else {
             $context = $coursecontext;
         }
@@ -101,13 +101,21 @@ class moodle_enrol_external extends external_api {
         }
 
         list($sql, $params) =  get_enrolled_sql($coursecontext, $withcapability, $groupid, $onlyactive);
-        $sql = "SELECT e.courseid, ue.userid
+        $sql = "SELECT DISTINCT ue.userid, e.courseid
                   FROM {user_enrolments} ue
                   JOIN {enrol} e ON (e.id = ue.enrolid)
                  WHERE e.courseid = :courseid AND ue.userid IN ($sql)";
         $params['courseid'] = $courseid;
 
-        return $DB->get_records_sql($sql, $params);
+        $enrolledusers = $DB->get_records_sql($sql, $params);
+
+        $result = array();
+        foreach ($enrolledusers as $enrolleduser) {
+            $result[] = array('courseid' => $enrolleduser->courseid,
+                'userid' => $enrolleduser->userid);
+        }
+
+        return $result;
     }
 
     /**
@@ -115,10 +123,12 @@ class moodle_enrol_external extends external_api {
      * @return external_description
      */
     public static function get_enrolled_users_returns() {
-        return new external_single_structure(
-            array(
-                'courseid' => new external_value(PARAM_INT, 'id of course'),
-                'userid' => new external_value(PARAM_INT, 'id of user'),
+        return new external_multiple_structure(
+            new external_single_structure(
+                array(
+                    'courseid' => new external_value(PARAM_INT, 'id of course'),
+                    'userid' => new external_value(PARAM_INT, 'id of user'),
+                )
             )
         );
     }
