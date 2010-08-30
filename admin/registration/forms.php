@@ -53,9 +53,13 @@ class site_unregistration_form extends moodleform {
                 ' ' . get_string('unpublishalluploadedcourses', 'hub'));
 
         $mform->addElement('hidden', 'confirm', 1);
+        $mform->setType('confirm', PARAM_INT);
         $mform->addElement('hidden', 'unregistration', 1);
+        $mform->setType('unregistration', PARAM_INT);
         $mform->addElement('hidden', 'huburl', $huburl);
+        $mform->setType('huburl', PARAM_URL);
         $mform->addElement('hidden', 'hubname', $hubname);
+        $mform->setType('hubname', PARAM_TEXT);
 
         $this->add_action_buttons(true, $unregisterlabel);
     }
@@ -80,10 +84,15 @@ class site_clean_registration_data_form extends moodleform {
 
 
         $mform->addElement('hidden', 'confirm', 1);
+        $mform->setType('confirm', PARAM_INT);
         $mform->addElement('hidden', 'unregistration', 1);
+        $mform->setType('unregistration', PARAM_INT);
         $mform->addElement('hidden', 'cleanregdata', 1);
+        $mform->setType('cleanregdata', PARAM_INT);
         $mform->addElement('hidden', 'huburl', $huburl);
+        $mform->setType('huburl', PARAM_URL);
         $mform->addElement('hidden', 'hubname', $hubname);
+        $mform->setType('hubname', PARAM_TEXT);
 
         $this->add_action_buttons(true, $unregisterlabel);
     }
@@ -135,6 +144,7 @@ class hub_selector_form extends moodleform {
             }
             $options[$hub['url']] = $hubname;
             $mform->addElement('hidden', clean_param($hub['url'], PARAM_ALPHANUMEXT), $hubname);
+            $mform->setType(clean_param($hub['url'], PARAM_ALPHANUMEXT), PARAM_ALPHANUMEXT);
         }
         if (!empty($hubs)) {
             $mform->addElement('select', 'publichub', get_string('publichub', 'hub'),
@@ -230,8 +240,11 @@ class site_registration_form extends moodleform {
 
         //hidden parameters
         $mform->addElement('hidden', 'huburl', $huburl);
+        $mform->setType('huburl', PARAM_URL);
         $mform->addElement('hidden', 'hubname', $hubname);
+        $mform->setType('hubname', PARAM_TEXT);
         $mform->addElement('hidden', 'password', $password);
+        $mform->setType('password', PARAM_RAW);
 
         //the input parameters
         $mform->addElement('header', 'moodle', get_string('registrationinfo', 'hub'));
@@ -266,14 +279,17 @@ class site_registration_form extends moodleform {
         $languages = get_string_manager()->get_list_of_languages();
         $mform->addElement('static', 'langstring', get_string('sitelang', 'hub'), $languages[current_language()]);
         $mform->addElement('hidden', 'language', current_language());
+        $mform->setType('language', PARAM_ALPHANUMEXT);
         $mform->addHelpButton('langstring', 'sitelang', 'hub');
 
         $mform->addElement('static', 'versionstring', get_string('siteversion', 'hub'), $CFG->version);
         $mform->addElement('hidden', 'moodleversion', $CFG->version);
+        $mform->setType('moodleversion', PARAM_INT);
         $mform->addHelpButton('versionstring', 'siteversion', 'hub');
 
         $mform->addElement('static', 'releasestring', get_string('siterelease', 'hub'), $CFG->release);
         $mform->addElement('hidden', 'moodlerelease', $CFG->release);
+        $mform->setType('moodlerelease', PARAM_TEXT);
         $mform->addHelpButton('releasestring', 'siterelease', 'hub');
 
         $mform->addElement('textarea', 'address', get_string('postaladdress', 'hub'),
@@ -286,6 +302,7 @@ class site_registration_form extends moodleform {
 //        $mform->addElement('select', 'region', get_string('selectaregion'), array('-' => '-'));
 //        $mform->setDefault('region', $region);
         $mform->addElement('hidden', 'regioncode', '-');
+        $mform->setType('regioncode', PARAM_ALPHANUMEXT);
 
         $countries = get_string_manager()->get_list_of_countries();
         $mform->addElement('select', 'countrycode', get_string('sitecountry', 'hub'), $countries);
@@ -334,6 +351,7 @@ class site_registration_form extends moodleform {
 
         //TODO site logo
         $mform->addElement('hidden', 'imageurl', ''); //TODO: temporary
+        $mform->setType('imageurl', PARAM_URL);
         /// Display statistic that are going to be retrieve by the hub
         $coursecount = $DB->count_records('course') - 1;
         $usercount = $DB->count_records('user', array('deleted' => 0));
@@ -382,35 +400,43 @@ class site_registration_form extends moodleform {
             $mform->addElement('static', 'courseslabel', get_string('sendfollowinginfo', 'hub'),
                     " " . get_string('coursesnumber', 'hub', $coursecount));
             $mform->addElement('hidden', 'courses', true);
+            $mform->setType('courses', PARAM_FLOAT);
             $mform->addHelpButton('courseslabel', 'sendfollowinginfo', 'hub');
 
             $mform->addElement('static', 'userslabel', '',
                     " " . get_string('usersnumber', 'hub', $usercount));
             $mform->addElement('hidden', 'users', true);
+            $mform->setType('users', PARAM_FLOAT);
 
             $mform->addElement('static', 'roleassignmentslabel', '',
                     " " . get_string('roleassignmentsnumber', 'hub', $roleassigncount));
             $mform->addElement('hidden', 'roleassignments', true);
+            $mform->setType('roleassignments', PARAM_FLOAT);
 
             $mform->addElement('static', 'postslabel', '',
                     " " . get_string('postsnumber', 'hub', $postcount));
             $mform->addElement('hidden', 'posts', true);
+            $mform->setType('posts', PARAM_FLOAT);
 
             $mform->addElement('static', 'questionslabel', '',
                     " " . get_string('questionsnumber', 'hub', $questioncount));
             $mform->addElement('hidden', 'questions', true);
+            $mform->setType('questions', PARAM_FLOAT);
 
             $mform->addElement('static', 'resourceslabel', '',
                     " " . get_string('resourcesnumber', 'hub', $resourcecount));
             $mform->addElement('hidden', 'resources', true);
+            $mform->setType('resources', PARAM_FLOAT);
 
             $mform->addElement('static', 'participantnumberaveragelabel', '',
                     " " . get_string('participantnumberaverage', 'hub', $participantnumberaverage));
             $mform->addElement('hidden', 'participantnumberaverage', true);
+            $mform->setType('participantnumberaverage', PARAM_FLOAT);
 
             $mform->addElement('static', 'modulenumberaveragelabel', '',
                     " " . get_string('modulenumberaverage', 'hub', $modulenumberaverage));
             $mform->addElement('hidden', 'modulenumberaverage', true);
+            $mform->setType('modulenumberaverage', PARAM_FLOAT);
         }
 
         //check if it's a first registration or update
@@ -420,6 +446,7 @@ class site_registration_form extends moodleform {
             $buttonlabel = get_string('updatesite', 'hub',
                             !empty($hubname) ? $hubname : $huburl);
             $mform->addElement('hidden', 'update', true);
+            $mform->setType('update', PARAM_BOOL);
         } else {
             $buttonlabel = get_string('registersite', 'hub',
                             !empty($hubname) ? $hubname : $huburl);
