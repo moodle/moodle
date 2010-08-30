@@ -289,25 +289,6 @@ function display() {
     }
     /// MW END
 
-
-    /// Print a notice and redirect if we are trying to access a file on a local file system
-    /// and the config setting has been disabled
-    if (!$CFG->resource_allowlocalfiles and (strpos($resource->reference, RESOURCE_LOCALPATH) === 0)) {
-        if ($inpopup) {
-            print_header($pagetitle, $course->fullname);
-        } else {
-            print_header($pagetitle, $course->fullname, $navigation, "", "", true,
-                    update_module_button($cm->id, $course->id, $this->strresource), navmenu($course, $cm));
-        }
-        notify(get_string('notallowedlocalfileaccess', 'resource', ''));
-        if ($inpopup) {
-            close_window_button();
-        }
-        print_footer('none');
-        die;
-    }
-
-
     /// Check whether this is supposed to be a popup, but was called directly
 
     if ($resource->popup and !$inpopup) {    /// Make a page and a pop-up window
@@ -351,11 +332,7 @@ function display() {
         echo "<title>" . format_string($course->shortname) . ": ".strip_tags(format_string($resource->name,true))."</title></head>\n";
         echo "<frameset rows=\"$CFG->resource_framesize,*\">";
         echo "<frame src=\"view.php?id={$cm->id}&amp;type={$resource->type}&amp;frameset=top\" title=\"".get_string('modulename','resource')."\"/>";
-        if (!empty($localpath)) {  // Show it like this so we interpose some HTML
-            echo "<frame src=\"view.php?id={$cm->id}&amp;type={$resource->type}&amp;inpopup=true\" title=\"".get_string('modulename','resource')."\"/>";
-        } else {
-            echo "<frame src=\"$fullurl\" title=\"".get_string('modulename','resource')."\"/>";
-        }
+        echo "<frame src=\"$fullurl\" title=\"".get_string('modulename','resource')."\"/>";
         echo "</frameset>";
         echo "</html>";
         exit;
@@ -374,15 +351,9 @@ function display() {
                 update_module_button($cm->id, $course->id, $this->strresource), navmenu($course, $cm, "parent"));
 
         echo '<div class="summary">'.format_text($resource->summary, FORMAT_HTML, $formatoptions).'</div>';
-        if (!empty($localpath)) {  // Show some help
-            echo '<div class="mdl-right helplink">';
-            link_to_popup_window ('/mod/resource/type/file/localpath.php', get_string('localfile', 'resource'), get_string('localfilehelp','resource'), 400, 500, get_string('localfilehelp', 'resource'));
-            echo '</div>';
-        }
         echo '</body></html>';
         exit;
     }
-
 
     /// Display the actual resource
 
@@ -488,12 +459,6 @@ function display() {
         }
 
     } else {              // Display the resource on it's own
-        if (!empty($localpath)) {   // Show a link to help work around browser security
-            echo '<div class="mdl-right helplink">';
-            link_to_popup_window ('/mod/resource/type/file/localpath.php', get_string('localfile', 'resource'), get_string('localfilehelp','resource'), 400, 500, get_string('localfilehelp', 'resource'));
-            echo '</div>';
-            echo "<center><p>(<a href=\"$fullurl\">$fullurl</a>)</p></center>";
-        }
         redirect($fullurl);
     }
 

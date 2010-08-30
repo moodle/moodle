@@ -77,6 +77,11 @@ function xmldb_resource_upgrade($oldversion=0) {
         $result = $result && execute_sql($sql);
     }
 
+    // MDL-10906. Removing resource_allowlocalfiles setting.
+    if ($result && $oldversion < 2007101511) {
+        $result = $result && unset_config('resource_allowlocalfiles');
+    }
+    
 //===== 1.9.0 upgrade line ======//
     return $result;
 }

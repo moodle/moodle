@@ -18,9 +18,6 @@ $settings->add(new admin_setting_configtext('resource_defaulturl', get_string('r
 $settings->add(new admin_setting_configpasswordunmask('resource_secretphrase', get_string('password'),
                    get_string('configsecretphrase', 'resource'), random_string(20)));
 
-$settings->add(new admin_setting_configcheckbox('resource_allowlocalfiles', get_string('allowlocalfiles', 'resource'),
-                   get_string('configallowlocalfiles', 'resource'), 0));
-
 $woptions = array('' => get_string('pagewindow', 'resource'), 'checked' => get_string('newwindow', 'resource'));
 $settings->add(new admin_setting_configselect('resource_popup', get_string('display', 'resource'),
                    get_string('configpopup', 'resource'), '', $woptions));

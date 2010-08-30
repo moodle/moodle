@@ -1,10 +1,9 @@
-<?PHP // $Id$ 
+<?PHP // $Id$
       // resource.php - created with Moodle 1.7 beta + (2006101003)
 
 
 $string['addresource'] = 'Add a resource';
 $string['affectedresources'] = 'Affected resources';
-$string['allowlocalfiles'] = 'Allow local files';
 $string['autofilerename'] = 'Update link if file renamed';
 $string['back'] = 'Back';
 $string['blockdeletingfile'] = 'Block deleting of referenced files';
@@ -13,7 +12,6 @@ $string['choose'] = 'Choose';
 $string['chooseafile'] = 'Choose or upload a file';
 $string['chooseparameter'] = 'Choose parameter';
 $string['clicktoopen'] = 'To open this document, click on this link: ';
-$string['configallowlocalfiles'] = 'When creating a new file resource, allow links to files on a local file system such as a CD drive or a hard drive. This may be useful in a classroom where all students have access to a common network drive or where files on a CD need to be accessed. Use of this feature may require changes to your browser\'s security settings.';
 $string['configautofilerenamesettings'] = 'Automatically update references to files and directories when renamed in file manager.';
 $string['configblockdeletingfilesettings'] = 'Block deleting of files and directories referenced by resources. Please note that images and other files referenced from html are not protected.';
 $string['configdefaulturl'] = 'This value is used to prefill the URL form when creating a new URL-based resource.';
@@ -56,12 +54,6 @@ $string['htmlfragment'] = 'HTML fragment';
 $string['imspackageloaded'] = 'Package loaded';
 $string['keepnavigationvisible'] = 'Show navigation';
 $string['keepnavigationvisiblewarning'] = 'Note: some media files may ignore this setting';
-$string['localfile'] = 'Local file';
-$string['localfilechoose'] = 'Choose a local file (CD-ROM)';
-$string['localfilehelp'] = 'Help displaying local files';
-$string['localfileinfo'] = '<p>Choose a local file from your computer. The file will not be uploaded to the web site, but Moodle will look for the same file on the computer of anyone viewing this resource.</p><p>This is mostly useful when you have large media files stored on a standard CD-ROM that you distribute to all participants.  Each participant is able to choose their own local path for such files, by <a href=\"$a\" target=\"_blank\">editing their user profile</a>.</p>';
-$string['localfilepath'] = 'To set your own local path for this resource, choose any file from the drive (usually a CD_ROM) on your computer where the resource exists. The file will not be uploaded but the drive information will be stored and used for any local file resources';
-$string['localfileselect'] = 'Choose this file path.';
 $string['maindirectory'] = 'Main files directory';
 $string['modulename'] = 'Resource';
 $string['modulenameplural'] = 'Resources';
@@ -85,7 +77,6 @@ $string['newwidth'] = 'Default window width (in pixels)';
 $string['newwindow'] = 'New window';
 $string['newwindowopen'] = 'Display this resource in a new popup window';
 $string['next'] = 'Next';
-$string['notallowedlocalfileaccess'] = 'Access to local files is currently disabled, so this resource is not available.';
 $string['notdeployed'] = 'Not deployed';
 $string['note'] = 'Note';
 $string['notefile'] = 'To upload more files into the course (so they appear in this list) use the <a href=\"$a\">File Manager</a>.';
