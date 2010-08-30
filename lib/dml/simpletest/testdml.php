@@ -2848,13 +2848,20 @@ class dml_test extends UnitTestCase {
         $this->assertTrue($DB->insert_record($tablename, array('name' => 'bb', 'content'=>2)));
 
 
-        $this->assertTrue($records = $DB->get_records($tablename, array('name' => 1)));
+        // Conditions in CHAR colums
+        $sqlqm = "SELECT *
+                    FROM {{$tablename}}
+                   WHERE name = ?";
+        $this->assertTrue($records = $DB->get_records_sql($sqlqm, array(1)));
         $this->assertEqual(1, count($records));
-        $this->assertTrue($records = $DB->get_records($tablename, array('name' => '1')));
+        $this->assertTrue($records = $DB->get_records_sql($sqlqm, array('1')));
         $this->assertEqual(1, count($records));
-        $this->assertTrue($records = $DB->get_records($tablename, array('name' => 2)));
+        $sqlnamed = "SELECT *
+                       FROM {{$tablename}}
+                      WHERE name = :name";
+        $this->assertTrue($records = $DB->get_records_sql($sqlnamed, array('name' => 2)));
         $this->assertEqual(1, count($records));
-        $this->assertTrue($records = $DB->get_records($tablename, array('name' => '2')));
+        $this->assertTrue($records = $DB->get_records_sql($sqlnamed, array('name' => '2')));
         $this->assertEqual(1, count($records));
 
         // Conditions in TEXT columns always must be performed with the sql_compare_text
