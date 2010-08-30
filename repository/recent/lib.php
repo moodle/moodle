@@ -59,10 +59,10 @@ class repository_recent extends repository {
         $sql = 'SELECT * FROM {files} files1
                 JOIN (SELECT contenthash, filename, MAX(id) AS id
                 FROM {files}
-                WHERE (userid = ? AND filename != ?) OR (filearea = ? AND itemid = ?)
+                WHERE userid = ? AND filename != ? AND ((filearea = ? AND itemid = ?) OR filearea != ?)
                 GROUP BY contenthash, filename) files2 ON files1.id = files2.id
                 ORDER BY files1.timemodified DESC';
-        $params = array('userid'=>$USER->id, 'filename'=>'.', 'filearea'=>'draft', 'itemid'=>$itemid);
+        $params = array('userid'=>$USER->id, 'filename'=>'.', 'filearea'=>'draft', 'itemid'=>$itemid, 'draft');
         $rs = $DB->get_recordset_sql($sql, $params, $limitfrom, $limit);
         $result = array();
         foreach ($rs as $file_record) {
