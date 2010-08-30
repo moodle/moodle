@@ -155,7 +155,7 @@
 
         if (!empty($displaysection) and $displaysection != $section) {  // Check this week is visible
             if ($showsection) {
-                $sectionmenu[$section] = s("$strweek $section |     $weekday - $endweekday");
+                $sectionmenu[$section] = get_section_name($course, $thissection);
             }
             $section++;
             $weekdate = $nextweekdate;

@@ -154,13 +154,7 @@ while ($section <= $course->numsections) {
 
     if (!empty($displaysection) and $displaysection != $section) {  // Check this topic is visible
         if ($showsection) {
-            $strsummary = strip_tags(format_string($thissection->summary,true));
-            if (strlen($strsummary) < 57) {
-                $strsummary = ' - '.$strsummary;
-            } else {
-                $strsummary = ' - '.substr($strsummary, 0, 60).'...';
-            }
-            $sectionmenu[$section] = s($section.$strsummary);
+            $sectionmenu[$section] = get_section_name($course, $thissection);
         }
         $section++;
         continue;

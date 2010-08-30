@@ -207,12 +207,15 @@
         // go to another page, (c) clicks Back button - the page will
         // automatically reload. Otherwise it would start with the wrong tick
         // values.
-        print '<form action="."><div><input type="hidden" id="completion_dynamic_change"
-          name="completion_dynamic_change" value="0" /></div></form>';
+        echo html_writer::start_tag('form', array('action'=>'.', 'method'=>'get'));
+        echo html_writer::start_tag('div');
+        echo html_writer::empty_tag('input', array('type'=>'hidden', 'id'=>'completion_dynamic_change', 'name'=>'completion_dynamic_change', 'value'=>'0'));
+        echo html_writer::end_tag('div');
+        echo html_writer::end_tag('form');
     }
 
     // Course wrapper start.
-    echo '<div class="course-content">';
+    echo html_writer::start_tag('div', array('class'=>'course-content'));
 
     $modinfo =& get_fast_modinfo($COURSE);
     get_all_mods($course->id, $mods, $modnames, $modnamesplural, $modnamesused);
@@ -242,16 +245,15 @@
     // Include the actual course format.
     require($CFG->dirroot .'/course/format/'. $course->format .'/format.php');
     // Content wrapper end.
-    echo "</div>\n\n";
+
+    echo html_writer::end_tag('div');
 
     // Use AJAX?
     if ($useajax && has_capability('moodle/course:manageactivities', $context)) {
         // At the bottom because we want to process sections and activities
         // after the relevant html has been generated. We're forced to do this
         // because of the way in which lib/ajax/ajaxcourse.js is written.
-
-        echo '<script type="text/javascript" ';
-        echo "src=\"{$CFG->wwwroot}/lib/ajax/ajaxcourse.js\"></script>\n";
+        echo html_writer::script(false, new moodle_url('/lib/ajax/ajaxcourse.js'));
         $COURSE->javascriptportal->print_javascript($course->id);
     }
 
