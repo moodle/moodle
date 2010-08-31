@@ -2451,7 +2451,7 @@ function unassign_capability($capability, $roleid, $contextid=NULL) {
  * Get the roles that have a given capability assigned to it
  * Get the roles that have a given capability assigned to it. This function
  * does not resolve the actual permission of the capability. It just checks
- * for assignment only.
+ * for assignment only. Use get_roles_with_cap_in_context() if resolution is required.
  *
  * @global object
  * @global object
@@ -5909,7 +5909,8 @@ function role_cap_duplicate($sourcerole, $targetrole) {
 /**
  * Returns two lists, this can be used to find out if user has capability.
  * Having any needed role and no forbidden role in this context means
- * user has this capability in this context,
+ * user has this capability in this context.
+ * Use get_role_names_with_cap_in_context() if you need role names to display in the UI
  *
  * @param object $context
  * @param string $capability
@@ -5964,6 +5965,68 @@ function get_roles_with_cap_in_context($context, $capability) {
     }
 
     return array($needed, $forbidden);
+}
+
+/**
+ * Returns an array of role IDs that have ALL of the the supplied capabilities
+ * Uses get_roles_with_cap_in_context(). Returns $allowed minus $forbidden
+ *
+ * @param object $context
+ * @param array $capabilities An array of capabilities
+ * @return array of roles with all of the required capabilities
+ */
+function get_roles_with_caps_in_context($context, $capabilities) {
+    $neededarr = array();
+    $forbiddenarr = array();
+    foreach($capabilities as $caprequired) {
+        list($neededarr[], $forbiddenarr[]) = get_roles_with_cap_in_context($context, $caprequired);
+    }
+
+    $rolesthatcanrate = array();
+    if (!empty($neededarr)) {
+        foreach ($neededarr as $needed) {
+            if (empty($rolesthatcanrate)) {
+                $rolesthatcanrate = $needed;
+            } else {
+                //only want roles that have all caps
+                $rolesthatcanrate = array_intersect_key($rolesthatcanrate,$needed);
+            }
+        }
+    }
+    if (!empty($forbiddenarr) && !empty($rolesthatcanrate)) {
+        foreach ($forbiddenarr as $forbidden) {
+           //remove any roles that are forbidden any of the caps
+           $rolesthatcanrate = array_diff($rolesthatcanrate, $forbidden);
+        }
+    }
+    return $rolesthatcanrate;
+}
+
+/**
+ * Returns an array of role names that have ALL of the the supplied capabilities
+ * Uses get_roles_with_caps_in_context(). Returns $allowed minus $forbidden
+ *
+ * @param object $context
+ * @param array $capabilities An array of capabilities
+ * @return array of roles with all of the required capabilities
+ */
+function get_role_names_with_caps_in_context($context, $capabilities) {
+    global $DB;
+
+    $rolesthatcanrate = get_roles_with_caps_in_context($context, $capabilities);
+
+    $allroles = array();
+    $roles = $DB->get_records('role', null, 'sortorder DESC');
+    foreach ($roles as $roleid=>$role) {
+        $allroles[$roleid] = $role->name;
+    }
+
+    $rolenames = array();
+    foreach ($rolesthatcanrate as $r) {
+        $rolenames[$r] = $allroles[$r];
+    }
+    $rolenames = role_fix_names($rolenames, $context);
+    return $rolenames;
 }
 
 /**

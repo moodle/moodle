@@ -34,6 +34,7 @@ $string['aggregatetype_help'] = 'The aggregate type defines how ratings are comb
 
 If "No ratings" is selected, then the activity will not appear in the gradebook.';
 $string['allowratings'] = 'Allow items to be rated?';
+$string['capabilitychecknotavailable'] = 'Capability check not available until activity is saved';
 $string['norate'] = 'Rating of items not allowed!';
 $string['noviewanyrate'] = 'You can only look at results for posts that you made';
 $string['noviewrate'] = 'You do not have the capability to view post ratings';
@@ -43,4 +44,4 @@ $string['rating'] = 'Rating';
 $string['ratingtime'] = 'Restrict ratings to items with dates in this range:';
 $string['ratings'] = 'Ratings';
 $string['rolewarning'] = 'Roles with permission to rate';
-$string['rolewarning_help'] = 'Users assigned the following roles may rate items. The list of roles may be amended via the permissions link in the settings block.';
+$string['rolewarning_help'] = 'To rate users require the moodle/rating:rate capability and any module specific capabilities. Users assigned the following roles can rate items. The list of roles may be amended via the permissions link in the settings block.';
