@@ -231,6 +231,59 @@ class restore_gradebook_step extends restore_structure_step {
         $newitemid = $DB->insert_record('grade_letters', $data);
         $this->set_mapping('grade_letter', $oldid, $newitemid);
     }
+    protected function after_execute() {
+        global $DB;
+
+        //put all activity grade items in the correct grade category
+
+        $conditions = array(
+            'backupid' => $this->get_restoreid(),
+            'itemname' => 'grade_item'//,
+            //'itemid'   => $itemid
+        );
+        $rs = $DB->get_recordset('backup_ids_temp', $conditions);
+
+        if (!empty($rs)) {
+            foreach($rs as $grade_item_backup) {
+                // Get the complete grade item object (stored as info)
+                echo '<hr />grade_item_backup==';
+                var_dump($grade_item_backup);
+
+                //get the grade_item from the backup to find out the old categoryid
+                //cant use the grade_item in the DB as the category IDs have been defaulted to the course grade_item
+                $grade_item = restore_dbops::get_backup_ids_record($this->get_restoreid(), 'grade_item', $grade_item_backup->itemid)->info;
+                var_dump('grade_item object from backup==');
+                //$grade_item = $DB->get_record('grade_items', array('id'=>$grade_item_backup->newitemid));
+                //var_dump('grade_item object from db==');
+                var_dump($grade_item);
+
+                //exclude the grade items handled as part of the gradebook backup/restore process
+                if ($grade_item->itemtype!='course' && $grade_item->itemtype!='category' && $grade_item->itemtype!='manual') {
+                    var_dump('got a grade item we need to deal with. was put in category '.$grade_item->categoryid);
+
+                    //find the category the grade item is meant to be in
+                    /*$conditions = array(
+                        'backupid' => $this->get_restoreid(),
+                        'itemname' => 'grade_category',
+                        'itemid'   => $grade_item->categoryid
+                    );
+                    $grade_category_backup = $DB->get_record('backup_ids_temp', $conditions);
+                    echo 'grade_category_backup==';
+                    var_dump($grade_category_backup);
+                    */
+                    $updateobj = new stdclass();
+                    //$updateobj->id = $grade_item->id;
+                    $updateobj->id = $grade_item_backup->newitemid;
+                    //$updateobj->categoryid = $grade_category_backup->newitemid;
+                    $updateobj->categoryid = $this->get_mappingid('grade_category', $grade_item->categoryid);
+                    var_dump('updateobj==');
+                    var_dump($updateobj->categoryid);
+                    $DB->update_record('grade_items', $updateobj);
+                }
+            }
+        }
+        $rs->close();
+    }
 }
 
 /**
