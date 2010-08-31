@@ -739,12 +739,17 @@ abstract class repository {
                         $is_supported = false;
                     }
                 }
+
                 if (!$onlyvisible || ($repository->is_visible() && !$repository->disabled)) {
                     // check capability in current context
                     if (!empty($current_context)) {
                         $capability = has_capability('repository/'.$record->repositorytype.':view', $current_context);
                     } else {
                         $capability = has_capability('repository/'.$record->repositorytype.':view', get_system_context());
+                    }
+                    if ($record->repositorytype == 'coursefiles') {
+                        // coursefiles plugin needs managefiles permission
+                        $capability = $capability && has_capability('moodle/course:managefiles', $current_context);
                     }
                     if ($is_supported && $capability) {
                         $repositories[$repository->id] = $repository;
