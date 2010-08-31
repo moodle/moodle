@@ -133,13 +133,19 @@ abstract class restore_structure_step extends restore_step {
      * by children. Also will inject the known old context id for the task
      * in case it's going to be used for restoring files later
      */
-    public function set_mapping($itemname, $oldid, $newid, $restorefiles = false, $filesctxid = null) {
+    public function set_mapping($itemname, $oldid, $newid, $restorefiles = false, $filesctxid = null, $parentid = null) {
+        if ($restorefiles && $parentid) {
+            throw new restore_step_exception('set_mapping_cannot_specify_both_restorefiles_and_parentitemid');
+        }
         // If we haven't specified one context for the files, use the task one
-        if ($filesctxid == null) {
+        if (is_null($filesctxid)) {
             $parentitemid = $restorefiles ? $this->task->get_old_contextid() : null;
         } else { // Use the specified one
             $parentitemid = $restorefiles ? $filesctxid : null;
         }
+        // We have passed one explicit parentid, apply it
+        $parentitemid = !is_null($parentid) ? $parentid : $parentitemid;
+
         // Let's call the low level one
         restore_dbops::set_backup_ids_record($this->get_restoreid(), $itemname, $oldid, $newid, $parentitemid);
         // Now, if the itemname matches any pathelement->name, store the latest $newid
