@@ -361,6 +361,9 @@ class assignment_upload extends assignment_base {
         } else if ($finalize) {
             $this->finalize('single');
         }
+        if ($unfinalize || $finalize) {
+            $mode = 'singlenosave';
+        }
         parent::submissions($mode);
     }
 
@@ -689,7 +692,9 @@ class assignment_upload extends assignment_base {
         $eventdata->userid       = $userid;
         events_trigger('assessable_files_done', $eventdata);
 
-        redirect($returnurl->out(false));
+        if ($forcemode==null) {
+            redirect($returnurl->out(false));
+        }
     }
 
     function finalizeclose() {
@@ -752,7 +757,10 @@ class assignment_upload extends assignment_base {
                 die;
             }
         }
-        redirect($returnurl);
+
+        if ($forcemode==null) {
+            redirect($returnurl);
+        }
     }
 
 

@@ -747,6 +747,10 @@ class assignment_base {
                 redirect('submissions.php?id='.$id.'&userid='. $nextid . '&mode=single&offset='.$offset);
                 break;
 
+            case 'singlenosave':
+                $this->display_submission();
+                break;
+
             default:
                 echo "something seriously is wrong!!";
                 break;
@@ -2175,7 +2179,7 @@ class mod_assignment_grading_form extends moodleform {
         $mform->addElement('hidden', 'sesskey', sesskey());
         $mform->setType('sesskey', PARAM_ALPHANUM);
         $mform->addElement('hidden', 'mode', 'grade');
-        $mform->setType('mode', PARAM_INT);
+        $mform->setType('mode', PARAM_TEXT);
         $mform->addElement('hidden', 'menuindex', "0");
         $mform->setType('menuindex', PARAM_INT);
         $mform->addElement('hidden', 'saveuserid', "-1");
