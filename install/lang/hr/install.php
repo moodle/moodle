@@ -28,6 +28,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['admindirname'] = 'Admin mapa';
 $string['availablelangs'] = 'Popis dostupnih jezika';
 $string['chooselanguagehead'] = 'Odaberite jezik';
 $string['databasehost'] = 'Poslužitelj baze podataka (HOST)';
