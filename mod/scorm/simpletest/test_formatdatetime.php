@@ -30,7 +30,7 @@ class scorm_formatdatetime_test extends UnitTestCase {
  
     function test_scorm12_format() {
         $stryears = get_string('years');
-        $strmonths = get_string('months');
+        $strmonths =  trim(get_string('nummonths'));
         $strdays = get_string('days');
         $strhours = get_string('hours');
         $strminutes = get_string('minutes');

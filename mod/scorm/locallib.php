@@ -1186,12 +1186,12 @@ function scorm_delete_attempt($userid, $scorm, $attemptid) {
  */
 function scorm_format_duration($duration) {
     // fetch date/time strings
-    $stryears = get_string('numyears');
+    $stryears = get_string('years');
     $strmonths = get_string('nummonths');
-    $strdays = get_string('numdays');
-    $strhours = get_string('numhours');
-    $strminutes = get_string('numminutes');
-    $strseconds = get_string('numseconds');
+    $strdays = get_string('days');
+    $strhours = get_string('hours');
+    $strminutes = get_string('minutes');
+    $strseconds = get_string('seconds');
 
     if ($duration[0] == 'P') {
         // if timestamp starts with 'P' - it's a SCORM 2004 format
@@ -1200,15 +1200,15 @@ function scorm_format_duration($duration) {
         // also saves the only zero before seconds decimals (if there are any) and discards decimals if they are zero
         $pattern = array( '#([A-Z])0+Y#', '#([A-Z])0+M#', '#([A-Z])0+D#', '#P(|\d+Y)0*(\d+)M#', '#0*(\d+)Y#', '#0*(\d+)D#', '#P#',
                           '#([A-Z])0+H#', '#([A-Z])[0.]+S#', '#\.0+S#', '#T(|\d+H)0*(\d+)M#', '#0*(\d+)H#', '#0+\.(\d+)S#', '#0*([\d.]+)S#', '#T#' );
-        $replace = array( '$1', '$1', '$1', '$1$2'.$strmonths.' ', '$1'.$stryears.' ', '$1'.$strdays.' ', '',
-                          '$1', '$1', 'S', '$1$2'.$strminutes.' ', '$1'.$strhours.' ', '0.$1'.$strseconds, '$1'.$strseconds, '');
+        $replace = array( '$1', '$1', '$1', '$1$2 '.$strmonths.' ', '$1 '.$stryears.' ', '$1 '.$strdays.' ', '',
+                          '$1', '$1', 'S', '$1$2 '.$strminutes.' ', '$1 '.$strhours.' ', '0.$1 '.$strseconds, '$1 '.$strseconds, '');
     } else {
         // else we have SCORM 1.2 format there
         // first convert the timestamp to some SCORM 2004-like format for conveniency
         $duration = preg_replace('#^(\d+):(\d+):([\d.]+)$#', 'T$1H$2M$3S', $duration);
         // then convert in the same way as SCORM 2004
         $pattern = array( '#T0+H#', '#([A-Z])0+M#', '#([A-Z])[0.]+S#', '#\.0+S#', '#0*(\d+)H#', '#0*(\d+)M#', '#0+\.(\d+)S#', '#0*([\d.]+)S#', '#T#' );
-        $replace = array( 'T', '$1', '$1', 'S', '$1'.$strhours.' ', '$1'.$strminutes.' ', '0.$1'.$strseconds, '$1'.$strseconds, '' );
+        $replace = array( 'T', '$1', '$1', 'S', '$1 '.$strhours.' ', '$1 '.$strminutes.' ', '0.$1 '.$strseconds, '$1 '.$strseconds, '' );
         //$pattern = '##';
         //$replace = '';
     }
