@@ -84,8 +84,8 @@ abstract class restore_subplugin {
      * by children. Also will inject the known old context id for the task
      * in case it's going to be used for restoring files later
      */
-    protected function set_mapping($itemname, $oldid, $newid, $restorefiles = false, $filesctxid = null) {
-        $this->step->set_mapping($itemname, $oldid, $newid, $restorefiles, $filesctxid);
+    protected function set_mapping($itemname, $oldid, $newid, $restorefiles = false, $filesctxid = null, $parentid = null) {
+        $this->step->set_mapping($itemname, $oldid, $newid, $restorefiles, $filesctxid, $parentid);
     }
 
     /**

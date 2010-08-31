@@ -1233,7 +1233,9 @@ class restore_activity_grades_structure_step extends restore_structure_step {
 
         $gradeitem = new grade_item($data);
         $gradeitem->insert('restore');
-        $this->set_mapping('grade_item', $oldid, $gradeitem->id, $oldparentid);
+        // Set mapping, saving the original category id into parentitemid
+        // gradebook restore (final task) will need it to reorganise items
+        $this->set_mapping('grade_item', $oldid, $gradeitem->id, false, null, $oldparentid);
     }
 
     protected function process_grade_grade($data) {
