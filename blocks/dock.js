@@ -258,13 +258,12 @@ M.core_dock.getPanel = function() {
             };
             // Add a method to set the top of the panel position
             dockpanel.setTop = function(newtop) {
-                this.setY(newtop);
-                return;
-                if (Y.UA.ie > 0) {
+                if (Y.UA.ie > 0 && Y.UA.ie < 7) {
                     this.setY(newtop);
-                    return true;
+                } else {
+                    this.setStyle('top', newtop.toString()+'px');
                 }
-                this.setStyle('top', newtop+'px');
+                return;
             };
             // Put the dockpanel in the body
             parent.append(dockpanel);
@@ -613,15 +612,17 @@ M.core_dock.resize = function() {
     panel.removeClass('oversized_content');
     var panelheight = panel.get('offsetHeight');
 
-    if (panelheight > screenheight) {
-        panel.setStyle('top', (buffer-containerheight)+'px');
+    if (this.Y.UA.ie > 0 && this.Y.UA.ie < 7) {
+        panel.setTop(item.nodes.docktitle.getY());
+    } else if (panelheight > screenheight) {
+        panel.setTop(buffer-containerheight);
         panel.contentBody.setStyle('height', (screenheight-panel.contentHeader.get('offsetHeight'))+'px');
         panel.addClass('oversized_content');
     } else if (panelheight > (screenheight-(titletop-buffer))) {
         var difference = panelheight - (screenheight-titletop);
-        panel.setStyle('top', (titletop-containerheight-difference+buffer)+'px');
+        panel.setTop(titletop-containerheight-difference+buffer);
     } else {
-        panel.setStyle('top', (titletop-containerheight+buffer)+'px');
+        panel.setTop(titletop-containerheight+buffer);
     }
     this.fire('dock:resizepanelcomplete');
     return;

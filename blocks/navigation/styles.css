@@ -9,7 +9,7 @@
 .block_navigation .block_tree .tree_item {padding-left: 18px;margin:3px 0px;text-align:left;}
 
 .block_navigation .block_tree .tree_item.branch {background-image: url([[pix:t/expanded]]);background-position: 0 10%;background-repeat: no-repeat;}
-.block_navigation .block_tree .navigation_node.tree_item.branch {background-image:none;padding-left:0;}
+.block_navigation .block_tree .tree_item.branch.navigation_node {background-image:none;padding-left:0;}
 .block_navigation .block_tree .type_activity > .tree_item.branch {background-image:none;position:relative;}
 .block_navigation .block_tree .type_activity > .tree_item.branch img {position:absolute;left:0;}
 .block_navigation .block_tree .root_node.leaf {padding-left:0px;}

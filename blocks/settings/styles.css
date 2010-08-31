@@ -32,5 +32,5 @@
 .dir-rtl .block_settings .block_tree .tree_item.branch {background-position: center right;}
 .dir-rtl .block_settings .block_tree .root_node.leaf {padding-right:0px;}
 
-.dir-rtl.jsenabled .block_settings .block_tree .tree_item.emptybranch {background-image: url([[pix:t/collapsed_empty_rtl]]);background-position: center right;}
-.dir-rtl.jsenabled .block_settings .block_tree .collapsed .tree_item.branch {background-image: url([[pix:t/collapsed_rtl]]);}
+.jsenabled.dir-rtl .block_settings .block_tree .tree_item.emptybranch {background-image: url([[pix:t/collapsed_empty_rtl]]);background-position: center right;}
+.jsenabled.dir-rtl .block_settings .block_tree .collapsed .tree_item.branch {background-image: url([[pix:t/collapsed_rtl]]);}
