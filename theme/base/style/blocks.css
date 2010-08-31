@@ -1,35 +1,25 @@
-.block.hidden .header {border-bottom-width:0;}
-.block.hidden .content {display: none;}
+.block {border:1px solid;margin-bottom:1em;}
+.block .header h2 {margin:4px;}
+.block .header .block_action {float:right;margin:0 4px;vertical-align:top;}
+.block .header .block_action input {margin-right:2px;}
+.block .content {padding:4px;}
+.block .content .userpicture {width:16px;height:16px;margin-right:4px;}
+.block .content .list li.listentry {clear:both;}
+.block .content .list .c0 {display:inline;}
+.block .content .list .c1 {margin-left:5px;display:inline;}
+.block .footer {margin-bottom: 4px;}
+.block .blockannotation {font-size:0.75em;margin: -1em 0 1em;}
+
+.block.beingmoved {border-width: 2px;border-style: dashed;}
+.blockmovetarget {display: block;height: 1em;margin-bottom: 1em;border-width: 2px;border-style: dashed;}
+
+.block-region .invisible {opacity: 0.5;filter: alpha(opacity=50);}
 
 .block .block-hider-show,
 .block .block-hider-hide {cursor:pointer;}
 .block .block-hider-show,
 .block.hidden .block-hider-hide {display:none;}
 .block.hidden .block-hider-show {display:inline;}
-
-.block {border-style: solid;border-width:1px;margin-bottom:1em;}
-.block .header h2 {margin:4px;}
-.block .header .block_action {float:right;margin:0 4px;vertical-align:top;}
-.block .header .block_action input {margin-right:2px;}
-.block .content {padding:4px;}
-.block .footer {margin-bottom: 4px;}
-
-.block img.userpicture {width:16px;height:16px;margin-right:4px;}
-.block.beingmoved {border-width: 2px;border-style: dashed;}
-
-.block-region .hidden .header {border-bottom: 1px solid;}
-.block-region .hidden .content {display: none;}
-.block-region .invisible {opacity: 0.5;filter: alpha(opacity=50);}
-
-.blockmovetarget {display: block;height: 1em;margin-bottom: 1em;border-width: 2px;border-style: dashed;}
-
-.block .blockannotation {font-size:0.75em;margin: -1em 0 1em;}
-.block.beingmoved {border-width: 2px;border-style: dashed;}
-.block .content ul.list li.listentry {clear:both;}
-
-/** List block contents **/
-.block .list .c0 {display:inline;}
-.block .list .c1 {margin-left:5px;display:inline;}
 
 /** Overide for RTL layout **/
 .dir-rtl .block .header .block_action {float:left;}
