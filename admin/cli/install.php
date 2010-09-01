@@ -572,10 +572,16 @@ if (!file_exists($configfile)) {
     cli_error('Can not create config file.');
 }
 
+// remember selected language
+$installlang = $CFG->lang;
 // return back to original dir before executing setup.php which changes the dir again
 chdir($olddir);
 // We have config.php, it is a real php script from now on :-)
 require($configfile);
+
+// use selected language
+$CFG->lang = $installlang;
+$SESSION->lang = $CFG->lang;
 
 install_cli_database($options, $interactive);
 
