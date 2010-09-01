@@ -43,7 +43,7 @@ class restore_final_task extends restore_task {
         }
 
         // Gradebook
-        //$this->add_step(new restore_gradebook_step('gradebook_step','gradebook.xml'));
+        $this->add_step(new restore_gradebook_step('gradebook_step','gradebook.xml'));
 
         // Review all the module_availability records in backup_ids in order
         // to match them with existing modules / grade items.

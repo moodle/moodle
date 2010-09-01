@@ -231,10 +231,10 @@ class restore_gradebook_step extends restore_structure_step {
         $newitemid = $DB->insert_record('grade_letters', $data);
         $this->set_mapping('grade_letter', $oldid, $newitemid);
     }
+
+    //put all activity grade items in the correct grade category and mark all for recalculation
     protected function after_execute() {
         global $DB;
-
-        //put all activity grade items in the correct grade category
 
         $conditions = array(
             'backupid' => $this->get_restoreid(),
@@ -245,53 +245,19 @@ class restore_gradebook_step extends restore_structure_step {
 
         if (!empty($rs)) {
             foreach($rs as $grade_item_backup) {
-                // Get the complete grade item object (stored as info)
-                echo '<hr />grade_item_backup==';
-                var_dump($grade_item_backup);
+                $updateobj = new stdclass();
+                $updateobj->id = $grade_item_backup->newitemid;
 
-                //get the grade_item from the backup to find out the old categoryid
-                //cant use the grade_item in the DB as the category IDs have been defaulted to the course grade_item
-                var_dump('trying to get grade_item from backup with id=='.$grade_item_backup->itemid);
-
-                //this isnt working so tried to avoid a second trip to the DB to see if that would help
-                //$grade_item = restore_dbops::get_backup_ids_record($this->get_restoreid(), 'grade_item', $grade_item_backup->itemid)->info;
-                $grade_item = null;
-                if ($grade_item_backup->info != null) {
-                    $grade_item = unserialize(base64_decode($grade_item_backup->info));
-                }
-
-                var_dump('grade_item object from backup==');
-                //$grade_item = $DB->get_record('grade_items', array('id'=>$grade_item_backup->newitemid));
-                //var_dump('grade_item object from db==');
-                var_dump($grade_item);
-
-                if (!empty($grade_item)) {
-                    //exclude the grade items handled as part of the gradebook backup/restore process
-                    if ($grade_item->itemtype!='course' && $grade_item->itemtype!='category' && $grade_item->itemtype!='manual') {
-                        var_dump('got a grade item we need to deal with. was put in category '.$grade_item->categoryid);
-
-                        //find the category the grade item is meant to be in
-                        /*$conditions = array(
-                            'backupid' => $this->get_restoreid(),
-                            'itemname' => 'grade_category',
-                            'itemid'   => $grade_item->categoryid
-                        );
-                        $grade_category_backup = $DB->get_record('backup_ids_temp', $conditions);
-                        echo 'grade_category_backup==';
-                        var_dump($grade_category_backup);
-                        */
-                        $updateobj = new stdclass();
-                        //$updateobj->id = $grade_item->id;
-                        $updateobj->id = $grade_item_backup->newitemid;
-                        //$updateobj->categoryid = $grade_category_backup->newitemid;
-                        $updateobj->categoryid = $this->get_mappingid('grade_category', $grade_item->categoryid);
-                        var_dump('updateobj==');
-                        var_dump($updateobj->categoryid);
-                        $DB->update_record('grade_items', $updateobj);
-                    }
+                //if this is an activity grade item that needs to be put back in its correct category
+                if (!empty($grade_item_backup->parentitemid)) {
+                    $updateobj->categoryid = $this->get_mappingid('grade_category', $grade_item_backup->parentitemid);
                 } else {
-                    mtrace('backup_ids_temp contains a grade_item that doesnt have the serialized grade_item object in ->info');
+                    //mark course and category items as needing to be recalculated
+                    $updateobj->needsupdate=1;
                 }
+                $DB->update_record('grade_items', $updateobj);
+
+                //todo need to get hold of the grade_items previous sortorder to restore it
             }
         }
         $rs->close();
