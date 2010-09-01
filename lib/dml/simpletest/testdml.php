@@ -2850,7 +2850,10 @@ class dml_test extends UnitTestCase {
         $this->assertTrue($DB->insert_record($tablename, array('name' => 'cc', 'content'=>'sometext')));
 
 
-        // Conditions in CHAR colums
+        // Conditions in CHAR columns
+        $this->assertTrue($DB->record_exists($tablename, array('name'=>1)));
+        $this->assertTrue($DB->record_exists($tablename, array('name'=>'1')));
+        $this->assertFalse($DB->record_exists($tablename, array('name'=>111)));
         $sqlqm = "SELECT *
                     FROM {{$tablename}}
                    WHERE name = ?";
@@ -2858,6 +2861,8 @@ class dml_test extends UnitTestCase {
         $this->assertEqual(1, count($records));
         $this->assertTrue($records = $DB->get_records_sql($sqlqm, array('1')));
         $this->assertEqual(1, count($records));
+        $records = $DB->get_records_sql($sqlqm, array(222));
+        $this->assertEqual(0, count($records));
         $sqlnamed = "SELECT *
                        FROM {{$tablename}}
                       WHERE name = :name";
