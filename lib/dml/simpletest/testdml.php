@@ -2854,6 +2854,9 @@ class dml_test extends UnitTestCase {
         $this->assertTrue($DB->record_exists($tablename, array('name'=>1)));
         $this->assertTrue($DB->record_exists($tablename, array('name'=>'1')));
         $this->assertFalse($DB->record_exists($tablename, array('name'=>111)));
+        $this->assertTrue($DB->get_record($tablename, array('name'=>1)));
+        $this->assertTrue($DB->get_record($tablename, array('name'=>'1')));
+        $this->assertFalse($DB->get_record($tablename, array('name'=>111)));
         $sqlqm = "SELECT *
                     FROM {{$tablename}}
                    WHERE name = ?";
