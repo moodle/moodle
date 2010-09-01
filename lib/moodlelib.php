@@ -4023,6 +4023,16 @@ function remove_course_contents($courseid, $showfeedback=true) {
     remove_course_grades($courseid, $showfeedback);
     remove_grade_letters($context, $showfeedback);
 
+/// Remove all data from availability and completion tables that is associated
+/// with course-modules belonging to this course. Note this is done even if the
+/// features are not enabled now, in case they were enabled previously
+    $DB->delete_records_select('course_modules_completion',
+           'coursemoduleid IN (SELECT id from {course_modules} WHERE course=?)',
+           array($courseid));
+    $DB->delete_records_select('course_modules_availability',
+           'coursemoduleid IN (SELECT id from {course_modules} WHERE course=?)',
+           array($courseid));
+
 /// Delete every instance of every module
 
     if ($allmods = $DB->get_records('modules') ) {

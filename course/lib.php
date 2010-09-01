@@ -2637,6 +2637,11 @@ function delete_course_module($id) {
             $grade_item->delete('moddelete');
         }
     }
+    // Delete completion and availability data; it is better to do this even if the
+    // features are not turned on, in case they were turned on previously (these will be
+    // very quick on an empty table)
+    $DB->delete_records('course_modules_completion', array('coursemoduleid' => $cm->id));
+    $DB->delete_records('course_modules_availability', array('coursemoduleid'=> $cm->id));
 
     delete_context(CONTEXT_MODULE, $cm->id);
     return $DB->delete_records('course_modules', array('id'=>$cm->id));
