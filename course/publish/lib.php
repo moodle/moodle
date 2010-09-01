@@ -170,7 +170,7 @@ class course_publish_manager {
         }
 
         if ($enrollable != -1) {
-            $params['enrollable'] = $enrollable;
+            $params['enrollable'] = (int) $enrollable;
         }
 
         return $DB->get_records('course_published', $params);
