@@ -103,7 +103,7 @@ if ($user2->deleted) {
     die;
 }
 
-$search = optional_param('search', '', PARAM_CLEAN);
+$search = optional_param('search', '', PARAM_CLEAN); //TODO: use PARAM_RAW, but make sure we use s() and p() properly
 
 add_to_log(SITEID, 'message', 'history', 'history.php?user1='.$userid1.'&amp;user2='.$userid2, $userid1);
 
