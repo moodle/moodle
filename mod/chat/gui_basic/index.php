@@ -5,7 +5,7 @@ require_once('../lib.php');
 
 $id      = required_param('id', PARAM_INT);
 $groupid = optional_param('groupid', 0, PARAM_INT);  // only for teachers
-$message = optional_param('message', '', PARAM_CLEAN);
+$message = optional_param('message', '', PARAM_CLEANHTML);
 $refresh = optional_param('refresh', '', PARAM_RAW); // force refresh
 $last    = optional_param('last', 0, PARAM_INT);     // last time refresh or sending
 $newonly = optional_param('newonly', 0, PARAM_BOOL); // show only new messages
