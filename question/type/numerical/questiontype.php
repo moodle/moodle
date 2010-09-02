@@ -338,8 +338,8 @@ class question_numerical_qtype extends question_shortanswer_qtype {
         $unitalreadyinsert = array();
         foreach ($question->multiplier as $i => $multiplier) {
             // Discard any unit which doesn't specify the unit or the multiplier
-            if (!empty($question->multiplier[$i]) && !empty($question->unit[$i])&& !array_key_exists(addslashes($question->unit[$i]),$unitalreadyinsert)) {
-                $unitalreadyinsert[addslashes($question->unit[$i])] = 1 ;
+            if (!empty($question->multiplier[$i]) && !empty($question->unit[$i])&& !array_key_exists($question->unit[$i],$unitalreadyinsert)) {
+                $unitalreadyinsert[$question->unit[$i]] = 1 ;
                 $units[$i] = new stdClass;
                 $units[$i]->question = $question->id;
                 $units[$i]->multiplier = $this->apply_unit_old($question->multiplier[$i], array());
