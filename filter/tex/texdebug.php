@@ -117,7 +117,6 @@
             return;
         }
 
-        $texexp = stripslashes($texexp);
         $image  = md5($texexp) . ".gif";
         $filetype = 'image/gif';
         if (!file_exists("$CFG->dataroot/filter/tex")) {
