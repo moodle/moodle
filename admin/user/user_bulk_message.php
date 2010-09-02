@@ -4,7 +4,7 @@ require_once($CFG->libdir.'/adminlib.php');
 require_once($CFG->dirroot.'/message/lib.php');
 require_once('user_message_form.php');
 
-$msg     = optional_param('msg', '', PARAM_CLEAN);
+$msg     = optional_param('msg', '', PARAM_CLEANHTML);
 $confirm = optional_param('confirm', 0, PARAM_BOOL);
 
 require_login();
@@ -27,7 +27,7 @@ if ($confirm and !empty($msg) and confirm_sesskey()) {
     list($in, $params) = $DB->get_in_or_equal($SESSION->bulk_users);
     if ($rs = $DB->get_recordset_select('user', "id $in", $params)) {
         foreach ($rs as $user) {
-            message_post_message($USER, $user, $msg, FORMAT_HTML, 'direct');
+            message_post_message($USER, $user, $msg, FORMAT_HTML, 'direct'); // TODO: this is weird, we should support all text formats here
         }
         $rs->close();
     }
@@ -52,9 +52,9 @@ if ($msgform->is_cancelled()) {
     $usernames = implode(', ', $userlist);
     echo $OUTPUT->header();
     echo $OUTPUT->heading(get_string('confirmation', 'admin'));
-    echo $OUTPUT->box($msg, 'boxwidthnarrow boxaligncenter generalbox', 'preview');
+    echo $OUTPUT->box($msg, 'boxwidthnarrow boxaligncenter generalbox', 'preview'); //TODO: clean once we start using proper text formats here
 
-    $formcontinue = new single_button(new moodle_url('user_bulk_message.php', array('confirm' => 1, 'msg' => $msg)), get_string('yes'));
+    $formcontinue = new single_button(new moodle_url('user_bulk_message.php', array('confirm' => 1, 'msg' => $msg)), get_string('yes')); //TODO: clean once we start using proper text formats here
     $formcancel = new single_button('user_bulk.php', get_string('no'), 'get');
     echo $OUTPUT->confirm(get_string('confirmmessage', 'bulkusers', $usernames), $formcontinue, $formcancel);
     echo $OUTPUT->footer();
