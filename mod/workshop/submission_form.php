@@ -76,7 +76,7 @@ class workshop_submission_form extends moodleform {
 
         if (empty($data['id']) and empty($data['example'])) {
             // make sure there is no submission saved meanwhile from another browser window
-            $sql = "SELECT COUNT (s.id)
+            $sql = "SELECT COUNT(s.id)
                       FROM {workshop_submissions} s
                       JOIN {workshop} w ON (s.workshopid = w.id)
                       JOIN {course_modules} cm ON (w.id = cm.instance)
