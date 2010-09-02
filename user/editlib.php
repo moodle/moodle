@@ -267,22 +267,22 @@ function useredit_shared_definition(&$mform, $editoroptions = null) {
     $mform->setType('url', PARAM_URL);
 
     $mform->addElement('text', 'icq', get_string('icqnumber'), 'maxlength="15" size="25"');
-    $mform->setType('icq', PARAM_CLEAN);
+    $mform->setType('icq', PARAM_NOTAGS);
 
     $mform->addElement('text', 'skype', get_string('skypeid'), 'maxlength="50" size="25"');
-    $mform->setType('skype', PARAM_CLEAN);
+    $mform->setType('skype', PARAM_NOTAGS);
 
     $mform->addElement('text', 'aim', get_string('aimid'), 'maxlength="50" size="25"');
-    $mform->setType('aim', PARAM_CLEAN);
+    $mform->setType('aim', PARAM_NOTAGS);
 
     $mform->addElement('text', 'yahoo', get_string('yahooid'), 'maxlength="50" size="25"');
-    $mform->setType('yahoo', PARAM_CLEAN);
+    $mform->setType('yahoo', PARAM_NOTAGS);
 
     $mform->addElement('text', 'msn', get_string('msnid'), 'maxlength="50" size="25"');
-    $mform->setType('msn', PARAM_CLEAN);
+    $mform->setType('msn', PARAM_NOTAGS);
 
     $mform->addElement('text', 'idnumber', get_string('idnumber'), 'maxlength="255" size="25"');
-    $mform->setType('idnumber', PARAM_CLEAN);
+    $mform->setType('idnumber', PARAM_NOTAGS);
 
     $mform->addElement('text', 'institution', get_string('institution'), 'maxlength="40" size="25"');
     $mform->setType('institution', PARAM_MULTILANG);
@@ -291,10 +291,10 @@ function useredit_shared_definition(&$mform, $editoroptions = null) {
     $mform->setType('department', PARAM_MULTILANG);
 
     $mform->addElement('text', 'phone1', get_string('phone'), 'maxlength="20" size="25"');
-    $mform->setType('phone1', PARAM_CLEAN);
+    $mform->setType('phone1', PARAM_NOTAGS);
 
     $mform->addElement('text', 'phone2', get_string('phone2'), 'maxlength="20" size="25"');
-    $mform->setType('phone2', PARAM_CLEAN);
+    $mform->setType('phone2', PARAM_NOTAGS);
 
     $mform->addElement('text', 'address', get_string('address'), 'maxlength="70" size="25"');
     $mform->setType('address', PARAM_MULTILANG);

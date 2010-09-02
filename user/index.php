@@ -16,8 +16,8 @@
     $perpage      = optional_param('perpage', DEFAULT_PAGE_SIZE, PARAM_INT);  // how many per page
     $mode         = optional_param('mode', NULL);                             // use the MODE_ constants
     $accesssince  = optional_param('accesssince',0,PARAM_INT);                // filter by last access. -1 = never
-    $search       = optional_param('search','',PARAM_CLEAN);
-    $roleid       = optional_param('roleid', 0, PARAM_INT);                   // optional roleid, 0 menas all enrolled users (or all on the frontpage)
+    $search       = optional_param('search','',PARAM_RAW);                    // make sure it is processed with p() or s() when sending to output!
+    $roleid       = optional_param('roleid', 0, PARAM_INT);                   // optional roleid, 0 means all enrolled users (or all on the frontpage)
 
     $contextid    = optional_param('contextid', 0, PARAM_INT);                // one of this or
     $courseid     = optional_param('id', 0, PARAM_INT);                       // this are required
