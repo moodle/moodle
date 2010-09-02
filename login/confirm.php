@@ -26,10 +26,10 @@
 
 require('../config.php');
 
-$data = optional_param('data', '', PARAM_CLEAN);  // Formatted as:  secret/username
+$data = optional_param('data', '', PARAM_RAW);  // Formatted as:  secret/username
 
-$p = optional_param('p', '', PARAM_ALPHANUM);     // Old parameter:  secret
-$s = optional_param('s', '', PARAM_CLEAN);        // Old parameter:  username
+$p = optional_param('p', '', PARAM_ALPHANUM);   // Old parameter:  secret
+$s = optional_param('s', '', PARAM_RAW);        // Old parameter:  username
 
 $PAGE->set_url('/login/confirm.php');
 $PAGE->set_context(get_context_instance(CONTEXT_SYSTEM));
@@ -46,7 +46,7 @@ if (!$authplugin->can_confirm()) {
 if (!empty($data) || (!empty($p) && !empty($s))) {
 
     if (!empty($data)) {
-        $dataelements = explode('/',$data, 2); // Stop after 1st slash. Rest is username. MDL-7647
+        $dataelements = explode('/', $data, 2); // Stop after 1st slash. Rest is username. MDL-7647
         $usersecret = $dataelements[0];
         $username   = $dataelements[1];
     } else {
@@ -75,7 +75,7 @@ if (!empty($data) || (!empty($p) && !empty($s))) {
         // The user has confirmed successfully, let's log them in
 
         if (!$user = get_complete_user_data('username', $username)) {
-            print_error('cannotfinduser', '', '', $username);
+            print_error('cannotfinduser', '', '', s($username));
         }
 
         complete_user_login($user);
