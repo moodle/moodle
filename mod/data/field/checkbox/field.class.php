@@ -184,7 +184,7 @@ class data_field_checkbox extends data_field_base {
             if ($key === 'xxx') {
                 continue;
             }
-            if (!in_array(stripslashes($val), $options)) {
+            if (!in_array($val, $options)) {
                 continue;
 
             }
