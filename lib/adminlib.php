@@ -1622,7 +1622,7 @@ class admin_setting_configtext extends admin_setting {
         if (!is_null($size)) {
             $this->size  = $size;
         } else {
-            $this->size  = ($paramtype == PARAM_INT) ? 5 : 30;
+            $this->size  = ($paramtype === PARAM_INT) ? 5 : 30;
         }
         parent::__construct($name, $visiblename, $description, $defaultsetting);
     }
@@ -1668,7 +1668,7 @@ class admin_setting_configtext extends admin_setting {
 
         } else {
             $cleaned = clean_param($data, $this->paramtype);
-            if ("$data" == "$cleaned") { // implicit conversion to string is needed to do exact comparison
+            if ("$data" === "$cleaned") { // implicit conversion to string is needed to do exact comparison
                 return true;
             } else {
                 return get_string('validateerror', 'admin');
