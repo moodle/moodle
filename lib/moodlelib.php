@@ -117,7 +117,7 @@ define('PARAM_BOOL',     'bool');
 define('PARAM_CAPABILITY',   'capability');
 
 /**
- * PARAM_CLEANHTML - cleans submitted HTML code and removes slashes. It stays as HTML.
+ * PARAM_CLEANHTML - cleans submitted HTML code. use only for text in HTML format. It stays as HTML.
  */
 define('PARAM_CLEANHTML', 'cleanhtml');
 
