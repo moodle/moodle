@@ -208,7 +208,7 @@ define('PARAM_TAG',   'tag');
 define('PARAM_TAGLIST',   'taglist');
 
 /**
- * PARAM_TEXT - general plain text compatible with multilang filter, no other html tags.
+ * PARAM_TEXT - general plain text compatible with multilang filter, no other html tags. Please note '<', or '>' are allowed here.
  */
 define('PARAM_TEXT',  'text');
 
@@ -582,7 +582,67 @@ function clean_param($param, $type) {
             return strip_tags($param);
 
         case PARAM_TEXT:    // leave only tags needed for multilang
-            return clean_param(strip_tags($param, '<lang><span>'), PARAM_CLEAN);
+            // if the multilang syntax is not correct we strip all tags
+            // because it would break xhtml strict which is required for accessibility standards
+            // please note this cleaning does not strip unbalanced '>' for BC compatibility reasons
+            do {
+                if (strpos($param, '</lang>') !== false) {
+                    // old and future mutilang syntax
+                    $param = strip_tags($param, '<lang>');
+                    if (!preg_match_all('/<.*>/suU', $param, $matches)) {
+                        break;
+                    }
+                    $open = false;
+                    foreach ($matches[0] as $match) {
+                        if ($match === '</lang>') {
+                            if ($open) {
+                                $open = false;
+                                continue;
+                            } else {
+                                break 2;
+                            }
+                        }
+                        if (!preg_match('/^<lang lang="[a-zA-Z0-9_-]+"\s*>$/u', $match)) {
+                            break 2;
+                        } else {
+                            $open = true;
+                        }
+                    }
+                    if ($open) {
+                        break;
+                    }
+                    return $param;
+
+                } else if (strpos($param, '</span>') !== false) {
+                    // current problematic multilang syntax
+                    $param = strip_tags($param, '<span>');
+                    if (!preg_match_all('/<.*>/suU', $param, $matches)) {
+                        break;
+                    }
+                    $open = false;
+                    foreach ($matches[0] as $match) {
+                        if ($match === '</span>') {
+                            if ($open) {
+                                $open = false;
+                                continue;
+                            } else {
+                                break 2;
+                            }
+                        }
+                        if (!preg_match('/^<span(\s+lang="[a-zA-Z0-9_-]+"|\s+class="multilang"){2}\s*>$/u', $match)) {
+                            break 2;
+                        } else {
+                            $open = true;
+                        }
+                    }
+                    if ($open) {
+                        break;
+                    }
+                    return $param;
+                }
+            } while (false);
+            // easy, just strip all tags, if we ever want to fix orphaned '&' we have to do that in format_string()
+            return strip_tags($param);
 
         case PARAM_SAFEDIR:      // Remove everything not a-zA-Z0-9_-
             return preg_replace('/[^a-zA-Z0-9_-]/i', '', $param);

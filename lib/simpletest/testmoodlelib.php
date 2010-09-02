@@ -270,6 +270,27 @@ class moodlelib_test extends UnitTestCase {
                 ',9789,42897');
     }
 
+    function test_clean_param_text() {
+        $this->assertEqual(PARAM_TEXT, PARAM_MULTILANG);
+        //standard
+        $this->assertEqual(clean_param('xx<lang lang="en">aa</lang><lang lang="yy">pp</lang>', PARAM_TEXT), 'xx<lang lang="en">aa</lang><lang lang="yy">pp</lang>');
+        $this->assertEqual(clean_param('<span lang="en" class="multilang">aa</span><span lang="xy" class="multilang">bb</span>', PARAM_TEXT), '<span lang="en" class="multilang">aa</span><span lang="xy" class="multilang">bb</span>');
+        $this->assertEqual(clean_param('xx<lang lang="en">aa'."\n".'</lang><lang lang="yy">pp</lang>', PARAM_TEXT), 'xx<lang lang="en">aa'."\n".'</lang><lang lang="yy">pp</lang>');
+        //malformed
+        $this->assertEqual(clean_param('<span lang="en" class="multilang">aa</span>', PARAM_TEXT), '<span lang="en" class="multilang">aa</span>');
+        $this->assertEqual(clean_param('<span lang="en" class="nothing" class="multilang">aa</span>', PARAM_TEXT), 'aa');
+        $this->assertEqual(clean_param('<lang lang="en" class="multilang">aa</lang>', PARAM_TEXT), 'aa');
+        $this->assertEqual(clean_param('<lang lang="en!!">aa</lang>', PARAM_TEXT), 'aa');
+        $this->assertEqual(clean_param('<span lang="en==" class="multilang">aa</span>', PARAM_TEXT), 'aa');
+        $this->assertEqual(clean_param('a<em>b</em>c', PARAM_TEXT), 'abc');
+        $this->assertEqual(clean_param('a><xx >c>', PARAM_TEXT), 'a>c>'); // standard strip_tags() behaviour
+        $this->assertEqual(clean_param('a<b', PARAM_TEXT), 'a');
+        $this->assertEqual(clean_param('a>b', PARAM_TEXT), 'a>b');
+        $this->assertEqual(clean_param('<lang lang="en">a>a</lang>', PARAM_TEXT), '<lang lang="en">a>a</lang>'); // standard strip_tags() behaviour
+        $this->assertEqual(clean_param('<lang lang="en">a<a</lang>', PARAM_TEXT), 'a');
+        $this->assertEqual(clean_param('<lang lang="en">a<br>a</lang>', PARAM_TEXT), '<lang lang="en">aa</lang>');
+    }
+
     function test_clean_param_url() {
         // Test PARAM_URL and PARAM_LOCALURL a bit
         $this->assertEqual(clean_param('http://google.com/', PARAM_URL), 'http://google.com/');
