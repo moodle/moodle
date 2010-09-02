@@ -267,7 +267,7 @@
                                             $value .= $datarow."\r\n";
                                             next($datarows);
                                         }
-                                        $value = rawurlencode(stripslashes($value));
+                                        $value = rawurlencode(stripslashes($value)); // TODO: this is probably wrong, the stripslashes() has undefined meaning now; was this related to JS quoting or magic quotes?
                                         $id = scorm_insert_track($USER->id, $scorm->id, $sco->id, $attempt, $element, $value);
                                     }
                                 }

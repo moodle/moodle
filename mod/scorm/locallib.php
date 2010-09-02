@@ -431,7 +431,7 @@ function scorm_get_tracks($scoid,$userid,$attempt='') {
         $usertrack->timemodified = 0;
         foreach ($tracks as $track) {
             $element = $track->element;
-            $track->value = stripslashes($track->value);
+            $track->value = stripslashes($track->value); // TODO: this is probably wrong, the stripslashes() has undefined meaning now; was this related to JS quoting or magic quotes?
             $usertrack->{$element} = $track->value;
             switch ($element) {
                 case 'cmi.core.lesson_status':
