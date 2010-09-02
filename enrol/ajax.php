@@ -120,7 +120,7 @@ switch ($action) {
         break;
     case 'searchusers':
         $enrolid = required_param('enrolid', PARAM_INT);
-        $search  = optional_param('search', '', PARAM_CLEAN);
+        $search  = optional_param('search', '', PARAM_RAW);
         $page = optional_param('page', 0, PARAM_INT);
         $outcome->response = $manager->get_potential_users($enrolid, $search, false, $page);
         foreach ($outcome->response['users'] as &$user) {
@@ -131,7 +131,7 @@ switch ($action) {
         break;
 
     case 'searchotherusers':
-        $search  = optional_param('search', '', PARAM_CLEAN);
+        $search  = optional_param('search', '', PARAM_RAW);
         $page = optional_param('page', 0, PARAM_INT);
         $outcome->response = $manager->search_other_users($search, false, $page);
         foreach ($outcome->response['users'] as &$user) {
