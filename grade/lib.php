@@ -125,7 +125,8 @@ class graded_users_iterator {
                         FROM {user} u
                              INNER JOIN {role_assignments} ra ON u.id = ra.userid
                              $groupsql
-                       WHERE ra.roleid $gradebookroles_sql
+                       WHERE u.deleted=0
+                             AND ra.roleid $gradebookroles_sql
                              AND ra.contextid $relatedcontexts
                              $groupwheresql
                     ORDER BY $order";
