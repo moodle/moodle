@@ -259,6 +259,7 @@ class csv_import_reader {
      * @return array suitable for selection box
      */
     function get_delimiter_list() {
+        global $CFG;
         $delimiters = array('comma'=>',', 'semicolon'=>';', 'colon'=>':', 'tab'=>'\\t');
         if (isset($CFG->CSV_DELIMITER) and strlen($CFG->CSV_DELIMITER) === 1 and !in_array($CFG->CSV_DELIMITER, $delimiters)) {
             $delimiters['cfg'] = $CFG->CSV_DELIMITER;
@@ -273,6 +274,7 @@ class csv_import_reader {
      * @return string delimiter char
      */
     function get_delimiter($delimiter_name) {
+        global $CFG;
         switch ($delimiter_name) {
             case 'colon':     return ':';
             case 'semicolon': return ';';
