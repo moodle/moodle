@@ -31,3 +31,5 @@ index b7e3e3e..96ef508 100644
      }
 
  -- Tim Hunt 2010-08-04
+
+2- No strip slashes, we do not use magic quotes any more in Moodle 2.0 or later

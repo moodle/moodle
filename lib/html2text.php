@@ -297,7 +297,7 @@ class html2text
      *  @see _build_link_list()
      */
     var $_link_list = '';
-    
+
     /**
      *  Number of valid links detected in the text, used for plain text
      *  display (rendered similar to footnotes).
@@ -308,15 +308,15 @@ class html2text
      */
     var $_link_count = 0;
 
-    /** 
-     * Boolean flag, true if a table of link URLs should be listed after the text. 
-     *  
-     * @var boolean $_do_links 
-     * @access private 
-     * @see html2text() 
+    /**
+     * Boolean flag, true if a table of link URLs should be listed after the text.
+     *
+     * @var boolean $_do_links
+     * @access private
+     * @see html2text()
      */
     var $_do_links = true;
- 
+
     /**
      *  Constructor.
      *
@@ -353,7 +353,7 @@ class html2text
     function set_html( $source, $from_file = false )
     {
         if ( $from_file && file_exists($source) ) {
-            $this->html = file_get_contents($source); 
+            $this->html = file_get_contents($source);
         }
         else
             $this->html = $source;
@@ -455,7 +455,7 @@ class html2text
         $this->_link_count = 0;
         $this->_link_list = '';
 
-        $text = trim(stripslashes($this->html));
+        $text = trim($this->html);
 
         // Convert <PRE>
         $this->_convert_pre($text);
@@ -468,7 +468,7 @@ class html2text
         $text = html_entity_decode($text, ENT_COMPAT, 'UTF-8');
 
         // Remove unknown/unhandled entities (this cannot be done in search-and-replace block)
-        $text = preg_replace('/&[^&;]+;/i', '', $text); 
+        $text = preg_replace('/&[^&;]+;/i', '', $text);
 
         // Strip any other HTML tags
         $text = strip_tags($text, $this->allowed_tags);
@@ -510,7 +510,7 @@ class html2text
     function _build_link_list( $link, $display )
     {
 	if ( !$this->_do_links ) return $display;
-	
+
 	if ( substr($link, 0, 7) == 'http://' || substr($link, 0, 8) == 'https://' ||
              substr($link, 0, 7) == 'mailto:' ) {
             $this->_link_count++;
@@ -532,7 +532,7 @@ class html2text
 
         return $display . $additional;
     }
-    
+
     /**
      *  Helper function for PRE body conversion.
      *
@@ -570,7 +570,7 @@ class html2text
             return '[' . $matches[2] . ']';
         }
     }
-    
+
     /**
      *  Strtoupper multibyte wrapper function
      *
