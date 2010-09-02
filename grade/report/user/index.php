@@ -123,7 +123,8 @@ if (has_capability('moodle/grade:viewall', $context)) { //Teachers will see all 
 
         if ($user_selector) {
             $renderer = $PAGE->get_renderer('gradereport_user');
-            echo $renderer->graded_users_selector('user', $course, $userid, $currentgroup, false);
+            $showallusersoptions = true;
+            echo $renderer->graded_users_selector('user', $course, $userid, $currentgroup, $showallusersoptions);
         }
 
         if ($currentgroup and !groups_is_member($currentgroup, $userid)) {
