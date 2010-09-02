@@ -1774,15 +1774,18 @@ function markdown_to_html($text) {
  * @param string $html The text to be converted.
  * @param integer $width Width to wrap the text at. (optional, default 75 which
  *      is a good value for email. 0 means do not limit line length.)
+ * @param boolean $dolinks By default, any links in the HTML are collected, and
+ *      printed as a list at the end of the HTML. If you don't want that, set this
+ *      argument to false.
  * @return string plain text equivalent of the HTML.
  */
-function html_to_text($html, $width = 75) {
+function html_to_text($html, $width = 75, $dolinks = true) {
 
     global $CFG;
 
     require_once($CFG->libdir .'/html2text.php');
 
-    $h2t = new html2text($html, false, true, $width);
+    $h2t = new html2text($html, false, $dolinks, $width);
     $result = $h2t->get_text();
 
     return $result;
