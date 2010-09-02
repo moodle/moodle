@@ -3076,7 +3076,7 @@ function ewiki_author($defstr="") {
 
    (empty($author))
       && ($author = $remote)
-      || ($author = addslashes($author) . " (" . $remote . ")" );
+      || ($author = $author . " (" . $remote . ")" );
 
    return($author);
 }
