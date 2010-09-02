@@ -700,7 +700,7 @@ class sqlsrv_native_moodle_database extends moodle_database {
                 $return .= 'NULL';
 
             } else if (is_number($param)) { // we can not use is_numeric() because it eats leading zeros from strings like 0045646
-                $return .= $param;
+                $return .= "'$param'"; // this is a hack for MDL-23997, we intentionally use string because it is compatible with both nvarchar and int types
             } else if (is_float($param)) {
                 $return .= $param;
             } else {
