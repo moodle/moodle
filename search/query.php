@@ -54,7 +54,7 @@
     $page_number  = optional_param('page', -1, PARAM_INT);
     $pages        = ($page_number == -1) ? false : true;
     $advanced     = (optional_param('a', '0', PARAM_INT) == '1') ? true : false;
-    $query_string = stripslashes(optional_param('query_string', '', PARAM_CLEAN));
+    $query_string = optional_param('query_string', '', PARAM_CLEAN);
 
     $url = new moodle_url('/search/query.php');
     if ($page_number !== -1) {
@@ -186,8 +186,8 @@
     if (isset($vars)) {
         foreach ($vars as $key => $value) {
             // htmlentities breaks non-ascii chars ??
-            $adv->key = stripslashes($value);
-            //$adv->$key = stripslashes(htmlentities($value));
+            $adv->key = $value;
+            //$adv->$key = htmlentities($value);
         }
     }
     ?>
