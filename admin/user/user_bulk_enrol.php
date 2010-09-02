@@ -2,6 +2,9 @@
 /**
 * script for bulk user multy enrol operations
 */
+
+die('this needs to be rewritten to use new enrol framework, sorry');  //TODO: MDL-24064
+
 require_once('../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 $processed = optional_param('processed', '', PARAM_CLEAN);
@@ -75,7 +78,7 @@ if(!empty($processed)) {
     for ( $i = 0; $i < $total; $i++ )
     {
         $param = "selected".$i;
-        $info = optional_param($param, '', PARAM_CLEAN);
+        $info = optional_param($param, '', PARAM_SEQUENCE);
         /**
          * user id:    ids[0]
          * course id:  ids[1]
@@ -84,7 +87,7 @@ if(!empty($processed)) {
         $ids = explode(',', $info);
         if(!empty($ids[2])) {
             $context = get_context_instance(CONTEXT_COURSE, $ids[1]);
-            role_assign(5, $ids[0], $context->id);
+            role_assign(5, $ids[0], $context->id); //TODO: horrible!!
         } else {
             if( empty($ids[1] ) ) {
                 continue;
@@ -93,7 +96,7 @@ if(!empty($processed)) {
             role_unassign(5, $ids[0], $context->id);
         }
     }
-    redirect($return, get_string('changessaved'));
+    redirect($return, get_string('changessaved')); //TODO: horrible!!
 }
 
 //Form beginning
