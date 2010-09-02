@@ -974,7 +974,7 @@ class qformat_xml extends qformat_default {
         case MULTIANSWER:
             $a_count=1;
             foreach($question->options->questions as $question) {
-                $thispattern = addslashes("{#".$a_count."}"); // TODO: fix this addslashes
+                $thispattern = preg_quote("{#".$a_count."}"); //TODO: is this really necessary?
                 $thisreplace = $question->questiontext;
                 $expout=preg_replace("~$thispattern~", $thisreplace, $expout );
                 $a_count++;
