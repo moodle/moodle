@@ -241,7 +241,7 @@ class grade_report_grader extends grade_report {
                 if (empty($trimmed)) {
                      $feedback = NULL;
                 } else {
-                     $feedback = stripslashes($postedvalue);
+                     $feedback = $postedvalue;
                 }
             }
 
