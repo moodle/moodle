@@ -263,11 +263,11 @@ class HTML_QuickForm extends HTML_Common {
         $this->updateAttributes($attributes);
         if (!$trackSubmit || isset($_REQUEST['_qf__' . $formName])) {
             if (1 == get_magic_quotes_gpc()) {
-                $this->_submitValues = $this->_recursiveFilter('stripslashes', 'get' == $method? $_GET: $_POST);
+                $this->_submitValues = ('get' == $method? $_GET: $_POST); // we already eliminated magic quotes in moodle setup.php
                 foreach ($_FILES as $keyFirst => $valFirst) {
                     foreach ($valFirst as $keySecond => $valSecond) {
                         if ('name' == $keySecond) {
-                            $this->_submitFiles[$keyFirst][$keySecond] = $this->_recursiveFilter('stripslashes', $valSecond);
+                            $this->_submitFiles[$keyFirst][$keySecond] = $valSecond; // we already eliminated magic quotes in moodle setup.php
                         } else {
                             $this->_submitFiles[$keyFirst][$keySecond] = $valSecond;
                         }
