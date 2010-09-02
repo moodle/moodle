@@ -333,6 +333,7 @@ class assignment_upload extends assignment_base {
             if ($this->can_unfinalize($submission)) {
                 //$options = array ('id'=>$this->cm->id, 'userid'=>$userid, 'action'=>'unfinalize', 'mode'=>$mode, 'offset'=>$offset);
                 $output .= '<br /><input type="submit" name="unfinalize" value="'.get_string('unfinalize', 'assignment').'" />';
+                $output .=  $OUTPUT->help_icon('unfinalize', 'assignment');
 
             } else if ($this->can_finalize($submission)) {
                 //$options = array ('id'=>$this->cm->id, 'userid'=>$userid, 'action'=>'finalizeclose', 'mode'=>$mode, 'offset'=>$offset);
