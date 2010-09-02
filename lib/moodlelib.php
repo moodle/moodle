@@ -236,6 +236,7 @@ define('PARAM_STRINGID',    'stringid');
 /**
  * PARAM_CLEAN - obsoleted, please use a more specific type of parameter.
  * It was one of the first types, that is why it is abused so much ;-)
+ * @deprecated since 2.0
  */
 define('PARAM_CLEAN',    'clean');
 
@@ -429,12 +430,18 @@ define('HUB_MOODLEORGHUBURL', "http://hub.moodle.org");
  * used like this:
  *    $id = required_param('id', PARAM_INT);
  *
- * @param string $parname the name of the page parameter we want,
- *                        default PARAM_CLEAN
- * @param int $type expected type of parameter
+ * Please note the $type parameter is now required,
+ * for now PARAM_CLEAN is used for backwards compatibility only.
+ *
+ * @param string $parname the name of the page parameter we want
+ * @param string $type expected type of parameter
  * @return mixed
  */
-function required_param($parname, $type=PARAM_CLEAN) {
+function required_param($parname, $type) {
+    if (!isset($type)) {
+        debugging('required_param() requires $type to be specified.');
+        $type = PARAM_CLEAN; // for now let's use this deprecated type
+    }
     if (isset($_POST[$parname])) {       // POST has precedence
         $param = $_POST[$parname];
     } else if (isset($_GET[$parname])) {
@@ -455,12 +462,23 @@ function required_param($parname, $type=PARAM_CLEAN) {
  * used like this:
  *    $name = optional_param('name', 'Fred', PARAM_TEXT);
  *
+ * Please note $default and $type parameters are now required,
+ * for now PARAM_CLEAN is used for backwards compatibility only.
+ *
  * @param string $parname the name of the page parameter we want
  * @param mixed  $default the default value to return if nothing is found
- * @param int $type expected type of parameter, default PARAM_CLEAN
+ * @param string $type expected type of parameter
  * @return mixed
  */
-function optional_param($parname, $default=NULL, $type=PARAM_CLEAN) {
+function optional_param($parname, $default, $type) {
+    if (!isset($type)) {
+        debugging('optional_param() requires $default and $type to be specified.');
+        $type = PARAM_CLEAN; // for now let's use this deprecated type
+    }
+    if (!isset($default)) {
+        $default = null;
+    }
+
     if (isset($_POST[$parname])) {       // POST has precedence
         $param = $_POST[$parname];
     } else if (isset($_GET[$parname])) {
