@@ -1117,7 +1117,6 @@ class assignment_upload extends assignment_base {
             error("there are no submissions to download");
         }
         $filesforzipping = array();
-        $filenewname = clean_filename($this->assignment->name); //create prefix of individual files
         $fs = get_file_storage();
 
         $groupmode = groupmode($this->course,$this->cm);
@@ -1138,7 +1137,9 @@ class assignment_upload extends assignment_base {
                 $files = $fs->get_area_files($this->context->id, 'mod_assignment', 'submission', $submission->id, "timemodified", false);
                 foreach ($files as $file) {
                     //get files new name.
-                    $fileforzipname =  $a_user->username . "_" . $filenewname . "_" . $file->get_filename();
+                    $fileext = strstr($file->get_filename(), '.');
+                    $fileoriginal = str_replace($fileext, '', $file->get_filename());
+                    $fileforzipname =  clean_filename(fullname($a_user) . "_" . $fileoriginal."_".$a_userid.$fileext);
                     //save file name to array for zipping.
                     $filesforzipping[$fileforzipname] = $file;
                 }

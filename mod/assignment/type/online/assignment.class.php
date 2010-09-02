@@ -412,7 +412,7 @@ class assignment_online extends assignment_base {
                 $a_user = $DB->get_record("user", array("id"=>$a_userid),'id,username,firstname,lastname'); //get user firstname/lastname
                 $submissioncontent = "<html><body>". format_text($submission->data1, $submission->data2). "</body></html>";      //fetched from database
                 //get file name.html
-                $fileforzipname =  $a_user->username . "_" . clean_filename($this->assignment->name) . $filextn;
+                $fileforzipname =  clean_filename(fullname($a_user) . "_" .$a_userid.$filextn);
                 $filesforzipping[$fileforzipname] = array($submissioncontent);
             }
         }      //end of foreach
