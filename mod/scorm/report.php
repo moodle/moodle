@@ -424,7 +424,7 @@
                         echo '<div id="scormtablecontainer">';
                         if ($candelete) {
                             // Start form
-                            $strreallydel  = addslashes(get_string('deleteattemptcheck','scorm'));
+                            $strreallydel  = addslashes_js(get_string('deleteattemptcheck','scorm'));
                             echo '<form id="attemptsform" method="post" action="' . $reporturlwithdisplayoptions->out(true) .
                                     '" onsubmit="return confirm(\''.$strreallydel.'\');">';
                             echo '<input type="hidden" name="action" value="delete"/>';
