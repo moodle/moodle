@@ -620,7 +620,7 @@ class define_role_table_advanced extends capability_table_with_risks {
         }
 
         // Description.
-        $description = optional_param('description', null, PARAM_CLEAN);
+        $description = optional_param('description', null, PARAM_RAW);
         if (!is_null($description)) {
             $this->role->description = $description;
         }
