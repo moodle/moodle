@@ -530,7 +530,7 @@ function validate_param($param, $type, $allownull=NULL_NOT_ALLOWED, $debuginfo='
  * an options field.
  * <code>
  * $course->format = clean_param($course->format, PARAM_ALPHA);
- * $selectedgrade_item = clean_param($selectedgrade_item, PARAM_CLEAN);
+ * $selectedgrade_item = clean_param($selectedgrade_item, PARAM_INT);
  * </code>
  *
  * @param mixed $param the variable we are cleaning
@@ -554,6 +554,7 @@ function clean_param($param, $type) {
             return $param;
 
         case PARAM_CLEAN:        // General HTML cleaning, try to use more specific type if possible
+            // this is deprecated!, please use more specific type instead
             if (is_numeric($param)) {
                 return $param;
             }
