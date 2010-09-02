@@ -29,7 +29,7 @@ class feedback_item_info extends feedback_item_base {
         }
         //the elements for position dropdownlist
         $positionlist = array_slice(range(0,$i_formselect_last),1,$i_formselect_last,true);
-        
+
         $item->presentation = empty($item->presentation) ? 1 : $item->presentation;
         $item->required = 0;
 
@@ -49,7 +49,7 @@ class feedback_item_info extends feedback_item_base {
     function show_editform() {
         $this->item_form->display();
     }
-    
+
     function is_cancelled() {
         return $this->item_form->is_cancelled();
     }
@@ -63,23 +63,23 @@ class feedback_item_info extends feedback_item_base {
 
     function save_item() {
         global $DB;
-        
+
         if(!$item = $this->item_form->get_data()) {
             return false;
         }
-        
+
         if(isset($item->clone_item) AND $item->clone_item) {
             $item->id = ''; //to clone this item
             $item->position++;
         }
-        
+
         $item->hasvalue = $this->get_hasvalue();
         if(!$item->id) {
             $item->id = $DB->insert_record('feedback_item', $item);
         }else {
             $DB->update_record('feedback_item', $item);
         }
-        
+
         return $DB->get_record('feedback_item', array('id'=>$item->id));
     }
 
@@ -157,8 +157,8 @@ class feedback_item_info extends feedback_item_base {
         $rowOffset++;
         return $rowOffset;
     }
-    
-    /**     
+
+    /**
      * print the item at the edit-page of feedback
      *
      * @global object
@@ -171,7 +171,7 @@ class feedback_item_info extends feedback_item_base {
 
         $presentation = $item->presentation;
         $requiredmark =  ($item->required == 1)?'<span class="feedback_required_mark">*</span>':'';
-        
+
         $feedback = $DB->get_record('feedback', array('id'=>$item->feedback));
         $course = $DB->get_record('course', array('id'=>$feedback->course));
         $coursecategory = $DB->get_record('course_categories', array('id'=>$course->category));
@@ -189,7 +189,7 @@ class feedback_item_info extends feedback_item_base {
                 $itemshowvalue = $itemvalue;
                 break;
         }
-        
+
         //print the question and label
         echo '<div class="feedback_item_label_'.$align.'">';
         echo '('.$item->label.') ';
@@ -206,8 +206,8 @@ class feedback_item_info extends feedback_item_base {
             echo '<span class="feedback_item_info">'.$itemshowvalue.'</span>';
         echo '</div>';
     }
-    
-    /**     
+
+    /**
      * print the item at the complete-page of feedback
      *
      * @global object
@@ -245,12 +245,12 @@ class feedback_item_info extends feedback_item_base {
                 $itemshowvalue = $itemvalue;
                 break;
         }
-        
+
         //print the question and label
         echo '<div class="feedback_item_label_'.$align.$highlight.'">';
             echo format_text($item->name.$requiredmark, true, false, false);
         echo '</div>';
-        
+
         //print the presentation
         echo '<div class="feedback_item_presentation_'.$align.'">';
             echo '<input type="hidden" name="'.$item->typ.'_'.$item->id.'" value="'.$itemvalue.'" />';
@@ -258,7 +258,7 @@ class feedback_item_info extends feedback_item_base {
         echo '</div>';
     }
 
-    /**     
+    /**
      * print the item at the complete-page of feedback
      *
      * @global object
@@ -272,13 +272,13 @@ class feedback_item_info extends feedback_item_base {
 
         $presentation = $item->presentation;
         $requiredmark =  ($item->required == 1)?'<span class="feedback_required_mark">*</span>':'';
-        
+
         //print the question and label
         echo '<div class="feedback_item_label_'.$align.'">';
             echo '('.$item->label.') ';
             echo format_text($item->name . $requiredmark, true, false, false);
         echo '</div>';
-        
+
         //print the presentation
         echo $OUTPUT->box_start('generalbox boxalign'.$align);
         echo $value ? UserDate($value):'&nbsp;';
@@ -290,7 +290,7 @@ class feedback_item_info extends feedback_item_base {
     }
 
     function create_value($data) {
-        $data = addslashes(clean_text($data));
+        $data = clean_text($data);
         return $data;
     }
 
@@ -303,7 +303,7 @@ class feedback_item_info extends feedback_item_base {
         }
         return false;
     }
-    
+
     function get_presentation($data) {
         return $data->infotype;
     }
@@ -311,7 +311,7 @@ class feedback_item_info extends feedback_item_base {
     function get_hasvalue() {
         return 1;
     }
-    
+
     function can_switch_require() {
         return false;
     }
