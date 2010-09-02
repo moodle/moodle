@@ -117,7 +117,7 @@ define('PARAM_BOOL',     'bool');
 define('PARAM_CAPABILITY',   'capability');
 
 /**
- * PARAM_CLEANHTML - cleans submitted HTML code. use only for text in HTML format. It stays as HTML.
+ * PARAM_CLEANHTML - cleans submitted HTML code. use only for text in HTML format. This cleaning may fix xhtml strictness too.
  */
 define('PARAM_CLEANHTML', 'cleanhtml');
 
@@ -560,8 +560,8 @@ function clean_param($param, $type) {
             }
             return clean_text($param);     // Sweep for scripts, etc
 
-        case PARAM_CLEANHTML:    // prepare html fragment for display, do not store it into db!!
-            $param = clean_text($param);     // Sweep for scripts, etc
+        case PARAM_CLEANHTML:    // clean html fragment
+            $param = clean_text($param, FORMAT_HTML);     // Sweep for scripts, etc
             return trim($param);
 
         case PARAM_INT:
