@@ -29,7 +29,7 @@
  */
 
 $string['clianswerno'] = 'n';
-$string['cliansweryes'] = 'd';
+$string['cliansweryes'] = 'y';
 $string['cliincorrectvalueretry'] = 'Netočna vrijednost, pokušajte ponovno';
 $string['clitypevalue'] = 'unesite vrijednost';
 $string['clitypevaluedefault'] = 'unesite vrijednost ili pritisnite Enter za korištenje zadane vrijednosti ({$a})';
