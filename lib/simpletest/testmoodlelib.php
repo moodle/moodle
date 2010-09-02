@@ -246,7 +246,8 @@ class moodlelib_test extends UnitTestCase {
     }
 
     function test_clean_param_clean() {
-        //TODO: param clean is an ugly hack, do not use in new code (skodak)
+        // PARAM_CLEAN is an ugly hack, do not use in new code (skodak)
+        // instead use more specific type, or submit sothing that can be verified properly
         $this->assertEqual(clean_param('xx<script>', PARAM_CLEAN), 'xx');
     }
 
