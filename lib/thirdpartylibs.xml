@@ -141,20 +141,6 @@
     <licenseversion>2.0</licenseversion>
   </library>
   <library>
-    <location>pear/HTML/AJAX</location>
-    <name>Pear_HTML_AJAX</name>
-    <license>LGPL</license>
-    <version>0.5.6</version>
-    <licenseversion></licenseversion>
-  </library>
-  <library>
-    <location>pear/HTML/AJAX/JSON.php</location>
-    <name>Pear_HTML_AJAX_JSON</name>
-    <license>BSD</license>
-    <version>1.0.0</version>
-    <licenseversion></licenseversion>
-  </library>
-  <library>
     <location>pear/HTTP/WebDAV</location>
     <name>Pear_HTTP_WebDAV</name>
     <license>BSD</license>
