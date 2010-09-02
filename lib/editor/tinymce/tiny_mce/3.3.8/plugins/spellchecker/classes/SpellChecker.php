@@ -20,7 +20,7 @@ class SpellChecker {
 	 * Simple loopback function everything that gets in will be send back.
 	 *
 	 * @param $args.. Arguments.
-	 * @return {Array} Array of all input arguments. 
+	 * @return {Array} Array of all input arguments.
 	 */
 	function &loopback(/* args.. */) {
 		return func_get_args();
@@ -54,7 +54,7 @@ class SpellChecker {
 	 * @param {String} $str Message to send back to user.
 	 */
 	function throwError($str) {
-		die('{"result":null,"id":null,"error":{"errstr":"' . addslashes($str) . '","errfile":"","errline":null,"errcontext":"","level":"FATAL"}}');
+		die('{"result":null,"id":null,"error":{"errstr":"' . addslashes_js($str) . '","errfile":"","errline":null,"errcontext":"","level":"FATAL"}}');
 	}
 }
 
