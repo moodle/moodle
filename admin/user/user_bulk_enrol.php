@@ -7,7 +7,7 @@ die('this needs to be rewritten to use new enrol framework, sorry');  //TODO: MD
 
 require_once('../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
-$processed = optional_param('processed', '', PARAM_CLEAN);
+$processed = optional_param('processed', '', PARAM_BOOL);
 $sort = optional_param('sort', 'fullname', PARAM_ALPHA); //Sort by full name
 $dir  = optional_param('dir', 'asc', PARAM_ALPHA);       //Order to sort (ASC)
 
