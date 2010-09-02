@@ -808,8 +808,7 @@ class qformat_default {
      * back into an array of category names.
      *
      * Each category name is cleaned by a call to clean_param(, PARAM_MULTILANG),
-     * which matches the cleaning in question/category_form.php. Not that this
-     * addslashes the names, ready for insertion into the database.
+     * which matches the cleaning in question/category_form.php.
      *
      * @param string $path
      * @return array of category names.
