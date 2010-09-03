@@ -154,8 +154,13 @@ class course_edit_form extends moodleform {
         $mform->addHelpButton('maxbytes', 'maximumupload');
         $mform->setDefault('maxbytes', $courseconfig->maxbytes);
 
-        if (!empty($course->legacyfiles)) {
-            $choices = array('1'=>get_string('no'), '2'=>get_string('yes'));
+        if (!empty($course->legacyfiles) or !empty($CFG->legacyfilesinnewcourses)) {
+            if (empty($course->legacyfiles)) {
+                //0 or missing means no legacy files ever used in this course - new course or nobody turned on legacy files yet
+                $choices = array('0'=>get_string('no'), '2'=>get_string('yes'));
+            } else {
+                $choices = array('1'=>get_string('no'), '2'=>get_string('yes'));
+            }
             $mform->addElement('select', 'legacyfiles', get_string('courselegacyfiles'), $choices);
             $mform->addHelpButton('legacyfiles', 'courselegacyfiles');
         }
