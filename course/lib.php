@@ -2581,7 +2581,7 @@ function set_coursemodule_idnumber($id, $idnumber) {
 * the course module back to what it was originally.
 */
 function set_coursemodule_visible($id, $visible, $prevstateoverrides=false) {
-    global $DB;
+    global $DB, $CFG;
     if (!$cm = $DB->get_record('course_modules', array('id'=>$id))) {
         return false;
     }
@@ -2597,6 +2597,14 @@ function set_coursemodule_visible($id, $visible, $prevstateoverrides=false) {
             }
         }
     }
+
+    //hide the grade item so the teacher doesn't also have to go to the gradebook and hide it there
+    require_once($CFG->libdir.'/gradelib.php');
+    $grade_item = grade_item::fetch(array('itemtype'=>'mod', 'itemmodule'=>$modulename, 'iteminstance'=>$cm->instance, 'courseid'=>$cm->course));
+    if ($grade_item !== false) {
+        $grade_item->set_hidden(!$visible);
+    }
+    
     if ($prevstateoverrides) {
         if ($visible == '0') {
             // Remember the current visible state so we can toggle this back.
