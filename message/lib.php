@@ -1643,12 +1643,9 @@ function message_move_userfrom_unread2read($userid) {
             $message->timeread = 0; //the message was never read
             $messageid = $message->id;
             unset($message->id);
-            if ($DB->insert_record('message_read', $message)) {
-                $DB->delete_records('message', array('id' => $messageid));
-                $DB->delete_records('message_working', array('unreadmessageid' => $messageid));
-            } else {
-                return false;
-            }
+            $DB->insert_record('message_read', $message);
+            $DB->delete_records('message', array('id' => $messageid));
+            $DB->delete_records('message_working', array('unreadmessageid' => $messageid));
         }
     }
     return true;
@@ -1678,9 +1675,8 @@ function message_get_popup_messages($destuserid, $fromuserid=NULL){
             //delete what we've processed and check if can move message
             $DB->delete_records('message_working', array('id' => $msgp->id));
             if ( $DB->count_records('message_working', array('unreadmessageid'=>$messageid)) == 0){
-                if ($DB->insert_record('message_read', $message)) {
-                    $DB->delete_records('message', array('id' => $messageid));
-                }
+                $DB->insert_record('message_read', $message);
+                $DB->delete_records('message', array('id' => $messageid));
             }
         }
     }
@@ -1706,9 +1702,8 @@ function message_mark_messages_read($touserid, $fromuserid){
 
         //have all message processors completed dealing with this message?
         if ( $DB->count_records('message_working', array('unreadmessageid'=>$messageid)) == 0){
-            if ($DB->insert_record('message_read', $message)) {
-                $DB->delete_records('message', array('id' => $messageid));
-            }
+            $DB->insert_record('message_read', $message);
+            $DB->delete_records('message', array('id' => $messageid));
         }
     }
 }

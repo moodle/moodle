@@ -136,9 +136,8 @@ function message_send($eventdata) {
 
             //if there is no more processors that want to process this we can move message to message_read
             if ( $DB->count_records('message_working', array('unreadmessageid' => $messageid)) == 0){
-                if ($DB->insert_record('message_read', $savemessage)) {
-                    $DB->delete_records('message', array('id' => $messageid));
-                }
+                $DB->insert_record('message_read', $savemessage);
+                $DB->delete_records('message', array('id' => $messageid));
             }
     }
 

@@ -441,29 +441,26 @@ class assignment_base {
         $assignment->timemodified = time();
         $assignment->courseid = $assignment->course;
 
-        if ($returnid = $DB->insert_record("assignment", $assignment)) {
-            $assignment->id = $returnid;
+        $returnid = $DB->insert_record("assignment", $assignment);
+        $assignment->id = $returnid;
 
-            if ($assignment->timedue) {
-                $event = new object();
-                $event->name        = $assignment->name;
-                $event->description = format_module_intro('assignment', $assignment, $assignment->coursemodule);
-                $event->courseid    = $assignment->course;
-                $event->groupid     = 0;
-                $event->userid      = 0;
-                $event->modulename  = 'assignment';
-                $event->instance    = $returnid;
-                $event->eventtype   = 'due';
-                $event->timestart   = $assignment->timedue;
-                $event->timeduration = 0;
+        if ($assignment->timedue) {
+            $event = new object();
+            $event->name        = $assignment->name;
+            $event->description = format_module_intro('assignment', $assignment, $assignment->coursemodule);
+            $event->courseid    = $assignment->course;
+            $event->groupid     = 0;
+            $event->userid      = 0;
+            $event->modulename  = 'assignment';
+            $event->instance    = $returnid;
+            $event->eventtype   = 'due';
+            $event->timestart   = $assignment->timedue;
+            $event->timeduration = 0;
 
-                calendar_event::create($event);
-            }
-
-            assignment_grade_item_update($assignment);
-
+            calendar_event::create($event);
         }
 
+        assignment_grade_item_update($assignment);
 
         return $returnid;
     }

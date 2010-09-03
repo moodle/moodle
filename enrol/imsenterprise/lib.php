@@ -374,12 +374,9 @@ function process_group_tag($tagcontents){
                         // Else if we're allowed to create new categories, let's create this one
                         $newcat->name = $group->category;
                        $newcat->visible = 0;
-                       if($catid = $DB->insert_record('course_categories', $newcat)){
-                           $course->category = $catid;
-                           $this->log_line("Created new (hidden) category, #$catid: $newcat->name");
-                       }else{
-                           $this->log_line('Failed to create new category: '.$newcat->name);
-                       }
+                       $catid = $DB->insert_record('course_categories', $newcat);
+                       $course->category = $catid;
+                       $this->log_line("Created new (hidden) category, #$catid: $newcat->name");
                     }else{
                         // If not found and not allowed to create, stick with default
                         $this->log_line('Category '.$group->category.' not found in Moodle database, so using default category instead.');
@@ -394,24 +391,21 @@ function process_group_tag($tagcontents){
                 // Choose a sort order that puts us at the start of the list!
                 $course->sortorder = 0;
 
-                if ($courseid = $DB->insert_record('course', $course)) {
+                $courseid = $DB->insert_record('course', $course);
 
-                    // Setup the blocks
-                    $course = $DB->get_record('course', array('id' => $courseid));
-                    blocks_add_default_course_blocks($course);
+                // Setup the blocks
+                $course = $DB->get_record('course', array('id' => $courseid));
+                blocks_add_default_course_blocks($course);
 
-                    $section = new object();
-                    $section->course = $course->id;   // Create a default section.
-                    $section->section = 0;
-                    $section->summaryformat = FORMAT_HTML;
-                    $section->id = $DB->insert_record("course_sections", $section);
+                $section = new object();
+                $section->course = $course->id;   // Create a default section.
+                $section->section = 0;
+                $section->summaryformat = FORMAT_HTML;
+                $section->id = $DB->insert_record("course_sections", $section);
 
-                    add_to_log(SITEID, "course", "new", "view.php?id=$course->id", "$course->fullname (ID $course->id)");
+                add_to_log(SITEID, "course", "new", "view.php?id=$course->id", "$course->fullname (ID $course->id)");
 
-                    $this->log_line("Created course $coursecode in Moodle (Moodle ID is $course->id)");
-                }else{
-                    $this->log_line('Failed to create course '.$coursecode.' in Moodle');
-                }
+                $this->log_line("Created course $coursecode in Moodle (Moodle ID is $course->id)");
               }
             }elseif($recstatus==3 && ($courseid = $DB->get_field('course', 'id', array('idnumber'=>$coursecode)))){
                 // If course does exist, but recstatus==3 (delete), then set the course as hidden
@@ -512,7 +506,7 @@ function process_person_tag($tagcontents){
             $person->confirmed = 1;
             $person->timemodified = time();
             $person->mnethostid = $CFG->mnet_localhost_id;
-            if($id = $DB->insert_record('user', $person)){
+            $id = $DB->insert_record('user', $person);
     /*
     Photo processing is deactivated until we hear from Moodle dev forum about modification to gdlib.
 
@@ -531,10 +525,7 @@ function process_person_tag($tagcontents){
                                    }
                                  }
     */
-                    $this->log_line("Created user record for user '$person->username' (ID number $person->idnumber).");
-                }else{
-                    $this->log_line("Database error while trying to create user record for user '$person->username' (ID number $person->idnumber).");
-                }
+                $this->log_line("Created user record for user '$person->username' (ID number $person->idnumber).");
             }
         } elseif ($createnewusers) {
             $this->log_line("User record already exists for user '$person->username' (ID number $person->idnumber).");

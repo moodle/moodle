@@ -340,18 +340,17 @@ class blog_entry {
         $this->created      = time();
 
         // Insert the new blog entry.
-        if ($this->id = $DB->insert_record('post', $this)) {
+        $this->id = $DB->insert_record('post', $this);
 
-            // Update tags.
-            $this->add_tags_info();
+        // Update tags.
+        $this->add_tags_info();
 
-            if (!empty($CFG->useblogassociations)) {
-                $this->add_associations();
-                add_to_log(SITEID, 'blog', 'add', 'index.php?userid='.$this->userid.'&entryid='.$this->id, $this->subject);
-            }
-
-            tag_set('post', $this->id, $this->tags);
+        if (!empty($CFG->useblogassociations)) {
+            $this->add_associations();
+            add_to_log(SITEID, 'blog', 'add', 'index.php?userid='.$this->userid.'&entryid='.$this->id, $this->subject);
         }
+
+        tag_set('post', $this->id, $this->tags);
     }
 
     /**

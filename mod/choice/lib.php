@@ -117,21 +117,21 @@ function choice_add_instance($choice) {
     }
 
     //insert answers
-    if ($choice->id = $DB->insert_record("choice", $choice)) {
-        foreach ($choice->option as $key => $value) {
-            $value = trim($value);
-            if (isset($value) && $value <> '') {
-                $option = new object();
-                $option->text = $value;
-                $option->choiceid = $choice->id;
-                if (isset($choice->limit[$key])) {
-                    $option->maxanswers = $choice->limit[$key];
-                }
-                $option->timemodified = time();
-                $DB->insert_record("choice_options", $option);
+    $choice->id = $DB->insert_record("choice", $choice);
+    foreach ($choice->option as $key => $value) {
+        $value = trim($value);
+        if (isset($value) && $value <> '') {
+            $option = new object();
+            $option->text = $value;
+            $option->choiceid = $choice->id;
+            if (isset($choice->limit[$key])) {
+                $option->maxanswers = $choice->limit[$key];
             }
+            $option->timemodified = time();
+            $DB->insert_record("choice_options", $option);
         }
     }
+
     return $choice->id;
 }
 

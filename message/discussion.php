@@ -343,9 +343,8 @@
             $messageid = $message->id;
             unset($message->id);
             $message->timeread = time();
-            if ($DB->insert_record('message_read', $message)) {
-                $DB->delete_records('message', array('id'=>$messageid));
-            }
+            $DB->insert_record('message_read', $message);
+            $DB->delete_records('message', array('id'=>$messageid));
             if ($message->timecreated < $start) {
                 $start = $message->timecreated; // move start back so that we see all current history
             }

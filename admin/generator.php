@@ -896,9 +896,8 @@ class generator {
                     $entry->timemodified = time();
                     $entry->teacherentry = 0;
                     $entry->approved = 1;
-                    if ($DB->insert_record('glossary_entries', $entry)) {
-                        $entries_count++;
-                    }
+                    $DB->insert_record('glossary_entries', $entry);
+                    $entries_count++;
                 }
             }
             if ($entries_count > 0 && !$this->get('quiet')) {
