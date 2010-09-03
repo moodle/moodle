@@ -174,77 +174,76 @@ switch ($action) {
         // We have two special repository type need to deal with
         // local and recent plugins don't added new files to moodle, just add new records to database
         // so we don't check user quota and maxbytes here
-        if (in_array($repo->options['type'], array('local', 'recent', 'user', 'coursefiles'))) {
-            $fileinfo = $repo->copy_to_area($source, $itemid, $saveas_path, $saveas_filename);
-            $info = array();
-            $info['file'] = $fileinfo['title'];
-            $info['id'] = $itemid;
-            $info['url'] = $CFG->httpswwwroot.'/draftfile.php/'.$fileinfo['contextid'].'/user/draft/'.$itemid.'/'.$fileinfo['title'];
-            $filesize = $fileinfo['filesize'];
-            if (($maxbytes!==-1) && ($filesize>$maxbytes)) {
-                throw new file_exception('maxbytes');
-            }
-            echo json_encode($info);
-            die; // ends here!!
+        $allowexternallink = (int)get_config(null, 'repositoryallowexternallinks');
+        if (!empty($allowexternallink)) {
+            $allowexternallink = true;
         } else {
-            $allowexternallink = (int)get_config(null, 'repositoryallowexternallinks');
-            if (!empty($allowexternallink)) {
-                $allowexternallink = true;
-            } else {
-                $allowexternallink = false;
-            }
-            // allow external links in url element all the time
-            $allowexternallink = ($allowexternallink || ($env == 'url'));
+            $allowexternallink = false;
+        }
+        // allow external links in url element all the time
+        $allowexternallink = ($allowexternallink || ($env == 'url'));
 
-            // Use link of the files
-            if ($allowexternallink and $linkexternal === 'yes' and ($repo->supported_returntypes() & FILE_EXTERNAL)) {
-                // use external link
-                $link = $repo->get_link($source);
+        // Use link of the files
+        if ($allowexternallink and $linkexternal === 'yes' and ($repo->supported_returntypes() & FILE_EXTERNAL)) {
+            // use external link
+            $link = $repo->get_link($source);
+            $info = array();
+            $info['filename'] = $saveas_filename;
+            $info['type'] = 'link';
+            $info['url'] = $link;
+            echo json_encode($info);
+            die;
+        } else {
+            if (in_array($repo->options['type'], array('local', 'recent', 'user', 'coursefiles'))) {
+                $fileinfo = $repo->copy_to_area($source, $itemid, $saveas_path, $saveas_filename);
                 $info = array();
-                $info['filename'] = $saveas_filename;
-                $info['type'] = 'link';
-                $info['url'] = $link;
-                echo json_encode($info);
-                die;
-            } else {
-                // Download file to moodle
-                $file = $repo->get_file($source, $saveas_filename);
-                if ($file['path'] === false) {
-                    $err->error = get_string('cannotdownload', 'repository');
-                    die(json_encode($err));
-                }
-
-                // check if exceed maxbytes
-                if (($maxbytes!==-1) && (filesize($file['path']) > $maxbytes)) {
+                $info['file'] = $fileinfo['title'];
+                $info['id'] = $itemid;
+                $info['url'] = $CFG->httpswwwroot.'/draftfile.php/'.$fileinfo['contextid'].'/user/draft/'.$itemid.'/'.$fileinfo['title'];
+                $filesize = $fileinfo['filesize'];
+                if (($maxbytes!==-1) && ($filesize>$maxbytes)) {
                     throw new file_exception('maxbytes');
                 }
-
-                $record = new stdclass;
-                $record->filepath = $saveas_path;
-                $record->filename = $saveas_filename;
-                $record->component = 'user';
-                $record->filearea = 'draft';
-                $record->itemid   = $itemid;
-
-                if (!empty($file['license'])) {
-                    $record->license  = $file['license'];
-                } else {
-                    $record->license  = $license;
-                }
-                if (!empty($file['author'])) {
-                    $record->author   = $file['author'];
-                } else {
-                    $record->author   = $author;
-                }
-                $record->source = !empty($file['url']) ? $file['url'] : '';
-
-                $info = repository::move_to_filepool($file['path'], $record);
-                if (empty($info)) {
-                    $info['e'] = get_string('error', 'moodle');
-                }
                 echo json_encode($info);
                 die;
             }
+            // Download file to moodle
+            $file = $repo->get_file($source, $saveas_filename);
+            if ($file['path'] === false) {
+                $err->error = get_string('cannotdownload', 'repository');
+                die(json_encode($err));
+            }
+
+            // check if exceed maxbytes
+            if (($maxbytes!==-1) && (filesize($file['path']) > $maxbytes)) {
+                throw new file_exception('maxbytes');
+            }
+
+            $record = new stdclass;
+            $record->filepath = $saveas_path;
+            $record->filename = $saveas_filename;
+            $record->component = 'user';
+            $record->filearea = 'draft';
+            $record->itemid   = $itemid;
+
+            if (!empty($file['license'])) {
+                $record->license  = $file['license'];
+            } else {
+                $record->license  = $license;
+            }
+            if (!empty($file['author'])) {
+                $record->author   = $file['author'];
+            } else {
+                $record->author   = $author;
+            }
+            $record->source = !empty($file['url']) ? $file['url'] : '';
+
+            $info = repository::move_to_filepool($file['path'], $record);
+            if (empty($info)) {
+                $info['e'] = get_string('error', 'moodle');
+            }
+            echo json_encode($info);
+            die;
         }
         break;
     case 'upload':

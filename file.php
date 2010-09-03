@@ -65,11 +65,6 @@ $relativepath = implode('/', $args);
 // security: limit access to existing course subdirectories
 $course = $DB->get_record('course', array('id'=>$courseid), '*', MUST_EXIST);
 
-if ($course->legacyfiles != 2) {
-    // course files disabled
-    send_file_not_found();
-}
-
 if ($course->id != SITEID) {
     require_login($course->id, true, null, false);
 

@@ -127,15 +127,6 @@ class repository_coursefiles extends repository {
     }
 
     /**
-     * course files don't support to link to external links
-     *
-     * @return int
-     */
-    public function supported_returntypes() {
-        return FILE_INTERNAL;
-    }
-
-    /**
      * Copy a file to file area
      *
      * @global object $USER
@@ -177,5 +168,36 @@ class repository_coursefiles extends repository {
         $info['filesize'] = $file_info->get_filesize();
 
         return $info;
+    }
+
+    public function get_link($encoded) {
+        $info = array();
+
+        $browser = get_file_browser();
+
+        // the final file
+        $params = unserialize(base64_decode($encoded));
+        $contextid  = clean_param($params['contextid'], PARAM_INT);
+        $fileitemid = clean_param($params['itemid'], PARAM_INT);
+        $filename = clean_param($params['filename'], PARAM_FILE);
+        $filepath = clean_param($params['filepath'], PARAM_PATH);;
+        $filearea = clean_param($params['filearea'], PARAM_ALPHAEXT);
+        $component = clean_param($params['component'], PARAM_ALPHAEXT);
+        $context = get_context_instance_by_id($contextid);
+
+        $file_info = $browser->get_file_info($context, $component, $filearea, $fileitemid, $filepath, $filename);
+        return $file_info->get_url();
+    }
+
+    public function get_name() {
+        global $COURSE;
+        return $COURSE->fullname;
+    }
+
+    public function supported_returntypes() {
+        return (FILE_INTERNAL | FILE_EXTERNAL);
+    }
+    public static function get_type_option_names() {
+        return array();
     }
 }
