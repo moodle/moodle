@@ -193,22 +193,28 @@ class restore_gradebook_step extends restore_structure_step {
         $data->timecreated  = $this->apply_date_offset($data->timecreated);
         $data->timemodified = $this->apply_date_offset($data->timemodified);
 
-        //no parent means a course level grade category. That should have been created when the course was created
+        $newitemid = null;
+        //no parent means a course level grade category. That may have been created when the course was created
         if(empty($data->parent)) {
-            //get the already created course level grade category
-            $category = new stdclass();
-            $category->courseid  = $this->get_courseid();
-
-            $coursecategory = $DB->get_record('grade_categories', (array)$category);
-            $newitemid = $coursecategory->id;
-            $data->id = $newitemid;
-            
             //parent was being saved as 0 when it should be null
             $data->parent = null;
 
-            $DB->update_record('grade_categories', $data);
-        } else {
-            $data->parent = $this->get_mappingid('grade_category', $data->parent);
+            //get the already created course level grade category
+            $category = new stdclass();
+            $category->courseid = $this->get_courseid();
+
+            $coursecategory = $DB->get_record('grade_categories', (array)$category);
+            if (!empty($coursecategory)) {
+                $data->id = $newitemid = $coursecategory->id;
+                $DB->update_record('grade_categories', $data);
+            }
+        }
+
+        //need to insert a course category
+        if (empty($newitemid)) {
+            if (!empty($data->parent)) {
+                $data->parent = $this->get_mappingid('grade_category', $data->parent);
+            }
             $newitemid = $DB->insert_record('grade_categories', $data);
         }
         $this->set_mapping('grade_category', $oldid, $newitemid);
