@@ -1199,6 +1199,11 @@ class restore_activity_grades_structure_step extends restore_structure_step {
 
         $gradeitem = new grade_item($data);
         $gradeitem->insert('restore');
+
+        //sortorder is automatically assigned when inserting. Re-instate the previous sortorder
+        $gradeitem->sortorder = $data->sortorder;
+        $gradeitem->update('restore');
+
         // Set mapping, saving the original category id into parentitemid
         // gradebook restore (final task) will need it to reorganise items
         $this->set_mapping('grade_item', $oldid, $gradeitem->id, false, null, $oldparentid);
