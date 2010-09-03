@@ -134,6 +134,7 @@ class restore_gradebook_step extends restore_structure_step {
         $data->timecreated  = $this->apply_date_offset($data->timecreated);
         $data->timemodified = $this->apply_date_offset($data->timemodified);
 
+        $coursecategory = $newitemid = null;
         //course grade item should already exist so updating instead of inserting
         if($data->itemtype=='course') {
 
@@ -154,11 +155,18 @@ class restore_gradebook_step extends restore_structure_step {
             }
 
             $existinggradeitem = $DB->get_record('grade_items', (array)$gi);
-            $newitemid = $existinggradeitem->id;
+            if (!empty($existinggradeitem)) {
+                $data->id = $newitemid = $existinggradeitem->id;
+                $DB->update_record('grade_items', $data);
+            }
+        }
 
-            $data->id = $newitemid;
-            $DB->update_record('grade_items', $data);
-        } else { //insert manual grade items
+        if (empty($newitemid)) {
+            //in case we found the course category but still need to insert the course grade item
+            if ($data->itemtype=='course' && !empty($coursecategory)) {
+                $data->iteminstance = $coursecategory->id;
+            }
+            
             $newitemid = $DB->insert_record('grade_items', $data);
         }
         $this->set_mapping('grade_item', $oldid, $newitemid);
