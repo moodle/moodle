@@ -189,8 +189,23 @@ class repository_coursefiles extends repository {
         return $file_info->get_url();
     }
 
+    /**
+     * Return is the instance is visible
+     * (is the type visible ? is the context enable ?)
+     * @return boolean
+     */
+    public function is_visible() {
+        global $COURSE; //TODO: this is deprecated (skodak)
+        if ($COURSE->legacyfiles != 2) {
+            // do not show repo if legacy files disabled in this course...
+            return false;
+        }
+
+        return parent::is_visible();
+    }
+
     public function get_name() {
-        global $COURSE;
+        global $COURSE; //TODO: this is deprecated (skodak)
         return $COURSE->fullname;
     }
 
