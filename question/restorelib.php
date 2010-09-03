@@ -253,7 +253,7 @@
                     } else {
                         $updateobj->parent = 0;
                     }
-                    $status = $status && $DB->update_record('question_categories', $updateobj);
+                    $DB->update_record('question_categories', $updateobj);
                 }
             }
             //now we have recoded all parents, check through all parents and set parent to be
@@ -291,7 +291,7 @@
                 $updateobj = new object();
                 $updateobj->id = $id;
                 $updateobj->parent = $parent;
-                $status = $status && $DB->update_record('question_categories', $updateobj);
+                $DB->update_record('question_categories', $updateobj);
             }
         }
         return $status;

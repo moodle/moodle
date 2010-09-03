@@ -116,13 +116,13 @@ function glossary_update_instance($glossary) {
         print_error('unknowformat', '', '', $glossary->displayformat);
     }
 
-    $return = $DB->update_record("glossary", $glossary);
+    $DB->update_record("glossary", $glossary);
     if ($glossary->defaultapproval) {
         $DB->execute("UPDATE {glossary_entries} SET approved = 1 where approved <> 1 and glossaryid = ?", array($glossary->id));
     }
     glossary_grade_item_update($glossary);
 
-    return $return;
+    return true;
 }
 
 /**

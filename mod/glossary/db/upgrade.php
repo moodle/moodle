@@ -82,9 +82,8 @@ function xmldb_glossary_upgrade($oldversion) {
                     $file_record = array('contextid'=>$context->id, 'component'=>'mod_glossary', 'filearea'=>$filearea, 'itemid'=>$entry->id, 'filepath'=>'/', 'filename'=>$filename, 'userid'=>$entry->userid);
                     if ($fs->create_file_from_pathname($file_record, $filepath)) {
                         $entry->attachment = '1';
-                        if ($DB->update_record('glossary_entries', $entry)) {
-                            unlink($filepath);
-                        }
+                        $DB->update_record('glossary_entries', $entry);
+                        unlink($filepath);
                     }
                 }
 

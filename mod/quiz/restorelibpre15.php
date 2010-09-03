@@ -1757,7 +1757,7 @@
                 $wtm = new WikiToMarkdown();
                 $record->questiontext = $wtm->convert($record->questiontext, $restore->course_id);
                 $record->questiontextformat = FORMAT_MARKDOWN;
-                $status = $DB->update_record('question', $record);
+                $DB->update_record('question', $record);
                 //Do some output
                 $i++;
                 if (($i+1) % 1 == 0) {

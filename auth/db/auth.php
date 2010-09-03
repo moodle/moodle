@@ -263,11 +263,8 @@ class auth_plugin_db extends auth_plugin_base {
                         $updateuser = new object();
                         $updateuser->id   = $user->id;
                         $updateuser->auth = 'nologin';
-                        if ($DB->update_record('user', $updateuser)) {
-                            echo "\t"; print_string('auth_dbsuspenduser', 'auth_db', array('name'=>$user->username, 'id'=>$user->id)); echo "\n";
-                        } else {
-                            echo "\t"; print_string('auth_dbsuspendusererror', 'auth_db', $user->username); echo "\n";
-                        }
+                        $DB->update_record('user', $updateuser);
+                        echo "\t"; print_string('auth_dbsuspenduser', 'auth_db', array('name'=>$user->username, 'id'=>$user->id)); echo "\n";
                     }
                 }
             }

@@ -368,9 +368,8 @@ function profile_move_category($id, $move) {
         $category->sortorder     = $neworder;
 
         /// Update the category records
-        if ($DB->update_record('user_info_category', $category) and $DB->update_record('user_info_category', $swapcategory)) {
-            return true;
-        }
+        $DB->update_record('user_info_category', $category) and $DB->update_record('user_info_category', $swapcategory);
+        return true;
     }
 
     return false;

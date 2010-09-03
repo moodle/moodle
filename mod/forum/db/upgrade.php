@@ -136,9 +136,8 @@ function xmldb_forum_upgrade($oldversion) {
                     $file_record = array('contextid'=>$context->id, 'component'=>'mod_form', 'filearea'=>$filearea, 'itemid'=>$post->id, 'filepath'=>'/', 'filename'=>$filename, 'userid'=>$post->userid);
                     if ($fs->create_file_from_pathname($file_record, $filepath)) {
                         $post->attachment = '1';
-                        if ($DB->update_record('forum_posts', $post)) {
-                            unlink($filepath);
-                        }
+                        $DB->update_record('forum_posts', $post);
+                        unlink($filepath);
                     }
                 }
 

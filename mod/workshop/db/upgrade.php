@@ -172,9 +172,8 @@ function xmldb_workshop_upgrade($oldversion) {
                                             'userid'    => $submission->authorid);
                         if ($fs->create_file_from_pathname($filerecord, $filepath)) {
                             $submission->attachment = 1;
-                            if ($DB->update_record('workshop_submissions', $submission)) {
-                                unlink($filepath);
-                            }
+                            $DB->update_record('workshop_submissions', $submission);
+                            unlink($filepath);
                         }
                     }
                 }

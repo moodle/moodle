@@ -136,9 +136,8 @@ if (($mytemplate = data_submitted()) && confirm_sesskey()) {
 
         // Check for multiple tags, only need to check for add template.
         if ($mode != 'addtemplate' or data_tags_check($data->id, $newtemplate->{$mode})) {
-            if ($DB->update_record('data', $newtemplate)) {
-                echo $OUTPUT->notification(get_string('templatesaved', 'data'), 'notifysuccess');
-            }
+            $DB->update_record('data', $newtemplate);
+            echo $OUTPUT->notification(get_string('templatesaved', 'data'), 'notifysuccess');
         }
         add_to_log($course->id, 'data', 'templates saved', "templates.php?id=$cm->id&amp;d=$data->id", $data->id, $cm->id);
     }

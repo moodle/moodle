@@ -616,7 +616,7 @@ function data_decode_content_links_caller($restore) {
 
         /// Update record if any field changed
             if($changed) {
-                $status = $DB->update_record("data",$newdata);
+                $DB->update_record("data",$newdata);
             }
 
         /// Do some output
@@ -650,7 +650,7 @@ function data_decode_content_links_caller($restore) {
             if ($result != $content) {
             /// Update record
                 $comment->content = $result;
-                $status = $DB->update_record("data_comments",$comment);
+                $DB->update_record("data_comments",$comment);
                 if (debugging()) {
                     if (!defined('RESTORE_SILENTLY')) {
                         echo '<br /><hr />'.s($content).'<br />changed to<br />'.s($result).'<hr /><br />';
@@ -718,7 +718,7 @@ function data_decode_content_links_caller($restore) {
                     $cnt->content4 = $result4;
                 }
             /// Update record with the changed fields
-                $status = $DB->update_record("data_content",$cnt);
+                $DB->update_record("data_content",$cnt);
                 if (debugging()) {
                     if (!defined('RESTORE_SILENTLY')) {
                         echo '<br /><hr />'.s($content).'<br />changed to<br />'.s($result).'<hr /><br />';

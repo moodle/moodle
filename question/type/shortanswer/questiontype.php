@@ -319,7 +319,7 @@ class question_shortanswer_qtype extends default_questiontype {
                 // We have the answers field recoded to its new ids
                 $questionextradata->answers = $answers_field;
                 // Update the question
-                $status = $status && $DB->update_record($questionextensiontable, $questionextradata);
+                $DB->update_record($questionextensiontable, $questionextradata);
             }
         }
 

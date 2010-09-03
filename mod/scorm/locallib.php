@@ -376,7 +376,7 @@ function scorm_insert_track($userid,$scormid,$scoid,$attempt,$element,$value,$fo
             if ($tracktest = $DB->get_record_select('scorm_scoes_track','userid=? AND scormid=? AND scoid=? AND attempt=? AND element=\'cmi.core.lesson_status\'', array($userid, $scormid, $scoid, $attempt))) {
                 if ($tracktest->value == "incomplete") {
                     $tracktest->value = "completed";
-                    $idtest = $DB->update_record('scorm_scoes_track',$tracktest);
+                    $DB->update_record('scorm_scoes_track',$tracktest);
                 }
             }
         }
@@ -386,7 +386,8 @@ function scorm_insert_track($userid,$scormid,$scoid,$attempt,$element,$value,$fo
         if ($element != 'x.start.time' ) { //don't update x.start.time - keep the original value.
             $track->value = addslashes_js($value);
             $track->timemodified = time();
-            $id = $DB->update_record('scorm_scoes_track',$track);
+            $DB->update_record('scorm_scoes_track',$track);
+            $id = $track->id;
         }
     } else {
         $track->userid = $userid;

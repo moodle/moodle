@@ -295,7 +295,7 @@
 
     $PAGE->set_title($title);
     $PAGE->set_heading($course->fullname);
-    
+
     echo $OUTPUT->header();
 
 /// Check to see if groups are being used here
@@ -407,9 +407,8 @@ if ($showactivity) {
                 if ($approverecord->dataid == $data->id) {                       // Must be from this database
                     $newrecord->id = $approverecord->id;
                     $newrecord->approved = 1;
-                    if ($DB->update_record('data_records', $newrecord)) {
-                        echo $OUTPUT->notification(get_string('recordapproved','data'), 'notifysuccess');
-                    }
+                    $DB->update_record('data_records', $newrecord);
+                    echo $OUTPUT->notification(get_string('recordapproved','data'), 'notifysuccess');
                 }
             }
         }

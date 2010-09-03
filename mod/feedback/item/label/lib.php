@@ -208,10 +208,8 @@ class feedback_item_label extends feedback_item_base {
 
         // $item = new object();
         // $item->id = $data->id
-        if($DB->update_record('feedback_item', $item)) {
-            return $item->id;
-        }
-        return false;
+        $DB->update_record('feedback_item', $item);
+        return $item->id;
     }
 
     function get_hasvalue() {

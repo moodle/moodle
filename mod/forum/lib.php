@@ -6762,9 +6762,8 @@ function forum_discussion_update_last_post($discussionid) {
         $discussionobject->id           = $discussionid;
         $discussionobject->usermodified = $lastpost->userid;
         $discussionobject->timemodified = $lastpost->modified;
-        if ($DB->update_record('forum_discussions', $discussionobject)) {
-            return $lastpost->id;
-        }
+        $DB->update_record('forum_discussions', $discussionobject);
+        return $lastpost->id;
     }
 
 // To get here either we couldn't find a post for the discussion (weird)

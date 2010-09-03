@@ -351,7 +351,7 @@
                                 $value = scorm_add_time($track->value, $SESSION->scorm_session_time);
                                 $track->value = $value;
                                 $track->timemodified = time();
-                                $id = $DB->update_record('scorm_scoes_track',$track);
+                                $DB->update_record('scorm_scoes_track',$track);
                             } else {
                                 $track = new object();
                                 $track->userid = $USER->id;

@@ -136,7 +136,7 @@ function chat_add_instance($chat) {
  *
  * @global object
  * @param object $chat
- * @return int
+ * @return bool
  */
 function chat_update_instance($chat) {
     global $DB;
@@ -145,22 +145,21 @@ function chat_update_instance($chat) {
     $chat->id = $chat->instance;
 
 
-    if ($returnid = $DB->update_record("chat", $chat)) {
+    $DB->update_record("chat", $chat);
 
-        $event = new object();
+    $event = new object();
 
-        if ($event->id = $DB->get_field('event', 'id', array('modulename'=>'chat', 'instance'=>$chat->id))) {
+    if ($event->id = $DB->get_field('event', 'id', array('modulename'=>'chat', 'instance'=>$chat->id))) {
 
-            $event->name        = $chat->name;
-            $event->description = format_module_intro('chat', $chat, $chat->coursemodule);
-            $event->timestart   = $chat->chattime;
+        $event->name        = $chat->name;
+        $event->description = format_module_intro('chat', $chat, $chat->coursemodule);
+        $event->timestart   = $chat->chattime;
 
-            $calendarevent = calendar_event::load($event->id);
-            $calendarevent->update($event);
-        }
+        $calendarevent = calendar_event::load($event->id);
+        $calendarevent->update($event);
     }
 
-    return $returnid;
+    return true;
 }
 
 /**

@@ -560,7 +560,7 @@
                 if ($result != $content) {
                     //Update record
                     $quiz->intro = $result;
-                    $status = $DB->update_record("quiz",$quiz);
+                    $DB->update_record("quiz",$quiz);
                     if (debugging()) {
                         if (!defined('RESTORE_SILENTLY')) {
                             echo '<br /><hr />'.s($content).'<br />changed to<br />'.s($result).'<hr /><br />';
@@ -606,7 +606,7 @@
                 $wtm = new WikiToMarkdown();
                 $record->questiontext = $wtm->convert($record->questiontext, $restore->course_id);
                 $record->questiontextformat = FORMAT_MARKDOWN;
-                $status = $DB->update_record('question', $record);
+                $DB->update_record('question', $record);
                 //Do some output
                 $i++;
                 if (($i+1) % 1 == 0) {

@@ -1024,27 +1024,24 @@ class test extends XMLDBAction {
         /// Calculate its length
             $textlen = $textlib->strlen($basetext);
             $imglen = strlen($basetext);
-            if ($DB->update_record('newnameforthetable', $rec)) {
-                if ($new = $DB->get_record('newnameforthetable', array('id'=>$rec->id))) {
-                    $newtextlen = $textlib->strlen($new->intro);
-                    $newimglen = strlen($new->avatar);
-                    if ($basetext === $new->avatar && $basetext === $new->intro) {
-                        $test->sql = array($newtextlen . ' cc. (text) sent and received ok',
-                                           $newimglen . ' bytes (binary) sent and received ok');
-                        $test->status = true;
-                    } else {
-                        if ($rec->avatar !== $new->avatar) {
-                            $test->error = $DB->get_last_error();
-                            $test->sql = array($newimglen . ' bytes (binary) transfer failed. Data changed!');
-                            $test->status = false;
-                        } else {
-                            $test->error = $DB->get_last_error();
-                            $test->sql = array($newtextlen . ' cc. (text) transfer failed. Data changed!');
-                            $test->status = false;
-                        }
-                    }
+            $DB->update_record('newnameforthetable', $rec);
+            if ($new = $DB->get_record('newnameforthetable', array('id'=>$rec->id))) {
+                $newtextlen = $textlib->strlen($new->intro);
+                $newimglen = strlen($new->avatar);
+                if ($basetext === $new->avatar && $basetext === $new->intro) {
+                    $test->sql = array($newtextlen . ' cc. (text) sent and received ok',
+                                       $newimglen . ' bytes (binary) sent and received ok');
+                    $test->status = true;
                 } else {
-                    $test->error = $DB->get_last_error();
+                    if ($rec->avatar !== $new->avatar) {
+                        $test->error = $DB->get_last_error();
+                        $test->sql = array($newimglen . ' bytes (binary) transfer failed. Data changed!');
+                        $test->status = false;
+                    } else {
+                        $test->error = $DB->get_last_error();
+                        $test->sql = array($newtextlen . ' cc. (text) transfer failed. Data changed!');
+                        $test->status = false;
+                    }
                 }
             } else {
                 $test->error = $DB->get_last_error();

@@ -476,19 +476,11 @@ class assignment_upload extends assignment_base {
             $updated->timemodified = time();
             $updated->data1        = $data->text;
 
-            if ($DB->update_record('assignment_submissions', $updated)) {
-                add_to_log($this->course->id, 'assignment', 'upload', 'view.php?a='.$this->assignment->id, $this->assignment->id, $this->cm->id);
-                redirect($returnurl);
-                $submission = $this->get_submission($USER->id);
-                $this->update_grade($submission);
-
-            } else {
-                $this->view_header(get_string('notes', 'assignment'));
-                echo $OUTPUT->notification(get_string('notesupdateerror', 'assignment'));
-                echo $OUTPUT->continue_button($returnurl);
-                $this->view_footer();
-                die;
-            }
+            $DB->update_record('assignment_submissions', $updated);
+            add_to_log($this->course->id, 'assignment', 'upload', 'view.php?a='.$this->assignment->id, $this->assignment->id, $this->cm->id);
+            redirect($returnurl);
+            $submission = $this->get_submission($USER->id);
+            $this->update_grade($submission);
         }
 
         /// show notes edit form
@@ -550,28 +542,27 @@ class assignment_upload extends assignment_base {
             $updates = new object();
             $updates->id = $submission->id;
             $updates->timemodified = time();
-            if ($DB->update_record('assignment_submissions', $updates)) {
-                add_to_log($this->course->id, 'assignment', 'upload',
-                        'view.php?a='.$this->assignment->id, $this->assignment->id, $this->cm->id);
-                $this->update_grade($submission);
-                if (!$this->drafts_tracked()) {
-                    $this->email_teachers($submission);
-                }
-
-                // send files to event system
-                $files = $fs->get_area_files($this->context->id, 'mod_assignment', 'submission', $submission->id);
-                // Let Moodle know that assessable files were  uploaded (eg for plagiarism detection)
-                $eventdata = new object();
-                $eventdata->modulename   = 'assignment';
-                $eventdata->cmid         = $this->cm->id;
-                $eventdata->itemid       = $submission->id;
-                $eventdata->courseid     = $this->course->id;
-                $eventdata->userid       = $USER->id;
-                if ($files) {
-                    $eventdata->files        = $files;
-                }
-                events_trigger('assessable_file_uploaded', $eventdata);
+            $DB->update_record('assignment_submissions', $updates);
+            add_to_log($this->course->id, 'assignment', 'upload',
+                    'view.php?a='.$this->assignment->id, $this->assignment->id, $this->cm->id);
+            $this->update_grade($submission);
+            if (!$this->drafts_tracked()) {
+                $this->email_teachers($submission);
             }
+
+            // send files to event system
+            $files = $fs->get_area_files($this->context->id, 'mod_assignment', 'submission', $submission->id);
+            // Let Moodle know that assessable files were  uploaded (eg for plagiarism detection)
+            $eventdata = new object();
+            $eventdata->modulename   = 'assignment';
+            $eventdata->cmid         = $this->cm->id;
+            $eventdata->itemid       = $submission->id;
+            $eventdata->courseid     = $this->course->id;
+            $eventdata->userid       = $USER->id;
+            if ($files) {
+                $eventdata->files        = $files;
+            }
+            events_trigger('assessable_file_uploaded', $eventdata);
             $returnurl  = new moodle_url('/mod/assignment/view.php', array('id'=>$this->cm->id));
             redirect($returnurl);
         }
@@ -670,19 +661,12 @@ class assignment_upload extends assignment_base {
         $updated->data2        = ASSIGNMENT_STATUS_SUBMITTED;
         $updated->timemodified = time();
 
-        if ($DB->update_record('assignment_submissions', $updated)) {
-            add_to_log($this->course->id, 'assignment', 'upload', //TODO: add finalize action to log
-                    'view.php?a='.$this->assignment->id, $this->assignment->id, $this->cm->id);
-            $submission = $this->get_submission($userid);
-            $this->update_grade($submission);
-            $this->email_teachers($submission);
-        } else {
-            $this->view_header(get_string('submitformarking', 'assignment'));
-            echo $OUTPUT->notification(get_string('finalizeerror', 'assignment'));
-            echo $OUTPUT->continue_button($returnurl);
-            $this->view_footer();
-            die;
-        }
+        $DB->update_record('assignment_submissions', $updated);
+        add_to_log($this->course->id, 'assignment', 'upload', //TODO: add finalize action to log
+                'view.php?a='.$this->assignment->id, $this->assignment->id, $this->cm->id);
+        $submission = $this->get_submission($userid);
+        $this->update_grade($submission);
+        $this->email_teachers($submission);
 
         // Trigger assessable_files_done event to show files are complete
         $eventdata = new object();
@@ -717,12 +701,11 @@ class assignment_upload extends assignment_base {
         $updated->id    = $submission->id;
         $updated->data2 = ASSIGNMENT_STATUS_CLOSED;
 
-        if ($DB->update_record('assignment_submissions', $updated)) {
-            add_to_log($this->course->id, 'assignment', 'upload', //TODO: add finalize action to log
-                    'view.php?a='.$this->assignment->id, $this->assignment->id, $this->cm->id);
-            $submission = $this->get_submission($userid, false, true);
-            $this->update_grade($submission);
-        }
+        $DB->update_record('assignment_submissions', $updated);
+        add_to_log($this->course->id, 'assignment', 'upload', //TODO: add finalize action to log
+                'view.php?a='.$this->assignment->id, $this->assignment->id, $this->cm->id);
+        $submission = $this->get_submission($userid, false, true);
+        $this->update_grade($submission);
         redirect($returnurl);
     }
 
@@ -745,18 +728,11 @@ class assignment_upload extends assignment_base {
             $updated = new object();
             $updated->id = $submission->id;
             $updated->data2 = '';
-            if ($DB->update_record('assignment_submissions', $updated)) {
-                //TODO: add unfinalize action to log
-                add_to_log($this->course->id, 'assignment', 'view submission', 'submissions.php?id='.$this->assignment->id, $this->assignment->id, $this->cm->id);
-                $submission = $this->get_submission($userid);
-                $this->update_grade($submission);
-            } else {
-                $this->view_header(get_string('submitformarking', 'assignment'));
-                echo $OUTPUT->notification(get_string('unfinalizeerror', 'assignment'));
-                echo $OUTPUT->continue_button($returnurl);
-                $this->view_footer();
-                die;
-            }
+            $DB->update_record('assignment_submissions', $updated);
+            //TODO: add unfinalize action to log
+            add_to_log($this->course->id, 'assignment', 'view submission', 'submissions.php?id='.$this->assignment->id, $this->assignment->id, $this->cm->id);
+            $submission = $this->get_submission($userid);
+            $this->update_grade($submission);
         }
 
         if ($forcemode==null) {

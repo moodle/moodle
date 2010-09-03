@@ -101,9 +101,8 @@ if ($externalblogform->is_cancelled()){
                 $external->filtertags = $data->filtertags;
                 $external->timemodified = mktime();
 
-                if ($DB->update_record('blog_external', $external)) {
-                    tag_set('blog_external', $external->id, explode(',', $data->autotags));
-                }
+                $DB->update_record('blog_external', $external);
+                tag_set('blog_external', $external->id, explode(',', $data->autotags));
 
             } else {
                 print_error('wrongexternalid', 'blog');

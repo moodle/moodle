@@ -266,9 +266,8 @@ function scorm_parse_aicc($scorm) {
                         $id = null;
                         if ($oldscoid = scorm_array_search('identifier',$sco->identifier,$oldscoes)) {
                             $sco->id = $oldscoid;
-                            if ($DB->update_record('scorm_scoes',$sco)) {
-                                $id = $oldscoid;
-                            }
+                            $DB->update_record('scorm_scoes',$sco);
+                            $id = $oldscoid;
                             $DB->delete_records('scorm_scoes_data', array('scoid'=>$oldscoid));
                             unset($oldscoes[$oldscoid]);
                         } else {
