@@ -416,9 +416,7 @@ class question_numerical_qtype extends question_shortanswer_qtype {
             $responses = $state->responses['answer'].'|||||';
         }
         // Set the legacy answer field
-        if (!$DB->set_field('question_states', 'answer', $responses, array('id' => $state->id))) {
-            return false;
-        }
+        $DB->set_field('question_states', 'answer', $responses, array('id' => $state->id));
         return true;
     }
 

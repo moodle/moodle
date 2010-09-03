@@ -68,9 +68,7 @@
                 $visible = 1;
             }
             if ($course) {
-                if (! $DB->set_field("course", "visible", $visible, array("id"=>$course->id))) {
-                    echo $OUTPUT->notification("Could not update that course!");
-                }
+                $DB->set_field("course", "visible", $visible, array("id"=>$course->id));
             }
         }
     }

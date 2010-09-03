@@ -340,9 +340,7 @@ class moodle_list {
     function reorder_peers($peers) {
         global $DB;
         foreach ($peers as $key => $peer) {
-            if (!$DB->set_field($this->table, "sortorder", $key, array("id"=>$peer))) {
-                print_error('listupdatefail');
-            }
+            $DB->set_field($this->table, "sortorder", $key, array("id"=>$peer));
         }
     }
 
@@ -363,13 +361,10 @@ class moodle_list {
             } else {
                 $newparent = 0; // top level item
             }
-            if (!$DB->set_field($this->table, "parent", $newparent, array("id"=>$item->id))) {
-                print_error('listupdatefail');
-            } else {
-                $oldparentkey = array_search($item->parentlist->parentitem->id, $newpeers);
-                $neworder = array_merge(array_slice($newpeers, 0, $oldparentkey+1), array($item->id), array_slice($newpeers, $oldparentkey+1));
-                $this->reorder_peers($neworder);
-            }
+            $DB->set_field($this->table, "parent", $newparent, array("id"=>$item->id));
+            $oldparentkey = array_search($item->parentlist->parentitem->id, $newpeers);
+            $neworder = array_merge(array_slice($newpeers, 0, $oldparentkey+1), array($item->id), array_slice($newpeers, $oldparentkey+1));
+            $this->reorder_peers($neworder);
         }
         return $item->parentlist->parentitem;
     }
@@ -387,17 +382,14 @@ class moodle_list {
         if (!isset($peers[$itemkey-1])) {
             print_error('listcantmoveright');
         } else {
-            if (!$DB->set_field($this->table, "parent", $peers[$itemkey-1], array("id"=>$peers[$itemkey]))) {
-                print_error('listupdatefail');
-            } else {
-                $newparent = $this->find_item($peers[$itemkey-1]);
-                if (isset($newparent->children)) {
-                    $newpeers = $newparent->children->get_child_ids();
-                }
-                if ($newpeers) {
-                    $newpeers[] = $peers[$itemkey];
-                    $this->reorder_peers($newpeers);
-                }
+            $DB->set_field($this->table, "parent", $peers[$itemkey-1], array("id"=>$peers[$itemkey]));
+            $newparent = $this->find_item($peers[$itemkey-1]);
+            if (isset($newparent->children)) {
+                $newpeers = $newparent->children->get_child_ids();
+            }
+            if ($newpeers) {
+                $newpeers[] = $peers[$itemkey];
+                $this->reorder_peers($newpeers);
             }
         }
     }

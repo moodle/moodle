@@ -241,9 +241,7 @@ class question_calculatedmulti_qtype extends question_calculated_qtype {
         $responses .= implode(',', $state->responses);
 
         // Set the legacy answer field
-        if (!$DB->set_field('question_states', 'answer', $responses, array('id'=> $state->id))) {
-            return false;
-        }
+        $DB->set_field('question_states', 'answer', $responses, array('id'=> $state->id));
         return true;
     }
 

@@ -230,9 +230,7 @@ class question_match_qtype extends default_questiontype {
         $responses = implode(',', $responses);
 
         // Set the legacy answer field
-        if (!$DB->set_field('question_states', 'answer', $responses, array('id' => $state->id))) {
-            return false;
-        }
+        $DB->set_field('question_states', 'answer', $responses, array('id' => $state->id));
         return true;
     }
 

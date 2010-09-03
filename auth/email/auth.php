@@ -131,12 +131,8 @@ class auth_plugin_email extends auth_plugin_base {
                 return AUTH_CONFIRM_ERROR;
 
             } else if ($user->secret == $confirmsecret) {   // They have provided the secret key to get in
-                if (!$DB->set_field("user", "confirmed", 1, array("id"=>$user->id))) {
-                    return AUTH_CONFIRM_FAIL;
-                }
-                if (!$DB->set_field("user", "firstaccess", time(), array("id"=>$user->id))) {
-                    return AUTH_CONFIRM_FAIL;
-                }
+                $DB->set_field("user", "confirmed", 1, array("id"=>$user->id));
+                $DB->set_field("user", "firstaccess", time(), array("id"=>$user->id));
                 return AUTH_CONFIRM_OK;
             }
         } else {

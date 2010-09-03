@@ -42,9 +42,7 @@ if (!isloggedin()) {
 
 if ($agree and confirm_sesskey()) {    // User has agreed
     if (!isguestuser()) {              // Don't remember guests
-        if (!$DB->set_field('user', 'policyagreed', 1, array('id'=>$USER->id))) {
-            print_error('cannotsaveagreement');
-        }
+        $DB->set_field('user', 'policyagreed', 1, array('id'=>$USER->id));
     }
     $USER->policyagreed = 1;
 

@@ -1317,19 +1317,18 @@ abstract class repository {
             $DB->update_record('repository_instances', $r);
             unset($options['name']);
         }
-        $result = true;
         foreach ($options as $name=>$value) {
             if ($id = $DB->get_field('repository_instance_config', 'id', array('name'=>$name, 'instanceid'=>$this->id))) {
-                $result = $result && $DB->set_field('repository_instance_config', 'value', $value, array('id'=>$id));
+                $DB->set_field('repository_instance_config', 'value', $value, array('id'=>$id));
             } else {
                 $config = new object();
                 $config->instanceid = $this->id;
                 $config->name   = $name;
                 $config->value  = $value;
-                $result = $result && $DB->insert_record('repository_instance_config', $config);
+                $DB->insert_record('repository_instance_config', $config);
             }
         }
-        return $result;
+        return true;
     }
 
     /**

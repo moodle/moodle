@@ -1448,10 +1448,9 @@ class question_bank_view {
                             $questionid = (int)$questionid;
                             question_require_capability_on($questionid, 'edit');
                             if ($DB->record_exists('quiz_question_instances', array('question' => $questionid))) {
-                                if (!$DB->set_field('question', 'hidden', 1, array('id' => $questionid))) {
-                                    question_require_capability_on($questionid, 'edit');
-                                    print_error('cannothidequestion', 'question');
-                                }
+                                $DB->set_field('question', 'hidden', 1, array('id' => $questionid));
+                                question_require_capability_on($questionid, 'edit');
+                                print_error('cannothidequestion', 'question');
                             } else {
                                 delete_question($questionid);
                             }
@@ -1467,9 +1466,7 @@ class question_bank_view {
         // Unhide a question
         if(($unhide = optional_param('unhide', '', PARAM_INT)) and confirm_sesskey()) {
             question_require_capability_on($unhide, 'edit');
-            if(!$DB->set_field('question', 'hidden', 0, array('id' => $unhide))) {
-                print_error('cannotunhidequestion', 'question');
-            }
+            $DB->set_field('question', 'hidden', 0, array('id' => $unhide));
             redirect($this->baseurl);
         }
     }

@@ -170,9 +170,7 @@
         }
         $sortorder = 0;
         foreach ($peers as $peer) {
-            if (! $DB->set_field('question_categories', "sortorder", $sortorder, array("id" => $peer))) {
-                print_error('listupdatefail', '', $onerrorurl);
-            }
+            $DB->set_field('question_categories', "sortorder", $sortorder, array("id" => $peer));
             $sortorder++;
         }
         //now move category

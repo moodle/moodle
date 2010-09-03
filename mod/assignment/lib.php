@@ -2511,10 +2511,7 @@ function assignment_cron () {
         $realuser = clone($USER);
 
         foreach ($submissions as $key => $submission) {
-            if (! $DB->set_field("assignment_submissions", "mailed", "1", array("id"=>$submission->id))) {
-                echo "Could not update the mailed field for id $submission->id.  Not mailed.\n";
-                unset($submissions[$key]);
-            }
+            $DB->set_field("assignment_submissions", "mailed", "1", array("id"=>$submission->id));
         }
 
         $timenow = time();

@@ -137,12 +137,8 @@ class auth_plugin_manual extends auth_plugin_base {
             if ($user->confirmed) {
                 return AUTH_CONFIRM_ALREADY;
             } else {
-                if (!$DB->set_field("user", "confirmed", 1, array("id"=>$user->id))) {
-                    return AUTH_CONFIRM_FAIL;
-                }
-                if (!$DB->set_field("user", "firstaccess", time(), array("id"=>$user->id))) {
-                    return AUTH_CONFIRM_FAIL;
-                }
+                $DB->set_field("user", "confirmed", 1, array("id"=>$user->id));
+                $DB->set_field("user", "firstaccess", time(), array("id"=>$user->id));
                 return AUTH_CONFIRM_OK;
             }
         } else  {

@@ -1735,9 +1735,7 @@ function rebuild_course_cache($courseid=0, $clearonly=false) {
     if ($rs = $DB->get_recordset("course", $select,'','id,fullname')) {
         foreach ($rs as $course) {
             $modinfo = serialize(get_array_of_activities($course->id));
-            if (!$DB->set_field("course", "modinfo", $modinfo, array("id"=>$course->id))) {
-                echo $OUTPUT->notification("Could not cache module information for course '" . format_string($course->fullname) . "'!");
-            }
+            $DB->set_field("course", "modinfo", $modinfo, array("id"=>$course->id));
             // update cached global COURSE too ;-)
             if ($course->id == $COURSE->id) {
                 $COURSE->modinfo = $modinfo;
@@ -2547,11 +2545,8 @@ function add_mod_to_section($mod, $beforemod=NULL) {
             $newsequence = "$section->sequence,$mod->coursemodule";
         }
 
-        if ($DB->set_field("course_sections", "sequence", $newsequence, array("id"=>$section->id))) {
-            return $section->id;     // Return course_sections ID that was used.
-        } else {
-            return 0;
-        }
+        $DB->set_field("course_sections", "sequence", $newsequence, array("id"=>$section->id));
+        return $section->id;     // Return course_sections ID that was used.
 
     } else {  // Insert a new record
         $section->course   = $mod->course;
@@ -2604,7 +2599,7 @@ function set_coursemodule_visible($id, $visible, $prevstateoverrides=false) {
     if ($grade_item !== false) {
         $grade_item->set_hidden(!$visible);
     }
-    
+
     if ($prevstateoverrides) {
         if ($visible == '0') {
             // Remember the current visible state so we can toggle this back.
@@ -2703,12 +2698,9 @@ function move_section($course, $section, $move) {
         return false;
     }
 
-    if (!$DB->set_field("course_sections", "section", $sectiondest, array("id"=>$sectionrecord->id))) {
-        return false;
-    }
-    if (!$DB->set_field("course_sections", "section", $section, array("id"=>$sectiondestrecord->id))) {
-        return false;
-    }
+    $DB->set_field("course_sections", "section", $sectiondest, array("id"=>$sectionrecord->id));
+    $DB->set_field("course_sections", "section", $section, array("id"=>$sectiondestrecord->id));
+
     // if the focus is on the section that is being moved, then move the focus along
     if (isset($USER->display[$course->id]) and ($USER->display[$course->id] == $section)) {
         course_set_display($course->id, $sectiondest);
@@ -2720,9 +2712,7 @@ function move_section($course, $section, $move) {
     $n = 0;
     foreach ($sections as $section) {
         if ($section->section != $n) {
-            if (!$DB->set_field('course_sections', 'section', $n, array('id'=>$section->id))) {
-                return false;
-            }
+            $DB->set_field('course_sections', 'section', $n, array('id'=>$section->id));
         }
         $n++;
     }

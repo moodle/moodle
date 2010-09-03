@@ -2944,10 +2944,8 @@ function forum_get_course_forum($courseid, $type) {
         echo $OUTPUT->notification("Could not add the new course module to that section");
         return false;
     }
-    if (! $DB->set_field("course_modules", "section", $sectionid, array("id" => $mod->coursemodule))) {
-        echo $OUTPUT->notification("Could not update the course module with the correct section");
-        return false;
-    }
+    $DB->set_field("course_modules", "section", $sectionid, array("id" => $mod->coursemodule));
+
     include_once("$CFG->dirroot/course/lib.php");
     rebuild_course_cache($courseid);
 

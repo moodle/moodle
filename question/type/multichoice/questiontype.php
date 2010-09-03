@@ -236,9 +236,7 @@ class question_multichoice_qtype extends default_questiontype {
         $responses .= implode(',', $state->responses);
 
         // Set the legacy answer field
-        if (!$DB->set_field('question_states', 'answer', $responses, array('id' => $state->id))) {
-            return false;
-        }
+        $DB->set_field('question_states', 'answer', $responses, array('id' => $state->id));
         return true;
     }
 

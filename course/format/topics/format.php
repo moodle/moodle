@@ -43,9 +43,7 @@ $context = get_context_instance(CONTEXT_COURSE, $course->id);
 
 if (($marker >=0) && has_capability('moodle/course:setcurrentsection', $context) && confirm_sesskey()) {
     $course->marker = $marker;
-    if (! $DB->set_field("course", "marker", $marker, array("id"=>$course->id))) {
-        print_error("cannotmarktopic");
-    }
+    $DB->set_field("course", "marker", $marker, array("id"=>$course->id));
 }
 
 $streditsummary  = get_string('editsummary');

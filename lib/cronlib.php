@@ -75,9 +75,7 @@ function cron_run() {
                     $pre_dbqueries = $DB->perf_get_queries();
                     $pre_time      = microtime(1);
                     if ($cron_function()) {
-                        if (!$DB->set_field("modules", "lastcron", $timenow, array("id"=>$mod->id))) {
-                            mtrace("Error: could not update timestamp for $mod->fullname");
-                        }
+                        $DB->set_field("modules", "lastcron", $timenow, array("id"=>$mod->id));
                     }
                     if (isset($pre_dbqueries)) {
                         mtrace("... used " . ($DB->perf_get_queries() - $pre_dbqueries) . " dbqueries");
@@ -106,9 +104,7 @@ function cron_run() {
                 if (method_exists($blockobj,'cron')) {
                     mtrace("Processing cron function for ".$block->name.'....','');
                     if ($blockobj->cron()) {
-                        if (!$DB->set_field('block', 'lastcron', $timenow, array('id'=>$block->id))) {
-                            mtrace('Error: could not update timestamp for '.$block->name);
-                        }
+                        $DB->set_field('block', 'lastcron', $timenow, array('id'=>$block->id));
                     }
                 /// Reset possible changes by blocks to time_limit. MDL-11597
                     @set_time_limit(0);
@@ -133,9 +129,7 @@ function cron_run() {
                     $pre_dbqueries = $DB->perf_get_queries();
                     $pre_time      = microtime(1);
                     if ($cron_function()) {
-                        if (!$DB->set_field('quiz_report', "lastcron", $timenow, array("id"=>$report->id))) {
-                            mtrace("Error: could not update timestamp for $report->name");
-                        }
+                        $DB->set_field('quiz_report', "lastcron", $timenow, array("id"=>$report->id));
                     }
                     if (isset($pre_dbqueries)) {
                         mtrace("... used " . ($DB->perf_get_queries() - $pre_dbqueries) . " dbqueries");

@@ -394,9 +394,8 @@ class question_calculated_qtype extends default_questiontype {
         }
 
         // Set the legacy answer field
-        if (!$DB->set_field('question_states', 'answer', $responses, array('id'=> $state->id))) {
-            return false;
-        }
+        $DB->set_field('question_states', 'answer', $responses, array('id'=> $state->id));
+
         return true;
     }
 
@@ -623,9 +622,7 @@ class question_calculated_qtype extends default_questiontype {
             }
             $questionname ="#".$questionname;
         }
-        if (!$DB->set_field('question', 'name', $questionname, array("id" => $question->id))) {
-            return false ;
-        }
+        $DB->set_field('question', 'name', $questionname, array("id" => $question->id));
     }
 
     /**
@@ -703,9 +700,7 @@ class question_calculated_qtype extends default_questiontype {
             }else {
                 $options_synchronize = 0 ;
             }
-            if (!$DB->set_field('question_calculated_options', 'synchronize', $options_synchronize, array("question" => $question->id))) {
-                return false;
-            }
+            $DB->set_field('question_calculated_options', 'synchronize', $options_synchronize, array("question" => $question->id));
             if(isset($form->synchronize) && $form->synchronize == 2 ){
                 $this->addnamecategory($question);
             }

@@ -297,8 +297,7 @@ class random_qtype extends default_questiontype {
         $response = "random$realqid-$response";
 
         // ... and save it again.
-        if (!$DB->set_field('question_states', 'answer', $response, array('id' => $state->id))) {
-        }
+        $DB->set_field('question_states', 'answer', $response, array('id' => $state->id));
 
         // Restore the real id
         $wrappedquestion->id = $realqid;
