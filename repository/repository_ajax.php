@@ -194,7 +194,7 @@ switch ($action) {
             echo json_encode($info);
             die;
         } else {
-            if (in_array($repo->options['type'], array('local', 'recent', 'user', 'coursefiles'))) {
+            if (in_array($repo->options['type'], array('local', 'recent', 'user', 'coursefiles'))) { //TODO: this hardcoding is a really ugly hack (skodak)
                 $fileinfo = $repo->copy_to_area($source, $itemid, $saveas_path, $saveas_filename);
                 $info = array();
                 $info['file'] = $fileinfo['title'];
