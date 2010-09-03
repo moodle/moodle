@@ -2905,7 +2905,7 @@ class settings_navigation extends navigation_node {
         }
 
         // Manage files
-        if (has_capability('moodle/course:managefiles', $coursecontext)) {
+        if ($course->legacyfiles == 2 and has_capability('moodle/course:managefiles', $coursecontext)) {
             // hidden in new courses and courses where legacy files were turned off
             $url = new moodle_url('/files/index.php', array('contextid'=>$coursecontext->id));
             $coursenode->add(get_string('courselegacyfiles'), $url, self::TYPE_SETTING, null, 'coursefiles', new pix_icon('i/files', ''));
@@ -3280,16 +3280,16 @@ class settings_navigation extends navigation_node {
                 $url = new moodle_url('/user/editadvanced.php', array('id'=>$user->id, 'course'=>$course->id));
                 $usersetting->add(get_string('editmyprofile'), $url, self::TYPE_SETTING);
             } else if ((has_capability('moodle/user:editprofile', $usercontext) && !is_siteadmin($user)) || ($currentuser && has_capability('moodle/user:editownprofile', $systemcontext))) {
-				if (!empty($user->auth)) {
-					$userauth = get_auth_plugin($user->auth);
-					if ($userauth->can_edit_profile()) {
-						$url = $userauth->edit_profile_url();
-						if (empty($url)) {
-							$url = new moodle_url('/user/edit.php', array('id'=>$user->id, 'course'=>$course->id));
-						}
-						$usersetting->add(get_string('editmyprofile'), $url, self::TYPE_SETTING);
-					}
-				}
+                if (!empty($user->auth)) {
+                    $userauth = get_auth_plugin($user->auth);
+                    if ($userauth->can_edit_profile()) {
+                        $url = $userauth->edit_profile_url();
+                        if (empty($url)) {
+                            $url = new moodle_url('/user/edit.php', array('id'=>$user->id, 'course'=>$course->id));
+                        }
+                        $usersetting->add(get_string('editmyprofile'), $url, self::TYPE_SETTING);
+                    }
+                }
             }
         }
 
@@ -3582,9 +3582,9 @@ class settings_navigation extends navigation_node {
         }
 
         // Manage files
-        if (has_capability('moodle/course:managefiles', $this->context)) {
+        if ($course->legacyfiles == 2 and has_capability('moodle/course:managefiles', $this->context)) {
             //hiden in new installs
-            $url = new moodle_url('/files/index.php', array('contextid'=>$coursecontext->id));
+            $url = new moodle_url('/files/index.php', array('contextid'=>$coursecontext->id, 'itemid'=>0, 'component' => 'course', 'filearea'=>'legacy'));
             $frontpage->add(get_string('sitelegacyfiles'), $url, self::TYPE_SETTING, null, null, new pix_icon('i/files', ''));
         }
         return $frontpage;
