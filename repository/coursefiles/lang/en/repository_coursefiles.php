@@ -23,9 +23,9 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['configplugin'] = 'Configuration for course files repository';
+$string['configplugin'] = 'Configuration for legacy course files repository';
 $string['emptyfilelist'] = 'There are no files to show';
 $string['notitle'] = 'notitle';
 $string['remember'] = 'Remember me';
-$string['pluginname_help'] = 'Course files';
-$string['pluginname'] = 'Course files';
+$string['pluginname_help'] = 'Legacy course files';
+$string['pluginname'] = 'Legacy course files';
