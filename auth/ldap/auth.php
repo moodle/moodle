@@ -490,9 +490,7 @@ class auth_plugin_ldap extends auth_plugin_base {
             print_error('auth_ldap_create_error', 'auth_ldap');
         }
 
-        if (! ($user->id = $DB->insert_record('user', $user)) ) {
-            print_error('auth_emailnoinsert', 'auth_email');
-        }
+        $user->id = $DB->insert_record('user', $user);
 
         // Save any custom profile field information
         profile_save_data($user);
@@ -861,18 +859,15 @@ class auth_plugin_ldap extends auth_plugin_base {
                     $user->lang = $CFG->lang;
                 }
 
-                if ($id = $DB->insert_record('user', $user)) {
-                    echo "\t"; print_string('auth_dbinsertuser', 'auth_db', array('name'=>$user->username, 'id'=>$id)); echo "\n";
-                    if (!empty($this->config->forcechangepassword)) {
-                        set_user_preference('auth_forcepasswordchange', 1, $id);
-                    }
+                $id = $DB->insert_record('user', $user);
+                echo "\t"; print_string('auth_dbinsertuser', 'auth_db', array('name'=>$user->username, 'id'=>$id)); echo "\n";
+                if (!empty($this->config->forcechangepassword)) {
+                    set_user_preference('auth_forcepasswordchange', 1, $id);
+                }
 
-                    // Add course creators if needed
-                    if ($creatorrole !== false and $this->iscreator($user->username)) {
-                        role_assign($creatorrole->id, $id, $sitecontext->id, $this->roleauth);
-                    }
-                } else {
-                    echo "\t"; print_string('auth_dbinsertusererror', 'auth_db', $user->username); echo "\n";
+                // Add course creators if needed
+                if ($creatorrole !== false and $this->iscreator($user->username)) {
+                    role_assign($creatorrole->id, $id, $sitecontext->id, $this->roleauth);
                 }
 
             }

@@ -237,54 +237,48 @@ if ($xml = glossary_read_imported_file($result)) {
                 $newentry->fullmatch      = $CFG->glossary_fullmatch;
             }
 
-            if ( $newentry->id = $DB->insert_record("glossary_entries",$newentry) )  {
-                $importedentries++;
+            $newentry->id = $DB->insert_record("glossary_entries",$newentry);
+            $importedentries++;
 
-                $xmlaliases = @$xmlentry['#']['ALIASES'][0]['#']['ALIAS']; // ignore missing ALIASES
-                for($k = 0; $k < sizeof($xmlaliases); $k++) {
-                /// Importing aliases
-                    $xmlalias = $xmlaliases[$k];
-                    $aliasname = $xmlalias['#']['NAME'][0]['#'];
+            $xmlaliases = @$xmlentry['#']['ALIASES'][0]['#']['ALIAS']; // ignore missing ALIASES
+            for($k = 0; $k < sizeof($xmlaliases); $k++) {
+            /// Importing aliases
+                $xmlalias = $xmlaliases[$k];
+                $aliasname = $xmlalias['#']['NAME'][0]['#'];
 
-                    if (!empty($aliasname)) {
-                        $newalias = new object();
-                        $newalias->entryid = $newentry->id;
-                        $newalias->alias = trim($aliasname);
-                        $newalias->id = $DB->insert_record("glossary_alias",$newalias);
+                if (!empty($aliasname)) {
+                    $newalias = new object();
+                    $newalias->entryid = $newentry->id;
+                    $newalias->alias = trim($aliasname);
+                    $newalias->id = $DB->insert_record("glossary_alias",$newalias);
+                }
+            }
+
+            if (!empty($data->catsincl)) {
+                // If the categories must be imported...
+                $xmlcats = @$xmlentry['#']['CATEGORIES'][0]['#']['CATEGORY']; // ignore missing CATEGORIES
+                for($k = 0; $k < sizeof($xmlcats); $k++) {
+                    $xmlcat = $xmlcats[$k];
+
+                    $newcat = new object();
+                    $newcat->name = $xmlcat['#']['NAME'][0]['#'];
+                    $newcat->usedynalink = $xmlcat['#']['USEDYNALINK'][0]['#'];
+                    if ( !$category = $DB->get_record("glossary_categories", array("glossaryid"=>$glossary->id,"name"=>$newcat->name))) {
+                        // Create the category if it does not exist
+                        $category = new object();
+                        $category->name = $newcat->name;
+                        $category->glossaryid = $glossary->id;
+                        $category->id = $DB->insert_record("glossary_categories",$category);
+                        $importedcats++;
+                    }
+                    if ( $category ) {
+                        // inserting the new relation
+                        $entrycat = new object();
+                        $entrycat->entryid    = $newentry->id;
+                        $entrycat->categoryid = $category->id;
+                        $DB->insert_record("glossary_entries_categories",$entrycat);
                     }
                 }
-
-                if (!empty($data->catsincl)) {
-                    // If the categories must be imported...
-                    $xmlcats = @$xmlentry['#']['CATEGORIES'][0]['#']['CATEGORY']; // ignore missing CATEGORIES
-                    for($k = 0; $k < sizeof($xmlcats); $k++) {
-                        $xmlcat = $xmlcats[$k];
-
-                        $newcat = new object();
-                        $newcat->name = $xmlcat['#']['NAME'][0]['#'];
-                        $newcat->usedynalink = $xmlcat['#']['USEDYNALINK'][0]['#'];
-                        if ( !$category = $DB->get_record("glossary_categories", array("glossaryid"=>$glossary->id,"name"=>$newcat->name))) {
-                            // Create the category if it does not exist
-                            $category = new object();
-                            $category->name = $newcat->name;
-                            $category->glossaryid = $glossary->id;
-                            $category->id = $DB->insert_record("glossary_categories",$category);
-                            $importedcats++;
-                        }
-                        if ( $category ) {
-                            // inserting the new relation
-                            $entrycat = new object();
-                            $entrycat->entryid    = $newentry->id;
-                            $entrycat->categoryid = $category->id;
-                            $DB->insert_record("glossary_entries_categories",$entrycat);
-                        }
-                    }
-                }
-            } else {
-                $entriesrejected++;
-                // add to exception report (can't insert new record)
-                $rejections .= "<tr><td>$newentry->concept</td>" .
-                               "<td>" . get_string("cantinsertrec","glossary"). "</td></tr>";
             }
         } else {
             $entriesrejected++;

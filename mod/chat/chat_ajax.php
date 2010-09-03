@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+//TODO: use standard CLI_SCRIPT support here (skodak)
+
 require_once(dirname(dirname(dirname(__FILE__))) . '/config.php');
 require_once(dirname(__FILE__) . '/lib.php');
 
@@ -81,11 +83,8 @@ case 'chat':
         $chatuser->lastmessageping = time() - 2;
         $DB->update_record('chat_users', $chatuser);
 
-        if (!($DB->insert_record('chat_messages', $message) && $DB->insert_record('chat_messages_current', $message))) {
-            chat_print_error('ERROR', get_string('cantlogin','chat'));
-        } else {
-            echo 200;
-        }
+        $DB->insert_record('chat_messages', $message);
+        $DB->insert_record('chat_messages_current', $message);
         add_to_log($course->id, 'chat', 'talk', "view.php?id=$cm->id", $chat->id, $cm->id);
 
         ob_end_flush();

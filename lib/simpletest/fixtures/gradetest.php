@@ -106,11 +106,10 @@ class grade_test extends UnitTestCaseUsingDatabase {
         $scale->description = 'This scale defines some of qualities that make posts helpful within the Moodle help forums.\n Your feedback will help others see how their posts are being received.';
         $scale->timemodified = mktime();
 
-        if ($scale->id = $DB->insert_record('scale', $scale)) {
-            $this->scale[0] = $scale;
-            $temp = explode(',', $scale->scale);
-            $this->scalemax[0] = count($temp) -1;
-        }
+        $scale->id = $DB->insert_record('scale', $scale);
+        $this->scale[0] = $scale;
+        $temp = explode(',', $scale->scale);
+        $this->scalemax[0] = count($temp) -1;
 
         $scale = new stdClass();
 
@@ -121,11 +120,10 @@ class grade_test extends UnitTestCaseUsingDatabase {
         $scale->description = 'This scale is used to mark standard assignments.';
         $scale->timemodified = mktime();
 
-        if ($scale->id = $DB->insert_record('scale', $scale)) {
-            $this->scale[1] = $scale;
-            $temp = explode(',', $scale->scale);
-            $this->scalemax[1] = count($temp) -1;
-        }
+        $scale->id = $DB->insert_record('scale', $scale);
+        $this->scale[1] = $scale;
+        $temp = explode(',', $scale->scale);
+        $this->scalemax[1] = count($temp) -1;
 
         $scale = new stdClass();
 
@@ -138,11 +136,10 @@ class grade_test extends UnitTestCaseUsingDatabase {
         $temp  = explode(',', $scale->scale);
         $scale->max         = count($temp) -1;
 
-        if ($scale->id = $DB->insert_record('scale', $scale)) {
-            $this->scale[2] = $scale;
-            $temp = explode(',', $scale->scale);
-            $this->scalemax[2] = count($temp) -1;
-        }
+        $scale->id = $DB->insert_record('scale', $scale);
+        $this->scale[2] = $scale;
+        $temp = explode(',', $scale->scale);
+        $this->scalemax[2] = count($temp) -1;
 
         $scale->name        = 'unittestscale4';
         $scale->courseid    = $this->courseid;
@@ -153,11 +150,10 @@ class grade_test extends UnitTestCaseUsingDatabase {
         $temp  = explode(',', $scale->scale);
         $scale->max         = count($temp) -1;
 
-        if ($scale->id = $DB->insert_record('scale', $scale)) {
-            $this->scale[3] = $scale;
-            $temp = explode(',', $scale->scale);
-            $this->scalemax[3] = count($temp) -1;
-        }
+        $scale->id = $DB->insert_record('scale', $scale);
+        $this->scale[3] = $scale;
+        $temp = explode(',', $scale->scale);
+        $this->scalemax[3] = count($temp) -1;
 
         $scale->name        = 'unittestscale5';
         $scale->courseid    = $this->courseid;
@@ -168,11 +164,10 @@ class grade_test extends UnitTestCaseUsingDatabase {
         $temp  = explode(',', $scale->scale);
         $scale->max         = count($temp) -1;
 
-        if ($scale->id = $DB->insert_record('scale', $scale)) {
-            $this->scale[4] = $scale;
-            $temp = explode(',', $scale->scale);
-            $this->scalemax[4] = count($temp) -1;
-        }
+        $scale->id = $DB->insert_record('scale', $scale);
+        $this->scale[4] = $scale;
+        $temp = explode(',', $scale->scale);
+        $this->scalemax[4] = count($temp) -1;
     }
 
     /**
@@ -196,11 +191,10 @@ class grade_test extends UnitTestCaseUsingDatabase {
         $grade_category->timemodified = mktime();
         $grade_category->depth = 2;
 
-        if ($grade_category->id = $DB->insert_record('grade_categories', $grade_category)) {
-            $grade_category->path = '/'.$course_category->id.'/'.$grade_category->id.'/';
-            $DB->update_record('grade_categories', $grade_category);
-            $this->grade_categories[0] = $grade_category;
-        }
+        $grade_category->id = $DB->insert_record('grade_categories', $grade_category);
+        $grade_category->path = '/'.$course_category->id.'/'.$grade_category->id.'/';
+        $DB->update_record('grade_categories', $grade_category);
+        $this->grade_categories[0] = $grade_category;
 
         $grade_category = new stdClass();
 
@@ -215,11 +209,10 @@ class grade_test extends UnitTestCaseUsingDatabase {
         $grade_category->timemodified = mktime();
         $grade_category->depth = 3;
 
-        if ($grade_category->id = $DB->insert_record('grade_categories', $grade_category)) {
-            $grade_category->path = $this->grade_categories[0]->path.$grade_category->id.'/';
-            $DB->update_record('grade_categories', $grade_category);
-            $this->grade_categories[1] = $grade_category;
-        }
+        $grade_category->id = $DB->insert_record('grade_categories', $grade_category);
+        $grade_category->path = $this->grade_categories[0]->path.$grade_category->id.'/';
+        $DB->update_record('grade_categories', $grade_category);
+        $this->grade_categories[1] = $grade_category;
 
         $grade_category = new stdClass();
 
@@ -234,11 +227,10 @@ class grade_test extends UnitTestCaseUsingDatabase {
         $grade_category->timemodified = mktime();
         $grade_category->depth = 3;
 
-        if ($grade_category->id = $DB->insert_record('grade_categories', $grade_category)) {
-            $grade_category->path = $this->grade_categories[0]->path.$grade_category->id.'/';
-            $DB->update_record('grade_categories', $grade_category);
-            $this->grade_categories[2] = $grade_category;
-        }
+        $grade_category->id = $DB->insert_record('grade_categories', $grade_category);
+        $grade_category->path = $this->grade_categories[0]->path.$grade_category->id.'/';
+        $DB->update_record('grade_categories', $grade_category);
+        $this->grade_categories[2] = $grade_category;
 
         // A category with no parent, but grade_items as children
 
@@ -255,11 +247,10 @@ class grade_test extends UnitTestCaseUsingDatabase {
         $grade_category->timemodified = mktime();
         $grade_category->depth = 2;
 
-        if ($grade_category->id = $DB->insert_record('grade_categories', $grade_category)) {
-            $grade_category->path = '/'.$course_category->id.'/'.$grade_category->id.'/';
-            $DB->update_record('grade_categories', $grade_category);
-            $this->grade_categories[3] = $grade_category;
-        }
+        $grade_category->id = $DB->insert_record('grade_categories', $grade_category);
+        $grade_category->path = '/'.$course_category->id.'/'.$grade_category->id.'/';
+        $DB->update_record('grade_categories', $grade_category);
+        $this->grade_categories[3] = $grade_category;
     }
 
     /**
@@ -269,21 +260,18 @@ class grade_test extends UnitTestCaseUsingDatabase {
         global $DB;
         $module = new stdClass();
         $module->name = 'assignment';
-        if ($module->id = $DB->insert_record('modules', $module)) {
-            $this->modules[0] = $module;
-        }
+        $module->id = $DB->insert_record('modules', $module);
+        $this->modules[0] = $module;
 
         $module = new stdClass();
         $module->name = 'quiz';
-        if ($module->id = $DB->insert_record('modules', $module)) {
-            $this->modules[1] = $module;
-        }
+        $module->id = $DB->insert_record('modules', $module);
+        $this->modules[1] = $module;
 
         $module = new stdClass();
         $module->name = 'forum';
-        if ($module->id = $DB->insert_record('modules', $module)) {
-            $this->modules[2] = $module;
-        }
+        $module->id = $DB->insert_record('modules', $module);
+        $this->modules[2] = $module;
     }
 
     /**
@@ -295,49 +283,43 @@ class grade_test extends UnitTestCaseUsingDatabase {
         $course_module->course = $this->courseid;
         $quiz->module = 1;
         $quiz->instance = 2;
-        if ($course_module->id = $DB->insert_record('course_modules', $course_module)) {
-            $this->course_module[0] = $course_module;
-        }
+        $course_module->id = $DB->insert_record('course_modules', $course_module);
+        $this->course_module[0] = $course_module;
 
         $course_module = new stdClass();
         $course_module->course = $this->courseid;
         $quiz->module = 2;
         $quiz->instance = 1;
-        if ($course_module->id = $DB->insert_record('course_modules', $course_module)) {
-            $this->course_module[0] = $course_module;
-        }
+        $course_module->id = $DB->insert_record('course_modules', $course_module);
+        $this->course_module[0] = $course_module;
 
         $course_module = new stdClass();
         $course_module->course = $this->courseid;
         $quiz->module = 2;
         $quiz->instance = 5;
-        if ($course_module->id = $DB->insert_record('course_modules', $course_module)) {
-            $this->course_module[0] = $course_module;
-        }
+        $course_module->id = $DB->insert_record('course_modules', $course_module);
+        $this->course_module[0] = $course_module;
 
         $course_module = new stdClass();
         $course_module->course = $this->courseid;
         $quiz->module = 3;
         $quiz->instance = 3;
-        if ($course_module->id = $DB->insert_record('course_modules', $course_module)) {
-            $this->course_module[0] = $course_module;
-        }
+        $course_module->id = $DB->insert_record('course_modules', $course_module);
+        $this->course_module[0] = $course_module;
 
         $course_module = new stdClass();
         $course_module->course = $this->courseid;
         $quiz->module = 3;
         $quiz->instance = 7;
-        if ($course_module->id = $DB->insert_record('course_modules', $course_module)) {
-            $this->course_module[0] = $course_module;
-        }
+        $course_module->id = $DB->insert_record('course_modules', $course_module);
+        $this->course_module[0] = $course_module;
 
         $course_module = new stdClass();
         $course_module->course = $this->courseid;
         $quiz->module = 3;
         $quiz->instance = 9;
-        if ($course_module->id = $DB->insert_record('course_modules', $course_module)) {
-            $this->course_module[0] = $course_module;
-        }
+        $course_module->id = $DB->insert_record('course_modules', $course_module);
+        $this->course_module[0] = $course_module;
     }
 
     /**
@@ -350,19 +332,16 @@ class grade_test extends UnitTestCaseUsingDatabase {
         $quiz->name = 'test quiz';
         $quiz->intro = 'let us quiz you!';
         $quiz->questions = '1,2';
-        if ($quiz->id = $DB->insert_record('quiz', $quiz)) {
-            $this->activities[0] = $quiz;
-        }
+        $quiz->id = $DB->insert_record('quiz', $quiz);
+        $this->activities[0] = $quiz;
 
         $quiz = new stdClass();
         $quiz->course = $this->courseid;
         $quiz->name = 'test quiz 2';
         $quiz->intro = 'let us quiz you again!';
         $quiz->questions = '1,3';
-        if ($quiz->id = $DB->insert_record('quiz', $quiz)) {
-            $this->activities[1] = $quiz;
-        }
-
+        $quiz->id = $DB->insert_record('quiz', $quiz);
+        $this->activities[1] = $quiz;
     }
 
     /**
@@ -392,9 +371,8 @@ class grade_test extends UnitTestCaseUsingDatabase {
         $grade_item->timemodified = mktime();
         $grade_item->sortorder = 3;
 
-        if ($grade_item->id = $DB->insert_record('grade_items', $grade_item)) {
-            $this->grade_items[0] = $grade_item;
-        }
+        $grade_item->id = $DB->insert_record('grade_items', $grade_item);
+        $this->grade_items[0] = $grade_item;
 
         // id = 1
         $grade_item = new stdClass();
@@ -415,9 +393,8 @@ class grade_test extends UnitTestCaseUsingDatabase {
         $grade_item->timemodified = mktime();
         $grade_item->sortorder = 4;
 
-        if ($grade_item->id = $DB->insert_record('grade_items', $grade_item)) {
-            $this->grade_items[1] = $grade_item;
-        }
+        $grade_item->id = $DB->insert_record('grade_items', $grade_item);
+        $this->grade_items[1] = $grade_item;
 
         // id = 2
         $grade_item = new stdClass();
@@ -437,9 +414,8 @@ class grade_test extends UnitTestCaseUsingDatabase {
         $grade_item->timemodified = mktime();
         $grade_item->sortorder = 6;
 
-        if ($grade_item->id = $DB->insert_record('grade_items', $grade_item)) {
-            $this->grade_items[2] = $grade_item;
-        }
+        $grade_item->id = $DB->insert_record('grade_items', $grade_item);
+        $this->grade_items[2] = $grade_item;
 
         // Load grade_items associated with the 3 categories
         // id = 3
@@ -458,9 +434,8 @@ class grade_test extends UnitTestCaseUsingDatabase {
         $grade_item->timemodified = mktime();
         $grade_item->sortorder = 1;
 
-        if ($grade_item->id = $DB->insert_record('grade_items', $grade_item)) {
-            $this->grade_items[3] = $grade_item;
-        }
+        $grade_item->id = $DB->insert_record('grade_items', $grade_item);
+        $this->grade_items[3] = $grade_item;
 
         // id = 4
         $grade_item = new stdClass();
@@ -478,9 +453,8 @@ class grade_test extends UnitTestCaseUsingDatabase {
         $grade_item->timemodified = mktime();
         $grade_item->sortorder = 2;
 
-        if ($grade_item->id = $DB->insert_record('grade_items', $grade_item)) {
-            $this->grade_items[4] = $grade_item;
-        }
+        $grade_item->id = $DB->insert_record('grade_items', $grade_item);
+        $this->grade_items[4] = $grade_item;
 
         // id = 5
         $grade_item = new stdClass();
@@ -498,9 +472,8 @@ class grade_test extends UnitTestCaseUsingDatabase {
         $grade_item->timemodified = mktime();
         $grade_item->sortorder = 5;
 
-        if ($grade_item->id = $DB->insert_record('grade_items', $grade_item)) {
-            $this->grade_items[5] = $grade_item;
-        }
+        $grade_item->id = $DB->insert_record('grade_items', $grade_item);
+        $this->grade_items[5] = $grade_item;
 
         // Orphan grade_item
         // id = 6
@@ -522,9 +495,8 @@ class grade_test extends UnitTestCaseUsingDatabase {
         $grade_item->timemodified = mktime();
         $grade_item->sortorder = 7;
 
-        if ($grade_item->id = $DB->insert_record('grade_items', $grade_item)) {
-            $this->grade_items[6] = $grade_item;
-        }
+        $grade_item->id = $DB->insert_record('grade_items', $grade_item);
+        $this->grade_items[6] = $grade_item;
 
         // 2 grade items under level1category
         // id = 7
@@ -545,9 +517,8 @@ class grade_test extends UnitTestCaseUsingDatabase {
         $grade_item->timemodified = mktime();
         $grade_item->sortorder = 9;
 
-        if ($grade_item->id = $DB->insert_record('grade_items', $grade_item)) {
-            $this->grade_items[7] = $grade_item;
-        }
+        $grade_item->id = $DB->insert_record('grade_items', $grade_item);
+        $this->grade_items[7] = $grade_item;
 
         // id = 8
         $grade_item = new stdClass();
@@ -566,9 +537,8 @@ class grade_test extends UnitTestCaseUsingDatabase {
         $grade_item->timemodified = mktime();
         $grade_item->sortorder = 10;
 
-        if ($grade_item->id = $DB->insert_record('grade_items', $grade_item)) {
-            $this->grade_items[8] = $grade_item;
-        }
+        $grade_item->id = $DB->insert_record('grade_items', $grade_item);
+        $this->grade_items[8] = $grade_item;
 
         // Grade_item for level1category
         // id = 9
@@ -588,9 +558,8 @@ class grade_test extends UnitTestCaseUsingDatabase {
         $grade_item->timemodified = mktime();
         $grade_item->sortorder = 8;
 
-        if ($grade_item->id = $DB->insert_record('grade_items', $grade_item)) {
-            $this->grade_items[9] = $grade_item;
-        }
+        $grade_item->id = $DB->insert_record('grade_items', $grade_item);
+        $this->grade_items[9] = $grade_item;
 
         // Manual grade_item
         // id = 10
@@ -609,10 +578,8 @@ class grade_test extends UnitTestCaseUsingDatabase {
         $grade_item->timecreated = mktime();
         $grade_item->timemodified = mktime();
 
-        if ($grade_item->id = $DB->insert_record('grade_items', $grade_item)) {
-            $this->grade_items[10] = $grade_item;
-        }
-
+        $grade_item->id = $DB->insert_record('grade_items', $grade_item);
+        $this->grade_items[10] = $grade_item;
     }
 
     /**
@@ -623,7 +590,7 @@ class grade_test extends UnitTestCaseUsingDatabase {
 
         //this method is called once for each test method. Avoid adding things to $this->grade_grades multiple times
         $this->grade_grades = array();
-        
+
         // Grades for grade_item 1
         $grade = new stdClass();
         $grade->itemid = $this->grade_items[0]->id;
@@ -637,9 +604,8 @@ class grade_test extends UnitTestCaseUsingDatabase {
         $grade->feedback = 'Good, but not good enough..';
         $grade->feedbackformat = FORMAT_PLAIN;
 
-        if ($grade->id = $DB->insert_record('grade_grades', $grade)) {
-            $this->grade_grades[0] = $grade;
-        }
+        $grade->id = $DB->insert_record('grade_grades', $grade);
+        $this->grade_grades[0] = $grade;
 
         $grade = new stdClass();
         $grade->itemid = $this->grade_items[0]->id;
@@ -650,9 +616,8 @@ class grade_test extends UnitTestCaseUsingDatabase {
         $grade->timemodified = mktime();
         $grade->information = '2 of 17 grade_grades';
 
-        if ($grade->id = $DB->insert_record('grade_grades', $grade)) {
-            $this->grade_grades[1] = $grade;
-        }
+        $grade->id = $DB->insert_record('grade_grades', $grade);
+        $this->grade_grades[1] = $grade;
 
         $grade = new stdClass();
         $grade->itemid = $this->grade_items[0]->id;
@@ -663,9 +628,8 @@ class grade_test extends UnitTestCaseUsingDatabase {
         $grade->timemodified = mktime();
         $grade->information = '3 of 17 grade_grades';
 
-        if ($grade->id = $DB->insert_record('grade_grades', $grade)) {
-            $this->grade_grades[2] = $grade;
-        }
+        $grade->id = $DB->insert_record('grade_grades', $grade);
+        $this->grade_grades[2] = $grade;
 
 
         // No raw grades for grade_item 2 - it is calculated
@@ -678,9 +642,8 @@ class grade_test extends UnitTestCaseUsingDatabase {
         $grade->timemodified = mktime();
         $grade->information = '4 of 17 grade_grades';
 
-        if ($grade->id = $DB->insert_record('grade_grades', $grade)) {
-            $this->grade_grades[3] = $grade;
-        }
+        $grade->id = $DB->insert_record('grade_grades', $grade);
+        $this->grade_grades[3] = $grade;
 
         $grade = new stdClass();
         $grade->itemid = $this->grade_items[1]->id;
@@ -690,9 +653,8 @@ class grade_test extends UnitTestCaseUsingDatabase {
         $grade->timemodified = mktime();
         $grade->information = '5 of 17 grade_grades';
 
-        if ($grade->id = $DB->insert_record('grade_grades', $grade)) {
-            $this->grade_grades[4] = $grade;
-        }
+        $grade->id = $DB->insert_record('grade_grades', $grade);
+        $this->grade_grades[4] = $grade;
 
         $grade = new stdClass();
         $grade->itemid = $this->grade_items[1]->id;
@@ -702,9 +664,8 @@ class grade_test extends UnitTestCaseUsingDatabase {
         $grade->timemodified = mktime();
         $grade->information = '6 of 17 grade_grades';
 
-        if ($grade->id = $DB->insert_record('grade_grades', $grade)) {
-            $this->grade_grades[5] = $grade;
-        }
+        $grade->id = $DB->insert_record('grade_grades', $grade);
+        $this->grade_grades[5] = $grade;
 
 
         // Grades for grade_item 3
@@ -719,9 +680,8 @@ class grade_test extends UnitTestCaseUsingDatabase {
         $grade->timemodified = mktime();
         $grade->information = '7 of 17 grade_grades';
 
-        if ($grade->id = $DB->insert_record('grade_grades', $grade)) {
-            $this->grade_grades[6] = $grade;
-        }
+        $grade->id = $DB->insert_record('grade_grades', $grade);
+        $this->grade_grades[6] = $grade;
 
         $grade = new stdClass();
         $grade->itemid = $this->grade_items[2]->id;
@@ -733,9 +693,8 @@ class grade_test extends UnitTestCaseUsingDatabase {
         $grade->timemodified = mktime();
         $grade->information = '8 of 17 grade_grades';
 
-        if ($grade->id = $DB->insert_record('grade_grades', $grade)) {
-            $this->grade_grades[] = $grade;
-        }
+        $grade->id = $DB->insert_record('grade_grades', $grade);
+        $this->grade_grades[] = $grade;
 
         $grade = new stdClass();
         $grade->itemid = $this->grade_items[2]->id;
@@ -747,9 +706,8 @@ class grade_test extends UnitTestCaseUsingDatabase {
         $grade->timemodified = mktime();
         $grade->information = '9 of 17 grade_grades';
 
-        if ($grade->id = $DB->insert_record('grade_grades', $grade)) {
-            $this->grade_grades[] = $grade;
-        }
+        $grade->id = $DB->insert_record('grade_grades', $grade);
+        $this->grade_grades[] = $grade;
 
         // Grades for grade_item 7
 
@@ -762,9 +720,8 @@ class grade_test extends UnitTestCaseUsingDatabase {
         $grade->timemodified = mktime();
         $grade->information = '10 of 17 grade_grades';
 
-        if ($grade->id = $DB->insert_record('grade_grades', $grade)) {
-            $this->grade_grades[] = $grade;
-        }
+        $grade->id = $DB->insert_record('grade_grades', $grade);
+        $this->grade_grades[] = $grade;
 
         $grade = new stdClass();
         $grade->itemid = $this->grade_items[6]->id;
@@ -775,9 +732,8 @@ class grade_test extends UnitTestCaseUsingDatabase {
         $grade->timemodified = mktime();
         $grade->information = '11 of 17 grade_grades';
 
-        if ($grade->id = $DB->insert_record('grade_grades', $grade)) {
-            $this->grade_grades[] = $grade;
-        }
+        $grade->id = $DB->insert_record('grade_grades', $grade);
+        $this->grade_grades[] = $grade;
 
         $grade = new stdClass();
         $grade->itemid = $this->grade_items[6]->id;
@@ -788,9 +744,8 @@ class grade_test extends UnitTestCaseUsingDatabase {
         $grade->timemodified = mktime();
         $grade->information = '12 of 17 grade_grades';
 
-        if ($grade->id = $DB->insert_record('grade_grades', $grade)) {
-            $this->grade_grades[] = $grade;
-        }
+        $grade->id = $DB->insert_record('grade_grades', $grade);
+        $this->grade_grades[] = $grade;
 
         // Grades for grade_item 8
 
@@ -803,9 +758,8 @@ class grade_test extends UnitTestCaseUsingDatabase {
         $grade->timemodified = mktime();
         $grade->information = '13 of 17 grade_grades';
 
-        if ($grade->id = $DB->insert_record('grade_grades', $grade)) {
-            $this->grade_grades[] = $grade;
-        }
+        $grade->id = $DB->insert_record('grade_grades', $grade);
+        $this->grade_grades[] = $grade;
 
         $grade = new stdClass();
         $grade->itemid = $this->grade_items[7]->id;
@@ -816,9 +770,8 @@ class grade_test extends UnitTestCaseUsingDatabase {
         $grade->timemodified = mktime();
         $grade->information = '14 of 17 grade_grades';
 
-        if ($grade->id = $DB->insert_record('grade_grades', $grade)) {
-            $this->grade_grades[] = $grade;
-        }
+        $grade->id = $DB->insert_record('grade_grades', $grade);
+        $this->grade_grades[] = $grade;
 
         // Grades for grade_item 9
 
@@ -831,9 +784,8 @@ class grade_test extends UnitTestCaseUsingDatabase {
         $grade->timemodified = mktime();
         $grade->information = '15 of 17 grade_grades';
 
-        if ($grade->id = $DB->insert_record('grade_grades', $grade)) {
-            $this->grade_grades[] = $grade;
-        }
+        $grade->id = $DB->insert_record('grade_grades', $grade);
+        $this->grade_grades[] = $grade;
 
         $grade = new stdClass();
         $grade->itemid = $this->grade_items[8]->id;
@@ -844,9 +796,8 @@ class grade_test extends UnitTestCaseUsingDatabase {
         $grade->timemodified = mktime();
         $grade->information = '16 of 17 grade_grades';
 
-        if ($grade->id = $DB->insert_record('grade_grades', $grade)) {
-            $this->grade_grades[] = $grade;
-        }
+        $grade->id = $DB->insert_record('grade_grades', $grade);
+        $this->grade_grades[] = $grade;
 
         $grade = new stdClass();
         $grade->itemid = $this->grade_items[8]->id;
@@ -857,9 +808,8 @@ class grade_test extends UnitTestCaseUsingDatabase {
         $grade->timemodified = mktime();
         $grade->information = '17 of 17 grade_grades';
 
-        if ($grade->id = $DB->insert_record('grade_grades', $grade)) {
-            $this->grade_grades[] = $grade;
-        }
+        $grade->id = $DB->insert_record('grade_grades', $grade);
+        $this->grade_grades[] = $grade;
     }
 
     /**
@@ -880,9 +830,8 @@ class grade_test extends UnitTestCaseUsingDatabase {
         $grade_outcome->timemodified = mktime();
         $grade_outcome->scaleid = $this->scale[2]->id;
 
-        if ($grade_outcome->id = $DB->insert_record('grade_outcomes', $grade_outcome)) {
-            $this->grade_outcomes[] = $grade_outcome;
-        }
+        $grade_outcome->id = $DB->insert_record('grade_outcomes', $grade_outcome);
+        $this->grade_outcomes[] = $grade_outcome;
 
         // Calculation for grade_item 2
         $grade_outcome = new stdClass();
@@ -893,9 +842,8 @@ class grade_test extends UnitTestCaseUsingDatabase {
         $grade_outcome->timemodified = mktime();
         $grade_outcome->scaleid = $this->scale[3]->id;
 
-        if ($grade_outcome->id = $DB->insert_record('grade_outcomes', $grade_outcome)) {
-            $this->grade_outcomes[] = $grade_outcome;
-        }
+        $grade_outcome->id = $DB->insert_record('grade_outcomes', $grade_outcome);
+        $this->grade_outcomes[] = $grade_outcome;
 
         // Calculation for grade_item 3
         $grade_outcome = new stdClass();
@@ -906,9 +854,8 @@ class grade_test extends UnitTestCaseUsingDatabase {
         $grade_outcome->timemodified = mktime();
         $grade_outcome->scaleid = $this->scale[4]->id;
 
-        if ($grade_outcome->id = $DB->insert_record('grade_outcomes', $grade_outcome)) {
-            $this->grade_outcomes[] = $grade_outcome;
-        }
+        $grade_outcome->id = $DB->insert_record('grade_outcomes', $grade_outcome);
+        $this->grade_outcomes[] = $grade_outcome;
     }
 
 /**

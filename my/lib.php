@@ -27,12 +27,12 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-define('MY_PAGE_PUBLIC', 0); 
+define('MY_PAGE_PUBLIC', 0);
 define('MY_PAGE_PRIVATE', 1);
 
 require_once("$CFG->libdir/blocklib.php");
 
-/* 
+/*
  * For a given user, this returns the $page information for their My Moodle page
  *
  */
@@ -71,10 +71,8 @@ function my_copy_page($userid, $private=MY_PAGE_PRIVATE, $pagetype='my-index') {
     $page = clone($systempage);
     unset($page->id);
     $page->userid = $userid;
-    if (!$page->id = $DB->insert_record('my_pages', $page)) {
-        return false;
-    }
-    
+    $page->id = $DB->insert_record('my_pages', $page);
+
     // Clone ALL the associated blocks as well
     $systemcontext = get_context_instance(CONTEXT_SYSTEM);
     $usercontext = get_context_instance(CONTEXT_USER, $userid);
@@ -86,9 +84,8 @@ function my_copy_page($userid, $private=MY_PAGE_PRIVATE, $pagetype='my-index') {
         unset($instance->id);
         $instance->parentcontextid = $usercontext->id;
         $instance->subpagepattern = $page->id;
-        if ($instance->id = $DB->insert_record('block_instances', $instance)) {
-            $blockcontext = get_context_instance(CONTEXT_BLOCK, $instance->id);  // Just creates the context record
-        }
+        $instance->id = $DB->insert_record('block_instances', $instance);
+        $blockcontext = get_context_instance(CONTEXT_BLOCK, $instance->id);  // Just creates the context record
     }
 
     // FIXME: block position overrides should be merged in with block instance

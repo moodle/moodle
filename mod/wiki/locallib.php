@@ -246,9 +246,7 @@ function wiki_save_page($wikipage, $newcontent, $userid) {
         $version->userid = $userid;
         $version->version++;
         $version->timecreated = time();
-        if (!$versionid = $DB->insert_record('wiki_versions', $version)) {
-            return false;
-        }
+        $versionid = $DB->insert_record('wiki_versions', $version);
 
         $wikipage->timemodified = $version->timecreated;
         $wikipage->userid = $userid;
@@ -334,9 +332,7 @@ function wiki_create_page($swid, $title, $format, $userid) {
     $version->userid = $userid;
 
     $versionid = null;
-    if (!$versionid = $DB->insert_record('wiki_versions', $version)) {
-        return false;
-    }
+    $versionid = $DB->insert_record('wiki_versions', $version);
 
     // Createing a new empty page
     $page = new stdClass();

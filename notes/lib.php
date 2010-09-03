@@ -99,18 +99,14 @@ function note_save(&$note) {
     if (empty($note->id)) {
         // insert new note
         $note->created = $note->lastmodified;
-        if ($id = $DB->insert_record('post', $note)) {
-            $note = $DB->get_record('post', array('id'=>$id));
-            $result = true;
-        } else {
-            $result = false;
-        }
+        $id = $DB->insert_record('post', $note);
+        $note = $DB->get_record('post', array('id'=>$id));
     } else {
         // update old note
-        $result = $DB->update_record('post', $note);
+        $DB->update_record('post', $note);
     }
     unset($note->module);
-    return $result;
+    return true;
 }
 
 /**

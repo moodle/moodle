@@ -442,25 +442,17 @@ function mnet_update_sso_access_control($username, $mnet_host_id, $accessctrl) {
     if ($aclrecord = $DB->get_record('mnet_sso_access_control', array('username'=>$username, 'mnet_host_id'=>$mnet_host_id))) {
         // update
         $aclrecord->accessctrl = $accessctrl;
-        if ($DB->update_record('mnet_sso_access_control', $aclrecord)) {
-            add_to_log(SITEID, 'admin/mnet', 'update', 'admin/mnet/access_control.php',
-                    "SSO ACL: $accessctrl user '$username' from {$mnethost->name}");
-        } else {
-            print_error('failedaclwrite', 'mnet', '', $username);
-            return false;
-        }
+        $DB->update_record('mnet_sso_access_control', $aclrecord);
+        add_to_log(SITEID, 'admin/mnet', 'update', 'admin/mnet/access_control.php',
+                "SSO ACL: $accessctrl user '$username' from {$mnethost->name}");
     } else {
         // insert
         $aclrecord->username = $username;
         $aclrecord->accessctrl = $accessctrl;
         $aclrecord->mnet_host_id = $mnet_host_id;
-        if ($id = $DB->insert_record('mnet_sso_access_control', $aclrecord)) {
-            add_to_log(SITEID, 'admin/mnet', 'add', 'admin/mnet/access_control.php',
-                    "SSO ACL: $accessctrl user '$username' from {$mnethost->name}");
-        } else {
-            print_error('failedaclwrite', 'mnet', '', $username);
-            return false;
-        }
+        $id = $DB->insert_record('mnet_sso_access_control', $aclrecord);
+        add_to_log(SITEID, 'admin/mnet', 'add', 'admin/mnet/access_control.php',
+                "SSO ACL: $accessctrl user '$username' from {$mnethost->name}");
     }
     return true;
 }

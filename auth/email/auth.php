@@ -79,9 +79,7 @@ class auth_plugin_email extends auth_plugin_base {
 
         $user->password = hash_internal_user_password($user->password);
 
-        if (! ($user->id = $DB->insert_record('user', $user)) ) {
-            print_error('auth_emailnoinsert','auth_email');
-        }
+        $user->id = $DB->insert_record('user', $user);
 
         /// Save any custom profile field information
         profile_save_data($user);

@@ -1234,9 +1234,8 @@ function make_default_scale() {
                            get_string('postrating3', 'forum');
     $defaultscale->timemodified = time();
 
-    if ($defaultscale->id = $DB->insert_record('scale', $defaultscale)) {
-        $DB->execute("UPDATE {forum} SET scale = ?", array($defaultscale->id));
-    }
+    $defaultscale->id = $DB->insert_record('scale', $defaultscale);
+    $DB->execute("UPDATE {forum} SET scale = ?", array($defaultscale->id));
 }
 
 

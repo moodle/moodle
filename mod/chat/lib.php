@@ -110,22 +110,21 @@ function chat_add_instance($chat) {
 
     $chat->timemodified = time();
 
-    if ($returnid = $DB->insert_record("chat", $chat)) {
+    $returnid = $DB->insert_record("chat", $chat);
 
-        $event = NULL;
-        $event->name        = $chat->name;
-        $event->description = format_module_intro('chat', $chat, $chat->coursemodule);
-        $event->courseid    = $chat->course;
-        $event->groupid     = 0;
-        $event->userid      = 0;
-        $event->modulename  = 'chat';
-        $event->instance    = $returnid;
-        $event->eventtype   = 'chattime';
-        $event->timestart   = $chat->chattime;
-        $event->timeduration = 0;
+    $event = NULL;
+    $event->name        = $chat->name;
+    $event->description = format_module_intro('chat', $chat, $chat->coursemodule);
+    $event->courseid    = $chat->course;
+    $event->groupid     = 0;
+    $event->userid      = 0;
+    $event->modulename  = 'chat';
+    $event->instance    = $returnid;
+    $event->eventtype   = 'chattime';
+    $event->timestart   = $chat->chattime;
+    $event->timeduration = 0;
 
-        calendar_event::create($event);
-    }
+    calendar_event::create($event);
 
     return $returnid;
 }

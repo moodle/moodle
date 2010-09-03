@@ -365,15 +365,14 @@ class auth_plugin_db extends auth_plugin_base {
                     $DB->set_field('user', 'deleted', 0, array('username'=>$user->username));
                     echo "\t"; print_string('auth_dbreviveduser', 'auth_db', array('name'=>$user->username, 'id'=>$user->id)); echo "\n";
 
-                } elseif ($id = $DB->insert_record ('user',$user)) { // it is truly a new user
+                } else {
+                    $id = $DB->insert_record ('user',$user); // it is truly a new user
                     echo "\t"; print_string('auth_dbinsertuser','auth_db',array('name'=>$user->username, 'id'=>$id)); echo "\n";
                     // if relevant, tag for password generation
                     if ($this->config->passtype === 'internal') {
                         set_user_preference('auth_forcepasswordchange', 1, $id);
                         set_user_preference('create_password',          1, $id);
                     }
-                } else {
-                    echo "\t"; print_string('auth_dbinsertusererror', 'auth_db', $user->username); echo "\n";
                 }
             }
             $transaction->allow_commit();
