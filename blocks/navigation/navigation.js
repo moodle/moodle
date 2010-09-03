@@ -212,7 +212,9 @@ M.block_navigation.classes.tree.prototype.add_branch = function(branchobj, targe
             if (branch.children[i].type == 20) {
                 count++;
             }
-            this.add_branch(branch.children[i], childrenul, depth+1);
+            if (typeof(branch.children[i])=='object') {
+                this.add_branch(branch.children[i], childrenul, depth+1);
+            }
         }
         if (branch.type == 10 && count >= M.block_navigation.courselimit) {
             var properties = Array();
