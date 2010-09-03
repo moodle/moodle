@@ -632,6 +632,11 @@ abstract class moodle_database {
         // convert table names
         $sql = $this->fix_table_names($sql);
 
+        // cast booleans to 1/0 int
+        foreach ($params as $key => $value) {
+            $params[$key] = is_bool($value) ? (int)$value : $value;
+        }
+
         // NICOLAS C: Fixed regexp for negative backwards lookahead of double colons. Thanks for Sam Marshall's help
         $named_count = preg_match_all('/(?<!:):[a-z][a-z0-9_]*/', $sql, $named_matches); // :: used in pgsql casts
         $dollar_count = preg_match_all('/\$[1-9][0-9]*/', $sql, $dollar_matches);

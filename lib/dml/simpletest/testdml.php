@@ -180,7 +180,26 @@ class dml_test extends UnitTestCase {
         } catch (Exception $e) {
             $this->assertTrue($e instanceof moodle_exception);
         }
+        // Booleans in NAMED params are casting to 1/0 int
+        $sql = "SELECT * FROM {".$tablename."} WHERE course = ? OR course = ?";
+        $params = array(true, false);
+        list($sql, $params) = $DB->fix_sql_params($sql, $params);
+        $this->assertTrue(reset($params) === 1);
+        $this->assertTrue(next($params) === 0);
 
+        // Booleans in QM params are casting to 1/0 int
+        $sql = "SELECT * FROM {".$tablename."} WHERE course = :course1 OR course = :course2";
+        $params = array('course1' => true, 'course2' => false);
+        list($sql, $params) = $DB->fix_sql_params($sql, $params);
+        $this->assertTrue(reset($params) === 1);
+        $this->assertTrue(next($params) === 0);
+
+        // Booleans in DOLLAR params are casting to 1/0 int
+        $sql = "SELECT * FROM {".$tablename."} WHERE course = \$1 OR course = \$2";
+        $params = array(true, false);
+        list($sql, $params) = $DB->fix_sql_params($sql, $params);
+        $this->assertTrue(reset($params) === 1);
+        $this->assertTrue(next($params) === 0);
     }
 
     public function testGetTables() {
@@ -731,6 +750,12 @@ class dml_test extends UnitTestCase {
         $this->assertTrue(empty($records[1]->course));
         $this->assertFalse(empty($records[1]->id));
         $this->assertEqual(4, count($records));
+
+        // Booleans into params
+        $records = $DB->get_records($tablename, array('course' => true));
+        $this->assertEqual(0, count($records));
+        $records = $DB->get_records($tablename, array('course' => false));
+        $this->assertEqual(0, count($records));
 
         // note: delegate limits testing to test_get_records_sql()
     }
