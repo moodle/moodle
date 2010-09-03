@@ -516,11 +516,12 @@ function process_group_tag($tagcontents){
                         // Else if we're allowed to create new categories, let's create this one
                         $newcat->name = $group->category;
                        $newcat->visible = 0;
-                       if($catid = insert_record('course_categories', $newcat)){
+                       if($catid = insert_record('course_categories', addslashes_object($newcat))){
                            $course->category = $catid;
                            $this->log_line("Created new (hidden) category, #$catid: $newcat->name");
                        }else{
-                           $this->log_line('Failed to create new category: '.$newcat->name);
+                           $this->log_line('Failed to create new category: '.$newcat->name.' so using default category instead.');
+                           $course->category = 1;
                        }
                     }else{
                         // If not found and not allowed to create, stick with default
