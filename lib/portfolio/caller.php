@@ -131,7 +131,7 @@ abstract class portfolio_caller_base {
     * should we offer the user the option to wait..
     * this is deliberately nonstatic so it can take filesize into account
     * the portfolio plugin can override this.
-    * (so for exmaple even if a huge file is being sent,
+    * (so for example even if a huge file is being sent,
     * the download portfolio plugin doesn't care )
     *
     * @return string (see PORTFOLIO_TIME_* constants)
@@ -374,7 +374,7 @@ abstract class portfolio_caller_base {
      *
      * @param mixed $ids one of:
      *                   - single file id
-     *                   - single stored_file ojbect
+     *                   - single stored_file object
      *                   - array of file ids or stored_file objects
      *                   - null
      * @param int    $contextid   (optional), passed to {@link see file_storage::get_area_files}
@@ -467,7 +467,7 @@ abstract class portfolio_caller_base {
     /**
      * array of arguments the caller expects to be passed through to it
      * this must be keyed on the argument name, and the array value is a boolean,
-     * whether it is requrired, or just optional
+     * whether it is required, or just optional
      * eg array(
      *     id            => true,
      *     somethingelse => false,
@@ -545,7 +545,7 @@ abstract class portfolio_module_caller_base extends portfolio_caller_base {
 
     /**
     * return a string to put at the header summarising this export
-    * by default, just hte display name and the module instance name
+    * by default, just the display name and the module instance name
     * override this to do something more specific
     */
     public function heading_summary() {
