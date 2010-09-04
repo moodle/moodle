@@ -2368,8 +2368,8 @@ abstract class lesson_page extends lesson_base {
                 $this->properties->contentsformat = FORMAT_HTML;
             }
             $context = get_context_instance(CONTEXT_MODULE, $PAGE->cm->id);
-            $contents = format_text($this->properties->contents); //format text so glossary autolinking happens
-            return file_rewrite_pluginfile_urls($contents, 'pluginfile.php', $context->id, 'mod_lesson', 'page_contents', $this->properties->id);
+            $contents = file_rewrite_pluginfile_urls($this->properties->contents, 'pluginfile.php', $context->id, 'mod_lesson', 'page_contents', $this->properties->id); // must do this BEFORE format_text()!!!!!!
+            return format_text($contents, $this->properties->contentsformat, array('context'=>$context, 'noclean'=>true)); // page edit is marked with XSS, we want all content here
         } else {
             return '';
         }
