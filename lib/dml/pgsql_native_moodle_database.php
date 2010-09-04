@@ -1049,10 +1049,11 @@ class pgsql_native_moodle_database extends moodle_database {
      * @param string $param usually bound query parameter (?, :named)
      * @param bool $casesensitive use case sensitive search
      * @param bool $accensensitive use accent sensitive search (not all databases support accent insensitive)
+     * @param bool $notlike true means "NOT LIKE"
      * @param string $escapechar escape char for '%' and '_'
      * @return string SQL code fragment
      */
-    public function sql_like($fieldname, $param, $casesensitive = true, $accentsensitive = true, $escapechar = '\\') {
+    public function sql_like($fieldname, $param, $casesensitive = true, $accentsensitive = true, $notlike = false, $escapechar = '\\') {
         if (strpos($param, '%') !== false) {
             debugging('Potential SQL injection detected, sql_ilike() expects bound parameters (? or :named)');
         }
@@ -1060,10 +1061,11 @@ class pgsql_native_moodle_database extends moodle_database {
 
         // postgresql does not support accent insensitive text comparisons, sorry
         if ($casesensitive) {
-            return "$fieldname LIKE $param ESCAPE '$escapechar'";
+            $LIKE = $notlike ? 'NOT LIKE' : 'LIKE';
         } else {
-            return "$fieldname ILIKE $param ESCAPE '$escapechar'";
+            $LIKE = $notlike ? 'NOT ILIKE' : 'ILIKE';
         }
+        return "$fieldname $LIKE $param ESCAPE '$escapechar'";
     }
 
     public function sql_ilike() {

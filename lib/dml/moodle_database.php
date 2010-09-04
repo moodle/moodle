@@ -1744,15 +1744,17 @@ abstract class moodle_database {
      * @param string $param usually bound query parameter (?, :named)
      * @param bool $casesensitive use case sensitive search
      * @param bool $accensensitive use accent sensitive search (not all databases support accent insensitive)
+     * @param bool $notlike true means "NOT LIKE"
      * @param string $escapechar escape char for '%' and '_'
      * @return string SQL code fragment
      */
-    public function sql_like($fieldname, $param, $casesensitive = true, $accentsensitive = true, $escapechar = '\\') {
+    public function sql_like($fieldname, $param, $casesensitive = true, $accentsensitive = true, $notlike = false, $escapechar = '\\') {
         if (strpos($param, '%') !== false) {
             debugging('Potential SQL injection detected, sql_like() expects bound parameters (? or :named)');
         }
+        $LIKE = $notlike ? 'NOT LIKE' : 'LIKE';
         // by default ignore any sensitiveness - each database does it in a different way
-        return "$fieldname LIKE $param ESCAPE '$escapechar'";
+        return "$fieldname $LIKE $param ESCAPE '$escapechar'";
     }
 
     /**

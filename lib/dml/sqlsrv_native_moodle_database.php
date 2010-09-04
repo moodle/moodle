@@ -1192,15 +1192,17 @@ class sqlsrv_native_moodle_database extends moodle_database {
      * @param string $param usually bound query parameter (?, :named)
      * @param bool $casesensitive use case sensitive search
      * @param bool $accensensitive use accent sensitive search (not all databases support accent insensitive)
+     * @param bool $notlike true means "NOT LIKE"
      * @param string $escapechar escape char for '%' and '_'
      * @return string SQL code fragment
      */
-    public function sql_like($fieldname, $param, $casesensitive = true, $accentsensitive = true, $escapechar = '\\') {
+    public function sql_like($fieldname, $param, $casesensitive = true, $accentsensitive = true, $notlike = false, $escapechar = '\\') {
         if (strpos($param, '%') !== false) {
             debugging('Potential SQL injection detected, sql_ilike() expects bound parameters (? or :named)');
         }
 
         $collation = $this->get_collation();
+        $LIKE = $notlike ? 'NOT LIKE' : 'LIKE';
 
         if ($casesensitive) {
             $collation = str_replace('_CI', '_CS', $collation);
@@ -1213,7 +1215,7 @@ class sqlsrv_native_moodle_database extends moodle_database {
             $collation = str_replace('_AS', '_AI', $collation);
         }
 
-        return "$fieldname COLLATE $collation LIKE $param ESCAPE '$escapechar'";
+        return "$fieldname COLLATE $collation $LIKE $param ESCAPE '$escapechar'";
     }
 
     public function sql_concat() {

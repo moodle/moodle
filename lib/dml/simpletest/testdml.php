@@ -2189,13 +2189,21 @@ class dml_test extends UnitTestCase {
         $records = $DB->get_records_sql($sql, array("ouc\\_"));
         $this->assertEqual(count($records), 1);
 
-        $sql = "SELECT * FROM {{$tablename}} WHERE ".$DB->sql_like('name', '?', true, true, '|');
+        $sql = "SELECT * FROM {{$tablename}} WHERE ".$DB->sql_like('name', '?', true, true, false, '|');
         $records = $DB->get_records_sql($sql, array($DB->sql_like_escape("ouc%", '|')));
         $this->assertEqual(count($records), 1);
 
         $sql = "SELECT * FROM {{$tablename}} WHERE ".$DB->sql_like('name', '?', true, true);
         $records = $DB->get_records_sql($sql, array('aui'));
         $this->assertEqual(count($records), 1);
+
+        $sql = "SELECT * FROM {{$tablename}} WHERE ".$DB->sql_like('name', '?', true, true, true); // NOT LIKE
+        $records = $DB->get_records_sql($sql, array("%o%"));
+        $this->assertEqual(count($records), 3);
+
+        $sql = "SELECT * FROM {{$tablename}} WHERE ".$DB->sql_like('name', '?', false, true, true); // NOT ILIKE
+        $records = $DB->get_records_sql($sql, array("%D%"));
+        $this->assertEqual(count($records), 6);
 
         // TODO: we do not require accent insensitivness yet, just make sure it does not throw errors
         $sql = "SELECT * FROM {{$tablename}} WHERE ".$DB->sql_like('name', '?', true, false);
