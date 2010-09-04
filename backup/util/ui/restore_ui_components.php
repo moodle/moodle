@@ -315,7 +315,6 @@ class restore_course_search extends restore_search_base {
         global $DB;
 
         list($ctxselect, $ctxjoin) = context_instance_preload_sql('c.id', CONTEXT_COURSE, 'ctx');
-        $like = $DB->sql_ilike();
         $params = array(
             'fullnamesearch' => $this->get_search().'%',
             'shortnamesearch' => '%'.$this->get_search().'%'
@@ -323,15 +322,14 @@ class restore_course_search extends restore_search_base {
 
         $select     = " SELECT c.id,c.fullname,c.shortname,c.visible,c.sortorder ";
         $from       = " FROM {course} c ";
-        $where      = " WHERE c.fullname $like :fullnamesearch OR c.shortname $like :shortnamesearch ";
+        $where      = " WHERE ".$DB->sql_like('c.fullname', ':fullnamesearch', false)." OR ".$DB->sql_like('c.shortname', ':shortnamesearch', false);
         $orderby    = " ORDER BY c.sortorder";
 
         return array($select.$ctxselect.$from.$ctxjoin.$where.$orderby, $params);
     }
     protected function get_countsql() {
         global $DB;
-        
-        $like = $DB->sql_ilike();
+
         $params = array(
             'fullnamesearch' => $this->get_search().'%',
             'shortnamesearch' => '%'.$this->get_search().'%'
@@ -339,7 +337,7 @@ class restore_course_search extends restore_search_base {
 
         $select     = " SELECT COUNT(c.id) ";
         $from       = " FROM {course} c ";
-        $where      = " WHERE c.fullname $like :fullnamesearch OR c.shortname $like :shortnamesearch ";
+        $where      = " WHERE ".$DB->sql_like('c.fullname', ':fullnamesearch', false)." OR ".$DB->sql_like('c.shortname', ':shortnamesearch', false);
 
         return array($select.$from.$where, $params);
     }
@@ -379,14 +377,13 @@ class restore_category_search extends restore_search_base  {
         global $DB;
 
         list($ctxselect, $ctxjoin) = context_instance_preload_sql('c.id', CONTEXT_COURSECAT, 'ctx');
-        $like = $DB->sql_ilike();
         $params = array(
             'namesearch' => $this->get_search().'%',
         );
 
         $select     = " SELECT c.id,c.name,c.visible,c.sortorder,c.description,c.descriptionformat ";
         $from       = " FROM {course_categories} c ";
-        $where      = " WHERE c.name $like :namesearch ";
+        $where      = " WHERE ".$DB->sql_like('c.name', ':namesearch', false);
         $orderby    = " ORDER BY c.sortorder";
 
         return array($select.$ctxselect.$from.$ctxjoin.$where.$orderby, $params);
@@ -394,14 +391,13 @@ class restore_category_search extends restore_search_base  {
     protected function get_countsql() {
         global $DB;
 
-        $like = $DB->sql_ilike();
         $params = array(
             'namesearch' => $this->get_search().'%',
         );
 
         $select     = " SELECT COUNT(c.id) ";
         $from       = " FROM {course_categories} c ";
-        $where      = " WHERE c.name $like :namesearch ";
+        $where      = " WHERE ".$DB->sql_like('c.name', ':namesearch', false);
 
         return array($select.$from.$where, $params);
     }
