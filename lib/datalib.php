@@ -108,7 +108,6 @@ function get_admins() {
 function search_users($courseid, $groupid, $searchtext, $sort='', array $exceptions=null) {
     global $DB;
 
-    $LIKE      = $DB->sql_ilike();
     $fullname  = $DB->sql_fullname('u.firstname', 'u.lastname');
 
     if (!empty($exceptions)) {
@@ -125,7 +124,7 @@ function search_users($courseid, $groupid, $searchtext, $sort='', array $excepti
         $order = "";
     }
 
-    $select = "u.deleted = 0 AND u.confirmed = 1 AND ($fullname $LIKE :search1 OR u.email $LIKE :search2)";
+    $select = "u.deleted = 0 AND u.confirmed = 1 AND (".$DB->sql_like($fullname, ':search1', false)." OR ".$DB->sql_like('u.email', ':search2', false).")";
     $params['search1'] = "%$searchtext%";
     $params['search2'] = "%$searchtext%";
 
@@ -193,7 +192,6 @@ function get_users($get=true, $search='', $confirmed=false, array $exceptions=nu
                 'load so much data into memory.', DEBUG_DEVELOPER);
     }
 
-    $LIKE      = $DB->sql_ilike();
     $fullname  = $DB->sql_fullname();
 
     $select = " id <> :guestid AND deleted = 0";
@@ -201,7 +199,7 @@ function get_users($get=true, $search='', $confirmed=false, array $exceptions=nu
 
     if (!empty($search)){
         $search = trim($search);
-        $select .= " AND ($fullname $LIKE :search1 OR email $LIKE :search2 OR username = :search3)";
+        $select .= " AND (".$DB->sql_like($fullname, ':search1', false)." OR ".$DB->sql_like('email', ':search2', false)." OR username = :search3)";
         $params['search1'] = "%$search%";
         $params['search2'] = "%$search%";
         $params['search3'] = "$search";
@@ -218,11 +216,11 @@ function get_users($get=true, $search='', $confirmed=false, array $exceptions=nu
     }
 
     if ($firstinitial) {
-        $select .= " AND firstname $LIKE :fni";
+        $select .= " AND ".$DB->sql_like('firstname', ':fni', false, false);
         $params['fni'] = "$firstinitial%";
     }
     if ($lastinitial) {
-        $select .= " AND lastname $LIKE :lni";
+        $select .= " AND ".$DB->sql_like('lastname', ':lni', false, false);
         $params['lni'] = "$lastinitial%";
     }
 
@@ -717,7 +715,6 @@ function get_courses_search($searchterms, $sort='fullname ASC', $page=0, $record
         $REGEXP    = $DB->sql_regex(true);
         $NOTREGEXP = $DB->sql_regex(false);
     }
-    $LIKE = $DB->sql_ilike(); // case-insensitive
 
     $searchcond = array();
     $params     = array();
@@ -728,14 +725,14 @@ function get_courses_search($searchterms, $sort='fullname ASC', $page=0, $record
     foreach ($searchterms as $searchterm) {
         $i++;
 
-        $NOT = ''; /// Initially we aren't going to perform NOT LIKE searches, only MSSQL and Oracle
+        $NOT = false; /// Initially we aren't going to perform NOT LIKE searches, only MSSQL and Oracle
                    /// will use it to simulate the "-" operator with LIKE clause
 
     /// Under Oracle and MSSQL, trim the + and - operators and perform
     /// simpler LIKE (or NOT LIKE) queries
         if (!$DB->sql_regex_supported()) {
             if (substr($searchterm, 0, 1) == '-') {
-                $NOT = ' NOT ';
+                $NOT = true;
             }
             $searchterm = trim($searchterm, '+-');
         }
@@ -755,7 +752,11 @@ function get_courses_search($searchterms, $sort='fullname ASC', $page=0, $record
             $params['ss'.$i] = "(^|[^a-zA-Z0-9])$searchterm([^a-zA-Z0-9]|$)";
 
         } else {
-            $searchcond[] = "$concat $NOT $LIKE :ss$i";
+            if ($NOT) {
+                $searchcond[] = "$concat NOT LIKE :ss$i"; //TODO: MDL-24080
+            } else {
+                $searchcond[] = $DB->sql_like($concat,":ss$i", false);
+            }
             $params['ss'.$i] = "%$searchterm%";
         }
     }
