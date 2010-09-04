@@ -264,15 +264,14 @@ class course_enrolment_manager {
         $params = array('guestid' => $CFG->siteguest);
         if (!empty($search)) {
             $conditions = array('u.firstname','u.lastname');
-            $ilike = ' ' . $DB->sql_ilike();
             if ($searchanywhere) {
                 $searchparam = '%' . $search . '%';
             } else {
                 $searchparam = $search . '%';
             }
             $i = 0;
-            foreach ($conditions as &$condition) {
-                $condition .= "$ilike :con{$i}00";
+            foreach ($conditions as $key=>$condition) {
+                $conditions[$key] = $DB->sql_like($condition,":con{$i}00", false);
                 $params["con{$i}00"] = $searchparam;
                 $i++;
             }
@@ -314,15 +313,14 @@ class course_enrolment_manager {
         $params = array('guestid'=>$CFG->siteguest);
         if (!empty($search)) {
             $conditions = array('u.firstname','u.lastname');
-            $ilike = ' ' . $DB->sql_ilike();
             if ($searchanywhere) {
                 $searchparam = '%' . $search . '%';
             } else {
                 $searchparam = $search . '%';
             }
             $i = 0;
-            foreach ($conditions as &$condition) {
-                $condition .= "$ilike :con{$i}00";
+            foreach ($conditions as $key=>$condition) {
+                $conditions[$key] = $DB->sql_like($condition, ":con{$i}00", false);
                 $params["con{$i}00"] = $searchparam;
                 $i++;
             }
