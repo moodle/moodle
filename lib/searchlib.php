@@ -503,8 +503,6 @@ function search_generate_SQL($parsetree, $datafield, $metafield, $mainidfield, $
         $REGEXP    = $DB->sql_regex(true);
         $NOTREGEXP = $DB->sql_regex(false);
     }
-    $LIKE   = $DB->sql_ilike(); // case-insensitive
-    $NOTLIKE = 'NOT ' . $LIKE;
 
     $params = array();
 
@@ -536,7 +534,7 @@ function search_generate_SQL($parsetree, $datafield, $metafield, $mainidfield, $
 
         switch($type){
             case TOKEN_STRING:
-                $SQLString .= "(($datafield $LIKE :$name1) OR ($metafield $LIKE :$name2))";
+                $SQLString .= "((".$DB->sql_like($datafield, ":$name1", false).") OR (".$DB->sql_like($metafield, ":$name2", false)."))";
                 $params[$name1] =  "%$value%";
                 $params[$name2] =  "%$value%";
                 break;
@@ -547,12 +545,12 @@ function search_generate_SQL($parsetree, $datafield, $metafield, $mainidfield, $
                 break;
             case TOKEN_META:
                 if ($metafield != '') {
-                    $SQLString .= "($metafield $LIKE :$name1)";
+                    $SQLString .= "(".$DB->sql_like($metafield, ":$name1", false).")";
                     $params[$name1] =  "%$value%";
                 }
                 break;
             case TOKEN_USER:
-                $SQLString .= "(($mainidfield = $useridfield) AND (($userfirstnamefield $LIKE :$name1) OR ($userlastnamefield $LIKE :$name2)))";
+                $SQLString .= "(($mainidfield = $useridfield) AND ((".$DB->sql_like($userfirstnamefield, ":$name1", false).") OR (".$DB->sql_like($userlastnamefield, ":$name2", false).")))";
                 $params[$name1] =  "%$value%";
                 $params[$name2] =  "%$value%";
                 break;
@@ -573,7 +571,7 @@ function search_generate_SQL($parsetree, $datafield, $metafield, $mainidfield, $
                 $params[$name1] =  $value;
                 break;
             case TOKEN_NEGATE:
-                $SQLString .= "(NOT (($datafield  $LIKE :$name1) OR ($metafield  $LIKE :$name2)))";
+                $SQLString .= "(NOT ((".$DB->sql_like($datafield, ":$name1", false).") OR (".$DB->sql_like($metafield, ":$name2", false).")))";
                 $params[$name1] =  "%$value%";
                 $params[$name2] =  "%$value%";
                 break;
