@@ -149,14 +149,14 @@ if ($courseitemfilter > 0) {
                                           'where c.id = fv.course_id and fv.item = fi.id '.
                                           'and fi.feedback = ? '.
                                           'and
-                                          (c.shortname '.$DB->sql_ilike().' ?
-                                          OR c.fullname '.$DB->sql_ilike().' ?)';
+                                          ('.$DB->sql_like('c.shortname', '?', false).'
+                                          OR '.$DB->sql_like('c.fullname', '?', false).')';
     $params = array($feedback->id, "%$searchcourse%", "%$searchcourse%");
 
     if ($courses = $DB->get_records_sql_menu($sql, $params)) {
 
          echo ' ' . get_string('filter_by_course', 'feedback') . ': ';
-         
+
          echo html_writer::select($courses, 'coursefilter', $coursefilter, null, array('id'=>'coursefilterid'));
          $PAGE->requires->js_init_call('M.util.init_select_autosubmit', array('analysis-form', 'coursefilterid', false));
     }

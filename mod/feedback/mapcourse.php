@@ -86,8 +86,8 @@ echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
 
 $sql = "select c.id, c.shortname
           from {course} c
-         where c.shortname ".$DB->sql_ilike()." ?
-               OR c.fullname ".$DB->sql_ilike()." ?";
+         where ".$DB->sql_like('c.shortname', '?', false)."
+               OR ".$DB->sql_like('c.fullname', '?', false);
 $params = array("%{$searchcourse}%", "%{$searchcourse}%");
 
 if (($courses = $DB->get_records_sql_menu($sql, $params)) && !empty($searchcourse)) {
