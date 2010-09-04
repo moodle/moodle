@@ -493,18 +493,18 @@ class report_customlang_translator implements renderable {
         }
 
         if (!empty($filter->substring)) {
-            $sql .= "   AND (s.original ".$DB->sql_ilike()." :substringoriginal OR
-                             s.master ".$DB->sql_ilike()." :substringmaster OR
-                             s.local ".$DB->sql_ilike()." :substringlocal)";
+            $sql .= "   AND (".$DB->sql_like('s.original', ':substringoriginal', false)." OR
+                             ".$DB->sql_like('s.master', ':substringmaster', false)." OR
+                             ".$DB->sql_like('s.local', ':substringlocal', false).")";
             $params['substringoriginal'] = '%'.$filter->substring.'%';
             $params['substringmaster']   = '%'.$filter->substring.'%';
             $params['substringlocal']    = '%'.$filter->substring.'%';
         }
 
         if (!empty($filter->helps)) {
-            $sql .= "   AND s.stringid ".$DB->sql_ilike()." '%\\\\_help'";
+            $sql .= "   AND ".$DB->sql_like('s.stringid', '%\\\\_help', false);
         } else {
-            $sql .= "   AND s.stringid NOT ".$DB->sql_ilike()." '%\\\\_link'";
+            $sql .= "   AND s.stringid NOT LIKE '%\\\\_link'"; //TODO: MDL-24080
         }
 
         $osql = " ORDER BY c.name, s.stringid";
