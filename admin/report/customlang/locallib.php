@@ -502,9 +502,11 @@ class report_customlang_translator implements renderable {
         }
 
         if (!empty($filter->helps)) {
-            $sql .= "   AND ".$DB->sql_like('s.stringid', '%\\\\_help', false);
+            $sql .= "   AND ".$DB->sql_like('s.stringid', ':help', false); //ILIKE
+            $params['help'] = '%\\\\_help';
         } else {
-            $sql .= "   AND s.stringid NOT LIKE '%\\\\_link'"; //TODO: MDL-24080
+            $sql .= "   AND ".$DB->sql_like('s.stringid', ':link', false, true, true); //NOT ILIKE
+            $params['link'] = '%\\\\_link';
         }
 
         $osql = " ORDER BY c.name, s.stringid";
