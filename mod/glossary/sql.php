@@ -145,7 +145,6 @@
                 $REGEXP    = $DB->sql_regex(true);
                 $NOTREGEXP = $DB->sql_regex(false);
             }
-            $LIKE = $DB->sql_ilike(); // case-insensitive
 
             $searchcond = array();
             $alcond     = array();
@@ -159,14 +158,14 @@
             foreach ($searchterms as $searchterm) {
                 $i++;
 
-                $NOT = ''; /// Initially we aren't going to perform NOT LIKE searches, only MSSQL and Oracle
+                $NOT = false; /// Initially we aren't going to perform NOT LIKE searches, only MSSQL and Oracle
                            /// will use it to simulate the "-" operator with LIKE clause
 
             /// Under Oracle and MSSQL, trim the + and - operators and perform
             /// simpler LIKE (or NOT LIKE) queries
                 if (!$DB->sql_regex_supported()) {
                     if (substr($searchterm, 0, 1) == '-') {
-                        $NOT = ' NOT ';
+                        $NOT = true;
                     }
                     $searchterm = trim($searchterm, '+-');
                 }
@@ -193,13 +192,17 @@
                     if ($textlib->strlen($searchterm) < 2) {
                         continue;
                     }
-                    $searchcond[] = "$concat $NOT $LIKE :ss$i";
+                    if ($NOT) {
+                        $searchcond[] = "$concat NOT LIKE :ss$i"; //TODO: MDL-24080
+                    } else {
+                        $searchcond[] = $DB->sql_like($concat, ":ss$i", false);
+                    }
                     $params['ss'.$i] = "%$searchterm%";
                 }
             }
 
             if (empty($searchcond)) {
-                $where = " 1=2 "; // no search result
+                $where = "AND 1=2 "; // no search result
 
             } else {
                 $searchcond = implode(" AND ", $searchcond);

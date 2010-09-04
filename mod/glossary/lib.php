@@ -1200,7 +1200,6 @@ function glossary_search($course, $searchterms, $extended = 0, $glossary = NULL)
         $REGEXP    = $DB->sql_regex(true);
         $NOTREGEXP = $DB->sql_regex(false);
     }
-    $LIKE = $DB->sql_ilike(); // case-insensitive
 
     $searchcond = array();
     $params     = array();
@@ -1212,14 +1211,14 @@ function glossary_search($course, $searchterms, $extended = 0, $glossary = NULL)
     foreach ($searchterms as $searchterm) {
         $i++;
 
-        $NOT = ''; /// Initially we aren't going to perform NOT LIKE searches, only MSSQL and Oracle
+        $NOT = false; /// Initially we aren't going to perform NOT LIKE searches, only MSSQL and Oracle
                    /// will use it to simulate the "-" operator with LIKE clause
 
     /// Under Oracle and MSSQL, trim the + and - operators and perform
     /// simpler LIKE (or NOT LIKE) queries
         if (!$DB->sql_regex_supported()) {
             if (substr($searchterm, 0, 1) == '-') {
-                $NOT = ' NOT ';
+                $NOT = true;
             }
             $searchterm = trim($searchterm, '+-');
         }
@@ -1239,7 +1238,11 @@ function glossary_search($course, $searchterms, $extended = 0, $glossary = NULL)
             $params['ss'.$i] = "(^|[^a-zA-Z0-9])$searchterm([^a-zA-Z0-9]|$)";
 
         } else {
-            $searchcond[] = "$concat $NOT $LIKE :ss$i";
+            if ($NOT) {
+                $searchcond[] = "$concat NOT LIKE :ss$i"; //TODO: MDL-24080
+            } else {
+                $searchcond[] = $DB->sql_like($concat, ":ss$i", false);
+            }
             $params['ss'.$i] = "%$searchterm%";
         }
     }
