@@ -1143,10 +1143,9 @@ class blog_filter_search extends blog_filter {
 
     public function __construct($searchterm) {
         global $DB;
-        $ilike = $DB->sql_ilike();
-        $this->conditions = array("(p.summary $ilike ? OR
-                                    p.content $ilike ? OR
-                                    p.subject $ilike ?)");
+        $this->conditions = array("(".$DB->sql_like('p.summary', '?', false)." OR
+                                    ".$DB->sql_like('p.content', '?', false)." OR
+                                    ".$DB->sql_like('p.subject', '?', false).")");
         $this->params[] = "%$searchterm%";
         $this->params[] = "%$searchterm%";
         $this->params[] = "%$searchterm%";
