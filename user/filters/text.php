@@ -88,37 +88,35 @@ class user_filter_text extends user_filter_type {
             return '';
         }
 
-        $ilike = $DB->sql_ilike();
-
         switch($operator) {
             case 0: // contains
-                $res = "$ilike :$name";
+                $res = $DB->sql_like($field, ":$name", false, false);
                 $params[$name] = "%$value%";
                 break;
             case 1: // does not contain
-                $res = "NOT $ilike :$name";
+                $res = "$field NOT LIKE :$name"; //TODO: MDL-24080
                 $params[$name] = "%$value%";
                 break;
             case 2: // equal to
-                $res = "$ilike :$name";
+                $res = $DB->sql_like($field, ":$name", false, false);
                 $params[$name] = "$value";
                 break;
             case 3: // starts with
-                $res = "$ilike :$name";
+                $res = $DB->sql_like($field, ":$name", false, false);
                 $params[$name] = "$value%";
                 break;
             case 4: // ends with
-                $res = "$ilike :$name";
+                $res = $DB->sql_like($field, ":$name", false, false);
                 $params[$name] = "%$value";
                 break;
             case 5: // empty
-                $res = "=:$name";
-                $params[$name] = "";
+                $res = "$field = :$name";
+                $params[$name] = $DB->sql_empty();
                 break;
             default:
                 return '';
         }
-        return array($field.' '.$res, $params);
+        return array($res, $params);
     }
 
     /**

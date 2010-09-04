@@ -258,7 +258,6 @@ function get_users_listing($sort='lastaccess', $dir='ASC', $page=0, $recordsperp
                            $search='', $firstinitial='', $lastinitial='', $extraselect='', array $extraparams=null) {
     global $DB;
 
-    $LIKE      = $DB->sql_ilike();
     $fullname  = $DB->sql_fullname();
 
     $select = "deleted <> 1";
@@ -266,18 +265,20 @@ function get_users_listing($sort='lastaccess', $dir='ASC', $page=0, $recordsperp
 
     if (!empty($search)) {
         $search = trim($search);
-        $select .= " AND ($fullname $LIKE :search1 OR email $LIKE :search2 OR username = :search3)";
+        $select .= " AND (". $DB->sql_like($fullname, ':search1', false, false).
+                   " OR ". $DB->sql_like('email', ':search2', false, false).
+                   " OR username = :search3)";
         $params['search1'] = "%$search%";
         $params['search2'] = "%$search%";
         $params['search3'] = "$search";
     }
 
     if ($firstinitial) {
-        $select .= " AND firstname $LIKE :fni";
+        $select .= " AND ". $DB->sql_like('firstname', ':fni', false, false);
         $params['fni'] = "$firstinitial%";
     }
     if ($lastinitial) {
-        $select .= " AND lastname $LIKE :lni";
+        $select .= " AND ". $DB->sql_like('lastname', ':lni', false, false);
         $params['lni'] = "$lastinitial%";
     }
 

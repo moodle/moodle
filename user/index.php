@@ -415,9 +415,10 @@
     $totalcount = $DB->count_records_sql("SELECT COUNT(u.id) $from $where", $params);
 
     if (!empty($search)) {
-        $LIKE = $DB->sql_ilike();
         $fullname = $DB->sql_fullname('u.firstname','u.lastname');
-        $wheres[] = "($fullname $LIKE :search1 OR email $LIKE :search2 OR idnumber $LIKE :search3) ";
+        $wheres[] = "(". $DB->sql_like($fullname, ':search1', false, false) .
+                    " OR ". $DB->sql_like('email', ':search2', false, false) .
+                    " OR ". $DB->sql_like('idnumber', ':search3', false, false) .") ";
         $params['search1'] = "%$search%";
         $params['search2'] = "%$search%";
         $params['search3'] = "%$search%";

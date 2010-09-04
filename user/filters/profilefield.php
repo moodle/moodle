@@ -120,7 +120,6 @@ class user_filter_profilefield extends user_filter_type {
 
         $where = "";
         $op = " IN ";
-        $ilike = $DB->sql_ilike();
 
         if ($operator < 5 and $value === '') {
             return '';
@@ -128,27 +127,27 @@ class user_filter_profilefield extends user_filter_type {
 
         switch($operator) {
             case 0: // contains
-                $where = "data $ilike :$name";
+                $where = $DB->sql_like('data', ":$name", false, false);
                 $params[$name] = "%$value%";
                 break;
             case 1: // does not contain
-                $where = "data NOT $ilike :$name";
+                $where = "data NOT LIKE :$name"; //TODO: MDL-24080
                 $params[$name] = "%$value%";
                 break;
             case 2: // equal to
-                $where = "data $ilike :$name";
+                $where = $DB->sql_like('data', ":$name", false, false);
                 $params[$name] = "$value";
                 break;
             case 3: // starts with
-                $where = "data $ilike :$name";
+                $where = $DB->sql_like('data', ":$name", false, false);
                 $params[$name] = "$value%";
                 break;
             case 4: // ends with
-                $where = "data $ilike :$name";
+                $where = $DB->sql_like('data', ":$name", false, false);
                 $params[$name] = "%$value";
                 break;
             case 5: // empty
-                $where = "data=:$name";
+                $where = "data = :$name";
                 $params[$name] = "";
                 break;
             case 6: // is not defined
