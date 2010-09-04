@@ -465,4 +465,20 @@ class textlib {
         }
         return implode(' ', $words);
     }
+
+    /**
+     * Locale aware sorting, the key associations are kept, values are sorted alphabetically.
+     * @param array $arr array to be sorted
+     * @param string $lang moodle language
+     * @return array
+     */
+    function asort(array $arr) {
+        if (function_exists('collator_asort')) {
+            $coll = collator_create(get_string('locale', 'langconfig'));
+            collator_asort($coll, $arr);
+        } else {
+            asort($arr);
+        }
+        return $arr;
+    }
 }
