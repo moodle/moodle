@@ -148,8 +148,6 @@ function build_mnet_logs_array($hostid, $course, $user=0, $date=0, $order="l.tim
     //    $groupid = 0;
     //}
 
-    $ILIKE = $DB->sql_ilike();
-
     $groupid = 0;
 
     $joins = array();
@@ -185,12 +183,12 @@ function build_mnet_logs_array($hostid, $course, $user=0, $date=0, $order="l.tim
 
     if ($modaction) {
         $firstletter = substr($modaction, 0, 1);
-        if (preg_match('/[[:alpha:]]/', $firstletter)) {
-            $where .= " AND lower(l.action) $ILIKE :modaction";
-            $params['modaction'] = "%$modaction%";
-        } else if ($firstletter == '-') {
-            $where .= " AND lower(l.action) NOT $ILIKE :modaction";
-            $params['modaction'] = "%$modaction%";
+        if ($firstletter == '-') {
+            $where .= " AND l.action NOT LIKE :modaction"; //TODO: MDL-24080
+            $params['modaction'] = '%'.substr($modaction, 1).'%';
+        } else {
+            $where .= " AND ".$DB->sql_like('l.action', ':modaction', false);
+            $params['modaction'] = '%'.$modaction.'%';
         }
     }
 
@@ -266,14 +264,13 @@ function build_logs_array($course, $user=0, $date=0, $order="l.time ASC", $limit
     }
 
     if ($modaction) {
-        $ILIKE = $DB->sql_ilike();
         $firstletter = substr($modaction, 0, 1);
-        if (preg_match('/[[:alpha:]]/', $firstletter)) {
-            $joins[] = "l.action $ILIKE :modaction";
-            $params['modaction'] = '%'.$modaction.'%';
-        } else if ($firstletter == '-') {
-            $joins[] = "l.action NOT $ILIKE :modaction";
+        if ($firstletter == '-') {
+            $joins[] = "l.action NOT LIKE :modaction"; //TODO: MDL-24080
             $params['modaction'] = '%'.substr($modaction, 1).'%';
+        } else {
+            $joins[] = $DB->sql_like('l.action', ':modaction', false);
+            $params['modaction'] = '%'.$modaction.'%';
         }
     }
 
