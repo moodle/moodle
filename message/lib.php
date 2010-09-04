@@ -1091,7 +1091,6 @@ function message_search_users($courseid, $searchtext, $sort='', $exceptions='') 
     global $CFG, $USER, $DB;
 
     $fullname = $DB->sql_fullname();
-    $LIKE     = $DB->sql_ilike();
 
     if (!empty($exceptions)) {
         $except = ' AND u.id NOT IN ('. $exceptions .') ';
@@ -1113,7 +1112,7 @@ function message_search_users($courseid, $searchtext, $sort='', $exceptions='') 
                                        LEFT JOIN {message_contacts} mc
                                             ON mc.contactid = u.id AND mc.userid = ?
                                       WHERE u.deleted = '0' AND u.confirmed = '1'
-                                            AND ($fullname $LIKE ?)
+                                            AND (".$DB->sql_like($fullname, '?', false).")
                                             $except
                                      $order", $params);
     } else {
@@ -1130,7 +1129,7 @@ function message_search_users($courseid, $searchtext, $sort='', $exceptions='') 
                                               ON mc.contactid = u.id AND mc.userid = ?
                                         WHERE u.deleted = '0' AND u.confirmed = '1'
                                               AND ra.contextid $contextlists
-                                              AND ($fullname $LIKE ?)
+                                              AND (".$DB->sql_like($fullname, '?', false).")
                                               $except
                                        $order", $params);
 
@@ -1155,8 +1154,6 @@ function message_search($searchterms, $fromme=true, $tome=true, $courseid='none'
         $REGEXP    = $DB->sql_regex(true);
         $NOTREGEXP = $DB->sql_regex(false);
     }
-
-    $LIKE = $DB->sql_ilike();
 
     $searchcond = array();
     $params = array();
@@ -1201,13 +1198,13 @@ function message_search($searchterms, $fromme=true, $tome=true, $courseid='none'
             $params['ss'.$i] = "(^|[^a-zA-Z0-9])$searchterm([^a-zA-Z0-9]|$)";
 
         } else {
-            $searchcond[] = "m.fullmessage $NOT $LIKE :ss$i";
+            $searchcond[] = "m.fullmessage NOT LIKE :ss$i"; //TODO: MDL-24080
             $params['ss'.$i] = "%$searchterm%";
         }
     }
 
     if (empty($searchcond)) {
-        $searchcond = " m.fullmessage $LIKE :ss1";
+        $searchcond = " ".$DB->sql_like('m.fullmessage', ':ss1', false);
         $params['ss1'] = "%";
     } else {
         $searchcond = implode(" AND ", $searchcond);
