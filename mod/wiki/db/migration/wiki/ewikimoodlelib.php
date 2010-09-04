@@ -249,7 +249,7 @@ function ewiki_database_moodle($action, &$args, $sw1, $sw2) {
          $sql= "SELECT pagename AS id, version, flags" .
              (EWIKI_DBQUERY_BUFFER && ($field!="pagename") ? ", $field" : "") .
              " FROM {".EWIKI_DB_TABLE_NAME."}".
-             " WHERE $field " . $DB->sql_ilike() . " ? and wiki= ?".
+             " WHERE " . $DB->sql_like($field, '?', false) . " and wiki= ?".
              " ORDER BY id, version ASC";
          $result=$DB->get_records_sql($sql, array("%$content%", $wiki_entry->id));
 
