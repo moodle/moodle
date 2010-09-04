@@ -36,7 +36,7 @@ $PAGE->set_url('/blog/index.php', $url_params);
 
 //correct tagid if a text tag is provided as a param
 if (!empty($tag)) {
-    if ($tagrec = $DB->get_record_sql("SELECT * FROM {tag} WHERE ". $DB->sql_ilike('name', '?', false), array("%$tag%"))) {
+    if ($tagrec = $DB->get_record_sql("SELECT * FROM {tag} WHERE ". $DB->sql_like('name', '?', false), array("%$tag%"))) {
         $tagid = $tagrec->id;
     } else {
         unset($tagid);
