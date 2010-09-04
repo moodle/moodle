@@ -1749,7 +1749,7 @@ abstract class moodle_database {
      */
     public function sql_like($fieldname, $param, $casesensitive = true, $accentsensitive = true, $escapechar = '\\') {
         if (strpos($param, '%') !== false) {
-            debugging('Potential SQL injection detected, sql_ilike() expects bound parameters (? or :named)');
+            debugging('Potential SQL injection detected, sql_like() expects bound parameters (? or :named)');
         }
         // by default ignore any sensitiveness - each database does it in a different way
         return "$fieldname LIKE $param ESCAPE '$escapechar'";
@@ -1778,7 +1778,7 @@ abstract class moodle_database {
      * @return string
      */
     public function sql_ilike() {
-        //TODO: debugging('sql_ilike() is deprecated, please use sql_like() instead');
+        debugging('sql_ilike() is deprecated, please use sql_like() instead');
         return 'LIKE';
     }
 

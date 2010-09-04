@@ -2207,6 +2207,9 @@ class dml_test extends UnitTestCase {
     }
 
     function test_sql_ilike() {
+        global $CFG;
+
+        // note: this is deprecated, just make sure it does not throw error
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
@@ -2223,10 +2226,22 @@ class dml_test extends UnitTestCase {
         $DB->insert_record($tablename, array('name'=>'NoDupor'));
         $DB->insert_record($tablename, array('name'=>'ouch'));
 
+        // make sure it prints debug message
+        $olddebug   = $CFG->debug;       // Save current debug settings
+        $olddisplay = $CFG->debugdisplay;
+        $CFG->debug = DEBUG_DEVELOPER;
+        $CFG->debugdisplay = true;
+        ob_start(); // hide debug warning
         $sql = "SELECT * FROM {".$tablename."} WHERE name ".$DB->sql_ilike()." ?";
         $params = array("%dup_r%");
-        $records = $DB->get_records_sql($sql, $params);
-        $this->assertEqual(count($records), 2, 'DB->sql_ilike() is deprecated, ignore this problem.');
+        ob_end_clean();
+        $debuginfo = ob_get_contents();
+        $CFG->debug = $olddebug;         // Restore original debug settings
+        $CFG->debugdisplay = $olddisplay;
+        $this->assertFalse($debuginfo === '');
+
+        // following must not throw exception, we ignore result
+        $DB->get_records_sql($sql, $params);
     }
 
     function test_sql_concat() {

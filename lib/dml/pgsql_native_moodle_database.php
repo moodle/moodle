@@ -1067,7 +1067,7 @@ class pgsql_native_moodle_database extends moodle_database {
     }
 
     public function sql_ilike() {
-        //TODO: debugging('sql_ilike() is deprecated, please use sql_like() instead');
+        debugging('sql_ilike() is deprecated, please use sql_like() instead');
         return 'ILIKE';
     }
 
