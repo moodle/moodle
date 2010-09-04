@@ -230,7 +230,7 @@ class lesson_page_type_branchtable extends lesson_page {
         $formattextdefoptions = new stdClass;
         $formattextdefoptions->para = false;  //I'll use it widely in this page
         foreach ($answers as $answer) {
-            $data = "<input type=\"button\" name=\"$answer->id\" value=\"".strip_tags(format_text($answer->answer, FORMAT_MOODLE,$formattextdefoptions))."\" disabled=\"disabled\"> ";
+            $data = "<input type=\"button\" name=\"$answer->id\" value=\"".s(strip_tags(format_text($answer->answer, FORMAT_MOODLE,$formattextdefoptions)))."\" disabled=\"disabled\"> ";
             $data .= get_string('jumpsto', 'lesson', $this->get_jump_name($answer->jumpto));
             $answerdata->answers[] = array($data, "");
             $answerpage->answerdata = $answerdata;
