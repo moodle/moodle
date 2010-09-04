@@ -153,9 +153,9 @@ function search_spammers($keywords) {
 
     $keywordfull = array();
     foreach ($keywords as $keyword) {
-        $keywordfull[] = " description $like :descpat ";
+        $keywordfull[] = $DB->sql_like('description', ':descpat', false);
         $params['descpat'] = "%$keyword%";
-        $keywordfull2[] = " p.summary $like :sumpat ";
+        $keywordfull2[] = $DB->sql_like('p.summary', ':sumpat', false);
         $params['sumpat'] = "%$keyword%";
     }
     $conditions = '( '.implode(' OR ', $keywordfull).' )';
