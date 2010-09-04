@@ -131,7 +131,7 @@ class user_filter_profilefield extends user_filter_type {
                 $params[$name] = "%$value%";
                 break;
             case 1: // does not contain
-                $where = "data NOT LIKE :$name"; //TODO: MDL-24080
+                $where = $DB->sql_like('data', ":$name", false, false, true);
                 $params[$name] = "%$value%";
                 break;
             case 2: // equal to

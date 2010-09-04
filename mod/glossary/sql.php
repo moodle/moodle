@@ -192,11 +192,7 @@
                     if ($textlib->strlen($searchterm) < 2) {
                         continue;
                     }
-                    if ($NOT) {
-                        $searchcond[] = "$concat NOT LIKE :ss$i"; //TODO: MDL-24080
-                    } else {
-                        $searchcond[] = $DB->sql_like($concat, ":ss$i", false);
-                    }
+                    $searchcond[] = $DB->sql_like($concat, ":ss$i", false, true, $NOT);
                     $params['ss'.$i] = "%$searchterm%";
                 }
             }

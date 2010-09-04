@@ -1171,7 +1171,7 @@ function message_search($searchterms, $fromme=true, $tome=true, $courseid='none'
     foreach ($searchterms as $searchterm) {
         $i++;
 
-        $NOT = ''; /// Initially we aren't going to perform NOT LIKE searches, only MSSQL and Oracle
+        $NOT = false; /// Initially we aren't going to perform NOT LIKE searches, only MSSQL and Oracle
 
         if ($dropshortwords && strlen($searchterm) < 2) {
             continue;
@@ -1180,7 +1180,7 @@ function message_search($searchterms, $fromme=true, $tome=true, $courseid='none'
     /// simpler LIKE search
         if (!$DB->sql_regex_supported()) {
             if (substr($searchterm, 0, 1) == '-') {
-                $NOT = ' NOT ';
+                $NOT = true;
             }
             $searchterm = trim($searchterm, '+-');
         }
@@ -1198,7 +1198,7 @@ function message_search($searchterms, $fromme=true, $tome=true, $courseid='none'
             $params['ss'.$i] = "(^|[^a-zA-Z0-9])$searchterm([^a-zA-Z0-9]|$)";
 
         } else {
-            $searchcond[] = "m.fullmessage NOT LIKE :ss$i"; //TODO: MDL-24080
+            $searchcond[] = $DB->sql_like("m.fullmessage", ":ss$i", false, true, $NOT);
             $params['ss'.$i] = "%$searchterm%";
         }
     }

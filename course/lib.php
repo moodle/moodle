@@ -184,7 +184,7 @@ function build_mnet_logs_array($hostid, $course, $user=0, $date=0, $order="l.tim
     if ($modaction) {
         $firstletter = substr($modaction, 0, 1);
         if ($firstletter == '-') {
-            $where .= " AND l.action NOT LIKE :modaction"; //TODO: MDL-24080
+            $where .= " AND ".$DB->sql_like('l.action', ':modaction', false, true, true);
             $params['modaction'] = '%'.substr($modaction, 1).'%';
         } else {
             $where .= " AND ".$DB->sql_like('l.action', ':modaction', false);
@@ -266,7 +266,7 @@ function build_logs_array($course, $user=0, $date=0, $order="l.time ASC", $limit
     if ($modaction) {
         $firstletter = substr($modaction, 0, 1);
         if ($firstletter == '-') {
-            $joins[] = "l.action NOT LIKE :modaction"; //TODO: MDL-24080
+            $joins[] = $DB->sql_like('l.action', ':modaction', false, true, true);
             $params['modaction'] = '%'.substr($modaction, 1).'%';
         } else {
             $joins[] = $DB->sql_like('l.action', ':modaction', false);

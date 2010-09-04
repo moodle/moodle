@@ -752,11 +752,7 @@ function get_courses_search($searchterms, $sort='fullname ASC', $page=0, $record
             $params['ss'.$i] = "(^|[^a-zA-Z0-9])$searchterm([^a-zA-Z0-9]|$)";
 
         } else {
-            if ($NOT) {
-                $searchcond[] = "$concat NOT LIKE :ss$i"; //TODO: MDL-24080
-            } else {
-                $searchcond[] = $DB->sql_like($concat,":ss$i", false);
-            }
+            $searchcond[] = $DB->sql_like($concat,":ss$i", false, true, $NOT);
             $params['ss'.$i] = "%$searchterm%";
         }
     }

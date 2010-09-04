@@ -94,7 +94,7 @@ class user_filter_text extends user_filter_type {
                 $params[$name] = "%$value%";
                 break;
             case 1: // does not contain
-                $res = "$field NOT LIKE :$name"; //TODO: MDL-24080
+                $res = $DB->sql_like($field, ":$name", false, false, true);
                 $params[$name] = "%$value%";
                 break;
             case 2: // equal to

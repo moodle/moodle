@@ -1238,11 +1238,7 @@ function glossary_search($course, $searchterms, $extended = 0, $glossary = NULL)
             $params['ss'.$i] = "(^|[^a-zA-Z0-9])$searchterm([^a-zA-Z0-9]|$)";
 
         } else {
-            if ($NOT) {
-                $searchcond[] = "$concat NOT LIKE :ss$i"; //TODO: MDL-24080
-            } else {
-                $searchcond[] = $DB->sql_like($concat, ":ss$i", false);
-            }
+            $searchcond[] = $DB->sql_like($concat, ":ss$i", false, true, $NOT);
             $params['ss'.$i] = "%$searchterm%";
         }
     }
