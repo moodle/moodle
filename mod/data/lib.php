@@ -1650,14 +1650,13 @@ function data_get_post_actions() {
 function data_fieldname_exists($name, $dataid, $fieldid=0) {
     global $CFG, $DB;
 
-    $LIKE = $DB->sql_ilike();
     if ($fieldid) {
         return $DB->record_exists_sql("SELECT * FROM {data_fields} df
-                                        WHERE df.name $LIKE ? AND df.dataid = ?
+                                        WHERE ".$DB->sql_like('df.name', '?', false)." AND df.dataid = ?
                                               AND ((df.id < ?) OR (df.id > ?))", array($name, $dataid, $fieldid, $fieldid));
     } else {
         return $DB->record_exists_sql("SELECT * FROM {data_fields} df
-                                        WHERE df.name $LIKE ? AND df.dataid = ?", array($name, $dataid));
+                                        WHERE ".$DB->sql_like('df.name', '?', false)." AND df.dataid = ?", array($name, $dataid));
     }
 }
 
@@ -2949,7 +2948,7 @@ function data_presets_save($course, $cm, $data, $path) {
  */
 function data_presets_generate_xml($course, $cm, $data) {
     global $DB;
-    
+
     // Assemble "preset.xml":
     $presetxmldata = "<preset>\n\n";
 
