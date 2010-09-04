@@ -617,26 +617,26 @@ class flexible_table {
     }
 
     /**
-     * @return string sql to add to where statement.
+     * @return array - sql, params
      */
     function get_sql_where() {
         global $DB;
         if(!isset($this->columns['fullname'])) {
-            return '';
+            return array('', null);
         }
 
-        $LIKE = $DB->sql_ilike();
-        if(!empty($this->sess->i_first) && !empty($this->sess->i_last)) {
-            return 'firstname '.$LIKE.' \''.$this->sess->i_first.'%\' AND lastname '.$LIKE.' \''.$this->sess->i_last.'%\'';
-        }
-        else if(!empty($this->sess->i_first)) {
-            return 'firstname '.$LIKE.' \''.$this->sess->i_first.'%\'';
-        }
-        else if(!empty($this->sess->i_last)) {
-            return 'lastname '.$LIKE.' \''.$this->sess->i_last.'%\'';
+        $conditions = array();
+        $params = array();
+
+        if (!empty($this->sess->i_first)) {
+            $conditions[] = $DB->sql_like('firstname', ':ifirstc', false, false);
+            $params['ifirstc'] = $this->sess->i_first.'%';
+        } else if(!empty($this->sess->i_last)) {
+            $conditions[] = $DB->sql_like('lastname', ':ilastc', false, false);
+            $params['ilastc'] = $this->sess->i_last.'%';
         }
 
-        return '';
+        return array(implode(" AND ", $conditions), $params);
     }
 
     /**
@@ -1290,7 +1290,7 @@ class table_sql extends flexible_table{
      * We need to count rows returned by the db seperately to the query itself
      * as we need to know how many pages of data we have to display.
      */
-    function set_count_sql($sql, $params=array()){
+    function set_count_sql($sql, array $params = NULL){
         $this->countsql = $sql;
         $this->countparams = $params;
     }
@@ -1301,7 +1301,7 @@ class table_sql extends flexible_table{
      * Of course you can use sub-queries, JOINS etc. by putting them in the
      * appropriate clause of the query.
      */
-    function set_sql($fields, $from, $where, $params=array()){
+    function set_sql($fields, $from, $where, array $params = NULL){
         $this->sql = new object();
         $this->sql->fields = $fields;
         $this->sql->from = $from;
@@ -1327,14 +1327,18 @@ class table_sql extends flexible_table{
                 $this->initialbars($totalinitials>$pagesize);
             }
 
-            if ($this->get_sql_where()) {
-                $this->countsql .= ' AND '.$this->get_sql_where();
-                $this->sql->where .= ' AND '.$this->get_sql_where();
+            list($wsql, $wparams) = $this->get_sql_where();
+            if ($wsql) {
+                $this->countsql .= ' AND '.$wsql;
+                $this->countparams = arry_merge($this->countparams, $wparams);
+
+                $this->sql->where .= ' AND '.$wsql;
+                $this->sql->params = array_merge($this->sql->params, $wparams);
+
                 $total  = $DB->count_records_sql($this->countsql, $this->countparams);
             } else {
                 $total = $totalinitials;
             }
-
 
             $this->pagesize($pagesize, $total);
         }
