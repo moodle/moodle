@@ -148,7 +148,6 @@ function search_spammers($keywords) {
         $keywords = array($keywords);    // Make it into an array
     }
 
-    $like = $DB->sql_ilike();
     $params = array('userid'=>$USER->id);
 
     $keywordfull = array();
