@@ -36,6 +36,8 @@ required changes in code:
   (http://docs.moodle.org/en/Development:JavaScript_usage_guide)
 * remove '_utf8' from lang pack names, use new {a} syntax
 * replace helps with new 'xxx_hlp' strings
+* please note the $plugin->requires in version.php has to be bigger than 2010000000,
+  otherwise the pluguin is marked as outdated and upgrade is interrupted
 
 optional - no changes needed in older code:
 * settingstree.php replaced by settings.php - just unset the $settings if you want to make custom part of settings admin tree
