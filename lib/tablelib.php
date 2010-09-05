@@ -468,13 +468,13 @@ class flexible_table {
         }
 
         if(isset($_GET[$this->request[TABLE_VAR_ILAST]])) {
-            if(empty($_GET[$this->request[TABLE_VAR_ILAST]]) || is_numeric(strpos(get_string('alphabet'), $_GET[$this->request[TABLE_VAR_ILAST]]))) {
+            if(empty($_GET[$this->request[TABLE_VAR_ILAST]]) || is_numeric(strpos(get_string('alphabet', 'langconfig'), $_GET[$this->request[TABLE_VAR_ILAST]]))) {
                 $this->sess->i_last = $_GET[$this->request[TABLE_VAR_ILAST]];
             }
         }
 
         if(isset($_GET[$this->request[TABLE_VAR_IFIRST]])) {
-            if(empty($_GET[$this->request[TABLE_VAR_IFIRST]]) || is_numeric(strpos(get_string('alphabet'), $_GET[$this->request[TABLE_VAR_IFIRST]]))) {
+            if(empty($_GET[$this->request[TABLE_VAR_IFIRST]]) || is_numeric(strpos(get_string('alphabet', 'langconfig'), $_GET[$this->request[TABLE_VAR_IFIRST]]))) {
                 $this->sess->i_first = $_GET[$this->request[TABLE_VAR_IFIRST]];
             }
         }
@@ -617,23 +617,26 @@ class flexible_table {
     }
 
     /**
-     * @return array - sql, params
+     * @return array - sql where, params array
      */
     function get_sql_where() {
         global $DB;
-        if(!isset($this->columns['fullname'])) {
-            return array('', null);
-        }
 
         $conditions = array();
         $params = array();
 
-        if (!empty($this->sess->i_first)) {
-            $conditions[] = $DB->sql_like('firstname', ':ifirstc', false, false);
-            $params['ifirstc'] = $this->sess->i_first.'%';
-        } else if(!empty($this->sess->i_last)) {
-            $conditions[] = $DB->sql_like('lastname', ':ilastc', false, false);
-            $params['ilastc'] = $this->sess->i_last.'%';
+        if (isset($this->columns['fullname'])) {
+            static $i = 0;
+            $i++;
+
+            if (!empty($this->sess->i_first)) {
+                $conditions[] = $DB->sql_like('firstname', ':ifirstc'.$i, false, false);
+                $params['ifirstc'.$i] = $this->sess->i_first.'%';
+            }
+            if (!empty($this->sess->i_last)) {
+                $conditions[] = $DB->sql_like('lastname', ':ilastc'.$i, false, false);
+                $params['ilastc'.$i] = $this->sess->i_last.'%';
+            }
         }
 
         return array(implode(" AND ", $conditions), $params);
