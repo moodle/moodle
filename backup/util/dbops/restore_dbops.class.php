@@ -246,7 +246,7 @@ abstract class restore_dbops {
             throw new restore_dbops_exception('unknown_context_mapping', $oldcontextid);
         }
 
-        // Important: remember how files have been loaded to backup_ids_temp
+        // Important: remember how files have been loaded to backup_files_temp
         //   - info: contains the whole original object (times, names...)
         //   (all them being original ids as loaded from xml)
 
@@ -329,7 +329,7 @@ abstract class restore_dbops {
      * ready to be created. Also, annotate their newids
      * once created for later reference
      */
-    public static function create_included_users($basepath, $restoreid, $userfiles) {
+    public static function create_included_users($basepath, $restoreid, $userfiles, $userid) {
         global $CFG, $DB;
 
         $authcache = array(); // Cache to get some bits from authentication plugins
@@ -465,10 +465,10 @@ abstract class restore_dbops {
             }
 
             // Create user files in pool (profile, icon, private) by context
-            restore_dbops::send_files_to_pool($basepath, $restoreid, 'user', 'icon', $recuser->parentitemid);
-            restore_dbops::send_files_to_pool($basepath, $restoreid, 'user', 'profile', $recuser->parentitemid);
+            restore_dbops::send_files_to_pool($basepath, $restoreid, 'user', 'icon', $recuser->parentitemid, $userid);
+            restore_dbops::send_files_to_pool($basepath, $restoreid, 'user', 'profile', $recuser->parentitemid, $userid);
             if ($userfiles) { // private files only if enabled in settings
-                restore_dbops::send_files_to_pool($basepath, $restoreid, 'user', 'private', $recuser->parentitemid);
+                restore_dbops::send_files_to_pool($basepath, $restoreid, 'user', 'private', $recuser->parentitemid, $userid);
             }
 
         }

@@ -514,7 +514,7 @@ class restore_create_included_users extends restore_execution_step {
 
     protected function define_execution() {
 
-        restore_dbops::create_included_users($this->get_basepath(), $this->get_restoreid(), $this->get_setting_value('user_files'));
+        restore_dbops::create_included_users($this->get_basepath(), $this->get_restoreid(), $this->get_setting_value('user_files'), $this->task->get_userid());
     }
 }
 
