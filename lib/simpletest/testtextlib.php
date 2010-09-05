@@ -44,13 +44,13 @@ class textlib_test extends UnitTestCase {
         $SESSION->lang = 'en'; // make sure we test en language to get consistent results, hopefully all systems have this locale
 
         $arr = array('b'=>'ab', 1=>'aa', 0=>'cc');
-        $result = textlib_get_instance()->asort($arr);
-        $this->assertIdentical(array_keys($result), array(1, 'b', 0));
-        $this->assertIdentical(array_values($result), array('aa', 'ab', 'cc'));
+        textlib_get_instance()->asort($arr);
+        $this->assertIdentical(array_keys($arr), array(1, 'b', 0));
+        $this->assertIdentical(array_values($arr), array('aa', 'ab', 'cc'));
 
         $arr = array('a'=>'áb', 'b'=>'ab', 1=>'aa', 0=>'cc');
-        $result = textlib_get_instance()->asort($arr);
-        $this->assertIdentical(array_keys($result), array(1, 'b', 'a', 0), 'Collation aware sorting not supported');
+        textlib_get_instance()->asort($arr);
+        $this->assertIdentical(array_keys($arr), array(1, 'b', 'a', 0), 'Collation aware sorting not supported');
 
         unset($SESSION->lang);
     }

@@ -470,15 +470,14 @@ class textlib {
      * Locale aware sorting, the key associations are kept, values are sorted alphabetically.
      * @param array $arr array to be sorted
      * @param string $lang moodle language
-     * @return array
+     * @return void, modifies parameter
      */
-    function asort(array $arr) {
+    function asort(array &$arr) {
         if (function_exists('collator_asort')) {
             $coll = collator_create(get_string('locale', 'langconfig'));
             collator_asort($coll, $arr);
         } else {
-            asort($arr);
+            asort($arr, SORT_LOCALE_STRING);
         }
-        return $arr;
     }
 }
