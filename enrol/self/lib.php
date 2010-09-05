@@ -162,6 +162,15 @@ class enrol_self_plugin extends enrol_plugin {
             return null;
         }
 
+        if ($instance->customint3 > 0) {
+            // max enrol limit specified
+            $count = $DB->count_records('user_enrolments', array('enrolid'=>$instance->id));
+            if ($count >= $instance->customint3) {
+                // bad luck, no more self enrolments here
+                return $OUTPUT->notification(get_string('maxenrolledreached', 'enrol_self'));
+            }
+        }
+
         require_once("$CFG->dirroot/enrol/self/locallib.php");
         require_once("$CFG->dirroot/group/lib.php");
 
@@ -218,6 +227,7 @@ class enrol_self_plugin extends enrol_plugin {
 
         $fields = array('customint1'  => $this->get_config('groupkey'),
                         'customint2'  => $this->get_config('longtimenosee'),
+                        'customint3'  => $this->get_config('maxenrolled'),
                         'enrolperiod' => $this->get_config('enrolperiod', 0),
                         'status'      => $this->get_config('status'),
                         'roleid'      => $this->get_config('roleid', 0));

@@ -92,8 +92,15 @@ class enrol_self_edit_form extends moodleform {
         $mform->setDefault('customint2', $plugin->get_config('longtimenosee'));
         $mform->addHelpButton('customint2', 'longtimenosee', 'enrol_self');
 
+        $mform->addElement('text', 'customint3', get_string('maxenrolled', 'enrol_self'));
+        $mform->setDefault('customint3', $plugin->get_config('maxenrolled'));
+        $mform->addHelpButton('customint3', 'maxenrolled', 'enrol_self');
+        $mform->setType('customint3', PARAM_INT);
+
         $mform->addElement('hidden', 'id');
+        $mform->setType('id', PARAM_INT);
         $mform->addElement('hidden', 'courseid');
+        $mform->setType('courseid', PARAM_INT);
 
         $this->add_action_buttons(true, ($instance->id ? null : get_string('addinstance', 'enrol')));
 
