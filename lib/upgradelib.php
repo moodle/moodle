@@ -290,6 +290,8 @@ function upgrade_plugins($type, $startcallback, $endcallback, $verbose) {
         if (!empty($plugin->requires)) {
             if ($plugin->requires > $CFG->version) {
                 throw new upgrade_requires_exception($component, $plugin->version, $CFG->version, $plugin->requires);
+            } else if ($plugin->requires < 2010000000) {
+                throw new plugin_defective_exception($component, 'Plugin is not compatible with Moodle 2.x or later.');
             }
         }
 
@@ -419,6 +421,8 @@ function upgrade_plugins_modules($startcallback, $endcallback, $verbose) {
         if (!empty($module->requires)) {
             if ($module->requires > $CFG->version) {
                 throw new upgrade_requires_exception($component, $module->version, $CFG->version, $module->requires);
+            } else if ($module->requires < 2010000000) {
+                throw new plugin_defective_exception($component, 'Plugin is not compatible with Moodle 2.x or later.');
             }
         }
 
@@ -552,6 +556,14 @@ function upgrade_plugins_blocks($startcallback, $endcallback, $verbose) {
         $plugin->cron    = 0;
         include($fullblock.'/version.php');
         $block = $plugin;
+
+        if (!empty($plugin->requires)) {
+            if ($plugin->requires > $CFG->version) {
+                throw new upgrade_requires_exception($component, $plugin->version, $CFG->version, $plugin->requires);
+            } else if ($plugin->requires < 2010000000) {
+                throw new plugin_defective_exception($component, 'Plugin is not compatible with Moodle 2.x or later.');
+            }
+        }
 
         if (!is_readable($fullblock.'/block_'.$blockname.'.php')) {
             throw new plugin_defective_exception('block/'.$blockname, 'Missing main block class file.');

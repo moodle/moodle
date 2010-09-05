@@ -31,7 +31,7 @@
  * @package
  */
 
-$plugin->version  = 2008090900;
-$plugin->requires = 2008091500;
+$plugin->version  = 2010090501;
+$plugin->requires = 2010090501;
 
 

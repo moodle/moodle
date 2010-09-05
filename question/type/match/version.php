@@ -1,6 +1,6 @@
 <?php
 
-$plugin->version  = 2009072100;
-$plugin->requires = 2007101000;
+$plugin->version  = 2010090501;
+$plugin->requires = 2010090501;
 
 

@@ -32,7 +32,7 @@
  */
 
 
-$plugin->version  = 2008072401;
-$plugin->requires = 2008072401;
+$plugin->version  = 2010090501;
+$plugin->requires = 2010090501;
 
 
