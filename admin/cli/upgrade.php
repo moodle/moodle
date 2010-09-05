@@ -77,7 +77,7 @@ require("$CFG->dirroot/version.php");       // defines $version and $release
 $CFG->target_release = $release;            // used during installation and upgrades
 
 if ($version < $CFG->version) {
-    cli_error('The code you are using is OLDER than the version that made these databases!'); // TODO: localize
+    cli_error(get_string('downgradedcore', 'error'));
 }
 
 $newversion = "$release ($version)";

@@ -249,7 +249,8 @@ if ($version > $CFG->version) {  // upgrade
         upgrade_core($version, true);
     }
 } else if ($version < $CFG->version) {
-    echo $OUTPUT->notification('WARNING!!!  The code you are using is OLDER than the version that made these databases!');
+    // better stop here, we can not continue with plugin upgrades or anything else
+    throw new moodle_exception('downgradedcore', 'error', new moodle_url('/admin/'));
 }
 
 // Updated human-readable release version if necessary
