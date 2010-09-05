@@ -214,18 +214,15 @@ TABLE_VAR_PAGE    => 'spage'
 
 $table->setup();
 
-$params = array();
-
 if ($table->get_sql_sort()) {
     $sort = 'ORDER BY '. $table->get_sql_sort();
 } else {
     $sort = '';
 }
 
-if ($table->get_sql_where()) {
-    $where = 'WHERE '. $table->get_sql_where();
-} else {
-    $where = '';
+list($where, $params) = $table->get_sql_where();
+if ($where) {
+    $where = 'WHERE '. $where;
 }
 
 $query = "

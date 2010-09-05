@@ -169,11 +169,9 @@
         $sort = '';
     }
 
-    if($table->get_sql_where()) {
-        $where = $table->get_sql_where();
+    list($where, $params) = $table->get_sql_where(); //TODO: weird, $where not used anywhere
+    if ($where) {
         $where .= ' AND';
-    }else {
-        $where = '';
     }
 
     //get students in conjunction with groupmode
@@ -199,7 +197,7 @@
         $pagecount = $table->get_page_size();
     }
 
-    $students = feedback_get_incomplete_users($cm, $usedgroupid, $sort, $startpage, $pagecount);
+    $students = feedback_get_incomplete_users($cm, $usedgroupid, $sort, $startpage, $pagecount); // TODO: $where and $params should be probably used here
     //####### viewreports-start
     //print the list of students
     echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthwide');

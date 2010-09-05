@@ -136,11 +136,9 @@ if($do_show == 'showentries'){
             $sort = '';
         }
 
-        if($table->get_sql_where()) {
-            $where = $table->get_sql_where();
+        list($where, $params) = $table->get_sql_where();
+        if ($where) {
             $where .= ' AND';
-        }else {
-            $where = '';
         }
 
         //get students in conjunction with groupmode
@@ -166,7 +164,7 @@ if($do_show == 'showentries'){
             $pagecount = $table->get_page_size();
         }
 
-        $students = feedback_get_complete_users($cm, $usedgroupid, $where, $sort, $startpage, $pagecount);
+        $students = feedback_get_complete_users($cm, $usedgroupid, $where, $params, $sort, $startpage, $pagecount);
 
         $completedFeedbackCount = feedback_get_completeds_group_count($feedback, $mygroupid);
         if($feedback->course == SITEID){

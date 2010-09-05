@@ -166,7 +166,7 @@ function feedback_pluginfile($course, $cm, $context, $filearea, $args, $forcedow
         if ($filearea !== 'item') {
             return false;
         }
-        
+
         if ($item->feedback == $cm->instance) {
             $filecontext = $context;
         } else {
@@ -179,7 +179,7 @@ function feedback_pluginfile($course, $cm, $context, $filearea, $args, $forcedow
             return false;
         }
     }
-    
+
     $relativepath = implode('/', $args);
     $fullpath = "/$context->id/mod_feedback/$filearea/$itemid/$relativepath";
 
@@ -805,42 +805,45 @@ function feedback_count_complete_users($cm, $group = false) {
  * @uses FEEDBACK_ANONYMOUS_NO
  * @param object $cm
  * @param int $group single groupid
- * @param string $where a sql where condition
+ * @param string $where a sql where condition (must end with " AND ")
+ * @param array parameters used in $where
  * @param string $sort a table field
  * @param int $startpage
  * @param int $pagecount
  * @return object the userrecords
  */
-function feedback_get_complete_users($cm, $group = false, $where, $sort = '', $startpage = false, $pagecount = false) {
+function feedback_get_complete_users($cm, $group = false, $where = '', array $params = NULL, $sort = '', $startpage = false, $pagecount = false) {
     global $DB;
 
     if (!$context = get_context_instance(CONTEXT_MODULE, $cm->id)) {
             print_error('badcontext');
     }
 
-    $params = array(FEEDBACK_ANONYMOUS_NO, $cm->instance);
+    $params = (array)$params;
+
+    $params['anon'] = FEEDBACK_ANONYMOUS_NO;
+    $params['instance'] = $cm->instance;
 
     $fromgroup = '';
     $wheregroup = '';
-    if($group) {
+    if ($group) {
         $fromgroup = ', {groups_members} g';
-        $wheregroup = ' AND g.groupid = ? AND g.userid = c.userid';
-        $params[] = $group;
+        $wheregroup = ' AND g.groupid = :group AND g.userid = c.userid';
+        $params['group'] = $group;
     }
 
-    if($sort) {
+    if ($sort) {
         $sortsql = ' ORDER BY '.$sort;
-    }else {
+    } else {
         $sortsql = '';
     }
 
     $ufields = user_picture::fields('u');
-    $sql = 'SELECT DISTINCT '.$ufields.' FROM {user} u, {feedback_completed} c'.$fromgroup.'
-              WHERE '.$where.' anonymous_response = ? AND u.id = c.userid AND c.feedback = ?
+    $sql = 'SELECT DISTINCT '.$ufields.' FROM {user} u, {feedback_completed} c '.$fromgroup.'
+              WHERE '.$where.' anonymous_response = :anon AND u.id = c.userid AND c.feedback = :instance
               '.$wheregroup.$sortsql;
-              ;
 
-    if($startpage === false OR $pagecount === false) {
+    if ($startpage === false OR $pagecount === false) {
         $startpage = false;
         $pagecount = false;
     }

@@ -374,6 +374,7 @@
                     $countsql .= 'COUNT(DISTINCT('.$DB->sql_concat('u.id', '\'#\'','st.attempt').')) AS nbattempts, ';
                     $countsql .= 'COUNT(DISTINCT(u.id)) AS nbusers ';
                     $countsql .= $from.$where;
+                    $params = array();
 
                     if (!$download) {
                         $sort = $table->get_sql_sort();
@@ -390,17 +391,19 @@
 
                     if (!$download) {
                         // Add extra limits due to initials bar
-                        if($table->get_sql_where()) {
-                            $where .= ' AND '.$table->get_sql_where();
+                        list($twhere, $tparams) = $table->get_sql_where();
+                        if ($twhere) {
+                            $where .= ' AND '.$twhere; //initial bar
+                            $params = array_merge($params, $tparams);
                         }
 
                         if (!empty($countsql)) {
                             $count = $DB->get_record_sql($countsql);
                             $totalinitials = $count->nbresults;
-                            if ($table->get_sql_where()) {
-                                $countsql .= ' AND '.$table->get_sql_where();
+                            if ($twhere) {
+                                $countsql .= ' AND '.$twhere;
                             }
-                            $count = $DB->get_record_sql($countsql);
+                            $count = $DB->get_record_sql($countsql, $params);
                             $total  = $count->nbresults;
                         }
 
@@ -419,7 +422,7 @@
 
                     // Fetch the attempts
                     if (!$download) {
-                        $attempts = $DB->get_records_sql($select.$from.$where.$sort, array(),
+                        $attempts = $DB->get_records_sql($select.$from.$where.$sort, $params,
                                                 $table->get_page_start(), $table->get_page_size());
                         echo '<div id="scormtablecontainer">';
                         if ($candelete) {
@@ -436,7 +439,7 @@
                         }
                         $table->initialbars($totalinitials>20); // Build table rows
                     } else {
-                        $attempts = $DB->get_records_sql($select.$from.$where.$sort);
+                        $attempts = $DB->get_records_sql($select.$from.$where.$sort, $params);
                     }
 
                     if ($attempts) {

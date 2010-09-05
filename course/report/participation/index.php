@@ -202,8 +202,10 @@
         $params['instanceid'] = $instanceid;
         $params['timefrom'] = $timefrom;
 
-        if ($table->get_sql_where()) {
-            $sql .= ' AND '.$table->get_sql_where(); //initial bar
+        list($twhere, $tparams) = $table->get_sql_where();
+        if ($twhere) {
+            $sql .= ' AND '.$twhere; //initial bar
+            $params = array_merge($params, $tparams);
         }
 
         $sql .= " GROUP BY ra.userid, u.firstname, u.lastname, u.idnumber";
@@ -220,8 +222,8 @@
 
         $totalcount = $DB->count_records_sql($countsql, $params);
 
-        if ($table->get_sql_where()) {
-            $matchcount = $DB->count_records_sql($countsql.' AND '.$table->get_sql_where(), $params);
+        if ($twhere) {
+            $matchcount = $DB->count_records_sql($countsql.' AND '.$twhere, $params);
         } else {
             $matchcount = $totalcount;
         }

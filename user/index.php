@@ -14,7 +14,7 @@
 
     $page         = optional_param('page', 0, PARAM_INT);                     // which page to show
     $perpage      = optional_param('perpage', DEFAULT_PAGE_SIZE, PARAM_INT);  // how many per page
-    $mode         = optional_param('mode', NULL);                             // use the MODE_ constants
+    $mode         = optional_param('mode', NULL, PARAM_INT);                  // use the MODE_ constants
     $accesssince  = optional_param('accesssince',0,PARAM_INT);                // filter by last access. -1 = never
     $search       = optional_param('search','',PARAM_RAW);                    // make sure it is processed with p() or s() when sending to output!
     $roleid       = optional_param('roleid', 0, PARAM_INT);                   // optional roleid, 0 means all enrolled users (or all on the frontpage)
@@ -424,8 +424,10 @@
         $params['search3'] = "%$search%";
     }
 
-    if ($table->get_sql_where()) {
-        $wheres[] = $table->get_sql_where();
+    list($twhere, $tparams) = $table->get_sql_where();
+    if ($twhere) {
+        $wheres[] = $twhere;
+        $params = array_merge($params, $tparams);
     }
 
     $from = implode("\n", $joins);

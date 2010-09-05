@@ -260,12 +260,14 @@ class quiz_grading_report extends quiz_default_report {
 
         list($select, $from, $where, $params) = $this->attempts_sql($quiz->id, true, $question->id);
 
-        if($table->get_sql_where()) { // forgot what this does
-            $where .= 'AND '.$table->get_sql_where();
+        list($twhere, $tparams) = $table->get_sql_where();
+        if ($twhere) {
+            $where .= ' AND '.$twhere; //initial bar
+            $params = array_merge($params, $tparams);
         }
 
         // sorting of the table
-        if($sort = $table->get_sql_sort()) {
+        if ($sort = $table->get_sql_sort()) {
             $sort = 'ORDER BY '.$sort;  // seems like I would need to have u. or qa. infront of the ORDER BY attribues... but seems to work..
         } else {
             // my default sort rule

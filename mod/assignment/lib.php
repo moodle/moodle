@@ -1261,11 +1261,12 @@ class assignment_base {
         }
     /// Construct the SQL
 
-        if ($where = $table->get_sql_where()) {
+        list($where, $params) = $table->get_sql_where();
+        if ($where) {
             $where .= ' AND ';
         }
 
-        if($filter == self::FILTER_SUBMITTED) {
+        if ($filter == self::FILTER_SUBMITTED) {
            $where .= 's.timemodified > 0 AND ';
         } else if($filter == self::FILTER_REQUIRE_GRADING) {
            $where .= 's.timemarked < s.timemodified AND ';
@@ -1286,7 +1287,7 @@ class assignment_base {
                 AND s.assignment = '.$this->assignment->id.' '.
                'WHERE '.$where.'u.id IN ('.implode(',',$users).') ';
 
-        $ausers = $DB->get_records_sql($select.$sql.$sort, null, $table->get_page_start(), $table->get_page_size());
+        $ausers = $DB->get_records_sql($select.$sql.$sort, $params, $table->get_page_start(), $table->get_page_size());
 
         $table->pagesize($perpage, count($users));
 
