@@ -248,7 +248,7 @@ $capabilities = array(
         'riskbitmask' => RISK_SPAM | RISK_PERSONAL | RISK_XSS,
 
         'captype' => 'write',
-        'contextlevel' => CONTEXT_MODULE,
+        'contextlevel' => CONTEXT_COURSE,
         'archetypes' => array(
             'editingteacher' => CAP_ALLOW,
             'manager' => CAP_ALLOW
