@@ -450,6 +450,7 @@ $string['incompatibleblocks'] = 'Incompatible blocks';
 $string['install'] = 'Install selected language pack';
 $string['installedlangs'] = 'Installed language packs';
 $string['intcachemax'] = 'Int. cache max';
+$string['intlrecommended'] = 'Intl extension is used to improve internationalization support, such as locale aware sorting.';
 $string['invalidsection'] = 'Invalid section.';
 $string['invaliduserchangeme'] = 'Username \"changeme\" is reserved -- you cannot create an account with it.';
 $string['iplookup'] = 'IP address lookup';
