@@ -736,7 +736,7 @@ function feedback_get_incomplete_users($cm, $group = false, $sort = '', $startpa
 
     //now get all completeds
     if(!$completedusers = $DB->get_records_menu('feedback_completed', array('feedback'=>$cm->instance), '', 'userid,id')){
-        return false;
+        return $allusers;
     }
     $completedusers = array_keys($completedusers);
 
