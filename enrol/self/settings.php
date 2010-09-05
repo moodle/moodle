@@ -40,10 +40,6 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configcheckbox('enrol_self/showhint',
         get_string('showhint', 'enrol_self'), get_string('showhint_desc', 'enrol_self'), 0));
 
-    $settings->add(new admin_setting_configcheckbox('enrol_self/sendcoursewelcomemessage',
-        get_string('sendcoursewelcomemessage', 'enrol_self'), get_string('sendcoursewelcomemessage_desc', 'enrol_self'), 1));
-
-
     //--- enrol instance defaults ----------------------------------------------------------------------------
     $settings->add(new admin_setting_heading('enrol_self_defaults',
         get_string('enrolinstancedefaults', 'admin'), get_string('enrolinstancedefaults_desc', 'admin')));
@@ -90,4 +86,7 @@ if ($ADMIN->fulltree) {
 
     $settings->add(new admin_setting_configtext('enrol_self/maxenrolled',
         get_string('maxenrolled', 'enrol_self'), get_string('maxenrolled_help', 'enrol_self'), 0, PARAM_INT));
+
+    $settings->add(new admin_setting_configcheckbox('enrol_self/sendcoursewelcomemessage',
+        get_string('sendcoursewelcomemessage', 'enrol_self'), get_string('sendcoursewelcomemessage_desc', 'enrol_self'), 1));
 }

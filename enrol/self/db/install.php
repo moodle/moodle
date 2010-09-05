@@ -30,7 +30,8 @@ function xmldb_enrol_self_install() {
 
     // migrate welcome message
     if (isset($CFG->sendcoursewelcomemessage)) {
-        set_config('sendcoursewelcomemessage', $CFG->sendcoursewelcomemessage, 'enrol_self');
+        set_config('sendcoursewelcomemessage', $CFG->sendcoursewelcomemessage, 'enrol_self'); // new course default
+        $DB->set_field('enrol', 'customint4', $CFG->sendcoursewelcomemessage, array('enrol'=>'self')); // each instance has different setting now
         unset_config('sendcoursewelcomemessage');
     }
 
