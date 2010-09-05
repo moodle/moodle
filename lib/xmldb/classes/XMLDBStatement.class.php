@@ -336,7 +336,7 @@ class XMLDBStatement extends XMLDBObject {
         $fields = array();
 
     /// Get first part from the sentence (before VALUES)
-        preg_match('/^\((.*)\)\s+VALUES/is', $sentence, $matches);
+        preg_match('/^\((.*)\)\s+VALUES/Us', $sentence, $matches);
         if (isset($matches[1])) {
             $part = $matches[1];
         /// Convert the comma separated string to an array
