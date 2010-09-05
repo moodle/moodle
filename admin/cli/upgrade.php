@@ -107,7 +107,7 @@ if ($version > $CFG->version) {
 }
 set_config('release', $release);
 
-// uncoditionally upgrade
+// unconditionally upgrade
 upgrade_noncore(true);
 
 // log in as admin - we need doanything permission when applying defaults
