@@ -262,8 +262,9 @@ if ($release <> $CFG->release) {  // Update the release version
 
 if (moodle_needs_upgrading()) {
     if (!$PAGE->headerprinted) {
-        $PAGE->set_pagelayout('maintenance');
+        // means core upgrade or installation was not already done
         if (!$confirmplugins) {
+            $PAGE->set_pagelayout('maintenance');
             $strplugincheck = get_string('plugincheck');
             $PAGE->navbar->add($strplugincheck);
             $PAGE->set_title($strplugincheck);
