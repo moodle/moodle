@@ -584,6 +584,7 @@ $string['installedlangs'] = 'Installed language packs';
 $string['installhijacked'] = 'Installation must be finished from the original IP address, sorry.';
 $string['installsessionerror'] = 'Can not initialise PHP session, please verify that your browser accepts cookies.';
 $string['intcachemax'] = 'Int. cache max';
+$string['intlrecommended'] = 'Intl extension is used to improve internationalization support, such as locale aware sorting.';
 $string['invalidlangpack'] = 'to edit this language pack, you need to put it in language folder.';
 $string['invalidsection'] = 'Invalid section.';
 $string['invaliduserchangeme'] = 'Username "changeme" is reserved -- you cannot create an account with it.';

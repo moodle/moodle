@@ -295,6 +295,11 @@
       </PHP_EXTENSION>
       <PHP_EXTENSION name="xml" level="required">
       </PHP_EXTENSION>
+      <PHP_EXTENSION name="intl" level="optional">
+        <FEEDBACK>
+          <ON_CHECK message="intlrecommended" />
+        </FEEDBACK>
+      </PHP_EXTENSION>
     </PHP_EXTENSIONS>
     <PHP_SETTINGS>
       <PHP_SETTING name="memory_limit" value="40M" level="required">
