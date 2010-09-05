@@ -1629,15 +1629,44 @@ class dml_test extends UnitTestCase {
         $dbman->create_table($table);
         $this->tables[$tablename] = $table;
 
-        $DB->insert_record($tablename, array('course' => 1));
+        // simple set_field
+        $id1 = $DB->insert_record($tablename, array('course' => 1));
+        $id2 = $DB->insert_record($tablename, array('course' => 1));
+        $id3 = $DB->insert_record($tablename, array('course' => 3));
+        $this->assertTrue($DB->set_field($tablename, 'course', 2, array('id' => $id1)));
+        $this->assertEqual(2, $DB->get_field($tablename, 'course', array('id' => $id1)));
+        $this->assertEqual(1, $DB->get_field($tablename, 'course', array('id' => $id2)));
+        $this->assertEqual(3, $DB->get_field($tablename, 'course', array('id' => $id3)));
+        $DB->delete_records($tablename, array());
 
-        $this->assertTrue($DB->set_field($tablename, 'course', 2, array('id' => 1)));
-        $this->assertEqual(2, $DB->get_field($tablename, 'course', array('id' => 1)));
+        // multiple fields affected
+        $id1 = $DB->insert_record($tablename, array('course' => 1));
+        $id2 = $DB->insert_record($tablename, array('course' => 1));
+        $id3 = $DB->insert_record($tablename, array('course' => 3));
+        $DB->set_field($tablename, 'course', '5', array('course' => 1));
+        $this->assertEqual(5, $DB->get_field($tablename, 'course', array('id' => $id1)));
+        $this->assertEqual(5, $DB->get_field($tablename, 'course', array('id' => $id2)));
+        $this->assertEqual(3, $DB->get_field($tablename, 'course', array('id' => $id3)));
+        $DB->delete_records($tablename, array());
 
-        // Add one set_field() example where the field being set is also one condition
-        // to check we haven't problem with any type of param (specially NAMED ones)
-        $DB->set_field($tablename, 'course', '1', array('course' => 2));
-        $this->assertEqual(1, $DB->get_field($tablename, 'course', array('id' => 1)));
+        // no field affected
+        $id1 = $DB->insert_record($tablename, array('course' => 1));
+        $id2 = $DB->insert_record($tablename, array('course' => 1));
+        $id3 = $DB->insert_record($tablename, array('course' => 3));
+        $DB->set_field($tablename, 'course', '5', array('course' => 0));
+        $this->assertEqual(1, $DB->get_field($tablename, 'course', array('id' => $id1)));
+        $this->assertEqual(1, $DB->get_field($tablename, 'course', array('id' => $id2)));
+        $this->assertEqual(3, $DB->get_field($tablename, 'course', array('id' => $id3)));
+        $DB->delete_records($tablename, array());
+
+        // all fields - no condition
+        $id1 = $DB->insert_record($tablename, array('course' => 1));
+        $id2 = $DB->insert_record($tablename, array('course' => 1));
+        $id3 = $DB->insert_record($tablename, array('course' => 3));
+        $DB->set_field($tablename, 'course', 5, array());
+        $this->assertEqual(5, $DB->get_field($tablename, 'course', array('id' => $id1)));
+        $this->assertEqual(5, $DB->get_field($tablename, 'course', array('id' => $id2)));
+        $this->assertEqual(5, $DB->get_field($tablename, 'course', array('id' => $id3)));
 
         // Note: All the nulls, booleans, empties, quoted and backslashes tests
         // go to set_field_select() because set_field() is just one wrapper over it
