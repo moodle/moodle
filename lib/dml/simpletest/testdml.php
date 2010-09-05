@@ -1045,6 +1045,8 @@ class dml_test extends UnitTestCase {
     }
 
     public function test_get_field() {
+        global $CFG;
+
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
@@ -1059,15 +1061,38 @@ class dml_test extends UnitTestCase {
 
         $id1 = $DB->insert_record($tablename, array('course' => 3));
         $DB->insert_record($tablename, array('course' => 5));
-        $DB->insert_record($tablename, array('course' => 7));
+        $DB->insert_record($tablename, array('course' => 5));
 
-        $this->assertTrue($course = $DB->get_field($tablename, 'course', array('id' => $id1)));
-        $this->assertEqual(3, $course);
-
-        // Add one get_field() example where the field being get is also one condition
-        // to check we haven't problem with any type of param (specially NAMED ones)
-        $DB->get_field($tablename, 'course', array('course' => 3));
+        $this->assertEqual(3, $DB->get_field($tablename, 'course', array('id' => $id1)));
         $this->assertEqual(3, $DB->get_field($tablename, 'course', array('course' => 3)));
+
+        $this->assertIdentical(false, $DB->get_field($tablename, 'course', array('course' => 11), IGNORE_MISSING));
+        try {
+            $DB->get_field($tablename, 'course', array('course' => 4), MUST_EXIST);
+            $this->assertFail('Exception expected due to missing record');
+        } catch (dml_exception $ex) {
+            $this->assertTrue(true);
+        }
+
+        $olddebug   = $CFG->debug;       // Save current debug settings
+        $olddisplay = $CFG->debugdisplay;
+        $CFG->debug = DEBUG_DEVELOPER;
+        $CFG->debugdisplay = true;
+
+        ob_start(); // catch debug warning
+        $this->assertEqual(5, $DB->get_field($tablename, 'course', array('course' => 5), IGNORE_MULTIPLE));
+        $debuginfo = ob_get_contents();
+        ob_end_clean();
+        $this->assertTrue($debuginfo === '');
+
+        ob_start(); // catch debug warning
+        $this->assertEqual(5, $DB->get_field($tablename, 'course', array('course' => 5), IGNORE_MISSING));
+        $debuginfo = ob_get_contents();
+        ob_end_clean();
+        $this->assertFalse($debuginfo === '');
+
+        $CFG->debug = $olddebug;         // Restore original debug settings
+        $CFG->debugdisplay = $olddisplay;
     }
 
     public function test_get_field_select() {
