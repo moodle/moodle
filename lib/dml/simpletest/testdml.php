@@ -1057,9 +1057,11 @@ class dml_test extends UnitTestCase {
         $dbman->create_table($table);
         $this->tables[$tablename] = $table;
 
-        $DB->insert_record($tablename, array('course' => 3));
+        $id1 = $DB->insert_record($tablename, array('course' => 3));
+        $DB->insert_record($tablename, array('course' => 5));
+        $DB->insert_record($tablename, array('course' => 7));
 
-        $this->assertTrue($course = $DB->get_field($tablename, 'course', array('id' => 1)));
+        $this->assertTrue($course = $DB->get_field($tablename, 'course', array('id' => $id1)));
         $this->assertEqual(3, $course);
 
         // Add one get_field() example where the field being get is also one condition
