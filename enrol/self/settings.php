@@ -88,5 +88,5 @@ if ($ADMIN->fulltree) {
         get_string('maxenrolled', 'enrol_self'), get_string('maxenrolled_help', 'enrol_self'), 0, PARAM_INT));
 
     $settings->add(new admin_setting_configcheckbox('enrol_self/sendcoursewelcomemessage',
-        get_string('sendcoursewelcomemessage', 'enrol_self'), get_string('sendcoursewelcomemessage_desc', 'enrol_self'), 1));
+        get_string('sendcoursewelcomemessage', 'enrol_self'), get_string('sendcoursewelcomemessage_help', 'enrol_self'), 1));
 }
