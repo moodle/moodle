@@ -1496,7 +1496,7 @@ function block_add_block_ui($page, $output) {
             $menu[$block->name] = $blockobject->get_title();
         }
     }
-    asort($menu, SORT_LOCALE_STRING);
+    textlib_get_instance()->asort($menu);
 
     $actionurl = new moodle_url($page->url, array('sesskey'=>sesskey()));
     $select = new single_select($actionurl, 'bui_addblock', $menu, null, array(''=>get_string('adddots')), 'add_block');

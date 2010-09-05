@@ -96,7 +96,7 @@ class community_hub_search_form extends moodleform {
                         'filetype' => HUB_HUBSCREENSHOT_FILE_TYPE);
                     $imgurl = new moodle_url(HUB_HUBDIRECTORYURL . "/local/hubdirectory/webservice/download.php", $params);
                     $ascreenshothtml = html_writer::empty_tag('img', array('src' => $imgurl, 'alt' => $hub['name']));
-                   
+
                     $hubdescription = '&nbsp;&nbsp;' . $hub['name'];
                     $hubdescription .= $brtag;
                     $hubdescription .= html_writer::tag('span', $ascreenshothtml, array('class' => 'hubscreenshot'));
@@ -200,7 +200,7 @@ class community_hub_search_form extends moodleform {
             $mform->setDefault('licence', 'all');
 
             $languages = get_string_manager()->get_list_of_languages();
-            asort($languages, SORT_LOCALE_STRING);
+            textlib_get_instance()->asort($languages);
             $languages = array_merge(array('all' => get_string('any')), $languages);
             $mform->addElement('select', 'language', get_string('language'), $languages);
             $mform->setDefault('language', 'all');

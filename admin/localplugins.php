@@ -89,7 +89,7 @@ foreach (get_plugin_list('local') as $plugin => $plugindir) {
     }
     $plugins[$plugin] = $strpluginname;
 }
-asort($plugins, SORT_LOCALE_STRING);
+textlib_get_instance()->asort($plugins);
 
 foreach ($plugins as $plugin => $name) {
     $delete = new moodle_url($PAGE->url, array('delete' => $plugin, 'sesskey' => sesskey()));

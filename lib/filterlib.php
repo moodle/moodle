@@ -514,7 +514,7 @@ function filter_get_all_installed() {
             }
         }
     }
-    asort($filternames, SORT_LOCALE_STRING);
+    textlib_get_instance()->asort($filternames);
     return $filternames;
 }
 

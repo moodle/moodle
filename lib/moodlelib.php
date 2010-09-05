@@ -5997,8 +5997,7 @@ class core_string_manager implements string_manager {
         }
 
         $countries = $this->load_component_strings('core_countries', $lang);
-        asort($countries);
-
+        textlib_get_instance()->asort($countries);
         if (!$returnall and !empty($CFG->allcountrycodes)) {
             $enabled = explode(',', $CFG->allcountrycodes);
             $return = array();
@@ -6132,7 +6131,6 @@ class core_string_manager implements string_manager {
             $langdirs = array_merge($langdirs, array("$CFG->dirroot/lang/en"=>'en'));
             // Sort all
 
-            asort($langdirs);
             // Loop through all langs and get info
             foreach ($langdirs as $lang) {
                 if (strstr($lang, '_local') !== false) {
@@ -6148,6 +6146,8 @@ class core_string_manager implements string_manager {
                 unset($string);
             }
         }
+
+        textlib_get_instance()->asort($languages);
 
         return $languages;
     }

@@ -45,7 +45,7 @@ class block_activity_modules extends block_list {
             }
         }
 
-        asort($modfullnames, SORT_LOCALE_STRING);
+        textlib_get_instance()->asort($modfullnames);
 
         foreach ($modfullnames as $modname => $modfullname) {
             if ($modname === 'resources') {

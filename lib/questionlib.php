@@ -213,7 +213,7 @@ function question_type_menu() {
 /**
  * Sort an array of question type names according to the question type sort order stored in
  * config_plugins. Entries for which there is no xxx_sortorder defined will go
- * at the end, sorted according to asort($inarray, SORT_LOCALE_STRING).
+ * at the end, sorted according to textlib_get_instance()->asort($inarray).
  * @param $inarray an array $qtype => $QTYPES[$qtype]->local_name().
  * @param $config get_config('question'), if you happen to have it around, to save one DB query.
  * @return array the sorted version of $inarray.
@@ -237,7 +237,7 @@ function question_sort_qtype_array($inarray, $config = null) {
         $outarray[$name] = $inarray[$name];
         unset($inarray[$name]);
     }
-    asort($inarray, SORT_LOCALE_STRING);
+    textlib_get_instance()->asort($inarray);
     return array_merge($outarray, $inarray);
 }
 

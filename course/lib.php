@@ -1144,7 +1144,7 @@ function get_all_mods($courseid, &$mods, &$modnames, &$modnamesplural, &$modname
                 $modnamesplural[$mod->name] = get_string("modulenameplural", "$mod->name");
             }
         }
-        asort($modnames, SORT_LOCALE_STRING);
+        textlib_get_instance()->asort($modnames);
     } else {
         print_error("nomodules", 'debug');
     }
@@ -1169,7 +1169,7 @@ function get_all_mods($courseid, &$mods, &$modnames, &$modnamesplural, &$modname
             $modnamesused[$mod->modname] = $modnames[$mod->modname];
         }
         if ($modnamesused) {
-            asort($modnamesused, SORT_LOCALE_STRING);
+            textlib_get_instance()->asort($modnamesused);
         }
     }
 }
