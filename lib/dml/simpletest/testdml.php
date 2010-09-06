@@ -77,6 +77,8 @@ class dml_test extends UnitTestCase {
         return new xmldb_table($tablename);
     }
 
+    /// NOTE: please keep order of test methods here matching the order of moodle_database class methods
+
     function test_diagnose() {
         $DB = $this->tdb;
         $result = $DB->diagnose();
@@ -89,6 +91,115 @@ class dml_test extends UnitTestCase {
         $this->assertTrue(is_array($result));
         $this->assertTrue(array_key_exists('description', $result));
         $this->assertTrue(array_key_exists('version', $result));
+    }
+
+    public function test_get_in_or_equal() {
+        $DB = $this->tdb;
+
+        // SQL_PARAMS_QM - IN or =
+
+        // Correct usage of multiple values
+        $in_values = array('value1', 'value2', 'value3', 'value4');
+        list($usql, $params) = $DB->get_in_or_equal($in_values);
+        $this->assertEqual("IN (?,?,?,?)", $usql);
+        $this->assertEqual(4, count($params));
+        foreach ($params as $key => $value) {
+            $this->assertEqual($in_values[$key], $value);
+        }
+
+        // Correct usage of single value (in an array)
+        $in_values = array('value1');
+        list($usql, $params) = $DB->get_in_or_equal($in_values);
+        $this->assertEqual("= ?", $usql);
+        $this->assertEqual(1, count($params));
+        $this->assertEqual($in_values[0], $params[0]);
+
+        // Correct usage of single value
+        $in_value = 'value1';
+        list($usql, $params) = $DB->get_in_or_equal($in_values);
+        $this->assertEqual("= ?", $usql);
+        $this->assertEqual(1, count($params));
+        $this->assertEqual($in_value, $params[0]);
+
+        // SQL_PARAMS_QM - NOT IN or <>
+
+        // Correct usage of multiple values
+        $in_values = array('value1', 'value2', 'value3', 'value4');
+        list($usql, $params) = $DB->get_in_or_equal($in_values, SQL_PARAMS_QM, null, false);
+        $this->assertEqual("NOT IN (?,?,?,?)", $usql);
+        $this->assertEqual(4, count($params));
+        foreach ($params as $key => $value) {
+            $this->assertEqual($in_values[$key], $value);
+        }
+
+        // Correct usage of single value (in array()
+        $in_values = array('value1');
+        list($usql, $params) = $DB->get_in_or_equal($in_values, SQL_PARAMS_QM, null, false);
+        $this->assertEqual("<> ?", $usql);
+        $this->assertEqual(1, count($params));
+        $this->assertEqual($in_values[0], $params[0]);
+
+        // Correct usage of single value
+        $in_value = 'value1';
+        list($usql, $params) = $DB->get_in_or_equal($in_values, SQL_PARAMS_QM, null, false);
+        $this->assertEqual("<> ?", $usql);
+        $this->assertEqual(1, count($params));
+        $this->assertEqual($in_value, $params[0]);
+
+        // SQL_PARAMS_NAMED - IN or =
+
+        // Correct usage of multiple values
+        $in_values = array('value1', 'value2', 'value3', 'value4');
+        list($usql, $params) = $DB->get_in_or_equal($in_values, SQL_PARAMS_NAMED, 'param01', true);
+        $this->assertEqual("IN (:param01,:param02,:param03,:param04)", $usql);
+        $this->assertEqual(4, count($params));
+        reset($in_values);
+        foreach ($params as $key => $value) {
+            $this->assertEqual(current($in_values), $value);
+            next($in_values);
+        }
+
+        // Correct usage of single values (in array)
+        $in_values = array('value1');
+        list($usql, $params) = $DB->get_in_or_equal($in_values, SQL_PARAMS_NAMED, 'param01', true);
+        $this->assertEqual("= :param01", $usql);
+        $this->assertEqual(1, count($params));
+        $this->assertEqual($in_values[0], $params['param01']);
+
+        // Correct usage of single value
+        $in_value = 'value1';
+        list($usql, $params) = $DB->get_in_or_equal($in_values, SQL_PARAMS_NAMED, 'param01', true);
+        $this->assertEqual("= :param01", $usql);
+        $this->assertEqual(1, count($params));
+        $this->assertEqual($in_value, $params['param01']);
+
+        // SQL_PARAMS_NAMED - NOT IN or <>
+
+        // Correct usage of multiple values
+        $in_values = array('value1', 'value2', 'value3', 'value4');
+        list($usql, $params) = $DB->get_in_or_equal($in_values, SQL_PARAMS_NAMED, 'param01', false);
+        $this->assertEqual("NOT IN (:param01,:param02,:param03,:param04)", $usql);
+        $this->assertEqual(4, count($params));
+        reset($in_values);
+        foreach ($params as $key => $value) {
+            $this->assertEqual(current($in_values), $value);
+            next($in_values);
+        }
+
+        // Correct usage of single values (in array)
+        $in_values = array('value1');
+        list($usql, $params) = $DB->get_in_or_equal($in_values, SQL_PARAMS_NAMED, 'param01', false);
+        $this->assertEqual("<> :param01", $usql);
+        $this->assertEqual(1, count($params));
+        $this->assertEqual($in_values[0], $params['param01']);
+
+        // Correct usage of single value
+        $in_value = 'value1';
+        list($usql, $params) = $DB->get_in_or_equal($in_values, SQL_PARAMS_NAMED, 'param01', false);
+        $this->assertEqual("<> :param01", $usql);
+        $this->assertEqual(1, count($params));
+        $this->assertEqual($in_value, $params['param01']);
+
     }
 
     function test_fix_sql_params() {
@@ -354,115 +465,6 @@ class dml_test extends UnitTestCase {
         foreach ($params as $field => $value) {
             $this->assertEqual($value, $record->$field, "Field $field in DB ({$record->$field}) is not equal to field $field in sql ($value)");
         }
-    }
-
-    public function test_get_in_or_equal() {
-        $DB = $this->tdb;
-
-        // SQL_PARAMS_QM - IN or =
-
-        // Correct usage of multiple values
-        $in_values = array('value1', 'value2', 'value3', 'value4');
-        list($usql, $params) = $DB->get_in_or_equal($in_values);
-        $this->assertEqual("IN (?,?,?,?)", $usql);
-        $this->assertEqual(4, count($params));
-        foreach ($params as $key => $value) {
-            $this->assertEqual($in_values[$key], $value);
-        }
-
-        // Correct usage of single value (in an array)
-        $in_values = array('value1');
-        list($usql, $params) = $DB->get_in_or_equal($in_values);
-        $this->assertEqual("= ?", $usql);
-        $this->assertEqual(1, count($params));
-        $this->assertEqual($in_values[0], $params[0]);
-
-        // Correct usage of single value
-        $in_value = 'value1';
-        list($usql, $params) = $DB->get_in_or_equal($in_values);
-        $this->assertEqual("= ?", $usql);
-        $this->assertEqual(1, count($params));
-        $this->assertEqual($in_value, $params[0]);
-
-        // SQL_PARAMS_QM - NOT IN or <>
-
-        // Correct usage of multiple values
-        $in_values = array('value1', 'value2', 'value3', 'value4');
-        list($usql, $params) = $DB->get_in_or_equal($in_values, SQL_PARAMS_QM, null, false);
-        $this->assertEqual("NOT IN (?,?,?,?)", $usql);
-        $this->assertEqual(4, count($params));
-        foreach ($params as $key => $value) {
-            $this->assertEqual($in_values[$key], $value);
-        }
-
-        // Correct usage of single value (in array()
-        $in_values = array('value1');
-        list($usql, $params) = $DB->get_in_or_equal($in_values, SQL_PARAMS_QM, null, false);
-        $this->assertEqual("<> ?", $usql);
-        $this->assertEqual(1, count($params));
-        $this->assertEqual($in_values[0], $params[0]);
-
-        // Correct usage of single value
-        $in_value = 'value1';
-        list($usql, $params) = $DB->get_in_or_equal($in_values, SQL_PARAMS_QM, null, false);
-        $this->assertEqual("<> ?", $usql);
-        $this->assertEqual(1, count($params));
-        $this->assertEqual($in_value, $params[0]);
-
-        // SQL_PARAMS_NAMED - IN or =
-
-        // Correct usage of multiple values
-        $in_values = array('value1', 'value2', 'value3', 'value4');
-        list($usql, $params) = $DB->get_in_or_equal($in_values, SQL_PARAMS_NAMED, 'param01', true);
-        $this->assertEqual("IN (:param01,:param02,:param03,:param04)", $usql);
-        $this->assertEqual(4, count($params));
-        reset($in_values);
-        foreach ($params as $key => $value) {
-            $this->assertEqual(current($in_values), $value);
-            next($in_values);
-        }
-
-        // Correct usage of single values (in array)
-        $in_values = array('value1');
-        list($usql, $params) = $DB->get_in_or_equal($in_values, SQL_PARAMS_NAMED, 'param01', true);
-        $this->assertEqual("= :param01", $usql);
-        $this->assertEqual(1, count($params));
-        $this->assertEqual($in_values[0], $params['param01']);
-
-        // Correct usage of single value
-        $in_value = 'value1';
-        list($usql, $params) = $DB->get_in_or_equal($in_values, SQL_PARAMS_NAMED, 'param01', true);
-        $this->assertEqual("= :param01", $usql);
-        $this->assertEqual(1, count($params));
-        $this->assertEqual($in_value, $params['param01']);
-
-        // SQL_PARAMS_NAMED - NOT IN or <>
-
-        // Correct usage of multiple values
-        $in_values = array('value1', 'value2', 'value3', 'value4');
-        list($usql, $params) = $DB->get_in_or_equal($in_values, SQL_PARAMS_NAMED, 'param01', false);
-        $this->assertEqual("NOT IN (:param01,:param02,:param03,:param04)", $usql);
-        $this->assertEqual(4, count($params));
-        reset($in_values);
-        foreach ($params as $key => $value) {
-            $this->assertEqual(current($in_values), $value);
-            next($in_values);
-        }
-
-        // Correct usage of single values (in array)
-        $in_values = array('value1');
-        list($usql, $params) = $DB->get_in_or_equal($in_values, SQL_PARAMS_NAMED, 'param01', false);
-        $this->assertEqual("<> :param01", $usql);
-        $this->assertEqual(1, count($params));
-        $this->assertEqual($in_values[0], $params['param01']);
-
-        // Correct usage of single value
-        $in_value = 'value1';
-        list($usql, $params) = $DB->get_in_or_equal($in_values, SQL_PARAMS_NAMED, 'param01', false);
-        $this->assertEqual("<> :param01", $usql);
-        $this->assertEqual(1, count($params));
-        $this->assertEqual($in_value, $params['param01']);
-
     }
 
     public function test_fix_table_names() {
