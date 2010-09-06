@@ -83,6 +83,14 @@ class dml_test extends UnitTestCase {
         $this->assertNull($result, 'Database self diagnostics failed %s');
     }
 
+    function test_get_server_info() {
+        $DB = $this->tdb;
+        $result = $DB->get_server_info();
+        $this->assertTrue(is_array($result));
+        $this->assertTrue(array_key_exists('description', $result));
+        $this->assertTrue(array_key_exists('version', $result));
+    }
+
     function test_fix_sql_params() {
         $DB = $this->tdb;
 
