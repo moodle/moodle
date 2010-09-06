@@ -1386,7 +1386,7 @@ class dml_test extends UnitTestCase {
         $this->tables[$tablename] = $table;
 
         $result = $DB->insert_record_raw($tablename, array('course' => 1, 'onechar' => 'xx'));
-        $this->assertEqual(1, $result);
+        $this->assertIdentical(1, $result);
 
         $record = $DB->get_record($tablename, array('course' => 1));
         $this->assertTrue($record instanceof stdClass);
@@ -1407,14 +1407,21 @@ class dml_test extends UnitTestCase {
         $record = $DB->get_record($tablename, array('id' => 10));
         $this->assertTrue($record instanceof stdClass);
         $this->assertIdentical('bb', $record->onechar);
+
+        // custom sequence - missing id error
+        try {
+            $DB->insert_record_raw($tablename, array('course' => 3, 'onechar' => 'bb'), true, false, true);
+            $this->assertFail('Exception expected due to missing record');
+        } catch (coding_exception $ex) {
+            $this->assertTrue(true);
+        }
     }
 
     public function test_insert_record() {
+        global $CFG;
 
         // All the information in this test is fetched from DB by get_recordset() so we
         // have such method properly tested against nulls, empties and friends...
-
-        global $CFG;
 
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
@@ -1433,27 +1440,31 @@ class dml_test extends UnitTestCase {
         $dbman->create_table($table);
         $this->tables[$tablename] = $table;
 
-        $this->assertTrue($DB->insert_record($tablename, array('course' => 1), false)); // Without returning id
-        $rs = $DB->get_recordset($tablename, array('course' => 1));
-        $record = $rs->current();
-        $rs->close();
+        $this->assertIdentical(1, $DB->insert_record($tablename, array('course' => 1), true));
+        $record = $DB->get_record($tablename, array('course' => 1));
         $this->assertEqual(1, $record->id);
         $this->assertEqual(100, $record->oneint); // Just check column defaults have been applied
         $this->assertEqual(200, $record->onenum);
-        $this->assertEqual('onestring', $record->onechar);
+        $this->assertIdentical('onestring', $record->onechar);
         $this->assertNull($record->onetext);
         $this->assertNull($record->onebinary);
 
+        // without returning id, bulk not implemented
+        $result = $this->assertIdentical(true, $DB->insert_record($tablename, array('course' => 99), false, true));
+        $record = $DB->get_record($tablename, array('course' => 99));
+        $this->assertEqual(2, $record->id);
+        $this->assertEqual(99, $record->course);
+
         // Check nulls are set properly for all types
+        $record = new object();
         $record->oneint = null;
         $record->onenum = null;
         $record->onechar = null;
         $record->onetext = null;
         $record->onebinary = null;
         $recid = $DB->insert_record($tablename, $record);
-        $rs = $DB->get_recordset($tablename, array('id' => $recid));
-        $record = $rs->current();
-        $rs->close();
+        $record = $DB->get_record($tablename, array('id' => $recid));
+        $this->assertEqual(0, $record->course);
         $this->assertNull($record->oneint);
         $this->assertNull($record->onenum);
         $this->assertNull($record->onechar);
@@ -1461,43 +1472,41 @@ class dml_test extends UnitTestCase {
         $this->assertNull($record->onebinary);
 
         // Check zeros are set properly for all types
+        $record = new object();
         $record->oneint = 0;
         $record->onenum = 0;
         $recid = $DB->insert_record($tablename, $record);
-        $rs = $DB->get_recordset($tablename, array('id' => $recid));
-        $record = $rs->current();
-        $rs->close();
+        $record = $DB->get_record($tablename, array('id' => $recid));
         $this->assertEqual(0, $record->oneint);
         $this->assertEqual(0, $record->onenum);
 
         // Check booleans are set properly for all types
+        $record = new object();
         $record->oneint = true; // trues
         $record->onenum = true;
         $record->onechar = true;
         $record->onetext = true;
         $recid = $DB->insert_record($tablename, $record);
-        $rs = $DB->get_recordset($tablename, array('id' => $recid));
-        $record = $rs->current();
-        $rs->close();
+        $record = $DB->get_record($tablename, array('id' => $recid));
         $this->assertEqual(1, $record->oneint);
         $this->assertEqual(1, $record->onenum);
         $this->assertEqual(1, $record->onechar);
         $this->assertEqual(1, $record->onetext);
 
+        $record = new object();
         $record->oneint = false; // falses
         $record->onenum = false;
         $record->onechar = false;
         $record->onetext = false;
         $recid = $DB->insert_record($tablename, $record);
-        $rs = $DB->get_recordset($tablename, array('id' => $recid));
-        $record = $rs->current();
-        $rs->close();
+        $record = $DB->get_record($tablename, array('id' => $recid));
         $this->assertEqual(0, $record->oneint);
         $this->assertEqual(0, $record->onenum);
         $this->assertEqual(0, $record->onechar);
         $this->assertEqual(0, $record->onetext);
 
         // Check string data causes exception in numeric types
+        $record = new object();
         $record->oneint = 'onestring';
         $record->onenum = 0;
         try {
@@ -1506,6 +1515,7 @@ class dml_test extends UnitTestCase {
         } catch (exception $e) {
             $this->assertTrue($e instanceof dml_exception);
         }
+        $record = new object();
         $record->oneint = 0;
         $record->onenum = 'onestring';
         try {
@@ -1516,41 +1526,37 @@ class dml_test extends UnitTestCase {
         }
 
         // Check empty string data is stored as 0 in numeric datatypes
+        $record = new object();
         $record->oneint = ''; // empty string
         $record->onenum = 0;
         $recid = $DB->insert_record($tablename, $record);
-        $rs = $DB->get_recordset($tablename, array('id' => $recid));
-        $record = $rs->current();
-        $rs->close();
+        $record = $DB->get_record($tablename, array('id' => $recid));
         $this->assertTrue(is_numeric($record->oneint) && $record->oneint == 0);
 
+        $record = new object();
         $record->oneint = 0;
         $record->onenum = ''; // empty string
         $recid = $DB->insert_record($tablename, $record);
-        $rs = $DB->get_recordset($tablename, array('id' => $recid));
-        $record = $rs->current();
-        $rs->close();
+        $record = $DB->get_record($tablename, array('id' => $recid));
         $this->assertTrue(is_numeric($record->onenum) && $record->onenum == 0);
 
         // Check empty strings are set properly in string types
+        $record = new object();
         $record->oneint = 0;
         $record->onenum = 0;
         $record->onechar = '';
         $record->onetext = '';
         $recid = $DB->insert_record($tablename, $record);
-        $rs = $DB->get_recordset($tablename, array('id' => $recid));
-        $record = $rs->current();
-        $rs->close();
+        $record = $DB->get_record($tablename, array('id' => $recid));
         $this->assertTrue($record->onechar === '');
         $this->assertTrue($record->onetext === '');
 
         // Check operation ((210.10 + 39.92) - 150.02) against numeric types
+        $record = new object();
         $record->oneint = ((210.10 + 39.92) - 150.02);
         $record->onenum = ((210.10 + 39.92) - 150.02);
         $recid = $DB->insert_record($tablename, $record);
-        $rs = $DB->get_recordset($tablename, array('id' => $recid));
-        $record = $rs->current();
-        $rs->close();
+        $record = $DB->get_record($tablename, array('id' => $recid));
         $this->assertEqual(100, $record->oneint);
         $this->assertEqual(100, $record->onenum);
 
@@ -1561,12 +1567,11 @@ class dml_test extends UnitTestCase {
             'backslashes and quotes sequences (even): \\"\\" \\\'\\\'',
             'backslashes and quotes sequences (odd): \\"\\"\\" \\\'\\\'\\\'');
         foreach ($teststrings as $teststring) {
+            $record = new object();
             $record->onechar = $teststring;
             $record->onetext = $teststring;
             $recid = $DB->insert_record($tablename, $record);
-            $rs = $DB->get_recordset($tablename, array('id' => $recid));
-            $record = $rs->current();
-            $rs->close();
+            $record = $DB->get_record($tablename, array('id' => $recid));
             $this->assertEqual($teststring, $record->onechar);
             $this->assertEqual($teststring, $record->onetext);
         }
@@ -1574,6 +1579,7 @@ class dml_test extends UnitTestCase {
         // Check LOBs in text/binary columns
         $clob = file_get_contents($CFG->libdir.'/dml/simpletest/fixtures/clob.txt');
         $blob = file_get_contents($CFG->libdir.'/dml/simpletest/fixtures/randombinary');
+        $record = new object();
         $record->onetext = $clob;
         $record->onebinary = $blob;
         $recid = $DB->insert_record($tablename, $record);
@@ -1586,6 +1592,7 @@ class dml_test extends UnitTestCase {
         // And "small" LOBs too, just in case
         $newclob = substr($clob, 0, 500);
         $newblob = substr($blob, 0, 250);
+        $record = new object();
         $record->onetext = $newclob;
         $record->onebinary = $newblob;
         $recid = $DB->insert_record($tablename, $record);
@@ -1597,13 +1604,13 @@ class dml_test extends UnitTestCase {
         $this->assertEqual(false, $rs->key()); // Ensure recordset key() method to be working ok after closing
 
         // test data is not modified
-        $rec = new object();
-        $rec->id     = -1; // has to be ignored
-        $rec->course = 3;
-        $rec->lalala = 'lalal'; // unused
-        $before = clone($rec);
+        $record = new object();
+        $record->id     = -1; // has to be ignored
+        $record->course = 3;
+        $record->lalala = 'lalal'; // unused
+        $before = clone($record);
         $DB->insert_record($tablename, $record);
-        $this->assertEqual($rec, $before);
+        $this->assertEqual($record, $before);
     }
 
     public function test_import_record() {
