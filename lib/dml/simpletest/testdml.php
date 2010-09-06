@@ -626,11 +626,46 @@ class dml_test extends UnitTestCase {
             $DB->insert_record($tablename, $record);
         }
 
+        // standard recordset iteration
         $rs = $DB->get_recordset($tablename);
         $this->assertTrue($rs instanceof moodle_recordset);
-
         reset($data);
         foreach($rs as $record) {
+            $data_record = current($data);
+            foreach ($record as $k => $v) {
+                $this->assertEqual($data_record[$k], $v);
+            }
+            next($data);
+        }
+        $rs->close();
+
+        // iterator style usage
+        $rs = $DB->get_recordset($tablename);
+        $this->assertTrue($rs instanceof moodle_recordset);
+        reset($data);
+        while ($rs->valid()) {
+            $record = $rs->current();
+            $data_record = current($data);
+            foreach ($record as $k => $v) {
+                $this->assertEqual($data_record[$k], $v);
+            }
+            next($data);
+            $rs->next();
+        }
+        $rs->close();
+
+        // make sure rewind is ignored
+        $rs = $DB->get_recordset($tablename);
+        $this->assertTrue($rs instanceof moodle_recordset);
+        reset($data);
+        $i = 0;
+        foreach($rs as $record) {
+            $i++;
+            $rs->rewind();
+            if ($i > 10) {
+                $this->fail('revind not ignored in recordsets');
+                break;
+            }
             $data_record = current($data);
             foreach ($record as $k => $v) {
                 $this->assertEqual($data_record[$k], $v);
