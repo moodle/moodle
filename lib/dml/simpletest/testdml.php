@@ -380,7 +380,8 @@ class dml_test extends UnitTestCase {
         $dbman->create_table($table);
         $this->tables[$tablename] = $table;
 
-        $this->assertTrue($indices = $DB->get_indexes($tablename));
+        $indices = $DB->get_indexes($tablename);
+        $this->assertTrue(is_array($indices));
         $this->assertEqual(count($indices), 2);
         // we do not care about index names for now
         $first = array_shift($indices);
@@ -401,28 +402,7 @@ class dml_test extends UnitTestCase {
         $this->assertEqual('id', $composed['columns'][1]);
     }
 
-    public function testDefaults() {
-        $DB = $this->tdb;
-        $dbman = $this->tdb->get_manager();
-
-        $table = $this->get_test_table();
-        $tablename = $table->getName();
-
-        $table->add_field('enumfield', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, 'test2');
-        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
-        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
-        $dbman->create_table($table);
-        $this->tables[$tablename] = $table;
-
-        $columns = $DB->get_columns($tablename);
-
-        $enumfield = $columns['enumfield'];
-        $this->assertEqual('test2', $enumfield->default_value);
-        $this->assertEqual('C', $enumfield->meta_type);
-
-    }
-
-    public function testGetColumns() {
+    public function test_get_columns() {
         $DB = $this->tdb;
         $dbman = $this->tdb->get_manager();
 
@@ -431,14 +411,58 @@ class dml_test extends UnitTestCase {
 
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
         $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
-        $table->add_field('name', XMLDB_TYPE_CHAR, '255', null, null, null, '0');
+        $table->add_field('name', XMLDB_TYPE_CHAR, '255', null, null, null, 'lala');
+        $table->add_field('description', XMLDB_TYPE_TEXT, 'small', null, null, null, null);
+        $table->add_field('enumfield', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, 'test2');
+        $table->add_field('onenum', XMLDB_TYPE_NUMBER, '10,2', null, null, null, 200);
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $dbman->create_table($table);
         $this->tables[$tablename] = $table;
 
-        $this->assertTrue($columns = $DB->get_columns($tablename));
+        $columns = $DB->get_columns($tablename);
+        $this->assertTrue(is_array($columns));
+
         $fields = $this->tables[$tablename]->getFields();
         $this->assertEqual(count($columns), count($fields));
+
+        $field = $columns['id'];
+        $this->assertEqual('R', $field->meta_type);
+        $this->assertTrue($field->auto_increment);
+        $this->assertTrue($field->unique);
+
+        $field = $columns['course'];
+        $this->assertEqual('I', $field->meta_type);
+        $this->assertFalse($field->auto_increment);
+        $this->assertTrue($field->has_default);
+        $this->assertEqual(0, $field->default_value);
+        $this->assertTrue($field->not_null);
+
+        $field = $columns['name'];
+        $this->assertEqual('C', $field->meta_type);
+        $this->assertFalse($field->auto_increment);
+        $this->assertTrue($field->has_default);
+        $this->assertIdentical('lala', $field->default_value);
+        $this->assertFalse($field->not_null);
+
+        $field = $columns['description'];
+        $this->assertEqual('X', $field->meta_type);
+        $this->assertFalse($field->auto_increment);
+        $this->assertFalse($field->has_default);
+        $this->assertIdentical(null, $field->default_value);
+        $this->assertFalse($field->not_null);
+
+        $field = $columns['enumfield'];
+        $this->assertEqual('C', $field->meta_type);
+        $this->assertFalse($field->auto_increment);
+        $this->assertIdentical('test2', $field->default_value);
+        $this->assertTrue($field->not_null);
+
+        $field = $columns['onenum'];
+        $this->assertEqual('N', $field->meta_type);
+        $this->assertFalse($field->auto_increment);
+        $this->assertTrue($field->has_default);
+        $this->assertEqual(200.0, $field->default_value);
+        $this->assertFalse($field->not_null);
 
         for ($i = 0; $i < count($columns); $i++) {
             if ($i == 0) {
