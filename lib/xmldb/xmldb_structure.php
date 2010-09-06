@@ -31,7 +31,6 @@ class xmldb_structure extends xmldb_object {
     var $path;
     var $version;
     var $tables;
-    var $statements;
 
     /**
      * Creates one new xmldb_structure
@@ -41,7 +40,6 @@ class xmldb_structure extends xmldb_object {
         $this->path = NULL;
         $this->version = NULL;
         $this->tables = array();
-        $this->statements = array();
     }
 
     /**
@@ -84,19 +82,6 @@ class xmldb_structure extends xmldb_object {
     }
 
     /**
-     * Returns the position of one statement in the array.
-     */
-    function &findStatementInArray($statementname) {
-        foreach ($this->statements as $i => $statement) {
-            if ($statementname == $statement->getName()) {
-                return $i;
-            }
-        }
-        $null = NULL;
-        return $null;
-    }
-
-    /**
      * This function will reorder the array of tables
      */
     function orderTables() {
@@ -110,42 +95,10 @@ class xmldb_structure extends xmldb_object {
     }
 
     /**
-     * This function will reorder the array of statements
-     */
-    function orderStatements() {
-        $result = $this->orderElements($this->statements);
-        if ($result) {
-            $this->setStatements($result);
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    /**
      * Returns the tables of the structure
      */
     function &getTables() {
         return $this->tables;
-    }
-
-    /**
-     * Returns one xmldb_statement
-     */
-    function &getStatement($statementname) {
-        $i = $this->findStatementInArray($statementname);
-        if ($i !== NULL) {
-            return $this->statements[$i];
-        }
-        $null = NULL;
-        return $null;
-    }
-
-    /**
-     * Returns the statements of the structure
-     */
-    function &getStatements() {
-        return $this->statements;
     }
 
     /**
@@ -202,52 +155,6 @@ class xmldb_structure extends xmldb_object {
     }
 
     /**
-     * Add one statement to the structure, allowing to specify the desired order
-     * If it's not specified, then the statement is added at the end.
-     */
-    function addStatement(&$statement, $after=NULL) {
-
-    /// Calculate the previous and next tables
-        $prevstatement = NULL;
-        $nextstatement = NULL;
-
-        if (!$after) {
-            $allstatements =& $this->getStatements();
-            if ($allstatements) {
-                end($allstatements);
-                $prevstatement =& $allstatements[key($allstatements)];
-            }
-        } else {
-            $prevstatement =& $this->getStatement($after);
-        }
-        if ($prevstatement && $prevstatement->getNext()) {
-            $nextstatement =& $this->getStatement($prevstatement->getNext());
-        }
-
-    /// Set current statement previous and next attributes
-        if ($prevstatement) {
-            $statement->setPrevious($prevstatement->getName());
-            $prevstatement->setNext($statement->getName());
-        }
-        if ($nextstatement) {
-            $statement->setNext($nextstatement->getName());
-            $nextstatement->setPrevious($statement->getName());
-        }
-    /// Some more attributes
-        $statement->setLoaded(true);
-        $statement->setChanged(true);
-    /// Add the new statement
-        $this->statements[] =& $statement;
-    /// Reorder the whole structure
-        $this->orderStatements($this->statements);
-    /// Recalculate the hash
-        $this->calculateHash(true);
-    /// We have one new statement, so the structure has changed
-        $this->setVersion(userdate(time(), '%Y%m%d', 99, false));
-        $this->setChanged(true);
-    }
-
-    /**
      * Delete one table from the Structure
      */
     function deleteTable($tablename) {
@@ -280,49 +187,10 @@ class xmldb_structure extends xmldb_object {
     }
 
     /**
-     * Delete one statement from the Structure
-     */
-    function deleteStatement($statementname) {
-
-        $statement =& $this->getStatement($statementname);
-        if ($statement) {
-            $i = $this->findStatementInArray($statementname);
-            $prevstatement = NULL;
-            $nextstatement = NULL;
-        /// Look for prev and next statement
-            $prevstatement =& $this->getStatement($statement->getPrevious());
-            $nextstatement =& $this->getStatement($statement->getNext());
-        /// Change their previous and next attributes
-            if ($prevstatement) {
-                $prevstatement->setNext($statement->getNext());
-            }
-            if ($nextstatement) {
-                $nextstatement->setPrevious($statement->getPrevious());
-            }
-        /// Delete the statement
-            unset($this->statements[$i]);
-        /// Reorder the statements
-            $this->orderStatements($this->statements);
-        /// Recalculate the hash
-            $this->calculateHash(true);
-        /// We have one deleted statement, so the structure has changed
-            $this->setVersion(userdate(time(), '%Y%m%d', 99, false));
-            $this->setChanged(true);
-        }
-    }
-
-    /**
      * Set the tables
      */
     function setTables(&$tables) {
         $this->tables = $tables;
-    }
-
-    /**
-     * Set the statements
-     */
-    function setStatements(&$statements) {
-        $this->statements = $statements;
     }
 
     /**
@@ -409,47 +277,6 @@ class xmldb_structure extends xmldb_object {
             }
         }
 
-    /// Iterate over statements
-        if (isset($xmlarr['XMLDB']['#']['STATEMENTS']['0']['#']['STATEMENT'])) {
-            foreach ($xmlarr['XMLDB']['#']['STATEMENTS']['0']['#']['STATEMENT'] as $xmlstatement) {
-                if (!$result) { //Skip on error
-                    continue;
-                }
-                $name = trim($xmlstatement['@']['NAME']);
-                $statement = new xmldb_statement($name);
-                $statement->arr2xmldb_statement($xmlstatement);
-                $this->statements[] = $statement;
-                if (!$statement->isLoaded()) {
-                    $this->errormsg = 'Problem loading statement ' . $name;
-                    $this->debug($this->errormsg);
-                    $result = false;
-                }
-            }
-        }
-
-    /// Perform some general checks over statements
-        if ($result && $this->statements) {
-        /// Check statements names are ok (lowercase, a-z _-)
-            if (!$this->checkNameValues($this->statements)) {
-                $this->errormsg = 'Some STATEMENTS name values are incorrect';
-                $this->debug($this->errormsg);
-                $result = false;
-            }
-        /// Check previous & next are ok (duplicates and existing statements)
-            $this->fixPrevNext($this->statements);
-            if ($result && !$this->checkPreviousNextValues($this->statements)) {
-                $this->errormsg = 'Some STATEMENTS previous/next values are incorrect';
-                $this->debug($this->errormsg);
-                $result = false;
-            }
-        /// Order statements
-            if ($result && !$this->orderStatements($this->statements)) {
-                $this->errormsg = 'Error ordering the statements';
-                $this->debug($this->errormsg);
-                $result = false;
-            }
-        }
-
     /// Set some attributes
         if ($result) {
             $this->loaded = true;
@@ -473,15 +300,6 @@ class xmldb_structure extends xmldb_object {
                         $table->calculateHash($recursive);
                     }
                     $key .= $table->getHash();
-                }
-            }
-            if ($this->statements) {
-                foreach ($this->statements as $sta) {
-                    $statement =& $this->getStatement($sta->getName());
-                    if ($recursive) {
-                        $statement->calculateHash($recursive);
-                    }
-                    $key .= $statement->getHash();
                 }
             }
             $this->hash = md5($key);
@@ -510,14 +328,6 @@ class xmldb_structure extends xmldb_object {
                 $o.= $table->xmlOutput();
             }
             $o.= '  </TABLES>' . "\n";
-        }
-    /// Now the statements
-        if ($this->statements) {
-            $o.= '  <STATEMENTS>' . "\n";
-            foreach ($this->statements as $statement) {
-                $o.= $statement->xmlOutput();
-            }
-            $o.= '  </STATEMENTS>' . "\n";
         }
         $o.= '</XMLDB>';
 
@@ -677,7 +487,7 @@ class xmldb_structure extends xmldb_object {
 
     /**
      * This function will return all the errors found in one structure
-     * looking recursively inside each table/statement. Returns
+     * looking recursively inside each table. Returns
      * an array of errors or false
      */
     function getAllErrors() {
@@ -697,14 +507,6 @@ class xmldb_structure extends xmldb_object {
         /// Add them to the errors array
             if ($tableerrors) {
                 $errors = array_merge($errors, $tableerrors);
-            }
-        }
-    /// Delegate to statements
-        if ($statements = $this->getStatements()) {
-            foreach ($statements as $statement) {
-                if ($statement->getError()) {
-                    $errors[] = $statement->getError();
-                }
             }
         }
     /// Return decision

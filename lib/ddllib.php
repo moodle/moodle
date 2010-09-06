@@ -63,8 +63,6 @@ require_once($CFG->libdir.'/xmldb/xmldb_field.php');
 require_once($CFG->libdir.'/xmldb/xmldb_key.php');
 // Add required XMLDB DB classes
 require_once($CFG->libdir.'/xmldb/xmldb_index.php');
-// Add required XMLDB DB classes
-require_once($CFG->libdir.'/xmldb/xmldb_statement.php');
 
 require_once($CFG->libdir.'/ddl/sql_generator.php');
 require_once($CFG->libdir.'/ddl/database_manager.php');

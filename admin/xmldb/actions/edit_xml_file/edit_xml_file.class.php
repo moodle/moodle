@@ -25,7 +25,7 @@
  * This class will edit one loaded XML file
  *
  * Main page to start editing one XML file. From here it's possible to access
- * to tables/statements edition plus PHP code generation and other utilities
+ * to tables edition plus PHP code generation and other utilities
  *
  * @package   xmldb-editor
  * @copyright 2003 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
@@ -52,10 +52,8 @@ class edit_xml_file extends XMLDBAction {
             'vieworiginal' => 'xmldb',
             'viewedited' => 'xmldb',
             'tables' => 'xmldb',
-            'statements' => 'xmldb',
             'newtable' => 'xmldb',
             'newtablefrommysql' => 'xmldb',
-            'newstatement' => 'xmldb',
             'viewsqlcode' => 'xmldb',
             'viewphpcode' => 'xmldb',
             'reserved' => 'xmldb',
@@ -155,10 +153,6 @@ class edit_xml_file extends XMLDBAction {
                 } else {
                     $b .= '&nbsp;[' . $this->str['newtablefrommysql'] . ']';
                 }
-            /// The new statement button
-                $b .= '&nbsp;<a href="index.php?action=new_statement&amp;sesskey=' . sesskey() . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' . $this->str['newstatement'] . ']</a>';
-                $b .= '</p>';
-                $b .= ' <p class="centerpara buttons">';
 
             /// The view sql code button
                 $b .= '<a href="index.php?action=view_structure_sql&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' .$this->str['viewsqlcode'] . ']</a>';
@@ -229,49 +223,7 @@ class edit_xml_file extends XMLDBAction {
                     }
                     $o .= '</table>';
                 }
-            ///Add the statements list
-                $statements =& $structure->getStatements();
-                if ($statements) {
-                    $o .= '<h3 class="main">' . $this->str['statements'] . '</h3>';
-                    $o .= '<table id="liststatements" border="0" cellpadding="5" cellspacing="1" class="boxaligncenter flexible">';
-                    $row = 0;
-                    foreach ($statements as $statement) {
-                    /// The statement name (link to edit statement)
-                        $s = '<a href="index.php?action=edit_statement&amp;statement=' . $statement->getName() . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">' . $statement->getName() . '</a>';
-                    /// Calculate buttons
-                        $b = '</td><td class="button cell">';
-                    /// The edit button
-                        $b .= '<a href="index.php?action=edit_statement&amp;statement=' . $statement->getName() . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' . $this->str['edit'] . ']</a>';
-                        $b .= '</td><td class="button cell">';
-                    /// The up button
-                        if ($statement->getPrevious()) {
-                            $b .= '<a href="index.php?action=move_updown_statement&amp;direction=up&amp;sesskey=' . sesskey() . '&amp;statement=' . $statement->getName() . '&amp;postaction=edit_xml_file' . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' . $this->str['up'] . ']</a>';
-                        } else {
-                            $b .= '[' . $this->str['up'] . ']';
-                        }
-                        $b .= '</td><td class="button cell">';
-                    /// The down button
-                        if ($statement->getNext()) {
-                            $b .= '<a href="index.php?action=move_updown_statement&amp;direction=down&amp;sesskey=' . sesskey() . '&amp;statement=' . $statement->getName() . '&amp;postaction=edit_xml_file' . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' . $this->str['down'] . ']</a>';
-                        } else {
-                            $b .= '[' . $this->str['down'] . ']';
-                        }
-                        $b .= '</td><td class="button cell">';
-                    /// The delete button
-                        $b .= '<a href="index.php?action=delete_statement&amp;sesskey=' . sesskey() . '&amp;statement=' . $statement->getName() . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' . $this->str['delete'] . ']</a>';
-                        $b .= '</td><td class="button cell">';
-                    /// The view xml button
-                        $b .= '<a href="index.php?action=view_statement_xml&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '&amp;statement=' . $statement->getName() . '&amp;select=edited">[' . $this->str['viewxml'] . ']</a>';
-                        $b .= '</td>';
-                    /// Print statement row
-                        $o .= '<tr class="r' . $row . '"><td class="statement cell">' . $s . $b . '</tr>';
-                        $row = ($row + 1) % 2;
-                    }
-                    $o .= '</table>';
-                }
             ///Add the back to main
-
-
             $this->output = $o;
             }
         }

@@ -73,65 +73,42 @@ class xmldb_file extends xmldb_object {
      */
     function validateXMLStructure() {
 
-    /// Going to perform complete DOM schema validation
-        if (extension_loaded('dom') && method_exists(new DOMDocument(), 'load')) {
-        /// Let's capture errors
-            if (function_exists('libxml_use_internal_errors')) {
-                libxml_use_internal_errors(true); // This function is PHP5 only (MDL-8730)
-            }
+    /// Let's capture errors
+        libxml_use_internal_errors(true);
 
-        /// Create and load XML file
-            $parser = new DOMDocument();
-            $parser->load($this->path);
-        /// Only validate if we have a schema
-            if (!empty($this->schema) && file_exists($this->schema)) {
-                $parser->schemaValidate($this->schema);
-            }
-        /// Check for errors
-            $errors = false;
-            if (function_exists('libxml_get_errors')) {
-                $errors = libxml_get_errors();
-            }
+    /// Create and load XML file
+        $parser = new DOMDocument();
+        $contents = file_get_contents($this->path);
+        if (strpos($contents, '<STATEMENTS>')) {
+            //delete the removed STATEMENTS section, it would not validate
+            $contents = preg_replace('|<STATEMENTS>.*</STATEMENTS>|s', '', $contents);
+        }
 
-        /// Prepare errors
-            if (!empty($errors)) {
-            /// Create one structure to store errors
-                $structure = new xmldb_structure($this->path);
-            /// Add errors to structure
-                $structure->errormsg = 'XML Error: ';
-                foreach ($errors as $error) {
-                    $structure->errormsg .= sprintf("%s at line %d. ",
-                                                     trim($error->message, "\n\r\t ."),
-                                                     $error->line);
-                }
-            /// Add structure to file
-                $this->xmldb_structure = $structure;
-            /// Check has failed
-                return false;
-            }
+        $parser->loadXML($contents);
+    /// Only validate if we have a schema
+        if (!empty($this->schema) && file_exists($this->schema)) {
+            $parser->schemaValidate($this->schema);
         }
-    /// Going to perform expat simple check (no validation)
-        else if (function_exists('xml_parser_create')) {
-            $parser = xml_parser_create();
-            if (!xml_parse($parser, file_get_contents($this->path))) {
-            /// Create one structure to store errors
-                $structure = new xmldb_structure($this->path);
-            /// Add error to structure
-                $structure->errormsg = sprintf("XML Error: %s at line %d",
-                         xml_error_string(xml_get_error_code($parser)),
-                         xml_get_current_line_number($parser));
-            /// Add structure to file
-                $this->xmldb_structure = $structure;
-            /// Check has failed
-                return false;
+    /// Check for errors
+        $errors = libxml_get_errors();
+
+    /// Prepare errors
+        if (!empty($errors)) {
+        /// Create one structure to store errors
+            $structure = new xmldb_structure($this->path);
+        /// Add errors to structure
+            $structure->errormsg = 'XML Error: ';
+            foreach ($errors as $error) {
+                $structure->errormsg .= sprintf("%s at line %d. ",
+                                                 trim($error->message, "\n\r\t ."),
+                                                 $error->line);
             }
-        /// Free parser resources
-            xml_parser_free($parser);
-        }
-    /// Arriving here, something is really wrong because nor dom not expat are present
-        else {
+        /// Add structure to file
+            $this->xmldb_structure = $structure;
+        /// Check has failed
             return false;
         }
+
         return true;
     }
 
@@ -144,9 +121,15 @@ class xmldb_file extends xmldb_object {
             if (!$this->validateXMLStructure()) {
                 return false;
             }
+            $contents = file_get_contents($this->path);
+            if (strpos($contents, '<STATEMENTS>')) {
+                //delete the removed STATEMENTS section, it would not validate
+                $contents = preg_replace('|<STATEMENTS>.*</STATEMENTS>|s', '', $contents);
+                debugging('STATEMENTS section is not supported any more, please use db/install.php or db/log.php');
+            }
         /// File exists, so let's process it
         /// Load everything to a big array
-            $xmlarr = xmlize(file_get_contents($this->path));
+            $xmlarr = xmlize($contents);
         /// Convert array to xmldb structure
             $this->xmldb_structure = $this->arr2xmldb_structure($xmlarr);
         /// Analize results

@@ -53,15 +53,6 @@
     </xs:restriction>
   </xs:simpleType>
 
-  <xs:simpleType name="statementType">
-    <xs:restriction base="xs:NMTOKEN">
-      <xs:enumeration value="insert" />
-      <xs:enumeration value="update" />
-      <xs:enumeration value="delete" />
-      <xs:enumeration value="custom" />
-    </xs:restriction>
-  </xs:simpleType>
-
 
   <xs:element name="FIELD">
     <xs:complexType>
@@ -144,28 +135,6 @@
     </xs:complexType>
   </xs:element>
 
-  <xs:element name="STATEMENT">
-    <xs:complexType>
-      <xs:sequence>
-        <xs:element ref="SENTENCES" />
-      </xs:sequence>
-      <xs:attribute name="NAME"     type="xs:string"     use="required" />
-      <xs:attribute name="TABLE"    type="tableName"     use="required" />
-      <xs:attribute name="TYPE"     type="statementType" use="required" />
-      <xs:attribute name="COMMENT"  type="xs:string"     use="optional" />
-      <xs:attribute name="PREVIOUS" type="xs:string"     use="optional" />
-      <xs:attribute name="NEXT"     type="xs:string"     use="optional" />
-    </xs:complexType>
-  </xs:element>
-
-  <xs:element name="STATEMENTS">
-    <xs:complexType>
-      <xs:sequence>
-        <xs:element ref="STATEMENT" maxOccurs="unbounded" />
-      </xs:sequence>
-    </xs:complexType>
-  </xs:element>
-
   <xs:element name="TABLE">
     <xs:complexType>
       <xs:sequence>
@@ -192,7 +161,6 @@
     <xs:complexType>
       <xs:sequence>
         <xs:element ref="TABLES"     minOccurs="0" />
-        <xs:element ref="STATEMENTS" minOccurs="0" />
       </xs:sequence>
       <xs:attribute name="PATH"    type="xs:string" use="required" />
       <xs:attribute name="VERSION" type="xs:string" use="required" />

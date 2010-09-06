@@ -196,37 +196,6 @@ abstract class sql_generator {
             }
         }
 
-        if ($statements = $xmldb_structure->getStatements()) {
-            foreach ($statements as $statement) {
-                $results = array_merge($results, $this->getExecuteStatementSQL($statement));
-            }
-        }
-        return $results;
-    }
-
-    /**
-     * This function will return the code needed to execute a collection
-     * of sentences present inside one statement for the specified BD
-     * and prefix.
-     * For now it only supports INSERT statements
-     */
-    public function getExecuteStatementSQL($xmldb_statement) {
-
-        $results = array();
-
-    /// Based on statement type
-        switch ($xmldb_statement->type) {
-            case XMLDB_STATEMENT_INSERT:
-                $results = $this->getExecuteInsertSQL($xmldb_statement);
-                break;
-            case XMLDB_STATEMENT_UPDATE:
-                break;
-            case XMLDB_STATEMENT_DELETE:
-                break;
-            case XMLDB_STATEMENT_CUSTOM:
-                break;
-        }
-
         return $results;
     }
 
