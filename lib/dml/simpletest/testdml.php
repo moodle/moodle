@@ -225,86 +225,97 @@ class dml_test extends UnitTestCase {
         $params[SQL_PARAMS_DOLLAR] = array('first record', 1);
 
         list($rsql, $rparams, $rtype) = $DB->fix_sql_params($sql[SQL_PARAMS_NAMED], $params[SQL_PARAMS_NAMED]);
-        $this->assertEqual($rsql, $sql[$rtype]);
-        $this->assertEqual($rparams, $params[$rtype]);
+        $this->assertIdentical($rsql, $sql[$rtype]);
+        $this->assertIdentical($rparams, $params[$rtype]);
 
         list($rsql, $rparams, $rtype) = $DB->fix_sql_params($sql[SQL_PARAMS_QM], $params[SQL_PARAMS_QM]);
-        $this->assertEqual($rsql, $sql[$rtype]);
-        $this->assertEqual($rparams, $params[$rtype]);
+        $this->assertIdentical($rsql, $sql[$rtype]);
+        $this->assertIdentical($rparams, $params[$rtype]);
 
         list($rsql, $rparams, $rtype) = $DB->fix_sql_params($sql[SQL_PARAMS_DOLLAR], $params[SQL_PARAMS_DOLLAR]);
-        $this->assertEqual($rsql, $sql[$rtype]);
-        $this->assertEqual($rparams, $params[$rtype]);
+        $this->assertIdentical($rsql, $sql[$rtype]);
+        $this->assertIdentical($rparams, $params[$rtype]);
 
 
         // Malformed table placeholder
         $sql = "SELECT * FROM [testtable]";
         $sqlarray = $DB->fix_sql_params($sql);
-        $this->assertEqual($sql, $sqlarray[0]);
+        $this->assertIdentical($sql, $sqlarray[0]);
 
 
         // Mixed param types (colon and dollar)
         $sql = "SELECT * FROM {{$tablename}} WHERE name = :param1, course = \$1";
         $params = array('param1' => 'record1', 'param2' => 3);
         try {
-            $sqlarray = $DB->fix_sql_params($sql, $params);
+            $DB->fix_sql_params($sql, $params);
             $this->fail("Expecting an exception, none occurred");
         } catch (Exception $e) {
-            $this->assertTrue($e instanceof moodle_exception);
+            $this->assertTrue($e instanceof dml_exception);
         }
 
         // Mixed param types (question and dollar)
         $sql = "SELECT * FROM {{$tablename}} WHERE name = ?, course = \$1";
         $params = array('param1' => 'record2', 'param2' => 5);
         try {
-            $sqlarray = $DB->fix_sql_params($sql, $params);
+            $DB->fix_sql_params($sql, $params);
             $this->fail("Expecting an exception, none occurred");
         } catch (Exception $e) {
-            $this->assertTrue($e instanceof moodle_exception);
+            $this->assertTrue($e instanceof dml_exception);
         }
 
-        // Too many params in sql
+        // Too few params in sql
         $sql = "SELECT * FROM {{$tablename}} WHERE name = ?, course = ?, id = ?";
         $params = array('record2', 3);
         try {
-            $sqlarray = $DB->fix_sql_params($sql, $params);
+            $DB->fix_sql_params($sql, $params);
             $this->fail("Expecting an exception, none occurred");
         } catch (Exception $e) {
-            $this->assertTrue($e instanceof moodle_exception);
+            $this->assertTrue($e instanceof dml_exception);
         }
 
-        // Too many params in array: no error
+        // Too many params in array: no error, just use what is necessary
         $params[] = 1;
         $params[] = time();
-        $sqlarray = null;
-
         try {
             $sqlarray = $DB->fix_sql_params($sql, $params);
-            $this->pass();
+            $this->assertTrue(is_array($sqlarray));
+            $this->assertEqual(count($sqlarray[1]), 3);
         } catch (Exception $e) {
             $this->fail("Unexpected ".get_class($e)." exception");
         }
-        $this->assertTrue($sqlarray[0]);
 
         // Named params missing from array
         $sql = "SELECT * FROM {{$tablename}} WHERE name = :name, course = :course";
         $params = array('wrongname' => 'record1', 'course' => 1);
         try {
-            $sqlarray = $DB->fix_sql_params($sql, $params);
+            $DB->fix_sql_params($sql, $params);
             $this->fail("Expecting an exception, none occurred");
         } catch (Exception $e) {
-            $this->assertTrue($e instanceof moodle_exception);
+            $this->assertTrue($e instanceof dml_exception);
         }
 
-        // Duplicate named param in query
+        // Duplicate named param in query - this is a very important feature!!
+        // it helps with debugging of sloppy code
         $sql = "SELECT * FROM {{$tablename}} WHERE name = :name, course = :name";
         $params = array('name' => 'record2', 'course' => 3);
         try {
-            $sqlarray = $DB->fix_sql_params($sql, $params);
+            $DB->fix_sql_params($sql, $params);
             $this->fail("Expecting an exception, none occurred");
         } catch (Exception $e) {
-            $this->assertTrue($e instanceof moodle_exception);
+            $this->assertTrue($e instanceof dml_exception);
         }
+
+        // Extra named param is ignored
+        $sql = "SELECT * FROM {{$tablename}} WHERE name = :name, course = :course";
+        $params = array('name' => 'record1', 'course' => 1, 'extrastuff'=>'haha');
+        try {
+            $sqlarray = $DB->fix_sql_params($sql, $params);
+            $this->assertTrue(is_array($sqlarray));
+            $this->assertEqual(count($sqlarray[1]), 2);
+        } catch (Exception $e) {
+            $this->fail("Unexpected ".get_class($e)." exception");
+        }
+
         // Booleans in NAMED params are casting to 1/0 int
         $sql = "SELECT * FROM {{$tablename}} WHERE course = ? OR course = ?";
         $params = array(true, false);
@@ -325,6 +336,12 @@ class dml_test extends UnitTestCase {
         list($sql, $params) = $DB->fix_sql_params($sql, $params);
         $this->assertTrue(reset($params) === 1);
         $this->assertTrue(next($params) === 0);
+
+        // No other data types are touched except bool
+        $sql = "SELECT * FROM {{$tablename}} WHERE name IN (?,?,?,?,?,?)";
+        $inparams = array('abc', 'ABC', NULL, '1', 1, 1.4);
+        list($sql, $params) = $DB->fix_sql_params($sql, $inparams);
+        $this->assertIdentical($params, $inparams);
     }
 
     public function testGetTables() {
