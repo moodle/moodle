@@ -77,7 +77,7 @@ class dml_test extends UnitTestCase {
         return new xmldb_table($tablename);
     }
 
-    /// NOTE: please keep order of test methods here matching the order of moodle_database class methods
+    // NOTE: please keep order of test methods here matching the order of moodle_database class methods
 
     function test_diagnose() {
         $DB = $this->tdb;
@@ -627,7 +627,7 @@ class dml_test extends UnitTestCase {
         }
 
         $rs = $DB->get_recordset($tablename);
-        $this->assertTrue($rs);
+        $this->assertTrue($rs instanceof moodle_recordset);
 
         reset($data);
         foreach($rs as $record) {
@@ -639,7 +639,9 @@ class dml_test extends UnitTestCase {
         }
         $rs->close();
 
-        // note: delegate limits testing to test_get_recordset_sql()
+        // notes:
+        //  * limits are tested in test_get_recordset_sql()
+        //  * where_clause() is used internally and is tested in test_get_records()
     }
 
     public function test_get_recordset_iterator_keys() {
@@ -664,7 +666,7 @@ class dml_test extends UnitTestCase {
             $DB->insert_record($tablename, $record);
         }
 
-    /// Test repeated numeric keys are returned ok
+        // Test repeated numeric keys are returned ok
         $rs = $DB->get_recordset($tablename, NULL, NULL, 'course, name, id');
 
         reset($data);
@@ -676,11 +678,9 @@ class dml_test extends UnitTestCase {
             $count++;
         }
         $rs->close();
-
-    /// Test record returned are ok
         $this->assertEqual($count, 3);
 
-    /// Test string keys are returned ok
+        // Test string keys are returned ok
         $rs = $DB->get_recordset($tablename, NULL, NULL, 'name, course, id');
 
         reset($data);
@@ -692,11 +692,9 @@ class dml_test extends UnitTestCase {
             $count++;
         }
         $rs->close();
-
-    /// Test record returned are ok
         $this->assertEqual($count, 3);
 
-    /// Test numeric not starting in 1 keys are returned ok
+        // Test numeric not starting in 1 keys are returned ok
         $rs = $DB->get_recordset($tablename, NULL, 'id DESC', 'id, course, name');
 
         $data = array_reverse($data);
@@ -709,8 +707,6 @@ class dml_test extends UnitTestCase {
             $count++;
         }
         $rs->close();
-
-    /// Test record returned are ok
         $this->assertEqual($count, 3);
     }
 
@@ -753,7 +749,9 @@ class dml_test extends UnitTestCase {
         $rs->close();
         $this->assertEqual(0, $counter);
 
-        // note: delegate limits testing to test_get_recordset_sql()
+        // notes:
+        //  * limits are tested in test_get_recordset_sql()
+        //  * where_clause() is used internally and is tested in test_get_records()
     }
 
     public function test_get_recordset_select() {
@@ -790,7 +788,8 @@ class dml_test extends UnitTestCase {
         $rs->close();
         $this->assertEqual(2, $counter);
 
-        // note: delegate limits testing to test_get_recordset_sql()
+        // notes:
+        //  * limits are tested in test_get_recordset_sql()
     }
 
     public function test_get_recordset_sql() {
