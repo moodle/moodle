@@ -1189,17 +1189,21 @@ class dml_test extends UnitTestCase {
         $DB->insert_record($tablename, array('course' => 3));
         $DB->insert_record($tablename, array('course' => 2));
 
-        $this->assertTrue($record = $DB->get_record_sql("SELECT * FROM {{$tablename}} WHERE id = ?", array(2)));
-
+        // standard use
+        $record = $DB->get_record_sql("SELECT * FROM {{$tablename}} WHERE id = ?", array(2));
+        $this->assertTrue($record instanceof stdClass);
         $this->assertEqual(2, $record->course);
+        $this->assertEqual(2, $record->id);
 
         // backwards compatibility with $ignoremultiple
         $this->assertFalse(IGNORE_MISSING);
         $this->assertTrue(IGNORE_MULTIPLE);
 
-        // record not found
-        $this->assertFalse($record = $DB->get_record_sql("SELECT * FROM {{$tablename}} WHERE id = ?", array(666), IGNORE_MISSING));
-        $this->assertFalse($record = $DB->get_record_sql("SELECT * FROM {{$tablename}} WHERE id = ?", array(666), IGNORE_MULTIPLE));
+        // record not found - ignore
+        $this->assertFalse($DB->get_record_sql("SELECT * FROM {{$tablename}} WHERE id = ?", array(666), IGNORE_MISSING));
+        $this->assertFalse($DB->get_record_sql("SELECT * FROM {{$tablename}} WHERE id = ?", array(666), IGNORE_MULTIPLE));
+
+        // record not found error
         try {
             $DB->get_record_sql("SELECT * FROM {{$tablename}} WHERE id = ?", array(666), MUST_EXIST);
             $this->fail("Exception expected");
@@ -1207,11 +1211,17 @@ class dml_test extends UnitTestCase {
             $this->assertTrue(true);
         }
 
-        // multiple matches
+        // multiple matches - debug warning
         ob_start(); // hide debug warning
-        $this->assertTrue($record = $DB->get_record_sql("SELECT * FROM {{$tablename}}", array(), IGNORE_MISSING));
+        $this->assertTrue($DB->get_record_sql("SELECT * FROM {{$tablename}}", array(), IGNORE_MISSING));
+        $debuginfo = ob_get_contents();
         ob_end_clean();
-        $this->assertTrue($record = $DB->get_record_sql("SELECT * FROM {{$tablename}}", array(), IGNORE_MULTIPLE));
+        $this->assertFalse($debuginfo === '');
+
+        // multiple matches ignored
+        $this->assertTrue($DB->get_record_sql("SELECT * FROM {{$tablename}}", array(), IGNORE_MULTIPLE));
+
+        // multiple found error
         try {
             $DB->get_record_sql("SELECT * FROM {{$tablename}}", array(), MUST_EXIST);
             $this->fail("Exception expected");
@@ -1286,9 +1296,7 @@ class dml_test extends UnitTestCase {
 
         $DB->insert_record($tablename, array('course' => 3));
 
-        $this->assertTrue($course = $DB->get_field_select($tablename, 'course', "id = ?", array(1)));
-        $this->assertEqual(3, $course);
-
+        $this->assertEqual(3, $DB->get_field_select($tablename, 'course', "id = ?", array(1)));
     }
 
     public function test_get_field_sql() {
@@ -1306,9 +1314,7 @@ class dml_test extends UnitTestCase {
 
         $DB->insert_record($tablename, array('course' => 3));
 
-        $this->assertTrue($course = $DB->get_field_sql("SELECT course FROM {{$tablename}} WHERE id = ?", array(1)));
-        $this->assertEqual(3, $course);
-
+        $this->assertEqual(3, $DB->get_field_sql("SELECT course FROM {{$tablename}} WHERE id = ?", array(1)));
     }
 
     public function test_get_fieldset_select() {
@@ -1329,13 +1335,13 @@ class dml_test extends UnitTestCase {
         $DB->insert_record($tablename, array('course' => 2));
         $DB->insert_record($tablename, array('course' => 6));
 
-        $this->assertTrue($fieldset = $DB->get_fieldset_select($tablename, 'course', "course > ?", array(1)));
+        $fieldset = $DB->get_fieldset_select($tablename, 'course', "course > ?", array(1));
+        $this->assertTrue(is_array($fieldset));
 
         $this->assertEqual(3, count($fieldset));
         $this->assertEqual(3, $fieldset[0]);
         $this->assertEqual(2, $fieldset[1]);
         $this->assertEqual(6, $fieldset[2]);
-
     }
 
     public function test_get_fieldset_sql() {
@@ -1356,7 +1362,8 @@ class dml_test extends UnitTestCase {
         $DB->insert_record($tablename, array('course' => 2));
         $DB->insert_record($tablename, array('course' => 6));
 
-        $this->assertTrue($fieldset = $DB->get_fieldset_sql("SELECT * FROM {{$tablename}} WHERE course > ?", array(1)));
+        $fieldset = $DB->get_fieldset_sql("SELECT * FROM {{$tablename}} WHERE course > ?", array(1));
+        $this->assertTrue(is_array($fieldset));
 
         $this->assertEqual(3, count($fieldset));
         $this->assertEqual(2, $fieldset[0]);
