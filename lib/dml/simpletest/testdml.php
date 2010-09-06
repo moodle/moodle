@@ -1666,11 +1666,32 @@ class dml_test extends UnitTestCase {
         $this->tables[$tablename] = $table;
 
         $DB->insert_record($tablename, array('course' => 1));
+        $DB->insert_record($tablename, array('course' => 3));
+
         $record = $DB->get_record($tablename, array('course' => 1));
         $record->course = 2;
         $this->assertTrue($DB->update_record_raw($tablename, $record));
-        $this->assertFalse($record = $DB->get_record($tablename, array('course' => 1)));
-        $this->assertTrue($record = $DB->get_record($tablename, array('course' => 2)));
+        $this->assertEqual(0, $DB->count_records($tablename, array('course' => 1)));
+        $this->assertEqual(1, $DB->count_records($tablename, array('course' => 2)));
+        $this->assertEqual(1, $DB->count_records($tablename, array('course' => 3)));
+
+        $record = $DB->get_record($tablename, array('course' => 1));
+        $record->xxxxx = 2;
+        try {
+           $DB->update_record_raw($tablename, $record);
+           $this->fail("Expecting an exception, none occurred");
+        } catch (Exception $e) {
+            $this->assertTrue($e instanceof coding_exception);
+        }
+
+        $record = $DB->get_record($tablename, array('course' => 3));
+        unset($record->id);
+        try {
+           $DB->update_record_raw($tablename, $record);
+           $this->fail("Expecting an exception, none occurred");
+        } catch (Exception $e) {
+            $this->assertTrue($e instanceof coding_exception);
+        }
     }
 
     public function test_update_record() {
