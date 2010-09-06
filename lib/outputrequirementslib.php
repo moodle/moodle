@@ -152,7 +152,7 @@ class page_requirements_manager {
         } else {
             $jsrev = $CFG->jsrev;
         }
-        
+
         // set up JS YUI loader helper object
         $this->M_yui_loader = new stdClass();
         $this->M_yui_loader->base         = $this->yui3loader->base;
@@ -405,7 +405,8 @@ class page_requirements_manager {
                                                         array('uploading', 'repository'), array('xhtmlerror', 'repository'),
                                                         array('xhtml', 'quiz'), array('cancel'), array('chooselicense', 'repository'), array('author', 'repository'),
                                                         array('ok', 'moodle'), array('error', 'moodle'), array('info', 'moodle'), array('norepositoriesavailable', 'repository'), array('norepositoriesexternalavailable', 'repository'),
-                                                        array('nofilesattached', 'repository'), array('filepicker', 'repository')
+                                                        array('nofilesattached', 'repository'), array('filepicker', 'repository'),
+                                                        array('nofilesavailable', 'repository')
                                                     ));
                     break;
                 case 'core_comment':
