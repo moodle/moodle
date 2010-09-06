@@ -99,12 +99,12 @@ class dml_test extends UnitTestCase {
         // SQL_PARAMS_QM - IN or =
 
         // Correct usage of multiple values
-        $in_values = array('value1', 'value2', 'value3', 'value4');
+        $in_values = array('value1', 'value2', '3', 4, null, false, true);
         list($usql, $params) = $DB->get_in_or_equal($in_values);
-        $this->assertEqual("IN (?,?,?,?)", $usql);
-        $this->assertEqual(4, count($params));
+        $this->assertEqual('IN ('.implode(',',array_fill(0, count($in_values), '?')).')', $usql);
+        $this->assertEqual(count($in_values), count($params));
         foreach ($params as $key => $value) {
-            $this->assertEqual($in_values[$key], $value);
+            $this->assertIdentical($in_values[$key], $value);
         }
 
         // Correct usage of single value (in an array)
