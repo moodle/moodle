@@ -330,7 +330,7 @@ class backup_ui_stage_confirmation extends backup_ui_stage {
             foreach ($this->ui->get_tasks() as $task) {
                 if ($setting = $task->get_setting('filename')) {
                     $form->add_heading('filenamesetting', get_string('filename', 'backup'));
-                    if ($setting->get_value() == 'backup.zip') {
+                    if ($setting->get_value() == 'backup.mbz') {
                         $format = $this->ui->get_format();
                         $type = $this->ui->get_type();
                         $id = $this->ui->get_controller_id();

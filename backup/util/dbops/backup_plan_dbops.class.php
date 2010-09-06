@@ -138,7 +138,7 @@ abstract class backup_plan_dbops extends backup_dbops {
     * Returns the default backup filename, based in passed params.
     *
     * Default format is (see MDL-22145)
-    *   backup word - format - type - name - date - info . zip
+    *   backup word - format - type - name - date - info . mbz
     * where name is variable (course shortname, section name/id, activity modulename + cmid)
     * and info can be (nu = no user info, an = anonymized)
     */
@@ -182,7 +182,7 @@ abstract class backup_plan_dbops extends backup_dbops {
         }
 
         return $backupword . '-' . $format . '-' . $type . '-' .
-               $name . '-' . $date . $info . '.zip';
+               $name . '-' . $date . $info . '.mbz';
     }
 
     /**
