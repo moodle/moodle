@@ -780,10 +780,10 @@ abstract class moodle_database {
     public abstract function get_indexes($table);
 
     /**
-     * Returns datailed information about columns in table. This information is cached internally.
+     * Returns detailed information about columns in table. This information is cached internally.
      * @param string $table name
      * @param bool $usecache
-     * @return array array of database_column_info objects indexed with column names
+     * @return array of database_column_info objects indexed with column names
      */
     public abstract function get_columns($table, $usecache=true);
 
@@ -809,7 +809,7 @@ abstract class moodle_database {
     /**
      * Returns sql generator used for db manipulation.
      * Used mostly in upgrade.php scripts.
-     * @return object database_manager instance
+     * @return database_manager instance
      */
     public function get_manager() {
         global $CFG;
