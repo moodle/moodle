@@ -173,8 +173,9 @@ M.mod_chat_ajax.init = function(Y, cfg) {
             }
             clearInterval(this.interval);
             this.update_messages();
-            this.interval = setInterval(function(me) {
-                me.update_messages();
+            var scope = this;
+            this.interval = setInterval(function() {
+                scope.update_messages();
             }, this.cfg.timer, this);
         },
 
