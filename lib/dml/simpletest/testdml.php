@@ -477,6 +477,13 @@ class dml_test extends UnitTestCase {
         }
     }
 
+    public function test_get_manager() {
+        $DB = $this->tdb;
+        $dbman = $this->tdb->get_manager();
+
+        $this->assertTrue($dbman instanceof database_manager);
+    }
+
     public function testExecute() {
         $DB = $this->tdb;
         $dbman = $this->tdb->get_manager();
