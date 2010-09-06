@@ -365,28 +365,7 @@ class dml_test extends UnitTestCase {
         $this->assertTrue(count($DB->get_tables()) == $original_count);
     }
 
-    public function testDefaults() {
-        $DB = $this->tdb;
-        $dbman = $this->tdb->get_manager();
-
-        $table = $this->get_test_table();
-        $tablename = $table->getName();
-
-        $table->add_field('enumfield', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, 'test2');
-        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
-        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
-        $dbman->create_table($table);
-        $this->tables[$tablename] = $table;
-
-        $columns = $DB->get_columns($tablename);
-
-        $enumfield = $columns['enumfield'];
-        $this->assertEqual('test2', $enumfield->default_value);
-        $this->assertEqual('C', $enumfield->meta_type);
-
-    }
-
-    public function testGetIndexes() {
+    public function test_get_indexes() {
         $DB = $this->tdb;
         $dbman = $this->tdb->get_manager();
 
@@ -420,6 +399,27 @@ class dml_test extends UnitTestCase {
         $this->assertEqual('course', $single['columns'][0]);
         $this->assertEqual('course', $composed['columns'][0]);
         $this->assertEqual('id', $composed['columns'][1]);
+    }
+
+    public function testDefaults() {
+        $DB = $this->tdb;
+        $dbman = $this->tdb->get_manager();
+
+        $table = $this->get_test_table();
+        $tablename = $table->getName();
+
+        $table->add_field('enumfield', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, 'test2');
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $dbman->create_table($table);
+        $this->tables[$tablename] = $table;
+
+        $columns = $DB->get_columns($tablename);
+
+        $enumfield = $columns['enumfield'];
+        $this->assertEqual('test2', $enumfield->default_value);
+        $this->assertEqual('C', $enumfield->meta_type);
+
     }
 
     public function testGetColumns() {
