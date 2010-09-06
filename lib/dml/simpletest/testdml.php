@@ -337,14 +337,14 @@ class dml_test extends UnitTestCase {
         $this->assertTrue(reset($params) === 1);
         $this->assertTrue(next($params) === 0);
 
-        // No other data types are touched except bool
+        // No data types are touched except bool
         $sql = "SELECT * FROM {{$tablename}} WHERE name IN (?,?,?,?,?,?)";
         $inparams = array('abc', 'ABC', NULL, '1', 1, 1.4);
         list($sql, $params) = $DB->fix_sql_params($sql, $inparams);
         $this->assertIdentical($params, $inparams);
     }
 
-    public function testGetTables() {
+    public function test_get_tables() {
         $DB = $this->tdb;
         $dbman = $this->tdb->get_manager();
 
@@ -356,10 +356,13 @@ class dml_test extends UnitTestCase {
 
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+
         $dbman->create_table($table);
         $this->tables[$tablename] = $table;
-
         $this->assertTrue(count($DB->get_tables()) == $original_count + 1);
+
+        $dbman->drop_table($table);
+        $this->assertTrue(count($DB->get_tables()) == $original_count);
     }
 
     public function testDefaults() {
