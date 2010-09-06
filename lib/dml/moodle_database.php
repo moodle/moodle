@@ -156,7 +156,7 @@ abstract class moodle_database {
 
     /**
      * Loads and returns a database instance with the specified type and library.
-     * @param string $type database type of the driver (mysqli, pgsql, mssql, sqldrv, oci, etc)
+     * @param string $type database type of the driver (mysqli, pgsql, mssql, sqldrv, oci, etc.)
      * @param string $library database library of the driver (native, pdo, etc.)
      * @return moodle_database driver object or null if error
      */
@@ -184,7 +184,7 @@ abstract class moodle_database {
     /**
      * Returns more specific database driver type
      * Note: can be used before connect()
-     * @return string db type mysql, mysqli, postgres7
+     * @return string db type mysqli, pgsql, oci, mssql, sqlsrv
      */
     protected abstract function get_dbtype();
 
