@@ -77,6 +77,12 @@ class dml_test extends UnitTestCase {
         return new xmldb_table($tablename);
     }
 
+    function test_diagnose() {
+        $DB = $this->tdb;
+        $result = $DB->diagnose();
+        $this->assertNull($result, 'Database self diagnostics failed %s');
+    }
+
     function test_fix_sql_params() {
         $DB = $this->tdb;
 
