@@ -46,9 +46,10 @@ define ('DEBUG_DEVELOPER', 38911);
  * more familiar to Java developers ;-) Do not use for type checking of
  * function parameters.
  *
- * @package   moodlecore
- * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    core
+ * @subpackage lib
+ * @copyright  2009 Petr Skoda  {@link http://skodak.org}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class object extends stdClass {};
 
@@ -58,9 +59,10 @@ class object extends stdClass {};
  * Although this class is defined here, you cannot throw a moodle_exception until
  * after moodlelib.php has been included (which will happen very soon).
  *
- * @package   moodlecore
- * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    core
+ * @subpackage lib
+ * @copyright  2008 Petr Skoda  {@link http://skodak.org}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class moodle_exception extends Exception {
     public $errorcode;
@@ -102,6 +104,11 @@ class moodle_exception extends Exception {
  * Course/activity access exception.
  *
  * This exception is thrown from require_login()
+ *
+ * @package    core
+ * @subpackage lib
+ * @copyright  2010 Petr Skoda  {@link http://skodak.org}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class require_login_exception extends moodle_exception {
     function __construct($debuginfo) {
@@ -129,6 +136,11 @@ class webservice_parameter_exception extends moodle_exception {
 /**
  * Exceptions indicating user does not have permissions to do something
  * and the execution can not continue.
+ *
+ * @package    core
+ * @subpackage lib
+ * @copyright  2009 Petr Skoda  {@link http://skodak.org}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class required_capability_exception extends moodle_exception {
     function __construct($context, $capability, $errormessage, $stringfile) {
@@ -141,9 +153,10 @@ class required_capability_exception extends moodle_exception {
  * Exception indicating programming error, must be fixed by a programer. For example
  * a core API might throw this type of exception if a plugin calls it incorrectly.
  *
- * @package   moodlecore
- * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    core
+ * @subpackage lib
+ * @copyright  2008 Petr Skoda  {@link http://skodak.org}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class coding_exception extends moodle_exception {
     /**
@@ -161,6 +174,11 @@ class coding_exception extends moodle_exception {
  * This exception is not supposed to be thrown when processing
  * user submitted data in forms. It is more suitable
  * for WS and other low level stuff.
+ *
+ * @package    core
+ * @subpackage lib
+ * @copyright  2009 Petr Skoda  {@link http://skodak.org}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class invalid_parameter_exception extends moodle_exception {
     /**
@@ -195,9 +213,10 @@ class invalid_response_exception extends moodle_exception {
  * default case, to just in case something really weird is going on, and
  * $context->contextlevel is invalid - rather than ignoring this possibility.
  *
- * @package   moodlecore
- * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    core
+ * @subpackage lib
+ * @copyright  2009 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class invalid_state_exception extends moodle_exception {
     /**
