@@ -489,7 +489,7 @@ class dml_test extends UnitTestCase {
         $this->assertTrue($DB->setup_is_unicodedb());
     }
 
-    public function test_set_debug() {
+    public function test_set_debug() { //tests get_debug() too
         $DB = $this->tdb;
         $dbman = $this->tdb->get_manager();
 
@@ -508,8 +508,10 @@ class dml_test extends UnitTestCase {
 
         ob_start();
         $DB->set_debug(true);
+        $this->assertTrue($DB->get_debug());
         $DB->execute($sql);
         $DB->set_debug(false);
+        $this->assertFalse($DB->get_debug());
         $debuginfo = ob_get_contents();
         ob_end_clean();
         $this->assertFalse($debuginfo === '');
