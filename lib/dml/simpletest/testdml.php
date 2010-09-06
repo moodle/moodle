@@ -489,6 +489,40 @@ class dml_test extends UnitTestCase {
         $this->assertTrue($DB->setup_is_unicodedb());
     }
 
+    public function test_set_debug() {
+        $DB = $this->tdb;
+        $dbman = $this->tdb->get_manager();
+
+        $table = $this->get_test_table();
+        $tablename = $table->getName();
+
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $dbman->create_table($table);
+        $this->tables[$tablename] = $table;
+
+        $sql = "SELECT * FROM {{$tablename}}";
+
+        $prevdebug = $DB->get_debug();
+
+        ob_start();
+        $DB->set_debug(true);
+        $DB->execute($sql);
+        $DB->set_debug(false);
+        $debuginfo = ob_get_contents();
+        ob_end_clean();
+        $this->assertFalse($debuginfo === '');
+
+        ob_start();
+        $DB->execute($sql);
+        $debuginfo = ob_get_contents();
+        ob_end_clean();
+        $this->assertTrue($debuginfo === '');
+
+        $DB->set_debug($prevdebug);
+    }
+
     public function testExecute() {
         $DB = $this->tdb;
         $dbman = $this->tdb->get_manager();
