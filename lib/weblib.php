@@ -1362,7 +1362,7 @@ function format_module_intro($module, $activity, $cmid, $filter=true) {
     global $CFG;
     require_once("$CFG->libdir/filelib.php");
     $context = get_context_instance(CONTEXT_MODULE, $cmid);
-    $options = (object)array('noclean'=>true, 'para'=>false, 'filter'=>true, 'context'=>$context);
+    $options = (object)array('noclean'=>true, 'para'=>false, 'filter'=>$filter, 'context'=>$context);
     $intro = file_rewrite_pluginfile_urls($activity->intro, 'pluginfile.php', $context->id, 'mod_'.$module, 'intro', null);
     return trim(format_text($intro, $activity->introformat, $options, null));
 }
