@@ -845,6 +845,7 @@ abstract class moodle_database {
     /**
      * Enable/disable very detailed debugging
      * @param bool $state
+     * @return void
      */
     public function set_debug($state) {
         $this->debug = $state;
