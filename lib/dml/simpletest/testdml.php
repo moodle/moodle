@@ -525,38 +525,61 @@ class dml_test extends UnitTestCase {
         $DB->set_debug($prevdebug);
     }
 
-    public function testExecute() {
+    public function test_execute() {
         $DB = $this->tdb;
         $dbman = $this->tdb->get_manager();
 
-        $table = $this->get_test_table();
-        $tablename = $table->getName();
+        $table1 = $this->get_test_table('unit_table1');
+        $tablename1 = $table1->getName();
+        $table1->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table1->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+        $table1->add_field('name', XMLDB_TYPE_CHAR, '255', null, null, null, '0');
+        $table1->add_index('course', XMLDB_INDEX_NOTUNIQUE, array('course'));
+        $table1->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $dbman->create_table($table1);
+        $this->tables[$tablename1] = $table1;
 
-        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
-        $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
-        $table->add_field('name', XMLDB_TYPE_CHAR, '255', null, null, null, '0');
-        $table->add_index('course', XMLDB_INDEX_NOTUNIQUE, array('course'));
-        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
-        $dbman->create_table($table);
-        $this->tables[$tablename] = $table;
+        $table2 = $this->get_test_table('unit_table2');
+        $tablename2 = $table2->getName();
+        $table2->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table2->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+        $table2->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $dbman->create_table($table2);
+        $this->tables[$tablename1] = $table2;
 
-        $sql = "SELECT * FROM {{$tablename}}";
+        $DB->insert_record($tablename1, array('course' => 3, 'name' => 'aaa'));
+        $DB->insert_record($tablename1, array('course' => 1, 'name' => 'bbb'));
+        $DB->insert_record($tablename1, array('course' => 7, 'name' => 'ccc'));
+        $DB->insert_record($tablename1, array('course' => 3, 'name' => 'ddd'));
+
+        // select results are ignored
+        $sql = "SELECT * FROM {{$tablename1}} WHERE course = :course";
+        $this->assertTrue($DB->execute($sql, array('course'=>3)));
+
+        // throw exception on error
+        $sql = "XXUPDATE SET XSSD";
+        try {
+            $DB->execute($sql);
+            $this->fail("Expecting an exception, none occurred");
+        } catch (Exception $e) {
+            $this->assertTrue($e instanceof dml_write_exception);
+        }
+
+        // update records
+        $sql = "UPDATE {{$tablename1}}
+                   SET course = 6
+                 WHERE course = ?";
+        $this->assertTrue($DB->execute($sql, array('3')));
+        $this->assertEqual($DB->count_records($tablename1, array('course' => 6)), 2);
+
+        // insert from one into second table
+        $sql = "INSERT INTO {{$tablename2}} (course)
+
+                SELECT course
+                  FROM {{$tablename1}}";
 
         $this->assertTrue($DB->execute($sql));
-
-        $params = array('course' => 1, 'name' => 'test');
-
-        $sql = "INSERT INTO {{$tablename}} (".implode(',', array_keys($params)).")
-                       VALUES (".implode(',', array_fill(0, count($params), '?')).")";
-
-
-        $this->assertTrue($DB->execute($sql, $params));
-
-        $record = $DB->get_record($tablename, array('id' => 1));
-
-        foreach ($params as $field => $value) {
-            $this->assertEqual($value, $record->$field, "Field $field in DB ({$record->$field}) is not equal to field $field in sql ($value)");
-        }
+        $this->assertEqual($DB->count_records($tablename2), 4);
     }
 
     public function test_fix_table_names() {
