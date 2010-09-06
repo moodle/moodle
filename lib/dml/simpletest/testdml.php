@@ -1415,6 +1415,14 @@ class dml_test extends UnitTestCase {
         } catch (coding_exception $ex) {
             $this->assertTrue(true);
         }
+
+        // wrong column error
+        try {
+            $DB->insert_record_raw($tablename, array('xxxxx' => 3, 'onechar' => 'bb'));
+            $this->assertFail('Exception expected due to invalid column');
+        } catch (dml_write_exception $ex) {
+            $this->assertTrue(true);
+        }
     }
 
     public function test_insert_record() {
