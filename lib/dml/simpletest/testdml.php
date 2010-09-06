@@ -202,6 +202,28 @@ class dml_test extends UnitTestCase {
 
     }
 
+    public function test_fix_table_names() {
+        $DB = new moodle_database_for_testing();
+        $prefix = $DB->get_prefix();
+
+        // Simple placeholder
+        $placeholder = "{user_123}";
+        $this->assertIdentical($prefix."user_123", $DB->public_fix_table_names($placeholder));
+
+        // wrong table name
+        $placeholder = "{user-a}";
+        $this->assertIdentical($placeholder, $DB->public_fix_table_names($placeholder));
+
+        // wrong table name
+        $placeholder = "{123user}";
+        $this->assertIdentical($placeholder, $DB->public_fix_table_names($placeholder));
+
+        // Full SQL
+        $sql = "SELECT * FROM {user}, {funny_table_name}, {mdl_stupid_table} WHERE {user}.id = {funny_table_name}.userid";
+        $expected = "SELECT * FROM {$prefix}user, {$prefix}funny_table_name, {$prefix}mdl_stupid_table WHERE {$prefix}user.id = {$prefix}funny_table_name.userid";
+        $this->assertIdentical($expected, $DB->public_fix_table_names($sql));
+    }
+
     function test_fix_sql_params() {
         $DB = $this->tdb;
 
@@ -577,25 +599,8 @@ class dml_test extends UnitTestCase {
 
                 SELECT course
                   FROM {{$tablename1}}";
-
         $this->assertTrue($DB->execute($sql));
         $this->assertEqual($DB->count_records($tablename2), 4);
-    }
-
-    public function test_fix_table_names() {
-        $DB = new moodle_database_for_testing();
-        $prefix = $DB->get_prefix();
-
-        // Simple placeholder
-        $placeholder = "{user}";
-        $this->assertEqual($prefix."user", $DB->public_fix_table_names($placeholder));
-
-        // Full SQL
-        $sql = "SELECT * FROM {user}, {funny_table_name}, {mdl_stupid_table} WHERE {user}.id = {funny_table_name}.userid";
-        $expected = "SELECT * FROM {$prefix}user, {$prefix}funny_table_name, {$prefix}mdl_stupid_table WHERE {$prefix}user.id = {$prefix}funny_table_name.userid";
-        $this->assertEqual($expected, $DB->public_fix_table_names($sql));
-
-
     }
 
     public function test_get_recordset() {
