@@ -209,7 +209,7 @@ class dml_test extends UnitTestCase {
         $tablename = $table->getName();
 
         // Correct table placeholder substitution
-        $sql = "SELECT * FROM {".$tablename."}";
+        $sql = "SELECT * FROM {{$tablename}}";
         $sqlarray = $DB->fix_sql_params($sql);
         $this->assertEqual("SELECT * FROM {$DB->get_prefix()}".$tablename, $sqlarray[0]);
 
@@ -244,7 +244,7 @@ class dml_test extends UnitTestCase {
 
 
         // Mixed param types (colon and dollar)
-        $sql = "SELECT * FROM {".$tablename."} WHERE name = :param1, course = \$1";
+        $sql = "SELECT * FROM {{$tablename}} WHERE name = :param1, course = \$1";
         $params = array('param1' => 'record1', 'param2' => 3);
         try {
             $sqlarray = $DB->fix_sql_params($sql, $params);
@@ -254,7 +254,7 @@ class dml_test extends UnitTestCase {
         }
 
         // Mixed param types (question and dollar)
-        $sql = "SELECT * FROM {".$tablename."} WHERE name = ?, course = \$1";
+        $sql = "SELECT * FROM {{$tablename}} WHERE name = ?, course = \$1";
         $params = array('param1' => 'record2', 'param2' => 5);
         try {
             $sqlarray = $DB->fix_sql_params($sql, $params);
@@ -264,7 +264,7 @@ class dml_test extends UnitTestCase {
         }
 
         // Too many params in sql
-        $sql = "SELECT * FROM {".$tablename."} WHERE name = ?, course = ?, id = ?";
+        $sql = "SELECT * FROM {{$tablename}} WHERE name = ?, course = ?, id = ?";
         $params = array('record2', 3);
         try {
             $sqlarray = $DB->fix_sql_params($sql, $params);
@@ -287,7 +287,7 @@ class dml_test extends UnitTestCase {
         $this->assertTrue($sqlarray[0]);
 
         // Named params missing from array
-        $sql = "SELECT * FROM {".$tablename."} WHERE name = :name, course = :course";
+        $sql = "SELECT * FROM {{$tablename}} WHERE name = :name, course = :course";
         $params = array('wrongname' => 'record1', 'course' => 1);
         try {
             $sqlarray = $DB->fix_sql_params($sql, $params);
@@ -297,7 +297,7 @@ class dml_test extends UnitTestCase {
         }
 
         // Duplicate named param in query
-        $sql = "SELECT * FROM {".$tablename."} WHERE name = :name, course = :name";
+        $sql = "SELECT * FROM {{$tablename}} WHERE name = :name, course = :name";
         $params = array('name' => 'record2', 'course' => 3);
         try {
             $sqlarray = $DB->fix_sql_params($sql, $params);
@@ -306,21 +306,21 @@ class dml_test extends UnitTestCase {
             $this->assertTrue($e instanceof moodle_exception);
         }
         // Booleans in NAMED params are casting to 1/0 int
-        $sql = "SELECT * FROM {".$tablename."} WHERE course = ? OR course = ?";
+        $sql = "SELECT * FROM {{$tablename}} WHERE course = ? OR course = ?";
         $params = array(true, false);
         list($sql, $params) = $DB->fix_sql_params($sql, $params);
         $this->assertTrue(reset($params) === 1);
         $this->assertTrue(next($params) === 0);
 
         // Booleans in QM params are casting to 1/0 int
-        $sql = "SELECT * FROM {".$tablename."} WHERE course = :course1 OR course = :course2";
+        $sql = "SELECT * FROM {{$tablename}} WHERE course = :course1 OR course = :course2";
         $params = array('course1' => true, 'course2' => false);
         list($sql, $params) = $DB->fix_sql_params($sql, $params);
         $this->assertTrue(reset($params) === 1);
         $this->assertTrue(next($params) === 0);
 
         // Booleans in DOLLAR params are casting to 1/0 int
-        $sql = "SELECT * FROM {".$tablename."} WHERE course = \$1 OR course = \$2";
+        $sql = "SELECT * FROM {{$tablename}} WHERE course = \$1 OR course = \$2";
         $params = array(true, false);
         list($sql, $params) = $DB->fix_sql_params($sql, $params);
         $this->assertTrue(reset($params) === 1);
@@ -448,13 +448,13 @@ class dml_test extends UnitTestCase {
         $dbman->create_table($table);
         $this->tables[$tablename] = $table;
 
-        $sql = "SELECT * FROM {".$tablename."}";
+        $sql = "SELECT * FROM {{$tablename}}";
 
         $this->assertTrue($DB->execute($sql));
 
         $params = array('course' => 1, 'name' => 'test');
 
-        $sql = "INSERT INTO {".$tablename."} (".implode(',', array_keys($params)).")
+        $sql = "INSERT INTO {{$tablename}} (".implode(',', array_keys($params)).")
                        VALUES (".implode(',', array_fill(0, count($params), '?')).")";
 
 
@@ -694,7 +694,7 @@ class dml_test extends UnitTestCase {
         $inskey6 = $DB->insert_record($tablename, array('course' => 1));
         $inskey7 = $DB->insert_record($tablename, array('course' => 0));
 
-        $this->assertTrue($rs = $DB->get_recordset_sql("SELECT * FROM {".$tablename."} WHERE course = ?", array(3)));
+        $this->assertTrue($rs = $DB->get_recordset_sql("SELECT * FROM {{$tablename}} WHERE course = ?", array(3)));
         $counter = 0;
         foreach ($rs as $record) {
             $counter++;
@@ -704,7 +704,7 @@ class dml_test extends UnitTestCase {
 
         // limits - only need to test this case, the rest have been tested by test_get_records_sql()
         // only limitfrom = skips that number of records
-        $rs = $DB->get_recordset_sql("SELECT * FROM {".$tablename."} ORDER BY id", null, 2, 0);
+        $rs = $DB->get_recordset_sql("SELECT * FROM {{$tablename}} ORDER BY id", null, 2, 0);
         $records = array();
         foreach($rs as $key => $record) {
             $records[$key] = $record;
@@ -851,7 +851,7 @@ class dml_test extends UnitTestCase {
         $inskey6 = $DB->insert_record($tablename, array('course' => 1));
         $inskey7 = $DB->insert_record($tablename, array('course' => 0));
 
-        $this->assertTrue($records = $DB->get_records_sql("SELECT * FROM {".$tablename."} WHERE course = ?", array(3)));
+        $this->assertTrue($records = $DB->get_records_sql("SELECT * FROM {{$tablename}} WHERE course = ?", array(3)));
         $this->assertEqual(2, count($records));
         $this->assertEqual($inskey1, reset($records)->id);
         $this->assertEqual($inskey4, next($records)->id);
@@ -862,7 +862,7 @@ class dml_test extends UnitTestCase {
         $CFG->debug = DEBUG_DEVELOPER;
         $CFG->debugdisplay = true;
         ob_start(); // hide debug warning
-        $records = $DB->get_records_sql("SELECT course AS id, course AS course FROM {".$tablename."}", null);
+        $records = $DB->get_records_sql("SELECT course AS id, course AS course FROM {{$tablename}}", null);
         ob_end_clean();
         $debuginfo = ob_get_contents();
         $CFG->debug = $olddebug;         // Restore original debug settings
@@ -872,27 +872,27 @@ class dml_test extends UnitTestCase {
         $this->assertFalse($debuginfo === '');
 
         // negative limits = no limits
-        $records = $DB->get_records_sql("SELECT * FROM {".$tablename."} ORDER BY id", null, -1, -1);
+        $records = $DB->get_records_sql("SELECT * FROM {{$tablename}} ORDER BY id", null, -1, -1);
         $this->assertEqual(7, count($records));
 
         // zero limits = no limits
-        $records = $DB->get_records_sql("SELECT * FROM {".$tablename."} ORDER BY id", null, 0, 0);
+        $records = $DB->get_records_sql("SELECT * FROM {{$tablename}} ORDER BY id", null, 0, 0);
         $this->assertEqual(7, count($records));
 
         // only limitfrom = skips that number of records
-        $records = $DB->get_records_sql("SELECT * FROM {".$tablename."} ORDER BY id", null, 2, 0);
+        $records = $DB->get_records_sql("SELECT * FROM {{$tablename}} ORDER BY id", null, 2, 0);
         $this->assertEqual(5, count($records));
         $this->assertEqual($inskey3, reset($records)->id);
         $this->assertEqual($inskey7, end($records)->id);
 
         // only limitnum = fetches that number of records
-        $records = $DB->get_records_sql("SELECT * FROM {".$tablename."} ORDER BY id", null, 0, 3);
+        $records = $DB->get_records_sql("SELECT * FROM {{$tablename}} ORDER BY id", null, 0, 3);
         $this->assertEqual(3, count($records));
         $this->assertEqual($inskey1, reset($records)->id);
         $this->assertEqual($inskey3, end($records)->id);
 
         // both limitfrom and limitnum = skips limitfrom records and fetches limitnum ones
-        $records = $DB->get_records_sql("SELECT * FROM {".$tablename."} ORDER BY id", null, 3, 2);
+        $records = $DB->get_records_sql("SELECT * FROM {{$tablename}} ORDER BY id", null, 3, 2);
         $this->assertEqual(2, count($records));
         $this->assertEqual($inskey4, reset($records)->id);
         $this->assertEqual($inskey5, end($records)->id);
@@ -978,7 +978,7 @@ class dml_test extends UnitTestCase {
         $DB->insert_record($tablename, array('course' => 3));
         $DB->insert_record($tablename, array('course' => 5));
 
-        $this->assertTrue($records = $DB->get_records_sql_menu("SELECT * FROM {".$tablename."} WHERE course > ?", array(2)));
+        $this->assertTrue($records = $DB->get_records_sql_menu("SELECT * FROM {{$tablename}} WHERE course > ?", array(2)));
 
         $this->assertEqual(3, count($records));
         $this->assertFalse(empty($records[1]));
@@ -1029,7 +1029,7 @@ class dml_test extends UnitTestCase {
         $DB->insert_record($tablename, array('course' => 3));
         $DB->insert_record($tablename, array('course' => 2));
 
-        $this->assertTrue($record = $DB->get_record_sql("SELECT * FROM {".$tablename."} WHERE id = ?", array(2)));
+        $this->assertTrue($record = $DB->get_record_sql("SELECT * FROM {{$tablename}} WHERE id = ?", array(2)));
 
         $this->assertEqual(2, $record->course);
 
@@ -1038,10 +1038,10 @@ class dml_test extends UnitTestCase {
         $this->assertTrue(IGNORE_MULTIPLE);
 
         // record not found
-        $this->assertFalse($record = $DB->get_record_sql("SELECT * FROM {".$tablename."} WHERE id = ?", array(666), IGNORE_MISSING));
-        $this->assertFalse($record = $DB->get_record_sql("SELECT * FROM {".$tablename."} WHERE id = ?", array(666), IGNORE_MULTIPLE));
+        $this->assertFalse($record = $DB->get_record_sql("SELECT * FROM {{$tablename}} WHERE id = ?", array(666), IGNORE_MISSING));
+        $this->assertFalse($record = $DB->get_record_sql("SELECT * FROM {{$tablename}} WHERE id = ?", array(666), IGNORE_MULTIPLE));
         try {
-            $DB->get_record_sql("SELECT * FROM {".$tablename."} WHERE id = ?", array(666), MUST_EXIST);
+            $DB->get_record_sql("SELECT * FROM {{$tablename}} WHERE id = ?", array(666), MUST_EXIST);
             $this->fail("Exception expected");
         } catch (dml_missing_record_exception $e) {
             $this->assertTrue(true);
@@ -1049,11 +1049,11 @@ class dml_test extends UnitTestCase {
 
         // multiple matches
         ob_start(); // hide debug warning
-        $this->assertTrue($record = $DB->get_record_sql("SELECT * FROM {".$tablename."}", array(), IGNORE_MISSING));
+        $this->assertTrue($record = $DB->get_record_sql("SELECT * FROM {{$tablename}}", array(), IGNORE_MISSING));
         ob_end_clean();
-        $this->assertTrue($record = $DB->get_record_sql("SELECT * FROM {".$tablename."}", array(), IGNORE_MULTIPLE));
+        $this->assertTrue($record = $DB->get_record_sql("SELECT * FROM {{$tablename}}", array(), IGNORE_MULTIPLE));
         try {
-            $DB->get_record_sql("SELECT * FROM {".$tablename."}", array(), MUST_EXIST);
+            $DB->get_record_sql("SELECT * FROM {{$tablename}}", array(), MUST_EXIST);
             $this->fail("Exception expected");
         } catch (dml_multiple_records_exception $e) {
             $this->assertTrue(true);
@@ -1146,7 +1146,7 @@ class dml_test extends UnitTestCase {
 
         $DB->insert_record($tablename, array('course' => 3));
 
-        $this->assertTrue($course = $DB->get_field_sql("SELECT course FROM {".$tablename."} WHERE id = ?", array(1)));
+        $this->assertTrue($course = $DB->get_field_sql("SELECT course FROM {{$tablename}} WHERE id = ?", array(1)));
         $this->assertEqual(3, $course);
 
     }
@@ -1196,7 +1196,7 @@ class dml_test extends UnitTestCase {
         $DB->insert_record($tablename, array('course' => 2));
         $DB->insert_record($tablename, array('course' => 6));
 
-        $this->assertTrue($fieldset = $DB->get_fieldset_sql("SELECT * FROM {".$tablename."} WHERE course > ?", array(1)));
+        $this->assertTrue($fieldset = $DB->get_fieldset_sql("SELECT * FROM {{$tablename}} WHERE course > ?", array(1)));
 
         $this->assertEqual(3, count($fieldset));
         $this->assertEqual(2, $fieldset[0]);
@@ -1884,7 +1884,7 @@ class dml_test extends UnitTestCase {
         $DB->insert_record($tablename, array('course' => 4));
         $DB->insert_record($tablename, array('course' => 5));
 
-        $this->assertEqual(2, $DB->count_records_sql("SELECT COUNT(*) FROM {".$tablename."} WHERE course > ?", array(3)));
+        $this->assertEqual(2, $DB->count_records_sql("SELECT COUNT(*) FROM {{$tablename}} WHERE course > ?", array(3)));
     }
 
     public function test_record_exists() {
@@ -1945,10 +1945,10 @@ class dml_test extends UnitTestCase {
 
         $this->assertEqual(0, $DB->count_records($tablename));
 
-        $this->assertFalse($DB->record_exists_sql("SELECT * FROM {".$tablename."} WHERE course = ?", array(3)));
+        $this->assertFalse($DB->record_exists_sql("SELECT * FROM {{$tablename}} WHERE course = ?", array(3)));
         $DB->insert_record($tablename, array('course' => 3));
 
-        $this->assertTrue($DB->record_exists_sql("SELECT * FROM {".$tablename."} WHERE course = ?", array(3)));
+        $this->assertTrue($DB->record_exists_sql("SELECT * FROM {{$tablename}} WHERE course = ?", array(3)));
     }
 
     public function test_delete_records() {
@@ -2124,7 +2124,7 @@ class dml_test extends UnitTestCase {
         $DB->insert_record($tablename, array('name'=>'1.10', 'res'=>666));
         $DB->insert_record($tablename, array('name'=>'11.10', 'res'=>0.1));
 
-        $sql = "SELECT * FROM {".$tablename."} WHERE ".$DB->sql_cast_char2real('name')." > res";
+        $sql = "SELECT * FROM {{$tablename}} WHERE ".$DB->sql_cast_char2real('name')." > res";
         $records = $DB->get_records_sql($sql);
         $this->assertEqual(count($records), 2);
     }
@@ -2147,11 +2147,11 @@ class dml_test extends UnitTestCase {
         $DB->insert_record($tablename, array('name'=>'abcdef', 'description'=>'bbcdef'));
         $DB->insert_record($tablename, array('name'=>'aaaabb', 'description'=>'aaaacccccccccccccccccc'));
 
-        $sql = "SELECT * FROM {".$tablename."} WHERE name = ".$DB->sql_compare_text('description');
+        $sql = "SELECT * FROM {{$tablename}} WHERE name = ".$DB->sql_compare_text('description');
         $records = $DB->get_records_sql($sql);
         $this->assertEqual(count($records), 1);
 
-        $sql = "SELECT * FROM {".$tablename."} WHERE name = ".$DB->sql_compare_text('description', 4);
+        $sql = "SELECT * FROM {{$tablename}} WHERE name = ".$DB->sql_compare_text('description', 4);
         $records = $DB->get_records_sql($sql);
         $this->assertEqual(count($records), 2);
     }
@@ -2312,7 +2312,7 @@ class dml_test extends UnitTestCase {
         $CFG->debug = DEBUG_DEVELOPER;
         $CFG->debugdisplay = true;
         ob_start(); // hide debug warning
-        $sql = "SELECT * FROM {".$tablename."} WHERE name ".$DB->sql_ilike()." ?";
+        $sql = "SELECT * FROM {{$tablename}} WHERE name ".$DB->sql_ilike()." ?";
         $params = array("%dup_r%");
         ob_end_clean();
         $debuginfo = ob_get_contents();
@@ -2395,7 +2395,7 @@ class dml_test extends UnitTestCase {
         $DB->insert_record($tablename, array('description'=>'dxxx'));
         $DB->insert_record($tablename, array('description'=>'bcde'));
 
-        $sql = "SELECT * FROM {".$tablename."} ORDER BY ".$DB->sql_order_by_text('description');
+        $sql = "SELECT * FROM {{$tablename}} ORDER BY ".$DB->sql_order_by_text('description');
         $records = $DB->get_records_sql($sql);
         $first = array_unshift($records);
         $this->assertEqual(1, $first->id);
@@ -2422,11 +2422,11 @@ class dml_test extends UnitTestCase {
 
         $DB->insert_record($tablename, array('name'=>$string));
 
-        $sql = "SELECT id, ".$DB->sql_substr("name", 5)." AS name FROM {".$tablename."}";
+        $sql = "SELECT id, ".$DB->sql_substr("name", 5)." AS name FROM {{$tablename}}";
         $record = $DB->get_record_sql($sql);
         $this->assertEqual(substr($string, 5-1), $record->name);
 
-        $sql = "SELECT id, ".$DB->sql_substr("name", 5, 2)." AS name FROM {".$tablename."}";
+        $sql = "SELECT id, ".$DB->sql_substr("name", 5, 2)." AS name FROM {{$tablename}}";
         $record = $DB->get_record_sql($sql);
         $this->assertEqual(substr($string, 5-1, 2), $record->name);
 
@@ -2475,17 +2475,17 @@ class dml_test extends UnitTestCase {
         $DB->insert_record($tablename, array('name'=>'lalala'));
         $DB->insert_record($tablename, array('name'=>0));
 
-        $records = $DB->get_records_sql("SELECT * FROM {".$tablename."} WHERE name = '".$DB->sql_empty()."'");
+        $records = $DB->get_records_sql("SELECT * FROM {{$tablename}} WHERE name = '".$DB->sql_empty()."'");
         $this->assertEqual(count($records), 1);
         $record = reset($records);
         $this->assertEqual($record->name, '');
 
-        $records = $DB->get_records_sql("SELECT * FROM {".$tablename."} WHERE namenotnull = '".$DB->sql_empty()."'");
+        $records = $DB->get_records_sql("SELECT * FROM {{$tablename}} WHERE namenotnull = '".$DB->sql_empty()."'");
         $this->assertEqual(count($records), 1);
         $record = reset($records);
         $this->assertEqual($record->namenotnull, '');
 
-        $records = $DB->get_records_sql("SELECT * FROM {".$tablename."} WHERE namenotnullnodeflt = '".$DB->sql_empty()."'");
+        $records = $DB->get_records_sql("SELECT * FROM {{$tablename}} WHERE namenotnullnodeflt = '".$DB->sql_empty()."'");
         $this->assertEqual(count($records), 4);
         $record = reset($records);
         $this->assertEqual($record->namenotnullnodeflt, '');
@@ -2512,22 +2512,22 @@ class dml_test extends UnitTestCase {
         $DB->insert_record($tablename, array('name'=>'la', 'namenull'=>'la', 'description'=>'la', 'descriptionnull'=>'lalala'));
         $DB->insert_record($tablename, array('name'=>0,    'namenull'=>0,    'description'=>0,    'descriptionnull'=>0));
 
-        $records = $DB->get_records_sql("SELECT * FROM {".$tablename."} WHERE ".$DB->sql_isempty($tablename, 'name', false, false));
+        $records = $DB->get_records_sql("SELECT * FROM {{$tablename}} WHERE ".$DB->sql_isempty($tablename, 'name', false, false));
         $this->assertEqual(count($records), 1);
         $record = reset($records);
         $this->assertEqual($record->name, '');
 
-        $records = $DB->get_records_sql("SELECT * FROM {".$tablename."} WHERE ".$DB->sql_isempty($tablename, 'namenull', true, false));
+        $records = $DB->get_records_sql("SELECT * FROM {{$tablename}} WHERE ".$DB->sql_isempty($tablename, 'namenull', true, false));
         $this->assertEqual(count($records), 1);
         $record = reset($records);
         $this->assertEqual($record->namenull, '');
 
-        $records = $DB->get_records_sql("SELECT * FROM {".$tablename."} WHERE ".$DB->sql_isempty($tablename, 'description', false, true));
+        $records = $DB->get_records_sql("SELECT * FROM {{$tablename}} WHERE ".$DB->sql_isempty($tablename, 'description', false, true));
         $this->assertEqual(count($records), 1);
         $record = reset($records);
         $this->assertEqual($record->description, '');
 
-        $records = $DB->get_records_sql("SELECT * FROM {".$tablename."} WHERE ".$DB->sql_isempty($tablename, 'descriptionnull', true, true));
+        $records = $DB->get_records_sql("SELECT * FROM {{$tablename}} WHERE ".$DB->sql_isempty($tablename, 'descriptionnull', true, true));
         $this->assertEqual(count($records), 1);
         $record = reset($records);
         $this->assertEqual($record->descriptionnull, '');
@@ -2554,22 +2554,22 @@ class dml_test extends UnitTestCase {
         $DB->insert_record($tablename, array('name'=>'la', 'namenull'=>'la', 'description'=>'la', 'descriptionnull'=>'lalala'));
         $DB->insert_record($tablename, array('name'=>0,    'namenull'=>0,    'description'=>0,    'descriptionnull'=>0));
 
-        $records = $DB->get_records_sql("SELECT * FROM {".$tablename."} WHERE ".$DB->sql_isnotempty($tablename, 'name', false, false));
+        $records = $DB->get_records_sql("SELECT * FROM {{$tablename}} WHERE ".$DB->sql_isnotempty($tablename, 'name', false, false));
         $this->assertEqual(count($records), 3);
         $record = reset($records);
         $this->assertEqual($record->name, '??');
 
-        $records = $DB->get_records_sql("SELECT * FROM {".$tablename."} WHERE ".$DB->sql_isnotempty($tablename, 'namenull', true, false));
+        $records = $DB->get_records_sql("SELECT * FROM {{$tablename}} WHERE ".$DB->sql_isnotempty($tablename, 'namenull', true, false));
         $this->assertEqual(count($records), 2); // nulls aren't comparable (so they aren't "not empty"). SQL expected behaviour
         $record = reset($records);
         $this->assertEqual($record->namenull, 'la'); // so 'la' is the first non-empty 'namenull' record
 
-        $records = $DB->get_records_sql("SELECT * FROM {".$tablename."} WHERE ".$DB->sql_isnotempty($tablename, 'description', false, true));
+        $records = $DB->get_records_sql("SELECT * FROM {{$tablename}} WHERE ".$DB->sql_isnotempty($tablename, 'description', false, true));
         $this->assertEqual(count($records), 3);
         $record = reset($records);
         $this->assertEqual($record->description, '??');
 
-        $records = $DB->get_records_sql("SELECT * FROM {".$tablename."} WHERE ".$DB->sql_isnotempty($tablename, 'descriptionnull', true, true));
+        $records = $DB->get_records_sql("SELECT * FROM {{$tablename}} WHERE ".$DB->sql_isnotempty($tablename, 'descriptionnull', true, true));
         $this->assertEqual(count($records), 2); // nulls aren't comparable (so they aren't "not empty"). SQL expected behaviour
         $record = reset($records);
         $this->assertEqual($record->descriptionnull, 'lalala'); // so 'lalala' is the first non-empty 'descriptionnull' record
@@ -2592,7 +2592,7 @@ class dml_test extends UnitTestCase {
         $DB->insert_record($tablename, array('name'=>'holaaa'));
         $DB->insert_record($tablename, array('name'=>'aouch'));
 
-        $sql = "SELECT * FROM {".$tablename."} WHERE name ".$DB->sql_regex()." ?";
+        $sql = "SELECT * FROM {{$tablename}} WHERE name ".$DB->sql_regex()." ?";
         $params = array('a$');
         if ($DB->sql_regex_supported()) {
             $records = $DB->get_records_sql($sql, $params);
@@ -2601,7 +2601,7 @@ class dml_test extends UnitTestCase {
             $this->assertTrue(true, 'Regexp operations not supported. Test skipped');
         }
 
-        $sql = "SELECT * FROM {".$tablename."} WHERE name ".$DB->sql_regex(false)." ?";
+        $sql = "SELECT * FROM {{$tablename}} WHERE name ".$DB->sql_regex(false)." ?";
         $params = array('.a');
         if ($DB->sql_regex_supported()) {
             $records = $DB->get_records_sql($sql, $params);
@@ -2637,11 +2637,10 @@ class dml_test extends UnitTestCase {
         $DB->insert_record($tablename, array('course' => 2, 'content' => 'universe'));
 
         // we have sql like this in moodle, this syntax breaks on older versions of sqlite for example..
-        $sql = 'SELECT a.id AS id, a.course AS course
-                FROM {'.$tablename.'} a
-                JOIN (SELECT * FROM {'.$tablename.'}) b
-                ON a.id = b.id
-                WHERE a.course = ?';
+        $sql = "SELECT a.id AS id, a.course AS course
+                  FROM {{$tablename}} a
+                  JOIN (SELECT * FROM {{$tablename}}) b ON a.id = b.id
+                 WHERE a.course = ?";
 
         $this->assertTrue($records = $DB->get_records_sql($sql, array(3)));
         $this->assertEqual(2, count($records));
@@ -2858,7 +2857,7 @@ class dml_test extends UnitTestCase {
         $data = (object)array('course'=>4);
         $DB->insert_record($tablename, $data);
         try {
-            // this first rollback should prevent all otehr rollbacks
+            // this first rollback should prevent all other rollbacks
             $transaction1->rollback(new Exception('test'));
         } catch (Exception $e) {
             $this->assertEqual(get_class($e), 'Exception');
