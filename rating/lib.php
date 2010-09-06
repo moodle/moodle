@@ -18,9 +18,10 @@
 /**
  * A class representing a single rating and containing some static methods for manipulating ratings
  *
- * @package   moodlecore
- * @copyright 2010 Andrew Davis
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    core
+ * @subpackage rating
+ * @copyright  2010 Andrew Davis
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 define('RATING_UNSET_RATING', -999);
@@ -386,7 +387,7 @@ class rating_manager {
                     $rating->count      = $rec->numratings; //unset($rec->numratings);
                     $rating->rating     = $rec->usersrating; //unset($rec->usersrating);
                     $rating->itemtimecreated = $this->get_item_time_created($item);
-                    
+
                     break;
                 }
             }
@@ -492,7 +493,7 @@ class rating_manager {
         $params['contextid']= $contextid;
         $itemtable          = $options->itemtable;
         $itemtableusercolumn= $options->itemtableusercolumn;
-        $scaleid            = $options->scaleid;        
+        $scaleid            = $options->scaleid;
         $aggregationstring = $this->get_aggregation_method($options->aggregationmethod);
 
         //if userid is not 0 we only want the grade for a single user

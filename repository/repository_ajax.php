@@ -20,10 +20,10 @@
  * The Web service script that is called from the filepicker front end
  *
  * @since 2.0
- * @package moodlecore
+ * @package    core
  * @subpackage repository
- * @copyright 2009 Dongsheng Cai <dongsheng@moodle.com>
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2009 Dongsheng Cai <dongsheng@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 define('AJAX_SCRIPT', true);

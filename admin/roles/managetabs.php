@@ -18,7 +18,7 @@
 /**
  * Defines the tab bar used on the manage/allow assign/allow overrides pages.
  *
- * @package    moodlecore
+ * @package    core
  * @subpackage role
  * @copyright  1999 onwards Martin Dougiamas (http://dougiamas.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

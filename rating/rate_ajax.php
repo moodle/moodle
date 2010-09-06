@@ -20,9 +20,10 @@
  *
  * It is similar to rate.php. Unlike rate.php a return url is NOT required.
  *
- * @package   moodlecore
- * @copyright 2010 Andrew Davis
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    core
+ * @subpackage rating
+ * @copyright  2010 Andrew Davis
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 define('AJAX_SCRIPT', true);
@@ -99,7 +100,7 @@ if ($userrating != RATING_UNSET_RATING) {
     $options->contextid = $context->id;
     $options->userid = $USER->id;
     $options->itemid = $itemid;
-    
+
     $rm->delete_ratings($options);
 }
 
@@ -156,7 +157,7 @@ if ($items[0]->rating->settings->aggregationmethod==RATING_AGGREGATE_COUNT or $i
 //if we accept the item owner user id from the http request a user could alter the URL and erroneously get access to the rating aggregate
 
 //if its their own item and they have view permission
-if (($USER->id==$items[0]->rating->itemuserid && has_capability('moodle/rating:view',$context) 
+if (($USER->id==$items[0]->rating->itemuserid && has_capability('moodle/rating:view',$context)
         && (empty($pluginpermissionsarray) or $pluginpermissionsarray['view']))
     //or if its not their item or if no user created the item (the hub did) and they have viewany permission
     || (($USER->id!=$items[0]->rating->itemuserid or empty($items[0]->rating->itemuserid)) && has_capability('moodle/rating:viewany',$context)

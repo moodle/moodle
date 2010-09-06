@@ -28,7 +28,7 @@
  * For all but the first two of those, you also need a roleid parameter, and
  * possibly some other data.
  *
- * @package    moodlecore
+ * @package    core
  * @subpackage role
  * @copyright  1999 onwards Martin Dougiamas (http://dougiamas.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

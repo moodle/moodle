@@ -26,10 +26,10 @@
  * This file is used to manage draft files in non-javascript browsers
  *
  * @since 2.0
- * @package moodlecore
+ * @package    core
  * @subpackage repository
- * @copyright 2010 Dongsheng Cai <dongsheng@moodle.com>
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2010 Dongsheng Cai <dongsheng@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 require_once('../config.php');

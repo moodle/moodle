@@ -18,7 +18,7 @@
 /**
  * This script serves draft files of current user
  *
- * @package    moodlecore
+ * @package    core
  * @subpackage role
  * @copyright  2009 Petr Skoda (skodak) info@skodak.org
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

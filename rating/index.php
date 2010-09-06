@@ -18,9 +18,10 @@
 /**
  * A page to display a list of ratings for a given item (forum post etc)
  *
- * @package   moodlecore
- * @copyright 2010 Andrew Davis
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    core
+ * @subpackage rating
+ * @copyright  2010 Andrew Davis
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 require_once("../config.php");
@@ -97,7 +98,7 @@ if (!$ratings) {
         //we could clone the rating object or preserve the rating id if we needed it again
         //but we don't
         $rating->id = $rating->uid;
-        
+
         echo '<tr class="ratingitemheader">';
         echo "<td>";
         if($course && $course->id) {

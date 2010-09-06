@@ -20,10 +20,10 @@
  * This file is used to browse repositories in non-javascript mode
  *
  * @since 2.0
- * @package moodlecore
+ * @package    core
  * @subpackage repository
- * @copyright 2009 Dongsheng Cai <dongsheng@moodle.com>
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2009 Dongsheng Cai <dongsheng@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 require_once('../config.php');

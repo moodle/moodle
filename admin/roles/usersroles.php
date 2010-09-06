@@ -19,7 +19,7 @@
  * User roles report list all the users who have been assigned a particular
  * role in all contexts.
  *
- * @package    moodlecore
+ * @package    core
  * @subpackage role
  * @copyright  &copy; 2007 The Open University and others
  * @author     t.j.hunt@open.ac.uk and others
