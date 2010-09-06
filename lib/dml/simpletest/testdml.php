@@ -1380,13 +1380,33 @@ class dml_test extends UnitTestCase {
 
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
         $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+        $table->add_field('onechar', XMLDB_TYPE_CHAR, '100', null, null, null, 'onestring');
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $dbman->create_table($table);
         $this->tables[$tablename] = $table;
 
-        $this->assertTrue($DB->insert_record_raw($tablename, array('course' => 1)));
-        $this->assertTrue($record = $DB->get_record($tablename, array('course' => 1)));
-        $this->assertEqual(1, $record->course);
+        $result = $DB->insert_record_raw($tablename, array('course' => 1, 'onechar' => 'xx'));
+        $this->assertEqual(1, $result);
+
+        $record = $DB->get_record($tablename, array('course' => 1));
+        $this->assertTrue($record instanceof stdClass);
+        $this->assertIdentical('xx', $record->onechar);
+
+        $result = $DB->insert_record_raw($tablename, array('course' => 2, 'onechar' => 'yy'), false);
+        $this->assertIdentical(true, $result);
+
+        // note: bulk not implemented yet
+        $DB->insert_record_raw($tablename, array('course' => 3, 'onechar' => 'zz'), true, true);
+        $record = $DB->get_record($tablename, array('course' => 3));
+        $this->assertTrue($record instanceof stdClass);
+        $this->assertIdentical('zz', $record->onechar);
+
+        // custom sequence (id) - returnid is ignored
+        $result = $DB->insert_record_raw($tablename, array('id' => 10, 'course' => 3, 'onechar' => 'bb'), true, false, true);
+        $this->assertIdentical(true, $result);
+        $record = $DB->get_record($tablename, array('id' => 10));
+        $this->assertTrue($record instanceof stdClass);
+        $this->assertIdentical('bb', $record->onechar);
     }
 
     public function test_insert_record() {
