@@ -156,8 +156,8 @@ abstract class moodle_database {
 
     /**
      * Loads and returns a database instance with the specified type and library.
-     * @param string $type database type of the driver (mysql, postgres7, mssql, etc)
-     * @param string $library database library of the driver (adodb, pdo, native, etc)
+     * @param string $type database type of the driver (mysqli, pgsql, mssql, sqldrv, oci, etc)
+     * @param string $library database library of the driver (native, pdo, etc.)
      * @return moodle_database driver object or null if error
      */
     public static function get_driver_instance($type, $library) {
