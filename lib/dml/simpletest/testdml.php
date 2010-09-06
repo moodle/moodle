@@ -1385,8 +1385,11 @@ class dml_test extends UnitTestCase {
         $dbman->create_table($table);
         $this->tables[$tablename] = $table;
 
-        $result = $DB->insert_record_raw($tablename, array('course' => 1, 'onechar' => 'xx'));
+        $record = (object)array('course' => 1, 'onechar' => 'xx');
+        $before = clone($record);
+        $result = $DB->insert_record_raw($tablename, $record);
         $this->assertIdentical(1, $result);
+        $this->assertIdentical($record, $before);
 
         $record = $DB->get_record($tablename, array('course' => 1));
         $this->assertTrue($record instanceof stdClass);
@@ -1634,14 +1637,17 @@ class dml_test extends UnitTestCase {
         $dbman->create_table($table);
         $this->tables[$tablename] = $table;
 
-        $record = (object)array('id'=>666, 'course'=>10);
-        $this->assertTrue($DB->import_record($tablename, $record));
+        $record = array('id'=>666, 'course'=>10);
+        $this->assertIdentical(true, $DB->import_record($tablename, $record));
         $records = $DB->get_records($tablename);
         $this->assertEqual(1, count($records));
         $this->assertEqual(10, $records[666]->course);
 
-        $record = (object)array('id'=>13, 'course'=>2);
-        $this->assertTrue($DB->import_record($tablename, $record));
+        // ignore extra columns
+        $record = (object)array('id'=>13, 'course'=>2, 'xxxx'=>788778);
+        $before = clone($record);
+        $this->assertIdentical(true, $DB->import_record($tablename, $record));
+        $this->assertIdentical($record, $before);
         $records = $DB->get_records($tablename);
         $this->assertEqual(2, $records[13]->course);
     }
