@@ -79,7 +79,7 @@ abstract class moodleform_mod extends moodleform {
         $this->_features = new object();
         $this->_features->groups            = plugin_supports('mod', $this->_modname, FEATURE_GROUPS, true);
         $this->_features->groupings         = plugin_supports('mod', $this->_modname, FEATURE_GROUPINGS, false);
-        $this->_features->groupmembersonly  = plugin_supports('mod', $this->_modname, FEATURE_GROUPMEMBERSONLY, false);
+        $this->_features->groupmembersonly  = (!empty($CFG->enablegroupmembersonly) and plugin_supports('mod', $this->_modname, FEATURE_GROUPMEMBERSONLY, false));
         $this->_features->outcomes          = (!empty($CFG->enableoutcomes) and plugin_supports('mod', $this->_modname, FEATURE_GRADE_OUTCOMES, true));
         $this->_features->hasgrades         = plugin_supports('mod', $this->_modname, FEATURE_GRADE_HAS_GRADE, false);
         $this->_features->idnumber          = plugin_supports('mod', $this->_modname, FEATURE_IDNUMBER, true);
@@ -346,7 +346,7 @@ abstract class moodleform_mod extends moodleform {
             }
         }
 
-        
+
         if ($this->_features->rating) {
             require_once($CFG->dirroot.'/rating/lib.php');
             $rm = new rating_manager();
