@@ -85,6 +85,7 @@ case 'chat':
 
         $DB->insert_record('chat_messages', $message);
         $DB->insert_record('chat_messages_current', $message);
+        echo 200;
         add_to_log($course->id, 'chat', 'talk', "view.php?id=$cm->id", $chat->id, $cm->id);
 
         ob_end_flush();
