@@ -24,7 +24,7 @@
  *              file.php/courseid/dir (returns index.html from dir)
  * Workaround:  file.php?file=/courseid/dir/dir/dir/filename.ext
  *
- * @package    moodlecore
+ * @package    core
  * @subpackage file
  * @copyright  1999 onwards Martin Dougiamas (http://dougiamas.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

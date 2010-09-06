@@ -19,10 +19,10 @@
  * repository_user class is used to browse user private files
  *
  * @since 2.0
- * @package moodlecore
- * @subpackage repository
- * @copyright 2010 Dongsheng Cai <dongsheng@moodle.com>
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    repository
+ * @subpackage user
+ * @copyright  2010 Dongsheng Cai <dongsheng@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 class repository_user extends repository {

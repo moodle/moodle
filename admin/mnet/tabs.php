@@ -21,7 +21,8 @@
  * $mnet_peer object must be set and bootstrapped
  * $currenttab string must be set
  *
- * @package    moodlecore
+ * @package    core
+ * @subpackage mnet
  * @copyright  2007 Donal McMullan
  * @copyright  2007 Martin Langhoff
  * @copyright  2010 Penny Leach

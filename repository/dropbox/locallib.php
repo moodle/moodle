@@ -20,11 +20,11 @@
  * A helper class to access dropbox resources
  *
  * @since 2.0
- * @package moodlecore
- * @subpackage repository
- * @copyright 2010 Dongsheng Cai
- * @author Dongsheng Cai <dongsheng@moodle.com>
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    repository
+ * @subpackage dropbox
+ * @copyright  2010 Dongsheng Cai
+ * @author     Dongsheng Cai <dongsheng@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 

@@ -5,6 +5,8 @@
  * This script 'remotely' executes the reflection methods on a remote Moodle,
  * and publishes the details of the available services
  *
+ * @package    core
+ * @subpackage mnet
  * @author  Donal McMullan  donal@catalyst.net.nz
  * @version 0.0.1
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License

@@ -19,7 +19,8 @@
 /**
  * The form for configuring which services are subscribed and published on a host
  *
- * @package    moodlecore
+ * @package    core
+ * @subpackage mnet
  * @copyright  2010 Penny Leach
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

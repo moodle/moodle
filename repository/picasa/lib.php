@@ -19,11 +19,11 @@
  * Picasa Repository Plugin
  *
  * @since 2.0
- * @package moodlecore
- * @subpackage repository
- * @copyright 2009 Dan Poltawski
- * @author Dan Poltawski <talktodan@gmail.com>
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    repository
+ * @subpackage picasa
+ * @copyright  2009 Dan Poltawski
+ * @author     Dan Poltawski <talktodan@gmail.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 require_once($CFG->libdir.'/googleapi.php');

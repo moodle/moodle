@@ -19,7 +19,8 @@
 /**
  * Page to allow the administrator to delete networked hosts, with a confirm message
  *
- * @package    moodlecore
+ * @package    core
+ * @subpackage mnet
  * @copyright  2007 Donal McMullan
  * @copyright  2007 Martin Langhoff
  * @copyright  2010 Penny Leach

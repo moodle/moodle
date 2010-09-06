@@ -19,10 +19,10 @@
  * repository_coursefiles class is used to browse course files
  *
  * @since 2.0
- * @package moodlecore
- * @subpackage repository
- * @copyright 2010 Dongsheng Cai <dongsheng@moodle.com>
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    repository
+ * @subpackage coursefiles
+ * @copyright  2010 Dongsheng Cai <dongsheng@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 class repository_coursefiles extends repository {

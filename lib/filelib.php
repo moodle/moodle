@@ -2235,9 +2235,10 @@ function file_modify_html_header($text) {
  * $html = $c->put('http://example.com/', array('file'=>'/var/www/test.txt');
  * </code>
  *
- * @package moodlecore
- * @author Dongsheng Cai <dongsheng@cvs.moodle.org>
- * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+ * @package    core
+ * @subpackage file
+ * @author     Dongsheng Cai <dongsheng@cvs.moodle.org>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU Public License
  */
 
 class curl {
@@ -2743,10 +2744,10 @@ class curl {
  * $ret = $c->get('http://www.google.com');
  * </code>
  *
- * @package moodlecore
+ * @package    core
  * @subpackage file
- * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class curl_cache {
     /** @var string */
@@ -2865,10 +2866,10 @@ class curl_cache {
  * extensions by file types.
  * The file_types.mm file can be edited by freemind in graphic environment.
  *
- * @package moodlecore
+ * @package    core
  * @subpackage file
- * @copyright 2009 Dongsheng Cai <dongsheng@moodle.com>
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2009 Dongsheng Cai <dongsheng@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class filetype_parser {
     /**

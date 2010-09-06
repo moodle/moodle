@@ -18,8 +18,10 @@
 /**
  * moodle_image class
  *
- * @author Dongsheng Cai <dongsheng@moodle.com>
- * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+ * @package    repository
+ * @subpackage flickr_public
+ * @author     Dongsheng Cai <dongsheng@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU Public License
  */
 class moodle_image {
     private $imagepath;
