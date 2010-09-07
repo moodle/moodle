@@ -262,8 +262,8 @@ class backup_course_structure_step extends backup_structure_step {
         $course = new backup_nested_element('course', array('id', 'contextid'), array(
             'shortname', 'fullname', 'idnumber',
             'summary', 'summaryformat', 'format', 'showgrades',
-            'newsitems', 'startdate',
-            'numsections', 'marker', 'maxbytes', 'showreports',
+            'newsitems', 'startdate', 'numsections',
+            'marker', 'maxbytes', 'legacyfiles', 'showreports',
             'visible', 'hiddensections', 'groupmode', 'groupmodeforce',
             'defaultgroupingid', 'lang', 'theme',
             'timecreated', 'timemodified',
