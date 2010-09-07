@@ -115,6 +115,7 @@ $string['language_help'] = 'The main language of this course.';
 $string['lasttimechecked'] = 'Last time checked';
 $string['licence'] = 'Licence';
 $string['licence_help'] = 'Select the licence you want to distribute your course under.';
+$string['licence_link'] = 'licenses';
 $string['logourl'] = 'Logo URL';
 $string['modulenumberaverage'] = 'Average number of course modules ({$a})';
 $string['moodleorg'] = 'Moodle.org';
