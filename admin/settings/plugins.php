@@ -138,7 +138,7 @@ if ($hassiteconfig) {
 
 /// License types
     $ADMIN->add('modules', new admin_category('licensesettings', get_string('license')));
-    $temp = new admin_settingpage('managelicenses', get_string('license'));
+    $temp = new admin_settingpage('managelicenses', get_string('managelicenses', 'admin'));
 
     require_once($CFG->libdir . '/licenselib.php');
     $licenses = array();
