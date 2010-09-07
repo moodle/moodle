@@ -67,7 +67,7 @@ class data_field_textarea extends data_field_base {
             $formats[$fid] = $strformats[$fid];
         }
         $editor->use_editor($field, $options);
-        $str .= '<div><textarea id="'.$field.'" name="'.$field.'" rows="'.$this->field->param3.'" cols="'.$this->field->param2.'">'.s($text).'</textarea></div>';
+        $str .= '<div><textarea id="'.$field.'" name="'.$field.'" rows="15" cols="80">'.s($text).'</textarea></div>';
         $str .= '<div><select name="'.$field.'_content1">';
         foreach ($formats as $key=>$desc) {
             $selected = ($format == $key) ? 'selected="selected"' : '';
