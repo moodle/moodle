@@ -294,9 +294,8 @@ class google_docs {
 
         $files = array();
         foreach($xml->entry as $gdoc){
-
             $docid  = (string) $gdoc->children('http://schemas.google.com/g/2005')->resourceId;
-            list($type) = explode(':', $docid);
+            list($type, $docid) = explode(':', $docid);
 
             $title  = '';
             $source = '';
@@ -306,11 +305,11 @@ class google_docs {
             switch($type){
                 case 'document':
                     $title = $gdoc->title.'.rtf';
-                    $source = 'http://docs.google.com/feeds/download/documents/Export?docID='.$docid.'&exportFormat=rtf';
+                    $source = 'http://docs.google.com/feeds/download/documents/Export?id='.$docid.'&exportFormat=rtf';
                     break;
                 case 'presentation':
                     $title = $gdoc->title.'.ppt';
-                    $source = 'http://docs.google.com/feeds/download/presentations/Export?docID='.$docid.'&exportFormat=ppt';
+                    $source = 'http://docs.google.com/feeds/download/presentations/Export?id='.$docid.'&exportFormat=ppt';
                     break;
                 case 'spreadsheet':
                     $title = $gdoc->title.'.xls';
