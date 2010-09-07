@@ -59,15 +59,16 @@ class dml_test extends UnitTestCase {
      * run that crashed.
      *
      * @param database_manager $dbman the database_manager to use.
-     * @param string $tablename the name of the table to create.
+     * @param string $suffix table name suffix, use if you need more test tables
      * @return xmldb_table the table object.
      */
-    private function get_test_table($tablename="") {
+    private function get_test_table($suffix = '') {
         $DB = $this->tdb;
         $dbman = $this->tdb->get_manager();
 
-        if ($tablename == '') {
-            $tablename = "unit_table";
+        $tablename = "unit_table";
+        if ($suffix !== '') {
+            $tablename .= $suffix;
         }
 
         $table = new xmldb_table($tablename);
@@ -551,7 +552,7 @@ class dml_test extends UnitTestCase {
         $DB = $this->tdb;
         $dbman = $this->tdb->get_manager();
 
-        $table1 = $this->get_test_table('unit_table1');
+        $table1 = $this->get_test_table('1');
         $tablename1 = $table1->getName();
         $table1->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
         $table1->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
@@ -561,7 +562,7 @@ class dml_test extends UnitTestCase {
         $dbman->create_table($table1);
         $this->tables[$tablename1] = $table1;
 
-        $table2 = $this->get_test_table('unit_table2');
+        $table2 = $this->get_test_table('2');
         $tablename2 = $table2->getName();
         $table2->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
         $table2->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
@@ -2313,7 +2314,7 @@ class dml_test extends UnitTestCase {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
-        $table1 = $this->get_test_table("testtable1");
+        $table1 = $this->get_test_table("1");
         $tablename1 = $table1->getName();
 
         $table1->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
@@ -2324,7 +2325,7 @@ class dml_test extends UnitTestCase {
 
         $DB->insert_record($tablename1, array('name'=>'100'));
 
-        $table2 = $this->get_test_table("testtable2");
+        $table2 = $this->get_test_table("2");
         $tablename2 = $table2->getName();
         $table2->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
         $table2->add_field('res', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
