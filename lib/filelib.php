@@ -651,7 +651,8 @@ function file_save_draft_area_files($draftitemid, $contextid, $component, $filea
 
     } else {
         // we have to merge old and new files - we want to keep file ids for files that were not changed
-        $file_record = array('contextid'=>$contextid, 'component'=>$component, 'filearea'=>$filearea, 'itemid'=>$itemid);
+        // we change time modified for all new and changed files, we keep time created as is
+        $file_record = array('contextid'=>$contextid, 'component'=>$component, 'filearea'=>$filearea, 'itemid'=>$itemid, 'timemodified'=>time());
 
         $newhashes = array();
         foreach ($draftfiles as $file) {
@@ -659,22 +660,30 @@ function file_save_draft_area_files($draftitemid, $contextid, $component, $filea
             $newhashes[$newhash] = $file;
         }
         $filecount = 0;
-        foreach ($oldfiles as $file) {
-            $oldhash = $file->get_pathnamehash();
-            // check if sortorder, filename, filepath
-            if (isset($newhashes[$oldhash]) && $file->get_sortorder() == $newhashes[$oldhash]->get_sortorder()) {
-                if (!$file->is_directory()) {
-                    $filecount++;
-                }
-                // unchanged file already there
-                unset($newhashes[$oldhash]);
-            } else {
+        foreach ($oldfiles as $oldfile) {
+            $oldhash = $oldfile->get_pathnamehash();
+            if (!isset($newhashes[$oldhash])) {
                 // delete files not needed any more - deleted by user
-                $file->delete();
+                $oldfile->delete();
+                continue;
+            }
+            $newfile = $newhashes[$oldhash];
+            if ($oldfile->get_contenthash() != $newfile->get_contenthash() or $oldfile->get_sortorder() != $newfile->get_sortorder()
+                or $oldfile->get_status() != $newfile->get_status() or $oldfile->get_license() != $newfile->get_license()
+                or $oldfile->get_author() != $newfile->get_author() or $oldfile->get_source() != $newfile->get_source()) {
+                // file was changed, use updated with new timemodified data
+                $oldfile->delete();
+                continue;
+            }
+            // unchanged file or directory - we keep it as is
+            unset($newhashes[$oldhash]);
+            if (!$file->is_directory()) {
+                $filecount++;
             }
         }
 
-        // now add new files
+        // now add new/changed files
+        // the size and subdirectory tests are extra safety only, the UI should prevent it
         foreach ($newhashes as $file) {
             if (!$options['subdirs']) {
                 if ($file->get_filepath() !== '/' or $file->is_directory()) {
