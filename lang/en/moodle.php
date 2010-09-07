@@ -979,6 +979,7 @@ $string['maximumshort'] = 'Max';
 $string['maximumupload'] = 'Maximum upload size';
 $string['maximumupload_help'] = 'This setting determines the largest size of file that can be uploaded to the course, limited by the site-wide setting set by an administrator. Activity modules also include a maximum upload size setting for further restricting the file size.';
 $string['maxsize'] = 'Max size: {$a}';
+$string['maxfilesize'] = 'Max single file size: {$a}';
 $string['memberincourse'] = 'People in the course';
 $string['messagebody'] = 'Message body';
 $string['messagedselectedusers'] = 'Selected users have been messaged and the recipient list has been reset.';

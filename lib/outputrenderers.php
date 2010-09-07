@@ -778,7 +778,7 @@ class core_renderer extends renderer_base {
 
     /**
      * Produces a header for a block
-     * 
+     *
      * @param block_contents $bc
      * @return string
      */
@@ -812,7 +812,7 @@ class core_renderer extends renderer_base {
         $output .= $bc->content;
         $output .= $this->block_footer($bc);
         $output .= html_writer::end_tag('div');
-        
+
         return $output;
     }
 
@@ -1914,6 +1914,7 @@ class core_renderer extends renderer_base {
         if (empty($currentfile)) {
             $currentfile = get_string('nofilesattached', 'repository');
         }
+        $maxsize = get_string('maxfilesize', 'moodle', display_size(get_max_upload_file_size()));
         $html = <<<EOD
 <div class="filemanager-loading mdl-align" id='filepicker-loading-{$client_id}'>
 $icon_progress
@@ -1921,6 +1922,7 @@ $icon_progress
 <div id="filepicker-wrapper-{$client_id}" class="mdl-left" style="display:none">
     <div>
         <button id="filepicker-button-{$client_id}">$straddfile</button>
+        <span> $maxsize </span>
     </div>
 EOD;
         if ($options->env != 'url') {

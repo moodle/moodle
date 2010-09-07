@@ -265,6 +265,7 @@ function form_filemanager_render($options) {
         $extra = '';
     }
 
+    $maxsize = get_string('maxfilesize', 'moodle', display_size(get_max_upload_file_size()));
     $html .= <<<FMHTML
 <div class="filemanager-loading mdl-align" id='filemanager-loading-{$client_id}'>
 $icon_progress
@@ -275,6 +276,7 @@ $icon_progress
         <button id="btnadd-{$client_id}" onclick="return false">{$icon_add_file} $straddfile</button>
         <button id="btncrt-{$client_id}" onclick="return false">{$icon_add_folder} $strmakedir</button>
         <button id="btndwn-{$client_id}" onclick="return false" {$extra}>{$icon_download} $strdownload</button>
+        <span> $maxsize </span>
     </div>
     <div class="filemanager-container" id="filemanager-{$client_id}">
         <ul id="draftfiles-{$client_id}" class="fm-filelist">
