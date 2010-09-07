@@ -14,7 +14,7 @@ require_once($CFG->libdir.'/tablelib.php');
 require_login();
 require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM));
 
-$returnurl = "$CFG->wwwroot/$CFG->admin/settings.php?section=manageauths";
+$returnurl = new moodle_url('/admin/settings.php', array('section'=>'manageauths'));
 
 $PAGE->set_url($returnurl);
 
@@ -29,7 +29,7 @@ if (empty($CFG->auth)) {
 }
 
 if (!empty($auth) and !exists_auth_plugin($auth)) {
-    print_error('pluginnotinstalled', 'auth', $url, $auth);
+    print_error('pluginnotinstalled', 'auth', $returnurl, $auth);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -68,7 +68,7 @@ switch ($action) {
         $key = array_search($auth, $authsenabled);
         // check auth plugin is valid
         if ($key === false) {
-            print_error('pluginnotenabled', 'auth', $url, $auth);
+            print_error('pluginnotenabled', 'auth', $returnurl, $auth);
         }
         // move down the list
         if ($key < (count($authsenabled) - 1)) {
@@ -83,7 +83,7 @@ switch ($action) {
         $key = array_search($auth, $authsenabled);
         // check auth is valid
         if ($key === false) {
-            print_error('pluginnotenabled', 'auth', $url, $auth);
+            print_error('pluginnotenabled', 'auth', $returnurl, $auth);
         }
         // move up the list
         if ($key >= 1) {
@@ -98,6 +98,6 @@ switch ($action) {
         break;
 }
 
-redirect ($returnurl);
+redirect($returnurl);
 
 
