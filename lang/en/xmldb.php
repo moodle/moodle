@@ -149,7 +149,6 @@ $string['selectonefieldkeyindex'] = 'Please, select one Field/Key/Index from the
 $string['selecttable'] = 'Select Table:';
 $string['table'] = 'Table';
 $string['tables'] = 'Tables';
-$string['test'] = 'Test';
 $string['textincorrectlength'] = 'Incorrect length for text field';
 $string['unload'] = 'Unload';
 $string['up'] = 'Up';

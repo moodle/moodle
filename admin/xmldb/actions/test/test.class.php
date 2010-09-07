@@ -33,6 +33,8 @@
  */
 class test extends XMLDBAction {
 
+    //TODO: MDL-24116 content of this file is being migrated to DDL/DML functional tests, this script is not referenced from UI any more and will be deleted soon
+
     /**
      * Init method, every subclass will have its own
      */

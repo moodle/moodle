@@ -25,7 +25,7 @@
  * This class will show all the actions available under the XMLDB editor interface
  *
  * From here, files can be created, edited, saved and deleted, plus some
- * extra utilities like displaying docs, xml info and performing various tests
+ * extra utilities like displaying docs, xml info and performing various consistency tests
  *
  * @package   xmldb-editor
  * @copyright 2003 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
@@ -52,7 +52,6 @@ class main_view extends XMLDBAction {
             'unload' => 'xmldb',
             'delete' => 'xmldb',
             'reservedwords' => 'xmldb',
-            'test' => 'xmldb',
             'gotolastused' => 'xmldb',
             'checkindexes' => 'xmldb',
             'checkdefaults' => 'xmldb',
@@ -95,8 +94,6 @@ class main_view extends XMLDBAction {
         $b = '<p class="centerpara buttons">';
     /// The reserved_words button
         $b .= '&nbsp;<a href="index.php?action=view_reserved_words">[' . $this->str['reservedwords'] . ']</a>';
-    /// The test button
-        $b .= '&nbsp;<a href="index.php?action=test&amp;sesskey=' . sesskey() . '">[' . $this->str['test'] . ']</a>';
     /// The docs button
         $b .= '&nbsp;<a href="index.php?action=generate_all_documentation">[' . $this->str['doc'] . ']</a>';
     /// The check indexes button
