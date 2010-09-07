@@ -1163,7 +1163,7 @@ class question_calculated_qtype extends default_questiontype {
             }
         // adding supplementary items
         $numbertoadd =0;
-        if (isset($fromform->addbutton) && $fromform->selectadd > 1 && $maxnumber < CALCULATEDQUESTIONMAXITEMNUMBER ) {
+        if (isset($fromform->addbutton) && $fromform->selectadd > 0 && $maxnumber < CALCULATEDQUESTIONMAXITEMNUMBER ) {
             $numbertoadd =$fromform->selectadd ;
             if ( $max100 - $maxnumber < $numbertoadd ) {
                 $numbertoadd = $max100 - $maxnumber ;
