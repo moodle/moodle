@@ -45,8 +45,9 @@ class dml_test extends UnitTestCase {
     function tearDown() {
         $dbman = $this->tdb->get_manager();
 
-        foreach ($this->tables as $table) {
-            if ($dbman->table_exists($table)) {
+        foreach ($this->tables as $tablename) {
+            if ($dbman->table_exists($tablename)) {
+                $table = new xmldb_table($tablename);
                 $dbman->drop_table($table);
             }
         }
@@ -75,6 +76,7 @@ class dml_test extends UnitTestCase {
         if ($dbman->table_exists($table)) {
             $dbman->drop_table($table);
         }
+        $this->tables[$tablename] = $tablename;
         return new xmldb_table($tablename);
     }
 
@@ -381,7 +383,6 @@ class dml_test extends UnitTestCase {
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
 
         $dbman->create_table($table);
-        $this->tables[$tablename] = $table;
         $this->assertTrue(count($DB->get_tables()) == $original_count + 1);
 
         $dbman->drop_table($table);
@@ -401,7 +402,6 @@ class dml_test extends UnitTestCase {
         $table->add_index('course', XMLDB_INDEX_NOTUNIQUE, array('course'));
         $table->add_index('course-id', XMLDB_INDEX_UNIQUE, array('course', 'id'));
         $dbman->create_table($table);
-        $this->tables[$tablename] = $table;
 
         $indices = $DB->get_indexes($tablename);
         $this->assertTrue(is_array($indices));
@@ -440,12 +440,11 @@ class dml_test extends UnitTestCase {
         $table->add_field('onenum', XMLDB_TYPE_NUMBER, '10,2', null, null, null, 200);
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $dbman->create_table($table);
-        $this->tables[$tablename] = $table;
 
         $columns = $DB->get_columns($tablename);
         $this->assertTrue(is_array($columns));
 
-        $fields = $this->tables[$tablename]->getFields();
+        $fields = $table->getFields();
         $this->assertEqual(count($columns), count($fields));
 
         $field = $columns['id'];
@@ -523,7 +522,6 @@ class dml_test extends UnitTestCase {
         $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $dbman->create_table($table);
-        $this->tables[$tablename] = $table;
 
         $sql = "SELECT * FROM {{$tablename}}";
 
@@ -560,7 +558,6 @@ class dml_test extends UnitTestCase {
         $table1->add_index('course', XMLDB_INDEX_NOTUNIQUE, array('course'));
         $table1->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $dbman->create_table($table1);
-        $this->tables[$tablename1] = $table1;
 
         $table2 = $this->get_test_table('2');
         $tablename2 = $table2->getName();
@@ -568,7 +565,6 @@ class dml_test extends UnitTestCase {
         $table2->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
         $table2->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $dbman->create_table($table2);
-        $this->tables[$tablename1] = $table2;
 
         $DB->insert_record($tablename1, array('course' => 3, 'name' => 'aaa'));
         $DB->insert_record($tablename1, array('course' => 1, 'name' => 'bbb'));
@@ -617,7 +613,6 @@ class dml_test extends UnitTestCase {
         $table->add_index('course', XMLDB_INDEX_NOTUNIQUE, array('course'));
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $dbman->create_table($table);
-        $this->tables[$tablename] = $table;
 
         $data = array(array('id' => 1, 'course' => 3, 'name' => 'record1'),
                       array('id' => 2, 'course' => 3, 'name' => 'record2'),
@@ -693,7 +688,6 @@ class dml_test extends UnitTestCase {
         $table->add_index('course', XMLDB_INDEX_NOTUNIQUE, array('course'));
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $dbman->create_table($table);
-        $this->tables[$tablename] = $table;
 
         $data = array(array('id'=> 1, 'course' => 3, 'name' => 'record1'),
                       array('id'=> 2, 'course' => 3, 'name' => 'record2'),
@@ -758,7 +752,6 @@ class dml_test extends UnitTestCase {
         $table->add_index('course', XMLDB_INDEX_NOTUNIQUE, array('course'));
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $dbman->create_table($table);
-        $this->tables[$tablename] = $table;
 
         $DB->insert_record($tablename, array('course' => 3));
         $DB->insert_record($tablename, array('course' => 3));
@@ -799,7 +792,6 @@ class dml_test extends UnitTestCase {
         $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $dbman->create_table($table);
-        $this->tables[$tablename] = $table;
 
         $DB->insert_record($tablename, array('course' => 3));
         $DB->insert_record($tablename, array('course' => 3));
@@ -837,7 +829,6 @@ class dml_test extends UnitTestCase {
         $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $dbman->create_table($table);
-        $this->tables[$tablename] = $table;
 
         $inskey1 = $DB->insert_record($tablename, array('course' => 3));
         $inskey2 = $DB->insert_record($tablename, array('course' => 5));
@@ -881,7 +872,6 @@ class dml_test extends UnitTestCase {
         $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $dbman->create_table($table);
-        $this->tables[$tablename] = $table;
 
         $DB->insert_record($tablename, array('course' => 3));
         $DB->insert_record($tablename, array('course' => 3));
@@ -940,7 +930,6 @@ class dml_test extends UnitTestCase {
         $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $dbman->create_table($table);
-        $this->tables[$tablename] = $table;
 
         $DB->insert_record($tablename, array('course' => 3));
         $DB->insert_record($tablename, array('course' => 3));
@@ -972,7 +961,6 @@ class dml_test extends UnitTestCase {
         $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $dbman->create_table($table);
-        $this->tables[$tablename] = $table;
 
         $inskey1 = $DB->insert_record($tablename, array('course' => 3));
         $inskey2 = $DB->insert_record($tablename, array('course' => 5));
@@ -1042,7 +1030,6 @@ class dml_test extends UnitTestCase {
         $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $dbman->create_table($table);
-        $this->tables[$tablename] = $table;
 
         $DB->insert_record($tablename, array('course' => 3));
         $DB->insert_record($tablename, array('course' => 3));
@@ -1071,7 +1058,6 @@ class dml_test extends UnitTestCase {
         $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $dbman->create_table($table);
-        $this->tables[$tablename] = $table;
 
         $DB->insert_record($tablename, array('course' => 3));
         $DB->insert_record($tablename, array('course' => 2));
@@ -1104,7 +1090,6 @@ class dml_test extends UnitTestCase {
         $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $dbman->create_table($table);
-        $this->tables[$tablename] = $table;
 
         $DB->insert_record($tablename, array('course' => 3));
         $DB->insert_record($tablename, array('course' => 2));
@@ -1137,7 +1122,6 @@ class dml_test extends UnitTestCase {
         $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $dbman->create_table($table);
-        $this->tables[$tablename] = $table;
 
         $DB->insert_record($tablename, array('course' => 3));
         $DB->insert_record($tablename, array('course' => 2));
@@ -1161,7 +1145,6 @@ class dml_test extends UnitTestCase {
         $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $dbman->create_table($table);
-        $this->tables[$tablename] = $table;
 
         $DB->insert_record($tablename, array('course' => 3));
         $DB->insert_record($tablename, array('course' => 2));
@@ -1187,7 +1170,6 @@ class dml_test extends UnitTestCase {
         $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $dbman->create_table($table);
-        $this->tables[$tablename] = $table;
 
         $DB->insert_record($tablename, array('course' => 3));
         $DB->insert_record($tablename, array('course' => 2));
@@ -1252,7 +1234,6 @@ class dml_test extends UnitTestCase {
         $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $dbman->create_table($table);
-        $this->tables[$tablename] = $table;
 
         $id1 = $DB->insert_record($tablename, array('course' => 3));
         $DB->insert_record($tablename, array('course' => 5));
@@ -1301,7 +1282,6 @@ class dml_test extends UnitTestCase {
         $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $dbman->create_table($table);
-        $this->tables[$tablename] = $table;
 
         $DB->insert_record($tablename, array('course' => 3));
 
@@ -1319,7 +1299,6 @@ class dml_test extends UnitTestCase {
         $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $dbman->create_table($table);
-        $this->tables[$tablename] = $table;
 
         $DB->insert_record($tablename, array('course' => 3));
 
@@ -1337,7 +1316,6 @@ class dml_test extends UnitTestCase {
         $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $dbman->create_table($table);
-        $this->tables[$tablename] = $table;
 
         $DB->insert_record($tablename, array('course' => 1));
         $DB->insert_record($tablename, array('course' => 3));
@@ -1364,7 +1342,6 @@ class dml_test extends UnitTestCase {
         $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $dbman->create_table($table);
-        $this->tables[$tablename] = $table;
 
         $DB->insert_record($tablename, array('course' => 1));
         $DB->insert_record($tablename, array('course' => 3));
@@ -1392,7 +1369,6 @@ class dml_test extends UnitTestCase {
         $table->add_field('onechar', XMLDB_TYPE_CHAR, '100', null, null, null, 'onestring');
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $dbman->create_table($table);
-        $this->tables[$tablename] = $table;
 
         $record = (object)array('course' => 1, 'onechar' => 'xx');
         $before = clone($record);
@@ -1458,7 +1434,6 @@ class dml_test extends UnitTestCase {
         $table->add_field('onebinary', XMLDB_TYPE_BINARY, 'big', null, null, null);
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $dbman->create_table($table);
-        $this->tables[$tablename] = $table;
 
         $this->assertIdentical(1, $DB->insert_record($tablename, array('course' => 1), true));
         $record = $DB->get_record($tablename, array('course' => 1));
@@ -1644,7 +1619,6 @@ class dml_test extends UnitTestCase {
         $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $dbman->create_table($table);
-        $this->tables[$tablename] = $table;
 
         $record = array('id'=>666, 'course'=>10);
         $this->assertIdentical(true, $DB->import_record($tablename, $record));
@@ -1672,7 +1646,6 @@ class dml_test extends UnitTestCase {
         $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $dbman->create_table($table);
-        $this->tables[$tablename] = $table;
 
         $DB->insert_record($tablename, array('course' => 1));
         $DB->insert_record($tablename, array('course' => 3));
@@ -1725,7 +1698,6 @@ class dml_test extends UnitTestCase {
         $table->add_field('onebinary', XMLDB_TYPE_BINARY, 'big', null, null, null);
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $dbman->create_table($table);
-        $this->tables[$tablename] = $table;
 
         $DB->insert_record($tablename, array('course' => 1));
         $record = $DB->get_record($tablename, array('course' => 1));
@@ -1881,7 +1853,6 @@ class dml_test extends UnitTestCase {
         $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $dbman->create_table($table);
-        $this->tables[$tablename] = $table;
 
         // simple set_field
         $id1 = $DB->insert_record($tablename, array('course' => 1));
@@ -1948,7 +1919,6 @@ class dml_test extends UnitTestCase {
         $table->add_field('onebinary', XMLDB_TYPE_BINARY, 'big', null, null, null);
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $dbman->create_table($table);
-        $this->tables[$tablename] = $table;
 
         $DB->insert_record($tablename, array('course' => 1));
 
@@ -2069,7 +2039,6 @@ class dml_test extends UnitTestCase {
         $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $dbman->create_table($table);
-        $this->tables[$tablename] = $table;
 
         $this->assertEqual(0, $DB->count_records($tablename));
 
@@ -2092,7 +2061,6 @@ class dml_test extends UnitTestCase {
         $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $dbman->create_table($table);
-        $this->tables[$tablename] = $table;
 
         $this->assertEqual(0, $DB->count_records($tablename));
 
@@ -2114,7 +2082,6 @@ class dml_test extends UnitTestCase {
         $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $dbman->create_table($table);
-        $this->tables[$tablename] = $table;
 
         $this->assertEqual(0, $DB->count_records($tablename));
 
@@ -2136,7 +2103,6 @@ class dml_test extends UnitTestCase {
         $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $dbman->create_table($table);
-        $this->tables[$tablename] = $table;
 
         $this->assertEqual(0, $DB->count_records($tablename));
 
@@ -2158,7 +2124,6 @@ class dml_test extends UnitTestCase {
         $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $dbman->create_table($table);
-        $this->tables[$tablename] = $table;
 
         $this->assertEqual(0, $DB->count_records($tablename));
 
@@ -2179,7 +2144,6 @@ class dml_test extends UnitTestCase {
         $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $dbman->create_table($table);
-        $this->tables[$tablename] = $table;
 
         $this->assertEqual(0, $DB->count_records($tablename));
 
@@ -2200,7 +2164,6 @@ class dml_test extends UnitTestCase {
         $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $dbman->create_table($table);
-        $this->tables[$tablename] = $table;
 
         $DB->insert_record($tablename, array('course' => 3));
         $DB->insert_record($tablename, array('course' => 2));
@@ -2230,7 +2193,6 @@ class dml_test extends UnitTestCase {
         $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $dbman->create_table($table);
-        $this->tables[$tablename] = $table;
 
         $DB->insert_record($tablename, array('course' => 3));
         $DB->insert_record($tablename, array('course' => 2));
@@ -2251,7 +2213,6 @@ class dml_test extends UnitTestCase {
         $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $dbman->create_table($table);
-        $this->tables[$tablename] = $table;
 
         $DB->insert_record($tablename, array('course' => 1));
         $DB->insert_record($tablename, array('course' => 2));
@@ -2321,7 +2282,6 @@ class dml_test extends UnitTestCase {
         $table1->add_field('name', XMLDB_TYPE_CHAR, '255', null, null, null, null);
         $table1->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $dbman->create_table($table1);
-        $this->tables[$tablename1] = $table1;
 
         $DB->insert_record($tablename1, array('name'=>'100'));
 
@@ -2331,7 +2291,6 @@ class dml_test extends UnitTestCase {
         $table2->add_field('res', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
         $table2->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $dbman->create_table($table2);
-        $this->tables[$table2->getName()] = $table2;
 
         $DB->insert_record($tablename2, array('res'=>100));
 
@@ -2356,7 +2315,6 @@ class dml_test extends UnitTestCase {
         $table->add_field('res', XMLDB_TYPE_NUMBER, '12, 7', null, null, null, null);
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $dbman->create_table($table);
-        $this->tables[$tablename] = $table;
 
         $DB->insert_record($tablename, array('name'=>'10.10', 'res'=>5.1));
         $DB->insert_record($tablename, array('name'=>'1.10', 'res'=>666));
@@ -2379,7 +2337,6 @@ class dml_test extends UnitTestCase {
         $table->add_field('description', XMLDB_TYPE_TEXT, 'big', null, null, null, null);
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $dbman->create_table($table);
-        $this->tables[$tablename] = $table;
 
         $DB->insert_record($tablename, array('name'=>'abcd',   'description'=>'abcd'));
         $DB->insert_record($tablename, array('name'=>'abcdef', 'description'=>'bbcdef'));
@@ -2408,7 +2365,6 @@ class dml_test extends UnitTestCase {
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $table->add_index('name', XMLDB_INDEX_UNIQUE, array('name'));
         $dbman->create_table($table);
-        $this->tables[$tablename] = $table;
 
         $DB->insert_record($tablename, array('name'=>'aaa'));
 
@@ -2446,7 +2402,6 @@ class dml_test extends UnitTestCase {
         $table->add_field('name', XMLDB_TYPE_CHAR, '255', null, null, null, null);
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $dbman->create_table($table);
-        $this->tables[$tablename] = $table;
 
         $DB->insert_record($tablename, array('name'=>'aaa'));
         $DB->insert_record($tablename, array('name'=>'aáa'));
@@ -2472,7 +2427,6 @@ class dml_test extends UnitTestCase {
         $table->add_field('name', XMLDB_TYPE_CHAR, '255', null, null, null, null);
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $dbman->create_table($table);
-        $this->tables[$tablename] = $table;
 
         $DB->insert_record($tablename, array('name'=>'SuperDuperRecord'));
         $DB->insert_record($tablename, array('name'=>'Nodupor'));
@@ -2538,7 +2492,6 @@ class dml_test extends UnitTestCase {
         $table->add_field('name', XMLDB_TYPE_CHAR, '255', null, null, null, null);
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $dbman->create_table($table);
-        $this->tables[$tablename] = $table;
 
         $DB->insert_record($tablename, array('name'=>'SuperDuperRecord'));
         $DB->insert_record($tablename, array('name'=>'NoDupor'));
@@ -2589,7 +2542,6 @@ class dml_test extends UnitTestCase {
         $table->add_field('description', XMLDB_TYPE_TEXT, 'big', null, null, null, null);
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $dbman->create_table($table);
-        $this->tables[$tablename] = $table;
 
         $DB->insert_record($tablename, array('description'=>'áéíóú'));
         $DB->insert_record($tablename, array('description'=>'dxxx'));
@@ -2627,7 +2579,6 @@ class dml_test extends UnitTestCase {
         $table->add_field('description', XMLDB_TYPE_TEXT, 'big', null, null, null, null);
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $dbman->create_table($table);
-        $this->tables[$tablename] = $table;
 
         $DB->insert_record($tablename, array('description'=>'abcd'));
         $DB->insert_record($tablename, array('description'=>'dxxx'));
@@ -2654,7 +2605,6 @@ class dml_test extends UnitTestCase {
         $table->add_field('name', XMLDB_TYPE_CHAR, '255', null, null, null, null);
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $dbman->create_table($table);
-        $this->tables[$tablename] = $table;
 
         $string = 'abcdefghij';
 
@@ -2706,7 +2656,6 @@ class dml_test extends UnitTestCase {
         $table->add_field('namenotnullnodeflt', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $dbman->create_table($table);
-        $this->tables[$tablename] = $table;
 
         $DB->insert_record($tablename, array('name'=>'', 'namenotnull'=>''));
         $DB->insert_record($tablename, array('name'=>null));
@@ -2743,7 +2692,6 @@ class dml_test extends UnitTestCase {
         $table->add_field('descriptionnull', XMLDB_TYPE_TEXT, 'big', null, null, null, null);
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $dbman->create_table($table);
-        $this->tables[$tablename] = $table;
 
         $DB->insert_record($tablename, array('name'=>'',   'namenull'=>'',   'description'=>'',   'descriptionnull'=>''));
         $DB->insert_record($tablename, array('name'=>'??', 'namenull'=>null, 'description'=>'??', 'descriptionnull'=>null));
@@ -2785,7 +2733,6 @@ class dml_test extends UnitTestCase {
         $table->add_field('descriptionnull', XMLDB_TYPE_TEXT, 'big', null, null, null, null);
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $dbman->create_table($table);
-        $this->tables[$tablename] = $table;
 
         $DB->insert_record($tablename, array('name'=>'',   'namenull'=>'',   'description'=>'',   'descriptionnull'=>''));
         $DB->insert_record($tablename, array('name'=>'??', 'namenull'=>null, 'description'=>'??', 'descriptionnull'=>null));
@@ -2824,7 +2771,6 @@ class dml_test extends UnitTestCase {
         $table->add_field('name', XMLDB_TYPE_CHAR, '255', null, null, null, null);
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $dbman->create_table($table);
-        $this->tables[$tablename] = $table;
 
         $DB->insert_record($tablename, array('name'=>'lalala'));
         $DB->insert_record($tablename, array('name'=>'holaaa'));
@@ -2867,7 +2813,6 @@ class dml_test extends UnitTestCase {
         $table->add_field('content', XMLDB_TYPE_TEXT, 'big', XMLDB_UNSIGNED, XMLDB_NOTNULL);
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $dbman->create_table($table);
-        $this->tables[$tablename] = $table;
 
         $DB->insert_record($tablename, array('course' => 3, 'content' => 'hello'));
         $DB->insert_record($tablename, array('course' => 3, 'content' => 'world'));
@@ -2901,7 +2846,6 @@ class dml_test extends UnitTestCase {
         $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $dbman->create_table($table);
-        $this->tables[$tablename] = $table;
 
         $transaction = $DB->start_delegated_transaction();
         $data = (object)array('course'=>3);
@@ -2923,7 +2867,6 @@ class dml_test extends UnitTestCase {
         $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $dbman->create_table($table);
-        $this->tables[$tablename] = $table;
 
         // this might in fact encourage ppl to migrate from myisam to innodb
 
@@ -2951,7 +2894,6 @@ class dml_test extends UnitTestCase {
         $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $dbman->create_table($table);
-        $this->tables[$tablename] = $table;
 
         // two level commit
         $this->assertFalse($DB->is_transaction_started());
@@ -3029,7 +2971,6 @@ class dml_test extends UnitTestCase {
         $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $dbman->create_table($table);
-        $this->tables[$tablename] = $table;
 
         $DB->transactions_forbidden();
         $transaction = $DB->start_delegated_transaction();
@@ -3057,7 +2998,6 @@ class dml_test extends UnitTestCase {
         $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $dbman->create_table($table);
-        $this->tables[$tablename] = $table;
 
 
         // wrong order of nested commits
@@ -3153,7 +3093,6 @@ class dml_test extends UnitTestCase {
         $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $dbman->create_table($table);
-        $this->tables[$tablename] = $table;
 
         $transaction = $DB->start_delegated_transaction();
         $data = (object)array('course'=>1);
@@ -3197,7 +3136,6 @@ class dml_test extends UnitTestCase {
         $table->add_field('content', XMLDB_TYPE_TEXT, 'big', XMLDB_UNSIGNED, XMLDB_NOTNULL);
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $dbman->create_table($table);
-        $this->tables[$tablename] = $table;
 
         $this->assertTrue($DB->insert_record($tablename, array('name' => '1', 'content'=>'xx')));
         $this->assertTrue($DB->insert_record($tablename, array('name' => 2, 'content'=>'yy')));
