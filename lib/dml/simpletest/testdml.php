@@ -1174,6 +1174,8 @@ class dml_test extends UnitTestCase {
     }
 
     public function test_get_record_sql() {
+        global $CFG;
+
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
@@ -1212,10 +1214,16 @@ class dml_test extends UnitTestCase {
         }
 
         // multiple matches - debug warning
+        $olddebug   = $CFG->debug;       // Save current debug settings
+        $olddisplay = $CFG->debugdisplay;
+        $CFG->debug = DEBUG_DEVELOPER;
+        $CFG->debugdisplay = true;
         ob_start(); // hide debug warning
         $this->assertTrue($DB->get_record_sql("SELECT * FROM {{$tablename}}", array(), IGNORE_MISSING));
         $debuginfo = ob_get_contents();
         ob_end_clean();
+        $CFG->debug = $olddebug;         // Restore original debug settings
+        $CFG->debugdisplay = $olddisplay;
         $this->assertFalse($debuginfo === '');
 
         // multiple matches ignored
