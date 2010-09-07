@@ -53,7 +53,6 @@ class question_dataset_dependent_items_form extends moodleform {
         }
 
         foreach ($this->datasetdefs as $datasetdef) {
-
             // Get maxnumber
             if ($this->maxnumber == -1 || $datasetdef->itemcount < $this->maxnumber) {
                 $this->maxnumber = $datasetdef->itemcount;
@@ -209,7 +208,7 @@ class question_dataset_dependent_items_form extends moodleform {
 //------------------------------------------------------------------------------------------------------------------------------
         $j = $this->noofitems * count($this->datasetdefs);
         $k = 1 ;
-        if ("" != optional_param('selectshow')){
+        if ("" != optional_param('selectshow', '', PARAM_INT)){
             $k = optional_param('selectshow', '', PARAM_INT);
         }
         for ($i = $this->noofitems; $i >= 1 ; $i--){

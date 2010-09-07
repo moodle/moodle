@@ -224,7 +224,7 @@ class question_edit_calculatedsimple_form extends question_edit_form {
             }
         }
         $maxnumber = -1 ;
-        if  (  "" !=optional_param('addbutton')){
+        if  (  "" !=optional_param('addbutton', '', PARAM_TEXT)){
             $maxnumber = optional_param('selectadd', '', PARAM_INT); //FIXME: sloppy coding
             foreach ($this->datasetdefs as $defid => $datasetdef) {
                 $datasetdef->itemcount = $maxnumber;
@@ -240,7 +240,7 @@ class question_edit_calculatedsimple_form extends question_edit_form {
             $this->maxnumber = $maxnumber ;
         }else {
             // Handle reload dataset items
-            if  (  "" !=optional_param('definition')&& !($datasettoremove ||$newdataset ||$newdatasetvalues )){
+            if  (  "" !=optional_param('definition','', PARAM_NOTAGS)&& !($datasettoremove ||$newdataset ||$newdatasetvalues )){
                 $i = 1;
                 $fromformdefinition = optional_param('definition', '', PARAM_NOTAGS);
                 $fromformnumber = optional_param('number', '', PARAM_INT);
@@ -486,7 +486,7 @@ class question_edit_calculatedsimple_form extends question_edit_form {
                 //------------------------------------------------------------------------------------------------------------------------------
                 $j = $this->noofitems * count($this->datasetdefs);
                 $k = 1 ;
-                if ("" != optional_param('selectshow')){
+                if ("" != optional_param('selectshow', '', PARAM_INT)){
                     $k = optional_param('selectshow', '', PARAM_INT);
                 }
 
