@@ -76,6 +76,7 @@ class dml_test extends UnitTestCase {
         if ($dbman->table_exists($table)) {
             $dbman->drop_table($table);
         }
+        $table->setComment("This is a test'n drop table. You can drop it safely");
         $this->tables[$tablename] = $tablename;
         return new xmldb_table($tablename);
     }
