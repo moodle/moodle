@@ -603,6 +603,20 @@ class core_backup_renderer extends plugin_renderer_base {
         $output .= html_writer::end_tag('div');
         return $output;
     }
+
+    public function invalid_format($format) {
+        $html  = html_writer::start_tag('div', array('class'=>'invalidformat'));
+        $html .= html_writer::tag('h2', get_string('errorinvalidformat', 'backup'), array('class'=>'notifyproblem'));
+        if ($format == 'moodle1') {
+            // Moodle 1.x backups
+            $html .= html_writer::tag('div', get_string('errormoodle1formatdesc', 'backup'), array('class'=>'notifyproblem'));
+        } else {
+            // Totally unknown format
+            $html .= html_writer::tag('div', get_string('errorinvalidformatdesc', 'backup'), array('class'=>'notifyproblem'));
+        }
+        $html .= html_writer::end_tag('div');
+        return $html;
+    }
 }
 
 /**

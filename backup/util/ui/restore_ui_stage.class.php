@@ -169,6 +169,13 @@ class restore_ui_stage_confirm extends restore_ui_independent_stage {
         return ($fb->extract_to_pathname("$CFG->dataroot/temp/backup/".$this->filename, "$CFG->dataroot/temp/backup/$this->filepath/"));
     }
     public function display($renderer) {
+
+        // TODO: Remove this when backup formats are better supported
+        $format = backup_general_helper::detect_backup_format($this->filepath);
+        if ($format !== 'moodle2') {
+            return $renderer->invalid_format($format);
+        }
+
         $this->details = backup_general_helper::get_backup_information($this->filepath);
         return $renderer->backup_details($this->details, new moodle_url('/backup/restore.php', array('contextid'=>$this->contextid, 'filepath'=>$this->filepath, 'stage'=>restore_ui::STAGE_DESTINATION)));
     }
@@ -233,6 +240,12 @@ class restore_ui_stage_destination extends restore_ui_independent_stage {
      */
     public function display($renderer) {
         global $DB, $USER, $PAGE;
+
+        $format = backup_general_helper::detect_backup_format($this->filepath);
+        if ($format !== 'moodle2') {
+            return $renderer->invalid_format($format);
+        }
+
         $this->details = backup_general_helper::get_backup_information($this->filepath);
         $url = new moodle_url('/backup/restore.php', array('contextid'=>$this->contextid, 'filepath'=>$this->filepath, 'stage'=>restore_ui::STAGE_SETTINGS));
         
