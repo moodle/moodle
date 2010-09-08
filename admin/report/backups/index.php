@@ -93,7 +93,7 @@
         print_simple_box_start('center');
 
     /// First, me get all the distinct backups for that course in backup_log
-        $executions = get_records_sql("SELECT DISTINCT laststarttime,laststarttime
+        $executions = get_records_sql("SELECT DISTINCT laststarttime
                                        FROM {$CFG->prefix}backup_log
                                        WHERE courseid = '$courseid'
                                        ORDER BY laststarttime DESC");
