@@ -26,3 +26,4 @@
 $string['managemyfiles'] = 'Manage my files';
 $string['pluginname'] = 'User private files';
 $string['privatefiles'] = 'Private files';
+$string['nofiles'] = 'There are no files added yet, please click "Manage my private file" button to add files';
