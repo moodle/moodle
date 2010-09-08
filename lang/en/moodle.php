@@ -905,6 +905,7 @@ $string['leavetokeep'] = 'Leave blank to keep current password';
 $string['legacythemeinuse'] = 'This site is being displayed to you in compatibility mode because your browser is too old.';
 $string['legacythemesaved'] = 'New legacy theme saved';
 $string['license'] = 'License';
+$string['licenses'] = 'Licenses';
 $string['liketologin'] = 'Would you like to log in now with a full user account?';
 $string['list'] = 'List';
 $string['listfiles'] = 'List of files in {$a}';
