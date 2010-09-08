@@ -909,10 +909,6 @@ function data_delete_instance($id) {    // takes the dataid
     $fs = get_file_storage();
     $fs->delete_area_files($context->id, 'mod_data');
 
-    // Delete comments
-    require_once($CFG->dirroot.'/comment/lib.php');
-    comment::delete_comments(array('contextid'=>$context->id));
-
     // Delete ratings
     //delete ratings
     require_once($CFG->dirroot.'/rating/lib.php');

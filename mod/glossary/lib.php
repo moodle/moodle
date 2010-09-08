@@ -195,10 +195,6 @@ function glossary_delete_instance($id) {
     $DB->delete_records_select('glossary_entries_categories', "categoryid IN ($category_select)", array($id));
     $DB->delete_records('glossary_categories', array('glossaryid'=>$id));
 
-    // Delete comments
-    require_once($CFG->dirroot.'/comment/lib.php');
-    comment::delete_comments(array('contextid'=>$context->id));
-
     // delete all files
     $fs->delete_area_files($context->id);
 
