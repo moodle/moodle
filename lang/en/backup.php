@@ -81,8 +81,12 @@ $string['errorfilenamemustbezip'] = 'The filename you enter must be a ZIP file a
 $string['errorminbackup20version'] = 'This backup file has been created with one development version of Moodle backup ({$a->backup}). Minimum required is {$a->min}. Cannot be restored.';
 $string['errorrestorefrontpage'] = 'Restoring over front page is not allowed.';
 $string['errorinvalidformat'] = 'Invalid backup format.';
-$string['errorinvalidformatdesc'] = 'The uploaded file is invalid or not a recognised restorable backup.';
-$string['errormoodle1formatdesc'] = 'Moodle 1.x backups are not presently restorable. This functionality is under development and will be complete shortly.';
+$string['errorinvalidformatdesc'] = 'The uploaded file is not a valid Moodle backup file and could not be restored.';
+$string['errormoodle1formatdesc'] = 'The backup file was created with Moodle 1.x and can not currently be restored in Moodle 2.  This functionality is coming in a future update.';
+$string['errormoodle1format'] = 'Restoring Moodle 1.9 backups';
+$string['errormoodle1format_help'] = 'Moodle 2 currently doesn\'t support restoring Moodle 1.x backups.
+A temporary work around to this is to restore your Moodle 1.x backup onto a Moodle 1.9 site, and then upgrade it to Moodle 2.
+Once the upgrade is complete you will be able to make new backups which will be restorable on other Moodle 2.0 sites.';
 $string['executionsuccess'] = 'The backup file was successfully created.';
 $string['filename'] = 'Filename';
 $string['generalactivities'] = 'Include activities';
