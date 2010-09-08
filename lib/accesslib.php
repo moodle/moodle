@@ -1923,6 +1923,8 @@ function delete_context($contextlevel, $instanceid) {
 
         blocks_delete_all_for_context($context->id);
         filter_delete_all_for_context($context->id);
+        require_once($CFG->dirroot . '/comment/lib.php');
+        comment::delete_comments(array('contextid'=>$context->id));
     }
 
     return true;
