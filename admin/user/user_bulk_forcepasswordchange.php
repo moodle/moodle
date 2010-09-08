@@ -23,14 +23,15 @@ echo $OUTPUT->header();
 
 if ($confirm and confirm_sesskey()) {
     // only force password change if user may actually change the password
-    $authsavailable = get_plugin_list('auth');
+    $authsavailable = get_enabled_auth_plugins();
     $changeable = array();
-    foreach($authsavailable as $authname=>$path) {
-        if (!$auth = get_auth_plugin($authname)) {
+
+    foreach($authsavailable as $authplugin) {
+        if (!$auth = get_auth_plugin($authplugin)) {
             continue;
         }
         if ($auth->is_internal() and $auth->can_change_password()) {
-            $changeable[$authname] = true;
+            $changeable[$authplugin] = true;
         }
     }
 
@@ -60,8 +61,8 @@ if ($confirm and confirm_sesskey()) {
         $usernames .= ', ...';
     }
     echo $OUTPUT->heading(get_string('confirmation', 'admin'));
-    $formcontinue = new single_button(new moodle_url('user_bulk_forcepasswordchange.php', array('confirm' => 1)), get_string('yes'));
-    $formcancel = new single_button('user_bulk.php', get_string('no'), 'get');
+    $formcontinue = new single_button(new moodle_url('/admin/user/user_bulk_forcepasswordchange.php', array('confirm' => 1)), get_string('yes'));
+    $formcancel = new single_button(new moodle_url('/admin/user/user_bulk.php'), get_string('no'), 'get');
     echo $OUTPUT->confirm(get_string('forcepasswordchangecheckfull', '', $usernames), $formcontinue, $formcancel);
 }
 
