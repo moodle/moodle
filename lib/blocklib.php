@@ -419,6 +419,7 @@ class block_manager {
     /**
      * Checks to see whether all of the blocks within the given region are docked
      *
+     * @see region_uses_dock
      * @param string $region
      * @return bool True if all of the blocks within that region are docked
      */
@@ -434,6 +435,29 @@ class block_manager {
             }
         }
         return true;
+    }
+
+    /**
+     * Checks to see whether any of the blocks within the given regions are docked
+     *
+     * @see region_completely_docked
+     * @param array|string $regions array of regions (or single region)
+     * @return bool True if any of the blocks within that region are docked
+     */
+    public function region_uses_dock($regions, $output) {
+        if (!$this->page->theme->enable_dock) {
+            return false;
+        }
+        $this->check_is_loaded();
+        foreach((array)$regions as $region) {
+            $this->ensure_content_created($region, $output);
+            foreach($this->visibleblockcontent[$region] as $instance) {
+                if(!empty($instance->content) && get_user_preferences('docked_block_instance_'.$instance->blockinstanceid, 0)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
 /// Actions ====================================================================
