@@ -656,6 +656,8 @@ class block_base {
      * The framework has first say in whether this will be allowed (e.g., no adding allowed unless in edit mode)
      * but if the framework does allow it, the block can still decide to refuse.
      * This function has access to the complete page object, the creation related to which is being determined.
+     *
+     * @param moodle_page $page
      * @return boolean
      */
     function user_can_addto($page) {
