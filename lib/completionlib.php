@@ -973,10 +973,15 @@ class completion_info {
     function is_tracked_user($userid) {
         global $DB;
 
+        $tracked = $this->generate_tracked_user_sql();
+
         $sql  = "SELECT u.id ";
-        $sql .= $this->generate_tracked_user_sql();
+        $sql .= $tracked->sql;
         $sql .= ' AND u.id = :user';
-        return $DB->record_exists_sql($sql, array('user' => (int)$userid));
+
+        $params = $tracked->data;
+        $params['user'] = (int)$userid;
+        return $DB->record_exists_sql($sql, $params);
     }
 
 
@@ -985,21 +990,25 @@ class completion_info {
      *
      * Optionally supply a search's where clause, or a group id
      *
-     * @param   string  $where      Where clause
+     * @param   string  $where          Where clause sql
+     * @param   array   $where_params   Where clause params
      * @param   int     $groupid    Group id
      * @return  int
      */
-    function get_num_tracked_users($where = '', $groupid = 0) {
+    function get_num_tracked_users($where = '', $where_params = array(), $groupid = 0) {
         global $DB;
 
+        $tracked = $this->generate_tracked_user_sql($groupid);
+
         $sql  = "SELECT COUNT(u.id) ";
-        $sql .= $this->generate_tracked_user_sql($groupid);
+        $sql .= $tracked->sql;
 
         if ($where) {
             $sql .= " AND $where";
         }
 
-        return $DB->count_records_sql($sql);
+        $params = array_merge($tracked->data, $where_params);
+        return $DB->count_records_sql($sql, $params);
     }
 
 
@@ -1008,17 +1017,21 @@ class completion_info {
      *
      * Optionally supply a search's where caluse, group id, sorting, paging
      *
-     * @param   string      $where      Where clause (optional)
+     * @param   string      $where          Where clause sql (optional)
+     * @param   array       $where_params   Where clause params (optional)
      * @param   integer     $groupid    Group ID to restrict to (optional)
      * @param   string      $sort       Order by clause (optional)
      * @param   integer     $limitfrom  Result start (optional)
      * @param   integer     $limitnum   Result max size (optional)
      * @return  array
      */
-    function get_tracked_users($where = '', $groupid = 0, $sort = '',
-             $limitfrom = '', $limitnum = '') {
+    function get_tracked_users($where = '', $where_params = array(), $groupid = 0,
+             $sort = '', $limitfrom = '', $limitnum = '') {
 
         global $DB;
+
+        $tracked = $this->generate_tracked_user_sql($groupid);
+        $params = $tracked->data;
 
         $sql = "
             SELECT
@@ -1028,17 +1041,18 @@ class completion_info {
                 u.idnumber
         ";
 
-        $sql .= $this->generate_tracked_user_sql($groupid);
+        $sql .= $tracked->sql;
 
         if ($where) {
             $sql .= " AND $where";
+            $params = array_merge($params, $where_params);
         }
 
         if ($sort) {
             $sql .= " ORDER BY $sort";
         }
 
-        $users = $DB->get_records_sql($sql, null, $limitfrom, $limitnum);
+        $users = $DB->get_records_sql($sql, $params, $limitfrom, $limitnum);
         return $users ? $users : array(); // In case it returns false
     }
 
@@ -1046,13 +1060,18 @@ class completion_info {
     /**
      * Generate the SQL for finding tracked users in this course
      *
-     * Optionally supply a group id
+     * Returns an object containing the sql fragment and an array of
+     * bound data params.
      *
      * @param   integer $groupid
-     * @return  string
+     * @return  object
      */
     function generate_tracked_user_sql($groupid = 0) {
         global $CFG;
+
+        $return = new stdClass();
+        $return->sql = '';
+        $return->data = array();
 
         if (!empty($CFG->progresstrackedroles)) {
             $roles = ' AND ra.roleid IN ('.$CFG->progresstrackedroles.')';
@@ -1074,12 +1093,12 @@ class completion_info {
         if ($groupid) {
             $groupjoin   = "JOIN {groups_members} gm
                               ON gm.userid = u.id";
-            $groupselect = " AND gm.groupid = $groupid ";
+            $groupselect = " AND gm.groupid = :groupid ";
+            
+            $return->data['groupid'] = $groupid;
         }
 
-        $now = time();
-
-        $sql = "
+        $return->sql = "
             FROM
                 {user} u
             INNER JOIN
@@ -1099,17 +1118,23 @@ class completion_info {
              ON c.id = e.courseid
             $groupjoin
             WHERE
-                (ra.contextid = {$context->id} $parentcontexts)
-            AND c.id = {$this->course->id}
+                (ra.contextid = :contextid $parentcontexts)
+            AND c.id = :courseid
             AND ue.status = 0
             AND e.status = 0
-            AND ue.timestart < $now
-            AND (ue.timeend > $now OR ue.timeend = 0)
+            AND ue.timestart < :now1
+            AND (ue.timeend > :now2 OR ue.timeend = 0)
                 $groupselect
                 $roles
         ";
 
-        return $sql;
+        $now = time();
+        $return->data['now1'] = $now;
+        $return->data['now2'] = $now;
+        $return->data['contextid'] = $context->id;
+        $return->data['courseid'] = $this->course->id;
+
+        return $return;
     }
 
     /**
@@ -1126,6 +1151,8 @@ class completion_info {
      * @global object
      * @param bool $sortfirstname If true, sort by first name, otherwise sort by
      *   last name
+     * @param string $where Where clause sql (optional)
+     * @param array $where_params Where clause params (optional)
      * @param int $groupid Group ID or 0 (default)/false for all groups
      * @param int $pagesize Number of users to actually return (optional)
      * @param int $start User to start at if paging (optional)
@@ -1133,11 +1160,12 @@ class completion_info {
      *   an array of user objects (like mdl_user id, firstname, lastname)
      *   containing an additional ->progress array of coursemoduleid => completionstate
      */
-    public function get_progress_all($where = '', $groupid = 0, $sort = '', $pagesize = '', $start = '') {
+    public function get_progress_all($where = '', $where_params = array(), $groupid = 0,
+                                       $sort = '', $pagesize = '', $start = '') {
         global $CFG, $DB;
 
         // Get list of applicable users
-        $users = $this->get_tracked_users($where, $groupid, $sort, $start, $pagesize);
+        $users = $this->get_tracked_users($where, $where_params, $groupid, $sort, $start, $pagesize);
 
         // Get progress information for these users in groups of 1, 000 (if needed)
         // to avoid making the SQL IN too long

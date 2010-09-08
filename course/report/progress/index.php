@@ -78,21 +78,23 @@ if(count($activities)==0) {
 
 // Generate where clause
 $where = array();
-$ilike = $DB->sql_ilike();
+$where_params = array();
 
 if ($sifirst !== 'all') {
-    $where[] = "u.firstname $ilike '$sifirst%'";
+    $where[] = $DB->sql_like('u.firstname', ':sifirst', false);
+    $where_params['sifirst'] = $sifirst.'%';
 }
 
 if ($silast !== 'all') {
-    $where[] = "u.lastname $ilike '$silast%'";
+    $where[] = $DB->sql_like('u.lastname', ':silast', false);
+    $where_params['silast'] = $silast.'%';
 }
 
 // Get user match count
-$total = $completion->get_num_tracked_users(implode(' AND ', $where), $group);
+$total = $completion->get_num_tracked_users(implode(' AND ', $where), $where_params, $group);
 
 // Total user count
-$grandtotal = $completion->get_num_tracked_users('', $group);
+$grandtotal = $completion->get_num_tracked_users('', array(), $group);
 
 // If no users in this course what-so-ever
 if (!$grandtotal) {
@@ -110,6 +112,7 @@ $progress = array();
 if ($total) {
     $progress = $completion->get_progress_all(
         implode(' AND ', $where),
+        $where_params,
         $group,
         $firstnamesort ? 'u.firstname ASC' : 'u.lastname ASC',
         $csv ? 0 : COMPLETION_REPORT_PAGE,
