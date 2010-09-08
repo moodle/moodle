@@ -1388,7 +1388,7 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                 if (!empty($customicon)) {
                     if (substr($customicon, 0, 4) === 'mod/') {
                         list($modname, $iconname) = explode('/', substr($customicon, 4), 2);
-                        $icon = $OUTPUT->pix_url($customicon, $modname);
+                        $icon = $OUTPUT->pix_url($iconname, $modname);
                     } else {
                         $icon = $OUTPUT->pix_url($customicon);
                     }
