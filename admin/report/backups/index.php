@@ -93,7 +93,7 @@
         echo $OUTPUT->box_start();
 
     /// First, me get all the distinct backups for that course in backup_log
-        $executions = $DB->get_records_sql("SELECT DISTINCT laststarttime,laststarttime
+        $executions = $DB->get_records_sql("SELECT DISTINCT laststarttime
                                               FROM {backup_log}
                                              WHERE courseid = ? AND backuptype = ?
                                           ORDER BY laststarttime DESC", array($courseid,'scheduledbackup'));
