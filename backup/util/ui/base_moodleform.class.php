@@ -147,7 +147,7 @@ abstract class base_moodleform extends moodleform {
         $this->add_html_formatting($setting);
 
         // The call the add method with the get_element_properties array
-        call_user_method_array('addElement', $this->_form, $setting->get_ui()->get_element_properties($task, $OUTPUT));
+        call_user_func_array(array($this->_form, 'addElement'), $setting->get_ui()->get_element_properties($task, $OUTPUT));
         $this->_form->setDefault($setting->get_ui_name(), $setting->get_value());
         if ($setting->has_help()) {
             list($identifier, $component) = $setting->get_help();
@@ -262,7 +262,7 @@ abstract class base_moodleform extends moodleform {
         $mform = $this->_form;
         // Apply all dependencies for backup
         foreach ($setting->get_my_dependency_properties() as $key=>$dependency) {
-            call_user_method_array('disabledIf', $this->_form, $dependency);
+            call_user_func_array(array($this->_form, 'disabledIf'), $dependency);
         }
     }
     /**
