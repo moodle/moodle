@@ -53,6 +53,7 @@ $string['authsettings'] = 'Manage authentication';
 $string['autolang'] = 'Language autodetect';
 $string['autologinguests'] = 'Auto-login guests';
 $string['availableto'] = 'Available to';
+$string['availablelicenses'] = 'Available licenses';
 $string['backgroundcolour'] = 'Transparent colour';
 $string['backups'] = 'Backups';
 $string['badwordsconfig'] = 'Enter your list of bad words separated by commas.';

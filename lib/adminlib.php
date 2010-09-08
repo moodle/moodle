@@ -5177,7 +5177,7 @@ class admin_setting_managelicenses extends admin_setting {
         $txt = get_strings(array('administration', 'settings', 'name', 'enable', 'disable', 'none'));
         $licenses = license_manager::get_licenses();
 
-        $return = $OUTPUT->heading(get_string('managelicenses', 'admin'), 3, 'main', true);
+        $return = $OUTPUT->heading(get_string('availablelicenses', 'admin'), 3, 'main', true);
 
         $return .= $OUTPUT->box_start('generalbox editorsui');
 
