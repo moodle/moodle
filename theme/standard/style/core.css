@@ -376,14 +376,6 @@ table#tag-management-list {margin: 10px auto;width: 80%;}
  #page-course-publish-index .justifytext {text-align: justify}
  #page-course-publish-index .publicationwarning {color: #6666ff;}
 
- /**
- * Community block
- */
- #page-blocks-community-communitycourse .trustedtr {background-color: #ffe1c3;}
- #page-blocks-community-communitycourse .prioritisetr {background-color: #ffd4ff;}
- #page-blocks-community-communitycourse .additionaldesc {font-size: 80%; color: purple;}
- #page-blocks-community-communitycourse .additionaladmindesc {font-size: 80%; color: #6666ff;}
-
 /**
  * Custom menu
  */

@@ -183,5 +183,18 @@ $hubselectorform->display();
 if (!empty($errormessage)) {
     echo $errormessage;
 }
+
+//load javascript
+$courseids = array();
+if (!empty($courses)) {
+    foreach ($courses as $course) {
+        if (!empty($course['comments'])) {
+            $courseids[] = $course['id'];
+        }
+    }
+}
+$PAGE->requires->yui_module('moodle-block_community-comments', 'M.blocks_community.init_comments',
+        array(array('commentids' => $courseids)));
+
 echo highlight($search, $renderer->course_list($courses, $huburl, $courseid));
 echo $OUTPUT->footer();

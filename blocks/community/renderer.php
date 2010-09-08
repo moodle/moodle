@@ -32,7 +32,7 @@ class block_community_renderer extends plugin_renderer_base {
 
     public function restore_confirmation_box($filename, $context) {
         $restoreurl = new moodle_url('/backup/restore.php',
-                        array('filename' => $filename.".zip", 'contextid' => $context->id));
+                        array('filename' => $filename . ".zip", 'contextid' => $context->id));
         $searchurl = new moodle_url('/blocks/community/communitycourse.php',
                         array('add' => 1, 'courseid' => $context->instanceid,
                             'cancelrestore' => 1, 'sesskey' => sesskey(),
@@ -57,50 +57,36 @@ class block_community_renderer extends plugin_renderer_base {
 
         $renderedhtml = '';
 
-        $table = new html_table();
-
-
-        $table->head = array(
-            get_string('coursename', 'block_community'),
-            get_string('coursedesc', 'block_community'),
-            get_string('operation', 'block_community')
-        );
-        $table->align = array('center', 'left', 'center', 'left', 'center');
-        $table->size = array('20%', '45%', '5%', '5%', '5%');
-
-
-
         if (empty($courses)) {
             if (isset($courses)) {
                 $renderedhtml .= get_string('nocourse', 'block_community');
             }
         } else {
-
-            $table->width = '100%';
-            $table->data = array();
-            $table->attributes['class'] = 'sitedirectory';
-
-            // iterate through sites and add to the display table
+            $courseiteration = 0;
             foreach ($courses as $course) {
+                $course = (object) $course;
+                $courseiteration = $courseiteration + 1;
 
-                if (is_array($course)) {
-                    $course = (object) $course;
-                }
-
-                //create site name with link
+                //create visit link html
                 if (!empty($course->courseurl)) {
                     $courseurl = new moodle_url($course->courseurl);
+                    $linktext = get_string('visitsite', 'block_community');
                 } else {
                     $courseurl = new moodle_url($course->demourl);
+                    $linktext = get_string('visitdemo', 'block_community');
                 }
-                $courseatag = html_writer::tag('a', $course->fullname,
-                                array('href' => $courseurl));
 
-                $coursenamehtml = html_writer::tag('span', $courseatag, array());
+                $visitlinkhtml = html_writer::tag('a', $linktext,
+                                array('href' => $courseurl, 'class' => 'hubcoursedownload'));
 
+                //create title html
+                $coursename = html_writer::tag('h3', $course->fullname,
+                                array('class' => 'hubcoursetitle'));
+                $coursenamehtml = html_writer::tag('div', $coursename, array());
 
-                // add a row to the table
+                // create screenshots html
                 $screenshothtml = '';
+
                 if (!empty($course->screenshots)) {
                     $images = array();
                     $baseurl = new moodle_url($huburl . '/local/hub/webservice/download.php',
@@ -109,8 +95,7 @@ class block_community_renderer extends plugin_renderer_base {
                     for ($i = 1; $i <= $course->screenshots; $i = $i + 1) {
                         $params['screenshotnumber'] = $i;
                         $images[] = array(
-                            'thumburl' => new moodle_url($baseurl,
-                                    array('screenshotnumber' => $i)),
+                            'thumburl' => new moodle_url($baseurl, array('screenshotnumber' => $i)),
                             'imageurl' => new moodle_url($baseurl,
                                     array('screenshotnumber' => $i, 'imagewidth' => 'original')),
                             'title' => $course->fullname,
@@ -121,37 +106,51 @@ class block_community_renderer extends plugin_renderer_base {
                     $imagegallery->displayfirstimageonly = true;
                     $screenshothtml = $this->output->render($imagegallery);
                 }
-                $deschtml = html_writer::tag('div', $screenshothtml,
+                $coursescreenshot = html_writer::tag('div', $screenshothtml,
                                 array('class' => 'coursescreenshot'));
 
-                //create description to display
+
+                //create description html
+                $deschtml = html_writer::tag('div', $course->description,
+                                array('class' => 'hubcoursedescription'));
+
+                //create users related information html
+                $courseuserinfo = '';
+                if (!empty($course->contributornames)) {
+                    $course->contributorname = get_string('contributors', 'block_community',
+                                    $course->contributorname);
+                }
+                if ($course->contributornames) {
+                    $courseuserinfo .= get_string('contributors', 'block_community',
+                                    $course->contributornames);
+                    $courseuserinfo .= ' - ';
+                }
+                $courseuserinfo = get_string('userinfo', 'block_community', $course);
+                $courseuserinfohtml = html_writer::tag('div', $courseuserinfo,
+                                array('class' => 'hubcourseuserinfo'));
+
+                //create course content related information html
                 $course->subject = get_string($course->subject, 'edufields');
                 $course->audience = get_string('audience' . $course->audience, 'hub');
-                $course->educationallevel = get_string('edulevel' .
-                                $course->educationallevel, 'hub');
-                $deschtml .= $course->description; //the description
-                /// courses and sites number display under the description, in smaller
-                $deschtml .= html_writer::empty_tag('br');
-                $additionaldesc = '';
-                if ($course->contributornames) {
-                    $additionaldesc .= get_string('contributors',
-                                    'block_community', $course->contributornames);
-                    $additionaldesc .= ' - ';
+                $course->educationallevel = get_string('edulevel' . $course->educationallevel, 'hub');
+                if (empty($course->coverage)) {
+                    $course->coverage = '';
+                } else {
+                    $coursecontentinfo .= get_string('coverage', 'block_community', $course->coverage);
+                    $coursecontentinfo .= ' - ';
                 }
-                if ($course->coverage) {
-                    $additionaldesc .= get_string('coverage',
-                                    'block_community', $course->coverage);
-                    $additionaldesc .= ' - ';
-                }
-                //retrieve language string
+                $coursecontentinfo = get_string('contentinfo', 'block_community', $course);
+                $coursecontentinfohtml = html_writer::tag('div', $coursecontentinfo,
+                                array('class' => 'hubcoursecontentinfo'));
+
+                ///create course file related information html
+                //language
                 if (!empty($course->language)) {
                     $languages = get_string_manager()->get_list_of_languages();
-                    $course->lang = get_string('langdesc',
-                                    'block_community', $languages[$course->language]);
+                    $course->lang = $languages[$course->language];
                 } else {
                     $course->lang = '';
                 }
-
                 //licence
                 require_once($CFG->dirroot . "/lib/licenselib.php");
                 $licensemanager = new license_manager();
@@ -161,77 +160,159 @@ class block_community_renderer extends plugin_renderer_base {
                         $course->license = $license->fullname;
                     }
                 }
+                $course->timeupdated = userdate($course->timemodified);
+                $coursefileinfo = get_string('fileinfo', 'block_community', $course);
+                $coursefileinfohtml = html_writer::tag('div', $coursefileinfo,
+                                array('class' => 'hubcoursefileinfo'));
 
-                $additionaldesc .= get_string('additionalcoursedesc',
-                                'block_community', $course);
 
 
-
-                $deschtml .= html_writer::tag('span', $additionaldesc,
-                                array('class' => 'additionaldesc'));
-                //add content to the course description
+                //Create course content html
                 if (!empty($course->contents)) {
                     $activitieshtml = '';
                     $blockhtml = '';
                     foreach ($course->contents as $content) {
-                        if ($content['moduletype'] == 'block') {
+                        $content = (object) $content;
+                        if ($content->moduletype == 'block') {
                             if (!empty($blockhtml)) {
                                 $blockhtml .= ' - ';
                             }
-                            $blockhtml .= get_string('pluginname',
-                                            'block_' . $content['modulename'])
-                                    . " (" . $content['contentcount'] . ")";
+                            $blockhtml .= get_string('pluginname', 'block_' . $content->modulename)
+                                    . " (" . $content->contentcount . ")";
                         } else {
                             if (!empty($activitieshtml)) {
                                 $activitieshtml .= ' - ';
                             }
-                            $activitieshtml .= get_string('modulename',
-                                            $content['modulename']) . " ("
-                                    . $content['contentcount'] . ")";
+                            $activitieshtml .= get_string('modulename', $content->modulename)
+                                    . " (" . $content->contentcount . ")";
                         }
                     }
-                    $blocksandactivities = html_writer::tag('span',
-                                    get_string('activities', 'block_community')
-                                    . " : " . $activitieshtml);
-                    $blocksandactivities .= html_writer::empty_tag('br') . html_writer::tag('span',
-                                    get_string('blocks', 'block_community')
-                                    . " : " . $blockhtml);
 
-                    $deschtml .= print_collapsible_region($blocksandactivities, 'blockdescription',
-                                    'blocksandactivities-' . $course->id . '-'
-                                    . clean_param($courseurl, PARAM_ALPHANUMEXT),
-                                    get_string('moredetails', 'block_community'), '', false, true);
+                    $blocksandactivities = html_writer::tag('div',
+                                    get_string('activities', 'block_community') . " : " . $activitieshtml);
+
+                    //Uncomment following lines to display blocks information
+//                    $blocksandactivities .= html_writer::tag('span',
+//                                    get_string('blocks', 'block_community') . " : " . $blockhtml);
                 }
 
+                //create additional information html
+                $additionaldesc = $courseuserinfohtml . $coursecontentinfohtml
+                        . $coursefileinfohtml . $blocksandactivities;
+                $additionaldeschtml = html_writer::tag('div', $additionaldesc,
+                                array('class' => 'additionaldesc'));
 
-
+                //Create add button html
+                $addbuttonhtml = "";
                 if ($course->enrollable) {
                     $params = array('sesskey' => sesskey(), 'add' => 1, 'confirmed' => 1,
                         'coursefullname' => $course->fullname, 'courseurl' => $courseurl,
                         'coursedescription' => $course->description,
                         'courseid' => $contextcourseid);
                     $addurl = new moodle_url("/blocks/community/communitycourse.php", $params);
-                    $addbutton = new single_button($addurl,
-                                    get_string('addtocommunityblock', 'block_community'));
-                    $addbutton->class = 'centeredbutton';
-                    $addbuttonhtml = $this->output->render($addbutton);
-                } else {
+                    $addbuttonhtml = html_writer::tag('a',
+                                    get_string('addtocommunityblock', 'block_community'),
+                                    array('href' => $addurl, 'class' => 'centeredbutton, hubcoursedownload'));
+                }
+
+                //create download button html
+                $downloadbuttonhtml = "";
+                if (!$course->enrollable) {
                     $params = array('sesskey' => sesskey(), 'download' => 1, 'confirmed' => 1,
                         'remotemoodleurl' => $CFG->wwwroot, 'courseid' => $contextcourseid,
                         'downloadcourseid' => $course->id, 'huburl' => $huburl,
                         'coursefullname' => $course->fullname);
-                    $addurl = new moodle_url("/blocks/community/communitycourse.php", $params);
-                    $downloadbutton = new single_button($addurl,
-                                    get_string('download', 'block_community'));
-                    $downloadbutton->class = 'centeredbutton';
-                    $addbuttonhtml = $this->output->render($downloadbutton);
+                    $downloadurl = new moodle_url("/blocks/community/communitycourse.php", $params);
+                    $downloadbuttonhtml = html_writer::tag('a', get_string('download', 'block_community'),
+                                    array('href' => $downloadurl, 'class' => 'centeredbutton, hubcoursedownload'));
+                }
+
+                //Create rating html
+                $rating = html_writer::tag('div', get_string('noratings', 'block_community'),
+                                array('class' => 'norating'));
+                if (!empty($course->rating)) {
+                    $course->rating = (object) $course->rating;
+                    if ($course->rating->count > 0) {
+
+                        //calculate size of the rating star
+                        $starimagesize = 20; //in px
+                        $numberofstars = 5;
+                        $size = ($course->rating->aggregate / $course->rating->scaleid)
+                                * $numberofstars * $starimagesize;
+                        $rating = html_writer::tag('li', '',
+                                        array('class' => 'current-rating',
+                                            'style' => 'width:' . $size . 'px;'));
+
+                        $rating = html_writer::tag('ul', $rating ,
+                                        array('class' => 'star-rating clearfix'));
+                        $rating .= html_writer::tag('div', ' (' . $course->rating->count . ')' ,
+                                        array('class' => 'ratingcount clearfix'));;
+                    }
                 }
 
 
-                $table->data[] = array($coursenamehtml, $deschtml, $addbuttonhtml);
+                //Create comments html
+                $coursecomments = html_writer::tag('div', get_string('nocomments', 'block_community'),
+                                array('class' => 'nocomments'));
+                $commentcount = 0;
+                if (!empty($course->comments)) {
+                    //display only if there is some comment if there is some comment
+                    $commentcount = count($course->comments);
+                    $coursecomments = html_writer::tag('div',
+                            get_string('comments', 'block_community', $commentcount),
+                            array('class'=>'commenttitle'));;
+
+                    foreach ($course->comments as $comment) {
+                        $commentator = html_writer::tag('div',
+                                        $comment['commentator'],
+                                        array('class' => 'hubcommentator'));
+                        $commentdate = html_writer::tag('div',
+                                        ' - ' . userdate($comment['date'], '%e/%m/%y'),
+                                        array('class' => 'hubcommentdate clearfix'));
+                     
+                        $commenttext = html_writer::tag('div',
+                                        $comment['comment'],
+                                        array('class' => 'hubcommenttext'));
+                    
+                        $coursecomments .= html_writer::tag('div',
+                                        $commentator . $commentdate . $commenttext,
+                                        array('class' => 'hubcomment'));
+                    }
+                    $coursecommenticon = html_writer::tag('div',
+                                    get_string('comments', 'block_community', $commentcount),
+                                    array('class' => 'hubcoursecomments',
+                                        'id' => 'comments-' . $course->id));
+                    $coursecomments = $coursecommenticon . html_writer::tag('div',
+                                    $coursecomments,
+                                    array('class' => 'yui3-overlay-loading',
+                                        'id' => 'commentoverlay-' . $course->id)); 
+                }
+
+                //the main DIV tags
+                $buttonsdiv = html_writer::tag('div',
+                                $addbuttonhtml . $downloadbuttonhtml . $visitlinkhtml,
+                                array('class' => 'courseoperations'));
+                $screenshotbuttonsdiv = html_writer::tag('div',
+                                $coursescreenshot . $buttonsdiv,
+                                array('class' => 'courselinks'));
+
+                $coursedescdiv = html_writer::tag('div',
+                                $deschtml . $additionaldeschtml
+                                . $rating . $coursecomments,
+                                array('class' => 'coursedescription'));
+                $coursehtml =
+                        $coursenamehtml . html_writer::tag('div',
+                                $coursedescdiv . $screenshotbuttonsdiv,
+                                array('class' => 'hubcourseinfo clearfix'));
+
+                $renderedhtml .=html_writer::tag('div', $coursehtml,
+                                array('class' => 'fullhubcourse clearfix'));
             }
-            $renderedhtml .= html_writer::table($table);
+
+            $renderedhtml = html_writer::tag('div', $renderedhtml,
+                            array('class' => 'hubcourseresult'));
         }
+
         return $renderedhtml;
     }
 

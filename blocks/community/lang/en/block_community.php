@@ -26,7 +26,7 @@
 
 $string['activities'] = 'Activities';
 $string['add'] = 'Add';
-$string['addtocommunityblock'] = 'Add to community block';
+$string['addtocommunityblock'] = 'Bookmark';
 $string['addcommunitycourse'] = 'Add community course';
 $string['additionalcoursedesc'] = '{$a->lang} Creator: {$a->creatorname} - Publisher: {$a->publishername} - Subject: {$a->subject}
     - Audience: {$a->audience} - Educational level: {$a->educationallevel} - License: {$a->license}';
@@ -35,6 +35,8 @@ $string['audience'] = 'Designed for';
 $string['audience_help'] = 'What kind of course are you looking for?  As well as traditional courses intended for students, you might search for communities of Educators or Moodle Administrators';
 $string['blocks'] = 'Blocks';
 $string['cannotselecttopsubject'] = 'Cannot select a top subject level';
+$string['comments'] = 'Comments ({$a})';
+$string['contentinfo'] = 'Subject: {$a->subject} - Audience: {$a->audience} - Educational level: {$a->educationallevel}';
 $string['contributors'] = ' - Contributors: {$a}';
 $string['coursedesc'] = 'Description';
 $string['courselang'] = 'Language';
@@ -56,6 +58,7 @@ Others are course templates provided for you to download and use on your own Moo
 $string['enrollable'] = 'courses I can enrol in';
 $string['errorcourselisting'] = 'An error occured when retrieving the course listing from the selected hub, please try again later. ({$a})';
 $string['errorhublisting'] = 'An error occured when retrieving the hub listing from Moodle.org, please try again later. ({$a})';
+$string['fileinfo'] = 'Language: {$a->lang} - License: {$a->license} -  Time updated: {$a->timeupdated}';
 $string['hub'] = 'hub';
 $string['hubnottrusted'] = 'Not trusted';
 $string['hubtrusted'] = 'This hub is trusted by Moodle.org';
@@ -68,9 +71,12 @@ $string['licence'] = 'License';
 $string['licence_help'] = 'You can search for courses that are licensed in a particular way.';
 $string['moredetails'] = 'More details';
 $string['mycommunities'] = 'My communities:';
+$string['nocomments'] = 'No comments';
 $string['nocourse'] = 'No courses found';
+$string['noratings'] = 'No ratings';
 $string['operation'] = 'Operation';
 $string['pluginname'] = 'Community';
+$string['rating'] = 'Rating';
 $string['removecommunitycourse'] = 'Remove community course';
 $string['restorecourse'] = 'Restore course';
 $string['restorecourseinfo'] = 'Restore the course?';
@@ -83,3 +89,6 @@ $string['selecthub_help'] = 'Select hub where to search the courses.';
 $string['sites'] = 'Sites';
 $string['subject'] = 'Subject';
 $string['subject_help'] = 'To narrow your search to courses about a particular subject, choose one from this list.';
+$string['userinfo'] = 'Creator: {$a->creatorname} - Publisher: {$a->publishername}';
+$string['visitdemo'] = 'Visit demo';
+$string['visitsite'] = 'Visit site';
