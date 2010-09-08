@@ -2960,11 +2960,11 @@ class settings_navigation extends navigation_node {
         $structurefile = $CFG->dirroot.'/course/format/'.$course->format.'/lib.php';
         if (file_exists($structurefile)) {
             require_once($structurefile);
-            $formatstring = call_user_func('callback_'.$course->format.'_definition');
-            $formatidentifier = optional_param(call_user_func('callback_'.$course->format.'_request_key'), 0, PARAM_INT);
+            $requestkey = call_user_func('callback_'.$course->format.'_request_key');
+            $formatidentifier = optional_param($requestkey, 0, PARAM_INT);
         } else {
-            $formatstring = get_string('topic');
-            $formatidentifier = optional_param('topic', 0, PARAM_INT);
+            $requestkey = get_string('section');
+            $formatidentifier = optional_param($requestkey, 0, PARAM_INT);
         }
 
         $sections = get_all_sections($course->id);
@@ -2988,13 +2988,14 @@ class settings_navigation extends navigation_node {
             if ($formatidentifier !== 0 && $section->section != $formatidentifier) {
                 continue;
             }
-            $sectionurl = new moodle_url('/course/view.php', array('id'=>$course->id, $formatstring=>$section->section));
+            $sectionurl = new moodle_url('/course/view.php', array('id'=>$course->id, $requestkey=>$section->section));
             if ($section->section == 0) {
                 $sectionresources = $addresource->add(get_string('course'), $sectionurl, self::TYPE_SETTING);
                 $sectionactivities = $addactivity->add(get_string('course'), $sectionurl, self::TYPE_SETTING);
             } else {
-                $sectionresources = $addresource->add($formatstring.' '.$section->section, $sectionurl, self::TYPE_SETTING);
-                $sectionactivities = $addactivity->add($formatstring.' '.$section->section, $sectionurl, self::TYPE_SETTING);
+                $sectionname = get_section_name($course, $section);
+                $sectionresources = $addresource->add($sectionname, $sectionurl, self::TYPE_SETTING);
+                $sectionactivities = $addactivity->add($sectionname, $sectionurl, self::TYPE_SETTING);
             }
             foreach ($resources as $value=>$resource) {
                 $url = new moodle_url('/course/mod.php', array('id'=>$course->id, 'sesskey'=>sesskey(), 'section'=>$section->section));
