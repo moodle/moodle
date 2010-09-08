@@ -40,7 +40,7 @@ class block_private_files_renderer extends plugin_renderer_base {
     public function render_private_files_tree(private_files_tree $tree) {
         $module = array('name'=>'block_private_files', 'fullpath'=>'/blocks/private_files/module.js', 'requires'=>array('yui2-treeview'));
         if (empty($tree->dir['subdirs']) && empty($tree->dir['files'])) {
-            $html = $this->output->box(get_string('nofiles', 'block_private_files'));
+            $html = $this->output->box(get_string('nofilesavailable', 'repository'));
         } else {
             $htmlid = 'private_files_tree_'.uniqid();
             $this->page->requires->js_init_call('M.block_private_files.init_tree', array(false, $htmlid));
