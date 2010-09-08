@@ -33,7 +33,7 @@ class block_community extends block_list {
     function user_can_addto($page) {
         // Don't allow people to add the block if they can't even use it
         if (!has_capability('moodle/community:add', 
-                get_context_instance(CONTEXT_COURSE, $this->page->course->id))) {
+                get_context_instance(CONTEXT_COURSE, $page->course->id))) {
             return false;
         }
 
