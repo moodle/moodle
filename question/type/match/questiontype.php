@@ -813,11 +813,11 @@ class question_match_qtype extends default_questiontype {
 
         $itemid = reset($args);
         if ($filearea == 'subquestion') {
-            // always display quetion images
             // itemid is sub question id
-            if ($itemid != $question->id) {
+            if (!array_key_exists($itemid, $question->options->subquestions)) {
                 return false;
             }
+
             return true;
         } else {
             return parent::check_file_access($question, $state, $options, $contextid, $component,
