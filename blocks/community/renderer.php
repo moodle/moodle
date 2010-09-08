@@ -133,13 +133,14 @@ class block_community_renderer extends plugin_renderer_base {
                 $course->subject = get_string($course->subject, 'edufields');
                 $course->audience = get_string('audience' . $course->audience, 'hub');
                 $course->educationallevel = get_string('edulevel' . $course->educationallevel, 'hub');
+                $coursecontentinfo = '';
                 if (empty($course->coverage)) {
                     $course->coverage = '';
                 } else {
                     $coursecontentinfo .= get_string('coverage', 'block_community', $course->coverage);
                     $coursecontentinfo .= ' - ';
                 }
-                $coursecontentinfo = get_string('contentinfo', 'block_community', $course);
+                $coursecontentinfo .= get_string('contentinfo', 'block_community', $course);
                 $coursecontentinfohtml = html_writer::tag('div', $coursecontentinfo,
                                 array('class' => 'hubcoursecontentinfo'));
 
