@@ -1,0 +1,29 @@
+/*
+Copyright (c) 2010, Yahoo! Inc. All rights reserved.
+Code licensed under the BSD License:
+http://developer.yahoo.com/yui/license.html
+version: 3.2.0
+build: 2676
+*/
+.yui3-tab-panel {
+    display: none;
+}
+
+.yui3-tab-selected {
+    background: yellow;
+}
+
+.yui3-tab-selected {
+    background: yellow;
+}
+
+.yui3-tab-panel-selected {
+    background: yellow;
+    display: block;
+}
+
+.yui3-tab {
+    display: inline-block;
+    margin-right: 0.5em;
+    zoom: 1;
+};

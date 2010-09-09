@@ -168,7 +168,7 @@ umask(0000);
 
 // exact version of currently used yui2 and 3 library
 $CFG->yui2version = '2.8.1';
-$CFG->yui3version = '3.1.1';
+$CFG->yui3version = '3.2.0';
 
 
 // special support for highly optimised scripts that do not need libraries and DB connection

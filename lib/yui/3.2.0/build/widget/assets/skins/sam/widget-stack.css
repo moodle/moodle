@@ -1,0 +1,8 @@
+/*
+Copyright (c) 2010, Yahoo! Inc. All rights reserved.
+Code licensed under the BSD License:
+http://developer.yahoo.com/yui/license.html
+version: 3.2.0
+build: 2676
+*/
+.yui3-widget-stacked .yui3-widget-shim{opacity:0;filter:alpha(opacity=0);position:absolute;border:none;top:0;left:0;padding:0;margin:0;z-index:-1;width:100%;height:100%;_width:0;_height:0;}
