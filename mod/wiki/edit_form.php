@@ -57,8 +57,11 @@ class mod_wiki_edit_form extends moodleform {
 
         if ($format != 'html') {
             $mform->addElement('wikieditor', 'newcontent', get_string('content'), array('cols' => 50, 'rows' => 20, 'wiki_format' => $format));
+            $mform->addHelpButton('newcontent', 'format'.$format, 'wiki');
         } else {
             $mform->addElement('editor', 'newcontent_editor', get_string('content'), null, page_wiki_edit::$attachmentoptions);
+            $mform->addHelpButton('newcontent_editor', 'formathtml', 'wiki');
+
         }
 
         //hiddens

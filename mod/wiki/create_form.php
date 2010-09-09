@@ -44,6 +44,8 @@ class mod_wiki_create_form extends moodleform {
         }
         $mform->addElement('text', 'pagetitle', get_string('newpagetitle', 'wiki'), $textoptions);
 
+        $mform->addElement('static', 'format', get_string('format', 'wiki'));
+        $mform->addHelpButton('format', 'format', 'wiki');
         foreach ($formats as $format) {
             if ($format == $defaultformat) {
                 $attr = array('checked'=>'checked');
@@ -52,7 +54,9 @@ class mod_wiki_create_form extends moodleform {
             } else {
                 $attr = array();
             }
+
             $mform->addElement('radio', 'pageformat', '', get_string('format'.$format, 'wiki'), $format, $attr);
+
         }
 
         //hiddens

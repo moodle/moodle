@@ -36,7 +36,7 @@ $string['defaultformat_help'] = 'This setting determines the default format used
 
 * HTML - The HTML editor is available
 * Creole - A common wiki markup language for which a small edit toolbar is available
-* Nwiki - The markup language used in the contributed Nwiki module';
+* Nwiki - Mediawiki-like markup language used in the contributed Nwiki module';
 $string['deletecomment'] = 'Deleting comment';
 $string['deleteupload'] = 'Delete';
 $string['deletedbegins'] = 'Deleted begins';
@@ -54,9 +54,18 @@ $string['firstpagetitle'] = 'First page name';
 $string['firstpagetitle_help'] = 'Title of the first page of the wiki.';
 $string['forceformat'] = 'Force format';
 $string['forceformat_help'] = 'If the format is forced (checkbox ticked), there is no option to choose a format when editing a wiki page.';
+$string['format'] = 'Format';
+$string['format_help'] = 'Format used when editing wiki pages.
+
+* HTML - The HTML editor is available
+* Creole - A common wiki markup language for which a small edit toolbar is available
+* Nwiki - Mediawiki-like markup language used in the contributed Nwiki module';
 $string['formathtml'] = 'HTML Format';
+$string['formathtml_help'] = '<a href="http://docs.moodle.org/en/HTML_format">HTML Format</a>';
 $string['formatcreole'] = 'Creole Format';
-$string['formatnwiki'] = 'NWIKI Format';
+$string['formatcreole_help'] = '<a href="http://docs.moodle.org/en/Creole_format">Creole Format</a>';
+$string['formatnwiki'] = 'NWiki Format';
+$string['formatnwiki_help'] = '<a href="http://docs.moodle.org/en/NWiki_format">NWiki Format</a>';
 $string['history'] = 'History';
 $string['html'] = 'HTML';
 $string['insertcomment'] = 'Insert comment';
