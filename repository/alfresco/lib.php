@@ -192,7 +192,6 @@ class repository_alfresco extends repository {
      * @return array
      */
     public function get_file($uuid, $file = '') {
-        global $CFG;
         $node = $this->user_session->getNode($this->store, $uuid);
         $url = $this->get_url($node);
         $path = $this->prepare_file($file);
@@ -226,7 +225,6 @@ class repository_alfresco extends repository {
      * @return array
      */
     public function search($search_text) {
-        global $CFG;
         $space = optional_param('space', 'workspace://SpacesStore', PARAM_RAW);
         $currentStore = $this->user_session->getStoreFromString($space);
         $nodes = $this->user_session->query($currentStore, $search_text);
@@ -277,7 +275,7 @@ class repository_alfresco extends repository {
         }
     }
     public function supported_returntypes() {
-        return FILE_INTERNAL | FILE_EXTERNAL;
+        return FILE_INTERNAL;
     }
 }
 
