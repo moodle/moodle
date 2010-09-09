@@ -32,7 +32,7 @@ class block_community_renderer extends plugin_renderer_base {
 
     public function restore_confirmation_box($filename, $context) {
         $restoreurl = new moodle_url('/backup/restore.php',
-                        array('filename' => $filename . ".zip", 'contextid' => $context->id));
+                        array('filename' => $filename . ".mbz", 'contextid' => $context->id));
         $searchurl = new moodle_url('/blocks/community/communitycourse.php',
                         array('add' => 1, 'courseid' => $context->instanceid,
                             'cancelrestore' => 1, 'sesskey' => sesskey(),
