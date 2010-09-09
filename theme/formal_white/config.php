@@ -53,9 +53,9 @@ $THEME->sheets = array('dock','base','general','fw_corners','formalwhite','setti
 ////////////////////////////////////////////////////
 
 $THEME->parents_exclude_sheets = array(
-		'canvas'=>array(
-			'tabs',
-		),
+    'canvas'=>array(
+        'tabs',
+    ),
 );
 
 $THEME->resource_mp3player_colors =

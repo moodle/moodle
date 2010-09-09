@@ -6,10 +6,10 @@ img.icon,
 img.iconhelp {vertical-align:middle;}
 
 #page {overflow:visible}
-/*#page #page-content {background-color:#FFF;border:1px solid #697F55;}*/
+/*#page #page-content {background-color:#FFF;border:1px solid #E3DFD4;}*/
 
 /******************/
-#page-header {background-color: #E3DFD4; color:#FFF;border:1px solid #697F55;border-bottom: none;}
+#page-header {background-color: #E3DFD4; color:#FFF;border:1px solid #E3DFD4;border-bottom: none;}
 .hasnavbar #page-header {border-bottom-width:0px;}
 #page-header .headermain span {color:#C8C9C7;}
 
@@ -28,7 +28,7 @@ img.iconhelp {vertical-align:middle;}
 .generalbox {border: 1px solid #DDDDDD;}
 .generaltable td {border-width:0px;}
 .sitetopic {border-width:0px;}
-.headingblock {margin-bottom:10px;border-bottom:1px solid #697F55;background-color:#FFF;padding:4px 5px;}
+.headingblock {margin-bottom:10px;border-bottom:1px solid #E3DFD4;background-color:#FFF;padding:4px 5px;}
 
 .coursebox {width:100%;margin:10px 0px;border-bottom:1px solid #E3E3E3;overflow:hidden;padding-bottom:10px;}
 .coursebox .info {width:35%;float:left;}
@@ -106,7 +106,7 @@ img.iconhelp {vertical-align:middle;}
 .user th.header,
 .group th.header,
 .admin table tr th,
-.admin table tr th.header {background-color:#697F55;color:#FFF;border:2px solid #697F55;border-bottom-color:#111;}
+.admin table tr th.header {background-color:#E3DFD4;color:#FFF;border:2px solid #E3DFD4;border-bottom-color:#111;}
 
 .user th a:link,
 #categoryquestions th a:link,
@@ -128,6 +128,14 @@ img.iconhelp {vertical-align:middle;}
 .group .r1 .cell,
 .admin table .r1 .cell {background-color:#EEE;}
 
+#categoryquestions th, .user th, .user th.header, .group th.header, .admin table tr th, .admin table tr th.header {color:black; border-width:1px;}
+
+#permissions th, td {border-bottom:1px solid #000000; padding:0.5em;}
+#permissions tr {background-color:#EEEEEE;}
+#permissions tr.rolecapheading {border-top: 1px black; background-color:#E3DFD4;}
+.user th a:link, #categoryquestions th a:link, .group th a:link, .admin table tr th a:link {
+    color:black;
+}
 .admin .plugincompattable .r1 .cell {background-color:#FFF;}
 
 .singlebutton,
