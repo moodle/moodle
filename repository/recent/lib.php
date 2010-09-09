@@ -100,7 +100,6 @@ class repository_recent extends repository {
                 $params = base64_encode(serialize($file));
                 $node = array(
                     'title' => $file['filename'],
-                    'shorttitle' => $this->get_short_filename($file['filename'], 12),
                     'size' => 0,
                     'date' => '',
                     'source'=> $params,
