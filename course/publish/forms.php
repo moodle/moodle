@@ -119,7 +119,8 @@ class course_publication_form extends moodleform {
             $options = new stdClass();
             $options->ids = array($publication->hubcourseid);
             $options->allsitecourses = 1;
-            $params = array('', $share, !$share, $options);
+            $params = array('search' => '', 'downloadable' => $share,
+                'enrollable' => !$share, 'options' => $options);
             $serverurl = $huburl . "/local/hub/webservice/webservices.php";
             require_once($CFG->dirroot . "/webservice/xmlrpc/lib.php");
             $xmlrpcclient = new webservice_xmlrpc_client($serverurl, $registeredhub->token);

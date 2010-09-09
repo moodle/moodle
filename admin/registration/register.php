@@ -111,7 +111,7 @@ if ($update and confirm_sesskey()) {
     //update the registration
     $function = 'hub_update_site_info';
     $siteinfo = $registrationmanager->get_site_info($huburl);
-    $params = array($siteinfo);
+    $params = array('siteinfo' => $siteinfo);
     $serverurl = $huburl . "/local/hub/webservice/webservices.php";
     require_once($CFG->dirroot . "/webservice/xmlrpc/lib.php");
     $xmlrpcclient = new webservice_xmlrpc_client($serverurl, $registeredhub->token);

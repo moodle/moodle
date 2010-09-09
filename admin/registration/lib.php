@@ -64,7 +64,7 @@ class registration_manager {
                 foreach ($hubs as $hub) {
                     //update the registration
                     $siteinfo = $this->get_site_info($hub->huburl);
-                    $params = array($siteinfo);
+                    $params = array('siteinfo' => $siteinfo);
                     $serverurl = $hub->huburl . "/local/hub/webservice/webservices.php";
                     $xmlrpcclient = new webservice_xmlrpc_client($serverurl, $hub->token);
                     try {

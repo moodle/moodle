@@ -80,7 +80,7 @@ if (empty($cancel) and $unregistration and $confirm and confirm_sesskey()) {
         //unpublish the courses by web service
         if (!empty($hubcourseids)) {
             $function = 'hub_unregister_courses';
-            $params = array($hubcourseids);
+            $params = array('courseids' => $hubcourseids);
             $serverurl = $huburl . "/local/hub/webservice/webservices.php";
             $xmlrpcclient = new webservice_xmlrpc_client($serverurl, $hub->token);
             try {

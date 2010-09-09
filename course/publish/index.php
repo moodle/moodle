@@ -69,7 +69,8 @@ if (has_capability('moodle/course:publish', get_context_instance(CONTEXT_COURSE,
         } else {
             //get all site courses registered on this hub
             $function = 'hub_get_courses';
-            $params = array('', 1, 1, array( 'allsitecourses' => 1));
+            $params = array('search' => '', 'downloadable' => 1,
+                'enrollable' => 1, 'options' => array( 'allsitecourses' => 1));
             $serverurl = $hub->huburl."/local/hub/webservice/webservices.php";
             require_once($CFG->dirroot."/webservice/xmlrpc/lib.php");
             $xmlrpcclient = new webservice_xmlrpc_client($serverurl, $hub->token);
@@ -128,7 +129,7 @@ if (has_capability('moodle/course:publish', get_context_instance(CONTEXT_COURSE,
             //unpublish the publication by web service
             $registeredhub = $registrationmanager->get_registeredhub($huburl);
             $function = 'hub_unregister_courses';
-            $params = array(array( $publication->hubcourseid));
+            $params = array('courseids' => array( $publication->hubcourseid));
             $serverurl = $huburl."/local/hub/webservice/webservices.php";
             require_once($CFG->dirroot."/webservice/xmlrpc/lib.php");
             $xmlrpcclient = new webservice_xmlrpc_client($serverurl, $registeredhub->token);
