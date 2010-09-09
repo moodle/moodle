@@ -1449,8 +1449,6 @@ class question_bank_view {
                             question_require_capability_on($questionid, 'edit');
                             if ($DB->record_exists('quiz_question_instances', array('question' => $questionid))) {
                                 $DB->set_field('question', 'hidden', 1, array('id' => $questionid));
-                                question_require_capability_on($questionid, 'edit');
-                                print_error('cannothidequestion', 'question');
                             } else {
                                 delete_question($questionid);
                             }
