@@ -30,6 +30,7 @@
 
 $string['clianswerno'] = 'n';
 $string['cliansweryes'] = 'y';
+$string['cliincorrectvalueretry'] = '不正确的值，请重试';
 $string['cliyesnoprompt'] = '输入y（表示是）或n（表示否）';
 $string['environmentrequireinstall'] = '必需安装并激活';
 $string['environmentrequireversion'] = '需要 {$a->needed} 版本，而您的是 {$a->current}';

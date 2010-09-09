@@ -31,13 +31,13 @@
 $string['admindirname'] = '管理目录';
 $string['availablelangs'] = '可用的语言包';
 $string['chooselanguagehead'] = '选择一种语言';
-$string['chooselanguagesub'] = '请选择在安装过程中使用的语言。稍后您可以根据需要重新选择用于站点和用户的语言。';
+$string['chooselanguagesub'] = '请选择在安装过程中使用的语言。这个语言也会成为网站的缺省语言，不过以后可以随时更改。';
 $string['dataroot'] = '数据目录';
 $string['dbprefix'] = '表格名称前缀';
 $string['dirroot'] = 'Moodle目录';
 $string['environmenthead'] = '检测您的运行环境...';
 $string['installation'] = '安装';
-$string['langdownloaderror'] = '很不幸，语言“{$a}”并未安装。安装过程将以英文继续。';
+$string['langdownloaderror'] = '很不幸，无法下载“{$a}”语言包。安装过程将以英文继续。';
 $string['memorylimithelp'] = '<p>您的服务器的PHP内存限制是${a}。</p>
 
 <p>这会使Moodle在将来运行是碰到内存问题，特别是您安装了很多模块并且/或者有很多用户。</p>
