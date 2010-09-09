@@ -89,20 +89,24 @@ echo $OUTPUT->doctype() ?>
         </div>
     </div>
     
+    <div class="clearfix"></div>
 <?php if ($hasfooter) { ?>
   
     <div id="page-footer" class="clearfix">
       <p class="helplink"><?php echo page_doc_link(get_string('moodledocslink')) ?></p>
       <?php echo $OUTPUT->login_info(); ?>
     </div>
-
+    
+    
 <?php }
 
 if ($hasheading || $hasnavbar) { ?>
   
+ 	<div class="myclear"></div>
   </div> <!-- END #page -->
+  
 </div> <!-- END #page-wrapper -->
-
+	
 <?php } ?>
 
 <div id="page-footer-bottom">

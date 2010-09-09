@@ -13,6 +13,7 @@ body {
     background: #fff;
     padding: 5px;
     width: auto;
+    
 }
 
 a:link,
@@ -1042,6 +1043,10 @@ h2.headingblock {
     display: inline;
     margin-right: 10px;
     margin-left: 10px;
+}
+
+.myclear {
+	clear: both;
 }
 
 #custommenu .yui3-menu-horizontal .yui3-menu-content,

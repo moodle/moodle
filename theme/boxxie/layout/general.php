@@ -55,6 +55,7 @@ echo $OUTPUT->doctype() ?>
       <?php } ?>
     </div>
 
+ <div class="myclear"></div>
       
       <?php if ($hasnavbar) { ?>
         <div class="navbar clearfix">
@@ -97,6 +98,7 @@ echo $OUTPUT->doctype() ?>
         </div>
     </div>
     
+    <div class="myclear"></div>
 <?php if ($hasfooter) { ?>
   
     <div id="page-footer" class="clearfix">
@@ -107,8 +109,9 @@ echo $OUTPUT->doctype() ?>
 <?php }
 
 if ($hasheading || $hasnavbar) { ?>
-  
+   <div class="myclear"></div>
   </div> <!-- END #page -->
+ 
 </div> <!-- END #page-wrapper -->
 
 <?php } ?>
