@@ -45,6 +45,7 @@ M.core_dock.css = {
     dockspacer:'dockspacer',        // CSS class applied to the dockspacer
     controls:'controls',            // CSS class applied to the controls box
     body:'has_dock',                // CSS class added to the body when there is a dock
+    buttonscontainer: 'buttons_container',
     dockeditem:'dockeditem',        // CSS class added to each item in the dock
     dockeditemcontainer:'dockeditem_container',
     dockedtitle:'dockedtitle',      // CSS class added to the item's title in each dock
@@ -96,7 +97,8 @@ M.core_dock.init = function(Y) {
     if (!dock) {
         // Start the construction of the dock
         dock = Y.Node.create('<div id="dock" class="'+css.dock+' '+css.dock+'_'+this.cfg.position+'_'+this.cfg.orientation+'"></div>')
-                    .append(Y.Node.create('<div class="'+css.dockeditemcontainer+'"></div>'));
+                    .append(Y.Node.create('<div class="'+css.buttonscontainer+'"></div>')
+                        .append(Y.Node.create('<div class="'+css.dockeditemcontainer+'"></div>')));
         this.nodes.body.append(dock);
     } else {
         dock.addClass(css.dock+'_'+this.cfg.position+'_'+this.cfg.orientation);
@@ -109,13 +111,14 @@ M.core_dock.init = function(Y) {
     }
     // Store the dock
     this.nodes.dock = dock;
-    this.nodes.container = dock.one('.'+css.dockeditemcontainer);
+    this.nodes.buttons = dock.one('.'+css.buttonscontainer);
+    this.nodes.container = this.nodes.buttons.one('.'+css.dockeditemcontainer);
 
     if (Y.all('.block.dock_on_load').size() == 0) {
         // Nothing on the dock... hide it using CSS
         dock.addClass('nothingdocked');
     } else {
-        this.nodes.body.addClass(this.css.body);
+        this.nodes.body.addClass(this.css.body).addClass(this.css.body+'_'+this.cfg.position+'_'+this.cfg.orientation);
     }
 
     this.fire('dock:beforedraw');
@@ -125,7 +128,7 @@ M.core_dock.init = function(Y) {
     var removeall = Y.Node.create('<img alt="'+M.str.block.undockall+'" title="'+M.str.block.undockall+'" />');
     removeall.setAttribute('src',this.cfg.removeallicon);
     removeall.on('removeall|click', this.remove_all, this);
-    dock.appendChild(Y.Node.create('<div class="'+css.controls+'"></div>').append(removeall));
+    this.nodes.buttons.appendChild(Y.Node.create('<div class="'+css.controls+'"></div>').append(removeall));
 
     // Create a manager for the height of the tabs. Once set this can be forgotten about
     new (function(Y){
@@ -369,8 +372,14 @@ M.core_dock.delayEvent = function(event, options, target) {
  */
 M.core_dock.fixTitleOrientation = function(item, title, text) {
     var Y = this.Y;
-
+    
     var title = Y.one(title);
+
+    if(M.core_dock.cfg.orientation != 'vertical') {
+        // If the dock isn't vertical don't adjust it!
+        title.setContent(text);
+        return title
+    }
 
     if (Y.UA.ie > 0 && Y.UA.ie < 8) {
         // IE 6/7 can't rotate text so force ver
@@ -559,12 +568,14 @@ M.core_dock.hideActive = function() {
 M.core_dock.checkDockVisibility = function() {
     if (!this.count) {
         this.nodes.dock.addClass('nothingdocked');
-        this.nodes.body.removeClass(this.css.body);
+        this.nodes.body.removeClass(this.css.body)
+                       .removeClass(this.css.body+'_'+this.cfg.position+'_'+this.cfg.orientation);
         this.fire('dock:hidden');
     } else {
         this.fire('dock:beforeshow');
         this.nodes.dock.removeClass('nothingdocked');
-        this.nodes.body.addClass(this.css.body);
+        this.nodes.body.addClass(this.css.body)
+                       .addClass(this.css.body+'_'+this.cfg.position+'_'+this.cfg.orientation);
         this.fire('dock:shown');
     }
 };
@@ -602,28 +613,41 @@ M.core_dock.resize = function() {
     if (!panel.visible || !item) {
         return;
     }
-    var buffer = this.cfg.buffer;
-    var screenheight = parseInt(this.nodes.body.get('winHeight'))-(buffer*2);
-    var docky = this.nodes.dock.getY();
-    var titletop = item.nodes.docktitle.getY()-docky-buffer;
-    var containery = this.nodes.container.getY();
-    var containerheight = containery-docky+this.nodes.container.get('offsetHeight');
-    panel.contentBody.setStyle('height', 'auto');
-    panel.removeClass('oversized_content');
-    var panelheight = panel.get('offsetHeight');
 
-    if (this.Y.UA.ie > 0 && this.Y.UA.ie < 7) {
-        panel.setTop(item.nodes.docktitle.getY());
-    } else if (panelheight > screenheight) {
-        panel.setTop(buffer-containerheight);
-        panel.contentBody.setStyle('height', (screenheight-panel.contentHeader.get('offsetHeight'))+'px');
-        panel.addClass('oversized_content');
-    } else if (panelheight > (screenheight-(titletop-buffer))) {
-        var difference = panelheight - (screenheight-titletop);
-        panel.setTop(titletop-containerheight-difference+buffer);
-    } else {
-        panel.setTop(titletop-containerheight+buffer);
+    if (this.cfg.orientation=='vertical') {
+        var buffer = this.cfg.buffer;
+        var screenheight = parseInt(this.nodes.body.get('winHeight'))-(buffer*2);
+        var docky = this.nodes.dock.getY();
+        var titletop = item.nodes.docktitle.getY()-docky-buffer;
+        var containery = this.nodes.container.getY();
+        var containerheight = containery-docky+this.nodes.buttons.get('offsetHeight');
+        panel.contentBody.setStyle('height', 'auto');
+        panel.removeClass('oversized_content');
+        var panelheight = panel.get('offsetHeight');
+
+        if (this.Y.UA.ie > 0 && this.Y.UA.ie < 7) {
+            panel.setTop(item.nodes.docktitle.getY());
+        } else if (panelheight > screenheight) {
+            panel.setTop(buffer-containerheight);
+            panel.contentBody.setStyle('height', (screenheight-panel.contentHeader.get('offsetHeight'))+'px');
+            panel.addClass('oversized_content');
+        } else if (panelheight > (screenheight-(titletop-buffer))) {
+            var difference = panelheight - (screenheight-titletop);
+            panel.setTop(titletop-containerheight-difference+buffer);
+        } else {
+            panel.setTop(titletop-containerheight+buffer);
+        }
     }
+
+    if (this.cfg.position=='right') {
+        panel.setStyle('left', -panel.get('offsetWidth')+'px');
+
+    } else if (this.cfg.position=='top') {
+        var dockx = this.nodes.dock.getX();
+        var titleleft = item.nodes.docktitle.getX()-dockx;
+        panel.setStyle('left', titleleft+'px');
+    }
+
     this.fire('dock:resizepanelcomplete');
     return;
 };
@@ -904,7 +928,7 @@ M.core_dock.item.prototype = {
         panel.setHeader(this.titlestring, this.commands);
         panel.setBody(Y.Node.create('<div class="'+this.blockclass+' block_docked"></div>').append(this.contents));
         panel.show();
-        
+
         this.active = true;
         // Add active item class first up
         this.nodes.docktitle.addClass(css.activeitem);
