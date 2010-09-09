@@ -46,7 +46,7 @@ class core_files_renderer extends plugin_renderer_base {
 
     public function render_files_tree_viewer(files_tree_viewer $tree) {
 
-        $html = $this->output->notification(get_string('coursefileswarning'), 'notifyproblem');
+        $html = $this->output->heading_with_help(get_string('coursefileswarning'), 'coursefileswarning', 'moodle');
         $html .= '<div class="file-tree-breadcrumb">';
         foreach($tree->path as $path) {
             $html .= $path;
