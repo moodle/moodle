@@ -3365,3 +3365,19 @@ function create_ufo_inline($id, $args) {
     $jsoutput .= html_writer::script(js_writer::function_call('M.util.create_UFO_object', array($id, $args)));
     return $jsoutput;
 }
+
+function create_flowplayer($id, $fileurl, $type='flv', $color='#000000') {
+    global $CFG;
+
+    $playerpath = $CFG->wwwroot.'/filter/mediaplugin/'.$type.'player.swf';
+    $jsoutput = html_writer::script('', $CFG->wwwroot.'/lib/flowplayer.js');
+
+    if ($type == 'flv') {
+        $jsoutput .= html_writer::script(js_writer::function_call('M.util.init_flvflowplayer', array($id, $playerpath, $fileurl)));
+    } else if ($type == 'mp3') {
+        $audioplayerpath = $CFG->wwwroot .'/filter/mediaplugin/flowplayer.audio.swf';
+        $jsoutput .= html_writer::script(js_writer::function_call('M.util.init_mp3flowplayerplugin', array($id, $playerpath, $audioplayerpath, $fileurl, $color)));
+    }
+
+    return $jsoutput;
+}

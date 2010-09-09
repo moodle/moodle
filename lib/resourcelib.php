@@ -182,36 +182,42 @@ function resourcelib_embed_mp3($fullurl, $title, $clicktoopen) {
     global $CFG, $OUTPUT, $PAGE;
 
     $c = $OUTPUT->resource_mp3player_colors();   // You can set this up in your theme/xxx/config.php
+    $colors = explode('&', $c);
+    $playercolors = array();
+    foreach ($colors as $color) {
+        $color = explode('=', $color);
+        $playercolors[$color[0]] = $color[1];
+    }
 
-    $c .= '&volText='.get_string('vol', 'resource').'&panText='.get_string('pan','resource');
     $id = 'filter_mp3_'.time(); //we need something unique because it might be stored in text cache
 
-    $ufoargs = array('movie'        => $CFG->wwwroot.'/lib/mp3player/mp3player.swf?src='.urlencode($fullurl),
-                     'width'        => 600,
-                     'height'       => 70,
-                     'majorversion' => 6,
-                     'build'        => 40,
-                     'flashvars'    => $c,
-                     'quality'      => 'high');
+    $playerpath = $CFG->wwwroot .'/filter/mediaplugin/mp3player.swf';
+    $audioplayerpath = $CFG->wwwroot .'/filter/mediaplugin/flowplayer.audio.swf';
 
-    // If we have Javascript, use UFO to embed the MP3 player, otherwise depend on plugins
     $code = <<<OET
 <div class="resourcecontent resourcemp3">
-  <span class="mediaplugin mediaplugin_mp3" id="$id"></span>
+  <span class="resourcemediaplugin resourcemediaplugin_mp3" id="$id"></span>
   <noscript>
-    <object type="audio/mpeg" data="$fullurl" width="600" height="70">
-      <param name="src" value="$fullurl" />
-      <param name="quality" value="high" />
-      <param name="autoplay" value="true" />
-      <param name="autostart" value="true" />
+    <object width="251" height="25" id="nonjsmp3plugin" name="undefined" data="$playerpath" type="application/x-shockwave-flash">
+    <param name="movie" value="$playerpath" />
+    <param name="allowfullscreen" value="false" />
+    <param name="allowscriptaccess" value="always" />
+    <param name="flashvars" value='config={"plugins": {"controls": {
+                                                            "fullscreen": false,
+                                                            "height": 25,
+                                                            "autoHide": false
+                                                            }
+                                                      },
+                                           "clip":{"url":"$fullurl",
+                                                   "autoPlay": false},
+                                           "content":{"url":"$playerpath"}}}' />
     </object>
-    $clicktoopen
   </noscript>
 </div>
 OET;
+    $PAGE->requires->js('/lib/flowplayer.js');
+    $code .= $PAGE->requires->js_function_call('M.util.init_mp3flowplayer', array('id'=>$id, 'playerpath'=>$playerpath, 'audioplayerpath'=>$audioplayerpath, 'fileurl'=>$fullurl, 'color'=>$playercolors));
 
-    $PAGE->requires->js('/lib/ufo.js');
-    $code .= $PAGE->requires->js_function_call('M.util.create_UFO_object', array($id, $ufoargs));
     return $code;
 }
 
@@ -227,34 +233,26 @@ function resourcelib_embed_flashvideo($fullurl, $title, $clicktoopen) {
 
     $id = 'filter_flv_'.time(); //we need something unique because it might be stored in text cache
 
-    $ufoargs = array('movie'             => $CFG->wwwroot.'/filter/mediaplugin/flvplayer.swf?file='.urlencode($fullurl),
-                     'width'             => 600,
-                     'height'            => 400,
-                     'majorversion'      => 6,
-                     'build'             => 40,
-                     'allowscriptaccess' => 'never',
-                     'allowfullscreen'   => 'true',
-                     'quality'           => 'high');
-
-    // If we have Javascript, use UFO to embed the FLV player, otherwise depend on plugins
+    $playerpath = $CFG->wwwroot .'/filter/mediaplugin/flvplayer.swf';
 
     $code = <<<EOT
 <div class="resourcecontent resourceflv">
   <span class="mediaplugin mediaplugin_flv" id="$id"></span>
   <noscript>
-    <object type="video/x-flv" data="$fullurl" width="600" height="400">
-      <param name="src" value="$fullurl" />
-      <param name="quality" value="high" />
-      <param name="autoplay" value="true" />
-      <param name="autostart" value="true" />
+    <object width="800" height="600" id="undefined" name="undefined" data="$playerpath" type="application/x-shockwave-flash">
+    <param name="movie" value="$playerpath" />
+    <param name="allowfullscreen" value="true" />
+    <param name="allowscriptaccess" value="always" />
+    <param name="flashvars" value='config={"clip":{"url":"$fullurl",
+                                                   "autoPlay": false},
+                                           "content":{"url":"$playerpath"}}}' />
     </object>
-    $clicktoopen
   </noscript>
 </div>
 EOT;
 
-    $PAGE->requires->js('/lib/ufo.js');
-    $code .= $PAGE->requires->js_function_call('M.util.create_UFO_object', array($id, $ufoargs));
+    $PAGE->requires->js('/lib/flowplayer.js');
+    $code .= $PAGE->requires->js_function_call('M.util.init_flvflowplayer', array('id'=>$id, 'playerpath'=>$playerpath, 'fileurl'=>$fullurl));
     return $code;
 }
 

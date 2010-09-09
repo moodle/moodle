@@ -534,7 +534,7 @@ body.tag .managelink {padding: 5px;}
 #helppopupbox .yui3-widget-hd {float:right;margin:3px 3px 0 0;}
 #helppopupbox .yui3-widget-bd {margin:0 1em 1em 1em;border-top:1px solid #eee;}
 #helppopupbox .helpheading {font-size: 1em;}
-#helppopupbox .spinner {margin:1em;} 
+#helppopupbox .spinner {margin:1em;}
 
 /**
  * Custom menu
@@ -613,7 +613,7 @@ body.tag .managelink {padding: 5px;}
 .userenrolment .col_enrol .enrolment {float:left;padding:3px;margin:3px;}
 .userenrolment .col_enrol .enrolment a {float:right;margin-left:3px;}
 
-/** 
+/**
 * Overide for RTL layout
 **/
 .dir-rtl .headermain {float:right;}
@@ -657,7 +657,15 @@ body.tag .managelink {padding: 5px;}
 .corelightbox {background-color:#CCC;position:absolute;top:0;left:0;width:100%;height:100%;text-align:center;}
 .corelightbox img {position:fixed;top:50%;}
 
-/** 
+/**
  * IE - Overide for RTL layout
  */
 .ie.dir-rtl .mform .fitem .felement {margin-right:0;text-align:right;float:right;}
+
+/**
+ * Filters
+ */
+.jsenabled .mediaplugin.mediaplugin_mp3 object {height:15px;width:100px; }
+.jsenabled .mediaplugin.mediaplugin_flv object {height:600px;width:800px;}
+
+.ie .mediaplugin.mediaplugin_mp3 object{height:20px;}
