@@ -108,7 +108,7 @@ abstract class page_wiki {
     function print_header() {
         global $OUTPUT, $PAGE, $CFG, $USER, $SESSION;
 
-        $PAGE->set_heading($PAGE->course->fullname);
+        $PAGE->set_heading(format_string($PAGE->course->fullname));
 
         $this->set_url();
 
@@ -138,7 +138,7 @@ abstract class page_wiki {
         $html = '';
 
         $html .= $OUTPUT->container_start();
-        $html .= $OUTPUT->heading($this->title, 2, 'wiki_headingtitle');
+        $html .= $OUTPUT->heading(format_string($this->title), 2, 'wiki_headingtitle');
         $html .= $OUTPUT->container_end();
         echo $html;
     }
@@ -230,7 +230,7 @@ abstract class page_wiki {
     protected function create_navbar() {
         global $PAGE, $CFG;
 
-        $PAGE->navbar->add($this->title, $CFG->wwwroot . '/mod/wiki/view.php?pageid=' . $this->page->id);
+        $PAGE->navbar->add(format_string($this->title), $CFG->wwwroot . '/mod/wiki/view.php?pageid=' . $this->page->id);
     }
 
     /**
@@ -339,7 +339,7 @@ class page_wiki_view extends page_wiki {
     protected function create_navbar() {
         global $PAGE, $CFG;
 
-        $PAGE->navbar->add($this->title);
+        $PAGE->navbar->add(format_string($this->title));
         $PAGE->navbar->add(get_string('view', 'wiki'));
     }
 }
@@ -380,7 +380,7 @@ class page_wiki_edit extends page_wiki {
             $title .= ' : ' . $this->section;
         }
         echo $OUTPUT->container_start('wiki_clear');
-        echo $OUTPUT->heading($title, 2, 'wiki_headingtitle');
+        echo $OUTPUT->heading(format_string($title), 2, 'wiki_headingtitle');
         echo $OUTPUT->container_end();
     }
 
@@ -668,7 +668,7 @@ class page_wiki_comments extends page_wiki {
 
                 $cell4->text = html_entity_decode($parsedcontent['parsed_text']);
             } else {
-                $cell4->text = $comment->content;
+                $cell4->text = format_text($comment->content, FORMAT_HTML);
             }
 
             $row2->cells[] = $cell4;
@@ -1011,7 +1011,8 @@ class page_wiki_preview extends page_wiki_edit {
 
         $parseroutput = wiki_parse_content($format, $this->newcontent, $options);
         echo $OUTPUT->notification(get_string('previewwarning', 'wiki'), 'notifyproblem wiki_info');
-        echo $OUTPUT->box($parseroutput['parsed_text'], 'generalbox wiki_previewbox');
+        $content = format_text($parseroutput['parsed_text'], FORMAT_HTML);
+        echo $OUTPUT->box($content, 'generalbox wiki_previewbox');
         $content = $this->newcontent;
 
         $this->print_edit($content);
@@ -1503,7 +1504,7 @@ class page_wiki_map extends page_wiki {
                     $user = $users[$version->userid];
                 }
 
-                $link = wiki_parser_link(wiki_trim_string($page->title), array('swid' => $swid));
+                $link = wiki_parser_link(format_string($page->title), array('swid' => $swid));
                 $class = ($link['new']) ? 'class="wiki_newentry"' : '';
 
                 $linkpage = '<a href="' . $link['url'] . '"' . $class . '>' . $link['content'] . '</a>';
@@ -1543,7 +1544,7 @@ class page_wiki_map extends page_wiki {
         foreach ($fromlinks as $link) {
             $lpage = wiki_get_page($link->frompageid);
             $link = new moodle_url('/mod/wiki/view.php', array('pageid' => $lpage->id));
-            $table->data[] = array(html_writer::link($link->out(false), $lpage->title));
+            $table->data[] = array(html_writer::link($link->out(false), format_string($lpage->title)));
             $table->rowclasses[] = 'mdl-align';
         }
 
@@ -1557,11 +1558,11 @@ class page_wiki_map extends page_wiki {
         foreach ($tolinks as $link) {
             if ($link->tomissingpage) {
                 $viewlink = new moodle_url('/mod/wiki/create.php', array('swid' => $page->subwikiid, 'title' => $link->tomissingpage, 'action' => 'new'));
-                $table->data[] = array(html_writer::link($viewlink->out(false), $link->tomissingpage, array('class' => 'wiki_newentry')));
+                $table->data[] = array(html_writer::link($viewlink->out(false), format_string($link)->tomissingpage, array('class' => 'wiki_newentry')));
             } else {
                 $lpage = wiki_get_page($link->topageid);
                 $viewlink = new moodle_url('/mod/wiki/view.php', array('pageid' => $lpage->id));
-                $table->data[] = array(html_writer::link($viewlink->out(false), $lpage->title));
+                $table->data[] = array(html_writer::link($viewlink->out(false), format_string($lpage->title)));
             }
             $table->rowclasses[] = 'mdl-align';
         }
@@ -1665,9 +1666,9 @@ class page_wiki_map extends page_wiki {
 
         if ($orphanedpages = wiki_get_orphaned_pages($swid)) {
             foreach ($orphanedpages as $page) {
-                $link = wiki_parser_link(wiki_trim_string($page->title), array('swid' => $swid));
+                $link = wiki_parser_link($page->title, array('swid' => $swid));
                 $class = ($link['new']) ? 'class="wiki_newentry"' : '';
-                $table->data[] = array('<a href="' . $link['url'] . '"' . $class . '>' . $link['content'] . '</a>');
+                $table->data[] = array('<a href="' . $link['url'] . '"' . $class . '>' . format_string($link['content']) . '</a>');
             }
         } else {
             $table->data[] = array(get_string('noorphanedpages', 'wiki'));
@@ -1708,10 +1709,10 @@ class page_wiki_map extends page_wiki {
                     $table->data[] = array($OUTPUT->heading($strdata, 4));
                     $strdataux = $strdata;
                 }
-                $link = wiki_parser_link(wiki_trim_string($page->title), array('swid' => $swid));
+                $link = wiki_parser_link($page->title, array('swid' => $swid));
                 $class = ($link['new']) ? 'class="wiki_newentry"' : '';
 
-                $linkpage = '<a href="' . $link['url'] . '"' . $class . '>' . $link['content'] . '</a>';
+                $linkpage = '<a href="' . $link['url'] . '"' . $class . '>' . format_string($link['content']) . '</a>';
                 $icon = $OUTPUT->user_picture($user, array($COURSE->id));
                 $table->data[] = array("$icon&nbsp;$linkpage");
             }
@@ -2054,7 +2055,7 @@ class page_wiki_viewversion extends page_wiki {
             print_container($heading, false, 'mdl-align wiki_modifieduser wiki_headingtime');
             $options = array('swid' => $this->subwiki->id, 'pretty_print' => true, 'pageid' => $this->page->id);
             $parseroutput = wiki_parse_content($pageversion->contentformat, $pageversion->content, $options);
-            $content = print_container($parseroutput['parsed_text'], false, '', '', true);
+            $content = print_container(format_text($parseroutput['parsed_text'], FORMAT_HTML), false, '', '', true);
             echo $OUTPUT->box($content, 'generalbox wiki_contentbox');
 
         } else {
@@ -2103,7 +2104,7 @@ class page_wiki_prettyview extends page_wiki {
         echo '</head>';
         echo '<body>';
 
-        echo '<h1 id="wiki_printable_title">' . $this->title . '</h1>';
+        echo '<h1 id="wiki_printable_title">' . format_string($this->title) . '</h1>';
     }
 
     function print_content() {
@@ -2132,7 +2133,7 @@ class page_wiki_prettyview extends page_wiki {
         $content = wiki_parse_content($version->contentformat, $version->content, array('printable' => true, 'swid' => $this->subwiki->id, 'pageid' => $this->page->id, 'pretty_print' => true));
 
         echo '<div id="wiki_printable_content">';
-        echo $content['parsed_text'];
+        echo format_text($content['parsed_text'], FORMAT_HTML);
         echo '</div>';
     }
 }
