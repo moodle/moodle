@@ -32,12 +32,18 @@ $url = new moodle_url('/files/coursefilesedit.php', array('contextid'=>$contexti
 require_login($course);
 require_capability('moodle/course:managefiles', $context);
 
-$heading = get_string('coursefiles') . ': ' . $course->fullname;
 $PAGE->set_url($url);
+$heading = get_string('coursefiles') . ': ' . $course->fullname;
+$strfiles = get_string("files");
+if ($node = $PAGE->settingsnav->find('coursefiles', navigation_node::TYPE_SETTING)) {
+    $node->make_active();
+} else {
+    $PAGE->navbar->add($strfiles);
+}
 $PAGE->set_context($context);
 $PAGE->set_title($heading);
 $PAGE->set_heading($heading);
-$PAGE->set_pagelayout('admin');
+$PAGE->set_pagelayout('course');
 
 $data = new object();
 $options = array('subdirs'=>1, 'maxfiles'=>-1, 'accepted_types'=>'*', 'return_types'=>FILE_INTERNAL);
