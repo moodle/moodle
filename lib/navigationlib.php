@@ -1956,9 +1956,13 @@ class global_navigation extends navigation_node {
     public function add_front_page_course_essentials(navigation_node $coursenode, stdClass $course) {
         global $CFG;
 
-        if ($coursenode == false || $coursenode->get('participants', navigation_node::TYPE_CUSTOM)) {
+        if ($coursenode == false || $coursenode->get('frontpageloaded', navigation_node::TYPE_CUSTOM)) {
             return true;
         }
+
+        // Hidden node that we use to determine if the front page navigation is loaded.
+        // This required as there are not other guaranteed nodes that may be loaded.
+        $coursenode->add('frontpageloaded', null, self::TYPE_CUSTOM, null, 'frontpageloaded')->display = false;
 
         //Participants
         if (has_capability('moodle/course:viewparticipants', $this->page->context)) {
