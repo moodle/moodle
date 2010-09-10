@@ -171,17 +171,13 @@ function print_mnet_log_selector_form($hostid, $course, $selecteduser=0, $select
 /// Casting $course->modinfo to string prevents one notice when the field is null
     if ($modinfo = unserialize((string)$course->modinfo)) {
         $section = 0;
-        if ($course->format == 'weeks') {  // Bodgy
-            $strsection = get_string("week");
-        } else {
-            $strsection = get_string("topic");
-        }
+        $sections = get_all_sections($course->id);
         foreach ($modinfo as $mod) {
             if ($mod->mod == "label") {
                 continue;
             }
             if ($mod->section > 0 and $section <> $mod->section) {
-                $activities["section/$mod->section"] = "-------------- $strsection $mod->section --------------";
+                $activities["section/$mod->section"] = '--- '.get_section_name($course, $sections[$mod->section]).' ---';
             }
             $section = $mod->section;
             $mod->name = strip_tags(format_string($mod->name, true));
@@ -388,17 +384,13 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate='today'
 /// Casting $course->modinfo to string prevents one notice when the field is null
     if ($modinfo = unserialize((string)$course->modinfo)) {
         $section = 0;
-        if ($course->format == 'weeks') {  // Bodgy
-            $strsection = get_string("week");
-        } else {
-            $strsection = get_string("topic");
-        }
+        $sections = get_all_sections($course->id);
         foreach ($modinfo as $mod) {
             if ($mod->mod == "label") {
                 continue;
             }
             if ($mod->section > 0 and $section <> $mod->section) {
-                $activities["section/$mod->section"] = "-------------- $strsection $mod->section --------------";
+                $activities["section/$mod->section"] = '--- '.get_section_name($course, $sections[$mod->section]).' ---';
             }
             $section = $mod->section;
             $mod->name = strip_tags(format_string($mod->name, true));
