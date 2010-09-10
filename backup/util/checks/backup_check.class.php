@@ -218,6 +218,19 @@ abstract class backup_check {
             }
         }
 
+        // Check the user has the ability to configure the backup. If not then we need
+        // to lock all settings by permission so that no changes can be made.
+        $hasconfigcap = has_capability('moodle/backup:configure', $coursectx, $userid);
+        if (!$hasconfigcap) {
+            $settings = $backup_controller->get_plan()->get_settings();
+            foreach ($settings as $setting) {
+                if ($setting->get_name()=='filename') {
+                    continue;
+                }
+                $setting->set_status(base_setting::LOCKED_BY_PERMISSION);
+            }
+        }
+
         return true;
     }
 }
