@@ -313,7 +313,7 @@ $string['courseinfo'] = 'Course info';
 $string['coursemessage'] = 'Message course users';
 $string['coursenotaccessible'] = 'This course does not allow public access';
 $string['courselegacyfiles'] = 'Legacy course files';
-$string['courselegacyfiles_help'] = 'Files are now stored in separate areas for each activity or specific purposes, the old course files area is not available by default in new courses. Only new file storage implements reliable access control, backup/restore, etc.';
+$string['courselegacyfiles_help'] = 'Files are now stored in separate areas for each activity or specific purposes, the old course files area is not available by default in new courses. Only new file storage implements reliable access control, backup/restore, etc. More on: <a href="http://docs.moodle.org/en/Legacy_course_files" target="_blank">Legacy course files</a>';
 $string['courseoverview'] = 'Course overview';
 $string['courseoverviewgraph'] = 'Course overview graph';
 $string['courseprofiles'] = 'Course profiles';
