@@ -68,7 +68,7 @@ class zip_archive extends file_archive {
 
         switch($mode) {
             case file_archive::OPEN:      $flags = 0; break;
-            case file_archive::OVERWRITE: $flags = ZIPARCHIVE::OVERWRITE; break;
+            case file_archive::OVERWRITE: $flags = ZIPARCHIVE::CREATE | ZIPARCHIVE::OVERWRITE; break;
             case file_archive::CREATE:
             default :                     $flags = ZIPARCHIVE::CREATE; break;
         }
