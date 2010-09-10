@@ -60,10 +60,10 @@ class mod_wiki_renderer extends plugin_renderer_base {
         $totalcount = count($records);
         $html = $this->output->heading("$strsearchresults $totalcount");
         foreach ($records as $page) {
-            $table->head = array('title' => $page->title . ' (' . html_writer::link($CFG->wwwroot . '/mod/wiki/view.php?pageid=' . $page->id, get_string('view', 'wiki')) . ')');
+            $table->head = array('title' => format_string($page->title) . ' (' . html_writer::link($CFG->wwwroot . '/mod/wiki/view.php?pageid=' . $page->id, get_string('view', 'wiki')) . ')');
             $table->align = array('title' => 'left');
             $table->width = '100%';
-            $table->data = array(array(file_rewrite_pluginfile_urls($page->cachedcontent, 'pluginfile.php', $context->id, 'mod_wiki', 'attachments', $page->id)));
+            $table->data = array(array(file_rewrite_pluginfile_urls(format_text($page->cachedcontent, FORMAT_HTML), 'pluginfile.php', $context->id, 'mod_wiki', 'attachments', $page->id)));
             $table->colclasses = array('wikisearchresults');
             $html .= html_writer::table($table);
         }
@@ -77,8 +77,8 @@ class mod_wiki_renderer extends plugin_renderer_base {
         } else {
             $total = 0;
         }
-        $diff1 = $old->diff;
-        $diff2 = $new->diff;
+        $diff1 = format_text($old->diff, FORMAT_HTML);
+        $diff2 = format_text($new->diff, FORMAT_HTML);
 
         $olduser = $old->user;
         $versionlink = new moodle_url('/mod/wiki/viewversion.php', array('pageid' => $pageid, 'versionid' => $old->id));
