@@ -38,7 +38,14 @@ if ($hassiteconfig
     } else {
         $choices = get_max_upload_sizes();
     }
+
     $temp->add(new admin_setting_configselect('moodlecourse/maxbytes', get_string('maximumupload'), get_string('coursehelpmaximumupload'), key($choices), $choices));
+
+
+    if (!empty($CFG->legacyfilesinnewcourses)) {
+        $choices = array('0'=>get_string('no'), '2'=>get_string('yes'));
+        $temp->add(new admin_setting_configselect('moodlecourse/legacyfiles', get_string('courselegacyfiles'), get_string('courselegacyfiles_help'), key($choices), $choices));
+    }
 
     $temp->add(new admin_setting_heading('groups', get_string('groups', 'group'), ''));
     $choices = array();
