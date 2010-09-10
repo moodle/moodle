@@ -1216,10 +1216,7 @@ M.core_filepicker.init = function(Y, options) {
                 toolbar.appendChild(help);
             }
 
-            // only show in icons view
-            if (this.viewmode == 1) {
-                this.print_path();
-            }
+            this.print_path();
         },
         get_page_button: function(page) {
             var r = this.active_repo;
@@ -1314,9 +1311,6 @@ M.core_filepicker.init = function(Y, options) {
         },
         print_path: function() {
             var client_id = this.options.client_id;
-            if (this.viewmode == 2) {
-                return;
-            }
             var panel = Y.one('#panel-'+client_id);
             var p = this.filepath;
             if (p && p.length!=0) {
