@@ -461,14 +461,20 @@ M.core_dock.resizeBlockSpace = function(node) {
         blockregions[region.get('id')] = {hasblocks: hasblocks, bodyclass: region.get('id').replace(/^region\-/, 'side-')+'-only'};
     });
     var bodynode = M.core_dock.nodes.body;
+    var showregions = false;
+    if (bodynode.hasClass('blocks-moving')) {
+        // open up blocks during blocks positioning
+        showregions = true;
+    }
+
     var noblocksbodyclass = 'content-only';
     var i = null;
-    if (populatedblockregions==0) {
+    if (populatedblockregions==0 && showregions==false) {
         bodynode.addClass(noblocksbodyclass);
         for (i in blockregions) {
             bodynode.removeClass(blockregions[i].bodyclass);
         }
-    } else if (populatedblockregions==1) {
+    } else if (populatedblockregions==1 && showregions==false) {
         bodynode.removeClass(noblocksbodyclass);
         for (i in blockregions) {
             if (!blockregions[i].hasblocks) {

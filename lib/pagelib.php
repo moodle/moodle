@@ -1368,6 +1368,9 @@ class moodle_page {
 
         if (!empty($USER->editing)) {
             $this->add_body_class('editing');
+            if (optional_param('bui_moveid', false, PARAM_INT)) {
+               $this->add_body_class('blocks-moving');
+        }
         }
 
         if (!empty($CFG->blocksdrag)) {
