@@ -62,6 +62,7 @@ class repository_user extends repository {
         }
         $filearea = 'private';
         $component = 'user';
+        $itemid  = 0;
         $context = get_context_instance(CONTEXT_USER, $USER->id);
 
         try {
@@ -71,7 +72,7 @@ class repository_user extends repository {
                 $pathnodes = array();
                 $level = $fileinfo;
                 $params = $fileinfo->get_params();
-                while ($level && $params['filearea'] == 'user_private') {
+                while ($level && $params['component'] == 'user' && $params['filearea'] == 'private') {
                     $encodedpath = base64_encode(serialize($level->get_params()));
                     $pathnodes[] = array('name'=>$level->get_visible_name(), 'path'=>$encodedpath);
                     $level = $level->get_parent();
