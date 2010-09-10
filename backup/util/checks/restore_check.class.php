@@ -167,6 +167,16 @@ abstract class restore_check {
             }
         }
 
+        // Ensure the user has the rolldates capability. If not we want to lock this
+        // settings so that they cannot change it.
+        $hasrolldatescap = has_capability('moodle/restore:rolldates', $coursectx, $userid);
+        if ($type == backup::TYPE_1COURSE && !$hasrolldatescap) {
+            $datesetting = $restore_controller->get_plan()->get_setting('course_startdate');
+            if ($datesetting) {
+                $datesetting->set_status(base_setting::LOCKED_BY_PERMISSION);
+            }
+        }
+
         return true;
     }
 }
