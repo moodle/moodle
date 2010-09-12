@@ -172,6 +172,34 @@ class file_info_context_module extends file_info {
     }
 
     /**
+     * Is this empty area?
+     *
+     * @return bool
+     */
+    public function is_empty_area() {
+        if ($child = $this->get_area_backup(0, '/', '.')) {
+            if (!$child->is_empty_area()) {
+                return false;
+            }
+        }
+        if ($child = $this->get_area_intro(0, '/', '.')) {
+            if (!$child->is_empty_area()) {
+                return false;
+            }
+        }
+
+        foreach ($this->areas as $area=>$desctiption) {
+            if ($child = $this->get_file_info('mod_'.$this->modname, $area, null, null, null)) {
+                if (!$child->is_empty_area()) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    /**
      * Is directory?
      * @return bool
      */

@@ -78,7 +78,7 @@ class file_info_stored extends file_info {
      */
     public function get_params() {
         return array('contextid'=>$this->context->id,
-                     'component' =>$this->lf->get_component(),
+                     'component'=>$this->lf->get_component(),
                      'filearea' =>$this->lf->get_filearea(),
                      'itemid'   =>$this->lf->get_itemid(),
                      'filepath' =>$this->lf->get_filepath(),
@@ -127,9 +127,9 @@ class file_info_stored extends file_info {
         $contextid = $this->lf->get_contextid();
         $component = $this->lf->get_component();
         $filearea  = $this->lf->get_filearea();
+        $itemid    = $this->lf->get_itemid();
         $filepath  = $this->lf->get_filepath();
         $filename  = $this->lf->get_filename();
-        $itemid    = $this->lf->get_itemid();
 
         if ($this->itemidused) {
             $path = '/'.$contextid.'/'.$component.'/'.$filearea.'/'.$itemid.$filepath.$filename;
@@ -153,6 +153,21 @@ class file_info_stored extends file_info {
      */
     public function is_writable() {
         return $this->writeaccess;
+    }
+
+    /**
+     * Is this top of empty area?
+     *
+     * @return bool
+     */
+    public function is_empty_area() {
+        if ($this->lf->get_filepath() === '/' and $this->lf->get_filename() === '.') {
+            // test the emptiness only in the top most level, it does not make sense at lower levels
+            $fs = get_file_storage();
+            return $fs->is_area_empty($this->lf->get_contextid(), $this->lf->get_component(), $this->lf->get_filearea(), $this->lf->get_itemid());
+        } else {
+            return false;
+        }
     }
 
     /**

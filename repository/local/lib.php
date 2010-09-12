@@ -95,6 +95,9 @@ class repository_local extends repository {
             $children = $fileinfo->get_children();
             foreach ($children as $child) {
                 if ($child->is_directory()) {
+                    if ($child->is_empty_area()) {
+                        continue;
+                    }
                     $params = $child->get_params();
                     $subdir_children = $child->get_children();
                     //if (empty($subdir_children)) {

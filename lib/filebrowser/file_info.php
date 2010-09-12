@@ -129,6 +129,19 @@ abstract class file_info {
     }
 
     /**
+     * Is this info area and is it "empty"? Are there any files in subfolders?
+     *
+     * This is used mostly in repositories to reduce the
+     * number of empty folders. This method may be very slow,
+     * use with care.
+     *
+     * @return bool
+     */
+    public function is_empty_area() {
+        return false;
+    }
+
+    /**
      * Returns file size in bytes, null for directories
      * @return int bytes or null if not known
      */

@@ -214,6 +214,39 @@ class file_storage {
     }
 
     /**
+     * Are there any files (or directories)
+     * @param int $contextid
+     * @param string $component
+     * @param string $filearea
+     * @param bool|int $itemid tem id or false if all items
+     * @param bool $ignoredirs
+     * @return bool empty
+     */
+    public function is_area_empty($contextid, $component, $filearea, $itemid = false, $ignoredirs = true) {
+        global $DB;
+
+        $params = array('contextid'=>$contextid, 'component'=>$component, 'filearea'=>$filearea);
+        $where = "contextid = :contextid AND component = :component AND filearea = :filearea";
+
+        if ($itemid !== false) {
+            $params['itemid'] = $itemid;
+            $where .= " AND itemid = :itemid";
+        }
+
+        if ($ignoredirs) {
+            $sql = "SELECT 'x'
+                      FROM {files}
+                     WHERE $where AND filename <> '.'";
+        } else {
+            $sql = "SELECT 'x'
+                      FROM {files}
+                     WHERE $where AND (filename <> '.' OR filepath <> '/')";
+        }
+
+        return !$DB->record_exists_sql($sql, $params);
+    }
+
+    /**
      * Returns all area files (optionally limited by itemid)
      *
      * @param int $contextid
@@ -224,7 +257,7 @@ class file_storage {
      * @param bool $includedirs
      * @return array of stored_files indexed by pathanmehash
      */
-    public function get_area_files($contextid, $component, $filearea, $itemid=false, $sort="sortorder, itemid, filepath, filename", $includedirs = true) {
+    public function get_area_files($contextid, $component, $filearea, $itemid = false, $sort="sortorder, itemid, filepath, filename", $includedirs = true) {
         global $DB;
 
         $conditions = array('contextid'=>$contextid, 'component'=>$component, 'filearea'=>$filearea);

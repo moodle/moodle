@@ -320,8 +320,6 @@ class file_info_area_course_legacy extends file_info_stored {
      * @return string url
      */
     public function get_url($forcedownload=false, $https=false) {
-        global $CFG;
-
         if (!$this->is_readable()) {
             return null;
         }
@@ -413,6 +411,16 @@ class file_info_area_course_section extends file_info {
     }
 
     /**
+     * Is this empty area?
+     *
+     * @return bool
+     */
+    public function is_empty_area() {
+        $fs = get_file_storage();
+        return $fs->is_area_empty($this->context->id, 'course', 'section');
+    }
+
+    /**
      * Is directory?
      * @return bool
      */
@@ -499,6 +507,16 @@ class file_info_area_backup_section extends file_info {
      */
     public function is_writable() {
         return false;
+    }
+
+    /**
+     * Is this empty area?
+     *
+     * @return bool
+     */
+    public function is_empty_area() {
+        $fs = get_file_storage();
+        return $fs->is_area_empty($this->context->id, 'backup', 'section');
     }
 
     /**
