@@ -243,6 +243,7 @@ function backup_data_comments($bf,$preferences,$recordid){
             fwrite ($bf,full_tag("RECORDID",8,false,$com_sub->recordid));
             fwrite ($bf,full_tag("USERID",8,false,$com_sub->userid));
             fwrite ($bf,full_tag("CONTENT",8,false,$com_sub->content));
+            fwrite ($bf,full_tag("FORMAT",8,false,$com_sub->format));
             fwrite ($bf,full_tag("CREATED",8,false,$com_sub->created));
             fwrite ($bf,full_tag("MODIFIED",8,false,$com_sub->modified));
             //End submission

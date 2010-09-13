@@ -404,9 +404,15 @@ function data_ratings_restore_mods ($oldid, $newid, $info, $rec_info) {
 
         $rat_info = $ratings[$i];
 
-        $rating -> recordid = $newid;
-        $rating -> userid = backup_todb($rat_info['#']['USERID']['0']['#']);
-        $rating -> rating = backup_todb($rat_info['#']['RATING']['0']['#']);
+        $rating->recordid = $newid;
+        $rating->userid = backup_todb($rat_info['#']['USERID']['0']['#']);
+        $rating->rating = backup_todb($rat_info['#']['RATING']['0']['#']);
+
+        // Need to remap the user
+        $user = backup_getid($restore->backup_unique_code,"user",$rating->userid);
+        if ($user) {
+            $rating->userid = $user->new_id;
+        }
 
         if (! insert_record ("data_ratings",$rating)) {
             $status = false;
@@ -431,11 +437,19 @@ function data_comments_restore_mods ($oldid, $newid, $info, $rec_info) {
 
         $com_info = $comments[$i];
 
-        $comment -> recordid = $newid;
-        $comment -> userid = backup_todb($com_info['#']['USERID']['0']['#']);
-        $comment -> content = backup_todb($com_info['#']['CONTENT']['0']['#']);
-        $comment -> created = backup_todb($com_info['#']['CREATED']['0']['#']);
-        $comment -> modified = backup_todb($com_info['#']['MODIFIED']['0']['#']);
+        $comment->recordid = $newid;
+        $comment->userid = backup_todb($com_info['#']['USERID']['0']['#']);
+        $comment->content = backup_todb($com_info['#']['CONTENT']['0']['#']);
+        $comment->format = backup_todb($com_info['#']['FORMAT']['0']['#']);
+        $comment->created = backup_todb($com_info['#']['CREATED']['0']['#']);
+        $comment->modified = backup_todb($com_info['#']['MODIFIED']['0']['#']);
+
+        // Need to remap the user
+        $user = backup_getid($restore->backup_unique_code,"user",$comment->userid);
+        if ($user) {
+            $comment->userid = $user->new_id;
+        }
+
         if (! insert_record ("data_comments",$comment)) {
             $status = false;
         }
