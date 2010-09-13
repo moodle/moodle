@@ -5082,6 +5082,50 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         upgrade_main_savepoint(true, 2010082502);
     }
 
+    if ($oldversion < 2010091300) {
+        // Need to drop the index before we can alter the column precision in the next step.
+
+        // Define index parentcontextid-showinsubcontexts-pagetypepattern-subpagepattern (not unique) to be dropped form block_instances
+        $table = new xmldb_table('block_instances');
+        $index = new xmldb_index('parentcontextid-showinsubcontexts-pagetypepattern-subpagepattern', XMLDB_INDEX_NOTUNIQUE, array('parentcontextid', 'showinsubcontexts', 'pagetypepattern', 'subpagepattern'));
+
+        // Conditionally launch drop index parentcontextid-showinsubcontexts-pagetypepattern-subpagepattern
+        if ($dbman->index_exists($table, $index)) {
+            $dbman->drop_index($table, $index);
+        }
+
+        // Main savepoint reached
+        upgrade_main_savepoint(true, 2010091300);
+    }
+
+    if ($oldversion < 2010091301) {
+
+        // Changing precision of field pagetypepattern on table block_instances to (64)
+        $table = new xmldb_table('block_instances');
+        $field = new xmldb_field('pagetypepattern', XMLDB_TYPE_CHAR, '64', null, XMLDB_NOTNULL, null, null, 'showinsubcontexts');
+
+        // Launch change of precision for field pagetypepattern
+        $dbman->change_field_precision($table, $field);
+
+        // Main savepoint reached
+        upgrade_main_savepoint(true, 2010091301);
+    }
+
+    if ($oldversion < 2010091302) {
+        // Now add the index back.
+
+        // Define index parentcontextid-showinsubcontexts-pagetypepattern-subpagepattern (not unique) to be added to block_instances
+        $table = new xmldb_table('block_instances');
+        $index = new xmldb_index('parentcontextid-showinsubcontexts-pagetypepattern-subpagepattern', XMLDB_INDEX_NOTUNIQUE, array('parentcontextid', 'showinsubcontexts', 'pagetypepattern', 'subpagepattern'));
+
+        // Conditionally launch add index parentcontextid-showinsubcontexts-pagetypepattern-subpagepattern
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Main savepoint reached
+        upgrade_main_savepoint(true, 2010091302);
+    }
 
     return true;
 }
