@@ -853,7 +853,12 @@ class restore_course_structure_step extends restore_structure_step {
         return array($course, $category, $tag, $allowed);
     }
 
-    // Processing functions go here
+    /**
+     * Processing functions go here
+     *
+     * @global moodledatabase $DB
+     * @param stdClass $data
+     */
     public function process_course($data) {
         global $CFG, $DB;
 
@@ -874,8 +879,10 @@ class restore_course_structure_step extends restore_structure_step {
         $data->fullname = $fullname;
         $data->shortname= $shortname;
         $data->idnumber = '';
-        // TODO: Set category from the UI, its not a setting just a param
-        $data->category = get_course_category()->id;
+
+        // Category is set by UI when choosing the destination
+        unset($data->category);
+
         $data->startdate= $this->apply_date_offset($data->startdate);
         if ($data->defaultgroupingid) {
             $data->defaultgroupingid = $this->get_mappingid('grouping', $data->defaultgroupingid);
