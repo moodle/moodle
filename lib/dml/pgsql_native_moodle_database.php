@@ -871,8 +871,8 @@ class pgsql_native_moodle_database extends moodle_database {
             $cleaned[$field] = $value;
         }
 
-        $id = $dataobject['id'];
         $this->insert_record_raw($table, $cleaned, false, true, true);
+        $id = $dataobject['id'];
 
         foreach ($blobs as $key=>$value) {
             $value = pg_escape_bytea($this->pgsql, $value);
