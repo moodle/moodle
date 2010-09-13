@@ -31,15 +31,17 @@ class dml_test extends UnitTestCase {
     public  static $includecoverage = array('lib/dml');
     public  static $excludecoverage = array('lib/dml/simpletest');
 
+    protected $olddebug;
+    protected $olddisplay;
+
     function setUp() {
-        global $CFG, $DB, $UNITTEST;
+        global $DB, $UNITTEST;
 
         if (isset($UNITTEST->func_test_db)) {
             $this->tdb = $UNITTEST->func_test_db;
         } else {
             $this->tdb = $DB;
         }
-
     }
 
     function tearDown() {
@@ -64,7 +66,6 @@ class dml_test extends UnitTestCase {
      * @return xmldb_table the table object.
      */
     private function get_test_table($suffix = '') {
-        $DB = $this->tdb;
         $dbman = $this->tdb->get_manager();
 
         $tablename = "unit_table";
@@ -79,6 +80,28 @@ class dml_test extends UnitTestCase {
         $table->setComment("This is a test'n drop table. You can drop it safely");
         $this->tables[$tablename] = $tablename;
         return new xmldb_table($tablename);
+    }
+
+    protected function enable_debugging() {
+        global $CFG;
+
+        $this->olddebug   = $CFG->debug;       // Save current debug settings
+        $this->olddisplay = $CFG->debugdisplay;
+        $CFG->debug = DEBUG_DEVELOPER;
+        $CFG->debugdisplay = true;
+        ob_start(); // hide debug warning
+
+    }
+
+    protected function get_debugging() {
+        global $CFG;
+
+        $debuginfo = ob_get_contents();
+        ob_end_clean();
+        $CFG->debug = $this->olddebug;         // Restore original debug settings
+        $CFG->debugdisplay = $this->olddisplay;
+
+        return $debuginfo;
     }
 
     // NOTE: please keep order of test methods here matching the order of moodle_database class methods
@@ -951,7 +974,6 @@ class dml_test extends UnitTestCase {
     }
 
     public function test_get_records_sql() {
-        global $CFG;
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
@@ -977,19 +999,10 @@ class dml_test extends UnitTestCase {
         $this->assertEqual($inskey4, next($records)->id);
 
         // Awful test, requires debug enabled and sent to browser. Let's do that and restore after test
-        $olddebug   = $CFG->debug;       // Save current debug settings
-        $olddisplay = $CFG->debugdisplay;
-        $CFG->debug = DEBUG_DEVELOPER;
-        $CFG->debugdisplay = true;
-        ob_start(); // hide debug warning
+        $this->enable_debugging();
         $records = $DB->get_records_sql("SELECT course AS id, course AS course FROM {{$tablename}}", null);
-        ob_end_clean();
-        $debuginfo = ob_get_contents();
-        $CFG->debug = $olddebug;         // Restore original debug settings
-        $CFG->debugdisplay = $olddisplay;
-
+        $this->assertFalse($this->get_debugging() === '');
         $this->assertEqual(6, count($records));
-        $this->assertFalse($debuginfo === '');
 
         // negative limits = no limits
         $records = $DB->get_records_sql("SELECT * FROM {{$tablename}} ORDER BY id", null, -1, -1);
@@ -1159,8 +1172,6 @@ class dml_test extends UnitTestCase {
     }
 
     public function test_get_record_sql() {
-        global $CFG;
-
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
@@ -1197,18 +1208,9 @@ class dml_test extends UnitTestCase {
             $this->assertTrue(true);
         }
 
-        // multiple matches - debug warning
-        $olddebug   = $CFG->debug;       // Save current debug settings
-        $olddisplay = $CFG->debugdisplay;
-        $CFG->debug = DEBUG_DEVELOPER;
-        $CFG->debugdisplay = true;
-        ob_start(); // hide debug warning
+        $this->enable_debugging();
         $this->assertTrue($DB->get_record_sql("SELECT * FROM {{$tablename}}", array(), IGNORE_MISSING));
-        $debuginfo = ob_get_contents();
-        ob_end_clean();
-        $CFG->debug = $olddebug;         // Restore original debug settings
-        $CFG->debugdisplay = $olddisplay;
-        $this->assertFalse($debuginfo === '');
+        $this->assertFalse($this->get_debugging() === '');
 
         // multiple matches ignored
         $this->assertTrue($DB->get_record_sql("SELECT * FROM {{$tablename}}", array(), IGNORE_MULTIPLE));
@@ -1223,8 +1225,6 @@ class dml_test extends UnitTestCase {
     }
 
     public function test_get_field() {
-        global $CFG;
-
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
@@ -1251,25 +1251,13 @@ class dml_test extends UnitTestCase {
             $this->assertTrue(true);
         }
 
-        $olddebug   = $CFG->debug;       // Save current debug settings
-        $olddisplay = $CFG->debugdisplay;
-        $CFG->debug = DEBUG_DEVELOPER;
-        $CFG->debugdisplay = true;
-
-        ob_start(); // catch debug warning
+        $this->enable_debugging();
         $this->assertEqual(5, $DB->get_field($tablename, 'course', array('course' => 5), IGNORE_MULTIPLE));
-        $debuginfo = ob_get_contents();
-        ob_end_clean();
-        $this->assertTrue($debuginfo === '');
+        $this->assertIdentical($this->get_debugging(), '');
 
-        ob_start(); // catch debug warning
+        $this->enable_debugging();
         $this->assertEqual(5, $DB->get_field($tablename, 'course', array('course' => 5), IGNORE_MISSING));
-        $debuginfo = ob_get_contents();
-        ob_end_clean();
-        $this->assertFalse($debuginfo === '');
-
-        $CFG->debug = $olddebug;         // Restore original debug settings
-        $CFG->debugdisplay = $olddisplay;
+        $this->assertFalse($this->get_debugging() === '');
     }
 
     public function test_get_field_select() {
@@ -1415,8 +1403,6 @@ class dml_test extends UnitTestCase {
     }
 
     public function test_insert_record() {
-        global $CFG;
-
         // All the information in this test is fetched from DB by get_recordset() so we
         // have such method properly tested against nulls, empties and friends...
 
@@ -1573,8 +1559,8 @@ class dml_test extends UnitTestCase {
         }
 
         // Check LOBs in text/binary columns
-        $clob = file_get_contents($CFG->libdir.'/dml/simpletest/fixtures/clob.txt');
-        $blob = file_get_contents($CFG->libdir.'/dml/simpletest/fixtures/randombinary');
+        $clob = file_get_contents(dirname(__FILE__).'/fixtures/clob.txt');
+        $blob = file_get_contents(dirname(__FILE__).'/fixtures/randombinary');
         $record = new object();
         $record->onetext = $clob;
         $record->onebinary = $blob;
@@ -1610,8 +1596,6 @@ class dml_test extends UnitTestCase {
     }
 
     public function test_import_record() {
-        global $CFG;
-
         // All the information in this test is fetched from DB by get_recordset() so we
         // have such method properly tested against nulls, empties and friends...
 
@@ -1739,7 +1723,7 @@ class dml_test extends UnitTestCase {
         }
 
         // Check LOBs in text/binary columns
-        $clob = file_get_contents($CFG->libdir.'/dml/simpletest/fixtures/clob.txt');
+        $clob = file_get_contents(dirname(__FILE__).'/fixtures/clob.txt');
         $record = new object();
         $record->id = 70;
         $record->onetext = $clob;
@@ -1750,7 +1734,7 @@ class dml_test extends UnitTestCase {
         $rs->close();
         $this->assertEqual($clob, $record->onetext, 'Test CLOB insert (full contents output disabled)');
 
-        $blob = file_get_contents($CFG->libdir.'/dml/simpletest/fixtures/randombinary');
+        $blob = file_get_contents(dirname(__FILE__).'/fixtures/randombinary');
         $record = new object();
         $record->id = 71;
         $record->onetext = '';
@@ -1822,8 +1806,6 @@ class dml_test extends UnitTestCase {
 
         // All the information in this test is fetched from DB by get_record() so we
         // have such method properly tested against nulls, empties and friends...
-
-        global $CFG;
 
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
@@ -1964,8 +1946,8 @@ class dml_test extends UnitTestCase {
         }
 
         // Check LOBs in text/binary columns
-        $clob = file_get_contents($CFG->libdir.'/dml/simpletest/fixtures/clob.txt');
-        $blob = file_get_contents($CFG->libdir.'/dml/simpletest/fixtures/randombinary');
+        $clob = file_get_contents(dirname(__FILE__).'/fixtures/clob.txt');
+        $blob = file_get_contents(dirname(__FILE__).'/fixtures/randombinary');
         $record->onetext = $clob;
         $record->onebinary = $blob;
         $DB->update_record($tablename, $record);
@@ -2043,8 +2025,6 @@ class dml_test extends UnitTestCase {
 
         // All the information in this test is fetched from DB by get_field() so we
         // have such method properly tested against nulls, empties and friends...
-
-        global $CFG;
 
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
@@ -2153,8 +2133,8 @@ class dml_test extends UnitTestCase {
         }
 
         // Check LOBs in text/binary columns
-        $clob = file_get_contents($CFG->libdir.'/dml/simpletest/fixtures/clob.txt');
-        $blob = file_get_contents($CFG->libdir.'/dml/simpletest/fixtures/randombinary');
+        $clob = file_get_contents(dirname(__FILE__).'/fixtures/clob.txt');
+        $blob = file_get_contents(dirname(__FILE__).'/fixtures/randombinary');
         $DB->set_field_select($tablename, 'onetext', $clob, 'id = ?', array(1));
         $DB->set_field_select($tablename, 'onebinary', $blob, 'id = ?', array(1));
         $this->assertEqual($clob, $DB->get_field($tablename, 'onetext', array('id' => 1)), 'Test CLOB set_field (full contents output disabled)');
@@ -2694,8 +2674,6 @@ class dml_test extends UnitTestCase {
     }
 
     function test_sql_ilike() {
-        global $CFG;
-
         // note: this is deprecated, just make sure it does not throw error
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
@@ -2713,18 +2691,10 @@ class dml_test extends UnitTestCase {
         $DB->insert_record($tablename, array('name'=>'ouch'));
 
         // make sure it prints debug message
-        $olddebug   = $CFG->debug;       // Save current debug settings
-        $olddisplay = $CFG->debugdisplay;
-        $CFG->debug = DEBUG_DEVELOPER;
-        $CFG->debugdisplay = true;
-        ob_start(); // hide debug warning
+        $this->enable_debugging();
         $sql = "SELECT * FROM {{$tablename}} WHERE name ".$DB->sql_ilike()." ?";
         $params = array("%dup_r%");
-        ob_end_clean();
-        $debuginfo = ob_get_contents();
-        $CFG->debug = $olddebug;         // Restore original debug settings
-        $CFG->debugdisplay = $olddisplay;
-        $this->assertFalse($debuginfo === '');
+        $this->assertFalse($this->get_debugging() === '');
 
         // following must not throw exception, we ignore result
         $DB->get_records_sql($sql, $params);
@@ -3016,7 +2986,6 @@ class dml_test extends UnitTestCase {
      * useful to determine if new database libraries can be supported.
      */
     public function test_get_records_sql_complicated() {
-        global $CFG;
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
