@@ -657,17 +657,7 @@ function setup_get_remote_url() {
     if (stripos($_SERVER['SERVER_SOFTWARE'], 'apache') !== false) {
         //Apache server
         $rurl['scheme']   = empty($_SERVER['HTTPS']) ? 'http' : 'https';
-        $rurl['fullpath'] = $_SERVER['REQUEST_URI']; // TODO: verify this is always properly encoded
-
-    } else if (stripos($_SERVER['SERVER_SOFTWARE'], 'lighttpd') !== false) {
-        //lighttpd - not officially supported
-        $rurl['scheme']   = empty($_SERVER['HTTPS']) ? 'http' : 'https';
-        $rurl['fullpath'] = $_SERVER['REQUEST_URI']; // TODO: verify this is always properly encoded
-
-    } else if (stripos($_SERVER['SERVER_SOFTWARE'], 'nginx') !== false) {
-        //nginx - not officially supported
-        $rurl['scheme']   = empty($_SERVER['HTTPS']) ? 'http' : 'https';
-        $rurl['fullpath'] = $_SERVER['REQUEST_URI']; // TODO: verify this is always properly encoded
+        $rurl['fullpath'] = $_SERVER['REQUEST_URI'];
 
     } else if (stripos($_SERVER['SERVER_SOFTWARE'], 'iis') !== false) {
         //IIS - needs a lot of tweaking to make it work
@@ -683,6 +673,18 @@ function setup_get_remote_url() {
         }
         $_SERVER['REQUEST_URI'] = $rurl['fullpath']; // extra IIS compatibility
 
+/* NOTE: following servers are not fully tested! */
+
+    } else if (stripos($_SERVER['SERVER_SOFTWARE'], 'lighttpd') !== false) {
+        //lighttpd - not officially supported
+        $rurl['scheme']   = empty($_SERVER['HTTPS']) ? 'http' : 'https';
+        $rurl['fullpath'] = $_SERVER['REQUEST_URI']; // TODO: verify this is always properly encoded
+
+    } else if (stripos($_SERVER['SERVER_SOFTWARE'], 'nginx') !== false) {
+        //nginx - not officially supported
+        $rurl['scheme']   = empty($_SERVER['HTTPS']) ? 'http' : 'https';
+        $rurl['fullpath'] = $_SERVER['REQUEST_URI']; // TODO: verify this is always properly encoded
+
      } else if (stripos($_SERVER['SERVER_SOFTWARE'], 'cherokee') !== false) {
          //cherokee - not officially supported
          $rurl['scheme']   = ($_SERVER['HTTPS'] == 'off') ? 'http' : 'https';
@@ -692,6 +694,11 @@ function setup_get_remote_url() {
          //zeus - not officially supported
          $rurl['scheme']   = ($_SERVER['HTTPS'] == 'off') ? 'http' : 'https';
          $rurl['fullpath'] = $_SERVER['REQUEST_URI']; // TODO: verify this is always properly encoded
+
+    } else if (stripos($_SERVER['SERVER_SOFTWARE'], 'LiteSpeed') !== false) {
+        //LiteSpeed - not officially supported
+        $rurl['scheme']   = ($_SERVER['HTTPS'] == 'off') ? 'http' : 'https';
+        $rurl['fullpath'] = $_SERVER['REQUEST_URI']; // TODO: verify this is always properly encoded
 
      } else {
         throw new moodle_exception('unsupportedwebserver', 'error', '', $_SERVER['SERVER_SOFTWARE']);
