@@ -48,6 +48,7 @@ class oci_native_moodle_database extends moodle_database {
     private $unique_session_id; // To store unique_session_id. Needed for temp tables unique naming
 
     private $dblocks_supported = null; // To cache locks support along the connection life
+    private $bitwise_supported = null; // To cache bitwise operations support along the connection life
 
 
     /**
@@ -1126,7 +1127,7 @@ class oci_native_moodle_database extends moodle_database {
         $stmt = $this->parse_query($sql);
         $descriptors = $this->bind_params($stmt, $params, $table);
         if ($returning) {
-            oci_bind_by_name($stmt, ":oracle_id", $id, -1, SQLT_INT);
+            oci_bind_by_name($stmt, ":oracle_id", $id, 10, SQLT_INT);
         }
         $result = oci_execute($stmt, $this->commit_status);
         $this->free_descriptors($descriptors);
@@ -1366,6 +1367,27 @@ class oci_native_moodle_database extends moodle_database {
         return ' FROM dual';
     }
 
+// Bitwise operations
+   protected function bitwise_supported() {
+        if (isset($this->bitwise_supported)) { // Use cached value if available
+            return $this->bitwise_supported;
+        }
+        $sql = "SELECT 1
+                FROM user_objects
+                WHERE object_type = 'PACKAGE BODY'
+                  AND object_name = 'MOODLE_BITS'
+                  AND status = 'VALID'";
+        $this->query_start($sql, null, SQL_QUERY_AUX);
+        $stmt = $this->parse_query($sql);
+        $result = oci_execute($stmt, $this->commit_status);
+        $this->query_end($result, $stmt);
+        $records = null;
+        oci_fetch_all($stmt, $records, 0, -1, OCI_FETCHSTATEMENT_BY_ROW);
+        oci_free_statement($stmt);
+        $this->bitwise_supported = isset($records[0]) && reset($records[0]) ? true : false;
+        return $this->bitwise_supported;
+    }
+
     public function sql_bitand($int1, $int2) {
         return 'bitand((' . $int1 . '), (' . $int2 . '))';
     }
@@ -1375,10 +1397,20 @@ class oci_native_moodle_database extends moodle_database {
     }
 
     public function sql_bitor($int1, $int2) {
+        // Use the MOODLE_BITS package if available
+        if ($this->bitwise_supported()) {
+            return 'MOODLE_BITS.BITOR(' . $int1 . ', ' . $int2 . ')';
+        }
+        // fallback to PHP bool operations, can break if using placeholders
         return '((' . $int1 . ') + (' . $int2 . ') - ' . $this->sql_bitand($int1, $int2) . ')';
     }
 
     public function sql_bitxor($int1, $int2) {
+        // Use the MOODLE_BITS package if available
+        if ($this->bitwise_supported()) {
+            return 'MOODLE_BITS.BITXOR(' . $int1 . ', ' . $int2 . ')';
+        }
+        // fallback to PHP bool operations, can break if using placeholders
         return '(' . $this->sql_bitor($int1, $int2) . ' - ' . $this->sql_bitand($int1, $int2) . ')';
     }
 
