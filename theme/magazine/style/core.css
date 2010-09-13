@@ -105,18 +105,20 @@ div.thetitle {
 
 #nologo {
 	width: 337px;
-	height: 130px;
 	float: left;
 	overflow: hidden;
 	padding-left: 3px;
-}
+	margin-top: 40px;
+	}
 #nologo a, #nologo {
-	font-size: 40px;
+	font-size: 35px;
 	font-style: italic;
 	font-family: Palatino,"Palatino Linotype",Georgia,"Times New Roman",serif;
 	font-weight: 800;
 	letter-spacing: -1px;
-	line-height: 130px;
+	line-height: 45px;
+	
+	
 }
 #nologo a:hover {
 	text-decoration: none;
@@ -319,8 +321,9 @@ div#jcontrols_button span.arrow.sep {
 	font-weight: 800;
 }
 
-.block div.block_action input {
+.block div.block_action input, .block div.block_action img {
 	margin-top: 3px;
+	margin-right: 3px;
 	position: relative;
 	top: 6px;
 }
