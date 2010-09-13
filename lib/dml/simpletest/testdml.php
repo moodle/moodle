@@ -2660,11 +2660,11 @@ class dml_test extends UnitTestCase {
 
         $sql = "SELECT * FROM {{$tablename}} ORDER BY ".$DB->sql_order_by_text('description');
         $records = $DB->get_records_sql($sql);
-        $first = array_unshift($records);
+        $first = array_shift($records);
         $this->assertEqual(1, $first->id);
-        $second = array_unshift($records);
+        $second = array_shift($records);
         $this->assertEqual(3, $second->id);
-        $last = array_unshift($records);
+        $last = array_shift($records);
         $this->assertEqual(2, $last->id);
     }
 
