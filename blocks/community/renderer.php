@@ -115,17 +115,11 @@ class block_community_renderer extends plugin_renderer_base {
                                 array('class' => 'hubcoursedescription'));
 
                 //create users related information html
-                $courseuserinfo = '';
-                if (!empty($course->contributornames)) {
-                    $course->contributorname = get_string('contributors', 'block_community',
-                                    $course->contributorname);
-                }
-                if ($course->contributornames) {
-                    $courseuserinfo .= get_string('contributors', 'block_community',
-                                    $course->contributornames);
-                    $courseuserinfo .= ' - ';
-                }
                 $courseuserinfo = get_string('userinfo', 'block_community', $course);
+                if ($course->contributornames) {
+                    $courseuserinfo .= ' - ' . get_string('contributors', 'block_community',
+                                    $course->contributornames);
+                }
                 $courseuserinfohtml = html_writer::tag('div', $courseuserinfo,
                                 array('class' => 'hubcourseuserinfo'));
 
