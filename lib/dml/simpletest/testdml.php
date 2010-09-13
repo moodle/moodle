@@ -2238,8 +2238,31 @@ class dml_test extends UnitTestCase {
 
     function test_sql_bitand() {
         $DB = $this->tdb;
+        $dbman = $DB->get_manager();
+
+        $table = $this->get_test_table();
+        $tablename = $table->getName();
+
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('col1', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+        $table->add_field('col2', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $dbman->create_table($table);
+
+        $DB->insert_record($tablename, array('col1' => 3, 'col2' => 2));
+
         $sql = "SELECT ".$DB->sql_bitand(10, 3)." AS res ".$DB->sql_null_from_clause();
         $this->assertEqual($DB->get_field_sql($sql), 2);
+
+        $sql = "SELECT id, ".$DB->sql_bitand('col1', 'col2')." AS res FROM {{$tablename}}";
+        $result = $DB->get_records_sql($sql);
+        $this->assertEqual(count($result), 1);
+        $this->assertEqual(reset($result)->res, 2);
+
+        $sql = "SELECT id, ".$DB->sql_bitand('col1', '?')." AS res FROM {{$tablename}}";
+        $result = $DB->get_records_sql($sql, array(10));
+        $this->assertEqual(count($result), 1);
+        $this->assertEqual(reset($result)->res, 2);
     }
 
     function test_sql_bitnot() {
