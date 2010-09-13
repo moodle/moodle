@@ -58,7 +58,7 @@ body {
 }
 
 #headerenvelop { /* Inside Header Middle */
-    color:#fff;
+    color:black;
     height: 105px;
     /*background-color: #E3DFD4;*/
 }
@@ -115,7 +115,7 @@ a:hover, a:active {
 }
 
 #headerenvelop a:link, #headerenvelop a:visited {
-   color:#000;
+   color:#375FAF;
 }
 
 .clearfix {
