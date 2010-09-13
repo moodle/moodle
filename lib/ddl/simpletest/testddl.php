@@ -275,6 +275,39 @@ class ddl_test extends UnitTestCase {
         $this->assertEqual($dbrec->name, 'Moodle');
         $this->assertEqual($dbrec->thirdname, '');
 
+        // check exceptions if multiple R columns
+        $table = new xmldb_table ('test_table2');
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('rid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('rid'));
+        $table->setComment("This is a test'n drop table. You can drop it safely");
+
+        $this->tables[$table->getName()] = $table;
+
+        try {
+            $dbman->create_table($table);
+            $this->fail('Exception expected');
+        } catch (Exception $e) {
+            $this->assertTrue($e instanceof ddl_exception);
+        }
+
+        // check exceptions missing primary key on R column
+        $table = new xmldb_table ('test_table2');
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+        $table->setComment("This is a test'n drop table. You can drop it safely");
+
+        $this->tables[$table->getName()] = $table;
+
+        try {
+            $dbman->create_table($table);
+            $this->fail('Exception expected');
+        } catch (Exception $e) {
+            $this->assertTrue($e instanceof ddl_exception);
+        }
+
     }
 
     /**
