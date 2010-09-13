@@ -38,7 +38,7 @@
     $row = array();
 
     $row[] = new tabobject('list', $CFG->wwwroot.'/mod/data/view.php?d='.$data->id, get_string('list','data'));
-    
+
     if (isset($record)) {
         $row[] = new tabobject('single', $CFG->wwwroot.'/mod/data/view.php?d='.$data->id.'&amp;rid='.$record->id, get_string('single','data'));
     } else {
@@ -49,13 +49,13 @@
     $row[] = new tabobject('asearch', $CFG->wwwroot.'/mod/data/view.php?d='.$data->id.'&amp;mode=asearch', get_string('search', 'data'));
 
     if (isloggedin()) {
-        if (data_user_can_add_entry($data, $currentgroup, $groupmode)) { // took out participation list here!
+        if (data_user_can_add_entry($data, $currentgroup, $groupmode) && !data_atmaxentries($data)) { // took out participation list here!
             $addstring = empty($editentry) ? get_string('add', 'data') : get_string('editentry', 'data');
             $row[] = new tabobject('add', $CFG->wwwroot.'/mod/data/edit.php?d='.$data->id, $addstring);
         }
         if (has_capability(DATA_CAP_EXPORT, $context)) {
             // The capability required to Export database records is centrally defined in 'lib.php'
-            // and should be weaker than those required to edit Templates, Fields and Presets. 
+            // and should be weaker than those required to edit Templates, Fields and Presets.
             $row[] = new tabobject('export', $CFG->wwwroot.'/mod/data/export.php?d='.$data->id,
                          get_string('export', 'data'));
         }
