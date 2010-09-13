@@ -258,6 +258,16 @@ function form_filemanager_render($options) {
 
     $client_id = $options->client_id;
     $itemid    = $options->itemid;
+    list($context, $course, $cm) = get_context_info_array($options->context->id);
+    if (is_object($course)) {
+        $course_maxbytes = $course->maxbytes;
+    } else {
+        $course_maxbytes = $CFG->maxbytes;
+    }
+
+    if ($options->maxbytes == -1 || empty($options->maxbytes)) {
+        $options->maxbytes = $CFG->maxbytes;
+    }
 
     if (empty($options->filecount)) {
         $extra = ' style="display:none"';
@@ -265,7 +275,7 @@ function form_filemanager_render($options) {
         $extra = '';
     }
 
-    $maxsize = get_string('maxfilesize', 'moodle', display_size(get_max_upload_file_size($CFG->maxbytes, 0, $options->maxbytes)));
+    $maxsize = get_string('maxfilesize', 'moodle', display_size(get_max_upload_file_size($CFG->maxbytes, $course_maxbytes, $options->maxbytes)));
     $html .= <<<FMHTML
 <div class="filemanager-loading mdl-align" id='filemanager-loading-{$client_id}'>
 $icon_progress
