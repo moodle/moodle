@@ -1217,7 +1217,7 @@ class grade_structure {
             return $strparams;
         }
 
-        $strparams->itemname = $element['object']->get_name();
+        $strparams->itemname = html_to_text($element['object']->get_name());
 
         // If element name is categorytotal, get the name of the parent category
         if ($strparams->itemname == get_string('categorytotal', 'grades')) {
