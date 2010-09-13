@@ -5127,6 +5127,24 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         upgrade_main_savepoint(true, 2010091302);
     }
 
+    if ($oldversion < 2010091303) {
+        // drop all test tables from old xmldb test suite
+        $table = new xmldb_table('testtable');
+        if ($dbman->table_exists($table)) {
+            $dbman->drop_table($table);
+        }
+        $table = new xmldb_table('anothertest');
+        if ($dbman->table_exists($table)) {
+            $dbman->drop_table($table);
+        }
+        $table = new xmldb_table('newnameforthetable');
+        if ($dbman->table_exists($table)) {
+            $dbman->drop_table($table);
+        }
+        upgrade_main_savepoint(true, 2010091303);
+    }
+
+
     return true;
 }
 
