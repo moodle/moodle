@@ -50,6 +50,7 @@ $callbackclass = optional_param('callbackclass', null, PARAM_ALPHAEXT);       //
 $callerformats = optional_param('callerformats', null, PARAM_TAGLIST);        // comma separated list of formats the specific place exporting content supports
 
 require_login();  // this is selectively called again with $course later when we know for sure which one we're in.
+$PAGE->set_context(get_system_context());
 $PAGE->set_url('/portfolio/add.php', array('id' => $dataid, 'sesskey' => sesskey()));
 $PAGE->set_pagelayout('standard');
 $exporter = null;
