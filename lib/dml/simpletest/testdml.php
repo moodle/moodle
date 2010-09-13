@@ -2181,6 +2181,10 @@ class dml_test extends UnitTestCase {
 
         $this->assertTrue($DB->delete_records($tablename, array('course' => 2)));
         $this->assertEqual(1, $DB->count_records($tablename));
+
+        // delete all
+        $this->assertTrue($DB->delete_records($tablename, array()));
+        $this->assertEqual(0, $DB->count_records($tablename));
     }
 
     public function test_delete_records_select() {
