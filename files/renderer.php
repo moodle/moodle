@@ -64,12 +64,18 @@ class core_files_renderer extends plugin_renderer_base {
                 $link_attributes = array();
                 if (!empty($node['isdir'])) {
                     $class = ' class="file-tree-folder"';
+                    $icon = $this->output->pix_icon('f/folder', 'icon');
                 } else {
                     $class = ' class="file-tree-file"';
+                    $icon = $this->output->pix_icon('f/'.mimeinfo('icon', $node['filename']), get_string('icon'));
                     $link_attributes['target'] = '_blank';
                 }
-                $html .= '<li '.$class.'>';
+                $html .= '<li '.$class.' yuiConfig="{\'type\':\'HTMLNode\'}">';
+                $html .= '<div>';
+                $html .= $icon;
+                $html .= '&nbsp;';
                 $html .= html_writer::link($node['url'], $node['filename'], $link_attributes);
+                $html .= '</div>';
                 $html .= '</li>';
             }
             $html .= '</ul>';

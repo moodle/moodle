@@ -70,8 +70,10 @@ switch ($action) {
             if ($child->is_directory()) {
                 $fileitem['isdir'] = true;
                 $fileitem['url'] = $url->out(false);
+                $fileitem['icon'] = $OUTPUT->pix_icon('f/folder', get_string('icon'));
             } else {
                 $fileitem['url'] = $child->get_url();
+                $fileitem['icon'] = $OUTPUT->pix_icon('f/'.mimeinfo('icon', $child->get_visible_name()), get_string('icon'));
             }
             $tree[] = $fileitem;
         }

@@ -845,6 +845,7 @@ $string['choosereportfilter'] = 'Choose a filter for the report';
 $string['choosetheme'] = 'Choose theme';
 $string['chooseuser'] = 'Choose a user';
 $string['icqnumber'] = 'ICQ number';
+$string['icon'] = 'Icon';
 $string['idnumber'] = 'ID number';
 $string['idnumbercourse'] = 'Course ID number';
 $string['idnumbercourse_help'] = 'The ID number of a course is only used when matching the course against external systems and is not displayed anywhere on the site. If the course has an official code name it may be entered, otherwise the field can be left blank.';

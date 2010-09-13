@@ -28,11 +28,7 @@ M.core_filetree = {
                         node.isLeaf = true;
                     } else {
                         for (i in data) {
-                            var mynode = {
-                                label: data[i].filename,
-                                href: data[i].url
-                            };
-                            var tmp = new YAHOO.widget.TextNode(mynode, node, false);
+                            var tmp = new YAHOO.widget.HTMLNode('<div>'+data[i].icon+'&nbsp;<a href="'+data[i].url+'">'+data[i].filename+'</a></div>', node, false);
                             if (data[i].isdir) {
                                 tmp.isLeaf = false;
                             } else {
@@ -72,7 +68,10 @@ M.core_filetree = {
         this.y3 = Y;
     }, 
     dynload: function(node, oncompletecb) {
-        M.core_filetree.request(node.href, node, oncompletecb);
+        var tmp = document.createElement('p');
+        tmp.innerHTML = node.html;
+        var links = tmp.getElementsByTagName('a');
+        M.core_filetree.request(links[0].href, node, oncompletecb);
     },
     onclick: function(e) {
         YAHOO.util.Event.preventDefault(e); 
