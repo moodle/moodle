@@ -16,6 +16,8 @@
 
 //TODO: use standard CLI_SCRIPT support here (skodak)
 
+define('AJAX_SCRIPT', true);
+
 require_once(dirname(dirname(dirname(__FILE__))) . '/config.php');
 require_once(dirname(__FILE__) . '/lib.php');
 
@@ -85,7 +87,8 @@ case 'chat':
 
         $DB->insert_record('chat_messages', $message);
         $DB->insert_record('chat_messages_current', $message);
-        echo 200;
+        // response ok message
+        echo json_encode(true);
         add_to_log($course->id, 'chat', 'talk', "view.php?id=$cm->id", $chat->id, $cm->id);
 
         ob_end_flush();
