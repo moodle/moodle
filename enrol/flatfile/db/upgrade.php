@@ -38,17 +38,20 @@ function xmldb_enrol_flatfile_upgrade($oldversion) {
         $table = new xmldb_table('enrol_flatfile');
 
         // Adding fields to table enrol_flatfile
-        $table->add_field('id', XMLDB_TYPE_INTEGER, '20', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
-        $table->add_field('action', XMLDB_TYPE_CHAR, '10', null, null, null, 'add');
-        $table->add_field('role_id', XMLDB_TYPE_INTEGER, '20', null, XMLDB_NOTNULL, null, '0');
-        $table->add_field('user_id', XMLDB_TYPE_INTEGER, '20', null, XMLDB_NOTNULL, null, '0');
-        $table->add_field('course_id', XMLDB_TYPE_INTEGER, '20', null, XMLDB_NOTNULL, null, '0');
-        $table->add_field('timestart', XMLDB_TYPE_INTEGER, '20', null, XMLDB_NOTNULL, null, '0');
-        $table->add_field('timeend', XMLDB_TYPE_INTEGER, '20', null, XMLDB_NOTNULL, null, '0');
-        $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '20', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('action', XMLDB_TYPE_CHAR, '30', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('roleid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+        $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+        $table->add_field('courseid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+        $table->add_field('timestart', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+        $table->add_field('timeend', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+        $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
 
         // Adding keys to table enrol_flatfile
         $table->add_key('id', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_key('courseid-id', XMLDB_KEY_FOREIGN, array('courseid'), 'course', array('id'));
+        $table->add_key('userid-id', XMLDB_KEY_FOREIGN, array('userid'), 'user', array('id'));
+        $table->add_key('roleid-id', XMLDB_KEY_FOREIGN, array('roleid'), 'role', array('id'));
 
         // Conditionally launch create table for enrol_flatfile
         if (!$dbman->table_exists($table)) {
@@ -58,6 +61,7 @@ function xmldb_enrol_flatfile_upgrade($oldversion) {
         // flatfile savepoint reached
         upgrade_plugin_savepoint(true, 2010091400, 'enrol', 'flatfile');
     }
+
 
     return $result;
 }

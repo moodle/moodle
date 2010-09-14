@@ -191,10 +191,10 @@ class enrol_flatfile_plugin extends enrol_plugin {
         if ($future_enrols = $DB->get_records('enrol_flatfile', null, '')) {
             foreach($future_enrols as $id => $future_en) {
                     $this->log .= "Processing buffered enrolments.\n";
-                    $user = $DB->get_record("user", array("id"=>$future_en->user_id));
-                    $course = $DB->get_record("course", array("id"=>$future_en->course_id));
+                    $user = $DB->get_record("user", array("id"=>$future_en->userid));
+                    $course = $DB->get_record("course", array("id"=>$future_en->courseid));
                     // enrol the person.
-                    if($this->process_records($future_en->action, $future_en->role_id,
+                    if($this->process_records($future_en->action, $future_en->roleid,
                             $user, $course, $future_en->timestart, $future_en->timeend, false)) {
                         //ok record went thru, get rid of the record.
                         $DB->delete_records('enrol_flatfile', array('id'=>$future_en->id));
@@ -215,9 +215,9 @@ class enrol_flatfile_plugin extends enrol_plugin {
                 // populate into enrol_flatfile table as a future role to be assigned by cron.
                 $future_en = new object();
                 $future_en->action = $action;
-                $future_en->role_id = $roleid;
-                $future_en->user_id = $user->id;
-                $future_en->course_id = $course->id;
+                $future_en->roleid = $roleid;
+                $future_en->userid = $user->id;
+                $future_en->courseid = $course->id;
                 $future_en->timestart = $timestart;
                 $future_en->timeend     = $timeend;
                 $future_en->timemodified  = time();
