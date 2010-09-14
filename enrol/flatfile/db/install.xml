@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="enrol/flatfile/db" VERSION="20100914" COMMENT="XMLDB file for Moodle enrol/flatfile"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="enrol_flatfile" COMMENT="enrol_flatfile table retrofitted from MySQL">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="20" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="action"/>
+        <FIELD NAME="action" TYPE="char" LENGTH="10" NOTNULL="false" DEFAULT="add" SEQUENCE="false" PREVIOUS="id" NEXT="role_id"/>
+        <FIELD NAME="role_id" TYPE="int" LENGTH="20" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="action" NEXT="user_id"/>
+        <FIELD NAME="user_id" TYPE="int" LENGTH="20" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="role_id" NEXT="course_id"/>
+        <FIELD NAME="course_id" TYPE="int" LENGTH="20" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="user_id" NEXT="timestart"/>
+        <FIELD NAME="timestart" TYPE="int" LENGTH="20" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="course_id" NEXT="timeend"/>
+        <FIELD NAME="timeend" TYPE="int" LENGTH="20" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="timestart" NEXT="timemodified"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="20" NOTNULL="true" UNSIGNED="false" SEQUENCE="false" PREVIOUS="timeend"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="id" TYPE="primary" FIELDS="id" COMMENT="primary key"/>
+      </KEYS>
+    </TABLE>
+  </TABLES>
+</XMLDB>
