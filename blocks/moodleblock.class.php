@@ -725,9 +725,24 @@ class block_base {
         throw new coding_exception('config_print() can no longer be used. Blocks should use a settings.php file.');
     }
 
+    /**
+     * Can be overridden by the block to prevent the block from being dockable.
+     * 
+     * @return bool
+     */
     public function instance_can_be_docked() {
         global $CFG;
         return (!empty($CFG->allowblockstodock) && $this->page->theme->enable_dock);
+    }
+
+    /**
+     * If overridden and set to true by the block it will not be hidable when
+     * editing is turned on.
+     *
+     * @return bool
+     */
+    public function instance_can_be_hidden() {
+        return true;
     }
 
     /** @callback callback functions for comments api */

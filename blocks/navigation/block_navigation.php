@@ -85,6 +85,16 @@ class block_navigation extends block_base {
         return true;
     }
 
+    /**
+     * The navigation block cannot be hidden by default as it is integral to
+     * the navigation of Moodle.
+     *
+     * @return false
+     */
+    function  instance_can_be_hidden() {
+        return false;
+    }
+
     function instance_can_be_docked() {
         return (parent::instance_can_be_docked() && (empty($this->config->enabledock) || $this->config->enabledock=='yes'));
     }

@@ -16,7 +16,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * This file keeps track of upgrades to the navigation block
+ * This file keeps track of upgrades to the settings block
  *
  * Sometimes, changes between versions involve alterations to database structures
  * and other major things that may break installations.
@@ -52,15 +52,15 @@
  * @param int $oldversion
  * @param object $block
  */
-function xmldb_block_navigation_upgrade($oldversion, $block) {
+function xmldb_block_settings_upgrade($oldversion, $block) {
     global $DB;
     // Implemented at 2009082800
 
     if ($oldversion < 2010091400) {
 
-        $sql = "SELECT bp.id FROM {block_instances} bi 
+        $sql = "SELECT bp.id FROM {block_instances} bi
                 LEFT JOIN {block_positions} bp ON bp.blockinstanceid=bi.id
-                WHERE bi.blockname='navigation' AND bp.visible=0";
+                WHERE bi.blockname='settings' AND bp.visible=0";
         $blockpositions = $DB->get_records_sql($sql);
         if ($blockpositions) {
             foreach ($blockpositions as $bp) {
@@ -69,7 +69,7 @@ function xmldb_block_navigation_upgrade($oldversion, $block) {
             }
         }
 
-        upgrade_block_savepoint(true, 2010091400, 'navigation');
+        upgrade_block_savepoint(true, 2010091400, 'settings');
     }
 
     return true;

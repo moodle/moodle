@@ -61,6 +61,16 @@ class block_settings extends block_base {
     }
 
     /**
+     * The settings block cannot be hidden by default as it is integral to
+     * the navigation of Moodle.
+     *
+     * @return false
+     */
+    function  instance_can_be_hidden() {
+        return false;
+    }
+
+    /**
      * Set the applicable formats for this block to all
      * @return array
      */

@@ -93,7 +93,10 @@ class block_manager {
 
 /// Field declarations =========================================================
 
-    /** @var moodle_page the moodle_page we are managing blocks for. */
+    /**
+     * the moodle_page we are managing blocks for.
+     * @var moodle_page
+     */
     protected $page;
 
     /** @var array region name => 1.*/
@@ -972,7 +975,7 @@ class block_manager {
                     'icon' => 'i/roles', 'caption' => get_string('assignroles', 'role'));
         }
 
-        if ($this->page->user_can_edit_blocks()) {
+        if ($this->page->user_can_edit_blocks() && $block->instance_can_be_hidden()) {
             // Show/hide icon.
             if ($block->instance->visible) {
                 $controls[] = array('url' => $actionurl . '&bui_hideid=' . $block->instance->id,
@@ -1096,6 +1099,8 @@ class block_manager {
 
         if (!$this->page->user_can_edit_blocks()) {
             throw new moodle_exception('nopermissions', '', $this->page->url->out(), get_string('hideshowblocks'));
+        } else if (!$block->instance_can_be_hidden()) {
+            return false;
         }
 
         blocks_set_visibility($block->instance, $this->page, $newvisibility);
