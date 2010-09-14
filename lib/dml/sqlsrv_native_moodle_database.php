@@ -263,7 +263,7 @@ class sqlsrv_native_moodle_database extends moodle_database {
             $server_info = sqlsrv_server_info($this->sqlsrv);
 
             if ($server_info) {
-                $info['server'] = $server_info['SQLServerName'];
+                $info['description'] = $server_info['SQLServerName'];
                 $info['version'] = $server_info['SQLServerVersion'];
                 $info['database'] = $server_info['CurrentDatabase'];
             }

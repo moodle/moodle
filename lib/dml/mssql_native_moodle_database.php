@@ -260,7 +260,7 @@ class mssql_native_moodle_database extends moodle_database {
             $result = mssql_query($sql, $this->mssql);
             $this->query_end($result);
             $row = mssql_fetch_row($result);
-            $info['server'] = $row[2];
+            $info['description'] = $row[2];
             $this->free_result($result);
 
             $sql = 'sp_server_info 500';
