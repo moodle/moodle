@@ -233,8 +233,13 @@ abstract class sql_generator {
             return $results;
         }
 
+        $sequencefield = null;
+
     /// Add the fields, separated by commas
         foreach ($xmldb_fields as $xmldb_field) {
+            if ($xmldb_field->getSequence()) {
+                $sequencefield = $xmldb_field->getName();
+            }
             $table .= "\n    " . $this->getFieldSQL($xmldb_field);
             $table .= ',';
         }
@@ -252,8 +257,20 @@ abstract class sql_generator {
                         $table .= "\nCONSTRAINT " . $keytext . ',';
                     }
                 }
+            /// make sure sequence field is unique
+                if ($sequencefield and $xmldb_key->getType() == XMLDB_KEY_PRIMARY) {
+                    $field = reset($xmldb_key->getFields());
+                    if ($sequencefield === $field) {
+                        $sequencefield = null;
+                    }
+                }
             }
         }
+    /// throw error if sequence field does not have unique key defined
+        if ($sequencefield) {
+            throw new ddl_exception('ddsequenceerror', $xmldb_table->getName());
+        }
+
     /// Table footer, trim the latest comma
         $table = trim($table,',');
         $table .= "\n)";

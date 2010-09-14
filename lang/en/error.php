@@ -186,6 +186,7 @@ $string['ddldependencyerror'] = '{$a->targettype} "{$a->targetname}" cannot be m
 $string['ddlexecuteerror'] = 'DDL sql execution error';
 $string['ddlfieldalreadyexists'] = 'Field "{$a}" already exists';
 $string['ddlfieldnotexist'] = 'Field "{$a->fieldname}" does not exist in table "{$a->tablename}"';
+$string['ddsequenceerror'] = 'Incorrect table "{$a}" definition; there can be only one auto column and it must be defined as a key.';
 $string['ddltablealreadyexists'] = 'Table "{$a}" already exists';
 $string['ddltablenotexist'] = 'Table "{$a}" does not exist';
 $string['ddlunknownerror'] = 'Unknown DDL library error';
