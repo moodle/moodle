@@ -782,6 +782,15 @@ class mssql_native_moodle_database extends moodle_database {
                 throw new coding_exception('moodle_database::insert_record_raw() id field must be specified if custom sequences used.');
             }
             $returnid = false;
+
+            // Disable IDENTITY column before inserting record with id
+            $sql = 'SET IDENTITY_INSERT {' . $table . '} ON'; // Yes, it' ON!!
+            list($sql, $xparams, $xtype) = $this->fix_sql_params($sql, null);
+            $this->query_start($sql, null, SQL_QUERY_AUX);
+            $result = mssql_query($sql, $this->mssql);
+            $this->query_end($result);
+            $this->free_result($result);
+
         } else {
             unset($params['id']);
             if ($returnid) {
@@ -811,6 +820,16 @@ class mssql_native_moodle_database extends moodle_database {
             $params['id'] = reset($row);
         }
         $this->free_result($result);
+
+        if ($customsequence) {
+            // Enable IDENTITY column after inserting record with id
+            $sql = 'SET IDENTITY_INSERT {' . $table . '} OFF'; // Yes, it' OFF!!
+            list($sql, $xparams, $xtype) = $this->fix_sql_params($sql, null);
+            $this->query_start($sql, null, SQL_QUERY_AUX);
+            $result = mssql_query($sql, $this->mssql);
+            $this->query_end($result);
+            $this->free_result($result);
+        }
 
         if (!$returnid) {
             return true;
@@ -874,31 +893,9 @@ class mssql_native_moodle_database extends moodle_database {
             $cleaned[$field] = $this->normalise_value($column, $value);
         }
 
-        // Disable IDENTITY column before inserting record with id
-        $sql = 'SET IDENTITY_INSERT {' . $table . '} ON'; // Yes, it' ON!!
+        $this->insert_record_raw($table, $cleaned, false, false, true);
 
-        list($sql, $params, $type) = $this->fix_sql_params($sql, null);
-
-        $this->query_start($sql, null, SQL_QUERY_AUX);
-        $result = mssql_query($sql, $this->mssql);
-        $this->query_end($result);
-
-        $this->free_result($result);
-
-        $insertresult = $this->insert_record_raw($table, $cleaned, false, false, true);
-
-        // Enable IDENTITY column after inserting record with id
-        $sql = 'SET IDENTITY_INSERT {' . $table . '} OFF'; // Yes, it' OFF!!
-
-        list($sql, $params, $type) = $this->fix_sql_params($sql, null);
-
-        $this->query_start($sql, null, SQL_QUERY_AUX);
-        $result = mssql_query($sql, $this->mssql);
-        $this->query_end($result);
-
-        $this->free_result($result);
-
-        return $insertresult;
+        return true;
     }
 
     /**
