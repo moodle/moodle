@@ -946,8 +946,8 @@ abstract class moodle_database {
     public function get_recordset_list($table, $field, array $values, $sort='', $fields='*', $limitfrom=0, $limitnum=0) {
         list($select, $params) = $this->where_clause_list($field, $values);
         if (empty($select)) {
-            $select = '? = ?'; /// Fake condition, won't return rows ever. MDL-17645
-            $params = array(1, 2);
+            $select = '1 = 2'; /// Fake condition, won't return rows ever. MDL-17645
+            $params = array();
         }
         return $this->get_recordset_select($table, $select, $params, $sort, $fields, $limitfrom, $limitnum);
     }
