@@ -120,10 +120,14 @@ class core_course_renderer extends plugin_renderer_base {
             $coursecount = 0;
             foreach ($category->courses as $course) {
                 $classes = array('course');
+                $linkclass = 'course_link';
+                if (!$course->visible) {
+                    $linkclass .= ' dimmed';
+                }
                 $coursecount ++;
                 $classes[] = ($coursecount%2)?'odd':'even';
                 $content .= html_writer::start_tag('div', array('class'=>join(' ', $classes)));
-                $content .= html_writer::link(new moodle_url('/course/view.php', array('id'=>$course->id)), s($course->fullname), array('class'=>'course_link'));
+                $content .= html_writer::link(new moodle_url('/course/view.php', array('id'=>$course->id)), format_text($course->fullname), array('class'=>$linkclass));
                 $content .= html_writer::start_tag('div', array('class'=>'course_info clearfix'));
 
                 $content .= html_writer::tag('div', '', array('class'=>'course_info_spacer'));
