@@ -168,7 +168,7 @@ class oci_native_moodle_database extends moodle_database {
         unset($this->dboptions['dbsocket']);
 
         // NOTE: use of ', ", / and \ is very problematic, even native oracle tools seem to have
-        //       problems with these, so just forget them and od not report problems into tracker...
+        //       problems with these, so just forget them and do not report problems into tracker...
 
         if (empty($this->dbhost)) {
             // old style full address (TNS)
