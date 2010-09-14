@@ -543,7 +543,11 @@ class sqlsrv_native_moodle_database extends moodle_database {
 
             // Process defaults
             $info->has_default = !empty($rawcolumn->default_value);
-            $info->default_value = preg_replace("/^[\(N]+[']?(.*?)[']?[\)]+$/", '\\1', $rawcolumn->default_value);
+            if ($rawcolumn->default_value === NULL) {
+                $info->default_value = NULL;
+            } else {
+                $info->default_value = preg_replace("/^[\(N]+[']?(.*?)[']?[\)]+$/", '\\1', $rawcolumn->default_value);
+            }
 
             // Process binary
             $info->binary = $info->meta_type == 'B' ? true : false;
