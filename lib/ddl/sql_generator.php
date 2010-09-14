@@ -918,9 +918,7 @@ abstract class sql_generator {
     /// We need this because sql statements are created before executing
     /// them, hence names doesn't exist "physically" yet in DB, so we need
     /// to known which ones have been used
-        if (!isset($used_names)) {
-            static $used_names = array();
-        }
+        static $used_names = array();
 
     /// Use standard naming. See http://docs.moodle.org/en/XMLDB_key_and_index_naming
         $tablearr = explode ('_', $tablename);
