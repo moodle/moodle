@@ -50,7 +50,6 @@ class oci_native_moodle_database extends moodle_database {
     private $dblocks_supported = null; // To cache locks support along the connection life
     private $bitwise_supported = null; // To cache bitwise operations support along the connection life
 
-
     /**
      * Detects if all needed PHP stuff installed.
      * Note: can be used before connect()
@@ -96,7 +95,7 @@ class oci_native_moodle_database extends moodle_database {
      * @return string
      */
     public function get_name() {
-        return get_string('nativeoci', 'install'); // TODO: localise
+        return get_string('nativeoci', 'install');
     }
 
     /**
@@ -114,7 +113,20 @@ class oci_native_moodle_database extends moodle_database {
      * @return string
      */
     public function get_configuration_hints() {
-        return get_string('databasesettingssub_oci', 'install'); // TODO: l
+        return get_string('databasesettingssub_oci', 'install');
+    }
+
+    /**
+     * Diagnose database and tables, this function is used
+     * to verify database and driver settings, db engine types, etc.
+     *
+     * @return string null means everything ok, string means problem found.
+     */
+    public function diagnose() {
+        if (!$this->bitwise_supported() or !$this->session_lock_supported()) {
+            return 'Oracle PL/SQL Moodle support packages are not installed! Database administrator has to execute /lib/dml/oci_native_moodle_package.sql script.';
+        }
+        return null;
     }
 
     /**
