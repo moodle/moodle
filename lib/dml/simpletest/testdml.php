@@ -390,7 +390,7 @@ class dml_test extends UnitTestCase {
         $sql = "SELECT * FROM {{$tablename}} WHERE name IN (?,?,?,?,?,?)";
         $inparams = array('abc', 'ABC', NULL, '1', 1, 1.4);
         list($sql, $params) = $DB->fix_sql_params($sql, $inparams);
-        $this->assertIdentical($params, $inparams);
+        $this->assertIdentical(array_values($params), array_values($inparams));
     }
 
     public function test_get_tables() {
