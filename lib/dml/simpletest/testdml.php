@@ -3014,8 +3014,8 @@ class dml_test extends UnitTestCase {
         $this->assertEqual(1, reset($records)->id);
         $this->assertEqual(2, next($records)->id);
 
-        // try embeding sql_xxxx() helper functions, to check they don't break params/binding
-        $count = $DB->count_records($tablename, array('course' => 3, $DB->sql_compare_text('content') => 'hello'));
+        // do NOT try embedding sql_xxxx() helper functions in conditions array of count_records(), they don't break params/binding!
+        $count = $DB->count_records_select($tablename, "course = :course AND ".$DB->sql_compare_text('content')." = :content", array('course' => 3, 'content' => 'hello'));
         $this->assertEqual(1, $count);
     }
 
