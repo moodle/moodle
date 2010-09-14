@@ -87,6 +87,17 @@ class restore_gradebook_step extends restore_structure_step {
             return false;
         }
 
+        // Some module present in backup file isn't available to restore
+        // in this site, don't execute
+        if ($this->task->is_missing_modules()) {
+            return false;
+        }
+
+        // Some activity has been excluded to be restored, don't execute
+        if ($this->task->is_excluding_activities()) {
+            return false;
+        }
+
         // Arrived here, execute the step
         return true;
      }

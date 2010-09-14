@@ -37,6 +37,8 @@ class restore_plan extends base_plan implements loggable {
     protected $basepath;   // Fullpath to dir where backup is available
     protected $preloaded;  // When executing the plan, do we have preloaded (from checks) info
     protected $decoder;    // restore_decode_processor in charge of decoding all the interlinks
+    protected $missingmodules; // to flag if restore has detected some missing module
+    protected $excludingdactivities; // to flag if restore settings are excluding any activity
 
     /**
      * Constructor - instantiates one object of this class
@@ -51,6 +53,9 @@ class restore_plan extends base_plan implements loggable {
         $this->basepath   = $CFG->dataroot . '/temp/backup/' . $controller->get_tempdir();
         $this->preloaded  = false;
         $this->decoder    = new restore_decode_processor($this->get_restoreid(), $this->get_info()->original_wwwroot, $CFG->wwwroot);
+        $this->missingmodules = false;
+        $this->excludingdactivities = false;
+
         parent::__construct('restore_plan');
     }
 
@@ -96,6 +101,14 @@ class restore_plan extends base_plan implements loggable {
         return $this->controller->is_samesite();
     }
 
+    public function is_missing_modules() {
+        return $this->missingmodules;
+    }
+
+    public function is_excluding_activities() {
+        return $this->excludingdactivities;
+    }
+
     public function set_preloaded_information() {
         $this->preloaded = true;
     }
@@ -106,6 +119,14 @@ class restore_plan extends base_plan implements loggable {
 
     public function get_tempdir() {
         return $this->controller->get_tempdir();
+    }
+
+    public function set_missing_modules() {
+        $this->missingmodules = true;
+    }
+
+    public function set_excluding_activities() {
+        $this->excludingdactivities = true;
     }
 
     public function log($message, $level, $a = null, $depth = null, $display = false) {

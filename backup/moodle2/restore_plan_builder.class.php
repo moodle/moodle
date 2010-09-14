@@ -124,7 +124,10 @@ abstract class restore_plan_builder {
                     // TODO: Debug information about block not supported
                 }
             }
+        } else { // Activity is missing in target site, inform plan about that
+            $plan->set_missing_modules();
         }
+
     }
 
     /**
