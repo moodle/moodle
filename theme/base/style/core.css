@@ -669,3 +669,9 @@ body.tag .managelink {padding: 5px;}
 .jsenabled .mediaplugin.mediaplugin_flv object {height:600px;width:800px;}
 
 .ie .mediaplugin.mediaplugin_mp3 object{height:20px;}
+
+/**
+ * Fix for broken YUI images in the menunav component
+ */
+.yui3-skin-sam .yui3-menu-horizontal .yui3-menu-label,
+.yui3-skin-sam .yui3-menu-horizontal .yui3-menu-content {background-image:none;}
