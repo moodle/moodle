@@ -62,7 +62,8 @@ class restore_section_task extends restore_task {
         $this->contextid = get_context_instance(CONTEXT_COURSE, $this->get_courseid())->id;
 
         // Executed conditionally if restoring to new course or deleting or if overwrite_conf setting is enabled
-        if ($this->get_target() == backup::TARGET_NEW_COURSE || $this->get_setting_value('overwrite_conf') == true) {
+        if ($this->get_target() == backup::TARGET_NEW_COURSE || $this->get_target() == backup::TARGET_CURRENT_DELETING ||
+            $this->get_target() == backup::TARGET_EXISTING_DELETING || $this->get_setting_value('overwrite_conf') == true) {
             $this->add_step(new restore_section_structure_step('course_info', 'section.xml'));
         }
 
