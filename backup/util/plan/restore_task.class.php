@@ -83,6 +83,10 @@ abstract class restore_task extends base_task {
         return $this->plan->get_tempdir();
     }
 
+    public function get_old_courseid() {
+        return $this->plan->get_info()->original_course_id;
+    }
+
     public function get_old_contextid() {
         return $this->plan->get_info()->original_course_contextid;
     }

@@ -47,6 +47,11 @@ class restore_create_and_clean_temp_stuff extends restore_execution_step {
         $itemid = $this->task->get_old_system_contextid();
         $newitemid = get_context_instance(CONTEXT_SYSTEM)->id;
         restore_dbops::set_backup_ids_record($this->get_restoreid(), 'context', $itemid, $newitemid);
+        // Create the old-course-id to new-course-id mapping, we need that available since the beginning
+        $itemid = $this->task->get_old_courseid();
+        $newitemid = $this->get_courseid();
+        restore_dbops::set_backup_ids_record($this->get_restoreid(), 'course', $itemid, $newitemid);
+
     }
 }
 
@@ -949,9 +954,6 @@ class restore_course_structure_step extends restore_structure_step {
 
         // Course record ready, update it
         $DB->update_record('course', $data);
-
-        // Set course mapping
-        $this->set_mapping('course', $oldid, $data->id);
 
         // Course tags
         if (!empty($CFG->usetags) && isset($coursetags)) { // if enabled in server and present in backup
