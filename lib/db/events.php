@@ -41,7 +41,8 @@ $handlers = array(
     'portfolio_send' => array (
         'handlerfile'      => '/lib/portfolio.php',
         'handlerfunction'  => 'portfolio_handle_event',    // argument to call_user_func(), could be an array
-        'schedule'         => 'cron'
+        'schedule'         => 'cron',
+        'internal'         => 0,
     ),
 
 

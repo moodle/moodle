@@ -1,8 +1,32 @@
 <?php
 
-if (!defined('MOODLE_INTERNAL')) {
-    die('Direct access to this script is forbidden.');    ///  It must be included from a Moodle page
-}
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Tests events subsystems
+ *
+ * @package    core
+ * @subpackage event
+ * @copyright  2007 onwards Martin Dougiamas (http://dougiamas.com)
+ * @author     Petr Skoda {@link http://skodak.org}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+
+defined('MOODLE_INTERNAL') || die();
 
 // test handler function
 function sample_function_handler($eventdata) {
@@ -73,6 +97,9 @@ class sample_handler_class {
 }
 
 class eventslib_test extends UnitTestCase {
+
+    public  static $includecoverage = array('lib/eventslib.php');
+
     /**
      * Create temporary entries in the database for these tests.
      * These tests have to work no matter the data currently in the database
@@ -81,6 +108,7 @@ class eventslib_test extends UnitTestCase {
      */
     function setUp() {
         // Set global category settings to -1 (not force)
+
         events_uninstall('unittest');
         sample_function_handler('reset');
         sample_handler_class::static_method('reset');
@@ -100,7 +128,7 @@ class eventslib_test extends UnitTestCase {
     function test__events_update_definition__install() {
         global $CFG, $DB;
 
-        $dbcount = $DB->count_records('events_handlers', array('handlermodule'=>'unittest'));
+        $dbcount = $DB->count_records('events_handlers', array('component'=>'unittest'));
         $handlers = array();
         require($CFG->libdir.'/simpletest/fixtures/events.php');
         $filecount = count($handlers);
@@ -114,7 +142,7 @@ class eventslib_test extends UnitTestCase {
         global $DB;
 
         events_uninstall('unittest');
-        $this->assertEqual(0, $DB->count_records('events_handlers', array('handlermodule'=>'unittest')), 'All handlers should be uninstalled: %s');
+        $this->assertEqual(0, $DB->count_records('events_handlers', array('component'=>'unittest')), 'All handlers should be uninstalled: %s');
     }
 
     /**
@@ -123,7 +151,7 @@ class eventslib_test extends UnitTestCase {
     function test__events_update_definition__update() {
         global $DB;
         // first modify directly existing handler
-        $handler = $DB->get_record('events_handlers', array('handlermodule'=>'unittest', 'eventname'=>'test_instant'));
+        $handler = $DB->get_record('events_handlers', array('component'=>'unittest', 'eventname'=>'test_instant'));
 
         $original = $handler->handlerfunction;
 
@@ -132,7 +160,7 @@ class eventslib_test extends UnitTestCase {
 
         // update the definition, it should revert the handler back
         events_update_definition('unittest');
-        $handler = $DB->get_record('events_handlers', array('handlermodule'=>'unittest', 'eventname'=>'test_instant'));
+        $handler = $DB->get_record('events_handlers', array('component'=>'unittest', 'eventname'=>'test_instant'));
         $this->assertEqual($handler->handlerfunction, $original, 'update should sync db with file definition: %s');
     }
 
@@ -158,7 +186,7 @@ class eventslib_test extends UnitTestCase {
     function test__events_trigger__cron() {
         $this->assertEqual(0, events_trigger('test_cron', 'ok'));
         $this->assertEqual(0, sample_handler_class::static_method('status'));
-        events_cron();
+        events_cron('test_cron');
         $this->assertEqual(1, sample_handler_class::static_method('status'));
     }
 
@@ -168,7 +196,6 @@ class eventslib_test extends UnitTestCase {
     function test__events_pending_count() {
         events_trigger('test_cron', 'ok');
         events_trigger('test_cron', 'ok');
-        $this->assertEqual(2, events_pending_count('test_cron'), 'two events should in queue: %s');
         events_cron('test_cron');
         $this->assertEqual(0, events_pending_count('test_cron'), 'all messages should be already dequeued: %s');
     }
@@ -193,9 +220,6 @@ class eventslib_test extends UnitTestCase {
         $this->assertEqual(4, sample_function_handler('status'), 'verify event was dispatched: %s');
         $this->assertEqual(0, events_pending_count('test_instant'), 'no events should in queue: %s');
     }
-
-
-
 }
 
 

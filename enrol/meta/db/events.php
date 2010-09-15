@@ -31,30 +31,35 @@ $handlers = array (
     'role_assigned' => array (
         'handlerfile'      => '/enrol/meta/locallib.php',
         'handlerfunction'  => array('enrol_meta_handler', 'role_assigned'),
-        'schedule'         => 'instant'
+        'schedule'         => 'instant',
+        'internal'         => 1,
     ),
 
     'role_unassigned' => array (
         'handlerfile'      => '/enrol/meta/locallib.php',
         'handlerfunction'  => array('enrol_meta_handler', 'role_unassigned'),
-        'schedule'         => 'instant'
+        'schedule'         => 'instant',
+        'internal'         => 1,
     ),
 
     'user_enrolled' => array (
         'handlerfile'      => '/enrol/meta/locallib.php',
         'handlerfunction'  => array('enrol_meta_handler', 'user_enrolled'),
-        'schedule'         => 'instant'
+        'schedule'         => 'instant',
+        'internal'         => 1,
     ),
 
     'user_unenrolled' => array (
         'handlerfile'      => '/enrol/meta/locallib.php',
         'handlerfunction'  => array('enrol_meta_handler', 'user_unenrolled'),
-        'schedule'         => 'instant'
+        'schedule'         => 'instant',
+        'internal'         => 1,
     ),
 
     'course_deleted' => array (
         'handlerfile'      => '/enrol/meta/locallib.php',
         'handlerfunction'  => array('enrol_meta_handler', 'course_deleted'),
-        'schedule'         => 'instant'
+        'schedule'         => 'instant',
+        'internal'         => 1,
     ),
 );

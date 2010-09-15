@@ -1976,18 +1976,6 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         upgrade_main_savepoint(true, 2009061704);
     }
 
-    if ($oldversion < 2009061705) {
-        // change component string in events_handlers records to new "_" format
-        if ($handlers = $DB->get_records('events_handlers')) {
-            foreach ($handlers as $handler) {
-                $handler->handlermodule = str_replace('/', '_', $handler->handlermodule);
-                $DB->update_record('events_handlers', $handler);
-            }
-        }
-        unset($handlers);
-        upgrade_main_savepoint(true, 2009061705);
-    }
-
     if ($oldversion < 2009063000) {
         // upgrade format of _with_advanced settings - quiz only
         // note: this can be removed later, not needed for upgrades from 1.9.x
@@ -5173,6 +5161,89 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         // Main savepoint reached
         upgrade_main_savepoint(true, 2010091504);
     }
+
+    if ($oldversion < 2010091505) {
+        // drop all events queued from 1.9, unfortunately we can not process them because the serialisation of data changed
+        // also the events format was changed....
+        $DB->delete_records('events_queue_handlers', array());
+        $DB->delete_records('events_queue', array());
+
+        //reset all status fields too
+        $DB->set_field('events_handlers', 'status', 0, array());
+
+        upgrade_main_savepoint(true, 2010091505);
+    }
+
+    if ($oldversion < 2010091506) {
+        // change component string in events_handlers records to new "_" format
+        if ($handlers = $DB->get_records('events_handlers')) {
+            foreach ($handlers as $handler) {
+                $handler->handlermodule = str_replace('/', '_', $handler->handlermodule);
+                $DB->update_record('events_handlers', $handler);
+            }
+        }
+        unset($handlers);
+        upgrade_main_savepoint(true, 2010091506);
+    }
+
+    if ($oldversion < 2010091507) {
+
+        // Define index eventname-handlermodule (unique) to be dropped form events_handlers
+        $table = new xmldb_table('events_handlers');
+        $index = new xmldb_index('eventname-handlermodule', XMLDB_INDEX_UNIQUE, array('eventname', 'handlermodule'));
+
+        // Conditionally launch drop index eventname-handlermodule
+        if ($dbman->index_exists($table, $index)) {
+            $dbman->drop_index($table, $index);
+        }
+
+        // Main savepoint reached
+        upgrade_main_savepoint(true, 2010091507);
+    }
+
+    if ($oldversion < 2010091508) {
+
+        // Rename field handlermodule on table events_handlers to component
+        $table = new xmldb_table('events_handlers');
+        $field = new xmldb_field('handlermodule', XMLDB_TYPE_CHAR, '166', null, XMLDB_NOTNULL, null, null, 'eventname');
+
+        // Launch rename field handlermodule
+        $dbman->rename_field($table, $field, 'component');
+
+        // Main savepoint reached
+        upgrade_main_savepoint(true, 2010091508);
+    }
+
+    if ($oldversion < 2010091509) {
+
+        // Define index eventname-component (unique) to be added to events_handlers
+        $table = new xmldb_table('events_handlers');
+        $index = new xmldb_index('eventname-component', XMLDB_INDEX_UNIQUE, array('eventname', 'component'));
+
+        // Conditionally launch add index eventname-component
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Main savepoint reached
+        upgrade_main_savepoint(true, 2010091509);
+    }
+
+    if ($oldversion < 2010091510) {
+
+        // Define field internal to be added to events_handlers
+        $table = new xmldb_table('events_handlers');
+        $field = new xmldb_field('internal', XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '1', 'status');
+
+        // Conditionally launch add field internal
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Main savepoint reached
+        upgrade_main_savepoint(true, 2010091510);
+    }
+
 
     return true;
 }

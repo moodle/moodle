@@ -31,13 +31,15 @@ $handlers = array (
     'role_assigned' => array (
         'handlerfile'      => '/enrol/category/locallib.php',
         'handlerfunction'  => array('enrol_category_handler', 'role_assigned'),
-        'schedule'         => 'instant'
+        'schedule'         => 'instant',
+        'internal'         => 1,
     ),
 
     'role_unassigned' => array (
         'handlerfile'      => '/enrol/category/locallib.php',
         'handlerfunction'  => array('enrol_category_handler', 'role_unassigned'),
-        'schedule'         => 'instant'
+        'schedule'         => 'instant',
+        'internal'         => 1,
     ),
 
 );

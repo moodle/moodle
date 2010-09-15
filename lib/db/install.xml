@@ -1550,18 +1550,19 @@
     <TABLE NAME="events_handlers" COMMENT="This table is for storing which components requests what type of event, and the location of the responsible handlers. For example, the assignment registers 'grade_updated' event with a function assignment_grade_handler() that should be called event time an 'grade_updated' event is triggered by grade_update() function." PREVIOUS="events_queue" NEXT="events_queue_handlers">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="eventname"/>
-        <FIELD NAME="eventname" TYPE="char" LENGTH="166" NOTNULL="true" SEQUENCE="false" COMMENT="name of the event, e.g. 'grade_updated'" PREVIOUS="id" NEXT="handlermodule"/>
-        <FIELD NAME="handlermodule" TYPE="char" LENGTH="166" NOTNULL="true" SEQUENCE="false" COMMENT="e.g. moodle, mod/forum, block/rss_client" PREVIOUS="eventname" NEXT="handlerfile"/>
-        <FIELD NAME="handlerfile" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="path to the file of the function, eg /grade/export/lib.php" PREVIOUS="handlermodule" NEXT="handlerfunction"/>
+        <FIELD NAME="eventname" TYPE="char" LENGTH="166" NOTNULL="true" SEQUENCE="false" COMMENT="name of the event, e.g. 'grade_updated'" PREVIOUS="id" NEXT="component"/>
+        <FIELD NAME="component" TYPE="char" LENGTH="166" NOTNULL="true" SEQUENCE="false" COMMENT="e.g. moodle, mod_forum, block_rss_client" PREVIOUS="eventname" NEXT="handlerfile"/>
+        <FIELD NAME="handlerfile" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="path to the file of the function, eg /grade/export/lib.php" PREVIOUS="component" NEXT="handlerfunction"/>
         <FIELD NAME="handlerfunction" TYPE="text" LENGTH="medium" NOTNULL="false" SEQUENCE="false" COMMENT="serialized string or array describing function, suitable to be passed to call_user_func()" PREVIOUS="handlerfile" NEXT="schedule"/>
         <FIELD NAME="schedule" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="'cron' or 'instant'." PREVIOUS="handlerfunction" NEXT="status"/>
-        <FIELD NAME="status" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="number of failed attempts to process this handler" PREVIOUS="schedule"/>
+        <FIELD NAME="status" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="number of failed attempts to process this handler" PREVIOUS="schedule" NEXT="internal"/>
+        <FIELD NAME="internal" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" COMMENT="1 means standard plugin handler, 0 indicates if event handler sends data to external systems, this is used for example to prevent immediate sending of events from pending db transactions" PREVIOUS="status"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
       </KEYS>
       <INDEXES>
-        <INDEX NAME="eventname-handlermodule" UNIQUE="true" FIELDS="eventname, handlermodule"/>
+        <INDEX NAME="eventname-component" UNIQUE="true" FIELDS="eventname, component"/>
       </INDEXES>
     </TABLE>
     <TABLE NAME="events_queue_handlers" COMMENT="This is the list of queued handlers for processing. The event object is retrieved from the events_queue table. When no further reference is made to the event_queues table, the corresponding entry in the events_queue table should be deleted. Entry should get deleted after a successful event processing by the specified handler." PREVIOUS="events_handlers" NEXT="grade_outcomes">
@@ -2608,7 +2609,7 @@
     <TABLE NAME="registration_hubs" COMMENT="hub where the site is registered on with their associated token" PREVIOUS="license" NEXT="backup_controllers">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="token"/>
-        <FIELD NAME="token" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="id" NEXT="hubname"/>
+        <FIELD NAME="token" TYPE="char" LENGTH="40" NOTNULL="true" SEQUENCE="false" PREVIOUS="id" NEXT="hubname"/>
         <FIELD NAME="hubname" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="token" NEXT="huburl"/>
         <FIELD NAME="huburl" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="hubname" NEXT="confirmed"/>
         <FIELD NAME="confirmed" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="huburl"/>
