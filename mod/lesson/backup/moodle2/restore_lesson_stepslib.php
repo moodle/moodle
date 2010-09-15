@@ -81,11 +81,6 @@ class restore_lesson_activity_structure_step extends restore_activity_structure_
 
         $newitemid = $DB->insert_record('lesson_pages', $data);
         $this->set_mapping('lesson_page', $oldid, $newitemid, true); // Has related fileareas
-
-        //now update previous page with newitemid as the nextpageid
-        if (!empty($data->prevpageid)) {
-            $DB->set_field('lesson_pages', 'nextpageid', $newitemid, array('id' => $data->prevpageid));
-        }
     }
 
     protected function process_lesson_answer($data) {
