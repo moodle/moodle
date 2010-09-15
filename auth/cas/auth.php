@@ -370,6 +370,13 @@ if ( !is_object($PHPCAS_CLIENT) ) {
      * @return mixed array with no magic quotes or false on error
      */
     function get_userinfo($username) {
+        // No LDAP servers configured, so user info has to be provided
+        // via other methods (CSV file, manually, etc.). Return empty
+        // array so existing user info is not lost.
+        if (empty($this->config->host_url)) {
+            return array();
+        }
+
         $textlib = textlib_get_instance();
         $extusername = $textlib->convert(stripslashes($username), 'utf-8', $this->config->ldapencoding);
         $ldapconnection = $this->ldap_connect();
