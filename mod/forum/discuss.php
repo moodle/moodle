@@ -204,7 +204,7 @@
     }
 
 /// Print the controls across the top
-    echo '<div class="discussioncontrols">';
+    echo '<div class="discussioncontrols clearfix">';
 
     // groups selector not needed here
     echo '<div class="displaymode">';
