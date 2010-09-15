@@ -1167,6 +1167,7 @@ function get_mimetypes_array() {
         'js'   => array ('type'=>'application/x-javascript', 'icon'=>'text'),
         'latex'=> array ('type'=>'application/x-latex', 'icon'=>'text'),
         'm'    => array ('type'=>'text/plain', 'icon'=>'text'),
+        'mbz'  => array ('type'=>'application/vnd.moodle.backup', 'icon'=>'moodle'),
         'mov'  => array ('type'=>'video/quicktime', 'icon'=>'video'),
         'movie'=> array ('type'=>'video/x-sgi-movie', 'icon'=>'video'),
         'm3u'  => array ('type'=>'audio/x-mpegurl', 'icon'=>'audio'),
