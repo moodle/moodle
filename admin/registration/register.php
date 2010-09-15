@@ -133,7 +133,7 @@ if (!empty($fromform) and empty($update) and confirm_sesskey()) {
         if (empty($unconfirmedhub)) {
             //we save the token into the communication table in order to have a reference
             $unconfirmedhub = new stdClass();
-            $unconfirmedhub->token = md5(uniqid(rand(), 1));
+            $unconfirmedhub->token = get_site_identifier();
             $unconfirmedhub->huburl = $huburl;
             $unconfirmedhub->hubname = $hubname;
             $unconfirmedhub->confirmed = 0;

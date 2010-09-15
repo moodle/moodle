@@ -5144,6 +5144,18 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         upgrade_main_savepoint(true, 2010091303);
     }
 
+    if ($oldversion < 2010091500) {
+
+        // Changing precision of field token on table registration_hubs to (255)
+        $table = new xmldb_table('registration_hubs');
+        $field = new xmldb_field('token', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, 'id');
+
+        // Launch change of precision for field token
+        $dbman->change_field_precision($table, $field);
+
+        // Main savepoint reached
+        upgrade_main_savepoint(true, 2010091500);
+    }
 
     return true;
 }
