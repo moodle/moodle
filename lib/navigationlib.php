@@ -3905,6 +3905,8 @@ class navigation_cache {
             foreach (self::$volatilecaches as $area) {
                 $SESSION->navcache->{$area} = array();
             }
+        } else {
+            $SESSION->navcache = new stdClass;
         }
     }
 }
