@@ -1799,9 +1799,15 @@ function initialise_filepicker($args) {
 
     $user_context = get_context_instance(CONTEXT_USER, $USER->id);
 
+    list($context, $course, $cm) = get_context_info_array($context->id);
+    $contexts = array($user_context, get_system_context());
+    if (!empty($course)) {
+        // adding course context
+        $contexts[] = get_context_instance(CONTEXT_COURSE, $course->id);
+    }
     $externallink = (int)get_config(null, 'repositoryallowexternallinks');
     $repositories = repository::get_instances(array(
-        'context'=>array($user_context, get_system_context()),
+        'context'=>$contexts,
         'currentcontext'=> $context,
         'accepted_types'=>$args->accepted_types,
         'return_types'=>$args->return_types,
