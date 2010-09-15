@@ -1705,6 +1705,9 @@ function get_category_or_system_context($categoryid) {
 function rebuild_course_cache($courseid=0, $clearonly=false) {
     global $COURSE, $DB, $OUTPUT;
 
+    // Destroy navigation caches
+    navigation_cache::destroy_volatile_caches();
+
     if ($clearonly) {
         if (empty($courseid)) {
             $courseselect = array();
