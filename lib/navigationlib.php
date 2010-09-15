@@ -1265,14 +1265,21 @@ class global_navigation extends navigation_node {
      * @param navigation_node $parent
      */
     protected function add_category($cat, navigation_node $parent) {
-        $category = $parent->get($cat['category']->id, navigation_node::TYPE_CATEGORY);
-        if (!$category) {
+        $categorynode = $parent->get($cat['category']->id, navigation_node::TYPE_CATEGORY);
+        if (!$categorynode) {
             $category = $cat['category'];
             $url = new moodle_url('/course/category.php', array('id'=>$category->id));
-            $category = $parent->add($category->name, null, self::TYPE_CATEGORY, $category->name, $category->id);
+            $categorynode = $parent->add($category->name, null, self::TYPE_CATEGORY, $category->name, $category->id);
+            if (empty($category->visible)) {
+                if (has_capability('moodle/category:viewhiddencategories', get_system_context())) {
+                    $categorynode->hidden = true;
+                } else {
+                    $categorynode->display = false;
+                }
+            }
         }
         foreach ($cat['children'] as $child) {
-            $this->add_category($child, $category);
+            $this->add_category($child, $categorynode);
         }
     }
 
