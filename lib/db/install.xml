@@ -2609,7 +2609,7 @@
     <TABLE NAME="registration_hubs" COMMENT="hub where the site is registered on with their associated token" PREVIOUS="license" NEXT="backup_controllers">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="token"/>
-        <FIELD NAME="token" TYPE="char" LENGTH="40" NOTNULL="true" SEQUENCE="false" PREVIOUS="id" NEXT="hubname"/>
+        <FIELD NAME="token" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="id" NEXT="hubname"/>
         <FIELD NAME="hubname" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="token" NEXT="huburl"/>
         <FIELD NAME="huburl" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="hubname" NEXT="confirmed"/>
         <FIELD NAME="confirmed" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="huburl"/>
