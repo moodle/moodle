@@ -1512,7 +1512,7 @@ function insert_record($table, $dataobject, $returnid=true, $primarykey='id') {
         $seqname = find_sequence_name($xmldb_table);
         if (!$seqname) {
         /// Fallback, seqname not found, something is wrong. Inform and use the alternative getNameForObject() method
-            debugging('Sequence name for table ' . $table->getName() . ' not found', DEBUG_DEVELOPER);
+            debugging('Sequence name for table ' . $xmldb_table->getName() . ' not found', DEBUG_DEVELOPER);
             $generator = new XMLDBoci8po();
             $generator->setPrefix($CFG->prefix);
             $seqname = $generator->getNameForObject($table, $primarykey, 'seq');
