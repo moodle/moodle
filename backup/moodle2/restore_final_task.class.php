@@ -42,8 +42,10 @@ class restore_final_task extends restore_task {
             $this->add_step(new restore_review_pending_block_positions('review_block_positions'));
         }
 
-        // Gradebook
-        $this->add_step(new restore_gradebook_step('gradebook_step','gradebook.xml'));
+        // Gradebook. Don't restore the gradebook unless activities are being restored.
+        if ($this->get_setting_value('activities')) {
+            $this->add_step(new restore_gradebook_structure_step('gradebook_step','gradebook.xml'));
+        }
 
         // Review all the module_availability records in backup_ids in order
         // to match them with existing modules / grade items.

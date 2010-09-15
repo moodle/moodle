@@ -665,7 +665,8 @@ class backup_gradebook_structure_step extends backup_structure_step {
         //grade_categories
         $grade_categories = new backup_nested_element('grade_categories');
         $grade_category   = new backup_nested_element('grade_category', array('id'), array(
-                'courseid', 'parent', 'depth', 'path', 'fullname', 'aggregation', 'keephigh',
+                //'courseid', 
+                'parent', 'depth', 'path', 'fullname', 'aggregation', 'keephigh',
                 'dropload', 'aggregateonlygraded', 'aggregateoutcomes', 'aggregatesubcats',
                 'timecreated', 'timemodified'));
 
@@ -713,6 +714,9 @@ class backup_gradebook_structure_step extends backup_structure_step {
         // Annotations (both as final as far as they are going to be exported in next steps)
         $grade_item->annotate_ids('scalefinal', 'scaleid'); // Straight as scalefinal because it's > 0
         $grade_item->annotate_ids('outcomefinal', 'outcomeid');
+
+        //just in case there are any users not already annotated by the activities
+        $grade_grade->annotate_ids('userfinal', 'userid');
 
         // Return the root element
         return $gradebook;

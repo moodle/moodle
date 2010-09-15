@@ -69,7 +69,7 @@ class restore_drop_and_clean_temp_stuff extends restore_execution_step {
 /**
  * Restore calculated grade items, grade categories etc
  */
-class restore_gradebook_step extends restore_structure_step {
+class restore_gradebook_structure_step extends restore_structure_step {
 
     /**
      * To conditionally decide if this step must be executed
@@ -78,7 +78,7 @@ class restore_gradebook_step extends restore_structure_step {
      * not being restore settings (files, site settings...)
      */
      protected function execute_condition() {
-        global $CFG;
+        global $CFG, $DB;
 
         // No gradebook info found, don't execute
         $fullpath = $this->task->get_taskbasepath();
@@ -95,6 +95,16 @@ class restore_gradebook_step extends restore_structure_step {
 
         // Some activity has been excluded to be restored, don't execute
         if ($this->task->is_excluding_activities()) {
+            return false;
+        }
+
+        // There should only be one grade category (the 1 associated with the course itself)
+        // If other categories already exist we're restoring into an existing course.
+        // Restoring categories into a course with an existing category structure is unlikely to go well
+        $category = new stdclass();
+        $category->courseid  = $this->get_courseid();
+        $catcount = $DB->count_records('grade_categories', (array)$category);
+        if ($catcount>1) {
             return false;
         }
 
@@ -159,7 +169,8 @@ class restore_gradebook_step extends restore_structure_step {
                 $category = new stdclass();
                 $category->courseid  = $this->get_courseid();
                 $category->parent  = null;
-                $category->fullname  = '?';
+                //course category fullname starts out as ? but may be edited
+                //$category->fullname  = '?';
 
                 $coursecategory = $DB->get_record('grade_categories', (array)$category);
                 $gi->iteminstance = $coursecategory->id;
@@ -194,6 +205,8 @@ class restore_gradebook_step extends restore_structure_step {
         $data->userid = $this->get_mappingid('user', $data->userid);
         $data->usermodified = $this->get_mappingid('user', $data->usermodified);
         $data->locktime     = $this->apply_date_offset($data->locktime);
+        // TODO: Ask, all the rest of locktime/exported... work with time... to be rolled?
+        $data->overridden = $this->apply_date_offset($data->overridden);
         $data->timecreated  = $this->apply_date_offset($data->timecreated);
         $data->timemodified = $this->apply_date_offset($data->timemodified);
 
@@ -231,19 +244,9 @@ class restore_gradebook_step extends restore_structure_step {
 
         //need to insert a course category
         if (empty($newitemid)) {
-            if (!empty($data->parent)) {
-                $data->parent = $this->get_mappingid('grade_category', $data->parent);
-            }
             $newitemid = $DB->insert_record('grade_categories', $data);
         }
         $this->set_mapping('grade_category', $oldid, $newitemid);
-
-        //need to correct the path as its a string that contains grade category IDs
-        $grade_category = new stdclass();
-        $grade_category->parent = $data->parent;
-        $grade_category->id = $newitemid;
-        $grade_category->path = grade_category::build_path($grade_category);
-        $DB->update_record('grade_categories', $grade_category);
     }
     protected function process_grade_letter($data) {
         global $DB;
@@ -252,6 +255,7 @@ class restore_gradebook_step extends restore_structure_step {
         $oldid = $data->id;
 
         $data->contextid = $this->get_mappingid('context', $data->contextid);
+        //$data->contextid = $this->task->get_contextid();
 
         $newitemid = $DB->insert_record('grade_letters', $data);
         $this->set_mapping('grade_letter', $oldid, $newitemid);
@@ -281,8 +285,39 @@ class restore_gradebook_step extends restore_structure_step {
                     $updateobj->needsupdate=1;
                 }
                 $DB->update_record('grade_items', $updateobj);
+            }
+        }
+        $rs->close();
 
-                //todo need to get hold of the grade_items previous sortorder to restore it
+        //need to correct the grade category path and parent
+        $conditions = array(
+            'courseid' => $this->get_courseid()
+        );
+        $grade_category = new stdclass();
+        
+        $rs = $DB->get_recordset('grade_categories', $conditions);
+        if (!empty($rs)) {
+            //get all the parents correct first as grade_category::build_path() loads category parents from the DB
+            foreach($rs as $gc) {
+                if (!empty($gc->parent)) {
+                    $grade_category->id = $gc->id;
+                    $grade_category->parent = $this->get_mappingid('grade_category', $gc->parent);
+                    $DB->update_record('grade_categories', $grade_category);
+                }
+            }
+        }
+        if (isset($grade_category->parent)) {
+            unset($grade_category->parent);
+        }
+        $rs->close();
+
+        $rs = $DB->get_recordset('grade_categories', $conditions);
+        if (!empty($rs)) {
+            //now we can rebuild all the paths
+            foreach($rs as $gc) {
+                $grade_category->id = $gc->id;
+                $grade_category->path = grade_category::build_path($gc);
+                $DB->update_record('grade_categories', $grade_category);
             }
         }
         $rs->close();
