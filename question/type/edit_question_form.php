@@ -362,7 +362,7 @@ class question_edit_form extends moodleform {
         if (is_array($extra_question_fields) && !empty($question->options)) {
             array_shift($extra_question_fields);
             foreach ($extra_question_fields as $field) {
-                if (!empty($question->options->$field)) {
+                if (isset($question->options->$field)) {
                     $question->$field = $question->options->$field;
                 }
             }
