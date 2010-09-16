@@ -607,12 +607,14 @@ function forum_cron() {
                            'List-Id: "'.$cleanforumname.'" <moodleforum'.$forum->id.'@'.$hostname.'>',
                            'List-Help: '.$CFG->wwwroot.'/mod/forum/view.php?f='.$forum->id,
                            'Message-ID: <moodlepost'.$post->id.'@'.$hostname.'>',
-                           'In-Reply-To: <moodlepost'.$post->parent.'@'.$hostname.'>',
-                           'References: <moodlepost'.$post->parent.'@'.$hostname.'>',
                            'X-Course-Id: '.$course->id,
                            'X-Course-Name: '.format_string($course->fullname, true)
                 );
 
+                if ($post->parent) {  // This post is a reply, so add headers for threading (see MDL-22551)
+                    $userfrom->customheaders[] = 'In-Reply-To: <moodlepost'.$post->parent.'@'.$hostname.'>';
+                    $userfrom->customheaders[] = 'References: <moodlepost'.$post->parent.'@'.$hostname.'>',
+                }
 
                 $postsubject = "$course->shortname: ".format_string($post->subject,true);
                 $posttext = forum_make_mail_text($course, $cm, $forum, $discussion, $post, $userfrom, $userto);
