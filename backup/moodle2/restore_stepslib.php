@@ -259,8 +259,7 @@ class restore_gradebook_structure_step extends restore_structure_step {
         $data = (object)$data;
         $oldid = $data->id;
 
-        $data->contextid = $this->get_mappingid('context', $data->contextid);
-        //$data->contextid = $this->task->get_contextid();
+        $data->contextid = get_context_instance(CONTEXT_COURSE, $this->get_courseid())->id;
 
         $newitemid = $DB->insert_record('grade_letters', $data);
         $this->set_mapping('grade_letter', $oldid, $newitemid);

@@ -672,7 +672,7 @@ class backup_gradebook_structure_step extends backup_structure_step {
 
         $letters = new backup_nested_element('grade_letters');
         $letter = new backup_nested_element('grade_letter', 'id', array(
-            'contextid', 'lowerboundary', 'letter'));
+            'lowerboundary', 'letter'));
 
 
         // Build the tree
