@@ -4297,6 +4297,14 @@ function reset_course_userdata($data) {
         $status[] = array('component'=>$componentstr, 'item'=>get_string('deleteblogassociations', 'blog'), 'error'=>false);
     }
 
+    if (!empty($data->reset_course_completion)) {
+        // Delete course completion information
+        $course = $DB->get_record('course', array('id'=>$data->courseid));
+        $cc = new completion_info($course);
+        $cc->delete_course_completion_data();
+        $status[] = array('component'=>$componentstr, 'item'=>get_string('deletecoursecompletiondata', 'completion'), 'error'=>false);
+    }
+
     $componentstr = get_string('roles');
 
     if (!empty($data->reset_roles_overrides)) {
