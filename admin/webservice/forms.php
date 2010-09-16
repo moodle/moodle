@@ -105,7 +105,13 @@ class external_service_form extends moodleform {
         $mform->addElement('hidden', 'id');
         $mform->setType('id', PARAM_INT);
 
-        $this->add_action_buttons(true, get_string('addaservice', 'webservice'));
+        if (!empty($service->id)) {
+            $buttonlabel = get_string('editaservice', 'webservice');
+        } else {
+            $buttonlabel = get_string('addaservice', 'webservice');
+        }
+
+        $this->add_action_buttons(true, $buttonlabel);
 
         $this->set_data($service);
     }

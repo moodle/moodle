@@ -39,8 +39,7 @@ require_once($CFG->dirroot . '/admin/registration/forms.php');
 require_once($CFG->dirroot . '/webservice/lib.php');
 require_once($CFG->dirroot . '/admin/registration/lib.php');
 
-admin_externalpage_setup('registration');
-
+admin_externalpage_setup('registrationindex');
 
 $huburl = optional_param('huburl', '', PARAM_URL);
 $password = optional_param('password', '', PARAM_TEXT);

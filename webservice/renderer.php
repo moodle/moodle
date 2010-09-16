@@ -136,6 +136,25 @@ class core_webservice_renderer extends plugin_renderer_base {
     }
 
     /**
+     * Display a confirmation page to remove a service
+     * @param object $service
+     * @return string html
+     */
+    public function admin_remove_service_confirmation($service) {
+        global $CFG;
+        $optionsyes = array('id' => $service->id, 'action' => 'delete',
+            'confirm' => 1, 'sesskey' => sesskey());
+        $optionsno = array('section' => 'externalservices');
+        $formcontinue = new single_button(new moodle_url('service.php', $optionsyes),
+                        get_string('delete'), 'post');
+        $formcancel = new single_button(
+                        new moodle_url($CFG->wwwroot . "/" . $CFG->admin . "/settings.php", $optionsno),
+                        get_string('cancel'), 'get');
+        return $this->output->confirm(get_string('deleteserviceconfirm', 'webservice', $service->name),
+                $formcontinue, $formcancel);
+    }
+
+    /**
      * Display a confirmation page to delete a token
      * @param object $token
      * @return string html

@@ -223,6 +223,18 @@ class webservice {
     }
 
     /**
+     * Delete a service - it also delete the functions and users references to this service
+     * @param int $serviceid
+     */
+    public function delete_service($serviceid) {
+        global $DB;
+        $DB->delete_records('external_services_users', array('externalserviceid' => $serviceid));
+        $DB->delete_records('external_services_functions', array('externalserviceid' => $serviceid));
+        $DB->delete_records('external_tokens', array('externalserviceid' => $serviceid));
+        $DB->delete_records('external_services', array('id' => $serviceid));     
+    }
+
+    /**
      * Get a user token by token
      * @param string $token
      * @throws moodle_exception if there is multiple result
@@ -364,6 +376,19 @@ class webservice {
     }
 
     /**
+     * Get a external service for a given id
+     * @param service id $serviceid
+     * @param integer $strictness IGNORE_MISSING, MUST_EXIST...
+     * @return object external service
+     */
+    public function get_external_service_by_id($serviceid, $strictness=IGNORE_MISSING) {
+        global $DB;
+        $service = $DB->get_record('external_services',
+                        array('id' => $serviceid), '*', $strictness);
+        return $service;
+    }
+
+    /**
      * Get a external function for a given id
      * @param function id $functionid
      * @param integer $strictness IGNORE_MISSING, MUST_EXIST...
@@ -387,6 +412,28 @@ class webservice {
         $addedfunction->externalserviceid = $serviceid;
         $addedfunction->functionname = $functionname;
         $DB->insert_record('external_services_functions', $addedfunction);
+    }
+
+    /**
+     * Add a service
+     * @param object $service
+     * @return serviceid integer
+     */
+    public function add_external_service($service) {
+        global $DB;
+        $service->timecreated = mktime();
+        $serviceid = $DB->insert_record('external_services', $service);
+        return $serviceid;
+    }
+
+     /**
+     * Update a service
+     * @param object $service
+     */
+    public function update_external_service($service) {
+        global $DB;
+        $service->timemodified = mktime();
+        $DB->update_record('external_services', $service);
     }
 
     /**
