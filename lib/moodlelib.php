@@ -5179,6 +5179,7 @@ function get_file_packer($mimetype='application/zip') {
 
     switch ($mimetype) {
         case 'application/zip':
+        case 'application/vnd.moodle.backup':
             $classname = 'zip_packer';
             break;
         case 'application/x-tar':
