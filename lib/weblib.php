@@ -3140,7 +3140,7 @@ EOT;
         if ($percent != 100 && ($this->lastcall->time + $this->minimum_time) > microtime(true)){
             return;
         }
-        $this->_update($percent/100, $msg);
+        $this->update($percent, 100, $msg);
     }
     /**
       * Update progress bar according the number of tasks
