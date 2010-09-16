@@ -128,6 +128,7 @@ class restore_gradebook_structure_step extends restore_structure_step {
             $paths[] = new restore_path_element('grade_grade', '/gradebook/grade_items/grade_item/grade_grades/grade_grade');
         }
         $paths[] = new restore_path_element('grade_letter', '/gradebook/grade_letters/grade_letter');
+        $paths[] = new restore_path_element('grade_setting', '/gradebook/grade_settings/grade_setting');
 
         return $paths;
     }
@@ -263,6 +264,17 @@ class restore_gradebook_structure_step extends restore_structure_step {
 
         $newitemid = $DB->insert_record('grade_letters', $data);
         $this->set_mapping('grade_letter', $oldid, $newitemid);
+    }
+    protected function process_grade_setting($data) {
+        global $DB;
+
+        $data = (object)$data;
+        $oldid = $data->id;
+
+        $data->courseid = $this->get_courseid();
+
+        $newitemid = $DB->insert_record('grade_settings', $data);
+        $this->set_mapping('grade_setting', $oldid, $newitemid);
     }
 
     //put all activity grade items in the correct grade category and mark all for recalculation

@@ -674,6 +674,10 @@ class backup_gradebook_structure_step extends backup_structure_step {
         $letter = new backup_nested_element('grade_letter', 'id', array(
             'lowerboundary', 'letter'));
 
+        $grade_settings = new backup_nested_element('grade_settings');
+        $grade_setting = new backup_nested_element('grade_setting', 'id', array(
+            'name', 'value'));
+
 
         // Build the tree
         $gradebook->add_child($grade_categories);
@@ -686,6 +690,9 @@ class backup_gradebook_structure_step extends backup_structure_step {
 
         $gradebook->add_child($letters);
         $letters->add_child($letter);
+
+        $gradebook->add_child($grade_settings);
+        $grade_settings->add_child($grade_setting);
 
         // Define sources
 
@@ -710,6 +717,8 @@ class backup_gradebook_structure_step extends backup_structure_step {
         $grade_category->set_source_sql($grade_category_sql, $grade_category_params);
 
         $letter->set_source_table('grade_letters', array('contextid' => backup::VAR_CONTEXTID));
+
+        $grade_setting->set_source_table('grade_settings', array('courseid' => backup::VAR_COURSEID));
 
         // Annotations (both as final as far as they are going to be exported in next steps)
         $grade_item->annotate_ids('scalefinal', 'scaleid'); // Straight as scalefinal because it's > 0
