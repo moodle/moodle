@@ -34,7 +34,7 @@ require_once($CFG->dirroot . '/admin/registration/lib.php');
 
 require_login();
 
-$courseid = optional_param('courseid', 0, PARAM_INT);
+$courseid = optional_param('courseid', $SITE->id, PARAM_INT); //if no courseid is given
 $context = get_context_instance(CONTEXT_COURSE, $courseid);
 
 $PAGE->set_context($context);
