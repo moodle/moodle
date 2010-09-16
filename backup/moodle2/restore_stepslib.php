@@ -217,7 +217,7 @@ class restore_gradebook_structure_step extends restore_structure_step {
         $data->timemodified = $this->apply_date_offset($data->timemodified);
 
         $newitemid = $DB->insert_record('grade_grades', $data);
-        $this->set_mapping('grade_grade', $oldid, $newitemid);
+        //$this->set_mapping('grade_grade', $oldid, $newitemid);
     }
     protected function process_grade_category($data) {
         global $DB;
@@ -274,7 +274,7 @@ class restore_gradebook_structure_step extends restore_structure_step {
         $data->courseid = $this->get_courseid();
 
         $newitemid = $DB->insert_record('grade_settings', $data);
-        $this->set_mapping('grade_setting', $oldid, $newitemid);
+        //$this->set_mapping('grade_setting', $oldid, $newitemid);
     }
 
     //put all activity grade items in the correct grade category and mark all for recalculation
