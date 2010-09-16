@@ -4441,6 +4441,11 @@ function reset_course_userdata($data) {
         grade_course_reset($data->courseid);
         $status[] = array('component'=>$componentstr, 'item'=>get_string('removeallcoursegrades', 'grades'), 'error'=>false);
     }
+    // reset comments
+    if (!empty($data->reset_comments)) {
+        require_once($CFG->dirroot.'/comment/lib.php');
+        comment::reset_course_page_comments($context);
+    }
 
     return $status;
 }

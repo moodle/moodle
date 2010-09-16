@@ -520,11 +520,11 @@ EOD;
 
     /**
      * delete by context, commentarea and itemid
-    * @param object $param {
-    *            contextid => int the context in which the comments exist [required]
-    *            commentarea => string the comment area [optional]
-    *            itemid => int comment itemid [optional]
-    * }
+     * @param object $param {
+     *            contextid => int the context in which the comments exist [required]
+     *            commentarea => string the comment area [optional]
+     *            itemid => int comment itemid [optional]
+     * }
      * @return boolean
      */
     public function delete_comments($param) {
@@ -535,6 +535,22 @@ EOD;
         }
         $DB->delete_records('comments', $param);
         return true;
+    }
+
+    /**
+     * Delete page_comments in whole course, used by course reset
+     * @param object $context course context
+     */
+    public function reset_course_page_comments($context) {
+        global $DB;
+        $contexts = array();
+        $contexts[] = $context->id;
+        $children = get_child_contexts($context);
+        foreach ($children as $c) {
+            $contexts[] = $c->id;
+        }
+        list($ids, $params) = $DB->get_in_or_equal($contexts);
+        $DB->delete_records_select('comments', "commentarea='page_comments' AND contextid $ids", $params);
     }
 
     /**
