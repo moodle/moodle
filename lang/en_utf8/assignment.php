@@ -135,6 +135,7 @@ $string['uploadfiletoobig'] = 'Sorry, but that file is too big (limit is $a byte
 $string['uploadnofilefound'] = 'No file was found - are you sure you selected one to upload?';
 $string['uploadnotregistered'] = '\'$a\' was uploaded OK but submission did not register!';
 $string['uploadsuccess'] = 'Uploaded \'$a\' successfully';
+$string['usernosubmit'] = 'Sorry, you are not allowed to submit an assignment.';
 $string['viewfeedback'] = 'View assignment grades and feedback';
 $string['viewsubmissions'] = 'View $a submitted assignments';
 $string['yoursubmission'] = 'Your submission';

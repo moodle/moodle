@@ -84,7 +84,7 @@ class assignment_online extends assignment_base {
         if ($editmode) {
             $this->view_header(get_string('editmysubmission', 'assignment'));
         } else {
-            $this->view_header();
+            $this->view_header(get_string('viewsubmissions', 'assignment'));
         }
 
         $this->view_intro();
@@ -95,28 +95,30 @@ class assignment_online extends assignment_base {
             notify(get_string('submissionsaved', 'assignment'), 'notifysuccess');
         }
 
-        if (has_capability('mod/assignment:submit', $context)) {
-            if ($editmode) {
-                print_box_start('generalbox', 'online');
-                $mform->display();
-            } else {
-                print_box_start('generalbox boxwidthwide boxaligncenter', 'online');
-                if ($submission) {
-                    echo format_text($submission->data1, $submission->data2);
-                } else if (!has_capability('mod/assignment:submit', $context)) { //fix for #4604
+        if ($editmode) {
+            print_box_start('generalbox', 'online');
+            $mform->display();
+            print_box_end();
+        } else {
+            print_box_start('generalbox boxwidthwide boxaligncenter', 'online');
+            if ($submission) {
+                echo format_text($submission->data1, $submission->data2);
+            } else if (!has_capability('mod/assignment:submit', $context)) { //fix for #4604
+                if (isguest()) {
                     echo '<div style="text-align:center">'. get_string('guestnosubmit', 'assignment').'</div>';
-                } else if ($this->isopen()){    //fix for #4206
-                    echo '<div style="text-align:center">'.get_string('emptysubmission', 'assignment').'</div>';
+                } else {
+                    echo '<div style="text-align:center">'. get_string('usernosubmit', 'assignment').'</div>';
                 }
+            } else if ($this->isopen()){    //fix for #4206
+                echo '<div style="text-align:center">'.get_string('emptysubmission', 'assignment').'</div>';
             }
             print_box_end();
-            if (!$editmode && $editable) {
+            if ($editable) {
                 echo "<div style='text-align:center'>";
                 print_single_button('view.php', array('id'=>$this->cm->id,'edit'=>'1'),
                         get_string('editmysubmission', 'assignment'));
                 echo "</div>";
             }
-
         }
 
         $this->view_feedback();
