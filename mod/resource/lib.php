@@ -401,6 +401,7 @@ function resource_pluginfile($course, $cm, $context, $filearea, $args, $forcedow
     $mimetype = $file->get_mimetype();
     if ($mimetype = 'text/html' or $mimetype = 'text/plain') {
         $filter = $DB->get_field('resource', 'filterfiles', array('id'=>$cm->instance));
+        $CFG->embeddedsoforcelinktarget = true;
     } else {
         $filter = 0;
     }
