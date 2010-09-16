@@ -613,7 +613,7 @@ function forum_cron() {
 
                 if ($post->parent) {  // This post is a reply, so add headers for threading (see MDL-22551)
                     $userfrom->customheaders[] = 'In-Reply-To: <moodlepost'.$post->parent.'@'.$hostname.'>';
-                    $userfrom->customheaders[] = 'References: <moodlepost'.$post->parent.'@'.$hostname.'>',
+                    $userfrom->customheaders[] = 'References: <moodlepost'.$post->parent.'@'.$hostname.'>';
                 }
 
                 $postsubject = "$course->shortname: ".format_string($post->subject,true);
