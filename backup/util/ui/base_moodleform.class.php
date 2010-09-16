@@ -275,12 +275,12 @@ abstract class base_moodleform extends moodleform {
 
     /**
      * Removes an element from the form if it exists
-     * @param string $elementName
+     * @param string $elementname
      * @return bool
      */
-    public function remove_element($elementName) {
+    public function remove_element($elementname) {
         if ($this->_form->elementExists($elementname)) {
-            return $this->_form->removeElement($elementName);
+            return $this->_form->removeElement($elementname);
         } else {
             return false;
         }

@@ -97,7 +97,7 @@ if ($backup->get_stage() == backup_ui::STAGE_FINAL) {
     if (!file_exists($tempdestination) || !is_dir($tempdestination)) {
         $results = $backup->get_controller()->get_results();
         $file = $results['backup_destination'];
-        $file->extract_to_pathname(get_file_packer($file->get_mimetype()), $tempdestination);
+        $file->extract_to_pathname(get_file_packer('application/zip'), $tempdestination);
     }
     // Delete the backup file, we only want the directory
     $results['backup_destination']->delete();
