@@ -4189,6 +4189,10 @@ function remove_course_contents($courseid, $showfeedback=true) {
     require_once($CFG->dirroot.'/tag/coursetagslib.php');
     coursetag_delete_course_tags($course->id, $showfeedback);
 
+    // Delete course completion information
+    $cc = new completion_info($course);
+    $cc->clear_criteria();
+
     // Delete legacy files
     fulldelete($CFG->dataroot.'/'.$courseid);
 
