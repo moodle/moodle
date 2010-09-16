@@ -290,7 +290,7 @@
     if ($rid) {
         echo '&nbsp;<input type="submit" name="cancel" value="'.get_string('cancel').'" onclick="javascript:history.go(-1)" />';
     } else {
-        if ( (has_capability('mod/data:manageentries',$context)) || (!$data->maxentries) || (data_numentries($data)<($data->maxentries-1)) ) {
+        if ( (!$data->maxentries) || (data_numentries($data)<($data->maxentries-1)) ) {
             echo '&nbsp;<input type="submit" value="'.get_string('saveandadd','data').'" />';
         }
     }
