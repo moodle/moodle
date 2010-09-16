@@ -2296,7 +2296,7 @@ function print_recent_activity_note($time, $user, $text, $link, $return=false, $
  */
 function navmenulist($course, $sections, $modinfo, $strsection, $strjumpto, $width=50, $cmid=0) {
 
-    global $CFG;
+    global $CFG, $OUTPUT;
 
     $section = -1;
     $url = '';
