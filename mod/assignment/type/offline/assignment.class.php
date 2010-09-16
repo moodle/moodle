@@ -66,9 +66,8 @@ class assignment_offline extends assignment_base {
         if (!$grading_info->items[0]->grades[$feedback->userid]->locked and
             !$grading_info->items[0]->grades[$feedback->userid]->overridden) {
 
-            $submission->grade      = $feedback->grade;
-            $submission->submissioncomment    = $feedback->submissioncomment;
-            $submission->format     = $feedback->format;
+            $submission->grade      = $feedback->xgrade;
+            $submission->submissioncomment    = $feedback->submissioncomment_editor['text'];
             $submission->teacher    = $USER->id;
             $mailinfo = get_user_preferences('assignment_mailinfo', 0);
             if (!$mailinfo) {
