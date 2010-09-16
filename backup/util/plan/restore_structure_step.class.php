@@ -201,8 +201,8 @@ abstract class restore_structure_step extends restore_step {
      */
     public function apply_date_offset($value) {
 
-        // 0 doesn't offset
-        if ($value == 0) {
+        // empties don't offset - zeros (int and string), false and nulls return original value
+        if (empty($value)) {
             return $value;
         }
 
