@@ -1593,6 +1593,17 @@ class dml_test extends UnitTestCase {
         $before = clone($record);
         $DB->insert_record($tablename, $record);
         $this->assertEqual($record, $before);
+
+        // make sure the id is always increasing and never reuses the same id
+        $id1 = $DB->insert_record($tablename, array('course' => 3));
+        $id2 = $DB->insert_record($tablename, array('course' => 3));
+        $this->assertTrue($id1 < $id2);
+        $DB->delete_records($tablename, array('id'=>$id2));
+        $id3 = $DB->insert_record($tablename, array('course' => 3));
+        $this->assertTrue($id2 < $id3);
+        $DB->delete_records($tablename, array());
+        $id4 = $DB->insert_record($tablename, array('course' => 3));
+        $this->assertTrue($id3 < $id4);
     }
 
     public function test_import_record() {
