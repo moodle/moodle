@@ -1646,13 +1646,18 @@ function data_get_post_actions() {
 function data_fieldname_exists($name, $dataid, $fieldid=0) {
     global $CFG, $DB;
 
+    if(!is_numeric($name)) {
+        $like = $DB->sql_like('df.name', $name, false);
+    } else {
+        $like = "df.name = $name";
+    }
     if ($fieldid) {
         return $DB->record_exists_sql("SELECT * FROM {data_fields} df
-                                        WHERE ".$DB->sql_like('df.name', '?', false)." AND df.dataid = ?
-                                              AND ((df.id < ?) OR (df.id > ?))", array($name, $dataid, $fieldid, $fieldid));
+                                        WHERE ".$like." AND df.dataid = ?
+                                              AND ((df.id < ?) OR (df.id > ?))", array($dataid, $fieldid, $fieldid));
     } else {
         return $DB->record_exists_sql("SELECT * FROM {data_fields} df
-                                        WHERE ".$DB->sql_like('df.name', '?', false)." AND df.dataid = ?", array($name, $dataid));
+                                        WHERE ".$like." AND df.dataid = ?", array($dataid));
     }
 }
 
