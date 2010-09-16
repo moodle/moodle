@@ -98,9 +98,11 @@ class HTMLPurifier_Generator
         }
 
         // Normalize newlines to system defined value
-        $nl = $this->config->get('Output.Newline');
-        if ($nl === null) $nl = PHP_EOL;
-        if ($nl !== "\n") $html = str_replace("\n", $nl, $html);
+        if ($this->config->get('Core.NormalizeNewlines')) {
+            $nl = $this->config->get('Output.Newline');
+            if ($nl === null) $nl = PHP_EOL;
+            if ($nl !== "\n") $html = str_replace("\n", $nl, $html);
+        }
         return $html;
     }
 
@@ -215,7 +217,10 @@ class HTMLPurifier_Generator
      *               permissible for non-attribute output.
      * @return String escaped data.
      */
-    public function escape($string, $quote = ENT_COMPAT) {
+    public function escape($string, $quote = null) {
+        // Workaround for APC bug on Mac Leopard reported by sidepodcast
+        // http://htmlpurifier.org/phorum/read.php?3,4823,4846
+        if ($quote === null) $quote = ENT_COMPAT;
         return htmlspecialchars($string, $quote, 'UTF-8');
     }
 

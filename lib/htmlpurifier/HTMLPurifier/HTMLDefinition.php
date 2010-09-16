@@ -300,7 +300,12 @@ class HTMLPurifier_HTMLDefinition extends HTMLPurifier_Definition
                             unset($allowed_attributes_mutable[$key]);
                         }
                     }
-                    if ($delete) unset($this->info[$tag]->attr[$attr]);
+                    if ($delete) {
+                        if ($this->info[$tag]->attr[$attr]->required) {
+                            trigger_error("Required attribute '$attr' in element '$tag' was not allowed, which means '$tag' will not be allowed either", E_USER_WARNING);
+                        }
+                        unset($this->info[$tag]->attr[$attr]);
+                    }
                 }
             }
             // emit errors

@@ -5,11 +5,14 @@ DEFAULT: NULL
 --DESCRIPTION--
 
 <p>
-    This is a convenience directive that rolls the functionality of
-    %HTML.AllowedElements and %HTML.AllowedAttributes into one directive.
+    This is a preferred convenience directive that combines
+    %HTML.AllowedElements and %HTML.AllowedAttributes.
     Specify elements and attributes that are allowed using:
-    <code>element1[attr1|attr2],element2...</code>. You can also use
-    newlines instead of commas to separate elements.
+    <code>element1[attr1|attr2],element2...</code>.  For example,
+    if you would like to only allow paragraphs and links, specify
+    <code>a[href],p</code>.  You can specify attributes that apply
+    to all elements using an asterisk, e.g. <code>*[lang]</code>.
+    You can also use newlines instead of commas to separate elements.
 </p>
 <p>
     <strong>Warning</strong>:

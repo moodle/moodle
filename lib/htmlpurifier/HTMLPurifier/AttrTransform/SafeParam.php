@@ -33,6 +33,13 @@ class HTMLPurifier_AttrTransform_SafeParam extends HTMLPurifier_AttrTransform
             case 'allowNetworking':
                 $attr['value'] = 'internal';
                 break;
+            case 'allowFullScreen':
+                if ($config->get('HTML.FlashAllowFullScreen')) {
+                    $attr['value'] = ($attr['value'] == 'true') ? 'true' : 'false';
+                } else {
+                    $attr['value'] = 'false';
+                }
+                break;
             case 'wmode':
                 $attr['value'] = 'window';
                 break;

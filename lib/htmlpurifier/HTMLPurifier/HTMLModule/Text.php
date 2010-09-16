@@ -45,13 +45,6 @@ class HTMLPurifier_HTMLModule_Text extends HTMLPurifier_HTMLModule
         $this->addElement('span', 'Inline', 'Inline', 'Common');
         $this->addElement('br',   'Inline', 'Empty',  'Core');
 
-        // Moodle specific elements - start
-        $this->addElement('nolink',  'Inline', 'Flow');
-        $this->addElement('tex',     'Inline', 'Flow');
-        $this->addElement('algebra', 'Inline', 'Flow');
-        $this->addElement('lang',    'Inline', 'Flow', 'I18N');
-        // Moodle specific elements - end
-        
         // Block Phrasal --------------------------------------------------
         $this->addElement('address',     'Block', 'Inline', 'Common');
         $this->addElement('blockquote',  'Block', 'Optional: Heading | Block | List', 'Common', array('cite' => 'URI') );
