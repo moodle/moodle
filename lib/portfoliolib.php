@@ -269,6 +269,7 @@ class portfolio_add_button {
         $url = new moodle_url('/portfolio/add.php');
         foreach ($this->callbackargs as $key => $value) {
             if (!empty($value) && !is_string($value) && !is_numeric($value)) {
+                $a = new object();
                 $a->key = $key;
                 $a->value = print_r($value, true);
                 debugging(get_string('nonprimative', 'portfolio', $a));
