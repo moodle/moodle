@@ -306,7 +306,7 @@ if (!empty($forum)) {      // User is starting a new discussion in a forum
     if (!empty($confirm) && confirm_sesskey()) {    // User has confirmed the delete
 
         if ($post->totalscore) {
-            notice(get_string("couldnotdeleteratings", "forum"),
+            notice(get_string('couldnotdeleteratings', 'rating'),
                     forum_go_back_to("discuss.php?d=$post->discussion"));
 
         } else if ($replycount && !has_capability('mod/forum:deleteanypost', $modcontext)) {

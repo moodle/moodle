@@ -24,6 +24,12 @@
  */
 
 $string['aggregatetype'] = 'Aggregate type';
+$string['aggregateavg'] = 'Average of ratings';
+$string['aggregatecount'] = 'Count of ratings';
+$string['aggregatemax'] = 'Maximum rating';
+$string['aggregatemin'] = 'Minimum rating';
+$string['aggregatenone'] = 'No ratings';
+$string['aggregatesum'] = 'Sum of ratings';
 $string['aggregatetype_help'] = 'The aggregate type defines how ratings are combined to form the final grade in the gradebook.
 
 * Average of ratings - The mean of all ratings
@@ -35,9 +41,10 @@ $string['aggregatetype_help'] = 'The aggregate type defines how ratings are comb
 If "No ratings" is selected, then the activity will not appear in the gradebook.';
 $string['allowratings'] = 'Allow items to be rated?';
 $string['capabilitychecknotavailable'] = 'Capability check not available until activity is saved';
+$string['couldnotdeleteratings'] = 'Sorry, that cannot be deleted as people have already rated it';
 $string['norate'] = 'Rating of items not allowed!';
-$string['noviewanyrate'] = 'You can only look at results for posts that you made';
-$string['noviewrate'] = 'You do not have the capability to view post ratings';
+$string['noviewanyrate'] = 'You can only look at results for items that you made';
+$string['noviewrate'] = 'You do not have the capability to view item ratings';
 $string['rate'] = 'Rate';
 $string['ratepermissiondenied'] = 'You do not have permission to rate this item';
 $string['rating'] = 'Rating';

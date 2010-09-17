@@ -90,9 +90,5 @@ if ($ADMIN->fulltree) {
 
     $settings->add(new admin_setting_configcheckbox('forum_logblocked', get_string('logblocked', 'forum'),
                        get_string('configlogblocked', 'forum'), 1));
-
-    //no using the central ajax setting for ratings. MDL-21657
-    //$settings->add(new admin_setting_configcheckbox('forum_ajaxrating', get_string('ajaxrating', 'forum'),
-    //                   get_string('configajaxrating', 'forum'), 0));
 }
 

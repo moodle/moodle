@@ -1402,19 +1402,19 @@ class core_renderer extends renderer_base {
             $aggregatelabel = '';
             switch ($rating->settings->aggregationmethod) {
                 case RATING_AGGREGATE_AVERAGE :
-                    $aggregatelabel .= get_string("aggregateavg", "forum");
+                    $aggregatelabel .= get_string("aggregateavg", "rating");
                     break;
                 case RATING_AGGREGATE_COUNT :
-                    $aggregatelabel .= get_string("aggregatecount", "forum");
+                    $aggregatelabel .= get_string("aggregatecount", "rating");
                     break;
                 case RATING_AGGREGATE_MAXIMUM :
-                    $aggregatelabel .= get_string("aggregatemax", "forum");
+                    $aggregatelabel .= get_string("aggregatemax", "rating");
                     break;
                 case RATING_AGGREGATE_MINIMUM :
-                    $aggregatelabel .= get_string("aggregatemin", "forum");
+                    $aggregatelabel .= get_string("aggregatemin", "rating");
                     break;
                 case RATING_AGGREGATE_SUM :
-                    $aggregatelabel .= get_string("aggregatesum", "forum");
+                    $aggregatelabel .= get_string("aggregatesum", "rating");
                     break;
             }
 

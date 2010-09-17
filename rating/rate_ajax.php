@@ -36,7 +36,7 @@ $itemid = required_param('itemid', PARAM_INT);
 $scaleid = required_param('scaleid', PARAM_INT);
 $userrating = required_param('rating', PARAM_INT);
 $rateduserid = required_param('rateduserid', PARAM_INT);//which user is being rated. Required to update their grade
-$aggregationmethod = optional_param('aggregation', PARAM_INT);//we're going to calculate the aggregate and return it to the client
+$aggregationmethod = optional_param('aggregation', RATING_AGGREGATE_NONE, PARAM_INT);//we're going to calculate the aggregate and return it to the client
 
 $result = new stdClass;
 

@@ -558,12 +558,12 @@ class rating_manager {
      * @return array
      */
     public function get_aggregate_types() {
-        return array (RATING_AGGREGATE_NONE  => get_string('aggregatenone', 'forum'),
-                      RATING_AGGREGATE_AVERAGE   => get_string('aggregateavg', 'forum'),
-                      RATING_AGGREGATE_COUNT => get_string('aggregatecount', 'forum'),
-                      RATING_AGGREGATE_MAXIMUM   => get_string('aggregatemax', 'forum'),
-                      RATING_AGGREGATE_MINIMUM   => get_string('aggregatemin', 'forum'),
-                      RATING_AGGREGATE_SUM   => get_string('aggregatesum', 'forum'));
+        return array (RATING_AGGREGATE_NONE  => get_string('aggregatenone', 'rating'),
+                      RATING_AGGREGATE_AVERAGE   => get_string('aggregateavg', 'rating'),
+                      RATING_AGGREGATE_COUNT => get_string('aggregatecount', 'rating'),
+                      RATING_AGGREGATE_MAXIMUM   => get_string('aggregatemax', 'rating'),
+                      RATING_AGGREGATE_MINIMUM   => get_string('aggregatemin', 'rating'),
+                      RATING_AGGREGATE_SUM   => get_string('aggregatesum', 'rating'));
     }
 
     /**

@@ -1576,43 +1576,6 @@ function data_print_preference_form($data, $perpage, $search, $sort='', $order='
  * @return void Output echo'd
  */
 function data_print_ratings($data, $record) {
-    /*global $USER, $DB, $OUTPUT;
-
-    $cm = get_coursemodule_from_instance('data', $data->id);
-    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-
-    if ($data->assessed and isloggedin() and (has_capability('mod/data:rate', $context) or has_capability('mod/data:viewrating', $context) or data_isowner($record->id))) {
-        if ($ratingsscale = make_grades_menu($data->scale)) {
-            $ratingsmenuused = false;
-
-            echo '<div class="ratings" style="text-align:center">';
-            echo '<form id="form" method="post" action="rate.php">';
-            echo '<input type="hidden" name="dataid" value="'.$data->id.'" />';
-
-            if (has_capability('mod/data:rate', $context) and !data_isowner($record->id)) {
-                data_print_ratings_mean($record->id, $ratingsscale, has_capability('mod/data:viewrating', $context));
-                echo '&nbsp;';
-                data_print_rating_menu($record->id, $USER->id, $ratingsscale);
-                $ratingsmenuused = true;
-
-            } else {
-                data_print_ratings_mean($record->id, $ratingsscale, true);
-            }
-
-            if ($data->scale < 0) {
-                if ($scale = $DB->get_record('scale', array('id'=>abs($data->scale)))) {
-                    echo $OUTPUT->help_icon_scale($data->course, $scale);
-                }
-            }
-
-            if ($ratingsmenuused) {
-                echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
-                echo '<input type="submit" value="'.get_string('sendinratings', 'data').'" />';
-            }
-            echo '</form>';
-            echo '</div>';
-        }
-    }*/
     global $OUTPUT;
     if( !empty($record->rating) ){
         echo $OUTPUT->render($record->rating);

@@ -93,6 +93,7 @@ if (!$ratings) {
     echo "<th class=\"header\" scope=\"col\"><a href=\"index.php?$sortargs&amp;sort=time\">$strtime</a></th>";
     echo "</tr>";
 
+    $maxrating = count($scalemenu);
     foreach ($ratings as $rating) {
         //Undo the aliasing of the user id column from user_picture::fields()
         //we could clone the rating object or preserve the rating id if we needed it again
@@ -107,6 +108,12 @@ if (!$ratings) {
             echo $OUTPUT->user_picture($rating);
         }
         echo '</td><td>'.fullname($rating).'</td>';
+        
+        //if they've switched to rating out of 5 but there were ratings submitted out of 10 for example
+        //Not doing this within $rm->get_all_ratings_for_item to allow access to the raw data
+        if ($rating->rating > $maxrating) {
+            $rating->rating = $maxrating;
+        }
         echo '<td style="white-space:nowrap" align="center" class="rating">'.$scalemenu[$rating->rating]."</td>";
         echo '<td style="white-space:nowrap" align="center" class="time">'.userdate($rating->timemodified)."</td>";
         echo "</tr>\n";
