@@ -40,7 +40,7 @@ class webservice {
      */
     public function add_ws_authorised_user($user) {
         global $DB;
-        $serviceuser->timecreated = mktime();
+        $user->timecreated = mktime();
         $DB->insert_record('external_services_users', $user);
     }
 
@@ -231,7 +231,7 @@ class webservice {
         $DB->delete_records('external_services_users', array('externalserviceid' => $serviceid));
         $DB->delete_records('external_services_functions', array('externalserviceid' => $serviceid));
         $DB->delete_records('external_tokens', array('externalserviceid' => $serviceid));
-        $DB->delete_records('external_services', array('id' => $serviceid));     
+        $DB->delete_records('external_services', array('id' => $serviceid));
     }
 
     /**
@@ -946,8 +946,8 @@ class '.$classname.' {
      * You can override this function in your child class to add extra code into the dynamically
      * created service class. For example it is used in the amf server to cast types of parameters and to
      * cast the return value to the types as specified in the return value description.
-     * @param unknown_type $function
-     * @param unknown_type $params
+     * @param stdClass $function
+     * @param array $params
      * @return string body of the method for $function ie. everything within the {} of the method declaration.
      */
     protected function service_class_method_body($function, $params){
