@@ -367,6 +367,7 @@ function environment_get_errors($environment_results) {
         }
 
         // We are comparing versions
+        $rec = new object();
         if ($rec->needed = $environment_result->getNeededVersion()) {
             $rec->current = $environment_result->getCurrentVersion();
             if ($environment_result->getLevel() == 'required') {
