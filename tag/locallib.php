@@ -93,7 +93,7 @@ function tag_cloud_sort($a, $b) {
 /**
  * Prints a box with the description of a tag and its related tags
  *
- * @param unknown_type $tag_object
+ * @param stdClass $tag_object
  * @param $return if true return html string
  */
 function tag_print_description_box($tag_object, $return=false) {
