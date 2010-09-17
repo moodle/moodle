@@ -152,12 +152,12 @@ class enrol_self_plugin extends enrol_plugin {
             return null;
         }
 
-        if ($instance->enrolstartdate != 0 and $instance->enrolstartdate < time) {
+        if ($instance->enrolstartdate != 0 and $instance->enrolstartdate < time()) {
             //TODO: inform that we can not enrol yet
             return null;
         }
 
-        if ($instance->enrolenddate != 0 and $instance->enrolenddate > time) {
+        if ($instance->enrolenddate != 0 and $instance->enrolenddate > time()) {
             //TODO: inform that enrolment is not possible any more
             return null;
         }
