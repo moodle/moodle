@@ -2556,7 +2556,7 @@ class curl {
             curl_multi_exec($main, $running);
         } while($running > 0);
         for ($i = 0; $i < $count; $i++) {
-            if (!empty($optins['CURLOPT_RETURNTRANSFER'])) {
+            if (!empty($options['CURLOPT_RETURNTRANSFER'])) {
                 $results[] = true;
             } else {
                 $results[] = curl_multi_getcontent($handles[$i]);
