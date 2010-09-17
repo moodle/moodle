@@ -74,7 +74,7 @@ if (($action == 'edit') || ($action == 'new')) {
         }
         // This branch is where you process validated data.
         if ($action == 'edit') {
-            $instance->set_config($fromform);
+            $instance->set_config((array)$fromform);
             $instance->save();
         } else {
             portfolio_static_function($plugin, 'create_instance', $plugin, $fromform->name, $fromform);

@@ -19,7 +19,7 @@
  * Fetches language packages from download.moodle.org server
  *
  * Language packages are available at http://download.moodle.org/langpack/2.0/
- * in ZIP format together with a file languages.md5 containing thir hashes
+ * in ZIP format together with a file languages.md5 containing their hashes
  * and meta info.
  * Locally, language packs are saved into $CFG->dataroot/lang/
  *

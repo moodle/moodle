@@ -106,7 +106,7 @@ class new_table extends XMLDBAction {
             $table->addField($field);
             $table->addKey($key);
 
-        /// Finally, add the whole retroffited table to the structure
+        /// Finally, add the whole retrofitted table to the structure
         /// in the place specified
             $structure->addTable($table);
         }

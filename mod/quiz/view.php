@@ -37,7 +37,7 @@
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
     require_capability('mod/quiz:view', $context);
 
-/// Cache some other capabilites we use several times.
+/// Cache some other capabilities we use several times.
     $canattempt = has_capability('mod/quiz:attempt', $context);
     $canreviewmine = has_capability('mod/quiz:reviewmyattempts', $context);
     $canpreview = has_capability('mod/quiz:preview', $context);

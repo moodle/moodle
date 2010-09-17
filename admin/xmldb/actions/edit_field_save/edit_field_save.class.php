@@ -23,7 +23,7 @@
 
 /**
  * This class verifies all the data introduced when editing a field for correctness,
- * peforming changes / displaying errors depending of the results.
+ * performing changes / displaying errors depending of the results.
  *
  * @package   xmldb-editor
  * @copyright 2003 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
@@ -109,7 +109,7 @@ class edit_field_save extends XMLDBAction {
 
         $errors = array();    /// To store all the errors found
 
-    /// Perform some automatic asumptions
+    /// Perform some automatic assumptions
         if ($sequence) {
             $unsigned = true;
             $notnull  = true;

@@ -1,6 +1,6 @@
 <?php
 /**
- * Sets up the tabs used by the scorm pages based on the users capabilites.
+ * Sets up the tabs used by the scorm pages based on the users capabilities.
  *
  * @author Dan Marsden and others.
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License

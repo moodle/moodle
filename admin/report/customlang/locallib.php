@@ -399,7 +399,7 @@ class report_customlang_menu implements renderable {
     /**
      * Returns the menu items
      *
-     * @return array (string)key => (object)[->(string)title ->(moodl_url)url ->(string)method]
+     * @return array (string)key => (object)[->(string)title ->(moodle_url)url ->(string)method]
      */
     public function get_items() {
         return $this->items;

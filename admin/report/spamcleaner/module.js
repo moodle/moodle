@@ -27,12 +27,12 @@ M.report_spamcleaner = {
             context.Y.io(context.me+'?delall=yes&sesskey='+M.cfg.sesskey, cfg);
         }
     },
-    
+
     del_user: function(obj, id) {
         var context = M.report_spamcleaner;
 
         if (context.Y == null) {
-            // not initilised yet
+            // not initialised yet
             return;
         }
 
@@ -94,7 +94,7 @@ M.report_spamcleaner = {
                             context.row.parentNode.removeChild(context.row);
                             context.row = null;
                         }
-                    }                    
+                    }
                 }
             }
         }

@@ -23,7 +23,7 @@
 
 /**
  * This class verifies all the data introduced when editing a key for correctness,
- * peforming changes / displaying errors depending of the results.
+ * performing changes / displaying errors depending of the results.
  *
  * @package   xmldb-editor
  * @copyright 2003 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}

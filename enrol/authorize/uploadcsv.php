@@ -31,7 +31,7 @@ require_once($CFG->dirroot.'/enrol/authorize/localfuncs.php');
 require_once($CFG->libdir.'/eventslib.php');
 require_once('import_form.php');
 
-/// Require capabilites
+/// Require capabilities
 require_login();
 require_capability('enrol/authorize:uploadcsv', get_context_instance(CONTEXT_SYSTEM));
 

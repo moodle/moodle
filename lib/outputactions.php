@@ -123,7 +123,7 @@ class popup_action extends component_action {
     /**
      * Constructor
      * @param string $event DOM event
-     * @param moodle_url $url A moodle_url object, required if no jsfunction is given
+     * @param moodle_url|string $url A moodle_url object, required if no jsfunction is given
      * @param string $method 'post' or 'get'
      * @param array  $params An array of popup parameters
      * @return void

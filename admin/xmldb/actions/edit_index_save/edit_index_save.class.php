@@ -23,7 +23,7 @@
 
 /**
  * This class verifies all the data introduced when editing an index for correctness,
- * peforming changes / displaying errors depending of the results.
+ * performing changes / displaying errors depending of the results.
  *
  * @package   xmldb-editor
  * @copyright 2003 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
@@ -135,7 +135,7 @@ class edit_index_save extends XMLDBAction {
             if ($tablekeys) {
                 foreach ($tablekeys as $tablekey) {
                     $keyfieldsarr = $tablekey->getFields();
-                /// Compare both arrays, looking for diferences
+                /// Compare both arrays, looking for differences
                     $diferences = array_merge(array_diff($fieldsarr, $keyfieldsarr), array_diff($keyfieldsarr, $fieldsarr));
                     if (empty($diferences)) {
                         $errors[] = $this->str['fieldsusedinkey'];
@@ -143,7 +143,7 @@ class edit_index_save extends XMLDBAction {
                     }
                 }
             }
-        /// Check that there isn't any index using exactlt the same fields
+        /// Check that there isn't any index using exactly the same fields
             $tableindexes = $table->getIndexes();
             if ($tableindexes) {
                 foreach ($tableindexes as $tableindex) {
@@ -152,7 +152,7 @@ class edit_index_save extends XMLDBAction {
                         continue;
                     }
                     $indexfieldsarr = $tableindex->getFields();
-                /// Compare both arrays, looking for diferences
+                /// Compare both arrays, looking for differences
                     $diferences = array_merge(array_diff($fieldsarr, $indexfieldsarr), array_diff($indexfieldsarr, $fieldsarr));
                     if (empty($diferences)) {
                         $errors[] = $this->str['fieldsusedinindex'];
@@ -177,7 +177,7 @@ class edit_index_save extends XMLDBAction {
     /// Continue if we aren't under errors
         if (empty($errors)) {
         /// If there is one name change, do it, changing the prev and next
-        /// atributes of the adjacent fields
+        /// attributes of the adjacent fields
             if ($indexparam != $name) {
                 $index->setName($name);
                 if ($index->getPrevious()) {

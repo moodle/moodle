@@ -374,11 +374,11 @@ class permissions_table extends capability_table_base {
  */
 abstract class capability_table_with_risks extends capability_table_base {
     protected $allrisks;
-    protected $allpermissions; // We don't need perms ourself, but all our subclasses do.
+    protected $allpermissions; // We don't need perms ourselves, but all our subclasses do.
     protected $strperms; // Language string cache.
     protected $risksurl; // URL in moodledocs about risks.
     protected $riskicons = array(); // Cache to avoid regenerating the HTML for each risk icon.
-    /** The capabilities to highlight as default/interited. */
+    /** The capabilities to highlight as default/inherited. */
     protected $parentpermissions;
     protected $displaypermissions;
     protected $permissions;
@@ -438,7 +438,7 @@ abstract class capability_table_with_risks extends capability_table_base {
 
         foreach ($this->capabilities as $cap) {
             if ($cap->locked || $this->skip_row($cap)) {
-            /// The user is not allowed to change the permission for this capapability
+            /// The user is not allowed to change the permission for this capability
                 continue;
             }
 
@@ -536,7 +536,7 @@ abstract class capability_table_with_risks extends capability_table_base {
 
 /**
  * As well as tracking the permissions information about the role we are creating
- * or editing, we aslo track the other infromation about the role. (This class is
+ * or editing, we also track the other information about the role. (This class is
  * starting to be more and more like a formslib form in some respects.)
  */
 class define_role_table_advanced extends capability_table_with_risks {
@@ -901,7 +901,7 @@ class view_role_definition_table extends define_role_table_advanced {
 
 class override_permissions_table_advanced extends capability_table_with_risks {
     protected $strnotset;
-    protected $haslockedcapabiltites = false;
+    protected $haslockedcapabilities = false;
 
     /**
      * Constructor
@@ -925,7 +925,7 @@ class override_permissions_table_advanced extends capability_table_with_risks {
             foreach ($this->capabilities as $capid => $cap) {
                 if (!is_safe_capability($cap)) {
                     $this->capabilities[$capid]->locked = true;
-                    $this->haslockedcapabiltites = true;
+                    $this->haslockedcapabilities = true;
                 }
             }
         }
@@ -934,13 +934,13 @@ class override_permissions_table_advanced extends capability_table_with_risks {
     protected function load_parent_permissions() {
         global $DB;
 
-    /// Get the capabiltites from the parent context, so that can be shown in the interface.
+    /// Get the capabilities from the parent context, so that can be shown in the interface.
         $parentcontext = get_context_instance_by_id(get_parent_contextid($this->context));
         $this->parentpermissions = role_context_capabilities($this->roleid, $parentcontext);
     }
 
-    public function has_locked_capabiltites() {
-        return $this->haslockedcapabiltites;
+    public function has_locked_capabilities() {
+        return $this->haslockedcapabilities;
     }
 
     protected function add_permission_cells($capability) {
@@ -1308,7 +1308,7 @@ abstract class role_allow_role_page {
     /// Load the current settings
         $this->allowed = array();
         foreach ($this->roles as $role) {
-            // Make an array $role->id => false. This is probalby too clever for its own good.
+            // Make an array $role->id => false. This is probably too clever for its own good.
             $this->allowed[$role->id] = array_combine(array_keys($this->roles), array_fill(0, count($this->roles), false));
         }
         $rs = $DB->get_recordset($this->tablename);
@@ -1474,9 +1474,9 @@ class role_allow_switch_page extends role_allow_role_page {
  * some blocks) then return a potential_assignees_below_course object. Otherwise
  * return a potential_assignees_course_and_above.
  *
- * @param $context a context.
- * @param $name passed to user selector constructor.
- * @param $options to user selector constructor.
+ * @param stdClass $context a context.
+ * @param string $name passed to user selector constructor.
+ * @param array $options to user selector constructor.
  * @return user_selector_base an appropriate user selector.
  */
 function roles_get_potential_user_selector($context, $name, $options) {

@@ -102,7 +102,7 @@ foreach ($contexts as $conid => $con) {
     }
 }
 
-/// Put the role capabilites into the context tree.
+/// Put the role capabilities into the context tree.
 foreach ($roleassignments as $ra) {
     $contexts[$ra->contextid]->roleassignments[$ra->roleid] = $ra;
 }

@@ -2072,7 +2072,7 @@ function put_records_csv($file, $records, $table = NULL) {
  * then delete it. If $location does not exist to start, that is not
  * considered an error.
  *
- * @param $location the path to remove.
+ * @param string $location the path to remove.
  * @return bool
  */
 function fulldelete($location) {

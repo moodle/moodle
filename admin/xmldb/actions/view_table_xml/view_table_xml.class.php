@@ -22,7 +22,7 @@
  */
 
 /**
- * This class will display the XML for one table bein edited
+ * This class will display the XML for one table being edited
  *
  * @package   xmldb-editor
  * @copyright 2003 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}

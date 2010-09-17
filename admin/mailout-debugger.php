@@ -63,7 +63,7 @@ fclose($stdin);
  *
  * Very useful for perl-like error-handling:
  *
- * do_somethting() or mdie("Something went wrong");
+ * do_something() or mdie("Something went wrong");
  *
  * @param string  $msg       Error message
  * @param integer $errorcode Error code to emit

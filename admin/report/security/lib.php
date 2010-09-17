@@ -272,7 +272,7 @@ function report_security_check_unsecuredataroot($detailed=false) {
 }
 
 /**
- * Verifies disaplying of errors - problem for lib files and 3rd party code
+ * Verifies displaying of errors - problem for lib files and 3rd party code
  * because we can not disable debugging in these scripts (they do not include config.php)
  * @param bool $detailed
  * @return object result
@@ -302,7 +302,7 @@ function report_security_check_displayerrors($detailed=false) {
 }
 
 /**
- * Verifies open profiles - originaly open by default, not anymore because spammer abused it a lot
+ * Verifies open profiles - originally open by default, not anymore because spammer abused it a lot
  * @param bool $detailed
  * @return object result
  */
@@ -803,7 +803,7 @@ function report_security_check_riskbackup($detailed=false) {
 
     // list of users that are able to backup personal info
     // note: "sc" is context where is role assigned,
-    //       "c" is context where is role overriden or system context if in role definition
+    //       "c" is context where is role overridden or system context if in role definition
     $params = array('capability'=>'moodle/backup:userinfo', 'permission'=>CAP_ALLOW, 'context1'=>CONTEXT_COURSE, 'context2'=>CONTEXT_COURSE);
 
     $sqluserinfo = "

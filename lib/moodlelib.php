@@ -4630,8 +4630,8 @@ function &get_mailer($action='get') {
  * @global string
  * @global string IdentityProvider(IDP) URL user hits to jump to mnet peer.
  * @uses SITEID
- * @param user $user  A {@link $USER} object
- * @param user $from A {@link $USER} object
+ * @param stdClass $user  A {@link $USER} object
+ * @param stdClass $from A {@link $USER} object
  * @param string $subject plain text subject line of the email
  * @param string $messagetext plain text version of the message
  * @param string $messagehtml complete html version of the message (optional)
@@ -5291,7 +5291,7 @@ function get_max_upload_file_size($sitebytes=0, $coursebytes=0, $modulebytes=0) 
  * @param int $sizebytes Set maximum size
  * @param int $coursebytes Current course $course->maxbytes (in bytes)
  * @param int $modulebytes Current module ->maxbytes (in bytes)
- * @return int
+ * @return array
  */
 function get_max_upload_sizes($sitebytes=0, $coursebytes=0, $modulebytes=0) {
     global $CFG;

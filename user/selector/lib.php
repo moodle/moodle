@@ -477,7 +477,7 @@ abstract class user_selector_base {
      * text of the message depends on whether the search term is non-blank.
      *
      * @param string $search the search term, as passed in to the find users method.
-     * @param unknown_type $count the number of users that currently match.
+     * @param int $count the number of users that currently match.
      * @return array in the right format to return from the find_users method.
      */
     protected function too_many_results($search, $count) {

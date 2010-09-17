@@ -51,7 +51,7 @@ if ($quizobj->is_preview_user() && $forcenew) {
 }
 
 
-/// Check capabilites.
+/// Check capabilities.
 if (!$quizobj->is_preview_user()) {
     $quizobj->require_capability('mod/quiz:attempt');
 }

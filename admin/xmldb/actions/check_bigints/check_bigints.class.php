@@ -22,7 +22,7 @@
  */
 
 /**
- * reporting about the ones not phisically implemented as BIGINTs
+ * reporting about the ones not physically implemented as BIGINTs
  * and providing one SQL script to fix all them. Also, under MySQL,
  * it performs one check of signed bigints. MDL-11038
  *
@@ -89,7 +89,7 @@ class check_bigints extends XMLDBCheckAction {
                 $metacolumn = $metacolumns[$xmldb_field->getName()];
             /// Going to check this field in DB
                 $o.='            <li>' . $this->str['field'] . ': ' . $xmldb_field->getName() . ' ';
-            /// Detect if the phisical field is wrong and, under mysql, check for incorrect signed fields too
+            /// Detect if the physical field is wrong and, under mysql, check for incorrect signed fields too
                 if ($metacolumn->type != $this->correct_type || ($this->dbfamily == 'mysql' && $xmldb_field->getUnsigned() && !$metacolumn->unsigned)) {
                     $o.='<font color="red">' . $this->str['wrong'] . '</font>';
                 /// Add the wrong field to the list

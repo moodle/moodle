@@ -21,7 +21,7 @@ echo $OUTPUT->header();
 // Log.
 add_to_log(SITEID, "admin", "report questioninstances", "report/questioninstances/index.php?qtype=$requestedqtype", $requestedqtype);
 
-// Prepare the list of capabilites to choose from
+// Prepare the list of capabilities to choose from
 $qtypechoices = array();
 foreach ($QTYPES as $qtype) {
     $qtypechoices[$qtype->name()] = $qtype->local_name();

@@ -149,7 +149,7 @@ abstract class XMLDBCheckAction extends XMLDBAction {
                             if (!$dbman->table_exists($xmldb_table)) {
                                 continue;
                             }
-                        /// Fetch metadata from phisical DB. All the columns info.
+                        /// Fetch metadata from physical DB. All the columns info.
                             if (!$metacolumns = $DB->get_columns($xmldb_table->getName())) {
                             //// Skip table if no metacolumns is available for it
                                 continue;

@@ -47,7 +47,7 @@ add_to_log(SITEID, "admin", "report capability", "report/capability/index.php?ca
 admin_externalpage_setup('reportcapability');
 echo $OUTPUT->header();
 
-// Prepare the list of capabilites to choose from
+// Prepare the list of capabilities to choose from
 $allcapabilities = fetch_context_capabilities($systemcontext);
 $capabilitychoices = array();
 foreach ($allcapabilities as $cap) {
@@ -117,7 +117,7 @@ if ($capability) {
     // Prepare some empty arrays to hold the data we are about to compute.
     foreach ($contexts as $conid => $con) {
         $contexts[$conid]->children = array();
-        $contexts[$conid]->rolecapabilites = array();
+        $contexts[$conid]->rolecapabilities = array();
     }
 
     // Put the contexts into a tree structure.
@@ -128,15 +128,15 @@ if ($capability) {
         }
     }
 
-    // Put the role capabilites into the context tree.
+    // Put the role capabilities into the context tree.
     foreach ($rolecaps as $rolecap) {
-        $contexts[$rolecap->contextid]->rolecapabilites[$rolecap->roleid] = $rolecap->permission;
+        $contexts[$rolecap->contextid]->rolecapabilities[$rolecap->roleid] = $rolecap->permission;
     }
 
     // Fill in any missing rolecaps for the system context.
     foreach ($cleanedroleids as $roleid) {
-        if (!isset($contexts[$systemcontext->id]->rolecapabilites[$roleid])) {
-            $contexts[$systemcontext->id]->rolecapabilites[$roleid] = CAP_INHERIT;
+        if (!isset($contexts[$systemcontext->id]->rolecapabilities[$roleid])) {
+            $contexts[$systemcontext->id]->rolecapabilities[$roleid] = CAP_INHERIT;
         }
     }
 
@@ -183,12 +183,12 @@ function print_report_tree($contextid, $contexts, $allroles) {
     echo '<h3><a href="' . $url . '" title="' . $title . '">', print_context_name($contexts[$contextid]), '</a></h3>';
 
     // If there are any role overrides here, print them.
-    if (!empty($contexts[$contextid]->rolecapabilites)) {
+    if (!empty($contexts[$contextid]->rolecapabilities)) {
         $rowcounter = 0;
         echo '<table class="generaltable rolecaps"><tbody>';
         foreach ($allroles as $role) {
-            if (isset($contexts[$contextid]->rolecapabilites[$role->id])) {
-                $permission = $contexts[$contextid]->rolecapabilites[$role->id];
+            if (isset($contexts[$contextid]->rolecapabilities[$role->id])) {
+                $permission = $contexts[$contextid]->rolecapabilities[$role->id];
                 echo '<tr class="r' . ($rowcounter % 2) . '"><th class="cell">', $role->name,
                         '</th><td class="cell">' . $strpermissions[$permission] . '</td></tr>';
                 $rowcounter++;

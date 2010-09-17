@@ -29,7 +29,7 @@ require_once($CFG->dirroot . '/webservice/lib.php');
 
 admin_externalpage_setup('externalservice');
 
-//Desactivate the 'Edit service' navigation node, and use the main 'Service' navigation node
+//Deactivate the 'Edit service' navigation node, and use the main 'Service' navigation node
 $node = $PAGE->settingsnav->find('externalservice', navigation_node::TYPE_SETTING);
 $newnode = $PAGE->settingsnav->find('externalservices', navigation_node::TYPE_SETTING);
 if ($node && $newnode) {
@@ -76,7 +76,7 @@ if ($mform->is_cancelled()) {
         $servicedata->id = $webservicemanager->add_external_service($servicedata);
         add_to_log(1, 'webservice', 'add', $returnurl, get_string('addservice', 'webservice', $servicedata));
 
-        //redirecto to the 'add functions to service' page
+        //redirect to the 'add functions to service' page
         $addfunctionpage = new moodle_url(
                         $CFG->wwwroot . '/' . $CFG->admin . '/webservice/service_functions.php',
                         array('id' => $servicedata->id));

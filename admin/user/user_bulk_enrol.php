@@ -1,6 +1,6 @@
 <?php
 /**
-* script for bulk user multy enrol operations
+* script for bulk user multi enrol operations
 */
 
 die('this needs to be rewritten to use new enrol framework, sorry');  //TODO: MDL-24064

@@ -2283,7 +2283,7 @@ class admin_setting_configselect extends admin_setting {
      * @param string $name unique ascii name, either 'mysetting' for settings that in config, or 'myplugin/mysetting' for ones in config_plugins.
      * @param string $visiblename localised
      * @param string $description long localised info
-     * @param string $defaultsetting
+     * @param string|int $defaultsetting
      * @param array $choices array of $value=>$label for each selection
      */
     public function __construct($name, $visiblename, $description, $defaultsetting, $choices) {

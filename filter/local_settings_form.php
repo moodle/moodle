@@ -61,13 +61,13 @@ abstract class filter_local_settings_form extends moodleform {
 
     /**
      * Override this method to add your form controls.
-     * @param $mform the form we are building. $this->_form, but passed in for convinience.
+     * @param $mform the form we are building. $this->_form, but passed in for convenience.
      */
     abstract protected function definition_inner($mform);
 
     /**
      * Override this method to save the settings to the database. The default
-     * implementation will probalby be sufficient for most simple cases.
+     * implementation will probably be sufficient for most simple cases.
      * @param object $data the form data that was submitted.
      */
     public function save_changes($data) {

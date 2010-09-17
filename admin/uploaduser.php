@@ -484,7 +484,7 @@ if ($formdata = $mform->is_cancelled()) {
                     }
                 }
 
-                // do not update record if new auth plguin does not exist!
+                // do not update record if new auth plugin does not exist!
                 if (!in_array($existinguser->auth, $availableauths)) {
                     $upt->track('auth', get_string('userautherror', 'error', $existinguser->auth), 'error');
                     $upt->track('status', $strusernotupdated, 'error');

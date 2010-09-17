@@ -47,7 +47,7 @@
         }
     }
 
-/// Check capabilites and block settings
+/// Check capabilities and block settings
     if (!$attemptobj->is_preview_user()) {
         $attemptobj->require_capability('mod/quiz:attempt');
         if (empty($attemptobj->get_quiz()->showblocks)) {

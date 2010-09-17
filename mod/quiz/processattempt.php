@@ -51,7 +51,7 @@ if ($attemptobj->get_userid() != $USER->id) {
     quiz_error($attemptobj->get_quiz(), 'notyourattempt');
 }
 
-/// Check capabilites.
+/// Check capabilities.
 if (!$attemptobj->is_preview_user()) {
     $attemptobj->require_capability('mod/quiz:attempt');
 }

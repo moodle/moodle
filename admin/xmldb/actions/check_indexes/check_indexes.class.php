@@ -23,7 +23,7 @@
 
 /**
  * This class will compare all the indexes found in the XMLDB definitions
- * with the phisical DB implementation, reporting about all the missing
+ * with the physical DB implementation, reporting about all the missing
  * indexes to be created to be 100% ok.
  *
  * @package   xmldb-editor

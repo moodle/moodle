@@ -106,7 +106,7 @@
             if (empty($version)) {
                 $version =  $env_version;
             }
-        ///Iterate over each version, adding bigged than current
+        ///Iterate over each version, adding bigger than current
             foreach ($env_versions as $env_version) {
                 if (version_compare(normalize_version($current_version), $env_version, '<')) {
                     $versions[$env_version] = $env_version;
