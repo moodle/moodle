@@ -1084,7 +1084,7 @@ M.gradereport_grader.classes.textfield.prototype.attach_key_events = function() 
  * @param {Y.Node} node
  */
 M.gradereport_grader.classes.scalefield = function(report, node) {
-    this.report=report = report;
+    this.report = report;
     this.node = node;
     this.gradespan = node.one('.gradevalue');
     this.inputdiv = this.report.Y.Node.create('<div></div>');
