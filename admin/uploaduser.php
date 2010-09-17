@@ -167,7 +167,7 @@ if ($formdata = $mform->is_cancelled()) {
     // caches
     $ccache       = array(); // course cache - do not fetch all courses here, we  will not probably use them all anyway!
     $rolecache    = uu_allowed_roles_cache(); // roles lookup cache
-    $manualcacche = array(); // cache of used manual enrol plugins in each course
+    $manualcache  = array(); // cache of used manual enrol plugins in each course
 
     $allowedauths   = uu_allowed_auths();
     $allowedauths   = array_keys($allowedauths);
