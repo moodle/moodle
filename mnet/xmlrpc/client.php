@@ -39,7 +39,7 @@ class mnet_xmlrpc_client {
     function set_timeout($timeout) {
         if (!is_integer($timeout)) {
             if (is_numeric($timeout)) {
-                $this->timeout = (integer($timeout));
+                $this->timeout = (integer)$timeout;
                 return true;
             }
             return false;
