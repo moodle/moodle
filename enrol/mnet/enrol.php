@@ -90,7 +90,7 @@ class enrol_mnet_mnetservice_enrol {
                 unset($course->customint1); // the client does not need to know this
                 $context = get_context_instance(CONTEXT_COURSE, $course->remoteid);
                 // Rewrite file URLs so that they are correct
-                $course->summary = file_rewrite_pluginfile_urls($course->summary, 'pluginfile.php', $context->id, 'course', 'summary');
+                $course->summary = file_rewrite_pluginfile_urls($course->summary, 'pluginfile.php', $context->id, 'course', 'summary', false);
                 $courses[$course->remoteid] = $course;
             }
         }
