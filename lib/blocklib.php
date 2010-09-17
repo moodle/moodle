@@ -1565,6 +1565,7 @@ function blocks_get_missing(&$page, &$blockmanager) {
 function blocks_remove_inappropriate($course) {
     // TODO
     return;
+    /*
     $blockmanager = blocks_get_by_page($page);
 
     if (empty($blockmanager)) {
@@ -1582,7 +1583,7 @@ function blocks_remove_inappropriate($course) {
                blocks_delete_instance($instance->instance);
             }
         }
-    }
+    }*/
 }
 
 /**
