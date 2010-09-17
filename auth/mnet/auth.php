@@ -448,7 +448,7 @@ class auth_plugin_mnet extends auth_plugin_base {
      * Normally called by the SP after calling user_authorise()
      *
      * @param string $username The username
-     * @param string $courses  Assoc array of courses following the structure of mnetservice_enrol_courses
+     * @param array $courses  Assoc array of courses following the structure of mnetservice_enrol_courses
      * @return bool
      */
     function update_enrolments($username, $courses) {
