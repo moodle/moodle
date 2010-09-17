@@ -5856,6 +5856,8 @@ function is_contextpath_dirty($pathcontexts, $dirty) {
  * @return array $role->sortorder =-> $role->id with the keys in ascending order.
  */
 function fix_role_sortorder($allroles) {
+    global $DB;
+
     $rolesort = array();
     $i = 0;
     foreach ($allroles as $role) {
