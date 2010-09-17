@@ -60,7 +60,7 @@ class enrol_meta_handler {
         $plugin = enrol_get_plugin('meta');
         if ($disabled = $plugin->get_config('nosyncroleids')) {
             if (in_array($ra->roleid, explode(',', $disabled))) {
-                continue;
+                return true;
             }
         }
 
