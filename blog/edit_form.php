@@ -75,10 +75,12 @@ class blog_edit_form extends moodleform {
                     $course = $DB->get_record('course', array('id' => $courseid));
                     $mform->addElement('header', 'assochdr', get_string('associations', 'blog'));
                     $context = get_context_instance(CONTEXT_COURSE, $courseid);
+                    $a = new object();
                     $a->coursename = $course->fullname;
                     $contextid = $context->id;
                 } else {
                     $sql = 'SELECT fullname FROM {course} cr LEFT JOIN {context} ct ON ct.instanceid = cr.id WHERE ct.id = ?';
+                    $a = new object();
                     $a->coursename = $DB->get_field_sql($sql, array($entry->courseassoc));
                     $contextid = $entry->courseassoc;
                 }
@@ -88,12 +90,14 @@ class blog_edit_form extends moodleform {
             } else if ((!empty($entry->modassoc) || !empty($modid)) && has_capability('moodle/blog:associatemodule', $sitecontext)) {
                 if (!empty($modid)) {
                     $mod = get_coursemodule_from_id(false, $modid);
+                    $a = new object();
                     $a->modtype = get_string('modulename', $mod->modname);
                     $a->modname = $mod->name;
                     $context = get_context_instance(CONTEXT_MODULE, $modid);
                 } else {
                     $context = $DB->get_record('context', array('id' => $entry->modassoc));
                     $cm = $DB->get_record('course_modules', array('id' => $context->instanceid));
+                    $a = new object();
                     $a->modtype = $DB->get_field('modules', 'name', array('id' => $cm->module));
                     $a->modname = $DB->get_field($a->modtype, 'name', array('id' => $cm->instance));
                 }
