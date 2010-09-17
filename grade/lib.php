@@ -689,7 +689,7 @@ class grade_plugin_return {
 
         } else {
             foreach ($params as $key=>$value) {
-                if (array_key_exists($key, $this)) {
+                if (property_exists($key, $this)) {
                     $this->$key = $value;
                 }
             }
@@ -1988,7 +1988,7 @@ class grade_tree extends grade_structure {
 
 /**
  * Local shortcut function for creating an edit/delete button for a grade_* object.
- * @param strong $type 'edit' or 'delete'
+ * @param string $type 'edit' or 'delete'
  * @param int $courseid The Course ID
  * @param grade_* $object The grade_* object
  * @return string html
@@ -2332,7 +2332,7 @@ abstract class grade_helper {
     /**
      * Get information on letters
      * @param int $courseid
-     * @return grade_plugin_info
+     * @return array
      */
     public static function get_info_letters($courseid) {
         if (self::$letterinfo !== null) {
