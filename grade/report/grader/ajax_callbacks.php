@@ -117,7 +117,7 @@ switch ($action) {
                 } else {
                     $json_object->result = 'error';
                     $json_object->message = "TO BE LOCALISED: Failure to update final grade!";
-                    echo json_encode();
+                    echo json_encode($json_object);
                     die();
                 }
 
