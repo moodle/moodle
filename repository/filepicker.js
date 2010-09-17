@@ -28,7 +28,7 @@
  * this.active_repo.nologin
  * this.active_repo.help
  * this.active_repo.manage
- * 
+ *
  * Server responses
  * =====
  * this.filelist, cached filelist
@@ -51,7 +51,7 @@ M.core_filepicker.active_filepicker = null;
  */
 M.core_filepicker.show = function(Y, options) {
     if (!M.core_filepicker.instances[options.client_id]) {
-        M.core_filepicker.init(Y, options); 
+        M.core_filepicker.init(Y, options);
     }
     M.core_filepicker.instances[options.client_id].show();
 };
@@ -62,7 +62,7 @@ M.core_filepicker.show = function(Y, options) {
 M.core_filepicker.init = function(Y, options) {
     var FilePickerHelper = function(options) {
         FilePickerHelper.superclass.constructor.apply(this, arguments);
-    }
+    };
 
     FilePickerHelper.NAME = "FilePickerHelper";
     FilePickerHelper.ATTRS = {
@@ -183,7 +183,7 @@ M.core_filepicker.init = function(Y, options) {
                 icon = YAHOO.widget.SimpleDialog.ICON_ALARM;
             }
             if (!this.msg_dlg) {
-                this.msg_dlg = new YAHOO.widget.SimpleDialog(dlg_id, 
+                this.msg_dlg = new YAHOO.widget.SimpleDialog(dlg_id,
                      { width: "300px",
                        fixedcenter: true,
                        visible: true,
@@ -364,7 +364,7 @@ M.core_filepicker.init = function(Y, options) {
                 }
                 var filename_id = 'filname-link-'+client_id+'-'+String(count);
                 title.innerHTML += '<a href="###" id="'+filename_id+'" title="'+node.title+'"><span>'+filename+"</span></a>";
- 
+
 
                 if(node.thumbnail_width){
                     grid.style.width = node.thumbnail_width+'px';
@@ -391,7 +391,7 @@ M.core_filepicker.init = function(Y, options) {
                 link.href='###';
                 link.id = 'img-id-'+client_id+'-'+String(count);
                 if(node.url) {
-                    // hide 
+                    // hide
                     //grid.innerHTML += '<p><a target="_blank" href="'+node.url+'">'+M.str.repository.preview+'</a></p>';
                 }
                 link.appendChild(img);
@@ -574,7 +574,7 @@ M.core_filepicker.init = function(Y, options) {
             elform.on('keydown', function(e) {
                 if (e.keyCode == 13) {
                     getfile.simulate('click');
-                    e.preventDefault(); 
+                    e.preventDefault();
                 }
             }, this);
             var cancel = Y.one('#fp-cancel-'+client_id);
@@ -900,7 +900,7 @@ M.core_filepicker.init = function(Y, options) {
                 popup_button.on('click', function(e){
                     M.core_filepicker.active_filepicker = this;
                     window.open(loginurl, 'repo_auth', 'location=0,status=0,width=500,height=300,scrollbars=yes');
-                    e.preventDefault(); 
+                    e.preventDefault();
                 }, this);
             }
             var elform = Y.one('#'+form_id);
@@ -914,7 +914,7 @@ M.core_filepicker.init = function(Y, options) {
                             login_button.simulate('click');
                             break;
                     }
-                    e.preventDefault(); 
+                    e.preventDefault();
                 }
             }, this);
 
@@ -981,7 +981,7 @@ M.core_filepicker.init = function(Y, options) {
                         scope.viewbar.set('disabled', true);
                         scope.parse_repository_options(obj);
                         scope.create_upload_form(obj);
-                    
+
                     } else if (obj.iframe) {
 
                     } else if (obj.list) {
@@ -1041,7 +1041,7 @@ M.core_filepicker.init = function(Y, options) {
             Y.one('#panel-'+client_id).appendChild(upload_form);
             var scope = this;
             Y.one('#'+id+'_action').on('click', function(e) {
-                e.preventDefault(); 
+                e.preventDefault();
                 var license = Y.one('#select-license-'+client_id).get('value');
                 YAHOO.util.Cookie.set('recentlicense', license);
                 if (!Y.one('#'+id+'_file').get('value')) {
