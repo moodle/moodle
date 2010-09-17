@@ -1317,17 +1317,21 @@ class restore_course_completion_structure_step extends restore_structure_step {
             $data->role = $this->get_mappingid('role', $data->role);
         }
 
+        $skipcriteria = false;
+
         // If the completion criteria is for a module we need to map the module instance
         // to the new module id.
         if (!empty($data->moduleinstance) && !empty($data->module)) {
             $data->moduleinstance = $this->get_mappingid('course_module', $data->moduleinstance);
+            if (empty($data->moduleinstance)) {
+                $skipcriteria = true;
+            }
         } else {
             $data->module = null;
             $data->moduleinstance = null;
         }
 
         // We backup the course shortname rather than the ID so that we can match back to the course
-        $skipcriteria = false;
         if (!empty($data->courseinstanceshortname)) {
             $courseinstanceid = $DB->get_field('course', 'id', array('shortname'=>$data->courseinstanceshortname));
             if (!$courseinstanceid) {
