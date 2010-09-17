@@ -38,4 +38,4 @@ M.block_private_files.init_tree = function(Y, expand_all, htmlid) {
 
         tree.render();
     });
-}
+};

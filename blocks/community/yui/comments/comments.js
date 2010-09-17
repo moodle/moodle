@@ -4,7 +4,7 @@ YUI.add('moodle-block_community-comments', function(Y) {
 
     var COMMENTS = function() {
         COMMENTS.superclass.constructor.apply(this, arguments);
-    }
+    };
 
     Y.extend(COMMENTS, Y.Base, {
 
@@ -16,7 +16,7 @@ YUI.add('moodle-block_community-comments', function(Y) {
 
             //attach a show event on the div with id = comments
             for (var i=0;i<this.get('commentids').length;i++)
-            {  
+            {
                 var commentid = this.get('commentids')[i];
                 this.overlays[commentid] = new M.core.dialogue({
                     headerContent:Y.one('#commentoverlay-'+commentid+' .commenttitle').get('innerHTML'),
@@ -76,7 +76,7 @@ YUI.add('moodle-block_community-comments', function(Y) {
             //Note: it would work without but create js warning everytime
             //we click on the body
             }
-        
+
         }
 
     }, {

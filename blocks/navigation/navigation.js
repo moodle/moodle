@@ -42,7 +42,7 @@ M.block_navigation = M.block_navigation || {
     /**
      * This function gets called when the module is first loaded as required by
      * the YUI.add statement at the bottom of the page.
-     * 
+     *
      * NOTE: This will only be executed ONCE
      * @function
      */
@@ -85,7 +85,7 @@ M.block_navigation.classes.tree = function(Y, id, properties) {
     this.position = 'block';
     this.skipsetposition = false;
     this.candock = false;
-    
+
     if (properties.expansions) {
         this.expansions = properties.expansions;
     }
@@ -97,12 +97,12 @@ M.block_navigation.classes.tree = function(Y, id, properties) {
     }
 
     var node = this.Y.one('#inst'+this.id);
-    
+
     // Can't find the block instance within the page
     if (node === null) {
         return;
     }
-    
+
     // Attach event to toggle expansion
     node.all('.tree_item.branch').on('click', this.toggleexpansion , this);
 
@@ -129,7 +129,7 @@ M.block_navigation.classes.tree = function(Y, id, properties) {
     if (this.candock) {
         this.init(Y, node);
     }
-}
+};
 
 /**
  * Loads a branch via AJAX
@@ -158,7 +158,7 @@ M.block_navigation.classes.tree.prototype.init_load_ajax = function(e, branch) {
         }
     });
     return true;
-}
+};
 
 /**
  * Takes an branch provided through ajax and loads it into the tree
@@ -182,7 +182,7 @@ M.block_navigation.classes.tree.prototype.load_ajax = function(tid, outcome, arg
     // The branch is empty so class it accordingly
     args.target.replaceClass('branch', 'emptybranch');
     return true;
-}
+};
 
 /**
  * Adds a branch into the tree provided with some XML
@@ -227,7 +227,7 @@ M.block_navigation.classes.tree.prototype.add_branch = function(branchobj, targe
         }
     }
     return true;
-}
+};
 /**
  * Toggle a branch as expanded or collapsed
  * @param {Event} e
@@ -254,7 +254,7 @@ M.block_navigation.classes.tree.prototype.toggleexpansion = function(e) {
     if (this.candock) {
         M.core_dock.resize();
     }
-}
+};
 
 /**
  * This class represents a branch for a tree
@@ -282,7 +282,7 @@ M.block_navigation.classes.branch = function(tree, obj) {
         // Construct from the provided xml
         this.construct_from_json(obj);
     }
-}
+};
 /**
  * Populates this branch from a JSON object
  * @param {object} obj
@@ -301,7 +301,7 @@ M.block_navigation.classes.branch.prototype.construct_from_json = function(obj) 
         M.block_navigation.expandablebranchcount++;
         this.id = 'expandable_branch_'+M.block_navigation.expandablebranchcount;
     }
-}
+};
 /**
  * Injects a branch into the tree at the given location
  * @param {element} element
@@ -349,7 +349,7 @@ M.block_navigation.classes.branch.prototype.inject_into_dom = function(element) 
             }
         }
     }
-    
+
     if (this.link === null) {
         if (branchicon) {
             branchp.appendChild(branchicon);
@@ -377,7 +377,7 @@ M.block_navigation.classes.branch.prototype.inject_into_dom = function(element) 
         element.appendChild(branchli);
         return false;
     }
-}
+};
 
 /**
  * Causes the navigation block module to initalise the first time the module
