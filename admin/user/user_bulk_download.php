@@ -38,7 +38,7 @@ if ($format) {
                     'msn'       => 'msn',
                     'country'   => 'country');
 
-    if ($extrafields = $DB->get_records_select('user_info_field')) {
+    if ($extrafields = $DB->get_records('user_info_field')) {
         foreach ($extrafields as $n=>$v){
             $fields['profile_field_'.$v->shortname] = 'profile_field_'.$v->shortname;
         }
