@@ -186,7 +186,7 @@ if ($mform->is_cancelled()) {
     }
 
     // the overriding of feedback is tricky - we have to care about external items only
-    if (!property_exists('feedback', $data) or $data->feedback == $data->oldfeedback) {
+    if (!property_exists($data, 'feedback') or $data->feedback == $data->oldfeedback) {
         $data->feedback       = $old_grade_grade->feedback;
         $data->feedbackformat = $old_grade_grade->feedbackformat;
     }

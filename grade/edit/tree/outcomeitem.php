@@ -107,7 +107,7 @@ if ($data = $mform->get_data()) {
         $data->aggregationcoef = 0;
     }
 
-    if (property_exists('calculation', $data)) {
+    if (property_exists($data, 'calculation')) {
         $data->calculation = grade_item::normalize_formula($data->calculation, $course->id);
     }
 
@@ -123,7 +123,7 @@ if ($data = $mform->get_data()) {
 
     $convert = array('gradepass', 'aggregationcoef');
     foreach ($convert as $param) {
-        if (property_exists($param, $data)) {
+        if (property_exists($data, $param)) {
             $data->$param = unformat_float($data->$param);
         }
     }

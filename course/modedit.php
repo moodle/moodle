@@ -521,7 +521,7 @@ if ($mform->is_cancelled()) {
         foreach($outcomes as $outcome) {
             $elname = 'outcome_'.$outcome->id;
 
-            if (property_exists($elname, $fromform) and $fromform->$elname) {
+            if (property_exists($fromform, $elname) and $fromform->$elname) {
                 // so we have a request for new outcome grade item?
                 if ($items) {
                     foreach($items as $item) {

@@ -142,7 +142,7 @@ if (!$edit) {
             $gradelettername = 'gradeletter'.$i;
             $gradeboundaryname = 'gradeboundary'.$i;
 
-            if (property_exists($gradeboundaryname, $data) and $data->$gradeboundaryname != -1) {
+            if (property_exists($data, $gradeboundaryname) and $data->$gradeboundaryname != -1) {
                 $letter = trim($data->$gradelettername);
                 if ($letter == '') {
                     continue;

@@ -86,7 +86,7 @@ abstract class data_object {
     public function load_optional_fields() {
         global $DB;
         foreach ($this->optional_fields as $field=>$default) {
-            if (property_exists($field, $this)) {
+            if (property_exists($this, $field)) {
                 continue;
             }
             if (empty($this->id)) {

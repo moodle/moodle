@@ -457,7 +457,7 @@ if ($formdata = $mform->is_cancelled()) {
                             }
                         }
                     }
-                    if ((property_exists($column, $existinguser) and property_exists($column, $user)) or in_array($column, $PRF_FIELDS)) {
+                    if ((property_exists($existinguser, $column) and property_exists($user, $column)) or in_array($column, $PRF_FIELDS)) {
                         if ($updatetype == 3 and $existinguser->$column !== '') {
                             //missing == non-empty only
                             continue;

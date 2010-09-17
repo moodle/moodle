@@ -125,7 +125,7 @@ if ($mform->is_cancelled()) {
 
     $convert = array('grademax', 'grademin', 'gradepass', 'multfactor', 'plusfactor', 'aggregationcoef');
     foreach ($convert as $param) {
-        if (property_exists($param, $data)) {
+        if (property_exists($data, $param)) {
             $data->$param = unformat_float($data->$param);
         }
     }
@@ -135,7 +135,7 @@ if ($mform->is_cancelled()) {
     $grade_item->outcomeid = null;
 
     // Handle null decimals value
-    if (!property_exists('decimals', $data) or $data->decimals < 0) {
+    if (!property_exists($data, 'decimals') or $data->decimals < 0) {
         $grade_item->decimals = null;
     }
 

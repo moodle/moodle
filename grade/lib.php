@@ -691,7 +691,7 @@ class grade_plugin_return {
 
         } else {
             foreach ($params as $key=>$value) {
-                if (property_exists($key, $this)) {
+                if (property_exists($this, $key)) {
                     $this->$key = $value;
                 }
             }

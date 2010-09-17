@@ -170,7 +170,7 @@ class workshop {
      */
     public function __construct(stdclass $dbrecord, stdclass $cm, stdclass $course, stdclass $context=null) {
         foreach ($dbrecord as $field => $value) {
-            if (property_exists('workshop', $field)) {
+            if (property_exists($field, 'workshop')) {
                 $this->{$field} = $value;
             }
         }
