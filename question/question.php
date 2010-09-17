@@ -59,9 +59,11 @@ if ($inpopup !== 0) {
 }
 $PAGE->set_url($url);
 
-if ($originalreturnurl) {
+if ($originalreturnurl && $wizardnow == '') {
     $returnurl = $CFG->wwwroot . '/' . $originalreturnurl;
-} else {
+} else if ($originalreturnurl && $wizardnow !== ''){
+    $returnurl = $originalreturnurl;
+}else {
     $returnurl = "{$CFG->wwwroot}/question/edit.php?courseid={$COURSE->id}";
 }
 
