@@ -156,7 +156,7 @@ class base_setting_ui {
 
 /**
  * Abstract class to represent the user interface backup settings have
- * 
+ *
  * @copyright 2010 Sam Hemelryk
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -210,7 +210,7 @@ abstract class backup_setting_ui extends base_setting_ui {
      * @param string $label The label to display with the setting ui
      * @param array $attributes Array of HTML attributes to apply to the element
      * @param array $options Array of options to apply to the setting ui object
-     * 
+     *
      * @return backup_setting_ui_text|backup_setting_ui_checkbox|backup_setting_ui_select|backup_setting_ui_radio
      */
     final public static function make(backup_setting $setting, $type, $label, array $attributes = null, array $options=null) {
@@ -367,7 +367,7 @@ class backup_setting_ui_checkbox extends backup_setting_ui {
      */
     public function get_element_properties(base_task $task=null, renderer_base $output=null) {
         // name, label, text, attributes
-        
+
         $icon = $this->get_icon();
         $label = $this->get_label($task);
         if (!empty($icon)) {
@@ -380,7 +380,7 @@ class backup_setting_ui_checkbox extends backup_setting_ui {
      * @param string $text
      */
     public function set_text($text) {
-        $this->text = text;
+        $this->text = $text;
     }
     /**
      * Gets the static value for the element
@@ -474,14 +474,14 @@ class backup_setting_ui_radio extends backup_setting_ui {
      * @param text $text
      */
     public function set_text($text) {
-        $this->text = text;
+        $this->text = $text;
     }
     /**
      * Sets the value for the input
      * @param string $value
      */
     public function set_value($value) {
-        $this->value = (string)value;
+        $this->value = (string)$value;
     }
     /**
      * Gets the static value to show for the element
