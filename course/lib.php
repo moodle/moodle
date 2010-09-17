@@ -3520,7 +3520,7 @@ function create_course($data, $editoroptions = NULL) {
     // update module restrictions
     if ($course->restrictmodules) {
         if (isset($data->allowedmods)) {
-            update_restricted_mods($data->allowedmods);
+            update_restricted_mods($course, $data->allowedmods);
         } else {
             if (!empty($CFG->defaultallowedmodules)) {
                 update_restricted_mods($course, explode(',', $CFG->defaultallowedmodules));
