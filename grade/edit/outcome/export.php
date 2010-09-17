@@ -42,9 +42,8 @@ if ($courseid) {
     admin_externalpage_setup('outcomes');
 }
 
-if (!confirm_sesskey()) {
-    break;
-}
+require_sesskey();
+
 // $outcome = grade_outcome::fetch(array('id'=>$outcomeid));
 
 $systemcontext = get_context_instance(CONTEXT_SYSTEM);
