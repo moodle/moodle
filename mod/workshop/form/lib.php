@@ -115,4 +115,14 @@ interface workshop_strategy {
      * @return bool
      */
     public static function scale_used($scaleid, $workshopid=null);
+
+    /**
+     * Delete all data related to a given workshop module instance
+     *
+     * This is called from {@link workshop_delete_instance()}.
+     *
+     * @param int $workshopid id of the workshop module instance being deleted
+     * @return void
+     */
+    public static function delete_instance($workshopid);
 }

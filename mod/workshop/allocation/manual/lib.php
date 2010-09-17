@@ -323,6 +323,19 @@ class workshop_manual_allocator implements workshop_allocator {
     }
 
     /**
+     * Delete all data related to a given workshop module instance
+     *
+     * This plugin does not store any data.
+     *
+     * @see workshop_delete_instance()
+     * @param int $workshopid id of the workshop module instance being deleted
+     * @return void
+     */
+    public static function delete_instance($workshopid) {
+        return;
+    }
+
+    /**
      * Returns the list of all allocations where the given users are involved
      *
      * We must use recordset here because we do not have any unique identifier available

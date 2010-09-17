@@ -59,4 +59,14 @@ interface workshop_allocator {
      * @return string HTML code to be echoed
      */
     public function ui();
+
+    /**
+     * Delete all data related to a given workshop module instance
+     *
+     * This is called from {@link workshop_delete_instance()}.
+     *
+     * @param int $workshopid id of the workshop module instance being deleted
+     * @return void
+     */
+    public static function delete_instance($workshopid);
 }

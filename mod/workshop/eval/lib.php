@@ -28,8 +28,17 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * Defines all methods that grading evaluation subplugins has to implement
  *
- * @todo
+ * @todo the final interface is not decided yet as we have only one implementation so far
  */
 interface workshop_evaluation {
 
+    /**
+     * Delete all data related to a given workshop module instance
+     *
+     * This is called from {@link workshop_delete_instance()}.
+     *
+     * @param int $workshopid id of the workshop module instance being deleted
+     * @return void
+     */
+    public static function delete_instance($workshopid);
 }

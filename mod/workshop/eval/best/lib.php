@@ -124,6 +124,19 @@ class workshop_best_evaluation implements workshop_evaluation {
         return new workshop_best_evaluation_settings_form($actionurl, $customdata, 'post', '', $attributes);
     }
 
+    /**
+     * Delete all data related to a given workshop module instance
+     *
+     * @see workshop_delete_instance()
+     * @param int $workshopid id of the workshop module instance being deleted
+     * @return void
+     */
+    public static function delete_instance($workshopid) {
+        global $DB;
+
+        $DB->delete_records('workshopeval_best_settings', array('workshopid' => $workshopid));
+    }
+
     ////////////////////////////////////////////////////////////////////////////////
     // Internal methods                                                           //
     ////////////////////////////////////////////////////////////////////////////////

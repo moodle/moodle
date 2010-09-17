@@ -166,22 +166,46 @@ function workshop_delete_instance($id) {
     global $CFG, $DB;
     require_once($CFG->libdir.'/gradelib.php');
 
-
     if (! $workshop = $DB->get_record('workshop', array('id' => $id))) {
         return false;
     }
+
     // delete all associated aggregations
     $DB->delete_records('workshop_aggregations', array('workshopid' => $workshop->id));
+
     // get the list of ids of all submissions
     $submissions = $DB->get_records('workshop_submissions', array('workshopid' => $workshop->id), '', 'id');
+
     // get the list of all allocated assessments
     $assessments = $DB->get_records_list('workshop_assessments', 'submissionid', array_keys($submissions), '', 'id');
+
     // delete the associated records from the workshop core tables
     $DB->delete_records_list('workshop_grades', 'assessmentid', array_keys($assessments));
     $DB->delete_records_list('workshop_assessments', 'id', array_keys($assessments));
     $DB->delete_records_list('workshop_submissions', 'id', array_keys($submissions));
-    // todo call the static clean-up methods of all available subplugins
-    // ...
+
+    // call the static clean-up methods of all available subplugins
+    $strategies = get_plugin_list('workshopform');
+    foreach ($strategies as $strategy => $path) {
+        require_once($path.'/lib.php');
+        $classname = 'workshop_'.$strategy.'_strategy';
+        call_user_func($classname.'::delete_instance', $workshop->id);
+    }
+
+    $allocators = get_plugin_list('workshopallocation');
+    foreach ($allocators as $allocator => $path) {
+        require_once($path.'/lib.php');
+        $classname = 'workshop_'.$allocator.'_allocator';
+        call_user_func($classname.'::delete_instance', $workshop->id);
+    }
+
+    $evaluators = get_plugin_list('workshopeval');
+    foreach ($evaluators as $evaluator => $path) {
+        require_once($path.'/lib.php');
+        $classname = 'workshop_'.$evaluator.'_evaluation';
+        call_user_func($classname.'::delete_instance', $workshop->id);
+    }
+
     // finally remove the workshop record itself
     $DB->delete_records('workshop', array('id' => $workshop->id));
 

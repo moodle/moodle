@@ -182,6 +182,19 @@ class workshop_random_allocator implements workshop_allocator {
     }
 
     /**
+     * Delete all data related to a given workshop module instance
+     *
+     * This plugin does not store any data.
+     *
+     * @see workshop_delete_instance()
+     * @param int $workshopid id of the workshop module instance being deleted
+     * @return void
+     */
+    public static function delete_instance($workshopid) {
+        return;
+    }
+
+    /**
      * Return an array of possible numbers of reviews to be done
      *
      * Should contain numbers 1, 2, 3, ... 10 and possibly others up to a reasonable value

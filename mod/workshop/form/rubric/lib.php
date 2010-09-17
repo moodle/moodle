@@ -386,6 +386,22 @@ class workshop_rubric_strategy implements workshop_strategy {
         return false;
     }
 
+    /**
+     * Delete all data related to a given workshop module instance
+     *
+     * @see workshop_delete_instance()
+     * @param int $workshopid id of the workshop module instance being deleted
+     * @return void
+     */
+    public static function delete_instance($workshopid) {
+        global $DB;
+
+        $dimensions = $DB->get_records('workshopform_rubric', array('workshopid' => $workshopid), '', 'id');
+        $DB->delete_records_list('workshopform_rubric_levels', 'dimensionid', array_keys($dimensions));
+        $DB->delete_records('workshopform_rubric', array('workshopid' => $workshopid));
+        $DB->delete_records('workshopform_rubric_config', array('workshopid' => $workshopid));
+    }
+
     ////////////////////////////////////////////////////////////////////////////////
     // Internal methods                                                           //
     ////////////////////////////////////////////////////////////////////////////////
