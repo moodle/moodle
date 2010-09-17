@@ -731,7 +731,7 @@ function is_siteadmin($user_or_id = NULL) {
  * @return unknown_type
  */
 function has_coursecontact_role($userid) {
-    global $DB;
+    global $DB, $CFG;
 
     if (empty($CFG->coursecontact)) {
         return false;
