@@ -177,14 +177,14 @@ class pgsql_native_moodle_database extends moodle_database {
         $result = pg_query($this->pgsql, $sql);
         $this->query_end($result);
 
-        $this->bytea_oid = pg_fetch_result($result, 0);
+        $this->bytea_oid = pg_fetch_result($result, 0, 0);
         pg_free_result($result);
         if ($this->bytea_oid === false) {
             $this->pgsql = null;
             throw new dml_connection_exception('Can not read bytea type.');
         }
 
-        // Connection stabilished and configured, going to instantiate the temptables controller
+        // Connection stabilised and configured, going to instantiate the temptables controller
         $this->temptables = new pgsql_native_moodle_temptables($this);
 
         return true;
