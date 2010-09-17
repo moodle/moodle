@@ -1833,8 +1833,9 @@ function blocks_add_default_course_blocks($course) {
 
         } else {
             $formatconfig = $CFG->dirroot.'/course/format/'.$course->format.'/config.php';
+            $format = array(); // initialize array in external file
             if (is_readable($formatconfig)) {
-                require($formatconfig);
+                include($formatconfig);
             }
             if (!empty($format['defaultblocks'])) {
                 $blocknames = blocks_parse_default_blocks_list($format['defaultblocks']);
