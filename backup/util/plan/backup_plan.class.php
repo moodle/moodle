@@ -31,6 +31,7 @@ class backup_plan extends base_plan implements loggable {
 
     protected $controller; // The backup controller building/executing this plan
     protected $basepath;   // Fullpath to dir where backup is created
+    protected $excludingdactivities;
 
     /**
      * Constructor - instantiates one object of this class
@@ -65,6 +66,14 @@ class backup_plan extends base_plan implements loggable {
 
     public function get_logger() {
         return $this->controller->get_logger();
+    }
+
+    public function is_excluding_activities() {
+        return $this->excludingdactivities;
+    }
+
+    public function set_excluding_activities() {
+        $this->excludingdactivities = true;
     }
 
     public function log($message, $level, $a = null, $depth = null, $display = false) {

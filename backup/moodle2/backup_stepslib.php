@@ -1544,3 +1544,82 @@ class backup_activity_grades_structure_step extends backup_structure_step {
         return $book;
     }
 }
+
+/**
+ * Backups up the course completion information for the course.
+ */
+class backup_course_completion_structure_step extends backup_structure_step {
+
+    protected function execute_condition() {
+        // Check that all activities have been included
+        if ($this->task->is_excluding_activities()) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * The structure of the course completion backup
+     *
+     * @return backup_nested_element
+     */
+    protected function define_structure() {
+
+        // To know if we are including user completion info
+        $userinfo = $this->get_setting_value('userscompletion');
+
+        $cc = new backup_nested_element('course_completion');
+
+        $criteria = new backup_nested_element('course_completion_criteria', array('id'), array(
+            'course','criteriatype', 'module', 'moduleinstance', 'courseinstanceshortname', 'enrolperiod', 'timeend', 'gradepass', 'role'
+        ));
+
+        $criteriacompletions = new backup_nested_element('course_completion_crit_completions');
+
+        $criteriacomplete = new backup_nested_element('course_completion_crit_compl', array('id'), array(
+            'criteriaid', 'userid','gradefinal','unenrolled','deleted','timecompleted'
+        ));
+
+        $coursecompletions = new backup_nested_element('course_completions', array('id'), array(
+            'userid', 'course', 'deleted', 'timenotified', 'timeenrolled','timestarted','timecompleted','reaggregate'
+        ));
+
+        $notify = new backup_nested_element('course_completion_notify', array('id'), array(
+            'course','role','message','timesent'
+        ));
+
+        $aggregatemethod = new backup_nested_element('course_completion_aggr_methd', array('id'), array(
+            'course','criteriatype','method','value'
+        ));
+
+        $cc->add_child($criteria);
+            $criteria->add_child($criteriacompletions);
+                $criteriacompletions->add_child($criteriacomplete);
+        $cc->add_child($coursecompletions);
+        $cc->add_child($notify);
+        $cc->add_child($aggregatemethod);
+
+        // We need to get the courseinstances shortname rather than an ID for restore
+        $criteria->set_source_sql("SELECT ccc.*, c.shortname courseinstanceshortname
+                                   FROM {course_completion_criteria} ccc
+                                   LEFT JOIN {course} c ON c.id = ccc.courseinstance
+                                   WHERE ccc.course = ?", array(backup::VAR_COURSEID));
+
+
+        $notify->set_source_table('course_completion_notify', array('course' => backup::VAR_COURSEID));
+        $aggregatemethod->set_source_table('course_completion_aggr_methd', array('course' => backup::VAR_COURSEID));
+
+        if ($userinfo) {
+            $criteriacomplete->set_source_table('course_completion_crit_compl', array('criteriaid' => backup::VAR_PARENTID));
+            $coursecompletions->set_source_table('course_completions', array('course' => backup::VAR_COURSEID));
+        }
+
+        $criteria->annotate_ids('role', 'role');
+        $criteriacomplete->annotate_ids('user', 'userid');
+        $coursecompletions->annotate_ids('user', 'userid');
+        $notify->annotate_ids('role', 'role');
+
+        return $cc;
+
+    }
+}

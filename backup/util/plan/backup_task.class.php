@@ -42,6 +42,10 @@ abstract class backup_task extends base_task {
     public function get_backupid() {
         return $this->plan->get_backupid();
     }
+
+    public function is_excluding_activities() {
+        return $this->plan->is_excluding_activities();
+    }
 }
 
 /*

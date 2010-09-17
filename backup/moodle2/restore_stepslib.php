@@ -1226,6 +1226,253 @@ class restore_comments_structure_step extends restore_structure_step {
     }
 }
 
+class restore_course_completion_structure_step extends restore_structure_step {
+
+    /**
+     * Conditionally decide if this step should be executed.
+     *
+     * This function checks parameters that are not immediate settings to ensure
+     * that the enviroment is suitable for the restore of course completion info.
+     *
+     * This function checks the following four parameters:
+     *
+     *   1. Course completion is enabled on the site
+     *   2. The backup includes course completion information
+     *   3. All modules are restorable
+     *   4. All modules are marked for restore.
+     *
+     * @return bool True is safe to execute, false otherwise
+     */
+    protected function execute_condition() {
+        global $CFG;
+
+        // First check course completion is enabled on this site
+        if (empty($CFG->enablecompletion)) {
+            // Disabled, don't restore course completion
+            return false;
+        }
+
+        // Check it is included in the backup
+        $fullpath = $this->task->get_taskbasepath();
+        $fullpath = rtrim($fullpath, '/') . '/' . $this->filename;
+        if (!file_exists($fullpath)) {
+            // Not found, can't restore course completion
+            return false;
+        }
+
+        // Check we are able to restore all backed up modules
+        if ($this->task->is_missing_modules()) {
+            return false;
+        }
+
+        // Finally check all modules within the backup are being restored.
+        if ($this->task->is_excluding_activities()) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Define the course completion structure
+     *
+     * @return array Array of restore_path_element
+     */
+    protected function define_structure() {
+
+        // To know if we are including user completion info
+        $userinfo = $this->get_setting_value('userscompletion');
+
+        $paths = array();
+        $paths[] = new restore_path_element('course_completion_criteria', '/course_completion/course_completion_criteria');
+        $paths[] = new restore_path_element('course_completion_notify', '/course_completion/course_completion_notify');
+        $paths[] = new restore_path_element('course_completion_aggr_methd', '/course_completion/course_completion_aggr_methd');
+
+        if ($userinfo) {
+            $paths[] = new restore_path_element('course_completion_crit_compl', '/course_completion/course_completion_criteria/course_completion_crit_completions/course_completion_crit_compl');
+            $paths[] = new restore_path_element('course_completions', '/course_completion/course_completions');
+        }
+
+        return $paths;
+
+    }
+
+    /**
+     * Process course completion criteria
+     *
+     * @global moodle_database $DB
+     * @param stdClass $data
+     */
+    public function process_course_completion_criteria($data) {
+        global $DB;
+
+        $data = (object)$data;
+        $data->course = $this->get_courseid();
+
+        // Apply the date offset to the time end field
+        $data->timeend = $this->apply_date_offset($data->timeend);
+
+        // Map the role from the criteria
+        if (!empty($data->role)) {
+            $data->role = $this->get_mappingid('role', $data->role);
+        }
+
+        // If the completion criteria is for a module we need to map the module instance
+        // to the new module id.
+        if (!empty($data->moduleinstance) && !empty($data->module)) {
+            $data->moduleinstance = $this->get_mappingid('course_module', $data->moduleinstance);
+        } else {
+            $data->module = null;
+            $data->moduleinstance = null;
+        }
+
+        // We backup the course shortname rather than the ID so that we can match back to the course
+        $skipcriteria = false;
+        if (!empty($data->courseinstanceshortname)) {
+            $courseinstanceid = $DB->get_field('course', 'id', array('shortname'=>$data->courseinstanceshortname));
+            if (!$courseinstanceid) {
+                $skipcriteria = true;
+            }
+        } else {
+            $courseinstanceid = null;
+        }
+        $data->courseinstance = $courseinstanceid;
+
+        if (!$skipcriteria) {
+            $params = array(
+                'course'         => $data->course,
+                'criteriatype'   => $data->criteriatype,
+                'enrolperiod'    => $data->enrolperiod,
+                'courseinstance' => $data->courseinstance,
+                'module'         => $data->module,
+                'moduleinstance' => $data->moduleinstance,
+                'timeend'        => $data->timeend,
+                'gradepass'      => $data->gradepass,
+                'role'           => $data->role
+            );
+            $newid = $DB->insert_record('course_completion_criteria', $params);
+            $this->set_mapping('course_completion_criteria', $data->id, $newid);
+        }
+    }
+
+    /**
+     * Processes course compltion criteria complete records
+     *
+     * @global moodle_database $DB
+     * @param stdClass $data
+     */
+    public function process_course_completion_crit_compl($data) {
+        global $DB;
+
+        $data = (object)$data;
+
+        // This may be empty if criteria could not be restored
+        $data->criteriaid = $this->get_mappingid('course_completion_criteria', $data->criteriaid);
+        
+        $data->course = $this->get_courseid();
+        $data->userid = $this->get_mappingid('user', $data->userid);
+
+        if (!empty($data->criteriaid) && !empty($data->userid)) {
+            $params = array(
+                'userid' => $data->userid,
+                'course' => $data->course,
+                'criteriaid' => $data->criteriaid,
+                'timecompleted' => $this->apply_date_offset($data->timecompleted)
+            );
+            if (isset($data->gradefinal)) {
+                $params['gradefinal'] = $data->gradefinal;
+            }
+            if (isset($data->unenroled)) {
+                $params['unenroled'] = $data->unenroled;
+            }
+            if (isset($data->deleted)) {
+                $params['deleted'] = $data->deleted;
+            }
+            $DB->insert_record('course_completion_crit_compl', $params);
+        }
+    }
+
+    /**
+     * Process course completions
+     *
+     * @global moodle_database $DB
+     * @param stdClass $data
+     */
+    public function process_course_completions($data) {
+        global $DB;
+
+        $data = (object)$data;
+
+        $data->course = $this->get_courseid();
+        $data->userid = $this->get_mappingid('user', $data->userid);
+
+        if (!empty($data->userid)) {
+            $params = array(
+                'userid' => $data->userid,
+                'course' => $data->course,
+                'deleted' => $data->deleted,
+                'timenotified' => $this->apply_date_offset($data->timenotified),
+                'timeenrolled' => $this->apply_date_offset($data->timeenrolled),
+                'timestarted' => $this->apply_date_offset($data->timestarted),
+                'timecompleted' => $this->apply_date_offset($data->timecompleted),
+                'reaggregate' => $data->reaggregate
+            );
+            $DB->insert_record('course_completions', $params);
+        }
+    }
+
+    /**
+     * Process course completion notification records.
+     *
+     * Note: As of Moodle 2.0 this table is not being used however it has been
+     * left in in the hopes that one day the functionality there will be completed
+     *
+     * @global moodle_database $DB
+     * @param stdClass $data
+     */
+    public function process_course_completion_notify($data) {
+        global $DB;
+
+        $data = (object)$data;
+
+        $data->course = $this->get_courseid();
+        if (!empty($data->role)) {
+            $data->role = $this->get_mappingid('role', $data->role);
+        }
+
+        $params = array(
+            'course' => $data->course,
+            'role' => $data->role,
+            'message' => $data->message,
+            'timesent' => $this->apply_date_offset($data->timesent),
+        );
+        $DB->insert_record('course_completion_notify', $params);
+    }
+
+    /**
+     * Process course completion aggregate methods
+     *
+     * @global moodle_database $DB
+     * @param stdClass $data
+     */
+    public function process_course_completion_aggr_methd($data) {
+        global $DB;
+
+        $data = (object)$data;
+
+        $data->course = $this->get_courseid();
+
+        $params = array(
+            'course' => $data->course,
+            'criteriatype' => $data->criteriatype,
+            'method' => $data->method,
+            'value' => $data->value,
+        );
+        $DB->insert_record('course_completion_aggr_methd', $params);
+    }
+
+}
+
 /**
  * This structure step restores the grade items associated with one activity
  * All the grade items are made child of the "course" grade item but the original

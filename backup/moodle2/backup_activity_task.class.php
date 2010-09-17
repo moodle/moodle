@@ -173,7 +173,7 @@ abstract class backup_activity_task extends backup_task {
         // Find activity_included_setting
         if (!$this->get_setting_value('included')) {
             $this->log('activity skipped by _included setting', backup::LOG_DEBUG, $this->name);
-
+            $this->plan->set_excluding_activities();
         } else { // Setting tells us it's ok to execute
             parent::execute();
         }

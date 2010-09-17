@@ -73,6 +73,9 @@ class backup_final_task extends backup_task {
         // execute_condition() so only will be excuted if ALL module grade_items in course have been exported
         $this->add_step(new backup_gradebook_structure_step('course_gradebook','gradebook.xml'));
 
+        // Generate the course completion
+        $this->add_step(new backup_course_completion_structure_step('course_completion', 'completion.xml'));
+
         // Generate the scales file with all the (final) annotated scales
         $this->add_step(new backup_final_scales_structure_step('scaleslist', 'scales.xml'));
 
