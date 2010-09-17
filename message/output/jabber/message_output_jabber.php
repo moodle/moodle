@@ -62,7 +62,7 @@ class message_output_jabber extends message_output {
         }
         $jabbermessage = fullname($userfrom).': '.$message->fullmessage;
 
-        $conection = new XMPPHP_XMPP(JABBER_SERVER, 5222, JABBER_USERNAME, JABBER_PASSWORD, 'moodle', JABBER_SERVER);
+        $conn = new XMPPHP_XMPP(JABBER_SERVER, 5222, JABBER_USERNAME, JABBER_PASSWORD, 'moodle', JABBER_SERVER);
 
         try {
             $conn->connect();
