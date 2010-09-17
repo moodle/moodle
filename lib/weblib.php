@@ -2498,7 +2498,7 @@ function notice ($message, $link='', $course=NULL) {
  * <strong>Good practice:</strong> You should call this method before starting page
  * output by using any of the OUTPUT methods.
  *
- * @param moodle_url $url A moodle_url to redirect to. Strings are not to be trusted!
+ * @param moodle_url|string $url A moodle_url to redirect to. Strings are not to be trusted!
  * @param string $message The message to display to the user
  * @param int $delay The delay before redirecting
  * @return void
