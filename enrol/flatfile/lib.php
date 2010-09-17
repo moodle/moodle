@@ -273,6 +273,7 @@ class enrol_flatfile_plugin extends enrol_plugin {
 
             if (!empty($mailstudents)) {
                 // Send mail to students
+                $a = new object();
                 $a->coursename = "$course->fullname";
                 $a->profileurl = "$CFG->wwwroot/user/view.php?id=$user->id&amp;course=$course->id";
 
@@ -294,6 +295,7 @@ class enrol_flatfile_plugin extends enrol_plugin {
 
                 // Send mail to teachers
                 foreach($teachers as $teacher) {
+                    $a = new object();
                     $a->course = "$course->fullname";
                     $a->user = fullname($user);
 

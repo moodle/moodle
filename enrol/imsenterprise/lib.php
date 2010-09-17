@@ -311,7 +311,7 @@ function process_group_tag($tagcontents){
     $createnewcategories    = $this->get_config('createnewcategories');
 
     // Process tag contents
-    unset($group);
+    $group = new object();
     if(preg_match('{<sourcedid>.*?<id>(.+?)</id>.*?</sourcedid>}is', $tagcontents, $matches)){
         $group->coursecode = trim($matches[1]);
     }
@@ -372,11 +372,12 @@ function process_group_tag($tagcontents){
                         $course->category = $catid;
                     } elseif($createnewcategories) {
                         // Else if we're allowed to create new categories, let's create this one
+                        $newcat = new object();
                         $newcat->name = $group->category;
-                       $newcat->visible = 0;
-                       $catid = $DB->insert_record('course_categories', $newcat);
-                       $course->category = $catid;
-                       $this->log_line("Created new (hidden) category, #$catid: $newcat->name");
+                        $newcat->visible = 0;
+                        $catid = $DB->insert_record('course_categories', $newcat);
+                        $course->category = $catid;
+                        $this->log_line("Created new (hidden) category, #$catid: $newcat->name");
                     }else{
                         // If not found and not allowed to create, stick with default
                         $this->log_line('Category '.$group->category.' not found in Moodle database, so using default category instead.');
@@ -429,6 +430,7 @@ function process_person_tag($tagcontents){
     $imsdeleteusers         = $this->get_config('imsdeleteusers');
     $createnewusers         = $this->get_config('createnewusers');
 
+    $person = new object();
     if(preg_match('{<sourcedid>.*?<id>(.+?)</id>.*?</sourcedid>}is', $tagcontents, $matches)){
         $person->idnumber = trim($matches[1]);
     }
