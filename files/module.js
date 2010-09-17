@@ -69,7 +69,7 @@ M.core_filetree = {
         }
         tree.render();
         this.y3 = Y;
-    }, 
+    },
     dynload: function(node, oncompletecb) {
         var tmp = document.createElement('p');
         tmp.innerHTML = node.html;
@@ -78,7 +78,7 @@ M.core_filetree = {
         M.core_filetree.request(link, node, oncompletecb);
     },
     onclick: function(e) {
-        YAHOO.util.Event.preventDefault(e); 
+        YAHOO.util.Event.preventDefault(e);
         if (e.node.isFile) {
             var tmp = document.createElement('p');
             tmp.innerHTML = e.node.html;
@@ -98,4 +98,4 @@ M.core_filetree = {
             return unescape(results[1]);
         }
     }
-}
+};
