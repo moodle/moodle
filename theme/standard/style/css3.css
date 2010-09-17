@@ -183,7 +183,7 @@ table.minicalendar {
   border-bottom-right-radius: 10px;
 }
 
-.loginbox .content.left.
+.loginbox .content.left,
 #page-user-view .left,
 .forumpost .side,
 .glossarycomment .side {
