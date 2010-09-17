@@ -42,8 +42,8 @@ function disablePopupHeads() {
             popup[i].disabled = true;
         }
     }
-    var popup = document.getElementById("menufieldkeyindex");
-    var i = popup.length;
+    popup = document.getElementById("menufieldkeyindex");
+    i = popup.length;
     while (i--) {
         option = popup[i];
         if (option.value == "fieldshead" || option.value == "keyshead" || option.value == "indexeshead") {
