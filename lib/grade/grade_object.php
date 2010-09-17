@@ -219,7 +219,7 @@ abstract class grade_object {
             $data->oldid        = $this->id;
             $data->source       = $source;
             $data->timemodified = time();
-            $data->userlogged   = $USER->id;
+            $data->loggeduser   = $USER->id;
             $DB->insert_record($this->table.'_history', $data);
         }
 
