@@ -1,7 +1,7 @@
 <?php
 
 die;die;die;
-
+/*
     if (empty($CFG->unittestprefix)) {
         die;
     }
@@ -91,3 +91,4 @@ die;die;die;
 
 
     redirect('index.php');
+*/
