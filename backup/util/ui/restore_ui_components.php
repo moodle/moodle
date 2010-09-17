@@ -303,9 +303,16 @@ class restore_course_search extends restore_search_base {
     static $VAR_PAGELIMIT = 'pagelimit';
     static $VAR_SEARCH = 'search';
 
-    public function __construct(array $config=array()) {
+    protected $currentcourseid = null;
+
+    /**
+     * @param array $config
+     * @param int $currentcouseid The current course id so it can be ignored
+     */
+    public function __construct(array $config=array(), $currentcouseid = null) {
         parent::__construct($config);
         $this->require_capability('moodle/restore:restorecourse');
+        $this->currentcourseid = $currentcouseid;
     }
     /**
      *
@@ -317,13 +324,19 @@ class restore_course_search extends restore_search_base {
         list($ctxselect, $ctxjoin) = context_instance_preload_sql('c.id', CONTEXT_COURSE, 'ctx');
         $params = array(
             'fullnamesearch' => $this->get_search().'%',
-            'shortnamesearch' => '%'.$this->get_search().'%'
+            'shortnamesearch' => '%'.$this->get_search().'%',
+            'siteid' => SITEID
         );
 
         $select     = " SELECT c.id,c.fullname,c.shortname,c.visible,c.sortorder ";
         $from       = " FROM {course} c ";
-        $where      = " WHERE ".$DB->sql_like('c.fullname', ':fullnamesearch', false)." OR ".$DB->sql_like('c.shortname', ':shortnamesearch', false);
+        $where      = " WHERE (".$DB->sql_like('c.fullname', ':fullnamesearch', false)." OR ".$DB->sql_like('c.shortname', ':shortnamesearch', false).") AND c.id <> :siteid";
         $orderby    = " ORDER BY c.sortorder";
+
+        if ($this->currentcourseid !== null) {
+            $where .= " AND c.id <> :currentcourseid";
+            $params['currentcourseid'] = $this->currentcourseid;
+        }
 
         return array($select.$ctxselect.$from.$ctxjoin.$where.$orderby, $params);
     }
@@ -332,12 +345,18 @@ class restore_course_search extends restore_search_base {
 
         $params = array(
             'fullnamesearch' => $this->get_search().'%',
-            'shortnamesearch' => '%'.$this->get_search().'%'
+            'shortnamesearch' => '%'.$this->get_search().'%',
+            'siteid' => SITEID
         );
 
         $select     = " SELECT COUNT(c.id) ";
         $from       = " FROM {course} c ";
-        $where      = " WHERE ".$DB->sql_like('c.fullname', ':fullnamesearch', false)." OR ".$DB->sql_like('c.shortname', ':shortnamesearch', false);
+        $where      = " WHERE (".$DB->sql_like('c.fullname', ':fullnamesearch', false)." OR ".$DB->sql_like('c.shortname', ':shortnamesearch', false).") AND c.id <> :siteid";
+
+        if ($this->currentcourseid !== null) {
+            $where .= " AND c.id <> :currentcourseid";
+            $params['currentcourseid'] = $this->currentcourseid;
+        }
 
         return array($select.$from.$where, $params);
     }

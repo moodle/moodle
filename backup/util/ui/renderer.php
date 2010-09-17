@@ -178,19 +178,6 @@ class core_backup_renderer extends plugin_renderer_base {
 
         $html  = html_writer::start_tag('div', array('class'=>'backup-course-selector backup-restore'));
 
-        // Current course
-        if (!empty($currentcourse)) {
-            $html .= $form;
-            $html .= html_writer::empty_tag('input', array('type'=>'hidden', 'name'=>'targetid', 'value'=>$currentcourse));
-            $html .= html_writer::start_tag('div', array('class'=>'bcs-current-course backup-section'));
-            $html .= $this->output->heading(get_string('restoretocurrentcourse', 'backup'), 2, array('class'=>'header'));
-            $html .= $this->backup_detail_input(get_string('restoretocurrentcourseadding', 'backup'), 'radio', 'target', backup::TARGET_CURRENT_ADDING, array('checked'=>'checked'));
-            $html .= $this->backup_detail_input(get_string('restoretocurrentcoursedeleting', 'backup'), 'radio', 'target', backup::TARGET_CURRENT_DELETING);
-            $html .= $this->backup_detail_pair('', html_writer::empty_tag('input', array('type'=>'submit', 'value'=>get_string('continue'))));
-            $html .= html_writer::end_tag('div');
-            $html .= html_writer::end_tag('form');
-        }
-
         if (!empty($categories) && ($categories->get_resultscount() > 0 || $categories->get_search() == '')) {
             // New course
             $html .= $form;
@@ -199,6 +186,19 @@ class core_backup_renderer extends plugin_renderer_base {
             $html .= $this->backup_detail_input(get_string('restoretonewcourse', 'backup'), 'radio', 'target', backup::TARGET_NEW_COURSE, array('checked'=>'checked'));
             //$html .= $this->backup_detail_select(get_string('coursecategory', 'backup'), 'targetid', $categories);
             $html .= $this->backup_detail_pair(get_string('selectacategory', 'backup'), $this->render($categories));
+            $html .= $this->backup_detail_pair('', html_writer::empty_tag('input', array('type'=>'submit', 'value'=>get_string('continue'))));
+            $html .= html_writer::end_tag('div');
+            $html .= html_writer::end_tag('form');
+        }
+
+        // Current course
+        if (!empty($currentcourse)) {
+            $html .= $form;
+            $html .= html_writer::empty_tag('input', array('type'=>'hidden', 'name'=>'targetid', 'value'=>$currentcourse));
+            $html .= html_writer::start_tag('div', array('class'=>'bcs-current-course backup-section'));
+            $html .= $this->output->heading(get_string('restoretocurrentcourse', 'backup'), 2, array('class'=>'header'));
+            $html .= $this->backup_detail_input(get_string('restoretocurrentcourseadding', 'backup'), 'radio', 'target', backup::TARGET_CURRENT_ADDING, array('checked'=>'checked'));
+            $html .= $this->backup_detail_input(get_string('restoretocurrentcoursedeleting', 'backup'), 'radio', 'target', backup::TARGET_CURRENT_DELETING);
             $html .= $this->backup_detail_pair('', html_writer::empty_tag('input', array('type'=>'submit', 'value'=>get_string('continue'))));
             $html .= html_writer::end_tag('div');
             $html .= html_writer::end_tag('form');

@@ -208,7 +208,7 @@ class restore_ui_stage_destination extends restore_ui_independent_stage {
             'filepath'=>$this->filepath,
             'contextid'=>$this->contextid,
             'stage'=>restore_ui::STAGE_DESTINATION));
-        $this->coursesearch = new restore_course_search(array('url'=>$url));
+        $this->coursesearch = new restore_course_search(array('url'=>$url), get_context_instance_by_id($contextid)->instanceid);
         $this->categorysearch = new restore_category_search(array('url'=>$url));
     }
     public function process() {
