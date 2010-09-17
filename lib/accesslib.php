@@ -5029,7 +5029,7 @@ function sort_by_roleassignment_authority($users, $context, $roles=array(), $sor
  *
  * @global object
  * @param int $roleid (can also be an array of ints!)
- * @param object $context
+ * @param stdClass $context
  * @param bool $parent if true, get list of users assigned in higher context too
  * @param string $fields fields from user (u.) , role assignment (ra) or role (r.)
  * @param string $sort sort from user (u.) , role assignment (ra) or role (r.)
@@ -5038,7 +5038,7 @@ function sort_by_roleassignment_authority($users, $context, $roles=array(), $sor
  * @param mixed $limitfrom defaults to ''
  * @param mixed $limitnum defaults to ''
  * @param string $extrawheretest defaults to ''
- * @param string $whereparams defaults to ''
+ * @param string|array $whereparams defaults to ''
  * @return array
  */
 function get_role_users($roleid, $context, $parent=false, $fields='',
@@ -5719,9 +5719,8 @@ function build_context_path($force=false) {
  * DB efficient as possible. This op can have a
  * massive impact in the DB.
  *
- * @global object
- * @param obj $current context obj
- * @param obj $newparent new parent obj
+ * @param stdClass $current context obj
+ * @param stdClass $newparent new parent obj
  *
  */
 function context_moved($context, $newparent) {

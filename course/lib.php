@@ -1752,7 +1752,7 @@ function rebuild_course_cache($courseid=0, $clearonly=false) {
  * Gets the child categories of a given coures category. Uses a static cache
  * to make repeat calls efficient.
  *
- * @param unknown_type $parentid the id of a course category.
+ * @param int $parentid the id of a course category.
  * @return array all the child course categories.
  */
 function get_child_categories($parentid) {
@@ -3093,7 +3093,7 @@ function course_allowed_module($course,$mod) {
 
 /**
  * Recursively delete category including all subcategories and courses.
- * @param object $category
+ * @param stdClass $category
  * @param boolean $showfeedback display some notices
  * @return array return deleted courses
  */
@@ -3192,7 +3192,8 @@ function category_delete_move($category, $newparentid, $showfeedback=true) {
  * Efficiently moves many courses around while maintaining
  * sortorder in order.
  *
- * @param $courseids is an array of course ids
+ * @param array $courseids is an array of course ids
+ * @param int $categoryid
  * @return bool success
  */
 function move_courses($courseids, $categoryid) {
@@ -3234,7 +3235,7 @@ function move_courses($courseids, $categoryid) {
 
 /**
  * Hide course category and child course and subcategories
- * @param $category
+ * @param stdClass $category
  * @return void
  */
 function course_category_hide($category) {
@@ -3258,7 +3259,7 @@ function course_category_hide($category) {
 
 /**
  * Show course category and child course and subcategories
- * @param $category
+ * @param stdClass $category
  * @return void
  */
 function course_category_show($category) {
@@ -3531,7 +3532,7 @@ function create_course($data, $editoroptions = NULL) {
     mark_context_dirty($context->path);
 
     // Save any custom role names.
-    save_local_role_names($course->id, $data);
+    save_local_role_names($course->id, (array)$data);
 
     // set up enrolments
     enrol_course_updated(true, $course, $data);
