@@ -570,7 +570,7 @@ function message_print_search($advancedsearch = false, $user1=null) {
 }
 
 function message_print_settings() {
-    global $USER, $OUTPUT;
+    global $USER, $OUTPUT, $PAGE;
 
     if ($frm = data_submitted() and confirm_sesskey()) {
 
