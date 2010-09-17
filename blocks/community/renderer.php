@@ -288,7 +288,7 @@ class block_community_renderer extends plugin_renderer_base {
                 $rateandcomment = html_writer::tag('div',
                                 html_writer::tag('a', get_string('rateandcomment', 'block_community'),
                                         array('href' => new moodle_url($huburl,
-                                                    array('courseid' => $course->id)),
+                                                    array('courseid' => $course->id, 'mustbelogged' => true)),
                                             'onclick' => 'this.target="_blank"')),
                                 array('class' => 'hubrateandcomment'));
 
