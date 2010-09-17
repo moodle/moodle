@@ -116,7 +116,7 @@ class database_manager {
 
     /// Check the table exists
         if (!$this->table_exists($table)) {
-            throw new ddl_table_missing_exception($tablename);
+            throw new ddl_table_missing_exception($table);
         }
 
         if (!$sqlarr = $this->generator->getResetSequenceSQL($table)) {
