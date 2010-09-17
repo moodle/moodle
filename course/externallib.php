@@ -324,10 +324,10 @@ class moodle_course_external extends external_api {
             //set default value for completion
             if (completion_info::is_enabled_for_site()) {
                 if (!key_exists('enablecompletion', $course)) {
-                    $course['enablecompletion'] = $courseconfig->enablecompletion;
+                    $course['enablecompletion'] = $course->enablecompletion;
                 }
                 if (!key_exists('completionstartonenrol', $course)) {
-                    $course['completionstartonenrol'] = $courseconfig->completionstartonenrol;
+                    $course['completionstartonenrol'] = $course->completionstartonenrol;
                 }
             } else {
                 $course['enablecompletion'] = 0;
