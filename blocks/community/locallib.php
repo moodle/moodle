@@ -101,6 +101,7 @@ class block_community_manager {
         fclose($fp);
 
         $fs = get_file_storage();
+        $record = new object();
         $record->contextid = get_context_instance(CONTEXT_USER, $USER->id)->id;
         $record->component = 'user';
         $record->filearea = 'private';

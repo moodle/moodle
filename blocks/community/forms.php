@@ -90,6 +90,7 @@ class community_hub_search_form extends moodleform {
             //Public hub list
             $options = array();
             $brtag = html_writer::empty_tag('br');
+            $firsthub = false;
             foreach ($hubs as $hub) {
                 if (key_exists('id', $hub)) {
                     $params = array('hubid' => $hub['id'],
