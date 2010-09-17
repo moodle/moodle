@@ -3630,7 +3630,6 @@ function update_course($data, $editoroptions = NULL) {
 function average_number_of_participants() {
     global $DB;
     return 0;
-    return $avg;
 }
 
 /**
@@ -3640,7 +3639,6 @@ function average_number_of_participants() {
 function average_number_of_courses_modules() {
     global $DB;
     return 0;
-    return $avg;
 }
 
 /**
