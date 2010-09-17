@@ -529,7 +529,7 @@ class course_enrolment_manager {
         try {
             role_unassign($roleid, $user->id, $this->context->id, '', NULL);
         } catch (Exception $e) {
-            if (is_defined('AJAX_SCRIPT')) {
+            if (defined('AJAX_SCRIPT')) {
                 throw $e;
             }
             return false;
@@ -547,7 +547,7 @@ class course_enrolment_manager {
     public function assign_role_to_user($roleid, $userid) {
         require_capability('moodle/role:assign', $this->context);
         if (!array_key_exists($roleid, $this->get_assignable_roles())) {
-            if (is_defined('AJAX_SCRIPT')) {
+            if (defined('AJAX_SCRIPT')) {
                 throw new moodle_exception('invalidrole');
             }
             return false;
