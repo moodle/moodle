@@ -388,7 +388,7 @@ class core_renderer extends renderer_base {
      * @return string HTML fragment.
      */
     public function login_info() {
-        global $USER, $CFG, $DB;
+        global $USER, $CFG, $DB, $SESSION;
 
         if (during_initial_install()) {
             return '';
