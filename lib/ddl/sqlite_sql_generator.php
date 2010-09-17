@@ -86,8 +86,8 @@ class sqlite_sql_generator extends sql_generator {
         }
 
         // From http://sqlite.org/autoinc.html
-        $value = (int)$this->mdb->get_field_sql('SELECT MAX(id) FROM {'.$tablename.'}');
-        return array("UPDATE sqlite_sequence SET seq=$value WHERE name='$this->prefix$tablename'");
+        $value = (int)$this->mdb->get_field_sql('SELECT MAX(id) FROM {'.$table.'}');
+        return array("UPDATE sqlite_sequence SET seq=$value WHERE name='{$this->prefix}{$table}'");
     }
 
     /**
