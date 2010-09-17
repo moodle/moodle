@@ -32,7 +32,7 @@ YUI.add('moodle-enrol-quickcohortenrolment', function(Y) {
 
     var CONTROLLER = function(config) {
         CONTROLLER.superclass.constructor.apply(this, arguments);
-    }
+    };
     Y.extend(CONTROLLER, Y.Base, {
         _preformingAction : false,
         initializer : function(config) {
@@ -41,7 +41,7 @@ YUI.add('moodle-enrol-quickcohortenrolment', function(Y) {
             this.publish('cohortsloaded');
             this.publish('performingaction');
             this.publish('actioncomplete');
-            
+
             var close = Y.Node.create('<div class="close"></div>');
             var panel = new Y.Overlay({
                 headerContent : Y.Node.create('<div></div>').append(Y.Node.create('<h2>'+M.str.enrol.enrolcohort+'</h2>')).append(close),
@@ -138,7 +138,7 @@ YUI.add('moodle-enrol-quickcohortenrolment', function(Y) {
                         }
                         this.getCohorts = function() {
                             this.fire('cohortsloaded');
-                        }
+                        };
                         this.getCohorts();
                     }
                 },
@@ -166,7 +166,7 @@ YUI.add('moodle-enrol-quickcohortenrolment', function(Y) {
                         }
                         this.getAssignableRoles = function() {
                             this.fire('assignablerolesloaded');
-                        }
+                        };
                         this.getAssignableRoles();
                     }
                 },
@@ -185,7 +185,7 @@ YUI.add('moodle-enrol-quickcohortenrolment', function(Y) {
                 cohortid : cohort.get(COHORTID),
                 action : (usersonly)?'enrolcohortusers':'enrolcohort',
                 sesskey : M.cfg.sesskey
-            }
+            };
             Y.io(M.cfg.wwwroot+this.get(AJAXURL), {
                 method:'POST',
                 data:build_querystring(params),
@@ -205,7 +205,7 @@ YUI.add('moodle-enrol-quickcohortenrolment', function(Y) {
                                                 .append(Y.Node.create('<img alt="loading" />').setAttribute('src', M.cfg.loadingicon)));
                                         window.location.href = redirecturl;
                                     }
-                                }
+                                };
                                 if (result.response && result.response.message) {
                                     new M.core.alert(result.response).on('complete', redirect, this);
                                 } else {
@@ -251,7 +251,7 @@ YUI.add('moodle-enrol-quickcohortenrolment', function(Y) {
 
     var COHORT = function(config) {
         COHORT.superclass.constructor.apply(this, arguments);
-    }
+    };
     Y.extend(COHORT, Y.Base, {
         toHTML : function(supportmanualenrolment){
             var button, result, name, users, syncbutton, usersbutton;
@@ -282,7 +282,7 @@ YUI.add('moodle-enrol-quickcohortenrolment', function(Y) {
         NAME : COHORTNAME,
         ATTRS : {
             cohortid : {
-                
+
             },
             name : {
                 validator : Y.Lang.isString

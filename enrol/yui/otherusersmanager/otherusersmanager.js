@@ -1,5 +1,5 @@
 YUI.add('moodle-enrol-otherusersmanager', function(Y) {
-    
+
     var OUMANAGERNAME = 'Other users manager',
         OTHERUSERNAME = 'Other user (not enroled in course)',
         COURSEID = 'courseId',
@@ -49,7 +49,7 @@ YUI.add('moodle-enrol-otherusersmanager', function(Y) {
 
     var OUMANAGER = function(config) {
         OUMANAGER.superclass.constructor.apply(this, arguments);
-    }
+    };
     Y.extend(OUMANAGER, Y.Base, {
         _loadingNode : null,
         _escCloseEvent : null,
@@ -82,7 +82,7 @@ YUI.add('moodle-enrol-otherusersmanager', function(Y) {
             this._loadingNode = this.get(BASE).one('.'+CSS.CONTENT+' .'+CSS.LIGHTBOX);
             Y.on('key', this.getUsers, this.get(SEARCH), 'down:13', this);
             Y.one(document.body).append(this.get(BASE));
-            
+
             var base = this.get(BASE);
             base.plug(Y.Plugin.Drag);
             base.dd.addHandle('.'+CSS.HEADER+' h2');
@@ -137,7 +137,7 @@ YUI.add('moodle-enrol-otherusersmanager', function(Y) {
             params['action'] = 'searchotherusers';
             params['search'] = this.get(SEARCH).get('value');
             params['page'] = this.get(PAGE);
-            
+
             Y.io(M.cfg.wwwroot+this.get(AJAXURL), {
                 method:'POST',
                 data:build_querystring(params),
@@ -223,7 +223,7 @@ YUI.add('moodle-enrol-otherusersmanager', function(Y) {
                         }
                         this.getAssignableRoles = function() {
                             this.fire('assignablerolesloaded');
-                        }
+                        };
                         this.getAssignableRoles();
                     }
                 },
@@ -234,7 +234,7 @@ YUI.add('moodle-enrol-otherusersmanager', function(Y) {
         NAME : OUMANAGERNAME,
         ATTRS : {
             courseId : {
-                
+
             },
             ajaxUrl : {
                 validator : Y.Lang.isString
@@ -290,7 +290,7 @@ YUI.add('moodle-enrol-otherusersmanager', function(Y) {
         this._count = count;
         this._manager = manager;
         OTHERUSER.superclass.constructor.apply(this, arguments);
-    }
+    };
     Y.extend(OTHERUSER, Y.Base, {
         _count : 0,
         _manager : null,
@@ -369,7 +369,7 @@ YUI.add('moodle-enrol-otherusersmanager', function(Y) {
         NAME : OTHERUSERNAME,
         ATTRS : {
             userId : {
-                
+
             },
             fullname : {
                 validator : Y.Lang.isString

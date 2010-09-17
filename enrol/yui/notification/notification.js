@@ -43,7 +43,7 @@ var DIALOGUE = function(config) {
     config.center =     config.centered || true;
     config.centered =   false;
     DIALOGUE.superclass.constructor.apply(this, [config]);
-}
+};
 Y.extend(DIALOGUE, Y.Overlay, {
     initializer : function(config) {
         this.set(NODELIGHTBOX, this.get(BASE).one('.'+CSS.LIGHTBOX).setStyle('opacity', 0.5));
@@ -116,7 +116,7 @@ Y.extend(DIALOGUE, Y.Overlay, {
 var ALERT = function(config) {
     config.closeButton = false;
     ALERT.superclass.constructor.apply(this, [config]);
-}
+};
 Y.extend(ALERT, DIALOGUE, {
     _enterKeypress : null,
     initializer : function(config) {
@@ -132,7 +132,7 @@ Y.extend(ALERT, DIALOGUE, {
         this.after('destroyedChange', function(){this.get(BASE).remove();}, this);
         this._enterKeypress = Y.on('key', this.submit, window, 'down:13', this);
         yes.on('click', this.submit, this);
-    }, 
+    },
     submit : function(e, outcome) {
         this._enterKeypress.detach();
         this.fire('complete');
@@ -166,7 +166,7 @@ Y.extend(ALERT, DIALOGUE, {
 
 var CONFIRM = function(config) {
     CONFIRM.superclass.constructor.apply(this, [config]);
-}
+};
 Y.extend(CONFIRM, DIALOGUE, {
     _enterKeypress : null,
     _escKeypress : null,
@@ -230,7 +230,7 @@ var EXCEPTION = function(config) {
     config.width = config.width || (M.cfg.developerdebug)?Math.floor(Y.one(document.body).get('winWidth')/3)+'px':null;
     config.closeButton = true;
     EXCEPTION.superclass.constructor.apply(this, [config]);
-}
+};
 Y.extend(EXCEPTION, DIALOGUE, {
     _hideTimeout : null,
     _keypress : null,
@@ -302,7 +302,7 @@ var AJAXEXCEPTION = function(config) {
     config.name = config.name || 'Error';
     config.closeButton = true;
     AJAXEXCEPTION.superclass.constructor.apply(this, [config]);
-}
+};
 Y.extend(AJAXEXCEPTION, DIALOGUE, {
     _keypress : null,
     initializer : function(config) {

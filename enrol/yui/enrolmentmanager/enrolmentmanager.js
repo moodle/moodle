@@ -96,7 +96,7 @@ YUI.add('moodle-enrol-enrolmentmanager', function(Y) {
                             .setStyle('opacity', 0.5)))
                     .append(Y.Node.create('<div class="'+CSS.FOOTER+'"></div>')
                         .append(Y.Node.create('<div class="'+CSS.SEARCH+'"><label>'+M.str.enrol.usersearch+'</label></div>')
-                            .append(Y.Node.create('<input type="text" id="enrolusersearch" value="" />'))   
+                            .append(Y.Node.create('<input type="text" id="enrolusersearch" value="" />'))
                         )
                     )
                 )
@@ -115,7 +115,7 @@ YUI.add('moodle-enrol-enrolmentmanager', function(Y) {
             this.set(UEP.PARAMS, params);
 
             Y.on('key', this.preSearch, this.get(UEP.SEARCH), 'down:13', this);
-            
+
             Y.one(document.body).append(this.get(UEP.BASE));
 
             var base = this.get(UEP.BASE);
@@ -200,7 +200,7 @@ YUI.add('moodle-enrol-enrolmentmanager', function(Y) {
                         }
                         this.getAssignableRoles = function() {
                             this.fire('assignablerolesloaded');
-                        }
+                        };
                         this.getAssignableRoles();
                     }
                 },
@@ -238,7 +238,7 @@ YUI.add('moodle-enrol-enrolmentmanager', function(Y) {
                 y = parseInt(base.get('winHeight'))*0.1;
             }
             base.setXY([x,y]);
-            
+
             if (this.get(UEP.USERS)===null) {
                 this.search(e, false);
             }

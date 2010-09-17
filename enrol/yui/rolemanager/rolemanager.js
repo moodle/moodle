@@ -19,7 +19,7 @@ YUI.add('moodle-enrol-rolemanager', function(Y) {
 
     var ROLE = function(config) {
         ROLE.superclass.constructor.apply(this, arguments);
-    }
+    };
     ROLE.NAME = MOD_NAME;
     ROLE.ATTRS = {
         containerId : {
@@ -52,7 +52,7 @@ YUI.add('moodle-enrol-rolemanager', function(Y) {
         otherusers : {
             value : false
         }
-    }
+    };
     Y.extend(ROLE, Y.Base, {
         users : [],
         roleAssignmentPanel : null,
@@ -64,7 +64,7 @@ YUI.add('moodle-enrol-rolemanager', function(Y) {
             var container = Y.one('#'+this.get(CONTAINERID));
             container.addClass('ajaxactive');
             this.set(CONTAINER, container);
-            
+
             var userids = this.get(USERIDS);
             for (i in userids) {
                 this.users[userids[i]] = new ROLEUSER({userId:userids[i],manipulator:this}).wire();
@@ -117,7 +117,7 @@ YUI.add('moodle-enrol-rolemanager', function(Y) {
                     question :  s.confirmunassign,
                     yesLabel :  s.confirmunassignyes,
                     noLabel  :  s.confirmunassignno
-                }
+                };
                 new M.core.confirm(confirmation).on('complete-yes', this.removeRoleCallback, this, user.get(USERID), roleid);
             }, this);
             this._loadAssignableRoles();
@@ -167,7 +167,7 @@ YUI.add('moodle-enrol-rolemanager', function(Y) {
                         }
                         this._loadAssignableRoles = function() {
                             this.fire('assignablerolesloaded');
-                        }
+                        };
                         this._loadAssignableRoles();
                     }
                 },
@@ -185,7 +185,7 @@ YUI.add('moodle-enrol-rolemanager', function(Y) {
 
     var ROLEUSER = function(config) {
         ROLEUSER.superclass.constructor.apply(this, arguments);
-    }
+    };
     ROLEUSER.NAME = MOD_USER;
     ROLEUSER.ATTRS = {
         userId  : {
@@ -233,7 +233,7 @@ YUI.add('moodle-enrol-rolemanager', function(Y) {
             value : '.unassignrolelink',
             validator : Y.Lang.isString
         }
-    }
+    };
     Y.extend(ROLEUSER, Y.Base, {
         initializer : function() {
             var container = this.get(MANIPULATOR).get(CONTAINER).one('#user_'+this.get(USERID));
@@ -263,7 +263,7 @@ YUI.add('moodle-enrol-rolemanager', function(Y) {
             container.all('.role.unchangeable').each(function(node){
                 currentroles[node.getAttribute('rel')] = true;
             }, this);
-            
+
             this.set(CURRENTROLES, currentroles);
             return this;
         },
@@ -322,7 +322,7 @@ YUI.add('moodle-enrol-rolemanager', function(Y) {
 
     var ROLEPANEL = function(config) {
         ROLEPANEL.superclass.constructor.apply(this, arguments);
-    }
+    };
     ROLEPANEL.NAME = MOD_PANEL;
     ROLEPANEL.ATTRS = {
         elementNode : {
@@ -346,7 +346,7 @@ YUI.add('moodle-enrol-rolemanager', function(Y) {
         manipulator : {
             validator: Y.Lang.isObject
         }
-    }
+    };
     Y.extend(ROLEPANEL, Y.Base, {
         user : null,
         roles : [],
@@ -415,5 +415,5 @@ YUI.add('moodle-enrol-rolemanager', function(Y) {
             return M.enrol.rolemanager.instance;
         }
     }
-    
+
 }, '@VERSION@', {requires:['base','node','io','json-parse','test','moodle-enrol-notification']});
