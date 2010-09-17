@@ -1884,7 +1884,7 @@ function make_categories_list(&$list, &$parents, $requiredcapability = '',
  * @param int $depth
  */
 function get_course_category_tree($id = 0, $depth = 0) {
-    global $DB;
+    global $DB, $CFG;
     $viewhiddencats = has_capability('moodle/category:viewhiddencategories', get_context_instance(CONTEXT_SYSTEM));
     $categories = get_child_categories($id);
     $categoryids = array();
