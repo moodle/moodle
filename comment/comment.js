@@ -24,7 +24,7 @@ M.core_comment = {
     init: function(Y, options) {
         var CommentHelper = function(args) {
             CommentHelper.superclass.constructor.apply(this, arguments);
-        }
+        };
         CommentHelper.NAME = "COMMENT";
         CommentHelper.ATTRS = {
             options: {},
@@ -194,7 +194,7 @@ bodyContent: '<div class="comment-delete-confirm"><a href="#" id="confirmdelete-
                 var container = Y.one('#comment-ctrl-'+this.client_id);
                 var params = {
                     'page': page
-                }
+                };
                 this.request({
                     scope: scope,
                     params: params,
@@ -352,7 +352,7 @@ bodyContent: '<div class="comment-delete-confirm"><a href="#" id="confirmdelete-
                     //// reset textarea size
                     ta.on('click', function() {
                         this.toggle_textarea(true);
-                    }, this)
+                    }, this);
                     //ta.onkeypress = function() {
                         //if (this.scrollHeight > this.clientHeight && !window.opera)
                             //this.rows += 1;
@@ -426,7 +426,7 @@ bodyContent: '<div class="comment-delete-confirm"><a href="#" id="confirmdelete-
                         'commentids': list,
                         'sesskey': M.cfg.sesskey,
                         'action': 'delete'
-                    }
+                    };
                     var cfg = {
                         method: 'POST',
                         on: {
@@ -450,7 +450,7 @@ bodyContent: '<div class="comment-delete-confirm"><a href="#" id="confirmdelete-
                         data: build_querystring(data)
                     };
                     Y.io(url, cfg);
-                }
+                };
                 M.util.show_confirm_dialog(e, args);
             });
         }
