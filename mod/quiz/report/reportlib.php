@@ -309,17 +309,21 @@ function quiz_report_highlighting_grading_method($quiz, $qmsubselect, $qmfilter)
  * @param integer $quizid the id of the quiz object.
  * @return string the comment that corresponds to this grade (empty string if there is not one.
  */
-function quiz_report_feedback_for_grade($grade, $quizid) {
+function quiz_report_feedback_for_grade($grade, $quizid, $context) {
     global $DB;
     static $feedbackcache = array();
     if (!isset($feedbackcache[$quizid])){
         $feedbackcache[$quizid] = $DB->get_records('quiz_feedback', array('quizid' => $quizid));
     }
     $feedbacks = $feedbackcache[$quizid];
+    $feedbackid = 0;
     $feedbacktext = '';
+    $feedbacktextformat = FORMAT_MOODLE;
     foreach ($feedbacks as $feedback) {
         if ($feedback->mingrade <= $grade && $grade < $feedback->maxgrade){
+            $feedbackid = $feedback->id;
             $feedbacktext = $feedback->feedbacktext;
+            $feedbacktextformat = $feedback->feedbacktextformat;
             break;
         }
     }
@@ -327,7 +331,8 @@ function quiz_report_feedback_for_grade($grade, $quizid) {
     // Clean the text, ready for display.
     $formatoptions = new stdClass;
     $formatoptions->noclean = true;
-    $feedbacktext = format_text($feedbacktext, FORMAT_MOODLE, $formatoptions);
+    $feedbacktext = file_rewrite_pluginfile_urls($feedbacktext, 'pluginfile.php', $context->id, 'mod_quiz', 'feedback', $feedbackid);
+    $feedbacktext = format_text($feedbacktext, $feedbacktextformat, $formatoptions);
 
     return $feedbacktext;
 }

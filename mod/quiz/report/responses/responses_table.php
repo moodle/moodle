@@ -9,7 +9,7 @@ class quiz_report_responses_table extends table_sql {
     var $displayoptions;
 
     function quiz_report_responses_table($quiz , $qmsubselect, $groupstudents,
-                $students, $questions, $candelete, $reporturl, $displayoptions){
+                $students, $questions, $candelete, $reporturl, $displayoptions, $context){
         parent::table_sql('mod-quiz-report-responses-report');
         $this->quiz = $quiz;
         $this->qmsubselect = $qmsubselect;
@@ -19,6 +19,7 @@ class quiz_report_responses_table extends table_sql {
         $this->candelete = $candelete;
         $this->reporturl = $reporturl;
         $this->displayoptions = $displayoptions;
+        $this->context = $context;
     }
     function build_table(){
         if ($this->rawdata) {
@@ -197,9 +198,9 @@ class quiz_report_responses_table extends table_sql {
     function col_feedbacktext($attempt){
         if ($attempt->timefinish) {
             if (!$this->is_downloading()) {
-                return quiz_report_feedback_for_grade(quiz_rescale_grade($attempt->sumgrades, $this->quiz, false), $this->quiz->id);
+                return quiz_report_feedback_for_grade(quiz_rescale_grade($attempt->sumgrades, $this->quiz, false), $this->quiz->id, $this->context);
             } else {
-                return strip_tags(quiz_report_feedback_for_grade(quiz_rescale_grade($attempt->sumgrades, $this->quiz, false), $this->quiz->id));
+                return strip_tags(quiz_report_feedback_for_grade(quiz_rescale_grade($attempt->sumgrades, $this->quiz, false), $this->quiz->id, $this->context));
             }
         } else {
             return '-';

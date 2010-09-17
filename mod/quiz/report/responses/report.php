@@ -132,7 +132,7 @@ class quiz_responses_report extends quiz_default_report {
         $questions = quiz_report_load_questions($quiz);
 
         $table = new quiz_report_responses_table($quiz , $qmsubselect, $groupstudents,
-                $students, $questions, $candelete, $reporturl, $displayoptions);
+                $students, $questions, $candelete, $reporturl, $displayoptions, $context);
         $table->is_downloading($download, get_string('reportresponses','quiz_responses'),
                     "$COURSE->shortname ".format_string($quiz->name,true));
         if (!$table->is_downloading()) {
