@@ -40,7 +40,7 @@ class gradereportlib_test extends UnitTestCaseUsingDatabase {
     public  static $includecoverage = array('grade/report/lib.php');
 
     function setUp() {
-        $this->report = new grade_report($this->courseid, $this->context);
+        //$this->report = new grade_report($this->courseid, $this->context);
     }
 
 }
