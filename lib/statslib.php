@@ -1021,7 +1021,7 @@ function stats_get_parameters($time,$report,$courseid,$mode,$roleid=0) {
     global $CFG, $DB;
 
     $param = new object();
-    $params->params = array();
+    $param->params = array();
 
     if ($time < 10) { // dailies
         // number of days to go back = 7* time
