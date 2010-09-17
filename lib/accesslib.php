@@ -3236,7 +3236,7 @@ function reset_role_capabilities($roleid) {
  * @return boolean true if success, exception in case of any problems
  */
 function update_capabilities($component='moodle') {
-    global $DB, $OUTPUT;
+    global $DB, $OUTPUT, $ACCESSLIB_PRIVATE;
 
     $storedcaps = array();
 
