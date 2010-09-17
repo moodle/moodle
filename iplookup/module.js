@@ -39,5 +39,5 @@ M.core_iplookup.init = function(Y, latitude, longitude) {
                 GUnload();
             }
         }, document.body);
-    }		
-}
+    }
+};
