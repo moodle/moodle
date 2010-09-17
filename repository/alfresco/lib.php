@@ -75,11 +75,13 @@ class repository_alfresco extends repository {
 
     public function print_login() {
         if ($this->options['ajax']) {
+            $user_field = new object();
             $user_field->label = get_string('username', 'repository_alfresco').': ';
             $user_field->id    = 'alfresco_username';
             $user_field->type  = 'text';
             $user_field->name  = 'al_username';
 
+            $passwd_field = new object();
             $passwd_field->label = get_string('password', 'repository_alfresco').': ';
             $passwd_field->id    = 'alfresco_password';
             $passwd_field->type  = 'password';

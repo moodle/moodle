@@ -51,6 +51,7 @@ class repository_wikimedia extends repository {
     // if check_login returns false,
     // this function will be called to print a login form.
     public function print_login() {
+        $keyword = new object();
         $keyword->label = get_string('keyword', 'repository_wikimedia').': ';
         $keyword->id    = 'input_text_keyword';
         $keyword->type  = 'text';
