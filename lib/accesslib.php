@@ -2976,14 +2976,12 @@ function get_enrolled_sql($context, $withcapability = '', $groupid = 0, $onlyact
         // make lists of roles that are needed and prohibited
         $needed     = array(); // one of these is enough
         $prohibited = array(); // must not have any of these
-        if ($withcapability) {
-            foreach ($access as $roleid => $perm) {
-                if ($perm == CAP_PROHIBIT) {
-                    unset($needed[$roleid]);
-                    $prohibited[$roleid] = true;
-                } else if ($perm == CAP_ALLOW and empty($prohibited[$roleid])) {
-                    $needed[$roleid] = true;
-                }
+        foreach ($access as $roleid => $perm) {
+            if ($perm == CAP_PROHIBIT) {
+                unset($needed[$roleid]);
+                $prohibited[$roleid] = true;
+            } else if ($perm == CAP_ALLOW and empty($prohibited[$roleid])) {
+                $needed[$roleid] = true;
             }
         }
 
@@ -2995,7 +2993,7 @@ function get_enrolled_sql($context, $withcapability = '', $groupid = 0, $onlyact
         if ($isfrontpage) {
             if (!empty($prohibited[$defaultuserroleid]) or !empty($prohibited[$defaultfrontpageroleid])) {
                 $nobody = true;
-            } else if (!empty($neded[$defaultuserroleid]) or !empty($neded[$defaultfrontpageroleid])) {
+            } else if (!empty($needed[$defaultuserroleid]) or !empty($needed[$defaultfrontpageroleid])) {
                 // everybody not having prohibit has the capability
                 $needed = array();
             } else if (empty($needed)) {
@@ -3004,7 +3002,7 @@ function get_enrolled_sql($context, $withcapability = '', $groupid = 0, $onlyact
         } else {
             if (!empty($prohibited[$defaultuserroleid])) {
                 $nobody = true;
-            } else if (!empty($neded[$defaultuserroleid])) {
+            } else if (!empty($needed[$defaultuserroleid])) {
                 // everybody not having prohibit has the capability
                 $needed = array();
             } else if (empty($needed)) {
@@ -3037,6 +3035,11 @@ function get_enrolled_sql($context, $withcapability = '', $groupid = 0, $onlyact
             }
         }
 
+    } else {
+        if ($groupid) {
+            $joins[] = "JOIN {groups_members} {$prefix}gm ON ({$prefix}gm.userid = {$prefix}u.id AND {$prefix}gm.groupid = :{$prefix}gmid)";
+            $params["{$prefix}gmid"] = $groupid;
+        }
     }
 
     $wheres[] = "{$prefix}u.deleted = 0 AND {$prefix}u.id <> :{$prefix}guestid";
