@@ -1001,7 +1001,7 @@ class admin_externalpage implements part_of_admin_tree {
      * @param string $url The external URL that we should link to when someone requests this external page.
      * @param mixed $req_capability The role capability/permission a user must have to access this external page. Defaults to 'moodle/site:config'.
      * @param boolean $hidden Is this external page hidden in admin tree block? Default false.
-     * @param context $context The context the page relates to. Not sure what happens
+     * @param stdClass $context The context the page relates to. Not sure what happens
      *      if you specify something other than system or front page. Defaults to system.
      */
     public function __construct($name, $visiblename, $url, $req_capability='moodle/site:config', $hidden=false, $context=NULL) {
@@ -1142,7 +1142,7 @@ class admin_settingpage implements part_of_admin_tree {
      * @param string $visiblename The displayed name for this external page. Usually obtained through get_string().
      * @param mixed $req_capability The role capability/permission a user must have to access this external page. Defaults to 'moodle/site:config'.
      * @param boolean $hidden Is this external page hidden in admin tree block? Default false.
-     * @param context $context The context the page relates to. Not sure what happens
+     * @param stdClass $context The context the page relates to. Not sure what happens
      *      if you specify something other than system or front page. Defaults to system.
      */
     public function __construct($name, $visiblename, $req_capability='moodle/site:config', $hidden=false, $context=NULL) {

@@ -654,10 +654,10 @@ function wiki_parser_table($table) {
 /**
  * Returns an absolute path link, unless there is no such link.
  *
- * @param url Link's URL
- * @param context filearea params
- * @param filearea
- * @param fileareaid
+ * @param string url Link's URL
+ * @param stdClass context filearea params
+ * @param string filearea
+ * @param int fileareaid
  *
  * @return File full path
  */
@@ -995,8 +995,8 @@ function wiki_delete_old_locks() {
 /**
  * Uploads files to permanent disk space.
  *
- * @param draftitemid Draft space ID
- * @param contextid
+ * @param int draftitemid Draft space ID
+ * @param int contextid
  *
  * @return array of files that have not been inserted.
  */
