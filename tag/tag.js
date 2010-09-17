@@ -62,7 +62,7 @@ function add_tag_footer_link(eid, ltitle, laction, ltext) {
         link.appendChild(document.createTextNode(ltext));
         var callback = function () {
             ctags_show_div(laction);
-        }
+        };
         YAHOO.util.Event.addListener(link, 'click', callback);
         if (e.childNodes.length > 0) {
             e.appendChild(document.createTextNode(' | '));
