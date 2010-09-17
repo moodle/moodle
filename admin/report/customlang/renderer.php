@@ -75,7 +75,12 @@ class report_customlang_renderer extends plugin_renderer_base {
             $cells[1] = new html_table_cell(html_writer::tag('div', s($string->stringid), array('class' => 'stringid')));
             $cells[1]->attributes['class'] = 'stringid';
             // master translation of the string
-            $cells[2] = new html_table_cell(html_writer::tag('div', s($string->master), array('class' => 'preformatted')));
+            $master = html_writer::tag('div', s($string->master), array('class' => 'preformatted'));
+            if (preg_match('/\{\$a(->.+)?\}/', $string->master)) {
+                $master .= html_writer::tag('div', $this->help_icon('placeholder', 'report_customlang',
+                        get_string('placeholderwarning', 'report_customlang')), array('class' => 'placeholderinfo'));
+            }
+            $cells[2] = new html_table_cell($master);
             $cells[2]->attributes['class'] = 'standard master';
             // local customization of the string
             $textarea = html_writer::tag('textarea', s($string->local), array('name'=>'cust['.$string->id.']'));

@@ -49,6 +49,11 @@ $string['markuptodate'] = 'mark as up-to-date';
 $string['modifiedno'] = 'There are no modified strings to check in.';
 $string['modifiednum'] = 'There are {$a} modified strings. You must check in them into disk to store them permanently.';
 $string['nostringsfound'] = 'No strings found, please modify the filter settings';
+$string['placeholder'] = 'Placeholders';
+$string['placeholder_help'] = 'Placeholders are special statements like `{$a}` or `{$a->something}` within the string. They are replaced with a value when the string is actually printed.
+
+It is important to copy them exactly as they are in the original string. Do not translate them nor change their left-to-right orientation.';
+$string['placeholderwarning'] = 'string contains a placeholder';
 $string['pluginname'] = 'Language customization';
 $string['savecheckin'] = 'Save and check in strings into files';
 $string['savecontinue'] = 'Save and continue editing';

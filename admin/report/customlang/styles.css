@@ -56,3 +56,10 @@
     width: 100%;
     min-height: 4em;
 }
+
+.path-admin-report-customlang #translator .placeholderinfo {
+    text-align: center;
+    border: 1px dotted #ddd;
+    background-color: #f6f6f6;
+    margin-top: 0.5em;
+}
