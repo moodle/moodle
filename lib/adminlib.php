@@ -298,6 +298,7 @@ function get_component_version($component, $source='installed') {
             if (!is_readable($CFG->dirroot.'/version.php')) {
                 return false;
             } else {
+                $version = null; //initialize variable for IDEs
                 include($CFG->dirroot.'/version.php');
                 return $version;
             }
