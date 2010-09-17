@@ -165,6 +165,7 @@ function LogoutNotification($SessionID){
         }
     } else {
         // DB Session
+        //TODO: this needs to be rewritten to use new session stuff
         if (!empty($CFG->sessiontimeout)) {
             $ADODB_SESS_LIFE   = $CFG->sessiontimeout;
         }
