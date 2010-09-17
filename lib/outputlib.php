@@ -579,7 +579,7 @@ class theme_config {
             foreach ($parent_config->editor_sheets as $sheet) {
                 $sheetfile = "$parent_config->dir/$sheet.css";
                 if (is_readable($sheetfile)) {
-                    $css .= "/*** Parent theme $parent/$sheet ***/\n\n" . file_get_contents($sheetfile) . "\n\n";
+                    $css .= "/*** Parent theme {$parent_config->name}/$sheet ***/\n\n" . file_get_contents($sheetfile) . "\n\n";
                 }
             }
         }
