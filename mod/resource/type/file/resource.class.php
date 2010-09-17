@@ -734,8 +734,11 @@ class resource_file extends resource_base {
 
         $mform->addElement('choosecoursefile', 'reference', get_string('location'), null, array('maxlength' => 255, 'size' => 48));
         $mform->setDefault('reference', $CFG->resource_defaulturl);
-        $mform->addGroupRule('reference', array('value' => array(array(get_string('maximumchars', '', 255), 'maxlength', 255, 'client'))));
-        $mform->addRule('name', null, 'required', null, 'client');
+        $referencegrprules = array();
+        $referencegrprules['value'][] = array(get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
+        $referencegrprules['value'][] = array(null, 'required', null, 'client');
+        $mform->addGroupRule('reference', $referencegrprules);
+        $mform->addRule('reference', null, 'required', null, 'client');
 
         if (!empty($CFG->resource_websearch)) {
             $searchbutton = $mform->addElement('button', 'searchbutton', get_string('searchweb', 'resource').'...');
