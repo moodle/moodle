@@ -85,7 +85,7 @@ if ($currentmembers) {
         $currentmemberscount ++;
     }
 
-    // Get course managers so they can be hilited in the list
+    // Get course managers so they can be highlighted in the list
     if ($managerroles = get_config('', 'coursecontact')) {
         $coursecontactroles = explode(',', $managerroles);
         foreach ($coursecontactroles as $roleid) {
