@@ -347,6 +347,9 @@ $CFG->admin = 'admin';
 //
 //     $CFG->themedir = '/location/of/extra/themes';
 //
+// This setting is for localised error messages for database connection problems:
+//     $CFG->lang="yourlangcode";
+
 //=========================================================================
 // 8. SETTINGS FOR DEVELOPMENT SERVERS - not intended for production use!!!
 //=========================================================================
