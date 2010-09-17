@@ -1271,7 +1271,7 @@ class fake_form {
 
 class generator_form extends moodleform {
     function definition() {
-        global $generator, $CFG;
+        global $generator, $CFG; //TODO: sloppy coding style!!
 
         $mform =& $this->_form;
         $mform->addElement('hidden', 'do_generation', 1);
