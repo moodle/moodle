@@ -920,6 +920,8 @@ function external_delete_descriptions($component) {
  * upgrade logging functions
  */
 function upgrade_handle_exception($ex, $plugin = null) {
+    global $CFG;
+
     // rollback everything, we need to log all upgrade problems
     abort_all_db_transactions();
 
