@@ -244,7 +244,7 @@ class backup_nested_element extends base_nested_element implements processable {
             $param = $this->find_first_parent_by_name('id');
 
         // If the param is array, with key 'sqlparam', return the value without modifications
-        } else if (is_array($param) && isset($param['sqlparam'])) {
+        } else if (is_array($param) && array_key_exists('sqlparam', $param)) {
             return $param['sqlparam'];
 
         } else if (((int)$param) >= 0) {  // Search by path if param isn't a backup::XXX candidate
