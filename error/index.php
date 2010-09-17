@@ -54,7 +54,6 @@
 
     if (isloggedin()) {
 ?>
-        <center>
         <p><?php echo get_string('pleasereport', 'error'); ?>
         <p><form action="<?php echo $CFG->wwwroot ?>/error/index.php" method="post">
            <textarea rows="3" cols="50" name="text" id="text"></textarea><br />
