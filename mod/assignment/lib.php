@@ -816,7 +816,7 @@ class assignment_base {
         $currentgroup = groups_get_activity_group($cm);
 
         $gradebookroles = explode(",", $CFG->gradebookroles);
-        $users = get_role_users($gradebookroles, $context, true);
+        $users = get_role_users($gradebookroles, $context, true, '', 'u.lastname ASC', true, $currentgroup);
         if ($users) {
             $users = array_keys($users);
             // if groupmembersonly used, remove users who are not in any group
@@ -1075,7 +1075,7 @@ class assignment_base {
         groups_print_activity_menu($cm, $CFG->wwwroot . '/mod/assignment/submissions.php?id=' . $this->cm->id);
 
         $gradebookroles = explode(",", $CFG->gradebookroles);
-        $users = get_role_users($gradebookroles, $context, true);
+        $users = get_role_users($gradebookroles, $context, true, '', 'u.lastname ASC', true, $currentgroup);
         if ($users) {
             $users = array_keys($users);
             if (!empty($CFG->enablegroupings) and $cm->groupmembersonly) {
@@ -2784,7 +2784,7 @@ function assignment_count_real_submissions($cm, $groupid=0) {
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
     $gradebookroles = explode(",", $CFG->gradebookroles);
-    $users = get_role_users($gradebookroles, $context, true);
+    $users = get_role_users($gradebookroles, $context, true, '', 'u.lastname ASC', true, $groupid);
     if ($users) {
         $users = array_keys($users);
         // if groupmembersonly used, remove users who are not in any group
