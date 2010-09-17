@@ -33,12 +33,12 @@ M.core_completion.init = function(Y) {
         }
 
         args.ajax.remove();
-    }
+    };
 
     var handle_failure = function(id, o, args) {
         alert('An error occurred when attempting to save your tick mark.\n\n('+o.responseText+'.)'); //TODO: localize
         args.ajax.remove();
-    }
+    };
 
     var toggle = function(e) {
         e.preventDefault();
@@ -82,7 +82,7 @@ M.core_completion.init = function(Y) {
         Y.use('io', function(Y) {
             Y.io(M.cfg.wwwroot+'/course/togglecompletion.php', cfg);
         });
-    }
+    };
 
     // register submit handlers on manual tick completion forms
     Y.all('form.togglecompletion').each(function(form) {
@@ -96,6 +96,6 @@ M.core_completion.init = function(Y) {
     if (help && !(Y.one('form.togglecompletion') || Y.one('.autocompletion'))) {
         help.setStyle('display', 'none');
     }
-}
+};
 
 
