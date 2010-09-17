@@ -1539,7 +1539,7 @@ class oci_native_moodle_database extends moodle_database {
         oci_fetch_all($stmt, $records, 0, -1, OCI_FETCHSTATEMENT_BY_ROW);
         oci_free_statement($stmt);
         $this->dblocks_supported = isset($records[0]) && reset($records[0]) ? true : false;
-        return $this->dblocks_supported;;
+        return $this->dblocks_supported;
     }
 
     public function get_session_lock($rowid) {
