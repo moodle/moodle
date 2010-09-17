@@ -415,10 +415,10 @@ class report_customlang_menu implements renderable {
      */
     public function add_item($key, $title, moodle_url $url, $method) {
         if (isset($this->items[$key])) {
-            throw new coding_error('Menu item already exists');
+            throw new coding_exception('Menu item already exists');
         }
         if (empty($title) or empty($key)) {
-            throw new coding_error('Empty title or item key not allowed');
+            throw new coding_exception('Empty title or item key not allowed');
         }
         $item = new stdclass();
         $item->title = $title;
