@@ -108,6 +108,9 @@ class portfolio_caller_test extends portfolio_caller_base {
     public static function base_supported_formats() {
         return array(PORTFOLIO_FORMAT_RICH, PORTFOLIO_FORMAT_FILE);
     }
+    public function set_context($PAGE) {
+        $PAGE->set_context(get_system_context());
+    }
 }
 
 class portfolio_exporter_test extends portfolio_exporter {

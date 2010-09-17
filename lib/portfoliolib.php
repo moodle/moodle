@@ -1119,19 +1119,13 @@ function portfolio_insane_notify_admins($insane, $instances=false) {
 }
 
 function portfolio_export_pagesetup($PAGE, $caller) {
-    // for build navigation
-    if (!$course = $caller->get('course')) {
-        $course = $courseid;
-    }
-
-    // set up the course so that build_navigation works nice
-    $PAGE->set_course($course);
+    // set up the context so that build_navigation works nice
+    $caller->set_context($PAGE);
 
     list($extranav, $cm) = $caller->get_navigation();
 
     // and now we know the course for sure and maybe the cm, call require_login with it
-    // todo this will have to change when we have things exporting content outside the course context (eg blogs)
-    require_login($course, false, $cm);
+    require_login($PAGE->course, false, $cm);
 
     foreach ($extranav as $navitem) {
         $PAGE->navbar->add($navitem['name']);

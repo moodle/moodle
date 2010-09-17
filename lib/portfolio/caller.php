@@ -477,6 +477,13 @@ abstract class portfolio_caller_base {
      */
     public static abstract function expected_callbackargs();
 
+
+    /**
+     * return the context for this export. used for $PAGE->set_context
+     *
+     * @return stdclass
+     */
+    public abstract function set_context($PAGE);
 }
 
 /**
@@ -550,5 +557,12 @@ abstract class portfolio_module_caller_base extends portfolio_caller_base {
     */
     public function heading_summary() {
         return get_string('exportingcontentfrom', 'portfolio', $this->display_name() . ': ' . $this->cm->name);
+    }
+
+    /**
+     * overridden to return the course module context
+     */
+    public function set_context($PAGE) {
+        $PAGE->set_cm($this->cm);
     }
 }
