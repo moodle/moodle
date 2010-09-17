@@ -652,7 +652,7 @@ if ($formdata = $mform->is_cancelled()) {
             if (!empty($user->{'group'.$i})) {
                 // make sure user is enrolled into course before adding into groups
                 if (!is_enrolled($coursecontext, $user->id)) {
-                    $upt->track('enrolments', get_string('addedtogroupnotenrolled', '', $gname), 'error');
+                    $upt->track('enrolments', get_string('addedtogroupnotenrolled', '', $user->{'group'.$i}), 'error');
                     continue;
                 }
                 //build group cache
