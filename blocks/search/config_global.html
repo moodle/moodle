@@ -77,7 +77,7 @@ global $DB;
             $notusemoodleroot = (!isset($CFG->block_search_usemoodleroot)) ? 'checked="checked"' : '' ;
         ?>
           <input id="block_search_usemoodleroot" type="radio" name="block_search_usemoodleroot" <?php echo $usemoodleroot ?> value="1"/> <?php print_string('yes') ?> -
-          <input id="block_search_usemoodleroot" type="radio" name="block_search_usemoodleroot" <?php echo $notusemoodleroot ?> value="0"/> <?php print_string('no') ?>
+          <input id="block_search_notusemoodleroot" type="radio" name="block_search_usemoodleroot" <?php echo $notusemoodleroot ?> value="0"/> <?php print_string('no') ?>
           <br/><br/>
         </td>
     </tr>
@@ -97,7 +97,7 @@ global $DB;
 </table>
 
 <fieldset class="">
-<legend align="top"><?php print_string('pdfhandling', 'block_search') ?></legend> 
+<legend align="top"><?php print_string('pdfhandling', 'block_search') ?></legend>
 <table cellspacing="5" width="90%">
     <tr>
         <td valign="top" align="right">
@@ -121,7 +121,7 @@ global $DB;
 </fieldset>
 
 <fieldset class="">
-<legend align="top"><?php print_string('wordhandling', 'block_search') ?></legend> 
+<legend align="top"><?php print_string('wordhandling', 'block_search') ?></legend>
 <table cellspacing="5" width="90%">
     <tr>
         <td valign="top" align="right">
@@ -172,7 +172,7 @@ if (!empty($types)){
         if (preg_match("/\\b$type\\b/i", $defaultfiletypes)) continue;
 ?>
 <fieldset class="">
-<legend align="top"><?php echo get_string('handlingfor', 'block_search').' '.$utype ?></legend> 
+<legend align="top"><?php echo get_string('handlingfor', 'block_search').' '.$utype ?></legend>
 <table cellspacing="5" width="90%">
     <tr>
         <td valign="top" align="right">
@@ -208,7 +208,7 @@ if (!empty($types)){
 ?>
 
 <fieldset class="">
-<legend align="top"><?php echo get_string('searchdiscovery', 'block_search') ?></legend> 
+<legend align="top"><?php echo get_string('searchdiscovery', 'block_search') ?></legend>
 <table>
     <tr>
         <td>
@@ -224,7 +224,7 @@ if (!empty($types)){
 </fieldset>
 
 <fieldset class="">
-<legend align="top"><?php echo get_string('modulessearchswitches', 'block_search') ?></legend> 
+<legend align="top"><?php echo get_string('modulessearchswitches', 'block_search') ?></legend>
 <table cellspacing="5" width="90%">
     <tr valign="top">
         <td align="left">
@@ -257,7 +257,7 @@ if (!$found_searchable_modules) {
 </fieldset>
 
 <fieldset class="">
-<legend align="top"><?php echo get_string('blockssearchswitches', 'block_search') ?></legend> 
+<legend align="top"><?php echo get_string('blockssearchswitches', 'block_search') ?></legend>
 <table cellspacing="5" width="90%">
     <tr valign="top">
         <td align="left">
