@@ -139,7 +139,7 @@ if (!empty($groupid)) {
     }
 }
 
-if (!empty($user)) {
+if (!empty($userid)) {
     if ($CFG->bloglevel < BLOG_USER_LEVEL) {
         print_error('blogdisable', 'blog');
     }
