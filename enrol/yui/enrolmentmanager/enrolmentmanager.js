@@ -21,9 +21,9 @@ YUI.add('moodle-enrol-enrolmentmanager', function(Y) {
         DEFAULTSTARTDATE : 'defaultStartDate',
         DEFAULTDURATION : 'defaultDuration',
         ASSIGNABLEROLES : 'assignableRoles'
-    },
+    };
     /** CSS classes for nodes in structure **/
-    CSS = {
+    var CSS = {
         PANEL : 'user-enroller-panel',
         WRAP : 'uep-wrap',
         HEADER : 'uep-header',
