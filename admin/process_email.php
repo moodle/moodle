@@ -9,7 +9,7 @@ $address = $tmp[0];
 
 // BOUNCE EMAILS TO NOREPLY
 if ($_ENV['RECIPIENT'] == $CFG->noreplyaddress) {
-    $user = new pbject();
+    $user = new object();
     $user->email = $_ENV['SENDER'];
 
     if (!validate_email($user->email)) {
