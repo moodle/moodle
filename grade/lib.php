@@ -296,6 +296,8 @@ function print_graded_users_selector($course, $actionpage, $userid=0, $groupid=0
 }
 
 function grade_get_graded_users_select($report, $course, $userid, $groupid, $includeall) {
+    global $USER;
+
     if (is_null($userid)) {
         $userid = $USER->id;
     }
