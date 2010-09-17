@@ -5244,6 +5244,12 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         upgrade_main_savepoint(true, 2010091510);
     }
 
+    if ($oldversion < 2010091700) {
+        // Fix MNet sso_jump_url for Moodle application
+        $DB->set_field('mnet_application', 'sso_jump_url', '/auth/mnet/jump.php',
+                       array('name' => 'moodle', 'sso_jump_url' => '/auth/mnet/land.php'));
+        upgrade_main_savepoint(true, 2010091700);
+    }
 
     return true;
 }

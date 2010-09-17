@@ -111,7 +111,7 @@ function xmldb_main_install() {
     $mnet_app->display_name      = 'Moodle';
     $mnet_app->xmlrpc_server_url = '/mnet/xmlrpc/server.php';
     $mnet_app->sso_land_url      = '/auth/mnet/land.php';
-    $mnet_app->sso_jump_url      = '/auth/mnet/land.php';
+    $mnet_app->sso_jump_url      = '/auth/mnet/jump.php';
     $moodleapplicationid = $DB->insert_record('mnet_application', $mnet_app);
 
     $mnet_app = new object();
