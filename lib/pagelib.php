@@ -346,6 +346,7 @@ class moodle_page {
      * @return string e.g. 'my-index' or 'mod-quiz-attempt'.
      */
     protected function magic_get_pagetype() {
+        global $CFG;
         if (is_null($this->_pagetype) || isset($CFG->pagepath)) {
             $this->initialise_default_pagetype();
         }
