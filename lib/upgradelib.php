@@ -1388,6 +1388,8 @@ function upgrade_plugin_mnet_functions($component) {
     list($type, $plugin) = explode('_', $component);
     $path = get_plugin_directory($type, $plugin);
 
+    $publishes = array();
+    $subscribes = array();
     if (file_exists($path . '/db/mnet.php')) {
         require_once($path . '/db/mnet.php'); // $publishes comes from this file
     }
