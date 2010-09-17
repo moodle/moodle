@@ -79,7 +79,7 @@ class block_blog_recent extends block_base {
         if ($context->contextlevel == CONTEXT_MODULE) {
             $filter['module'] = $context->instanceid;
             $a = new stdClass;
-            $a->type = get_string('modulename', $page->cm->modname);
+            $a->type = get_string('modulename', $this->page->cm->modname);
             $strview = get_string('viewallmodentries', 'blog', $a);
         } else if ($context->contextlevel == CONTEXT_COURSE) {
             $filter['course'] = $context->instanceid;
