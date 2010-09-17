@@ -548,7 +548,7 @@ class course_enrolment_manager {
         require_capability('moodle/role:assign', $this->context);
         if (!array_key_exists($roleid, $this->get_assignable_roles())) {
             if (is_defined('AJAX_SCRIPT')) {
-                throw new moodle_;
+                throw new moodle_exception('invalidrole');
             }
             return false;
         }
