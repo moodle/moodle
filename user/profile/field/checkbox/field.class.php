@@ -38,6 +38,7 @@ class profile_field_checkbox extends profile_field_base {
      * Display the data for this field
      */
     function display_data() {
+        $options = new object();
         $options->para = false;
         $checked = intval($this->data) === 1 ? 'checked="checked"' : '';
         return '<input disabled="disabled" type="checkbox" name="'.$this->inputname.'" '.$checked.' />';

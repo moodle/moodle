@@ -2193,7 +2193,7 @@ function print_collapsible_region_end($return = false) {
  *
  * @global object
  * @uses CONTEXT_COURSE
- * @param array $group A single {@link group} object OR array of groups.
+ * @param array|stdClass $group A single {@link group} object OR array of groups.
  * @param int $courseid The course ID.
  * @param boolean $large Default small picture, or large.
  * @param boolean $return If false print picture, otherwise return the output as string

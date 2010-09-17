@@ -203,12 +203,10 @@ function profile_category_icons($category) {
 function profile_field_icons($field) {
     global $CFG, $USER, $DB, $OUTPUT;
 
-    if (empty($str)) {
-        $strdelete   = get_string('delete');
-        $strmoveup   = get_string('moveup');
-        $strmovedown = get_string('movedown');
-        $stredit     = get_string('edit');
-    }
+    $strdelete   = get_string('delete');
+    $strmoveup   = get_string('moveup');
+    $strmovedown = get_string('movedown');
+    $stredit     = get_string('edit');
 
     $fieldcount = $DB->count_records('user_info_field', array('categoryid'=>$field->categoryid));
     $datacount  = $DB->count_records('user_info_data', array('fieldid'=>$field->id));
