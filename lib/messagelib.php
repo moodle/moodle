@@ -262,6 +262,7 @@ function message_get_providers_from_file($component) {
  * @param $component - examples: 'moodle', 'mod/forum', 'block/quiz_results'
  */
 function message_uninstall($component) {
+    global $DB;
     return $DB->delete_records('message_providers', array('component' => $component));
 }
 
