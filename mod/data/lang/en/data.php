@@ -40,14 +40,14 @@ $string['authorfirstname'] = 'Author first name';
 $string['authorlastname'] = 'Author surname';
 $string['autogenallforms'] = 'Generate all default templates';
 $string['autolinkurl'] = 'Autolink the URL';
-$string['availablefromdate'] = 'Available from';
+$string['availablefromdate'] = 'Entries available from';
 $string['availabletags'] = 'Available tags';
 $string['availabletags_help'] = 'Tags are placeholders in the template, which will be replaced by data or other items, such as an edit icon, when entries are edited or viewed.
 
 Fields have the format [[fieldname]]. All other tags have the format ##sometag##.
 
 Only the tags that are in the "Available tags" list may be used for the current template.';
-$string['availabletodate'] = 'Available to';
+$string['availabletodate'] = 'Entries available to';
 $string['blank'] = 'Blank';
 $string['buttons'] = 'Actions';
 $string['bynameondate'] = 'by {$a->name} - {$a->date}';
