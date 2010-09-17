@@ -2764,6 +2764,8 @@ function isguestuser($user = NULL) {
  * @return bool
  */
 function is_guest($context, $user = NULL) {
+    global $USER;
+
     // first find the course context
     $coursecontext = get_course_context($context);
 
