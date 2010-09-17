@@ -114,12 +114,15 @@ function blog_user_can_view_user_entry($targetuserid, $blogentry=null) {
  */
 function blog_remove_associations_for_user($userid) {
     global $DB;
+    throw new coding_exception('function blog_remove_associations_for_user() is not finished');
+    /*
     $blogentries = blog_fetch_entries(array('user' => $userid), 'lasmodified DESC');
     foreach ($blogentries as $entry) {
         if (blog_user_can_edit_entry($entry)) {
             blog_remove_associations_for_entry($entry->id);
         }
     }
+     */
 }
 
 /**
