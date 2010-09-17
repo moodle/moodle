@@ -206,6 +206,8 @@ abstract class session_stub implements moodle_session {
      * @return void
      */
     protected function check_user_initialised() {
+        global $CFG;
+
         if (isset($_SESSION['USER']->id)) {
             // already set up $USER
             return;
@@ -362,6 +364,8 @@ class legacy_file_session extends session_stub {
      * @return boolean true if session found.
      */
     public function session_exists($sid){
+        global $CFG;
+
         $sid = clean_param($sid, PARAM_FILE);
         $sessionfile = "$CFG->dataroot/sessions/sess_$sid";
         return file_exists($sessionfile);
@@ -531,6 +535,7 @@ class database_session extends session_stub {
         }
 
         if (isset($this->record->id)) {
+            $record = new object();
             $record->state              = 0;
             $record->sid                = $sid;                         // might be regenerating sid
             $this->record->sessdata     = base64_encode($session_data); // there might be some binary mess :-(
