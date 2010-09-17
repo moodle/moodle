@@ -2201,7 +2201,7 @@ function days_in_month($month, $year) {
 function dayofweek($day, $month, $year) {
     // I wonder if this is any different from
     // strftime('%w', mktime(12, 0, 0, $month, $daysinmonth, $year, 0));
-    return intval(date('w', mktime(12, 0, 0, $month, $day, $year, 0)));
+    return intval(date('w', mktime(12, 0, 0, $month, $day, $year)));
 }
 
 /// USER AUTHENTICATION AND LOGIN ////////////////////////////////////////
