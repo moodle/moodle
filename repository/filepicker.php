@@ -241,7 +241,7 @@ case 'sign':
     break;
 
 case 'download':
-    $thefile = $repo->get_file($fileurl, $filename, $itemid);
+    $thefile = $repo->get_file($fileurl, $filename);
     $filesize = filesize($thefile['path']);
     if (($maxbytes!=-1) && ($filesize>$maxbytes)) {
         print_error('maxbytes');
