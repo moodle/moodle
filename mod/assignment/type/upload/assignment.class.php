@@ -61,7 +61,7 @@ class assignment_upload extends assignment_base {
 
         $this->view_dates();
 
-        if (is_enrolled($this->context, $USER, 'mod/assignment:submit')) {
+        if (is_enrolled($this->context, $USER)) {
             if ($submission = $this->get_submission($USER->id)) {
                 $filecount = $this->count_user_files($submission->id);
             } else {
@@ -86,7 +86,9 @@ class assignment_upload extends assignment_base {
                 }
             }
 
-            $this->view_upload_form();
+            if (has_capability('mod/assignment:submit', $this->context)) {
+                $this->view_upload_form();
+            }
 
             if ($this->notes_allowed()) {
                 echo $OUTPUT->heading(get_string('notes', 'assignment'), 3);

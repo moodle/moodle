@@ -199,6 +199,7 @@ $string['uploadnofilefound'] = 'No file was found - are you sure you selected on
 $string['uploadnotregistered'] = '\'{$a}\' was uploaded OK but submission did not register!';
 $string['uploadsuccess'] = 'Uploaded \'{$a}\' successfully';
 $string['usermisconf'] = 'User is misconfigured';
+$string['usernosubmit'] = 'Sorry, you are not allowed to submit an assignment.';
 $string['viewfeedback'] = 'View assignment grades and feedback';
 $string['viewmysubmission'] = 'View my submission';
 $string['viewsubmissions'] = 'View {$a} submitted assignments';

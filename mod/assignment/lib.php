@@ -262,13 +262,22 @@ class assignment_base {
         global $USER, $CFG, $DB, $OUTPUT;
         require_once($CFG->libdir.'/gradelib.php');
 
-        if (!is_enrolled($this->context, $USER, 'mod/assignment:submit')) {
+        if (!is_enrolled($this->context, $USER, 'mod/assignment:view')) {
             // can not submit assignments -> no feedback
             return;
         }
 
         if (!$submission) { /// Get submission for this assignment
             $submission = $this->get_submission($USER->id);
+        }
+        // Check the user can submit
+        $cansubmit = has_capability('mod/assignment:submit', $this->context, $USER->id, false);
+        // If not then check if ther user still has the view cap and has a previous submission
+        $cansubmit = $cansubmit || (!empty($submission) && has_capability('mod/assignment:view', $this->context, $USER->id, false));
+
+        if (!$cansubmit) {
+            // can not submit assignments -> no feedback
+            return;
         }
 
         $grading_info = grade_get_grades($this->course->id, 'mod', 'assignment', $this->assignment->id, $USER->id);
@@ -938,14 +947,15 @@ class assignment_base {
         /// Get all ppl that can submit assignments
 
         $currentgroup = groups_get_activity_group($cm);
-        if ($users = get_enrolled_users($context, 'mod/assignment:submit', $currentgroup, 'u.id')) {
+        $gradebookroles = explode(",", $CFG->gradebookroles);
+        $users = get_enrolled_users($context, 'mod/assignment:view', $currentgroup, 'u.id');
+        if ($users) {
             $users = array_keys($users);
-        }
-
-        // if groupmembersonly used, remove users who are not in any group
-        if ($users and !empty($CFG->enablegroupmembersonly) and $cm->groupmembersonly) {
-            if ($groupingusers = groups_get_grouping_members($cm->groupingid, 'u.id', 'u.id')) {
-                $users = array_intersect($users, array_keys($groupingusers));
+            // if groupmembersonly used, remove users who are not in any group
+            if (!empty($CFG->enablegroupmembersonly) and $cm->groupmembersonly) {
+                if ($groupingusers = groups_get_grouping_members($cm->groupingid, 'u.id', 'u.id')) {
+                    $users = array_intersect($users, array_keys($groupingusers));
+                }
             }
         }
 
@@ -1162,7 +1172,7 @@ class assignment_base {
         groups_print_activity_menu($cm, $CFG->wwwroot . '/mod/assignment/submissions.php?id=' . $this->cm->id);
 
         /// Get all ppl that are allowed to submit assignments
-        list($esql, $params) = get_enrolled_sql($context, 'mod/assignment:submit', $currentgroup);
+        list($esql, $params) = get_enrolled_sql($context, 'mod/assignment:view', $currentgroup);
 
         if ($filter == self::FILTER_ALL) {
             $sql = "SELECT u.id FROM {user} u ".
@@ -3208,7 +3218,7 @@ function assignment_count_real_submissions($cm, $groupid=0) {
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
     // this is all the users with this capability set, in this context or higher
-    if ($users = get_enrolled_users($context, 'mod/assignment:submit', $groupid, 'u.id')) {
+    if ($users = get_enrolled_users($context, 'mod/assignment:view', $groupid, 'u.id')) {
         $users = array_keys($users);
     }
 
@@ -3415,7 +3425,7 @@ function assignment_print_overview($courses, &$htmlarray) {
 
             // count how many people can submit
             $submissions = 0; // init
-            if ($students = get_enrolled_users($context, 'mod/assignment:submit', 0, 'u.id')) {
+            if ($students = get_enrolled_users($context, 'mod/assignment:view', 0, 'u.id')) {
                 foreach ($students as $student) {
                     if (isset($unmarkedsubmissions[$assignment->id][$student->id])) {
                         $submissions++;

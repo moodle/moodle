@@ -79,7 +79,7 @@ class assignment_online extends assignment_base {
         if ($editmode) {
             $this->view_header(get_string('editmysubmission', 'assignment'));
         } else {
-            $this->view_header();
+            $this->view_header(get_string('viewsubmissions', 'assignment'));
         }
 
         $this->view_intro();
@@ -90,7 +90,7 @@ class assignment_online extends assignment_base {
             echo $OUTPUT->notification(get_string('submissionsaved', 'assignment'), 'notifysuccess');
         }
 
-        if (is_enrolled($this->context, $USER, 'mod/assignment:submit')) {
+        if (is_enrolled($this->context, $USER)) {
             if ($editmode) {
                 echo $OUTPUT->box_start('generalbox', 'onlineenter');
                 $mform->display();
