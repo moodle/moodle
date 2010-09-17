@@ -46,7 +46,7 @@ class core_calendar_renderer extends plugin_renderer_base {
         $output .= html_writer::start_tag('form', array('action'=>new moodle_url('/calendar/export_execute.php'), 'method'=>'get'));
 
         $output .= html_writer::tag('div', get_string('iwanttoexport', 'calendar'));
-        
+
         $output .= html_writer::start_tag('div', array('class'=>'indent'));
         $output .= html_writer::empty_tag('input', array('type'=>'radio', 'name'=>'preset_what', 'id'=>'pw_all', 'value'=>'all', 'checked'=>'checked'));
         $output .= html_writer::tag('label', get_string('eventsall', 'calendar'), array('for'=>'pw_all'));
@@ -55,7 +55,7 @@ class core_calendar_renderer extends plugin_renderer_base {
         $output .= html_writer::tag('label', get_string('eventsrelatedtocourses', 'calendar'), array('for'=>'pw_course'));
         $output .= html_writer::empty_tag('br');
         $output .= html_writer::end_tag('div');
-        
+
         $output .= html_writer::tag('div', get_string('for', 'calendar').':');
 
         $output .= html_writer::start_tag('div', array('class'=>'indent'));
@@ -109,7 +109,7 @@ class core_calendar_renderer extends plugin_renderer_base {
 
     /**
      * Starts the standard layout for the page
-     * 
+     *
      * @return string
      */
     public function start_layout() {
@@ -351,7 +351,7 @@ class core_calendar_renderer extends plugin_renderer_base {
      */
     public function show_month_detailed(calendar_information $calendar) {
         global $CALENDARDAYS;
-        
+
         $date = usergetdate(time());
         list($d, $m, $y) = array($date['mday'], $date['mon'], $date['year']); // This is what we want to display
 
@@ -534,7 +534,7 @@ class core_calendar_renderer extends plugin_renderer_base {
      */
     protected function filter_selection_table(calendar_information $calendar) {
         global $SESSION;
-        
+
         $output  = html_writer::start_tag('div', array('class'=>'filters'));
         $output .= html_writer::start_tag('table');
         $output .= html_writer::start_tag('tr');
@@ -630,7 +630,7 @@ class core_calendar_renderer extends plugin_renderer_base {
      * @return string
      */
     protected function course_filter_selector(array $getvars = array(), $label=null) {
-        global $USER, $SESSION;
+        global $USER, $SESSION, $CFG;
 
         if (!isloggedin() or isguestuser()) {
             return '';
