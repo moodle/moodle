@@ -212,7 +212,7 @@ class grade_object {
             $data->oldid        = $this->id;
             $data->source       = $source;
             $data->timemodified = time();
-            $data->userlogged   = $USER->id;
+            $data->loggeduser   = $USER->id;
             insert_record($this->table.'_history', addslashes_recursive($data));
         }
 
@@ -242,7 +242,7 @@ class grade_object {
                 $data->oldid        = $this->id;
                 $data->source       = $source;
                 $data->timemodified = time();
-                $data->userlogged   = $USER->id;
+                $data->loggeduser   = $USER->id;
                 insert_record($this->table.'_history', addslashes_recursive($data));
             }
             return true;
