@@ -521,7 +521,7 @@ if ($mform->is_cancelled()) {
         foreach($outcomes as $outcome) {
             $elname = 'outcome_'.$outcome->id;
 
-            if (array_key_exists($elname, $fromform) and $fromform->$elname) {
+            if (property_exists($elname, $fromform) and $fromform->$elname) {
                 // so we have a request for new outcome grade item?
                 if ($items) {
                     foreach($items as $item) {
@@ -580,7 +580,7 @@ if ($mform->is_cancelled()) {
     }
 
     $PAGE->set_heading($course->fullname);
-    $PAGE->set_title($streditinga);    
+    $PAGE->set_title($streditinga);
     $PAGE->set_cacheable(false);
     echo $OUTPUT->header();
 
