@@ -125,9 +125,9 @@ function uninstall_plugin($type, $name) {
 
     // recursively uninstall all module subplugins first
     if ($type === 'mod') {
-        if (file_exists("$CFG->dirroot/$name/db/subplugins.php")) {
+        if (file_exists("$CFG->dirroot/mod/$name/db/subplugins.php")) {
             $subplugins = array();
-            include("$moddir/db/subplugins.php");
+            include("$CFG->dirroot/mod/$name/db/subplugins.php");
             foreach ($subplugins as $subplugintype=>$dir) {
                 $instances = get_plugin_list($subplugintype);
                 foreach ($instances as $subpluginname => $notusedpluginpath) {
