@@ -101,7 +101,7 @@ class cohort_edit_form extends moodleform {
             $context = get_context_instance(CONTEXT_COURSECAT, $cid, MUST_EXIST);
             $options[$context->id] = $name;
         }
-        // always add current - this is not likely, but if the logic get's changed it might be a problem
+        // always add current - this is not likely, but if the logic gets changed it might be a problem
         if (!isset($options[$currentcontextid])) {
             $context = get_context_instance_by_id($currentcontextid, MUST_EXIST);
             $options[$context->id] = print_context_name($syscontext);
