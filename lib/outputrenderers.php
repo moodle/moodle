@@ -1720,7 +1720,7 @@ class core_renderer extends renderer_base {
         if (empty($attributes['width'])) {
             $attributes['width'] = 1;
         }
-        if (empty($options['height'])) {
+        if (empty($attributes['height'])) {
             $attributes['height'] = 1;
         }
         $attributes['class'] = 'spacer';
