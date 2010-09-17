@@ -2000,7 +2000,7 @@ function make_categories_options() {
  * Prints the category info in indented fashion
  * This function is only used by print_whole_category_list() above
  */
-function print_category_info($category, $depth, $showcourses = false) {
+function print_category_info($category, $depth=0, $showcourses = false) {
     global $CFG, $DB, $OUTPUT;
 
     $strsummary = get_string('summary');
@@ -2051,16 +2051,17 @@ function print_category_info($category, $depth, $showcourses = false) {
                     $linkcss = array('class'=>'dimmed');
                 }
 
-                $coursecontent = '';
                 $courselink = html_writer::link(new moodle_url('/course/view.php', array('id'=>$course->id)), format_string($course->fullname), $linkcss);
-                $coursecontent .= html_writer::tag('div', $courselink, array('class'=>'name'));
 
                 // print enrol info
+                $courseicon = '';
                 if ($icons = enrol_get_course_info_icons($course)) {
                     foreach ($icons as $pix_icon) {
-                        echo $OUTPUT->render($pix_icon);
+                        $courseicon = $OUTPUT->render($pix_icon).' ';
                     }
                 }
+
+                $coursecontent = html_writer::tag('div', $courseicon.$courselink, array('class'=>'name'));
 
                 if ($course->summary) {
                     $link = new moodle_url('/course/info.php?id='.$course->id);
@@ -2072,7 +2073,7 @@ function print_category_info($category, $depth, $showcourses = false) {
                 }
 
                 $html = '';
-                for ($i=1; $i <= $depth; $i++) {
+                for ($i=0; $i <= $depth; $i++) {
                     $html = html_writer::tag('div', $html . $coursecontent , array('class'=>'indentation'));
                     $coursecontent = '';
                 }
