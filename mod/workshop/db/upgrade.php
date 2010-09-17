@@ -51,9 +51,7 @@ function xmldb_workshop_upgrade($oldversion) {
                                           WHERE ws.id IS NULL');
         if (!empty($orphans)) {
             echo $OUTPUT->notification('Orphaned assessment records found - cleaning...');
-            foreach (array_keys($orphans) as $waid) {
-                $DB->delete_records('workshop_assessments', 'id', $waid);
-            }
+            $DB->delete_records_list('workshop_assessments', 'id', array_keys($orphans));
         }
         upgrade_mod_savepoint(true, 2007101510, 'workshop');
     }
