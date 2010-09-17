@@ -177,7 +177,7 @@ die;
                 }
                 $newgroup->courseid = $mycourse->id;
             }
-            //else juse use current id
+            //else use use current id
             else{
                 $newgroup->courseid = $id;
             }

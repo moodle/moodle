@@ -1218,7 +1218,7 @@ function course_set_display($courseid, $display=0) {
 }
 
 /**
- * For a given course section, markes it visible or hidden,
+ * For a given course section, marks it visible or hidden,
  * and does the same for every activity in that section
  */
 function set_section_visible($courseid, $sectionnumber, $visibility) {
@@ -1277,7 +1277,7 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
     $modinfo = get_fast_modinfo($course);
     $completioninfo = new completion_info($course);
 
-    //Acccessibility: replace table with list <ul>, but don't output empty list.
+    //Accessibility: replace table with list <ul>, but don't output empty list.
     if (!empty($section->sequence)) {
 
         // Fix bug #5027, don't want style=\"width:$width\".
@@ -1699,7 +1699,7 @@ function get_category_or_system_context($categoryid) {
 
 /**
  * Rebuilds the cached list of course activities stored in the database
- * @param int $courseid - id of course to rebuil, empty means all
+ * @param int $courseid - id of course to rebuild, empty means all
  * @param boolean $clearonly - only clear the modinfo fields, gets rebuild automatically on the fly
  */
 function rebuild_course_cache($courseid=0, $clearonly=false) {
@@ -1749,7 +1749,7 @@ function rebuild_course_cache($courseid=0, $clearonly=false) {
 }
 
 /**
- * Gets the child categories of a given coures category. Uses a static cache
+ * Gets the child categories of a given courses category. Uses a static cache
  * to make repeat calls efficient.
  *
  * @param int $parentid the id of a course category.
@@ -3074,7 +3074,7 @@ function course_allowed_module($course,$mod) {
     }
 
     // Admins and admin-like people who can edit everything can also add anything.
-    // Originally there was a coruse:update test only, but it did not match the test in course edit form
+    // Originally there was a course:update test only, but it did not match the test in course edit form
     if (has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM))) {
         return true;
     }
@@ -3665,7 +3665,7 @@ class course_request {
 
     /**
      * This is the stdClass that stores the properties for the course request
-     * and is externally acccessed through the __get magic method
+     * and is externally accessed through the __get magic method
      * @var stdClass
      */
     protected $properties;
@@ -3850,7 +3850,7 @@ class course_request {
      * This function approves the request turning it into a course
      *
      * This function converts the course request into a course, at the same time
-     * transfering any files used in the summary to the new course and then removing
+     * transferring any files used in the summary to the new course and then removing
      * the course request and the files associated with it.
      *
      * @return int The id of the course that was created from this request

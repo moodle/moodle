@@ -27,7 +27,7 @@ abstract class moodleform_mod extends moodleform {
      */
     protected $_section;
     /**
-     * Coursemodle record of the module that is being updated. Will be null if this is an 'add' form and not an
+     * Course module record of the module that is being updated. Will be null if this is an 'add' form and not an
      * update one.
       *
      * @var mixed

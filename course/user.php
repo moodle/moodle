@@ -130,7 +130,7 @@ if (empty($modes)) {
 }
 
 if (!in_array($mode, $modes)) {
-    // forbidden or non-exitent mode
+    // forbidden or non-existent mode
     $mode = reset($modes);
 }
 
@@ -470,7 +470,7 @@ switch ($mode) {
                     // For aggregating activity completion
                     $activities = array();
                     $activities_complete = 0;
-                    
+
                     // For aggregating prerequisites
                     $prerequisites = array();
                     $prerequisites_complete = 0;

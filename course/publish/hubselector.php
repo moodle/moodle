@@ -55,7 +55,7 @@ $hubselectorform = new hub_publish_selector_form('',
         array('id' => $id, 'share' => $share, 'advertise' => $advertise));
 $fromform = $hubselectorform->get_data();
 
-//// Redirect to the registration form if an URL has been choosen ////
+//// Redirect to the registration form if an URL has been chosen ////
 $huburl = optional_param('huburl', false, PARAM_URL);
 
 //redirect
