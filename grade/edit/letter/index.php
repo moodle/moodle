@@ -52,14 +52,14 @@ if ($context->contextlevel == CONTEXT_SYSTEM or $context->contextlevel == CONTEX
     require_login();
 
     admin_externalpage_setup('letters');
-    
+
     $admin = true;
     $returnurl = "$CFG->wwwroot/grade/edit/letter/index.php";
     $editparam = '?edit=1';
 } else if ($context->contextlevel == CONTEXT_COURSE) {
 
     $PAGE->set_pagelayout('standard');//calling this here to make blocks display
-   
+
     require_login($context->instanceid, false, $cm);
 
     $admin = false;
@@ -142,7 +142,7 @@ if (!$edit) {
             $gradelettername = 'gradeletter'.$i;
             $gradeboundaryname = 'gradeboundary'.$i;
 
-            if (array_key_exists($gradeboundaryname, $data) and $data->$gradeboundaryname != -1) {
+            if (property_exists($gradeboundaryname, $data) and $data->$gradeboundaryname != -1) {
                 $letter = trim($data->$gradelettername);
                 if ($letter == '') {
                     continue;
