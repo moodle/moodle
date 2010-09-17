@@ -86,7 +86,7 @@ abstract class data_object {
     public function load_optional_fields() {
         global $DB;
         foreach ($this->optional_fields as $field=>$default) {
-            if (array_key_exists($field, $this)) {
+            if (property_exists($field, $this)) {
                 continue;
             }
             if (empty($this->id)) {
@@ -164,7 +164,7 @@ abstract class data_object {
 
         global $DB;
         if ($datas = $DB->get_records_select($table, $wheresql, $params)) {
-            
+
             $result = array();
             foreach($datas as $data) {
                 $instance = new $classname();
@@ -174,7 +174,7 @@ abstract class data_object {
             return $result;
 
         } else {
-            
+
             return false;
         }
     }
@@ -302,8 +302,8 @@ abstract class data_object {
     }
 
     /**
-     * Called immediately after the object data has been inserted, updated, or 
-     * deleted in the database. Default does nothing, can be overridden to 
+     * Called immediately after the object data has been inserted, updated, or
+     * deleted in the database. Default does nothing, can be overridden to
      * hook in special behaviour.
      *
      * @param bool $deleted
