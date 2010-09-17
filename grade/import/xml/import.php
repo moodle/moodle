@@ -58,7 +58,7 @@ $error = '';
 $importcode = import_xml_grades($text, $course, $error);
 
 if ($importcode !== false) {
-    /// comit the code if we are up this far
+    /// commit the code if we are up this far
 
     if (defined('USER_KEY_LOGIN')) {
         if (grade_import_commit($id, $importcode, $feedback, false)) {

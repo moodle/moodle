@@ -181,7 +181,7 @@ if ($mform->is_cancelled()) {
         $data->finalgrade = unformat_float($data->finalgrade);
 
     } else {
-        //this shoul not happen
+        //this should not happen
         $data->finalgrade = $old_grade_grade->finalgrade;
     }
 
@@ -253,7 +253,7 @@ if ($mform->is_cancelled()) {
         $parent = $grade_item->get_parent_category();
         $parent->force_regrading();
 
-    } else if ($old_grade_grade->overridden != $grade_grade->overridden and empty($grade_grade->overridden)) { // only when unoverriding
+    } else if ($old_grade_grade->overridden != $grade_grade->overridden and empty($grade_grade->overridden)) { // only when unoverridding
         $grade_item->force_regrading();
 
     } else if ($old_grade_grade->locktime != $grade_grade->locktime) {

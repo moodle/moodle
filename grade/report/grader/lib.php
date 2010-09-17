@@ -149,7 +149,7 @@ class grade_report_grader extends grade_report {
 
     /**
      * Processes the data sent by the form (grades and feedbacks).
-     * Caller is reposible for all access control checks
+     * Caller is responsible for all access control checks
      * @param array $data form submission (with magic quotes)
      * @return array empty array if success, array of warnings if something fails.
      */
@@ -257,7 +257,7 @@ class grade_report_grader extends grade_report {
                     }
                 }
                 if (!$sharinggroup) {
-                    // either group membership changed or somebedy is hacking grades of other group
+                    // either group membership changed or somebody is hacking grades of other group
                     $warnings[] = get_string('errorsavegrade', 'grades');
                     continue;
                 }
@@ -399,7 +399,7 @@ class grade_report_grader extends grade_report {
     public function load_final_grades() {
         global $CFG, $DB;
 
-        // please note that we must fetch all grade_grades fields if we want to contruct grade_grade object from it!
+        // please note that we must fetch all grade_grades fields if we want to construct grade_grade object from it!
         $params = array_merge(array('courseid'=>$this->courseid), $this->userselect_params);
         $sql = "SELECT g.*
                   FROM {grade_items} gi,
@@ -886,7 +886,7 @@ class grade_report_grader extends grade_report {
                     $gradepass = '';
                 }
 
-                // if in editting mode, we need to print either a text box
+                // if in editing mode, we need to print either a text box
                 // or a drop down (for scales)
                 // grades in item of type grade category or course are not directly editable
                 if ($item->needsupdate) {
@@ -1232,7 +1232,7 @@ class grade_report_grader extends grade_report {
 
         if (!$this->canviewhidden) {
             // totals might be affected by hiding, if user can not see hidden grades the aggregations might be altered
-            // better not show them at all if user can not see all hideen grades
+            // better not show them at all if user can not see all hidden grades
             return $rows;
         }
 

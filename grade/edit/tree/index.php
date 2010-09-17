@@ -33,7 +33,7 @@ $action          = optional_param('action', 0, PARAM_ALPHA);
 $eid             = optional_param('eid', 0, PARAM_ALPHANUM);
 $category        = optional_param('category', null, PARAM_INT);
 $aggregationtype = optional_param('aggregationtype', null, PARAM_INT);
-$showadvanced    = optional_param('showadvanced', -1, PARAM_BOOL); // sticky editting mode
+$showadvanced    = optional_param('showadvanced', -1, PARAM_BOOL); // sticky editing mode
 
 $url = new moodle_url('/grade/edit/tree/index.php', array('id' => $courseid));
 if($showadvanced!=-1) {
@@ -83,7 +83,7 @@ if (has_capability('moodle/grade:manage', $context)) {
         $USER->gradeediting[$course->id] = 0;
     }
 
-    // page params for the turn editting on
+    // page params for the turn editing on
     $options = $gpr->get_options();
     $options['sesskey'] = sesskey();
 

@@ -302,7 +302,7 @@ abstract class grade_report {
             $this->group_selector = groups_print_course_menu($this->course, $this->pbarurl, true);
 
             if ($this->groupmode == SEPARATEGROUPS and !$this->currentgroup and !has_capability('moodle/site:accessallgroups', $this->context)) {
-                $this->currentgroup = -2; // means can not accesss any groups at all
+                $this->currentgroup = -2; // means can not access any groups at all
             }
 
             if ($this->currentgroup) {

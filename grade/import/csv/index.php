@@ -183,7 +183,7 @@ if ($formdata = $mform->get_data()) {
         $map[$i] = $formdata->{'mapping_'.$i};
     }
 
-    // if mapping informatioin is supplied
+    // if mapping information is supplied
     $map[clean_param($formdata->mapfrom, PARAM_RAW)] = clean_param($formdata->mapto, PARAM_RAW);
 
     // check for mapto collisions
@@ -263,7 +263,7 @@ if ($formdata = $mform->get_data()) {
                 switch ($t0) {
                     case 'userid': //
                         if (!$user = $DB->get_record('user', array('id' => $value))) {
-                            // user not found, abort whold import
+                            // user not found, abort whole import
                             import_cleanup($importcode);
                             echo $OUTPUT->notification("user mapping error, could not find user with id \"$value\"");
                             $status = false;
@@ -273,7 +273,7 @@ if ($formdata = $mform->get_data()) {
                     break;
                     case 'useridnumber':
                         if (!$user = $DB->get_record('user', array('idnumber' => $value))) {
-                             // user not found, abort whold import
+                             // user not found, abort whole import
                             import_cleanup($importcode);
                             echo $OUTPUT->notification("user mapping error, could not find user with idnumber \"$value\"");
                             $status = false;
@@ -410,7 +410,7 @@ if ($formdata = $mform->get_data()) {
 
             // no user mapping supplied at all, or user mapping failed
             if (empty($studentid) || !is_numeric($studentid)) {
-                // user not found, abort whold import
+                // user not found, abort whole import
                 $status = false;
                 import_cleanup($importcode);
                 echo $OUTPUT->notification('user mapping error, could not find user!');

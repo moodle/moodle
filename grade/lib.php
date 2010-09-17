@@ -838,7 +838,7 @@ class grade_plugin_return {
      *
      * @param moodle_url $url A URL
      *
-     * @return string $url with erturn tracking params
+     * @return string $url with return tracking params
      */
     public function add_url_params(moodle_url $url) {
         if (empty($this->type)) {
@@ -1197,7 +1197,7 @@ class grade_structure {
         }
 
         $strparams = $this->get_params_for_iconstr($element);
-        
+
         $object = $element['object'];
 
         switch ($element['type']) {

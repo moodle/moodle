@@ -19,7 +19,7 @@
  * Grade export key management form.
  *
  * @package   moodlecore
- * @copyright 2008 Petr Skodak
+ * @copyright 2008 Petr Skoda
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 

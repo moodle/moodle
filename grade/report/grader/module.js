@@ -21,7 +21,7 @@ M.gradereport_grader = {
      * @function
      * @param {YUI} Y
      * @param {String} id The id attribute of the reports table
-     * @param {Obejct} cfg A configuration object
+     * @param {Object} cfg A configuration object
      * @param {Array} An array of items in the report
      * @param {Array} An array of users on the report
      * @param {Array} An array of feedback objects
@@ -106,7 +106,7 @@ M.gradereport_grader = {
  * @param {int} id The id of the table to attach the report to
  * @param {Object} cfg Configuration variables
  * @param {Array} items An array containing grade items
- * @param {Array} users An array containing user infomation
+ * @param {Array} users An array containing user information
  * @param {Array} feedback An array containing feedback information
  */
 M.gradereport_grader.classes.report = function(Y, id, cfg, items, users, feedback) {
@@ -168,7 +168,7 @@ M.gradereport_grader.classes.report.prototype.ajax = null;            // An inst
  *
  * @function
  * @param {Event} e
- * @param {Y.Node} tr The table row to hightlight
+ * @param {Y.Node} tr The table row to highlight
  */
 M.gradereport_grader.classes.report.prototype.table_highlight_row = function (e, tr) {
     tr.all('.cell').toggleClass('hmarked');
@@ -265,7 +265,7 @@ M.gradereport_grader.classes.report.prototype.update_feedback = function(userid,
 };
 
 /**
- * Initalises the AJAX component of this report
+ * Initialises the AJAX component of this report
  * @class ajax
  * @constructor
  * @this {M.gradereport_grader.ajax}
@@ -512,7 +512,7 @@ M.gradereport_grader.classes.ajax.prototype.get_below_cell = function(cell) {
  *
  * @function
  * @this {M.gradereport_grader.classes.ajax}
- * @param {Object} properties Properties of the cell being editied
+ * @param {Object} properties Properties of the cell being edited
  * @param {Object} values Object containing old + new values
  */
 M.gradereport_grader.classes.ajax.prototype.submit = function(properties, values) {
@@ -586,7 +586,7 @@ M.gradereport_grader.classes.ajax.prototype.submission_outcome = function(tid, o
             if (outcome.row[i] && outcome.row[i].userid && outcome.row[i].itemid) {
                 // alias it, we use it quite a bit
                 var r = outcome.row[i];
-                // Get the cell refered to by this result object
+                // Get the cell referred to by this result object
                 var info = this.report.get_cell_info([r.userid, r.itemid]);
                 if (!info) {
                     continue;
@@ -1105,7 +1105,7 @@ M.gradereport_grader.classes.scalefield = function(report, node) {
     }
 };
 /**
- * Override + extend the scalefield class with the follwing properties
+ * Override + extend the scalefield class with the following properties
  * and methods
  */
 /**

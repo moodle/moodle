@@ -65,7 +65,7 @@ class edit_item_form extends moodleform {
                 $options[$scale->id] = $scale->get_name();
             }
         }
-        // ugly BC hack - it was possbile to use custom scale from other courses :-(
+        // ugly BC hack - it was possible to use custom scale from other courses :-(
         if (!empty($item->scaleid) and !isset($options[$item->scaleid])) {
             if ($scale = grade_scale::fetch(array('id'=>$item->scaleid))) {
                 $options[$scale->id] = $scale->get_name().get_string('incorrectcustomscale', 'grades');

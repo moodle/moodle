@@ -149,7 +149,7 @@ function grade_import_commit($courseid, $importcode, $importfeedback=true, $verb
 
 /**
  * This function returns an array of grades that were included in the import,
- * but wherer the user does not currenly have a graded role on the course. These gradse
+ * but where the user does not currently have a graded role on the course. These grades
  * are still stored in the database, but will not be visible in the gradebook unless
  * this user subsequently enrols on the course in a graded roles.
  *
