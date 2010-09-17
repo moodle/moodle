@@ -644,6 +644,8 @@ class page_requirements_manager {
      * @param bool $ondomready
      */
     public function yui_module($modules, $function, array $arguments = null, $galleryversion = '2010.04.08-12-35', $ondomready = false) {
+        global $CFG;
+
         if (!is_array($modules)) {
             $modules = array($modules);
         }
