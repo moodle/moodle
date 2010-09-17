@@ -75,7 +75,7 @@ class repository_merlot extends repository {
         return $ret;
     }
 
-    private function _get_collection($keyword, $author) {
+    private function _get_collection($keyword) {
         global $OUTPUT;
         $list = array();
         $this->api = 'http://www.merlot.org/merlot/materials.rest?keywords=' . urlencode($keyword) . '&licenseKey='.$this->licensekey;
