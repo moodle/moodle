@@ -218,7 +218,7 @@ class enrol_mnet_mnetservice_enrol {
         $user = $DB->get_record('user', array('username'=>$username, 'mnethostid'=>$client->id));
 
         if ($user === false) {
-            throw new mnet_exception(5014, 'usernotfound', 'enrol_mnet');
+            throw new mnet_server_exception(5014, 'usernotfound', 'enrol_mnet');
         }
 
         if (! $course = $DB->get_record('course', array('id'=>$courseid))) {
