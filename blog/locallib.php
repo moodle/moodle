@@ -1051,7 +1051,7 @@ class blog_filter_user extends blog_filter {
      * @param int    $id
      */
     public function __construct($id=null, $type='user') {
-        global $CFG, $DB;
+        global $CFG, $DB, $USER;
         $this->availabletypes = array('user' => get_string('user'), 'group' => get_string('group'));
 
         if (empty($id)) {
