@@ -2,7 +2,7 @@ M.core_message = M.core_message || {};
 
 M.core_message.init_focus = function(Y, eid) {
     document.getElementById(eid).focus();
-}
+};
 
 M.core_message.init_refresh_parent_frame = function(Y, msgcount, msg) {
 	var add_message = function (messagestr) {
@@ -10,7 +10,7 @@ M.core_message.init_refresh_parent_frame = function(Y, msgcount, msg) {
 	    var message = document.createElement('div');
 	    message.innerHTML = messagestr;
 	    messageblock.appendChild(message);
-	}
+	};
 
     if (msgcount>0) {
         for (var i=0; i < msgcount; i++) {
@@ -19,14 +19,14 @@ M.core_message.init_refresh_parent_frame = function(Y, msgcount, msg) {
     }
     parent.messages.scroll(1,5000000);
     parent.send.focus();
-}
+};
 
 M.core_message.init_refresh_page = function(Y, delay, url) {
 	var delay_callback = function() {
 		document.location.replace(url);
-	}
+	};
 	setTimeout(delay_callback, delay);
-}
+};
 
 M.core_message.init_search_page = function(Y, defaultsearchterm) {
     this.Y = Y;
@@ -34,14 +34,14 @@ M.core_message.init_search_page = function(Y, defaultsearchterm) {
 
     var combinedsearchbox = this.Y.one('#combinedsearch');
     combinedsearchbox.on('focus', this.combinedsearchgotfocus, this);
-}
+};
 
 
 M.core_message.combinedsearchgotfocus = function(e) {
     if (e.target.get('value')==this.defaultsearchterm) {
         e.target.select();
     }
-}
+};
 
 M.core_message.init_notification = function(Y, title, content, url) {
     Y.use('overlay', function() {
@@ -57,7 +57,7 @@ M.core_message.init_notification = function(Y, title, content, url) {
             o.set("align", {
                 points:[Y.WidgetPositionAlign.BR, Y.WidgetPositionAlign.BR]
             });
-        }        
+        }
 
         Y.one('#notificationyes').on('click', function(e) {
             window.location.href = url;
@@ -68,4 +68,4 @@ M.core_message.init_notification = function(Y, title, content, url) {
             return false;
         }, o);
     });
-}
+};
