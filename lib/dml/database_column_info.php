@@ -133,7 +133,7 @@ class database_column_info {
      */
     public function __construct($data) {
         foreach ($data as $key=>$value) {
-            if (array_key_exists($key, $this)) {
+            if (property_exists($key, $this)) {
                 $this->$key = $value;
             }
         }
