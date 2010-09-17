@@ -15,11 +15,11 @@ M.core_user.user_selectors = [];
  */
 M.core_user.get_user_selector = function (name) {
     return this.user_selectors[name] || null;
-}
+};
 
 /**
  * Initialise a new user selector.
- * 
+ *
  * @param {YUI} Y The YUI3 instance
  * @param {string} name the control name/id.
  * @param {string} hash the hash that identifies this selector in the user's session.
@@ -303,7 +303,7 @@ M.core_user.init_user_selector = function (Y, name, hash, extrafields, lastsearc
                 return false;
             }
         }
-    }
+    };
     // Augment the user selector with the EventTarget class so that we can use
     // custom events
     Y.augment(user_selector, Y.EventTarget, null, null, {});
@@ -313,7 +313,7 @@ M.core_user.init_user_selector = function (Y, name, hash, extrafields, lastsearc
     this.user_selectors[name] = user_selector;
     // Return the user selector
     return user_selector;
-}
+};
 
 /**
  * Initialise a class that updates the user's preferences when they change one of
@@ -348,9 +348,9 @@ M.core_user.init_user_selector_options_tracker = function(Y) {
         set_user_preference : function(e, name) {
             M.util.set_user_preference(name, Y.one('#'+name+'id').get('checked'));
         }
-    }
+    };
     // Initialise the options tracker
     user_selector_options_tracker.init();
     // Return it just incase it is ever wanted
     return user_selector_options_tracker;
-}
+};

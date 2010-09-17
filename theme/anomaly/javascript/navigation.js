@@ -91,7 +91,7 @@ var anomaly = (function(){
                     pre: {hasblocks:true,c:'side-pre-only'},
                     post: {hasblocks:true,c:'side-post-only'},
                     noblocksc:'noblocks'
-                }
+                };
                 M.core_dock.Y.all('div.block-region').each(function(blockregion){
                     if (blockregion.hasClass('side-pre') && blockregion.all('.block').size() == 0) {
                         blockregions.pre.hasblocks = false;

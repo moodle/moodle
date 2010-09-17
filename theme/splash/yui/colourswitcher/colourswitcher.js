@@ -9,7 +9,7 @@ var COLOURS = ['red','green','blue','orange'];
  */
 var ColourSwitcher = function() {
     ColourSwitcher.superclass.constructor.apply(this, arguments);
-}
+};
 ColourSwitcher.prototype = {
     /**
      * Constructor for this class
@@ -43,7 +43,7 @@ ColourSwitcher.prototype = {
         // Store the users selection (Uses AJAX to save to the database)
         M.util.set_user_preference('theme_splash_chosen_colour', colour);
     }
-}
+};
 // Make the colour switcher a fully fledged YUI module
 Y.extend(ColourSwitcher, Y.Base, ColourSwitcher.prototype, {
     NAME : 'Splash theme colour switcher',
@@ -54,7 +54,7 @@ Y.extend(ColourSwitcher, Y.Base, ColourSwitcher.prototype, {
     }
 });
 // Our splash theme namespace
-M.theme_splash = M.theme_splash || {}
+M.theme_splash = M.theme_splash || {};
 // Initialisation function for the colour switcher
 M.theme_splash.initColourSwitcher = function(cfg) {
     return new ColourSwitcher(cfg);
