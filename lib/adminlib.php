@@ -310,11 +310,11 @@ function get_component_version($component, $source='installed') {
             return $DB->get_field('modules', 'version', array('name'=>$name));
         } else {
             $mods = get_plugin_list('mod');
-            if (empty($mod[$name]) or !is_readable($mod[$name].'/version.php')) {
+            if (empty($mods[$name]) or !is_readable($mods[$name].'/version.php')) {
                 return false;
             } else {
                 $module = new stdclass();
-                include($mod[$name].'/version.php');
+                include($mods[$name].'/version.php');
                 return $module->version;
             }
         }
