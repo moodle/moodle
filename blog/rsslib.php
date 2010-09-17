@@ -69,6 +69,8 @@ function blog_rss_add_http_header($context, $title, $filtertype, $filterselect=0
 function blog_rss_get_params($filters) {
     $thingid = $rsscontext = $filtertype = null;
 
+    $sitecontext = get_context_instance(CONTEXT_SYSTEM);
+
     if (!$filters) {
         $thingid = SITEID;
         $rsscontext = $sitecontext;
