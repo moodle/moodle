@@ -392,7 +392,7 @@ function print_grade_plugin_selector($plugin_info, $active_type, $active_plugin,
 function grade_print_tabs($active_type, $active_plugin, $plugin_info, $return=false) {
     global $CFG, $COURSE;
 
-    if (!isset($currenttab)) {
+    if (!isset($currenttab)) { //TODO: this is weird
         $currenttab = '';
     }
 
@@ -1096,6 +1096,7 @@ class grade_structure {
         if ($withlink and $itemtype=='mod' and $iteminstance and $itemmodule) {
             if ($cm = get_coursemodule_from_instance($itemmodule, $iteminstance, $this->courseid)) {
 
+                $a = new object();
                 $a->name = get_string('modulename', $element['object']->itemmodule);
                 $title = get_string('linktoactivity', 'grades', $a);
                 $dir = $CFG->dirroot.'/mod/'.$itemmodule;

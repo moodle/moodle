@@ -512,8 +512,7 @@ class grade_report_grader extends grade_report {
 
         $string = ${'str' . $showhide};
 
-        $aurl = clone($this->baseurl);
-        $url->params(array('toggle' => $toggleaction, 'toggle_type' => $type));
+        $url = new moodle_url($this->baseurl, array('toggle' => $toggleaction, 'toggle_type' => $type));
 
         $retval = $OUTPUT->container($OUTPUT->action_icon($url, new pix_icon($imagename, $string))); // TODO: this container looks wrong here
 
@@ -618,6 +617,7 @@ class grade_report_grader extends grade_report {
                 $userreportcell = new html_table_cell();
                 $userreportcell->attributes['class'] = 'userreport';
                 $userreportcell->header = true;
+                $a = new object();
                 $a->user = fullname($user);
                 $strgradesforuser = get_string('gradesforuser', 'grades', $a);
                 $url = new moodle_url('/grade/report/'.$CFG->grade_profilereport.'/index.php', array('userid' => $user->id, 'id' => $this->course->id));
@@ -1456,7 +1456,6 @@ class grade_report_grader extends grade_report {
             } else if (in_array($element['object']->id, $this->collapsed['gradesonly'])) {
                 $url->param('action', 'switch_whole');
                 $icon = $OUTPUT->action_icon($url, new pix_icon('t/switch_whole', $strswitchwhole));
-                $contractexpandicon->image->src = $OUTPUT->pix_url('t/switch_whole');
 
             } else {
                 $url->param('action', 'switch_minus');
