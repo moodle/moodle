@@ -75,6 +75,7 @@ $string['nocomments'] = 'No comments';
 $string['nocourse'] = 'No courses found';
 $string['noratings'] = 'No ratings';
 $string['operation'] = 'Operation';
+$string['outcomes'] = 'Outcomes: {$a}';
 $string['pluginname'] = 'Community';
 $string['rateandcomment'] = 'Rate and comment';
 $string['rating'] = 'Rating';

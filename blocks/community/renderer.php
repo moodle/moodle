@@ -192,9 +192,23 @@ class block_community_renderer extends plugin_renderer_base {
 //                                    get_string('blocks', 'block_community') . " : " . $blockhtml);
                 }
 
+                //Create outcomes html
+                $outcomes= '';
+                if (!empty($course->outcomes)) {
+                    foreach ($course->outcomes as $outcome) {
+                        if (!empty($outcomes)) {
+                            $outcomes .= ', ';
+                        }
+                        $outcomes .= $outcome['fullname'];
+                    }
+                    $outcomes = get_string('outcomes', 'block_community',
+                            $outcomes);
+                }
+                $outcomeshtml = html_writer::tag('div', $outcomes, array('class' => 'hubcourseoutcomes'));
+
                 //create additional information html
                 $additionaldesc = $courseuserinfohtml . $coursecontentinfohtml
-                        . $coursefileinfohtml . $blocksandactivities;
+                        . $coursefileinfohtml . $blocksandactivities . $outcomeshtml;
                 $additionaldeschtml = html_writer::tag('div', $additionaldesc,
                                 array('class' => 'additionaldesc'));
 

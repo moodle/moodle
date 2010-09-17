@@ -116,6 +116,17 @@ if (has_capability('moodle/course:publish', get_context_instance(CONTEXT_COURSE,
             $courseinfo->enrollable = true;
         }
 
+        //retrieve the outcomes of this course
+        require_once($CFG->libdir . '/grade/grade_outcome.php');
+        $outcomes = grade_outcome::fetch_all_available($id);
+        if (!empty($outcomes)) {
+            foreach ($outcomes as $outcome) {
+                $sentoutcome = new stdClass();
+                $sentoutcome->fullname = $outcome->fullname;
+                $courseinfo->outcomes[] = $sentoutcome;
+            }
+        }
+
         //retrieve the content information from the course
         $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
         $courseblocks = $publicationmanager->get_block_instances_by_context($coursecontext->id, 'blockname');
