@@ -1756,8 +1756,12 @@ function qf_errorHandler(element, _qfMsg) {
             //unset($element);
             list($jsArr,$element)=$jsandelement;
             //end of fix
+            $escapedElementName = preg_replace_callback(
+                '/[_\[\]]/',
+                create_function('$matches', 'return sprintf("_%2x",ord($matches[0]));'),
+                $elementName);
             $js .= '
-function validate_' . $this->_formName . '_' . $elementName . '(element) {
+function validate_' . $this->_formName . '_' . $escapedElementName . '(element) {
   var value = \'\';
   var errFlag = new Array();
   var _qfGroups = {};
@@ -1771,7 +1775,7 @@ function validate_' . $this->_formName . '_' . $elementName . '(element) {
 }
 ';
             $validateJS .= '
-  ret = validate_' . $this->_formName . '_' . $elementName.'(frm.elements[\''.$elementName.'\']) && ret;
+  ret = validate_' . $this->_formName . '_' . $escapedElementName.'(frm.elements[\''.$elementName.'\']) && ret;
   if (!ret && !first_focus) {
     first_focus = true;
     frm.elements[\''.$elementName.'\'].focus();
@@ -1782,7 +1786,7 @@ function validate_' . $this->_formName . '_' . $elementName . '(element) {
             //unset($element);
             //$element =& $this->getElement($elementName);
             //end of fix
-            $valFunc = 'validate_' . $this->_formName . '_' . $elementName . '(this)';
+            $valFunc = 'validate_' . $this->_formName . '_' . $escapedElementName . '(this)';
             $onBlur = $element->getAttribute('onBlur');
             $onChange = $element->getAttribute('onChange');
             $element->updateAttributes(array('onBlur' => $onBlur . $valFunc,
