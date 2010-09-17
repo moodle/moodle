@@ -94,17 +94,24 @@ class community_hub_search_form extends moodleform {
                 if (key_exists('id', $hub)) {
                     $params = array('hubid' => $hub['id'],
                         'filetype' => HUB_HUBSCREENSHOT_FILE_TYPE);
-                    $imgurl = new moodle_url(HUB_HUBDIRECTORYURL . "/local/hubdirectory/webservice/download.php", $params);
-                    $ascreenshothtml = html_writer::empty_tag('img', array('src' => $imgurl, 'alt' => $hub['name']));
+                    $imgurl = new moodle_url(HUB_HUBDIRECTORYURL .
+                            "/local/hubdirectory/webservice/download.php", $params);
+                    $ascreenshothtml = html_writer::empty_tag('img',
+                            array('src' => $imgurl, 'alt' => $hub['name']));
 
-                    $hubdescription = '&nbsp;&nbsp;' . $hub['name'];
+                    $hubdescription = '&nbsp;&nbsp;' . html_writer::tag('a', $hub['name'],
+                                    array('class' => 'hublink', 'href' => $hub['url'],
+                                        'onclick' => 'this.target="_blank"'));
                     $hubdescription .= $brtag;
-                    $hubdescription .= html_writer::tag('span', $ascreenshothtml, array('class' => 'hubscreenshot'));
-                    $hubdescription .= html_writer::tag('span', $hub['description'], array('class' => 'hubdescription'));
+                    $hubdescription .= html_writer::tag('span', $ascreenshothtml,
+                            array('class' => 'hubscreenshot'));
+                    $hubdescription .= html_writer::tag('span', $hub['description'],
+                            array('class' => 'hubdescription'));
                     $hubdescription .= $brtag;
                     $additionaldesc = get_string('sites', 'block_community') . ': ' . $hub['sites'] . ' - ' .
                             get_string('courses', 'block_community') . ': ' . $hub['courses'];
-                    $hubdescription .= html_writer::tag('span', $additionaldesc, array('class' => 'hubadditionaldesc'));
+                    $hubdescription .= html_writer::tag('span', $additionaldesc,
+                            array('class' => 'hubadditionaldesc'));
                     $hubdescription .= $brtag;
                     $hubdescription .= html_writer::tag('span',
                                     $hub['trusted'] ? get_string('hubtrusted', 'block_community') :
@@ -116,8 +123,7 @@ class community_hub_search_form extends moodleform {
                 } else {
                     $hubdescription = '&nbsp;&nbsp;';
                     $hubdescription .= html_writer::tag('a', $hub['name'],
-                            array('class' => 'hublink', 'href' => $hub['url']));
-
+                                    array('class' => 'hublink', 'href' => $hub['url']));
                 }
 
                 if (empty($firsthub)) {
@@ -131,8 +137,8 @@ class community_hub_search_form extends moodleform {
             }
 
             //display enrol/download select box if the USER has the download capability on the course
-            if (has_capability('moodle/community:download', 
-                    get_context_instance(CONTEXT_COURSE, $this->_customdata['courseid']))) {
+            if (has_capability('moodle/community:download',
+                            get_context_instance(CONTEXT_COURSE, $this->_customdata['courseid']))) {
                 $options = array(0 => get_string('enrollable', 'block_community'),
                     1 => get_string('downloadable', 'block_community'));
                 $mform->addElement('select', 'downloadable', get_string('enroldownload', 'block_community'),

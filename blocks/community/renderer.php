@@ -77,7 +77,8 @@ class block_community_renderer extends plugin_renderer_base {
                 }
 
                 $visitlinkhtml = html_writer::tag('a', $linktext,
-                                array('href' => $courseurl, 'class' => 'hubcoursedownload'));
+                                array('href' => $courseurl, 'class' => 'hubcoursedownload',
+                                    'onclick' => 'this.target="_blank"'));
 
                 //create title html
                 $coursename = html_writer::tag('h3', $course->fullname,
@@ -238,10 +239,10 @@ class block_community_renderer extends plugin_renderer_base {
                                         array('class' => 'current-rating',
                                             'style' => 'width:' . $size . 'px;'));
 
-                        $rating = html_writer::tag('ul', $rating ,
+                        $rating = html_writer::tag('ul', $rating,
                                         array('class' => 'star-rating clearfix'));
-                        $rating .= html_writer::tag('div', ' (' . $course->rating->count . ')' ,
-                                        array('class' => 'ratingcount clearfix'));;
+                        $rating .= html_writer::tag('div', ' (' . $course->rating->count . ')',
+                                        array('class' => 'ratingcount clearfix'));
                     }
                 }
 
@@ -254,8 +255,8 @@ class block_community_renderer extends plugin_renderer_base {
                     //display only if there is some comment if there is some comment
                     $commentcount = count($course->comments);
                     $coursecomments = html_writer::tag('div',
-                            get_string('comments', 'block_community', $commentcount),
-                            array('class'=>'commenttitle'));;
+                                    get_string('comments', 'block_community', $commentcount),
+                                    array('class' => 'commenttitle'));
 
                     foreach ($course->comments as $comment) {
                         $commentator = html_writer::tag('div',
@@ -264,11 +265,11 @@ class block_community_renderer extends plugin_renderer_base {
                         $commentdate = html_writer::tag('div',
                                         ' - ' . userdate($comment['date'], '%e/%m/%y'),
                                         array('class' => 'hubcommentdate clearfix'));
-                     
+
                         $commenttext = html_writer::tag('div',
                                         $comment['comment'],
                                         array('class' => 'hubcommenttext'));
-                    
+
                         $coursecomments .= html_writer::tag('div',
                                         $commentator . $commentdate . $commenttext,
                                         array('class' => 'hubcomment'));
@@ -280,8 +281,16 @@ class block_community_renderer extends plugin_renderer_base {
                     $coursecomments = $coursecommenticon . html_writer::tag('div',
                                     $coursecomments,
                                     array('class' => 'yui3-overlay-loading',
-                                        'id' => 'commentoverlay-' . $course->id)); 
+                                        'id' => 'commentoverlay-' . $course->id));
                 }
+
+                //link rate and comment
+                $rateandcomment = html_writer::tag('div',
+                                html_writer::tag('a', get_string('rateandcomment', 'block_community'),
+                                        array('href' => new moodle_url($huburl,
+                                                    array('courseid' => $course->id)),
+                                            'onclick' => 'this.target="_blank"')),
+                                array('class' => 'hubrateandcomment'));
 
                 //the main DIV tags
                 $buttonsdiv = html_writer::tag('div',
@@ -293,7 +302,7 @@ class block_community_renderer extends plugin_renderer_base {
 
                 $coursedescdiv = html_writer::tag('div',
                                 $deschtml . $additionaldeschtml
-                                . $rating . $coursecomments,
+                                . $rating . $coursecomments . $rateandcomment,
                                 array('class' => 'coursedescription'));
                 $coursehtml =
                         $coursenamehtml . html_writer::tag('div',
