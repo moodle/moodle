@@ -108,7 +108,7 @@ function message_print_contact_selector($countunreadtotal, $usergroup, $user1, $
 
                 message_print_participants($coursecontexts[$courseidtoshow], $courseidtoshow, $PAGE->url, $showcontactactionlinks);
             } else {
-                //shouldnt get here. User trying to access a course theyre not in perhaps.
+                //shouldn't get here. User trying to access a course they're not in perhaps.
                 add_to_log(SITEID, 'message', 'view', 'index.php', $usergroup);
             }
         }
@@ -869,7 +869,7 @@ function message_print_search_results($frm, $showicontext=false, $user1=null) {
                 echo '<td class="summary">'.message_get_fragment($message->fullmessage, $keywords);
                 echo '<br /><div class="link">';
 
-                //find the user involved that isnt the current user
+                //find the user involved that isn't the current user
                 $user2id = null;
                 if ($user1->id == $message->useridto) {
                     $user2id = $message->useridfrom;
@@ -896,7 +896,7 @@ function message_print_search_results($frm, $showicontext=false, $user1=null) {
     }
 
     if (!$personsearch && !$messagesearch) {
-        //they didnt enter any search terms
+        //they didn't enter any search terms
         echo $OUTPUT->notification(get_string('emptysearchstring', 'message'));
     }
 
@@ -1452,6 +1452,7 @@ function message_print_message_history($user1,$user2,$search='',$messagelimit=0,
     if ($messages = message_get_history($user1, $user2, $messagelimit)) {
         $tablecontents = '';
 
+        $current = new object();
         $current->mday = '';
         $current->month = '';
         $current->year = '';
@@ -1634,7 +1635,7 @@ function message_move_userfrom_unread2read($userid) {
 
     global $DB;
 
-    // move all unread messages from message table to messasge_read
+    // move all unread messages from message table to message_read
     if ($messages = $DB->get_records_select('message', 'useridfrom = ?', array($userid), 'timecreated')) {
         foreach ($messages as $message) {
             $message->timeread = 0; //the message was never read

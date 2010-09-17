@@ -263,7 +263,7 @@
                 '<span class="time">['.$time.']</span>: '.
                 '<span class="content">'.$printmessage.'</span></div>';
             $i=0;
-            $sortkey = $message->timecreated."$i"; // we need string bacause we would run out of int range
+            $sortkey = $message->timecreated."$i"; // we need string because we would run out of int range
             while (array_key_exists($sortkey, $allmessages)) {
                 $i++;
                 $sortkey = $message->timecreated."$i";
@@ -285,7 +285,7 @@
                 '<span class="time">['.$time.']</span>: '.
                 '<span class="content">'.$printmessage.'</span></div>';
             $i=0;
-            $sortkey = $message->timecreated."$i"; // we need string bacause we would run out of int range
+            $sortkey = $message->timecreated."$i"; // we need string because we would run out of int range
             while (array_key_exists($sortkey, $allmessages)) {
                 $i++;
                 $sortkey = $message->timecreated."$i";
@@ -293,7 +293,7 @@
             $allmessages[$sortkey] = $printmessage;
         }
     }
-    /*Get still to be read message, use message/lib.php funtion*/
+    /*Get still to be read message, use message/lib.php function*/
     $messages = message_get_popup_messages($USER->id, $userid);
     if ($messages) {
         foreach ($messages as $message) {
@@ -308,7 +308,7 @@
                 '<span class="time">['.$time.']</span>: '.
                 '<span class="content">'.$printmessage.'</span></div>';
             $i=0;
-            $sortkey = $message->timecreated."$i"; // we need string bacause we would run out of int range
+            $sortkey = $message->timecreated."$i"; // we need string because we would run out of int range
             while (array_key_exists($sortkey, $allmessages)) {
                 $i++;
                 $sortkey = $message->timecreated."$i";
@@ -331,7 +331,7 @@
                 '<span class="time">['.$time.']</span>: '.
                 '<span class="content">'.$printmessage.'</span></div>';
             $i=0;
-            $sortkey = $message->timecreated."$i"; // we need string bacause we would run out of int range
+            $sortkey = $message->timecreated."$i"; // we need string because we would run out of int range
             while (array_key_exists($sortkey, $allmessages)) {
                 $i++;
                 $sortkey = $message->timecreated."$i";

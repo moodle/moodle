@@ -122,7 +122,7 @@ if (!empty($user2id)) {
 }
 unset($user2id);
 
-//was a message sent? Do NOT allow someone looking at somone elses messages to send them.
+//was a message sent? Do NOT allow someone looking at someone else's messages to send them.
 $messageerror = null;
 if ($currentuser && !empty($user2) && has_capability('moodle/site:sendmessage', $context)) {
 

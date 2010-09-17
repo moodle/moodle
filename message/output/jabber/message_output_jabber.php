@@ -86,7 +86,7 @@ class message_output_jabber extends message_output {
     }
 
     /**
-     * Parses the form submited data and saves it into preferences array.
+     * Parses the form submitted data and saves it into preferences array.
      * @param object $mform preferences form class
      * @param array $preferences preferences array
      */

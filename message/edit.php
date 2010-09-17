@@ -90,7 +90,7 @@ if ($user->id == $USER->id) {
     $PAGE->navigation->extend_for_user($user);
 }
 
-/// Save new preferences if data was submited
+/// Save new preferences if data was submitted
 
 if (($form = data_submitted()) && confirm_sesskey()) {
     $preferences = array();
