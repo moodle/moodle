@@ -229,7 +229,7 @@ function filters_action_url($filterpath, $action) {
 }
 
 function get_table_row($filterinfo, $isfirstrow, $islastactive, $applytostrings) {
-    global $CFG, $OUTPUT, $activechoices, $applytochoices, $filternames;
+    global $CFG, $OUTPUT, $activechoices, $applytochoices, $filternames; //TODO: this is sloppy coding style!!
     $row = array();
     $filter = $filterinfo->filter;
 
