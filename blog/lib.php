@@ -68,7 +68,7 @@ function blog_user_can_view_user_entry($targetuserid, $blogentry=null) {
         return false; // blog system disabled
     }
 
-    if (isloggdin() && $USER->id == $targetuserid) {
+    if (isloggedin() && $USER->id == $targetuserid) {
         return true; // can view own entries in any case
     }
 
@@ -749,7 +749,7 @@ function blog_get_headers($courseid=null, $groupid=null, $userid=null, $tagid=nu
     if (!empty($userid) && !empty($courseid) && empty($modid) && empty($entryid)) {
         $blogurl->param('userid', $userid);
         $blogurl->param('courseid', $courseid);
-        
+
         $PAGE->navbar->add($strblogentries, $blogurl);
 
         $PAGE->set_title("$site->shortname: $course->shortname: " . fullname($user) . ': ' . get_string('blogentries', 'blog'));
