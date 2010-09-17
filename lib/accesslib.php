@@ -3032,7 +3032,7 @@ function get_enrolled_sql($context, $withcapability = '', $groupid = 0, $onlyact
             }
 
             if ($groupid) {
-                $joins[] = "JOIN {groups_members} {$prefix}gm ON ({$prefix}gm.userid = {$prefix}u.id AND {$prefix}gm.id = :{$prefix}gmid)";
+                $joins[] = "JOIN {groups_members} {$prefix}gm ON ({$prefix}gm.userid = {$prefix}u.id AND {$prefix}gm.groupid = :{$prefix}gmid)";
                 $params["{$prefix}gmid"] = $groupid;
             }
         }
