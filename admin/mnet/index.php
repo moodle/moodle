@@ -84,7 +84,6 @@
 
     echo $OUTPUT->header();
 ?>
-<center>
 <form method="post" action="index.php">
     <table align="center" width="635" class="generalbox" border="0" cellpadding="5" cellspacing="0">
         <tr>
@@ -129,7 +128,6 @@
         </tr>
     </table>
 </form>
-</center>
 
 <?php
 echo $OUTPUT->footer();
