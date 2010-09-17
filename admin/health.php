@@ -104,6 +104,7 @@ STYLES;
 
 
 function health_find_problems() {
+    global $OUTPUT;
 
     echo $OUTPUT->heading(get_string('healthcenter'));
 
@@ -328,6 +329,8 @@ class problem_000008 extends problem_base {
         return 'PHP: memory_limit cannot be controlled by Moodle';
     }
     function exists() {
+        global $CFG;
+
         $oldmemlimit = @ini_get('memory_limit');
         if(empty($oldmemlimit)) {
             // PHP not compiled with memory limits, this means that it's
