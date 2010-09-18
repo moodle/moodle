@@ -16,7 +16,7 @@
 // You should have received a copy of the GNU Lesser General Public
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- 
+
 /**
  * webdav_client v0.1.5, a php based webdav client class.
  *
@@ -35,7 +35,7 @@
  * or an array in case of a multistatus response (207) from the webdav server. Look at the code which keys are used in arrays.
  * It's your responsibility to handle the webdav server responses in an proper manner.
  * Please notice that all Filenames coming from or going to the webdav server should be UTF-8 encoded (see RFC 2518).
- * This class tries to convert all you filenames into utf-8 when it's needed. 
+ * This class tries to convert all you filenames into utf-8 when it's needed.
  *
  * @author Christian Juerges <christian.juerges@xwave.ch>, Xwave GmbH, Josefstr. 92, 8005 Zuerich - Switzerland
  * @copyright (C) 2003/2004, Christian Juerges
@@ -46,7 +46,7 @@ class webdav_client {
 
     /**#@+
      * @access private
-     * @var string 
+     * @var string
      */
     private $_debug = false;
     private $_fp;
@@ -257,12 +257,12 @@ class webdav_client {
 
     }
 
-    /** 
+    /**
      * Public method mkcol
      *
      * Creates a new collection/directory on a webdav server
      * @param string path
-     * @return int status code received as reponse from webdav server (see rfc 2518)  
+     * @return int status code received as reponse from webdav server (see rfc 2518)
      */
     function mkcol($path) {
         $this->_path = $this->_translate_uri($path);
@@ -295,8 +295,8 @@ class webdav_client {
      * Public method get
      *
      * Gets a file from a webdav collection.
-     * @param string path, string &buffer 
-     * @return status code and &$buffer (by reference) with response data from server on success. False on error. 
+     * @param string path, string &buffer
+     * @return status code and &$buffer (by reference) with response data from server on success. False on error.
      */
     function get($path, &$buffer) {
         $this->_path = $this->_translate_uri($path);
@@ -325,7 +325,7 @@ class webdav_client {
     /**
      * Public method put
      *
-     * Puts a file into a collection. 
+     * Puts a file into a collection.
      *	Data is putted as one chunk!
      * @param string path, string data
      * @return int status-code read from webdavserver. False on error.
@@ -363,7 +363,7 @@ class webdav_client {
      *
      * Read a file as stream and puts it chunk by chunk into webdav server collection.
      *
-     * Look at php documenation for legal filenames with fopen();   
+     * Look at php documenation for legal filenames with fopen();
      * The filename will be translated into utf-8 if not allready in utf-8.
      *
      * @param string targetpath, string filename
@@ -414,8 +414,8 @@ class webdav_client {
     /**
      * Public method get_file
      *
-     * Gets a file from a collection into local filesystem. 
-     * 
+     * Gets a file from a collection into local filesystem.
+     *
      * fopen() is used.
      * @param string srcpath, string localpath
      * @return true on success. false on error.
@@ -440,14 +440,14 @@ class webdav_client {
         }
     }
 
-    /** 
+    /**
      * Public method copy_file
      *
      * Copies a file on a webdav server
-     * 
-     * Duplicates a file on the webdav server (serverside). 
+     *
+     * Duplicates a file on the webdav server (serverside).
      * All work is done on the webdav server. If you set param overwrite as true,
-     * the target will be overwritten. 
+     * the target will be overwritten.
      *
      * @param string src_path, string dest_path, bool overwrite
      * @return int status code (look at rfc 2518). false on error.
@@ -488,14 +488,14 @@ class webdav_client {
         return false;
     }
 
-    /** 
+    /**
      * Public method copy_coll
      *
      * Copies a collection on a webdav server
      *
-     * Duplicates a collection on the webdav server (serverside). 
+     * Duplicates a collection on the webdav server (serverside).
      * All work is done on the webdav server. If you set param overwrite as true,
-     * the target will be overwritten. 
+     * the target will be overwritten.
      *
      * @param string src_path, string dest_path, bool overwrite
      * @return int status code (look at rfc 2518). false on error.
@@ -541,12 +541,12 @@ class webdav_client {
         return false;
     }
 
-    /** 
+    /**
      * Public method move
      *
      * Moves a file or collection on webdav server (serverside)
-     * 
-     * If you set param overwrite as true, the target will be overwritten. 
+     *
+     * If you set param overwrite as true, the target will be overwritten.
      *
      * @param string src_path, string dest_path, bool overwrite
      * @return int status code (look at rfc 2518). false on error.
@@ -599,13 +599,13 @@ class webdav_client {
         return false;
     }
 
-    /** 
+    /**
      * Public method lock
      *
      * Locks a file or collection.
-     * 
+     *
      * Lock uses this->_user as lock owner.
-     * 
+     *
      * @param string path
      * @return int status code (look at rfc 2518). false on error.
      */
@@ -675,7 +675,7 @@ class webdav_client {
                     return false;
 
                 default:
-                    // hmm. not what we expected. Just return what we got from webdav server 
+                    // hmm. not what we expected. Just return what we got from webdav server
                     // someone else has to handle it.
                     $this->_lock['status'] = $response['status']['status-code'];
                     return $this->_lock;
@@ -686,11 +686,11 @@ class webdav_client {
     }
 
 
-    /** 
+    /**
      * Public method unlock
      *
      * Unlocks a file or collection.
-     * 
+     *
      * @param string path, string locktoken
      * @return int status code (look at rfc 2518). false on error.
      */
@@ -713,7 +713,7 @@ class webdav_client {
         return false;
     }
 
-    /** 
+    /**
      * Public method delete
      *
      * deletes a collection/directory on a webdav server
@@ -783,13 +783,13 @@ class webdav_client {
 
     }
 
-    /**	
+    /**
      * Public method ls
      *
      * Get's directory information from webdav server into flat a array using PROPFIND
      *
-     * All filenames are UTF-8 encoded. 
-     * Have a look at _propfind_startElement what keys are used in array returned. 
+     * All filenames are UTF-8 encoded.
+     * Have a look at _propfind_startElement what keys are used in array returned.
      * @param string path
      * @return array dirinfo, false on error
      */
@@ -864,7 +864,7 @@ EOD;
                 } else {
                     // return status code ...
                     return $response['status']['status-code'];
-                }	
+                }
             }
 
         // response was not http
@@ -875,9 +875,9 @@ EOD;
 
     /**
      * Public method gpi
-     * 
+     *
      * Get's path information from webdav server for one element.
-     * 
+     *
      * @param string path
      * @return array dirinfo. false on error
      */
@@ -909,7 +909,7 @@ EOD;
      * Public method is_file
      *
      * Gathers whether a path points to a file or not.
-     * 
+     *
      * @param string path
      * @return bool true or false
      */
@@ -948,10 +948,10 @@ EOD;
      * Public method mput
      *
      * Puts multiple files and/or directories onto a webdav server.
-     * 
+     *
      * Filenames should be allready UTF-8 encoded.
      * Param fileList must be in format array("localpath" => "destpath").
-     * 
+     *
      * @param array filelist
      * @return bool true on success. otherwise int status code on error
      */
@@ -1000,12 +1000,12 @@ EOD;
 
     /**
      * Public method mget
-     * 
+     *
      * Gets multiple files and directories.
-     * 
+     *
      * FileList must be in format array("remotepath" => "localpath").
      * Filenames are UTF-8 encoded.
-     * 
+     *
      * @param array filelist
      * @return bool true on succes, other int status code on error
      */
@@ -1060,8 +1060,8 @@ EOD;
     // --------------------------------------------------------------------------
 
 
-    /**	
-     * Private method _endelement 
+    /**
+     * Private method _endelement
      *
      * a generic endElement method  (used for all xml callbacks).
      *
@@ -1078,12 +1078,12 @@ EOD;
      * Private method _propfind_startElement
      *
      * Is needed by public method ls.
-     * 
+     *
      * Generic method will called by php xml_parse when a xml start element tag has been detected.
      * The xml tree will translated into a flat php array for easier access.
      * @param resource parser, string name, string attrs
      * @access private
-     */ 
+     */
     private function _propfind_startElement($parser, $name, $attrs) {
         // lower XML Names... maybe break a RFC, don't know ...
 
@@ -1150,19 +1150,19 @@ EOD;
         }
     }
 
-    /** 
+    /**
      * Private method _propfind_cData
      *
      * Is needed by public method ls.
-     * 
+     *
      * Will be called by php xml_set_character_data_handler() when xml data has to be handled.
      * Stores data found into class var _ls_ref_cdata
      * @param resource parser, string cdata
      * @access private
-     */ 
+     */
     private function _propfind_cData($parser, $cdata) {
         if (trim($cdata) <> '') {
-            // cdata must be appended, because sometimes the php xml parser makes multiple calls 
+            // cdata must be appended, because sometimes the php xml parser makes multiple calls
             // to _propfind_cData before the xml end tag was reached...
             $this->_ls_ref_cdata .= $cdata;
         } else {
@@ -1173,8 +1173,8 @@ EOD;
     /**
      * Private method _delete_startElement
      *
-     * Is used by public method delete. 
-     * 
+     * Is used by public method delete.
+     *
      * Will be called by php xml_parse.
      * @param resource parser, string name, string attrs)
      * @access private
@@ -1201,16 +1201,16 @@ EOD;
     }
 
 
-    /** 
+    /**
      * Private method _delete_cData
      *
      * Is used by public method delete.
-     * 
+     *
      * Will be called by php xml_set_character_data_handler() when xml data has to be handled.
      * Stores data found into class var _delete_ref_cdata
      * @param resource parser, string cdata
      * @access private
-     */ 
+     */
     private function _delete_cData($parser, $cdata) {
         if (trim($cdata) <> '') {
             $this->_delete_ref_cdata .= $cdata;
@@ -1229,7 +1229,7 @@ EOD;
      * The xml tree will translated into a flat php array for easier access.
      * @param resource parser, string name, string attrs
      * @access private
-     */ 
+     */
     private function _lock_startElement($parser, $name, $attrs) {
         // lower XML Names... maybe break a RFC, don't know ...
         $propname = strtolower($name);
@@ -1276,7 +1276,7 @@ EOD;
         }
     }
 
-    /** 
+    /**
      * Private method _lock_cData
      *
      * Is used by public method lock.
@@ -1285,7 +1285,7 @@ EOD;
      * Stores data found into class var _lock_ref_cdata
      * @param resource parser, string cdata
      * @access private
-     */ 
+     */
     private function _lock_cData($parser, $cdata) {
         if (trim($cdata) <> '') {
             // $this->_error_log(($this->_xmltree[$parser]) . '='. htmlentities($cdata));
@@ -1298,8 +1298,8 @@ EOD;
 
     /**
      * Private method _header_add
-     * 
-     * extends class var array _req  
+     *
+     * extends class var array _req
      * @param string string
      * @access private
      */
@@ -1309,8 +1309,8 @@ EOD;
 
     /**
      * Private method _header_unset
-     * 
-     * unsets class var array _req  
+     *
+     * unsets class var array _req
      * @access private
      */
 
@@ -1320,7 +1320,7 @@ EOD;
 
     /**
      * Private method _create_basic_request
-     * 
+     *
      * creates by using private method _header_add an general request header.
      * @param string method
      * @access private
@@ -1338,9 +1338,9 @@ EOD;
 
     /**
      * Private method _send_request
-     * 
+     *
      * Sends a ready formed http/webdav request to webdav server.
-     * 
+     *
      * @access private
      */
     private function _send_request() {
@@ -1362,7 +1362,7 @@ EOD;
 
     /**
      * Private method _get_respond
-     * 
+     *
      * Reads the reponse from the webdav server.
      *
      * Stores data into class vars _header for the header data and
@@ -1464,12 +1464,12 @@ EOD;
         default:
             // just get the data until foef appears...
             $this->_error_log('reading until feof...' . $header);
-            socket_set_timeout($this->_fp,0 );
+            socket_set_timeout($this->_fp, 0, 0);
             while (!feof($this->_fp)) {
                 $buffer .= fread($this->_fp, 4096);
             }
             // renew the socket timeout...does it do something ???? Is it needed. More debugging needed...
-            socket_set_timeout($this->_fp, $this->_socket_timeout);
+            socket_set_timeout($this->_fp, $this->_socket_timeout, 0);
         }
 
         $this->_header = $header;
@@ -1482,7 +1482,7 @@ EOD;
 
     /**
      * Private method _process_respond
-     * 
+     *
      * Processes the webdav server respond and detects its components (header, body).
      * and returns data array structure.
      * @return array ret_struct
@@ -1532,9 +1532,9 @@ EOD;
 
     /**
      * Private method _reopen
-     * 
-     * Reopens a socket, if 'connection: closed'-header was received from server. 
-     * 
+     *
+     * Reopens a socket, if 'connection: closed'-header was received from server.
+     *
      * Uses public method open.
      * @access private
      */
@@ -1561,7 +1561,7 @@ EOD;
 
     /**
      * Private method _translate_uri
-     * 
+     *
      * translates an uri to raw url encoded string.
      * Removes any html entity in uri
      * @param string uri
@@ -1577,32 +1577,32 @@ EOD;
             if (iconv('UTF-8', 'UTF-8', $parts[$i]) == $parts[$i]) {
                 $parts[$i] = rawurlencode($parts[$i]);
             } else {
-                $parts[$i] = rawurlencode(utf8_encode($parts[$i])); 
-            }	
+                $parts[$i] = rawurlencode(utf8_encode($parts[$i]));
+            }
         }
         return implode('/', $parts);
     }
 
     /**
      * Private method _utf_decode_path
-     * 
-     * decodes a UTF-8 encoded string 
+     *
+     * decodes a UTF-8 encoded string
      * @return string decodedstring
      * @access private
-     */	
+     */
     private function _utf_decode_path($path) {
         $fullpath = $path;
         if (iconv('UTF-8', 'UTF-8', $fullpath) == $fullpath) {
             $this->_error_log("filename is utf-8. Needs conversion...");
             $fullpath = utf8_decode($fullpath);
         }
-        return $fullpath;  
+        return $fullpath;
     }
 
     /**
      * Private method _error_log
-     * 
-     * a simple php error_log wrapper. 
+     *
+     * a simple php error_log wrapper.
      * @param string err_string
      * @access private
      */
