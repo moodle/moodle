@@ -293,7 +293,7 @@ if (moodle_needs_upgrading()) {
 if (during_initial_install()) {
     set_config('rolesactive', 1); // after this, during_initial_install will return false.
     set_config('adminsetuppending', 1);
-    // we neeed this redirect to setup proper session
+    // we need this redirect to setup proper session
     upgrade_finished("index.php?sessionstarted=1&amp;lang=$CFG->lang");
 }
 
@@ -316,7 +316,8 @@ if (during_initial_install()) {
         }
     }
 
-    $adminuser = get_complete_user_data('username', 'admin');
+    // at this stage there can be only one admin - users may change username, so do not rely on that
+    $adminuser = get_complete_user_data('id', $CFG->siteadmins);
 
     if ($adminuser->password === 'adminsetuppending') {
         // prevent installation hijacking
