@@ -22,7 +22,7 @@ M.mod_chat_header.init_insert = function(Y, forcerefreshasap) {
         parent.jsupdate.location.href = parent.jsupdate.document.anchors[0].href;
     }
     parent.input.enableForm();
-}
+};
 
 /**
  * Init header based Chat UI - frame input
@@ -38,7 +38,7 @@ M.mod_chat_header.init_input = function(Y) {
         waitflag : false,       // True when a submission is in progress
 
         /**
-         * Initialises the input frame 
+         * Initialises the input frame
          *
          * @function
          */
