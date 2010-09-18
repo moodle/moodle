@@ -29,7 +29,7 @@ defined('MOODLE_INTERNAL') || die();
 
 /**
  * XML format exporter class.
- * Provides logic for writing XML tags and data inside appropiate callbacks.
+ * Provides logic for writing XML tags and data inside appropriate callbacks.
  * Subclasses should define XML data sinks.
  */
 abstract class xml_database_exporter extends database_exporter {

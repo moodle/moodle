@@ -66,7 +66,7 @@ class database_importer {
      * Object constructor.
      *
      * @param moodle_database $mdb Connection to the target database (a
-     * @see moodle_database object). Use null to use the curent $DB connection.
+     * @see moodle_database object). Use null to use the current $DB connection.
      * @param boolean $check_schema - whether or not to check that XML database
      * schema matches the RDBMS database schema before importing (inside
      * @see begin_database_import).
