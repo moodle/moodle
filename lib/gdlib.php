@@ -112,6 +112,7 @@ function process_new_icon($context, $component, $filearea, $itemid, $originalfil
         return false;
     }
 
+    $image = new object();
     $image->width  = $imageinfo[0];
     $image->height = $imageinfo[1];
     $image->type   = $imageinfo[2];
