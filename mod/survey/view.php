@@ -149,7 +149,7 @@
     global $qnum;  //TODO: ugly globals hack for survey_print_*()
     global $checklist; //TODO: ugly globals hack for survey_print_*()
     $qnum = 0;
-    $checklist = array(); 
+    $checklist = array();
     foreach ($questionorder as $key => $val) {
         $question = $questions["$val"];
         $question->id = $val;
