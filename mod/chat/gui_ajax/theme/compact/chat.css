@@ -24,7 +24,7 @@
 
 .mdl-chat-entry , .mdl-chat-my-entry {
     margin: 1em auto;
-    border: 1px solid #938F5A
+    border: 1px solid #938F5A;
     -moz-border-radius-bottomleft: 6px;
     -moz-border-radius-bottomright: 6px;
     border-bottom-left-radius:6px;
