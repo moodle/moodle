@@ -34,4 +34,4 @@ M.mod_assignment.init_tree = function(Y, expand_all, htmlid) {
 
         tree.render();
     });
-}
+};
