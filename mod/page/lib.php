@@ -363,11 +363,11 @@ function page_pluginfile($course, $cm, $context, $filearea, $args, $forcedownloa
     $relativepath = implode('/', $args);
     $fullpath = "/$context->id/mod_page/$filearea/0/$relativepath";
     if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
-        $page = $DB->get_record('page', array('id'=>$cminfo->instance), 'id, legacyfiles', MUST_EXIST);
+        $page = $DB->get_record('page', array('id'=>$cm->instance), 'id, legacyfiles', MUST_EXIST);
         if ($page->legacyfiles != RESOURCELIB_LEGACYFILES_ACTIVE) {
             return false;
         }
-        if (!$file = resourcelib_try_file_migration('/'.$relativepath, $cminfo->id, $cminfo->course, 'mod_page', 'content', 0)) {
+        if (!$file = resourcelib_try_file_migration('/'.$relativepath, $cm->id, $cm->course, 'mod_page', 'content', 0)) {
             return false;
         }
         //file migrate - update flag
