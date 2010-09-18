@@ -495,6 +495,7 @@ function scorm_seq_overall_rollup($sco,$userid){//Carlos
 /* For this next function I have defined measure weight and measure status as records with the attempt = 0 on the scorm_scoes_track table. According to the page 89 of the SeqNav.pdf those datas give us some information about the progress of the objective*/
 
 function scorm_seq_measure_rollup($sco,$userid){
+    global $DB;
 
     $totalmeasure = 0; //Check if there is something similar in the database
     $valid = false;//Same as in the last line
