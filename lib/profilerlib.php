@@ -178,7 +178,7 @@ class Profiler
                 list($index, $file, $line) = preg_split("/ /",$data, 3);
                 if(array_key_exists('i',$opt) && $symbol_type[$index] == 1) {
                     continue;
-                }	
+                }
                 $index_cur = $index;
                 $calls[$index_cur]++;
                 array_push($callstack, $index_cur);
@@ -261,7 +261,7 @@ class Profiler
         if(array_key_exists('U', $opt)) { $sort = 'by_c_utime'; }
         if(array_key_exists('Z', $opt)) { $sort = 'by_c_time'; }
         if( !count($symbol_hash)) {
-            continue;
+            return NULL;
         }
 
         $retstring .= sprintf("
