@@ -234,7 +234,7 @@ final class portfolio_user_form extends moodleform {
         $this->userid = $this->_customdata['userid'];
 
         $this->_form->addElement('hidden', 'config', $this->instance->get('id'));
-        $mform->setType('config', PARAM_INT);
+        $this->_form->setType('config', PARAM_INT);
 
         $this->instance->user_config_form($this->_form, $this->userid);
 
