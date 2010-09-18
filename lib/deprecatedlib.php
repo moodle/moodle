@@ -3589,7 +3589,7 @@ function print_heading_with_help($text, $helppage, $module='moodle', $icon=false
     // Extract the src from $icon if it exists
     if (preg_match('/src="([^"]*)"/', $icon, $matches)) {
         $icon = $matches[1];
-        $icon = moodle_url($icon);
+        $icon = new moodle_url($icon);
     } else {
         $icon = '';
     }
