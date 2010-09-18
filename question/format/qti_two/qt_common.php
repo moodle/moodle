@@ -18,7 +18,8 @@
 function get_course_media_files($courseid)
 {
 // this code lifted from mod/quiz/question.php and modified
-    global $CFG;
+throw new coding_exception('qti_two not converted to new fil api yet, sorry');
+    /*global $CFG;
     $images = null;
 
     make_upload_directory("$course->id");    // Just in case
@@ -28,7 +29,7 @@ function get_course_media_files($courseid)
             $images["$filename"] = $filename;
         }
     }
-    return $images;
+    return $images;*/
 }
 
 /**
