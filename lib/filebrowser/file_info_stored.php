@@ -49,13 +49,13 @@ class file_info_stored extends file_info {
      * Constructor
      *
      * @param file_browser $browser
-     * @param object $context
-     * @param stored_file $storedfile
+     * @param stdClass $context
+     * @param stored_file|virtual_root_file $storedfile
      * @param string $urlbase the serving script - usually the $CFG->wwwroot/.'pluginfile.php'
      * @param string $topvisiblename the human readable name of this area
-     * @param string $itemidused false if itemid  always 0 and not included in URL
-     * @param string $readaccess allow file reading
-     * @param string $writeaccess allow file write, delete
+     * @param int|bool $itemidused false if itemid  always 0 and not included in URL
+     * @param bool $readaccess allow file reading
+     * @param bool $writeaccess allow file write, delete
      * @param string $areaonly do not show links to parent context/area
      */
     public function __construct(file_browser $browser, $context, $storedfile, $urlbase, $topvisiblename, $itemidused, $readaccess, $writeaccess, $areaonly) {
@@ -471,7 +471,7 @@ class file_info_stored extends file_info {
         if ($this->is_directory()) {
             $filepath = $this->lf->get_filepath();
             $fs = get_file_storage();
-            $storedfiles = $fs->get_area_files($this->context->id, $file->get_component(), $this->lf->get_filearea(), $this->lf->get_itemid(), "");
+            $storedfiles = $fs->get_area_files($this->context->id, $this->get_component(), $this->lf->get_filearea(), $this->lf->get_itemid(), "");
             foreach ($storedfiles as $file) {
                 if (strpos($file->get_filepath(), $filepath) === 0) {
                     $file->delete();
