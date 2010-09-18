@@ -258,11 +258,11 @@ class mod_scorm_mod_form extends moodleform_mod {
         if (isset($default_values['grademethod'])) {
             $default_values['grademethod'] = intval($default_values['grademethod']);
         }
-        if (isset($default_value['width']) && (strpos($default_value['width'],'%') === false) && ($default_value['width'] <= 100)) {
-            $default_value['width'] .= '%';
+        if (isset($default_values['width']) && (strpos($default_values['width'],'%') === false) && ($default_values['width'] <= 100)) {
+            $default_values['width'] .= '%';
         }
-        if (isset($default_value['width']) && (strpos($default_value['height'],'%') === false) && ($default_value['height'] <= 100)) {
-            $default_value['height'] .= '%';
+        if (isset($default_values['width']) && (strpos($default_values['height'],'%') === false) && ($default_values['height'] <= 100)) {
+            $default_values['height'] .= '%';
         }
         $scorms = get_all_instances_in_course('scorm', $COURSE);
         $coursescorm = current($scorms);
