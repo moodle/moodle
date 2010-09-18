@@ -112,6 +112,7 @@ include('tabs.php');
 $resettemplate = false;
 
 if (($mytemplate = data_submitted()) && confirm_sesskey()) {
+    $newtemplate = new object();
     $newtemplate->id = $data->id;
     $newtemplate->{$mode} = $mytemplate->template;
 

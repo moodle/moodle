@@ -405,6 +405,7 @@ if ($showactivity) {
         if ($approve && confirm_sesskey() && $approvecap) {
             if ($approverecord = $DB->get_record('data_records', array('id'=>$approve))) {   // Need to check this is valid
                 if ($approverecord->dataid == $data->id) {                       // Must be from this database
+                    $newrecord = new object();
                     $newrecord->id = $approverecord->id;
                     $newrecord->approved = 1;
                     $DB->update_record('data_records', $newrecord);

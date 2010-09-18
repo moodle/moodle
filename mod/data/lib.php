@@ -2524,12 +2524,12 @@ function data_export_csv($export, $delimiter_name, $dataname, $count, $return=fa
     global $CFG;
     require_once($CFG->libdir . '/csvlib.class.php');
     $delimiter = csv_import_reader::get_delimiter($delimiter_name);
-    $filename = clean_filename("${dataname}-${count}_record");
+    $filename = clean_filename("{$dataname}-{$count}_record");
     if ($count > 1) {
         $filename .= 's';
     }
     $filename .= clean_filename('-' . gmdate("Ymd_Hi"));
-    $filename .= clean_filename("-${delimiter_name}_separated");
+    $filename .= clean_filename("-{$delimiter_name}_separated");
     $filename .= '.csv';
     if (empty($return)) {
         header("Content-Type: application/download\n");
@@ -2563,7 +2563,7 @@ function data_export_csv($export, $delimiter_name, $dataname, $count, $return=fa
 function data_export_xls($export, $dataname, $count) {
     global $CFG;
     require_once("$CFG->libdir/excellib.class.php");
-    $filename = clean_filename("${dataname}-${count}_record");
+    $filename = clean_filename("{$dataname}-{$count}_record");
     if ($count > 1) {
         $filename .= 's';
     }
@@ -2598,7 +2598,7 @@ function data_export_xls($export, $dataname, $count) {
 function data_export_ods($export, $dataname, $count) {
     global $CFG;
     require_once("$CFG->libdir/odslib.class.php");
-    $filename = clean_filename("${dataname}-${count}_record");
+    $filename = clean_filename("{$dataname}-{$count}_record");
     if ($count > 1) {
         $filename .= 's';
     }
@@ -2800,7 +2800,7 @@ function data_extend_settings_navigation(settings_navigation $settings, navigati
     $groupmode = groups_get_activity_groupmode($PAGE->cm);
 
     if (data_user_can_add_entry($data, $currentgroup, $groupmode)) { // took out participation list here!
-        if (empty($editentry)) {
+        if (empty($editentry)) { //TODO: undefined
             $addstring = get_string('add', 'data');
         } else {
             $addstring = get_string('editentry', 'data');

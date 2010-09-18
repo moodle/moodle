@@ -187,7 +187,7 @@ switch ($mode) {
 
                     // Update the default sort field
                     if ($fid == $data->defaultsort) {
-                        unset($rec);
+                        $rec = new object();
                         $rec->id = $data->id;
                         $rec->defaultsort = 0;
                         $rec->defaultsortdir = 0;
@@ -220,6 +220,7 @@ switch ($mode) {
 
     case 'sort':    // Set the default sort parameters
         if (confirm_sesskey()) {
+            $rec = new object();
             $rec->id = $data->id;
             $rec->defaultsort = $defaultsort;
             $rec->defaultsortdir = $defaultsortdir;
