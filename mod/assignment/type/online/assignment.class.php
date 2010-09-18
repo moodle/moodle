@@ -298,7 +298,7 @@ class assignment_online extends assignment_base {
         if (in_array($exporter->get('formatclass'), array(PORTFOLIO_FORMAT_PLAINHTML, PORTFOLIO_FORMAT_RICHHTML))) {
             if ($files = $exporter->get('caller')->get('multifiles')) {
                 foreach ($files as $f) {
-                    $exporter->copy_existing_file($file);
+                    $exporter->copy_existing_file($f);
                 }
             }
             return $exporter->write_new_file($html, 'assignment.html', !empty($files));
