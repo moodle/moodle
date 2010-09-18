@@ -75,7 +75,7 @@ foreach ($chats as $chat) {
         }
         $currentsection = $chat->section;
     }
-    if ($usesection) {
+    if ($usesections) {
         $table->data[] = array ($printsection, $link);
     } else {
         $table->data[] = array ($link);
