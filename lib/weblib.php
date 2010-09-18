@@ -2522,11 +2522,11 @@ function redirect($url, $message='', $delay=-1) {
 
     if (function_exists('error_get_last')) {
         $lasterror = error_get_last();
+        //NOTE: problem here is that this contains error even if error hidden with @do();
     }
     $debugdisableredirect = defined('DEBUGGING_PRINTED') ||
             (!empty($CFG->debugdisplay) && !empty($lasterror) && ($lasterror['type'] & DEBUG_DEVELOPER));
 
-    $usingmsg = false;
     if (!empty($message)) {
         if ($delay === -1 || !is_numeric($delay)) {
             $delay = 3;

@@ -40,7 +40,9 @@ if (version_compare(phpversion(), '5.2.0') < 0) {
 
 // try to flush everything all the time
 @ob_implicit_flush(true);
-while(@ob_end_clean()); // ob_end_flush prevents sending of headers
+while(ob_get_level()) {
+    ob_end_clean(); // ob_end_flush prevents sending of headers
+}
 
 require('../config.php');
 require_once($CFG->libdir.'/adminlib.php');    // various admin-only functions
