@@ -951,7 +951,7 @@ function portfolio_cron() {
                 $e = portfolio_exporter::rewaken_object($d->id);
                 $e->process_stage_cleanup(true);
             } catch (Exception $e) {
-                mtrade('Exception thrown in portfolio cron while cleaning up ' . $d->id . ': ' . $e->getMessage());
+                mtrace('Exception thrown in portfolio cron while cleaning up ' . $d->id . ': ' . $e->getMessage());
             }
         }
     }
