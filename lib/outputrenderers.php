@@ -2573,7 +2573,6 @@ class core_renderer_cli extends core_renderer {
      * @return string HTML fragment
      */
     public function header() {
-        output_starting_hook();
         return $this->page->heading . "\n";
     }
 
