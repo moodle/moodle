@@ -33,7 +33,7 @@ defined('MOODLE_INTERNAL') || die;
  * @return void
  */
 function lesson_20_migrate_moddata_mixture($courseid, $path) {
-    global $CFG, $DB;
+    global $CFG, $DB, $OUTPUT;
 
     $fullpathname = "$CFG->dataroot/$courseid".$path;
 
