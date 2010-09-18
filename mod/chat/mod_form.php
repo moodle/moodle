@@ -8,6 +8,8 @@ require_once ($CFG->dirroot.'/course/moodleform_mod.php');
 class mod_chat_mod_form extends moodleform_mod {
 
     function definition() {
+        global $CFG;
+
         $mform = $this->_form;
 
 //-------------------------------------------------------------------------------
