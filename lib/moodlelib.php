@@ -8222,11 +8222,10 @@ function make_menu_from_list($list, $separator=',') {
  * are scales, zero is no grade, and positive numbers are maximum
  * grades.
  *
- * @todo Finish documenting this function
+ * @todo Finish documenting this function or better deprecated this completely!
  *
- * @global object
  * @param int $gradingtype
- * @return int
+ * @return array
  */
 function make_grades_menu($gradingtype) {
     global $DB;
