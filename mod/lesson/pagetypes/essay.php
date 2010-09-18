@@ -49,7 +49,7 @@ class lesson_page_type_essay extends lesson_page {
         return $this->typeidstring;
     }
     public function display($renderer, $attempt) {
-        global $PAGE, $CFG;
+        global $PAGE, $CFG, $USER;
 
         $mform = new lesson_display_answer_form_essay($CFG->wwwroot.'/mod/lesson/continue.php', array('contents'=>$this->get_contents()));
 
