@@ -20,7 +20,7 @@ YUI.add('moodle-mod_glossary-autolinker', function(Y) {
 
     var AUTOLINKER = function() {
         AUTOLINKER.superclass.constructor.apply(this, arguments);
-    }
+    };
     Y.extend(AUTOLINKER, Y.Base, {
         overlay : null,
         initializer : function(config) {
@@ -68,7 +68,7 @@ YUI.add('moodle-mod_glossary-autolinker', function(Y) {
                 var data = Y.JSON.parse(content);
                 if (data.success){
                     this.overlay.hide(); //hide progress indicator
-                    
+
                     for (key in data.entries) {
                         new M.core.alert({title:data.entries[key].concept, message:data.entries[key].definition, lightbox:false});
                     }

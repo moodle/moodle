@@ -66,7 +66,7 @@
 
         //show clock in NS 4
         if (document.layers)
-                document.ClockPosNS.visibility="show"
+                document.ClockPosNS.visibility="show";
         if (old == "die") { return; }
 
         currentDate = new Date();
