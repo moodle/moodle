@@ -131,7 +131,7 @@ function imscp_update_instance($data, $mform) {
 
     $data->timemodified = time();
     $data->id           = $data->instance;
-    $imscp->structure   = null; // better reparse structure after each update
+    $data->structure   = null; // better reparse structure after each update
 
     $DB->update_record('imscp', $data);
 
