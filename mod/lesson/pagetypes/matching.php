@@ -481,7 +481,7 @@ class lesson_display_answer_form_matching extends moodleform {
                 $mform->addElement('select', 'response['.$answer->id.']', format_text($answer->answer,$answer->answerformat,$options), $responseoptions);
                 $mform->setType('response['.$answer->id.']', PARAM_TEXT);
                 if (isset($USER->modattempts[$lessonid])) {
-                    $mform->setDefault('response['.$answer->id.']', htmlspecialchars(trim($answers[$useranswers[$t]]->response)));
+                    $mform->setDefault('response['.$answer->id.']', htmlspecialchars(trim($answers[$useranswers[$i]]->response))); //TODO: this is suspicious
                 } else {
                     $mform->setDefault('response['.$answer->id.']', 'answeroption');
                 }
