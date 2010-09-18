@@ -162,8 +162,6 @@ class xmldb_structure extends xmldb_object {
         $table =& $this->getTable($tablename);
         if ($table) {
             $i = $this->findTableInArray($tablename);
-            $prevtable = NULL;
-            $nexttable = NULL;
         /// Look for prev and next table
             $prevtable =& $this->getTable($table->getPrevious());
             $nexttable =& $this->getTable($table->getNext());

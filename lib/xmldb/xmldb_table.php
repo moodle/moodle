@@ -344,8 +344,6 @@ class xmldb_table extends xmldb_object {
         $field =& $this->getField($fieldname);
         if ($field) {
             $i = $this->findFieldInArray($fieldname);
-            $prevfield = NULL;
-            $nextfield = NULL;
         /// Look for prev and next field
             $prevfield =& $this->getField($field->getPrevious());
             $nextfield =& $this->getField($field->getNext());
@@ -375,8 +373,6 @@ class xmldb_table extends xmldb_object {
         $key =& $this->getKey($keyname);
         if ($key) {
             $i = $this->findKeyInArray($keyname);
-            $prevkey = NULL;
-            $nextkey = NULL;
         /// Look for prev and next key
             $prevkey =& $this->getKey($key->getPrevious());
             $nextkey =& $this->getKey($key->getNext());
@@ -406,8 +402,6 @@ class xmldb_table extends xmldb_object {
         $index =& $this->getIndex($indexname);
         if ($index) {
             $i = $this->findIndexInArray($indexname);
-            $previndex = NULL;
-            $nextindex = NULL;
         /// Look for prev and next index
             $previndex =& $this->getIndex($index->getPrevious());
             $nextindex =& $this->getIndex($index->getNext());

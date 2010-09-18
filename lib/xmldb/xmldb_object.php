@@ -433,8 +433,6 @@ class xmldb_object {
      */
     function comma2array($string) {
 
-        $arr = array();
-
         $foundquotes  = array();
         $foundconcats = array();
 

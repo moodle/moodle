@@ -171,8 +171,6 @@ class xmldb_file extends xmldb_object {
      */
     function saveXMLFile() {
 
-        $result = true;
-
         $structure =& $this->getStructure();
 
         $result = file_put_contents($this->path, $structure->xmlOutput());
