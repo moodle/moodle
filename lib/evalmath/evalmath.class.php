@@ -429,7 +429,7 @@ class EvalMathStack {
     }
 }
 
-// spreadsheed functions emulation
+// spreadsheet functions emulation
 // watch out for reversed args!!
 class EvalMathCalcEmul {
 
