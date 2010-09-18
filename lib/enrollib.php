@@ -290,6 +290,7 @@ function enrol_course_updated($inserted, $course, $data) {
  * @return void
  */
 function enrol_add_course_navigation(navigation_node $coursenode, $course) {
+    global $CFG;
 
     $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
 
