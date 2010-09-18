@@ -1185,8 +1185,11 @@ abstract class sql_generator {
     /**
      * Returns an array of reserved words (lowercase) for this DB
      * You MUST provide the real list for each DB inside every XMLDB class
+     * @return array of reserved words
      */
-    public static abstract function getReservedWords();
+    public static function getReservedWords() {
+        return array();
+    }
 
     /**
      * Returns all reserved works in supported databases.

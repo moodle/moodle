@@ -1482,6 +1482,10 @@ class ddl_test extends UnitTestCase {
         $dbman->drop_table($table);
     }
 
+    public function test_reserved_words() {
+        $reserved = sql_generator::getAllReservedWords();
+        $this->assertTrue(count($reserved) > 1);
+    }
 
  // Following methods are not supported == Do not test
 /*
