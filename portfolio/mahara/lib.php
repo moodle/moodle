@@ -132,9 +132,7 @@ class portfolio_plugin_mahara extends portfolio_plugin_pull_base {
     private static function get_mnet_hosts() {
         global $DB, $CFG;
         static $hosts;
-        if (isset($this) && is_object($this) && isset($this->hosts)) {
-            return $this->hosts;
-        } else if (!isset($this) && isset($hosts)) {
+        if (isset($hosts)) {
             return $hosts;
         }
         $hosts = $DB->get_records_sql('  SELECT
@@ -169,10 +167,6 @@ class portfolio_plugin_mahara extends portfolio_plugin_pull_base {
                                     s3.name = ? AND hs3.subscribe = ? AND
                                     s3.name = ? AND hs3.publish = ?',
                         array($CFG->mnet_localhost_id, 'mahara', 'sso_idp', 1, 'sso_sp', 1, 'pf', 1, 'pf', 1));
-        if (empty($hosts)) { $hosts = array(); }
-        if (isset($this) && is_object($this)) {
-            $this->hosts = $hosts;
-        }
         return $hosts;
     }
 
