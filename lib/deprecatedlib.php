@@ -2680,7 +2680,7 @@ function button_to_popup_window ($url, $name=null, $linkname=null,
     }
 
     // Create a single_button object
-    $form = new single_button($url, $text, 'post');
+    $form = new single_button($url, $linkname, 'post');
     $form->button->title = $title;
     $form->button->id = $id;
 
@@ -2710,7 +2710,7 @@ function button_to_popup_window ($url, $name=null, $linkname=null,
     }
 
     $form->button->add_action(new popup_action('click', $url, $name, $popupparams));
-    $output = $OUTPUT->single_button($form);
+    $output = $OUTPUT->render($form);
 
     if ($return) {
         return $output;
@@ -2751,7 +2751,7 @@ function print_single_button($link, $options, $label='OK', $method='get', $notus
         $button->button->add_confirm_action($jsconfirmmessage);
     }
 
-    $output = $OUTPUT->single_button($button);
+    $output = $OUTPUT->render($button);
 
     if ($return) {
         return $output;
