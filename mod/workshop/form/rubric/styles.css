@@ -68,7 +68,7 @@
 
 .path-mod-workshop .mform.frozen .fitem.description.rubric + .fitem .fitemtitle + .felement,
 .path-mod-workshop .assessmentform.rubric.list .fitem .felement {
-    width: auto%;
+    width: auto;
     border: none;
 }
 

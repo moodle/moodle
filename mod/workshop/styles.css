@@ -330,7 +330,7 @@
 
 .path-mod-workshop .grading-report del {
     color: red;
-    font-size: 90%
+    font-size: 90%;
     text-decoration: line-through;
 }
 
