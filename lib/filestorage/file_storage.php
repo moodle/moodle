@@ -200,8 +200,6 @@ class file_storage {
      * @return stored_file instance if exists, false if not
      */
     public function get_file($contextid, $component, $filearea, $itemid, $filepath, $filename) {
-        global $DB;
-
         $filepath = clean_param($filepath, PARAM_PATH);
         $filename = clean_param($filename, PARAM_FILE);
 
@@ -287,7 +285,7 @@ class file_storage {
      */
     public function get_area_tree($contextid, $component, $filearea, $itemid) {
         $result = array('dirname'=>'', 'dirfile'=>null, 'subdirs'=>array(), 'files'=>array());
-        $files = $this->get_area_files($contextid, $component, $filearea, $itemid, $sort="sortorder, itemid, filepath, filename", true);
+        $files = $this->get_area_files($contextid, $component, $filearea, $itemid, "sortorder, itemid, filepath, filename", true);
         // first create directory structure
         foreach ($files as $hash=>$dir) {
             if (!$dir->is_directory()) {
@@ -550,8 +548,6 @@ class file_storage {
         unset($file_record['filesize']);
         unset($file_record['contenthash']);
         unset($file_record['pathnamehash']);
-
-        $now = time();
 
         if (!$newrecord = $DB->get_record('files', array('id'=>$fid))) {
             throw new file_exception('storedfileproblem', 'File does not exist');
@@ -880,8 +876,6 @@ class file_storage {
      * @return stored_file instance
      */
     public function convert_image($file_record, $fid, $newwidth = NULL, $newheight = NULL, $keepaspectratio = true, $quality = NULL) {
-        global $DB;
-
         if ($fid instanceof stored_file) {
             $fid = $fid->get_id();
         }

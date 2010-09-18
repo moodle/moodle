@@ -90,8 +90,6 @@ class zip_packer extends file_packer {
      * @return bool success
      */
     public function archive_to_pathname($files, $archivefile) {
-        global $CFG;
-
         if (!is_array($files)) {
             return false;
         }
