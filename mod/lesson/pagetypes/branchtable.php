@@ -184,7 +184,7 @@ class lesson_page_type_branchtable extends lesson_page {
                 $newpageid = LESSON_EOL;
             }
         } elseif ($newpageid == LESSON_PREVIOUSPAGE) {
-            $newpageid = $page->prevpageid;
+            $newpageid = $this->prevpageid;
         } elseif ($newpageid == LESSON_RANDOMPAGE) {
             $newpageid = lesson_random_question_jump($this->lesson, $this->properties->id);
         } elseif ($newpageid == LESSON_RANDOMBRANCH) {
