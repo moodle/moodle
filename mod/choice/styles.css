@@ -42,8 +42,8 @@
 #page-mod-choice-report .downloadreport ul li {list-style:none;padding: 0 20px; display: inline;float: left; }
 .path-mod-choice .clearfloat {float:none; clear:both;}
 
-/** 
- * Overide for RTL layout
+/**
+ * Override for RTL layout
  */
 .path-mod-choice.dir-rtl .horizontal .choices .option {padding-right:0px; padding-left: 20px; float:right;}
 .path-mod-choice.dir-rtl .results.anonymous .graph.horizontal {text-align: right;}

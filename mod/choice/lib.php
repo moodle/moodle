@@ -70,6 +70,7 @@ $CHOICE_DISPLAY = array (CHOICE_DISPLAY_HORIZONTAL   => get_string('displayhoriz
 function choice_user_outline($course, $user, $mod, $choice) {
     global $DB;
     if ($answer = $DB->get_record('choice_answers', array('choiceid' => $choice->id, 'userid' => $user->id))) {
+        $result = new object();
         $result->info = "'".format_string(choice_get_option_text($choice, $answer->optionid))."'";
         $result->time = $answer->timemodified;
         return $result;
@@ -88,6 +89,7 @@ function choice_user_outline($course, $user, $mod, $choice) {
 function choice_user_complete($course, $user, $mod, $choice) {
     global $DB;
     if ($answer = $DB->get_record('choice_answers', array("choiceid" => $choice->id, "userid" => $user->id))) {
+        $result = new object();
         $result->info = "'".format_string(choice_get_option_text($choice, $answer->optionid))."'";
         $result->time = $answer->timemodified;
         echo get_string("answered", "choice").": $result->info. ".get_string("updated", '', userdate($result->time));
@@ -415,7 +417,7 @@ function prepare_choice_show_results($choice, $course, $cm, $allresponses, $forc
             if ($choice->showunanswered) {
                 echo "<td class=\"col$count data\" >";
                 // added empty row so that when the next iteration is empty,
-                // we do not get <table></table> erro from w3c validator
+                // we do not get <table></table> error from w3c validator
                 // MDL-7861
                 echo "<table class=\"choiceresponse\"><tr><td></td></tr>";
                 if (!empty($allresponses[0])) {
@@ -437,7 +439,7 @@ function prepare_choice_show_results($choice, $course, $cm, $allresponses, $forc
                     echo '<td class="col'.$count.' data" >';
 
                     // added empty row so that when the next iteration is empty,
-                    // we do not get <table></table> erro from w3c validator
+                    // we do not get <table></table> error from w3c validator
                     // MDL-7861
                     echo '<table class="choiceresponse"><tr><td></td></tr>';
                     if (isset($allresponses[$optionid])) {

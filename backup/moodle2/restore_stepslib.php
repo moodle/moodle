@@ -194,7 +194,7 @@ class restore_gradebook_structure_step extends restore_structure_step {
             if ($data->itemtype=='course' && !empty($coursecategory)) {
                 $data->iteminstance = $coursecategory->id;
             }
-            
+
             $newitemid = $DB->insert_record('grade_items', $data);
         }
         $this->set_mapping('grade_item', $oldid, $newitemid);
@@ -310,7 +310,7 @@ class restore_gradebook_structure_step extends restore_structure_step {
             'courseid' => $this->get_courseid()
         );
         $grade_category = new stdclass();
-        
+
         $rs = $DB->get_recordset('grade_categories', $conditions);
         if (!empty($rs)) {
             //get all the parents correct first as grade_category::build_path() loads category parents from the DB
@@ -1372,7 +1372,7 @@ class restore_course_completion_structure_step extends restore_structure_step {
 
         // This may be empty if criteria could not be restored
         $data->criteriaid = $this->get_mappingid('course_completion_criteria', $data->criteriaid);
-        
+
         $data->course = $this->get_courseid();
         $data->userid = $this->get_mappingid('user', $data->userid);
 
@@ -1915,7 +1915,7 @@ abstract class restore_activity_structure_step extends restore_structure_step {
     }
 
     /**
-     * This must be invoked inmediately after creating the "module" activity record (forum, choice...)
+     * This must be invoked immediately after creating the "module" activity record (forum, choice...)
      * and will adjust the new activity id (the instance) in various places
      */
     protected function apply_activity_instance($newitemid) {

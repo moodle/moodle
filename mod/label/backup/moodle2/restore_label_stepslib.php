@@ -49,7 +49,7 @@ class restore_label_activity_structure_step extends restore_activity_structure_s
 
         // insert the label record
         $newitemid = $DB->insert_record('label', $data);
-        // inmediately after inserting "activity" record, call this
+        // immediately after inserting "activity" record, call this
         $this->apply_activity_instance($newitemid);
     }
 

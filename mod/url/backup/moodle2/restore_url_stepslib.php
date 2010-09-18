@@ -49,7 +49,7 @@ class restore_url_activity_structure_step extends restore_activity_structure_ste
 
         // insert the url record
         $newitemid = $DB->insert_record('url', $data);
-        // inmediately after inserting "activity" record, call this
+        // immediately after inserting "activity" record, call this
         $this->apply_activity_instance($newitemid);
     }
 

@@ -50,7 +50,7 @@ class restore_resource_activity_structure_step extends restore_activity_structur
 
         // insert the resource record
         $newitemid = $DB->insert_record('resource', $data);
-        // inmediately after inserting "activity" record, call this
+        // immediately after inserting "activity" record, call this
         $this->apply_activity_instance($newitemid);
     }
 

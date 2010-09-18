@@ -260,7 +260,7 @@ function enrol_category_sync_full() {
     $params['courselevel'] = CONTEXT_COURSE;
     $params['catlevel'] = CONTEXT_COURSECAT;
 
-    // first of all add necessay enrol instances to all courses
+    // first of all add necessary enrol instances to all courses
     $parentcat = $DB->sql_concat("cat.path", "'/%'");
     $sql = "SELECT DISTINCT c.*
               FROM {course} c

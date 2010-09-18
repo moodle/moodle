@@ -829,7 +829,7 @@ class enrol_ldap_plugin extends enrol_plugin {
                 $objectclass = ldap_get_values($ldapconnection, $entry, 'objectClass');
 
                 if (!in_array('group', $objectclass)) {
-                    // Not a group, so return inmediately.
+                    // Not a group, so return immediately.
                     return array($group);
                 }
 

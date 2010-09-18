@@ -57,7 +57,7 @@ class restore_chat_activity_structure_step extends restore_activity_structure_st
 
         // insert the chat record
         $newitemid = $DB->insert_record('chat', $data);
-        // inmediately after inserting "activity" record, call this
+        // immediately after inserting "activity" record, call this
         $this->apply_activity_instance($newitemid);
     }
 

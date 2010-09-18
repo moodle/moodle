@@ -1774,7 +1774,7 @@
         return $status;
     }
 
-    //This function returns a log record with all the necessay transformations
+    //This function returns a log record with all the necessary transformations
     //done. It's used by restore_log_module() to restore modules log.
     function quiz_restore_pre15_logs($restore,$log) {
 

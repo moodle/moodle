@@ -64,7 +64,7 @@ class restore_lesson_activity_structure_step extends restore_activity_structure_
 
         // insert the lesson record
         $newitemid = $DB->insert_record('lesson', $data);
-        // inmediately after inserting "activity" record, call this
+        // immediately after inserting "activity" record, call this
         $this->apply_activity_instance($newitemid);
     }
 

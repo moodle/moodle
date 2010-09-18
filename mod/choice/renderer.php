@@ -41,21 +41,21 @@ class mod_choice_renderer extends plugin_renderer_base {
         }
         $target = new moodle_url('/mod/choice/view.php');
         $attributes = array('method'=>'POST', 'target'=>$target, 'class'=> $layoutclass);
-        
+
         $html = html_writer::start_tag('form', $attributes);
         $html .= html_writer::start_tag('ul', array('class'=>'choices' ));
-        
+
         $availableoption = count($options['options']);
-        foreach ($options['options'] as $option) {            
+        foreach ($options['options'] as $option) {
             $html .= html_writer::start_tag('li', array('class'=>'option'));
             $option->attributes->name = 'answer';
             $option->attributes->type = 'radio';
-            
+
             $labeltext = $option->text;
-            if (!empty($option->attributes->disabled)) { 
+            if (!empty($option->attributes->disabled)) {
                 $labeltext .= ' ' . get_string('full', 'choice');
                 $availableoption--;
-            }            
+            }
 
             $html .= html_writer::empty_tag('input', (array)$option->attributes);
             $html .= html_writer::tag('label', $labeltext, array('for'=>$option->attributes->name));
@@ -67,7 +67,7 @@ class mod_choice_renderer extends plugin_renderer_base {
         $html .= html_writer::empty_tag('input', array('type'=>'hidden', 'name'=>'sesskey', 'value'=>sesskey()));
         $html .= html_writer::empty_tag('input', array('type'=>'hidden', 'name'=>'id', 'value'=>$coursemoduleid));
 
-        if (!empty($options['hascapability']) && ($options['hascapability'])) {            
+        if (!empty($options['hascapability']) && ($options['hascapability'])) {
             if ($availableoption < 1) {
                $html .= html_writer::tag('label', get_string('choicefull', 'choice'));
             } else {
@@ -81,10 +81,10 @@ class mod_choice_renderer extends plugin_renderer_base {
         } else {
             $html .= html_writer::tag('label', get_string('havetologin', 'choice'));
         }
-        
+
         $html .= html_writer::end_tag('ul');
-        $html .= html_writer::end_tag('form');        
-        
+        $html .= html_writer::end_tag('form');
+
         return $html;
     }
 
@@ -95,20 +95,20 @@ class mod_choice_renderer extends plugin_renderer_base {
      * @return string
      */
     public function display_result($choices, $forcepublish = false) {
-        if (empty($forcepublish)) { //alow the publish setting to be overridden
+        if (empty($forcepublish)) { //allow the publish setting to be overridden
             $forcepublish = $choices->publish;
         }
 
         $displaylayout = $choices->display;
 
-        if ($forcepublish) {  //CHOICE_PUBLISH_NAMES            
+        if ($forcepublish) {  //CHOICE_PUBLISH_NAMES
             return $this->display_publish_name_vertical($choices);
         } else { //CHOICE_PUBLISH_ANONYMOUS';
             if ($displaylayout == DISPLAY_HORIZONTAL_LAYOUT) {
                 return $this->display_publish_anonymous_horizontal($choices);
             }
             return $this->display_publish_anonymous_vertical($choices);
-        }                
+        }
     }
 
     /**
@@ -120,16 +120,16 @@ class mod_choice_renderer extends plugin_renderer_base {
     public function display_publish_name_vertical($choices) {
         $html ='';
         $html .= html_writer::tag('h2',format_string(get_string("responses", "choice")), array('class'=>'main'));
-        
+
         $attributes = array('method'=>'POST');
         $attributes['action'] = new moodle_url('/mod/choice/view.php');
         $attributes['id'] = 'attemptsform';
-                
+
         if ($choices->viewresponsecapability) {
             $html .= html_writer::start_tag('form', $attributes);
             $html .= html_writer::empty_tag('input', array('type'=>'hidden', 'name'=>'id', 'value'=> $choices->coursemoduleid));
             $html .= html_writer::empty_tag('input', array('type'=>'hidden', 'name'=>'sesskey', 'value'=> sesskey()));
-            $html .= html_writer::empty_tag('input', array('type'=>'hidden', 'name'=>'mode', 'value'=>'overview'));                
+            $html .= html_writer::empty_tag('input', array('type'=>'hidden', 'name'=>'mode', 'value'=>'overview'));
         }
 
         $table = new html_table();
@@ -144,7 +144,7 @@ class mod_choice_renderer extends plugin_renderer_base {
 
         $columns = array();
         foreach ($choices->options as $optionid => $options) {
-            $coldata = '';            
+            $coldata = '';
             if ($choices->showunanswered && $optionid == 0) {
                 $coldata .= html_writer::tag('div', format_string(get_string('notanswered', 'choice')), array('class'=>'option'));
             } else if ($optionid > 0) {
@@ -152,13 +152,13 @@ class mod_choice_renderer extends plugin_renderer_base {
             }
             $numberofuser = 0;
             if (!empty($options->user) && count($options->user) > 0) {
-                $numberofuser = count($options->user);                
-            } 
-            
-            $coldata .= html_writer::tag('div', ' ('.$numberofuser. ')', array('class'=>'numberofuser', 'title' => get_string('numberofuser', 'choice')));            
+                $numberofuser = count($options->user);
+            }
+
+            $coldata .= html_writer::tag('div', ' ('.$numberofuser. ')', array('class'=>'numberofuser', 'title' => get_string('numberofuser', 'choice')));
             $columns[] = $coldata;
         }
-        
+
         $table->head = $columns;
 
         $coldata = '';
@@ -167,13 +167,13 @@ class mod_choice_renderer extends plugin_renderer_base {
             $coldata = '';
             if ($choices->showunanswered || $optionid > 0) {
                 if (!empty($options->user)) {
-                    foreach ($options->user as $user) { 
+                    foreach ($options->user as $user) {
                         $data = '';
                         if (empty($user->imagealt)){
                             $user->imagealt = '';
                         }
-                        
-                        if ($choices->viewresponsecapability && $choices->deleterepsonsecapability  && $optionid > 0) {                            
+
+                        if ($choices->viewresponsecapability && $choices->deleterepsonsecapability  && $optionid > 0) {
                             $attemptaction = html_writer::checkbox('attemptid[]', $user->id,'');
                             $data .= html_writer::tag('div', $attemptaction, array('class'=>'attemptaction'));
                         }
@@ -184,23 +184,23 @@ class mod_choice_renderer extends plugin_renderer_base {
                         $name = html_writer::tag('a', fullname($user, $choices->fullnamecapability), array('href'=>$userlink, 'class'=>'username'));
                         $data .= html_writer::tag('div', $name, array('class'=>'fullname'));
                         $data .= html_writer::tag('div','', array('class'=>'clearfloat'));
-                        $coldata .= html_writer::tag('div', $data, array('class'=>'user'));                        
-                    }                    
-                }                
+                        $coldata .= html_writer::tag('div', $data, array('class'=>'user'));
+                    }
+                }
             }
-            
+
             $columns[] = $coldata;
             $count++;
         }
-       
-        $table->data[] = $columns;        
+
+        $table->data[] = $columns;
         foreach ($columns as $d) {
             $table->colclasses[] = 'data';
         }
         $html .= html_writer::tag('div', html_writer::table($table), array('class'=>'response'));
-        
+
         $actiondata = '';
-        if ($choices->viewresponsecapability && $choices->deleterepsonsecapability) {            
+        if ($choices->viewresponsecapability && $choices->deleterepsonsecapability) {
             $selecturl = new moodle_url('#');
 
             $selectallactions = new component_action('click',"select_all_in", array('div',null,'tablecontainer'));
@@ -212,18 +212,18 @@ class mod_choice_renderer extends plugin_renderer_base {
             $actiondata .= $this->output->render($deselectall);
 
             $actiondata .= html_writer::tag('label', ' ' . get_string('withselected', 'quiz') . ' ', array('for'=>'menuaction'));
-            
+
             $actionurl = new moodle_url('/mod/choice/view.php', array('sesskey'=>sesskey(), 'action'=>'delete_confirmation()'));
             $select = new single_select($actionurl, 'action', array('delete'=>get_string('delete')), null, array(''=>get_string('moveselectedusersto', 'choice')), 'attemptsform');
-            
+
             $actiondata .= $this->output->render($select);
         }
         $html .= html_writer::tag('div', $actiondata, array('class'=>'responseaction'));
-        
+
         if ($choices->viewresponsecapability) {
             $html .= html_writer::end_tag('form');
         }
-       
+
         return $html;
     }
 
@@ -236,12 +236,12 @@ class mod_choice_renderer extends plugin_renderer_base {
     public function display_publish_anonymous_vertical($choices) {
         global $CHOICE_COLUMN_HEIGHT;
 
-        $html = '';        
+        $html = '';
         $table = new html_table();
         $table->cellpadding = 5;
-        $table->cellspacing = 0;       
-        $table->attributes['class'] = 'results anonymous ';        
-        $table->data = array();        
+        $table->cellspacing = 0;
+        $table->attributes['class'] = 'results anonymous ';
+        $table->data = array();
         $count = 0;
         ksort($choices->options);
         $columns = array();
@@ -269,7 +269,7 @@ class mod_choice_renderer extends plugin_renderer_base {
         $rowgraph = new html_table_row();
         $rowgraph->cells = $columns;
         $rows[] = $rowgraph;
-        
+
         $columns = array();
         $printskiplink = true;
         foreach ($choices->options as $optionid => $options) {
@@ -277,40 +277,40 @@ class mod_choice_renderer extends plugin_renderer_base {
             $numberofuser = 0;
             if (!empty($options->user)) {
                $numberofuser = count($options->user);
-            }            
+            }
 
             if ($printskiplink) {
                 $columndata .= html_writer::tag('div', '', array('class'=>'skip-block-to', 'id'=>'skipresultgraph'));
                 $printskiplink = false;
             }
-            
+
             if ($choices->showunanswered && $optionid == 0) {
                 $columndata .= html_writer::tag('div', format_string(get_string('notanswered', 'choice')), array('class'=>'option'));
             } else if ($optionid > 0) {
                 $columndata .= html_writer::tag('div', format_string($choices->options[$optionid]->text), array('class'=>'option'));
             }
             $columndata .= html_writer::tag('div', ' ('.$numberofuser.')', array('class'=>'numberofuser', 'title'=> get_string('numberofuser', 'choice')));
-            
+
             if($choices->numberofuser > 0) {
                $percentageamount = ((float)$numberofuser/(float)$choices->numberofuser)*100.0;
             }
             $columndata .= html_writer::tag('div', format_float($percentageamount,1). '%', array('class'=>'percentage'));
-            
+
             $cell = new html_table_cell();
             $cell->text = $columndata;
             $cell->attributes = array('class'=>'data header');
-            $columns[] = $cell;            
+            $columns[] = $cell;
         }
         $rowdata = new html_table_row();
         $rowdata->cells = $columns;
         $rows[] = $rowdata;
 
         $table->data = $rows;
-        
+
         $header = html_writer::tag('h2',format_string(get_string("responses", "choice")));
         $html .= html_writer::tag('div', $header, array('class'=>'responseheader'));
-        $html .= html_writer::tag('a', get_string('skipresultgraph', 'choice'), array('href'=>'#skipresultgraph', 'class'=>'skip-block'));      
-        $html .= html_writer::tag('div', html_writer::table($table), array('class'=>'response'));      
+        $html .= html_writer::tag('a', get_string('skipresultgraph', 'choice'), array('href'=>'#skipresultgraph', 'class'=>'skip-block'));
+        $html .= html_writer::tag('div', html_writer::table($table), array('class'=>'response'));
 
         return $html;
     }
@@ -322,7 +322,7 @@ class mod_choice_renderer extends plugin_renderer_base {
      */
     public function display_publish_anonymous_horizontal($choices) {
         global $CHOICE_COLUMN_WIDTH;
-        
+
         $table = new html_table();
         $table->cellpadding = 5;
         $table->cellspacing = 0;
@@ -333,7 +333,7 @@ class mod_choice_renderer extends plugin_renderer_base {
         ksort($choices->options);
 
         $rows = array();
-        foreach ($choices->options as $optionid => $options) {         
+        foreach ($choices->options as $optionid => $options) {
             $numberofuser = 0;
             $graphcell = new html_table_cell();
             if (!empty($options->user)) {
@@ -351,7 +351,7 @@ class mod_choice_renderer extends plugin_renderer_base {
 
             $skiplink = html_writer::tag('a', get_string('skipresultgraph', 'choice'), array('href'=>'#skipresultgraph'. $optionid, 'class'=>'skip-block'));
             $skiphandler = html_writer::tag('span', '', array('class'=>'skip-block-to', 'id'=>'skipresultgraph'.$optionid));
-            
+
             $graphcell->text = $skiplink . $displaydiagram . $skiphandler;
             $graphcell->attributes = array('class'=>'graph horizontal');
 
@@ -366,7 +366,7 @@ class mod_choice_renderer extends plugin_renderer_base {
             if($choices->numberofuser > 0) {
                $percentageamount = ((float)$numberofuser/(float)$choices->numberofuser)*100.0;
             }
-            $columndata .= html_writer::tag('div', format_float($percentageamount,1). '%', array('class'=>'percentage'));            
+            $columndata .= html_writer::tag('div', format_float($percentageamount,1). '%', array('class'=>'percentage'));
 
             $datacell->text = $columndata;
             $datacell->attributes = array('class'=>'header');
@@ -375,14 +375,14 @@ class mod_choice_renderer extends plugin_renderer_base {
             $row->cells = array($datacell, $graphcell);
             $rows[] = $row;
         }
-        
+
         $table->data = $rows;
-        
+
         $html = '';
         $header = html_writer::tag('h2',format_string(get_string("responses", "choice")));
-        $html .= html_writer::tag('div', $header, array('class'=>'responseheader'));        
+        $html .= html_writer::tag('div', $header, array('class'=>'responseheader'));
         $html .= html_writer::table($table);
-        
+
         return $html;
     }
 }

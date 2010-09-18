@@ -61,7 +61,7 @@ class restore_feedback_activity_structure_step extends restore_activity_structur
 
         // insert the feedback record
         $newitemid = $DB->insert_record('feedback', $data);
-        // inmediately after inserting "activity" record, call this
+        // immediately after inserting "activity" record, call this
         $this->apply_activity_instance($newitemid);
     }
 
@@ -71,7 +71,7 @@ class restore_feedback_activity_structure_step extends restore_activity_structur
         $data = (object)$data;
         $oldid = $data->id;
         $data->feedback = $this->get_new_parentid('feedback');
-        
+
         //dependitem
         $data->dependitem = $this->get_mappingid('feedback_item', $data->dependitem);
 

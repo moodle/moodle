@@ -68,7 +68,7 @@ class restore_scorm_activity_structure_step extends restore_activity_structure_s
 
         // insert the scorm record
         $newitemid = $DB->insert_record('scorm', $data);
-        // inmediately after inserting "activity" record, call this
+        // immediately after inserting "activity" record, call this
         $this->apply_activity_instance($newitemid);
     }
 

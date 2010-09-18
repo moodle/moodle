@@ -113,7 +113,7 @@ class restore_workshop_activity_structure_step extends restore_activity_structur
 
         // insert the workshop record
         $newitemid = $DB->insert_record('workshop', $data);
-        // inmediately after inserting "activity" record, call this
+        // immediately after inserting "activity" record, call this
         $this->apply_activity_instance($newitemid);
     }
 

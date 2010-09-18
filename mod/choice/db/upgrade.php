@@ -29,7 +29,7 @@ function xmldb_choice_upgrade($oldversion) {
 
     if ($oldversion < 2009042000) {
 
-    /// Rename field text on table choice to NEWNAMEGOESHERE
+    /// Rename field text on table choice to text
         $table = new xmldb_table('choice');
         $field = new xmldb_field('text', XMLDB_TYPE_TEXT, 'small', null, XMLDB_NOTNULL, null, null, 'name');
 
@@ -42,7 +42,7 @@ function xmldb_choice_upgrade($oldversion) {
 
     if ($oldversion < 2009042001) {
 
-    /// Rename field format on table choice to NEWNAMEGOESHERE
+    /// Rename field format on table choice to format
         $table = new xmldb_table('choice');
         $field = new xmldb_field('format', XMLDB_TYPE_INTEGER, '4', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'intro');
 
