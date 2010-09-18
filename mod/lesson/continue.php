@@ -133,6 +133,7 @@ if ($result->nodefaultresponse) {
 if ($canmanage) {
     // This is the warning msg for teachers to inform them that cluster and unseen does not work while logged in as a teacher
     if(lesson_display_teacher_warning($lesson)) {
+        $warningvars = new object();
         $warningvars->cluster = get_string("clusterjump", "lesson");
         $warningvars->unseen = get_string("unseenpageinbranch", "lesson");
         $lesson->add_message(get_string("teacherjumpwarning", "lesson", $warningvars));

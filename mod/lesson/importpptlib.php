@@ -137,6 +137,7 @@ function lesson_create_objects($pageobjects, $lessonid) {
     $branchtable = new stdClass;
 
     // all pages have this info
+    $page = new object();
     $page->lessonid = $lessonid;
     $page->prevpageid = 0;
     $page->nextpageid = 0;
@@ -148,6 +149,7 @@ function lesson_create_objects($pageobjects, $lessonid) {
     $page->timemodified = 0;
 
     // all answers are the same
+    $answer = new object();
     $answer->lessonid = $lessonid;
     $answer->jumpto = LESSON_NEXTPAGE;
     $answer->grade = 0;
@@ -186,7 +188,7 @@ function lesson_create_objects($pageobjects, $lessonid) {
             $imagetag = str_replace("'", '"', $imagetag);  // imgstyle
             $page->contents .= $imagetag;
         }
-        // go through the contents array and put <p> tags around each element and strip out \n which I have found to be uneccessary
+        // go through the contents array and put <p> tags around each element and strip out \n which I have found to be unneccessary
         foreach ($pageobject->contents as $content) {
             $content = str_replace("\n", '', $content);
             $content = str_replace("\r", '', $content);

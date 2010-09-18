@@ -38,6 +38,8 @@ function removedoublecr($filename) {
         $outfile = $filearray;
     }
 
+    $outarray = array();
+
     foreach ($outfile as $line) {
         // remove leading and trailing whitespace
         trim($line);

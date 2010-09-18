@@ -155,6 +155,8 @@ class lesson_page_type_multichoice extends lesson_page {
                     }
                 }
             }
+            $correctpageid = null;
+            $wrongpageid = null;
             // this is for custom scores.  If score on answer is positive, it is correct
             if ($this->lesson->custom) {
                 $ncorrect = 0;

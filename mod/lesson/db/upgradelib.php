@@ -53,7 +53,7 @@ function lesson_20_migrate_moddata_mixture($courseid, $path) {
 
         if ($item->isFile()) {
             if (!$item->isReadable()) {
-                echo $OUTPUT->notification(" File not readable, skipping: ".$courseid.$pathname.$item->getFilename());
+                echo $OUTPUT->notification(" File not readable, skipping: ".$courseid.$path.$item->getFilename());
                 continue;
             }
 

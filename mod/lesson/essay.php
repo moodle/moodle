@@ -105,6 +105,7 @@ switch ($mode) {
             $gradeinfo = lesson_grade($lesson, $attempt->retry, $attempt->userid);
 
             // Set and update
+            $updategrade = new object();
             $updategrade->id = $grade->id;
             $updategrade->grade = $gradeinfo->grade;
             $DB->update_record('lesson_grades', $updategrade);
