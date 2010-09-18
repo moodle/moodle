@@ -2501,7 +2501,7 @@ function notice ($message, $link='', $course=NULL) {
  * @param moodle_url|string $url A moodle_url to redirect to. Strings are not to be trusted!
  * @param string $message The message to display to the user
  * @param int $delay The delay before redirecting
- * @return void
+ * @return void - does not return!
  */
 function redirect($url, $message='', $delay=-1) {
     global $OUTPUT, $PAGE, $SESSION, $CFG;
