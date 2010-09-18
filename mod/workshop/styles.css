@@ -7,6 +7,11 @@
     font-size: 120%;
 }
 
+.path-mod-workshop div.singlebutton {
+    text-align: center;
+    margin: 0.75em auto;
+}
+
 /**
  * Submission - one line summary display
  */
@@ -141,11 +146,9 @@
     position: relative;
 }
 
-.path-mod-workshop .status-message-closer {
-    font-weight: bold;
-    position: absolute;
-    top: 5px;
-    right: 15px;
+.path-mod-workshop .status-message .singlebutton {
+    text-align: left;
+    margin: 0px;
 }
 
 .path-mod-workshop .status-message.ok {

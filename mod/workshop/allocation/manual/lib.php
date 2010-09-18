@@ -198,9 +198,11 @@ class workshop_manual_allocator implements workshop_allocator {
         if ($hlauthorid > 0 and $hlreviewerid > 0) {
             // display just those two users
             $participants = array_intersect_key($participants, array($hlauthorid => null, $hlreviewerid => null));
+            $button = $OUTPUT->single_button($PAGE->url, get_string('showallparticipants', 'workshopallocation_manual'), 'get');
         } else {
             // slice the list of participants according to the current page
             $participants = array_slice($participants, $page * $perpage, $perpage, true);
+            $button = '';
         }
 
         // this will hold the information needed to display user names and pictures
@@ -319,7 +321,7 @@ class workshop_manual_allocator implements workshop_allocator {
         $wsoutput = $PAGE->get_renderer('mod_workshop');
         $uioutput = $PAGE->get_renderer('workshopallocation_manual');
 
-        return $pagingbarout . $wsoutput->status_message($msg) . $uioutput->display_allocations($data) . $pagingbarout;
+        return $pagingbarout . $wsoutput->status_message($msg) . $uioutput->display_allocations($data) . $button . $pagingbarout;
     }
 
     /**

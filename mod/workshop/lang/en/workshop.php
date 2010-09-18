@@ -146,7 +146,6 @@ $string['latesubmissions_desc'] = 'Allow submissions after the deadline';
 $string['latesubmissions_help'] = 'If enabled, an author may submit their work after the submissions deadline or during the assessment phase. Late submissions cannot be edited though.';
 $string['latesubmissionsallowed'] = 'Late submissions are allowed';
 $string['maxbytes'] = 'Maximum file size';
-$string['messageclose'] = '(X)';
 $string['modulename'] = 'Workshop';
 $string['modulenameplural'] = 'Workshops';
 $string['mysubmission'] = 'My submission';
